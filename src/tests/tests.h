@@ -28,6 +28,7 @@ enum {
 
   /* Bugs */
   TEST_BUG_SEGMENTATION,
+  TEST_SEGMENT_POSITION,
 
   NB_TESTS
 };
@@ -56,6 +57,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_CLUSTER, "Test automatic clusterisation");
 
   RECORD_TAP_TEST(TEST_BUG_SEGMENTATION, "Test segmentation bug");
+  RECORD_TAP_TEST(TEST_SEGMENT_POSITION, "Test V,D,J position");
 }
 
 TAP_DECLARATIONS

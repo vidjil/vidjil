@@ -130,9 +130,8 @@ void comp_matrix::del(){
   free(m);
 }
 
-list<list<junction> >  comp_matrix::cluster(MapKmerStore<Kmer> *junctions, 
-					 string forced_edges, int w, ostream &out, 
-					 int epsilon, int minPts)
+list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream &out, 
+					      int epsilon, int minPts)
 {
   
 out << "  eps: " << epsilon << " / minPts: " << minPts << endl ;
@@ -149,8 +148,8 @@ out << "  eps: " << epsilon << " / minPts: " << minPts << endl ;
 //indexation des voisins
   map <string, list <string> > neighbor;
   string j1, j2;
-  int n_j=0;
-  int n_j2=0;
+  n_j=0;
+  n_j2=0;
   int c=0;
   int c1=0;
   int c2=0;
@@ -335,6 +334,22 @@ out << "  eps: " << epsilon << " / minPts: " << minPts << endl ;
     
     return cluster;
     
+}
+list<list<junction> >  comp_matrix::nocluster()
+{
+  list <list < string > > cluster ;
+  typedef map<string,Kmer> msK ;
+  map<string,Kmer> z = junctions->store;
+  
+    for (msK::const_iterator it0 = z.begin();
+    it0 != z.end(); ++it0 )	 
+    {
+      list< string > c1;
+      c1.push_back(it0->first);
+      cluster.push_back(c1);
+    }
+  
+  return cluster;
 }
 
 void comp_matrix::stat_cluster( list<list<junction> > cluster, string neato_file, ostream &out )

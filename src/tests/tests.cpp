@@ -19,6 +19,6 @@ int main(void) {
   testBugs();
   testCluster();
   testSegment();
-   
+  
   TAP_END_TEST_EXIT
 }

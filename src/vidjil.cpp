@@ -625,30 +625,35 @@ int main (int argc, char **argv)
     out << " (" << setprecision(3) << 100 * (float) nb_reads / nb_total_reads << "%)  " << endl ;
 
     //////////////////////////////////
-    out << "Cluster similar junctions" << endl ;
     
     comp_matrix comp=comp_matrix(junctions);
-    
-    if(load_comp==1){
-      comp.load((out_dir+prefix_filename + comp_filename).c_str());
-    }else{
-      comp.compare( out);
+    if (epsilon!=0){
+      if(load_comp==1){
+	comp.load((out_dir+prefix_filename + comp_filename).c_str());
+      }else{
+	comp.compare( out);
+      }
     }
     
     if(save_comp==1){
       comp.save(( out_dir+prefix_filename + comp_filename).c_str());
     }
     
-    list <list <junction> > clones_junctions = comp.cluster(junctions, forced_edges, w, out, epsilon, minPts) ;
-       
+    list <list <junction> > clones_junctions;
+    
+    if (epsilon!=0){
+      out << "Cluster similar junctions" << endl ;
+      clones_junctions  = comp.cluster(forced_edges, w, out, epsilon, minPts) ;
+      comp.stat_cluster(clones_junctions, out_dir + prefix_filename + GRAPH_FILENAME, out );
+    }else{
+      clones_junctions  = comp.nocluster() ;
+    }
+    
     out << "  ==> " << clones_junctions.size() << " clones" << endl ;
  
-  
     map<string,Kmer> z = junctions->store;
     
     int size=z.size();
-    
-    comp.stat_cluster(clones_junctions, out_dir + prefix_filename + GRAPH_FILENAME, out );
     
     comp.del();
     

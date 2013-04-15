@@ -59,10 +59,11 @@ class comp_matrix {
     * @param epsilon: maximum neighborhood distance 
     * @param minPts: minimum neighbors required 
     */
-    list<list<junction> >  cluster(MapKmerStore<Kmer> *junctions, 
-					string forced_edges="",
+    list<list<junction> >  cluster(string forced_edges="",
 					int w=0,ostream &out=cout,
 					int epsilon=1, int minPts=10);
+    
+    list<list<junction> >  nocluster();
     
     /**
     * reset state 

@@ -20,13 +20,13 @@ void testSegment()
 	//segmentation VJ
         FineSegmenter s(data.read(2), seqV, seqJ, 0, 40);
 	
-	TAP_TEST(s.isSegmented(), TEST_CLUSTER, "is segmented") ;
+	TAP_TEST(s.isSegmented(), TEST_SEGMENT_POSITION, "is segmented") ;
 	if (s.isSegmented()){
 	  cout << s.info << endl << endl ;
 	}
-	TAP_TEST(s.getRight()==202, TEST_CLUSTER, "J position") ;
+	TAP_TEST(s.getRight()==202, TEST_SEGMENT_POSITION, "J position") ;
 	
-	TAP_TEST((s.getRight()-s.getLeft())==32, TEST_CLUSTER, "size n") ;
+	TAP_TEST((s.getRight()-s.getLeft())==32, TEST_SEGMENT_POSITION, "size n") ;
 	
 	//segmentation D
 	s.FineSegmentD(seqV, seqD, seqJ);
@@ -34,8 +34,8 @@ void testSegment()
 	if (s.isSegmented()){
 	  cout << s.info << endl << endl ;
 	}
-	TAP_TEST(s.getRight()==204, TEST_CLUSTER, "overlap resizing") ;
+	TAP_TEST(s.getRight()==204, TEST_SEGMENT_POSITION, "overlap resizing") ;
 	
-	TAP_TEST((s.getRight()-s.getLeft())==34, TEST_CLUSTER, "n resizing") ;
+	TAP_TEST((s.getRight()-s.getLeft())==34, TEST_SEGMENT_POSITION, "n resizing") ;
 }
 
