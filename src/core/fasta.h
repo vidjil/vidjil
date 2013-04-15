@@ -66,6 +66,12 @@ class OnlineFasta {
   size_t line_nb;
 
  public:
+
+  /**
+   * Default constructor
+   */
+  OnlineFasta(int extract_field=0, string extract_separator="|");
+
   /**
    * Open the file and read the first sequence.
    * @post getSequence() does not return the first sequence yet. 
@@ -76,6 +82,11 @@ class OnlineFasta {
 
   OnlineFasta(istream &input, 
               int extract_field=0, string extract_separator="|");
+
+  /**
+   * Copy constructor
+   */
+  OnlineFasta(OnlineFasta &of);
 
   ~OnlineFasta();
   
