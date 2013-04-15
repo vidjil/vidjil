@@ -433,10 +433,10 @@ int main (int argc, char **argv)
   Fasta rep_D(f_rep_D, 2, "|", out);
   Fasta rep_J(f_rep_J, 2, "|", out);
   
-  OnlineFasta reads;
+  OnlineFasta *reads;
 
   try {
-    reads = OnlineFasta(f_reads, 1, " ");
+    reads = new OnlineFasta(f_reads, 1, " ");
   } catch (const std::ios_base::failure e) {
     out << "Error while reading reads file " << f_reads << ": " << e.what()
         << endl;
@@ -490,14 +490,14 @@ int main (int argc, char **argv)
     for (int i=0; i<STATS_SIZE; i++)
       stats_segmented[i] = 0 ;
 
-    while (reads.hasNext())
+    while (reads->hasNext())
       {
-        reads.next();
+        reads->next();
         nb_total_reads++;
         if (verbose)
-          out << endl << endl << reads.getSequence().label << endl;
+          out << endl << endl << reads->getSequence().label << endl;
        
-        KmerSegmenter seg(reads.getSequence(), index, delta_min, delta_max_kmer, stats_segmented);
+        KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max_kmer, stats_segmented);
         if (verbose)
 	  out << seg;
 	  
@@ -516,7 +516,7 @@ int main (int argc, char **argv)
             if (junc.size())
               {
                 junctions->insert(junc, "bloup");
-                seqs_by_junction[junc].push_back(reads.getSequence());
+                seqs_by_junction[junc].push_back(reads->getSequence());
               }
 	    else
 	      too_short_for_the_junction++ ;
@@ -525,7 +525,7 @@ int main (int argc, char **argv)
 	    // Output segmented
 	    //////////////////////////////////
 	    
-	    // out_segmented << reads.getSequence() ;
+	    // out_segmented << reads->getSequence() ;
 	    out_segmented << seg ; // Sortie du KmerSegmenter (V/N/J par left/right)
           }
       }
@@ -1102,11 +1102,11 @@ int main (int argc, char **argv)
     // déja déclaré ?
     //reads = OnlineFasta(f_reads, 1, " ");
     
-    while (reads.hasNext()) 
+    while (reads->hasNext()) 
       {
-        reads.next();
+        reads->next();
 	
-        FineSegmenter s(reads.getSequence(), rep_V, rep_J, delta_min, delta_max);
+        FineSegmenter s(reads->getSequence(), rep_V, rep_J, delta_min, delta_max);
         if (s.isSegmented()) {
           html << "<h3>" << s.code << "</h3>";
           html << "<pre>";
@@ -1118,7 +1118,7 @@ int main (int argc, char **argv)
           out << "Unable to segment" << endl;
           html << "</h3>";
           html << "<pre>";
-          out << reads.getSequence();
+          out << reads->getSequence();
           html << "</pre>";
           out << endl << endl;
         }
@@ -1131,5 +1131,6 @@ int main (int argc, char **argv)
     cerr << "Ooops... unknown command. I don't know what to do apart from exiting!" << endl;
   }
   
-  
+
+  delete reads;
 }
