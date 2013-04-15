@@ -16,14 +16,20 @@ DATA_DIR=$(dirname $0)
 
 FILES=($DATA_DIR/result.sam)    # For each such file, a file with the same
                                 # name, suffixed by .should_get must exist
+
+FILES=(vidjil.log) ### Hum.
+
 COMMENT=("Testing SNPs")
+
+echo "==>" $0.tap
 
 {
 nb_tests=0
 # Count number of tests to be performed
-for file in ${FILES[*]}; do
-    nb_tests=$((nb_tests+`grep -Pc '^[^$#]' $file.should_get`))
-done
+#for file in ${FILES[*]}; do
+#    nb_tests=$((nb_tests+`grep -Pc '^[^$#]' $file.should_get`))
+#done
+nb_tests=1
 
 echo "1.."$nb_tests
 test_nb=1
