@@ -10,24 +10,12 @@ LIBCORE=core.a
 
 BINDIR=..
 
-
 v: vidjil
 
 all: $(EXEC)
 
 $(EXEC): %: %.o $(LIBCORE) 
 	$(CC) -o $(BINDIR)/$@ $^ $(LDFLAGS) $(CFLAGS)
-
-# cut: cut.o $(LIBCORE)
-# 	$(CC) -o $(BINDIR)/$@ $^ $(LDFLAGS) $(CFLAGS)
-
-# count: count.o $(LIBCORE)
-# 	$(CC) -o $(BINDIR)/$@ $^ $(LDFLAGS) $(CFLAGS)
-
-# kmer: kmer.o $(LIBCORE) 
-# 	$(CC) -o $(BINDIR)/$@ $^ $(LDFLAGS) $(CFLAGS)
-# kmer_count: kmer_count.o $(LIBCORE) 
-# 	$(CC) -o $(BINDIR)/$@ $^ $(LDFLAGS) $(CFLAGS)
 
 core: $(LIBCORE)
 
