@@ -1,0 +1,93 @@
+# Vidjil -- V(D)J recombinations analysis <http://bioinfo.lifl.fr/vidjil>
+# Copyright (C) 2011, 2012, 2013 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
+
+V(D)J recombinations in lymphocytes are a key for immunologic diversity
+as they have an influence on the production of antibodies and antigen
+receptors. They are also useful markers for pathologies: in many
+cases, such a clonality marker is used for patient follow-up to
+quantify the minimal residual disease in leukemias.  
+
+Vidjil process high-througput sequencing data to extract V(D)J
+junctions and gather them into clones. This analysis is based on a
+seed heuristics and is fast and scalable, as, in the first phase, no
+alignment is done with database germline sequences.  Starting from a
+set of reads, Vidjil detects the junctions in each read. This is based
+on an ultra-fast seed-based heuristic, which has be prooven to be
+reliable output the most abundant clones, based on their junctions
+
+Vidjil can also clusterize similar clones, or leave this to the user
+after a manual review. The method is described in the paper referenced
+below.
+
+Vidjil is open-source, released under GNU GPLv3 license.
+
+
+### Supported platforms
+
+Vidjil has been successfully tested on the following platforms :
+ - CentOS 6.3 amd64
+ - CentOS 6.3 i386
+ - Debian Squeeze 
+ - Fedora 17
+ - FreeBSD 9.1 amd64
+ - NetBSD 6.0.1 amd64
+ - Ubuntu 12.04 amd64
+ - Ubuntu 12.04 i386
+
+
+### Installation
+
+sh data/get-sequences    # get a sample dataset from Xxxxxx (Xxxx reads on 454 ?)
+sh germline/get-germline # get IMGT germline databases (you have to agree to IMGT license: free for academic use provided that IMGT name is granted XXXXX)
+
+make                     # compile Vijil
+make test                # run self-tests
+
+
+### Optional dependencies
+
+clustalw (to compute alignments between xxxx)
+neato (to display graph of neighbors xxx)
+
+
+### Examples of use
+
+All the following examples are on a IGH XXXXX, V(D)J : 
+XXXX requring the  "-G germline/IGH" as the "-d" options
+
+
+./vidjil -G germline/IGH -d data/Stanford_S22.fasta
+   # Extract (with the heuristic) all junctions
+   # Results are in out/segmented.fa
+
+>5--junction--1 
+TTGTAGTGGTGGTAGCTGCTACTCCTTTGACTACTGGGGC
+>5--junction--2 
+TGTAGTGGTGGTAGCTGTTACTCCCACGTCTGGGGCCAAG
+(...)
+
+   Junctions of size 40 (modifiable by -w) have been extracted
+   These two junctions have 5 occurrences.
+   Expliquer résultats : blablablabla .....
+
+
+./vidjil -c clones -G germline/IGH -R 5 -d data/Stanford_S22.fasta
+   # Extracts the junctions, then gather them into clones (with at least 5 reads each).
+   # Results are in out/segmented.fa, out/junctions.fa-* and out/clonesXXXX
+
+  Expliquer résultats : blablablabla .....
+
+
+
+./vidjil -c clones -G germline/IGH -R 5 -n 1 -d data/Stanford_S22.fasta
+  # Junction extraction + clone gathering, with automatic clusterisation, distance one (-n 1)
+
+  Expliquer résultats : blablablabla .....
+
+
+./vidjil -c segment -G germline/IGH -d data/Stanford_S22.fasta
+   # Segment the reads onto VDJ germline using a full comparison (dynamic programming) with all sequences
+
+  Expliquer résultats : blablablabla .....
+
+
