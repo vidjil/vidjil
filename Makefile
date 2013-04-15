@@ -3,7 +3,8 @@ all:
 	make -C src
 
 test: all
-	./vidjil
+	make -C src/tests 
+
 
 
 
