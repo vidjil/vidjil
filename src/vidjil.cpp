@@ -362,7 +362,8 @@ int main (int argc, char **argv)
   ios_base::openmode mode = ios::out;
 
   if (command == CMD_ANALYSIS) {
-    string com = "cat html/header.html html/vdj.css > " ;
+    // TODO: put this in #define
+    string com = "cat src/html/header.html src/html/vdj.css > " ;
     if (system((com + f_html).c_str()) == -1) {
       perror("Creation of HTML file");
       exit(3);

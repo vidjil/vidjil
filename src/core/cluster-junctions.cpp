@@ -408,7 +408,7 @@ list<list<junction> >  comp_matrix::cluster(MapKmerStore<Kmer> *junctions,
 
   f_graph << "}" << endl ;
   f_graph.close();
-  string com = "neato graph.dot -Tpdf -o graph.pdf" ;
+  string com = "neato out/graph.dot -Tpdf -o out/graph.pdf" ; // TODO: use out_dir + GRAPH_FILE
   out << "  " << com << endl ;
   if (system(com.c_str()) == -1) {
     perror("Launching neato");

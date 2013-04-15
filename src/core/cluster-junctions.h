@@ -15,7 +15,7 @@ typedef string junction ;
 
 #define SIMILAR_JUNCTIONS_THRESHOLD 1
 
-#define GRAPH_FILE "./graph.dot"
+#define GRAPH_FILE "./out/graph.dot" // TODO: use out_dir from main
 
 class comp_matrix {
   public:
