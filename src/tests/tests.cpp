@@ -6,6 +6,7 @@
 #include "testAffectAnalyser.cpp"
 #include "testBugs.cpp"
 #include "testCluster.cpp"
+#include "testSegment.cpp"
 
 
 int main(void) {
@@ -17,6 +18,7 @@ int main(void) {
   testAffectAnalyser();
   testBugs();
   testCluster();
+  testSegment();
   
   TAP_END_TEST_EXIT
 }
