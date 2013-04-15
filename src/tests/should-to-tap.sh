@@ -17,7 +17,7 @@ DATA_DIR=$(dirname $0)
 FILES=($DATA_DIR/result.sam)    # For each such file, a file with the same
                                 # name, suffixed by .should_get must exist
 
-FILES=(vidjil.log) ### Hum.
+FILES=(src/tests/stanford.log) ### Hum.
 
 COMMENT=("Testing SNPs")
 
