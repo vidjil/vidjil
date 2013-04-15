@@ -14,11 +14,11 @@ list<string> multiple_seq_align(string file)
 
   cout << "[clustalw... " ;
   cout.flush() ;
-  system(com.c_str());
+  int ret_code = system(com.c_str());
 
   ifstream alig(alig_file.c_str());
   
-  if (!alig.is_open())
+  if (ret_code == -1 || !alig.is_open())
     {
       cout << "FAILED] " << endl ;
       cout.flush();
