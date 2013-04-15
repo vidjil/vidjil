@@ -112,10 +112,10 @@ void usage(char *progname)
        << "  \t\t" << COMMAND_SEGMENT   << "  \t V(D)J segmentation" << endl
        << endl       
 
-       << "Germline database" << endl
-       << "  -V <file>     V repertoire multi-fasta file" << endl
-       << "  -D <file>     D repertoire multi-fasta file" << endl
-       << "  -J <file>     J repertoire multi-fasta file" << endl
+       << "Germline databases" << endl
+       << "  -V <file>     V germline multi-fasta file" << endl
+       << "  -D <file>     D germline multi-fasta file (if provided, -d is automatically considered)" << endl
+       << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa)" << endl
        << endl
 
@@ -128,11 +128,11 @@ void usage(char *progname)
        << endl
 
        << "Junction annotations" << endl
-       << "  -l <file>     labels for some junctions -- these junctions will be kept even under the limits" << endl
+       << "  -l <file>     labels for some junctions -- these junctions will be kept even if some limits are not reached" << endl
        << endl
 
        << "Limit to keep a junction" << endl
-       << "  -r <nb>       minimal number of reads (default: " << MIN_READS_JUNCTION << ")" << endl
+       << "  -r <nb>       minimal number of reads containing a junction (default: " << MIN_READS_JUNCTION << ")" << endl
        << endl
 
        << "Clusterisation" << endl
@@ -143,8 +143,8 @@ void usage(char *progname)
        << "  -L            load comparative matrix for clustering" << endl
        << endl
 
-       << "Limit to report a clone" << endl
-       << "  -R <nb>       minimal number of reads (default: " << MIN_READS_CLONE << ")" << endl
+       << "Limits to report a clone" << endl
+       << "  -R <nb>       minimal number of reads supporting a clone (default: " << MIN_READS_CLONE << ")" << endl
        << "  -% <ratio>    minimal percentage of reads (default: " << RATIO_READS_CLONE << ")" << endl
        << endl
 
@@ -156,7 +156,7 @@ void usage(char *progname)
 
        << "Output" << endl
        << "  -o <dir>      output directory (default: " << OUT_DIR << ")" <<  endl
-       << "  -p <string>   prefix produced filenames by the specified string" << endl
+       << "  -p <string>   prefix output filenames by the specified string" << endl
     
        << "  -a            output all sequences by cluster (" << SEQUENCES_FILENAME << ")" << endl
        << "  -x            no detailed analysis of each cluster" << endl
