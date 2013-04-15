@@ -94,7 +94,7 @@ OnlineFasta::OnlineFasta(const OnlineFasta &of) {
   extract_field = of.extract_field;
   extract_separator = of.extract_separator;
   line = of.line;
-  input_allocated = of.input_allocated;
+  input_allocated = false;
   line_nb = of.line_nb;
 }
 
