@@ -14,6 +14,8 @@ should:
 clean:
 	make -C src clean
 
+.PHONY: all test should clean distrib
+
 RELEASE_H = src/release.h
 RELEASE_SOURCE = $(wildcard src/*.cpp) $(wildcard src/*.h)  $(wildcard src/core/*.cpp) $(wildcard src/core/*.h)  
 RELEASE_FILES = $(RELEASE_SOURCE) ./Makefile src/Makefile germline/get-germline doc/README doc/LICENSE
