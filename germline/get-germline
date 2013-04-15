@@ -1,7 +1,11 @@
 #!/bin/sh
 
-wget http://www.lifl.fr/~giraud/germline.zip
-unzip -d $(dirname $0) -o germline.zip
-rm -f germline.zip
+
+wget -O imgt.fa http://www.imgt.org/download/GENE-DB/GENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+inframeP
+python split-from-imgt.py < imgt.fa
+
+# wget http://www.lifl.fr/~giraud/germline.zip
+# unzip -d $(dirname $0) -o germline.zip
+# rm -f germline.zip
 
 # ln -s ../../seq/Repertoire/*.fa .
