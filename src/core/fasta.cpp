@@ -88,7 +88,7 @@ OnlineFasta::OnlineFasta(istream &input,
   init();
 }
 
-OnlineFasta::OnlineFasta(OnlineFasta &of) {
+OnlineFasta::OnlineFasta(const OnlineFasta &of) {
   current = of.current;
   input = of.input;
   extract_field = of.extract_field;

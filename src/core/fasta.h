@@ -86,7 +86,7 @@ class OnlineFasta {
   /**
    * Copy constructor
    */
-  OnlineFasta(OnlineFasta &of);
+  OnlineFasta(const OnlineFasta &of);
 
   ~OnlineFasta();
   
