@@ -20,7 +20,6 @@
 #include "cluster-junctions.h"
 #include<cstdlib>
 
-
 int total_nb_reads (list<junction> clone, map <string, list<Sequence> > seqs_by_junction)
 {
   int total = 0 ;
@@ -35,10 +34,11 @@ int total_nb_reads (list<junction> clone, map <string, list<Sequence> > seqs_by_
     return lh.second>rh.second;
   }
 
-comp_matrix::comp_matrix(){
+comp_matrix::comp_matrix(MapKmerStore<Kmer> *junc){
+  junctions=junc;
 }
 
-void comp_matrix::compare(MapKmerStore<Kmer> *junctions, ostream &out)
+void comp_matrix::compare( ostream &out)
 {
   // DEBUG // out << "  DEBUT COMPARE JUNCTION" << endl ;
   //     clock_t start = clock();
@@ -86,7 +86,7 @@ void comp_matrix::compare(MapKmerStore<Kmer> *junctions, ostream &out)
   // DEBUG // out << "  FIN COMPARE JUNCTION ("<<(clock()-start)/1000 <<"ms)" << endl ;
 }
 
-void comp_matrix::load(MapKmerStore<Kmer> *junctions, string file){
+void comp_matrix::load(string file){
   
   typedef map<string,Kmer> msK ;
   map<string,Kmer> z = junctions->store;
@@ -132,11 +132,10 @@ void comp_matrix::del(){
 
 list<list<junction> >  comp_matrix::cluster(MapKmerStore<Kmer> *junctions, 
 					 string forced_edges, int w, ostream &out, 
-					 int epsilon, int minPts, 
-					 int stat)
+					 int epsilon, int minPts)
 {
   
-  if (stat==1)  out << "  eps: " << epsilon << " / minPts: " << minPts << endl ;
+out << "  eps: " << epsilon << " / minPts: " << minPts << endl ;
     
     
   typedef map<string,Kmer> msK ;
@@ -149,7 +148,6 @@ list<list<junction> >  comp_matrix::cluster(MapKmerStore<Kmer> *junctions,
 ////////////////////////
 //indexation des voisins
   map <string, list <string> > neighbor;
-  map <string, int> count;
   string j1, j2;
   int n_j=0;
   int n_j2=0;
@@ -331,18 +329,19 @@ list<list<junction> >  comp_matrix::cluster(MapKmerStore<Kmer> *junctions,
 	  }
 	  c2.reverse();
 	  cluster.push_back(c2);
-	
 	}
       }
     }//fin it0
     
-    /////////////////////////////////////////////
-    //STATS CLUSTER + NEATO/////////////////
-    ////////////////////////////////////////////
-    if (stat==1){
+    return cluster;
     
+}
+
+void comp_matrix::stat_cluster( list<list<junction> > cluster, string neato_file, ostream &out )
+{
+
   ofstream f_graph;
-  f_graph.open(GRAPH_FILE);
+  f_graph.open((neato_file + ".dot").c_str());
   f_graph << "graph pairs {" << endl ;
   f_graph << "   ratio = 1.618 " << endl ;
   f_graph << "   node [shape=box,colorscheme=pastel19,style=filled]" << endl ;
@@ -355,8 +354,7 @@ list<list<junction> >  comp_matrix::cluster(MapKmerStore<Kmer> *junctions,
     float jc=0;				//nombre de junction unique clusterisé(%)
     int n_j2c=0;			//nombre de junction clusterisé
     float jc2=0;			//nombre de junction clusterisé(%)
-    float moy=0;				//taille moyenne des clusters
-    
+    float moy=0;			//taille moyenne des clusters
     
     int color=0;
     //recherche du plus gros cluster
@@ -408,7 +406,7 @@ list<list<junction> >  comp_matrix::cluster(MapKmerStore<Kmer> *junctions,
 
   f_graph << "}" << endl ;
   f_graph.close();
-  string com = "neato out/graph.dot -Tpdf -o out/graph.pdf" ; // TODO: use out_dir + GRAPH_FILE
+  string com = "neato "+neato_file+".dot -Tpdf -o "+neato_file+".pdf" ; // TODO: use out_dir + GRAPH_FILE
   out << "  " << com << endl ;
   if (system(com.c_str()) == -1) {
     perror("Launching neato");
@@ -437,7 +435,7 @@ list<list<junction> >  comp_matrix::cluster(MapKmerStore<Kmer> *junctions,
       out << "    junctions 		: "<< n_j << endl ;
 
       stat << n_jc <<" ";		//nombre de junction clusterisé
-      if (n_jc!=0) jc= ((n_jc*100)/n_j);
+      if (n_j!=0) jc= ((n_jc*100)/n_j);
       stat << jc <<" ";
       out << "    clusterised junctions 	: "<< n_jc << " (" << jc << "%)" << endl ;
 
@@ -445,10 +443,8 @@ list<list<junction> >  comp_matrix::cluster(MapKmerStore<Kmer> *junctions,
       out << "    occurrences 	        : "<< n_j2 << endl ;
 
       stat << n_j2c <<" ";		//nombre d'occurrence clusterisé
-      if (n_j2c!=0)  jc2= ((n_j2c*100)/n_j2);
+      if (n_j2!=0)  jc2= ((n_j2c*100)/n_j2);
       stat << jc2 <<" ";
       out << "    clusterised occurrences	: "<< n_j2c << " (" << jc2 << "%)" << endl ;
-  }
-
- return cluster;
+  
 }

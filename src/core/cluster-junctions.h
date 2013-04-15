@@ -15,31 +15,34 @@ typedef string junction ;
 
 #define SIMILAR_JUNCTIONS_THRESHOLD 1
 
-#define GRAPH_FILE "./out/graph.dot" // TODO: use out_dir from main
 
 class comp_matrix {
   public:
     char ** m;
     int size;
+    MapKmerStore<Kmer> *junctions;
+    map <string, int> count;
+    int n_j;
+    int n_j2;
     
     /**
     * create new distance matrix
     */
-    comp_matrix();
+    comp_matrix(MapKmerStore<Kmer> *junctions);
         
     /**
     * init matrix with a KmerStore and compute distance value between sequences
     * @param junctions: a MapKmerStore containing sequences to be compared
     * @param out: exit for log
     */
-    void compare(MapKmerStore<Kmer> *junctions, ostream &out);
+    void compare(ostream &out);
     
     /**
     * init matrix with a previous run stored 
     * @param junctions: a MapKmerStore containing sequences
     * @param file: a file containing the distance value between sequences
     */
-    void load(MapKmerStore<Kmer> *junctions, string file);
+    void load(string file);
     
     /**
     * store matrix in a file for future use
@@ -59,15 +62,16 @@ class comp_matrix {
     list<list<junction> >  cluster(MapKmerStore<Kmer> *junctions, 
 					string forced_edges="",
 					int w=0,ostream &out=cout,
-					int epsilon=1, int minPts=10,
-					int verbose=0);
+					int epsilon=1, int minPts=10);
     
     /**
     * reset state 
     */
     void del();
+    
+    void stat_cluster( list<list<junction> > cluster, string neato_file, ostream &out=cout);
 };
 
-
 int total_nb_reads (list<junction> clone, map <string, list<Sequence> > seqs_by_junction);
+
 

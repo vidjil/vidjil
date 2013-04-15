@@ -75,6 +75,7 @@ enum { CMD_JUNCTIONS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define SEGMENTED_FILENAME "segmented.fa"
 #define EDGES_FILENAME "edges"
 #define COMP_FILENAME "comp.data"
+#define GRAPH_FILENAME "graph"
 
 
 // "tests/data/leukemia.fa" 
@@ -610,19 +611,19 @@ int main (int argc, char **argv)
     //////////////////////////////////
     out << "Cluster similar junctions" << endl ;
     
-    comp_matrix comp=comp_matrix();
+    comp_matrix comp=comp_matrix(junctions);
     
     if(load_comp==1){
-      comp.load(junctions, (out_dir+prefix_filename + comp_filename).c_str());
+      comp.load((out_dir+prefix_filename + comp_filename).c_str());
     }else{
-      comp.compare(junctions, out);
+      comp.compare( out);
     }
     
     if(save_comp==1){
       comp.save(( out_dir+prefix_filename + comp_filename).c_str());
     }
     
-    list <list <junction> > clones_junctions = comp.cluster(junctions, forced_edges, w, out, epsilon, minPts, 1) ;
+    list <list <junction> > clones_junctions = comp.cluster(junctions, forced_edges, w, out, epsilon, minPts) ;
        
     out << "  ==> " << clones_junctions.size() << " clones" << endl ;
  
@@ -630,6 +631,8 @@ int main (int argc, char **argv)
     map<string,Kmer> z = junctions->store;
     
     int size=z.size();
+    
+    comp.stat_cluster(clones_junctions, out_dir + prefix_filename + GRAPH_FILENAME, out );
     
     comp.del();
     
