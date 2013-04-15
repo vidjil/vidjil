@@ -1,3 +1,6 @@
 #!/bin/sh
 
-ln -s ../../seq/Repertoire/*.fa .
+wget http://www.lifl.fr/~giraud/germline.zip
+unzip germline.zip
+
+# ln -s ../../seq/Repertoire/*.fa .
