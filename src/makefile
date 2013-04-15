@@ -10,10 +10,6 @@ LIBCORE=core.a
 
 BINDIR=..
 
-RELEASE_H = release.h
-RELEASE_FILES = vidjil.cpp vidjil.h $(RELEASE_H) Makefile $(SRCCORE)
-RELEASE_ARCHIVE = vidjil-$(RELEASE_TAG).tgz
-
 
 v: vidjil
 
@@ -62,7 +58,12 @@ include dep.mk
 
 
 
-CURRENT_DIR = newkmer
+RELEASE_H = release.h
+RELEASE_SOURCE = $(wildcard src/*.cpp) $(wildcard src/*.h)  $(wildcard src/core/*.cpp) $(wildcard src/core/*.h)  
+RELEASE_FILES = $(RELEASE_SOURCE) src/Makefile germline/get-germline doc/README doc/LICENSE
+RELEASE_ARCHIVE = vidjil-$(RELEASE_TAG).tgz
+
+CURRENT_DIR = .
 RELEASE_FILES_VID = $(addprefix $(CURRENT_DIR)/, $(RELEASE_FILES))
 
 
