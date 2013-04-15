@@ -12,7 +12,7 @@
 int main(void) {
   TAP_START(NB_TESTS);
   declare_tests();
-
+ 
   testTools();
   testStorage();
   testAffectAnalyser();

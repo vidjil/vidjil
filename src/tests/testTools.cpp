@@ -3,8 +3,8 @@
 #include "tests.h"
 
 void testFasta1() {
-  Fasta fa("data/test1.fa");
-  Fasta fq("data/test1.fq");
+  Fasta fa("../../data/test1.fa");
+  Fasta fq("../../data/test1.fq");
 
   TAP_TEST(fa.size() == fq.size(), TEST_FASTA_SIZE, "");
   for (int i=0; i < fa.size(); i++) {
