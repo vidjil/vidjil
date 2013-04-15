@@ -1,0 +1,49 @@
+
+
+
+pre.log, a.log, table.similarityMatrix
+{
+    color: #888 ;
+    font-size: 80% ;
+}
+
+span.alert   {  color: #f00 ; }
+span.warning  {  background: #ff0;  }
+
+span.seg_V   {  background: #bfb;  }
+span.seg_D   {  background: #bbf;  }
+span.seg_J   {  background: #fbb;  }
+span.seg_N   {  background: #bbb;  }
+
+pre
+{   
+    white-space: pre-wrap;
+    word-wrap: break-word ;
+} 
+
+table.similarityMatrix {
+   border-collapse: collapse;
+}
+
+table.similarityMatrix td, table.similarityMatrix tr {
+   text-align: right;
+}
+
+table.similarityMatrix thead, table.similarityMatrix td.index {
+   color: gray;
+}
+
+table.similarityMatrix .highSimilarity {
+   background: #fee;
+}
+
+table.similarityMatrix tbody tr:hover, table.similarityMatrix tbody tr:hover .highSimilarity {
+   background: #ff9 !important;
+}
+
+table.similarityMatrix td.label {
+   text-align:left;
+   font-family: monospace;
+   padding-left: 1em;
+}
+
