@@ -115,6 +115,7 @@ void usage(char *progname)
        << "Germline database" << endl
        << "  -V <file>     V repertoire multi-fasta file" << endl
        << "  -J <file>     J repertoire multi-fasta file" << endl
+       << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa)" << endl
        << endl
 
        << "Junction prediction" << endl
@@ -219,7 +220,7 @@ int main (int argc, char **argv)
 
   char c ;
 
-  while ((c = getopt(argc, argv, "DhaV:J:k:r:R:vw:e:l:d:c:m:M:s:p:Sn:o:Lx%:")) != EOF)
+  while ((c = getopt(argc, argv, "DhaG:V:J:k:r:R:vw:e:l:d:c:m:M:s:p:Sn:o:Lx%:")) != EOF)
 
     switch (c)
       {
@@ -256,6 +257,8 @@ int main (int argc, char **argv)
 	verbose += 1 ;
 	break;
 
+      // Germline
+
       case 'V':
 	f_rep_V = optarg;
 	break;
@@ -263,6 +266,15 @@ int main (int argc, char **argv)
       case 'J':
 	f_rep_J = optarg;
 	break;
+
+      case 'G':
+	f_rep_V = (string(optarg) + "V.fa").c_str() ;
+	f_rep_D = (string(optarg) + "D.fa").c_str() ;
+	f_rep_J = (string(optarg) + "J.fa").c_str() ;
+	// TODO: if VDJ, set segment_D
+	break;
+
+      // Algorithm
 
       case 'k':
 	k = atoi(optarg);
@@ -429,6 +441,10 @@ int main (int argc, char **argv)
 
   //////////////////////////////////
   out << "Read sequence files" << endl ;
+
+
+  if (!segment_D) // TODO: add other constructor to Fasta, and do not load rep_D in this case
+    f_rep_D = DEFAULT_D_REP;
 
   Fasta rep_V(f_rep_V, 2, "|", out);
   Fasta rep_D(f_rep_D, 2, "|", out);

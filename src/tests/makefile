@@ -7,6 +7,10 @@ EXEC=$(SRC:.cpp=)
 DEP=../core.a
 
 
+test: all
+	./tests
+	cat tests.cpp.tap
+
 all: core $(EXEC)
 	@echo "All tests compiled."
 
