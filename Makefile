@@ -2,6 +2,8 @@
 all:
 	make -C src
 
+test: all
+	./vidjil
 
 
 
