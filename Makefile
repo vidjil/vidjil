@@ -11,6 +11,8 @@ should:
 	src/tests/should-to-tap.sh
 	cat src/tests/should-to-tap.sh.tap
 
+clean:
+	make -C src clean
 
 RELEASE_H = src/release.h
 RELEASE_SOURCE = $(wildcard src/*.cpp) $(wildcard src/*.h)  $(wildcard src/core/*.cpp) $(wildcard src/core/*.h)  
