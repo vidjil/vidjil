@@ -114,6 +114,7 @@ void usage(char *progname)
 
        << "Germline database" << endl
        << "  -V <file>     V repertoire multi-fasta file" << endl
+       << "  -D <file>     D repertoire multi-fasta file" << endl
        << "  -J <file>     J repertoire multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa)" << endl
        << endl
@@ -137,7 +138,7 @@ void usage(char *progname)
        << "Clusterisation" << endl
        << "  -e <file>     manual clusterisation -- a file used to force some specific edges" << endl
        << "  -n <int>      maximum distance between neighbors for automatic clusterisation (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
-       << "  -o <int>      minimum required neighbors for automatic clusterisation (default " << DEFAULT_MINPTS << ")" << endl
+       << "  -N <int>      minimum required neighbors for automatic clusterisation (default " << DEFAULT_MINPTS << ")" << endl
        << "  -S            generate and save comparative matrix for clustering" << endl
        << "  -L            load comparative matrix for clustering" << endl
        << endl
@@ -148,13 +149,13 @@ void usage(char *progname)
        << endl
 
        << "Fine segmentation options" << endl
-       << "  -D            segment into V(D)J components instead of VJ " << endl
+       << "  -d            segment into V(D)J components instead of VJ " << endl
        << "  -m <int>      minimal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MIN << ")" << endl
        << "  -M <int>      maximal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MAX << ")" << endl
        << endl
 
        << "Output" << endl
-       << "  -d <dir>      output directory (default: " << OUT_DIR << ")" <<  endl
+       << "  -o <dir>      output directory (default: " << OUT_DIR << ")" <<  endl
        << "  -p <string>   prefix produced filenames by the specified string" << endl
     
        << "  -a            output all sequences by cluster (" << SEQUENCES_FILENAME << ")" << endl
@@ -220,7 +221,7 @@ int main (int argc, char **argv)
 
   char c ;
 
-  while ((c = getopt(argc, argv, "DhaG:V:J:k:r:R:vw:e:l:d:c:m:M:s:p:Sn:o:Lx%:")) != EOF)
+  while ((c = getopt(argc, argv, "DhaG:V:J:k:r:R:vw:e:l:dc:m:M:N:s:p:Sn:o:Lx%:")) != EOF)
 
     switch (c)
       {
@@ -229,7 +230,7 @@ int main (int argc, char **argv)
       case 'a':
 	output_sequences_by_cluster = true;
 	break;
-      case 'D':
+      case 'd':
 	segment_D = 1 ;
 	break;
       case 'e':
@@ -262,6 +263,10 @@ int main (int argc, char **argv)
       case 'V':
 	f_rep_V = optarg;
 	break;
+
+      case 'D':
+	f_rep_D = optarg;
+	break;
         
       case 'J':
 	f_rep_J = optarg;
@@ -293,7 +298,7 @@ int main (int argc, char **argv)
 	delta_max = atoi(optarg);
         break;
 
-      case 'd':
+      case 'o':
         out_dir = optarg ;
         break;
 
@@ -322,11 +327,13 @@ int main (int argc, char **argv)
 #endif
         break;
 	
+      // Clusterisation
+	
       case 'n':
 	epsilon = atoi(optarg);
         break;
 
-      case 'o':
+      case 'N':
 	minPts = atoi(optarg);
         break;
 	
