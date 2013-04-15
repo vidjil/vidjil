@@ -8,8 +8,8 @@ void testSegmentationBug1(int delta_min, int delta_max) {
   string buggy_sequences = "bugs/kmersegment.fa";
   int k = 14;
   bool rc = true;
-  Fasta seqV("data/Repertoire/TRGV.fa");
-  Fasta seqJ("data/Repertoire/TRGJ.fa");
+  Fasta seqV("../../germline/TRGV.fa");
+  Fasta seqJ("../../germline/TRGJ.fa");
 
   IKmerStore<KmerAffect>  *index = new ArrayKmerStore<KmerAffect>(k, rc);
   index->insert(seqV, "V");
