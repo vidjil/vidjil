@@ -8,6 +8,8 @@ MAINCORE=$(wildcard *.cpp)
 OBJCORE=$(SRCCORE:.cpp=.o)
 LIBCORE=core.a
 
+BINDIR=..
+
 RELEASE_H = release.h
 RELEASE_FILES = vidjil.cpp vidjil.h $(RELEASE_H) Makefile $(SRCCORE)
 RELEASE_ARCHIVE = vidjil-$(RELEASE_TAG).tgz
@@ -18,18 +20,18 @@ v: vidjil
 all: $(EXEC)
 
 $(EXEC): %: %.o $(LIBCORE) 
-	$(CC) -o $@ $^ $(LDFLAGS) $(CFLAGS)
+	$(CC) -o $(BINDIR)/$@ $^ $(LDFLAGS) $(CFLAGS)
 
 # cut: cut.o $(LIBCORE)
-# 	$(CC) -o $@ $^ $(LDFLAGS) $(CFLAGS)
+# 	$(CC) -o $(BINDIR)/$@ $^ $(LDFLAGS) $(CFLAGS)
 
 # count: count.o $(LIBCORE)
-# 	$(CC) -o $@ $^ $(LDFLAGS) $(CFLAGS)
+# 	$(CC) -o $(BINDIR)/$@ $^ $(LDFLAGS) $(CFLAGS)
 
 # kmer: kmer.o $(LIBCORE) 
-# 	$(CC) -o $@ $^ $(LDFLAGS) $(CFLAGS)
+# 	$(CC) -o $(BINDIR)/$@ $^ $(LDFLAGS) $(CFLAGS)
 # kmer_count: kmer_count.o $(LIBCORE) 
-# 	$(CC) -o $@ $^ $(LDFLAGS) $(CFLAGS)
+# 	$(CC) -o $(BINDIR)/$@ $^ $(LDFLAGS) $(CFLAGS)
 
 core: $(LIBCORE)
 
@@ -44,7 +46,8 @@ $(LIBCORE): $(OBJCORE)
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 clean:
-	rm -f core/*.o *.o $(EXEC) $(LIBCORE)
+	rm -f core/*.o *.o $(LIBCORE)
+	cd $(BINDIR) ; rm -f $(EXEC)
 
 forcedep:
 	g++ -M $(SRCCORE) $(MAINCORE) > dep.mk

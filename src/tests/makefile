@@ -2,7 +2,7 @@ CC=g++
 CFLAGS=-W -Wall -g -O0
 INCLUDE=-I ..
 LDFLAGS=
-SRC=affectanalyser.cpp align.cpp  compareV.cpp cut.cpp dynprog.cpp segmentD.cpp teestream.cpp tests.cpp
+SRC= tests.cpp
 EXEC=$(SRC:.cpp=)
 DEP=../core.a
 
