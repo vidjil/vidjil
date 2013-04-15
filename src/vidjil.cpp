@@ -435,7 +435,9 @@ int main (int argc, char **argv)
 #else
   out << "# git: " ;
   out.flush();
-  system("git log -1 --pretty=format:'%h (%ci)' --abbrev-commit");
+  if (system("git log -1 --pretty=format:'%h (%ci)' --abbrev-commit") == -1) {
+    perror("Cannot launch git");
+  }
   out << endl ;
 #endif
 
