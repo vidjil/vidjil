@@ -432,9 +432,16 @@ int main (int argc, char **argv)
   Fasta rep_V(f_rep_V, 2, "|", out);
   Fasta rep_D(f_rep_D, 2, "|", out);
   Fasta rep_J(f_rep_J, 2, "|", out);
+  
+  OnlineFasta reads;
 
-  OnlineFasta reads(f_reads, 1, " ");
-
+  try {
+    reads = OnlineFasta(f_reads, 1, " ");
+  } catch (const std::ios_base::failure e) {
+    out << "Error while reading reads file " << f_reads << ": " << e.what()
+        << endl;
+    exit(1);
+  }
 
   out_dir += "/";
 

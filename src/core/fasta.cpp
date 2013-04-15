@@ -62,6 +62,9 @@ const string& Fasta::sequence(int index) const{ return reads[index].sequence; }
 
 // OnlineFasta
 
+OnlineFasta::OnlineFasta(int extract_field, string extract_separator):
+  input(NULL), extract_field(extract_field), extract_separator(extract_separator){}
+
 OnlineFasta::OnlineFasta(const string &input, 
                          int extract_field, string extract_separator)
   :input(new ifstream(input.c_str())), 
@@ -83,6 +86,16 @@ OnlineFasta::OnlineFasta(istream &input,
   this->input = &input;
   input_allocated = false;
   init();
+}
+
+OnlineFasta::OnlineFasta(OnlineFasta &of) {
+  current = of.current;
+  input = of.input;
+  extract_field = of.extract_field;
+  extract_separator = of.extract_separator;
+  line = of.line;
+  input_allocated = of.input_allocated;
+  line_nb = of.line_nb;
 }
 
 OnlineFasta::~OnlineFasta() {
