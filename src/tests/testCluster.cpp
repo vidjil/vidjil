@@ -49,10 +49,10 @@ void testCluster() {
    junctions->insert("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCATGCCCCCC", " ");
 
    
-   comp_matrix comp=comp_matrix();
+   comp_matrix comp=comp_matrix(junctions);
    
    //create matrix using junctions 
-   comp.compare(junctions, cout);
+   comp.compare( cout);
    
    //save matrix file 
    comp.save("comp_matrix.data");
@@ -61,7 +61,7 @@ void testCluster() {
    comp.del();
    
    //create matrix using matrix file 
-   comp.load(junctions,"comp_matrix.data");
+   comp.load("comp_matrix.data");
  
    //save matrix file 
    comp.save("comp_matrix2.data");
@@ -76,19 +76,19 @@ void testCluster() {
    TAP_TEST(cluster.size()==0, TEST_CLUSTER, "no cluster here") ;
 
    //epsilon 0// taille mini 1 / 16 cluster possible
-   cluster = comp.cluster(junctions, forced_edges, w, cout, 0, 1, 0) ;
+   cluster = comp.cluster(junctions, forced_edges, w, cout, 0, 1) ;
    TAP_TEST(cluster.size()==16, TEST_CLUSTER, "expected 16 clusters") ;
 
    //epsilon 1// taille mini 3 / 1 cluster possible
-   cluster = comp.cluster(junctions, forced_edges, w, cout, 1, 3, 0) ;
+   cluster = comp.cluster(junctions, forced_edges, w, cout, 1, 3) ;
    TAP_TEST(cluster.size()==1, TEST_CLUSTER, "expected 1 cluster") ;   
 
    //epsilon 3// taille mini 3 / 2 cluster possible
-   cluster = comp.cluster(junctions, forced_edges, w, cout, 3, 3, 0) ;
+   cluster = comp.cluster(junctions, forced_edges, w, cout, 3, 3) ;
    TAP_TEST(cluster.size()==2, TEST_CLUSTER, "expected 2 clusters") ;   
    
    //epsilon 20 // taille mini 3 / 4 cluster possible
-   cluster = comp.cluster(junctions, forced_edges, w, cout, 20, 3, 0) ;
+   cluster = comp.cluster(junctions, forced_edges, w, cout, 20, 3) ;
    TAP_TEST(cluster.size()==4, TEST_CLUSTER, "expected 4 clusters") ;   
 
    //del matrix 
