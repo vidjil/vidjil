@@ -114,7 +114,7 @@ void usage(char *progname)
 
        << "Germline databases" << endl
        << "  -V <file>     V germline multi-fasta file" << endl
-       << "  -D <file>     D germline multi-fasta file (if provided, -d is automatically considered)" << endl
+       << "  -D <file>     D germline multi-fasta file (automatically implies -d)" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa)" << endl
        << endl
@@ -266,6 +266,7 @@ int main (int argc, char **argv)
 
       case 'D':
 	f_rep_D = optarg;
+        segment_D = 1;
 	break;
         
       case 'J':
