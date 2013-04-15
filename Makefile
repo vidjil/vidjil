@@ -7,7 +7,7 @@ test: all
 	make should
 
 should:
-	./vidjil -G germline/IGH -D data/Stanford_S22.fasta > src/tests/stanford.log
+	./vidjil -G germline/IGH -d data/Stanford_S22.fasta > src/tests/stanford.log
 	src/tests/should-to-tap.sh
 	cat src/tests/should-to-tap.sh.tap
 

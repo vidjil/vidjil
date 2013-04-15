@@ -221,7 +221,7 @@ int main (int argc, char **argv)
 
   char c ;
 
-  while ((c = getopt(argc, argv, "DhaG:V:J:k:r:R:vw:e:l:dc:m:M:N:s:p:Sn:o:Lx%:")) != EOF)
+  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:l:dc:m:M:N:s:p:Sn:o:Lx%:")) != EOF)
 
     switch (c)
       {
