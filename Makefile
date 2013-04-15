@@ -4,8 +4,12 @@ all:
 
 test: all
 	make -C src/tests 
+	make should
 
-
+should:
+	./vidjil -G germline/IGH -D data/Stanford_S22.fasta > vidjil.log
+	src/tests/should-to-tap.sh
+	cat src/tests/should-to-tap.sh.tap
 
 
 RELEASE_H = src/release.h
