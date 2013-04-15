@@ -34,7 +34,8 @@ public:
    */
   KmerAffectReadScore(IKmerStore<KmerAffect> &idx, float unambiguous_score=1.,
                       float ambiguous_score=0.5, float unknown_score=0.);
-
+  ~KmerAffectReadScore();
+  
   /**
    * The score is computed using the affectation in the sequence and the scores
    * that have been attributed (or the default ones).

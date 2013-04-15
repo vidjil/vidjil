@@ -105,6 +105,7 @@ class KmerAffectAnalyser: public AffectAnalyser<T> {
    * @param seq: the sequence to analyse (parameter is not copied)
    */
   KmerAffectAnalyser(IKmerStore<T> &kms, const string &seq);
+  ~KmerAffectAnalyser();
 
   int count() const;
 
@@ -133,6 +134,9 @@ KmerAffectAnalyser<T>::KmerAffectAnalyser(IKmerStore<T> &kms,
   assert(seq.length() >=  (size_t)kms.getS());
   affectations = kms.getResults(seq, true);
 }
+
+template <class T>
+KmerAffectAnalyser<T>::~KmerAffectAnalyser(){}
 
 template <class T>
 int KmerAffectAnalyser<T>::count() const{

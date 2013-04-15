@@ -7,6 +7,8 @@ KmerAffectReadScore::KmerAffectReadScore(IKmerStore<KmerAffect> &idx,
   :index(idx), unambiguous_score(unambiguous_score), ambiguous_score(ambiguous_score),
    unknown_score(unknown_score){}
 
+KmerAffectReadScore::~KmerAffectReadScore() {}
+
 float KmerAffectReadScore::getScore(const string &sequence) const {
   vector<KmerAffect> answers = index.getResults(sequence);
   float score = 0;
