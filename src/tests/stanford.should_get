@@ -2,14 +2,14 @@
 !LOG: stanford.log
 
 $ Parses IGHV.fa germline
-1: 68813 bp in 238 sequences
+1: 94301 bp in 324 sequences
 
 $ Parses IGHD.fa germline
-1: 727 bp in 29 sequences
+1: 3706 bp in 60 sequences
 
 $ Parses germline/IGHJ.fa
-1: 438 bp in 8 sequences
+1: 701 bp in 13 sequences
 
 $ Find the good number of junctions in Stanford S22
-1: found 10025 junctions in 12300 segments
+1: found 10037 junctions in 12317 segments
 
