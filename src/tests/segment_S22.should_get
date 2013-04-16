@@ -1,0 +1,10 @@
+!LAUNCH: ../../vidjil -G ../../germline/IGH -d -c segment ../../data/segment_S22.fa | grep '^>' 
+
+$ First sequence Stanford
+1:>lcl\\|FLN1FA002RWEZA.1\\|.*VDJ\\s+0 165 174 196 203 243\\s+IGHV3-48.01\\s+1/CGATCCCCC/0\\s+IGHD3-22.01\\s+10/CCCAAAC/8\\s+IGHJ4.02
+
+$ Second sequence Stanford
+1:>lcl\\|FLN1FA001BLION.1\\|.*VDJ\\s+0\\s+166\\s+168\\s+181\\s+182\\s+233\\s+IGHV1-3.01\\s+1/TG/7\\s+IGHD6-13.01\\s+2/C/0\\s+IGHJ3.02
+
+$ Third sequence Stanford
+1:>lcl\\|FLN1FA002SGU3N.1\\|.*VDJ\\s+0\\s+170\\s+176\\s+207\\s+207\\s+252\\s+IGHV3-9.01\\s+0/AAATTG/0\\s+IGHD3-16.02\\s+7/tgggt/10\\s+IGHJ4.02

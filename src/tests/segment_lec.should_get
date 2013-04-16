@@ -1,0 +1,7 @@
+!LAUNCH: ../../vidjil -G ../../germline/TRG -c segment ../../data/segment_lec.fa | grep '^>'
+
+$ First sequence lec
+1:>Seq#01|.*VJ\\s+0\\s+19\\s+22\\s+40\\s+TRGV5*01\\s+5/CC/0\\s+TRGJ1*02
+
+$ Second sequence lec
+1:>Seq#05.*VJ\\s+0\\s+19\\s+21\\s+40\\s+TRGV10*02\\s+3/G/2\\s+TRGJP1*01
