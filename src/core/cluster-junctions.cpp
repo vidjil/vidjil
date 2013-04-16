@@ -133,8 +133,7 @@ void comp_matrix::del(){
 list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream &out, 
 					      int epsilon, int minPts)
 {
-  
-out << "  eps: " << epsilon << " / minPts: " << minPts << endl ;
+  // out << "  eps: " << epsilon << " / minPts: " << minPts << endl ;
     
     
   typedef map<string,Kmer> msK ;
