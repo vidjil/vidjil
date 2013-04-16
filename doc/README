@@ -46,9 +46,32 @@ make test                # run self-tests
 
 ### Optional dependencies
 
-clustalw (to compute alignments between xxxx)
+clustalw (to compute alignments between junctions from a same clone xxxx)
 neato (to display graph of neighbors xxx)
 
+### Vidjil parameters
+
+Launching vidjil with -h option provides the list of parameters that can be
+used.
+
+##### List of junctions
+
+Vidjil allows to specify a list of junctions that must be followed (even if
+those junctions are rare). The parameter -l is made for providing such a list
+in a file having the following format:
+junction label
+
+The first column of the file is supposed to be the junction to be followed
+while the remaining columns consist of the junction's label.
+In Vidjil output, the labels are output alongside their junctions.
+
+###### Manual clustering
+
+The -e option allows to specify a file for manually clustering two junctions
+considered as similar. Such a file may be automatically produced by vidjil
+(out/edges), depending on the option provided. Only the two first columns are
+important to vidjil, they only consist of the two junctions that must be
+clustered.
 
 ### Examples of use
 
