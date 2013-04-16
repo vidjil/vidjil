@@ -112,6 +112,8 @@ DynProg::DynProg(const string &x, const string &y, DynProgMode mode, const Cost&
 
   this -> best_i = -1 ;
   this -> best_j = -1 ;
+  this -> first_i = -1 ;
+  this -> first_j = -1 ;
 
   init();
 }
