@@ -57,7 +57,7 @@
 
 // #define DEFAULT_READS  "./data/Stanford_S22.fa"
 #define DEFAULT_READS  "../seq/chr_pgm_50k.cut.fa"
-#define MIN_READS_JUNCTION 3
+#define MIN_READS_JUNCTION 10
 #define MIN_READS_CLONE 100
 #define RATIO_READS_CLONE 0.1
 
