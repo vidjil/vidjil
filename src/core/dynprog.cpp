@@ -327,6 +327,14 @@ void DynProg::backtrack()
   ostringstream back_tr;
   ostringstream back;
   
+  if (x[ti]==y[tj]){
+    back_tr << "|";
+  }else{
+    back_tr << ":";
+  }
+  
+  back_s1 << x[ti];
+  back_s2 << y[tj];
   
   while ( B[ti][tj][2] != FIN ){
     
@@ -369,6 +377,7 @@ void DynProg::backtrack()
     ti=tmpi;
     tj=tmpj;
   }
+  
 
   str1=back_s1.str();
   str1 =string (str1.rbegin(), str1.rend());

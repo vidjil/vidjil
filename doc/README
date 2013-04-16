@@ -114,3 +114,52 @@ TGTAGTGGTGGTAGCTGTTACTCCCACGTCTGGGGCCAAG
   Expliquer résultats : blablablabla .....
 
 
+
+ ### Output format
+ 
+ segmented
+ 
+   >4-lcl|FLN1FA001DKTMH.1| + VDJ 	0 162 165 192 199 249	IGHV4-34*01 0/ATT/0 IGHD3-22*01 2/CCACGGG/1 IGHJ3*02
+   GGCTGGAGTGGATTGGGGAAATCAATCATAGTGGAAGCACCAACTACAACCCGTCCCTCAAGAGTCGAGTCACCATATCAGTAGACACGTCCAAGAACCAGTTCTCCCTGAAGCTGAGCTCTGTGACCGCCGCGGACACGGCTGTGTATTACTGTGCGAGAG
+   ATTGGTATTACTATGATAGTAGTGGTTACTCCACGGG
+   GAATGCTTTTGATATCTGGGGCCAAGGGACAATGGTCACCGTCTCCTCAG
+   
+   4 			number of junction occurence
+   lcl... 		original sequence name (the longest sequence containing the junction is used)
+   + VDJ 		segmentation type
+   
+   0 			begining of V in the sequence
+   162 			end of V(include)                 // beginning of first n-diversity region 
+   165  		end of first n-diversity region	  // beginning of D
+   192 			end of D(include)  		  // beginning of second n-diversity region 
+   199  		end of second n-diversity region  // beginning of J
+   249  		end of J(include)  
+   
+   IGHV4-34*01 		V gene name
+   0/			number of deletion at the end of V gene
+   ATT			first n-diversity region 
+   /0 			number of deletion at the beginning of D gene
+   IGHD3-22*01 		D gene name
+   2/			number of deletion at the end of D gene
+   CCACGGG		second n-diversity region 
+   /1 			number of deletion at the beginning of J gene
+   IGHJ3*02		J gene name
+   
+   GGC(...)		V sequence
+   ATT(...)		n-diversity regions + D sequence
+   GAA(...)		J sequence
+   
+ 
+ 
+ junction
+  
+   >5--junction--1 
+   TTGTAGTGGTGGTAGCTGCTACTCCTTTGACTACTGGGGC
+   
+   5 			number of junction occurence
+   1 			junction id
+   TTG(...)		junction
+   
+   
+ 
+

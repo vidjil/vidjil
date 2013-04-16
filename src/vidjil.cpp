@@ -845,7 +845,7 @@ int main (int argc, char **argv)
 
 	    string end_V = rep_V.sequence(seg.best_V).substr(rep_V.sequence(seg.best_V).size() - ww, 
 							     ww - seg.del_V);
-	    
+    
 	    string mid_D = "";
 	    
 	    if (segment_D)
