@@ -11,9 +11,9 @@ using namespace std;
 
 void testSegment()
 {
-  Fasta seqV("../../germline/IGHV.fa");
-  Fasta seqD("../../germline/IGHD.fa");
-  Fasta seqJ("../../germline/IGHJ.fa");
+  Fasta seqV("../../germline/IGHV.fa", 2);
+  Fasta seqD("../../germline/IGHD.fa", 2);
+  Fasta seqJ("../../germline/IGHJ.fa", 2);
   
   Fasta data("../../data/Stanford_S22.fasta", 1, " ");
       
