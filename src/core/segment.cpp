@@ -530,17 +530,23 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
       cout <<"seq left : "<<seq_left<<"//seq right : "<<seq_right<<endl;
       best_align(overlap, seq_left, seq_right, 
 		 rep_V.sequence(best_V), rep_J.sequence(best_J), &b_r,&b_l);
-      right+=b_r;
-      left-=b_l;
+
+      // Trim V
+      left -= b_l;
+      del_V += b_l;
+
+      // Trim J
+      right += b_r;
+      del_J += b_r;
     }
 
-  string chevauchement = removeChevauchement();
+    // string chevauchement = removeChevauchement();
   string n_junction = revcomp(sequence, reversed).substr(left, right-left);
 
   code = rep_V.label(best_V) +
     " "+ string_of_int(del_V) + 
     "/" + n_junction + 
-    chevauchement +
+    // chevauchement +
     "/" + string_of_int(del_J) +
     " " + rep_J.label(best_J); 
 
@@ -593,8 +599,13 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
 
       best_align(overlap, seq_left, seq_right, 
 		 rep_V.sequence(best_V), rep_D.sequence(best_D), &b_r,&b_l);
-      left2+=b_r;
-      left-=b_l;
+
+      // Trim V
+      left -= b_l;
+      del_V += b_l;
+
+      // Trim D
+      left2 += b_r;
     }
     string n1_junction = seq.substr(left, left2-left) ;
     
@@ -607,8 +618,13 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
 
       best_align(overlap, seq_left, seq_right, 
 		 rep_D.sequence(best_D), rep_J.sequence(best_J), &b_r,&b_l);
-      right2-=b_l;
-      right+=b_r;
+
+      // Trim D
+      right2 -= b_l;
+
+      // Trim J
+      right += b_r;
+      del_J += b_r;
 
     }
     string n2_junction = seq.substr(right2, right-right2) ;
