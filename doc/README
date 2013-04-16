@@ -162,4 +162,36 @@ TGTAGTGGTGGTAGCTGTTACTCCCACGTCTGGGGCCAAG
    
    
  
+### VDJ format
 
+Segmentation of a VDJ sequence are displayed using a dedicated format. This
+format is compatible with FASTA format. A line starting with a > is of the
+following form:
+>name + VDJ     startV      endV        startD  endD    startJ  endJ    Vgene   delV/N1/delD5'        Dgene   delD3'/N2/delJ Jgene
+
+Where:
+        name    is the sequence name
+        +       is the strand on which the sequence is mapped
+        VDJ     is the type of segmentation (can be VJ, or VD, or V 
+                for incomplete sequences)
+        startV  is the starting position of the V gene in the sequence (start at 0)
+        endV    is the ending position of the V gene in the sequence
+        startD  is the starting position of the D gene in the sequence
+        endD    is the ending position of the D gene in the sequence
+        startJ  is the starting position of the J gene in the sequence
+        endJ    is the ending position of the J gene in the sequence
+        Vgene   is the name of the V gene being rearranged
+        delV    is the number of deletions at the end (3') of the V
+        N1      is the nucleotide sequence inserted between the V and the D
+        delD5'  is the number of deletions at the start (5') of the D
+        Dgene   is the name of the D gene being rearranged
+        delD3'  is the number of deletions at the end (3') of the D
+        N2      is the nucleotide sequence inserted between the D and the J
+        delJ  is the number of deletions at the start (5') of the J
+        Jgene   is the name of the J gene being rearranged
+        
+Following such a line, there may have the nucleotide sequence.
+
+For VJ recombinations the output is very similar, the fields that are not
+applicable are removed:
+>name + VJ     startV      endV startJ  endJ    Vgene   delV/N1/delJ    Jgene
