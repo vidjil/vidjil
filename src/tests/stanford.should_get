@@ -1,3 +1,5 @@
+!LAUNCH: ../../vidjil -G ../../germline/IGH -d ../../data/Stanford_S22.fasta
+!LOG: stanford.log
 
 $ Parses IGHV.fa germline
 1: 68813 bp in 238 sequences
