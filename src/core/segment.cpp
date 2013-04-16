@@ -606,7 +606,7 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
       string seq_left = seq.substr(right, seq.length()-right);
 
       best_align(overlap, seq_left, seq_right, 
-		 rep_V.sequence(best_D), rep_D.sequence(best_J), &b_r,&b_l);
+		 rep_D.sequence(best_D), rep_J.sequence(best_J), &b_r,&b_l);
       right2-=b_l;
       right+=b_r;
 

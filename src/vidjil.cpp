@@ -87,6 +87,9 @@ enum { CMD_JUNCTIONS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define DEFAULT_DELTA_MIN  -10
 #define DEFAULT_DELTA_MAX   15
 
+#define DEFAULT_DELTA_MIN_D  0
+#define DEFAULT_DELTA_MAX_D  40
+
 #define DEFAULT_EPSILON  0
 #define DEFAULT_MINPTS   10
 
@@ -150,8 +153,8 @@ void usage(char *progname)
 
        << "Fine segmentation options" << endl
        << "  -d            segment into V(D)J components instead of VJ " << endl
-       << "  -m <int>      minimal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MIN << ")" << endl
-       << "  -M <int>      maximal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MAX << ")" << endl
+       << "  -m <int>      minimal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MIN << ") (default with -d: " << DEFAULT_DELTA_MIN_D << ")" << endl
+       << "  -M <int>      maximal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MAX << ") (default with -d: " << DEFAULT_DELTA_MAX_D << ")" << endl
        << endl
 
        << "Output" << endl
@@ -232,6 +235,8 @@ int main (int argc, char **argv)
 	break;
       case 'd':
 	segment_D = 1 ;
+	delta_min = DEFAULT_DELTA_MIN_D ;
+	delta_max = DEFAULT_DELTA_MAX_D ;
 	break;
       case 'e':
 	forced_edges = optarg;
@@ -1142,6 +1147,8 @@ int main (int argc, char **argv)
 	
         FineSegmenter s(reads->getSequence(), rep_V, rep_J, delta_min, delta_max);
         if (s.isSegmented()) {
+	  if (segment_D)
+	  s.FineSegmentD(rep_V, rep_D, rep_J);
           html << "<h3>" << s.code << "</h3>";
           html << "<pre>";
           s.html(html, segment_D);
