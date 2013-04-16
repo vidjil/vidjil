@@ -282,7 +282,7 @@ int main (int argc, char **argv)
 	f_rep_V = (string(optarg) + "V.fa").c_str() ;
 	f_rep_D = (string(optarg) + "D.fa").c_str() ;
 	f_rep_J = (string(optarg) + "J.fa").c_str() ;
-	// TODO: if VDJ, set segment_D
+	// TODO: if VDJ, set segment_D // NO, bad idea, depends on naming convention
 	break;
 
       // Algorithm
@@ -459,7 +459,7 @@ int main (int argc, char **argv)
 
 
   if (!segment_D) // TODO: add other constructor to Fasta, and do not load rep_D in this case
-    f_rep_D = DEFAULT_D_REP;
+    f_rep_D = "";
 
   Fasta rep_V(f_rep_V, 2, "|", out);
   Fasta rep_D(f_rep_D, 2, "|", out);

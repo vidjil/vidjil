@@ -32,6 +32,9 @@ Fasta::Fasta(const string &input,
 	     int extract_field, string extract_separator,
 	     ostream &out) 
 {
+  if (!input.size()) // Do not open empty files (D germline if not segmentD)
+    return ;
+
   // oout = out;
   this -> extract_field = extract_field ;
   this -> extract_separator = extract_separator ;
