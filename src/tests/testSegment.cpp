@@ -34,8 +34,8 @@ void testSegment()
 	if (s.isSegmented()){
 	  cout << s.info << endl << endl ;
 	}
-	TAP_TEST(s.getRight()==204, TEST_SEGMENT_POSITION, "overlap resizing") ;
+	TAP_TEST(s.getRight()==207, TEST_SEGMENT_POSITION, "overlap resizing") ;
 	
-	TAP_TEST((s.getRight()-s.getLeft())==34, TEST_SEGMENT_POSITION, "n resizing") ;
+	TAP_TEST((s.getRight()-s.getLeft())==37, TEST_SEGMENT_POSITION, "n resizing") ;
 }
 
