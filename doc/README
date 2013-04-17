@@ -37,35 +37,47 @@ Vidjil has been successfully tested on the following platforms :
 
 ### Installation
 
-sh data/get-sequences    # get a sample dataset from Xxxxxx (Xxxx reads on 454 ?)
-sh germline/get-germline # get IMGT germline databases (you have to agree to IMGT license: free for academic use provided that IMGT name is granted XXXXX)
+sh data/get-sequences 
+   # get some IGH rearrangements from a single individual, as described in:
+   # Boyd, S. D., and al. Individual variation in the germline Ig gene
+   # repertoire inferred from variable region gene rearrangements. J
+   # Immunol, 184(12), 6986–92.
+
+sh germline/get-germline 
+   # get IMGT germline databases -- you have to agree to IMGT license: 
+   # academic research only, provided that it is referred to IMGT®,
+   # and cited as "IMGT®, the international ImMunoGeneTics information system® 
+   # http://www.imgt.org (founder and director: Marie-Paule Lefranc, Montpellier, France). 
+   # Lefranc, M.-P., IMGT®, the international ImMunoGeneTics database,
+   # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
 
 make                     # compile Vijil
 make test                # run self-tests
 
+./vidjil -h              # display help/usage
 
 ### Optional dependencies
 
-clustalw (to compute alignments between junctions from a same clone xxxx)
-neato (to display graph of neighbors xxx)
+clustalw (to compute alignments between junctions from a same clone)
+neato (to display graph of neighbors for the automatic clusterisation)
 
 ### Vidjil parameters
 
 Launching vidjil with -h option provides the list of parameters that can be
 used.
 
-##### List of junctions
+### List of junctions
 
 Vidjil allows to specify a list of junctions that must be followed (even if
-those junctions are rare). The parameter -l is made for providing such a list
-in a file having the following format:
+those junctions are 'rare', below the -r/-R/-% thresholds). 
+The parameter -l is made for providing such a list in a file having the following format:
 junction label
 
-The first column of the file is supposed to be the junction to be followed
+The first column of the file is the junction to be followed
 while the remaining columns consist of the junction's label.
 In Vidjil output, the labels are output alongside their junctions.
 
-###### Manual clustering
+### Manual clustering
 
 The -e option allows to specify a file for manually clustering two junctions
 considered as similar. Such a file may be automatically produced by vidjil
@@ -73,15 +85,23 @@ considered as similar. Such a file may be automatically produced by vidjil
 (separed by one space) are important to vidjil, they only consist of the 
 two junctions that must be clustered.
 
+
 ### Examples of use
 
-All the following examples are on a IGH XXXXX, V(D)J : 
-XXXX requring the  "-G germline/IGH" as the "-d" options
+All the following examples are on a IGH VDJ recombinations : they thus
+require the "-G germline/IGH" and the "-d" options.
 
 
 ./vidjil -G germline/IGH -d data/Stanford_S22.fasta
    # Extract (with the heuristic) all junctions
-   # Results are in out/segmented.fa
+   # Results are in out/segmented.fa, which is a FASTA file embedding segmentation information
+   # in the headers ('.vdj' format, see below)
+
+./vidjil -c clones -G germline/IGH -R 5 -d data/Stanford_S22.fasta
+   # Extracts the junctions, then gather them into clones (with at least 5 reads each).
+   # Results are in out/segmented.fa, out/junctions.fa-* and out/clones*
+   # out/segemented.fa list segmented reads using the .vdj format (see below)
+
 
 >5--junction--1 
 TTGTAGTGGTGGTAGCTGCTACTCCTTTGACTACTGGGGC
@@ -89,29 +109,16 @@ TTGTAGTGGTGGTAGCTGCTACTCCTTTGACTACTGGGGC
 TGTAGTGGTGGTAGCTGTTACTCCCACGTCTGGGGCCAAG
 (...)
 
-   Junctions of size 40 (modifiable by -w) have been extracted
-   These two junctions have 5 occurrences.
-   Expliquer résultats : blablablabla .....
-
-
-./vidjil -c clones -G germline/IGH -R 5 -d data/Stanford_S22.fasta
-   # Extracts the junctions, then gather them into clones (with at least 5 reads each).
-   # Results are in out/segmented.fa, out/junctions.fa-* and out/clonesXXXX
-
-  Expliquer résultats : blablablabla .....
-
+   Junctions of size 40 (modifiable by -w) have been extracted.
+   These two junctions have 5 occurrences in the set of reads.
 
 
 ./vidjil -c clones -G germline/IGH -R 5 -n 1 -d data/Stanford_S22.fasta
-  # Junction extraction + clone gathering, with automatic clusterisation, distance one (-n 1)
-
-  Expliquer résultats : blablablabla .....
-
+   # Junction extraction + clone gathering, with automatic clusterisation, distance one (-n 1)
 
 ./vidjil -c segment -G germline/IGH -d data/Stanford_S22.fasta
    # Segment the reads onto VDJ germline using a full comparison (dynamic programming) with all sequences
-
-  Expliquer résultats : blablablabla .....
+   # The output is displayed in .vdj format (see below)
 
 
 ### VDJ format
@@ -119,31 +126,38 @@ TGTAGTGGTGGTAGCTGTTACTCCCACGTCTGGGGCCAAG
 Segmentation of a VDJ sequence are displayed using a dedicated format. This
 format is compatible with FASTA format. A line starting with a > is of the
 following form:
->name + VDJ     startV      endV        startD  endD    startJ  endJ    Vgene   delV/N1/delD5'        Dgene   delD3'/N2/delJ Jgene
+>name + VDJ  startV endV   startD endD   startJ  endJ   Vgene   delV/N1/delD5'   Dgene   delD3'/N2/delJ   Jgene
 
-Where:
-        name    is the sequence name
-        +       is the strand on which the sequence is mapped
-        VDJ     is the type of segmentation (can be VJ, or VD, or V 
-                for incomplete sequences)
-        startV  is the starting position of the V gene in the sequence (start at 0)
-        endV    is the ending position of the V gene in the sequence
-        startD  is the starting position of the D gene in the sequence
-        endD    is the ending position of the D gene in the sequence
-        startJ  is the starting position of the J gene in the sequence
-        endJ    is the ending position of the J gene in the sequence
-        Vgene   is the name of the V gene being rearranged
-        delV    is the number of deletions at the end (3') of the V
-        N1      is the nucleotide sequence inserted between the V and the D
-        delD5'  is the number of deletions at the start (5') of the D
-        Dgene   is the name of the D gene being rearranged
-        delD3'  is the number of deletions at the end (3') of the D
-        N2      is the nucleotide sequence inserted between the D and the J
-        delJ  is the number of deletions at the start (5') of the J
-        Jgene   is the name of the J gene being rearranged
+Field descriptions :
+        name          sequence name
+        +             strand on which the sequence is mapped
+        VDJ           type of segmentation (can be "VJ", "VDJ", 
+    	              or shorter tags such as "V" for incomplete sequences).	
+		      The following line are for "VDJ" recombinations :
+
+        startV endV   start and end position of the V gene in the sequence (start at 0)
+        startD endD                      ... of the D gene ...
+        startJ endJ                      ... of the J gene ...
+
+        Vgene         name of the V gene 
+
+        delV          number of deletions at the end (3') of the V
+        N1            nucleotide sequence inserted between the V and the D
+        delD5'        number of deletions at the start (5') of the D
+
+        Dgene         name of the D gene being rearranged
+
+        delD3'        number of deletions at the end (3') of the D
+        N2            nucleotide sequence inserted between the D and the J
+        delJ          number of deletions at the start (5') of the J
+
+        Jgene         name of the J gene being rearranged
         
+
 Following such a line, there may have the nucleotide sequence.
 
 For VJ recombinations the output is very similar, the fields that are not
 applicable are removed:
->name + VJ     startV      endV startJ  endJ    Vgene   delV/N1/delJ    Jgene
+>name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene
+
+
