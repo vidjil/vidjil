@@ -82,6 +82,7 @@ enum { CMD_JUNCTIONS, CMD_ANALYSIS, CMD_SEGMENT } ;
 
 #define DEFAULT_K      14
 #define DEFAULT_W      40
+#define DEFAULT_W_D    50
 #define DEFAULT_SEED   (seed_contiguous(DEFAULT_K))
 
 #define DEFAULT_DELTA_MIN  -10
@@ -127,7 +128,7 @@ void usage(char *progname)
        << "  -s <string>   spaced seed used for the V/J affectation (default: " << DEFAULT_SEED << ")" << endl
 #endif
        << "  -k <int>      k-mer size used for the V/J affectation (default: " << DEFAULT_K << ")" << endl
-       << "  -w <int>      w-mer size used for the length of the extracted junction (default: " << DEFAULT_W << ")" << endl
+       << "  -w <int>      w-mer size used for the length of the extracted junction (default: " << DEFAULT_W << ")(default with -d: " << DEFAULT_W_D << ")" << endl
        << endl
 
        << "Junction annotations" << endl
@@ -237,6 +238,7 @@ int main (int argc, char **argv)
 	segment_D = 1 ;
 	delta_min = DEFAULT_DELTA_MIN_D ;
 	delta_max = DEFAULT_DELTA_MAX_D ;
+	w = DEFAULT_W_D ;
 	break;
       case 'e':
 	forced_edges = optarg;
@@ -842,23 +844,32 @@ int main (int argc, char **argv)
               // for V.
               ww = seg.getLeft() - junction_pos + seg.del_V;
             } 
-
-	    string end_V = rep_V.sequence(seg.best_V).substr(rep_V.sequence(seg.best_V).size() - ww, 
+            
+            string end_V ="";
+	    
+	    // avoid case when V is not in the junction
+	    if (seg.getLeft() > junction_pos)
+	      end_V = rep_V.sequence(seg.best_V).substr(rep_V.sequence(seg.best_V).size() - ww, 
 							     ww - seg.del_V);
+
     
 	    string mid_D = "";
 	    
 	    if (segment_D)
 	      mid_D = rep_D.sequence(seg.best_D).substr(seg.del_D_left, 
-						        (seg.getRightD() - seg.getLeftD() ) );
+				rep_D.sequence(seg.best_D).size() - seg.del_D_left - seg.del_D_right );
 	   
             if (junction_pos != string::npos) {
               // for J.
               ww = (junction_pos + w - 1) - seg.getRight() + seg.del_J;
             }
-
-	    string start_J = rep_J.sequence(seg.best_J).substr(seg.del_J, ww);
-
+	    
+	    string start_J = "";
+	    
+	    // avoid case when J is not in the junction
+	    if (seg.getRight() > (junction_pos + w - 1))
+	      start_J=rep_J.sequence(seg.best_J).substr(seg.del_J, ww);
+	      
 	    best_V = rep_V.label(seg.best_V) ;
 	    best_D = rep_D.label(seg.best_D) ;
 	    best_J = rep_J.label(seg.best_J) ;
