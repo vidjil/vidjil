@@ -168,10 +168,10 @@ void usage(char *progname)
        << endl        
 
        << endl 
-       << "Examples" << endl
-       << "  " << progname << " test/data/reads-xxx" << endl
-       << "  " << progname << " -c clones  test/data/reads-xxx" << endl
-       << "  " << progname << " -c segment test/data/reads-xxx" << endl
+       << "Examples (see doc/README)" << endl
+       << "  " << progname << "             -G germline/IGH  -d  data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c clones   -G germline/IGH  -d  data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c segment  -G germline/IGH  -d  data/Stanford_S22.fasta" << endl
     ;
   exit(1);
 }
