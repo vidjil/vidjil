@@ -514,11 +514,11 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
     }
     
     //overlap VJ
-    if(right-left <0){
+    if(right-left <=0){
       int b_r, b_l;
-      int overlap=left-left2;
+      int overlap=left-left2+1;
       
-      string seq_left = sequence.substr(0, left);
+      string seq_left = sequence.substr(0, left+1);
       string seq_right = sequence.substr(right);
 
       cout <<sequence<<endl;
@@ -581,11 +581,11 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
     if (length>0) dSegmented=true;
     
     //overlap VD
-    if(left2-left <0){
+    if(left2-left <=0){
       int b_r, b_l;
-      int overlap=left-left2;
-      string seq_left = seq.substr(0, left);
-      string seq_right = seq.substr(left2, right2-left2);
+      int overlap=left-left2+1;
+      string seq_left = seq.substr(0, left+1);
+      string seq_right = seq.substr(left2, right2-left2+1);
 
       best_align(overlap, seq_left, seq_right, 
 		 rep_V.sequence(best_V), rep_D.sequence(best_D), &b_r,&b_l);
@@ -600,10 +600,10 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
     seg_N1 = seq.substr(left+1, left2-left-1) ; // From left+1 to left2-1
     
     //overlap DJ
-    if(right-right2 <0){
+    if(right-right2 <=0){
       int b_r, b_l;
-      int overlap=right2-right;
-      string seq_right = seq.substr(left2, right2-left2);
+      int overlap=right2-right+1;
+      string seq_right = seq.substr(left2, right2-left2+1);
       string seq_left = seq.substr(right, seq.length()-right);
 
       best_align(overlap, seq_left, seq_right, 
