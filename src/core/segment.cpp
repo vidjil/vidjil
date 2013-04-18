@@ -102,7 +102,6 @@ bool Segmenter::finishSegmentation()
   string seq = getSequence().sequence;
     
   seg_V = seq.substr(0, left) ;
-  seg_N = seq.substr(left+1, right-left-1) ;
   seg_J = seq.substr(right) ;
   left2=0;
   right2=0;
@@ -120,13 +119,10 @@ bool Segmenter::finishSegmentationD()
   string seq = getSequence().sequence;
 
   seg_V = seq.substr(0, left+1) ; // From pos. 0 to left
-  seg_N = seq.substr(left+1, right-left-1) ; // From left+1 to right-1
   seg_J = seq.substr(right) ;
   
-  seg_N1 = seq.substr(left+1, left2-left-1) ; // From left+1 to left2-1
   if(left2-left <0) seg_N1= "overlap";
   seg_D  = seq.substr(left2, right2-left2+1) ; // From left2 to right2
-  seg_N2 = seq.substr(right2+1, right-right2-1) ; // From right2+1 to right-1
   if(right-right2 <0) seg_N2= "overlap";
   
   info = "VDJ \t0 " + string_of_int(left) +
@@ -538,11 +534,11 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
     }
 
     // string chevauchement = removeChevauchement();
-  string n_junction = revcomp(sequence, reversed).substr(left+1, right-left-1);
+  seg_N = revcomp(sequence, reversed).substr(left+1, right-left-1);
 
   code = rep_V.label(best_V) +
     " "+ string_of_int(del_V) + 
-    "/" + n_junction + 
+    "/" + seg_N + 
     // chevauchement +
     "/" + string_of_int(del_J) +
     " " + rep_J.label(best_J); 
@@ -601,7 +597,7 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
       // Trim D
       left2 += b_r;
     }
-    string n1_junction = seq.substr(left, left2-left) ;
+    seg_N1 = seq.substr(left+1, left2-left-1) ; // From left+1 to left2-1
     
     //overlap DJ
     if(right-right2 <0){
@@ -621,16 +617,16 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
       del_J += b_r;
 
     }
-    string n2_junction = seq.substr(right2, right-right2) ;
+    seg_N2 = seq.substr(right2+1, right-right2-1) ; // From right2+1 to right-1
     code = rep_V.label(best_V) +
     " "+ string_of_int(del_V) + 
-    "/" + n1_junction + 
+    "/" + seg_N1 + 
     
     "/" + string_of_int(del_D_left) +
     " " + rep_D.label(best_D) +
     " " + string_of_int(del_D_right) +
     
-    "/" + n2_junction +
+    "/" + seg_N2 +
     "/" + string_of_int(del_J) +
     " " + rep_J.label(best_J); 
 
