@@ -20,6 +20,9 @@
 #include "dynprog.h"
 #include "tools.h"
 #include <cassert>
+#include <list>
+#include <cstdlib>
+#include <string>
 
 #define SUBST 0
 #define INSER 1
@@ -475,5 +478,39 @@ ostream& operator<<(ostream& out, const DynProg& dp)
 
   return out ;
 }
+
+
+Cost strToCost(string str, Cost default_cost){
+
+  string::size_type stTemp = str.find(',');
+	
+  std::list<int> val;
+  
+  while(stTemp != string::npos)
+  {
+	val.push_back(atoi(str.substr(0, stTemp).c_str() ) );
+	str = str.substr(stTemp + 1);
+	stTemp = str.find(',');
+  }
+
+  if (val.size()==5){ 
+    int val1=val.front();
+    val.pop_front();
+    int val2=val.front();
+    val.pop_front();
+    int val3=val.front();
+    val.pop_front();
+    int val4=val.front();
+    val.pop_front();
+    int val5=val.front();
+    val.pop_front();
+    cout << "custom Cost"<<endl;
+    return Cost(val1, val2, val3, val4, val5);
+  }
+  
+  cout << "incorrect Cost format, use default"<<endl;
+  return default_cost;
+}
+
 
 

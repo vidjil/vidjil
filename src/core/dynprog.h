@@ -108,5 +108,7 @@ class DynProg
 
 ostream& operator<<(ostream& out, const DynProg& dp);
 
+Cost strToCost(string str, Cost default_cost);
+
 #endif
 
