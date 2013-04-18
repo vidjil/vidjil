@@ -38,14 +38,14 @@ comp_matrix::comp_matrix(MapKmerStore<Kmer> *junc){
   junctions=junc;
 }
 
-void comp_matrix::compare( ostream &out)
+void comp_matrix::compare(string custom_cluster_cost, ostream &out)
 {
   // DEBUG // out << "  DEBUT COMPARE JUNCTION" << endl ;
   //     clock_t start = clock();
    
   typedef map<string,Kmer> msK ;
   
-  Cost compareCost = Cluster ;
+  Cost compareCost = strToCost(custom_cluster_cost ,Cluster) ;
   out << "  Using cost " << compareCost << endl ;
   
   map<string,Kmer> z = junctions->store;

@@ -482,33 +482,37 @@ ostream& operator<<(ostream& out, const DynProg& dp)
 
 Cost strToCost(string str, Cost default_cost){
 
-  string::size_type stTemp = str.find(',');
-	
-  std::list<int> val;
-  
-  while(stTemp != string::npos)
-  {
-	val.push_back(atoi(str.substr(0, stTemp).c_str() ) );
-	str = str.substr(stTemp + 1);
-	stTemp = str.find(',');
-  }
+  if (str.length()!=0){
+    string::size_type stTemp = str.find(',');
+	  
+    std::list<int> val;
+    
+    while(stTemp != string::npos)
+    {
+	  val.push_back(atoi(str.substr(0, stTemp).c_str() ) );
+	  str = str.substr(stTemp + 1);
+	  stTemp = str.find(',');
+    }
+    val.push_back(atoi(str.c_str() ) );
 
-  if (val.size()==5){ 
-    int val1=val.front();
-    val.pop_front();
-    int val2=val.front();
-    val.pop_front();
-    int val3=val.front();
-    val.pop_front();
-    int val4=val.front();
-    val.pop_front();
-    int val5=val.front();
-    val.pop_front();
-    cout << "custom Cost"<<endl;
-    return Cost(val1, val2, val3, val4, val5);
+    if (val.size()==5){ 
+      int val1=val.front();
+      val.pop_front();
+      int val2=val.front();
+      val.pop_front();
+      int val3=val.front();
+      val.pop_front();
+      int val4=val.front();
+      val.pop_front();
+      int val5=val.front();
+      val.pop_front();
+      cout << "use custom Cost"<<endl;
+      return Cost(val1, val2, val3, val4, val5);
+    }
+    
+    cout << "incorrect Cost format, use default"<<endl;
   }
   
-  cout << "incorrect Cost format, use default"<<endl;
   return default_cost;
 }
 

@@ -35,6 +35,7 @@
 #include "core/fasta.h"
 #include "core/segment.h"
 #include "core/cluster-junctions.h"
+#include "core/dynprog.h"
 #include "core/read_score.h"
 #include "core/read_chooser.h"
 #include "core/msa.h"
@@ -145,6 +146,7 @@ void usage(char *progname)
        << "  -N <int>      minimum required neighbors for automatic clusterisation (default " << DEFAULT_MINPTS << ")" << endl
        << "  -S            generate and save comparative matrix for clustering" << endl
        << "  -L            load comparative matrix for clustering" << endl
+       << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
        << endl
 
        << "Limits to report a clone" << endl
@@ -198,6 +200,8 @@ int main (int argc, char **argv)
   
   int epsilon = DEFAULT_EPSILON ;
   int minPts = DEFAULT_MINPTS ;
+  string custom_cluster_cost = "" ;
+  
   
   int save_comp = 0;
   int load_comp = 0;
@@ -225,7 +229,7 @@ int main (int argc, char **argv)
 
   char c ;
 
-  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:l:dc:m:M:N:s:p:Sn:o:Lx%:")) != EOF)
+  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:C:l:dc:m:M:N:s:p:Sn:o:Lx%:")) != EOF)
 
     switch (c)
       {
@@ -351,6 +355,10 @@ int main (int argc, char **argv)
 
       case 'L':
 	load_comp=1;
+        break;
+	
+      case 'C':
+	custom_cluster_cost=optarg;
         break;
       }
 
@@ -658,7 +666,7 @@ int main (int argc, char **argv)
 	  }
 	else
 	  {
-	    comp.compare(out);
+	    comp.compare(custom_cluster_cost, out);
 	  }
 	
 	if (save_comp==1)
