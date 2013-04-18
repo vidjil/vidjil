@@ -102,7 +102,7 @@ bool Segmenter::finishSegmentation()
   string seq = getSequence().sequence;
     
   seg_V = seq.substr(0, left) ;
-  seg_N = seq.substr(left, right-left) ;
+  seg_N = seq.substr(left+1, right-left-1) ;
   seg_J = seq.substr(right) ;
   left2=0;
   right2=0;
@@ -119,21 +119,21 @@ bool Segmenter::finishSegmentationD()
 {
   string seq = getSequence().sequence;
 
-  seg_V = seq.substr(0, left) ;
-  seg_N = seq.substr(left, right-left) ;
+  seg_V = seq.substr(0, left+1) ; // From pos. 0 to left
+  seg_N = seq.substr(left+1, right-left-1) ; // From left+1 to right-1
   seg_J = seq.substr(right) ;
   
-  seg_N1 = seq.substr(left, left2-left) ;
+  seg_N1 = seq.substr(left+1, left2-left-1) ; // From left+1 to left2-1
   if(left2-left <0) seg_N1= "overlap";
-  seg_D  = seq.substr(left2, right2-left2) ;
-  seg_N2 = seq.substr(right2, right-right2) ;
+  seg_D  = seq.substr(left2, right2-left2+1) ; // From left2 to right2
+  seg_N2 = seq.substr(right2+1, right-right2-1) ; // From right2+1 to right-1
   if(right-right2 <0) seg_N2= "overlap";
   
   info = "VDJ \t0 " + string_of_int(left) +
 		" " + string_of_int(left2) + 
 		" " + string_of_int(right2) +
 		" " + string_of_int(right) +
-		" " + string_of_int(seq.size()) ;
+		" " + string_of_int(seq.size()-1+FIRST_POS) ;
 		
   info += "\t" + code ;
   
@@ -427,7 +427,7 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool l
 
     }
 
-  *del = reverse_both ? best_best_j : rep.sequence(best_r).size() - best_best_j ;
+  *del = reverse_both ? best_best_j : rep.sequence(best_r).size() - best_best_j - 1;
   *del2 = best_first_j;
   *begin = best_first_i;
   *tag = best_label ; 
@@ -538,7 +538,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
     }
 
     // string chevauchement = removeChevauchement();
-  string n_junction = revcomp(sequence, reversed).substr(left, right-left);
+  string n_junction = revcomp(sequence, reversed).substr(left+1, right-left-1);
 
   code = rep_V.label(best_V) +
     " "+ string_of_int(del_V) + 

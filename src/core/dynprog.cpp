@@ -308,18 +308,22 @@ int DynProg::compute()
     }
 
   if (reverse_x)
-    best_i = m - best_i ;
+    best_i = m - best_i + 1 ;
 
   if (reverse_y)
-    best_j = n - best_j ;
+    best_j = n - best_j + 1;
+
+  // In the matrix positions start at 1, but start positions may start at 0
+  best_i -= 1;   
+  best_j -= 1;
 
   return best_score ;
 }
 
 void DynProg::backtrack()
 {
-  int ti=best_i-1;
-  int tj=best_j-1;
+  int ti=best_i;
+  int tj=best_j;
   int tmpi, tmpj;
   tmpi=ti;
   tmpj=tj;
