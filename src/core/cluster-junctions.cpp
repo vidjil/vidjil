@@ -46,7 +46,7 @@ void comp_matrix::compare( ostream &out)
   typedef map<string,Kmer> msK ;
   
   Cost compareCost = Cluster ;
-  //out << "  Using cost " << compareCost << endl ;
+  out << "  Using cost " << compareCost << endl ;
   
   map<string,Kmer> z = junctions->store;
   

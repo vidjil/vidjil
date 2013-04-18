@@ -16,8 +16,8 @@ clean:
 .PHONY: all test should clean distrib
 
 RELEASE_H = src/release.h
-RELEASE_SOURCE = $(wildcard src/*.cpp) $(wildcard src/*.h)  $(wildcard src/core/*.cpp) $(wildcard src/core/*.h)  
-RELEASE_FILES = $(RELEASE_SOURCE) ./Makefile src/Makefile germline/get-germline doc/README doc/LICENSE
+RELEASE_SOURCE = $(wildcard src/*.cpp) $(wildcard src/*.h)  $(wildcard src/core/*.cpp)  $(wildcard src/tests/*.cpp) $(wildcard src/core/*.h)  $(wildcard src/tests/*.h)  
+RELEASE_FILES = $(RELEASE_SOURCE) ./Makefile src/Makefile src/tests/Makefile germline/get-germline  germline/split-from-imgt.py data/get-sequences data/*.fa data/*.fq doc/README doc/LICENSE
 RELEASE_ARCHIVE = vidjil-$(RELEASE_TAG).tgz
 
 CURRENT_DIR = vidjil
