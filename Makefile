@@ -6,9 +6,10 @@ test: all
 	make -C src/tests 
 	make should
 
-should:
+should: all
 	src/tests/should-to-tap.sh src/tests/stanford.should_get
 	src/tests/should-to-tap.sh src/tests/segment_S22.should_get
+	src/tests/should-to-tap.sh src/tests/segment_lec.should_get
 
 clean:
 	make -C src clean
