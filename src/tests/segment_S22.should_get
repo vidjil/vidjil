@@ -1,10 +1,47 @@
 !LAUNCH: ../../vidjil -G ../../germline/IGH -d -c segment ../../data/segment_S22.fa | grep '^>' 
 
 $ First sequence Stanford
-1:>lcl\\|FLN1FA002RWEZA.1\\|.*VDJ\\s+0 165 174 196 203 243\\s+IGHV3-48.01\\s+1/CGATCCCCC/0\\s+IGHD3-22.01\\s+10/CCCAAAC/8\\s+IGHJ4.02
+#                            164        175                 195     203
+#                             |          |                   |       |
+# S22  : 147 tgtattactgtgcgagagcgatcccccggtattactatgatactagtggcccaaacgactactggggccaggga
+#            ||||||||||||||||||                                      |||||||||||||| |||
+# V3-48: 277 tgtattactgtgcgagaga         |||||||||||||| |||||| 
+# D3-22:   1                             gtattactatgatagtagtggttattactac
+# J4   :   1                                                 actactttgactactggggccaaggaa
+# V: 1 del
+# N1: CGATCCCCCG ← Vidjil sees the last G as an homopolymer
+# D: 0 del (left), 10 del (right)
+# N2: CCCAAAC
+# J: 8 del
+1:>lcl\\|FLN1FA002RWEZA.1\\|.*VDJ\\s+0 164 174 195 203 242\\s+IGHV3-48.01\\s+1/CGATCCCCC/0\\s+IGHD3-22.01\\s+10/CCCAAAC/8\\s+IGHJ4.02
 
 $ Second sequence Stanford
-1:>lcl\\|FLN1FA001BLION.1\\|.*VDJ\\s+0\\s+166\\s+168\\s+181\\s+182\\s+233\\s+IGHV1-3.01\\s+1/TG/7\\s+IGHD6-13.01\\s+2/C/0\\s+IGHJ3.02
+#                           165 169        180
+#                            |   |          | 
+# S22   : 150 tattactgtgcgagagtgggcagcagctggtctgatgcttttgattatctggggccaagggacaatggtcaccgtctcctcag
+#             ||||||||||||||||                ||||||||||||| |||||||||||||||||||||||||||||||| ||||
+# V1-3  : 279 tattactgtgcgagaga  ||||||||||||
+# D6-13 :   1             gggtatagcagcagctggtac
+# J3*02 :                                     tgatgcttttgat-atctggggccaagggacaatggtcaccgtctcttcag
+# V: 1 del
+# N1: TGG ← Vidjil sees the last G as an homopolymer
+# D: 7 del, 2 del
+# N2: C
+# J: 0 del
+1:>lcl\\|FLN1FA001BLION.1\\|.*VDJ\\s+0\\s+165\\s+168\\s+180\\s+182\\s+232\\s+IGHV1-3.01\\s+1/TG/7\\s+IGHD6-13.01\\s+2/C/0\\s+IGHJ3.02
 
 $ Third sequence Stanford
-f1:>lcl\\|FLN1FA002SGU3N.1\\|.*VDJ\\s+0\\s+170\\s+176\\s+207\\s+207\\s+252\\s+IGHV3-9.01\\s+0/AAATTG/0\\s+IGHD3-16.02\\s+7/tgggt/10\\s+IGHJ4.02
+#                                 169     177                            208   214  
+#                                  |       |                              |     |
+# S22   : 148 ttgtattactgtgcaaaagataaaattgggtattatgattacgtttgggggagttatcgtttgggtctactggggccagggaaccctggtcaccgtctcctcag
+#             ||||||||||||||||||||||                                            ||||||||||||||||||||||||||||||||||||||
+# V3-9  : 276 ttgtattactgtgcaaaagata       ||||||||||||||||||||||||||||||||
+# D3-16*02: 1                              gtattatgattacgtttgggggagttatcgttatacc
+# J4*02 :   1                                                         actactttgactactggggccagggaaccctggtcaccgtctcctcag
+#
+# V: 0 del
+# N1: AAATTGG ← Vidjil sees the last G as an homopolymer in the D
+# D : 0 del, 5 del
+# N2 : TGGGT
+# J : 10 del
+f1:>lcl\\|FLN1FA002SGU3N.1\\|.*VDJ\\s+0\\s+169\\s+176\\s+208\\s+214\\s+251\\s+IGHV3-9.01\\s+0/AAATTG/0\\s+IGHD3-16.02\\s+5/tgggt/10\\s+IGHJ4.02
