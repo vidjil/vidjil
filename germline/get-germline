@@ -1,11 +1,5 @@
 #!/bin/sh
 
-
 cd $(dirname $0)
 wget -O - http://www.imgt.org/download/GENE-DB/GENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+inframeP | python split-from-imgt.py 
 
-# wget http://www.lifl.fr/~giraud/germline.zip
-# unzip -d $(dirname $0) -o germline.zip
-# rm -f germline.zip
-
-# ln -s ../../seq/Repertoire/*.fa .
