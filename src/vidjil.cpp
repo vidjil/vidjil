@@ -845,6 +845,7 @@ int main (int argc, char **argv)
               ww = seg.getLeft() - junction_pos + seg.del_V;
             } 
             
+
             string end_V ="";
 	    
 	    // avoid case when V is not in the junction
@@ -852,7 +853,6 @@ int main (int argc, char **argv)
 	      end_V = rep_V.sequence(seg.best_V).substr(rep_V.sequence(seg.best_V).size() - ww, 
 							     ww - seg.del_V);
 
-    
 	    string mid_D = "";
 	    
 	    if (segment_D)
@@ -871,7 +871,7 @@ int main (int argc, char **argv)
 	      start_J=rep_J.sequence(seg.best_J).substr(seg.del_J, ww);
 	      
 	    best_V = rep_V.label(seg.best_V) ;
-	    best_D = rep_D.label(seg.best_D) ;
+	    if (segment_D) best_D = rep_D.label(seg.best_D) ;
 	    best_J = rep_J.label(seg.best_J) ;
 	    
 	    // TODO: pad aux dimensions exactes
@@ -1164,9 +1164,9 @@ int main (int argc, char **argv)
     while (reads->hasNext()) 
       {
         reads->next();
-	
         FineSegmenter s(reads->getSequence(), rep_V, rep_J, delta_min, delta_max);
-        if (s.isSegmented()) {
+        cout <<"bob"<<endl;
+	if (s.isSegmented()) {
 	  if (segment_D)
 	  s.FineSegmentD(rep_V, rep_D, rep_J);
           html << "<h3>" << s.code << "</h3>";

@@ -341,7 +341,6 @@ void best_align(int overlap, string seq_left, string seq_right,
 			   DynProg::Local, VDJ);
       score_l[0] = dp1.compute();
       dp1.backtrack();
-
       
       //RIGHT
       DynProg dp = DynProg(seq_right, ref_right,
@@ -350,10 +349,16 @@ void best_align(int overlap, string seq_left, string seq_right,
       dp.backtrack();    
       
       for(int i=1; i<=overlap; i++){
+	if(dp.best_i-i >0)
 	score_r[i] = dp.S[dp.best_i-i][dp.best_j];
-	score_l[i] = dp1.S[dp1.best_i-i][dp1.best_j];
+	else
+	score_r[i] =0;
+	if(dp1.best_i-i >0)
+	score_l[i] = dp1.S[dp1.best_i-i][dp1.best_j];	
+	else
+	score_l[i] =0;
       }
-
+       cout <<"BOB"<<endl;
       int score=-1000000;
       int best_r=0;
       int best_l=0;
@@ -370,11 +375,9 @@ void best_align(int overlap, string seq_left, string seq_right,
 	    best_l=j;
 	    score=(score_r[i]+score_l[j]) ;
 	  }
-	  //cout<< i<<"/"<<j<<"/"<<score<<"/"<<score_r[i]<<"/"<<score_l[j]<<endl;
 	}
       }
-      //cout <<best_r <<"/"<< best_l<<endl;
-      
+      cout << best_r << "/" << best_l << endl;
       *b_r=best_r;
       *b_l=best_l;
 }
@@ -468,8 +471,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
 					    &best_plus_J);
   plus_length += plus_right - plus_left ;
 
-  string plus_info = string_of_int(plus_left + FIRST_POS) + " " + string_of_int(plus_right + FIRST_POS) ;
-
   // Strand -
   string rc = revcomp(sequence) ;
   int minus_score = 0 ;
@@ -483,8 +484,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
 					     &minus_length, &minus_score,
 					     &best_minus_J);
   minus_length += minus_right - minus_left ;
-
-  string minus_info = string_of_int(minus_left + FIRST_POS) + " " + string_of_int(minus_right + FIRST_POS) ;
 
   reversed = (minus_score > plus_score) ;
 
@@ -527,10 +526,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
       string seq_right = sequence.substr(right);
 
       cout <<sequence<<endl;
-      cout <<"seq left : "<<seq_left<<"//seq right : "<<seq_right<<endl;
       best_align(overlap, seq_left, seq_right, 
 		 rep_V.sequence(best_V), rep_J.sequence(best_J), &b_r,&b_l);
-
       // Trim V
       left -= b_l;
       del_V += b_l;
@@ -554,10 +551,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
     "/ " + rep_J.label(best_J); 
 
  
-  if (!reversed)
-    info = plus_info ;
-  else
-    info = minus_info  ;
+  info = string_of_int(left + FIRST_POS) + " " + string_of_int(right + FIRST_POS) ;
 
   finishSegmentation();
 }
