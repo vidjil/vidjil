@@ -19,7 +19,11 @@ The script must contain a !LAUNCH: line stating what command line to be
 launched (the working directory is the directory where the input file is).  A
 line starting with !LOG: is the filename used for redirecting STDOUT from the
 command line. By default it is the input filename where the extension is
-replaced by .log.
+replaced by .log. If !OUTPUT_FILE: is provided then the program is assumed to
+produce a file whose filename is given after !OUTPUT_FILE:. This file will be
+parsed by the script. The !LOG: file won't be used. By default, output files
+are produced in the working directory, to change this behavior, specify an
+option after the option !OUTPUT_DIR:
 
 The output is in TAP format and consists of a file whose name is the same
 as the input file, where .should_get is replaced by .tap
@@ -32,10 +36,13 @@ DIR=$(dirname $file)
 BASE=$(basename $file)
 cd "$DIR"
 
+OUTPUT_DIR=.
 TAP_FILE=${BASE%.*}.tap
 LOG_FILE=${BASE%.*}.log
+OUTPUT_FILE=
+FILE_TO_GREP=
 
-echo "==>" $DIR/$TAP_FILE
+TMP_TAP_FILE=$(mktemp)
 
 {
 nb_tests=0
@@ -56,24 +63,39 @@ while read line; do
             line=${line:1}
             type=${line%%:*}
             if [ "$type" == "LAUNCH" ]; then
-                cmd=${line#*:}
+                eval cmd=\"${line#*:}\"
             elif [ "$type" == "LOG" ]; then
-                LOG_FILE=${line#*:}
+                eval LOG_FILE=\"${line#*:}\"
+            elif [ "$type" == "OUTPUT_FILE" ]; then
+                eval OUTPUT_FILE=\"${line#*:}\"
+            elif [ "$type" == "OUTPUT_DIR" ]; then
+                eval OUTPUT_DIR=\"${line#*:}\"
             fi
         elif [ ${line:0:1} == '$' ]; then
             msg=${line:1}
         else
-            if [ $launched -eq 0 ]; then
-                if [ -z "$cmd" ]; then
-                    echo "Error: you must specify a !LAUNCH: line in $file" >&2
-                    exit 2
-                fi
-                echo "Launching $cmd" >&2
-                eval $cmd > $LOG_FILE
-                launched=1
-            fi
                 # This is not a comment
             if [ ${line:0:1} != '#' ]; then
+                if [ $launched -eq 0 ]; then
+                    if [ -z "$cmd" ]; then
+                        echo "Error: you must specify a !LAUNCH: line in $file" >&2
+                        exit 2
+                    fi
+                    echo "Launching $cmd" >&2
+                    if [ -z "$OUTPUT_FILE" ]; then
+                        eval $cmd > $LOG_FILE
+                        FILE_TO_GREP=$LOG_FILE
+                    else
+                        eval $cmd > /dev/null
+                        FILE_TO_GREP=$OUTPUT_FILE
+                    fi
+                    launched=1
+
+                    TAP_FILE=$OUTPUT_DIR/$TAP_FILE
+                    LOG_FILE=$OUTPUT_DIR/$LOG_FILE
+                    echo "==>" $TAP_FILE >&2
+                fi
+
                 skip=0
                 know_to_fail=0
 
@@ -87,7 +109,13 @@ while read line; do
                     know_to_fail=1 # We know the test fails, but don't fail globally
                     nb_hits=${nb_hits:1}
                 fi
-                if [ $(grep -cE "$pattern" $LOG_FILE) -eq $nb_hits -o $skip -eq 1 ]; then
+                if [ ! -z "$DEBUG" ]; then
+                    echo "Grepping \"$pattern\" in $FILE_TO_GREP" >&2
+                fi
+                if [ $(grep -cE "$pattern" $FILE_TO_GREP) -eq $nb_hits -o $skip -eq 1 ]; then
+                    if [ $know_to_fail -eq 1 ]; then
+                        echo "Warning: test $test_nb should have failed, but has not!" >&2
+                    fi
                     echo -n "ok"
                 else
                     echo -n "not ok"
@@ -106,7 +134,7 @@ while read line; do
     fi
     line_nb=$((line_nb+1))
 done < $BASE
-} > $TAP_FILE
+} > $TMP_TAP_FILE
 
-
+mv $TMP_TAP_FILE $TAP_FILE
 exit $error
