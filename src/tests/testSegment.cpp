@@ -26,7 +26,7 @@ void testSegment()
 	}
 	TAP_TEST(s.getRight()==202, TEST_SEGMENT_POSITION, "J position") ;
 	
-	TAP_TEST((s.getRight()-s.getLeft())==32, TEST_SEGMENT_POSITION, "size n") ;
+	TAP_TEST((s.getRight()-s.getLeft())==33, TEST_SEGMENT_POSITION, "size n") ;
 	
 	//segmentation D
 	s.FineSegmentD(seqV, seqD, seqJ);
