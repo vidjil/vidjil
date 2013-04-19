@@ -36,7 +36,7 @@ void testSegmentationBug1(int delta_min, int delta_max) {
 
     int stats[STATS_SIZE];
     Segmenter *segment = new KmerSegmenter(input.getSequence(), index, 
-                                           delta_min, delta_max, stats);
+                                           delta_min, delta_max, stats, VDJ);
 
     if (strand == 2 
         || (strand == 1

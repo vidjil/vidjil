@@ -186,13 +186,14 @@ ostream &operator<<(ostream &out, const Segmenter &s)
 // KmerSegmenter (Cheap)
 
 KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index, 
-			     int delta_min, int delta_max, int *stats)
+			     int delta_min, int delta_max, int *stats, Cost segment_c)
 {
   label = seq.label ;
   sequence = seq.sequence ;
   info = "" ;
   segmented = false;
-  right2=0; 
+  right2=0;
+  segment_cost=segment_c;
   
   int s = (size_t)index->getS() ;
 
@@ -324,7 +325,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
 // FineSegmenter
 
 void best_align(int overlap, string seq_left, string seq_right,
-		string ref_left ,string ref_right, int *b_r, int *b_l)
+		string ref_left ,string ref_right, int *b_r, int *b_l, Cost segment_cost)
 {
       int score_r[overlap+1];
       int score_l[overlap+1];
@@ -334,13 +335,13 @@ void best_align(int overlap, string seq_left, string seq_right,
       seq_left=string(seq_left.rbegin(), seq_left.rend()); 
       
       DynProg dp1 = DynProg(seq_left, ref_left,
-			   DynProg::Local, VDJ);
+			   DynProg::Local, segment_cost);
       score_l[0] = dp1.compute();
       dp1.backtrack();
       
       //RIGHT
       DynProg dp = DynProg(seq_right, ref_right,
-			   DynProg::Local, VDJ);
+			   DynProg::Local, segment_cost);
       score_r[0] = dp.compute();
       dp.backtrack();    
       
@@ -354,7 +355,6 @@ void best_align(int overlap, string seq_left, string seq_right,
 	else
 	score_l[i] =0;
       }
-       cout <<"BOB"<<endl;
       int score=-1000000;
       int best_r=0;
       int best_l=0;
@@ -379,7 +379,8 @@ void best_align(int overlap, string seq_left, string seq_right,
 }
 
 int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool local, string *tag, 
-			     int *del, int *del2, int *begin, int *length, int *score, int *best_r_)
+			     int *del, int *del2, int *begin, int *length, int *score, int *best_r_
+			    , Cost segment_cost)
 {
   
   int best_score = MINUS_INF ;
@@ -397,7 +398,7 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool l
     {
       DynProg dp = DynProg(read, rep.sequence(r),
 			   dpMode, // DynProg::SemiGlobalTrans, 
-			   VDJ, // DNA
+			   segment_cost, // DNA
 			   reverse_both, reverse_both);
       int score = dp.compute();
 
@@ -441,17 +442,19 @@ string format_del(int deletions)
 }
 
 FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J, 
-			     int delta_min, int delta_max)
+			     int delta_min, int delta_max, Cost segment_c)
 {
 
   
   label = seq.label ;
   sequence = seq.sequence ;
   right2=0;
+  segment_cost=segment_c;
 
   // TODO: factoriser tout cela, peut-etre en lancant deux segmenteurs, un +, un -, puis un qui chapote
   
   // Strand +
+  
   int plus_score = 0 ;
   string tag_V, tag_J;
   int plus_length = 0 ;
@@ -461,10 +464,10 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
   int beg=0;
   int plus_left = align_against_collection(sequence, rep_V, false, false, &tag_V, &del_plus_V, &del2, &beg, 
 					   &plus_length, &plus_score,
-					   &best_plus_V);
+					   &best_plus_V, segment_cost);
   int plus_right = align_against_collection(sequence, rep_J, true, false, &tag_J, &del_plus_J, &del2, &beg,
 					    &plus_length, &plus_score,
-					    &best_plus_J);
+					    &best_plus_J, segment_cost);
   plus_length += plus_right - plus_left ;
 
   // Strand -
@@ -475,10 +478,10 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
   int del_minus_V, del_minus_J ;
   int minus_left = align_against_collection(rc, rep_V, false, false, &tag_V, &del_minus_V, &del2, &beg,
 					    &minus_length, &minus_score,
-					    &best_minus_V);
+					    &best_minus_V,  segment_cost);
   int minus_right = align_against_collection(rc, rep_J, true, false, &tag_J, &del_minus_J, &del2, &beg,
 					     &minus_length, &minus_score,
-					     &best_minus_J);
+					     &best_minus_J, segment_cost);
   minus_length += minus_right - minus_left ;
 
   reversed = (minus_score > plus_score) ;
@@ -521,9 +524,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
       string seq_left = sequence.substr(0, left+1);
       string seq_right = sequence.substr(right);
 
-      cout <<sequence<<endl;
       best_align(overlap, seq_left, seq_right, 
-		 rep_V.sequence(best_V), rep_J.sequence(best_J), &b_r,&b_l);
+		 rep_V.sequence(best_V), rep_J.sequence(best_J), &b_r,&b_l, segment_cost);
       // Trim V
       left -= b_l;
       del_V += b_l;
@@ -571,7 +573,7 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
     string str = getSequence().sequence.substr(l, r-l);
 
     end = align_against_collection(str, rep_D, false, true, &tag_D, &del_D_right, &del_D_left, &begin,
-				&length, &score, &best_D);
+				&length, &score, &best_D, segment_cost);
     
     left2 = l + begin;
     right2 = l + end;
@@ -588,7 +590,7 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
       string seq_right = seq.substr(left2, right2-left2+1);
 
       best_align(overlap, seq_left, seq_right, 
-		 rep_V.sequence(best_V), rep_D.sequence(best_D), &b_r,&b_l);
+		 rep_V.sequence(best_V), rep_D.sequence(best_D), &b_r,&b_l, segment_cost);
 
       // Trim V
       left -= b_l;
@@ -607,7 +609,7 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
       string seq_left = seq.substr(right, seq.length()-right);
 
       best_align(overlap, seq_left, seq_right, 
-		 rep_D.sequence(best_D), rep_J.sequence(best_J), &b_r,&b_l);
+		 rep_D.sequence(best_D), rep_J.sequence(best_J), &b_r,&b_l, segment_cost);
 
       // Trim D
       right2 -= b_l;

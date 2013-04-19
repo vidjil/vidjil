@@ -40,6 +40,7 @@ protected:
   
   int best_D;
   string seg_N1, seg_D, seg_N2;
+  Cost segment_cost;
 
   /* Queries */
 
@@ -124,7 +125,8 @@ class KmerSegmenter : public Segmenter
    *        (left bound: end of V, right bound : start of J)
    * @param stats: integer array (of size STATS_SIZE) to store statistics
    */
-  KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index, int delta_min, int delta_max, int *stats);
+  KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index, 
+		int delta_min, int delta_max, int *stats, Cost custom_cost);
 };
 
 class FineSegmenter : public Segmenter
@@ -142,7 +144,8 @@ class FineSegmenter : public Segmenter
    *        so that the segmentation is accepted 
    *        (left bound: end of V, right bound : start of J)
    */
-  FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J, int delta_min, int delta_max);
+  FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
+		int delta_min, int delta_max, Cost segment_cost);
   
   /**
   * extend segmentation from VJ to VDJ

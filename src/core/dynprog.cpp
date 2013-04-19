@@ -510,11 +510,12 @@ Cost strToCost(string str, Cost default_cost){
       val.pop_front();
       int val5=val.front();
       val.pop_front();
-      cout << "use custom Cost"<<endl;
-      return Cost(val1, val2, val3, val4, val5);
+      Cost result = Cost(val1, val2, val3, val4, val5);
+      cout << "use custom Cost "<< result << endl;
+      return result;
     }
     
-    cout << "incorrect Cost format, use default"<<endl;
+    cout << "incorrect Cost format, use default "<< default_cost<<endl;
   }
   
   return default_cost;

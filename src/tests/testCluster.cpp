@@ -52,7 +52,7 @@ void testCluster() {
    comp_matrix comp=comp_matrix(junctions);
    
    //create matrix using junctions 
-   comp.compare( cout);
+   comp.compare( cout, Cluster);
    
    //save matrix file 
    comp.save("comp_matrix.data");

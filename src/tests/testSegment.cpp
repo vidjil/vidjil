@@ -18,7 +18,7 @@ void testSegment()
   Fasta data("../../data/Stanford_S22.fasta", 1, " ");
       
 	//segmentation VJ
-        FineSegmenter s(data.read(2), seqV, seqJ, 0, 40);
+        FineSegmenter s(data.read(2), seqV, seqJ, 0, 40, VDJ);
 	
 	TAP_TEST(s.isSegmented(), TEST_SEGMENT_POSITION, "is segmented") ;
 	if (s.isSegmented()){
@@ -36,6 +36,6 @@ void testSegment()
 	}
 	TAP_TEST(s.getRight()==207, TEST_SEGMENT_POSITION, "overlap resizing") ;
 	
-	TAP_TEST((s.getRight()-s.getLeft())==37, TEST_SEGMENT_POSITION, "n resizing") ;
+	TAP_TEST((s.getRight()-s.getLeft())==38, TEST_SEGMENT_POSITION, "n resizing") ;
 }
 

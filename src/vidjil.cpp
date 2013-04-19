@@ -95,6 +95,8 @@ enum { CMD_JUNCTIONS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define DEFAULT_EPSILON  0
 #define DEFAULT_MINPTS   10
 
+#define DEFAULT_CLUSTER_COST  Cluster
+#define DEFAULT_SEGMENT_COST   VDJ
 
 // display
 #define WIDTH_NB_READS 7
@@ -158,6 +160,7 @@ void usage(char *progname)
        << "  -d            segment into V(D)J components instead of VJ " << endl
        << "  -m <int>      minimal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MIN << ") (default with -d: " << DEFAULT_DELTA_MIN_D << ")" << endl
        << "  -M <int>      maximal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MAX << ") (default with -d: " << DEFAULT_DELTA_MAX_D << ")" << endl
+       << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
        << endl
 
        << "Output" << endl
@@ -200,7 +203,8 @@ int main (int argc, char **argv)
   
   int epsilon = DEFAULT_EPSILON ;
   int minPts = DEFAULT_MINPTS ;
-  string custom_cluster_cost = "" ;
+  Cost cluster_cost = DEFAULT_CLUSTER_COST ;
+  Cost segment_cost = DEFAULT_SEGMENT_COST ;
   
   
   int save_comp = 0;
@@ -229,7 +233,7 @@ int main (int argc, char **argv)
 
   char c ;
 
-  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:C:l:dc:m:M:N:s:p:Sn:o:Lx%:")) != EOF)
+  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:")) != EOF)
 
     switch (c)
       {
@@ -358,7 +362,11 @@ int main (int argc, char **argv)
         break;
 	
       case 'C':
-	custom_cluster_cost=optarg;
+	cluster_cost=strToCost(optarg, Cluster);
+        break;
+	
+      case 't':
+	segment_cost=strToCost(optarg, VDJ);
         break;
       }
 
@@ -539,7 +547,7 @@ int main (int argc, char **argv)
         if (verbose)
           out << endl << endl << reads->getSequence().label << endl;
        
-        KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max_kmer, stats_segmented);
+        KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max_kmer, stats_segmented, segment_cost);
         if (verbose)
 	  out << seg;
 	  
@@ -666,7 +674,7 @@ int main (int argc, char **argv)
 	  }
 	else
 	  {
-	    comp.compare(custom_cluster_cost, out);
+	    comp.compare( out, cluster_cost);
 	  }
 	
 	if (save_comp==1)
@@ -828,7 +836,7 @@ int main (int argc, char **argv)
 	cout.flush()  ;
 	
 	
-	FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max);
+	FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 		  
 	if (segment_D)
 	  seg.FineSegmentD(rep_V, rep_D, rep_J);
@@ -1025,7 +1033,7 @@ int main (int argc, char **argv)
         Sequence representative = chooser.getBest() ;
 	representative.label = string_of_int(it->second) + "-" + representative.label ;
 
-	FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max);
+	FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 
 	if (segment_D)
 	  seg.FineSegmentD(rep_V, rep_D, rep_J);
@@ -1172,8 +1180,7 @@ int main (int argc, char **argv)
     while (reads->hasNext()) 
       {
         reads->next();
-        FineSegmenter s(reads->getSequence(), rep_V, rep_J, delta_min, delta_max);
-        cout <<"bob"<<endl;
+        FineSegmenter s(reads->getSequence(), rep_V, rep_J, delta_min, delta_max, segment_cost);
 	if (s.isSegmented()) {
 	  if (segment_D)
 	  s.FineSegmentD(rep_V, rep_D, rep_J);

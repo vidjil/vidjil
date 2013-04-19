@@ -35,7 +35,7 @@ class comp_matrix {
     * @param junctions: a MapKmerStore containing sequences to be compared
     * @param out: exit for log
     */
-    void compare(string custom_cluster_cost, ostream &out);
+    void compare(ostream &out, Cost cluster_cost);
     
     /**
     * init matrix with a previous run stored 
