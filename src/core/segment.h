@@ -132,6 +132,10 @@ class KmerSegmenter : public Segmenter
 class FineSegmenter : public Segmenter
 {
  public:
+   vector<pair<int, int> > score_V;
+   vector<pair<int, int> > score_D;
+   vector<pair<int, int> > score_J;
+   
    /**
    * Build a fineSegmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file
@@ -154,6 +158,9 @@ class FineSegmenter : public Segmenter
   * @param rep_J: germline for J
   */
   void FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J);
+  
+  string toJson();
+  
 };
 
 

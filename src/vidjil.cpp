@@ -837,7 +837,9 @@ int main (int argc, char **argv)
 	
 	
 	FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
-		  
+	
+	cout << seg.toJson();
+	
 	if (segment_D)
 	  seg.FineSegmentD(rep_V, rep_D, rep_J);
 	
