@@ -47,7 +47,7 @@ ostream& operator<<(ostream& out, const Cost& cost);
 /* const Cost VDJ = Cost(+5, -8, -8, -1); */
 
 const Cost DNA = Cost(+5, -4, -10, 0, 0);
-const Cost VDJ = Cost(+5, -8, -8, -1, +5);
+const Cost VDJ = Cost(+4, -10, -10, -1, -2);
 const Cost Identity = Cost(+1, -1, -1, 0, 0);
 
 const Cost Homopolymers = Cost(+1, MINUS_INF, -1); // TODO: true homopolymer
