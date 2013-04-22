@@ -6,14 +6,14 @@ $ First sequence Stanford
 # S22  : 147 tgtattactgtgcgagagcgatcccccggtattactatgatactagtggcccaaacgactactggggccaggga
 #            ||||||||||||||||||                                      |||||||||||||| |||
 # V3-48: 277 tgtattactgtgcgagaga         |||||||||||||| |||||| 
-# D3-22:   1                             gtattactatgatagtagtggttattactac
-# J4   :   1                                                 actactttgactactggggccaaggaa
+# D3-22:   0                             gtattactatgatagtagtggttattactac
+# J4   :   0                                                 actactttgactactggggccaaggaa
 # V: 1 del
-# N1: CGATCCCCCG ← Vidjil sees the last G as an homopolymer
+# N1: CGATCCCCCG
 # D: 0 del (left), 10 del (right)
 # N2: CCCAAAC
 # J: 8 del
-1:>lcl\\|FLN1FA002RWEZA.1\\|.*VDJ\\s+0 164 174 195 203 242\\s+IGHV3-48.01\\s+1/CGATCCCCC/0\\s+IGHD3-22.01\\s+10/CCCAAAC/8\\s+IGHJ4.02
+1:>lcl\\|FLN1FA002RWEZA.1\\|.*VDJ\\s+0 164 175 195 203 242\\s+IGHV3-48.01\\s+1/CGATCCCCCG/0\\s+IGHD3-22.01\\s+10/CCCAAAC/8\\s+IGHJ4.02
 
 $ Second sequence Stanford
 #                           165 169        180
@@ -21,14 +21,14 @@ $ Second sequence Stanford
 # S22   : 150 tattactgtgcgagagtgggcagcagctggtctgatgcttttgattatctggggccaagggacaatggtcaccgtctcctcag
 #             ||||||||||||||||                ||||||||||||| |||||||||||||||||||||||||||||||| ||||
 # V1-3  : 279 tattactgtgcgagaga  ||||||||||||
-# D6-13 :   1             gggtatagcagcagctggtac
+# D6-13 :   0             gggtatagcagcagctggtac
 # J3*02 :                                     tgatgcttttgat-atctggggccaagggacaatggtcaccgtctcttcag
 # V: 1 del
-# N1: TGG ← Vidjil sees the last G as an homopolymer
+# N1: TGG
 # D: 7 del, 2 del
 # N2: C
 # J: 0 del
-1:>lcl\\|FLN1FA001BLION.1\\|.*VDJ\\s+0\\s+165\\s+168\\s+180\\s+182\\s+232\\s+IGHV1-3.01\\s+1/TG/7\\s+IGHD6-13.01\\s+2/C/0\\s+IGHJ3.02
+1:>lcl\\|FLN1FA001BLION.1\\|.*VDJ\\s+0\\s+165\\s+169\\s+180\\s+182\\s+232\\s+IGHV1-3.01\\s+1/TGG/7\\s+IGHD6-13.01\\s+2/C/0\\s+IGHJ3.02
 
 $ Third sequence Stanford
 #                                 169     177                            208   214  
@@ -36,12 +36,12 @@ $ Third sequence Stanford
 # S22   : 148 ttgtattactgtgcaaaagataaaattgggtattatgattacgtttgggggagttatcgtttgggtctactggggccagggaaccctggtcaccgtctcctcag
 #             ||||||||||||||||||||||                                            ||||||||||||||||||||||||||||||||||||||
 # V3-9  : 276 ttgtattactgtgcaaaagata       ||||||||||||||||||||||||||||||||
-# D3-16*02: 1                              gtattatgattacgtttgggggagttatcgttatacc
-# J4*02 :   1                                                         actactttgactactggggccagggaaccctggtcaccgtctcctcag
+# D3-16*02: 0                              gtattatgattacgtttgggggagttatcgttatacc
+# J4*02 :   0                                                         actactttgactactggggccagggaaccctggtcaccgtctcctcag
 #
 # V: 0 del
-# N1: AAATTGG ← Vidjil sees the last G as an homopolymer in the D
+# N1: AAATTGG
 # D : 0 del, 5 del
 # N2 : TGGGT
 # J : 10 del
-f1:>lcl\\|FLN1FA002SGU3N.1\\|.*VDJ\\s+0\\s+169\\s+176\\s+208\\s+214\\s+251\\s+IGHV3-9.01\\s+0/AAATTG/0\\s+IGHD3-16.02\\s+5/tgggt/10\\s+IGHJ4.02
+f1:>lcl\\|FLN1FA002SGU3N.1\\|.*VDJ\\s+0\\s+169\\s+177\\s+208\\s+214\\s+251\\s+IGHV3-9.01\\s+0/AAATTGG/0\\s+IGHD3-16.02\\s+5/TGGGT/10\\s+IGHJ4.02
