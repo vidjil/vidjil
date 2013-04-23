@@ -137,4 +137,5 @@ done < $BASE
 } > $TMP_TAP_FILE
 
 mv $TMP_TAP_FILE $TAP_FILE
+echo >&2
 exit $error

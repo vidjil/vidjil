@@ -97,8 +97,9 @@ require the "-G germline/IGH" and the "-d" options.
    # Results are in out/segmented.fa, which is a FASTA file embedding segmentation information
    # in the headers ('.vdj' format, see below)
 
-./vidjil -c clones -G germline/IGH -R 5 -d data/Stanford_S22.fasta
-   # Extracts the junctions, then gather them into clones (with at least 5 reads each).
+./vidjil -c clones -G germline/IGH -r 3 -R 5 -d data/Stanford_S22.fasta
+   # Extracts the junctions (with at least 3 reads each), 
+   # then gather them into clones (with at least 5 reads each).
    # Results are in out/segmented.fa, out/junctions.fa-* and out/clones*
    # out/segemented.fa list segmented reads using the .vdj format (see below)
 
@@ -113,7 +114,7 @@ TGTAGTGGTGGTAGCTGTTACTCCCACGTCTGGGGCCAAG
    These two junctions have 5 occurrences in the set of reads.
 
 
-./vidjil -c clones -G germline/IGH -R 5 -n 1 -d data/Stanford_S22.fasta
+./vidjil -c clones -G germline/IGH -r 3 -R 5 -n 1 -d data/Stanford_S22.fasta
    # Junction extraction + clone gathering, with automatic clusterisation, distance one (-n 1)
 
 ./vidjil -c segment -G germline/IGH -d data/Stanford_S22.fasta
