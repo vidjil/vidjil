@@ -593,6 +593,9 @@ int main (int argc, char **argv)
     for (int i=0; i<STATS_SIZE; i++)
       out << "   " << left << setw(20) << segmented_mesg[i] << " -> " << stats_segmented[i] << endl ;
 
+    
+      map <junction, string> json_data_segment ;
+      list<pair <junction, int> > sort_all_junctions;
 
     /// if (command == CMD_JUNCTIONS) /// on le fait meme si CMD_ANALYSIS
       {
@@ -601,7 +604,7 @@ int main (int argc, char **argv)
 	// Sort junctions
 	
 	out << "Sort junctions by number of occurrences" << endl;
-	list<pair <junction, int> > sort_all_junctions;
+	
 	
 	for (map <junction, list<Sequence> >::const_iterator it = seqs_by_junction.begin(); 
 	     it != seqs_by_junction.end(); ++it) 
@@ -630,7 +633,7 @@ int main (int argc, char **argv)
 	    out_all_junctions << it->first << endl;
 	  }
 	
-      }
+      } 
 
 
     if (command == CMD_ANALYSIS) {
@@ -821,6 +824,8 @@ int main (int argc, char **argv)
       string best_J ;
       int more_junctions = 0 ;
       
+     
+      
       for (list <pair<junction, int> >::const_iterator it = sort_junctions.begin(); 
            it != sort_junctions.end(); ++it) {
 
@@ -838,16 +843,17 @@ int main (int argc, char **argv)
 	
 	FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 	
-	cout << seg.toJson();
-	
 	if (segment_D)
 	  seg.FineSegmentD(rep_V, rep_D, rep_J);
 	
 	if (seg.isSegmented())
 
 	  {
+	    //cout << seg.toJson();
+	    json_data_segment[it->first]=seg.toJson();
+	    
 	    // As soon as one representative is segmented
-
+	    
 	    representatives.push_back(seg.getSequence());
             representatives_labels.push_back("#" + string_of_int(num_clone));
 	    cout << seg.info << endl ;
@@ -1042,6 +1048,9 @@ int main (int argc, char **argv)
 		
 	if (seg.isSegmented())
 	  {
+	    //cout << seg.toJson();
+	    json_data_segment[it->first]=seg.toJson();
+	    
 	    representatives_this_clone.push_back(seg.getSequence());
 	  }
 
@@ -1166,6 +1175,29 @@ int main (int argc, char **argv)
     html << "</body></html>" << endl ;
     html.close();
     }
+    
+    //création du fichier json_data_segment
+    string f_json = out_dir + prefix_filename + "data.json" ;
+    out << "  ==> " << f_json << endl ;
+    ofstream out_json(f_json.c_str()) ;
+      
+    out_json <<"[";
+    for (list<pair <junction, int> >::const_iterator it = sort_all_junctions.begin(); 
+	     it != sort_all_junctions.end(); ++it) 
+	 {
+	  if (it != sort_all_junctions.begin())
+	  {
+	    out_json <<",";
+	  }
+	   
+	 out_json <<" {\"junction\" : \""<<it->first<<"\"," <<endl;
+	 out_json <<" \"size\" : [ {\"n\" : "<< it->second<<" } ]"<<endl;
+	 if (json_data_segment.count(it->first) !=0 ){
+	    out_json << ","<< json_data_segment[it->first] <<endl;
+	 }
+	  out_json <<"}";
+	}
+        out_json <<"]";
     
     delete index ;
     delete junctions;
