@@ -1,0 +1,40 @@
+<!doctype html>
+<html >
+
+  <head>
+  
+	<meta charset="utf-8">
+	<title>maquette </title>
+
+	<script src='http://d3js.org/d3.v2.js'></script>
+	<script type="text/javascript" src="http://mbostock.github.com/d3/d3.geom.js"></script>
+	<script type="text/javascript" src="http://mbostock.github.com/d3/d3.layout.js"></script>
+	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	
+  </head>
+
+  <body style="background-color: #151524; color : #dddddd">
+    <form name="uploadForm">
+      <table>
+	<tbody>
+	  <tr>
+	    <td><input id="upload" type="file" name="json" onchange="loadJson();" /></td>
+	  </tr>
+	</tbody>
+      </table>
+    </form>
+	<div id="visu">
+	    <script type="text/javascript" src="test.js"> </script>
+	</div><!--fin visu -->	
+	<div>
+	<a onclick='changeT(0);'>0</a> <a onclick='changeT(1);'>1</a> <a onclick='changeT(2);'>2</a>
+	
+	</div>
+	
+<div id="log" style="position: fixed;top: 10px;right: 10px;width: 500px; font-family : monaco,terminal,courier,system; height: 150px;overflow-y: scroll;font-size: 14px;background-color: #333044;opacity: 0.7;padding: 10px;">log </div>
+      
+  </body>
+      
+</html>
+
+  
