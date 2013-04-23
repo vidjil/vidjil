@@ -42,7 +42,7 @@ LOG_FILE=${BASE%.*}.log
 OUTPUT_FILE=
 FILE_TO_GREP=
 
-TMP_TAP_FILE=$(mktemp)
+TMP_TAP_FILE=$(mktemp tap.XXXX)
 
 {
 nb_tests=0
