@@ -695,7 +695,7 @@ int main (int argc, char **argv)
  
     map<string,Kmer> z = junctions->store;
     
-    int size=z.size();
+    // int size=z.size();
 
     comp.del();
         
@@ -865,7 +865,7 @@ int main (int argc, char **argv)
             string end_V ="";
 	    
 	    // avoid case when V is not in the junction
-	    if (seg.getLeft() > junction_pos)
+	    if (seg.getLeft() > (int) junction_pos)
 	      end_V = rep_V.sequence(seg.best_V).substr(rep_V.sequence(seg.best_V).size() - ww, 
 							     ww - seg.del_V);
 
@@ -883,7 +883,7 @@ int main (int argc, char **argv)
 	    string start_J = "";
 	    
 	    // avoid case when J is not in the junction
-	    if (seg.getRight() > (junction_pos + w - 1))
+	    if (seg.getRight() > (int) (junction_pos + w - 1))
 	      start_J=rep_J.sequence(seg.best_J).substr(seg.del_J, ww);
 	      
 	    best_V = rep_V.label(seg.best_V) ;
