@@ -44,4 +44,4 @@ $ Third sequence Stanford
 # D : 0 del, 5 del
 # N2 : TGGGT
 # J : 10 del
-f1:>lcl\\|FLN1FA002SGU3N.1\\|.*VDJ\\s+0\\s+169\\s+177\\s+208\\s+214\\s+251\\s+IGHV3-9.01\\s+0/AAATTGG/0\\s+IGHD3-16.02\\s+5/TGGGT/10\\s+IGHJ4.02
+1:>lcl\\|FLN1FA002SGU3N.1\\|.*VDJ\\s+0\\s+169\\s+177\\s+208\\s+214\\s+251\\s+IGHV3-9.01\\s+0/AAATTGG/0\\s+IGHD3-16.02\\s+5/TGGGT/10\\s+IGHJ4.02
