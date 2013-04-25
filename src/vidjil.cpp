@@ -1190,8 +1190,8 @@ int main (int argc, char **argv)
 	    out_json <<",";
 	  }
 	   
-	 out_json <<" {\"junction\" : \""<<it->first<<"\"," <<endl;
-	 out_json <<" \"size\" : [ {\"n\" : "<< it->second<<" } ]"<<endl;
+	 out_json <<" {\"junction\":\""<<it->first<<"\"," <<endl;
+	 out_json <<" \"size\":["<< it->second<<"]"<<endl;
 	 if (json_data_segment.count(it->first) !=0 ){
 	    out_json << ","<< json_data_segment[it->first] <<endl;
 	 }
