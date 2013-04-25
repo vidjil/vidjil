@@ -29,6 +29,7 @@ oFReader.onload = function (oFREvent) {
   jsonDataText = oFREvent.target.result;
   jsonData = JSON.parse(jsonDataText);
   updateVis();
+  document.getElementById("log").innerHTML+=jsonData[0].size[0];
   document.getElementById("log").innerHTML+="<br>chargement fichier json";
   force.start();
 };
@@ -62,14 +63,14 @@ var node = vis.selectAll("circle.node")
     .style("fill", function(i) { return color(i); })
     .call(force.drag)
     .on("click", function(d,i) { 
-      jsonData[i].size[t].n=100;
+      jsonData[i].size[t]=100;
 	document.getElementById("log").innerHTML+=("<br>[element id "+i+" / "+jsonData[i].junction+"] change size n to 100");
 	updateVis()
 	$("#log").scrollTop(100000000000000),
 	 force.start();
     })
     .on("mouseover", function(d,i){
-      document.getElementById("log").innerHTML+="<br>[element id "+i+" / "+jsonData[i].junction+"] focus on // size = "+jsonData[i].size[t].n;
+      document.getElementById("log").innerHTML+="<br>[element id "+i+" / "+jsonData[i].junction+"] focus on // size = "+jsonData[i].size[t];
       $("#log").scrollTop(100000000000000);
     })
 ;
@@ -87,11 +88,11 @@ function tick(e) {
 
 function sizeSplit() {
     return function(d) {
-      if (jsonData[d].size[t].n <50){
+      if (jsonData[d].size[t] <50){
 	d.x+=0.005*(150-d.x);
 	d.y+=0.005*(100-d.y);
       }else{
-	 if (jsonData[d].size[t].n <200){
+	 if (jsonData[d].size[t] <200){
 	    d.x+=0.005*(400-d.x);
 	    d.y+=0.005*(250-d.y);
 	  }else{
@@ -151,17 +152,17 @@ function updateVis(){
 
 function radius(i) {
   if (typeof jsonData != "undefined") {
-    return Math.sqrt(jsonData[i].size[t].n);
+    return Math.sqrt(jsonData[i].size[t]);
   }
 }
   
   function color(i) {
     if (typeof jsonData != "undefined") {
-      if( jsonData[i].size[t].n <30) return 'blue'
-      if( jsonData[i].size[t].n <50) return 'green'
-      if( jsonData[i].size[t].n <100) return 'violet'
-      if( jsonData[i].size[t].n <200) return 'yellow'
-      if( jsonData[i].size[t].n <400) return 'orange'
+      if( jsonData[i].size[t] <30) return 'blue'
+      if( jsonData[i].size[t] <50) return 'green'
+      if( jsonData[i].size[t] <100) return 'violet'
+      if( jsonData[i].size[t] <200) return 'yellow'
+      if( jsonData[i].size[t] <400) return 'orange'
       return 'red'
     }
   }
