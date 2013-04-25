@@ -12,7 +12,7 @@ for l in sys.stdin:
 
     if ">" in l:
         current_file = None
-        if "Homo sapiens" in l:
+        if "Homo sapiens" in l and ("V-REGION" in l or "D-REGION" in l or "J-REGION" in l):
             system = l.split('|')[1][:4]
             if system.startswith('IG') or system.startswith('TR'):
 

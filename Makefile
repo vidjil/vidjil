@@ -7,10 +7,14 @@ test: all
 	make should
 
 should: all
+	@echo
+	@echo "*** Launching .should_get tests..."
 	src/tests/should-to-tap.sh src/tests/stanford.should_get
+	src/tests/should-to-tap.sh src/tests/clones_S22.should_get
 	src/tests/should-to-tap.sh src/tests/segment_S22.should_get
 	src/tests/should-to-tap.sh src/tests/segment_lec.should_get
 	src/tests/should-to-tap.sh src/tests/segment_simul.should_get
+	@echo "*** All .should_get tests passed"
 
 clean:
 	make -C src clean

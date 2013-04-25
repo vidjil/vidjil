@@ -42,12 +42,12 @@ LOG_FILE=${BASE%.*}.log
 OUTPUT_FILE=
 FILE_TO_GREP=
 
-TMP_TAP_FILE=$(mktemp)
+TMP_TAP_FILE=$(mktemp tap.XXXX)
 
 {
 nb_tests=0
 # Count number of tests to be performed
-nb_tests=`grep -Pc '^[^$#!]' $BASE`
+nb_tests=`grep -c '^[^$#!]' $BASE`
 
 echo "1.."$nb_tests
 test_nb=1
@@ -137,4 +137,5 @@ done < $BASE
 } > $TMP_TAP_FILE
 
 mv $TMP_TAP_FILE $TAP_FILE
+echo >&2
 exit $error

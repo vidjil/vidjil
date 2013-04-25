@@ -8,8 +8,11 @@ DEP=../core.a
 
 
 test: all
+	@echo
+	@echo "*** Launching unit tests..."
 	./tests
 	cat tests.cpp.tap
+	@echo "*** All unit tests passed"
 
 all: core $(EXEC)
 	@echo "All tests compiled."
