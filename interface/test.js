@@ -40,7 +40,34 @@ var w = 960,
     fill = d3.scale.category10(),
     nodes = d3.range(100).map(Object),
     t = 0;  
+    drag=0;
 
+    
+//custom drag
+var node_drag = d3.behavior.drag()
+        .on("dragstart", dragstart)
+        .on("drag", dragmove)
+        .on("dragend", dragend);
+ 
+    function dragstart(d, i) {
+      d.drag=1;
+    }
+ 
+    function dragmove(d, i) {
+
+        d.px += d3.event.dx;
+        d.py += d3.event.dy;
+        d.x += d3.event.dx;
+        d.y += d3.event.dy; 
+	force.alpha(.2);
+    }
+ 
+    function dragend(d, i) {
+      d.drag=0;
+      force.alpha(.2);
+
+    }
+    
 //la visu
 var vis = d3.select("#visu").append("svg:svg")
     .attr("width", w)
@@ -48,7 +75,10 @@ var vis = d3.select("#visu").append("svg:svg")
 
 
 var force = d3.layout.force()
-    .gravity(0.01)
+    .gravity(0)
+    .theta(0.8)
+    .charge(-1)
+    .friction(0.9)
     .nodes(nodes)
     .on("tick", tick)
     .size([w, h]);
@@ -61,13 +91,13 @@ var node = vis.selectAll("circle.node")
     .attr("cy", function(d) { return d.y; })
     .attr("r", function(i) { return radius(i); })
     .style("fill", function(i) { return color(i); })
-    .call(force.drag)
+    //.call(force.drag)
+    .call(node_drag)
     .on("click", function(d,i) { 
       jsonData[i].size[t]=100;
 	document.getElementById("log").innerHTML+=("<br>[element id "+i+" / "+jsonData[i].junction+"] change size n to 100");
 	updateVis()
-	$("#log").scrollTop(100000000000000),
-	 force.start();
+	$("#log").scrollTop(100000000000000)
     })
     .on("mouseover", function(d,i){
       document.getElementById("log").innerHTML+="<br>[element id "+i+" / "+jsonData[i].junction+"] focus on // size = "+jsonData[i].size[t];
@@ -75,30 +105,32 @@ var node = vis.selectAll("circle.node")
     })
 ;
 
-
-
 function tick(e) {
-  node
-
+    node
+  
       .each(sizeSplit())
       .each(collide())
       .attr("cx", function(d) { return d.x; })
       .attr("cy", function(d) { return d.y; });
 }
 
+
 function sizeSplit() {
+  var coef = 0.005
     return function(d) {
-      if (jsonData[d].size[t] <50){
-	d.x+=0.005*(150-d.x);
-	d.y+=0.005*(100-d.y);
-      }else{
-	 if (jsonData[d].size[t] <200){
-	    d.x+=0.005*(400-d.x);
-	    d.y+=0.005*(250-d.y);
-	  }else{
-	    d.x+=0.005*(650-d.x);
-	    d.y+=0.005*(400-d.y);
-	  }
+      if (d.drag != 1){
+	if (jsonData[d].size[t] <50){
+	  d.x+=coef*(150-d.x);
+	  d.y+=coef*(100-d.y);
+	}else{
+	  if (jsonData[d].size[t] <200){
+	      d.x+=coef*(400-d.x);
+	      d.y+=coef*(250-d.y);
+	    }else{
+	      d.x+=coef*(650-d.x);
+	      d.y+=coef*(400-d.y);
+	    }
+	}
       }
   };
 }
@@ -107,6 +139,7 @@ function sizeSplit() {
 function collide() {
   var quadtree = d3.geom.quadtree(nodes);
   return function(d) {
+   if (d.drag != 1){
     var r = radius(d)+padding,
         nx1 = d.x - r,
         nx2 = d.x + r,
@@ -123,8 +156,10 @@ function collide() {
           l = (l - r) / l*0.5;
           d.x -= x *= l;
           d.y -= y *= l;
-          quad.point.x += x;
-          quad.point.y += y;
+	  if(quad.point.drag!=1) {
+	    quad.point.x += x;
+	    quad.point.y += y;
+	  }
         }
       }
       return x1 > nx2
@@ -132,6 +167,7 @@ function collide() {
           || y1 > ny2
           || y2 < ny1;
     });
+   }
   };
 }
 
@@ -147,7 +183,7 @@ function updateVis(){
   vis.selectAll("circle.node")
       .attr("r", function(i) { return radius(i); })
       .style("fill", function(i) { return color(i); })
-  force.start()
+  force.alpha(.2);
 }
 
 function radius(i) {
@@ -166,4 +202,6 @@ function radius(i) {
       return 'red'
     }
   }
+  
+
 
