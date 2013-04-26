@@ -36,6 +36,7 @@ $(LIBCORE): $(OBJCORE)
 clean:
 	rm -f core/*.o *.o $(LIBCORE)
 	cd $(BINDIR) ; rm -f $(EXEC)
+	make -C tests $@
 
 forcedep:
 	g++ -M $(SRCCORE) $(MAINCORE) > dep.mk
