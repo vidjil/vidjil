@@ -91,8 +91,8 @@ var node = vis.selectAll("circle.node")
     .attr("cy", function(d) { return d.y; })
     .attr("r", function(i) { return radius(i); })
     .style("fill", function(i) { return color(i); })
-    //.call(force.drag)
-    .call(node_drag)
+    .call(force.drag)
+    //.call(node_drag)
     .on("click", function(d,i) { 
       jsonData[i].size[t]=100;
 	document.getElementById("log").innerHTML+=("<br>[element id "+i+" / "+jsonData[i].junction+"] change size n to 100");

@@ -71,17 +71,23 @@ def fuseList(l1, l2):
       dataseg[l1[index].junction] = l1[index].segment
     
   for index in range(len(l2)): 
-    if l2[index].junction  not in dico:
-      dico[l2[index].junction] = tampon
-    dico[l2[index].junction] += l2[index].size
+  
     if (l2[index].segment != 0) :
       if not l2[index].junction in dataseg :
 	dataseg[l2[index].junction] = l2[index].segment
+      else :
+	if ( max (l2[index].size) > max (dico[l2[index].junction]) ) :
+	  dataseg[l2[index].junction] = l2[index].segment
+	  
+    if l2[index].junction  not in dico:
+      dico[l2[index].junction] = tampon
+    dico[l2[index].junction] += l2[index].size
 	
     
   for index in range(len(l1)): 
     if len(dico[l1[index].junction]) == s :
-      dico[l1[index].junction] + [0]
+      dico[l1[index].junction] += [0]
+      print 'a'
   
   out = []
   
@@ -101,8 +107,8 @@ def fuseList(l1, l2):
 with open(path1, "r") as file:
   jlist1 = json.load(file, object_hook=jsonToJunc)       
   
-with open(path2, "r") as file:
-  jlist2 = json.load(file, object_hook=jsonToJunc)      
+with open(path2, "r") as file2:
+  jlist2 = json.load(file2, object_hook=jsonToJunc)      
   
 newList= fuseList(jlist1, jlist2);
 
