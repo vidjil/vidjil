@@ -29,6 +29,7 @@ cleanall: clean
 
 .PHONY: all test should clean cleanall distrib data germline
 
+RELEASE_TAG="notag"
 RELEASE_H = src/release.h
 RELEASE_SOURCE = $(wildcard src/*.cpp) $(wildcard src/*.h)  $(wildcard src/core/*.cpp)  $(wildcard src/tests/*.cpp) $(wildcard src/core/*.h)  $(wildcard src/tests/*.h)  
 RELEASE_MAKE = ./Makefile  src/Makefile src/tests/Makefile germline/Makefile data/Makefile
@@ -46,8 +47,10 @@ distrib:
 	$(info ==== Release $(RELEASE_TAG) ====)
 
 	# Tag the release
-	git tag -f release-$(RELEASE_TAG)
-	echo '#define RELEASE_TAG "$(RELEASE_TAG)"' > $(RELEASE_H)
+	if test "$(RELEASE_TAG)" != "notag"; then \
+		git tag -f release-$(RELEASE_TAG); \
+		echo '#define RELEASE_TAG "$(RELEASE_TAG)"' > $(RELEASE_H); \
+	fi
 
 	mkdir -p release 
 	rm -rf release/$(RELEASE_ARCHIVE) release/$(DIST_DIR)
