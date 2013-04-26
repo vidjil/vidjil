@@ -1,0 +1,8 @@
+# 100 reads (200bp) from 2 first clones of S22, should be 50%/50%
+
+
+# exact
+wgsim -S42 -N100 -e0 -d0 -1 200 -2 1 -h clones_simul.fa.base clones_simul_exact.fa /dev/null
+
+# some errors
+wgsim -S42 -N100 -e0.01 -d0 -1 200 -2 1 -h clones_simul.fa.base clones_simul.fa /dev/null

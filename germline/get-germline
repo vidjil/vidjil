@@ -1,0 +1,5 @@
+#!/bin/sh
+
+cd $(dirname $0)
+wget -O - http://www.imgt.org/download/GENE-DB/GENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+inframeP | python split-from-imgt.py 
+

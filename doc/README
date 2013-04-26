@@ -1,0 +1,169 @@
+# Vidjil -- V(D)J recombinations analysis <http://bioinfo.lifl.fr/vidjil>
+# Copyright (C) 2011, 2012, 2013 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
+# Contact: mathieu.giraud@lifl.fr, mikael.salson@lifl.fr
+
+V(D)J recombinations in lymphocytes are a key for immunologic diversity
+as they have an influence on the production of antibodies and antigen
+receptors. They are also useful markers for pathologies: in many
+cases, such a clonality marker is used for patient follow-up to
+quantify the minimal residual disease in leukemias.  
+
+Vidjil process high-througput sequencing data to extract V(D)J
+junctions and gather them into clones. This analysis is based on a
+seed heuristics and is fast and scalable, as, in the first phase, no
+alignment is done with database germline sequences.  Starting from a
+set of reads, Vidjil detects the junctions in each read. This is based
+on an ultra-fast seed-based heuristic, which has be prooven to be
+reliable output the most abundant clones, based on their junctions
+
+Vidjil can also clusterize similar clones, or leave this to the user
+after a manual review. The method is described in the paper referenced
+below.
+
+Vidjil is open-source, released under GNU GPLv3 license.
+
+
+### Supported platforms
+
+Vidjil has been successfully tested on the following platforms :
+ - CentOS 6.3 amd64
+ - CentOS 6.3 i386
+ - Debian Squeeze 
+ - Fedora 17
+ - FreeBSD 9.1 amd64
+ - NetBSD 6.0.1 amd64
+ - Ubuntu 12.04 amd64
+ - Ubuntu 12.04 i386
+
+
+### Installation
+
+make data
+   # get some IGH rearrangements from a single individual, as described in:
+   # Boyd, S. D., and al. Individual variation in the germline Ig gene
+   # repertoire inferred from variable region gene rearrangements. J
+   # Immunol, 184(12), 6986–92.
+
+make germline
+   # get IMGT germline databases -- you have to agree to IMGT license: 
+   # academic research only, provided that it is referred to IMGT®,
+   # and cited as "IMGT®, the international ImMunoGeneTics information system® 
+   # http://www.imgt.org (founder and director: Marie-Paule Lefranc, Montpellier, France). 
+   # Lefranc, M.-P., IMGT®, the international ImMunoGeneTics database,
+   # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
+
+make                     # compile Vijil
+make test                # run self-tests
+
+./vidjil -h              # display help/usage
+
+### Optional dependencies
+
+clustalw (to compute alignments between junctions from a same clone)
+neato (to display graph of neighbors for the automatic clusterisation)
+
+### Vidjil parameters
+
+Launching vidjil with -h option provides the list of parameters that can be
+used.
+
+### List of junctions
+
+Vidjil allows to specify a list of junctions that must be followed
+(even if those junctions are 'rare', below the -r/-R/-% thresholds).
+The parameter -l is made for providing such a list in a file having
+the following format: junction label (separed by one space)
+
+The first column of the file is the junction to be followed
+while the remaining columns consist of the junction's label.
+In Vidjil output, the labels are output alongside their junctions.
+
+### Manual clustering
+
+The -e option allows to specify a file for manually clustering two junctions
+considered as similar. Such a file may be automatically produced by vidjil
+(out/edges), depending on the option provided. Only the two first columns 
+(separed by one space) are important to vidjil, they only consist of the 
+two junctions that must be clustered.
+
+
+### Examples of use
+
+All the following examples are on a IGH VDJ recombinations : they thus
+require the "-G germline/IGH" and the "-d" options.
+
+
+./vidjil -G germline/IGH -d data/Stanford_S22.fasta
+   # Extract (with an ultra-fast heuristic) all junctions
+   # Results are in out/segmented.vdj.fa, which is a FASTA file 
+   # embedding segmentation information in the headers
+   # ('.vdj' format, see below)
+
+>5--junction--1 
+TTGTAGTGGTGGTAGCTGCTACTCCTTTGACTACTGGGGC
+>5--junction--2 
+TGTAGTGGTGGTAGCTGTTACTCCCACGTCTGGGGCCAAG
+(...)
+
+   Junctions of size 40 (modifiable by -w) have been extracted.
+   These two junctions have 5 occurrences in the set of reads.
+
+./vidjil -c clones -G germline/IGH -x -r 1 -R 1 -d ./data/clones_simul.fa
+   # Extracts the junctions (-r 1, with at least 1 read each), 
+   # then gather them into clones (-R 1, with at least 1 read each:
+   # there are many 1-read clones due to sequencing errors.) 
+   # A more natural option could be -R 5.
+   # No representative selection / clustalw postprocessing (-x)
+   # Results are in out/segmented.fa, out/junctions.fa-* and out/clones*
+   # out/segmented.fa list segmented reads using the .vdj format (see below)
+
+./vidjil -c clones -G germline/IGH -x -r 1 -R 5 -n 5 -d ./data/clones_simul.fa
+   # Junction extraction + clone gathering,
+   # with automatic clusterisation, distance five (-n 5)
+
+./vidjil -c segment -G germline/IGH -d data/segment_S22.fa
+   # Segment the reads onto VDJ germline using a full comparison 
+   # (dynamic programming) with all sequences.
+   # The output is displayed in .vdj format (see below)
+
+
+### .vdj format
+
+Segmentations of V(D)J recombinations are displayed using a dedicated
+format. This format is compatible with FASTA format. A line starting
+with a > is of the following form:
+
+>name + VDJ  startV endV   startD endD   startJ  endJ   Vgene   delV/N1/delD5'   Dgene   delD3'/N2/delJ   Jgene
+
+        name          sequence name
+        +             strand on which the sequence is mapped
+        VDJ           type of segmentation (can be "VJ", "VDJ", 
+    	              or shorter tags such as "V" for incomplete sequences).	
+		      The following line are for "VDJ" recombinations :
+
+        startV endV   start and end position of the V gene in the sequence (start at 0)
+        startD endD                      ... of the D gene ...
+        startJ endJ                      ... of the J gene ...
+
+        Vgene         name of the V gene 
+
+        delV          number of deletions at the end (3') of the V
+        N1            nucleotide sequence inserted between the V and the D
+        delD5'        number of deletions at the start (5') of the D
+
+        Dgene         name of the D gene being rearranged
+
+        delD3'        number of deletions at the end (3') of the D
+        N2            nucleotide sequence inserted between the D and the J
+        delJ          number of deletions at the start (5') of the J
+
+        Jgene         name of the J gene being rearranged
+        
+
+Following such a line, the nucleotide sequence may be given, giving in
+this case a valid FASTA file.
+
+For VJ recombinations the output is similar, the fields that are not
+applicable being removed:
+>name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene
+

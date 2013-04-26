@@ -1,0 +1,235 @@
+/*
+  This file is part of "Vidjil" <http://bioinfo.lifl.fr/vid>
+  Copyright (C) 2011, 2012, 2013 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
+  Contributors: Mathieu Giraud <mathieu.giraud@lifl.fr>, Mikaël Salson <mikael.salson@lifl.fr>, David Chatel
+
+  "Vidjil" is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  "Vidjil" is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
+*/
+
+#include <fstream>
+#include <iostream>
+#include <iomanip>
+#include <algorithm>
+#include <cctype>
+#include <stdexcept>
+#include "fasta.h"
+
+Fasta::Fasta(){
+}
+
+Fasta::Fasta(const string &input, 
+	     int extract_field, string extract_separator,
+	     ostream &out) 
+{
+  if (!input.size()) // Do not open empty files (D germline if not segmentD)
+    return ;
+
+  // oout = out;
+  this -> extract_field = extract_field ;
+  this -> extract_separator = extract_separator ;
+
+  ifstream is(input.c_str());
+
+  if (is.fail())
+    {
+      out << "  !! Error in opening file: " << input << endl ;
+      exit(1);
+    }
+
+  out << "  <== " << input << endl ;
+
+  while (is.good()) {
+    is >> *this;
+  }
+  is.close();
+
+  out << "      " << total_size << " bp in " << size() << " sequences" << endl ;
+}
+
+int Fasta::size() const{ return (int)reads.size(); }
+const string& Fasta::label(int index) const{ return reads[index].label; }
+const string& Fasta::label_full(int index) const{ return reads[index].label_full; }
+const Sequence& Fasta::read(int index) const {return reads[index];}
+const string& Fasta::sequence(int index) const{ return reads[index].sequence; }
+
+// OnlineFasta
+
+OnlineFasta::OnlineFasta(int extract_field, string extract_separator):
+  input(NULL), extract_field(extract_field), extract_separator(extract_separator){}
+
+OnlineFasta::OnlineFasta(const string &input, 
+                         int extract_field, string extract_separator)
+  :input(new ifstream(input.c_str())), 
+  extract_field(extract_field), 
+  extract_separator(extract_separator)
+{
+  if (this->input->fail()) {
+    throw ios_base::failure("!! Error in opening file "+input);
+  }
+  input_allocated = true;
+  init();
+}
+
+OnlineFasta::OnlineFasta(istream &input, 
+                         int extract_field, string extract_separator)
+  :extract_field(extract_field), 
+  extract_separator(extract_separator)
+{
+  this->input = &input;
+  input_allocated = false;
+  init();
+}
+
+OnlineFasta::OnlineFasta(const OnlineFasta &of) {
+  current = of.current;
+  input = of.input;
+  extract_field = of.extract_field;
+  extract_separator = of.extract_separator;
+  line = of.line;
+  input_allocated = false;
+  line_nb = of.line_nb;
+}
+
+OnlineFasta::~OnlineFasta() {
+  if (input_allocated)
+    delete input;
+}
+
+void OnlineFasta::init() {
+  line_nb = 0;
+  line = getInterestingLine();
+}
+
+size_t OnlineFasta::getLineNb() {
+  return line_nb;
+}
+
+Sequence OnlineFasta::getSequence() {
+  return current;
+}
+
+bool OnlineFasta::hasNext() {
+  return (! input->eof()) || line.length() > 0;
+}
+
+void OnlineFasta::next() {
+  fasta_state state = FASTX_UNINIT;
+
+  // Reinit the Sequence object
+  current.label_full.erase();
+  current.label.erase();
+  current.sequence.erase();
+  current.quality.erase();
+
+  if  (hasNext()) {
+    switch(line[0]) {
+    case '>': state=FASTX_FASTA; break;
+    case '@': state=FASTX_FASTQ_ID; break;
+    default: 
+      throw runtime_error("The file seems to be malformed!");
+    }
+    
+    // Identifier line
+    current.label_full = line.substr(1);
+    current.label = extract_from_label(current.label_full, extract_field, extract_separator);
+
+    line = getInterestingLine();
+    while (hasNext() && ((state != FASTX_FASTA || line[0] != '>')
+                         && (state != FASTX_FASTQ_QUAL || line[0] != '@'))) {
+
+      if (hasNext()) {
+        switch(state) {
+        case FASTX_FASTA: case FASTX_FASTQ_ID:
+          // Sequence
+          current.sequence += line;
+          break;
+        case FASTX_FASTQ_SEQ:
+          // FASTQ separator between sequence and quality
+          assert(line[0] == '+');
+          break;
+        case FASTX_FASTQ_SEP:
+          // Reading quality
+          current.quality = line;
+          break;
+        default:
+          throw runtime_error("Unexpected state after reading identifiers line");
+        }
+        if (state >= FASTX_FASTQ_ID && state <= FASTX_FASTQ_SEP)
+          state = (fasta_state)(((int)state) + 1);
+      } else {
+        unexpectedEOF();
+      }
+      line = getInterestingLine();
+    }
+
+    if (state >= FASTX_FASTQ_ID && state < FASTX_FASTQ_QUAL) 
+      unexpectedEOF();
+
+    // Sequence in uppercase
+    transform(current.sequence.begin(), current.sequence.end(), current.sequence.begin(), (int (*)(int))toupper);
+  } else
+    unexpectedEOF();
+}
+
+OnlineFasta& OnlineFasta::operator=(const OnlineFasta&of) {
+  current = of.current;
+  line = of.line;
+  input = of.input;
+  extract_field = of.extract_field;
+  extract_separator = of.extract_separator;
+  return *this;
+}
+
+string OnlineFasta::getInterestingLine() {
+  string line;
+  while (line.length() == 0 && hasNext() && getline(*input, line)) {
+    line_nb++;
+    remove_trailing_whitespaces(line);
+  }
+  return line;
+}
+
+void OnlineFasta::unexpectedEOF() {
+  throw runtime_error("Unexpected EOF while reading FASTA/FASTQ file");
+}
+
+// Operators
+
+istream& operator>>(istream& in, Fasta& fasta){
+	string line;
+	Sequence read;
+        OnlineFasta of(in, fasta.extract_field, fasta.extract_separator);
+	fasta.total_size = 0 ;
+
+        while (of.hasNext()) {
+          of.next();
+          fasta.reads.push_back(of.getSequence());
+          fasta.total_size += of.getSequence().sequence.size();
+        }
+	return in;
+}
+
+ostream& operator<<(ostream& out, Fasta& fasta){
+	for(int i = 0 ; i < fasta.size() ; i++){
+          out << fasta.read(i) << endl;
+	}
+	return out;
+}
+
+ostream &operator<<(ostream &out, const Sequence &seq) {
+  out << ">" << seq.label << endl;
+  out << seq.sequence << endl;
+  return out;
+}
+
