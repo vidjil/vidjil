@@ -565,14 +565,19 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
     int begin = 0;
     int score;
     
-    int l=left-5;
-    if (l<0) l=0;
-    int r=right+5;
-    if ((right+5)>(int)getSequence().sequence.length() ) 
-      r=getSequence().sequence.length();
+    // Create a zone where to look for D, adding at most EXTEND_D_ZONE nucleotides at each side
+    int l = left - EXTEND_D_ZONE;
+    if (l<0) 
+      l=0 ;
+
+    int r = right + EXTEND_D_ZONE;
+
+    if (r > (int)getSequence().sequence.length()) 
+      r = getSequence().sequence.length();
       
     string str = getSequence().sequence.substr(l, r-l);
 
+    // Align
     end = align_against_collection(str, rep_D, false, true, &tag_D, &del_D_right, &del_D_left, &begin,
 				&length, &score, &best_D, segment_cost);
     
