@@ -684,6 +684,7 @@ int main (int argc, char **argv)
        
 	clones_junctions  = comp.cluster(forced_edges, w, out, epsilon, minPts) ;
 	comp.stat_cluster(clones_junctions, out_dir + prefix_filename + GRAPH_FILENAME, out );
+	comp.del();
       } 
     else
       {
@@ -697,8 +698,6 @@ int main (int argc, char **argv)
     
     // int size=z.size();
 
-    comp.del();
-        
     //////////////////////////////////
     out << "Sort clones by number of occurrences" << endl;
 
