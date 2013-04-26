@@ -1120,7 +1120,7 @@ int main (int argc, char **argv)
  
       out_clone.close();
       out << endl;
-
+      
       // Compare representatives of this clone
       out << "Comparing representatives of this clone 2 by 2" << endl ;
       // compare_all(representatives_this_clone);
@@ -1139,6 +1139,9 @@ int main (int argc, char **argv)
 
   
     // Compare representatives
+
+    if (detailed_cluster_analysis)
+      {
     html << "<h3>Comparison between clones</h3>" ;
 
     if (nb_edges)
@@ -1154,7 +1157,7 @@ int main (int argc, char **argv)
 
     html << "</pre>";
     html << HTMLOutputSimilarityMatrix(matrix, 90);
-
+     }
 
 
     delete scorer;
