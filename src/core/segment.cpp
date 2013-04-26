@@ -568,7 +568,8 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
     int l=left-5;
     if (l<0) l=0;
     int r=right+5;
-    if ((right+5)>getSequence().sequence.length() ) r=getSequence().sequence.length();
+    if ((right+5)>(int)getSequence().sequence.length() ) 
+      r=getSequence().sequence.length();
       
     string str = getSequence().sequence.substr(l, r-l);
 

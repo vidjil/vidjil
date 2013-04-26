@@ -399,10 +399,10 @@ void DynProg::backtrack()
   back << ti <<	"  >>	" << str1.substr(0, BACKSIZE-8) << endl;
   back << " diff	" << str2.substr(0, BACKSIZE-8) << endl;
   back << tj <<	"  >>	" << str3.substr(0, BACKSIZE-8) << endl << endl;
-  for (int k=0 ; (BACKSIZE-8+k*BACKSIZE)< str1.length() ; k++){
-  back << str1.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl;
-  back << str2.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl;
-  back << str3.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl << endl;
+  for (size_t k=0 ; (BACKSIZE-8+k*BACKSIZE)< str1.length() ; k++){
+    back << str1.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl;
+    back << str2.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl;
+    back << str3.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl << endl;
   }
   
   first_i=ti;
