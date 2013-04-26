@@ -73,7 +73,7 @@ enum { CMD_JUNCTIONS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define CLONE_FILENAME "clone.fa-"
 #define JUNCTIONS_FILENAME "junctions.fa"
 #define SEQUENCES_FILENAME "sequences.fa"
-#define SEGMENTED_FILENAME "segmented.fa"
+#define SEGMENTED_FILENAME "segmented.vdj.fa"
 #define EDGES_FILENAME "edges"
 #define COMP_FILENAME "comp.data"
 #define GRAPH_FILENAME "graph"
