@@ -37,13 +37,13 @@ Vidjil has been successfully tested on the following platforms :
 
 ### Installation
 
-sh data/get-sequences 
+make data
    # get some IGH rearrangements from a single individual, as described in:
    # Boyd, S. D., and al. Individual variation in the germline Ig gene
    # repertoire inferred from variable region gene rearrangements. J
    # Immunol, 184(12), 6986–92.
 
-sh germline/get-germline 
+make germline
    # get IMGT germline databases -- you have to agree to IMGT license: 
    # academic research only, provided that it is referred to IMGT®,
    # and cited as "IMGT®, the international ImMunoGeneTics information system® 
