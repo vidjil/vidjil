@@ -1,4 +1,4 @@
-
+import collections
 import json
 import sys
  
@@ -57,10 +57,9 @@ def jsonToJunc(obj_dict):
     return obj
 
 
-
-
 def fuseList(l1, l2): 
-  dico = {} 
+  dico = collections.OrderedDict()
+  dataseg = {}
   tampon=[]
   s=len(l1[0].size)
   for i in range(s):
@@ -68,17 +67,35 @@ def fuseList(l1, l2):
   
   for index in range(len(l1)): 
     dico[l1[index].junction] = l1[index].size
+    if (l1[index].segment != 0) :
+      dataseg[l1[index].junction] = l1[index].segment
     
   for index in range(len(l2)): 
     if l2[index].junction  not in dico:
       dico[l2[index].junction] = tampon
     dico[l2[index].junction] += l2[index].size
+    if (l2[index].segment != 0) :
+      if not l2[index].junction in dataseg :
+	dataseg[l2[index].junction] = l2[index].segment
+	
     
   for index in range(len(l1)): 
     if len(dico[l1[index].junction]) == s :
       dico[l1[index].junction] + [0]
   
-  return l1
+  out = []
+  
+  for key in dico :
+    junct=Junction()
+    junct.junction=key
+    junct.size=dico[key]
+    junct.segment = 0
+    if key in dataseg :
+      junct.segment = dataseg[key]
+    out.append(junct)
+    
+
+  return out
   
 
 with open(path1, "r") as file:

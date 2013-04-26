@@ -34,8 +34,8 @@ oFReader.onload = function (oFREvent) {
   force.start();
 };
 
-var w = 960,
-    h = 500,
+var w = 1200,
+    h = 600,
     padding = 5,
     fill = d3.scale.category10(),
     nodes = d3.range(100).map(Object),
@@ -120,14 +120,14 @@ function sizeSplit() {
     return function(d) {
       if (d.drag != 1){
 	if (jsonData[d].size[t] <50){
-	  d.x+=coef*(150-d.x);
+	  d.x+=coef*(100-d.x);
 	  d.y+=coef*(100-d.y);
 	}else{
 	  if (jsonData[d].size[t] <200){
-	      d.x+=coef*(400-d.x);
+	      d.x+=coef*(550-d.x);
 	      d.y+=coef*(250-d.y);
 	    }else{
-	      d.x+=coef*(650-d.x);
+	      d.x+=coef*(950-d.x);
 	      d.y+=coef*(400-d.y);
 	    }
 	}
