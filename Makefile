@@ -17,10 +17,17 @@ should: all
 	src/tests/should-to-tap.sh src/tests/segment_simul.should_get
 	@echo "*** All .should_get tests passed"
 
+data germline: %:
+	make -C $@
+
 clean:
 	make -C src clean
 
-.PHONY: all test should clean distrib
+cleanall: clean
+	make -C data $^
+	make -C germline $^
+
+.PHONY: all test should clean cleanall distrib data germline
 
 RELEASE_H = src/release.h
 RELEASE_SOURCE = $(wildcard src/*.cpp) $(wildcard src/*.h)  $(wildcard src/core/*.cpp)  $(wildcard src/tests/*.cpp) $(wildcard src/core/*.h)  $(wildcard src/tests/*.h)  
