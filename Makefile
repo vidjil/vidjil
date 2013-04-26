@@ -67,12 +67,11 @@ distrib:
 	rm -f $(RELEASE_H) ; touch $(RELEASE_H)
 
 	# Check archive
-	cd release ; tar xvfz $(RELEASE_ARCHIVE)
-	cd release/$(CURRENT_DIR) ; make
-	cd release/$(CURRENT_DIR) ; make germline
-	cd release/$(CURRENT_DIR) ; make data
-	cd release/$(CURRENT_DIR) ; make test
-
+	cd release && tar xvfz $(RELEASE_ARCHIVE)
+	cd release/$(DIST_DIR) && make
+	cd release/$(DIST_DIR) && make germline
+	cd release/$(DIST_DIR) && make data
+	cd release/$(DIST_DIR) && make test
 
 
 
