@@ -10,7 +10,8 @@ should: all
 	@echo
 	@echo "*** Launching .should_get tests..."
 	src/tests/should-to-tap.sh src/tests/stanford.should_get
-	src/tests/should-to-tap.sh src/tests/clones_S22.should_get
+	src/tests/should-to-tap.sh src/tests/clones_simul.should_get
+	src/tests/should-to-tap.sh src/tests/clones_simul_cluster.should_get
 	src/tests/should-to-tap.sh src/tests/segment_S22.should_get
 	src/tests/should-to-tap.sh src/tests/segment_lec.should_get
 	src/tests/should-to-tap.sh src/tests/segment_simul.should_get
