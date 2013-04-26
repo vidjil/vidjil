@@ -25,11 +25,32 @@ parsed by the script. The !LOG: file won't be used. By default, output files
 are produced in the working directory, to change this behavior, specify an
 option after the option !OUTPUT_DIR:
 
+* Environment
+** Debug
+   If the environment variable DEBUG is defined, then some debug information 
+   is output.
+** Launcher
+   If one wants to use a launcher that will execute the program, then 
+   environment variable LAUNCHER must be defined, with the program name to 
+   use as a launcher (eg. valgrind).
+   A .should_get file may specify an option !NO_LAUNCHER: to tell that this
+   must not be launched using a launcher. Also, in the !LAUNCH option, 
+   $LAUNCHER may be specified if the launcher must not be put at the start
+   of the command line, but somewhere else.
+
+* Output
+
 The output is in TAP format and consists of a file whose name is the same
 as the input file, where .should_get is replaced by .tap
 " >&2
     exit 1
 fi
+
+debug() {
+    if [ ! -z "$DEBUG" ]; then
+        echo $* >&2
+    fi
+}
 
 file=$1
 DIR=$(dirname $file)
@@ -41,6 +62,7 @@ TAP_FILE=${BASE%.*}.tap
 LOG_FILE=${BASE%.*}.log
 OUTPUT_FILE=
 FILE_TO_GREP=
+NO_LAUNCHER=
 
 TMP_TAP_FILE=$(mktemp tap.XXXX)
 
@@ -70,6 +92,8 @@ while read line; do
                 eval OUTPUT_FILE=\"${line#*:}\"
             elif [ "$type" == "OUTPUT_DIR" ]; then
                 eval OUTPUT_DIR=\"${line#*:}\"
+            elif [ "$type" == "NO_LAUNCHER" ]; then
+                NO_LAUNCHER=1
             fi
         elif [ ${line:0:1} == '$' ]; then
             msg=${line:1}
@@ -81,7 +105,15 @@ while read line; do
                         echo "Error: you must specify a !LAUNCH: line in $file" >&2
                         exit 2
                     fi
-                    echo "Launching $cmd" >&2
+                    # Should we use a launcher?
+                    if [ ! -z "$LAUNCHER" -a -z "$NO_LAUNCHER" ]; then
+                        # Yes, we should.
+                        # Do we need to specify the place where LAUNCHER should be?
+                        if [[ "$cmd" != *'$LAUNCHER'* ]]; then
+                            cmd='$LAUNCHER '"$cmd"
+                        fi
+                    fi
+                    echo "Launching '$cmd'" >&2
                     if [ -z "$OUTPUT_FILE" ]; then
                         eval $cmd > $LOG_FILE
                         FILE_TO_GREP=$LOG_FILE
@@ -109,9 +141,7 @@ while read line; do
                     know_to_fail=1 # We know the test fails, but don't fail globally
                     nb_hits=${nb_hits:1}
                 fi
-                if [ ! -z "$DEBUG" ]; then
-                    echo "Grepping \"$pattern\" in $FILE_TO_GREP" >&2
-                fi
+                debug "Grepping \"$pattern\" in $FILE_TO_GREP"
                 if [ $(grep -cE "$pattern" $FILE_TO_GREP) -eq $nb_hits -o $skip -eq 1 ]; then
                     if [ $know_to_fail -eq 1 ]; then
                         echo "Warning: test $test_nb should have failed, but has not!" >&2
@@ -126,6 +156,9 @@ while read line; do
                 echo -n " "$test_nb" "
                 if [ $skip -eq 1 ]; then
                     echo -n "# SKIP "
+                fi
+                if [ $know_to_fail -eq 1 ]; then
+                    echo -n "# TODO "
                 fi
                 echo "- " $msg
                 test_nb=$((test_nb+1))

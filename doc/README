@@ -1,5 +1,6 @@
 # Vidjil -- V(D)J recombinations analysis <http://bioinfo.lifl.fr/vidjil>
 # Copyright (C) 2011, 2012, 2013 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
+# Contact: mathieu.giraud@lifl.fr, mikael.salson@lifl.fr
 
 V(D)J recombinations in lymphocytes are a key for immunologic diversity
 as they have an influence on the production of antibodies and antigen
@@ -37,13 +38,13 @@ Vidjil has been successfully tested on the following platforms :
 
 ### Installation
 
-sh data/get-sequences 
+make data
    # get some IGH rearrangements from a single individual, as described in:
    # Boyd, S. D., and al. Individual variation in the germline Ig gene
    # repertoire inferred from variable region gene rearrangements. J
    # Immunol, 184(12), 6986–92.
 
-sh germline/get-germline 
+make germline
    # get IMGT germline databases -- you have to agree to IMGT license: 
    # academic research only, provided that it is referred to IMGT®,
    # and cited as "IMGT®, the international ImMunoGeneTics information system® 
@@ -68,10 +69,10 @@ used.
 
 ### List of junctions
 
-Vidjil allows to specify a list of junctions that must be followed (even if
-those junctions are 'rare', below the -r/-R/-% thresholds). 
-The parameter -l is made for providing such a list in a file having the following format:
-junction label
+Vidjil allows to specify a list of junctions that must be followed
+(even if those junctions are 'rare', below the -r/-R/-% thresholds).
+The parameter -l is made for providing such a list in a file having
+the following format: junction label (separed by one space)
 
 The first column of the file is the junction to be followed
 while the remaining columns consist of the junction's label.
@@ -93,16 +94,10 @@ require the "-G germline/IGH" and the "-d" options.
 
 
 ./vidjil -G germline/IGH -d data/Stanford_S22.fasta
-   # Extract (with the heuristic) all junctions
-   # Results are in out/segmented.fa, which is a FASTA file embedding segmentation information
-   # in the headers ('.vdj' format, see below)
-
-./vidjil -c clones -G germline/IGH -r 3 -R 5 -d data/Stanford_S22.fasta
-   # Extracts the junctions (with at least 3 reads each), 
-   # then gather them into clones (with at least 5 reads each).
-   # Results are in out/segmented.fa, out/junctions.fa-* and out/clones*
-   # out/segemented.fa list segmented reads using the .vdj format (see below)
-
+   # Extract (with an ultra-fast heuristic) all junctions
+   # Results are in out/segmented.vdj.fa, which is a FASTA file 
+   # embedding segmentation information in the headers
+   # ('.vdj' format, see below)
 
 >5--junction--1 
 TTGTAGTGGTGGTAGCTGCTACTCCTTTGACTACTGGGGC
@@ -113,23 +108,33 @@ TGTAGTGGTGGTAGCTGTTACTCCCACGTCTGGGGCCAAG
    Junctions of size 40 (modifiable by -w) have been extracted.
    These two junctions have 5 occurrences in the set of reads.
 
+./vidjil -c clones -G germline/IGH -x -r 1 -R 1 -d ./data/clones_simul.fa
+   # Extracts the junctions (-r 1, with at least 1 read each), 
+   # then gather them into clones (-R 1, with at least 1 read each:
+   # there are many 1-read clones due to sequencing errors.) 
+   # A more natural option could be -R 5.
+   # No representative selection / clustalw postprocessing (-x)
+   # Results are in out/segmented.fa, out/junctions.fa-* and out/clones*
+   # out/segmented.fa list segmented reads using the .vdj format (see below)
 
-./vidjil -c clones -G germline/IGH -r 3 -R 5 -n 1 -d data/Stanford_S22.fasta
-   # Junction extraction + clone gathering, with automatic clusterisation, distance one (-n 1)
+./vidjil -c clones -G germline/IGH -x -r 1 -R 5 -n 5 -d ./data/clones_simul.fa
+   # Junction extraction + clone gathering,
+   # with automatic clusterisation, distance five (-n 5)
 
-./vidjil -c segment -G germline/IGH -d data/Stanford_S22.fasta
-   # Segment the reads onto VDJ germline using a full comparison (dynamic programming) with all sequences
+./vidjil -c segment -G germline/IGH -d data/segment_S22.fa
+   # Segment the reads onto VDJ germline using a full comparison 
+   # (dynamic programming) with all sequences.
    # The output is displayed in .vdj format (see below)
 
 
-### VDJ format
+### .vdj format
 
-Segmentation of a VDJ sequence are displayed using a dedicated format. This
-format is compatible with FASTA format. A line starting with a > is of the
-following form:
+Segmentations of V(D)J recombinations are displayed using a dedicated
+format. This format is compatible with FASTA format. A line starting
+with a > is of the following form:
+
 >name + VDJ  startV endV   startD endD   startJ  endJ   Vgene   delV/N1/delD5'   Dgene   delD3'/N2/delJ   Jgene
 
-Field descriptions :
         name          sequence name
         +             strand on which the sequence is mapped
         VDJ           type of segmentation (can be "VJ", "VDJ", 
@@ -155,10 +160,10 @@ Field descriptions :
         Jgene         name of the J gene being rearranged
         
 
-Following such a line, there may have the nucleotide sequence.
+Following such a line, the nucleotide sequence may be given, giving in
+this case a valid FASTA file.
 
-For VJ recombinations the output is very similar, the fields that are not
-applicable are removed:
+For VJ recombinations the output is similar, the fields that are not
+applicable being removed:
 >name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene
-
 

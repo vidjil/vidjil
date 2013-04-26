@@ -30,8 +30,7 @@ core:
 	$(CC) -o $@ $(INCLUDE) -c $< $(CFLAGS)
 
 clean:
-	rm -f *.o $(EXEC)
-	make -C .. clean
+	rm -f *.o $(EXEC) *.tap *.log
 
 forcedep:
 	g++ $(INCLUDE) -M $(SRC) > dep.mk

@@ -1,6 +1,6 @@
 CC=g++
 OPTIM=-O2 -DNO_SPACED_SEEDS
-CFLAGS=-W -Wall -g $(OPTIM)
+CFLAGS=-W -Wall $(OPTIM) $(DEBUG)
 LDFLAGS=
 EXEC=vidjil kmer kmer_count cut count detailed_affect
 SRCCORE=$(wildcard core/*.cpp) $(wildcard core/*.h) 
@@ -13,6 +13,10 @@ BINDIR=..
 v: vidjil
 
 all: $(EXEC)
+
+debug:
+	make clean
+	make DEBUG="-ggdb"
 
 $(EXEC): %: %.o $(LIBCORE) 
 	$(CC) -o $(BINDIR)/$@ $^ $(LDFLAGS) $(CFLAGS)
@@ -32,6 +36,7 @@ $(LIBCORE): $(OBJCORE)
 clean:
 	rm -f core/*.o *.o $(LIBCORE)
 	cd $(BINDIR) ; rm -f $(EXEC)
+	make -C tests $@
 
 forcedep:
 	g++ -M $(SRCCORE) $(MAINCORE) > dep.mk

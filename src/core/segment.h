@@ -9,6 +9,8 @@
 #include "kmerstore.h"
 #include "kmeraffect.h"
 
+#define EXTEND_D_ZONE 5
+
 using namespace std;
 
 enum SEGMENTED { DONT_KNOW, SEG_PLUS, SEG_MINUS, UNSEG_TOO_SHORT, UNSEG_STRAND_NOT_CONSISTENT, 

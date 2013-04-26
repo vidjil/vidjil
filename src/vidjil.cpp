@@ -73,7 +73,7 @@ enum { CMD_JUNCTIONS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define CLONE_FILENAME "clone.fa-"
 #define JUNCTIONS_FILENAME "junctions.fa"
 #define SEQUENCES_FILENAME "sequences.fa"
-#define SEGMENTED_FILENAME "segmented.fa"
+#define SEGMENTED_FILENAME "segmented.vdj.fa"
 #define EDGES_FILENAME "edges"
 #define COMP_FILENAME "comp.data"
 #define GRAPH_FILENAME "graph"
@@ -687,6 +687,7 @@ int main (int argc, char **argv)
        
 	clones_junctions  = comp.cluster(forced_edges, w, out, epsilon, minPts) ;
 	comp.stat_cluster(clones_junctions, out_dir + prefix_filename + GRAPH_FILENAME, out );
+	comp.del();
       } 
     else
       {
@@ -700,8 +701,6 @@ int main (int argc, char **argv)
     
     // int size=z.size();
 
-    comp.del();
-        
     //////////////////////////////////
     out << "Sort clones by number of occurrences" << endl;
 
@@ -1132,7 +1131,7 @@ int main (int argc, char **argv)
  
       out_clone.close();
       out << endl;
-
+      
       // Compare representatives of this clone
       out << "Comparing representatives of this clone 2 by 2" << endl ;
       // compare_all(representatives_this_clone);
@@ -1151,6 +1150,9 @@ int main (int argc, char **argv)
 
   
     // Compare representatives
+
+    if (detailed_cluster_analysis)
+      {
     html << "<h3>Comparison between clones</h3>" ;
 
     if (nb_edges)
@@ -1166,7 +1168,7 @@ int main (int argc, char **argv)
 
     html << "</pre>";
     html << HTMLOutputSimilarityMatrix(matrix, 90);
-
+     }
 
 
     delete scorer;
