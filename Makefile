@@ -37,7 +37,8 @@ RELEASE_FILES = $(RELEASE_SOURCE) $(RELEASE_TESTS) $(RELEASE_MAKE)  germline/get
 RELEASE_ARCHIVE = vidjil-$(RELEASE_TAG).tgz
 
 CURRENT_DIR = vidjil
-RELEASE_FILES_VID = $(addprefix $(CURRENT_DIR)/, $(RELEASE_FILES))
+DIST_DIR=$(CURRENT_DIR)-$(RELEASE_TAG)
+RELEASE_FILES_VID = $(RELEASE_FILES)
 
 
 # make distrib RELEASE_TAG=2013.04alpha
@@ -49,11 +50,18 @@ distrib:
 	echo '#define RELEASE_TAG "$(RELEASE_TAG)"' > $(RELEASE_H)
 
 	mkdir -p release 
-	rm -rf release/$(RELEASE_ARCHIVE) release/$(CURRENT_DIR)
-	cd .. ; tar cvfz  $(CURRENT_DIR)/release/$(RELEASE_ARCHIVE) $(RELEASE_FILES_VID)
+	rm -rf release/$(RELEASE_ARCHIVE) release/$(DIST_DIR)
+	mkdir -p release/$(DIST_DIR)
+	for file in  $(RELEASE_FILES_VID); do\
+		dir=release/$(DIST_DIR)/`dirname "$$file"`;	\
+		mkdir -p $$dir;	\
+		cp "$$file" $$dir;	\
+	done
+	cd release && tar cvzf  $(RELEASE_ARCHIVE) $(DIST_DIR) \
+	&& rm -rf $(DIST_DIR)
 
 	# Untag the source
-	rm $(RELEASE_H) ; touch $(RELEASE_H)
+	rm -f $(RELEASE_H) ; touch $(RELEASE_H)
 
 	# Check archive
 	cd release ; tar xvfz $(RELEASE_ARCHIVE)
