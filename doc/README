@@ -93,7 +93,7 @@ require the "-G germline/IGH" and the "-d" options.
 
 
 ./vidjil -G germline/IGH -d data/Stanford_S22.fasta
-   # Extract (with the heuristic) all junctions
+   # Extract (with an ultra-fast heuristic) all junctions
    # Results are in out/segmented.fa, which is a FASTA file embedding segmentation information
    # in the headers ('.vdj' format, see below)
 
@@ -118,7 +118,7 @@ TGTAGTGGTGGTAGCTGTTACTCCCACGTCTGGGGCCAAG
 ./vidjil -c clones -G germline/IGH -x -r 1 -R 5 -n 5 -d ./data/clones_simul.fa
    # Junction extraction + clone gathering, with automatic clusterisation, distance five (-n 5)
 
-./vidjil -c segment -G germline/IGH -d data/Stanford_S22.fasta
+./vidjil -c segment -G germline/IGH -d data/segment_S22.fa
    # Segment the reads onto VDJ germline using a full comparison (dynamic programming) with all sequences
    # The output is displayed in .vdj format (see below)
 
