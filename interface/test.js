@@ -17,8 +17,6 @@ var req = new XMLHttpRequest();
 
 oFReader = new FileReader();
 
-var jsonData
-
 function loadJson() {
   if (document.getElementById("upload").files.length === 0) { return; }
   var oFile = document.getElementById("upload").files[0];
@@ -28,21 +26,50 @@ function loadJson() {
 oFReader.onload = function (oFREvent) {
   jsonDataText = oFREvent.target.result;
   jsonData = JSON.parse(jsonDataText);
-  updateVis();
-  document.getElementById("log").innerHTML+=jsonData[0].size[0];
   document.getElementById("log").innerHTML+="<br>chargement fichier json";
+  initClones(jsonData);
+  document.getElementById("log").innerHTML+="<br>génération des clones";
+  updateVis();
   force.start();
+  document.getElementById("log").innerHTML+="<br>start visu";
 };
 
+var jsonData
+var sizeMap=100; 
 var w = 1200,
     h = 600,
     padding = 5,
     fill = d3.scale.category10(),
-    nodes = d3.range(100).map(Object),
-    t = 0;  
+    nodes = d3.range(sizeMap).map(Object),
+    t = 0,
     drag=0;
 
+function initClones(data) {
+   for(var i=0 ;i<sizeMap; i++){
+      var n = [i]
+      nodes[i].r1 = 5;
+      nodes[i].r2 = 5;
+      nodes[i].clones = n;
+    }
+}
+
+//ajoute la jonction b (ou le clone lead par la jonction b) dans le clone lead par a
+function merge(a, b){
+  var nlist = nodes[a].clones+nodes[b].clones;
+  nodes[a].clones = nlist;
+  nodes[b].clones=[];
+}
+
+//libere la jonction b du clone lead par a
+function split(a, b){
+  if (a==b) return
     
+  for(var i=0 ;i<nodes[a].clones.length; i++){
+    if (nodes[a].clones[i] == b) return
+  }
+  
+}
+
 //custom drag
 var node_drag = d3.behavior.drag()
         .on("dragstart", dragstart)
@@ -54,18 +81,16 @@ var node_drag = d3.behavior.drag()
     }
  
     function dragmove(d, i) {
-
         d.px += d3.event.dx;
         d.py += d3.event.dy;
         d.x += d3.event.dx;
-        d.y += d3.event.dy; 
+        d.y += d3.event.dy;
 	force.alpha(.2);
     }
  
     function dragend(d, i) {
       d.drag=0;
       force.alpha(.2);
-
     }
     
 //la visu
@@ -85,18 +110,16 @@ var force = d3.layout.force()
     
 var node = vis.selectAll("circle.node")
     .data(nodes)
-  .enter().append("svg:circle")
+    .enter().append("svg:circle")
     .attr("class", "node")
     .attr("cx", function(d) { return d.x; })
     .attr("cy", function(d) { return d.y; })
-    .attr("r", function(i) { return radius(i); })
-    .style("fill", function(i) { return color(i); })
+    .attr("r", 5)
     .call(force.drag)
     //.call(node_drag)
     .on("click", function(d,i) { 
-      jsonData[i].size[t]=100;
-	document.getElementById("log").innerHTML+=("<br>[element id "+i+" / "+jsonData[i].junction+"] change size n to 100");
-	updateVis()
+	merge(1,2);
+	updateVis();
 	$("#log").scrollTop(100000000000000)
     })
     .on("mouseover", function(d,i){
@@ -106,14 +129,24 @@ var node = vis.selectAll("circle.node")
 ;
 
 function tick(e) {
+    updateRadius()
     node
-  
       .each(sizeSplit())
       .each(collide())
       .attr("cx", function(d) { return d.x; })
-      .attr("cy", function(d) { return d.y; });
+      .attr("cy", function(d) { return d.y; })
+      .attr("r" , function(d) { return d.r2; })
+ 
 }
 
+function updateRadius(){
+    for(var i=0 ;i<nodes.length; i++){
+      if( nodes[i].r1 != nodes[i].r2){
+	var delta = nodes[i].r1-nodes[i].r2;
+	nodes[i].r2 +=0.03*delta;
+      }
+    }
+}
 
 function sizeSplit() {
   var coef = 0.005
@@ -140,7 +173,7 @@ function collide() {
   var quadtree = d3.geom.quadtree(nodes);
   return function(d) {
    if (d.drag != 1){
-    var r = radius(d)+padding,
+    var r = nodes[d].r2+padding,
         nx1 = d.x - r,
         nx2 = d.x + r,
         ny1 = d.y - r,
@@ -151,7 +184,7 @@ function collide() {
         var x = d.x - quad.point.x,
             y = d.y - quad.point.y,
             l = Math.sqrt(x * x + y * y),
-            r = radius(d) + radius(quad.point)+padding;
+            r = nodes[d].r2 + nodes[quad.point].r2+padding;
         if (l < r) {
           l = (l - r) / l*0.5;
           d.x -= x *= l;
@@ -180,15 +213,20 @@ function changeT(nt){
 }
 
 function updateVis(){
+  for(var i=0 ;i<100; i++){
+    nodes[i].r1=radius(i);
+  }
   vis.selectAll("circle.node")
-      .attr("r", function(i) { return radius(i); })
       .style("fill", function(i) { return color(i); })
   force.alpha(.2);
 }
 
 function radius(i) {
   if (typeof jsonData != "undefined") {
-    return Math.sqrt(jsonData[i].size[t]);
+    var r=0;
+    for(var j=0 ;j<nodes[i].clones.length; j++){
+      r += jsonData[nodes[i].clones[j]].size[t];}
+    return Math.sqrt(r);
   }
 }
   
