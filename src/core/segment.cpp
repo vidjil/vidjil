@@ -553,6 +553,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
       // Trim J
       right += b_r;
       del_J += b_r;
+        if (right>=sequence.length())
+	  right=sequence.length()-1;
     }
 
     // string chevauchement = removeChevauchement();

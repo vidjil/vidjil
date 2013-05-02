@@ -29,6 +29,8 @@ oFReader.onload = function (oFREvent) {
   document.getElementById("log").innerHTML+="<br>chargement fichier json";
   initClones(jsonData);
   document.getElementById("log").innerHTML+="<br>génération des clones";
+  initVJposition();
+  document.getElementById("log").innerHTML+="<br>calcul des position VJ";
   updateVis();
   force.start();
   document.getElementById("log").innerHTML+="<br>start visu";
@@ -43,24 +45,84 @@ var w = 1200,
     nodes = d3.range(sizeMap).map(Object),
     t = 0,
     drag=0;
-
+    
+    
 function initClones(data) {
+  var divParent   = document.getElementById("listJ");
+  var div = document.createElement('div');
+
    for(var i=0 ;i<sizeMap; i++){
       var n = [i]
       nodes[i].r1 = 5;
       nodes[i].r2 = 5;
       nodes[i].clones = n;
+      nodes[i].focus = false;
+      var div = document.createElement('div');
+      div.id=i;
+      div.onmouseover = function(){ focusIn(this.id); }
+      div.onmouseout= function(){ focusOut(this.id); }
+      divParent.appendChild(div);
+      if ( typeof(jsonData[i].seg)!='undefined' && typeof(jsonData[i].seg.name)!='undefined' ){
+	  document.getElementById(i).innerHTML=jsonData[i].seg.name
+      }else{
+	document.getElementById(i).innerHTML=jsonData[i].junction;
+      }
     }
 }
 
-//ajoute la jonction b (ou le clone lead par la jonction b) dans le clone lead par a
+var vjposition=false;
+var positionV=new Array(150);
+var positionJ=new Array(150);
+for (var i = 0; i<150;  i++){
+  positionV[i]=0;
+  positionJ[i]=0;
+}
+
+function initVJposition(){
+  
+  var x=0;
+  var y=0;
+  for(var i=0 ;i<sizeMap; i++){
+
+    
+    if ( typeof(jsonData[i].seg) != 'undefined' && typeof(jsonData[i].seg.V) != 'undefined' ){
+      if ( positionV[jsonData[i].seg.V[0]] == 0){
+	x+=120;
+	positionV[jsonData[i].seg.V[0]]=x;
+	document.getElementById("log").innerHTML+="<br>x"+x;
+      }
+       if ( positionJ[jsonData[i].seg.J[0]] == 0){
+	y+=120;
+	positionJ[jsonData[i].seg.J[0]]=y;
+	document.getElementById("log").innerHTML+="<br>y"+y;
+      }
+    }
+  }
+}
+
+function focusIn(cloneID){
+  nodes[cloneID].focus = true;
+  document.getElementById(cloneID).style.background="#455565";
+  node.style("fill", function(i) { return color(i); })
+  
+  document.getElementById("log").innerHTML+="<br>[element id "+cloneID+" / "+jsonData[cloneID].junction+"] focus on // size = "+jsonData[cloneID].size[t];
+  $("#log").scrollTop(100000000000000);
+}
+
+function focusOut(cloneID){
+  nodes[cloneID].focus = false;
+  document.getElementById(cloneID).style.background="";
+  node.style("fill", function(i) { return color(i); })
+}
+
+//ajoute la jonction b (ou le clone lead par la jonction b) dans le clone lead par a// TODO(gerer les cas speciaux)
 function merge(a, b){
   var nlist = nodes[a].clones+nodes[b].clones;
   nodes[a].clones = nlist;
   nodes[b].clones=[];
 }
 
-//libere la jonction b du clone lead par a
+//libere la jonction b du clone lead par a TODO
 function split(a, b){
   if (a==b) return
     
@@ -69,7 +131,7 @@ function split(a, b){
   }
   
 }
-
+/*
 //custom drag
 var node_drag = d3.behavior.drag()
         .on("dragstart", dragstart)
@@ -92,7 +154,7 @@ var node_drag = d3.behavior.drag()
       d.drag=0;
       force.alpha(.2);
     }
-    
+    */
 //la visu
 var vis = d3.select("#visu").append("svg:svg")
     .attr("width", w)
@@ -123,15 +185,22 @@ var node = vis.selectAll("circle.node")
 	$("#log").scrollTop(100000000000000)
     })
     .on("mouseover", function(d,i){
-      document.getElementById("log").innerHTML+="<br>[element id "+i+" / "+jsonData[i].junction+"] focus on // size = "+jsonData[i].size[t];
-      $("#log").scrollTop(100000000000000);
+      focusIn(i);
+    })
+     .on("mouseout", function(d,i){
+      focusOut(i);
     })
 ;
 
 function tick(e) {
     updateRadius()
+    if (vjposition==true){
+      node.each(vjSplit());
+    }
+    else {
+      node.each(sizeSplit());
+    }
     node
-      .each(sizeSplit())
       .each(collide())
       .attr("cx", function(d) { return d.x; })
       .attr("cy", function(d) { return d.y; })
@@ -148,6 +217,18 @@ function updateRadius(){
     }
 }
 
+function vjSplit(){
+    var coef = 0.005
+    return function(d) {
+      if ( typeof(jsonData[d].seg) != 'undefined' && typeof(jsonData[d].seg.V) != 'undefined' ){
+	d.x+=coef*(positionV[jsonData[d].seg.V[0]]-d.x);
+	d.y+=coef*(positionJ[jsonData[d].seg.J[0]]-d.y);
+      }else{
+	d.x=0;
+      }
+    };
+}
+
 function sizeSplit() {
   var coef = 0.005
     return function(d) {
@@ -159,13 +240,13 @@ function sizeSplit() {
 	  if (jsonData[d].size[t] <200){
 	      d.x+=coef*(550-d.x);
 	      d.y+=coef*(250-d.y);
-	    }else{
+	  }else{
 	      d.x+=coef*(950-d.x);
 	      d.y+=coef*(400-d.y);
-	    }
+	  }
 	}
       }
-  };
+    };
 }
 
 
@@ -213,7 +294,7 @@ function changeT(nt){
 }
 
 function updateVis(){
-  for(var i=0 ;i<100; i++){
+  for(var i=0 ;i<sizeMap; i++){
     nodes[i].r1=radius(i);
   }
   vis.selectAll("circle.node")
@@ -231,6 +312,8 @@ function radius(i) {
 }
   
   function color(i) {
+    if (nodes[i].focus==true)
+      return 'grey'
     if (typeof jsonData != "undefined") {
       if( jsonData[i].size[t] <30) return 'blue'
       if( jsonData[i].size[t] <50) return 'green'
@@ -241,5 +324,18 @@ function radius(i) {
     }
   }
   
-
-
+  function displayAlign(){
+    $("#align").animate({ height: "show", display: "show"}, 200 ); 
+  }
+  
+  function hideAlign(){
+    $("#align").animate({ height: "hide", display: "none"}, 200 ); 
+  }
+  
+  function changeSplit(){
+    if (vjposition==true) vjposition=false;
+    else vjposition=true;
+    force.alpha(.2);
+  }
+  
+  

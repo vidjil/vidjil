@@ -109,7 +109,6 @@ def fuseList(l1, l2):
     if key in dataseg :
       junct.segment = dataseg[key]
     out.append(junct)
-    print dico[key]
   return out
   
   
