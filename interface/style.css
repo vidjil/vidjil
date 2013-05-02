@@ -1,0 +1,60 @@
+html{
+  height: 100%;
+  padding: 0px;
+  margin: 0px;
+}
+
+body {
+  background: none repeat scroll 0 0 #101010;
+  color: white;
+  font-family: Arial, Helvetica, Sans-serif;
+  font-size: 14px;
+  height : 100%;
+}
+
+#topbar {
+  width: 100%;
+  height : auto;
+  background : #152525;
+}
+
+#mid-container {
+  height: -moz-calc(100% - 100px);
+  height: -webkit-calc(100% - 100px);
+  height: calc(100% - 100px)
+  width : 100%;
+  background : #202010;
+}
+
+#left-container {
+  width : 300px;
+  height : 100%;
+  background : #352515;
+  overflow-y : scroll;
+  overflow-x : hidden;
+  float : left;
+  font-family : monaco,terminal,courier,system; 
+  font-size: 12px;
+}
+
+#visu {
+  background : #201020;
+  display : inline-block;
+  height : 100%;
+  width: -moz-calc(100% - 300px);
+  width: -webkit-calc(100% - 300px);
+  width: calc(100% - 300px);
+
+}
+
+#bot-container {
+  width : 100%%;
+  position : fixed;
+  bottom :10px;
+  background : #102020;
+  padding : 5px;
+}
+
+#align {
+  height : 100px;
+}
