@@ -2,7 +2,7 @@
 
 import sys
 
-# Parse lines such as:
+# Parse lines in IMGT/GENE-DB such as:
 # >M12949|TRGV1*01|Homo sapiens|ORF|...
 
 open_files = {}
