@@ -2,6 +2,7 @@ html{
   height: 100%;
   padding: 0px;
   margin: 0px;
+  min-width: 1252px
 }
 
 body {
@@ -10,6 +11,8 @@ body {
   font-family: Arial, Helvetica, Sans-serif;
   font-size: 14px;
   height : 100%;
+  margin-bottom:0px;
+  margin-top:0px;
 }
 
 #topbar {
@@ -19,9 +22,9 @@ body {
 }
 
 #mid-container {
-  height: -moz-calc(100% - 100px);
-  height: -webkit-calc(100% - 100px);
-  height: calc(100% - 100px)
+  height: -moz-calc(100% - 80px);
+  height: -webkit-calc(100% - 80px);
+  height: calc(100% - 80px)
   width : 100%;
   background : #202010;
 }
@@ -58,3 +61,30 @@ body {
 #align {
   height : 100px;
 }
+
+.button {
+    cursor:pointer;
+    color: rgb(255, 255, 255);
+    font-size: 14px;
+    padding: 3px;
+    text-shadow: 0px 0px 0px rgba(30, 30, 30, 0.8);
+    -webkit-border-radius: 4px;
+    -moz-border-radius: 4px;
+    border-radius: 4px;
+    background: rgb(139, 139, 137);
+    background: -moz-linear-gradient(125deg, rgb(139, 139, 137) 35%, rgb(9, 5, 7) 100%);
+    background: -webkit-linear-gradient(125deg, rgb(139, 139, 137) 35%, rgb(9, 5, 7) 100%);
+    background: -o-linear-gradient(125deg, rgb(139, 139, 137) 35%, rgb(9, 5, 7) 100%);
+    background: -ms-linear-gradient(125deg, rgb(139, 139, 137) 35%, rgb(9, 5, 7) 100%);
+    background: linear-gradient(35deg, rgb(139, 139, 137) 35%, rgb(9, 5, 7) 100%);
+    -webkit-box-shadow: 0px 0px 0px rgba(50, 50, 50, 0.65);
+    -moz-box-shadow:    0px 0px 0px rgba(50, 50, 50, 0.65);
+    box-shadow:         0px 0px 0px rgba(50, 50, 50, 0.65);
+    margin-right:10px;
+    margin-left:10px;
+}
+
+circle:hover {
+  cursor:pointer;
+}
+

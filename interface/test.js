@@ -1,6 +1,6 @@
 
  /* ne marche pas en local (securité)
- * 
+ * chargement Json
 var req = new XMLHttpRequest();
   req.open("GET", "data.Json", true); 
   req.onreadystatechange = getData; 
@@ -31,14 +31,17 @@ oFReader.onload = function (oFREvent) {
   document.getElementById("log").innerHTML+="<br>génération des clones";
   initVJposition();
   document.getElementById("log").innerHTML+="<br>calcul des position VJ";
+  initTimeBar();
+  document.getElementById("log").innerHTML+="<br>initialisation timebar";
   updateVis();
   force.start();
   document.getElementById("log").innerHTML+="<br>start visu";
+  $("#log").scrollTop(100000000000000);
 };
 
 var jsonData
 var sizeMap=100; 
-var w = 1200,
+var w = 1100,
     h = 600,
     padding = 5,
     fill = d3.scale.category10(),
@@ -46,10 +49,10 @@ var w = 1200,
     t = 0,
     drag=0;
     
-    
+
+//
 function initClones(data) {
   var divParent   = document.getElementById("listJ");
-  var div = document.createElement('div');
 
    for(var i=0 ;i<sizeMap; i++){
       var n = [i]
@@ -67,6 +70,21 @@ function initClones(data) {
       }else{
 	document.getElementById(i).innerHTML=jsonData[i].junction;
       }
+    }
+}
+
+//ajoute les boutons de changement de point de suivi
+function initTimeBar(){
+    var divParent = document.getElementById("timebar");
+    divParent.innerHTML="";
+    for(var i=0 ;i<jsonData[0].size.length; i++){
+      var a = document.createElement('a');
+      a.time=i;
+      a.id="test";
+      a.className="button";
+      a.onclick= function(){ changeT(this.time); }
+      a.innerHTML="Time "+i;
+      divParent.appendChild(a);
     }
 }
 
@@ -89,26 +107,33 @@ function initVJposition(){
       if ( positionV[jsonData[i].seg.V[0]] == 0){
 	x+=120;
 	positionV[jsonData[i].seg.V[0]]=x;
-	document.getElementById("log").innerHTML+="<br>x"+x;
       }
        if ( positionJ[jsonData[i].seg.J[0]] == 0){
 	y+=120;
 	positionJ[jsonData[i].seg.J[0]]=y;
-	document.getElementById("log").innerHTML+="<br>y"+y;
       }
     }
   }
 }
 
+//renvoye la taille d'un clone ( somme des tailles des jonctions qui le compose
+function getSize(cloneID){
+  var r=0;
+  for(var j=0 ;j<nodes[cloneID].clones.length; j++){
+    r += jsonData[nodes[cloneID].clones[j]].size[t];}
+  return r;
+}
+
+//libere le clone du focus
 function focusIn(cloneID){
   nodes[cloneID].focus = true;
   document.getElementById(cloneID).style.background="#455565";
   node.style("fill", function(i) { return color(i); })
-  
-  document.getElementById("log").innerHTML+="<br>[element id "+cloneID+" / "+jsonData[cloneID].junction+"] focus on // size = "+jsonData[cloneID].size[t];
+  document.getElementById("log").innerHTML+="<br>[element id "+cloneID+" / "+jsonData[cloneID].junction+"] focus on // size = "+getSize(cloneID);
   $("#log").scrollTop(100000000000000);
 }
 
+//poitionne le focus sur un clone
 function focusOut(cloneID){
   nodes[cloneID].focus = false;
   document.getElementById(cloneID).style.background="";
@@ -155,12 +180,13 @@ var node_drag = d3.behavior.drag()
       force.alpha(.2);
     }
     */
-//la visu
+
+//initialisation du cadre
 var vis = d3.select("#visu").append("svg:svg")
     .attr("width", w)
     .attr("height", h);
 
-
+//initialisation du modele physique
 var force = d3.layout.force()
     .gravity(0)
     .theta(0.8)
@@ -169,7 +195,8 @@ var force = d3.layout.force()
     .nodes(nodes)
     .on("tick", tick)
     .size([w, h]);
-    
+
+//initialisation des nodes
 var node = vis.selectAll("circle.node")
     .data(nodes)
     .enter().append("svg:circle")
@@ -192,6 +219,7 @@ var node = vis.selectAll("circle.node")
     })
 ;
 
+//fonction effectué 30x par seconde
 function tick(e) {
     updateRadius()
     if (vjposition==true){
@@ -205,9 +233,9 @@ function tick(e) {
       .attr("cx", function(d) { return d.x; })
       .attr("cy", function(d) { return d.y; })
       .attr("r" , function(d) { return d.r2; })
- 
 }
 
+//mise a jour progressive des radius (evite les problemes physiques liés a des changement de taille brutaux)
 function updateRadius(){
     for(var i=0 ;i<nodes.length; i++){
       if( nodes[i].r1 != nodes[i].r2){
@@ -217,27 +245,33 @@ function updateRadius(){
     }
 }
 
+//méthode de répartition des clones en fonction des genes V et J
 function vjSplit(){
     var coef = 0.005
     return function(d) {
+      if (typeof jsonData != "undefined") {
       if ( typeof(jsonData[d].seg) != 'undefined' && typeof(jsonData[d].seg.V) != 'undefined' ){
 	d.x+=coef*(positionV[jsonData[d].seg.V[0]]-d.x);
 	d.y+=coef*(positionJ[jsonData[d].seg.J[0]]-d.y);
       }else{
-	d.x=0;
+	d.y+=coef*5*(20-d.y);
+	d.x+=coef*(550-d.x);
+      }
       }
     };
 }
 
+//méthode de répartition des clones en fonction du radius
 function sizeSplit() {
-  var coef = 0.005
+  var coef = 0.006
     return function(d) {
+      var r=getSize(d);
       if (d.drag != 1){
-	if (jsonData[d].size[t] <50){
+	if (r < 50){
 	  d.x+=coef*(100-d.x);
 	  d.y+=coef*(100-d.y);
 	}else{
-	  if (jsonData[d].size[t] <200){
+	  if (r < 200){
 	      d.x+=coef*(550-d.x);
 	      d.y+=coef*(250-d.y);
 	  }else{
@@ -249,7 +283,7 @@ function sizeSplit() {
     };
 }
 
-
+//résolution des collisions
 function collide() {
   var quadtree = d3.geom.quadtree(nodes);
   return function(d) {
@@ -285,7 +319,7 @@ function collide() {
   };
 }
 
-  
+//changement de point de suivi
 function changeT(nt){
   t=nt;
   document.getElementById("log").innerHTML+="<br>changement de point de suivi > "+nt;
@@ -293,6 +327,7 @@ function changeT(nt){
   updateVis();
 }
 
+//mise a jour de la visualisation
 function updateVis(){
   for(var i=0 ;i<sizeMap; i++){
     nodes[i].r1=radius(i);
@@ -302,28 +337,30 @@ function updateVis(){
   force.alpha(.2);
 }
 
-function radius(i) {
+//retourne le rayon du clone passé en parametre
+function radius(cloneID) {
   if (typeof jsonData != "undefined") {
-    var r=0;
-    for(var j=0 ;j<nodes[i].clones.length; j++){
-      r += jsonData[nodes[i].clones[j]].size[t];}
+    var r=getSize(cloneID);
     return Math.sqrt(r);
   }
 }
   
-  function color(i) {
-    if (nodes[i].focus==true)
+//retourne la couleur du clone passé en parametre
+  function color(cloneID) {
+    if (nodes[cloneID].focus==true)
       return 'grey'
     if (typeof jsonData != "undefined") {
-      if( jsonData[i].size[t] <30) return 'blue'
-      if( jsonData[i].size[t] <50) return 'green'
-      if( jsonData[i].size[t] <100) return 'violet'
-      if( jsonData[i].size[t] <200) return 'yellow'
-      if( jsonData[i].size[t] <400) return 'orange'
+      var r=getSize(cloneID);
+      if( r <30) return 'blue'
+      if( r <50) return 'green'
+      if( r <100) return 'violet'
+      if( r <200) return 'yellow'
+      if( r <400) return 'orange'
       return 'red'
     }
   }
   
+
   function displayAlign(){
     $("#align").animate({ height: "show", display: "show"}, 200 ); 
   }
@@ -332,9 +369,18 @@ function radius(i) {
     $("#align").animate({ height: "hide", display: "none"}, 200 ); 
   }
   
-  function changeSplit(){
-    if (vjposition==true) vjposition=false;
-    else vjposition=true;
+//change la methode de répartition des clones dans la visualisation
+  function changeSplitMethod(){
+    if (vjposition==true){ 
+      vjposition=false;
+      document.getElementById("log").innerHTML+="<br>active sizeSplit";
+      $("#log").scrollTop(100000000000000);
+    }
+    else{ 
+      vjposition=true;
+      document.getElementById("log").innerHTML+="<br>active vjSplit";
+      $("#log").scrollTop(100000000000000);
+    }
     force.alpha(.2);
   }
   
