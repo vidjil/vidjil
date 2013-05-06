@@ -33,6 +33,8 @@ oFReader.onload = function (oFREvent) {
   document.getElementById("log").innerHTML+="<br>calcul des position VJ";
   initTimeBar();
   document.getElementById("log").innerHTML+="<br>initialisation timebar";
+  initCoef();
+  document.getElementById("log").innerHTML+="<br>initialisation coef";
   updateVis();
   force.start();
   document.getElementById("log").innerHTML+="<br>start visu";
@@ -41,7 +43,7 @@ oFReader.onload = function (oFREvent) {
 
 var jsonData
 var sizeMap=100; 
-var w = 1100,
+var w = 1200,
     h = 600,
     padding = 5,
     fill = d3.scale.category10(),
@@ -87,6 +89,23 @@ function initTimeBar(){
       divParent.appendChild(a);
     }
 }
+
+resizeCoef = 1
+
+window.onresize = initCoef;
+function initCoef(){
+ 
+  var resizeW = document.getElementById("visu").offsetWidth/w;
+  var resizeH = document.getElementById("visu").offsetHeight/h;
+
+resizeCoef = resizeW
+  
+  tick();
+    
+  document.getElementById("log").innerHTML+="<br>resize (new coef : "+resizeCoef+")";
+  $("#log").scrollTop(100000000000000);
+
+};
 
 var vjposition=false;
 var positionV=new Array(150);
@@ -183,8 +202,7 @@ var node_drag = d3.behavior.drag()
 
 //initialisation du cadre
 var vis = d3.select("#visu").append("svg:svg")
-    .attr("width", w)
-    .attr("height", h);
+    .attr("id", "svg");
 
 //initialisation du modele physique
 var force = d3.layout.force()
@@ -230,9 +248,9 @@ function tick(e) {
     }
     node
       .each(collide())
-      .attr("cx", function(d) { return d.x; })
-      .attr("cy", function(d) { return d.y; })
-      .attr("r" , function(d) { return d.r2; })
+      .attr("cx", function(d) { return (resizeCoef*d.x); })
+      .attr("cy", function(d) { return (resizeCoef*d.y); })
+      .attr("r" , function(d) { return (resizeCoef*d.r2); })
 }
 
 //mise a jour progressive des radius (evite les problemes physiques liés a des changement de taille brutaux)
