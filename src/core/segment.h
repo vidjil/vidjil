@@ -161,7 +161,7 @@ class FineSegmenter : public Segmenter
   */
   void FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J);
   
-  string toJson();
+  string toJson(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J);
   
 };
 

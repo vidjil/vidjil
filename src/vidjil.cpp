@@ -849,7 +849,7 @@ int main (int argc, char **argv)
 
 	  {
 	    //cout << seg.toJson();
-	    json_data_segment[it->first]=seg.toJson();
+	    json_data_segment[it->first]=seg.toJson(rep_V, rep_D, rep_J);
 	    
 	    // As soon as one representative is segmented
 	    
@@ -951,7 +951,7 @@ int main (int argc, char **argv)
 	    cout << setw(junction_pos) << " " << it->first << " " << junctions_labels[it->first] << endl ;
 
 	    break ;
-	  }
+	  }z
 	  
       }
 
@@ -1048,7 +1048,7 @@ int main (int argc, char **argv)
 	if (seg.isSegmented())
 	  {
 	    //cout << seg.toJson();
-	    json_data_segment[it->first]=seg.toJson();
+	    json_data_segment[it->first]=seg.toJson(rep_V, rep_D, rep_J);
 	    
 	    representatives_this_clone.push_back(seg.getSequence());
 	  }

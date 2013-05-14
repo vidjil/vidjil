@@ -33,8 +33,12 @@
 	  
 	</td><td style="width:auto" id="timebar">
 	  
-	</td><td style="width:200px">
-	  <a class="button" onclick='changeSplitMethod();'>répartition VJ</a> 
+	</td><td style="width:300px">
+	
+	  <a class="button" onclick="changeSplitMethod();">répartition VJ</a> 
+	  <a class="button" onclick="changeColorMethod('V');">V</a>
+	  <a class="button" onclick="changeColorMethod('J');">J</a>
+	  <a class="button" onclick="changeColorMethod(' ');">size</a>
 	</td></tr>
       </table>
       
@@ -45,6 +49,7 @@
 	    
       <span id="left-container">
 	<div id="listJ"></div>
+	<div id="info"></div>
       </span>
 	    
       <!-- VISU -->
@@ -65,7 +70,7 @@
     </div>
 	
 	
-    <div id="log" style="position: fixed;top: 50px;right: 10px;width: 500px; font-family : monaco,terminal,courier,system; height: 150px;overflow-y: scroll;font-size: 14px;background-color: #333044;opacity: 0.5;padding: 10px;">log </div>
+    <div id="log" style="position: fixed; bottom: 50px;right: 10px;width: 500px; font-family : monaco,terminal,courier,system; height: 150px;overflow-y: scroll;font-size: 14px;background-color: #333044;opacity: 0.5;padding: 10px;">log </div>
       
   </body>
       

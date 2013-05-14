@@ -2,7 +2,7 @@ html{
   height: 100%;
   padding: 0px;
   margin: 0px;
-  min-width: 996px
+  min-width: 1252px
 }
 
 body {
@@ -15,7 +15,7 @@ body {
   margin-top:0px;
 }
 
-#topbar {
+#topbar { 
   width: 100%;
   height : auto;
   background : #152525;
@@ -30,11 +30,10 @@ body {
 }
 
 #left-container {
-  width : 300px;
+  width : 330px;
   height : 100%;
   background : #352515;
-  overflow-y : scroll;
-  overflow-x : hidden;
+  overflow-y : none;
   float : left;
   font-family : monaco,terminal,courier,system; 
   font-size: 12px;
@@ -44,14 +43,14 @@ body {
   background : #201020;
   display : inline-block;
   height : 100%;
-  width: -moz-calc(100% - 300px);
-  width: -webkit-calc(100% - 300px);
-  width: calc(100% - 300px);
+  width: -moz-calc(100% - 330px);
+  width: -webkit-calc(100% - 330px);
+  width: calc(100% - 330px);
 
 }
 
 #bot-container {
-  width : 100%%;
+  width : 100%;
   position : fixed;
   bottom :10px;
   background : #102020;
@@ -60,6 +59,14 @@ body {
 
 #align {
   height : 100px;
+}
+
+.listElem{
+  width :300px;
+  margin: auto;
+  padding: 3px;
+  margin: 5px;
+  cursor:pointer;
 }
 
 .button {
@@ -87,4 +94,28 @@ body {
 circle:hover {
   cursor:pointer;
 }
+
+#info{
+  background : #103030;
+  height :100px;
+}
+
+#listJ{
+  height : calc(100% - 100px);
+  height : -webkit-calc(100% - 100px);
+  height : -moz-calc(100% - 100px);
+  overflow-y : scroll;
+  overflow-x : hidden;
+  font-weight: bold;
+  color: #333;
+}
+
+.vjlegend{
+  
+}
+
+.vjlines{
+  stroke-width : 0.5px;
+}
+
 

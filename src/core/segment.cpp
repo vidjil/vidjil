@@ -671,28 +671,28 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
   }
 }
 
-string FineSegmenter::toJson(){
+string FineSegmenter::toJson(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
   
   ostringstream seg_str;
   
   seg_str << " \"seg\" : {";
   seg_str << " \"sequence\" : \""<< sequence << "\" ,"<<endl;
   seg_str << " \"name\" : \""<< code << "\" ,"<<endl;
-  seg_str << " \"V\" : ["<<score_V[0].second;
+  seg_str << " \"V\" : [\""<<rep_V.label(score_V[0].second);
   for (int i=1; i<4; i++){
-      seg_str << ","<<score_V[i].second;
+      seg_str << "\",\""<<rep_V.label(score_V[i].second);
   }
   if (score_D.size()>0){
-    seg_str << "],\n \"D\" : ["<<score_D[0].second;
+    seg_str << "\"],\n \"D\" : [\""<<rep_D.label(score_D[0].second);
       for (int i=1; i<4; i++){
-	seg_str << ","<<score_D[i].second;
+	seg_str << ", \""<<rep_D.label(score_D[i].second);
     }
   }
-  seg_str << "],\n \"J\" : ["<<score_J[0].second;
+  seg_str << "\"],\n \"J\" : [\""<<rep_J.label(score_J[0].second);
     for (int i=1; i<4; i++){
-      seg_str << ","<<score_J[i].second;
+      seg_str << "\",\""<<rep_J.label(score_J[i].second);
   }
-  seg_str << "]}";
+  seg_str << "\"]}";
   
   return seg_str.str();
 }
