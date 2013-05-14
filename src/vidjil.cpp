@@ -581,14 +581,15 @@ int main (int argc, char **argv)
       }
 
     out << endl;
-    out << "  ==> found " << seqs_by_junction.size() << " junctions"
-	<< " in " << nb_segmented << " segments"
-        << " (" << setprecision(3) << 100 * (float) nb_segmented / nb_total_reads << "%)  " 
-        << " (" << too_short_for_the_junction << " too short, "
-	<< setprecision(3) << 100 * (float) (nb_segmented - too_short_for_the_junction) / nb_total_reads << "% remaining)  " << endl 
+    out << "  ==> segmented " << nb_segmented << " reads"
+	<< " (" << setprecision(3) << 100 * (float) nb_segmented / nb_total_reads << "%)" 
+	<< endl ;
+
+    out << "  ==> found " << seqs_by_junction.size() << " " << w << "-junctions"
+	<< " in " << (nb_segmented - too_short_for_the_junction) << " segments"
+	<< " (" << setprecision(3) << 100 * (float) (nb_segmented - too_short_for_the_junction) / nb_total_reads << "%)"
 	<< " inside " << nb_total_reads << " sequences" << endl ;
   
-
 
     for (int i=0; i<STATS_SIZE; i++)
       out << "   " << left << setw(20) << segmented_mesg[i] << " -> " << stats_segmented[i] << endl ;
