@@ -77,7 +77,7 @@ function initClones(data) {
       }else{
 	document.getElementById(i).innerHTML=jsonData[i].junction;
       }
-      document.getElementById(i).style.background=color(i);
+     document.getElementById(i).style.background=color(i);
     }
 }
 
@@ -116,13 +116,16 @@ function initCoef(){
 
 };
 
-
+var leg, lines;
 
 function displayLegend(data){
-  var leg = vis.selectAll("text").data(data);
+  leg = vis.selectAll("text").data(data);
   leg.enter().append("text");
-  leg.exit().remove();
+  leg.exit()
+    .remove();
   leg
+    .transition()
+    .duration(1000)
     .attr("x", function(d) { 
       if (d.cx<5) return resizeCoef*(d.cx+20);
       else return resizeCoef*d.cx;
@@ -135,10 +138,13 @@ function displayLegend(data){
     .attr("class", "vjLegend")
     .attr("fill", function (d) { return colorVJ[d.label]; });
     
-  var lines = vis.selectAll("line").data(data);
+  lines = vis.selectAll("line").data(data);
   lines.enter().append("line");
-  lines.exit().remove();
+  lines.exit()    
+    .remove();
   lines
+    .transition()
+    .duration(1000)
     .attr("x1", function(d) { return resizeCoef*d.cx; })
     .attr("x2", function(d) { 
       if (d.cx<5) return 5000;
@@ -481,7 +487,10 @@ function updateVis(){
 }
 
 function updateLook(){
-  node.style("fill", function(i) { return color(i); } )
+  node
+  .transition()
+  .duration(1500)
+  .style("fill", function(i) { return color(i); } )
   node.style("stroke", function(i) { return stroke(i); } )
   for(var i=0 ;i<sizeMap; i++){
     document.getElementById(i).style.background=color(i);
