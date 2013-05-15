@@ -44,8 +44,8 @@ oFReader.onload = function (oFREvent) {
 
 var jsonData
 var sizeMap=100; 
-var w = 1200,
-    h = 600,
+var w = 1400,
+    h = 700,
     padding = 5,
     fill = d3.scale.category10(),
     nodes = d3.range(sizeMap).map(Object),
@@ -103,14 +103,16 @@ function initCoef(){
  
   var resizeW = document.getElementById("visu").offsetWidth/w;
   var resizeH = document.getElementById("visu").offsetHeight/h;
-
+  document.getElementById("svg").style.width=document.getElementById("visu").offsetWidth+"px";
+  document.getElementById("svg").style.height=document.getElementById("visu").offsetHeight+"px";
+  
   resizeCoef = resizeW
   
   if (vjposition==true)
   updateLegend();
   
   tick();
-    
+
   document.getElementById("log").innerHTML+="<br>resize (new coef : "+resizeCoef+")";
   $("#log").scrollTop(100000000000000);
 
@@ -165,7 +167,7 @@ function updateLegend(){
       if (d.cx<5) return resizeCoef*(d.cx+20);
       else return resizeCoef*d.cx;
     })
-    .attr("y", function(d) { 
+    .attr("y", function(d) {
       if (d.cy<5) return resizeCoef*(d.cy+20);
       else return resizeCoef*d.cy;
     });
@@ -207,41 +209,48 @@ function initVJposition(){
   for(var i=0 ;i<sizeMap; i++){
 
     if ( typeof(jsonData[i].seg) != 'undefined' && typeof(jsonData[i].seg.V) != 'undefined' ){
-      if (typeof( positionV[jsonData[i].seg.V[0]] ) == 'undefined'){
-	x+=120;
+      if (typeof( positionV[jsonData[i].seg.V[0]] ) == 'undefined'){	
 	vmap[sizeV]=jsonData[i].seg.V[0];
 	sizeV++;
+	x+=120;
 	positionV[jsonData[i].seg.V[0]]=x;
-	vjData[n]={};
-	vjData[n].cx=x;
-	vjData[n].cy=0;
-	vjData[n].label=jsonData[i].seg.V[0];
-	n++;
       }
        if (typeof( positionJ[jsonData[i].seg.J[0]] ) == 'undefined'){
-	y+=120;
 	jmap[sizeJ]=jsonData[i].seg.J[0];
 	sizeJ++;
+	y+=120;
 	positionJ[jsonData[i].seg.J[0]]=y;
-	vjData[n]={};
-	vjData[n].cx=0;
-	vjData[n].cy=y;
-	vjData[n].label=jsonData[i].seg.J[0];
-	n++;
       }
     }
   }
   
+  vmap.sort();
+  jmap.sort();
+  
   for (var i=0; i<sizeV; i++){
     colorVJ[vmap[i]]="rgb("+Math.floor((colorV_begin[0]+(i/sizeV)*(colorV_end[0]-colorV_begin[0] )))+
 			","+Math.floor((colorV_begin[1]+(i/sizeV)*(colorV_end[1]-colorV_begin[1] )))+
-			","+Math.floor((colorV_begin[2]+(i/sizeV)*(colorV_end[2]-colorV_begin[2] )))+")"
+			","+Math.floor((colorV_begin[2]+(i/sizeV)*(colorV_end[2]-colorV_begin[2] )))+")";
+    
+    positionV[vmap[i]]=140+i*120;
+    vjData[n]={};
+    vjData[n].cx=140+i*120;
+    vjData[n].cy=0;
+    vjData[n].label=vmap[i];
+    n++;
   }
   
   for (var i=0; i<sizeJ; i++){
     colorVJ[jmap[i]]="rgb("+Math.floor((colorJ_begin[0]+(i/sizeJ)*(colorJ_end[0]-colorJ_begin[0] )))+
 			","+Math.floor((colorJ_begin[1]+(i/sizeJ)*(colorJ_end[1]-colorJ_begin[1] )))+
-			","+Math.floor((colorJ_begin[2]+(i/sizeJ)*(colorJ_end[2]-colorJ_begin[2] )))+")"
+			","+Math.floor((colorJ_begin[2]+(i/sizeJ)*(colorJ_end[2]-colorJ_begin[2] )))+")";
+			
+    positionJ[jmap[i]]=140+i*120;
+    vjData[n]={};
+    vjData[n].cx=0;
+    vjData[n].cy=140+i*120;
+    vjData[n].label=jmap[i];
+    n++;
   }
   
 }
@@ -399,8 +408,8 @@ function vjSplit(){
 	d.x+=coef*(positionV[jsonData[d].seg.V[0]]-d.x);
 	d.y+=coef*(positionJ[jsonData[d].seg.J[0]]-d.y);
       }else{
-	d.y+=coef*5*(20-d.y);
-	d.x+=coef*(550-d.x);
+	d.y+=coef*(50-d.y);
+	d.x+=coef*(50-d.x);
       }
       }
     };
