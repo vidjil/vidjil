@@ -101,7 +101,7 @@ bool Segmenter::finishSegmentation()
   
   string seq = getSequence().sequence;
     
-  seg_V = seq.substr(0, left) ;
+  seg_V = seq.substr(0, left+1) ;
   seg_J = seq.substr(right) ;
   left2=0;
   right2=0;
@@ -676,8 +676,12 @@ string FineSegmenter::toJson(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
   ostringstream seg_str;
   
   seg_str << " \"seg\" : {";
-  seg_str << " \"sequence\" : \""<< sequence << "\" ,"<<endl;
+  seg_str << " \"sequence\" : \""<< sequence << "\","<<endl;
   seg_str << " \"name\" : \""<< code << "\" ,"<<endl;
+  seg_str << " \"r1\" : "<< right << ","<<endl;
+  seg_str << " \"r2\" : "<< right2 << ","<<endl;
+  seg_str << " \"l1\" : "<< left << ","<<endl;
+  seg_str << " \"l2\" : "<< left2 << ","<<endl;
   seg_str << " \"V\" : [\""<<rep_V.label(score_V[0].second);
   for (int i=1; i<4; i++){
       seg_str << "\",\""<<rep_V.label(score_V[i].second);

@@ -6,20 +6,20 @@
 	<meta charset="utf-8">
 	<title>maquette </title>
 	<link rel="stylesheet" type="text/css" href="style.css">  
-	<script src='menu.js'></script>
 	<script src='http://d3js.org/d3.v2.js'></script>
 	<script src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script src='segmenter.js'></script>
 	
   </head>
 
   <body>
-  
-    <!-- TOPBAR -->
+ 
+    <div id="mid-container">
+      <!-- LEFT-CONTAINER -->
+	    
+      <span id="left-container">
       
-    <div id="topbar">
-    
-      <table style="width:100%">
-	<tr><td style="width:400px">
+	<div id="menu">
 	
 	  <form name="uploadForm">
 	    <table>
@@ -31,32 +31,42 @@
 	    </table>
 	  </form>
 	  
-	</td><td style="width:auto" id="timebar">
-	  
-	</td><td style="width:300px">
-	
-	  <a class="button" onclick="changeSplitMethod();">répartition VJ</a> 
-	  <a class="button" onclick="changeColorMethod('V');">V</a>
-	  <a class="button" onclick="changeColorMethod('J');">J</a>
-	  <a class="button" onclick="changeColorMethod(' ');">size</a>
-	</td></tr>
-      </table>
-      
-    </div>
-	
-    <div id="mid-container">
-      <!-- LEFT-CONTAINER -->
+	  <table style="width:100%">
+	    <tr>
+	    <td style="width:auto" id="timebar">
+	    </td></tr>
 	    
-      <span id="left-container">
+	    <td style="width:220px">
+	      methode
+	      <a class="button" onclick="changeSplitMethod('vj1');">VJ1</a> 
+	      <a class="button" onclick="changeSplitMethod('vj2');">VJ2</a> 
+	      <a class="button" onclick="changeSplitMethod(' ');">size</a> 
+	    </td></tr>
+	    
+	    <td style="width:180px">
+	    color
+	      <a class="button" onclick="changeColorMethod('V');">V</a>
+	      <a class="button" onclick="changeColorMethod('J');">J</a>
+	      <a class="button" onclick="changeColorMethod(' ');">size</a>
+	    </td></tr>
+	    
+	    <td style="width:30px">
+	      <a class="button" onclick="showlog();">log</a>
+	    </td></tr>
+	  </table>
+	  
+	</div>
 	<div id="listJ"></div>
 	<div id="info"></div>
       </span>
 	    
       <!-- VISU -->
-		
+      <span id="visu2" onmouseover="hideAlign()">
+	<script type="text/javascript" src="graph.js"> </script>
+      </span>
+      
       <span id="visu" onmouseover="hideAlign()">
       	<script type="text/javascript" src="test.js"> </script>
-	
       </span>
     
     </div>
@@ -64,13 +74,16 @@
     <!-- BOT-CONTAINER -->
 	  
     <div id="bot-container" onmouseover="displayAlign()" >
-      bot bot bot bot bot bot bot bot bot bot bot
+      <div id="focus-sequence"> > </div>
+ 
+      
       <div id="align" style="display:none">
+	<ul id="listSeq"></ul>
       </div>
     </div>
 	
 	
-    <div id="log" style="position: fixed; bottom: 50px;right: 10px;width: 500px; font-family : monaco,terminal,courier,system; height: 150px;overflow-y: scroll;font-size: 14px;background-color: #333044;opacity: 0.5;padding: 10px;">log </div>
+    <div id="log" style="display:none; position: fixed; top: 50px;right: 10px;width: 500px; font-family : monaco,terminal,courier,system; height: 150px;overflow-y: scroll;font-size: 14px;background-color: #333044;opacity: 0.5;padding: 10px;">log </div>
       
   </body>
       

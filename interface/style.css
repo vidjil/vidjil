@@ -15,6 +15,10 @@ body {
   margin-top:0px;
 }
 
+ul {
+list-style-type: none;
+}
+
 #topbar { 
   width: 100%;
   height : auto;
@@ -22,15 +26,16 @@ body {
 }
 
 #mid-container {
-  height: -moz-calc(100% - 80px);
-  height: -webkit-calc(100% - 80px);
-  height: calc(100% - 80px)
+  height: -moz-calc(100% - 10px);
+  height: -webkit-calc(100% - 10px);
+  height: calc(100% - 10px);
   width : 100%;
   background : #202010;
 }
 
 #left-container {
-  width : 330px;
+  height:100%;
+  width : 380px;
   height : 100%;
   background : #352515;
   overflow-y : none;
@@ -42,27 +47,39 @@ body {
 #visu {
   background : #201020;
   display : inline-block;
-  height : 100%;
-  width: -moz-calc(100% - 330px);
-  width: -webkit-calc(100% - 330px);
-  width: calc(100% - 330px);
-
+  height : 70%;
+  width: -moz-calc(100% - 380px);
+  width: -webkit-calc(100% - 380px);
+  width: calc(100% - 380px);
+}
+#visu2 {
+  background : #101020;
+  display : inline-block;
+  height : 30%;
+  width: -moz-calc(100% - 380px);
+  width: -webkit-calc(100% - 380px);
+  width: calc(100% - 380px);
 }
 
 #bot-container {
   width : 100%;
   position : fixed;
-  bottom :10px;
+  bottom :0px;
   background : #102020;
   padding : 5px;
 }
 
 #align {
-  height : 100px;
+width: auto;
+height: 100px;
+background-color: #101010;
+overflow: auto;
+margin-left: 380px;
+
 }
 
 .listElem{
-  width :300px;
+  width :350px;
   margin: auto;
   padding: 3px;
   margin: 5px;
@@ -76,49 +93,59 @@ body {
 
 .button {
     cursor:pointer;
-    color: rgb(255, 255, 255);
     font-size: 14px;
     padding: 3px;
     margin :3px;
-    text-shadow: 0px 0px 0px rgba(30, 30, 30, 0.8);
-    background: rgb(139, 139, 137);
-    background: -moz-linear-gradient(125deg, rgb(139, 139, 137) 35%, rgb(9, 5, 7) 100%);
-    background: -webkit-linear-gradient(125deg, rgb(139, 139, 137) 35%, rgb(9, 5, 7) 100%);
-    background: -o-linear-gradient(125deg, rgb(139, 139, 137) 35%, rgb(9, 5, 7) 100%);
-    background: -ms-linear-gradient(125deg, rgb(139, 139, 137) 35%, rgb(9, 5, 7) 100%);
-    background: linear-gradient(35deg, rgb(139, 139, 137) 35%, rgb(9, 5, 7) 100%);
-    -webkit-box-shadow: 0px 0px 0px rgba(50, 50, 50, 0.65);
-    -moz-box-shadow:    0px 0px 0px rgba(50, 50, 50, 0.65);
-    box-shadow:         0px 0px 0px rgba(50, 50, 50, 0.65);
-    margin-right:10px;
-    margin-left:10px;
+    margin-right:5px;
+    margin-left:5px;
+    text-decoration:underline;
+}
+
+.button:hover {
+    cursor: pointer;
+    color: grey;
+    font-weight: bold;
 }
 
 circle:hover {
   cursor:pointer;
 }
 
+#menu{
+  background : #301020;
+  height :200px;
+}
 #info{
-  background : #103030;
+  background : #102020;
   height :100px;
 }
 
 #listJ{
-  height : calc(100% - 100px);
-  height : -webkit-calc(100% - 100px);
-  height : -moz-calc(100% - 100px);
+  height : calc(100% - 300px);
+  height : -webkit-calc(100% - 300px);
+  height : -moz-calc(100% - 300px);
   overflow-y : scroll;
   overflow-x : hidden;
   font-weight: bold;
   color: #333;
 }
 
-.vjlegend{
-  
+.vjLegend{
+  font-weight : bold;
 }
 
-.vjlines{
-  stroke-width : 0.5px;
+.vjline1{
+  stroke-width : 0.6px;
+}
+.vjline2{
+  stroke-width : 0.6px;
+  stroke-dasharray: 2,2;
 }
 
+.sequence-line {
+  font-family: Courier New, monospace;
+  letter-spacing: 0.1em;
+  width: 100%;
+  font-weight: bold;
+}
 

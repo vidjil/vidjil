@@ -952,7 +952,7 @@ int main (int argc, char **argv)
 	    cout << setw(junction_pos) << " " << it->first << " " << junctions_labels[it->first] << endl ;
 
 	    break ;
-	  }z
+	  }
 	  
       }
 

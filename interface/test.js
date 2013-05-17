@@ -71,6 +71,7 @@ function initClones(data) {
       div.className="listElem";
       div.onmouseover = function(){ focusIn(this.id, 0); }
       div.onmouseout= function(){ focusOut(this.id); }
+      div.onclick=function(){ addToSegmenter(this.id); }
       divParent.appendChild(div);
       if ( typeof(jsonData[i].seg)!='undefined' && typeof(jsonData[i].seg.name)!='undefined' ){
 	document.getElementById(i).innerHTML=jsonData[i].seg.name
@@ -108,7 +109,7 @@ function initCoef(){
   
   resizeCoef = resizeW
   
-  if (vjposition==true)
+  if (method!=0)
   updateLegend();
   
   tick();
@@ -158,7 +159,7 @@ function displayLegend(data){
       else return resizeCoef*d.cy;
     })
     .style("stroke", function (d) { return colorVJ[d.label]; })
-    .attr("class", "vjlines");
+    .attr("class", function (d) { return d.class; });
 }
 
 function updateLegend(){
@@ -183,43 +184,52 @@ function updateLegend(){
       else return resizeCoef*d.cy;
     });
 }
+/***************
+ * Variable VJ *
+ ***************/
 
-var colorV_begin=[209,251,22];
-var colorV_end=[255,119,22];
+//dégradé de couleur germline V
+var colorV_begin=[255,241,22];
+var colorV_end=[193,17,118];
 
+//dégradé de couleur germline J
 var colorJ_begin=[199,22,219];
 var colorJ_end=[18,211,211];
-
-var vjposition=false;
-var positionV={};
 var colorVJ={};
+
+//position quadrillage
+var margeVJ=140;
+var stepVJ=120;
+
+var method=0;
+var positionV={};
 var positionJ={};
-var sizeV=0;
-var sizeJ=0;
-var vmap=[];
-var jmap=[];
 var vjData=[];
-var legendData=[];
+
+var positionV2={};
+var positionJ2={};
+var vjData2=[];
 
 function initVJposition(){
   
-  var x=0;
-  var y=0;
+  var sizeV=0;
+  var sizeJ=0;
+  var vmap=[];
+  var jmap=[];
   var n=0;
+  
   for(var i=0 ;i<sizeMap; i++){
 
     if ( typeof(jsonData[i].seg) != 'undefined' && typeof(jsonData[i].seg.V) != 'undefined' ){
       if (typeof( positionV[jsonData[i].seg.V[0]] ) == 'undefined'){	
 	vmap[sizeV]=jsonData[i].seg.V[0];
 	sizeV++;
-	x+=120;
-	positionV[jsonData[i].seg.V[0]]=x;
+	positionV[jsonData[i].seg.V[0]]=0;
       }
        if (typeof( positionJ[jsonData[i].seg.J[0]] ) == 'undefined'){
 	jmap[sizeJ]=jsonData[i].seg.J[0];
 	sizeJ++;
-	y+=120;
-	positionJ[jsonData[i].seg.J[0]]=y;
+	positionJ[jsonData[i].seg.J[0]]=0;
       }
     }
   }
@@ -232,10 +242,11 @@ function initVJposition(){
 			","+Math.floor((colorV_begin[1]+(i/sizeV)*(colorV_end[1]-colorV_begin[1] )))+
 			","+Math.floor((colorV_begin[2]+(i/sizeV)*(colorV_end[2]-colorV_begin[2] )))+")";
     
-    positionV[vmap[i]]=140+i*120;
+    positionV[vmap[i]]=margeVJ+i*stepVJ;
     vjData[n]={};
-    vjData[n].cx=140+i*120;
+    vjData[n].cx=margeVJ+i*stepVJ;
     vjData[n].cy=0;
+    vjData[n].class="vjline1";
     vjData[n].label=vmap[i];
     n++;
   }
@@ -245,12 +256,74 @@ function initVJposition(){
 			","+Math.floor((colorJ_begin[1]+(i/sizeJ)*(colorJ_end[1]-colorJ_begin[1] )))+
 			","+Math.floor((colorJ_begin[2]+(i/sizeJ)*(colorJ_end[2]-colorJ_begin[2] )))+")";
 			
-    positionJ[jmap[i]]=140+i*120;
+    positionJ[jmap[i]]=margeVJ+i*stepVJ;
     vjData[n]={};
     vjData[n].cx=0;
-    vjData[n].cy=140+i*120;
+    vjData[n].cy=margeVJ+i*stepVJ;
+    vjData[n].class="vjline1";
     vjData[n].label=jmap[i];
     n++;
+  }
+  
+  var tmp="";
+  var n2=-1;
+  n=-1;
+  
+  for (var i=0; i<sizeV; i++){
+    var elem = vmap[i].split('*')[0];
+    n++;
+    if (elem!=tmp){
+      tmp=elem;
+      n2++
+      vjData2[n]={};
+      vjData2[n].cx=margeVJ+n2*stepVJ;
+      vjData2[n].cy=0;
+      vjData2[n].label=elem;
+      vjData2[n].class="vjline1";
+    }else{
+      vjData2[n]={};
+      vjData2[n].cx=margeVJ+n2*stepVJ;;
+      vjData2[n].cy=0;
+      vjData2[n].label=elem;
+      vjData2[n].class="vjline2";
+      vjData[n].class="vjline2";
+    }
+    positionV2[vmap[i]]=margeVJ+n2*stepVJ;
+  }
+  
+  for (var i=0; i<=n; i++){
+    colorVJ[vjData2[i].label]="rgb("+Math.floor((colorV_begin[0]+(i/n)*(colorV_end[0]-colorV_begin[0] )))+
+			","+Math.floor((colorV_begin[1]+(i/n)*(colorV_end[1]-colorV_begin[1] )))+
+			","+Math.floor((colorV_begin[2]+(i/n)*(colorV_end[2]-colorV_begin[2] )))+")";
+			
+  }
+  n2=-1;
+  for (var i=0; i<sizeJ; i++){
+    var elem = jmap[i].split('*')[0];
+    n++;
+    if (elem!=tmp){
+      tmp=elem;
+      n2++
+      vjData2[n]={};
+      vjData2[n].cx=0;
+      vjData2[n].cy=margeVJ+n2*stepVJ;
+      vjData2[n].label=elem;
+      vjData2[n].class="vjline1";
+    }else{
+      vjData2[n]={};
+      vjData2[n].cx=0;
+      vjData2[n].cy=margeVJ+n2*stepVJ;
+      vjData2[n].label=elem;
+      vjData2[n].class="vjline2";
+      vjData[n].class="vjline2";
+    }
+    positionJ2[jmap[i]]=margeVJ+n2*stepVJ;
+  }
+  
+  for (var i=0; i<=n2; i++){
+    colorVJ[vjData2[i+n-n2].label]="rgb("+Math.floor((colorJ_begin[0]+(i/n2)*(colorJ_end[0]-colorJ_begin[0] )))+
+			","+Math.floor((colorJ_begin[1]+(i/n2)*(colorJ_end[1]-colorJ_begin[1] )))+
+			","+Math.floor((colorJ_begin[2]+(i/n2)*(colorJ_end[2]-colorJ_begin[2] )))+")";
   }
   
 }
@@ -272,13 +345,14 @@ function focusIn(cloneID, move){
     var position = p.position();
     var position2 = $('#listJ').scrollTop();
     document.getElementById("log").innerHTML+="<br>"+position2;
-    $('#listJ').animate({scrollTop: position2+position.top-135}, 500);
+    $('#listJ').animate({scrollTop: position2+position.top-235}, 500);
   }
   updateLook();
-  document.getElementById(cloneID).style.background='white';
-  document.getElementById(cloneID).style.color='#999';
-  
-  
+  document.getElementById(cloneID).style.border='white';
+  document.getElementById(cloneID).style.borderStyle='solid';
+  document.getElementById(cloneID).style.padding='0px';
+  document.getElementById(cloneID).style.color='white';
+
   document.getElementById("log").innerHTML+="<br>[element id "+cloneID+" / "+jsonData[cloneID].junction+"] focus on // size = "+getSize(cloneID);
   $("#log").scrollTop(100000000000000);
 }
@@ -286,7 +360,9 @@ function focusIn(cloneID, move){
 
 function focusOut(cloneID){
   nodes[cloneID].focus = false;
-  document.getElementById(cloneID).style.background=color(cloneID);
+  document.getElementById(cloneID).style.border='';
+  document.getElementById(cloneID).style.borderStyle='';
+  document.getElementById(cloneID).style.padding='';
   document.getElementById(cloneID).style.color='';
   
   updateLook();
@@ -360,9 +436,7 @@ var node = vis.selectAll("circle.node")
     .call(force.drag)
     //.call(node_drag)
     .on("click", function(d,i) { 
-	merge(1,2);
-	updateVis();
-	$("#log").scrollTop(100000000000000)
+      addToSegmenter(i);
     })
     .on("mouseover", function(d,i){
       focusIn(i, 1);
@@ -375,7 +449,7 @@ var node = vis.selectAll("circle.node")
 //fonction effectué 30x par seconde
 function tick(e) {
     updateRadius()
-    if (vjposition==true){
+    if (method!=0){
       node.each(vjSplit());
     }
     else {
@@ -398,15 +472,19 @@ function updateRadius(){
     }
 }
 
-
 //méthode de répartition des clones en fonction des genes V et J
 function vjSplit(){
     var coef = 0.005
     return function(d) {
       if (typeof jsonData != "undefined") {
       if ( typeof(jsonData[d].seg) != 'undefined' && typeof(jsonData[d].seg.V) != 'undefined' ){
-	d.x+=coef*(positionV[jsonData[d].seg.V[0]]-d.x);
-	d.y+=coef*(positionJ[jsonData[d].seg.J[0]]-d.y);
+	if (method==1){
+	  d.x+=coef*(positionV[jsonData[d].seg.V[0]]-d.x);
+	  d.y+=coef*(positionJ[jsonData[d].seg.J[0]]-d.y);
+	}else{
+	  d.x+=coef*(positionV2[jsonData[d].seg.V[0]]-d.x);
+	  d.y+=coef*(positionJ2[jsonData[d].seg.J[0]]-d.y);
+	} 
       }else{
 	d.y+=coef*(50-d.y);
 	d.x+=coef*(50-d.x);
@@ -510,7 +588,7 @@ function updateLook(){
 function radius(cloneID) {
   if (typeof jsonData != "undefined") {
     var r=getSize(cloneID);
-    return Math.sqrt(r);
+    return 1.5*Math.sqrt(r);
   }
 }
 
@@ -526,54 +604,64 @@ function changeColorMethod(method){
     if (typeof jsonData != "undefined") {
       
       if (colorMethod=='V'){
-	if (typeof jsonData[cloneID].seg !="undefined" ){
+	return colorV(cloneID)
+      }
+      if (colorMethod=='J'){
+	return colorJ(cloneID)
+      }
+      return colorSize(cloneID);
+    }
+  }
+  
+  function colorV(cloneID){
+    	if (typeof jsonData[cloneID].seg !="undefined" ){
 	  return colorVJ[jsonData[cloneID].seg.V[0]];
 	}	
 	return "rgb(20,226,89)"
-      }
-      if (colorMethod=='J'){
+  }
+  
+  function colorJ(cloneID){
 	if (typeof jsonData[cloneID].seg !="undefined" ){
 	  return colorVJ[jsonData[cloneID].seg.J[0]];
 	}	
 	return "rgb(20,226,89)"
-      }
-      var r=getSize(cloneID) / 2;
-      return "rgb("+Math.floor(r)+",200,200)"
-    }
   }
+  
+  function colorSize(cloneID){
+    var r=getSize(cloneID) / 2;
+    return "rgb("+Math.floor(r)+",200,200)"
+  }
+  
+  
 //retourne la couleur de la bordure du clone passé en parametre
   function stroke(cloneID) {
     if (nodes[cloneID].focus==true)
-      return 'white';
+      return "white";
     return '';
   }
   
 
-  function displayAlign(){
-    $('#align').animate({ height: "show", display: "show"}, 200 ); 
-  }
-  
-  function hideAlign(){
-    $('#align').stop();
-    $('#align').animate({ height: "hide", display: "none"}, 200 ); 
-  }
-  
-  
 //change la methode de répartition des clones dans la visualisation
-  function changeSplitMethod(){
-    if (vjposition==true){ 
-      vjposition=false;
+  function changeSplitMethod(m){
+    
+    if (m==" "){ 
+      method=0;
       displayLegend([]);
       document.getElementById("log").innerHTML+="<br>active sizeSplit";
       $('#log').scrollTop(100000000000000);
     }
-    else{ 
-      vjposition=true;
+    if (m=="vj1"){ 
+      method=1;
       displayLegend(vjData);
-      document.getElementById("log").innerHTML+="<br>active vjSplit";
+      document.getElementById("log").innerHTML+="<br>active vjSplit1";
+      $('#log').scrollTop(100000000000000);
+    }
+    if (m=="vj2"){ 
+      method=2;
+      displayLegend(vjData2);
+      document.getElementById("log").innerHTML+="<br>active vjSplit2";
       $('#log').scrollTop(100000000000000);
     }
     force.alpha(.2);
   }
-  
   
