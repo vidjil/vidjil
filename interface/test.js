@@ -53,6 +53,8 @@ var w = 1400,
     drag=0;
     
   var colorMethod="V"
+  var useCustomColor=false;
+  var customColor = [];
     
 
 //
@@ -61,23 +63,31 @@ function initClones(data) {
   divParent.innerHTML="";
 
    for(var i=0 ;i<sizeMap; i++){
+     
       var n = [i]
       nodes[i].r1 = 5;
       nodes[i].r2 = 5;
       nodes[i].clones = n;
       nodes[i].focus = false;
+      
       var div = document.createElement('div');
       div.id=i;
       div.className="listElem";
       div.onmouseover = function(){ focusIn(this.id, 0); }
       div.onmouseout= function(){ focusOut(this.id); }
       div.onclick=function(){ addToSegmenter(this.id); }
+      
+      var span = document.createElement('span');
+      span.className = "spancolor";
+      div.onclick=function(){ changeColor(this.id); }
+      
       divParent.appendChild(div);
       if ( typeof(jsonData[i].seg)!='undefined' && typeof(jsonData[i].seg.name)!='undefined' ){
 	document.getElementById(i).innerHTML=jsonData[i].seg.name
       }else{
 	document.getElementById(i).innerHTML=jsonData[i].junction;
       }
+      document.getElementById(i).appendChild(span);
      document.getElementById(i).style.background=color(i);
     }
 }
@@ -594,8 +604,21 @@ function radius(cloneID) {
 
 function changeColorMethod(method){
   colorMethod=method;
-  document.getElementById("log").innerHTML+="<br>change ColorMethod";
+  document.getElementById("log").innerHTML+="<br>change ColorMethod >> "+ method;
   $("#log").scrollTop(100000000000000);
+  updateLook();
+}
+
+function toggleCustomColor(){
+  if (useCustomColor==true) {
+    useCustomColor=false;
+    document.getElementById("log").innerHTML+="<br>stop customColor";
+    $('#log').scrollTop(100000000000000);
+  }else{
+    useCustomColor=true;
+    document.getElementById("log").innerHTML+="<br>active customColor";
+    $('#log').scrollTop(100000000000000);
+  }
   updateLook();
 }
 
@@ -603,6 +626,12 @@ function changeColorMethod(method){
   function color(cloneID) {
     if (typeof jsonData != "undefined") {
       
+      if( useCustomColor==true){
+	if (typeof customColor[cloneID] != "undefined"){
+	  return customColor[cloneID]
+	}
+      }
+	
       if (colorMethod=='V'){
 	return colorV(cloneID)
       }
@@ -613,6 +642,26 @@ function changeColorMethod(method){
     }
   }
   
+var tmpID
+function changeColor(cloneID){
+  document.getElementById("log").innerHTML+="<br>"+cloneID;
+  tmpID=cloneID;
+  document.getElementById('colorSelector').style.display='block';
+   $('#colorSelector').ColorPicker({
+	flat:true,
+
+	onSubmit: function(hsb, hex, rgb, el) {
+		$(el).val(hex);
+		document.getElementById('colorSelector').style.display='none';
+		customColor[tmpID]="#"+hex;
+		document.getElementById("log").innerHTML+="<br>"+tmpID+"//"+customColor[tmpID];
+		$('#log').scrollTop(100000000000000);
+		updateLook();
+	}
+  })
+}
+
+     
   function colorV(cloneID){
     	if (typeof jsonData[cloneID].seg !="undefined" ){
 	  return colorVJ[jsonData[cloneID].seg.V[0]];

@@ -135,11 +135,11 @@ circle:hover {
 }
 
 .vjline1{
-  stroke-width : 0.6px;
+  stroke-width : 0.7px;
 }
 .vjline2{
-  stroke-width : 0.6px;
-  stroke-dasharray: 2,2;
+  stroke-width : 0.5px;
+  stroke-dasharray: 4,4;
 }
 
 .sequence-line {
@@ -147,5 +147,20 @@ circle:hover {
   letter-spacing: 0.1em;
   width: 100%;
   font-weight: bold;
+}
+
+.spancolor{
+  right: 3px;
+  float: right;
+  border: solid;
+  height: 8px;
+  width: 8px;
+}
+
+#colorSelector{
+  position: absolute;
+  left: 388px;
+  top: 195px;
+  display:none;
 }
 
