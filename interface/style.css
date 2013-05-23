@@ -149,12 +149,17 @@ circle:hover {
   font-weight: bold;
 }
 
-.spancolor{
+.colorBox{
   right: 3px;
   float: right;
   border: solid;
   height: 8px;
   width: 8px;
+}
+
+.sizeBox{
+  float: right;
+  margin-right: 5px;
 }
 
 #colorSelector{
@@ -163,4 +168,11 @@ circle:hover {
   top: 195px;
   display:none;
 }
+
+.graphLine{
+ stroke-width : 1px;
+ fill :none;
+}
+
+
 

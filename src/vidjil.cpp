@@ -952,7 +952,7 @@ int main (int argc, char **argv)
 	    cout << setw(junction_pos) << " " << it->first << " " << junctions_labels[it->first] << endl ;
 
 	    break ;
-	  }
+	  } 
 	  
       }
 
@@ -1184,7 +1184,8 @@ int main (int argc, char **argv)
     out << "  ==> " << f_json << endl ;
     ofstream out_json(f_json.c_str()) ;
       
-    out_json <<"[";
+    out_json <<"{ \"total_size\" : ["<<nb_segmented<<"] ,"; 
+    out_json <<"\"junctions\" : [";
     for (list<pair <junction, int> >::const_iterator it = sort_all_junctions.begin(); 
 	     it != sort_all_junctions.end(); ++it) 
 	 {
@@ -1192,7 +1193,7 @@ int main (int argc, char **argv)
 	  {
 	    out_json <<",";
 	  }
-	   
+	
 	 out_json <<" {\"junction\":\""<<it->first<<"\"," <<endl;
 	 out_json <<" \"size\":["<< it->second<<"]"<<endl;
 	 if (json_data_segment.count(it->first) !=0 ){
@@ -1200,7 +1201,7 @@ int main (int argc, char **argv)
 	 }
 	  out_json <<"}";
 	}
-        out_json <<"]";
+        out_json <<"] } ";
     
     delete index ;
     delete junctions;

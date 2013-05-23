@@ -20,21 +20,22 @@
       var li = document.createElement('li');
       li.id="seq"+cloneID;
       li.className="sequence-line";
+      
       var spanV = document.createElement('span');
       spanV.className="V";
       spanV.style.color=colorV(cloneID);
-      spanV.innerHTML=jsonData[cloneID].seg.sequence.substr(0, jsonData[cloneID].seg.l1+1);
+      spanV.innerHTML=junctions[cloneID].seg.sequence.substr(0, junctions[cloneID].seg.l1+1);
       li.appendChild(spanV);
       
       var spanN = document.createElement('span');
       spanN.className="N";
-      spanN.innerHTML=jsonData[cloneID].seg.sequence.substring(jsonData[cloneID].seg.l1+1, jsonData[cloneID].seg.r1);
+      spanN.innerHTML=junctions[cloneID].seg.sequence.substring(junctions[cloneID].seg.l1+1, junctions[cloneID].seg.r1);
       li.appendChild(spanN);
       
       var spanJ = document.createElement('span');
       spanJ.className="J";
       spanJ.style.color=colorJ(cloneID);
-      spanJ.innerHTML=jsonData[cloneID].seg.sequence.substr(jsonData[cloneID].seg.r1);
+      spanJ.innerHTML=junctions[cloneID].seg.sequence.substr(junctions[cloneID].seg.r1);
       li.appendChild(spanJ);
       divParent.appendChild(li);
       

@@ -10,7 +10,7 @@ var req = new XMLHttpRequest();
   { 
     if (req.readyState == 4) 
     { 
-      var jsonData = eval('(' + req.responseText + ')'); 
+      var junctions = eval('(' + req.responseText + ')'); 
     }
   }
 */
@@ -26,13 +26,16 @@ function loadJson() {
 oFReader.onload = function (oFREvent) {
   jsonDataText = oFREvent.target.result;
   jsonData = JSON.parse(jsonDataText);
+  junctions=jsonData.junctions;
   document.getElementById("log").innerHTML+="<br>chargement fichier json";
   initVJposition();
   document.getElementById("log").innerHTML+="<br>calcul des positions VJ";
-  initClones(jsonData);
+  initClones(junctions);
   document.getElementById("log").innerHTML+="<br>génération des clones";
   initTimeBar();
   document.getElementById("log").innerHTML+="<br>initialisation timebar";
+  initGraph();
+  document.getElementById("log").innerHTML+="<br>initialisation graph";
   initCoef();
   document.getElementById("log").innerHTML+="<br>initialisation coef";
   updateVis();
@@ -42,7 +45,8 @@ oFReader.onload = function (oFREvent) {
   $("#log").scrollTop(100000000000000);
 };
 
-var jsonData
+var jsonData;
+var junctions
 var sizeMap=100; 
 var w = 1400,
     h = 700,
@@ -77,17 +81,22 @@ function initClones(data) {
       div.onmouseout= function(){ focusOut(this.id); }
       div.onclick=function(){ addToSegmenter(this.id); }
       
-      var span = document.createElement('span');
-      span.className = "spancolor";
-      div.onclick=function(){ changeColor(this.id); }
+      var span1 = document.createElement('span');
+      span1.className = "colorBox";
+      span1.onclick=function(){ changeColor(this.parentNode.id); }
+      
+      var span2=document.createElement('span')
+      span2.className = "sizeBox";
+      span2.appendChild(document.createTextNode((100*getSize(i)).toFixed(2)+"%"))
       
       divParent.appendChild(div);
-      if ( typeof(jsonData[i].seg)!='undefined' && typeof(jsonData[i].seg.name)!='undefined' ){
-	document.getElementById(i).innerHTML=jsonData[i].seg.name
+      if ( typeof(junctions[i].seg)!='undefined' && typeof(junctions[i].seg.name)!='undefined' ){
+	document.getElementById(i).innerHTML=junctions[i].seg.name
       }else{
-	document.getElementById(i).innerHTML=jsonData[i].junction;
+	document.getElementById(i).innerHTML=junctions[i].junction;
       }
-      document.getElementById(i).appendChild(span);
+      document.getElementById(i).appendChild(span1);
+      document.getElementById(i).appendChild(span2);
      document.getElementById(i).style.background=color(i);
     }
 }
@@ -96,7 +105,7 @@ function initClones(data) {
 function initTimeBar(){
     var divParent = document.getElementById("timebar");
     divParent.innerHTML="";
-    for(var i=0 ;i<jsonData[0].size.length; i++){
+    for(var i=0 ;i<junctions[0].size.length; i++){
       var a = document.createElement('a');
       a.time=i;
       a.id="test";
@@ -107,7 +116,9 @@ function initTimeBar(){
     }
 }
 
-resizeCoef = 1
+resizeCoef = 1;
+var resizeG_W = 1;
+var resizeG_H = 1;
 
 window.onresize = initCoef;
 function initCoef(){
@@ -117,14 +128,20 @@ function initCoef(){
   document.getElementById("svg").style.width=document.getElementById("visu").offsetWidth+"px";
   document.getElementById("svg").style.height=document.getElementById("visu").offsetHeight+"px";
   
+  resizeG_W = document.getElementById("visu2").offsetWidth/g_w;
+  resizeG_H = document.getElementById("visu2").offsetHeight/g_h;
+  document.getElementById("svg2").style.width=document.getElementById("visu2").offsetWidth+"px";
+  document.getElementById("svg2").style.height=document.getElementById("visu2").offsetHeight+"px";
+  
   resizeCoef = resizeW
   
   if (method!=0)
   updateLegend();
+  updateGraph();
   
   tick();
 
-  document.getElementById("log").innerHTML+="<br>resize (new coef : "+resizeCoef+")";
+  document.getElementById("log").innerHTML+="<br>resize (new coef : "+resizeCoef+")<br>  graph coef ("+resizeG_W+"/"+resizeG_H+")";
   $("#log").scrollTop(100000000000000);
 
 };
@@ -230,16 +247,16 @@ function initVJposition(){
   
   for(var i=0 ;i<sizeMap; i++){
 
-    if ( typeof(jsonData[i].seg) != 'undefined' && typeof(jsonData[i].seg.V) != 'undefined' ){
-      if (typeof( positionV[jsonData[i].seg.V[0]] ) == 'undefined'){	
-	vmap[sizeV]=jsonData[i].seg.V[0];
+    if ( typeof(junctions[i].seg) != 'undefined' && typeof(junctions[i].seg.V) != 'undefined' ){
+      if (typeof( positionV[junctions[i].seg.V[0]] ) == 'undefined'){	
+	vmap[sizeV]=junctions[i].seg.V[0];
 	sizeV++;
-	positionV[jsonData[i].seg.V[0]]=0;
+	positionV[junctions[i].seg.V[0]]=0;
       }
-       if (typeof( positionJ[jsonData[i].seg.J[0]] ) == 'undefined'){
-	jmap[sizeJ]=jsonData[i].seg.J[0];
+       if (typeof( positionJ[junctions[i].seg.J[0]] ) == 'undefined'){
+	jmap[sizeJ]=junctions[i].seg.J[0];
 	sizeJ++;
-	positionJ[jsonData[i].seg.J[0]]=0;
+	positionJ[junctions[i].seg.J[0]]=0;
       }
     }
   }
@@ -338,12 +355,13 @@ function initVJposition(){
   
 }
 
-//renvoye la taille d'un clone ( somme des tailles des jonctions qui le compose)
+//renvoye la taille d'un clone(en %) ( somme des tailles des jonctions qui le compose)
 function getSize(cloneID){
   var r=0;
   for(var j=0 ;j<nodes[cloneID].clones.length; j++){
-    r += jsonData[nodes[cloneID].clones[j]].size[t];}
-  return r;
+    r += junctions[nodes[cloneID].clones[j]].size[t];}
+  
+  return (r)/(jsonData.total_size[t]);
 }
 
 
@@ -363,7 +381,7 @@ function focusIn(cloneID, move){
   document.getElementById(cloneID).style.padding='0px';
   document.getElementById(cloneID).style.color='white';
 
-  document.getElementById("log").innerHTML+="<br>[element id "+cloneID+" / "+jsonData[cloneID].junction+"] focus on // size = "+getSize(cloneID);
+  document.getElementById("log").innerHTML+="<br>[element id "+cloneID+" / "+junctions[cloneID].junction+"] focus on // size = "+getSize(cloneID);
   $("#log").scrollTop(100000000000000);
 }
 
@@ -486,14 +504,14 @@ function updateRadius(){
 function vjSplit(){
     var coef = 0.005
     return function(d) {
-      if (typeof jsonData != "undefined") {
-      if ( typeof(jsonData[d].seg) != 'undefined' && typeof(jsonData[d].seg.V) != 'undefined' ){
+      if (typeof junctions != "undefined") {
+      if ( typeof(junctions[d].seg) != 'undefined' && typeof(junctions[d].seg.V) != 'undefined' ){
 	if (method==1){
-	  d.x+=coef*(positionV[jsonData[d].seg.V[0]]-d.x);
-	  d.y+=coef*(positionJ[jsonData[d].seg.J[0]]-d.y);
+	  d.x+=coef*(positionV[junctions[d].seg.V[0]]-d.x);
+	  d.y+=coef*(positionJ[junctions[d].seg.J[0]]-d.y);
 	}else{
-	  d.x+=coef*(positionV2[jsonData[d].seg.V[0]]-d.x);
-	  d.y+=coef*(positionJ2[jsonData[d].seg.J[0]]-d.y);
+	  d.x+=coef*(positionV2[junctions[d].seg.V[0]]-d.x);
+	  d.y+=coef*(positionJ2[junctions[d].seg.J[0]]-d.y);
 	} 
       }else{
 	d.y+=coef*(50-d.y);
@@ -596,19 +614,22 @@ function updateLook(){
 
 //retourne le rayon du clone passé en parametre
 function radius(cloneID) {
-  if (typeof jsonData != "undefined") {
+  if (typeof junctions != "undefined") {
     var r=getSize(cloneID);
-    return 1.5*Math.sqrt(r);
+    return Math.sqrt(10000*r);
   }
 }
 
+//chnage la methode de colorisation ( par V / par / par taille)
 function changeColorMethod(method){
   colorMethod=method;
   document.getElementById("log").innerHTML+="<br>change ColorMethod >> "+ method;
   $("#log").scrollTop(100000000000000);
   updateLook();
+  updateGraph();
 }
 
+//active/désactive les couleurs personalisés
 function toggleCustomColor(){
   if (useCustomColor==true) {
     useCustomColor=false;
@@ -620,11 +641,12 @@ function toggleCustomColor(){
     $('#log').scrollTop(100000000000000);
   }
   updateLook();
+  updateGraph();
 }
 
 //retourne la couleur du clone passé en parametre
   function color(cloneID) {
-    if (typeof jsonData != "undefined") {
+    if (typeof junctions != "undefined") {
       
       if( useCustomColor==true){
 	if (typeof customColor[cloneID] != "undefined"){
@@ -638,10 +660,12 @@ function toggleCustomColor(){
       if (colorMethod=='J'){
 	return colorJ(cloneID)
       }
-      return colorSize(cloneID);
+      return 'grey';
     }
   }
   
+  
+//déclenche l'apparition du colorpicker > choix d'une customColor pour un node
 var tmpID
 function changeColor(cloneID){
   document.getElementById("log").innerHTML+="<br>"+cloneID;
@@ -654,33 +678,30 @@ function changeColor(cloneID){
 		$(el).val(hex);
 		document.getElementById('colorSelector').style.display='none';
 		customColor[tmpID]="#"+hex;
-		document.getElementById("log").innerHTML+="<br>"+tmpID+"//"+customColor[tmpID];
+		document.getElementById("log").innerHTML+="<br>"+tmpID+"/test/"+customColor[tmpID];
 		$('#log').scrollTop(100000000000000);
 		updateLook();
 	}
   })
 }
 
-     
   function colorV(cloneID){
-    	if (typeof jsonData[cloneID].seg !="undefined" ){
-	  return colorVJ[jsonData[cloneID].seg.V[0]];
+    	if (typeof junctions[cloneID].seg !="undefined" ){
+	  if (junctions[cloneID].seg !="0" ){
+	    return colorVJ[junctions[cloneID].seg.V[0]];
+	  }
 	}	
 	return "rgb(20,226,89)"
   }
   
   function colorJ(cloneID){
-	if (typeof jsonData[cloneID].seg !="undefined" ){
-	  return colorVJ[jsonData[cloneID].seg.J[0]];
+	if (typeof junctions[cloneID].seg !="undefined" ){
+	  if (junctions[cloneID].seg !="0" ){
+	    return colorVJ[junctions[cloneID].seg.J[0]];
+	  }
 	}	
 	return "rgb(20,226,89)"
   }
-  
-  function colorSize(cloneID){
-    var r=getSize(cloneID) / 2;
-    return "rgb("+Math.floor(r)+",200,200)"
-  }
-  
   
 //retourne la couleur de la bordure du clone passé en parametre
   function stroke(cloneID) {
