@@ -34,8 +34,8 @@ function displayGraph(data, data_2){
   g_axis.exit()    
     .remove();
     
-    g_graph = vis2.selectAll("path").data(data_2);
-    g_graph.enter().append("path");
+    g_graph = vis2.selectAll("polyline").data(data_2);
+    g_graph.enter().append("polyline");
     g_graph.exit()    
       .remove();
       
@@ -45,15 +45,14 @@ function displayGraph(data, data_2){
 function constructPath(cloneID){
   var tmp=t;
   t=0;
-  var path = "M" + graph_col[0]*resizeG_W +", "
-	    + ( (g_h-axis_y) - scale_x(getSize(cloneID)*1000) ) * resizeG_H +" ";
-
+  var path = Math.floor( graph_col[0]*resizeG_W) +", "
+	    +Math.floor( ( g_h-axis_y - scale_x(getSize(cloneID)*1000) ) * resizeG_H );
       
   for (var i=1; i< graph_col.length; i++){
     t++;
-
-    path += "L" + graph_col[i]*resizeG_W +", "
-	    + ( (g_h-axis_y) - scale_x(getSize(cloneID)*1000) ) * resizeG_H +" ";
+    
+    path += ", "+Math.floor(graph_col[i]*resizeG_W )+", "
+	    +Math.floor( ( g_h-axis_y - scale_x(getSize(cloneID)*1000) ) * resizeG_H );
   }
   t=tmp;
   return path;
@@ -61,6 +60,10 @@ function constructPath(cloneID){
 
 var scale_x;
 
+function updateGraphColor(){
+    g_graph
+    .style("stroke", function(d) { return color(d.id); })
+}
 
 function updateGraph(){
     document.getElementById("log").innerHTML+="<br>updateGraph";
@@ -72,7 +75,7 @@ function updateGraph(){
     
   g_axis
     .transition()
-    .duration(200)
+    .duration(800)
     .attr("x1", function(d) { return resizeG_W*d.x1; })
     .attr("x2", function(d) { return resizeG_W*d.x2; })
     .attr("y1", function(d) { return resizeG_H*d.y1; })
@@ -84,11 +87,12 @@ function updateGraph(){
   g_graph
     .transition()
     .duration(1000)
-    .attr("d", function(d) {return constructPath(d.id); } )
+    .attr("points", function(d) {return constructPath(d.id); } )
     .attr("class", "graphLine")
-    .style("stroke", function(d) { return color(d.id); });
+    .style("stroke", function(d) { return color(d.id); })
+    .attr("id", function(d) { return "line"+d.id; });
     
-  vis2.selectAll("path")
+  vis2.selectAll("polyline")
     .on("mouseover", function(d){
       focusIn(d.id, 1);
     })

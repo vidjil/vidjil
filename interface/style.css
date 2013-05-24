@@ -19,10 +19,8 @@ ul {
 list-style-type: none;
 }
 
-#topbar { 
-  width: 100%;
-  height : auto;
-  background : #152525;
+#visu-container{
+  height :100%;
 }
 
 #mid-container {
@@ -111,23 +109,34 @@ circle:hover {
   cursor:pointer;
 }
 
+#left{
+  height:100%;
+}
+
 #menu{
   background : #301020;
   height :200px;
 }
+
 #info{
   background : #102020;
-  height :100px;
+  height :200px;
 }
 
-#listJ{
-  height : calc(100% - 300px);
-  height : -webkit-calc(100% - 300px);
-  height : -moz-calc(100% - 300px);
+#listFav{
+  overflow-y : scroll;
+  overflow-x : hidden;
+  font-weight : bold;
+  color : #333;
+  background : #101020;
+}
+
+#listClones{
   overflow-y : scroll;
   overflow-x : hidden;
   font-weight: bold;
   color: #333;
+  background : #302010;
 }
 
 .vjLegend{
@@ -170,9 +179,13 @@ circle:hover {
 }
 
 .graphLine{
- stroke-width : 1px;
+ stroke-width : 2px;
+ opacity:0.5;
  fill :none;
 }
 
+.graphLine:hover {
+  cursor:pointer;
+}
 
 

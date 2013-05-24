@@ -63,7 +63,7 @@ var w = 1400,
 
 //
 function initClones(data) {
-  var divParent = document.getElementById("listJ");
+  var divParent = document.getElementById("listClones");
   divParent.innerHTML="";
 
    for(var i=0 ;i<sizeMap; i++){
@@ -122,7 +122,7 @@ var resizeG_H = 1;
 
 window.onresize = initCoef;
 function initCoef(){
- 
+  
   var resizeW = document.getElementById("visu").offsetWidth/w;
   var resizeH = document.getElementById("visu").offsetHeight/h;
   document.getElementById("svg").style.width=document.getElementById("visu").offsetWidth+"px";
@@ -133,13 +133,29 @@ function initCoef(){
   document.getElementById("svg2").style.width=document.getElementById("visu2").offsetWidth+"px";
   document.getElementById("svg2").style.height=document.getElementById("visu2").offsetHeight+"px";
   
-  resizeCoef = resizeW
+  if (resizeW>resizeH)
+    resizeCoef = resizeH;
+  else
+    resizeCoef = resizeW;
+  
+  $('#listFav').height((($('#left').height()-400)/2)+"px");
+  $('#listClones').height((($('#left').height()-400)/2)+"px");
   
   if (method!=0)
   updateLegend();
   updateGraph();
   
-  tick();
+  force.alpha(0);
+  
+  node
+    .transition()
+    .duration(1000)
+      .attr("cx", function(d) { return (resizeCoef*d.x); })
+      .attr("cy", function(d) { return (resizeCoef*d.y); })
+      .attr("r" , function(d) { return (resizeCoef*d.r2); });
+  
+  setTimeout(function() {force.alpha(.2);},1001);
+  
 
   document.getElementById("log").innerHTML+="<br>resize (new coef : "+resizeCoef+")<br>  graph coef ("+resizeG_W+"/"+resizeG_H+")";
   $("#log").scrollTop(100000000000000);
@@ -191,6 +207,8 @@ function displayLegend(data){
 
 function updateLegend(){
   leg
+    .transition()
+    .duration(1000)
     .attr("x", function(d) { 
       if (d.cx<5) return resizeCoef*(d.cx+20);
       else return resizeCoef*d.cx;
@@ -200,6 +218,8 @@ function updateLegend(){
       else return resizeCoef*d.cy;
     });
   lines
+    .transition()
+    .duration(1000)
     .attr("x1", function(d) { return resizeCoef*d.cx; })
     .attr("x2", function(d) { 
       if (d.cx==0) return 5000;
@@ -367,32 +387,48 @@ function getSize(cloneID){
 
 function focusIn(cloneID, move){
   nodes[cloneID].focus = true;
+  
   if (move==1) {
-    $('#listJ').stop();
+    $('#listClones').stop();
     var p = $("#"+cloneID);
     var position = p.position();
-    var position2 = $('#listJ').scrollTop();
-    document.getElementById("log").innerHTML+="<br>"+position2;
-    $('#listJ').animate({scrollTop: position2+position.top-235}, 500);
+    var position2 = $('#listClones').scrollTop();
+    var diff=$('#menu').height()+$('#info').height()+$('#listFav').height()+50;
+    $('#listClones').animate({scrollTop: position2+position.top-diff}, 500);
   }
   updateLook();
-  document.getElementById(cloneID).style.border='white';
-  document.getElementById(cloneID).style.borderStyle='solid';
-  document.getElementById(cloneID).style.padding='0px';
-  document.getElementById(cloneID).style.color='white';
+  
+  var list = document.getElementById(cloneID);
+  list.style.border='white';
+  list.style.borderStyle='solid';
+  list.style.padding='0px';
+  list.style.color='white';
+  
+  var line = document.getElementById("line"+cloneID);
+  line.style.stroke='white';
+  line.style.opacity='1';
+  line.style.strokeWidth='3px';
+  line.parentNode.appendChild(line);
 
   document.getElementById("log").innerHTML+="<br>[element id "+cloneID+" / "+junctions[cloneID].junction+"] focus on // size = "+getSize(cloneID);
   $("#log").scrollTop(100000000000000);
 }
 
-
 function focusOut(cloneID){
   nodes[cloneID].focus = false;
-  document.getElementById(cloneID).style.border='';
-  document.getElementById(cloneID).style.borderStyle='';
-  document.getElementById(cloneID).style.padding='';
-  document.getElementById(cloneID).style.color='';
   
+  var list = document.getElementById(cloneID);
+  list.style.border='';
+  list.style.borderStyle='';
+  list.style.padding='';
+  list.style.color='';
+  
+  var line = document.getElementById("line"+cloneID);
+  line.style.stroke='';
+  line.style.opacity='';
+  line.style.strokeWidth='';
+  
+  updateGraphColor();
   updateLook();
 }
 
@@ -681,6 +717,7 @@ function changeColor(cloneID){
 		document.getElementById("log").innerHTML+="<br>"+tmpID+"/test/"+customColor[tmpID];
 		$('#log').scrollTop(100000000000000);
 		updateLook();
+		updateGraph();
 	}
   })
 }
@@ -733,5 +770,24 @@ function changeColor(cloneID){
       $('#log').scrollTop(100000000000000);
     }
     force.alpha(.2);
+  }
+  
+  function switchVisu(){
+    var hv1 = $('#visu').height();
+    var hv2 = $('#visu2').height();
+    
+    if (hv1<hv2){
+      hv1='30%';
+      hv2='70%';
+    }
+    else{
+      hv1='70%';
+      hv2='30%';
+    }
+    
+    $('#visu').animate({height: hv2}, 400 ); 
+    $('#visu2').animate({height: hv1}, 400 ); 
+    setTimeout(function() {initCoef();},500);
+    
   }
   
