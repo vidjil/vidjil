@@ -79,25 +79,26 @@ function initClones(data) {
       div.className="listElem";
       div.onmouseover = function(){ focusIn(this.id, 0); }
       div.onmouseout= function(){ focusOut(this.id); }
-      div.onclick=function(){ addToSegmenter(this.id); }
+      div.onclick=function(){ selectClone(this.id); }
+      
+      var span0 = document.createElement('span');
+      span0.className = "nameBox";
+      span0.appendChild(document.createTextNode(getname(i)));
       
       var span1 = document.createElement('span');
       span1.className = "colorBox";
+      span1.id="color"+i;
       span1.onclick=function(){ changeColor(this.parentNode.id); }
       
       var span2=document.createElement('span')
       span2.className = "sizeBox";
-      span2.appendChild(document.createTextNode((100*getSize(i)).toFixed(2)+"%"))
+      span2.appendChild(document.createTextNode((100*getSize(i)).toFixed(2)+"%"));
       
-      divParent.appendChild(div);
-      if ( typeof(junctions[i].seg)!='undefined' && typeof(junctions[i].seg.name)!='undefined' ){
-	document.getElementById(i).innerHTML=junctions[i].seg.name
-      }else{
-	document.getElementById(i).innerHTML=junctions[i].junction;
-      }
-      document.getElementById(i).appendChild(span1);
-      document.getElementById(i).appendChild(span2);
-     document.getElementById(i).style.background=color(i);
+      div.appendChild(span0);
+      div.appendChild(span1);
+      div.appendChild(span2);
+      div.style.background=color(i);
+      document.getElementById("listClones").appendChild(div);
     }
 }
 
@@ -174,7 +175,7 @@ function displayLegend(data){
     .duration(1000)
     .attr("x", function(d) { 
       if (d.cx<5) { 
-	if (d.class=="vjline1") return resizeCoef*(d.cx+20);
+	if (d.class=="vjline1") return resizeCoef*(d.cx+60);
 	  else return resizeCoef*(d.cx+150);
       }else return resizeCoef*d.cx;
     })
@@ -218,7 +219,7 @@ function updateLegend(){
     .duration(1000)
     .attr("x", function(d) { 
       if (d.cx<5) { 
-	if (d.class=="vjline1") return resizeCoef*(d.cx+20);
+	if (d.class=="vjline1") return resizeCoef*(d.cx+60);
 	  else return resizeCoef*(d.cx+150);
       }else return resizeCoef*d.cx;
     })
@@ -558,7 +559,7 @@ var node = vis.selectAll("circle.node")
     .call(force.drag)
     //.call(node_drag)
     .on("click", function(d,i) { 
-      addToSegmenter(i);
+      selectClone(i);
     })
     .on("mouseover", function(d,i){
       focusIn(i, 1);
@@ -762,7 +763,6 @@ function toggleCustomColor(){
 //déclenche l'apparition du colorpicker > choix d'une customColor pour un node
 var tmpID
 function changeColor(cloneID){
-  document.getElementById("log").innerHTML+="<br>"+cloneID;
   tmpID=cloneID;
   document.getElementById('colorSelector').style.display='block';
    $('#colorSelector').ColorPicker({
@@ -772,6 +772,7 @@ function changeColor(cloneID){
 		$(el).val(hex);
 		document.getElementById('colorSelector').style.display='none';
 		customColor[tmpID]="#"+hex;
+		document.getElementById('color'+tmpID).style.backgroundColor=customColor[tmpID];
 		document.getElementById("log").innerHTML+="<br>"+tmpID+"/test/"+customColor[tmpID];
 		$('#log').scrollTop(100000000000000);
 		updateLook();
@@ -802,6 +803,8 @@ function changeColor(cloneID){
   function stroke(cloneID) {
     if (nodes[cloneID].focus==true)
       return "white";
+        if (select==cloneID)
+      return "#dddddd";
     return '';
   }
   
@@ -835,17 +838,81 @@ function changeColor(cloneID){
     var hv2 = $('#visu2').height();
     
     if (hv1<hv2){
-      hv1='30%';
-      hv2='70%';
+      $('#visu2').animate({height: '30%'}, 400 ); 
+      $('#visu').delay(200).animate({height: '70%'}, 400 ); 
     }
     else{
-      hv1='70%';
-      hv2='30%';
+      $('#visu').animate({height: '30%'}, 400 ); 
+      $('#visu2').delay(200).animate({height: '70%'}, 400 ); 
     }
     
-    $('#visu').animate({height: hv2}, 400 ); 
-    $('#visu2').animate({height: hv1}, 400 ); 
-    setTimeout(function() {initCoef();},500);
+    setTimeout(function() {initCoef();},700);
     
+  }
+  
+  function getname(cloneID){
+    if ( typeof(junctions[cloneID].seg)!='undefined' && typeof(junctions[cloneID].seg.name)!='undefined' ){
+      return junctions[cloneID].seg.name
+    }else{
+      return junctions[cloneID].junction;
+    }
+  }
+  
+  
+  var select=-1;
+  function selectClone(cloneID){
+    select=cloneID;
+    displayInfo(cloneID);
+  }
+  
+  function freeSelect(){
+    select=-1;
+    document.getElementById("info").innerHTML="";
+    updateGraphColor();
+    updateLook();
+  }
+  
+  function displayInfo(cloneID){
+    var divParent = document.getElementById("info");
+    divParent.innerHTML="";
+    var div = document.createElement('div');
+    div.id="infoClone";
+    
+    var div_name=document.createElement('div');
+    div_name.appendChild(document.createTextNode(getname(cloneID)));
+    div.appendChild(div_name);
+    
+    var div_exit=document.createElement('div');
+    div_exit.onclick = function(){ freeSelect(); }
+    div_exit.appendChild(document.createTextNode(" X deselect X"));
+    div.appendChild(div_exit);
+	
+    var div_fav=document.createElement('div');
+    div_fav.onclick = function(){ addToFavorite(cloneID); }
+    div_fav.appendChild(document.createTextNode("^  ajouter aux favoris ^"));
+    div.appendChild(div_fav);
+    
+    var div_notFav=document.createElement('div');
+    div_notFav.onclick = function(){ addToList(cloneID); }
+    div_notFav.appendChild(document.createTextNode("v retirer des favoris v"));
+    div.appendChild(div_notFav);
+    
+    var div_seg=document.createElement('div');
+    div_seg.onclick = function(){ addToSegmenter(cloneID); }
+    div_seg.appendChild(document.createTextNode("> ajouter au comparateur >"));
+    div.appendChild(div_seg);
+    
+    divParent.appendChild(div);
+    
+  }
+  
+  function addToFavorite(cloneID){
+    var clone = document.getElementById(cloneID);
+    document.getElementById("listFav").appendChild(clone);
+  }
+
+  function addToList(cloneID){
+    var clone = document.getElementById(cloneID);
+    document.getElementById("listClones").appendChild(clone);
   }
   

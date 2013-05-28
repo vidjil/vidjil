@@ -141,6 +141,7 @@ circle:hover {
 
 .vjLegend{
   font-weight : bold;
+  text-anchor : middle;
 }
 
 .vjline1{
@@ -158,17 +159,25 @@ circle:hover {
   font-weight: bold;
 }
 
+.nameBox{
+  width :270px;
+  overflow :hidden;
+  display: inline-block;
+}
+
 .colorBox{
   right: 3px;
   float: right;
   border: solid;
   height: 8px;
   width: 8px;
+  display: inline-block;
 }
 
 .sizeBox{
   float: right;
   margin-right: 5px;
+  display: inline-block;
 }
 
 #colorSelector{
@@ -176,6 +185,11 @@ circle:hover {
   left: 388px;
   top: 195px;
   display:none;
+}
+
+.axis{
+ stroke-width : 2px;
+ opacity:0.6;
 }
 
 .graphLine{

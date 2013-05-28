@@ -97,9 +97,10 @@ function updateGraph(){
     .transition()
     .duration(800)
     .text( function (d) { return d.text; })
-    .style("color", 'white')
-    .attr("x", (resizeG_W*50) )
-    .attr("Y", function(d) { return resizeG_W*d.y1 });
+    .attr("fill", "white")
+    .attr("y", function(d) { return Math.floor(resizeG_H*d.y1) })
+    .attr("x", Math.floor(resizeG_W*50) );
+    
 
   g_graph
     .transition()

@@ -109,12 +109,12 @@
           "TRGJ2*01"
         ], 
         "V": [
-          "TRGV10*02", 
+          "TRGV10*03", 
           "TRGV10*01", 
           "TRGV11*01", 
           "TRGV11*02"
         ], 
-        "name": "TRGV10*02 0/GTT/3 TRGJP1*01", 
+        "name": "TRGV10*03 0/GTT/3 TRGJP1*01", 
         "D": [], 
         "sequence": "TGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGAACTAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTACTTGC"
       }, 
@@ -223,7 +223,7 @@
     {
       "seg": {
         "J": [
-          "TRGJP1*01", 
+          "TRGJP1*02", 
           "TRGJP2*01", 
           "TRGJ1*02", 
           "TRGJP*01"
@@ -234,7 +234,7 @@
           "TRGV4*02", 
           "TRGV4*01"
         ], 
-        "name": "TRGV2*01 3/A/0 TRGJP1*01", 
+        "name": "TRGV2*01 3/A/0 TRGJP1*02", 
         "D": [], 
         "sequence": "CAAGCACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACAATACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCA"
       }, 
@@ -313,7 +313,7 @@
     {
       "seg": {
         "J": [
-          "TRGJP1*01", 
+          "TRGJP1*03", 
           "TRGJP2*01", 
           "TRGJ1*02", 
           "TRGJ1*01"
@@ -324,7 +324,7 @@
           "TRGV4*01", 
           "TRGV4*02"
         ], 
-        "name": "TRGV2*01 0/TCCT/1 TRGJP1*01", 
+        "name": "TRGV2*01 0/TCCT/1 TRGJP1*03", 
         "D": [], 
         "sequence": "TTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGTCCTTACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCG"
       }, 
@@ -1113,12 +1113,12 @@
           "TRGJ1*02"
         ], 
         "V": [
-          "TRGV2*01", 
+          "TRGV2*03", 
           "TRGV2*02", 
           "TRGV4*01", 
           "TRGV4*02"
         ], 
-        "name": "TRGV2*01 1//2 TRGJP2*01", 
+        "name": "TRGV2*03 1//2 TRGJP2*01", 
         "D": [], 
         "sequence": "GAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCACCTGGGAAGGAGTAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAAG"
       }, 
@@ -1203,12 +1203,12 @@
           "TRGJ1*02"
         ], 
         "V": [
-          "TRGV2*01", 
+          "TRGV2*04", 
           "TRGV2*02", 
           "TRGV4*02", 
           "TRGV4*01"
         ], 
-        "name": "TRGV2*01 0/TAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCA/84 TRGJP2*01", 
+        "name": "TRGV2*04 0/TAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCA/84 TRGJP2*01", 
         "D": [], 
         "sequence": "CACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCGCGAAGGGTAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCAT"
       }, 
