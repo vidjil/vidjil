@@ -173,16 +173,23 @@ function displayLegend(data){
     .transition()
     .duration(1000)
     .attr("x", function(d) { 
-      if (d.cx<5) return resizeCoef*(d.cx+20);
-      else return resizeCoef*d.cx;
+      if (d.cx<5) { 
+	if (d.class=="vjline1") return resizeCoef*(d.cx+20);
+	  else return resizeCoef*(d.cx+150);
+      }else return resizeCoef*d.cx;
     })
     .attr("y", function(d) { 
-      if (d.cy<5) return resizeCoef*(d.cy+20);
-      else return resizeCoef*d.cy;
+      if (d.cy<5) {
+	if (d.class=="vjline1") return resizeCoef*(d.cy+20);
+	else return resizeCoef*(d.cy+75);
+      }else return resizeCoef*d.cy;
     })
-    .text( function (d) { return d.label; })
+    .text( function (d) { 
+      if (d.class=="vjline2") return d.subname;
+      else return d.name;
+    })
     .attr("class", "vjLegend")
-    .attr("fill", function (d) { return colorVJ[d.label]; });
+    .attr("fill", function (d) { return colorVJ[d.color]; });
     
   lines = vis.selectAll("line").data(data);
   lines.enter().append("line");
@@ -201,7 +208,7 @@ function displayLegend(data){
       if (d.cy<5) return 5000;
       else return resizeCoef*d.cy;
     })
-    .style("stroke", function (d) { return colorVJ[d.label]; })
+    .style("stroke", function (d) { return colorVJ[d.color]; })
     .attr("class", function (d) { return d.class; });
 }
 
@@ -210,13 +217,17 @@ function updateLegend(){
     .transition()
     .duration(1000)
     .attr("x", function(d) { 
-      if (d.cx<5) return resizeCoef*(d.cx+20);
-      else return resizeCoef*d.cx;
+      if (d.cx<5) { 
+	if (d.class=="vjline1") return resizeCoef*(d.cx+20);
+	  else return resizeCoef*(d.cx+150);
+      }else return resizeCoef*d.cx;
     })
-    .attr("y", function(d) {
-      if (d.cy<5) return resizeCoef*(d.cy+20);
-      else return resizeCoef*d.cy;
-    });
+    .attr("y", function(d) { 
+      if (d.cy<5) {
+	if (d.class=="vjline1") return resizeCoef*(d.cy+20);
+	else return resizeCoef*(d.cy+75);
+      }else return resizeCoef*d.cy;
+    })  
   lines
     .transition()
     .duration(1000)
@@ -246,7 +257,7 @@ var colorVJ={};
 
 //position quadrillage
 var margeVJ=140;
-var stepVJ=120;
+var stepVJ=200;
 
 var method=0;
 var positionV={};
@@ -257,7 +268,10 @@ var positionV2={};
 var positionJ2={};
 var vjData2=[];
 
+
 function initVJposition(){
+  
+  var subsize={};
   
   var sizeV=0;
   var sizeJ=0;
@@ -283,96 +297,140 @@ function initVJposition(){
   
   vmap.sort();
   jmap.sort();
-  
-  for (var i=0; i<sizeV; i++){
-    colorVJ[vmap[i]]="rgb("+Math.floor((colorV_begin[0]+(i/sizeV)*(colorV_end[0]-colorV_begin[0] )))+
-			","+Math.floor((colorV_begin[1]+(i/sizeV)*(colorV_end[1]-colorV_begin[1] )))+
-			","+Math.floor((colorV_begin[2]+(i/sizeV)*(colorV_end[2]-colorV_begin[2] )))+")";
-    
-    positionV[vmap[i]]=margeVJ+i*stepVJ;
-    vjData[n]={};
-    vjData[n].cx=margeVJ+i*stepVJ;
-    vjData[n].cy=0;
-    vjData[n].class="vjline1";
-    vjData[n].label=vmap[i];
-    n++;
-  }
-  
-  for (var i=0; i<sizeJ; i++){
-    colorVJ[jmap[i]]="rgb("+Math.floor((colorJ_begin[0]+(i/sizeJ)*(colorJ_end[0]-colorJ_begin[0] )))+
-			","+Math.floor((colorJ_begin[1]+(i/sizeJ)*(colorJ_end[1]-colorJ_begin[1] )))+
-			","+Math.floor((colorJ_begin[2]+(i/sizeJ)*(colorJ_end[2]-colorJ_begin[2] )))+")";
-			
-    positionJ[jmap[i]]=margeVJ+i*stepVJ;
-    vjData[n]={};
-    vjData[n].cx=0;
-    vjData[n].cy=margeVJ+i*stepVJ;
-    vjData[n].class="vjline1";
-    vjData[n].label=jmap[i];
-    n++;
-  }
-  
+ 
   var tmp="";
   var n2=-1;
   n=-1;
   
   for (var i=0; i<sizeV; i++){
     var elem = vmap[i].split('*')[0];
-    n++;
+
     if (elem!=tmp){
+      subsize[elem]=0;
       tmp=elem;
       n2++
+      n++;
       vjData2[n]={};
-      vjData2[n].cx=margeVJ+n2*stepVJ;
-      vjData2[n].cy=0;
-      vjData2[n].label=elem;
       vjData2[n].class="vjline1";
-    }else{
-      vjData2[n]={};
-      vjData2[n].cx=margeVJ+n2*stepVJ;;
+      vjData2[n].cx=margeVJ+(n2+0.5)*stepVJ;;
       vjData2[n].cy=0;
-      vjData2[n].label=elem;
-      vjData2[n].class="vjline2";
-      vjData[n].class="vjline2";
+      vjData2[n].color=vmap[i];
+      vjData2[n].name=elem;
+      vjData2[n].subname="";    
     }
-    positionV2[vmap[i]]=margeVJ+n2*stepVJ;
+    subsize[elem]++;
+    n++;
+    vjData2[n]={};
+    vjData2[n].class="vjline2";
+    vjData2[n].cx=margeVJ+(n2+0.5)*stepVJ;
+    vjData2[n].cy=0;
+    vjData2[n].color=vmap[i];
+    vjData2[n].name=elem;
+    vjData2[n].subname="";    
+    positionV2[vmap[i]]=margeVJ+(n2+0.5)*stepVJ;
   }
   
-  for (var i=0; i<=n; i++){
-    colorVJ[vjData2[i].label]="rgb("+Math.floor((colorV_begin[0]+(i/n)*(colorV_end[0]-colorV_begin[0] )))+
-			","+Math.floor((colorV_begin[1]+(i/n)*(colorV_end[1]-colorV_begin[1] )))+
-			","+Math.floor((colorV_begin[2]+(i/n)*(colorV_end[2]-colorV_begin[2] )))+")";
-			
-  }
   n2=-1;
   for (var i=0; i<sizeJ; i++){
     var elem = jmap[i].split('*')[0];
-    n++;
+    
     if (elem!=tmp){
+      subsize[elem]=0;
       tmp=elem;
       n2++
+      n++;
       vjData2[n]={};
-      vjData2[n].cx=0;
-      vjData2[n].cy=margeVJ+n2*stepVJ;
-      vjData2[n].label=elem;
       vjData2[n].class="vjline1";
-    }else{
-      vjData2[n]={};
       vjData2[n].cx=0;
-      vjData2[n].cy=margeVJ+n2*stepVJ;
-      vjData2[n].label=elem;
-      vjData2[n].class="vjline2";
-      vjData[n].class="vjline2";
+      vjData2[n].cy=margeVJ+(n2+0.5)*stepVJ;
+      vjData2[n].color=jmap[i];
+      vjData2[n].name=elem;
+      vjData2[n].subname="";
     }
-    positionJ2[jmap[i]]=margeVJ+n2*stepVJ;
+    subsize[elem]++;
+    n++;
+    vjData2[n]={};
+    vjData2[n].class="vjline2";
+    vjData2[n].cx=0;
+    vjData2[n].cy=margeVJ+(n2+0.5)*stepVJ;
+    vjData2[n].color=jmap[i];
+    vjData2[n].name=elem;
+    vjData2[n].subname="";
+    positionJ2[jmap[i]]=margeVJ+(n2+0.5)*stepVJ;
   }
   
-  for (var i=0; i<=n2; i++){
-    colorVJ[vjData2[i+n-n2].label]="rgb("+Math.floor((colorJ_begin[0]+(i/n2)*(colorJ_end[0]-colorJ_begin[0] )))+
-			","+Math.floor((colorJ_begin[1]+(i/n2)*(colorJ_end[1]-colorJ_begin[1] )))+
-			","+Math.floor((colorJ_begin[2]+(i/n2)*(colorJ_end[2]-colorJ_begin[2] )))+")";
+  n2=-1;
+  n=-1;
+  tmp='';
+  var t1, t2;
+  for (var i=0; i<sizeV; i++){
+    colorVJ[vmap[i]]="rgb("+Math.floor((colorV_begin[0]+(i/sizeV)*(colorV_end[0]-colorV_begin[0] )))+
+			","+Math.floor((colorV_begin[1]+(i/sizeV)*(colorV_end[1]-colorV_begin[1] )))+
+			","+Math.floor((colorV_begin[2]+(i/sizeV)*(colorV_end[2]-colorV_begin[2] )))+")";
+			
+    var elem = vmap[i].split('*')[0];
+
+    if (elem!=tmp){
+      t1=0;
+      t2=subsize[elem];
+      tmp=elem;
+      n2++
+      n++;
+      vjData[n]={};
+      vjData[n].class="vjline1";
+      vjData[n].cx=margeVJ+(n2+0.5)*stepVJ;
+      vjData[n].cy=0;
+      vjData[n].color=vmap[i];
+      vjData[n].name=elem;
+      vjData[n].subname="";    
+    }
+    t1++
+    n++;
+    vjData[n]={};
+    vjData[n].cx=margeVJ+(n2+(t1/(t2+1)))*stepVJ;
+    vjData[n].cy=0;
+    vjData[n].class="vjline2";
+    vjData[n].name=vmap[i];
+    vjData[n].color=vmap[i];
+    vjData[n].name=elem;
+    vjData[n].subname=vmap[i].split('*')[1];    
+    positionV[vmap[i]]=margeVJ+(n2+(t1/(t2+1)))*stepVJ;			
   }
   
+  
+  n2=-1;
+  for (var i=0; i<sizeJ; i++){
+    colorVJ[jmap[i]]="rgb("+Math.floor((colorJ_begin[0]+(i/sizeJ)*(colorJ_end[0]-colorJ_begin[0] )))+
+			","+Math.floor((colorJ_begin[1]+(i/sizeJ)*(colorJ_end[1]-colorJ_begin[1] )))+
+			","+Math.floor((colorJ_begin[2]+(i/sizeJ)*(colorJ_end[2]-colorJ_begin[2] )))+")";
+    var elem = jmap[i].split('*')[0];
+
+    if (elem!=tmp){
+      t1=0;
+      t2=subsize[elem];
+      tmp=elem;
+      n2++
+      n++;
+      vjData[n]={};
+      vjData[n].class="vjline1";
+      vjData[n].cx=0;
+      vjData[n].cy=margeVJ+(n2+0.5)*stepVJ;
+      vjData[n].color=jmap[i];
+      vjData[n].name=elem;
+      vjData[n].subname="";    
+    }
+    t1++;
+    n++;
+    vjData[n]={};
+    vjData[n].class="vjline2";
+    vjData[n].cx=0;
+    vjData[n].cy=margeVJ+(n2+(t1/(t2+1)))*stepVJ;
+    vjData[n].color=jmap[i];
+    vjData[n].name=elem;
+    vjData[n].subname=jmap[i].split('*')[1];    
+    positionJ[jmap[i]]=margeVJ+(n2+(t1/(t2+1)))*stepVJ;		
+  }
+ 
 }
 
 //renvoye la taille d'un clone(en %) ( somme des tailles des jonctions qui le compose)

@@ -12,10 +12,17 @@ var g_graph;
 var data_axis=[];
 var data_graph=[];
 var graph_col=[];
+var scale_x = d3.scale.log()
+    .domain([1,1000])
+    .range([0,(g_h-2*axis_y)]);
 
 function initGraph(){
-  data_axis[0]={x1 : axis_x, x2 : g_w-axis_x, y1: (g_h-axis_y), y2 : (g_h-axis_y) }
-  data_axis[1]={x1 : axis_x, x2 : axis_x, y1: axis_y, y2 : (g_h-axis_y)}
+  data_axis[0]={text : "", x1 : axis_x, x2 : axis_x, y1: 0, y2 : g_h}
+  data_axis[1]={text : "100%", x1 : axis_x, x2 : g_w-axis_x, y1: (g_h-axis_y- scale_x(1000)), y2 : (g_h-axis_y- scale_x(1000))}
+  data_axis[2]={text : " 10%", x1 : axis_x, x2 : g_w-axis_x, y1: (g_h-axis_y- scale_x(100)), y2 : (g_h-axis_y- scale_x(100)) }
+  data_axis[3]={text : "  1%", x1 : axis_x, x2 : g_w-axis_x, y1: (g_h-axis_y- scale_x(10)), y2 : (g_h-axis_y- scale_x(10)) }
+  data_axis[4]={text : "0.1%", x1 : axis_x, x2 : g_w-axis_x, y1: (g_h-axis_y- scale_x(1)), y2 : (g_h-axis_y- scale_x(1)) }
+  
   
   for (var i=0 ; i<junctions[0].size.length; i++){
     graph_col[i]=axis_x + 5 + i*(( g_w-(2*axis_x) )/(junctions[0].size.length-1) );
@@ -34,10 +41,15 @@ function displayGraph(data, data_2){
   g_axis.exit()    
     .remove();
     
-    g_graph = vis2.selectAll("polyline").data(data_2);
-    g_graph.enter().append("polyline");
-    g_graph.exit()    
-      .remove();
+  g_text = vis2.selectAll("text").data(data);
+  g_text.enter().append("text");
+  g_text.exit()    
+    .remove();
+    
+  g_graph = vis2.selectAll("polyline").data(data_2);
+  g_graph.enter().append("polyline");
+  g_graph.exit()    
+    .remove();
       
   updateGraph();
 }
@@ -58,8 +70,6 @@ function constructPath(cloneID){
   return path;
 }
 
-var scale_x;
-
 function updateGraphColor(){
     g_graph
     .style("stroke", function(d) { return color(d.id); })
@@ -68,7 +78,7 @@ function updateGraphColor(){
 function updateGraph(){
     document.getElementById("log").innerHTML+="<br>updateGraph";
   $("#log").scrollTop(100000000000000);
-  
+    
   scale_x = d3.scale.log()
     .domain([1,1000])
     .range([0,(g_h-2*axis_y)]);
@@ -82,7 +92,14 @@ function updateGraph(){
     .attr("y2", function(d) { return resizeG_H*d.y2; })
     .style("stroke", 'white')
     .attr("class", "axis");
-    
+   
+  g_text
+    .transition()
+    .duration(800)
+    .text( function (d) { return d.text; })
+    .style("color", 'white')
+    .attr("x", (resizeG_W*50) )
+    .attr("Y", function(d) { return resizeG_W*d.y1 });
 
   g_graph
     .transition()

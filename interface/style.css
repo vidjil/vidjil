@@ -148,7 +148,7 @@ circle:hover {
 }
 .vjline2{
   stroke-width : 0.5px;
-  stroke-dasharray: 4,4;
+  stroke-dasharray: 6,6;
 }
 
 .sequence-line {
