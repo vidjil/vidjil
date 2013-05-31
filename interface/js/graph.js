@@ -14,7 +14,7 @@
 var axis_x = 100,       //marge entre l'ordonnée et le bord du graph
     axis_y = 50,        //marge entre l'abscisse et le bord du graph
     g_w = 1400,         //largeur du graph (avant resize)
-    g_h = 500;          //hauteur du graph (avant resize)
+    g_h = 450;          //hauteur du graph (avant resize)
 
 var vis2 = d3.select("#visu2").append("svg:svg")
     .attr("id", "svg2")
@@ -26,24 +26,31 @@ var data_axis=[];
 var data_graph=[];
 var graph_col=[];
 
-var scale_x = d3.scale.log()
-    .domain([1,10000])
-    .range([0,(g_h-2*axis_y)]);
-
+var scale_x;
+    
     
 function initGraph(){
   
-  data_axis[0]={axis : "h" ,text : "", x1 : axis_x, x2 : axis_x, y1: 0, y2 : g_h}
-  data_axis[1]={axis : "h" ,text : " 100%", x1 : axis_x, x2 : g_w-axis_x, y1: (g_h-axis_y- scale_x(10000)), y2 : (g_h-axis_y- scale_x(10000))}
-  data_axis[2]={axis : "h" ,text : "  10%", x1 : axis_x, x2 : g_w-axis_x, y1: (g_h-axis_y- scale_x(1000)), y2 : (g_h-axis_y- scale_x(1000))}
-  data_axis[3]={axis : "h" ,text : "   1%", x1 : axis_x, x2 : g_w-axis_x, y1: (g_h-axis_y- scale_x(100)), y2 : (g_h-axis_y- scale_x(100)) }
-  data_axis[4]={axis : "h" ,text : " 0.1%", x1 : axis_x, x2 : g_w-axis_x, y1: (g_h-axis_y- scale_x(10)), y2 : (g_h-axis_y- scale_x(10)) }
-  data_axis[5]={axis : "h" ,text : "0.01%", x1 : axis_x, x2 : g_w-axis_x, y1: (g_h-axis_y- scale_x(1)), y2 : (g_h-axis_y- scale_x(1)) }
+  scale_x = d3.scale.log()
+    .domain([1,(1/min_size)])
+    .range([0,(g_h)]);
+    
+  var height=100;
   
-  data_axis[6]={axis : "v" ,text : "time", x1 : 100, x2 : 100, y1: (g_h-10), y2 : 0 }
+  for (var i=0 ; i<8; i++){
+    data_axis[i]={class : "axis" ,text : (height+"%"), x1 : 0, x2 : g_w, 
+		    y1 : (g_h- scale_x((height/100)*(1/min_size))), 
+		    y2 : (g_h- scale_x((height/100)*(1/min_size)))}
+		    
+    height=height/10;
+  }
   
   for (var i=0 ; i<junctions[0].size.length; i++){
     graph_col[i]=axis_x + 5 + i*(( g_w-(2*axis_x) )/(junctions[0].size.length-1) );
+    
+    data_axis[7+i]={class : "axis_v" ,text : "time"+i ,
+		    x1 : graph_col[i], x2 : graph_col[i], 
+		    y1 : g_h, y2 : 0, time: i}
   }
   
   for (var i=0 ; i<totalClones; i++){
@@ -77,13 +84,13 @@ function constructPath(cloneID){
   var tmp=t;
   t=0;
   var path = Math.floor( graph_col[0]*resizeG_W) +", "
-	    +Math.floor( ( g_h-axis_y - scale_x(getSize(cloneID)*10000) ) * resizeG_H );
+	    +Math.floor(( g_h- scale_x(getSize(cloneID)*(1/min_size)) ) * resizeG_H );
       
   for (var i=1; i< graph_col.length; i++){
     t++;
     
     path += ", "+Math.floor(graph_col[i]*resizeG_W )+", "
-	    +Math.floor( ( g_h-axis_y - scale_x(getSize(cloneID)*10000) ) * resizeG_H );
+	    +Math.floor(( g_h- scale_x(getSize(cloneID)*(1/min_size)) ) * resizeG_H );
   }
   t=tmp;
   return path;
@@ -101,8 +108,8 @@ function updateGraph(){
   $("#log").scrollTop(100000000000000);
     
   scale_x = d3.scale.log()
-    .domain([1,10000])
-    .range([0,(g_h-2*axis_y)]);
+    .domain([1,(1/min_size)])
+    .range([0,(g_h)]);
     
   g_axis
     .transition()
@@ -112,15 +119,27 @@ function updateGraph(){
     .attr("y1", function(d) { return resizeG_H*d.y1; })
     .attr("y2", function(d) { return resizeG_H*d.y2; })
     .style("stroke", 'white')
-    .attr("class", "axis");
+    .attr("class", function(d) { return d.class; })
    
   g_text
     .transition()
     .duration(800)
     .text( function (d) { return d.text; })
     .attr("fill", "white")
-    .attr("y", function(d) { return Math.floor(resizeG_H*d.y1);})
-    .attr("x", Math.floor(resizeG_W*50) );
+    .attr("class", function(d) { if (d.class=="axis_v") return "axis_button"; })
+    .attr("y", function(d) { 
+      if (d.class=="axis") return Math.floor(resizeG_H*d.y1);
+      else return Math.floor(resizeG_H*(g_h) + 15);
+    })
+    .attr("x", function(d) { 
+      if (d.class=="axis") return Math.floor(resizeG_W*20);
+      else return Math.floor(resizeG_W*d.x1);
+    });
+    
+    vis2.selectAll("text")
+    .on("click", function(d){
+      if (d.class=="axis_v") return changeT(d.time);
+    })
     
   g_graph
     .transition()
@@ -136,6 +155,9 @@ function updateGraph(){
     })
     .on("mouseout", function(d){
       focusOut(d.id);
+    })
+    .on("click", function(d){
+      selectClone(d.id);
     })
 
 }

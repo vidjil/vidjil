@@ -65,7 +65,7 @@ var node = vis.selectAll("circle.node")
     })
 ;
     
-/* initialise les elements devant avec les données du modele
+/* initialise les elements avec les données du modele
  * nodes[] pour la fenetre de visu
  * cree et rempli la liste html
  * TODO: initialiser favoris depuis prefs.json
@@ -73,14 +73,21 @@ var node = vis.selectAll("circle.node")
 function initClones(data) {
   var divParent = document.getElementById("listClones");
   divParent.innerHTML="";
-
+  min_size = 1;
    for(var i=0 ;i<totalClones; i++){
-     
+
       var n = [i]
       nodes[i].r1 = 5;
       nodes[i].r2 = 5;
       nodes[i].clones = n;
       nodes[i].focus = false;
+      for (t=0 ; t<junctions[i].size.length; t++){
+	if (getSize(i)<min_size) {
+	  min_size=getSize(i)
+	}
+      };
+      
+      t=0;
       
       var div = document.createElement('div');
       div.id=i;

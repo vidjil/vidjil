@@ -33,7 +33,7 @@
         930, 
         430, 
         830, 
-        1030, 
+        9000, 
         430, 
         30, 
         230, 
@@ -2172,11 +2172,11 @@
       }, 
       "junction": "CTGTGCTGCGTGGGACTCATACCGATATAAGAAACTCTTT", 
       "size": [
+        2, 
+        1, 
         8, 
         8, 
-        8, 
-        8, 
-        8, 
+        0.1, 
         8, 
         8, 
         8

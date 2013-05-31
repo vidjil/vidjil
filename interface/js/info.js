@@ -11,10 +11,8 @@
  * info panel
  * 
  * 
- * 
  * content:
  * 
- * initTimeBar()
  * displayInfo(cloneID)
  * addToFavorite(cloneID)
  * addToList(cloneID)
@@ -25,21 +23,6 @@
  * -maj des % affiché en fonction du point de suivi
  */
   
-
-  /*ajoute les boutons de changement de point de suivi(TODO integrer la timebar au graph )*/
-  function initTimeBar(){
-      var divParent = document.getElementById("timebar");
-      divParent.innerHTML="";
-      for(var i=0 ;i<junctions[0].size.length; i++){
-	var a = document.createElement('a');
-	a.time=i;
-	a.id="test";
-	a.className="button";
-	a.onclick= function(){ changeT(this.time); }
-	a.innerHTML="Time "+i;
-	divParent.appendChild(a);
-      }
-  }
 
   
   /*genere le contenu du panel d'information avec les données d'un clone */

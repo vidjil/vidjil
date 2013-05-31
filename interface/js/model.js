@@ -51,7 +51,6 @@
 var jsonData;          //fichier json
 var junctions;         //liste des jonctions du fichier json
 var totalClones=100;   //nombres de clones a gerer //TODO initialiser la variable au chargement du fichier json
-
 var customColor = [];  //table des couleurs personalisées (TODO save/load depuis prefs.json)
  
 /* initialisation fixé par defaut*/
@@ -73,6 +72,7 @@ var stepVJ=200;
 var resizeCoef ;  //coefficient utilisé pour réajusté la visu dans l'espace disponible
 var resizeG_W ;   //coefficients utilisés pour réajusté le graphique 
 var resizeG_H ;
+var min_size;
 
 /* initialisation by initVJposition */
 var positionV={};         //tables associative labels (V-J) <=> positions X-Y (vj1)
@@ -124,8 +124,6 @@ var req = new XMLHttpRequest();
     document.getElementById("log").innerHTML+="<br>calcul des positions VJ";
     initClones(junctions);
     document.getElementById("log").innerHTML+="<br>génération des clones";
-    initTimeBar();
-    document.getElementById("log").innerHTML+="<br>initialisation timebar";
     initGraph();
     document.getElementById("log").innerHTML+="<br>initialisation graph";
     initCoef();
@@ -154,7 +152,7 @@ function initCoef(){
   document.getElementById("svg").style.height=document.getElementById("visu").offsetHeight+"px";
   
   resizeG_W = document.getElementById("visu2").offsetWidth/g_w;
-  resizeG_H = document.getElementById("visu2").offsetHeight/g_h;
+  resizeG_H = (document.getElementById("visu2").offsetHeight-20)/(g_h);
   document.getElementById("svg2").style.width=document.getElementById("visu2").offsetWidth+"px";
   document.getElementById("svg2").style.height=document.getElementById("visu2").offsetHeight+"px";
   
@@ -363,7 +361,7 @@ function initVJposition(){
   function radius(cloneID) {
     if (typeof junctions != "undefined") {
       var r=getSize(cloneID);
-      return Math.sqrt(10000*r);
+      return Math.pow(50000*r,(1/3) );
     }
   }
   
