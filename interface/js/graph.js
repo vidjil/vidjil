@@ -96,10 +96,16 @@ function constructPath(cloneID){
   return path;
 }
 
+function g_class(cloneID){
+  if (customColor && typeof customColor[cloneID] != "undefined"){
+    return "graphLine2";
+  }else{ return "graphLine";}
+}
 
 function updateGraphColor(){
     g_graph
     .style("stroke", function(d) { return color(d.id); })
+    .attr("class", function(d) { return g_class(d.id); })
 }
 
 
@@ -145,7 +151,7 @@ function updateGraph(){
     .transition()
     .duration(1000)
     .attr("points", function(d) {return constructPath(d.id); } )
-    .attr("class", "graphLine")
+    .attr("class", function(d) { return g_class(d.id); })
     .style("stroke", function(d) { return color(d.id); })
     .attr("id", function(d) { return "line"+d.id; });
     
