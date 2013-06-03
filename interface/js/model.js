@@ -392,7 +392,7 @@ function initVJposition(){
   function radius(cloneID) {
     if (typeof junctions != "undefined") {
       var r=getSize(cloneID);
-      return Math.pow(50000*r,(1/3) );
+      return 0.5+Math.pow(50000*r,(1/3) );
     }
   }
   

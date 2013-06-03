@@ -29,7 +29,7 @@ var node ;              //
 var leg, lines;		//container pour les legendes / quadrillages
 var w = 1400,		//largeur visu (avant resize)
     h = 700,		//hauteur visu (avant resize)
-    padding = 5;	//espacement minimum entre les circles
+    padding = 2;	//espacement minimum entre les circles
     
 var vis = d3.select("#visu").append("svg:svg")
     .attr("id", "svg");
