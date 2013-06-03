@@ -23,7 +23,9 @@
  * 
  */
 
-var nodes = d3.range(totalClones).map(Object);	//container pour les circles 
+var nodes ;             //container pour les circles 
+var force ;             //moteur physique
+var node ;              //
 var leg, lines;		//container pour les legendes / quadrillages
 var w = 1400,		//largeur visu (avant resize)
     h = 700,		//hauteur visu (avant resize)
@@ -32,8 +34,11 @@ var w = 1400,		//largeur visu (avant resize)
 var vis = d3.select("#visu").append("svg:svg")
     .attr("id", "svg");
 
-//modele physique
-var force = d3.layout.force()
+
+
+function initVisu(){
+  nodes = d3.range(totalClones).map(Object);
+  force = d3.layout.force()
     .gravity(0)
     .theta(0.8)
     .charge(-1)
@@ -42,18 +47,17 @@ var force = d3.layout.force()
     .on("tick", tick)
     .size([w, h]);
 
-//initialisation des nodes
-var node = vis.selectAll("circle.node")
-    .data(nodes)
-    .enter().append("svg:circle")
-    .attr("class", "node")
+  node = vis.selectAll("circle").data(nodes)
+    node.enter().append("svg:circle");
+    node.exit()    
+    .remove()
+    vis.selectAll("circle")
+    .attr("stroke-width", 5) 
     .attr("cx", function(d) { return d.x; })
     .attr("cy", function(d) { return d.y; })
     .attr("stroke", "")
-    .attr("stroke-width", 3) 
     .attr("r", 5)
     .call(force.drag)
-    //.call(node_drag)
     .on("click", function(d,i) { 
       selectClone(i);
     })
@@ -64,13 +68,15 @@ var node = vis.selectAll("circle.node")
       focusOut(i);
     })
 ;
-    
+}
+
 /* initialise les elements avec les données du modele
  * nodes[] pour la fenetre de visu
  * cree et rempli la liste html
  * TODO: initialiser favoris depuis prefs.json
  */
 function initClones(data) {
+  
   var divParent = document.getElementById("listClones");
   divParent.innerHTML="";
   min_size = 1;

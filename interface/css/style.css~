@@ -219,7 +219,7 @@ circle:hover {
 }
 
 .graphLine2{
- stroke-width : 2px;
+ stroke-width : 2.5px;
  opacity:1;
  fill :none;
 }

@@ -50,8 +50,10 @@
 /* données brut issu du chargement des fichiers json*/
 var jsonData;          //fichier json
 var junctions;         //liste des jonctions du fichier json
-var totalClones=100;   //nombres de clones a gerer //TODO initialiser la variable au chargement du fichier json
+var pref;              //fichier des preferences
+var totalClones;   //nombres de clones a gerer //TODO initialiser la variable au chargement du fichier json
 var customColor = [];  //table des couleurs personalisées (TODO save/load depuis prefs.json)
+var customName = [];   //table des noms personalisées (TODO save/load depuis prefs.json)
  
 /* initialisation fixé par defaut*/
 var colorMethod="V"           //methode de colorisation ( V par defaut)
@@ -107,10 +109,21 @@ var req = new XMLHttpRequest();
 */
 
   oFReader = new FileReader();
+  oFReader2 = new FileReader();
   
-  if (document.getElementById("upload").files.length === 0) { return; }
-  //recupere le chemin du fichier dans le dom
-  var oFile = document.getElementById("upload").files[0];
+  if (document.getElementById("upload_pref").files.length != 0) { 
+    var oFile = document.getElementById("upload_pref").files[0];
+    oFReader2.readAsText(oFile);
+    
+    oFReader2.onload = function (oFREvent) {
+      var text = oFREvent.target.result;
+      pref = JSON.parse(text);
+    }
+  }
+  
+  if (document.getElementById("upload_json").files.length === 0) { return; }
+
+  oFile = document.getElementById("upload_json").files[0];
   oFReader.readAsText(oFile);
   
   //fonction s'executant une fois le fichier json correctement chargé
@@ -119,7 +132,11 @@ var req = new XMLHttpRequest();
     jsonDataText = oFREvent.target.result;
     jsonData = JSON.parse(jsonDataText);
     junctions=jsonData.junctions;
+    init();
+    initVisu();
     document.getElementById("log").innerHTML+="<br>chargement fichier json";
+    loadPref();
+    document.getElementById("log").innerHTML+="<br>chargement fichier de preference";
     initVJposition();
     document.getElementById("log").innerHTML+="<br>calcul des positions VJ";
     initClones(junctions);
@@ -136,6 +153,13 @@ var req = new XMLHttpRequest();
   };
 }
 
+function init(){
+  totalClones=junctions.length;
+  document.getElementById("log").innerHTML+="<br>nombre de jonctions"+totalClones;
+}
+
+function loadPref(){
+}
 
 /*************************************************************************************************/
 //////////////////////////
@@ -303,8 +327,11 @@ function initVJposition(){
     n++;
     vjData2[n]=makeVJclass("vjline2", margeVJ+(n2+0.5)*stepVJ, 0, vmap[i], elem, "");
     positionV2[vmap[i]]=margeVJ+(n2+0.5)*stepVJ;
-    vjData[n]=makeVJclass("vjline2", margeVJ+(n2+(t1/(t2+1)))*stepVJ, 0, vmap[i], elem, vmap[i].split('*')[1]);
-    positionV[vmap[i]]=margeVJ+(n2+(t1/(t2+1)))*stepVJ;
+    vjData[n]=makeVJclass("vjline2", margeVJ+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
+			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) ),
+			  0, vmap[i], elem, vmap[i].split('*')[1]);
+    positionV[vmap[i]]=margeVJ+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
+			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) );
 
   }
   
@@ -329,8 +356,12 @@ function initVJposition(){
     }
     t1++;
     n++;
-    vjData[n]=makeVJclass("vjline2", 0, margeVJ+(n2+(t1/(t2+1)))*stepVJ, jmap[i], elem, jmap[i].split('*')[1]);
-    positionJ[jmap[i]]=margeVJ+(n2+(t1/(t2+1)))*stepVJ;		
+    vjData[n]=makeVJclass("vjline2", 0, margeVJ+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
+			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) )
+			    , jmap[i], elem, jmap[i].split('*')[1]);
+    
+    positionJ[jmap[i]]=margeVJ+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
+			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) );		
     vjData2[n]=makeVJclass("vjline2", 0, margeVJ+(n2+0.5)*stepVJ, jmap[i], elem, "");
     positionJ2[jmap[i]]=margeVJ+(n2+0.5)*stepVJ;
   }
