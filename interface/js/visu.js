@@ -121,8 +121,8 @@ function initClones(data) {
       document.getElementById("listClones").appendChild(div);
     }
     for(var i=0 ;i<favorites.length; i++){
-      document.getElementById("log").innerHTML+="<br>plop";
-      addToFavorites(favorites[i]);
+      var clone = document.getElementById(favorites[i]);
+      document.getElementById("listFav").appendChild(clone);
     }
 }
 

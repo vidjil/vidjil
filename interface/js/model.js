@@ -50,7 +50,7 @@
 /* données brutes issues du chargement des fichiers json*/
 var jsonData;          //fichier json
 var junctions;         //liste des jonctions du fichier json
-var pref;              //fichier des preferences
+var pref ={ custom :[], cluster :[]} ;              //fichier des preferences
 var customColor = [];  //table des couleurs personalisées (TODO save to prefs.json)
 var customName = [];   //table des noms personalisées (TODO save to prefs.json)
 var favorites = [];    //liste des favoris
@@ -184,6 +184,33 @@ function loadPref(){
     
   }
 }
+
+  function editName(cloneID){
+    var divParent = document.getElementById("clone_name");
+    divParent.innerHTML="";
+    
+    var input = document.createElement('input');
+    input.type="text";
+    input.id= "new_name";
+    divParent.appendChild(input);
+    
+    var a = document.createElement('a');
+    a.className="button";
+    a.appendChild(document.createTextNode("save"));
+    a.onclick=function(){ 
+      var newName=document.getElementById("new_name").value;
+      changeName(cloneID, newName); }
+    divParent.appendChild(a);
+    
+  }
+
+  function changeName(cloneID, newName){
+    document.getElementById("log").innerHTML+="<br>plop";
+    tmpID = cloneID;
+    customName[tmpID] = newName;
+    $("#"+tmpID).find(".nameBox").html(newName);
+    $("#clone_name").html(newName);
+  }
 
 
 /*************************************************************************************************/
