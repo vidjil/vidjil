@@ -73,7 +73,6 @@ function initVisu(){
 /* initialise les elements avec les données du modele
  * nodes[] pour la fenetre de visu
  * cree et rempli la liste html
- * TODO: initialiser favoris depuis prefs.json
  */
 function initClones(data) {
   

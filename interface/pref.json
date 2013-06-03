@@ -4,7 +4,8 @@
      {
       "junction" : "CTGTGCCACCTGGGATCGGAGTCGGATTATAAGAAACTCT", 
       "color" : "blue" , 
-      "name" : "guilty" 
+      "name" : "guilty",
+      "fav": true
      },
      {
       "junction" : "TACTGTGCTGCGTGGGATCCTACACTGGTTGGTTCAAGAT", 
@@ -13,11 +14,13 @@
      },
      {
       "junction" : "TGTGCTGCGTGGGATTTAAGGTAGAATACCACTGGTTGGT", 
-      "color" : "#aacc22" 
+      "color" : "#aacc22", 
+      "fav": true
      },
      {
       "junction" : "TTACTGTGCCACCTGGGACACTATAAGAAACTCTTTGGCA", 
-      "name" : "bernard minet"
+      "name" : "bernard minet",
+      "fav": true
      }
   ],
   "cluster" : 

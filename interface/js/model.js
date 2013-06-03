@@ -136,15 +136,14 @@ var req = new XMLHttpRequest();
     jsonData = JSON.parse(jsonDataText);
     junctions=jsonData.junctions;
     init();
-    loadPref();
     initVisu();
     document.getElementById("log").innerHTML+="<br>chargement fichier json";
+    initClones(junctions);
+    document.getElementById("log").innerHTML+="<br>génération des clones";
     loadPref();
     document.getElementById("log").innerHTML+="<br>chargement fichier de preference";
     initVJposition();
     document.getElementById("log").innerHTML+="<br>calcul des positions VJ";
-    initClones(junctions);
-    document.getElementById("log").innerHTML+="<br>génération des clones";
     initGraph();
     document.getElementById("log").innerHTML+="<br>initialisation graph";
     initCoef();
@@ -176,6 +175,10 @@ function loadPref(){
     
     if (typeof( pref.custom[i].name ) != "undefined" ) {
       customName[mapID[pref.custom[i].junction]]=pref.custom[i].name;
+    }
+    
+    if (typeof( pref.custom[i].fav ) != "undefined" ) {
+      addToFavorite(mapID[pref.custom[i].junction]);
     }
     
   }
