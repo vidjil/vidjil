@@ -169,13 +169,14 @@ function init(){
 
 function loadPref(){
   for(var i=0 ;i<pref.custom.length; i++){
-     document.getElementById("log").innerHTML+="<br>plop";
     
     if (typeof( pref.custom[i].color ) != "undefined" ) {
-      document.getElementById("log").innerHTML+="<br>plap";
       customColor[mapID[pref.custom[i].junction]]=pref.custom[i].color;
     }
     
+    if (typeof( pref.custom[i].name ) != "undefined" ) {
+      customName[mapID[pref.custom[i].junction]]=pref.custom[i].name;
+    }
     
   }
 }
@@ -389,10 +390,14 @@ function initVJposition(){
 
   /*retourne le label d'un clone ( s'il n'en possde pas retourne sa jonction*/
   function getname(cloneID){
-    if ( typeof(junctions[cloneID].seg)!='undefined' && typeof(junctions[cloneID].seg.name)!='undefined' ){
-      return junctions[cloneID].seg.name
+    if ( typeof(customName[cloneID])!='undefined' ){
+      return customName[cloneID];
     }else{
-      return junctions[cloneID].junction;
+      if ( typeof(junctions[cloneID].seg)!='undefined' && typeof(junctions[cloneID].seg.name)!='undefined' ){
+	return junctions[cloneID].seg.name
+      }else{
+	return junctions[cloneID].junction;
+      }
     }
   }
   

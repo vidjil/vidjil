@@ -10,6 +10,14 @@
       "junction" : "TACTGTGCTGCGTGGGATCCTACACTGGTTGGTTCAAGAT", 
       "color" : "red" , 
       "name" : "bob"
+     },
+     {
+      "junction" : "TGTGCTGCGTGGGATTTAAGGTAGAATACCACTGGTTGGT", 
+      "color" : "#aacc22" 
+     },
+     {
+      "junction" : "TTACTGTGCCACCTGGGACACTATAAGAAACTCTTTGGCA", 
+      "name" : "bernard minet"
      }
   ],
   "cluster" : 
