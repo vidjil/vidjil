@@ -120,6 +120,10 @@ function initClones(data) {
       div.style.background=color(i);
       document.getElementById("listClones").appendChild(div);
     }
+    for(var i=0 ;i<favorites.length; i++){
+      document.getElementById("log").innerHTML+="<br>plop";
+      addToFavorites(favorites[i]);
+    }
 }
 
 

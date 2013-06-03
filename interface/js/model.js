@@ -51,8 +51,9 @@
 var jsonData;          //fichier json
 var junctions;         //liste des jonctions du fichier json
 var pref;              //fichier des preferences
-var customColor = [];  //table des couleurs personalisées (TODO save/load depuis prefs.json)
-var customName = [];   //table des noms personalisées (TODO save/load depuis prefs.json)
+var customColor = [];  //table des couleurs personalisées (TODO save to prefs.json)
+var customName = [];   //table des noms personalisées (TODO save to prefs.json)
+var favorites = [];    //liste des favoris
  
 /* initialisation fixé par defaut*/
 var colorMethod="V"           //methode de colorisation ( V par defaut)
@@ -141,7 +142,6 @@ var req = new XMLHttpRequest();
     loadPref();
     document.getElementById("log").innerHTML+="<br>chargement fichier de preference";
     initClones(junctions);
-    loadPrefFav();
     document.getElementById("log").innerHTML+="<br>génération des clones";
     initVJposition();
     document.getElementById("log").innerHTML+="<br>calcul des positions VJ";
@@ -178,16 +178,13 @@ function loadPref(){
       customName[mapID[pref.custom[i].junction]]=pref.custom[i].name;
     }
     
+    if (typeof( pref.custom[i].fav ) != "undefined" ) {
+      favorites.push(mapID[pref.custom[i].junction]);
+    }
+    
   }
 }
 
-function loadPrefFav(){
-  for(var i=0 ;i<pref.custom.length; i++){
-    if (typeof( pref.custom[i].fav ) != "undefined" ) {
-      addToFavorite(mapID[pref.custom[i].junction]);
-    }
-  }
-}
 
 /*************************************************************************************************/
 //////////////////////////

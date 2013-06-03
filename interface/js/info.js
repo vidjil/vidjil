@@ -14,7 +14,7 @@
  * content:
  * 
  * displayInfo(cloneID)
- * addToFavorite(cloneID)
+ * addToFavorites(cloneID)
  * addToList(cloneID)
  * 
  * TODO manipulation sur les listes
@@ -42,7 +42,7 @@
     div.appendChild(div_exit);
 	
     var div_fav=document.createElement('div');
-    div_fav.onclick = function(){ addToFavorite(cloneID); }
+    div_fav.onclick = function(){ addToFavorites(cloneID); }
     div_fav.appendChild(document.createTextNode("^  ajouter aux favoris ^"));
     div.appendChild(div_fav);
     
@@ -62,7 +62,7 @@
   
   
   /*pure manipulation du dom, deplace un element du container listClone vers favoris*/
-  function addToFavorite(cloneID){
+  function addToFavorites(cloneID){
     var clone = document.getElementById(cloneID);
     document.getElementById("listFav").appendChild(clone);
   }
