@@ -212,6 +212,38 @@ function loadPref(){
     $("#clone_name").html(newName);
   }
 
+  /*fonction de sauvegarde (local)*/
+  function savePref(){
+    
+    var filePref ={ custom :[], cluster :[]} 
+    
+    for(var i=0 ;i<totalClones; i++){
+      if ( typeof customColor[i] != "undefined" || 
+      typeof customName[i] != "undefined" || 
+      favorites.indexOf(i) != -1 ){
+	
+	var elem = {};
+	elem.junction = junctions[i].junction;
+	if ( typeof customColor[i] != "undefined" )
+	  elem.color = customColor[i];
+	if ( typeof customName[i] != "undefined" ) 
+	  elem.name = customName[i];
+	if ( favorites.indexOf(i) != -1 )
+	  elem.fav = true;
+	
+	filePref.custom.push(elem);
+      }
+    }
+	
+    var textToWrite = JSON.stringify(filePref);
+    var textFileAsBlob = new Blob([textToWrite], {type:'json'});
+    var fileName = "pref.json";
+
+    var downloadLink = document.createElement("a");
+    downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
+    downloadLink.download = fileName;
+    downloadLink.click();    
+  }
 
 /*************************************************************************************************/
 //////////////////////////

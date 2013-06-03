@@ -82,8 +82,8 @@
   
   /*operation inverse*/
   function addToList(cloneID){
-    var index = array.indexOf(cloneID);
-    array.splice(index, 1);
+    var index = favorites.indexOf(cloneID);
+    favorites.splice(index, 1);
     var clone = document.getElementById(cloneID);
     document.getElementById("listClones").appendChild(clone);
   }
