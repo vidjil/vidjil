@@ -138,10 +138,11 @@ var req = new XMLHttpRequest();
     init();
     initVisu();
     document.getElementById("log").innerHTML+="<br>chargement fichier json";
-    initClones(junctions);
-    document.getElementById("log").innerHTML+="<br>génération des clones";
     loadPref();
     document.getElementById("log").innerHTML+="<br>chargement fichier de preference";
+    initClones(junctions);
+    loadPrefFav();
+    document.getElementById("log").innerHTML+="<br>génération des clones";
     initVJposition();
     document.getElementById("log").innerHTML+="<br>calcul des positions VJ";
     initGraph();
@@ -177,10 +178,14 @@ function loadPref(){
       customName[mapID[pref.custom[i].junction]]=pref.custom[i].name;
     }
     
+  }
+}
+
+function loadPrefFav(){
+  for(var i=0 ;i<pref.custom.length; i++){
     if (typeof( pref.custom[i].fav ) != "undefined" ) {
       addToFavorite(mapID[pref.custom[i].junction]);
     }
-    
   }
 }
 
