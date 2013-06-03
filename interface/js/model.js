@@ -47,11 +47,10 @@
 //	MODELS   	//
 //////////////////////////
 
-/* données brut issu du chargement des fichiers json*/
+/* données brutes issues du chargement des fichiers json*/
 var jsonData;          //fichier json
 var junctions;         //liste des jonctions du fichier json
 var pref;              //fichier des preferences
-var totalClones;   //nombres de clones a gerer //TODO initialiser la variable au chargement du fichier json
 var customColor = [];  //table des couleurs personalisées (TODO save/load depuis prefs.json)
 var customName = [];   //table des noms personalisées (TODO save/load depuis prefs.json)
  
@@ -69,6 +68,10 @@ var colorJ_end=[18,211,211];
  
 var margeVJ=140;              //info quadrillage (vj1/vj2)
 var stepVJ=200;
+
+/* initialisation by init */
+var totalClones;   	//nombres de clones a gerer 
+var mapID = [];      //map entre les jonctions et les cloneID correspondants
 
 /* initialisation by initCoef */
 var resizeCoef ;  //coefficient utilisé pour réajusté la visu dans l'espace disponible
@@ -133,6 +136,7 @@ var req = new XMLHttpRequest();
     jsonData = JSON.parse(jsonDataText);
     junctions=jsonData.junctions;
     init();
+    loadPref();
     initVisu();
     document.getElementById("log").innerHTML+="<br>chargement fichier json";
     loadPref();
@@ -156,9 +160,24 @@ var req = new XMLHttpRequest();
 function init(){
   totalClones=junctions.length;
   document.getElementById("log").innerHTML+="<br>nombre de jonctions"+totalClones;
+  
+  for(var i=0 ;i<totalClones; i++){
+    mapID[junctions[i].junction]=i;
+  }
+  
 }
 
 function loadPref(){
+  for(var i=0 ;i<pref.custom.length; i++){
+     document.getElementById("log").innerHTML+="<br>plop";
+    
+    if (typeof( pref.custom[i].color ) != "undefined" ) {
+      document.getElementById("log").innerHTML+="<br>plap";
+      customColor[mapID[pref.custom[i].junction]]=pref.custom[i].color;
+    }
+    
+    
+  }
 }
 
 /*************************************************************************************************/

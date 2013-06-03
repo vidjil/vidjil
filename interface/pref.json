@@ -1,0 +1,28 @@
+{
+  "custom" : 
+  [
+     {
+      "junction" : "CTGTGCCACCTGGGATCGGAGTCGGATTATAAGAAACTCT", 
+      "color" : "blue" , 
+      "name" : "guilty" 
+     },
+     {
+      "junction" : "TACTGTGCTGCGTGGGATCCTACACTGGTTGGTTCAAGAT", 
+      "color" : "red" , 
+      "name" : "bob"
+     }
+  ],
+  "cluster" : 
+  [ 
+    { 
+      "action" : "merge", 
+      "junction 1" : "CTGTGCCACCTGGGATCGGAGTCGGATTATAAGAAACTCT",
+      "junction 2" : "TTACTGTGCCACCTGGGACAATACCACTGGTTGGTTCAAG"
+    },
+    { 
+      "action" : "merge", 
+      "junction 1" : "CTGTGCCACCTGGGATCGGAGTCGGATTATAAGAAACTCT",
+      "junction 2" : "TACTGTGCTGCGTGGGATCCTACACTGGTTGGTTCAAGAT" 
+    }
+  ]
+}
