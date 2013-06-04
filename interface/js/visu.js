@@ -81,10 +81,8 @@ function initClones(data) {
   min_size = 1;
    for(var i=0 ;i<totalClones; i++){
 
-      var n = [i]
       nodes[i].r1 = 5;
       nodes[i].r2 = 5;
-      nodes[i].clones = n;
       nodes[i].focus = false;
       for (t=0 ; t<junctions[i].size.length; t++){
 	if (getSize(i)<min_size) {
@@ -231,25 +229,6 @@ function updateLook(){
     document.getElementById(i).style.background=color(i);
   }
 }
-
-  
-/*ajoute la jonction b (ou le clone lead par la jonction b) dans le clone lead par a// TODO(gerer les cas speciaux)*/
-function merge(a, b){
-  var nlist = nodes[a].clones+nodes[b].clones;
-  nodes[a].clones = nlist;
-  nodes[b].clones=[];
-}
-
-
-/*libere la jonction b du clone lead par a TODO*/
-function split(a, b){
-  if (a==b) return
-    
-  for(var i=0 ;i<nodes[a].clones.length; i++){
-    if (nodes[a].clones[i] == b) return
-  }
-}
-
 
 /* update position frame by frame pour la gestion des collisions*/
 function tick(e) {

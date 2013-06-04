@@ -71,12 +71,13 @@ var margeVJ=140;              //info quadrillage (vj1/vj2)
 var stepVJ=200;
 
 /* initialisation by init */
-var totalClones;   	//nombres de clones a gerer 
-var mapID = [];      //map entre les jonctions et les cloneID correspondants
+var totalClones;              //nombres de clones a gerer 
+var mapID = [];               //map entre les jonctions et les cloneID correspondants
+var clones = [];              //clusters
 
 /* initialisation by initCoef */
-var resizeCoef ;  //coefficient utilisé pour réajusté la visu dans l'espace disponible
-var resizeG_W ;   //coefficients utilisés pour réajusté le graphique 
+var resizeCoef ;              //coefficient utilisé pour réajusté la visu dans l'espace disponible
+var resizeG_W ;               //coefficients utilisés pour réajusté le graphique 
 var resizeG_H ;
 var min_size;
 
@@ -90,7 +91,6 @@ var vjData=[];            //contient les données pour le dessin du quadrillage/
 var vjData2=[];           //idem(vj2)
 
 var colorVJ={};           //table associative labels (V ou J) <=> couleurs
-
 
 
 /*fonction de chargement local*/
@@ -163,6 +163,8 @@ function init(){
   
   for(var i=0 ;i<totalClones; i++){
     mapID[junctions[i].junction]=i;
+    
+    clones[i]=[i];
   }
   
 }
@@ -205,7 +207,6 @@ function loadPref(){
   }
 
   function changeName(cloneID, newName){
-    document.getElementById("log").innerHTML+="<br>plop";
     tmpID = cloneID;
     customName[tmpID] = newName;
     $("#"+tmpID).find(".nameBox").html(newName);
@@ -466,11 +467,11 @@ function initVJposition(){
   }
   
   
-  /*renvoye la taille d'un clone(en %) ( somme des tailles des jonctions qui le compose)*/
+  /*renvoye la taille d'un clone( somme des tailles des jonctions qui le compose)*/
   function getSize(cloneID){
     var r=0;
-    for(var j=0 ;j<nodes[cloneID].clones.length; j++){
-      r += junctions[nodes[cloneID].clones[j]].size[t];}
+    for(var j=0 ;j<clones[cloneID].length; j++){
+      r += junctions[clones[cloneID][j]].size[t];}
     
     return (r)/(jsonData.total_size[t]);
   }
@@ -480,7 +481,7 @@ function initVJposition(){
   function radius(cloneID) {
     if (typeof junctions != "undefined") {
       var r=getSize(cloneID);
-      return 0.5+Math.pow(50000*r,(1/3) );
+      return 2+Math.pow(60000*r,(1/3) );
     }
   }
   
@@ -698,6 +699,37 @@ function initVJposition(){
     document.getElementById("info").innerHTML="";
     updateGraphColor();
     updateLook();
+  }
+  
+  function merge(cloneIDa, cloneIDb){
+    var nlist = clones[cloneIDa].concat(clones[cloneIDb]);
+    clones[cloneIDa] = nlist;
+    clones[cloneIDb] = [];
+    document.getElementById(cloneIDb).style.display="none";
+    data_graph[cloneIDb].id=cloneIDa;
+    updateGraph();
+    updateVis();
+  }
+
+
+  /*libere la jonction b du clone lead par a */
+  function split(cloneIDa, cloneIDb){
+    if (cloneIDa==cloneIDb) return
+     
+      
+    var nlist = clones[cloneIDa];
+    var index = nlist.indexOf(cloneIDb);
+    if (index ==-1) return
+      
+    nlist.splice(index, 1);
+    
+    clones[cloneIDa]=nlist;
+    clones[cloneIDb]=[cloneIDb];
+    data_graph[cloneIDb].id=cloneIDb;
+    document.getElementById(cloneIDb).style.display="";
+    
+    updateGraph();
+    updateVis();
   }
   
  
