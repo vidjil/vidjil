@@ -21,6 +21,12 @@
       "junction" : "TTACTGTGCCACCTGGGACACTATAAGAAACTCTTTGGCA", 
       "name" : "bernard minet",
       "fav": true
+     },
+     {
+      "junction" : "TATTACTGTGCCACCTGAACCGTTTATTATAAGAAACTCT", 
+      "name" : "guilty2",
+      "color" : "violet", 
+      "fav": true
      }
   ],
   "cluster" : 

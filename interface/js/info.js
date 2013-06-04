@@ -67,6 +67,15 @@
     div_edit.appendChild(document.createTextNode(" modifier le nom "));
     div.appendChild(div_edit);
     
+    var div_cluster=document.createElement('div');
+    for (var i=0; i<clones[cloneID].length; i++){
+      var div_clone=document.createElement('div');
+      div_clone.appendChild(document.createTextNode(getname(clones[cloneID][i])));
+      div_cluster.appendChild(div_clone);
+    }
+    
+    div.appendChild(div_cluster);
+    
     divParent.appendChild(div);
     
   }

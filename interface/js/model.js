@@ -649,6 +649,8 @@ function initVJposition(){
     }
     updateLook();
     
+    document.getElementById("focus-sequence").innerHTML=getname(cloneID);
+    
     var list = document.getElementById(cloneID);
     list.style.border='white';
     list.style.borderStyle='solid';
