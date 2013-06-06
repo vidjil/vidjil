@@ -40,8 +40,8 @@ function initVisu(){
   nodes = d3.range(totalClones).map(Object);
   force = d3.layout.force()
     .gravity(0)
-    .theta(0.8)
-    .charge(-1)
+    .theta(0) //0.8
+    .charge(0) //-1
     .friction(0.9)
     .nodes(nodes)
     .on("tick", tick)
@@ -314,26 +314,17 @@ function vjSplit(posV, posJ){
 }
 
 
-/*méthode de répartition des clones en fonction du radius*/
+/*méthode de répartition des clones en fonction de la taille*/
 function sizeSplit() {
   var coef = 0.006
     return function(d) {
-      var r=getSize(d);
-      if (d.drag != 1){
-	if (r < 50){
-	  d.x+=coef*(100-d.x);
-	  d.y+=coef*(100-d.y);
-	}else{
-	  if (r < 200){
-	      d.x+=coef*(550-d.x);
-	      d.y+=coef*(250-d.y);
-	  }else{
-	      d.x+=coef*(950-d.x);
-	      d.y+=coef*(400-d.y);
-	  }
-	}
+      var r=radius(d);
+	  d.y+=coef*((740-(r*18))-d.y);
+	  
+	  if ( d.x > 1350) d.x=d.x-Math.random();
+	  if ( d.x < 50) d.x=d.x+Math.random();
       }
-    };
 }
+
 
 
