@@ -44,7 +44,11 @@ def juncToJson(obj):
       "sequence": obj.sequence,
       "V": obj.V,
       "D": obj.D,
-      "J": obj.J
+      "J": obj.J,
+      "l1": obj.l1,
+      "l2": obj.l2,
+      "r1": obj.r1,
+      "r2": obj.r2
       }
     raise TypeError(repr(obj) + " fail !") 
 
@@ -68,6 +72,10 @@ def jsonToJunc(obj_dict):
     obj = Segment(obj_dict["sequence"])
     obj.name=obj_dict["name"]
     obj.V=obj_dict["V"]
+    obj.l1=obj_dict["l1"]
+    obj.l2=obj_dict["l2"]
+    obj.r1=obj_dict["r1"]
+    obj.r2=obj_dict["r2"]
     if "D" in obj_dict:
       obj.D=obj_dict["D"]
     obj.J=obj_dict["J"]

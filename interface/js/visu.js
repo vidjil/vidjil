@@ -52,7 +52,7 @@ function initVisu(){
     node.exit()    
     .remove()
     vis.selectAll("circle")
-    .attr("stroke-width", 5) 
+    .attr("stroke-width", 4) 
     .attr("cx", function(d) { return d.x; })
     .attr("cy", function(d) { return d.y; })
     .attr("stroke", "")
@@ -81,9 +81,11 @@ function initClones(data) {
   min_size = 1;
    for(var i=0 ;i<totalClones; i++){
 
+      nodes[i].id = i;
       nodes[i].r1 = 5;
       nodes[i].r2 = 5;
       nodes[i].focus = false;
+      
       for (t=0 ; t<junctions[i].size.length; t++){
 	if (getSize(i)<min_size) {
 	  min_size=getSize(i)
@@ -97,7 +99,7 @@ function initClones(data) {
       div.className="listElem";
       div.onmouseover = function(){ focusIn(this.id, 0); }
       div.onmouseout= function(){ focusOut(this.id); }
-      div.onclick=function(){ selectClone(this.id); }
+      div.onclick=function(){ displayInfo(this.id); }
       
       var span0 = document.createElement('span');
       span0.className = "nameBox";
@@ -110,6 +112,7 @@ function initClones(data) {
       
       var span2=document.createElement('span')
       span2.className = "sizeBox";
+      span2.id="size"+i;
       span2.appendChild(document.createTextNode((100*getSize(i)).toFixed(2)+"%"));
       
       div.appendChild(span0);
@@ -210,12 +213,14 @@ function updateLegend(){
 
 /*mise a jour de la visualisation*/
 function updateVis(){
+  
   for(var i=0 ;i<totalClones; i++){
     nodes[i].r1=radius(i);
   }
   vis.selectAll("circle.node")
       .style("fill", function(i) { return color(i); })
   force.alpha(.2);
+  
 }
 
 
@@ -223,8 +228,8 @@ function updateLook(){
   node
   .transition()
   .duration(1500)
-  .style("fill", function(i) { return color(i); } )
-  node.style("stroke", function(i) { return stroke(i); } )
+  .style("fill", function(d) { return color(d.id); } )
+  node.style("stroke", function(d) { return stroke(d.id); } )
   for(var i=0 ;i<totalClones; i++){
     document.getElementById(i).style.background=color(i);
   }
@@ -255,7 +260,7 @@ function collide() {
   var quadtree = d3.geom.quadtree(nodes);
   return function(d) {
    if (d.drag != 1){
-    var r = nodes[d].r2+padding,
+    var r = nodes[d.id].r2+padding,
         nx1 = d.x - r,
         nx2 = d.x + r,
         ny1 = d.y - r,
@@ -265,7 +270,7 @@ function collide() {
         var x = d.x - quad.point.x,
             y = d.y - quad.point.y,
             l = Math.sqrt(x * x + y * y),
-            r = nodes[d].r2 + nodes[quad.point].r2+padding;
+            r = nodes[d.id].r2 + nodes[quad.point].r2+padding;
         if (l < r) {
           l = (l - r) / l*0.5;
           d.x -= x *= l;
@@ -302,9 +307,9 @@ function vjSplit(posV, posJ){
     var coef = 0.005
     return function(d) {
       if (typeof junctions != "undefined") {
-	if ( typeof(junctions[d].seg) != 'undefined' && typeof(junctions[d].seg.V) != 'undefined' ){
-	  d.x+=coef*(posV[junctions[d].seg.V[0]]-d.x);
-	  d.y+=coef*(posJ[junctions[d].seg.J[0]]-d.y);
+	if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
+	  d.x+=coef*(posV[junctions[d.id].seg.V[0]]-d.x);
+	  d.y+=coef*(posJ[junctions[d.id].seg.J[0]]-d.y);
 	}else{
 	  d.y+=coef*(50-d.y);
 	  d.x+=coef*(50-d.x);
@@ -318,7 +323,7 @@ function vjSplit(posV, posJ){
 function sizeSplit() {
   var coef = 0.006
     return function(d) {
-      var r=radius(d);
+      var r=radius(d.id);
 	  d.y+=coef*((740-(r*18))-d.y);
 	  
 	  if ( d.x > 1350) d.x=d.x-Math.random();

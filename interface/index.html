@@ -20,7 +20,12 @@
 	
   </head>
 
-  <body>
+  <body onload="initCoef();">
+    <div id="file_menu" style="position: fixed; top: 200px; margin-left:-200px;left:50% ;width: 400px; height: 60px;font-size: 14px;background-color: #333044; padding: 10px;">
+    	pref:<input id="upload_pref" type="file" name="pref" /></br>
+	data:<input id="upload_json" type="file" name="json" onchange="loadJson();" />
+    </div>
+    <div onclick="showlog();" style="position: fixed; top: 5px; right:5px ;width: 2px; height: 2px;font-size: 14px;background-color: #333044; padding: 10px;"> </div>
  
     <div id="mid-container">
       <!-- LEFT-CONTAINER -->
@@ -31,18 +36,6 @@
 
 	<div id="menu">
 	
-	
-	  <form name="uploadForm">
-	    <table>
-	      <tbody>
-		<tr>
-		  <td>
-		  pref:<input id="upload_pref" type="file" name="pref" /></br>
-		  data:<input id="upload_json" type="file" name="json" onchange="loadJson();" /></td>
-		</tr>
-	      </tbody>
-	    </table>
-	  </form>
 	  <table style="width:100%">
 	    <tr>
 	    <td>
@@ -57,40 +50,32 @@
 	      <a class="button" onclick="changeColorMethod('V');">V</a>
 	      <a class="button" onclick="changeColorMethod('J');">J</a>
 	      <a class="button" onclick="changeColorMethod(' ');">none</a>
+	      <a class="button" onclick="toggleCustomColor('V');">use custom</a>
 	    </td></tr>
 	    
 	    <td>
-	    useCustomColor
-	      <a class="button" onclick="toggleCustomColor('V');"> click </a>
-	    </td></tr>
-	    
-	    <td>
-	      <a class="button" onclick="showlog();">log</a>
 	    </td></tr>
 	    
 	    <td>
 	      <a class="button" onclick="switchVisu();">switch</a>
+	      <a class="button" href="javascript:savePref()">Save pref</a>
+	      <a class="button" onclick="merge(0,1)">merge</a>
+	      <a class="button" onclick="split(0,1)">split</a>
 	    </td></tr>
-	   
-	    <tr>
-	    <td><a class="button" href="javascript:savePref()">Save pref</a></td>
-	    </tr>
-	    
-	    <tr>
-	    <td><a class="button" onclick="merge(0,1)">merge</a><a class="button" onclick="split(0,1)">split</a></td>
-	    </tr>
-	    
 	  </table>
 	  
 	</div>
-
-	<div id="info">Info</div>	
-
-	<div id="listFav">listFav</div>
+  
+  	<div id="listFav">listFav</div>
 	 
-	 <div id="clones">
-	    <div id="listClones">listClone</div>
-	 </div>
+	<div id="clones">
+	  <div id="listClones">listClone</div>
+	</div>
+	
+	<div id="info">Info</div>	
+	
+	<div id="listSelect">select</div>
+
       </div>
 	
       </span>
@@ -115,8 +100,7 @@
 	  
     <div id="bot-container" onmouseover="displayAlign()" >
       <div id="focus-sequence"> > </div>
- 
-      
+
       <div id="align" style="display:none">
 	<ul id="listSeq"></ul>
       </div>

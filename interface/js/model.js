@@ -60,7 +60,7 @@ var colorMethod="V"           //methode de colorisation ( V par defaut)
 var splitMethod=" ";          //par defaut pas de method de split
 var t = 0;                    //point de suivi courant ( par defaut t=0 )
 var useCustomColor=true;      //utilisation des couleurs personalisées
-var select=-1;                //ID du clone selectionné ( par defaut -1 => aucun clone selectionné)
+var select=[];                //liste des clones selectionnés
 
 var colorV_begin=[255,241,22];//dégradé de couleur germline V
 var colorV_end=[193,17,118];
@@ -155,6 +155,8 @@ var req = new XMLHttpRequest();
     document.getElementById("log").innerHTML+="<br>start visu";
     $("#log").scrollTop(100000000000000);
   };
+  
+  document.getElementById("file_menu").style.display="none";
 }
 
 function init(){
@@ -270,8 +272,8 @@ function initCoef(){
   else
     resizeCoef = resizeW;
   
-  $('#listFav').height((($('#left').height()-400)/2)+"px");
-  $('#listClones').height((($('#left').height()-400)/2)+"px");
+  $('#listFav').height((($('#left').height()-475))+"px");
+  $('#listClones').height((($('#left').height()-475))+"px");
   
   //recadrage des legendes si la methode de répartition utilisé a ce moment la en utilise
   if (splitMethod=="vj1" || splitMethod=="vj2") updateLegend();
@@ -303,16 +305,18 @@ window.onresize = initCoef;
 function switchVisu(){
   var hv1 = $('#visu').height();
   var hv2 = $('#visu2').height();
-    
+  
+  
   if (hv1<hv2){
     $('#visu2').animate({height: '30%'}, 400 ); 
-    $('#visu').delay(200).animate({height: '70%'}, 400 ); 
+    $('#visu').animate({height: '70%'}, 400 ); 
   }
   else{
     $('#visu').animate({height: '30%'}, 400 ); 
-    $('#visu2').delay(200).animate({height: '70%'}, 400 ); 
+    $('#visu2').animate({height: '70%'}, 400 ); 
   }
-  setTimeout(function() {initCoef();},700);
+  
+setTimeout(function() {initCoef();},400);
 }
 
   
@@ -321,6 +325,7 @@ function changeT(time){
   t=time;
   document.getElementById("log").innerHTML+="<br>changement de point de suivi > "+time;
   $("#log").scrollTop(100000000000000);
+  updateList();
   updateVis();
   updateLook();
 }
@@ -481,6 +486,7 @@ function initVJposition(){
   function radius(cloneID) {
     if (typeof junctions != "undefined") {
       var r=getSize(cloneID);
+      if (r==0) return 0;
       return 1+Math.pow(60000*r,(1/3) );
     }
   }
@@ -590,10 +596,8 @@ function initVJposition(){
   
   /*retourne la couleur de la bordure du clone passé en parametre*/
   function stroke(cloneID) {
-    if (nodes[cloneID].focus==true)
-      return "white";
-        if (select==cloneID)
-      return "#dddddd";
+    if (nodes[cloneID].focus==true) return "white";
+    if (select.indexOf(cloneID)!=-1)return "#BBB";
     return '';
   }
   
@@ -657,6 +661,14 @@ function initVJposition(){
     list.style.padding='0px';
     list.style.color='white';
     
+    var list2 = document.getElementById("select"+cloneID);
+    if(list2){
+      list2.style.border='white';
+      list2.style.borderStyle='solid';
+      list2.style.padding='0px';
+      list2.style.color='white';
+    }
+    
     var line = document.getElementById("line"+cloneID);
     line.style.stroke='white';
     line.style.opacity='1';
@@ -678,6 +690,14 @@ function initVJposition(){
     list.style.padding='';
     list.style.color='';
     
+    var list2 = document.getElementById("select"+cloneID);
+    if(list2){
+      list2.style.border='';
+      list2.style.borderStyle='';
+      list2.style.padding='';
+      list2.style.color='';
+    }
+    
     var line = document.getElementById("line"+cloneID);
     line.style.stroke='';
     line.style.opacity='';
@@ -690,15 +710,34 @@ function initVJposition(){
   
   /*selectionne un element et déclenche l'affichage de ses informations */
   function selectClone(cloneID){
-    select=cloneID;
-    displayInfo(cloneID);
+    var index = select.indexOf(cloneID);
+    if (index == -1){
+      select.push(cloneID);
+      displayInfo(cloneID);
+      var clone = document.getElementById(cloneID).cloneNode(true);
+      clone.id2=clone.id;
+      clone.id="select"+clone.id;
+      clone.onmouseover = function(){ focusIn(this.id2, 0); }
+      clone.onmouseout= function(){ focusOut(this.id2); }
+      clone.onclick=function(){displayInfo(this.id2); }
+      document.getElementById("listSelect").appendChild(clone);
+      addToSegmenter(cloneID);
+    }else{
+      select.splice(index,1);
+      document.getElementById("info").innerHTML="";
+      var clone = document.getElementById("select"+cloneID);
+      clone.parentNode.removeChild(clone);
+    }
+     updateLook();
   }
   
   
-  /*libere l'element selectionné et vide la fenêtre d'information*/
+  /*libere les elements selectionnées et vide la fenêtre d'information*/
   function freeSelect(){
-    select=-1;
+    select=[];
     document.getElementById("info").innerHTML="";
+    document.getElementById("listSelect").innerHTML="";
+    document.getElementById("listSeq").innerHTML="";
     updateGraphColor();
     updateLook();
   }
@@ -711,6 +750,8 @@ function initVJposition(){
     data_graph[cloneIDb].id=cloneIDa;
     updateGraph();
     updateVis();
+    updateList();//TODO update uniquement les elements concerné
+    
   }
 
 
@@ -732,6 +773,7 @@ function initVJposition(){
     
     updateGraph();
     updateVis();
+    updateList(); //TODO update uniquement les elements nconcerné
   }
   
  

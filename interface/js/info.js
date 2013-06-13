@@ -23,7 +23,6 @@
  * -maj des % affiché en fonction du point de suivi
  */
   
-
   
   /*genere le contenu du panel d'information avec les données d'un clone */
   function displayInfo(cloneID){
@@ -80,6 +79,12 @@
     
   }
   
+  //met a jour les % dans les listes
+  function updateList(){
+    for (var i=0; i<totalClones; i++){
+      document.getElementById("size"+i).innerHTML=(100*getSize(i)).toFixed(2)+"%";
+    }   
+  }
   
   /*pure manipulation du dom, deplace un element du container listClone vers favoris*/
   function addToFavorites(cloneID){

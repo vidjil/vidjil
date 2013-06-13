@@ -2,7 +2,8 @@ html{
   height: 100%;
   padding: 0px;
   margin: 0px;
-  min-width: 1252px
+  min-width: 960px;
+  min-height: 650px
 }
 
 body {
@@ -11,8 +12,8 @@ body {
   font-family: Arial, Helvetica, Sans-serif;
   font-size: 14px;
   height : 100%;
-  margin-bottom:0px;
-  margin-top:0px;
+  
+
 }
 
 ul {
@@ -61,6 +62,7 @@ list-style-type: none;
 
 #bot-container {
   width : 100%;
+  margin-left:380px;
   position : fixed;
   bottom :0px;
   background : #102020;
@@ -68,12 +70,11 @@ list-style-type: none;
 }
 
 #align {
-width: auto;
-height: 100px;
-background-color: #101010;
-overflow: auto;
-margin-left: 380px;
-
+  width: auto;
+  height: 160px;
+  background-color: #101010;
+  overflow: auto;
+  margin-right: 390px;
 }
 
 .listElem{
@@ -115,12 +116,12 @@ circle:hover {
 
 #menu{
   background : #301020;
-  height :200px;
+  height :75px;
 }
 
 #info{
   background : #102020;
-  height :200px;
+  height :250px;
 }
 
 #listFav{
@@ -136,6 +137,20 @@ circle:hover {
   background : #101020;
 }
 
+#listSelect{
+  text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1.8px 1px 0 #000,
+    1px 1px 0 #000;  
+  overflow-y : scroll;
+  overflow-x : hidden;
+  font-weight: bold;
+  color: #ddd;
+  background : #201030;
+  height :160px
+}
+
 #listClones{
   text-shadow:
     -1px -1px 0 #000,
@@ -147,6 +162,7 @@ circle:hover {
   font-weight: bold;
   color: #ddd;
   background : #302010;
+  display :none;
 }
 
 .vjLegend{
@@ -228,4 +244,7 @@ circle:hover {
   cursor:pointer;
 }
 
+#focus-sequence {
+
+}
 
