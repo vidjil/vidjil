@@ -223,7 +223,6 @@ function updateVis(){
   
 }
 
-
 function updateLook(){
   node
   .transition()
@@ -232,6 +231,9 @@ function updateLook(){
   node.style("stroke", function(d) { return stroke(d.id); } )
   for(var i=0 ;i<totalClones; i++){
     document.getElementById(i).style.background=color(i);
+  }
+  for(var i=0 ;i<select.length; i++){
+    document.getElementById("select"+select[i]).style.background=color(select[i]);
   }
 }
 

@@ -720,6 +720,7 @@ function initVJposition(){
       clone.onmouseover = function(){ focusIn(this.id2, 0); }
       clone.onmouseout= function(){ focusOut(this.id2); }
       clone.onclick=function(){displayInfo(this.id2); }
+      var colorbox = clone.firstChild.nextSibling.onclick=function(){ changeColor(this.parentNode.id2); };
       document.getElementById("listSelect").appendChild(clone);
       addToSegmenter(cloneID);
     }else{
@@ -727,6 +728,8 @@ function initVJposition(){
       document.getElementById("info").innerHTML="";
       var clone = document.getElementById("select"+cloneID);
       clone.parentNode.removeChild(clone);
+      var listElem = document.getElementById("seq"+cloneID);
+      listElem.parentNode.removeChild(listElem);
     }
      updateLook();
   }
@@ -750,7 +753,7 @@ function initVJposition(){
     data_graph[cloneIDb].id=cloneIDa;
     updateGraph();
     updateVis();
-    updateList();//TODO update uniquement les elements concerné
+    updateList();
     
   }
 
@@ -773,7 +776,7 @@ function initVJposition(){
     
     updateGraph();
     updateVis();
-    updateList(); //TODO update uniquement les elements nconcerné
+    updateList(); 
   }
   
  
