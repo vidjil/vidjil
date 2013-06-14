@@ -37,7 +37,6 @@ var vis = d3.select("#visu").append("svg:svg")
 
 
 function initVisu(){
-  nodes = d3.range(totalClones).map(Object);
   force = d3.layout.force()
     .gravity(0)
     .theta(0) //0.8
@@ -57,6 +56,7 @@ function initVisu(){
     .attr("cy", function(d) { return d.y; })
     .attr("stroke", "")
     .attr("r", 5)
+    .attr("id", function(d) { return "circle"+d.id; })
     .call(force.drag)
     .on("click", function(d,i) { 
       selectClone(i);
@@ -75,7 +75,7 @@ function initVisu(){
  * cree et rempli la liste html
  */
 function initClones(data) {
-  
+  nodes = d3.range(totalClones).map(Object);
   var divParent = document.getElementById("listClones");
   divParent.innerHTML="";
   min_size = 1;
@@ -236,6 +236,19 @@ function updateLook(){
     document.getElementById("select"+select[i]).style.background=color(select[i]);
   }
 }
+
+function updateLookbyID(cloneID){
+  vis.select("#circle"+cloneID)
+  .transition()
+  .duration(1500)
+  .style("fill", function(d) { return color(d.id); } )
+  node.style("stroke", function(d) { return stroke(d.id); } )
+  document.getElementById(cloneID).style.background=color(cloneID);
+  if (document.getElementById("select"+select[cloneID]) ){
+    document.getElementById("select"+select[cloneID]).style.background=color(cloneID);
+  }
+}
+
 
 /* update position frame by frame pour la gestion des collisions*/
 function tick(e) {
