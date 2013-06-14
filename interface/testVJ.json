@@ -2,339 +2,371 @@
   "total_size": [
     8219, 
     6219, 
-    5219, 
-    10219, 
     4219, 
-    6219, 
+    3619, 
+    5219, 
     7219, 
-    4219
+    5519
   ], 
   "junctions": [
     {
       "seg": {
+        "r1": 104, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV8*01 0/AGTCGG/2 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTCCACTGCCAAAGAGTTTCTTATAATCCGACTCCGATCCCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAAGGCTCTTCCCTGTGCTTGCATAAGTATGAT", 
         "V": [
-          "TRGV8*01", 
+          "TRGV4*01", 
           "TRGV2*02", 
           "TRGV2*01", 
           "TRGV4*01"
         ], 
-        "name": "TRGV8*01 0/AGTCGG/2 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TGTTCCACTGCCAAAGAGTTTCTTATAATCCGACTCCGATCCCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAAGGCTCTTCCCTGTGCTTGCATAAGTATGAT"
+        "l1": 97, 
+        "D": []
       }, 
       "junction": "CTGTGCCACCTGGGATCGGAGTCGGATTATAAGAAACTCT", 
       "size": [
-        930, 
-        430, 
-        830, 
-        9000, 
-        430, 
-        30, 
+        7030, 
+        3030, 
         230, 
-        530
+        9, 
+        8, 
+        7, 
+        8
       ]
     }, 
     {
       "seg": {
+        "r1": 114, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV5*01 7/AACCGT/0 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "ACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGAACCGTTTATTATAAGAAACTCTT", 
         "V": [
-          "TRGV5*01", 
+          "TRGV4*01", 
           "TRGV3*02", 
           "TRGV3*01", 
           "TRGV5P*02"
         ], 
-        "name": "TRGV5*01 7/AACCGT/0 TRGJ1*02", 
-        "D": [], 
-        "sequence": "ACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGAACCGTTTATTATAAGAAACTCTT"
+        "l1": 107, 
+        "D": []
       }, 
       "junction": "TATTACTGTGCCACCTGAACCGTTTATTATAAGAAACTCT", 
       "size": [
+        24, 
+        12, 
+        8, 
+        40, 
         316, 
-        20, 
-        916, 
-        1216, 
-        316, 
-        416, 
-        116, 
-        916
+        3500, 
+        4200
       ]
     }, 
     {
       "seg": {
+        "r1": 115, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV5*01 7/AACCGT/0 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "GGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCACCTGAACCGTTTATTATAAGAAACTCTTT", 
         "V": [
           "TRGV5*01", 
           "TRGV3*02", 
           "TRGV3*01", 
           "TRGV5P*02"
         ], 
-        "name": "TRGV5*01 7/AACCGT/0 TRGJ1*02", 
-        "D": [], 
-        "sequence": "GGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCACCTGAACCGTTTATTATAAGAAACTCTTT"
+        "l1": 108, 
+        "D": []
       }, 
       "junction": "GGTCTATTACTGTGCACCTGAACCGTTTATTATAAGAAAC", 
       "size": [
         143, 
         143, 
+        43, 
         143, 
+        43, 
         143, 
-        143, 
-        143, 
-        143, 
-        143
+        43
       ]
     }, 
     {
       "seg": {
+        "r1": 99, 
         "J": [
           "TRGJP1*01", 
           "TRGJP2*01", 
           "TRGJ1*01", 
           "TRGJ2*01"
         ], 
-        "V": [
-          "TRGV10*03", 
-          "TRGV10*01", 
-          "TRGV11*01", 
-          "TRGV11*02"
-        ], 
-        "name": "TRGV10*03 0/GTT/3 TRGJP1*01", 
-        "D": [], 
-        "sequence": "TGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGAACTAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTACTTGC"
-      }, 
-      "junction": "ACTGTGCTGCGTGGGATTAGTTCCACTGGTTGGTTCAAGA", 
-      "size": [
-        130, 
-        130, 
-        130, 
-        130, 
-        130, 
-        130, 
-        130, 
-        130
-      ]
-    }, 
-    {
-      "seg": {
-        "J": [
-          "TRGJ1*02", 
-          "TRGJ1*01", 
-          "TRGJ2*01", 
-          "TRGJP1*01"
-        ], 
-        "V": [
-          "TRGV5*01", 
-          "TRGV3*02", 
-          "TRGV3*01", 
-          "TRGV5P*02"
-        ], 
-        "name": "TRGV5*01 7/AACCGTT/0 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTTATAATAAAACGGTTCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTCGTAGTATCAATATCCAGCTCCACCTCCTGGGTGTATGAGTAT"
-      }, 
-      "junction": "TATTACTGTGCCACCTGAACCGTTTTATTATAAGAAACTC", 
-      "size": [
-        109, 
-        109, 
-        109, 
-        109, 
-        109, 
-        109, 
-        109, 
-        109
-      ]
-    }, 
-    {
-      "seg": {
-        "J": [
-          "TRGJ1*02", 
-          "TRGJ1*01", 
-          "TRGJ2*01", 
-          "TRGJP2*01"
-        ], 
-        "V": [
-          "TRGV5*01", 
-          "TRGV3*02", 
-          "TRGV3*01", 
-          "TRGV5P*02"
-        ], 
-        "name": "TRGV5*01 7/AACCG/0 TRGJ1*02", 
-        "D": [], 
-        "sequence": "GGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCACCTGAACCGTTATTATAAGAAACTCTTGGACAGTTGGAATCAAC"
-      }, 
-      "junction": "GGTCTATTACTGTGCACCTGAACCGTTATTATAAGAAACT", 
-      "size": [
-        83, 
-        83, 
-        83, 
-        83, 
-        83, 
-        83, 
-        83, 
-        83
-      ]
-    }, 
-    {
-      "seg": {
-        "J": [
-          "TRGJ1*02", 
-          "TRGJ1*01", 
-          "TRGJ2*01", 
-          "TRGJP1*01"
-        ], 
-        "V": [
-          "TRGV5*01", 
-          "TRGV3*02", 
-          "TRGV3*01", 
-          "TRGV5P*02"
-        ], 
-        "name": "TRGV5*01 7/AACCGT/0 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TTGTTCCACTGCCAAAGAGTTCTTATAATAAACGGTTCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTCGTAGTATCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTT"
-      }, 
-      "junction": "CTGTGCCACCTGAACCGTTTATTATAAGAACTCTTTGGCA", 
-      "size": [
-        82, 
-        82, 
-        82, 
-        82, 
-        82, 
-        82, 
-        82, 
-        82
-      ]
-    }, 
-    {
-      "seg": {
-        "J": [
-          "TRGJP1*02", 
-          "TRGJP2*01", 
-          "TRGJ1*02", 
-          "TRGJP*01"
-        ], 
-        "V": [
-          "TRGV2*01", 
-          "TRGV2*02", 
-          "TRGV4*02", 
-          "TRGV4*01"
-        ], 
-        "name": "TRGV2*01 3/A/0 TRGJP1*02", 
-        "D": [], 
-        "sequence": "CAAGCACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACAATACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCA"
-      }, 
-      "junction": "TTACTGTGCCACCTGGGACAATACCACTGGTTGGTTCAAG", 
-      "size": [
-        74, 
-        74, 
-        74, 
-        74, 
-        74, 
-        74, 
-        74, 
-        74
-      ]
-    }, 
-    {
-      "seg": {
-        "J": [
-          "TRGJP1*01", 
-          "TRGJP*01", 
-          "TRGJP2*01", 
-          "TRGJ1*01"
-        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/GTT/3 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGAACTAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTACTTGC", 
         "V": [
           "TRGV10*02", 
           "TRGV10*01", 
           "TRGV11*01", 
           "TRGV11*02"
         ], 
+        "l1": 95, 
+        "D": []
+      }, 
+      "junction": "ACTGTGCTGCGTGGGATTAGTTCCACTGGTTGGTTCAAGA", 
+      "size": [
+        130, 
+        30, 
+        130, 
+        30, 
+        130, 
+        30, 
+        130
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 95, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV5*01 7/AACCGTT/0 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTTATAATAAAACGGTTCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTCGTAGTATCAATATCCAGCTCCACCTCCTGGGTGTATGAGTAT", 
+        "V": [
+          "TRGV5*01", 
+          "TRGV3*02", 
+          "TRGV3*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 87, 
+        "D": []
+      }, 
+      "junction": "TATTACTGTGCCACCTGAACCGTTTTATTATAAGAAACTC", 
+      "size": [
+        59, 
+        139, 
+        109, 
+        109, 
+        19, 
+        19, 
+        19
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 102, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV5*01 7/AACCG/0 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "GGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCACCTGAACCGTTATTATAAGAAACTCTTGGACAGTTGGAATCAAC", 
+        "V": [
+          "TRGV5*01", 
+          "TRGV3*02", 
+          "TRGV3*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 96, 
+        "D": []
+      }, 
+      "junction": "GGTCTATTACTGTGCACCTGAACCGTTATTATAAGAAACT", 
+      "size": [
+        83, 
+        83, 
+        43, 
+        83, 
+        183, 
+        83, 
+        83
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 102, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV5*01 7/AACCGT/0 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TTGTTCCACTGCCAAAGAGTTCTTATAATAAACGGTTCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTCGTAGTATCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTT", 
+        "V": [
+          "TRGV5*01", 
+          "TRGV3*02", 
+          "TRGV3*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 95, 
+        "D": []
+      }, 
+      "junction": "CTGTGCCACCTGAACCGTTTATTATAAGAACTCTTTGGCA", 
+      "size": [
+        82, 
+        82, 
+        182, 
+        82, 
+        82, 
+        182, 
+        82
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 84, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJ1*02", 
+          "TRGJP*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV2*01 3/A/0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "CAAGCACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACAATACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCA", 
+        "V": [
+          "TRGV2*01", 
+          "TRGV2*02", 
+          "TRGV4*02", 
+          "TRGV4*01"
+        ], 
+        "l1": 82, 
+        "D": []
+      }, 
+      "junction": "TTACTGTGCCACCTGGGACAATACCACTGGTTGGTTCAAG", 
+      "size": [
+        74, 
+        174, 
+        74, 
+        24, 
+        174, 
+        74, 
+        74
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 110, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP*01", 
+          "TRGJP2*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
         "name": "TRGV10*02 2/CC/1 TRGJP1*01", 
-        "D": [], 
-        "sequence": "AGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATCCTACACTGGTTGGTTCAAGATAT"
+        "r2": 0, 
+        "sequence": "AGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATCCTACACTGGTTGGTTCAAGATAT", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 107, 
+        "D": []
       }, 
       "junction": "TACTGTGCTGCGTGGGATCCTACACTGGTTGGTTCAAGAT", 
       "size": [
         61, 
         61, 
+        161, 
         61, 
-        61, 
-        61, 
-        61, 
+        161, 
         61, 
         61
       ]
     }, 
     {
       "seg": {
+        "r1": 102, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV8*01 0/AGTCGG/2 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TCATACTTATGCAAGCACAGGGAAGAGCCTTAAATTTATACTGGAAAATCTAATTGAACGTGACTCTGGGGTCTATTACTGTGCACCTGGGATCGGAGTCGGATTATAAGAAACTCTTTGGCAGTGAAT", 
         "V": [
           "TRGV8*01", 
           "TRGV2*02", 
           "TRGV2*01", 
           "TRGV4*01"
         ], 
-        "name": "TRGV8*01 0/AGTCGG/2 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TCATACTTATGCAAGCACAGGGAAGAGCCTTAAATTTATACTGGAAAATCTAATTGAACGTGACTCTGGGGTCTATTACTGTGCACCTGGGATCGGAGTCGGATTATAAGAAACTCTTTGGCAGTGAAT"
+        "l1": 95, 
+        "D": []
       }, 
       "junction": "TATTACTGTGCACCTGGGATCGGAGTCGGATTATAAGAAA", 
       "size": [
         49, 
         49, 
+        149, 
         49, 
         49, 
-        49, 
-        49, 
-        49, 
+        149, 
         49
       ]
     }, 
     {
       "seg": {
+        "r1": 73, 
         "J": [
-          "TRGJP1*03", 
+          "TRGJP1*01", 
           "TRGJP2*01", 
           "TRGJ1*02", 
           "TRGJ1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV2*01 0/TCCT/1 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGTCCTTACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCG", 
         "V": [
           "TRGV2*01", 
           "TRGV2*02", 
           "TRGV4*01", 
           "TRGV4*02"
         ], 
-        "name": "TRGV2*01 0/TCCT/1 TRGJP1*03", 
-        "D": [], 
-        "sequence": "TTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGTCCTTACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCG"
+        "l1": 68, 
+        "D": []
       }, 
       "junction": "TGTGCCACCTGGGACGGGTCCTTACCACTGGTTGGTTCAA", 
       "size": [
         45, 
+        145, 
         45, 
-        45, 
-        45, 
-        45, 
+        145, 
         45, 
         45, 
         45
@@ -342,231 +374,256 @@
     }, 
     {
       "seg": {
+        "r1": 110, 
         "J": [
           "TRGJP1*01", 
           "TRGJP*01", 
           "TRGJ1*01", 
           "TRGJ2*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV10*02 1/TAAGGTAGA/0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "GAACCAACCAGTGGTATTCTACCTTAAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACT", 
         "V": [
           "TRGV10*02", 
           "TRGV10*01", 
           "TRGV11*01", 
           "TRGV11*02"
         ], 
-        "name": "TRGV10*02 1/TAAGGTAGA/0 TRGJP1*01", 
-        "D": [], 
-        "sequence": "GAACCAACCAGTGGTATTCTACCTTAAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACT"
+        "l1": 100, 
+        "D": []
       }, 
       "junction": "TGTGCTGCGTGGGATTTAAGGTAGAATACCACTGGTTGGT", 
       "size": [
         37, 
         37, 
+        137, 
         37, 
         37, 
-        37, 
-        37, 
-        37, 
+        137, 
         37
       ]
     }, 
     {
       "seg": {
+        "r1": 104, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV5*01 2/C/4 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTCCACTGCCAAAGAGTTTCTTATAGTGTCCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTCGTAGTATCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCC", 
         "V": [
           "TRGV5*01", 
           "TRGV3*02", 
           "TRGV3*01", 
           "TRGV5P*02"
         ], 
-        "name": "TRGV5*01 2/C/4 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TGTTCCACTGCCAAAGAGTTTCTTATAGTGTCCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTCGTAGTATCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCC"
+        "l1": 102, 
+        "D": []
       }, 
       "junction": "TTACTGTGCCACCTGGGACACTATAAGAAACTCTTTGGCA", 
       "size": [
         36, 
+        136, 
         36, 
         36, 
-        36, 
-        36, 
-        36, 
+        136, 
         36, 
         36
       ]
     }, 
     {
       "seg": {
+        "r1": 108, 
         "J": [
           "TRGJP1*01", 
           "TRGJP*01", 
           "TRGJP2*01", 
           "TRGJ1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV10*02 2/AC/0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "CAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATACATACCACTGGTTGGTTCAAGATATT", 
         "V": [
           "TRGV10*02", 
           "TRGV10*01", 
           "TRGV11*01", 
           "TRGV11*02"
         ], 
-        "name": "TRGV10*02 2/AC/0 TRGJP1*01", 
-        "D": [], 
-        "sequence": "CAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATACATACCACTGGTTGGTTCAAGATATT"
+        "l1": 105, 
+        "D": []
       }, 
       "junction": "CTACTGTGCTGCGTGGGATACATACCACTGGTTGGTTCAA", 
       "size": [
         32, 
+        132, 
         32, 
         32, 
-        32, 
-        32, 
-        32, 
+        132, 
         32, 
         32
       ]
     }, 
     {
       "seg": {
+        "r1": 81, 
         "J": [
           "TRGJP2*01", 
           "TRGJP1*01", 
           "TRGJP*01", 
           "TRGJ1*02"
         ], 
+        "l2": 0, 
+        "name": "TRGV2*01 0/CCGC/3 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "GGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGCCGCGTGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCAT", 
         "V": [
           "TRGV2*01", 
           "TRGV2*02", 
           "TRGV4*01", 
           "TRGV4*02"
         ], 
-        "name": "TRGV2*01 0/CCGC/3 TRGJP2*01", 
-        "D": [], 
-        "sequence": "GGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGCCGCGTGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCAT"
+        "l1": 76, 
+        "D": []
       }, 
       "junction": "GTGCCACCTGGGACGGGCCGCGTGTGATTGGATCAAGACG", 
       "size": [
         27, 
+        127, 
         27, 
+        127, 
         27, 
-        27, 
-        27, 
-        27, 
-        27, 
+        127, 
         27
       ]
     }, 
     {
       "seg": {
+        "r1": 112, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV2*01 1/CTAAACTAG/5 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "GGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGCTAAACTAGATAAGAAACTCTTTGG", 
         "V": [
           "TRGV2*01", 
           "TRGV2*02", 
           "TRGV4*02", 
           "TRGV4*01"
         ], 
-        "name": "TRGV2*01 1/CTAAACTAG/5 TRGJ1*02", 
-        "D": [], 
-        "sequence": "GGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGCTAAACTAGATAAGAAACTCTTTGG"
+        "l1": 102, 
+        "D": []
       }, 
       "junction": "GTGCCACCTGGGACGGCTAAACTAGATAAGAAACTCTTTG", 
       "size": [
         27, 
         27, 
         27, 
-        27, 
-        27, 
-        27, 
+        57, 
+        127, 
         27, 
         27
       ]
     }, 
     {
       "seg": {
+        "r1": 105, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV10*02 2/ACCTCAGG/3 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "GGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATACCTCAGGTTATAAGAAACTCTTTAGGCTGAGATGGATCGAAACCAAACCAGG", 
         "V": [
           "TRGV10*02", 
           "TRGV10*01", 
           "TRGV11*01", 
           "TRGV11*02"
         ], 
-        "name": "TRGV10*02 2/ACCTCAGG/3 TRGJ1*02", 
-        "D": [], 
-        "sequence": "GGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATACCTCAGGTTATAAGAAACTCTTTAGGCTGAGATGGATCGAAACCAAACCAGG"
+        "l1": 96, 
+        "D": []
       }, 
       "junction": "CTGTGCTGCGTGGGATACCTCAGGTTATAAGAAACTCTTT", 
       "size": [
         25, 
         25, 
+        125, 
         25, 
         25, 
-        25, 
-        25, 
-        25, 
+        125, 
         25
       ]
     }, 
     {
       "seg": {
+        "r1": 126, 
         "J": [
           "TRGJP1*01", 
           "TRGJP2*01", 
           "TRGJ1*02", 
           "TRGJ1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV8*01 1/CACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCG/74 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "AAGAGCCTTAAATTTATACTGGAAAATCTAATTGAACGTGACTCTGGGGTCTATTACTGTGCCACCTGGGATAGCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGC", 
         "V": [
           "TRGV8*01", 
           "TRGV2*02", 
           "TRGV2*01", 
           "TRGV3*02"
         ], 
-        "name": "TRGV8*01 1/CACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCG/74 TRGJP1*01", 
-        "D": [], 
-        "sequence": "AAGAGCCTTAAATTTATACTGGAAAATCTAATTGAACGTGACTCTGGGGTCTATTACTGTGCCACCTGGGATAGCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGC"
+        "l1": 73, 
+        "D": []
       }, 
       "junction": "TACTGTGCCACCTGGGATAGCACTGGTTGGTTCAAGATAT", 
       "size": [
         24, 
+        124, 
         24, 
         24, 
-        24, 
-        24, 
-        24, 
+        124, 
         24, 
         24
       ]
     }, 
     {
       "seg": {
+        "r1": 100, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP2*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV5*01 7/AACCG/0 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "GAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCACTGAACCGTTATTATAAGAAACTCTTGACAGTTGGATCAC", 
         "V": [
           "TRGV5*01", 
           "TRGV3*02", 
           "TRGV3*01", 
           "TRGV5P*02"
         ], 
-        "name": "TRGV5*01 7/AACCG/0 TRGJ1*02", 
-        "D": [], 
-        "sequence": "GAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCACTGAACCGTTATTATAAGAAACTCTTGACAGTTGGATCAC"
+        "l1": 94, 
+        "D": []
       }, 
       "junction": "GGGTCTATTACTGTGCACTGAACCGTTATTATAAGAAACT", 
       "size": [
@@ -576,31 +633,33 @@
         24, 
         24, 
         24, 
-        24, 
         24
       ]
     }, 
     {
       "seg": {
+        "r1": 113, 
         "J": [
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJ1*02", 
           "TRGJP1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV3*02 3/ATT/0 TRGJ1*01", 
+        "r2": 0, 
+        "sequence": "GAGTTTCTTATAATAATTCAATTCCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTTTGCAGTCTCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTTG", 
         "V": [
           "TRGV3*02", 
           "TRGV3*01", 
           "TRGV5*01", 
           "TRGV5P*02"
         ], 
-        "name": "TRGV3*02 3/ATT/0 TRGJ1*01", 
-        "D": [], 
-        "sequence": "GAGTTTCTTATAATAATTCAATTCCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTTTGCAGTCTCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTTG"
+        "l1": 109, 
+        "D": []
       }, 
       "junction": "ATTACTGTGCCACCTGGGAATTGAATTATTATAAGAAACT", 
       "size": [
-        23, 
         23, 
         23, 
         23, 
@@ -612,25 +671,28 @@
     }, 
     {
       "seg": {
+        "r1": 86, 
         "J": [
           "TRGJP1*01", 
           "TRGJP2*01", 
           "TRGJ1*02", 
           "TRGJ1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV3*01 0/CCGTT/9 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "CCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACAACGGCCTGTCCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTTGCAGTCTCAATATCCAGCTCCACCCTCC", 
         "V": [
           "TRGV3*01", 
           "TRGV3*02", 
           "TRGV5P*02", 
           "TRGV5P*01"
         ], 
-        "name": "TRGV3*01 0/CCGTT/9 TRGJP1*01", 
-        "D": [], 
-        "sequence": "CCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACAACGGCCTGTCCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTTGCAGTCTCAATATCCAGCTCCACCCTCC"
+        "l1": 80, 
+        "D": []
       }, 
       "junction": "TGTGCCACCTGGGACAGGCCGTTGTTGGTTCAAGATATTT", 
       "size": [
-        21, 
         21, 
         21, 
         21, 
@@ -650,31 +712,33 @@
         21, 
         21, 
         21, 
-        21, 
         21
       ]
     }, 
     {
       "seg": {
+        "r1": 100, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV2*01 1/CCG/8 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTCGGCCGTCCCAGGTGGCACAGTAATAGACCCCAGAGTCATTTTCAATTAGATTTCGCAGTATCAATCTCAAGTTGTTCCTTGTGCTTGCGTAAGTATAAT", 
         "V": [
           "TRGV2*01", 
           "TRGV2*02", 
           "TRGV4*02", 
           "TRGV4*01"
         ], 
-        "name": "TRGV2*01 1/CCG/8 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTCGGCCGTCCCAGGTGGCACAGTAATAGACCCCAGAGTCATTTTCAATTAGATTTCGCAGTATCAATCTCAAGTTGTTCCTTGTGCTTGCGTAAGTATAAT"
+        "l1": 96, 
+        "D": []
       }, 
       "junction": "ACTGTGCCACCTGGGACGGCCGAGAAACTCTTTGGCAGTG", 
       "size": [
-        19, 
         19, 
         19, 
         19, 
@@ -686,25 +750,28 @@
     }, 
     {
       "seg": {
+        "r1": 83, 
         "J": [
           "TRGJP2*01", 
           "TRGJP1*01", 
           "TRGJ1*02", 
           "TRGJ1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV4*02 10/GTTCT/19 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "CGGAAGCACAAGGAAGAACTTGAGAATGATACTGCGAAATCTTATTGAAAATGACTCTGGAGTCTATTACTGTGCCACGTTCTGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGC", 
         "V": [
           "TRGV4*02", 
           "TRGV4*01", 
           "TRGV2*01", 
           "TRGV2*02"
         ], 
-        "name": "TRGV4*02 10/GTTCT/19 TRGJP2*01", 
-        "D": [], 
-        "sequence": "CGGAAGCACAAGGAAGAACTTGAGAATGATACTGCGAAATCTTATTGAAAATGACTCTGGAGTCTATTACTGTGCCACGTTCTGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGC"
+        "l1": 77, 
+        "D": []
       }, 
       "junction": "AGTCTATTACTGTGCCACGTTCTGACGTTTGCAAAAGGGA", 
       "size": [
-        18, 
         18, 
         18, 
         18, 
@@ -716,25 +783,28 @@
     }, 
     {
       "seg": {
+        "r1": 90, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV4*01 1/CAGGTGGAGGCGTC/0 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTTATAATAAGACGCCTCCACCTGCCATCCCAGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCC", 
         "V": [
           "TRGV4*01", 
           "TRGV4*02", 
           "TRGV2*01", 
           "TRGV2*02"
         ], 
-        "name": "TRGV4*01 1/CAGGTGGAGGCGTC/0 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTTATAATAAGACGCCTCCACCTGCCATCCCAGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCC"
+        "l1": 75, 
+        "D": []
       }, 
       "junction": "CCACCTGGGATGGCAGGTGGAGGCGTCTTATTATAAGAAA", 
       "size": [
-        16, 
         16, 
         16, 
         16, 
@@ -746,21 +816,25 @@
     }, 
     {
       "seg": {
+        "r1": 106, 
         "J": [
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJ1*02", 
           "TRGJP1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV2*01 0/TGG/2 TRGJ1*01", 
+        "r2": 0, 
+        "sequence": "GGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGAAGGGTGGATTATTATAAGAAACTCT", 
         "V": [
           "TRGV2*01", 
           "TRGV2*02", 
           "TRGV4*02", 
           "TRGV4*01"
         ], 
-        "name": "TRGV2*01 0/TGG/2 TRGJ1*01", 
-        "D": [], 
-        "sequence": "GGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGAAGGGTGGATTATTATAAGAAACTCT"
+        "l1": 102, 
+        "D": []
       }, 
       "junction": "TTACTGTGCCACCTGGAAGGGTGGATTATTATAAGAAACT", 
       "size": [
@@ -770,27 +844,30 @@
         15, 
         15, 
         15, 
-        15, 
         15
       ]
     }, 
     {
       "seg": {
+        "r1": 80, 
         "J": [
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJ1*02", 
           "TRGJP1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/TTTT/2 TRGJ1*01", 
+        "r2": 0, 
+        "sequence": "GTTCCACTGCCAAAGAGTTTCTTATAATAATAAAATAATCCCACGCAGCACAGTAGTAAACGGCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGT", 
         "V": [
           "TRGV10*02", 
           "TRGV10*01", 
           "TRGV11*01", 
           "TRGV11*02"
         ], 
-        "name": "TRGV10*02 0/TTTT/2 TRGJ1*01", 
-        "D": [], 
-        "sequence": "GTTCCACTGCCAAAGAGTTTCTTATAATAATAAAATAATCCCACGCAGCACAGTAGTAAACGGCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGT"
+        "l1": 75, 
+        "D": []
       }, 
       "junction": "CTGTGCTGCGTGGGATTATTTTATTATTATAAGAAACTCT", 
       "size": [
@@ -800,27 +877,30 @@
         15, 
         15, 
         15, 
-        15, 
         15
       ]
     }, 
     {
       "seg": {
+        "r1": 85, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV5*01 7/AACCGT/0 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "CGCCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGAACCGTTTATTATAAGAAAACTCTTTGGCAGTTGGAAC", 
         "V": [
           "TRGV5*01", 
           "TRGV3*02", 
           "TRGV3*01", 
           "TRGV5P*02"
         ], 
-        "name": "TRGV5*01 7/AACCGT/0 TRGJ1*02", 
-        "D": [], 
-        "sequence": "CGCCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGAACCGTTTATTATAAGAAAACTCTTTGGCAGTTGGAAC"
+        "l1": 78, 
+        "D": []
       }, 
       "junction": "CTGTGCCACCTGAACCGTTTATTATAAGAAAACTCTTTGG", 
       "size": [
@@ -830,27 +910,30 @@
         15, 
         15, 
         15, 
-        15, 
         15
       ]
     }, 
     {
       "seg": {
+        "r1": 115, 
         "J": [
           "TRGJP1*01", 
           "TRGJP*01", 
           "TRGJP2*01", 
           "TRGJ1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV10*02 9/AT/1 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "ATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCATTAACACTGGTTGGTTCAAGATATCACCGTAACTGTCCCACATAACG", 
         "V": [
           "TRGV10*02", 
           "TRGV10*01", 
           "TRGV11*01", 
           "TRGV11*02"
         ], 
-        "name": "TRGV10*02 9/AT/1 TRGJP1*01", 
-        "D": [], 
-        "sequence": "ATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCATTAACACTGGTTGGTTCAAGATATCACCGTAACTGTCCCACATAACG"
+        "l1": 112, 
+        "D": []
       }, 
       "junction": "CGTTTACTACTGTGCTGCATTAACACTGGTTGGTTCAAGA", 
       "size": [
@@ -860,27 +943,30 @@
         15, 
         15, 
         15, 
-        15, 
         15
       ]
     }, 
     {
       "seg": {
+        "r1": 101, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV10*02 5/AC/5 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTTATGTCCCGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTG", 
         "V": [
           "TRGV10*02", 
           "TRGV10*01", 
           "TRGV11*01", 
           "TRGV11*02"
         ], 
-        "name": "TRGV10*02 5/AC/5 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTTATGTCCCGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTG"
+        "l1": 98, 
+        "D": []
       }, 
       "junction": "GTTTACTACTGTGCTGCGGGACATAAGAAACTCTTTGGCA", 
       "size": [
@@ -890,27 +976,30 @@
         14, 
         14, 
         14, 
-        14, 
         14
       ]
     }, 
     {
       "seg": {
+        "r1": 82, 
         "J": [
           "TRGJP2*01", 
           "TRGJP1*01", 
           "TRGJP*01", 
           "TRGJ1*02"
         ], 
+        "l2": 0, 
+        "name": "TRGV2*01 0/CCCACC/6 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "GAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGCCCACCGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCAT", 
         "V": [
           "TRGV2*01", 
           "TRGV2*02", 
           "TRGV4*01", 
           "TRGV4*02"
         ], 
-        "name": "TRGV2*01 0/CCCACC/6 TRGJP2*01", 
-        "D": [], 
-        "sequence": "GAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGCCCACCGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCAT"
+        "l1": 75, 
+        "D": []
       }, 
       "junction": "GTGCCACCTGGGACGGGCCCACCGTGATTGGATCAAGACG", 
       "size": [
@@ -920,27 +1009,30 @@
         14, 
         14, 
         14, 
-        14, 
         14
       ]
     }, 
     {
       "seg": {
+        "r1": 71, 
         "J": [
           "TRGJP1*01", 
           "TRGJP2*01", 
           "TRGJ1*02", 
           "TRGJ1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV5*01 0/CCGA/2 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "GATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCCGAACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGC", 
         "V": [
           "TRGV5*01", 
           "TRGV3*01", 
           "TRGV3*02", 
           "TRGV2*01"
         ], 
-        "name": "TRGV5*01 0/CCGA/2 TRGJP1*01", 
-        "D": [], 
-        "sequence": "GATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGACAGGCCGAACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGC"
+        "l1": 66, 
+        "D": []
       }, 
       "junction": "TGTGCCACCTGGGACAGGCCGAACCACTGGTTGGTTCAAG", 
       "size": [
@@ -950,27 +1042,30 @@
         13, 
         13, 
         13, 
-        13, 
         13
       ]
     }, 
     {
       "seg": {
+        "r1": 100, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV4*02 0/CAGGTGGAGGCGTC/0 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "GGAAGCACAAGGAAGAACTTGAGAATGATACTGCGAAATCTTATTGAAAATGGCTCTGGAGTCTATTACTGTGCACCTGGGATGGGCAGGTGGAGGCGTCTTATTATAAGAAACTCTTTGGCAGTGGAA", 
         "V": [
           "TRGV4*02", 
           "TRGV4*01", 
           "TRGV2*01", 
           "TRGV2*02"
         ], 
-        "name": "TRGV4*02 0/CAGGTGGAGGCGTC/0 TRGJ1*02", 
-        "D": [], 
-        "sequence": "GGAAGCACAAGGAAGAACTTGAGAATGATACTGCGAAATCTTATTGAAAATGGCTCTGGAGTCTATTACTGTGCACCTGGGATGGGCAGGTGGAGGCGTCTTATTATAAGAAACTCTTTGGCAGTGGAA"
+        "l1": 85, 
+        "D": []
       }, 
       "junction": "ACTGTGCACCTGGGATGGGCAGGTGGAGGCGTCTTATTAT", 
       "size": [
@@ -980,27 +1075,30 @@
         13, 
         13, 
         13, 
-        13, 
         13
       ]
     }, 
     {
       "seg": {
+        "r1": 117, 
         "J": [
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJ1*02", 
           "TRGJP*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV8*01 1/AATTATTATAAGAAACTCTTTGGCAGTGGAA/86 TRGJ1*01", 
+        "r2": 0, 
+        "sequence": "GCAAGCACAGGGAAGAGCCTTAAATTTATACTGGAAAATCTAATTGAACGTGACTCTGGGGTCTATTACTGTGCCACCTGGGATAGAATTATTATAAGAAACTCTTTGGCAGTGGAAC", 
         "V": [
           "TRGV8*01", 
           "TRGV2*02", 
           "TRGV2*01", 
           "TRGV4*01"
         ], 
-        "name": "TRGV8*01 1/AATTATTATAAGAAACTCTTTGGCAGTGGAA/86 TRGJ1*01", 
-        "D": [], 
-        "sequence": "GCAAGCACAGGGAAGAGCCTTAAATTTATACTGGAAAATCTAATTGAACGTGACTCTGGGGTCTATTACTGTGCCACCTGGGATAGAATTATTATAAGAAACTCTTTGGCAGTGGAAC"
+        "l1": 85, 
+        "D": []
       }, 
       "junction": "TTACTGTGCCACCTGGGATAGAATTATTATAAGAAACTCT", 
       "size": [
@@ -1010,27 +1108,30 @@
         12, 
         12, 
         12, 
-        12, 
         12
       ]
     }, 
     {
       "seg": {
+        "r1": 67, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV2*02 3/CGGACGG/4 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTTTACCGTCCGCCAGGTGGCACAGTAATAGATCCAGAATCATTTTCAATTAGATTTTGCAGTATCAATTTC", 
         "V": [
           "TRGV2*02", 
           "TRGV3*02", 
           "TRGV3*01", 
           "TRGV5P*02"
         ], 
-        "name": "TRGV2*02 3/CGGACGG/4 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTTTACCGTCCGCCAGGTGGCACAGTAATAGATCCAGAATCATTTTCAATTAGATTTTGCAGTATCAATTTC"
+        "l1": 59, 
+        "D": []
       }, 
       "junction": "TTACTGTGCCACCTGGCGGACGGTAAAGAAACTCTTTGGC", 
       "size": [
@@ -1040,27 +1141,30 @@
         12, 
         12, 
         12, 
-        12, 
         12
       ]
     }, 
     {
       "seg": {
+        "r1": 126, 
         "J": [
           "TRGJP2*01", 
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV5*01 1/TGATTGGATCAAGACGT/114 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "AACGTCTTGATCCAATCACTTCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTCGTAGTATCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTG", 
         "V": [
           "TRGV5*01", 
           "TRGV3*02", 
           "TRGV3*01", 
           "TRGV5P*02"
         ], 
-        "name": "TRGV5*01 1/TGATTGGATCAAGACGT/114 TRGJP2*01", 
-        "D": [], 
-        "sequence": "AACGTCTTGATCCAATCACTTCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTCGTAGTATCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTG"
+        "l1": 108, 
+        "D": []
       }, 
       "junction": "TCTATTACTGTGCCACCTGGAAGTGATTGGATCAAGACGT", 
       "size": [
@@ -1070,27 +1174,30 @@
         12, 
         12, 
         12, 
-        12, 
         12
       ]
     }, 
     {
       "seg": {
+        "r1": 123, 
         "J": [
           "TRGJP1*01", 
           "TRGJP2*01", 
           "TRGJ1*02", 
           "TRGJ1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV8*01 2/CCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGCCTG/66 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "CCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATCCCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAA", 
         "V": [
           "TRGV8*01", 
           "TRGV2*02", 
           "TRGV2*01", 
           "TRGV3*02"
         ], 
-        "name": "TRGV8*01 2/CCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGCCTG/66 TRGJP1*01", 
-        "D": [], 
-        "sequence": "CCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATCCCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAA"
+        "l1": 65, 
+        "D": []
       }, 
       "junction": "TATTACTGTGCCACCTGGGATACCACTGGTTGGTTCAAGA", 
       "size": [
@@ -1100,27 +1207,30 @@
         12, 
         12, 
         12, 
-        12, 
         12
       ]
     }, 
     {
       "seg": {
+        "r1": 74, 
         "J": [
           "TRGJP2*01", 
           "TRGJP1*01", 
           "TRGJP*01", 
           "TRGJ1*02"
         ], 
+        "l2": 0, 
+        "name": "TRGV2*01 1//2 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "GAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCACCTGGGAAGGAGTAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAAG", 
         "V": [
-          "TRGV2*03", 
+          "TRGV2*01", 
           "TRGV2*02", 
           "TRGV4*01", 
           "TRGV4*02"
         ], 
-        "name": "TRGV2*03 1//2 TRGJP2*01", 
-        "D": [], 
-        "sequence": "GAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCACCTGGGAAGGAGTAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAAG"
+        "l1": 73, 
+        "D": []
       }, 
       "junction": "GGTCTATTACTGTGCACCTGGGAAGGAGTAGTGATTGGAT", 
       "size": [
@@ -1130,27 +1240,30 @@
         12, 
         12, 
         12, 
-        12, 
         12
       ]
     }, 
     {
       "seg": {
+        "r1": 66, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV8*01 0/AGTCGG/2 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TACTGGAAAATCTAATTGAACGTGACTCTGGGGGTCTATTACTGTGCCACCTGGGATCGGAGTCGGATTATAAGAAAACTCTTTGGCAGTGGAAC", 
         "V": [
           "TRGV8*01", 
           "TRGV2*02", 
           "TRGV2*01", 
           "TRGV3*02"
         ], 
-        "name": "TRGV8*01 0/AGTCGG/2 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TACTGGAAAATCTAATTGAACGTGACTCTGGGGGTCTATTACTGTGCCACCTGGGATCGGAGTCGGATTATAAGAAAACTCTTTGGCAGTGGAAC"
+        "l1": 59, 
+        "D": []
       }, 
       "junction": "CCACCTGGGATCGGAGTCGGATTATAAGAAAACTCTTTGG", 
       "size": [
@@ -1160,27 +1273,30 @@
         12, 
         12, 
         12, 
-        12, 
         12
       ]
     }, 
     {
       "seg": {
+        "r1": 77, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP2*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV10*02 3/CCTTTTGG/5 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "CACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGACCTTTTGGATAAGAAACTCTTTGGCAGTGGAAC", 
         "V": [
           "TRGV10*02", 
           "TRGV10*01", 
           "TRGV9*02", 
           "TRGV9*01"
         ], 
-        "name": "TRGV10*02 3/CCTTTTGG/5 TRGJ1*02", 
-        "D": [], 
-        "sequence": "CACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGACCTTTTGGATAAGAAACTCTTTGGCAGTGGAAC"
+        "l1": 68, 
+        "D": []
       }, 
       "junction": "ACTGTGCTGCGTGGGACCTTTTGGATAAGAAACTCTTTGG", 
       "size": [
@@ -1190,27 +1306,30 @@
         12, 
         12, 
         12, 
-        12, 
         12
       ]
     }, 
     {
       "seg": {
+        "r1": 122, 
         "J": [
           "TRGJP2*01", 
           "TRGJP1*01", 
           "TRGJP*01", 
           "TRGJ1*02"
         ], 
+        "l2": 0, 
+        "name": "TRGV2*01 0/TAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCA/84 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "CACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCGCGAAGGGTAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCAT", 
         "V": [
-          "TRGV2*04", 
+          "TRGV2*01", 
           "TRGV2*02", 
           "TRGV4*02", 
           "TRGV4*01"
         ], 
-        "name": "TRGV2*04 0/TAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCA/84 TRGJP2*01", 
-        "D": [], 
-        "sequence": "CACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCGCGAAGGGTAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCAT"
+        "l1": 80, 
+        "D": []
       }, 
       "junction": "TCTATTACTGTGCCACCGCGAAGGGTAGTGATTGGATCAA", 
       "size": [
@@ -1220,27 +1339,30 @@
         11, 
         11, 
         11, 
-        11, 
         11
       ]
     }, 
     {
       "seg": {
+        "r1": 99, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV8*01 0/AGTCGG/2 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTTATAATCCGACTCCGATCCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAAGGCTCTTCCCTGTGCTTGCATAAATA", 
         "V": [
           "TRGV8*01", 
           "TRGV2*02", 
           "TRGV2*01", 
           "TRGV4*01"
         ], 
-        "name": "TRGV8*01 0/AGTCGG/2 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTTATAATCCGACTCCGATCCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAAGGCTCTTCCCTGTGCTTGCATAAATA"
+        "l1": 92, 
+        "D": []
       }, 
       "junction": "TACTGTGCCACCTGGATCGGAGTCGGATTATAAGAAACTC", 
       "size": [
@@ -1250,27 +1372,30 @@
         11, 
         11, 
         11, 
-        11, 
         11
       ]
     }, 
     {
       "seg": {
+        "r1": 90, 
         "J": [
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJ1*02", 
           "TRGJP1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV4*02 3/ACGACCTC/0 TRGJ1*01", 
+        "r2": 0, 
+        "sequence": "AAGAGTTTCTTATAATAATTCGAGGTCGTATTCCAGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTT", 
         "V": [
           "TRGV4*02", 
           "TRGV4*01", 
           "TRGV2*01", 
           "TRGV2*02"
         ], 
-        "name": "TRGV4*02 3/ACGACCTC/0 TRGJ1*01", 
-        "D": [], 
-        "sequence": "AAGAGTTTCTTATAATAATTCGAGGTCGTATTCCAGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTT"
+        "l1": 81, 
+        "D": []
       }, 
       "junction": "TACTGTGCCACCTGGAATACGACCTCGAATTATTATAAGA", 
       "size": [
@@ -1280,27 +1405,30 @@
         11, 
         11, 
         11, 
-        11, 
         11
       ]
     }, 
     {
       "seg": {
+        "r1": 74, 
         "J": [
           "TRGJP2*01", 
           "TRGJP1*01", 
           "TRGJP*01", 
           "TRGJ1*02"
         ], 
+        "l2": 0, 
+        "name": "TRGV2*01 1//2 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "AACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGAAGGAGTAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAAGTTAAACCAT", 
         "V": [
           "TRGV2*01", 
           "TRGV2*02", 
           "TRGV4*01", 
           "TRGV4*02"
         ], 
-        "name": "TRGV2*01 1//2 TRGJP2*01", 
-        "D": [], 
-        "sequence": "AACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGAAGGAGTAGTGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAAGTTAAACCAT"
+        "l1": 73, 
+        "D": []
       }, 
       "junction": "ATTACTGTGCCACCTGGGAAGGAGTAGTGATTGGATCAAG", 
       "size": [
@@ -1310,27 +1438,30 @@
         11, 
         11, 
         11, 
-        11, 
         11
       ]
     }, 
     {
       "seg": {
+        "r1": 98, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV8*01 2/CC/6 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTTAGGTAACCTCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAAGGCTCTTCCCTGTGCTTGCATAAGTATGA", 
         "V": [
           "TRGV8*01", 
           "TRGV2*02", 
           "TRGV2*01", 
           "TRGV4*01"
         ], 
-        "name": "TRGV8*01 2/CC/6 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTTAGGTAACCTCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAAGGCTCTTCCCTGTGCTTGCATAAGTATGA"
+        "l1": 95, 
+        "D": []
       }, 
       "junction": "ATTACTGTGCCACCTGAGGTTACCTAAGAAACTCTTTGGC", 
       "size": [
@@ -1340,27 +1471,30 @@
         11, 
         11, 
         11, 
-        11, 
         11
       ]
     }, 
     {
       "seg": {
+        "r1": 64, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP2*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV10*02 3/CCCTTTTGG/5 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTCCACTGCCAAAGAGTTTCTTATCCAAAAGGGTCCCACGCAGCACAGTAGTAAACGGCCCCCAATCGTCTTCTTTCTCTACGGACTT", 
         "V": [
           "TRGV10*02", 
           "TRGV10*01", 
           "TRGV9*02", 
           "TRGV9*01"
         ], 
-        "name": "TRGV10*02 3/CCCTTTTGG/5 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TGTTCCACTGCCAAAGAGTTTCTTATCCAAAAGGGTCCCACGCAGCACAGTAGTAAACGGCCCCCAATCGTCTTCTTTCTCTACGGACTT"
+        "l1": 54, 
+        "D": []
       }, 
       "junction": "ACTGTGCTGCGTGGGACCCTTTTGGATAAGAAACTCTTTG", 
       "size": [
@@ -1370,27 +1504,30 @@
         11, 
         11, 
         11, 
-        11, 
         11
       ]
     }, 
     {
       "seg": {
+        "r1": 118, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP2*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV5*01 8/TGAACCGT/0 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTCCACTGCCAAAGAGTTTCTTATAATAAACGGTTCAAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTCGTAGTTATCAATATCCAGCTCCACCTCCTGGGTGTACTAGCTGAGTTATAATTGAAGTTTACCTA", 
         "V": [
           "TRGV5*01", 
           "TRGV3*02", 
           "TRGV3*01", 
           "TRGV5P*02"
         ], 
-        "name": "TRGV5*01 8/TGAACCGT/0 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TGTTCCACTGCCAAAGAGTTTCTTATAATAAACGGTTCAAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTCGTAGTTATCAATATCCAGCTCCACCTCCTGGGTGTACTAGCTGAGTTATAATTGAAGTTTACCTA"
+        "l1": 109, 
+        "D": []
       }, 
       "junction": "TATTACTGTGCCACCTTGAACCGTTTATTATAAGAAACTC", 
       "size": [
@@ -1400,27 +1537,30 @@
         10, 
         10, 
         10, 
-        10, 
         10
       ]
     }, 
     {
       "seg": {
+        "r1": 110, 
         "J": [
           "TRGJP2*01", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJ1*02"
         ], 
+        "l2": 0, 
+        "name": "TRGV2*01 1/TGGAAGG/2 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "GGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCACCTGGGATGGTGGAAGGAGTAGTGATTGGATCAAGACGT", 
         "V": [
           "TRGV2*01", 
           "TRGV2*02", 
           "TRGV4*02", 
           "TRGV4*01"
         ], 
-        "name": "TRGV2*01 1/TGGAAGG/2 TRGJP2*01", 
-        "D": [], 
-        "sequence": "GGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCACCTGGGATGGTGGAAGGAGTAGTGATTGGATCAAGACGT"
+        "l1": 102, 
+        "D": []
       }, 
       "junction": "TATTACTGTGCACCTGGGATGGTGGAAGGAGTAGTGATTG", 
       "size": [
@@ -1430,27 +1570,30 @@
         10, 
         10, 
         10, 
-        10, 
         10
       ]
     }, 
     {
       "seg": {
+        "r1": 67, 
         "J": [
           "TRGJP1*01", 
           "TRGJP2*01", 
           "TRGJ1*02", 
           "TRGJ1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV3*02 2/TCCGCTCCCTTTA/0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "CCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATTAAAGGGAGCGGAGTCCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTTAGATTTTGCA", 
         "V": [
           "TRGV3*02", 
           "TRGV3*01", 
           "TRGV5P*02", 
           "TRGV5P*01"
         ], 
-        "name": "TRGV3*02 2/TCCGCTCCCTTTA/0 TRGJP1*01", 
-        "D": [], 
-        "sequence": "CCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATTAAAGGGAGCGGAGTCCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTTAGATTTTGCA"
+        "l1": 53, 
+        "D": []
       }, 
       "junction": "GTGCCACCTGGGACTCCGCTCCCTTTAATACCACTGGTTG", 
       "size": [
@@ -1460,27 +1603,30 @@
         10, 
         10, 
         10, 
-        10, 
         10
       ]
     }, 
     {
       "seg": {
+        "r1": 72, 
         "J": [
           "TRGJP1*01", 
           "TRGJP2*01", 
           "TRGJ1*02", 
           "TRGJ1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV2*01 1/TCCT/1 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "CCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTAAGGACCGTCCCAGGTGGCACAGTAATAGACCCAGAGTCATTTTCAATTAGATTTCGCAGTATCAATCTCAAG", 
         "V": [
           "TRGV2*01", 
           "TRGV2*02", 
           "TRGV4*02", 
           "TRGV4*01"
         ], 
-        "name": "TRGV2*01 1/TCCT/1 TRGJP1*01", 
-        "D": [], 
-        "sequence": "CCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTAAGGACCGTCCCAGGTGGCACAGTAATAGACCCAGAGTCATTTTCAATTAGATTTCGCAGTATCAATCTCAAG"
+        "l1": 67, 
+        "D": []
       }, 
       "junction": "CTGTGCCACCTGGGACGGTCCTTACCACTGGTTGGTTCAA", 
       "size": [
@@ -1490,27 +1636,30 @@
         10, 
         10, 
         10, 
-        10, 
         10
       ]
     }, 
     {
       "seg": {
+        "r1": 118, 
         "J": [
           "TRGJP1*01", 
           "TRGJP*01", 
           "TRGJ1*01", 
           "TRGJ2*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV10*02 3/CCCAGGGCT/0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "CAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGACCCAGGGCTATACCACTGGTTGGTTCAA", 
         "V": [
           "TRGV10*02", 
           "TRGV10*01", 
           "TRGV9*02", 
           "TRGV9*01"
         ], 
-        "name": "TRGV10*02 3/CCCAGGGCT/0 TRGJP1*01", 
-        "D": [], 
-        "sequence": "CAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGACCCAGGGCTATACCACTGGTTGGTTCAA"
+        "l1": 108, 
+        "D": []
       }, 
       "junction": "ACTGTGCTGCGTGGGACCCAGGGCTATACCACTGGTTGGT", 
       "size": [
@@ -1520,27 +1669,30 @@
         10, 
         10, 
         10, 
-        10, 
         10
       ]
     }, 
     {
       "seg": {
+        "r1": 59, 
         "J": [
           "TRGJP1*01", 
           "TRGJP2*01", 
           "TRGJP*01", 
           "TRGJ1*02"
         ], 
+        "l2": 0, 
+        "name": "TRGV10*02 2/CGATG/0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "ATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATCGATGATACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGC", 
         "V": [
           "TRGV10*02", 
           "TRGV10*01", 
           "TRGV11*01", 
           "TRGV11*02"
         ], 
-        "name": "TRGV10*02 2/CGATG/0 TRGJP1*01", 
-        "D": [], 
-        "sequence": "ATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATCGATGATACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGC"
+        "l1": 53, 
+        "D": []
       }, 
       "junction": "TACTGTGCTGCGTGGGATCGATGATACCACTGGTTGGTTC", 
       "size": [
@@ -1550,27 +1702,30 @@
         9, 
         9, 
         9, 
-        9, 
         9
       ]
     }, 
     {
       "seg": {
+        "r1": 79, 
         "J": [
           "TRGJP1*01", 
           "TRGJP2*01", 
           "TRGJ1*02", 
           "TRGJP*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV10*02 2/CT/3 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "AAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGCGATCTCCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTC", 
         "V": [
           "TRGV10*02", 
           "TRGV10*01", 
           "TRGV11*01", 
           "TRGV11*02"
         ], 
-        "name": "TRGV10*02 2/CT/3 TRGJP1*01", 
-        "D": [], 
-        "sequence": "AAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGCGATCTCCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTC"
+        "l1": 76, 
+        "D": []
       }, 
       "junction": "TACTACTGTGCTGCGTGCGATCTCCACTGGTTGGTTCAAG", 
       "size": [
@@ -1580,31 +1735,33 @@
         9, 
         9, 
         9, 
-        9, 
         9
       ]
     }, 
     {
       "seg": {
+        "r1": 96, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV2*01 9/CC/8 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTGGGGTGGCACAGTAATAGACCCCAGAGTCATTTTCAATTAGATTTCGCAGTATCAATCTCAAGTTGTTCCTTGTGCTTGCGTAAGTATAATACTTC", 
         "V": [
           "TRGV2*01", 
           "TRGV2*02", 
           "TRGV4*02", 
           "TRGV4*01"
         ], 
-        "name": "TRGV2*01 9/CC/8 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTGGGGTGGCACAGTAATAGACCCCAGAGTCATTTTCAATTAGATTTCGCAGTATCAATCTCAAGTTGTTCCTTGTGCTTGCGTAAGTATAATACTTC"
+        "l1": 93, 
+        "D": []
       }, 
       "junction": "GGTCTATTACTGTGCCACCCCAGAAACTCTTTGGCAGTGG", 
       "size": [
-        9, 
         9, 
         9, 
         9, 
@@ -1624,27 +1781,30 @@
         9, 
         9, 
         9, 
-        9, 
         9
       ]
     }, 
     {
       "seg": {
+        "r1": 70, 
         "J": [
           "TRGJP1*01", 
           "TRGJP2*01", 
           "TRGJP*01", 
           "TRGJ1*02"
         ], 
+        "l2": 0, 
+        "name": "TRGV10*02 1/CCTCCT/0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "ATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATTCCTCCTATACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATA", 
         "V": [
           "TRGV10*02", 
           "TRGV10*01", 
           "TRGV11*01", 
           "TRGV11*02"
         ], 
-        "name": "TRGV10*02 1/CCTCCT/0 TRGJP1*01", 
-        "D": [], 
-        "sequence": "ATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATTCCTCCTATACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATA"
+        "l1": 63, 
+        "D": []
       }, 
       "junction": "CTGTGCTGCGTGGGATTCCTCCTATACCACTGGTTGGTTC", 
       "size": [
@@ -1654,27 +1814,30 @@
         9, 
         9, 
         9, 
-        9, 
         9
       ]
     }, 
     {
       "seg": {
+        "r1": 103, 
         "J": [
           "TRGJ1*02", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJP1*01"
         ], 
+        "l2": 0, 
+        "name": "TRGV5*01 8/TGAACCGT/0 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TTGTTCCACTGCCAAAGAGTTCTTATAATAAACGGTTCAAGGTGGCACAGTAATAGACCCAGAATCATTTCCAATTAGATTTCGATTATGTATCAATATCCAAGCTCCACCTCCTGGGTGTATGAGTATAATAC", 
         "V": [
           "TRGV5*01", 
           "TRGV3*02", 
           "TRGV3*01", 
           "TRGV5P*02"
         ], 
-        "name": "TRGV5*01 8/TGAACCGT/0 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TTGTTCCACTGCCAAAGAGTTCTTATAATAAACGGTTCAAGGTGGCACAGTAATAGACCCAGAATCATTTCCAATTAGATTTCGATTATGTATCAATATCCAAGCTCCACCTCCTGGGTGTATGAGTATAATAC"
+        "l1": 94, 
+        "D": []
       }, 
       "junction": "CTGTGCCACCTTGAACCGTTTATTATAAGAACTCTTTGGC", 
       "size": [
@@ -1684,27 +1847,30 @@
         9, 
         9, 
         9, 
-        9, 
         9
       ]
     }, 
     {
       "seg": {
+        "r1": 65, 
         "J": [
           "TRGJP2*01", 
           "TRGJP1*01", 
           "TRGJP*01", 
           "TRGJ1*02"
         ], 
+        "l2": 0, 
+        "name": "TRGV4*01 1/ACGA/8 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TGATACTGCGAAATCTTATTGAAAATGACTCTGGAGTCTATTACTGTGCCACCTGGGACGGACGAGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGC", 
         "V": [
           "TRGV4*01", 
           "TRGV4*02", 
           "TRGV2*01", 
           "TRGV2*02"
         ], 
-        "name": "TRGV4*01 1/ACGA/8 TRGJP2*01", 
-        "D": [], 
-        "sequence": "TGATACTGCGAAATCTTATTGAAAATGACTCTGGAGTCTATTACTGTGCCACCTGGGACGGACGAGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGC"
+        "l1": 60, 
+        "D": []
       }, 
       "junction": "CTGTGCCACCTGGGACGGACGAGATTGGATCAAGACGTTT", 
       "size": [
@@ -1714,27 +1880,30 @@
         9, 
         9, 
         9, 
-        9, 
         9
       ]
     }, 
     {
       "seg": {
+        "r1": 109, 
         "J": [
           "TRGJP2*01", 
           "TRGJ1*01", 
           "TRGJ2*01", 
           "TRGJ1*02"
         ], 
+        "l2": 0, 
+        "name": "TRGV2*01 2/CACGACC/1 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "GGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGCACGACCTAGTAGTGATTGGATC", 
         "V": [
           "TRGV2*01", 
           "TRGV2*02", 
           "TRGV4*02", 
           "TRGV4*01"
         ], 
-        "name": "TRGV2*01 2/CACGACC/1 TRGJP2*01", 
-        "D": [], 
-        "sequence": "GGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGCACGACCTAGTAGTGATTGGATC"
+        "l1": 101, 
+        "D": []
       }, 
       "junction": "CTGTGCCACCTGGGACGCACGACCTAGTAGTGATTGGATC", 
       "size": [
@@ -1744,27 +1913,30 @@
         9, 
         9, 
         9, 
-        9, 
         9
       ]
     }, 
     {
       "seg": {
+        "r1": 113, 
         "J": [
           "TRGJP1*01", 
           "TRGJP*01", 
           "TRGJP2*01", 
           "TRGJ1*02"
         ], 
+        "l2": 0, 
+        "name": "TRGV8*01 3//4 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "GCAAATATCTTGAACCAACCAGTGATCCCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAAGGGCTCTTCCCTGTGCTTGCATAAGTATGATACTTTTCTCGACTGATT", 
         "V": [
           "TRGV8*01", 
           "TRGV2*02", 
           "TRGV2*01", 
           "TRGV4*01"
         ], 
-        "name": "TRGV8*01 3//4 TRGJP1*01", 
-        "D": [], 
-        "sequence": "GCAAATATCTTGAACCAACCAGTGATCCCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAAGGGCTCTTCCCTGTGCTTGCATAAGTATGATACTTTTCTCGACTGATT"
+        "l1": 112, 
+        "D": []
       }, 
       "junction": "ATTACTGTGCCACCTGGGATCACTGGTTGGTTCAAGATAT", 
       "size": [
@@ -1774,27 +1946,30 @@
         9, 
         9, 
         9, 
-        9, 
         9
       ]
     }, 
     {
       "seg": {
+        "r1": 122, 
         "J": [
           "TRGJP1*01", 
           "TRGJP2*01", 
           "TRGJP*01", 
           "TRGJ1*02"
         ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/TACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGCCTG/63 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "CCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATACTCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGG", 
         "V": [
           "TRGV10*02", 
           "TRGV10*01", 
           "TRGV9*02", 
           "TRGV9*01"
         ], 
-        "name": "TRGV10*02 0/TACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGCCTG/63 TRGJP1*01", 
-        "D": [], 
-        "sequence": "CCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATACTCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGG"
+        "l1": 62, 
+        "D": []
       }, 
       "junction": "ACTACTGTGCTGCGTGGGAGTATACCACTGGTTGGTTCAA", 
       "size": [
@@ -1804,28 +1979,11 @@
         9, 
         9, 
         9, 
-        9, 
         9
       ]
     }, 
     {
-      "seg": {
-        "J": [
-          "TRGJP2*01", 
-          "TRGJ1*01", 
-          "TRGJ2*01", 
-          "TRGJ1*02"
-        ], 
-        "V": [
-          "TRGV2*01", 
-          "TRGV2*02", 
-          "TRGV4*02", 
-          "TRGV4*01"
-        ], 
-        "name": "TRGV2*01 1/CCGC/3 TRGJP2*01", 
-        "D": [], 
-        "sequence": "AACGTCTTGATCCAATCACACGCGGCCGTCCCAGGTGGCACAGTAATAGACCCCAGAGTCATTTTCAATTAGATTTCGCAGTATCAATCTCAAGTTGTTCCTTGTGCTTGCGTAAGTATAATACTTCC"
-      }, 
+      "seg": 0, 
       "junction": "TGTGCCACCTGGGACGGCCGCGTGTGATTGGATCAAGACG", 
       "size": [
         8, 
@@ -1834,28 +1992,11 @@
         8, 
         8, 
         8, 
-        8, 
         8
       ]
     }, 
     {
-      "seg": {
-        "J": [
-          "TRGJP1*01", 
-          "TRGJP2*01", 
-          "TRGJ1*01", 
-          "TRGJ2*01"
-        ], 
-        "V": [
-          "TRGV10*02", 
-          "TRGV10*01", 
-          "TRGV11*01", 
-          "TRGV11*02"
-        ], 
-        "name": "TRGV10*02 0/TTTCCTAGGG/8 TRGJP1*01", 
-        "D": [], 
-        "sequence": "CCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATTATTTCCTAGGGGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGC"
-      }, 
+      "seg": 0, 
       "junction": "TGCTGCGTGGGATTATTTCCTAGGGGGTTGGTTCAAGATA", 
       "size": [
         8, 
@@ -1864,28 +2005,11 @@
         8, 
         8, 
         8, 
-        8, 
         8
       ]
     }, 
     {
-      "seg": {
-        "J": [
-          "TRGJP2*01", 
-          "TRGJP1*01", 
-          "TRGJP*01", 
-          "TRGJ1*02"
-        ], 
-        "V": [
-          "TRGV3*01", 
-          "TRGV3*02", 
-          "TRGV5P*02", 
-          "TRGV5P*01"
-        ], 
-        "name": "TRGV3*01 0/CCTGGTTAC/8 TRGJP2*01", 
-        "D": [], 
-        "sequence": "CTGGAAATTGATACTGCAAAATCTAATTGAAAATGATTCTGGATCTATTACTGTGCCACCTGGGACAGGCCTGGTTACGATTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTCGC"
-      }, 
+      "seg": 0, 
       "junction": "TGCCACCTGGGACAGGCCTGGTTACGATTGGATCAAGACG", 
       "size": [
         8, 
@@ -1894,28 +2018,11 @@
         8, 
         8, 
         8, 
-        8, 
         8
       ]
     }, 
     {
-      "seg": {
-        "J": [
-          "TRGJP2*01", 
-          "TRGJP1*01", 
-          "TRGJP*01", 
-          "TRGJ1*02"
-        ], 
-        "V": [
-          "TRGV4*01", 
-          "TRGV4*02", 
-          "TRGV2*01", 
-          "TRGV2*02"
-        ], 
-        "name": "TRGV4*01 9/AAAAACC/8 TRGJP2*01", 
-        "D": [], 
-        "sequence": "AAGGAAGAACTTGAGAATGATACTGCGAAATCTTATTGAAAATGACTCTGGAGTCTATTACTGTGCCACCAAAAACCGATTGGATCAAGACGTTTGCAAAAGGGACTAGCGTCATAGATAACTTCGC"
-      }, 
+      "seg": 0, 
       "junction": "TCTATTACTGTGCCACCAAAAACCGATTGGATCAAGACGT", 
       "size": [
         8, 
@@ -1924,28 +2031,11 @@
         8, 
         8, 
         8, 
-        8, 
         8
       ]
     }, 
     {
-      "seg": {
-        "J": [
-          "TRGJP2*01", 
-          "TRGJP1*01", 
-          "TRGJP*01", 
-          "TRGJ1*02"
-        ], 
-        "V": [
-          "TRGV4*01", 
-          "TRGV4*02", 
-          "TRGV2*01", 
-          "TRGV2*02"
-        ], 
-        "name": "TRGV4*01 9/GCAACGAGAGG/11 TRGJP2*01", 
-        "D": [], 
-        "sequence": "GAAGAACTTGAGAATGATACTGCGAAATCTTATTGAAAATGACTCTGGAGTCTATTACTGTGCACCGCAACGAGAGGTGGATCAAGACGTTTGCAAAAGGGACTAGGCTCATAGTAACTTC"
-      }, 
+      "seg": 0, 
       "junction": "TCTATTACTGTGCACCGCAACGAGAGGTGGATCAAGACGT", 
       "size": [
         8, 
@@ -1954,31 +2044,13 @@
         8, 
         8, 
         8, 
-        8, 
         8
       ]
     }, 
     {
-      "seg": {
-        "J": [
-          "TRGJP1*01", 
-          "TRGJP*01", 
-          "TRGJP2*01", 
-          "TRGJ1*01"
-        ], 
-        "V": [
-          "TRGV10*01", 
-          "TRGV10*02", 
-          "TRGV11*01", 
-          "TRGV11*02"
-        ], 
-        "name": "TRGV10*01 0/G/2 TRGJP1*01", 
-        "D": [], 
-        "sequence": "GGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGTTTGTGGCGACCACTGGTTGGTTCAAGA"
-      }, 
+      "seg": 0, 
       "junction": "TACTGTGCTGCGTGGTTTGTGGCGACCACTGGTTGGTTCA", 
       "size": [
-        8, 
         8, 
         8, 
         8, 
@@ -1998,28 +2070,11 @@
         8, 
         8, 
         8, 
-        8, 
         8
       ]
     }, 
     {
-      "seg": {
-        "J": [
-          "TRGJP1*01", 
-          "TRGJP2*01", 
-          "TRGJP*01", 
-          "TRGJ1*02"
-        ], 
-        "V": [
-          "TRGV10*02", 
-          "TRGV10*01", 
-          "TRGV9*02", 
-          "TRGV9*01"
-        ], 
-        "name": "TRGV10*02 3/A/4 TRGJP1*01", 
-        "D": [], 
-        "sequence": "ACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGAACACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAAC"
-      }, 
+      "seg": 0, 
       "junction": "TACTACTGTGCTGCGTGGGAACACTGGTTGGTTCAAGATA", 
       "size": [
         8, 
@@ -2028,28 +2083,11 @@
         8, 
         8, 
         8, 
-        8, 
         8
       ]
     }, 
     {
-      "seg": {
-        "J": [
-          "TRGJP1*01", 
-          "TRGJP2*01", 
-          "TRGJP*01", 
-          "TRGJ1*02"
-        ], 
-        "V": [
-          "TRGV10*01", 
-          "TRGV10*02", 
-          "TRGV11*01", 
-          "TRGV11*02"
-        ], 
-        "name": "TRGV10*01 4//3 TRGJP1*01", 
-        "D": [], 
-        "sequence": "ACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGATGTGGGCCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCG"
-      }, 
+      "seg": 0, 
       "junction": "TACTACTGTGCTGCGTGATGTGGGCCACTGGTTGGTTCAA", 
       "size": [
         8, 
@@ -2058,28 +2096,11 @@
         8, 
         8, 
         8, 
-        8, 
         8
       ]
     }, 
     {
-      "seg": {
-        "J": [
-          "TRGJP2*01", 
-          "TRGJ1*01", 
-          "TRGJ2*01", 
-          "TRGJ1*02"
-        ], 
-        "V": [
-          "TRGV2*01", 
-          "TRGV2*02", 
-          "TRGV4*02", 
-          "TRGV4*01"
-        ], 
-        "name": "TRGV2*01 0/ACGAAAG/6 TRGJP2*01", 
-        "D": [], 
-        "sequence": "GGGAAGTATTATACTTACGCAAGCACAAGGAACAACTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCCACCTGGGACGGGACGAAAGGTGATTGGATCAAGACG"
-      }, 
+      "seg": 0, 
       "junction": "GTGCCACCTGGGACGGGACGAAAGGTGATTGGATCAAGAC", 
       "size": [
         8, 
@@ -2088,28 +2109,11 @@
         8, 
         8, 
         8, 
-        8, 
         8
       ]
     }, 
     {
-      "seg": {
-        "J": [
-          "TRGJP1*01", 
-          "TRGJP2*01", 
-          "TRGJ1*02", 
-          "TRGJP*01"
-        ], 
-        "V": [
-          "TRGV2*01", 
-          "TRGV2*02", 
-          "TRGV5*01", 
-          "TRGV3*02"
-        ], 
-        "name": "TRGV2*01 3/A/0 TRGJP1*01", 
-        "D": [], 
-        "sequence": "GATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCACCTGGGACAATACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCGC"
-      }, 
+      "seg": 0, 
       "junction": "GGTCTATTACTGTGCACCTGGGACAATACCACTGGTTGGT", 
       "size": [
         8, 
@@ -2118,28 +2122,11 @@
         8, 
         8, 
         8, 
-        8, 
         8
       ]
     }, 
     {
-      "seg": {
-        "J": [
-          "TRGJ1*01", 
-          "TRGJ2*01", 
-          "TRGJ1*02", 
-          "TRGJP*01"
-        ], 
-        "V": [
-          "TRGV10*02", 
-          "TRGV10*01", 
-          "TRGV9*02", 
-          "TRGV9*01"
-        ], 
-        "name": "TRGV10*02 2/CCTGGGGT/2 TRGJ1*01", 
-        "D": [], 
-        "sequence": "CATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTGCTACTGTGCTGCGTGGGATCCTGGGGTATTATTATAAGAAACTCTTTGGCAGTGGAAC"
-      }, 
+      "seg": 0, 
       "junction": "CTGTGCTGCGTGGGATCCTGGGGTATTATTATAAGAAACT", 
       "size": [
         8, 
@@ -2148,732 +2135,7 @@
         8, 
         8, 
         8, 
-        8, 
         8
-      ]
-    }, 
-    {
-      "seg": {
-        "J": [
-          "TRGJ1*02", 
-          "TRGJ1*01", 
-          "TRGJ2*01", 
-          "TRGJP1*01"
-        ], 
-        "V": [
-          "TRGV10*02", 
-          "TRGV10*01", 
-          "TRGV9*02", 
-          "TRGV9*01"
-        ], 
-        "name": "TRGV10*02 3/CTCATACCGA/4 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTTATATCGGTATGAGTCCCACGCAGCACAGTAGTAAACGGCCATGTCCTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAAT"
-      }, 
-      "junction": "CTGTGCTGCGTGGGACTCATACCGATATAAGAAACTCTTT", 
-      "size": [
-        2, 
-        1, 
-        8, 
-        8, 
-        0.1, 
-        8, 
-        8, 
-        8
-      ]
-    }, 
-    {
-      "seg": {
-        "J": [
-          "TRGJ1*02", 
-          "TRGJ1*01", 
-          "TRGJ2*01", 
-          "TRGJP*01"
-        ], 
-        "V": [
-          "TRGV8*01", 
-          "TRGV2*02", 
-          "TRGV2*01", 
-          "TRGV4*01"
-        ], 
-        "name": "TRGV8*01 0/AGTCGG/2 TRGJ1*02", 
-        "D": [], 
-        "sequence": "CTTATGCAAGCACAGGGAAGAGCCTTAAATTTATACTGGAAAATCTAATTGAACGTGACTCTGGGGTCTATTACTGTGCCACCTGGGATCGGAGTCGGATTATAAGAAACTCATTTGGCAGT"
-      }, 
-      "junction": "CTGTGCCACCTGGGATCGGAGTCGGATTATAAGAAACTCA", 
-      "size": [
-        8, 
-        8, 
-        8, 
-        8, 
-        8, 
-        8, 
-        8, 
-        8
-      ]
-    }, 
-    {
-      "seg": {
-        "J": [
-          "TRGJP1*01", 
-          "TRGJP2*01", 
-          "TRGJ1*02", 
-          "TRGJ1*01"
-        ], 
-        "V": [
-          "TRGV2*01", 
-          "TRGV2*02", 
-          "TRGV4*01", 
-          "TRGV4*02"
-        ], 
-        "name": "TRGV2*01 0/TCCT/1 TRGJP1*01", 
-        "D": [], 
-        "sequence": "CTTGAGATTGATACTGCGAAATCTAATTGAAAATGACTCTGGGGTCTATTACTGTGCACCTGGGACGGGTCCTTACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCG"
-      }, 
-      "junction": "CTATTACTGTGCACCTGGGACGGGTCCTTACCACTGGTTG", 
-      "size": [
-        8, 
-        8, 
-        8, 
-        8, 
-        8, 
-        8, 
-        8, 
-        8
-      ]
-    }, 
-    {
-      "seg": {
-        "J": [
-          "TRGJ1*02", 
-          "TRGJ1*01", 
-          "TRGJ2*01", 
-          "TRGJP1*01"
-        ], 
-        "V": [
-          "TRGV8*01", 
-          "TRGV2*02", 
-          "TRGV2*01", 
-          "TRGV5P*02"
-        ], 
-        "name": "TRGV8*01 5/TTTTT/0 TRGJ1*02", 
-        "D": [], 
-        "sequence": "TTGTTCCACTGCCAAAGAGTTTCTTATAATAAAAAAACCCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTA"
-      }, 
-      "junction": "ATTACTGTGCCACCTGGGTTTTTTTATTATAAGAAACTCT", 
-      "size": [
-        8, 
-        8, 
-        8, 
-        8, 
-        8, 
-        8, 
-        8, 
-        8
-      ]
-    }, 
-    {
-      "seg": {
-        "J": [
-          "TRGJ1*01", 
-          "TRGJ2*01", 
-          "TRGJ1*02", 
-          "TRGJP1*01"
-        ], 
-        "V": [
-          "TRGV10*02", 
-          "TRGV10*01", 
-          "TRGV11*01", 
-          "TRGV11*02"
-        ], 
-        "name": "TRGV10*02 0/TTATAAGAAACTCTTTGGCAGTGGAA/79 TRGJ1*01", 
-        "D": [], 
-        "sequence": "ACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATTATTATAAGAAACTCTTTGGCAGTGGAAC"
-      }, 
-      "junction": "ACTACTGTGCTGCGTGGGATTATTATAAGAAACTCTTTGG", 
-      "size": [
-        8, 
-        8, 
-        8, 
-        8, 
-        8, 
-        8, 
-        8, 
-        8
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TTACTGTGCACCTGAACCGTTTATTATAAGAAAACTCTTT", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TGTGCCACCTGGGATCGGAGTCGGATTTATAAGAAACTCT", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TGTGCCACCTGGGACGGCCACTGGTAGTGATTGGATCAAG", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TGCTGCGTGGGATTAGCCTTTAAGTGGGTTCAAGATATTT", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TATTACTGTGCCACCCTGAACCGTTTTATTATAAGAAACT", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "GGTCTATTACTGTGCACCTGGGACACTATAAGAAACTCTT", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "GGGTCTATTACTGTGCCACCATACCACTGGTTGGTTCAAG", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CTGTGCCACCTGGGACGGGCCTCCACTGGTTGGTTCAAGA", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CTGTGCCACCTGGGACGGGCCGAGAAACTCTTTGGCAGTG", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CTGTGCCACCTGGGACGCCGGACTTATTATAAGAAACTCT", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CTACTGTGCTGCGTGGGATCTACACTGGTTGGTTCAAGAT", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CCACCTGGGACGGGCTACAAACCGCAAAATTATTATAAGA", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "ATTACTGTGCCACCTGGAATGGAGCCACTGGTTGGTTCAA", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "ACTGTGCTGCGTGGGCTCCTAGAAGTTATTATAAGAAACT", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "ACTACTGTGCTGCGTGGGACCGCTGGTTGGTTCAAGATAT", 
-      "size": [
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7, 
-        7
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TTTACTACTGTGCTGGGAAGACCGATATACCACTGGTTGG", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TTACTGTGCCACCTGGGACCCGAATTATTATAAGAAACTC", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TTACTGTGCCACCTGGATCGCCGGATTATAAGAAACTCTT", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TTACTGTGCCACCTGGACGCCGGACTTATTATAAGAAACT", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TGTGCTGCGTGGGATTATCAGCCGGTTGGTTCAAGATATT", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TGTGCTGCGTGGGATTAAGGTAGTTATAAGAAACTCTTTG", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TGTGCCACCTGGGACGGGCCACGATTATAAGAAACTCTTT", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TGTGCCACCTGGGACAGACTACGAGTAGTGATTGGATCAA", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TGCCACCTGGGACGGCCCGAGGGGAGGTAGTGATTGGATC", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TGCCACCTGGGACAAGCGAAGGGAGGCGAAACTCTTTGGC", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TCTATTACTGTGCACCTGGGATCGCCGGATTATAAGAAAC", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TATTACTGTGCCACCTGGTTTTTTATTATAAGAAACTCTT", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TATTACTGTGCCACCTGGGTTCGTAGTGATTGGATCAAGA", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TATTACTGTGCCACCTGGAATGGTACCACTGGTTGGTTCA", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TACTGTGCCACCTGGATGGTGGAAGGAGTAGTGATTGGAT", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "TACTACTGTGCTGCGTGGGACACTGGTTGGTTCAAGATAT", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CTGTGCTGCGTGGGATTGGAAAGCACTGGTTGGTTCAAGA", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CTGTGCTGCGTGGGATCCTCTCTTATACCACTGGTTGGTT", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CTGTGCCACCTGGGACGGGCCCCACTGGTTGGTTCAAGAT", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CTATTACTGTGCCGTGTTACACTCATCTATAAGAAACTCT", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CTATTACTGTGCCACCTGAAATGATCAAGACGTTTGCAAA", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CTACTGTGCTGCGTGGGATCGATTATAAGAAACTCTTTGG", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CGTTTACTACTGTGCTGCCCTCATACCACTGGTTGGTTCA", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CCTGGGATCGGAGTCGGATTATAAGAAAACTCTTTTGGCA", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CCGTTTACTACTGTGCTGCCTCACTGGTTGGTTCAAGATA", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
-      ]
-    }, 
-    {
-      "seg": 0, 
-      "junction": "CACCTGGGATGGGCAGGTGGAGGCGTCTTATTATAAGAAA", 
-      "size": [
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6, 
-        6
       ]
     }
   ]
