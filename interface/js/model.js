@@ -559,6 +559,9 @@ function initVJposition(){
 		  document.getElementById('colorSelector').style.display='none';
 		  customColor[tmpID]="#"+hex;
 		  document.getElementById('color'+tmpID).style.backgroundColor=customColor[tmpID];
+		  if(document.getElementById('select'+tmpID) ){
+		    document.getElementById('select'+tmpID).lastChild.previousSibling.style.backgroundColor=customColor[tmpID];
+		  }
 		  document.getElementById("log").innerHTML+="<br>"+tmpID+"/test/"+customColor[tmpID];
 		  $('#log').scrollTop(100000000000000);
 		  updateLook();
@@ -720,20 +723,35 @@ function initVJposition(){
       clone.onmouseover = function(){ focusIn(this.id2, 0); }
       clone.onmouseout= function(){ focusOut(this.id2); }
       clone.onclick=function(){displayInfo(this.id2); }
-      var colorbox = clone.firstChild.nextSibling.onclick=function(){ changeColor(this.parentNode.id2); };
+      var colorbox = clone.lastChild.previousSibling.onclick=function(){ changeColor(this.parentNode.id2); };
+      var delBox = clone.firstChild.nextSibling.onclick=function(){ deselectClone(this.parentNode.id2); };
       document.getElementById("listSelect").appendChild(clone);
       addToSegmenter(cloneID);
+      updateLook();
     }else{
-      select.splice(index,1);
-      document.getElementById("info").innerHTML="";
-      var clone = document.getElementById("select"+cloneID);
-      clone.parentNode.removeChild(clone);
-      var listElem = document.getElementById("seq"+cloneID);
-      listElem.parentNode.removeChild(listElem);
+      deselectClone(cloneID);
     }
-     updateLook();
   }
   
+  function deselectClone(cloneID){
+    tmpID=cloneID;
+    var index = select.indexOf(tmpID);
+    for (var i=0; i<select.length; i++){
+      document.getElementById("log").innerHTML+="<br>test";
+      if (select[i]==tmpID) index=i;
+    }
+    if (index != -1){
+      document.getElementById("log").innerHTML+="<br>test"+cloneID+"//"+ select+"//"+index;
+      select.splice(index,1);
+      document.getElementById("info").innerHTML="";
+      var clone = document.getElementById("select"+tmpID);
+      clone.parentNode.removeChild(clone);
+      var listElem = document.getElementById("seq"+tmpID);
+      listElem.parentNode.removeChild(listElem);
+      nodes[tmpID].focus = false;
+      updateLook();
+    }
+  }
   
   /*libere les elements selectionnées et vide la fenêtre d'information*/
   function freeSelect(){

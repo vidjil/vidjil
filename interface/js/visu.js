@@ -115,7 +115,14 @@ function initClones(data) {
       span2.id="size"+i;
       span2.appendChild(document.createTextNode((100*getSize(i)).toFixed(2)+"%"));
       
+      var img=document.createElement('img')
+      img.className="delBox";
+      img.onclick=function(){ addToList(this.parentNode.id); }
+      img.src="images/delete.png";
+      
+       
       div.appendChild(span0);
+      div.appendChild(img);
       div.appendChild(span1);
       div.appendChild(span2);
       div.style.background=color(i);

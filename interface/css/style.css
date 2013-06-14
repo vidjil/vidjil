@@ -186,15 +186,25 @@ circle:hover {
 }
 
 .nameBox{
-  width :270px;
+  width :260px;
   overflow :hidden;
   display: inline-block;
+  height :12px;
 }
 
 .colorBox{
   right: 3px;
   float: right;
   border: solid;
+  height: 8px;
+  width: 8px;
+  display: inline-block;
+}
+.delBox{
+  float: right;
+  border: solid;
+  margin-left:2px;
+  background-color: black;
   height: 8px;
   width: 8px;
   display: inline-block;
