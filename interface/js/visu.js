@@ -238,22 +238,14 @@ function updateLook(){
   node.style("stroke", function(d) { return stroke(d.id); } )
   for(var i=0 ;i<totalClones; i++){
     document.getElementById(i).style.background=color(i);
+  if (document.getElementById("info"+select[i]) ){
+    document.getElementById("info"+select[i]).style.background=color(i);
+  }
   }
   for(var i=0 ;i<select.length; i++){
     document.getElementById("select"+select[i]).style.background=color(select[i]);
   }
-}
 
-function updateLookbyID(cloneID){
-  vis.select("#circle"+cloneID)
-  .transition()
-  .duration(1500)
-  .style("fill", function(d) { return color(d.id); } )
-  node.style("stroke", function(d) { return stroke(d.id); } )
-  document.getElementById(cloneID).style.background=color(cloneID);
-  if (document.getElementById("select"+select[cloneID]) ){
-    document.getElementById("select"+select[cloneID]).style.background=color(cloneID);
-  }
 }
 
 

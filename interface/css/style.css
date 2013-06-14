@@ -88,6 +88,13 @@ list-style-type: none;
   -o-transition: background-color  1.5s;
   -ms-transition: background-color 1.5s;
   transition: background-color 1.5s;
+    font-weight : bold;
+    color : #ddd;
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1.8px 1px 0 #000,
+    1px 1px 0 #000;  
 }
 
 .button {
@@ -125,28 +132,14 @@ circle:hover {
 }
 
 #listFav{
-  text-shadow:
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1.8px 1px 0 #000,
-    1px 1px 0 #000;  
   overflow-y : scroll;
   overflow-x : hidden;
-  font-weight : bold;
-  color : #ddd;
   background : #101020;
 }
 
 #listSelect{
-  text-shadow:
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1.8px 1px 0 #000,
-    1px 1px 0 #000;  
   overflow-y : scroll;
   overflow-x : hidden;
-  font-weight: bold;
-  color: #ddd;
   background : #201030;
   height :160px
 }

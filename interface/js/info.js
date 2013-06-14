@@ -31,34 +31,21 @@
     var div = document.createElement('div');
     div.id="infoClone";
     
-    var div_name=document.createElement('div');
-    div_name.appendChild(document.createTextNode(getname(cloneID)));
-    div_name.id="clone_name";
-    div.appendChild(div_name);
+    var clone = document.getElementById(cloneID).cloneNode(true);
+    clone.id2=clone.id;
+    clone.id="info"+clone.id;
+    clone.onmouseover = function(){ focusIn(this.id2, 0); }
+    clone.onmouseout= function(){ focusOut(this.id2); }
+    var colorbox = clone.lastChild.previousSibling.onclick=function(){ changeColor(this.parentNode.id2); };
+    var delBox = clone.firstChild.nextSibling.onclick=function(){ document.getElementById("info").innerHTML=""; };
+    document.getElementById("listSelect").appendChild(clone);
+    div.appendChild(clone);
     
-    var div_exit=document.createElement('div');
-    div_exit.onclick = function(){ freeSelect(); }
-    div_exit.className="button";
-    div_exit.appendChild(document.createTextNode(" X deselect X"));
-    div.appendChild(div_exit);
-	
     var div_fav=document.createElement('div');
     div_fav.onclick = function(){ addToFavorites(cloneID); }
     div_fav.className="button";
     div_fav.appendChild(document.createTextNode("^  ajouter aux favoris ^"));
     div.appendChild(div_fav);
-    
-    var div_notFav=document.createElement('div');
-    div_notFav.onclick = function(){ addToList(cloneID); }
-    div_notFav.className="button";
-    div_notFav.appendChild(document.createTextNode("v retirer des favoris v"));
-    div.appendChild(div_notFav);
-    
-    var div_seg=document.createElement('div');
-    div_seg.onclick = function(){ addToSegmenter(cloneID); }
-    div_seg.className="button";
-    div_seg.appendChild(document.createTextNode("> ajouter au comparateur >"));
-    div.appendChild(div_seg);
     
     var div_edit=document.createElement('div');
     div_edit.onclick = function(){ editName(cloneID); }

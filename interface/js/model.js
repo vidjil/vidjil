@@ -190,7 +190,7 @@ function loadPref(){
 }
 
   function editName(cloneID){
-    var divParent = document.getElementById("clone_name");
+    var divParent = document.getElementById("info"+cloneID);
     divParent.innerHTML="";
     
     var input = document.createElement('input');
@@ -203,8 +203,11 @@ function loadPref(){
     a.appendChild(document.createTextNode("save"));
     a.onclick=function(){ 
       var newName=document.getElementById("new_name").value;
-      changeName(cloneID, newName); }
+      changeName(cloneID, newName);
+       displayInfo(cloneID);
+    }
     divParent.appendChild(a);
+    
     
   }
 
@@ -562,6 +565,9 @@ function initVJposition(){
 		  if(document.getElementById('select'+tmpID) ){
 		    document.getElementById('select'+tmpID).lastChild.previousSibling.style.backgroundColor=customColor[tmpID];
 		  }
+		  if(document.getElementById('info'+tmpID) ){
+		    document.getElementById('info'+tmpID).lastChild.previousSibling.style.backgroundColor=customColor[tmpID];
+		  }
 		  document.getElementById("log").innerHTML+="<br>"+tmpID+"/test/"+customColor[tmpID];
 		  $('#log').scrollTop(100000000000000);
 		  updateLook();
@@ -672,6 +678,14 @@ function initVJposition(){
       list2.style.color='white';
     }
     
+    var list3 = document.getElementById("info"+cloneID);
+    if(list3){
+      list3.style.border='white';
+      list3.style.borderStyle='solid';
+      list3.style.padding='0px';
+      list3.style.color='white';
+    }
+    
     var line = document.getElementById("line"+cloneID);
     line.style.stroke='white';
     line.style.opacity='1';
@@ -699,6 +713,14 @@ function initVJposition(){
       list2.style.borderStyle='';
       list2.style.padding='';
       list2.style.color='';
+    }
+    
+    var list3 = document.getElementById("info"+cloneID);
+    if(list3){
+      list3.style.border='';
+      list3.style.borderStyle='';
+      list3.style.padding='';
+      list3.style.color='';
     }
     
     var line = document.getElementById("line"+cloneID);
