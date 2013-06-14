@@ -275,8 +275,8 @@ function initCoef(){
   else
     resizeCoef = resizeW;
   
-  $('#listFav').height((($('#left').height()-475))+"px");
-  $('#listClones').height((($('#left').height()-475))+"px");
+  $('#listFav').height((($('#left').height()-490))+"px");
+  $('#listClones').height((($('#left').height()-490))+"px");
   
   //recadrage des legendes si la methode de répartition utilisé a ce moment la en utilise
   if (splitMethod=="vj1" || splitMethod=="vj2") updateLegend();
@@ -794,9 +794,28 @@ function initVJposition(){
     updateGraph();
     updateVis();
     updateList();
-    
   }
 
+  function mergeSelection(){
+    if (select.length !=0){
+      var new_cluster = [];
+      var leader = select[0]; 
+      
+      for (var i = 0; i < select.length ; i++){
+	new_cluster= new_cluster.concat(clones[select[i]]);
+	clones[select[i]]=[];
+	data_graph[select[i]].id=leader;
+      }
+      document.getElementById("listSelect").innerHTML="";
+      document.getElementById("listSeq").innerHTML="";
+      select=[];
+      selectClone(leader);
+      clones[leader]=new_cluster;
+      updateGraph();
+      updateVis();
+      updateList();
+    }
+  }
 
   /*libere la jonction b du clone lead par a */
   function split(cloneIDa, cloneIDb){

@@ -57,6 +57,9 @@
     for (var i=0; i<clones[cloneID].length; i++){
       var div_clone=document.createElement('div');
       div_clone.appendChild(document.createTextNode(getname(clones[cloneID][i])));
+      var span_free=document.createElement('span');
+      span_free.appendChild(document.createTextNode( "free" ));
+
       div_cluster.appendChild(div_clone);
     }
     
