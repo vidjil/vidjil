@@ -61,6 +61,7 @@ var splitMethod=" ";          //par defaut pas de method de split
 var t = 0;                    //point de suivi courant ( par defaut t=0 )
 var useCustomColor=true;      //utilisation des couleurs personalisées
 var select=[];                //liste des clones selectionnés
+limitClones=150;
 
 var colorV_begin=[255,241,22];//dégradé de couleur germline V
 var colorV_end=[193,17,118];
@@ -161,6 +162,7 @@ var req = new XMLHttpRequest();
 
 function init(){
   totalClones=junctions.length;
+  if ( totalClones > limitClones ) totalClones = limitClones;
   document.getElementById("log").innerHTML+="<br>nombre de jonctions"+totalClones;
   
   for(var i=0 ;i<totalClones; i++){
