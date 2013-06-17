@@ -44,13 +44,13 @@
     var div_fav=document.createElement('div');
     div_fav.onclick = function(){ addToFavorites(cloneID); }
     div_fav.className="button";
-    div_fav.appendChild(document.createTextNode("^  ajouter aux favoris ^"));
+    div_fav.appendChild(document.createTextNode("^  add to favorite ^"));
     div.appendChild(div_fav);
     
     var div_edit=document.createElement('div');
     div_edit.onclick = function(){ editName(cloneID); }
     div_edit.className="button";
-    div_edit.appendChild(document.createTextNode(" modifier le nom "));
+    div_edit.appendChild(document.createTextNode(" rename "));
     div.appendChild(div_edit);
     
     var div_cluster=document.createElement('div');

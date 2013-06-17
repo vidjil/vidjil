@@ -398,7 +398,8 @@ function initVJposition(){
   var tmp="";
   var n2=-1;
   n=-1;
-  
+
+      
   //attribution d'une couleur et d'une colonne pour chaque genes V (et chaque sous-genes)
   for (var i=0; i<sizeV; i++){
     
@@ -424,7 +425,7 @@ function initVJposition(){
     positionV2[vmap[i]]=margeVJ+(n2+0.5)*stepVJ;
     vjData[n]=makeVJclass("vjline2", margeVJ+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
 			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) ),
-			  0, vmap[i], elem, vmap[i].split('*')[1]);
+			  0, vmap[i], elem, '*' + vmap[i].split('*')[1]);
     positionV[vmap[i]]=margeVJ+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
 			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) );
 
@@ -453,7 +454,7 @@ function initVJposition(){
     n++;
     vjData[n]=makeVJclass("vjline2", 0, margeVJ+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
 			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) )
-			    , jmap[i], elem, jmap[i].split('*')[1]);
+			    , jmap[i], elem, '*' + jmap[i].split('*')[1]);
     
     positionJ[jmap[i]]=margeVJ+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
 			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) );		
