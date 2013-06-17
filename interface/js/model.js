@@ -791,6 +791,7 @@ function initVJposition(){
     clones[cloneIDb] = [];
     document.getElementById(cloneIDb).style.display="none";
     data_graph[cloneIDb].id=cloneIDa;
+    data_graph[cloneIDb].display=false;
     updateGraph();
     updateVis();
     updateList();
@@ -805,15 +806,20 @@ function initVJposition(){
 	new_cluster= new_cluster.concat(clones[select[i]]);
 	clones[select[i]]=[];
 	data_graph[select[i]].id=leader;
+	data_graph[select[i]].display=false;
+	
       }
       document.getElementById("listSelect").innerHTML="";
       document.getElementById("listSeq").innerHTML="";
+      data_graph[leader].display=true;
       select=[];
       selectClone(leader);
       clones[leader]=new_cluster;
       updateGraph();
       updateVis();
       updateList();
+      displayInfo(leader);
+      setTimeout('updateGraphDisplay()',1000);
     }
   }
 
@@ -831,6 +837,7 @@ function initVJposition(){
     clones[cloneIDa]=nlist;
     clones[cloneIDb]=[cloneIDb];
     data_graph[cloneIDb].id=cloneIDb;
+    data_graph[cloneIDb].display=true;
     document.getElementById(cloneIDb).style.display="";
     
     updateGraph();

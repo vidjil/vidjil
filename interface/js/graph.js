@@ -54,7 +54,7 @@ function initGraph(){
   }
   
   for (var i=0 ; i<totalClones; i++){
-    data_graph[i]={id : i};
+    data_graph[i]={id : i, display: true, name :"line"+i};
   }
   
   displayGraph(data_axis, data_graph);
@@ -108,6 +108,24 @@ function updateGraphColor(){
     .attr("class", function(d) { return g_class(d.id); })
 }
 
+function updateGraphDisplay(){
+    g_graph
+    .style("display", function(d) { if (d.display==true) return "";
+				    else return "none";
+    })
+
+    vis2.selectAll("polyline")
+    .on("mouseover", function(d){
+     if (d.display==true) focusIn(d.id, 1);
+    })
+    .on("mouseout", function(d){
+     if (d.display==true) focusOut(d.id);
+    })
+    .on("click", function(d){
+     if (d.display==true) selectClone(d.id);
+    })
+}
+
 
 function updateGraph(){
     document.getElementById("log").innerHTML+="<br>updateGraph";
@@ -155,17 +173,17 @@ function updateGraph(){
     } )
     .attr("class", function(d) { return g_class(d.id); })
     .style("stroke", function(d) { return color(d.id); })
-    .attr("id", function(d) { return "line"+d.id; });
+    .attr("id", function(d) { return d.name; });
     
   vis2.selectAll("polyline")
     .on("mouseover", function(d){
-      focusIn(d.id, 1);
+     if (d.display==true) focusIn(d.id, 1);
     })
     .on("mouseout", function(d){
-      focusOut(d.id);
+     if (d.display==true) focusOut(d.id);
     })
     .on("click", function(d){
-      selectClone(d.id);
+     if (d.display==true) selectClone(d.id);
     })
 
 }
