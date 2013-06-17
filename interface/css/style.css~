@@ -252,7 +252,6 @@ circle:hover {
 }
 
 #cluster {
-  margin: 5px;
   background: #101030;
   overflow-y: scroll;
   overflow-x: hidden;

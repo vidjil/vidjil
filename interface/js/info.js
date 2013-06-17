@@ -26,6 +26,9 @@
   
   /*genere le contenu du panel d'information avec les données d'un clone */
   function displayInfo(cloneID){
+    if (cloneID==-1) return;
+    info = cloneID;
+    
     var divParent = document.getElementById("info");
     divParent.innerHTML="";
     
@@ -38,7 +41,6 @@
       
       var span0 = document.createElement('span');
       span0.className = "nameBox";
-      
       span0.appendChild(document.createTextNode(getname(cloneID)));
       
       var span1 = document.createElement('span');
@@ -75,36 +77,46 @@
     div_edit.appendChild(document.createTextNode(" rename "));
     divParent.appendChild(div_edit);
     
-    divParent.innerHTML+= "</br></br>composition"
-    
-    var div_cluster=document.createElement('div');
-    div_cluster.id="cluster";
-    
-    for (var i=0; i<clones[cloneID].length; i++){
+    if (clones[cloneID].length>1){
       
-      var div_clone=document.createElement('div');
-      div_clone.id2=clones[cloneID][i];
-      div_clone.className="listElem";
-      div_clone.style.background=color(clones[cloneID][i]);
-      div_clone.appendChild(document.createTextNode( getcode(clones[cloneID][i]) ) );
+      var div_cluster=document.createElement('div');
+      div_cluster.id="cluster";
+      div_cluster.appendChild(document.createTextNode("composition"));
       
-      var img=document.createElement('img');
-      img.onclick=function(){ split(cloneID, this.parentNode.id2);
-			      displayInfo(cloneID);
-      }
-      img.src="images/delete.png";
-      img.className="delBox";
-      div_clone.appendChild(img);
-      
-      var span_stat=document.createElement('span');
-      span_stat.className="sizeBox";
-      span_stat.appendChild(document.createTextNode(" xx %"));
-      div_clone.appendChild(span_stat);
-      
-      div_cluster.appendChild(div_clone);
+    var clusterSize=0;
+    for(var j=0 ;j<clones[cloneID].length; j++){
+      clusterSize += junctions[clones[cloneID][j]].size[t];
     }
-    
-    divParent.appendChild(div_cluster);
+      
+      for (var i=0; i<clones[cloneID].length; i++){
+	
+	var div_clone=document.createElement('div');
+	div_clone.id2=clones[cloneID][i];
+	div_clone.className="listElem";
+	div_clone.style.background=color(clones[cloneID][i]);
+	
+	var span_name = document.createElement('span');
+        span_name.className = "nameBox";
+        span_name.appendChild(document.createTextNode( getcode(clones[cloneID][i]) ) );
+	div_clone.appendChild(span_name);
+	
+	var img=document.createElement('img');
+	img.onclick=function(){ split(cloneID, this.parentNode.id2);
+				displayInfo(cloneID);
+	}
+	img.src="images/delete.png";
+	img.className="delBox";
+	div_clone.appendChild(img);
+	
+	var span_stat=document.createElement('span');
+	span_stat.className="sizeBox";
+	span_stat.appendChild(document.createTextNode( (junctions[clones[cloneID][i]].size[t]*100/clusterSize).toFixed(2)+"%"));
+	div_clone.appendChild(span_stat);
+	
+	div_cluster.appendChild(div_clone);
+      }
+      divParent.appendChild(div_cluster);
+    }
     
       /*
     
