@@ -247,6 +247,10 @@ circle:hover {
   cursor:pointer;
 }
 
+.separator {
+  height : 15px
+}
+
 #focus-sequence {
 
 }

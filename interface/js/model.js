@@ -275,8 +275,8 @@ function initCoef(){
   else
     resizeCoef = resizeW;
   
-  $('#listFav').height((($('#left').height()-490))+"px");
-  $('#listClones').height((($('#left').height()-490))+"px");
+  $('#listFav').height((($('#left').height()-505))+"px");
+  $('#listClones').height((($('#left').height()-505))+"px");
   
   //recadrage des legendes si la methode de répartition utilisé a ce moment la en utilise
   if (splitMethod=="vj1" || splitMethod=="vj2") updateLegend();
