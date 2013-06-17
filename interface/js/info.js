@@ -50,7 +50,7 @@
       var span2=document.createElement('span')
       span2.className = "sizeBox";
       span2.id="size"+cloneID;
-      span2.appendChild(document.createTextNode((100*getSize(cloneID)).toFixed(2)+"%"));
+      span2.appendChild(document.createTextNode((100*getSize(cloneID)).toFixed(4)+"%"));
       
       var img=document.createElement('img')
       img.className="delBox";
@@ -164,10 +164,10 @@
   //met a jour les % dans les listes
   function updateList(){
     for (var i=0; i<totalClones; i++){
-      document.getElementById("size"+i).innerHTML=(100*getSize(i)).toFixed(2)+"%";
+      document.getElementById("size"+i).innerHTML=(100*getSize(i)).toFixed(4)+"%";
     }  
     for (var i=0; i<select.length; i++){
-      document.getElementById("sizeS"+select[i]).innerHTML=(100*getSize(select[i])).toFixed(2)+"%";
+      document.getElementById("sizeS"+select[i]).innerHTML=(100*getSize(select[i])).toFixed(4)+"%";
     }  
   }
   

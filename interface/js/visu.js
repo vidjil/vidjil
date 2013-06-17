@@ -87,7 +87,7 @@ function initClones(data) {
       nodes[i].focus = false;
       
       for (t=0 ; t<junctions[i].size.length; t++){
-	if (getSize(i)<min_size) {
+	if (getSize(i)<min_size && getSize(i)!=0) {
 	  min_size=getSize(i)
 	}
       };
@@ -113,7 +113,7 @@ function initClones(data) {
       var span2=document.createElement('span')
       span2.className = "sizeBox";
       span2.id="size"+i;
-      span2.appendChild(document.createTextNode((100*getSize(i)).toFixed(2)+"%"));
+      span2.appendChild(document.createTextNode((100*getSize(i)).toFixed(4)+"%"));
       
       var img=document.createElement('img')
       img.className="delBox";

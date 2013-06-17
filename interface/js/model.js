@@ -777,9 +777,8 @@ function initVJposition(){
       if (select[i]==tmpID) index=i;
     }
     if (index != -1){
-      document.getElementById("log").innerHTML+="<br>test"+cloneID+"//"+ select+"//"+index;
       select.splice(index,1);
-      document.getElementById("info").innerHTML="";
+      setTimeout('document.getElementById("info").innerHTML="";',200);
       var clone = document.getElementById("select"+tmpID);
       clone.parentNode.removeChild(clone);
       var listElem = document.getElementById("seq"+tmpID);

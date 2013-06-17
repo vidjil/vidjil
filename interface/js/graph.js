@@ -44,13 +44,29 @@ function initGraph(){
 		    
     height=height/10;
   }
-  
-  for (var i=0 ; i<junctions[0].size.length; i++){
-    graph_col[i]=axis_x + 5 + i*(( g_w-(2*axis_x) )/(junctions[0].size.length-1) );
-    
-    data_axis[7+i]={class : "axis_v" ,text : "time"+i ,
-		    x1 : graph_col[i], x2 : graph_col[i], 
-		    y1 : g_h, y2 : 0, time: i}
+  if (junctions[0].size.length==1){
+    graph_col[0]=700;
+    data_axis[7]={class : "axis_v" ,text : "time"+0 ,
+			x1 : graph_col[0], x2 : graph_col[0], 
+			y1 : g_h, y2 : 0, time: 0}
+    }else{
+      if (junctions[0].size.length==2){
+	graph_col[0]=300;
+	graph_col[1]=1100;
+	data_axis[7]={class : "axis_v" ,text : "time"+0 ,
+			x1 : graph_col[0], x2 : graph_col[0], 
+			y1 : g_h, y2 : 0, time: 0}
+	data_axis[8]={class : "axis_v" ,text : "time"+1 ,
+			x1 : graph_col[1], x2 : graph_col[1], 
+			y1 : g_h, y2 : 0, time: 1}
+      }else{
+	for (var i=0 ; i<junctions[0].size.length; i++){
+	graph_col[i]=axis_x + 5 + i*(( g_w-(2*axis_x) )/(junctions[0].size.length-1) );
+	data_axis[7+i]={class : "axis_v" ,text : "time"+i ,
+			x1 : graph_col[i], x2 : graph_col[i], 
+			y1 : g_h, y2 : 0, time: i}
+      }
+    }
   }
   
   for (var i=0 ; i<totalClones; i++){
@@ -83,14 +99,27 @@ function displayGraph(data, data_2){
 function constructPath(cloneID){
   var tmp=t;
   t=0;
-  var path = Math.floor( graph_col[0]*resizeG_W) +", "
-	    +Math.floor(( g_h- scale_x(getSize(cloneID)*(1/min_size)) ) * resizeG_H );
-      
+  var path;
+  
+  if (getSize(cloneID)==0){
+    path = Math.floor( graph_col[0] * resizeG_W ) + ", "
+	      +Math.floor(( g_h - 0 ) * resizeG_H );
+  }else{
+    path = Math.floor( graph_col[0] * resizeG_W ) + ", "
+	      +Math.floor(( g_h - scale_x(getSize(cloneID)*(1/min_size)) ) * resizeG_H );
+  }
+  
   for (var i=1; i< graph_col.length; i++){
     t++;
     
-    path += ", "+Math.floor(graph_col[i]*resizeG_W )+", "
-	    +Math.floor(( g_h- scale_x(getSize(cloneID)*(1/min_size)) ) * resizeG_H );
+    if (getSize(cloneID)==0){
+      path += ", "+Math.floor( graph_col[i] * resizeG_W ) + ", "
+		+Math.floor(( g_h + 450 ) * resizeG_H );
+    }else{
+      path += ", "+Math.floor( graph_col[i] * resizeG_W ) + ", "
+		+Math.floor(( g_h - scale_x(getSize(cloneID)*(1/min_size)) ) * resizeG_H );
+    }
+
   }
   t=tmp;
   return path;
