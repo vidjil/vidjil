@@ -37,7 +37,9 @@
     var li = document.createElement('li');
     li.id="seq"+cloneID;
     li.className="sequence-line";
-      
+    
+    if(typeof junctions[cloneID].seg !='undefined' && junctions[cloneID].seg!=0){
+    
     var spanV = document.createElement('span');
     spanV.className="V";
     spanV.style.color=colorV(cloneID);
@@ -54,6 +56,12 @@
     spanJ.style.color=colorJ(cloneID);
     spanJ.innerHTML=junctions[cloneID].seg.sequence.substr(junctions[cloneID].seg.r1);
     li.appendChild(spanJ);
+    }else{
+      var spanJunc=document.createElement('span');
+      spanJunc.innerHTML=junctions[cloneID].junction;
+      li.appendChild(spanJunc);
+    }
+    
     divParent.appendChild(li);
       
     document.getElementById("log").innerHTML+="<br>[element id "+cloneID+"] >> segmenter";
