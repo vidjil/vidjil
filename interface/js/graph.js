@@ -54,7 +54,7 @@ function initGraph(){
   }
   
   for (var i=0 ; i<totalClones; i++){
-    data_graph[i]={id : i, display: true, name :"line"+i};
+    data_graph[i]={id : i, display: true, name :"line"+i, select : false, focus : false};
   }
   
   displayGraph(data_axis, data_graph);
@@ -112,6 +112,20 @@ function updateGraphDisplay(){
     g_graph
     .style("display", function(d) { if (d.display==true) return "";
 				    else return "none";
+    })
+    .style("stroke-dasharray", function(d) { if (d.select==true) return "8,1";
+				    else return "";
+    })
+    .style("stroke-width", function(d) { 
+      if ( d.focus==true ) return "3";
+      if ( d.select==true ) return "2";
+      return "";
+    })
+    .style("opacity", function(d) { if (d.select==true || d.focus==true) return "1";
+				    else return "";
+    })
+    .style("stroke", function(d) { if (d.focus==true) return "white";
+				    else return color(d.id);
     })
 
     vis2.selectAll("polyline")
