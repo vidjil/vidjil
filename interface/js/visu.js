@@ -239,7 +239,7 @@ function updateLook(){
   for(var i=0 ;i<totalClones; i++){
     document.getElementById(i).style.background=color(i);
   if (document.getElementById("info"+select[i]) ){
-    document.getElementById("info"+select[i]).style.background=color(i);
+    document.getElementById("info"+select[i]).style.background=color(select[i]);
   }
   }
   for(var i=0 ;i<select.length; i++){

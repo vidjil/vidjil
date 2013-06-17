@@ -469,13 +469,18 @@ function initVJposition(){
     if ( typeof(customName[cloneID])!='undefined' ){
       return customName[cloneID];
     }else{
+      return getcode(cloneID);
+    }
+  }
+  
+  /*retourne le label d'un clone ( s'il n'en possde pas retourne sa jonction*/
+  function getcode(cloneID){
       if ( typeof(junctions[cloneID].seg)!='undefined' && typeof(junctions[cloneID].seg.name)!='undefined' ){
 	return junctions[cloneID].seg.name
       }else{
 	return junctions[cloneID].junction;
       }
     }
-  }
   
   
   /*renvoye la taille d'un clone( somme des tailles des jonctions qui le compose)*/
@@ -748,6 +753,7 @@ function initVJposition(){
       
       var colorbox = clone.lastChild.previousSibling.onclick=function(){ changeColor(this.parentNode.id2); };
       var delBox = clone.firstChild.nextSibling.onclick=function(){ deselectClone(this.parentNode.id2); };
+      var sizeBox = clone.lastChild.id="sizeS"+clone.id2;
       
       document.getElementById("listSelect").appendChild(clone);
       
@@ -841,8 +847,11 @@ function initVJposition(){
       
       for (var i = 0; i < copy_select.length ; i++){
 	data_graph[copy_select[i]].display=false;
+	data_graph[copy_select[i]].select=false;
       }
+      
       data_graph[leader].display=true;
+      data_graph[leader].select=true;
       setTimeout('updateGraphDisplay()',1000);
       displayInfo(leader);
     }

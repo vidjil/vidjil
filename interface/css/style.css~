@@ -248,7 +248,15 @@ circle:hover {
 }
 
 .separator {
-  height : 15px
+  height : 25px
+}
+
+#cluster {
+  margin: 5px;
+  background: #101030;
+  overflow-y: scroll;
+  overflow-x: hidden;
+  height: 140px;
 }
 
 #focus-sequence {
