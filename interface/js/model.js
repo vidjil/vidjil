@@ -176,19 +176,19 @@ function init(){
 
 function loadPref(){
   for(var i=0 ;i<pref.custom.length; i++){
-    
-    if (typeof( pref.custom[i].color ) != "undefined" ) {
-      customColor[mapID[pref.custom[i].junction]]=pref.custom[i].color;
+    if (typeof mapID[pref.custom[i].junction] != "undefined" ){
+      if (typeof( pref.custom[i].color ) != "undefined" ) {
+	customColor[mapID[pref.custom[i].junction]]=pref.custom[i].color;
+      }
+      
+      if (typeof( pref.custom[i].name ) != "undefined" ) {
+	customName[mapID[pref.custom[i].junction]]=pref.custom[i].name;
+      }
+      
+      if (typeof( pref.custom[i].fav ) != "undefined" ) {
+	favorites.push(mapID[pref.custom[i].junction]);
+      }
     }
-    
-    if (typeof( pref.custom[i].name ) != "undefined" ) {
-      customName[mapID[pref.custom[i].junction]]=pref.custom[i].name;
-    }
-    
-    if (typeof( pref.custom[i].fav ) != "undefined" ) {
-      favorites.push(mapID[pref.custom[i].junction]);
-    }
-    
   }
 }
 

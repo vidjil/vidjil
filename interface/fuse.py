@@ -23,11 +23,17 @@ class Segment:
 path1=sys.argv[1]
 path2=sys.argv[2]
 
+output_name=sys.argv[3]
+output_limit=sys.argv[4]
+
 jlist1 = []
 jlist2 = []
+
+ite=0
  
 #serialiseur perso, convertit un objet python en json
 def juncToJson(obj):
+  global ite
   if isinstance(obj, Junctions):
     return {"junctions": obj.junctions,
       "total_size": obj.total_size,
@@ -36,7 +42,8 @@ def juncToJson(obj):
   if isinstance(obj, Junction):
     return {"junction": obj.junction,
       "size": obj.size,
-      "seg": obj.segment
+      "seg": obj.segment,
+      "top": obj.top
       }
     raise TypeError(repr(obj) + " fail !") 
   if isinstance(obj, Segment):
@@ -54,15 +61,21 @@ def juncToJson(obj):
 
 #deserialiseur perso, convertit un format json en objet python correspondant
 def jsonToJunc(obj_dict):
+  global ite
   if "total_size" in obj_dict:
     obj = Junctions()
     obj.junctions=obj_dict["junctions"]
     obj.total_size=obj_dict["total_size"]
     return obj
   if "junction" in obj_dict:
+    ite=ite+1
     obj = Junction()
     obj.junction=obj_dict["junction"]
     obj.size=obj_dict["size"]
+    if "top" in obj_dict :
+      obj.top=obj_dict["top"]
+    else:
+      obj.top = ite
     if "seg" in obj_dict :
       obj.segment=obj_dict["seg"]
     else :
@@ -81,22 +94,32 @@ def jsonToJunc(obj_dict):
     obj.J=obj_dict["J"]
     return obj
 
-def fuseList(l1, l2): 
+def fuseList(l1, l2, limit): 
   dico = collections.OrderedDict()
+  dico2 = collections.OrderedDict()
   dataseg = {}
   tampon=[]
   s=len(l1.total_size)
   for i in range(s):
     tampon.append(0)
   
+  tampon2=[]
+  s2=len(l2.total_size)
+  for i in range(s2):
+    tampon2.append(0)
+  
+  length1 = len(l1.junctions)
+    
+  length2 = len(l2.junctions)
+  
   #recuperation des quantites de jonctions de la liste 1
-  for index in range(len(l1.junctions)): 
+  for index in range(length1): 
     dico[l1.junctions[index].junction] = l1.junctions[index].size
+    dico2[l1.junctions[index].junction] = l1.junctions[index].top
     if (l1.junctions[index].segment != 0) :
       dataseg[l1.junctions[index].junction] = l1.junctions[index].segment
     
-    
-  for index in range(len(l2.junctions)): 
+  for index in range(length2): 
     
     if (l2.junctions[index].segment != 0) :
       if not l2.junctions[index].junction in dataseg :
@@ -111,13 +134,16 @@ def fuseList(l1, l2):
     #cas ou la jonction n'etait pas presente dans la 1ere liste
     if l2.junctions[index].junction not in dico:
       dico[l2.junctions[index].junction] = tampon + l2.junctions[index].size
+      dico2[l2.junctions[index].junction] = l2.junctions[index].top
     else :
-      dico[l2.junctions[index].junction] += l2.junctions[index].size
+      dico[l2.junctions[index].junction] = dico[l2.junctions[index].junction] + l2.junctions[index].size
+      if (dico2[l2.junctions[index].junction] > l2.junctions[index].top) :
+	dico2[l2.junctions[index].junction] = l2.junctions[index].top
     
-  #cas ou la jonction n'etait presente que dans la 2eme liste
-  for index in range(len(l1.junctions)): 
+  #cas ou la jonction n'etait presente que dans la 1ere liste
+  for index in range(length1): 
     if len(dico[l1.junctions[index].junction]) == s :
-      dico[l1.junctions[index].junction] += [0]
+      dico[l1.junctions[index].junction] += tampon2
   
   out = Junctions()
   out.total_size=l1.total_size+l2.total_size    
@@ -127,12 +153,14 @@ def fuseList(l1, l2):
     junct=Junction()
     junct.junction=key
     junct.size=dico[key]
+    junct.top=dico2[key]
     junct.segment = 0
     if key in dataseg :
       junct.segment = dataseg[key]
-    out.junctions.append(junct)
+    if (junct.top < limit or limit == 0) :
+      out.junctions.append(junct)
 
-  print out
+  print limit
   return out
   
   
@@ -141,11 +169,16 @@ with open(path1, "r") as file:
   
   print jlist1
   
+
 with open(path2, "r") as file2:
   jlist2 = json.load(file2, object_hook=jsonToJunc)      
   
-newList= fuseList(jlist1, jlist2);
+newList= fuseList(jlist1, jlist2, 0);
 
-with open("junction.json", "w") as file:
+newList2= fuseList(jlist1, jlist2, int(output_limit));
+
+with open(output_name+".json", "w") as file:
   json.dump(newList, file, indent=2, default=juncToJson)
 
+with open(output_name+"top"+output_limit+".json", "w") as file:
+  json.dump(newList2, file, indent=2, default=juncToJson)
