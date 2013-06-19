@@ -184,6 +184,7 @@ circle:hover {
   overflow :hidden;
   display: inline-block;
   height :12px;
+  margin-top:2px;
 }
 
 .colorBox{
@@ -194,6 +195,7 @@ circle:hover {
   width: 10px;
   display: inline-block;
 }
+
 .delBox{
   float: right;
   border: solid;
@@ -208,6 +210,7 @@ circle:hover {
   float: right;
   margin-right: 5px;
   display: inline-block;
+  margin-top: 2px;
 }
 
 .favBox{
@@ -237,8 +240,20 @@ circle:hover {
  stroke-dasharray: 6,6;
 }
 
+.axis_f{
+  stroke-width: 50px;
+  opacity: 0.2;
+}
+
 .axis_button{
-  cursor:pointer;
+  text-anchor: middle;
+  text-decoration: underline;
+  color: #555555 ;
+}
+
+.axis_button:hover{
+  cursor: pointer;
+  
 }
 
 .graphLine{

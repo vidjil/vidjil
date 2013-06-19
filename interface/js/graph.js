@@ -37,6 +37,7 @@ function initGraph(){
     
   var height=100;
   
+  //ordonnée
   for (var i=0 ; i<8; i++){
     data_axis[i]={class : "axis" ,text : (height+"%"), x1 : 0, x2 : g_w, 
 		    y1 : (g_h- scale_x((height/100)*(1/min_size))), 
@@ -44,30 +45,37 @@ function initGraph(){
 		    
     height=height/10;
   }
+  
+  //abscisse
   if (junctions[0].size.length==1){
     graph_col[0]=700;
-    data_axis[7]={class : "axis_v" ,text : "fu"+1 ,
+    data_axis[9]={class : "axis_v" ,text : "fu"+1 ,
 			x1 : graph_col[0], x2 : graph_col[0], 
-			y1 : g_h, y2 : 0, time: 0}
+			y1 : g_h+20, y2 : 0, time: 0}
     }else{
       if (junctions[0].size.length==2){
 	graph_col[0]=300;
 	graph_col[1]=1100;
-	data_axis[7]={class : "axis_v" ,text : "fu"+1 ,
+	data_axis[9]={class : "axis_v" ,text : "fu"+1 ,
 			x1 : graph_col[0], x2 : graph_col[0], 
 			y1 : g_h+20, y2 : 0, time: 0}
-	data_axis[8]={class : "axis_v" ,text : "fu"+2 ,
+	data_axis[10]={class : "axis_v" ,text : "fu"+2 ,
 			x1 : graph_col[1], x2 : graph_col[1], 
 			y1 : g_h+20, y2 : 0, time: 1}
       }else{
 	for (var i=0 ; i<junctions[0].size.length; i++){
 	graph_col[i]=axis_x + 5 + i*(( g_w-(2*axis_x) )/(junctions[0].size.length-1) );
-	data_axis[7+i]={class : "axis_v" ,text : "fu"+(i+1) ,
+	data_axis[9+i]={class : "axis_v" ,text : "fu"+(i+1) ,
 			x1 : graph_col[i], x2 : graph_col[i], 
 			y1 : g_h+20, y2 : 0, time: i}
       }
     }
   }
+  
+  //mobile
+  data_axis[8]={class : "axis_f" ,text : "",
+			x1 : graph_col[t], x2 : graph_col[t], 
+			y1 : g_h+20, y2 : 0, time: 0}
   
   for (var i=0 ; i<totalClones; i++){
     data_graph[i]={id : i, display: true, name :"line"+i, select : false, focus : false};
@@ -178,7 +186,7 @@ function updateGraph(){
     .domain([1,(1/min_size)])
     .range([30,(g_h)]);
     
-  g_axis
+  g_axis.data(data_axis)
     .transition()
     .duration(800)
     .attr("x1", function(d) { return resizeG_W*d.x1; })

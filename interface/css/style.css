@@ -240,8 +240,15 @@ circle:hover {
  stroke-dasharray: 6,6;
 }
 
+.axis_f{
+  stroke-width: 50px;
+  opacity: 0.2;
+}
+
 .axis_button{
-  cursor:pointer;
+  text-anchor: middle;
+  text-decoration: underline;
+  cursor: pointer;
 }
 
 .graphLine{
