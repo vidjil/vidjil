@@ -33,7 +33,7 @@ function initGraph(){
   
   scale_x = d3.scale.log()
     .domain([1,(1/min_size)])
-    .range([0,(g_h)]);
+    .range([30,(g_h)]);
     
   var height=100;
   
@@ -46,25 +46,25 @@ function initGraph(){
   }
   if (junctions[0].size.length==1){
     graph_col[0]=700;
-    data_axis[7]={class : "axis_v" ,text : "time"+0 ,
+    data_axis[7]={class : "axis_v" ,text : "fu"+1 ,
 			x1 : graph_col[0], x2 : graph_col[0], 
 			y1 : g_h, y2 : 0, time: 0}
     }else{
       if (junctions[0].size.length==2){
 	graph_col[0]=300;
 	graph_col[1]=1100;
-	data_axis[7]={class : "axis_v" ,text : "time"+0 ,
+	data_axis[7]={class : "axis_v" ,text : "fu"+1 ,
 			x1 : graph_col[0], x2 : graph_col[0], 
-			y1 : g_h, y2 : 0, time: 0}
-	data_axis[8]={class : "axis_v" ,text : "time"+1 ,
+			y1 : g_h+20, y2 : 0, time: 0}
+	data_axis[8]={class : "axis_v" ,text : "fu"+2 ,
 			x1 : graph_col[1], x2 : graph_col[1], 
-			y1 : g_h, y2 : 0, time: 1}
+			y1 : g_h+20, y2 : 0, time: 1}
       }else{
 	for (var i=0 ; i<junctions[0].size.length; i++){
 	graph_col[i]=axis_x + 5 + i*(( g_w-(2*axis_x) )/(junctions[0].size.length-1) );
-	data_axis[7+i]={class : "axis_v" ,text : "time"+i ,
+	data_axis[7+i]={class : "axis_v" ,text : "fu"+(i+1) ,
 			x1 : graph_col[i], x2 : graph_col[i], 
-			y1 : g_h, y2 : 0, time: i}
+			y1 : g_h+20, y2 : 0, time: i}
       }
     }
   }
@@ -176,7 +176,7 @@ function updateGraph(){
     
   scale_x = d3.scale.log()
     .domain([1,(1/min_size)])
-    .range([0,(g_h)]);
+    .range([30,(g_h)]);
     
   g_axis
     .transition()
@@ -196,7 +196,7 @@ function updateGraph(){
     .attr("class", function(d) { if (d.class=="axis_v") return "axis_button"; })
     .attr("y", function(d) { 
       if (d.class=="axis") return Math.floor(resizeG_H*d.y1);
-      else return Math.floor(resizeG_H*(g_h) + 15);
+      else return Math.floor(resizeG_H*(g_h));
     })
     .attr("x", function(d) { 
       if (d.class=="axis") return Math.floor(resizeG_W*20);

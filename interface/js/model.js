@@ -269,7 +269,7 @@ function initCoef(){
   document.getElementById("svg").style.height=document.getElementById("visu").offsetHeight+"px";
   
   resizeG_W = document.getElementById("visu2").offsetWidth/g_w;
-  resizeG_H = (document.getElementById("visu2").offsetHeight-20)/(g_h);
+  resizeG_H = (document.getElementById("visu2").offsetHeight)/(g_h);
   document.getElementById("svg2").style.width=document.getElementById("visu2").offsetWidth+"px";
   document.getElementById("svg2").style.height=document.getElementById("visu2").offsetHeight+"px";
   
@@ -284,7 +284,7 @@ function initCoef(){
   //recadrage des legendes si la methode de répartition utilisé a ce moment la en utilise
   if (splitMethod=="vj1" || splitMethod=="vj2") updateLegend();
   
-  updateGraph();
+  setTimeout('updateGraph()',500);
   
   //recadrage vue 1
   //stop les animations de la vue
@@ -312,17 +312,17 @@ function switchVisu(){
   var hv1 = $('#visu').height();
   var hv2 = $('#visu2').height();
   
-  
   if (hv1<hv2){
-    $('#visu2').animate({height: '30%'}, 400 ); 
-    $('#visu').animate({height: '70%'}, 400 ); 
+    $('#visu2').animate({height: hv1+"px"}, 400 ); 
+    $('#visu').animate({height: hv2+"px"}, 400 ); 
   }
   else{
-    $('#visu').animate({height: '30%'}, 400 ); 
-    $('#visu2').animate({height: '70%'}, 400 ); 
+    $('#visu').animate({height: hv2+"px"}, 400 ); 
+    $('#visu2').animate({height: hv1+"px"}, 400 ); 
   }
   
-setTimeout(function() {initCoef();},400);
+  
+setTimeout(function() {initCoef();},500);
 }
 
   
