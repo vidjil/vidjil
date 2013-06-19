@@ -34,7 +34,7 @@ list-style-type: none;
 
 #left-container {
   height:100%;
-  width : 380px;
+  width : 450px;
   height : 100%;
   background : #352515;
   overflow-y : none;
@@ -47,22 +47,22 @@ list-style-type: none;
   background : #201020;
   display : inline-block;
   height : 70%;
-  width: -moz-calc(100% - 380px);
-  width: -webkit-calc(100% - 380px);
-  width: calc(100% - 380px);
+  width: -moz-calc(100% - 450px);
+  width: -webkit-calc(100% - 450px);
+  width: calc(100% - 450px);
 }
 #visu2 {
   background : #101020;
   display : inline-block;
   height : 30%;
-  width: -moz-calc(100% - 380px);
-  width: -webkit-calc(100% - 380px);
-  width: calc(100% - 380px);
+  width: -moz-calc(100% - 450px);
+  width: -webkit-calc(100% - 450px);
+  width: calc(100% - 450px);
 }
 
 #bot-container {
   width : 100%;
-  margin-left:380px;
+  margin-left:450px;
   position : fixed;
   bottom :0px;
   background : #102020;
@@ -74,27 +74,7 @@ list-style-type: none;
   height: 160px;
   background-color: #101010;
   overflow: auto;
-  margin-right: 390px;
-}
-
-.listElem{
-  width :350px;
-  margin: auto;
-  padding: 3px;
-  margin: 5px;
-  cursor:pointer;
-  -moz-transition: background-color  1.5s;
-  -webkit-transition: background-color 1.5s;
-  -o-transition: background-color  1.5s;
-  -ms-transition: background-color 1.5s;
-  transition: background-color 1.5s;
-    font-weight : bold;
-    color : #ddd;
-    text-shadow:
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1.8px 1px 0 #000,
-    1px 1px 0 #000;  
+  margin-right: 460px;
 }
 
 .button {
@@ -178,28 +158,51 @@ circle:hover {
   font-weight: bold;
 }
 
+.listElem{
+  width :420px;
+  margin: auto;
+  padding: 3px;
+  margin: 5px;
+  height: 16px;
+  cursor:pointer;
+  -moz-transition: background-color  1.5s;
+  -webkit-transition: background-color 1.5s;
+  -o-transition: background-color  1.5s;
+  -ms-transition: background-color 1.5s;
+  transition: background-color 1.5s;
+    font-weight : bold;
+    color : #ddd;
+    text-shadow:
+    -1px -1px 0 #000,
+    1px -1px 0 #000,
+    -1.8px 1px 0 #000,
+    1px 1px 0 #000;  
+}
+
 .nameBox{
-  width :250px;
+  width :280px;
   overflow :hidden;
   display: inline-block;
   height :12px;
+  margin-top:2px;
 }
 
 .colorBox{
   right: 3px;
   float: right;
   border: solid;
-  height: 8px;
-  width: 8px;
+  height: 10px;
+  width: 10px;
   display: inline-block;
 }
+
 .delBox{
   float: right;
   border: solid;
   margin-left:2px;
   background-color: black;
-  height: 8px;
-  width: 8px;
+  height: 10px;
+  width: 10px;
   display: inline-block;
 }
 
@@ -207,7 +210,17 @@ circle:hover {
   float: right;
   margin-right: 5px;
   display: inline-block;
+  margin-top: 2px;
 }
+
+.favBox{
+  float: right;
+  margin-right:2px;
+  height: 14px;
+  width: 14px;
+  display: inline-block;
+}
+
 
 #colorSelector{
   position: absolute;

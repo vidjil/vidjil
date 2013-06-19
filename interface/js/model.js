@@ -192,13 +192,17 @@ function loadPref(){
   }
 }
 
-  function editName(cloneID){
-    var divParent = document.getElementById("info"+cloneID);
+  function editName(cloneID, elem){
+    var divParent = elem;
     divParent.innerHTML="";
     
     var input = document.createElement('input');
     input.type="text";
     input.id= "new_name";
+    input.value= getname(cloneID);
+    input.style.width="300px";
+    input.style.border="0px";
+    input.style.margin="0px";
     divParent.appendChild(input);
     
     var a = document.createElement('a');

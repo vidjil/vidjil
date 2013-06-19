@@ -41,11 +41,29 @@
       
       var span0 = document.createElement('span');
       span0.className = "nameBox";
+      span0.ondblclick = function(){ editName(cloneID, this.parentNode); }
       span0.appendChild(document.createTextNode(getname(cloneID)));
       
       var span1 = document.createElement('span');
       span1.className = "colorBox";
       span1.onclick=function(){ changeColor(this.parentNode.id2); }
+      
+      var fav=document.createElement('img')
+      fav.className = "favBox";
+      fav.id="fav"+cloneID;
+      if (favorites.indexOf(cloneID) != -1 ){
+	fav.src="images/icon_fav_on.png";
+	fav.onclick=function(){ 
+	  addToList(cloneID); 
+	  displayInfo(cloneID);
+	}
+      }else{
+	fav.src="images/icon_fav_off.png";
+	fav.onclick=function(){ 
+	  addToFavorites(cloneID);
+	  displayInfo(cloneID);
+	}
+      }
       
       var span2=document.createElement('span')
       span2.className = "sizeBox";
@@ -61,21 +79,10 @@
       div.appendChild(span0);
       div.appendChild(img);
       div.appendChild(span1);
+      div.appendChild(fav);
       div.appendChild(span2);
       div.style.background=color(cloneID);
       divParent.appendChild(div);
-      
-    var div_fav=document.createElement('span');
-    div_fav.onclick = function(){ addToFavorites(cloneID); }
-    div_fav.className="button";
-    div_fav.appendChild(document.createTextNode("^  add to favorite ^"));
-    divParent.appendChild(div_fav);
-    
-    var div_edit=document.createElement('span');
-    div_edit.onclick = function(){ editName(cloneID); }
-    div_edit.className="button";
-    div_edit.appendChild(document.createTextNode(" rename "));
-    divParent.appendChild(div_edit);
     
     if (clones[cloneID].length>1){
       
