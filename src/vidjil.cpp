@@ -706,13 +706,16 @@ int main (int argc, char **argv)
     out << "Sort clones by number of occurrences" << endl;
 
     list<pair<list <junction>, int> >sort_clones;
-
+    
     for (list <list <junction> >::const_iterator it = clones_junctions.begin(); it != clones_junctions.end(); ++it)
       {
         list <junction>clone = *it ;
+        int clone_nb_reads = 0;
 
-        int clone_nb_reads = total_nb_reads(clone, seqs_by_junction);
+	for (list <junction>::const_iterator it2 = clone.begin(); it2 != clone.end(); ++it2) 
+	clone_nb_reads += seqs_by_junction[*it2].size() ;
 
+	
 	bool labeled = false ;
 	// Is there a labeled junction ?
 	for (list <junction>::const_iterator iit = clone.begin(); iit != clone.end(); ++iit) {
