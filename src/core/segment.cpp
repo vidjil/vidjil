@@ -539,7 +539,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
     //overlap VJ
     if(right-left <=0){
       int b_r, b_l;
-      int overlap=left-left2+1;
+      int overlap=left-right+1;
       
       string seq_left = sequence.substr(0, left+1);
       string seq_right = sequence.substr(right);

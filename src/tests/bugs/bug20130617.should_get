@@ -1,0 +1,10 @@
+!LAUNCH: ../../../vidjil -c clones -G ../../../germline/TRG -r 1 -R 1 bug20130617.fa
+
+
+$ Bug with J deletion being 122
+# According to IMGT : 
+# V10*01 ends at gtttactactgtgctgcgtgg
+# JP1*01 starts at ataccactggttg
+# N1 is G
+1:Clone #001 –       4 reads – 100%
+

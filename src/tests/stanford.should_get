@@ -11,5 +11,5 @@ $ Parses germline/IGHJ.fa
 1: 701 bp in 13 sequences
 
 $ Find the good number of junctions in Stanford S22
-1: found 10087 junctions in 12317 segments
+1: found 10087 50-junctions in 12317 segments
 
