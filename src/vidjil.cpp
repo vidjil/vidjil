@@ -766,7 +766,11 @@ int main (int argc, char **argv)
 
       ofstream out_clone(clone_file_name.c_str());
       ofstream out_junctions(junctions_file_name.c_str());
-      ofstream out_sequences(sequences_file_name.c_str());
+      ofstream out_sequences;
+
+      if (output_sequences_by_cluster) {
+        out_sequences.open(sequences_file_name.c_str());
+      }
       
       html << "</pre>" << endl ;
 
