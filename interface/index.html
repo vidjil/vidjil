@@ -9,9 +9,9 @@
 	<link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" />
 	<!--[if lte IE 8]><script src="js/r2d3.js" charset="utf-8"></script><![endif]-->
 	<!--[if gte IE 9]><!-->
-	<script type="text/javascript" src='http://d3js.org/d3.v2.js'></script>
+	<script type="text/javascript" src='js/d3.v2.js'></script>
 	<!--<![endif]-->
-	<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="js/colorpicker.js"></script>
 	
 	<script type="text/javascript" src='js/segmenter.js'></script>
@@ -59,7 +59,16 @@
 	    <td>
 	      <a class="button" onclick="switchVisu();">switch</a>
 	      <a class="button" href="javascript:savePref()">Save pref</a>
-	    </td></tr>
+	    </td></tr><tr><td>_____________________________________</td></tr>
+	    <tr>
+	    <td>
+	      <a class="button" onclick="displayFavoris();">favoris only</a>
+	      <a class="button" onclick="displayTop(5);">top 5</a>
+	      <a class="button" onclick="displayAll();">show all</a>
+	    </td>
+	    </tr>
+	    
+	    
 	  </table>
 	  
 	</div>
@@ -69,13 +78,15 @@
 	
 	  <div id="info"></div>	
 	
-	<div class="separator">slection <span class="button" onclick="mergeSelection()"> merge selection </span></div>
+	<div class="separator">slection 
+	<span class="button" onclick="mergeSelection()"> merge selection</span>
+	<span class="button" onclick="freeSelect()"> free select</span>
+	</div>
 	  <div id="listSelect"></div>
 
       </div>
 	
       </span>
-      
       
       
       <div id="visu-container">

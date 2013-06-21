@@ -111,7 +111,7 @@ function constructPath(cloneID){
   
   if (getSize(cloneID)==0){
     path = Math.floor( graph_col[0] * resizeG_W ) + ", "
-	      +Math.floor(( g_h - 0 ) * resizeG_H );
+	      +Math.floor(( g_h + 50 ) * resizeG_H );
   }else{
     path = Math.floor( graph_col[0] * resizeG_W ) + ", "
 	      +Math.floor(( g_h - scale_x(getSize(cloneID)*(1/min_size)) ) * resizeG_H );
@@ -122,7 +122,7 @@ function constructPath(cloneID){
     
     if (getSize(cloneID)==0){
       path += ", "+Math.floor( graph_col[i] * resizeG_W ) + ", "
-		+Math.floor(( g_h + 450 ) * resizeG_H );
+		+Math.floor(( g_h + 50 ) * resizeG_H );
     }else{
       path += ", "+Math.floor( graph_col[i] * resizeG_W ) + ", "
 		+Math.floor(( g_h - scale_x(getSize(cloneID)*(1/min_size)) ) * resizeG_H );

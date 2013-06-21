@@ -61,7 +61,7 @@ var splitMethod=" ";          //par defaut pas de method de split
 var t = 0;                    //point de suivi courant ( par defaut t=0 )
 var useCustomColor=true;      //utilisation des couleurs personalisées
 var select=[];                //liste des clones selectionnés
-limitClones=150;
+limitClones=300;
 var info=-1;
 
 var colorV_begin=[255,241,22];//dégradé de couleur germline V
@@ -200,10 +200,11 @@ function loadPref(){
     input.type="text";
     input.id= "new_name";
     input.value= getname(cloneID);
-    input.style.width="300px";
+    input.style.width="200px";
     input.style.border="0px";
     input.style.margin="0px";
     divParent.appendChild(input);
+    divParent.onclick="";
     
     var a = document.createElement('a');
     a.className="button";
@@ -211,7 +212,9 @@ function loadPref(){
     a.onclick=function(){ 
       var newName=document.getElementById("new_name").value;
       changeName(cloneID, newName);
-       displayInfo(cloneID);
+      displayInfo(cloneID);
+      document.getElementById(cloneID).firstChild.onclick=function(){ displayInfo(cloneID);};
+      document.getElementById("select"+cloneID).firstChild.nextSibling.onclick=function(){ displayInfo(cloneID);};
     }
     divParent.appendChild(a);
     
@@ -222,6 +225,7 @@ function loadPref(){
     tmpID = cloneID;
     customName[tmpID] = newName;
     $("#"+tmpID).find(".nameBox").html(newName);
+    $("#select"+tmpID).find(".nameBox").html(newName);
     $("#clone_name").html(newName);
   }
 
@@ -510,7 +514,7 @@ function initVJposition(){
     if (typeof junctions != "undefined") {
       var r=getSize(cloneID);
       if (r==0) return 0;
-      return 1+Math.pow(60000*r,(1/3) );
+      return 2+Math.pow(60000*r,(1/3) );
     }
   }
   
@@ -583,10 +587,10 @@ function initVJposition(){
 		  customColor[tmpID]="#"+hex;
 		  document.getElementById('color'+tmpID).style.backgroundColor=customColor[tmpID];
 		  if(document.getElementById('select'+tmpID) ){
-		    document.getElementById('select'+tmpID).lastChild.previousSibling.style.backgroundColor=customColor[tmpID];
+		    document.getElementById('select'+tmpID).firstChild.nextSibling.style.backgroundColor=customColor[tmpID];
 		  }
 		  if(document.getElementById('info'+tmpID) ){
-		    document.getElementById('info'+tmpID).lastChild.previousSibling.style.backgroundColor=customColor[tmpID];
+		    document.getElementById('info'+tmpID).firstChild.nextSibling.style.backgroundColor=customColor[tmpID];
 		  }
 		  document.getElementById("log").innerHTML+="<br>"+tmpID+"/test/"+customColor[tmpID];
 		  $('#log').scrollTop(100000000000000);
@@ -673,12 +677,14 @@ function initVJposition(){
     nodes[cloneID].focus = true;
     
     if (move==1) {
+      /*
       $('#listClones').stop();
       var p = $("#"+cloneID);
       var position = p.position();
       var position2 = $('#listClones').scrollTop();
       var diff=$('#menu').height()+$('#info').height()+$('#listFav').height()+50;
       $('#listClones').animate({scrollTop: position2+position.top-diff}, 500);
+      */
     }
     updateLook();
     
@@ -756,18 +762,58 @@ function initVJposition(){
       select.push(cloneID);
       displayInfo(cloneID);
       
-      var clone = document.getElementById(cloneID).cloneNode(true);
-      clone.id2=clone.id;
-      clone.id="select"+clone.id;
-      clone.onmouseover = function(){ focusIn(this.id2, 0); }
-      clone.onmouseout= function(){ focusOut(this.id2); }
-      clone.onclick=function(){displayInfo(this.id2); }
+      var div = document.createElement('div');
+      div.id2=cloneID;
+      div.id="select"+cloneID;
+      div.className="listElem";
+      div.onmouseover = function(){ focusIn(this.id2, 0); }
+      div.onmouseout= function(){ focusOut(this.id2); }
       
-      var colorbox = clone.lastChild.previousSibling.onclick=function(){ changeColor(this.parentNode.id2); };
-      var delBox = clone.firstChild.nextSibling.onclick=function(){ deselectClone(this.parentNode.id2); };
-      var sizeBox = clone.lastChild.id="sizeS"+clone.id2;
+      var span0 = document.createElement('span');
+      span0.className = "nameBox";
+      span0.ondblclick = function(){ editName(cloneID, this); }
+      span0.onclick=function(){ displayInfo(this.parentNode.id2); }
+      span0.appendChild(document.createTextNode(getname(cloneID)));
       
-      document.getElementById("listSelect").appendChild(clone);
+      var span1 = document.createElement('span');
+      span1.className = "colorBox";
+      span1.id="colorselect"+cloneID;
+      span1.onclick=function(){ changeColor(this.parentNode.id2); }
+      
+      var fav=document.createElement('img')
+      fav.className = "favBox";
+      fav.id="selectfav"+cloneID;
+      if (favorites.indexOf(cloneID) != -1 ){
+	fav.src="images/icon_fav_on.png";
+	fav.onclick=function(){ 
+	  addToList(cloneID); 
+	  displayInfo(cloneID);
+	}
+      }else{
+	fav.src="images/icon_fav_off.png";
+	fav.onclick=function(){ 
+	  addToFavorites(cloneID);
+	  displayInfo(cloneID);
+	}
+      }
+      
+      var span2=document.createElement('span')
+      span2.className = "sizeBox";
+      span2.id="selectsize"+cloneID;
+      span2.appendChild(document.createTextNode((100*getSize(cloneID)).toFixed(4)+"%"));
+      
+      	var img=document.createElement('img');
+	img.onclick=function(){ deselectClone(this.parentNode.id2);
+	}
+	img.src="images/delete.png";
+	img.className="delBox";
+      
+      div.appendChild(img);
+      div.appendChild(span0);
+      div.appendChild(span1);
+      div.appendChild(fav);
+      div.appendChild(span2);
+      document.getElementById("listSelect").appendChild(div);
       
       data_graph[cloneID].select=true;
       

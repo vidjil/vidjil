@@ -99,38 +99,49 @@ function initClones(data) {
       div.className="listElem";
       div.onmouseover = function(){ focusIn(this.id, 0); }
       div.onmouseout= function(){ focusOut(this.id); }
-      div.onclick=function(){ displayInfo(this.id); }
       
       var span0 = document.createElement('span');
       span0.className = "nameBox";
+      span0.ondblclick = function(){ editName(i, this); }
+      span0.onclick=function(){ 
+	selectClone(this.parentNode.id); 
+	displayInfo(this.parentNode.id); }
       span0.appendChild(document.createTextNode(getname(i)));
-      
+
       var span1 = document.createElement('span');
       span1.className = "colorBox";
       span1.id="color"+i;
       span1.onclick=function(){ changeColor(this.parentNode.id); }
+      
+      var fav=document.createElement('img')
+      fav.className = "favBox";
+      fav.id="fav"+i;
+      if (favorites.indexOf(i) != -1 ){
+	fav.src="images/icon_fav_on.png";
+	fav.onclick=function(){ 
+	  addToList(this.parentNode.id); 
+	  displayInfo(this.parentNode.id);
+	}
+      }else{
+	fav.src="images/icon_fav_off.png";
+	fav.onclick=function(){ 
+	  addToFavorites(this.parentNode.id);
+	  displayInfo(this.parentNode.id);
+	}
+      }
       
       var span2=document.createElement('span')
       span2.className = "sizeBox";
       span2.id="size"+i;
       span2.appendChild(document.createTextNode((100*getSize(i)).toFixed(4)+"%"));
       
-      var img=document.createElement('img')
-      img.className="delBox";
-      img.onclick=function(){ addToList(this.parentNode.id); }
-      img.src="images/delete.png";
-      
        
       div.appendChild(span0);
-      div.appendChild(img);
       div.appendChild(span1);
+      div.appendChild(fav);
       div.appendChild(span2);
       div.style.background=color(i);
       document.getElementById("listClones").appendChild(div);
-    }
-    for(var i=0 ;i<favorites.length; i++){
-      var clone = document.getElementById(favorites[i]);
-      document.getElementById("listFav").appendChild(clone);
     }
 }
 
@@ -338,7 +349,7 @@ function sizeSplit() {
   var coef = 0.006
     return function(d) {
       var r=radius(d.id);
-	  d.y+=coef*((740-(r*18))-d.y);
+	  d.y+=coef*((650-(r*15))-d.y);
 	  
 	  if ( d.x > 1350) d.x=d.x-Math.random();
 	  if ( d.x < 50) d.x=d.x+Math.random();

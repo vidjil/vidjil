@@ -103,18 +103,20 @@ circle:hover {
 
 #menu{
   background : #301020;
-  height :75px;
+  height :125px;
 }
 
 #info{
   background : #102020;
-  height :250px;
+  height :190px;
+  padding-top: 10px;
 }
 
 #listFav{
   overflow-y : scroll;
   overflow-x : hidden;
   background : #101020;
+  display :none;
 }
 
 #listSelect{
@@ -135,7 +137,6 @@ circle:hover {
   font-weight: bold;
   color: #ddd;
   background : #302010;
-  display :none;
 }
 
 .vjLegend{
@@ -183,8 +184,8 @@ circle:hover {
   width :280px;
   overflow :hidden;
   display: inline-block;
-  height :12px;
-  margin-top:2px;
+  height :14px;
+  margin-top:1px;
 }
 
 .colorBox{

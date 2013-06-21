@@ -41,7 +41,7 @@
       
       var span0 = document.createElement('span');
       span0.className = "nameBox";
-      span0.ondblclick = function(){ editName(cloneID, this.parentNode); }
+      span0.ondblclick = function(){ editName(cloneID, this); }
       span0.appendChild(document.createTextNode(getname(cloneID)));
       
       var span1 = document.createElement('span');
@@ -50,7 +50,6 @@
       
       var fav=document.createElement('img')
       fav.className = "favBox";
-      fav.id="fav"+cloneID;
       if (favorites.indexOf(cloneID) != -1 ){
 	fav.src="images/icon_fav_on.png";
 	fav.onclick=function(){ 
@@ -174,15 +173,27 @@
       document.getElementById("size"+i).innerHTML=(100*getSize(i)).toFixed(4)+"%";
     }  
     for (var i=0; i<select.length; i++){
-      document.getElementById("sizeS"+select[i]).innerHTML=(100*getSize(select[i])).toFixed(4)+"%";
+      document.getElementById("selectsize"+select[i]).innerHTML=(100*getSize(select[i])).toFixed(4)+"%";
     }  
   }
   
   /*pure manipulation du dom, deplace un element du container listClone vers favoris*/
   function addToFavorites(cloneID){
     favorites.push(cloneID);
-    var clone = document.getElementById(cloneID);
-    document.getElementById("listFav").appendChild(clone);
+    
+    document.getElementById("fav"+cloneID).src="images/icon_fav_on.png";
+    document.getElementById("fav"+cloneID).onclick=function(){  
+      addToList(this.parentNode.id);
+      displayInfo(this.parentNode.id);
+    };
+    
+    if ( document.getElementById("selectfav"+cloneID) ){
+      document.getElementById("selectfav"+cloneID).src="images/icon_fav_on.png";
+      document.getElementById("selectfav"+cloneID).onclick=function(){  
+	addToList(this.parentNode.id2);
+	displayInfo(this.parentNode.id2);
+      };
+    }
   }
 
   
@@ -190,8 +201,58 @@
   function addToList(cloneID){
     var index = favorites.indexOf(cloneID);
     favorites.splice(index, 1);
-    var clone = document.getElementById(cloneID);
-    document.getElementById("listClones").appendChild(clone);
+    
+    document.getElementById("fav"+cloneID).src="images/icon_fav_off.png";
+    document.getElementById("fav"+cloneID).onclick= function(){
+      addToFavorites(this.parentNode.id);
+      displayInfo(this.parentNode.ID);
+    };
+    
+    if ( document.getElementById("selectfav"+cloneID) ){
+      document.getElementById("selectfav"+cloneID).src="images/icon_fav_off.png";
+      document.getElementById("selectfav"+cloneID).onclick= function(){
+      addToFavorites(this.parentNode.id2);
+      displayInfo(this.parentNode.id2);
+      };
+    }
+  }
+  
+  function displayFavoris(){
+
+    for (var i = 0; i < totalClones; i++){       
+      
+      var fav=false;
+      
+      for (var j=0; j<favorites.length; j++){
+	if (favorites[j]==i) fav=true;
+      }
+      
+      if (clones[i].length!=0 && fav){
+	document.getElementById(i).style.display="";
+      }else{
+	document.getElementById(i).style.display="none";
+      }      
+    }   
   }
 
+  function displayAll(){
+
+    for (var i = 0; i < totalClones; i++){    
+      if (clones[i].length!=0){
+	document.getElementById(i).style.display="";
+      }else{
+	document.getElementById(i).style.display="none";
+      }     
+    }
+  }
   
+  function displayTop(top){
+
+    for (var i = 0; i < totalClones; i++){      
+      if (clones[i].length!=0 && junctions[i].top <= top){
+	document.getElementById(i).style.display="";
+      }else{
+	document.getElementById(i).style.display="none";
+      }      
+    }   
+  }
