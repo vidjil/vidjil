@@ -4,6 +4,7 @@
 #include <istream>
 #include <string>
 #include <vector>
+#include <list>
 #include "tools.h"
 
 using namespace std;
@@ -42,6 +43,11 @@ public:
 	      ostream &out=cout);
 	
 	int size() const;
+        /**
+         * Get all the sequences from the FASTA file
+         * @return a list of sequences in the same order as in the input file
+         */
+        list<Sequence> getAll() const;
 	const string& label(int index) const;
 	const string& label_full(int index) const;
         const Sequence &read(int index) const;

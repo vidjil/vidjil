@@ -58,6 +58,15 @@ Fasta::Fasta(const string &input,
 }
 
 int Fasta::size() const{ return (int)reads.size(); }
+list<Sequence> Fasta::getAll() const {
+  list<Sequence> reads;
+
+  for (int i=0; i < size(); i++) {
+    reads.push_back(read(i));
+  }
+
+  return reads;
+}
 const string& Fasta::label(int index) const{ return reads[index].label; }
 const string& Fasta::label_full(int index) const{ return reads[index].label_full; }
 const Sequence& Fasta::read(int index) const {return reads[index];}
