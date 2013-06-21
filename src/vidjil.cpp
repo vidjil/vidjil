@@ -467,7 +467,7 @@ int main (int argc, char **argv)
   out << "# git: " ;
   out.flush();
   if (system("git log -1 --pretty=format:'%h (%ci)' --abbrev-commit") == -1) {
-    out << "<not in a git repository>"
+    out << "<not in a git repository>";
   }
   out << endl ;
 #endif
