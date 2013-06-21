@@ -24,6 +24,14 @@ bool RepresentativeComputer::hasRepresentative() const{
 }
 
 
+int KmerRepresentativeComputer::getK() const{
+  return k;
+}
+
+void KmerRepresentativeComputer::setK(int k) {
+  this->k = k;
+}
+
 KmerRepresentativeComputer::KmerRepresentativeComputer(list<Sequence> &r,
                                                        int k)
   :RepresentativeComputer(r),k(k){}
