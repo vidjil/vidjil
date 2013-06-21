@@ -102,7 +102,7 @@ function initClones(data) {
       
       var span0 = document.createElement('span');
       span0.className = "nameBox";
-      span0.ondblclick = function(){ editName(i, this); }
+      span0.ondblclick = function(){ editName(this.parentNode.id, this); }
       span0.onclick=function(){ 
 	selectClone(this.parentNode.id); 
 	displayInfo(this.parentNode.id); }
