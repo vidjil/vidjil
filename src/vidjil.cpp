@@ -93,6 +93,9 @@ enum { CMD_JUNCTIONS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define DEFAULT_DELTA_MIN_D  0
 #define DEFAULT_DELTA_MAX_D  50
 
+#define DEFAULT_RATIO_REPRESENTATIVE 0.5
+#define DEFAULT_MIN_COVER_REPRESENTATIVE 5
+
 #define DEFAULT_EPSILON  0
 #define DEFAULT_MINPTS   10
 
@@ -219,6 +222,9 @@ int main (int argc, char **argv)
   int min_reads_clone = MIN_READS_CLONE ;
   float ratio_reads_clone = RATIO_READS_CLONE;
   // int average_deletion = 4;     // Average number of deletion in V or J
+
+  size_t min_cover_representative = DEFAULT_MIN_COVER_REPRESENTATIVE;
+  float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
 
   // Admissible delta between left and right segmentation points
   int delta_min = DEFAULT_DELTA_MIN ; // Kmer+Fine
@@ -832,7 +838,7 @@ int main (int argc, char **argv)
 	// Choose one representative
 
         KmerRepresentativeComputer repComp(seqs_by_junction[it->first], k);
-        repComp.compute(true, 5, 0.5);
+        repComp.compute(true, min_cover_representative, ratio_representative);
 
         if (repComp.hasRepresentative()) {
           Sequence representative = repComp.getRepresentative();
@@ -1033,7 +1039,7 @@ int main (int argc, char **argv)
 	//
 
         KmerRepresentativeComputer repComp(seqs_by_junction[it->first], k);
-        repComp.compute(true, 5, 0.5);
+        repComp.compute(true, min_cover_representative, ratio_representative);
 
         if (repComp.hasRepresentative()) {
           Sequence representative = repComp.getRepresentative();
