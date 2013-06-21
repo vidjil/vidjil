@@ -3,12 +3,7 @@
 #include "core/fasta.h"
 
 void testChooser() {
-  Fasta fa("../../data/test1.fa");
-  list<Sequence> reads;
-
-  for (int i=0; i < fa.size(); i++) {
-    reads.push_back(fa.read(i));
-  }
+  list<Sequence> reads = Fasta("../../data/test1.fa").getAll();
 
   ReadLengthScore rls;
   ReadChooser rc(reads, rls);
