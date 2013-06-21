@@ -9,17 +9,16 @@ ReadChooser::ReadChooser(list<Sequence> &r, VirtualReadScore &scorer) {
     scores[it->sequence] = scorer.getScore(it->sequence);
   }
 
-  vector<Sequence> test(r.begin(), r.end());
-  sort(test.begin(), test.end(), *this);
-  reads = list<Sequence>(test.begin(), test.end());
+  reads.assign(r.begin(), r.end());
+  sort(reads.begin(), reads.end(), *this);
 }
 
 Sequence ReadChooser::getBest() const{
-  return *(reads.begin());
+  return reads[0];
 }
 
-list<Sequence> ReadChooser::getSorted() const {
-  return reads;
+Sequence ReadChooser::getithBest(size_t i) const {
+  return reads[i-1];
 }
 
 bool ReadChooser::operator()(Sequence first, Sequence second) {

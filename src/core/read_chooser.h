@@ -16,7 +16,7 @@
 class ReadChooser {
 
  private:
-  list<Sequence> reads;
+  vector<Sequence> reads;
   map<string, float> scores;
  public:
   
@@ -29,9 +29,11 @@ class ReadChooser {
   Sequence getBest() const;
 
   /**
-   * @return the list of sorted sequence from the best (the first one) to the worst.
+   * @pre i >= 1 && i <= total number of sequences on the input
+   * @param i: starts at 1
+   * @return the i-th best scored sequence 
    */
-  list<Sequence> getSorted() const;
+  Sequence getithBest(size_t i) const;
 
   /**
    * A comparison based on scorer of the two sequences.
