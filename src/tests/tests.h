@@ -26,6 +26,13 @@ enum {
   /* Cluster */
   TEST_CLUSTER,
 
+  /* Score */
+  TEST_LENGTH_SCORE,
+
+  /* Chooser */
+  TEST_READ_CHOOSER_BEST,
+  TEST_READ_CHOOSER_SORTED,
+
   /* Bugs */
   TEST_BUG_SEGMENTATION,
   TEST_SEGMENT_POSITION,
@@ -55,6 +62,11 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_AA_PREDICATES, "AffectAnalyser: isUnknown() isAmbiguous()");
 
   RECORD_TAP_TEST(TEST_CLUSTER, "Test automatic clusterisation");
+
+  RECORD_TAP_TEST(TEST_LENGTH_SCORE, "Test ReadLengthScore getScore()");
+
+  RECORD_TAP_TEST(TEST_READ_CHOOSER_BEST, "Test getBest() in ReadChooser");
+  RECORD_TAP_TEST(TEST_READ_CHOOSER_SORTED, "Test getSorted() in ReadChooser");
 
   RECORD_TAP_TEST(TEST_BUG_SEGMENTATION, "Test segmentation bug");
   RECORD_TAP_TEST(TEST_SEGMENT_POSITION, "Test V,D,J position");

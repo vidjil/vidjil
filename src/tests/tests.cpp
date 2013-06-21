@@ -7,7 +7,8 @@
 #include "testBugs.cpp"
 #include "testCluster.cpp"
 #include "testSegment.cpp"
-
+#include "testScore.cpp"
+#include "testChooser.cpp"
 
 int main(void) {
   TAP_START(NB_TESTS);
@@ -19,6 +20,8 @@ int main(void) {
   testBugs();
   testCluster();
   testSegment();
+  testScore();
+  testChooser();
   
   TAP_END_TEST_EXIT
 }
