@@ -65,10 +65,10 @@ void KmerRepresentativeComputer::compute(bool do_revcomp, size_t min_cover,
   // Traverse the sequences to get the desired representative
   size_t pos_longest_run = 0;
   size_t length_longest_run = 0;
-  size_t seq_index_longest_run = 0;
+  size_t seq_index_longest_run = 1;
   Sequence sequence_longest_run;
 
-  for (size_t seq = 1; seq <= sequences.size() && seq < seq_index_longest_run + stability_limit ; seq++) {
+  for (size_t seq = 1; seq <= sequences.size() && seq <= seq_index_longest_run + stability_limit ; seq++) {
     Sequence sequence = rc.getithBest(seq);
     if (sequence.sequence.size() <= length_longest_run) {
       break;
