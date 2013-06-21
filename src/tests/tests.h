@@ -33,6 +33,9 @@ enum {
   TEST_READ_CHOOSER_BEST,
   TEST_READ_CHOOSER_SORTED,
 
+  /* Representative */
+  TEST_KMER_REPRESENTATIVE,
+
   /* Bugs */
   TEST_BUG_SEGMENTATION,
   TEST_SEGMENT_POSITION,
@@ -68,6 +71,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_READ_CHOOSER_BEST, "Test getBest() in ReadChooser");
   RECORD_TAP_TEST(TEST_READ_CHOOSER_SORTED, "Test getSorted() in ReadChooser");
 
+  RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE, "Test KmerRepresentativeComputer computations");
   RECORD_TAP_TEST(TEST_BUG_SEGMENTATION, "Test segmentation bug");
   RECORD_TAP_TEST(TEST_SEGMENT_POSITION, "Test V,D,J position");
 }
