@@ -54,4 +54,18 @@ public:
   void setUnambiguousScore(float score) ;
   void setUnknownScore(float score) ;
 };
+
+/**
+ * A simple implementation of VirtualReadScore.
+ * The score is the length of the read
+ */
+class ReadLengthScore: public VirtualReadScore {
+ public:
+  ReadLengthScore();
+
+  /**
+   * @return the sequence length
+   */
+  float getScore(const string &sequence) const;
+};
 #endif
