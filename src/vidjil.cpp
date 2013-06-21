@@ -825,16 +825,10 @@ int main (int argc, char **argv)
            it != sort_junctions.end(); ++it) {
 
 	// Choose one representative
-	cout << "[choose " ;
-	cout.flush();
 
         ReadChooser chooser(seqs_by_junction[it->first], *scorer);
         Sequence representative = chooser.getBest() ;
 	representative.label = string_of_int(it->second) + "-" + representative.label ;
-	
-	cout << "ok] ";
-	cout.flush()  ;
-	
 	
 	FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 		  
