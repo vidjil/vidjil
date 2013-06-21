@@ -8,7 +8,6 @@ using namespace std;
 
 RepresentativeComputer::RepresentativeComputer(list<Sequence> &r)
   :sequences(r),is_computed(false),representative() {
-  cout << "***** RepresentativeComputer" << endl;
 }
 
 string RepresentativeComputer::getRepresentative() const{
