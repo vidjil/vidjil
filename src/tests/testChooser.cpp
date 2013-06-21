@@ -13,24 +13,19 @@ void testChooser() {
   ReadLengthScore rls;
   ReadChooser rc(reads, rls);
 
-  list<Sequence> sorted = rc.getSorted();
-
-  TAP_TEST(sorted.front().label == "seq4", TEST_READ_CHOOSER_SORTED,
-           "First sequence is " << sorted.front().label);
-  TAP_TEST(sorted.front().label == rc.getBest().label
-           && sorted.front().sequence == rc.getBest().sequence, 
+  TAP_TEST(rc.getithBest(1).label == "seq4", TEST_READ_CHOOSER_SORTED,
+           "First sequence is " << rc.getithBest(1).label);
+  TAP_TEST(rc.getithBest(1).label == rc.getBest().label
+           && rc.getithBest(1).sequence == rc.getBest().sequence, 
            TEST_READ_CHOOSER_BEST,"");
 
-  sorted.pop_front();
-  TAP_TEST(sorted.front().label == "seq2", TEST_READ_CHOOSER_SORTED,
-           "Second sequence is " << sorted.front().label);
+  TAP_TEST(rc.getithBest(2).label == "seq2", TEST_READ_CHOOSER_SORTED,
+           "Second sequence is " << rc.getithBest(1).label);
 
-  sorted.pop_front();
-  TAP_TEST(sorted.front().label == "seq1", TEST_READ_CHOOSER_SORTED,
-           "Third sequence is " << sorted.front().label);
+  TAP_TEST(rc.getithBest(3).label == "seq1", TEST_READ_CHOOSER_SORTED,
+           "Third sequence is " << rc.getithBest(1).label);
 
-  sorted.pop_front();
-  TAP_TEST(sorted.front().label == "", TEST_READ_CHOOSER_SORTED,
-           "First sequence is " << sorted.front().label);
+  TAP_TEST(rc.getithBest(4).label == "", TEST_READ_CHOOSER_SORTED,
+           "First sequence is " << rc.getithBest(1).label);
 
 }
