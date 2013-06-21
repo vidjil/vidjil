@@ -831,8 +831,6 @@ int main (int argc, char **argv)
 
 	// Choose one representative
 
-        // ReadChooser chooser(seqs_by_junction[it->first], *scorer);
-        // Sequence representative = chooser.getBest() ;
         KmerRepresentativeComputer repComp(seqs_by_junction[it->first], k);
         repComp.compute(true, 5, 0.5);
 
@@ -1034,8 +1032,6 @@ int main (int argc, char **argv)
 
 	//
 
-        // ReadChooser chooser(seqs_by_junction[it->first], *scorer);
-        // Sequence representative = chooser.getBest() ;
         KmerRepresentativeComputer repComp(seqs_by_junction[it->first], k);
         repComp.compute(true, 5, 0.5);
 
