@@ -44,6 +44,7 @@
 #include "core/html.h"
 #include "core/mkdir.h"
 #include "core/labels.h"
+#include "core/representative.h"
 
 #include "vidjil.h"
 
@@ -830,9 +831,15 @@ int main (int argc, char **argv)
 
 	// Choose one representative
 
-        ReadChooser chooser(seqs_by_junction[it->first], *scorer);
-        Sequence representative = chooser.getBest() ;
-	representative.label = string_of_int(it->second) + "-" + representative.label ;
+        // ReadChooser chooser(seqs_by_junction[it->first], *scorer);
+        // Sequence representative = chooser.getBest() ;
+        KmerRepresentativeComputer repComp(seqs_by_junction[it->first], k);
+        repComp.compute(true, 5, 0.5);
+
+        if (repComp.hasRepresentative()) {
+          Sequence representative = repComp.getRepresentative();
+          representative.label = string_of_int(it->second) + "-" 
+            + representative.label;
 	
 	FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 		  
@@ -1027,9 +1034,15 @@ int main (int argc, char **argv)
 
 	//
 
-        ReadChooser chooser(seqs_by_junction[it->first], *scorer);
-        Sequence representative = chooser.getBest() ;
-	representative.label = string_of_int(it->second) + "-" + representative.label ;
+        // ReadChooser chooser(seqs_by_junction[it->first], *scorer);
+        // Sequence representative = chooser.getBest() ;
+        KmerRepresentativeComputer repComp(seqs_by_junction[it->first], k);
+        repComp.compute(true, 5, 0.5);
+
+        if (repComp.hasRepresentative()) {
+          Sequence representative = repComp.getRepresentative();
+          representative.label = string_of_int(it->second) + "-" 
+            + representative.label;
 
 	FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 
