@@ -1040,8 +1040,6 @@ int main (int argc, char **argv)
           representative.label = string_of_int(it->second) + "-" 
             + representative.label;
 
-          cout << "**** nb = " << it->second << endl;
-
           FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 
           if (segment_D)

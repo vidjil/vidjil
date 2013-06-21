@@ -71,7 +71,6 @@ void KmerRepresentativeComputer::compute(bool do_revcomp, size_t min_cover,
   for (size_t seq = 1; seq <= sequences.size() && seq < seq_index_longest_run + stability_limit ; seq++) {
     Sequence sequence = rc.getithBest(seq);
     if (sequence.sequence.size() <= length_longest_run) {
-      cout << "Break on sequence " << seq << " on " << sequences.size() << endl; 
       break;
     }
     vector<Kmer> counts = index->getResults(sequence.sequence);
@@ -94,7 +93,6 @@ void KmerRepresentativeComputer::compute(bool do_revcomp, size_t min_cover,
         pos_longest_run = i - (length_run - getK() - 1);
         sequence_longest_run = sequence;
         seq_index_longest_run = seq;
-        cout << "Seq " << seq << ", pos = " << pos_longest_run <<", length = " << length_longest_run << ", seq length = " << sequence.sequence.length() << endl;
       }
     }
   }
