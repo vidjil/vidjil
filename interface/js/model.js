@@ -906,11 +906,13 @@ function initVJposition(){
       updateList();
       
       for (var i = 0; i < copy_select.length ; i++){
+	document.getElementById(copy_select[i]).style.display="none";
 	data_graph[copy_select[i]].display=false;
 	data_graph[copy_select[i]].select=false;
 	data_graph[copy_select[i]].path=constructPath(leader);
       }
       
+      document.getElementById(leader).style.display="";
       data_graph[leader].display=true;
       data_graph[leader].select=true;
       setTimeout('updateGraphDisplay()',1000);
