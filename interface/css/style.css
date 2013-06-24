@@ -44,7 +44,7 @@ list-style-type: none;
 }
 
 #visu {
-  background : #201020;
+  background : #002b36 ;
   display : inline-block;
   height : 70%;
   width: -moz-calc(100% - 450px);
@@ -52,7 +52,7 @@ list-style-type: none;
   width: calc(100% - 450px);
 }
 #visu2 {
-  background : #101020;
+  background : #002b36 ;
   display : inline-block;
   height : 30%;
   width: -moz-calc(100% - 450px);
@@ -102,12 +102,16 @@ circle:hover {
 }
 
 #menu{
-  background : #301020;
+  background : #073642;
   height :125px;
 }
 
+#file_menu{
+  background : #073642;
+}
+
 #info{
-  background : #102020;
+  background : #073642;
   height :190px;
   padding-top: 10px;
 }
@@ -115,14 +119,14 @@ circle:hover {
 #listFav{
   overflow-y : scroll;
   overflow-x : hidden;
-  background : #101020;
+  background : #073642;
   display :none;
 }
 
 #listSelect{
   overflow-y : scroll;
   overflow-x : hidden;
-  background : #201030;
+  background : #073642;
   height :160px
 }
 
@@ -136,7 +140,7 @@ circle:hover {
   overflow-x : hidden;
   font-weight: bold;
   color: #ddd;
-  background : #302010;
+  background : #073642;
 }
 
 .vjLegend{
@@ -166,13 +170,13 @@ circle:hover {
   margin: 5px;
   height: 16px;
   cursor:pointer;
-  -moz-transition: background-color  1.5s;
-  -webkit-transition: background-color 1.5s;
-  -o-transition: background-color  1.5s;
-  -ms-transition: background-color 1.5s;
-  transition: background-color 1.5s;
+  -moz-transition: color  1.5s;
+  -webkit-transition: color 1.5s;
+  -o-transition: color  1.5s;
+  -ms-transition: color 1.5s;
+  transition: color 1.5s;
+  background-color :#002b36;
     font-weight : bold;
-    color : #ddd;
     text-shadow:
     -1px -1px 0 #000,
     1px -1px 0 #000,
@@ -231,13 +235,11 @@ circle:hover {
 }
 
 .axis{
- stroke-width : 3px;
- opacity:0.5;
+ stroke-width : 2px;
 }
 
 .axis_v{
  stroke-width : 1px;
- opacity:0.5;
  stroke-dasharray: 6,6;
 }
 
@@ -253,8 +255,7 @@ circle:hover {
 }
 
 .graphLine{
- stroke-width : 2px;
- opacity:0.5;
+ stroke-width : 1.5px;
  fill :none;
 }
 

@@ -21,7 +21,7 @@
   </head>
 
   <body onload="initCoef();">
-    <div id="file_menu" style="position: fixed; top: 200px; margin-left:-200px;left:50% ;width: 400px; height: 60px;font-size: 14px;background-color: #333044; padding: 10px;">
+    <div id="file_menu" style="position: fixed; top: 200px; margin-left:-200px;left:50% ;width: 400px; height: 60px;font-size: 14px; padding: 10px;">
     	pref:<input id="upload_pref" type="file" name="pref" /></br>
 	data:<input id="upload_json" type="file" name="json" onchange="loadJson();" />
     </div>
@@ -62,7 +62,7 @@
 	    </td></tr><tr><td>_____________________________________</td></tr>
 	    <tr>
 	    <td>
-	      <a class="button" onclick="displayFavoris();">favoris only</a>
+	      <a class="button" onclick="displayFavoris();">favoris</a>
 	      <a class="button" onclick="displayTop(5);">top 5</a>
 	      <a class="button" onclick="displayAll();">show all</a>
 	    </td>

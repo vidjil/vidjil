@@ -140,7 +140,7 @@ function initClones(data) {
       div.appendChild(span1);
       div.appendChild(fav);
       div.appendChild(span2);
-      div.style.background=color(i);
+      div.style.color=color(i);
       document.getElementById("listClones").appendChild(div);
     }
 }
@@ -248,13 +248,13 @@ function updateLook(){
   .style("fill", function(d) { return color(d.id); } )
   node.style("stroke", function(d) { return stroke(d.id); } )
   for(var i=0 ;i<totalClones; i++){
-    document.getElementById(i).style.background=color(i);
+    document.getElementById(i).style.color=color(i);
   if (document.getElementById("info"+select[i]) ){
-    document.getElementById("info"+select[i]).style.background=color(select[i]);
+    document.getElementById("info"+select[i]).style.color=color(select[i]);
   }
   }
   for(var i=0 ;i<select.length; i++){
-    document.getElementById("select"+select[i]).style.background=color(select[i]);
+    document.getElementById("select"+select[i]).style.color=color(select[i]);
   }
 
 }

@@ -161,7 +161,7 @@ function updateGraphDisplay(){
     .style("opacity", function(d) { if (d.select==true || d.focus==true) return "1";
 				    else return "";
     })
-    .style("stroke", function(d) { if (d.focus==true) return "white";
+    .style("stroke", function(d) { if (d.focus==true) return "#586e75";
 				    else return color(d.id);
     })
 
@@ -193,14 +193,14 @@ function updateGraph(){
     .attr("x2", function(d) { return resizeG_W*d.x2; })
     .attr("y1", function(d) { return resizeG_H*d.y1; })
     .attr("y2", function(d) { return resizeG_H*d.y2; })
-    .style("stroke", 'white')
+    .style("stroke", '#586e75')
     .attr("class", function(d) { return d.class; })
    
   g_text
     .transition()
     .duration(800)
     .text( function (d) { return d.text; })
-    .attr("fill", "white")
+    .attr("fill", "#586e75")
     .attr("class", function(d) { if (d.class=="axis_v") return "axis_button"; })
     .attr("y", function(d) { 
       if (d.class=="axis") return Math.floor(resizeG_H*d.y1);

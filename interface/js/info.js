@@ -80,7 +80,7 @@
       div.appendChild(span1);
       div.appendChild(fav);
       div.appendChild(span2);
-      div.style.background=color(cloneID);
+      div.style.color=color(cloneID);
       divParent.appendChild(div);
     
     if (clones[cloneID].length>1){
@@ -99,7 +99,7 @@
 	var div_clone=document.createElement('div');
 	div_clone.id2=clones[cloneID][i];
 	div_clone.className="listElem";
-	div_clone.style.background=color(clones[cloneID][i]);
+	div_clone.style.color=color(clones[cloneID][i]);
 	
 	var span_name = document.createElement('span');
         span_name.className = "nameBox";

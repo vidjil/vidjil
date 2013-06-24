@@ -542,7 +542,7 @@ function initVJposition(){
       if (colorMethod=='J'){
 	return colorJ(cloneID)
       }
-      return 'grey';
+      return '#839496';
     }
   }
   
@@ -585,12 +585,12 @@ function initVJposition(){
 		  $(el).val(hex);
 		  document.getElementById('colorSelector').style.display='none';
 		  customColor[tmpID]="#"+hex;
-		  document.getElementById('color'+tmpID).style.backgroundColor=customColor[tmpID];
+		  document.getElementById('color'+tmpID).style.background=customColor[tmpID];
 		  if(document.getElementById('select'+tmpID) ){
-		    document.getElementById('select'+tmpID).firstChild.nextSibling.style.backgroundColor=customColor[tmpID];
+		    document.getElementById('select'+tmpID).firstChild.nextSibling.style.color=customColor[tmpID];
 		  }
 		  if(document.getElementById('info'+tmpID) ){
-		    document.getElementById('info'+tmpID).firstChild.nextSibling.style.backgroundColor=customColor[tmpID];
+		    document.getElementById('info'+tmpID).firstChild.nextSibling.style.color=customColor[tmpID];
 		  }
 		  document.getElementById("log").innerHTML+="<br>"+tmpID+"/test/"+customColor[tmpID];
 		  $('#log').scrollTop(100000000000000);
