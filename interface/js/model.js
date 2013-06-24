@@ -344,6 +344,7 @@ function changeT(time){
 			x1 : graph_col[t], x2 : graph_col[t], 
 			y1 : g_h+20, y2 : 0, time: 0}
   
+  updateAxis();
   updateList();
   updateVis();
   updateLook();

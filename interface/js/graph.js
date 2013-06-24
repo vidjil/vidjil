@@ -182,7 +182,7 @@ function updateGraph(){
     .domain([1,(1/min_size)])
     .range([30,(g_h)]);
     
-  g_axis.data(data_axis)
+    g_axis
     .transition()
     .duration(800)
     .attr("x1", function(d) { return resizeG_W*d.x1; })
@@ -191,6 +191,10 @@ function updateGraph(){
     .attr("y2", function(d) { return resizeG_H*d.y2; })
     .style("stroke", '#586e75')
     .attr("class", function(d) { return d.class; })
+    .attr("id", function(d) {
+      if (d.class=="axis_f") return "timebar"
+	return
+    });
    
   g_text
     .transition()
@@ -214,7 +218,7 @@ function updateGraph(){
     
   g_graph
     .transition()
-    .duration(1000)
+    .duration(800)
     .attr("points", function(d) {
       var p=(d.path[0][0]*resizeG_W)+','+(d.path[0][1]*resizeG_H);
 	for (var i=1; i<d.path.length; i++){
@@ -237,4 +241,12 @@ function updateGraph(){
      if (d.display==true) selectClone(d.id);
     })
 
+}
+
+function updateAxis(){
+    g_axis.data(data_axis)
+    .attr("x1", function(d) { return resizeG_W*d.x1; })
+    .attr("x2", function(d) { return resizeG_W*d.x2; })
+    .attr("y1", function(d) { return resizeG_H*d.y1; })
+    .attr("y2", function(d) { return resizeG_H*d.y2; })
 }
