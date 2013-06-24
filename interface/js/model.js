@@ -347,7 +347,6 @@ function changeT(time){
   updateList();
   updateVis();
   updateLook();
-  updateGraph();
   displayInfo(info);
 }
   
