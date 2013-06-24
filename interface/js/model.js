@@ -587,10 +587,10 @@ function initVJposition(){
 		  customColor[tmpID]="#"+hex;
 		  document.getElementById('color'+tmpID).style.background=customColor[tmpID];
 		  if(document.getElementById('select'+tmpID) ){
-		    document.getElementById('select'+tmpID).firstChild.nextSibling.style.color=customColor[tmpID];
+		    document.getElementById('select'+tmpID).style.color=customColor[tmpID];
 		  }
 		  if(document.getElementById('info'+tmpID) ){
-		    document.getElementById('info'+tmpID).firstChild.nextSibling.style.color=customColor[tmpID];
+		    document.getElementById('info'+tmpID).style.color=customColor[tmpID];
 		  }
 		  document.getElementById("log").innerHTML+="<br>"+tmpID+"/test/"+customColor[tmpID];
 		  $('#log').scrollTop(100000000000000);
@@ -753,7 +753,6 @@ function initVJposition(){
     data_graph[cloneID].focus=false;
     
     updateGraphDisplay();
-    updateGraphColor();
     updateLook();
   }
   
@@ -864,7 +863,6 @@ function initVJposition(){
     document.getElementById("listSeq").innerHTML="";
     
     updateGraphDisplay();
-    updateGraphColor();
     updateLook();
   }
   

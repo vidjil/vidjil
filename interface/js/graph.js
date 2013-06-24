@@ -143,22 +143,20 @@ function updateGraphColor(){
 
 function updateGraphDisplay(){
     g_graph
-    .style("display", function(d) { if (d.display==true) return "";
+    .style("display", function(d) { if (d.display) return "";
 				    else return "none";
     })
-    .style("stroke-dasharray", function(d) { if (d.select==true) return "8,1";
+    .style("stroke-dasharray", function(d) { if (d.select) return "8,1";
 				    else return "";
     })
     .style("stroke-width", function(d) { 
       if ( d.focus==true ) return "3";
-      if ( d.select==true ) return "2";
+      if ( d.select==true ) return "3";
       return "";
     })
-    .style("opacity", function(d) { if (d.select==true || d.focus==true) return "1";
-				    else return "";
-    })
-    .style("stroke", function(d) { if (d.focus==true) return "#586e75";
-				    else return color(d.id);
+    .style("stroke", function(d) { if (d.focus) return "#93a1a1";
+				   
+				    return color(d.id);
     })
 
     vis2.selectAll("polyline")
@@ -227,7 +225,6 @@ function updateGraph(){
 	return p;
     } )
     .attr("class", function(d) { return g_class(d.id); })
-    .style("stroke", function(d) { return color(d.id); })
     .attr("id", function(d) { return d.name; });
     
   vis2.selectAll("polyline")
@@ -240,7 +237,8 @@ function updateGraph(){
     .on("click", function(d){
      if (d.display==true) selectClone(d.id);
     })
-
+  
+    updateGraphDisplay()
 }
 
 function updateAxis(){
