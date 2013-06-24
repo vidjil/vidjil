@@ -712,6 +712,9 @@ function initVJposition(){
       list3.style.color='white';
     }
     
+    var line = document.getElementById("line"+cloneID);
+    document.getElementById("svg2").appendChild(line);
+    
     data_graph[cloneID].focus=true;
 
     updateGraphDisplay();
@@ -871,6 +874,8 @@ function initVJposition(){
     clones[cloneIDb] = [];
     document.getElementById(cloneIDb).style.display="none";
     data_graph[cloneIDb].id=cloneIDa;
+    data_graph[cloneIDb].id=constructPath(cloneIDa);
+    data_graph[cloneIDa].id=constructPath(cloneIDa);
     data_graph[cloneIDb].display=false;
     
     updateGraphDisplay();
@@ -905,6 +910,7 @@ function initVJposition(){
       for (var i = 0; i < copy_select.length ; i++){
 	data_graph[copy_select[i]].display=false;
 	data_graph[copy_select[i]].select=false;
+	data_graph[copy_select[i]].path=constructPath(leader);
       }
       
       data_graph[leader].display=true;
@@ -929,6 +935,8 @@ function initVJposition(){
     clones[cloneIDb]=[cloneIDb];
     data_graph[cloneIDb].id=cloneIDb;
     data_graph[cloneIDb].display=true;
+    data_graph[cloneIDa].path=constructPath(cloneIDa);
+    data_graph[cloneIDb].path=constructPath(cloneIDb);
     document.getElementById(cloneIDb).style.display="";
     
     updateGraph();

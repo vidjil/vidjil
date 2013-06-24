@@ -78,7 +78,7 @@ function initGraph(){
 			y1 : g_h+20, y2 : 0, time: 0}
   
   for (var i=0 ; i<totalClones; i++){
-    data_graph[i]={id : i, display: true, name :"line"+i, select : false, focus : false};
+    data_graph[i]={id : i, display: true, name :"line"+i, select : false, focus : false, path : constructPath(i)};
   }
   
   displayGraph(data_axis, data_graph);
@@ -107,30 +107,26 @@ function displayGraph(data, data_2){
 function constructPath(cloneID){
   var tmp=t;
   t=0;
-  var path;
+  var p;
   
   if (getSize(cloneID)==0){
-    path = Math.floor( graph_col[0] * resizeG_W ) + ", "
-	      +Math.floor(( g_h + 50 ) * resizeG_H );
+    p = [[ ( graph_col[0] ),( g_h + 50 ) ]];
   }else{
-    path = Math.floor( graph_col[0] * resizeG_W ) + ", "
-	      +Math.floor(( g_h - scale_x(getSize(cloneID)*(1/min_size)) ) * resizeG_H );
+    p = [[ ( graph_col[0] ), ( g_h - scale_x(getSize(cloneID)*(1/min_size)) ) ]];
   }
   
   for (var i=1; i< graph_col.length; i++){
     t++;
     
     if (getSize(cloneID)==0){
-      path += ", "+Math.floor( graph_col[i] * resizeG_W ) + ", "
-		+Math.floor(( g_h + 50 ) * resizeG_H );
+      p.push([( graph_col[i] ),( g_h + 50 ) ]);
     }else{
-      path += ", "+Math.floor( graph_col[i] * resizeG_W ) + ", "
-		+Math.floor(( g_h - scale_x(getSize(cloneID)*(1/min_size)) ) * resizeG_H );
+      p.push([ ( graph_col[i] ), ( g_h - scale_x(getSize(cloneID)*(1/min_size)) ) ]);
     }
 
   }
   t=tmp;
-  return path;
+  return p;
 }
 
 function g_class(cloneID){
@@ -220,7 +216,11 @@ function updateGraph(){
     .transition()
     .duration(1000)
     .attr("points", function(d) {
-	return constructPath(d.id); 
+      var p=(d.path[0][0]*resizeG_W)+','+(d.path[0][1]*resizeG_H);
+	for (var i=1; i<d.path.length; i++){
+	  p+=','+(d.path[i][0]*resizeG_W)+','+(d.path[i][1]*resizeG_H);
+	}
+	return p;
     } )
     .attr("class", function(d) { return g_class(d.id); })
     .style("stroke", function(d) { return color(d.id); })
