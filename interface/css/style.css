@@ -46,7 +46,7 @@ list-style-type: none;
 #visu {
   background : #002b36 ;
   display : inline-block;
-  height : 70%;
+  height : 30%;
   width: -moz-calc(100% - 450px);
   width: -webkit-calc(100% - 450px);
   width: calc(100% - 450px);
@@ -54,7 +54,7 @@ list-style-type: none;
 #visu2 {
   background : #002b36 ;
   display : inline-block;
-  height : 30%;
+  height : 70%;
   width: -moz-calc(100% - 450px);
   width: -webkit-calc(100% - 450px);
   width: calc(100% - 450px);
@@ -131,11 +131,6 @@ circle:hover {
 }
 
 #listClones{
-  text-shadow:
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1.8px 1px 0 #000,
-    1px 1px 0 #000;  
   overflow-y : scroll;
   overflow-x : hidden;
   font-weight: bold;
@@ -177,11 +172,7 @@ circle:hover {
   transition: color 1.5s;
   background-color :#002b36;
     font-weight : bold;
-    text-shadow:
-    -1px -1px 0 #000,
-    1px -1px 0 #000,
-    -1.8px 1px 0 #000,
-    1px 1px 0 #000;  
+
 }
 
 .nameBox{
@@ -255,6 +246,11 @@ circle:hover {
 }
 
 .graphLine{
+  -moz-transition: stroke  1.5s;
+  -webkit-transition: stroke 1.5s;
+  -o-transition: stroke  1.5s;
+  -ms-transition: stroke 1.5s;
+  transition: stroke 1.5s;
  stroke-width : 1.5px;
  fill :none;
 }

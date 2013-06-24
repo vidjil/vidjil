@@ -29,7 +29,7 @@ var node ;              //
 var leg, lines;		//container pour les legendes / quadrillages
 var w = 1400,		//largeur visu (avant resize)
     h = 700,		//hauteur visu (avant resize)
-    padding = 2;	//espacement minimum entre les circles
+    padding = 1;	//espacement minimum entre les circles
     
 var vis = d3.select("#visu").append("svg:svg")
     .attr("id", "svg");
@@ -71,80 +71,28 @@ function initVisu(){
 }
 
 /* initialise les elements avec les données du modele
- * nodes[] pour la fenetre de visu
- * cree et rempli la liste html
- */
-function initClones(data) {
+ * nodes[] pour la fenetre de visu*/
+function initNodes() {
   nodes = d3.range(totalClones).map(Object);
-  var divParent = document.getElementById("listClones");
-  divParent.innerHTML="";
-  min_size = 1;
    for(var i=0 ;i<totalClones; i++){
-
       nodes[i].id = i;
       nodes[i].r1 = 5;
       nodes[i].r2 = 5;
       nodes[i].focus = false;
-      
-      for (t=0 ; t<junctions[i].size.length; t++){
-	if (getSize(i)<min_size && getSize(i)!=0) {
-	  min_size=getSize(i)
-	}
-      };
-      
-      t=0;
-      
-      var div = document.createElement('div');
-      div.id=i;
-      div.className="listElem";
-      div.onmouseover = function(){ focusIn(this.id, 0); }
-      div.onmouseout= function(){ focusOut(this.id); }
-      
-      var span0 = document.createElement('span');
-      span0.className = "nameBox";
-      span0.ondblclick = function(){ editName(this.parentNode.id, this); }
-      span0.onclick=function(){ 
-	selectClone(this.parentNode.id); 
-	displayInfo(this.parentNode.id); }
-      span0.appendChild(document.createTextNode(getname(i)));
-
-      var span1 = document.createElement('span');
-      span1.className = "colorBox";
-      span1.id="color"+i;
-      span1.onclick=function(){ changeColor(this.parentNode.id); }
-      
-      var fav=document.createElement('img')
-      fav.className = "favBox";
-      fav.id="fav"+i;
-      if (favorites.indexOf(i) != -1 ){
-	fav.src="images/icon_fav_on.png";
-	fav.onclick=function(){ 
-	  addToList(this.parentNode.id); 
-	  displayInfo(this.parentNode.id);
-	}
-      }else{
-	fav.src="images/icon_fav_off.png";
-	fav.onclick=function(){ 
-	  addToFavorites(this.parentNode.id);
-	  displayInfo(this.parentNode.id);
-	}
-      }
-      
-      var span2=document.createElement('span')
-      span2.className = "sizeBox";
-      span2.id="size"+i;
-      span2.appendChild(document.createTextNode((100*getSize(i)).toFixed(4)+"%"));
-      
-       
-      div.appendChild(span0);
-      div.appendChild(span1);
-      div.appendChild(fav);
-      div.appendChild(span2);
-      div.style.color=color(i);
-      document.getElementById("listClones").appendChild(div);
     }
 }
 
+function initSize() {
+  min_size = 1;
+   for(var i=0 ;i<totalClones; i++){
+      for (t=0 ; t<junctions[i].size.length; t++){
+	if (getSize(i)<min_size && getSize(i)!=0) {
+	  min_size=getSize(i);
+	}
+      }
+      t=0;
+    }
+}
 
 /* attribue une data issue du modele aux legendes/quadrillages de la visualisation*/
 function displayLegend(data){
@@ -157,14 +105,14 @@ function displayLegend(data){
     .duration(1000)
     .attr("x", function(d) { 
       if (d.cx<5) { 
-	if (d.class=="vjline1") return resizeCoef*(d.cx+60);
-	  else return resizeCoef*(d.cx+150);
+	if (d.class=="vjline1") return resizeCoef*(d.cx+40);
+	  else return resizeCoef*(d.cx+80);
       }else return resizeCoef*d.cx;
     })
     .attr("y", function(d) { 
       if (d.cy<5) {
-	if (d.class=="vjline1") return resizeCoef*(d.cy+20);
-	else return resizeCoef*(d.cy+75);
+	if (d.class=="vjline1") return resizeCoef*(d.cy+25);
+	else return resizeCoef*(d.cy+50);
       }else return resizeCoef*d.cy;
     })
     .text( function (d) { 
