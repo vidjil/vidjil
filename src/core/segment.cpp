@@ -21,6 +21,7 @@
 #include "segment.h"
 #include "tools.h"
 #include "affectanalyser.h"
+#include <sstream>
 
 Sequence Segmenter::getSequence() const {
   assert(isSegmented());
@@ -567,6 +568,15 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
     "/" + string_of_int(del_J) +
     " " + rep_J.label(best_J); 
 
+    stringstream code_s;
+   code_s<< rep_V.label(best_V) <<
+    " -" << string_of_int(del_V) << "/" 
+    << seg_N.size()
+    // chevauchement +
+    << "/-" << string_of_int(del_J)
+    <<" " << rep_J.label(best_J);
+    code_short=code_s.str();
+    
   code_light = rep_V.label(best_V) +
     "/ " + rep_J.label(best_J); 
 
@@ -663,6 +673,21 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
     "/" + string_of_int(del_J) +
     " " + rep_J.label(best_J); 
 
+    stringstream code_s;
+    code_s << rep_V.label(best_V) 
+    << " -" << string_of_int(del_V) << "/" 
+    << seg_N1.size()
+    
+    << "/-" << string_of_int(del_D_left) 
+    << " " << rep_D.label(best_D) 
+    << " -" << string_of_int(del_D_right) << "/"
+    
+    << seg_N2.size()
+    << "/-" << string_of_int(del_J) 
+    << " " << rep_J.label(best_J);
+    code_short=code_s.str();
+    
+    
     code_light = rep_V.label(best_V) +
     "/ " + rep_D.label(best_D) +
     "/ " + rep_J.label(best_J); 
@@ -677,7 +702,7 @@ string FineSegmenter::toJson(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
   
   seg_str << " \"seg\" : {";
   seg_str << " \"sequence\" : \""<< sequence << "\","<<endl;
-  seg_str << " \"name\" : \""<< code << "\" ,"<<endl;
+  seg_str << " \"name\" : \""<< code_short << "\" ,"<<endl;
   seg_str << " \"r1\" : "<< right << ","<<endl;
   seg_str << " \"r2\" : "<< right2 << ","<<endl;
   seg_str << " \"l1\" : "<< left << ","<<endl;

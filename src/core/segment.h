@@ -34,6 +34,7 @@ protected:
 
  public:
   string code;
+  string code_short;
   string code_light;
   string info;
   int best_V, best_J ;
