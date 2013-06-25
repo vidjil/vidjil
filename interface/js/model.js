@@ -484,7 +484,7 @@ function initVJposition(){
 }
 
 
-  /*retourne le label d'un clone ( s'il n'en possde pas retourne sa jonction*/
+  /*retourne le label d'un clone ( s'il n'en possde pas retourne son code*/
   function getname(cloneID){
     if ( typeof(customName[cloneID])!='undefined' ){
       return customName[cloneID];
@@ -493,10 +493,10 @@ function initVJposition(){
     }
   }
   
-  /*retourne le label d'un clone ( s'il n'en possde pas retourne sa jonction*/
+  /*retourne le code d'un clone ( s'il n'en possde pas retourne sa jonction*/
   function getcode(cloneID){
       if ( typeof(junctions[cloneID].seg)!='undefined' && typeof(junctions[cloneID].seg.name)!='undefined' ){
-	return junctions[cloneID].seg.name
+	return junctions[cloneID].seg.name;
       }else{
 	return junctions[cloneID].junction;
       }

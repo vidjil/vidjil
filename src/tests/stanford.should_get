@@ -2,7 +2,7 @@
 !LOG: stanford.log
 
 $ Parses IGHV.fa germline
-1: 94301 bp in 324 sequences
+1: 99341 bp in 341 sequences
 
 $ Parses IGHD.fa germline
 1: 1070 bp in 44 sequences

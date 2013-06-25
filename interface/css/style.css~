@@ -246,6 +246,11 @@ circle:hover {
 }
 
 .graphLine{
+  -moz-transition: stroke  1.5s;
+  -webkit-transition: stroke 1.5s;
+  -o-transition: stroke  1.5s;
+  -ms-transition: stroke 1.5s;
+  transition: stroke 1.5s;
  stroke-width : 1.5px;
  fill :none;
 }

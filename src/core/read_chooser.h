@@ -3,7 +3,7 @@
 #include <list>
 #include "fasta.h"
 #include "read_score.h"
-
+#include <map>
 
 /**
  * This class aims at choosing the best read among a group of read.
@@ -16,17 +16,30 @@
 class ReadChooser {
 
  private:
-  Sequence best_sequence;
+  vector<Sequence> reads;
+  map<string, float> scores;
  public:
   
   ReadChooser(list<Sequence> &r, VirtualReadScore &scorer);
-
 
   /**
    * @return the best sequence among the list of sequences that have been 
    *         given to the object
    */
   Sequence getBest() const;
+
+  /**
+   * @pre i >= 1 && i <= total number of sequences on the input
+   * @param i: starts at 1
+   * @return the i-th best scored sequence 
+   */
+  Sequence getithBest(size_t i) const;
+
+  /**
+   * A comparison based on scorer of the two sequences.
+   */
+  bool operator()(Sequence first, Sequence second);
 };
+
 
 #endif

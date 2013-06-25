@@ -44,6 +44,7 @@
 #include "core/html.h"
 #include "core/mkdir.h"
 #include "core/labels.h"
+#include "core/representative.h"
 
 #include "vidjil.h"
 
@@ -91,6 +92,9 @@ enum { CMD_JUNCTIONS, CMD_ANALYSIS, CMD_SEGMENT } ;
 
 #define DEFAULT_DELTA_MIN_D  0
 #define DEFAULT_DELTA_MAX_D  50
+
+#define DEFAULT_RATIO_REPRESENTATIVE 0.5
+#define DEFAULT_MIN_COVER_REPRESENTATIVE 5
 
 #define DEFAULT_EPSILON  0
 #define DEFAULT_MINPTS   10
@@ -218,6 +222,9 @@ int main (int argc, char **argv)
   int min_reads_clone = MIN_READS_CLONE ;
   float ratio_reads_clone = RATIO_READS_CLONE;
   // int average_deletion = 4;     // Average number of deletion in V or J
+
+  size_t min_cover_representative = DEFAULT_MIN_COVER_REPRESENTATIVE;
+  float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
 
   // Admissible delta between left and right segmentation points
   int delta_min = DEFAULT_DELTA_MIN ; // Kmer+Fine
@@ -467,7 +474,7 @@ int main (int argc, char **argv)
   out << "# git: " ;
   out.flush();
   if (system("git log -1 --pretty=format:'%h (%ci)' --abbrev-commit") == -1) {
-    perror("Cannot launch git");
+    out << "<not in a git repository>";
   }
   out << endl ;
 #endif
@@ -772,7 +779,11 @@ int main (int argc, char **argv)
 
       ofstream out_clone(clone_file_name.c_str());
       ofstream out_junctions(junctions_file_name.c_str());
-      ofstream out_sequences(sequences_file_name.c_str());
+      ofstream out_sequences;
+
+      if (output_sequences_by_cluster) {
+        out_sequences.open(sequences_file_name.c_str());
+      }
       
       html << "</pre>" << endl ;
 
@@ -833,24 +844,22 @@ int main (int argc, char **argv)
            it != sort_junctions.end(); ++it) {
 
 	// Choose one representative
-	cout << "[choose " ;
-	cout.flush();
 
-        ReadChooser chooser(seqs_by_junction[it->first], *scorer);
-        Sequence representative = chooser.getBest() ;
-	representative.label = string_of_int(it->second) + "-" + representative.label ;
-	
-	cout << "ok] ";
-	cout.flush()  ;
-	
+        KmerRepresentativeComputer repComp(seqs_by_junction[it->first], k);
+        repComp.compute(true, min_cover_representative, ratio_representative);
+
+        if (repComp.hasRepresentative()) {
+          Sequence representative = repComp.getRepresentative();
+          representative.label = string_of_int(it->second) + "-" 
+            + representative.label;
 	
 	FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 	
 	if (segment_D)
 	  seg.FineSegmentD(rep_V, rep_D, rep_J);
-	
-	if (seg.isSegmented())
 
+	
+          if (seg.isSegmented())
 	  {
 	    //cout << seg.toJson();
 	    json_data_segment[it->first]=seg.toJson(rep_V, rep_D, rep_J);
@@ -861,102 +870,102 @@ int main (int argc, char **argv)
             representatives_labels.push_back("#" + string_of_int(num_clone));
 	    cout << seg.info << endl ;
 
-            // We need to find the junction in the representative
-            size_t junction_pos = seg.getSequence().sequence.find(it->first);
+              // We need to find the junction in the representative
+              size_t junction_pos = seg.getSequence().sequence.find(it->first);
 
-            // Default
-	    int ww = 2*w/3 ; // /2 ;
+              // Default
+              int ww = 2*w/3 ; // /2 ;
 
-            if (junction_pos != string::npos) {
-              // for V.
-              ww = seg.getLeft() - junction_pos + seg.del_V;
-            } 
+              if (junction_pos != string::npos) {
+                // for V.
+                ww = seg.getLeft() - junction_pos + seg.del_V;
+              } 
             
 
-            string end_V ="";
+              string end_V ="";
 	    
-	    // avoid case when V is not in the junction
-	    if (seg.getLeft() > (int) junction_pos)
-	      end_V = rep_V.sequence(seg.best_V).substr(rep_V.sequence(seg.best_V).size() - ww, 
-							     ww - seg.del_V);
+              // avoid case when V is not in the junction
+              if (seg.getLeft() > (int) junction_pos)
+                end_V = rep_V.sequence(seg.best_V).substr(rep_V.sequence(seg.best_V).size() - ww, 
+                                                          ww - seg.del_V);
 
-	    string mid_D = "";
+              string mid_D = "";
 	    
-	    if (segment_D)
-	      mid_D = rep_D.sequence(seg.best_D).substr(seg.del_D_left, 
-				rep_D.sequence(seg.best_D).size() - seg.del_D_left - seg.del_D_right );
+              if (segment_D)
+                mid_D = rep_D.sequence(seg.best_D).substr(seg.del_D_left, 
+                                                          rep_D.sequence(seg.best_D).size() - seg.del_D_left - seg.del_D_right );
 	   
-            if (junction_pos != string::npos) {
-              // for J.
-              ww = (junction_pos + w - 1) - seg.getRight() + seg.del_J;
-            }
+              if (junction_pos != string::npos) {
+                // for J.
+                ww = (junction_pos + w - 1) - seg.getRight() + seg.del_J;
+              }
 	    
-	    string start_J = "";
+              string start_J = "";
 	    
-	    // avoid case when J is not in the junction
-	    if (seg.getRight() > (int) (junction_pos + w - 1))
-	      start_J=rep_J.sequence(seg.best_J).substr(seg.del_J, ww);
+              // avoid case when J is not in the junction
+              if (seg.getRight() > (int) (junction_pos + w - 1))
+                start_J=rep_J.sequence(seg.best_J).substr(seg.del_J, ww);
 	      
-	    best_V = rep_V.label(seg.best_V) ;
-	    if (segment_D) best_D = rep_D.label(seg.best_D) ;
-	    best_J = rep_J.label(seg.best_J) ;
+              best_V = rep_V.label(seg.best_V) ;
+              if (segment_D) best_D = rep_D.label(seg.best_D) ;
+              best_J = rep_J.label(seg.best_J) ;
 	    
-	    // TODO: pad aux dimensions exactes
-	    string pad_N = "NNNNNNNNNNNNNNNN" ;
+              // TODO: pad aux dimensions exactes
+              string pad_N = "NNNNNNNNNNNNNNNN" ;
 
-	    // Add V, (D) and J to junctions to be aligned
+              // Add V, (D) and J to junctions to be aligned
 	    
-	    out_junctions << ">" << best_V << "-junction" << endl ;
-	    out_junctions << end_V << pad_N << endl ;
-	    more_junctions++;
+              out_junctions << ">" << best_V << "-junction" << endl ;
+              out_junctions << end_V << pad_N << endl ;
+              more_junctions++;
 
-	    if (segment_D) {
-	      out_junctions << ">" << best_D << "-junction" << endl ;
-	      out_junctions << mid_D << endl ;   
-	      more_junctions++ ;
-	    }
+              if (segment_D) {
+                out_junctions << ">" << best_D << "-junction" << endl ;
+                out_junctions << mid_D << endl ;   
+                more_junctions++ ;
+              }
 	    
-	    out_junctions << ">" << best_J << "-junction" << endl ;
-	    out_junctions << pad_N << start_J <<  endl ;
-	    more_junctions++;
+              out_junctions << ">" << best_J << "-junction" << endl ;
+              out_junctions << pad_N << start_J <<  endl ;
+              more_junctions++;
 
-	    string code = seg.code ;
-	    int cc = clones_codes[code];
+              string code = seg.code ;
+              int cc = clones_codes[code];
 
-	    html << " &ndash; " << code << endl ;
+              html << " &ndash; " << code << endl ;
 
-	    if (cc)
-	      {
-		html << "<span class='alert'>" ;
-		out << " (similar to Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc << setfill(' ') << ")";
+              if (cc)
+                {
+                  html << "<span class='alert'>" ;
+                  out << " (similar to Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc << setfill(' ') << ")";
 
-		nb_edges++ ;
-		out_edges << clones_map_junctions[code] + " " + it->first + " "  ;
-		out_edges << code << "  " ;
-		out_edges << "Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc        << setfill(' ') << "  " ;
-		out_edges << "Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << setfill(' ') << "  " ;
-		out_edges << endl ;
+                  nb_edges++ ;
+                  out_edges << clones_map_junctions[code] + " " + it->first + " "  ;
+                  out_edges << code << "  " ;
+                  out_edges << "Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc        << setfill(' ') << "  " ;
+                  out_edges << "Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << setfill(' ') << "  " ;
+                  out_edges << endl ;
 
-		html << "</span>" ;
-	      }
-	    else
-	      {
-		clones_codes[code] = num_clone ;
-		clones_map_junctions[code] = it->first ;
-	      }
+                  html << "</span>" ;
+                }
+              else
+                {
+                  clones_codes[code] = num_clone ;
+                  clones_map_junctions[code] = it->first ;
+                }
 
-	    html << "</h3>" << endl ;
-	    html << "<pre>" << endl ;
+              html << "</h3>" << endl ;
+              html << "<pre>" << endl ;
       
-	    // html (test)
-	    seg.html(html, segment_D) ;
+              // html (test)
+              seg.html(html, segment_D) ;
 
-	    // display junction
-	    cout << setw(junction_pos) << " " << it->first << " " << junctions_labels[it->first] << endl ;
+              // display junction
+              cout << setw(junction_pos) << " " << it->first << " " << junctions_labels[it->first] << endl ;
 
-	    break ;
-	  } 
-	  
+              break ;
+            }
+        }
       }
 
       out << endl ;
@@ -1040,14 +1049,18 @@ int main (int argc, char **argv)
 
 	//
 
-        ReadChooser chooser(seqs_by_junction[it->first], *scorer);
-        Sequence representative = chooser.getBest() ;
-	representative.label = string_of_int(it->second) + "-" + representative.label ;
+        KmerRepresentativeComputer repComp(seqs_by_junction[it->first], k);
+        repComp.compute(true, min_cover_representative, ratio_representative);
 
-	FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
+        if (repComp.hasRepresentative()) {
+          Sequence representative = repComp.getRepresentative();
+          representative.label = string_of_int(it->second) + "-" 
+            + representative.label;
 
-	if (segment_D)
-	  seg.FineSegmentD(rep_V, rep_D, rep_J);
+          FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
+
+          if (segment_D)
+            seg.FineSegmentD(rep_V, rep_D, rep_J);
 		
 	if (seg.isSegmented())
 	  {
@@ -1057,62 +1070,62 @@ int main (int argc, char **argv)
 	    representatives_this_clone.push_back(seg.getSequence());
 	  }
 
-	/// TODO: et si pas isSegmented ?
+          /// TODO: et si pas isSegmented ?
 
-	bool warning = false;
+          bool warning = false;
 
-	if (num_seq <= 20) /////
-	  {
-	    out << setw(20) << representative.label << " " ;
+          if (num_seq <= 20) /////
+            {
+              out << setw(20) << representative.label << " " ;
 
-	    cout << "   " << junc ;
+              cout << "   " << junc ;
 
-	    // HTML pretty printing
-	    string junc_html ;
+              // HTML pretty printing
+              string junc_html ;
 
-	    if (seg.isSegmented())
-	      {
-		// We need to find the junction in the representative
+              if (seg.isSegmented())
+                {
+                  // We need to find the junction in the representative
 		
-		size_t junction_pos = seg.getSequence().sequence.find(it->first);
+                  size_t junction_pos = seg.getSequence().sequence.find(it->first);
 	    
-		junc_html = spanify_alignment_pos("seg_V", seg.getLeft() - junction_pos,
-                                                  "seg_n", seg.getLeftD() - junction_pos,
-						  "seg_D", seg.getRightD() - junction_pos,
-                                                  "seg_N",seg.getRight() - junction_pos,
-                                                  "seg_J",
-                                                  junc);
+                  junc_html = spanify_alignment_pos("seg_V", seg.getLeft() - junction_pos,
+                                                    "seg_n", seg.getLeftD() - junction_pos,
+                                                    "seg_D", seg.getRightD() - junction_pos,
+                                                    "seg_N",seg.getRight() - junction_pos,
+                                                    "seg_J",
+                                                    junc);
 
-		if (!code_representative.size())
-		  code_representative = seg.code_light ;
+                  if (!code_representative.size())
+                    code_representative = seg.code_light ;
 		
-		if (code_representative.compare(seg.code_light) != 0)
-		  warning = true ;
-	      }
-	    else
-	      {
-		junc_html = junc ; 
-	      }
+                  if (code_representative.compare(seg.code_light) != 0)
+                    warning = true ;
+                }
+              else
+                {
+                  junc_html = junc ; 
+                }
 
-	    html << "   " << junc_html ;
-	    // end HTML
+              html << "   " << junc_html ;
+              // end HTML
 
-	    out << " " << setw(WIDTH_NB_READS) << it->second << " " ;
+              out << " " << setw(WIDTH_NB_READS) << it->second << " " ;
 
-	    if (warning)
-	      html << "<span class='warning'>" ;
+              if (warning)
+                html << "<span class='warning'>" ;
 
-	    out << (warning ? "Â§ " : "  ") ;
-	    out << seg.info ;
+              out << (warning ? "Â§ " : "  ") ;
+              out << seg.info ;
 
-	    if (warning)
-	      html << "</span>" ;
+              if (warning)
+                html << "</span>" ;
 
-	    out << endl ;
-	  }
-
-	out_clone << seg ;
-	out_clone << endl ;
+              out << endl ;
+            }
+          out_clone << seg ;
+          out_clone << endl ;
+        }
       }
 
       if (good_msa)

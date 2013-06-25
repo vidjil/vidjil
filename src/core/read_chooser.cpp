@@ -5,29 +5,22 @@
 using namespace std;
 
 ReadChooser::ReadChooser(list<Sequence> &r, VirtualReadScore &scorer) {
-  float best_score = -1;
-  float current_score;
-
   for (list <Sequence>::const_iterator it = r.begin(); it != r.end(); ++it) {
-    current_score = scorer.getScore(it->sequence);
-    if (current_score > best_score) {
-      best_score = current_score;
-      best_sequence = *it;
-    }
+    scores[it->sequence] = scorer.getScore(it->sequence);
   }
-  // vector<Sequence> test(r.begin(), r.end());
-  // sort(test.begin(), test.end(), *this);
-  // reads = list<Sequence>(test.begin(), test.end());
+
+  reads.assign(r.begin(), r.end());
+  sort(reads.begin(), reads.end(), *this);
 }
 
 Sequence ReadChooser::getBest() const{
-  return best_sequence;
+  return reads[0];
 }
 
-// list<Sequence> ReadChooser::getSorted() const {
-//   return reads;
-// }
+Sequence ReadChooser::getithBest(size_t i) const {
+  return reads[i-1];
+}
 
-// bool ReadChooser::operator()(Sequence first, Sequence second) {
-//   return scorer.getScore(first.sequence) > scorer.getScore(second.sequence);
-// }
+bool ReadChooser::operator()(Sequence first, Sequence second) {
+  return scores[first.sequence] > scores[second.sequence];
+}
