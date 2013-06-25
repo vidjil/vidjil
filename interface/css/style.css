@@ -158,11 +158,13 @@ circle:hover {
   font-weight: bold;
 }
 
+.list{
+  padding: 3px;
+}
+
 .listElem{
   width :420px;
-  margin: auto;
   padding: 3px;
-  margin: 5px;
   height: 16px;
   cursor:pointer;
   -moz-transition: color  1.5s;
@@ -176,6 +178,7 @@ circle:hover {
 }
 
 .nameBox{
+  float: left;
   width :280px;
   overflow :hidden;
   display: inline-block;
@@ -193,9 +196,9 @@ circle:hover {
 }
 
 .delBox{
-  float: right;
+  float: left;
   border: solid;
-  margin-left:2px;
+  margin-right:2px;
   background-color: black;
   height: 10px;
   width: 10px;
@@ -212,6 +215,15 @@ circle:hover {
 .favBox{
   float: right;
   margin-right:2px;
+  height: 14px;
+  width: 14px;
+  display: inline-block;
+}
+
+.clusterBox{
+  float: left;
+  margin-right:2px;
+  margin-left:2px;
   height: 14px;
   width: 14px;
   display: inline-block;
@@ -246,11 +258,11 @@ circle:hover {
 }
 
 .graphLine{
-  -moz-transition: stroke  1.5s;
-  -webkit-transition: stroke 1.5s;
-  -o-transition: stroke  1.5s;
-  -ms-transition: stroke 1.5s;
-  transition: stroke 1.5s;
+  -moz-transition: stroke  1s;
+  -webkit-transition: stroke 1s;
+  -o-transition: stroke  1s;
+  -ms-transition: stroke 1s;
+  transition: stroke 1s;
  stroke-width : 1.5px;
  fill :none;
 }

@@ -216,9 +216,6 @@ function loadPref(){
     a.onclick=function(){ 
       var newName=document.getElementById("new_name").value;
       changeName(cloneID, newName);
-      displayInfo(cloneID);
-      document.getElementById(cloneID).firstChild.onclick=function(){ displayInfo(cloneID);};
-      document.getElementById("select"+cloneID).firstChild.nextSibling.onclick=function(){ displayInfo(cloneID);};
     }
     divParent.appendChild(a);
     
@@ -290,8 +287,8 @@ function initCoef(){
   else
     resizeCoef = resizeW;
   
-  $('#listFav').height((($('#left').height()-505))+"px");
-  $('#listClones').height((($('#left').height()-505))+"px");
+  $('#listFav').height((($('#left').height()-315))+"px");
+  $('#listClones').height((($('#left').height()-315))+"px");
   
   //recadrage des legendes si la methode de répartition utilisé a ce moment la en utilise
   if (splitMethod=="vj1" || splitMethod=="vj2") updateLegend();
@@ -352,7 +349,6 @@ function changeT(time){
   updateList();
   updateVis();
   updateLook();
-  displayInfo(info);
 }
   
 
@@ -766,7 +762,6 @@ function initVJposition(){
     var index = select.indexOf(cloneID);
     if (index == -1){
       select.push(cloneID);
-      displayInfo(cloneID);
       
       var div = document.createElement('div');
       div.id2=cloneID;
@@ -778,7 +773,6 @@ function initVJposition(){
       var span0 = document.createElement('span');
       span0.className = "nameBox";
       span0.ondblclick = function(){ editName(cloneID, this); }
-      span0.onclick=function(){ displayInfo(this.parentNode.id2); }
       span0.appendChild(document.createTextNode(getname(cloneID)));
       
       var span1 = document.createElement('span');
@@ -793,13 +787,11 @@ function initVJposition(){
 	fav.src="images/icon_fav_on.png";
 	fav.onclick=function(){ 
 	  addToList(cloneID); 
-	  displayInfo(cloneID);
 	}
       }else{
 	fav.src="images/icon_fav_off.png";
 	fav.onclick=function(){ 
 	  addToFavorites(cloneID);
-	  displayInfo(cloneID);
 	}
       }
       
@@ -880,6 +872,7 @@ function initVJposition(){
     data_graph[cloneIDa].id=constructPath(cloneIDa);
     data_graph[cloneIDb].display=false;
     
+    
     updateGraphDisplay();
     updateGraph();
     updateVis();
@@ -907,20 +900,20 @@ function initVJposition(){
       
       updateGraph();
       updateVis();
-      updateList();
       
       for (var i = 0; i < copy_select.length ; i++){
 	document.getElementById(copy_select[i]).style.display="none";
 	data_graph[copy_select[i]].display=false;
 	data_graph[copy_select[i]].select=false;
 	data_graph[copy_select[i]].path=constructPath(leader);
+	updateListElem(copy_select[i],false)
       }
       
+      updateListElem(leader,true)
       document.getElementById(leader).style.display="";
       data_graph[leader].display=true;
       data_graph[leader].select=true;
       setTimeout('updateGraphDisplay()',1000);
-      displayInfo(leader);
     }
   }
 
@@ -943,10 +936,12 @@ function initVJposition(){
     data_graph[cloneIDb].path=constructPath(cloneIDb);
     document.getElementById(cloneIDb).style.display="";
     
+    updateListElem(cloneIDa,true)
+    updateListElem(cloneIDb,false)
+    
     updateGraph();
     updateGraphDisplay();
     updateVis();
-    updateList(); 
   }
   
  
