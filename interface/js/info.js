@@ -23,46 +23,7 @@
  * -maj des % affiché en fonction du point de suivi
  */
   
-  
-  /*genere le contenu du panel d'information avec les données d'un clone 
-  function displayInfo(cloneID){
-    if (cloneID==-1) return;
-    info = cloneID;
-    
-    var divParent = document.getElementById("info");
-    divParent.innerHTML="";
-    
-      var div = document.createElement('div');
-      div.id2=cloneID;
-      div.id="info"+cloneID;
-      div.className="listElem";
-      div.onmouseover = function(){ focusIn(this.id2, 0); }
-      div.onmouseout= function(){ focusOut(this.id2); }
-      
-      var span0 = document.createElement('span');
-      span0.className = "nameBox";
-      span0.ondblclick = function(){ editName(cloneID, this); }
-      span0.appendChild(document.createTextNode(getname(cloneID)));
-      
-      var span1 = document.createElement('span');
-      span1.className = "colorBox";
-      span1.onclick=function(){ changeColor(this.parentNode.id2); }
-      
-      var fav=document.createElement('img')
-      fav.className = "favBox";
-      if (favorites.indexOf(cloneID) != -1 ){
-	fav.src="images/icon_fav_on.png";
-	fav.onclick=function(){ 
-	  addToList(cloneID); 
-	  displayInfo(cloneID);
-	}
-      }else{
-	fav.src="images/icon_fav_off.png";
-	fav.onclick=function(){ 
-	  addToFavorites(cloneID);
-	  displayInfo(cloneID);
-	}
-      }
+
       
       var span2=document.createElement('span')
       span2.className = "sizeBox";
@@ -71,7 +32,6 @@
       
       var img=document.createElement('img')
       img.className="delBox";
-      img.onclick=function(){ document.getElementById("info").innerHTML=""; }
       img.src="images/delete.png";
       
        
@@ -108,7 +68,6 @@
 	
 	var img=document.createElement('img');
 	img.onclick=function(){ split(cloneID, this.parentNode.id2);
-				displayInfo(cloneID);
 	}
 	img.src="images/delete.png";
 	img.className="delBox";
@@ -160,7 +119,7 @@
   }
   
   function showCluster(cloneID){
-    $("#cluster"+cloneID).toggle("slow");
+    $("#cluster"+cloneID).toggle("fast");
   }
   
   function div_elem(div_elem, cloneID){
@@ -188,7 +147,6 @@
 	fav.src="images/icon_fav_on.png";
 	fav.onclick=function(){ 
 	  addToList(this.parentNode.parentNode.id); 
-	  displayInfo(this.parentNode.parentNode.id);
 	}
       }else{
 	fav.src="images/icon_fav_off.png";
@@ -257,7 +215,6 @@
 	
 	var img=document.createElement('img');
 	img.onclick=function(){ split(cloneID, this.parentNode.id2);
-				displayInfo(cloneID);
 	}
 	img.src="images/delete.png";
 	img.className="delBox";
@@ -290,7 +247,6 @@
       document.getElementById("selectfav"+cloneID).src="images/icon_fav_on.png";
       document.getElementById("selectfav"+cloneID).onclick=function(){  
 	addToList(this.parentNode.parentNode.id2);
-	displayInfo(this.parentNode.parentNode.id2);
       };
     }
   }

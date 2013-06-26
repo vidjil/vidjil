@@ -8,7 +8,7 @@ html{
 
 body {
   background: none repeat scroll 0 0 #101010;
-  color: white;
+  color: #93a1a1;
   font-family: Arial, Helvetica, Sans-serif;
   font-size: 14px;
   height : 100%;
@@ -111,9 +111,12 @@ circle:hover {
 }
 
 #info{
-  background : #073642;
-  height :190px;
-  padding-top: 10px;
+  background : transparent;
+  height :50px;
+  width : 300px;
+  position : relative;
+  top : 25px;
+  float:right;
 }
 
 #listFav{
@@ -178,6 +181,7 @@ circle:hover {
 }
 
 .nameBox{
+  float: left;
   width :280px;
   overflow :hidden;
   display: inline-block;
@@ -234,6 +238,11 @@ circle:hover {
   left: 388px;
   top: 195px;
   display:none;
+}
+
+#svg{
+  position:relative;
+  top:-50px;
 }
 
 .axis{

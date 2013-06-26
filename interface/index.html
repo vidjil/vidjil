@@ -21,10 +21,12 @@
   </head>
 
   <body onload="initCoef();">
-    <div id="file_menu" style="position: fixed; top: 200px; margin-left:-200px;left:50% ;width: 400px; height: 60px;font-size: 14px; padding: 10px;">
+    <div id="file_menu" style="position: fixed; top: 200px; margin-left:-200px;left:50% ;width: 400px; height: 80px;font-size: 14px; padding: 10px;">
     	pref:<input id="upload_pref" type="file" name="pref" /></br>
-	data:<input id="upload_json" type="file" name="json" onchange="loadJson();" />
+	data:<input id="upload_json" type="file" name="json" /></br>
+	<button onclick="loadJson();">start</button> 
     </div>
+    
     <div onclick="showlog();" style="position: fixed; top: 5px; right:5px ;width: 2px; height: 2px;font-size: 14px;background-color: #333044; padding: 10px;"> </div>
  
     <div id="mid-container">
@@ -64,7 +66,8 @@
 	    <td>
 	      <a class="button" onclick="displayFavoris();">favoris</a>
 	      <a class="button" onclick="displayTop(5);">top 5</a>
-	      <a class="button" onclick="displayAll();">show all</a>
+	      <a class="button" onclick="displayTop(10);">top 10</a>
+	      <a class="button" onclick="displayAll();">tout</a>
 	    </td>
 	    </tr>
 	    
@@ -94,6 +97,7 @@
 	</span>
 	
 	<span id="visu" onclick="" onmouseover="hideAlign()">
+	  <div id="info"> info sur le point de suivi courant </br> date : ... </br> commentaire:(rechute/diag/...)</div>
 	  <script type="text/javascript" src="js/visu.js"> </script>
 	</span>
       </div>

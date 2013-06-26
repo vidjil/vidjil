@@ -197,9 +197,6 @@ function updateLook(){
   node.style("stroke", function(d) { return stroke(d.id); } )
   for(var i=0 ;i<totalClones; i++){
     document.getElementById(i).style.color=color(i);
-  if (document.getElementById("info"+select[i]) ){
-    document.getElementById("info"+select[i]).style.color=color(select[i]);
-  }
   }
   for(var i=0 ;i<select.length; i++){
     document.getElementById("select"+select[i]).style.color=color(select[i]);

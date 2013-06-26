@@ -64,8 +64,6 @@
     
     divParent.appendChild(li);
       
-    document.getElementById("log").innerHTML+="<br>[element id "+cloneID+"] >> segmenter";
-    $("#log").scrollTop(100000000000000);
       
     /*
       var li2 = document.createElement('li');

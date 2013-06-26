@@ -62,7 +62,6 @@ var t = 0;                    //point de suivi courant ( par defaut t=0 )
 var useCustomColor=true;      //utilisation des couleurs personalisées
 var select=[];                //liste des clones selectionnés
 limitClones=300;
-var info=-1;
 
 var colorV_begin=[255,241,22];//dégradé de couleur germline V
 var colorV_end=[193,17,118];
@@ -589,11 +588,8 @@ function initVJposition(){
 		  if(document.getElementById('select'+tmpID) ){
 		    document.getElementById('select'+tmpID).style.color=customColor[tmpID];
 		  }
-		  if(document.getElementById('info'+tmpID) ){
-		    document.getElementById('info'+tmpID).style.color=customColor[tmpID];
-		  }
-		  document.getElementById("log").innerHTML+="<br>"+tmpID+"/test/"+customColor[tmpID];
-		  $('#log').scrollTop(100000000000000);
+		  
+		  
 		  updateLook();
 		  updateGraph();
 	  }
@@ -704,14 +700,6 @@ function initVJposition(){
       list2.style.color='white';
     }
     
-    var list3 = document.getElementById("info"+cloneID);
-    if(list3){
-      list3.style.border='white';
-      list3.style.borderStyle='solid';
-      list3.style.padding='0px';
-      list3.style.color='white';
-    }
-    
     var line = document.getElementById("line"+cloneID);
     document.getElementById("svg2").appendChild(line);
     
@@ -719,7 +707,6 @@ function initVJposition(){
 
     updateGraphDisplay();
     
-    document.getElementById("log").innerHTML+="<br>[element id "+cloneID+" / "+junctions[cloneID].junction+"] focus on // size = "+getSize(cloneID);
     $("#log").scrollTop(100000000000000);
   }
   
@@ -740,14 +727,6 @@ function initVJposition(){
       list2.style.borderStyle='';
       list2.style.padding='';
       list2.style.color='';
-    }
-    
-    var list3 = document.getElementById("info"+cloneID);
-    if(list3){
-      list3.style.border='';
-      list3.style.borderStyle='';
-      list3.style.padding='';
-      list3.style.color='';
     }
     
     data_graph[cloneID].focus=false;
@@ -832,7 +811,6 @@ function initVJposition(){
     }
     if (index != -1){
       select.splice(index,1);
-      setTimeout('document.getElementById("info").innerHTML="";',200);
       var clone = document.getElementById("select"+tmpID);
       clone.parentNode.removeChild(clone);
       var listElem = document.getElementById("seq"+tmpID);
@@ -854,7 +832,6 @@ function initVJposition(){
     }
     
     select=[];
-    document.getElementById("info").innerHTML="";
     document.getElementById("listSelect").innerHTML="";
     document.getElementById("listSeq").innerHTML="";
     
