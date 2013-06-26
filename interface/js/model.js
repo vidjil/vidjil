@@ -580,23 +580,6 @@ function initVJposition(){
     tagID=cloneID;
     $('#tagSelector').show("slow");
   document.getElementById("tagname").innerHTML=getname(cloneID);
-  /*  $('#colorSelector').ColorPicker({
-	  flat:true,
-	  onSubmit: function(hsb, hex, rgb, el) {
-		  $(el).val(hex);
-		  document.getElementById('colorSelector').style.display='none';
-		  customColor[tmpID]="#"+hex;
-		  document.getElementById('color'+tmpID).style.background=customColor[tmpID];
-		  if(document.getElementById('select'+tmpID) ){
-		    document.getElementById('select'+tmpID).style.color=customColor[tmpID];
-		  }
-		  
-		  
-		  updateLook();
-		  updateGraph();
-	  }
-    })
-    */
   }
   
   var tagColor = [];
@@ -617,6 +600,7 @@ function initVJposition(){
     if(document.getElementById('select'+tagID) ){
       document.getElementById('select'+tagID).style.color=customColor[tagID];
     }
+    if (tag==8) { removeKey(customColor, tagID) }
     updateLook();
     updateGraph();
   }
@@ -929,4 +913,14 @@ function initVJposition(){
     updateVis();
   }
   
+  function removeKey(arrayName,key)
+  {
+    var x;
+    var tmpArray = new Array();
+    for(x in arrayName)
+    {
+      if(x!=key) { tmpArray[x] = arrayName[x]; }
+    }
+    return tmpArray;
+  }
  
