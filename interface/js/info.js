@@ -24,67 +24,6 @@
  */
   
 
-      
-      var span2=document.createElement('span')
-      span2.className = "sizeBox";
-      span2.id="size"+cloneID;
-      span2.appendChild(document.createTextNode((100*getSize(cloneID)).toFixed(4)+"%"));
-      
-      var img=document.createElement('img')
-      img.className="delBox";
-      img.src="images/delete.png";
-      
-       
-      div.appendChild(span0);
-      div.appendChild(img);
-      div.appendChild(span1);
-      div.appendChild(fav);
-      div.appendChild(span2);
-      div.style.color=color(cloneID);
-      divParent.appendChild(div);
-    
-    if (clones[cloneID].length>1){
-      
-      var div_cluster=document.createElement('div');
-      div_cluster.id="cluster";
-      div_cluster.appendChild(document.createTextNode("composition"));
-      
-    var clusterSize=0;
-    for(var j=0 ;j<clones[cloneID].length; j++){
-      clusterSize += junctions[clones[cloneID][j]].size[t];
-    }
-      
-      for (var i=0; i<clones[cloneID].length; i++){
-	
-	var div_clone=document.createElement('div');
-	div_clone.id2=clones[cloneID][i];
-	div_clone.className="listElem";
-	div_clone.style.color=color(clones[cloneID][i]);
-	
-	var span_name = document.createElement('span');
-        span_name.className = "nameBox";
-        span_name.appendChild(document.createTextNode( getcode(clones[cloneID][i]) ) );
-	div_clone.appendChild(span_name);
-	
-	var img=document.createElement('img');
-	img.onclick=function(){ split(cloneID, this.parentNode.id2);
-	}
-	img.src="images/delete.png";
-	img.className="delBox";
-	div_clone.appendChild(img);
-	
-	var span_stat=document.createElement('span');
-	span_stat.className="sizeBox";
-	span_stat.appendChild(document.createTextNode( (junctions[clones[cloneID][i]].size[t]*100/clusterSize).toFixed(2)+"%"));
-	div_clone.appendChild(span_stat);
-	
-	div_cluster.appendChild(div_clone);
-      }
-      divParent.appendChild(div_cluster);
-    }
-   
-  }
-  */
   
   function initList(data){
   var divParent = document.getElementById("listClones");
@@ -281,9 +220,13 @@
       }
       
       if (clones[i].length!=0 && fav){
-	document.getElementById(i).style.display="";
+	$("#"+i).show("slow");
+	document.getElementById("line"+i).style.opacity=1;
+	document.getElementById("circle"+i).style.opacity=1;
       }else{
-	document.getElementById(i).style.display="none";
+	$("#"+i).hide("slow");
+	document.getElementById("line"+i).style.opacity=0.4;
+	document.getElementById("circle"+i).style.opacity=0.5;
       }      
     }   
   }
@@ -292,9 +235,13 @@
 
     for (var i = 0; i < totalClones; i++){    
       if (clones[i].length!=0){
-	document.getElementById(i).style.display="";
+	$("#"+i).show("slow");
+	document.getElementById("line"+i).style.opacity=1;
+	document.getElementById("circle"+i).style.opacity=1;
       }else{
-	document.getElementById(i).style.display="none";
+	$("#"+i).hide("slow");
+	document.getElementById("line"+i).style.opacity=0.4;
+	document.getElementById("circle"+i).style.opacity=0.5;
       }     
     }
   }
@@ -303,9 +250,13 @@
 
     for (var i = 0; i < totalClones; i++){      
       if (clones[i].length!=0 && junctions[i].top <= top){
-	document.getElementById(i).style.display="";
+	$("#"+i).show("slow");
+	document.getElementById("line"+i).style.opacity=1;
+	document.getElementById("circle"+i).style.opacity=1;
       }else{
-	document.getElementById(i).style.display="none";
+	$("#"+i).hide("slow");
+	document.getElementById("line"+i).style.opacity=0.4;
+	document.getElementById("circle"+i).style.opacity=0.5;
       }      
     }   
   }
