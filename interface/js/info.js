@@ -82,7 +82,11 @@
       var fav=document.createElement('img')
       fav.className = "favBox";
       fav.id="fav"+cloneID;
-      if (favorites.indexOf(cloneID) != -1 ){
+      var f=false;
+      for (var j=0; j<favorites.length; j++){
+	if (favorites[j]==cloneID) f=true;
+      }
+      if (f){
 	fav.src="images/icon_fav_on.png";
 	fav.onclick=function(){ 
 	  addToList(this.parentNode.parentNode.id); 
@@ -173,7 +177,6 @@
   
   
   
-  /*pure manipulation du dom, deplace un element du container listClone vers favoris*/
   function addToFavorites(cloneID){
     favorites.push(cloneID);
     
@@ -191,7 +194,6 @@
   }
 
   
-  /*operation inverse*/
   function addToList(cloneID){
     var index = favorites.indexOf(cloneID);
     favorites.splice(index, 1);
@@ -225,7 +227,7 @@
 	document.getElementById("circle"+i).style.opacity=1;
       }else{
 	$("#"+i).hide("slow");
-	document.getElementById("line"+i).style.opacity=0.4;
+	document.getElementById("line"+i).style.opacity=0.5;
 	document.getElementById("circle"+i).style.opacity=0.5;
       }      
     }   
@@ -240,7 +242,7 @@
 	document.getElementById("circle"+i).style.opacity=1;
       }else{
 	$("#"+i).hide("slow");
-	document.getElementById("line"+i).style.opacity=0.4;
+	document.getElementById("line"+i).style.opacity=0.5;
 	document.getElementById("circle"+i).style.opacity=0.5;
       }     
     }
@@ -255,7 +257,7 @@
 	document.getElementById("circle"+i).style.opacity=1;
       }else{
 	$("#"+i).hide("slow");
-	document.getElementById("line"+i).style.opacity=0.4;
+	document.getElementById("line"+i).style.opacity=0.5;
 	document.getElementById("circle"+i).style.opacity=0.5;
       }      
     }   
