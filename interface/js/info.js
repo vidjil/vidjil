@@ -70,8 +70,7 @@
       var span0 = document.createElement('span');
       span0.className = "nameBox";
       span0.ondblclick = function(){ editName(this.parentNode.parentNode.id, this); }
-      span0.onclick=function(){ 
-	selectClone(this.parentNode.parentNode.id); }
+      span0.onclick=function(){ selectClone(this.parentNode.parentNode.id); }
       span0.appendChild(document.createTextNode(getname(cloneID)));
 
       var span1 = document.createElement('span');
@@ -101,6 +100,7 @@
       var span2=document.createElement('span')
       span2.className = "sizeBox";
       span2.id="size"+cloneID;
+      span2.onclick=function(){ selectClone(this.parentNode.parentNode.id); }
       span2.appendChild(document.createTextNode((100*getSize(cloneID)).toFixed(4)+"%"));
       
       var span3=document.createElement('span')

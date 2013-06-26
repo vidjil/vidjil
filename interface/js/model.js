@@ -217,7 +217,7 @@ function loadPref(){
       changeName(cloneID, newName);
     }
     divParent.appendChild(a);
-    
+    $('#new_name').select();
     
   }
 

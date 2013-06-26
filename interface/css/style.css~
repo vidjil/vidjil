@@ -180,13 +180,15 @@ circle:hover {
 
 }
 
-.nameBox{
+.nameBox {
   float: left;
-  width :280px;
-  overflow :hidden;
+  width: 280px;
+  overflow: hidden;
   display: inline-block;
-  height :14px;
-  margin-top:1px;
+  height: 18px;
+  padding-top: 6px;
+  top: -3px;
+  position: relative;
 }
 
 .colorBox{
@@ -196,6 +198,7 @@ circle:hover {
   height: 10px;
   width: 10px;
   display: inline-block;
+  color: white;
 }
 
 .delBox{
@@ -206,13 +209,18 @@ circle:hover {
   height: 10px;
   width: 10px;
   display: inline-block;
+  color: white;
 }
 
 .sizeBox{
   float: right;
   margin-right: 5px;
+  overflow: hidden;
   display: inline-block;
-  margin-top: 2px;
+  height: 18px;
+  padding-top: 6px;
+  top: -3px;
+  position: relative;
 }
 
 .favBox{
