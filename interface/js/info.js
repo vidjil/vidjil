@@ -32,7 +32,7 @@
       var div = document.createElement('div');
       div.className="list";
       div.id=i;
-      div.onmouseover = function(){ focusIn(this.id, 0); }
+      div.onmouseover = function(){ focusIn(this.id); }
       div.onmouseout= function(){ focusOut(this.id); }
       
       var div2 = document.createElement('div');

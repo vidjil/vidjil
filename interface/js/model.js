@@ -678,19 +678,9 @@ function initVJposition(){
    * cloneID : ID du clone a focus
    * move : 1 => ajustement de la liste au dessus de l'element focus
    */
-  function focusIn(cloneID, move){
+  function focusIn(cloneID){
     nodes[cloneID].focus = true;
     
-    if (move==1) {
-      /*
-      $('#listClones').stop();
-      var p = $("#"+cloneID);
-      var position = p.position();
-      var position2 = $('#listClones').scrollTop();
-      var diff=$('#menu').height()+$('#info').height()+$('#listFav').height()+50;
-      $('#listClones').animate({scrollTop: position2+position.top-diff}, 500);
-      */
-    }
     updateLook();
     
     document.getElementById("focus-sequence").innerHTML=getname(cloneID);
@@ -755,7 +745,7 @@ function initVJposition(){
       div.id2=cloneID;
       div.id="select"+cloneID;
       div.className="listElem";
-      div.onmouseover = function(){ focusIn(this.id2, 0); }
+      div.onmouseover = function(){ focusIn(this.id2); }
       div.onmouseout= function(){ focusOut(this.id2); }
       
       var span0 = document.createElement('span');

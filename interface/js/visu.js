@@ -62,7 +62,7 @@ function initVisu(){
       selectClone(i);
     })
     .on("mouseover", function(d,i){
-      focusIn(i, 1);
+      focusIn(i);
     })
      .on("mouseout", function(d,i){
       focusOut(i);

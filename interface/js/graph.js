@@ -161,7 +161,7 @@ function updateGraphDisplay(){
 
     vis2.selectAll("polyline")
     .on("mouseover", function(d){
-     if (d.display==true) focusIn(d.id, 1);
+     if (d.display==true) focusIn(d.id);
     })
     .on("mouseout", function(d){
      if (d.display==true) focusOut(d.id);
@@ -230,7 +230,7 @@ function updateGraph(){
     
   vis2.selectAll("polyline")
     .on("mouseover", function(d){
-     if (d.display==true) focusIn(d.id, 1);
+     if (d.display==true) focusIn(d.id);
     })
     .on("mouseout", function(d){
      if (d.display==true) focusOut(d.id);
