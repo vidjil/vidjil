@@ -154,7 +154,7 @@ function updateGraphDisplay(){
       if ( d.select==true ) return "3";
       return "";
     })
-    .style("stroke", function(d) { if (d.focus) return "#93a1a1";
+    .style("stroke", function(d) { if (d.focus) return "white";
 				   
 				    return color(d.id);
     })
@@ -200,6 +200,7 @@ function updateGraph(){
     .text( function (d) { return d.text; })
     .attr("fill", "#586e75")
     .attr("class", function(d) { if (d.class=="axis_v") return "axis_button"; })
+    .attr("id", function(d) { if (d.class=="axis_v") return ("time"+d.time); })
     .attr("y", function(d) { 
       if (d.class=="axis") return Math.floor(resizeG_H*d.y1);
       else return Math.floor(resizeG_H*(g_h));

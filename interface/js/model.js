@@ -344,6 +344,11 @@ function changeT(time){
 			x1 : graph_col[t], x2 : graph_col[t], 
 			y1 : g_h+20, y2 : 0, time: 0}
   
+  for (var i = 0 ; i<jsonData.total_size.length; i++){
+    document.getElementById("time"+i).style.fill="";
+  }
+  document.getElementById("time"+time).style.fill="white";
+  
   updateAxis();
   updateList();
   updateVis();
@@ -568,17 +573,14 @@ function initVJposition(){
 	return "rgb(20,226,89)"
   }
   
-  
-  /*fonction changeColor : déclenche l'apparition du colorpicker > choix d'une customColor pour un node*/
-  
-  //variable globale tampon (changecolor étant appelé depuis un element du dom qui subit une modification par la fonction
-  //la variable en input cloneID du dom peut etre perdu durant l'execution)
+  var tagID;
   var tmpID;
   
   function changeColor(cloneID){
-    tmpID=cloneID;
-    document.getElementById('colorSelector').style.display='block';
-    $('#colorSelector').ColorPicker({
+    tagID=cloneID;
+    $('#tagSelector').show("slow");
+  document.getElementById("tagname").innerHTML=getname(cloneID);
+  /*  $('#colorSelector').ColorPicker({
 	  flat:true,
 	  onSubmit: function(hsb, hex, rgb, el) {
 		  $(el).val(hex);
@@ -594,6 +596,29 @@ function initVJposition(){
 		  updateGraph();
 	  }
     })
+    */
+  }
+  
+  var tagColor = [];
+  tagColor[0]= "#dc322f";
+  tagColor[1]= "#cb4b16";
+  tagColor[2]= "#d33682";
+  tagColor[3]= "#268bd2";
+  tagColor[4]= "#6c71c4";
+  tagColor[5]= "#2aa198";
+  tagColor[6]= "#b58900";
+  tagColor[7]= "#859900";
+  tagColor[8]= "";
+  
+  function selectTag(tag){
+    $('#tagSelector').hide("slow");
+    customColor[tagID]=tagColor[tag];
+    document.getElementById('color'+tagID).style.background=customColor[tagID];
+    if(document.getElementById('select'+tagID) ){
+      document.getElementById('select'+tagID).style.color=customColor[tagID];
+    }
+    updateLook();
+    updateGraph();
   }
   
   
@@ -837,23 +862,6 @@ function initVJposition(){
     
     updateGraphDisplay();
     updateLook();
-  }
-  
-  function merge(cloneIDa, cloneIDb){
-    var nlist = clones[cloneIDa].concat(clones[cloneIDb]);
-    clones[cloneIDa] = nlist;
-    clones[cloneIDb] = [];
-    document.getElementById(cloneIDb).style.display="none";
-    data_graph[cloneIDb].id=cloneIDa;
-    data_graph[cloneIDb].id=constructPath(cloneIDa);
-    data_graph[cloneIDa].id=constructPath(cloneIDa);
-    data_graph[cloneIDb].display=false;
-    
-    
-    updateGraphDisplay();
-    updateGraph();
-    updateVis();
-    updateList();
   }
 
   function mergeSelection(){

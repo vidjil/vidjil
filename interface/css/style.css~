@@ -6,6 +6,10 @@ html{
   min-height: 650px
 }
 
+ul{
+  padding-left:2px;
+}
+
 body {
   background: none repeat scroll 0 0 #101010;
   color: #93a1a1;
@@ -108,6 +112,7 @@ circle:hover {
 
 #file_menu{
   background : #073642;
+  z-index:2;
 }
 
 #info{
@@ -185,7 +190,7 @@ circle:hover {
   width: 280px;
   overflow: hidden;
   display: inline-block;
-  height: 18px;
+  height: 16px;
   padding-top: 6px;
   top: -3px;
   position: relative;
@@ -217,7 +222,7 @@ circle:hover {
   margin-right: 5px;
   overflow: hidden;
   display: inline-block;
-  height: 18px;
+  height: 16px;
   padding-top: 6px;
   top: -3px;
   position: relative;
@@ -241,9 +246,10 @@ circle:hover {
 }
 
 
+
 #colorSelector{
   position: absolute;
-  left: 388px;
+  left: 450px;
   top: 195px;
   display:none;
 }
@@ -264,7 +270,7 @@ circle:hover {
 
 .axis_f{
   stroke-width: 50px;
-  opacity: 0.2;
+  opacity: 0.5;
 }
 
 .axis_button{
@@ -309,3 +315,67 @@ circle:hover {
 
 }
 
+#tagSelector{
+  position: absolute;
+  left: 450px;
+  top: 125px;
+  width: 230px;
+  height:300px;
+  background:#073642;
+  border:solid;
+  border-color:#002b36;
+  display:none;
+}
+
+.tagElem{
+  margin:6px;
+  height: 16px;
+  background: #002b36;
+  border:solid;
+  border-color: #002b36;
+}
+
+.tagElem:hover{
+  border-color: white;
+  cursor:pointer;
+}
+
+.tagColorBox {
+  float: left;
+  margin-right:6px;
+  height: 16px;
+  width: 16px;
+  display: inline-block;
+}
+
+.tagColor0{
+    background: #dc322f ;
+}
+
+.tagColor1{
+    background: #cb4b16 ;
+}
+
+.tagColor2{
+    background: #d33682 ;
+}
+
+.tagColor3{
+    background: #268bd2 ;
+}
+
+.tagColor4{
+    background: #6c71c4 ;
+}
+
+.tagColor5{
+    background: #2aa198;
+}
+
+.tagColor6{
+    background: #b58900 ;
+}
+
+.tagColor7{
+    background: #859900 ;
+}

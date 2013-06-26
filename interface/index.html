@@ -31,7 +31,6 @@
  
     <div id="mid-container">
       <!-- LEFT-CONTAINER -->
-      <div id="colorSelector"></div>
       <span id="left-container">
       
       <div id="left">
@@ -115,9 +114,45 @@
       </div>
     </div>
 	
-	
+
+    
     <div id="log" style="display:none; position: fixed; top: 50px;right: 10px;width: 500px; font-family : monaco,terminal,courier,system; height: 150px;overflow-y: scroll;font-size: 14px;background-color: #333044;opacity: 0.5;padding: 10px;">log </div>
-      
+    <div id="colorSelector"></div>
+    <div id="tagSelector">
+      choisir un tag pour : <div id=tagname></div>
+      <ul>
+	<li onClick="selectTag(0)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor0"></span> <span id="tag0">pathologique (big boss)</span></div>
+	</li>
+	<li onClick="selectTag(1)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor1"></span> <span id="tag1">pathologique 2 (boss)</span></div>
+	</li>
+	<li onClick="selectTag(2)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor2"></span> <span id="tag2">pathologique 3 (rookie)</span></div>
+	</li>
+	<li onClick="selectTag(3)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor3"></span> <span id="tag3">standard</span></div>
+	</li>
+	<li onClick="selectTag(4)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor4"></span> <span id="tag4">PBL</span></div>
+	</li>
+	<li onClick="selectTag(5)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor5"></span> <span id="tag5">tagname blabla</span></div>
+	</li>
+	<li onClick="selectTag(6)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor6"></span> <span id="tag6">tagname blabla</span></div>
+	</li>
+	<li onClick="selectTag(7)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor7"></span> <span id="tag7">tagname blabla</span></div>
+	</li>
+	<li onClick="selectTag(8)">
+	  <div class="tagElem" ><span class="tagColorBox "></span> <span id="tag8">notag</span></div>
+	</li>
+	
+      </ul>
+    </div>
+    
+    
   </body>
       
 </html>
