@@ -653,7 +653,8 @@ int main (int argc, char **argv)
       {
         junction junc = it->first;
       
-        if (!(seqs_by_window[junc].size() >= (size_t) min_reads_window) && !(windows_labels[junc].size()))
+        if (!(seqs_by_window[junc].size() >= (size_t) min_reads_window) && !(windows_labels.find(junc) == windows_labels.end()))
+
           {
             removes++ ;
             windows->store.erase(junc);
@@ -720,7 +721,7 @@ int main (int argc, char **argv)
 	bool labeled = false ;
 	// Is there a labeled window ?
 	for (list <junction>::const_iterator iit = clone.begin(); iit != clone.end(); ++iit) {
-	  if (windows_labels[*iit].size())
+	  if (windows_labels.find(*iit) != windows_labels.end())
 	    {
 	      labeled = true ;
 	      break ;
