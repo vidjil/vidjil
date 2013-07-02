@@ -346,7 +346,7 @@ int main (int argc, char **argv)
 	seed = string(optarg);
 	k = seed_weight(seed);
 #else
-        cerr << "The option -s is not available" << endl;
+        cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
 #endif
         break;
 	
@@ -394,6 +394,17 @@ int main (int argc, char **argv)
       exit(1);
     }
     
+
+
+#ifndef NO_SPACED_SEEDS
+  // Check seed buffer  
+  if (seed.size() >= MAX_SEED_SIZE)
+    {
+      cout << "Seed size is too large (MAX_SEED_SIZE). Aborting." << endl ;
+      exit(1);
+    }
+#endif
+
   // Check that out_dir is an existing directory or creates it
   const char *out_cstr = out_dir.c_str();
 
@@ -501,7 +512,6 @@ int main (int argc, char **argv)
   }
 
   out_dir += "/";
-
 
   ////////////////////////////////////////
   //           CLONE ANALYSIS           //
