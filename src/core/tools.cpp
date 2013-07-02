@@ -20,6 +20,10 @@ char spaced_buf[MAX_SEED_SIZE+1];
 
 string spaced(const string &input, const string &seed) {
 
+// #ifdef STATIC_SPACED_SEED_FOURTEEN
+//   return input.substr(0, 7) + input.substr(8, 7);
+// #endif
+
 #ifdef NO_SPACED_SEEDS
   return input ;
 #endif
