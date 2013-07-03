@@ -48,7 +48,7 @@ fi
 
 debug() {
     if [ ! -z "$DEBUG" ]; then
-        echo $* >&2
+        echo "$*" >&2
     fi
 }
 
@@ -131,8 +131,8 @@ while read line; do
                 skip=0
                 know_to_fail=0
 
-                pattern=$(cut -d: -f2- <<< $line)
-                nb_hits=$(cut -d: -f1 <<< $line)
+                pattern=$(cut -d: -f2- <<< "$line")
+                nb_hits=$(cut -d: -f1 <<< "$line")
 
                 if [ ${nb_hits:0:1} == "s" ]; then
                     skip=1  # We skip the test if it fails
@@ -141,7 +141,7 @@ while read line; do
                     know_to_fail=1 # We know the test fails, but don't fail globally
                     nb_hits=${nb_hits:1}
                 fi
-                debug "Grepping \"$pattern\" in $FILE_TO_GREP"
+                debug "Grepping $pattern in $FILE_TO_GREP"
                 if [ $(grep -cE "$pattern" $FILE_TO_GREP) -eq $nb_hits -o $skip -eq 1 ]; then
                     if [ $know_to_fail -eq 1 ]; then
                         echo "Warning: test $test_nb should have failed, but has not!" >&2

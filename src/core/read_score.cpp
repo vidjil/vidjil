@@ -53,3 +53,14 @@ void KmerAffectReadScore::setUnambiguousScore(float score) {
 void KmerAffectReadScore::setUnknownScore(float score) {
   unknown_score = score;
 }
+
+
+////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////  ReadLengthScore  ///////////////////////////////
+////////////////////////////////////////////////////////////////////////////////
+
+ReadLengthScore::ReadLengthScore(){}
+
+float ReadLengthScore::getScore(const string &sequence) const {
+  return sequence.size();
+}

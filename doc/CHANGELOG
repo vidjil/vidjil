@@ -1,4 +1,11 @@
-2013-04-18  The Vidjil Team 
+
+2013-07-03  The Vidjil Team
+	* New selection of representative read (core/read_chooser.cpp)
+	* Faster spaced seed computation (core/tools.cpp)
+	* New unit tests
+	* Bugs closed
+
+2013-04-18  The Vidjil Team
 
 	* First public release
 

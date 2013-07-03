@@ -44,6 +44,7 @@
 #include "core/html.h"
 #include "core/mkdir.h"
 #include "core/labels.h"
+#include "core/representative.h"
 
 #include "vidjil.h"
 
@@ -58,20 +59,20 @@
 
 // #define DEFAULT_READS  "./data/Stanford_S22.fa"
 #define DEFAULT_READS  "../seq/chr_pgm_50k.cut.fa"
-#define MIN_READS_JUNCTION 10
+#define MIN_READS_WINDOW 10
 #define MIN_READS_CLONE 100
 #define RATIO_READS_CLONE 0.1
 
-#define COMMAND_JUNCTIONS "junctions"
+#define COMMAND_WINDOWS "windows"
 #define COMMAND_ANALYSIS "clones"
 #define COMMAND_SEGMENT "segment"
  
-enum { CMD_JUNCTIONS, CMD_ANALYSIS, CMD_SEGMENT } ;
+enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 
 #define OUT_DIR "./out/" 
 #define HTML_FILENAME "clones.html"
 #define CLONE_FILENAME "clone.fa-"
-#define JUNCTIONS_FILENAME "junctions.fa"
+#define WINDOWS_FILENAME "windows.fa"
 #define SEQUENCES_FILENAME "sequences.fa"
 #define SEGMENTED_FILENAME "segmented.vdj.fa"
 #define EDGES_FILENAME "edges"
@@ -91,6 +92,9 @@ enum { CMD_JUNCTIONS, CMD_ANALYSIS, CMD_SEGMENT } ;
 
 #define DEFAULT_DELTA_MIN_D  0
 #define DEFAULT_DELTA_MAX_D  50
+
+#define DEFAULT_RATIO_REPRESENTATIVE 0.5
+#define DEFAULT_MIN_COVER_REPRESENTATIVE 5
 
 #define DEFAULT_EPSILON  0
 #define DEFAULT_MINPTS   10
@@ -114,7 +118,7 @@ void usage(char *progname)
   cerr << "Usage: " << progname << " [options] <reads.fa>" << endl << endl;
 
   cerr << "Command selection" << endl
-       << "  -c <command> \t" << COMMAND_JUNCTIONS << "\t junction extracting (default)" << endl 
+       << "  -c <command> \t" << COMMAND_WINDOWS << "\t window extracting (default)" << endl 
        << "  \t\t" << COMMAND_ANALYSIS  << "  \t clone analysis" << endl 
        << "  \t\t" << COMMAND_SEGMENT   << "  \t V(D)J segmentation" << endl
        << endl       
@@ -126,20 +130,20 @@ void usage(char *progname)
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa)" << endl
        << endl
 
-       << "Junction prediction" << endl
+       << "Window prediction" << endl
 #ifndef NO_SPACED_SEEDS
        << "  -s <string>   spaced seed used for the V/J affectation (default: " << DEFAULT_SEED << ")" << endl
 #endif
        << "  -k <int>      k-mer size used for the V/J affectation (default: " << DEFAULT_K << ")" << endl
-       << "  -w <int>      w-mer size used for the length of the extracted junction (default: " << DEFAULT_W << ")(default with -d: " << DEFAULT_W_D << ")" << endl
+       << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ")(default with -d: " << DEFAULT_W_D << ")" << endl
        << endl
 
-       << "Junction annotations" << endl
-       << "  -l <file>     labels for some junctions -- these junctions will be kept even if some limits are not reached" << endl
+       << "Window annotations" << endl
+       << "  -l <file>     labels for some windows -- these windows will be kept even if some limits are not reached" << endl
        << endl
 
-       << "Limit to keep a junction" << endl
-       << "  -r <nb>       minimal number of reads containing a junction (default: " << MIN_READS_JUNCTION << ")" << endl
+       << "Limit to keep a window" << endl
+       << "  -r <nb>       minimal number of reads containing a window (default: " << MIN_READS_WINDOW << ")" << endl
        << endl
 
        << "Clusterisation" << endl
@@ -212,12 +216,15 @@ int main (int argc, char **argv)
   int segment_D = 0;
   
   int verbose = 0 ;
-  int command = CMD_JUNCTIONS;
+  int command = CMD_WINDOWS;
 
-  int min_reads_junction = MIN_READS_JUNCTION ;
+  int min_reads_window = MIN_READS_WINDOW ;
   int min_reads_clone = MIN_READS_CLONE ;
   float ratio_reads_clone = RATIO_READS_CLONE;
   // int average_deletion = 4;     // Average number of deletion in V or J
+
+  size_t min_cover_representative = DEFAULT_MIN_COVER_REPRESENTATIVE;
+  float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
 
   // Admissible delta between left and right segmentation points
   int delta_min = DEFAULT_DELTA_MIN ; // Kmer+Fine
@@ -229,7 +236,7 @@ int main (int argc, char **argv)
 
   string forced_edges = "" ;
 
-  string junctions_labels_file = "" ;
+  string windows_labels_file = "" ;
 
   char c ;
 
@@ -252,7 +259,7 @@ int main (int argc, char **argv)
 	forced_edges = optarg;
 	break;
       case 'l':
-	junctions_labels_file = optarg; 
+	windows_labels_file = optarg; 
 	break;
       case 'x':
 	detailed_cluster_analysis = false;
@@ -262,8 +269,8 @@ int main (int argc, char **argv)
           command = CMD_ANALYSIS;
         else if (!strcmp(COMMAND_SEGMENT,optarg))
           command = CMD_SEGMENT;
-        else if (!strcmp(COMMAND_JUNCTIONS,optarg))
-          command = CMD_JUNCTIONS;
+        else if (!strcmp(COMMAND_WINDOWS,optarg))
+          command = CMD_WINDOWS;
         else {
           cerr << "Unknwown command " << optarg << endl;
 	  usage(argv[0]);
@@ -323,7 +330,7 @@ int main (int argc, char **argv)
         break;
 
       case 'r':
-	min_reads_junction = atoi(optarg);
+	min_reads_window = atoi(optarg);
         break;
 
       case '%':
@@ -339,7 +346,7 @@ int main (int argc, char **argv)
 	seed = string(optarg);
 	k = seed_weight(seed);
 #else
-        cerr << "The option -s is not available" << endl;
+        cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
 #endif
         break;
 	
@@ -387,6 +394,17 @@ int main (int argc, char **argv)
       exit(1);
     }
     
+
+
+#ifndef NO_SPACED_SEEDS
+  // Check seed buffer  
+  if (seed.size() >= MAX_SEED_SIZE)
+    {
+      cout << "Seed size is too large (MAX_SEED_SIZE). Aborting." << endl ;
+      exit(1);
+    }
+#endif
+
   // Check that out_dir is an existing directory or creates it
   const char *out_cstr = out_dir.c_str();
 
@@ -398,7 +416,7 @@ int main (int argc, char **argv)
   out_dir += "/" ;
 
   /// Load labels ;
-  map <string, string> junctions_labels = load_map(junctions_labels_file);
+  map <string, string> windows_labels = load_map(windows_labels_file);
 
   /// HTML output
   string f_html = out_dir + prefix_filename + HTML_FILENAME ;
@@ -430,7 +448,7 @@ int main (int argc, char **argv)
   teestream out(cout, html);
 
   switch(command) {
-  case CMD_JUNCTIONS: cout << "Extracting junctions" << endl; 
+  case CMD_WINDOWS: cout << "Extracting windows" << endl; 
     break;
   case CMD_ANALYSIS: cout << "Analysing clones" << endl; 
     break;
@@ -467,7 +485,7 @@ int main (int argc, char **argv)
   out << "# git: " ;
   out.flush();
   if (system("git log -1 --pretty=format:'%h (%ci)' --abbrev-commit") == -1) {
-    perror("Cannot launch git");
+    out << "<not in a git repository>";
   }
   out << endl ;
 #endif
@@ -495,11 +513,10 @@ int main (int argc, char **argv)
 
   out_dir += "/";
 
-
   ////////////////////////////////////////
   //           CLONE ANALYSIS           //
   ////////////////////////////////////////
-  if (command == CMD_ANALYSIS || command == CMD_JUNCTIONS) {
+  if (command == CMD_ANALYSIS || command == CMD_WINDOWS) {
 
     //////////////////////////////////
     out << "# seed = " << seed << endl ;
@@ -525,13 +542,13 @@ int main (int argc, char **argv)
     out << "  ==> " << f_segmented << endl ;
     ofstream out_segmented(f_segmented.c_str()) ;
 
-    out << "Loop through reads, looking for junctions" ;
+    out << "Loop through reads, looking for windows" ;
  
 
-    MapKmerStore<Kmer> *junctions = new MapKmerStore<Kmer>(w);
-    map <junction, list<Sequence> > seqs_by_junction ;
+    MapKmerStore<Kmer> *windows = new MapKmerStore<Kmer>(w);
+    map <junction, list<Sequence> > seqs_by_window ;
 
-    int too_short_for_the_junction = 0 ;
+    int too_short_for_the_window = 0 ;
     int nb_segmented = 0 ;
     int ok = 0 ;
     size_t nb_total_reads = 0;
@@ -565,11 +582,11 @@ int main (int argc, char **argv)
 
             if (junc.size())
               {
-                junctions->insert(junc, "bloup");
-                seqs_by_junction[junc].push_back(reads->getSequence());
+                windows->insert(junc, "bloup");
+                seqs_by_window[junc].push_back(reads->getSequence());
               }
 	    else
-	      too_short_for_the_junction++ ;
+	      too_short_for_the_window++ ;
 
 	    //////////////////////////////////
 	    // Output segmented
@@ -581,53 +598,54 @@ int main (int argc, char **argv)
       }
 
     out << endl;
-    out << "  ==> found " << seqs_by_junction.size() << " junctions"
-	<< " in " << nb_segmented << " segments"
-        << " (" << setprecision(3) << 100 * (float) nb_segmented / nb_total_reads << "%)  " 
-        << " (" << too_short_for_the_junction << " too short, "
-	<< setprecision(3) << 100 * (float) (nb_segmented - too_short_for_the_junction) / nb_total_reads << "% remaining)  " << endl 
+    out << "  ==> segmented " << nb_segmented << " reads"
+	<< " (" << setprecision(3) << 100 * (float) nb_segmented / nb_total_reads << "%)" 
+	<< endl ;
+
+    out << "  ==> found " << seqs_by_window.size() << " " << w << "-windows"
+	<< " in " << (nb_segmented - too_short_for_the_window) << " segments"
+	<< " (" << setprecision(3) << 100 * (float) (nb_segmented - too_short_for_the_window) / nb_total_reads << "%)"
 	<< " inside " << nb_total_reads << " sequences" << endl ;
   
-
 
     for (int i=0; i<STATS_SIZE; i++)
       out << "   " << left << setw(20) << segmented_mesg[i] << " -> " << stats_segmented[i] << endl ;
 
 
-    /// if (command == CMD_JUNCTIONS) /// on le fait meme si CMD_ANALYSIS
+    /// if (command == CMD_WINDOWS) /// on le fait meme si CMD_ANALYSIS
       {
 
 	//////////////////////////////////
-	// Sort junctions
+	// Sort windows
 	
-	out << "Sort junctions by number of occurrences" << endl;
-	list<pair <junction, int> > sort_all_junctions;
+	out << "Sort windows by number of occurrences" << endl;
+	list<pair <junction, int> > sort_all_windows;
 	
-	for (map <junction, list<Sequence> >::const_iterator it = seqs_by_junction.begin(); 
-	     it != seqs_by_junction.end(); ++it) 
+	for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin(); 
+	     it != seqs_by_window.end(); ++it) 
 	  {
-	    sort_all_junctions.push_back(make_pair(it->first, it->second.size()));
+	    sort_all_windows.push_back(make_pair(it->first, it->second.size()));
 	  }
 
-	sort_all_junctions.sort(pair_occurrence_sort<junction>);
+	sort_all_windows.sort(pair_occurrence_sort<junction>);
 
 	//////////////////////////////////
-	// Output junctions
+	// Output windows
 	//////////////////////////////////
 
-	string f_all_junctions = out_dir + prefix_filename + JUNCTIONS_FILENAME;
-	out << "  ==> " << f_all_junctions << endl ;
+	string f_all_windows = out_dir + prefix_filename + WINDOWS_FILENAME;
+	out << "  ==> " << f_all_windows << endl ;
 
-	ofstream out_all_junctions(f_all_junctions.c_str());
+	ofstream out_all_windows(f_all_windows.c_str());
 	int num_seq = 0 ;
 
-	for (list<pair <junction, int> >::const_iterator it = sort_all_junctions.begin(); 
-	     it != sort_all_junctions.end(); ++it) 
+	for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
+	     it != sort_all_windows.end(); ++it) 
 	  {
 	    num_seq++ ;
 	    
-	    out_all_junctions << ">" << it->second << "--junction--" << num_seq << " " << junctions_labels[it->first] << endl ;
-	    out_all_junctions << it->first << endl;
+	    out_all_windows << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
+	    out_all_windows << it->first << endl;
 	  }
 	
       }
@@ -636,37 +654,38 @@ int main (int argc, char **argv)
     if (command == CMD_ANALYSIS) {
 
     //////////////////////////////////
-    out << "Considering only junctions with >= " << min_reads_junction << " reads and labeled junctions" << endl;
+    out << "Considering only windows with >= " << min_reads_window << " reads and labeled windows" << endl;
 
     int removes = 0 ;
     int nb_reads = 0 ;
 
-    for (map <junction, list<Sequence> >::iterator it = seqs_by_junction.begin(); it != seqs_by_junction.end(); ++it)
+    for (map <junction, list<Sequence> >::iterator it = seqs_by_window.begin(); it != seqs_by_window.end(); ++it)
       {
         junction junc = it->first;
       
-        if (!(seqs_by_junction[junc].size() >= (size_t) min_reads_junction) && !(junctions_labels[junc].size()))
+        if (!(seqs_by_window[junc].size() >= (size_t) min_reads_window) && !(windows_labels.find(junc) == windows_labels.end()))
+
           {
             removes++ ;
-            junctions->store.erase(junc);
+            windows->store.erase(junc);
           }
         else
-          nb_reads += seqs_by_junction[junc].size() ;
+          nb_reads += seqs_by_window[junc].size() ;
       }
 	 
-    out << "  ==> keep " <<  seqs_by_junction.size() - removes << " junctions in " << nb_reads << " reads" ;
+    out << "  ==> keep " <<  seqs_by_window.size() - removes << " windows in " << nb_reads << " reads" ;
     out << " (" << setprecision(3) << 100 * (float) nb_reads / nb_total_reads << "%)  " << endl ;
 
     //////////////////////////////////
 
 
     // Clustering
-    list <list <junction> > clones_junctions;
-    comp_matrix comp=comp_matrix(junctions);
+    list <list <junction> > clones_windows;
+    comp_matrix comp=comp_matrix(windows);
 
     if (epsilon || forced_edges.size())
       {
-	out << "Cluster similar junctions" << endl ;
+	out << "Cluster similar windows" << endl ;
 
 	if (load_comp==1) 
 	  {
@@ -682,19 +701,19 @@ int main (int argc, char **argv)
 	    comp.save(( out_dir+prefix_filename + comp_filename).c_str());
 	  }
        
-	clones_junctions  = comp.cluster(forced_edges, w, out, epsilon, minPts) ;
-	comp.stat_cluster(clones_junctions, out_dir + prefix_filename + GRAPH_FILENAME, out );
+	clones_windows  = comp.cluster(forced_edges, w, out, epsilon, minPts) ;
+	comp.stat_cluster(clones_windows, out_dir + prefix_filename + GRAPH_FILENAME, out );
 	comp.del();
       } 
     else
       {
 	out << "No clustering" << endl ;
-	clones_junctions  = comp.nocluster() ;
+	clones_windows  = comp.nocluster() ;
       }
 
-    out << "  ==> " << clones_junctions.size() << " clones" << endl ;
+    out << "  ==> " << clones_windows.size() << " clones" << endl ;
  
-    map<string,Kmer> z = junctions->store;
+    map<string,Kmer> z = windows->store;
     
     // int size=z.size();
 
@@ -703,16 +722,16 @@ int main (int argc, char **argv)
 
     list<pair<list <junction>, int> >sort_clones;
 
-    for (list <list <junction> >::const_iterator it = clones_junctions.begin(); it != clones_junctions.end(); ++it)
+    for (list <list <junction> >::const_iterator it = clones_windows.begin(); it != clones_windows.end(); ++it)
       {
         list <junction>clone = *it ;
 
-        int clone_nb_reads = total_nb_reads(clone, seqs_by_junction);
+        int clone_nb_reads = total_nb_reads(clone, seqs_by_window);
 
 	bool labeled = false ;
-	// Is there a labeled junction ?
+	// Is there a labeled window ?
 	for (list <junction>::const_iterator iit = clone.begin(); iit != clone.end(); ++iit) {
-	  if (junctions_labels[*iit].size())
+	  if (windows_labels.find(*iit) != windows_labels.end())
 	    {
 	      labeled = true ;
 	      break ;
@@ -734,7 +753,7 @@ int main (int argc, char **argv)
     out << "Output clones with >= " << min_reads_clone << " reads" << endl ;
 
     map <string, int> clones_codes ;
-    map <string, string> clones_map_junctions ;
+    map <string, string> clones_map_windows ;
 
     list <Sequence> representatives ;
     list <string> representatives_labels ;
@@ -760,12 +779,16 @@ int main (int argc, char **argv)
       ++num_clone ;
       cout << "#### " ;
       string clone_file_name = out_dir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
-      string junctions_file_name = out_dir+ prefix_filename + JUNCTIONS_FILENAME + "-" + string_of_int(num_clone) ;
+      string windows_file_name = out_dir+ prefix_filename + WINDOWS_FILENAME + "-" + string_of_int(num_clone) ;
       string sequences_file_name = out_dir+ prefix_filename + SEQUENCES_FILENAME + "-" + string_of_int(num_clone) ;
 
       ofstream out_clone(clone_file_name.c_str());
-      ofstream out_junctions(junctions_file_name.c_str());
-      ofstream out_sequences(sequences_file_name.c_str());
+      ofstream out_windows(windows_file_name.c_str());
+      ofstream out_sequences;
+
+      if (output_sequences_by_cluster) {
+        out_sequences.open(sequences_file_name.c_str());
+      }
       
       html << "</pre>" << endl ;
 
@@ -779,30 +802,30 @@ int main (int argc, char **argv)
 
       //////////////////////////////////
 
-      list<pair<junction, int> >sort_junctions;
+      list<pair<junction, int> >sort_windows;
 
       for (list <junction>::const_iterator it = clone.begin(); it != clone.end(); ++it) {
-	int nb_reads = seqs_by_junction[*it].size();
-        sort_junctions.push_back(make_pair(*it, nb_reads));
+	int nb_reads = seqs_by_window[*it].size();
+        sort_windows.push_back(make_pair(*it, nb_reads));
       }
-      sort_junctions.sort(pair_occurrence_sort<junction>);
+      sort_windows.sort(pair_occurrence_sort<junction>);
 
-      // Output junctions 
+      // Output windows 
 
       int num_seq = 0 ;
       
-      for (list <pair<junction, int> >::const_iterator it = sort_junctions.begin(); 
-           it != sort_junctions.end(); ++it) {
+      for (list <pair<junction, int> >::const_iterator it = sort_windows.begin(); 
+           it != sort_windows.end(); ++it) {
 	num_seq++ ;
 
-        out_junctions << ">" << it->second << "--junction--" << num_seq << " " << junctions_labels[it->first] << endl ;
-	out_junctions << it->first << endl;
+        out_windows << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
+	out_windows << it->first << endl;
 
 	if ((!detailed_cluster_analysis) && (num_seq == 1))
 	  {
 	    out << "\t" << setw(WIDTH_NB_READS) << it->second << "\t";
 	    out << it->first ;
-	    out << "\t" << junctions_labels[it->first] ;
+	    out << "\t" << windows_labels[it->first] ;
 	  }
       }
 
@@ -818,137 +841,135 @@ int main (int argc, char **argv)
       string best_V ;
       string best_D ;
       string best_J ;
-      int more_junctions = 0 ;
+      int more_windows = 0 ;
       
-      for (list <pair<junction, int> >::const_iterator it = sort_junctions.begin(); 
-           it != sort_junctions.end(); ++it) {
+      for (list <pair<junction, int> >::const_iterator it = sort_windows.begin(); 
+           it != sort_windows.end(); ++it) {
 
 	// Choose one representative
-	cout << "[choose " ;
-	cout.flush();
 
-        ReadChooser chooser(seqs_by_junction[it->first], *scorer);
-        Sequence representative = chooser.getBest() ;
-	representative.label = string_of_int(it->second) + "-" + representative.label ;
+        KmerRepresentativeComputer repComp(seqs_by_window[it->first], k);
+        repComp.compute(true, min_cover_representative, ratio_representative);
+
+        if (repComp.hasRepresentative()) {
+          Sequence representative = repComp.getRepresentative();
+          representative.label = string_of_int(it->second) + "-" 
+            + representative.label;
 	
-	cout << "ok] ";
-	cout.flush()  ;
-	
-	
-	FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
+          FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 		  
-	if (segment_D)
-	  seg.FineSegmentD(rep_V, rep_D, rep_J);
+          if (segment_D)
+            seg.FineSegmentD(rep_V, rep_D, rep_J);
 	
-	if (seg.isSegmented())
+          if (seg.isSegmented())
 
-	  {
-	    // As soon as one representative is segmented
+            {
+              // As soon as one representative is segmented
 
-	    representatives.push_back(seg.getSequence());
-            representatives_labels.push_back("#" + string_of_int(num_clone));
-	    cout << seg.info << endl ;
+              representatives.push_back(seg.getSequence());
+              representatives_labels.push_back("#" + string_of_int(num_clone));
+              cout << seg.info << endl ;
 
-            // We need to find the junction in the representative
-            size_t junction_pos = seg.getSequence().sequence.find(it->first);
+              // We need to find the window in the representative
+              size_t window_pos = seg.getSequence().sequence.find(it->first);
 
-            // Default
-	    int ww = 2*w/3 ; // /2 ;
+              // Default
+              int ww = 2*w/3 ; // /2 ;
 
-            if (junction_pos != string::npos) {
-              // for V.
-              ww = seg.getLeft() - junction_pos + seg.del_V;
-            } 
+              if (window_pos != string::npos) {
+                // for V.
+                ww = seg.getLeft() - window_pos + seg.del_V;
+              } 
             
 
-            string end_V ="";
+              string end_V ="";
 	    
-	    // avoid case when V is not in the junction
-	    if (seg.getLeft() > (int) junction_pos)
-	      end_V = rep_V.sequence(seg.best_V).substr(rep_V.sequence(seg.best_V).size() - ww, 
-							     ww - seg.del_V);
+              // avoid case when V is not in the window
+              if (seg.getLeft() > (int) window_pos)
+                end_V = rep_V.sequence(seg.best_V).substr(rep_V.sequence(seg.best_V).size() - ww, 
+                                                          ww - seg.del_V);
 
-	    string mid_D = "";
+              string mid_D = "";
 	    
-	    if (segment_D)
-	      mid_D = rep_D.sequence(seg.best_D).substr(seg.del_D_left, 
-				rep_D.sequence(seg.best_D).size() - seg.del_D_left - seg.del_D_right );
+              if (segment_D)
+                mid_D = rep_D.sequence(seg.best_D).substr(seg.del_D_left, 
+                                                          rep_D.sequence(seg.best_D).size() - seg.del_D_left - seg.del_D_right );
 	   
-            if (junction_pos != string::npos) {
-              // for J.
-              ww = (junction_pos + w - 1) - seg.getRight() + seg.del_J;
-            }
+              if (window_pos != string::npos) {
+                // for J.
+                ww = (window_pos + w - 1) - seg.getRight() + seg.del_J;
+              }
 	    
-	    string start_J = "";
+              string start_J = "";
 	    
-	    // avoid case when J is not in the junction
-	    if (seg.getRight() > (int) (junction_pos + w - 1))
-	      start_J=rep_J.sequence(seg.best_J).substr(seg.del_J, ww);
+              // avoid case when J is not in the window
+              if (seg.getRight() > (int) (window_pos + w - 1))
+                start_J=rep_J.sequence(seg.best_J).substr(seg.del_J, ww);
 	      
-	    best_V = rep_V.label(seg.best_V) ;
-	    if (segment_D) best_D = rep_D.label(seg.best_D) ;
-	    best_J = rep_J.label(seg.best_J) ;
+              best_V = rep_V.label(seg.best_V) ;
+              if (segment_D) best_D = rep_D.label(seg.best_D) ;
+              best_J = rep_J.label(seg.best_J) ;
 	    
-	    // TODO: pad aux dimensions exactes
-	    string pad_N = "NNNNNNNNNNNNNNNN" ;
+              // TODO: pad aux dimensions exactes
+              string pad_N = "NNNNNNNNNNNNNNNN" ;
 
-	    // Add V, (D) and J to junctions to be aligned
+              // Add V, (D) and J to windows to be aligned
 	    
-	    out_junctions << ">" << best_V << "-junction" << endl ;
-	    out_junctions << end_V << pad_N << endl ;
-	    more_junctions++;
+              out_windows << ">" << best_V << "-window" << endl ;
+              out_windows << end_V << pad_N << endl ;
+              more_windows++;
 
-	    if (segment_D) {
-	      out_junctions << ">" << best_D << "-junction" << endl ;
-	      out_junctions << mid_D << endl ;   
-	      more_junctions++ ;
-	    }
+              if (segment_D) {
+                out_windows << ">" << best_D << "-window" << endl ;
+                out_windows << mid_D << endl ;   
+                more_windows++ ;
+              }
 	    
-	    out_junctions << ">" << best_J << "-junction" << endl ;
-	    out_junctions << pad_N << start_J <<  endl ;
-	    more_junctions++;
+              out_windows << ">" << best_J << "-window" << endl ;
+              out_windows << pad_N << start_J <<  endl ;
+              more_windows++;
 
-	    string code = seg.code ;
-	    int cc = clones_codes[code];
+              string code = seg.code ;
+              int cc = clones_codes[code];
 
-	    html << " &ndash; " << code << endl ;
+              html << " &ndash; " << code << endl ;
 
-	    if (cc)
-	      {
-		html << "<span class='alert'>" ;
-		out << " (similar to Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc << setfill(' ') << ")";
+              if (cc)
+                {
+                  html << "<span class='alert'>" ;
+                  out << " (similar to Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc << setfill(' ') << ")";
 
-		nb_edges++ ;
-		out_edges << clones_map_junctions[code] + " " + it->first + " "  ;
-		out_edges << code << "  " ;
-		out_edges << "Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc        << setfill(' ') << "  " ;
-		out_edges << "Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << setfill(' ') << "  " ;
-		out_edges << endl ;
+                  nb_edges++ ;
+                  out_edges << clones_map_windows[code] + " " + it->first + " "  ;
+                  out_edges << code << "  " ;
+                  out_edges << "Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc        << setfill(' ') << "  " ;
+                  out_edges << "Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << setfill(' ') << "  " ;
+                  out_edges << endl ;
 
-		html << "</span>" ;
-	      }
-	    else
-	      {
-		clones_codes[code] = num_clone ;
-		clones_map_junctions[code] = it->first ;
-	      }
+                  html << "</span>" ;
+                }
+              else
+                {
+                  clones_codes[code] = num_clone ;
+                  clones_map_windows[code] = it->first ;
+                }
 
-	    html << "</h3>" << endl ;
-	    html << "<pre>" << endl ;
+              html << "</h3>" << endl ;
+              html << "<pre>" << endl ;
       
-	    // html (test)
-	    seg.html(html, segment_D) ;
+              // html (test)
+              seg.html(html, segment_D) ;
 
-	    // display junction
-	    cout << setw(junction_pos) << " " << it->first << " " << junctions_labels[it->first] << endl ;
+              // display window
+              cout << setw(window_pos) << " " << it->first << " " << windows_labels[it->first] << endl ;
 
-	    break ;
-	  }
-	  
+              break ;
+            }
+        }
       }
 
       out << endl ;
-      out_junctions.close();
+      out_windows.close();
 
       html << "</pre>" << endl ;
       html << "<div  id='detail-" << num_clone << "' style='display:none;'>"
@@ -958,19 +979,19 @@ int main (int argc, char **argv)
       bool good_msa = false ;
 
       // TODO: do something if no sequences have been segmented !
-      if (!more_junctions)
+      if (!more_windows)
 	{
 	  out << "!! No segmented sequence, deleting clone" << endl ;
 	  // continue ;
 	} else 
         {
-          msa = multiple_seq_align(junctions_file_name);
+          msa = multiple_seq_align(windows_file_name);
         
-          // Alignment of junctions
+          // Alignment of windows
           
           if (!msa.empty())
             {
-              if (msa.size() == sort_junctions.size() + more_junctions)
+              if (msa.size() == sort_windows.size() + more_windows)
                 {
                   // out << "clustalw parse: success" << endl ;
                   good_msa = true ;
@@ -989,8 +1010,8 @@ int main (int argc, char **argv)
       list <Sequence> representatives_this_clone ;
       string code_representative = "";
 
-      for (list <pair<junction, int> >::const_iterator it = sort_junctions.begin(); 
-           it != sort_junctions.end(); ++it) {
+      for (list <pair<junction, int> >::const_iterator it = sort_windows.begin(); 
+           it != sort_windows.end(); ++it) {
 
 	num_seq++ ;
 
@@ -1006,7 +1027,7 @@ int main (int argc, char **argv)
 	    msa.pop_back();
 	  }
 
-        out_clone << ">" << it->second << "--junction--" << num_seq << " " << junctions_labels[it->first] << endl ;
+        out_clone << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
 	out_clone << it->first << endl;
 
 
@@ -1015,10 +1036,10 @@ int main (int argc, char **argv)
 
 	if (output_sequences_by_cluster)
 	  {
-	    out_sequences << ">" << it->second << "--junction--" << num_seq << " " << junctions_labels[it->first] << endl ;
+	    out_sequences << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
 	    out_sequences << it->first << endl;
 
-	    list<Sequence> sequences = seqs_by_junction[it->first] ;
+	    list<Sequence> sequences = seqs_by_window[it->first] ;
 	    
 	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
 	      {
@@ -1028,76 +1049,80 @@ int main (int argc, char **argv)
 
 	//
 
-        ReadChooser chooser(seqs_by_junction[it->first], *scorer);
-        Sequence representative = chooser.getBest() ;
-	representative.label = string_of_int(it->second) + "-" + representative.label ;
+        KmerRepresentativeComputer repComp(seqs_by_window[it->first], k);
+        repComp.compute(true, min_cover_representative, ratio_representative);
 
-	FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
+        if (repComp.hasRepresentative()) {
+          Sequence representative = repComp.getRepresentative();
+          representative.label = string_of_int(it->second) + "-" 
+            + representative.label;
 
-	if (segment_D)
-	  seg.FineSegmentD(rep_V, rep_D, rep_J);
+          FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
+
+          if (segment_D)
+            seg.FineSegmentD(rep_V, rep_D, rep_J);
 		
-	if (seg.isSegmented())
-	  {
-	    representatives_this_clone.push_back(seg.getSequence());
-	  }
+          if (seg.isSegmented())
+            {
+              representatives_this_clone.push_back(seg.getSequence());
+            }
 
-	/// TODO: et si pas isSegmented ?
+          /// TODO: et si pas isSegmented ?
 
-	bool warning = false;
+          bool warning = false;
 
-	if (num_seq <= 20) /////
-	  {
-	    out << setw(20) << representative.label << " " ;
+          if (num_seq <= 20) /////
+            {
+              out << setw(20) << representative.label << " " ;
 
-	    cout << "   " << junc ;
+              cout << "   " << junc ;
 
-	    // HTML pretty printing
-	    string junc_html ;
+              // HTML pretty printing
+              string junc_html ;
 
-	    if (seg.isSegmented())
-	      {
-		// We need to find the junction in the representative
+              if (seg.isSegmented())
+                {
+                  // We need to find the window in the representative
 		
-		size_t junction_pos = seg.getSequence().sequence.find(it->first);
+                  size_t window_pos = seg.getSequence().sequence.find(it->first);
 	    
-		junc_html = spanify_alignment_pos("seg_V", seg.getLeft() - junction_pos,
-                                                  "seg_n", seg.getLeftD() - junction_pos,
-						  "seg_D", seg.getRightD() - junction_pos,
-                                                  "seg_N",seg.getRight() - junction_pos,
-                                                  "seg_J",
-                                                  junc);
+                  junc_html = spanify_alignment_pos("seg_V", seg.getLeft() - window_pos,
+                                                    "seg_n", seg.getLeftD() - window_pos,
+                                                    "seg_D", seg.getRightD() - window_pos,
+                                                    "seg_N",seg.getRight() - window_pos,
+                                                    "seg_J",
+                                                    junc);
 
-		if (!code_representative.size())
-		  code_representative = seg.code_light ;
+                  if (!code_representative.size())
+                    code_representative = seg.code_light ;
 		
-		if (code_representative.compare(seg.code_light) != 0)
-		  warning = true ;
-	      }
-	    else
-	      {
-		junc_html = junc ; 
-	      }
+                  if (code_representative.compare(seg.code_light) != 0)
+                    warning = true ;
+                }
+              else
+                {
+                  junc_html = junc ; 
+                }
 
-	    html << "   " << junc_html ;
-	    // end HTML
+              html << "   " << junc_html ;
+              // end HTML
 
-	    out << " " << setw(WIDTH_NB_READS) << it->second << " " ;
+              out << " " << setw(WIDTH_NB_READS) << it->second << " " ;
 
-	    if (warning)
-	      html << "<span class='warning'>" ;
+              if (warning)
+                html << "<span class='warning'>" ;
 
-	    out << (warning ? "Â§ " : "  ") ;
-	    out << seg.info ;
+              out << (warning ? "Â§ " : "  ") ;
+              out << seg.info ;
 
-	    if (warning)
-	      html << "</span>" ;
+              if (warning)
+                html << "</span>" ;
 
-	    out << endl ;
-	  }
-
-	out_clone << seg ;
-	out_clone << endl ;
+              out << endl ;
+            }
+          out_clone << seg ;
+          out_clone << endl ;
+        }
       }
 
       if (good_msa)
@@ -1168,7 +1193,7 @@ int main (int argc, char **argv)
     }
     
     delete index ;
-    delete junctions;
+    delete windows;
     
   } else if (command == CMD_SEGMENT) {
     ////////////////////////////////////////

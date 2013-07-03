@@ -45,7 +45,7 @@ make data
    # Immunol, 184(12), 6986–92.
 
 make germline
-   # get IMGT germline databases -- you have to agree to IMGT license: 
+   # get IMGT germline databases (IMGT/GENE-DB) -- you have to agree to IMGT license: 
    # academic research only, provided that it is referred to IMGT®,
    # and cited as "IMGT®, the international ImMunoGeneTics information system® 
    # http://www.imgt.org (founder and director: Marie-Paule Lefranc, Montpellier, France). 
