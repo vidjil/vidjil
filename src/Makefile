@@ -1,5 +1,5 @@
 CC=g++
-OPTIM=-O2 -DNO_SPACED_SEEDS
+OPTIM=-O2 
 CFLAGS=-W -Wall $(OPTIM) $(DEBUG)
 LDFLAGS=
 EXEC=vidjil kmer kmer_count cut count detailed_affect
@@ -11,6 +11,18 @@ LIBCORE=core.a
 BINDIR=..
 
 v: vidjil
+
+
+spaced: cleanspaced
+	make
+
+nospaced: cleanspaced
+	make OPTIM="-O2 -DNO_SPACED_SEEDS"
+
+cleanspaced:
+	rm vidjil.o core/tools.o
+
+
 
 all: $(EXEC)
 

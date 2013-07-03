@@ -1,7 +1,7 @@
 !LAUNCH: ../../vidjil -c clones -G ../../germline/IGH -x -r 1 -R 5 -n 5 -d ../../data/clones_simul.fa
 
-$ Junction extractions
-1:found 20 50-junctions in 47 segments
+$ Window extractions
+1:found 20 50-windows in 47 segments
 
 $ Some clustering
 1:==> 2 clones
