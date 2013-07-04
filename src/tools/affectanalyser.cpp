@@ -13,18 +13,17 @@ using namespace std;
 int main(int argc, char **argv) {
   int k = 14;
   bool rc = true;
-  Fasta seqV("data/Repertoire/TRGV.fa");
-  Fasta seqJ("data/Repertoire/TRGJ.fa");
-  string input_file = "data/leukemia.fa";
   list<Sequence> sequences;
+  string input_file;
 
-  if (argc > 1) {
-    if (string(argv[1]) == "-h") {
-      cerr << "Usage: " << argv[0] << " [file]" << endl;
+  if ((argc > 1 && string(argv[1]) == "-h") || argc <= 3) {
+      cerr << "Usage: " << argv[0] << " repV repJ input_file" << endl;
       exit(1);
-    }
-    input_file = argv[1];
   }
+
+  Fasta seqV(argv[1]);
+  Fasta seqJ(argv[2]);
+  input_file = argv[3];
 
   Fasta seq(input_file);
 
