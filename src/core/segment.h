@@ -126,9 +126,12 @@ class KmerSegmenter : public Segmenter
    *        so that the segmentation is accepted 
    *        (left bound: end of V, right bound : start of J)
    * @param stats: integer array (of size STATS_SIZE) to store statistics
+   * @param out_unsegmented: ostream& to output unsegmented sequences
    */
   KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index, 
-		int delta_min, int delta_max, int *stats, Cost custom_cost);
+		int delta_min, int delta_max, int *stats, 
+		Cost custom_cost, /// TODO: custom_cost should disappear here
+		ostream &out_unsegmented);
 };
 
 class FineSegmenter : public Segmenter

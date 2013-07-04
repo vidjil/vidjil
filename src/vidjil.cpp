@@ -75,6 +75,7 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define WINDOWS_FILENAME "windows.fa"
 #define SEQUENCES_FILENAME "sequences.fa"
 #define SEGMENTED_FILENAME "segmented.vdj.fa"
+#define UNSEGMENTED_FILENAME "unsegmented.fa"
 #define EDGES_FILENAME "edges"
 #define COMP_FILENAME "comp.data"
 #define GRAPH_FILENAME "graph"
@@ -542,6 +543,10 @@ int main (int argc, char **argv)
     out << "  ==> " << f_segmented << endl ;
     ofstream out_segmented(f_segmented.c_str()) ;
 
+    string f_unsegmented = out_dir + prefix_filename + UNSEGMENTED_FILENAME ;
+    out << "  ==> " << f_unsegmented << endl ;
+    ofstream out_unsegmented(f_unsegmented.c_str()) ;
+
     out << "Loop through reads, looking for windows" ;
  
 
@@ -564,7 +569,7 @@ int main (int argc, char **argv)
         if (verbose)
           out << endl << endl << reads->getSequence().label << endl;
        
-        KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max_kmer, stats_segmented, segment_cost);
+        KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max_kmer, stats_segmented, segment_cost, out_unsegmented);
         if (verbose)
 	  out << seg;
 	  
