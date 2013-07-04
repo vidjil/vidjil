@@ -307,24 +307,22 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
       // Yes, it is segmented
 
       reversed = (strand == -1); 
+      because = reversed ? SEG_MINUS : SEG_PLUS ;
 
       info = string_of_int(left + FIRST_POS) + " " + string_of_int(right + FIRST_POS)  ;
       info += " " + removeChevauchement();
       finishSegmentation();
-
-      // cout << "ok" << endl ;
-
-      stats[reversed ? SEG_MINUS : SEG_PLUS]++ ;
     }
-  else
+
+  if (true)
     {
       // Dump sequence in unsegmented, with kaa and cause
       out_unsegmented << seq ;
       out_unsegmented << kaa->toString() << endl ;
       out_unsegmented << "#" << segmented_mesg[because] << endl << endl ;
-      stats[because]++ ;
-      return ;
     }
+
+  stats[because]++ ;      
   delete kaa;
 }
 

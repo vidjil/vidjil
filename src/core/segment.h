@@ -16,7 +16,7 @@ using namespace std;
 enum SEGMENTED { DONT_KNOW, SEG_PLUS, SEG_MINUS, UNSEG_TOO_SHORT, UNSEG_STRAND_NOT_CONSISTENT, 
 		 UNSEG_TOO_FEW_ZERO,  UNSEG_TOO_FEW_V, UNSEG_TOO_FEW_J, 
 		 UNSEG_BAD_DELTA_MIN, UNSEG_BAD_DELTA_MAX, STATS_SIZE } ;
-const char* const segmented_mesg[] = { "?", "+", "-", "UNSEG too short", "UNSEG strand",  
+const char* const segmented_mesg[] = { "?", "SEG_+", "SEG_-", "UNSEG too short", "UNSEG strand",  
 				       "UNSEG too few (zero)", "UNSEG too few V", "UNSEG too few J",
 				       "UNSEG < delta_min", "UNSEG > delta_max" } ;
 
