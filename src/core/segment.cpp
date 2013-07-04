@@ -287,19 +287,19 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
   
   if (segmented)
     {
-  // Now we check the delta between left and right
+      // Now we check the delta between left and right
    
-  if (right - left < delta_min)
-  {
-    because = UNSEG_BAD_DELTA_MIN ;
-    segmented = false ;
-  }
+      if (right - left < delta_min)
+	{
+	  because = UNSEG_BAD_DELTA_MIN ;
+	  segmented = false ;
+	}
 
-  if (right - left > delta_max)
-  {
-    because = UNSEG_BAD_DELTA_MAX ;
-    segmented = false ;
-  }
+      if (right - left > delta_max)
+	{
+	  because = UNSEG_BAD_DELTA_MAX ;
+	  segmented = false ;
+	}
     }
 
   if (segmented)
