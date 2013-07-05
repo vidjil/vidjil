@@ -39,7 +39,9 @@ string spaced(const string &input, const string &seed) {
   
   spaced_buf[j] = (char) 0;
 
-  // cout << spaced_buf << "|" << string(spaced_buf) << "|" << input << "|" <<  endl ;
+#ifdef DEBUG_SPACED
+  cout << input << " => |" << spaced_buf << "|" <<  endl ;
+#endif
 
   return string(spaced_buf);
 }
