@@ -11,13 +11,10 @@ ul{
 }
 
 body {
-  background: none repeat scroll 0 0 #101010;
-  color: #93a1a1;
   font-family: Arial, Helvetica, Sans-serif;
   font-size: 14px;
   height : 100%;
   margin:0px;
-
 }
 
 ul {
@@ -33,14 +30,12 @@ list-style-type: none;
   height: -webkit-calc(100% - 10px);
   height: calc(100% - 10px);
   width : 100%;
-  background : #202010;
 }
 
 #left-container {
   height:100%;
   width : 450px;
   height : 100%;
-  background : #352515;
   overflow-y : none;
   float : left;
   font-family : monaco,terminal,courier,system; 
@@ -48,7 +43,6 @@ list-style-type: none;
 }
 
 #visu {
-  background : #002b36 ;
   display : inline-block;
   height : 30%;
   width: -moz-calc(100% - 450px);
@@ -56,7 +50,6 @@ list-style-type: none;
   width: calc(100% - 450px);
 }
 #visu2 {
-  background : #002b36 ;
   display : inline-block;
   height : 70%;
   width: -moz-calc(100% - 450px);
@@ -69,14 +62,12 @@ list-style-type: none;
   margin-left:450px;
   position : fixed;
   bottom :0px;
-  background : #102020;
   padding : 5px;
 }
 
 #align {
   width: auto;
   height: 160px;
-  background-color: #101010;
   overflow: auto;
   margin-right: 460px;
 }
@@ -106,35 +97,22 @@ circle:hover {
 }
 
 #menu{
-  background : #073642;
   height :125px;
 }
 
 #file_menu{
-  background : #073642;
   z-index:2;
-}
-
-#info{
-  background : transparent;
-  height :50px;
-  width : 300px;
-  position : relative;
-  top : 25px;
-  float:right;
 }
 
 #listFav{
   overflow-y : scroll;
   overflow-x : hidden;
-  background : #073642;
   display :none;
 }
 
 #listSelect{
   overflow-y : scroll;
   overflow-x : hidden;
-  background : #073642;
   height :160px
 }
 
@@ -142,8 +120,6 @@ circle:hover {
   overflow-y : scroll;
   overflow-x : hidden;
   font-weight: bold;
-  color: #ddd;
-  background : #073642;
 }
 
 .vjLegend{
@@ -167,32 +143,27 @@ circle:hover {
 }
 
 .list{
-  padding: 3px;
+  width: 440px;
 }
 
 .listElem{
   width :420px;
-  padding: 3px;
-  height: 16px;
   cursor:pointer;
   -moz-transition: color  1.5s;
   -webkit-transition: color 1.5s;
   -o-transition: color  1.5s;
   -ms-transition: color 1.5s;
   transition: color 1.5s;
-  background-color :#002b36;
-    font-weight : bold;
+  font-weight : bold;
+  padding:3px;
 
 }
 
 .nameBox {
-  float: left;
   width: 280px;
   overflow: hidden;
   display: inline-block;
   height: 16px;
-  padding-top: 6px;
-  top: -3px;
   position: relative;
 }
 
@@ -207,7 +178,6 @@ circle:hover {
 }
 
 .delBox{
-  float: left;
   border: solid;
   margin-right:2px;
   background-color: black;
@@ -255,8 +225,7 @@ circle:hover {
 }
 
 #svg{
-  position:relative;
-  top:-50px;
+
 }
 
 .axis{
@@ -287,17 +256,16 @@ circle:hover {
   transition: stroke 1s;
  stroke-width : 1.5px;
  fill :none;
+ cursor:pointer;
 }
 
 .graphLine2{
  stroke-width : 2.5px;
  opacity:1;
  fill :none;
+ cursor:pointer;
 }
 
-.graphLine:hover {
-  cursor:pointer;
-}
 
 .separator {
   height : 25px
@@ -316,22 +284,20 @@ circle:hover {
 }
 
 #tagSelector{
+  padding: 5px;
+  width:300px;
   position: absolute;
   left: 450px;
   top: 125px;
   height:300px;
-  background:#073642;
   border:solid;
-  border-color:#002b36;
   display:none;
 }
 
 .tagElem{
-  margin:6px;
+  margin:8px;
   height: 16px;
-  background: #002b36;
-  border:solid;
-  border-color: #002b36;
+
 }
 
 .tagElem:hover{
@@ -378,3 +344,29 @@ circle:hover {
 .tagColor7{
     background: #859900 ;
 }
+
+#style{
+  position: fixed; 
+  top: 5px; 
+  right:35px ;
+  width: 2px; 
+  height: 2px;
+  padding:10px;
+  background :white;
+}
+
+#styleSelector{
+  display:none; 
+  position: fixed; 
+  top: 50px;
+  right: 10px;
+  width: 150px; 
+  height: 150px;
+  padding: 10px;
+  border: solid;
+  border-color: white;
+  background:inherit;
+}
+
+
+

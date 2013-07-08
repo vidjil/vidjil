@@ -12,7 +12,6 @@
  * displayLegend(data)
  * updateLegend()
  * updateVis()
- * updateLook()
  * 
  * tick(e)
  * collide()
@@ -34,6 +33,13 @@ var w = 1400,		//largeur visu (avant resize)
 var vis = d3.select("#visu").append("svg:svg")
     .attr("id", "svg");
 
+   d3.select("#svg").append("svg:rect")
+    .attr("id", "visu_back")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", 2500)
+    .attr("height", 2500)
+    .on("click", function(){freeSelect();})
 
 
 function initVisu(){
@@ -78,7 +84,6 @@ function initNodes() {
       nodes[i].id = i;
       nodes[i].r1 = 5;
       nodes[i].r2 = 5;
-      nodes[i].focus = false;
     }
 }
 
@@ -176,34 +181,14 @@ function updateLegend(){
     });
 }
 
-
 /*mise a jour de la visualisation*/
 function updateVis(){
   
   for(var i=0 ;i<totalClones; i++){
     nodes[i].r1=radius(i);
   }
-  vis.selectAll("circle.node")
-      .style("fill", function(i) { return color(i); })
-  force.alpha(.2);
   
 }
-
-function updateLook(){
-  node
-  .transition()
-  .duration(1500)
-  .style("fill", function(d) { return color(d.id); } )
-  node.style("stroke", function(d) { return stroke(d.id); } )
-  for(var i=0 ;i<totalClones; i++){
-    document.getElementById(i).style.color=color(i);
-  }
-  for(var i=0 ;i<select.length; i++){
-    document.getElementById("select"+select[i]).style.color=color(select[i]);
-  }
-
-}
-
 
 /* update position frame by frame pour la gestion des collisions*/
 function tick(e) {
@@ -295,7 +280,6 @@ function sizeSplit() {
     return function(d) {
       var r=radius(d.id);
 	  d.y+=coef*((650-(r*15))-d.y);
-	  
 	  if ( d.x > 1350) d.x=d.x-Math.random();
 	  if ( d.x < 50) d.x=d.x+Math.random();
       }

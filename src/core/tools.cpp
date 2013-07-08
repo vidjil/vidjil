@@ -16,22 +16,34 @@ int seed_weight(const string &seed)
   return count(seed.begin(), seed.end(), SEED_YES);
 }
 
+char spaced_buf[MAX_SEED_SIZE+1];
+
 string spaced(const string &input, const string &seed) {
+
+// #ifdef STATIC_SPACED_SEED_FOURTEEN
+//   return input.substr(0, 7) + input.substr(8, 7);
+// #endif
 
 #ifdef NO_SPACED_SEEDS
   return input ;
 #endif
 
-  string output = "";
-  
+  int j = 0 ;
+
   // cout << input << endl << seed << endl ;
   assert(input.length() == seed.length());
 
   for (size_t i = 0; i < input.length(); i++) 
     if (seed[i] == SEED_YES)
-      output += input[i] ;
+      spaced_buf[j++] = input[i] ;
   
-  return output ;
+  spaced_buf[j] = (char) 0;
+
+#ifdef DEBUG_SPACED
+  cout << input << " => |" << spaced_buf << "|" <<  endl ;
+#endif
+
+  return string(spaced_buf);
 }
 
 

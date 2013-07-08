@@ -18,22 +18,38 @@ var axis_x = 100,       //marge entre l'ordonnée et le bord du graph
 
 var vis2 = d3.select("#visu2").append("svg:svg")
     .attr("id", "svg2")
-		
+
+    d3.select("#svg2").append("svg:rect")
+    .attr("id", "graph_back")
+    .attr("x", 0)
+    .attr("y", 0)
+    .attr("width", 2500)
+    .attr("height", 2500)
+    .on("click", function(){freeSelect();})
+
+var axis_container = d3.select("#svg2").append("svg:g")
+    .attr("id", "axis_container")
+var polyline_container = d3.select("#svg2").append("svg:g")
+    .attr("id", "polyline_container")
+var reso_container = d3.select("#svg2").append("svg:g")
+    .attr("id", "reso_container")
     
 var g_axis;
 var g_graph;
+var g_res;
 var data_axis=[];
 var data_graph=[];
+var data_res=[];
+
 var graph_col=[];
 
 var scale_x;
-    
     
 function initGraph(){
   
   scale_x = d3.scale.log()
     .domain([1,(1/min_size)])
-    .range([30,(g_h)]);
+    .range([30,(g_h-20)]);
     
   var height=100;
   
@@ -78,14 +94,17 @@ function initGraph(){
 			y1 : g_h+20, y2 : 0, time: 0}
   
   for (var i=0 ; i<totalClones; i++){
-    data_graph[i]={id : i, display: true, name :"line"+i, select : false, focus : false, path : constructPath(i)};
+    data_graph[i]={id : i, name :"line"+i, path : constructPath(i)};
   }
   
-  displayGraph(data_axis, data_graph);
+  data_res[0]={id : totalClones, name :"resolution1", path :constructPathR(1) };
+  data_res[1]={id : totalClones+1, name :"resolution5", path :constructPathR(5) };
+  
+  displayGraph(data_axis, data_graph, data_res);
 }
 
-function displayGraph(data, data_2){
-  g_axis = vis2.selectAll("line").data(data);
+function displayGraph(data, data_2, data_3){
+  g_axis = axis_container.selectAll("line").data(data);
   g_axis.enter().append("line");
   g_axis.exit()    
     .remove();
@@ -95,33 +114,82 @@ function displayGraph(data, data_2){
   g_text.exit()    
     .remove();
     
-  g_graph = vis2.selectAll("polyline").data(data_2);
-  g_graph.enter().append("polyline");
+  g_graph = polyline_container.selectAll("g").data(data_2);
+  g_graph.enter().append("svg:g")
+  .attr("id", function(d) { return d.name; });
   g_graph.exit()    
     .remove();
-      
+    
+  g_graph.append("polyline")
+    .transition()
+    .duration(800)
+    .attr("points", function(p) {
+      var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
+	for (var i=1; i<p.path.length; i++){
+	  che+=','+(p.path[i][0]*resizeG_W)+','+(p.path[i][1]*resizeG_H);
+	}
+	return che;
+    } )
+    .attr("class", function(p) { return g_class(p.id); })
+  g_graph.exit().remove();
+
+  g_res = reso_container.selectAll("g").data(data_3);
+  g_res.enter().append("svg:g")
+  .attr("id", function(d) { return d.name; });
+  g_res.exit()    
+    .remove();
+   
+  g_res.append("polyline")
+    .transition()
+    .duration(800)
+    .attr("points", function(p) {
+      var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
+	for (var i=1; i<p.path.length; i++){
+	  che+=','+(p.path[i][0]*resizeG_W)+','+(p.path[i][1]*resizeG_H);
+	}
+	return che;
+    } )
+    g_res.exit().remove();
+    
   updateGraph();
 }
 
+function constructPathR(res){
+  var p;
+  
+  
+  p=[ [0, (g_h+1000)] ];
+  p.push([0, ( g_h - scale_x((res/jsonData.total_size[0])*(1/min_size)) ) ]);
+  
+  for (var i=0; i< graph_col.length; i++){
+      p.push([( graph_col[i]), ( g_h - scale_x((res/jsonData.total_size[i])*(1/min_size)) ) ]);
+  }
+  p.push([g_w, ( g_h - scale_x((res/jsonData.total_size[graph_col.length-1])*(1/min_size)) ) ]);
+  p.push([g_w, ( g_h+1000) ]);
+  
+  
+  return p;
+}
 
+/*construit le tableau des points par laquelle la courbe d'un clone doit passer*/
 function constructPath(cloneID){
   var tmp=t;
   t=0;
   var p;
   
   if (getSize(cloneID)==0){
-    p = [[ ( graph_col[0] ),( g_h + 50 ) ]];
+    p = [ [( graph_col[0] ),(g_h + 50)] ]
   }else{
-    p = [[ ( graph_col[0] ), ( g_h - scale_x(getSize(cloneID)*(1/min_size)) ) ]];
+    p = [[ ( graph_col[0]+ (Math.random()*30)-15  ), ( g_h - scale_x(getSize(cloneID)*(1/min_size)) ) ]];
   }
   
   for (var i=1; i< graph_col.length; i++){
     t++;
     
     if (getSize(cloneID)==0){
-      p.push([( graph_col[i] ),( g_h + 50 ) ]);
+	p.push([( graph_col[i] ),(g_h + 50)]);
     }else{
-      p.push([ ( graph_col[i] ), ( g_h - scale_x(getSize(cloneID)*(1/min_size)) ) ]);
+      p.push([( graph_col[i] + (Math.random()*30)-15 ), ( g_h - scale_x(getSize(cloneID)*(1/min_size)) ) ]);
     }
 
   }
@@ -135,42 +203,6 @@ function g_class(cloneID){
   }else{ return "graphLine";}
 }
 
-function updateGraphColor(){
-    g_graph
-    .style("stroke", function(d) { return color(d.id); })
-    .attr("class", function(d) { return g_class(d.id); })
-}
-
-function updateGraphDisplay(){
-    g_graph
-    .style("display", function(d) { if (d.display) return "";
-				    else return "none";
-    })
-    .style("stroke-dasharray", function(d) { if (d.select) return "8,1";
-				    else return "";
-    })
-    .style("stroke-width", function(d) { 
-      if ( d.focus==true ) return "3";
-      if ( d.select==true ) return "3";
-      return "";
-    })
-    .style("stroke", function(d) { if (d.focus) return "white";
-				   
-				    return color(d.id);
-    })
-
-    vis2.selectAll("polyline")
-    .on("mouseover", function(d){
-     if (d.display==true) focusIn(d.id);
-    })
-    .on("mouseout", function(d){
-     if (d.display==true) focusOut(d.id);
-    })
-    .on("click", function(d){
-     if (d.display==true) selectClone(d.id);
-    })
-}
-
 
 function updateGraph(){
     document.getElementById("log").innerHTML+="<br>updateGraph";
@@ -178,7 +210,7 @@ function updateGraph(){
     
   scale_x = d3.scale.log()
     .domain([1,(1/min_size)])
-    .range([30,(g_h)]);
+    .range([30,(g_h-20)]);
     
     g_axis
     .transition()
@@ -187,7 +219,7 @@ function updateGraph(){
     .attr("x2", function(d) { return resizeG_W*d.x2; })
     .attr("y1", function(d) { return resizeG_H*d.y1; })
     .attr("y2", function(d) { return resizeG_H*d.y2; })
-    .style("stroke", '#586e75')
+    .style("stroke", colorStyle.c06)
     .attr("class", function(d) { return d.class; })
     .attr("id", function(d) {
       if (d.class=="axis_f") return "timebar"
@@ -198,7 +230,7 @@ function updateGraph(){
     .transition()
     .duration(800)
     .text( function (d) { return d.text; })
-    .attr("fill", "#586e75")
+    .attr("fill", colorStyle.c01)
     .attr("class", function(d) { if (d.class=="axis_v") return "axis_button"; })
     .attr("id", function(d) { if (d.class=="axis_v") return ("time"+d.time); })
     .attr("y", function(d) { 
@@ -215,31 +247,37 @@ function updateGraph(){
       if (d.class=="axis_v") return changeT(d.time);
     })
     
-  g_graph
+    g_graph.selectAll("polyline")
     .transition()
     .duration(800)
-    .attr("points", function(d) {
-      var p=(d.path[0][0]*resizeG_W)+','+(d.path[0][1]*resizeG_H);
-	for (var i=1; i<d.path.length; i++){
-	  p+=','+(d.path[i][0]*resizeG_W)+','+(d.path[i][1]*resizeG_H);
+    .attr("points", function(p) {
+      var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
+	for (var i=1; i<p.path.length; i++){
+	  che+=','+(p.path[i][0]*resizeG_W)+','+(p.path[i][1]*resizeG_H);
 	}
-	return p;
+	return che;
     } )
-    .attr("class", function(d) { return g_class(d.id); })
-    .attr("id", function(d) { return d.name; });
+    .attr("class", function(p) { return g_class(p.id); })
     
-  vis2.selectAll("polyline")
-    .on("mouseover", function(d){
-     if (d.display==true) focusIn(d.id);
+    g_res.selectAll("polyline")
+    .transition()
+    .duration(800)
+    .attr("points", function(p) {
+      var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
+	for (var i=1; i<p.path.length; i++){
+	  che+=','+(p.path[i][0]*resizeG_W)+','+(p.path[i][1]*resizeG_H);
+	}
+	return che;
+    } )
+
+  polyline_container.selectAll("polyline")
+    .on("mouseover", function(d){ focusIn(d.id);
     })
-    .on("mouseout", function(d){
-     if (d.display==true) focusOut(d.id);
+    .on("mouseout", function(d){ focusOut(d.id);
     })
-    .on("click", function(d){
-     if (d.display==true) selectClone(d.id);
-    })
-  
-    updateGraphDisplay()
+    .on("click", function(d){ selectClone(d.id);})
+    
+    initStyle()
 }
 
 function updateAxis(){

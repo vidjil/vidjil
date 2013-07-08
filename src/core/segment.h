@@ -16,7 +16,7 @@ using namespace std;
 enum SEGMENTED { DONT_KNOW, SEG_PLUS, SEG_MINUS, UNSEG_TOO_SHORT, UNSEG_STRAND_NOT_CONSISTENT, 
 		 UNSEG_TOO_FEW_ZERO,  UNSEG_TOO_FEW_V, UNSEG_TOO_FEW_J, 
 		 UNSEG_BAD_DELTA_MIN, UNSEG_BAD_DELTA_MAX, STATS_SIZE } ;
-const char* const segmented_mesg[] = { "?", "+", "-", "UNSEG too short", "UNSEG strand",  
+const char* const segmented_mesg[] = { "?", "SEG_+", "SEG_-", "UNSEG too short", "UNSEG strand",  
 				       "UNSEG too few (zero)", "UNSEG too few V", "UNSEG too few J",
 				       "UNSEG < delta_min", "UNSEG > delta_max" } ;
 
@@ -127,9 +127,12 @@ class KmerSegmenter : public Segmenter
    *        so that the segmentation is accepted 
    *        (left bound: end of V, right bound : start of J)
    * @param stats: integer array (of size STATS_SIZE) to store statistics
+   * @param out_unsegmented: ostream& to output unsegmented sequences
    */
   KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index, 
-		int delta_min, int delta_max, int *stats, Cost custom_cost);
+		int delta_min, int delta_max, int *stats, 
+		Cost custom_cost, /// TODO: custom_cost should disappear here
+		ostream &out_unsegmented);
 };
 
 class FineSegmenter : public Segmenter

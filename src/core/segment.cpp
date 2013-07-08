@@ -185,7 +185,10 @@ ostream &operator<<(ostream &out, const Segmenter &s)
 // KmerSegmenter (Cheap)
 
 KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index, 
-			     int delta_min, int delta_max, int *stats, Cost segment_c)
+			     int delta_min, int delta_max, int *stats, 
+			     Cost segment_c, /// TODO: should be removed
+			     ostream& out_unsegmented
+			     )
 {
   label = seq.label ;
   sequence = seq.sequence ;
@@ -198,16 +201,14 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
 
   if (sequence.length() < (size_t) s) 
     {
+      out_unsegmented << seq ;
+      out_unsegmented << "#" << segmented_mesg[UNSEG_TOO_SHORT] << endl << endl ;
       stats[UNSEG_TOO_SHORT]++ ;
       return ;
     }
  
   KmerAffectAnalyser<KmerAffect> *kaa = new KmerAffectAnalyser<KmerAffect>(*index, sequence);
   
-  //cout << endl ;
-  //cout << seq  ;
-  //cout << kaa->toString() << endl ;
-
   // Check strand consistency among the affectations.
   set<KmerAffect> distinct_a = kaa->getDistinctAffectations();
   int strand = DONT_KNOW;
@@ -224,18 +225,19 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
 
 
   segmented = true ;
+  int because = 0 ; // Cause of unsegmentation
 
   // Zero information
   if (strand == 0)
     {
-      stats[UNSEG_TOO_FEW_ZERO]++ ;
+      because = UNSEG_TOO_FEW_ZERO ;
       segmented = false ;
     }
     
   // Ambiguous
   if (strand == 2) 
     {
-      stats[UNSEG_STRAND_NOT_CONSISTENT]++ ;
+      because = UNSEG_STRAND_NOT_CONSISTENT ;
       segmented = false ;
     }
   
@@ -248,13 +250,13 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
 
       if (left == (int)string::npos) 
 	{
-	  stats[UNSEG_TOO_FEW_V]++ ;
+	  because = UNSEG_TOO_FEW_V ;
 	  segmented = false ;
 	}
       
       if (right == (int)string::npos)
 	{
-	  stats[UNSEG_TOO_FEW_J]++ ;
+	  because = UNSEG_TOO_FEW_J ;
 	  segmented = false ;
 	}
 
@@ -268,13 +270,13 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
 
       if (first == (int)string::npos)
 	{
-	  stats[UNSEG_TOO_FEW_V]++ ;
+	  because = UNSEG_TOO_FEW_V ;
 	  segmented = false ;
 	}
 
       if (last == (int)string::npos)
 	{
-	  stats[UNSEG_TOO_FEW_J]++ ;
+	  because = UNSEG_TOO_FEW_J ;
 	  segmented = false ;
 	}
 
@@ -282,42 +284,44 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
       right = sequence.size() - (last + s) ;
     }
   
-  // Exit if not segmented
-  if (!segmented)
+  if (segmented)
     {
-      delete kaa;
-      return ;
-    }
-
-  // Now we check the delta between left and right
+      // Now we check the delta between left and right
    
-  if (right - left < delta_min)
-  {
-    stats[UNSEG_BAD_DELTA_MIN]++ ;
-    segmented = false ;
-  }
+      if (right - left < delta_min)
+	{
+	  because = UNSEG_BAD_DELTA_MIN ;
+	  segmented = false ;
+	}
 
-  if (right - left > delta_max)
-  {
-    stats[UNSEG_BAD_DELTA_MAX]++ ;
-    segmented = false ;
-  }
+      if (right - left > delta_max)
+	{
+	  because = UNSEG_BAD_DELTA_MAX ;
+	  segmented = false ;
+	}
+    }
 
   if (segmented)
     {
       // Yes, it is segmented
 
       reversed = (strand == -1); 
+      because = reversed ? SEG_MINUS : SEG_PLUS ;
 
       info = string_of_int(left + FIRST_POS) + " " + string_of_int(right + FIRST_POS)  ;
       info += " " + removeChevauchement();
       finishSegmentation();
-
-      // cout << "ok" << endl ;
-
-      stats[reversed ? SEG_MINUS : SEG_PLUS]++ ;
     }
 
+  if (true)
+    {
+      // Dump sequence in unsegmented, with kaa and cause
+      out_unsegmented << seq ;
+      out_unsegmented << kaa->toString() << endl ;
+      out_unsegmented << "#" << segmented_mesg[because] << endl << endl ;
+    }
+
+  stats[because]++ ;      
   delete kaa;
 }
 

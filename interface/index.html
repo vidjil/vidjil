@@ -17,10 +17,11 @@
 	<script type="text/javascript" src='js/segmenter.js'></script>
 	<script type="text/javascript" src='js/info.js'></script>
 	<script type="text/javascript" src='js/model.js'></script>
+	<script type="text/javascript" src='js/vidjil-style.js'></script>
 	
   </head>
 
-  <body onload="initCoef();">
+  <body onload="initCoef()">
     <div id="file_menu" style="position: fixed; top: 200px; margin-left:-200px;left:50% ;width: 400px; height: 80px;font-size: 14px; padding: 10px;">
     	pref:<input id="upload_pref" type="file" name="pref" /></br>
 	data:<input id="upload_json" type="file" name="json" /></br>
@@ -96,7 +97,6 @@
 	</span>
 	
 	<span id="visu" onclick="" onmouseover="hideAlign()">
-	  <div id="info"> info sur le point de suivi courant </br> date : ... </br> commentaire:(rechute/diag/...)</div>
 	  <script type="text/javascript" src="js/visu.js"> </script>
 	</span>
       </div>
@@ -114,10 +114,18 @@
       </div>
     </div>
 	
-
     
     <div id="log" style="display:none; position: fixed; top: 50px;right: 10px;width: 500px; font-family : monaco,terminal,courier,system; height: 150px;overflow-y: scroll;font-size: 14px;background-color: #333044;opacity: 0.5;padding: 10px;">log </div>
     <div id="colorSelector"></div>
+    <div id="style" onclick="showStyleSelector();"></div>
+    <div id="styleSelector">
+    style</br>
+    <a class="button" onclick="changeStyle(whiteStyle);">white</a></br>
+    <a class="button" onclick="changeStyle(blackStyle);">black</a></br>
+    <a class="button" onclick="changeStyle(solarizeD);">solarize dark</a></br>
+    <a class="button" onclick="changeStyle(solarizeL);">solarize light</a></br>
+    </div>
+    
     <div id="tagSelector">
       choisir un tag pour : <div id=tagname></div>
       <ul>

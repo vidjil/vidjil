@@ -22,7 +22,7 @@
  * -voir par jonction/ par clone
  * -maj des % affiché en fonction du point de suivi
  */
-  
+
 
   
   function initList(data){
@@ -51,10 +51,15 @@
   function updateList(){
     for (var i=0; i<totalClones; i++){
       document.getElementById("size"+i).innerHTML=(100*getSize(i)).toFixed(4)+"%";
+      if (style[i].select){
+	document.getElementById("selectsize"+select[i]).innerHTML=(100*getSize(select[i])).toFixed(4)+"%";
+      }
+      document.getElementById(i).removeChild(document.getElementById("cluster"+i));
+      var div=document.createElement('div');
+      div_cluster(div, i, false);
+      document.getElementById(i).appendChild(div);
     }  
-    for (var i=0; i<select.length; i++){
-      document.getElementById("selectsize"+select[i]).innerHTML=(100*getSize(select[i])).toFixed(4)+"%";
-    }  
+   
   }
   
   function showCluster(cloneID){
@@ -81,11 +86,8 @@
       var fav=document.createElement('img')
       fav.className = "favBox";
       fav.id="fav"+cloneID;
-      var f=false;
-      for (var j=0; j<favorites.length; j++){
-	if (favorites[j]==cloneID) f=true;
-      }
-      if (f){
+
+      if (style[cloneID].favorite==true){
 	fav.src="images/icon_fav_on.png";
 	fav.onclick=function(){ 
 	  addToList(this.parentNode.parentNode.id); 
@@ -113,7 +115,6 @@
       div_elem.appendChild(span1);
       div_elem.appendChild(fav);
       div_elem.appendChild(span2);
-      div_elem.style.color=color(cloneID);
     
   }
   
@@ -150,7 +151,6 @@
 	var div_clone=document.createElement('div');
 	div_clone.id2=clones[cloneID][i];
 	div_clone.className="listElem";
-	div_clone.style.color=color(clones[cloneID][i]);
 	
 	var span_name = document.createElement('span');
         span_name.className = "nameBox";
@@ -164,7 +164,7 @@
 	
 	var span_stat=document.createElement('span');
 	span_stat.className="sizeBox";
-	span_stat.style.float="left";
+	span_stat.style.float="none";
 	span_stat.appendChild(document.createTextNode( (junctions[clones[cloneID][i]].size[t]*100/clusterSize).toFixed(2)+"%"));
 	
 	div_clone.appendChild(img);
@@ -178,7 +178,7 @@
   
   
   function addToFavorites(cloneID){
-    favorites.push(cloneID);
+    style[cloneID].favorite=true;
     
     document.getElementById("fav"+cloneID).src="images/icon_fav_on.png";
     document.getElementById("fav"+cloneID).onclick=function(){  
@@ -195,8 +195,7 @@
 
   
   function addToList(cloneID){
-    var index = favorites.indexOf(cloneID);
-    favorites.splice(index, 1);
+    style[cloneID].favorite=false;
     
     document.getElementById("fav"+cloneID).src="images/icon_fav_off.png";
     document.getElementById("fav"+cloneID).onclick= function(){
@@ -212,53 +211,34 @@
   }
   
   function displayFavoris(){
-
-    for (var i = 0; i < totalClones; i++){       
-      
-      var fav=false;
-      
-      for (var j=0; j<favorites.length; j++){
-	if (favorites[j]==i) fav=true;
-      }
-      
-      if (clones[i].length!=0 && fav){
-	$("#"+i).show("slow");
-	document.getElementById("line"+i).style.opacity=1;
-	document.getElementById("circle"+i).style.opacity=1;
+    for (var i = 0; i < totalClones; i++){
+      if (clones[i].length!=0 && style[i].favorite){
+	style[i].active=true;
       }else{
-	$("#"+i).hide("slow");
-	document.getElementById("line"+i).style.opacity=0.5;
-	document.getElementById("circle"+i).style.opacity=0.5;
+	style[i].active=false;
       }      
     }   
+    updateStyle();
   }
 
   function displayAll(){
-
     for (var i = 0; i < totalClones; i++){    
       if (clones[i].length!=0){
-	$("#"+i).show("slow");
-	document.getElementById("line"+i).style.opacity=1;
-	document.getElementById("circle"+i).style.opacity=1;
+	style[i].active=true;
       }else{
-	$("#"+i).hide("slow");
-	document.getElementById("line"+i).style.opacity=0.5;
-	document.getElementById("circle"+i).style.opacity=0.5;
+	style[i].active=false;
       }     
     }
+    updateStyle();
   }
   
   function displayTop(top){
-
     for (var i = 0; i < totalClones; i++){      
       if (clones[i].length!=0 && junctions[i].top <= top){
-	$("#"+i).show("slow");
-	document.getElementById("line"+i).style.opacity=1;
-	document.getElementById("circle"+i).style.opacity=1;
+	style[i].active=true;
       }else{
-	$("#"+i).hide("slow");
-	document.getElementById("line"+i).style.opacity=0.5;
-	document.getElementById("circle"+i).style.opacity=0.5;
+	style[i].active=false;
       }      
     }   
+    updateStyle();
   }

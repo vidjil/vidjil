@@ -53,7 +53,6 @@ var junctions;         //liste des jonctions du fichier json
 var pref ={ custom :[], cluster :[]} ;              //fichier des preferences
 var customColor = [];  //table des couleurs personalisées (TODO save to prefs.json)
 var customName = [];   //table des noms personalisées (TODO save to prefs.json)
-var favorites = [];    //liste des favoris
  
 /* initialisation fixé par defaut*/
 var colorMethod="V"           //methode de colorisation ( V par defaut)
@@ -155,8 +154,8 @@ var req = new XMLHttpRequest();
     document.getElementById("log").innerHTML+="<br>initialisation coef";
     updateVis();
     force.start();
-    updateLook();
     changeSplitMethod("vj2");
+    displayTop(5);
     document.getElementById("log").innerHTML+="<br>start visu";
     $("#log").scrollTop(100000000000000);
   };
@@ -171,10 +170,9 @@ function init(){
   
   for(var i=0 ;i<totalClones; i++){
     mapID[junctions[i].junction]=i;
-    
+    style[i]={display:true};
     clones[i]=[i];
   }
-  
 }
 
 function loadPref(){
@@ -224,7 +222,7 @@ function loadPref(){
   function changeName(cloneID, newName){
     tmpID = cloneID;
     customName[tmpID] = newName;
-    $("#"+tmpID).find(".nameBox").html(newName);
+    document.getElementById(tmpID).firstChild.nextsibling.innerHTML=newName
     $("#select"+tmpID).find(".nameBox").html(newName);
     $("#clone_name").html(newName);
   }
@@ -270,7 +268,7 @@ function loadPref(){
 /* calcul les coefficients de resize des différentes vues
  * appel les vues pour appliquer les changements*/
 function initCoef(){
-  
+  initStyle();
   var resizeW = document.getElementById("visu").offsetWidth/w;
   var resizeH = document.getElementById("visu").offsetHeight/h;
   document.getElementById("svg").style.width=document.getElementById("visu").offsetWidth+"px";
@@ -349,10 +347,10 @@ function changeT(time){
   }
   document.getElementById("time"+time).style.fill="white";
   
+  force.alpha(.2);
   updateAxis();
   updateList();
   updateVis();
-  updateLook();
 }
   
 
@@ -390,7 +388,6 @@ function initVJposition(){
   var jmap=[];
   var n=0;
   
-  //comptage du nombre de genes V et J ( et de sous-genes ) differents dans le fichier json
   for(var i=0 ;i<totalClones; i++){
 
     if ( typeof(junctions[i].seg) != 'undefined' && typeof(junctions[i].seg.V) != 'undefined' ){
@@ -546,7 +543,7 @@ function initVJposition(){
       if (colorMethod=='J'){
 	return colorJ(cloneID)
       }
-      return '#839496';
+      return colorStyle.c01;
     }
   }
   
@@ -582,17 +579,6 @@ function initVJposition(){
   document.getElementById("tagname").innerHTML=getname(cloneID);
   }
   
-  var tagColor = [];
-  tagColor[0]= "#dc322f";
-  tagColor[1]= "#cb4b16";
-  tagColor[2]= "#d33682";
-  tagColor[3]= "#268bd2";
-  tagColor[4]= "#6c71c4";
-  tagColor[5]= "#2aa198";
-  tagColor[6]= "#b58900";
-  tagColor[7]= "#859900";
-  tagColor[8]= "";
-  
   function selectTag(tag){
     $('#tagSelector').hide("slow");
     customColor[tagID]=tagColor[tag];
@@ -601,7 +587,6 @@ function initVJposition(){
       document.getElementById('select'+tagID).style.color=customColor[tagID];
     }
     if (tag==8) { removeKey(customColor, tagID) }
-    updateLook();
     updateGraph();
   }
   
@@ -611,8 +596,8 @@ function initVJposition(){
     colorMethod=colorM;
     document.getElementById("log").innerHTML+="<br>change ColorMethod >> "+ colorM;
     $("#log").scrollTop(100000000000000);
-    updateLook();
     updateGraph();
+    updateStyle();
   }
   
   
@@ -627,15 +612,13 @@ function initVJposition(){
       document.getElementById("log").innerHTML+="<br>active customColor";
       $('#log').scrollTop(100000000000000);
     }
-    updateLook();
     updateGraph();
   }
   
   
   /*retourne la couleur de la bordure du clone passé en parametre*/
   function stroke(cloneID) {
-    if (nodes[cloneID].focus==true) return "white";
-    if (select.indexOf(cloneID)!=-1)return "#BBB";
+
     return '';
   }
   
@@ -679,59 +662,22 @@ function initVJposition(){
    * move : 1 => ajustement de la liste au dessus de l'element focus
    */
   function focusIn(cloneID){
-    nodes[cloneID].focus = true;
     
-    updateLook();
-    
+    style[cloneID].focus=true;
+    updateStyleElem(cloneID);
     document.getElementById("focus-sequence").innerHTML=getname(cloneID);
     
-    var list = document.getElementById(cloneID);
-    list.style.border='white';
-    list.style.borderStyle='solid';
-    list.style.padding='0px';
-    list.style.color='white';
-    
-    var list2 = document.getElementById("select"+cloneID);
-    if(list2){
-      list2.style.border='white';
-      list2.style.borderStyle='solid';
-      list2.style.padding='0px';
-      list2.style.color='white';
-    }
-    
     var line = document.getElementById("line"+cloneID);
-    document.getElementById("svg2").appendChild(line);
+    document.getElementById("polyline_container").appendChild(line);
     
-    data_graph[cloneID].focus=true;
-
-    updateGraphDisplay();
-    
-    $("#log").scrollTop(100000000000000);
   }
   
   
   /*libere un element du focus / déclenchement style mouseover*/
   function focusOut(cloneID){
-    nodes[cloneID].focus = false;
     
-    var list = document.getElementById(cloneID);
-    list.style.border='';
-    list.style.borderStyle='';
-    list.style.padding='';
-    list.style.color='';
-    
-    var list2 = document.getElementById("select"+cloneID);
-    if(list2){
-      list2.style.border='';
-      list2.style.borderStyle='';
-      list2.style.padding='';
-      list2.style.color='';
-    }
-    
-    data_graph[cloneID].focus=false;
-    
-    updateGraphDisplay();
-    updateLook();
+    style[cloneID].focus=false;
+    updateStyleElem(cloneID);
   }
   
   
@@ -761,7 +707,7 @@ function initVJposition(){
       var fav=document.createElement('img')
       fav.className = "favBox";
       fav.id="selectfav"+cloneID;
-      if (favorites.indexOf(cloneID) != -1 ){
+      if (style[cloneID].favorite){
 	fav.src="images/icon_fav_on.png";
 	fav.onclick=function(){ 
 	  addToList(cloneID); 
@@ -791,12 +737,9 @@ function initVJposition(){
       div.appendChild(span2);
       document.getElementById("listSelect").appendChild(div);
       
-      data_graph[cloneID].select=true;
+      style[cloneID].select=true;
       
       addToSegmenter(cloneID);
-
-      updateGraphDisplay();
-      updateLook();
     }else{
       deselectClone(cloneID);
     }
@@ -814,12 +757,10 @@ function initVJposition(){
       clone.parentNode.removeChild(clone);
       var listElem = document.getElementById("seq"+tmpID);
       listElem.parentNode.removeChild(listElem);
-      data_graph[tmpID].select=false;
-      nodes[tmpID].focus = false;
+      style[tmpID].select=false;
+      style[tmpID].focus = false;
       
       focusOut(tmpID);
-      updateGraphDisplay();
-      updateLook();
     }
   }
   
@@ -833,9 +774,6 @@ function initVJposition(){
     select=[];
     document.getElementById("listSelect").innerHTML="";
     document.getElementById("listSeq").innerHTML="";
-    
-    updateGraphDisplay();
-    updateLook();
   }
 
   function mergeSelection(){
@@ -860,19 +798,22 @@ function initVJposition(){
       updateGraph();
       updateVis();
       
+      var path=constructPath(leader);
+      
       for (var i = 0; i < copy_select.length ; i++){
 	document.getElementById(copy_select[i]).style.display="none";
-	data_graph[copy_select[i]].display=false;
-	data_graph[copy_select[i]].select=false;
-	data_graph[copy_select[i]].path=constructPath(leader);
+	style[copy_select[i]].display=false;
+	style[copy_select[i]].select=false;
+	data_graph[copy_select[i]].path=path;
 	updateListElem(copy_select[i],false)
       }
       
       updateListElem(leader,true)
       document.getElementById(leader).style.display="";
-      data_graph[leader].display=true;
-      data_graph[leader].select=true;
-      setTimeout('updateGraphDisplay()',1000);
+      style[leader].display=true;
+      style[leader].select=true;
+      setTimeout('updateStyle()',1000);
+      force.alpha(.2)
     }
   }
 
@@ -899,7 +840,6 @@ function initVJposition(){
     updateListElem(cloneIDb,false)
     
     updateGraph();
-    updateGraphDisplay();
     updateVis();
   }
   

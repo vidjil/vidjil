@@ -1,10 +1,10 @@
 !LAUNCH: ../../vidjil -c clones -G ../../germline/IGH -r 3 -R 5 -d ../../data/Stanford_S22.fasta
 
-$ Junction extractions
-1:found 3867 junctions in 8219 segments
+$ Window extractions
+1:found 3867 windows in 8219 segments
 
-$ Junction threshold
-1:keep 51 junctions in 2386 reads
+$ Window threshold
+1:keep 51 windows in 2386 reads
 
 $ Clones output
 1:Clone #001 –     630 reads

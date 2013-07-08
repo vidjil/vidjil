@@ -1,7 +1,7 @@
 !LAUNCH: ../../vidjil -G ../../germline/IGH -d -c segment ../../data/segment_simul.fa | grep '^>' 
 
 
-$ First sequence, easy segmentation (no error, few deletions at the junctions, small N)
+$ First sequence, easy segmentation (no error, few deletions at the windows, small N)
 #                         72   77          89   94
 #                         |    |           |    |
 # seq    :  61 attactgtgcgaCTTCataaccggaaccaGTTAtggttcgactcctggggccaaggaaccctggtcaccgtctcctcag
