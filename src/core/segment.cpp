@@ -102,6 +102,7 @@ bool Segmenter::finishSegmentation()
   string seq = getSequence().sequence;
     
   seg_V = seq.substr(0, left) ;
+  seg_N = seq.substr(left+1, right-left-1) ;  // Twice computed for FineSegmenter, but only once in KmerSegmenter !
   seg_J = seq.substr(right) ;
   left2=0;
   right2=0;
@@ -540,7 +541,9 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
     }
 
     // string chevauchement = removeChevauchement();
-  seg_N = revcomp(sequence, reversed).substr(left+1, right-left-1);
+
+    /// used only below, then recomputed in finishSegmentation() ;
+    seg_N = revcomp(sequence, reversed).substr(left+1, right-left-1); 
 
   code = rep_V.label(best_V) +
     " "+ string_of_int(del_V) + 
