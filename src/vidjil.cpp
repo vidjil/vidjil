@@ -626,13 +626,8 @@ int main (int argc, char **argv)
 	//////////////////////////////////
 	// Sort windows
 	
-<<<<<<< HEAD
-	out << "Sort junctions by number of occurrences" << endl;
-	
-=======
 	out << "Sort windows by number of occurrences" << endl;
 	list<pair <junction, int> > sort_all_windows;
->>>>>>> 40e32283720cbde8247702b219eceb7cae7d926e
 	
 	for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin(); 
 	     it != seqs_by_window.end(); ++it) 
@@ -734,23 +729,12 @@ int main (int argc, char **argv)
     out << "Sort clones by number of occurrences" << endl;
 
     list<pair<list <junction>, int> >sort_clones;
-<<<<<<< HEAD
-    
-    for (list <list <junction> >::const_iterator it = clones_junctions.begin(); it != clones_junctions.end(); ++it)
-=======
 
     for (list <list <junction> >::const_iterator it = clones_windows.begin(); it != clones_windows.end(); ++it)
->>>>>>> 40e32283720cbde8247702b219eceb7cae7d926e
       {
         list <junction>clone = *it ;
-        int clone_nb_reads = 0;
 
-<<<<<<< HEAD
-	for (list <junction>::const_iterator it2 = clone.begin(); it2 != clone.end(); ++it2) 
-	clone_nb_reads += seqs_by_junction[*it2].size() ;
-=======
         int clone_nb_reads = total_nb_reads(clone, seqs_by_window);
->>>>>>> 40e32283720cbde8247702b219eceb7cae7d926e
 
 	
 	bool labeled = false ;
