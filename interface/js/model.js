@@ -767,11 +767,11 @@ function initVJposition(){
   /*libere les elements selectionnées et vide la fenêtre d'information*/
   function freeSelect(){
     
-    for (var i=0; i< select.length ; i++){
-      data_graph[select[i]].select=false; 
+    for (var i=0; i< totalClones ; i++){
+      style[i].select=false; 
     }
     
-    select=[];
+    updateStyle();
     document.getElementById("listSelect").innerHTML="";
     document.getElementById("listSeq").innerHTML="";
   }
