@@ -768,10 +768,11 @@ function initVJposition(){
   function freeSelect(){
     
     for (var i=0; i< totalClones ; i++){
-      style[i].select=false; 
+      if(style[i].select){
+	style[i].select=false; 
+	updateStyleElem(i);
+      }
     }
-    
-    updateStyle();
     document.getElementById("listSelect").innerHTML="";
     document.getElementById("listSeq").innerHTML="";
   }
