@@ -103,9 +103,7 @@ bool Segmenter::finishSegmentation()
   string seq = getSequence().sequence;
     
   seg_V = seq.substr(0, left+1) ;
-  seg_V = seq.substr(0, left) ;
   seg_N = seq.substr(left+1, right-left-1) ;  // Twice computed for FineSegmenter, but only once in KmerSegmenter !
-
   seg_J = seq.substr(right) ;
   left2=0;
   right2=0;
