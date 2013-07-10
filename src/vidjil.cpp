@@ -734,9 +734,11 @@ int main (int argc, char **argv)
       {
         list <junction>clone = *it ;
 
-        int clone_nb_reads = total_nb_reads(clone, seqs_by_window);
-
+	int clone_nb_reads=0;
 	
+        for (list <junction>::const_iterator it2 = clone.begin(); it2 != clone.end(); ++it2)
+	  clone_nb_reads += seqs_by_window[*it2].size();
+	  
 	bool labeled = false ;
 	// Is there a labeled window ?
 	for (list <junction>::const_iterator iit = clone.begin(); iit != clone.end(); ++iit) {

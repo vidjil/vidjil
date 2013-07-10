@@ -98,7 +98,7 @@ var style =[];
 	document.getElementById("circle"+cloneID).style.opacity=1;
 	document.getElementById("line"+cloneID).style.opacity=1;
       }else{
-	document.getElementById("circle"+cloneID).style.opacity=0.4;
+	document.getElementById("circle"+cloneID).style.opacity=0.75;
 	document.getElementById("line"+cloneID).style.opacity=0.4;
       }
     }
@@ -122,16 +122,17 @@ var style =[];
       document.getElementById(cloneID).style.background=colorStyle.c03;
       document.getElementById("circle"+cloneID).style.fill=colorStyle.c05;
       document.getElementById("line"+cloneID).style.stroke=colorStyle.c05;
-      document.getElementById("line"+cloneID).firstChild.style.strokeWidth="3px";
+      document.getElementById("line"+cloneID).firstChild.style.strokeWidth="4px";
     }else{
-      document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1.5px";
       document.getElementById("circle"+cloneID).style.stroke="";
       document.getElementById(cloneID).style.background=colorStyle.c02;
       if (style[cloneID].active){
+	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="2px";
 	  document.getElementById(cloneID).style.color=color(cloneID);
 	  document.getElementById("circle"+cloneID).style.fill=color(cloneID);
 	  document.getElementById("line"+cloneID).style.stroke=color(cloneID);
       }else{
+	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1.2px";
 	  document.getElementById(cloneID).style.color=colorStyle.c06;
 	  document.getElementById("circle"+cloneID).style.fill=colorStyle.c06;
 	  document.getElementById("line"+cloneID).style.stroke=colorStyle.c06;

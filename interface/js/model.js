@@ -69,7 +69,7 @@ var colorJ_end=[18,211,211];
  
 var margeVJ_left=80;              //info quadrillage (vj1/vj2)
 var margeVJ_top=50;
-var stepVJ=140;
+
 
 /* initialisation by init */
 var totalClones;              //nombres de clones a gerer 
@@ -144,7 +144,7 @@ var req = new XMLHttpRequest();
     initSize();
     initList(junctions);
     document.getElementById("log").innerHTML+="<br>génération des clones";
-    initVJposition();
+    initVJposition(TRGV,TRGJ);
     initNodes();
     initVisu();
     document.getElementById("log").innerHTML+="<br>calcul des positions VJ";
@@ -366,12 +366,13 @@ function changeT(time){
  * color : couleur ...
  * name : nom du gene  	ex : trgv8
  * subname : variation	ex : *01 */
-function makeVJclass(classname, x, y, color, name, subname){
+function makeVJclass(classname, x, y, color, germline, name, subname){
   var result={}
   result.class=classname;
   result.cx=x;
   result.cy=y;
   result.color=color;
+  result.germline=germline;
   result.name=name;
   result.subname=subname;
   return result;
@@ -379,7 +380,7 @@ function makeVJclass(classname, x, y, color, name, subname){
 
 
 /*initialise les variables liées aux labels V-J*/
-function initVJposition(){
+function initVJposition(germlineV, germlineJ){
   
   var subsize={};
   var sizeV=0;
@@ -387,29 +388,31 @@ function initVJposition(){
   var vmap=[];
   var jmap=[];
   var n=0;
-  
-  for(var i=0 ;i<totalClones; i++){
+  //reset des tables
+  positionV={};       
+  positionJ={};	
+  positionV2={};    
+  positionJ2={};	
+  vjData=[];            
+  vjData2=[];           
 
-    if ( typeof(junctions[i].seg) != 'undefined' && typeof(junctions[i].seg.V) != 'undefined' ){
-      if (typeof( positionV[junctions[i].seg.V[0]] ) == 'undefined'){	
-	vmap[sizeV]=junctions[i].seg.V[0];
-	if (typeof( subsize[vmap[sizeV].split('*')[0]] ) == 'undefined') subsize[vmap[sizeV].split('*')[0]]=1;
-	else subsize[vmap[sizeV].split('*')[0]]++;
-	sizeV++;
-	positionV[junctions[i].seg.V[0]]=0;
-      }
-       if (typeof( positionJ[junctions[i].seg.J[0]] ) == 'undefined'){
-	jmap[sizeJ]=junctions[i].seg.J[0];
-	if (typeof( subsize[jmap[sizeJ].split('*')[0]] ) == 'undefined') subsize[jmap[sizeJ].split('*')[0]]=1;
-	else subsize[jmap[sizeJ].split('*')[0]]++;
-	sizeJ++;
-	positionJ[junctions[i].seg.J[0]]=0;
-      }
+  
+  
+  for(var i=0 ;i<germlineV.length; i++){
+    for(var j=0 ;j<germlineV[i].sub.length; j++){
+      vmap[sizeV]=germlineV[i].name+germlineV[i].sub[j].name;
+      sizeV++;
     }
+    subsize[germlineV[i].name]=germlineV[i].sub.length;;
   }
   
-  vmap.sort();
-  jmap.sort();
+  for(var i=0 ;i<germlineJ.length; i++){
+    for(var j=0 ;j<germlineJ[i].sub.length; j++){
+      jmap[sizeJ]=germlineJ[i].name+germlineJ[i].sub[j].name;
+      sizeJ++;
+    }
+    subsize[germlineJ[i].name]=germlineJ[i].sub.length;;
+  }
  
   var t1, t2;
   var tmp="";
@@ -427,22 +430,24 @@ function initVJposition(){
     
     var elem = vmap[i].split('*')[0];
 
+    var stepVJ = (w-margeVJ_left)/germlineV.length
+    
     if (elem!=tmp){
       t1=0;
       t2=subsize[elem];
       tmp=elem;
       n2++
       n++;
-      vjData[n]=makeVJclass("vjline1", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], elem, "");
-      vjData2[n]=makeVJclass("vjline1", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], elem, "");
+      vjData[n]=makeVJclass("vjline1", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
+      vjData2[n]=makeVJclass("vjline1", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
     }
     t1++
     n++;
-    vjData2[n]=makeVJclass("vjline2", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], elem, "");
+    vjData2[n]=makeVJclass("vjline2", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
     positionV2[vmap[i]]=margeVJ_left+(n2+0.5)*stepVJ;
     vjData[n]=makeVJclass("vjline2", margeVJ_left+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
 			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) ),
-			  0, vmap[i], elem, '*' + vmap[i].split('*')[1]);
+			  0, vmap[i], "V" , elem, '*' + vmap[i].split('*')[1]);
     positionV[vmap[i]]=margeVJ_left+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
 			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) );
 
@@ -458,24 +463,26 @@ function initVJposition(){
 			
     var elem = jmap[i].split('*')[0];
     
+    stepVJ = (h-margeVJ_top)/germlineJ.length
+    
     if (elem!=tmp){
       t1=0;
       t2=subsize[elem];
       tmp=elem;
       n2++
       n++;
-      vjData[n]=makeVJclass("vjline1", 0, margeVJ_top+(n2+0.5)*stepVJ, jmap[i], elem, "");
-      vjData2[n]=makeVJclass("vjline1", 0, margeVJ_top+(n2+0.5)*stepVJ, jmap[i], elem, "");
+      vjData[n]=makeVJclass("vjline1", 0, margeVJ_top+(n2+0.5)*stepVJ, jmap[i], "J" , elem, "");
+      vjData2[n]=makeVJclass("vjline1", 0, margeVJ_top+(n2+0.5)*stepVJ, jmap[i], "J" , elem, "");
     }
     t1++;
     n++;
     vjData[n]=makeVJclass("vjline2", 0, margeVJ_top+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
 			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) )
-			    , jmap[i], elem, '*' + jmap[i].split('*')[1]);
+			    , jmap[i], "J" , elem, '*' + jmap[i].split('*')[1]);
     
     positionJ[jmap[i]]=margeVJ_top+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
 			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) );		
-    vjData2[n]=makeVJclass("vjline2", 0, margeVJ_top+(n2+0.5)*stepVJ, jmap[i], elem, "");
+    vjData2[n]=makeVJclass("vjline2", 0, margeVJ_top+(n2+0.5)*stepVJ, jmap[i], "J" , elem, "");
     positionJ2[jmap[i]]=margeVJ_top+(n2+0.5)*stepVJ;
   }
 }
@@ -587,6 +594,7 @@ function initVJposition(){
       document.getElementById('select'+tagID).style.color=customColor[tagID];
     }
     if (tag==8) { removeKey(customColor, tagID) }
+    updateStyleElem(tagID)
     updateGraph();
   }
   
@@ -597,6 +605,7 @@ function initVJposition(){
     document.getElementById("log").innerHTML+="<br>change ColorMethod >> "+ colorM;
     $("#log").scrollTop(100000000000000);
     updateGraph();
+    updateLegend()
     updateStyle();
   }
   

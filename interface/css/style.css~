@@ -259,6 +259,14 @@ circle:hover {
  cursor:pointer;
 }
 
+.circle{
+  -moz-transition: fill  1s;
+  -webkit-transition: fill 1s;
+  -o-transition: fill  1s;
+  -ms-transition: fill 1s;
+  transition: fill 1s;
+}
+
 .graphLine2{
  stroke-width : 2.5px;
  opacity:1;

@@ -63,6 +63,7 @@ function initVisu(){
     .attr("stroke", "")
     .attr("r", 5)
     .attr("id", function(d) { return "circle"+d.id; })
+    .attr("class", "circle")
     .call(force.drag)
     .on("click", function(d,i) { 
       selectClone(i);
@@ -125,7 +126,10 @@ function displayLegend(data){
       else return d.name;
     })
     .attr("class", "vjLegend")
-    .attr("fill", function (d) { return colorVJ[d.color]; });
+    .attr("fill", function (d) { 
+      if (colorMethod==d.germline) return colorVJ[d.color] ; 
+      return colorStyle.c06;
+    });
     
   lines = vis.selectAll("line").data(data);
   lines.enter().append("line");
@@ -144,7 +148,10 @@ function displayLegend(data){
       if (d.cy<5) return 5000;
       else return resizeCoef*d.cy;
     })
-    .style("stroke", function (d) { return colorVJ[d.color]; })
+    .style("stroke", function (d) { 
+      if (colorMethod==d.germline) return colorVJ[d.color] ; 
+      return colorStyle.c06;
+    })
     .attr("class", function (d) { return d.class; });
 }
 
@@ -166,6 +173,10 @@ function updateLegend(){
 	else return resizeCoef*(d.cy+75);
       }else return resizeCoef*d.cy;
     })  
+    .attr("fill", function (d) { 
+      if (colorMethod==d.germline) return colorVJ[d.color] ; 
+      return colorStyle.c06;
+    });
   lines
     .transition()
     .duration(1000)
@@ -178,6 +189,10 @@ function updateLegend(){
     .attr("y2", function(d) { 
       if (d.cy==0) return 5000;
       else return resizeCoef*d.cy;
+    })
+    .style("stroke", function (d) { 
+      if (colorMethod==d.germline) return colorVJ[d.color] ; 
+      return colorStyle.c06;
     });
 }
 
