@@ -1,0 +1,3219 @@
+{
+  "total_size": [
+    506830, 
+    465165, 
+    587024, 
+    386711, 
+    421530
+  ], 
+  "junctions": [
+    {
+      "seg": {
+        "r1": 177, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV3*02 7/TCTGAC/5 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTATGTCAGAAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTTGCAGTCTCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCTTTGAGTTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV3*02", 
+          "TRGV5*01", 
+          "TRGV3*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 170, 
+        "D": []
+      }, 
+      "top": 1, 
+      "junction": "CTATTACTGTGCCACCTTCTGACATAAGAAACTCTTTGGC", 
+      "size": [
+        140076, 
+        33292, 
+        272311, 
+        100459, 
+        6741
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 177, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV3*01 8/TCTGAC/5 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "AGTGTTGTTCCACTGCCAAGAGTTTCTTATGTCAGAAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTTGCAGTCTCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCCTTGCGGTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV3*01", 
+          "TRGV3*02", 
+          "TRGV5*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 170, 
+        "D": []
+      }, 
+      "top": 2, 
+      "junction": "ACTGTGCCACCTTCTGACATAAGAAACTCTTGGCAGTGGA", 
+      "size": [
+        3489, 
+        806, 
+        7901, 
+        787, 
+        91
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 182, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 1/TCCG/7 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTCGGACCATCCCAGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 177, 
+        "D": []
+      }, 
+      "top": 3, 
+      "junction": "CTGTGCCACCTGGGATGGTCCGAAGAAACTCTTTGGCAGT", 
+      "size": [
+        2481, 
+        881, 
+        5744, 
+        4310, 
+        287
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 176, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV3*01 8/TCTGAC/5 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTATGTCAGAAGGTGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTTGCAGTCTCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCCTTGCGGTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV3*01", 
+          "TRGV3*02", 
+          "TRGV5*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 169, 
+        "D": []
+      }, 
+      "top": 4, 
+      "junction": "GGTCTATTACTGTGCACCTTCTGACATAAGAAACTCTTTG", 
+      "size": [
+        1922, 
+        673, 
+        3904, 
+        3877, 
+        173
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 169, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 13/GCG/1 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTATAATACGCGCACAGTAATAGACCCCAAAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 165, 
+        "D": []
+      }, 
+      "top": 5, 
+      "junction": "TTGGGGTCTATTACTGTGCGCGTATTATAAGAAACTCTTT", 
+      "size": [
+        1816, 
+        49, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 139, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJ1*02", 
+          "TRGJP*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV3*01 49/CCCCGTCAT/0 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATCACTACTATATGACGGGGTTTTGCAGTCTCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCCTTGCGGTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV3*01", 
+          "TRGV3*02", 
+          "TRGV5*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 129, 
+        "D": []
+      }, 
+      "top": 6, 
+      "junction": "TATTGAGACTGCAAAACCCCGTCATATAGTAGTGATTGGA", 
+      "size": [
+        1688, 
+        0, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": 0, 
+      "top": 7, 
+      "junction": "GTGGGATTATGGTTGCCTCCTCTATACCTTTTTCAAGACG", 
+      "size": [
+        1430, 
+        1, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 183, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 2/TATGCC/5 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTATGGCATACATCCCAGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 176, 
+        "D": []
+      }, 
+      "top": 8, 
+      "junction": "CTGTGCCACCTGGGATGTATGCCATAAGAAACTCTTTGGC", 
+      "size": [
+        1385, 
+        0, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 182, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 4/AAATTAG/12 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTCTAATTTTCCCAGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 174, 
+        "D": []
+      }, 
+      "top": 9, 
+      "junction": "TACTGTGCCACCTGGGAAAATTAGACTCTTTGGCAGTGGA", 
+      "size": [
+        1283, 
+        0, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 180, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 0//9 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCCCCTCCCTCAGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 179, 
+        "D": []
+      }, 
+      "top": 10, 
+      "junction": "ATTACTGTGCCACCTGAGGGAGGGGAAACTCTTTGGCAGT", 
+      "size": [
+        1204, 
+        0, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 129, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*02"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 9/CCCACGAAACCATT/0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATAATGGTTTCGTGGGGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 114, 
+        "D": []
+      }, 
+      "top": 11, 
+      "junction": "ACTACTGTGCTGCCCCACGAAACCATTATACCACTGGTTG", 
+      "size": [
+        1132, 
+        1, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 133, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 1/TGTCGGCTTG/8 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCCAAGCCGACAAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 122, 
+        "D": []
+      }, 
+      "top": 12, 
+      "junction": "GTGCTGCGTGGGATTTGTCGGCTTGGGTTGGTTCAAGATA", 
+      "size": [
+        1062, 
+        1, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 135, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJ1*02", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/TAAGGGTCAGG/3 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGCCTGACCCTTATAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 13, 
+      "junction": "TGCTGCGTGGGATTATAAGGGTCAGGCCACTGGTTGGTTC", 
+      "size": [
+        1010, 
+        1, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 177, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV3*01 8/TCTGAC/5 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTTCTTATGTCAGAAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTTGCAGTCTCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCCTTGCGGTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV3*01", 
+          "TRGV3*02", 
+          "TRGV5*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 170, 
+        "D": []
+      }, 
+      "top": 13, 
+      "junction": "TTACTGTGCCACCTTCTGACATAAGAAAACTCTTTGGCAG", 
+      "size": [
+        910, 
+        143, 
+        1833, 
+        647, 
+        19
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 136, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 1/GGTTGGGATCGAA/5 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAGCCCAGTTTCGATCCCAACCAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 122, 
+        "D": []
+      }, 
+      "top": 15, 
+      "junction": "GCGTGGGATTGGTTGGGATCGAAACTGGGCTGGTTCAAGA", 
+      "size": [
+        818, 
+        2, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 132, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 2/CGGATTTGAG/0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTTATCTCAAATCCGATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 121, 
+        "D": []
+      }, 
+      "top": 16, 
+      "junction": "GTGCTGCGTGGGATCGGATTTGAGATAACCACTGGTTGGT", 
+      "size": [
+        797, 
+        0, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 128, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 2/GATGGG/0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "CTACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATCCCATCATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 121, 
+        "D": []
+      }, 
+      "top": 17, 
+      "junction": "ACTGTGCTGCGTGGGATGATGGGATACCACTGGTTGGTTC", 
+      "size": [
+        740, 
+        0, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 135, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*02"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/TATGGCAGTCT/0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATAGACTGCCATATAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 18, 
+      "junction": "TGCTGCGTGGGATTATATGGCAGTCTATACCACTGGTTGG", 
+      "size": [
+        722, 
+        0, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 121, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 7/CTCC/0 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATCACTACTATGGAGACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 116, 
+        "D": []
+      }, 
+      "top": 19, 
+      "junction": "TTTACTACTGTGCTGCGTCTCCATAGTAGTGATTGGATCA", 
+      "size": [
+        695, 
+        0, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 178, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV3*01 8/TCTGAC/5 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTATGTCAGAAGGTCGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTTGCAGTCTCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCCTTGCGGTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV3*01", 
+          "TRGV3*02", 
+          "TRGV5*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 171, 
+        "D": []
+      }, 
+      "top": 11, 
+      "junction": "GTCTATTACTGTGCCGACCTTCTGACATAAGAAACTCTTT", 
+      "size": [
+        670, 
+        214, 
+        2171, 
+        314, 
+        21
+      ]
+    }, 
+    {
+      "seg": 0, 
+      "top": 21, 
+      "junction": "TACTACTGTGCTCCCCATTGATACTATTGATACCACTGGT", 
+      "size": [
+        666, 
+        1, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 176, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV2*01 6/TCT/10 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTAGACCAGGTGGCACAGTAATAGACCCCAAAGTCATTTTCAATTAGATTTCGCAGTATCAATCTCAAGTTGTTCCTTGTGCTTGCGTAAGTATAATACTTCCCTGGACTGACTCCTGATTCCAACACAACCTTGGAGTTGTAGGAGTCATAGTACTGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV2*01", 
+          "TRGV2*02", 
+          "TRGV4*02", 
+          "TRGV4*01"
+        ], 
+        "l1": 172, 
+        "D": []
+      }, 
+      "top": 22, 
+      "junction": "CTATTACTGTGCCACCTGGTCTAAACTCTTTGGCAGTGGA", 
+      "size": [
+        647, 
+        0, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 130, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/TGGTGT/4 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGACACCATAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 23, 
+      "junction": "TGTGCTGCGTGGGATTATGGTGTCACTGGTTGGTTCAAGA", 
+      "size": [
+        633, 
+        0, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 178, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV3*01 8/TCTGAC/5 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTATGTCAGAAGGTGGCACAGTAATCAGACCCCAGAATCATTTTCAATTAGATTTTGCAGTCTCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCCTTGCGGTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV3*01", 
+          "TRGV3*02", 
+          "TRGV5*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 171, 
+        "D": []
+      }, 
+      "top": 24, 
+      "junction": "TGATTACTGTGCCACCTTCTGACATAAGAAACTCTTTGGC", 
+      "size": [
+        607, 
+        69, 
+        646, 
+        204, 
+        14
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 179, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV3*01 8/TCTGAC/5 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTATGTCAGAAGGTCGGCACAGTAATAGATCCCCAGAATCATTTTCAATTAGATTTTGCAGTCTCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCCTTGCGGTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV3*01", 
+          "TRGV3*02", 
+          "TRGV5*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 172, 
+        "D": []
+      }, 
+      "top": 8, 
+      "junction": "ATCTATTACTGTGCCGACCTTCTGACATAAGAAACTCTTT", 
+      "size": [
+        563, 
+        141, 
+        2359, 
+        223, 
+        17
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 122, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 2//2 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 121, 
+        "D": []
+      }, 
+      "top": 4, 
+      "junction": "TACTACTGTGCTGCGTGGGATACCACTGGTTGGTTCAAGA", 
+      "size": [
+        274, 
+        1148, 
+        1, 
+        0, 
+        532
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 124, 
+        "J": [
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJ1*02", 
+          "TRGJP*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0//6 TRGJ1*01", 
+        "r2": 0, 
+        "sequence": "GCATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATTATTATAAGAAACTCTTTGGCAGTGGAACAACA", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 12, 
+      "junction": "ACTACTGTGCTGCGTGGGATTATTATAAGAAACTCTTTGG", 
+      "size": [
+        239, 
+        648, 
+        1, 
+        59, 
+        1916
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 124, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*02"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0//1 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 13, 
+      "junction": "CTACTGTGCTGCGTGGGATTATACCACTGGTTGGTTCAAG", 
+      "size": [
+        218, 
+        502, 
+        415, 
+        2856, 
+        395
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 178, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV5*01 3/TT/8 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTAAGTCCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTCGTAGTATCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCTTTGAGTTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV5*01", 
+          "TRGV3*02", 
+          "TRGV3*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 175, 
+        "D": []
+      }, 
+      "top": 22, 
+      "junction": "TTACTGTGCCACCTGGGACTTAGAAACTCTTTGGCAGTGG", 
+      "size": [
+        98, 
+        0, 
+        982, 
+        0, 
+        9
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 191, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 0/CCTAAAAGGCGT/3 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTATAAACGCCTTTTAGGCCCATCCCAGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 178, 
+        "D": []
+      }, 
+      "top": 20, 
+      "junction": "CCACCTGGGATGGGCCTAAAAGGCGTTTATAAGAAACTCT", 
+      "size": [
+        26, 
+        9, 
+        0, 
+        0, 
+        1132
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 178, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJ1*01", 
+          "TRGJ2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV2*01 1//0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATCCGTCCCAGGTGGCACAGTAATAGACCCCAGAGTCATTTTCAATTAGATTTCGCAGTATCAATCTCAAGTTGTTCCTTGTGCTTGCGTAAGTATAATACTTCCCTGGACTGACTCCTGATTCCAACACAACCTTGGAGTTGTAGGAGTCATAGTACTGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV2*01", 
+          "TRGV2*02", 
+          "TRGV4*02", 
+          "TRGV4*01"
+        ], 
+        "l1": 177, 
+        "D": []
+      }, 
+      "top": 15, 
+      "junction": "TACTGTGCCACCTGGGACGGATACCACTGGTTGGTTCAAG", 
+      "size": [
+        4, 
+        22, 
+        0, 
+        0, 
+        1484
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 177, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJP*01", 
+          "TRGJ1*02"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*01 2//2 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATCACTACTCATCCCAGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCATAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*01", 
+          "TRGV4*02", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 176, 
+        "D": []
+      }, 
+      "top": 13, 
+      "junction": "TTACTGTGCCACCTGGGATGAGTAGTGATTGGATCAAGAC", 
+      "size": [
+        1, 
+        0, 
+        0, 
+        0, 
+        1759
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 176, 
+        "J": [
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJ1*02", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV3*01 4/G/2 TRGJ1*01", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTATAATAATCTCCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTTGCAGTCTCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCCTTGCGGTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV3*01", 
+          "TRGV3*02", 
+          "TRGV5*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 174, 
+        "D": []
+      }, 
+      "top": 16, 
+      "junction": "TATTACTGTGCCACCTGGGAGATTATTATAAGAAACTCTT", 
+      "size": [
+        1, 
+        22, 
+        0, 
+        0, 
+        1422
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 124, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0//0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATTAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 7, 
+      "junction": "TACTGTGCTGCGTGGGATTAATACCACTGGTTGGTTCAAG", 
+      "size": [
+        1, 
+        201, 
+        0, 
+        0, 
+        4206
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 122, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 2//2 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 121, 
+        "D": []
+      }, 
+      "top": 3, 
+      "junction": "ACTACTGTGCTGCGTGGGATCCACTGGTTGGTTCAAGATA", 
+      "size": [
+        1, 
+        1299, 
+        0, 
+        2, 
+        68
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 130, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/GGCG/0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATCGCCTAATTGCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 125, 
+        "D": []
+      }, 
+      "top": 2, 
+      "junction": "ACTGTGCTGCGTGGGCAATTAGGCGATACCACTGGTTGGT", 
+      "size": [
+        0, 
+        1377, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 124, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 1/CC/9 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACGGAACCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 121, 
+        "D": []
+      }, 
+      "top": 5, 
+      "junction": "ACTACTGTGCTGCGTGGGTTCCGTTGGTTCAAGATATTTG", 
+      "size": [
+        0, 
+        1032, 
+        2, 
+        1, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 178, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV5*01 4/TGA/5 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTATTCATCCCAGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATTAGATTTCGTAGTATCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCTTTGAGTTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV5*01", 
+          "TRGV3*02", 
+          "TRGV3*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 174, 
+        "D": []
+      }, 
+      "top": 7, 
+      "junction": "TTACTGTGCCACCTGGGATGAATAAGAAACTCTTTGGCAG", 
+      "size": [
+        0, 
+        879, 
+        1, 
+        0, 
+        4
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 135, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 1/TTATTGGAGTAG/1 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTACTACTCCAATAAAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 122, 
+        "D": []
+      }, 
+      "top": 8, 
+      "junction": "TGCTGCGTGGGATTTTATTGGAGTAGTACCACTGGTTGGT", 
+      "size": [
+        0, 
+        845, 
+        1, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": 0, 
+      "top": 10, 
+      "junction": "ATTACTGTGCCATCACCTAGGAGTTGGCGACCACTGGTTG", 
+      "size": [
+        0, 
+        777, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 129, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 1/CCCCCT/1 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATCACTACCTAAGGGGGAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 122, 
+        "D": []
+      }, 
+      "top": 11, 
+      "junction": "TGTGCTGCGTGGGATTCCCCCTTAGGTAGTGATTGGATCA", 
+      "size": [
+        0, 
+        745, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 132, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 4/CCCTGGGAGGCG/3 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATCACTACCGCCTCCCAGGGCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 119, 
+        "D": []
+      }, 
+      "top": 12, 
+      "junction": "CTGTGCTGCGTGGGCCCTGGGAGGCGGTAGTGATTGGATC", 
+      "size": [
+        0, 
+        704, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 130, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 3/GCATGGAAA/0 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "ATACCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATCACTACTATTTTCCATGCTCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV9*02", 
+          "TRGV9*01"
+        ], 
+        "l1": 120, 
+        "D": []
+      }, 
+      "top": 14, 
+      "junction": "ACTGTGCTGCGTGGGAGCATGGAAAATAGTAGTGATTGGA", 
+      "size": [
+        0, 
+        671, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 137, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/TTTTATCGTGTGG/8 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCCCACACGATAAAATAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 15, 
+      "junction": "GCTGCGTGGGATTATTTTATCGTGTGGGGTTGGTTCAAGA", 
+      "size": [
+        0, 
+        648, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 131, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 4/GAAATCAGGAG/2 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTCTCCTGATTTCCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 119, 
+        "D": []
+      }, 
+      "top": 17, 
+      "junction": "ACTGTGCTGCGTGGGGAAATCAGGAGACCACTGGTTGGTT", 
+      "size": [
+        0, 
+        631, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": 0, 
+      "top": 18, 
+      "junction": "GCGTGGGATTCCCGCCGTTCCCCTTAGTCGGAGACGTTTG", 
+      "size": [
+        0, 
+        630, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 132, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/CCACGGAT/4 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGATCCGTGGTAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 19, 
+      "junction": "GTGCTGCGTGGGATTACCACGGATCACTGGTTGGTTCAAG", 
+      "size": [
+        0, 
+        609, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 130, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 2/AGGGAGGGG/2 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATCACTACTCCCCTCCCTATCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 120, 
+        "D": []
+      }, 
+      "top": 20, 
+      "junction": "TACTGTGCTGCGTGGATAGGGAGGGGAGTAGTGATTGGAT", 
+      "size": [
+        0, 
+        605, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 134, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 1/TTGAAGGAGGA/0 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "CTTCCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATCACTACTATTCCTCCTTCAAAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 122, 
+        "D": []
+      }, 
+      "top": 21, 
+      "junction": "GTGCTGCGTGGGATTTTGAAGGAGGAATAGTAGTGATTGG", 
+      "size": [
+        0, 
+        597, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 166, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 23/CATGAGGGGG/7 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTCCCCCTCATGAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 155, 
+        "D": []
+      }, 
+      "top": 22, 
+      "junction": "ATGACTCTGGAGTCTCATGAGGGGGAAGAAACTCTTTGGC", 
+      "size": [
+        0, 
+        597, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 134, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 4/CTAGACGAGGGAGG/2 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTCCTCCCTCGTCTAGCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 119, 
+        "D": []
+      }, 
+      "top": 23, 
+      "junction": "TGTGCTGCGTGGGCTAGACGAGGGAGGACCACTGGTTGGT", 
+      "size": [
+        0, 
+        581, 
+        1, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 136, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/AAGGCAAACGTG/6 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGCACGTTTGCCTTTAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 24, 
+      "junction": "GCTGCGTGGGATTAAAGGCAAACGTGCTGGTTGGTTCAAG", 
+      "size": [
+        0, 
+        562, 
+        0, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 123, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 3/AA/0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATTTTCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV9*02", 
+          "TRGV9*01"
+        ], 
+        "l1": 120, 
+        "D": []
+      }, 
+      "top": 19, 
+      "junction": "ACTACTGTGCTGCGTGGGAAAATACCACTGGTTGGTTCAA", 
+      "size": [
+        0, 
+        84, 
+        0, 
+        1680, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 126, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 3/CCTAA/0 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTATTTAGGTCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV9*02", 
+          "TRGV9*01"
+        ], 
+        "l1": 120, 
+        "D": []
+      }, 
+      "top": 17, 
+      "junction": "CTACTGTGCTGCGTGGGACCTAAATACCACTGGTTGGTTC", 
+      "size": [
+        0, 
+        3, 
+        1173, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 129, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 4/TCTCCCAGG/4 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGCCTGGGAGACCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 119, 
+        "D": []
+      }, 
+      "top": 2, 
+      "junction": "TACTGTGCTGCGTGGGTCTCCCAGGCACTGGTTGGTTCAA", 
+      "size": [
+        0, 
+        2, 
+        0, 
+        31164, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 164, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV2*01 15//5 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTATACCGTAATAGACCCCAAAGTCATTTTCAATTAGATTTCGCAGTATCAATCTCAAGTTGTTCCTTGTGCTTGCGTAAGTATAATACTTCCCTGGACTGACTCCTGATTCCAACACAACCTTGGAGTTGTAGGAGTCATAGTACTGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV2*01", 
+          "TRGV2*02", 
+          "TRGV4*02", 
+          "TRGV4*01"
+        ], 
+        "l1": 163, 
+        "D": []
+      }, 
+      "top": 19, 
+      "junction": "TTGAAAATGACTTTGGGGTCTATTACGGTATAAGAAACTC", 
+      "size": [
+        0, 
+        1, 
+        1139, 
+        742, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 184, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*02", 
+          "TRGJP1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV8*01 1/TAGGGG/2 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TTGATCCAATCACTACTCCCCTACTATCCCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAAGGCTCTTCCCTGTGCTTGCATAAGTATGATACTTTTCTCGACTGATTCCTGATTCCAACACAACCCTGGAGTTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV8*01", 
+          "TRGV2*02", 
+          "TRGV2*01", 
+          "TRGV4*01"
+        ], 
+        "l1": 177, 
+        "D": []
+      }, 
+      "top": 10, 
+      "junction": "TGTGCCACCTGGGATAGTAGGGGAGTAGTGATTGGATCAA", 
+      "size": [
+        0, 
+        1, 
+        0, 
+        3370, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 128, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/ATTA/2 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TAACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTTAATTAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 12, 
+      "junction": "CTGTGCTGCGTGGGATTAATTAACCACTGGTTGGTTCAAG", 
+      "size": [
+        0, 
+        1, 
+        0, 
+        2898, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 174, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV8*01 3//3 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTATAAATCCGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAAGGCTCTTCCCTGTGCTTGCATAAGTATGATACTTTTCTCGACTGATTCCTGATTCCAACACAACCCTGGAGTTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV8*01", 
+          "TRGV2*02", 
+          "TRGV2*01", 
+          "TRGV4*01"
+        ], 
+        "l1": 173, 
+        "D": []
+      }, 
+      "top": 2, 
+      "junction": "GTCTATTACTGTGCCACCGGATTTATAAGAAACTCTTTGG", 
+      "size": [
+        0, 
+        0, 
+        50074, 
+        3803, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 175, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 4//12 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTCCCTGGAGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 174, 
+        "D": []
+      }, 
+      "top": 6, 
+      "junction": "GAGTCTATTACTGTGCCTCCAGGGAACTCTTTGGCAGTGG", 
+      "size": [
+        0, 
+        0, 
+        2901, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 175, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 5/G/9 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCCCCCTGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 173, 
+        "D": []
+      }, 
+      "top": 7, 
+      "junction": "GTCTATTACTGTGCCACCAGGGGGAAACTCTTTGGCAGTG", 
+      "size": [
+        0, 
+        0, 
+        2753, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 169, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 15/TTTCG/9 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTCTCCGAAAACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 163, 
+        "D": []
+      }, 
+      "top": 9, 
+      "junction": "TGGAGTCTATTACTGTTTTCGGAGACTCTTTGGCAGTGGA", 
+      "size": [
+        0, 
+        0, 
+        2323, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 133, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/TCCCCTCCG/2 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATCACTACTCGGAGGGGATAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 10, 
+      "junction": "GTGCTGCGTGGGATTATCCCCTCCGAGTAGTGATTGGATC", 
+      "size": [
+        0, 
+        0, 
+        2250, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 171, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV5*01 17/TCCGCCCCG/11 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTCGGGGCGGAAGTAATAGACCCCAGAATCATTTTCAATTAGATTTCGTAGTATCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCTTTGAGTTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV5*01", 
+          "TRGV3*02", 
+          "TRGV3*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 161, 
+        "D": []
+      }, 
+      "top": 12, 
+      "junction": "TCTGGGGTCTATTACTTCCGCCCCGAACTCTTTGGCAGTG", 
+      "size": [
+        0, 
+        0, 
+        1922, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 170, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV2*01 12/GGC/4 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTATAGCCGGCACAGTAATAGACCCCAAAGTCATTTTCAATTAGATTTCGCAGTATCAATCTCAAGTTGTTCCTTGTGCTTGCGTAAGTATAATACTTCCCTGGACTGACTCCTGATTCCAACACAACCTTGGAGTTGTAGGAGTCATAGTACTGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV2*01", 
+          "TRGV2*02", 
+          "TRGV4*02", 
+          "TRGV4*01"
+        ], 
+        "l1": 166, 
+        "D": []
+      }, 
+      "top": 14, 
+      "junction": "TGGGGTCTATTACTGTGCCGGCTATAAGAAACTCTTTGGC", 
+      "size": [
+        0, 
+        0, 
+        1563, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 173, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV8*01 7/T/8 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTACAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAAGGCTCTTCCCTGTGCTTGCATAAGTATGATACTTTTCTCGACTGATTCCTGATTCCAACACAACCCTGGAGTTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV8*01", 
+          "TRGV2*02", 
+          "TRGV2*01", 
+          "TRGV4*01"
+        ], 
+        "l1": 171, 
+        "D": []
+      }, 
+      "top": 15, 
+      "junction": "GTCTATTACTGTGCCACCTGTAGAAACTCTTTGGCAGTGG", 
+      "size": [
+        0, 
+        0, 
+        1429, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 177, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV3*01 5/TGG/12 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTCCACCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTTGCAGTCTCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCCTTGCGGTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV3*01", 
+          "TRGV3*02", 
+          "TRGV5*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 173, 
+        "D": []
+      }, 
+      "top": 16, 
+      "junction": "TATTACTGTGCCACCTGGGTGGACTCTTTGGCAGTGGAAC", 
+      "size": [
+        0, 
+        0, 
+        1195, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 177, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV5*01 3/G/13 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGCGTCCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTCGTAGTATCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCTTTGAGTTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV5*01", 
+          "TRGV3*02", 
+          "TRGV3*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 175, 
+        "D": []
+      }, 
+      "top": 18, 
+      "junction": "TTACTGTGCCACCTGGGACGCTCTTTGGCAGTGGAACAAC", 
+      "size": [
+        0, 
+        0, 
+        1166, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 173, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 3//3 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTATAAATCCGGTGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 172, 
+        "D": []
+      }, 
+      "top": 20, 
+      "junction": "GGAGTCTATTACTGTGCACCGGATTTATAAGAAACTCTTT", 
+      "size": [
+        0, 
+        0, 
+        1042, 
+        259, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 179, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 0//10 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCCCGTCCCAGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 178, 
+        "D": []
+      }, 
+      "top": 21, 
+      "junction": "TACTGTGCCACCTGGGACGGGAAACTCTTTGGCAGTGGAA", 
+      "size": [
+        0, 
+        0, 
+        994, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 174, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV2*01 9/GCCC/11 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTGGGCGGAGGCACAGTAATAGACCCCAGAGTCATTTTCAATTAGATTTCGCAGTATCAATCTCAAGTTGTTCCTTGTGCTTGCGTAAGTATAATACTTCCCTGGACTGACTCCTGATTCCAACACAACCTTGGAGTTGTAGGAGTCATAGTACTGAAGATGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV2*01", 
+          "TRGV2*02", 
+          "TRGV4*02", 
+          "TRGV4*01"
+        ], 
+        "l1": 169, 
+        "D": []
+      }, 
+      "top": 23, 
+      "junction": "GGGTCTATTACTGTGCCTCCGCCCAACTCTTTGGCAGTGG", 
+      "size": [
+        0, 
+        0, 
+        940, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 172, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 6//11 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTCCGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 171, 
+        "D": []
+      }, 
+      "top": 24, 
+      "junction": "AGTCTATTACTGTGCCACCGGAACTCTTTGGCAGTGGAAC", 
+      "size": [
+        0, 
+        0, 
+        932, 
+        0, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 174, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJ1*01", 
+          "TRGJ2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV2*01 0/CCCC/3 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGGGGGCCCGTCCCAGGTGGCACAGTAATAGACCCCAAAGTCATTTTCAATTAGATTTCGCAGTATCAATCTCAAGTTGTTCCTTGTGCTTGCGTAAGTATAATACTTCCCTGGACTGACTCCTGATTCCAACACAACCTTGGAGTTGTAGGAGTCATAGTACTGAAGACGCTGTG", 
+        "V": [
+          "TRGV2*01", 
+          "TRGV2*02", 
+          "TRGV4*02", 
+          "TRGV4*01"
+        ], 
+        "l1": 169, 
+        "D": []
+      }, 
+      "top": 4, 
+      "junction": "TGTGCCACCTGGGACGGGCCCCCCACTGGTTGGTTCAAGA", 
+      "size": [
+        0, 
+        0, 
+        257, 
+        5532, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 125, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/A/9 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACTTAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 20, 
+      "junction": "TACTGTGCTGCGTGGGATTAAGTTGGTTCAAGATATTTGC", 
+      "size": [
+        0, 
+        0, 
+        129, 
+        1579, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 189, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJ1*01", 
+          "TRGJ2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV2*01 2/ACCCAGTTACTT/3 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATCACTACAAGTAACTGGGTCGTCCCAGGTGGCACAGTAATAGACCCCAAAGTCATTTTCAATTAGATTTCGCAGTATCAATCTCAAGTTGTTCCTTGTGCTTGCGTAAGTATAATACTTCCCTGGACTGACTCCTGATTCCAACACAACCTTGGAGTTGTAGGAGTCATAGTACTGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV2*01", 
+          "TRGV2*02", 
+          "TRGV4*02", 
+          "TRGV4*01"
+        ], 
+        "l1": 176, 
+        "D": []
+      }, 
+      "top": 3, 
+      "junction": "TGCCACCTGGGACGACCCAGTTACTTGTAGTGATTGGATC", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        13276, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 137, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/TTTACGCTTAAAA/15 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGATTTTAAGCGTAAATAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 6, 
+      "junction": "GCTGCGTGGGATTATTTACGCTTAAAATCAAGATATTTGC", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        3972, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 125, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 4/CGGGG/3 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATCACTACCCCCGCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 119, 
+        "D": []
+      }, 
+      "top": 9, 
+      "junction": "ACTACTGTGCTGCGTGGGCGGGGGTAGTGATTGGATCAAG", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        3661, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 132, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 1/GGTATGGGG/7 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCACCCCATACCAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 122, 
+        "D": []
+      }, 
+      "top": 11, 
+      "junction": "TGTGCTGCGTGGGATTGGTATGGGGTGGTTGGTTCAAGAT", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        3147, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 176, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*02"
+        ], 
+        "l2": 0, 
+        "name": "TRGV8*01 3//4 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "AAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGATCCCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAAGGCTCTTCCCTGTGCTTGCATAAGTATGATACTTTTCTCGACTGATTCCTGATTCCAACACAACCCTGGAGTTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV8*01", 
+          "TRGV2*02", 
+          "TRGV2*01", 
+          "TRGV4*01"
+        ], 
+        "l1": 175, 
+        "D": []
+      }, 
+      "top": 14, 
+      "junction": "ATTACTGTGCCACCTGGGATCACTGGTTGGTTCAAGATAT", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        2035, 
+        13
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 155, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 26/CGG/9 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCCCGCTCCGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 151, 
+        "D": []
+      }, 
+      "top": 15, 
+      "junction": "CTTATTGAAAATGACTCGGAGCGGGAAACTCTTTGGCAGT", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        1962, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 124, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 4/CGGG/3 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATCACTACCCCGCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 119, 
+        "D": []
+      }, 
+      "top": 16, 
+      "junction": "ACTACTGTGCTGCGTGGGCGGGGTAGTGATTGGATCAAGA", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        1750, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 126, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 2/GGGA/2 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTTCCCATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 121, 
+        "D": []
+      }, 
+      "top": 17, 
+      "junction": "TACTGTGCTGCGTGGGATGGGAACCACTGGTTGGTTCAAG", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        1741, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 132, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 1/TCTGGCTCT/10 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAAAGAGCCAGAAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 122, 
+        "D": []
+      }, 
+      "top": 18, 
+      "junction": "TGTGCTGCGTGGGATTTCTGGCTCTTTGGTTCAAGATATT", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        1730, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 131, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/TTCGGCC/10 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAAGGCCGAATAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 21, 
+      "junction": "TGTGCTGCGTGGGATTATTCGGCCTTGGTTCAAGATATTT", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        1501, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 170, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*02 8//15 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTGGACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCGTAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*02", 
+          "TRGV4*01", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 169, 
+        "D": []
+      }, 
+      "top": 22, 
+      "junction": "CTCTGGAGTCTATTACTGTCCAACTCTTTGGCAGTGGAAC", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        1382, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 120, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 4//3 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACGAGCGGCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 119, 
+        "D": []
+      }, 
+      "top": 23, 
+      "junction": "CTACTGTGCTGCGTGGGCCGCTCGTTGGTTCAAGATATTT", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        1339, 
+        0
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 126, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 2/ACCT/10 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCCAAAGGTATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 121, 
+        "D": []
+      }, 
+      "top": 24, 
+      "junction": "ACTGTGCTGCGTGGGATACCTTTGGGTTCAAGATATTTGC", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        1288, 
+        0
+      ]
+    }, 
+    {
+      "seg": 0, 
+      "top": 1, 
+      "junction": "GCCGTTTACTACTGTGCTGGAAAGAAACTCTTTGGCAGTG", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        22425
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 176, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJ1*02", 
+          "TRGJP*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV3*01 5/GC/3 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATCACACGCCCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTTGCAGTCTCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCCTTGCGGTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV3*01", 
+          "TRGV3*02", 
+          "TRGV5*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 173, 
+        "D": []
+      }, 
+      "top": 2, 
+      "junction": "TTACTGTGCCACCTGGGGCGTGTGATTGGATCAAGACGTT", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        12389
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 126, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 1/GAG/3 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGCTCAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 122, 
+        "D": []
+      }, 
+      "top": 3, 
+      "junction": "TACTGTGCTGCGTGGGATTGAGCCACTGGTTGGTTCAAGA", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        10807
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 128, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 1/CTGGG/7 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "GCATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATTCTGGGAAGAAACTCTTTGGCAGTGGAACAACA", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 122, 
+        "D": []
+      }, 
+      "top": 4, 
+      "junction": "ACTGTGCTGCGTGGGATTCTGGGAAGAAACTCTTTGGCAG", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        7277
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 131, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 1/GATTGGGT/4 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGACCCAATCAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 122, 
+        "D": []
+      }, 
+      "top": 6, 
+      "junction": "TGTGCTGCGTGGGATTGATTGGGTCACTGGTTGGTTCAAG", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        5951
+      ]
+    }, 
+    {
+      "seg": 0, 
+      "top": 8, 
+      "junction": "TGGGATTATTCCCCTCGCAAGAGATTTCCCCGATTATTAT", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        3871
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 183, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJP*01", 
+          "TRGJ1*02"
+        ], 
+        "l2": 0, 
+        "name": "TRGV4*01 0/TTAG/0 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATCACTACTTATCTAACCCATCCCAGGTGGCACAGTAATAGACTCCAGAGTCATTTTCAATAAGATTTCGCAGTATCATTCTCAAGTTCTTCCTTGTGCTTCCATAAGTATCATACTTCCCTGGGCTGATTCCTGATTCCAACACAACGCTGGAGGTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV4*01", 
+          "TRGV4*02", 
+          "TRGV2*01", 
+          "TRGV2*02"
+        ], 
+        "l1": 178, 
+        "D": []
+      }, 
+      "top": 9, 
+      "junction": "GTGCCACCTGGGATGGGTTAGATAAGTAGTGATTGGATCA", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        3344
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 185, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV8*01 5/CCCCTTAGCGG/7 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTCCGCTAAGGGGCCCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAAGGCTCTTCCCTGTGCTTGCATAAGTATGATACTTTTCTCGACTGATTCCTGATTCCAACACAACCCTGGAGTTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV8*01", 
+          "TRGV2*02", 
+          "TRGV2*01", 
+          "TRGV4*01"
+        ], 
+        "l1": 173, 
+        "D": []
+      }, 
+      "top": 10, 
+      "junction": "ACTGTGCCACCTGGGCCCCTTAGCGGAAGAAACTCTTTGG", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        3232
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 133, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 3/CCCCCGGTATGA/1 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "GCATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGACCCCCGGTATGATATTATAAGAAACTCTTTGGCAGTGGAACAACA", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV9*02", 
+          "TRGV9*01"
+        ], 
+        "l1": 120, 
+        "D": []
+      }, 
+      "top": 11, 
+      "junction": "TGTGCTGCGTGGGACCCCCGGTATGATATTATAAGAAACT", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        2767
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 122, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 2/C/2 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTGGTGATCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 120, 
+        "D": []
+      }, 
+      "top": 14, 
+      "junction": "TTACTACTGTGCTGCGTGGATCACCACTGGTTGGTTCAAG", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        1537
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 180, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV3*01 0//7 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTCCTTGTCCCAGGTGGCACAGTAATAGACCCCAGAATCATTTTCAATTAGATTTTGCAGTCTCAATATCCAGCTCCACCTCCTGGGTGTATGAGTATAATACTTTCCTGGACTGAGTCCTGATTCCAACACATCCCTTGCGGTGGAGACGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV3*01", 
+          "TRGV3*02", 
+          "TRGV5*01", 
+          "TRGV5P*02"
+        ], 
+        "l1": 179, 
+        "D": []
+      }, 
+      "top": 17, 
+      "junction": "TACTGTGCCACCTGGGACAAGGAAGAAACTCTTTGGCAGT", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        1403
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 184, 
+        "J": [
+          "TRGJP2*01", 
+          "TRGJP1*01", 
+          "TRGJP*01", 
+          "TRGJ1*02"
+        ], 
+        "l2": 0, 
+        "name": "TRGV8*01 1/ACCTCC/6 TRGJP2*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCCTAGTCCCTTTTGCAAACGTCTTGATCCAATGCACGGAGGTCTATCCCAGGTGGCACAGTAATAGACCCCAGAGTCACGTTCAATTAGATTTTCCAGTATAAATTTAAGGCTCTTCCCTGTGCTTGCATAAGTATGATACTTTTCTCGACTGATTCCTGATTCCAACACAACCCTGGAGTTGTAGGAGTCATAGTACAGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV8*01", 
+          "TRGV2*02", 
+          "TRGV2*01", 
+          "TRGV4*01"
+        ], 
+        "l1": 177, 
+        "D": []
+      }, 
+      "top": 18, 
+      "junction": "TGCCACCTGGGATAGACCTCCGTGCATTGGATCAAGACGT", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        1348
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 126, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/GG/7 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCACCTAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 19, 
+      "junction": "ACTGTGCTGCGTGGGATTAGGTGGTTGGTTCAAGATATTT", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        1195
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 188, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV2*02 0/GGGCCTTCCGGG/8 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "CTGCCAAAGAGTTTCTCCCGGAAGGCCCGTCCCAGGTGGCACAGTAATAGACCCCAGAGTCATTTTCAATTAGATTTTGCAGTATCAATCTCAAGTTGTTCCTTGTGCTTGCGTAAGTATAATACTTCCCTGGACTGACTCCTGATTCCAACACAACCTTGGAGTTGTAGGAGTCATAGTACTGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV2*02", 
+          "TRGV2*01", 
+          "TRGV4*02", 
+          "TRGV4*01"
+        ], 
+        "l1": 175, 
+        "D": []
+      }, 
+      "top": 21, 
+      "junction": "TGCCACCTGGGACGGGCCTTCCGGGAGAAACTCTTTGGCA", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        980
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 132, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 0/GGCGGGAG/9 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "GCATGGGTAAGACAAGCAACAAAGTGGAGGCAAGAAAGAATTCTCAAACTCTCACTTCAATCCTTACCATCAAGTCCGTAGAGAAAGAAGACATGGCCGTTTACTACTGTGCTGCGTGGGATTAGGCGGGAGGAAACTCTTTGGCAGTGGAACAACA", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 123, 
+        "D": []
+      }, 
+      "top": 22, 
+      "junction": "GTGCTGCGTGGGATTAGGCGGGAGGAAACTCTTTGGCAGT", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        949
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 168, 
+        "J": [
+          "TRGJ1*02", 
+          "TRGJ1*01", 
+          "TRGJ2*01", 
+          "TRGJP2*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV2*02 17/GGAAAGGGGG/6 TRGJ1*02", 
+        "r2": 0, 
+        "sequence": "TGTTGTTCCACTGCCAAAGAGTTTCTTACCCCCTTTCCAATAGACCCAGAGTCATTTTCAATTAGATTTTGCAGTATCAATCTCAAGTTGTTCCTTGTGCTTGCGTAAGTATAATACTTCCCTGGACTGACTCCTGATTCCAACACAACCTTGGAGTTGTAGGAGTCATAGTACTGAAGACGCTGTGGGGCCTTCC", 
+        "V": [
+          "TRGV2*02", 
+          "TRGV2*01", 
+          "TRGV4*02", 
+          "TRGV4*01"
+        ], 
+        "l1": 157, 
+        "D": []
+      }, 
+      "top": 23, 
+      "junction": "AATGACTCTGGGTCTATTGGAAAGGGGGTAAGAAACTCTT", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        877
+      ]
+    }, 
+    {
+      "seg": {
+        "r1": 137, 
+        "J": [
+          "TRGJP1*01", 
+          "TRGJP2*01", 
+          "TRGJP*01", 
+          "TRGJ1*01"
+        ], 
+        "l2": 0, 
+        "name": "TRGV10*02 1/TTGGAGCGGGACGT/5 TRGJP1*01", 
+        "r2": 0, 
+        "sequence": "TACCAGGCGAAGTTACTATGAGCTTAGTCCCTTCAGCAAATATCTTGAACCAACCAGTACGTCCCGCTCCAAAATCCCACGCAGCACAGTAGTAAACGGCCATGTCTTCTTTCTCTACGGACTTGATGGTAAGGATTGAAGTGAGAGTTTGAGAATTCTTTCTTGCCTCCACTTTGTTGCTTGTCTTACCCATGC", 
+        "V": [
+          "TRGV10*02", 
+          "TRGV10*01", 
+          "TRGV11*01", 
+          "TRGV11*02"
+        ], 
+        "l1": 122, 
+        "D": []
+      }, 
+      "top": 24, 
+      "junction": "GCTGCGTGGGATTTTGGAGCGGGACGTACTGGTTGGTTCA", 
+      "size": [
+        0, 
+        0, 
+        0, 
+        0, 
+        864
+      ]
+    }
+  ]
+}
