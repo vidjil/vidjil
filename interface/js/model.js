@@ -811,7 +811,6 @@ function initVJposition(germlineV, germlineJ){
       var path=constructPath(leader);
       
       for (var i = 0; i < copy_select.length ; i++){
-	document.getElementById(copy_select[i]).style.display="none";
 	style[copy_select[i]].display=false;
 	style[copy_select[i]].select=false;
 	data_graph[copy_select[i]].path=path;
@@ -819,7 +818,6 @@ function initVJposition(germlineV, germlineJ){
       }
       
       updateListElem(leader,true)
-      document.getElementById(leader).style.display="";
       style[leader].display=true;
       style[leader].select=true;
       setTimeout('updateStyle()',1000);
@@ -841,14 +839,15 @@ function initVJposition(germlineV, germlineJ){
     clones[cloneIDa]=nlist;
     clones[cloneIDb]=[cloneIDb];
     data_graph[cloneIDb].id=cloneIDb;
-    data_graph[cloneIDb].display=true;
+    style[cloneIDb].display=true;
     data_graph[cloneIDa].path=constructPath(cloneIDa);
     data_graph[cloneIDb].path=constructPath(cloneIDb);
-    document.getElementById(cloneIDb).style.display="";
     
-    updateListElem(cloneIDa,true)
-    updateListElem(cloneIDb,false)
+    updateListElem(cloneIDa,true),
+    updateListElem(cloneIDb,false),
     
+    updateStyleElem(cloneIDa);
+    updateStyleElem(cloneIDb);
     updateGraph();
     updateVis();
   }

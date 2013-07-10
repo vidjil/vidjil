@@ -139,6 +139,7 @@ var style =[];
       }   
     }
     if (style[cloneID].select){
+      document.getElementById("line"+cloneID).firstChild.style.strokeWidth="3px";
       document.getElementById(cloneID).style.background=colorStyle.c03;
       document.getElementById("circle"+cloneID).style.stroke=colorStyle.c05;
       document.getElementById("line"+cloneID).style.stroke=colorStyle.c05;
@@ -199,6 +200,7 @@ var style =[];
     colorStyle=newStyle;
     initStyle();
     updateStyle();
+    updateLegend();
     updateGraph();
     document.getElementById("styleSelector").style.display="none";
   }
