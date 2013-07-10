@@ -222,7 +222,7 @@ function loadPref(){
   function changeName(cloneID, newName){
     tmpID = cloneID;
     customName[tmpID] = newName;
-    document.getElementById(tmpID).firstChild.nextsibling.innerHTML=newName
+    $("#"+tmpID).find(".nameBox").html(newName);
     $("#select"+tmpID).find(".nameBox").html(newName);
     $("#clone_name").html(newName);
   }

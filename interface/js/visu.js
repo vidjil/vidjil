@@ -128,7 +128,7 @@ function displayLegend(data){
     .attr("class", "vjLegend")
     .attr("fill", function (d) { 
       if (colorMethod==d.germline) return colorVJ[d.color] ; 
-      return colorStyle.c06;
+      return colorStyle.c01;
     });
     
   lines = vis.selectAll("line").data(data);
@@ -175,7 +175,7 @@ function updateLegend(){
     })  
     .attr("fill", function (d) { 
       if (colorMethod==d.germline) return colorVJ[d.color] ; 
-      return colorStyle.c06;
+      return colorStyle.c01;
     });
   lines
     .transition()
