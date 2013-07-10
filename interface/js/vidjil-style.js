@@ -28,6 +28,9 @@ solarizeD.c04 = "#93a1a1"; //base1
 solarizeD.c05 = "#fdf6e3"; //base3
 solarizeD.c06 = "#586e75"; //base01
 
+solarizeD.col_s = 0.8; //pureté
+solarizeD.col_v = 0.72; //brightness
+
 
 /*light solarize*/
 var solarizeL = {};
@@ -38,6 +41,9 @@ solarizeL.c04 = "#586e75"; //base01
 solarizeL.c05 = "#002b36"; //base03
 solarizeL.c06 = "#93a1a1"; //base1
 
+solarizeL.col_s = 0.8; //pureté
+solarizeL.col_v = 0.72; //brightness
+
 /*dark*/
 var blackStyle ={};
 blackStyle.c01 = "#839496"; //default text color
@@ -47,6 +53,9 @@ blackStyle.c04 = "#93a1a1";
 blackStyle.c05 = "#fdf6e3"; //focus 
 blackStyle.c06 = "#716362";
 
+blackStyle.col_s = 0.8; //pureté
+blackStyle.col_v = 0.72; //brightness
+
 /*white*/
 var whiteStyle ={};
 whiteStyle.c01 = "#434044"; //base00
@@ -55,6 +64,9 @@ whiteStyle.c03 = "#ffffff"; //background highlight
 whiteStyle.c04 = "#93a1a1";
 whiteStyle.c05 = "#502325"; //focus 
 whiteStyle.c06 = "#b3b5b1"; //inactive / graph legend
+
+whiteStyle.col_s = 0.8; //pureté
+whiteStyle.col_v = 0.72; //brightness
 
 var colorStyle = {};
 
@@ -147,29 +159,34 @@ var style =[];
   }
 
   /*ressort une couleur format RGB*/
-  function colorGenerator(c){
-    var deltaR=c-70;
-    if (deltaR<0) deltaR=-deltaR;
-    if ( (170-c) < deltaR) deltaR = 170-c;
-    var r=Math.floor(255-deltaR*10);
-    if(r<0)r=0;
-   
-    var deltaG=c-35;
-    if (deltaG<0) deltaG=-deltaG;
-    if ( (135-c) < deltaG) deltaG = 135-c
-    var g=Math.floor(255-deltaG*10)
-    if(g<0) g=0;
-    
-
-    var deltaB=c;
-    if (deltaB<0) deltaB=-deltaB;
-    if ( (100-c) < deltaB) deltaB = 100-c
-    var b=Math.floor(255-deltaB*10)
-    if(b<0) b=0;
-
-    document.getElementById('circle0').style.fill= "RGB("+r+","+g+","+b+")";
-    
-    return "RGB("+r+","+g+","+b+")"
+  function colorGenerator(h,s,v){
+  h=h/60;
+  var i=Math.floor(h);
+  var f=h-i;
+  var p =Math.floor(( v * ( 1 - s ) )*255);
+  var q =Math.floor(( v * ( 1 - ( s * f) ) )*255);
+  var t =Math.floor(( v * ( 1 - ( s * (1-f) ) ) )*255);
+  v=Math.floor(v*255);
+  
+  if (i==0){
+    return "rgb("+v+","+t+","+p+")";
+  }
+  if (i==1){
+    return "rgb("+q+","+v+","+p+")";
+  }
+  if (i==2){
+    return "rgb("+p+","+v+","+t+")";
+  }
+  if (i==3){
+    return "rgb("+p+","+q+","+v+")";
+  }
+  if (i==4){
+    return "rgb("+t+","+p+","+v+")";
+  }
+  if (i==5){
+    return "rgb("+v+","+p+","+q+")";
+  }
+  
   }
   
   function initStyle(){
@@ -199,13 +216,15 @@ var style =[];
   function changeStyle(newStyle){
     colorStyle=newStyle;
     initStyle();
+    initVJcolor();
     updateStyle();
     updateLegend();
     updateGraph();
     document.getElementById("styleSelector").style.display="none";
   }
   
+  
   function test(bob){
-    colorGenerator(bob);
-    setTimeout('test('+(bob+1)+')', 100);
+    document.getElementById('visu_back').style.fill=colorGenerator(bob);
+    setTimeout('test('+(bob+1)+')', 20);
   }

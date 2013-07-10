@@ -61,15 +61,9 @@ var t = 0;                    //point de suivi courant ( par defaut t=0 )
 var useCustomColor=true;      //utilisation des couleurs personalisées
 var select=[];                //liste des clones selectionnés
 limitClones=300;
-
-var colorV_begin=[255,241,22];//dégradé de couleur germline V
-var colorV_end=[193,17,118];
-var colorJ_begin=[199,22,219];//dégradé de couleur germline J
-var colorJ_end=[18,211,211];
  
 var margeVJ_left=80;              //info quadrillage (vj1/vj2)
 var margeVJ_top=50;
-
 
 /* initialisation by init */
 var totalClones;              //nombres de clones a gerer 
@@ -378,15 +372,26 @@ function makeVJclass(classname, x, y, color, germline, name, subname){
   return result;
 }
 
+  var vmap=[];
+  var jmap=[];
 
+function initVJcolor(col_s, col_v){
+  colorVJ=[];
+  for (var i=0; i<vmap.length; i++){
+    colorVJ[vmap[i]]=colorGenerator( ( (i/vmap.length)*360 ), colorStyle.col_s, colorStyle.col_v );
+  }
+  for (var i=0; i<jmap.length; i++){
+    colorVJ[jmap[i]]=colorGenerator( ( (i/jmap.length)*360 ), colorStyle.col_s, colorStyle.col_v );
+  }
+  
+}
+  
 /*initialise les variables liées aux labels V-J*/
 function initVJposition(germlineV, germlineJ){
   
   var subsize={};
   var sizeV=0;
   var sizeJ=0;
-  var vmap=[];
-  var jmap=[];
   var n=0;
   //reset des tables
   positionV={};       
@@ -395,6 +400,8 @@ function initVJposition(germlineV, germlineJ){
   positionJ2={};	
   vjData=[];            
   vjData2=[];           
+  vmap=[];
+  jmap=[];
 
   
   
@@ -420,13 +427,8 @@ function initVJposition(germlineV, germlineJ){
   n=-1;
 
       
-  //attribution d'une couleur et d'une colonne pour chaque genes V (et chaque sous-genes)
+  //attribution d'une colonne pour chaque genes V (et chaque sous-genes)
   for (var i=0; i<sizeV; i++){
-    
-        colorVJ[vmap[i]]="rgb("+Math.floor((colorV_begin[0]+(i/sizeV)*(colorV_end[0]-colorV_begin[0] )))+
-			","+Math.floor((colorV_begin[1]+(i/sizeV)*(colorV_end[1]-colorV_begin[1] )))+
-			","+Math.floor((colorV_begin[2]+(i/sizeV)*(colorV_end[2]-colorV_begin[2] )))+")";
-			
     
     var elem = vmap[i].split('*')[0];
 
@@ -454,13 +456,9 @@ function initVJposition(germlineV, germlineJ){
   }
   
   n2=-1;
-  //attribution d'une couleur et d'une ligne pour chaque genes J (et chaque sous-genes)
+  //attribution d'une ligne pour chaque genes J (et chaque sous-genes)
   for (var i=0; i<sizeJ; i++){
-    
-        colorVJ[jmap[i]]="rgb("+Math.floor((colorJ_begin[0]+(i/sizeJ)*(colorJ_end[0]-colorJ_begin[0] )))+
-			","+Math.floor((colorJ_begin[1]+(i/sizeJ)*(colorJ_end[1]-colorJ_begin[1] )))+
-			","+Math.floor((colorJ_begin[2]+(i/sizeJ)*(colorJ_end[2]-colorJ_begin[2] )))+")";
-			
+
     var elem = jmap[i].split('*')[0];
     
     stepVJ = (h-margeVJ_top)/germlineJ.length
@@ -485,6 +483,8 @@ function initVJposition(germlineV, germlineJ){
     vjData2[n]=makeVJclass("vjline2", 0, margeVJ_top+(n2+0.5)*stepVJ, jmap[i], "J" , elem, "");
     positionJ2[jmap[i]]=margeVJ_top+(n2+0.5)*stepVJ;
   }
+  
+  initVJcolor();
 }
 
 

@@ -165,6 +165,7 @@ circle:hover {
   display: inline-block;
   height: 16px;
   position: relative;
+  text-shadow: -1px -1px 0 #000, 1px -1px 0 #000, -1px 1px 0 #000, 1px 1px 0 #000;  
 }
 
 .colorBox{
@@ -249,22 +250,22 @@ circle:hover {
 }
 
 .graphLine{
-  -moz-transition: stroke  1s;
-  -webkit-transition: stroke 1s;
-  -o-transition: stroke  1s;
-  -ms-transition: stroke 1s;
-  transition: stroke 1s;
+  -moz-transition: stroke  0.5s;
+  -webkit-transition: stroke 0.5s;
+  -o-transition: stroke  0.5s;
+  -ms-transition: stroke 0.5s;
+  transition: stroke 0.5s;
  stroke-width : 1.5px;
  fill :none;
  cursor:pointer;
 }
 
 .circle{
-  -moz-transition: fill  1s;
-  -webkit-transition: fill 1s;
-  -o-transition: fill  1s;
-  -ms-transition: fill 1s;
-  transition: fill 1s;
+  -moz-transition: fill  0.5s;
+  -webkit-transition: fill 0.5s;
+  -o-transition: fill  0.5s;
+  -ms-transition: fill 0.5s;
+  transition: fill 0.5s;
 }
 
 .graphLine2{
