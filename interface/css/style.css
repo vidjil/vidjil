@@ -25,10 +25,15 @@ list-style-type: none;
   height :100%;
 }
 
+#top-container {
+  height: 40px;
+  width : 100%;
+}
+
 #mid-container {
-  height: -moz-calc(100% - 10px);
-  height: -webkit-calc(100% - 10px);
-  height: calc(100% - 10px);
+  height: -moz-calc(100% - 50px);
+  height: -webkit-calc(100% - 50px);
+  height: calc(100% - 50px);
   width : 100%;
 }
 
@@ -44,14 +49,14 @@ list-style-type: none;
 
 #visu {
   display : inline-block;
-  height : 30%;
+  height : 50%;
   width: -moz-calc(100% - 450px);
   width: -webkit-calc(100% - 450px);
   width: calc(100% - 450px);
 }
 #visu2 {
   display : inline-block;
-  height : 70%;
+  height : 50%;
   width: -moz-calc(100% - 450px);
   width: -webkit-calc(100% - 450px);
   width: calc(100% - 450px);
@@ -193,8 +198,6 @@ circle:hover {
   overflow: hidden;
   display: inline-block;
   height: 16px;
-  padding-top: 6px;
-  top: -3px;
   position: relative;
 }
 

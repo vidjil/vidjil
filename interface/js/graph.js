@@ -11,8 +11,9 @@
  * 
  */
 
-var axis_x = 100,       //marge entre l'ordonnée et le bord du graph
-    axis_y = 50,        //marge entre l'abscisse et le bord du graph
+var axis_x1 = 150,       //marge entre l'ordonnée et le bord du graph
+    axis_x2 = 100,       //marge entre l'ordonnée et le bord du graph
+    axis_y = 10,        //marge entre l'abscisse et le bord du graph
     g_w = 1400,         //largeur du graph (avant resize)
     g_h = 450;          //hauteur du graph (avant resize)
 
@@ -49,7 +50,7 @@ function initGraph(){
   
   scale_x = d3.scale.log()
     .domain([1,(1/min_size)])
-    .range([30,(g_h-20)]);
+    .range([30,(g_h)]);
     
   var height=100;
   
@@ -80,7 +81,7 @@ function initGraph(){
 			y1 : g_h+20, y2 : 0, time: 1}
       }else{
 	for (var i=0 ; i<junctions[0].size.length; i++){
-	graph_col[i]=axis_x + 5 + i*(( g_w-(2*axis_x) )/(junctions[0].size.length-1) );
+	graph_col[i]=axis_x1 + 5 + i*(( g_w-(axis_x1+axis_x2) )/(junctions[0].size.length-1) );
 	data_axis[9+i]={class : "axis_v" ,text : "fu"+(i+1) ,
 			x1 : graph_col[i], x2 : graph_col[i], 
 			y1 : g_h+20, y2 : 0, time: i}
@@ -208,7 +209,7 @@ function updateGraph(){
     
   scale_x = d3.scale.log()
     .domain([1,(1/min_size)])
-    .range([30,(g_h-20)]);
+    .range([30,(g_h)]);
     
     g_axis
      .transition()
@@ -230,11 +231,11 @@ function updateGraph(){
     .attr("class", function(d) { if (d.class=="axis_v") return "axis_button"; })
     .attr("id", function(d) { if (d.class=="axis_v") return ("time"+d.time); })
     .attr("y", function(d) { 
-      if (d.class=="axis") return Math.floor(resizeG_H*d.y1);
-      else return Math.floor(resizeG_H*(g_h));
+      if (d.class=="axis") return Math.floor(resizeG_H*d.y1)+15;
+      else return 15;
     })
     .attr("x", function(d) { 
-      if (d.class=="axis") return Math.floor(resizeG_W*20);
+      if (d.class=="axis") return 10;
       else return Math.floor(resizeG_W*d.x1);
     });
     

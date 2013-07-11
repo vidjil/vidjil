@@ -111,14 +111,14 @@ function displayLegend(data){
     .duration(1000)
     .attr("x", function(d) { 
       if (d.cx<5) { 
-	if (d.class=="vjline1") return resizeW*(d.cx+40);
-	  else return resizeW*(d.cx+80);
+	if (d.class=="vjline1") return resizeW*(d.cx)+30;
+	  else return resizeW*(d.cx)+70;
       }else return resizeW*d.cx;
     })
     .attr("y", function(d) { 
       if (d.cy<5) {
-	if (d.class=="vjline1") return resizeH*(d.cy+25);
-	else return resizeH*(d.cy+50);
+	if (d.class=="vjline1") return resizeH*(d.cy)+10;
+	else return resizeH*(d.cy)+25;
       }else return resizeH*d.cy;
     })
     .text( function (d) { 
@@ -163,14 +163,14 @@ function updateLegend(){
     .duration(1000)
     .attr("x", function(d) { 
       if (d.cx<5) { 
-	if (d.class=="vjline1") return resizeW*(d.cx+40);
-	  else return resizeW*(d.cx+80);
+	if (d.class=="vjline1") return resizeW*(d.cx)+30;
+	  else return resizeW*(d.cx)+70;
       }else return resizeW*d.cx;
     })
     .attr("y", function(d) { 
       if (d.cy<5) {
-	if (d.class=="vjline1") return resizeH*(d.cy+25);
-	else return resizeH*(d.cy+50);
+	if (d.class=="vjline1") return resizeH*(d.cy)+10;
+	else return resizeH*(d.cy)+25;
       }else return resizeH*d.cy;
     })  
     .attr("fill", function (d) { 

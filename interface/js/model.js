@@ -276,7 +276,7 @@ function initCoef(){
   document.getElementById("svg2").style.height=document.getElementById("visu2").offsetHeight+"px";
   
 
-  resizeCoef = resizeW*resizeH;
+  resizeCoef = Math.sqrt(resizeW*resizeH);
   
   $('#listFav').height((($('#left').height()-315))+"px");
   $('#listClones').height((($('#left').height()-315))+"px");
