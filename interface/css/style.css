@@ -36,6 +36,7 @@ list-style-type: none;
   height: -webkit-calc(100% - 50px);
   height: calc(100% - 50px);
   width : 100%;
+  overflow:hidden;
 }
 
 #switch{
@@ -50,7 +51,7 @@ list-style-type: none;
   height : 100%;
   overflow-y : none;
   float : left;
-  font-family : monaco,terminal,courier,system; 
+  font-family : Courier New,monaco,terminal,courier,system; 
   font-size: 12px;
 }
 
@@ -60,6 +61,7 @@ list-style-type: none;
   width: -moz-calc(100% - 450px);
   width: -webkit-calc(100% - 450px);
   width: calc(100% - 450px);
+  overflow:hidden;
 }
 #visu2 {
   display : inline-block;
@@ -67,6 +69,7 @@ list-style-type: none;
   width: -moz-calc(100% - 450px);
   width: -webkit-calc(100% - 450px);
   width: calc(100% - 450px);
+  overflow:hidden;
 }
 
 #bot-container {

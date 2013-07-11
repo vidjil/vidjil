@@ -36,6 +36,7 @@ list-style-type: none;
   height: -webkit-calc(100% - 50px);
   height: calc(100% - 50px);
   width : 100%;
+  overflow:hidden;
 }
 
 #switch{
@@ -50,7 +51,7 @@ list-style-type: none;
   height : 100%;
   overflow-y : none;
   float : left;
-  font-family : monaco,terminal,courier,system; 
+  font-family : Courier New,monaco,terminal,courier,system; 
   font-size: 12px;
 }
 
@@ -255,7 +256,6 @@ circle:hover {
 .axis_button{
   text-anchor: middle;
   cursor: pointer;
-  z-index:5;
   background:inherit;
   
 }
