@@ -258,13 +258,15 @@ function loadPref(){
 //////////////////////////
 //	RESIZE  	//
 //////////////////////////
+  var resizeW;
+  var resizeH;
 
 /* calcul les coefficients de resize des différentes vues
  * appel les vues pour appliquer les changements*/
 function initCoef(){
   initStyle();
-  var resizeW = document.getElementById("visu").offsetWidth/w;
-  var resizeH = document.getElementById("visu").offsetHeight/h;
+  resizeW = document.getElementById("visu").offsetWidth/w;
+  resizeH = document.getElementById("visu").offsetHeight/h;
   document.getElementById("svg").style.width=document.getElementById("visu").offsetWidth+"px";
   document.getElementById("svg").style.height=document.getElementById("visu").offsetHeight+"px";
   
@@ -273,33 +275,22 @@ function initCoef(){
   document.getElementById("svg2").style.width=document.getElementById("visu2").offsetWidth+"px";
   document.getElementById("svg2").style.height=document.getElementById("visu2").offsetHeight+"px";
   
-  if (resizeW>resizeH)
-    resizeCoef = resizeH;
-  else
-    resizeCoef = resizeW;
+
+  resizeCoef = resizeW*resizeH;
   
   $('#listFav').height((($('#left').height()-315))+"px");
   $('#listClones').height((($('#left').height()-315))+"px");
   
   //recadrage des legendes si la methode de répartition utilisé a ce moment la en utilise
   if (splitMethod=="vj1" || splitMethod=="vj2") updateLegend();
-  
-  setTimeout('updateGraph()',500);
-  
-  //recadrage vue 1
-  //stop les animations de la vue
   force.alpha(0);
-  //utilisation d'une transition d3js pour replacer/resize les elements
-  node
-    .transition()
-    .duration(1000)
-      .attr("cx", function(d) { return (resizeCoef*d.x); })
-      .attr("cy", function(d) { return (resizeCoef*d.y); })
-      .attr("r" , function(d) { return (resizeCoef*d.r2); });
-  //reprend l'animation apres la transition
-  setTimeout(function() {force.alpha(.2);},1001);
+  setTimeout('updateGraph()',100);
+
+  updateVis();
+  setTimeout('force.alpha(.2)',1000);
   
-  document.getElementById("log").innerHTML+="<br>resize (new coef : "+resizeCoef+")<br>  graph coef ("+resizeG_W+"/"+resizeG_H+")";
+  
+  document.getElementById("log").innerHTML+="<br>resize (new coef : "+resizeW+"/"+resizeH+"/"+resizeCoef+")<br>  graph coef ("+resizeG_W+"/"+resizeG_H+")";
   $("#log").scrollTop(100000000000000);
 };
 
@@ -522,7 +513,7 @@ function initVJposition(germlineV, germlineJ){
     if (typeof junctions != "undefined") {
       var r=getSize(cloneID);
       if (r==0) return 0;
-      return 2+Math.pow(60000*r,(1/3) );
+      return resizeCoef*(2+Math.pow(60000*r,(1/3) ));
     }
   }
   

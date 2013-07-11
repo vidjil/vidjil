@@ -139,7 +139,7 @@ var style =[];
       document.getElementById("circle"+cloneID).style.stroke="";
       document.getElementById(cloneID).style.background=colorStyle.c02;
       if (style[cloneID].active){
-	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="2px";
+	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1.5px";
 	  document.getElementById(cloneID).style.color=color(cloneID);
 	  document.getElementById("circle"+cloneID).style.fill=color(cloneID);
 	  document.getElementById("line"+cloneID).style.stroke=color(cloneID);
@@ -225,6 +225,13 @@ var style =[];
   
   
   function test(bob){
-    document.getElementById('visu_back').style.fill=colorGenerator(bob);
+    document.getElementById('visu_back').style.fill=colorGenerator(bob,colorStyle.col_s, colorStyle.col_v);
     setTimeout('test('+(bob+1)+')', 20);
+  }
+  
+  function test2(s,v){
+    colorStyle.col_s=s;
+    colorStyle.col_v=v;
+    initVJcolor();
+    updateStyle();
   }

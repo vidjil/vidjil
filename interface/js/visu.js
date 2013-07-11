@@ -111,15 +111,15 @@ function displayLegend(data){
     .duration(1000)
     .attr("x", function(d) { 
       if (d.cx<5) { 
-	if (d.class=="vjline1") return resizeCoef*(d.cx+40);
-	  else return resizeCoef*(d.cx+80);
-      }else return resizeCoef*d.cx;
+	if (d.class=="vjline1") return resizeW*(d.cx+40);
+	  else return resizeW*(d.cx+80);
+      }else return resizeW*d.cx;
     })
     .attr("y", function(d) { 
       if (d.cy<5) {
-	if (d.class=="vjline1") return resizeCoef*(d.cy+25);
-	else return resizeCoef*(d.cy+50);
-      }else return resizeCoef*d.cy;
+	if (d.class=="vjline1") return resizeH*(d.cy+25);
+	else return resizeH*(d.cy+50);
+      }else return resizeH*d.cy;
     })
     .text( function (d) { 
       if (d.class=="vjline2") return d.subname;
@@ -138,15 +138,15 @@ function displayLegend(data){
   lines
     .transition()
     .duration(1000)
-    .attr("x1", function(d) { return resizeCoef*d.cx; })
+    .attr("x1", function(d) { return resizeW*d.cx; })
     .attr("x2", function(d) { 
       if (d.cx<5) return 5000;
-      else return resizeCoef*d.cx;
+      else return resizeW*d.cx;
     })
-    .attr("y1", function(d) { return resizeCoef*d.cy; })
+    .attr("y1", function(d) { return resizeH*d.cy; })
     .attr("y2", function(d) { 
       if (d.cy<5) return 5000;
-      else return resizeCoef*d.cy;
+      else return resizeH*d.cy;
     })
     .style("stroke", function (d) { 
       if (colorMethod==d.germline) return colorVJ[d.color] ; 
@@ -163,15 +163,15 @@ function updateLegend(){
     .duration(1000)
     .attr("x", function(d) { 
       if (d.cx<5) { 
-	if (d.class=="vjline1") return resizeCoef*(d.cx+60);
-	  else return resizeCoef*(d.cx+150);
-      }else return resizeCoef*d.cx;
+	if (d.class=="vjline1") return resizeW*(d.cx+40);
+	  else return resizeW*(d.cx+80);
+      }else return resizeW*d.cx;
     })
     .attr("y", function(d) { 
       if (d.cy<5) {
-	if (d.class=="vjline1") return resizeCoef*(d.cy+20);
-	else return resizeCoef*(d.cy+75);
-      }else return resizeCoef*d.cy;
+	if (d.class=="vjline1") return resizeH*(d.cy+25);
+	else return resizeH*(d.cy+50);
+      }else return resizeH*d.cy;
     })  
     .attr("fill", function (d) { 
       if (colorMethod==d.germline) return colorVJ[d.color] ; 
@@ -180,15 +180,15 @@ function updateLegend(){
   lines
     .transition()
     .duration(1000)
-    .attr("x1", function(d) { return resizeCoef*d.cx; })
+    .attr("x1", function(d) { return resizeW*d.cx; })
     .attr("x2", function(d) { 
       if (d.cx==0) return 5000;
-      else return resizeCoef*d.cx;
+      else return resizeW*d.cx;
     })
-    .attr("y1", function(d) { return resizeCoef*d.cy; })
+    .attr("y1", function(d) { return resizeH*d.cy; })
     .attr("y2", function(d) { 
       if (d.cy==0) return 5000;
-      else return resizeCoef*d.cy;
+      else return resizeH*d.cy;
     })
     .style("stroke", function (d) { 
       if (colorMethod==d.germline) return colorVJ[d.color] ; 
@@ -219,9 +219,9 @@ function tick(e) {
     }
     node
       .each(collide())
-      .attr("cx", function(d) { return (resizeCoef*d.x); })
-      .attr("cy", function(d) { return (resizeCoef*d.y); })
-      .attr("r" , function(d) { return (resizeCoef*d.r2); })
+      .attr("cx", function(d) { return (d.x); })
+      .attr("cy", function(d) { return (d.y); })
+      .attr("r" , function(d) { return (d.r2); })
 }
 
 
@@ -278,11 +278,11 @@ function vjSplit(posV, posJ){
     return function(d) {
       if (typeof junctions != "undefined") {
 	if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
-	  d.x+=coef*(posV[junctions[d.id].seg.V[0]]-d.x);
-	  d.y+=coef*(posJ[junctions[d.id].seg.J[0]]-d.y);
+	  d.x+=coef*((posV[junctions[d.id].seg.V[0]]*resizeW)-d.x);
+	  d.y+=coef*((posJ[junctions[d.id].seg.J[0]]*resizeH)-d.y);
 	}else{
-	  d.y+=coef*(50-d.y);
-	  d.x+=coef*(50-d.x);
+	  d.y+=coef*((50*resizeH)-d.y);
+	  d.x+=coef*((50*resizeW)-d.x);
 	}
       }
     };
@@ -293,10 +293,10 @@ function vjSplit(posV, posJ){
 function sizeSplit() {
   var coef = 0.006
     return function(d) {
-      var r=radius(d.id);
-	  d.y+=coef*((650-(r*15))-d.y);
-	  if ( d.x > 1350) d.x=d.x-Math.random();
-	  if ( d.x < 50) d.x=d.x+Math.random();
+      var r=radius(d.id)/resizeCoef;
+	  d.y+=coef*(((650-(r*15))*resizeH)-d.y);
+	  if ( d.x > (1350*resizeW)) d.x=d.x-Math.random();
+	  if ( d.x < (50*resizeW)) d.x=d.x+Math.random();
       }
 }
 
