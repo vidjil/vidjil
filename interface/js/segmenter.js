@@ -27,8 +27,13 @@
   function hideAlign(){
     $('#align').stop();
     $('#align').animate({ height: "hide", display: "none"}, 200 ); 
+    hideSelector();
   }
 
+  function hideSelector(){
+    $('.selector').stop();
+    $('.selector').animate({ height: "hide", display: "none"}, 200 ); 
+  }
   
   /*ajoute le représentant d'un clone dans le comparateur
    colorise selon les genes v-j TODO : gerer les séquences reverse*/

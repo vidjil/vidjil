@@ -298,23 +298,14 @@ function initCoef(){
 window.onresize = initCoef;
 
 
-/*inverse les tailles du graphique et de la vue*/
-function switchVisu(){
-  var hv1 = $('#visu').height();
-  var hv2 = $('#visu2').height();
+function switchVisu(hv1,hv2){
   
-  if (hv1<hv2){
-    $('#visu2').animate({height: hv1+"px"}, 400 ); 
-    $('#visu').animate({height: hv2+"px"}, 400 ); 
-  }
-  else{
-    $('#visu').animate({height: hv2+"px"}, 400 ); 
-    $('#visu2').animate({height: hv1+"px"}, 400 ); 
-  }
-  
-  
-setTimeout(function() {initCoef();},500);
+  $('#visu2').animate({height: hv1+"%"}, 400 ); 
+  $('#visu').animate({height: hv2+"%"}, 400 ); 
+  setTimeout(function() {initCoef();},500);
 }
+
+
 
   
 /*changement de point de suivi*/
@@ -541,6 +532,9 @@ function initVJposition(germlineV, germlineJ){
       if (colorMethod=='J'){
 	return colorJ(cloneID)
       }
+      if (colorMethod=='N'){
+	return colorN(cloneID)
+      }
       return colorStyle.c01;
     }
   }
@@ -565,6 +559,12 @@ function initVJposition(germlineV, germlineJ){
 	    return colorVJ[junctions[cloneID].seg.J[0]];
 	  }
 	}	
+	return "rgb(20,226,89)"
+  }
+  
+  /*retourne la couleur correspondant au gene J du clone passé en parametre*/
+  function colorN(cloneID){
+    //TODO
 	return "rgb(20,226,89)"
   }
   

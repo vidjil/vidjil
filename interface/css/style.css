@@ -28,6 +28,7 @@ list-style-type: none;
 #top-container {
   height: 40px;
   width : 100%;
+  background:inherit;
 }
 
 #mid-container {
@@ -35,6 +36,12 @@ list-style-type: none;
   height: -webkit-calc(100% - 50px);
   height: calc(100% - 50px);
   width : 100%;
+}
+
+#switch{
+  float: right;
+  position: relative;
+  top: -35px;
 }
 
 #left-container {
@@ -220,7 +227,7 @@ circle:hover {
 
 
 
-#colorSelector{
+#tagSelector{
   position: absolute;
   left: 450px;
   top: 195px;
@@ -247,8 +254,9 @@ circle:hover {
 
 .axis_button{
   text-anchor: middle;
-  text-decoration: underline;
   cursor: pointer;
+  z-index:5;
+  
 }
 
 .graphLine{
@@ -296,11 +304,9 @@ circle:hover {
 
 #tagSelector{
   padding: 5px;
-  width:300px;
   position: absolute;
   left: 450px;
   top: 125px;
-  height:300px;
   border:solid;
   display:none;
 }
@@ -356,27 +362,28 @@ circle:hover {
     background: #859900 ;
 }
 
-#style{
-  position: fixed; 
-  top: 5px; 
-  right:35px ;
-  width: 2px; 
-  height: 2px;
-  padding:10px;
-  background :white;
+.menu{
+  width:120px;
+  padding:3px;
+  border:solid;
+  float:left;
+  margin:5px;
+  text-align:center;
+  cursor:pointer;
+  background:inherit;
 }
 
-#styleSelector{
+.selector{
   display:none; 
-  position: fixed; 
-  top: 50px;
-  right: 10px;
-  width: 150px; 
-  height: 150px;
-  padding: 10px;
+  position: fixed;
+  margin-right:-5px;
+  padding: 3px;
   border: solid;
-  border-color: white;
   background:inherit;
+  text-center:left;
+  width:120px;
+  margin-left:-6px;
+  border-top:none;
 }
 
 
