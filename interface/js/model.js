@@ -229,7 +229,7 @@ function loadPref(){
     for(var i=0 ;i<totalClones; i++){
       if ( typeof customColor[i] != "undefined" || 
       typeof customName[i] != "undefined" || 
-      favorites.indexOf(i) != -1 ){
+      style[i]){
 	
 	var elem = {};
 	elem.junction = junctions[i].junction;
@@ -237,7 +237,7 @@ function loadPref(){
 	  elem.color = customColor[i];
 	if ( typeof customName[i] != "undefined" ) 
 	  elem.name = customName[i];
-	if ( favorites.indexOf(i) != -1 )
+	if ( style[i].favorite)
 	  elem.fav = true;
 	
 	filePref.custom.push(elem);

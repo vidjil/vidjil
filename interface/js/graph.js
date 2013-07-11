@@ -232,7 +232,7 @@ function updateGraph(){
     .attr("id", function(d) { if (d.class=="axis_v") return ("time"+d.time); })
     .attr("y", function(d) { 
       if (d.class=="axis") return Math.floor(resizeG_H*d.y1)+15;
-      else return -15;
+      else return 15;
     })
     .attr("x", function(d) { 
       if (d.class=="axis") return 10;

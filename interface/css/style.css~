@@ -84,17 +84,6 @@ list-style-type: none;
   margin-right: 460px;
 }
 
-.menu{
-  width:100px;
-  padding:3px;
-  border:solid;
-  float:left;
-  margin:5px;
-  text-align:center;
-  cursor:pointer;
-  background:inherit;
-}
-
 .button {
     cursor:pointer;
     font-size: 14px;
@@ -267,6 +256,7 @@ circle:hover {
   text-anchor: middle;
   cursor: pointer;
   z-index:5;
+  background:inherit;
   
 }
 
@@ -373,6 +363,17 @@ circle:hover {
     background: #859900 ;
 }
 
+.menu{
+  width:120px;
+  padding:3px;
+  border:solid;
+  float:left;
+  margin:5px;
+  text-align:center;
+  cursor:pointer;
+  background:inherit;
+}
+
 .selector{
   display:none; 
   position: fixed;
@@ -381,7 +382,7 @@ circle:hover {
   border: solid;
   background:inherit;
   text-center:left;
-  width:100px;
+  width:120px;
   margin-left:-6px;
   border-top:none;
 }

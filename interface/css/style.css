@@ -255,7 +255,7 @@ circle:hover {
 .axis_button{
   text-anchor: middle;
   cursor: pointer;
-  z-index:5;
+  background:inherit;
   
 }
 
