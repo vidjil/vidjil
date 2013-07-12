@@ -32,7 +32,7 @@
 
   function hideSelector(){
     $('.selector').stop();
-    $('.selector').animate({ height: "hide", display: "none"}, 200 ); 
+    $('.selector').animate({ height: "hide", display: "none"}, 100 ); 
   }
   
   /*ajoute le représentant d'un clone dans le comparateur

@@ -302,12 +302,16 @@ function vjSplit(posV, posJ){
 
 /*méthode de répartition des clones en fonction de la taille*/
 function sizeSplit(posV) {
-  var coef = 0.02;
-  var coef2= 0.0003;
+  var coef = 0.01;
+  var coef2= 0.0005;
   
     return function(d) {
       var r=radius(d.id)/resizeCoef;
-      d.y+=coef*(((650-(r*15))*resizeH)-d.y);
+      if (d.r1!=0){
+	d.y+=coef*(((650-(r*15))*resizeH)-d.y);
+      }else{
+	d.y+=coef*((h*resizeH)-d.y);
+      }
 	    if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
 	      if ( d.x > (  (posV[junctions[d.id].seg.V[0]]+(stepV/2.2) ) *resizeW)) d.x=d.x-Math.random();
 	      if ( d.x < (  (posV[junctions[d.id].seg.V[0]]-(stepV/2.2) ) *resizeW)) d.x=d.x+Math.random();
@@ -319,13 +323,17 @@ function sizeSplit(posV) {
     }
 }
 
-/*méthode de répartition des clones en fonction de la taille*/
 function nSizeSplit(posV) {
-  var coef = 0.02;
-  var coef2 =0.0003;
+  var coef = 0.01;
+  var coef2 =0.0005;
   
     return function(d) {
-	  d.y+=coef*( ((50+(1-style[d.id].Nsize/maxNsize)*600)*resizeH) -d.y  )
+      if (d.r1!=0){
+	d.y+=coef*( ((50+(1-style[d.id].Nsize/maxNsize)*600)*resizeH) -d.y  );
+      }else{
+	d.y+=coef*((h*resizeH)-d.y);
+      }
+	  
 	    if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
 	      if ( d.x > (  (posV[junctions[d.id].seg.V[0]]+(stepV/2) ) *resizeW)) d.x=d.x-Math.random();
 	      if ( d.x < (  (posV[junctions[d.id].seg.V[0]]-(stepV/2) ) *resizeW)) d.x=d.x+Math.random();

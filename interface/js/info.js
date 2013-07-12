@@ -217,7 +217,7 @@
   }
 
   function showSelector(elem){
-    $('#'+elem).animate({ height: "show", display: "show"}, 200 ); 
+    $('#'+elem).animate({ height: "show", display: "show"}, 100 ); 
   }
   
   
