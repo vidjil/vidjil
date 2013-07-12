@@ -20,10 +20,7 @@
  * TODO manipulation sur les listes
  * -trie par nom / par size
  * -voir par jonction/ par clone
- * -maj des % affiché en fonction du point de suivi
  */
-
-
   
   function initList(data){
   var divParent = document.getElementById("listClones");

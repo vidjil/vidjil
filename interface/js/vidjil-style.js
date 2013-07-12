@@ -27,6 +27,7 @@ solarizeD.c03 = "#073642"; //base02
 solarizeD.c04 = "#93a1a1"; //base1
 solarizeD.c05 = "#fdf6e3"; //base3
 solarizeD.c06 = "#586e75"; //base01
+solarizeD.c07 = "#284e55"; //inactive 
 
 solarizeD.col_s = 0.8; //pureté
 solarizeD.col_v = 0.72; //brightness
@@ -40,6 +41,7 @@ solarizeL.c03 = "#fdf6e3"; //base3
 solarizeL.c04 = "#586e75"; //base01
 solarizeL.c05 = "#002b36"; //base03
 solarizeL.c06 = "#93a1a1"; //base1
+solarizeL.c07 = "#b3c1c1"; //inactive 
 
 solarizeL.col_s = 0.8; //pureté
 solarizeL.col_v = 0.72; //brightness
@@ -52,6 +54,7 @@ blackStyle.c03 = "#333034"; //background highlight
 blackStyle.c04 = "#93a1a1";
 blackStyle.c05 = "#fdf6e3"; //focus 
 blackStyle.c06 = "#716362";
+blackStyle.c07 = "#514142"; //inactive 
 
 blackStyle.col_s = 0.8; //pureté
 blackStyle.col_v = 0.72; //brightness
@@ -63,7 +66,8 @@ whiteStyle.c02 = "#e5e7e3"; //background
 whiteStyle.c03 = "#ffffff"; //background highlight
 whiteStyle.c04 = "#93a1a1";
 whiteStyle.c05 = "#502325"; //focus 
-whiteStyle.c06 = "#b3b5b1"; //inactive / graph legend
+whiteStyle.c06 = "#b3b5b1"; //graph legend
+whiteStyle.c07 = "#d3d5d1"; //inactive 
 
 whiteStyle.col_s = 0.8; //pureté
 whiteStyle.col_v = 0.72; //brightness
@@ -102,17 +106,8 @@ var style =[];
       }else{
 	document.getElementById(cloneID).style.display="none";
       }
-      document.getElementById("circle"+cloneID).style.opacity=1;
-      document.getElementById("line"+cloneID).style.opacity=1;
     }else{
       document.getElementById(cloneID).style.display="none"
-      if (style[cloneID].focus || style[cloneID].select){
-	document.getElementById("circle"+cloneID).style.opacity=1;
-	document.getElementById("line"+cloneID).style.opacity=1;
-      }else{
-	document.getElementById("circle"+cloneID).style.opacity=0.75;
-	document.getElementById("line"+cloneID).style.opacity=0.4;
-      }
     }
     if(style[cloneID].display){
       document.getElementById("line"+cloneID).style.display="block";
@@ -144,10 +139,10 @@ var style =[];
 	  document.getElementById("circle"+cloneID).style.fill=color(cloneID);
 	  document.getElementById("line"+cloneID).style.stroke=color(cloneID);
       }else{
-	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1.2px";
+	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1px";
 	  document.getElementById(cloneID).style.color=colorStyle.c06;
-	  document.getElementById("circle"+cloneID).style.fill=colorStyle.c06;
-	  document.getElementById("line"+cloneID).style.stroke=colorStyle.c06;
+	  document.getElementById("circle"+cloneID).style.fill=colorStyle.c07;
+	  document.getElementById("line"+cloneID).style.stroke=colorStyle.c07;
       }   
     }
     if (style[cloneID].select){

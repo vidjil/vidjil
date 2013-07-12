@@ -212,7 +212,7 @@ function updateGraph(){
     .range([30,(g_h)]);
     
     g_axis
-     .transition()
+    .transition()
     .duration(500)
     .attr("x1", function(d) { return resizeG_W*d.x1; })
     .attr("x2", function(d) { return resizeG_W*d.x2; })
@@ -226,6 +226,8 @@ function updateGraph(){
     });
    
   g_text
+    .transition()
+    .duration(500)
     .text( function (d) { return d.text; })
     .attr("fill", colorStyle.c01)
     .attr("class", function(d) { if (d.class=="axis_v") return "axis_button"; })
@@ -257,6 +259,8 @@ function updateGraph(){
     .attr("class", function(p) { return g_class(p.id); })
     
     g_res.selectAll("polyline")
+    .transition()
+    .duration(500)
     .attr("points", function(p) {
       var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
 	for (var i=1; i<p.path.length; i++){
@@ -277,6 +281,8 @@ function updateGraph(){
 
 function updateAxis(){
     g_axis.data(data_axis)
+    .transition()
+    .duration(300)
     .attr("x1", function(d) { return resizeG_W*d.x1; })
     .attr("x2", function(d) { return resizeG_W*d.x2; })
     .attr("y1", function(d) { return resizeG_H*d.y1; })

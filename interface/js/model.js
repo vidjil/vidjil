@@ -60,7 +60,7 @@ var splitMethod=" ";          //par defaut pas de method de split
 var t = 0;                    //point de suivi courant ( par defaut t=0 )
 var useCustomColor=true;      //utilisation des couleurs personalisées
 var select=[];                //liste des clones selectionnés
-limitClones=300;
+limitClones=1000;
  
 var margeVJ_left=80;              //info quadrillage (vj1/vj2)
 var margeVJ_top=50;
@@ -143,12 +143,11 @@ var req = new XMLHttpRequest();
     initVisu();
     document.getElementById("log").innerHTML+="<br>calcul des positions VJ";
     initGraph();
+    force.start();
     document.getElementById("log").innerHTML+="<br>initialisation graph";
     initCoef();
     document.getElementById("log").innerHTML+="<br>initialisation coef";
-    updateVis();
-    force.start();
-    changeSplitMethod("vj2");
+    setTimeout('changeSplitMethod("vj2");',2000);
     displayTop(5);
     document.getElementById("log").innerHTML+="<br>start visu";
     $("#log").scrollTop(100000000000000);
@@ -323,7 +322,8 @@ function changeT(time){
   }
   document.getElementById("time"+time).style.fill="white";
   
-  force.alpha(.2);
+  force.alpha(0);
+  setTimeout('force.alpha(0.2)',300);
   updateAxis();
   updateList();
   updateVis();

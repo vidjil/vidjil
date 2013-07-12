@@ -276,12 +276,20 @@ function updateRadius(){
 function vjSplit(posV, posJ){
     var coef = 0.005
     return function(d) {
-      if (typeof junctions != "undefined") {
+	if (typeof junctions != "undefined" && d.r1!=0) {
+	  if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
+	    d.x+=coef*((posV[junctions[d.id].seg.V[0]]*resizeW)-d.x);
+	    d.y+=coef*((posJ[junctions[d.id].seg.J[0]]*resizeH)-d.y);
+	  }else{
+	    d.y+=coef*((50*resizeH)-d.y);
+	    d.x+=coef*((50*resizeW)-d.x);
+	  }
+	} 
+      else{
+	d.y+=coef*(g_h+20-d.y);
 	if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
 	  d.x+=coef*((posV[junctions[d.id].seg.V[0]]*resizeW)-d.x);
-	  d.y+=coef*((posJ[junctions[d.id].seg.J[0]]*resizeH)-d.y);
 	}else{
-	  d.y+=coef*((50*resizeH)-d.y);
 	  d.x+=coef*((50*resizeW)-d.x);
 	}
       }
