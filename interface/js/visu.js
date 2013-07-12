@@ -214,8 +214,11 @@ function tick(e) {
     if (splitMethod=="vj2"){
       node.each(vjSplit(positionV2, positionJ2));
     }
+    if (splitMethod=="Nsize"){
+      node.each(nSizeSplit(positionV2));
+    }
     if (splitMethod==" "){
-      node.each(sizeSplit());
+      node.each(sizeSplit(positionV2));
     }
     node
       .each(collide())
@@ -298,15 +301,40 @@ function vjSplit(posV, posJ){
 
 
 /*méthode de répartition des clones en fonction de la taille*/
-function sizeSplit() {
-  var coef = 0.006
+function sizeSplit(posV) {
+  var coef = 0.02;
+  var coef2= 0.0003;
+  
     return function(d) {
       var r=radius(d.id)/resizeCoef;
-	  d.y+=coef*(((650-(r*15))*resizeH)-d.y);
-	  if ( d.x > (1350*resizeW)) d.x=d.x-Math.random();
-	  if ( d.x < (50*resizeW)) d.x=d.x+Math.random();
-      }
+      d.y+=coef*(((650-(r*15))*resizeH)-d.y);
+	    if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
+	      if ( d.x > (  (posV[junctions[d.id].seg.V[0]]+(stepV/2.2) ) *resizeW)) d.x=d.x-Math.random();
+	      if ( d.x < (  (posV[junctions[d.id].seg.V[0]]-(stepV/2.2) ) *resizeW)) d.x=d.x+Math.random();
+	      d.x+=coef2*((posV[junctions[d.id].seg.V[0]]*resizeW)-d.x);
+	    }else{
+	      if ( d.x > (50*resizeW)) d.x=d.x-Math.random();
+	      if ( d.x < (0*resizeW)) d.x=d.x+Math.random();
+	    }
+    }
 }
 
+/*méthode de répartition des clones en fonction de la taille*/
+function nSizeSplit(posV) {
+  var coef = 0.02;
+  var coef2 =0.0003;
+  
+    return function(d) {
+	  d.y+=coef*( ((50+(1-style[d.id].Nsize/maxNsize)*600)*resizeH) -d.y  )
+	    if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
+	      if ( d.x > (  (posV[junctions[d.id].seg.V[0]]+(stepV/2) ) *resizeW)) d.x=d.x-Math.random();
+	      if ( d.x < (  (posV[junctions[d.id].seg.V[0]]-(stepV/2) ) *resizeW)) d.x=d.x+Math.random();
+	      d.x+=coef2*((posV[junctions[d.id].seg.V[0]]*resizeW)-d.x);
+	    }else{
+	      if ( d.x > (50*resizeW)) d.x=d.x-Math.random();
+	      if ( d.x < (0*resizeW)) d.x=d.x+Math.random();
+	    }
+      }
+}
 
 

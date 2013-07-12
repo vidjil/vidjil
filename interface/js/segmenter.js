@@ -19,7 +19,7 @@
  
   /*affiche le segmenteur/comparateur*/
  function displayAlign(){
-    $('#align').animate({ height: "show", display: "show"}, 200 ); 
+    //$('#align').animate({ height: "show", display: "show"}, 200 ); 
   }
   
   

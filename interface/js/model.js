@@ -64,9 +64,11 @@ limitClones=1000;
  
 var margeVJ_left=80;              //info quadrillage (vj1/vj2)
 var margeVJ_top=50;
+var stepV;
 
 /* initialisation by init */
 var totalClones;              //nombres de clones a gerer 
+var maxNsize=0;
 var mapID = [];               //map entre les jonctions et les cloneID correspondants
 var clones = [];              //clusters
 
@@ -84,8 +86,10 @@ var positionJ2={};
 
 var vjData=[];            //contient les données pour le dessin du quadrillage/legende(vj1)
 var vjData2=[];           //idem(vj2)
+var vData=[];             //
 
 var colorVJ={};           //table associative labels (V ou J) <=> couleurs
+var colorN=[];		  
 
 
 /*fonction de chargement local*/
@@ -162,9 +166,29 @@ function init(){
   document.getElementById("log").innerHTML+="<br>nombre de jonctions"+totalClones;
   
   for(var i=0 ;i<totalClones; i++){
+    
+    var nsize;
+    
+    if (typeof(junctions[i].seg) != 'undefined' && typeof(junctions[i].seg.V) != 'undefined' ){
+      
+      //nsize=junctions[i].seg.Nsize;
+      nsize=(Math.floor(Math.random()*15)); //un faux nsize (TODO : nsize dans la sortie json
+      
+      if (nsize>maxNsize) maxNsize=nsize;
+    }else{
+      nsize=-1;
+    }
+    
     mapID[junctions[i].junction]=i;
-    style[i]={display:true};
+    style[i]={display:true, Nsize:nsize};
     clones[i]=[i];
+  }
+  initNcolor();
+}
+
+function initNcolor(){
+  for (var i=0; i<maxNsize+1; i++){
+    colorN[i]=colorGenerator( ( (i/maxNsize)*250 )  ,  colorStyle.col_s  , colorStyle.col_v);
   }
 }
 
@@ -414,7 +438,7 @@ function initVJposition(germlineV, germlineJ){
     
     var elem = vmap[i].split('*')[0];
 
-    var stepVJ = (w-margeVJ_left)/germlineV.length
+    var stepVJ=stepV = (w-margeVJ_left)/germlineV.length
     
     if (elem!=tmp){
       t1=0;
@@ -423,7 +447,7 @@ function initVJposition(germlineV, germlineJ){
       n2++
       n++;
       vjData[n]=makeVJclass("vjline1", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
-      vjData2[n]=makeVJclass("vjline1", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
+      vData[n2]=vjData2[n]=makeVJclass("vjline1", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
     }
     t1++
     n++;
@@ -533,7 +557,7 @@ function initVJposition(germlineV, germlineJ){
 	return colorJ(cloneID)
       }
       if (colorMethod=='N'){
-	return colorN(cloneID)
+	return colorNsize(cloneID)
       }
       return colorStyle.c01;
     }
@@ -562,9 +586,10 @@ function initVJposition(germlineV, germlineJ){
 	return "rgb(20,226,89)"
   }
   
-  /*retourne la couleur correspondant au gene J du clone passé en parametre*/
-  function colorN(cloneID){
-    //TODO
+  function colorNsize(cloneID){
+	if (style[cloneID].Nsize!=-1 ){
+	    return colorN[style[cloneID].Nsize];
+	}	
 	return "rgb(20,226,89)"
   }
   
@@ -634,7 +659,7 @@ function initVJposition(germlineV, germlineJ){
     
     splitMethod=splitM;
     if (splitMethod==" "){ 
-      displayLegend([]);
+      displayLegend(vData);
       document.getElementById("log").innerHTML+="<br>active sizeSplit";
       $('#log').scrollTop(100000000000000);
     }
@@ -648,7 +673,12 @@ function initVJposition(germlineV, germlineJ){
       document.getElementById("log").innerHTML+="<br>active vjSplit2";
       $('#log').scrollTop(100000000000000);
     }
-    force.alpha(.2);
+    if (splitMethod=="Nsize"){ 
+      displayLegend(vData);
+      document.getElementById("log").innerHTML+="<br>active split by N size";
+      $('#log').scrollTop(100000000000000);
+    }
+    force.alpha(.5);
   }
   
   

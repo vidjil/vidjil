@@ -212,6 +212,7 @@ var style =[];
     colorStyle=newStyle;
     initStyle();
     initVJcolor();
+    initNcolor();
     updateStyle();
     updateLegend();
     updateGraph();
