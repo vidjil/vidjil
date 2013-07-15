@@ -169,10 +169,9 @@ function init(){
     
     var nsize;
     
-    if (typeof(junctions[i].seg) != 'undefined' && typeof(junctions[i].seg.V) != 'undefined' ){
+    if (typeof(junctions[i].seg) != 'undefined' && typeof(junctions[i].seg.Nsize) != 'undefined' ){
       
-      //nsize=junctions[i].seg.Nsize;
-      nsize=(Math.floor(Math.random()*15)); //un faux nsize (TODO : nsize dans la sortie json
+      nsize=junctions[i].seg.Nsize;
       
       if (nsize>maxNsize) maxNsize=nsize;
     }else{

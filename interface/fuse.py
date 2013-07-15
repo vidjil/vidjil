@@ -52,7 +52,8 @@ def juncToJson(obj):
       "l1": obj.l1,
       "l2": obj.l2,
       "r1": obj.r1,
-      "r2": obj.r2
+      "r2": obj.r2,
+      "Nsize": obj.Nsize
       }
     raise TypeError(repr(obj) + " fail !") 
 
@@ -81,6 +82,7 @@ def jsonToJunc(obj_dict):
     obj.l2=obj_dict["l2"]
     obj.r1=obj_dict["r1"]
     obj.r2=obj_dict["r2"]
+    obj.Nsize=obj_dict["Nsize"]
     if "D" in obj_dict:
       obj.D=obj_dict["D"]
     obj.J=obj_dict["J"]

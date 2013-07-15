@@ -73,7 +73,6 @@ bool Segmenter::isDSegmented() const {
   return dSegmented;
 }
 
-
 // Chevauchement
 
 string Segmenter::removeChevauchement()
@@ -714,6 +713,7 @@ string FineSegmenter::toJson(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
   seg_str << " \"r2\" : "<< right2 << ","<<endl;
   seg_str << " \"l1\" : "<< left << ","<<endl;
   seg_str << " \"l2\" : "<< left2 << ","<<endl;
+  seg_str << " \"Nsize\" : "<< (del_V+del_J+seg_N.size()) << ","<<endl;
   seg_str << " \"V\" : [\""<<rep_V.label(score_V[0].second);
   for (int i=1; i<4; i++){
       seg_str << "\",\""<<rep_V.label(score_V[i].second);
