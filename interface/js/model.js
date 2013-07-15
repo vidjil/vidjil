@@ -61,6 +61,7 @@ var t = 0;                    //point de suivi courant ( par defaut t=0 )
 var useCustomColor=true;      //utilisation des couleurs personalisées
 var select=[];                //liste des clones selectionnés
 limitClones=1000;
+var top_limit=50;
  
 var margeVJ_left=80;              //info quadrillage (vj1/vj2)
 var margeVJ_top=50;
@@ -114,6 +115,8 @@ var req = new XMLHttpRequest();
   oFReader = new FileReader();
   oFReader2 = new FileReader();
   
+  top_limit=document.getElementById("limit_top").value;
+  
   if (document.getElementById("upload_pref").files.length != 0) { 
     var oFile = document.getElementById("upload_pref").files[0];
     oFReader2.readAsText(oFile);
@@ -133,7 +136,8 @@ var req = new XMLHttpRequest();
   //initialise les modeles de données et les visualisations
   oFReader.onload = function (oFREvent) {
     jsonDataText = oFREvent.target.result;
-    jsonData = JSON.parse(jsonDataText);
+    jsonData = load(JSON.parse(jsonDataText), top_limit);
+    jsonDatatext = 'undefined'; //récupération mémoire
     junctions=jsonData.junctions;
     init();
     document.getElementById("log").innerHTML+="<br>chargement fichier json";
@@ -158,6 +162,24 @@ var req = new XMLHttpRequest();
   };
   
   document.getElementById("file_menu").style.display="none";
+}
+
+function loadData(){
+  document.getElementById("file_menu").style.display="block";
+}
+
+function load(data, limit){
+  var result={};
+  result.total_size=data.total_size;
+  result.junctions=[];
+  var ite=0;
+  for(var i=0; i<data.junctions.length; i++){
+   if (data.junctions[i].top<=limit){
+     result.junctions[ite]=data.junctions[i];
+     ite++;
+   }
+  }
+  return result;
 }
 
 function init(){
@@ -203,7 +225,7 @@ function loadPref(){
       }
       
       if (typeof( pref.custom[i].fav ) != "undefined" ) {
-	favorites.push(mapID[pref.custom[i].junction]);
+	style[mapID[pref.custom[i].junction]].favorite=true;
       }
     }
   }

@@ -22,15 +22,37 @@
   </head>
 
   <body onload="initCoef()">
-    <div id="file_menu" style="position: fixed; top: 200px; margin-left:-200px;left:50% ;width: 400px; height: 80px;font-size: 14px; padding: 10px;">
-    	pref:<input id="upload_pref" type="file" name="pref" /></br>
-	data:<input id="upload_json" type="file" name="json" /></br>
+    <div id="file_menu" style="display:none; border:solid; position: fixed; top: 200px; margin-left:-200px;left:50% ; font-size: 14px; padding: 10px;">
+    	<h2>Load menu</h2>
+    	
+	analysis file (optional) :<br/>
+	<input id="upload_pref" type="file" name="pref" /></br></br>
+		
+	data file:<br/>
+	<input id="upload_json" type="file" name="json" /></br></br>
+	
+	show only incoming clones in the top <select id="limit_top" name="limit_top">
+	  <option value="25">25</option>
+	  <option value="50">50</option>
+	  <option value="100">100</option>
+	  <option value="200">200</option>
+	</select> </br></br>
+	
 	<button onclick="loadJson();">start</button> 
     </div>
     
     <div onclick="showlog();" style="position: fixed; top: 5px; right:5px ;width: 2px; height: 2px;font-size: 14px;background-color: #333044; padding: 10px;"> </div>
     
     <div id="top-container">
+    
+      <div class="menu" onmouseover="showSelector('loadSelector');"> save/load 
+        <div id="loadSelector" class="selector">
+	  <a class="button" onclick="javascript:loadData()">Load data</a></br>
+	  <a class="button" onclick="javascript:loadAnalysis()">Load analysis</a></br>
+	  <a class="button" onclick="javascript:savePref()">Save analysis</a></br>
+	</div>
+      </div>
+      
     
       <div class="menu" onmouseover="showSelector('colorSelector');" > color 
 	<div id="colorSelector" class="selector">
@@ -57,12 +79,6 @@
 	  <a class="button" onclick="changeStyle(blackStyle);">black</a></br>
 	  <a class="button" onclick="changeStyle(solarizeD);">solarize dark</a></br>
 	  <a class="button" onclick="changeStyle(solarizeL);">solarize light</a></br>
-	</div>
-      </div>
-      
-      <div class="menu" onmouseover="showSelector('loadSelector');"> save/load 
-        <div id="loadSelector" class="selector">
-	  <a class="button" href="javascript:savePref()">Save pref</a></br>
 	</div>
       </div>
       
