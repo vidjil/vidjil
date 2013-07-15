@@ -768,6 +768,7 @@ function initVJposition(germlineV, germlineJ){
       document.getElementById("listSelect").appendChild(div);
       
       style[cloneID].select=true;
+      updateStyleElem(cloneID);
       
       addToSegmenter(cloneID);
     }else{

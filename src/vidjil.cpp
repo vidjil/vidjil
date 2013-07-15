@@ -618,8 +618,8 @@ int main (int argc, char **argv)
 
     
       map <junction, string> json_data_segment ;
-      list<pair <junction, int> > sort_all_junctions;
-
+      list<pair <junction, int> > sort_all_windows;
+    
     /// if (command == CMD_WINDOWS) /// on le fait meme si CMD_ANALYSIS
       {
 
@@ -627,7 +627,6 @@ int main (int argc, char **argv)
 	// Sort windows
 	
 	out << "Sort windows by number of occurrences" << endl;
-	list<pair <junction, int> > sort_all_windows;
 	
 	for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin(); 
 	     it != seqs_by_window.end(); ++it) 
@@ -1212,24 +1211,26 @@ int main (int argc, char **argv)
     
     //création du fichier json_data_segment
     string f_json = out_dir + prefix_filename + "data.json" ;
+    int top = 1;
     out << "  ==> " << f_json << endl ;
     ofstream out_json(f_json.c_str()) ;
       
     out_json <<"{ \"total_size\" : ["<<nb_segmented<<"] ,"; 
     out_json <<"\"junctions\" : [";
-    for (list<pair <junction, int> >::const_iterator it = sort_all_junctions.begin(); 
-	     it != sort_all_junctions.end(); ++it) 
+    for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
+	     it != sort_all_windows.end(); ++it) 
 	 {
-	  if (it != sort_all_junctions.begin())
+	  if (it != sort_all_windows.begin())
 	  {
 	    out_json <<",";
 	  }
-	
+	 
 	 out_json <<" {\"junction\":\""<<it->first<<"\"," <<endl;
-	 out_json <<" \"size\":["<< it->second<<"]"<<endl;
+	 out_json <<" \"size\":["<< it->second<<"],"<<endl;
 	 if (json_data_segment.count(it->first) !=0 ){
-	    out_json << ","<< json_data_segment[it->first] <<endl;
+	    out_json << json_data_segment[it->first]<<","<<endl;
 	 }
+	 out_json <<"\"top\":"<<top++<<endl;
 	  out_json <<"}";
 	}
         out_json <<"] } ";

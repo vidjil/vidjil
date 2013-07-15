@@ -28,12 +28,9 @@ output_limit=sys.argv[4]
 
 jlist1 = []
 jlist2 = []
-
-ite=0
  
 #serialiseur perso, convertit un objet python en json
 def juncToJson(obj):
-  global ite
   if isinstance(obj, Junctions):
     return {"junctions": obj.junctions,
       "total_size": obj.total_size,
@@ -61,21 +58,16 @@ def juncToJson(obj):
 
 #deserialiseur perso, convertit un format json en objet python correspondant
 def jsonToJunc(obj_dict):
-  global ite
   if "total_size" in obj_dict:
     obj = Junctions()
     obj.junctions=obj_dict["junctions"]
     obj.total_size=obj_dict["total_size"]
     return obj
   if "junction" in obj_dict:
-    ite=ite+1
     obj = Junction()
     obj.junction=obj_dict["junction"]
     obj.size=obj_dict["size"]
-    if "top" in obj_dict :
-      obj.top=obj_dict["top"]
-    else:
-      obj.top = ite
+    obj.top=obj_dict["top"]
     if "seg" in obj_dict :
       obj.segment=obj_dict["seg"]
     else :
