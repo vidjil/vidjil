@@ -119,7 +119,7 @@ function displayLegend(data){
       if (d.cy<5) {
 	if (d.class=="vjline1") return resizeH*(d.cy)+10;
 	else return resizeH*(d.cy)+25;
-      }else return resizeH*d.cy;
+      }else return resizeH*d.cy+5;
     })
     .text( function (d) { 
       if (d.class=="vjline2") return d.subname;
@@ -127,7 +127,7 @@ function displayLegend(data){
     })
     .attr("class", "vjLegend")
     .attr("fill", function (d) { 
-      if (colorMethod==d.germline) return colorVJ[d.color] ; 
+      if (colorMethod==d.type) return colorVJ[d.color] ; 
       return colorStyle.c01;
     });
     
@@ -138,7 +138,10 @@ function displayLegend(data){
   lines
     .transition()
     .duration(1000)
-    .attr("x1", function(d) { return resizeW*d.cx; })
+    .attr("x1", function(d) { 
+      if (d.cx<5) return resizeW*80;
+      else return resizeW*d.cx;
+    })
     .attr("x2", function(d) { 
       if (d.cx<5) return 5000;
       else return resizeW*d.cx;
@@ -149,7 +152,7 @@ function displayLegend(data){
       else return resizeH*d.cy;
     })
     .style("stroke", function (d) { 
-      if (colorMethod==d.germline) return colorVJ[d.color] ; 
+      if (colorMethod==d.type) return colorVJ[d.color] ; 
       return colorStyle.c06;
     })
     .attr("class", function (d) { return d.class; });
@@ -174,7 +177,7 @@ function updateLegend(){
       }else return resizeH*d.cy;
     })  
     .attr("fill", function (d) { 
-      if (colorMethod==d.germline) return colorVJ[d.color] ; 
+      if (colorMethod==d.type) return colorVJ[d.color] ; 
       return colorStyle.c01;
     });
   lines
@@ -191,7 +194,7 @@ function updateLegend(){
       else return resizeH*d.cy;
     })
     .style("stroke", function (d) { 
-      if (colorMethod==d.germline) return colorVJ[d.color] ; 
+      if (colorMethod==d.type) return colorVJ[d.color] ; 
       return colorStyle.c06;
     });
 }
@@ -305,10 +308,15 @@ function sizeSplit(posV) {
   var coef = 0.01;
   var coef2= 0.0005;
   
+  var scale_y= d3.scale.log()
+    .domain([1,(1/min_size)])
+    .range([h,30]);
+    
+  
     return function(d) {
       var r=radius(d.id)/resizeCoef;
       if (d.r1!=0){
-	d.y+=coef*(((650-(r*15))*resizeH)-d.y);
+	d.y+=coef*( (scale_y(getSize(d.id)*(1/min_size))*resizeH ) -d.y);
       }else{
 	d.y+=coef*((h*resizeH)-d.y);
       }

@@ -20,7 +20,7 @@
  * initClones(data)
  * 
  * makeVJclass()
- * initVJposition()
+ * initVJgrid()
  * 
  * getName(cloneID)
  * getSize(cloneID)
@@ -79,15 +79,15 @@ var resizeG_W ;               //coefficients utilisés pour réajusté le graphi
 var resizeG_H ;
 var min_size;
 
-/* initialisation by initVJposition */
+/* initialisation by initVJgrid */
 var positionV={};         //tables associative labels (V-J) <=> positions X-Y (vj1)
 var positionJ={};	
 var positionV2={};        //idem (vj2)
 var positionJ2={};	
 
-var vjData=[];            //contient les données pour le dessin du quadrillage/legende(vj1)
-var vjData2=[];           //idem(vj2)
-var vData=[];             //
+var grid_vj1=[];            //contient les données pour le dessin du quadrillage/legende(vj1)
+var grid_vj2=[];           //idem(vj2)
+var grid_size=[];             //
 
 var colorVJ={};           //table associative labels (V ou J) <=> couleurs
 var colorN=[];		  
@@ -146,7 +146,7 @@ var req = new XMLHttpRequest();
     initSize();
     initList(junctions);
     document.getElementById("log").innerHTML+="<br>génération des clones";
-    initVJposition(TRGV,TRGJ);
+    initVJgrid(TRGV,TRGJ);
     initNodes();
     initVisu();
     document.getElementById("log").innerHTML+="<br>calcul des positions VJ";
@@ -427,13 +427,13 @@ function changeT(time){
  * color : couleur ...
  * name : nom du gene  	ex : trgv8
  * subname : variation	ex : *01 */
-function makeVJclass(classname, x, y, color, germline, name, subname){
+function makeVJclass(classname, x, y, color, type, name, subname){
   var result={}
   result.class=classname;
   result.cx=x;
   result.cy=y;
   result.color=color;
-  result.germline=germline;
+  result.type=type;
   result.name=name;
   result.subname=subname;
   return result;
@@ -454,7 +454,7 @@ function initVJcolor(col_s, col_v){
 }
   
 /*initialise les variables liées aux labels V-J*/
-function initVJposition(germlineV, germlineJ){
+function initVJgrid(germlineV, germlineJ){
   
   var subsize={};
   var sizeV=0;
@@ -465,8 +465,8 @@ function initVJposition(germlineV, germlineJ){
   positionJ={};	
   positionV2={};    
   positionJ2={};	
-  vjData=[];            
-  vjData2=[];           
+  grid_vj1=[];            
+  grid_vj2=[];           
   vmap=[];
   jmap=[];
 
@@ -507,14 +507,15 @@ function initVJposition(germlineV, germlineJ){
       tmp=elem;
       n2++
       n++;
-      vjData[n]=makeVJclass("vjline1", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
-      vData[n2]=vjData2[n]=makeVJclass("vjline1", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
+      grid_vj1[n]=makeVJclass("vjline1", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
+      grid_size[n]=grid_vj2[n]=makeVJclass("vjline1", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
     }
     t1++
     n++;
-    vjData2[n]=makeVJclass("vjline2", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
+    grid_vj2[n]=makeVJclass("vjline2", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
+    grid_size[n]=makeVJclass("", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , "", "");
     positionV2[vmap[i]]=margeVJ_left+(n2+0.5)*stepVJ;
-    vjData[n]=makeVJclass("vjline2", margeVJ_left+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
+    grid_vj1[n]=makeVJclass("vjline2", margeVJ_left+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
 			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) ),
 			  0, vmap[i], "V" , elem, '*' + vmap[i].split('*')[1]);
     positionV[vmap[i]]=margeVJ_left+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
@@ -523,6 +524,7 @@ function initVJposition(germlineV, germlineJ){
   }
   
   n2=-1;
+  
   //attribution d'une ligne pour chaque genes J (et chaque sous-genes)
   for (var i=0; i<sizeJ; i++){
 
@@ -536,20 +538,32 @@ function initVJposition(germlineV, germlineJ){
       tmp=elem;
       n2++
       n++;
-      vjData[n]=makeVJclass("vjline1", 0, margeVJ_top+(n2+0.5)*stepVJ, jmap[i], "J" , elem, "");
-      vjData2[n]=makeVJclass("vjline1", 0, margeVJ_top+(n2+0.5)*stepVJ, jmap[i], "J" , elem, "");
+      grid_vj1[n]=makeVJclass("vjline1", 0, margeVJ_top+(n2+0.5)*stepVJ, jmap[i], "J" , elem, "");
+      grid_vj2[n]=makeVJclass("vjline1", 0, margeVJ_top+(n2+0.5)*stepVJ, jmap[i], "J" , elem, "");
     }
     t1++;
     n++;
-    vjData[n]=makeVJclass("vjline2", 0, margeVJ_top+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
+    grid_vj1[n]=makeVJclass("vjline2", 0, margeVJ_top+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
 			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) )
 			    , jmap[i], "J" , elem, '*' + jmap[i].split('*')[1]);
     
     positionJ[jmap[i]]=margeVJ_top+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
 			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) );		
-    vjData2[n]=makeVJclass("vjline2", 0, margeVJ_top+(n2+0.5)*stepVJ, jmap[i], "J" , elem, "");
+    grid_vj2[n]=makeVJclass("vjline2", 0, margeVJ_top+(n2+0.5)*stepVJ, jmap[i], "J" , elem, "");
     positionJ2[jmap[i]]=margeVJ_top+(n2+0.5)*stepVJ;
   }
+  
+  n=grid_size.length;
+  var scale = d3.scale.log()
+    .domain([1,(1/min_size)])
+    .range([h,30]);
+  var height=100;
+  
+  for (var i=n ;i<(n+8) ; i++){
+    grid_size[i]=makeVJclass("vjline1", 0, (scale((height/100)*(1/min_size))) ,"#fff" , "S", (height+"%"), "");
+    height=height/10;
+  }
+  
   
   initVJcolor();
 }
@@ -720,22 +734,22 @@ function initVJposition(germlineV, germlineJ){
     
     splitMethod=splitM;
     if (splitMethod==" "){ 
-      displayLegend(vData);
+      displayLegend(grid_size);
       document.getElementById("log").innerHTML+="<br>active sizeSplit";
       $('#log').scrollTop(100000000000000);
     }
     if (splitMethod=="vj1"){ 
-      displayLegend(vjData);
+      displayLegend(grid_vj1);
       document.getElementById("log").innerHTML+="<br>active vjSplit1";
       $('#log').scrollTop(100000000000000);
     }
     if (splitMethod=="vj2"){ 
-      displayLegend(vjData2);
+      displayLegend(grid_vj2);
       document.getElementById("log").innerHTML+="<br>active vjSplit2";
       $('#log').scrollTop(100000000000000);
     }
     if (splitMethod=="Nsize"){ 
-      displayLegend(vData);
+      displayLegend(grid_size);
       document.getElementById("log").innerHTML+="<br>active split by N size";
       $('#log').scrollTop(100000000000000);
     }
