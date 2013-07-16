@@ -334,7 +334,7 @@ function nSizeSplit(posV) {
 	d.y+=coef*((h*resizeH)-d.y);
       }
 	  
-	    if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
+	    if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.N) != 'undefined' ){
 	      if ( d.x > (  (posV[junctions[d.id].seg.V[0]]+(stepV/2) ) *resizeW)) d.x=d.x-Math.random();
 	      if ( d.x < (  (posV[junctions[d.id].seg.V[0]]-(stepV/2) ) *resizeW)) d.x=d.x+Math.random();
 	      d.x+=coef2*((posV[junctions[d.id].seg.V[0]]*resizeW)-d.x);

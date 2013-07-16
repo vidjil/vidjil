@@ -69,7 +69,7 @@ var stepV;
 
 /* initialisation by init */
 var totalClones;              //nombres de clones a gerer 
-var maxNsize=0;
+var maxNsize=1;
 var mapID = [];               //map entre les jonctions et les cloneID correspondants
 var clones = [];              //clusters
 
@@ -183,7 +183,8 @@ function loadJsonAnalysis() {
     updateGraph();
     updateVis();
     updateStyle();
-    updateList();
+    initList();
+    displayTop(5);
   };
   
   document.getElementById("analysis_menu").style.display="none";
@@ -697,7 +698,7 @@ function initVJposition(germlineV, germlineJ){
       document.getElementById("log").innerHTML+="<br>active customColor";
       $('#log').scrollTop(100000000000000);
     }
-    updateGraph();
+    updateStyle();
   }
   
   

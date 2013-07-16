@@ -204,10 +204,6 @@ var style =[];
     document.getElementById('tagSelector').style.border=colorStyle.c03;
   }
   
-  function showStyleSelector(){
-    document.getElementById('styleSelector').style.display="block";
-  }
-  
   function changeStyle(newStyle){
     colorStyle=newStyle;
     initStyle();
@@ -216,7 +212,6 @@ var style =[];
     updateStyle();
     updateLegend();
     updateGraph();
-    document.getElementById("styleSelector").style.display="none";
   }
   
   

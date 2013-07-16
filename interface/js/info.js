@@ -224,7 +224,6 @@
     $('#'+elem).animate({ height: "show", display: "show"}, 100 ); 
   }
   
-  
   function displayAll(){
     for (var i = 0; i < totalClones; i++){    
       if (clones[i].length!=0){
