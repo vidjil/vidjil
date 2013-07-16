@@ -115,8 +115,17 @@ circle:hover {
   height :125px;
 }
 
-#file_menu{
+#file_menu, #analysis_menu{
   z-index:2;
+  display:none; 
+  border:solid; 
+  position: fixed; 
+  top: 200px; 
+  margin-left:-200px;
+  left:50% ; 
+  font-size: 14px; 
+  padding: 10px;
+  background:inherit;
 }
 
 #listFav{

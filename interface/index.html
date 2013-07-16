@@ -22,7 +22,8 @@
   </head>
 
   <body onload="initCoef()">
-    <div id="file_menu" style="display:none; border:solid; position: fixed; top: 200px; margin-left:-200px;left:50% ; font-size: 14px; padding: 10px;">
+  
+    <div id="file_menu" >
     	<h2>Load menu</h2>
     	
 	analysis file (optional) :<br/>
@@ -39,7 +40,19 @@
 	</select> </br></br>
 	
 	<button onclick="loadJson();">start</button> 
+	<button onclick="cancel();">cancel</button> 
     </div>
+    
+    <div id="analysis_menu" >
+    	<h2>analysis menu</h2>
+    	
+	Analysis file :<br/>
+	<input id="upload_analysis" type="file" name="analysis" /></br></br>
+		
+	<button onclick="loadJsonAnalysis();">start</button> 
+	<button onclick="cancel();">cancel</button> 
+    </div>
+    
     
     <div onclick="showlog();" style="position: fixed; top: 5px; right:5px ;width: 2px; height: 2px;font-size: 14px;background-color: #333044; padding: 10px;"> </div>
     

@@ -164,10 +164,46 @@ var req = new XMLHttpRequest();
   document.getElementById("file_menu").style.display="none";
 }
 
-function loadData(){
-  document.getElementById("file_menu").style.display="block";
+function loadJsonAnalysis() {
+
+  oFReader = new FileReader();
+
+  if (document.getElementById("upload_analysis").files.length === 0) { return; }
+
+  oFile = document.getElementById("upload_analysis").files[0];
+  oFReader.readAsText(oFile);
+  
+  oFReader.onload = function (oFREvent) {
+    var text = oFREvent.target.result;
+    pref = JSON.parse(text);
+    loadPref();
+    document.getElementById("log").innerHTML+="<br>chargement fichier de preference";
+    initCoef();
+    document.getElementById("log").innerHTML+="<br>initialisation coef";
+    updateGraph();
+    updateVis();
+    updateStyle();
+    updateList();
+  };
+  
+  document.getElementById("analysis_menu").style.display="none";
 }
 
+
+function loadData(){
+  document.getElementById("file_menu").style.display="block";
+  document.getElementById("analysis_menu").style.display="none";
+}
+
+function loadAnalysis(){
+  document.getElementById("analysis_menu").style.display="block";
+  document.getElementById("file_menu").style.display="none";
+}
+
+function cancel(){
+  document.getElementById("analysis_menu").style.display="none";
+  document.getElementById("file_menu").style.display="none";
+}
 
 function reset(){
   location.reload(true);

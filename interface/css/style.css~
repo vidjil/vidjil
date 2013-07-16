@@ -61,6 +61,7 @@ list-style-type: none;
   width: -moz-calc(100% - 450px);
   width: -webkit-calc(100% - 450px);
   width: calc(100% - 450px);
+  overflow:hidden;
 }
 #visu2 {
   display : inline-block;
@@ -68,6 +69,7 @@ list-style-type: none;
   width: -moz-calc(100% - 450px);
   width: -webkit-calc(100% - 450px);
   width: calc(100% - 450px);
+  overflow:hidden;
 }
 
 #bot-container {
@@ -113,8 +115,17 @@ circle:hover {
   height :125px;
 }
 
-#file_menu{
+#file_menu, #analysis_menu{
   z-index:2;
+  display:none; 
+  border:solid; 
+  position: fixed; 
+  top: 200px; 
+  margin-left:-200px;
+  left:50% ; 
+  font-size: 14px; 
+  padding: 10px;
+  background:inherit;
 }
 
 #listFav{
