@@ -55,6 +55,8 @@
       var div=document.createElement('div');
       div_cluster(div, i, false);
       document.getElementById(i).appendChild(div);
+      if (style[i].favorite==true) {document.getElementById("fav"+i).src="images/icon_fav_on.png";}
+      else{document.getElementById("fav"+i).src="images/icon_fav_off.png";}
     }  
    
   }

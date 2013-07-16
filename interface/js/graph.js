@@ -279,6 +279,13 @@ function updateGraph(){
     initStyle()
 }
 
+function resetGraph(){
+  for (var i=0 ; i<totalClones; i++){
+    data_graph[i].id = i;
+  }
+  updateGraph();
+}
+
 function updateAxis(){
     g_axis.data(data_axis)
     .transition()

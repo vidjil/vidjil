@@ -51,8 +51,8 @@
 var jsonData;          //fichier json
 var junctions;         //liste des jonctions du fichier json
 var pref ={ custom :[], cluster :[]} ;              //fichier des preferences
-var customColor = [];  //table des couleurs personalisées (TODO save to prefs.json)
-var customName = [];   //table des noms personalisées (TODO save to prefs.json)
+var customColor = [];  //table des couleurs personalisées 
+var customName = [];   //table des noms personalisées 
  
 /* initialisation fixé par defaut*/
 var colorMethod="V"           //methode de colorisation ( V par defaut)
@@ -137,7 +137,7 @@ var req = new XMLHttpRequest();
   oFReader.onload = function (oFREvent) {
     jsonDataText = oFREvent.target.result;
     jsonData = load(JSON.parse(jsonDataText), top_limit);
-    jsonDatatext = 'undefined'; //récupération mémoire
+    jsonDatatext = '0'; //récupération mémoire
     junctions=jsonData.junctions;
     init();
     document.getElementById("log").innerHTML+="<br>chargement fichier json";
@@ -166,6 +166,11 @@ var req = new XMLHttpRequest();
 
 function loadData(){
   document.getElementById("file_menu").style.display="block";
+}
+
+
+function reset(){
+  location.reload(true);
 }
 
 function load(data, limit){
@@ -734,9 +739,11 @@ function initVJposition(germlineV, germlineJ){
   
   /*selectionne un element et déclenche l'affichage de ses informations */
   function selectClone(cloneID){
-    var index = select.indexOf(cloneID);
-    if (index == -1){
-      select.push(cloneID);
+   
+    if (style[cloneID].select){
+     deselectClone(cloneID); 
+    }else{
+      style[cloneID].select==true;
       
       var div = document.createElement('div');
       div.id2=cloneID;
@@ -792,27 +799,18 @@ function initVJposition(germlineV, germlineJ){
       updateStyleElem(cloneID);
       
       addToSegmenter(cloneID);
-    }else{
-      deselectClone(cloneID);
     }
   }
   
   function deselectClone(cloneID){
-    tmpID=cloneID;
-    var index = select.indexOf(tmpID);
-    for (var i=0; i<select.length; i++){
-      if (select[i]==tmpID) index=i;
-    }
-    if (index != -1){
-      select.splice(index,1);
-      var clone = document.getElementById("select"+tmpID);
+    if (style[cloneID].select){
+      style[cloneID].select=false;
+      style[cloneID].focus=false;
+      var clone = document.getElementById("select"+cloneID);
       clone.parentNode.removeChild(clone);
-      var listElem = document.getElementById("seq"+tmpID);
+      var listElem = document.getElementById("seq"+cloneID);
       listElem.parentNode.removeChild(listElem);
-      style[tmpID].select=false;
-      style[tmpID].focus = false;
-      
-      focusOut(tmpID);
+      focusOut(cloneID);
     }
   }
   
@@ -830,42 +828,52 @@ function initVJposition(germlineV, germlineJ){
   }
 
   function mergeSelection(){
-    if (select.length !=0){
+    
       var new_cluster = [];
-      var leader = select[0]; 
-      var copy_select=select;
+      var leader;
       
-      for (var i = 0; i < select.length ; i++){
-	new_cluster= new_cluster.concat(clones[select[i]]);
-	clones[select[i]]=[];
-	data_graph[select[i]].id=leader;
+      for (var i = totalClones-1; i >=0 ; i--){
+	if(style[i].select) leader=i;
       }
       
-      document.getElementById("listSelect").innerHTML="";
-      document.getElementById("listSeq").innerHTML="";
-      
-      select=[];
-      selectClone(leader);
+      for (var i = 0; i < totalClones ; i++){
+	if (style[i].select){
+	  new_cluster= new_cluster.concat(clones[i]);
+	  clones[i]=[];
+	  data_graph[i].id=leader;
+	  style[i].display=false;
+	}
+      }
       clones[leader]=new_cluster;
-      
-      updateGraph();
-      updateVis();
-      
       var path=constructPath(leader);
       
-      for (var i = 0; i < copy_select.length ; i++){
-	style[copy_select[i]].display=false;
-	style[copy_select[i]].select=false;
-	data_graph[copy_select[i]].path=path;
-	updateListElem(copy_select[i],false)
+      for (var i = 0; i < totalClones ; i++){
+	if (style[i].select){
+	  data_graph[i].path=path;
+	}
       }
       
-      updateListElem(leader,true)
+      
       style[leader].display=true;
-      style[leader].select=true;
-      setTimeout('updateStyle()',1000);
+      updateGraph();
+      updateVis();
+      setTimeout('freeSelect();',1000);
       force.alpha(.2)
-    }
+  }
+  
+  function resetAnalysis(){
+    style=[];
+    customColor = [];
+    customName = [];
+    init();
+    updateStyle();
+    updateList();
+    displayTop(5);
+    resetGraph();
+    updateGraph();
+    updateVis();
+    setTimeout('updateStyle()',1000);
+    force.alpha(.2)
   }
 
   /*libere la jonction b du clone lead par a */
