@@ -301,9 +301,7 @@ function loadPref(){
   function changeName(cloneID, newName){
     tmpID = cloneID;
     customName[tmpID] = newName;
-    $("#"+tmpID).find(".nameBox").html(newName);
-    $("#select"+tmpID).find(".nameBox").html(newName);
-    $("#clone_name").html(newName);
+    updateListElem(cloneID, false);
   }
 
   /*fonction de sauvegarde (local)*/
@@ -886,14 +884,15 @@ function initVJposition(germlineV, germlineJ){
       for (var i = 0; i < totalClones ; i++){
 	if (style[i].select){
 	  data_graph[i].path=path;
+	  updateListElem(i, false);
 	}
       }
       
-      
       style[leader].display=true;
+      document.getElementById("cluster"+leader).style.display="block";
       updateGraph();
       updateVis();
-      setTimeout('freeSelect();',1000);
+      setTimeout('freeSelect();',500);
       force.alpha(.2)
   }
   

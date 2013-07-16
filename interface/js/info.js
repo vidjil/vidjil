@@ -51,14 +51,16 @@
       if (style[i].select){
 	document.getElementById("selectsize"+select[i]).innerHTML=(100*getSize(select[i])).toFixed(4)+"%";
       }
+      var display=true;
+      if (document.getElementById("cluster"+i).style.display=="none") display=false;
+      
       document.getElementById(i).removeChild(document.getElementById("cluster"+i));
       var div=document.createElement('div');
-      div_cluster(div, i, false);
+      div_cluster(div, i, display);
       document.getElementById(i).appendChild(div);
       if (style[i].favorite==true) {document.getElementById("fav"+i).src="images/icon_fav_on.png";}
       else{document.getElementById("fav"+i).src="images/icon_fav_off.png";}
     }  
-   
   }
   
   function showCluster(cloneID){
