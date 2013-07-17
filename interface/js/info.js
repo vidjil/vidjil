@@ -70,7 +70,6 @@
   function div_elem(div_elem, cloneID){
     
       div_elem.innerHTML='';
-      
       div_elem.className="listElem";
       
       var span0 = document.createElement('span');

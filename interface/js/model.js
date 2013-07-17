@@ -51,8 +51,6 @@
 var jsonData;          //fichier json
 var junctions;         //liste des jonctions du fichier json
 var pref ={ custom :[], cluster :[]} ;              //fichier des preferences
-var customColor = [];  //table des couleurs personalisées 
-var customName = [];   //table des noms personalisées 
  
 /* initialisation fixé par defaut*/
 var colorMethod="V"           //methode de colorisation ( V par defaut)
@@ -258,12 +256,12 @@ function initNcolor(){
 function loadPref(){
   for(var i=0 ;i<pref.custom.length; i++){
     if (typeof mapID[pref.custom[i].junction] != "undefined" ){
-      if (typeof( pref.custom[i].color ) != "undefined" ) {
-	customColor[mapID[pref.custom[i].junction]]=pref.custom[i].color;
+      if (typeof( pref.custom[i].tag ) != "undefined" ) {
+	style[mapID[pref.custom[i].junction]].tag=pref.custom[i].tag;
       }
       
       if (typeof( pref.custom[i].name ) != "undefined" ) {
-	customName[mapID[pref.custom[i].junction]]=pref.custom[i].name;
+	style[mapID[pref.custom[i].junction]].c_name=pref.custom[i].name;
       }
       
       if (typeof( pref.custom[i].fav ) != "undefined" ) {
@@ -301,7 +299,7 @@ function loadPref(){
 
   function changeName(cloneID, newName){
     tmpID = cloneID;
-    customName[tmpID] = newName;
+    style[tmpID].c_name = newName;
     updateListElem(cloneID, false);
   }
 
@@ -311,16 +309,16 @@ function loadPref(){
     var filePref ={ custom :[], cluster :[]} 
     
     for(var i=0 ;i<totalClones; i++){
-      if ( typeof customColor[i] != "undefined" || 
-      typeof customName[i] != "undefined" || 
-      style[i]){
+      if ( typeof style[i].tag != "undefined" || 
+      typeof style[i].c_name != "undefined" || 
+      typeof style[i].favorite != "undefined"){
 	
 	var elem = {};
 	elem.junction = junctions[i].junction;
-	if ( typeof customColor[i] != "undefined" )
-	  elem.color = customColor[i];
-	if ( typeof customName[i] != "undefined" ) 
-	  elem.name = customName[i];
+	if ( typeof style[i].tag != "undefined" )
+	  elem.tag = style[i].tag;
+	if ( typeof style[i].c_name != "undefined" ) 
+	  elem.name = style[i].c_name;
 	if ( style[i].favorite)
 	  elem.fav = true;
 	
@@ -571,8 +569,8 @@ function initVJgrid(germlineV, germlineJ){
 
   /*retourne le label d'un clone ( s'il n'en possde pas retourne son code*/
   function getname(cloneID){
-    if ( typeof(customName[cloneID])!='undefined' ){
-      return customName[cloneID];
+    if ( typeof(style[cloneID].c_name)!='undefined' ){
+      return style[cloneID].c_name;
     }else{
       return getcode(cloneID);
     }
@@ -607,13 +605,10 @@ function initVJgrid(germlineV, germlineJ){
     }
   }
   
-  
-  
 /*************************************************************************************************/
 //////////////////////////
 //	COLORMETHOD	//
 //////////////////////////
-
   
   /*retourne la couleur du clone passé en parametre
    * verifie les variables de colorisation selectionnées pour déterminer la couleur a utiliser*/
@@ -621,8 +616,8 @@ function initVJgrid(germlineV, germlineJ){
     if (typeof junctions != "undefined") {
       
       if( useCustomColor==true){
-	if (typeof customColor[cloneID] != "undefined"){
-	  return customColor[cloneID]
+	if (typeof style[cloneID].tag != "undefined"){
+	  return tagColor[style[cloneID].tag]
 	}
       }
       if (colorMethod=='V'){
@@ -679,12 +674,14 @@ function initVJgrid(germlineV, germlineJ){
   
   function selectTag(tag){
     $('#tagSelector').hide("slow");
-    customColor[tagID]=tagColor[tag];
-    document.getElementById('color'+tagID).style.background=customColor[tagID];
+    style[tagID].tag=tag;
+    document.getElementById('color'+tagID).style.background=tagColor[style[tagID].tag];
     if(document.getElementById('select'+tagID) ){
-      document.getElementById('select'+tagID).style.color=customColor[tagID];
+      document.getElementById('select'+tagID).style.color=tagColor[style[tagID].tag];
     }
-    if (tag==8) { removeKey(customColor, tagID) }
+    if (tag==8) { 
+      delete(style[tagID].tag)
+    }
     updateStyleElem(tagID)
     updateGraph();
   }
@@ -914,7 +911,6 @@ function initVJgrid(germlineV, germlineJ){
   function resetAnalysis(){
     style=[];
     customColor = [];
-    customName = [];
     init();
     updateStyle();
     updateList();
