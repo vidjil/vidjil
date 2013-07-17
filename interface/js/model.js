@@ -252,6 +252,7 @@ function initNcolor(){
 }
 
 function loadPref(){
+  
   for(var i=0 ;i<pref.custom.length; i++){
     if (typeof mapID[pref.custom[i].junction] != "undefined" ){
       if (typeof( pref.custom[i].tag ) != "undefined" ) {
@@ -267,6 +268,29 @@ function loadPref(){
       }
     }
   }
+      
+  for (var i = 0; i < totalClones ; i++){
+	if (table[i].select){
+	  new_cluster= new_cluster.concat(table[i].cluster);
+	  table[i].cluster=[];
+	  data_graph[i].id=leader;
+	  table[i].display=false;
+	}
+      }
+  
+  for(var i=0 ;i<pref.cluster.length; i++){
+    if (typeof mapID[pref.cluster[i].l] != "undefined" && typeof mapID[pref.cluster[i].f] != "undefined" ){
+      
+      var new_cluster = [];
+      new_cluster= new_cluster.concat(table[ mapID[pref.cluster[i].l] ].cluster);
+      new_cluster= new_cluster.concat(table[ mapID[pref.cluster[i].f] ].cluster);
+      
+      table[ mapID[pref.cluster[i].l] ].cluster=new_cluster;
+      table[ mapID[pref.cluster[i].f] ].cluster=[];
+      
+    }
+  }
+  
 }
 
   function editName(cloneID, elem){
@@ -307,6 +331,7 @@ function loadPref(){
     var filePref ={ custom :[], cluster :[]} 
     
     for(var i=0 ;i<totalClones; i++){
+      
       if ( typeof table[i].tag != "undefined" || 
       typeof table[i].c_name != "undefined" || 
       typeof table[i].favorite != "undefined"){
@@ -322,9 +347,22 @@ function loadPref(){
 	
 	filePref.custom.push(elem);
       }
+      
+      if (table[i].cluster.length > 1){
+	
+	for (var j=0; j<table[i].cluster.length; j++){
+	  
+	  if (table[i].cluster[j] !=i){
+	    var elem ={};
+	    elem.l = junctions[i].junction;
+	    elem.f = junctions[ table[i].cluster[j] ].junction ;
+	    filePref.cluster.push(elem);
+	  } 
+	}
+      }
     }
 	
-    var textToWrite = JSON.stringify(filePref);
+    var textToWrite = JSON.stringify(filePref, undefined, 2);
     var textFileAsBlob = new Blob([textToWrite], {type:'json'});
     var fileName = "pref.json";
 

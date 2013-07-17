@@ -47,34 +47,34 @@ list-style-type: none;
 
 #left-container {
   height:100%;
-  width : 450px;
+  width : 400px;
   height : 100%;
   overflow-y : none;
   float : left;
   font-family : Courier New,monaco,terminal,courier,system; 
-  font-size: 12px;
+  font-size: 14px;
 }
 
 #visu {
   display : inline-block;
   height : 50%;
-  width: -moz-calc(100% - 450px);
-  width: -webkit-calc(100% - 450px);
-  width: calc(100% - 450px);
+  width: -moz-calc(100% - 400px);
+  width: -webkit-calc(100% - 400px);
+  width: calc(100% - 400px);
   overflow:hidden;
 }
 #visu2 {
   display : inline-block;
   height : 50%;
-  width: -moz-calc(100% - 450px);
-  width: -webkit-calc(100% - 450px);
-  width: calc(100% - 450px);
+  width: -moz-calc(100% - 400px);
+  width: -webkit-calc(100% - 400px);
+  width: calc(100% - 400px);
   overflow:hidden;
 }
 
 #bot-container {
   width : 100%;
-  margin-left:450px;
+  margin-left:400px;
   position : fixed;
   bottom :0px;
   padding : 5px;
@@ -84,7 +84,7 @@ list-style-type: none;
   width: auto;
   height: 160px;
   overflow: auto;
-  margin-right: 460px;
+  margin-right: 410px;
 }
 
 .button {
@@ -171,7 +171,7 @@ circle:hover {
 }
 
 .listElem{
-  width :420px;
+  width :370px;
   cursor:pointer;
   -moz-transition: color  1.5s;
   -webkit-transition: color 1.5s;
@@ -184,7 +184,7 @@ circle:hover {
 }
 
 .nameBox {
-  width: 280px;
+  width: 230px;
   overflow: hidden;
   display: inline-block;
   height: 16px;
@@ -241,7 +241,7 @@ circle:hover {
 
 #tagSelector{
   position: absolute;
-  left: 450px;
+  left: 400px;
   top: 195px;
   display:none;
 }
@@ -317,7 +317,7 @@ circle:hover {
 #tagSelector{
   padding: 5px;
   position: absolute;
-  left: 450px;
+  left: 400px;
   top: 125px;
   border:solid;
   display:none;
