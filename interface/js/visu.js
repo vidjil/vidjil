@@ -310,7 +310,7 @@ function sizeSplit(posV) {
   
   var scale_y= d3.scale.log()
     .domain([1,(1/min_size)])
-    .range([h,30]);
+    .range([(h-30),30]);
     
   
     return function(d) {
@@ -336,13 +336,13 @@ function nSizeSplit(posV) {
   var coef2 =0.0005;
   
     return function(d) {
-      if (d.r1!=0){
+      if (junctions[d.id].seg.N!=-1){
 	d.y+=coef*( ((50+(1-table[d.id].Nsize/maxNsize)*600)*resizeH) -d.y  );
       }else{
 	d.y+=coef*((h*resizeH)-d.y);
       }
 	  
-	    if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.N) != 'undefined' ){
+	    if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
 	      if ( d.x > (  (posV[junctions[d.id].seg.V[0]]+(stepV/2) ) *resizeW)) d.x=d.x-Math.random();
 	      if ( d.x < (  (posV[junctions[d.id].seg.V[0]]-(stepV/2) ) *resizeW)) d.x=d.x+Math.random();
 	      d.x+=coef2*((posV[junctions[d.id].seg.V[0]]*resizeW)-d.x);

@@ -274,7 +274,6 @@ function loadPref(){
 	  new_cluster= new_cluster.concat(table[i].cluster);
 	  table[i].cluster=[];
 	  data_graph[i].id=leader;
-	  table[i].display=false;
 	}
       }
   
@@ -401,7 +400,7 @@ function initCoef(){
   
   //recadrage des legendes si la methode de répartition utilisé a ce moment la en utilise
   if (splitMethod=="vj1" || splitMethod=="vj2") updateLegend();
-  force.alpha(0);
+  
   setTimeout('updateGraph()',100);
 
   updateVis();
@@ -590,7 +589,7 @@ function initVJgrid(germlineV, germlineJ){
   n=grid_size.length;
   var scale = d3.scale.log()
     .domain([1,(1/min_size)])
-    .range([h,30]);
+    .range([(h-30),30]);
   var height=100;
   
   for (var i=n ;i<(n+8) ; i++){
@@ -923,7 +922,6 @@ function initVJgrid(germlineV, germlineJ){
 	  new_cluster= new_cluster.concat(table[i].cluster);
 	  table[i].cluster=[];
 	  data_graph[i].id=leader;
-	  table[i].display=false;
 	}
       }
       table[leader].cluster=new_cluster;
@@ -936,8 +934,6 @@ function initVJgrid(germlineV, germlineJ){
 	}
       }
       
-      table[leader].display=true;
-      document.getElementById("cluster"+leader).style.display="block";
       updateGraph();
       updateVis();
       setTimeout('freeSelect();',500);
@@ -972,7 +968,6 @@ function initVJgrid(germlineV, germlineJ){
     table[cloneIDa].cluster=nlist;
     table[cloneIDb].cluster=[cloneIDb];
     data_graph[cloneIDb].id=cloneIDb;
-    table[cloneIDb].display=true;
     table[cloneIDa].focus=false;
     data_graph[cloneIDa].path=constructPath(cloneIDa);
     data_graph[cloneIDb].path=constructPath(cloneIDb);

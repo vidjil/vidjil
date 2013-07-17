@@ -99,7 +99,7 @@ colorStyle=solarizeD;
 /*met a jour l'affichage de l'element cloneID*/
   function updateDisplayElem(cloneID){
     if (table[cloneID].active){
-      if(table[cloneID].display){
+      if(table[cloneID].cluster.length !=0){
 	document.getElementById(cloneID).style.display="block";
       }else{
 	document.getElementById(cloneID).style.display="none";
@@ -107,7 +107,7 @@ colorStyle=solarizeD;
     }else{
       document.getElementById(cloneID).style.display="none"
     }
-    if(table[cloneID].display){
+    if(table[cloneID].cluster.length !=0){
       document.getElementById("line"+cloneID).style.display="block";
     }else{
       document.getElementById("line"+cloneID).style.display="none";
@@ -149,6 +149,7 @@ colorStyle=solarizeD;
       document.getElementById("circle"+cloneID).style.stroke=colorStyle.c05;
       document.getElementById("line"+cloneID).style.stroke=colorStyle.c05;
     }
+    if (table[cloneID].tag) document.getElementById("color"+cloneID).style.backgroundColor=tagColor[table[cloneID].tag];
   }
 
   /*ressort une couleur format RGB*/

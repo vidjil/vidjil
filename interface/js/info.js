@@ -49,7 +49,7 @@
     for (var i=0; i<totalClones; i++){
       document.getElementById("size"+i).innerHTML=(100*getSize(i)).toFixed(4)+"%";
       if (table[i].select){
-	document.getElementById("selectsize"+select[i]).innerHTML=(100*getSize(select[i])).toFixed(4)+"%";
+	document.getElementById("selectsize"+select[i]).innerHTML=(100*getSize(select[i])).toFixed(3)+"%";
       }
       var display=true;
       if (document.getElementById("cluster"+i).style.display=="none") display=false;
@@ -81,6 +81,7 @@
       var span1 = document.createElement('span');
       span1.className = "colorBox";
       span1.id="color"+cloneID;
+      if (table[cloneID].tag) span1.style.backgroundColor=tagColor[table[cloneID].tag];
       span1.onclick=function(){ changeColor(this.parentNode.parentNode.id); }
       
       var fav=document.createElement('img')
@@ -103,7 +104,7 @@
       span2.className = "sizeBox";
       span2.id="size"+cloneID;
       span2.onclick=function(){ selectClone(this.parentNode.parentNode.id); }
-      span2.appendChild(document.createTextNode((100*getSize(cloneID)).toFixed(4)+"%"));
+      span2.appendChild(document.createTextNode((100*getSize(cloneID)).toFixed(3)+"%"));
       
       var span3=document.createElement('span')
       span3.className = "clusterBox";
@@ -164,8 +165,7 @@
 	
 	var span_stat=document.createElement('span');
 	span_stat.className="sizeBox";
-	span_stat.style.float="none";
-	span_stat.appendChild(document.createTextNode( (junctions[table[cloneID].cluster[i]].size[t]*100/clusterSize).toFixed(2)+"%"));
+	span_stat.appendChild(document.createTextNode( (junctions[table[cloneID].cluster[i]].size[t]*100/clusterSize).toFixed(1)+"%"));
 	
 	div_clone.appendChild(img);
 	div_clone.appendChild(span_name);
