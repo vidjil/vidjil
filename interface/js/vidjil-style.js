@@ -76,8 +76,6 @@ var colorStyle = {};
 
 colorStyle=solarizeD;
 
-var style =[];
-
 /*met a jour le style de tout les elements*/
   function updateStyle(){
     for (var i = 0; i < totalClones; i++){      
@@ -100,8 +98,8 @@ var style =[];
   
 /*met a jour l'affichage de l'element cloneID*/
   function updateDisplayElem(cloneID){
-    if (style[cloneID].active){
-      if(style[cloneID].display){
+    if (table[cloneID].active){
+      if(table[cloneID].display){
 	document.getElementById(cloneID).style.display="block";
       }else{
 	document.getElementById(cloneID).style.display="none";
@@ -109,7 +107,7 @@ var style =[];
     }else{
       document.getElementById(cloneID).style.display="none"
     }
-    if(style[cloneID].display){
+    if(table[cloneID].display){
       document.getElementById("line"+cloneID).style.display="block";
     }else{
       document.getElementById("line"+cloneID).style.display="none";
@@ -125,7 +123,7 @@ var style =[];
 
 /*met a jour la couleur de l'element cloneID*/
   function updateColorElem(cloneID){
-    if (style[cloneID].focus){
+    if (table[cloneID].focus){
       document.getElementById(cloneID).style.background=colorStyle.c03;
       document.getElementById("circle"+cloneID).style.fill=colorStyle.c05;
       document.getElementById("line"+cloneID).style.stroke=colorStyle.c05;
@@ -133,7 +131,7 @@ var style =[];
     }else{
       document.getElementById("circle"+cloneID).style.stroke="";
       document.getElementById(cloneID).style.background=colorStyle.c02;
-      if (style[cloneID].active){
+      if (table[cloneID].active){
 	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1.5px";
 	  document.getElementById(cloneID).style.color=color(cloneID);
 	  document.getElementById("circle"+cloneID).style.fill=color(cloneID);
@@ -145,7 +143,7 @@ var style =[];
 	  document.getElementById("line"+cloneID).style.stroke=colorStyle.c07;
       }   
     }
-    if (style[cloneID].select){
+    if (table[cloneID].select){
       document.getElementById("line"+cloneID).firstChild.style.strokeWidth="3px";
       document.getElementById(cloneID).style.background=colorStyle.c03;
       document.getElementById("circle"+cloneID).style.stroke=colorStyle.c05;
@@ -213,7 +211,6 @@ var style =[];
     updateLegend();
     updateGraph();
   }
-  
   
   function test(bob){
     document.getElementById('visu_back').style.fill=colorGenerator(bob,colorStyle.col_s, colorStyle.col_v);

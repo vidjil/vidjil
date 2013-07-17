@@ -337,7 +337,7 @@ function nSizeSplit(posV) {
   
     return function(d) {
       if (d.r1!=0){
-	d.y+=coef*( ((50+(1-style[d.id].Nsize/maxNsize)*600)*resizeH) -d.y  );
+	d.y+=coef*( ((50+(1-table[d.id].Nsize/maxNsize)*600)*resizeH) -d.y  );
       }else{
 	d.y+=coef*((h*resizeH)-d.y);
       }

@@ -48,7 +48,7 @@
   function updateList(){
     for (var i=0; i<totalClones; i++){
       document.getElementById("size"+i).innerHTML=(100*getSize(i)).toFixed(4)+"%";
-      if (style[i].select){
+      if (table[i].select){
 	document.getElementById("selectsize"+select[i]).innerHTML=(100*getSize(select[i])).toFixed(4)+"%";
       }
       var display=true;
@@ -58,7 +58,7 @@
       var div=document.createElement('div');
       div_cluster(div, i, display);
       document.getElementById(i).appendChild(div);
-      if (style[i].favorite==true) {document.getElementById("fav"+i).src="images/icon_fav_on.png";}
+      if (table[i].favorite==true) {document.getElementById("fav"+i).src="images/icon_fav_on.png";}
       else{document.getElementById("fav"+i).src="images/icon_fav_off.png";}
     }  
   }
@@ -87,7 +87,7 @@
       fav.className = "favBox";
       fav.id="fav"+cloneID;
 
-      if (style[cloneID].favorite==true){
+      if (table[cloneID].favorite==true){
 	fav.src="images/icon_fav_on.png";
 	fav.onclick=function(){ 
 	  addToList(this.parentNode.parentNode.id); 
@@ -142,19 +142,19 @@
       if (!display) div_cluster.style.display="none";
       
       var clusterSize=0;
-      for(var j=0 ;j<clones[cloneID].length; j++){
-	clusterSize += junctions[clones[cloneID][j]].size[t];
+      for(var j=0 ;j<table[cloneID].cluster.length; j++){
+	clusterSize += junctions[table[cloneID].cluster[j]].size[t];
       }
       
-      for (var i=0; i<clones[cloneID].length; i++){
+      for (var i=0; i<table[cloneID].cluster.length; i++){
 	
 	var div_clone=document.createElement('div');
-	div_clone.id2=clones[cloneID][i];
+	div_clone.id2=table[cloneID].cluster[i];
 	div_clone.className="listElem";
 	
 	var span_name = document.createElement('span');
         span_name.className = "nameBox";
-        span_name.appendChild(document.createTextNode( getcode(clones[cloneID][i]) ) );
+        span_name.appendChild(document.createTextNode( getcode(table[cloneID].cluster[i]) ) );
 	
 	var img=document.createElement('img');
 	img.onclick=function(){ split(cloneID, this.parentNode.id2);
@@ -165,7 +165,7 @@
 	var span_stat=document.createElement('span');
 	span_stat.className="sizeBox";
 	span_stat.style.float="none";
-	span_stat.appendChild(document.createTextNode( (junctions[clones[cloneID][i]].size[t]*100/clusterSize).toFixed(2)+"%"));
+	span_stat.appendChild(document.createTextNode( (junctions[table[cloneID].cluster[i]].size[t]*100/clusterSize).toFixed(2)+"%"));
 	
 	div_clone.appendChild(img);
 	div_clone.appendChild(span_name);
@@ -176,7 +176,7 @@
   
   
   function addToFavorites(cloneID){
-    style[cloneID].favorite=true;
+    table[cloneID].favorite=true;
     
     document.getElementById("fav"+cloneID).src="images/icon_fav_on.png";
     document.getElementById("fav"+cloneID).onclick=function(){  
@@ -193,7 +193,7 @@
 
   
   function addToList(cloneID){
-    style[cloneID].favorite=false;
+    table[cloneID].favorite=false;
     
     document.getElementById("fav"+cloneID).src="images/icon_fav_off.png";
     document.getElementById("fav"+cloneID).onclick= function(){
@@ -210,10 +210,10 @@
   
   function displayFavoris(){
     for (var i = 0; i < totalClones; i++){
-      if (clones[i].length!=0 && style[i].favorite){
-	style[i].active=true;
+      if (table[i].cluster.length!=0 && table[i].favorite){
+	table[i].active=true;
       }else{
-	style[i].active=false;
+	table[i].active=false;
       }      
     }   
     updateStyle();
@@ -225,10 +225,10 @@
   
   function displayAll(){
     for (var i = 0; i < totalClones; i++){    
-      if (clones[i].length!=0){
-	style[i].active=true;
+      if (table[i].cluster.length!=0){
+	table[i].active=true;
       }else{
-	style[i].active=false;
+	table[i].active=false;
       }     
     }
     updateStyle();
@@ -236,10 +236,10 @@
   
   function displayTop(top){
     for (var i = 0; i < totalClones; i++){      
-      if (clones[i].length!=0 && junctions[i].top <= top){
-	style[i].active=true;
+      if (table[i].cluster.length!=0 && junctions[i].top <= top){
+	table[i].active=true;
       }else{
-	style[i].active=false;
+	table[i].active=false;
       }      
     }   
     updateStyle();

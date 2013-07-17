@@ -57,7 +57,6 @@ var colorMethod="V"           //methode de colorisation ( V par defaut)
 var splitMethod=" ";          //par defaut pas de method de split
 var t = 0;                    //point de suivi courant ( par defaut t=0 )
 var useCustomColor=true;      //utilisation des couleurs personalisées
-var select=[];                //liste des clones selectionnés
 limitClones=1000;
 var top_limit=50;
  
@@ -69,7 +68,7 @@ var stepV;
 var totalClones;              //nombres de clones a gerer 
 var maxNsize=1;
 var mapID = [];               //map entre les jonctions et les cloneID correspondants
-var clones = [];              //clusters
+var table =[];
 
 /* initialisation by initCoef */
 var resizeCoef ;              //coefficient utilisé pour réajusté la visu dans l'espace disponible
@@ -241,8 +240,7 @@ function init(){
     }
     
     mapID[junctions[i].junction]=i;
-    style[i]={display:true, Nsize:nsize};
-    clones[i]=[i];
+    table[i]={display:true, Nsize:nsize, cluster :[i]};
   }
   initNcolor();
 }
@@ -257,15 +255,15 @@ function loadPref(){
   for(var i=0 ;i<pref.custom.length; i++){
     if (typeof mapID[pref.custom[i].junction] != "undefined" ){
       if (typeof( pref.custom[i].tag ) != "undefined" ) {
-	style[mapID[pref.custom[i].junction]].tag=pref.custom[i].tag;
+	table[mapID[pref.custom[i].junction]].tag=pref.custom[i].tag;
       }
       
       if (typeof( pref.custom[i].name ) != "undefined" ) {
-	style[mapID[pref.custom[i].junction]].c_name=pref.custom[i].name;
+	table[mapID[pref.custom[i].junction]].c_name=pref.custom[i].name;
       }
       
       if (typeof( pref.custom[i].fav ) != "undefined" ) {
-	style[mapID[pref.custom[i].junction]].favorite=true;
+	table[mapID[pref.custom[i].junction]].favorite=true;
       }
     }
   }
@@ -299,7 +297,7 @@ function loadPref(){
 
   function changeName(cloneID, newName){
     tmpID = cloneID;
-    style[tmpID].c_name = newName;
+    table[tmpID].c_name = newName;
     updateListElem(cloneID, false);
   }
 
@@ -309,17 +307,17 @@ function loadPref(){
     var filePref ={ custom :[], cluster :[]} 
     
     for(var i=0 ;i<totalClones; i++){
-      if ( typeof style[i].tag != "undefined" || 
-      typeof style[i].c_name != "undefined" || 
-      typeof style[i].favorite != "undefined"){
+      if ( typeof table[i].tag != "undefined" || 
+      typeof table[i].c_name != "undefined" || 
+      typeof table[i].favorite != "undefined"){
 	
 	var elem = {};
 	elem.junction = junctions[i].junction;
-	if ( typeof style[i].tag != "undefined" )
-	  elem.tag = style[i].tag;
-	if ( typeof style[i].c_name != "undefined" ) 
-	  elem.name = style[i].c_name;
-	if ( style[i].favorite)
+	if ( typeof table[i].tag != "undefined" )
+	  elem.tag = table[i].tag;
+	if ( typeof table[i].c_name != "undefined" ) 
+	  elem.name = table[i].c_name;
+	if ( table[i].favorite)
 	  elem.fav = true;
 	
 	filePref.custom.push(elem);
@@ -569,8 +567,8 @@ function initVJgrid(germlineV, germlineJ){
 
   /*retourne le label d'un clone ( s'il n'en possde pas retourne son code*/
   function getname(cloneID){
-    if ( typeof(style[cloneID].c_name)!='undefined' ){
-      return style[cloneID].c_name;
+    if ( typeof(table[cloneID].c_name)!='undefined' ){
+      return table[cloneID].c_name;
     }else{
       return getcode(cloneID);
     }
@@ -589,8 +587,8 @@ function initVJgrid(germlineV, germlineJ){
   /*renvoye la taille d'un clone( somme des tailles des jonctions qui le compose)*/
   function getSize(cloneID){
     var r=0;
-    for(var j=0 ;j<clones[cloneID].length; j++){
-      r += junctions[clones[cloneID][j]].size[t];}
+    for(var j=0 ;j<table[cloneID].cluster.length; j++){
+      r += junctions[table[cloneID].cluster[j]].size[t];}
     
     return (r)/(jsonData.total_size[t]);
   }
@@ -616,8 +614,8 @@ function initVJgrid(germlineV, germlineJ){
     if (typeof junctions != "undefined") {
       
       if( useCustomColor==true){
-	if (typeof style[cloneID].tag != "undefined"){
-	  return tagColor[style[cloneID].tag]
+	if (typeof table[cloneID].tag != "undefined"){
+	  return tagColor[table[cloneID].tag]
 	}
       }
       if (colorMethod=='V'){
@@ -657,8 +655,8 @@ function initVJgrid(germlineV, germlineJ){
   }
   
   function colorNsize(cloneID){
-	if (style[cloneID].Nsize!=-1 ){
-	    return colorN[style[cloneID].Nsize];
+	if (table[cloneID].Nsize!=-1 ){
+	    return colorN[table[cloneID].Nsize];
 	}	
 	return "rgb(20,226,89)"
   }
@@ -674,13 +672,13 @@ function initVJgrid(germlineV, germlineJ){
   
   function selectTag(tag){
     $('#tagSelector').hide("slow");
-    style[tagID].tag=tag;
-    document.getElementById('color'+tagID).style.background=tagColor[style[tagID].tag];
+    table[tagID].tag=tag;
+    document.getElementById('color'+tagID).style.background=tagColor[table[tagID].tag];
     if(document.getElementById('select'+tagID) ){
-      document.getElementById('select'+tagID).style.color=tagColor[style[tagID].tag];
+      document.getElementById('select'+tagID).style.color=tagColor[table[tagID].tag];
     }
     if (tag==8) { 
-      delete(style[tagID].tag)
+      delete(table[tagID].tag)
     }
     updateStyleElem(tagID)
     updateGraph();
@@ -765,7 +763,7 @@ function initVJgrid(germlineV, germlineJ){
    */
   function focusIn(cloneID){
     
-    style[cloneID].focus=true;
+    table[cloneID].focus=true;
     updateStyleElem(cloneID);
     document.getElementById("focus-sequence").innerHTML=getname(cloneID);
     
@@ -778,7 +776,7 @@ function initVJgrid(germlineV, germlineJ){
   /*libere un element du focus / déclenchement style mouseover*/
   function focusOut(cloneID){
     
-    style[cloneID].focus=false;
+    table[cloneID].focus=false;
     updateStyleElem(cloneID);
   }
   
@@ -786,10 +784,10 @@ function initVJgrid(germlineV, germlineJ){
   /*selectionne un element et déclenche l'affichage de ses informations */
   function selectClone(cloneID){
    
-    if (style[cloneID].select){
+    if (table[cloneID].select){
      deselectClone(cloneID); 
     }else{
-      style[cloneID].select==true;
+      table[cloneID].select==true;
       
       var div = document.createElement('div');
       div.id2=cloneID;
@@ -811,7 +809,7 @@ function initVJgrid(germlineV, germlineJ){
       var fav=document.createElement('img')
       fav.className = "favBox";
       fav.id="selectfav"+cloneID;
-      if (style[cloneID].favorite){
+      if (table[cloneID].favorite){
 	fav.src="images/icon_fav_on.png";
 	fav.onclick=function(){ 
 	  addToList(cloneID); 
@@ -841,7 +839,7 @@ function initVJgrid(germlineV, germlineJ){
       div.appendChild(span2);
       document.getElementById("listSelect").appendChild(div);
       
-      style[cloneID].select=true;
+      table[cloneID].select=true;
       updateStyleElem(cloneID);
       
       addToSegmenter(cloneID);
@@ -849,9 +847,9 @@ function initVJgrid(germlineV, germlineJ){
   }
   
   function deselectClone(cloneID){
-    if (style[cloneID].select){
-      style[cloneID].select=false;
-      style[cloneID].focus=false;
+    if (table[cloneID].select){
+      table[cloneID].select=false;
+      table[cloneID].focus=false;
       var clone = document.getElementById("select"+cloneID);
       clone.parentNode.removeChild(clone);
       var listElem = document.getElementById("seq"+cloneID);
@@ -864,8 +862,8 @@ function initVJgrid(germlineV, germlineJ){
   function freeSelect(){
     
     for (var i=0; i< totalClones ; i++){
-      if(style[i].select){
-	style[i].select=false; 
+      if(table[i].select){
+	table[i].select=false; 
 	updateStyleElem(i);
       }
     }
@@ -879,28 +877,28 @@ function initVJgrid(germlineV, germlineJ){
       var leader;
       
       for (var i = totalClones-1; i >=0 ; i--){
-	if(style[i].select) leader=i;
+	if(table[i].select) leader=i;
       }
       
       for (var i = 0; i < totalClones ; i++){
-	if (style[i].select){
-	  new_cluster= new_cluster.concat(clones[i]);
-	  clones[i]=[];
+	if (table[i].select){
+	  new_cluster= new_cluster.concat(table[i].cluster);
+	  table[i].cluster=[];
 	  data_graph[i].id=leader;
-	  style[i].display=false;
+	  table[i].display=false;
 	}
       }
-      clones[leader]=new_cluster;
+      table[leader].cluster=new_cluster;
       var path=constructPath(leader);
       
       for (var i = 0; i < totalClones ; i++){
-	if (style[i].select){
+	if (table[i].select){
 	  data_graph[i].path=path;
 	  updateListElem(i, false);
 	}
       }
       
-      style[leader].display=true;
+      table[leader].display=true;
       document.getElementById("cluster"+leader).style.display="block";
       updateGraph();
       updateVis();
@@ -909,7 +907,7 @@ function initVJgrid(germlineV, germlineJ){
   }
   
   function resetAnalysis(){
-    style=[];
+    table=[];
     customColor = [];
     init();
     updateStyle();
@@ -927,16 +925,17 @@ function initVJgrid(germlineV, germlineJ){
     if (cloneIDa==cloneIDb) return
      
       
-    var nlist = clones[cloneIDa];
+    var nlist = table[cloneIDa].cluster;
     var index = nlist.indexOf(cloneIDb);
     if (index ==-1) return
       
     nlist.splice(index, 1);
     
-    clones[cloneIDa]=nlist;
-    clones[cloneIDb]=[cloneIDb];
+    table[cloneIDa].cluster=nlist;
+    table[cloneIDb].cluster=[cloneIDb];
     data_graph[cloneIDb].id=cloneIDb;
-    style[cloneIDb].display=true;
+    table[cloneIDb].display=true;
+    table[cloneIDa].focus=false;
     data_graph[cloneIDa].path=constructPath(cloneIDa);
     data_graph[cloneIDb].path=constructPath(cloneIDb);
     
