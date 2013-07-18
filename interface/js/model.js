@@ -478,10 +478,10 @@ function makeVJclass(classname, x, y, color, type, name, subname){
 function initVJcolor(col_s, col_v){
   colorVJ=[];
   for (var i=0; i<vmap.length; i++){
-    colorVJ[vmap[i]]=colorGenerator( ( (i/vmap.length)*360 ), colorStyle.col_s, colorStyle.col_v );
+    colorVJ[vmap[i]]=colorGenerator( ( 30+(i/vmap.length)*290 ), colorStyle.col_s, colorStyle.col_v );
   }
   for (var i=0; i<jmap.length; i++){
-    colorVJ[jmap[i]]=colorGenerator( ( (i/jmap.length)*360 ), colorStyle.col_s, colorStyle.col_v );
+    colorVJ[jmap[i]]=colorGenerator( ( 30+(i/jmap.length)*290 ), colorStyle.col_s, colorStyle.col_v );
   }
   
 }
@@ -636,7 +636,7 @@ function initVJgrid(germlineV, germlineJ){
     if (typeof junctions != "undefined") {
       var r=getSize(cloneID);
       if (r==0) return 0;
-      return resizeCoef*(2+Math.pow(60000*r,(1/3) ));
+      return resizeCoef*Math.pow(80000*(r+0.002),(1/3) );
     }
   }
   
@@ -861,7 +861,7 @@ function initVJgrid(germlineV, germlineJ){
       var span2=document.createElement('span')
       span2.className = "sizeBox";
       span2.id="selectsize"+cloneID;
-      span2.appendChild(document.createTextNode((100*getSize(cloneID)).toFixed(4)+"%"));
+      span2.appendChild(document.createTextNode((100*getSize(cloneID)).toFixed(3)+"%"));
       
       	var img=document.createElement('img');
 	img.onclick=function(){ deselectClone(this.parentNode.id2);

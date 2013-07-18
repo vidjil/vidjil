@@ -235,28 +235,28 @@ function tick(e) {
 function collide() {
   var quadtree = d3.geom.quadtree(nodes);
   return function(d) {
-   if (d.drag != 1){
+   if (d.drag != 1 && d.r1 !=0){
     var r = nodes[d.id].r2+padding,
-        nx1 = d.x - r,
-        nx2 = d.x + r,
-        ny1 = d.y - r,
-        ny2 = d.y + r;
+    nx1 = d.x - r,
+    nx2 = d.x + r,
+    ny1 = d.y - r,
+    ny2 = d.y + r;
     quadtree.visit(function(quad, x1, y1, x2, y2) {
-      if (quad.point && (quad.point !== d)) {
+    if (quad.point && (quad.point !== d)) {
         var x = d.x - quad.point.x,
             y = d.y - quad.point.y,
             l = Math.sqrt(x * x + y * y),
             r = nodes[d.id].r2 + nodes[quad.point].r2+padding;
         if (l < r) {
           l = (l - r) / l*0.5;
-          d.x -= x *= l;
-          d.y -= y *= l;
-	  if(quad.point.drag!=1) {
+	  if (quad.point.r1!=0){
+	    d.x -= x *= l;
+	    d.y -= y *= l;
 	    quad.point.x += x;
 	    quad.point.y += y;
 	  }
         }
-      }
+    }
       return x1 > nx2
           || x2 < nx1
           || y1 > ny2
@@ -282,7 +282,7 @@ function updateRadius(){
 function vjSplit(posV, posJ){
     var coef = 0.005
     return function(d) {
-	if (typeof junctions != "undefined" && d.r1!=0) {
+	if (typeof junctions != "undefined") {
 	  if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
 	    d.x+=coef*((posV[junctions[d.id].seg.V[0]]*resizeW)-d.x);
 	    d.y+=coef*((posJ[junctions[d.id].seg.J[0]]*resizeH)-d.y);

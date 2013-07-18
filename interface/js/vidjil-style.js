@@ -124,7 +124,7 @@ colorStyle=solarizeD;
 /*met a jour la couleur de l'element cloneID*/
   function updateColorElem(cloneID){
     if (table[cloneID].focus){
-      document.getElementById(cloneID).style.background=colorStyle.c03;
+      document.getElementById(cloneID).style.background=colorStyle.c07;
       document.getElementById("circle"+cloneID).style.fill=colorStyle.c05;
       document.getElementById("line"+cloneID).style.stroke=colorStyle.c05;
       document.getElementById("line"+cloneID).firstChild.style.strokeWidth="4px";
@@ -145,7 +145,7 @@ colorStyle=solarizeD;
     }
     if (table[cloneID].select){
       document.getElementById("line"+cloneID).firstChild.style.strokeWidth="3px";
-      document.getElementById(cloneID).style.background=colorStyle.c03;
+      document.getElementById(cloneID).style.background=colorStyle.c07;
       document.getElementById("circle"+cloneID).style.stroke=colorStyle.c05;
       document.getElementById("line"+cloneID).style.stroke=colorStyle.c05;
     }

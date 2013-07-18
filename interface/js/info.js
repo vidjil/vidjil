@@ -47,9 +47,9 @@
   //met a jour les % dans les listes
   function updateList(){
     for (var i=0; i<totalClones; i++){
-      document.getElementById("size"+i).innerHTML=(100*getSize(i)).toFixed(4)+"%";
+      document.getElementById("size"+i).innerHTML=(100*getSize(i)).toFixed(3)+"%";
       if (table[i].select){
-	document.getElementById("selectsize"+select[i]).innerHTML=(100*getSize(select[i])).toFixed(3)+"%";
+	document.getElementById("selectsize"+i).innerHTML=(100*getSize(i)).toFixed(3)+"%";
       }
       var display=true;
       if (document.getElementById("cluster"+i).style.display=="none") display=false;
@@ -236,8 +236,14 @@
   
   function displayTop(top){
     for (var i = 0; i < totalClones; i++){      
-      if (table[i].cluster.length!=0 && junctions[i].top <= top){
-	table[i].active=true;
+      if (table[i].cluster.length!=0 ){
+	
+	var result=false;
+	for (var j=0; j<table[i].cluster.length && !result ; j++){
+	  if ( junctions[table[i].cluster[j]].top < top ) result=true;
+	}
+	table[i].active=result;
+	
       }else{
 	table[i].active=false;
       }      
