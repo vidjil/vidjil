@@ -52,7 +52,7 @@ list-style-type: none;
   overflow-y : none;
   float : left;
   font-family : Courier New,monaco,terminal,courier,system; 
-  font-size: 12px;
+  font-size: 14px;
 }
 
 #visu {

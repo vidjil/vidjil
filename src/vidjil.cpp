@@ -94,6 +94,7 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define DEFAULT_DELTA_MIN_D  0
 #define DEFAULT_DELTA_MAX_D  50
 
+#define DEFAULT_MAX_AUDITIONED 0.5
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
 #define DEFAULT_MIN_COVER_REPRESENTATIVE 5
 
@@ -226,6 +227,7 @@ int main (int argc, char **argv)
 
   size_t min_cover_representative = DEFAULT_MIN_COVER_REPRESENTATIVE;
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
+  int max_auditionned = DEFAULT_MAX_AUDITIONED;
 
   // Admissible delta between left and right segmentation points
   int delta_min = DEFAULT_DELTA_MIN ; // Kmer+Fine
@@ -859,19 +861,33 @@ int main (int argc, char **argv)
 
 	// Choose one representative
 
-        KmerRepresentativeComputer repComp(seqs_by_window[it->first], k);
-        repComp.compute(true, min_cover_representative, ratio_representative);
+	list <Sequence> auditioned_sequences;
 
+	if (seqs_by_window[it->first].size()< max_auditionned){
+	  auditioned_sequences=seqs_by_window[it->first];
+	}else{
+
+	  list <Sequence>::const_iterator it2;
+	  it2=seqs_by_window[it->first].begin();
+	  
+	  for (int i=0 ; i<max_auditionned; i++){
+	    auditioned_sequences.push_back(*it2);
+	    it2++;
+	  }
+	}
+
+        KmerRepresentativeComputer repComp(auditioned_sequences, k);
+        repComp.compute(true, min_cover_representative, ratio_representative);
+	
         if (repComp.hasRepresentative()) {
+	  
           Sequence representative = repComp.getRepresentative();
           representative.label = string_of_int(it->second) + "-" 
             + representative.label;
-	
-	FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
+	  FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 	
 	if (segment_D)
 	  seg.FineSegmentD(rep_V, rep_D, rep_J);
-
 	
           if (seg.isSegmented())
 	  {
@@ -1017,7 +1033,6 @@ int main (int argc, char **argv)
             }
         }
       
-
       // Second pass: output clone, all representatives      
 
       num_seq = 0 ;
@@ -1061,9 +1076,22 @@ int main (int argc, char **argv)
 	      }
 	  }
 
-	//
+	list <Sequence> auditioned_sequences;
 
-        KmerRepresentativeComputer repComp(seqs_by_window[it->first], k);
+	if (seqs_by_window[it->first].size()<max_auditionned){
+	  auditioned_sequences=seqs_by_window[it->first];
+	}else{
+
+	  list <Sequence>::const_iterator it2;
+	  it2=seqs_by_window[it->first].begin();
+	  
+	  for (int i=0 ; i<max_auditionned; i++){
+	    auditioned_sequences.push_back(*it2);
+	    it2++;
+	  }
+	}
+	
+        KmerRepresentativeComputer repComp(auditioned_sequences, k);
         repComp.compute(true, min_cover_representative, ratio_representative);
 
         if (repComp.hasRepresentative()) {
