@@ -365,10 +365,7 @@ function loadPref(){
     var textFileAsBlob = new Blob([textToWrite], {type:'json'});
     var fileName = "pref.json";
 
-    var downloadLink = document.createElement("a");
-    downloadLink.href = window.webkitURL.createObjectURL(textFileAsBlob);
-    downloadLink.download = fileName;
-    downloadLink.click();    
+  saveAs(textFileAsBlob, "analysis.json");
   }
 
 /*************************************************************************************************/

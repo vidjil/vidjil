@@ -94,7 +94,7 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define DEFAULT_DELTA_MIN_D  0
 #define DEFAULT_DELTA_MAX_D  50
 
-#define DEFAULT_MAX_AUDITIONED 0.5
+#define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
 #define DEFAULT_MIN_COVER_REPRESENTATIVE 5
 
@@ -863,7 +863,7 @@ int main (int argc, char **argv)
 
 	list <Sequence> auditioned_sequences;
 
-	if (seqs_by_window[it->first].size()< max_auditionned){
+	if (seqs_by_window[it->first].size()<max_auditionned){
 	  auditioned_sequences=seqs_by_window[it->first];
 	}else{
 
