@@ -34,10 +34,13 @@
 	<input id="upload_json" type="file" name="json" /></br></br>
 	
 	show only incoming clones in the top <select id="limit_top" name="limit_top">
-	  <option value="25">25</option>
+	  <option value="10">10</option>	
+	  <option value="15">15</option>
+	  <option value="20">20</option>
+	  <option value="30">30</option>
+	  <option value="40">40</option>
 	  <option value="50">50</option>
 	  <option value="100">100</option>
-	  <option value="200">200</option>
 	</select> </br></br>
 	
 	<button onclick="loadJson();">start</button> 
@@ -130,7 +133,6 @@
 		<a class="button" onclick="displayTop(5);">top 5</a>
 		<a class="button" onclick="displayTop(10);">top 10</a>
 		<a class="button" onclick="displayTop(25);">top 25</a>
-		<a class="button" onclick="displayTop(50);">top 50</a>
 		<a class="button" onclick="displayAll();">all</a>
 	      </td>
 	    </tr>
@@ -146,7 +148,7 @@
 	<div class="separator">selection 
 	<span class="button" onclick="mergeSelection()"> merge selection</span>
 	</div>
-	  <div id="listSelect"></div>
+	  <div id="listSelect" onmouseover="displayAlign()"></div>
 
       </div>
 	
@@ -186,7 +188,7 @@
 	
     <!-- BOT-CONTAINER -->
 	  
-    <div id="bot-container" onmouseover="displayAlign()" >
+    <div id="bot-container">
       <div id="focus-sequence"> > </div>
 
       <div id="align" style="display:none">

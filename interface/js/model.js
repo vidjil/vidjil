@@ -84,7 +84,8 @@ var positionJ2={};
 
 var grid_vj1=[];            //contient les données pour le dessin du quadrillage/legende(vj1)
 var grid_vj2=[];           //idem(vj2)
-var grid_size=[];             //
+var grid_size=[];          
+var grid_nsize=[]; 
 
 var colorVJ={};           //table associative labels (V ou J) <=> couleurs
 var colorN=[];		  
@@ -210,6 +211,7 @@ function reset(){
 function load(data, limit){
   var result={};
   result.total_size=data.total_size;
+  result.time=data.time;
   result.junctions=[];
   var ite=0;
   for(var i=0; i<data.junctions.length; i++){
@@ -247,7 +249,7 @@ function init(){
 
 function initNcolor(){
   for (var i=0; i<maxNsize+1; i++){
-    colorN[i]=colorGenerator( ( (i/maxNsize)*250 )  ,  colorStyle.col_s  , colorStyle.col_v);
+    colorN[i]=colorGenerator( ( ((i/maxNsize)-1)*(-250) )  ,  colorStyle.col_s  , colorStyle.col_v);
   }
 }
 
@@ -392,8 +394,8 @@ function initCoef(){
 
   resizeCoef = Math.sqrt(resizeW*resizeH);
   
-  $('#listFav').height((($('#left').height()-315))+"px");
-  $('#listClones').height((($('#left').height()-315))+"px");
+  $('#listFav').height((($('#left').height()-305))+"px");
+  $('#listClones').height((($('#left').height()-305))+"px");
   
   //recadrage des legendes si la methode de répartition utilisé a ce moment la en utilise
   if (splitMethod=="vj1" || splitMethod=="vj2") updateLegend();
@@ -538,12 +540,12 @@ function initVJgrid(germlineV, germlineJ){
       n2++
       n++;
       grid_vj1[n]=makeVJclass("vjline1", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
-      grid_size[n]=grid_vj2[n]=makeVJclass("vjline1", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
+      grid_size[n]=grid_nsize[n]=grid_vj2[n]=makeVJclass("vjline1", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
     }
     t1++
     n++;
     grid_vj2[n]=makeVJclass("vjline2", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , elem, "");
-    grid_size[n]=makeVJclass("", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , "", "");
+    grid_size[n]=grid_nsize[n]=makeVJclass("", margeVJ_left+(n2+0.5)*stepVJ, 0, vmap[i], "V" , "", "");
     positionV2[vmap[i]]=margeVJ_left+(n2+0.5)*stepVJ;
     grid_vj1[n]=makeVJclass("vjline2", margeVJ_left+ (n2*stepVJ) -( 0.5*stepVJ/(t2+1) ) + 
 			  ( (t1/(t2+1))*(stepVJ+stepVJ/(t2+1)) ),
@@ -594,6 +596,12 @@ function initVJgrid(germlineV, germlineJ){
     height=height/10;
   }
   
+  n=grid_nsize.length;
+  var size=0
+  for (var i=n ;i<=(n+Math.floor(maxNsize/5)) ; i++){
+    grid_nsize[i]=makeVJclass("vjline1", 0, (50+(1-size/maxNsize)*600) ,"#fff" , "S", size, "");
+    size=size+5;
+  }
   
   initVJcolor();
 }
@@ -778,7 +786,7 @@ function initVJgrid(germlineV, germlineJ){
       $('#log').scrollTop(100000000000000);
     }
     if (splitMethod=="Nsize"){ 
-      displayLegend(grid_size);
+      displayLegend(grid_nsize);
       document.getElementById("log").innerHTML+="<br>active split by N size";
       $('#log').scrollTop(100000000000000);
     }

@@ -8,6 +8,7 @@ html{
 
 ul{
   padding-left:2px;
+  margin-top: 3px;
 }
 
 body {
@@ -135,8 +136,7 @@ circle:hover {
 }
 
 #listSelect{
-  overflow-y : scroll;
-  overflow-x : hidden;
+  overflow : hidden;
   height :160px
 }
 
@@ -184,7 +184,7 @@ circle:hover {
 }
 
 .nameBox {
-  width: 230px;
+  width: 250px;
   overflow: hidden;
   display: inline-block;
   height: 16px;

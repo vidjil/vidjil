@@ -82,7 +82,15 @@ function initGraph(){
       }else{
 	for (var i=0 ; i<junctions[0].size.length; i++){
 	graph_col[i]=axis_x1 + 5 + i*(( g_w-(axis_x1+axis_x2) )/(junctions[0].size.length-1) );
-	data_axis[9+i]={class : "axis_v" ,text : "fu"+(i+1) ,
+	
+	var time_name = "fu"+(i+1);
+	if ( typeof jsonData.time != "undefined" ){
+	  if ( typeof jsonData.time[i] != "undefined" ){
+	    time_name = jsonData.time[i];
+	  }
+	}
+	
+	data_axis[9+i]={class : "axis_v" ,text : time_name ,
 			x1 : graph_col[i], x2 : graph_col[i], 
 			y1 : g_h+20, y2 : 0, time: i}
       }

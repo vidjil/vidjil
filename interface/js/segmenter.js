@@ -19,7 +19,7 @@
  
   /*affiche le segmenteur/comparateur*/
  function displayAlign(){
-    //$('#align').animate({ height: "show", display: "show"}, 200 ); 
+    $('#align').animate({ height: "show", display: "show"}, 200 ); 
   }
   
   
@@ -51,11 +51,14 @@
     spanV.innerHTML=junctions[cloneID].seg.sequence.substr(0, junctions[cloneID].seg.l1+1);
     li.appendChild(spanV);
       
-    var spanN = document.createElement('span');
-    spanN.className="N";
-    spanN.innerHTML=junctions[cloneID].seg.sequence.substring(junctions[cloneID].seg.l1+1, junctions[cloneID].seg.r1);
-    li.appendChild(spanN);
-      
+    
+    if ( (junctions[cloneID].seg.l1+1 -junctions[cloneID].seg.r1)!=0){
+      var spanN = document.createElement('span');
+      spanN.className="N";
+      spanN.innerHTML=junctions[cloneID].seg.sequence.substring(junctions[cloneID].seg.l1+1, junctions[cloneID].seg.r1);
+      li.appendChild(spanN);
+    }
+    
     var spanJ = document.createElement('span');
     spanJ.className="J";
     spanJ.style.color=colorJ(cloneID);
