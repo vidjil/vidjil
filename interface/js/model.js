@@ -941,7 +941,10 @@ function initVJgrid(germlineV, germlineJ){
       
       updateGraph();
       updateVis();
+      
       setTimeout('freeSelect();',500);
+      setTimeout("selectClone("+leader+");",600);
+      setTimeout("showCluster("+leader+");",700);
       force.alpha(.2)
   }
   
