@@ -144,7 +144,7 @@
       
       div_cluster.id="cluster"+cloneID;
       div_cluster.id2=cloneID;
-      if (!display) div_cluster.style.display="none";
+      if (!display || table[cloneID].cluster.length==1) div_cluster.style.display="none";
       
       var clusterSize=0;
       for(var j=0 ;j<table[cloneID].cluster.length; j++){
