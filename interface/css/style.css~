@@ -43,7 +43,7 @@ list-style-type: none;
 #switch{
   float: right;
   position: relative;
-  top: -35px;
+  top: -50px;
 }
 
 #left-container {
@@ -97,6 +97,17 @@ list-style-type: none;
     margin-right:5px;
     margin-left:5px;
     text-decoration:underline;
+}
+
+.buttonSelector {
+    cursor:pointer;
+    font-size: 14px;
+    margin :2px;
+    display:block;
+}
+
+.buttonSelector:hover {
+    cursor: pointer;
 }
 
 .button:hover {

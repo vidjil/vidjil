@@ -99,6 +99,18 @@ list-style-type: none;
     text-decoration:underline;
 }
 
+.buttonSelector {
+    cursor:pointer;
+    font-size: 14px;
+    margin :2px;
+    display:block;
+    text-align:left;
+}
+
+.buttonSelector:hover {
+    cursor: pointer;
+}
+
 .button:hover {
     cursor: pointer;
     color: grey;

@@ -76,6 +76,7 @@ var colorStyle = {};
 
 colorStyle=solarizeD;
 
+
 /*met a jour le style de tout les elements*/
   function updateStyle(){
     for (var i = 0; i < totalClones; i++){      
@@ -201,6 +202,16 @@ colorStyle=solarizeD;
     document.getElementById('listSelect').style.background=colorStyle.c02;
     document.getElementById('tagSelector').style.background=colorStyle.c02;
     document.getElementById('tagSelector').style.border=colorStyle.c03;
+    
+    var button = document.getElementsByClassName("buttonSelector");
+
+    for(var i = 0; i<button.length; i++){
+      button[i].addEventListener("mouseover", function(){ this.style.background=colorStyle.c03; });
+      button[i].addEventListener("mouseout", function(){ this.style.background=colorStyle.c02; });
+      button[i].style.background=colorStyle.c02;
+    }
+    
+
   }
   
   function changeStyle(newStyle){
