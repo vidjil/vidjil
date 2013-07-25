@@ -64,9 +64,9 @@
     
       <div class="menu" onmouseover="showSelector('loadSelector');"> save/load 
         <div id="loadSelector" class="selector">
-	  <a class="button" onclick="javascript:loadData()">Load data</a></br>
-	  <a class="button" onclick="javascript:loadAnalysis()">Load analysis</a></br>
-	  <a class="button" onclick="javascript:savePref()">Save analysis</a></br>
+	  <a class="button" onclick="javascript:loadData()">load data</a></br>
+	  <a class="button" onclick="javascript:loadAnalysis()">load analysis</a></br>
+	  <a class="button" onclick="javascript:savePref()">save analysis</a></br>
 	  <a class="button" onclick="javascript:resetAnalysis()">reset analysis</a></br>
 	  <a class="button" onclick="javascript:reset()">reset</a></br>
 	</div>
@@ -87,8 +87,8 @@
       	<div id="groupSelector" class="selector">
 	  <a class="button" onclick="changeSplitMethod('vj1');">alleles</a> </br>
 	  <a class="button" onclick="changeSplitMethod('vj2');">genes</a> </br>
-	  <a class="button" onclick="changeSplitMethod('Nsize');">N size</a> </br>
-	  <a class="button" onclick="changeSplitMethod(' ');">size</a> </br>
+	  <a class="button" onclick="changeSplitMethod('Nsize');">length N</a> </br>
+	  <a class="button" onclick="changeSplitMethod(' ');">weight</a> </br>
 	</div>
       </div>
       
@@ -172,6 +172,10 @@
 	    
 	    <div style="float:left; background:#333044; width:22px; height:22px; margin:5px; " onclick="switchVisu(70,30);"> 
 	      <div style="background:white; width:100%; height:75%;"></div>
+	    </div>
+	    
+	    <div style="float:left; background:#333044; width:22px; height:22px; margin:5px; " onclick="switchVisu(100,0);"> 
+	      <div style="background:white; width:100%; height:100%;"></div>
 	    </div>
 	    
 	  </div>

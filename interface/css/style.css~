@@ -84,7 +84,8 @@ list-style-type: none;
 #align {
   width: auto;
   height: 160px;
-  overflow: auto;
+  overflow-x: auto;
+  overflow-y:hidden;
   margin-right: 410px;
 }
 
@@ -164,6 +165,7 @@ circle:hover {
   letter-spacing: 0.1em;
   width: 100%;
   font-weight: bold;
+  height:26px
 }
 
 .list{

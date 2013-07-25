@@ -54,7 +54,7 @@ var pref ={ custom :[], cluster :[]} ;              //fichier des preferences
  
 /* initialisation fixé par defaut*/
 var colorMethod="V"           //methode de colorisation ( V par defaut)
-var splitMethod=" ";          //par defaut pas de method de split
+var splitMethod="begin";          //par defaut pas de method de split
 var t = 0;                    //point de suivi courant ( par defaut t=0 )
 var useCustomColor=true;      //utilisation des couleurs personalisées
 limitClones=1000;
@@ -398,7 +398,7 @@ function initCoef(){
   $('#listClones').height((($('#left').height()-305))+"px");
   
   //recadrage des legendes si la methode de répartition utilisé a ce moment la en utilise
-  if (splitMethod!=" ") updateLegend();
+  if (splitMethod!="begin") updateLegend();
   
   setTimeout('updateGraph()',100);
 
