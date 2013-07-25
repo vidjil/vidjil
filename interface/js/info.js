@@ -108,8 +108,12 @@
       
       var span3=document.createElement('span')
       span3.className = "clusterBox";
-      span3.onclick=function(){ showCluster( this.parentNode.parentNode.id )}
-      span3.appendChild(document.createTextNode("+"));
+      if (table[cloneID].cluster.length >1){
+	span3.onclick=function(){ showCluster( this.parentNode.parentNode.id )}
+	span3.appendChild(document.createTextNode("+"));
+      }else{
+	span3.appendChild(document.createTextNode(' '));
+      }
       
       div_elem.appendChild(span3);
       div_elem.appendChild(span0);
