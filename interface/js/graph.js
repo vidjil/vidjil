@@ -43,22 +43,29 @@ var data_graph=[];
 var data_res=[];
 
 var graph_col=[];
-
+var precision=1;
 var scale_x;
     
 function initGraph(){
   
+  var count=min_size;
+
+  while (count<1){
+    count=count*10;
+    precision= precision*10;
+  }
+  
   scale_x = d3.scale.log()
-    .domain([1,(1/min_size)])
-    .range([30,(g_h)]);
+    .domain([1,precision])
+    .range([50,(g_h)]);
     
   var height=100;
   
   //ordonnée
   for (var i=0 ; i<8; i++){
     data_axis[i]={class : "axis" ,text : (height+"%"), x1 : 0, x2 : g_w, 
-		    y1 : (g_h- scale_x((height/100)*(1/min_size))), 
-		    y2 : (g_h- scale_x((height/100)*(1/min_size)))}
+		    y1 : (g_h- scale_x((height/100)*precision)), 
+		    y2 : (g_h- scale_x((height/100)*precision))}
 		    
     height=height/10;
   }
@@ -166,12 +173,12 @@ function constructPathR(res){
   
   
   p=[ [0, (g_h+1000)] ];
-  p.push([0, ( g_h - scale_x((res/jsonData.total_size[0])*(1/min_size)) ) ]);
+  p.push([0, ( g_h - scale_x((res/jsonData.total_size[0])*precision) ) ]);
   
   for (var i=0; i< graph_col.length; i++){
-      p.push([( graph_col[i]), ( g_h - scale_x((res/jsonData.total_size[i])*(1/min_size)) ) ]);
+      p.push([( graph_col[i]), ( g_h - scale_x((res/jsonData.total_size[i])*precision) ) ]);
   }
-  p.push([g_w, ( g_h - scale_x((res/jsonData.total_size[graph_col.length-1])*(1/min_size)) ) ]);
+  p.push([g_w, ( g_h - scale_x((res/jsonData.total_size[graph_col.length-1])*precision) ) ]);
   p.push([g_w, ( g_h+1000) ]);
   
   
@@ -185,18 +192,20 @@ function constructPath(cloneID){
   var p;
   
   if (getSize(cloneID)==0){
-    p = [ [( graph_col[0] ),(g_h + 50)] ]
+    p = [ ];
   }else{
-    p = [[ ( graph_col[0]+ (Math.random()*30)-15  ), ( g_h - scale_x(getSize(cloneID)*(1/min_size)) ) ]];
+    p = [[ ( graph_col[0]+ (Math.random()*30)-15  ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]];
   }
   
   for (var i=1; i< graph_col.length; i++){
     t++;
     
     if (getSize(cloneID)==0){
+      if (p.length!=0){
 	p.push([( graph_col[i] ),(g_h + 50)]);
+      }
     }else{
-      p.push([( graph_col[i] + (Math.random()*30)-15 ), ( g_h - scale_x(getSize(cloneID)*(1/min_size)) ) ]);
+      p.push([( graph_col[i] + (Math.random()*30)-15 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
     }
 
   }
@@ -216,8 +225,8 @@ function updateGraph(){
   $("#log").scrollTop(100000000000000);
     
   scale_x = d3.scale.log()
-    .domain([1,(1/min_size)])
-    .range([30,(g_h)]);
+    .domain([1,precision])
+    .range([50,(g_h)]);
     
     g_axis
     .transition()

@@ -398,7 +398,7 @@ function initCoef(){
   $('#listClones').height((($('#left').height()-305))+"px");
   
   //recadrage des legendes si la methode de répartition utilisé a ce moment la en utilise
-  if (splitMethod=="vj1" || splitMethod=="vj2") updateLegend();
+  if (splitMethod!=" ") updateLegend();
   
   setTimeout('updateGraph()',100);
 
