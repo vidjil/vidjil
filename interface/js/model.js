@@ -897,6 +897,7 @@ function initVJgrid(germlineV, germlineJ){
       var listElem = document.getElementById("seq"+cloneID);
       listElem.parentNode.removeChild(listElem);
       focusOut(cloneID);
+      force.alpha(.2)
     }
   }
   

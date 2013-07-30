@@ -341,8 +341,8 @@ void DynProg::backtrack()
   int g1=x.size();
   int g2=y.size();
   
-  int ti=best_i;
-  int tj=best_j;
+  int ti=best_i+1;
+  int tj=best_j+1;
   int tmpi, tmpj;
   tmpi=ti;
   tmpj=tj;
@@ -355,16 +355,6 @@ void DynProg::backtrack()
   ostringstream back_tr;
   ostringstream back;
   
-  if (x[ti]==y[tj]){
-    back_tr << "|";
-  }else{
-    back_tr << ":";
-  }
-  g1--;
-  g2--;
-  
-  back_s1 << x[ti];
-  back_s2 << y[tj];
   
   while ( B[ti][tj][2] != FIN ){
     
@@ -372,42 +362,52 @@ void DynProg::backtrack()
     tmpj=B[ti][tj][1];
 
     if (B[ti][tj][2] == SUBST ){
+      linkgap[g1]=g2;
       back_s1 << x[ti-1];
       g1--;
       back_s2 << y[tj-1];
       g2--;
-      
+
       if(x[ti-1]==y[tj-1]) {
 	back_tr << "|";
       }else{
 	back_tr << ":";
       }
+      
     }
     if (B[ti][tj][2] == INSER ){
+      linkgap[g1]=g2;
       back_s1 << x[ti-1];
       g1--;
       back_s2 << " ";
       gap2[g2]++;
       back_tr << ".";
+      
     }
     if (B[ti][tj][2] == DELET){
+    linkgap[g1]=g2;
       back_s1 << " ";
       gap1[g1]++;
       back_s2 << y[tj-1];
       g2--;
       back_tr << ".";
+      
     }
     if (B[ti][tj][2] == HOMO2X ){
+      linkgap[g1]=g2;
       back_s1 << x[ti-1] << x[ti-2];
       g1--;
+      linkgap[g1]=g2;
       g1--;
       back_s2  << " " << y[tj-1];
       gap2[g2]++;
       g2--;
       back_tr << " h";
+
     }
       
     if (B[ti][tj][2] == HOMO2Y ){
+    linkgap[g1]=g2;
       back_s1 << " " << x[ti-1] ;
       gap1[g1]++;
       g1--;
