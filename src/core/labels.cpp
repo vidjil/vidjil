@@ -123,6 +123,11 @@ list< pair <float, int> > compute_normalization_list(map<string, list<Sequence> 
        it != normalization.end(); 
        it++) {
     int nb_occs = seqs_by_window[it->first].size();
+
+    // If a normalized window is not found
+    if (!nb_occs)
+      continue ;
+
     float norm = it->second.second / (nb_occs*1. / total);
     // PRINT_VAR(nb_occs);
     // PRINT_VAR(norm);
@@ -160,7 +165,8 @@ float compute_normalization(list< pair <float, int> > norm_list, int nb_reads)
       float lower_norm = it->first;
       int lower_value = it->second;
 
-      float ratio = (log(nb_reads) - log(lower_value)) / (log(higher_value) - log(lower_value));
+      float ratio = (higher_value == lower_value) ? 0.5 :
+	(log(nb_reads) - log(lower_value)) / (log(higher_value) - log(lower_value)) ;
 
       // PRINT_VAR(ratio);
       // PRINT_VAR(lower_value);
