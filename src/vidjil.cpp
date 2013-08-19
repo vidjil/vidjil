@@ -236,6 +236,7 @@ int main (int argc, char **argv)
 
   bool output_sequences_by_cluster = false;
   bool detailed_cluster_analysis = true ;
+  bool very_detailed_cluster_analysis = false ;
 
   string forced_edges = "" ;
 
@@ -1009,6 +1010,12 @@ int main (int argc, char **argv)
 
       out << endl ;
       out_windows.close();
+
+      if (!very_detailed_cluster_analysis)
+	{
+	  continue ;
+	}
+
 
       html << "</pre>" << endl ;
       html << "<div  id='detail-" << num_clone << "' style='display:none;'>"
