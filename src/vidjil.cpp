@@ -230,7 +230,7 @@ int main (int argc, char **argv)
 
   size_t min_cover_representative = DEFAULT_MIN_COVER_REPRESENTATIVE;
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
-  int max_auditionned = DEFAULT_MAX_AUDITIONED;
+  unsigned int max_auditionned = DEFAULT_MAX_AUDITIONED;
 
   // Admissible delta between left and right segmentation points
   int delta_min = DEFAULT_DELTA_MIN ; // Kmer+Fine
@@ -901,7 +901,7 @@ int main (int argc, char **argv)
 	  list <Sequence>::const_iterator it2;
 	  it2=seqs_by_window[it->first].begin();
 	  
-	  for (int i=0 ; i<max_auditionned; i++){
+	  for (int i=0 ; i<(int) max_auditionned; i++){
 	    auditioned_sequences.push_back(*it2);
 	    it2++;
 	  }
@@ -1122,7 +1122,7 @@ int main (int argc, char **argv)
 	  list <Sequence>::const_iterator it2;
 	  it2=seqs_by_window[it->first].begin();
 	  
-	  for (int i=0 ; i<max_auditionned; i++){
+	  for (int i=0 ; i<(int) max_auditionned; i++){
 	    auditioned_sequences.push_back(*it2);
 	    it2++;
 	  }
