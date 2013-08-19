@@ -61,6 +61,7 @@
 #define DEFAULT_READS  "../seq/chr_pgm_50k.cut.fa"
 #define MIN_READS_WINDOW 10
 #define MIN_READS_CLONE 100
+#define MAX_CLONES 10
 #define RATIO_READS_CLONE 0.1
 
 #define COMMAND_WINDOWS "windows"
@@ -160,6 +161,7 @@ void usage(char *progname)
        << "Limits to report a clone" << endl
        << "  -R <nb>       minimal number of reads supporting a clone (default: " << MIN_READS_CLONE << ")" << endl
        << "  -% <ratio>    minimal percentage of reads (default: " << RATIO_READS_CLONE << ")" << endl
+       << "  -z <nb>       maximal number of clones (default: " << MAX_CLONES << ")" << endl
        << endl
 
        << "Fine segmentation options" << endl
@@ -220,6 +222,7 @@ int main (int argc, char **argv)
   int verbose = 0 ;
   int command = CMD_WINDOWS;
 
+  int max_clones = MAX_CLONES ;
   int min_reads_window = MIN_READS_WINDOW ;
   int min_reads_clone = MIN_READS_CLONE ;
   float ratio_reads_clone = RATIO_READS_CLONE;
@@ -244,7 +247,7 @@ int main (int argc, char **argv)
 
   char c ;
 
-  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:")) != EOF)
+  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:z:")) != EOF)
 
     switch (c)
       {
@@ -345,6 +348,9 @@ int main (int argc, char **argv)
 	min_reads_clone = atoi(optarg);
         break;
 
+      case 'z':
+	max_clones = atoi(optarg);
+        break;
       case 's':
 #ifndef NO_SPACED_SEEDS
 	seed = string(optarg);
@@ -798,6 +804,10 @@ int main (int argc, char **argv)
 
     
       ++num_clone ;
+
+      if (num_clone == max_clones)
+	  break ;
+
       cout << "#### " ;
 
       string clone_file_name = out_seqdir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
