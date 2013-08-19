@@ -19,12 +19,15 @@ class Segment:
     self.D=[]
     self.J=[]
     
-
-path1=sys.argv[1]
-path2=sys.argv[2]
-
-output_name=sys.argv[3]
-output_limit=sys.argv[4]
+      
+if len(sys.argv) < 4:
+  print "incorect number of argument ( minimum 4 )"
+  print "fuse.py -output_file- -top_limit- -input_file1- -input_file2- ... -input_fileX-"
+  sys.exit() 
+  
+  
+output_name=sys.argv[1]
+output_limit=sys.argv[2]
 
 jlist1 = []
 jlist2 = []
@@ -88,6 +91,22 @@ def jsonToJunc(obj_dict):
     obj.J=obj_dict["J"]
     return obj
 
+    
+def cutList(l1, limit):
+  
+  out = Junctions()
+  out.total_size=l1.total_size
+  
+  length1 = len(l1.junctions)
+  
+  for index in range(length1): 
+    if (int(l1.junctions[index].top) < int(limit) or limit == 0) :
+      out.junctions.append(l1.junctions[index])
+
+  print limit
+  return out
+  
+    
 def fuseList(l1, l2, limit): 
   dico = collections.OrderedDict()
   dico2 = collections.OrderedDict()
@@ -154,25 +173,22 @@ def fuseList(l1, l2, limit):
     if (junct.top < limit or limit == 0) :
       out.junctions.append(junct)
 
-  print limit
   return out
   
-  
-with open(path1, "r") as file:
+
+with open(sys.argv[3], "r") as file:
   jlist1 = json.load(file, object_hook=jsonToJunc)       
   
   print jlist1
   
-
-with open(path2, "r") as file2:
-  jlist2 = json.load(file2, object_hook=jsonToJunc)      
+for index in range(len(sys.argv) - 4):
   
-newList= fuseList(jlist1, jlist2, 0);
+  with open(sys.argv[index+4], "r") as file2:
+    jlist2 = json.load(file2, object_hook=jsonToJunc)      
+    
+  jlist1= fuseList(jlist1, jlist2, 0)
 
-newList2= fuseList(jlist1, jlist2, int(output_limit));
-
+jlist1=cutList(jlist1,output_limit)
+  
 with open(output_name+".json", "w") as file:
-  json.dump(newList, file, indent=2, default=juncToJson)
-
-with open(output_name+"top"+output_limit+".json", "w") as file:
-  json.dump(newList2, file, indent=2, default=juncToJson)
+  json.dump(jlist1, file, indent=2, default=juncToJson)
