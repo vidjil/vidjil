@@ -1292,6 +1292,8 @@ int main (int argc, char **argv)
 	 
 	 out_json <<" {\"junction\":\""<<it->first<<"\"," <<endl;
 	 out_json <<" \"size\":["<< it->second<<"],"<<endl;
+	 out_json <<" \"ratio\":["<< (float) it->second / nb_segmented <<"],"<<endl;
+	 out_json <<" \"norm_ratio\":["<<  (float) it->second * compute_normalization(norm_list, it->second) / nb_segmented <<"],"<<endl;
 	 if (json_data_segment.count(it->first) !=0 ){
 	    out_json << json_data_segment[it->first]<<","<<endl;
 	 }
