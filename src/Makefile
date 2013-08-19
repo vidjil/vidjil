@@ -1,7 +1,7 @@
 CC=g++
 OPTIM=-O2 
 CFLAGS=-W -Wall $(OPTIM) $(DEBUG)
-LDFLAGS=
+LDFLAGS=-lm
 EXEC=vidjil kmer kmer_count cut count detailed_affect
 SRCCORE=$(wildcard core/*.cpp) $(wildcard core/*.h) 
 MAINCORE=$(wildcard *.cpp)

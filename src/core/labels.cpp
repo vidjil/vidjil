@@ -18,6 +18,9 @@
 */
 
 #include "labels.h"
+#include <cmath>
+#include <cstdlib>
+#include "tools.h"
 
 map <string, string> load_map(string map_file)
 {
@@ -110,15 +113,55 @@ map <string, pair <string, float> > load_map_norm(string map_file)
 }
 
 
-list< pair <int, float> > compute_normalization_list(list<pair <string, int> > sort_all_windows, 
+list< pair <float, int> > compute_normalization_list(map<string, list<Sequence> > &seqs_by_window, 
 						     map <string, pair <string, float> > normalization,
 						     int total
 						     )
 {
-  return 1. ;
+  list< pair <float, int> > result;
+  for (map <string, pair <string, float> >::iterator it = normalization.begin(); 
+       it != normalization.end(); 
+       it++) {
+    int nb_occs = seqs_by_window[it->second.first].size();
+    float norm = it->second.second / (nb_occs*1. / total);
+    result.push_back(make_pair(norm, nb_occs)); 
+  }
+  result.sort(pair_occurrence_sort<float>);
+  return result;
 }
 
-float compute_normalization(list< pair <int, float> > norm_list, int nb_reads)
+float compute_normalization(list< pair <float, int> > norm_list, int nb_reads)
 {
-  return 1 ;
+  list<pair <float, int> >::const_iterator it;
+  // Traverse the list until we find the interesting position (in-between
+  // someone bigger and smaller)
+  for (it = norm_list.begin();
+       it != norm_list.end() && nb_reads <= it->second ; it++) {}
+  // At the end the iterator is on the smallest value that is bigger than nb_reads
+
+  float higher_norm = it->first;
+  int higher_value = it->second;
+  
+  if (it == norm_list.begin()) {
+    // We are above the higher standard
+    return higher_norm;
+  } else {
+    it++;
+    if (it != norm_list.end()) {
+      float lower_norm = it->first;
+      int lower_value = it->second;
+
+      float ratio = (log(nb_reads) - log(lower_value)) / (log(higher_value) - log(lower_value));
+
+      PRINT_VAR(ratio);
+      PRINT_VAR(lower_value);
+      PRINT_VAR(higher_value);
+      PRINT_VAR(nb_reads);
+
+      return lower_norm + (higher_norm - lower_norm) * ratio;
+    } else {
+      // We are below the lowest standard
+      return higher_norm;
+    }
+  }
 }

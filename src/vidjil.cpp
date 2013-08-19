@@ -681,7 +681,7 @@ int main (int argc, char **argv)
 
 	// }
 	// Normalization
-	list< pair <int, float> > norm_list = compute_normalization_list(sort_all_windows, normalization, nb_segmented);
+	list< pair <float, int> > norm_list = compute_normalization_list(seqs_by_window, normalization, nb_segmented);
 
 
     if (command == CMD_ANALYSIS) {
