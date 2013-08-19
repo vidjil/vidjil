@@ -61,6 +61,7 @@
 #define DEFAULT_READS  "../seq/chr_pgm_50k.cut.fa"
 #define MIN_READS_WINDOW 10
 #define MIN_READS_CLONE 100
+#define MAX_CLONES 10
 #define RATIO_READS_CLONE 0.1
 
 #define COMMAND_WINDOWS "windows"
@@ -94,6 +95,7 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define DEFAULT_DELTA_MIN_D  0
 #define DEFAULT_DELTA_MAX_D  50
 
+#define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
 #define DEFAULT_MIN_COVER_REPRESENTATIVE 5
 
@@ -159,6 +161,7 @@ void usage(char *progname)
        << "Limits to report a clone" << endl
        << "  -R <nb>       minimal number of reads supporting a clone (default: " << MIN_READS_CLONE << ")" << endl
        << "  -% <ratio>    minimal percentage of reads (default: " << RATIO_READS_CLONE << ")" << endl
+       << "  -z <nb>       maximal number of clones (default: " << MAX_CLONES << ")" << endl
        << endl
 
        << "Fine segmentation options" << endl
@@ -219,6 +222,7 @@ int main (int argc, char **argv)
   int verbose = 0 ;
   int command = CMD_WINDOWS;
 
+  int max_clones = MAX_CLONES ;
   int min_reads_window = MIN_READS_WINDOW ;
   int min_reads_clone = MIN_READS_CLONE ;
   float ratio_reads_clone = RATIO_READS_CLONE;
@@ -226,6 +230,7 @@ int main (int argc, char **argv)
 
   size_t min_cover_representative = DEFAULT_MIN_COVER_REPRESENTATIVE;
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
+  int max_auditionned = DEFAULT_MAX_AUDITIONED;
 
   // Admissible delta between left and right segmentation points
   int delta_min = DEFAULT_DELTA_MIN ; // Kmer+Fine
@@ -234,6 +239,7 @@ int main (int argc, char **argv)
 
   bool output_sequences_by_cluster = false;
   bool detailed_cluster_analysis = true ;
+  bool very_detailed_cluster_analysis = false ;
 
   string forced_edges = "" ;
 
@@ -241,7 +247,7 @@ int main (int argc, char **argv)
 
   char c ;
 
-  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:")) != EOF)
+  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:z:")) != EOF)
 
     switch (c)
       {
@@ -342,6 +348,9 @@ int main (int argc, char **argv)
 	min_reads_clone = atoi(optarg);
         break;
 
+      case 'z':
+	max_clones = atoi(optarg);
+        break;
       case 's':
 #ifndef NO_SPACED_SEEDS
 	seed = string(optarg);
@@ -378,6 +387,8 @@ int main (int argc, char **argv)
         break;
       }
 
+  string out_seqdir = out_dir + "/seq/" ;
+
   if (verbose)
     cout << "# verbose " << verbose << endl ;
 
@@ -410,6 +421,12 @@ int main (int argc, char **argv)
   const char *out_cstr = out_dir.c_str();
 
   if (mkpath(out_cstr, 0755) == -1) {
+    perror("Directory creation");
+    exit(2);
+  }
+
+  const char *outseq_cstr = out_seqdir.c_str();
+  if (mkpath(outseq_cstr, 0755) == -1) {
     perror("Directory creation");
     exit(2);
   }
@@ -616,7 +633,10 @@ int main (int argc, char **argv)
     for (int i=0; i<STATS_SIZE; i++)
       out << "   " << left << setw(20) << segmented_mesg[i] << " -> " << stats_segmented[i] << endl ;
 
-
+    
+      map <junction, string> json_data_segment ;
+      list<pair <junction, int> > sort_all_windows;
+    
     /// if (command == CMD_WINDOWS) /// on le fait meme si CMD_ANALYSIS
       {
 
@@ -624,7 +644,6 @@ int main (int argc, char **argv)
 	// Sort windows
 	
 	out << "Sort windows by number of occurrences" << endl;
-	list<pair <junction, int> > sort_all_windows;
 	
 	for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin(); 
 	     it != seqs_by_window.end(); ++it) 
@@ -653,7 +672,7 @@ int main (int argc, char **argv)
 	    out_all_windows << it->first << endl;
 	  }
 	
-      }
+      } 
 
 
     if (command == CMD_ANALYSIS) {
@@ -785,10 +804,15 @@ int main (int argc, char **argv)
 
     
       ++num_clone ;
+
+      if (num_clone == max_clones)
+	  break ;
+
       cout << "#### " ;
-      string clone_file_name = out_dir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
-      string windows_file_name = out_dir+ prefix_filename + WINDOWS_FILENAME + "-" + string_of_int(num_clone) ;
-      string sequences_file_name = out_dir+ prefix_filename + SEQUENCES_FILENAME + "-" + string_of_int(num_clone) ;
+
+      string clone_file_name = out_seqdir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
+      string windows_file_name = out_seqdir+ prefix_filename + WINDOWS_FILENAME + "-" + string_of_int(num_clone) ;
+      string sequences_file_name = out_seqdir+ prefix_filename + SEQUENCES_FILENAME + "-" + string_of_int(num_clone) ;
 
       ofstream out_clone(clone_file_name.c_str());
       ofstream out_windows(windows_file_name.c_str());
@@ -851,32 +875,50 @@ int main (int argc, char **argv)
       string best_J ;
       int more_windows = 0 ;
       
+
       for (list <pair<junction, int> >::const_iterator it = sort_windows.begin(); 
            it != sort_windows.end(); ++it) {
 
 	// Choose one representative
 
-        KmerRepresentativeComputer repComp(seqs_by_window[it->first], k);
-        repComp.compute(true, min_cover_representative, ratio_representative);
+	list <Sequence> auditioned_sequences;
 
+	if (seqs_by_window[it->first].size()<max_auditionned){
+	  auditioned_sequences=seqs_by_window[it->first];
+	}else{
+
+	  list <Sequence>::const_iterator it2;
+	  it2=seqs_by_window[it->first].begin();
+	  
+	  for (int i=0 ; i<max_auditionned; i++){
+	    auditioned_sequences.push_back(*it2);
+	    it2++;
+	  }
+	}
+
+        KmerRepresentativeComputer repComp(auditioned_sequences, k);
+        repComp.compute(true, min_cover_representative, ratio_representative);
+	
         if (repComp.hasRepresentative()) {
+	  
           Sequence representative = repComp.getRepresentative();
           representative.label = string_of_int(it->second) + "-" 
             + representative.label;
+	  FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 	
-          FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
-		  
-          if (segment_D)
-            seg.FineSegmentD(rep_V, rep_D, rep_J);
+	if (segment_D)
+	  seg.FineSegmentD(rep_V, rep_D, rep_J);
 	
           if (seg.isSegmented())
-
-            {
-              // As soon as one representative is segmented
-
-              representatives.push_back(seg.getSequence());
-              representatives_labels.push_back("#" + string_of_int(num_clone));
-              cout << seg.info << endl ;
+	  {
+	    //cout << seg.toJson();
+	    json_data_segment[it->first]=seg.toJson(rep_V, rep_D, rep_J);
+	    
+	    // As soon as one representative is segmented
+	    
+	    representatives.push_back(seg.getSequence());
+            representatives_labels.push_back("#" + string_of_int(num_clone));
+	    cout << seg.info << endl ;
 
               // We need to find the window in the representative
               size_t window_pos = seg.getSequence().sequence.find(it->first);
@@ -979,6 +1021,12 @@ int main (int argc, char **argv)
       out << endl ;
       out_windows.close();
 
+      if (!very_detailed_cluster_analysis)
+	{
+	  continue ;
+	}
+
+
       html << "</pre>" << endl ;
       html << "<div  id='detail-" << num_clone << "' style='display:none;'>"
            << "<pre class='log'> "<< endl  ;
@@ -1011,7 +1059,6 @@ int main (int argc, char **argv)
             }
         }
       
-
       // Second pass: output clone, all representatives      
 
       num_seq = 0 ;
@@ -1055,9 +1102,22 @@ int main (int argc, char **argv)
 	      }
 	  }
 
-	//
+	list <Sequence> auditioned_sequences;
 
-        KmerRepresentativeComputer repComp(seqs_by_window[it->first], k);
+	if (seqs_by_window[it->first].size()<max_auditionned){
+	  auditioned_sequences=seqs_by_window[it->first];
+	}else{
+
+	  list <Sequence>::const_iterator it2;
+	  it2=seqs_by_window[it->first].begin();
+	  
+	  for (int i=0 ; i<max_auditionned; i++){
+	    auditioned_sequences.push_back(*it2);
+	    it2++;
+	  }
+	}
+	
+        KmerRepresentativeComputer repComp(auditioned_sequences, k);
         repComp.compute(true, min_cover_representative, ratio_representative);
 
         if (repComp.hasRepresentative()) {
@@ -1070,10 +1130,13 @@ int main (int argc, char **argv)
           if (segment_D)
             seg.FineSegmentD(rep_V, rep_D, rep_J);
 		
-          if (seg.isSegmented())
-            {
-              representatives_this_clone.push_back(seg.getSequence());
-            }
+	if (seg.isSegmented())
+	  {
+	    //cout << seg.toJson();
+	    json_data_segment[it->first]=seg.toJson(rep_V, rep_D, rep_J);
+	    
+	    representatives_this_clone.push_back(seg.getSequence());
+	  }
 
           /// TODO: et si pas isSegmented ?
 
@@ -1199,6 +1262,32 @@ int main (int argc, char **argv)
     html << "</body></html>" << endl ;
     html.close();
     }
+    
+    //création du fichier json_data_segment
+    string f_json = out_dir + prefix_filename + "data.json" ;
+    int top = 1;
+    out << "  ==> " << f_json << endl ;
+    ofstream out_json(f_json.c_str()) ;
+      
+    out_json <<"{ \"total_size\" : ["<<nb_segmented<<"] ,"; 
+    out_json <<"\"junctions\" : [";
+    for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
+	     it != sort_all_windows.end(); ++it) 
+	 {
+	  if (it != sort_all_windows.begin())
+	  {
+	    out_json <<",";
+	  }
+	 
+	 out_json <<" {\"junction\":\""<<it->first<<"\"," <<endl;
+	 out_json <<" \"size\":["<< it->second<<"],"<<endl;
+	 if (json_data_segment.count(it->first) !=0 ){
+	    out_json << json_data_segment[it->first]<<","<<endl;
+	 }
+	 out_json <<"\"top\":"<<top++<<endl;
+	  out_json <<"}";
+	}
+        out_json <<"] } ";
     
     delete index ;
     delete windows;

@@ -16,11 +16,12 @@
   You should have received a copy of the GNU General Public License
   along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 */
-
+#include <algorithm>    // std::sort
 #include <cassert>
 #include "segment.h"
 #include "tools.h"
 #include "affectanalyser.h"
+#include <sstream>
 
 Sequence Segmenter::getSequence() const {
   assert(isSegmented());
@@ -72,7 +73,6 @@ bool Segmenter::isDSegmented() const {
   return dSegmented;
 }
 
-
 // Chevauchement
 
 string Segmenter::removeChevauchement()
@@ -101,7 +101,7 @@ bool Segmenter::finishSegmentation()
   
   string seq = getSequence().sequence;
     
-  seg_V = seq.substr(0, left) ;
+  seg_V = seq.substr(0, left+1) ;
   seg_N = seq.substr(left+1, right-left-1) ;  // Twice computed for FineSegmenter, but only once in KmerSegmenter !
   seg_J = seq.substr(right) ;
   left2=0;
@@ -122,9 +122,7 @@ bool Segmenter::finishSegmentationD()
   seg_V = seq.substr(0, left+1) ; // From pos. 0 to left
   seg_J = seq.substr(right) ;
   
-  if(left2-left <0) seg_N1= "overlap";
   seg_D  = seq.substr(left2, right2-left2+1) ; // From left2 to right2
-  if(right-right2 <0) seg_N2= "overlap";
   
   info = "VDJ \t0 " + string_of_int(left) +
 		" " + string_of_int(left2) + 
@@ -383,8 +381,13 @@ void best_align(int overlap, string seq_left, string seq_right,
       *b_l=best_l;
 }
 
+bool comp_pair (pair<int,int> i,pair<int,int> j)
+{
+  return ( i.first > j.first);
+}
+
 int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool local, string *tag, 
-			     int *del, int *del2, int *begin, int *length, int *score, int *best_r_
+			     int *del, int *del2, int *begin, int *length, vector<pair<int, int> > *score
 			    , Cost segment_cost)
 {
   
@@ -395,6 +398,7 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool l
   int best_first_i = (int) string::npos ;
   int best_first_j = (int) string::npos ;
   string best_label = "" ;
+  vector<pair<int, int> > score_r;
 
   DynProg::DynProgMode dpMode = DynProg::LocalEndWithSomeDeletions;
   if (local==true) dpMode = DynProg::Local;
@@ -406,7 +410,7 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool l
 			   segment_cost, // DNA
 			   reverse_both, reverse_both);
       int score = dp.compute();
-
+      
       if (score == best_score)
 	best_label += "/" + rep.label(r) ;
 	
@@ -424,10 +428,12 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool l
 	  best_r = r ;
 	  best_label = rep.label(r) ;
 	}
-      
+	
+	score_r.push_back(make_pair(score, r));
       // cout << extract_from_label(rep.label(r), "|") << " " << score << " " << dp.best_i << endl ;
 
     }
+    sort(score_r.begin(),score_r.end(),comp_pair);
 
   *del = reverse_both ? best_best_j : rep.sequence(best_r).size() - best_best_j - 1;
   *del2 = best_first_j;
@@ -435,8 +441,8 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool l
   *tag = best_label ; 
   
   *length -= *del ;
-  *score += best_score ;
-  *best_r_ = best_r ;
+  
+  *score=score_r;
   
   return best_best_i ;
 }
@@ -463,51 +469,65 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
   int plus_score = 0 ;
   string tag_V, tag_J;
   int plus_length = 0 ;
-  int best_plus_V, best_plus_J ;
   int del_plus_V, del_plus_J ;
   int del2=0;
   int beg=0;
+  
+  vector<pair<int, int> > score_plus_V;
+  vector<pair<int, int> > score_plus_J;
+  
   int plus_left = align_against_collection(sequence, rep_V, false, false, &tag_V, &del_plus_V, &del2, &beg, 
-					   &plus_length, &plus_score,
-					   &best_plus_V, segment_cost);
+					   &plus_length, &score_plus_V
+					   , segment_cost);
   int plus_right = align_against_collection(sequence, rep_J, true, false, &tag_J, &del_plus_J, &del2, &beg,
-					    &plus_length, &plus_score,
-					    &best_plus_J, segment_cost);
+					    &plus_length, &score_plus_J
+					    , segment_cost);
   plus_length += plus_right - plus_left ;
 
+  plus_score=score_plus_V[0].first + score_plus_J[0].first ;
+  
   // Strand -
   string rc = revcomp(sequence) ;
   int minus_score = 0 ;
   int minus_length = 0 ;
-  int best_minus_V, best_minus_J ;
   int del_minus_V, del_minus_J ;
+  
+  vector<pair<int, int> > score_minus_V;
+  vector<pair<int, int> > score_minus_J;
+  
   int minus_left = align_against_collection(rc, rep_V, false, false, &tag_V, &del_minus_V, &del2, &beg,
-					    &minus_length, &minus_score,
-					    &best_minus_V,  segment_cost);
+					    &minus_length, &score_minus_V
+					    ,  segment_cost);
   int minus_right = align_against_collection(rc, rep_J, true, false, &tag_J, &del_minus_J, &del2, &beg,
-					     &minus_length, &minus_score,
-					     &best_minus_J, segment_cost);
+					     &minus_length, &score_minus_J
+					     , segment_cost);
   minus_length += minus_right - minus_left ;
 
+  minus_score=score_minus_V[0].first + score_minus_J[0].first ;
+  
   reversed = (minus_score > plus_score) ;
 
   if (!reversed)
     {
       left = plus_left ;
       right = plus_right ;
-      best_V = best_plus_V ;
-      best_J = best_plus_J ;
+      best_V = score_plus_V[0].second;
+      best_J = score_plus_J[0].second ;
       del_V = del_plus_V ;
       del_J = del_plus_J ;
+      score_V=score_plus_V;
+      score_J=score_plus_J;
     }
   else
     {
       left = minus_left ;
       right = minus_right ;
-      best_V = best_minus_V ;
-      best_J = best_minus_J ;
+      best_V = score_minus_V[0].second;
+      best_J = score_minus_J[0].second ;
       del_V = del_minus_V ;
       del_J = del_minus_J ;
+      score_V=score_minus_V;
+      score_J=score_minus_J;
     }
 
   segmented = (left != (int) string::npos) && (right != (int) string::npos) && 
@@ -538,6 +558,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
       // Trim J
       right += b_r;
       del_J += b_r;
+        if (right>=sequence.length())
+	  right=sequence.length()-1;
     }
 
     // string chevauchement = removeChevauchement();
@@ -552,6 +574,15 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
     "/" + string_of_int(del_J) +
     " " + rep_J.label(best_J); 
 
+    stringstream code_s;
+   code_s<< rep_V.label(best_V) <<
+    " -" << string_of_int(del_V) << "/" 
+    << seg_N.size()
+    // chevauchement +
+    << "/-" << string_of_int(del_J)
+    <<" " << rep_J.label(best_J);
+    code_short=code_s.str();
+    
   code_light = rep_V.label(best_V) +
     "/ " + rep_J.label(best_J); 
 
@@ -586,7 +617,10 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
 
     // Align
     end = align_against_collection(str, rep_D, false, true, &tag_D, &del_D_right, &del_D_left, &begin,
-				&length, &score, &best_D, segment_cost);
+				&length, &score_D, segment_cost);
+    
+    score=score_D[0].first;
+    best_D=score_D[0].second;
     
     left2 = l + begin;
     right2 = l + end;
@@ -645,6 +679,21 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
     "/" + string_of_int(del_J) +
     " " + rep_J.label(best_J); 
 
+    stringstream code_s;
+    code_s << rep_V.label(best_V) 
+    << " -" << string_of_int(del_V) << "/" 
+    << seg_N1.size()
+    
+    << "/-" << string_of_int(del_D_left) 
+    << " " << rep_D.label(best_D) 
+    << " -" << string_of_int(del_D_right) << "/"
+    
+    << seg_N2.size()
+    << "/-" << string_of_int(del_J) 
+    << " " << rep_J.label(best_J);
+    code_short=code_s.str();
+    
+    
     code_light = rep_V.label(best_V) +
     "/ " + rep_D.label(best_D) +
     "/ " + rep_J.label(best_J); 
@@ -652,3 +701,43 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
     finishSegmentationD();
   }
 }
+
+string FineSegmenter::toJson(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
+  
+  ostringstream seg_str;
+  
+  seg_str << " \"seg\" : {";
+  if (reversed){
+    string str;
+    str =string (sequence.rbegin(), sequence.rend());
+    seg_str << " \"sequence\" : \""<< str << "\","<<endl;
+  }else{
+    seg_str << " \"sequence\" : \""<< sequence << "\","<<endl;
+  }
+  seg_str << " \"name\" : \""<< code_short << "\" ,"<<endl;
+  seg_str << " \"r1\" : "<< right << ","<<endl;
+  seg_str << " \"r2\" : "<< right2 << ","<<endl;
+  seg_str << " \"l1\" : "<< left << ","<<endl;
+  seg_str << " \"l2\" : "<< left2 << ","<<endl;
+  seg_str << " \"Nsize\" : "<< (del_V+del_J+seg_N.size()) << ","<<endl;
+  seg_str << " \"V\" : [\""<<rep_V.label(score_V[0].second);
+  for (int i=1; i<4; i++){
+      seg_str << "\",\""<<rep_V.label(score_V[i].second);
+  }
+  if (score_D.size()>0){
+    seg_str << "\"],\n \"D\" : [\""<<rep_D.label(score_D[0].second);
+      for (int i=1; i<4; i++){
+	seg_str << ", \""<<rep_D.label(score_D[i].second);
+    }
+  }
+  seg_str << "\"],\n \"J\" : [\""<<rep_J.label(score_J[0].second);
+    for (int i=1; i<4; i++){
+      seg_str << "\",\""<<rep_J.label(score_J[i].second);
+  }
+  seg_str << "\"]}";
+  
+  return seg_str.str();
+}
+
+
+

@@ -1,0 +1,22 @@
+{"custom":[
+{"junction":"CTATTACTGTGCCACCTTCTGACATAAGAAACTCTTTGGC","name":"B-#001 BCD-B-65.9 ACD-0.44", "color": "red"},
+{"junction":"CTGTGCCACCTGGGATGGTCCGAAGAAACTCTTTGGCAGT","name":"BCD-C-7.43 ACD-C-2.09", "color": "red"},
+{"junction":"ACTGTGCCACCTTCTGACATAAGAAACTCTTGGCAGTGGA","name":"B-#002 BCD-X-1.18", "color": "red"},
+{"junction":"TTACTGTGCCACCTTCTGACATAAGAAAACTCTTTGGCAG","name":"B-#004 BCD-Y-1.13", "color": "red"},
+{"junction":"TTACTGTGCCACCTGGGACCCTTATTATAAGAAACTCTTT","name":"BCD-Z-0.76", "color": "red"},
+{"junction":"GTCTATTACTGTGCCGACCTTCTGACATAAGAAACTCTTT","name":"BCD3-1306-0.83", "color": "red"},
+
+{"junction":"ACTGTGCCACCTGGGATGTGAGTATTATAAGAAACTCTTT","name":"A-#001 ACD-A-25.0", "color": "green"},
+{"junction":"ATTACTGTGCCACCTGGGTAGGATACCACTGGTTGGTTCA","name":"A-#002 ACD-?-16.3", "color": "green"},
+{"junction":"ACTGTGCTGCGTGGGATTATAGCCACTGGTTGGTTCAAGA","name":"ACD-#003-1306-4.8", "color": "red"},
+
+{"junction":"GTGCCACCTGGGATGTGAGTATTATAAAGAAACTCTTTGG","name":"A-#003", "color": "green"},
+{"junction":"TCTATTACTGTGCACCTGGGATGTGAGTATTATAAGAAAC","name":"A-#004", "color": "green"},
+
+{"junction":"GTGCTGCGTGGGATGAATAAGGGGGGCTGGTTGGTTCAAG","name":"ACD-W-0.793 H-1", "color": "blue"},
+{"junction":"CTGTGCCACCTGGGGCGGGGACCAATTATAAGAAACTCTT","name":"H-2", "color": "blue"},
+{"junction":"TGTGCTGCGTGGGATCGACCCCTGCGAATTATTATAAGAA","name":"H-3", "color": "blue"},
+{"junction":"TGTGCTGCGTGGGATGAATAAGGGGGCTGGTTGGTTCAAG","name":"H-4", "color": "blue"},
+{"junction":"CTGTGCTGCGTGGGATCCTAACGGGATTATTATAAGAAAC","name":"H-5", "color": "blue"},
+{"junction":"TTACTGTGCCACCTGGGATTCCGAATTATTATAAGAAACT","name":"H-6", "color": "blue"}],
+"cluster":[]}

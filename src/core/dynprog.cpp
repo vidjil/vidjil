@@ -30,7 +30,7 @@
 #define HOMO2X 3
 #define HOMO2Y 4
 #define FIN 5
-#define BACKSIZE 80
+#define BACKSIZE 120
 
 using namespace std;
 
@@ -109,7 +109,7 @@ DynProg::DynProg(const string &x, const string &y, DynProgMode mode, const Cost&
       B[i][j] = new int[3];
     }
   }
-
+  
   this -> mode = mode;
   this -> cost = cost;
 
@@ -218,14 +218,17 @@ int DynProg::compute()
       }
       if (best==homo2x){
 	B[i][j][0] = i-2 ;
+	if (B[i][j][0] < 0) B[i][j][0] = 0 ;
 	B[i][j][1] = j-1 ;
 	B[i][j][2] = HOMO2X ;
       }
       if (best==homo2y){
 	B[i][j][0] = i-1 ;
 	B[i][j][1] = j-2 ;
+	if (B[i][j][1] < 0) B[i][j][1] = 0 ;
 	B[i][j][2] = HOMO2Y ;
       }
+
       
       if (mode == Local || mode == LocalEndWithSomeDeletions)
 	{
@@ -322,8 +325,24 @@ int DynProg::compute()
 
 void DynProg::backtrack()
 {
-  int ti=best_i;
-  int tj=best_j;
+  gap1 = new int[x.size()+1];
+  linkgap = new int[x.size()+1];
+  gap2 = new int[y.size()+1];
+      
+  for (int i = 0; i <=x.size(); i++) {
+    gap1[i] = 0;
+    linkgap[i] = 0;
+  }
+  for (int i = 0; i <= y.size(); i++) {
+    gap2[i] = 0;
+  }
+  
+  
+  int g1=x.size();
+  int g2=y.size();
+  
+  int ti=best_i+1;
+  int tj=best_j+1;
   int tmpi, tmpj;
   tmpi=ti;
   tmpj=tj;
@@ -336,14 +355,6 @@ void DynProg::backtrack()
   ostringstream back_tr;
   ostringstream back;
   
-  if (x[ti]==y[tj]){
-    back_tr << "|";
-  }else{
-    back_tr << ":";
-  }
-  
-  back_s1 << x[ti];
-  back_s2 << y[tj];
   
   while ( B[ti][tj][2] != FIN ){
     
@@ -351,42 +362,64 @@ void DynProg::backtrack()
     tmpj=B[ti][tj][1];
 
     if (B[ti][tj][2] == SUBST ){
+      linkgap[g1]=g2;
       back_s1 << x[ti-1];
+      g1--;
       back_s2 << y[tj-1];
+      g2--;
+
       if(x[ti-1]==y[tj-1]) {
 	back_tr << "|";
       }else{
 	back_tr << ":";
       }
+      
     }
     if (B[ti][tj][2] == INSER ){
+      linkgap[g1]=g2;
       back_s1 << x[ti-1];
+      g1--;
       back_s2 << " ";
+      gap2[g2]++;
       back_tr << ".";
+      
     }
     if (B[ti][tj][2] == DELET){
+    linkgap[g1]=g2;
       back_s1 << " ";
+      gap1[g1]++;
       back_s2 << y[tj-1];
+      g2--;
       back_tr << ".";
+      
     }
     if (B[ti][tj][2] == HOMO2X ){
+      linkgap[g1]=g2;
       back_s1 << x[ti-1] << x[ti-2];
+      g1--;
+      linkgap[g1]=g2;
+      g1--;
       back_s2  << " " << y[tj-1];
-
-	back_tr << " h";
+      gap2[g2]++;
+      g2--;
+      back_tr << " h";
 
     }
       
     if (B[ti][tj][2] == HOMO2Y ){
+    linkgap[g1]=g2;
       back_s1 << " " << x[ti-1] ;
+      gap1[g1]++;
+      g1--;
       back_s2 <<  y[tj-1] << y[tj-2] ;
-	back_tr << " h";
+      g2--;
+      g2--;
+      back_tr << " h";
     }
     
     ti=tmpi;
     tj=tmpj;
   }
-  
 
   str1=back_s1.str();
   str1 =string (str1.rbegin(), str1.rend());
@@ -409,7 +442,6 @@ void DynProg::backtrack()
   first_j=tj;
   
   str_back=back.str();
-  
 }
 
 string DynProg::SemiGlobal_extract_best()

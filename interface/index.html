@@ -1,0 +1,245 @@
+<!doctype html>
+<html>
+
+  <head>
+  
+	<meta charset="utf-8">
+	<title>Vidjil</title>
+	<link rel="stylesheet" type="text/css" href="css/style.css">  
+	<link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" />
+	<!--[if lte IE 8]><script src="js/r2d3.js" charset="utf-8"></script><![endif]-->
+	<!--[if gte IE 9]><!-->
+	<script type="text/javascript" src='js/d3.v2.js'></script>
+	<!--<![endif]-->
+	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
+	
+	<script type="text/javascript" src='js/file.js'></script>
+	<script type="text/javascript" src='js/germline.js'></script>
+	<script type="text/javascript" src='js/segmenter.js'></script>
+	<script type="text/javascript" src='js/info.js'></script>
+	<script type="text/javascript" src='js/model.js'></script>
+	<script type="text/javascript" src='js/vidjil-style.js'></script>
+	
+  </head>
+
+  <body onload="initCoef()">
+  
+    <div id="file_menu" >
+    	<h2>Load menu</h2>
+    	
+	analysis file (optional) :<br/>
+	<input id="upload_pref" type="file" name="pref" /></br></br>
+		
+	data file:<br/>
+	<input id="upload_json" type="file" name="json" /></br></br>
+	
+	show only incoming clones in the top <select id="limit_top" name="limit_top">
+	  <option value="10">10</option>	
+	  <option value="15">15</option>
+	  <option value="20">20</option>
+	  <option value="30">30</option>
+	  <option value="40">40</option>
+	  <option value="50">50</option>
+	  <option value="100">100</option>
+	</select> </br></br>
+	
+	<button onclick="loadJson();">start</button> 
+	<button onclick="cancel();">cancel</button> 
+    </div>
+    
+    <div id="analysis_menu" >
+    	<h2>analysis menu</h2>
+    	
+	Analysis file :<br/>
+	<input id="upload_analysis" type="file" name="analysis" /></br></br>
+		
+	<button onclick="loadJsonAnalysis();">start</button> 
+	<button onclick="cancel();">cancel</button> 
+    </div>
+    
+    
+    <div onclick="showlog();" style="position: fixed; top: 5px; right:5px ;width: 2px; height: 2px;font-size: 14px;background-color: #333044; padding: 10px;"> </div>
+    
+    <div id="top-container">
+    
+      <div class="menu" onmouseover="showSelector('loadSelector');"> save/load 
+        <div id="loadSelector" class="selector">
+	  <a class="buttonSelector" onclick="javascript:loadData()">load data</a>
+	  <a class="buttonSelector" onclick="javascript:loadAnalysis()">load analysis</a>
+	  <a class="buttonSelector" onclick="javascript:savePref()">save analysis</a>
+	  <a class="buttonSelector" onclick="javascript:resetAnalysis()">reset analysis</a>
+	  <a class="buttonSelector" onclick="javascript:reset()">reset</a>
+	</div>
+      </div>
+      
+    
+      <div class="menu" onmouseover="showSelector('colorSelector');" > color 
+	<div id="colorSelector" class="selector">
+	  <a class="buttonSelector" onclick="changeColorMethod('V');">V</a>
+	  <a class="buttonSelector" onclick="changeColorMethod('J');">J</a>
+	  <a class="buttonSelector" onclick="changeColorMethod('N');">N</a>
+	  <a class="buttonSelector" onclick="changeColorMethod(' ');">none</a>
+	  <a class="buttonSelector" onclick="toggleCustomColor();">use custom</a>
+	</div>
+      </div>
+      
+      <div class="menu" onmouseover="showSelector('groupSelector');"> regroup 
+      	<div id="groupSelector" class="selector">
+	  <a class="buttonSelector" onclick="changeSplitMethod('vj1');">alleles</a> 
+	  <a class="buttonSelector" onclick="changeSplitMethod('vj2');">genes</a> 
+	  <a class="buttonSelector" onclick="changeSplitMethod('Nsize');">length N</a> 
+	  <a class="buttonSelector" onclick="changeSplitMethod(' ');">weight</a> 
+	</div>
+      </div>
+      
+      <div class="menu" onmouseover="showSelector('paletteSelector');"> palette 
+        <div id="paletteSelector" class="selector">
+	  <a class="buttonSelector" onclick="changeStyle(whiteStyle);">white</a>
+	  <a class="buttonSelector" onclick="changeStyle(blackStyle);">black</a>
+	  <a class="buttonSelector" onclick="changeStyle(solarizeD);">solarize dark</a>
+	  <a class="buttonSelector" onclick="changeStyle(solarizeL);">solarize light</a>
+	</div>
+      </div>
+      
+      
+      <span></span>
+    </div>
+
+    <div id="mid-container" onmouseover="hideSelector()">
+      <!-- LEFT-CONTAINER -->
+      <span id="left-container">
+      
+      <div id="left">
+
+	<div id="menu">
+	
+	  <table style="width:100%">
+	    <tr>
+	      <td>
+	      info patient
+	      </br>
+	      </br>
+	      </br>
+	      </br>
+	      </td>
+	    </tr>
+	    <tr>
+	      <td>_____________________________________
+	      </td>
+	    </tr>
+	    <tr>
+	      <td>
+		<a class="button" onclick="displayFavoris();">favorites</a>
+		<a class="button" onclick="displayTop(5);">top 5</a>
+		<a class="button" onclick="displayTop(10);">top 10</a>
+		<a class="button" onclick="displayTop(25);">top 25</a>
+		<a class="button" onclick="displayAll();">all</a>
+	      </td>
+	    </tr>
+	    
+	    
+	  </table>
+	  
+	</div>
+	
+	  <div id="listFav"></div> 
+	  <div id="listClones"></div>
+	
+	<div class="separator">selection 
+	<span class="button" onclick="mergeSelection()"> merge selection</span>
+	</div>
+	  <div id="listSelect" onmouseover="displayAlign()"></div>
+
+      </div>
+	
+      </span>
+      
+      
+      <div id="visu-container">
+	<!-- VISU -->
+	<span id="visu2" onmouseover="hideAlign()">
+	  <script type="text/javascript" src="js/graph.js"> </script>
+	  
+	  <div id="switch"> 
+	  
+	    <div style="float:left; background:#333044; width:22px; height:22px; margin:5px; " onclick="switchVisu(30,70);"> 
+	      <div style="background:white; width:100%; height:25%;"></div> 
+	    </div>
+	  
+	    <div style="float:left; background:#333044; width:22px; height:22px; margin:5px; " onclick="switchVisu(50,50);"> 
+	      <div style="background:white; width:100%; height:50%;"></div>
+	    </div>
+	    
+	    <div style="float:left; background:#333044; width:22px; height:22px; margin:5px; " onclick="switchVisu(70,30);"> 
+	      <div style="background:white; width:100%; height:75%;"></div>
+	    </div>
+	    
+	    <div style="float:left; background:#333044; width:22px; height:22px; margin:5px; " onclick="switchVisu(100,0);"> 
+	      <div style="background:white; width:100%; height:100%;"></div>
+	    </div>
+	    
+	  </div>
+	  
+	</span>
+	
+	<span id="visu" onclick="" onmouseover="hideAlign()">
+	  <script type="text/javascript" src="js/visu.js"> </script>
+	</span>
+      </div>
+      
+      
+    </div>
+	
+    <!-- BOT-CONTAINER -->
+	  
+    <div id="bot-container">
+      <div id="focus-sequence"> > </div>
+
+      <div id="align" style="display:none">
+	<ul id="listSeq"></ul>
+      </div>
+    </div>
+	
+    
+    <div id="log" style="display:none; position: fixed; top: 50px;right: 10px;width: 500px; font-family : monaco,terminal,courier,system; height: 150px;overflow-y: scroll;font-size: 14px;background-color: #333044;opacity: 0.5;padding: 10px;">log </div>
+    
+    <div id="tagSelector">
+      choisir un tag pour : <div id=tagname></div>
+      <ul>
+	<li onClick="selectTag(0)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor0"></span> <span id="tag0">pathologique (big boss)</span></div>
+	</li>
+	<li onClick="selectTag(1)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor1"></span> <span id="tag1">pathologique 2 (boss)</span></div>
+	</li>
+	<li onClick="selectTag(2)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor2"></span> <span id="tag2">pathologique 3 (rookie)</span></div>
+	</li>
+	<li onClick="selectTag(3)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor3"></span> <span id="tag3">standard</span></div>
+	</li>
+	<li onClick="selectTag(4)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor4"></span> <span id="tag4">PBL</span></div>
+	</li>
+	<li onClick="selectTag(5)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor5"></span> <span id="tag5">tagname blabla</span></div>
+	</li>
+	<li onClick="selectTag(6)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor6"></span> <span id="tag6">tagname blabla</span></div>
+	</li>
+	<li onClick="selectTag(7)">
+	  <div class="tagElem" ><span class="tagColorBox tagColor7"></span> <span id="tag7">tagname blabla</span></div>
+	</li>
+	<li onClick="selectTag(8)">
+	  <div class="tagElem" ><span class="tagColorBox "></span> <span id="tag8">notag</span></div>
+	</li>
+	
+      </ul>
+    </div>
+    
+    
+  </body>
+      
+</html>
+
+  
