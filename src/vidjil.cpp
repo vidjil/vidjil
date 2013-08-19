@@ -380,6 +380,8 @@ int main (int argc, char **argv)
         break;
       }
 
+  string out_seqdir = out_dir + "/seq/" ;
+
   if (verbose)
     cout << "# verbose " << verbose << endl ;
 
@@ -412,6 +414,12 @@ int main (int argc, char **argv)
   const char *out_cstr = out_dir.c_str();
 
   if (mkpath(out_cstr, 0755) == -1) {
+    perror("Directory creation");
+    exit(2);
+  }
+
+  const char *outseq_cstr = out_seqdir.c_str();
+  if (mkpath(outseq_cstr, 0755) == -1) {
     perror("Directory creation");
     exit(2);
   }
@@ -790,9 +798,10 @@ int main (int argc, char **argv)
     
       ++num_clone ;
       cout << "#### " ;
-      string clone_file_name = out_dir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
-      string windows_file_name = out_dir+ prefix_filename + WINDOWS_FILENAME + "-" + string_of_int(num_clone) ;
-      string sequences_file_name = out_dir+ prefix_filename + SEQUENCES_FILENAME + "-" + string_of_int(num_clone) ;
+
+      string clone_file_name = out_seqdir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
+      string windows_file_name = out_seqdir+ prefix_filename + WINDOWS_FILENAME + "-" + string_of_int(num_clone) ;
+      string sequences_file_name = out_seqdir+ prefix_filename + SEQUENCES_FILENAME + "-" + string_of_int(num_clone) ;
 
       ofstream out_clone(clone_file_name.c_str());
       ofstream out_windows(windows_file_name.c_str());
