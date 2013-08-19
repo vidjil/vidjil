@@ -160,8 +160,8 @@ void usage(char *progname)
 
        << "Limits to report a clone" << endl
        << "  -R <nb>       minimal number of reads supporting a clone (default: " << MIN_READS_CLONE << ")" << endl
-       << "  -% <ratio>    minimal percentage of reads (default: " << RATIO_READS_CLONE << ")" << endl
-       << "  -z <nb>       maximal number of clones (default: " << MAX_CLONES << ")" << endl
+       << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << RATIO_READS_CLONE << ")" << endl
+       << "  -z <nb>       maximal number of clones reported (default: " << MAX_CLONES << ")" << endl
        << endl
 
        << "Fine segmentation options" << endl
