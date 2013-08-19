@@ -840,7 +840,7 @@ int main (int argc, char **argv)
       out << " – " << setfill(' ') << setw(WIDTH_NB_READS) << clone_nb_reads << " reads" ;
       out << " – " << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%  "  ;
 
-      out << " – " << compute_normalization(norm_list, clone_nb_reads) << "xx " ;
+      out << " – " << 100 * (float) clone_nb_reads * compute_normalization(norm_list, clone_nb_reads) / nb_segmented << "% " << compute_normalization(norm_list, clone_nb_reads) << " ";
       out.flush();
 
       //////////////////////////////////

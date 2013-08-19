@@ -122,8 +122,10 @@ list< pair <float, int> > compute_normalization_list(map<string, list<Sequence> 
   for (map <string, pair <string, float> >::iterator it = normalization.begin(); 
        it != normalization.end(); 
        it++) {
-    int nb_occs = seqs_by_window[it->second.first].size();
+    int nb_occs = seqs_by_window[it->first].size();
     float norm = it->second.second / (nb_occs*1. / total);
+    // PRINT_VAR(nb_occs);
+    // PRINT_VAR(norm);
     result.push_back(make_pair(norm, nb_occs)); 
   }
   result.sort(pair_occurrence_sort<float>);
@@ -133,30 +135,37 @@ list< pair <float, int> > compute_normalization_list(map<string, list<Sequence> 
 float compute_normalization(list< pair <float, int> > norm_list, int nb_reads)
 {
   list<pair <float, int> >::const_iterator it;
+  float higher_norm;
+  int higher_value;
+
+  if (norm_list.empty()) {
+    return 1.;
+  }
+
   // Traverse the list until we find the interesting position (in-between
   // someone bigger and smaller)
   for (it = norm_list.begin();
-       it != norm_list.end() && nb_reads <= it->second ; it++) {}
-  // At the end the iterator is on the smallest value that is bigger than nb_reads
+       it != norm_list.end() && nb_reads <= it->second ; it++) {
+    higher_norm = it->first;
+    higher_value = it->second;
+    // cout << it->second << endl;
+  }
+  // At the end the iterator is on the highest value that is lower than nb_reads
 
-  float higher_norm = it->first;
-  int higher_value = it->second;
-  
   if (it == norm_list.begin()) {
     // We are above the higher standard
-    return higher_norm;
+    return it->first;
   } else {
-    it++;
     if (it != norm_list.end()) {
       float lower_norm = it->first;
       int lower_value = it->second;
 
       float ratio = (log(nb_reads) - log(lower_value)) / (log(higher_value) - log(lower_value));
 
-      PRINT_VAR(ratio);
-      PRINT_VAR(lower_value);
-      PRINT_VAR(higher_value);
-      PRINT_VAR(nb_reads);
+      // PRINT_VAR(ratio);
+      // PRINT_VAR(lower_value);
+      // PRINT_VAR(higher_value);
+      // PRINT_VAR(nb_reads);
 
       return lower_norm + (higher_norm - lower_norm) * ratio;
     } else {
