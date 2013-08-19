@@ -244,10 +244,11 @@ int main (int argc, char **argv)
   string forced_edges = "" ;
 
   string windows_labels_file = "" ;
+  string normalization_file = "" ;
 
   char c ;
 
-  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:z:")) != EOF)
+  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:")) != EOF)
 
     switch (c)
       {
@@ -267,6 +268,9 @@ int main (int argc, char **argv)
 	break;
       case 'l':
 	windows_labels_file = optarg; 
+	break;
+      case 'Z':
+	normalization_file = optarg; 
 	break;
       case 'x':
 	detailed_cluster_analysis = false;
@@ -435,6 +439,8 @@ int main (int argc, char **argv)
 
   /// Load labels ;
   map <string, string> windows_labels = load_map(windows_labels_file);
+
+  map <string, pair <string, float> > normalization = load_map_norm(normalization_file);
 
   /// HTML output
   string f_html = out_dir + prefix_filename + HTML_FILENAME ;
@@ -638,7 +644,7 @@ int main (int argc, char **argv)
       list<pair <junction, int> > sort_all_windows;
     
     /// if (command == CMD_WINDOWS) /// on le fait meme si CMD_ANALYSIS
-      {
+      //      {
 
 	//////////////////////////////////
 	// Sort windows
@@ -672,7 +678,10 @@ int main (int argc, char **argv)
 	    out_all_windows << it->first << endl;
 	  }
 	
-      } 
+
+	// }
+	// Normalization
+	list< pair <int, float> > norm_list = compute_normalization_list(sort_all_windows, normalization, nb_segmented);
 
 
     if (command == CMD_ANALYSIS) {
@@ -830,6 +839,8 @@ int main (int argc, char **argv)
       out << "Clone #" << right << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone ;
       out << " – " << setfill(' ') << setw(WIDTH_NB_READS) << clone_nb_reads << " reads" ;
       out << " – " << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%  "  ;
+
+      out << " – " << compute_normalization(norm_list, clone_nb_reads) << "xx " ;
       out.flush();
 
       //////////////////////////////////
