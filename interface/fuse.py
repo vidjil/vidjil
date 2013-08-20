@@ -11,6 +11,8 @@ class Junctions:
 class Junction:
   def __init__(self):
     self.size = []
+    self.ratio = []
+    self.norm_ratio = []
     
 class Segment:
   def __init__(self, sequence):
@@ -42,6 +44,8 @@ def juncToJson(obj):
   if isinstance(obj, Junction):
     return {"junction": obj.junction,
       "size": obj.size,
+      "ratio": obj.ratio,
+      "norm_ratio": obj.norm_ratio,
       "seg": obj.segment,
       "top": obj.top
       }
@@ -71,6 +75,8 @@ def jsonToJunc(obj_dict):
     obj = Junction()
     obj.junction=obj_dict["junction"]
     obj.size=obj_dict["size"]
+    obj.ratio=obj_dict["ratio"]
+    obj.norm_ratio=obj_dict["norm_ratio"]
     obj.top=obj_dict["top"]
     if "seg" in obj_dict :
       obj.segment=obj_dict["seg"]
@@ -108,8 +114,11 @@ def cutList(l1, limit):
   
     
 def fuseList(l1, l2, limit): 
-  dico = collections.OrderedDict()
-  dico2 = collections.OrderedDict()
+  dico_size = collections.OrderedDict()
+  dico_top = collections.OrderedDict()
+  dico_norm_ratio = collections.OrderedDict()
+  dico_ratio = collections.OrderedDict()
+  
   dataseg = {}
   tampon=[]
   s=len(l1.total_size)
@@ -127,8 +136,10 @@ def fuseList(l1, l2, limit):
   
   #recuperation des quantites de jonctions de la liste 1
   for index in range(length1): 
-    dico[l1.junctions[index].junction] = l1.junctions[index].size
-    dico2[l1.junctions[index].junction] = l1.junctions[index].top
+    dico_size[l1.junctions[index].junction] = l1.junctions[index].size
+    dico_ratio[l1.junctions[index].junction] = l1.junctions[index].ratio
+    dico_norm_ratio[l1.junctions[index].junction] = l1.junctions[index].norm_ratio
+    dico_top[l1.junctions[index].junction] = l1.junctions[index].top
     if (l1.junctions[index].segment != 0) :
       dataseg[l1.junctions[index].junction] = l1.junctions[index].segment
     
@@ -140,33 +151,41 @@ def fuseList(l1, l2, limit):
       else :
 	#si les 2 listes ont des donnees de segmentation pour une meme jonction
 	#on garde les donnees de segmentation de la liste possedant le point de suivi le plus haut
-	if ( max (l2.junctions[index].size) > max (dico[l2.junctions[index].junction]) ) :
+	if ( max (l2.junctions[index].size) > max (dico_size[l2.junctions[index].junction]) ) :
 	  dataseg[l2.junctions[index].junction] = l2.junctions[index].segment
 	  
 	  
     #cas ou la jonction n'etait pas presente dans la 1ere liste
-    if l2.junctions[index].junction not in dico:
-      dico[l2.junctions[index].junction] = tampon + l2.junctions[index].size
-      dico2[l2.junctions[index].junction] = l2.junctions[index].top
+    if l2.junctions[index].junction not in dico_size:
+      dico_size[l2.junctions[index].junction] = tampon + l2.junctions[index].size
+      dico_norm_ratio[l2.junctions[index].junction] = tampon + l2.junctions[index].norm_ratio
+      dico_ratio[l2.junctions[index].junction] = tampon + l2.junctions[index].ratio
+      dico_top[l2.junctions[index].junction] = l2.junctions[index].top
     else :
-      dico[l2.junctions[index].junction] = dico[l2.junctions[index].junction] + l2.junctions[index].size
-      if (dico2[l2.junctions[index].junction] > l2.junctions[index].top) :
-	dico2[l2.junctions[index].junction] = l2.junctions[index].top
+      dico_size[l2.junctions[index].junction] = dico_size[l2.junctions[index].junction] + l2.junctions[index].size
+      dico_norm_ratio[l2.junctions[index].junction] = dico_norm_ratio[l2.junctions[index].junction] + l2.junctions[index].norm_ratio
+      dico_ratio[l2.junctions[index].junction] = dico_ratio[l2.junctions[index].junction] + l2.junctions[index].ratio
+      if (dico_top[l2.junctions[index].junction] > l2.junctions[index].top) :
+	dico_top[l2.junctions[index].junction] = l2.junctions[index].top
     
   #cas ou la jonction n'etait presente que dans la 1ere liste
   for index in range(length1): 
-    if len(dico[l1.junctions[index].junction]) == s :
-      dico[l1.junctions[index].junction] += tampon2
+    if len(dico_size[l1.junctions[index].junction]) == s :
+      dico_size[l1.junctions[index].junction] += tampon2
+      dico_norm_ratio[l1.junctions[index].junction] += tampon2
+      dico_ratio[l1.junctions[index].junction] += tampon2
   
   out = Junctions()
   out.total_size=l1.total_size+l2.total_size    
   
   #creation de la nouvelle liste de jonction
-  for key in dico :
+  for key in dico_size :
     junct=Junction()
     junct.junction=key
-    junct.size=dico[key]
-    junct.top=dico2[key]
+    junct.size=dico_size[key]
+    junct.ratio=dico_ratio[key]
+    junct.norm_ratio=dico_norm_ratio[key]
+    junct.top=dico_top[key]
     junct.segment = 0
     if key in dataseg :
       junct.segment = dataseg[key]
