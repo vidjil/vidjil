@@ -96,21 +96,6 @@ var colorN=[];
 /*fonction de chargement local*/
 function loadJson() {
   
-/* ne marche pas en local (securité) TODO : fonction de chargement distante
- * chargement Json
-var req = new XMLHttpRequest();
-  req.open("GET", "data.Json", true); 
-  req.onreadystatechange = getData; 
-  req.send(null); 
- 
-  function getData() 
-  { 
-    if (req.readyState == 4) 
-    { 
-      var junctions = eval('(' + req.responseText + ')'); 
-    }
-  }
-*/
 
   oFReader = new FileReader();
   oFReader2 = new FileReader();
@@ -119,6 +104,8 @@ var req = new XMLHttpRequest();
   
   if (document.getElementById("upload_pref").files.length != 0) { 
     var oFile = document.getElementById("upload_pref").files[0];
+    document.getElementById("analysis_file").innerHTML="analysis_file : "+document.getElementById("upload_pref").files[0].name;
+  
     oFReader2.readAsText(oFile);
     
     oFReader2.onload = function (oFREvent) {
@@ -130,6 +117,7 @@ var req = new XMLHttpRequest();
   if (document.getElementById("upload_json").files.length === 0) { return; }
 
   oFile = document.getElementById("upload_json").files[0];
+  document.getElementById("data_file").innerHTML="data_file : "+document.getElementById("upload_json").files[0].name;
   oFReader.readAsText(oFile);
   
   //fonction s'executant une fois le fichier json correctement chargé
@@ -170,6 +158,8 @@ function loadJsonAnalysis() {
 
   if (document.getElementById("upload_analysis").files.length === 0) { return; }
 
+  document.getElementById("analysis_file").innerHTML="analysis_file : "+document.getElementById("upload_analysis").files[0].name;
+ 
   oFile = document.getElementById("upload_analysis").files[0];
   oFReader.readAsText(oFile);
   
