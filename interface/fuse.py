@@ -6,6 +6,7 @@ import sys
 class Junctions:
   def __init__(self):
     self.total_size = []
+    self.time = []
     self.junctions = []
  
 class Junction:
@@ -39,6 +40,7 @@ def juncToJson(obj):
   if isinstance(obj, Junctions):
     return {"junctions": obj.junctions,
       "total_size": obj.total_size,
+      "time": obj.time,
       }
     raise TypeError(repr(obj) + " fail !") 
   if isinstance(obj, Junction):
@@ -208,6 +210,15 @@ for index in range(len(sys.argv) - 4):
   jlist1= fuseList(jlist1, jlist2, 0)
 
 jlist1=cutList(jlist1,output_limit)
+
+for index in range(len(sys.argv) - 3):
+  path_name=sys.argv[index+3]
+  split=path_name.split("/");
+  
+  file_name=split[len(split)-1]
+  split=file_name.split(".");
+  name=split[0]
+  jlist1.time.append(name);
   
 with open(output_name+".json", "w") as file:
   json.dump(jlist1, file, indent=2, default=juncToJson)
