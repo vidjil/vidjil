@@ -53,7 +53,7 @@ var junctions;         //liste des jonctions du fichier json
 var pref ={ custom :[], cluster :[]} ;              //fichier des preferences
  
 /* initialisation fixé par defaut*/
-var colorMethod="V"           //methode de colorisation ( V par defaut)
+var colorMethod=" "           //methode de colorisation ( V par defaut)
 var splitMethod="begin";          //par defaut pas de method de split
 var t = 0;                    //point de suivi courant ( par defaut t=0 )
 var useCustomColor=true;      //utilisation des couleurs personalisées
@@ -739,10 +739,12 @@ function initVJgrid(germlineV, germlineJ){
     if (useCustomColor==true) {
       useCustomColor=false;
       document.getElementById("log").innerHTML+="<br>stop customColor";
+      document.getElementById("useCustom").innerHTML="custom color on";
       $('#log').scrollTop(100000000000000);
     }else{
       useCustomColor=true;
       document.getElementById("log").innerHTML+="<br>active customColor";
+      document.getElementById("useCustom").innerHTML="custom color off";
       $('#log').scrollTop(100000000000000);
     }
     updateStyle();
