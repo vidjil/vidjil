@@ -25,14 +25,14 @@
   <body onload="initCoef()">
   
     <div id="file_menu" >
-    	<h2>Load menu</h2>
+    	<h2>Load data and analysis</h2>
     	
-	analysis file (optional) :<br/>
-	<input id="upload_pref" type="file" name="pref" /></br></br>
-		
 	data file:<br/>
 	<input id="upload_json" type="file" name="json" /></br></br>
 	
+	analysis file (optional) :<br/>
+	<input id="upload_pref" type="file" name="pref" /></br></br>
+		
 	show only incoming clones in the top <select id="limit_top" name="limit_top">
 	  <option value="10">10</option>	
 	  <option value="15">15</option>
@@ -64,11 +64,11 @@
     
       <div class="menu" onmouseover="showSelector('loadSelector');"> save/load 
         <div id="loadSelector" class="selector">
-	  <a class="buttonSelector" onclick="javascript:loadData()">load data</a>
+	  <a class="buttonSelector" onclick="javascript:loadData()">load data/analysis</a>
 	  <a class="buttonSelector" onclick="javascript:loadAnalysis()">load analysis</a>
 	  <a class="buttonSelector" onclick="javascript:savePref()">save analysis</a>
-	  <a class="buttonSelector" onclick="javascript:resetAnalysis()">reset analysis</a>
-	  <a class="buttonSelector" onclick="javascript:reset()">reset</a>
+          <a class="buttonSelector" onclick="javascript:resetAnalysis()">reset analysis</a>
+	  <a class="buttonSelector" onclick="javascript:reset()">reset all</a>
 	</div>
       </div>
       
@@ -87,8 +87,8 @@
       	<div id="groupSelector" class="selector">
 	  <a class="buttonSelector" onclick="changeSplitMethod('vj1');">alleles</a> 
 	  <a class="buttonSelector" onclick="changeSplitMethod('vj2');">genes</a> 
-	  <a class="buttonSelector" onclick="changeSplitMethod('Nsize');">length N</a> 
-	  <a class="buttonSelector" onclick="changeSplitMethod(' ');">weight</a> 
+	  <a class="buttonSelector" onclick="changeSplitMethod('Nsize');">N length</a> 
+	  <a class="buttonSelector" onclick="changeSplitMethod(' ');">abundance</a> 
 	</div>
       </div>
       
@@ -97,10 +97,10 @@
       
       <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
         <div id="paletteSelector" class="selector">
-	  <a class="buttonSelector" onclick="changeStyle(whiteStyle);">white</a>
-	  <a class="buttonSelector" onclick="changeStyle(blackStyle);">black</a>
-	  <a class="buttonSelector" onclick="changeStyle(solarizeD);">solarize dark</a>
-	  <a class="buttonSelector" onclick="changeStyle(solarizeL);">solarize light</a>
+	  <!-- <a class="buttonSelector" onclick="changeStyle(whiteStyle);">white</a>
+	  <a class="buttonSelector" onclick="changeStyle(blackStyle);">black</a> -->
+	  <a class="buttonSelector" onclick="changeStyle(solarizeD);">dark</a>
+	  <a class="buttonSelector" onclick="changeStyle(solarizeL);">light</a>
 	</div>
       </div>
       
