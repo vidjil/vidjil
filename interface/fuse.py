@@ -215,9 +215,12 @@ for index in range(len(sys.argv) - 3):
   path_name=sys.argv[index+3]
   split=path_name.split("/");
   
-  file_name=split[len(split)-1]
-  split=file_name.split(".");
-  name=split[0]
+  name="";
+  if (len(split)>1):
+    name=split[len(split)-2]
+  else:
+    name=path_name
+
   jlist1.time.append(name);
   
 with open(output_name+".json", "w") as file:
