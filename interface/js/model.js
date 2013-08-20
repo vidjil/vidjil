@@ -984,11 +984,18 @@ function initVJgrid(germlineV, germlineJ){
     updateStyleElem(cloneIDb);
     updateGraph();
     updateVis();
+    force.alpha(.2)
   }
   
-  function normalize(){
-    if (normalization==true) normalization=false;
-    else normalization=true;
+  function toggleNormalize(){
+    if (normalization==true){
+      normalization=false;
+      document.getElementById("norm").innerHTML="normalize off"
+    }
+    else{ 
+      normalization=true;
+      document.getElementById("norm").innerHTML="normalize on"
+    }
     
     updateList()
 
@@ -1000,6 +1007,7 @@ function initVJgrid(germlineV, germlineJ){
       
     updateGraph();
     updateVis();
+    force.alpha(.2)
   }
   
   function removeKey(arrayName,key)

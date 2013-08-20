@@ -92,7 +92,10 @@
 	</div>
       </div>
       
-      <div class="menu" onmouseover="showSelector('paletteSelector');"> palette 
+      <div id="norm" class="menu" onclick="javascript:toggleNormalize();"> normalize off
+      </div>
+      
+      <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
         <div id="paletteSelector" class="selector">
 	  <a class="buttonSelector" onclick="changeStyle(whiteStyle);">white</a>
 	  <a class="buttonSelector" onclick="changeStyle(blackStyle);">black</a>
