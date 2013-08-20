@@ -59,6 +59,8 @@ var t = 0;                    //point de suivi courant ( par defaut t=0 )
 var useCustomColor=true;      //utilisation des couleurs personalisées
 limitClones=1000;
 var top_limit=50;
+var normalization=false;
+
  
 var margeVJ_left=80;              //info quadrillage (vj1/vj2)
 var margeVJ_top=50;
@@ -629,10 +631,14 @@ function initVJgrid(germlineV, germlineJ){
   /*renvoye la taille d'un clone( somme des tailles des jonctions qui le compose)*/
   function getSize(cloneID){
     var r=0;
-    for(var j=0 ;j<table[cloneID].cluster.length; j++){
-      r += junctions[table[cloneID].cluster[j]].size[t];}
-    
-    return (r)/(jsonData.total_size[t]);
+    if (normalization==false ){
+      for(var j=0 ;j<table[cloneID].cluster.length; j++){
+	r += junctions[table[cloneID].cluster[j]].ratio[t];}
+    }else{
+      for(var j=0 ;j<table[cloneID].cluster.length; j++){
+	r += junctions[table[cloneID].cluster[j]].norm_ratio[t];}
+    }
+    return r
   }
   
   
@@ -986,6 +992,22 @@ function initVJgrid(germlineV, germlineJ){
     
     updateStyleElem(cloneIDa);
     updateStyleElem(cloneIDb);
+    updateGraph();
+    updateVis();
+  }
+  
+  function normalize(){
+    if (normalization==true) normalization=false;
+    else normalization=true;
+    
+    updateList()
+
+      for (var i = 0; i < totalClones ; i++){
+	for (var j=0; j<table[i].cluster.length; j++){
+	  data_graph[table[i].cluster[j]].path=constructPath(i);
+	}
+      }
+      
     updateGraph();
     updateVis();
   }
