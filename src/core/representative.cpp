@@ -49,7 +49,7 @@ void KmerRepresentativeComputer::compute(bool do_revcomp, size_t min_cover,
   is_computed = false;
 
   // First create an index on the set of reads
-  IKmerStore<Kmer> *index = KmerStoreFactory::createIndex<Kmer>(getK(), do_revcomp);
+  IKmerStore<Kmer> *index = new MapKmerStore<Kmer>(getK(), do_revcomp);
 
   // Add sequences to the index
   for (list<Sequence>::iterator it=sequences.begin(); it != sequences.end(); ++it) {
