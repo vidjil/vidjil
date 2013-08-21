@@ -214,6 +214,11 @@ function reset(){
 function load(data, limit){
   var result={};
   result.total_size=data.total_size;
+  result.resolution1=data.resolution1;
+  result.resolution5=data.resolution5;
+  result.norm_resolution1=data.resolution1;    
+  result.norm_resolution5=data.norm_resolution5;
+    
   result.time=data.time;
   result.junctions=[];
   var ite=0;
