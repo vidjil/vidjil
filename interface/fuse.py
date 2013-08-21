@@ -8,6 +8,9 @@ class Junctions:
     self.total_size = []
     self.time = []
     self.junctions = []
+
+  def __str__(self):
+    return "<Junctions %s: %s %d>" % (self.time, self.total_size, len(self.junctions))
  
 class Junction:
   def __init__(self):
@@ -214,7 +217,7 @@ for path_name in input_names:
     else:
         name = path_name
 
-    print "<==", path_name, "\t", name
+    print "<==", path_name, "\t", name, "\t", 
 
     with open(path_name, "r") as file:
         jlist = json.load(file, object_hook=jsonToJunc)       
@@ -226,7 +229,10 @@ for path_name in input_names:
     # Store short name
     jlist_fused.time.append(name)
 
+print
+
 jlist_fused = cutList(jlist_fused, output_limit)
+print jlist_fused 
   
 print "==>", output_name
 with open(output_name, "w") as file:
