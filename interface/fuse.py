@@ -33,7 +33,7 @@ if len(sys.argv) < 4:
   
   
 output_name=sys.argv[1]
-output_limit=sys.argv[2]
+output_limit = int(sys.argv[2])
 input_names = sys.argv[3:]
 
 jlist1 = []
@@ -112,10 +112,10 @@ def cutList(l1, limit):
   length1 = len(l1.junctions)
   
   for index in range(length1): 
-    if (int(l1.junctions[index].top) < int(limit) or limit == 0) :
+    if (int(l1.junctions[index].top) < limit or limit == 0) :
       out.junctions.append(l1.junctions[index])
 
-  print limit
+  print "! cut to %d" % limit
   return out
   
     
