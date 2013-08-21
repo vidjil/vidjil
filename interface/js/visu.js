@@ -96,14 +96,21 @@ function initNodes() {
 
 function initSize() {
   min_size = 1;
+  tmp=normalization;
    for(var i=0 ;i<totalClones; i++){
       for (t=0 ; t<junctions[i].size.length; t++){
+	normalization=true;
+	if (getSize(i)<min_size && getSize(i)!=0) {
+	  min_size=getSize(i);
+	}
+	normalization=false
 	if (getSize(i)<min_size && getSize(i)!=0) {
 	  min_size=getSize(i);
 	}
       }
       t=0;
     }
+  normalization=tmp;
 }
 
 /* attribue une data issue du modele aux legendes/quadrillages de la visualisation*/
