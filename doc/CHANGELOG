@@ -1,4 +1,13 @@
 
+2013-08-XX  The Vidjil Team
+        * Normalization against a standard (-Z) (core/labels.cpp)
+        * Faster selection of representative read (vidjil.cpp, core/read_chooser.cpp)
+        * New .json output
+        * New lazy_msa multiple aligner for Xxxxx
+        * Better display of reason of non-segmenting reads
+        * New unit tests
+        * Bugs closed
+
 2013-07-03  The Vidjil Team
 	* New selection of representative read (core/read_chooser.cpp)
 	* Faster spaced seed computation (core/tools.cpp)
@@ -6,7 +15,6 @@
 	* Bugs closed
 
 2013-04-18  The Vidjil Team
-
 	* First public release
 
 
