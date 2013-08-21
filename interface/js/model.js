@@ -216,7 +216,7 @@ function load(data, limit){
   result.total_size=data.total_size;
   result.resolution1=data.resolution1;
   result.resolution5=data.resolution5;
-  result.norm_resolution1=data.resolution1;    
+  result.norm_resolution1=data.norm_resolution1;    
   result.norm_resolution5=data.norm_resolution5;
     
   result.time=data.time;
@@ -1009,10 +1009,14 @@ function initVJgrid(germlineV, germlineJ){
     if (normalization==true){
       normalization=false;
       document.getElementById("norm").innerHTML="normalize off"
+      data_res[0].path=constructPathR(jsonData.resolution1);
+      data_res[1].path=constructPathR(jsonData.resolution5);
     }
     else{ 
       normalization=true;
       document.getElementById("norm").innerHTML="normalize on"
+      data_res[0].path = constructPathR(jsonData.norm_resolution1);
+      data_res[1].path = constructPathR(jsonData.norm_resolution5);
     }
     
     updateList()

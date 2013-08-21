@@ -124,9 +124,13 @@ function initGraph(){
   for (var i=0 ; i<totalClones; i++){
     data_graph[i]={id : i, name :"line"+i, path : constructPath(i)};
   }
-  
-  data_res[0]={id : totalClones, name :"resolution1", path :constructPathR(1) };
-  data_res[1]={id : totalClones+1, name :"resolution5", path :constructPathR(5) };
+  if (normalization){
+    data_res[0]={id : totalClones, name :"resolution1", path :constructPathR(jsonData.norm_resolution1) };
+    data_res[1]={id : totalClones+1, name :"resolution5", path :constructPathR(jsonData.norm_resolution5) };
+  }else{
+    data_res[0]={id : totalClones, name :"resolution1", path :constructPathR(jsonData.resolution1) };
+    data_res[1]={id : totalClones+1, name :"resolution5", path :constructPathR(jsonData.resolution5) };
+  }
   
   displayGraph(data_axis, data_graph, data_res);
 }
@@ -181,20 +185,23 @@ function displayGraph(data, data_2, data_3){
 }
 
 function constructPathR(res){
-  var p;
-  
-  
-  p=[ [0, (g_h+1000)] ];
-  p.push([0, ( g_h - scale_x((res/jsonData.total_size[0])*precision) ) ]);
-  
-  for (var i=0; i< graph_col.length; i++){
-      p.push([( graph_col[i]), ( g_h - scale_x((res/jsonData.total_size[i])*precision) ) ]);
+  if (typeof res != "undefined" && res.length!=0){
+    
+    var p;
+    
+    p=[ [0, (g_h+1000)] ];
+    p.push([0, ( g_h - scale_x(res[0]*precision) ) ]);
+    
+    for (var i=0; i< graph_col.length; i++){
+	p.push([( graph_col[i]), ( g_h - scale_x(res[i]*precision))]);
+    }
+    p.push([g_w, ( g_h - scale_x(res[graph_col.length-1]*precision) ) ]);
+    p.push([g_w, ( g_h+1000) ]);
+    
+    return p;
+    
   }
-  p.push([g_w, ( g_h - scale_x((res/jsonData.total_size[graph_col.length-1])*precision) ) ]);
-  p.push([g_w, ( g_h+1000) ]);
-  
-  
-  return p;
+  else return [[0,0]];
 }
 
 /*construit le tableau des points par laquelle la courbe d'un clone doit passer*/
