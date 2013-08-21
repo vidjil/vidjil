@@ -46,6 +46,16 @@ var graph_col=[];
 var precision=1;
 var scale_x;
     
+function resetGraph(){
+  data_axis=[];
+  data_graph=[];
+  data_res=[];
+  graph_col=[];
+  precision=1;
+  displayGraph(data_axis, data_graph, data_res);
+  
+}
+
 function initGraph(){
   
   var count=min_size;
@@ -296,7 +306,7 @@ function updateGraph(){
     initStyle()
 }
 
-function resetGraph(){
+function resetGraphCluster(){
   for (var i=0 ; i<totalClones; i++){
     data_graph[i].id = i;
   }

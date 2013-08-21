@@ -41,6 +41,12 @@ var vis = d3.select("#visu").append("svg:svg")
     .attr("height", 2500)
     .on("click", function(){freeSelect();})
 
+    
+function resetVisu(){
+  initNodes();
+  initVisu();
+  displayLegend([]);
+}
 
 function initVisu(){
   force = d3.layout.force()

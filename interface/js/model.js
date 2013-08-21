@@ -96,6 +96,7 @@ var colorN=[];
 /*fonction de chargement local*/
 function loadJson() {
   
+  reset();
 
   oFReader = new FileReader();
   oFReader2 = new FileReader();
@@ -197,7 +198,17 @@ function cancel(){
 }
 
 function reset(){
-  location.reload(true);
+  table=[];
+  jsonData={};
+  junctions={};
+  pref ={ custom :[], cluster :[]} ; 
+  t = 0;
+  totalClones=0;
+  splitMethod="begin"; 
+  initList();
+  resetVisu();
+  force.alpha(0);
+  resetGraph();
 }
 
 function load(data, limit){
@@ -954,7 +965,7 @@ function initVJgrid(germlineV, germlineJ){
     updateStyle();
     updateList();
     displayTop(5);
-    resetGraph();
+    resetGraphCluster();
     updateGraph();
     updateVis();
     setTimeout('updateStyle()',1000);
