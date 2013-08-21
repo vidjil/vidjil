@@ -206,6 +206,7 @@ def fuseList(l1, l2, limit):
   
 
 jlist_fused = None
+times = []
 
 for path_name in input_names:
 
@@ -227,11 +228,12 @@ for path_name in input_names:
     jlist_fused = fuseList(jlist_fused, jlist, 0)
 
     # Store short name
-    jlist_fused.time.append(name)
+    times.append(name)
 
 print
 
 jlist_fused = cutList(jlist_fused, output_limit)
+jlist_fused.time = times
 print jlist_fused 
   
 print "==>", output_name
