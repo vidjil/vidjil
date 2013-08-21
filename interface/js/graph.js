@@ -69,15 +69,17 @@ function initGraph(){
     .domain([1,precision])
     .range([50,(g_h)]);
     
-  var height=100;
+  var height=1;
+  var p=0;
   
   //ordonnée
   for (var i=0 ; i<8; i++){
-    data_axis[i]={class : "axis" ,text : (height+"%"), x1 : 0, x2 : g_w, 
-		    y1 : (g_h- scale_x((height/100)*precision)), 
-		    y2 : (g_h- scale_x((height/100)*precision))}
+    data_axis[i]={class : "axis" ,text : -p, x1 : 0, x2 : g_w, 
+		    y1 : (g_h- scale_x(height*precision)), 
+		    y2 : (g_h- scale_x(height*precision))}
 		    
     height=height/10;
+    p=p+1;
   }
   
   //abscisse
@@ -255,7 +257,10 @@ function updateGraph(){
   g_text
     .transition()
     .duration(500)
-    .text( function (d) { return d.text; })
+    .text( function (d) {return d.text;
+    })
+
+    
     .attr("fill", colorStyle.c01)
     .attr("class", function(d) { if (d.class=="axis_v") return "axis_button"; })
     .attr("id", function(d) { if (d.class=="axis_v") return ("time"+d.time); })
