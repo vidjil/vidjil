@@ -911,10 +911,17 @@ int main (int argc, char **argv)
         repComp.compute(true, min_cover_representative, ratio_representative);
 	
         if (repComp.hasRepresentative()) {
+
+	  // One representative is found
 	  
           Sequence representative = repComp.getRepresentative();
           representative.label = string_of_int(it->second) + "-" 
-            + representative.label;
+            + representative.label + " (representative)";
+
+	  // out << representative ;
+	  out_clone << representative ;
+	  out_clone << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
+
 	  FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 	
 	if (segment_D)
