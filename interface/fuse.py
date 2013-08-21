@@ -6,6 +6,10 @@ import sys
 class Junctions:
   def __init__(self):
     self.total_size = []
+    self.resolution1 = []
+    self.resolution5 = []
+    self.norm_resolution1 = []
+    self.norm_resolution5 = []
     self.time = []
     self.junctions = []
 
@@ -44,6 +48,10 @@ def juncToJson(obj):
   if isinstance(obj, Junctions):
     return {"junctions": obj.junctions,
       "total_size": obj.total_size,
+      "resolution1": obj.resolution1,
+      "resolution5": obj.resolution5,
+      "norm_resolution1": obj.norm_resolution1,
+      "norm_resolution5": obj.norm_resolution5,
       "time": obj.time,
       }
     raise TypeError(repr(obj) + " fail !") 
@@ -76,6 +84,11 @@ def jsonToJunc(obj_dict):
     obj = Junctions()
     obj.junctions=obj_dict["junctions"]
     obj.total_size=obj_dict["total_size"]
+    obj.resolution1=obj_dict["resolution1"]
+    obj.resolution5=obj_dict["resolution5"]
+    obj.norm_resolution1=obj_dict["norm_resolution1"]
+    obj.norm_resolution5=obj_dict["norm_resolution5"]
+
     return obj
   if "junction" in obj_dict:
     obj = Junction()
@@ -108,6 +121,10 @@ def cutList(l1, limit):
   
   out = Junctions()
   out.total_size=l1.total_size
+  out.resolution1=l1.resolution1
+  out.resolution5=l1.resolution5
+  out.norm_resolution1=l1.norm_resolution1
+  out.norm_resolution5=l1.norm_resolution5
   
   length1 = len(l1.junctions)
   
@@ -187,6 +204,10 @@ def fuseList(l1, l2, limit):
   
   out = Junctions()
   out.total_size=l1.total_size+l2.total_size    
+  out.resolution1=l1.resolution1+l2.resolution1
+  out.resolution5=l1.resolution5+l2.resolution5
+  out.norm_resolution1=l1.norm_resolution1+l2.norm_resolution1
+  out.norm_resolution5=l1.norm_resolution5+l2.norm_resolution5
   
   #creation de la nouvelle liste de jonction
   for key in dico_size :

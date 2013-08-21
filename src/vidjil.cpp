@@ -1280,11 +1280,11 @@ int main (int argc, char **argv)
     out << "  ==> " << f_json << endl ;
     ofstream out_json(f_json.c_str()) ;
       
-    out_json <<"{ \"total_size\" : ["<<nb_segmented<<"] ,"; 
-    out_json <<"{ \"resolution1\" : ["<<(float) 1 / nb_segmented <<"] ,"; 
-    out_json <<"{ \"resolution5\" : ["<<(float) 5 / nb_segmented <<"] ,"; 
-    out_json <<"{ \"norm_resolution1\" : ["<<(float) 1 / nb_segmented <<"] ,"; 
-    out_json <<"{ \"norm_resolution5\" : ["<<(float) 5 / nb_segmented <<"] ,"; 
+    out_json <<"{ \"total_size\" : ["<<nb_segmented<<"] ,"<<endl;
+    out_json <<"\"resolution1\" : ["<<(float) 1 / nb_segmented <<"] ,"<<endl;
+    out_json <<"\"resolution5\" : ["<<(float) 5 / nb_segmented <<"] ,"<<endl;
+    out_json <<"\"norm_resolution1\" : ["<< (float) 1 * compute_normalization(norm_list, 1) / nb_segmented<<"] ,"<<endl;
+    out_json <<"\"norm_resolution5\" : ["<< (float) 5 * compute_normalization(norm_list, 5) / nb_segmented<<"] ,"<<endl;
     out_json <<"\"junctions\" : [";
     for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
 	     it != sort_all_windows.end(); ++it) 
