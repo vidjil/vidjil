@@ -31,6 +31,7 @@ if len(sys.argv) < 4:
   
 output_name=sys.argv[1]
 output_limit=sys.argv[2]
+input_names = sys.argv[3:]
 
 jlist1 = []
 jlist2 = []
@@ -116,6 +117,10 @@ def cutList(l1, limit):
   
     
 def fuseList(l1, l2, limit): 
+
+  if l1 is None:
+    return l2
+
   dico_size = collections.OrderedDict()
   dico_top = collections.OrderedDict()
   dico_norm_ratio = collections.OrderedDict()
@@ -197,31 +202,32 @@ def fuseList(l1, l2, limit):
   return out
   
 
-with open(sys.argv[3], "r") as file:
-  jlist1 = json.load(file, object_hook=jsonToJunc)       
-  
-  print jlist1
-  
-for index in range(len(sys.argv) - 4):
-  
-  with open(sys.argv[index+4], "r") as file2:
-    jlist2 = json.load(file2, object_hook=jsonToJunc)      
-    
-  jlist1= fuseList(jlist1, jlist2, 0)
+jlist_fused = None
 
-jlist1=cutList(jlist1,output_limit)
+for path_name in input_names:
 
-for index in range(len(sys.argv) - 3):
-  path_name=sys.argv[index+3]
-  split=path_name.split("/");
-  
-  name="";
-  if (len(split)>1):
-    name=split[len(split)-2]
-  else:
-    name=path_name
+    # Compute short name
+    split=path_name.split("/");
+    name="";
+    if (len(split)>1):
+        name = split[len(split)-2]
+    else:
+        name = path_name
 
-  jlist1.time.append(name);
+    print "<==", path_name, "\t", name
+
+    with open(path_name, "r") as file:
+        jlist = json.load(file, object_hook=jsonToJunc)       
+        print jlist
+
+    # Merge lists
+    jlist_fused = fuseList(jlist_fused, jlist, 0)
+
+    # Store short name
+    jlist_fused.time.append(name)
+
+jlist_fused = cutList(jlist_fused, output_limit)
   
-with open(output_name+".json", "w") as file:
-  json.dump(jlist1, file, indent=2, default=juncToJson)
+print "==>", output_name
+with open(output_name, "w") as file:
+    json.dump(jlist_fused, file, indent=2, default=juncToJson)
