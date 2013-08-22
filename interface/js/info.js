@@ -47,9 +47,27 @@
   //met a jour les % dans les listes
   function updateList(){
     for (var i=0; i<totalClones; i++){
-      document.getElementById("size"+i).innerHTML=(100*getSize(i)).toFixed(3)+"%";
+      
+      	if (getSize(i)==0){
+	  document.getElementById("size"+i).innerHTML="-∕-";
+	}else{
+	  if (getSize(i)<0.0001){
+	    document.getElementById("size"+i).innerHTML=(100*getSize(i)).toExponential(1)+"%";
+	  }else{
+	    document.getElementById("size"+i).innerHTML=(100*getSize(i)).toFixed(3)+"%";
+	  }
+	}
+      
       if (table[i].select){
-	document.getElementById("selectsize"+i).innerHTML=(100*getSize(i)).toFixed(3)+"%";
+	if (getSize(i)==0){
+	  document.getElementById("selectsize"+i).innerHTML="-∕-";
+	}else{
+	  if (getSize(i)<0.0001){
+	    document.getElementById("selectsize"+i).innerHTML=(100*getSize(i)).toExponential(1)+"%";
+	  }else{
+	    document.getElementById("selectsize"+i).innerHTML=(100*getSize(i)).toFixed(3)+"%";
+	  }
+	}
       }
       var display=true;
       if (document.getElementById("cluster"+i).style.display=="none") display=false;
@@ -104,7 +122,19 @@
       span2.className = "sizeBox";
       span2.id="size"+cloneID;
       span2.onclick=function(){ selectClone(this.parentNode.parentNode.id); }
-      span2.appendChild(document.createTextNode((100*getSize(cloneID)).toFixed(3)+"%"));
+      
+      var displaySize;
+        if (getSize(cloneID)==0){
+	  displaySize="-∕-";
+	}else{
+	  if (getSize(cloneID)<0.0001){
+	    displaySize=(100*getSize(cloneID)).toExponential(1)+"%";
+	  }else{
+	    displaySize=(100*getSize(cloneID)).toFixed(3)+"%";
+	  }
+	}
+      
+      span2.appendChild(document.createTextNode(displaySize));
       
       var span3=document.createElement('span')
       span3.className = "clusterBox";
