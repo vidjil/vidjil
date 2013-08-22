@@ -34,13 +34,22 @@ var polyline_container = d3.select("#svg2").append("svg:g")
     .attr("id", "polyline_container")
 var reso_container = d3.select("#svg2").append("svg:g")
     .attr("id", "reso_container")
+var date_container = d3.select("#svg2").append("svg:g")
+    .attr("id", "date_container")
+var text_container = d3.select("#svg2").append("svg:g")
+    .attr("id", "text_container")
+
     
 var g_axis;
 var g_graph;
-var g_res;
+var g_text;
+var g_leg;
+var g_date;
+
 var data_axis=[];
 var data_graph=[];
 var data_res=[];
+var data_date=[];
 
 var graph_col=[];
 var precision=1;
@@ -50,9 +59,11 @@ function resetGraph(){
   data_axis=[];
   data_graph=[];
   data_res=[];
+  data_date=[];
+  
   graph_col=[];
   precision=1;
-  displayGraph(data_axis, data_graph, data_res);
+  displayGraph(data_axis, data_graph, data_res, data_date);
   
 }
 
@@ -132,16 +143,22 @@ function initGraph(){
     data_res[1]={id : totalClones+1, name :"resolution5", path :constructPathR(jsonData.resolution5) };
   }
   
-  displayGraph(data_axis, data_graph, data_res);
+  for (var i=0 ; i <junctions[0].size.length ; i++){
+    data_date[i]={class : "date" ,text : "xx/xx/xx" ,
+			x1 : graph_col[i], x2 : graph_col[i], 
+			y1 : g_h+40, y2 : 0, time: i}
+  }
+  
+  displayGraph(data_axis, data_graph, data_res, data_date);
 }
 
-function displayGraph(data, data_2, data_3){
+function displayGraph(data, data_2, data_3, data_4){
   g_axis = axis_container.selectAll("line").data(data);
   g_axis.enter().append("line");
   g_axis.exit()    
     .remove();
     
-  g_text = vis2.selectAll("text").data(data);
+  g_text = text_container.selectAll("text").data(data);
   g_text.enter().append("text");
   g_text.exit()    
     .remove();
@@ -180,6 +197,11 @@ function displayGraph(data, data_2, data_3){
 	return che;
     } )
     g_res.exit().remove();
+    
+  g_date= date_container.selectAll("text").data(data_4);
+  g_date.enter().append("text");
+  g_date.exit()    
+    .remove();
     
   updateGraph();
 }
@@ -280,7 +302,7 @@ function updateGraph(){
       else return Math.floor(resizeG_W*d.x1);
     });
     
-    vis2.selectAll("text")
+    text_container.selectAll("text")
     .on("click", function(d){
       if (d.class=="axis_v") return changeT(d.time);
     })
@@ -307,6 +329,22 @@ function updateGraph(){
 	}
 	return che;
     } )
+    
+    g_date
+    .transition()
+    .duration(500)
+    .text( function (d) {return d.text;
+    })
+    .attr("class", "date")
+    .attr("fill", colorStyle.c01)
+    .attr("y", function(d) { return 30;
+    })
+    .attr("x", function(d) { return Math.floor(resizeG_W*d.x1);
+    });
+    
+    date_container.selectAll("text")
+    .on("click", function(d){ return changeDate(d.time);
+    })
 
   polyline_container.selectAll("polyline")
     .on("mouseover", function(d){ focusIn(d.id);

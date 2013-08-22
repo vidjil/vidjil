@@ -104,6 +104,7 @@ list-style-type: none;
     font-size: 14px;
     margin :2px;
     display:block;
+    text-align:left;
 }
 
 .buttonSelector:hover {

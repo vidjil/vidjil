@@ -285,6 +285,14 @@ circle:hover {
   
 }
 
+.date{
+  text-anchor: middle;
+  cursor: pointer;
+  background:inherit;
+  
+}
+
+
 .graphLine{
   -moz-transition: stroke  0.5s;
   -webkit-transition: stroke 0.5s;

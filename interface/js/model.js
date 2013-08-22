@@ -50,7 +50,7 @@
 /* données brutes issues du chargement des fichiers json*/
 var jsonData;          //fichier json
 var junctions;         //liste des jonctions du fichier json
-var pref ={ custom :[], cluster :[]} ;              //fichier des preferences
+var pref ={ custom :[], cluster :[], date :[]} ;              //fichier des preferences
  
 /* initialisation fixé par defaut*/
 var colorMethod=" "           //methode de colorisation ( V par defaut)
@@ -1043,3 +1043,5 @@ function initVJgrid(germlineV, germlineJ){
     return tmpArray;
   }
  
+ function changeDate(time){
+ }
