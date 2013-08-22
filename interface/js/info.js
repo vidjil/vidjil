@@ -52,7 +52,7 @@
 	  document.getElementById("size"+i).innerHTML="-∕-";
 	}else{
 	  if (getSize(i)<0.0001){
-	    document.getElementById("size"+i).innerHTML=(100*getSize(i)).toExponential(1)+"%";
+	    document.getElementById("size"+i).innerHTML=(getSize(i)).toExponential(1);
 	  }else{
 	    document.getElementById("size"+i).innerHTML=(100*getSize(i)).toFixed(3)+"%";
 	  }
@@ -63,7 +63,7 @@
 	  document.getElementById("selectsize"+i).innerHTML="-∕-";
 	}else{
 	  if (getSize(i)<0.0001){
-	    document.getElementById("selectsize"+i).innerHTML=(100*getSize(i)).toExponential(1)+"%";
+	    document.getElementById("selectsize"+i).innerHTML=(getSize(i)).toExponential(1);
 	  }else{
 	    document.getElementById("selectsize"+i).innerHTML=(100*getSize(i)).toFixed(3)+"%";
 	  }
@@ -128,7 +128,7 @@
 	  displaySize="-∕-";
 	}else{
 	  if (getSize(cloneID)<0.0001){
-	    displaySize=(100*getSize(cloneID)).toExponential(1)+"%";
+	    displaySize=(getSize(cloneID)).toExponential(1);
 	  }else{
 	    displaySize=(100*getSize(cloneID)).toFixed(3)+"%";
 	  }
