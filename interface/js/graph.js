@@ -144,7 +144,9 @@ function initGraph(){
   }
   
   for (var i=0 ; i <junctions[0].size.length ; i++){
-    data_date[i]={class : "date" ,text : "xx/xx/xx" ,
+    
+
+    data_date[i]={class : "date" ,date : 'undefined' ,
 			x1 : graph_col[i], x2 : graph_col[i], 
 			y1 : g_h+40, y2 : 0, time: i}
   }
@@ -269,7 +271,7 @@ function updateGraph(){
     .domain([1,precision])
     .range([50,(g_h)]);
     
-    g_axis
+  g_axis
     .transition()
     .duration(500)
     .attr("x1", function(d) { return resizeG_W*d.x1; })
@@ -288,8 +290,6 @@ function updateGraph(){
     .duration(500)
     .text( function (d) {return d.text;
     })
-
-    
     .attr("fill", colorStyle.c01)
     .attr("class", function(d) { if (d.class=="axis_v") return "axis_button"; })
     .attr("id", function(d) { if (d.class=="axis_v") return ("time"+d.time); })
@@ -302,12 +302,12 @@ function updateGraph(){
       else return Math.floor(resizeG_W*d.x1);
     });
     
-    text_container.selectAll("text")
+  text_container.selectAll("text")
     .on("click", function(d){
       if (d.class=="axis_v") return changeT(d.time);
     })
     
-    g_graph.selectAll("polyline")
+  g_graph.selectAll("polyline")
     .transition()
     .duration(500)
     .attr("points", function(p) {
@@ -319,7 +319,7 @@ function updateGraph(){
     } )
     .attr("class", function(p) { return g_class(p.id); })
     
-    g_res.selectAll("polyline")
+  g_res.selectAll("polyline")
     .transition()
     .duration(500)
     .attr("points", function(p) {
@@ -330,10 +330,15 @@ function updateGraph(){
 	return che;
     } )
     
-    g_date
+  g_date
     .transition()
     .duration(500)
-    .text( function (d) {return d.text;
+    .text( function (d) {
+      if ( d.date != "undefined" ){
+	return d.date.toLocaleDateString();
+      }else{
+	return "  /  /  ";
+      }
     })
     .attr("class", "date")
     .attr("fill", colorStyle.c01)
@@ -342,8 +347,8 @@ function updateGraph(){
     .attr("x", function(d) { return Math.floor(resizeG_W*d.x1);
     });
     
-    date_container.selectAll("text")
-    .on("click", function(d){ return changeDate(d.time);
+  date_container.selectAll("text")
+    .on("dblclick", function(d){ return changeDate(d.time);
     })
 
   polyline_container.selectAll("polyline")

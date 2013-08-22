@@ -129,7 +129,7 @@ circle:hover {
   height :125px;
 }
 
-#file_menu, #analysis_menu{
+#file_menu, #analysis_menu, #dateSelector{
   z-index:2;
   display:none; 
   border:solid; 

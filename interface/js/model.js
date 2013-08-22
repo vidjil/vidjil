@@ -201,7 +201,7 @@ function reset(){
   table=[];
   jsonData={};
   junctions={};
-  pref ={ custom :[], cluster :[]} ; 
+  var pref ={ custom :[], cluster :[], date :[]} ;
   t = 0;
   totalClones=0;
   splitMethod="begin"; 
@@ -1043,5 +1043,19 @@ function initVJgrid(germlineV, germlineJ){
     return tmpArray;
   }
  
- function changeDate(time){
- }
+  function changeDate(time){
+    document.getElementById("dateSelector").style.display="block";
+    document.getElementById("dateSelected").innerHTML=time;
+  }
+  
+  function saveDate(){
+    var myDate=new Date();
+    myDate.setFullYear(2010,0,14);
+    data_date[document.getElementById("dateSelected").innerHTML].date=myDate;
+    updateGraph();
+    document.getElementById("dateSelector").style.display="none";
+  }
+  
+  function cancelSaveDate(){
+    document.getElementById("dateSelector").style.display="none";
+  }
