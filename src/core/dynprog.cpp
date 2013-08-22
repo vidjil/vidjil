@@ -117,6 +117,10 @@ DynProg::DynProg(const string &x, const string &y, DynProgMode mode, const Cost&
   this -> best_j = -1 ;
   this -> first_i = -1 ;
   this -> first_j = -1 ;
+  
+  gap1=NULL;
+  gap2=NULL;
+  linkgap=NULL;
 
   init();
 }
@@ -136,6 +140,10 @@ DynProg::~DynProg() {
     delete [] B[i];
   }
   delete [] B;
+  
+  delete [] gap1;
+  delete [] gap2;
+  delete [] linkgap;
 }
 
 void DynProg::init()
