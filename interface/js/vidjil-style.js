@@ -126,14 +126,19 @@ colorStyle=solarizeD;
   function updateColorElem(cloneID){
     if (table[cloneID].focus){
       document.getElementById(cloneID).style.background=colorStyle.c07;
-      document.getElementById("circle"+cloneID).style.fill=colorStyle.c05;
-      document.getElementById("line"+cloneID).style.stroke=colorStyle.c05;
-      document.getElementById("line"+cloneID).firstChild.style.strokeWidth="4px";
+      document.getElementById("circle"+cloneID).style.stroke=colorStyle.c05;
+      document.getElementById("circle"+cloneID).style.fill=color(cloneID);
+      document.getElementById("line"+cloneID).style.stroke=color(cloneID);
+      document.getElementById("line"+cloneID).firstChild.style.strokeWidth="6px";
     }else{
       document.getElementById("circle"+cloneID).style.stroke="";
       document.getElementById(cloneID).style.background=colorStyle.c02;
       if (table[cloneID].active){
 	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1.5px";
+	  if ((typeof(table[cloneID].tag) != 'undefined') && (table[cloneID].tag != 8) && (table[cloneID].tag != 3)) { 
+	  // if tagged, but not standard 		  
+		  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="4px";
+	      }
 	  document.getElementById(cloneID).style.color=color(cloneID);
 	  document.getElementById("circle"+cloneID).style.fill=color(cloneID);
 	  document.getElementById("line"+cloneID).style.stroke=color(cloneID);
