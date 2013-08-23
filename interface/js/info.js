@@ -136,7 +136,7 @@
 	  result="-∕-";
 	}else{
 	  if (size<0.0001){
-	    result=(100*size).toExponential(1)+"%";
+	    result=(size).toExponential(1);
 	  }else{
 	    result=(100*size).toFixed(3)+"%";
 	  }
