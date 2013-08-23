@@ -48,34 +48,21 @@
   function updateList(){
     for (var i=0; i<totalClones; i++){
       
-      	if (getSize(i)==0){
-	  document.getElementById("size"+i).innerHTML="-∕-";
-	}else{
-	  if (getSize(i)<0.0001){
-	    document.getElementById("size"+i).innerHTML=(100*getSize(i)).toExponential(1)+"%";
-	  }else{
-	    document.getElementById("size"+i).innerHTML=(100*getSize(i)).toFixed(3)+"%";
-	  }
-	}
+      document.getElementById("size"+i).innerHTML=getStrSize(i);
       
       if (table[i].select){
-	if (getSize(i)==0){
-	  document.getElementById("selectsize"+i).innerHTML="-∕-";
-	}else{
-	  if (getSize(i)<0.0001){
-	    document.getElementById("selectsize"+i).innerHTML=(100*getSize(i)).toExponential(1)+"%";
-	  }else{
-	    document.getElementById("selectsize"+i).innerHTML=(100*getSize(i)).toFixed(3)+"%";
-	  }
-	}
+	document.getElementById("selectsize"+i).innerHTML=getStrSize(i);
       }
+      
       var display=true;
       if (document.getElementById("cluster"+i).style.display=="none") display=false;
       
       document.getElementById(i).removeChild(document.getElementById("cluster"+i));
+      
       var div=document.createElement('div');
       div_cluster(div, i, display);
       document.getElementById(i).appendChild(div);
+      
       if (table[i].favorite==true) {document.getElementById("fav"+i).src="images/icon_fav_on.png";}
       else{document.getElementById("fav"+i).src="images/icon_fav_off.png";}
     }  
@@ -123,18 +110,8 @@
       span2.id="size"+cloneID;
       span2.onclick=function(){ selectClone(this.parentNode.parentNode.id); }
       
-      var displaySize;
-        if (getSize(cloneID)==0){
-	  displaySize="-∕-";
-	}else{
-	  if (getSize(cloneID)<0.0001){
-	    displaySize=(100*getSize(cloneID)).toExponential(1)+"%";
-	  }else{
-	    displaySize=(100*getSize(cloneID)).toFixed(3)+"%";
-	  }
-	}
       
-      span2.appendChild(document.createTextNode(displaySize));
+      span2.appendChild(document.createTextNode(getStrSize(cloneID)));
       
       var span3=document.createElement('span')
       span3.className = "clusterBox";
@@ -151,6 +128,21 @@
       div_elem.appendChild(fav);
       div_elem.appendChild(span2);
     
+  }
+  
+  function getStrSize(cloneID){
+	var size = getSize(cloneID);
+        var result;
+        if (size==0){
+	  result="-∕-";
+	}else{
+	  if (size<0.0001){
+	    result=(100*size).toExponential(1)+"%";
+	  }else{
+	    result=(100*size).toFixed(3)+"%";
+	  }
+	}
+    return result
   }
   
   function updateListElem(cloneID, display){
