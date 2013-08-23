@@ -110,7 +110,6 @@
       span2.id="size"+cloneID;
       span2.onclick=function(){ selectClone(this.parentNode.parentNode.id); }
       
-      
       span2.appendChild(document.createTextNode(getStrSize(cloneID)));
       
       var span3=document.createElement('span')
