@@ -325,7 +325,6 @@ function sizeSplit(posV) {
     .domain([1,(1/min_size)])
     .range([(h-30),30]);
     
-  
     return function(d) {
       var r=radius(d.id)/resizeCoef;
       if (d.r1!=0){

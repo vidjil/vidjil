@@ -20,6 +20,11 @@
 	<script type="text/javascript" src='js/model.js'></script>
 	<script type="text/javascript" src='js/vidjil-style.js'></script>
 	
+	<!--
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+	-->
+	
   </head>
 
   <body onload="initCoef()">
@@ -251,10 +256,15 @@
     <!--
     <div id="dateSelector">
       <h2>select date (<span id="dateSelected"></span>)</h2>
-    hello
+      
+      <div id="datepicker"></div>
+ 
+      <script>
+      $( "#datepicker" ).datepicker({ changeYear: true });
+      </script>
     
-    	<button onclick="saveDate();">save</button> 
-	<button onclick="cancelChangeDate();">cancel</button> 
+      <button onclick="saveDate();">save</button> 
+      <button onclick="cancelChangeDate();">cancel</button> 
     </div>
     -->
     

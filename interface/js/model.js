@@ -1051,11 +1051,13 @@ function initVJgrid(germlineV, germlineJ){
   function saveDate(){
     var myDate=new Date();
     myDate.setFullYear(2010,0,14);
+    
+    
     data_date[document.getElementById("dateSelected").innerHTML].date=myDate;
     updateGraph();
     document.getElementById("dateSelector").style.display="none";
   }
   
-  function cancelSaveDate(){
+  function cancelChangeDate(){
     document.getElementById("dateSelector").style.display="none";
   }
