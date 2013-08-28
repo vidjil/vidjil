@@ -202,6 +202,7 @@ colorStyle=solarizeD;
     document.getElementById('graph_back').style.fill=colorStyle.c03;
     document.getElementById('visu_back').style.fill=colorStyle.c02;
     document.getElementById('file_menu').style.background=colorStyle.c02;
+    document.getElementById('align').style.background=colorStyle.c02;
     document.getElementById('menu').style.background=colorStyle.c02;
     document.getElementById('listClones').style.background=colorStyle.c02;
     document.getElementById('listSelect').style.background=colorStyle.c02;

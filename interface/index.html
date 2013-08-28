@@ -161,10 +161,13 @@
 	  <div id="listFav"></div> 
 	  <div id="listClones"></div>
 	
-	<div class="separator">selection 
-	<span class="button" onclick="mergeSelection()"> merge selection</span>
+	<div class="separator">
+	<span class="button" onclick="mergeSelection()">merge</span>
+	<span class="button" onclick="displayAlign()">align</span>
+	<span class="button" onclick="hideAlign()">hide</span>
+	
 	</div>
-	  <div id="listSelect" onmouseover="displayAlign()"></div>
+	  <div id="listSelect"></div>
 
       </div>
 	
@@ -173,7 +176,7 @@
       
       <div id="visu-container">
 	<!-- VISU -->
-	<span id="visu2" onmouseover="hideAlign()">
+	<span id="visu2">
 	  <script type="text/javascript" src="js/graph.js"> </script>
 	  
 	  <div id="switch"> 
@@ -198,7 +201,7 @@
 	  
 	</span>
 	
-	<span id="visu" onclick="" onmouseover="hideAlign()">
+	<span id="visu" onclick="">
 	  <script type="text/javascript" src="js/visu.js"> </script>
 	</span>
       </div>
@@ -213,6 +216,7 @@
 
       <div id="align" style="display:none">
 	<ul id="listSeq"></ul>
+	
       </div>
     </div>
 	

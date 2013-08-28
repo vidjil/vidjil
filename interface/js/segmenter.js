@@ -19,14 +19,14 @@
  
   /*affiche le segmenteur/comparateur*/
  function displayAlign(){
-    $('#align').animate({ height: "show", display: "show"}, 200 ); 
+    $('#align').animate({ width: "show", display: "show"}, 200 ); 
   }
   
   
   /*masque le segmenteur/comparateur ( */
   function hideAlign(){
     $('#align').stop();
-    $('#align').animate({ height: "hide", display: "none"}, 200 ); 
+    $('#align').animate({ width: "hide", display: "none"}, 200 ); 
     hideSelector();
   }
 
