@@ -720,10 +720,6 @@ function initVJgrid(germlineV, germlineJ){
   function selectTag(tag){
     $('#tagSelector').hide("slow");
     table[tagID].tag=tag;
-    document.getElementById('color'+tagID).setAttribute("fill", tagColor[table[tagID].tag])
-    if(document.getElementById('select'+tagID) ){
-      document.getElementById('select'+tagID).style.color=tagColor[table[tagID].tag];
-    }
     if (tag==8) { 
       delete(table[tagID].tag)
     }

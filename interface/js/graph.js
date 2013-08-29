@@ -257,7 +257,7 @@ function constructPath(cloneID){
 }
 
 function g_class(cloneID){
-  if (useCustomColor && typeof table[cloneID].tag != "undefined"){
+  if (colorMethod=="Tag" && typeof table[cloneID].tag != "undefined"){
     return "graphLine2";
   }else{ return "graphLine";}
 }

@@ -87,7 +87,7 @@
       var path=document.createElementNS('http://www.w3.org/2000/svg','path')
       path.setAttribute('d', "M 0,6.1176482 5.5244193,5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z");
       path.setAttribute('id','color'+cloneID); 
-      if (table[cloneID].tag) path.setAttribute("fill", tagColor[table[cloneID].tag]);
+      if (typeof table[cloneID].tag != 'undefined') path.setAttribute("fill", tagColor[table[cloneID].tag]);
       else path.setAttribute("fill", colorStyle.c01);
 	
       svg.appendChild(path);
