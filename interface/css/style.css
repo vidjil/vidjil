@@ -242,6 +242,14 @@ circle:hover {
   display: inline-block;
 }
 
+.starBox{
+  float: right;
+  margin-right:2px;
+  height: 16px;
+  width: 16px;
+  display: inline-block;
+}
+
 .clusterBox{
   float: left;
   margin-right:2px;

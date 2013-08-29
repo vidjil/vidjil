@@ -155,7 +155,7 @@ colorStyle=solarizeD;
       document.getElementById("circle"+cloneID).style.stroke=colorStyle.c05;
       document.getElementById("line"+cloneID).style.stroke=colorStyle.c05;
     }
-    if (table[cloneID].tag) document.getElementById("color"+cloneID).style.backgroundColor=tagColor[table[cloneID].tag];
+    if (table[cloneID].tag) document.getElementById("color"+cloneID).setAttribute("fill", tagColor[table[cloneID].tag]);
   }
 
   /*ressort une couleur format RGB*/

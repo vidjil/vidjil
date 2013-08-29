@@ -273,9 +273,6 @@ function loadPref(){
 	table[mapID[pref.custom[i].junction]].c_name=pref.custom[i].name;
       }
       
-      if (typeof( pref.custom[i].fav ) != "undefined" ) {
-	table[mapID[pref.custom[i].junction]].favorite=true;
-      }
     }
   }
       
@@ -342,8 +339,7 @@ function loadPref(){
     for(var i=0 ;i<totalClones; i++){
       
       if ( typeof table[i].tag != "undefined" || 
-      typeof table[i].c_name != "undefined" || 
-      typeof table[i].favorite != "undefined"){
+      typeof table[i].c_name != "undefined" ){
 	
 	var elem = {};
 	elem.junction = junctions[i].junction;
@@ -351,8 +347,6 @@ function loadPref(){
 	  elem.tag = table[i].tag;
 	if ( typeof table[i].c_name != "undefined" ) 
 	  elem.name = table[i].c_name;
-	if ( table[i].favorite)
-	  elem.fav = true;
 	
 	filePref.custom.push(elem);
       }
@@ -402,7 +396,6 @@ function initCoef(){
 
   resizeCoef = Math.sqrt(resizeW*resizeH);
   
-  $('#listFav').height((($('#left').height()-305))+"px");
   $('#listClones').height((($('#left').height()-305))+"px");
   
   //recadrage des legendes si la methode de répartition utilisé a ce moment la en utilise
@@ -727,7 +720,7 @@ function initVJgrid(germlineV, germlineJ){
   function selectTag(tag){
     $('#tagSelector').hide("slow");
     table[tagID].tag=tag;
-    document.getElementById('color'+tagID).style.background=tagColor[table[tagID].tag];
+    document.getElementById('color'+tagID).setAttribute("fill", tagColor[table[tagID].tag])
     if(document.getElementById('select'+tagID) ){
       document.getElementById('select'+tagID).style.color=tagColor[table[tagID].tag];
     }
@@ -857,25 +850,6 @@ function initVJgrid(germlineV, germlineJ){
       span0.ondblclick = function(){ editName(cloneID, this); }
       span0.appendChild(document.createTextNode(getname(cloneID)));
       
-      var span1 = document.createElement('span');
-      span1.className = "colorBox";
-      span1.id="colorselect"+cloneID;
-      span1.onclick=function(){ changeColor(this.parentNode.id2); }
-      
-      var fav=document.createElement('img')
-      fav.className = "favBox";
-      fav.id="selectfav"+cloneID;
-      if (table[cloneID].favorite){
-	fav.src="images/icon_fav_on.png";
-	fav.onclick=function(){ 
-	  addToList(cloneID); 
-	}
-      }else{
-	fav.src="images/icon_fav_off.png";
-	fav.onclick=function(){ 
-	  addToFavorites(cloneID);
-	}
-      }
       
       var span2=document.createElement('span')
       span2.className = "sizeBox";
@@ -890,8 +864,6 @@ function initVJgrid(germlineV, germlineJ){
       
       div.appendChild(img);
       div.appendChild(span0);
-      div.appendChild(span1);
-      div.appendChild(fav);
       div.appendChild(span2);
       document.getElementById("listSelect").appendChild(div);
       

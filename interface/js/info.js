@@ -63,8 +63,6 @@
       div_cluster(div, i, display);
       document.getElementById(i).appendChild(div);
       
-      if (table[i].favorite==true) {document.getElementById("fav"+i).src="images/icon_fav_on.png";}
-      else{document.getElementById("fav"+i).src="images/icon_fav_off.png";}
     }  
   }
   
@@ -82,28 +80,17 @@
       span0.ondblclick = function(){ editName(this.parentNode.parentNode.id, this); }
       span0.onclick=function(){ selectClone(this.parentNode.parentNode.id); }
       span0.appendChild(document.createTextNode(getname(cloneID)));
-
-      var span1 = document.createElement('span');
-      span1.className = "colorBox";
-      span1.id="color"+cloneID;
-      if (table[cloneID].tag) span1.style.backgroundColor=tagColor[table[cloneID].tag];
-      span1.onclick=function(){ changeColor(this.parentNode.parentNode.id); }
       
-      var fav=document.createElement('img')
-      fav.className = "favBox";
-      fav.id="fav"+cloneID;
-
-      if (table[cloneID].favorite==true){
-	fav.src="images/icon_fav_on.png";
-	fav.onclick=function(){ 
-	  addToList(this.parentNode.parentNode.id); 
-	}
-      }else{
-	fav.src="images/icon_fav_off.png";
-	fav.onclick=function(){ 
-	  addToFavorites(this.parentNode.parentNode.id);
-	}
-      }
+      var svg=document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+      svg.setAttribute('class','starBox'); 
+      svg.onclick=function(){ changeColor(this.parentNode.parentNode.id); }
+      var path=document.createElementNS('http://www.w3.org/2000/svg','path')
+      path.setAttribute('d', "M 0,6.1176482 5.5244193,5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z");
+      path.setAttribute('id','color'+cloneID); 
+      if (table[cloneID].tag) path.setAttribute("fill", tagColor[table[cloneID].tag]);
+      else path.setAttribute("fill", colorStyle.c01);
+	
+      svg.appendChild(path);
       
       var span2=document.createElement('span')
       span2.className = "sizeBox";
@@ -123,9 +110,9 @@
       
       div_elem.appendChild(span3);
       div_elem.appendChild(span0);
-      div_elem.appendChild(span1);
-      div_elem.appendChild(fav);
+      div_elem.appendChild(svg);
       div_elem.appendChild(span2);
+
     
   }
   
@@ -198,51 +185,7 @@
 	div_cluster.appendChild(div_clone);
       }
   }
-  
-  
-  function addToFavorites(cloneID){
-    table[cloneID].favorite=true;
-    
-    document.getElementById("fav"+cloneID).src="images/icon_fav_on.png";
-    document.getElementById("fav"+cloneID).onclick=function(){  
-      addToList(this.parentNode.parentNode.id);
-    };
-    
-    if ( document.getElementById("selectfav"+cloneID) ){
-      document.getElementById("selectfav"+cloneID).src="images/icon_fav_on.png";
-      document.getElementById("selectfav"+cloneID).onclick=function(){  
-	addToList(this.parentNode.parentNode.id2);
-      };
-    }
-  }
-
-  
-  function addToList(cloneID){
-    table[cloneID].favorite=false;
-    
-    document.getElementById("fav"+cloneID).src="images/icon_fav_off.png";
-    document.getElementById("fav"+cloneID).onclick= function(){
-      addToFavorites(this.parentNode.parentNode.id);
-    };
-    
-    if ( document.getElementById("selectfav"+cloneID) ){
-      document.getElementById("selectfav"+cloneID).src="images/icon_fav_off.png";
-      document.getElementById("selectfav"+cloneID).onclick= function(){
-      addToFavorites(this.parentNode.parentNode.id2);
-      };
-    }
-  }
-  
-  function displayFavoris(){
-    for (var i = 0; i < totalClones; i++){
-      if (table[i].cluster.length!=0 && table[i].favorite){
-	table[i].active=true;
-      }else{
-	table[i].active=false;
-      }      
-    }   
-    updateStyle();
-  }
+ 
 
   function showSelector(elem){
     $('#'+elem).animate({ height: "show", display: "show"}, 100 ); 
