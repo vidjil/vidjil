@@ -31,7 +31,6 @@
  * colorJ(cloneID)
  * changeColor(cloneID)
  * changeColorMethod(colorM)
- * toggleCustomColor()
  * stroke(cloneID);
  * 
  * changeSplitMethod(splitM)
@@ -53,10 +52,9 @@ var junctions;         //liste des jonctions du fichier json
 var pref ={ custom :[], cluster :[], date :[]} ;              //fichier des preferences
  
 /* initialisation fixé par defaut*/
-var colorMethod=" "           //methode de colorisation ( V par defaut)
+var colorMethod="Tag"           //methode de colorisation ( Tag par defaut)
 var splitMethod="begin";          //par defaut pas de method de split
 var t = 0;                    //point de suivi courant ( par defaut t=0 )
-var useCustomColor=true;      //utilisation des couleurs personalisées
 limitClones=1000;
 var top_limit=50;
 var normalization=false;
@@ -659,11 +657,8 @@ function initVJgrid(germlineV, germlineJ){
    * verifie les variables de colorisation selectionnées pour déterminer la couleur a utiliser*/
   function color(cloneID) {
     if (typeof junctions != "undefined") {
-      
-      if( useCustomColor==true){
-	if (typeof table[cloneID].tag != "undefined"){
-	  return tagColor[table[cloneID].tag]
-	}
+      if (colorMethod=='Tag'){
+	return colorTag(cloneID)
       }
       if (colorMethod=='V'){
 	return colorV(cloneID)
@@ -678,6 +673,13 @@ function initVJgrid(germlineV, germlineJ){
     }
   }
   
+  /*retourne la couleur du tag correspondant au clone passé en parametre*/
+  function colorTag(cloneID){
+	if (typeof table[cloneID].tag != "undefined"){
+	  return tagColor[table[cloneID].tag]
+	}
+	return colorStyle.c01;
+  }
   
   /*retourne la couleur correspondant au gene V du clone passé en parametre*/
   function colorV(cloneID){
@@ -686,10 +688,8 @@ function initVJgrid(germlineV, germlineJ){
 	    return colorVJ[junctions[cloneID].seg.V[0]];
 	  }
 	}	
-	return "rgb(20,226,89)"
+	return colorStyle.c01;
   }
-  
-  
   
   /*retourne la couleur correspondant au gene J du clone passé en parametre*/
   function colorJ(cloneID){
@@ -698,7 +698,7 @@ function initVJgrid(germlineV, germlineJ){
 	    return colorVJ[junctions[cloneID].seg.J[0]];
 	  }
 	}	
-	return "rgb(20,226,89)"
+	return colorStyle.c01;
   }
   
   function colorNsize(cloneID){
@@ -739,23 +739,6 @@ function initVJgrid(germlineV, germlineJ){
     $("#log").scrollTop(100000000000000);
     updateGraph();
     updateLegend()
-    updateStyle();
-  }
-  
-  
-  /*active/désactive les couleurs personalisées*/
-  function toggleCustomColor(){
-    if (useCustomColor==true) {
-      useCustomColor=false;
-      document.getElementById("log").innerHTML+="<br>stop customColor";
-      document.getElementById("useCustom").innerHTML="custom color on";
-      $('#log').scrollTop(100000000000000);
-    }else{
-      useCustomColor=true;
-      document.getElementById("log").innerHTML+="<br>active customColor";
-      document.getElementById("useCustom").innerHTML="custom color off";
-      $('#log').scrollTop(100000000000000);
-    }
     updateStyle();
   }
   
