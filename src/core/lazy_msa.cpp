@@ -34,9 +34,14 @@ void LazyMsa::add(string sequence){
   dp.compute();
   dp.backtrack();
 
-  gapRef[sizeUsed]=dp.gap1;
-  gapSeq[sizeUsed]=dp.gap2;
-  link[sizeUsed]=dp.linkgap;
+  gapRef[sizeUsed]= new int[ref.size()+1];
+  std::copy(dp.gap1, dp.gap1+(ref.size()+1), gapRef[sizeUsed]);
+  
+  gapSeq[sizeUsed]=new int[sequence.size()+1];
+  std::copy(dp.gap2, dp.gap2+(sequence.size()+1), gapSeq[sizeUsed]);
+  
+  link[sizeUsed]= new int[ref.size()+1];
+  std::copy(dp.linkgap, dp.linkgap+(ref.size()+1), link[sizeUsed]);
 }
 
 void LazyMsa::alignOne(string *align, int one){
