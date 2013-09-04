@@ -242,7 +242,7 @@ circle:hover {
   display: inline-block;
 }
 
-.favBox{
+.starBox{
   float: right;
   margin-right:2px;
   height: 16px;

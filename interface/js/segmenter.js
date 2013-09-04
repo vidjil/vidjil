@@ -35,8 +35,6 @@
     $('.selector').animate({ height: "hide", display: "none"}, 100 ); 
   }
   
-  /*ajoute le représentant d'un clone dans le comparateur
-   colorise selon les genes v-j TODO : gerer les séquences reverse*/
   function addToSegmenter(cloneID){
     var divParent = document.getElementById("listSeq");
     var li = document.createElement('li');
@@ -82,7 +80,82 @@
     */
   }
   
-  /*affiche/masque la fenetre de log TODO: utilisé l'interface de log javascript*/
   function showlog(){
     $('#log').animate({height: "toggle"}, 200 ); 
   }
+
+  function align(){
+    var request;
+    
+    var li =document.getElementById("listSeq").getElementsByTagName("li")
+    
+    if ( typeof(jsonData.junctions[li[0].id.substr(3)].seg) != 'undefined')
+      request = jsonData.junctions[li[0].id.substr(3)].seg.sequence;
+    else
+      request = jsonData.junctions[li[0].id.substr(3)].junction;
+    
+    
+    for (var i = 1; i<li.length; i++){
+      if ( typeof(jsonData.junctions[li[i].id.substr(3)].seg) != 'undefined')
+	request += "," + jsonData.junctions[li[i].id.substr(3)].seg.sequence;
+      else
+	request += "," + jsonData.junctions[li[i].id.substr(3)].junction;
+    }
+    
+        $.ajax({
+            type: "Get",
+	    data : request,
+            url: "http://127.0.0.1/cgi-bin/test_lazy_msa.cgi",
+            success: function(result) {
+                displayAjaxResult(result);
+	    }
+        });
+    
+  }
+  
+  function testAjax(){
+        $.ajax({
+            type: "Get",
+	    data : "ATATGC,ATATGCC,TATGCCCC,TGCCAA",
+            url: "http://127.0.0.1/cgi-bin/test_lazy_msa.cgi",
+            success: function(result) {
+                displayAjaxResult(result);
+	    }
+        });
+  }
+  
+  function displayAjaxResult(file){
+    
+    displayAlign();
+    
+    var json=JSON.parse(file)
+    
+    document.getElementById("listSeq").innerHTML="";
+    
+    for (var i = 0 ; i< json.seq.length; i++ ){
+      
+      var divParent = document.getElementById("listSeq");
+      var li = document.createElement('li');
+      li.className="sequence-line";
+      
+      var span = document.createElement('span');
+      span.className="V";
+      span.innerHTML=json.seq[i];
+      li.appendChild(span);
+	
+      divParent.appendChild(li);
+
+    }
+  }
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
+  
