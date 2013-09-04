@@ -177,7 +177,8 @@ circle:hover {
   letter-spacing: 0.1em;
   width: 100%;
   font-weight: bold;
-  height:26px
+  height:26px;
+  white-space: nowrap;
 }
 
 .list{

@@ -22,7 +22,6 @@
     $('#align').animate({ width: "show", display: "show"}, 200 ); 
   }
   
-  
   /*masque le segmenteur/comparateur ( */
   function hideAlign(){
     $('#align').stop();
@@ -49,7 +48,6 @@
     spanV.innerHTML=junctions[cloneID].seg.sequence.substr(0, junctions[cloneID].seg.l1+1);
     li.appendChild(spanV);
       
-    
     if ( (junctions[cloneID].seg.l1+1 -junctions[cloneID].seg.r1)!=0){
       var spanN = document.createElement('span');
       spanN.className="N";
@@ -70,7 +68,6 @@
     
     divParent.appendChild(li);
       
-      
     /*
       var li2 = document.createElement('li');
       li2.id="seq"+cloneID;
@@ -89,34 +86,19 @@
     
     var li =document.getElementById("listSeq").getElementsByTagName("li")
     
-    if ( typeof(jsonData.junctions[li[0].id.substr(3)].seg) != 'undefined')
-      request = jsonData.junctions[li[0].id.substr(3)].seg.sequence;
-    else
-      request = jsonData.junctions[li[0].id.substr(3)].junction;
+    request = li.length+"";
     
-    
-    for (var i = 1; i<li.length; i++){
-      if ( typeof(jsonData.junctions[li[i].id.substr(3)].seg) != 'undefined')
-	request += "," + jsonData.junctions[li[i].id.substr(3)].seg.sequence;
+    for (var i = 0; i<li.length; i++){
+      var id =li[i].id.substr(3);
+      if ( typeof(jsonData.junctions[id].seg) != 'undefined')
+	request += "," +id+";"+ jsonData.junctions[id].seg.sequence;
       else
-	request += "," + jsonData.junctions[li[i].id.substr(3)].junction;
+	request += "," +id+";"+ jsonData.junctions[id].junction;
     }
     
         $.ajax({
             type: "Get",
 	    data : request,
-            url: "http://127.0.0.1/cgi-bin/test_lazy_msa.cgi",
-            success: function(result) {
-                displayAjaxResult(result);
-	    }
-        });
-    
-  }
-  
-  function testAjax(){
-        $.ajax({
-            type: "Get",
-	    data : "ATATGC,ATATGCC,TATGCCCC,TGCCAA",
             url: "http://127.0.0.1/cgi-bin/test_lazy_msa.cgi",
             success: function(result) {
                 displayAjaxResult(result);
@@ -132,28 +114,22 @@
     
     document.getElementById("listSeq").innerHTML="";
     
-    for (var i = 0 ; i< json.seq.length; i++ ){
+    for (var i = 0 ; i< json.seq.length-1; i++ ){
       
       var divParent = document.getElementById("listSeq");
       var li = document.createElement('li');
       li.className="sequence-line";
+      li.id="seq"+json.seq[i][0];
       
       var span = document.createElement('span');
       span.className="V";
-      span.innerHTML=json.seq[i];
+      span.innerHTML=json.seq[i][1];
       li.appendChild(span);
 	
       divParent.appendChild(li);
 
     }
   }
-  
-  
-  
-  
-  
-  
-  
   
   
   

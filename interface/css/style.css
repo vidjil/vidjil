@@ -75,7 +75,7 @@ list-style-type: none;
 
 #bot-container {
   width : 100%;
-  margin-left:400px;
+  margin-left:390px;
   position : fixed;
   bottom :0px;
   padding : 5px;
@@ -86,7 +86,7 @@ list-style-type: none;
   height: 160px;
   overflow-x: auto;
   overflow-y:hidden;
-  margin-right: 400px;
+  margin-right: 390px;
 }
 
 .button {
