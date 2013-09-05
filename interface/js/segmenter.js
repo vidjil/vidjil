@@ -115,22 +115,61 @@
     document.getElementById("listSeq").innerHTML="";
     
     for (var i = 0 ; i< json.seq.length-1; i++ ){
-      
-      var divParent = document.getElementById("listSeq");
-      var li = document.createElement('li');
-      li.className="sequence-line";
-      li.id="seq"+json.seq[i][0];
-      
-      var span = document.createElement('span');
-      span.className="V";
-      span.innerHTML=json.seq[i][1];
-      li.appendChild(span);
-	
-      divParent.appendChild(li);
-
+      colorSeq(json.seq[i][0], json.seq[i][1]);
     }
   }
   
+  function colorSeq(cloneID, seq){
+    
+    var divParent = document.getElementById("listSeq");
+    var li = document.createElement('li');
+    li.id="seq"+cloneID;
+    li.className="sequence-line";
+    
+    if(typeof junctions[cloneID].seg !='undefined' && junctions[cloneID].seg!=0){
+      
+      var newl1=getNewPosition(seq,junctions[cloneID].seg.l1)
+      var newr1=getNewPosition(seq,junctions[cloneID].seg.r1)
+    
+    var spanV = document.createElement('span');
+    spanV.className="V";
+    spanV.style.color=colorV(cloneID);
+    
+    spanV.innerHTML=seq.substr(0, newl1+1);
+    li.appendChild(spanV);
+      
+    if ( (newl1 - newr1)!=0){
+      var spanN = document.createElement('span');
+      spanN.className="N";
+      spanN.innerHTML=seq.substring(newl1+1, newr1);
+      li.appendChild(spanN);
+    }
+    
+    var spanJ = document.createElement('span');
+    spanJ.className="J";
+    spanJ.style.color=colorJ(cloneID);
+    spanJ.innerHTML=seq.substr(newr1);
+    li.appendChild(spanJ);
+    }else{
+      var spanJunc=document.createElement('span');
+      spanJunc.innerHTML=seq;
+      li.appendChild(spanJunc);
+    }
+    
+    divParent.appendChild(li);
+  }
+  
+  function getNewPosition(seq, oldPos){
+    
+    var k=0;
+    
+    for (var i = 0 ; i < seq.length ; i++){
+
+      if (seq[i]!='-') k++;
+      if (k==oldPos) return i;
+    }
+    
+  }
   
   
   
