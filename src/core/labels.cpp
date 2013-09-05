@@ -137,7 +137,21 @@ list< pair <float, int> > compute_normalization_list(map<string, list<Sequence> 
   return result;
 }
 
+
+float compute_normalization_one(list< pair <float, int> > norm_list, int nb_reads)  
+// Normalization with the largest standard
+{
+  if (norm_list.empty()) {
+    return 1.;
+  }
+
+  float highest_norm = norm_list.begin()->first; 
+
+  return highest_norm;
+}
+
 float compute_normalization(list< pair <float, int> > norm_list, int nb_reads)
+// Full normalization
 {
   list<pair <float, int> >::const_iterator it;
   float higher_norm;
