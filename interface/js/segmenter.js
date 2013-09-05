@@ -101,7 +101,7 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
         $.ajax({
             type: "Get",
 	    data : request,
-            url: CGI_ADRESS+"test_lazy_msa.cgi",
+            url: CGI_ADRESS+"align.cgi",
             success: function(result) {
                 displayAjaxResult(result);
 	    }
