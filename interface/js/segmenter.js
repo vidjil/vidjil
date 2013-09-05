@@ -6,7 +6,6 @@
  * segmenter.js
  * 
  * segmenter tools
- * TODO all
  * 
  * content:
  * 
@@ -16,6 +15,9 @@
  * showlog()
  * 
  */
+
+var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
+
  
   /*affiche le segmenteur/comparateur*/
  function displayAlign(){
@@ -99,7 +101,7 @@
         $.ajax({
             type: "Get",
 	    data : request,
-            url: "http://127.0.0.1/cgi-bin/test_lazy_msa.cgi",
+            url: CGI_ADRESS+"test_lazy_msa.cgi",
             success: function(result) {
                 displayAjaxResult(result);
 	    }
@@ -164,7 +166,6 @@
     var k=0;
     
     for (var i = 0 ; i < seq.length ; i++){
-
       if (seq[i]!='-') k++;
       if (k==oldPos) return i;
     }
