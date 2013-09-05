@@ -498,6 +498,8 @@ function initVJgrid(germlineV, germlineJ){
   positionJ2={};	
   grid_vj1=[];            
   grid_vj2=[];           
+  grid_size=[];
+  grid_nsize=[];
   vmap=[];
   jmap=[];
 
