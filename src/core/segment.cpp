@@ -707,13 +707,7 @@ string FineSegmenter::toJson(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
   ostringstream seg_str;
   
   seg_str << " \"seg\" : {";
-  if (reversed){
-    string str;
-    str =string (sequence.rbegin(), sequence.rend());
-    seg_str << " \"sequence\" : \""<< str << "\","<<endl;
-  }else{
-    seg_str << " \"sequence\" : \""<< sequence << "\","<<endl;
-  }
+  seg_str << " \"sequence\" : \""<< revcomp(sequence, reversed) << "\","<<endl;
   seg_str << " \"name\" : \""<< code_short << "\" ,"<<endl;
   seg_str << " \"r1\" : "<< right << ","<<endl;
   seg_str << " \"r2\" : "<< right2 << ","<<endl;
