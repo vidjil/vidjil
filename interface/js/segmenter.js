@@ -21,14 +21,14 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
  
   /*affiche le segmenteur/comparateur*/
  function displayAlign(){
-    $('#align').animate({ width: "show", display: "show"}, 200 ); 
+    $('#bot-container').animate({ width: "100%"}, 200 ); 
   }
   
   /*masque le segmenteur/comparateur ( */
   function hideAlign(){
-    $('#align').stop();
-    $('#align').animate({ width: "hide", display: "none"}, 200 ); 
     hideSelector();
+    $('#bot-container').stop();
+    $('#bot-container').animate({ width: "400px"}, 200 ); 
   }
 
   function hideSelector(){
@@ -41,6 +41,17 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     var li = document.createElement('li');
     li.id="seq"+cloneID;
     li.className="sequence-line";
+    li.onmouseover = function(){ focusIn(this.id); }
+    li.onmouseout= function(){ focusOut(this.id); }
+    
+    var spanF = document.createElement('span');
+    spanF.id = "f"+cloneID;
+    div_elem(spanF, cloneID);
+    spanF.className="seq-fixed";
+    
+    var spanM = document.createElement('span');
+    spanM.id = "m"+cloneID;
+    spanM.className="seq-mobil";
     
     if(typeof junctions[cloneID].seg !='undefined' && junctions[cloneID].seg!=0){
     
@@ -48,58 +59,56 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     spanV.className="V";
     spanV.style.color=colorV(cloneID);
     spanV.innerHTML=junctions[cloneID].seg.sequence.substr(0, junctions[cloneID].seg.l1+1);
-    li.appendChild(spanV);
+    spanM.appendChild(spanV);
       
     if ( (junctions[cloneID].seg.l1+1 -junctions[cloneID].seg.r1)!=0){
       var spanN = document.createElement('span');
       spanN.className="N";
       spanN.innerHTML=junctions[cloneID].seg.sequence.substring(junctions[cloneID].seg.l1+1, junctions[cloneID].seg.r1);
-      li.appendChild(spanN);
+      spanM.appendChild(spanN);
     }
     
     var spanJ = document.createElement('span');
     spanJ.className="J";
     spanJ.style.color=colorJ(cloneID);
     spanJ.innerHTML=junctions[cloneID].seg.sequence.substr(junctions[cloneID].seg.r1);
-    li.appendChild(spanJ);
+    spanM.appendChild(spanJ);
     }else{
       var spanJunc=document.createElement('span');
       spanJunc.innerHTML=junctions[cloneID].junction;
-      li.appendChild(spanJunc);
+      spanM.appendChild(spanJunc);
     }
     
+    li.appendChild(spanF);
+    li.appendChild(spanM);
     divParent.appendChild(li);
       
-    /*
-      var li2 = document.createElement('li');
-      li2.id="seq"+cloneID;
-      li2.className="sequence-line";
-      li2.innerHTML=jsonData[cloneID].seg.sequence;
-      divParent.appendChild(li2);
-    */
   }
   
   function showlog(){
     $('#log').animate({height: "toggle"}, 200 ); 
   }
-
+  
+  //TODO repasser en local
+  var memTab=[];
   function align(){
-    var request;
-    
-    var li =document.getElementById("listSeq").getElementsByTagName("li")
-    
-    request = li.length+"";
+   
+    var li =document.getElementById("listSeq").getElementsByTagName("li");
+    var request = "";
+    memTab=[];
     
     for (var i = 0; i<li.length; i++){
       var id =li[i].id.substr(3);
-      if ( typeof(jsonData.junctions[id].seg) != 'undefined')
-	request += "," +id+";"+ jsonData.junctions[id].seg.sequence;
+      memTab[i]=id;
+      if ( typeof(jsonData.junctions[id].seg) != 'undefined' && jsonData.junctions[id].seg!=0)
+	request += ">" +id+"\n"+ jsonData.junctions[id].seg.sequence+"\n";
       else
-	request += "," +id+";"+ jsonData.junctions[id].junction;
+	request += ">" +id+"\n"+ jsonData.junctions[id].junction+"\n";
     }
     
+    
         $.ajax({
-            type: "Get",
+            type: "POST",
 	    data : request,
             url: CGI_ADRESS+"align.cgi",
             success: function(result) {
@@ -111,22 +120,22 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
   function displayAjaxResult(file){
     
     displayAlign();
-    
     var json=JSON.parse(file)
     
-    document.getElementById("listSeq").innerHTML="";
-    
-    for (var i = 0 ; i< json.seq.length-1; i++ ){
-      colorSeq(json.seq[i][0], json.seq[i][1]);
+    for (var i = 0 ; i< json.seq.length; i++ ){
+      colorSeq(memTab[i], json.seq[i]);
     }
+    
+    var mid=$("#m"+memTab[0]+" span:first-child").width();
+
+     $("#bot-container").animate({scrollLeft: mid}, 500);
+      
   }
   
   function colorSeq(cloneID, seq){
     
-    var divParent = document.getElementById("listSeq");
-    var li = document.createElement('li');
-    li.id="seq"+cloneID;
-    li.className="sequence-line";
+    var spanM = document.getElementById("m"+cloneID);
+    spanM.innerHTML="";
     
     if(typeof junctions[cloneID].seg !='undefined' && junctions[cloneID].seg!=0){
       
@@ -138,27 +147,26 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     spanV.style.color=colorV(cloneID);
     
     spanV.innerHTML=seq.substr(0, newl1+1);
-    li.appendChild(spanV);
+    spanM.appendChild(spanV);
       
     if ( (newl1 - newr1)!=0){
       var spanN = document.createElement('span');
       spanN.className="N";
       spanN.innerHTML=seq.substring(newl1+1, newr1);
-      li.appendChild(spanN);
+      spanM.appendChild(spanN);
     }
     
     var spanJ = document.createElement('span');
     spanJ.className="J";
     spanJ.style.color=colorJ(cloneID);
     spanJ.innerHTML=seq.substr(newr1);
-    li.appendChild(spanJ);
+    spanM.appendChild(spanJ);
     }else{
       var spanJunc=document.createElement('span');
       spanJunc.innerHTML=seq;
-      li.appendChild(spanJunc);
+      spanM.appendChild(spanJunc);
     }
     
-    divParent.appendChild(li);
   }
   
   function getNewPosition(seq, oldPos){
@@ -172,6 +180,21 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     
   }
   
-  
+  function sendToIMGT(){
+    
+    var li =document.getElementById("listSeq").getElementsByTagName("li")
+    var request = "";
+
+    for (var i = 0; i<li.length; i++){
+      var id =li[i].id.substr(3);
+      if ( typeof(jsonData.junctions[id].seg) != 'undefined' && jsonData.junctions[id].seg!=0)
+	request += ">" +getname(id)+"\n"+ jsonData.junctions[id].seg.sequence+"\n";
+      else
+	request += ">" +getname(id)+"\n"+ jsonData.junctions[id].junction+"\n";
+    }
+     document.getElementById("log").innerHTML+=request;
+    imgtPost(request);
+    
+  }
   
   

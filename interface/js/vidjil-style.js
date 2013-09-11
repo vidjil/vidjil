@@ -125,12 +125,18 @@ colorStyle=solarizeD;
 /*met a jour la couleur de l'element cloneID*/
   function updateColorElem(cloneID){
     if (table[cloneID].focus){
+      if (document.getElementById("seq"+cloneID)){
+	document.getElementById("f"+cloneID).style.background=colorStyle.c07;
+      }
       document.getElementById(cloneID).style.background=colorStyle.c07;
       document.getElementById("circle"+cloneID).style.stroke=colorStyle.c05;
       document.getElementById("circle"+cloneID).style.fill=color(cloneID);
       document.getElementById("line"+cloneID).style.stroke=color(cloneID);
       document.getElementById("line"+cloneID).firstChild.style.strokeWidth="6px";
     }else{
+      if (document.getElementById("seq"+cloneID)){
+	document.getElementById("f"+cloneID).style.background=colorStyle.c02;
+      }
       document.getElementById("circle"+cloneID).style.stroke="";
       document.getElementById(cloneID).style.background=colorStyle.c02;
       if (table[cloneID].active){
@@ -203,7 +209,7 @@ colorStyle=solarizeD;
     document.getElementById('graph_back').style.fill=colorStyle.c03;
     document.getElementById('visu_back').style.fill=colorStyle.c02;
     document.getElementById('file_menu').style.background=colorStyle.c02;
-    document.getElementById('align').style.background=colorStyle.c02;
+    document.getElementById('bot-container').style.background=colorStyle.c02;
     document.getElementById('menu').style.background=colorStyle.c02;
     document.getElementById('listClones').style.background=colorStyle.c02;
     document.getElementById('listSelect').style.background=colorStyle.c02;

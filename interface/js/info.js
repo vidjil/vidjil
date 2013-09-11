@@ -110,9 +110,8 @@
       
       div_elem.appendChild(span3);
       div_elem.appendChild(span0);
-      div_elem.appendChild(svg);
       div_elem.appendChild(span2);
-
+      div_elem.appendChild(svg);
     
   }
   
@@ -143,6 +142,13 @@
       var div3=document.createElement('div');
       div_cluster(div3, cloneID, display);
       div.appendChild(div3);
+      
+      if(table[cloneID].select){
+	spanF = document.getElementById("f"+cloneID);
+	spanF.innerHTML="";
+	div_elem(spanF, cloneID);
+	spanF.className="seq-fixed";
+      }
     
   }
   
