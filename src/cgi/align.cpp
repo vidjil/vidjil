@@ -8,73 +8,83 @@
 #include "../core/fasta.h"
 #include "../core/msa.h"
 #include "../core/lazy_msa.h"
+#define MAXLEN 500
+#define EXTRA 5
+#define MAXINPUT MAXLEN+EXTRA+2
+#define DATAFILE "data.txt"
 
 using namespace std;
 
 
 int main()
 {
-    string temp;
-    temp=getenv("QUERY_STRING");
     
-    size_t pos = 0;
-    size_t pos2 = 0;
-    string tok;
-    string seq;
-    string id;
-    int size;
-    int ite=0;
-    string * tab;
+    char *lenstr;
+    char input[MAXINPUT], data[MAXINPUT];
+    long len;
     
     cout <<"Content-type: text/html"<<endl<<endl;
+    cout<< "{"<<endl;
     
-    //récupération nombre de séquence
-    pos = temp.find(",");
-    tok = temp.substr(0, pos);
-    size = atoi(const_cast<char*>(tok.c_str()));
-    temp.erase(0, pos + 1);
-    tab=new string[size];
-    
-    //récupération séquence principale
-    pos = temp.find(",");
-    tok = temp.substr(0, pos);
-
-    pos2 = tok.find(";");
-    id = tok.substr(0, pos2);
-    seq = tok.substr(pos2+1);
-    tab[ite]=id;
-    ite++;
-
-    LazyMsa lm = LazyMsa(50, seq);
-    temp.erase(0, pos + 1);
-    
-    
-    //récupération des séquences suivantes
-    for (int i=1 ; i<size ; i++){ 
-      pos = temp.find(",");
-      tok = temp.substr(0, pos);
-
-      pos2 = tok.find(";");
-      id = tok.substr(0, pos2);
-      seq = tok.substr(pos2+1);
-      lm.add(seq);
-      tab[ite]=id;
-      ite++;
-
-      LazyMsa lm = LazyMsa(50, seq);
-      temp.erase(0, pos + 1);
+    char * requestMethod = getenv("REQUEST_METHOD");
+    cout<<"\"requestMethod\" : \""<<requestMethod<<"\""<<endl;
+    if(!requestMethod) {
+      cout<<",\"Error\": \"requestMethod\"}"<<endl;
+      return 0;
     }
-
+    if(strcmp(requestMethod, "POST") != 0) {
+      cout<<",\"Error\": \"requestMethod =/= post\"}"<<endl;
+      return 0;
+    }
+    char * contentType = getenv("CONTENT_TYPE");
+    if(!contentType) {
+      cout<<",\"Error\": \"content_type\"}"<<endl;
+      return 0;
+    }
+      cout<<",\"contentType\": \""<<contentType<<"\""<<endl;
+    
+    char temp[1024];
+    FILE *f;
+    f = fopen(DATAFILE, "w");
+    if(f == NULL){
+      cout<<",\"Error\": \"save\"}"<<endl;
+      return 0;
+    }else{
+      while(cin) {
+	cin.getline(temp, 1024);
+	fputs(temp, f);
+	fputs("\n", f);
+      }
+    }
+    
+    fclose(f);
+    
+    const char* fdata_default = "data.txt" ; 
+    DynProg::DynProgMode dpMode = DynProg::Global;
+    Cost dpCost = VDJ;
+    ostringstream ost; 
+    
+    const char* fdata = fdata_default;
+    
+    Fasta fa(fdata, 1, " ", ost);
+    string seq0 = fa.sequence(0);
+    
+      LazyMsa lm = LazyMsa(50, seq0);
+    
+    for (int i=1; i < fa.size(); i++){
+      string seq1 = fa.sequence(i);
+      
+      lm.add(seq1);
+    }
     
     string *result;
     result =new string[lm.sizeUsed+2];
     lm.align(result);
     
-    cout<<endl<<endl<< "{ \"seq\" : ["<<endl;
-    for (int i=0; i<lm.sizeUsed+2; i++){
-      cout<<"[\""<<tab[i]<<"\",\""<<result[i]<<"\"]"<<","<<endl;
+     cout<<",\"seq\" : [\""<<result[0]<<"\""<<endl;
+    for (int i=1; i<lm.sizeUsed+2; i++){
+      cout<<",\""<<result[i]<<"\""<<endl;
     }
-    cout<<"0]}";
-  
-  
+    cout<<"]}";
+      
 }
