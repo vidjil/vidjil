@@ -10,6 +10,7 @@ void testRepresentative() {
   krc.compute(false, 1, 0.5);
   Sequence representative = krc.getRepresentative();
 
+  // Seq3 is the longest it should be taken when performing 0 extra iteration
   TAP_TEST(representative.label.find("seq3") == 0, TEST_KMER_REPRESENTATIVE,
            "If we take the first representative we should have seq3 (" << representative.label << " instead)");
 
