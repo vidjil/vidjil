@@ -159,13 +159,6 @@
 	
 	  <div id="listClones"></div>
 	
-	<div class="separator">
-	<span class="button" onclick="mergeSelection()">merge</span>
-	<span class="button" onclick="displayAlign()">show</span>
-	<span class="button" onclick="hideAlign()">hide</span>
-	<span class="button" onclick="align()">align</span>
-	
-	</div>
 	  <div id="listSelect"></div>
 
       </div>
@@ -209,7 +202,7 @@
     </div>
 	
     <!-- BOT-CONTAINER -->
-	  
+	<!--  
     <div id="bot-container">
       <div id="focus-sequence"> > </div>
 
@@ -217,7 +210,7 @@
 	<ul id="listSeq"></ul>
       </div>
     </div>
-	
+	-->
     
     <div id="log" style="display:none; position: fixed; top: 50px;right: 10px;width: 500px; font-family : monaco,terminal,courier,system; height: 150px;overflow-y: scroll;font-size: 14px;background-color: #333044;opacity: 0.5;padding: 10px;">log </div>
     
@@ -269,6 +262,22 @@
       <button onclick="cancelChangeDate();">cancel</button> 
     </div>
     -->
+    
+    <div id="bot-container">
+    
+      <div class="separator">
+	<span class="button" onclick="mergeSelection()">merge</span>
+	<span class="button" onclick="displayAlign()">show</span>
+	<span class="button" onclick="hideAlign()">hide</span>
+	<span class="button" onclick="align()">align</span>
+	<span class="button" onclick="sendToIMGT()">IMGT</span>
+      </div>
+    
+      <ul id="listSeq">
+      </ul>
+    </div>
+    
+    <div id="frame-container"></div>
     
   </body>
       
