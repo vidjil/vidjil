@@ -301,6 +301,9 @@ function loadPref(){
     var divParent = elem;
     divParent.innerHTML="";
     
+    if (cloneID[0]=='s')
+      cloneID=cloneID.substr(3);
+    
     var input = document.createElement('input');
     input.type="text";
     input.id= "new_name";
@@ -365,7 +368,6 @@ function loadPref(){
 	
     var textToWrite = JSON.stringify(filePref, undefined, 2);
     var textFileAsBlob = new Blob([textToWrite], {type:'json'});
-    var fileName = "pref.json";
 
   saveAs(textFileAsBlob, "analysis.json");
   }
@@ -793,9 +795,11 @@ function initVJgrid(germlineV, germlineJ){
    */
   function focusIn(cloneID){
     
+    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+    
     table[cloneID].focus=true;
     updateStyleElem(cloneID);
-    document.getElementById("focus-sequence").innerHTML=getname(cloneID);
+    //document.getElementById("focus-sequence").innerHTML=getname(cloneID);
     
     var line = document.getElementById("line"+cloneID);
     document.getElementById("polyline_container").appendChild(line);
@@ -806,6 +810,8 @@ function initVJgrid(germlineV, germlineJ){
   /*libere un element du focus / déclenchement style mouseover*/
   function focusOut(cloneID){
     
+    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+    
     table[cloneID].focus=false;
     updateStyleElem(cloneID);
   }
@@ -814,40 +820,11 @@ function initVJgrid(germlineV, germlineJ){
   /*selectionne un element et déclenche l'affichage de ses informations */
   function selectClone(cloneID){
    
+    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+    
     if (table[cloneID].select){
      deselectClone(cloneID); 
     }else{
-      table[cloneID].select==true;
-      
-      var div = document.createElement('div');
-      div.id2=cloneID;
-      div.id="select"+cloneID;
-      div.className="listElem";
-      div.onmouseover = function(){ focusIn(this.id2); }
-      div.onmouseout= function(){ focusOut(this.id2); }
-      
-      var span0 = document.createElement('span');
-      span0.className = "nameBox";
-      span0.ondblclick = function(){ editName(cloneID, this); }
-      span0.appendChild(document.createTextNode(getname(cloneID)));
-      
-      
-      var span2=document.createElement('span')
-      span2.className = "sizeBox";
-      span2.id="selectsize"+cloneID;
-      span2.appendChild(document.createTextNode((100*getSize(cloneID)).toFixed(3)+"%"));
-      
-      	var img=document.createElement('img');
-	img.onclick=function(){ deselectClone(this.parentNode.id2);
-	}
-	img.src="images/delete.png";
-	img.className="delBox";
-      
-      div.appendChild(img);
-      div.appendChild(span0);
-      div.appendChild(span2);
-      document.getElementById("listSelect").appendChild(div);
-      
       table[cloneID].select=true;
       updateStyleElem(cloneID);
       
@@ -859,8 +836,6 @@ function initVJgrid(germlineV, germlineJ){
     if (table[cloneID].select){
       table[cloneID].select=false;
       table[cloneID].focus=false;
-      var clone = document.getElementById("select"+cloneID);
-      clone.parentNode.removeChild(clone);
       var listElem = document.getElementById("seq"+cloneID);
       listElem.parentNode.removeChild(listElem);
       focusOut(cloneID);
