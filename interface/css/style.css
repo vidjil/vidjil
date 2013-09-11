@@ -73,22 +73,6 @@ list-style-type: none;
   overflow:hidden;
 }
 
-#bot-container {
-  width : 100%;
-  margin-left:390px;
-  position : fixed;
-  bottom :0px;
-  padding : 5px;
-}
-
-#align {
-  width: auto;
-  height: 160px;
-  overflow-x: auto;
-  overflow-y:hidden;
-  margin-right: 390px;
-}
-
 .button {
     cursor:pointer;
     font-size: 14px;
@@ -172,14 +156,7 @@ circle:hover {
   stroke-dasharray: 6,6;
 }
 
-.sequence-line {
-  font-family: Courier New, monospace;
-  letter-spacing: 0.1em;
-  width: 100%;
-  font-weight: bold;
-  height:26px;
-  white-space: nowrap;
-}
+
 
 .list{
   width: 440px;
@@ -195,6 +172,7 @@ circle:hover {
   transition: color 1.5s;
   font-weight : bold;
   padding:3px;
+  height :14px;
 
 }
 
@@ -204,6 +182,7 @@ circle:hover {
   display: inline-block;
   height: 16px;
   position: relative;
+  float:left
 }
 
 .colorBox{
@@ -214,6 +193,7 @@ circle:hover {
   width: 10px;
   display: inline-block;
   color: white;
+  float:left
 }
 
 .delBox{
@@ -224,27 +204,21 @@ circle:hover {
   width: 10px;
   display: inline-block;
   color: white;
+  float:left;
 }
 
 .sizeBox{
-  float: right;
+  float: left;
   margin-right: 5px;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
-}
-
-.favBox{
-  float: right;
-  margin-right:2px;
-  height: 14px;
-  width: 14px;
-  display: inline-block;
+  width: 75px;
 }
 
 .starBox{
-  float: right;
+  float: left;
   margin-right:2px;
   height: 16px;
   width: 16px;
@@ -298,16 +272,15 @@ circle:hover {
   text-anchor: middle;
   cursor: pointer;
   background:inherit;
-  
 }
 
 
 .graphLine{
-  -moz-transition: stroke  0.5s;
-  -webkit-transition: stroke 0.5s;
-  -o-transition: stroke  0.5s;
-  -ms-transition: stroke 0.5s;
-  transition: stroke 0.5s;
+ -moz-transition: stroke  0.5s;
+ -webkit-transition: stroke 0.5s;
+ -o-transition: stroke  0.5s;
+ -ms-transition: stroke 0.5s;
+ transition: stroke 0.5s;
  stroke-width : 1.5px;
  fill :none;
  cursor:pointer;
@@ -330,7 +303,9 @@ circle:hover {
 
 
 .separator {
-  height : 25px
+  height: 25px;
+  position: fixed;
+  margin-top: -20px;
 }
 
 #cluster {
@@ -429,5 +404,35 @@ circle:hover {
   border-top:none;
 }
 
+#bot-container {
+font-weight: bold;
+font-family: Courier New,monaco,terminal,courier,system;
+font-size: 14px;
+position: fixed;
+bottom: 5px;
+left: 0px;
+width: 400px;
+overflow-x: scroll;
+min-height:50px;
+max-height:200px;
+overflow-y:auto;
+}
 
+.sequence-line {
+white-space: nowrap;
+}
+
+.seq-fixed {
+position: fixed;
+width: 395px;
+padding-left: 5px;
+left:0px;
+cursor:pointer;
+}
+
+.seq-mobil {
+color: white;
+margin-left: 405px;
+letter-spacing: 0.12em;
+}
 
