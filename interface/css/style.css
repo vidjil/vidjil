@@ -165,11 +165,11 @@ circle:hover {
 .listElem{
   width :370px;
   cursor:pointer;
-  -moz-transition: color  1.5s;
-  -webkit-transition: color 1.5s;
-  -o-transition: color  1.5s;
-  -ms-transition: color 1.5s;
-  transition: color 1.5s;
+  -moz-transition: color  0.8s;
+  -webkit-transition: color 0.8s;
+  -o-transition: color  0.8s;
+  -ms-transition: color 0.8s;
+  transition: color 0.8s;
   font-weight : bold;
   padding:3px;
   height :14px;
