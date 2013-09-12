@@ -127,6 +127,7 @@ function loadJson() {
     jsonDatatext = '0'; //récupération mémoire
     junctions=jsonData.junctions;
     init();
+    initTag();
     document.getElementById("log").innerHTML+="<br>chargement fichier json";
     loadPref();
     document.getElementById("log").innerHTML+="<br>chargement fichier de preference";

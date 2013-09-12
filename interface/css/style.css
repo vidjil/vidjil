@@ -348,38 +348,6 @@ circle:hover {
   display: inline-block;
 }
 
-.tagColor0{
-    background: #dc322f ;
-}
-
-.tagColor1{
-    background: #cb4b16 ;
-}
-
-.tagColor2{
-    background: #d33682 ;
-}
-
-.tagColor3{
-    background: #268bd2 ;
-}
-
-.tagColor4{
-    background: #6c71c4 ;
-}
-
-.tagColor5{
-    background: #2aa198;
-}
-
-.tagColor6{
-    background: #b58900 ;
-}
-
-.tagColor7{
-    background: #859900 ;
-}
-
 .menu{
   width:120px;
   padding:3px;
