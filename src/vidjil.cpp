@@ -108,6 +108,7 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 // display
 #define WIDTH_NB_READS 7
 #define WIDTH_NB_CLONES 3
+#define WIDTH_WINDOW_POS 14+WIDTH_NB_CLONES
 
 using namespace std ;
 
@@ -856,7 +857,7 @@ int main (int argc, char **argv)
       // Output windows 
 
       int num_seq = 0 ;
-      
+
       for (list <pair<junction, int> >::const_iterator it = sort_windows.begin(); 
            it != sort_windows.end(); ++it) {
 	num_seq++ ;
@@ -929,7 +930,7 @@ int main (int argc, char **argv)
 	    
 	    representatives.push_back(seg.getSequence());
             representatives_labels.push_back("#" + string_of_int(num_clone));
-	    cout << seg.info << endl ;
+	    cout << seg.info ;
 
               // We need to find the window in the representative
               size_t window_pos = seg.getSequence().sequence.find(it->first);
@@ -1022,10 +1023,12 @@ int main (int argc, char **argv)
               seg.html(html, segment_D) ;
 
               // display window
-              cout << setw(window_pos) << " " << it->first << " " << windows_labels[it->first] << endl ;
+              cout << endl 
+                   << setw(WIDTH_WINDOW_POS) << " " << it->first 
+                   << " " << windows_labels[it->first] << endl ;
 
               break ;
-            }
+          }
         }
       }
 
