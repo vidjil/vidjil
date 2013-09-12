@@ -90,7 +90,7 @@ void KmerRepresentativeComputer::compute(bool do_revcomp, size_t min_cover,
         length_run += getK() - 1;
       if (length_run > length_longest_run) {
         length_longest_run = length_run;
-        pos_longest_run = i - (length_run - getK() - 1);
+        pos_longest_run = i - (length_run - getK() + 1);
         sequence_longest_run = sequence;
         seq_index_longest_run = seq;
       }
