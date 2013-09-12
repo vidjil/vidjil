@@ -30,3 +30,32 @@ void testRepresentative() {
   TAP_TEST(! krc.hasRepresentative(), TEST_KMER_REPRESENTATIVE,
            "When requiring 4 reads to support the representative, we should not find any solution.");
 }
+
+void testRevcompRepresentative() {
+  list<Sequence> reads = Fasta("../../data/representative_revcomp.fa").getAll();
+
+  KmerRepresentativeComputer krc(reads, 14);
+  krc.compute(false, 3, 0.5);
+  Sequence representative = krc.getRepresentative();
+
+  // Computing reads revcomp
+  for (list <Sequence>::iterator it = reads.begin(); it != reads.end(); it++) {
+    it->sequence = revcomp(it->sequence);
+  }
+
+  KmerRepresentativeComputer krc2(reads, 14);
+  krc2.compute(false, 3, 0.5);
+  Sequence representative2 = krc2.getRepresentative();
+
+  // Check position of [ in label, so that we remove that part, and then we
+  // can compare the labels
+  size_t pos1 = representative.label.find_first_of('[');
+  size_t pos2 = representative2.label.find_first_of('[');
+
+  TAP_TEST(representative.label.substr(0, pos1) == representative2.label.substr(0, pos2), TEST_KMER_REPRESENTATIVE_REVCOMP,
+           "The two representatives should have the same label");
+
+  TAP_TEST(revcomp(representative.sequence) == representative2.sequence, TEST_KMER_REPRESENTATIVE_REVCOMP,
+           "The two representatives should have the same sequence (but revcomp-ed)");
+
+}
