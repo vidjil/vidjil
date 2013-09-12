@@ -272,7 +272,6 @@ circle:hover {
   text-anchor: middle;
   cursor: pointer;
   background:inherit;
-  
 }
 
 
@@ -403,5 +402,12 @@ cursor:pointer;
 color: white;
 margin-left: 405px;
 letter-spacing: 0.12em;
+}
+
+#display-menu{
+  position: absolute;
+  left: 400px;
+  top: 195px;
+  display:none;
 }
 
