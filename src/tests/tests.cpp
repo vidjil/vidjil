@@ -24,6 +24,7 @@ int main(void) {
   testScore();
   testChooser();
   testRepresentative();
+  testRevcompRepresentative();
   
   TAP_END_TEST_EXIT
 }
