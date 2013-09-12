@@ -22,6 +22,15 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
   /*affiche le segmenteur/comparateur*/
  function displayAlign(){
     $('#bot-container').animate({ width: "100%"}, 200 ); 
+    
+    var li =document.getElementById("listSeq").getElementsByTagName("li");
+    if (li.length >0){
+      var id=li[0].id.substr(3);
+      var mid=$("#m"+id+" span:first-child").width();
+      $("#bot-container").animate({scrollLeft: mid}, 500);
+    }
+    
+    
   }
   
   /*masque le segmenteur/comparateur ( */
@@ -89,8 +98,8 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     $('#log').animate({height: "toggle"}, 200 ); 
   }
   
-  //TODO repasser en local
-  var memTab=[];
+      //TODO repasser en local
+      var memTab=[];
   function align(){
    
     var li =document.getElementById("listSeq").getElementsByTagName("li");

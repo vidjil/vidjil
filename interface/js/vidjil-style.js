@@ -11,13 +11,25 @@
 var tagColor = [];
 tagColor[0] = "#dc322f";
 tagColor[1] = "#cb4b16";
-tagColor[2] = "#d33682";
+tagColor[2] = "#b58900";
 tagColor[3] = "#268bd2";
 tagColor[4] = "#6c71c4";
 tagColor[5] = "#2aa198";
-tagColor[6] = "#b58900";
+tagColor[6] = "#d33682";
 tagColor[7] = "#859900";
 tagColor[8] = "";
+
+var tagName = [];
+tagName[0] = "pathologique 1";
+tagName[1] = "pathologique 2";
+tagName[2] = "pathologique 3";
+tagName[3] = "standard";
+tagName[4] = "standard noize";
+tagName[5] = "custom 1";
+tagName[6] = "custom 2";
+tagName[7] = "custom 3";
+tagName[8] = "-/-";
+
 
 /* dark solarize*/
 var solarizeD = {};
@@ -77,6 +89,12 @@ var colorStyle = {};
 colorStyle=solarizeD;
 
 
+function showDisplayMenu(){
+
+    $('#display-menu').show("slow");
+
+}
+
 /*met a jour le style de tout les elements*/
   function updateStyle(){
     for (var i = 0; i < totalClones; i++){      
@@ -129,10 +147,10 @@ colorStyle=solarizeD;
 	document.getElementById("f"+cloneID).style.background=colorStyle.c07;
       }
       document.getElementById(cloneID).style.background=colorStyle.c07;
-      document.getElementById("circle"+cloneID).style.stroke=colorStyle.c05;
-      document.getElementById("circle"+cloneID).style.fill=color(cloneID);
-      document.getElementById("line"+cloneID).style.stroke=color(cloneID);
-      document.getElementById("line"+cloneID).firstChild.style.strokeWidth="6px";
+      document.getElementById(cloneID).style.color=colorStyle.c05;
+      document.getElementById("circle"+cloneID).style.fill=colorStyle.c05;
+      document.getElementById("line"+cloneID).firstChild.style.stroke=colorStyle.c05;
+      document.getElementById("line"+cloneID).firstChild.style.strokeWidth="5px";
     }else{
       if (document.getElementById("seq"+cloneID)){
 	document.getElementById("f"+cloneID).style.background=colorStyle.c02;
@@ -141,25 +159,28 @@ colorStyle=solarizeD;
       document.getElementById(cloneID).style.background=colorStyle.c02;
       if (table[cloneID].active){
 	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1.5px";
-	  if ((typeof(table[cloneID].tag) != 'undefined') && (table[cloneID].tag != 8) && (table[cloneID].tag != 3)) { 
+	  if ((typeof(table[cloneID].tag) != 'undefined') && (table[cloneID].tag != 8) && (table[cloneID].tag != 4)) { 
 	  // if tagged, but not standard 		  
-		  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="4px";
+		  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="5px";
 	      }
 	  document.getElementById(cloneID).style.color=color(cloneID);
 	  document.getElementById("circle"+cloneID).style.fill=color(cloneID);
-	  document.getElementById("line"+cloneID).style.stroke=color(cloneID);
+	  document.getElementById("line"+cloneID).firstChild.style.stroke=color(cloneID);
       }else{
-	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1px";
+	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1.2px";
 	  document.getElementById(cloneID).style.color=colorStyle.c06;
 	  document.getElementById("circle"+cloneID).style.fill=colorStyle.c07;
-	  document.getElementById("line"+cloneID).style.stroke=colorStyle.c07;
+	  document.getElementById("line"+cloneID).firstChild.style.stroke=colorStyle.c07;
       }   
     }
     if (table[cloneID].select){
-      document.getElementById("line"+cloneID).firstChild.style.strokeWidth="3px";
+      document.getElementById("line"+cloneID).firstChild.style.strokeWidth="6px";
       document.getElementById(cloneID).style.background=colorStyle.c07;
       document.getElementById("circle"+cloneID).style.stroke=colorStyle.c05;
-      document.getElementById("line"+cloneID).style.stroke=colorStyle.c05;
+      $("#line"+cloneID+ " polyline:first-child").css("stroke-dasharray","20px,5px");
+      
+    }else{
+      $("#line"+cloneID+ " polyline:first-child").css("stroke-dasharray","");
     }
     if (typeof table[cloneID].tag != 'undefined') document.getElementById("color"+cloneID).setAttribute("fill", tagColor[table[cloneID].tag]);
     else document.getElementById("color"+cloneID).setAttribute("fill", colorStyle.c01);
@@ -215,6 +236,8 @@ colorStyle=solarizeD;
     document.getElementById('listSelect').style.background=colorStyle.c02;
     document.getElementById('tagSelector').style.background=colorStyle.c02;
     document.getElementById('tagSelector').style.border=colorStyle.c03;
+    document.getElementById('display-menu').style.background=colorStyle.c02;
+    document.getElementById('display-menu').style.border=colorStyle.c03;
     
     var button = document.getElementsByClassName("buttonSelector");
 
@@ -223,8 +246,13 @@ colorStyle=solarizeD;
       button[i].addEventListener("mouseout", function(){ this.style.background=colorStyle.c02; });
       button[i].style.background=colorStyle.c02;
     }
-    
-
+  }
+  
+  function initTag(){
+    for (var i =0; i<tagColor.length; i++){
+      $(".tagColor"+i).css("background", tagColor[i]);
+      $(".tagName"+i).html(tagName[i]);
+    }
   }
   
   function changeStyle(newStyle){
