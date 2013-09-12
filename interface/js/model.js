@@ -613,6 +613,9 @@ function initVJgrid(germlineV, germlineJ){
 
   /*retourne le label d'un clone ( s'il n'en possde pas retourne son code*/
   function getname(cloneID){
+    
+    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+    
     if ( typeof(table[cloneID].c_name)!='undefined' ){
       return table[cloneID].c_name;
     }else{
@@ -622,6 +625,9 @@ function initVJgrid(germlineV, germlineJ){
   
   /*retourne le code d'un clone ( s'il n'en possde pas retourne sa jonction*/
   function getcode(cloneID){
+    
+    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+    
       if ( typeof(junctions[cloneID].seg)!='undefined' && typeof(junctions[cloneID].seg.name)!='undefined' ){
 	return junctions[cloneID].seg.name;
       }else{
@@ -632,6 +638,9 @@ function initVJgrid(germlineV, germlineJ){
   
   /*renvoye la taille d'un clone( somme des tailles des jonctions qui le compose)*/
   function getSize(cloneID){
+    
+    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+    
     var r=0;
     if (normalization==false ){
       for(var j=0 ;j<table[cloneID].cluster.length; j++){

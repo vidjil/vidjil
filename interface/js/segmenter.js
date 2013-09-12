@@ -128,17 +128,15 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
   
   function displayAjaxResult(file){
     
-    displayAlign();
+
     var json=JSON.parse(file)
     
     for (var i = 0 ; i< json.seq.length; i++ ){
       colorSeq(memTab[i], json.seq[i]);
     }
     
-    var mid=$("#m"+memTab[0]+" span:first-child").width();
-
-     $("#bot-container").animate({scrollLeft: mid}, 500);
-      
+    displayAlign();
+    
   }
   
   function colorSeq(cloneID, seq){

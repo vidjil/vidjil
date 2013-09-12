@@ -233,24 +233,32 @@ function constructPath(cloneID){
   var tmp=t;
   t=0;
   var p;
-  
-  if (getSize(cloneID)==0){
-    p = [ ];
-  }else{
-    p = [[ ( graph_col[0]+ (Math.random()*30)-15  ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]];
-  }
-  
-  for (var i=1; i< graph_col.length; i++){
-    t++;
-    
+  if (graph_col.length==3){
     if (getSize(cloneID)==0){
-      if (p.length!=0){
-	p.push([( graph_col[i] ),(g_h + 50)]);
-      }
+      p = [ ];
     }else{
-      p.push([( graph_col[i] + (Math.random()*30)-15 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
+      p = [[ ( graph_col[0]-100+ (Math.random()*50)-25 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]];
+      p.push([ ( graph_col[0]+100+ (Math.random()*50)-25 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
     }
+  }else{
+    if (getSize(cloneID)==0){
+      p = [ ];
+    }else{
+      p = [[ ( graph_col[0]+ (Math.random()*30)-15  ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]];
+    }
+    
+    for (var i=1; i< graph_col.length; i++){
+      t++;
+      
+      if (getSize(cloneID)==0){
+	if (p.length!=0){
+	  p.push([( graph_col[i] ),(g_h + 50)]);
+	}
+      }else{
+	p.push([( graph_col[i] + (Math.random()*30)-15 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
+      }
 
+    }
   }
   t=tmp;
   return p;
