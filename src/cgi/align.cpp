@@ -11,7 +11,7 @@
 #define MAXLEN 500
 #define EXTRA 5
 #define MAXINPUT MAXLEN+EXTRA+2
-#define DATAFILE "data.txt"
+#define DATAFILE "/vidjilAlignCgi.txt"
 
 using namespace std;
 
@@ -22,6 +22,9 @@ int main()
     char *lenstr;
     char input[MAXINPUT], data[MAXINPUT];
     long len;
+    string filename = DATAFILE;
+    string filepath = P_tmpdir+filename;
+    
     
     cout <<"Content-type: text/html"<<endl<<endl;
     cout<< "{"<<endl;
@@ -42,10 +45,10 @@ int main()
       return 0;
     }
       cout<<",\"contentType\": \""<<contentType<<"\""<<endl;
-    
+
     char temp[1024];
     FILE *f;
-    f = fopen(DATAFILE, "w");
+    f = fopen(filepath.c_str(), "w");
     if(f == NULL){
       cout<<",\"Error\": \"save\"}"<<endl;
       return 0;
@@ -59,7 +62,7 @@ int main()
     
     fclose(f);
     
-    const char* fdata_default = "data.txt" ; 
+    const char* fdata_default = filepath.c_str() ; 
     DynProg::DynProgMode dpMode = DynProg::Global;
     Cost dpCost = VDJ;
     ostringstream ost; 
