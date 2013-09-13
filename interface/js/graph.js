@@ -233,7 +233,7 @@ function constructPath(cloneID){
   var tmp=t;
   t=0;
   var p;
-  if (graph_col.length==3){
+  if (graph_col.length==1){
     if (getSize(cloneID)==0){
       p = [ ];
     }else{
