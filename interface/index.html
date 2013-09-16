@@ -229,60 +229,123 @@
     <div id="log" style="display:none; position: fixed; top: 50px;right: 10px;width: 500px; font-family : monaco,terminal,courier,system; height: 150px;overflow-y: scroll;font-size: 14px;background-color: #333044;opacity: 0.5;padding: 10px;">log </div>
     
     <div id="tagSelector">
-      tag for <div id=tagname></div>
+    
+    <div class="tagD button" onclick="$('#tagSelector').hide('fast')">close</div></br>
+    
+      <div>tag for <span id=tagname></span></div>
       <ul>
 	<li onClick="selectTag(0)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor0"></span> <span class="tagName0" id="tag0"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor0"></span> <span class="tagName0 tn" id="tag0"></span></div>
 	</li>
 	<li onClick="selectTag(1)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor1"></span> <span class="tagName1" id="tag1"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor1"></span> <span class="tagName1 tn" id="tag1"></span></div>
 	</li>
 	<li onClick="selectTag(2)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor2"></span> <span class="tagName2" id="tag2"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor2"></span> <span class="tagName2 tn" id="tag2"></span></div>
 	</li>
 	<li onClick="selectTag(3)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor3"></span> <span class="tagName3" id="tag3"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor3"></span> <span class="tagName3 tn" id="tag3"></span></div>
 	</li>
 	<li onClick="selectTag(4)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor4"></span> <span class="tagName4" id="tag4"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor4"></span> <span class="tagName4 tn" id="tag4"></span></div>
 	</li>
 	<li onClick="selectTag(5)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor5"></span> <span class="tagName5" id="tag5"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor5"></span> <span class="tagName5 tn" id="tag5"></span></div>
 	</li>
 	<li onClick="selectTag(6)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor6"></span> <span class="tagName6" id="tag6"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor6"></span> <span class="tagName6 tn" id="tag6"></span></div>
 	</li>
 	<li onClick="selectTag(7)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor7"></span> <span class="tagName7" id="tag7"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor7"></span> <span class="tagName7 tn" id="tag7"></span></div>
 	</li>
 	<li onClick="selectTag(8)">
-	  <div class="tagElem" ><span class="tagColorBox "></span> <span class="tagName8" id="tag8"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox "></span> <span class="tagName8 tn" id="tag8"></span></div>
 	</li>
 	
       </ul>
     </div>
     
     <div id="display-menu">
+    <span class="tagD button" onclick="showDisplayMenu()">close</span>
+         <h2>Display menu</h2>
+    
       <ul>
+      
+      
 	<li>
-	  <div class="tagElem" ><span class="tagColorBox tagColor0"></span> <span class="tagName0">pathologique 1</span>
-	  <input type="radio" name="radio1" value="1">
-	  <input type="radio" name="radio1" value="2">
-	  <input type="radio" name="radio1" value="3">
+	  <div> top <input id="rangeValue" type="text" size="3" value="10"
+	  readonly="true">
+	  <input id="top_slider" type="range" min="0" max="100" step="5" value="10" 
+	  onchange="displayTop(this.value)" />
 	  </div>
 	</li>
 	<li>
-	  <div class="tagElem" ><span class="tagColorBox tagColor1"></span> <span class="tagName1">pathologique 2</span>
-	  <input type="radio" name="radio2" value="1">
-	  <input type="radio" name="radio2" value="2">
-	  <input type="radio" name="radio2" value="3">
+	<span class="tn"></span>
+	<span class="tagD">hide</span>
+	<span class="tagD">show</span>
+	<span class="tagD">color</span>
+	</li>
+	<li>
+	  <div id="tagDisplay0" class="tagElem"><span class="tagColorBox tagColor0"></span> <span class="tagName0 tn"></span>
+	  <input class="tagD" type="radio" name="radio0" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio0" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio0" value=2 onclick="changeDisplayTag(this)">
 	  </div>
 	</li>
 	<li>
-	  <div class="tagElem" ><span class="tagColorBox tagColor2"></span> <span class="tagName2">pathologique 3</span>
-	  <input type="radio" name="radio3" value="1">
-	  <input type="radio" name="radio3" value="2">
-	  <input type="radio" name="radio3" value="3">
+	  <div id="tagDisplay1" class="tagElem"><span class="tagColorBox tagColor1"></span> <span class="tagName1 tn"></span>
+	  <input class="tagD" type="radio" name="radio1" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio1" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio1" value=2 onclick="changeDisplayTag(this)">
+	  </div>
+	</li>
+	<li>
+	  <div id="tagDisplay2" class="tagElem"><span class="tagColorBox tagColor2"></span> <span class="tagName2 tn"></span>
+	  <input class="tagD" type="radio" name="radio2" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio2" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio2" value=2 onclick="changeDisplayTag(this)">
+	  </div>
+	</li>
+	<li>
+	  <div id="tagDisplay3" class="tagElem"><span class="tagColorBox tagColor3"></span> <span class="tagName3 tn"></span>
+	  <input class="tagD" type="radio" name="radio3" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio3" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio3" value=2 onclick="changeDisplayTag(this)">
+	  </div>
+	</li>
+	<li>
+	  <div id="tagDisplay4" class="tagElem"><span class="tagColorBox tagColor4"></span> <span class="tagName4 tn"></span>
+	  <input class="tagD" type="radio" name="radio4" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio4" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio4" value=2 onclick="changeDisplayTag(this)">
+	  </div>
+	</li>
+	<li>
+	  <div id="tagDisplay5" class="tagElem"><span class="tagColorBox tagColor5"></span> <span class="tagName5 tn"></span>
+	  <input class="tagD" type="radio" name="radio5" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio5" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio5" value=2 onclick="changeDisplayTag(this)">
+	  </div>
+	</li>
+	<li>
+	  <div id="tagDisplay6" class="tagElem"><span class="tagColorBox tagColor6"></span> <span class="tagName6 tn"></span>
+	  <input class="tagD" type="radio" name="radio6" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio6" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio6" value=2 onclick="changeDisplayTag(this)">
+	  </div>
+	</li>
+	<li>
+	  <div id="tagDisplay7" class="tagElem"><span class="tagColorBox tagColor7"></span> <span class="tagName7 tn"></span>
+	  <input class="tagD" type="radio" name="radio7" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio7" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio7" value=2 onclick="changeDisplayTag(this)">
+	  </div>
+	</li>
+	<li>
+	  <div id="tagDisplay8" class="tagElem"><span class="tagColorBox tagColor8"></span> <span class="tagName8 tn"></span>
+	  <input class="tagD" type="radio" name="radio8" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio8" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio8" value=2 onclick="changeDisplayTag(this)">
 	  </div>
 	</li>
 	
