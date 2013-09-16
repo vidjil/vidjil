@@ -210,17 +210,29 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
   KmerAffectAnalyser<KmerAffect> *kaa = new KmerAffectAnalyser<KmerAffect>(*index, sequence);
   
   // Check strand consistency among the affectations.
-  set<KmerAffect> distinct_a = kaa->getDistinctAffectations();
-  int strand = DONT_KNOW;
-  for (set<KmerAffect>::iterator it = distinct_a.begin(); 
-       it != distinct_a.end() && strand != 2; it++) {
-    if (! it->isAmbiguous() && ! it->isUnknown()) {
-      if (strand == 0)
-        strand = affect_strand(it->affect);
-      else if ((strand == 1 && affect_strand(it->affect) == -1)
-               || (strand == -1 && affect_strand(it->affect) == 1))
-        strand = 2;
+  int strand;
+  int nb_strand[2] = {0,0};     // In cell 0 we'll put the number of negative
+                                // strand, while in cell 1 we'll put the
+                                // positives
+  for (int i = 0; i < kaa->count(); i++) { 
+    KmerAffect it = kaa->getAffectation(i);
+    if (! it.isAmbiguous() && ! it.isUnknown()) {
+      strand = affect_strand(it.affect);
+      nb_strand[(strand + 1) / 2] ++; // (strand+1) / 2 → 0 if strand == -1; 1 if strand == 1
     }
+  }
+
+  // Test on which strand we are.
+  if (nb_strand[0] == 0 && nb_strand[1] == 0) {
+    strand = 0;                 // No info
+  } else if (nb_strand[0] > RATIO_STRAND * nb_strand[1]) {
+    strand = -1;
+  } else if (nb_strand[1] > RATIO_STRAND * nb_strand[0]) {
+    strand = 1;
+  } else {
+    // Ambiguous information: we have positive and negative strands
+    // and there is not enough difference to put them aparat.
+    strand = 2;
   }
 
 
@@ -318,7 +330,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
       // Dump sequence in unsegmented, with kaa and cause
       out_unsegmented << seq ;
       out_unsegmented << kaa->toString() << endl ;
-      out_unsegmented << "#" << segmented_mesg[because] << endl << endl ;
+      out_unsegmented << "#" << segmented_mesg[because] << endl ;
+      out_unsegmented << "-: " << nb_strand[0] << " +:" << nb_strand[1] 
+                      << endl  << endl;
     }
 
   stats[because]++ ;      
