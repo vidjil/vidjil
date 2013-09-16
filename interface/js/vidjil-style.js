@@ -8,29 +8,6 @@
  * content:
  */
   
-var tagColor = [];
-tagColor[0] = "#dc322f";
-tagColor[1] = "#cb4b16";
-tagColor[2] = "#b58900";
-tagColor[3] = "#268bd2";
-tagColor[4] = "#6c71c4";
-tagColor[5] = "#2aa198";
-tagColor[6] = "#d33682";
-tagColor[7] = "#859900";
-tagColor[8] = "";
-
-var tagName = [];
-tagName[0] = "pathologique 1";
-tagName[1] = "pathologique 2";
-tagName[2] = "pathologique 3";
-tagName[3] = "standard";
-tagName[4] = "standard noize";
-tagName[5] = "custom 1";
-tagName[6] = "custom 2";
-tagName[7] = "custom 3";
-tagName[8] = "-/-";
-
-
 /* dark solarize*/
 var solarizeD = {};
 solarizeD.c01 = "#839496"; //base0
@@ -89,11 +66,48 @@ var colorStyle = {};
 colorStyle=solarizeD;
 
 
-function showDisplayMenu(){
+var tagColor = [];
+tagColor[0] = "#dc322f";
+tagColor[1] = "#cb4b16";
+tagColor[2] = "#b58900";
+tagColor[3] = "#268bd2";
+tagColor[4] = "#6c71c4";
+tagColor[5] = "#2aa198";
+tagColor[6] = "#d33682";
+tagColor[7] = "#859900";
+tagColor[8] = colorStyle.c01;
 
-    $('#display-menu').show("slow");
+var tagName = [];
+tagName[0] = "pathologique 1";
+tagName[1] = "pathologique 2";
+tagName[2] = "pathologique 3";
+tagName[3] = "standard";
+tagName[4] = "standard noize";
+tagName[5] = "custom 1";
+tagName[6] = "custom 2";
+tagName[7] = "custom 3";
+tagName[8] = "-/-";
 
-}
+//default tag display 
+//0=hidden  -  1=show  -  2=show+color
+var tagDisplay = [];
+tagDisplay[0] = 2;
+tagDisplay[1] = 2;
+tagDisplay[2] = 2;
+tagDisplay[3] = 2;
+tagDisplay[4] = 2;
+tagDisplay[5] = 2;
+tagDisplay[6] = 2;
+tagDisplay[7] = 2;
+tagDisplay[8] = 2;
+
+var default_tag=8;
+
+
+  function showDisplayMenu(){
+    $('#display-menu').stop
+    $('#display-menu').toggle("fast");
+  }
 
 /*met a jour le style de tout les elements*/
   function updateStyle(){
@@ -101,6 +115,24 @@ function showDisplayMenu(){
       updateStyleElem(i);
     }  
   }
+  
+  function changeDisplayTag(elem){
+    var tag = elem.parentNode.id.substr(10);
+    tagDisplay[tag]=elem.value;
+    updateStyle();
+    updateTagBox();
+  }
+  
+  function nextDisplayTag(elem){
+    var tag = elem.id.substr(7);
+    var s =tagDisplay[tag]+1;
+    if (s > 2) s=0;
+    tagDisplay[tag]=s;
+    $("#tagDisplay"+tag).find('input')[tagDisplay[tag]].checked=true
+    updateStyle();
+    updateTagBox();
+  }
+  
   
 /*met a jour le style de l'element cloneID*/
   function updateStyleElem(cloneID){
@@ -131,6 +163,15 @@ function showDisplayMenu(){
     }else{
       document.getElementById("line"+cloneID).style.display="none";
     }
+    
+    if (tagDisplay[table[cloneID].tag]==0){
+      document.getElementById(cloneID).style.display="none";
+      document.getElementById("line"+cloneID).style.display="none";
+      document.getElementById("circle"+cloneID).style.display="none";
+    }else{
+      document.getElementById("circle"+cloneID).style.display="";
+    }
+    
   }
   
 /*met a jour la couleur de tout les elements*/
@@ -250,10 +291,42 @@ function showDisplayMenu(){
   
   function initTag(){
     for (var i =0; i<tagColor.length; i++){
-      $(".tagColor"+i).css("background", tagColor[i]);
       $(".tagName"+i).html(tagName[i]);
+      $("#tagDisplay"+i).find("input")[tagDisplay[i]].checked=true;
+    }
+    updateTagBox();
+  }
+  function updateTagBox(){
+    for (var i =0; i<tagColor.length; i++){
+      if (tagDisplay[i]==2){
+	$(".tagColor"+i).css({
+	  background : tagColor[i] 
+	});
+      }else{
+	
+	if (tagDisplay[i]==1){
+	  $(".tagColor"+i).css({
+            "background-color" : tagColor[i],
+            "background-image" : 'linear-gradient(45deg, transparent -25%, '+colorStyle.c01+' 60%, '+colorStyle.c01+' 100%, transparent 0%)',
+            "background" : '-moz-linear-gradient(45deg, transparent -25%, '+colorStyle.c01+' 60%, '+colorStyle.c01+' 100%, transparent 0%) repeat scroll 0 0 '+tagColor[i], //firefox
+            "background-image" : '-webkit-linear-gradient(45deg, transparent -25%, '+colorStyle.c01+' 60%, '+colorStyle.c01+' 100%, transparent 0%)'  //chrome
+	  })
+	}
+	
+	if (tagDisplay[i]==0){
+	  $(".tagColor"+i).css({
+            "background-color" : tagColor[i],
+            "background-image" : 'linear-gradient(45deg, transparent -25%, '+colorStyle.c02+' 100%, '+colorStyle.c02+' 100%, transparent 0%)',
+            "background" : '-moz-linear-gradient(45deg, transparent -25%, '+colorStyle.c02+' 100%, '+colorStyle.c02+' 100%, transparent 0%) repeat scroll 0 0 '+tagColor[i], //firefox
+            "background-image" : '-webkit-linear-gradient(45deg, transparent -25%, '+colorStyle.c02+' 100%, '+colorStyle.c02+' 100%, transparent 0%)'  //chrome
+	  })
+	}
+	
+      }
     }
   }
+    
+  
   
   function changeStyle(newStyle){
     colorStyle=newStyle;

@@ -29,8 +29,6 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
       var mid=$("#m"+id+" span:first-child").width();
       $("#bot-container").animate({scrollLeft: mid}, 500);
     }
-    
-    
   }
   
   /*masque le segmenteur/comparateur ( */
@@ -114,7 +112,6 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
       else
 	request += ">" +id+"\n"+ jsonData.junctions[id].junction+"\n";
     }
-    
     
         $.ajax({
             type: "POST",

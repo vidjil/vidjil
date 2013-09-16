@@ -249,7 +249,7 @@ function init(){
     }
     
     mapID[junctions[i].junction]=i;
-    table[i]={display:true, Nsize:nsize, cluster :[i]};
+    table[i]={display:true, Nsize:nsize, cluster :[i], tag: default_tag};
   }
   initNcolor();
 }
@@ -689,8 +689,10 @@ function initVJgrid(germlineV, germlineJ){
   
   /*retourne la couleur du tag correspondant au clone passé en parametre*/
   function colorTag(cloneID){
-	if (typeof table[cloneID].tag != "undefined"){
-	  return tagColor[table[cloneID].tag]
+	  var tag = table[cloneID].tag;
+    
+	if (typeof tag != "undefined" && tagDisplay[tag]==2){
+	  return tagColor[tag]
 	}
 	return colorStyle.c01;
   }
@@ -719,7 +721,7 @@ function initVJgrid(germlineV, germlineJ){
 	if (table[cloneID].Nsize!=-1 ){
 	    return colorN[table[cloneID].Nsize];
 	}	
-	return "rgb(20,226,89)"
+	return colorStyle.c01;
   }
   
   var tagID;
@@ -727,12 +729,12 @@ function initVJgrid(germlineV, germlineJ){
   
   function changeColor(cloneID){
     tagID=cloneID;
-    $('#tagSelector').show("slow");
+    $('#tagSelector').show("fast");
   document.getElementById("tagname").innerHTML=getname(cloneID);
   }
   
   function selectTag(tag){
-    $('#tagSelector').hide("slow");
+    $('#tagSelector').hide("fast");
     table[tagID].tag=tag;
     if (tag==8) { 
       delete(table[tagID].tag)
@@ -862,6 +864,7 @@ function initVJgrid(germlineV, germlineJ){
 	updateStyleElem(i);
       }
     }
+    hideAlign();
     document.getElementById("listSelect").innerHTML="";
     document.getElementById("listSeq").innerHTML="";
   }

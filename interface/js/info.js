@@ -209,6 +209,8 @@
   }
   
   function displayTop(top){
+      document.getElementById('rangeValue').value=top;
+      document.getElementById('top_display').innerHTML=top;
     for (var i = 0; i < totalClones; i++){      
       if (table[i].cluster.length!=0 ){
 	
@@ -224,3 +226,16 @@
     }   
     updateStyle();
   }
+
+  function incDisplayTop(){
+    var top=parseInt(document.getElementById('rangeValue').value);
+    
+    if (top<100){ displayTop((top+5));}
+  }
+  
+  function decDisplayTop(){
+    var top=document.getElementById('rangeValue').value;
+    
+    if (top>0) displayTop((top-5));
+  }
+  
