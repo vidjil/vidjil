@@ -1,4 +1,4 @@
-DATA=Stanford_S22.fasta
+DATA=Stanford_S22.fasta Stanford_S22_rc.fasta
 
 $(DATA):
 	sh get-sequences
