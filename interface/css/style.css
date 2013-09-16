@@ -83,6 +83,12 @@ list-style-type: none;
     text-decoration:underline;
 }
 
+.smallbutton {
+    cursor:pointer;
+    font-size: 14px;
+    text-decoration:underline;
+}
+
 .buttonSelector {
     cursor:pointer;
     font-size: 14px;
@@ -110,7 +116,7 @@ circle:hover {
 }
 
 #menu{
-  height :125px;
+  height :150px;
 }
 
 #file_menu, #analysis_menu, #dateSelector{
@@ -186,14 +192,15 @@ circle:hover {
 }
 
 .colorBox{
-  right: 3px;
+  right: 2px;
   float: right;
   border: solid;
   height: 10px;
   width: 10px;
   display: inline-block;
   color: white;
-  float:left
+  float:left;
+  user-select :none;
 }
 
 .delBox{
@@ -205,6 +212,7 @@ circle:hover {
   display: inline-block;
   color: white;
   float:left;
+  user-select :none;
 }
 
 .sizeBox{
@@ -223,6 +231,7 @@ circle:hover {
   height: 16px;
   width: 16px;
   display: inline-block;
+  user-select :none;
 }
 
 .clusterBox{
@@ -232,19 +241,6 @@ circle:hover {
   height: 14px;
   width: 14px;
   display: inline-block;
-}
-
-
-
-#tagSelector{
-  position: absolute;
-  left: 400px;
-  top: 195px;
-  display:none;
-}
-
-#svg{
-
 }
 
 .axis{
@@ -305,7 +301,10 @@ circle:hover {
 .separator {
   height: 25px;
   position: fixed;
-  margin-top: -20px;
+  margin-top: -26px;
+  border-top: solid;
+  width: 400px;
+  padding-top:2px;
 }
 
 #cluster {
@@ -324,7 +323,8 @@ circle:hover {
   padding: 5px;
   position: absolute;
   left: 400px;
-  top: 125px;
+  top: 195px;
+  width:220px;
   border:solid;
   display:none;
 }
@@ -332,7 +332,6 @@ circle:hover {
 .tagElem{
   margin:8px;
   height: 16px;
-
 }
 
 .tagElem:hover{
@@ -341,11 +340,14 @@ circle:hover {
 }
 
 .tagColorBox {
-  float: left;
-  margin-right:6px;
+  margin-right:5px;
   height: 16px;
   width: 16px;
   display: inline-block;
+  cursor:pointer;
+  user-select :none;
+  margin-bottom: -4px;
+  margin-top: 2px;
 }
 
 .menu{
@@ -384,9 +386,11 @@ overflow-x: scroll;
 min-height:50px;
 max-height:200px;
 overflow-y:auto;
+border-top: solid;
+border-bottom: solid;
 }
 
-.sequence-line {
+.sequence-line { 
 white-space: nowrap;
 }
 
@@ -408,6 +412,36 @@ letter-spacing: 0.12em;
   position: absolute;
   left: 400px;
   top: 195px;
+  width:300px;
   display:none;
+  padding: 10px;
 }
 
+.tn{
+  width:120px;
+  display:inline-table;
+}
+
+#top_display{
+  width:25px;
+  display: inline-block;
+}
+
+#display-bar{
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+  border-top: solid;
+  border-bottom:solid;
+  padding-bottom:2px;
+  width: 100%;
+}
+
+.tagD{
+  width : 40px;
+  display : inline-block;
+  margin : 0px;
+  float : right;
+}
