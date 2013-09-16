@@ -140,22 +140,35 @@
 	    </td>
 	    </tr>
 	    <tr>
-	      <td>_____________________________________
+	      <td></br>
 	      </td>
 	    </tr>
 	    <tr>
 	      <td>
-		<a class="button" onclick="displayFavoris();">favorites</a>
-		<a class="button" onclick="displayTop(5);">top 5</a>
-		<a class="button" onclick="displayTop(10);">top 10</a>
-		<a class="button" onclick="displayTop(25);">top 25</a>
-		<a class="button" onclick="displayAll();">all</a>
+
 	      </td>
 	    </tr>
 	    
 	    
 	  </table>
 	  
+	</div>
+	
+	<div id="display-bar">
+	  <a class="smallbutton" onclick="decDisplayTop();"><</a>
+	  top <span id=top_display></span>
+	  <a class="smallbutton" onclick="incDisplayTop();">></a>
+	  
+	  <span id="fastTag0" class="tagColorBox tagColor0" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag1" class="tagColorBox tagColor1" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag2" class="tagColorBox tagColor2" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag3" class="tagColorBox tagColor3" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag4" class="tagColorBox tagColor4" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag5" class="tagColorBox tagColor5" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag6" class="tagColorBox tagColor6" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag7" class="tagColorBox tagColor7" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag8" class="tagColorBox tagColor8" onclick="nextDisplayTag(this)"></span>
+	  <a class="button" onclick="showDisplayMenu();">>></a>
 	</div>
 	
 	  <div id="listClones"></div>
