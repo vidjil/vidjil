@@ -1288,13 +1288,13 @@ int main (int argc, char **argv)
     out_json_normalization_names(out_json);
     out_json << "," << endl ;
 
-    out_json << "\"resolution1\" :" ;
+    out_json << "\"resolution1\" :[" ;
     out_json_normalization(out_json, norm_list, 1, nb_segmented);
-    out_json << "," << endl ;
+    out_json << "]," << endl ;
 
-    out_json << "\"resolution5\" :" ;
+    out_json << "\"resolution5\" :[" ;
     out_json_normalization(out_json, norm_list, 5, nb_segmented);
-    out_json << "," << endl ;
+    out_json << "]," << endl ;
 
     out_json <<"\"junctions\" : [";
     for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
@@ -1308,9 +1308,9 @@ int main (int argc, char **argv)
 	 out_json <<" {\"junction\":\""<<it->first<<"\"," <<endl;
 	 out_json <<" \"size\":["<< it->second<<"],"<<endl;
 
-	 out_json <<" \"ratios\": ";
+	 out_json <<" \"ratios\": [";
 	 out_json_normalization(out_json, norm_list, it->second, nb_segmented);
-	 out_json << "," << endl ;
+	 out_json << "]," << endl ;
 
 	 if (json_data_segment.count(it->first) !=0 ){
 	    out_json << json_data_segment[it->first]<<","<<endl;
