@@ -66,7 +66,7 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     spanV.className="V";
     spanV.style.color=colorV(cloneID);
     var v_seq=junctions[cloneID].seg.sequence.substr(0, junctions[cloneID].seg.l1+1);
-    var size_marge=150-v_seq.length;
+    var size_marge=200-v_seq.length;
     if (size_marge>0){
       var marge="";
       for (var i=0; i<size_marge; i++) marge+="&nbsp";
