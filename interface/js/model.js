@@ -106,7 +106,7 @@ function loadJson() {
   
   if (document.getElementById("upload_pref").files.length != 0) { 
     var oFile = document.getElementById("upload_pref").files[0];
-    document.getElementById("analysis_file").innerHTML="analysis_file : "+document.getElementById("upload_pref").files[0].name;
+    document.getElementById("analysis_file").innerHTML=document.getElementById("upload_pref").files[0].name;
   
     oFReader2.readAsText(oFile);
     
@@ -119,7 +119,7 @@ function loadJson() {
   if (document.getElementById("upload_json").files.length === 0) { return; }
 
   oFile = document.getElementById("upload_json").files[0];
-  document.getElementById("data_file").innerHTML="data_file : "+document.getElementById("upload_json").files[0].name;
+  document.getElementById("data_file").innerHTML= document.getElementById("upload_json").files[0].name;
   oFReader.readAsText(oFile);
   
   //fonction s'executant une fois le fichier json correctement chargé

@@ -119,6 +119,11 @@ circle:hover {
   height :150px;
 }
 
+#data_file
+{
+  font-size: 200%;
+}
+
 #file_menu, #analysis_menu, #dateSelector{
   z-index:2;
   display:none; 
