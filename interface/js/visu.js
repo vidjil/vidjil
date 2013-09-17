@@ -96,21 +96,20 @@ function initNodes() {
 
 function initSize() {
   min_size = 1;
-  tmp=normalization;
+  tmp=used_ratio;
    for(var i=0 ;i<totalClones; i++){
       for (t=0 ; t<junctions[i].size.length; t++){
-	normalization=true;
-	if (getSize(i)<min_size && getSize(i)!=0) {
-	  min_size=getSize(i);
-	}
-	normalization=false
-	if (getSize(i)<min_size && getSize(i)!=0) {
-	  min_size=getSize(i);
+	//TODO change with normalizations.length
+	for (var j=0; j<jsonData.junctions[0].ratios[0].length ; j++ ){
+	  used_ratio=j;
+	  if (getSize(i)<min_size && getSize(i)!=0) {
+	    min_size=getSize(i);
+	  }
 	}
       }
       t=0;
     }
-  normalization=tmp;
+  used_ratio=tmp;
 }
 
 /* attribue une data issue du modele aux legendes/quadrillages de la visualisation*/
