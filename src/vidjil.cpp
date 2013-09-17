@@ -1101,6 +1101,7 @@ int main (int argc, char **argv)
 	    msa.pop_back();
 	  }
 
+        out << "Outputing in clone file!" << endl;
         out_clone << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
 	out_clone << it->first << endl;
 

@@ -16,7 +16,7 @@
  * 
  */
 
-var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
+var CGI_ADRESS ="http://becasse.lifl.fr/cgi-vidjil/";
 
  
   /*affiche le segmenteur/comparateur*/
