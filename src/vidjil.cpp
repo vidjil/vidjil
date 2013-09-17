@@ -896,6 +896,9 @@ int main (int argc, char **argv)
       for (list <pair<junction, int> >::const_iterator it = sort_windows.begin(); 
            it != sort_windows.end(); ++it) {
 
+        out_clone << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
+	out_clone << it->first << endl;
+
 	// Choose one representative
 
 	list <Sequence> auditioned_sequences;
@@ -1032,6 +1035,9 @@ int main (int argc, char **argv)
                    << setw(WIDTH_WINDOW_POS) << " " << it->first 
                    << " " << windows_labels[it->first] << endl ;
 
+              out_clone << seg ;
+              out_clone << endl ;
+
               break ;
           }
         }
@@ -1100,11 +1106,6 @@ int main (int argc, char **argv)
 	    junc = msa.back();
 	    msa.pop_back();
 	  }
-
-        out << "Outputing in clone file!" << endl;
-        out_clone << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
-	out_clone << it->first << endl;
-
 
 
 	// Output all sequences
@@ -1211,8 +1212,6 @@ int main (int argc, char **argv)
 
               out << endl ;
             }
-          out_clone << seg ;
-          out_clone << endl ;
         }
       }
 
