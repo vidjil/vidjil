@@ -65,7 +65,15 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     var spanV = document.createElement('span');
     spanV.className="V";
     spanV.style.color=colorV(cloneID);
-    spanV.innerHTML=junctions[cloneID].seg.sequence.substr(0, junctions[cloneID].seg.l1+1);
+    var v_seq=junctions[cloneID].seg.sequence.substr(0, junctions[cloneID].seg.l1+1);
+    var size_marge=150-v_seq.length;
+    if (size_marge>0){
+      var marge="";
+      for (var i=0; i<size_marge; i++) marge+="&nbsp";
+      spanV.innerHTML=marge+v_seq;
+    }else{
+      spanV.innerHTML=v_seq;
+    }
     spanM.appendChild(spanV);
       
     if ( (junctions[cloneID].seg.l1+1 -junctions[cloneID].seg.r1)!=0){
