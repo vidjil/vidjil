@@ -1311,7 +1311,7 @@ int main (int argc, char **argv)
     out_json_normalization(out_json, norm_list, 5, nb_segmented);
     out_json << "]," << endl ;
 
-    out_json <<"\"junctions\" : [";
+    out_json <<"\"windows\" : [";
     for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
 	     it != sort_all_windows.end(); ++it) 
 	 {
@@ -1320,7 +1320,7 @@ int main (int argc, char **argv)
 	    out_json <<",";
 	  }
 	 
-	 out_json <<" {\"junction\":\""<<it->first<<"\"," <<endl;
+	 out_json <<" {\"window\":\""<<it->first<<"\"," <<endl;
 	 out_json <<" \"size\":["<< it->second<<"],"<<endl;
 
 	 out_json <<" \"ratios\": [";
