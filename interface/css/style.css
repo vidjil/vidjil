@@ -126,7 +126,6 @@ circle:hover {
 
 #file_menu, #analysis_menu, #dateSelector{
   z-index:2;
-  display:none; 
   border:solid; 
   position: fixed; 
   top: 200px; 
@@ -135,6 +134,11 @@ circle:hover {
   font-size: 14px; 
   padding: 10px;
   background:inherit;
+}
+
+#analysis_menu, #dateSelector
+{
+  display:none; 
 }
 
 #listFav{
