@@ -6,10 +6,9 @@ import sys
 class Junctions:
   def __init__(self):
     self.total_size = []
+    self.normalizations = []
     self.resolution1 = []
     self.resolution5 = []
-    self.norm_resolution1 = []
-    self.norm_resolution5 = []
     self.time = []
     self.junctions = []
 
@@ -19,8 +18,7 @@ class Junctions:
 class Junction:
   def __init__(self):
     self.size = []
-    self.ratio = []
-    self.norm_ratio = []
+    self.ratios = []
     
 class Segment:
   def __init__(self, sequence):
@@ -47,19 +45,17 @@ jlist2 = []
 def juncToJson(obj):
   if isinstance(obj, Junctions):
     return {"junctions": obj.junctions,
+      "normalizations": obj.normalizations,
       "total_size": obj.total_size,
       "resolution1": obj.resolution1,
       "resolution5": obj.resolution5,
-      "norm_resolution1": obj.norm_resolution1,
-      "norm_resolution5": obj.norm_resolution5,
       "time": obj.time,
       }
     raise TypeError(repr(obj) + " fail !") 
   if isinstance(obj, Junction):
     return {"junction": obj.junction,
       "size": obj.size,
-      "ratio": obj.ratio,
-      "norm_ratio": obj.norm_ratio,
+      "ratios": obj.ratios,
       "seg": obj.segment,
       "top": obj.top
       }
@@ -82,20 +78,18 @@ def juncToJson(obj):
 def jsonToJunc(obj_dict):
   if "total_size" in obj_dict:
     obj = Junctions()
+    obj.normalizations=obj_dict["normalizations"]
     obj.junctions=obj_dict["junctions"]
     obj.total_size=obj_dict["total_size"]
     obj.resolution1=obj_dict["resolution1"]
     obj.resolution5=obj_dict["resolution5"]
-    obj.norm_resolution1=obj_dict["norm_resolution1"]
-    obj.norm_resolution5=obj_dict["norm_resolution5"]
 
     return obj
   if "junction" in obj_dict:
     obj = Junction()
     obj.junction=obj_dict["junction"]
     obj.size=obj_dict["size"]
-    obj.ratio=obj_dict["ratio"]
-    obj.norm_ratio=obj_dict["norm_ratio"]
+    obj.ratios=obj_dict["ratios"]
     obj.top=obj_dict["top"]
     if "seg" in obj_dict :
       obj.segment=obj_dict["seg"]
@@ -123,8 +117,6 @@ def cutList(l1, limit):
   out.total_size=l1.total_size
   out.resolution1=l1.resolution1
   out.resolution5=l1.resolution5
-  out.norm_resolution1=l1.norm_resolution1
-  out.norm_resolution5=l1.norm_resolution5
   
   length1 = len(l1.junctions)
   
@@ -143,8 +135,7 @@ def fuseList(l1, l2, limit):
 
   dico_size = collections.OrderedDict()
   dico_top = collections.OrderedDict()
-  dico_norm_ratio = collections.OrderedDict()
-  dico_ratio = collections.OrderedDict()
+  dico_ratios = collections.OrderedDict()
   
   dataseg = {}
   tampon=[]
@@ -164,8 +155,7 @@ def fuseList(l1, l2, limit):
   #recuperation des quantites de jonctions de la liste 1
   for index in range(length1): 
     dico_size[l1.junctions[index].junction] = l1.junctions[index].size
-    dico_ratio[l1.junctions[index].junction] = l1.junctions[index].ratio
-    dico_norm_ratio[l1.junctions[index].junction] = l1.junctions[index].norm_ratio
+    dico_ratios[l1.junctions[index].junction] = l1.junctions[index].ratios
     dico_top[l1.junctions[index].junction] = l1.junctions[index].top
     if (l1.junctions[index].segment != 0) :
       dataseg[l1.junctions[index].junction] = l1.junctions[index].segment
@@ -185,13 +175,11 @@ def fuseList(l1, l2, limit):
     #cas ou la jonction n'etait pas presente dans la 1ere liste
     if l2.junctions[index].junction not in dico_size:
       dico_size[l2.junctions[index].junction] = tampon + l2.junctions[index].size
-      dico_norm_ratio[l2.junctions[index].junction] = tampon + l2.junctions[index].norm_ratio
-      dico_ratio[l2.junctions[index].junction] = tampon + l2.junctions[index].ratio
+      dico_ratios[l2.junctions[index].junction] = tampon + l2.junctions[index].ratios
       dico_top[l2.junctions[index].junction] = l2.junctions[index].top
     else :
       dico_size[l2.junctions[index].junction] = dico_size[l2.junctions[index].junction] + l2.junctions[index].size
-      dico_norm_ratio[l2.junctions[index].junction] = dico_norm_ratio[l2.junctions[index].junction] + l2.junctions[index].norm_ratio
-      dico_ratio[l2.junctions[index].junction] = dico_ratio[l2.junctions[index].junction] + l2.junctions[index].ratio
+      dico_ratios[l2.junctions[index].junction] = dico_ratios[l2.junctions[index].junction] + l2.junctions[index].ratios
       if (dico_top[l2.junctions[index].junction] > l2.junctions[index].top) :
 	dico_top[l2.junctions[index].junction] = l2.junctions[index].top
     
@@ -199,23 +187,20 @@ def fuseList(l1, l2, limit):
   for index in range(length1): 
     if len(dico_size[l1.junctions[index].junction]) == s :
       dico_size[l1.junctions[index].junction] += tampon2
-      dico_norm_ratio[l1.junctions[index].junction] += tampon2
-      dico_ratio[l1.junctions[index].junction] += tampon2
+      dico_ratios[l1.junctions[index].junction] += tampon2
   
   out = Junctions()
+  out.normalizations=l1.normalizations
   out.total_size=l1.total_size+l2.total_size    
   out.resolution1=l1.resolution1+l2.resolution1
   out.resolution5=l1.resolution5+l2.resolution5
-  out.norm_resolution1=l1.norm_resolution1+l2.norm_resolution1
-  out.norm_resolution5=l1.norm_resolution5+l2.norm_resolution5
   
   #creation de la nouvelle liste de jonction
   for key in dico_size :
     junct=Junction()
     junct.junction=key
     junct.size=dico_size[key]
-    junct.ratio=dico_ratio[key]
-    junct.norm_ratio=dico_norm_ratio[key]
+    junct.ratios=dico_ratios[key]
     junct.top=dico_top[key]
     junct.segment = 0
     if key in dataseg :
