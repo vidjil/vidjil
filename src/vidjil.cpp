@@ -638,7 +638,7 @@ int main (int argc, char **argv)
   
 
     for (int i=0; i<STATS_SIZE; i++)
-      out << "   " << left << setw(20) << segmented_mesg[i] << " -> " << stats_segmented[i] << endl ;
+      out << "   " << left << setw(20) << segmented_mesg[i] << " ->" << right << setw(9) << stats_segmented[i] << endl ;
 
     
       map <junction, string> json_data_segment ;
