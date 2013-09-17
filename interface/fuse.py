@@ -114,6 +114,7 @@ def jsonToJunc(obj_dict):
 def cutList(l1, limit):
   
   out = Junctions()
+  out.normalizations=l1.normalizations
   out.total_size=l1.total_size
   out.resolution1=l1.resolution1
   out.resolution5=l1.resolution5
@@ -140,13 +141,19 @@ def fuseList(l1, l2, limit):
   dataseg = {}
   tampon=[]
   s=len(l1.total_size)
+  
+  tp=[]
+  
+  for i in l1.normalizations:
+    tp.append(0)
+  
   for i in range(s):
-    tampon.append(0)
+    tampon.append(tp)
   
   tampon2=[]
   s2=len(l2.total_size)
   for i in range(s2):
-    tampon2.append(0)
+    tampon2.append(tp)
   
   length1 = len(l1.junctions)
     
