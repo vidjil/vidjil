@@ -440,7 +440,8 @@ letter-spacing: 0.12em;
 }
 
 .tagD{
-  width : 40px;
+  margin-left: 25px;
+  width: 25px;
   display : inline-block;
-  margin : 0px
+  float : right;
 }

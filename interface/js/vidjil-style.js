@@ -200,7 +200,12 @@ var default_tag=8;
       document.getElementById(cloneID).style.background=colorStyle.c02;
       if (table[cloneID].active){
 	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1.5px";
-	  if ((typeof(table[cloneID].tag) != 'undefined') && (table[cloneID].tag != 8) && (table[cloneID].tag != 4)) { 
+	  if (
+	    (typeof(table[cloneID].tag) != 'undefined')
+	    && (tagDisplay[table[cloneID].tag]==2)
+	    && (table[cloneID].tag != 8)
+	    && (table[cloneID].tag != 4)
+	  ){ 
 	  // if tagged, but not standard 		  
 		  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="5px";
 	      }
