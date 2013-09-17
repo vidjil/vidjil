@@ -577,8 +577,6 @@ int main (int argc, char **argv)
     MapKmerStore<Kmer> *windows = new MapKmerStore<Kmer>(w);
     map <junction, list<Sequence> > seqs_by_window ;
 
-    int too_short_for_the_window = 0 ;
-    int nb_segmented = 0 ;
     int ok = 0 ;
     size_t nb_total_reads = 0;
 
@@ -605,17 +603,16 @@ int main (int argc, char **argv)
 
         if (seg.isSegmented())
           {
-            nb_segmented++ ;
-
             junction junc = seg.getJunction(w);
 
             if (junc.size())
               {
+		stats_segmented[TOTAL_SEG_AND_WINDOW]++ ;
                 windows->insert(junc, "bloup");
                 seqs_by_window[junc].push_back(reads->getSequence());
               }
 	    else
-	      too_short_for_the_window++ ;
+	      stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW]++ ;
 
 	    //////////////////////////////////
 	    // Output segmented
@@ -627,18 +624,21 @@ int main (int argc, char **argv)
       }
 
     out << endl;
-    out << "  ==> segmented " << nb_segmented << " reads"
-	<< " (" << setprecision(3) << 100 * (float) nb_segmented / nb_total_reads << "%)" 
+    out << "  ==> segmented " << stats_segmented[TOTAL_SEG_AND_WINDOW] << " reads"
+	<< " (" << setprecision(3) << 100 * (float) stats_segmented[TOTAL_SEG_AND_WINDOW] / nb_total_reads << "%)" 
 	<< endl ;
 
+    // nb_segmented is the main denominator for the following (but will be normalized)
+    int nb_segmented = stats_segmented[TOTAL_SEG_AND_WINDOW] - stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] ;
+
     out << "  ==> found " << seqs_by_window.size() << " " << w << "-windows"
-	<< " in " << (nb_segmented - too_short_for_the_window) << " segments"
-	<< " (" << setprecision(3) << 100 * (float) (nb_segmented - too_short_for_the_window) / nb_total_reads << "%)"
+	<< " in " << nb_segmented << " segments"
+	<< " (" << setprecision(3) << 100 * (float) nb_segmented / nb_total_reads << "%)"
 	<< " inside " << nb_total_reads << " sequences" << endl ;
   
 
     for (int i=0; i<STATS_SIZE; i++)
-      out << "   " << left << setw(20) << segmented_mesg[i] << " -> " << stats_segmented[i] << endl ;
+      out << "   " << left << setw(20) << segmented_mesg[i] << " ->" << right << setw(9) << stats_segmented[i] << endl ;
 
     
       map <junction, string> json_data_segment ;
@@ -841,7 +841,8 @@ int main (int argc, char **argv)
       out << " – " << setfill(' ') << setw(WIDTH_NB_READS) << clone_nb_reads << " reads" ;
       out << " – " << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%  "  ;
 
-      out << " – " << 100 * (float) clone_nb_reads * compute_normalization_one(norm_list, clone_nb_reads) / nb_segmented << "% " << compute_normalization_one(norm_list, clone_nb_reads) << " ";
+      out << " – " << 100 * (float) clone_nb_reads * compute_normalization_one(norm_list, clone_nb_reads) / nb_segmented << "% " 
+	  << compute_normalization_one(norm_list, clone_nb_reads) << " ";
       out.flush();
 
       //////////////////////////////////
