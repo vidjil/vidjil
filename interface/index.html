@@ -97,7 +97,13 @@
 	</div>
       </div>
       
-      <div id="norm" class="menu" onclick="javascript:toggleNormalize();"> normalize off
+      <div id="norm" class="menu" onmouseover="showSelector('ratioSelector');"> normalize 
+        <div id="ratioSelector" class="selector">
+        <!--TODO generer automatiquement-->
+	  <a class="buttonSelector" onclick="changeRatio(0);">none</a> 
+	  <a class="buttonSelector" onclick="changeRatio(1);">highest standard</a> 
+	  <a class="buttonSelector" onclick="changeRatio(2);">all standard</a> 
+	</div>
       </div>
       
       <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 

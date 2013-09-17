@@ -90,6 +90,9 @@ var grid_nsize=[];
 var colorVJ={};           //table associative labels (V ou J) <=> couleurs
 var colorN=[];		  
 
+//default 
+var used_ratio=0;
+
 
 /*fonction de chargement local*/
 function loadJson() {
@@ -215,8 +218,6 @@ function load(data, limit){
   result.total_size=data.total_size;
   result.resolution1=data.resolution1;
   result.resolution5=data.resolution5;
-  result.norm_resolution1=data.norm_resolution1;    
-  result.norm_resolution5=data.norm_resolution5;
     
   result.time=data.time;
   result.junctions=[];
@@ -642,13 +643,8 @@ function initVJgrid(germlineV, germlineJ){
     if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     
     var r=0;
-    if (normalization==false ){
       for(var j=0 ;j<table[cloneID].cluster.length; j++){
-	r += junctions[table[cloneID].cluster[j]].ratio[t];}
-    }else{
-      for(var j=0 ;j<table[cloneID].cluster.length; j++){
-	r += junctions[table[cloneID].cluster[j]].norm_ratio[t];}
-    }
+	r += junctions[table[cloneID].cluster[j]].ratios[t][used_ratio];}
     return r
   }
   
@@ -946,6 +942,26 @@ function initVJgrid(germlineV, germlineJ){
     force.alpha(.2)
   }
   
+  function changeRatio(ratio){
+    
+    used_ratio=ratio;
+    
+      data_res[0].path = constructPathR(jsonData.resolution1);
+      data_res[1].path = constructPathR(jsonData.resolution5);
+    
+    updateList()
+
+      for (var i = 0; i < totalClones ; i++){
+	for (var j=0; j<table[i].cluster.length; j++){
+	  data_graph[table[i].cluster[j]].path=constructPath(i);
+	}
+      }
+      
+    updateGraph();
+    updateVis();
+    force.alpha(.2)
+  }
+  /*
   function toggleNormalize(){
     if (normalization==true){
       normalization=false;
@@ -971,7 +987,7 @@ function initVJgrid(germlineV, germlineJ){
     updateGraph();
     updateVis();
     force.alpha(.2)
-  }
+  }*/
   
   function removeKey(arrayName,key)
   {
