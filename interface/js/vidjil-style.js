@@ -78,11 +78,11 @@ tagColor[7] = "#859900";
 tagColor[8] = colorStyle.c01;
 
 var tagName = [];
-tagName[0] = "pathologique 1";
-tagName[1] = "pathologique 2";
-tagName[2] = "pathologique 3";
+tagName[0] = "clone 1";
+tagName[1] = "clone 2";
+tagName[2] = "clone 3";
 tagName[3] = "standard";
-tagName[4] = "standard noize";
+tagName[4] = "standard (noise)";
 tagName[5] = "custom 1";
 tagName[6] = "custom 2";
 tagName[7] = "custom 3";
