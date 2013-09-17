@@ -53,6 +53,7 @@
 // #define RELEASE_TAG  "2013.04"
 #include "release.h"
 
+#define DEFAULT_GERMLINE_SYSTEM "TRG" 
 #define DEFAULT_V_REP  "./germline/TRGV.fa" // IGHV 
 #define DEFAULT_D_REP  "./germline/IGHD.fa" 
 #define DEFAULT_J_REP  "./germline/TRGJ.fa" // IGHJ
@@ -196,6 +197,7 @@ int main (int argc, char **argv)
        << "# Copyright (C) 2011, 2012, 2013 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille" << endl 
        << endl ;
 
+  string germline_system = DEFAULT_GERMLINE_SYSTEM ;
   string f_rep_V = DEFAULT_V_REP ;
   string f_rep_D = DEFAULT_D_REP ;
   string f_rep_J = DEFAULT_J_REP ;
@@ -308,9 +310,10 @@ int main (int argc, char **argv)
 	break;
 
       case 'G':
-	f_rep_V = (string(optarg) + "V.fa").c_str() ;
-	f_rep_D = (string(optarg) + "D.fa").c_str() ;
-	f_rep_J = (string(optarg) + "J.fa").c_str() ;
+	germline_system = string(optarg);
+	f_rep_V = (germline_system + "V.fa").c_str() ;
+	f_rep_D = (germline_system + "D.fa").c_str() ;
+	f_rep_J = (germline_system + "J.fa").c_str() ;
 	// TODO: if VDJ, set segment_D // NO, bad idea, depends on naming convention
 	break;
 
@@ -1284,7 +1287,18 @@ int main (int argc, char **argv)
     out << "  ==> " << f_json << endl ;
     ofstream out_json(f_json.c_str()) ;
       
-    out_json <<"{ \"total_size\" : ["<<nb_segmented<<"] ,"<<endl;
+    out_json << "{ " ;
+
+    // Version/timestamp/git info
+    out_json << "\"timestamp\" : \"" << time_buffer << "\"," << endl ; 
+    out_json << "\"commandline\" : \"" ; // TODO: escape "s in argv
+    for (int i=0; i < argc; i++) 
+      out_json << argv[i] << " ";
+    out_json << "\"," << endl ;
+
+    // Vidjil output
+    out_json << "\"germline\" : \"" << germline_system << "\"," << endl ; 
+    out_json << "\"total_size\" : ["<<nb_segmented<<"] ,"<<endl;
 
     out_json_normalization_names(out_json);
     out_json << "," << endl ;
