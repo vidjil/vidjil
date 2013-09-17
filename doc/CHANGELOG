@@ -1,5 +1,6 @@
 
-2013-08-XX  The Vidjil Team
+2013-09-XX  The Vidjil Team
+	* Better heuristic, segments more reads (core/segment.cpp)
         * Normalization against a standard (-Z) (core/labels.cpp)
         * Faster selection of representative read (vidjil.cpp, core/read_chooser.cpp)
         * New .json output

@@ -1,15 +1,15 @@
 !LAUNCH: ../../vidjil -c clones -G ../../germline/IGH -x -r 1 -R 5 -n 5 -d ../../data/clones_simul.fa
 
 $ Window extractions
-1:found 20 50-windows in 47 segments
+1:found 22 50-windows in 63 segments
 
 $ Some clustering
 1:==> 2 clones
 
 $ Clone 1 output
-1:Clone #001 .* 22 reads
+1:Clone #001 .* 36 reads
 
 $ Clone 2 output
-1:Clone #002 .* 20 reads
+1:Clone #002 .* 22 reads
 
 

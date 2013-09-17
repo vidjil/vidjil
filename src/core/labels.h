@@ -15,4 +15,8 @@ list< pair <float, int> > compute_normalization_list(map<string, list<Sequence> 
 						     int total
 						     );
 
+float compute_normalization_one(list< pair <float, int> > norm_list, int nb_reads);
 float compute_normalization(list< pair <float, int> > norm_list, int nb_reads);
+
+void out_json_normalization_names(ostream &out);
+void out_json_normalization(ostream &out, list< pair <float, int> > norm_list, int nb_reads, int nb_segmented);

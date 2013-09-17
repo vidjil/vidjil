@@ -5,7 +5,10 @@ LDFLAGS=
 SRC= tests.cpp
 EXEC=$(SRC:.cpp=)
 DEP=../core.a
+SHOULD=$(wildcard *.should_get)
+SHOULD_LOG=$(SHOULD:.should_get=.log)
 
+.PHONY: all force clean forcedep
 
 test: all
 	@echo
@@ -16,6 +19,11 @@ test: all
 
 all: core $(EXEC)
 	@echo "All tests compiled."
+
+should: core $(SHOULD_LOG)
+
+%.log: %.should_get force
+	./should-to-tap.sh $<
 
 $(EXEC): % : %.o $(DEP) 
 	$(CC) -o $@ $^ $(LDFLAGS) $(CFLAGS)
@@ -34,6 +42,8 @@ clean:
 
 forcedep:
 	g++ $(INCLUDE) -M $(SRC) > dep.mk
+
+force:
 
 DEP=$(wildcard dep.mk)
 

@@ -10,6 +10,9 @@
 #include "kmeraffect.h"
 
 #define EXTEND_D_ZONE 5
+#define RATIO_STRAND 5          /* The ratio between the affectations in one
+                                   strand and the other, to safely attribute a
+                                   segment to a given strand */
 
 using namespace std;
 

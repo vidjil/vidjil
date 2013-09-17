@@ -108,6 +108,7 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 // display
 #define WIDTH_NB_READS 7
 #define WIDTH_NB_CLONES 3
+#define WIDTH_WINDOW_POS 14+WIDTH_NB_CLONES
 
 using namespace std ;
 
@@ -840,7 +841,7 @@ int main (int argc, char **argv)
       out << " – " << setfill(' ') << setw(WIDTH_NB_READS) << clone_nb_reads << " reads" ;
       out << " – " << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%  "  ;
 
-      out << " – " << 100 * (float) clone_nb_reads * compute_normalization(norm_list, clone_nb_reads) / nb_segmented << "% " << compute_normalization(norm_list, clone_nb_reads) << " ";
+      out << " – " << 100 * (float) clone_nb_reads * compute_normalization_one(norm_list, clone_nb_reads) / nb_segmented << "% " << compute_normalization_one(norm_list, clone_nb_reads) << " ";
       out.flush();
 
       //////////////////////////////////
@@ -856,7 +857,7 @@ int main (int argc, char **argv)
       // Output windows 
 
       int num_seq = 0 ;
-      
+
       for (list <pair<junction, int> >::const_iterator it = sort_windows.begin(); 
            it != sort_windows.end(); ++it) {
 	num_seq++ ;
@@ -929,7 +930,7 @@ int main (int argc, char **argv)
 	    
 	    representatives.push_back(seg.getSequence());
             representatives_labels.push_back("#" + string_of_int(num_clone));
-	    cout << seg.info << endl ;
+	    cout << seg.info ;
 
               // We need to find the window in the representative
               size_t window_pos = seg.getSequence().sequence.find(it->first);
@@ -1022,10 +1023,12 @@ int main (int argc, char **argv)
               seg.html(html, segment_D) ;
 
               // display window
-              cout << setw(window_pos) << " " << it->first << " " << windows_labels[it->first] << endl ;
+              cout << endl 
+                   << setw(WIDTH_WINDOW_POS) << " " << it->first 
+                   << " " << windows_labels[it->first] << endl ;
 
               break ;
-            }
+          }
         }
       }
 
@@ -1281,10 +1284,18 @@ int main (int argc, char **argv)
     ofstream out_json(f_json.c_str()) ;
       
     out_json <<"{ \"total_size\" : ["<<nb_segmented<<"] ,"<<endl;
-    out_json <<"\"resolution1\" : ["<<(float) 1 / nb_segmented <<"] ,"<<endl;
-    out_json <<"\"resolution5\" : ["<<(float) 5 / nb_segmented <<"] ,"<<endl;
-    out_json <<"\"norm_resolution1\" : ["<< (float) 1 * compute_normalization(norm_list, 1) / nb_segmented<<"] ,"<<endl;
-    out_json <<"\"norm_resolution5\" : ["<< (float) 5 * compute_normalization(norm_list, 5) / nb_segmented<<"] ,"<<endl;
+
+    out_json_normalization_names(out_json);
+    out_json << "," << endl ;
+
+    out_json << "\"resolution1\" :" ;
+    out_json_normalization(out_json, norm_list, 1, nb_segmented);
+    out_json << "," << endl ;
+
+    out_json << "\"resolution5\" :" ;
+    out_json_normalization(out_json, norm_list, 5, nb_segmented);
+    out_json << "," << endl ;
+
     out_json <<"\"junctions\" : [";
     for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
 	     it != sort_all_windows.end(); ++it) 
@@ -1296,8 +1307,11 @@ int main (int argc, char **argv)
 	 
 	 out_json <<" {\"junction\":\""<<it->first<<"\"," <<endl;
 	 out_json <<" \"size\":["<< it->second<<"],"<<endl;
-	 out_json <<" \"ratio\":["<< (float) it->second / nb_segmented <<"],"<<endl;
-	 out_json <<" \"norm_ratio\":["<<  (float) it->second * compute_normalization(norm_list, it->second) / nb_segmented <<"],"<<endl;
+
+	 out_json <<" \"ratios\": ";
+	 out_json_normalization(out_json, norm_list, it->second, nb_segmented);
+	 out_json << "," << endl ;
+
 	 if (json_data_segment.count(it->first) !=0 ){
 	    out_json << json_data_segment[it->first]<<","<<endl;
 	 }
