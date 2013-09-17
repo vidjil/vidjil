@@ -206,5 +206,5 @@ void out_json_normalization(ostream &out, list< pair <float, int> > norm_list, i
       << (float) nb_reads / nb_segmented << ", " // Raw ratio
       << (float) nb_reads * compute_normalization_one(norm_list, nb_reads) / nb_segmented << ", " // normalization against highest standard
       << (float) nb_reads * compute_normalization(norm_list, nb_reads) / nb_segmented << "]"  // full normalization
-      << endl ;
+    ;
 }
