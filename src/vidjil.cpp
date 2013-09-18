@@ -45,6 +45,7 @@
 #include "core/mkdir.h"
 #include "core/labels.h"
 #include "core/representative.h"
+#include "core/list_utils.h"
 
 #include "vidjil.h"
 
@@ -1265,7 +1266,9 @@ int main (int argc, char **argv)
 
     html << "<pre>" << endl ;
     cout << "Comparing clone representatives 2 by 2" << endl ;
-    SimilarityMatrix matrix = compare_all(representatives, true, 
+    list<Sequence> first_representatives = keep_n_first<Sequence>(representatives,
+                                                                  LIMIT_DISPLAY);
+    SimilarityMatrix matrix = compare_all(first_representatives, true, 
                                           representatives_labels);
     cout << RawOutputSimilarityMatrix(matrix, 90);
 
