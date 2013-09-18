@@ -77,21 +77,29 @@ class OutputSimilarityMatrix {
   SimilarityMatrix &matrix;
  private:
   float sim;
+  int max_display;
 
  public:
-  OutputSimilarityMatrix(SimilarityMatrix &m, float sim=100.);
+  /**
+   * @param m: the matrix to be displayed
+   * @param sim: the level of similarity above which we display the values in a secial way
+   * @param max_display: the maximal number of rows or cols to display
+   */
+  OutputSimilarityMatrix(SimilarityMatrix &m, float sim=100., int max_display = LIMIT_DISPLAY);
 
   float similarity() const;
+
+  int maxDisplayed() const;
 };
 
 class RawOutputSimilarityMatrix: public OutputSimilarityMatrix {
  public:
-    RawOutputSimilarityMatrix(SimilarityMatrix &m, float sim=100.);
+  RawOutputSimilarityMatrix(SimilarityMatrix &m, float sim=100., int max_display = LIMIT_DISPLAY);
 }; 
 
 class HTMLOutputSimilarityMatrix: public OutputSimilarityMatrix {
  public:
-  HTMLOutputSimilarityMatrix(SimilarityMatrix &m, float sim=100.);
+  HTMLOutputSimilarityMatrix(SimilarityMatrix &m, float sim=100., int max_display = LIMIT_DISPLAY);
   
 }; 
 

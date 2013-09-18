@@ -93,16 +93,20 @@ void SimilarityMatrix::setScore(int i, int j, float score) {
   }
 }
 
-OutputSimilarityMatrix::OutputSimilarityMatrix(SimilarityMatrix &m, float sim):matrix(m), sim(sim){}
+OutputSimilarityMatrix::OutputSimilarityMatrix(SimilarityMatrix &m, float sim, int max_display):matrix(m), sim(sim), max_display(max_display){}
 
 
 float OutputSimilarityMatrix::similarity() const {
   return sim;
 }
 
-RawOutputSimilarityMatrix::RawOutputSimilarityMatrix(SimilarityMatrix &m, float sim) : OutputSimilarityMatrix(m, sim) {}
+int OutputSimilarityMatrix::maxDisplayed() const {
+  return max_display;
+}
 
-HTMLOutputSimilarityMatrix::HTMLOutputSimilarityMatrix(SimilarityMatrix &m, float sim) : OutputSimilarityMatrix(m, sim) {}
+RawOutputSimilarityMatrix::RawOutputSimilarityMatrix(SimilarityMatrix &m, float sim, int max_display) : OutputSimilarityMatrix(m, sim, max_display) {}
+
+HTMLOutputSimilarityMatrix::HTMLOutputSimilarityMatrix(SimilarityMatrix &m, float sim, int max_display) : OutputSimilarityMatrix(m, sim, max_display) {}
 
 
 
@@ -111,13 +115,13 @@ ostream &operator<<(ostream &out, const RawOutputSimilarityMatrix &outputMatrix)
   out << "    | " ;
 
   for (int num = 0; num <  matrix.size(); num++) 
-    if (num <= LIMIT_DISPLAY)
+    if (num <= outputMatrix.maxDisplayed())
       out << setw(4) << matrix.label(num) << " " ;
 
   out << endl ;
 
   for (int num = 0; num <  matrix.size(); num++) {
-    if (num <= LIMIT_DISPLAY)
+    if (num <= outputMatrix.maxDisplayed())
       out << setw(3) << matrix.label(num) << " | " ;
     
 
@@ -126,12 +130,12 @@ ostream &operator<<(ostream &out, const RawOutputSimilarityMatrix &outputMatrix)
         
         if (num_num < num)
           {
-            if ((num <= LIMIT_DISPLAY) && (num_num <= LIMIT_DISPLAY))
+            if ((num <= outputMatrix.maxDisplayed()) && (num_num <= outputMatrix.maxDisplayed()))
               out << "     " ;
             continue ;
           }
         
-        if (num_num <= LIMIT_DISPLAY)
+        if (num_num <= outputMatrix.maxDisplayed())
           {
             out << setw(4) << (int)matrix(num, num_num) ;
 	    
@@ -143,7 +147,7 @@ ostream &operator<<(ostream &out, const RawOutputSimilarityMatrix &outputMatrix)
           }
       }
 
-    if (num <= LIMIT_DISPLAY)
+    if (num <= outputMatrix.maxDisplayed())
       {
         out << "   " << matrix.description(num) ;
         out << endl ;	  
@@ -161,14 +165,14 @@ ostream &operator<<(ostream &out, const HTMLOutputSimilarityMatrix &outputMatrix
 
   out << "<th />";
   for (int num = 0; num <  matrix.size(); num++) 
-    if (num <= LIMIT_DISPLAY)
+    if (num <= outputMatrix.maxDisplayed())
       out << "<th>" << matrix.label(num) << "</th>" ;
 
   out << "</tr></thead>" << endl ;
   out << "<tbody>";
 
   for (int num = 0; num <  matrix.size(); num++) {
-    if (num <= LIMIT_DISPLAY)
+    if (num <= outputMatrix.maxDisplayed())
       out << "<tr><td class='index'>" << matrix.label(num) << "</td>" ;
     
 
@@ -177,12 +181,12 @@ ostream &operator<<(ostream &out, const HTMLOutputSimilarityMatrix &outputMatrix
         
         if (num_num < num)
           {
-            if ((num <= LIMIT_DISPLAY) && (num_num <= LIMIT_DISPLAY))
+            if ((num <= outputMatrix.maxDisplayed()) && (num_num <= outputMatrix.maxDisplayed()))
               out << "<td />" ;
             continue ;
           }
         
-        if (num_num <= LIMIT_DISPLAY)
+        if (num_num <= outputMatrix.maxDisplayed())
           {
             bool highSim = (matrix(num, num_num) >= outputMatrix.similarity()) 
                             && (num_num > num);
@@ -191,7 +195,7 @@ ostream &operator<<(ostream &out, const HTMLOutputSimilarityMatrix &outputMatrix
           }
       }
 
-    if (num <= LIMIT_DISPLAY)
+    if (num <= outputMatrix.maxDisplayed())
       {
         out << "  <td class='label'>" << matrix.description(num) << "</td>" ;
         out << "</tr>" << endl ;	  
