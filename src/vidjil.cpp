@@ -86,10 +86,10 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 
 // "tests/data/leukemia.fa" 
 
-#define DEFAULT_K      14
+#define DEFAULT_K      10
 #define DEFAULT_W      40
 #define DEFAULT_W_D    50
-#define DEFAULT_SEED   (seed_contiguous(DEFAULT_K))
+#define DEFAULT_SEED   "#####-#####"
 
 #define DEFAULT_DELTA_MIN  -10
 #define DEFAULT_DELTA_MAX   15
