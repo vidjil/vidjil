@@ -192,7 +192,7 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     
   }
   
-  function sendToIMGT(){
+  function sendTo(adress){
     
     var li =document.getElementById("listSeq").getElementsByTagName("li")
     var request = "";
@@ -204,8 +204,9 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
       else
 	request += ">" +getname(id)+"\n"+ jsonData.junctions[id].junction+"\n";
     }
-     document.getElementById("log").innerHTML+=request;
-    imgtPost(request);
+    if (adress=='IMGT') imgtPost(request);
+    if (adress=='igBlast') igBlastPost(request);
+
     
   }
   
