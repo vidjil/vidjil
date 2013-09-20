@@ -160,7 +160,7 @@ function displayGraph(data, data_2, data_3, data_4){
   g_text.exit()    
     .remove();
     
-  g_graph = polyline_container.selectAll("g").data(data_2);
+  g_graph = polyline_container.selectAll("polyline").data(data_2);
   g_graph.enter().append("svg:g")
   .attr("id", function(d) { return d.name; });
   g_graph.exit()    
@@ -169,6 +169,7 @@ function displayGraph(data, data_2, data_3, data_4){
   g_graph.append("polyline")
     .transition()
     .duration(500)
+    .attr("id", function(d) { return "poly"+d.name; })
     .attr("points", function(p) {
       var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
 	for (var i=1; i<p.path.length; i++){
@@ -321,6 +322,7 @@ function updateGraph(){
 	return che;
     } )
     .attr("class", function(p) { return g_class(p.id); })
+    .attr("id", function(d) { return "poly"+d.name; })
     
   g_res.selectAll("polyline")
     .transition()
@@ -355,13 +357,18 @@ function updateGraph(){
     })
 
   polyline_container.selectAll("polyline")
-    .on("mouseover", function(d){ focusIn(d.id);
-    })
-    .on("mouseout", function(d){ focusOut(d.id);
-    })
+    .attr("onmouseover",function(d) { return  "focusIn("+d.id+")"; } )
+    .attr("onmouseout", function(d) { return  "focusOut("+d.id+")"; } )
     .on("click", function(d){ selectClone(d.id);})
-    
     initStyle()
+}
+function lineFocusIn(elem){
+  var cloneID=elem.parentNode.id.substr(4)
+  focusIn(cloneID);
+}
+function lineFocusOut(elem){
+  var cloneID=elem.parentNode.id.substr(4)
+  focusOut(cloneID);
 }
 
 function resetGraphCluster(){
