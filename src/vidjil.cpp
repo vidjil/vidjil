@@ -211,8 +211,9 @@ int main (int argc, char **argv)
   string comp_filename = COMP_FILENAME;
 
   int k = DEFAULT_K ;
-  int w = DEFAULT_W ;
-  
+  int w = 0 ;
+  int default_w = DEFAULT_W ;
+
   int epsilon = DEFAULT_EPSILON ;
   int minPts = DEFAULT_MINPTS ;
   Cost cluster_cost = DEFAULT_CLUSTER_COST ;
@@ -265,7 +266,7 @@ int main (int argc, char **argv)
 	segment_D = 1 ;
 	delta_min = DEFAULT_DELTA_MIN_D ;
 	delta_max = DEFAULT_DELTA_MAX_D ;
-	w = DEFAULT_W_D ;
+	default_w = DEFAULT_W_D ;
 	break;
       case 'e':
 	forced_edges = optarg;
@@ -396,6 +397,11 @@ int main (int argc, char **argv)
         break;
       }
 
+  // If there was no -w option, then w is either DEFAULT_W or DEFAULT_W_D
+  if (w == 0)
+    w = default_w ;
+
+  
   string out_seqdir = out_dir + "/seq/" ;
 
   if (verbose)
