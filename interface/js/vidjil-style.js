@@ -230,9 +230,15 @@ var default_tag=8;
     }else{
       clone.polylineElem.setAttribute("stroke-dasharray","");
     }
-    if (typeof table[cloneID].tag != 'undefined') 
+    //TODO update star/tag uniquement avec le selectTag
+    if (typeof table[cloneID].tag != 'undefined'){
+      if (selectElem){document.getElementById("scolor"+cloneID).setAttribute("fill", tagColor[table[cloneID].tag]);}
       clone.colorElem.setAttribute("fill", tagColor[table[cloneID].tag]);
-    else clone.colorElem.setAttribute("fill", colorStyle.c01);
+    }
+    else{ 
+      if (selectElem){document.getElementById("scolor"+cloneID).setAttribute("fill", colorStyle.c01);}
+      clone.colorElem.setAttribute("fill", colorStyle.c01);
+    }
     
   }
   
