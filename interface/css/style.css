@@ -171,7 +171,6 @@ circle:hover {
 .listElem{
   width :370px;
   cursor:pointer;
-  -moz-transition: color  0.8s;
   -webkit-transition: color 0.8s;
   -o-transition: color  0.8s;
   -ms-transition: color 0.8s;
@@ -272,7 +271,6 @@ circle:hover {
 
 
 .graphLine{
- -moz-transition: stroke  0.5s;
  -webkit-transition: stroke 0.5s;
  -o-transition: stroke  0.5s;
  -ms-transition: stroke 0.5s;
@@ -283,7 +281,6 @@ circle:hover {
 }
 
 .circle{
-  -moz-transition: fill  0.5s;
   -webkit-transition: fill 0.5s;
   -o-transition: fill  0.5s;
   -ms-transition: fill 0.5s;

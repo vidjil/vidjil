@@ -272,11 +272,6 @@ circle:hover {
 
 
 .graphLine{
- -moz-transition: stroke  0.5s;
- -webkit-transition: stroke 0.5s;
- -o-transition: stroke  0.5s;
- -ms-transition: stroke 0.5s;
- transition: stroke 0.5s;
  stroke-width : 1.5px;
  fill :none;
  cursor:pointer;
@@ -440,7 +435,7 @@ letter-spacing: 0.12em;
 }
 
 .tagD{
-  margin-left: 25px;
+  margin-left: 15px;
   width: 25px;
   display : inline-block;
   float : right;
