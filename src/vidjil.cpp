@@ -628,12 +628,15 @@ int main (int argc, char **argv)
       }
 
     out << endl;
-    out << "  ==> segmented " << stats_segmented[TOTAL_SEG_AND_WINDOW] << " reads"
-	<< " (" << setprecision(3) << 100 * (float) stats_segmented[TOTAL_SEG_AND_WINDOW] / nb_total_reads << "%)" 
+
+    int nb_segmented_including_too_short = stats_segmented[TOTAL_SEG_AND_WINDOW] + stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] ;
+
+    out << "  ==> segmented " << nb_segmented_including_too_short << " reads"
+	<< " (" << setprecision(3) << 100 * (float) nb_segmented_including_too_short / nb_total_reads << "%)" 
 	<< endl ;
 
     // nb_segmented is the main denominator for the following (but will be normalized)
-    int nb_segmented = stats_segmented[TOTAL_SEG_AND_WINDOW] - stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] ;
+    int nb_segmented = stats_segmented[TOTAL_SEG_AND_WINDOW] ;
 
     out << "  ==> found " << seqs_by_window.size() << " " << w << "-windows"
 	<< " in " << nb_segmented << " segments"
