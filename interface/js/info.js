@@ -178,14 +178,14 @@
 	var img=document.createElement('img');
 	img.onclick=function(){ split(cloneID, this.parentNode.id2);
 	}
-	img.src="images/delete.png";
+	if (table[cloneID].cluster[i]!=parseInt(cloneID)){ img.src="images/delete.png";}
 	img.className="delBox";
 	
 	var span_stat=document.createElement('span');
 	span_stat.className="sizeBox";
 	span_stat.appendChild(document.createTextNode( (junctions[table[cloneID].cluster[i]].size[t]*100/clusterSize).toFixed(1)+"%"));
 	
-	div_clone.appendChild(img);
+	div_clone.appendChild(img); 
 	div_clone.appendChild(span_name);
 	div_clone.appendChild(span_stat);
 	div_cluster.appendChild(div_clone);

@@ -233,11 +233,11 @@ var default_tag=8;
     //TODO update star/tag uniquement avec le selectTag
     if (typeof table[cloneID].tag != 'undefined'){
       if (selectElem){document.getElementById("scolor"+cloneID).setAttribute("fill", tagColor[table[cloneID].tag]);}
-      clone.colorElem.setAttribute("fill", tagColor[table[cloneID].tag]);
+      document.getElementById("color"+cloneID).setAttribute("fill", tagColor[table[cloneID].tag]);
     }
     else{ 
       if (selectElem){document.getElementById("scolor"+cloneID).setAttribute("fill", colorStyle.c01);}
-      clone.colorElem.setAttribute("fill", colorStyle.c01);
+      document.getElementById("color"+cloneID).setAttribute("fill", colorStyle.c01);
     }
     
   }

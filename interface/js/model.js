@@ -905,9 +905,12 @@ function initVJgrid(germlineV, germlineJ){
       updateGraph();
       updateVis();
       
+    document.getElementById("listSelect").innerHTML="";
+    document.getElementById("listSeq").innerHTML="";
       setTimeout('freeSelect();',500);
       setTimeout("selectClone("+leader+");",600);
       setTimeout("showCluster("+leader+");",700);
+      setTimeout("updateDisplay();",700);
       force.alpha(.2)
   }
   
