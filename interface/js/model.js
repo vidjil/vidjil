@@ -148,7 +148,7 @@ function loadJson() {
     initCoef();
     document.getElementById("log").innerHTML+="<br>initialisation coef";
     setTimeout('changeSplitMethod("vj2");',2000);
-    displayTop(5);
+    displayTop(document.getElementById('rangeValue').value);
     document.getElementById("log").innerHTML+="<br>start visu";
     $("#log").scrollTop(100000000000000);
   };
