@@ -139,11 +139,12 @@ function loadJson() {
     document.getElementById("log").innerHTML+="<br>génération des clones";
     initVJgrid(TRGV,TRGJ);
     initNodes();
+    initGraph();
+    document.getElementById("log").innerHTML+="<br>initialisation graph";
     initVisu();
     document.getElementById("log").innerHTML+="<br>calcul des positions VJ";
-    initGraph();
+    setTimeout(function() {initCache();},2000);
     force.start();
-    document.getElementById("log").innerHTML+="<br>initialisation graph";
     initCoef();
     document.getElementById("log").innerHTML+="<br>initialisation coef";
     setTimeout('changeSplitMethod("vj2");',2000);
@@ -724,6 +725,7 @@ function initVJgrid(germlineV, germlineJ){
   var tmpID;
   
   function changeColor(cloneID){
+    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     tagID=cloneID;
     $('#tagSelector').show("fast");
   document.getElementById("tagname").innerHTML=getname(cloneID);
@@ -799,29 +801,38 @@ function initVJgrid(germlineV, germlineJ){
   
   /*positionne le focus un clone / déclenchement style mouseover
    * cloneID : ID du clone a focus
-   * move : 1 => ajustement de la liste au dessus de l'element focus
    */
   function focusIn(cloneID){
     
     if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     
-    table[cloneID].focus=true;
-    updateStyleElem(cloneID);
-    //document.getElementById("focus-sequence").innerHTML=getname(cloneID);
-    
     var line = document.getElementById("line"+cloneID);
     document.getElementById("polyline_container").appendChild(line);
     
+    table[cloneID].focus=true;
+    updateColorElem(cloneID);
+   
   }
-  
+  /*
+  function testFocus(x){
+    var startTime = new Date().getTime();  
+    var elapsedTime = 0;  
+      focusIn(Math.floor((Math.random()*80)+1));
+      focusOut(Math.floor((Math.random()*80)+1));
+      
+      if (x>0) testFocus(x-1);
+      
+    elapsedTime = new Date().getTime() - startTime;  
+    return elapsedTime;  
+  }*/
   
   /*libere un element du focus / déclenchement style mouseover*/
   function focusOut(cloneID){
-    
     if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     
     table[cloneID].focus=false;
-    updateStyleElem(cloneID);
+    updateColorElem(cloneID);
+
   }
   
   
@@ -908,7 +919,6 @@ function initVJgrid(germlineV, germlineJ){
     updateList();
     displayTop(5);
     resetGraphCluster();
-    updateGraph();
     updateVis();
     setTimeout('updateStyle()',1000);
     force.alpha(.2)
@@ -961,33 +971,6 @@ function initVJgrid(germlineV, germlineJ){
     updateVis();
     force.alpha(.2)
   }
-  /*
-  function toggleNormalize(){
-    if (normalization==true){
-      normalization=false;
-      document.getElementById("norm").innerHTML="normalize off"
-      data_res[0].path=constructPathR(jsonData.resolution1);
-      data_res[1].path=constructPathR(jsonData.resolution5);
-    }
-    else{ 
-      normalization=true;
-      document.getElementById("norm").innerHTML="normalize on"
-      data_res[0].path = constructPathR(jsonData.norm_resolution1);
-      data_res[1].path = constructPathR(jsonData.norm_resolution5);
-    }
-    
-    updateList()
-
-      for (var i = 0; i < totalClones ; i++){
-	for (var j=0; j<table[i].cluster.length; j++){
-	  data_graph[table[i].cluster[j]].path=constructPath(i);
-	}
-      }
-      
-    updateGraph();
-    updateVis();
-    force.alpha(.2)
-  }*/
   
   function removeKey(arrayName,key)
   {
@@ -999,7 +982,7 @@ function initVJgrid(germlineV, germlineJ){
     }
     return tmpArray;
   }
- 
+ /*
   function changeDate(time){
     document.getElementById("dateSelector").style.display="block";
     document.getElementById("dateSelected").innerHTML=time;
@@ -1017,4 +1000,24 @@ function initVJgrid(germlineV, germlineJ){
   
   function cancelChangeDate(){
     document.getElementById("dateSelector").style.display="none";
+  }
+*/
+ 
+  function initCache(){
+    for(var i=0; i<table.length; i++){
+      table[i].link={};
+      
+      table[i].link.listElemStyle=document.getElementById(i).style;
+      table[i].link.circleElemStyle=document.getElementById("circle"+i).style;
+      table[i].link.colorElemStyle=document.getElementById("color"+i).style;
+      table[i].link.lineElemStyle=document.getElementById("line"+i).style;
+      
+      table[i].link.listElem=document.getElementById(i);
+      table[i].link.circleElem=document.getElementById("circle"+i);
+      table[i].link.polylineElem=document.getElementById("polyline"+i);
+      table[i].link.colorElem=document.getElementById("color"+i);
+      table[i].link.lineElem=document.getElementById("line"+i);
+      
+    }
+    updateStyle()
   }

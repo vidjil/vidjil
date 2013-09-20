@@ -71,17 +71,14 @@ function initVisu(){
     .attr("id", function(d) { return "circle"+d.id; })
     .attr("class", "circle")
     .call(force.drag)
+    .attr("onmouseover",function(d) { return  "focusIn("+d.id+")"; } )
+    .attr("onmouseout", function(d) { return  "focusOut("+d.id+")"; } )
     .on("click", function(d,i) { 
       selectClone(i);
     })
-    .on("mouseover", function(d,i){
-      focusIn(i);
-    })
-     .on("mouseout", function(d,i){
-      focusOut(i);
-    })
 ;
 }
+
 
 /* initialise les elements avec les données du modele
  * nodes[] pour la fenetre de visu*/

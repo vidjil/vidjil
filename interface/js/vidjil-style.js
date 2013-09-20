@@ -21,7 +21,6 @@ solarizeD.c07 = "#284e55"; //inactive
 solarizeD.col_s = 0.8; //pureté
 solarizeD.col_v = 0.72; //brightness
 
-
 /*light solarize*/
 var solarizeL = {};
 solarizeL.c01 = "#657b83"; //base00
@@ -149,27 +148,30 @@ var default_tag=8;
   
 /*met a jour l'affichage de l'element cloneID*/
   function updateDisplayElem(cloneID){
+    var clone=table[cloneID].link
+    
     if (table[cloneID].active){
       if(table[cloneID].cluster.length !=0){
-	document.getElementById(cloneID).style.display="block";
+	clone.listElemStyle.display="block";
       }else{
-	document.getElementById(cloneID).style.display="none";
+	clone.listElemStyle.display="none";
       }
     }else{
-      document.getElementById(cloneID).style.display="none"
+      clone.listElemStyle.display="none"
     }
+    
     if(table[cloneID].cluster.length !=0){
-      document.getElementById("line"+cloneID).style.display="block";
+      clone.polylineElem.style.display="block";
     }else{
-      document.getElementById("line"+cloneID).style.display="none";
+      clone.polylineElem.style.display="none";
     }
     
     if (tagDisplay[table[cloneID].tag]==0){
-      document.getElementById(cloneID).style.display="none";
-      document.getElementById("line"+cloneID).style.display="none";
-      document.getElementById("circle"+cloneID).style.display="none";
+      clone.listElemStyle.display="none";
+      clone.polylineElem.style.display="none";
+      clone.circleElemStyle.display="none";
     }else{
-      document.getElementById("circle"+cloneID).style.display="";
+      clone.circleElemStyle.display="";
     }
     
   }
@@ -183,54 +185,57 @@ var default_tag=8;
 
 /*met a jour la couleur de l'element cloneID*/
   function updateColorElem(cloneID){
+    var clone=table[cloneID].link
+    var selectElem=document.getElementById("f"+cloneID);
+    
     if (table[cloneID].focus){
-      if (document.getElementById("seq"+cloneID)){
-	document.getElementById("f"+cloneID).style.background=colorStyle.c07;
-      }
-      document.getElementById(cloneID).style.background=colorStyle.c07;
-      document.getElementById(cloneID).style.color=colorStyle.c05;
-      document.getElementById("circle"+cloneID).style.fill=colorStyle.c05;
-      document.getElementById("line"+cloneID).firstChild.style.stroke=colorStyle.c05;
-      document.getElementById("line"+cloneID).firstChild.style.strokeWidth="5px";
+      if (selectElem){selectElem.style.background=colorStyle.c07;}
+      clone.listElemStyle.background=colorStyle.c07;
+      clone.listElemStyle.color=colorStyle.c05;
+      clone.circleElemStyle.fill=colorStyle.c05;
+      clone.polylineElem.style.stroke=colorStyle.c05;
+      clone.polylineElem.style.strokeWidth="5px";
     }else{
-      if (document.getElementById("seq"+cloneID)){
-	document.getElementById("f"+cloneID).style.background=colorStyle.c02;
-      }
-      document.getElementById("circle"+cloneID).style.stroke="";
-      document.getElementById(cloneID).style.background=colorStyle.c02;
+      if (selectElem){selectElem.style.background=colorStyle.c02;}
+      clone.circleElemStyle.stroke="";
+      clone.listElemStyle.background=colorStyle.c02;
       if (table[cloneID].active){
-	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1.5px";
+	  clone.polylineElem.style.strokeWidth="1.5px";
 	  if (
 	    (typeof(table[cloneID].tag) != 'undefined')
 	    && (tagDisplay[table[cloneID].tag]==2)
 	    && (table[cloneID].tag != 8)
 	    && (table[cloneID].tag != 4)
 	  ){ 
-	  // if tagged, but not standard 		  
-		  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="5px";
+	  // if tagged, but not standard 
+		  clone.polylineElem.style.strokeWidth="5px";
 	      }
-	  document.getElementById(cloneID).style.color=color(cloneID);
-	  document.getElementById("circle"+cloneID).style.fill=color(cloneID);
-	  document.getElementById("line"+cloneID).firstChild.style.stroke=color(cloneID);
+	  clone.listElemStyle.color=color(cloneID);
+	  clone.circleElemStyle.fill=color(cloneID);
+	  clone.polylineElem.style.stroke=color(cloneID);
       }else{
-	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1.2px";
-	  document.getElementById(cloneID).style.color=colorStyle.c06;
-	  document.getElementById("circle"+cloneID).style.fill=colorStyle.c07;
-	  document.getElementById("line"+cloneID).firstChild.style.stroke=colorStyle.c07;
+	  clone.polylineElem.style.strokeWidth="1.2px";
+	  clone.listElemStyle.color=colorStyle.c06;
+	  clone.circleElemStyle.fill=colorStyle.c07;
+	  clone.polylineElem.style.stroke=colorStyle.c07;
       }   
     }
+   
     if (table[cloneID].select){
-      document.getElementById("line"+cloneID).firstChild.style.strokeWidth="6px";
-      document.getElementById(cloneID).style.background=colorStyle.c07;
-      document.getElementById("circle"+cloneID).style.stroke=colorStyle.c05;
-      $("#line"+cloneID+ " polyline:first-child").css("stroke-dasharray","20px,5px");
+      clone.polylineElem.style.strokeWidth="6px";
+      clone.listElemStyle.background=colorStyle.c07;
+      clone.circleElemStyle.stroke=colorStyle.c05;
+      clone.polylineElem.setAttribute("stroke-dasharray","20px,5px");
       
     }else{
-      $("#line"+cloneID+ " polyline:first-child").css("stroke-dasharray","");
+      clone.polylineElem.setAttribute("stroke-dasharray","");
     }
-    if (typeof table[cloneID].tag != 'undefined') document.getElementById("color"+cloneID).setAttribute("fill", tagColor[table[cloneID].tag]);
-    else document.getElementById("color"+cloneID).setAttribute("fill", colorStyle.c01);
+    if (typeof table[cloneID].tag != 'undefined') 
+      clone.colorElem.setAttribute("fill", tagColor[table[cloneID].tag]);
+    else clone.colorElem.setAttribute("fill", colorStyle.c01);
+    
   }
+  
 
   /*ressort une couleur format RGB*/
   function colorGenerator(h,s,v){
