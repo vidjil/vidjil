@@ -17,7 +17,6 @@
  */
 
 var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
-
  
   /*affiche le segmenteur/comparateur*/
  function displayAlign(){
