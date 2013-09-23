@@ -71,7 +71,7 @@ function initGraph(){
   
   var count=min_size;
 
-  while (count<1){
+  while (count<0.1){
     count=count*10;
     precision= precision*10;
   }
