@@ -25,7 +25,7 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     var li =document.getElementById("listSeq").getElementsByTagName("li");
     if (li.length >0){
       var id=li[0].id.substr(3);
-      var mid=$("#m"+id+" span:first-child").width();
+      var mid=$("#m"+id+" span:first-child").width()-250;
       $("#bot-container").animate({scrollLeft: mid}, 500);
     }
   }
@@ -89,8 +89,11 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     spanJ.innerHTML=junctions[cloneID].seg.sequence.substr(junctions[cloneID].seg.r1);
     spanM.appendChild(spanJ);
     }else{
+      var size_marge=220-junctions[cloneID].junction.length;
+      var marge="";
+      for (var i=0; i<size_marge; i++) marge+="&nbsp";
       var spanJunc=document.createElement('span');
-      spanJunc.innerHTML=junctions[cloneID].junction;
+      spanJunc.innerHTML=marge+junctions[cloneID].junction;
       spanM.appendChild(spanJunc);
     }
     
