@@ -799,7 +799,7 @@ function initVJgrid(germlineV, germlineJ){
 //	FOCUS/SELECT 	  //
 //////////////////////////
   
-  /*positionne le focus un clone / déclenchement style mouseover
+  /*positionne le focus un clone 
    * cloneID : ID du clone a focus
    */
   function focusIn(cloneID){
@@ -825,8 +825,7 @@ function initVJgrid(germlineV, germlineJ){
     elapsedTime = new Date().getTime() - startTime;  
     return elapsedTime;  
   }*/
-  
-  /*libere un element du focus / déclenchement style mouseover*/
+
   function focusOut(cloneID){
     if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     
@@ -834,7 +833,6 @@ function initVJgrid(germlineV, germlineJ){
     updateColorElem(cloneID);
 
   }
-  
   
   /*selectionne un element et déclenche l'affichage de ses informations */
   function selectClone(cloneID){

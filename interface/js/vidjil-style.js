@@ -193,31 +193,37 @@ var default_tag=8;
       clone.listElemStyle.background=colorStyle.c07;
       clone.listElemStyle.color=colorStyle.c05;
       clone.circleElemStyle.fill=colorStyle.c05;
+      clone.polylineElem.style.setProperty('stroke',colorStyle.c05, null); 
       clone.polylineElem.style.stroke=colorStyle.c05;
+      clone.polylineElem.style.setProperty('strokewidth','5px', null); 
       clone.polylineElem.style.strokeWidth="5px";
     }else{
       if (selectElem){selectElem.style.background=colorStyle.c02;}
       clone.circleElemStyle.stroke="";
       clone.listElemStyle.background=colorStyle.c02;
       if (table[cloneID].active){
-	  clone.polylineElem.style.strokeWidth="1.5px";
-	  if (
+	clone.polylineElem.style.setProperty('strokewidth','1.5px', null); 
+	clone.polylineElem.style.strokeWidth="1.5px";
+	if (
 	    (typeof(table[cloneID].tag) != 'undefined')
 	    && (tagDisplay[table[cloneID].tag]==2)
 	    && (table[cloneID].tag != 8)
 	    && (table[cloneID].tag != 4)
-	  ){ 
+	){ 
 	  // if tagged, but not standard 
-		  clone.polylineElem.style.strokeWidth="5px";
-	      }
-	  clone.listElemStyle.color=color(cloneID);
-	  clone.circleElemStyle.fill=color(cloneID);
-	  clone.polylineElem.style.stroke=color(cloneID);
+	  clone.polylineElem.style.strokeWidth="5px";
+        }
+	clone.listElemStyle.color=color(cloneID);
+	clone.circleElemStyle.fill=color(cloneID);
+	clone.polylineElem.style.setProperty('stroke',color(cloneID), null); 
+	clone.polylineElem.style.stroke=color(cloneID);
       }else{
-	  clone.polylineElem.style.strokeWidth="1.2px";
-	  clone.listElemStyle.color=colorStyle.c06;
-	  clone.circleElemStyle.fill=colorStyle.c07;
-	  clone.polylineElem.style.stroke=colorStyle.c07;
+	clone.polylineElem.style.setProperty('strokewidth','1.2px', null); 
+	clone.polylineElem.style.strokeWidth="1.2px";
+	clone.listElemStyle.color=colorStyle.c06;
+	clone.circleElemStyle.fill=colorStyle.c07;
+	clone.polylineElem.style.setProperty('stroke',colorStyle.c07, null); 
+	clone.polylineElem.style.stroke=colorStyle.c07;
       }   
     }
    

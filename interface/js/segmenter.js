@@ -97,6 +97,7 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     li.appendChild(spanF);
     li.appendChild(spanM);
     divParent.appendChild(li);
+    displayAlign();
       
   }
   
