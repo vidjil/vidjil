@@ -52,3 +52,35 @@ void testSegment()
 
 }
 
+/**
+ * Test segmentation when there is an overlap between V and J (and no N)
+ */
+void testSegmentOverlap()
+{
+  Fasta seqV("../../germline/TRGV.fa", 2);
+  Fasta seqJ("../../germline/TRGJ.fa", 2);
+  
+  Fasta data("../../data/bug-segment-overlap.fa", 1, " ");
+  
+  int stats[STATS_SIZE];
+  ArrayKmerStore<KmerAffect> index(10, true);
+  index.insert(seqV, "V");
+  index.insert(seqJ, "J");
+
+  for (int i = 0; i < data.size(); i++) {
+    KmerSegmenter ks(data.read(i), &index, 0, 100, 
+                     stats, DNA, cout); // Grmph: we should not have those
+                                        // parameters. All of them are useless
+                                        // for our purpose!
+    TAP_TEST(ks.seg_V + ks.seg_N + ks.seg_J == data.sequence(i)
+             || ks.seg_V + ks.seg_N + ks.seg_J == revcomp(data.sequence(i)), 
+             TEST_KMER_SEGMENT_OVERLAP,
+             " V= " << ks.seg_V << ", N = " << ks.seg_N << ", J = " << ks.seg_J);
+
+    FineSegmenter fs(data.read(i), seqV, seqJ, -50, 50, VDJ); 
+    TAP_TEST(fs.seg_V + fs.seg_N + fs.seg_J == data.sequence(i)
+             || fs.seg_V + fs.seg_N + fs.seg_J == revcomp(data.sequence(i)), 
+             TEST_FINE_SEGMENT_OVERLAP,
+             " V= " << fs.seg_V << ", N = " << fs.seg_N << ", J = " << fs.seg_J);
+  }
+}
