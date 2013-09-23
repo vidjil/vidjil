@@ -8,6 +8,30 @@
  * content:
  */
   
+
+var tagColor = [];
+tagColor[0] = "#dc322f";
+tagColor[1] = "#cb4b16";
+tagColor[2] = "#b58900";
+tagColor[3] = "#268bd2";
+tagColor[4] = "#6c71c4";
+tagColor[5] = "#2aa198";
+tagColor[6] = "#d33682";
+tagColor[7] = "#859900";
+tagColor[8] = "";
+
+var tagName = [];
+tagName[0] = "pathologique 1";
+tagName[1] = "pathologique 2";
+tagName[2] = "pathologique 3";
+tagName[3] = "standard";
+tagName[4] = "standard noize";
+tagName[5] = "custom 1";
+tagName[6] = "custom 2";
+tagName[7] = "custom 3";
+tagName[8] = "-/-";
+
+
 /* dark solarize*/
 
 var scale_color;
@@ -227,10 +251,39 @@ var default_tag=8;
 	clone.circleElemStyle.fill=colorStyle.c07;
 	clone.polylineElem.style.setProperty('stroke',colorStyle.c07, null); 
 	clone.polylineElem.style.stroke=colorStyle.c07;
+      if (document.getElementById("seq"+cloneID)){
+	document.getElementById("f"+cloneID).style.background=colorStyle.c07;
+      }
+      document.getElementById(cloneID).style.background=colorStyle.c07;
+      document.getElementById(cloneID).style.color=colorStyle.c05;
+      document.getElementById("circle"+cloneID).style.fill=colorStyle.c05;
+      document.getElementById("line"+cloneID).firstChild.style.stroke=colorStyle.c05;
+      document.getElementById("line"+cloneID).firstChild.style.strokeWidth="5px";
+    }else{
+      if (document.getElementById("seq"+cloneID)){
+	document.getElementById("f"+cloneID).style.background=colorStyle.c02;
+      }
+      document.getElementById("circle"+cloneID).style.stroke="";
+      document.getElementById(cloneID).style.background=colorStyle.c02;
+      if (table[cloneID].active){
+	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1.5px";
+	  if ((typeof(table[cloneID].tag) != 'undefined') && (table[cloneID].tag != 8) && (table[cloneID].tag != 4)) { 
+	  // if tagged, but not standard 		  
+		  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="5px";
+	      }
+	  document.getElementById(cloneID).style.color=color(cloneID);
+	  document.getElementById("circle"+cloneID).style.fill=color(cloneID);
+	  document.getElementById("line"+cloneID).firstChild.style.stroke=color(cloneID);
+      }else{
+	  document.getElementById("line"+cloneID).firstChild.style.strokeWidth="1.2px";
+	  document.getElementById(cloneID).style.color=colorStyle.c06;
+	  document.getElementById("circle"+cloneID).style.fill=colorStyle.c07;
+	  document.getElementById("line"+cloneID).firstChild.style.stroke=colorStyle.c07;
       }   
     }
    
     if (table[cloneID].select){
+
       clone.polylineElem.style.strokeWidth="6px";
       clone.listElemStyle.background=colorStyle.c07;
       clone.circleElemStyle.stroke=colorStyle.c05;
@@ -247,6 +300,13 @@ var default_tag=8;
     else{ 
       if (selectElem){document.getElementById("scolor"+cloneID).setAttribute("fill", colorStyle.c01);}
       document.getElementById("color"+cloneID).setAttribute("fill", colorStyle.c01);
+      document.getElementById("line"+cloneID).firstChild.style.strokeWidth="6px";
+      document.getElementById(cloneID).style.background=colorStyle.c07;
+      document.getElementById("circle"+cloneID).style.stroke=colorStyle.c05;
+      $("#line"+cloneID+ " polyline:first-child").css("stroke-dasharray","20px,5px");
+      
+    }else{
+      $("#line"+cloneID+ " polyline:first-child").css("stroke-dasharray","");
     }
     
   }

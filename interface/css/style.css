@@ -180,6 +180,10 @@ circle:hover {
 .listElem{
   width :370px;
   cursor:pointer;
+<<<<<<< HEAD
+=======
+  -moz-transition: color  0.8s;
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
   -webkit-transition: color 0.8s;
   -o-transition: color  0.8s;
   -ms-transition: color 0.8s;
@@ -207,8 +211,12 @@ circle:hover {
   width: 10px;
   display: inline-block;
   color: white;
+<<<<<<< HEAD
   float:left;
   user-select :none;
+=======
+  float:left
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
 }
 
 .delBox{
@@ -220,7 +228,10 @@ circle:hover {
   display: inline-block;
   color: white;
   float:left;
+<<<<<<< HEAD
   user-select :none;
+=======
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
 }
 
 .sizeBox{
@@ -280,6 +291,10 @@ circle:hover {
 
 
 .graphLine{
+<<<<<<< HEAD
+=======
+ -moz-transition: stroke  0.5s;
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
  -webkit-transition: stroke 0.5s;
  -o-transition: stroke  0.5s;
  -ms-transition: stroke 0.5s;
@@ -307,10 +322,14 @@ circle:hover {
 .separator {
   height: 25px;
   position: fixed;
+<<<<<<< HEAD
   margin-top: -26px;
   border-top: solid;
   width: 400px;
   padding-top:2px;
+=======
+  margin-top: -20px;
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
 }
 
 #cluster {
@@ -350,10 +369,13 @@ circle:hover {
   height: 16px;
   width: 16px;
   display: inline-block;
+<<<<<<< HEAD
   cursor:pointer;
   user-select :none;
   margin-bottom: -4px;
   margin-top: 2px;
+=======
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
 }
 
 .menu{
@@ -392,6 +414,7 @@ overflow-x: scroll;
 min-height:50px;
 max-height:200px;
 overflow-y:auto;
+<<<<<<< HEAD
 border-top: solid;
 border-bottom: solid;
 }
@@ -400,6 +423,14 @@ border-bottom: solid;
 white-space: nowrap;
 }
 
+=======
+}
+
+.sequence-line {
+white-space: nowrap;
+}
+
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
 .seq-fixed {
 position: fixed;
 width: 395px;
@@ -418,6 +449,7 @@ letter-spacing: 0.12em;
   position: absolute;
   left: 400px;
   top: 195px;
+<<<<<<< HEAD
   width:300px;
   display:none;
   padding: 10px;
@@ -450,6 +482,9 @@ letter-spacing: 0.12em;
   width: 25px;
   display : inline-block;
   float : right;
+=======
+  display:none;
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
 }
 
 #new_name{

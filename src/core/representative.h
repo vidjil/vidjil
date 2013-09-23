@@ -60,18 +60,18 @@ public:
  */
 class KmerRepresentativeComputer : public RepresentativeComputer {
 protected:
-  int k;
+  string seed;
   int stability_limit;
 public:
-  KmerRepresentativeComputer(list<Sequence> &r, int k);
+  KmerRepresentativeComputer(list<Sequence> &r, string seed);
 
   // Getters, setters
-  int getK() const;
+  string getSeed() const;
 
   /**
    * Sets the length of the k-mer used for computing the representative
    */
-  void setK(int k);
+  void setSeed(string seed);
 
   int getStabilityLimit() const;
 

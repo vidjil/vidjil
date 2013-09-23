@@ -45,6 +45,7 @@
 #include "core/mkdir.h"
 #include "core/labels.h"
 #include "core/representative.h"
+#include "core/list_utils.h"
 
 #include "vidjil.h"
 
@@ -53,6 +54,7 @@
 // #define RELEASE_TAG  "2013.04"
 #include "release.h"
 
+#define DEFAULT_GERMLINE_SYSTEM "TRG" 
 #define DEFAULT_V_REP  "./germline/TRGV.fa" // IGHV 
 #define DEFAULT_D_REP  "./germline/IGHD.fa" 
 #define DEFAULT_J_REP  "./germline/TRGJ.fa" // IGHJ
@@ -84,10 +86,10 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 
 // "tests/data/leukemia.fa" 
 
-#define DEFAULT_K      14
+#define DEFAULT_K      10
 #define DEFAULT_W      40
 #define DEFAULT_W_D    50
-#define DEFAULT_SEED   (seed_contiguous(DEFAULT_K))
+#define DEFAULT_SEED   "#####-#####"
 
 #define DEFAULT_DELTA_MIN  -10
 #define DEFAULT_DELTA_MAX   15
@@ -196,6 +198,7 @@ int main (int argc, char **argv)
        << "# Copyright (C) 2011, 2012, 2013 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille" << endl 
        << endl ;
 
+  string germline_system = DEFAULT_GERMLINE_SYSTEM ;
   string f_rep_V = DEFAULT_V_REP ;
   string f_rep_D = DEFAULT_D_REP ;
   string f_rep_J = DEFAULT_J_REP ;
@@ -208,8 +211,9 @@ int main (int argc, char **argv)
   string comp_filename = COMP_FILENAME;
 
   int k = DEFAULT_K ;
-  int w = DEFAULT_W ;
-  
+  int w = 0 ;
+  int default_w = DEFAULT_W ;
+
   int epsilon = DEFAULT_EPSILON ;
   int minPts = DEFAULT_MINPTS ;
   Cost cluster_cost = DEFAULT_CLUSTER_COST ;
@@ -262,7 +266,7 @@ int main (int argc, char **argv)
 	segment_D = 1 ;
 	delta_min = DEFAULT_DELTA_MIN_D ;
 	delta_max = DEFAULT_DELTA_MAX_D ;
-	w = DEFAULT_W_D ;
+	default_w = DEFAULT_W_D ;
 	break;
       case 'e':
 	forced_edges = optarg;
@@ -308,9 +312,10 @@ int main (int argc, char **argv)
 	break;
 
       case 'G':
-	f_rep_V = (string(optarg) + "V.fa").c_str() ;
-	f_rep_D = (string(optarg) + "D.fa").c_str() ;
-	f_rep_J = (string(optarg) + "J.fa").c_str() ;
+	germline_system = string(optarg);
+	f_rep_V = (germline_system + "V.fa").c_str() ;
+	f_rep_D = (germline_system + "D.fa").c_str() ;
+	f_rep_J = (germline_system + "J.fa").c_str() ;
 	// TODO: if VDJ, set segment_D // NO, bad idea, depends on naming convention
 	break;
 
@@ -392,6 +397,11 @@ int main (int argc, char **argv)
         break;
       }
 
+  // If there was no -w option, then w is either DEFAULT_W or DEFAULT_W_D
+  if (w == 0)
+    w = default_w ;
+
+  
   string out_seqdir = out_dir + "/seq/" ;
 
   if (verbose)
@@ -624,12 +634,15 @@ int main (int argc, char **argv)
       }
 
     out << endl;
-    out << "  ==> segmented " << stats_segmented[TOTAL_SEG_AND_WINDOW] << " reads"
-	<< " (" << setprecision(3) << 100 * (float) stats_segmented[TOTAL_SEG_AND_WINDOW] / nb_total_reads << "%)" 
+
+    int nb_segmented_including_too_short = stats_segmented[TOTAL_SEG_AND_WINDOW] + stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] ;
+
+    out << "  ==> segmented " << nb_segmented_including_too_short << " reads"
+	<< " (" << setprecision(3) << 100 * (float) nb_segmented_including_too_short / nb_total_reads << "%)" 
 	<< endl ;
 
     // nb_segmented is the main denominator for the following (but will be normalized)
-    int nb_segmented = stats_segmented[TOTAL_SEG_AND_WINDOW] - stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] ;
+    int nb_segmented = stats_segmented[TOTAL_SEG_AND_WINDOW] ;
 
     out << "  ==> found " << seqs_by_window.size() << " " << w << "-windows"
 	<< " in " << nb_segmented << " segments"
@@ -892,6 +905,9 @@ int main (int argc, char **argv)
       for (list <pair<junction, int> >::const_iterator it = sort_windows.begin(); 
            it != sort_windows.end(); ++it) {
 
+        out_clone << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
+	out_clone << it->first << endl;
+
 	// Choose one representative
 
 	list <Sequence> auditioned_sequences;
@@ -909,7 +925,7 @@ int main (int argc, char **argv)
 	  }
 	}
 
-        KmerRepresentativeComputer repComp(auditioned_sequences, k);
+        KmerRepresentativeComputer repComp(auditioned_sequences, seed);
         repComp.compute(true, min_cover_representative, ratio_representative);
 	
         if (repComp.hasRepresentative()) {
@@ -1028,6 +1044,9 @@ int main (int argc, char **argv)
                    << setw(WIDTH_WINDOW_POS) << " " << it->first 
                    << " " << windows_labels[it->first] << endl ;
 
+              out_clone << seg ;
+              out_clone << endl ;
+
               break ;
           }
         }
@@ -1097,10 +1116,6 @@ int main (int argc, char **argv)
 	    msa.pop_back();
 	  }
 
-        out_clone << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
-	out_clone << it->first << endl;
-
-
 
 	// Output all sequences
 
@@ -1132,7 +1147,7 @@ int main (int argc, char **argv)
 	  }
 	}
 	
-        KmerRepresentativeComputer repComp(auditioned_sequences, k);
+        KmerRepresentativeComputer repComp(auditioned_sequences, seed);
         repComp.compute(true, min_cover_representative, ratio_representative);
 
         if (repComp.hasRepresentative()) {
@@ -1206,8 +1221,6 @@ int main (int argc, char **argv)
 
               out << endl ;
             }
-          out_clone << seg ;
-          out_clone << endl ;
         }
       }
 
@@ -1262,7 +1275,9 @@ int main (int argc, char **argv)
 
     html << "<pre>" << endl ;
     cout << "Comparing clone representatives 2 by 2" << endl ;
-    SimilarityMatrix matrix = compare_all(representatives, true, 
+    list<Sequence> first_representatives = keep_n_first<Sequence>(representatives,
+                                                                  LIMIT_DISPLAY);
+    SimilarityMatrix matrix = compare_all(first_representatives, true, 
                                           representatives_labels);
     cout << RawOutputSimilarityMatrix(matrix, 90);
 
@@ -1284,7 +1299,18 @@ int main (int argc, char **argv)
     out << "  ==> " << f_json << endl ;
     ofstream out_json(f_json.c_str()) ;
       
-    out_json <<"{ \"total_size\" : ["<<nb_segmented<<"] ,"<<endl;
+    out_json << "{ " ;
+
+    // Version/timestamp/git info
+    out_json << "\"timestamp\" : \"" << time_buffer << "\"," << endl ; 
+    out_json << "\"commandline\" : \"" ; // TODO: escape "s in argv
+    for (int i=0; i < argc; i++) 
+      out_json << argv[i] << " ";
+    out_json << "\"," << endl ;
+
+    // Vidjil output
+    out_json << "\"germline\" : \"" << germline_system << "\"," << endl ; 
+    out_json << "\"total_size\" : ["<<nb_segmented<<"] ,"<<endl;
 
     out_json_normalization_names(out_json);
     out_json << "," << endl ;
@@ -1297,7 +1323,7 @@ int main (int argc, char **argv)
     out_json_normalization(out_json, norm_list, 5, nb_segmented);
     out_json << "]," << endl ;
 
-    out_json <<"\"junctions\" : [";
+    out_json <<"\"windows\" : [";
     for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
 	     it != sort_all_windows.end(); ++it) 
 	 {
@@ -1306,7 +1332,7 @@ int main (int argc, char **argv)
 	    out_json <<",";
 	  }
 	 
-	 out_json <<" {\"junction\":\""<<it->first<<"\"," <<endl;
+	 out_json <<" {\"window\":\""<<it->first<<"\"," <<endl;
 	 out_json <<" \"size\":["<< it->second<<"],"<<endl;
 
 	 out_json <<" \"ratios\": [";

@@ -16,7 +16,12 @@
  * 
  */
 
+<<<<<<< HEAD
 var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
+=======
+var CGI_ADRESS ="http://becasse.lifl.fr/cgi-vidjil/";
+
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
  
   /*affiche le segmenteur/comparateur*/
  function displayAlign(){
@@ -25,9 +30,17 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     var li =document.getElementById("listSeq").getElementsByTagName("li");
     if (li.length >0){
       var id=li[0].id.substr(3);
+<<<<<<< HEAD
       var mid=$("#m"+id+" span:first-child").width()-250;
       $("#bot-container").animate({scrollLeft: mid}, 500);
     }
+=======
+      var mid=$("#m"+id+" span:first-child").width();
+      $("#bot-container").animate({scrollLeft: mid}, 500);
+    }
+    
+    
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
   }
   
   /*masque le segmenteur/comparateur ( */
@@ -55,7 +68,7 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     div_elem(spanF, cloneID);
     spanF.className="seq-fixed";
     spanF.lastChild.firstChild.id="scolor"+cloneID;
-    
+
     var spanM = document.createElement('span');
     spanM.id = "m"+cloneID;
     spanM.className="seq-mobil";
@@ -65,6 +78,7 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     var spanV = document.createElement('span');
     spanV.className="V";
     spanV.style.color=colorV(cloneID);
+
     var v_seq=junctions[cloneID].seg.sequence.substr(0, junctions[cloneID].seg.l1+1);
     var size_marge=200-v_seq.length;
     if (size_marge>0){
@@ -74,6 +88,7 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     }else{
       spanV.innerHTML=v_seq;
     }
+
     spanM.appendChild(spanV);
       
     if ( (junctions[cloneID].seg.l1+1 -junctions[cloneID].seg.r1)!=0){
@@ -93,7 +108,9 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
       var marge="";
       for (var i=0; i<size_marge; i++) marge+="&nbsp";
       var spanJunc=document.createElement('span');
+
       spanJunc.innerHTML=marge+junctions[cloneID].junction;
+
       spanM.appendChild(spanJunc);
     }
     
@@ -124,6 +141,7 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
       else
 	request += ">" +id+"\n"+ jsonData.junctions[id].junction+"\n";
     }
+    
     
         $.ajax({
             type: "POST",
@@ -186,7 +204,6 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
   }
   
   function getNewPosition(seq, oldPos){
-    
     var k=0;
     
     for (var i = 0 ; i < seq.length ; i++){
@@ -208,10 +225,9 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
       else
 	request += ">" +getname(id)+"\n"+ jsonData.junctions[id].junction+"\n";
     }
+
     if (adress=='IMGT') imgtPost(request);
     if (adress=='igBlast') igBlastPost(request);
-
     
   }
-  
   

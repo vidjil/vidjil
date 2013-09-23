@@ -42,6 +42,8 @@ enum {
   TEST_SEGMENT_POSITION,
   /* Revcomp */
   TEST_SEGMENT_REVCOMP,
+  TEST_KMER_SEGMENT_OVERLAP,
+  TEST_FINE_SEGMENT_OVERLAP,
 
   NB_TESTS
 };
@@ -78,6 +80,8 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE_REVCOMP, "Test KmerRepresentativeComputer computations on a dataset and its revcomp");
   RECORD_TAP_TEST(TEST_BUG_SEGMENTATION, "Test segmentation bug");
   RECORD_TAP_TEST(TEST_SEGMENT_POSITION, "Test V,D,J position");
+  RECORD_TAP_TEST(TEST_KMER_SEGMENT_OVERLAP, "Test kmer segmentation with an overlap");
+  RECORD_TAP_TEST(TEST_FINE_SEGMENT_OVERLAP, "Test fine segmentation with an overlap");
   RECORD_TAP_TEST(TEST_SEGMENT_REVCOMP, "Test segmentation on a sequence and its revcomp");
 }
 

@@ -21,6 +21,7 @@ int main(void) {
   testBugs();
   testCluster();
   testSegment();
+  testSegmentOverlap();
   testScore();
   testChooser();
   testRepresentative();

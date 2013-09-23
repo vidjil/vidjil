@@ -851,6 +851,8 @@ function initVJgrid(germlineV, germlineJ){
   function focusOut(cloneID){
     if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     
+    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+    
     table[cloneID].focus=false;
     updateColorElem(cloneID);
 
@@ -859,6 +861,7 @@ function initVJgrid(germlineV, germlineJ){
   /*selectionne un element et déclenche l'affichage de ses informations */
   function selectClone(cloneID){
     cancelEditName();
+
     if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     
     if (table[cloneID].select){

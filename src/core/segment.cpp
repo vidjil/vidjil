@@ -81,12 +81,12 @@ string Segmenter::removeChevauchement()
   
   string chevauchement = "" ;
 
-  if (left > right)
+  if (left >= right)
     {
       int middle = (left + right) / 2 ;
       chevauchement = "!" + string_of_int (left - right) + "!" ;
       left = middle ;
-      right = middle ;
+      right = middle+1 ;
     }
 
   return chevauchement ;

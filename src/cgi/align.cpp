@@ -8,6 +8,10 @@
 #include "../core/fasta.h"
 #include "../core/msa.h"
 #include "../core/lazy_msa.h"
+#define MAXLEN 500
+#define EXTRA 5
+#define MAXINPUT MAXLEN+EXTRA+2
+#define DATAFILE "data.txt"
 
 using namespace std;
 
@@ -16,9 +20,14 @@ int main()
 {
     
     char *lenstr;
+<<<<<<< HEAD
     long len;
     char filename[L_tmpnam];
     tmpnam(filename);
+=======
+    char input[MAXINPUT], data[MAXINPUT];
+    long len;
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
     
     cout <<"Content-type: text/html"<<endl<<endl;
     cout<< "{"<<endl;
@@ -39,12 +48,21 @@ int main()
       return 0;
     }
       cout<<",\"contentType\": \""<<contentType<<"\""<<endl;
+<<<<<<< HEAD
 
     char temp[1024];
     FILE *f;
     f = fopen(filename,"w");
     if(f == NULL){
       cout<<",\"Error\": \"save\""<<filename<<"}"<<endl;
+=======
+    
+    char temp[1024];
+    FILE *f;
+    f = fopen(DATAFILE, "w");
+    if(f == NULL){
+      cout<<",\"Error\": \"save\"}"<<endl;
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
       return 0;
     }else{
       while(cin) {
@@ -56,11 +74,19 @@ int main()
     
     fclose(f);
     
+<<<<<<< HEAD
+=======
+    const char* fdata_default = "data.txt" ; 
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
     DynProg::DynProgMode dpMode = DynProg::Global;
     Cost dpCost = VDJ;
     ostringstream ost; 
     
+<<<<<<< HEAD
     const char* fdata = filename;
+=======
+    const char* fdata = fdata_default;
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
     
     Fasta fa(fdata, 1, " ", ost);
     string seq0 = fa.sequence(0);
@@ -82,7 +108,10 @@ int main()
       cout<<",\""<<result[i]<<"\""<<endl;
     }
     cout<<"]}";
+<<<<<<< HEAD
     
     remove(filename);
+=======
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
       
 }
