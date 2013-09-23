@@ -925,7 +925,7 @@ int main (int argc, char **argv)
 	  }
 	}
 
-        KmerRepresentativeComputer repComp(auditioned_sequences, k);
+        KmerRepresentativeComputer repComp(auditioned_sequences, seed);
         repComp.compute(true, min_cover_representative, ratio_representative);
 	
         if (repComp.hasRepresentative()) {
@@ -1147,7 +1147,7 @@ int main (int argc, char **argv)
 	  }
 	}
 	
-        KmerRepresentativeComputer repComp(auditioned_sequences, k);
+        KmerRepresentativeComputer repComp(auditioned_sequences, seed);
         repComp.compute(true, min_cover_representative, ratio_representative);
 
         if (repComp.hasRepresentative()) {
