@@ -451,3 +451,8 @@ letter-spacing: 0.12em;
   display : inline-block;
   float : right;
 }
+
+#new_name{
+  font-family: monospace;
+  font-weight:bold;
+}

@@ -119,9 +119,13 @@ circle:hover {
   height :150px;
 }
 
+#data_file
+{
+  font-size: 200%;
+}
+
 #file_menu, #analysis_menu, #dateSelector{
   z-index:2;
-  display:none; 
   border:solid; 
   position: fixed; 
   top: 200px; 
@@ -130,6 +134,11 @@ circle:hover {
   font-size: 14px; 
   padding: 10px;
   background:inherit;
+}
+
+#analysis_menu, #dateSelector
+{
+  display:none; 
 }
 
 #listFav{
@@ -171,7 +180,6 @@ circle:hover {
 .listElem{
   width :370px;
   cursor:pointer;
-  -moz-transition: color  0.8s;
   -webkit-transition: color 0.8s;
   -o-transition: color  0.8s;
   -ms-transition: color 0.8s;
@@ -272,13 +280,16 @@ circle:hover {
 
 
 .graphLine{
+ -webkit-transition: stroke 0.5s;
+ -o-transition: stroke  0.5s;
+ -ms-transition: stroke 0.5s;
+ transition: stroke 0.5s;
  stroke-width : 1.5px;
  fill :none;
  cursor:pointer;
 }
 
 .circle{
-  -moz-transition: fill  0.5s;
   -webkit-transition: fill 0.5s;
   -o-transition: fill  0.5s;
   -ms-transition: fill 0.5s;
@@ -439,4 +450,8 @@ letter-spacing: 0.12em;
   width: 25px;
   display : inline-block;
   float : right;
+}
+
+#new_name{
+  font-family: monospace;
 }
