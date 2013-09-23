@@ -301,6 +301,9 @@ function loadPref(){
 }
 
   function editName(cloneID, elem){
+    if (document.getElementById("new_name")){
+      updateListElem(document.getElementById("new_name").parentNode.parentNode.parentNode.id, false);
+    }
     var divParent = elem;
     divParent.innerHTML="";
     
