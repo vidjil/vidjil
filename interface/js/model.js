@@ -300,10 +300,14 @@ function loadPref(){
   
 }
 
-  function editName(cloneID, elem){
+  function cancelEditName(){
     if (document.getElementById("new_name")){
       updateListElem(document.getElementById("new_name").parentNode.parentNode.parentNode.id, false);
     }
+  }
+
+  function editName(cloneID, elem){
+    cancelEditName()
     var divParent = elem;
     divParent.innerHTML="";
     
@@ -841,7 +845,7 @@ function initVJgrid(germlineV, germlineJ){
   
   /*selectionne un element et déclenche l'affichage de ses informations */
   function selectClone(cloneID){
-   
+    cancelEditName();
     if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     
     if (table[cloneID].select){
@@ -867,7 +871,7 @@ function initVJgrid(germlineV, germlineJ){
   
   /*libere les elements selectionnées et vide la fenêtre d'information*/
   function freeSelect(){
-    
+    cancelEditName();
     for (var i=0; i< totalClones ; i++){
       if(table[i].select){
 	table[i].select=false; 
