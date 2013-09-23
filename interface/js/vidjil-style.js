@@ -9,6 +9,9 @@
  */
   
 /* dark solarize*/
+
+var scale_color;
+
 var solarizeD = {};
 solarizeD.c01 = "#839496"; //base0
 solarizeD.c02 = "#002b36"; //base03

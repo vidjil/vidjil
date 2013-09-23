@@ -80,6 +80,10 @@ function initGraph(){
     .domain([1,precision])
     .range([50,(g_h)]);
     
+  scale_color = d3.scale.log()
+    .domain([1,precision])
+    .range([250,0]);
+    
   var height=1;
   var p=0;
   

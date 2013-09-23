@@ -457,6 +457,8 @@ function changeT(time){
   updateAxis();
   updateList();
   updateVis();
+  
+  if (colorMethod=="abundance") updateStyle();
 }
   
 
@@ -689,6 +691,9 @@ function initVJgrid(germlineV, germlineJ){
       if (colorMethod=='N'){
 	return colorNsize(cloneID)
       }
+      if (colorMethod=='abundance'){
+	return colorSize(cloneID)
+      }
       return colorStyle.c01;
     }
   }
@@ -727,6 +732,14 @@ function initVJgrid(germlineV, germlineJ){
 	if (table[cloneID].Nsize!=-1 ){
 	    return colorN[table[cloneID].Nsize];
 	}	
+	return colorStyle.c01;
+  }
+  
+  function colorSize(cloneID){
+    var s=getSize(cloneID);
+	if (s!=0){
+	  return colorGenerator( scale_color(getSize(cloneID)*precision) ,  colorStyle.col_s  , colorStyle.col_v);
+	}
 	return colorStyle.c01;
   }
   
