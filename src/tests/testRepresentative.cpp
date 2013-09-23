@@ -4,7 +4,7 @@
 void testRepresentative() {
   list<Sequence> reads = Fasta("../../data/representative.fa").getAll();
 
-  KmerRepresentativeComputer krc(reads, 14);
+  KmerRepresentativeComputer krc(reads, "##############");
 
   krc.setStabilityLimit(0);
   krc.compute(false, 1, 0.5);
@@ -34,7 +34,7 @@ void testRepresentative() {
 void testRevcompRepresentative() {
   list<Sequence> reads = Fasta("../../data/representative_revcomp.fa").getAll();
 
-  KmerRepresentativeComputer krc(reads, 14);
+  KmerRepresentativeComputer krc(reads, "##############");
   krc.compute(false, 3, 0.5);
   Sequence representative = krc.getRepresentative();
 
@@ -43,7 +43,7 @@ void testRevcompRepresentative() {
     it->sequence = revcomp(it->sequence);
   }
 
-  KmerRepresentativeComputer krc2(reads, 14);
+  KmerRepresentativeComputer krc2(reads, "##############");
   krc2.compute(false, 3, 0.5);
   Sequence representative2 = krc2.getRepresentative();
 
