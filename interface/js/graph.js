@@ -188,9 +188,9 @@ function displayGraph(data, data_2, data_3, data_4){
    
   g_res.append("polyline")
     .attr("points", function(p) {
-      var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
+      var che=Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
 	for (var i=1; i<p.path.length; i++){
-	  che+=','+(p.path[i][0]*resizeG_W)+','+(p.path[i][1]*resizeG_H);
+	  che+=','+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
 	}
 	return che;
     } )
@@ -240,7 +240,8 @@ function constructPath(cloneID){
     if (getSize(cloneID)==0){
       p = [ ];
     }else{
-      p = [[ ( graph_col[0]+ (Math.random()*30)-15  ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]];
+      p = [[ ( graph_col[0]-50  ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]];
+      p.push([ ( graph_col[0]+ (Math.random()*30)-15  ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
     }
     
     for (var i=1; i< graph_col.length; i++){
@@ -251,7 +252,13 @@ function constructPath(cloneID){
 	  p.push([( graph_col[i] ),(g_h + 50)]);
 	}
       }else{
+	if (p.length==0){
+	  p.push([( graph_col[i] -50 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
+	}
 	p.push([( graph_col[i] + (Math.random()*30)-15 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
+	if (i==graph_col.length-1 ){
+	  p.push([( graph_col[i] +50 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
+	}
       }
 
     }
@@ -315,9 +322,9 @@ function updateGraph(){
     .transition()
     .duration(500)
     .attr("points", function(p) {
-      var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
+      var che=Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
 	for (var i=1; i<p.path.length; i++){
-	  che+=','+(p.path[i][0]*resizeG_W)+','+(p.path[i][1]*resizeG_H);
+	  che+=','+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
 	}
 	return che;
     } )
@@ -328,9 +335,9 @@ function updateGraph(){
     .transition()
     .duration(500)
     .attr("points", function(p) {
-      var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
+      var che=Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
 	for (var i=1; i<p.path.length; i++){
-	  che+=','+(p.path[i][0]*resizeG_W)+','+(p.path[i][1]*resizeG_H);
+	  che+=','+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
 	}
 	return che;
     } )
