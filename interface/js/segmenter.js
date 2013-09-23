@@ -16,12 +16,7 @@
  * 
  */
 
-<<<<<<< HEAD
 var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
-=======
-var CGI_ADRESS ="http://becasse.lifl.fr/cgi-vidjil/";
-
->>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
  
   /*affiche le segmenteur/comparateur*/
  function displayAlign(){
@@ -30,17 +25,9 @@ var CGI_ADRESS ="http://becasse.lifl.fr/cgi-vidjil/";
     var li =document.getElementById("listSeq").getElementsByTagName("li");
     if (li.length >0){
       var id=li[0].id.substr(3);
-<<<<<<< HEAD
       var mid=$("#m"+id+" span:first-child").width()-250;
       $("#bot-container").animate({scrollLeft: mid}, 500);
     }
-=======
-      var mid=$("#m"+id+" span:first-child").width();
-      $("#bot-container").animate({scrollLeft: mid}, 500);
-    }
-    
-    
->>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
   }
   
   /*masque le segmenteur/comparateur ( */
