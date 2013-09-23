@@ -314,12 +314,14 @@ function loadPref(){
     input.style.width="200px";
     input.style.border="0px";
     input.style.margin="0px";
+    input.onkeydown=function(){if (event.keyCode == 13) document.getElementById('btnSave').click();}
     divParent.appendChild(input);
     divParent.onclick="";
     
     var a = document.createElement('a');
     a.className="button";
     a.appendChild(document.createTextNode("save"));
+    a.id="btnSave";
     a.onclick=function(){ 
       var newName=document.getElementById("new_name").value;
       changeName(cloneID, newName);
