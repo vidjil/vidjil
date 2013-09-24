@@ -98,13 +98,13 @@ function initGraph(){
   }
   
   //abscisse
-  if (junctions[0].size.length==1){
+  if (windows[0].size.length==1){
     graph_col[0]=700;
     data_axis[9]={class : "axis_v" ,text : "fu"+1 ,
 			x1 : graph_col[0], x2 : graph_col[0], 
 			y1 : g_h+20, y2 : 0, time: 0}
     }else{
-      if (junctions[0].size.length==2){
+      if (windows[0].size.length==2){
 	graph_col[0]=300;
 	graph_col[1]=1100;
 	data_axis[9]={class : "axis_v" ,text : "fu"+1 ,
@@ -114,8 +114,8 @@ function initGraph(){
 			x1 : graph_col[1], x2 : graph_col[1], 
 			y1 : g_h+20, y2 : 0, time: 1}
       }else{
-	for (var i=0 ; i<junctions[0].size.length; i++){
-	graph_col[i]=axis_x1 + 5 + i*(( g_w-(axis_x1+axis_x2) )/(junctions[0].size.length-1) );
+	for (var i=0 ; i<windows[0].size.length; i++){
+	graph_col[i]=axis_x1 + 5 + i*(( g_w-(axis_x1+axis_x2) )/(windows[0].size.length-1) );
 	
 	var time_name = "fu"+(i+1);
 	if ( typeof jsonData.time != "undefined" ){
@@ -142,7 +142,7 @@ function initGraph(){
     data_res[0]={id : totalClones, name :"resolution1", path :constructPathR(jsonData.resolution1) };
     data_res[1]={id : totalClones+1, name :"resolution5", path :constructPathR(jsonData.resolution5) };
 
-  for (var i=0 ; i <junctions[0].size.length ; i++){
+  for (var i=0 ; i <windows[0].size.length ; i++){
     
 
     data_date[i]={class : "date" ,date : 'undefined' ,

@@ -48,7 +48,7 @@
 
 /* données brutes issues du chargement des fichiers json*/
 var jsonData;          //fichier json
-var junctions;         //liste des jonctions du fichier json
+var windows;         //liste des jonctions du fichier json
 var pref ={ custom :[], cluster :[], date :[]} ;              //fichier des preferences
  
 /* initialisation fixé par defaut*/
@@ -128,14 +128,14 @@ function loadJson() {
     jsonDataText = oFREvent.target.result;
     jsonData = load(JSON.parse(jsonDataText), top_limit);
     jsonDatatext = '0'; //récupération mémoire
-    junctions=jsonData.junctions;
+    windows=jsonData.windows;
     init();
     initTag();
     document.getElementById("log").innerHTML+="<br>chargement fichier json";
     loadPref();
     document.getElementById("log").innerHTML+="<br>chargement fichier de preference";
     initSize();
-    initList(junctions);
+    initList(windows);
     document.getElementById("log").innerHTML+="<br>génération des clones";
     initVJgrid(TRGV,TRGJ);
     initNodes();
@@ -203,7 +203,7 @@ function cancel(){
 function reset(){
   table=[];
   jsonData={};
-  junctions={};
+  windows={};
   var pref ={ custom :[], cluster :[], date :[]} ;
   t = 0;
   totalClones=0;
@@ -221,11 +221,11 @@ function load(data, limit){
   result.resolution5=data.resolution5;
     
   result.time=data.time;
-  result.junctions=[];
+  result.windows=[];
   var ite=0;
-  for(var i=0; i<data.junctions.length; i++){
-   if (data.junctions[i].top<=limit){
-     result.junctions[ite]=data.junctions[i];
+  for(var i=0; i<data.windows.length; i++){
+   if (data.windows[i].top<=limit){
+     result.windows[ite]=data.windows[i];
      ite++;
    }
   }
@@ -233,7 +233,7 @@ function load(data, limit){
 }
 
 function init(){
-  totalClones=junctions.length;
+  totalClones=windows.length;
   if ( totalClones > limitClones ) totalClones = limitClones;
   document.getElementById("log").innerHTML+="<br>nombre de jonctions"+totalClones;
   
@@ -241,16 +241,16 @@ function init(){
     
     var nsize;
     
-    if (typeof(junctions[i].seg) != 'undefined' && typeof(junctions[i].seg.Nsize) != 'undefined' ){
+    if (typeof(windows[i].seg) != 'undefined' && typeof(windows[i].seg.Nsize) != 'undefined' ){
       
-      nsize=junctions[i].seg.Nsize;
+      nsize=windows[i].seg.Nsize;
       
       if (nsize>maxNsize) maxNsize=nsize;
     }else{
       nsize=-1;
     }
     
-    mapID[junctions[i].junction]=i;
+    mapID[windows[i].window]=i;
     table[i]={display:true, Nsize:nsize, cluster :[i], tag: default_tag};
   }
   initNcolor();
@@ -265,13 +265,13 @@ function initNcolor(){
 function loadPref(){
   
   for(var i=0 ;i<pref.custom.length; i++){
-    if (typeof mapID[pref.custom[i].junction] != "undefined" ){
+    if (typeof mapID[pref.custom[i].window] != "undefined" ){
       if (typeof( pref.custom[i].tag ) != "undefined" ) {
-	table[mapID[pref.custom[i].junction]].tag=pref.custom[i].tag;
+	table[mapID[pref.custom[i].window]].tag=pref.custom[i].tag;
       }
       
       if (typeof( pref.custom[i].name ) != "undefined" ) {
-	table[mapID[pref.custom[i].junction]].c_name=pref.custom[i].name;
+	table[mapID[pref.custom[i].window]].c_name=pref.custom[i].name;
       }
       
     }
@@ -355,7 +355,7 @@ function loadPref(){
       typeof table[i].c_name != "undefined" ){
 	
 	var elem = {};
-	elem.junction = junctions[i].junction;
+	elem.window = windows[i].window;
 	if ( typeof table[i].tag != "undefined" )
 	  elem.tag = table[i].tag;
 	if ( typeof table[i].c_name != "undefined" ) 
@@ -370,8 +370,8 @@ function loadPref(){
 	  
 	  if (table[i].cluster[j] !=i){
 	    var elem ={};
-	    elem.l = junctions[i].junction;
-	    elem.f = junctions[ table[i].cluster[j] ].junction ;
+	    elem.l = windows[i].window;
+	    elem.f = windows[ table[i].cluster[j] ].window ;
 	    filePref.cluster.push(elem);
 	  } 
 	}
@@ -641,10 +641,10 @@ function initVJgrid(germlineV, germlineJ){
     
     if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     
-      if ( typeof(junctions[cloneID].seg)!='undefined' && typeof(junctions[cloneID].seg.name)!='undefined' ){
-	return junctions[cloneID].seg.name;
+      if ( typeof(windows[cloneID].seg)!='undefined' && typeof(windows[cloneID].seg.name)!='undefined' ){
+	return windows[cloneID].seg.name;
       }else{
-	return junctions[cloneID].junction;
+	return windows[cloneID].window;
       }
     }
   
@@ -656,14 +656,14 @@ function initVJgrid(germlineV, germlineJ){
     
     var r=0;
       for(var j=0 ;j<table[cloneID].cluster.length; j++){
-	r += junctions[table[cloneID].cluster[j]].ratios[t][used_ratio];}
+	r += windows[table[cloneID].cluster[j]].ratios[t][used_ratio];}
     return r
   }
   
   
   /*retourne le rayon du clone passé en parametre*/
   function radius(cloneID) {
-    if (typeof junctions != "undefined") {
+    if (typeof windows != "undefined") {
       var r=getSize(cloneID);
       if (r==0) return 0;
       return resizeCoef*Math.pow(80000*(r+0.002),(1/3) );
@@ -678,7 +678,7 @@ function initVJgrid(germlineV, germlineJ){
   /*retourne la couleur du clone passé en parametre
    * verifie les variables de colorisation selectionnées pour déterminer la couleur a utiliser*/
   function color(cloneID) {
-    if (typeof junctions != "undefined") {
+    if (typeof windows != "undefined") {
       if (colorMethod=='Tag'){
 	return colorTag(cloneID)
       }
@@ -710,9 +710,9 @@ function initVJgrid(germlineV, germlineJ){
   
   /*retourne la couleur correspondant au gene V du clone passé en parametre*/
   function colorV(cloneID){
-    	if (typeof junctions[cloneID].seg !="undefined" ){
-	  if (junctions[cloneID].seg !="0" ){
-	    return colorVJ[junctions[cloneID].seg.V[0]];
+    	if (typeof windows[cloneID].seg !="undefined" ){
+	  if (windows[cloneID].seg !="0" ){
+	    return colorVJ[windows[cloneID].seg.V[0]];
 	  }
 	}	
 	return colorStyle.c01;
@@ -720,9 +720,9 @@ function initVJgrid(germlineV, germlineJ){
   
   /*retourne la couleur correspondant au gene J du clone passé en parametre*/
   function colorJ(cloneID){
-	if (typeof junctions[cloneID].seg !="undefined" ){
-	  if (junctions[cloneID].seg !="0" ){
-	    return colorVJ[junctions[cloneID].seg.J[0]];
+	if (typeof windows[cloneID].seg !="undefined" ){
+	  if (windows[cloneID].seg !="0" ){
+	    return colorVJ[windows[cloneID].seg.J[0]];
 	  }
 	}	
 	return colorStyle.c01;

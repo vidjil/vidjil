@@ -95,9 +95,9 @@ function initSize() {
   min_size = 1;
   tmp=used_ratio;
    for(var i=0 ;i<totalClones; i++){
-      for (t=0 ; t<junctions[i].size.length; t++){
+      for (t=0 ; t<windows[i].size.length; t++){
 	//TODO change with normalizations.length
-	for (var j=0; j<jsonData.junctions[0].ratios[0].length ; j++ ){
+	for (var j=0; j<jsonData.windows[0].ratios[0].length ; j++ ){
 	  used_ratio=j;
 	  if (getSize(i)<min_size && getSize(i)!=0) {
 	    min_size=getSize(i);
@@ -291,10 +291,10 @@ function updateRadius(){
 function vjSplit(posV, posJ){
     var coef = 0.005
     return function(d) {
-	if (typeof junctions != "undefined") {
-	  if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
-	    d.x+=coef*((posV[junctions[d.id].seg.V[0]]*resizeW)-d.x);
-	    d.y+=coef*((posJ[junctions[d.id].seg.J[0]]*resizeH)-d.y);
+	if (typeof windows != "undefined") {
+	  if ( typeof(windows[d.id].seg) != 'undefined' && typeof(windows[d.id].seg.V) != 'undefined' ){
+	    d.x+=coef*((posV[windows[d.id].seg.V[0]]*resizeW)-d.x);
+	    d.y+=coef*((posJ[windows[d.id].seg.J[0]]*resizeH)-d.y);
 	  }else{
 	    d.y+=coef*((50*resizeH)-d.y);
 	    d.x+=coef*((50*resizeW)-d.x);
@@ -302,8 +302,8 @@ function vjSplit(posV, posJ){
 	} 
       else{
 	d.y+=coef*(g_h+20-d.y);
-	if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
-	  d.x+=coef*((posV[junctions[d.id].seg.V[0]]*resizeW)-d.x);
+	if ( typeof(windows[d.id].seg) != 'undefined' && typeof(windows[d.id].seg.V) != 'undefined' ){
+	  d.x+=coef*((posV[windows[d.id].seg.V[0]]*resizeW)-d.x);
 	}else{
 	  d.x+=coef*((50*resizeW)-d.x);
 	}
@@ -328,10 +328,10 @@ function sizeSplit(posV) {
       }else{
 	d.y+=coef*((h*resizeH)-d.y);
       }
-	    if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
-	      if ( d.x > (  (posV[junctions[d.id].seg.V[0]]+(stepV/2.2) ) *resizeW)) d.x=d.x-Math.random();
-	      if ( d.x < (  (posV[junctions[d.id].seg.V[0]]-(stepV/2.2) ) *resizeW)) d.x=d.x+Math.random();
-	      d.x+=coef2*((posV[junctions[d.id].seg.V[0]]*resizeW)-d.x);
+	    if ( typeof(windows[d.id].seg) != 'undefined' && typeof(windows[d.id].seg.V) != 'undefined' ){
+	      if ( d.x > (  (posV[windows[d.id].seg.V[0]]+(stepV/2.2) ) *resizeW)) d.x=d.x-Math.random();
+	      if ( d.x < (  (posV[windows[d.id].seg.V[0]]-(stepV/2.2) ) *resizeW)) d.x=d.x+Math.random();
+	      d.x+=coef2*((posV[windows[d.id].seg.V[0]]*resizeW)-d.x);
 	    }else{
 	      if ( d.x > (50*resizeW)) d.x=d.x-Math.random();
 	      if ( d.x < (0*resizeW)) d.x=d.x+Math.random();
@@ -344,16 +344,16 @@ function nSizeSplit(posV) {
   var coef2 =0.0005;
   
     return function(d) {
-      if (junctions[d.id].seg.N!=-1){
+      if (windows[d.id].seg.N!=-1){
 	d.y+=coef*( ((50+(1-table[d.id].Nsize/maxNsize)*600)*resizeH) -d.y  );
       }else{
 	d.y+=coef*((h*resizeH)-d.y);
       }
 	  
-	    if ( typeof(junctions[d.id].seg) != 'undefined' && typeof(junctions[d.id].seg.V) != 'undefined' ){
-	      if ( d.x > (  (posV[junctions[d.id].seg.V[0]]+(stepV/2) ) *resizeW)) d.x=d.x-Math.random();
-	      if ( d.x < (  (posV[junctions[d.id].seg.V[0]]-(stepV/2) ) *resizeW)) d.x=d.x+Math.random();
-	      d.x+=coef2*((posV[junctions[d.id].seg.V[0]]*resizeW)-d.x);
+	    if ( typeof(windows[d.id].seg) != 'undefined' && typeof(windows[d.id].seg.V) != 'undefined' ){
+	      if ( d.x > (  (posV[windows[d.id].seg.V[0]]+(stepV/2) ) *resizeW)) d.x=d.x-Math.random();
+	      if ( d.x < (  (posV[windows[d.id].seg.V[0]]-(stepV/2) ) *resizeW)) d.x=d.x+Math.random();
+	      d.x+=coef2*((posV[windows[d.id].seg.V[0]]*resizeW)-d.x);
 	    }else{
 	      if ( d.x > (50*resizeW)) d.x=d.x-Math.random();
 	      if ( d.x < (0*resizeW)) d.x=d.x+Math.random();
