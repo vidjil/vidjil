@@ -38,9 +38,10 @@ void testSegmentationBug1(int delta_min, int delta_max) {
     }
 
     int stats[STATS_SIZE];
+    int stats_length[STATS_SIZE];
     ofstream file("/dev/null");
     Segmenter *segment = new KmerSegmenter(input.getSequence(), index, 
-                                           delta_min, delta_max, stats, VDJ, 
+                                           delta_min, delta_max, stats, stats_length, VDJ, 
                                            file);
 
     if (strand == 2 
