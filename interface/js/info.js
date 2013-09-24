@@ -26,7 +26,7 @@
   var divParent = document.getElementById("listClones");
   divParent.innerHTML="";
   for(var i=0 ;i<totalClones; i++){
-      var div = document.createElement('div');
+      var div = document.createElement('li');
       div.className="list";
       div.id=i;
       div.onmouseover = function(){ focusIn(this.id); }
@@ -239,3 +239,10 @@
     if (top>0) displayTop((top-5));
   }
   
+  function sortListBySize(){
+    var list=jQuery('.list')
+    var sort=list.sort(function(a,b){ 
+      return getSize($(b).attr("id"))> getSize($(a).attr("id")) ? 1:-1; 
+    })
+    $("#listClones").html(sort);
+  }
