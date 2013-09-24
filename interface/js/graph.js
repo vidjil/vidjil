@@ -233,39 +233,55 @@ function constructPath(cloneID){
   var tmp=t;
   t=0;
   var p;
+  
+  var x = graph_col[0];
+  var y = scale_x(getSize(cloneID)*precision)
+  
+  //cas avec un seul point de suivi
   if (graph_col.length==1){
     if (getSize(cloneID)==0){
       p = [ ];
     }else{
-      p = [[ ( graph_col[0]-100+ (Math.random()*50)-25 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]];
-      p.push([ ( graph_col[0]+100+ (Math.random()*50)-25 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
+      p = [[ ( x + (Math.random()*50)-125 ), ( g_h - y ) ]];
+      p.push([ ( x + (Math.random()*50)+75 ), ( g_h - y ) ]);
     }
-  }else{
+  }
+  //plusieurs points de suivi
+  else{
+    
+    //premier point de suivi 
     if (getSize(cloneID)==0){
       p = [ ];
     }else{
-      p = [[ ( graph_col[0]-50  ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]];
-      p.push([ ( graph_col[0]+ (Math.random()*30)-15  ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
+      p =   [[ ( x - 30  ), ( g_h - y )]];
+      p.push([ ( x )      , ( g_h - y )]);
     }
     
+    //points suivants
     for (var i=1; i< graph_col.length; i++){
       t++;
+      x = graph_col[i];
+      y = scale_x(getSize(cloneID)*precision)
       
-      if (getSize(cloneID)==0){
-	if (p.length!=0){
-	  p.push([( graph_col[i] ),(g_h + 50)]);
-	}
+      if (getSize(cloneID)==0 && p.length!=0){
+	p.push([( x ),(g_h + 30)]);
       }else{
+	
+	//si premiere apparition du clone sur le graphique
 	if (p.length==0){
-	  p.push([( graph_col[i] -50 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
+	  p.push([( x - 30 ), ( g_h - y )]);
 	}
-	p.push([( graph_col[i] + (Math.random()*30)-15 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
+	
+	p.push(  [( x ), ( g_h - y )]);
+	
+	//si derniere apparition du clone sur le graphique
 	if (i==graph_col.length-1 ){
-	  p.push([( graph_col[i] +50 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
+	  p.push([( x + 30 ), ( g_h - y )]);
 	}
+	
       }
-
     }
+    
   }
   t=tmp;
   return p;
