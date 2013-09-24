@@ -56,6 +56,6 @@ void testStorage() {
   testKmerStoreWithKmerSimple<MapKmerStore>(5, false, TEST_MAP_KMERSTORE);
   testKmerStoreWithKmerSimple<MapKmerStore>(5, true, TEST_MAP_KMERSTORE_RC);
 
-  testKmerStoreWithKmer<ArrayKmerStore>(14, TEST_ARRAY_KMERSTORE_RC);
+  testKmerStoreWithKmer<ArrayKmerStore>(10, TEST_ARRAY_KMERSTORE_RC);
   testKmerStoreWithKmer<MapKmerStore>(14, TEST_MAP_KMERSTORE_RC);
 }
