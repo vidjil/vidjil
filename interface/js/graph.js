@@ -71,14 +71,15 @@ function initGraph(){
   
   var count=min_size;
 
-  while (count<0.1){
+
+  while (count<1){
     count=count*10;
     precision= precision*10;
   }
-  
+    
   scale_x = d3.scale.log()
     .domain([1,precision])
-    .range([50,(g_h)]);
+    .range([0,(g_h)]);
     
   scale_color = d3.scale.log()
     .domain([1,precision])
@@ -300,7 +301,7 @@ function updateGraph(){
     
   scale_x = d3.scale.log()
     .domain([1,precision])
-    .range([50,(g_h)]);
+    .range([0,(g_h)]);
     
   g_axis
     .transition()

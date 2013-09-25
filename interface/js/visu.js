@@ -232,6 +232,7 @@ function tick(e) {
     if (splitMethod==" "){
       node.each(sizeSplit(positionV2));
     }
+      node.each(debugNaN());
     node
       .each(collide())
       .attr("cx", function(d) { return (d.x); })
@@ -239,6 +240,18 @@ function tick(e) {
       .attr("r" , function(d) { return (d.r2); })
 }
 
+function debugNaN() {
+    return function(d) {
+      if (isNaN(d.x)){
+	d.x=Math.random()*500;
+	console.log("debug NaN x circle"+ d.id );
+      }
+      if (isNaN(d.y)){
+	d.y=Math.random()*500;
+	console.log("debug NaN y circle"+ d.id );
+      }
+    }
+}
 
 /*résolution des collisions*/
 function collide() {
