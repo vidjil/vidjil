@@ -12,7 +12,6 @@
  * displayAlign()
  * hideAlign()
  * addToSegmenter()
- * showlog()
  * 
  */
 
@@ -106,10 +105,6 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     divParent.appendChild(li);
     displayAlign();
       
-  }
-  
-  function showlog(){
-    $('#log').animate({height: "toggle"}, 200 ); 
   }
   
       //TODO repasser en local

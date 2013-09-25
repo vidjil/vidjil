@@ -296,8 +296,7 @@ function g_class(cloneID){
 
 
 function updateGraph(){
-    document.getElementById("log").innerHTML+="<br>updateGraph";
-  $("#log").scrollTop(100000000000000);
+    console.log("updateGraph");
     
   scale_x = d3.scale.log()
     .domain([1,precision])

@@ -136,26 +136,25 @@ function loadJson() {
     windows=jsonData.windows;
     init();
     initTag();
-    document.getElementById("log").innerHTML+="<br>chargement fichier json";
+    console.log("chargement fichier json");
     loadPref();
-    document.getElementById("log").innerHTML+="<br>chargement fichier de preference";
+    console.log("chargement fichier de preference");
     initSize();
     initList(windows);
-    document.getElementById("log").innerHTML+="<br>génération des clones";
+    console.log("génération des clones");
     initVJgrid(TRGV,TRGJ);
     initNodes();
     initGraph();
-    document.getElementById("log").innerHTML+="<br>initialisation graph";
+    console.log("initialisation graph");
     initVisu();
-    document.getElementById("log").innerHTML+="<br>calcul des positions VJ";
+    console.log("calcul des positions VJ");
     setTimeout(function() {initCache();},2000);
     force.start();
     initCoef();
-    document.getElementById("log").innerHTML+="<br>initialisation coef";
+    console.log("initialisation coef");
     setTimeout('changeSplitMethod("vj2");',2000);
     displayTop(document.getElementById('rangeValue').value);
-    document.getElementById("log").innerHTML+="<br>start visu";
-    $("#log").scrollTop(100000000000000);
+    console.log("demarrage");
   };
   
   document.getElementById("file_menu").style.display="none";
@@ -176,9 +175,9 @@ function loadJsonAnalysis() {
     var text = oFREvent.target.result;
     pref = JSON.parse(text);
     loadPref();
-    document.getElementById("log").innerHTML+="<br>chargement fichier de preference";
+    console.log("chargement fichier de preference");
     initCoef();
-    document.getElementById("log").innerHTML+="<br>initialisation coef";
+    console.log("initialisation coef");
     updateGraph();
     updateVis();
     updateStyle();
@@ -240,7 +239,7 @@ function load(data, limit){
 function init(){
   totalClones=windows.length;
   if ( totalClones > limitClones ) totalClones = limitClones;
-  document.getElementById("log").innerHTML+="<br>nombre de jonctions"+totalClones;
+  console.log("nombre de jonctions "+totalClones);
   
   for(var i=0 ;i<totalClones; i++){
     
@@ -424,8 +423,7 @@ function initCoef(){
   setTimeout('force.alpha(.2)',1000);
   
   
-  document.getElementById("log").innerHTML+="<br>resize (new coef : "+resizeW+"/"+resizeH+"/"+resizeCoef+")<br>  graph coef ("+resizeG_W+"/"+resizeG_H+")";
-  $("#log").scrollTop(100000000000000);
+  console.log("resize (new coef : "+resizeW+"/"+resizeH+"/"+resizeCoef+")<br>  graph coef ("+resizeG_W+"/"+resizeG_H+")");
 };
 
 /*appel a chaque changement de taille du navigateur*/
@@ -445,8 +443,7 @@ function switchVisu(hv1,hv2){
 /*changement de point de suivi*/
 function changeT(time){
   t=time;
-  document.getElementById("log").innerHTML+="<br>changement de point de suivi > "+time;
-  $("#log").scrollTop(100000000000000);
+  console.log("changement de point de suivi > "+time);
   
   data_axis[8]={class : "axis_f" ,text : "", x1 : 0, x2 : g_w, 
 			x1 : graph_col[t], x2 : graph_col[t], 
@@ -772,8 +769,7 @@ function initVJgrid(germlineV, germlineJ){
   /*change la methode de colorisation ( par V / par J/ par taille)*/
   function changeColorMethod(colorM){
     colorMethod=colorM;
-    document.getElementById("log").innerHTML+="<br>change ColorMethod >> "+ colorM;
-    $("#log").scrollTop(100000000000000);
+    console.log("change ColorMethod >> "+ colorM);
     updateGraph();
     updateLegend()
     updateStyle();
@@ -799,23 +795,19 @@ function initVJgrid(germlineV, germlineJ){
     splitMethod=splitM;
     if (splitMethod==" "){ 
       displayLegend(grid_size);
-      document.getElementById("log").innerHTML+="<br>active sizeSplit";
-      $('#log').scrollTop(100000000000000);
+      console.log("active sizeSplit");
     }
     if (splitMethod=="vj1"){ 
       displayLegend(grid_vj1);
-      document.getElementById("log").innerHTML+="<br>active vjSplit1";
-      $('#log').scrollTop(100000000000000);
+      console.log("active vjSplit1");
     }
     if (splitMethod=="vj2"){ 
       displayLegend(grid_vj2);
-      document.getElementById("log").innerHTML+="<br>active vjSplit2";
-      $('#log').scrollTop(100000000000000);
+      console.log("active vjSplit2");
     }
     if (splitMethod=="Nsize"){ 
       displayLegend(grid_nsize);
-      document.getElementById("log").innerHTML+="<br>active split by N size";
-      $('#log').scrollTop(100000000000000);
+      console.log("active split by N size")
     }
     force.alpha(.5);
   }
