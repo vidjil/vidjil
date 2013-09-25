@@ -125,9 +125,14 @@ function loadJson() {
   //fonction s'executant une fois le fichier json correctement chargé
   //initialise les modeles de données et les visualisations
   oFReader.onload = function (oFREvent) {
-    jsonDataText = oFREvent.target.result;
-    jsonData = load(JSON.parse(jsonDataText), top_limit);
-    jsonDatatext = '0'; //récupération mémoire
+    jsonDataText =JSON.parse( oFREvent.target.result);
+    if (typeof(jsonDataText.timestamp) =='undefined'){
+      //message d'erreur
+      loadData();
+      return 0;
+    }
+    jsonData = load(jsonDataText, top_limit);
+    jsonDataText = '0'; //récupération mémoire
     windows=jsonData.windows;
     init();
     initTag();
