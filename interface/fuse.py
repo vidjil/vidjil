@@ -1,6 +1,7 @@
 import collections
 import json
 import sys
+import time
  
  
 class Windows:
@@ -50,6 +51,7 @@ def juncToJson(obj):
       "resolution1": obj.resolution1,
       "resolution5": obj.resolution5,
       "time": obj.time,
+      "timestamp": obj.timestamp
       }
     raise TypeError(repr(obj) + " fail !") 
   if isinstance(obj, Window):
@@ -83,7 +85,8 @@ def jsonToJunc(obj_dict):
     obj.total_size=obj_dict["total_size"]
     obj.resolution1=obj_dict["resolution1"]
     obj.resolution5=obj_dict["resolution5"]
-
+    obj.timestamp=obj_dict["timestamp"]
+    
     return obj
   if "window" in obj_dict:
     obj = Window()
@@ -118,6 +121,7 @@ def cutList(l1, limit):
   out.total_size=l1.total_size
   out.resolution1=l1.resolution1
   out.resolution5=l1.resolution5
+  out.timestamp=l1.timestamp
   
   length1 = len(l1.windows)
   
@@ -201,6 +205,13 @@ def fuseList(l1, l2, limit):
   out.total_size=l1.total_size+l2.total_size    
   out.resolution1=l1.resolution1+l2.resolution1
   out.resolution5=l1.resolution5+l2.resolution5
+  
+  timestamp1= time.strptime(l1.timestamp, "%Y-%m-%d %H:%M:%S")
+  timestamp2= time.strptime(l2.timestamp, "%Y-%m-%d %H:%M:%S")
+  if timestamp1>timestamp2 :
+    out.timestamp=l1.timestamp
+  else :
+    out.timestamp=l2.timestamp
   
   #creation de la nouvelle liste de jonction
   for key in dico_size :
