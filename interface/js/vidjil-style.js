@@ -222,14 +222,12 @@ var default_tag=8;
       clone.circleElemStyle.fill=colorStyle.c05;
       clone.polylineElem.style.setProperty('stroke',colorStyle.c05, null); 
       clone.polylineElem.style.stroke=colorStyle.c05;
-      clone.polylineElem.style.setProperty('strokewidth','5px', null); 
       clone.polylineElem.style.strokeWidth="5px";
     }else{
       if (selectElem){selectElem.style.background=colorStyle.c02;}
       clone.circleElemStyle.stroke="";
       clone.listElemStyle.background=colorStyle.c02;
       if (table[cloneID].active){
-	clone.polylineElem.style.setProperty('strokewidth','1.5px', null); 
 	clone.polylineElem.style.strokeWidth="1.5px";
 	if (
 	    (typeof(table[cloneID].tag) != 'undefined')
@@ -245,7 +243,7 @@ var default_tag=8;
 	clone.polylineElem.style.setProperty('stroke',color(cloneID), null); 
 	clone.polylineElem.style.stroke=color(cloneID);
       }else{
-	clone.polylineElem.style.setProperty('strokewidth','1.2px', null); 
+	clone.polylineElem.style.strokeWidth="1.2px";
 	clone.listElemStyle.color=colorStyle.c06;
 	clone.circleElemStyle.fill=colorStyle.c07;
 	clone.polylineElem.style.setProperty('stroke',colorStyle.c07, null); 
