@@ -242,11 +242,11 @@ function tick(e) {
 
 function debugNaN() {
     return function(d) {
-      if (isNaN(d.x)){
+      if (!isFinite(d.x)){
 	d.x=Math.random()*500;
 	console.log("debug NaN x circle"+ d.id );
       }
-      if (isNaN(d.y)){
+      if (!isFinite(d.y)){
 	d.y=Math.random()*500;
 	console.log("debug NaN y circle"+ d.id );
       }

@@ -64,7 +64,6 @@ function resetGraph(){
   graph_col=[];
   precision=1;
   displayGraph(data_axis, data_graph, data_res, data_date);
-  
 }
 
 function initGraph(){
@@ -264,8 +263,12 @@ function constructPath(cloneID){
       x = graph_col[i];
       y = scale_x(getSize(cloneID)*precision)
       
-      if (getSize(cloneID)==0 && p.length!=0){
-	p.push([( x ),(g_h + 30)]);
+      if (getSize(cloneID)==0){
+	if (p.length!=0){
+	  p.push([( x ),(g_h + 30)]);
+	}else{
+
+	}
       }else{
 	
 	//si premiere apparition du clone sur le graphique
