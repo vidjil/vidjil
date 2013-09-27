@@ -185,7 +185,8 @@ ostream &operator<<(ostream &out, const Segmenter &s)
 // KmerSegmenter (Cheap)
 
 KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index, 
-			     int delta_min, int delta_max, int *stats, 
+			     int delta_min, int delta_max, 
+			     int *stats, int *stats_length,
 			     Cost segment_c, /// TODO: should be removed
 			     ostream& out_unsegmented
 			     )
@@ -198,12 +199,14 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
   segment_cost=segment_c;
   
   int s = (size_t)index->getS() ;
+  int length = sequence.length() ;
 
-  if (sequence.length() < (size_t) s) 
+  if (length < (size_t) s) 
     {
       out_unsegmented << seq ;
       out_unsegmented << "#" << segmented_mesg[UNSEG_TOO_SHORT] << endl << endl ;
       stats[UNSEG_TOO_SHORT]++ ;
+      stats_length[UNSEG_TOO_SHORT] += length ;
       return ;
     }
  
@@ -336,6 +339,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
     }
 
   stats[because]++ ;      
+  stats_length[because] += length ;
   delete kaa;
 }
 

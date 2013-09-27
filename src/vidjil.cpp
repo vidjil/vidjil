@@ -591,8 +591,12 @@ int main (int argc, char **argv)
     size_t nb_total_reads = 0;
 
     int stats_segmented[STATS_SIZE];
+    int stats_length[STATS_SIZE];
     for (int i=0; i<STATS_SIZE; i++)
-      stats_segmented[i] = 0 ;
+      {
+	stats_segmented[i] = 0; 
+	stats_length[i] = 0 ;
+      }
 
     while (reads->hasNext())
       {
@@ -601,7 +605,9 @@ int main (int argc, char **argv)
         if (verbose)
           out << endl << endl << reads->getSequence().label << endl;
        
-        KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max_kmer, stats_segmented, segment_cost, out_unsegmented);
+        KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max_kmer, 
+			  stats_segmented, stats_length,
+			  segment_cost, out_unsegmented);
         if (verbose)
 	  out << seg;
 	  
@@ -618,11 +624,15 @@ int main (int argc, char **argv)
             if (junc.size())
               {
 		stats_segmented[TOTAL_SEG_AND_WINDOW]++ ;
+		stats_length[TOTAL_SEG_AND_WINDOW] += seg.getSequence().sequence.length() ;
                 windows->insert(junc, "bloup");
                 seqs_by_window[junc].push_back(reads->getSequence());
               }
 	    else
-	      stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW]++ ;
+	      {
+		stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW]++ ;
+		stats_length[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] += seg.getSequence().sequence.length() ;
+	      }
 
 	    //////////////////////////////////
 	    // Output segmented
@@ -650,9 +660,20 @@ int main (int argc, char **argv)
 	<< " inside " << nb_total_reads << " sequences" << endl ;
   
 
-    for (int i=0; i<STATS_SIZE; i++)
-      out << "   " << left << setw(20) << segmented_mesg[i] << " ->" << right << setw(9) << stats_segmented[i] << endl ;
+    // Display statistics on segmentation causes
 
+    out << "                                  #      av. length" << endl ;
+
+    for (int i=0; i<STATS_SIZE; i++)
+      {
+	out << "   " << left << setw(20) << segmented_mesg[i] 
+	    << " ->" << right << setw(9) << stats_segmented[i] ;
+
+	if (stats_length[i])
+	  out << "      " << setw(5) << fixed << setprecision(1) << (float) stats_length[i] / stats_segmented[i] ;
+
+	out << endl ;
+      }
     
       map <junction, string> json_data_segment ;
       list<pair <junction, int> > sort_all_windows;
