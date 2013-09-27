@@ -283,7 +283,6 @@ circle:hover {
  -ms-transition: stroke 0.5s;
  transition: stroke 0.5s;
  stroke-width : 1.5px;
- fill :none;
  cursor:pointer;
 }
 
@@ -419,6 +418,7 @@ letter-spacing: 0.12em;
   width:300px;
   display:none;
   padding: 10px;
+  border: solid;
 }
 
 .tn{

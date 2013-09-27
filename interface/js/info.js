@@ -249,16 +249,15 @@
     document.getElementById("popup-msg").innerHTML="";
   }
   
-  function convertToPng(){
+  function extractSVG(id){
     
-    var html = d3.select("#svg")
+    var html = d3.select("#"+id)
       .attr("title", "test2")
       .attr("version", 1.1)
       .attr("xmlns", "http://www.w3.org/2000/svg")
       .node().parentNode.innerHTML;
 
     d3.select("#popup-msg").append("div")
-      .attr("id", "download")
       .append("img")
       .attr("src", "data:image/svg+xml;base64,"+ btoa(html));
 	

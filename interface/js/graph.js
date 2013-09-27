@@ -84,33 +84,21 @@ function initGraph(){
     .domain([1,precision])
     .range([250,0]);
     
-  var height=1;
-  var p=0;
-  
-  //ordonnée
-  for (var i=0 ; i<8; i++){
-    data_axis[i]={class : "axis" ,text : -p, x1 : 0, x2 : g_w, 
-		    y1 : (g_h- scale_x(height*precision)), 
-		    y2 : (g_h- scale_x(height*precision))}
-		    
-    height=height/10;
-    p=p+1;
-  }
   
   //abscisse
   if (windows[0].size.length==1){
     graph_col[0]=700;
-    data_axis[9]={class : "axis_v" ,text : "fu"+1 ,
+    data_axis[0]={class : "axis_v" ,text : "fu"+1 ,
 			x1 : graph_col[0], x2 : graph_col[0], 
 			y1 : g_h+20, y2 : 0, time: 0}
     }else{
       if (windows[0].size.length==2){
 	graph_col[0]=300;
 	graph_col[1]=1100;
-	data_axis[9]={class : "axis_v" ,text : "fu"+1 ,
+	data_axis[0]={class : "axis_v" ,text : "fu"+1 ,
 			x1 : graph_col[0], x2 : graph_col[0], 
 			y1 : g_h+20, y2 : 0, time: 0}
-	data_axis[10]={class : "axis_v" ,text : "fu"+2 ,
+	data_axis[1]={class : "axis_v" ,text : "fu"+2 ,
 			x1 : graph_col[1], x2 : graph_col[1], 
 			y1 : g_h+20, y2 : 0, time: 1}
       }else{
@@ -124,7 +112,7 @@ function initGraph(){
 	  }
 	}
 	
-	data_axis[9+i]={class : "axis_v" ,text : time_name ,
+	data_axis[i]={class : "axis_v" ,text : time_name ,
 			x1 : graph_col[i], x2 : graph_col[i], 
 			y1 : g_h+20, y2 : 0, time: i}
       }
@@ -132,9 +120,25 @@ function initGraph(){
   }
   
   //mobile
-  data_axis[8]={class : "axis_f" ,text : "",
+  data_axis[data_axis.length]={class : "axis_f" ,text : "",
 			x1 : graph_col[t], x2 : graph_col[t], 
 			y1 : g_h+20, y2 : 0, time: 0}
+  
+  var height=1;
+  var p=data_axis.length;
+  var p2=0;
+  
+  //ordonnée
+  while((height*precision)>0.5){
+    data_axis[p]={class : "axis" ,text : -p2, x1 : 0, x2 : g_w, 
+		    y1 : (g_h- scale_x(height*precision)), 
+		    y2 : (g_h- scale_x(height*precision))}
+		    
+    height=height/10;
+    p=p+1;
+    p2=p2+1;
+  }
+  
   
   for (var i=0 ; i<totalClones; i++){
     data_graph[i]={id : i, name :"line"+i, path : constructPath(i)};
@@ -151,6 +155,7 @@ function initGraph(){
   }
   
   displayGraph(data_axis, data_graph, data_res, data_date);
+  
 }
 
 function displayGraph(data, data_2, data_3, data_4){
@@ -173,6 +178,7 @@ function displayGraph(data, data_2, data_3, data_4){
   g_graph.append("polyline")
     .transition()
     .duration(500)
+    .style("fill","none")
     .attr("id", function(d) { return "poly"+d.name; })
     .attr("points", function(p) {
       var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
@@ -213,14 +219,14 @@ function constructPathR(res){
     
     var p;
     
-    p=[ [0, (g_h+1000)] ];
+    p=[ [0, g_h] ];
     p.push([0, ( g_h - scale_x(res[0][used_ratio]*precision) ) ]);
     
     for (var i=0; i< graph_col.length; i++){
 	p.push([( graph_col[i]), ( g_h - scale_x(res[i][used_ratio]*precision))]);
     }
     p.push([g_w, ( g_h - scale_x(res[graph_col.length-1][used_ratio]*precision) ) ]);
-    p.push([g_w, ( g_h+1000) ]);
+    p.push([g_w, g_h]);
     
     return p;
     
@@ -342,6 +348,7 @@ function updateGraph(){
     })
     
   g_graph.selectAll("polyline")
+  .style("fill","none")
     .transition()
     .duration(500)
     .attr("points", function(p) {

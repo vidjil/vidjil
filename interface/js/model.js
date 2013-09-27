@@ -408,7 +408,10 @@ function initCoef(){
   resizeG_H = (document.getElementById("visu2").offsetHeight)/(g_h);
   document.getElementById("svg2").style.width=document.getElementById("visu2").offsetWidth+"px";
   document.getElementById("svg2").style.height=document.getElementById("visu2").offsetHeight+"px";
-  
+  document.getElementById('visu_back').setAttribute("width",resizeW*w);
+  document.getElementById('visu_back').setAttribute("height",resizeH*h);
+  document.getElementById('graph_back').setAttribute("width",resizeG_W*g_w);
+  document.getElementById('graph_back').setAttribute("height",resizeG_H*g_h);
 
   resizeCoef = Math.sqrt(resizeW*resizeH);
   
@@ -421,6 +424,7 @@ function initCoef(){
 
   updateVis();
   setTimeout('force.alpha(.2)',1000);
+  
   
   
   console.log("resize (new coef : "+resizeW+"/"+resizeH+"/"+resizeCoef+")<br>  graph coef ("+resizeG_W+"/"+resizeG_H+")");
