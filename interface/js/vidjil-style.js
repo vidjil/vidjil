@@ -198,7 +198,7 @@ var default_tag=8;
       clone.polylineElem.style.display="none";
       clone.circleElemStyle.display="none";
     }else{
-      clone.circleElemStyle.display="";
+      clone.circleElemStyle.display="inline";
     }
     
   }
@@ -246,7 +246,6 @@ var default_tag=8;
 	clone.polylineElem.style.stroke=color(cloneID);
       }else{
 	clone.polylineElem.style.setProperty('strokewidth','1.2px', null); 
-	clone.polylineElem.style.strokeWidth="1.2px";
 	clone.listElemStyle.color=colorStyle.c06;
 	clone.circleElemStyle.fill=colorStyle.c07;
 	clone.polylineElem.style.setProperty('stroke',colorStyle.c07, null); 
@@ -261,7 +260,7 @@ var default_tag=8;
       clone.polylineElem.setAttribute("stroke-dasharray","20px,5px");
       
     }else{
-      clone.polylineElem.setAttribute("stroke-dasharray","");
+      clone.polylineElem.removeAttribute("stroke-dasharray");
     }
     //TODO update star/tag uniquement avec le selectTag
     if (typeof table[cloneID].tag != 'undefined'){

@@ -11,15 +11,6 @@
  * info panel
  * 
  * 
- * content:
- * 
- * displayInfo(cloneID)
- * addToFavorites(cloneID)
- * addToList(cloneID)
- * 
- * TODO manipulation sur les listes
- * -trie par nom / par size
- * -voir par jonction/ par clone
  */
   
   function initList(data){
