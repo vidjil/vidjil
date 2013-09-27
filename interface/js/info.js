@@ -248,3 +248,20 @@
     document.getElementById("popup-container").style.display="none";
     document.getElementById("popup-msg").innerHTML="";
   }
+  
+  function convertToPng(){
+    
+    var html = d3.select("#svg")
+      .attr("title", "test2")
+      .attr("version", 1.1)
+      .attr("xmlns", "http://www.w3.org/2000/svg")
+      .node().parentNode.innerHTML;
+
+    d3.select("#popup-msg").append("div")
+      .attr("id", "download")
+      .append("img")
+      .attr("src", "data:image/svg+xml;base64,"+ btoa(html));
+	
+    popupMsg("plop");
+	
+  }
