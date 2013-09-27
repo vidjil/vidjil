@@ -171,8 +171,6 @@ circle:hover {
   stroke-dasharray: 6,6;
 }
 
-
-
 .list{
   width: 440px;
 }
@@ -421,6 +419,7 @@ letter-spacing: 0.12em;
   width:300px;
   display:none;
   padding: 10px;
+  border: solid;
 }
 
 .tn{
@@ -455,4 +454,32 @@ letter-spacing: 0.12em;
 #new_name{
   font-family: monospace;
   font-weight:bold;
+}
+
+#popup-container{
+  z-index:3;
+  border:solid; 
+  position: fixed; 
+  top: 200px; 
+  margin-left:-250px;
+  left:50% ;
+  width:500px;
+  font-size: 14px; 
+  padding: 10px;
+  background:inherit;
+  display:none;
+}
+
+.closeButton{
+position: absolute;
+top: -12px;
+right: -12px;
+border: solid;
+background: inherit;
+border-radius: 20px;
+width: 15px;
+height: 15px;
+text-align: center;
+font-weight: bolder;
+cursor: pointer;
 }

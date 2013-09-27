@@ -31,6 +31,8 @@
   <body onload="initCoef()">
   
     <div id="file_menu" >
+    <span class="closeButton" onclick="cancel();">X</span>
+    
     	<h2>Load data and analysis</h2>
     	
 	data file:<br/>
@@ -46,17 +48,16 @@
 	</select> </br></br>
 	
 	<button onclick="loadJson();">start</button> 
-	<button onclick="cancel();">cancel</button> 
     </div>
     
     <div id="analysis_menu" >
+        <span class="closeButton" onclick="cancel();">X</span>
     	<h2>analysis menu</h2>
     	
 	Analysis file :<br/>
 	<input id="upload_analysis" type="file" name="analysis" /></br></br>
 		
 	<button onclick="loadJsonAnalysis();">start</button> 
-	<button onclick="cancel();">cancel</button> 
     </div>
     
     <div id="top-container">
@@ -227,8 +228,7 @@
     <div id="log" style="display:none; position: fixed; top: 50px;right: 10px;width: 500px; font-family : monaco,terminal,courier,system; height: 150px;overflow-y: scroll;font-size: 14px;background-color: #333044;opacity: 0.5;padding: 10px;">log </div>
     
     <div id="tagSelector">
-    
-    <div class="tagD button" onclick="$('#tagSelector').hide('fast')">close</div></br>
+    <span class="closeButton" onclick="$('#tagSelector').hide('fast')">X</span>
     
       <div>tag for <span id=tagname></span></div>
       <ul>
@@ -264,8 +264,8 @@
     </div>
     
     <div id="display-menu">
-    <span class="tagD button" onclick="showDisplayMenu()">close</span>
-         <h2>Display menu</h2>
+      <span class="closeButton" onclick="showDisplayMenu();">X</span>
+       <h2>Display menu</h2>
     
       <ul>
       
@@ -382,6 +382,12 @@
     </div>
     
     <div id="frame-container"></div>
+    
+    <div id="popup-container">
+    <span class="closeButton" onclick="closePopupMsg()">X</span>
+      <div id="popup-msg">
+      </div>
+    </div>
     
   </body>
       

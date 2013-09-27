@@ -237,3 +237,14 @@
     })
     $("#listClones").html(sort);
   }
+  
+  function popupMsg(msg){
+    document.getElementById("popup-container").style.display="block";
+    
+    document.getElementById("popup-msg").innerHTML+="<p>" +msg+ "</p>";
+  }
+  
+  function closePopupMsg(){
+    document.getElementById("popup-container").style.display="none";
+    document.getElementById("popup-msg").innerHTML="";
+  }

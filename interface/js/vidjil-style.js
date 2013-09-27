@@ -324,9 +324,7 @@ var default_tag=8;
     document.getElementById('listClones').style.background=colorStyle.c02;
     document.getElementById('listSelect').style.background=colorStyle.c02;
     document.getElementById('tagSelector').style.background=colorStyle.c02;
-    document.getElementById('tagSelector').style.border=colorStyle.c03;
     document.getElementById('display-menu').style.background=colorStyle.c02;
-    document.getElementById('display-menu').style.border=colorStyle.c03;
     
     var button = document.getElementsByClassName("buttonSelector");
 
