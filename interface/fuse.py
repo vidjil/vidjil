@@ -1,21 +1,22 @@
 import collections
 import json
 import sys
+import time
  
  
-class Junctions:
+class Windows:
   def __init__(self):
     self.total_size = []
     self.normalizations = []
     self.resolution1 = []
     self.resolution5 = []
     self.time = []
-    self.junctions = []
+    self.windows = []
 
   def __str__(self):
-    return "<Junctions %s: %s %d>" % (self.time, self.total_size, len(self.junctions))
+    return "<windows %s: %s %d>" % (self.time, self.total_size, len(self.windows))
  
-class Junction:
+class Window:
   def __init__(self):
     self.size = []
     self.ratios = []
@@ -43,17 +44,18 @@ jlist2 = []
  
 #serialiseur perso, convertit un objet python en json
 def juncToJson(obj):
-  if isinstance(obj, Junctions):
-    return {"junctions": obj.junctions,
+  if isinstance(obj, Windows):
+    return {"windows": obj.windows,
       "normalizations": obj.normalizations,
       "total_size": obj.total_size,
       "resolution1": obj.resolution1,
       "resolution5": obj.resolution5,
       "time": obj.time,
+      "timestamp": obj.timestamp
       }
     raise TypeError(repr(obj) + " fail !") 
-  if isinstance(obj, Junction):
-    return {"junction": obj.junction,
+  if isinstance(obj, Window):
+    return {"window": obj.window,
       "size": obj.size,
       "ratios": obj.ratios,
       "seg": obj.segment,
@@ -77,17 +79,18 @@ def juncToJson(obj):
 #deserialiseur perso, convertit un format json en objet python correspondant
 def jsonToJunc(obj_dict):
   if "total_size" in obj_dict:
-    obj = Junctions()
+    obj = Windows()
     obj.normalizations=obj_dict["normalizations"]
-    obj.junctions=obj_dict["junctions"]
+    obj.windows=obj_dict["windows"]
     obj.total_size=obj_dict["total_size"]
     obj.resolution1=obj_dict["resolution1"]
     obj.resolution5=obj_dict["resolution5"]
-
+    obj.timestamp=obj_dict["timestamp"]
+    
     return obj
-  if "junction" in obj_dict:
-    obj = Junction()
-    obj.junction=obj_dict["junction"]
+  if "window" in obj_dict:
+    obj = Window()
+    obj.window=obj_dict["window"]
     obj.size=obj_dict["size"]
     obj.ratios=obj_dict["ratios"]
     obj.top=obj_dict["top"]
@@ -113,17 +116,18 @@ def jsonToJunc(obj_dict):
     
 def cutList(l1, limit):
   
-  out = Junctions()
+  out = Windows()
   out.normalizations=l1.normalizations
   out.total_size=l1.total_size
   out.resolution1=l1.resolution1
   out.resolution5=l1.resolution5
+  out.timestamp=l1.timestamp
   
-  length1 = len(l1.junctions)
+  length1 = len(l1.windows)
   
   for index in range(length1): 
-    if (int(l1.junctions[index].top) < limit or limit == 0) :
-      out.junctions.append(l1.junctions[index])
+    if (int(l1.windows[index].top) < limit or limit == 0) :
+      out.windows.append(l1.windows[index])
 
   print "! cut to %d" % limit
   return out
@@ -155,57 +159,64 @@ def fuseList(l1, l2, limit):
   for i in range(s2):
     tampon2.append(tp)
   
-  length1 = len(l1.junctions)
+  length1 = len(l1.windows)
     
-  length2 = len(l2.junctions)
+  length2 = len(l2.windows)
   
   #recuperation des quantites de jonctions de la liste 1
   for index in range(length1): 
-    dico_size[l1.junctions[index].junction] = l1.junctions[index].size
-    dico_ratios[l1.junctions[index].junction] = l1.junctions[index].ratios
-    dico_top[l1.junctions[index].junction] = l1.junctions[index].top
-    if (l1.junctions[index].segment != 0) :
-      dataseg[l1.junctions[index].junction] = l1.junctions[index].segment
+    dico_size[l1.windows[index].window] = l1.windows[index].size
+    dico_ratios[l1.windows[index].window] = l1.windows[index].ratios
+    dico_top[l1.windows[index].window] = l1.windows[index].top
+    if (l1.windows[index].segment != 0) :
+      dataseg[l1.windows[index].window] = l1.windows[index].segment
     
   for index in range(length2): 
     
-    if (l2.junctions[index].segment != 0) :
-      if not l2.junctions[index].junction in dataseg :
-	dataseg[l2.junctions[index].junction] = l2.junctions[index].segment
+    if (l2.windows[index].segment != 0) :
+      if not l2.windows[index].window in dataseg :
+	dataseg[l2.windows[index].window] = l2.windows[index].segment
       else :
 	#si les 2 listes ont des donnees de segmentation pour une meme jonction
 	#on garde les donnees de segmentation de la liste possedant le point de suivi le plus haut
-	if ( max (l2.junctions[index].size) > max (dico_size[l2.junctions[index].junction]) ) :
-	  dataseg[l2.junctions[index].junction] = l2.junctions[index].segment
+	if ( max (l2.windows[index].size) > max (dico_size[l2.windows[index].window]) ) :
+	  dataseg[l2.windows[index].window] = l2.windows[index].segment
 	  
 	  
     #cas ou la jonction n'etait pas presente dans la 1ere liste
-    if l2.junctions[index].junction not in dico_size:
-      dico_size[l2.junctions[index].junction] = tampon + l2.junctions[index].size
-      dico_ratios[l2.junctions[index].junction] = tampon + l2.junctions[index].ratios
-      dico_top[l2.junctions[index].junction] = l2.junctions[index].top
+    if l2.windows[index].window not in dico_size:
+      dico_size[l2.windows[index].window] = tampon + l2.windows[index].size
+      dico_ratios[l2.windows[index].window] = tampon + l2.windows[index].ratios
+      dico_top[l2.windows[index].window] = l2.windows[index].top
     else :
-      dico_size[l2.junctions[index].junction] = dico_size[l2.junctions[index].junction] + l2.junctions[index].size
-      dico_ratios[l2.junctions[index].junction] = dico_ratios[l2.junctions[index].junction] + l2.junctions[index].ratios
-      if (dico_top[l2.junctions[index].junction] > l2.junctions[index].top) :
-	dico_top[l2.junctions[index].junction] = l2.junctions[index].top
+      dico_size[l2.windows[index].window] = dico_size[l2.windows[index].window] + l2.windows[index].size
+      dico_ratios[l2.windows[index].window] = dico_ratios[l2.windows[index].window] + l2.windows[index].ratios
+      if (dico_top[l2.windows[index].window] > l2.windows[index].top) :
+	dico_top[l2.windows[index].window] = l2.windows[index].top
     
   #cas ou la jonction n'etait presente que dans la 1ere liste
   for index in range(length1): 
-    if len(dico_size[l1.junctions[index].junction]) == s :
-      dico_size[l1.junctions[index].junction] += tampon2
-      dico_ratios[l1.junctions[index].junction] += tampon2
+    if len(dico_size[l1.windows[index].window]) == s :
+      dico_size[l1.windows[index].window] += tampon2
+      dico_ratios[l1.windows[index].window] += tampon2
   
-  out = Junctions()
+  out = Windows()
   out.normalizations=l1.normalizations
   out.total_size=l1.total_size+l2.total_size    
   out.resolution1=l1.resolution1+l2.resolution1
   out.resolution5=l1.resolution5+l2.resolution5
   
+  timestamp1= time.strptime(l1.timestamp, "%Y-%m-%d %H:%M:%S")
+  timestamp2= time.strptime(l2.timestamp, "%Y-%m-%d %H:%M:%S")
+  if timestamp1>timestamp2 :
+    out.timestamp=l1.timestamp
+  else :
+    out.timestamp=l2.timestamp
+  
   #creation de la nouvelle liste de jonction
   for key in dico_size :
-    junct=Junction()
-    junct.junction=key
+    junct=Window()
+    junct.window=key
     junct.size=dico_size[key]
     junct.ratios=dico_ratios[key]
     junct.top=dico_top[key]
@@ -213,7 +224,7 @@ def fuseList(l1, l2, limit):
     if key in dataseg :
       junct.segment = dataseg[key]
     if (junct.top < limit or limit == 0) :
-      out.junctions.append(junct)
+      out.windows.append(junct)
 
   return out
   

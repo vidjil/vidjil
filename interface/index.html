@@ -39,13 +39,9 @@
 	analysis file (optional) :<br/>
 	<input id="upload_pref" type="file" name="pref" /></br></br>
 		
-	show only incoming clones in the top <select id="limit_top" name="limit_top">
+	load only clones in the top <select id="limit_top" name="limit_top">
 	  <option value="10">10</option>	
-	  <option value="15">15</option>
-	  <option value="20">20</option>
 	  <option value="30">30</option>
-	  <option value="40">40</option>
-	  <option value="50">50</option>
 	  <option value="100">100</option>
 	</select> </br></br>
 	
@@ -62,9 +58,6 @@
 	<button onclick="loadJsonAnalysis();">start</button> 
 	<button onclick="cancel();">cancel</button> 
     </div>
-    
-    
-    <div onclick="showlog();" style="position: fixed; top: 5px; right:5px ;width: 2px; height: 2px;font-size: 14px;background-color: #333044; padding: 10px;"> </div>
     
     <div id="top-container">
     
@@ -85,6 +78,7 @@
 	  <a class="buttonSelector" onclick="changeColorMethod('J');">J</a>
 	  <a class="buttonSelector" onclick="changeColorMethod('N');">N</a>
 	  <a class="buttonSelector" onclick="changeColorMethod('Tag');">Tag</a>
+	  <a class="buttonSelector" onclick="changeColorMethod('abundance');">abundance</a>
 	</div>
       </div>
       
@@ -97,7 +91,13 @@
 	</div>
       </div>
       
-      <div id="norm" class="menu" onclick="javascript:toggleNormalize();"> normalize off
+      <div id="norm" class="menu" onmouseover="showSelector('ratioSelector');"> normalize 
+        <div id="ratioSelector" class="selector">
+        <!--TODO generer automatiquement-->
+	  <a class="buttonSelector" onclick="changeRatio(0);">none</a> 
+	  <a class="buttonSelector" onclick="changeRatio(1);">highest standard</a> 
+	  <a class="buttonSelector" onclick="changeRatio(2);">all standard</a> 
+	</div>
       </div>
       
       <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
@@ -121,17 +121,15 @@
 
 	<div id="menu">
 	
-	  <table style="width:100%">
-	    <tr>
-	      <td>
-	      info patient
-	      </br>
-	      </br>
-	      </td>
-	    </tr>
+	  <table style="width:100%">	   
 	    <tr>
 	    <td id=data_file>
 	    	   </br>
+	    </td>
+	    </tr>
+	    <tr>
+	    <td>
+	    	XX/XX/19XX </br>
 	    </td>
 	    </tr>
 	    <tr>
@@ -140,22 +138,35 @@
 	    </td>
 	    </tr>
 	    <tr>
-	      <td>_____________________________________
+	      <td></br>
 	      </td>
 	    </tr>
 	    <tr>
 	      <td>
-		<a class="button" onclick="displayFavoris();">favorites</a>
-		<a class="button" onclick="displayTop(5);">top 5</a>
-		<a class="button" onclick="displayTop(10);">top 10</a>
-		<a class="button" onclick="displayTop(25);">top 25</a>
-		<a class="button" onclick="displayAll();">all</a>
+
 	      </td>
 	    </tr>
 	    
 	    
 	  </table>
 	  
+	</div>
+	
+	<div id="display-bar">
+	  <a class="smallbutton" onclick="decDisplayTop();"><</a>
+	  top <span id=top_display></span>
+	  <a class="smallbutton" onclick="incDisplayTop();">></a>
+	  
+	  <span id="fastTag0" class="tagColorBox tagColor0" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag1" class="tagColorBox tagColor1" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag2" class="tagColorBox tagColor2" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag3" class="tagColorBox tagColor3" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag4" class="tagColorBox tagColor4" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag5" class="tagColorBox tagColor5" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag6" class="tagColorBox tagColor6" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag7" class="tagColorBox tagColor7" onclick="nextDisplayTag(this)"></span>
+	  <span id="fastTag8" class="tagColorBox tagColor8" onclick="nextDisplayTag(this)"></span>
+	  <a class="button" onclick="showDisplayMenu();">>></a>
 	</div>
 	
 	  <div id="listClones"></div>
@@ -216,60 +227,123 @@
     <div id="log" style="display:none; position: fixed; top: 50px;right: 10px;width: 500px; font-family : monaco,terminal,courier,system; height: 150px;overflow-y: scroll;font-size: 14px;background-color: #333044;opacity: 0.5;padding: 10px;">log </div>
     
     <div id="tagSelector">
-      tag for <div id=tagname></div>
+    
+    <div class="tagD button" onclick="$('#tagSelector').hide('fast')">close</div></br>
+    
+      <div>tag for <span id=tagname></span></div>
       <ul>
 	<li onClick="selectTag(0)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor0"></span> <span class="tagName0" id="tag0"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor0"></span> <span class="tagName0 tn" id="tag0"></span></div>
 	</li>
 	<li onClick="selectTag(1)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor1"></span> <span class="tagName1" id="tag1"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor1"></span> <span class="tagName1 tn" id="tag1"></span></div>
 	</li>
 	<li onClick="selectTag(2)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor2"></span> <span class="tagName2" id="tag2"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor2"></span> <span class="tagName2 tn" id="tag2"></span></div>
 	</li>
 	<li onClick="selectTag(3)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor3"></span> <span class="tagName3" id="tag3"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor3"></span> <span class="tagName3 tn" id="tag3"></span></div>
 	</li>
 	<li onClick="selectTag(4)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor4"></span> <span class="tagName4" id="tag4"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor4"></span> <span class="tagName4 tn" id="tag4"></span></div>
 	</li>
 	<li onClick="selectTag(5)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor5"></span> <span class="tagName5" id="tag5"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor5"></span> <span class="tagName5 tn" id="tag5"></span></div>
 	</li>
 	<li onClick="selectTag(6)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor6"></span> <span class="tagName6" id="tag6"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor6"></span> <span class="tagName6 tn" id="tag6"></span></div>
 	</li>
 	<li onClick="selectTag(7)">
-	  <div class="tagElem" ><span class="tagColorBox tagColor7"></span> <span class="tagName7" id="tag7"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox tagColor7"></span> <span class="tagName7 tn" id="tag7"></span></div>
 	</li>
 	<li onClick="selectTag(8)">
-	  <div class="tagElem" ><span class="tagColorBox "></span> <span class="tagName8" id="tag8"></span></div>
+	  <div class="tagElem" ><span class="tagColorBox "></span> <span class="tagName8 tn" id="tag8"></span></div>
 	</li>
 	
       </ul>
     </div>
     
     <div id="display-menu">
+    <span class="tagD button" onclick="showDisplayMenu()">close</span>
+         <h2>Display menu</h2>
+    
       <ul>
+      
+      
 	<li>
-	  <div class="tagElem" ><span class="tagColorBox tagColor0"></span> <span class="tagName0">pathologique 1</span>
-	  <input type="radio" name="radio1" value="1">
-	  <input type="radio" name="radio1" value="2">
-	  <input type="radio" name="radio1" value="3">
+	  <div> top <input id="rangeValue" type="text" size="3" value="10"
+	  readonly="true">
+	  <input id="top_slider" type="range" min="0" max="100" step="5" value="10" 
+	  onchange="displayTop(this.value)" />
 	  </div>
 	</li>
 	<li>
-	  <div class="tagElem" ><span class="tagColorBox tagColor1"></span> <span class="tagName1">pathologique 2</span>
-	  <input type="radio" name="radio2" value="1">
-	  <input type="radio" name="radio2" value="2">
-	  <input type="radio" name="radio2" value="3">
+	<span class="tn"></span>
+	<span class="tagD">hide</span>
+	<span class="tagD">show</span>
+	<span class="tagD">color</span>
+	</li>
+	<li>
+	  <div id="tagDisplay0" class="tagElem"><span class="tagColorBox tagColor0"></span> <span class="tagName0 tn"></span>
+	  <input class="tagD" type="radio" name="radio0" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio0" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio0" value=2 onclick="changeDisplayTag(this)">
 	  </div>
 	</li>
 	<li>
-	  <div class="tagElem" ><span class="tagColorBox tagColor2"></span> <span class="tagName2">pathologique 3</span>
-	  <input type="radio" name="radio3" value="1">
-	  <input type="radio" name="radio3" value="2">
-	  <input type="radio" name="radio3" value="3">
+	  <div id="tagDisplay1" class="tagElem"><span class="tagColorBox tagColor1"></span> <span class="tagName1 tn"></span>
+	  <input class="tagD" type="radio" name="radio1" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio1" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio1" value=2 onclick="changeDisplayTag(this)">
+	  </div>
+	</li>
+	<li>
+	  <div id="tagDisplay2" class="tagElem"><span class="tagColorBox tagColor2"></span> <span class="tagName2 tn"></span>
+	  <input class="tagD" type="radio" name="radio2" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio2" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio2" value=2 onclick="changeDisplayTag(this)">
+	  </div>
+	</li>
+	<li>
+	  <div id="tagDisplay3" class="tagElem"><span class="tagColorBox tagColor3"></span> <span class="tagName3 tn"></span>
+	  <input class="tagD" type="radio" name="radio3" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio3" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio3" value=2 onclick="changeDisplayTag(this)">
+	  </div>
+	</li>
+	<li>
+	  <div id="tagDisplay4" class="tagElem"><span class="tagColorBox tagColor4"></span> <span class="tagName4 tn"></span>
+	  <input class="tagD" type="radio" name="radio4" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio4" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio4" value=2 onclick="changeDisplayTag(this)">
+	  </div>
+	</li>
+	<li>
+	  <div id="tagDisplay5" class="tagElem"><span class="tagColorBox tagColor5"></span> <span class="tagName5 tn"></span>
+	  <input class="tagD" type="radio" name="radio5" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio5" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio5" value=2 onclick="changeDisplayTag(this)">
+	  </div>
+	</li>
+	<li>
+	  <div id="tagDisplay6" class="tagElem"><span class="tagColorBox tagColor6"></span> <span class="tagName6 tn"></span>
+	  <input class="tagD" type="radio" name="radio6" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio6" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio6" value=2 onclick="changeDisplayTag(this)">
+	  </div>
+	</li>
+	<li>
+	  <div id="tagDisplay7" class="tagElem"><span class="tagColorBox tagColor7"></span> <span class="tagName7 tn"></span>
+	  <input class="tagD" type="radio" name="radio7" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio7" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio7" value=2 onclick="changeDisplayTag(this)">
+	  </div>
+	</li>
+	<li>
+	  <div id="tagDisplay8" class="tagElem"><span class="tagColorBox tagColor8"></span> <span class="tagName8 tn"></span>
+	  <input class="tagD" type="radio" name="radio8" value=0 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio8" value=1 onclick="changeDisplayTag(this)">
+	  <input class="tagD" type="radio" name="radio8" value=2 onclick="changeDisplayTag(this)">
 	  </div>
 	</li>
 	
@@ -298,7 +372,9 @@
 	<span class="button" onclick="displayAlign()">show</span>
 	<span class="button" onclick="hideAlign()">hide</span>
 	<span class="button" onclick="align()">align</span>
-	<span class="button" onclick="sendToIMGT()">IMGT</span>
+	<span class="button" onclick="sendTo('IMGT')">IMGT</span>
+	<span class="button" onclick="sendTo('igBlast')">igBlast</span>
+
       </div>
     
       <ul id="listSeq">

@@ -54,6 +54,33 @@ imgtInput["l01p01c08"]="";
 imgtInput["l01p01c26"]="";
 imgtInput["l01p01c10"]=">a\nATGCGCAGATGC\n";
 
+//parametre igBlast par defaut
+var igBlastInput= {};
+igBlastInput["queryseq"]="GAAGGCCCCACAGCGTCTTCTGTACTATGACGTCTCCACCGCAAGGGATGTGTTGGAATCAGGACTCAGTCCAGGAAAGTATTATACTCATACACCCAGGAGGTGGAGCTGGATATTGAGACTGCAAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTTCTGACATAAGAAACCCTTTGGCAGTGGAACAACAC"
+igBlastInput["organism"]="human"
+igBlastInput["germline_db_V"]="IG_DB/imgt.TR.Homo_sapiens.V.f.orf.p";
+igBlastInput["germline_db_D"]="IG_DB/imgt.TR.Homo_sapiens.D.f.orf";
+igBlastInput["germline_db_J"]="IG_DB/imgt.TR.Homo_sapiens.J.f.orf.p";
+igBlastInput["program"]="blastn";
+igBlastInput["min_D_match"]=5;
+igBlastInput["D_penalty"]=-4;
+igBlastInput["num_alignments_V"]=3;
+igBlastInput["num_alignments_D"]=3;
+igBlastInput["num_alignments_J"]=3;
+igBlastInput["translation="]=true;
+igBlastInput["domain"]="imgt";
+igBlastInput["outfmt"]=3;
+igBlastInput["additional_db"]="";
+igBlastInput["v_focus"]=true;
+igBlastInput["num_alignments_additional"]=10;
+igBlastInput["evalue"]=1;
+igBlastInput["LINK_LOC"]="";
+igBlastInput["SEARCH_TYPE"]="TCR";
+igBlastInput["igsource"]="new";
+igBlastInput["analyze"]="on";
+igBlastInput["CMD"]="request";
+igBlastInput["seqtype"]="TCR";
+    
 
 
 function imgtPost(data) {
@@ -81,4 +108,26 @@ function imgtPost(data) {
   form.submit();
 
 }
+
+function igBlastPost(data){
+
+  igBlastInput["queryseq"]=data;
+  
+   var form = document.createElement("form");
+  form.target = "_blank";
+  form.action = "http://www.ncbi.nlm.nih.gov/igblast/igblast.cgi";
+  form.method = "POST";
+
+  for (var k in igBlastInput){ 
+  var input = document.createElement("input");
+    input.type = "hidden";
+    input.name = k;
+    input.value = igBlastInput[k];
+    form.appendChild(input);
+  }
+
+  form.submit();
+      
+}
+
 

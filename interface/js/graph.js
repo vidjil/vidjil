@@ -71,14 +71,19 @@ function initGraph(){
   
   var count=min_size;
 
+
   while (count<1){
     count=count*10;
     precision= precision*10;
   }
-  
+    
   scale_x = d3.scale.log()
     .domain([1,precision])
-    .range([50,(g_h)]);
+    .range([0,(g_h)]);
+    
+  scale_color = d3.scale.log()
+    .domain([1,precision])
+    .range([250,0]);
     
   var height=1;
   var p=0;
@@ -94,13 +99,13 @@ function initGraph(){
   }
   
   //abscisse
-  if (junctions[0].size.length==1){
+  if (windows[0].size.length==1){
     graph_col[0]=700;
     data_axis[9]={class : "axis_v" ,text : "fu"+1 ,
 			x1 : graph_col[0], x2 : graph_col[0], 
 			y1 : g_h+20, y2 : 0, time: 0}
     }else{
-      if (junctions[0].size.length==2){
+      if (windows[0].size.length==2){
 	graph_col[0]=300;
 	graph_col[1]=1100;
 	data_axis[9]={class : "axis_v" ,text : "fu"+1 ,
@@ -110,8 +115,8 @@ function initGraph(){
 			x1 : graph_col[1], x2 : graph_col[1], 
 			y1 : g_h+20, y2 : 0, time: 1}
       }else{
-	for (var i=0 ; i<junctions[0].size.length; i++){
-	graph_col[i]=axis_x1 + 5 + i*(( g_w-(axis_x1+axis_x2) )/(junctions[0].size.length-1) );
+	for (var i=0 ; i<windows[0].size.length; i++){
+	graph_col[i]=axis_x1 + 5 + i*(( g_w-(axis_x1+axis_x2) )/(windows[0].size.length-1) );
 	
 	var time_name = "fu"+(i+1);
 	if ( typeof jsonData.time != "undefined" ){
@@ -135,15 +140,10 @@ function initGraph(){
   for (var i=0 ; i<totalClones; i++){
     data_graph[i]={id : i, name :"line"+i, path : constructPath(i)};
   }
-  if (normalization){
-    data_res[0]={id : totalClones, name :"resolution1", path :constructPathR(jsonData.norm_resolution1) };
-    data_res[1]={id : totalClones+1, name :"resolution5", path :constructPathR(jsonData.norm_resolution5) };
-  }else{
     data_res[0]={id : totalClones, name :"resolution1", path :constructPathR(jsonData.resolution1) };
     data_res[1]={id : totalClones+1, name :"resolution5", path :constructPathR(jsonData.resolution5) };
-  }
-  
-  for (var i=0 ; i <junctions[0].size.length ; i++){
+
+  for (var i=0 ; i <windows[0].size.length ; i++){
     
 
     data_date[i]={class : "date" ,date : 'undefined' ,
@@ -165,7 +165,7 @@ function displayGraph(data, data_2, data_3, data_4){
   g_text.exit()    
     .remove();
     
-  g_graph = polyline_container.selectAll("g").data(data_2);
+  g_graph = polyline_container.selectAll("polyline").data(data_2);
   g_graph.enter().append("svg:g")
   .attr("id", function(d) { return d.name; });
   g_graph.exit()    
@@ -174,6 +174,7 @@ function displayGraph(data, data_2, data_3, data_4){
   g_graph.append("polyline")
     .transition()
     .duration(500)
+    .attr("id", function(d) { return "poly"+d.name; })
     .attr("points", function(p) {
       var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
 	for (var i=1; i<p.path.length; i++){
@@ -192,9 +193,9 @@ function displayGraph(data, data_2, data_3, data_4){
    
   g_res.append("polyline")
     .attr("points", function(p) {
-      var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
+      var che=Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
 	for (var i=1; i<p.path.length; i++){
-	  che+=','+(p.path[i][0]*resizeG_W)+','+(p.path[i][1]*resizeG_H);
+	  che+=','+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
 	}
 	return che;
     } )
@@ -214,12 +215,12 @@ function constructPathR(res){
     var p;
     
     p=[ [0, (g_h+1000)] ];
-    p.push([0, ( g_h - scale_x(res[0]*precision) ) ]);
+    p.push([0, ( g_h - scale_x(res[0][used_ratio]*precision) ) ]);
     
     for (var i=0; i< graph_col.length; i++){
-	p.push([( graph_col[i]), ( g_h - scale_x(res[i]*precision))]);
+	p.push([( graph_col[i]), ( g_h - scale_x(res[i][used_ratio]*precision))]);
     }
-    p.push([g_w, ( g_h - scale_x(res[graph_col.length-1]*precision) ) ]);
+    p.push([g_w, ( g_h - scale_x(res[graph_col.length-1][used_ratio]*precision) ) ]);
     p.push([g_w, ( g_h+1000) ]);
     
     return p;
@@ -233,32 +234,55 @@ function constructPath(cloneID){
   var tmp=t;
   t=0;
   var p;
+  
+  var x = graph_col[0];
+  var y = scale_x(getSize(cloneID)*precision)
+  
+  //cas avec un seul point de suivi
   if (graph_col.length==1){
     if (getSize(cloneID)==0){
       p = [ ];
     }else{
-      p = [[ ( graph_col[0]-100+ (Math.random()*50)-25 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]];
-      p.push([ ( graph_col[0]+100+ (Math.random()*50)-25 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
+      p = [[ ( x + (Math.random()*50)-125 ), ( g_h - y ) ]];
+      p.push([ ( x + (Math.random()*50)+75 ), ( g_h - y ) ]);
     }
-  }else{
+  }
+  //plusieurs points de suivi
+  else{
+    
+    //premier point de suivi 
     if (getSize(cloneID)==0){
       p = [ ];
     }else{
-      p = [[ ( graph_col[0]+ (Math.random()*30)-15  ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]];
+      p =   [[ ( x - 30  ), ( g_h - y )]];
+      p.push([ ( x )      , ( g_h - y )]);
     }
     
+    //points suivants
     for (var i=1; i< graph_col.length; i++){
       t++;
+      x = graph_col[i];
+      y = scale_x(getSize(cloneID)*precision)
       
-      if (getSize(cloneID)==0){
-	if (p.length!=0){
-	  p.push([( graph_col[i] ),(g_h + 50)]);
-	}
+      if (getSize(cloneID)==0 && p.length!=0){
+	p.push([( x ),(g_h + 30)]);
       }else{
-	p.push([( graph_col[i] + (Math.random()*30)-15 ), ( g_h - scale_x(getSize(cloneID)*precision) ) ]);
+	
+	//si premiere apparition du clone sur le graphique
+	if (p.length==0){
+	  p.push([( x - 30 ), ( g_h - y )]);
+	}
+	
+	p.push(  [( x ), ( g_h - y )]);
+	
+	//si derniere apparition du clone sur le graphique
+	if (i==graph_col.length-1 ){
+	  p.push([( x + 30 ), ( g_h - y )]);
+	}
+	
       }
-
     }
+    
   }
   t=tmp;
   return p;
@@ -272,12 +296,11 @@ function g_class(cloneID){
 
 
 function updateGraph(){
-    document.getElementById("log").innerHTML+="<br>updateGraph";
-  $("#log").scrollTop(100000000000000);
+    console.log("updateGraph");
     
   scale_x = d3.scale.log()
     .domain([1,precision])
-    .range([50,(g_h)]);
+    .range([0,(g_h)]);
     
   g_axis
     .transition()
@@ -319,21 +342,22 @@ function updateGraph(){
     .transition()
     .duration(500)
     .attr("points", function(p) {
-      var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
+      var che=Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
 	for (var i=1; i<p.path.length; i++){
-	  che+=','+(p.path[i][0]*resizeG_W)+','+(p.path[i][1]*resizeG_H);
+	  che+=','+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
 	}
 	return che;
     } )
     .attr("class", function(p) { return g_class(p.id); })
+    .attr("id", function(d) { return "poly"+d.name; })
     
   g_res.selectAll("polyline")
     .transition()
     .duration(500)
     .attr("points", function(p) {
-      var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
+      var che=Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
 	for (var i=1; i<p.path.length; i++){
-	  che+=','+(p.path[i][0]*resizeG_W)+','+(p.path[i][1]*resizeG_H);
+	  che+=','+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
 	}
 	return che;
     } )
@@ -360,13 +384,18 @@ function updateGraph(){
     })
 
   polyline_container.selectAll("polyline")
-    .on("mouseover", function(d){ focusIn(d.id);
-    })
-    .on("mouseout", function(d){ focusOut(d.id);
-    })
+    .attr("onmouseover",function(d) { return  "focusIn("+d.id+")"; } )
+    .attr("onmouseout", function(d) { return  "focusOut("+d.id+")"; } )
     .on("click", function(d){ selectClone(d.id);})
-    
     initStyle()
+}
+function lineFocusIn(elem){
+  var cloneID=elem.parentNode.id.substr(4)
+  focusIn(cloneID);
+}
+function lineFocusOut(elem){
+  var cloneID=elem.parentNode.id.substr(4)
+  focusOut(cloneID);
 }
 
 function resetGraphCluster(){

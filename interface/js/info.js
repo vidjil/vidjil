@@ -26,7 +26,7 @@
   var divParent = document.getElementById("listClones");
   divParent.innerHTML="";
   for(var i=0 ;i<totalClones; i++){
-      var div = document.createElement('div');
+      var div = document.createElement('li');
       div.className="list";
       div.id=i;
       div.onmouseover = function(){ focusIn(this.id); }
@@ -50,7 +50,7 @@
       
       document.getElementById("size"+i).innerHTML=getStrSize(i);
       
-      if (table[i].select){
+      if (document.getElementById("selectsize"+i)){
 	document.getElementById("selectsize"+i).innerHTML=getStrSize(i);
       }
       
@@ -162,7 +162,7 @@
       
       var clusterSize=0;
       for(var j=0 ;j<table[cloneID].cluster.length; j++){
-	clusterSize += junctions[table[cloneID].cluster[j]].size[t];
+	clusterSize += windows[table[cloneID].cluster[j]].ratios[t][used_ratio];
       }
       
       for (var i=0; i<table[cloneID].cluster.length; i++){
@@ -178,14 +178,14 @@
 	var img=document.createElement('img');
 	img.onclick=function(){ split(cloneID, this.parentNode.id2);
 	}
-	img.src="images/delete.png";
+	if (table[cloneID].cluster[i]!=parseInt(cloneID)){ img.src="images/delete.png";}
 	img.className="delBox";
 	
 	var span_stat=document.createElement('span');
 	span_stat.className="sizeBox";
-	span_stat.appendChild(document.createTextNode( (junctions[table[cloneID].cluster[i]].size[t]*100/clusterSize).toFixed(1)+"%"));
+	span_stat.appendChild(document.createTextNode( (windows[table[cloneID].cluster[i]].ratios[t][used_ratio]*100/clusterSize).toFixed(1)+"%"));
 	
-	div_clone.appendChild(img);
+	div_clone.appendChild(img); 
 	div_clone.appendChild(span_name);
 	div_clone.appendChild(span_stat);
 	div_cluster.appendChild(div_clone);
@@ -209,12 +209,14 @@
   }
   
   function displayTop(top){
+      document.getElementById('rangeValue').value=top;
+      document.getElementById('top_display').innerHTML=top;
     for (var i = 0; i < totalClones; i++){      
       if (table[i].cluster.length!=0 ){
 	
 	var result=false;
 	for (var j=0; j<table[i].cluster.length && !result ; j++){
-	  if ( junctions[table[i].cluster[j]].top < top ) result=true;
+	  if ( windows[table[i].cluster[j]].top < top ) result=true;
 	}
 	table[i].active=result;
 	
@@ -223,4 +225,24 @@
       }      
     }   
     updateStyle();
+  }
+
+  function incDisplayTop(){
+    var top=parseInt(document.getElementById('rangeValue').value);
+    
+    if (top<100){ displayTop((top+5));}
+  }
+  
+  function decDisplayTop(){
+    var top=document.getElementById('rangeValue').value;
+    
+    if (top>0) displayTop((top-5));
+  }
+  
+  function sortListBySize(){
+    var list=jQuery('.list')
+    var sort=list.sort(function(a,b){ 
+      return getSize($(b).attr("id"))> getSize($(a).attr("id")) ? 1:-1; 
+    })
+    $("#listClones").html(sort);
   }

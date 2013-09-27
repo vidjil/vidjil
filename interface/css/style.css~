@@ -83,6 +83,12 @@ list-style-type: none;
     text-decoration:underline;
 }
 
+.smallbutton {
+    cursor:pointer;
+    font-size: 14px;
+    text-decoration:underline;
+}
+
 .buttonSelector {
     cursor:pointer;
     font-size: 14px;
@@ -110,12 +116,16 @@ circle:hover {
 }
 
 #menu{
-  height :125px;
+  height :150px;
+}
+
+#data_file
+{
+  font-size: 200%;
 }
 
 #file_menu, #analysis_menu, #dateSelector{
   z-index:2;
-  display:none; 
   border:solid; 
   position: fixed; 
   top: 200px; 
@@ -124,6 +134,11 @@ circle:hover {
   font-size: 14px; 
   padding: 10px;
   background:inherit;
+}
+
+#analysis_menu, #dateSelector
+{
+  display:none; 
 }
 
 #listFav{
@@ -165,11 +180,14 @@ circle:hover {
 .listElem{
   width :370px;
   cursor:pointer;
-  -moz-transition: color  1.5s;
-  -webkit-transition: color 1.5s;
-  -o-transition: color  1.5s;
-  -ms-transition: color 1.5s;
-  transition: color 1.5s;
+<<<<<<< HEAD
+=======
+  -moz-transition: color  0.8s;
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
+  -webkit-transition: color 0.8s;
+  -o-transition: color  0.8s;
+  -ms-transition: color 0.8s;
+  transition: color 0.8s;
   font-weight : bold;
   padding:3px;
   height :14px;
@@ -186,14 +204,19 @@ circle:hover {
 }
 
 .colorBox{
-  right: 3px;
+  right: 2px;
   float: right;
   border: solid;
   height: 10px;
   width: 10px;
   display: inline-block;
   color: white;
+<<<<<<< HEAD
+  float:left;
+  user-select :none;
+=======
   float:left
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
 }
 
 .delBox{
@@ -205,6 +228,10 @@ circle:hover {
   display: inline-block;
   color: white;
   float:left;
+<<<<<<< HEAD
+  user-select :none;
+=======
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
 }
 
 .sizeBox{
@@ -223,6 +250,7 @@ circle:hover {
   height: 16px;
   width: 16px;
   display: inline-block;
+  user-select :none;
 }
 
 .clusterBox{
@@ -232,19 +260,6 @@ circle:hover {
   height: 14px;
   width: 14px;
   display: inline-block;
-}
-
-
-
-#tagSelector{
-  position: absolute;
-  left: 400px;
-  top: 195px;
-  display:none;
-}
-
-#svg{
-
 }
 
 .axis{
@@ -276,7 +291,10 @@ circle:hover {
 
 
 .graphLine{
+<<<<<<< HEAD
+=======
  -moz-transition: stroke  0.5s;
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
  -webkit-transition: stroke 0.5s;
  -o-transition: stroke  0.5s;
  -ms-transition: stroke 0.5s;
@@ -287,7 +305,6 @@ circle:hover {
 }
 
 .circle{
-  -moz-transition: fill  0.5s;
   -webkit-transition: fill 0.5s;
   -o-transition: fill  0.5s;
   -ms-transition: fill 0.5s;
@@ -305,7 +322,14 @@ circle:hover {
 .separator {
   height: 25px;
   position: fixed;
+<<<<<<< HEAD
+  margin-top: -26px;
+  border-top: solid;
+  width: 400px;
+  padding-top:2px;
+=======
   margin-top: -20px;
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
 }
 
 #cluster {
@@ -324,7 +348,8 @@ circle:hover {
   padding: 5px;
   position: absolute;
   left: 400px;
-  top: 125px;
+  top: 195px;
+  width:220px;
   border:solid;
   display:none;
 }
@@ -332,7 +357,6 @@ circle:hover {
 .tagElem{
   margin:8px;
   height: 16px;
-
 }
 
 .tagElem:hover{
@@ -341,11 +365,17 @@ circle:hover {
 }
 
 .tagColorBox {
-  float: left;
-  margin-right:6px;
+  margin-right:5px;
   height: 16px;
   width: 16px;
   display: inline-block;
+<<<<<<< HEAD
+  cursor:pointer;
+  user-select :none;
+  margin-bottom: -4px;
+  margin-top: 2px;
+=======
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
 }
 
 .menu{
@@ -384,12 +414,23 @@ overflow-x: scroll;
 min-height:50px;
 max-height:200px;
 overflow-y:auto;
+<<<<<<< HEAD
+border-top: solid;
+border-bottom: solid;
+}
+
+.sequence-line { 
+white-space: nowrap;
+}
+
+=======
 }
 
 .sequence-line {
 white-space: nowrap;
 }
 
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
 .seq-fixed {
 position: fixed;
 width: 395px;
@@ -408,6 +449,45 @@ letter-spacing: 0.12em;
   position: absolute;
   left: 400px;
   top: 195px;
+<<<<<<< HEAD
+  width:300px;
   display:none;
+  padding: 10px;
 }
 
+.tn{
+  width:120px;
+  display:inline-table;
+}
+
+#top_display{
+  width:25px;
+  display: inline-block;
+}
+
+#display-bar{
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+  border-top: solid;
+  border-bottom:solid;
+  padding-bottom:2px;
+  width: 100%;
+}
+
+.tagD{
+  margin-left: 15px;
+  width: 25px;
+  display : inline-block;
+  float : right;
+=======
+  display:none;
+>>>>>>> 7e76dbc5e6a7574ee95e58b1d0a50fd12f81aebb
+}
+
+#new_name{
+  font-family: monospace;
+  font-weight:bold;
+}

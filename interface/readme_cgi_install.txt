@@ -18,3 +18,12 @@ configure Apache2
   #In folder interface/js/segmenter.js change CGI_ADRESS with your own server adress
 
 	var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
+
+
+
+
+# 2013/09/17 : sur bioinfo.lifl.fr
+
+bioinfo:~/www/cgi-bin/vdj> ln -s ~/git-bonsai/vdj/vidjil/interface/cgi/align.cgi .
+et CGI_ADRESS ---> "http://bioinfo.lifl.fr/cgi-bin/vdj/"
+
