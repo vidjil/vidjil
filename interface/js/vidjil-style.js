@@ -225,7 +225,7 @@ var default_tag=8;
       clone.circleElemStyle.stroke="";
       clone.listElemStyle.background=colorStyle.c02;
       if (table[cloneID].active){
-	clone.polylineElem.style.strokeWidth="1.5px";
+	clone.polylineElem.style.strokeWidth="2px";
 	if (
 	    (typeof(table[cloneID].tag) != 'undefined')
 	    && (tagDisplay[table[cloneID].tag]==2)

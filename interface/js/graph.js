@@ -359,7 +359,6 @@ function updateGraph(){
     } )
     .attr("class", function(p) { return g_class(p.id); })
     .attr("id", function(d) { return "poly"+d.name; })
-    .attr("vector-effect","non-scaling-stroke" )
     
   g_res.selectAll("polyline")
     .transition()
