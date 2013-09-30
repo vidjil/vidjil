@@ -218,7 +218,6 @@ var default_tag=8;
       clone.listElemStyle.background=colorStyle.c07;
       clone.listElemStyle.color=colorStyle.c05;
       clone.circleElemStyle.fill=colorStyle.c05;
-      clone.polylineElem.style.setProperty('stroke',colorStyle.c05, null); 
       clone.polylineElem.style.stroke=colorStyle.c05;
       clone.polylineElem.style.strokeWidth="5px";
     }else{
@@ -238,13 +237,11 @@ var default_tag=8;
         }
 	clone.listElemStyle.color=color(cloneID);
 	clone.circleElemStyle.fill=color(cloneID);
-	clone.polylineElem.style.setProperty('stroke',color(cloneID), null); 
 	clone.polylineElem.style.stroke=color(cloneID);
       }else{
 	clone.polylineElem.style.strokeWidth="1.2px";
 	clone.listElemStyle.color=colorStyle.c06;
 	clone.circleElemStyle.fill=colorStyle.c07;
-	clone.polylineElem.style.setProperty('stroke',colorStyle.c07, null); 
 	clone.polylineElem.style.stroke=colorStyle.c07;
       }   
     }

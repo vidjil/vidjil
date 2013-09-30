@@ -119,11 +119,6 @@ function initGraph(){
     }
   }
   
-  //mobile
-  data_axis[data_axis.length]={class : "axis_f" ,text : "",
-			x1 : graph_col[t], x2 : graph_col[t], 
-			y1 : g_h+20, y2 : 0, time: 0}
-  
   var height=1;
   var p=data_axis.length;
   var p2=0;
@@ -139,6 +134,10 @@ function initGraph(){
     p2=p2+1;
   }
   
+  //mobile
+  data_axis[data_axis.length]={class : "axis_f" ,text : "",
+			x1 : graph_col[t], x2 : graph_col[t], 
+			y1 : g_h+20, y2 : 0, time: 0}
   
   for (var i=0 ; i<totalClones; i++){
     data_graph[i]={id : i, name :"line"+i, path : constructPath(i)};

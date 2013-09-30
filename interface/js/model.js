@@ -449,7 +449,7 @@ function changeT(time){
   t=time;
   console.log("changement de point de suivi > "+time);
   
-  data_axis[8]={class : "axis_f" ,text : "", x1 : 0, x2 : g_w, 
+  data_axis[data_axis.length-1]={class : "axis_f" ,text : "", x1 : 0, x2 : g_w, 
 			x1 : graph_col[t], x2 : graph_col[t], 
 			y1 : g_h+20, y2 : 0, time: 0}
   
