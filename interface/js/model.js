@@ -406,12 +406,12 @@ function initCoef(){
   
   resizeG_W = document.getElementById("visu2").offsetWidth/g_w;
   resizeG_H = (document.getElementById("visu2").offsetHeight)/(g_h);
-  document.getElementById("svg2").style.width=document.getElementById("visu2").offsetWidth+"px";
-  document.getElementById("svg2").style.height=document.getElementById("visu2").offsetHeight+"px";
+  document.getElementById("svg2").setAttribute("width",document.getElementById("visu2").offsetWidth);
+  document.getElementById("svg2").setAttribute("height",document.getElementById("visu2").offsetHeight);
   document.getElementById('visu_back').setAttribute("width",resizeW*w);
   document.getElementById('visu_back').setAttribute("height",resizeH*h);
-  document.getElementById('graph_back').setAttribute("width",resizeG_W*g_w);
-  document.getElementById('graph_back').setAttribute("height",resizeG_H*g_h);
+  document.getElementById('graph_back').setAttribute("width",(resizeG_W*g_w)+1);
+  document.getElementById('graph_back').setAttribute("height",(resizeG_H*g_h)+1);
 
   resizeCoef = Math.sqrt(resizeW*resizeH);
   

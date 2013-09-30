@@ -73,24 +73,22 @@ blackStyle.c07 = "#514142"; //inactive
 blackStyle.col_s = 0.8; //pureté
 blackStyle.col_v = 0.72; //brightness
 
-/*white*/
-var whiteStyle ={};
-whiteStyle.c01 = "#434044"; //base00
-whiteStyle.c02 = "#e5e7e3"; //background
-whiteStyle.c03 = "#ffffff"; //background highlight
-whiteStyle.c04 = "#93a1a1";
-whiteStyle.c05 = "#502325"; //focus 
-whiteStyle.c06 = "#b3b5b1"; //graph legend
-whiteStyle.c07 = "#d3d5d1"; //inactive 
+/*pdf*/
+var pdfStyle ={};
+pdfStyle.c01 = "#000"; //base00
+pdfStyle.c02 = "#e5e7e3"; //background
+pdfStyle.c03 = "#ffffff"; //background highlight
+pdfStyle.c04 = "#93a1a1";
+pdfStyle.c05 = "#502325"; //focus 
+pdfStyle.c06 = "#b3b5b1"; //graph legend
+pdfStyle.c07 = "#d3d5d1"; //inactive 
 
-whiteStyle.col_s = 0.8; //pureté
-whiteStyle.col_v = 0.72; //brightness
+pdfStyle.col_s = 0.8; //pureté
+pdfStyle.col_v = 0.72; //brightness
 
 var colorStyle = {};
 
 colorStyle=solarizeD;
-
-
 
 var tagColor = [];
 tagColor[0] = "#dc322f";
