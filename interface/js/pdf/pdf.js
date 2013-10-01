@@ -43,13 +43,14 @@
     
     //TODO changement de style pour la version PDF
     // + gestion non-scaling-stroke vector effect + font
-    var reg;
     xmlString = xmlString.replace(new RegExp(colorStyle.c01, 'g'), pdfStyle.c01);
     xmlString = xmlString.replace(new RegExp(colorStyle.c02, 'g'), pdfStyle.c02);
     xmlString = xmlString.replace(new RegExp(colorStyle.c03, 'g'), pdfStyle.c03);
     xmlString = xmlString.replace(new RegExp(colorStyle.c04, 'g'), pdfStyle.c04);
     xmlString = xmlString.replace(new RegExp(colorStyle.c05, 'g'), pdfStyle.c05);
     xmlString = xmlString.replace(new RegExp(colorStyle.c06, 'g'), pdfStyle.c06);
+    
+    popupMsg(xmlString);
     
     //conversion canvas
     var canvas = document.createElement("canvas");

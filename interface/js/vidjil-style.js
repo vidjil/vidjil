@@ -218,14 +218,14 @@ var default_tag=8;
       clone.listElemStyle.background=colorStyle.c07;
       clone.listElemStyle.color=colorStyle.c05;
       clone.circleElemStyle.fill=colorStyle.c05;
-      clone.polylineElem.style.stroke=colorStyle.c05;
-      clone.polylineElem.style.strokeWidth="5px";
+      clone.polylineElem.attr("stroke", colorStyle.c05);
+      clone.polylineElem.style("stroke-width","5px");
     }else{
       if (selectElem){selectElem.style.background=colorStyle.c02;}
       clone.circleElemStyle.stroke="";
       clone.listElemStyle.background=colorStyle.c02;
       if (table[cloneID].active){
-	clone.polylineElem.style.strokeWidth="2px";
+	clone.polylineElem.style("stroke-width","2px");
 	if (
 	    (typeof(table[cloneID].tag) != 'undefined')
 	    && (tagDisplay[table[cloneID].tag]==2)
@@ -233,27 +233,27 @@ var default_tag=8;
 	    && (table[cloneID].tag != 4)
 	){ 
 	  // if tagged, but not standard 
-	  clone.polylineElem.style.strokeWidth="5px";
+	  clone.polylineElem.style("stroke-width","5px");
         }
 	clone.listElemStyle.color=color(cloneID);
 	clone.circleElemStyle.fill=color(cloneID);
-	clone.polylineElem.style.stroke=color(cloneID);
+	clone.polylineElem.attr("stroke", color(cloneID));
       }else{
-	clone.polylineElem.style.strokeWidth="1.2px";
+	clone.polylineElem.style("stroke-width","1.2px");
 	clone.listElemStyle.color=colorStyle.c06;
 	clone.circleElemStyle.fill=colorStyle.c07;
-	clone.polylineElem.style.stroke=colorStyle.c07;
+	clone.polylineElem.attr("stroke", colorStyle.c07);
       }   
     }
    
     if (table[cloneID].select){
-      clone.polylineElem.style.strokeWidth="6px";
+      clone.polylineElem.style("stroke-width","6px");
       clone.listElemStyle.background=colorStyle.c07;
       clone.circleElemStyle.stroke=colorStyle.c05;
-      clone.polylineElem.setAttribute("stroke-dasharray","20px,5px");
+      clone.polylineElem.attr("stroke-dasharray", "20px,5px");
       
     }else{
-      clone.polylineElem.removeAttribute("stroke-dasharray");
+      clone.polylineElem.attr("stroke-dasharray", null);
     }
     //TODO update star/tag uniquement avec le selectTag
     if (typeof table[cloneID].tag != 'undefined'){
@@ -309,8 +309,8 @@ var default_tag=8;
     
     document.getElementsByTagName('body')[0].style.color=colorStyle.c01;
     document.getElementsByTagName('body')[0].style.background=colorStyle.c02;
-    document.getElementById('graph_back').style.fill=colorStyle.c03;
-    document.getElementById('visu_back').style.fill=colorStyle.c02;
+    d3.select('#graph_back').attr('fill',colorStyle.c03);
+    d3.select('#visu_back').attr('fill',colorStyle.c02);
     document.getElementById('file_menu').style.background=colorStyle.c02;
     document.getElementById('bot-container').style.background=colorStyle.c02;
     document.getElementById('menu').style.background=colorStyle.c02;

@@ -1041,7 +1041,7 @@ function initVJgrid(germlineV, germlineJ){
       
       table[i].link.listElem=document.getElementById(i);
       table[i].link.circleElem=document.getElementById("circle"+i);
-      table[i].link.polylineElem=document.getElementById("polyline"+i);
+      table[i].link.polylineElem=d3.select("#polyline"+i);
       table[i].link.colorElem=document.getElementById("color"+i);
       table[i].link.lineElem=document.getElementById("line"+i);
       
