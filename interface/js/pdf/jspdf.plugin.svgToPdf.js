@@ -101,10 +101,10 @@ var svgElementToPdf = function(element, pdf, options) {
         switch (n.get(0).tagName.toLowerCase()) {
             case 'line':
                 pdf.line(
-                k * parseInt(n.attr('x1')),
-                k * parseInt(n.attr('y1')),
-                k * parseInt(n.attr('x2')),
-                k * parseInt(n.attr('y2')));
+                (k * parseInt(n.attr('x1'))) + x_offset,
+                (k * parseInt(n.attr('y1'))) + y_offset,
+                (k * parseInt(n.attr('x2'))) + x_offset,
+                (k * parseInt(n.attr('y2'))) + y_offset);
 
                 // $.each(node.attributes, function(i, a) {
                 //     if(typeof(a) != 'undefined' && pdfSvgAttr.line.indexOf(a.name.toLowerCase()) == -1) {
