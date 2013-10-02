@@ -67,9 +67,10 @@
   
   var listF;
   function testPDF2(){
-    
+    changeStyle(pdfStyle);
     var doc = new jsPDF();
     var elem =document.getElementById("svg2").cloneNode(true);
+    changeStyle(solarizeD);
     //TODO modifié style de elem
     var opt={};
     
