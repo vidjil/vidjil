@@ -378,7 +378,7 @@ var svgElementToPdf = function(element, pdf, options) {
                                 var lines_numbers = numbers.slice(2, numbers.length);
                                 var new_numbers = change_numbers(lines_numbers,
                                 x, y, false);
-                                pdf.lines(new_numbers, x, y, [1, 1], null);
+                                //pdf.lines(new_numbers, x, y, [1, 1], null);
                                 x += new_numbers[new_numbers.length - 1][0];
                                 y += new_numbers[new_numbers.length - 1][1];
 
@@ -509,7 +509,7 @@ var svgElementToPdf = function(element, pdf, options) {
                     previous_element.element = svg_element;
                     previous_element.prev_numbers = numbers;
                 }
-                pdf.lines(big_list, mx, my, [1, 1], colorMode);
+                pdf.lines(big_list, mx+x_offset, my+y_offset, [1, 1], colorMode);
                 var numbs = null;
                 break;
                 //TODO: image
