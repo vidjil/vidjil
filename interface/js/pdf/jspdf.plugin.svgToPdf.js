@@ -128,8 +128,8 @@ var svgElementToPdf = function(element, pdf, options) {
                 break;
             case 'ellipse':
                 pdf.ellipse(
-                k * parseInt(n.attr('cx')),
-                k * parseInt(n.attr('cy')),
+                (k * parseInt(n.attr('cx'))) + x_offset,
+                (k * parseInt(n.attr('cy'))) + y_offset,
                 k * parseInt(n.attr('rx')),
                 k * parseInt(n.attr('ry')),
                 colorMode);
@@ -141,8 +141,8 @@ var svgElementToPdf = function(element, pdf, options) {
                 break;
             case 'circle':
                 pdf.circle(
-                k * (parseInt(n.attr('cx'))) + x_offset,
-                k * (parseInt(n.attr('cy'))) + y_offset,
+                (k * parseInt(n.attr('cx'))) + x_offset,
+                (k * parseInt(n.attr('cy'))) + y_offset,
                 k * parseInt(n.attr('r')),
                 colorMode);
                 // $.each(node.attributes, function(i, a) {
