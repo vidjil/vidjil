@@ -62,8 +62,6 @@
     doc.text(20, 20, 'Vidjil pdf test');
     doc.text(20, 30, 'hi!');
     doc.addImage(imgData, 'JPEG', 5, 40, 200, 100);
-    doc.addPage();
-    doc.text(20, 20, 'bye');
     doc.save('Test.pdf');
   }
   
@@ -84,8 +82,6 @@
     doc.setFont('courier', 'normal');
     doc.text(20, 30, 'hi! aaaaaaaaaaaaa');
     svgElementToPdf(elem, doc, opt)
-    doc.addPage();
-    doc.text(20, 20, 'bye');
     doc.save('Test.pdf');
   }
   

@@ -75,10 +75,16 @@ var svgElementToPdf = function(element, pdf, options) {
         }
 
         if (hasFillColor) {
-
             pdf.setFillColor(fillRGB.r, fillRGB.g, fillRGB.b);
         }
-
+        
+        if (n.css("stroke-width")){
+	  var swidth=parseInt(n.css("stroke-width"))
+	  pdf.setLineWidth(swidth*k);
+	}else{
+	  pdf.setLineWidth(k);
+	}
+        
         var strokeColor = n.attr('stroke');
         if (typeof(strokeColor) != 'undefined' && strokeColor !== 'none') {
 
