@@ -326,7 +326,6 @@ var svgElementToPdf = function(element, pdf, options) {
                         }
                     }
 
-
                     switch (svg_element) {
                         case 'm':
                             //paths and subpaths must always start with m/M.
@@ -366,15 +365,11 @@ var svgElementToPdf = function(element, pdf, options) {
                                 pdf.lines(big_list, mx, my, [1, 1], null);
                             }
                             big_list = [];
-                            if (previous_element == null) {
-                                x = numbers[0];
-                                mx = numbers[0];
-                                y = numbers[1];
-                                my = numbers[1];
-                            }
+                            x = numbers[0];
+                            mx = numbers[0];
+                            y = numbers[1];
+                            my = numbers[1];
                             if (numbers.length != 2) {
-                                x = numbers[0];
-                                y = numbers[1];
                                 var lines_numbers = numbers.slice(2, numbers.length);
                                 var new_numbers = change_numbers(lines_numbers,
                                 x, y, false);
