@@ -26,6 +26,8 @@
 	<script type="text/javascript" src='js/pdf/canvg.js'></script>
 	<script type="text/javascript" src='js/pdf/jspdf.js'></script>
 	<script type="text/javascript" src='js/pdf/jspdf.plugin.addimage.js'></script>
+	<script type="text/javascript" src='js/pdf/jspdf.plugin.svgToPdf.js'></script>
+	<script type="text/javascript" src='js/pdf/underscore.js'></script>
 	<script type="text/javascript" src='js/pdf/pdf.js'></script>
 	
 	<!--
@@ -69,7 +71,7 @@
     
     <div id="top-container">
     
-      <div class="menu" onmouseover="showSelector('loadSelector');"> save/load 
+      <div class="menu" onmouseover="showSelector('loadSelector');"> file 
         <div id="loadSelector" class="selector">
 	  <a class="buttonSelector" onclick="javascript:loadData()">load data/analysis</a>
 	  <a class="buttonSelector" onclick="javascript:loadAnalysis()">load analysis</a>
@@ -108,8 +110,13 @@
 	</div>
       </div>
       
-      <div id="norm" class="menu" onclick="testPDF()"> pdf 
-
+       <div id="norm" class="menu" onmouseover="showSelector('pdfSelector');"> pdfTest
+        <div id="pdfSelector" class="selector">
+	  <a class="buttonSelector" onclick="javascript:extractSVG('svg')">extract svg visu</a>
+	  <a class="buttonSelector" onclick="javascript:extractSVG('svg2')">extract svg graph</a>
+	  <a class="buttonSelector" onclick="javascript:testPDF()">svg>jpeg>pdf</a>
+	  <a class="buttonSelector" onclick="javascript:testPDF2()">svg>pdf</a>
+	</div>
       </div>
       
       <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
