@@ -37,7 +37,8 @@ var pdfSvgAttr = {
 var svgElementToPdf = function(element, pdf, options) {
     // pdf is a jsPDF object
     var remove = (typeof(options.removeInvalid) == 'undefined' ? remove = false : options.removeInvalid);
-    var k = options.scale;
+    var kx = options.scaleX;
+    var ky = options.scaleY;
     var x_offset = (typeof(options.x_offset) == 'undefined' ? 0 : options.x_offset);
     var y_offset = (typeof(options.y_offset) == 'undefined' ? 0 : options.y_offset);
     var ego_or_link = (typeof(options.ego_or_link) == 'undefined' ? false : options.ego_or_link);
@@ -82,9 +83,9 @@ var svgElementToPdf = function(element, pdf, options) {
         
         if (n.css("stroke-width")){
 	  var swidth=parseInt(n.css("stroke-width"))
-	  pdf.setLineWidth(swidth*k);
+	  pdf.setLineWidth(swidth*kx);
 	}else{
-	  pdf.setLineWidth(k);
+	  pdf.setLineWidth(kx);
 	}
         
         var strokeColor = n.attr('stroke');
@@ -110,10 +111,10 @@ var svgElementToPdf = function(element, pdf, options) {
         switch (n.get(0).tagName.toLowerCase()) {
             case 'line':
                 pdf.line(
-                (k * parseInt(n.attr('x1'))) + x_offset,
-                (k * parseInt(n.attr('y1'))) + y_offset,
-                (k * parseInt(n.attr('x2'))) + x_offset,
-                (k * parseInt(n.attr('y2'))) + y_offset);
+                (kx * parseInt(n.attr('x1'))) + x_offset,
+                (ky * parseInt(n.attr('y1'))) + y_offset,
+                (kx * parseInt(n.attr('x2'))) + x_offset,
+                (ky * parseInt(n.attr('y2'))) + y_offset);
 
                 // $.each(node.attributes, function(i, a) {
                 //     if(typeof(a) != 'undefined' && pdfSvgAttr.line.indexOf(a.name.toLowerCase()) == -1) {
@@ -124,10 +125,10 @@ var svgElementToPdf = function(element, pdf, options) {
             case 'rect':
                 //console.log("in rectangle");
                 pdf.rect(
-                k * (parseInt(n.attr('x'))) + x_offset,
-                k * (parseInt(n.attr('y'))) + y_offset,
-                k * parseInt(n.attr('width')),
-                k * parseInt(n.attr('height')),
+                kx * (parseInt(n.attr('x'))) + x_offset,
+                ky * (parseInt(n.attr('y'))) + y_offset,
+                kx * parseInt(n.attr('width')),
+                ky * parseInt(n.attr('height')),
                 colorMode);
                 // $.each(node.attributes, function(i, a) {
                 //     if(typeof(a) != 'undefined' && pdfSvgAttr.rect.indexOf(a.name.toLowerCase()) == -1) {
@@ -137,10 +138,10 @@ var svgElementToPdf = function(element, pdf, options) {
                 break;
             case 'ellipse':
                 pdf.ellipse(
-                (k * parseInt(n.attr('cx'))) + x_offset,
-                (k * parseInt(n.attr('cy'))) + y_offset,
-                k * parseInt(n.attr('rx')),
-                k * parseInt(n.attr('ry')),
+                (kx * parseInt(n.attr('cx'))) + x_offset,
+                (ky * parseInt(n.attr('cy'))) + y_offset,
+                kx * parseInt(n.attr('rx')),
+                ky * parseInt(n.attr('ry')),
                 colorMode);
                 // $.each(node.attributes, function(i, a) {
                 //     if(typeof(a) != 'undefined' && pdfSvgAttr.ellipse.indexOf(a.name.toLowerCase()) == -1) {
@@ -149,11 +150,20 @@ var svgElementToPdf = function(element, pdf, options) {
                 // });
                 break;
             case 'circle':
-                pdf.circle(
-                (k * parseInt(n.attr('cx'))) + x_offset,
-                (k * parseInt(n.attr('cy'))) + y_offset,
-                k * parseInt(n.attr('r')),
+		if (kx==ky){
+		  pdf.circle(
+		  (kx * parseInt(n.attr('cx'))) + x_offset,
+		  (ky * parseInt(n.attr('cy'))) + y_offset,
+		  kx * parseInt(n.attr('r')),
+		  colorMode);
+		}else{
+		 pdf.ellipse(
+                (kx * parseInt(n.attr('cx'))) + x_offset,
+                (ky * parseInt(n.attr('cy'))) + y_offset,
+                kx * parseInt(n.attr('r')),
+                ky * parseInt(n.attr('r')),
                 colorMode);
+		}
                 // $.each(node.attributes, function(i, a) {
                 //     if(typeof(a) != 'undefined' && pdfSvgAttr.circle.indexOf(a.name.toLowerCase()) == -1) {
                 //         node.removeAttribute(a.name);
@@ -247,8 +257,8 @@ var svgElementToPdf = function(element, pdf, options) {
 
 
                 pdf.setFontSize(pdfFontSize).text(
-                (k * x) + x_offset ,
-                (k * y) + y_offset ,
+                (kx * x) + x_offset ,
+                (ky * y) + y_offset ,
                 text_value);
                 // $.each(node.attributes, function(i, a) {
                 //     if(typeof(a) != 'undefined' && pdfSvgAttr.text.indexOf(a.name.toLowerCase()) == -1) {
@@ -330,8 +340,10 @@ var svgElementToPdf = function(element, pdf, options) {
                         // Parse through the updated_path until we find the next
                         // letter or we are at the end of the updated_path
                         while ((svg_regex.test(updated_path[i]) == false) && (i != updated_path.length)) {
-                            numbers.push(k * parseFloat(updated_path[i]));
-                            i++;
+			    numbers.push(kx * parseFloat(updated_path[i]));
+			    numbers.push(ky * parseFloat(updated_path[i+1]));
+			    i++;
+			    i++;
                         }
                     }
 

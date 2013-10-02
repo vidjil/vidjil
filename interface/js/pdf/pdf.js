@@ -75,7 +75,8 @@
     
     listF=doc.getFontList();
     
-    opt.scale=200/document.getElementById("svg2").getAttribute("width");
+    opt.scaleX=200/document.getElementById("svg2").getAttribute("width");
+    opt.scaleY=100/document.getElementById("svg2").getAttribute("height");
     opt.x_offset=5;
     opt.y_offset=40;
     doc.text(20, 20, 'Vidjil pdf test');
