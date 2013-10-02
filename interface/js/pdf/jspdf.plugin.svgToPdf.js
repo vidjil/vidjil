@@ -76,7 +76,9 @@ var svgElementToPdf = function(element, pdf, options) {
 
         if (hasFillColor) {
             pdf.setFillColor(fillRGB.r, fillRGB.g, fillRGB.b);
-        }
+        }else{
+	    pdf.setFillColor(0);
+	}
         
         if (n.css("stroke-width")){
 	  var swidth=parseInt(n.css("stroke-width"))
@@ -100,10 +102,11 @@ var svgElementToPdf = function(element, pdf, options) {
                     colorMode = "S";
                 }
             } else {
-
                 colorMode = null;
             }
-        }
+        }else{
+	  pdf.setDrawColor(0);
+	}
         switch (n.get(0).tagName.toLowerCase()) {
             case 'line':
                 pdf.line(
