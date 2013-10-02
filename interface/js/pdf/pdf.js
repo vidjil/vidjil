@@ -50,8 +50,6 @@
     xmlString = xmlString.replace(new RegExp(colorStyle.c05, 'g'), pdfStyle.c05);
     xmlString = xmlString.replace(new RegExp(colorStyle.c06, 'g'), pdfStyle.c06);
     
-    popupMsg(xmlString);
-    
     //conversion canvas
     var canvas = document.createElement("canvas");
     canvg(canvas,xmlString);
@@ -68,3 +66,22 @@
     doc.text(20, 20, 'bye');
     doc.save('Test.pdf');
   }
+  
+  function testPDF2(){
+    
+    var doc = new jsPDF();
+    var elem =document.getElementById("svg2").cloneNode(true);
+    //TODO modifié style de elem
+    var opt={};
+    opt.x_offset=5;
+    opt.y_offset=40;
+    opt.scale=200/document.getElementById("svg2").getAttribute("width");
+    
+    doc.text(20, 20, 'Vidjil pdf test');
+    doc.text(20, 30, 'hi!');
+    svgElementToPdf(elem, doc, opt)
+    doc.addPage();
+    doc.text(20, 20, 'bye');
+    doc.save('Test.pdf');
+  }
+  
