@@ -73,10 +73,10 @@
     var elem =document.getElementById("svg2").cloneNode(true);
     //TODO modifié style de elem
     var opt={};
-    opt.x_offset=5;
-    opt.y_offset=40;
-    opt.scale=200/document.getElementById("svg2").getAttribute("width");
-    
+
+    opt.scale=150/document.getElementById("svg2").getAttribute("width");
+    opt.x_offset=50;
+    opt.y_offset=100;
     doc.text(20, 20, 'Vidjil pdf test');
     doc.text(20, 30, 'hi!');
     svgElementToPdf(elem, doc, opt)

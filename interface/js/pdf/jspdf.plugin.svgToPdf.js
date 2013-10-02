@@ -115,8 +115,8 @@ var svgElementToPdf = function(element, pdf, options) {
             case 'rect':
                 //console.log("in rectangle");
                 pdf.rect(
-                k * (parseInt(n.attr('x')) + x_offset),
-                k * (parseInt(n.attr('y')) + y_offset),
+                k * (parseInt(n.attr('x'))) + x_offset,
+                k * (parseInt(n.attr('y'))) + y_offset,
                 k * parseInt(n.attr('width')),
                 k * parseInt(n.attr('height')),
                 colorMode);
@@ -141,8 +141,8 @@ var svgElementToPdf = function(element, pdf, options) {
                 break;
             case 'circle':
                 pdf.circle(
-                k * (parseInt(n.attr('cx')) + x_offset),
-                k * (parseInt(n.attr('cy')) + y_offset),
+                k * (parseInt(n.attr('cx'))) + x_offset,
+                k * (parseInt(n.attr('cy'))) + y_offset,
                 k * parseInt(n.attr('r')),
                 colorMode);
                 // $.each(node.attributes, function(i, a) {
@@ -212,8 +212,8 @@ var svgElementToPdf = function(element, pdf, options) {
 
                 //FIXME: use more accurate positioning!!
                 var label_offset = 0;
-                var x = parseInt(n.attr('x')) + x_offset - label_offset;
-                var y = parseInt(n.attr('y')) + y_offset;
+                var x = parseInt(n.attr('x')) - label_offset;
+                var y = parseInt(n.attr('y')) ;
 
 
 
@@ -231,15 +231,15 @@ var svgElementToPdf = function(element, pdf, options) {
                             label_offset = 0;
                             break;
                     }
-                    x = parseInt(n.attr('x')) + x_offset - label_offset;
-                    y = parseInt(n.attr('y')) + y_offset;
+                    x = parseInt(n.attr('x')) - label_offset;
+                    y = parseInt(n.attr('y'));
                 }
 
 
 
                 pdf.setFontSize(pdfFontSize).text(
-                k * x,
-                k * y,
+                (k * x) + x_offset ,
+                (k * y) + y_offset ,
                 text_value);
                 // $.each(node.attributes, function(i, a) {
                 //     if(typeof(a) != 'undefined' && pdfSvgAttr.text.indexOf(a.name.toLowerCase()) == -1) {
