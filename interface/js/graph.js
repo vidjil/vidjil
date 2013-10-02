@@ -168,24 +168,18 @@ function displayGraph(data, data_2, data_3, data_4){
   g_text.exit()    
     .remove();
     
-  g_graph = polyline_container.selectAll("polyline").data(data_2);
+  g_graph = polyline_container.selectAll("path").data(data_2);
   g_graph.enter().append("svg:g")
   .attr("id", function(d) { return d.name; });
   g_graph.exit()    
     .remove();
     
-  g_graph.append("polyline")
+  g_graph.append("path")
     .transition()
     .duration(500)
     .style("fill","none")
     .attr("id", function(d) { return "poly"+d.name; })
-    .attr("points", function(p) {
-      var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
-	for (var i=1; i<p.path.length; i++){
-	  che+=','+(p.path[i][0]*resizeG_W)+','+(p.path[i][1]*resizeG_H);
-	}
-	return che;
-    } )
+
     .attr("class", function(p) { return g_class(p.id); })
   g_graph.exit().remove();
 
@@ -195,14 +189,7 @@ function displayGraph(data, data_2, data_3, data_4){
   g_res.exit()    
     .remove();
    
-  g_res.append("polyline")
-    .attr("points", function(p) {
-      var che=Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
-	for (var i=1; i<p.path.length; i++){
-	  che+=','+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
-	}
-	return che;
-    } )
+  g_res.append("path")
     g_res.exit().remove();
     
   g_date= date_container.selectAll("text").data(data_4);
@@ -346,28 +333,29 @@ function updateGraph(){
       if (d.class=="axis_v") return changeT(d.time);
     })
     
-  g_graph.selectAll("polyline")
+  g_graph.selectAll("path")
   .style("fill","none")
     .transition()
     .duration(500)
-    .attr("points", function(p) {
-      var che=Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
+    .attr("d", function(p) {
+      var che=' M '+Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
 	for (var i=1; i<p.path.length; i++){
-	  che+=','+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
+	  che+=' L '+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
 	}
 	return che;
     } )
     .attr("class", function(p) { return g_class(p.id); })
     .attr("id", function(d) { return "poly"+d.name; })
     
-  g_res.selectAll("polyline")
+  g_res.selectAll("path")
     .transition()
     .duration(500)
-    .attr("points", function(p) {
-      var che=Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
+    .attr("d", function(p) {
+      var che=' M '+Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
 	for (var i=1; i<p.path.length; i++){
-	  che+=','+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
+	  che+=' L '+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
 	}
+	che+=' Z ';
 	return che;
     } )
     
@@ -392,7 +380,7 @@ function updateGraph(){
     .on("dblclick", function(d){ return changeDate(d.time);
     })
 
-  polyline_container.selectAll("polyline")
+  polyline_container.selectAll("path")
     .attr("onmouseover",function(d) { return  "focusIn("+d.id+")"; } )
     .attr("onmouseout", function(d) { return  "focusOut("+d.id+")"; } )
     .on("click", function(d){ selectClone(d.id);})
