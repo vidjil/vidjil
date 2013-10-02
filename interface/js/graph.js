@@ -304,7 +304,7 @@ function updateGraph(){
     .attr("x2", function(d) { return resizeG_W*d.x2; })
     .attr("y1", function(d) { return resizeG_H*d.y1; })
     .attr("y2", function(d) { return resizeG_H*d.y2; })
-    .style("stroke", colorStyle.c06)
+    .attr("stroke", colorStyle.c06)
     .attr("class", function(d) { return d.class; })
     .attr("id", function(d) {
       if (d.class=="axis_f") return "timebar"
