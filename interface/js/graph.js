@@ -177,7 +177,7 @@ function displayGraph(data, data_2, data_3, data_4){
   g_graph.append("path")
     .transition()
     .duration(500)
-    .style("fill","none")
+    .attr("fill","none")
     .attr("id", function(d) { return "poly"+d.name; })
 
     .attr("class", function(p) { return g_class(p.id); })
@@ -334,7 +334,7 @@ function updateGraph(){
     })
     
   g_graph.selectAll("path")
-  .style("fill","none")
+  .attr("fill","none")
     .transition()
     .duration(500)
     .attr("d", function(p) {

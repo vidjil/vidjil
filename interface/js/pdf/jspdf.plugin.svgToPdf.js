@@ -85,7 +85,7 @@ var svgElementToPdf = function(element, pdf, options) {
 	  var swidth=parseInt(n.css("stroke-width"))
 	  pdf.setLineWidth(swidth*kx);
 	}else{
-	  pdf.setLineWidth(kx);
+	  pdf.setLineWidth(0);
 	}
         
         var strokeColor = n.attr('stroke');

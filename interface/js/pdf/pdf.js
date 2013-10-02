@@ -83,6 +83,32 @@
     doc.setFont('courier', 'normal');
     doc.text(20, 30, 'hi! aaaaaaaaaaaaa');
     svgElementToPdf(elem, doc, opt)
+    doc.setTextColor(50, 190, 100);
+    doc.text(20, 180, 'ATGCTGCAGTAGCATAGCAT');
+    doc.text(90, 180, 'ATGCTGCAGTAGCATAGCAT');
+    doc.setFont('courier', 'bold');
+    doc.setTextColor(50, 190, 100); 
+    doc.text(20, 185, 'ATGCTGCAGGAGCA-AGCAT');
+    doc.setFont('courier', 'italic');
+    doc.setTextColor(50, 190, 100); 
+    doc.text(20, 190, 'ATGCTGCATTAGCA-AGCAT');
+    
+    doc.setTextColor(0, 0, 0);
+    
+    doc.setFontSize(12);
+    doc.text(20,200, 'plop');
+    doc.setFontSize(18);
+    doc.text(50,200, 'plop');
+    doc.setFontSize(24);
+    doc.text(80,200, 'plop');
+    doc.setFontSize(30);
+    doc.text(110,200, 'plop');
+    doc.setFontSize(36);
+    doc.text(140,200, 'plop');
+    
+    
+    
     doc.save('Test.pdf');
+    
   }
   

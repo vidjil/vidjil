@@ -301,9 +301,9 @@ var default_tag=8;
   
   function initStyle(){
     if (document.getElementById("resolution1")){
-      document.getElementById("resolution1").firstChild.style.fill=colorStyle.c02;
+      document.getElementById("resolution1").firstChild.setAttribute("fill", colorStyle.c02);
       document.getElementById("resolution1").style.opacity=1;
-      document.getElementById("resolution5").firstChild.style.fill=colorStyle.c02;
+      document.getElementById("resolution5").firstChild.setAttribute("fill", colorStyle.c02);
       document.getElementById("resolution5").style.opacity=0.75;
     }
     
