@@ -67,18 +67,22 @@
     doc.save('Test.pdf');
   }
   
+  var listF;
   function testPDF2(){
     
     var doc = new jsPDF();
     var elem =document.getElementById("svg2").cloneNode(true);
     //TODO modifié style de elem
     var opt={};
-
-    opt.scale=150/document.getElementById("svg2").getAttribute("width");
-    opt.x_offset=50;
-    opt.y_offset=100;
+    
+    listF=doc.getFontList();
+    
+    opt.scale=200/document.getElementById("svg2").getAttribute("width");
+    opt.x_offset=5;
+    opt.y_offset=40;
     doc.text(20, 20, 'Vidjil pdf test');
-    doc.text(20, 30, 'hi!');
+    doc.setFont('courier', 'normal');
+    doc.text(20, 30, 'hi! aaaaaaaaaaaaa');
     svgElementToPdf(elem, doc, opt)
     doc.addPage();
     doc.text(20, 20, 'bye');
