@@ -929,21 +929,82 @@ int main (int argc, char **argv)
         out_clone << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
 	out_clone << it->first << endl;
 
-	// Choose one representative
-
+	// Choose one representative inside a list of "auditionned sequences"
 	list <Sequence> auditioned_sequences;
 
-	if (seqs_by_window[it->first].size()<max_auditionned){
-	  auditioned_sequences=seqs_by_window[it->first];
-	}else{
+#define MAX_LENGTH 300
 
-	  list <Sequence>::const_iterator it2;
-	  it2=seqs_by_window[it->first].begin();
+	{
+	  // Compute histogram with length distribution
+	  int length_distribution[MAX_LENGTH];
+
+	  for (int i=0; i<MAX_LENGTH; i++)
+	    length_distribution[i] = 0 ;
+
+	  list<Sequence> seqs = seqs_by_window[it->first];
+	  for (list<Sequence>::const_iterator it = seqs.begin(); it != seqs.end(); ++it) 
+	    length_distribution[(*it).sequence.size()]++ ;
+
+	  /* Display histogram */
+	  // for (int i=0; i<MAX_LENGTH; i++)
+	  //  if (length_distribution[i])
+	  //    cout << i << " -> " << length_distribution[i] << endl ;
+
+
+	  // Compute "auditionned_min_size"
+	  int to_be_auditionned = max_auditionned ;
+	  unsigned int auditionned_min_size ;
+
+	  for (auditionned_min_size=MAX_LENGTH-1; auditionned_min_size>0; auditionned_min_size--)
+	    {
+	      to_be_auditionned -= length_distribution[auditionned_min_size] ;
+	      if (to_be_auditionned < 0) 
+		break ;
+	    }
+
+	  cout << " --> auditionned_min_size : " << auditionned_min_size << endl ;
+
+	   // Build "auditionned_sequences"
+
+	  for (list<Sequence>::const_iterator it = seqs.begin(); it != seqs.end(); ++it) 
+	    {
+	      if ((*it).sequence.size() >= auditionned_min_size)
+		{
+		  auditioned_sequences.push_back(*it);
+		  if (auditioned_sequences.size() == max_auditionned)
+		    break ;
+		}
+	    }
+	}
+
+	// if (seqs_by_window[it->first].size()<max_auditionned){
+	//   auditioned_sequences=seqs_by_window[it->first];
+	// }else{
+
+	//   list <Sequence>::const_iterator it2;
+	//   it2=seqs_by_window[it->first].begin();
 	  
-	  for (int i=0 ; i<(int) max_auditionned; i++){
-	    auditioned_sequences.push_back(*it2);
-	    it2++;
-	  }
+	//   for (int i=0 ; i<(int) max_auditionned; i++){
+	//     auditioned_sequences.push_back(*it2);
+	//     it2++;
+	//   }
+	// }
+
+
+
+
+
+
+
+
+	// Display statistics on auditionned sequences
+	{
+	  int total_length = 0 ;
+
+	  for (list<Sequence>::const_iterator it = auditioned_sequences.begin(); it != auditioned_sequences.end(); ++it) 
+	    total_length += (*it).sequence.size() ;
+	  
+	  cout << auditioned_sequences.size() << " auditioned sequences, avg length " << total_length / auditioned_sequences.size() << endl ;
 	}
 
         KmerRepresentativeComputer repComp(auditioned_sequences, seed);
