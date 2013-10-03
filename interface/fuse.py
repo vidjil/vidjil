@@ -242,6 +242,9 @@ for path_name in input_names:
     else:
         name = path_name
 
+    name = name.replace('.fa', '')
+    name = name.replace('_BCD', '')
+
     print "<==", path_name, "\t", name, "\t", 
 
     with open(path_name, "r") as file:
