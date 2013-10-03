@@ -180,8 +180,9 @@ function loadJsonAnalysis() {
     console.log("initialisation coef");
     updateGraph();
     updateVis();
+    initList(windows);
+    initCache();
     updateStyle();
-    initList();
     displayTop(5);
   };
   
