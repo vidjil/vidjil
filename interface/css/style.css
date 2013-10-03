@@ -124,9 +124,19 @@ circle:hover {
 
 #logo
 {
-  font-size: 180%;
-  opacity: .4;
+  font-size: 130%;
+  font-weight: bold;
+  opacity: 1;
   padding: 5px 20px ;
+}
+
+span.logo
+{
+  font-size: 60% ;
+  font-weight: bold;
+  vertical-align: super;
+  opacity: .8;
+  color: #f88;
 }
 
 #data_file
