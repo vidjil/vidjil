@@ -932,7 +932,7 @@ int main (int argc, char **argv)
 	// Choose one representative inside a list of "auditionned sequences"
 	list <Sequence> auditioned_sequences;
 
-#define MAX_LENGTH 300
+#define MAX_LENGTH 500
 
 	{
 	  // Compute histogram with length distribution
@@ -943,7 +943,12 @@ int main (int argc, char **argv)
 
 	  list<Sequence> seqs = seqs_by_window[it->first];
 	  for (list<Sequence>::const_iterator it = seqs.begin(); it != seqs.end(); ++it) 
-	    length_distribution[(*it).sequence.size()]++ ;
+	    {
+	      int length = (*it).sequence.size();
+	      if (length >= MAX_LENGTH)
+		length = MAX_LENGTH-1 ;
+	      length_distribution[length]++ ;
+	    }
 
 	  /* Display histogram */
 	  // for (int i=0; i<MAX_LENGTH; i++)
