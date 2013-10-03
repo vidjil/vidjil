@@ -66,6 +66,7 @@
   }
   
   var listF;
+  
   function testPDF2(){
     changeStyle(pdfStyle);
     var doc = new jsPDF();
@@ -107,9 +108,11 @@
     doc.setFontSize(36);
     doc.text(140,200, 'plop');
     
+    doc.setFontSize(12);
+    doc.text(20,220, ['aaaaaaaaaaaa','bbbbbbbbbbbbbbb','cccccccccccccccccc','dddddd']);
     
-    
-    doc.save('Test.pdf');
+    doc.output('dataurlnewwindow')
+    //doc.save('Test.pdf');
     
   }
   
