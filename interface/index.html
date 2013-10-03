@@ -21,6 +21,15 @@
 	<script type="text/javascript" src='js/vidjil-style.js'></script>
 	<script type="text/javascript" src='js/crossDomain.js'></script>
 	
+	<script type="text/javascript" src='js/pdf/StackBlur.js'></script>
+	<script type="text/javascript" src='js/pdf/rgbcolor.js'></script>
+	<script type="text/javascript" src='js/pdf/canvg.js'></script>
+	<script type="text/javascript" src='js/pdf/jspdf.js'></script>
+	<script type="text/javascript" src='js/pdf/jspdf.plugin.addimage.js'></script>
+	<script type="text/javascript" src='js/pdf/jspdf.plugin.svgToPdf.js'></script>
+	<script type="text/javascript" src='js/pdf/underscore.js'></script>
+	<script type="text/javascript" src='js/pdf/pdf.js'></script>
+	
 	<!--
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
 	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
@@ -31,6 +40,8 @@
   <body onload="initCoef()">
   
     <div id="file_menu" >
+    <span class="closeButton" onclick="cancel();">X</span>
+    
     	<h2>Load data and analysis</h2>
     	
 	data file:<br/>
@@ -46,22 +57,21 @@
 	</select> </br></br>
 	
 	<button onclick="loadJson();">start</button> 
-	<button onclick="cancel();">cancel</button> 
     </div>
     
     <div id="analysis_menu" >
+        <span class="closeButton" onclick="cancel();">X</span>
     	<h2>analysis menu</h2>
     	
 	Analysis file :<br/>
 	<input id="upload_analysis" type="file" name="analysis" /></br></br>
 		
 	<button onclick="loadJsonAnalysis();">start</button> 
-	<button onclick="cancel();">cancel</button> 
     </div>
     
     <div id="top-container">
     
-      <div class="menu" onmouseover="showSelector('loadSelector');"> save/load 
+      <div class="menu" onmouseover="showSelector('loadSelector');"> file 
         <div id="loadSelector" class="selector">
 	  <a class="buttonSelector" onclick="javascript:loadData()">load data/analysis</a>
 	  <a class="buttonSelector" onclick="javascript:loadAnalysis()">load analysis</a>
@@ -97,6 +107,15 @@
 	  <a class="buttonSelector" onclick="changeRatio(0);">none</a> 
 	  <a class="buttonSelector" onclick="changeRatio(1);">highest standard</a> 
 	  <a class="buttonSelector" onclick="changeRatio(2);">all standard</a> 
+	</div>
+      </div>
+      
+       <div id="norm" class="menu" onmouseover="showSelector('pdfSelector');"> pdfTest
+        <div id="pdfSelector" class="selector">
+	  <a class="buttonSelector" onclick="javascript:extractSVG('svg')">extract svg visu</a>
+	  <a class="buttonSelector" onclick="javascript:extractSVG('svg2')">extract svg graph</a>
+	  <a class="buttonSelector" onclick="javascript:testPDF()">svg>jpeg>pdf</a>
+	  <a class="buttonSelector" onclick="javascript:testPDF2()">svg>pdf</a>
 	</div>
       </div>
       
@@ -182,9 +201,12 @@
       <div id="visu-container">
 	<!-- VISU -->
 	<span id="visu2">
-	  <script type="text/javascript" src="js/graph.js"> </script>
 	  
-	  <div id="switch"> 
+	  
+
+	  
+	</span>
+	<div id="switch"> 
 	  
 	    <div style="float:left; background:#333044; width:22px; height:22px; margin:5px; " onclick="switchVisu(30,70);"> 
 	      <div style="background:white; width:100%; height:25%;"></div> 
@@ -203,15 +225,12 @@
 	    </div>
 	    
 	  </div>
-	  
-	</span>
 	
 	<span id="visu" onclick="">
-	  <script type="text/javascript" src="js/visu.js"> </script>
 	</span>
       </div>
-      
-      
+      <script type="text/javascript" src="js/graph.js"> </script>
+      <script type="text/javascript" src="js/visu.js"> </script>
     </div>
 	
     <!-- BOT-CONTAINER -->
@@ -228,8 +247,7 @@
     <div id="log" style="display:none; position: fixed; top: 50px;right: 10px;width: 500px; font-family : monaco,terminal,courier,system; height: 150px;overflow-y: scroll;font-size: 14px;background-color: #333044;opacity: 0.5;padding: 10px;">log </div>
     
     <div id="tagSelector">
-    
-    <div class="tagD button" onclick="$('#tagSelector').hide('fast')">close</div></br>
+    <span class="closeButton" onclick="$('#tagSelector').hide('fast')">X</span>
     
       <div>tag for <span id=tagname></span></div>
       <ul>
@@ -265,8 +283,8 @@
     </div>
     
     <div id="display-menu">
-    <span class="tagD button" onclick="showDisplayMenu()">close</span>
-         <h2>Display menu</h2>
+      <span class="closeButton" onclick="showDisplayMenu();">X</span>
+       <h2>Display menu</h2>
     
       <ul>
       
@@ -384,6 +402,12 @@
     
     <div id="frame-container"></div>
     
+    <div id="popup-container">
+    <span class="closeButton" onclick="closePopupMsg()">X</span>
+      <div id="popup-msg">
+      </div>
+    </div>
+
   </body>
       
 </html>

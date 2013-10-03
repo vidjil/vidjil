@@ -11,15 +11,6 @@
  * info panel
  * 
  * 
- * content:
- * 
- * displayInfo(cloneID)
- * addToFavorites(cloneID)
- * addToList(cloneID)
- * 
- * TODO manipulation sur les listes
- * -trie par nom / par size
- * -voir par jonction/ par clone
  */
   
   function initList(data){
@@ -246,3 +237,15 @@
     })
     $("#listClones").html(sort);
   }
+  
+  function popupMsg(msg){
+    document.getElementById("popup-container").style.display="block";
+    
+    document.getElementById("popup-msg").innerHTML+="<p>" +msg+ "</p>";
+  }
+  
+  function closePopupMsg(){
+    document.getElementById("popup-container").style.display="none";
+    document.getElementById("popup-msg").innerHTML="";
+  }
+  

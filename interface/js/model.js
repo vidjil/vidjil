@@ -180,8 +180,9 @@ function loadJsonAnalysis() {
     console.log("initialisation coef");
     updateGraph();
     updateVis();
+    initList(windows);
+    initCache();
     updateStyle();
-    initList();
     displayTop(5);
   };
   
@@ -265,22 +266,32 @@ function initNcolor(){
     colorN[i]=colorGenerator( ( ((i/maxNsize)-1)*(-250) )  ,  colorStyle.col_s  , colorStyle.col_v);
   }
 }
-
+var noizeblock=0;
 function loadPref(){
   
+  //application des customTag
   for(var i=0 ;i<pref.custom.length; i++){
     if (typeof mapID[pref.custom[i].window] != "undefined" ){
-      if (typeof( pref.custom[i].tag ) != "undefined" ) {
-	table[mapID[pref.custom[i].window]].tag=pref.custom[i].tag;
+      var f=1;
+      if (typeof pref.custom[i].expected  != "undefined" ){
+	f=getSize([mapID[pref.custom[i].window]])/pref.custom[i].expected
       }
-      
-      if (typeof( pref.custom[i].name ) != "undefined" ) {
-	table[mapID[pref.custom[i].window]].c_name=pref.custom[i].name;
+      if (f<100 && f>0.01){
+	if (typeof( pref.custom[i].tag ) != "undefined" ) {
+	  table[mapID[pref.custom[i].window]].tag=pref.custom[i].tag;
+	}
+	
+	if (typeof( pref.custom[i].name ) != "undefined" ) {
+	  table[mapID[pref.custom[i].window]].c_name=pref.custom[i].name;
+	}
+      }else{
+	table[mapID[pref.custom[i].window]].tag=7;
+	noizeblock++;
       }
-      
     }
   }
       
+   
   for (var i = 0; i < totalClones ; i++){
 	if (table[i].select){
 	  new_cluster= new_cluster.concat(table[i].cluster);
@@ -406,9 +417,12 @@ function initCoef(){
   
   resizeG_W = document.getElementById("visu2").offsetWidth/g_w;
   resizeG_H = (document.getElementById("visu2").offsetHeight)/(g_h);
-  document.getElementById("svg2").style.width=document.getElementById("visu2").offsetWidth+"px";
-  document.getElementById("svg2").style.height=document.getElementById("visu2").offsetHeight+"px";
-  
+  document.getElementById("svg2").setAttribute("width",document.getElementById("visu2").offsetWidth);
+  document.getElementById("svg2").setAttribute("height",document.getElementById("visu2").offsetHeight);
+  document.getElementById('visu_back').setAttribute("width",resizeW*w);
+  document.getElementById('visu_back').setAttribute("height",resizeH*h);
+  document.getElementById('graph_back').setAttribute("width",(resizeG_W*g_w)+1);
+  document.getElementById('graph_back').setAttribute("height",(resizeG_H*g_h)+1);
 
   resizeCoef = Math.sqrt(resizeW*resizeH);
   
@@ -421,6 +435,7 @@ function initCoef(){
 
   updateVis();
   setTimeout('force.alpha(.2)',1000);
+  
   
   
   console.log("resize (new coef : "+resizeW+"/"+resizeH+"/"+resizeCoef+")<br>  graph coef ("+resizeG_W+"/"+resizeG_H+")");
@@ -445,7 +460,7 @@ function changeT(time){
   t=time;
   console.log("changement de point de suivi > "+time);
   
-  data_axis[8]={class : "axis_f" ,text : "", x1 : 0, x2 : g_w, 
+  data_axis[data_axis.length-1]={class : "axis_f" ,text : "", x1 : 0, x2 : g_w, 
 			x1 : graph_col[t], x2 : graph_col[t], 
 			y1 : g_h+20, y2 : 0, time: 0}
   
@@ -938,6 +953,7 @@ function initVJgrid(germlineV, germlineJ){
     table=[];
     customColor = [];
     init();
+    initCache();
     updateStyle();
     updateList();
     displayTop(5);
@@ -1037,7 +1053,7 @@ function initVJgrid(germlineV, germlineJ){
       
       table[i].link.listElem=document.getElementById(i);
       table[i].link.circleElem=document.getElementById("circle"+i);
-      table[i].link.polylineElem=document.getElementById("polyline"+i);
+      table[i].link.polylineElem=d3.select("#polyline"+i);
       table[i].link.colorElem=document.getElementById("color"+i);
       table[i].link.lineElem=document.getElementById("line"+i);
       

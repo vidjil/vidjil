@@ -64,7 +64,6 @@ function resetGraph(){
   graph_col=[];
   precision=1;
   displayGraph(data_axis, data_graph, data_res, data_date);
-  
 }
 
 function initGraph(){
@@ -85,33 +84,21 @@ function initGraph(){
     .domain([1,precision])
     .range([250,0]);
     
-  var height=1;
-  var p=0;
-  
-  //ordonnée
-  for (var i=0 ; i<8; i++){
-    data_axis[i]={class : "axis" ,text : -p, x1 : 0, x2 : g_w, 
-		    y1 : (g_h- scale_x(height*precision)), 
-		    y2 : (g_h- scale_x(height*precision))}
-		    
-    height=height/10;
-    p=p+1;
-  }
   
   //abscisse
   if (windows[0].size.length==1){
     graph_col[0]=700;
-    data_axis[9]={class : "axis_v" ,text : "fu"+1 ,
+    data_axis[0]={class : "axis_v" ,text : "fu"+1 ,
 			x1 : graph_col[0], x2 : graph_col[0], 
 			y1 : g_h+20, y2 : 0, time: 0}
     }else{
       if (windows[0].size.length==2){
 	graph_col[0]=300;
 	graph_col[1]=1100;
-	data_axis[9]={class : "axis_v" ,text : "fu"+1 ,
+	data_axis[0]={class : "axis_v" ,text : "fu"+1 ,
 			x1 : graph_col[0], x2 : graph_col[0], 
 			y1 : g_h+20, y2 : 0, time: 0}
-	data_axis[10]={class : "axis_v" ,text : "fu"+2 ,
+	data_axis[1]={class : "axis_v" ,text : "fu"+2 ,
 			x1 : graph_col[1], x2 : graph_col[1], 
 			y1 : g_h+20, y2 : 0, time: 1}
       }else{
@@ -125,15 +112,30 @@ function initGraph(){
 	  }
 	}
 	
-	data_axis[9+i]={class : "axis_v" ,text : time_name ,
+	data_axis[i]={class : "axis_v" ,text : time_name ,
 			x1 : graph_col[i], x2 : graph_col[i], 
 			y1 : g_h+20, y2 : 0, time: i}
       }
     }
   }
   
+  var height=1;
+  var p=data_axis.length;
+  var p2=0;
+  
+  //ordonnée
+  while((height*precision)>0.5){
+    data_axis[p]={class : "axis" ,text : -p2, x1 : 0, x2 : g_w, 
+		    y1 : (g_h- scale_x(height*precision)), 
+		    y2 : (g_h- scale_x(height*precision))}
+		    
+    height=height/10;
+    p=p+1;
+    p2=p2+1;
+  }
+  
   //mobile
-  data_axis[8]={class : "axis_f" ,text : "",
+  data_axis[data_axis.length]={class : "axis_f" ,text : "",
 			x1 : graph_col[t], x2 : graph_col[t], 
 			y1 : g_h+20, y2 : 0, time: 0}
   
@@ -152,6 +154,7 @@ function initGraph(){
   }
   
   displayGraph(data_axis, data_graph, data_res, data_date);
+  
 }
 
 function displayGraph(data, data_2, data_3, data_4){
@@ -165,23 +168,18 @@ function displayGraph(data, data_2, data_3, data_4){
   g_text.exit()    
     .remove();
     
-  g_graph = polyline_container.selectAll("polyline").data(data_2);
+  g_graph = polyline_container.selectAll("path").data(data_2);
   g_graph.enter().append("svg:g")
   .attr("id", function(d) { return d.name; });
   g_graph.exit()    
     .remove();
     
-  g_graph.append("polyline")
+  g_graph.append("path")
     .transition()
     .duration(500)
+    .attr("fill","none")
     .attr("id", function(d) { return "poly"+d.name; })
-    .attr("points", function(p) {
-      var che=(p.path[0][0]*resizeG_W)+','+(p.path[0][1]*resizeG_H);
-	for (var i=1; i<p.path.length; i++){
-	  che+=','+(p.path[i][0]*resizeG_W)+','+(p.path[i][1]*resizeG_H);
-	}
-	return che;
-    } )
+
     .attr("class", function(p) { return g_class(p.id); })
   g_graph.exit().remove();
 
@@ -191,14 +189,7 @@ function displayGraph(data, data_2, data_3, data_4){
   g_res.exit()    
     .remove();
    
-  g_res.append("polyline")
-    .attr("points", function(p) {
-      var che=Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
-	for (var i=1; i<p.path.length; i++){
-	  che+=','+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
-	}
-	return che;
-    } )
+  g_res.append("path")
     g_res.exit().remove();
     
   g_date= date_container.selectAll("text").data(data_4);
@@ -214,14 +205,14 @@ function constructPathR(res){
     
     var p;
     
-    p=[ [0, (g_h+1000)] ];
+    p=[ [0, g_h] ];
     p.push([0, ( g_h - scale_x(res[0][used_ratio]*precision) ) ]);
     
     for (var i=0; i< graph_col.length; i++){
 	p.push([( graph_col[i]), ( g_h - scale_x(res[i][used_ratio]*precision))]);
     }
     p.push([g_w, ( g_h - scale_x(res[graph_col.length-1][used_ratio]*precision) ) ]);
-    p.push([g_w, ( g_h+1000) ]);
+    p.push([g_w, g_h]);
     
     return p;
     
@@ -264,8 +255,12 @@ function constructPath(cloneID){
       x = graph_col[i];
       y = scale_x(getSize(cloneID)*precision)
       
-      if (getSize(cloneID)==0 && p.length!=0){
-	p.push([( x ),(g_h + 30)]);
+      if (getSize(cloneID)==0){
+	if (p.length!=0){
+	  p.push([( x ),(g_h + 30)]);
+	}else{
+
+	}
       }else{
 	
 	//si premiere apparition du clone sur le graphique
@@ -309,7 +304,7 @@ function updateGraph(){
     .attr("x2", function(d) { return resizeG_W*d.x2; })
     .attr("y1", function(d) { return resizeG_H*d.y1; })
     .attr("y2", function(d) { return resizeG_H*d.y2; })
-    .style("stroke", colorStyle.c06)
+    .attr("stroke", colorStyle.c06)
     .attr("class", function(d) { return d.class; })
     .attr("id", function(d) {
       if (d.class=="axis_f") return "timebar"
@@ -338,27 +333,29 @@ function updateGraph(){
       if (d.class=="axis_v") return changeT(d.time);
     })
     
-  g_graph.selectAll("polyline")
+  g_graph.selectAll("path")
+  .attr("fill","none")
     .transition()
     .duration(500)
-    .attr("points", function(p) {
-      var che=Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
+    .attr("d", function(p) {
+      var che=' M '+Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
 	for (var i=1; i<p.path.length; i++){
-	  che+=','+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
+	  che+=' L '+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
 	}
 	return che;
     } )
     .attr("class", function(p) { return g_class(p.id); })
     .attr("id", function(d) { return "poly"+d.name; })
     
-  g_res.selectAll("polyline")
+  g_res.selectAll("path")
     .transition()
     .duration(500)
-    .attr("points", function(p) {
-      var che=Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
+    .attr("d", function(p) {
+      var che=' M '+Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
 	for (var i=1; i<p.path.length; i++){
-	  che+=','+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
+	  che+=' L '+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
 	}
+	che+=' Z ';
 	return che;
     } )
     
@@ -383,7 +380,7 @@ function updateGraph(){
     .on("dblclick", function(d){ return changeDate(d.time);
     })
 
-  polyline_container.selectAll("polyline")
+  polyline_container.selectAll("path")
     .attr("onmouseover",function(d) { return  "focusIn("+d.id+")"; } )
     .attr("onmouseout", function(d) { return  "focusOut("+d.id+")"; } )
     .on("click", function(d){ selectClone(d.id);})

@@ -152,12 +152,12 @@ function displayLegend(data){
       else return resizeW*d.cx;
     })
     .attr("x2", function(d) { 
-      if (d.cx<5) return 5000;
+      if (d.cx<5) return resizeW*w;
       else return resizeW*d.cx;
     })
     .attr("y1", function(d) { return resizeH*d.cy; })
     .attr("y2", function(d) { 
-      if (d.cy<5) return 5000;
+      if (d.cy<5) return resizeH*h;
       else return resizeH*d.cy;
     })
     .style("stroke", function (d) { 
@@ -194,12 +194,12 @@ function updateLegend(){
     .duration(1000)
     .attr("x1", function(d) { return resizeW*d.cx; })
     .attr("x2", function(d) { 
-      if (d.cx==0) return 5000;
+      if (d.cx==0) return resizeW*w;
       else return resizeW*d.cx;
     })
     .attr("y1", function(d) { return resizeH*d.cy; })
     .attr("y2", function(d) { 
-      if (d.cy==0) return 5000;
+      if (d.cy==0) return resizeH*h;
       else return resizeH*d.cy;
     })
     .style("stroke", function (d) { 
@@ -242,11 +242,11 @@ function tick(e) {
 
 function debugNaN() {
     return function(d) {
-      if (isNaN(d.x)){
+      if (!isFinite(d.x)){
 	d.x=Math.random()*500;
 	console.log("debug NaN x circle"+ d.id );
       }
-      if (isNaN(d.y)){
+      if (!isFinite(d.y)){
 	d.y=Math.random()*500;
 	console.log("debug NaN y circle"+ d.id );
       }
