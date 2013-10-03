@@ -186,14 +186,14 @@ var default_tag=8;
     }
     
     if(table[cloneID].cluster.length !=0){
-      clone.polylineElem.style.display="block";
+      clone.polylineElem.style("display","block");
     }else{
-      clone.polylineElem.style.display="none";
+      clone.polylineElem.style("display","none");
     }
     
     if (tagDisplay[table[cloneID].tag]==0){
       clone.listElemStyle.display="none";
-      clone.polylineElem.style.display="none";
+      clone.polylineElem.style("display","none");
       clone.circleElemStyle.display="none";
     }else{
       clone.circleElemStyle.display="inline";
