@@ -942,6 +942,7 @@ function initVJgrid(germlineV, germlineJ){
     table=[];
     customColor = [];
     init();
+    initCache();
     updateStyle();
     updateList();
     displayTop(5);

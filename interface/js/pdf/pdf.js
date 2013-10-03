@@ -71,7 +71,6 @@
     var doc = new jsPDF();
     var elem =document.getElementById("svg2").cloneNode(true);
     changeStyle(solarizeD);
-    //TODO modifié style de elem
     var opt={};
     
     listF=doc.getFontList();
@@ -85,6 +84,7 @@
     doc.text(20, 30, 'hi! aaaaaaaaaaaaa');
     svgElementToPdf(elem, doc, opt)
     doc.setTextColor(50, 190, 100);
+    doc.setFont('courier', 'normal');
     doc.text(20, 180, 'ATGCTGCAGTAGCATAGCAT');
     doc.text(90, 180, 'ATGCTGCAGTAGCATAGCAT');
     doc.setFont('courier', 'bold');
