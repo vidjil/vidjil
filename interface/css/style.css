@@ -119,6 +119,13 @@ circle:hover {
   height :150px;
 }
 
+#logo
+{
+  font-size: 180%;
+  opacity: .4;
+  padding: 5px 20px ;
+}
+
 #data_file
 {
   font-size: 200%;
