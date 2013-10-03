@@ -97,6 +97,7 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define DEFAULT_DELTA_MIN_D  0
 #define DEFAULT_DELTA_MAX_D  50
 
+#define HISTOGRAM_SIZE_AUDITIONED 500
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
 #define DEFAULT_MIN_COVER_REPRESENTATIVE 5
@@ -932,26 +933,24 @@ int main (int argc, char **argv)
 	// Choose one representative inside a list of "auditionned sequences"
 	list <Sequence> auditioned_sequences;
 
-#define MAX_LENGTH 500
-
 	{
 	  // Compute histogram with length distribution
-	  int length_distribution[MAX_LENGTH];
+	  int length_distribution[HISTOGRAM_SIZE_AUDITIONED];
 
-	  for (int i=0; i<MAX_LENGTH; i++)
+	  for (int i=0; i<HISTOGRAM_SIZE_AUDITIONED; i++)
 	    length_distribution[i] = 0 ;
 
 	  list<Sequence> seqs = seqs_by_window[it->first];
 	  for (list<Sequence>::const_iterator it = seqs.begin(); it != seqs.end(); ++it) 
 	    {
 	      int length = (*it).sequence.size();
-	      if (length >= MAX_LENGTH)
-		length = MAX_LENGTH-1 ;
+	      if (length >= HISTOGRAM_SIZE_AUDITIONED)
+		length = HISTOGRAM_SIZE_AUDITIONED-1 ;
 	      length_distribution[length]++ ;
 	    }
 
 	  /* Display histogram */
-	  // for (int i=0; i<MAX_LENGTH; i++)
+	  // for (int i=0; i<HISTOGRAM_SIZE_AUDITIONED; i++)
 	  //  if (length_distribution[i])
 	  //    cout << i << " -> " << length_distribution[i] << endl ;
 
@@ -960,13 +959,14 @@ int main (int argc, char **argv)
 	  int to_be_auditionned = max_auditionned ;
 	  unsigned int auditionned_min_size ;
 
-	  for (auditionned_min_size=MAX_LENGTH-1; auditionned_min_size>0; auditionned_min_size--)
+	  for (auditionned_min_size=HISTOGRAM_SIZE_AUDITIONED-1; auditionned_min_size>0; auditionned_min_size--)
 	    {
 	      to_be_auditionned -= length_distribution[auditionned_min_size] ;
 	      if (to_be_auditionned < 0) 
 		break ;
 	    }
 
+	  if (verbose)
 	  cout << " --> auditionned_min_size : " << auditionned_min_size << endl ;
 
 	   // Build "auditionned_sequences"
@@ -982,27 +982,8 @@ int main (int argc, char **argv)
 	    }
 	}
 
-	// if (seqs_by_window[it->first].size()<max_auditionned){
-	//   auditioned_sequences=seqs_by_window[it->first];
-	// }else{
-
-	//   list <Sequence>::const_iterator it2;
-	//   it2=seqs_by_window[it->first].begin();
-	  
-	//   for (int i=0 ; i<(int) max_auditionned; i++){
-	//     auditioned_sequences.push_back(*it2);
-	//     it2++;
-	//   }
-	// }
-
-
-
-
-
-
-
-
 	// Display statistics on auditionned sequences
+	if (verbose)
 	{
 	  int total_length = 0 ;
 
