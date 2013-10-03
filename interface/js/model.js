@@ -221,6 +221,7 @@ function reset(){
 
 function load(data, limit){
   var result={};
+  result.normalizations=data.normalizations;
   result.total_size=data.total_size;
   result.resolution1=data.resolution1;
   result.resolution5=data.resolution5;
@@ -266,15 +267,18 @@ function initNcolor(){
     colorN[i]=colorGenerator( ( ((i/maxNsize)-1)*(-250) )  ,  colorStyle.col_s  , colorStyle.col_v);
   }
 }
-var noizeblock=0;
+
 function loadPref(){
-  
-  //application des customTag
   for(var i=0 ;i<pref.custom.length; i++){
     if (typeof mapID[pref.custom[i].window] != "undefined" ){
       var f=1;
       if (typeof pref.custom[i].expected  != "undefined" ){
-	f=getSize([mapID[pref.custom[i].window]])/pref.custom[i].expected
+	var u= jsonData.normalizations.indexOf("highest standard");
+	if (u!=-1){
+	  f=getSize([mapID[pref.custom[i].window]])/pref.custom[i].expected;
+	}else{
+	  f=jsonData.windows[mapID[pref.custom[i].window]].ratios[u]/pref.custom[i].expected;
+	}
       }
       if (f<100 && f>0.01){
 	if (typeof( pref.custom[i].tag ) != "undefined" ) {
@@ -284,9 +288,6 @@ function loadPref(){
 	if (typeof( pref.custom[i].name ) != "undefined" ) {
 	  table[mapID[pref.custom[i].window]].c_name=pref.custom[i].name;
 	}
-      }else{
-	table[mapID[pref.custom[i].window]].tag=7;
-	noizeblock++;
       }
     }
   }
