@@ -142,7 +142,8 @@ function loadJson() {
     initSize();
     initList(windows);
     console.log("génération des clones");
-    initVJgrid(TRGV,TRGJ);
+    initGermline();
+    initVJgrid(Vgermline,Jgermline);
     initNodes();
     initGraph();
     console.log("initialisation graph");
@@ -536,25 +537,23 @@ function initVJgrid(germlineV, germlineJ){
   grid_nsize=[];
   vmap=[];
   jmap=[];
-
-  
-  
-  for(var i=0 ;i<germlineV.length; i++){
-    for(var j=0 ;j<germlineV[i].sub.length; j++){
-      vmap[sizeV]=germlineV[i].name+germlineV[i].sub[j].name;
+ 
+  for (key in germlineV){
+    for (key2 in germlineV[key]){
+      vmap[sizeV]=key+"*"+key2;
       sizeV++;
     }
-    subsize[germlineV[i].name]=germlineV[i].sub.length;;
+    subsize[key]=Object.keys(germlineV).length;
   }
   
-  for(var i=0 ;i<germlineJ.length; i++){
-    for(var j=0 ;j<germlineJ[i].sub.length; j++){
-      jmap[sizeJ]=germlineJ[i].name+germlineJ[i].sub[j].name;
-      sizeJ++;
+  for (key in germlineJ){
+    for (key2 in germlineJ[key]){
+      jmap[sizeJ]=key+"*"+key2;
+      sizeJ++
     }
-    subsize[germlineJ[i].name]=germlineJ[i].sub.length;;
+    subsize[key]=Object.keys(germlineJ).length;
   }
- 
+  
   var t1, t2;
   var tmp="";
   var n2=-1;
@@ -566,7 +565,7 @@ function initVJgrid(germlineV, germlineJ){
     
     var elem = vmap[i].split('*')[0];
 
-    var stepVJ=stepV = (w-margeVJ_left)/germlineV.length
+    var stepVJ=stepV = (w-margeVJ_left)/Object.keys(germlineV).length;
     
     if (elem!=tmp){
       t1=0;
@@ -597,7 +596,7 @@ function initVJgrid(germlineV, germlineJ){
 
     var elem = jmap[i].split('*')[0];
     
-    stepVJ = (h-margeVJ_top)/germlineJ.length
+    stepVJ = (h-margeVJ_top)/Object.keys(germlineJ).length;
     
     if (elem!=tmp){
       t1=0;
@@ -1061,3 +1060,34 @@ function initVJgrid(germlineV, germlineJ){
     }
     updateStyle()
   }
+  
+  var Vgermline, Dgermline, Jgermline;
+  function initGermline(){
+    Vgermline={};
+    Dgermline={};
+    Jgermline={};
+    
+    for (var key in germline.TRGV ) {
+      var elem = key.split('*');
+      
+      if ( typeof Vgermline[elem[0]] == 'undefined')
+	Vgermline[elem[0]]={}
+      Vgermline[elem[0]][elem[1]]=germline.TRGV[key];
+    }
+
+    for (var key in germline.TRGJ ) {
+      var elem = key.split('*');
+      
+      if ( typeof Jgermline[elem[0]] == 'undefined')
+	Jgermline[elem[0]]={}
+      Jgermline[elem[0]][elem[1]]=germline.TRGJ[key];
+    }
+
+  }
+  
+  
+  
+  
+  
+  
+  
