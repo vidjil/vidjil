@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -k 14 -c clones -G ../../germline/IGH -x -r 1 -R 1 -d ../../data/clones_simul.fa
+!LAUNCH: ../../vidjil -k 14 -w 50 -c clones -G ../../germline/IGH -x -r 1 -R 1 -d ../../data/clones_simul.fa
 
 $ Junction extractions
 1:found 22 50-windows in 63 segments

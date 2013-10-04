@@ -88,7 +88,7 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 
 #define DEFAULT_K      10
 #define DEFAULT_W      40
-#define DEFAULT_W_D    50
+#define DEFAULT_W_D    60
 #define DEFAULT_SEED   "#####-#####"
 
 #define DEFAULT_DELTA_MIN  -10
