@@ -1,6 +1,6 @@
 CC=g++
 OPTIM=-O2 
-CFLAGS=-W -Wall $(OPTIM) $(DEBUG)
+CFLAGS=-W -Wall $(OPTIM) $(DEBUG) $(CONFIG)
 LDFLAGS=-lm
 EXEC=vidjil kmer kmer_count cut count detailed_affect
 SRCCORE=$(wildcard core/*.cpp) $(wildcard core/*.h) 
@@ -17,11 +17,15 @@ spaced: cleanspaced
 	make
 
 nospaced: cleanspaced
-	make OPTIM="-O2 -DNO_SPACED_SEEDS"
+	make CONFIG="-DNO_SPACED_SEEDS"
 
 cleanspaced:
-	rm vidjil.o core/tools.o
+	rm -f vidjil.o core/tools.o
 
+
+unsegmented:
+	rm -f vidjil.o core/segment.o
+	make CONFIG="-DOUT_UNSEGMENTED"
 
 
 all: $(EXEC)

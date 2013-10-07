@@ -203,8 +203,10 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
 
   if (length < (size_t) s) 
     {
+#ifdef OUT_UNSEGMENTED
       out_unsegmented << seq ;
       out_unsegmented << "#" << segmented_mesg[UNSEG_TOO_SHORT] << endl << endl ;
+#endif
       stats[UNSEG_TOO_SHORT]++ ;
       stats_length[UNSEG_TOO_SHORT] += length ;
       return ;
@@ -328,6 +330,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
       finishSegmentation();
     }
 
+#ifdef OUT_UNSEGMENTED
   if (true)
     {
       // Dump sequence in unsegmented, with kaa and cause
@@ -337,6 +340,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
       out_unsegmented << "-: " << nb_strand[0] << " +:" << nb_strand[1] 
                       << endl  << endl;
     }
+#endif
 
   stats[because]++ ;      
   stats_length[because] += length ;
