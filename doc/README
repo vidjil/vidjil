@@ -2,23 +2,26 @@
 # Copyright (C) 2011, 2012, 2013 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
 # Contact: mathieu.giraud@lifl.fr, mikael.salson@lifl.fr
 
-V(D)J recombinations in lymphocytes are a key for immunologic diversity
-as they have an influence on the production of antibodies and antigen
-receptors. They are also useful markers for pathologies: in many
-cases, such a clonality marker is used for patient follow-up to
-quantify the minimal residual disease in leukemias.  
+
+V(D)J recombinations in lymphocytes are essential for immunological
+diversity. They are also useful markers of pathologies, and in
+leukemia, are used to quantify the minimal residual disease during
+patient follow-up.
 
 Vidjil process high-througput sequencing data to extract V(D)J
 junctions and gather them into clones. This analysis is based on a
-seed heuristics and is fast and scalable, as, in the first phase, no
-alignment is done with database germline sequences.  Starting from a
-set of reads, Vidjil detects the junctions in each read. This is based
-on an ultra-fast seed-based heuristic, which has be prooven to be
-reliable output the most abundant clones, based on their junctions
+seed heuristics and is fast and scalable because in the first phase, no
+alignment is performed with database germline sequences. Vidjil starts 
+from a set of reads and detects "windows" overlapping the actual CDR3.
+This is based on an fast and reliable seed-based heuristic and allows
+to output the most abundant clones. Vidjil can also clusterize similar
+clones, or leave this to the user after a manual review. 
 
-Vidjil can also clusterize similar clones, or leave this to the user
-after a manual review. The method is described in the paper referenced
-below.
+The method is described in the following paper:
+
+Mathieu Giraud, Mikaël Salson, et al.,
+"Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing",
+(submitted)
 
 Vidjil is open-source, released under GNU GPLv3 license.
 
@@ -59,7 +62,7 @@ make test                # run self-tests
 
 ### Optional dependencies
 
-clustalw (to compute alignments between junctions from a same clone)
+clustalw (to compute alignments between windows from a same clone)
 neato (to display graph of neighbors for the automatic clusterisation)
 
 ### Vidjil parameters
@@ -67,24 +70,24 @@ neato (to display graph of neighbors for the automatic clusterisation)
 Launching vidjil with -h option provides the list of parameters that can be
 used.
 
-### List of junctions
+### List of windows
 
-Vidjil allows to specify a list of junctions that must be followed
-(even if those junctions are 'rare', below the -r/-R/-% thresholds).
+Vidjil allows to specify a list of windows that must be followed
+(even if those windows are 'rare', below the -r/-R/-% thresholds).
 The parameter -l is made for providing such a list in a file having
-the following format: junction label (separed by one space)
+the following format: window label (separed by one space)
 
-The first column of the file is the junction to be followed
-while the remaining columns consist of the junction's label.
-In Vidjil output, the labels are output alongside their junctions.
+The first column of the file is the window to be followed
+while the remaining columns consist of the window's label.
+In Vidjil output, the labels are output alongside their windows.
 
 ### Manual clustering
 
-The -e option allows to specify a file for manually clustering two junctions
+The -e option allows to specify a file for manually clustering two windows
 considered as similar. Such a file may be automatically produced by vidjil
 (out/edges), depending on the option provided. Only the two first columns 
 (separed by one space) are important to vidjil, they only consist of the 
-two junctions that must be clustered.
+two windows that must be clustered.
 
 
 ### Examples of use
@@ -94,31 +97,31 @@ require the "-G germline/IGH" and the "-d" options.
 
 
 ./vidjil -G germline/IGH -d data/Stanford_S22.fasta
-   # Extract (with an ultra-fast heuristic) all junctions
+   # Extract (with an ultra-fast heuristic) all windows
    # Results are in out/segmented.vdj.fa, which is a FASTA file 
    # embedding segmentation information in the headers
    # ('.vdj' format, see below)
 
->5--junction--1 
-TTGTAGTGGTGGTAGCTGCTACTCCTTTGACTACTGGGGC
->5--junction--2 
-TGTAGTGGTGGTAGCTGTTACTCCCACGTCTGGGGCCAAG
+>8--window--1 
+CACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCCA
+>5--window--2 
+CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 (...)
 
-   Junctions of size 40 (modifiable by -w) have been extracted.
-   These two junctions have 5 occurrences in the set of reads.
+   Windows of size 60 (modifiable by -w) have been extracted.
+   The first window has 8 occurrences, the second window has 5 occurrences.
 
 ./vidjil -c clones -G germline/IGH -x -r 1 -R 1 -d ./data/clones_simul.fa
-   # Extracts the junctions (-r 1, with at least 1 read each), 
+   # Extracts the windows (-r 1, with at least 1 read each), 
    # then gather them into clones (-R 1, with at least 1 read each:
    # there are many 1-read clones due to sequencing errors.) 
    # A more natural option could be -R 5.
    # No representative selection / clustalw postprocessing (-x)
-   # Results are in out/segmented.fa, out/junctions.fa-* and out/clones*
+   # Results are in out/segmented.fa, out/windows.fa-* and out/clones*
    # out/segmented.fa list segmented reads using the .vdj format (see below)
 
 ./vidjil -c clones -G germline/IGH -x -r 1 -R 5 -n 5 -d ./data/clones_simul.fa
-   # Junction extraction + clone gathering,
+   # Window extraction + clone gathering,
    # with automatic clusterisation, distance five (-n 5)
 
 ./vidjil -c segment -G germline/IGH -d data/segment_S22.fa
