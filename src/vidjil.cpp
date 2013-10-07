@@ -54,6 +54,7 @@
 // #define RELEASE_TAG  "2013.04"
 #include "release.h"
 
+
 #define DEFAULT_GERMLINE_SYSTEM "TRG" 
 #define DEFAULT_V_REP  "./germline/TRGV.fa" // IGHV 
 #define DEFAULT_D_REP  "./germline/IGHD.fa" 
@@ -578,9 +579,13 @@ int main (int argc, char **argv)
     out << "  ==> " << f_segmented << endl ;
     ofstream out_segmented(f_segmented.c_str()) ;
 
+#ifdef OUT_UNSEGMENTED
     string f_unsegmented = out_dir + prefix_filename + UNSEGMENTED_FILENAME ;
     out << "  ==> " << f_unsegmented << endl ;
     ofstream out_unsegmented(f_unsegmented.c_str()) ;
+#else
+    ofstream out_unsegmented;
+#endif
 
     out << "Loop through reads, looking for windows" ;
  
