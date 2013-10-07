@@ -1,0 +1,20 @@
+!LAUNCH: ../../vidjil -w 100 -G ../../germline/IGH -d ../../data/Stanford_S22.fasta
+!LOG: stanford-w100.log
+
+$ Parses IGHV.fa germline
+f1: 99341 bp in 341 sequences
+
+$ Parses IGHD.fa germline
+1: 1070 bp in 44 sequences
+
+$ Parses germline/IGHJ.fa
+1: 701 bp in 13 sequences
+
+$ Find the good number of "too short sequences" for windows of size 100
+1: SEG, but no window ->     2046
+
+$ Find the good number of segmented sequences (including "too short sequences")
+1: segmented 11220 reads .85.3%.
+
+$ Find the good number of windows of size 100 in Stanford S22
+1: found 8233 100-windows in 9174 segments

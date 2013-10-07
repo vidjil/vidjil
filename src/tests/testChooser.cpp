@@ -15,12 +15,12 @@ void testChooser() {
            TEST_READ_CHOOSER_BEST,"");
 
   TAP_TEST(rc.getithBest(2).label == "seq2", TEST_READ_CHOOSER_SORTED,
-           "Second sequence is " << rc.getithBest(1).label);
+           "Second sequence is " << rc.getithBest(2).label);
 
   TAP_TEST(rc.getithBest(3).label == "seq1", TEST_READ_CHOOSER_SORTED,
-           "Third sequence is " << rc.getithBest(1).label);
+           "Third sequence is " << rc.getithBest(3).label);
 
   TAP_TEST(rc.getithBest(4).label == "", TEST_READ_CHOOSER_SORTED,
-           "First sequence is " << rc.getithBest(1).label);
+           "First sequence is " << rc.getithBest(4).label);
 
 }

@@ -24,12 +24,12 @@ bool RepresentativeComputer::hasRepresentative() const{
 }
 
 
-int KmerRepresentativeComputer::getK() const{
-  return k;
+string KmerRepresentativeComputer::getSeed() const{
+  return seed;
 }
 
-void KmerRepresentativeComputer::setK(int k) {
-  this->k = k;
+void KmerRepresentativeComputer::setSeed(string seed) {
+  this->seed = seed;
 }
 
 int KmerRepresentativeComputer::getStabilityLimit() const {
@@ -41,15 +41,15 @@ void KmerRepresentativeComputer::setStabilityLimit(int limit) {
 }
 
 KmerRepresentativeComputer::KmerRepresentativeComputer(list<Sequence> &r,
-                                                       int k)
-  :RepresentativeComputer(r),k(k),stability_limit(DEFAULT_STABILITY_LIMIT){}
+                                                       string seed)
+  :RepresentativeComputer(r),seed(seed),stability_limit(DEFAULT_STABILITY_LIMIT){}
   
 void KmerRepresentativeComputer::compute(bool do_revcomp, size_t min_cover, 
                                          float percent_cover) {
   is_computed = false;
 
   // First create an index on the set of reads
-  IKmerStore<Kmer> *index = KmerStoreFactory::createIndex<Kmer>(getK(), do_revcomp);
+  IKmerStore<Kmer> *index = new MapKmerStore<Kmer>(getSeed(), do_revcomp);
 
   // Add sequences to the index
   for (list<Sequence>::iterator it=sequences.begin(); it != sequences.end(); ++it) {
@@ -67,6 +67,7 @@ void KmerRepresentativeComputer::compute(bool do_revcomp, size_t min_cover,
   size_t length_longest_run = 0;
   size_t seq_index_longest_run = 1;
   Sequence sequence_longest_run;
+  size_t k = getSeed().length();
 
   for (size_t seq = 1; seq <= sequences.size() && seq <= seq_index_longest_run + stability_limit ; seq++) {
     Sequence sequence = rc.getithBest(seq);
@@ -87,10 +88,10 @@ void KmerRepresentativeComputer::compute(bool do_revcomp, size_t min_cover,
       }
       if (length_run)
         // Take into account the whole k-mer, not just the starting positions
-        length_run += getK() - 1;
+        length_run += k - 1;
       if (length_run > length_longest_run) {
         length_longest_run = length_run;
-        pos_longest_run = i - (length_run - getK() - 1);
+        pos_longest_run = i - (length_run - k + 1);
         sequence_longest_run = sequence;
         seq_index_longest_run = seq;
       }

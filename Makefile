@@ -9,13 +9,7 @@ test: all
 should: all
 	@echo
 	@echo "*** Launching .should_get tests..."
-	src/tests/should-to-tap.sh src/tests/bugs/bug20130617.should_get
-	src/tests/should-to-tap.sh src/tests/stanford.should_get
-	src/tests/should-to-tap.sh src/tests/clones_simul.should_get
-	src/tests/should-to-tap.sh src/tests/clones_simul_cluster.should_get
-	src/tests/should-to-tap.sh src/tests/segment_S22.should_get
-	src/tests/should-to-tap.sh src/tests/segment_lec.should_get
-	src/tests/should-to-tap.sh src/tests/segment_simul.should_get
+	make -C src/tests should
 	@echo "*** All .should_get tests passed"
 
 data germline: %:
@@ -34,7 +28,7 @@ RELEASE_TAG="notag"
 RELEASE_H = src/release.h
 RELEASE_SOURCE = $(wildcard src/*.cpp) $(wildcard src/*.h)  $(wildcard src/core/*.cpp)  $(wildcard src/tests/*.cpp) $(wildcard src/core/*.h)  $(wildcard src/tests/*.h)  
 RELEASE_MAKE = ./Makefile  src/Makefile src/tests/Makefile germline/Makefile data/Makefile
-RELEASE_TESTS =  data/get-sequences $(wildcard data/*.fa) $(wildcard data/*.fq) src/tests/should-to-tap.sh $(wildcard src/tests/*.should_get) $(wildcard src/tests/bugs/*.fa)
+RELEASE_TESTS =  data/get-sequences $(wildcard data/*.fa) $(wildcard data/*.fq) src/tests/should-to-tap.sh $(wildcard src/tests/*.should_get) $(wildcard src/tests/bugs/*.fa)  $(wildcard src/tests/bugs/*.should_get)
 RELEASE_FILES = $(RELEASE_SOURCE) $(RELEASE_TESTS) $(RELEASE_MAKE)  germline/get-germline germline/split-from-imgt.py  doc/README doc/LICENSE
 RELEASE_ARCHIVE = vidjil-$(RELEASE_TAG).tgz
 

@@ -1,4 +1,14 @@
 
+2013-10-07  The Vidjil Team
+	* Better heuristic, segments more reads (core/segment.cpp)
+        * Better and faster selection of representative read (vidjil.cpp, core/read_chooser.cpp)
+        * Better display of reason of non-segmenting reads
+        * New normalization against a standard (-Z) (core/labels.cpp)
+        * New experimental lazy_msa multiple aligner
+        * New .json output
+        * New unit tests
+        * Bugs closed
+
 2013-07-03  The Vidjil Team
 	* New selection of representative read (core/read_chooser.cpp)
 	* Faster spaced seed computation (core/tools.cpp)
@@ -6,7 +16,6 @@
 	* Bugs closed
 
 2013-04-18  The Vidjil Team
-
 	* First public release
 
 

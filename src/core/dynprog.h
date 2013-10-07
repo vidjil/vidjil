@@ -8,7 +8,7 @@
 #include <iomanip>
 
 
-#define MINUS_INF -99
+#define MINUS_INF -9999
 
 using namespace std;
 
@@ -96,13 +96,16 @@ class DynProg
   int compute();
   void backtrack();
   void SemiGlobal_hits_threshold(vector<int> &hits, int threshold, int shift_pos, int verbose);
+
   string SemiGlobal_extract_best();
 
   friend ostream& operator<<(ostream& out, const DynProg& dp);
   
   int **S;
- private: 
   int ***B;
+  int *gap1 ;
+  int *linkgap ;
+  int *gap2 ;
 
 };
 

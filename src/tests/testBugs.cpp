@@ -3,6 +3,9 @@
 #include <core/kmeraffect.h>
 #include <core/affectanalyser.h>
 #include <core/segment.h>
+#include <iostream>
+
+using namespace std;
 
 void testSegmentationBug1(int delta_min, int delta_max) {
   string buggy_sequences = "bugs/kmersegment.fa";
@@ -35,8 +38,11 @@ void testSegmentationBug1(int delta_min, int delta_max) {
     }
 
     int stats[STATS_SIZE];
+    int stats_length[STATS_SIZE];
+    ofstream file("/dev/null");
     Segmenter *segment = new KmerSegmenter(input.getSequence(), index, 
-                                           delta_min, delta_max, stats, VDJ);
+                                           delta_min, delta_max, stats, stats_length, VDJ, 
+                                           file);
 
     if (strand == 2 
         || (strand == 1

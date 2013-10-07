@@ -10,15 +10,24 @@
 #include "kmeraffect.h"
 
 #define EXTEND_D_ZONE 5
+#define RATIO_STRAND 5          /* The ratio between the affectations in one
+                                   strand and the other, to safely attribute a
+                                   segment to a given strand */
 
 using namespace std;
 
 enum SEGMENTED { DONT_KNOW, SEG_PLUS, SEG_MINUS, UNSEG_TOO_SHORT, UNSEG_STRAND_NOT_CONSISTENT, 
 		 UNSEG_TOO_FEW_ZERO,  UNSEG_TOO_FEW_V, UNSEG_TOO_FEW_J, 
-		 UNSEG_BAD_DELTA_MIN, UNSEG_BAD_DELTA_MAX, STATS_SIZE } ;
-const char* const segmented_mesg[] = { "?", "+", "-", "UNSEG too short", "UNSEG strand",  
+		 UNSEG_BAD_DELTA_MIN, UNSEG_BAD_DELTA_MAX,
+		 TOTAL_SEG_AND_WINDOW, 
+		 TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW,
+		 STATS_SIZE } ;
+const char* const segmented_mesg[] = { "?", "SEG_+", "SEG_-", "UNSEG too short", "UNSEG strand",  
 				       "UNSEG too few (zero)", "UNSEG too few V", "UNSEG too few J",
-				       "UNSEG < delta_min", "UNSEG > delta_max" } ;
+				       "UNSEG < delta_min", "UNSEG > delta_max",
+                                       "= SEG, with window",
+                                       "= SEG, but no window",
+                                      } ;
 
 class Segmenter {
 protected:
@@ -34,6 +43,7 @@ protected:
 
  public:
   string code;
+  string code_short;
   string code_light;
   string info;
   int best_V, best_J ;
@@ -126,14 +136,23 @@ class KmerSegmenter : public Segmenter
    *        so that the segmentation is accepted 
    *        (left bound: end of V, right bound : start of J)
    * @param stats: integer array (of size STATS_SIZE) to store statistics
+   * @param stats_length: integer array (of size STATS_SIZE) to store length statistics
+   * @param out_unsegmented: ostream& to output unsegmented sequences
    */
   KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index, 
-		int delta_min, int delta_max, int *stats, Cost custom_cost);
+		int delta_min, int delta_max, 
+		int *stats, int *stats_length,
+		Cost custom_cost, /// TODO: custom_cost should disappear here
+		ostream &out_unsegmented);
 };
 
 class FineSegmenter : public Segmenter
 {
  public:
+   vector<pair<int, int> > score_V;
+   vector<pair<int, int> > score_D;
+   vector<pair<int, int> > score_J;
+   
    /**
    * Build a fineSegmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file
@@ -156,6 +175,9 @@ class FineSegmenter : public Segmenter
   * @param rep_J: germline for J
   */
   void FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J);
+  
+  string toJson(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J);
+  
 };
 
 

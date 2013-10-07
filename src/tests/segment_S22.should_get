@@ -13,7 +13,7 @@ $ First sequence Stanford
 # D: 0 del (left), 10 del (right)
 # N2: CCCAAAC
 # J: 8 del
-1:>lcl\\|FLN1FA002RWEZA.1\\|.*VDJ\\s+0 164 175 195 203 242\\s+IGHV3-48.01\\s+1/CGATCCCCCG/0\\s+IGHD3-22.01\\s+10/CCCAAAC/8\\s+IGHJ4.02
+1:>lcl\\|FLN1FA002RWEZA.1\\|.*VDJ\\s+0 164 175 195 203 242\\s+IGHV3-48.0.\\s+1/CGATCCCCCG/0\\s+IGHD3-22.0.\\s+10/CCCAAAC/8\\s+IGHJ4.0.
 
 $ Second sequence Stanford
 #                           165 169        180
@@ -28,7 +28,7 @@ $ Second sequence Stanford
 # D: 7 del, 2 del
 # N2: C
 # J: 0 del
-1:>lcl\\|FLN1FA001BLION.1\\|.*VDJ\\s+0\\s+165\\s+169\\s+180\\s+182\\s+232\\s+IGHV1-3.01\\s+1/TGG/7\\s+IGHD6-13.01\\s+2/C/0\\s+IGHJ3.02
+1:>lcl\\|FLN1FA001BLION.1\\|.*VDJ\\s+0\\s+165\\s+169\\s+180\\s+182\\s+232\\s+IGHV1-3.01\\s+1/TGG/7\\s+IGHD6-13.0.\\s+2/C/0\\s+IGHJ3.0.
 
 $ Third sequence Stanford
 #                                 169     177                            208   214  
@@ -44,4 +44,4 @@ $ Third sequence Stanford
 # D : 0 del, 5 del
 # N2 : TGGGT
 # J : 10 del
-1:>lcl\\|FLN1FA002SGU3N.1\\|.*VDJ\\s+0\\s+169\\s+177\\s+208\\s+214\\s+251\\s+IGHV3-9.01\\s+0/AAATTGG/0\\s+IGHD3-16.02\\s+5/TGGGT/10\\s+IGHJ4.02
+1:>lcl\\|FLN1FA002SGU3N.1\\|.*VDJ\\s+0\\s+169\\s+177\\s+208\\s+214\\s+251\\s+IGHV3-9.0.\\s+0/AAATTGG/0\\s+IGHD3-16.0.\\s+5/TGGGT/10\\s+IGHJ4.0.

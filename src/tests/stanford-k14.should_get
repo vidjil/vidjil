@@ -1,0 +1,15 @@
+!LAUNCH: ../../vidjil -k 14 -G ../../germline/IGH -d ../../data/Stanford_S22.fasta
+!LOG: stanford-k14.log
+
+$ Parses IGHV.fa germline
+f1: 99341 bp in 341 sequences
+
+$ Parses IGHD.fa germline
+1: 1070 bp in 44 sequences
+
+$ Parses germline/IGHJ.fa
+1: 701 bp in 13 sequences
+
+$ Find the good number of windows in Stanford S22 (contiguous seed 14)
+1: found 10454 60-windows in 12583 segments
+
