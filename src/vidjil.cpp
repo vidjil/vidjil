@@ -63,8 +63,8 @@
 // #define DEFAULT_READS  "./data/Stanford_S22.fa"
 #define DEFAULT_READS  "../seq/chr_pgm_50k.cut.fa"
 #define MIN_READS_WINDOW 10
-#define MIN_READS_CLONE 100
-#define MAX_CLONES -1
+#define MIN_READS_CLONE 10
+#define MAX_CLONES 20
 #define RATIO_READS_CLONE 0.1
 
 #define COMMAND_WINDOWS "windows"
