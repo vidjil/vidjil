@@ -101,6 +101,8 @@ require the "-G germline/IGH" and the "-d" options.
    # Results are in out/segmented.vdj.fa, which is a FASTA file 
    # embedding segmentation information in the headers
    # ('.vdj' format, see below)
+   # Summary of windows is also available in out/data.json
+   # ('.json' format, see below)
 
 >8--window--1 
 CACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCCA
@@ -170,3 +172,10 @@ For VJ recombinations the output is similar, the fields that are not
 applicable being removed:
 >name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene
 
+
+### .json format
+
+A summary of extracted windows is also available in a .json format,
+including, for each windows, the number of reads sharing this window.
+This file is currently used for development purposes, its format may
+change in future releases of Vidjil.
