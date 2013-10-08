@@ -183,6 +183,17 @@ circle:hover {
 }
 
 .listElem{
+  width :380px;
+  cursor:pointer;
+  -webkit-transition: color 0.8s;
+  -o-transition: color  0.8s;
+  -ms-transition: color 0.8s;
+  transition: color 0.8s;
+  font-weight : bold;
+  padding:3px;
+  height :28px;
+}
+.listElem2{
   width :370px;
   cursor:pointer;
   -webkit-transition: color 0.8s;
@@ -192,16 +203,24 @@ circle:hover {
   font-weight : bold;
   padding:3px;
   height :14px;
-
 }
 
 .nameBox {
-  width: 250px;
+  width: 320px;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
-  float:left
+  float:left;
+}
+.nameBox2 {
+  width: 260px;
+  overflow: hidden;
+  display: inline-block;
+  height: 16px;
+  position: relative;
+  float:left;
+  margin-right:10px;
 }
 
 .colorBox{
@@ -217,11 +236,9 @@ circle:hover {
 }
 
 .delBox{
-  border: solid;
-  margin-right:2px;
-  background-color: black;
-  height: 10px;
-  width: 10px;
+  margin:2px;
+  height: 12px;
+  width: 12px;
   display: inline-block;
   color: white;
   float:left;
@@ -229,18 +246,16 @@ circle:hover {
 }
 
 .sizeBox{
-  float: left;
-  margin-right: 5px;
+  float: right;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
-  width: 75px;
+  width: 60px;
 }
 
 .starBox{
-  float: left;
-  margin-right:2px;
+  float: right;
   height: 16px;
   width: 16px;
   display: inline-block;
@@ -251,9 +266,10 @@ circle:hover {
   float: left;
   margin-right:2px;
   margin-left:2px;
-  height: 14px;
-  width: 14px;
+  height: 12px;
+  width: 12px;
   display: inline-block;
+  margin-top:8px;
 }
 
 .axis{
