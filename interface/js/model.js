@@ -77,6 +77,7 @@ var resizeG_H ;
 var min_size;
 
 /* initialisation by initVJgrid */
+var system="TRG";
 var positionV={};         //tables associative labels (V-J) <=> positions X-Y (vj1)
 var positionJ={};	
 var positionV2={};        //idem (vj2)

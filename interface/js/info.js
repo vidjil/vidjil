@@ -72,6 +72,9 @@
       span0.onclick=function(){ selectClone(this.parentNode.parentNode.id); }
       span0.appendChild(document.createTextNode(getname(cloneID)));
       
+      var span1 = document.createElement('span');
+      span1.className = "nameBox2";
+      
       var svg=document.createElementNS('http://www.w3.org/2000/svg', 'svg')
       svg.setAttribute('class','starBox'); 
       svg.onclick=function(){ changeColor(this.parentNode.parentNode.id); }
@@ -101,8 +104,9 @@
       
       div_elem.appendChild(span3);
       div_elem.appendChild(span0);
-      div_elem.appendChild(span2);
       div_elem.appendChild(svg);
+      div_elem.appendChild(span1);
+      div_elem.appendChild(span2);
     
   }
   
@@ -160,10 +164,10 @@
 	
 	var div_clone=document.createElement('div');
 	div_clone.id2=table[cloneID].cluster[i];
-	div_clone.className="listElem";
+	div_clone.className="listElem2";
 	
 	var span_name = document.createElement('span');
-        span_name.className = "nameBox";
+        span_name.className = "nameBox2";
         span_name.appendChild(document.createTextNode( getcode(table[cloneID].cluster[i]) ) );
 	
 	var img=document.createElement('img');
