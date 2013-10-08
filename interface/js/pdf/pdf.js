@@ -69,21 +69,47 @@
   
   function testPDF2(){
     changeStyle(pdfStyle);
+    
     var doc = new jsPDF();
+    for (var i=0; i<6 ; i++){
+      d3.select("#polyline"+i).attr('stroke', tagColor[i]);
+      d3.select("#polyline"+i).style('stroke-width', '6px');
+    }
     var elem =document.getElementById("svg2").cloneNode(true);
     changeStyle(solarizeD);
     var opt={};
     
     listF=doc.getFontList();
     
-    opt.scaleX=200/document.getElementById("svg2").getAttribute("width");
-    opt.scaleY=100/document.getElementById("svg2").getAttribute("height");
-    opt.x_offset=5;
-    opt.y_offset=40;
-    doc.text(20, 20, 'Vidjil pdf test');
-    doc.setFont('courier', 'normal');
-    doc.text(20, 30, 'hi! aaaaaaaaaaaaa');
+    opt.scaleX=180/document.getElementById("svg2").getAttribute("width");
+    opt.scaleY=60/document.getElementById("svg2").getAttribute("height");
+    opt.x_offset=15;
+    opt.y_offset=80;
+    
+    doc.text(100, 20, 'Vidjil pdf test');
+    doc.setFontSize(12);
+    doc.text(20, 30, 'info patient : ...');
+    doc.rect(15,25, 180, 20);
+    doc.text(20, 50, 'date : '+jsonData.timestamp.split(' ')[0]);
+    doc.text(20, 55, 'system : '+system);
+    
     svgElementToPdf(elem, doc, opt)
+    doc.setFillColor(255, 255, 255);
+    doc.rect(0,140, 210, 140, 'F');
+
+    doc.setFont('courier', 'normal');
+    var y=145
+    for (var i=0; i<6 ; i++){
+      doc.setTextColor(tagColor[i]);
+      doc.text(20, y, getname(i));
+      y=y+5;
+      doc.setTextColor('black');
+      doc.text(20, y, jsonData.windows[i].window);
+      y=y+10;
+    }
+    
+    
+    /*
     doc.setTextColor(50, 190, 100);
     doc.setFont('courier', 'normal');
     doc.text(20, 180, 'ATGCTGCAGTAGCATAGCAT');
@@ -110,9 +136,10 @@
     
     doc.setFontSize(12);
     doc.text(20,220, ['aaaaaaaaaaaa','bbbbbbbbbbbbbbb','cccccccccccccccccc','dddddd']);
-    
+    */
     doc.output('dataurlnewwindow')
     //doc.save('Test.pdf');
+    changeStyle(solarizeD);
     
   }
   
