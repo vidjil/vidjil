@@ -264,10 +264,8 @@ var default_tag=8;
       if (document.getElementById("scolor"+cloneID)){document.getElementById("scolor"+cloneID).setAttribute("fill", colorStyle.c01);}
       document.getElementById("color"+cloneID).setAttribute("fill", colorStyle.c01);
     }
-    
   }
   
-
   /*ressort une couleur format RGB*/
   function colorGenerator(h,s,v){
   h=h/60;

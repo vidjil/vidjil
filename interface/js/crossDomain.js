@@ -86,13 +86,9 @@ igBlastInput["seqtype"]="TCR";
 function imgtPost(data) {
   
   imgtInput["l01p01c10"]=data;
-  
-  var iframe = document.createElement("iframe");
-  document.getElementById("frame-container").appendChild(iframe);
-  iframe.style.display = "none";
-  iframe.contentWindow.name = "imgt";
 
-  var form = document.createElement("form");
+  var form = document.getElementById("form");
+  form.innerHTML="";
   form.target = "_blank";
   form.action = "http://www.imgt.org/IMGT_vquest/vquest";
   form.method = "POST";
@@ -113,7 +109,8 @@ function igBlastPost(data){
 
   igBlastInput["queryseq"]=data;
   
-   var form = document.createElement("form");
+  var form = document.getElementById("form");
+  form.innerHTML="";
   form.target = "_blank";
   form.action = "http://www.ncbi.nlm.nih.gov/igblast/igblast.cgi";
   form.method = "POST";
