@@ -1078,7 +1078,7 @@ function initVJgrid(germlineV, germlineJ){
   
   function makeShortName(){
    for(var i=0; i<table.length; i++){
-     if (typeof(windows[i].seg) != 'undefined'){
+     if (typeof(windows[i].seg) != 'undefined' && typeof(windows[i].seg.name) != 'undefined' ){
        windows[i].seg.shortName=windows[i].seg.name.replace(new RegExp(system, 'g'), "");
      }
    }
