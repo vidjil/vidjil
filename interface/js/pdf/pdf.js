@@ -68,8 +68,8 @@
   var listF;
   
   function testPDF2(){
+    freeSelect();
     changeStyle(pdfStyle);
-    
     var doc = new jsPDF();
     for (var i=0; i<6 ; i++){
       d3.select("#polyline"+i).attr('stroke', tagColor[i]);
@@ -103,7 +103,7 @@
       doc.setTextColor(tagColor[i]);
       doc.text(20, y, getname(i));
       y=y+5;
-      doc.setTextColor('black');
+      doc.setTextColor(0,0,0);
       doc.text(20, y, jsonData.windows[i].window);
       y=y+10;
     }
