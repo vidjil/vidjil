@@ -43,9 +43,9 @@ var vis = d3.select("#visu").append("svg:svg")
 
     
 function resetVisu(){
+  displayLegend([]);
   initNodes();
   initVisu();
-  displayLegend([]);
 }
 
 function initVisu(){
@@ -357,7 +357,7 @@ function nSizeSplit(posV) {
   var coef2 =0.0005;
   
     return function(d) {
-      if (windows[d.id].seg.N!=-1){
+      if (typeof(windows[d.id].seg) != 'undefined' && windows[d.id].seg.N!=-1){
 	d.y+=coef*( ((50+(1-table[d.id].Nsize/maxNsize)*600)*resizeH) -d.y  );
       }else{
 	d.y+=coef*((h*resizeH)-d.y);

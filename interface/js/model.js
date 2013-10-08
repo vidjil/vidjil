@@ -141,6 +141,7 @@ function loadJson() {
     loadPref();
     console.log("chargement fichier de preference");
     initSize();
+    makeShortName();
     initList(windows);
     console.log("génération des clones");
     initGermline();
@@ -227,6 +228,8 @@ function load(data, limit){
   result.total_size=data.total_size;
   result.resolution1=data.resolution1;
   result.resolution5=data.resolution5;
+  result.germline=data.germline;
+  result.timestamp=data.timestamp;
     
   result.time=data.time;
   result.windows=[];
@@ -237,6 +240,11 @@ function load(data, limit){
      ite++;
    }
   }
+  
+  if (typeof result.germline !='undefined'){
+    system=result.germline.split('/')[1]
+  }
+  
   return result;
 }
 
@@ -544,7 +552,7 @@ function initVJgrid(germlineV, germlineJ){
       vmap[sizeV]=key+"*"+key2;
       sizeV++;
     }
-    subsize[key]=Object.keys(germlineV).length;
+    subsize[key]=Object.keys(germlineV[key]).length;
   }
   
   for (key in germlineJ){
@@ -552,7 +560,7 @@ function initVJgrid(germlineV, germlineJ){
       jmap[sizeJ]=key+"*"+key2;
       sizeJ++
     }
-    subsize[key]=Object.keys(germlineJ).length;
+    subsize[key]=Object.keys(germlineJ[key]).length;
   }
   
   var t1, t2;
@@ -660,7 +668,12 @@ function initVJgrid(germlineV, germlineJ){
     if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     
       if ( typeof(windows[cloneID].seg)!='undefined' && typeof(windows[cloneID].seg.name)!='undefined' ){
-	return windows[cloneID].seg.name;
+	if ( system=="IGH" && typeof(windows[cloneID].seg.shortName)!='undefined' ){
+	  return windows[cloneID].seg.shortName;
+	}
+	else{
+	  return windows[cloneID].seg.name;
+	}
       }else{
 	return windows[cloneID].window;
       }
@@ -1062,26 +1075,56 @@ function initVJgrid(germlineV, germlineJ){
     updateStyle()
   }
   
+  
+  function makeShortName(){
+   for(var i=0; i<table.length; i++){
+     if (typeof(windows[i].seg) != 'undefined'){
+       windows[i].seg.shortName=windows[i].seg.name.replace(new RegExp(system, 'g'), "");
+     }
+   }
+  }
+  
   var Vgermline, Dgermline, Jgermline;
   function initGermline(){
     Vgermline={};
     Dgermline={};
     Jgermline={};
+    var v,j;
     
-    for (var key in germline.TRGV ) {
+    switch (system){
+      case "IGH" :
+      v=germline.IGHV;
+      j=germline.IGHJ;
+      imgtInput["l01p01c04"]="IG";
+      break;
+      case "TRG" :
+      v=germline.TRGV;
+      j=germline.TRGJ;
+      imgtInput["l01p01c04"]="TR";
+      break;
+      default :
+      v=germline.TRGV;
+      j=germline.TRGJ;
+      imgtInput["l01p01c04"]="TR";
+      break;
+    }
+    
+    document.getElementById("system").innerHTML="system : "+system;
+    
+    for (var key in v ) {
       var elem = key.split('*');
       
       if ( typeof Vgermline[elem[0]] == 'undefined')
 	Vgermline[elem[0]]={}
-      Vgermline[elem[0]][elem[1]]=germline.TRGV[key];
+      Vgermline[elem[0]][elem[1]]=v[key];
     }
 
-    for (var key in germline.TRGJ ) {
+    for (var key in j ) {
       var elem = key.split('*');
       
       if ( typeof Jgermline[elem[0]] == 'undefined')
 	Jgermline[elem[0]]={}
-      Jgermline[elem[0]][elem[1]]=germline.TRGJ[key];
+      Jgermline[elem[0]][elem[1]]=j[key];
     }
 
   }
