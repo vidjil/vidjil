@@ -17,7 +17,6 @@ for ligne in fasta :
   
   if len(ligne) != 0 :
     if ligne[0]=='>' :
-      
       if len(sequence)!=0 :
 	table[identifiant]=sequence
       identifiant=ligne[1:]
@@ -25,12 +24,15 @@ for ligne in fasta :
       if identifiant.count('|') != 0 :
 	tmp=identifiant.split('|')
 	identifiant=tmp[1]
+      if identifiant.count('_') != 0 :
+	tmp2=identifiant.split('_')
+	identifiant=tmp2[0]
       sequence="";
     else :
       sequence+=ligne
       
-  if len(sequence)!=0 :
-    table[identifiant]=sequence
+if len(sequence)!=0 :
+  table[identifiant]=sequence
   
   
 fasta.close()
