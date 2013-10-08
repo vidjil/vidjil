@@ -67,13 +67,13 @@
       div_elem.className="listElem";
       
       var span0 = document.createElement('span');
-      span0.className = "nameBox";
+      span0.className = "nameBox2";
       span0.ondblclick = function(){ editName(this.parentNode.parentNode.id, this); }
       span0.onclick=function(){ selectClone(this.parentNode.parentNode.id); }
       span0.appendChild(document.createTextNode(getname(cloneID)));
       
-      var span1 = document.createElement('span');
-      span1.className = "nameBox2";
+  /*    var span1 = document.createElement('span');
+      span1.className = "nameBox2";*/
       
       var svg=document.createElementNS('http://www.w3.org/2000/svg', 'svg')
       svg.setAttribute('class','starBox'); 
@@ -105,7 +105,7 @@
       div_elem.appendChild(span3);
       div_elem.appendChild(span0);
       div_elem.appendChild(svg);
-      div_elem.appendChild(span1);
+      //div_elem.appendChild(span1);
       div_elem.appendChild(span2);
     
   }

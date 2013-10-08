@@ -53,6 +53,7 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     spanF.id = "f"+cloneID;
     div_elem(spanF, cloneID);
     spanF.className="seq-fixed";
+    spanF.firstChild.nextSibling.class="nameBox2";
     spanF.lastChild.firstChild.id="scolor"+cloneID;
 
     var spanM = document.createElement('span');

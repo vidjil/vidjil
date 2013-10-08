@@ -183,7 +183,7 @@ circle:hover {
 }
 
 .listElem{
-  width :370px;
+  width :380px;
   cursor:pointer;
   -webkit-transition: color 0.8s;
   -o-transition: color  0.8s;
@@ -191,7 +191,7 @@ circle:hover {
   transition: color 0.8s;
   font-weight : bold;
   padding:3px;
-  height :28px;
+  height :16px;
 }
 .listElem2{
   width :370px;
