@@ -237,7 +237,11 @@ var default_tag=8;
         }
 	clone.listElemStyle.color=color(cloneID);
 	clone.circleElemStyle.fill=color(cloneID);
-	clone.polylineElem.attr("stroke", color(cloneID));
+	if (colorStyle.c01 !="#000" ){
+	  clone.polylineElem.attr("stroke", color(cloneID));
+	}else{
+	  clone.polylineElem.attr("stroke", colorStyle.c07);
+	}
       }else{
 	clone.polylineElem.style("stroke-width","1.2px");
 	clone.listElemStyle.color=colorStyle.c06;

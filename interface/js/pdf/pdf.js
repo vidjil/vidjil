@@ -68,24 +68,33 @@
   var listF;
   
   function testPDF2(){
+    var list=[];
+    var li = document.getElementById("listSeq").getElementsByTagName("li");
+        for (var i = 0; i<li.length; i++){
+	  list[i]=li[i].id.substr(3);
+	}
     freeSelect();
     changeStyle(pdfStyle);
     var doc = new jsPDF();
-    for (var i=0; i<6 ; i++){
-      d3.select("#polyline"+i).attr('stroke', tagColor[i]);
-      d3.select("#polyline"+i).style('stroke-width', '6px');
+
+    for (var i = 0; i<table.length; i++){
+      d3.select("#polyline"+i).style('stroke-width', '2px');
+    }
+    for (var i = 0; i<list.length; i++){
+      d3.select("#polyline"+list[i]).attr('stroke', tagColor[i]);
+      d3.select("#polyline"+list[i]).style('stroke-width', '6px');
     }
     var elem =document.getElementById("svg2").cloneNode(true);
     changeStyle(solarizeD);
     var opt={};
-    
+
     listF=doc.getFontList();
-    
+
     opt.scaleX=180/document.getElementById("svg2").getAttribute("width");
-    opt.scaleY=60/document.getElementById("svg2").getAttribute("height");
+    opt.scaleY=80/document.getElementById("svg2").getAttribute("height");
     opt.x_offset=15;
-    opt.y_offset=80;
-    
+    opt.y_offset=60;
+
     doc.setFontSize(12);
     doc.text(145, 20, 'Vidjil - http://bioinfo.lifl.fr/vidjil');
     doc.rect(15, 15, 60, 23);
@@ -96,22 +105,22 @@
 
     doc.text(20, 45, 'reads: ' + jsonData.total_size);
 
-    
     svgElementToPdf(elem, doc, opt)
     doc.setFillColor(255, 255, 255);
     doc.rect(0,140, 210, 140, 'F');
 
+    
     doc.setFont('courier', 'normal');
     var y=145
-    for (var i=0; i<6 ; i++){
+
+    for (var i = 0; i<list.length; i++){
       doc.setTextColor(tagColor[i]);
-      doc.text(20, y, getname(i));
+      doc.text(20, y, getname(list[i]));
       y=y+5;
       doc.setTextColor(0,0,0);
-      doc.text(20, y, jsonData.windows[i].window);
+      doc.text(20, y, jsonData.windows[list[i]].window);
       y=y+10;
     }
-    
     
     /*
     doc.setTextColor(50, 190, 100);
