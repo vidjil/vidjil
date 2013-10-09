@@ -1080,7 +1080,12 @@ function initVJgrid(germlineV, germlineJ){
   function makeShortName(){
    for(var i=0; i<table.length; i++){
      if (typeof(windows[i].seg) != 'undefined' && typeof(windows[i].seg.name) != 'undefined' ){
-       windows[i].seg.shortName=windows[i].seg.name.replace(new RegExp(system, 'g'), "");
+       windows[i].seg.shortName=windows[i].seg.name.replace(new RegExp('IGHV', 'g'), "VH");
+       windows[i].seg.shortName=windows[i].seg.shortName.replace(new RegExp('IGHD', 'g'), "DH");
+       windows[i].seg.shortName=windows[i].seg.shortName.replace(new RegExp('IGHJ', 'g'), "JH");
+       windows[i].seg.shortName=windows[i].seg.shortName.replace(new RegExp('TRG', 'g'), "");
+       windows[i].seg.shortName=windows[i].seg.shortName.replace(new RegExp('\\*..', 'g'), "");
+
      }
    }
   }
