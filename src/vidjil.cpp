@@ -1011,10 +1011,11 @@ int main (int argc, char **argv)
 	if (segment_D)
 	  seg.FineSegmentD(rep_V, rep_D, rep_J);
 	
-          if (seg.isSegmented())
+        //cout << seg.toJson();
+        json_data_segment[it->first]=seg.toJson(rep_V, rep_D, rep_J);
+        
+        if (seg.isSegmented())
 	  {
-	    //cout << seg.toJson();
-	    json_data_segment[it->first]=seg.toJson(rep_V, rep_D, rep_J);
 	    
 	    // As soon as one representative is segmented
 	    
@@ -1233,11 +1234,11 @@ int main (int argc, char **argv)
           if (segment_D)
             seg.FineSegmentD(rep_V, rep_D, rep_J);
 		
-	if (seg.isSegmented())
+          //cout << seg.toJson();
+          json_data_segment[it->first]=seg.toJson(rep_V, rep_D, rep_J);
+
+          if (seg.isSegmented())
 	  {
-	    //cout << seg.toJson();
-	    json_data_segment[it->first]=seg.toJson(rep_V, rep_D, rep_J);
-	    
 	    representatives_this_clone.push_back(seg.getSequence());
 	  }
 
