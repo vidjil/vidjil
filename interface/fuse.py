@@ -6,6 +6,7 @@ import time
  
 class Windows:
   def __init__(self):
+    self.reads_total = []
     self.total_size = []
     self.normalizations = []
     self.resolution1 = []
@@ -14,7 +15,7 @@ class Windows:
     self.windows = []
 
   def __str__(self):
-    return "<windows %s: %s %d>" % (self.time, self.total_size, len(self.windows))
+    return "<windows %s: %s %s %d>" % (self.time, self.reads_total, self.total_size, len(self.windows))
  
 class Window:
   def __init__(self):
@@ -47,6 +48,7 @@ def juncToJson(obj):
   if isinstance(obj, Windows):
     return {"windows": obj.windows,
       "normalizations": obj.normalizations,
+      "reads_total": obj.reads_total,
       "total_size": obj.total_size,
       "resolution1": obj.resolution1,
       "resolution5": obj.resolution5,
@@ -84,10 +86,11 @@ def juncToJson(obj):
 
 #deserialiseur perso, convertit un format json en objet python correspondant
 def jsonToJunc(obj_dict):
-  if "total_size" in obj_dict:
+  if "reads_total" in obj_dict:
     obj = Windows()
     obj.normalizations=obj_dict["normalizations"]
     obj.windows=obj_dict["windows"]
+    obj.reads_total=obj_dict["reads_total"]
     obj.total_size=obj_dict["total_size"]
     obj.resolution1=obj_dict["resolution1"]
     obj.resolution5=obj_dict["resolution5"]
@@ -126,6 +129,7 @@ def cutList(l1, limit):
   
   out = Windows()
   out.normalizations=l1.normalizations
+  out.reads_total=l1.reads_total
   out.total_size=l1.total_size
   out.resolution1=l1.resolution1
   out.resolution5=l1.resolution5
@@ -153,7 +157,7 @@ def fuseList(l1, l2, limit):
   
   dataseg = {}
   tampon=[]
-  s=len(l1.total_size)
+  s=len(l1.reads_total)
   
   tp=[]
   
@@ -164,7 +168,7 @@ def fuseList(l1, l2, limit):
     tampon.append(tp)
   
   tampon2=[]
-  s2=len(l2.total_size)
+  s2=len(l2.reads_total)
   for i in range(s2):
     tampon2.append(tp)
   
@@ -210,7 +214,8 @@ def fuseList(l1, l2, limit):
       dico_ratios[l1.windows[index].window] += tampon2
   
   out = Windows()
-  out.normalizations=l1.normalizations  
+  out.normalizations=l1.normalizations
+  out.reads_total=l1.reads_total+l2.reads_total    
   out.total_size=l1.total_size+l2.total_size    
   out.resolution1=l1.resolution1+l2.resolution1
   out.resolution5=l1.resolution5+l2.resolution5
