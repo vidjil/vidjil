@@ -85,7 +85,6 @@
       d3.select("#polyline"+list[i]).attr('stroke', tagColor[i]);
       d3.select("#polyline"+list[i]).style('stroke-width', '6px');
     }
-    d3.select("#resolution5").attr('fill', null);
     
     var elem =document.getElementById("svg2").cloneNode(true);
     changeStyle(solarizeD);
@@ -123,13 +122,8 @@
       doc.setFont('courier', 'normal');
       doc.setTextColor(0,0,0);
       var r=0;
-      for(var j=0 ;j<table[id].cluster.length; j++){
-	r += windows[table[id].cluster[j]].size[0];}
-      if (typeof(r) != 'number'){
-	doc.text(120, y, 'reads : 0 -- '+(getSize(id)*100).toFixed(3)+' %');
-      }else{
-	doc.text(120, y, 'reads : '+r+' -- '+(getSize(id)*100).toFixed(3)+' %');
-      }
+
+      doc.text(120, y, 'reads : '+Math.floor(getSize(id)*jsonData.total_size[t])+' -- '+(getSize(id)*100).toFixed(3)+' %');
       
       y=y+5;
       if (typeof(windows[id].seg) !='number'){
@@ -140,7 +134,7 @@
 	var seq=windows[id].seg.sequence;
 	
 	var seq=seq.insert(windows[id].seg.r1, "-N    J-");
-	var seq=seq.insert(windows[id].seg.l1, "-V    N-");
+	var seq=seq.insert(windows[id].seg.l1+1, "-V    N-");
 	
 	for(j=0 ; j<(Math.floor(seq.length/80)+1) ; j++){
 	  doc.text(20, y, seq.substring(j*80, (j+1)*80 ));
