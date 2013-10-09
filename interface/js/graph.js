@@ -88,7 +88,7 @@ function initGraph(){
   //abscisse
   if (windows[0].size.length==1){
     graph_col[0]=700;
-    data_axis[0]={class : "axis_v" ,text : "fu"+1 ,
+    data_axis[0]={class : "axis_v" ,text : "", // "fu"+1 ,
 			x1 : graph_col[0], x2 : graph_col[0], 
 			y1 : g_h+20, y2 : 0, time: 0}
     }else{
@@ -366,7 +366,7 @@ function updateGraph(){
       if ( d.date != "undefined" ){
 	return d.date.toLocaleDateString();
       }else{
-	return "  /  /  ";
+	return ""; // "  /  /  ";
       }
     })
     .attr("class", "date")
