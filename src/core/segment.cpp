@@ -730,27 +730,29 @@ string FineSegmenter::toJson(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
   
   seg_str << " \"seg\" : {";
   seg_str << " \"sequence\" : \""<< revcomp(sequence, reversed) << "\","<<endl;
-  seg_str << " \"name\" : \""<< code_short << "\" ,"<<endl;
-  seg_str << " \"r1\" : "<< right << ","<<endl;
-  seg_str << " \"r2\" : "<< right2 << ","<<endl;
-  seg_str << " \"l1\" : "<< left << ","<<endl;
-  seg_str << " \"l2\" : "<< left2 << ","<<endl;
-  seg_str << " \"Nsize\" : "<< (del_V+del_J+seg_N.size()) << ","<<endl;
-  seg_str << " \"V\" : [\""<<rep_V.label(score_V[0].second);
-  for (int i=1; i<4; i++){
+  if (isSegmented()) {
+    seg_str << " \"name\" : \""<< code_short << "\" ,"<<endl;
+    seg_str << " \"r1\" : "<< right << ","<<endl;
+    seg_str << " \"r2\" : "<< right2 << ","<<endl;
+    seg_str << " \"l1\" : "<< left << ","<<endl;
+    seg_str << " \"l2\" : "<< left2 << ","<<endl;
+    seg_str << " \"Nsize\" : "<< (del_V+del_J+seg_N.size()) << ","<<endl;
+    seg_str << " \"V\" : [\""<<rep_V.label(score_V[0].second);
+    for (int i=1; i<4; i++){
       seg_str << "\",\""<<rep_V.label(score_V[i].second);
-  }
-  if (score_D.size()>0){
-    seg_str << "\"],\n \"D\" : [\""<<rep_D.label(score_D[0].second);
+    }
+    if (score_D.size()>0){
+      seg_str << "\"],\n \"D\" : [\""<<rep_D.label(score_D[0].second);
       for (int i=1; i<4; i++){
 	seg_str << "\", \""<<rep_D.label(score_D[i].second);
+      }
     }
-  }
-  seg_str << "\"],\n \"J\" : [\""<<rep_J.label(score_J[0].second);
+    seg_str << "\"],\n \"J\" : [\""<<rep_J.label(score_J[0].second);
     for (int i=1; i<4; i++){
       seg_str << "\",\""<<rep_J.label(score_J[i].second);
+    }
   }
-  seg_str << "\"]}";
+    seg_str << "\"]}";
   
   return seg_str.str();
 }
