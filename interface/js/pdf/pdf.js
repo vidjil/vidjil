@@ -86,12 +86,16 @@
     opt.x_offset=15;
     opt.y_offset=80;
     
-    doc.text(100, 20, 'Vidjil pdf test');
     doc.setFontSize(12);
-    doc.text(20, 30, 'info patient : ...');
-    doc.rect(15,25, 180, 20);
-    doc.text(20, 50, 'date : '+jsonData.timestamp.split(' ')[0]);
-    doc.text(20, 55, 'system : '+system);
+    doc.text(145, 20, 'Vidjil - http://bioinfo.lifl.fr/vidjil');
+    doc.rect(15, 15, 60, 23);
+    doc.text(20, 20, document.getElementById("upload_json").files[0].name);
+    doc.text(20, 25, 'run: 2013-10-03');
+    doc.text(20, 30, 'analysis: '+jsonData.timestamp.split(' ')[0]);
+    doc.text(20, 35, 'germline/'+system);
+
+    doc.text(20, 45, 'reads: ' + jsonData.total_size);
+
     
     svgElementToPdf(elem, doc, opt)
     doc.setFillColor(255, 255, 255);
