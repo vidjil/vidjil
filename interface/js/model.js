@@ -242,7 +242,8 @@ function load(data, limit){
   }
   
   if (typeof result.germline !='undefined'){
-    system=result.germline.split('/')[1]
+    var t=result.germline.split('/');
+    system=t[t.length-1]
   }
   
   return result;
