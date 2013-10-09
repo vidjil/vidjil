@@ -188,7 +188,7 @@ function loadJsonAnalysis2() {
     initList(windows);
     initCache();
     updateStyle();
-    displayTop(10);
+    displayTop(30);
   };
   
   document.getElementById("analysis_menu").style.display="none";
@@ -218,7 +218,7 @@ function loadJsonAnalysis() {
     initList(windows);
     initCache();
     updateStyle();
-    displayTop(5);
+    displayTop(30);
   };
   
   document.getElementById("analysis_menu").style.display="none";
@@ -1003,7 +1003,7 @@ function initVJgrid(germlineV, germlineJ){
     initCache();
     updateStyle();
     updateList();
-    displayTop(5);
+    displayTop(30);
     resetGraphCluster();
     updateVis();
     setTimeout('updateStyle()',1000);
