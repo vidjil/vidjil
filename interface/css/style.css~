@@ -193,17 +193,6 @@ circle:hover {
   padding:3px;
   height :14px;
 }
-.listElem2{
-  width :370px;
-  cursor:pointer;
-  -webkit-transition: color 0.8s;
-  -o-transition: color  0.8s;
-  -ms-transition: color 0.8s;
-  transition: color 0.8s;
-  font-weight : bold;
-  padding:3px;
-  height :14px;
-}
 
 .nameBox {
   width: 320px;
@@ -243,6 +232,8 @@ circle:hover {
   color: white;
   float:left;
   user-select :none;
+  margin-right: 5px;
+  margin-left: 15px;
 }
 
 .sizeBox{
@@ -269,7 +260,6 @@ circle:hover {
   height: 12px;
   width: 12px;
   display: inline-block;
-  margin-top:8px;
 }
 
 .axis{
@@ -428,7 +418,6 @@ cursor:pointer;
 }
 
 .seq-mobil {
-color: white;
 margin-left: 405px;
 letter-spacing: 0.12em;
 }

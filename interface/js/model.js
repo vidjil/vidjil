@@ -1085,7 +1085,6 @@ function initVJgrid(germlineV, germlineJ){
        windows[i].seg.shortName=windows[i].seg.shortName.replace(new RegExp('IGHJ', 'g'), "JH");
        windows[i].seg.shortName=windows[i].seg.shortName.replace(new RegExp('TRG', 'g'), "");
        windows[i].seg.shortName=windows[i].seg.shortName.replace(new RegExp('\\*..', 'g'), "");
-
      }
    }
   }
