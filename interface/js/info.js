@@ -71,6 +71,7 @@
       span0.ondblclick = function(){ editName(this.parentNode.parentNode.id, this); }
       span0.onclick=function(){ selectClone(this.parentNode.parentNode.id); }
       span0.appendChild(document.createTextNode(getname(cloneID)));
+      span0.title=getname(cloneID);
       
   /*    var span1 = document.createElement('span');
       span1.className = "nameBox2";*/
@@ -164,11 +165,12 @@
 	
 	var div_clone=document.createElement('div');
 	div_clone.id2=table[cloneID].cluster[i];
-	div_clone.className="listElem2";
+	div_clone.className="listElem";
 	
 	var span_name = document.createElement('span');
         span_name.className = "nameBox2";
         span_name.appendChild(document.createTextNode( getcode(table[cloneID].cluster[i]) ) );
+	span_name.title=getcode(table[cloneID].cluster[i]);
 	
 	var img=document.createElement('img');
 	img.onclick=function(){ split(cloneID, this.parentNode.id2);
