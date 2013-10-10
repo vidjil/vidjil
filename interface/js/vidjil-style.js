@@ -81,7 +81,7 @@ pdfStyle.c03 = "#ffffff"; //background highlight
 pdfStyle.c04 = "#93a1a1";
 pdfStyle.c05 = "#502325"; //focus 
 pdfStyle.c06 = "#b3b5b1"; //graph legend
-pdfStyle.c07 = "#d3d5d1"; //inactive 
+pdfStyle.c07 = "#e3e5e1"; //inactive 
 
 pdfStyle.col_s = 0.8; //pureté
 pdfStyle.col_v = 0.72; //brightness
@@ -237,6 +237,7 @@ var default_tag=8;
         }
 	clone.listElemStyle.color=color(cloneID);
 	clone.circleElemStyle.fill=color(cloneID);
+
 	clone.polylineElem.attr("stroke", color(cloneID));
       }else{
 	clone.polylineElem.style("stroke-width","1.2px");

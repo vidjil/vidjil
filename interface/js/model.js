@@ -138,8 +138,8 @@ function loadJson() {
     init();
     initTag();
     console.log("chargement fichier json");
-    loadPref();
-    console.log("chargement fichier de preference");
+    //loadPref();
+    //console.log("chargement fichier de preference");
     initSize();
     makeShortName();
     initList(windows);
@@ -160,8 +160,40 @@ function loadJson() {
     console.log("demarrage");
   };
   
+  setTimeout('loadJsonAnalysis2();',3000);
   document.getElementById("file_menu").style.display="none";
 }
+
+
+function loadJsonAnalysis2() {
+    
+  oFReader = new FileReader();
+
+  if (document.getElementById("upload_pref").files.length === 0) { return; }
+
+  document.getElementById("analysis_file").innerHTML="analysis_file : "+document.getElementById("upload_pref").files[0].name;
+ 
+  oFile = document.getElementById("upload_pref").files[0];
+  oFReader.readAsText(oFile);
+  
+  oFReader.onload = function (oFREvent) {
+    var text = oFREvent.target.result;
+    pref = JSON.parse(text);
+    loadPref();
+    console.log("chargement fichier de preference");
+    initCoef();
+    console.log("initialisation coef");
+    updateGraph();
+    updateVis();
+    initList(windows);
+    initCache();
+    updateStyle();
+    displayTop(30);
+  };
+  
+  document.getElementById("analysis_menu").style.display="none";
+}
+
 
 function loadJsonAnalysis() {
 
@@ -186,7 +218,7 @@ function loadJsonAnalysis() {
     initList(windows);
     initCache();
     updateStyle();
-    displayTop(5);
+    displayTop(30);
   };
   
   document.getElementById("analysis_menu").style.display="none";
@@ -971,7 +1003,7 @@ function initVJgrid(germlineV, germlineJ){
     initCache();
     updateStyle();
     updateList();
-    displayTop(5);
+    displayTop(30);
     resetGraphCluster();
     updateVis();
     setTimeout('updateStyle()',1000);

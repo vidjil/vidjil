@@ -68,24 +68,35 @@
   var listF;
   
   function testPDF2(){
+    var list=[];
+    var li = document.getElementById("listSeq").getElementsByTagName("li");
+        for (var i = 0; i<li.length; i++){
+	  list[i]=li[i].id.substr(3);
+	}
     freeSelect();
     changeStyle(pdfStyle);
+    tagColor[8] = "#d3d5d1";
     var doc = new jsPDF();
-    for (var i=0; i<6 ; i++){
-      d3.select("#polyline"+i).attr('stroke', tagColor[i]);
-      d3.select("#polyline"+i).style('stroke-width', '6px');
+
+    for (var i = 0; i<table.length; i++){
+      d3.select("#polyline"+i).style('stroke-width', '2px');
     }
+    for (var i = 0; i<list.length; i++){
+      d3.select("#polyline"+list[i]).attr('stroke', tagColor[i]);
+      d3.select("#polyline"+list[i]).style('stroke-width', '6px');
+    }
+    
     var elem =document.getElementById("svg2").cloneNode(true);
     changeStyle(solarizeD);
     var opt={};
-    
+
     listF=doc.getFontList();
-    
+
     opt.scaleX=180/document.getElementById("svg2").getAttribute("width");
-    opt.scaleY=60/document.getElementById("svg2").getAttribute("height");
+    opt.scaleY=80/document.getElementById("svg2").getAttribute("height");
     opt.x_offset=15;
-    opt.y_offset=80;
-    
+    opt.y_offset=60;
+
     doc.setFontSize(12);
     doc.text(145, 20, 'Vidjil - http://bioinfo.lifl.fr/vidjil');
     doc.rect(15, 15, 60, 23);
@@ -96,22 +107,47 @@
 
     doc.text(20, 45, 'reads: ' + jsonData.total_size);
 
-    
     svgElementToPdf(elem, doc, opt)
     doc.setFillColor(255, 255, 255);
     doc.rect(0,140, 210, 140, 'F');
 
-    doc.setFont('courier', 'normal');
-    var y=145
-    for (var i=0; i<6 ; i++){
-      doc.setTextColor(tagColor[i]);
-      doc.text(20, y, getname(i));
-      y=y+5;
-      doc.setTextColor(0,0,0);
-      doc.text(20, y, jsonData.windows[i].window);
-      y=y+10;
-    }
     
+    var y=145
+
+    for (var i = 0; i<list.length; i++){
+      var id=list[i];
+      doc.setFont('courier', 'bold');
+      doc.setTextColor(tagColor[i]);
+      doc.text(20, y, getname(id));
+      doc.setFont('courier', 'normal');
+      doc.setTextColor(0,0,0);
+      var r=0;
+
+      doc.text(120, y, 'reads : '+Math.floor(getSize(id)*jsonData.total_size[t])+' -- '+(getSize(id)*100).toFixed(3)+' %');
+      
+      y=y+5;
+      if (typeof(windows[id].seg) !='number'){
+	//var v_seq=windows[id].seg.sequence.substr(0, windows[id].seg.l1+1);
+	//var n_seq=windows[id].seg.sequence.substr(windows[id].seg.l1+1, windows[id].seg.r1);
+	//var j_seq=windows[id].seg.sequence.substr(windows[id].seg.r1);
+	  
+	var seq=windows[id].seg.sequence;
+	
+	var seq=seq.insert(windows[id].seg.r1, "-N    J-");
+	var seq=seq.insert(windows[id].seg.l1+1, "-V    N-");
+	
+	for(j=0 ; j<(Math.floor(seq.length/80)+1) ; j++){
+	  doc.text(20, y, seq.substring(j*80, (j+1)*80 ));
+	  y=y+5;
+	}
+	
+	y=y+10;
+      }else{
+	doc.text(20, y, "segment fail :"+windows[id].window);
+	y=y+10;
+      }
+      
+    }
     
     /*
     doc.setTextColor(50, 190, 100);
@@ -143,7 +179,14 @@
     */
     doc.output('dataurlnewwindow')
     //doc.save('Test.pdf');
+    tagColor[8] = colorStyle.c01;
     changeStyle(solarizeD);
-    
+
   }
   
+String.prototype.insert = function (index, string) {
+  if (index > 0)
+    return this.substring(0, index) + string + this.substring(index, this.length);
+  else
+    return string + this;
+};
