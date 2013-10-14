@@ -122,8 +122,16 @@
       doc.setFont('courier', 'normal');
       doc.setTextColor(0,0,0);
       var r=0;
-
-      doc.text(120, y, 'reads : '+Math.floor(getSize(id)*jsonData.total_size[t])+' -- '+(getSize(id)*100).toFixed(3)+' %');
+      for(var j=0 ;j<table[id].cluster.length; j++){
+	r += windows[table[id].cluster[j]].ratios[t][0];}
+      var s;
+      var size=getSize(id);
+      if (size<0.0001){
+	    s=(size).toExponential(1); 
+      }else{
+	    s=(100*size).toFixed(3)+"%";
+      }
+      doc.text(120, y, 'reads : '+Math.floor(r*jsonData.total_size[t])+' -- '+s);
       
       y=y+5;
       if (typeof(windows[id].seg) !='number'){

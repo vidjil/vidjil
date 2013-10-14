@@ -10,35 +10,6 @@
  * everytime a data model is modified by a control function the views are called to be updated
  * 
  * 
- * Content :
- * 
- * loadJson()
- * initCoef()
- * switchVisu()
- * changeT(time)
- * 
- * initClones(data)
- * 
- * makeVJclass()
- * initVJgrid()
- * 
- * getName(cloneID)
- * getSize(cloneID)
- * radius(cloneID)
- * 
- * color(cloneID)
- * colorV(cloneID)
- * colorJ(cloneID)
- * changeColor(cloneID)
- * changeColorMethod(colorM)
- * stroke(cloneID);
- * 
- * changeSplitMethod(splitM)
- * 
- * focusIn(cloneID)
- * focusOut(cloneID)
- * selectClone(cloneID)
- * freeSelect(cloneID)
  * ∕
  
 /*************************************************************************************************/
@@ -93,6 +64,20 @@ var colorN=[];
 
 //default 
 var used_ratio=0;
+
+function model(dataFile, analysisFile){
+  this.dataF=dataFile;
+  this.analysisF=analysisFile;
+  
+  this.jsonData;
+  this.windows;
+  this.pref ={ custom :[], cluster :[], date :[]} ;
+  
+  
+  
+}
+
+var m = new model("plop","plup");
 
 
 /*fonction de chargement local*/
