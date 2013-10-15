@@ -26,11 +26,9 @@ var pref ={ custom :[], cluster :[], date :[]} ;              //fichier des pref
 var colorMethod="Tag"           //methode de colorisation ( Tag par defaut)
 var splitMethod="begin";          //par defaut pas de method de split
 var t = 0;                    //point de suivi courant ( par defaut t=0 )
-limitClones=1000;
 var top_limit=50;
 var normalization=false;
 
- 
 var margeVJ_left=80;              //info quadrillage (vj1/vj2)
 var margeVJ_top=50;
 var stepV;
@@ -64,20 +62,6 @@ var colorN=[];
 
 //default 
 var used_ratio=0;
-
-function model(dataFile, analysisFile){
-  this.dataF=dataFile;
-  this.analysisF=analysisFile;
-  
-  this.jsonData;
-  this.windows;
-  this.pref ={ custom :[], cluster :[], date :[]} ;
-  
-  
-  
-}
-
-var m = new model("plop","plup");
 
 
 /*fonction de chargement local*/
@@ -147,6 +131,7 @@ function loadJson() {
   
   setTimeout('loadJsonAnalysis2();',3000);
   document.getElementById("file_menu").style.display="none";
+  
 }
 
 
@@ -268,8 +253,6 @@ function load(data, limit){
 
 function init(){
   totalClones=windows.length;
-  if ( totalClones > limitClones ) totalClones = limitClones;
-  console.log("nombre de jonctions "+totalClones);
   
   for(var i=0 ;i<totalClones; i++){
     
@@ -1042,17 +1025,6 @@ function initVJgrid(germlineV, germlineJ){
     updateVis();
     force.alpha(.2)
   }
-  
-  function removeKey(arrayName,key)
-  {
-    var x;
-    var tmpArray = new Array();
-    for(x in arrayName)
-    {
-      if(x!=key) { tmpArray[x] = arrayName[x]; }
-    }
-    return tmpArray;
-  }
  /*
   function changeDate(time){
     document.getElementById("dateSelector").style.display="block";
@@ -1151,9 +1123,492 @@ function initVJgrid(germlineV, germlineJ){
 
   }
   
+/*	MODEL
+ * 
+ * load
+ * loadGermline
+ * loadAnalysis
+ * initClones
+ * saveAnalysis
+ * resetAnalysis
+ * changeName
+ * getName
+ * getCode
+ * getSize
+ * changeRatio
+ * changeTime
+ * focusIn
+ * focusOut
+ * select
+ * unselect
+ * unselectAll
+ * getSelected
+ * merge
+ * split
+ * 
+ * */
   
   
+function Model(){
+  this.analysis ={ custom :[], cluster :[], date :[]} ;
+  this.t=0;
+  this.r=0;
+}
+
+Model.prototype = {
+
+/* test
+ * 
+ * */
+  test : function(){
+  },
+  
+/* load the selected data/analysis file in the model
+ * @data : id of the form (html element) linking to the data file
+ * @analysis : id of the form (html element) linking to the analysis file
+ * impossible to use direct path to input files, need a fakepath from input form 
+ * @limit : minimum top value to keep a window*/
+  load : function(data, analysis, limit){
+    console.log("load()");
+    if (document.getElementById(data).files.length === 0) { return; }
+    
+    var j=0;
+    self = this;
+    var oFReader = new FileReader();
+    var oFile = document.getElementById(data).files[0];
+    self.dataFileName= document.getElementById(data).files[0].name;
+    oFReader.readAsText(oFile);
+    
+    oFReader.onload = function (oFREvent) {
+      var data =JSON.parse( oFREvent.target.result);
+      if (typeof(data.timestamp) =='undefined'){
+	//TODO message d'erreur
+	return 0;
+      }
+      
+      self.normalizations = data.normalizations;
+      self.total_size = data.total_size;
+      self.resolution1 = data.resolution1;
+      self.resolution5 = data.resolution5;
+      self.timestamp = data.timestamp;
+      self.time = data.time;
+      self.windows = [];
+      
+      for(var i=0; i < data.windows.length; i++){
+	if (data.windows[i].top <= limit){
+	  self.windows[j] = data.windows[i];
+	  j++;
+	} 	
+      }
+      self.n_windows=self.windows.length;
+      
+      if (typeof data.germline !='undefined'){
+	var t=data.germline.split('/');
+	self.system=t[t.length-1];
+      }else{
+	self.system="TRG";
+      }
+      self.loadGermline();
+      self.loadAnalysis(analysis);
+    }
+  },//fin load
   
   
+/* 
+ * 
+ * */
+  loadGermline: function(){
+    console.log("loadGermline()");
+    self.germline={};
+    self.germline.v={}
+    self.germline.d={}
+    self.germline.j={}
+    var v,j;
+    
+    //selection germline
+    switch (self.system){
+      case "IGH" :
+	self.germline.v=germline.IGHV;
+	self.germline.j=germline.IGHJ;
+	break;
+	default :
+	self.germline.v=germline.TRGV;
+	self.germline.j=germline.TRGJ;
+	break;
+      }
+    /* 
+    //décomposition genes/alleles
+    self.germline.v={}
+    self.germline.d={}
+    self.germline.j={}
+    for (var key in v ) {
+      var elem = key.split('*');
+	
+      if ( typeof self.germline.v[elem[0]] == 'undefined')
+	self.germline.v[elem[0]]={}
+      self.germline.v[elem[0]][elem[1]]=v[key];
+    }
+
+    for (var key in j ) {
+      var elem = key.split('*');
+	
+      if ( typeof self.germline.j[elem[0]] == 'undefined')
+	self.germline.j[elem[0]]={}
+      self.germline.j[elem[0]][elem[1]]=j[key];
+    }*/
+   
+    // COLOR V
+    key = Object.keys(self.germline.v);
+    for (var i=0; i<key.length; i++){
+      var tmp=self.germline.v[key[i]];
+      self.germline.v[key[i]]={};
+      self.germline.v[key[i]].seq=tmp;
+      self.germline.v[key[i]].color=colorGenerator( ( 30+(i/key.length)*290 ), colorStyle.col_s, colorStyle.col_v );
+    }
+    // COLOR J
+    key = Object.keys(self.germline.j);
+    for (var i=0; i<key.length; i++){
+      var tmp=self.germline.j[key[i]];
+      self.germline.j[key[i]]={};
+      self.germline.j[key[i]].seq=tmp;
+      self.germline.j[key[i]].color=colorGenerator( ( 30+(i/key.length)*290 ), colorStyle.col_s, colorStyle.col_v );
+    }
   
+  },//fin loadGermline
+
+  
+/* load the selected analysis file in the model
+ * @analysis : id of the form (html element) linking to the analysis file
+ * */
+  loadAnalysis: function(analysis){
+    console.log("loadAnalysis()");
+    if (document.getElementById(analysis).files.length != 0) { 
+      var oFReader = new FileReader();
+      var oFile = document.getElementById(analysis).files[0];
+      self = this;
+      
+      self.analysisFileName=document.getElementById(analysis).files[0].name;
+      oFReader.readAsText(oFile);
+      
+      oFReader.onload = function (oFREvent) {
+	var text = oFREvent.target.result;
+	self.analysis = JSON.parse(text);
+	self.initClones();
+      }
+    }else{
+      self.initClones();
+    }
+  },//fin loadAnalysis
+
+  
+/* 
+ * 
+ * */
+  initClones: function(){
+    console.log("initClones()");
+    var maxNsize=0;
+    var nsize;
+    this.mapID = [];
+    this.clones =[];
+    
+    //		NSIZE
+    for(var i=0; i<this.n_windows; i++){
+      if (typeof(this.windows[i].seg) != 'undefined' && typeof(this.windows[i].seg.Nsize) != 'undefined' ){
+	nsize=this.windows[i].seg.Nsize;
+	if (nsize>maxNsize){maxNsize=nsize;}
+      }else{
+	nsize=-1;
+      }
+      this.mapID[this.windows[i].window]=i;
+      this.clones[i]={display:true, Nsize:nsize, cluster :[i], tag: default_tag};
+    }
+    
+    //		COLOR_N
+    for (var i=0; i<this.n_windows; i++){
+      this.clones[i].colorN=colorGenerator( ( ((i/maxNsize)-1)*(-250) )  ,  colorStyle.col_s  , colorStyle.col_v);
+    }
+    
+    //		SHORTNAME
+    for(var i=0; i<this.n_windows; i++){
+      if (typeof(this.windows[i].seg) != 'undefined' && typeof(this.windows[i].seg.name) != 'undefined' ){
+	this.clones[i].shortName=this.windows[i].seg.name.replace(new RegExp('IGHV', 'g'), "VH");
+	this.clones[i].shortName=this.clones[i].shortName.replace(new RegExp('IGHD', 'g'), "DH");
+	this.clones[i].shortName=this.clones[i].shortName.replace(new RegExp('IGHJ', 'g'), "JH");
+	this.clones[i].shortName=this.clones[i].shortName.replace(new RegExp('TRG', 'g'), "");
+	this.clones[i].shortName=this.clones[i].shortName.replace(new RegExp('\\*..', 'g'), "");
+      }
+    }
+    
+    //		CUSTOM TAG / NAME
+    //		EXPECTED VALUE
+    var c=this.analysis.custom;
+    for(var i=0 ;i<c.length; i++){
+      if (typeof this.mapID[c[i].window] != "undefined" ){
+	var f=1;
+	if (typeof c[i].expected  != "undefined" ){
+	  var u= this.normalizations.indexOf("highest standard");
+	  if (u!=-1){
+	    f=getSize([this.mapID[c[i].window]])/c[i].expected;
+	  }else{
+	    f=jsonData.windows[mapID[c[i].window]].ratios[u]/c[i].expected;
+	  }
+	}
+	if (f<100 && f>0.01){
+	  if (typeof( c[i].tag ) != "undefined" ) {
+	    this.clones[mapID[c[i].window]].tag=c[i].tag;
+	  }
+	  
+	  if (typeof( c[i].name ) != "undefined" ) {
+	    this.clones[mapID[c[i].window]].c_name=c[i].name;
+	  }
+	}
+      }
+    }
+    
+    //		CUSTOM CLUSTER
+    var cluster=this.analysis.cluster;
+    for(var i=0 ;i<cluster.length; i++){
+      if (typeof this.mapID[cluster[i].l] != "undefined" 
+       && typeof this.mapID[cluster[i].f] != "undefined" ){
+	
+	var new_cluster = [];
+	new_cluster= new_cluster.concat(this.clones[ this.mapID[cluster[i].l] ].cluster);
+	new_cluster= new_cluster.concat(this.clones[ this.mapID[cluster[i].f] ].cluster);
+	
+	this.clones[ this.mapID[cluster[i].l] ].cluster=new_cluster;
+	this.clones[ this.mapID[cluster[i].f] ].cluster=[];
+	
+      }
+    }
+  },//fin initClones
+  
+  
+/* 
+ * 
+ * */
+  saveAnalysis: function(){
+    
+  var analysisData ={ custom :[], cluster :[]} 
+    
+    for(var i=0 ;i<this.n_windows; i++){
+      
+      if ( ( typeof this.clones[i].tag != "undefined" && table[i].tag != 8 ) || 
+      typeof this.clones[i].c_name != "undefined" ){
+	
+	var elem = {};
+	elem.window = windows[i].window;
+	if ( typeof this.clones[i].tag != "undefined" && table[i].tag != 8)
+	  elem.tag = this.clones[i].tag;
+	if ( typeof this.clones[i].c_name != "undefined" ) 
+	  elem.name = this.clones[i].c_name;
+	
+	analysisData.custom.push(elem);
+      }
+      
+      if (this.clones[i].cluster.length > 1){
+	
+	for (var j=0; j<this.clones[i].cluster.length; j++){
+	  
+	  if (this.clones[i].cluster[j] !=i){
+	    var elem ={};
+	    elem.l = this.windows[i].window;
+	    elem.f = this.windows[ this.clones[i].cluster[j] ].window ;
+	    analysisData.cluster.push(elem);
+	  } 
+	}
+      }
+    }
+    var textToWrite = JSON.stringify(analysisData, undefined, 2);
+    var textFileAsBlob = new Blob([textToWrite], {type:'json'});
+
+  saveAs(textFileAsBlob, "analysis.json");
+  },//fin saveAnalysis
+  
+  
+/* 
+ * 
+ * */
+  resetAnalysis :function(){
+    this.analysis ={ custom :[], cluster :[], date :[]} ;
+    this.initClones();
+  },
+  
+  
+/* 
+ * 
+ * */
+  changeName : function(cloneID, newName){
+    this.clones[cloneID].c_name = newName;
+  },//fin changeName,
+  
+  
+/* renvoye le nom attribué au clone par l'utilisateur,
+ * si aucun nom attribué renvoye le code
+ * 
+ * */
+  getName : function(cloneID){
+    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+    
+    if ( typeof(this.clones[cloneID].c_name)!='undefined' ){
+      return this.clones[cloneID].c_name;
+    }else{
+      return this.getCode(cloneID);
+    }
+  },//fin getName
+
+/* renvoye le code du clone format "geneV -x/y/-z geneJ",
+ * si IGH renvoye un format réduit du code,
+ * si clone non segmenté renvoye la window
+ * 
+ * */
+  getCode : function(cloneID){
+    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+    
+    if ( typeof(this.windows[cloneID].seg)!='undefined' && typeof(this.windows[cloneID].seg.name)!='undefined' ){
+      if ( system=="IGH" && typeof(this.windows[cloneID].seg.shortName)!='undefined' ){
+	return this.windows[cloneID].seg.shortName;
+      }
+      else{
+	return this.windows[cloneID].seg.name;
+      }
+    }else{
+      return this.windows[cloneID].window;
+    }
+  },//fin getCode
+  
+  
+/* 
+ * 
+ * */
+  getSize : function(cloneID){
+    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+    
+    var result=0;
+      for(var j=0 ;j<this.clones[cloneID].cluster.length; j++){
+	result += this.windows[this.clones[cloneID].cluster[j]].ratios[this.t][this.r];}
+    return result
+  },//fin getSize
+  
+  
+/* 
+ * 
+ * */
+  changeRatio : function(newR){
+    this.r=newR;
+  },
+  
+  
+/* 
+ * 
+ * */
+  focusIn : function(cloneID){
+    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+    this.clones[cloneID].focus=true;
+  },
+  
+  
+/* 
+ * 
+ * */
+  focusOut : function(cloneID){
+    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+    this.clones[cloneID].focus=false;
+  },
+  
+/* 
+ * 
+ * */
+  select : function(cloneID){
+    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+    
+    if (this.clones[cloneID].select){
+      this.unselect(cloneID); 
+    }else{
+      this.clones[cloneID].select=true;
+    }
+  },
+  
+/* 
+ * 
+ * */
+  unselect :function(cloneID){
+    if (this.clones[cloneID].select){
+      this.clones[cloneID].select=false;
+      this.clones[cloneID].focus=false;
+    }
+  },
+  
+/* 
+ * 
+ * */
+  unselectAll :function(){
+    for (var i=0; i< this.n_windows ; i++){
+      if(this.clones[i].select){
+	this.clones[i].select=false; 
+      }
+    }
+  },
+  
+/* 
+ * 
+ * */
+  getSelected :function(){
+    var result=[]
+    for (var i=0; i< this.n_windows ; i++){
+      if(this.clones[i].select){
+	result.push(i);
+      }
+    }
+    return result
+  },
+  
+  
+/* 
+ * 
+ * */
+  merge :function(){
+    var new_cluster = [];
+    var list=this.getSelected()
+    var leader;
+    var top=200;
+      
+    for (var i = 0; i<list.length ; i++){
+      if(this.windows[list[i]].top < top) {
+	leader=list[i];
+	top=this.windows[list[i]].top;
+      }
+      new_cluster= new_cluster.concat(this.clones[list[i]].cluster);
+      this.clones[list[i]].cluster=[];
+    }
+      
+    this.clones[leader].cluster=new_cluster;
+    this.unselectAll()
+    this.select(leader)
+  },
+  
+  
+/* 
+ * 
+ * */
+  split :function(cloneIDa, cloneIDb){
+    if (cloneIDa==cloneIDb) return
+     
+    var nlist = this.clones[cloneIDa].cluster;
+    var index = nlist.indexOf(cloneIDb);
+    if (index == -1) return
+      
+    nlist.splice(index, 1);
+    
+    this.clones[cloneIDa].cluster=nlist;
+    this.clones[cloneIDb].cluster=[cloneIDb];
+    this.clones[cloneIDa].focus=false;
+    this.clones[cloneIDb].focus=false;
+    
+  },
+  
+}//fin prototypage Model
+
+var m= new Model();
+
+
   
