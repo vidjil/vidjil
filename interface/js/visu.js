@@ -22,8 +22,8 @@ function ScatterPlot(id, model){
 
 ScatterPlot.prototype = {
   
-/* 
- * 
+/* crée le cadre svg pour le scatterplot
+ * l
  * */
   init :function() {
     console.log("ScatterPlot "+this.id+": init()");
@@ -77,8 +77,27 @@ ScatterPlot.prototype = {
       .on("click", function(d) { self.m.select(d.id);})
     
     this.initGridModel();
+    this.resize();
   },
   
+/* 
+ * 
+ * */
+  resize :function(){
+    this.resizeW = document.getElementById(this.id).offsetWidth/this.w;
+    this.resizeH = document.getElementById(this.id).offsetHeight/this.h;
+    this.resizeCoef = Math.sqrt(this.resizeW*this.resizeH);
+    
+    this.vis = d3.select("#"+this.id+"_svg")
+        .attr("width", document.getElementById(this.id).offsetWidth)
+	.attr("height", document.getElementById(this.id).offsetHeight)
+    d3.select("#"+this.id+"_back")
+        .attr("width", document.getElementById(this.id).offsetWidth)
+	.attr("height", document.getElementById(this.id).offsetHeight);
+    
+    this.initGrid();
+    this.update();
+  },
 /* 
  * 
  * */
@@ -370,9 +389,9 @@ ScatterPlot.prototype = {
 /* 
  * 
  * */
-  initGrid : function(gridModel){
+  initGrid : function(){
   self = this;
-  leg = this.vis.selectAll("text").data(gridModel);
+  leg = this.vis.selectAll("text").data(this.gridModel[this.splitMethod]);
   leg.enter().append("text");
   leg.exit()
     .remove();
@@ -400,7 +419,7 @@ ScatterPlot.prototype = {
     })*/
     ;
     
-  lines = this.vis.selectAll("line").data(gridModel);
+  lines = this.vis.selectAll("line").data(this.gridModel[this.splitMethod]);
   lines.enter().append("line");
   lines.exit()    
     .remove();
@@ -437,10 +456,13 @@ ScatterPlot.prototype = {
  * */
   changeSplitMethod :function(splitM){
     this.splitMethod=splitM;
-    this.initGrid(this.gridModel[splitM]);
+    this.initGrid();
     this.update();
-  }
+  },
+  
 
 }
+
+
 
 var sp = new ScatterPlot("visu",m)

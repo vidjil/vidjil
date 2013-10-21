@@ -95,10 +95,10 @@
       
       <div class="menu" onmouseover="showSelector('groupSelector');"> regroup 
       	<div id="groupSelector" class="selector">
-	  <a class="buttonSelector" onclick="changeSplitMethod('vj1');">alleles</a> 
-	  <a class="buttonSelector" onclick="changeSplitMethod('vj2');">genes</a> 
-	  <a class="buttonSelector" onclick="changeSplitMethod('Nsize');">N length</a> 
-	  <a class="buttonSelector" onclick="changeSplitMethod(' ');">abundance</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('allele');">alleles</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('gene');">genes</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('nSize');">N length</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('Size')">abundance</a> 
 	</div>
       </div>
       
@@ -117,6 +117,14 @@
 	  <a class="buttonSelector" onclick="javascript:extractSVG('svg2')">extract svg graph</a>
 	  <a class="buttonSelector" onclick="javascript:testPDF()">svg>jpeg>pdf</a>
 	  <a class="buttonSelector" onclick="javascript:testPDF2()">svg>pdf</a>
+	</div>
+      </div>
+      
+      <div id="norm" class="menu" onmouseover="showSelector('testSelector');"> test
+        <div id="testSelector" class="selector">
+	  <a class="buttonSelector" onclick="sp.init()">init sp</a>
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('gene')">split</a>
+	  <a class="buttonSelector" onclick="sp.resize()">resize</a>
 	</div>
       </div>
       
