@@ -201,15 +201,17 @@ circle:hover {
   height: 16px;
   position: relative;
   float:left;
+
 }
 .nameBox2 {
-  width: 260px;
+  width: 275px;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
   float:left;
   margin-right:10px;
+  white-space:nowrap;
 }
 
 .colorBox{
