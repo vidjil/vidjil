@@ -105,9 +105,9 @@
       <div id="norm" class="menu" onmouseover="showSelector('ratioSelector');"> normalize 
         <div id="ratioSelector" class="selector">
         <!--TODO generer automatiquement-->
-	  <a class="buttonSelector" onclick="changeRatio(0);">none</a> 
-	  <a class="buttonSelector" onclick="changeRatio(1);">highest standard</a> 
-	  <a class="buttonSelector" onclick="changeRatio(2);">all standard</a> 
+	  <a class="buttonSelector" onclick="m.changeRatio(0);">none</a> 
+	  <a class="buttonSelector" onclick="m.changeRatio(1);">highest standard</a> 
+	  <a class="buttonSelector" onclick="m.changeRatio(2);">all standard</a> 
 	</div>
       </div>
       
@@ -122,9 +122,9 @@
       
       <div id="norm" class="menu" onmouseover="showSelector('testSelector');"> test
         <div id="testSelector" class="selector">
-	  <a class="buttonSelector" onclick="sp.init()">init sp</a>
+	  <a class="buttonSelector" onclick="m.init()">init sp</a>
 	  <a class="buttonSelector" onclick="sp.changeSplitMethod('gene')">split</a>
-	  <a class="buttonSelector" onclick="sp.resize()">resize</a>
+	  <a class="buttonSelector" onclick="m.resize()">resize</a>
 	</div>
       </div>
       
@@ -258,33 +258,33 @@
     <div id="tagSelector">
     <span class="closeButton" onclick="$('#tagSelector').hide('fast')">X</span>
     
-      <div>tag for <span id=tagname></span></div>
+      <div>tag for <span id=tag_name></span><span id=tag_id></span></div>
       <ul>
-	<li onClick="selectTag(0)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 0), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor0"></span> <span class="tagName0 tn" id="tag0"></span></div>
 	</li>
-	<li onClick="selectTag(1)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 1), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor1"></span> <span class="tagName1 tn" id="tag1"></span></div>
 	</li>
-	<li onClick="selectTag(2)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 2), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor2"></span> <span class="tagName2 tn" id="tag2"></span></div>
 	</li>
-	<li onClick="selectTag(3)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 3), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor3"></span> <span class="tagName3 tn" id="tag3"></span></div>
 	</li>
-	<li onClick="selectTag(4)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 4), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor4"></span> <span class="tagName4 tn" id="tag4"></span></div>
 	</li>
-	<li onClick="selectTag(5)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 5), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor5"></span> <span class="tagName5 tn" id="tag5"></span></div>
 	</li>
-	<li onClick="selectTag(6)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 6), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor6"></span> <span class="tagName6 tn" id="tag6"></span></div>
 	</li>
-	<li onClick="selectTag(7)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 7), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor7"></span> <span class="tagName7 tn" id="tag7"></span></div>
 	</li>
-	<li onClick="selectTag(8)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML), 8 ), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox "></span> <span class="tagName8 tn" id="tag8"></span></div>
 	</li>
 	

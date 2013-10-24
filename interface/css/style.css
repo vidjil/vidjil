@@ -180,7 +180,8 @@ circle:hover {
 }
 
 .list{
-  width: 440px;
+  width : 440px;
+  display : block;
 }
 
 .listElem{

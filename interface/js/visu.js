@@ -18,6 +18,8 @@ function ScatterPlot(id, model){
   
   this.splitMethod="gene";
   
+  this.m.view.push(this)
+  
 }
 
 ScatterPlot.prototype = {
@@ -28,6 +30,8 @@ ScatterPlot.prototype = {
   init :function() {
     console.log("ScatterPlot "+this.id+": init()");
     self = this;
+    
+    document.getElementById(this.id).innerHTML="";
     
     //création de la fenetre SVG
     this.vis = d3.select("#"+this.id).append("svg:svg")
@@ -401,14 +405,14 @@ ScatterPlot.prototype = {
     .attr("x", function(d) { 
       if (d.orientation=="vert") { return self.resizeW*d.pos;
       }else{
-	if ( d.type=="subline" ) return self.resizeW*70;
+	if ( d.type=="subline" ) return self.resizeW*75;
 	else return self.resizeW*30; 
       }
     })
     .attr("y", function(d) { 
       if (d.orientation=="vert") { 
-	if ( d.type=="subline" ) return self.resizeH*25
-	else return self.resizeH*10;
+	if ( d.type=="subline" ) return self.resizeH*40
+	else return self.resizeH*20;
       }else{ return self.resizeH*d.pos;}
     })
     .text( function (d) { return d.text; })
@@ -462,7 +466,5 @@ ScatterPlot.prototype = {
   
 
 }
-
-
 
 var sp = new ScatterPlot("visu",m)

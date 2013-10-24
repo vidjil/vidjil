@@ -8,138 +8,9 @@
  * contains data models and control function
  * data models are stocked here and can be accessed by the different views to be displayed
  * everytime a data model is modified by a control function the views are called to be updated
- * 
- * 
- * ∕
- 
-/*************************************************************************************************/
-//////////////////////////
-//	MODELS   	//
-//////////////////////////
-
-/* données brutes issues du chargement des fichiers json*/
-var jsonData;          //fichier json
-var windows;         //liste des jonctions du fichier json
-var pref ={ custom :[], cluster :[], date :[]} ;              //fichier des preferences
- 
-/* initialisation fixé par defaut*/
-var colorMethod="Tag"           //methode de colorisation ( Tag par defaut)
-var splitMethod="begin";          //par defaut pas de method de split
-var t = 0;                    //point de suivi courant ( par defaut t=0 )
-var top_limit=50;
-var normalization=false;
-
-var margeVJ_left=80;              //info quadrillage (vj1/vj2)
-var margeVJ_top=50;
-var stepV;
-
-/* initialisation by init */
-var totalClones;              //nombres de clones a gerer 
-var maxNsize=1;
-var mapID = [];               //map entre les jonctions et les cloneID correspondants
-var table =[];
-
-/* initialisation by initCoef */
-var resizeCoef ;              //coefficient utilisé pour réajusté la visu dans l'espace disponible
-var resizeG_W ;               //coefficients utilisés pour réajusté le graphique 
-var resizeG_H ;
-var min_size;
-
-/* initialisation by initVJgrid */
-var system="TRG";
-var positionV={};         //tables associative labels (V-J) <=> positions X-Y (vj1)
-var positionJ={};	
-var positionV2={};        //idem (vj2)
-var positionJ2={};	
-
-var grid_vj1=[];            //contient les données pour le dessin du quadrillage/legende(vj1)
-var grid_vj2=[];           //idem(vj2)
-var grid_size=[];          
-var grid_nsize=[]; 
-
-var colorVJ={};           //table associative labels (V ou J) <=> couleurs
-var colorN=[];		  
-
-//default 
-var used_ratio=0;
+ */
 
 
-function loadData(){
-  document.getElementById("file_menu").style.display="block";
-  document.getElementById("analysis_menu").style.display="none";
-}
-
-function loadAnalysis(){
-  document.getElementById("analysis_menu").style.display="block";
-  document.getElementById("file_menu").style.display="none";
-}
-
-function cancel(){
-  document.getElementById("analysis_menu").style.display="none";
-  document.getElementById("file_menu").style.display="none";
-}
-
-/*************************************************************************************************/
-//////////////////////////
-//	RESIZE  	//
-//////////////////////////
-  var resizeW;
-  var resizeH;
-
-/* calcul les coefficients de resize des différentes vues
- * appel les vues pour appliquer les changements*/
-function initCoef(){
-  initStyle();
-  resizeW = document.getElementById("visu").offsetWidth/w;
-  resizeH = document.getElementById("visu").offsetHeight/h;
-  document.getElementById("svg").style.width=document.getElementById("visu").offsetWidth+"px";
-  document.getElementById("svg").style.height=document.getElementById("visu").offsetHeight+"px";
-  
-  resizeG_W = document.getElementById("visu2").offsetWidth/g_w;
-  resizeG_H = (document.getElementById("visu2").offsetHeight)/(g_h);
-  document.getElementById("svg2").setAttribute("width",document.getElementById("visu2").offsetWidth);
-  document.getElementById("svg2").setAttribute("height",document.getElementById("visu2").offsetHeight);
-  document.getElementById('visu_back').setAttribute("width",resizeW*w);
-  document.getElementById('visu_back').setAttribute("height",resizeH*h);
-  document.getElementById('graph_back').setAttribute("width",(resizeG_W*g_w)+1);
-  document.getElementById('graph_back').setAttribute("height",(resizeG_H*g_h)+1);
-
-  resizeCoef = Math.sqrt(resizeW*resizeH);
-  
-  $('#listClones').height((($('#left').height()-305))+"px");
-  
-  //recadrage des legendes si la methode de répartition utilisé a ce moment la en utilise
-  if (splitMethod!="begin") updateLegend();
-  
-  setTimeout('updateGraph()',100);
-
-  updateVis();
-  setTimeout('force.alpha(.2)',1000);
-  
-  
-  
-  console.log("resize (new coef : "+resizeW+"/"+resizeH+"/"+resizeCoef+")<br>  graph coef ("+resizeG_W+"/"+resizeG_H+")");
-};
-
-/*appel a chaque changement de taille du navigateur*/
-window.onresize = initCoef;
-
-
-function switchVisu(hv1,hv2){
-  
-  $('#visu2').animate({height: hv1+"%"}, 400 , function(){
-    console.log("plop");
-  }); 
-  $('#visu').animate({height: hv2+"%"}, 400 ); 
-}
-
-
-
-  
-
-
-
-  
 /*	MODEL
  * 
  * load
@@ -165,22 +36,22 @@ function switchVisu(hv1,hv2){
  * 
  * */
   
-  
+
+/*Model constructor
+ * 
+ * */
 function Model(){
   console.log("creation Model")
   this.analysis ={ custom :[], cluster :[], date :[]} ;
   this.t=0;
   this.r=0;
+  this.view=[];
 }
+
 
 Model.prototype = {
 
-/* test
- * 
- * */
-  test : function(){
-  },
-  
+
 /* load the selected data/analysis file in the model
  * @data : id of the form (html element) linking to the data file
  * @analysis : id of the form (html element) linking to the analysis file
@@ -188,11 +59,15 @@ Model.prototype = {
  * @limit : minimum top value to keep a window*/
   load : function(data, analysis, limit){
     console.log("load()");
-    if (document.getElementById(data).files.length === 0) { return; }
     
+    if (document.getElementById(data).files.length === 0) { return; }
     self = this;
     var oFReader = new FileReader();
     var oFile = document.getElementById(data).files[0];
+    var min_size = 1;
+    var n_max=0;
+    var l=0;
+    self.windows = [];
     self.dataFileName= document.getElementById(data).files[0].name;
     oFReader.readAsText(oFile);
     
@@ -203,17 +78,7 @@ Model.prototype = {
 	return 0;
       }
       
-      self.normalizations = data.normalizations;
-      self.total_size = data.total_size;
-      self.resolution1 = data.resolution1;
-      self.resolution5 = data.resolution5;
-      self.timestamp = data.timestamp;
-      self.time = data.time;
-      self.windows = [];
-      
-      var min_size = 1;
-      var n_max=0;
-      var l=0;
+      //keep best top value
       for(var i=0; i < data.windows.length; i++){
 	if (data.windows[i].top <= limit){
 	  
@@ -224,6 +89,7 @@ Model.prototype = {
 		min_size=data.windows[i].ratios[j][k];
 	    }
 	  }
+	  
 	  //search for n_max
 	  if ((typeof(data.windows[i].seg) != 'undefined') && 
 	    (typeof(data.windows[i].seg.Nsize) != 'undefined') &&
@@ -239,24 +105,31 @@ Model.prototype = {
       self.n_windows=self.windows.length;
       self.min_size=min_size;
       self.n_max=n_max;
-      console.log("min_size: "+self.min_size);
-      console.log("n_max:"+n_max);
+      self.normalizations = data.normalizations;
+      self.total_size = data.total_size;
+      self.resolution1 = data.resolution1;
+      self.resolution5 = data.resolution5;
+      self.timestamp = data.timestamp;
+      self.time = data.time;
+
       
+      //extract germline
       if (typeof data.germline !='undefined'){
 	var t=data.germline.split('/');
 	self.system=t[t.length-1];
       }else{
 	self.system="TRG";
       }
+      
       self.loadGermline();
       self.loadAnalysis(analysis);
     }
 
-  },//fin load
+  },//end load
   
   
-/* 
- * 
+/* charge le germline définit a l'initialisation dans le modele
+ * détermine le nombre d'allele pour chaque gene et y attribue une couleur
  * */
   loadGermline: function(){
     console.log("loadGermline()");
@@ -266,7 +139,7 @@ Model.prototype = {
     self.germline.j={}
     var v,j;
     
-    //selection germline
+    //select germline (default TRG)
     switch (self.system){
       case "IGH" :
 	self.germline.v=germline.IGHV;
@@ -326,7 +199,7 @@ Model.prototype = {
       n2++;
     }
     self.germline.jgene[elem2]=n2;
-  },//fin loadGermline
+  },//end loadGermline
 
   
 /* load the selected analysis file in the model
@@ -350,11 +223,11 @@ Model.prototype = {
     }else{
       self.initClones();
     }
-  },//fin loadAnalysis
+  },//end loadAnalysis
 
   
-/* 
- * 
+/* initializes clones with analysis file data
+ * and store some info about them (N color / shortName /...)
  * */
   initClones: function(){
     console.log("initClones()");
@@ -432,10 +305,10 @@ Model.prototype = {
 	
       }
     }
-  },//fin initClones
+  },//end initClones
   
   
-/* 
+/* generate à json file from user analysis currently applied
  * 
  * */
   saveAnalysis: function(){
@@ -474,10 +347,10 @@ Model.prototype = {
     var textFileAsBlob = new Blob([textToWrite], {type:'json'});
 
   saveAs(textFileAsBlob, "analysis.json");
-  },//fin saveAnalysis
+  },//end saveAnalysis
   
   
-/* 
+/* erase all changes 
  * 
  * */
   resetAnalysis :function(){
@@ -487,21 +360,32 @@ Model.prototype = {
   },
   
   
-/* 
+/* give a new custom name to a clone
  * 
  * */
   changeName : function(cloneID, newName){
     console.log("changeName() (clone "+cloneID+" <<"+newName+")");
     this.clones[cloneID].c_name = newName;
+    this.updateElem(cloneID);
   },//fin changeName,
   
+/* give a new custom name to a clone
+ * 
+ * */
+  changeTag : function(cloneID, newTag){
+    console.log("changeTag() (clone "+cloneID+" <<"+newTag+")");
+    this.clones[cloneID].tag=newTag;
+    if (newTag==8) { 
+      delete(this.clones[cloneID].tag)
+    }
+    this.updateElem(cloneID);
+  },
   
 /* renvoye le nom attribué au clone par l'utilisateur,
  * si aucun nom attribué renvoye le code
  * 
  * */
   getName : function(cloneID){
-    console.log("getName() (clone "+cloneID+")");
     if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     
     if ( typeof(this.clones[cloneID].c_name)!='undefined' ){
@@ -509,7 +393,7 @@ Model.prototype = {
     }else{
       return this.getCode(cloneID);
     }
-  },//fin getName
+  },//end getName
 
 /* renvoye le code du clone format "geneV -x/y/-z geneJ",
  * si IGH renvoye un format réduit du code,
@@ -517,7 +401,6 @@ Model.prototype = {
  * 
  * */
   getCode : function(cloneID){
-    console.log("getCode() (clone "+cloneID+")");
     if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     
     if ( typeof(this.windows[cloneID].seg)!='undefined' && typeof(this.windows[cloneID].seg.name)!='undefined' ){
@@ -530,36 +413,63 @@ Model.prototype = {
     }else{
       return this.windows[cloneID].window;
     }
-  },//fin getCode
+  },//end getCode
   
   
-/* 
- * 
+/* compute the size of a clone ( sum of all windows clustered )
+ * @t : tracking point (default value : current tracking point)
  * */
-  getSize : function(cloneID){
-    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+  getSize : function(cloneID, time){
+    time = typeof time !== 'undefined' ? time : this.t; 
     
     var result=0;
       for(var j=0 ;j<this.clones[cloneID].cluster.length; j++){
-	result += this.windows[this.clones[cloneID].cluster[j]].ratios[this.t][this.r];}
+	result += this.windows[this.clones[cloneID].cluster[j]].ratios[time][this.r];}
     return result
-  },//fin getSize
-  
-  
+  },//end getSize
+
 /* 
+ * 
+ * */
+  getStrSize : function(cloneID){
+	var size = this.getSize(cloneID);
+        var result;
+        if (size==0){
+	  result="-∕-";
+	}else{
+	  if (size<0.0001){
+	    result=(size).toExponential(1);
+	  }else{
+	    result=(100*size).toFixed(3)+"%";
+	  }
+	}
+    return result
+  },
+  
+/* use another ratio to compute clone size
  * 
  * */
   changeRatio : function(newR){
     console.log("changeRatio()")
     this.r=newR;
+    this.update();
   },
   
   
-/* 
+/* change the current tracking point used
+ * 
+ * */
+  changeTime : function(newT){
+    console.log("changeTime()")
+    this.t=newT;
+    this.update();
+  },
+  
+  
+/* put a marker on a specific clone
  * 
  * */
   focusIn : function(cloneID){
-    console.log("focusIn() (clone "+cloneID+")")
     if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     this.clones[cloneID].focus=true;
   },
@@ -569,12 +479,11 @@ Model.prototype = {
  * 
  * */
   focusOut : function(cloneID){
-    console.log("focusOut() (clone "+cloneID+")")
     if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     this.clones[cloneID].focus=false;
   },
   
-/* 
+/* put a clone in the selection
  * 
  * */
   select : function(cloneID){
@@ -588,7 +497,7 @@ Model.prototype = {
     }
   },
   
-/* 
+/* kick a clone from the selection
  * 
  * */
   unselect :function(cloneID){
@@ -599,7 +508,7 @@ Model.prototype = {
     }
   },
   
-/* 
+/* kick all clones from the selection
  * 
  * */
   unselectAll :function(){
@@ -611,7 +520,7 @@ Model.prototype = {
     }
   },
   
-/* 
+/* return clones currently in the selection
  * 
  * */
   getSelected :function(){
@@ -671,10 +580,109 @@ Model.prototype = {
     
   },
   
+  
+/*resize toute les vues associées 
+ * 
+ * */
+  resize :function(){
+    for (var i=0; i<this.view.length; i++){
+      this.view[i].resize();
+    }
+    initStyle();
+  },
+  
+  
+/*update toute les vues associées 
+ * 
+ * */
+  update :function(){
+    var startTime = new Date().getTime();  
+    var elapsedTime = 0;  
+    for (var i=0; i<this.view.length; i++){
+      this.view[i].update();
+    }
+    elapsedTime = new Date().getTime() - startTime;  
+    console.log( "update() : " +elapsedTime);  
+  },
+  
+/*update l'element cloneID dans toute les vues associées 
+ * 
+ * */
+  updateElem :function(cloneID){
+    for (var i=0; i<this.view.length; i++){
+      this.view[i].updateElem(cloneID);
+    }
+  },
+
+/*init toute les vues associées 
+ * 
+ * */
+  init :function(){
+    for (var i=0; i<this.view.length; i++){
+      this.view[i].init();
+    }
+  },
+  
 }//fin prototypage Model
 
 var m = new Model();
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+//TODO a deplacer
+
+function loadData(){
+  document.getElementById("file_menu").style.display="block";
+  document.getElementById("analysis_menu").style.display="none";
+}
+
+function loadAnalysis(){
+  document.getElementById("analysis_menu").style.display="block";
+  document.getElementById("file_menu").style.display="none";
+}
+
+function cancel(){
+  document.getElementById("analysis_menu").style.display="none";
+  document.getElementById("file_menu").style.display="none";
+}
+
+
+function initCoef(){
+  initStyle();//TODO a supprimer
+};
+
+/*appel a chaque changement de taille du navigateur*/
+window.onresize = initCoef;
+
+
+function switchVisu(hv1,hv2){
+  
+  $('#visu2').animate({height: hv1+"%"}, 400 , function(){
+    m.resize();
+  }); 
+  $('#visu').animate({height: hv2+"%"}, 400 ); 
+}
 
 
   

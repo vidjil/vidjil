@@ -308,7 +308,7 @@ var default_tag=8;
     
     document.getElementsByTagName('body')[0].style.color=colorStyle.c01;
     document.getElementsByTagName('body')[0].style.background=colorStyle.c02;
-    d3.select('#graph_back').attr('fill',colorStyle.c03);
+    d3.select('#visu2_back').attr('fill',colorStyle.c03);
     d3.select('#visu_back').attr('fill',colorStyle.c02);
     document.getElementById('file_menu').style.background=colorStyle.c02;
     document.getElementById('bot-container').style.background=colorStyle.c02;
@@ -334,6 +334,7 @@ var default_tag=8;
     }
     updateTagBox();
   }
+  
   function updateTagBox(){
     for (var i =0; i<tagColor.length; i++){
       if (tagDisplay[i]==2){
