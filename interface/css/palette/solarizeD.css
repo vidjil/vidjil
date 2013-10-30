@@ -119,6 +119,17 @@ body{
  background : #002b36;
 }
 
+.list_select{
+  width : 440px;
+  display : block;
+  border : solid;
+  border-width : 2px;
+  margin : -2px;
+  border-color : #fdf6e3;
+}
 
+.list:hover{
+  background :#073642;
+}
 
 

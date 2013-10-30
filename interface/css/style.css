@@ -164,7 +164,8 @@ circle:hover {
   overflow-y : scroll;
   overflow-x : hidden;
   font-weight: bold;
-  height : 450px
+  height : 450px;
+  padding:2px;
 }
 
 .sp_legend{

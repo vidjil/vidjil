@@ -208,11 +208,19 @@ List.prototype = {
  * */   
   updateElem : function(list){
     for ( var i=0; i<list.length ; i++){
+      
       var displayCluster=true;
       if ($("#cluster"+list[i]).css("display")=="none") displayCluster=false;
+      
       var div = document.getElementById(list[i]);
-	div.innerHTML='';
+      div.innerHTML='';
+      
       if (this.m.clones[list[i]].active){  
+	if (this.m.clones[list[i]].select){  
+	  document.getElementById(list[i]).className="list_select";
+	}else{
+	  document.getElementById(list[i]).className="list";
+	}
 	var div2 = document.createElement('div');
 	this.div_elem(div2,list[i]);
 	div.appendChild(div2);
@@ -221,10 +229,12 @@ List.prototype = {
 	this.div_cluster(div3, list[i], displayCluster);
 	div.appendChild(div3);
 	div.style.display="";
+	
       }else{
 	div.style.display="none";
       }
     }
+    
   },
   
   
