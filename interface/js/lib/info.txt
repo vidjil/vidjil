@@ -1,0 +1,13 @@
+d3-v2							: framework svg pour graphique/scatterplot
+r2d3 							: fallback d3 pour internet-explorer IE8- (a tester)	
+Jquery						: framework généraliste 
+file.js  					: load/save cross-navigator
+
+jspdf							: API pdf 
+jspdf.plugin. __	: plugin jspdf (thx captain obvious)
+rgbcolor					: dépendance jspdf
+StackBlur					: dépendance jspdf 
+underscore			  : dépendance jspdf.plugin.svgToPdf
+
+canvg							: conversion svg>canvas (peut etre utile pour export vers image)
+
