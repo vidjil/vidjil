@@ -2,24 +2,25 @@
 // SCATTERPLOT
 
 function ScatterPlot(id, model){
-  this.id=id;									//ID de la div contenant le scatterPlot
-  this.m=model;								//objet Model utilisé 
-  this.resizeCoef=1;					//coef d'agrandissement a appliqué aux rayons des elements
-  this.resizeW=1;							//coef d'agrandissement largeur
-  this.resizeH=1;							//coef d'agrandissement hauteur
+  this.id=id;			//ID de la div contenant le scatterPlot
+  this.m=model;			//objet Model utilisé 
+  this.resizeCoef=1;		//coef d'agrandissement a appliquer aux rayons des elements
+  this.resizeW=1;		//coef d'agrandissement largeur
+  this.resizeH=1;		//coef d'agrandissement hauteur
   
-  this.w=1400;								//largeur avant resize
-  this.h=700;									//hauteur avant resize
-  this.marge_left=80;					//marge 
-  this.marge_top=50;					//
-  this.max_precision=8;				//precision max atteignable ( 10^-8 par defaut TODO compute)
+  this.w=1400;			//largeur avant resize
+  this.h=700;			//hauteur avant resize
   
-  this.positionGene={};				//position
-  this.positionAllele={};			//
+  this.marge_left=80;		//marge 
+  this.marge_top=50;		//
+  this.max_precision=8;		//precision max atteignable ( 10^-8 par defaut TODO compute)
   
-  this.splitMethod="gene";		//methode de répartition actuelle(defaut: gene)
+  this.positionGene={};		//position
+  this.positionAllele={};	//
   
-  this.m.view.push(this)			//synchronisation au Model
+  this.splitMethod="gene";	//methode de répartition actuelle(defaut: gene)
+  
+  this.m.view.push(this);	//synchronisation au Model
   
 }
 
@@ -390,7 +391,6 @@ ScatterPlot.prototype = {
   },
 
 
-
 /* update les données liées au clones
  * (ne relance pas l'animation)
  * */
@@ -451,7 +451,7 @@ ScatterPlot.prototype = {
     })*///TODO
     ;
   
-    //AXIS
+  //AXIS
   lines = this.vis.selectAll("line").data(this.gridModel[this.splitMethod]);
   lines.enter().append("line");
   lines.exit()    

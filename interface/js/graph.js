@@ -231,9 +231,37 @@ Graph.prototype = {
       for (var j=0 ; j<this.m.clones[list[i]].cluster.length; j++)
       	this.data_graph[this.m.clones[list[i]].cluster[j]].path = this.constructPath(list[i]);
     }
-    this.draw();
+    this.drawElem(list);
   },
+  
+/* 
+ * 
+ * */ 
+  drawElem : function(list){
 
+    for (var i=0; i<list.length ; i++){
+      
+      var che=' M '+Math.floor(this.data_graph[list[i]].path[0][0]*this.resizeW+this.marge4)+','+Math.floor(this.data_graph[list[i]].path[0][1]*this.resizeH+this.marge5);
+      for (var j=1; j<this.data_graph[list[i]].path.length; j++){
+	      che+=' L '+Math.floor(this.data_graph[list[i]].path[j][0]*this.resizeW+this.marge4)+','+Math.floor(this.data_graph[list[i]].path[j][1]*this.resizeH+this.marge5);
+      }
+      var name="poly"+this.data_graph[list[i]].name;
+      
+      var classname="graph_line";
+      if (!this.m.clones[this.data_graph[list[i]].id].active) classname = "graph_inactive";
+      if (this.m.clones[this.data_graph[list[i]].id].select) classname = "graph_select";
+      if (this.data_graph[list[i]].id==this.m.focus) classname = "graph_focus";
+      
+      d3.select("#polyline"+list[i])
+      .attr("fill","none")
+      .attr("stroke", this.m.clones[list[i]].color )
+	.transition()
+	.duration(500)
+	.attr("d", che)
+	.attr("class", classname)
+	.attr("id", name)
+    }
+  },
 
 /* reconstruit le graphique
  * 
@@ -303,7 +331,7 @@ Graph.prototype = {
        })
       .attr("id", function(d) { return "poly"+d.name; })
       
-  	//resolution
+    //resolution
     this.g_res.selectAll("path")
       .transition()
       .duration(500)

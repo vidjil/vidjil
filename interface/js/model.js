@@ -790,7 +790,7 @@ function initCoef(){
 window.onresize = initCoef;
 
 
-function switchVisu(hv1,hv2){
+  function switchVisu(hv1,hv2){
   
   $('#visu2').animate({height: hv1+"%"}, 400 , function(){
     m.resize();
@@ -798,5 +798,38 @@ function switchVisu(hv1,hv2){
   $('#visu').animate({height: hv2+"%"}, 400 ); 
 }
 
+  function showDisplayMenu(){
+    $('#display-menu').stop
+    $('#display-menu').toggle("fast");
+  }
 
+  /*ressort une couleur format RGB*/
+  function colorGenerator(h,s,v){
+    h=h/60;
+    var i=Math.floor(h);
+    var f=h-i;
+    var p =Math.floor(( v * ( 1 - s ) )*255);
+    var q =Math.floor(( v * ( 1 - ( s * f) ) )*255);
+    var t =Math.floor(( v * ( 1 - ( s * (1-f) ) ) )*255);
+    v=Math.floor(v*255);
+    
+    if (i==0){
+      return "rgb("+v+","+t+","+p+")";
+    }
+    if (i==1){
+      return "rgb("+q+","+v+","+p+")";
+    }
+    if (i==2){
+      return "rgb("+p+","+v+","+t+")";
+    }
+    if (i==3){
+      return "rgb("+p+","+q+","+v+")";
+    }
+    if (i==4){
+      return "rgb("+t+","+p+","+v+")";
+    }
+    if (i==5){
+      return "rgb("+v+","+p+","+q+")";
+    }
+  }
   

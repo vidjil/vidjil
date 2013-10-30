@@ -79,46 +79,46 @@ List.prototype = {
     div_elem.className="listElem";
     div_elem.style.display="block";
     
-      var span0 = document.createElement('span');
-      span0.className = "nameBox2";
-      span0.ondblclick = function(){ self.editName(cloneID, this); }
-      span0.onclick = function(){ self.m.select(cloneID); }
-      span0.appendChild(document.createTextNode(this.m.getName(cloneID)));
-      span0.title = this.m.getName(cloneID);
-      span0.style.color=this.m.clones[cloneID].color;
+    var span0 = document.createElement('span');
+    span0.className = "nameBox2";
+    span0.ondblclick = function(){ self.editName(cloneID, this); }
+    span0.onclick = function(){ self.m.select(cloneID); }
+    span0.appendChild(document.createTextNode(this.m.getName(cloneID)));
+    span0.title = this.m.getName(cloneID);
+    span0.style.color=this.m.clones[cloneID].color;
+      
+    var svg=document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    svg.setAttribute('class','starBox'); 
+    svg.onclick=function(){ changeTag(cloneID); }
+    var path=document.createElementNS('http://www.w3.org/2000/svg','path')
+    path.setAttribute('d', this.starPath);
+    path.setAttribute('id','color'+cloneID); 
+    if (typeof this.m.clones[cloneID].tag != 'undefined') path.setAttribute("fill", tagColor[this.m.clones[cloneID].tag]);
+    else path.setAttribute("fill", colorStyle.c01);
 	
-      var svg=document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-      svg.setAttribute('class','starBox'); 
-      svg.onclick=function(){ changeTag(cloneID); }
-      var path=document.createElementNS('http://www.w3.org/2000/svg','path')
-      path.setAttribute('d', this.starPath);
-      path.setAttribute('id','color'+cloneID); 
-      if (typeof this.m.clones[cloneID].tag != 'undefined') path.setAttribute("fill", tagColor[this.m.clones[cloneID].tag]);
-      else path.setAttribute("fill", colorStyle.c01);
-	  
-      svg.appendChild(path);
-	
-      var span2=document.createElement('span')
-      span2.className = "sizeBox";
-      span2.id="size"+cloneID;
-      span2.onclick=function(){ this.m.select(cloneID); }
-      span2.style.color=this.m.clones[cloneID].color;
-	
-      span2.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));
-	
-      var span3=document.createElement('span')
-      span3.className = "clusterBox";
-      if (this.m.clones[cloneID].cluster.length >1){
-	span3.onclick=function(){ showCluster( cloneID )}
-	span3.appendChild(document.createTextNode("+"));
-      }else{
-	span3.appendChild(document.createTextNode(' '));
-      }
-	
-      div_elem.appendChild(span3);
-      div_elem.appendChild(span0);
-      div_elem.appendChild(svg);
-      div_elem.appendChild(span2);
+    svg.appendChild(path);
+      
+    var span2=document.createElement('span')
+    span2.className = "sizeBox";
+    span2.id="size"+cloneID;
+    span2.onclick=function(){ this.m.select(cloneID); }
+    span2.style.color=this.m.clones[cloneID].color;
+      
+    span2.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));
+      
+    var span3=document.createElement('span')
+    span3.className = "clusterBox";
+    if (this.m.clones[cloneID].cluster.length >1){
+      span3.onclick=function(){ showCluster( cloneID )}
+      span3.appendChild(document.createTextNode("+"));
+    }else{
+      span3.appendChild(document.createTextNode(' '));
+    }
+      
+    div_elem.appendChild(span3);
+    div_elem.appendChild(span0);
+    div_elem.appendChild(svg);
+    div_elem.appendChild(span2);
   },
 
 /* genere le code HTML des infos d'un cluster
