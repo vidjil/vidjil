@@ -17,18 +17,16 @@
  * */
 function Graph(id, model){
   this.id=id;
-  this.m=model;
-  this.resizeCoef=1; 			
-  this.resizeW=1;					
-  this.resizeH=1;
+  this.m=model;		
+  this.resizeW=1;	//coeff d'agrandissement/réduction largeur				
+  this.resizeH=1;	//coeff d'agrandissement/réduction hauteur		
   
-  this.w=1400;
-  this.h=450;
-  this.marge1=100;	//
-  this.marge2=100;
-  this.marge3=100;
-  this.marge4=50;
-  this.marge5=25;
+  this.w=1400;		//largeur graph avant resize
+  this.h=450;		//hauteur graph avant resize
+  this.marge1=50;	//marge droite bord du graph/premiere colonne
+  this.marge2=50;	//marge gauche derniere colonne/bord du graph
+  this.marge4=75;	//marge droite/gauche (non influencé par le resize)
+  this.marge5=25;	//marge top (non influencé par le resize)
   
   this.m.view.push(this)
   
@@ -118,20 +116,19 @@ Graph.prototype = {
     }
 
     var height=1;
-    var p=0;
+
     
     //ordonnée
     while((height*this.precision)>0.5){
 
       var d={};
       d.type = "axis_h";
-      d.text = -p;
+      d.text = height.toExponential(1);
       d.orientation = "hori";
       d.pos = this.h-this.scale_x(height*this.precision);
       this.data_axis.push(d);
       
       height=height/10;
-      p++;
     }
 			
     this.mobil={};
@@ -185,7 +182,7 @@ Graph.prototype = {
  * 
  * */
   resize : function(){
-    this.resizeW = document.getElementById(this.id).offsetWidth/this.w;
+    this.resizeW = (document.getElementById(this.id).offsetWidth-(2*this.marge4))/this.w;
     this.resizeH = (document.getElementById(this.id).offsetHeight-this.marge5)/this.h;
     
     this.vis = d3.select("#"+this.id+"_svg")
@@ -248,10 +245,10 @@ Graph.prototype = {
     this.g_axis
       .transition()
       .duration(500)
-      .attr("x1", function(d) { if (d.orientation=="vert") return self.resizeW*d.pos; 
+      .attr("x1", function(d) { if (d.orientation=="vert") return self.resizeW*d.pos+self.marge4; 
 				else return self.marge4; })
-      .attr("x2", function(d) { if (d.orientation=="vert") return self.resizeW*d.pos; 
-				else return (self.resizeW*self.w)-self.marge4 })
+      .attr("x2", function(d) { if (d.orientation=="vert") return self.resizeW*d.pos+self.marge4; 
+				else return (self.resizeW*self.w)+self.marge4 })
       .attr("y1", function(d) { if (d.orientation=="vert") return self.marge5; 
 				else return (self.resizeH*d.pos)+self.marge5; })
       .attr("y2", function(d) { if (d.orientation=="vert") return (self.resizeH*self.h)+self.marge5; 
@@ -277,7 +274,7 @@ Graph.prototype = {
       })
       .attr("x", function(d) { 
 	if (d.type=="axis_h") return 10;
-	else return Math.floor(self.resizeW*d.pos);
+	else return Math.floor(self.resizeW*d.pos+self.marge4);
       });
     
     this.text_container.selectAll("text")
@@ -292,9 +289,9 @@ Graph.prototype = {
       .transition()
       .duration(500)
       .attr("d", function(p) {
-	var che=' M '+Math.floor(p.path[0][0]*self.resizeW)+','+Math.floor(p.path[0][1]*self.resizeH+self.marge5);
+	var che=' M '+Math.floor(p.path[0][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[0][1]*self.resizeH+self.marge5);
 	for (var i=1; i<p.path.length; i++){
-		che+=' L '+Math.floor(p.path[i][0]*self.resizeW)+','+Math.floor(p.path[i][1]*self.resizeH+self.marge5);
+		che+=' L '+Math.floor(p.path[i][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[i][1]*self.resizeH+self.marge5);
 	}
 	return che;
       })
@@ -311,9 +308,9 @@ Graph.prototype = {
       .transition()
       .duration(500)
       .attr("d", function(p) {
-	var che=' M '+Math.floor(p.path[0][0]*self.resizeW)+','+Math.floor(p.path[0][1]*self.resizeH+self.marge5);
+	var che=' M '+Math.floor(p.path[0][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[0][1]*self.resizeH+self.marge5);
 	for (var i=1; i<p.path.length; i++){
-	che+=' L '+Math.floor(p.path[i][0]*self.resizeW)+','+Math.floor(p.path[i][1]*self.resizeH+self.marge5);
+	che+=' L '+Math.floor(p.path[i][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[i][1]*self.resizeH+self.marge5);
 	}
 	che+=' Z ';
 	return che;
