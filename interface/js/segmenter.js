@@ -9,9 +9,6 @@
  * 
  * content:
  * 
- * displayAlign()
- * hideAlign()
- * addToSegmenter()
  * 
  */
 
@@ -108,8 +105,8 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
       
   }
   
-      //TODO repasser en local
-      var memTab=[];
+  //TODO repasser en local
+  var memTab=[];
   function align(){
    
     var li =document.getElementById("listSeq").getElementsByTagName("li");
@@ -126,14 +123,14 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     }
     
     
-        $.ajax({
-            type: "POST",
-	    data : request,
-            url: CGI_ADRESS+"align.cgi",
-            success: function(result) {
-                displayAjaxResult(result);
-	    }
-        });
+    $.ajax({
+	type: "POST",
+	data : request,
+	url: CGI_ADRESS+"align.cgi",
+	success: function(result) {
+	    displayAjaxResult(result);
+	}
+    });
   }
   
   function displayAjaxResult(file){

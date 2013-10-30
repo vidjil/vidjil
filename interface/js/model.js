@@ -1,6 +1,6 @@
 /* VIDJIL
  * License blablabla
- * date: 29/05/2013
+ * date: 28/10/2013
  * version :0.0.01-a
  * 
  * Model.js
@@ -45,7 +45,11 @@ function Model(){
   this.analysis ={ custom :[], cluster :[], date :[]} ;
   this.t=0;
   this.r=0;
+  this.focus=-1;
+  this.colorMethod="Tag";
   this.view=[];
+  this.mapID={};
+  this.top=10;
 }
 
 
@@ -68,6 +72,7 @@ Model.prototype = {
     var n_max=0;
     var l=0;
     self.windows = [];
+    self.mapID={}
     self.dataFileName= document.getElementById(data).files[0].name;
     oFReader.readAsText(oFile);
     
@@ -81,7 +86,7 @@ Model.prototype = {
       //keep best top value
       for(var i=0; i < data.windows.length; i++){
 	if (data.windows[i].top <= limit){
-	  
+
 	  //search for min_size
 	  for(var j=0 ; j<data.windows[i].ratios.length; j++){
 	    for(var k=0 ; k<data.windows[i].ratios[j].length; k++){
@@ -89,14 +94,14 @@ Model.prototype = {
 		min_size=data.windows[i].ratios[j][k];
 	    }
 	  }
-	  
+  
 	  //search for n_max
 	  if ((typeof(data.windows[i].seg) != 'undefined') && 
-	    (typeof(data.windows[i].seg.Nsize) != 'undefined') &&
-	    (data.windows[i].seg.Nsize > n_max)){
-	    n_max=data.windows[i].seg.Nsize;   
+		  (typeof(data.windows[i].seg.Nsize) != 'undefined') &&
+		  (data.windows[i].seg.Nsize > n_max)){
+		  n_max=data.windows[i].seg.Nsize;   
 	  }
-	  
+  
 	  self.windows[l] = data.windows[i];
 	  l++;
 	} 	
@@ -120,6 +125,10 @@ Model.prototype = {
       }else{
 	self.system="TRG";
       }
+
+      for (var i=0; i< self.n_windows; i++){
+	self.mapID[self.windows[i].window]=i;
+      }
       
       self.loadGermline();
       self.loadAnalysis(analysis);
@@ -128,7 +137,7 @@ Model.prototype = {
   },//end load
   
   
-/* charge le germline définit a l'initialisation dans le modele
+/* charge le germline définit a l'initialisation dans le model
  * détermine le nombre d'allele pour chaque gene et y attribue une couleur
  * */
   loadGermline: function(){
@@ -145,11 +154,11 @@ Model.prototype = {
 	self.germline.v=germline.IGHV;
 	self.germline.j=germline.IGHJ;
 	break;
-	default :
+      default :
 	self.germline.v=germline.TRGV;
 	self.germline.j=germline.TRGJ;
 	break;
-      }
+    }
     self.germline.vgene={};
     self.germline.jgene={};
       
@@ -216,9 +225,9 @@ Model.prototype = {
       oFReader.readAsText(oFile);
       
       oFReader.onload = function (oFREvent) {
-	var text = oFREvent.target.result;
-	self.analysis = JSON.parse(text);
-	self.initClones();
+      var text = oFREvent.target.result;
+      self.analysis = JSON.parse(text);
+      self.initClones();
       }
     }else{
       self.initClones();
@@ -241,7 +250,7 @@ Model.prototype = {
       if (typeof(this.windows[i].seg) != 'undefined' && typeof(this.windows[i].seg.Nsize) != 'undefined' ){
 	nsize=this.windows[i].seg.Nsize;
 	if (nsize>maxNsize){maxNsize=nsize;}
-      }else{
+			}else{
 	nsize=-1;
       }
       self.apID[this.windows[i].window]=i;
@@ -250,7 +259,7 @@ Model.prototype = {
     
     //		COLOR_N
     for (var i=0; i<this.n_windows; i++){
-      this.clones[i].colorN=colorGenerator( ( ((i/maxNsize)-1)*(-250) )  ,  colorStyle.col_s  , colorStyle.col_v);
+      this.clones[i].colorN=colorGenerator( ( ((this.clones[i].Nsize/maxNsize)-1)*(-250) )  ,  colorStyle.col_s  , colorStyle.col_v);
     }
     
     //		SHORTNAME
@@ -268,28 +277,28 @@ Model.prototype = {
     //		EXPECTED VALUE
     var c=this.analysis.custom;
     for(var i=0 ;i<c.length; i++){
-      if (typeof self.apID[c[i].window] != "undefined" ){
+      if (typeof this.mapID[c[i].window] != "undefined" ){
 	var f=1;
 	if (typeof c[i].expected  != "undefined" ){
 	  var u= this.normalizations.indexOf("highest standard");
 	  if (u!=-1){
-	    f=getSize([self.apID[c[i].window]])/c[i].expected;
+	    f=getSize([this.mapID[c[i].window]])/c[i].expected;
 	  }else{
-	    f=jsonData.windows[mapID[c[i].window]].ratios[u]/c[i].expected;
+	    f=jsonData.windows[this.mapID[c[i].window]].ratios[u]/c[i].expected;
 	  }
 	}
 	if (f<100 && f>0.01){
 	  if (typeof( c[i].tag ) != "undefined" ) {
-	    this.clones[mapID[c[i].window]].tag=c[i].tag;
+	    this.clones[this.mapID[c[i].window]].tag=c[i].tag;
 	  }
-	  
+
 	  if (typeof( c[i].name ) != "undefined" ) {
-	    this.clones[mapID[c[i].window]].c_name=c[i].name;
+	    this.clones[this.mapID[c[i].window]].c_name=c[i].name;
 	  }
 	}
       }
     }
-    
+    /*
     //		CUSTOM CLUSTER
     var cluster=this.analysis.cluster;
     for(var i=0 ;i<cluster.length; i++){
@@ -299,12 +308,14 @@ Model.prototype = {
 	var new_cluster = [];
 	new_cluster= new_cluster.concat(this.clones[ self.apID[cluster[i].l] ].cluster);
 	new_cluster= new_cluster.concat(this.clones[ self.apID[cluster[i].f] ].cluster);
-	
+
 	this.clones[ self.apID[cluster[i].l] ].cluster=new_cluster;
 	this.clones[ self.apID[cluster[i].f] ].cluster=[];
 	
       }
     }
+*/
+		this.init()
   },//end initClones
   
   
@@ -317,23 +328,21 @@ Model.prototype = {
     
     for(var i=0 ;i<this.n_windows; i++){
       
-      if ( ( typeof this.clones[i].tag != "undefined" && table[i].tag != 8 ) || 
-      typeof this.clones[i].c_name != "undefined" ){
-	
+      if ( ( typeof this.clones[i].tag != "undefined" && this.clones[i].tag != 8 ) || 
+	typeof this.clones[i].c_name != "undefined" ){
+
 	var elem = {};
-	elem.window = windows[i].window;
-	if ( typeof this.clones[i].tag != "undefined" && table[i].tag != 8)
+	elem.window = this.windows[i].window;
+	if ( typeof this.clones[i].tag != "undefined" && this.clones[i].tag != 8)
 	  elem.tag = this.clones[i].tag;
 	if ( typeof this.clones[i].c_name != "undefined" ) 
 	  elem.name = this.clones[i].c_name;
-	
+
 	analysisData.custom.push(elem);
       }
       
       if (this.clones[i].cluster.length > 1){
-	
 	for (var j=0; j<this.clones[i].cluster.length; j++){
-	  
 	  if (this.clones[i].cluster[j] !=i){
 	    var elem ={};
 	    elem.l = this.windows[i].window;
@@ -346,7 +355,7 @@ Model.prototype = {
     var textToWrite = JSON.stringify(analysisData, undefined, 2);
     var textFileAsBlob = new Blob([textToWrite], {type:'json'});
 
-  saveAs(textFileAsBlob, "analysis.json");
+    saveAs(textFileAsBlob, "analysis.json");
   },//end saveAnalysis
   
   
@@ -369,7 +378,7 @@ Model.prototype = {
     this.updateElem(cloneID);
   },//fin changeName,
   
-/* give a new custom name to a clone
+/* give a new custom tag to a clone
  * 
  * */
   changeTag : function(cloneID, newTag){
@@ -378,11 +387,11 @@ Model.prototype = {
     if (newTag==8) { 
       delete(this.clones[cloneID].tag)
     }
-    this.updateElem(cloneID);
+    this.updateElem([cloneID]);
   },
   
-/* renvoye le nom attribué au clone par l'utilisateur,
- * si aucun nom attribué renvoye le code
+/* return custom name of cloneID,
+ * or return segmentation name
  * 
  * */
   getName : function(cloneID){
@@ -395,9 +404,8 @@ Model.prototype = {
     }
   },//end getName
 
-/* renvoye le code du clone format "geneV -x/y/-z geneJ",
- * si IGH renvoye un format réduit du code,
- * si clone non segmenté renvoye la window
+/* return segmentation name "geneV -x/y/-z geneJ",
+ * return a short segmentation name if system == IGH,
  * 
  * */
   getCode : function(cloneID){
@@ -416,34 +424,73 @@ Model.prototype = {
   },//end getCode
   
   
-/* compute the size of a clone ( sum of all windows clustered )
+/* compute the clone size ( sum of all windows clustered )
  * @t : tracking point (default value : current tracking point)
  * */
   getSize : function(cloneID, time){
     time = typeof time !== 'undefined' ? time : this.t; 
-    
     var result=0;
-      for(var j=0 ;j<this.clones[cloneID].cluster.length; j++){
-	result += this.windows[this.clones[cloneID].cluster[j]].ratios[time][this.r];}
+    for(var j=0 ;j<this.clones[cloneID].cluster.length; j++){
+      result += this.windows[this.clones[cloneID].cluster[j]].ratios[time][this.r];}
     return result
   },//end getSize
 
-/* 
- * 
+/* return the clone size with a fixed number of character
+ * use scientific notation if neccesary
  * */
   getStrSize : function(cloneID){
-	var size = this.getSize(cloneID);
-        var result;
-        if (size==0){
-	  result="-∕-";
-	}else{
-	  if (size<0.0001){
-	    result=(size).toExponential(1);
-	  }else{
-	    result=(100*size).toFixed(3)+"%";
-	  }
-	}
+    var size = this.getSize(cloneID);
+    var result;
+    if (size==0){
+      result="-∕-";
+    }else{
+      if (size<0.0001){
+	result=(size).toExponential(1);
+      }else{
+	result=(100*size).toFixed(3)+"%";
+      }
+    }
     return result
+  },
+
+/* return the clone color
+ * 
+ * */
+  getColor : function(cloneID){
+    if (this.focus==cloneID) {
+      return colorStyle.c05;
+    }
+    if (!this.clones[cloneID].active) {
+      return colorStyle.c06;
+    }
+    if (typeof(this.windows[cloneID].seg.V) != 'undefined'){
+      if (this.colorMethod=="V") {
+      	var vGene=this.windows[cloneID].seg.V[0];
+      	return this.germline.v[vGene].color;
+      }
+      if (this.colorMethod=="J") {
+      	var jGene=this.windows[cloneID].seg.J[0];
+      	return this.germline.j[jGene].color;
+      }
+      if (this.colorMethod=="N") {
+      	return this.clones[cloneID].colorN;
+      }
+      if (this.colorMethod=="Tag") {
+      	return tagColor[this.clones[cloneID].tag];
+      }
+      if (this.colorMethod=="abundance") {
+      	return tagColor[this.clones[cloneID].tag];
+      }
+    }
+    return colorStyle.c06;
+  },
+
+/*
+ *
+ * */
+  changeColorMethod : function(colorM){
+    this.colorMethod=colorM;
+    this.update();
   },
   
 /* use another ratio to compute clone size
@@ -470,19 +517,30 @@ Model.prototype = {
  * 
  * */
   focusIn : function(cloneID){
-    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
-    this.clones[cloneID].focus=true;
+    var tmp=this.focus;
+
+    if (tmp!=cloneID){
+      if (cloneID[0]=="s") cloneID=cloneID.substr(3);
+	this.focus=cloneID;
+      if (tmp!=-1){
+	this.updateElem([cloneID, tmp]);
+      }else{
+	this.updateElem([cloneID]);
+      }
+    }
   },
   
   
-/* 
+/* remove focus marker
  * 
  * */
-  focusOut : function(cloneID){
-    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
-    this.clones[cloneID].focus=false;
+  focusOut : function(){
+    var tmp = this.focus;
+    this.focus=-1;
+    if (tmp!=-1) this.updateElem([tmp]);
   },
   
+
 /* put a clone in the selection
  * 
  * */
@@ -495,31 +553,35 @@ Model.prototype = {
     }else{
       this.clones[cloneID].select=true;
     }
+    this.updateElem([cloneID]);
   },
   
-/* kick a clone from the selection
+
+/* kick a clone out of the selection
  * 
  * */
   unselect :function(cloneID){
     console.log("unselect() (clone "+cloneID+")")
     if (this.clones[cloneID].select){
       this.clones[cloneID].select=false;
-      this.clones[cloneID].focus=false;
     }
+    this.updateElem([cloneID]);
   },
-  
-/* kick all clones from the selection
+ 
+ 
+/* kick all clones out of the selection
  * 
  * */
   unselectAll :function(){
     console.log("unselectAll()")
-    for (var i=0; i< this.n_windows ; i++){
-      if(this.clones[i].select){
-	this.clones[i].select=false; 
-      }
+    var list=this.getSelected();
+    for (var i=0; i< list.length ; i++){
+      this.clones[list[i]].select=false; 
     }
+    this.updateElem(list);
   },
   
+
 /* return clones currently in the selection
  * 
  * */
@@ -535,7 +597,7 @@ Model.prototype = {
   },
   
   
-/* 
+/* merge all clones currently in the selection into one
  * 
  * */
   merge :function(){
@@ -553,98 +615,151 @@ Model.prototype = {
       new_cluster= new_cluster.concat(this.clones[list[i]].cluster);
       this.clones[list[i]].cluster=[];
     }
-      
+
     this.clones[leader].cluster=new_cluster;
     this.unselectAll()
-    this.select(leader)
+    this.select(leader)	
   },
   
   
-/* 
+/* sépare une window d'un clone
  * 
  * */
-  split :function(cloneIDa, cloneIDb){
-    console.log("merge() (cloneA "+cloneIDa+" cloneB "+cloneIDb+")")
-    if (cloneIDa==cloneIDb) return
+  split :function(cloneID, windowID){
+    console.log("split() (cloneA "+cloneID+" windowB "+windowID+")")
+    if (cloneID==windowID) return
      
-    var nlist = this.clones[cloneIDa].cluster;
-    var index = nlist.indexOf(cloneIDb);
+    var nlist = this.clones[cloneID].cluster;
+    var index = nlist.indexOf(windowID);
     if (index == -1) return
       
     nlist.splice(index, 1);
-    
-    this.clones[cloneIDa].cluster=nlist;
-    this.clones[cloneIDb].cluster=[cloneIDb];
-    this.clones[cloneIDa].focus=false;
-    this.clones[cloneIDb].focus=false;
-    
+
+    //le clone retrouve sa liste de windows -1
+    this.clones[cloneID].cluster=nlist;
+    //la window forme son propre clone a part
+    this.clones[windowID].cluster=[windowID];
+		
+    this.updateElem([windowID,cloneID]);    
   },
   
   
-/*resize toute les vues associées 
+/* resize all views
  * 
  * */
   resize :function(){
     for (var i=0; i<this.view.length; i++){
       this.view[i].resize();
     }
-    initStyle();
   },
   
+
+/* 
+ * 
+ * */
+  updateModel :function(){
+    for (var i=0; i<this.n_windows; i++){
+      if (this.clones[i].cluster.length!=0 && this.windows[i].top < this.top && tagDisplay[this.clones[i].tag] == 1 ){
+	this.clones[i].active=true;
+      }else{
+	this.clones[i].active=false;
+      }
+    }   
+    for (var i=0; i<this.n_windows; i++){
+      this.clones[i].color=this.getColor(i);
+    }
+  },
   
-/*update toute les vues associées 
+
+/*
+ * 
+ * */
+  updateModelElem :function(list){
+    for (var i=0 ; i < list.length ; i++){
+      if (this.clones[list[i]].cluster.length!=0 && this.windows[list[i]].top < this.top && tagDisplay[this.clones[list[i]].tag] == 1 ){
+	this.clones[list[i]].active=true;
+      }else{
+	this.clones[list[i]].active=false;
+      }   
+    }
+    for (var i=0 ; i < list.length ; i++){
+      this.clones[list[i]].color=this.getColor(list[i]);
+    }
+  },
+  
+
+/*update all views
  * 
  * */
   update :function(){
     var startTime = new Date().getTime();  
     var elapsedTime = 0;  
+    this.updateModel();
     for (var i=0; i<this.view.length; i++){
       this.view[i].update();
     }
     elapsedTime = new Date().getTime() - startTime;  
     console.log( "update() : " +elapsedTime);  
   },
-  
-/*update l'element cloneID dans toute les vues associées 
+
+
+/*update a clone list in all views
  * 
  * */
-  updateElem :function(cloneID){
+  updateElem :function(list){
+    this.updateModelElem(list);
     for (var i=0; i<this.view.length; i++){
-      this.view[i].updateElem(cloneID);
+      this.view[i].updateElem(list);
     }
   },
 
-/*init toute les vues associées 
+
+/*init all views
  * 
  * */
   init :function(){
     for (var i=0; i<this.view.length; i++){
       this.view[i].init();
     }
+    this.displayTop();
   },
   
-}//fin prototypage Model
 
-var m = new Model();
-
-
-
-
-
-
-
-
-
-
+/* define a minimum top rank required for a clone to be displayed
+ * 
+ * */
+  displayTop : function(top){
+    top = typeof top !== 'undefined' ? top : this.top; 
+    this.top=top;
+    document.getElementById('rangeValue').value=top;
+    document.getElementById('top_display').innerHTML=top;
+    this.update();
+  },
 
 
+/* increase the minimum top rank required
+ * 
+ * */
+  incDisplayTop : function(){
+    if (this.top<100){ 
+      this.top=this.top+5;
+      this.displayTop();
+    }
+  },
 
 
+/* decrease the minimum top rank required
+ * 
+ * */  
+  decDisplayTop : function(){
+    if (this.top>0){ 
+      this.top=this.top-5;
+      this.displayTop();
+    }
+  },
+  
 
-
-
-
-
+}//end prototype Model
 
 
 
@@ -667,9 +782,8 @@ function cancel(){
   document.getElementById("file_menu").style.display="none";
 }
 
-
 function initCoef(){
-  initStyle();//TODO a supprimer
+	m.resize();
 };
 
 /*appel a chaque changement de taille du navigateur*/
