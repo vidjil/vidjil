@@ -27,16 +27,16 @@ list-style-type: none;
 }
 
 #top-container {
-height: 28px;
-width: 100%;
-background: inherit;
-border-bottom: solid;
+  height: 28px;
+  width: 100%;
+  background: inherit;
+  border-bottom: solid;
 }
 
 #mid-container {
-  height: -moz-calc(100% - 200px);
-  height: -webkit-calc(100% - 200px);
-  height: calc(100% - 200px);
+  height: -moz-calc(100% - 150px);
+  height: -webkit-calc(100% - 150px);
+  height: calc(100% - 150px);
   width : 100%;
   overflow:hidden;
 }
@@ -394,7 +394,7 @@ max-height:200px;
 overflow-y:auto;
 border-top: solid;
 border-bottom: solid;
-height:150px;
+height:100px;
 }
 
 .sequence-line { 

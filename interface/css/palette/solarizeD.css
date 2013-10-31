@@ -115,7 +115,7 @@ body{
  background : #002b36;
 }
 
-#file_menu, #menu, #listClones, #listSelect, #tagSelector, #display-menu, #bot-container{
+#file_menu, #menu, #listClones, #listSelect, #tagSelector, #display-menu, #bot-container, .seq-fixed{
  background : #002b36;
 }
 

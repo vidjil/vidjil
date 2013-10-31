@@ -70,7 +70,6 @@ Model.prototype = {
     var oFile = document.getElementById(data).files[0];
     var min_size = 1;
     var n_max=0;
-    var l=0;
     self.windows = [];
     self.mapID={}
     self.dataFileName= document.getElementById(data).files[0].name;
@@ -101,9 +100,7 @@ Model.prototype = {
 		  (data.windows[i].seg.Nsize > n_max)){
 		  n_max=data.windows[i].seg.Nsize;   
 	  }
-  
-	  self.windows[l] = data.windows[i];
-	  l++;
+	  self.windows.push(data.windows[i]);
 	} 	
       }
 
@@ -262,6 +259,26 @@ Model.prototype = {
       this.clones[i].colorN=colorGenerator( ( ((this.clones[i].Nsize/maxNsize)-1)*(-250) )  ,  colorStyle.col_s  , colorStyle.col_v);
     }
     
+    //		COLOR_V
+    for (var i=0; i<this.n_windows; i++){
+      if (typeof(this.windows[i].seg.V) != 'undefined'){
+	var vGene=this.windows[i].seg.V[0];
+	this.clones[i].colorV=this.germline.v[vGene].color;
+      }else{
+	this.clones[i].colorV=colorStyle.c06;
+      }
+    }
+    
+    //		COLOR_J
+    for (var i=0; i<this.n_windows; i++){
+      if (typeof(this.windows[i].seg.J) != 'undefined'){
+	var jGene=this.windows[i].seg.J[0];
+	this.clones[i].colorJ=this.germline.j[jGene].color;
+      }else{
+	this.clones[i].colorJ=colorStyle.c06;
+      }	
+    }
+    
     //		SHORTNAME
     for(var i=0; i<this.n_windows; i++){
       if (typeof(this.windows[i].seg) != 'undefined' && typeof(this.windows[i].seg.name) != 'undefined' ){
@@ -395,8 +412,6 @@ Model.prototype = {
  * 
  * */
   getName : function(cloneID){
-    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
-    
     if ( typeof(this.clones[cloneID].c_name)!='undefined' ){
       return this.clones[cloneID].c_name;
     }else{
@@ -409,8 +424,6 @@ Model.prototype = {
  * 
  * */
   getCode : function(cloneID){
-    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
-    
     if ( typeof(this.windows[cloneID].seg)!='undefined' && typeof(this.windows[cloneID].seg.name)!='undefined' ){
       if ( system=="IGH" && typeof(this.windows[cloneID].seg.shortName)!='undefined' ){
 	return this.windows[cloneID].seg.shortName;
@@ -465,12 +478,10 @@ Model.prototype = {
     }
     if (typeof(this.windows[cloneID].seg.V) != 'undefined'){
       if (this.colorMethod=="V") {
-      	var vGene=this.windows[cloneID].seg.V[0];
-      	return this.germline.v[vGene].color;
+      	return this.clones[cloneID].colorV;
       }
       if (this.colorMethod=="J") {
-      	var jGene=this.windows[cloneID].seg.J[0];
-      	return this.germline.j[jGene].color;
+      	return this.clones[cloneID].colorJ;
       }
       if (this.colorMethod=="N") {
       	return this.clones[cloneID].colorN;
@@ -520,7 +531,6 @@ Model.prototype = {
     var tmp=this.focus;
 
     if (tmp!=cloneID){
-      if (cloneID[0]=="s") cloneID=cloneID.substr(3);
 	this.focus=cloneID;
       if (tmp!=-1){
 	this.updateElem([cloneID, tmp]);
@@ -546,7 +556,6 @@ Model.prototype = {
  * */
   select : function(cloneID){
     console.log("select() (clone "+cloneID+")")
-    if (cloneID[0]=="s") cloneID=cloneID.substr(3);
     
     if (this.clones[cloneID].select){
       this.unselect(cloneID); 
