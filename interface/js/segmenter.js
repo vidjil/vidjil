@@ -14,29 +14,19 @@
 
 var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
  
-  /*affiche le segmenteur/comparateur*/
- function displayAlign(){
-    $('#bot-container').animate({ width: "100%"}, 200 ); 
-    
-    var li =document.getElementById("listSeq").getElementsByTagName("li");
-    if (li.length >0){
-      var id=li[0].id.substr(3);
-      var mid=$("#m"+id+" span:first-child").width()-250;
-      $("#bot-container").animate({scrollLeft: mid}, 500);
-    }
-  }
-  
-  /*masque le segmenteur/comparateur ( */
-  function hideAlign(){
-    hideSelector();
-    $('#bot-container').stop();
-    $('#bot-container').animate({ width: "400px"}, 200 ); 
-  }
+/* segment constructor
+ * 
+ * */   
+function Segment(id, model){
+  this.id=id;			//ID de la div contenant le segmenteur
+  this.m=model;			//Model utilisé
+  this.m.view.push(this);	//synchronisation au Model
+}
 
-  function hideSelector(){
-    $('.selector').stop();
-    $('.selector').animate({ height: "hide", display: "none"}, 100 ); 
-  }
+Segment.prototype = {
+}
+
+
   
   function addToSegmenter(cloneID){
     var divParent = document.getElementById("listSeq");
@@ -211,3 +201,23 @@ var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
     
   }
   
+/*
+ //affiche le segmenteur/comparateur
+ function displayAlign(){
+    $('#bot-container').animate({ width: "100%"}, 200 ); 
+    
+    var li =document.getElementById("listSeq").getElementsByTagName("li");
+    if (li.length >0){
+      var id=li[0].id.substr(3);
+      var mid=$("#m"+id+" span:first-child").width()-250;
+      $("#bot-container").animate({scrollLeft: mid}, 500);
+    }
+  }
+  
+  //masque le segmenteur/comparateur ( 
+  function hideAlign(){
+    hideSelector();
+    $('#bot-container').stop();
+    $('#bot-container').animate({ width: "400px"}, 200 ); 
+  }
+  */

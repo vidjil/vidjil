@@ -27,7 +27,7 @@ function ScatterPlot(id, model){
 ScatterPlot.prototype = {
   
 /* crée le cadre svg pour le scatterplot
- * l
+ * 
  * */
   init :function() {
     console.log("ScatterPlot "+this.id+": init()");
@@ -385,7 +385,7 @@ ScatterPlot.prototype = {
       this.nodes[i].r1=this.getRadius(i);
     }
     this.force.start();
-		this.updateStyle();
+    this.updateStyle();
     elapsedTime = new Date().getTime() - startTime;  
     console.log( "update sp: " +elapsedTime +"ms");  
   },

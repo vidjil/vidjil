@@ -1,0 +1,203 @@
+Vidjil interface
+
+
+///////////////////////////////////////////////////////////////////////////////////////
+Class Model
+
+    I Contenu
+
+      la class model contient toute les données chargées des fichiers data et analysis
+      et stock/genere un bon nombre de meta-données utile pour toutes les views
+
+	-windows
+	  -liste des fenêtres 
+	-germline
+	  -liste des genes + nombre d'alleles
+	-clones
+	  -liste des clones, un clones est basiquement un ensemble de fenêtre 
+	  -il existe autant de clones que de fenêtres et par defaut chaque clone
+	  est un ensemble d'une fenêtre    clone[1]=[window[1]] ...
+	  -une fenêtre ne peut se trouver que dans un seul clone a la fois
+	  -un clone vide est considéré comme inactif (non affiché)
+	  -la taille d'un clone correspond a la somme des tailles de ses fenêtres
+	  -la fenetre representative de clone[x] est toujours la windows[x] 
+	-view
+	  -la liste des vues associées
+	-t et r
+	  -le point de suivi actuel et le ratio utilisé (normalization)
+	  -chaque window/clone possede une taille différente suivant le point de suivi
+	    et le ratio utilisé, ces valeurs sont utilisées par defaut pour les calculs
+	-f
+	  -le clone actuellement en focus
+	
+
+    II fonction de chargement/sauvegarde
+
+	-load (data, analysis, limit)
+	-loadGermline()
+	-initClones()
+	-loadAnalysis(analysis)
+	-saveAnalysis()
+	-resetAnalysis()
+	
+    III manipulation du Model
+
+	-changeName(cloneID, new_name)
+	-getName(cloneID)
+	-getCode(cloneID)
+	-getSize(cloneID)
+	-changeRatio(new_r)
+	-changeTime(new_t)
+	-focusIn(cloneID)
+	-focusOut()
+
+    IV selection
+	permet de placer/retirer le status select sur un/plusieurs clones
+
+	-select(cloneID)
+	-unselect(cloneID)
+	-unselectAll()
+	-getSelected()
+
+    V merge/split
+    
+	-merge()
+	    merge all clones currently in the selection into one
+	      
+	      exemple:
+	      
+	      1/getSelected()
+		  selection = 1, 2, 5, 8,
+	      
+	      2/l'état des clones au départ
+		  clones[1]=[windows[1]]
+		  clones[2]=[windows[2]]	
+		  clones[5]=[windows[5]]	
+		  clones[8]=[windows[8]]
+
+	      3/merge() création d'un nouvel ensemble de fenetre
+		  [windows[1],windows[2],windows[5],windows[8]]
+	      
+	      4/attribution du nouvel ensemble au clone ayant le meilleur top
+		  clones[1]=[windows[1],windows[2],windows[5],windows[8]]
+		  clones[2]=[]->inactif
+		  clones[5]=[]->inactif	
+		  clones[8]=[]->inactif
+	    
+	-split(cloneID, windowID)
+	      exemple:
+	      
+	      1/
+		  clones[1]=[windows[1],windows[2],windows[5],windows[8]]
+		  clones[5]=[]->inactif	
+	      
+	      2/
+		  split(1,5)
+	      
+	      3/
+		  clones[1]=[windows[1],windows[2],windows[8]]
+		  clones[5]=[windows[5]]
+		
+    VI manipulation des views
+    
+      	-init()
+	-update()
+	-updateElem(list)
+	-resize()
+	    
+///////////////////////////////////////////////////////////////////////////////////////
+  Views
+
+    I Contenu commun a toutes les vues
+    
+	-id 
+	  l'identifiant de l'element HTML contenant la vue
+	-m
+	  le model associé a la vue
+	  
+    II fonctions communes a toutes les vues
+    
+        -init()
+	-update()
+	-updateElem(list)
+	-resize()
+    
+///////////////////////////////////////////////////////////////////////////////////////
+  Class Graph
+    
+    I Contenu spécifique a la vue graph
+    
+      resizeW=1;		coef d'agrandissement largeur	
+      resizeH=1;		coef d'agrandissement hauteur
+      w=1400;			largeur graph avant resize
+      h=450;			hauteur graph avant resize
+      marge1=50;		marge droite bord du graph/premiere colonne
+      marge2=50;		marge gauche derniere colonne/bord du graph
+      marge4=75;		marge droite/gauche (non influencé par le resize)
+      marge5=25;		marge top (non influencé par le resize)
+      
+    II fonctions spécifiques a la vue graph
+    
+      -drawElem(list)		retrace la liste de clone passé en parametre
+      -draw()			retrace le graph ( clones + axis + legendes)
+      -constructPathR(res)	calcul un tracé pour une résolution
+      -constructPath(cloneID)	calcul un tracé pour un clone
+      
+/////////////////////////////////////////////////////////////////////////////////////
+  Class ScatterPlot
+    
+    I Contenu spécifique a la vue scatterPlot
+	
+      resizeCoef=1;		coef d'agrandissement a appliquer aux rayons des elements
+      resizeW=1;		coef d'agrandissement largeur
+      resizeH=1;		coef d'agrandissement hauteur
+      w=1400;			largeur avant resize
+      h=700;			hauteur avant resize
+      marge_left=80;		
+      marge_top=50;		
+      max_precision=8;		precision max atteignable 
+      positionGene={};		positions des genes 
+      positionAllele={};	positions des alleles
+      grid[]			les grilles de répartition disponibles
+      splitMethod="gene";	méthode de répartition actuelle (defaut: gene)
+    
+    II fonctions spécifiques a la vue graph
+    
+      a/ fonction de manipulation
+      
+      -initGridModel()			
+      -getRadius(cloneID) 		
+      -updateStyle()			
+      -initGrid()			
+      -changeSplitMethod(new_splitM)	
+      
+      b/ fonction d'animation
+      
+      -tick()				retrace une image
+      -move()				déplace les nodes
+      -updateRadius()			modifie la taille des rayons de chaque nodes
+      -debugNaN()			
+      -collide()			résolution des collisions
+
+    
+/////////////////////////////////////////////////////////////////////////////////////
+  Class List
+    
+    I Contenu spécifique a la vue List
+    
+    II fonctions spécifiques a la vue List
+    
+      -div_elem
+      -div_cluster
+      -edit_name
+
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    

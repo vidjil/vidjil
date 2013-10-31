@@ -242,7 +242,7 @@ Model.prototype = {
     console.log("initClones()");
     var maxNsize=0;
     var nsize;
-    self.apID = [];
+    self.mapID = [];
     this.clones =[];
     
     //		NSIZE
@@ -253,7 +253,7 @@ Model.prototype = {
 			}else{
 	nsize=-1;
       }
-      self.apID[this.windows[i].window]=i;
+      self.mapID[this.windows[i].window]=i;
       this.clones[i]={display:true, Nsize:nsize, cluster :[i], tag: default_tag};
     }
     
@@ -298,23 +298,23 @@ Model.prototype = {
 	}
       }
     }
-    /*
+    
     //		CUSTOM CLUSTER
     var cluster=this.analysis.cluster;
     for(var i=0 ;i<cluster.length; i++){
-      if (typeof self.apID[cluster[i].l] != "undefined" 
-       && typeof self.apID[cluster[i].f] != "undefined" ){
+      if (typeof self.mapID[cluster[i].l] != "undefined" 
+       && typeof self.mapID[cluster[i].f] != "undefined" ){
 	
 	var new_cluster = [];
-	new_cluster= new_cluster.concat(this.clones[ self.apID[cluster[i].l] ].cluster);
-	new_cluster= new_cluster.concat(this.clones[ self.apID[cluster[i].f] ].cluster);
+	new_cluster= new_cluster.concat(this.clones[ self.mapID[cluster[i].l] ].cluster);
+	new_cluster= new_cluster.concat(this.clones[ self.mapID[cluster[i].f] ].cluster);
 
-	this.clones[ self.apID[cluster[i].l] ].cluster=new_cluster;
-	this.clones[ self.apID[cluster[i].f] ].cluster=[];
+	this.clones[ self.mapID[cluster[i].l] ].cluster=new_cluster;
+	this.clones[ self.mapID[cluster[i].f] ].cluster=[];
 	
       }
     }
-*/
+
 		this.init()
   },//end initClones
   
@@ -781,6 +781,32 @@ function cancel(){
   document.getElementById("analysis_menu").style.display="none";
   document.getElementById("file_menu").style.display="none";
 }
+
+
+
+  function showSelector(elem){
+    if ($('#'+elem).css('display') == 'none'){
+      $('.selector').stop()
+      $('.selector').css('display','none'); 
+      $('#'+elem).animate({ height: "show", display: "show"}, 100 ); 
+    }
+  }
+  
+  function hideSelector(){
+    $('.selector').stop();
+    $('.selector').animate({ height: "hide", display: "none"}, 100 ); 
+  }
+  
+  function popupMsg(msg){
+    document.getElementById("popup-container").style.display="block";
+    
+    document.getElementById("popup-msg").innerHTML+="<p>" +msg+ "</p>";
+  }
+  
+  function closePopupMsg(){
+    document.getElementById("popup-container").style.display="none";
+    document.getElementById("popup-msg").innerHTML="";
+  }
 
 function initCoef(){
 	m.resize();

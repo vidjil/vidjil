@@ -244,19 +244,6 @@ List.prototype = {
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
   function showCluster(cloneID){
     $("#cluster"+cloneID).toggle("fast");
   }
@@ -267,23 +254,6 @@ List.prototype = {
       return getSize($(b).attr("id"))> getSize($(a).attr("id")) ? 1:-1; 
     })
     $("#listClones").html(sort);
-  }
-
-
-
-  function showSelector(elem){
-    $('#'+elem).animate({ height: "show", display: "show"}, 100 ); 
-  }
-  
-  function popupMsg(msg){
-    document.getElementById("popup-container").style.display="block";
-    
-    document.getElementById("popup-msg").innerHTML+="<p>" +msg+ "</p>";
-  }
-  
-  function closePopupMsg(){
-    document.getElementById("popup-container").style.display="none";
-    document.getElementById("popup-msg").innerHTML="";
   }
   
   function changeTag(cloneID){
