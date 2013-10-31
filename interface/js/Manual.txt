@@ -191,13 +191,27 @@ Class Model
       -div_cluster
       -edit_name
 
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
+//////////////////////////////////////////////////////////////////////////////////////
+
+les noms par defaut dans vidjil
+
+Model			m
+ScatterPlot		sp
+Graph			graph
+List			list
+Segmenter		segment
+
+quelques exemples: 
+pour accéder aux objets depuis une console javascript 
+(avec chrome/chromium pour un résultat plus lisible)
+
+m				: retourne le contenu du model
+m.__proto__			: retourne la liste des methodes disponibles pour le model
+m.windows			: retourne la liste des fenetres
+m.clones[15]			: retourne le clone n°15
+
+graph.update()			: met a jour le graphique
+graph.update			: retourne le code de la fonction upate() de l'objet graph
+sp.changeSplitMethod("gene")	: active la répartition par gene sur le scatterplot
+
+etc ...
