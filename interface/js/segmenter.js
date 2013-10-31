@@ -58,7 +58,12 @@ Segment.prototype = {
       
       if (this.m.clones[list[i]].select){
 	if ( document.getElementById("seq"+list[i]) ){
-	  
+	  var spanF=document.getElementById("f"+list[i]);
+	  spanF.innerHTML="";
+	  this.div_elem(spanF, list[i]);
+	  spanF.className="seq-fixed";
+	  spanF.firstChild.nextSibling.class="nameBox2";
+	  spanF.lastChild.firstChild.id="scolor"+list[i];
 	}else{
 	  this.addToSegmenter(list[i]);
 	  this.show();
