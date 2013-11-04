@@ -13,6 +13,7 @@
  */
 
 var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
+var memtab=[];
  
 /* segment constructor
  * 
@@ -22,7 +23,7 @@ function Segment(id, model){
   this.m=model;			//Model utilisé
   this.m.view.push(this);	//synchronisation au Model
   this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
-  
+
   
 }
 
@@ -222,30 +223,19 @@ Segment.prototype = {
       var mid=$("#m"+id+" span:first-child").width()-250;
       $("#bot-container").animate({scrollLeft: mid}, 500);
     }
-  }
+  },
   
-  
-}//fin prototype
-
-
-  
- 
-  
-  //TODO repasser en local
-  var memTab=[];
-  function align(){
+  align : function(){
    
-    var li =document.getElementById("listSeq").getElementsByTagName("li");
+    var list =this.m.getSelected()
     var request = "";
-    memTab=[];
+    memTab=list;
     
-    for (var i = 0; i<li.length; i++){
-      var id =li[i].id.substr(3);
-      memTab[i]=id;
-      if ( typeof(jsonData.windows[id].seg) != 'undefined' && jsonData.windows[id].seg!=0)
-	request += ">" +id+"\n"+ jsonData.windows[id].seg.sequence+"\n";
+    for (var i = 0; i<list.length; i++){
+      if ( typeof(this.m.windows[list[i]].seg) != 'undefined' && this.m.windows[list[i]].seg!=0)
+	request += ">" +list[i]+"\n"+ this.m.windows[list[i]].seg.sequence+"\n";
       else
-	request += ">" +id+"\n"+ jsonData.windows[id].window+"\n";
+	request += ">" +list[i]+"\n"+ this.m.windows[list[i]].window+"\n";
     }
     
     
@@ -258,6 +248,10 @@ Segment.prototype = {
 	}
     });
   }
+
+}//fin prototype
+
+
   
   function displayAjaxResult(file){
     
@@ -268,8 +262,6 @@ Segment.prototype = {
       colorSeq(memTab[i], json.seq[i]);
     }
     
-    displayAlign();
-    
   }
   
   function colorSeq(cloneID, seq){
@@ -277,14 +269,14 @@ Segment.prototype = {
     var spanM = document.getElementById("m"+cloneID);
     spanM.innerHTML="";
     
-    if(typeof windows[cloneID].seg !='undefined' && windows[cloneID].seg!=0){
+    if(typeof m.windows[cloneID].seg !='undefined' && m.windows[cloneID].seg!=0){
       
-      var newl1=getNewPosition(seq,windows[cloneID].seg.l1)
-      var newr1=getNewPosition(seq,windows[cloneID].seg.r1)
+      var newl1=getNewPosition(seq,m.windows[cloneID].seg.l1)
+      var newr1=getNewPosition(seq,m.windows[cloneID].seg.r1)
     
     var spanV = document.createElement('span');
     spanV.className="V";
-    spanV.style.color=colorV(cloneID);
+    spanV.style.color=m.clones[cloneID].colorV;
     
     spanV.innerHTML=seq.substr(0, newl1+1);
     spanM.appendChild(spanV);
@@ -298,7 +290,7 @@ Segment.prototype = {
     
     var spanJ = document.createElement('span');
     spanJ.className="J";
-    spanJ.style.color=colorJ(cloneID);
+    spanJ.style.color=m.clones[cloneID].colorJ;
     spanJ.innerHTML=seq.substr(newr1);
     spanM.appendChild(spanJ);
     }else{
@@ -319,23 +311,3 @@ Segment.prototype = {
     
   }
   
-/*
- //affiche le segmenteur/comparateur
- function displayAlign(){
-    $('#bot-container').animate({ width: "100%"}, 200 ); 
-    
-    var li =document.getElementById("listSeq").getElementsByTagName("li");
-    if (li.length >0){
-      var id=li[0].id.substr(3);
-      var mid=$("#m"+id+" span:first-child").width()-250;
-      $("#bot-container").animate({scrollLeft: mid}, 500);
-    }
-  }
-  
-  //masque le segmenteur/comparateur ( 
-  function hideAlign(){
-    hideSelector();
-    $('#bot-container').stop();
-    $('#bot-container').animate({ width: "400px"}, 200 ); 
-  }
-  */
