@@ -47,14 +47,18 @@
     <div id="file_menu" >
     <span class="closeButton" onclick="cancel();">X</span>
     
-    	<h2>Load data and analysis</h2>
-    	
-	data file:<br/>
-	<input id="upload_json" type="file" name="json" /></br></br>
+    	<h2>Vidjil (beta) -- V(D)J repertoire browsing and analysis</h2>
 	
-	analysis file (optional) :<br/>
-	<input id="upload_pref" type="file" name="pref" /></br></br>
-		
+
+	Data file (.data):<br/>
+	<input id="upload_json" type="file" name="json" /></br>
+	<p class='help'>The data file stores a set of clones on several points.</p>
+
+	Analysis file (.analysis, optional):<br/>
+	<input id="upload_pref" type="file" name="pref" /></br>
+	<p class='help'>The analysis file stores all user (tags, colors, manual clusters).</p>
+
+
 	load only clones in the top <select id="limit_top" name="limit_top">
 	  <option value="10">10</option>	
 	  <option value="30">30</option>
@@ -146,7 +150,7 @@
 	<div id="info">
 	
 	  <div id=info_data_file></div>
-	  
+
 	  <div id=info_analysis_file></div>
 	    
 	  <div id="info_system"></div>
