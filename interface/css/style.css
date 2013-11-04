@@ -138,15 +138,12 @@ circle:hover {
   border:solid; 
   position: fixed; 
   top: 200px; 
-  margin-left:-200px;
-  left:50% ; 
+  min-width:400px;
+  margin-left:-250px;
+  left :50%;
   font-size: 14px; 
   padding: 10px;
   background:inherit;
-}
-
-#analysis_menu, #dateSelector
-{
   display:none; 
 }
 
@@ -462,27 +459,33 @@ letter-spacing: 0.12em;
   z-index:3;
   border:solid; 
   position: fixed; 
-  top: 200px; 
-  margin-left:-250px;
+  top: 250px; 
   left:50% ;
   width:500px;
   font-size: 14px; 
   padding: 10px;
   background:inherit;
   display:none;
+  left: -moz-calc(50% - 250px);
+  left: -webkit-calc(50% - 250px);
+  left: calc(50% - 250px);
 }
 
 .closeButton{
-	position: absolute;
-	top: -12px;
-	right: -12px;
-	border: solid;
-	background: inherit;
-	border-radius: 20px;
-	width: 15px;
-	height: 15px;
-	text-align: center;
-	font-weight: bolder;
-	cursor: pointer;
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  border: solid;
+  background: inherit;
+  border-radius: 20px;
+  width: 15px;
+  height: 15px;
+  text-align: center;
+  font-weight: bolder;
+  cursor: pointer;
+}
+
+.center{
+  text-align: center;
 }
 

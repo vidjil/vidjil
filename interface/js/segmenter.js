@@ -231,6 +231,8 @@ Segment.prototype = {
     var request = "";
     memTab=list;
     
+    if (list.length==0) return ;
+      
     for (var i = 0; i<list.length; i++){
       if ( typeof(this.m.windows[list[i]].seg) != 'undefined' && this.m.windows[list[i]].seg!=0)
 	request += ">" +list[i]+"\n"+ this.m.windows[list[i]].seg.sequence+"\n";
@@ -245,7 +247,8 @@ Segment.prototype = {
 	url: CGI_ADRESS+"align.cgi",
 	success: function(result) {
 	    displayAjaxResult(result);
-	}
+	},
+	error: popupMsg(msg.align_error)
     });
   }
 

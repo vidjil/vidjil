@@ -78,7 +78,7 @@ Model.prototype = {
     oFReader.onload = function (oFREvent) {
       var data =JSON.parse( oFREvent.target.result);
       if (typeof(data.timestamp) =='undefined'){
-	//TODO message d'erreur
+	popupMsg(msg.version_error);
 	return 0;
       }
       
@@ -805,17 +805,7 @@ function cancel(){
     $('.selector').stop();
     $('.selector').animate({ height: "hide", display: "none"}, 100 ); 
   }
-  
-  function popupMsg(msg){
-    document.getElementById("popup-container").style.display="block";
-    
-    document.getElementById("popup-msg").innerHTML+="<p>" +msg+ "</p>";
-  }
-  
-  function closePopupMsg(){
-    document.getElementById("popup-container").style.display="none";
-    document.getElementById("popup-msg").innerHTML="";
-  }
+ 
 
 function initCoef(){
 	m.resize();
@@ -838,33 +828,29 @@ window.onresize = initCoef;
     $('#display-menu').toggle("fast");
   }
 
-  /*ressort une couleur format RGB*/
-  function colorGenerator(h,s,v){
-    h=h/60;
-    var i=Math.floor(h);
-    var f=h-i;
-    var p =Math.floor(( v * ( 1 - s ) )*255);
-    var q =Math.floor(( v * ( 1 - ( s * f) ) )*255);
-    var t =Math.floor(( v * ( 1 - ( s * (1-f) ) ) )*255);
-    v=Math.floor(v*255);
+
+  function popupMsg(msg){
+    document.getElementById("popup-container").style.display="block";
     
-    if (i==0){
-      return "rgb("+v+","+t+","+p+")";
-    }
-    if (i==1){
-      return "rgb("+q+","+v+","+p+")";
-    }
-    if (i==2){
-      return "rgb("+p+","+v+","+t+")";
-    }
-    if (i==3){
-      return "rgb("+p+","+q+","+v+")";
-    }
-    if (i==4){
-      return "rgb("+t+","+p+","+v+")";
-    }
-    if (i==5){
-      return "rgb("+v+","+p+","+q+")";
-    }
+    document.getElementById("popup-msg").innerHTML+=msg;
+  }
+  
+  function closePopupMsg(){
+    document.getElementById("popup-container").style.display="none";
+    document.getElementById("popup-msg").innerHTML="";
+  }
+  
+  var msg= {
+    "align_error" : "ERROR : align fail , this can be due to connection problem with the cgi server "
+    +"</br> please check your internet connection and retry"
+    +"</br></br> <div class='center' > <button onclick='closePopupMsg()'>Ok</button></div>",
+    
+    "version-error" : "ERROR : incorrect data file"
+    +"</br></br> <div class='center' > <button onclick='closePopupMsg()'>Ok</button></div>",
+    
+    "welcome" : "<h2> Welcome,</h2> This is the Vidjil's beta interface. "
+    +"</br> Compatible with google chrome and mozilla firefox browsers"
+    +"</br></br> <div class='center' > <button onclick='loadData(), closePopupMsg()'>start</button></div>",
+    
   }
   

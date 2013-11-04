@@ -112,6 +112,37 @@ var default_tag=8;
     }
   }
   
+  /*ressort une couleur format RGB*/
+  function colorGenerator(h,s,v){
+    h=h/60;
+    var i=Math.floor(h);
+    var f=h-i;
+    var p =Math.floor(( v * ( 1 - s ) )*255);
+    var q =Math.floor(( v * ( 1 - ( s * f) ) )*255);
+    var t =Math.floor(( v * ( 1 - ( s * (1-f) ) ) )*255);
+    v=Math.floor(v*255);
+    
+    if (i==0){
+      return "rgb("+v+","+t+","+p+")";
+    }
+    if (i==1){
+      return "rgb("+q+","+v+","+p+")";
+    }
+    if (i==2){
+      return "rgb("+p+","+v+","+t+")";
+    }
+    if (i==3){
+      return "rgb("+p+","+q+","+v+")";
+    }
+    if (i==4){
+      return "rgb("+t+","+p+","+v+")";
+    }
+    if (i==5){
+      return "rgb("+v+","+p+","+q+")";
+    }
+  }
+  
+  
   function changeStyle(newStyle){
     if (newStyle=="solarizeD"){
       document.getElementById('palette').href='css/palette/solarizeD.css';
