@@ -1,6 +1,6 @@
 /* VIDJIL
  * License blablabla
- * date: 30/05/2013
+ * date: 28/10/2013
  * version :0.0.01-a
  * 
  * graph.js
@@ -11,403 +11,420 @@
  * 
  */
 
-var axis_x1 = 150,       //marge entre l'ordonnée et le bord du graph
-    axis_x2 = 100,       //marge entre l'ordonnée et le bord du graph
-    axis_y = 10,        //marge entre l'abscisse et le bord du graph
-    g_w = 1400,         //largeur du graph (avant resize)
-    g_h = 450;          //hauteur du graph (avant resize)
 
-var vis2 = d3.select("#visu2").append("svg:svg")
-    .attr("id", "svg2")
-
-    d3.select("#svg2").append("svg:rect")
-    .attr("id", "graph_back")
-    .attr("x", 0)
-    .attr("y", 0)
-    .attr("width", 2500)
-    .attr("height", 2500)
-    .on("click", function(){freeSelect();})
-
-var axis_container = d3.select("#svg2").append("svg:g")
-    .attr("id", "axis_container")
-var polyline_container = d3.select("#svg2").append("svg:g")
-    .attr("id", "polyline_container")
-var reso_container = d3.select("#svg2").append("svg:g")
-    .attr("id", "reso_container")
-var date_container = d3.select("#svg2").append("svg:g")
-    .attr("id", "date_container")
-var text_container = d3.select("#svg2").append("svg:g")
-    .attr("id", "text_container")
-
-    
-var g_axis;
-var g_graph;
-var g_text;
-var g_leg;
-var g_date;
-
-var data_axis=[];
-var data_graph=[];
-var data_res=[];
-var data_date=[];
-
-var graph_col=[];
-var precision=1;
-var scale_x;
-    
-function resetGraph(){
-  data_axis=[];
-  data_graph=[];
-  data_res=[];
-  data_date=[];
+/* constructor
+ * 
+ * */
+function Graph(id, model){
+  this.id=id;
+  this.m=model;		
+  this.resizeW=1;	//coeff d'agrandissement/réduction largeur				
+  this.resizeH=1;	//coeff d'agrandissement/réduction hauteur		
   
-  graph_col=[];
-  precision=1;
-  displayGraph(data_axis, data_graph, data_res, data_date);
-}
-
-function initGraph(){
+  this.w=1400;		//largeur graph avant resize
+  this.h=450;		//hauteur graph avant resize
+  this.marge1=50;	//marge droite bord du graph/premiere colonne
+  this.marge2=50;	//marge gauche derniere colonne/bord du graph
+  this.marge4=75;	//marge droite/gauche (non influencé par le resize)
+  this.marge5=25;	//marge top (non influencé par le resize)
   
-  var count=min_size;
-
-
-  while (count<1){
-    count=count*10;
-    precision= precision*10;
-  }
-    
-  scale_x = d3.scale.log()
-    .domain([1,precision])
-    .range([0,(g_h)]);
-    
-  scale_color = d3.scale.log()
-    .domain([1,precision])
-    .range([250,0]);
-    
-  
-  //abscisse
-  if (windows[0].size.length==1){
-    graph_col[0]=700;
-    data_axis[0]={class : "axis_v" ,text : "", // "fu"+1 ,
-			x1 : graph_col[0], x2 : graph_col[0], 
-			y1 : g_h+20, y2 : 0, time: 0}
-    }else{
-      if (windows[0].size.length==2){
-	graph_col[0]=300;
-	graph_col[1]=1100;
-	data_axis[0]={class : "axis_v" ,text : "fu"+1 ,
-			x1 : graph_col[0], x2 : graph_col[0], 
-			y1 : g_h+20, y2 : 0, time: 0}
-	data_axis[1]={class : "axis_v" ,text : "fu"+2 ,
-			x1 : graph_col[1], x2 : graph_col[1], 
-			y1 : g_h+20, y2 : 0, time: 1}
-      }else{
-	for (var i=0 ; i<windows[0].size.length; i++){
-	graph_col[i]=axis_x1 + 5 + i*(( g_w-(axis_x1+axis_x2) )/(windows[0].size.length-1) );
-	
-	var time_name = "fu"+(i+1);
-	if ( typeof jsonData.time != "undefined" ){
-	  if ( typeof jsonData.time[i] != "undefined" ){
-	    time_name = jsonData.time[i];
-	  }
-	}
-	
-	data_axis[i]={class : "axis_v" ,text : time_name ,
-			x1 : graph_col[i], x2 : graph_col[i], 
-			y1 : g_h+20, y2 : 0, time: i}
-      }
-    }
-  }
-  
-  var height=1;
-  var p=data_axis.length;
-  var p2=0;
-  
-  //ordonnée
-  while((height*precision)>0.5){
-    data_axis[p]={class : "axis" ,text : -p2, x1 : 0, x2 : g_w, 
-		    y1 : (g_h- scale_x(height*precision)), 
-		    y2 : (g_h- scale_x(height*precision))}
-		    
-    height=height/10;
-    p=p+1;
-    p2=p2+1;
-  }
-  
-  //mobile
-  data_axis[data_axis.length]={class : "axis_f" ,text : "",
-			x1 : graph_col[t], x2 : graph_col[t], 
-			y1 : g_h+20, y2 : 0, time: 0}
-  
-  for (var i=0 ; i<totalClones; i++){
-    data_graph[i]={id : i, name :"line"+i, path : constructPath(i)};
-  }
-    data_res[0]={id : totalClones, name :"resolution1", path :constructPathR(jsonData.resolution1) };
-    data_res[1]={id : totalClones+1, name :"resolution5", path :constructPathR(jsonData.resolution5) };
-
-  for (var i=0 ; i <windows[0].size.length ; i++){
-    
-
-    data_date[i]={class : "date" ,date : 'undefined' ,
-			x1 : graph_col[i], x2 : graph_col[i], 
-			y1 : g_h+40, y2 : 0, time: i}
-  }
-  
-  displayGraph(data_axis, data_graph, data_res, data_date);
+  this.m.view.push(this)
   
 }
 
-function displayGraph(data, data_2, data_3, data_4){
-  g_axis = axis_container.selectAll("line").data(data);
-  g_axis.enter().append("line");
-  g_axis.exit()    
-    .remove();
-    
-  g_text = text_container.selectAll("text").data(data);
-  g_text.enter().append("text");
-  g_text.exit()    
-    .remove();
-    
-  g_graph = polyline_container.selectAll("path").data(data_2);
-  g_graph.enter().append("svg:g")
-  .attr("id", function(d) { return d.name; });
-  g_graph.exit()    
-    .remove();
-    
-  g_graph.append("path")
-    .transition()
-    .duration(500)
-    .attr("fill","none")
-    .attr("id", function(d) { return "poly"+d.name; })
+Graph.prototype = {
 
-    .attr("class", function(p) { return g_class(p.id); })
-  g_graph.exit().remove();
+/* crée le cadre svg pour le graph
+ * 
+ * */
+  init :function() {
+    document.getElementById(this.id).innerHTML="";
+    
+    self=this;
+    this.vis = d3.select("#"+this.id).append("svg:svg")
+			.attr("id", this.id+"_svg");
 
-  g_res = reso_container.selectAll("g").data(data_3);
-  g_res.enter().append("svg:g")
-  .attr("id", function(d) { return d.name; });
-  g_res.exit()    
-    .remove();
-   
-  g_res.append("path")
-    g_res.exit().remove();
-    
-  g_date= date_container.selectAll("text").data(data_4);
-  g_date.enter().append("text");
-  g_date.exit()    
-    .remove();
-    
-  updateGraph();
-}
+    d3.select("#"+this.id+"_svg").append("svg:rect")
+      .attr("id", this.id+"_back")
+      .attr("class", "background_graph")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("width", 2500)
+      .attr("height", 2500)
+      .on("click", function(){self.m.unselectAll();})
+      .on("mouseover", function(){self.m.focusOut();})
 
-function constructPathR(res){
-  if (typeof res != "undefined" && res.length!=0){
+    this.axis_container = d3.select("#"+this.id+"_svg").append("svg:g")
+      .attr("id", "axis_container")
+    this.polyline_container = d3.select("#"+this.id+"_svg").append("svg:g")
+      .attr("id", "polyline_container")
+    this.reso_container = d3.select("#"+this.id+"_svg").append("svg:g")
+      .attr("id", "reso_container")
+    this.date_container = d3.select("#"+this.id+"_svg").append("svg:g")
+      .attr("id", "date_container")
+    this.text_container = d3.select("#"+this.id+"_svg").append("svg:g")
+      .attr("id", "text_container")
     
-    var p;
-    
-    p=[ [0, g_h] ];
-    p.push([0, ( g_h - scale_x(res[0][used_ratio]*precision) ) ]);
-    
-    for (var i=0; i< graph_col.length; i++){
-	p.push([( graph_col[i]), ( g_h - scale_x(res[i][used_ratio]*precision))]);
-    }
-    p.push([g_w, ( g_h - scale_x(res[graph_col.length-1][used_ratio]*precision) ) ]);
-    p.push([g_w, g_h]);
-    
-    return p;
-    
-  }
-  else return [[0,0]];
-}
+    this.data_axis=[];
+    this.data_graph=[];
+    this.data_res=[];
 
-/*construit le tableau des points par laquelle la courbe d'un clone doit passer*/
-function constructPath(cloneID){
-  var tmp=t;
-  t=0;
-  var p;
-  
-  var x = graph_col[0];
-  var y = scale_x(getSize(cloneID)*precision)
-  
-  //cas avec un seul point de suivi
-  if (graph_col.length==1){
-    if (getSize(cloneID)==0){
-      p = [ ];
-    }else{
-      p = [[ ( x + (Math.random()*50)-125 ), ( g_h - y ) ]];
-      p.push([ ( x + (Math.random()*50)+75 ), ( g_h - y ) ]);
-    }
-  }
-  //plusieurs points de suivi
-  else{
-    
-    //premier point de suivi 
-    if (getSize(cloneID)==0){
-      p = [ ];
-    }else{
-      p =   [[ ( x - 30  ), ( g_h - y )]];
-      p.push([ ( x )      , ( g_h - y )]);
+    this.graph_col=[];
+
+    var count=this.m.min_size;
+    this.precision=1;
+
+    while (count<1){
+      count=count*10;
+      this.precision= this.precision*10;
     }
     
-    //points suivants
-    for (var i=1; i< graph_col.length; i++){
-      t++;
-      x = graph_col[i];
-      y = scale_x(getSize(cloneID)*precision)
+    this.scale_x = d3.scale.log()
+      .domain([1,this.precision])
+      .range([0,this.h]);
+    
+    this.scale_color = d3.scale.log()
+      .domain([1,this.precision])
+      .range([250,0]);
+    
+    //abscisse
+    for (var i=0 ; i<this.m.windows[0].size.length; i++){
+      this.graph_col[i]=this.marge1 + 5 + i*(( this.w-(this.marge1+this.marge2) )/(this.m.windows[0].size.length-1) );
+    }
+    if (this.m.windows[0].size.length==1){
+      this.graph_col[0]=(this.w/2)
+    }
+    if (this.m.windows[0].size.length==2){
+      this.graph_col[0]=(this.w/4);
+      this.graph_col[1]=3*(this.w/4);
+    }
       
-      if (getSize(cloneID)==0){
-	if (p.length!=0){
-	  p.push([( x ),(g_h + 30)]);
-	}else{
-
-	}
-      }else{
-	
-	//si premiere apparition du clone sur le graphique
-	if (p.length==0){
-	  p.push([( x - 30 ), ( g_h - y )]);
-	}
-	
-	p.push(  [( x ), ( g_h - y )]);
-	
-	//si derniere apparition du clone sur le graphique
-	if (i==graph_col.length-1 ){
-	  p.push([( x + 30 ), ( g_h - y )]);
-	}
-	
+    for (var i=0 ; i<this.m.windows[0].size.length; i++){
+      var d={}
+      
+      var time_name = "fu"+(i+1);
+      if ( typeof this.m.time != "undefined" && typeof this.m.time[i] != "undefined" ){
+	time_name = this.m.time[i];
       }
+      
+      d.type = "axis_v";
+      d.text = time_name;
+      d.orientation = "vert";
+      d.pos = this.graph_col[i];
+      d.time=i;
+      this.data_axis.push(d);
+    }
+
+    var height=1;
+
+    
+    //ordonnée
+    while((height*this.precision)>0.5){
+
+      var d={};
+      d.type = "axis_h";
+      d.text = height.toExponential(1);
+      d.orientation = "hori";
+      d.pos = this.h-this.scale_x(height*this.precision);
+      this.data_axis.push(d);
+      
+      height=height/10;
+    }
+			
+    this.mobil={};
+    this.mobil.type = "axis_m";
+    this.mobil.text = "";
+    this.mobil.orientation = "vert";
+    this.mobil.pos = this.graph_col[this.m.t];
+    this.data_axis.push(this.mobil);
+  
+    
+    for (var i=0 ; i<this.m.n_windows; i++){
+      this.data_graph[i]={id : i, name :"line"+i, path : this.constructPath(i)};
     }
     
-  }
-  t=tmp;
-  return p;
-}
+    this.data_res.push({id : this.m.n_windows, name :"resolution1", path : this.constructPathR(this.m.resolution1) });
+    this.data_res.push({id : this.m.n_windows+1, name :"resolution5", path : this.constructPathR(this.m.resolution5) });
 
-function g_class(cloneID){
-  if (colorMethod=="Tag" && typeof table[cloneID].tag != "undefined"){
-    return "graphLine2";
-  }else{ return "graphLine";}
-}
-
-
-function updateGraph(){
-    console.log("updateGraph");
     
-  scale_x = d3.scale.log()
-    .domain([1,precision])
-    .range([0,(g_h)]);
+    this.g_axis = this.axis_container.selectAll("line").data(this.data_axis);
+    this.g_axis.enter().append("line");
+    this.g_axis.exit()    
+    .remove();
     
-  g_axis
-    .transition()
-    .duration(500)
-    .attr("x1", function(d) { return resizeG_W*d.x1; })
-    .attr("x2", function(d) { return resizeG_W*d.x2; })
-    .attr("y1", function(d) { return resizeG_H*d.y1; })
-    .attr("y2", function(d) { return resizeG_H*d.y2; })
-    .attr("stroke", colorStyle.c06)
-    .attr("class", function(d) { return d.class; })
-    .attr("id", function(d) {
-      if (d.class=="axis_f") return "timebar"
-	return
-    });
+    this.g_text = this.text_container.selectAll("text").data(this.data_axis);
+    this.g_text.enter().append("text");
+    this.g_text.exit()    
+    .remove();
+    
+    this.g_graph = this.polyline_container.selectAll("path").data(this.data_graph);
+    this.g_graph.enter().append("path")
+      .attr("id", function(d) { return d.name; })
+      .transition()
+      .duration(500)
+      .attr("fill","none")
+      .attr("id", function(d) { return "poly"+d.name; })
+    this.g_graph.exit().remove();
+
+    this.g_res = this.reso_container.selectAll("g").data(this.data_res);
+    this.g_res.enter().append("svg:g")
+      .attr("id", function(d) { return d.name; });
+    this.g_res.exit()    
+      .remove();
    
-  g_text
-    .transition()
-    .duration(500)
-    .text( function (d) {return d.text;
-    })
-    .attr("fill", colorStyle.c01)
-    .attr("class", function(d) { if (d.class=="axis_v") return "axis_button"; })
-    .attr("id", function(d) { if (d.class=="axis_v") return ("time"+d.time); })
-    .attr("y", function(d) { 
-      if (d.class=="axis") return Math.floor(resizeG_H*d.y1)+15;
-      else return 15;
-    })
-    .attr("x", function(d) { 
-      if (d.class=="axis") return 10;
-      else return Math.floor(resizeG_W*d.x1);
-    });
+    this.g_res.append("path")
+    this.g_res.exit().remove();
     
-  text_container.selectAll("text")
-    .on("click", function(d){
-      if (d.class=="axis_v") return changeT(d.time);
-    })
+    this.resize();
+  },
+  
+/* repositionne le graphique en fonction de la taille de la div le contenant
+ * 
+ * */
+  resize : function(){
+    this.resizeW = (document.getElementById(this.id).offsetWidth-(2*this.marge4))/this.w;
+    this.resizeH = (document.getElementById(this.id).offsetHeight-this.marge5)/this.h;
     
-  g_graph.selectAll("path")
-  .attr("fill","none")
-    .transition()
-    .duration(500)
-    .attr("d", function(p) {
-      var che=' M '+Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
+    this.vis = d3.select("#"+this.id+"_svg")
+      .attr("width", document.getElementById(this.id).offsetWidth)
+      .attr("height", document.getElementById(this.id).offsetHeight)
+    d3.select("#"+this.id+"_back")
+      .attr("width", document.getElementById(this.id).offsetWidth)
+      .attr("height", document.getElementById(this.id).offsetHeight);
+
+    this.update();
+  },
+  
+/* update l'intégralité du graphique
+ * 
+ * */
+  update : function(){
+    var startTime = new Date().getTime();  
+    var elapsedTime = 0;  
+		
+    if(this.m.focus!=-1){
+      var line = document.getElementById("polyline"+this.m.focus);
+      document.getElementById("polyline_container").appendChild(line);
+    }
+    this.data_res[0].path = this.constructPathR(this.m.resolution1);
+    this.data_res[1].path = this.constructPathR(this.m.resolution5);
+    
+    for (var i=0 ; i<this.m.n_windows; i++){
+      for (var j=0 ; j<this.m.clones[i].cluster.length; j++)
+	this.data_graph[this.m.clones[i].cluster[j]].path = this.constructPath(i);
+    }
+    this.mobil.pos = this.graph_col[this.m.t];
+    this.draw();
+    elapsedTime = new Date().getTime() - startTime;  
+    console.log( "update Graph: " +elapsedTime +"ms");  
+  },
+
+/*update la liste de clones passé en parametre
+ * 
+ * */  
+  updateElem: function (list){
+    if(this.m.focus!=-1){
+      var line = document.getElementById("polyline"+this.m.focus);
+      document.getElementById("polyline_container").appendChild(line);
+    }
+    for (var i=0; i<list.length ; i++){
+      for (var j=0 ; j<this.m.clones[list[i]].cluster.length; j++)
+      	this.data_graph[this.m.clones[list[i]].cluster[j]].path = this.constructPath(list[i]);
+    }
+    this.drawElem(list);
+  },
+  
+/* 
+ * 
+ * */ 
+  drawElem : function(list){
+
+    for (var i=0; i<list.length ; i++){
+      
+      var che=' M '+Math.floor(this.data_graph[list[i]].path[0][0]*this.resizeW+this.marge4)+','+Math.floor(this.data_graph[list[i]].path[0][1]*this.resizeH+this.marge5);
+      for (var j=1; j<this.data_graph[list[i]].path.length; j++){
+	      che+=' L '+Math.floor(this.data_graph[list[i]].path[j][0]*this.resizeW+this.marge4)+','+Math.floor(this.data_graph[list[i]].path[j][1]*this.resizeH+this.marge5);
+      }
+      var name="poly"+this.data_graph[list[i]].name;
+      
+      var classname="graph_line";
+      if (!this.m.clones[this.data_graph[list[i]].id].active) classname = "graph_inactive";
+      if (this.m.clones[this.data_graph[list[i]].id].select) classname = "graph_select";
+      if (this.data_graph[list[i]].id==this.m.focus) classname = "graph_focus";
+      
+      d3.select("#polyline"+list[i])
+      .attr("fill","none")
+      .attr("stroke", this.m.clones[list[i]].color )
+	.transition()
+	.duration(500)
+	.attr("d", che)
+	.attr("class", classname)
+	.attr("id", name)
+    }
+  },
+
+/* reconstruit le graphique
+ * 
+ * */ 
+  draw : function(){
+    var self=this;
+		
+    //axes
+    this.g_axis
+      .transition()
+      .duration(500)
+      .attr("x1", function(d) { if (d.orientation=="vert") return self.resizeW*d.pos+self.marge4; 
+				else return self.marge4; })
+      .attr("x2", function(d) { if (d.orientation=="vert") return self.resizeW*d.pos+self.marge4; 
+				else return (self.resizeW*self.w)+self.marge4 })
+      .attr("y1", function(d) { if (d.orientation=="vert") return self.marge5; 
+				else return (self.resizeH*d.pos)+self.marge5; })
+      .attr("y2", function(d) { if (d.orientation=="vert") return (self.resizeH*self.h)+self.marge5; 
+				else return (self.resizeH*d.pos)+self.marge5; })
+      .attr("class", function(d) { return d.type })
+      .attr("id", function(d) { if (d.type=="axis_m") return "timebar"
+				return});
+
+    //legendes
+    this.g_text
+      .transition()
+      .duration(500)
+      .text( function (d) {return d.text;
+      })
+      .attr("class", function(d) { 
+	if (d.type=="axis_v") return "axis_button"; 
+	if (d.type=="axis_h") return "axis_leg"; 
+      })
+      .attr("id", function(d) { if (d.type=="axis_v") return ("time"+d.time); })
+      .attr("y", function(d) { 
+	if (d.type=="axis_h") return Math.floor(self.resizeH*d.pos)+self.marge5;
+	else return 15;
+      })
+      .attr("x", function(d) { 
+	if (d.type=="axis_h") return 10;
+	else return Math.floor(self.resizeW*d.pos+self.marge4);
+      });
+    
+    this.text_container.selectAll("text")
+      .on("click", function(d){
+	if (d.type=="axis_v") return self.m.changeTime(d.time);
+      })
+      
+    //courbes
+    this.g_graph
+    .attr("fill","none")
+    .attr("stroke", function(d) { return self.m.clones[d.id].color; })
+      .transition()
+      .duration(500)
+      .attr("d", function(p) {
+	var che=' M '+Math.floor(p.path[0][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[0][1]*self.resizeH+self.marge5);
 	for (var i=1; i<p.path.length; i++){
-	  che+=' L '+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
+		che+=' L '+Math.floor(p.path[i][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[i][1]*self.resizeH+self.marge5);
 	}
 	return che;
-    } )
-    .attr("class", function(p) { return g_class(p.id); })
-    .attr("id", function(d) { return "poly"+d.name; })
-    
-  g_res.selectAll("path")
-    .transition()
-    .duration(500)
-    .attr("d", function(p) {
-      var che=' M '+Math.floor(p.path[0][0]*resizeG_W)+','+Math.floor(p.path[0][1]*resizeG_H);
+      })
+      .attr("class", function(p) { 
+	if (!self.m.clones[p.id].active) return "graph_inactive";
+	if (self.m.clones[p.id].select) return "graph_select";
+	if (p.id==self.m.focus)return "graph_focus";
+	return "graph_line"; 
+       })
+      .attr("id", function(d) { return "poly"+d.name; })
+      
+    //resolution
+    this.g_res.selectAll("path")
+      .transition()
+      .duration(500)
+      .attr("d", function(p) {
+	var che=' M '+Math.floor(p.path[0][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[0][1]*self.resizeH+self.marge5);
 	for (var i=1; i<p.path.length; i++){
-	  che+=' L '+Math.floor(p.path[i][0]*resizeG_W)+','+Math.floor(p.path[i][1]*resizeG_H);
+	che+=' L '+Math.floor(p.path[i][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[i][1]*self.resizeH+self.marge5);
 	}
 	che+=' Z ';
 	return che;
-    } )
-    
-  g_date
-    .transition()
-    .duration(500)
-    .text( function (d) {
-      if ( d.date != "undefined" ){
-	return d.date.toLocaleDateString();
-      }else{
-	return ""; // "  /  /  ";
+      })
+      
+    this.polyline_container.selectAll("path")
+      .on("mouseover", function(d){ self.m.focusIn(d.id); })
+      .on("click", function(d){ self.m.select(d.id); });
+  },
+  
+  
+/* construit le tableau des points par laquelle la courbe de résolution doit passer
+ * 
+ * */
+  constructPathR : function(res){
+    if (typeof res != "undefined" && res.length!=0){
+      var p;
+      p=[ [0, this.h+100] ];
+      p.push([0, ( this.h - this.scale_x(res[0][this.m.r]*this.precision) ) ]);
+      
+      for (var i=0; i< this.graph_col.length; i++){
+	  p.push([( this.graph_col[i]), ( this.h - this.scale_x(res[i][this.m.r]*this.precision))]);
       }
-    })
-    .attr("class", "date")
-    .attr("fill", colorStyle.c01)
-    .attr("y", function(d) { return 30;
-    })
-    .attr("x", function(d) { return Math.floor(resizeG_W*d.x1);
-    });
+      p.push([this.w, ( this.h - this.scale_x(res[this.graph_col.length-1][this.m.r]*this.precision))]);
+      p.push([this.w, this.h+100]);
+      
+      return p;
+    }
+    else return [[0,0]];
+  },//fin constructPathR()
+
+/* construit le tableau des points par laquelle la courbe d'un clone doit passer
+ * 
+ * */
+  constructPath: function(cloneID){
+    t=0;
+    var p;
     
-  date_container.selectAll("text")
-    .on("dblclick", function(d){ return changeDate(d.time);
-    })
+    var x = this.graph_col[0];
+    var y = this.scale_x(this.m.getSize(cloneID, 0)*this.precision)
+    
+    //cas avec un seul point de suivi
+    if (this.graph_col.length==1){
+      if (this.m.getSize(cloneID, 0)==0){
+	p = [ ];
+      }else{
+	p = [[ ( x + (Math.random()*50)-125 ), ( this.h - y ) ]];
+	p.push([ ( x + (Math.random()*50)+75 ), ( this.h - y ) ]);
+      }
+    }
+    //plusieurs points de suivi
+    else{
+      
+      //premier point de suivi 
+      if (this.m.getSize(cloneID, 0)==0){
+	p = [ ];
+      }else{
+	p =   [[ ( x - 30  ), ( this.h - y )]];
+	p.push([ ( x )      , ( this.h - y )]);
+      }
+      
+      //points suivants
+      for (var i=1; i< this.graph_col.length; i++){
+	x = this.graph_col[i];
+	y = this.scale_x(this.m.getSize(cloneID, i)*this.precision)
+	
+	if (this.m.getSize(cloneID, i)==0){
+	  if (p.length!=0){
+	    p.push([( x ),(this.h + 30)]);
+	  }
+	}else{
+	  //si premiere apparition du clone sur le graphique
+	  if (p.length==0){
+	    p.push([( x - 30 ), ( this.h - y )]);
+	  }
+	  p.push(  [( x ), ( this.h - y )]);
+	  //si derniere apparition du clone sur le graphique
+	  if (i==this.graph_col.length-1 ){
+	    p.push([( x + 30 ), ( this.h - y )]);
+	  }
+	}
+      }
+    }
+    return p;
+  },//fin constructPath
+  
+}//fin Graph
 
-  polyline_container.selectAll("path")
-    .attr("onmouseover",function(d) { return  "focusIn("+d.id+")"; } )
-    .attr("onmouseout", function(d) { return  "focusOut("+d.id+")"; } )
-    .on("click", function(d){ selectClone(d.id);})
-    initStyle()
-}
-function lineFocusIn(elem){
-  var cloneID=elem.parentNode.id.substr(4)
-  focusIn(cloneID);
-}
-function lineFocusOut(elem){
-  var cloneID=elem.parentNode.id.substr(4)
-  focusOut(cloneID);
-}
-
-function resetGraphCluster(){
-  for (var i=0 ; i<totalClones; i++){
-    data_graph[i].id = i;
-  }
-  updateGraph();
-}
-
-function updateAxis(){
-    g_axis.data(data_axis)
-    .transition()
-    .duration(300)
-    .attr("x1", function(d) { return resizeG_W*d.x1; })
-    .attr("x2", function(d) { return resizeG_W*d.x2; })
-    .attr("y1", function(d) { return resizeG_H*d.y1; })
-    .attr("y2", function(d) { return resizeG_H*d.y2; })
-}
+  

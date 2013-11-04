@@ -27,15 +27,16 @@ list-style-type: none;
 }
 
 #top-container {
-  height: 40px;
-  width : 100%;
-  background:inherit;
+  height: 28px;
+  width: 100%;
+  background: inherit;
+  border-bottom: solid;
 }
 
 #mid-container {
-  height: -moz-calc(100% - 50px);
-  height: -webkit-calc(100% - 50px);
-  height: calc(100% - 50px);
+  height: -moz-calc(100% - 150px);
+  height: -webkit-calc(100% - 150px);
+  height: calc(100% - 150px);
   width : 100%;
   overflow:hidden;
 }
@@ -44,6 +45,7 @@ list-style-type: none;
   float: right;
   position: relative;
   top: -50px;
+  height:0px;
 }
 
 #left-container {
@@ -163,32 +165,37 @@ circle:hover {
   overflow-y : scroll;
   overflow-x : hidden;
   font-weight: bold;
+  height: -moz-calc(100% - 210px);
+  height: -webkit-calc(100% - 210px);
+  height: calc(100% - 210px);
+  padding:2px;
 }
 
-.vjLegend{
+.sp_legend{
   font-weight : bold;
   text-anchor : middle;
 }
 
-.vjline1{
+.sp_line{
   stroke-width : 0.7px;
 }
-.vjline2{
+.sp_subline{
   stroke-width : 0.5px;
   stroke-dasharray: 6,6;
 }
 
 .list{
-  width: 440px;
+  width : 440px;
+  display : block;
 }
 
 .listElem{
   width :380px;
   cursor:pointer;
-  -webkit-transition: color 0.8s;
-  -o-transition: color  0.8s;
-  -ms-transition: color 0.8s;
-  transition: color 0.8s;
+  -webkit-transition: color 0.2s;
+  -o-transition: color  0.2s;
+  -ms-transition: color 0.2s;
+  transition: color 0.2s;
   font-weight : bold;
   padding:3px;
   height :14px;
@@ -201,15 +208,17 @@ circle:hover {
   height: 16px;
   position: relative;
   float:left;
+
 }
 .nameBox2 {
-  width: 260px;
+  width: 275px;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
   float:left;
   margin-right:10px;
+  white-space:nowrap;
 }
 
 .colorBox{
@@ -289,29 +298,12 @@ circle:hover {
   background:inherit;
 }
 
-
-.graphLine{
- -webkit-transition: stroke 0.5s;
- -o-transition: stroke  0.5s;
- -ms-transition: stroke 0.5s;
- transition: stroke 0.5s;
- stroke-width : 1.5px;
- cursor:pointer;
-}
-
 .circle{
-  -webkit-transition: fill 0.5s;
-  -o-transition: fill  0.5s;
-  -ms-transition: fill 0.5s;
-  transition: fill 0.5s;
+  -webkit-transition: fill 0.2s;
+  -o-transition: fill  0.2s;
+  -ms-transition: fill 0.2s;
+  transition: fill 0.2s;
 }
-
-.graphLine2{
- stroke-width : 2.5px;
- opacity:1;
- cursor:pointer;
-}
-
 
 .separator {
   height: 25px;
@@ -355,7 +347,7 @@ circle:hover {
 }
 
 .tagColorBox {
-  margin-right:5px;
+  margin-right:3px;
   height: 16px;
   width: 16px;
   display: inline-block;
@@ -366,9 +358,7 @@ circle:hover {
 }
 
 .menu{
-  width:120px;
   padding:3px;
-  border:solid;
   float:left;
   margin:5px;
   text-align:center;
@@ -377,16 +367,17 @@ circle:hover {
 }
 
 .selector{
-  display:none; 
-  position: fixed;
-  margin-right:-5px;
-  padding: 3px;
-  border: solid;
-  background:inherit;
-  text-center:left;
-  width:120px;
-  margin-left:-6px;
-  border-top:none;
+display: none;
+position: fixed;
+margin-right: -5px;
+padding: 3px;
+border: solid;
+background: inherit;
+text-center: left;
+width: 150px;
+margin-left: -6px;
+border-top: none;
+margin-top: 4px;
 }
 
 #bot-container {
@@ -396,13 +387,14 @@ font-size: 14px;
 position: fixed;
 bottom: 5px;
 left: 0px;
-width: 400px;
+width: 100%;
 overflow-x: scroll;
 min-height:50px;
 max-height:200px;
 overflow-y:auto;
 border-top: solid;
 border-bottom: solid;
+height:100px;
 }
 
 .sequence-line { 
@@ -481,15 +473,16 @@ letter-spacing: 0.12em;
 }
 
 .closeButton{
-position: absolute;
-top: -12px;
-right: -12px;
-border: solid;
-background: inherit;
-border-radius: 20px;
-width: 15px;
-height: 15px;
-text-align: center;
-font-weight: bolder;
-cursor: pointer;
+	position: absolute;
+	top: -12px;
+	right: -12px;
+	border: solid;
+	background: inherit;
+	border-radius: 20px;
+	width: 15px;
+	height: 15px;
+	text-align: center;
+	font-weight: bolder;
+	cursor: pointer;
 }
+

@@ -6,29 +6,34 @@
 	<meta charset="utf-8">
 	<title>Vidjil</title>
 	<link rel="stylesheet" type="text/css" href="css/style.css">  
-	<link rel="stylesheet" media="screen" type="text/css" href="css/colorpicker.css" />
+	<link id="palette" rel="stylesheet"type="text/css" href="css/palette/solarizeD.css" />
+
+
 	<!--[if lte IE 8]><script src="js/r2d3.js" charset="utf-8"></script><![endif]-->
 	<!--[if gte IE 9]><!-->
-	<script type="text/javascript" src='js/d3.v2.js'></script>
+	<script type="text/javascript" src='js/lib/d3.v3.js'></script>
 	<!--<![endif]-->
-	<script type="text/javascript" src="js/jquery-1.9.1.min.js"></script>
-	
-	<script type="text/javascript" src='js/file.js'></script>
+	<script type="text/javascript" src="js/lib/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src='js/lib/StackBlur.js'></script>
+	<script type="text/javascript" src='js/lib/rgbcolor.js'></script>
+	<script type="text/javascript" src='js/lib/canvg.js'></script>
+	<script type="text/javascript" src='js/lib/jspdf.js'></script>
+	<script type="text/javascript" src='js/lib/jspdf.plugin.addimage.js'></script>
+	<script type="text/javascript" src='js/lib/jspdf.plugin.svgToPdf.js'></script>
+	<script type="text/javascript" src='js/lib/underscore.js'></script>
+	<script type="text/javascript" src='js/lib/file.js'></script>
+
+
 	<script type="text/javascript" src='js/germline.js'></script>
-	<script type="text/javascript" src='js/segmenter.js'></script>
-	<script type="text/javascript" src='js/info.js'></script>
 	<script type="text/javascript" src='js/model.js'></script>
+	<script type="text/javascript" src='js/segmenter.js'></script>
+	<script type="text/javascript" src='js/list.js'></script>
+        <script type="text/javascript" src="js/graph.js"> </script>
+        <script type="text/javascript" src="js/scatterPlot.js"> </script>
 	<script type="text/javascript" src='js/vidjil-style.js'></script>
 	<script type="text/javascript" src='js/crossDomain.js'></script>
-	
-	<script type="text/javascript" src='js/pdf/StackBlur.js'></script>
-	<script type="text/javascript" src='js/pdf/rgbcolor.js'></script>
-	<script type="text/javascript" src='js/pdf/canvg.js'></script>
-	<script type="text/javascript" src='js/pdf/jspdf.js'></script>
-	<script type="text/javascript" src='js/pdf/jspdf.plugin.addimage.js'></script>
-	<script type="text/javascript" src='js/pdf/jspdf.plugin.svgToPdf.js'></script>
-	<script type="text/javascript" src='js/pdf/underscore.js'></script>
-	<script type="text/javascript" src='js/pdf/pdf.js'></script>
+	<script type="text/javascript" src='js/pdf.js'></script>
+
 	
 	<!--
 	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
@@ -56,7 +61,8 @@
 	  <option value="100">100</option>
 	</select> </br></br>
 	
-	<button onclick="loadJson();">start</button> 
+	<button onclick="document.getElementById('file_menu').style.display='none';
+	m.load('upload_json','upload_pref', document.getElementById('limit_top').value)">start</button> 
     </div>
     
     <div id="analysis_menu" >
@@ -66,7 +72,8 @@
 	Analysis file :<br/>
 	<input id="upload_analysis" type="file" name="analysis" /></br></br>
 		
-	<button onclick="loadJsonAnalysis();">start</button> 
+	<button onclick="document.getElementById('analysis_menu').style.display='none';
+									m.loadAnalysis('upload_analysis');">start</button> 
     </div>
     
     <div id="top-container">
@@ -75,8 +82,8 @@
         <div id="loadSelector" class="selector">
 	  <a class="buttonSelector" onclick="javascript:loadData()">load data/analysis</a>
 	  <a class="buttonSelector" onclick="javascript:loadAnalysis()">load analysis</a>
-	  <a class="buttonSelector" onclick="javascript:savePref()">save analysis</a>
-          <a class="buttonSelector" onclick="javascript:resetAnalysis()">reset analysis</a>
+	  <a class="buttonSelector" onclick="javascript:m.saveAnalysis()">save analysis</a>
+          <a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a>
 	  <a class="buttonSelector" onclick="javascript:reset()">reset all</a>
 	</div>
       </div>
@@ -84,47 +91,45 @@
     
       <div class="menu" onmouseover="showSelector('colorSelector');" > color 
 	<div id="colorSelector" class="selector">
-	  <a class="buttonSelector" onclick="changeColorMethod('V');">V</a>
-	  <a class="buttonSelector" onclick="changeColorMethod('J');">J</a>
-	  <a class="buttonSelector" onclick="changeColorMethod('N');">N</a>
-	  <a class="buttonSelector" onclick="changeColorMethod('Tag');">Tag</a>
-	  <a class="buttonSelector" onclick="changeColorMethod('abundance');">abundance</a>
+	  <a class="buttonSelector" onclick="m.changeColorMethod('V');">V</a>
+	  <a class="buttonSelector" onclick="m.changeColorMethod('J');">J</a>
+	  <a class="buttonSelector" onclick="m.changeColorMethod('N');">N</a>
+	  <a class="buttonSelector" onclick="m.changeColorMethod('Tag');">Tag</a>
+	  <a class="buttonSelector" onclick="m.changeColorMethod('abundance');">abundance</a>
 	</div>
       </div>
       
       <div class="menu" onmouseover="showSelector('groupSelector');"> regroup 
       	<div id="groupSelector" class="selector">
-	  <a class="buttonSelector" onclick="changeSplitMethod('vj1');">alleles</a> 
-	  <a class="buttonSelector" onclick="changeSplitMethod('vj2');">genes</a> 
-	  <a class="buttonSelector" onclick="changeSplitMethod('Nsize');">N length</a> 
-	  <a class="buttonSelector" onclick="changeSplitMethod(' ');">abundance</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('allele');">alleles</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('gene');">genes</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('nSize');">N length</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('Size')">abundance</a> 
 	</div>
       </div>
       
       <div id="norm" class="menu" onmouseover="showSelector('ratioSelector');"> normalize 
         <div id="ratioSelector" class="selector">
         <!--TODO generer automatiquement-->
-	  <a class="buttonSelector" onclick="changeRatio(0);">none</a> 
-	  <a class="buttonSelector" onclick="changeRatio(1);">highest standard</a> 
-	  <a class="buttonSelector" onclick="changeRatio(2);">all standard</a> 
+	  <a class="buttonSelector" onclick="m.changeRatio(0);">none</a> 
+	  <a class="buttonSelector" onclick="m.changeRatio(1);">highest standard</a> 
+	  <a class="buttonSelector" onclick="m.changeRatio(2);">all standard</a> 
 	</div>
       </div>
       
        <div id="norm" class="menu" onmouseover="showSelector('pdfSelector');">export
         <div id="pdfSelector" class="selector">
-	  <a class="buttonSelector" onclick="javascript:extractSVG('svg')">extract svg visu</a>
+	  <!--<a class="buttonSelector" onclick="javascript:extractSVG('svg')">extract svg visu</a>
 	  <a class="buttonSelector" onclick="javascript:extractSVG('svg2')">extract svg graph</a>
-	  <a class="buttonSelector" onclick="javascript:testPDF()">svg>jpeg>pdf</a>
+	  <a class="buttonSelector" onclick="javascript:testPDF()">svg>jpeg>pdf</a> -->
 	  <a class="buttonSelector" onclick="javascript:testPDF2()">svg>pdf</a>
 	</div>
       </div>
       
       <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
         <div id="paletteSelector" class="selector">
-	  <!-- <a class="buttonSelector" onclick="changeStyle(whiteStyle);">white</a>
-	  <a class="buttonSelector" onclick="changeStyle(blackStyle);">black</a> -->
-	  <a class="buttonSelector" onclick="changeStyle(solarizeD);">dark</a>
-	  <a class="buttonSelector" onclick="changeStyle(solarizeL);">light</a>
+	  <a class="buttonSelector" onclick="document.getElementById('palette').href='css/palette/solarizeD.css'">dark</a>
+	  <a class="buttonSelector" onclick="document.getElementById('palette').href='css/palette/solarizeL.css'">light</a>
 	</div>
       </div>
       
@@ -138,44 +143,20 @@
       
       <div id="left">
 
-	<div id="menu">
+	<div id="info">
 	
-	  <table style="width:100%">	   
-	    <tr>
-	    <td id=data_file>
-	    	   </br>
-	    </td>
-	    </tr>
-	    <tr>
-	    <td>
-	    <!--	03/09/2013 --> </br>
-	    </td>
-	    </tr>
-	    <tr>
-	    <td id=analysis_file>
-	    	   </br>
-	    </td>
-	    </tr>
-	    <tr>
-	      <td id="system">
-	      </br>
-	      </td>
-	    </tr>
-	    <tr>
-	      <td>
+	  <div id=info_data_file></div>
 
-	      </td>
-	    </tr>
+	  <div id=info_analysis_file></div>
 	    
-	    
-	  </table>
+	  <div id="info_system"></div>
 	  
 	</div>
 	
 	<div id="display-bar">
-	  <a class="smallbutton" onclick="decDisplayTop();"><</a>
+	  <a class="smallbutton" onclick="m.decDisplayTop();"><</a>
 	  top <span id=top_display></span>
-	  <a class="smallbutton" onclick="incDisplayTop();">></a>
+	  <a class="smallbutton" onclick="m.incDisplayTop();">></a>
 	  
 	  <span id="fastTag0" class="tagColorBox tagColor0" onclick="nextDisplayTag(this)"></span>
 	  <span id="fastTag1" class="tagColorBox tagColor1" onclick="nextDisplayTag(this)"></span>
@@ -229,8 +210,7 @@
 	<span id="visu" onclick="">
 	</span>
       </div>
-      <script type="text/javascript" src="js/graph.js"> </script>
-      <script type="text/javascript" src="js/visu.js"> </script>
+
     </div>
 	
     <!-- BOT-CONTAINER -->
@@ -249,33 +229,33 @@
     <div id="tagSelector">
     <span class="closeButton" onclick="$('#tagSelector').hide('fast')">X</span>
     
-      <div>tag for <span id=tagname></span></div>
+      <div>tag for <span id=tag_name></span><span id=tag_id></span></div>
       <ul>
-	<li onClick="selectTag(0)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 0), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor0"></span> <span class="tagName0 tn" id="tag0"></span></div>
 	</li>
-	<li onClick="selectTag(1)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 1), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor1"></span> <span class="tagName1 tn" id="tag1"></span></div>
 	</li>
-	<li onClick="selectTag(2)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 2), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor2"></span> <span class="tagName2 tn" id="tag2"></span></div>
 	</li>
-	<li onClick="selectTag(3)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 3), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor3"></span> <span class="tagName3 tn" id="tag3"></span></div>
 	</li>
-	<li onClick="selectTag(4)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 4), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor4"></span> <span class="tagName4 tn" id="tag4"></span></div>
 	</li>
-	<li onClick="selectTag(5)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 5), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor5"></span> <span class="tagName5 tn" id="tag5"></span></div>
 	</li>
-	<li onClick="selectTag(6)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 6), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor6"></span> <span class="tagName6 tn" id="tag6"></span></div>
 	</li>
-	<li onClick="selectTag(7)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 7), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox tagColor7"></span> <span class="tagName7 tn" id="tag7"></span></div>
 	</li>
-	<li onClick="selectTag(8)">
+	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML), 8 ), $('#tagSelector').hide('fast')">
 	  <div class="tagElem" ><span class="tagColorBox "></span> <span class="tagName8 tn" id="tag8"></span></div>
 	</li>
 	
@@ -293,106 +273,79 @@
 	  <div> top <input id="rangeValue" type="text" size="3" value="10"
 	  readonly="true">
 	  <input id="top_slider" type="range" min="0" max="100" step="5" value="10" 
-	  onchange="displayTop(this.value)" />
+	  onchange="m.displayTop(this.value)" />
 	  </div>
 	</li>
 	<li>
 	<span class="tn"></span>
 	<span class="tagD">hide</span>
 	<span class="tagD">show</span>
-	<span class="tagD">color</span>
 	</li>
 	<li>
 	  <div id="tagDisplay0" class="tagElem"><span class="tagColorBox tagColor0"></span> <span class="tagName0 tn"></span>
 	  <input class="tagD" type="radio" name="radio0" value=0 onclick="changeDisplayTag(this)">
 	  <input class="tagD" type="radio" name="radio0" value=1 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio0" value=2 onclick="changeDisplayTag(this)">
 	  </div>
 	</li>
 	<li>
 	  <div id="tagDisplay1" class="tagElem"><span class="tagColorBox tagColor1"></span> <span class="tagName1 tn"></span>
 	  <input class="tagD" type="radio" name="radio1" value=0 onclick="changeDisplayTag(this)">
 	  <input class="tagD" type="radio" name="radio1" value=1 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio1" value=2 onclick="changeDisplayTag(this)">
 	  </div>
 	</li>
 	<li>
 	  <div id="tagDisplay2" class="tagElem"><span class="tagColorBox tagColor2"></span> <span class="tagName2 tn"></span>
 	  <input class="tagD" type="radio" name="radio2" value=0 onclick="changeDisplayTag(this)">
 	  <input class="tagD" type="radio" name="radio2" value=1 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio2" value=2 onclick="changeDisplayTag(this)">
 	  </div>
 	</li>
 	<li>
 	  <div id="tagDisplay3" class="tagElem"><span class="tagColorBox tagColor3"></span> <span class="tagName3 tn"></span>
 	  <input class="tagD" type="radio" name="radio3" value=0 onclick="changeDisplayTag(this)">
 	  <input class="tagD" type="radio" name="radio3" value=1 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio3" value=2 onclick="changeDisplayTag(this)">
 	  </div>
 	</li>
 	<li>
 	  <div id="tagDisplay4" class="tagElem"><span class="tagColorBox tagColor4"></span> <span class="tagName4 tn"></span>
 	  <input class="tagD" type="radio" name="radio4" value=0 onclick="changeDisplayTag(this)">
 	  <input class="tagD" type="radio" name="radio4" value=1 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio4" value=2 onclick="changeDisplayTag(this)">
 	  </div>
 	</li>
 	<li>
 	  <div id="tagDisplay5" class="tagElem"><span class="tagColorBox tagColor5"></span> <span class="tagName5 tn"></span>
 	  <input class="tagD" type="radio" name="radio5" value=0 onclick="changeDisplayTag(this)">
 	  <input class="tagD" type="radio" name="radio5" value=1 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio5" value=2 onclick="changeDisplayTag(this)">
 	  </div>
 	</li>
 	<li>
 	  <div id="tagDisplay6" class="tagElem"><span class="tagColorBox tagColor6"></span> <span class="tagName6 tn"></span>
 	  <input class="tagD" type="radio" name="radio6" value=0 onclick="changeDisplayTag(this)">
 	  <input class="tagD" type="radio" name="radio6" value=1 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio6" value=2 onclick="changeDisplayTag(this)">
 	  </div>
 	</li>
 	<li>
 	  <div id="tagDisplay7" class="tagElem"><span class="tagColorBox tagColor7"></span> <span class="tagName7 tn"></span>
 	  <input class="tagD" type="radio" name="radio7" value=0 onclick="changeDisplayTag(this)">
 	  <input class="tagD" type="radio" name="radio7" value=1 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio7" value=2 onclick="changeDisplayTag(this)">
 	  </div>
 	</li>
 	<li>
 	  <div id="tagDisplay8" class="tagElem"><span class="tagColorBox tagColor8"></span> <span class="tagName8 tn"></span>
 	  <input class="tagD" type="radio" name="radio8" value=0 onclick="changeDisplayTag(this)">
 	  <input class="tagD" type="radio" name="radio8" value=1 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio8" value=2 onclick="changeDisplayTag(this)">
 	  </div>
 	</li>
 	
       </ul>
     </div>
-    
-    <!--
-    <div id="dateSelector">
-      <h2>select date (<span id="dateSelected"></span>)</h2>
-      
-      <div id="datepicker"></div>
- 
-      <script>
-      $( "#datepicker" ).datepicker({ changeYear: true });
-      </script>
-    
-      <button onclick="saveDate();">save</button> 
-      <button onclick="cancelChangeDate();">cancel</button> 
-    </div>
-    -->
-    
+
     <div id="bot-container">
     
       <div class="separator">
-	<span class="button" onclick="mergeSelection()">merge</span>
-	<span class="button" onclick="displayAlign()">show</span>
-	<span class="button" onclick="hideAlign()">hide</span>
-	<span class="button" onclick="align()">align</span>
-	<span class="button" onclick="sendTo('IMGT')">IMGT</span>
-	<span class="button" onclick="sendTo('igBlast')">igBlast</span>
+	<span class="button" onclick="m.merge()">merge</span>
+	<span class="button" onclick="segment.align()">align</span>
+	<span class="button" onclick="segment.sendTo('IMGT')"> send to IMGT</span>
+	<span class="button" onclick="segment.sendTo('igBlast')">send to IgBlast</span>
 
       </div>
     
@@ -412,7 +365,7 @@
     </form>
 
   </body>
-      
+            <script type="text/javascript" src="js/main.js"> </script>
 </html>
 
   

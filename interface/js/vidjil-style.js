@@ -113,220 +113,38 @@ tagName[7] = "custom 3";
 tagName[8] = "-/-";
 
 //default tag display 
-//0=hidden  -  1=show  -  2=show+color
+//0=hidden  -  1=show  
 var tagDisplay = [];
-tagDisplay[0] = 2;
-tagDisplay[1] = 2;
-tagDisplay[2] = 2;
-tagDisplay[3] = 2;
-tagDisplay[4] = 2;
-tagDisplay[5] = 2;
-tagDisplay[6] = 2;
-tagDisplay[7] = 2;
-tagDisplay[8] = 2;
+tagDisplay[0] = 1;
+tagDisplay[1] = 1;
+tagDisplay[2] = 1;
+tagDisplay[3] = 1;
+tagDisplay[4] = 1;
+tagDisplay[5] = 1;
+tagDisplay[6] = 1;
+tagDisplay[7] = 1;
+tagDisplay[8] = 1;
 
 var default_tag=8;
 
-
-  function showDisplayMenu(){
-    $('#display-menu').stop
-    $('#display-menu').toggle("fast");
-  }
-
-/*met a jour le style de tout les elements*/
-  function updateStyle(){
-    for (var i = 0; i < totalClones; i++){      
-      updateStyleElem(i);
-    }  
-  }
-  
   function changeDisplayTag(elem){
     var tag = elem.parentNode.id.substr(10);
     tagDisplay[tag]=elem.value;
-    updateStyle();
     updateTagBox();
   }
   
   function nextDisplayTag(elem){
     var tag = elem.id.substr(7);
     var s =tagDisplay[tag]+1;
-    if (s > 2) s=0;
+    if (s > 1) s=0;
     tagDisplay[tag]=s;
     $("#tagDisplay"+tag).find('input')[tagDisplay[tag]].checked=true
-    updateStyle();
     updateTagBox();
+		m.update();
   }
-  
-  
-/*met a jour le style de l'element cloneID*/
-  function updateStyleElem(cloneID){
-    updateColorElem(cloneID);
-    updateDisplayElem(cloneID);
-  }
-  
-/*met a jour l'affichage de tout les elements*/
-  function updateDisplay(){
-    for (var i = 0; i < totalClones; i++){      
-      updateDisplayElem(i);
-    }  
-  }
-  
-/*met a jour l'affichage de l'element cloneID*/
-  function updateDisplayElem(cloneID){
-    var clone=table[cloneID].link
-    
-    if (table[cloneID].active){
-      if(table[cloneID].cluster.length !=0){
-	clone.listElemStyle.display="block";
-      }else{
-	clone.listElemStyle.display="none";
-      }
-    }else{
-      clone.listElemStyle.display="none"
-    }
-    
-    if(table[cloneID].cluster.length !=0){
-      clone.polylineElem.style("display","block");
-    }else{
-      clone.polylineElem.style("display","none");
-    }
-    
-    if (tagDisplay[table[cloneID].tag]==0){
-      clone.listElemStyle.display="none";
-      clone.polylineElem.style("display","none");
-      clone.circleElemStyle.display="none";
-    }else{
-      clone.circleElemStyle.display="inline";
-    }
-    
-  }
-  
-/*met a jour la couleur de tout les elements*/
-  function updateColor(){
-    for (var i = 0; i < totalClones; i++){
-      updateColorElem(i)
-    }
-  }
+ 
 
-/*met a jour la couleur de l'element cloneID*/
-  function updateColorElem(cloneID){
-    var clone=table[cloneID].link
-    var selectElem=document.getElementById("f"+cloneID);
-    
-    if (table[cloneID].focus){
-      if (selectElem){selectElem.style.background=colorStyle.c07;}
-      clone.listElemStyle.background=colorStyle.c07;
-      clone.listElemStyle.color=colorStyle.c05;
-      clone.circleElemStyle.fill=colorStyle.c05;
-      clone.polylineElem.attr("stroke", colorStyle.c05);
-      clone.polylineElem.style("stroke-width","5px");
-    }else{
-      if (selectElem){selectElem.style.background=colorStyle.c02;}
-      clone.circleElemStyle.stroke="";
-      clone.listElemStyle.background=colorStyle.c02;
-      if (table[cloneID].active){
-	clone.polylineElem.style("stroke-width","2px");
-	if (
-	    (typeof(table[cloneID].tag) != 'undefined')
-	    && (tagDisplay[table[cloneID].tag]==2)
-	    && (table[cloneID].tag != 8)
-	    && (table[cloneID].tag != 4)
-	){ 
-	  // if tagged, but not standard 
-	  clone.polylineElem.style("stroke-width","5px");
-        }
-	clone.listElemStyle.color=color(cloneID);
-	clone.circleElemStyle.fill=color(cloneID);
-
-	clone.polylineElem.attr("stroke", color(cloneID));
-      }else{
-	clone.polylineElem.style("stroke-width","1.2px");
-	clone.listElemStyle.color=colorStyle.c06;
-	clone.circleElemStyle.fill=colorStyle.c07;
-	clone.polylineElem.attr("stroke", colorStyle.c07);
-      }   
-    }
-   
-    if (table[cloneID].select){
-      clone.polylineElem.style("stroke-width","6px");
-      clone.listElemStyle.background=colorStyle.c07;
-      clone.circleElemStyle.stroke=colorStyle.c05;
-      clone.polylineElem.attr("stroke-dasharray", "20px,5px");
-      
-    }else{
-      clone.polylineElem.attr("stroke-dasharray", null);
-    }
-    //TODO update star/tag uniquement avec le selectTag
-    if (typeof table[cloneID].tag != 'undefined'){
-      if (document.getElementById("scolor"+cloneID) ){document.getElementById("scolor"+cloneID).setAttribute("fill", tagColor[table[cloneID].tag]);}
-      document.getElementById("color"+cloneID).setAttribute("fill", tagColor[table[cloneID].tag]);
-    }
-    else{ 
-      if (document.getElementById("scolor"+cloneID)){document.getElementById("scolor"+cloneID).setAttribute("fill", colorStyle.c01);}
-      document.getElementById("color"+cloneID).setAttribute("fill", colorStyle.c01);
-    }
-  }
-  
-  /*ressort une couleur format RGB*/
-  function colorGenerator(h,s,v){
-  h=h/60;
-  var i=Math.floor(h);
-  var f=h-i;
-  var p =Math.floor(( v * ( 1 - s ) )*255);
-  var q =Math.floor(( v * ( 1 - ( s * f) ) )*255);
-  var t =Math.floor(( v * ( 1 - ( s * (1-f) ) ) )*255);
-  v=Math.floor(v*255);
-  
-  if (i==0){
-    return "rgb("+v+","+t+","+p+")";
-  }
-  if (i==1){
-    return "rgb("+q+","+v+","+p+")";
-  }
-  if (i==2){
-    return "rgb("+p+","+v+","+t+")";
-  }
-  if (i==3){
-    return "rgb("+p+","+q+","+v+")";
-  }
-  if (i==4){
-    return "rgb("+t+","+p+","+v+")";
-  }
-  if (i==5){
-    return "rgb("+v+","+p+","+q+")";
-  }
-  
-  }
-  
-  function initStyle(){
-    if (document.getElementById("resolution1")){
-      document.getElementById("resolution1").firstChild.setAttribute("fill", colorStyle.c02);
-      document.getElementById("resolution1").style.opacity=1;
-      document.getElementById("resolution5").firstChild.setAttribute("fill", colorStyle.c02);
-      document.getElementById("resolution5").style.opacity=0.75;
-    }
-    
-    document.getElementsByTagName('body')[0].style.color=colorStyle.c01;
-    document.getElementsByTagName('body')[0].style.background=colorStyle.c02;
-    d3.select('#graph_back').attr('fill',colorStyle.c03);
-    d3.select('#visu_back').attr('fill',colorStyle.c02);
-    document.getElementById('file_menu').style.background=colorStyle.c02;
-    document.getElementById('bot-container').style.background=colorStyle.c02;
-    document.getElementById('menu').style.background=colorStyle.c02;
-    document.getElementById('listClones').style.background=colorStyle.c02;
-    document.getElementById('listSelect').style.background=colorStyle.c02;
-    document.getElementById('tagSelector').style.background=colorStyle.c02;
-    document.getElementById('display-menu').style.background=colorStyle.c02;
-    
-    var button = document.getElementsByClassName("buttonSelector");
-
-    for(var i = 0; i<button.length; i++){
-      button[i].addEventListener("mouseover", function(){ this.style.background=colorStyle.c03; });
-      button[i].addEventListener("mouseout", function(){ this.style.background=colorStyle.c02; });
-      button[i].style.background=colorStyle.c02;
-    }
-  }
-  
+ 
   function initTag(){
     for (var i =0; i<tagColor.length; i++){
       $(".tagName"+i).html(tagName[i]);
@@ -334,22 +152,16 @@ var default_tag=8;
     }
     updateTagBox();
   }
+  
   function updateTagBox(){
     for (var i =0; i<tagColor.length; i++){
-      if (tagDisplay[i]==2){
+
+      if (tagDisplay[i]==1){
 	$(".tagColor"+i).css({
 	  background : tagColor[i] 
 	});
       }else{
 	
-	if (tagDisplay[i]==1){
-	  $(".tagColor"+i).css({
-            "background-color" : tagColor[i],
-            "background-image" : 'linear-gradient(45deg, transparent -25%, '+colorStyle.c01+' 60%, '+colorStyle.c01+' 100%, transparent 0%)',
-            "background" : '-moz-linear-gradient(45deg, transparent -25%, '+colorStyle.c01+' 60%, '+colorStyle.c01+' 100%, transparent 0%) repeat scroll 0 0 '+tagColor[i], //firefox
-            "background-image" : '-webkit-linear-gradient(45deg, transparent -25%, '+colorStyle.c01+' 60%, '+colorStyle.c01+' 100%, transparent 0%)'  //chrome
-	  })
-	}
 	
 	if (tagDisplay[i]==0){
 	  $(".tagColor"+i).css({
@@ -363,27 +175,9 @@ var default_tag=8;
       }
     }
   }
-    
-  
   
   function changeStyle(newStyle){
     colorStyle=newStyle;
-    initStyle();
-    initVJcolor();
-    initNcolor();
-    updateStyle();
-    updateLegend();
-    updateGraph();
   }
   
-  function test(bob){
-    document.getElementById('visu_back').style.fill=colorGenerator(bob,colorStyle.col_s, colorStyle.col_v);
-    setTimeout('test('+(bob+1)+')', 20);
-  }
-  
-  function test2(s,v){
-    colorStyle.col_s=s;
-    colorStyle.col_v=v;
-    initVJcolor();
-    updateStyle();
-  }
+
