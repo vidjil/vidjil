@@ -94,7 +94,7 @@ List.prototype = {
     path.setAttribute('d', this.starPath);
     path.setAttribute('id','color'+cloneID); 
     if (typeof this.m.clones[cloneID].tag != 'undefined') path.setAttribute("fill", tagColor[this.m.clones[cloneID].tag]);
-    else path.setAttribute("fill", colorStyle.c01);
+    else path.setAttribute("fill", default_color);
 	
     svg.appendChild(path);
       

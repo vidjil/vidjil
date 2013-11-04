@@ -168,7 +168,7 @@ Model.prototype = {
       self.germline.v[key[i]]={};
       self.germline.v[key[i]].seq=tmp;
       self.germline.v[key[i]].color=colorGenerator( ( 30+(i/key.length)*290 ), 
-						    colorStyle.col_s, colorStyle.col_v );
+						    color_s, color_v );
       
       var elem=key[i].split('*')[0];
       if (elem != elem2) {
@@ -192,7 +192,7 @@ Model.prototype = {
       self.germline.j[key[i]]={};
       self.germline.j[key[i]].seq=tmp;
       self.germline.j[key[i]].color=colorGenerator( ( 30+(i/key.length)*290 ),
-						    colorStyle.col_s, colorStyle.col_v );
+						    color_s, color_v );
       var elem=key[i].split('*')[0];
       if (elem != elem2) {
 	self.germline.jgene[elem2]=n2;
@@ -256,7 +256,7 @@ Model.prototype = {
     
     //		COLOR_N
     for (var i=0; i<this.n_windows; i++){
-      this.clones[i].colorN=colorGenerator( ( ((this.clones[i].Nsize/maxNsize)-1)*(-250) )  ,  colorStyle.col_s  , colorStyle.col_v);
+      this.clones[i].colorN=colorGenerator( ( ((this.clones[i].Nsize/maxNsize)-1)*(-250) )  ,  color_s  , color_v);
     }
     
     //		COLOR_V
@@ -265,7 +265,7 @@ Model.prototype = {
 	var vGene=this.windows[i].seg.V[0];
 	this.clones[i].colorV=this.germline.v[vGene].color;
       }else{
-	this.clones[i].colorV=colorStyle.c06;
+	this.clones[i].colorV=default_color;
       }
     }
     
@@ -275,7 +275,7 @@ Model.prototype = {
 	var jGene=this.windows[i].seg.J[0];
 	this.clones[i].colorJ=this.germline.j[jGene].color;
       }else{
-	this.clones[i].colorJ=colorStyle.c06;
+	this.clones[i].colorJ=default_color;
       }	
     }
     
@@ -471,10 +471,10 @@ Model.prototype = {
  * */
   getColor : function(cloneID){
     if (this.focus==cloneID) {
-      return colorStyle.c05;
+      return focus_color;
     }
     if (!this.clones[cloneID].active) {
-      return colorStyle.c06;
+      return default_color;
     }
     if (typeof(this.windows[cloneID].seg.V) != 'undefined'){
       if (this.colorMethod=="V") {
@@ -493,7 +493,7 @@ Model.prototype = {
       	return tagColor[this.clones[cloneID].tag];
       }
     }
-    return colorStyle.c06;
+    return default_color;
   },
 
 /*

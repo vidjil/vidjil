@@ -1,5 +1,15 @@
 
 
+/*
+solarizeL.c01 = "#657b83"; //base00
+solarizeL.c02 = "#eee8d5"; //base2
+solarizeL.c03 = "#fdf6e3"; //base3
+solarizeL.c04 = "#586e75"; //base01
+solarizeL.c05 = "#002b36"; //base03
+solarizeL.c06 = "#93a1a1"; //base1
+solarizeL.c07 = "#b3c1c1"; //inactive 
+*/
+
 /*Style polyline / graph*/
 .graph_line{
  stroke-width : 2.5px;
@@ -55,7 +65,7 @@
 
 .circle_select{
  stroke-width : 2.5px;
- stroke : #fdf6e3;
+ stroke : #002b36;
  cursor:pointer;
 }
 
@@ -64,28 +74,28 @@
 }
 
 #resolution1{
- fill : #eee8d5;
+ fill : #fdf6e3;
  opacity : 1;
 }
 #resolution5{
- fill : #eee8d5;
+ fill : #fdf6e3;
  opacity : 0.75;
 }
 
 .buttonSelector {
- background : #eee8d5;
-}
-
-.buttonSelector:hover {
  background : #fdf6e3;
 }
 
+.buttonSelector:hover {
+ background : #eee8d5;
+}
+
 .background_graph{
- fill : #fdf6e3
+ fill : #eee8d5
 }
 
 .background_sp{
- fill : #eee8d5;
+ fill : #fdf6e3;
 }
 
 .sp_legend{
@@ -102,11 +112,11 @@
 
 body{
  color : #657b83;
- background : #eee8d5;
+ background : #fdf6e3;
 }
 
 #file_menu, #menu, #listClones, #listSelect, #tagSelector, #display-menu, #bot-container, .seq-fixed{
- background : #eee8d5;
+ background : #fdf6e3;
 }
 
 .list_select{
@@ -115,11 +125,11 @@ body{
   border : solid;
   border-width : 2px;
   margin : -2px;
-  border-color : #fdf6e3;
+  border-color : #002b36;
 }
 
 .list:hover{
-  background :#fdf6e3;
+  background :#eee8d5;
 }
 
 
