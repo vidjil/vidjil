@@ -425,7 +425,7 @@ Model.prototype = {
  * */
   getCode : function(cloneID){
     if ( typeof(this.windows[cloneID].seg)!='undefined' && typeof(this.windows[cloneID].seg.name)!='undefined' ){
-      if ( system=="IGH" && typeof(this.windows[cloneID].seg.shortName)!='undefined' ){
+      if ( this.system=="IGH" && typeof(this.windows[cloneID].seg.shortName)!='undefined' ){
 	return this.windows[cloneID].seg.shortName;
       }
       else{

@@ -356,14 +356,14 @@ Graph.prototype = {
   constructPathR : function(res){
     if (typeof res != "undefined" && res.length!=0){
       var p;
-      p=[ [0, this.h] ];
+      p=[ [0, this.h+100] ];
       p.push([0, ( this.h - this.scale_x(res[0][this.m.r]*this.precision) ) ]);
       
       for (var i=0; i< this.graph_col.length; i++){
 	  p.push([( this.graph_col[i]), ( this.h - this.scale_x(res[i][this.m.r]*this.precision))]);
       }
       p.push([this.w, ( this.h - this.scale_x(res[this.graph_col.length-1][this.m.r]*this.precision))]);
-      p.push([this.w, this.h]);
+      p.push([this.w, this.h+100]);
       
       return p;
     }
