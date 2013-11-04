@@ -6,7 +6,7 @@
 	<meta charset="utf-8">
 	<title>Vidjil</title>
 	<link rel="stylesheet" type="text/css" href="css/style.css">  
-	<link rel="stylesheet"type="text/css" href="css/palette/solarizeD.css" />
+	<link id="palette" rel="stylesheet"type="text/css" href="css/palette/solarizeD.css" />
 
 
 	<!--[if lte IE 8]><script src="js/r2d3.js" charset="utf-8"></script><![endif]-->
@@ -128,10 +128,8 @@
       
       <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
         <div id="paletteSelector" class="selector">
-	  <!-- <a class="buttonSelector" onclick="changeStyle(whiteStyle);">white</a>
-	  <a class="buttonSelector" onclick="changeStyle(blackStyle);">black</a> -->
-	  <a class="buttonSelector" onclick="changeStyle(solarizeD);">dark</a>
-	  <a class="buttonSelector" onclick="changeStyle(solarizeL);">light</a>
+	  <a class="buttonSelector" onclick="document.getElementById('palette').href='css/palette/solarizeD.css'">dark</a>
+	  <a class="buttonSelector" onclick="document.getElementById('palette').href='css/palette/solarizeL.css'">light</a>
 	</div>
       </div>
       

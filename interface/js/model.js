@@ -299,7 +299,7 @@ Model.prototype = {
 	if (typeof c[i].expected  != "undefined" ){
 	  var u= this.normalizations.indexOf("highest standard");
 	  if (u!=-1){
-	    f=getSize([this.mapID[c[i].window]])/c[i].expected;
+	    f=this.getSize([this.mapID[c[i].window]])/c[i].expected;
 	  }else{
 	    f=jsonData.windows[this.mapID[c[i].window]].ratios[u]/c[i].expected;
 	  }

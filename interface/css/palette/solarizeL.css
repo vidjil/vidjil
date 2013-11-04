@@ -1,0 +1,224 @@
+
+
+/*
+solarizeL.c01 = "#657b83"; //base00
+solarizeL.c02 = "#eee8d5"; //base2
+solarizeL.c03 = "#fdf6e3"; //base3
+solarizeL.c04 = "#586e75"; //base01
+solarizeL.c05 = "#002b36"; //base03
+solarizeL.c06 = "#93a1a1"; //base1
+solarizeL.c07 = "#b3c1c1"; //inactive 
+*/
+
+/*Style polyline / graph*/
+.graph_line{
+ stroke-width : 2.5px;
+ cursor:pointer;
+}
+
+.graph_inactive{
+ stroke-width : 1.5px;
+ cursor:pointer;
+ display:none;
+}
+
+.graph_select{
+ stroke-width : 5px;
+ cursor:pointer;
+}
+
+.graph_focus{
+ stroke-width : 5px;
+ cursor:pointer;
+}
+
+
+
+/*style scatterPlot element*/
+.circle{
+ cursor:pointer;
+}
+
+.circle_inactive{
+ cursor:pointer;
+ opacity: 0.5
+}
+
+.circle_select{
+ stroke-width : 2.5px;
+ stroke : #fdf6e3;
+ cursor:pointer;
+}
+
+.circle_focus{
+ cursor:pointer;
+}
+
+#resolution1{
+ fill : #eee8d5;
+ opacity : 1;
+}
+#resolution5{
+ fill : #eee8d5;
+ opacity : 0.75;
+}
+
+.buttonSelector {
+ background : #eee8d5;
+}
+
+.buttonSelector:hover {
+ background : #fdf6e3;
+}
+
+.background_graph{
+ fill : #fdf6e3
+}
+
+.background_sp{
+ fill : #eee8d5;
+}
+
+body{
+ color : #657b83;
+ background : #eee8d5;
+}
+
+#file_menu, #menu, #listClones, #listSelect, #tagSelector, #display-menu, #bot-container{
+ background : #eee8d5;
+}
+
+/////////////////////////
+
+
+/*
+ * 
+
+*/
+
+/*Style polyline / graph*/
+.graph_line{
+ stroke-width : 2.5px;
+ cursor:pointer;
+}
+
+.graph_inactive{
+ stroke-width : 1.5px;
+ cursor:pointer;
+ display:none;
+}
+
+.graph_select{
+ stroke-width : 5px;
+ cursor:pointer;
+ stroke-dasharray : 20px,5px ;
+}
+
+.graph_focus{
+ stroke-width : 5px;
+ cursor:pointer;
+}
+
+#timebar{
+ stroke : #93a1a1 ;
+ opacity : 0.5 ;
+ stroke-width : 20px;
+}
+
+.axis_h, .axis_v{
+ stroke : #93a1a1 ;
+ stroke-width : 2px ;
+}
+
+.axis_button, .axis_leg{
+ fill : #657b83;
+}
+
+.axis_button:hover{
+ fill : #93a1a1 ;
+}
+
+
+/*style scatterPlot element*/
+.circle{
+ cursor:pointer;
+}
+
+.circle_inactive{
+ cursor:pointer;
+ opacity: 0.5
+}
+
+.circle_select{
+ stroke-width : 2.5px;
+ stroke : #fdf6e3;
+ cursor:pointer;
+}
+
+.circle_focus{
+ cursor:pointer;
+}
+
+#resolution1{
+ fill : #eee8d5;
+ opacity : 1;
+}
+#resolution5{
+ fill : #eee8d5;
+ opacity : 0.75;
+}
+
+.buttonSelector {
+ background : #eee8d5;
+}
+
+.buttonSelector:hover {
+ background : #fdf6e3;
+}
+
+.background_graph{
+ fill : #fdf6e3
+}
+
+.background_sp{
+ fill : #eee8d5;
+}
+
+.sp_legend{
+ fill : #93a1a1 ;
+}
+
+.sp_line{
+ stroke : #93a1a1 ;
+}
+
+.sp_subline{
+ stroke : #93a1a1 ;
+}
+
+body{
+ color : #657b83;
+ background : #eee8d5;
+}
+
+#file_menu, #menu, #listClones, #listSelect, #tagSelector, #display-menu, #bot-container, .seq-fixed{
+ background : #eee8d5;
+}
+
+.list_select{
+  width : 440px;
+  display : block;
+  border : solid;
+  border-width : 2px;
+  margin : -2px;
+  border-color : #fdf6e3;
+}
+
+.list:hover{
+  background :#fdf6e3;
+}
+
+
+
+
+
