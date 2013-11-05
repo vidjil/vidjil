@@ -115,13 +115,13 @@ ScatterPlot.prototype = {
 	if ( typeof(self.m.windows[d.id].seg) != 'undefined' 
 	&& typeof(self.m.windows[d.id].seg.V) != 'undefined' ){
 	  var geneV=self.m.windows[d.id].seg.V[0];
-	  return self.positionGene[geneV]*self.resizeW-15 
+	  return self.positionGene[geneV]*self.resizeW-15+self.marge_left;
 	}else{
-	  return self.positionGene["undefined V"]*self.resizeW-15
+	  return self.positionGene["undefined V"]*self.resizeW-15+self.marge_left;
 	}
       })
       .attr("height", function(d) { return 1; })
-      .attr("y", function(d) { return (10)*self.resizeH; })
+      .attr("y", function(d) { return this.h*self.resizeH; })
       .attr("fill", function(d) { return (self.m.clones[d].color); })
       .on("mouseover",function(d) { self.m.focusIn(d.id); } )
       .on("click", function(d) { self.m.select(d.id);})
@@ -131,6 +131,50 @@ ScatterPlot.prototype = {
   },
   
   updateBar :function(){
+    self=this
+    
+    this.vKey = Object.keys(this.m.germline.vgene);
+    this.bar_v={};
+    this.bar_max=0;
+    
+    //
+    for ( var i=0 ; i< this.vKey.length; i++){
+      this.bar_v[this.vKey[i]]={}
+      this.bar_v[this.vKey[i]].clones=[];
+      this.bar_v[this.vKey[i]].totalSize=0;
+      this.bar_v[this.vKey[i]].currentSize=0;
+    }
+    this.bar_v["undefined V"]={}
+    this.bar_v["undefined V"].clones=[];
+    this.bar_v["undefined V"].totalSize=0;
+    
+    //
+    for ( var i=0 ; i< this.m.n_windows; i++){
+      var geneV= this.m.getV(i);
+      var clone={id: i}
+      this.bar_v[geneV].clones.push(clone);
+      this.bar_v[geneV].totalSize+=this.m.getSize(i);
+    }
+    //
+    for ( var i=0 ; i< this.vKey.length; i++){
+      if (this.bar_v[this.vKey[i]].totalSize>this.bar_max)
+	this.bar_max=this.bar_v[this.vKey[i]].totalSize;
+      this.bar_v[this.vKey[i]].clones.sort(function(a,b){
+	var va=self.m.getV(a.id);
+	var vb=self.m.getV(b.id);
+	return vb-va
+      });
+    }
+    //
+    for ( var i=0 ; i< this.vKey.length; i++){
+      var somme=0;
+      for ( var j=0 ; j<this.bar_v[this.vKey[i]].clones.length ; j++){
+	somme+=this.getBarHeight(this.bar_v[this.vKey[i]].clones[j].id);
+	this.bar_v[this.vKey[i]].clones[j].pos=this.h-somme;
+      }
+    }
+    
+    //redraw
     this.bar = this.bar_container.selectAll("rect").data(this.nodes)
     this.bar_container.selectAll("rect")
       .transition()
@@ -142,16 +186,29 @@ ScatterPlot.prototype = {
 	if ( typeof(self.m.windows[d.id].seg) != 'undefined' 
 	&& typeof(self.m.windows[d.id].seg.V) != 'undefined' ){
 	  var geneV=self.m.windows[d.id].seg.V[0];
-	  return self.positionGene[geneV]*self.resizeW-15 
+	  return self.positionGene[geneV]*self.resizeW-15+self.marge_left; 
 	}else{
-	  return self.positionGene["undefined V"]*self.resizeW-15
+	  return self.positionGene["undefined V"]*self.resizeW-15+self.marge_left;
 	}
       })
-      .attr("height", function(d) { return 30; })
-      .attr("y", function(d) { return (10)*self.resizeH; })
+      .attr("height", function(d) { return self.getBarHeight(d)*self.resizeH; })
+      .attr("y", function(d) { return self.getBarPosition(d)*self.resizeH; })
       .attr("fill", function(d) { return (self.m.clones[d].color); })
   },
   
+  getBarHeight : function(cloneID){
+    var size= this.m.getSize(cloneID);
+    return this.h*(size/this.bar_max);
+  },
+  
+  getBarPosition : function(cloneID){
+    for ( var i=0 ; i< this.vKey.length; i++){
+      for ( var j=0 ; j<this.bar_v[this.vKey[i]].clones.length ;j++){
+	if(this.bar_v[this.vKey[i]].clones[j].id==cloneID)
+	return this.bar_v[this.vKey[i]].clones[j].pos;
+      }
+    }
+  },
 /* recalcul les coefs d'agrandissement/réduction en fonction de la taille de la div
  * 
  * */

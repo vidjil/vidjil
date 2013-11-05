@@ -459,6 +459,21 @@ Model.prototype = {
       result += this.windows[this.clones[cloneID].cluster[j]].ratios[time][this.r];}
     return result
   },//end getSize
+  
+  getV : function(cloneID){
+    if ( typeof(this.windows[cloneID].seg)!='undefined' && typeof(this.windows[cloneID].seg.V)!='undefined' ){
+      return this.windows[cloneID].seg.V[0].split('*')[0];
+    }
+    return "undefined V";
+  },
+  
+  getJ : function(cloneID){
+    if ( typeof(this.windows[cloneID].seg)!='undefined' && typeof(this.windows[cloneID].seg.J)!='undefined' ){
+      return this.windows[cloneID].seg.J[0].split('*')[0];;
+    }
+    return "undefined J";
+  },
+  
 
 /* return the clone size with a fixed number of character
  * use scientific notation if neccesary
