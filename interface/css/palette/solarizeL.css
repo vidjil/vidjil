@@ -90,8 +90,11 @@ solarizeL.c07 = "#b3c1c1"; //inactive
  background : #eee8d5;
 }
 
+.background_graph2{
+ fill : #eee8d5;
+}
 .background_graph{
- fill : #eee8d5
+ fill : #fdf6e3;
 }
 
 .background_sp{
@@ -124,12 +127,17 @@ body{
   display : block;
   border : solid;
   border-width : 2px;
-  margin : -2px;
+  padding : 0px;
   border-color : #002b36;
 }
 
 .list:hover{
   background :#eee8d5;
+}
+
+.graph_text{
+  font-weight : bold;
+  fill : #93a1a1 ;
 }
 
 

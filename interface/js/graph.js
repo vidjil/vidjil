@@ -317,7 +317,8 @@ Graph.prototype = {
       .attr("x", function(d) { 
 	if (d.type=="axis_h") return 20;
 	else return Math.floor(self.resizeW*d.pos+self.marge4);
-      });
+      })
+      .attr("class", "graph_text");
     
     this.text_container.selectAll("text")
       .on("click", function(d){

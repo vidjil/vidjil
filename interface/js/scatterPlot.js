@@ -120,23 +120,25 @@ ScatterPlot.prototype = {
 	  return self.positionGene["undefined V"]*self.resizeW-15+self.marge_left;
 	}
       })
-      .attr("height", function(d) { return 1; })
-      .attr("y", function(d) { return this.h*self.resizeH; })
+      .attr("height", 50 )
+      .attr("y", (this.h*self.resizeH)+self.marge_top )
       .attr("fill", function(d) { return (self.m.clones[d].color); })
       .on("mouseover",function(d) { self.m.focusIn(d.id); } )
       .on("click", function(d) { self.m.select(d.id);})
     
-    this.resize();
-    this.updateBar();
+    //this.resize();
+    //this.updateBar();
   },
   
   updateBar :function(){
     self=this
     
     this.vKey = Object.keys(this.m.germline.vgene);
+    this.vKey.push("undefined V");
     this.bar_v={};
     this.bar_max=0;
     
+    this.bar_width = 0.5*((this.w) / (this.vKey.length))
     //
     for ( var i=0 ; i< this.vKey.length; i++){
       this.bar_v[this.vKey[i]]={}
@@ -144,9 +146,6 @@ ScatterPlot.prototype = {
       this.bar_v[this.vKey[i]].totalSize=0;
       this.bar_v[this.vKey[i]].currentSize=0;
     }
-    this.bar_v["undefined V"]={}
-    this.bar_v["undefined V"].clones=[];
-    this.bar_v["undefined V"].totalSize=0;
     
     //
     for ( var i=0 ; i< this.m.n_windows; i++){
@@ -180,19 +179,19 @@ ScatterPlot.prototype = {
       .transition()
       .duration(500)
       .attr("id", function(d) { return "bar"+d.id; })
-      .attr("width", 30)
+      .attr("width", this.bar_width)
       .attr("x", function(d) { 
 	var geneV="undef";
 	if ( typeof(self.m.windows[d.id].seg) != 'undefined' 
 	&& typeof(self.m.windows[d.id].seg.V) != 'undefined' ){
 	  var geneV=self.m.windows[d.id].seg.V[0];
-	  return self.positionGene[geneV]*self.resizeW-15+self.marge_left; 
+	  return self.positionGene[geneV]*self.resizeW-(self.bar_width/2)+self.marge_left; 
 	}else{
-	  return self.positionGene["undefined V"]*self.resizeW-15+self.marge_left;
+	  return self.positionGene["undefined V"]*self.resizeW-(self.bar_width/2)+self.marge_left;
 	}
       })
       .attr("height", function(d) { return self.getBarHeight(d)*self.resizeH; })
-      .attr("y", function(d) { return self.getBarPosition(d)*self.resizeH; })
+      .attr("y", function(d) { return (self.getBarPosition(d)*self.resizeH)+self.marge_top; })
       .attr("fill", function(d) { return (self.m.clones[d].color); })
   },
   
@@ -632,7 +631,10 @@ ScatterPlot.prototype = {
       return null ; 
     })
     .attr("class", function (d) { 
-      if (d.type=="subline") return "sp_subline"; 
+      if (d.type=="subline"){
+	if (self.splitMethod!="allele") return "sp_subline_hidden";
+	return "sp_subline"; 
+      }
       return "sp_line"; 
     })
     .style("stroke", function (d) { 

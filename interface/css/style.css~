@@ -2,7 +2,7 @@ html{
   height: 100%;
   padding: 0px;
   margin: 0px;
-  min-width: 960px;
+  min-width: 1160px;
   min-height: 650px
 }
 
@@ -50,7 +50,7 @@ list-style-type: none;
 
 #left-container {
   height:100%;
-  width : 400px;
+  width : 410px;
   height : 100%;
   overflow-y : none;
   float : left;
@@ -61,17 +61,17 @@ list-style-type: none;
 #visu {
   display : inline-block;
   height : 50%;
-  width: -moz-calc(100% - 400px);
-  width: -webkit-calc(100% - 400px);
-  width: calc(100% - 400px);
+  width: -moz-calc(100% - 410px);
+  width: -webkit-calc(100% - 410px);
+  width: calc(100% - 410px);
   overflow:hidden;
 }
 #visu2 {
   display : inline-block;
   height : 50%;
-  width: -moz-calc(100% - 400px);
-  width: -webkit-calc(100% - 400px);
-  width: calc(100% - 400px);
+  width: -moz-calc(100% - 410px);
+  width: -webkit-calc(100% - 410px);
+  width: calc(100% - 410px);
   overflow:hidden;
 }
 
@@ -184,6 +184,7 @@ circle:hover {
 .list{
   width : 440px;
   display : block;
+  padding : 2px;
 }
 
 .listElem{

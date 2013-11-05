@@ -126,12 +126,17 @@ body{
   display : block;
   border : solid;
   border-width : 2px;
-  margin : -2px;
+  padding : 0px;
   border-color : #fdf6e3;
+  background : #073642;
 }
 
 .list:hover{
   background :#073642;
 }
 
+.graph_text{
+  font-weight : bold;
+  fill : #586e75 ;
+}
 

@@ -71,18 +71,33 @@
     m.focusOut();
     
     var list=m.getSelected()
+    if (list.length==0) list=[0,1,2,3,4];
     var elem = document.getElementById("visu2_svg").cloneNode(true);
     var opt={};
     var doc = new jsPDF();
+    
+    for (var i = 0; i<m.n_windows; i++){
+      var polyline = elem.getElementById("polyline"+i)
+      polyline.setAttribute("style","stroke-width:1px; stroke: #dddddd");
+      polyline.setAttribute("stroke","#dddddd");
+    }
     
     for (var i = 0; i<list.length; i++){
       var polyline = elem.getElementById("polyline"+list[i])
       polyline.setAttribute("style","stroke-width:6px; stroke:"+tagColor[i]);
       polyline.setAttribute("stroke",tagColor[i]);
+      elem.getElementById("polyline_container").appendChild(polyline);
     }
+    
     elem.getElementById("resolution1").firstChild.setAttribute("fill","#eeeeee");
     var timebar=elem.getElementById("timebar");
     elem.getElementById("timebar").parentNode.removeChild(timebar);
+    var visu2_back=elem.getElementById("visu2_back");
+    elem.getElementById("visu2_back").parentNode.removeChild(visu2_back);
+    var visu2_back2=elem.getElementById("visu2_back2");
+    elem.getElementById("visu2_back2").parentNode.removeChild(visu2_back2);
+    var reso5=elem.getElementById("resolution5");
+    elem.getElementById("resolution5").parentNode.removeChild(reso5);
 
     opt.scaleX=180/document.getElementById("visu2_svg").getAttribute("width");
     opt.scaleY=80/document.getElementById("visu2_svg").getAttribute("height");
@@ -117,12 +132,22 @@
       icon.appendChild(polyline)
       icon.appendChild(res)
       var opt_icon={};
-      opt_icon.scaleX=15/document.getElementById("visu2_svg").getAttribute("width");
-      opt_icon.scaleY=7/document.getElementById("visu2_svg").getAttribute("height");
+      opt_icon.scaleX=18/document.getElementById("visu2_svg").getAttribute("width");
+      opt_icon.scaleY=8/document.getElementById("visu2_svg").getAttribute("height");
+      opt_icon.x_offset=10;
+      opt_icon.y_offset=y;
+      svgElementToPdf(icon, doc, opt_icon)
+      doc.setDrawColor(150,150,150);
+      doc.rect(10, y, 18, 8);
+      /*
+      polyline.setAttribute("stroke",tagColor[i]);
+      polyline.setAttribute("style","stroke-width:6px");
+      opt_icon.scaleX=180/document.getElementById("visu2_svg").getAttribute("width");
+      opt_icon.scaleY=30/document.getElementById("visu2_svg").getAttribute("height");
       opt_icon.x_offset=15;
       opt_icon.y_offset=y-5;
       svgElementToPdf(icon, doc, opt_icon)
-      doc.rect(15, y-5, 14, 7);
+      */
       
       doc.setFont('courier', 'bold');
       doc.setTextColor(tagColor[i]);
