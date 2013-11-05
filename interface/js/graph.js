@@ -23,9 +23,10 @@ function Graph(id, model){
   
   this.w=1400;		//largeur graph avant resize
   this.h=450;		//hauteur graph avant resize
+  
   this.marge1=50;	//marge droite bord du graph/premiere colonne
   this.marge2=50;	//marge gauche derniere colonne/bord du graph
-  this.marge4=75;	//marge droite/gauche (non influencé par le resize)
+  this.marge4=80;	//marge droite/gauche (non influencé par le resize)
   this.marge5=25;	//marge top (non influencé par le resize)
   
   this.m.view.push(this)
@@ -54,6 +55,16 @@ Graph.prototype = {
       .on("click", function(){self.m.unselectAll();})
       .on("mouseover", function(){self.m.focusOut();})
 
+    d3.select("#"+this.id+"_svg").append("svg:rect")
+      .attr("id", this.id+"_back2")
+      .attr("class", "background_graph2")
+      .attr("x", this.marge4)
+      .attr("y", 0)
+      .attr("width", 2500)
+      .attr("height", 2500)
+      .on("click", function(){self.m.unselectAll();})
+      .on("mouseover", function(){self.m.focusOut();})
+      
     this.axis_container = d3.select("#"+this.id+"_svg").append("svg:g")
       .attr("id", "axis_container")
     this.polyline_container = d3.select("#"+this.id+"_svg").append("svg:g")
@@ -182,7 +193,7 @@ Graph.prototype = {
  * 
  * */
   resize : function(){
-    this.resizeW = (document.getElementById(this.id).offsetWidth-(2*this.marge4))/this.w;
+    this.resizeW = (document.getElementById(this.id).offsetWidth-(this.marge4))/this.w;
     this.resizeH = (document.getElementById(this.id).offsetHeight-this.marge5)/this.h;
     
     this.vis = d3.select("#"+this.id+"_svg")
@@ -190,6 +201,9 @@ Graph.prototype = {
       .attr("height", document.getElementById(this.id).offsetHeight)
     d3.select("#"+this.id+"_back")
       .attr("width", document.getElementById(this.id).offsetWidth)
+      .attr("height", document.getElementById(this.id).offsetHeight);
+    d3.select("#"+this.id+"_back2")
+      .attr("width", document.getElementById(this.id).offsetWidth-(this.marge4))
       .attr("height", document.getElementById(this.id).offsetHeight);
 
     this.update();
@@ -301,7 +315,7 @@ Graph.prototype = {
 	else return 15;
       })
       .attr("x", function(d) { 
-	if (d.type=="axis_h") return 10;
+	if (d.type=="axis_h") return 20;
 	else return Math.floor(self.resizeW*d.pos+self.marge4);
       });
     

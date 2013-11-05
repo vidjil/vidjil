@@ -81,6 +81,8 @@
       polyline.setAttribute("stroke",tagColor[i]);
     }
     elem.getElementById("resolution1").firstChild.setAttribute("fill","#eeeeee");
+    var timebar=elem.getElementById("timebar");
+    elem.getElementById("timebar").parentNode.removeChild(timebar);
 
     opt.scaleX=180/document.getElementById("visu2_svg").getAttribute("width");
     opt.scaleY=80/document.getElementById("visu2_svg").getAttribute("height");
@@ -115,11 +117,12 @@
       icon.appendChild(polyline)
       icon.appendChild(res)
       var opt_icon={};
-      opt_icon.scaleX=14/document.getElementById("visu2_svg").getAttribute("width");
-      opt_icon.scaleY=6/document.getElementById("visu2_svg").getAttribute("height");
+      opt_icon.scaleX=15/document.getElementById("visu2_svg").getAttribute("width");
+      opt_icon.scaleY=7/document.getElementById("visu2_svg").getAttribute("height");
       opt_icon.x_offset=15;
-      opt_icon.y_offset=y;
+      opt_icon.y_offset=y-5;
       svgElementToPdf(icon, doc, opt_icon)
+      doc.rect(15, y-5, 14, 7);
       
       doc.setFont('courier', 'bold');
       doc.setTextColor(tagColor[i]);

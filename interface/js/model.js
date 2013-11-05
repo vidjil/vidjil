@@ -87,7 +87,7 @@ Model.prototype = {
 	if (data.windows[i].top <= limit){
 
 	  //search for min_size
-	  for(var j=0 ; j<data.windows[i].ratios.length; j++){
+	  for(var j=0 ; j<data.windows[i].ratios.length; j=j+2){
 	    for(var k=0 ; k<data.windows[i].ratios[j].length; k++){
 	      if (min_size > data.windows[i].ratios[j][k] && data.windows[i].ratios[j][k] != 0)
 		min_size=data.windows[i].ratios[j][k];

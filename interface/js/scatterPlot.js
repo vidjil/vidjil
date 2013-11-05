@@ -11,9 +11,9 @@ function ScatterPlot(id, model){
   this.w=1400;			//largeur avant resize
   this.h=700;			//hauteur avant resize
   
-  this.marge_left=80;		//marge 
-  this.marge_top=50;		//
-  this.max_precision=8;		//precision max atteignable ( 10^-8 par defaut TODO compute)
+  this.marge_left=100;		//marge 
+  this.marge_top=30;		//
+  this.max_precision=9;		//precision max atteignable ( 10^-8 par defaut TODO compute)
   
   this.positionGene={};		//position
   this.positionAllele={};	//
@@ -48,6 +48,16 @@ ScatterPlot.prototype = {
       .on("click", function(){self.m.unselectAll();})
       .on("mouseover", function(){self.m.focusOut();})
       
+      
+    this.axis_container = d3.select("#"+this.id+"_svg").append("svg:g")
+      .attr("id", this.id+"_axis_container")
+      
+    this.plot_container = d3.select("#"+this.id+"_svg").append("svg:g")
+      .attr("id", this.id+"_plot_container")
+    
+    this.bar_container = d3.select("#"+this.id+"_svg").append("svg:g")
+      .attr("id", this.id+"_bar_container")
+      
     //initialisation des nodes
     this.nodes = d3.range(this.m.n_windows).map(Object);
     for(var i=0 ;i<this.m.n_windows; i++){
@@ -67,11 +77,11 @@ ScatterPlot.prototype = {
       .size([this.w, this.h]);
       
     //création d'un element SVG pour chaque nodes
-    this.node = this.vis.selectAll("circle").data(this.nodes)
+    this.node = this.plot_container.selectAll("circle").data(this.nodes)
     this.node.enter().append("svg:circle");
     this.node.exit()    
       .remove()
-    this.vis.selectAll("circle")
+    this.plot_container.selectAll("circle")
       .attr("stroke-width", 4) 
       .attr("stroke", "")
       .attr("id", function(d) { return "circle"+d.id; })
@@ -87,15 +97,67 @@ ScatterPlot.prototype = {
     
     this.initGridModel();
     this.resize();
-    this.update()
+  },
+  
+  initBar :function() {
+    self = this;
+   
+    //création d'un element SVG pour chaque nodes
+    this.bar = this.bar_container.selectAll("rect").data(this.nodes)
+    this.bar.enter().append("svg:rect");
+    this.bar.exit()    
+      .remove()
+    this.bar_container.selectAll("rect")
+      .attr("id", function(d) { return "bar"+d.id; })
+      .attr("width", 30)
+      .attr("x", function(d) { 
+	var geneV="undef";
+	if ( typeof(self.m.windows[d.id].seg) != 'undefined' 
+	&& typeof(self.m.windows[d.id].seg.V) != 'undefined' ){
+	  var geneV=self.m.windows[d.id].seg.V[0];
+	  return self.positionGene[geneV]*self.resizeW-15 
+	}else{
+	  return self.positionGene["undefined V"]*self.resizeW-15
+	}
+      })
+      .attr("height", function(d) { return 1; })
+      .attr("y", function(d) { return (10)*self.resizeH; })
+      .attr("fill", function(d) { return (self.m.clones[d].color); })
+      .on("mouseover",function(d) { self.m.focusIn(d.id); } )
+      .on("click", function(d) { self.m.select(d.id);})
+    
+    this.resize();
+    this.updateBar();
+  },
+  
+  updateBar :function(){
+    this.bar = this.bar_container.selectAll("rect").data(this.nodes)
+    this.bar_container.selectAll("rect")
+      .transition()
+      .duration(500)
+      .attr("id", function(d) { return "bar"+d.id; })
+      .attr("width", 30)
+      .attr("x", function(d) { 
+	var geneV="undef";
+	if ( typeof(self.m.windows[d.id].seg) != 'undefined' 
+	&& typeof(self.m.windows[d.id].seg.V) != 'undefined' ){
+	  var geneV=self.m.windows[d.id].seg.V[0];
+	  return self.positionGene[geneV]*self.resizeW-15 
+	}else{
+	  return self.positionGene["undefined V"]*self.resizeW-15
+	}
+      })
+      .attr("height", function(d) { return 30; })
+      .attr("y", function(d) { return (10)*self.resizeH; })
+      .attr("fill", function(d) { return (self.m.clones[d].color); })
   },
   
 /* recalcul les coefs d'agrandissement/réduction en fonction de la taille de la div
  * 
  * */
   resize :function(){
-    this.resizeW = document.getElementById(this.id).offsetWidth/this.w;
-    this.resizeH = document.getElementById(this.id).offsetHeight/this.h;
+    this.resizeW = (document.getElementById(this.id).offsetWidth-this.marge_left)/this.w;
+    this.resizeH = (document.getElementById(this.id).offsetHeight-this.marge_top)/this.h;
     this.resizeCoef = Math.sqrt(this.resizeW*this.resizeH);
     
     this.vis = d3.select("#"+this.id+"_svg")
@@ -123,11 +185,11 @@ ScatterPlot.prototype = {
     
     var vKey = Object.keys(this.m.germline.v);
     var vKey2 = Object.keys(this.m.germline.vgene);
-    var stepV = (this.w-this.marge_left) / vKey2.length
+    var stepV = (this.w) / (vKey2.length+1)
     
     var jKey = Object.keys(this.m.germline.j);
     var jKey2 = Object.keys(this.m.germline.jgene);
-    var stepJ = (this.h-this.marge_top) / jKey2.length
+    var stepJ = (this.h) / (jKey2.length+1)
     
     // V allele
     for (var i=0; i<vKey.length; i++){
@@ -136,15 +198,13 @@ ScatterPlot.prototype = {
       
       d.type = "subline";
       d.orientation = "vert";
-      d.pos = this.marge_left + 
-	      (this.m.germline.v[vKey[i]].gene)*stepV +
+      d.pos = (this.m.germline.v[vKey[i]].gene)*stepV +
 	      (this.m.germline.v[vKey[i]].allele+0.5) * (stepV/(this.m.germline.vgene[elem[0]]));
-      d.text=elem[1];
+      d.text="*"+elem[1];
       
       d2.type = "subline";
       d2.orientation = "vert";
-      d2.pos= this.marge_left + 
-	      (this.m.germline.v[vKey[i]].gene+0.5)*stepV;
+      d2.pos= (this.m.germline.v[vKey[i]].gene+0.5)*stepV;
       d2.text=" ";
       
       this.positionAllele[vKey[i]]=d.pos;
@@ -161,7 +221,7 @@ ScatterPlot.prototype = {
       var d={};
       d.type = "line";
       d.orientation = "vert";
-      d.pos = this.marge_left + (i+0.5)*stepV;
+      d.pos = (i+0.5)*stepV;
       d.text=vKey2[i];
       
       this.gridModel["allele"].push(d);
@@ -169,6 +229,19 @@ ScatterPlot.prototype = {
       this.gridModel["Size"].push(d);
       this.gridModel["nSize"].push(d);
     }
+    var d={};
+    d.type = "line";
+    d.orientation = "vert";
+    d.pos = (vKey2.length+0.5)*stepV;
+    d.text="undefined V"
+    
+    this.gridModel["allele"].push(d);
+    this.gridModel["gene"].push(d);
+    this.gridModel["Size"].push(d);
+    this.gridModel["nSize"].push(d);
+    this.positionGene["undefined V"]=d.pos;
+    this.positionAllele["undefined V"]=d.pos
+    
     
     //J allele
     for (var i=0; i<jKey.length; i++){
@@ -176,15 +249,13 @@ ScatterPlot.prototype = {
       var elem=jKey[i].split('*');
       d.type = "subline";
       d.orientation = "hori";
-      d.pos = this.marge_top + 
-	      (this.m.germline.j[jKey[i]].gene)*stepJ +
+      d.pos = (this.m.germline.j[jKey[i]].gene)*stepJ +
 	      (this.m.germline.j[jKey[i]].allele+0.5) * (stepJ/(this.m.germline.jgene[elem[0]]));
-      d.text=elem[1];
+      d.text="*"+elem[1];
       
       d2.type="subline";
       d2.orientation= "hori";
-      d2.pos = this.marge_top + 
-	      (this.m.germline.j[jKey[i]].gene+0.5)*stepJ;
+      d2.pos = (this.m.germline.j[jKey[i]].gene+0.5)*stepJ;
       d2.text=" ";
       
       this.positionAllele[jKey[i]]=d.pos;
@@ -199,19 +270,29 @@ ScatterPlot.prototype = {
       var d={};
       d.type = "line";
       d.orientation = "hori";
-      d.pos = this.marge_top + (i+0.5)*stepJ;
+      d.pos = (i+0.5)*stepJ;
       d.text=jKey2[i];
       
       this.gridModel["allele"].push(d);
       this.gridModel["gene"].push(d);
     }
+    d={};
+    d.type = "line";
+    d.orientation = "hori";
+    d.pos = (jKey2.length+0.5)*stepJ;
+    d.text="undefined J"
+    
+    this.gridModel["allele"].push(d);
+    this.gridModel["gene"].push(d);
+    this.positionGene["undefined J"]=d.pos
+    this.positionAllele["undefined J"]=d.pos
     
     //N_size
     for (var i=0 ;i<=(Math.floor(this.m.n_max/5)) ; i++){
       var d={};
       d.type = "line";
       d.orientation = "hori";
-      d.pos = this.marge_top + (1-((i*5)/this.m.n_max))*(this.h-(2*this.marge_top));
+      d.pos = (1-((i*5)/this.m.n_max))*(this.h-(2*this.marge_top));
       d.text=i*5;
       this.gridModel["nSize"].push(d);
     }
@@ -220,14 +301,14 @@ ScatterPlot.prototype = {
     this.sizeScale = d3.scale.log()
       .domain([this.m.min_size,1])
       .range([(this.h-this.marge_top),this.marge_top]);
-    var height=100;
+    var height=1;
     
     for (var i=0 ;i<this.max_precision ; i++){
       var d={};
       d.type = "line";
       d.orientation = "hori";
-      d.pos = this.sizeScale(height/100); 
-      d.text= height+"%";
+      d.pos = this.sizeScale(height); 
+      d.text= height.toExponential(1);;
       this.gridModel["Size"].push(d);
       height=height/10;
     }
@@ -238,6 +319,7 @@ ScatterPlot.prototype = {
  * 
  * */
   tick : function(){
+    self=this;
     //mise a jour des rayons( maj progressive )
     this.node.each(this.updateRadius());
     //élimine les valeurs NaN ou infinity pouvant apparaitre
@@ -249,8 +331,8 @@ ScatterPlot.prototype = {
     //élimine les valeurs NaN ou infinity pouvant apparaitre
     this.node.each(this.debugNaN())
     //attribution des nouvelles positions/tailles
-      .attr("cx", function(d) { return (d.x); })
-      .attr("cy", function(d) { return (d.y); })
+      .attr("cx", function(d) { return (d.x+self.marge_left); })
+      .attr("cy", function(d) { return (d.y+self.marge_top); })
       .attr("r" , function(d) { return (d.r2); })
   },
 
@@ -262,41 +344,45 @@ ScatterPlot.prototype = {
     return function(d) {
       var coef = 0.005;		//
       var coef2 = 0.01;		//force d'attraction
-      var coef3 = 0.001;	//
+      var coef3 = 0.0015;	//
+      var geneV="undefined V";
+      var geneJ="undefined J";
       if ( typeof(self.m.windows[d.id].seg) != 'undefined' 
        && typeof(self.m.windows[d.id].seg.V) != 'undefined' ){
       var geneV=self.m.windows[d.id].seg.V[0];
       var geneJ=self.m.windows[d.id].seg.J[0];
+      }
 
-      switch(self.splitMethod){ 
-      case "gene": 
-	d.x+=coef*((self.positionGene[geneV]*self.resizeW)-d.x);
-	d.y+=coef*((self.positionGene[geneJ]*self.resizeH)-d.y);
-	break;
-      case "allele": 
-	d.x+=coef*((self.positionAllele[geneV]*self.resizeW)-d.x);
-	d.y+=coef*((self.positionAllele[geneJ]*self.resizeH)-d.y);
-	break;
-      case "Size": 
-	d.x+=coef3*((self.positionGene[geneV]*self.resizeW)-d.x);
-	if (d.r1!=0){
-	  d.y+=coef2*(self.sizeScale(self.m.getSize(d.id))*self.resizeH - d.y);
-	}else{
-	  d.y+=coef2*(self.h*self.resizeH-d.y);
-	}
-      break; 
-      case "nSize": 
-	d.x+=coef3*((self.positionGene[geneV]*self.resizeW)-d.x);
+    switch(self.splitMethod){ 
+    case "gene": 
+      d.x+=coef*((self.positionGene[geneV]*self.resizeW)-d.x);
+      d.y+=coef*((self.positionGene[geneJ]*self.resizeH)-d.y);
+      break;
+    case "allele": 
+      d.x+=coef*((self.positionAllele[geneV]*self.resizeW)-d.x);
+      d.y+=coef*((self.positionAllele[geneJ]*self.resizeH)-d.y);
+      break;
+    case "Size": 
+      d.x+=coef3*((self.positionGene[geneV]*self.resizeW)-d.x);
+      if (d.r1!=0){
+	d.y+=coef2*(self.sizeScale(self.m.getSize(d.id))*self.resizeH - d.y);
+      }else{
+	d.y+=coef2*(self.h*self.resizeH-d.y);
+      }
+    break; 
+    case "nSize": 
+      d.x+=coef3*((self.positionGene[geneV]*self.resizeW)-d.x);
+      if ( typeof(self.m.windows[d.id].seg) != 'undefined' 
+      && typeof(self.m.windows[d.id].seg.V) != 'undefined' ){
 	if (self.m.windows[d.id].seg.N!=-1){
 	  d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].seg.Nsize/self.m.n_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
 	}else{
-	  d.y+=coef2*((h*resizeH)-d.y);
+	  d.y+=coef2*((self.h*self.resizeH)-d.y);
 	}
-      break; 
-      }
-
       }else{
-	d.x+=coef*((50)-d.x);
+	d.y+=coef2*((self.h*self.resizeH)-d.y);
+      }
+      break; 
       }
     }
   },
@@ -387,6 +473,7 @@ ScatterPlot.prototype = {
     this.force.start();
     this.updateStyle();
     elapsedTime = new Date().getTime() - startTime;  
+    this.updateBar();
     console.log( "update sp: " +elapsedTime +"ms");  
   },
 
@@ -423,7 +510,8 @@ ScatterPlot.prototype = {
   self = this;
 
   //LEGENDE
-  leg = this.vis.selectAll("text").data(this.gridModel[this.splitMethod]);
+  
+  leg = this.axis_container.selectAll("text").data(this.gridModel[this.splitMethod]);
   leg.enter().append("text");
   leg.exit()
     .remove();
@@ -431,17 +519,17 @@ ScatterPlot.prototype = {
     .transition()
     .duration(1000)
     .attr("x", function(d) { 
-      if (d.orientation=="vert") { return self.resizeW*d.pos;
+      if (d.orientation=="vert") { return self.resizeW*d.pos+self.marge_left;
       }else{
-	if ( d.type=="subline" ) return self.resizeW*75;
-	else return self.resizeW*30; 
+	if ( d.type=="subline" ) return 80;
+	else return 40; 
       }
     })
     .attr("y", function(d) { 
       if (d.orientation=="vert") { 
-      if ( d.type=="subline" ) return self.resizeH*40
-      else return self.resizeH*20;
-      }else{ return self.resizeH*d.pos;}
+      if ( d.type=="subline" ) return 25
+      else return 12;
+      }else{ return self.resizeH*d.pos+3+self.marge_top;}
     })
     .text( function (d) { return d.text; })
     .attr("class", "sp_legend")
@@ -452,7 +540,7 @@ ScatterPlot.prototype = {
     ;
   
   //AXIS
-  lines = this.vis.selectAll("line").data(this.gridModel[this.splitMethod]);
+  lines = this.axis_container.selectAll("line").data(this.gridModel[this.splitMethod]);
   lines.enter().append("line");
   lines.exit()    
     .remove();
@@ -460,20 +548,20 @@ ScatterPlot.prototype = {
     .transition()
     .duration(1000)
     .attr("x1", function(d) { 
-      if (d.orientation=="vert") return self.resizeW*d.pos;
-      else return self.resizeW*80;
+      if (d.orientation=="vert") return self.resizeW*d.pos+self.marge_left;
+      else return self.marge_left
     })
     .attr("x2", function(d) { 
-      if (d.orientation=="vert") return self.resizeW*d.pos;
-      else return self.resizeW*self.w;
+      if (d.orientation=="vert") return self.resizeW*d.pos+self.marge_left;
+      else return self.resizeW*self.w+self.marge_left;
     })
     .attr("y1", function(d) {      
-      if (d.orientation=="vert") return 0;
-      else return self.resizeH*d.pos;
+      if (d.orientation=="vert") return self.marge_top;
+      else return self.resizeH*d.pos+self.marge_top;
     })
     .attr("y2", function(d) { 
-      if (d.orientation=="vert") return self.resizeH*self.h;
-      else return self.resizeH*d.pos;
+      if (d.orientation=="vert") return self.resizeH*self.h+self.marge_top;
+      else return self.resizeH*d.pos+self.marge_top;
     })
     .style("stroke", function (d) { 
       return null ; 

@@ -221,7 +221,7 @@ Segment.prototype = {
     if (li.length >0){
       var id=li[0].id.substr(3);
       var mid=$("#m"+id+" span:first-child").width()-250;
-      $("#bot-container").animate({scrollLeft: mid}, 500);
+      $("#bot-container").animate({scrollLeft: mid}, 0);
     }
   },
   

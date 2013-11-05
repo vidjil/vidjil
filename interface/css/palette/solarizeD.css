@@ -90,10 +90,12 @@ solarizeD.c07 = "#284e55";
  background : #073642;
 }
 
-.background_graph{
+.background_graph2{
  fill : #073642
 }
-
+.background_graph{
+ fill : #002b36
+}
 .background_sp{
  fill : #002b36;
 }
