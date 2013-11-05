@@ -199,13 +199,15 @@ ScatterPlot.prototype = {
       d.type = "subline";
       d.orientation = "vert";
       d.pos = (this.m.germline.v[vKey[i]].gene)*stepV +
-	      (this.m.germline.v[vKey[i]].allele+0.5) * (stepV/(this.m.germline.vgene[elem[0]]));
+	      (this.m.germline.v[vKey[i]].allele+0.5) * (stepV/(this.m.germline.vgene[elem[0]].n ));
       d.text="*"+elem[1];
+      d.geneColor=this.m.germline.v[vKey[i]].color;
       
       d2.type = "subline";
       d2.orientation = "vert";
       d2.pos= (this.m.germline.v[vKey[i]].gene+0.5)*stepV;
       d2.text=" ";
+      d2.geneColor=this.m.germline.v[vKey[i]].color;
       
       this.positionAllele[vKey[i]]=d.pos;
       this.positionGene[vKey[i]]=d2.pos
@@ -223,6 +225,7 @@ ScatterPlot.prototype = {
       d.orientation = "vert";
       d.pos = (i+0.5)*stepV;
       d.text=vKey2[i];
+      d.geneColor=this.m.germline.vgene[vKey2[i]].color;
       
       this.gridModel["allele"].push(d);
       this.gridModel["gene"].push(d);
@@ -250,13 +253,15 @@ ScatterPlot.prototype = {
       d.type = "subline";
       d.orientation = "hori";
       d.pos = (this.m.germline.j[jKey[i]].gene)*stepJ +
-	      (this.m.germline.j[jKey[i]].allele+0.5) * (stepJ/(this.m.germline.jgene[elem[0]]));
+	      (this.m.germline.j[jKey[i]].allele+0.5) * (stepJ/(this.m.germline.jgene[elem[0]].n ));
       d.text="*"+elem[1];
+      d.geneColor=this.m.germline.j[jKey[i]].color;
       
       d2.type="subline";
       d2.orientation= "hori";
       d2.pos = (this.m.germline.j[jKey[i]].gene+0.5)*stepJ;
       d2.text=" ";
+      d2.geneColor=this.m.germline.j[jKey[i]].color;
       
       this.positionAllele[jKey[i]]=d.pos;
       this.positionGene[jKey[i]]=d2.pos
@@ -272,6 +277,7 @@ ScatterPlot.prototype = {
       d.orientation = "hori";
       d.pos = (i+0.5)*stepJ;
       d.text=jKey2[i];
+      d.geneColor=this.m.germline.jgene[jKey2[i]].color;
       
       this.gridModel["allele"].push(d);
       this.gridModel["gene"].push(d);
@@ -474,6 +480,7 @@ ScatterPlot.prototype = {
     this.updateStyle();
     elapsedTime = new Date().getTime() - startTime;  
     this.updateBar();
+    this.initGrid();
     console.log( "update sp: " +elapsedTime +"ms");  
   },
 
@@ -533,10 +540,11 @@ ScatterPlot.prototype = {
     })
     .text( function (d) { return d.text; })
     .attr("class", "sp_legend")
-    /*.style("fill", function (d) { 
-      if (self.m.colorMethod=="V" && d.orientation=="vert") return "" ; 
+    .style("fill", function (d) { 
+      if (self.m.colorMethod=="V" && d.orientation=="vert" && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
+      if (self.m.colorMethod=="J" && d.orientation=="hori" && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
       return null;
-    })*///TODO
+    })
     ;
   
   //AXIS
@@ -569,6 +577,11 @@ ScatterPlot.prototype = {
     .attr("class", function (d) { 
       if (d.type=="subline") return "sp_subline"; 
       return "sp_line"; 
+    })
+    .style("stroke", function (d) { 
+      if (self.m.colorMethod=="V" && d.orientation=="vert" && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
+      if (self.m.colorMethod=="J" && d.orientation=="hori" && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
+      return null;
     });
   },
 
@@ -577,10 +590,8 @@ ScatterPlot.prototype = {
  * */
   changeSplitMethod :function(splitM){
     this.splitMethod=splitM;
-    this.initGrid();
     this.update();
   },
-  
 
 }
 

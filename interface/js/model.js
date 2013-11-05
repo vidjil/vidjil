@@ -172,7 +172,10 @@ Model.prototype = {
       
       var elem=key[i].split('*')[0];
       if (elem != elem2) {
-	self.germline.vgene[elem2]=n2;
+	self.germline.vgene[elem2]={};
+	self.germline.vgene[elem2].n=n2;
+	self.germline.vgene[elem2].color=colorGenerator( ( 30+((i-1)/key.length)*290 ), 
+						    color_s, color_v );
 	n++;
 	n2=0;
       }
@@ -181,7 +184,10 @@ Model.prototype = {
       self.germline.v[key[i]].allele=n2
       n2++;
     }
-    self.germline.vgene[elem2]=n2;
+    self.germline.vgene[elem2]={};
+    self.germline.vgene[elem2].n=n2;
+    self.germline.vgene[elem2].color=colorGenerator( ( 30+((i-1)/key.length)*290 ), 
+						color_s, color_v );
     
     // COLOR J
     key = Object.keys(self.germline.j);
@@ -195,7 +201,10 @@ Model.prototype = {
 						    color_s, color_v );
       var elem=key[i].split('*')[0];
       if (elem != elem2) {
-	self.germline.jgene[elem2]=n2;
+	self.germline.jgene[elem2]={};
+	self.germline.jgene[elem2].n=n2;
+	self.germline.jgene[elem2].color=colorGenerator( ( 30+((i-1)/key.length)*290 ),
+						    color_s, color_v );
 	n++;
 	n2=0;
       }
@@ -204,7 +213,10 @@ Model.prototype = {
       self.germline.j[key[i]].allele=n2
       n2++;
     }
-    self.germline.jgene[elem2]=n2;
+    self.germline.jgene[elem2]={};
+    self.germline.jgene[elem2].n=n2;
+    self.germline.jgene[elem2].color=colorGenerator( ( 30+((i-1)/key.length)*290 ),
+						color_s, color_v );
   },//end loadGermline
 
   
@@ -668,7 +680,7 @@ Model.prototype = {
  * */
   updateModel :function(){
     for (var i=0; i<this.n_windows; i++){
-      if (this.clones[i].cluster.length!=0 && this.windows[i].top < this.top && tagDisplay[this.clones[i].tag] == 1 ){
+      if (this.clones[i].cluster.length!=0 && this.windows[i].top <= this.top && tagDisplay[this.clones[i].tag] == 1 ){
 	this.clones[i].active=true;
       }else{
 	this.clones[i].active=false;
