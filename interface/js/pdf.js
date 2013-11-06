@@ -135,10 +135,10 @@
       opt_icon.scaleX=18/document.getElementById("visu2_svg").getAttribute("width");
       opt_icon.scaleY=8/document.getElementById("visu2_svg").getAttribute("height");
       opt_icon.x_offset=10;
-      opt_icon.y_offset=y;
+      opt_icon.y_offset=y-2;
       svgElementToPdf(icon, doc, opt_icon)
       doc.setDrawColor(150,150,150);
-      doc.rect(10, y, 18, 8);
+      doc.rect(10, y-2, 18, 8);
       /*
       polyline.setAttribute("stroke",tagColor[i]);
       polyline.setAttribute("style","stroke-width:6px");
