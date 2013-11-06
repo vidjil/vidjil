@@ -138,5 +138,17 @@ body{
 .graph_text{
   font-weight : bold;
   fill : #586e75 ;
+  text-anchor:middle;
+}
+
+.graph_time{
+  font-weight : bold;
+  fill : #586e75;
+  text-anchor:middle;
+}
+
+.graph_time:hover{
+  cursor:pointer;
+  fill :#eee8d5;
 }
 

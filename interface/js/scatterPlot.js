@@ -128,9 +128,6 @@ ScatterPlot.prototype = {
   },
   
   updateBar :function(){
-    var startTime = new Date().getTime();  
-    var elapsedTime = 0;  
-
     self=this
     
     this.vKey = Object.keys(this.m.germline.vgene);
@@ -140,7 +137,7 @@ ScatterPlot.prototype = {
     
     this.bar_width = 0.5*((this.w) / (this.vKey.length))
 
-    //
+    //init
     for ( var i=0 ; i< this.vKey.length; i++){
       this.bar_v[this.vKey[i]]={}
       this.bar_v[this.vKey[i]].clones=[];
@@ -148,24 +145,28 @@ ScatterPlot.prototype = {
       this.bar_v[this.vKey[i]].currentSize=0;
     }
     
-    //
+    //classement des clones suivant leurs gene V
     for ( var i=0 ; i< this.m.n_windows; i++){
-      var geneV= this.m.getV(i);
-      var clone={id: i}
-      this.bar_v[geneV].clones.push(clone);
-      this.bar_v[geneV].totalSize+=this.m.getSize(i);
+      if (this.m.clones[i].active){
+	var geneV= this.m.getV(i);
+	var clone={id: i}
+	this.bar_v[geneV].clones.push(clone);
+	this.bar_v[geneV].totalSize+=this.m.getSize(i);
+      }
     }
-    //
+    
+    //trie des clones par J
     for ( var i=0 ; i< this.vKey.length; i++){
       if (this.bar_v[this.vKey[i]].totalSize>this.bar_max)
 	this.bar_max=this.bar_v[this.vKey[i]].totalSize;
       this.bar_v[this.vKey[i]].clones.sort(function(a,b){
-	var va=self.m.getV(a.id);
-	var vb=self.m.getV(b.id);
-	return vb-va
+	var ja=self.m.getJ(a.id);
+	var jb=self.m.getJ(b.id);
+	return jb-ja
       });
     }
-    //
+    
+    //calculs des positions 
     for ( var i=0 ; i< this.vKey.length; i++){
       var somme=0;
       for ( var j=0 ; j<this.bar_v[this.vKey[i]].clones.length ; j++){
@@ -210,14 +211,11 @@ ScatterPlot.prototype = {
       .attr("y", function(d) { return (self.getBarPosition(d)*self.resizeH)+self.marge_top; })
       .attr("fill", function(d) { return (self.m.clones[d].color); })
       .attr("class", function(p) { 
-	if (!self.m.clones[p.id].active) return "circle_inactive";
+	if (!self.m.clones[p.id].active) return "circle_hidden";
 	if (self.m.clones[p.id].select) return "circle_select";
 	if (p.id==self.m.focus) return "circle_focus";
 	return "circle"; 
       })
-      
-    elapsedTime = new Date().getTime() - startTime;  
-    console.log( "update bar: " +elapsedTime +"ms");  
 
   },
   

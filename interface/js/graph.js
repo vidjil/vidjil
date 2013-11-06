@@ -314,7 +314,10 @@ Graph.prototype = {
 	if (d.type=="axis_h") return 20;
 	else return Math.floor(self.resizeW*d.pos+self.marge4);
       })
-      .attr("class", "graph_text");
+      .attr("class", function(d) { 
+	if (d.type=="axis_v") return "graph_time"
+	else return "graph_text";
+      });
     
     this.text_container.selectAll("text")
       .on("click", function(d){
