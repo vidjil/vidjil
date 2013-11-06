@@ -119,6 +119,7 @@
     
     var y=150
 
+    // Detailed output by clone
     for (var i = 0; i<list.length; i++){
       var id=list[i];
       
@@ -164,7 +165,7 @@
       }else{
 	    s=(100*size).toFixed(3)+"%";
       }
-      doc.text(130, y, 'reads : '+Math.floor(r*m.total_size[m.t])+' -- '+s);
+      doc.text(120, y, 'reads (point 0): '+Math.floor(r*m.total_size[m.t])+' -- '+s);
       
       y=y+5;
       if (typeof(m.windows[id].seg) !='number'){
