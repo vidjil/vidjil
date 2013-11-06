@@ -179,13 +179,14 @@ ScatterPlot.prototype = {
     for ( var i=0 ; i< this.gridModel["bar"].length; i++){
       if (this.gridModel["bar"][i].orientation=="hori"){
 	var value=this.gridModel["bar"][i].value/100;
+	if (this.bar_max<0.1) value=value/5;
 	this.gridModel["bar"][i].pos=this.h-(this.h*(value/this.bar_max));
 	if (value>this.bar_max){
 	  this.gridModel["bar"][i].type = "subline";
 	  this.gridModel["bar"][i].text = ""
 	}else{
 	  this.gridModel["bar"][i].type = "line";
-	  this.gridModel["bar"][i].text = Math.floor(value*100) + " %"
+	  this.gridModel["bar"][i].text = Math.round(value*100) + " %"
 	}
       }
     }
