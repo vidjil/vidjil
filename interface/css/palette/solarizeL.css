@@ -86,7 +86,7 @@ solarizeL.c07 = "#b3c1c1"; //inactive
  background : #fdf6e3;
 }
 
-.buttonSelector:hover {
+.button:hover, .buttonSelector:hover {
  background : #eee8d5;
 }
 

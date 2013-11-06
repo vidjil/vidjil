@@ -81,11 +81,11 @@ list-style-type: none;
 .button {
     cursor:pointer;
     font-size: 14px;
-    padding: 3px;
+    padding: 2px 3px;
     margin :3px;
     margin-right:5px;
     margin-left:5px;
-    text-decoration:underline;
+    /* text-decoration:underline; */
 }
 
 .smallbutton {
@@ -108,7 +108,7 @@ list-style-type: none;
 
 .button:hover {
     cursor: pointer;
-    color: grey;
+   /*    color: grey; */
    /* font-weight: bold; */
 }
 
