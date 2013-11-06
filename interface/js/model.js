@@ -818,7 +818,7 @@ Model.prototype = {
  * 
  * */  
   decDisplayTop : function(){
-    if (this.top>0){ 
+    if (this.top>5){ 
       this.top=this.top-5;
       this.displayTop();
     }
