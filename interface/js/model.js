@@ -1,8 +1,13 @@
-/* VIDJIL
- * License blablabla
- * date: 28/10/2013
- * version :0.0.01-a
- * 
+/*
+ * Vidjil, V(D)J repertoire browsing and analysis
+ * http://bioinfo.lifl.fr/vidjil
+ * (c) 2013, Marc Duez and the Vidjil Team, Bonsai bioinfomatics (LIFL, UMR 8022 CNRS, Univ. Lille 1)
+ * =====
+ * This is a beta version, please use it only for test purposes.
+ * This file is a part of Vidjil, and can not be copied, modified and/or distributed 
+ * without the express permission of the Vidjil Team.
+ *
+ *
  * Model.js
  * 
  * contains data models and control function
