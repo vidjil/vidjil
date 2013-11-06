@@ -136,6 +136,11 @@ circle:hover {
   padding: 5px 20px ;
 }
 
+#logo:hover
+{
+  cursor: pointer;
+}
+
 span.logo
 {
   font-size: 60% ;
