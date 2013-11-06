@@ -80,7 +80,7 @@ Model.prototype = {
     self.windows = [];
     self.mapID={}
     self.dataFileName= document.getElementById(data).files[0].name;
-    document.getElementById("info_data_file").innerHTML="data file : " +self.dataFileName;//TODO
+    document.getElementById("info_data_file").innerHTML= self.dataFileName;//TODO
     oFReader.readAsText(oFile);
     
     oFReader.onload = function (oFREvent) {
@@ -146,7 +146,7 @@ Model.prototype = {
       }else{
 	self.system="TRG";
       }
-      document.getElementById("info_system").innerHTML="system : " +self.system;//TODO
+      document.getElementById("info_system").innerHTML="germline: " +self.system;//TODO
 
       for (var i=0; i< self.n_windows; i++){
 	self.mapID[self.windows[i].window]=i;
@@ -256,7 +256,7 @@ Model.prototype = {
       self = this;
       
       self.analysisFileName=document.getElementById(analysis).files[0].name;
-      document.getElementById("info_analysis_file").innerHTML="analysis file : " +self.analysisFileName; //TODO
+      document.getElementById("info_analysis_file").innerHTML= self.analysisFileName ; //TODO
       oFReader.readAsText(oFile);
       
       oFReader.onload = function (oFREvent) {
