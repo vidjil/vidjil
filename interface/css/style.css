@@ -59,8 +59,6 @@ list-style-type: none;
   height : 100%;
   overflow-y : none;
   float : left;
-  font-family : Courier New,monaco,terminal,courier,system; 
-  font-size: 14px;
 }
 
 #visu {
@@ -111,7 +109,7 @@ list-style-type: none;
 .button:hover {
     cursor: pointer;
     color: grey;
-    font-weight: bold;
+   /* font-weight: bold; */
 }
 
 circle:hover {
@@ -123,6 +121,9 @@ circle:hover {
 }
 
 #info{
+  font-family : Courier New,monaco,terminal,courier,system; 
+  font-size: 14px;
+
   height :150px;
   padding:3px;
 }
@@ -208,6 +209,9 @@ span.logo
 }
 
 .listElem{
+  font-family : Courier New,monaco,terminal,courier,system; 
+  font-size: 14px;
+
   width :380px;
   cursor:pointer;
   -webkit-transition: color 0.2s;
@@ -405,9 +409,6 @@ z-index:5;
 }
 
 #bot-container {
-font-weight: bold;
-font-family: Courier New,monaco,terminal,courier,system;
-font-size: 14px;
 position: fixed;
 bottom: 5px;
 left: 0px;
@@ -419,6 +420,12 @@ overflow-y:auto;
 border-top: solid;
 border-bottom: solid;
 height:100px;
+}
+
+#listSeq {
+font-weight: bold;
+font-family: Courier New,monaco,terminal,courier,system;
+font-size: 14px;
 }
 
 .sequence-line { 
