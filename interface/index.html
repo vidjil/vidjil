@@ -230,11 +230,35 @@
 
 	<div id="info">
 	
-	  <div id=info_data_file></div>
+	  <div id=info_data_file> data file : </div>
 
-	  <div id=info_analysis_file></div>
+	  <div id=info_analysis_file> analysis file : </div>
 	    
-	  <div id="info_system"></div>
+	  <div id="info_system">system :</div>
+	  
+	  <div id="info_color_Tag" class="info_color" style="">tag colors
+	    <span id="fastTag0" class="tagColorBox tagColor0" onclick="nextDisplayTag(this)"></span>
+	    <span id="fastTag1" class="tagColorBox tagColor1" onclick="nextDisplayTag(this)"></span>
+	    <span id="fastTag2" class="tagColorBox tagColor2" onclick="nextDisplayTag(this)"></span>
+	    <span id="fastTag3" class="tagColorBox tagColor3" onclick="nextDisplayTag(this)"></span>
+	    <span id="fastTag4" class="tagColorBox tagColor4" onclick="nextDisplayTag(this)"></span>
+	    <span id="fastTag5" class="tagColorBox tagColor5" onclick="nextDisplayTag(this)"></span>
+	    <span id="fastTag6" class="tagColorBox tagColor6" onclick="nextDisplayTag(this)"></span>
+	    <span id="fastTag7" class="tagColorBox tagColor7" onclick="nextDisplayTag(this)"></span>
+	    <span id="fastTag8" class="tagColorBox tagColor8" onclick="nextDisplayTag(this)"></span>
+	  </div>
+	  
+	  <div id="info_color_N" class="info_color" style="display:none">N colors :
+	    <span> N=0 </span>
+	    <span class="gradient"></span>
+	    <span id="info_n_max"> N=max</span>
+	  </div>
+	  
+	  <div id="info_color_abundance" class="info_color" style="display:none" >abundance colors :
+	    <span> 0% </span>
+	    <span class="gradient"></span>
+	    <span id="info_size_max"> 100%</span>
+	  </div>
 	  
 	</div>
 	<!--
@@ -255,6 +279,9 @@
 	  <a class="button" onclick="showDisplayMenu();">>></a>
 	</div>
 	-->
+
+	<div id="color-info" class="gradient_abundance">
+	</div>
 	
 	<div id="sort-bar">
 

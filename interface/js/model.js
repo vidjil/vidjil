@@ -75,6 +75,7 @@ Model.prototype = {
     self.windows = [];
     self.mapID={}
     self.dataFileName= document.getElementById(data).files[0].name;
+    document.getElementById("info_data_file").innerHTML="data file : " +self.dataFileName;//TODO
     oFReader.readAsText(oFile);
     
     oFReader.onload = function (oFREvent) {
@@ -131,6 +132,8 @@ Model.prototype = {
       .range([250,0]);
 
       
+      document.getElementById("info_n_max").innerHTML=" N = "+self.n_max;
+      
       //extract germline
       if (typeof data.germline !='undefined'){
 	var t=data.germline.split('/');
@@ -138,6 +141,7 @@ Model.prototype = {
       }else{
 	self.system="TRG";
       }
+      document.getElementById("info_system").innerHTML="system : " +self.system;//TODO
 
       for (var i=0; i< self.n_windows; i++){
 	self.mapID[self.windows[i].window]=i;
@@ -247,6 +251,7 @@ Model.prototype = {
       self = this;
       
       self.analysisFileName=document.getElementById(analysis).files[0].name;
+      document.getElementById("info_analysis_file").innerHTML="analysis file : " +self.analysisFileName; //TODO
       oFReader.readAsText(oFile);
       
       oFReader.onload = function (oFREvent) {
@@ -520,7 +525,9 @@ Model.prototype = {
       return default_color;
     }
     if (this.colorMethod=="abundance") {
-      	return colorGenerator( this.scale_color(this.getSize(cloneID)*this.precision) ,  color_s  , color_v);
+      var size=this.getSize(cloneID)
+      if (size==0) return default_color;
+      return colorGenerator( this.scale_color(size*this.precision) ,  color_s  , color_v);
     }
     if (typeof(this.windows[cloneID].seg.V) != 'undefined'){
       if (this.colorMethod=="V") {
@@ -544,6 +551,8 @@ Model.prototype = {
  * */
   changeColorMethod : function(colorM){
     this.colorMethod=colorM;
+    $(".info_color").hide();
+    $("#info_color_"+colorM).show();
     this.update();
   },
   

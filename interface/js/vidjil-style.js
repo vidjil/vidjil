@@ -83,6 +83,7 @@ var default_tag=8;
  
   function initTag(){
     for (var i =0; i<tagColor.length; i++){
+      $(".tagColor"+i).prop("title", tagName[i]);
       $(".tagName"+i).html(tagName[i]);
       $("#tagDisplay"+i).find("input")[tagDisplay[i]].checked=true;
     }
