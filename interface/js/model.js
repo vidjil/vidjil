@@ -784,7 +784,7 @@ Model.prototype = {
     top = typeof top !== 'undefined' ? top : this.top; 
     this.top=top;
     document.getElementById('rangeValue').value=top;
-    document.getElementById('top_display').innerHTML=top;
+    //document.getElementById('top_display').innerHTML=top;
     this.update();
   },
 

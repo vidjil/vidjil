@@ -238,6 +238,68 @@ List.prototype = {
     
   },
   
+  sortListBySize : function(){
+    self=this;
+    var list=jQuery('.list')
+    var sort=list.sort(function(a,b){ 
+      var idA=$(a).attr("id");
+      var idB=$(b).attr("id");
+      return self.m.getSize(idB)> self.m.getSize(idA) ? 1:-1; 
+    })
+    $("#listClones").html(sort);
+  },
+  
+  sortListByTop : function(){
+    self=this;
+    var list=jQuery('.list')
+    var sort=list.sort(function(a,b){ 
+      var idA=$(a).attr("id");
+      var idB=$(b).attr("id");
+      return self.m.windows[idA].top> self.m.windows[idB].top ? 1:-1; 
+    })
+    $("#listClones").html(sort);
+  },
+  
+  sortListByV : function(){
+    self=this;
+    var list=jQuery('.list')
+    var sort=list.sort(function(a,b){ 
+      var idA=$(a).attr("id");
+      var idB=$(b).attr("id");
+      var vA="undefined V";
+      var vB="undefined V";
+      
+      if (typeof(self.m.windows[idA].seg) != 'undefined' && typeof(self.m.windows[idA].seg.V) != 'undefined' )
+      vA=self.m.windows[idA].seg.V[0];
+      if (typeof(self.m.windows[idB].seg) != 'undefined' && typeof(self.m.windows[idB].seg.V) != 'undefined' )
+      vB=self.m.windows[idB].seg.V[0];
+      
+      //TODO ordre alpha//récupérer l'ordre correct dans le germline
+      return vA>vB ? 1:-1; 
+    })
+    $("#listClones").html(sort);
+  },
+  
+  sortListByJ : function(){
+    self=this;
+    var list=jQuery('.list')
+    var sort=list.sort(function(a,b){ 
+      var idA=$(a).attr("id");
+      var idB=$(b).attr("id");
+      var jA="undefined J";
+      var jB="undefined J";
+      
+      if (typeof(self.m.windows[idA].seg) != 'undefined' && typeof(self.m.windows[idA].seg.J) != 'undefined' )
+      jA=self.m.windows[idA].seg.J[0];
+      if (typeof(self.m.windows[idB].seg) != 'undefined' && typeof(self.m.windows[idB].seg.J) != 'undefined' )
+      jB=self.m.windows[idB].seg.J[0];
+      
+      //TODO ordre alpha//récupérer l'ordre correct dans le germline
+      return jA>jB ? 1:-1; 
+    })
+    $("#listClones").html(sort);
+  }
+  
   
 }//fin prototype
   
@@ -249,13 +311,6 @@ List.prototype = {
     $("#cluster"+cloneID).toggle(50);
   }
 
-  function sortListBySize(){
-    var list=jQuery('.list')
-    var sort=list.sort(function(a,b){ 
-      return getSize($(b).attr("id"))> getSize($(a).attr("id")) ? 1:-1; 
-    })
-    $("#listClones").html(sort);
-  }
   
   function changeTag(cloneID){
     if (cloneID[0]=="s") cloneID=cloneID.substr(3);

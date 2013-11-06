@@ -131,8 +131,9 @@ body{
   background : #073642;
 }
 
-.list:hover{
+.list:hover, .tagElem:hover{
   background :#073642;
+  cursor:pointer;
 }
 
 .graph_text{

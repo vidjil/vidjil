@@ -71,7 +71,7 @@ var default_tag=8;
   }
   
   function nextDisplayTag(elem){
-    var tag = elem.id.substr(7);
+    var tag = elem.id.charAt( elem.id.length-1 ) 
     var s =tagDisplay[tag]+1;
     if (s > 1) s=0;
     tagDisplay[tag]=s;
@@ -91,14 +91,11 @@ var default_tag=8;
   
   function updateTagBox(){
     for (var i =0; i<tagColor.length; i++){
-
       if (tagDisplay[i]==1){
 	$(".tagColor"+i).css({
 	  background : tagColor[i] 
 	});
       }else{
-	
-	
 	if (tagDisplay[i]==0){
 	  $(".tagColor"+i).css({
             "background-color" : tagColor[i],
