@@ -517,6 +517,11 @@ letter-spacing: 0.12em;
   left: calc(50% - 250px);
 }
 
+#popup-container a {
+  text-decoration: none;
+  font-weight: bold;
+}
+
 .closeButton{
   position: absolute;
   top: -12px;

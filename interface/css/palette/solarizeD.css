@@ -117,6 +117,10 @@ body{
  background : #002b36;
 }
 
+#popup-container a {
+  color: #586e75 ;
+}
+
 #file_menu, #menu, #listClones, #listSelect, #tagSelector, #display-menu, #bot-container, .seq-fixed{
  background : #002b36;
 }
