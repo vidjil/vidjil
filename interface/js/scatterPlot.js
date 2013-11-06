@@ -209,7 +209,10 @@ ScatterPlot.prototype = {
 	}
       })
       .attr("height", function(d) { return self.getBarHeight(d)*self.resizeH; })
-      .attr("y", function(d) { return (self.getBarPosition(d)*self.resizeH)+self.marge_top; })
+      .attr("y", function(d) { 
+	if (!self.m.clones[d.id].active) return (self.h*self.resizeH)+self.marge_top;
+	return (self.getBarPosition(d)*self.resizeH)+self.marge_top; 
+      })
       .attr("fill", function(d) { return (self.m.clones[d].color); })
       .attr("class", function(p) { 
 	if (!self.m.clones[p.id].active) return "circle_hidden";
