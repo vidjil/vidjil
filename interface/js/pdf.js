@@ -115,7 +115,7 @@
     opt.y_offset=60;
 
     doc.setFontSize(12);
-    doc.text(145, 20, 'Vidjil - http://bioinfo.lifl.fr/vidjil');
+    doc.text(130, 20, 'Vidjil (beta) - http://bioinfo.lifl.fr/vidjil');
     doc.rect(15, 15, 60, 23);
     doc.text(20, 20, document.getElementById("upload_json").files[0].name);
     doc.text(20, 25, 'run: 2013-10-03');
