@@ -209,8 +209,9 @@ List.prototype = {
   updateElem : function(list){
     for ( var i=0; i<list.length ; i++){
       
-      var displayCluster=true;
-      if ($("#cluster"+list[i]).css("display")=="none") displayCluster=false;
+      var displayCluster=false;
+      var cluster =$("#cluster"+list[i])
+      if (cluster.length!=0 && cluster.css("display")!="none") displayCluster=true;
       
       var div = document.getElementById(list[i]);
       div.innerHTML='';
@@ -245,7 +246,7 @@ List.prototype = {
 
 
   function showCluster(cloneID){
-    $("#cluster"+cloneID).toggle("fast");
+    $("#cluster"+cloneID).toggle(50);
   }
 
   function sortListBySize(){
