@@ -119,7 +119,17 @@ body{
 }
 
 #file_menu, #menu, #listClones, #listSelect, #tagSelector, #display-menu, #bot-container, .seq-fixed{
- background : #fdf6e3;
+ background : #b3c1c1;
+}
+
+.selector, #sort-bar, #top-container, #listClones, .separator, #bot-container, #popup-container, #file_menu, .closeButton
+{
+  border-color: #b3c1c1;
+}
+
+.closeButton
+{
+ border-color: #b3c1c1;
 }
 
 .list_select{

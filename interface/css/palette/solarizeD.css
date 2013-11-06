@@ -7,7 +7,7 @@ solarizeD.c03 = "#073642";
 solarizeD.c04 = "#93a1a1"; 
 solarizeD.c05 = "#fdf6e3"; 
 solarizeD.c06 = "#586e75"; 
-solarizeD.c07 = "#284e55"; 
+solarizeD.c07 = "#284e55";    // base02
 */
 
 /*Style polyline / graph*/
@@ -119,6 +119,16 @@ body{
 
 #file_menu, #menu, #listClones, #listSelect, #tagSelector, #display-menu, #bot-container, .seq-fixed{
  background : #002b36;
+}
+
+.selector, #sort-bar, #top-container, #listClones, .separator, #bot-container, #popup-container, #file_menu, .closeButton
+{
+  border-color: #284e55; 
+}
+
+.closeButton
+{
+  color: #284e55;
 }
 
 .list_select{

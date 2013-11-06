@@ -517,6 +517,8 @@ letter-spacing: 0.12em;
   text-align: center;
   font-weight: bolder;
   cursor: pointer;
+  padding: 1px;
+  font-size: 90%; 
 }
 
 .center{
