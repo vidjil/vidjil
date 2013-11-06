@@ -94,10 +94,6 @@ Graph.prototype = {
       .domain([1,this.precision])
       .range([0,this.h]);
     
-    this.scale_color = d3.scale.log()
-      .domain([1,this.precision])
-      .range([250,0]);
-    
     //abscisse
     for (var i=0 ; i<this.m.windows[0].size.length; i++){
       this.graph_col[i]=this.marge1 + 5 + i*(( this.w-(this.marge1+this.marge2) )/(this.m.windows[0].size.length-1) );

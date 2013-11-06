@@ -181,6 +181,10 @@ circle:hover {
   stroke-dasharray: 6,6;
 }
 
+.sp_subline_hidden{
+  stroke-width : 0px;
+}
+
 .list{
   width : 440px;
   display : block;
@@ -301,6 +305,11 @@ circle:hover {
   -o-transition: fill  0.2s;
   -ms-transition: fill 0.2s;
   transition: fill 0.2s;
+}
+
+.circle_hidden{
+  -webkit-transition: fill 0.2s;
+  display:none;
 }
 
 .separator {

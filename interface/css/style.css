@@ -307,6 +307,11 @@ circle:hover {
   transition: fill 0.2s;
 }
 
+.circle_hidden{
+  -webkit-transition: fill 0.2s;
+  display:none;
+}
+
 .separator {
   height: 25px;
   position: fixed;

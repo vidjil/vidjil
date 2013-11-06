@@ -50,6 +50,8 @@ function Model(){
   this.view=[];
   this.mapID={};
   this.top=10;
+  this.precision=1;
+  
 }
 
 
@@ -107,6 +109,13 @@ Model.prototype = {
 	  self.windows.push(data.windows[i]);
 	} 	
       }
+      var count=min_size;
+
+
+      while (count<1){
+	count=count*10;
+	self.precision= self.precision*10;
+      }
 
       self.n_windows=self.windows.length;
       self.min_size=min_size;
@@ -117,6 +126,9 @@ Model.prototype = {
       self.resolution5 = data.resolution5;
       self.timestamp = data.timestamp;
       self.time = data.time;
+      self.scale_color = d3.scale.log()
+      .domain([1,self.precision])
+      .range([250,0]);
 
       
       //extract germline
@@ -507,6 +519,9 @@ Model.prototype = {
     if (!this.clones[cloneID].active) {
       return default_color;
     }
+    if (this.colorMethod=="abundance") {
+      	return colorGenerator( this.scale_color(this.getSize(cloneID)*this.precision) ,  color_s  , color_v);
+    }
     if (typeof(this.windows[cloneID].seg.V) != 'undefined'){
       if (this.colorMethod=="V") {
       	return this.clones[cloneID].colorV;
@@ -518,9 +533,6 @@ Model.prototype = {
       	return this.clones[cloneID].colorN;
       }
       if (this.colorMethod=="Tag") {
-      	return tagColor[this.clones[cloneID].tag];
-      }
-      if (this.colorMethod=="abundance") {
       	return tagColor[this.clones[cloneID].tag];
       }
     }
@@ -716,7 +728,7 @@ Model.prototype = {
  * */
   updateModelElem :function(list){
     for (var i=0 ; i < list.length ; i++){
-      if (this.clones[list[i]].cluster.length!=0 && this.windows[list[i]].top < this.top && tagDisplay[this.clones[list[i]].tag] == 1 ){
+      if (this.clones[list[i]].cluster.length!=0 && this.windows[list[i]].top <= this.top && tagDisplay[this.clones[list[i]].tag] == 1 ){
 	this.clones[list[i]].active=true;
       }else{
 	this.clones[list[i]].active=false;

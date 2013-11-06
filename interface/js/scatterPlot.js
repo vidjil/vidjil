@@ -125,12 +125,12 @@ ScatterPlot.prototype = {
       .attr("fill", function(d) { return (self.m.clones[d].color); })
       .on("mouseover",function(d) { self.m.focusIn(d.id); } )
       .on("click", function(d) { self.m.select(d.id);})
-    
-    //this.resize();
-    //this.updateBar();
   },
   
   updateBar :function(){
+    var startTime = new Date().getTime();  
+    var elapsedTime = 0;  
+
     self=this
     
     this.vKey = Object.keys(this.m.germline.vgene);
@@ -139,6 +139,7 @@ ScatterPlot.prototype = {
     this.bar_max=0;
     
     this.bar_width = 0.5*((this.w) / (this.vKey.length))
+
     //
     for ( var i=0 ; i< this.vKey.length; i++){
       this.bar_v[this.vKey[i]]={}
@@ -173,6 +174,21 @@ ScatterPlot.prototype = {
       }
     }
     
+    //grid
+    for ( var i=0 ; i< this.gridModel["bar"].length; i++){
+      if (this.gridModel["bar"][i].orientation=="hori"){
+	var value=this.gridModel["bar"][i].value/100;
+	this.gridModel["bar"][i].pos=this.h-(this.h*(value/this.bar_max));
+	if (value>this.bar_max){
+	  this.gridModel["bar"][i].type = "subline";
+	  this.gridModel["bar"][i].text = ""
+	}else{
+	  this.gridModel["bar"][i].type = "line";
+	  this.gridModel["bar"][i].text = Math.floor(value*100) + " %"
+	}
+      }
+    }
+    
     //redraw
     this.bar = this.bar_container.selectAll("rect").data(this.nodes)
     this.bar_container.selectAll("rect")
@@ -193,6 +209,16 @@ ScatterPlot.prototype = {
       .attr("height", function(d) { return self.getBarHeight(d)*self.resizeH; })
       .attr("y", function(d) { return (self.getBarPosition(d)*self.resizeH)+self.marge_top; })
       .attr("fill", function(d) { return (self.m.clones[d].color); })
+      .attr("class", function(p) { 
+	if (!self.m.clones[p.id].active) return "circle_inactive";
+	if (self.m.clones[p.id].select) return "circle_select";
+	if (p.id==self.m.focus) return "circle_focus";
+	return "circle"; 
+      })
+      
+    elapsedTime = new Date().getTime() - startTime;  
+    console.log( "update bar: " +elapsedTime +"ms");  
+
   },
   
   getBarHeight : function(cloneID){
@@ -238,6 +264,7 @@ ScatterPlot.prototype = {
     this.gridModel["gene"]=[];
     this.gridModel["Size"]=[];
     this.gridModel["nSize"]=[];
+    this.gridModel["bar"]=[];
     
     var vKey = Object.keys(this.m.germline.v);
     var vKey2 = Object.keys(this.m.germline.vgene);
@@ -272,6 +299,7 @@ ScatterPlot.prototype = {
       this.gridModel["gene"].push(d2);
       this.gridModel["Size"].push(d2);
       this.gridModel["nSize"].push(d2);
+      this.gridModel["bar"].push(d2);
     }
     
     // V gene
@@ -287,6 +315,7 @@ ScatterPlot.prototype = {
       this.gridModel["gene"].push(d);
       this.gridModel["Size"].push(d);
       this.gridModel["nSize"].push(d);
+      this.gridModel["bar"].push(d);
     }
     var d={};
     d.type = "line";
@@ -298,6 +327,7 @@ ScatterPlot.prototype = {
     this.gridModel["gene"].push(d);
     this.gridModel["Size"].push(d);
     this.gridModel["nSize"].push(d);
+    this.gridModel["bar"].push(d);
     this.positionGene["undefined V"]=d.pos;
     this.positionAllele["undefined V"]=d.pos
     
@@ -374,6 +404,16 @@ ScatterPlot.prototype = {
       this.gridModel["Size"].push(d);
       height=height/10;
     }
+    
+    //bar
+    for (var i=0 ;i<20 ; i++){
+      var d={};
+      d.type = "line";
+      d.orientation = "hori";
+      d.pos = 0
+      d.value=i*5;
+      this.gridModel["bar"].push(d);
+    }
  
   },
   
@@ -416,6 +456,10 @@ ScatterPlot.prototype = {
       }
 
     switch(self.splitMethod){ 
+    case "bar": 
+      d.x+=coef*((self.positionGene[geneV]*self.resizeW)-d.x);
+      d.y+=coef*((self.h)-d.y);
+      break;
     case "gene": 
       d.x+=coef*((self.positionGene[geneV]*self.resizeW)-d.x);
       d.y+=coef*((self.positionGene[geneJ]*self.resizeH)-d.y);
@@ -529,14 +573,20 @@ ScatterPlot.prototype = {
   update : function(){
     var startTime = new Date().getTime();  
     var elapsedTime = 0;  
-    for(var i=0; i < this.nodes.length; i++){
-      this.nodes[i].r1=this.getRadius(i);
+    
+    if (this.splitMethod=="bar"){
+      this.updateBar();
+    }else{
+    
+      for(var i=0; i < this.nodes.length; i++){
+	this.nodes[i].r1=this.getRadius(i);
+      }
+      this.force.start();
+      this.updateStyle();
     }
-    this.force.start();
-    this.updateStyle();
-    elapsedTime = new Date().getTime() - startTime;  
-    this.updateBar();
+    
     this.initGrid();
+    elapsedTime = new Date().getTime() - startTime;  
     console.log( "update sp: " +elapsedTime +"ms");  
   },
 
@@ -545,10 +595,14 @@ ScatterPlot.prototype = {
  * (ne relance pas l'animation)
  * */
   updateElem : function(list){
-    for (var i = 0 ; i<list.length; i++){
-      this.nodes[list[i]].r1=this.getRadius(list[i]);
+    if (this.splitMethod=="bar"){
+      this.updateBar();
+    }else{
+      for (var i = 0 ; i<list.length; i++){
+	this.nodes[list[i]].r1=this.getRadius(list[i]);
+      }
+      this.updateStyle();
     }
-    this.updateStyle();
   },
 	
 /* update l'apparence liée a l'état (focus/select/inactive) des nodes
@@ -648,10 +702,41 @@ ScatterPlot.prototype = {
  * 
  * */
   changeSplitMethod :function(splitM){
+    if (splitM=="bar" && splitM!=this.splitMethod){
+      this.endPlot();
+      this.initBar();
+    }
+    
+    if (splitM!="bar" && this.splitMethod=="bar"){
+      this.endBar();
+    }
+    
     this.splitMethod=splitM;
     this.update();
   },
 
+  endPlot : function(){
+    var self=this;
+    this.node
+      .transition()
+      .duration(500)
+      .attr("class", function(p) { 
+	return "circle_hidden"; 
+      })
+    this.force.start()
+  },
+  
+  endBar : function(){
+    this.initBar();
+    var self=this;
+    this.bar_container.selectAll("rect")
+      .transition()
+      .duration(500)
+      .attr("class", function(p) { 
+	return "circle_hidden"; 
+      })
+  }
+  
 }
 
 

@@ -25,6 +25,7 @@ var color_v = 0.72; //brightness
 
 var default_color = "#839496";
 var focus_color = "#fdf6e3";
+var background_color ="#002b36";
 
 var tagColor = [];
 tagColor[0] = "#dc322f";
@@ -79,7 +80,6 @@ var default_tag=8;
 		m.update();
   }
  
-
  
   function initTag(){
     for (var i =0; i<tagColor.length; i++){
@@ -102,9 +102,9 @@ var default_tag=8;
 	if (tagDisplay[i]==0){
 	  $(".tagColor"+i).css({
             "background-color" : tagColor[i],
-            "background-image" : 'linear-gradient(45deg, transparent -25%, '+colorStyle.c02+' 100%, '+colorStyle.c02+' 100%, transparent 0%)',
-            "background" : '-moz-linear-gradient(45deg, transparent -25%, '+colorStyle.c02+' 100%, '+colorStyle.c02+' 100%, transparent 0%) repeat scroll 0 0 '+tagColor[i], //firefox
-            "background-image" : '-webkit-linear-gradient(45deg, transparent -25%, '+colorStyle.c02+' 100%, '+colorStyle.c02+' 100%, transparent 0%)'  //chrome
+            "background-image" : 'linear-gradient(45deg, transparent -25%, '+background_color+' 100%, '+background_color+' 100%, transparent 0%)',
+            "background" : '-moz-linear-gradient(45deg, transparent -25%, '+background_color+' 100%, '+background_color+' 100%, transparent 0%) repeat scroll 0 0 '+tagColor[i], //firefox
+            "background-image" : '-webkit-linear-gradient(45deg, transparent -25%, '+background_color+' 100%, '+background_color+' 100%, transparent 0%)'  //chrome
 	  })
 	}
 	
@@ -148,12 +148,14 @@ var default_tag=8;
       document.getElementById('palette').href='css/palette/solarizeD.css';
       default_color = "#839496";
       focus_color = "#fdf6e3";
+      background_color ="#002b36";
     }
       
     if (newStyle=="solarizeL"){
       document.getElementById('palette').href='css/palette/solarizeL.css';
       default_color = "#839496";
       focus_color = "#002b36";
+      background_color ="#eee8d5";
     }
   }
   
