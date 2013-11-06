@@ -89,39 +89,39 @@
 	  <a class="buttonSelector" onclick="javascript:m.saveAnalysis()">save analysis</a>
           <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
 	  <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
-	  <a class="buttonSelector" onclick="javascript:testPDF2()">export pdf</a>
+	  <a class="buttonSelector" onclick="javascript:testPDF2()">export pdf (graph + selected clones)</a>
 	</div>
       </div>
-      
-    
-      <div class="menu" onmouseover="showSelector('colorSelector');" > color 
-	<div id="colorSelector" class="selector">
-	  <a class="buttonSelector" onclick="m.changeColorMethod('V');">V</a>
-	  <a class="buttonSelector" onclick="m.changeColorMethod('J');">J</a>
-	  <a class="buttonSelector" onclick="m.changeColorMethod('N');">N</a>
-	  <a class="buttonSelector" onclick="m.changeColorMethod('Tag');">Tag</a>
-	  <a class="buttonSelector" onclick="m.changeColorMethod('abundance');">abundance</a>
-	</div>
-      </div>
-      
-      <div class="menu" onmouseover="showSelector('groupSelector');"> regroup 
-      	<div id="groupSelector" class="selector">
-	  <a class="buttonSelector" onclick="sp.changeSplitMethod('allele');">alleles</a> 
-	  <a class="buttonSelector" onclick="sp.changeSplitMethod('gene');">genes</a> 
-	  <a class="buttonSelector" onclick="sp.changeSplitMethod('nSize');">N length</a> 
-	  <a class="buttonSelector" onclick="sp.changeSplitMethod('Size')">abundance</a> 
-	  <a class="buttonSelector" onclick="sp.changeSplitMethod('bar')">bar</a> 
-	</div>
-      </div>
-      
+
       <div id="norm" class="menu" onmouseover="showSelector('ratioSelector');"> normalize 
         <div id="ratioSelector" class="selector">
         <!--TODO generer automatiquement-->
-	  <a class="buttonSelector" onclick="m.changeRatio(0);">none</a> 
-	  <a class="buttonSelector" onclick="m.changeRatio(1);">highest standard</a> 
+	  <a class="buttonSelector" onclick="m.changeRatio(0);">off</a> <!-- highest standard --> 
+	  <a class="buttonSelector" onclick="m.changeRatio(1);">on</a> 
 	  <!--<a class="buttonSelector" onclick="m.changeRatio(2);">all standard</a> -->
 	</div>
       </div>
+         
+      <div class="menu" onmouseover="showSelector('groupSelector');"> analysis 
+      	<div id="groupSelector" class="selector">
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('gene');">V / J (genes)</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('allele');">V / J (alleles)</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('nSize');">V / N length</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('Size')">V / abundance at selected timepoint</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('bar')">V distribution</a> 
+	</div>
+      </div>
+
+      <div class="menu" onmouseover="showSelector('colorSelector');" > color 
+	<div id="colorSelector" class="selector">
+	  <a class="buttonSelector" onclick="m.changeColorMethod('V');">by V</a>
+	  <a class="buttonSelector" onclick="m.changeColorMethod('J');">by J</a>
+	  <a class="buttonSelector" onclick="m.changeColorMethod('N');">by N length</a>
+	  <a class="buttonSelector" onclick="m.changeColorMethod('Tag');">by tag</a>
+	  <a class="buttonSelector" onclick="m.changeColorMethod('abundance');">by abundance at selected timepoint</a>
+	</div>
+      </div>
+      
       
       <div id="norm" class="menu" onmouseover="showSelector('displaySelector');"> display
         <div id="displaySelector" class="selector">
@@ -464,8 +464,8 @@
       <div class="separator">
 	<span class="button" onclick="m.merge()">merge</span>
 	<span class="button" onclick="segment.align()">align</span>
-	<span class="button" onclick="segment.sendTo('IMGT')"> send to IMGT</span>
-	<span class="button" onclick="segment.sendTo('igBlast')">send to IgBlast</span>
+	<span class="button" onclick="segment.sendTo('IMGT')">❯ to IMGT/V-QUEST</span>
+	<span class="button" onclick="segment.sendTo('igBlast')">❯ to IgBlast</span>
 
       </div>
     
