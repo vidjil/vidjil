@@ -252,8 +252,6 @@ Segment.prototype = {
 	url: CGI_ADRESS+"align.cgi",
 	success: function(result) {
 	    displayAjaxResult(result);
-	},
-	error: function() {popupMsg(msg.align_error);
 	}
     });
   }
