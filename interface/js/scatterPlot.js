@@ -637,7 +637,7 @@ ScatterPlot.prototype = {
       for (var i = 0 ; i<list.length; i++){
 	this.nodes[list[i]].r1=this.getRadius(list[i]);
       }
-      this.updateStyle();
+      this.update();
     }
   },
 	
