@@ -941,7 +941,9 @@ window.onresize = initCoef;
     +"</br>Vidjil is developed by the <a href='http://www.lifl.fr/bonsai'>Bonsai bioinformatics team</a> (LIFL, CNRS, U. Lille 1, Inria Lille), in collaboration with the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille and the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille 2, IFR-114, IRCL)."
     +"</br>"
     +"</br>This is a beta version, please use it only for test purposes."
+/*
 +  "<br/><br/>!!! Supprimer, mettre un message d'erreur seuelement si non compatible !!! compatible with google chrome and mozilla firefox browsers"
+*/
     +"</br></br> <div class='center' > <button onclick='loadData(), closePopupMsg()'>start</button></div>",
     
   }

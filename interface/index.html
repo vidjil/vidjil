@@ -68,7 +68,7 @@
 
 	Analysis file (.analysis, optional):<br/>
 	<input id="upload_pref" type="file" name="pref" /></br>
-	<p class='help'>The analysis file stores all user (tags, colors, manual clusters).</p>
+	<p class='help'>The analysis file stores all parameters set by the user (tags, colors, manual clusters).</p>
 
 	<!--
 	load only clones in the top <select id="limit_top" name="limit_top">
@@ -122,8 +122,8 @@
       	<div id="groupSelector" class="selector">
 	  <a class="buttonSelector" onclick="sp.changeSplitMethod('gene');">V / J (genes)</a> 
 	  <a class="buttonSelector" onclick="sp.changeSplitMethod('allele');">V / J (alleles)</a> 
-	  <a class="buttonSelector" onclick="sp.changeSplitMethod('nSize');">V / N length</a> 
-	  <a class="buttonSelector" onclick="sp.changeSplitMethod('n');">V / N length + V / J deletion</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('n');">V / N length</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('nSize');">V / N length + VJ deletions</a> 
 	  <a class="buttonSelector" onclick="sp.changeSplitMethod('Size')">V / abundance at selected timepoint</a> 
 	  <a class="buttonSelector" onclick="sp.changeSplitMethod('bar')">V distribution</a> 
 	</div>
@@ -133,8 +133,8 @@
 	<div id="colorSelector" class="selector">
 	  <a class="buttonSelector" onclick="m.changeColorMethod('V');">by V</a>
 	  <a class="buttonSelector" onclick="m.changeColorMethod('J');">by J</a>
-	  <a class="buttonSelector" onclick="m.changeColorMethod('N');">by N length</a>
-	  <a class="buttonSelector" onclick="m.changeColorMethod('N2');">by N length + V / J deletion</a>
+	  <a class="buttonSelector" onclick="m.changeColorMethod('N2');">by N length</a>
+	  <a class="buttonSelector" onclick="m.changeColorMethod('N');">by N length + VJ deletions</a>
 	  <a class="buttonSelector" onclick="m.changeColorMethod('Tag');">by tag</a>
 	  <a class="buttonSelector" onclick="m.changeColorMethod('abundance');">by abundance at selected timepoint</a>
 	</div>
