@@ -27,11 +27,15 @@ void LazyMsa::add(string sequence){
   sizeUsed++;
   sequences[sizeUsed]=sequence;
   
-  DynProg::DynProgMode dpMode = DynProg::Global;
+  DynProg::DynProgMode dpMode = DynProg::GlobalButMostlyLocal ;
   Cost dpCost = VDJ;
   
   DynProg dp = DynProg(ref, sequence, dpMode, dpCost);
   dp.compute();
+
+  // cout << "======================" << sizeUsed << endl ;
+  // cout << dpCost << endl ;
+
   dp.backtrack();
 
   gapRef[sizeUsed]= new int[ref.size()+1];
