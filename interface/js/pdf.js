@@ -99,6 +99,12 @@
       elem.getElementById("polyline_container").appendChild(polyline);
     }
     
+    var textElem = elem.getElementsByTagName("text");
+    
+    for (var i = 0; i<textElem.length; i++){
+      textElem[i].setAttribute("text-anchor","middle");
+    }
+    
     elem.getElementById("resolution1").firstChild.setAttribute("fill","#eeeeee");
     var timebar=elem.getElementById("timebar");
     elem.getElementById("timebar").parentNode.removeChild(timebar);

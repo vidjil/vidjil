@@ -226,15 +226,17 @@ var svgElementToPdf = function(element, pdf, options) {
                     .metadata.Unicode;
 
                 var text_value = n.text();
-                var name_length = 0;
+		
+		//var box = node.getBBox();
+		var name_length = 0;
+		//var name_length = pdf.getStringUnitWidth(text_value, fontMetrics) * pdfFontSize * kx;
+		//console.log(name_length);
 
 
                 //FIXME: use more accurate positioning!!
                 var label_offset = 0;
                 var x = parseInt(n.attr('x')) - label_offset;
                 var y = parseInt(n.attr('y')) ;
-
-
 
                 if (node.hasAttribute('text-anchor')) {
                     switch (n.attr('text-anchor')) {

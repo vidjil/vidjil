@@ -316,7 +316,7 @@ Graph.prototype = {
 	else return 15;
       })
       .attr("x", function(d) { 
-	if (d.type=="axis_h") return 20;
+	if (d.type=="axis_h") return 40;
 	else return Math.floor(self.resizeW*d.pos+self.marge4);
       })
       .attr("class", function(d) { 
