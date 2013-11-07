@@ -70,7 +70,7 @@
 	<input id="upload_pref" type="file" name="pref" /></br>
 	<p class='help'>The analysis file stores all user (tags, colors, manual clusters).</p>
 
-
+	<!--
 	load only clones in the top <select id="limit_top" name="limit_top">
 	  <option value="10">10</option>	
 	  <option value="30">30</option>
@@ -79,6 +79,10 @@
 	
 	<button onclick="document.getElementById('file_menu').style.display='none';
 	m.load('upload_json','upload_pref', document.getElementById('limit_top').value)">start</button> 
+	-->
+	<button onclick="document.getElementById('file_menu').style.display='none';
+	m.load('upload_json','upload_pref', 50)">start</button> 
+	
     </div>
     
     <div id="analysis_menu" >
@@ -119,6 +123,7 @@
 	  <a class="buttonSelector" onclick="sp.changeSplitMethod('gene');">V / J (genes)</a> 
 	  <a class="buttonSelector" onclick="sp.changeSplitMethod('allele');">V / J (alleles)</a> 
 	  <a class="buttonSelector" onclick="sp.changeSplitMethod('nSize');">V / N length</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('n');">V / N length + V / J deletion</a> 
 	  <a class="buttonSelector" onclick="sp.changeSplitMethod('Size')">V / abundance at selected timepoint</a> 
 	  <a class="buttonSelector" onclick="sp.changeSplitMethod('bar')">V distribution</a> 
 	</div>
@@ -129,6 +134,7 @@
 	  <a class="buttonSelector" onclick="m.changeColorMethod('V');">by V</a>
 	  <a class="buttonSelector" onclick="m.changeColorMethod('J');">by J</a>
 	  <a class="buttonSelector" onclick="m.changeColorMethod('N');">by N length</a>
+	  <a class="buttonSelector" onclick="m.changeColorMethod('N2');">by N length + V / J deletion</a>
 	  <a class="buttonSelector" onclick="m.changeColorMethod('Tag');">by tag</a>
 	  <a class="buttonSelector" onclick="m.changeColorMethod('abundance');">by abundance at selected timepoint</a>
 	</div>
@@ -142,7 +148,7 @@
 	    <li>
 	      <div> top <input id="rangeValue" type="text" size="3" value="10"
 	      readonly="true">
-	      <input id="top_slider" type="range" min="5" max="100" step="5" value="10" 
+	      <input id="top_slider" type="range" min="5" max="50" step="5" value="10" 
 	      onchange="m.displayTop(this.value)" />
 	      </div>
 	    </li>
@@ -264,6 +270,12 @@
 	    <span> N=0 </span>
 	    <span class="gradient"></span>
 	    <span id="info_n_max"> N=max</span>
+	  </div>
+	  
+	  <div id="info_color_N2" class="info_color" style="display:none">N colors :
+	    <span> N=0 </span>
+	    <span class="gradient"></span>
+	    <span id="info_n2_max"> N=max</span>
 	  </div>
 	  
 	  <div id="info_color_abundance" class="info_color" style="display:none" >abundance colors :

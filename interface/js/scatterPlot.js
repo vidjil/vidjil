@@ -280,6 +280,7 @@ ScatterPlot.prototype = {
     this.gridModel["gene"]=[];
     this.gridModel["Size"]=[];
     this.gridModel["nSize"]=[];
+    this.gridModel["n"]=[];
     this.gridModel["bar"]=[];
     
     var vKey = Object.keys(this.m.germline.v);
@@ -315,6 +316,7 @@ ScatterPlot.prototype = {
       this.gridModel["gene"].push(d2);
       this.gridModel["Size"].push(d2);
       this.gridModel["nSize"].push(d2);
+      this.gridModel["n"].push(d2);
       this.gridModel["bar"].push(d2);
     }
     
@@ -331,6 +333,7 @@ ScatterPlot.prototype = {
       this.gridModel["gene"].push(d);
       this.gridModel["Size"].push(d);
       this.gridModel["nSize"].push(d);
+      this.gridModel["n"].push(d);
       this.gridModel["bar"].push(d);
     }
     var d={};
@@ -343,7 +346,9 @@ ScatterPlot.prototype = {
     this.gridModel["gene"].push(d);
     this.gridModel["Size"].push(d);
     this.gridModel["nSize"].push(d);
+    this.gridModel["n"].push(d);
     this.gridModel["bar"].push(d);
+    
     this.positionGene["undefined V"]=d.pos;
     this.positionAllele["undefined V"]=d.pos
     
@@ -403,6 +408,16 @@ ScatterPlot.prototype = {
       d.pos = (1-((i*5)/this.m.n_max))*(this.h-(2*this.marge_top));
       d.text=i*5;
       this.gridModel["nSize"].push(d);
+    }
+    
+    //n
+    for (var i=0 ;i<=(Math.floor(this.m.n2_max)) ; i++){
+      var d={};
+      d.type = "line";
+      d.orientation = "hori";
+      d.pos = (1-((i)/this.m.n2_max))*(this.h-(2*this.marge_top));
+      d.text=i;
+      this.gridModel["n"].push(d);
     }
     
     //size 
@@ -473,38 +488,42 @@ ScatterPlot.prototype = {
       }
 
     switch(self.splitMethod){ 
-    case "bar": 
-      d.x+=coef*((self.positionGene[geneV]*self.resizeW)-d.x);
-      d.y+=coef*((self.h)-d.y);
-      break;
-    case "gene": 
-      d.x+=coef*((self.positionGene[geneV]*self.resizeW)-d.x);
-      d.y+=coef*((self.positionGene[geneJ]*self.resizeH)-d.y);
-      break;
-    case "allele": 
-      d.x+=coef*((self.positionAllele[geneV]*self.resizeW)-d.x);
-      d.y+=coef*((self.positionAllele[geneJ]*self.resizeH)-d.y);
-      break;
-    case "Size": 
-      d.x+=coef3*((self.positionGene[geneV]*self.resizeW)-d.x);
-      if (d.r1!=0){
-	d.y+=coef2*(self.sizeScale(self.m.getSize(d.id))*self.resizeH - d.y);
-      }else{
-	d.y+=coef2*(self.h*self.resizeH-d.y);
-      }
-    break; 
-    case "nSize": 
-      d.x+=coef3*((self.positionGene[geneV]*self.resizeW)-d.x);
-      if ( typeof(self.m.windows[d.id].seg) != 'undefined' 
-      && typeof(self.m.windows[d.id].seg.V) != 'undefined' ){
-	if (self.m.windows[d.id].seg.N!=-1){
-	  d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].seg.Nsize/self.m.n_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
+      case "bar": 
+	d.x+=coef*((self.positionGene[geneV]*self.resizeW)-d.x);
+	d.y+=coef*((self.h)-d.y);
+	break;
+      case "gene": 
+	d.x+=coef*((self.positionGene[geneV]*self.resizeW)-d.x);
+	d.y+=coef*((self.positionGene[geneJ]*self.resizeH)-d.y);
+	break;
+      case "allele": 
+	d.x+=coef*((self.positionAllele[geneV]*self.resizeW)-d.x);
+	d.y+=coef*((self.positionAllele[geneJ]*self.resizeH)-d.y);
+	break;
+      case "Size": 
+	d.x+=coef3*((self.positionGene[geneV]*self.resizeW)-d.x);
+	if (d.r1!=0){
+	  d.y+=coef2*(self.sizeScale(self.m.getSize(d.id))*self.resizeH - d.y);
+	}else{
+	  d.y+=coef2*(self.h*self.resizeH-d.y);
+	}
+      break; 
+      case "nSize": 
+	d.x+=coef3*((self.positionGene[geneV]*self.resizeW)-d.x);
+	if ( typeof(self.m.windows[d.id].seg) != 'undefined' 
+	&& typeof(self.m.windows[d.id].seg.V) != 'undefined' ){
+	  if (self.m.windows[d.id].seg.N!=-1){
+	    d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].seg.Nsize/self.m.n_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
+	  }else{
+	    d.y+=coef2*((self.h*self.resizeH)-d.y);
+	  }
 	}else{
 	  d.y+=coef2*((self.h*self.resizeH)-d.y);
 	}
-      }else{
-	d.y+=coef2*((self.h*self.resizeH)-d.y);
-      }
+      break; 
+      case "n": 
+	d.x+=coef3*((self.positionGene[geneV]*self.resizeW)-d.x);
+	d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].n/self.m.n2_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
       break; 
       }
     }

@@ -77,6 +77,7 @@ Model.prototype = {
     var oFile = document.getElementById(data).files[0];
     var min_size = 1;
     var n_max=0;
+    var n2_max=0; //TODO rename
     self.windows = [];
     self.mapID={}
     self.dataFileName= document.getElementById(data).files[0].name;
@@ -106,12 +107,20 @@ Model.prototype = {
 	    }
 	  }
   
-	  //search for n_max
+	  //search for n_max / n2_max
 	  if ((typeof(data.windows[i].seg) != 'undefined') && 
 		  (typeof(data.windows[i].seg.Nsize) != 'undefined') &&
 		  (data.windows[i].seg.Nsize > n_max)){
 		  n_max=data.windows[i].seg.Nsize;   
 	  }
+	  
+	  var n2=0;
+	  if ((typeof(data.windows[i].seg) != 'undefined') && 
+	  (typeof(data.windows[i].seg.Nsize) != 'undefined')){
+	    n2=data.windows[i].seg.name.split('/')[1];
+	    if (n2>n2_max)n2_max=n2;  
+	  }
+	  data.windows[i].n=n2
 	  self.windows.push(data.windows[i]);
 	} 	
       }
@@ -126,6 +135,7 @@ Model.prototype = {
       self.n_windows=self.windows.length;
       self.min_size=min_size;
       self.n_max=n_max;
+      self.n2_max=n2_max;
       self.normalizations = data.normalizations;
       self.total_size = data.total_size;
       self.resolution1 = data.resolution1;
@@ -138,6 +148,7 @@ Model.prototype = {
 
       
       document.getElementById("info_n_max").innerHTML=" N = "+self.n_max;
+      document.getElementById("info_n2_max").innerHTML=" N = "+self.n2_max;
       
       //extract germline
       if (typeof data.germline !='undefined'){
@@ -295,6 +306,11 @@ Model.prototype = {
     //		COLOR_N
     for (var i=0; i<this.n_windows; i++){
       this.clones[i].colorN=colorGenerator( ( ((this.clones[i].Nsize/maxNsize)-1)*(-250) )  ,  color_s  , color_v);
+    }
+    
+    //		COLOR_N2
+    for (var i=0; i<this.n_windows; i++){
+      this.clones[i].colorN2=colorGenerator( ( ((this.windows[i].n/this.n2_max)-1)*(-250) )  ,  color_s  , color_v);
     }
     
     //		COLOR_V
@@ -543,6 +559,9 @@ Model.prototype = {
       }
       if (this.colorMethod=="N") {
       	return this.clones[cloneID].colorN;
+      }
+      if (this.colorMethod=="N2") {
+      	return this.clones[cloneID].colorN2;
       }
       if (this.colorMethod=="Tag") {
       	return tagColor[this.clones[cloneID].tag];

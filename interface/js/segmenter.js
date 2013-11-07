@@ -253,7 +253,8 @@ Segment.prototype = {
 	success: function(result) {
 	    displayAjaxResult(result);
 	},
-	error: popupMsg(msg.align_error)
+	error: function() {popupMsg(msg.align_error);
+	}
     });
   }
 
