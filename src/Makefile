@@ -43,7 +43,7 @@ $(LIBCORE): $(OBJCORE)
 	rm -f $(LIBCORE)
 	ar rc $@ $^
 
-%.o: %.cpp %.h
+%.o: %.cpp %.h core/dynprog.h
 	$(CC) -o $@ -c $< $(CFLAGS)
 
 %.o: %.cpp 
