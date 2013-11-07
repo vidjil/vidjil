@@ -252,7 +252,11 @@ ScatterPlot.prototype = {
   resize :function(){
     this.resizeW = (document.getElementById(this.id).offsetWidth-this.marge_left)/this.w;
     this.resizeH = (document.getElementById(this.id).offsetHeight-this.marge_top)/this.h;
+    if (this.resizeW<0.1) this.resizeW=0.1;
+    if (this.resizeH<0.1) this.resizeH=0.1;
+    
     this.resizeCoef = Math.sqrt(this.resizeW*this.resizeH);
+    if (this.resizeCoef<0.1) this.resizeCoef=0.1;
     
     this.vis = d3.select("#"+this.id+"_svg")
       .attr("width", document.getElementById(this.id).offsetWidth)	
@@ -448,6 +452,7 @@ ScatterPlot.prototype = {
       .attr("cx", function(d) { return (d.x+self.marge_left); })
       .attr("cy", function(d) { return (d.y+self.marge_top); })
       .attr("r" , function(d) { return (d.r2); })
+      .attr("title", function(d) { return (self.m.getName(d)); })
   },
 
 /* déplace les nodes en fonction de la méthode de répartition actuelle
