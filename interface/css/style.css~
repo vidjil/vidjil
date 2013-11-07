@@ -6,6 +6,11 @@ html{
   min-height: 650px
 }
 
+h2
+{
+  margin-top: 2px;
+}
+
 ul{
   padding-left:2px;
   margin-top: 3px;
@@ -54,8 +59,6 @@ list-style-type: none;
   height : 100%;
   overflow-y : none;
   float : left;
-  font-family : Courier New,monaco,terminal,courier,system; 
-  font-size: 14px;
 }
 
 #visu {
@@ -78,11 +81,11 @@ list-style-type: none;
 .button {
     cursor:pointer;
     font-size: 14px;
-    padding: 3px;
+    padding: 2px 3px;
     margin :3px;
     margin-right:5px;
     margin-left:5px;
-    text-decoration:underline;
+    /* text-decoration:underline; */
 }
 
 .smallbutton {
@@ -105,8 +108,8 @@ list-style-type: none;
 
 .button:hover {
     cursor: pointer;
-    color: grey;
-    font-weight: bold;
+   /*    color: grey; */
+   /* font-weight: bold; */
 }
 
 circle:hover {
@@ -118,18 +121,36 @@ circle:hover {
 }
 
 #info{
+  font-family : Courier New,monaco,terminal,courier,system; 
+  font-size: 14px;
+
   height :150px;
   padding:3px;
 }
 
 #logo
 {
-  font-size: 180%;
-  opacity: .4;
+  font-size: 130%;
+  font-weight: bold;
+  opacity: 1;
   padding: 5px 20px ;
 }
 
-#data_file
+#logo:hover
+{
+  cursor: pointer;
+}
+
+span.logo
+{
+  font-size: 60% ;
+  font-weight: bold;
+  vertical-align: super;
+  opacity: .8;
+  color: #f88;
+}
+
+#info_data_file
 {
   font-size: 200%;
 }
@@ -193,6 +214,9 @@ circle:hover {
 }
 
 .listElem{
+  font-family : Courier New,monaco,terminal,courier,system; 
+  font-size: 14px;
+
   width :380px;
   cursor:pointer;
   -webkit-transition: color 0.2s;
@@ -390,9 +414,6 @@ z-index:5;
 }
 
 #bot-container {
-font-weight: bold;
-font-family: Courier New,monaco,terminal,courier,system;
-font-size: 14px;
 position: fixed;
 bottom: 5px;
 left: 0px;
@@ -404,6 +425,12 @@ overflow-y:auto;
 border-top: solid;
 border-bottom: solid;
 height:100px;
+}
+
+#listSeq {
+font-weight: bold;
+font-family: Courier New,monaco,terminal,courier,system;
+font-size: 14px;
 }
 
 .sequence-line { 
@@ -495,6 +522,11 @@ letter-spacing: 0.12em;
   left: calc(50% - 250px);
 }
 
+#popup-container a {
+  text-decoration: none;
+  font-weight: bold;
+}
+
 .closeButton{
   position: absolute;
   top: -12px;
@@ -507,6 +539,8 @@ letter-spacing: 0.12em;
   text-align: center;
   font-weight: bolder;
   cursor: pointer;
+  padding: 1px;
+  font-size: 90%; 
 }
 
 .center{
@@ -522,7 +556,7 @@ letter-spacing: 0.12em;
   background: -ms-linear-gradient(left, rgb(61,36,182) 0%,rgb(36,72,181) 10%,rgb(36,135,184) 20%,rgb(36,183,171) 30%,rgb(36,184,110) 40%,rgb(36,183,48) 50%,rgb(85,184,36) 60%,rgb(146,183,36) 70%,rgb(184,159,36) 80%,rgb(178,95,35) 90%,rgb(184,36,36) 100%); /* IE10+ */
   background: linear-gradient(to right, rgb(61,36,182) 0%,rgb(36,72,181) 10%,rgb(36,135,184) 20%,rgb(36,183,171) 30%,rgb(36,184,110) 40%,rgb(36,183,48) 50%,rgb(85,184,36) 60%,rgb(146,183,36) 70%,rgb(184,159,36) 80%,rgb(178,95,35) 90%,rgb(184,36,36) 100%); /* W3C */
   filter: progid:DXImageTransform.Microsoft.gradient( startColorstr='#3d24b6', endColorstr='#b82424',GradientType=1 ); /* IE6-9 */
-  width :200px;
+  width :180px;
   height:16px;
   display: inline-block;
 }

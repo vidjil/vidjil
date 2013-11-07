@@ -631,12 +631,16 @@ Model.prototype = {
  * 
  * */
   select : function(cloneID){
+    
+    var list=this.getSelected();
+
+    
     console.log("select() (clone "+cloneID+")")
     
     if (this.clones[cloneID].select){
       this.unselect(cloneID); 
     }else{
-      this.clones[cloneID].select=true;
+      if (list.length < 5) this.clones[cloneID].select=true;
     }
     this.updateElem([cloneID]);
   },

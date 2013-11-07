@@ -425,6 +425,7 @@ overflow-y:auto;
 border-top: solid;
 border-bottom: solid;
 height:100px;
+overflow-y: hidden;
 }
 
 #listSeq {
