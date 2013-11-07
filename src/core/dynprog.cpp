@@ -151,13 +151,19 @@ void DynProg::init()
   if (mode == Local || mode == LocalEndWithSomeDeletions)
     for (int i=0; i<=m; i++)
       S[i][0] = 0 ;
-  else
-     for (int i=0; i<=m; i++)
+  else if (mode == GlobalButMostlyLocal)
+    for (int i=0; i<=m; i++)
+      S[i][0] = i * cost.insertion / 2 ;
+  else // Global, SemiGlobal
+    for (int i=0; i<=m; i++)
       S[i][0] = i * cost.insertion ;
    
   if (mode == SemiGlobal || mode == SemiGlobalTrans || mode == Local || mode == LocalEndWithSomeDeletions)
     for (int j=0; j<=n; j++)
       S[0][j] = 0 ;
+  else if (mode == GlobalButMostlyLocal)
+    for (int j=0; j<=n; j++)
+      S[0][j] = j * cost.deletion / 2 ;
   else
     for (int j=0; j<=n; j++)
       S[0][j] = j * cost.deletion ;
@@ -174,7 +180,7 @@ int DynProg::compute()
 
       int inser = S[i-1][j] + cost.insertion;
       int delet = S[i][j-1] + cost.deletion;
-
+      
       // Also dealing with homopolymers (in a dirty way!)
       // int inser = S[i-1][j] + (i > 1 ? cost.ins(x[i-2], x[i-1]) : cost.ins(0,1));
       // int delet = S[i][j-1] + (j > 1 ? cost.del(y[j-2], y[j-1]) : cost.del(0,1));
@@ -299,7 +305,7 @@ int DynProg::compute()
     }
 
 
-  if (mode == Global)
+  if ((mode == Global) || (mode == GlobalButMostlyLocal))
     {
       best_i = m ;
       best_j = n ;
@@ -450,6 +456,8 @@ void DynProg::backtrack()
   first_j=tj;
   
   str_back=back.str();
+
+  // cout << str_back << endl ;
 }
 
 string DynProg::SemiGlobal_extract_best()

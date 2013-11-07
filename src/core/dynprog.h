@@ -68,6 +68,7 @@ class DynProg
     LocalEndWithSomeDeletions, // local + some deletions on __
     SemiGlobalTrans,  // start-to-partial x / partial-to-end y 
     SemiGlobal,       // complete x / partial y
+    GlobalButMostlyLocal,  // complete x / complete y, but deletions at begin (DONE) and end (TODO) are cheaper
     Global            // complete x / complete y
   } ;
 
