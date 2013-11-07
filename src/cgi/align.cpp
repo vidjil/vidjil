@@ -16,8 +16,6 @@ int main(int argc, char* argv[])
 {
   
   const char* fdata;
-  DynProg::DynProgMode dpMode = DynProg::Global;
-  Cost dpCost = VDJ;
   ostringstream ost; 
   ostream * p; 
   p=&ost;
