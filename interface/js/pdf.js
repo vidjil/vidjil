@@ -81,7 +81,17 @@
     m.focusOut();
     
     var list=m.getSelected()
-    if (list.length==0) list=[0,1,2,3,4];
+    
+    if (list.length==0){
+      var flag=5;
+      for (var i = 0; i<m.n_windows; i++){
+	if (m.clones[i].cluster.length !=0 && flag!=0){
+	  list.push(i);
+	  flag--;
+	}
+      }
+    }
+    
     var elem = document.getElementById("visu2_svg").cloneNode(true);
     var opt={};
     var doc = new jsPDF();
