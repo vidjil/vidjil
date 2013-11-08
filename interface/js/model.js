@@ -264,6 +264,8 @@ Model.prototype = {
     self.germline.jgene[elem2].n=n2;
     self.germline.jgene[elem2].color=colorGenerator( ( 30+((i-1)/key.length)*290 ),
 						color_s, color_v );
+    
+    return this;
   },//end loadGermline
 
   
@@ -833,8 +835,12 @@ Model.prototype = {
   displayTop : function(top){
     top = typeof top !== 'undefined' ? top : this.top; 
     this.top=top;
-    document.getElementById('rangeValue').value=top;
-    //document.getElementById('top_display').innerHTML=top;
+    
+    var html_container=document.getElementById('rangeValue');
+    if (html_container!=null){
+      html_container.value=top;
+      //document.getElementById('top_display').innerHTML=top;
+    }
     this.update();
   },
 
