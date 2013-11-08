@@ -568,3 +568,16 @@ letter-spacing: 0.12em;
   height:0px;
   opacity:0.5;
 }
+
+#test_result{
+  font-family : Courier New,monaco,terminal,courier,system; 
+  font-weight: bold;
+  position: absolute;
+  width: 100%;
+  top: 0px;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  padding: 25px;
+  color: grey;
+    
+}
