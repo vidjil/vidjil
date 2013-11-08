@@ -554,6 +554,7 @@ ScatterPlot.prototype = {
       if( d.r1 != d.r2){
 	var delta = d.r1-d.r2;
 	d.r2 +=0.03*delta;
+	if (d.r2<0.1) d.r2=0;
       }
     }
   },
@@ -614,6 +615,7 @@ ScatterPlot.prototype = {
  * 
  * */
   getRadius : function(nodeID){
+    if (!this.m.clones[nodeID].active) return 0;
     var size=this.m.getSize(nodeID);
     if (size==0) return 0;
     return this.resizeCoef*Math.pow(80000*(size+0.002),(1/3) );
@@ -664,7 +666,7 @@ ScatterPlot.prototype = {
     var self=this;
     this.node
       .attr("class", function(p) { 
-	if (!self.m.clones[p.id].active) return "circle_inactive";
+	if (!self.m.clones[p.id].active) return "circle_hidden";
 	if (self.m.clones[p.id].select) return "circle_select";
 	if (p.id==self.m.focus) return "circle_focus";
 	return "circle"; 
