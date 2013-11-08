@@ -32,6 +32,12 @@ function ScatterPlot(id, model){
   
   this.m.view.push(this);	//synchronisation au Model
   
+  
+  this.time0 = Date.now(),
+  this.time1= this.time0;
+  this.fpsqueue = [];
+ 
+  
 }
 
 ScatterPlot.prototype = {
@@ -468,6 +474,16 @@ ScatterPlot.prototype = {
       .attr("cy", function(d) { return (d.y+self.marge_top); })
       .attr("r" , function(d) { return (d.r2); })
       .attr("title", function(d) { return (self.m.getName(d)); })
+      
+    //calcul fps
+    this.time1 = Date.now();
+    if (this.fpsqueue.length === 20) { 
+      document.getElementById("fps").innerHTML=d3.mean(this.fpsqueue).toFixed(3);
+      this.fpsqueue = []; 
+    }
+    this.fpsqueue.push(Math.round(1000 / (this.time1 - this.time0)));
+    this.time0 = this.time1;
+      
   },
 
 /* déplace les nodes en fonction de la méthode de répartition actuelle

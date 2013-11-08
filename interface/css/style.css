@@ -562,3 +562,10 @@ letter-spacing: 0.12em;
   display: inline-block;
 }
 
+#fps{
+  float: right;
+  position: relative;
+  bottom: 20px;
+  height:0px;
+  opacity:0.5;
+}
