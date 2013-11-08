@@ -652,10 +652,18 @@ ScatterPlot.prototype = {
     if (this.splitMethod=="bar"){
       this.updateBar();
     }else{
+      var flag=false;
       for (var i = 0 ; i<list.length; i++){
+	var current_r = this.nodes[list[i]].r1
+	var new_r = this.getRadius(list[i]);
 	this.nodes[list[i]].r1=this.getRadius(list[i]);
+	if (current_r != new_r){
+	  flag=true;
+	  this.nodes[list[i]].r1=new_r;
+	}
       }
-      this.update();
+      if (flag) this.update();
+      this.updateStyle();
     }
   },
 	
