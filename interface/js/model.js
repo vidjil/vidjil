@@ -75,11 +75,6 @@ Model.prototype = {
     self = this;
     var oFReader = new FileReader();
     var oFile = document.getElementById(data).files[0];
-    var min_size = 1;
-    var n_max=0;
-    var n2_max=0; //TODO rename
-    self.windows = [];
-    self.mapID={}
     self.dataFileName= document.getElementById(data).files[0].name;
     document.getElementById("info_data_file").innerHTML= self.dataFileName;//TODO
     oFReader.readAsText(oFile);
@@ -89,85 +84,101 @@ Model.prototype = {
 	var data =JSON.parse( oFREvent.target.result);
       }catch(e){
 	popupMsg(msg.file_error);
+	return 0
       }
       if (typeof(data.timestamp) =='undefined'){
 	popupMsg(msg.version_error);
 	return 0;
       }
+     self.parseJsonData(data, limit)
+    .loadGermline()
+    .loadAnalysis(analysis);
       
-      //keep best top value
-      for(var i=0; i < data.windows.length; i++){
-	if (data.windows[i].top <= limit){
-
-	  //search for min_size
-	  for(var j=0 ; j<data.windows[i].ratios.length; j=j+2){
-	    for(var k=0 ; k<data.windows[i].ratios[j].length; k++){
-	      if (min_size > data.windows[i].ratios[j][k] && data.windows[i].ratios[j][k] != 0)
-		min_size=data.windows[i].ratios[j][k];
-	    }
-	  }
-  
-	  //search for n_max / n2_max
-	  if ((typeof(data.windows[i].seg) != 'undefined') && 
-		  (typeof(data.windows[i].seg.Nsize) != 'undefined') &&
-		  (data.windows[i].seg.Nsize > n_max)){
-		  n_max=data.windows[i].seg.Nsize;   
-	  }
-	  
-	  var n2=0;
-	  if ((typeof(data.windows[i].seg) != 'undefined') && 
-	  (typeof(data.windows[i].seg.Nsize) != 'undefined')){
-	    n2=data.windows[i].seg.name.split('/')[1];
-	    if (n2>n2_max)n2_max=n2;  
-	  }
-	  data.windows[i].n=n2
-	  self.windows.push(data.windows[i]);
-	} 	
-      }
-      var count=min_size;
-
-
-      while (count<1){
-	count=count*10;
-	self.precision= self.precision*10;
-      }
-
-      self.n_windows=self.windows.length;
-      self.min_size=min_size;
-      self.n_max=n_max;
-      self.n2_max=n2_max;
-      self.normalizations = data.normalizations;
-      self.total_size = data.total_size;
-      self.resolution1 = data.resolution1;
-      self.resolution5 = data.resolution5;
-      self.timestamp = data.timestamp;
-      self.time = data.time;
-      self.scale_color = d3.scale.log()
-      .domain([1,self.precision])
-      .range([250,0]);
-
-      
-      document.getElementById("info_n_max").innerHTML=" N = "+self.n_max;
-      document.getElementById("info_n2_max").innerHTML=" N = "+self.n2_max;
-      
-      //extract germline
-      if (typeof data.germline !='undefined'){
-	var t=data.germline.split('/');
-	self.system=t[t.length-1];
-      }else{
-	self.system="TRG";
-      }
-      document.getElementById("info_system").innerHTML="germline: " +self.system;//TODO
-
-      for (var i=0; i< self.n_windows; i++){
-	self.mapID[self.windows[i].window]=i;
-      }
-      
-      self.loadGermline();
-      self.loadAnalysis(analysis);
     }
 
+
   },//end load
+  
+  parseJsonData : function(data, limit){
+    self=this;
+    self.windows = [];
+    self.mapID={}
+    var min_size = 1;
+    var n_max=0;
+    var n2_max=0; //TODO rename
+    
+    //keep best top value
+    for(var i=0; i < data.windows.length; i++){
+      if (data.windows[i].top <= limit){
+
+	//search for min_size
+	for(var j=0 ; j<data.windows[i].ratios.length; j=j+2){
+	  for(var k=0 ; k<data.windows[i].ratios[j].length; k++){
+	    if (min_size > data.windows[i].ratios[j][k] && data.windows[i].ratios[j][k] != 0)
+	      min_size=data.windows[i].ratios[j][k];
+	  }
+	}
+
+	//search for n_max / n2_max
+	if ((typeof(data.windows[i].seg) != 'undefined') && 
+		(typeof(data.windows[i].seg.Nsize) != 'undefined') &&
+		(data.windows[i].seg.Nsize > n_max)){
+		n_max=data.windows[i].seg.Nsize;   
+	}
+	
+	var n2=0;
+	if ((typeof(data.windows[i].seg) != 'undefined') && 
+	(typeof(data.windows[i].seg.Nsize) != 'undefined')){
+	  n2=data.windows[i].seg.name.split('/')[1];
+	  if (n2>n2_max)n2_max=n2;  
+	}
+	data.windows[i].n=n2
+	self.windows.push(data.windows[i]);
+      } 	
+    }
+    var count=min_size;
+
+    while (count<1){
+      count=count*10;
+      self.precision= self.precision*10;
+    }
+
+    self.n_windows=self.windows.length;
+    self.min_size=min_size;
+    self.n_max=n_max;
+    self.n2_max=n2_max;
+    self.normalizations = data.normalizations;
+    self.total_size = data.total_size;
+    self.resolution1 = data.resolution1;
+    self.resolution5 = data.resolution5;
+    self.timestamp = data.timestamp;
+    self.time = data.time;
+    self.scale_color = d3.scale.log()
+    .domain([1,self.precision])
+    .range([250,0]);
+    
+    var html_container=document.getElementById("info_n_max");
+    if (html_container!=null)html_container.innerHTML=" N = "+self.n_max;
+    
+    html_container=document.getElementById("info_n2_max");
+    if (html_container!=null)html_container.innerHTML=" N = "+self.n2_max;
+    
+    //extract germline
+    if (typeof data.germline !='undefined'){
+      var t=data.germline.split('/');
+      self.system=t[t.length-1];
+    }else{
+      self.system="TRG";
+    }
+    
+    html_container=document.getElementById("info_system");
+    if (html_container!=null)html_container.innerHTML="germline: " +self.system;
+
+    for (var i=0; i< self.n_windows; i++){
+      self.mapID[self.windows[i].window]=i;
+    }
+    return this
+  },
   
   
 /* charge le germline définit a l'initialisation dans le model
@@ -278,6 +289,8 @@ Model.prototype = {
     }else{
       self.initClones();
     }
+    
+    return this;
   },//end loadAnalysis
 
   
