@@ -334,7 +334,7 @@ Model.prototype = {
 	var vGene=this.windows[i].seg.V[0];
 	this.clones[i].colorV=this.germline.v[vGene].color;
       }else{
-	this.clones[i].colorV=default_color;
+	this.clones[i].colorV=color['@default'];
       }
     }
     
@@ -344,7 +344,7 @@ Model.prototype = {
 	var jGene=this.windows[i].seg.J[0];
 	this.clones[i].colorJ=this.germline.j[jGene].color;
       }else{
-	this.clones[i].colorJ=default_color;
+	this.clones[i].colorJ=color['@default'];
       }	
     }
     
@@ -555,14 +555,14 @@ Model.prototype = {
  * */
   getColor : function(cloneID){
     if (this.focus==cloneID) {
-      return focus_color;
+      return color['@select'];
     }
     if (!this.clones[cloneID].active) {
-      return default_color;
+      return color['@default'];
     }
     if (this.colorMethod=="abundance") {
       var size=this.getSize(cloneID)
-      if (size==0) return default_color;
+      if (size==0) return color['@default'];
       return colorGenerator( this.scale_color(size*this.precision) ,  color_s  , color_v);
     }
     if (typeof(this.windows[cloneID].seg.V) != 'undefined'){
@@ -582,7 +582,7 @@ Model.prototype = {
       	return tagColor[this.clones[cloneID].tag];
       }
     }
-    return default_color;
+    return color['@default'];
   },
 
 /*

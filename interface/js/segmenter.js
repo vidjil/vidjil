@@ -17,7 +17,7 @@
  * 
  */
 
-var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
+var CGI_ADRESS ="http://127.0.1.1/cgi-bin/";
 var memtab=[];
  
 /* segment constructor
@@ -111,7 +111,7 @@ Segment.prototype = {
     path.setAttribute('d', this.starPath);
     path.setAttribute('id','color'+cloneID); 
     if (typeof this.m.clones[cloneID].tag != 'undefined') path.setAttribute("fill", tagColor[this.m.clones[cloneID].tag]);
-    else path.setAttribute("fill", colorStyle.c01);
+    else path.setAttribute("fill", color['@default']);
 	
     svg.appendChild(path);
       

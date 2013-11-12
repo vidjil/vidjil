@@ -10,21 +10,28 @@
 
 var scale_color;
 
-var solarizeD = {};
-solarizeD.c01 = "#839496"; //base0
-solarizeD.c02 = "#002b36"; //base03
-solarizeD.c03 = "#073642"; //base02
-solarizeD.c04 = "#93a1a1"; //base1
-solarizeD.c05 = "#fdf6e3"; //base3
-solarizeD.c06 = "#586e75"; //base01
-solarizeD.c07 = "#284e55"; //inactive 
+var solarizeD = {
+      '@default':'#839496',
+      '@background':'#002b36', 
+      '@highlight':'#073642', 
+      '@select':'#fdf6e3', 
+      '@secondary':'#586e75', 
+      '@border':'#284e55'    
+    };
+    
+var solarizeL = {
+      '@default':'#657b83', 
+      '@background':'#eee8d5', 
+      '@highlight':'#fdf6e3', 
+      '@select':'#002b36', 
+      '@secondary':'#93a1a1', 
+      '@border':'#b3c1c1'    
+    };
+    
+var color=solarizeD;
 
 var color_s = 0.8; //pureté
 var color_v = 0.72; //brightness
-
-var default_color = "#839496";
-var focus_color = "#fdf6e3";
-var background_color ="#002b36";
 
 var tagColor = [];
 tagColor[0] = "#dc322f";
@@ -35,7 +42,7 @@ tagColor[4] = "#6c71c4";
 tagColor[5] = "#2aa198";
 tagColor[6] = "#d33682";
 tagColor[7] = "#859900";
-tagColor[8] = default_color;
+tagColor[8] = color['@default'];
 
 var tagName = [];
 tagName[0] = "clone 1";
@@ -137,22 +144,12 @@ var default_tag=8;
       return "rgb("+v+","+p+","+q+")";
     }
   }
-  
-  
-  function changeStyle(newStyle){
-    if (newStyle=="solarizeD"){
-      document.getElementById('palette').href='css/palette/solarizeD.css';
-      default_color = "#839496";
-      focus_color = "#fdf6e3";
-      background_color ="#002b36";
-    }
+
       
-    if (newStyle=="solarizeL"){
-      document.getElementById('palette').href='css/palette/solarizeL.css';
-      default_color = "#839496";
-      focus_color = "#002b36";
-      background_color ="#eee8d5";
-    }
+  function changeStyle(newStyle){
+    color=newStyle
+    less.modifyVars(color);
+    tagColor[default_tag] = color['@default'];
   }
   
 

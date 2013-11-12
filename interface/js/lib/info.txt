@@ -23,7 +23,12 @@ Tools
     * @author 		Eli Grey
     * @link 		http://eligrey.com
     * @license 		MIT Licensed
-    
+
+    less.js  		: dynamic stylesheet 
+    * @version	 	less-1.5.0 
+    * @author 		Alexis Sellier 
+    * @link 		<self@cloudhead.net> / http://lesscss.org/
+    * @license 		apache v2 
     
 PDF 
 

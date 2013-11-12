@@ -16,7 +16,8 @@
 	<meta charset="utf-8">
 	<title>Vidjil</title>
 	<link rel="stylesheet" type="text/css" href="css/style.css">  
-	<link id="palette" rel="stylesheet"type="text/css" href="css/palette/solarizeD.css" />
+	<link rel="stylesheet/less" type="text/css" href="css/style.less" />
+	<!--<link id="palette" rel="stylesheet" type="text/css" href="css/palette/solarizeD.css" /> -->
 
 
 	<!--[if lte IE 8]><script src="js/r2d3.js" charset="utf-8"></script><![endif]-->
@@ -25,8 +26,6 @@
 	<!--<![endif]-->
 	<script type="text/javascript" src="js/lib/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src='js/lib/StackBlur.js'></script>
-	<script type="text/javascript" src='js/lib/rgbcolor.js'></script>
-	<script type="text/javascript" src='js/lib/canvg.js'></script>
 	<script type="text/javascript" src='js/lib/jspdf.js'></script>
 	<script type="text/javascript" src='js/lib/jspdf.plugin.addimage.js'></script>
 	<script type="text/javascript" src='js/lib/jspdf.plugin.svgToPdf.js'></script>
@@ -34,6 +33,7 @@
 	<script type="text/javascript" src='js/lib/jspdf.plugin.standard_fonts_metrics.js'></script>
 	<script type="text/javascript" src='js/lib/underscore.js'></script>
 	<script type="text/javascript" src='js/lib/file.js'></script>
+	<script type="text/javascript" src="js/lib/less-1.5.0.min.js"></script>
 
 
 	<script type="text/javascript" src='js/germline.js'></script>
@@ -211,8 +211,8 @@
      
       <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
         <div id="paletteSelector" class="selector">
-	  <a class="buttonSelector" onclick="changeStyle('solarizeD')">dark</a>
-	  <a class="buttonSelector" onclick="changeStyle('solarizeL')">light</a>
+	  <a class="buttonSelector" onclick="changeStyle(solarizeD)">dark</a>
+	  <a class="buttonSelector" onclick="changeStyle(solarizeL)">light</a>
 	</div>
       </div>
       
