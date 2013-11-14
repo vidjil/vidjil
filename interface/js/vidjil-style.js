@@ -81,11 +81,9 @@ var default_tag=8;
     var s =tagDisplay[tag]+1;
     if (s > 1) s=0;
     tagDisplay[tag]=s;
-    $("#tagDisplay"+tag).find('input')[tagDisplay[tag]].checked=true
     updateTagBox();
-		m.update();
+    m.update();
   }
- 
  
   function initTag(){
     for (var i =0; i<tagColor.length; i++){
@@ -105,9 +103,9 @@ var default_tag=8;
 	if (tagDisplay[i]==0){
 	  $(".tagColor"+i).css({
             "background-color" : tagColor[i],
-            "background-image" : 'linear-gradient(45deg, transparent -25%, '+background_color+' 100%, '+background_color+' 100%, transparent 0%)',
-            "background" : '-moz-linear-gradient(45deg, transparent -25%, '+background_color+' 100%, '+background_color+' 100%, transparent 0%) repeat scroll 0 0 '+tagColor[i], //firefox
-            "background-image" : '-webkit-linear-gradient(45deg, transparent -25%, '+background_color+' 100%, '+background_color+' 100%, transparent 0%)'  //chrome
+            "background-image" : 'linear-gradient(45deg, transparent -25%, '+color['@background']+' 100%, '+color['@background']+' 100%, transparent 0%)',
+            "background" : '-moz-linear-gradient(45deg, transparent -25%, '+color['@background']+' 100%, '+color['@background']+' 100%, transparent 0%) repeat scroll 0 0 '+tagColor[i], //firefox
+            "background-image" : '-webkit-linear-gradient(45deg, transparent -25%, '+color['@background']+' 100%, '+color['@background']+' 100%, transparent 0%)'  //chrome
 	  })
 	}
 	

@@ -78,6 +78,17 @@ ul{
   overflow:hidden;
 }
 
+#left{
+  height:100%;
+}
+
+#info{
+  font-family : Courier New,monaco,terminal,courier,system; 
+  font-size: 14px;
+  height :150px;
+  padding:3px;
+}
+
 
 						  /*Style polyline / graph*/
 
@@ -426,13 +437,28 @@ ul{
 /*	//////////////////////////////////////////////////////////////	*/
 
 
-
-
-
+#popup-container{
+  z-index:3;
+  border:solid; 
+  position: fixed; 
+  top: 250px; 
+  left:50% ;
+  width:500px;
+  font-size: 14px; 
+  padding: 10px;
+  background:inherit;
+  display:none;
+  left: -moz-calc(~"50% - 250px");
+  left: -webkit-calc(~"50% - 250px");
+  left: calc(~"50% - 250px");
+}
 
 #popup-container a {
+  text-decoration: none;
+  font-weight: bold;
   color: @secondary ;
 }
+
 
 #file_menu, #menu, #listClones, #listSelect, #tagSelector, #display-menu, #bot-container, .seq-fixed{
  background : @background;
@@ -461,17 +487,6 @@ ul{
 
 .button:hover {
     cursor: pointer;
-}
-
-#left{
-  height:100%;
-}
-
-#info{
-  font-family : Courier New,monaco,terminal,courier,system; 
-  font-size: 14px;
-  height :150px;
-  padding:3px;
 }
 
 #logo
@@ -565,27 +580,6 @@ overflow-y: hidden;
 }
 
 
-
-#popup-container{
-  z-index:3;
-  border:solid; 
-  position: fixed; 
-  top: 250px; 
-  left:50% ;
-  width:500px;
-  font-size: 14px; 
-  padding: 10px;
-  background:inherit;
-  display:none;
-  left: -moz-calc(~"50% - 250px");
-  left: -webkit-calc(~"50% - 250px");
-  left: calc(~"50% - 250px");
-}
-
-#popup-container a {
-  text-decoration: none;
-  font-weight: bold;
-}
 
 .closeButton{
   position: absolute;
