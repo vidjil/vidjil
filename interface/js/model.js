@@ -106,7 +106,7 @@ Model.prototype = {
     var min_size = 1;
     var n_max=0;
     var n2_max=0; //TODO rename
-    
+	
     //keep best top value
     for(var i=0; i < data.windows.length; i++){
       if (data.windows[i].top <= limit){
@@ -136,6 +136,16 @@ Model.prototype = {
 	self.windows.push(data.windows[i]);
       } 	
     }
+    
+    var other = { "seg" : 0,
+		 "window": "other", 
+		 "top": 0, 
+		 "ratios": data.windows[0].ratios,
+		 "size": []
+    }
+    
+    self.windows.push(other);
+    
     var count=min_size;
 
     while (count<1){
@@ -565,6 +575,9 @@ Model.prototype = {
       if (size==0) return color['@default'];
       return colorGenerator( this.scale_color(size*this.precision) ,  color_s  , color_v);
     }
+    if (this.colorMethod=="Tag") {
+      return tagColor[this.clones[cloneID].tag];
+    }
     if (typeof(this.windows[cloneID].seg.V) != 'undefined'){
       if (this.colorMethod=="V") {
       	return this.clones[cloneID].colorV;
@@ -577,9 +590,6 @@ Model.prototype = {
       }
       if (this.colorMethod=="N2") {
       	return this.clones[cloneID].colorN2;
-      }
-      if (this.colorMethod=="Tag") {
-      	return tagColor[this.clones[cloneID].tag];
       }
     }
     return color['@default'];
@@ -648,9 +658,10 @@ Model.prototype = {
   select : function(cloneID){
     
     var list=this.getSelected();
-
     
     console.log("select() (clone "+cloneID+")")
+    
+    if (cloneID==(this.n_windows-1)) return 0
     
     if (this.clones[cloneID].select){
       this.unselect(cloneID); 
@@ -769,6 +780,7 @@ Model.prototype = {
 	this.clones[i].active=false;
       }
     }   
+    this.computeOtherSize();
     for (var i=0; i<this.n_windows; i++){
       this.clones[i].color=this.getColor(i);
     }
@@ -786,6 +798,7 @@ Model.prototype = {
 	this.clones[list[i]].active=false;
       }   
     }
+    this.computeOtherSize();
     for (var i=0 ; i < list.length ; i++){
       this.clones[list[i]].color=this.getColor(list[i]);
     }
@@ -864,6 +877,32 @@ Model.prototype = {
       this.top=this.top-5;
       this.displayTop();
     }
+  },
+  
+/* 
+ * 
+ * */  
+  computeOtherSize : function(){
+    var other = [];
+
+    for (var j=0; j < this.total_size.length; j++){
+      other[j]=[]
+      for (var k=0; k < this.normalizations.length; k++){
+	other[j][k]=1
+      }   
+    }   
+    
+    for (var i=0; i < this.n_windows-1; i++){
+      for (var j=0; j < this.total_size.length; j++){
+	for (var k=0; k < this.normalizations.length; k++){
+	  if (this.clones[i].active==true)
+	    other[j][k]-= this.windows[i].ratios[j][k];
+	}   
+      }   
+    }
+    
+    this.windows[this.n_windows-1].ratios=other;
+
   },
   
 
