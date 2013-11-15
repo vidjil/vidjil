@@ -7,6 +7,7 @@
 @secondary : #586e75; 
 @border : #284e55;    
 
+
 html{
   height: 100%;
   padding: 0px;
@@ -63,7 +64,7 @@ ul{
 
 #left-container {
   height:100%;
-  width : 410px;
+  width : @width_left_container;
   height : 100%;
   overflow-y : none;
   float : left;
@@ -72,9 +73,9 @@ ul{
 #visu, #visu2 {
   display : inline-block;
   height : 50%;
-  width: -moz-calc(~"100% - 410px");
-  width: -webkit-calc(~"100% - 410px");
-  width: calc(~"100% - 410px");
+  width: -moz-calc(~"100% - " ( @width_left_container ) );
+  width: -webkit-calc(~"100% - " ( @width_left_container ) );
+  width: calc(~"100% - " ( @width_left_container ) );
   overflow:hidden;
 }
 
@@ -220,6 +221,21 @@ ul{
 
 							  /*style list element*/
 
+
+/*Metric*/
+
+@width_left_container : 440px;
+@width_scrollbar : 30px;
+@width_clusterBox :16px;
+@width_starBox : 16px;
+@width_sizeBox : 60px;
+@width_listElem : (@width_left_container - @width_scrollbar);
+
+@margin_nameBox : 10px;
+@width_nameBox2 : (@width_listElem - @width_starBox - @width_sizeBox - @width_clusterBox - @margin_nameBox);
+@width_nameBox2 : (@width_listElem - @width_starBox - @width_sizeBox - @width_clusterBox - @margin_nameBox);
+
+
 .list:hover, .tagElem:hover{
   background :@highlight;
 }
@@ -235,15 +251,15 @@ ul{
 }
 
 .list{
-  width : 440px;
-  display : block;
-  padding : 2px;
+  width : 	@width_left_container;
+  display :	block;
+  padding : 	2px;
 }
 
 .listElem{
+  width : @width_listElem;
   font-family : Courier New,monaco,terminal,courier,system; 
   font-size: 14px;
-  width :380px;
   cursor:pointer;
   -webkit-transition: color 0.2s;
   -o-transition: color  0.2s;
@@ -254,36 +270,40 @@ ul{
   height :14px;
 }
 
-.nameBox {
-  width: 320px;
-  overflow: hidden;
-  display: inline-block;
-  height: 16px;
-  position: relative;
-  float:left;
-
-}
 .nameBox2 {
-  width: 275px;
+  width: @width_nameBox2;
+  margin-right: @margin_nameBox;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
   float:left;
-  margin-right:10px;
   white-space:nowrap;
 }
 
-.colorBox{
-  right: 2px;
+.sizeBox{
+  width: @width_sizeBox;
   float: right;
-  border: solid;
-  height: 10px;
-  width: 10px;
+  overflow: hidden;
   display: inline-block;
-  color: white;
-  float:left;
+  height: 16px;
+  position: relative;
+}
+
+.starBox{
+  width: @width_starBox;
+  float: right;
+  height: 16px;
+  display: inline-block;
   user-select :none;
+}
+
+.clusterBox{
+  width: @width_clusterBox;
+  float: left;
+  height: 12px;
+  display: inline-block;
+  text-align :center
 }
 
 .delBox{
@@ -298,30 +318,14 @@ ul{
   margin-left: 15px;
 }
 
-.sizeBox{
-  float: right;
+.nameBox {
+  width: 320px;
   overflow: hidden;
   display: inline-block;
   height: 16px;
   position: relative;
-  width: 60px;
-}
+  float:left;
 
-.starBox{
-  float: right;
-  height: 16px;
-  width: 16px;
-  display: inline-block;
-  user-select :none;
-}
-
-.clusterBox{
-  float: left;
-  margin-right:2px;
-  margin-left:2px;
-  height: 12px;
-  width: 12px;
-  display: inline-block;
 }
 
 #new_name{
@@ -331,7 +335,7 @@ ul{
 
 							  /*style segmenter element*/
 .list_select{
-  width : 440px;
+  width : @width_left_container;
   display : block;
   border : solid;
   border-width : 2px;
@@ -352,14 +356,14 @@ ul{
 
 .seq-fixed {
   position: fixed;
-  width: 395px;
+  width: (@width_left_container - @width_scrollbar);
   padding-left: 5px;
   left:0px;
   cursor:pointer;
 }
 
 .seq-mobil {
-  margin-left: 405px;
+  margin-left: @width_left_container;
   letter-spacing: 0.12em;
 }
 
@@ -368,7 +372,7 @@ ul{
 #tagSelector{
   padding: 5px;
   position: absolute;
-  left: 400px;
+  left: @width_left_container;
   top: 195px;
   width:220px;
   border:solid;
@@ -521,38 +525,38 @@ span.logo
   position: fixed;
   margin-top: -26px;
   border-top: solid;
-  width: 400px;
+  width: @width_left_container;
   padding-top:2px;
 }
 
 .selector{
-display: none;
-position: fixed;
-margin-right: -5px;
-padding: 3px;
-border: solid;
-background: inherit;
-text-center: left;
-min-width: 150px;
-margin-left: -6px;
-border-top: none;
-margin-top: 4px;
-z-index:5;
+  display: none;
+  position: fixed;
+  margin-right: -5px;
+  padding: 3px;
+  border: solid;
+  background: inherit;
+  text-center: left;
+  min-width: 150px;
+  margin-left: -6px;
+  border-top: none;
+  margin-top: 4px;
+  z-index:5;
 }
 
 #bot-container {
-position: fixed;
-bottom: 5px;
-left: 0px;
-width: 100%;
-overflow-x: scroll;
-min-height:50px;
-max-height:200px;
-overflow-y:auto;
-border-top: solid;
-border-bottom: solid;
-height:100px;
-overflow-y: hidden;
+  position: fixed;
+  bottom: 5px;
+  left: 0px;
+  width: 100%;
+  overflow-x: scroll;
+  min-height:50px;
+  max-height:200px;
+  overflow-y:auto;
+  border-top: solid;
+  border-bottom: solid;
+  height:100px;
+  overflow-y: hidden;
 }
 
 .tn{
@@ -636,7 +640,7 @@ overflow-y: hidden;
     
 }
 
-.selector, #sort-bar, #top-container, #listClones, .separator, #bot-container, #popup-container, #file_menu, .closeButton
+.selector, #sort-bar, #top-container, #listClones, .separator, #bot-container, #popup-container, #file_menu, #tagSelector, .closeButton
 {
   border-color: @border; 
 }

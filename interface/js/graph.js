@@ -244,6 +244,7 @@ Graph.prototype = {
     }
     for (var i=0; i<list.length ; i++){
       for (var j=0 ; j<this.m.clones[list[i]].cluster.length; j++)
+	if (this.m.clones[list[i]].active)
       	this.data_graph[this.m.clones[list[i]].cluster[j]].path = this.constructPath(list[i]);
     }
     this.drawElem(list);
@@ -264,6 +265,7 @@ Graph.prototype = {
       
       var classname="graph_line";
       if (!this.m.clones[this.data_graph[list[i]].id].active) classname = "graph_inactive";
+      //if (this.m.windows[this.data_graph[list[i]].id].top >10) classname = "graph_inactive";
       if (this.m.clones[this.data_graph[list[i]].id].select) classname = "graph_select";
       if (this.data_graph[list[i]].id==this.m.focus) classname = "graph_focus";
       
@@ -344,6 +346,7 @@ Graph.prototype = {
       })
       .attr("class", function(p) { 
 	if (!self.m.clones[p.id].active) return "graph_inactive";
+	//if (self.m.windows[p.id].top > 10) return "graph_inactive";
 	if (self.m.clones[p.id].select) return "graph_select";
 	if (p.id==self.m.focus)return "graph_focus";
 	return "graph_line"; 

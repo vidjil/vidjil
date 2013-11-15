@@ -480,9 +480,6 @@ Model.prototype = {
   changeTag : function(cloneID, newTag){
     console.log("changeTag() (clone "+cloneID+" <<"+newTag+")");
     this.clones[cloneID].tag=newTag;
-    if (newTag==8) { 
-      delete(this.clones[cloneID].tag)
-    }
     this.updateElem([cloneID]);
   },
   

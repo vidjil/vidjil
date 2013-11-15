@@ -60,7 +60,7 @@ PDF
     * @link 		http://code.google.com/p/canvg/
     * @license 		MIT Licensed 
     
-    rgbcolor		: dépendance canvg
+    rgbcolor		: dépendance jspdf
     * @author 		Stoyan Stefanov <sstoo@gmail.com>
     * @link   		http://www.phpied.com/rgb-color-parser-in-javascript/
     * @license 		Use it if you like it

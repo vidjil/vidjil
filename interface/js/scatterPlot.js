@@ -477,7 +477,7 @@ ScatterPlot.prototype = {
       
     //calcul fps
     this.time1 = Date.now();
-    if (this.fpsqueue.length === 20) { 
+    if (this.fpsqueue.length === 10) { 
       document.getElementById("fps").innerHTML=d3.mean(this.fpsqueue).toFixed(3);
       this.fpsqueue = []; 
     }
