@@ -325,26 +325,29 @@ Model.prototype = {
 	nsize=-1;
       }
       self.mapID[this.windows[i].window]=i;
-      this.clones[i]={display:true, Nsize:nsize, cluster :[i], tag: default_tag};
+      this.clones[i]={cluster:[i]};
+      this.windows[i].display=true;
+      this.windows[i].Nsize=nsize;
+      this.windows[i].tag=default_tag;
     }
     
     //		COLOR_N
     for (var i=0; i<this.n_windows; i++){
-      this.clones[i].colorN=colorGenerator( ( ((this.clones[i].Nsize/maxNsize)-1)*(-250) )  ,  color_s  , color_v);
+      this.windows[i].colorN=colorGenerator( ( ((this.windows[i].Nsize/maxNsize)-1)*(-250) )  ,  color_s  , color_v);
     }
     
     //		COLOR_N2
     for (var i=0; i<this.n_windows; i++){
-      this.clones[i].colorN2=colorGenerator( ( ((this.windows[i].n/this.n2_max)-1)*(-250) )  ,  color_s  , color_v);
+      this.windows[i].colorN2=colorGenerator( ( ((this.windows[i].n/this.n2_max)-1)*(-250) )  ,  color_s  , color_v);
     }
     
     //		COLOR_V
     for (var i=0; i<this.n_windows; i++){
       if (typeof(this.windows[i].seg.V) != 'undefined'){
 	var vGene=this.windows[i].seg.V[0];
-	this.clones[i].colorV=this.germline.v[vGene].color;
+	this.windows[i].colorV=this.germline.v[vGene].color;
       }else{
-	this.clones[i].colorV=color['@default'];
+	this.windows[i].colorV=color['@default'];
       }
     }
     
@@ -352,20 +355,20 @@ Model.prototype = {
     for (var i=0; i<this.n_windows; i++){
       if (typeof(this.windows[i].seg.J) != 'undefined'){
 	var jGene=this.windows[i].seg.J[0];
-	this.clones[i].colorJ=this.germline.j[jGene].color;
+	this.windows[i].colorJ=this.germline.j[jGene].color;
       }else{
-	this.clones[i].colorJ=color['@default'];
+	this.windows[i].colorJ=color['@default'];
       }	
     }
     
     //		SHORTNAME
     for(var i=0; i<this.n_windows; i++){
       if (typeof(this.windows[i].seg) != 'undefined' && typeof(this.windows[i].seg.name) != 'undefined' ){
-	this.clones[i].shortName=this.windows[i].seg.name.replace(new RegExp('IGHV', 'g'), "VH");
-	this.clones[i].shortName=this.clones[i].shortName.replace(new RegExp('IGHD', 'g'), "DH");
-	this.clones[i].shortName=this.clones[i].shortName.replace(new RegExp('IGHJ', 'g'), "JH");
-	this.clones[i].shortName=this.clones[i].shortName.replace(new RegExp('TRG', 'g'), "");
-	this.clones[i].shortName=this.clones[i].shortName.replace(new RegExp('\\*..', 'g'), "");
+	this.windows[i].shortName=this.windows[i].seg.name.replace(new RegExp('IGHV', 'g'), "VH");
+	this.windows[i].shortName=this.windows[i].shortName.replace(new RegExp('IGHD', 'g'), "DH");
+	this.windows[i].shortName=this.windows[i].shortName.replace(new RegExp('IGHJ', 'g'), "JH");
+	this.windows[i].shortName=this.windows[i].shortName.replace(new RegExp('TRG', 'g'), "");
+	this.windows[i].shortName=this.windows[i].shortName.replace(new RegExp('\\*..', 'g'), "");
       }
     }
     
@@ -385,11 +388,11 @@ Model.prototype = {
 	}
 	if (f<100 && f>0.01){
 	  if (typeof( c[i].tag ) != "undefined" ) {
-	    this.clones[this.mapID[c[i].window]].tag=c[i].tag;
+	    this.windows[this.mapID[c[i].window]].tag=c[i].tag;
 	  }
 
 	  if (typeof( c[i].name ) != "undefined" ) {
-	    this.clones[this.mapID[c[i].window]].c_name=c[i].name;
+	    this.windows[this.mapID[c[i].window]].c_name=c[i].name;
 	  }
 	}
       }
@@ -411,7 +414,7 @@ Model.prototype = {
       }
     }
 
-		this.init()
+  this.init()
   },//end initClones
   
   
@@ -424,25 +427,25 @@ Model.prototype = {
     
     for(var i=0 ;i<this.n_windows; i++){
       
-      if ( ( typeof this.clones[i].tag != "undefined" && this.clones[i].tag != 8 ) || 
-	typeof this.clones[i].c_name != "undefined" ){
+      if ( ( typeof this.windows[i].tag != "undefined" && this.windows[i].tag != 8 ) || 
+	typeof this.windows[i].c_name != "undefined" ){
 
 	var elem = {};
 	elem.window = this.windows[i].window;
-	if ( typeof this.clones[i].tag != "undefined" && this.clones[i].tag != 8)
-	  elem.tag = this.clones[i].tag;
-	if ( typeof this.clones[i].c_name != "undefined" ) 
-	  elem.name = this.clones[i].c_name;
+	if ( typeof this.windows[i].tag != "undefined" && this.windows[i].tag != 8)
+	  elem.tag = this.windows[i].tag;
+	if ( typeof this.windows[i].c_name != "undefined" ) 
+	  elem.name = this.windows[i].c_name;
 
 	analysisData.custom.push(elem);
       }
       
-      if (this.clones[i].cluster.length > 1){
-	for (var j=0; j<this.clones[i].cluster.length; j++){
-	  if (this.clones[i].cluster[j] !=i){
+      if (this.windows[i].cluster.length > 1){
+	for (var j=0; j<this.windows[i].cluster.length; j++){
+	  if (this.windows[i].cluster[j] !=i){
 	    var elem ={};
 	    elem.l = this.windows[i].window;
-	    elem.f = this.windows[ this.clones[i].cluster[j] ].window ;
+	    elem.f = this.windows[ this.windows[i].cluster[j] ].window ;
 	    analysisData.cluster.push(elem);
 	  } 
 	}
@@ -470,7 +473,7 @@ Model.prototype = {
  * */
   changeName : function(cloneID, newName){
     console.log("changeName() (clone "+cloneID+" <<"+newName+")");
-    this.clones[cloneID].c_name = newName;
+    this.windows[cloneID].c_name = newName;
     this.updateElem(cloneID);
   },//fin changeName,
   
@@ -479,7 +482,7 @@ Model.prototype = {
  * */
   changeTag : function(cloneID, newTag){
     console.log("changeTag() (clone "+cloneID+" <<"+newTag+")");
-    this.clones[cloneID].tag=newTag;
+    this.windows[cloneID].tag=newTag;
     this.updateElem([cloneID]);
   },
   
@@ -488,8 +491,8 @@ Model.prototype = {
  * 
  * */
   getName : function(cloneID){
-    if ( typeof(this.clones[cloneID].c_name)!='undefined' ){
-      return this.clones[cloneID].c_name;
+    if ( typeof(this.windows[cloneID].c_name)!='undefined' ){
+      return this.windows[cloneID].c_name;
     }else{
       return this.getCode(cloneID);
     }
@@ -564,7 +567,7 @@ Model.prototype = {
     if (this.focus==cloneID) {
       return color['@select'];
     }
-    if (!this.clones[cloneID].active) {
+    if (!this.windows[cloneID].active) {
       return color['@default'];
     }
     if (this.colorMethod=="abundance") {
@@ -573,20 +576,20 @@ Model.prototype = {
       return colorGenerator( this.scale_color(size*this.precision) ,  color_s  , color_v);
     }
     if (this.colorMethod=="Tag") {
-      return tagColor[this.clones[cloneID].tag];
+      return tagColor[this.windows[cloneID].tag];
     }
     if (typeof(this.windows[cloneID].seg.V) != 'undefined'){
       if (this.colorMethod=="V") {
-      	return this.clones[cloneID].colorV;
+      	return this.windows[cloneID].colorV;
       }
       if (this.colorMethod=="J") {
-      	return this.clones[cloneID].colorJ;
+      	return this.windows[cloneID].colorJ;
       }
       if (this.colorMethod=="N") {
-      	return this.clones[cloneID].colorN;
+      	return this.windows[cloneID].colorN;
       }
       if (this.colorMethod=="N2") {
-      	return this.clones[cloneID].colorN2;
+      	return this.windows[cloneID].colorN2;
       }
     }
     return color['@default'];
@@ -660,10 +663,10 @@ Model.prototype = {
     
     if (cloneID==(this.n_windows-1)) return 0
     
-    if (this.clones[cloneID].select){
+    if (this.windows[cloneID].select){
       this.unselect(cloneID); 
     }else{
-      if (list.length < 5) this.clones[cloneID].select=true;
+      if (list.length < 5) this.windows[cloneID].select=true;
     }
     this.updateElem([cloneID]);
   },
@@ -674,8 +677,8 @@ Model.prototype = {
  * */
   unselect :function(cloneID){
     console.log("unselect() (clone "+cloneID+")")
-    if (this.clones[cloneID].select){
-      this.clones[cloneID].select=false;
+    if (this.windows[cloneID].select){
+      this.windows[cloneID].select=false;
     }
     this.updateElem([cloneID]);
   },
@@ -688,7 +691,7 @@ Model.prototype = {
     console.log("unselectAll()")
     var list=this.getSelected();
     for (var i=0; i< list.length ; i++){
-      this.clones[list[i]].select=false; 
+      this.windows[list[i]].select=false; 
     }
     this.updateElem(list);
   },
@@ -701,7 +704,7 @@ Model.prototype = {
     console.log("getSelected()")
     var result=[]
     for (var i=0; i< this.n_windows ; i++){
-      if(this.clones[i].select){
+      if(this.windows[i].select){
 	result.push(i);
       }
     }
@@ -771,15 +774,15 @@ Model.prototype = {
  * */
   updateModel :function(){
     for (var i=0; i<this.n_windows; i++){
-      if (this.clones[i].cluster.length!=0 && this.windows[i].top <= this.top && tagDisplay[this.clones[i].tag] == 1 ){
-	this.clones[i].active=true;
+      if (this.clones[i].cluster.length!=0 && this.windows[i].top <= this.top && tagDisplay[this.windows[i].tag] == 1 ){
+	this.windows[i].active=true;
       }else{
-	this.clones[i].active=false;
+	this.windows[i].active=false;
       }
     }   
     this.computeOtherSize();
     for (var i=0; i<this.n_windows; i++){
-      this.clones[i].color=this.getColor(i);
+      this.windows[i].color=this.getColor(i);
     }
   },
   
@@ -789,15 +792,15 @@ Model.prototype = {
  * */
   updateModelElem :function(list){
     for (var i=0 ; i < list.length ; i++){
-      if (this.clones[list[i]].cluster.length!=0 && this.windows[list[i]].top <= this.top && tagDisplay[this.clones[list[i]].tag] == 1 ){
-	this.clones[list[i]].active=true;
+      if (this.clones[list[i]].cluster.length!=0 && this.windows[list[i]].top <= this.top && tagDisplay[this.windows[list[i]].tag] == 1 ){
+	this.windows[list[i]].active=true;
       }else{
-	this.clones[list[i]].active=false;
+	this.windows[list[i]].active=false;
       }   
     }
     this.computeOtherSize();
     for (var i=0 ; i < list.length ; i++){
-      this.clones[list[i]].color=this.getColor(list[i]);
+      this.windows[list[i]].color=this.getColor(list[i]);
     }
   },
   
@@ -892,7 +895,7 @@ Model.prototype = {
     for (var i=0; i < this.n_windows-1; i++){
       for (var j=0; j < this.total_size.length; j++){
 	for (var k=0; k < this.normalizations.length; k++){
-	  if (this.clones[i].active==true)
+	  if (this.windows[i].active==true)
 	    other[j][k]-= this.windows[i].ratios[j][k];
 	}   
       }   

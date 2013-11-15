@@ -102,8 +102,8 @@ ScatterPlot.prototype = {
       .attr("stroke", "")
       .attr("id", function(d) { return "circle"+d.id; })
       .attr("class", function(p) { 
-	if (!self.m.clones[p.id].active) return "circle_inactive";
-	  if (self.m.clones[p.id].select) return "circle_select";
+	if (!self.m.windows[p.id].active) return "circle_inactive";
+	  if (self.m.windows[p.id].select) return "circle_select";
 	  if (p.id==self.m.focus) return "circle_focus";
 	  return "circle"; 
        })
@@ -138,7 +138,7 @@ ScatterPlot.prototype = {
       })
       .attr("height", 50 )
       .attr("y", (this.h*self.resizeH)+self.marge_top )
-      .attr("fill", function(d) { return (self.m.clones[d].color); })
+      .attr("fill", function(d) { return (self.m.windows[d].color); })
       .on("mouseover",function(d) { self.m.focusIn(d.id); } )
       .on("click", function(d) { self.m.select(d.id);})
   },
@@ -163,7 +163,7 @@ ScatterPlot.prototype = {
     
     //classement des clones suivant leurs gene V
     for ( var i=0 ; i< this.m.n_windows; i++){
-      if (this.m.clones[i].active){
+      if (this.m.windows[i].active){
 	var geneV= this.m.getV(i);
 	var clone={id: i}
 	this.bar_v[geneV].clones.push(clone);
@@ -226,13 +226,13 @@ ScatterPlot.prototype = {
       })
       .attr("height", function(d) { return self.getBarHeight(d)*self.resizeH; })
       .attr("y", function(d) { 
-	if (!self.m.clones[d.id].active) return (self.h*self.resizeH)+self.marge_top;
+	if (!self.m.windows[d.id].active) return (self.h*self.resizeH)+self.marge_top;
 	return (self.getBarPosition(d)*self.resizeH)+self.marge_top; 
       })
-      .attr("fill", function(d) { return (self.m.clones[d].color); })
+      .attr("fill", function(d) { return (self.m.windows[d].color); })
       .attr("class", function(p) { 
-	if (!self.m.clones[p.id].active) return "circle_hidden";
-	if (self.m.clones[p.id].select) return "circle_select";
+	if (!self.m.windows[p.id].active) return "circle_hidden";
+	if (self.m.windows[p.id].select) return "circle_select";
 	if (p.id==self.m.focus) return "circle_focus";
 	return "circle"; 
       })
@@ -615,7 +615,7 @@ ScatterPlot.prototype = {
  * 
  * */
   getRadius : function(nodeID){
-    if (!this.m.clones[nodeID].active) return 0;
+    if (!this.m.windows[nodeID].active) return 0;
     var size=this.m.getSize(nodeID);
     if (size==0) return 0;
     return this.resizeCoef*Math.pow(80000*(size+0.002),(1/3) );
@@ -674,12 +674,12 @@ ScatterPlot.prototype = {
     var self=this;
     this.node
       .attr("class", function(p) { 
-	if (!self.m.clones[p.id].active) return "circle_hidden";
-	if (self.m.clones[p.id].select) return "circle_select";
+	if (!self.m.windows[p.id].active) return "circle_hidden";
+	if (self.m.windows[p.id].select) return "circle_select";
 	if (p.id==self.m.focus) return "circle_focus";
 	return "circle"; 
       })
-      .attr("fill", function(d) { return (self.m.clones[d].color); })
+      .attr("fill", function(d) { return (self.m.windows[d].color); })
   },
   
 /* applique la grille correspondant a la methode de répartition définit dans this.splitMethod

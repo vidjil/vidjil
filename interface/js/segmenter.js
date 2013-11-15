@@ -62,7 +62,7 @@ Segment.prototype = {
     
     for (var i=0; i< list.length; i++){
       
-      if (this.m.clones[list[i]].select){
+      if (this.m.windows[list[i]].select){
 	if ( document.getElementById("seq"+list[i]) ){
 	  var spanF=document.getElementById("f"+list[i]);
 	  spanF.innerHTML="";
@@ -102,7 +102,7 @@ Segment.prototype = {
     span0.onclick = function(){ self.m.select(cloneID); }
     span0.appendChild(document.createTextNode(this.m.getName(cloneID)));
     span0.title = this.m.getName(cloneID);
-    span0.style.color=this.m.clones[cloneID].color;
+    span0.style.color=this.m.windows[cloneID].color;
       
     var svg=document.createElementNS('http://www.w3.org/2000/svg', 'svg')
     svg.setAttribute('class','starBox'); 
@@ -110,7 +110,7 @@ Segment.prototype = {
     var path=document.createElementNS('http://www.w3.org/2000/svg','path')
     path.setAttribute('d', this.starPath);
     path.setAttribute('id','color'+cloneID); 
-    if (typeof this.m.clones[cloneID].tag != 'undefined') path.setAttribute("fill", tagColor[this.m.clones[cloneID].tag]);
+    if (typeof this.m.windows[cloneID].tag != 'undefined') path.setAttribute("fill", tagColor[this.m.windows[cloneID].tag]);
     else path.setAttribute("fill", color['@default']);
 	
     svg.appendChild(path);
@@ -119,7 +119,7 @@ Segment.prototype = {
     span2.className = "sizeBox";
     span2.id="size"+cloneID;
     span2.onclick=function(){ this.m.select(cloneID); }
-    span2.style.color=this.m.clones[cloneID].color;
+    span2.style.color=this.m.windows[cloneID].color;
       
     span2.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));
       
@@ -161,7 +161,7 @@ Segment.prototype = {
     
     var spanV = document.createElement('span');
     spanV.className="V";
-    spanV.style.color=this.m.clones[cloneID].colorV;
+    spanV.style.color=this.m.windows[cloneID].colorV;
 
     var v_seq=this.m.windows[cloneID].seg.sequence.substr(0, this.m.windows[cloneID].seg.l1+1);
     var size_marge=200-v_seq.length;
@@ -184,7 +184,7 @@ Segment.prototype = {
     
     var spanJ = document.createElement('span');
     spanJ.className="J";
-    spanJ.style.color=this.m.clones[cloneID].colorJ;
+    spanJ.style.color=this.m.windows[cloneID].colorJ;
     spanJ.innerHTML=this.m.windows[cloneID].seg.sequence.substr(this.m.windows[cloneID].seg.r1);
     spanM.appendChild(spanJ);
     }else{
@@ -283,7 +283,7 @@ Segment.prototype = {
     
     var spanV = document.createElement('span');
     spanV.className="V";
-    spanV.style.color=m.clones[cloneID].colorV;
+    spanV.style.color=m.windows[cloneID].colorV;
     
     spanV.innerHTML=seq.substr(0, newl1+1);
     spanM.appendChild(spanV);
@@ -297,7 +297,7 @@ Segment.prototype = {
     
     var spanJ = document.createElement('span');
     spanJ.className="J";
-    spanJ.style.color=m.clones[cloneID].colorJ;
+    spanJ.style.color=m.windows[cloneID].colorJ;
     spanJ.innerHTML=seq.substr(newr1);
     spanM.appendChild(spanJ);
     }else{
