@@ -307,7 +307,7 @@ Model.prototype = {
 
   
 /* initializes clones with analysis file data
- * and store some info about them (N color / shortName /...)
+ * 
  * */
   initClones: function(){
     console.log("initClones()");
@@ -345,6 +345,8 @@ Model.prototype = {
     for (var i=0; i<this.n_windows; i++){
       if (typeof(this.windows[i].seg.V) != 'undefined'){
 	var vGene=this.windows[i].seg.V[0];
+	
+	console.log(i+" >> "+ vGene+" // ");
 	this.windows[i].colorV=this.germline.v[vGene].color;
       }else{
 	this.windows[i].colorV=color['@default'];

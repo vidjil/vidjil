@@ -22,6 +22,7 @@
 #include <cstdlib>
 #include "tools.h"
 
+
 map <string, string> load_map(string map_file)
 {
   // Loads a simple file with key, values into a map
@@ -195,16 +196,4 @@ float compute_normalization(list< pair <float, int> > norm_list, int nb_reads)
   }
 }
 
-void out_json_normalization_names(ostream &out)
-{
-  out << "\"normalizations\": [\"none\", \"highest standard\", \"all standards\"]" ;
-}
 
-void out_json_normalization(ostream &out, list< pair <float, int> > norm_list, int nb_reads, int nb_segmented)
-{
-  out << "[ "  
-      << (float) nb_reads / nb_segmented << ", " // Raw ratio
-      << (float) nb_reads * compute_normalization_one(norm_list, nb_reads) / nb_segmented << ", " // normalization against highest standard
-      << (float) nb_reads * compute_normalization(norm_list, nb_reads) / nb_segmented << "]"  // full normalization
-    ;
-}

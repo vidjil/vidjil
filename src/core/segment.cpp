@@ -724,38 +724,34 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
   }
 }
 
-string FineSegmenter::toJson(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
+JsonList FineSegmenter::toJsonList(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
+  JsonList result;
   
-  ostringstream seg_str;
-  
-  seg_str << " \"seg\" : {";
-  seg_str << " \"sequence\" : \""<< revcomp(sequence, reversed) << "\","<<endl;
+  result.add("sequence", revcomp(sequence, reversed) );
   if (isSegmented()) {
-    seg_str << " \"name\" : \""<< code_short << "\" ,"<<endl;
-    seg_str << " \"r1\" : "<< right << ","<<endl;
-    seg_str << " \"r2\" : "<< right2 << ","<<endl;
-    seg_str << " \"l1\" : "<< left << ","<<endl;
-    seg_str << " \"l2\" : "<< left2 << ","<<endl;
-    seg_str << " \"Nsize\" : "<< (del_V+del_J+seg_N.size()) << ","<<endl;
-    seg_str << " \"V\" : [\""<<rep_V.label(score_V[0].second);
-    for (int i=1; i<4; i++){
-      seg_str << "\",\""<<rep_V.label(score_V[i].second);
-    }
+    result.add("name", code_short);
+    result.add("r1", right);
+    result.add("r2", right2);
+    result.add("l1", left);
+    result.add("l2", left2);
+    result.add("Nsize", (del_V+del_J+seg_N.size()) );
+    
+    JsonArray jsonV;
+    JsonArray jsonD;
+    JsonArray jsonJ;
+    
+    for (int i=0; i<4; i++) jsonV.add( rep_V.label(score_V[i].second) ) ;
+    result.add("V", jsonV);
+    
     if (score_D.size()>0){
-      seg_str << "\"],\n \"D\" : [\""<<rep_D.label(score_D[0].second);
-      for (int i=1; i<4; i++){
-	seg_str << "\", \""<<rep_D.label(score_D[i].second);
-      }
+      for (int i=0; i<4; i++) jsonD.add( rep_D.label(score_D[i].second) ) ;
+      result.add("D", jsonD);
     }
-    seg_str << "\"],\n \"J\" : [\""<<rep_J.label(score_J[0].second);
-    for (int i=1; i<4; i++){
-      seg_str << "\",\""<<rep_J.label(score_J[i].second);
-    }
+    
+    for (int i=0; i<4; i++) jsonJ.add( rep_J.label(score_J[i].second) ) ;
+    result.add("J", jsonJ);
   }
-    seg_str << "\"]}";
-  
-  return seg_str.str();
+  return result;
 }
-
 
 
