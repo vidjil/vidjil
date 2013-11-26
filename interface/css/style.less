@@ -162,7 +162,7 @@ ul{
 
 .graph_time:hover{
   cursor:pointer;
-  fill :#eee8d5;
+  fill : @select;
 }
 
 							  /*style scatterPlot element*/
@@ -385,8 +385,9 @@ ul{
 }
 
 .tagElem:hover{
-  border-color: white;
-  cursor:pointer;
+  border-color : white;
+  cursor : pointer;
+  color : @select;
 }
 
 .tagColorBox {
@@ -433,8 +434,9 @@ ul{
   text-align:left;
 }
 
-.button:hover, .buttonSelector:hover {
+.button:hover, .buttonSelector:hover{
   background : @highlight;
+  color : @select;
 }
 
 
@@ -463,14 +465,33 @@ ul{
   color: @secondary ;
 }
 
+#popup-container a:hover{
+  color : @select;
+}
 
 #file_menu, #menu, #listClones, #listSelect, #tagSelector, #display-menu, #bot-container, .seq-fixed{
  background : @background;
 }
 
-.closeButton
-{
+.closeButton{
+  position: absolute;
+  top: -12px;
+  right: -12px;
+  border: solid;
+  background: inherit;
+  border-radius: 20px;
+  width: 15px;
+  height: 15px;
+  text-align: center;
+  font-weight: bolder;
+  cursor: pointer;
+  padding: 1px;
+  font-size: 90%; 
   color: @border;
+}
+
+.closeButton:hover{
+  color: @select;
 }
 
 .button {
@@ -489,20 +510,12 @@ ul{
     text-decoration:underline;
 }
 
-.button:hover {
-    cursor: pointer;
-}
-
 #logo
 {
   font-size: 130%;
   font-weight: bold;
   opacity: 1;
   padding: 5px 20px ;
-}
-
-#logo:hover
-{
   cursor: pointer;
 }
 
@@ -581,22 +594,6 @@ span.logo
   width: 25px;
   display : inline-block;
   float : right;
-}
-
-.closeButton{
-  position: absolute;
-  top: -12px;
-  right: -12px;
-  border: solid;
-  background: inherit;
-  border-radius: 20px;
-  width: 15px;
-  height: 15px;
-  text-align: center;
-  font-weight: bolder;
-  cursor: pointer;
-  padding: 1px;
-  font-size: 90%; 
 }
 
 .center{
