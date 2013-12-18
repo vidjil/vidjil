@@ -17,6 +17,7 @@
   along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 */
 
+//$$ #include
 
 #include<algorithm>
 #include<utility>
@@ -54,6 +55,7 @@
 // #define RELEASE_TAG  "2013.04"
 #include "release.h"
 
+//$$ #define (mainly default options)
 
 #define DEFAULT_GERMLINE_SYSTEM "TRG" 
 #define DEFAULT_V_REP  "./germline/TRGV.fa" // IGHV 
@@ -116,8 +118,9 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 
 using namespace std ;
 
-extern char *optarg;
+//$$ options: usage
 
+extern char *optarg;
 
 extern int optind, optopt, opterr;
 
@@ -200,6 +203,8 @@ int main (int argc, char **argv)
        << "# Copyright (C) 2011, 2012, 2013 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille" << endl 
        << endl ;
 
+  //$$ options: defaults
+
   string germline_system = DEFAULT_GERMLINE_SYSTEM ;
   string f_rep_V = DEFAULT_V_REP ;
   string f_rep_D = DEFAULT_D_REP ;
@@ -254,6 +259,8 @@ int main (int argc, char **argv)
   string normalization_file = "" ;
 
   char c ;
+
+  //$$ options: getopt
 
   while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:")) != EOF)
 
@@ -422,7 +429,8 @@ int main (int argc, char **argv)
       cout << "wrong number of arguments." << endl ;
       exit(1);
     }
-    
+
+  //$$ options: post-processing+display
 
 
 #ifndef NO_SPACED_SEEDS
@@ -528,6 +536,8 @@ int main (int argc, char **argv)
 #endif
 
   //////////////////////////////////
+  //$$ Read sequence files
+
   out << "Read sequence files" << endl ;
 
 
@@ -565,6 +575,7 @@ int main (int argc, char **argv)
 
 
     //////////////////////////////////
+    //$$ Build Kmer indexes
     out << "Build Kmer indexes" << endl ;
 
     bool rc = true ;
@@ -575,6 +586,8 @@ int main (int argc, char **argv)
 
   
     //////////////////////////////////
+    //$$ Kmer Segmentation
+
     string f_segmented = out_dir + prefix_filename + SEGMENTED_FILENAME ;
     out << "  ==> " << f_segmented << endl ;
     ofstream out_segmented(f_segmented.c_str()) ;
@@ -651,6 +664,10 @@ int main (int argc, char **argv)
 
     out << endl;
 
+
+    //$$ Display statistics on segmentation causes
+
+
     int nb_segmented_including_too_short = stats_segmented[TOTAL_SEG_AND_WINDOW] + stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] ;
 
     out << "  ==> segmented " << nb_segmented_including_too_short << " reads"
@@ -665,9 +682,6 @@ int main (int argc, char **argv)
 	<< " (" << setprecision(3) << 100 * (float) nb_segmented / nb_total_reads << "%)"
 	<< " inside " << nb_total_reads << " sequences" << endl ;
   
-
-    // Display statistics on segmentation causes
-
     out << "                                  #      av. length" << endl ;
 
     for (int i=0; i<STATS_SIZE; i++)
@@ -684,11 +698,9 @@ int main (int argc, char **argv)
       map <junction, JsonList> json_data_segment ;
       list<pair <junction, int> > sort_all_windows;
     
-    /// if (command == CMD_WINDOWS) /// on le fait meme si CMD_ANALYSIS
-      //      {
 
 	//////////////////////////////////
-	// Sort windows
+	//$$ Sort windows
 	
 	out << "Sort windows by number of occurrences" << endl;
 	
@@ -701,7 +713,7 @@ int main (int argc, char **argv)
 	sort_all_windows.sort(pair_occurrence_sort<junction>);
 
 	//////////////////////////////////
-	// Output windows
+	//$$ Output windows
 	//////////////////////////////////
 
 	string f_all_windows = out_dir + prefix_filename + WINDOWS_FILENAME;
@@ -720,14 +732,14 @@ int main (int argc, char **argv)
 	  }
 	
 
-	// }
-	// Normalization
+	//$$ Normalization
 	list< pair <float, int> > norm_list = compute_normalization_list(seqs_by_window, normalization, nb_segmented);
 
 
     if (command == CMD_ANALYSIS) {
 
     //////////////////////////////////
+    //$$ min_reads_window (ou label)
     out << "Considering only windows with >= " << min_reads_window << " reads and labeled windows" << endl;
 
     int removes = 0 ;
@@ -751,9 +763,8 @@ int main (int argc, char **argv)
     out << " (" << setprecision(3) << 100 * (float) nb_reads / nb_total_reads << "%)  " << endl ;
 
     //////////////////////////////////
+    //$$ Clustering
 
-
-    // Clustering
     list <list <junction> > clones_windows;
     comp_matrix comp=comp_matrix(windows);
 
@@ -787,10 +798,7 @@ int main (int argc, char **argv)
 
     out << "  ==> " << clones_windows.size() << " clones" << endl ;
  
-    map<string,Kmer> z = windows->store;
-    
-    // int size=z.size();
-
+    //$$ Sort clones, number of occurrences
     //////////////////////////////////
     out << "Sort clones by number of occurrences" << endl;
 
@@ -827,6 +835,7 @@ int main (int argc, char **argv)
     sort_clones.sort(pair_occurrence_sort<list<junction> >);
 
     //////////////////////////////////
+    //$$ Output clones
     out << "Output clones with >= " << min_reads_clone << " reads" << endl ;
 
     map <string, int> clones_codes ;
@@ -887,6 +896,7 @@ int main (int argc, char **argv)
 
       //////////////////////////////////
 
+      //$$ Sort sequences by nb_reads
       list<pair<junction, int> >sort_windows;
 
       for (list <junction>::const_iterator it = clone.begin(); it != clone.end(); ++it) {
@@ -895,7 +905,7 @@ int main (int argc, char **argv)
       }
       sort_windows.sort(pair_occurrence_sort<junction>);
 
-      // Output windows 
+      //$$ Output windows 
 
       int num_seq = 0 ;
 
@@ -921,7 +931,7 @@ int main (int argc, char **argv)
 	}
 
 	
-      // First pass, choose one representative per cluster
+      //$$ First pass, choose one representative per cluster
 
       string best_V ;
       string best_D ;
@@ -1001,6 +1011,8 @@ int main (int argc, char **argv)
         KmerRepresentativeComputer repComp(auditioned_sequences, seed);
         repComp.compute(true, min_cover_representative, ratio_representative);
 	
+
+	//$$ There is one representative, FineSegmenter
         if (repComp.hasRepresentative()) {
 	  
           Sequence representative = repComp.getRepresentative();
@@ -1135,6 +1147,8 @@ int main (int argc, char **argv)
 	}
 
 
+      //$$ Very detailed cluster analysis (with sequences)
+
       html << "</pre>" << endl ;
       html << "<div  id='detail-" << num_clone << "' style='display:none;'>"
            << "<pre class='log'> "<< endl  ;
@@ -1167,7 +1181,7 @@ int main (int argc, char **argv)
             }
         }
       
-      // Second pass: output clone, all representatives      
+      //$$ Second pass: output clone, all representatives      
 
       num_seq = 0 ;
       list <Sequence> representatives_this_clone ;
@@ -1297,7 +1311,8 @@ int main (int argc, char **argv)
             }
         }
       }
-
+      
+      //$$ Display msa
       if (good_msa)
 	{
 	  cout << setw(20) << best_V << "    " << msa.back() << endl ;
@@ -1319,7 +1334,7 @@ int main (int argc, char **argv)
       out_clone.close();
       out << endl;
       
-      // Compare representatives of this clone
+      //$$ Compare representatives of this clone
       out << "Comparing representatives of this clone 2 by 2" << endl ;
       // compare_all(representatives_this_clone);
       SimilarityMatrix matrix = compare_all(representatives_this_clone, true);
@@ -1336,7 +1351,7 @@ int main (int argc, char **argv)
     cout << "#### end of clones" << endl; 
 
   
-    // Compare representatives
+    //$$ Compare representatives of all clones
 
     if (detailed_cluster_analysis)
       {
@@ -1367,7 +1382,7 @@ int main (int argc, char **argv)
     html.close();
     }
     
-    //création du fichier json_data_segment
+    //$$ .json output: json_data_segment
     string f_json = out_dir + prefix_filename + "data.json" ;
     int top = 1;
     out << "  ==> " << f_json << endl ;
@@ -1426,6 +1441,7 @@ int main (int argc, char **argv)
     delete windowsArray;
     delete json;
   } else if (command == CMD_SEGMENT) {
+    //$$ CMD_SEGMENT
     ////////////////////////////////////////
     //       V(D)J SEGMENTATION           //
     ////////////////////////////////////////
@@ -1467,3 +1483,5 @@ int main (int argc, char **argv)
 
   delete reads;
 }
+
+//$$ end
