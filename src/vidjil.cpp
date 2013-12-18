@@ -1044,9 +1044,15 @@ int main (int argc, char **argv)
 
               string mid_D = "";
 	    
-              if (segment_D)
-                mid_D = rep_D.sequence(seg.best_D).substr(seg.del_D_left, 
-                                                          rep_D.sequence(seg.best_D).size() - seg.del_D_left - seg.del_D_right );
+              if (segment_D) {
+                // TODO In bug20131218, seg.del_D_left + seg.del_D_right > |D|
+                // There may be a problem in the segmentation process
+                if ((size_t) seg.del_D_left + seg.del_D_right > rep_D.sequence(seg.best_D).size())
+                  mid_D = "";
+                else
+                  mid_D = rep_D.sequence(seg.best_D).substr(seg.del_D_left, 
+                                                            rep_D.sequence(seg.best_D).size() - seg.del_D_left - seg.del_D_right );
+              } 
 	   
               if (window_pos != string::npos) {
                 // for J.
