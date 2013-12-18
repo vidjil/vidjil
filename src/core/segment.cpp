@@ -729,8 +729,9 @@ string FineSegmenter::toJson(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
   ostringstream seg_str;
   
   seg_str << " \"seg\" : {";
-  seg_str << " \"sequence\" : \""<< revcomp(sequence, reversed) << "\","<<endl;
+  seg_str << " \"sequence\" : \""<< revcomp(sequence, reversed) << "\"";
   if (isSegmented()) {
+    seg_str << "," << endl ;
     seg_str << " \"name\" : \""<< code_short << "\" ,"<<endl;
     seg_str << " \"r1\" : "<< right << ","<<endl;
     seg_str << " \"r2\" : "<< right2 << ","<<endl;
@@ -751,8 +752,9 @@ string FineSegmenter::toJson(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
     for (int i=1; i<4; i++){
       seg_str << "\",\""<<rep_J.label(score_J[i].second);
     }
+    seg_str << "]";
   }
-    seg_str << "\"]}";
+  seg_str << "}";
   
   return seg_str.str();
 }
