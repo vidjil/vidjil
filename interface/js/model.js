@@ -347,6 +347,7 @@ Model.prototype = {
 	var vGene=this.windows[i].seg.V[0];
 	
 	console.log(i+" >> "+ vGene+" // ");
+          // TODO : What if vGene isn't known? (same for J)
 	this.windows[i].colorV=this.germline.v[vGene].color;
       }else{
 	this.windows[i].colorV=color['@default'];
