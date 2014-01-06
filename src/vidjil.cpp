@@ -657,7 +657,6 @@ int main (int argc, char **argv)
 	    // Output segmented
 	    //////////////////////////////////
 	    
-	    // out_segmented << reads->getSequence() ;
 	    out_segmented << seg ; // Sortie du KmerSegmenter (V/N/J par left/right)
           }
       }
