@@ -1,3 +1,5 @@
+#ifndef CLUSTER_JUNCTIONS_H
+#define CLUSTER_JUNCTIONS_H
 
 #include <fstream>
 #include <iostream>
@@ -76,3 +78,4 @@ class comp_matrix {
 int total_nb_reads (list<junction> clone, map <string, list<Sequence> > seqs_by_junction);
 
 
+#endif
