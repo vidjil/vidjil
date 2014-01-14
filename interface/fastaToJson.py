@@ -3,8 +3,14 @@ import json
 import sys
 import time
 
+if len(sys.argv) < 2:
+  print "Usage: %s <FASTA input file> [JSON output file]" % sys.argv[0]
+  sys.exit()
 input_name = sys.argv[1]
-output_name = sys.argv[2]
+output_name = ""
+
+if len(sys.argv) == 3:
+  output_name = sys.argv[2]
 
 fasta = open(sys.argv[1], "r")
 
@@ -37,6 +43,7 @@ if len(sequence)!=0 :
   
 fasta.close()
 print json.dumps(table, indent=2, sort_keys=True)
-with open(output_name, "w") as file :
-  json.dump(table, file, indent=2, sort_keys=True)
+if output_name != "":
+  with open(output_name, "w") as file :
+    json.dump(table, file, indent=2, sort_keys=True)
 

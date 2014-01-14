@@ -90,7 +90,7 @@ List.prototype = {
     span0.onclick = function(){ self.m.select(cloneID); }
     span0.appendChild(document.createTextNode(this.m.getName(cloneID)));
     span0.title = this.m.getName(cloneID);
-    span0.style.color=this.m.clones[cloneID].color;
+    span0.style.color=this.m.windows[cloneID].color;
       
     var svg=document.createElementNS('http://www.w3.org/2000/svg', 'svg')
     svg.setAttribute('class','starBox'); 
@@ -98,8 +98,8 @@ List.prototype = {
     var path=document.createElementNS('http://www.w3.org/2000/svg','path')
     path.setAttribute('d', this.starPath);
     path.setAttribute('id','color'+cloneID); 
-    if (typeof this.m.clones[cloneID].tag != 'undefined') path.setAttribute("fill", tagColor[this.m.clones[cloneID].tag]);
-    else path.setAttribute("fill", default_color);
+    if (typeof this.m.windows[cloneID].tag != 'undefined') path.setAttribute("fill", tagColor[this.m.windows[cloneID].tag]);
+    else path.setAttribute("fill", color['@default']);
 	
     svg.appendChild(path);
       
@@ -107,7 +107,7 @@ List.prototype = {
     span2.className = "sizeBox";
     span2.id="size"+cloneID;
     span2.onclick=function(){ this.m.select(cloneID); }
-    span2.style.color=this.m.clones[cloneID].color;
+    span2.style.color=this.m.windows[cloneID].color;
       
     span2.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));
       
@@ -221,8 +221,8 @@ List.prototype = {
       var div = document.getElementById(list[i]);
       div.innerHTML='';
       
-      if (this.m.clones[list[i]].active){  
-	if (this.m.clones[list[i]].select){  
+      if (this.m.windows[list[i]].active){  
+	if (this.m.windows[list[i]].select){  
 	  document.getElementById(list[i]).className="list_select";
 	}else{
 	  document.getElementById(list[i]).className="list";

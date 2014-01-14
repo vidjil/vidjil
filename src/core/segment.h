@@ -8,6 +8,7 @@
 #include "tools.h"
 #include "kmerstore.h"
 #include "kmeraffect.h"
+#include "json.h"
 
 #define EXTEND_D_ZONE 5
 #define RATIO_STRAND 5          /* The ratio between the affectations in one
@@ -175,8 +176,8 @@ class FineSegmenter : public Segmenter
   * @param rep_J: germline for J
   */
   void FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J);
-  
-  string toJson(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J);
+
+  JsonList toJsonList(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J);
   
 };
 

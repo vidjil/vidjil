@@ -51,7 +51,8 @@ def juncToJson(obj):
       "resolution1": obj.resolution1,
       "resolution5": obj.resolution5,
       "time": obj.time,
-      "timestamp": obj.timestamp
+      "timestamp": obj.timestamp,
+      "germline": obj.germline
       }
     raise TypeError(repr(obj) + " fail !") 
   if isinstance(obj, Window):
@@ -63,16 +64,21 @@ def juncToJson(obj):
       }
     raise TypeError(repr(obj) + " fail !") 
   if isinstance(obj, Segment):
-    return {"name": obj.name,
-      "sequence": obj.sequence,
-      "V": obj.V,
-      "D": obj.D,
-      "J": obj.J,
-      "l1": obj.l1,
-      "l2": obj.l2,
-      "r1": obj.r1,
-      "r2": obj.r2,
-      "Nsize": obj.Nsize
+    if hasattr(obj, 'name'):
+      return {
+	"sequence": obj.sequence,
+	"V": obj.V,
+	"D": obj.D,
+	"J": obj.J,
+	"name": obj.name,
+	"l1": obj.l1,
+	"l2": obj.l2,
+	"r1": obj.r1,
+	"r2": obj.r2,
+	"Nsize": obj.Nsize
+	}
+    return {
+      "sequence": obj.sequence
       }
     raise TypeError(repr(obj) + " fail !") 
 
@@ -86,6 +92,7 @@ def jsonToJunc(obj_dict):
     obj.resolution1=obj_dict["resolution1"]
     obj.resolution5=obj_dict["resolution5"]
     obj.timestamp=obj_dict["timestamp"]
+    obj.germline=obj_dict["germline"]
     
     return obj
   if "window" in obj_dict:
@@ -101,16 +108,17 @@ def jsonToJunc(obj_dict):
     return obj
   if "sequence" in obj_dict:
     obj = Segment(obj_dict["sequence"])
-    obj.name=obj_dict["name"]
-    obj.V=obj_dict["V"]
-    obj.l1=obj_dict["l1"]
-    obj.l2=obj_dict["l2"]
-    obj.r1=obj_dict["r1"]
-    obj.r2=obj_dict["r2"]
-    obj.Nsize=obj_dict["Nsize"]
-    if "D" in obj_dict:
-      obj.D=obj_dict["D"]
-    obj.J=obj_dict["J"]
+    if "name" in obj_dict:
+      obj.name=obj_dict["name"]
+      obj.V=obj_dict["V"]
+      obj.l1=obj_dict["l1"]
+      obj.l2=obj_dict["l2"]
+      obj.r1=obj_dict["r1"]
+      obj.r2=obj_dict["r2"]
+      obj.Nsize=obj_dict["Nsize"]
+      if "D" in obj_dict:
+	obj.D=obj_dict["D"]
+      obj.J=obj_dict["J"]
     return obj
 
     
@@ -122,6 +130,7 @@ def cutList(l1, limit):
   out.resolution1=l1.resolution1
   out.resolution5=l1.resolution5
   out.timestamp=l1.timestamp
+  out.germline=l1.germline
   
   length1 = len(l1.windows)
   
@@ -201,10 +210,11 @@ def fuseList(l1, l2, limit):
       dico_ratios[l1.windows[index].window] += tampon2
   
   out = Windows()
-  out.normalizations=l1.normalizations
+  out.normalizations=l1.normalizations  
   out.total_size=l1.total_size+l2.total_size    
   out.resolution1=l1.resolution1+l2.resolution1
   out.resolution5=l1.resolution5+l2.resolution5
+  out.germline=l1.germline
   
   timestamp1= time.strptime(l1.timestamp, "%Y-%m-%d %H:%M:%S")
   timestamp2= time.strptime(l2.timestamp, "%Y-%m-%d %H:%M:%S")
@@ -250,10 +260,9 @@ for path_name in input_names:
     with open(path_name, "r") as file:
         jlist = json.load(file, object_hook=jsonToJunc)       
         print jlist
-
+        
     # Merge lists
     jlist_fused = fuseList(jlist_fused, jlist, 0)
-
     # Store short name
     times.append(name)
 

@@ -32,6 +32,12 @@ function ScatterPlot(id, model){
   
   this.m.view.push(this);	//synchronisation au Model
   
+  
+  this.time0 = Date.now(),
+  this.time1= this.time0;
+  this.fpsqueue = [];
+ 
+  
 }
 
 ScatterPlot.prototype = {
@@ -96,8 +102,8 @@ ScatterPlot.prototype = {
       .attr("stroke", "")
       .attr("id", function(d) { return "circle"+d.id; })
       .attr("class", function(p) { 
-	if (!self.m.clones[p.id].active) return "circle_inactive";
-	  if (self.m.clones[p.id].select) return "circle_select";
+	if (!self.m.windows[p.id].active) return "circle_inactive";
+	  if (self.m.windows[p.id].select) return "circle_select";
 	  if (p.id==self.m.focus) return "circle_focus";
 	  return "circle"; 
        })
@@ -132,7 +138,7 @@ ScatterPlot.prototype = {
       })
       .attr("height", 50 )
       .attr("y", (this.h*self.resizeH)+self.marge_top )
-      .attr("fill", function(d) { return (self.m.clones[d].color); })
+      .attr("fill", function(d) { return (self.m.windows[d].color); })
       .on("mouseover",function(d) { self.m.focusIn(d.id); } )
       .on("click", function(d) { self.m.select(d.id);})
   },
@@ -157,7 +163,7 @@ ScatterPlot.prototype = {
     
     //classement des clones suivant leurs gene V
     for ( var i=0 ; i< this.m.n_windows; i++){
-      if (this.m.clones[i].active){
+      if (this.m.windows[i].active){
 	var geneV= this.m.getV(i);
 	var clone={id: i}
 	this.bar_v[geneV].clones.push(clone);
@@ -220,13 +226,13 @@ ScatterPlot.prototype = {
       })
       .attr("height", function(d) { return self.getBarHeight(d)*self.resizeH; })
       .attr("y", function(d) { 
-	if (!self.m.clones[d.id].active) return (self.h*self.resizeH)+self.marge_top;
+	if (!self.m.windows[d.id].active) return (self.h*self.resizeH)+self.marge_top;
 	return (self.getBarPosition(d)*self.resizeH)+self.marge_top; 
       })
-      .attr("fill", function(d) { return (self.m.clones[d].color); })
+      .attr("fill", function(d) { return (self.m.windows[d].color); })
       .attr("class", function(p) { 
-	if (!self.m.clones[p.id].active) return "circle_hidden";
-	if (self.m.clones[p.id].select) return "circle_select";
+	if (!self.m.windows[p.id].active) return "circle_hidden";
+	if (self.m.windows[p.id].select) return "circle_select";
 	if (p.id==self.m.focus) return "circle_focus";
 	return "circle"; 
       })
@@ -468,6 +474,16 @@ ScatterPlot.prototype = {
       .attr("cy", function(d) { return (d.y+self.marge_top); })
       .attr("r" , function(d) { return (d.r2); })
       .attr("title", function(d) { return (self.m.getName(d)); })
+      
+    //calcul fps
+    this.time1 = Date.now();
+    if (this.fpsqueue.length === 10) { 
+      document.getElementById("fps").innerHTML=d3.mean(this.fpsqueue).toFixed(3);
+      this.fpsqueue = []; 
+    }
+    this.fpsqueue.push(Math.round(1000 / (this.time1 - this.time0)));
+    this.time0 = this.time1;
+      
   },
 
 /* déplace les nodes en fonction de la méthode de répartition actuelle
@@ -538,6 +554,7 @@ ScatterPlot.prototype = {
       if( d.r1 != d.r2){
 	var delta = d.r1-d.r2;
 	d.r2 +=0.03*delta;
+	if (d.r2<0.1) d.r2=0;
       }
     }
   },
@@ -598,6 +615,7 @@ ScatterPlot.prototype = {
  * 
  * */
   getRadius : function(nodeID){
+    if (!this.m.windows[nodeID].active) return 0;
     var size=this.m.getSize(nodeID);
     if (size==0) return 0;
     return this.resizeCoef*Math.pow(80000*(size+0.002),(1/3) );
@@ -634,10 +652,18 @@ ScatterPlot.prototype = {
     if (this.splitMethod=="bar"){
       this.updateBar();
     }else{
+      var flag=false;
       for (var i = 0 ; i<list.length; i++){
+	var current_r = this.nodes[list[i]].r1
+	var new_r = this.getRadius(list[i]);
 	this.nodes[list[i]].r1=this.getRadius(list[i]);
+	if (current_r != new_r){
+	  flag=true;
+	  this.nodes[list[i]].r1=new_r;
+	}
       }
-      this.update();
+      if (flag) this.update();
+      this.updateStyle();
     }
   },
 	
@@ -648,12 +674,12 @@ ScatterPlot.prototype = {
     var self=this;
     this.node
       .attr("class", function(p) { 
-	if (!self.m.clones[p.id].active) return "circle_inactive";
-	if (self.m.clones[p.id].select) return "circle_select";
+	if (!self.m.windows[p.id].active) return "circle_hidden";
+	if (self.m.windows[p.id].select) return "circle_select";
 	if (p.id==self.m.focus) return "circle_focus";
 	return "circle"; 
       })
-      .attr("fill", function(d) { return (self.m.clones[d].color); })
+      .attr("fill", function(d) { return (self.m.windows[d].color); })
   },
   
 /* applique la grille correspondant a la methode de répartition définit dans this.splitMethod

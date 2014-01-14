@@ -681,7 +681,7 @@ int main (int argc, char **argv)
 	out << endl ;
       }
     
-      map <junction, string> json_data_segment ;
+      map <junction, JsonList> json_data_segment ;
       list<pair <junction, int> > sort_all_windows;
     
     /// if (command == CMD_WINDOWS) /// on le fait meme si CMD_ANALYSIS
@@ -1012,7 +1012,7 @@ int main (int argc, char **argv)
 	  seg.FineSegmentD(rep_V, rep_D, rep_J);
 	
         //cout << seg.toJson();
-        json_data_segment[it->first]=seg.toJson(rep_V, rep_D, rep_J);
+        json_data_segment[it->first]=seg.toJsonList(rep_V, rep_D, rep_J);
         
         if (seg.isSegmented())
 	  {
@@ -1235,7 +1235,7 @@ int main (int argc, char **argv)
             seg.FineSegmentD(rep_V, rep_D, rep_J);
 		
           //cout << seg.toJson();
-          json_data_segment[it->first]=seg.toJson(rep_V, rep_D, rep_J);
+          json_data_segment[it->first]=seg.toJsonList(rep_V, rep_D, rep_J);
 
           if (seg.isSegmented())
 	  {
@@ -1372,54 +1372,56 @@ int main (int argc, char **argv)
     int top = 1;
     out << "  ==> " << f_json << endl ;
     ofstream out_json(f_json.c_str()) ;
-      
-    out_json << "{ " ;
+    
+    JsonList *json;
+    json=new JsonList();
 
     // Version/timestamp/git info
-    out_json << "\"timestamp\" : \"" << time_buffer << "\"," << endl ; 
-    out_json << "\"commandline\" : \"" ; // TODO: escape "s in argv
-    for (int i=0; i < argc; i++) 
-      out_json << argv[i] << " ";
-    out_json << "\"," << endl ;
 
-    // Vidjil output
-    out_json << "\"germline\" : \"" << germline_system << "\"," << endl ; 
-    out_json << "\"total_size\" : ["<<nb_segmented<<"] ,"<<endl;
+    ostringstream stream_cmdline;
+    for (int i=0; i < argc; i++) stream_cmdline << argv[i] << " ";
+    
+    JsonArray json_nb_segmented;
+    json_nb_segmented.add(nb_segmented);
+    
+    JsonArray normalization_names = json_normalization_names();
+    JsonArray normalization_res1 ;
+    normalization_res1.add( json_normalization(norm_list, 1, nb_segmented) );
+    JsonArray normalization_res5;
+    normalization_res5.add( json_normalization(norm_list, 5, nb_segmented) );
+    
+    json->add("timestamp", time_buffer);
+    json->add("commandline", stream_cmdline.str());// TODO: escape "s in argv
+    json->add("germline", germline_system);
+    json->add("total_size", json_nb_segmented);
+    json->add("normalizations", normalization_names);
+    json->add("resolution1", normalization_res1);
+    json->add("resolution5", normalization_res5);
 
-    out_json_normalization_names(out_json);
-    out_json << "," << endl ;
-
-    out_json << "\"resolution1\" :[" ;
-    out_json_normalization(out_json, norm_list, 1, nb_segmented);
-    out_json << "]," << endl ;
-
-    out_json << "\"resolution5\" :[" ;
-    out_json_normalization(out_json, norm_list, 5, nb_segmented);
-    out_json << "]," << endl ;
-
-    out_json <<"\"windows\" : [";
+    JsonArray *windowsArray = new JsonArray(); 
+    
     for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
 	     it != sort_all_windows.end(); ++it) 
 	 {
-	  if (it != sort_all_windows.begin())
-	  {
-	    out_json <<",";
-	  }
+	   
+	 JsonList *windowsList = new JsonList(); 
+    
+    	 JsonArray normalization_ratios;
+	 normalization_ratios.add( json_normalization( norm_list, it->second, nb_segmented) );
+    
+         JsonArray json_size;
+	 json_size.add(it->second);
+
+	 windowsList->add("seg", json_data_segment[it->first]);
+	 windowsList->add("window", it->first);
+	 windowsList->add("size", json_size);
+	 windowsList->add("ratios", normalization_ratios);
+	 windowsList->add("top", top++);
 	 
-	 out_json <<" {\"window\":\""<<it->first<<"\"," <<endl;
-	 out_json <<" \"size\":["<< it->second<<"],"<<endl;
-
-	 out_json <<" \"ratios\": [";
-	 out_json_normalization(out_json, norm_list, it->second, nb_segmented);
-	 out_json << "]," << endl ;
-
-	 if (json_data_segment.count(it->first) !=0 ){
-	    out_json << json_data_segment[it->first]<<","<<endl;
-	 }
-	 out_json <<"\"top\":"<<top++<<endl;
-	  out_json <<"}";
+	 windowsArray->add(*windowsList);
 	}
-        out_json <<"] } ";
+    json->add("windows", *windowsArray);
+    out_json << json->toString();
     
     delete index ;
     delete windows;
