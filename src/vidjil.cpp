@@ -1385,10 +1385,8 @@ int main (int argc, char **argv)
     json_nb_segmented.add(nb_segmented);
     
     JsonArray normalization_names = json_normalization_names();
-    JsonArray normalization_res1 ;
-    normalization_res1.add( json_normalization(norm_list, 1, nb_segmented) );
-    JsonArray normalization_res5;
-    normalization_res5.add( json_normalization(norm_list, 5, nb_segmented) );
+    JsonArray normalization_res1 = json_normalization(norm_list, 1, nb_segmented);
+    JsonArray normalization_res5 = json_normalization(norm_list, 5, nb_segmented);
     
     json->add("timestamp", time_buffer);
     json->add("commandline", stream_cmdline.str());// TODO: escape "s in argv
@@ -1406,8 +1404,7 @@ int main (int argc, char **argv)
 	   
 	 JsonList *windowsList = new JsonList(); 
     
-    	 JsonArray normalization_ratios;
-	 normalization_ratios.add( json_normalization( norm_list, it->second, nb_segmented) );
+    	 JsonArray normalization_ratios = json_normalization( norm_list, it->second, nb_segmented);
     
          JsonArray json_size;
 	 json_size.add(it->second);
