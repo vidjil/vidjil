@@ -39,7 +39,7 @@ void JsonList::add(string n, float d){
   l.push_back(elem);
 }
 
-void JsonList::add(string n, JsonList d){
+void JsonList::add(string n, JsonList &d){
   JsonData elem;
   
   elem.name=n;
@@ -47,7 +47,7 @@ void JsonList::add(string n, JsonList d){
   l.push_back(elem);
 }
 
-void JsonList::add(string n, JsonArray d){
+void JsonList::add(string n, JsonArray &d){
   JsonData elem;
   
   elem.name=n;
@@ -72,7 +72,6 @@ string JsonList::toString(){
 
 
 
-
 JsonArray::JsonArray(){
 }
 
@@ -86,11 +85,11 @@ void JsonArray::add(float d){
   l.push_back(stream.str());
 }
 
-void JsonArray::add(JsonArray d){
+void JsonArray::add(JsonArray &d){
   l.push_back(d.toString());
 }
 
-void JsonArray::add(JsonList d){
+void JsonArray::add(JsonList &d){
   l.push_back(d.toString());
 }
 

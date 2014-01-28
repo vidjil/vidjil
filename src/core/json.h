@@ -24,8 +24,8 @@ class JsonArray
   JsonArray();
   void add(string d);
   void add(float d);
-  void add(JsonList d);
-  void add(JsonArray d);
+  void add(JsonList &d);
+  void add(JsonArray &d);
   string toString();
 };
 
@@ -37,8 +37,8 @@ class JsonList
   JsonList();
   void add(string n, string d);
   void add(string n, float d);
-  void add(string n, JsonList d);
-  void add(string n, JsonArray d);
+  void add(string n, JsonList &d);
+  void add(string n, JsonArray &d);
   string toString();
 };
 
