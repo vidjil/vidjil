@@ -42,7 +42,6 @@
 #include "core/msa.h"
 #include "core/compare-all.h"
 #include "core/teestream.h"
-#include "core/html.h"
 #include "core/mkdir.h"
 #include "core/labels.h"
 #include "core/representative.h"
@@ -77,7 +76,6 @@
 enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 
 #define OUT_DIR "./out/" 
-#define HTML_FILENAME "clones.html"
 #define CLONE_FILENAME "clone.fa-"
 #define WINDOWS_FILENAME "windows.fa"
 #define SEQUENCES_FILENAME "sequences.fa"
@@ -464,34 +462,6 @@ int main (int argc, char **argv)
 
   map <string, pair <string, float> > normalization = load_map_norm(normalization_file);
 
-  /// HTML output
-  string f_html = out_dir + prefix_filename + HTML_FILENAME ;
-  cout << "  ==> " << f_html << endl ;
-  ios_base::openmode mode = ios::out;
-
-  if (command == CMD_ANALYSIS) {
-    // TODO: put this in #define
-    string com = "cat src/html/header.html src/html/vdj.css > " ;
-    if (system((com + f_html).c_str()) == -1) {
-      perror("Creation of HTML file");
-      exit(3);
-    }
-    mode |= ios::app;
-  }
-
-  // Creating stream for HTML output
-  ofstream html(f_html.c_str(), mode);
-  if (command == CMD_ANALYSIS) {
-    html << "</style>" << endl ;
-    html << "</head>" << endl ;
-    
-    html << "<body>" << endl ;
-  }
-
-  html << "<a class='log' href=\"javascript:inverseAfficheID('log-start')\">[show log]</a> " << endl ;
-  html << "<pre class='log' id='log-start' style='display:none;'>" << endl ;
-
-  teestream out(cout, html);
 
   switch(command) {
   case CMD_WINDOWS: cout << "Extracting windows" << endl; 
@@ -502,11 +472,11 @@ int main (int argc, char **argv)
     break;
   }
 
-  out << "Command line: ";
+  cout << "Command line: ";
   for (int i=0; i < argc; i++) {
-    out << argv[i] << " ";
+    cout << argv[i] << " ";
   }
-  out << endl;
+  cout << endl;
 
   //////////////////////////////////
   // Display time and date
@@ -519,42 +489,42 @@ int main (int argc, char **argv)
 
   strftime (time_buffer, 80,"%F %T", timeinfo);
 
-  out << "# " << time_buffer << endl ;
+  cout << "# " << time_buffer << endl ;
 
 
   //////////////////////////////////
   // Display version information or git log
 
 #ifdef RELEASE_TAG
-  out << "# version: vidjil " << RELEASE_TAG << endl ;
+  cout << "# version: vidjil " << RELEASE_TAG << endl ;
 #else
-  out << "# git: " ;
-  out.flush();
+  cout << "# git: " ;
+  cout.flush();
   if (system("git log -1 --pretty=format:'%h (%ci)' --abbrev-commit") == -1) {
-    out << "<not in a git repository>";
+    cout << "<not in a git repository>";
   }
-  out << endl ;
+  cout << endl ;
 #endif
 
   //////////////////////////////////
   //$$ Read sequence files
 
-  out << "Read sequence files" << endl ;
+  cout << "Read sequence files" << endl ;
 
 
   if (!segment_D) // TODO: add other constructor to Fasta, and do not load rep_D in this case
     f_rep_D = "";
 
-  Fasta rep_V(f_rep_V, 2, "|", out);
-  Fasta rep_D(f_rep_D, 2, "|", out);
-  Fasta rep_J(f_rep_J, 2, "|", out);
+  Fasta rep_V(f_rep_V, 2, "|", cout);
+  Fasta rep_D(f_rep_D, 2, "|", cout);
+  Fasta rep_J(f_rep_J, 2, "|", cout);
   
   OnlineFasta *reads;
 
   try {
     reads = new OnlineFasta(f_reads, 1, " ");
   } catch (const std::ios_base::failure e) {
-    out << "Error while reading reads file " << f_reads << ": " << e.what()
+    cout << "Error while reading reads file " << f_reads << ": " << e.what()
         << endl;
     exit(1);
   }
@@ -567,17 +537,17 @@ int main (int argc, char **argv)
   if (command == CMD_ANALYSIS || command == CMD_WINDOWS) {
 
     //////////////////////////////////
-    out << "# seed = " << seed << endl ;
-    out << "    weight = " << seed_weight(seed) << endl ;
-    out << "    span = " << seed.size() << endl ;
-    out << "# k = " << k << endl ;
-    out << "# w = " << w << endl ;
-    out << "# delta = [" << delta_min << "," << delta_max << "]" << endl ;
+    cout << "# seed = " << seed << endl ;
+    cout << "    weight = " << seed_weight(seed) << endl ;
+    cout << "    span = " << seed.size() << endl ;
+    cout << "# k = " << k << endl ;
+    cout << "# w = " << w << endl ;
+    cout << "# delta = [" << delta_min << "," << delta_max << "]" << endl ;
 
 
     //////////////////////////////////
     //$$ Build Kmer indexes
-    out << "Build Kmer indexes" << endl ;
+    cout << "Build Kmer indexes" << endl ;
 
     bool rc = true ;
     
@@ -590,18 +560,18 @@ int main (int argc, char **argv)
     //$$ Kmer Segmentation
 
     string f_segmented = out_dir + prefix_filename + SEGMENTED_FILENAME ;
-    out << "  ==> " << f_segmented << endl ;
+    cout << "  ==> " << f_segmented << endl ;
     ofstream out_segmented(f_segmented.c_str()) ;
 
 #ifdef OUT_UNSEGMENTED
     string f_unsegmented = out_dir + prefix_filename + UNSEGMENTED_FILENAME ;
-    out << "  ==> " << f_unsegmented << endl ;
+    cout << "  ==> " << f_unsegmented << endl ;
     ofstream out_unsegmented(f_unsegmented.c_str()) ;
 #else
     ofstream out_unsegmented;
 #endif
 
-    out << "Loop through reads, looking for windows" ;
+    cout << "Loop through reads, looking for windows" ;
  
 
     MapKmerStore<Kmer> *windows = new MapKmerStore<Kmer>(w);
@@ -623,18 +593,18 @@ int main (int argc, char **argv)
         reads->next();
         nb_total_reads++;
         if (verbose)
-          out << endl << endl << reads->getSequence().label << endl;
+          cout << endl << endl << reads->getSequence().label << endl;
        
         KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max_kmer, 
 			  stats_segmented, stats_length,
 			  segment_cost, out_unsegmented);
         if (verbose)
-	  out << seg;
+	  cout << seg;
 	  
         if (!(ok++ % 10000))
           {
-            out << "." ;
-            out.flush();
+            cout << "." ;
+            cout.flush();
           }
 
         if (seg.isSegmented())
@@ -662,7 +632,7 @@ int main (int argc, char **argv)
           }
       }
 
-    out << endl;
+    cout << endl;
 
 
     //$$ Display statistics on segmentation causes
@@ -670,29 +640,29 @@ int main (int argc, char **argv)
 
     int nb_segmented_including_too_short = stats_segmented[TOTAL_SEG_AND_WINDOW] + stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] ;
 
-    out << "  ==> segmented " << nb_segmented_including_too_short << " reads"
+    cout << "  ==> segmented " << nb_segmented_including_too_short << " reads"
 	<< " (" << setprecision(3) << 100 * (float) nb_segmented_including_too_short / nb_total_reads << "%)" 
 	<< endl ;
 
     // nb_segmented is the main denominator for the following (but will be normalized)
     int nb_segmented = stats_segmented[TOTAL_SEG_AND_WINDOW] ;
 
-    out << "  ==> found " << windowsStorage.size() << " " << w << "-windows"
+    cout << "  ==> found " << windowsStorage.size() << " " << w << "-windows"
 	<< " in " << nb_segmented << " segments"
 	<< " (" << setprecision(3) << 100 * (float) nb_segmented / nb_total_reads << "%)"
 	<< " inside " << nb_total_reads << " sequences" << endl ;
   
-    out << "                                  #      av. length" << endl ;
+    cout << "                                  #      av. length" << endl ;
 
     for (int i=0; i<STATS_SIZE; i++)
       {
-	out << "   " << left << setw(20) << segmented_mesg[i] 
+	cout << "   " << left << setw(20) << segmented_mesg[i] 
 	    << " ->" << right << setw(9) << stats_segmented[i] ;
 
 	if (stats_length[i])
-	  out << "      " << setw(5) << fixed << setprecision(1) << (float) stats_length[i] / stats_segmented[i] ;
-
-	out << endl ;
+	  cout << "      " << setw(5) << fixed << setprecision(1) << (float) stats_length[i] / stats_segmented[i] ;
+	
+	cout << endl ;
       }
     
       map <junction, JsonList> json_data_segment ;
@@ -701,7 +671,7 @@ int main (int argc, char **argv)
 	//////////////////////////////////
 	//$$ Sort windows
 	
-	out << "Sort windows by number of occurrences" << endl;
+        cout << "Sort windows by number of occurrences" << endl;
         windowsStorage.sort();
 
 	//////////////////////////////////
@@ -709,7 +679,7 @@ int main (int argc, char **argv)
 	//////////////////////////////////
 
 	string f_all_windows = out_dir + prefix_filename + WINDOWS_FILENAME;
-	out << "  ==> " << f_all_windows << endl ;
+	cout << "  ==> " << f_all_windows << endl ;
 
 	ofstream out_all_windows(f_all_windows.c_str());
         windowsStorage.printSortedWindows(out_all_windows);
@@ -722,12 +692,12 @@ int main (int argc, char **argv)
 
     //////////////////////////////////
     //$$ min_reads_window (ou label)
-    out << "Considering only windows with >= " << min_reads_window << " reads and labeled windows" << endl;
+    cout << "Considering only windows with >= " << min_reads_window << " reads and labeled windows" << endl;
 
     pair<int, int> info_remove = windowsStorage.keepInterestingWindows((size_t) min_reads_window);
 	 
-    out << "  ==> keep " <<  windowsStorage.size() - info_remove.first << " windows in " << info_remove.second << " reads" ;
-    out << " (" << setprecision(3) << 100 * (float) info_remove.second / nb_total_reads << "%)  " << endl ;
+    cout << "  ==> keep " <<  windowsStorage.size() - info_remove.first << " windows in " << info_remove.second << " reads" ;
+    cout << " (" << setprecision(3) << 100 * (float) info_remove.second / nb_total_reads << "%)  " << endl ;
 
     //////////////////////////////////
     //$$ Clustering
@@ -737,7 +707,7 @@ int main (int argc, char **argv)
 
     if (epsilon || forced_edges.size())
       {
-	out << "Cluster similar windows" << endl ;
+	cout << "Cluster similar windows" << endl ;
 
 	if (load_comp==1) 
 	  {
@@ -745,7 +715,7 @@ int main (int argc, char **argv)
 	  }
 	else
 	  {
-	    comp.compare( out, cluster_cost);
+	    comp.compare( cout, cluster_cost);
 	  }
 	
 	if (save_comp==1)
@@ -753,21 +723,21 @@ int main (int argc, char **argv)
 	    comp.save(( out_dir+prefix_filename + comp_filename).c_str());
 	  }
        
-	clones_windows  = comp.cluster(forced_edges, w, out, epsilon, minPts) ;
-	comp.stat_cluster(clones_windows, out_dir + prefix_filename + GRAPH_FILENAME, out );
+	clones_windows  = comp.cluster(forced_edges, w, cout, epsilon, minPts) ;
+	comp.stat_cluster(clones_windows, out_dir + prefix_filename + GRAPH_FILENAME, cout );
 	comp.del();
       } 
     else
       {
-	out << "No clustering" << endl ;
+	cout << "No clustering" << endl ;
 	clones_windows  = comp.nocluster() ;
       }
 
-    out << "  ==> " << clones_windows.size() << " clones" << endl ;
+    cout << "  ==> " << clones_windows.size() << " clones" << endl ;
  
     //$$ Sort clones, number of occurrences
     //////////////////////////////////
-    out << "Sort clones by number of occurrences" << endl;
+    cout << "Sort clones by number of occurrences" << endl;
 
     list<pair<list <junction>, int> >sort_clones;
 
@@ -797,13 +767,13 @@ int main (int argc, char **argv)
           sort_clones.push_back(make_pair(clone, clone_nb_reads));
       }
 
-    out << "Sort" << endl ;
+    cout << "Sort" << endl ;
     // Sort clones
     sort_clones.sort(pair_occurrence_sort<list<junction> >);
 
     //////////////////////////////////
     //$$ Output clones
-    out << "Output clones with >= " << min_reads_clone << " reads" << endl ;
+    cout << "Output clones with >= " << min_reads_clone << " reads" << endl ;
 
     map <string, int> clones_codes ;
     map <string, string> clones_map_windows ;
@@ -816,12 +786,12 @@ int main (int argc, char **argv)
 
     ofstream out_edges((out_dir+prefix_filename + EDGES_FILENAME).c_str());
     int nb_edges = 0 ;
-    out << "  ==> suggested edges in " << out_dir+ prefix_filename + EDGES_FILENAME
+    cout << "  ==> suggested edges in " << out_dir+ prefix_filename + EDGES_FILENAME
         << endl ;
 
-    out << endl ;
+    cout << endl ;
 
-    cout << "## Output clones in " << out_dir + prefix_filename << endl ; 
+    cout << "## output clones in " << out_dir + prefix_filename << endl ; 
 
     for (list <pair<list <junction>,int> >::const_iterator it = sort_clones.begin();
          it != sort_clones.end(); ++it) {
@@ -848,18 +818,13 @@ int main (int argc, char **argv)
         out_sequences.open(sequences_file_name.c_str());
       }
       
-      html << "</pre>" << endl ;
+      cout << "Clone #" << right << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone ;
+      cout << " – " << setfill(' ') << setw(WIDTH_NB_READS) << clone_nb_reads << " reads" ;
+      cout << " – " << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%  "  ;
 
-      html << "<h3>" ;
-      html << "<a href=\"javascript:inverseAfficheID('detail-" << num_clone << "')\">[+]</a> " << endl ;
-
-      out << "Clone #" << right << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone ;
-      out << " – " << setfill(' ') << setw(WIDTH_NB_READS) << clone_nb_reads << " reads" ;
-      out << " – " << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%  "  ;
-
-      out << " – " << 100 * (float) clone_nb_reads * compute_normalization_one(norm_list, clone_nb_reads) / nb_segmented << "% " 
+      cout << " – " << 100 * (float) clone_nb_reads * compute_normalization_one(norm_list, clone_nb_reads) / nb_segmented << "% " 
 	  << compute_normalization_one(norm_list, clone_nb_reads) << " ";
-      out.flush();
+      cout.flush();
 
       //////////////////////////////////
 
@@ -885,15 +850,15 @@ int main (int argc, char **argv)
 
 	if ((!detailed_cluster_analysis) && (num_seq == 1))
 	  {
-	    out << "\t" << setw(WIDTH_NB_READS) << it->second << "\t";
-	    out << it->first ;
-	    out << "\t" << windows_labels[it->first] ;
+	    cout << "\t" << setw(WIDTH_NB_READS) << it->second << "\t";
+	    cout << it->first ;
+	    cout << "\t" << windows_labels[it->first] ;
 	  }
       }
 
       if (!detailed_cluster_analysis)
 	{
-	  out << endl ;
+	  cout << endl ;
 	  continue ;
 	}
 
@@ -1064,33 +1029,22 @@ int main (int argc, char **argv)
               string code = seg.code ;
               int cc = clones_codes[code];
 
-              html << " &ndash; " << code << endl ;
-
               if (cc)
                 {
-                  html << "<span class='alert'>" ;
-                  out << " (similar to Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc << setfill(' ') << ")";
+                  cout << " (similar to Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc << setfill(' ') << ")";
 
                   nb_edges++ ;
                   out_edges << clones_map_windows[code] + " " + it->first + " "  ;
                   out_edges << code << "  " ;
                   out_edges << "Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << cc        << setfill(' ') << "  " ;
                   out_edges << "Clone #" << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << setfill(' ') << "  " ;
-                  out_edges << endl ;
-
-                  html << "</span>" ;
-                }
+                  out_edges << endl ;                }
               else
                 {
                   clones_codes[code] = num_clone ;
                   clones_map_windows[code] = it->first ;
                 }
 
-              html << "</h3>" << endl ;
-              html << "<pre>" << endl ;
-      
-              // html (test)
-              seg.html(html, segment_D) ;
 
               // display window
               cout << endl 
@@ -1105,7 +1059,7 @@ int main (int argc, char **argv)
         }
       }
 
-      out << endl ;
+      cout << endl ;
       out_windows.close();
 
       if (!very_detailed_cluster_analysis)
@@ -1116,17 +1070,13 @@ int main (int argc, char **argv)
 
       //$$ Very detailed cluster analysis (with sequences)
 
-      html << "</pre>" << endl ;
-      html << "<div  id='detail-" << num_clone << "' style='display:none;'>"
-           << "<pre class='log'> "<< endl  ;
-
       list<string> msa;
       bool good_msa = false ;
 
       // TODO: do something if no sequences have been segmented !
       if (!more_windows)
 	{
-	  out << "!! No segmented sequence, deleting clone" << endl ;
+	  cout << "!! No segmented sequence, deleting clone" << endl ;
 	  // continue ;
 	} else 
         {
@@ -1138,12 +1088,12 @@ int main (int argc, char **argv)
             {
               if (msa.size() == sort_windows.size() + more_windows)
                 {
-                  // out << "clustalw parse: success" << endl ;
+                  // cout << "clustalw parse: success" << endl ;
                   good_msa = true ;
                 }
               else
                 {
-                  out << "! clustalw parse: failed" << endl ;
+                  cout << "! clustalw parse: failed" << endl ;
                 }
             }
         }
@@ -1229,52 +1179,12 @@ int main (int argc, char **argv)
 
           if (num_seq <= 20) /////
             {
-              out << setw(20) << representative.label << " " ;
-
+              cout << setw(20) << representative.label << " " ;
               cout << "   " << junc ;
-
-              // HTML pretty printing
-              string junc_html ;
-
-              if (seg.isSegmented())
-                {
-                  // We need to find the window in the representative
-		
-                  size_t window_pos = seg.getSequence().sequence.find(it->first);
-	    
-                  junc_html = spanify_alignment_pos("seg_V", seg.getLeft() - window_pos,
-                                                    "seg_n", seg.getLeftD() - window_pos,
-                                                    "seg_D", seg.getRightD() - window_pos,
-                                                    "seg_N",seg.getRight() - window_pos,
-                                                    "seg_J",
-                                                    junc);
-
-                  if (!code_representative.size())
-                    code_representative = seg.code_light ;
-		
-                  if (code_representative.compare(seg.code_light) != 0)
-                    warning = true ;
-                }
-              else
-                {
-                  junc_html = junc ; 
-                }
-
-              html << "   " << junc_html ;
-              // end HTML
-
-              out << " " << setw(WIDTH_NB_READS) << it->second << " " ;
-
-              if (warning)
-                html << "<span class='warning'>" ;
-
-              out << (warning ? "Â§ " : "  ") ;
-              out << seg.info ;
-
-              if (warning)
-                html << "</span>" ;
-
-              out << endl ;
+              cout << " " << setw(WIDTH_NB_READS) << it->second << " " ;
+              cout << (warning ? "Â§ " : "  ") ;
+              cout << seg.info ;
+              cout << endl ;
             }
         }
       }
@@ -1283,38 +1193,31 @@ int main (int argc, char **argv)
       if (good_msa)
 	{
 	  cout << setw(20) << best_V << "    " << msa.back() << endl ;
-	  html << setw(20) << best_V << "    " << spanify_alignment("seg_V", msa.back()) << endl ;
 	  msa.pop_back();
 
 	  if (segment_D)
 	    {
 	      cout << setw(20) << best_D << "    " << msa.back() << endl ;
-	      html << setw(20) << best_D << "    " << spanify_alignment("seg_D", msa.back()) << endl ;
 	      msa.pop_back();
 	    }
 
 	  cout << setw(20) << best_J << "    " << msa.back() << endl ;
-	  html << setw(20) << best_J << "    " << spanify_alignment("seg_J", msa.back()) << endl ;
 	  msa.pop_back();
 	}
  
       out_clone.close();
-      out << endl;
+      cout << endl;
       
       //$$ Compare representatives of this clone
-      out << "Comparing representatives of this clone 2 by 2" << endl ;
+      cout << "Comparing representatives of this clone 2 by 2" << endl ;
       // compare_all(representatives_this_clone);
       SimilarityMatrix matrix = compare_all(representatives_this_clone, true);
       cout << RawOutputSimilarityMatrix(matrix, 90);
-      html << "</pre>" << endl ;      
-      html << HTMLOutputSimilarityMatrix(matrix, 90);
-      html << "</div>" << endl;
-
     }
 
     out_edges.close() ;
 
-    out << endl;
+    cout << endl;
     cout << "#### end of clones" << endl; 
 
   
@@ -1322,14 +1225,12 @@ int main (int argc, char **argv)
 
     if (detailed_cluster_analysis)
       {
-    html << "<h3>Comparison between clones</h3>" ;
 
     if (nb_edges)
       {
-        out << "Please review the " << nb_edges << " suggested edge(s) in " << out_dir+EDGES_FILENAME << endl ;
+        cout << "Please review the " << nb_edges << " suggested edge(s) in " << out_dir+EDGES_FILENAME << endl ;
       }
 
-    html << "<pre>" << endl ;
     cout << "Comparing clone representatives 2 by 2" << endl ;
     list<Sequence> first_representatives = keep_n_first<Sequence>(representatives,
                                                                   LIMIT_DISPLAY);
@@ -1337,21 +1238,15 @@ int main (int argc, char **argv)
                                           representatives_labels);
     cout << RawOutputSimilarityMatrix(matrix, 90);
 
-    html << "</pre>";
-    html << HTMLOutputSimilarityMatrix(matrix, 90);
      }
 
 
     delete scorer;
-
-
-    html << "</body></html>" << endl ;
-    html.close();
     }
     
     //$$ .json output: json_data_segment
     string f_json = out_dir + prefix_filename + "data.json" ;
-    out << "  ==> " << f_json << endl ;
+    cout << "  ==> " << f_json << endl ;
     ofstream out_json(f_json.c_str()) ;
     
     JsonList *json;
@@ -1391,7 +1286,6 @@ int main (int argc, char **argv)
     ////////////////////////////////////////
     //       V(D)J SEGMENTATION           //
     ////////////////////////////////////////
-    html << "</pre>";
 
     // déja déclaré ?
     //reads = OnlineFasta(f_reads, 1, " ");
@@ -1403,24 +1297,13 @@ int main (int argc, char **argv)
 	if (s.isSegmented()) {
 	  if (segment_D)
 	  s.FineSegmentD(rep_V, rep_D, rep_J);
-          html << "<h3>" << s.code << "</h3>";
-          html << "<pre>";
-          s.html(html, segment_D);
-          html << "</pre>";
           cout << s << endl;
         } else {
-          html << "<h3>";
-          out << "Unable to segment" << endl;
-          html << "</h3>";
-          html << "<pre>";
-          out << reads->getSequence();
-          html << "</pre>";
-          out << endl << endl;
+          cout << "Unable to segment" << endl;
+          cout << reads->getSequence();
+          cout << endl << endl;
         }
-    } 
-    // html << "</body></html>" << endl ;
-    html.close();
-
+    }     
     
   } else {
     cerr << "Ooops... unknown command. I don't know what to do apart from exiting!" << endl;
