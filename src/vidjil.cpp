@@ -47,6 +47,7 @@
 #include "core/labels.h"
 #include "core/representative.h"
 #include "core/list_utils.h"
+#include "core/windows.h"
 
 #include "vidjil.h"
 
@@ -604,7 +605,7 @@ int main (int argc, char **argv)
  
 
     MapKmerStore<Kmer> *windows = new MapKmerStore<Kmer>(w);
-    map <junction, list<Sequence> > seqs_by_window ;
+    WindowsStorage windowsStorage(windows_labels);
 
     int ok = 0 ;
     size_t nb_total_reads = 0;
@@ -645,7 +646,7 @@ int main (int argc, char **argv)
 		stats_segmented[TOTAL_SEG_AND_WINDOW]++ ;
 		stats_length[TOTAL_SEG_AND_WINDOW] += seg.getSequence().sequence.length() ;
                 windows->insert(junc, "bloup");
-                seqs_by_window[junc].push_back(reads->getSequence());
+                windowsStorage.add(junc, reads->getSequence());
               }
 	    else
 	      {
@@ -676,7 +677,7 @@ int main (int argc, char **argv)
     // nb_segmented is the main denominator for the following (but will be normalized)
     int nb_segmented = stats_segmented[TOTAL_SEG_AND_WINDOW] ;
 
-    out << "  ==> found " << seqs_by_window.size() << " " << w << "-windows"
+    out << "  ==> found " << windowsStorage.size() << " " << w << "-windows"
 	<< " in " << nb_segmented << " segments"
 	<< " (" << setprecision(3) << 100 * (float) nb_segmented / nb_total_reads << "%)"
 	<< " inside " << nb_total_reads << " sequences" << endl ;
@@ -695,21 +696,13 @@ int main (int argc, char **argv)
       }
     
       map <junction, JsonList> json_data_segment ;
-      list<pair <junction, int> > sort_all_windows;
     
 
 	//////////////////////////////////
 	//$$ Sort windows
 	
 	out << "Sort windows by number of occurrences" << endl;
-	
-	for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin(); 
-	     it != seqs_by_window.end(); ++it) 
-	  {
-	    sort_all_windows.push_back(make_pair(it->first, it->second.size()));
-	  }
-
-	sort_all_windows.sort(pair_occurrence_sort<junction>);
+        windowsStorage.sort();
 
 	//////////////////////////////////
 	//$$ Output windows
@@ -719,20 +712,10 @@ int main (int argc, char **argv)
 	out << "  ==> " << f_all_windows << endl ;
 
 	ofstream out_all_windows(f_all_windows.c_str());
-	int num_seq = 0 ;
-
-	for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
-	     it != sort_all_windows.end(); ++it) 
-	  {
-	    num_seq++ ;
-	    
-	    out_all_windows << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
-	    out_all_windows << it->first << endl;
-	  }
-	
+        windowsStorage.printSortedWindows(out_all_windows);
 
 	//$$ Normalization
-	list< pair <float, int> > norm_list = compute_normalization_list(seqs_by_window, normalization, nb_segmented);
+	list< pair <float, int> > norm_list = compute_normalization_list(windowsStorage.getMap(), normalization, nb_segmented);
 
 
     if (command == CMD_ANALYSIS) {
@@ -741,25 +724,10 @@ int main (int argc, char **argv)
     //$$ min_reads_window (ou label)
     out << "Considering only windows with >= " << min_reads_window << " reads and labeled windows" << endl;
 
-    int removes = 0 ;
-    int nb_reads = 0 ;
-
-    for (map <junction, list<Sequence> >::iterator it = seqs_by_window.begin(); it != seqs_by_window.end(); ++it)
-      {
-        junction junc = it->first;
-      
-        if (!(seqs_by_window[junc].size() >= (size_t) min_reads_window) && !(windows_labels.find(junc) == windows_labels.end()))
-
-          {
-            removes++ ;
-            windows->store.erase(junc);
-          }
-        else
-          nb_reads += seqs_by_window[junc].size() ;
-      }
+    pair<int, int> info_remove = windowsStorage.keepInterestingWindows((size_t) min_reads_window);
 	 
-    out << "  ==> keep " <<  seqs_by_window.size() - removes << " windows in " << nb_reads << " reads" ;
-    out << " (" << setprecision(3) << 100 * (float) nb_reads / nb_total_reads << "%)  " << endl ;
+    out << "  ==> keep " <<  windowsStorage.size() - info_remove.first << " windows in " << info_remove.second << " reads" ;
+    out << " (" << setprecision(3) << 100 * (float) info_remove.second / nb_total_reads << "%)  " << endl ;
 
     //////////////////////////////////
     //$$ Clustering
@@ -810,7 +778,7 @@ int main (int argc, char **argv)
 	int clone_nb_reads=0;
 	
         for (list <junction>::const_iterator it2 = clone.begin(); it2 != clone.end(); ++it2)
-	  clone_nb_reads += seqs_by_window[*it2].size();
+	  clone_nb_reads += windowsStorage.getNbReads(*it2);
 	  
 	bool labeled = false ;
 	// Is there a labeled window ?
@@ -899,7 +867,7 @@ int main (int argc, char **argv)
       list<pair<junction, int> >sort_windows;
 
       for (list <junction>::const_iterator it = clone.begin(); it != clone.end(); ++it) {
-	int nb_reads = seqs_by_window[*it].size();
+	int nb_reads = windowsStorage.getNbReads(*it);
         sort_windows.push_back(make_pair(*it, nb_reads));
       }
       sort_windows.sort(pair_occurrence_sort<junction>);
@@ -954,7 +922,7 @@ int main (int argc, char **argv)
 	  for (int i=0; i<HISTOGRAM_SIZE_AUDITIONED; i++)
 	    length_distribution[i] = 0 ;
 
-	  list<Sequence> seqs = seqs_by_window[it->first];
+¤	  list<Sequence> seqs = windowsStorage.getReads(it->first);
 	  for (list<Sequence>::const_iterator it = seqs.begin(); it != seqs.end(); ++it) 
 	    {
 	      int length = (*it).sequence.size();
@@ -1211,7 +1179,7 @@ int main (int argc, char **argv)
 	    out_sequences << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
 	    out_sequences << it->first << endl;
 
-	    list<Sequence> sequences = seqs_by_window[it->first] ;
+	    list<Sequence> sequences = windowsStorage.getReads(it->first);
 	    
 	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
 	      {
@@ -1221,12 +1189,12 @@ int main (int argc, char **argv)
 
 	list <Sequence> auditioned_sequences;
 
-	if (seqs_by_window[it->first].size()<max_auditionned){
-	  auditioned_sequences=seqs_by_window[it->first];
+	if (windowsStorage.getNbReads(it->first)<max_auditionned){
+	  auditioned_sequences=windowsStorage.getReads(it->first);
 	}else{
 
 	  list <Sequence>::const_iterator it2;
-	  it2=seqs_by_window[it->first].begin();
+	  it2=windowsStorage.getReads(it->first).begin();
 	  
 	  for (int i=0 ; i<(int) max_auditionned; i++){
 	    auditioned_sequences.push_back(*it2);
@@ -1383,7 +1351,6 @@ int main (int argc, char **argv)
     
     //$$ .json output: json_data_segment
     string f_json = out_dir + prefix_filename + "data.json" ;
-    int top = 1;
     out << "  ==> " << f_json << endl ;
     ofstream out_json(f_json.c_str()) ;
     
@@ -1410,34 +1377,14 @@ int main (int argc, char **argv)
     json->add("resolution1", normalization_res1);
     json->add("resolution5", normalization_res5);
 
-    JsonArray *windowsArray = new JsonArray(); 
-    
-    for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
-	     it != sort_all_windows.end(); ++it) 
-	 {
-	   
-	 JsonList *windowsList = new JsonList(); 
-    
-    	 JsonArray normalization_ratios = json_normalization( norm_list, it->second, nb_segmented);
-    
-         JsonArray json_size;
-	 json_size.add(it->second);
-
-	 windowsList->add("seg", json_data_segment[it->first]);
-	 windowsList->add("window", it->first);
-	 windowsList->add("size", json_size);
-	 windowsList->add("ratios", normalization_ratios);
-	 windowsList->add("top", top++);
-	 
-	 windowsArray->add(*windowsList);
-         delete windowsList;
-	}
-    json->add("windows", *windowsArray);
+    JsonArray jsonSortedWindows(windowsStorage.sortedWindowsToJsonArray(json_data_segment,
+                                                                        norm_list,
+                                                                        nb_segmented));
+    json->add("windows", jsonSortedWindows);
     out_json << json->toString();
     
     delete index ;
     delete windows;
-    delete windowsArray;
     delete json;
   } else if (command == CMD_SEGMENT) {
     //$$ CMD_SEGMENT
