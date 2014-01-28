@@ -696,7 +696,7 @@ int main (int argc, char **argv)
 
     pair<int, int> info_remove = windowsStorage.keepInterestingWindows((size_t) min_reads_window);
 	 
-    cout << "  ==> keep " <<  windowsStorage.size() - info_remove.first << " windows in " << info_remove.second << " reads" ;
+    cout << "  ==> keep " <<  windowsStorage.size() << " windows in " << info_remove.second << " reads" ;
     cout << " (" << setprecision(3) << 100 * (float) info_remove.second / nb_total_reads << "%)  " << endl ;
 
     //////////////////////////////////
