@@ -90,9 +90,8 @@ JsonArray WindowsStorage::sortedWindowsToJsonArray(map <junction, JsonList> json
 	   
       JsonList windowsList;
     
-      JsonArray normalization_ratios;
-      normalization_ratios.add( json_normalization(norm_list, it->second, 
-                                                   nb_segmented) );
+      JsonArray normalization_ratios = json_normalization(norm_list, it->second, 
+                                                          nb_segmented);
     
       JsonArray json_size;
       json_size.add(it->second);
