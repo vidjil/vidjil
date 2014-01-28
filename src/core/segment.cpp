@@ -452,7 +452,12 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool l
 	}
 	
 	score_r.push_back(make_pair(score, r));
-      // cout << extract_from_label(rep.label(r), "|") << " " << score << " " << dp.best_i << endl ;
+
+	// #define DEBUG_SEGMENT      
+
+#ifdef DEBUG_SEGMENT	
+	cout << rep.label(r) << " " << score << " " << dp.best_i << endl ;
+#endif
 
     }
     sort(score_r.begin(),score_r.end(),comp_pair);
@@ -465,6 +470,12 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool l
   *length -= *del ;
   
   *score=score_r;
+
+#ifdef DEBUG_SEGMENT	
+  cout << "best: " << best_label << " " << best_score ;
+  cout << "del/del2/begin:" << (*del) << "/" << (*del2) << "/" << (*begin) << endl;
+  cout << endl;
+#endif
   
   return best_best_i ;
 }
