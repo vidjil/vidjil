@@ -44,9 +44,11 @@ void testSegment()
   TAP_TEST(s.getRightD() == s2.getRightD(), TEST_SEGMENT_REVCOMP, " right D segmentation position");
   TAP_TEST(s.isReverse() == !s2.isReverse(), TEST_SEGMENT_REVCOMP, " sequence reversed");
   TAP_TEST(s.info.substr(1) == s2.info.substr(1), TEST_SEGMENT_REVCOMP, " info string " << endl <<
-           "s = " << s.info <<", s2 = " << s2.info);
+           "s  = " << s.info << endl <<
+	   "s2 = " << s2.info);
   TAP_TEST(s.info.substr(0,1) != s2.info.substr(0,1), TEST_SEGMENT_REVCOMP, "first character (strand) of info string " << endl <<
-           "s = " << s.info <<", s2 = " << s2.info);
+           "s  = " << s.info << endl <<
+	   "s2 = " << s2.info);
 
   TAP_TEST(s.code == s2.code, TEST_SEGMENT_REVCOMP, " code string");
 
