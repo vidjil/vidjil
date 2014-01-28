@@ -33,7 +33,7 @@ pair <int, int> WindowsStorage::keepInterestingWindows(size_t min_reads_window) 
   int nb_reads = 0 ;
 
   for (map <junction, list<Sequence> >::iterator it = seqs_by_window.begin(); 
-       it != seqs_by_window.end(); ++it)
+       it != seqs_by_window.end(); ) // We do not advance the iterator here because of the deletion
     {
       junction junc = it->first;
       
@@ -42,11 +42,15 @@ pair <int, int> WindowsStorage::keepInterestingWindows(size_t min_reads_window) 
           // Is it a labelled junction?
           && !(windows_labels.find(junc) == windows_labels.end()))
         {
-          seqs_by_window.erase(junc);
+          map <junction, list<Sequence> >::iterator toBeDeleted = it;
+          it++;
+          seqs_by_window.erase(toBeDeleted);
           removes++ ;
         }
-      else
+      else {
         nb_reads += seqs_by_window[junc].size();
+        it++;
+      }
     }
   return make_pair(removes, nb_reads);
 }
