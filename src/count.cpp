@@ -14,7 +14,6 @@
 #include "core/fasta.h"
 #include "core/dynprog.h"
 #include "core/teestream.h"
-#include "core/html.h"
 #include "core/mkdir.h"
 
 #define WIDTH 7

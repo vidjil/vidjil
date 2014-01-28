@@ -8,7 +8,6 @@
 #include "core/msa.h"
 #include "core/compare-all.h"
 #include "core/teestream.h"
-#include "core/html.h"
 #include "core/mkdir.h"
 #include "core/labels.h"
 #include <iostream>

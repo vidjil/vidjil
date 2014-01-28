@@ -11,7 +11,6 @@
 #include "core/fasta.h"
 #include "core/dynprog.h"
 #include "core/teestream.h"
-#include "core/html.h"
 #include "core/cut-pcr.h"
 
 #define DEFAULT_READS  "../../../seq/chr_pgm_100seq.fa"
