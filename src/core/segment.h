@@ -59,8 +59,6 @@ protected:
 
 
 
-  bool html(ostream &out, int flag_D);
-
   Sequence getSequence() const ;
 
   /**

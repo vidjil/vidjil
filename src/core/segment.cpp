@@ -137,30 +137,6 @@ bool Segmenter::finishSegmentationD()
   return true ;
 }
 
-bool Segmenter::html(ostream &out,int flag_D)
-{ 
-  assert(isSegmented());
-  
-  out << ">" << label ;
-  out << " " << info ;
-  out << endl ;
-
-  out << "<span class='seg_V'>" << seg_V << "</span>" ;
-  if(flag_D==1){
-    out << "<span class='seg_N'>" << seg_N1 << "</span>" ;
-    out << "<span class='seg_D'>" << seg_D << "</span>" ;
-    out << "<span class='seg_N'>" << seg_N2 << "</span>" ;
-  }else{
-    out << "<span class='seg_N'>" << seg_N << "</span>" ;
-  }
-  out << "<span class='seg_J'>" << seg_J << "</span>" ;
-
-  out << endl ;
-
-  return true ;
-} 
-
-
 ostream &operator<<(ostream &out, const Segmenter &s)
 {
   out << ">" << s.label << " " ;

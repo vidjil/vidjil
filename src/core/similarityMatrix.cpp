@@ -106,8 +106,6 @@ int OutputSimilarityMatrix::maxDisplayed() const {
 
 RawOutputSimilarityMatrix::RawOutputSimilarityMatrix(SimilarityMatrix &m, float sim, int max_display) : OutputSimilarityMatrix(m, sim, max_display) {}
 
-HTMLOutputSimilarityMatrix::HTMLOutputSimilarityMatrix(SimilarityMatrix &m, float sim, int max_display) : OutputSimilarityMatrix(m, sim, max_display) {}
-
 
 
 ostream &operator<<(ostream &out, const RawOutputSimilarityMatrix &outputMatrix) {
@@ -158,53 +156,3 @@ ostream &operator<<(ostream &out, const RawOutputSimilarityMatrix &outputMatrix)
   return out;
 }
 
-ostream &operator<<(ostream &out, const HTMLOutputSimilarityMatrix &outputMatrix) {
-  SimilarityMatrix &matrix = outputMatrix.matrix;
-  out << "<table class='similarityMatrix'>"
-      << "<thead><tr>" ;
-
-  out << "<th />";
-  for (int num = 0; num <  matrix.size(); num++) 
-    if (num <= outputMatrix.maxDisplayed())
-      out << "<th>" << matrix.label(num) << "</th>" ;
-
-  out << "</tr></thead>" << endl ;
-  out << "<tbody>";
-
-  for (int num = 0; num <  matrix.size(); num++) {
-    if (num <= outputMatrix.maxDisplayed())
-      out << "<tr><td class='index'>" << matrix.label(num) << "</td>" ;
-    
-
-    for (int num_num = 0; num_num < matrix.size(); num_num++ )
-      {
-        
-        if (num_num < num)
-          {
-            if ((num <= outputMatrix.maxDisplayed()) && (num_num <= outputMatrix.maxDisplayed()))
-              out << "<td />" ;
-            continue ;
-          }
-        
-        if (num_num <= outputMatrix.maxDisplayed())
-          {
-            bool highSim = (matrix(num, num_num) >= outputMatrix.similarity()) 
-                            && (num_num > num);
-            out << "<td" << (highSim ? " class='highSimilarity' " : "" ) << ">"
-                << (int)matrix(num, num_num) << "</td>";
-          }
-      }
-
-    if (num <= outputMatrix.maxDisplayed())
-      {
-        out << "  <td class='label'>" << matrix.description(num) << "</td>" ;
-        out << "</tr>" << endl ;	  
-      }
-  }
-
-  out << "</tbody>";
-  out << "</table>" << endl << endl;
-
-
-  return out;
-}
