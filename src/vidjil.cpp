@@ -1257,6 +1257,9 @@ int main (int argc, char **argv)
     ostringstream stream_cmdline;
     for (int i=0; i < argc; i++) stream_cmdline << argv[i] << " ";
     
+    JsonArray json_nb_reads;
+    json_nb_reads.add(nb_total_reads);
+
     JsonArray json_nb_segmented;
     json_nb_segmented.add(nb_segmented);
     
@@ -1267,7 +1270,8 @@ int main (int argc, char **argv)
     json->add("timestamp", time_buffer);
     json->add("commandline", stream_cmdline.str());// TODO: escape "s in argv
     json->add("germline", germline_system);
-    json->add("total_size", json_nb_segmented);
+    json->add("reads_total", json_nb_reads);
+    json->add("total_size", json_nb_segmented); // should this be called "reads_segmented" ?
     json->add("normalizations", normalization_names);
     json->add("resolution1", normalization_res1);
     json->add("resolution5", normalization_res5);
