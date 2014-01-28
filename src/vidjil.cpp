@@ -1416,13 +1416,15 @@ int main (int argc, char **argv)
 	 windowsList->add("top", top++);
 	 
 	 windowsArray->add(*windowsList);
+         delete windowsList;
 	}
     json->add("windows", *windowsArray);
     out_json << json->toString();
     
     delete index ;
     delete windows;
-    
+    delete windowsArray;
+    delete json;
   } else if (command == CMD_SEGMENT) {
     ////////////////////////////////////////
     //       V(D)J SEGMENTATION           //
