@@ -1272,9 +1272,9 @@ int main (int argc, char **argv)
     json->add("resolution1", normalization_res1);
     json->add("resolution5", normalization_res5);
 
-    JsonArray jsonSortedWindows(windowsStorage.sortedWindowsToJsonArray(json_data_segment,
-                                                                        norm_list,
-                                                                        nb_segmented));
+    JsonArray jsonSortedWindows = windowsStorage.sortedWindowsToJsonArray(json_data_segment,
+                                                                          norm_list,
+                                                                          nb_segmented);
     json->add("windows", jsonSortedWindows);
     out_json << json->toString();
     
