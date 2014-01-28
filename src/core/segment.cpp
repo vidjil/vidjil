@@ -408,7 +408,7 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
   return ( i.first > j.first);
 }
 
-int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool local, string *tag, 
+int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool local, int *tag, 
 			     int *del, int *del2, int *begin, int *length, vector<pair<int, int> > *score
 			    , Cost segment_cost)
 {
@@ -433,9 +433,6 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool l
 			   reverse_both, reverse_both);
       int score = dp.compute();
       
-      if (score == best_score)
-	best_label += "/" + rep.label(r) ;
-	
       if (local==true){ 
 	dp.backtrack();
       }
@@ -465,14 +462,14 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool l
   *del = reverse_both ? best_best_j : rep.sequence(best_r).size() - best_best_j - 1;
   *del2 = best_first_j;
   *begin = best_first_i;
-  *tag = best_label ; 
+  *tag = best_r ; 
   
   *length -= *del ;
   
   *score=score_r;
 
 #ifdef DEBUG_SEGMENT	
-  cout << "best: " << best_label << " " << best_score ;
+  cout << "best: " << best_labels << " " << best_score ;
   cout << "del/del2/begin:" << (*del) << "/" << (*del2) << "/" << (*begin) << endl;
   cout << endl;
 #endif
@@ -500,7 +497,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
   // Strand +
   
   int plus_score = 0 ;
-  string tag_V, tag_J;
+  int tag_plus_V, tag_plus_J;
   int plus_length = 0 ;
   int del_plus_V, del_plus_J ;
   int del2=0;
@@ -509,10 +506,10 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
   vector<pair<int, int> > score_plus_V;
   vector<pair<int, int> > score_plus_J;
   
-  int plus_left = align_against_collection(sequence, rep_V, false, false, &tag_V, &del_plus_V, &del2, &beg, 
+  int plus_left = align_against_collection(sequence, rep_V, false, false, &tag_plus_V, &del_plus_V, &del2, &beg, 
 					   &plus_length, &score_plus_V
 					   , segment_cost);
-  int plus_right = align_against_collection(sequence, rep_J, true, false, &tag_J, &del_plus_J, &del2, &beg,
+  int plus_right = align_against_collection(sequence, rep_J, true, false, &tag_plus_J, &del_plus_J, &del2, &beg,
 					    &plus_length, &score_plus_J
 					    , segment_cost);
   plus_length += plus_right - plus_left ;
@@ -522,16 +519,17 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
   // Strand -
   string rc = revcomp(sequence) ;
   int minus_score = 0 ;
+  int tag_minus_V, tag_minus_J;
   int minus_length = 0 ;
   int del_minus_V, del_minus_J ;
   
   vector<pair<int, int> > score_minus_V;
   vector<pair<int, int> > score_minus_J;
   
-  int minus_left = align_against_collection(rc, rep_V, false, false, &tag_V, &del_minus_V, &del2, &beg,
+  int minus_left = align_against_collection(rc, rep_V, false, false, &tag_minus_V, &del_minus_V, &del2, &beg,
 					    &minus_length, &score_minus_V
 					    ,  segment_cost);
-  int minus_right = align_against_collection(rc, rep_J, true, false, &tag_J, &del_minus_J, &del2, &beg,
+  int minus_right = align_against_collection(rc, rep_J, true, false, &tag_minus_J, &del_minus_J, &del2, &beg,
 					     &minus_length, &score_minus_J
 					     , segment_cost);
   minus_length += minus_right - minus_left ;
@@ -544,8 +542,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
     {
       left = plus_left ;
       right = plus_right ;
-      best_V = score_plus_V[0].second;
-      best_J = score_plus_J[0].second ;
+      best_V = tag_plus_V ;
+      best_J = tag_plus_J ;
       del_V = del_plus_V ;
       del_J = del_plus_J ;
       score_V=score_plus_V;
@@ -555,8 +553,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
     {
       left = minus_left ;
       right = minus_right ;
-      best_V = score_minus_V[0].second;
-      best_J = score_minus_J[0].second ;
+      best_V = tag_minus_V ;
+      best_J = tag_minus_J ;
       del_V = del_minus_V ;
       del_J = del_minus_J ;
       score_V=score_minus_V;
@@ -631,7 +629,7 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
   if (segmented){
     
     int end = (int) string::npos ;
-    string tag_D;
+    int tag_D;
     int length = 0 ;
     int begin = 0;
     int score;
@@ -653,7 +651,7 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
 				&length, &score_D, segment_cost);
     
     score=score_D[0].first;
-    best_D=score_D[0].second;
+    best_D = tag_D;
     
     left2 = l + begin;
     right2 = l + end;
