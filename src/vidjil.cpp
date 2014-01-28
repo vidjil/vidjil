@@ -922,7 +922,7 @@ int main (int argc, char **argv)
 	  for (int i=0; i<HISTOGRAM_SIZE_AUDITIONED; i++)
 	    length_distribution[i] = 0 ;
 
-¤	  list<Sequence> seqs = windowsStorage.getReads(it->first);
+	  list<Sequence> seqs = windowsStorage.getReads(it->first);
 	  for (list<Sequence>::const_iterator it = seqs.begin(); it != seqs.end(); ++it) 
 	    {
 	      int length = (*it).sequence.size();
