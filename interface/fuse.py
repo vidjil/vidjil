@@ -4,7 +4,7 @@ import sys
 import time
  
  
-class Windows:
+class ListWindows:
   def __init__(self):
     self.reads_total = []
     self.total_size = []
@@ -44,8 +44,9 @@ jlist1 = []
 jlist2 = []
  
 #serialiseur perso, convertit un objet python en json
+### TODO: mettre cela en methode ListWindows.save_json()
 def juncToJson(obj):
-  if isinstance(obj, Windows):
+  if isinstance(obj, ListWindows):
     return {"windows": obj.windows,
       "normalizations": obj.normalizations,
       "reads_total": obj.reads_total,
@@ -85,9 +86,10 @@ def juncToJson(obj):
     raise TypeError(repr(obj) + " fail !") 
 
 #deserialiseur perso, convertit un format json en objet python correspondant
+### TODO: mettre cela en methode ListWindows.load_json()
 def jsonToJunc(obj_dict):
   if "reads_total" in obj_dict:
-    obj = Windows()
+    obj = ListWindows()
     obj.normalizations=obj_dict["normalizations"]
     obj.windows=obj_dict["windows"]
     obj.reads_total=obj_dict["reads_total"]
@@ -127,7 +129,7 @@ def jsonToJunc(obj_dict):
     
 def cutList(l1, limit):
   
-  out = Windows()
+  out = ListWindows()
   out.normalizations=l1.normalizations
   out.reads_total=l1.reads_total
   out.total_size=l1.total_size
@@ -146,6 +148,8 @@ def cutList(l1, limit):
   return out
   
     
+
+### TODO, methode ListWindows.__add__(self, other) 
 def fuseList(l1, l2, limit): 
 
   if l1 is None:
@@ -213,7 +217,7 @@ def fuseList(l1, l2, limit):
       dico_size[l1.windows[index].window] += tampon2
       dico_ratios[l1.windows[index].window] += tampon2
   
-  out = Windows()
+  out = ListWindows()
   out.normalizations=l1.normalizations
   out.reads_total=l1.reads_total+l2.reads_total    
   out.total_size=l1.total_size+l2.total_size    
