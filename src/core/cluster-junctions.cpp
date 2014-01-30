@@ -24,21 +24,17 @@
     return lh.second>rh.second;
   }
 
-comp_matrix::comp_matrix(MapKmerStore<Kmer> *junc){
-  junctions=junc;
-}
+comp_matrix::comp_matrix(WindowsStorage &ws):windows(ws){}
 
 void comp_matrix::compare(ostream &out, Cost cluster_cost)
 {
   // DEBUG // out << "  DEBUT COMPARE JUNCTION" << endl ;
   //     clock_t start = clock();
    
-  typedef map<string,Kmer> msK ;
+  typedef map<junction,list<Sequence> > mjs ;
   
   Cost compareCost = cluster_cost;
   out << "  Using cost " << compareCost << endl ;
-  
-  map<string,Kmer> z = junctions->store;
   
   string j1, j2;
   size=z.size();
@@ -51,14 +47,14 @@ void comp_matrix::compare(ostream &out, Cost cluster_cost)
   int c1=0;
   int c2=0;
 
-  for (msK::const_iterator it0 = z.begin();
-       it0 != z.end(); ++it0 )
+  for (mjs::const_iterator it0 = windows.getMap().begin();
+       it0 != windows.getMap().end(); ++it0 )
     {
       
       j1=it0->first;
       
-      for (msK::const_iterator it1 =  it0;
-       it1 != z.end(); ++it1 )
+      for (mjs::const_iterator it1 =  it0;
+           it1 != windows.getMap().end(); ++it1 )
       {
 	j2=it1->first;
 	DynProg dp = DynProg(j1, j2, DynProg::Local, compareCost);
@@ -126,12 +122,10 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
   // out << "  eps: " << epsilon << " / minPts: " << minPts << endl ;
     
     
-  typedef map<string,Kmer> msK ;
+  typedef map<junction,list<Sequence> > mjs ;
   typedef list<string> li ;
 
   map <string, map <string, bool> > graph ;
-  
-  map<string,Kmer> z = junctions->store;
   
 ////////////////////////
 //indexation des voisins
@@ -143,8 +137,8 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
   int c1=0;
   int c2=0;
 
-    for (msK::const_iterator ite = z.begin();
-       ite != z.end(); ++ite )
+  for (mjs::const_iterator ite = windows.getMap().begin();
+       ite != windows.getMap().end(); ++ite )
     {
       n_j++;
       list <string> voisins ;
@@ -152,17 +146,17 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
       neighbor[j1]=voisins;
     }
   
-    for (msK::const_iterator it0 = z.begin();
-       it0 != z.end(); ++it0 )
+  for (mjs::const_iterator it0 = windows.getMap().begin();
+       it0 != windows.getMap().end(); ++it0 )
     {
       
       j1=it0->first;
-      int k=it0->second.count;
+      int k=it0->second.size();
       count[j1]=k;
       n_j2+=k;
       
-      for (msK::const_iterator it1 =  z.begin();
-       it1 != z.end(); ++it1 )
+      for (mjs::const_iterator it1 =  windows.getMap().begin();
+           it1 != windows.getMap().end(); ++it1 )
       {
 	j2=it1->first;
 	int distance = (int)m[c2][c1];
@@ -231,8 +225,8 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
    
    int noise = 0;
    int nb_comp = 0 ;
-    for (msK::const_iterator it0 = z.begin();
-    it0 != z.end(); ++it0 )	 
+   for (mjs::const_iterator it0 = windows.getMap().begin();
+        it0 != windows.getMap().end(); ++it0 )	 
     {
       j1=it0->first;
       if(visit[j1]==false && clust[j1]==false){
@@ -327,11 +321,9 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
 list<list<junction> >  comp_matrix::nocluster()
 {
   list <list < string > > cluster ;
-  typedef map<string,Kmer> msK ;
-  map<string,Kmer> z = junctions->store;
   
-    for (msK::const_iterator it0 = z.begin();
-    it0 != z.end(); ++it0 )	 
+  for (map<junction, list<Sequence> >::const_iterator it0 = windows.getMap().begin();
+       it0 != windows.getMap().end(); ++it0 )	 
     {
       list< string > c1;
       c1.push_back(it0->first);

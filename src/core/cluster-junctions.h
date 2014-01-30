@@ -8,8 +8,7 @@
 #include <list>
 #include <ctime>
 #include "dynprog.h"
-#include "kmerstore.h"
-
+#include "windows.h"
 
 using namespace std ;
 
@@ -20,7 +19,7 @@ class comp_matrix {
   public:
     char ** m;
     int size;
-    MapKmerStore<Kmer> *junctions;
+    WindowsStorage &windows;
     map <string, int> count;
     int n_j;
     int n_j2;
@@ -28,7 +27,7 @@ class comp_matrix {
     /**
     * create new distance matrix
     */
-    comp_matrix(MapKmerStore<Kmer> *junctions);
+    comp_matrix(WindowsStorage &windows);
         
     /**
     * init matrix with a KmerStore and compute distance value between sequences
