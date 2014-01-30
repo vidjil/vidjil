@@ -703,7 +703,7 @@ int main (int argc, char **argv)
     //$$ Clustering
 
     list <list <junction> > clones_windows;
-    comp_matrix comp=comp_matrix(windows);
+    comp_matrix comp=comp_matrix(windowsStorage);
 
     if (epsilon || forced_edges.size())
       {
