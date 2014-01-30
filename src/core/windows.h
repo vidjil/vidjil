@@ -10,6 +10,7 @@
 #include <utility>
 #include <string>
 #include "fasta.h"
+#include "json.h"
 
 using namespace std;
 
