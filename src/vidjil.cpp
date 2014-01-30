@@ -773,7 +773,7 @@ int main (int argc, char **argv)
 
     //////////////////////////////////
     //$$ Output clones
-    cout << "Output clones with >= " << min_reads_clone << " reads" << endl ;
+    cout << "Output at most " << max_clones<< " clones with >= " << min_reads_clone << " reads and with a ratio >= " << ratio_reads_clone << endl ;
 
     map <string, int> clones_codes ;
     map <string, string> clones_map_windows ;
@@ -870,7 +870,6 @@ int main (int argc, char **argv)
       string best_J ;
       int more_windows = 0 ;
       
-
       for (list <pair<junction, int> >::const_iterator it = sort_windows.begin(); 
            it != sort_windows.end(); ++it) {
 
