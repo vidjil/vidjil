@@ -37,11 +37,7 @@ void comp_matrix::compare(ostream &out, Cost cluster_cost)
   out << "  Using cost " << compareCost << endl ;
   
   string j1, j2;
-  size=z.size();
-  m=(char**)malloc(z.size()*sizeof(char*));
-  for (int i=0;i<size;i++){
-    m[i]=(char *)malloc(z.size()*sizeof(char));
-  }
+  m = alloc_matrix(windows.size());
   
   int c=0;
   int c1=0;
@@ -74,14 +70,7 @@ void comp_matrix::compare(ostream &out, Cost cluster_cost)
 
 void comp_matrix::load(string file){
   
-  typedef map<string,Kmer> msK ;
-  map<string,Kmer> z = junctions->store;
-  
-  size=z.size();
-  m=(char**)malloc(z.size()*sizeof(char*));
-  for (int i=0;i<size;i++){
-    m[i]=(char *)malloc(z.size()*sizeof(char));
-  }
+  m = alloc_matrix(windows.size());
 
   char* tampon=(char*)malloc(size*sizeof(char));
   ifstream in_comp(file.c_str());
@@ -443,4 +432,12 @@ void comp_matrix::stat_cluster( list<list<junction> > cluster, string neato_file
       stat << jc2 <<" ";
       out << "    clusterised occurrences	: "<< n_j2c << " (" << jc2 << "%)" << endl ;
   
+}
+
+char **comp_matrix::alloc_matrix(size_t s) {
+  char **matrix = (char**)malloc(s*sizeof(char*));
+  for (size_t i=0;i<s;i++){
+    matrix[i]=(char *)malloc(s*sizeof(char));
+  }
+  return matrix;
 }

@@ -70,6 +70,13 @@ class comp_matrix {
     void del();
     
     void stat_cluster( list<list<junction> > cluster, string neato_file, ostream &out=cout);
+
+ private:
+    
+    /**
+     * Allocates a matrix of size s * s bytes
+     */
+    char **alloc_matrix(size_t s);
 };
 
 #endif
