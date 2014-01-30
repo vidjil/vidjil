@@ -72,11 +72,11 @@ void comp_matrix::load(string file){
   
   m = alloc_matrix(windows.size());
 
-  char* tampon=(char*)malloc(size*sizeof(char));
+  char* tampon=(char*)malloc(windows.size()*sizeof(char));
   ifstream in_comp(file.c_str());
-  for(int i=0; i<size;i++){
-      in_comp.read(tampon, size*sizeof(char));
-      for(int j=0;j<size; j++){
+  for(int i=0; i<windows.size();i++){
+    in_comp.read(tampon, windows.size()*sizeof(char));
+    for(int j=0;j<windows.size(); j++){
 	m[i][j]=tampon[j];
       }
   }
@@ -90,8 +90,8 @@ void comp_matrix::save(string file){
   
   ofstream out_comp(file.c_str());
   
-  for(int i=0; i<size;i++){
-     out_comp.write((char *)m[i],size*sizeof(char));
+  for(int i=0; i<windows.size();i++){
+    out_comp.write((char *)m[i],windows.size()*sizeof(char));
   }
   
   out_comp.close();
@@ -99,7 +99,7 @@ void comp_matrix::save(string file){
  
 
 void comp_matrix::del(){
-  for (int i=0;i<size;i++){
+  for (int i=0;i<windows.size();i++){
 	free(m[i]);
   }
   free(m);
@@ -149,7 +149,7 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
       {
 	j2=it1->first;
 	int distance = (int)m[c2][c1];
-	  
+        
 	if (distance <= epsilon){
 	  neighbor[j1].push_back(j2);
 	  

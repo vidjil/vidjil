@@ -18,7 +18,6 @@ using namespace std ;
 class comp_matrix {
   public:
     char ** m;
-    int size;
     WindowsStorage &windows;
     map <string, int> count;
     int n_j;
