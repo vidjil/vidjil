@@ -374,7 +374,6 @@ void best_align(int overlap, string seq_left, string seq_right,
 	  }
 	}
       }
-      cout << best_r << "/" << best_l << endl;
       *b_r=best_r;
       *b_l=best_l;
 }
