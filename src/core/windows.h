@@ -8,11 +8,12 @@
 #include <iostream>
 #include <map>
 #include <utility>
+#include <string>
 #include "fasta.h"
-#include "cluster-junctions.h"
 
 using namespace std;
 
+typedef string junction ;
 
 class WindowsStorage {
  private:

@@ -13,8 +13,6 @@
 
 using namespace std ;
 
-typedef string junction ;
-
 #define SIMILAR_JUNCTIONS_THRESHOLD 1
 
 
