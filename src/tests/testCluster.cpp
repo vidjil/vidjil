@@ -1,5 +1,5 @@
 #include "core/tools.h"
-#include "core/kmerstore.h"
+#include "core/windows.h"
 #include "core/fasta.h"
 #include "core/segment.h"
 #include "core/cluster-junctions.h"
@@ -23,32 +23,33 @@ void testCluster() {
   int w=40;
    string forced_edges = "" ;
 
-   
-  MapKmerStore<Kmer> *junctions = new MapKmerStore<Kmer>(w);
+   map<string, string> labels;
+   WindowsStorage windows = WindowsStorage(labels);
 
+   Sequence seq = {"", "", "", ""};
 
-   junctions->insert("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", " ");
-   junctions->insert("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", " ");
-   junctions->insert("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG", " ");
-   junctions->insert("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC", " ");
+   windows.add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", seq);
+   windows.add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", seq);
+   windows.add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAG", seq);
+   windows.add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAC", seq);
    
-   junctions->insert("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT", " ");
-   junctions->insert("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTAAA", " ");
-   junctions->insert("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGGG", " ");
-   junctions->insert("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTCCC", " ");
+   windows.add("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTT", seq);
+   windows.add("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTAAA", seq);
+   windows.add("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTGGG", seq);
+   windows.add("TTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTTCCC", seq);
    
-   junctions->insert("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGTTTTTTTT", " ");
-   junctions->insert("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGAAAAAAAA", " ");
-   junctions->insert("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG", " ");
-   junctions->insert("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGCCCCCCCC", " ");
+   windows.add("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGTTTTTTTT", seq);
+   windows.add("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGAAAAAAAA", seq);
+   windows.add("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGG", seq);
+   windows.add("GGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGGCCCCCCCC", seq);
    
-   junctions->insert("CCCCCCCCCCCCCCCCCCCCCCCCCTTTTTTTTTTTTTTT", " ");
-   junctions->insert("CCCCCCCCCCCCCCCCCCCCCCCCCAAAAAAGCTAAAAAA", " ");
-   junctions->insert("CCCCCCCCCCCCCCCCCCCCCCCCCGGGGGGTCTAGGGGG", " ");
-   junctions->insert("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCATGCCCCCC", " ");
+   windows.add("CCCCCCCCCCCCCCCCCCCCCCCCCTTTTTTTTTTTTTTT", seq);
+   windows.add("CCCCCCCCCCCCCCCCCCCCCCCCCAAAAAAGCTAAAAAA", seq);
+   windows.add("CCCCCCCCCCCCCCCCCCCCCCCCCGGGGGGTCTAGGGGG", seq);
+   windows.add("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCATGCCCCCC", seq);
 
    
-   comp_matrix comp=comp_matrix(junctions);
+   comp_matrix comp=comp_matrix(windows);
    
    //create matrix using junctions 
    comp.compare( cout, Cluster);
@@ -93,6 +94,5 @@ void testCluster() {
    //del matrix 
    comp.del();
 
-   delete junctions;    
 }
 
