@@ -75,7 +75,4 @@ class comp_matrix {
     void stat_cluster( list<list<junction> > cluster, string neato_file, ostream &out=cout);
 };
 
-int total_nb_reads (list<junction> clone, map <string, list<Sequence> > seqs_by_junction);
-
-
 #endif

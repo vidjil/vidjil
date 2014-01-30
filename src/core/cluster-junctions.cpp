@@ -20,16 +20,6 @@
 #include "cluster-junctions.h"
 #include<cstdlib>
 
-int total_nb_reads (list<junction> clone, map <string, list<Sequence> > seqs_by_junction)
-{
-  int total = 0 ;
-
-  for (list <junction>::const_iterator it = clone.begin(); it != clone.end(); ++it) 
-    total += seqs_by_junction[*it].size() ;
-  
-  return total ;
-}
-
   bool MySort(const pair<int, string>& lh, const pair<int, string>& rh){
     return lh.second>rh.second;
   }
