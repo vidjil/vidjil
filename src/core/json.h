@@ -1,3 +1,6 @@
+#ifndef JSON_H
+#define JSON_H
+
 #include <string>
 #include <list>
 #include "labels.h"
@@ -45,3 +48,4 @@ class JsonList
 JsonArray json_normalization_names();
 JsonArray json_normalization( list< pair <float, int> > norm_list, int nb_reads, int nb_segmented);
 
+#endif

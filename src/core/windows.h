@@ -1,3 +1,5 @@
+#ifndef WINDOWS_H
+#define WINDOWS_H
 
 /** 
  * A window is associated to a list of sequences. We deal with a list of
@@ -88,3 +90,5 @@ class WindowsStorage {
    */
   ostream &windowToStream(ostream &os, junction window, int num_seq, size_t size);
 };
+
+#endif
