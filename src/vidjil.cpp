@@ -1049,7 +1049,8 @@ int main (int argc, char **argv)
               // display window
               cout << endl 
                    << setw(WIDTH_WINDOW_POS) << " " << it->first 
-                   << " " << windows_labels[it->first] << endl ;
+                   << " " << windows_labels[it->first] << endl
+                   << representative.sequence << endl;
 
               out_clone << seg ;
               out_clone << endl ;
