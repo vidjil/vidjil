@@ -1044,18 +1044,19 @@ int main (int argc, char **argv)
                   clones_map_windows[code] = it->first ;
                 }
 
+              out_clone << seg ;
+              out_clone << endl ;
+          }
 
-              // display window
+        if (seg.isSegmented() 
+            || it == --(sort_windows.end())) {
+              // display window and representative
               cout << endl 
                    << setw(WIDTH_WINDOW_POS) << " " << it->first 
                    << " " << windows_labels[it->first] << endl
                    << representative.sequence << endl;
-
-              out_clone << seg ;
-              out_clone << endl ;
-
               break ;
-          }
+        }
         }
       }
 
