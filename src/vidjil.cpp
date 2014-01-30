@@ -35,6 +35,7 @@
 #include "core/kmerstore.h"
 #include "core/fasta.h"
 #include "core/segment.h"
+#include "core/windows.h"
 #include "core/cluster-junctions.h"
 #include "core/dynprog.h"
 #include "core/read_score.h"
@@ -46,7 +47,6 @@
 #include "core/labels.h"
 #include "core/representative.h"
 #include "core/list_utils.h"
-#include "core/windows.h"
 
 #include "vidjil.h"
 
