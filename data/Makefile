@@ -1,8 +1,6 @@
 DATA=Stanford_S22.fasta Stanford_S22_rc.fasta
 
-all: $(DATA)
-
-$(DATA):
+all: 
 	sh get-sequences
 
 clean:
