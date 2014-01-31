@@ -574,7 +574,6 @@ int main (int argc, char **argv)
     cout << "Loop through reads, looking for windows" ;
  
 
-    MapKmerStore<Kmer> *windows = new MapKmerStore<Kmer>(w);
     WindowsStorage windowsStorage(windows_labels);
 
     int ok = 0 ;
@@ -615,7 +614,6 @@ int main (int argc, char **argv)
               {
 		stats_segmented[TOTAL_SEG_AND_WINDOW]++ ;
 		stats_length[TOTAL_SEG_AND_WINDOW] += seg.getSequence().sequence.length() ;
-                windows->insert(junc, "bloup");
                 windowsStorage.add(junc, reads->getSequence());
               }
 	    else
@@ -1287,7 +1285,6 @@ int main (int argc, char **argv)
     out_json << json->toString();
     
     delete index ;
-    delete windows;
     delete json;
   } else if (command == CMD_SEGMENT) {
     //$$ CMD_SEGMENT
