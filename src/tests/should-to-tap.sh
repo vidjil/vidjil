@@ -141,7 +141,7 @@ while read line; do
                     know_to_fail=1 # We know the test fails, but don't fail globally
                     nb_hits=${nb_hits:1}
                 fi
-                debug "Grepping $pattern in $FILE_TO_GREP"
+                debug "Grepping $pattern in $FILE_TO_GREP --> found "$(grep -cE "$pattern" $FILE_TO_GREP)" occurrences"
                 if [ $(grep -cE "$pattern" $FILE_TO_GREP) -eq $nb_hits -o $skip -eq 1 ]; then
                     if [ $know_to_fail -eq 1 ]; then
                         echo "Warning: test $test_nb should have failed, but has not!" >&2
