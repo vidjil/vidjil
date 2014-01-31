@@ -10,7 +10,7 @@ $ Same number unsegmented
 f0:UNSEG
 
 $ Keep the same number of windows
-f0:==> keep 
+0:==> keep 
 
 $ Same segmentation for Clone 1
 2:clone.001.representative.*0\\s+59\\s+60\\s+84\\s+97\\s+153
