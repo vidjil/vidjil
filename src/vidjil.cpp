@@ -1055,7 +1055,7 @@ int main (int argc, char **argv)
 		   << it->first << endl ;
 
 	      // display representative, possibly segmented
-	      cout << ">clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "-representative" << " " << seg.info << endl ;
+	      cout << ">clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "-representative" << " " << seg.info << setfill(' ') << endl ;
 
 	      cout << representative.sequence << endl;
               break ;
