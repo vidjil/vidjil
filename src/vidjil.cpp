@@ -63,7 +63,7 @@
 #define DEFAULT_J_REP  "./germline/TRGJ.fa" // IGHJ
 
 // #define DEFAULT_READS  "./data/Stanford_S22.fa"
-#define DEFAULT_READS  "../seq/chr_pgm_50k.cut.fa"
+#define DEFAULT_READS  "../bonsai/vdj/seq/chr_pgm_50k.cut.fa"
 #define MIN_READS_WINDOW 10
 #define MIN_READS_CLONE 10
 #define MAX_CLONES 20
