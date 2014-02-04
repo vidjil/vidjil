@@ -1,22 +1,25 @@
 
+
+VIDJIL_ALGO_SRC = algo/
+
 all:
-	make -C src
+	make -C $(VIDJIL_ALGO_SRC)
 
 test: all
-	make -C src/tests 
+	make -C $(VIDJIL_ALGO_SRC)/tests 
 	make should
 
 should: all
 	@echo
 	@echo "*** Launching .should_get tests..."
-	make -C src/tests should
+	make -C $(VIDJIL_ALGO_SRC)/tests should
 	@echo "*** All .should_get tests passed"
 
 data germline: %:
 	make -C $@
 
 clean:
-	make -C src clean
+	make -C $(VIDJIL_ALGO_SRC) clean
 
 cleanall: clean
 	make -C data $^
@@ -25,10 +28,10 @@ cleanall: clean
 .PHONY: all test should clean cleanall distrib data germline
 
 RELEASE_TAG="notag"
-RELEASE_H = src/release.h
-RELEASE_SOURCE = $(wildcard src/*.cpp) $(wildcard src/*.h)  $(wildcard src/core/*.cpp)  $(wildcard src/tests/*.cpp) $(wildcard src/core/*.h)  $(wildcard src/tests/*.h)  
-RELEASE_MAKE = ./Makefile  src/Makefile src/tests/Makefile germline/Makefile data/Makefile
-RELEASE_TESTS =  data/get-sequences $(wildcard data/*.fa) $(wildcard data/*.fq) src/tests/should-to-tap.sh $(wildcard src/tests/*.should_get) $(wildcard src/tests/bugs/*.fa)  $(wildcard src/tests/bugs/*.should_get)
+RELEASE_H = $(VIDJIL_ALGO_SRC)/release.h
+RELEASE_SOURCE = $(wildcard $(VIDJIL_ALGO_SRC)/*.cpp) $(wildcard $(VIDJIL_ALGO_SRC)/*.h)  $(wildcard $(VIDJIL_ALGO_SRC)/core/*.cpp)  $(wildcard $(VIDJIL_ALGO_SRC)/tests/*.cpp) $(wildcard $(VIDJIL_ALGO_SRC)/core/*.h)  $(wildcard $(VIDJIL_ALGO_SRC)/tests/*.h)  
+RELEASE_MAKE = ./Makefile  $(VIDJIL_ALGO_SRC)/Makefile $(VIDJIL_ALGO_SRC)/tests/Makefile germline/Makefile data/Makefile
+RELEASE_TESTS =  data/get-sequences $(wildcard data/*.fa) $(wildcard data/*.fq) $(VIDJIL_ALGO_SRC)/tests/should-to-tap.sh $(wildcard $(VIDJIL_ALGO_SRC)/tests/*.should_get) $(wildcard $(VIDJIL_ALGO_SRC)/tests/bugs/*.fa)  $(wildcard $(VIDJIL_ALGO_SRC)/tests/bugs/*.should_get)
 RELEASE_FILES = $(RELEASE_SOURCE) $(RELEASE_TESTS) $(RELEASE_MAKE)  germline/get-germline germline/split-from-imgt.py  doc/README doc/LICENSE
 RELEASE_ARCHIVE = vidjil-$(RELEASE_TAG).tgz
 
