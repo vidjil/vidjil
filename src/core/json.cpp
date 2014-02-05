@@ -55,6 +55,10 @@ void JsonList::add(string n, JsonArray &d){
   l.push_back(elem);
 }
 
+void JsonList::concat(JsonList &d){
+	l.insert(l.end(), d.l.begin(), d.l.end());
+}
+
 string JsonList::toString(){
   ostringstream stream;
   
@@ -99,11 +103,11 @@ string JsonArray::toString(){
   stream << " [ ";
   
   for ( list<string>::iterator i=l.begin(); i!= l.end(); ++i){
-    if (i!=l.begin()) stream << ",";
-    stream << endl << (*i);
+    if (i!=l.begin()) stream << ", ";
+    stream << (*i);
   }
   
-  stream << endl << " ] ";
+  stream << " ] ";
   
   return stream.str();
 }

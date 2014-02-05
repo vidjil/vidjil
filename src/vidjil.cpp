@@ -1264,19 +1264,24 @@ int main (int argc, char **argv)
 
     JsonArray json_nb_segmented;
     json_nb_segmented.add(nb_segmented);
-    
-    JsonArray normalization_names = json_normalization_names();
-    JsonArray normalization_res1 = json_normalization(norm_list, 1, nb_segmented);
-    JsonArray normalization_res5 = json_normalization(norm_list, 5, nb_segmented);
+	
+	JsonArray json_normalization_factor;
+    json_normalization_factor.add( (float)  compute_normalization_one(norm_list, nb_segmented));
+	
+    //JsonArray normalization_names = json_normalization_names();
+    //JsonArray normalization_res1 = json_normalization(norm_list, 1, nb_segmented);
+    //JsonArray normalization_res5 = json_normalization(norm_list, 5, nb_segmented);
     
     json->add("timestamp", time_buffer);
     json->add("commandline", stream_cmdline.str());// TODO: escape "s in argv
     json->add("germline", germline_system);
     json->add("reads_total", json_nb_reads);
-    json->add("total_size", json_nb_segmented); // should this be called "reads_segmented" ?
-    json->add("normalizations", normalization_names);
-    json->add("resolution1", normalization_res1);
-    json->add("resolution5", normalization_res5);
+    json->add("reads_segmented", json_nb_segmented); 
+	json->add("normalization_factor", json_normalization_factor ); 
+	
+    //json->add("normalizations", normalization_names);
+    //json->add("resolution1", normalization_res1);
+    //json->add("resolution5", normalization_res5);
 
     JsonArray jsonSortedWindows = windowsStorage.sortedWindowsToJsonArray(json_data_segment,
                                                                           norm_list,

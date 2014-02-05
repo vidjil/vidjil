@@ -42,6 +42,7 @@ class JsonList
   void add(string n, float d);
   void add(string n, JsonList &d);
   void add(string n, JsonArray &d);
+  void concat(JsonList &d);
   string toString();
 };
 

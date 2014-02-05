@@ -90,16 +90,19 @@ JsonArray WindowsStorage::sortedWindowsToJsonArray(map <junction, JsonList> json
 	   
       JsonList windowsList;
     
-      JsonArray normalization_ratios = json_normalization(norm_list, it->second, 
-                                                          nb_segmented);
-    
+      //JsonArray normalization_ratios = json_normalization(norm_list, it->second, 
+      //                                                    nb_segmented);
       JsonArray json_size;
       json_size.add(it->second);
 
-      windowsList.add("seg", json_data_segment[it->first]);
+	  if (json_data_segment.find(it->first) != json_data_segment.end()){
+          windowsList.concat(json_data_segment[it->first]);
+      }else{
+          windowsList.add("sequence", 0); //TODO need to compute representative sequence for this case
+      }
       windowsList.add("window", it->first);
       windowsList.add("size", json_size);
-      windowsList.add("ratios", normalization_ratios);
+      //windowsList.add("ratios", normalization_ratios);
       windowsList.add("top", top++);
 	 
       windowsArray.add(windowsList);
