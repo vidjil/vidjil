@@ -113,7 +113,7 @@ def euroMrdParser(file_path):
 	
 	out = ListWindows()
 	
-	out.timestamp = "no data"
+	out.timestamp = "1970-01-01 00:00:00"
 	out.normalization_factor = [1]
 	
 	listw = []
@@ -202,7 +202,7 @@ def fuseList(l1, l2, limit):
   
   dataseg = {}
   tampon=[]
-  s=len(l1.reads_total)
+  s=len(l1.reads_segmented)
   
   tp=[]
   
@@ -213,9 +213,9 @@ def fuseList(l1, l2, limit):
     tampon.append(tp)
   
   tampon2=[]
-  s2=len(l2.reads_total)
+  s2=len(l2.reads_segmented)
   for i in range(s2):
-    tampon2.append(tp)
+    tampon2.append(0)
   
   length1 = len(l1.windows)
     
@@ -225,12 +225,12 @@ def fuseList(l1, l2, limit):
   for index in range(length1): 
     dico_size[l1.windows[index].window] = l1.windows[index].size
     dico_top[l1.windows[index].window] = l1.windows[index].top
-    if (l1.windows[index].sequence != 0) :
+    if (l1.windows[index].V) :
       dataseg[l1.windows[index].window] = l1.windows[index]
     
   for index in range(length2): 
     
-    if (l2.windows[index].sequence != 0) :
+    if (l2.windows[index].V) :
       if not l2.windows[index].window in dataseg :
 	dataseg[l2.windows[index].window] = l2.windows[index]
       else :
@@ -273,7 +273,7 @@ def fuseList(l1, l2, limit):
     junct.window=key
     junct.size=dico_size[key]
     junct.top=dico_top[key]
-    junct.sequence = "0";
+    junct.sequence = 0;
     if key in dataseg :
 		junct.sequence = dataseg[key].sequence
 		junct.name=dataseg[key].name
@@ -298,7 +298,6 @@ jlist_fused = None
 times = []
 
 for path_name in input_names:
-
     # Compute short name
     split=path_name.split("/");
     name="";
@@ -312,7 +311,6 @@ for path_name in input_names:
 
     print "<==", path_name, "\t", name, "\t", 
     
-    jlist = None
     extension = path_name.split('.')[-1]
     
     if (extension=="json"): 
