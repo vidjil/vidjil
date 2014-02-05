@@ -2,6 +2,7 @@ import collections
 import json
 import sys
 import time
+from operator import itemgetter
  
  
 class ListWindows:
@@ -24,7 +25,7 @@ class Window:
     
       
 if len(sys.argv) < 4:
-  print "incorect number of argument ( minimum 4 )"
+  print "incorect number of argument ( minimum 3 )"
   print "fuse.py -output_file- -top_limit- -input_file1- -input_file2- ... -input_fileX-"
   sys.exit() 
   
@@ -107,6 +108,67 @@ def jsonToJunc(obj_dict):
 			obj.D=obj_dict["D"]
     return obj
 
+    
+def euroMrdParser(file_path):
+	
+	out = ListWindows()
+	
+	out.timestamp = "no data"
+	out.normalization_factor = [1]
+	
+	listw = []
+	total_size = 0
+	
+	fichier = open(file_path,"r")
+	for ligne in fichier:
+		if "clonotype" in ligne:
+			header = ligne.split('\t')
+			header_map = {}
+			for index in range(len(header)):
+				header_map[header[index]]=index
+			
+		else :
+			if "IGH" in ligne:
+				out.germline = "IGH"
+			elif "TRG" in ligne :
+				out.germline = "TRG"
+			else :
+				out.germline = "???"
+				
+			tab = ligne.split('\t')
+			
+			w=Window()
+			w.window=tab[header_map["sequence.seq id"]]	#use sequence id as window for euroMRD data
+			s = int(tab[ header_map["sequence.size"] ])
+			total_size += s
+			w.size=[ s ]
+			w.sequence = tab[header_map["sequence.raw nt seq"]]
+			w.V=tab[header_map["sequence.V-GENE and allele"]].split('=')
+			if (tab[header_map["sequence.D-GENE and allele"]] != "") :
+				w.D=tab[header_map["sequence.D-GENE and allele"]].split('=')
+			w.J=tab[header_map["sequence.J-GENE and allele"]].split('=')
+			
+			w.name=w.V[0] + " -x/y/-z " + w.J[0]
+			
+			w.l1=20
+			w.l2=0
+			w.r1=50
+			w.r2=0
+			w.Nsize=5
+
+			listw.append((w , w.size[0]))
+			
+	out.reads_segmented = [total_size]
+	
+	#tri par sequence_size
+	listw = sorted(listw, key=itemgetter(1), reverse=True)
+	
+	#attribution d'un classement top
+	for index in range(len(listw)):
+		listw[index][0].top=index+1
+		out.windows.append(listw[index][0])
+	return out
+    
     
 def cutList(l1, limit):
   
@@ -229,6 +291,8 @@ def fuseList(l1, l2, limit):
 
   return out
   
+  
+  
 
 jlist_fused = None
 times = []
@@ -247,10 +311,21 @@ for path_name in input_names:
     name = name.replace('_BCD', '')
 
     print "<==", path_name, "\t", name, "\t", 
-
-    with open(path_name, "r") as file:
-        jlist = json.load(file, object_hook=jsonToJunc)       
-        print jlist
+    
+    jlist = None
+    extension = path_name.split('.')[-1]
+    
+    if (extension=="json"): 
+		with open(path_name, "r") as file:
+			jlist = json.load(file, object_hook=jsonToJunc)       
+			print jlist
+			
+    elif (extension=="clntab"):
+		jlist = euroMrdParser(path_name)
+			
+    else :
+		print "\n ERROR .", extension, " invalid file extension"
+		sys.exit()
         
     # Merge lists
     jlist_fused = fuseList(jlist_fused, jlist, 0)

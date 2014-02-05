@@ -512,7 +512,7 @@ Model.prototype = {
  * */
   getCode : function(cloneID){
     if ( typeof(this.windows[cloneID].sequence)!='undefined' && typeof(this.windows[cloneID].name)!='undefined' ){
-      if ( this.system=="IGH" && typeof(this.windows[cloneID].shortName)!='undefined' ){
+      if ( this.windows[cloneID].name.length>50 && typeof(this.windows[cloneID].shortName)!='undefined' ){
 	return this.windows[cloneID].shortName;
       }
       else{
