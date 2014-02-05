@@ -204,13 +204,8 @@ def fuseList(l1, l2, limit):
   tampon=[]
   s=len(l1.reads_segmented)
   
-  tp=[]
-  
-  for i in l1.normalization_factor:
-    tp.append(0)
-  
   for i in range(s):
-    tampon.append(tp)
+    tampon.append(0)
   
   tampon2=[]
   s2=len(l2.reads_segmented)
