@@ -157,13 +157,13 @@ Segment.prototype = {
     spanM.id = "m"+cloneID;
     spanM.className="seq-mobil";
     
-    if(typeof this.m.windows[cloneID].seg !='undefined' && this.m.windows[cloneID].seg!=0){
+    if(typeof this.m.windows[cloneID].sequence !='undefined' && this.m.windows[cloneID].sequence!=0){
     
     var spanV = document.createElement('span');
     spanV.className="V";
     spanV.style.color=this.m.windows[cloneID].colorV;
 
-    var v_seq=this.m.windows[cloneID].seg.sequence.substr(0, this.m.windows[cloneID].seg.l1+1);
+    var v_seq=this.m.windows[cloneID].sequence.substr(0, this.m.windows[cloneID].l1+1);
     var size_marge=200-v_seq.length;
     if (size_marge>0){
       var marge="";
@@ -175,17 +175,17 @@ Segment.prototype = {
 
     spanM.appendChild(spanV);
       
-    if ( (this.m.windows[cloneID].seg.l1+1 -this.m.windows[cloneID].seg.r1)!=0){
+    if ( (this.m.windows[cloneID].l1+1 -this.m.windows[cloneID].r1)!=0){
       var spanN = document.createElement('span');
       spanN.className="N";
-      spanN.innerHTML=this.m.windows[cloneID].seg.sequence.substring(this.m.windows[cloneID].seg.l1+1, this.m.windows[cloneID].seg.r1);
+      spanN.innerHTML=this.m.windows[cloneID].sequence.substring(this.m.windows[cloneID].l1+1, this.m.windows[cloneID].r1);
       spanM.appendChild(spanN);
     }
     
     var spanJ = document.createElement('span');
     spanJ.className="J";
     spanJ.style.color=this.m.windows[cloneID].colorJ;
-    spanJ.innerHTML=this.m.windows[cloneID].seg.sequence.substr(this.m.windows[cloneID].seg.r1);
+    spanJ.innerHTML=this.m.windows[cloneID].sequence.substr(this.m.windows[cloneID].r1);
     spanM.appendChild(spanJ);
     }else{
       var size_marge=220-this.m.windows[cloneID].window.length;
@@ -210,8 +210,8 @@ Segment.prototype = {
     var request = "";
 
     for (var i = 0; i<list.length; i++){
-      if ( typeof(this.m.windows[list[i]].seg) != 'undefined' && this.m.windows[list[i]].seg!=0)
-	request += ">" +this.m.getName(list[i])+"\n"+ this.m.windows[list[i]].seg.sequence+"\n";
+      if ( typeof(this.m.windows[list[i]].sequence) != 'undefined' && this.m.windows[list[i]].sequence!=0)
+	request += ">" +this.m.getName(list[i])+"\n"+ this.m.windows[list[i]].sequence+"\n";
       else
 	request += ">" +this.m.getName(list[i])+"\n"+ this.m.windows[list[i]].window+"\n";
     }
@@ -239,8 +239,8 @@ Segment.prototype = {
     if (list.length==0) return ;
       
     for (var i = 0; i<list.length; i++){
-      if ( typeof(this.m.windows[list[i]].seg) != 'undefined' && this.m.windows[list[i]].seg!=0)
-	request += ">" +list[i]+"\n"+ this.m.windows[list[i]].seg.sequence+"\n";
+      if ( typeof(this.m.windows[list[i]].sequence) != 'undefined' && this.m.windows[list[i]].sequence!=0)
+	request += ">" +list[i]+"\n"+ this.m.windows[list[i]].sequence+"\n";
       else
 	request += ">" +list[i]+"\n"+ this.m.windows[list[i]].window+"\n";
     }
@@ -276,10 +276,10 @@ Segment.prototype = {
     var spanM = document.getElementById("m"+cloneID);
     spanM.innerHTML="";
     
-    if(typeof m.windows[cloneID].seg !='undefined' && m.windows[cloneID].seg!=0){
+    if(typeof m.windows[cloneID].sequence !='undefined' && m.windows[cloneID].sequence!=0){
       
-      var newl1=getNewPosition(seq,m.windows[cloneID].seg.l1)
-      var newr1=getNewPosition(seq,m.windows[cloneID].seg.r1)
+      var newl1=getNewPosition(seq,m.windows[cloneID].l1)
+      var newr1=getNewPosition(seq,m.windows[cloneID].r1)
     
     var spanV = document.createElement('span');
     spanV.className="V";

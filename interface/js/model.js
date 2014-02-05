@@ -49,7 +49,7 @@ function Model(){
   console.log("creation Model")
   this.analysis ={ custom :[], cluster :[], date :[]} ;
   this.t=0;
-  this.r=0;
+  this.norm=false;
   this.focus=-1;
   this.colorMethod="Tag";
   this.view=[];
@@ -107,40 +107,45 @@ Model.prototype = {
     var n_max=0;
     var n2_max=0; //TODO rename
 	
+	var min_nf=1;
+	for(var k=0 ; k < data.normalization_factor.length; k++){
+		if (min_nf > data.normalization_factor[k])
+		min_nf=data.normalization_factor[k];
+	}
+	
     //keep best top value
     for(var i=0; i < data.windows.length; i++){
       if (data.windows[i].top <= limit){
 
-	//search for min_size
-	for(var j=0 ; j<data.windows[i].ratios.length; j=j+2){
-	  for(var k=0 ; k<data.windows[i].ratios[j].length; k++){
-	    if (min_size > data.windows[i].ratios[j][k] && data.windows[i].ratios[j][k] != 0)
-	      min_size=data.windows[i].ratios[j][k];
-	  }
-	}
+		//search for min_size
+		for(var k=0 ; k<data.windows[i].size.length; k++){
+			var size =(data.windows[i].size[k]/data.reads_segmented[k])*min_nf;
+			
+			if (min_size > size && data.windows[i].size[k] != 0)
+			min_size=size;
+		}
 
-	//search for n_max / n2_max
-	if ((typeof(data.windows[i].seg) != 'undefined') && 
-		(typeof(data.windows[i].seg.Nsize) != 'undefined') &&
-		(data.windows[i].seg.Nsize > n_max)){
-		n_max=data.windows[i].seg.Nsize;   
-	}
-	
-	var n2=0;
-	if ((typeof(data.windows[i].seg) != 'undefined') && 
-	(typeof(data.windows[i].seg.Nsize) != 'undefined')){
-	  n2=data.windows[i].seg.name.split('/')[1];
-	  if (n2>n2_max)n2_max=n2;  
-	}
-	data.windows[i].n=n2
-	self.windows.push(data.windows[i]);
+		//search for n_max / n2_max
+		if ((typeof(data.windows[i].sequence) != 'undefined') && 
+			(typeof(data.windows[i].Nsize) != 'undefined') &&
+			(data.windows[i].Nsize > n_max)){
+			n_max=data.windows[i].Nsize;   
+		}
+		
+		var n2=0;
+		if ((typeof(data.windows[i].sequence) != 'undefined') && 
+		(typeof(data.windows[i].Nsize) != 'undefined')){
+		n2=data.windows[i].name.split('/')[1];
+		if (n2>n2_max)n2_max=n2;  
+		}
+		data.windows[i].n=n2
+		self.windows.push(data.windows[i]);
       } 	
     }
     
-    var other = { "seg" : 0,
+    var other = { "sequence" : 0,
 		 "window": "other", 
 		 "top": 0, 
-		 "ratios": data.windows[0].ratios,
 		 "size": []
     }
     
@@ -157,8 +162,8 @@ Model.prototype = {
     self.min_size=min_size;
     self.n_max=n_max;
     self.n2_max=n2_max;
-    self.normalizations = data.normalizations;
-    self.total_size = data.total_size;
+    self.normalization_factor = data.normalization_factor;
+    self.reads_segmented = data.reads_segmented;
     self.resolution1 = data.resolution1;
     self.resolution5 = data.resolution5;
     self.timestamp = data.timestamp;
@@ -318,8 +323,8 @@ Model.prototype = {
     
     //		NSIZE
     for(var i=0; i<this.n_windows; i++){
-      if (typeof(this.windows[i].seg) != 'undefined' && typeof(this.windows[i].seg.Nsize) != 'undefined' ){
-	nsize=this.windows[i].seg.Nsize;
+      if (typeof(this.windows[i].sequence) != 'undefined' && typeof(this.windows[i].Nsize) != 'undefined' ){
+	nsize=this.windows[i].Nsize;
 	if (nsize>maxNsize){maxNsize=nsize;}
 			}else{
 	nsize=-1;
@@ -343,8 +348,8 @@ Model.prototype = {
     
     //		COLOR_V
     for (var i=0; i<this.n_windows; i++){
-      if (typeof(this.windows[i].seg.V) != 'undefined'){
-	var vGene=this.windows[i].seg.V[0];
+      if (typeof(this.windows[i].V) != 'undefined'){
+	var vGene=this.windows[i].V[0];
 	
 	console.log(i+" >> "+ vGene+" // ");
           // TODO : What if vGene isn't known? (same for J)
@@ -356,8 +361,8 @@ Model.prototype = {
     
     //		COLOR_J
     for (var i=0; i<this.n_windows; i++){
-      if (typeof(this.windows[i].seg.J) != 'undefined'){
-	var jGene=this.windows[i].seg.J[0];
+      if (typeof(this.windows[i].J) != 'undefined'){
+	var jGene=this.windows[i].J[0];
 	this.windows[i].colorJ=this.germline.j[jGene].color;
       }else{
 	this.windows[i].colorJ=color['@default'];
@@ -366,8 +371,8 @@ Model.prototype = {
     
     //		SHORTNAME
     for(var i=0; i<this.n_windows; i++){
-      if (typeof(this.windows[i].seg) != 'undefined' && typeof(this.windows[i].seg.name) != 'undefined' ){
-	this.windows[i].shortName=this.windows[i].seg.name.replace(new RegExp('IGHV', 'g'), "VH");
+      if (typeof(this.windows[i].sequence) != 'undefined' && typeof(this.windows[i].name) != 'undefined' ){
+	this.windows[i].shortName=this.windows[i].name.replace(new RegExp('IGHV', 'g'), "VH");
 	this.windows[i].shortName=this.windows[i].shortName.replace(new RegExp('IGHD', 'g'), "DH");
 	this.windows[i].shortName=this.windows[i].shortName.replace(new RegExp('IGHJ', 'g'), "JH");
 	this.windows[i].shortName=this.windows[i].shortName.replace(new RegExp('TRG', 'g'), "");
@@ -506,12 +511,12 @@ Model.prototype = {
  * 
  * */
   getCode : function(cloneID){
-    if ( typeof(this.windows[cloneID].seg)!='undefined' && typeof(this.windows[cloneID].seg.name)!='undefined' ){
+    if ( typeof(this.windows[cloneID].sequence)!='undefined' && typeof(this.windows[cloneID].name)!='undefined' ){
       if ( this.system=="IGH" && typeof(this.windows[cloneID].shortName)!='undefined' ){
 	return this.windows[cloneID].shortName;
       }
       else{
-	return this.windows[cloneID].seg.name;
+	return this.windows[cloneID].name;
       }
     }else{
       return this.windows[cloneID].window;
@@ -525,21 +530,30 @@ Model.prototype = {
   getSize : function(cloneID, time){
     time = typeof time !== 'undefined' ? time : this.t; 
     var result=0;
+	
     for(var j=0 ;j<this.clones[cloneID].cluster.length; j++){
-      result += this.windows[this.clones[cloneID].cluster[j]].ratios[time][this.r];}
-    return result
+      result += this.windows[this.clones[cloneID].cluster[j]].size[time];
+	}
+      
+	var r=1;
+	if (this.norm){
+		r=this.normalization_factor[time];
+	}
+
+	return (result/m.reads_segmented[time])*r;
+
   },//end getSize
   
   getV : function(cloneID){
-    if ( typeof(this.windows[cloneID].seg)!='undefined' && typeof(this.windows[cloneID].seg.V)!='undefined' ){
-      return this.windows[cloneID].seg.V[0].split('*')[0];
+    if ( typeof(this.windows[cloneID].sequence)!='undefined' && typeof(this.windows[cloneID].V)!='undefined' ){
+      return this.windows[cloneID].V[0].split('*')[0];
     }
     return "undefined V";
   },
   
   getJ : function(cloneID){
-    if ( typeof(this.windows[cloneID].seg)!='undefined' && typeof(this.windows[cloneID].seg.J)!='undefined' ){
-      return this.windows[cloneID].seg.J[0].split('*')[0];;
+    if ( typeof(this.windows[cloneID].sequence)!='undefined' && typeof(this.windows[cloneID].J)!='undefined' ){
+      return this.windows[cloneID].J[0].split('*')[0];;
     }
     return "undefined J";
   },
@@ -581,7 +595,7 @@ Model.prototype = {
     if (this.colorMethod=="Tag") {
       return tagColor[this.windows[cloneID].tag];
     }
-    if (typeof(this.windows[cloneID].seg.V) != 'undefined'){
+    if (typeof(this.windows[cloneID].V) != 'undefined'){
       if (this.colorMethod=="V") {
       	return this.windows[cloneID].colorV;
       }
@@ -608,12 +622,12 @@ Model.prototype = {
     this.update();
   },
   
-/* use another ratio to compute clone size
+/* use normalization_factor to compute clone size ( true/false )
  * 
  * */
-  changeRatio : function(newR){
-    console.log("changeRatio()")
-    this.r=newR;
+  normalization_switch : function(newR){
+    console.log("normalization : "+newR)
+	this.norm=newR;
     this.update();
   },
   
@@ -888,23 +902,18 @@ Model.prototype = {
   computeOtherSize : function(){
     var other = [];
 
-    for (var j=0; j < this.total_size.length; j++){
-      other[j]=[]
-      for (var k=0; k < this.normalizations.length; k++){
-	other[j][k]=1
-      }   
+    for (var j=0; j < this.reads_segmented.length; j++){
+      other[j]=this.reads_segmented[j]
     }   
     
     for (var i=0; i < this.n_windows-1; i++){
-      for (var j=0; j < this.total_size.length; j++){
-	for (var k=0; k < this.normalizations.length; k++){
-	  if (this.windows[i].active==true)
-	    other[j][k]-= this.windows[i].ratios[j][k];
-	}   
+      for (var j=0; j < this.reads_segmented.length; j++){
+		if (this.windows[i].active==true)
+		other[j]-= this.windows[i].size[j];
       }   
     }
     
-    this.windows[this.n_windows-1].ratios=other;
+    this.windows[this.n_windows-1].size=other;
 
   },
   

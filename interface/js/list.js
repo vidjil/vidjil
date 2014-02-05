@@ -161,7 +161,11 @@ List.prototype = {
 
       var span_stat=document.createElement('span');
       span_stat.className="sizeBox";
-      span_stat.appendChild(document.createTextNode( (this.m.windows[id].ratios[this.m.t][this.m.r]*100/clusterSize).toFixed(1)+"%"));
+	  
+	  var r=100
+	  if(this.m.norm) 
+		  r=this.m.normalization_factor[this.m.t]*100
+      span_stat.appendChild(document.createTextNode( (((this.m.windows[id].size[this.m.t]/this.m.reads_segmented[this.m.t])*r)/clusterSize).toFixed(1)+"%"));
 
       div_clone.appendChild(img); 
       div_clone.appendChild(span_name);
@@ -274,10 +278,10 @@ List.prototype = {
       var vA="undefined V";
       var vB="undefined V";
       
-      if (typeof(self.m.windows[idA].seg) != 'undefined' && typeof(self.m.windows[idA].seg.V) != 'undefined' )
-      vA=self.m.windows[idA].seg.V[0];
-      if (typeof(self.m.windows[idB].seg) != 'undefined' && typeof(self.m.windows[idB].seg.V) != 'undefined' )
-      vB=self.m.windows[idB].seg.V[0];
+      if (typeof(self.m.windows[idA].V) != 'undefined' )
+      vA=self.m.windows[idA].V[0];
+      if (typeof(self.m.windows[idB].V) != 'undefined' )
+      vB=self.m.windows[idB].V[0];
       
       //TODO ordre alpha//récupérer l'ordre correct dans le germline
       return vA>vB ? 1:-1; 
@@ -294,10 +298,10 @@ List.prototype = {
       var jA="undefined J";
       var jB="undefined J";
       
-      if (typeof(self.m.windows[idA].seg) != 'undefined' && typeof(self.m.windows[idA].seg.J) != 'undefined' )
-      jA=self.m.windows[idA].seg.J[0];
-      if (typeof(self.m.windows[idB].seg) != 'undefined' && typeof(self.m.windows[idB].seg.J) != 'undefined' )
-      jB=self.m.windows[idB].seg.J[0];
+      if (typeof(self.m.windows[idA].J) != 'undefined' )
+      jA=self.m.windows[idA].J[0];
+      if (typeof(self.m.windows[idB].J) != 'undefined' )
+      jB=self.m.windows[idB].J[0];
       
       //TODO ordre alpha//récupérer l'ordre correct dans le germline
       return jA>jB ? 1:-1; 

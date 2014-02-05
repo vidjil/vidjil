@@ -155,8 +155,16 @@ Graph.prototype = {
       this.data_graph[i]={id : i, name :"line"+i, path : this.constructPath(i)};
     }
     
-    this.data_res.push({id : this.m.n_windows, name :"resolution1", path : this.constructPathR(this.m.resolution1) });
-    this.data_res.push({id : this.m.n_windows+1, name :"resolution5", path : this.constructPathR(this.m.resolution5) });
+    this.resolution1=[]
+    this.resolution5=[]
+    
+    for (i=0; i<this.m.normalization_factor.length; i++){
+		this.resolution1.push([1/this.m.reads_segmented[i], (1/this.m.reads_segmented[i])*this.m.normalization_factor[i]])
+		this.resolution5.push([5/this.m.reads_segmented[i], (5/this.m.reads_segmented[i])*this.m.normalization_factor[i]])
+	}
+    
+    this.data_res.push({id : this.m.n_windows, name :"resolution1", path : this.constructPathR(this.resolution1) });
+    this.data_res.push({id : this.m.n_windows+1, name :"resolution5", path : this.constructPathR(this.resolution5) });
 
     
     this.g_axis = this.axis_container.selectAll("line").data(this.data_axis);
@@ -221,8 +229,8 @@ Graph.prototype = {
       var line = document.getElementById("polyline"+this.m.focus);
       document.getElementById("polyline_container").appendChild(line);
     }
-    this.data_res[0].path = this.constructPathR(this.m.resolution1);
-    this.data_res[1].path = this.constructPathR(this.m.resolution5);
+    this.data_res[0].path = this.constructPathR(this.resolution1);
+    this.data_res[1].path = this.constructPathR(this.resolution5);
     
     for (var i=0 ; i<this.m.n_windows; i++){
       for (var j=0 ; j<this.m.clones[i].cluster.length; j++)
@@ -379,12 +387,16 @@ Graph.prototype = {
     if (typeof res != "undefined" && res.length!=0){
       var p;
       p=[ [0, this.h+100] ];
-      p.push([0, ( this.h - this.scale_x(res[0][this.m.r]*this.precision) ) ]);
+	  
+	  var r=0;
+	  if (this.m.norm==true)
+		  r=1;
+      p.push([0, ( this.h - this.scale_x(res[0][r]*this.precision) ) ]);
       
       for (var i=0; i< this.graph_col.length; i++){
-	  p.push([( this.graph_col[i]), ( this.h - this.scale_x(res[i][this.m.r]*this.precision))]);
+	  p.push([( this.graph_col[i]), ( this.h - this.scale_x(res[i][r]*this.precision))]);
       }
-      p.push([this.w, ( this.h - this.scale_x(res[this.graph_col.length-1][this.m.r]*this.precision))]);
+      p.push([this.w, ( this.h - this.scale_x(res[this.graph_col.length-1][r]*this.precision))]);
       p.push([this.w, this.h+100]);
       
       return p;

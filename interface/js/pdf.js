@@ -183,7 +183,7 @@
       doc.setTextColor(0,0,0);
       var r=0;
       for(var j=0 ;j<m.clones[id].cluster.length; j++){
-				r += m.windows[m.clones[id].cluster[j]].ratios[t][0];}
+				r += m.windows[m.clones[id].cluster[j]].size;}
       var s;
       var size=m.getSize(id);
       if (size<0.0001){
@@ -191,17 +191,17 @@
       }else{
 	    s=(100*size).toFixed(3)+"%";
       }
-      doc.text(120, y, 'reads (point 0): '+Math.floor(r*m.total_size[m.t])+' -- '+s);
+      doc.text(120, y, 'reads (point 0): '+r+' -- '+s);
       
       y=y+5;
-      if (typeof(m.windows[id].seg) !='number'){
-	//var v_seq=windows[id].seg.sequence.substr(0, windows[id].seg.l1+1);
-	//var n_seq=windows[id].seg.sequence.substr(windows[id].seg.l1+1, windows[id].seg.r1);
-	//var j_seq=windows[id].seg.sequence.substr(windows[id].seg.r1);
+      if (typeof(m.windows[id].sequence) !='number'){
+	//var v_seq=windows[id].sequence.substr(0, windows[id].l1+1);
+	//var n_seq=windows[id].sequence.substr(windows[id].l1+1, windows[id].r1);
+	//var j_seq=windows[id].sequence.substr(windows[id].r1);
 
-	var seq=m.windows[id].seg.sequence;
-	var seq=seq.insert(m.windows[id].seg.r1, "     ");
-	var seq=seq.insert(m.windows[id].seg.l1+1, "     ");
+	var seq=m.windows[id].sequence;
+	var seq=seq.insert(m.windows[id].r1, "     ");
+	var seq=seq.insert(m.windows[id].l1+1, "     ");
 
 	for(j=0 ; j<(Math.floor(seq.length/80)+1) ; j++){
 	  doc.text(30, y, seq.substring(j*80, (j+1)*80 ));

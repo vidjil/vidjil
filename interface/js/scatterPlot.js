@@ -128,9 +128,8 @@ ScatterPlot.prototype = {
       .attr("width", 30)
       .attr("x", function(d) { 
 	var geneV="undef";
-	if ( typeof(self.m.windows[d.id].seg) != 'undefined' 
-	&& typeof(self.m.windows[d.id].seg.V) != 'undefined' ){
-	  var geneV=self.m.windows[d.id].seg.V[0];
+	if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
+	  var geneV=self.m.windows[d.id].V[0];
 	  return self.positionGene[geneV]*self.resizeW-15+self.marge_left;
 	}else{
 	  return self.positionGene["undefined V"]*self.resizeW-15+self.marge_left;
@@ -216,9 +215,8 @@ ScatterPlot.prototype = {
       .attr("width", this.bar_width)
       .attr("x", function(d) { 
 	var geneV="undef";
-	if ( typeof(self.m.windows[d.id].seg) != 'undefined' 
-	&& typeof(self.m.windows[d.id].seg.V) != 'undefined' ){
-	  var geneV=self.m.windows[d.id].seg.V[0];
+	if (typeof(self.m.windows[d.id].V) != 'undefined' ){
+	  var geneV=self.m.windows[d.id].V[0];
 	  return self.positionGene[geneV]*self.resizeW-(self.bar_width/2)+self.marge_left; 
 	}else{
 	  return self.positionGene["undefined V"]*self.resizeW-(self.bar_width/2)+self.marge_left;
@@ -497,10 +495,9 @@ ScatterPlot.prototype = {
       var coef3 = 0.0015;	//
       var geneV="undefined V";
       var geneJ="undefined J";
-      if ( typeof(self.m.windows[d.id].seg) != 'undefined' 
-       && typeof(self.m.windows[d.id].seg.V) != 'undefined' ){
-      var geneV=self.m.windows[d.id].seg.V[0];
-      var geneJ=self.m.windows[d.id].seg.J[0];
+      if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
+      var geneV=self.m.windows[d.id].V[0];
+      var geneJ=self.m.windows[d.id].J[0];
       }
 
     switch(self.splitMethod){ 
@@ -526,10 +523,9 @@ ScatterPlot.prototype = {
       break; 
       case "nSize": 
 	d.x+=coef3*((self.positionGene[geneV]*self.resizeW)-d.x);
-	if ( typeof(self.m.windows[d.id].seg) != 'undefined' 
-	&& typeof(self.m.windows[d.id].seg.V) != 'undefined' ){
-	  if (self.m.windows[d.id].seg.N!=-1){
-	    d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].seg.Nsize/self.m.n_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
+	if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
+	  if (self.m.windows[d.id].N!=-1){
+	    d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].Nsize/self.m.n_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
 	  }else{
 	    d.y+=coef2*((self.h*self.resizeH)-d.y);
 	  }
