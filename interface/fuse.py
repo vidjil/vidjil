@@ -7,27 +7,20 @@ import time
 class ListWindows:
   def __init__(self):
     self.reads_total = []
-    self.total_size = []
-    self.normalizations = []
-    self.resolution1 = []
-    self.resolution5 = []
+    self.reads_segmented = []
+    self.normalization_factor = []
     self.time = []
     self.windows = []
 
   def __str__(self):
-    return "<windows %s: %s %s %d>" % (self.time, self.reads_total, self.total_size, len(self.windows))
+    return "<windows %s: %s %s %d>" % (self.time, self.reads_total, self.reads_segmented, len(self.windows))
  
 class Window:
   def __init__(self):
     self.size = []
-    self.ratios = []
-    
-class Segment:
-  def __init__(self, sequence):
-    self.sequence = sequence
-    self.V=[]
-    self.D=[]
-    self.J=[]
+    self.V = []
+    self.D = []
+    self.J = []
     
       
 if len(sys.argv) < 4:
@@ -46,95 +39,81 @@ jlist2 = []
 #serialiseur perso, convertit un objet python en json
 ### TODO: mettre cela en methode ListWindows.save_json()
 def juncToJson(obj):
-  if isinstance(obj, ListWindows):
-    return {"windows": obj.windows,
-      "normalizations": obj.normalizations,
-      "reads_total": obj.reads_total,
-      "total_size": obj.total_size,
-      "resolution1": obj.resolution1,
-      "resolution5": obj.resolution5,
-      "time": obj.time,
-      "timestamp": obj.timestamp,
-      "germline": obj.germline
-      }
-    raise TypeError(repr(obj) + " fail !") 
-  if isinstance(obj, Window):
-    return {"window": obj.window,
-      "size": obj.size,
-      "ratios": obj.ratios,
-      "seg": obj.segment,
-      "top": obj.top
-      }
-    raise TypeError(repr(obj) + " fail !") 
-  if isinstance(obj, Segment):
-    if hasattr(obj, 'name'):
-      return {
-	"sequence": obj.sequence,
-	"V": obj.V,
-	"D": obj.D,
-	"J": obj.J,
-	"name": obj.name,
-	"l1": obj.l1,
-	"l2": obj.l2,
-	"r1": obj.r1,
-	"r2": obj.r2,
-	"Nsize": obj.Nsize
-	}
-    return {
-      "sequence": obj.sequence
-      }
-    raise TypeError(repr(obj) + " fail !") 
+	if isinstance(obj, ListWindows):
+		return {"windows": obj.windows,
+		"normalization_factor": obj.normalization_factor,
+		"reads_total": obj.reads_total,
+		"reads_segmented": obj.reads_segmented,
+		"time": obj.time,
+		"timestamp": obj.timestamp,
+		"germline": obj.germline
+		}
+		raise TypeError(repr(obj) + " fail !") 
+	if isinstance(obj, Window):
+		if hasattr(obj, 'name'):
+			return {
+			"sequence": obj.sequence,
+			"window": obj.window,
+			"size": obj.size,
+			"top": obj.top,
+			"V": obj.V,
+			"D": obj.D,
+			"J": obj.J,
+			"name": obj.name,
+			"l1": obj.l1,
+			"l2": obj.l2,
+			"r1": obj.r1,
+			"r2": obj.r2,
+			"Nsize": obj.Nsize
+			}
+		return {
+			"sequence": obj.sequence,
+			"window": obj.window,
+			"size": obj.size,
+			"top": obj.top
+		}
+		raise TypeError(repr(obj) + " fail !") 
+
 
 #deserialiseur perso, convertit un format json en objet python correspondant
 ### TODO: mettre cela en methode ListWindows.load_json()
 def jsonToJunc(obj_dict):
   if "reads_total" in obj_dict:
     obj = ListWindows()
-    obj.normalizations=obj_dict["normalizations"]
+    obj.normalization_factor=obj_dict["normalization_factor"]
     obj.windows=obj_dict["windows"]
     obj.reads_total=obj_dict["reads_total"]
-    obj.total_size=obj_dict["total_size"]
-    obj.resolution1=obj_dict["resolution1"]
-    obj.resolution5=obj_dict["resolution5"]
+    obj.reads_segmented=obj_dict["reads_segmented"]
     obj.timestamp=obj_dict["timestamp"]
     obj.germline=obj_dict["germline"]
-    
     return obj
+    
   if "window" in obj_dict:
     obj = Window()
+    obj.sequence=obj_dict["sequence"]
     obj.window=obj_dict["window"]
     obj.size=obj_dict["size"]
-    obj.ratios=obj_dict["ratios"]
     obj.top=obj_dict["top"]
-    if "seg" in obj_dict :
-      obj.segment=obj_dict["seg"]
-    else :
-      obj.segment = 0
-    return obj
-  if "sequence" in obj_dict:
-    obj = Segment(obj_dict["sequence"])
     if "name" in obj_dict:
-      obj.name=obj_dict["name"]
-      obj.V=obj_dict["V"]
-      obj.l1=obj_dict["l1"]
-      obj.l2=obj_dict["l2"]
-      obj.r1=obj_dict["r1"]
-      obj.r2=obj_dict["r2"]
-      obj.Nsize=obj_dict["Nsize"]
-      if "D" in obj_dict:
-	obj.D=obj_dict["D"]
-      obj.J=obj_dict["J"]
+		obj.name=obj_dict["name"]
+		obj.V=obj_dict["V"]
+		obj.J=obj_dict["J"]
+		obj.l1=obj_dict["l1"]
+		obj.l2=obj_dict["l2"]
+		obj.r1=obj_dict["r1"]
+		obj.r2=obj_dict["r2"]
+		obj.Nsize=obj_dict["Nsize"]
+		if "D" in obj_dict:
+			obj.D=obj_dict["D"]
     return obj
 
     
 def cutList(l1, limit):
   
   out = ListWindows()
-  out.normalizations=l1.normalizations
+  out.normalization_factor=l1.normalization_factor
   out.reads_total=l1.reads_total
-  out.total_size=l1.total_size
-  out.resolution1=l1.resolution1
-  out.resolution5=l1.resolution5
+  out.reads_segmented=l1.reads_segmented
   out.timestamp=l1.timestamp
   out.germline=l1.germline
   
@@ -165,7 +144,7 @@ def fuseList(l1, l2, limit):
   
   tp=[]
   
-  for i in l1.normalizations:
+  for i in l1.normalization_factor:
     tp.append(0)
   
   for i in range(s):
@@ -183,31 +162,28 @@ def fuseList(l1, l2, limit):
   #recuperation des quantites de jonctions de la liste 1
   for index in range(length1): 
     dico_size[l1.windows[index].window] = l1.windows[index].size
-    dico_ratios[l1.windows[index].window] = l1.windows[index].ratios
     dico_top[l1.windows[index].window] = l1.windows[index].top
-    if (l1.windows[index].segment != 0) :
-      dataseg[l1.windows[index].window] = l1.windows[index].segment
+    if (l1.windows[index].sequence != 0) :
+      dataseg[l1.windows[index].window] = l1.windows[index]
     
   for index in range(length2): 
     
-    if (l2.windows[index].segment != 0) :
+    if (l2.windows[index].sequence != 0) :
       if not l2.windows[index].window in dataseg :
-	dataseg[l2.windows[index].window] = l2.windows[index].segment
+	dataseg[l2.windows[index].window] = l2.windows[index]
       else :
 	#si les 2 listes ont des donnees de segmentation pour une meme jonction
 	#on garde les donnees de segmentation de la liste possedant le point de suivi le plus haut
 	if ( max (l2.windows[index].size) > max (dico_size[l2.windows[index].window]) ) :
-	  dataseg[l2.windows[index].window] = l2.windows[index].segment
+	  dataseg[l2.windows[index].window] = l2.windows[index]
 	  
 	  
     #cas ou la jonction n'etait pas presente dans la 1ere liste
     if l2.windows[index].window not in dico_size:
       dico_size[l2.windows[index].window] = tampon + l2.windows[index].size
-      dico_ratios[l2.windows[index].window] = tampon + l2.windows[index].ratios
       dico_top[l2.windows[index].window] = l2.windows[index].top
     else :
       dico_size[l2.windows[index].window] = dico_size[l2.windows[index].window] + l2.windows[index].size
-      dico_ratios[l2.windows[index].window] = dico_ratios[l2.windows[index].window] + l2.windows[index].ratios
       if (dico_top[l2.windows[index].window] > l2.windows[index].top) :
 	dico_top[l2.windows[index].window] = l2.windows[index].top
     
@@ -215,14 +191,11 @@ def fuseList(l1, l2, limit):
   for index in range(length1): 
     if len(dico_size[l1.windows[index].window]) == s :
       dico_size[l1.windows[index].window] += tampon2
-      dico_ratios[l1.windows[index].window] += tampon2
   
   out = ListWindows()
-  out.normalizations=l1.normalizations
+  out.normalization_factor=l1.normalization_factor+l2.normalization_factor
   out.reads_total=l1.reads_total+l2.reads_total    
-  out.total_size=l1.total_size+l2.total_size    
-  out.resolution1=l1.resolution1+l2.resolution1
-  out.resolution5=l1.resolution5+l2.resolution5
+  out.reads_segmented=l1.reads_segmented+l2.reads_segmented    
   out.germline=l1.germline
   
   timestamp1= time.strptime(l1.timestamp, "%Y-%m-%d %H:%M:%S")
@@ -237,11 +210,20 @@ def fuseList(l1, l2, limit):
     junct=Window()
     junct.window=key
     junct.size=dico_size[key]
-    junct.ratios=dico_ratios[key]
     junct.top=dico_top[key]
-    junct.segment = 0
+    junct.sequence = "0";
     if key in dataseg :
-      junct.segment = dataseg[key]
+		junct.sequence = dataseg[key].sequence
+		junct.name=dataseg[key].name
+		junct.V=dataseg[key].V
+		junct.J=dataseg[key].J
+		junct.l1=dataseg[key].l1
+		junct.l2=dataseg[key].l2
+		junct.r1=dataseg[key].r1
+		junct.r2=dataseg[key].r2
+		junct.Nsize=dataseg[key].Nsize
+		junct.D=dataseg[key].D
+      
     if (junct.top < limit or limit == 0) :
       out.windows.append(junct)
 
