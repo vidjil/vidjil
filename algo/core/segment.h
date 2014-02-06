@@ -34,8 +34,8 @@ class Segmenter {
 protected:
   string label;
   string sequence;
-  int left, right;
-  int left2, right2;
+  int Vend, Jstart;
+  int Dstart, Dend;
   bool reversed, segmented, dSegmented;
 
   string removeChevauchement();

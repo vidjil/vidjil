@@ -46,19 +46,19 @@ string Segmenter::getJunction(int l) const {
 }
 
 int Segmenter::getLeft() const {
-  return left;
+  return Vend;
 }
   
 int Segmenter::getRight() const {
-  return right;
+  return Jstart;
 }
 
 int Segmenter::getLeftD() const {
-  return left2;
+  return Dstart;
 }
   
 int Segmenter::getRightD() const {
-  return right2;
+  return Dend;
 }
 
 bool Segmenter::isReverse() const {
@@ -81,12 +81,12 @@ string Segmenter::removeChevauchement()
   
   string chevauchement = "" ;
 
-  if (left >= right)
+  if (Vend >= Jstart)
     {
-      int middle = (left + right) / 2 ;
-      chevauchement = "!" + string_of_int (left - right) + "!" ;
-      left = middle ;
-      right = middle+1 ;
+      int middle = (Vend + Jstart) / 2 ;
+      chevauchement = "!" + string_of_int (Vend - Jstart) + "!" ;
+      Vend = middle ;
+      Jstart = middle+1 ;
     }
 
   return chevauchement ;
@@ -101,11 +101,11 @@ bool Segmenter::finishSegmentation()
   
   string seq = getSequence().sequence;
     
-  seg_V = seq.substr(0, left+1) ;
-  seg_N = seq.substr(left+1, right-left-1) ;  // Twice computed for FineSegmenter, but only once in KmerSegmenter !
-  seg_J = seq.substr(right) ;
-  left2=0;
-  right2=0;
+  seg_V = seq.substr(0, Vend+1) ;
+  seg_N = seq.substr(Vend+1, Jstart-Vend-1) ;  // Twice computed for FineSegmenter, but only once in KmerSegmenter !
+  seg_J = seq.substr(Jstart) ;
+  Dstart=0;
+  Dend=0;
 
   info = "VJ \t" + string_of_int(FIRST_POS) + " " + info + " " + string_of_int(seq.size() - 1 + FIRST_POS) ;
   info += "\t" + code ;
@@ -119,15 +119,15 @@ bool Segmenter::finishSegmentationD()
 {
   string seq = getSequence().sequence;
 
-  seg_V = seq.substr(0, left+1) ; // From pos. 0 to left
-  seg_J = seq.substr(right) ;
+  seg_V = seq.substr(0, Vend+1) ; // From pos. 0 to Vend
+  seg_J = seq.substr(Jstart) ;
   
-  seg_D  = seq.substr(left2, right2-left2+1) ; // From left2 to right2
+  seg_D  = seq.substr(Dstart, Dend-Dstart+1) ; // From Dstart to Dend
   
-  info = "VDJ \t0 " + string_of_int(left) +
-		" " + string_of_int(left2) + 
-		" " + string_of_int(right2) +
-		" " + string_of_int(right) +
+  info = "VDJ \t0 " + string_of_int(Vend) +
+		" " + string_of_int(Dstart) + 
+		" " + string_of_int(Dend) +
+		" " + string_of_int(Jstart) +
 		" " + string_of_int(seq.size()-1+FIRST_POS) ;
 		
   info += "\t" + code ;
@@ -171,7 +171,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
   sequence = seq.sequence ;
   info = "" ;
   segmented = false;
-  right2=0;
+  Dend=0;
   segment_cost=segment_c;
   
   int s = (size_t)index->getS() ;
@@ -238,22 +238,22 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
   if (strand == 1)
     {
       // Strand +
-      left = kaa->last(AFFECT_V);
-      right = kaa->first(AFFECT_J);
+      Vend = kaa->last(AFFECT_V);
+      Jstart = kaa->first(AFFECT_J);
 
-      if (left == (int)string::npos) 
+      if (Vend == (int)string::npos) 
 	{
 	  because = UNSEG_TOO_FEW_V ;
 	  segmented = false ;
 	}
       
-      if (right == (int)string::npos)
+      if (Jstart == (int)string::npos)
 	{
 	  because = UNSEG_TOO_FEW_J ;
 	  segmented = false ;
 	}
 
-      left += s;
+      Vend += s;
     } 
   
   if (strand == -1)
@@ -273,21 +273,21 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
 	  segmented = false ;
 	}
 
-      left = sequence.size() - first ;
-      right = sequence.size() - (last + s) ;
+      Vend = sequence.size() - first ;
+      Jstart = sequence.size() - (last + s) ;
     }
   
   if (segmented)
     {
-      // Now we check the delta between left and right
+      // Now we check the delta between Vend and right
    
-      if (right - left < delta_min)
+      if (Jstart - Vend < delta_min)
 	{
 	  because = UNSEG_BAD_DELTA_MIN ;
 	  segmented = false ;
 	}
 
-      if (right - left > delta_max)
+      if (Jstart - Vend > delta_max)
 	{
 	  because = UNSEG_BAD_DELTA_MAX ;
 	  segmented = false ;
@@ -301,7 +301,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
       reversed = (strand == -1); 
       because = reversed ? SEG_MINUS : SEG_PLUS ;
 
-      info = string_of_int(left + FIRST_POS) + " " + string_of_int(right + FIRST_POS)  ;
+      info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS)  ;
       info += " " + removeChevauchement();
       finishSegmentation();
     }
@@ -464,7 +464,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
   
   label = seq.label ;
   sequence = seq.sequence ;
-  right2=0;
+  Dend=0;
   segment_cost=segment_c;
 
   // TODO: factoriser tout cela, peut-etre en lancant deux segmenteurs, un +, un -, puis un qui chapote
@@ -515,8 +515,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
 
   if (!reversed)
     {
-      left = plus_left ;
-      right = plus_right ;
+      Vend = plus_left ;
+      Jstart = plus_right ;
       best_V = tag_plus_V ;
       best_J = tag_plus_J ;
       del_V = del_plus_V ;
@@ -526,8 +526,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
     }
   else
     {
-      left = minus_left ;
-      right = minus_right ;
+      Vend = minus_left ;
+      Jstart = minus_right ;
       best_V = tag_minus_V ;
       best_J = tag_minus_J ;
       del_V = del_minus_V ;
@@ -536,42 +536,42 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
       score_J=score_minus_J;
     }
 
-  segmented = (left != (int) string::npos) && (right != (int) string::npos) && 
-    (right - left >= delta_min) && (right - left <= delta_max);
+  segmented = (Vend != (int) string::npos) && (Jstart != (int) string::npos) && 
+    (Jstart - Vend >= delta_min) && (Jstart - Vend <= delta_max);
     
   dSegmented=false;
 
   if (!segmented)
     {
-      info = " @" + string_of_int (left + FIRST_POS) + "  @" + string_of_int(right + FIRST_POS) ;
+      info = " @" + string_of_int (Vend + FIRST_POS) + "  @" + string_of_int(Jstart + FIRST_POS) ;
       return ;
     }
     
     //overlap VJ
-    if(right-left <=0){
+    if(Jstart-Vend <=0){
       int b_r, b_l;
-      int overlap=left-right+1;
+      int overlap=Vend-Jstart+1;
       
-      string seq_left = sequence.substr(0, left+1);
-      string seq_right = sequence.substr(right);
+      string seq_left = sequence.substr(0, Vend+1);
+      string seq_right = sequence.substr(Jstart);
 
       best_align(overlap, seq_left, seq_right, 
 		 rep_V.sequence(best_V), rep_J.sequence(best_J), &b_r,&b_l, segment_cost);
       // Trim V
-      left -= b_l;
+      Vend -= b_l;
       del_V += b_l;
 
       // Trim J
-      right += b_r;
+      Jstart += b_r;
       del_J += b_r;
-        if (right>=sequence.length())
-	  right=sequence.length()-1;
+        if (Jstart>=sequence.length())
+	  Jstart=sequence.length()-1;
     }
 
     // string chevauchement = removeChevauchement();
 
     /// used only below, then recomputed in finishSegmentation() ;
-    seg_N = revcomp(sequence, reversed).substr(left+1, right-left-1); 
+    seg_N = revcomp(sequence, reversed).substr(Vend+1, Jstart-Vend-1); 
 
   code = rep_V.label(best_V) +
     " "+ string_of_int(del_V) + 
@@ -593,7 +593,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
     "/ " + rep_J.label(best_J); 
 
  
-  info = string_of_int(left + FIRST_POS) + " " + string_of_int(right + FIRST_POS) ;
+  info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS) ;
 
   finishSegmentation();
 }
@@ -610,11 +610,11 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
     int score;
     
     // Create a zone where to look for D, adding at most EXTEND_D_ZONE nucleotides at each side
-    int l = left - EXTEND_D_ZONE;
+    int l = Vend - EXTEND_D_ZONE;
     if (l<0) 
       l=0 ;
 
-    int r = right + EXTEND_D_ZONE;
+    int r = Jstart + EXTEND_D_ZONE;
 
     if (r > (int)getSequence().sequence.length()) 
       r = getSequence().sequence.length();
@@ -628,51 +628,51 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
     score=score_D[0].first;
     best_D = tag_D;
     
-    left2 = l + begin;
-    right2 = l + end;
+    Dstart = l + begin;
+    Dend = l + end;
 	
     string seq = getSequence().sequence;
     
     if (length>0) dSegmented=true;
     
     //overlap VD
-    if(left2-left <=0){
+    if(Dstart-Vend <=0){
       int b_r, b_l;
-      int overlap=left-left2+1;
-      string seq_left = seq.substr(0, left+1);
-      string seq_right = seq.substr(left2, right2-left2+1);
+      int overlap=Vend-Dstart+1;
+      string seq_left = seq.substr(0, Vend+1);
+      string seq_right = seq.substr(Dstart, Dend-Dstart+1);
 
       best_align(overlap, seq_left, seq_right, 
 		 rep_V.sequence(best_V), rep_D.sequence(best_D), &b_r,&b_l, segment_cost);
 
       // Trim V
-      left -= b_l;
+      Vend -= b_l;
       del_V += b_l;
 
       // Trim D
-      left2 += b_r;
+      Dstart += b_r;
     }
-    seg_N1 = seq.substr(left+1, left2-left-1) ; // From left+1 to left2-1
+    seg_N1 = seq.substr(Vend+1, Dstart-Vend-1) ; // From Vend+1 to Dstart-1
     
     //overlap DJ
-    if(right-right2 <=0){
+    if(Jstart-Dend <=0){
       int b_r, b_l;
-      int overlap=right2-right+1;
-      string seq_right = seq.substr(left2, right2-left2+1);
-      string seq_left = seq.substr(right, seq.length()-right);
+      int overlap=Dend-Jstart+1;
+      string seq_right = seq.substr(Dstart, Dend-Dstart+1);
+      string seq_left = seq.substr(Jstart, seq.length()-Jstart);
 
       best_align(overlap, seq_left, seq_right, 
 		 rep_D.sequence(best_D), rep_J.sequence(best_J), &b_r,&b_l, segment_cost);
 
       // Trim D
-      right2 -= b_l;
+      Dend -= b_l;
 
       // Trim J
-      right += b_r;
+      Jstart += b_r;
       del_J += b_r;
 
     }
-    seg_N2 = seq.substr(right2+1, right-right2-1) ; // From right2+1 to right-1
+    seg_N2 = seq.substr(Dend+1, Jstart-Dend-1) ; // From Dend+1 to right-1
     code = rep_V.label(best_V) +
     " "+ string_of_int(del_V) + 
     "/" + seg_N1 + 
@@ -714,10 +714,10 @@ JsonList FineSegmenter::toJsonList(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
   result.add("sequence", revcomp(sequence, reversed) );
   if (isSegmented()) {
     result.add("name", code_short);
-    result.add("r1", right);
-    result.add("r2", right2);
-    result.add("l1", left);
-    result.add("l2", left2);
+    result.add("r1", Jstart);
+    result.add("r2", Dend);
+    result.add("l1", Vend);
+    result.add("l2", Dstart);
     result.add("Nsize", (del_V+del_J+seg_N.size()) );
     
     JsonArray jsonV;
