@@ -336,7 +336,7 @@ for path_name in input_names:
     
     extension = path_name.split('.')[-1]
     
-    if (extension=="json"): 
+    if (extension=="data"): 
 		with open(path_name, "r") as file:
 			jlist = json.load(file, object_hook=jsonToJunc)       
 			print jlist
