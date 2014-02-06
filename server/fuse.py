@@ -1,9 +1,31 @@
 import collections
 import json
+import argparse
 import sys
 import time
 from operator import itemgetter
  
+
+DESCRIPTION = 'Vidjil utility to parse and regroup list of clones of different timepoints or origins'
+
+#### Argument parser (argparse)
+
+parser = argparse.ArgumentParser(description= DESCRIPTION,
+                                 epilog='''Example:
+                                 python2 %(prog)s -s 2 -m 13''',
+                                 formatter_class=argparse.RawTextHelpFormatter)
+
+
+group_options= parser.add_argument_group() # title='Options and parameters')
+
+group_options.add_argument('--output', '-o', type=str, default='fused.data', help='output file (%(default)s)')
+group_options.add_argument('--max-clones', '-z', type=int, default=50, help='maximum number of clones')
+
+parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
+
+
+####
+
  
 class ListWindows:
   def __init__(self):
@@ -24,17 +46,6 @@ class Window:
     self.D = []
     self.J = []
     
-      
-if len(sys.argv) < 4:
-  print "incorect number of argument ( minimum 3 )"
-  print "fuse.py -output_file- -top_limit- -input_file1- -input_file2- ... -input_fileX-"
-  sys.exit() 
-  
-  
-output_name=sys.argv[1]
-output_limit = int(sys.argv[2])
-input_names = sys.argv[3:]
-
 jlist1 = []
 jlist2 = []
  
@@ -316,11 +327,13 @@ def fuseList(l1, l2, limit):
   
   
   
+args = parser.parse_args()
+print args
 
 jlist_fused = None
 times = []
 
-for path_name in input_names:
+for path_name in args.file:
     # Compute short name
     split=path_name.split("/");
     name="";
@@ -355,10 +368,10 @@ for path_name in input_names:
 
 print
 
-jlist_fused = cutList(jlist_fused, output_limit)
+jlist_fused = cutList(jlist_fused, args.max_clones)
 jlist_fused.time = times
 print jlist_fused 
   
-print "==>", output_name
-with open(output_name, "w") as file:
+print "==>", args.output
+with open(args.output, "w") as file:
     json.dump(jlist_fused, file, indent=2, default=juncToJson)
