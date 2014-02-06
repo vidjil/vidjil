@@ -138,7 +138,8 @@ def euroMrdParser(file_path):
 			tab = ligne.split('\t')
 			
 			w=Window()
-			w.window=tab[header_map["sequence.seq id"]]	#use sequence id as window for euroMRD data
+			#w.window=tab[header_map["sequence.seq id"]]	#use sequence id as window for euroMRD data
+			w.window=tab[header_map["sequence.raw nt seq"]]	#use sequence as window for euroMRD data
 			s = int(tab[ header_map["sequence.size"] ])
 			total_size += s
 			w.size=[ s ]
