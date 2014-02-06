@@ -720,8 +720,10 @@ JsonList FineSegmenter::toJsonList(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
 
     JsonArray jsonV;
     JsonArray jsonJ;
+
+    // TODO: what is going on if some list is smaller than JSON_REMEMBER_BEST ?
     
-    for (int i=0; i<4; i++) jsonV.add( rep_V.label(score_V[i].second) ) ;
+    for (int i=0; i<JSON_REMEMBER_BEST; i++) jsonV.add( rep_V.label(score_V[i].second) ) ;
     result.add("V", jsonV);
     
     
@@ -730,11 +732,11 @@ JsonList FineSegmenter::toJsonList(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
       result.add("Dend", Dend);      
       JsonArray jsonD;
 
-      for (int i=0; i<4; i++) jsonD.add( rep_D.label(score_D[i].second) ) ;
+      for (int i=0; i<JSON_REMEMBER_BEST; i++) jsonD.add( rep_D.label(score_D[i].second) ) ;
       result.add("D", jsonD);
     }
     
-    for (int i=0; i<4; i++) jsonJ.add( rep_J.label(score_J[i].second) ) ;
+    for (int i=0; i<JSON_REMEMBER_BEST; i++) jsonJ.add( rep_J.label(score_J[i].second) ) ;
     result.add("J", jsonJ);
   }
   return result;
