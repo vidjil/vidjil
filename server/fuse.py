@@ -102,12 +102,17 @@ def jsonToJunc(obj_dict):
 		obj.V=obj_dict["V"]
 		obj.J=obj_dict["J"]
 		obj.l1=obj_dict["Vend"]
-		obj.l2=obj_dict["Dstart"]
-		obj.r2=obj_dict["Dend"]
 		obj.r1=obj_dict["Jstart"]
 		obj.Nsize=obj_dict["Nlength"]
 		if "D" in obj_dict:
 			obj.D=obj_dict["D"]
+                        obj.l2=obj_dict["Dstart"]
+                        obj.r2=obj_dict["Dend"]
+                else:
+                        ## TODO: Temporary hack, should work even without these variables
+                        obj.D = []
+                        obj.l2 = 0
+                        obj.r2 = 0
     return obj
 
     
