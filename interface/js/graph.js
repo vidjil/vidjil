@@ -426,34 +426,48 @@ Graph.prototype = {
     //plusieurs points de suivi
     else{
       
+		var to = 0;
+		for (var k=0; k<this.graph_col.length; k++) to+=this.m.getSize(cloneID, k);
+		var re = to;
+		var size = this.m.getSize(cloneID, 0)
       //premier point de suivi 
-      if (this.m.getSize(cloneID, 0)==0){
-	p = [ ];
-      }else{
-	p =   [[ ( x - 30  ), ( this.h - y )]];
-	p.push([ ( x )      , ( this.h - y )]);
+      if (size==0){
+			p = [ ];
+		}else{
+			p =   [[ ( x - 30  ), ( this.h - y )]];
+			p.push([ ( x )      , ( this.h - y )]);
+			
+			if (re==size){
+				p.push([( x + 30 ), ( this.h - y )]);
+			}
+			re-=size;
       }
       
       //points suivants
       for (var i=1; i< this.graph_col.length; i++){
-	x = this.graph_col[i];
-	y = this.scale_x(this.m.getSize(cloneID, i)*this.precision)
-	
-	if (this.m.getSize(cloneID, i)==0){
-	  if (p.length!=0){
-	    p.push([( x ),(this.h + 30)]);
-	  }
-	}else{
-	  //si premiere apparition du clone sur le graphique
-	  if (p.length==0){
-	    p.push([( x - 30 ), ( this.h - y )]);
-	  }
-	  p.push(  [( x ), ( this.h - y )]);
-	  //si derniere apparition du clone sur le graphique
-	  if (i==this.graph_col.length-1 ){
-	    p.push([( x + 30 ), ( this.h - y )]);
-	  }
-	}
+		  if (re!=0){
+			size=this.m.getSize(cloneID, i);
+			x = this.graph_col[i];
+			y = this.scale_x(size*this.precision)
+			
+			if (size==0){
+				if (p.length!=0){
+					p.push([( x ),(this.h + 30)]);
+				}
+			}else{
+			//si premiere apparition du clone sur le graphique
+				if (p.length==0){
+					p.push([( x - 30 ), ( this.h - y )]);
+				}
+				
+				p.push(  [( x ), ( this.h - y )]);
+				//si derniere apparition du clone sur le graphique
+				if (re==size){
+					p.push([( x + 30 ), ( this.h - y )]);
+				}
+			}
+			re-=size;
+		  }
       }
     }
     return p;
