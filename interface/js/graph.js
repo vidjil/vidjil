@@ -428,7 +428,6 @@ Graph.prototype = {
       
 		var to = 0;
 		for (var k=0; k<this.graph_col.length; k++) to+=this.m.getSize(cloneID, k);
-		var re = to;
 		var size = this.m.getSize(cloneID, 0)
       //premier point de suivi 
       if (size==0){
@@ -437,15 +436,17 @@ Graph.prototype = {
 			p =   [[ ( x - 30  ), ( this.h - y )]];
 			p.push([ ( x )      , ( this.h - y )]);
 			
-			if (re==size){
+			if (to==size){
 				p.push([( x + 30 ), ( this.h - y )]);
 			}
-			re-=size;
       }
       
       //points suivants
       for (var i=1; i< this.graph_col.length; i++){
-		  if (re!=0){
+		to = 0;
+		for (var k=i; k<this.graph_col.length; k++) to+=this.m.getSize(cloneID, k);
+		  
+		  if (to!=0){
 			size=this.m.getSize(cloneID, i);
 			x = this.graph_col[i];
 			y = this.scale_x(size*this.precision)
@@ -462,11 +463,10 @@ Graph.prototype = {
 				
 				p.push(  [( x ), ( this.h - y )]);
 				//si derniere apparition du clone sur le graphique
-				if (re==size){
+				if (to==size){
 					p.push([( x + 30 ), ( this.h - y )]);
 				}
 			}
-			re-=size;
 		  }
       }
     }
