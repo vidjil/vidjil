@@ -103,6 +103,7 @@ Model.prototype = {
     self=this;
     self.windows = [];
     self.mapID={}
+    self.dataCluster = []
     var min_size = 1;
     var n_max=0;
     var n2_max=0; //TODO rename
@@ -164,8 +165,6 @@ Model.prototype = {
     self.n2_max=n2_max;
     self.normalization_factor = data.normalization_factor;
     self.reads_segmented = data.reads_segmented;
-    self.resolution1 = data.resolution1;
-    self.resolution5 = data.resolution5;
     self.timestamp = data.timestamp;
     self.time = data.time;
     self.scale_color = d3.scale.log()
@@ -192,6 +191,28 @@ Model.prototype = {
     for (var i=0; i< self.n_windows; i++){
       self.mapID[self.windows[i].window]=i;
     }
+    
+    // init clones
+    if (data.clones){
+		for ( var i=0; i< data.clones.length; i++){
+			var cl = {}
+			cl.cluster = []
+			for ( var j=0; j<data.clones[i].cluster.length; j++){
+				if (self.mapID[data.clones[i].cluster[j]] ){
+					cl.cluster.push(self.mapID[data.clones[i].cluster[j]])
+				}
+			}
+			if (data.clones[i].name){
+				cl.name=data.clones[i].name
+			}
+			if (cl.cluster.length!=0){
+				cl.cluster.sort()
+				console.log(cl)
+				self.dataCluster.push(cl)
+			}
+		}
+	}
+    
     return this
   },
   
@@ -319,7 +340,7 @@ Model.prototype = {
     var maxNsize=0;
     var nsize;
     self.mapID = [];
-    this.clones =[];
+    this.clones = [];
     
     //		NSIZE
     for(var i=0; i<this.n_windows; i++){
@@ -405,6 +426,18 @@ Model.prototype = {
 	}
       }
     }
+    
+    //		DATA CLUSTER
+    this.dataCluster.sort(function(a,b){return b.cluster[0]-a.cluster[0]})
+    for (var i=0 ; i<this.dataCluster.length; i++){
+		var new_cluster = [];
+		for (var j=0 ; j<this.dataCluster[i].cluster.length; j++){
+			new_cluster = new_cluster.concat(this.clones[this.dataCluster[i].cluster[j]].cluster);
+			this.clones[this.dataCluster[i].cluster[j]].cluster=[]
+			console.log("HAAAAAAAAA"+ new_cluster)
+		}
+		this.clones[this.dataCluster[i].cluster[0]].cluster=new_cluster
+	}
     
     //		CUSTOM CLUSTER
     var cluster=this.analysis.cluster;

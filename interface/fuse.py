@@ -275,6 +275,7 @@ def fuseList(l1, l2, limit):
   out.normalization_factor=l1.normalization_factor+l2.normalization_factor
   out.reads_total=l1.reads_total+l2.reads_total    
   out.reads_segmented=l1.reads_segmented+l2.reads_segmented    
+  out.clones=l1.clones+l2.clones    
   out.germline=l1.germline
   
   timestamp1= time.strptime(l1.timestamp, "%Y-%m-%d %H:%M:%S")
