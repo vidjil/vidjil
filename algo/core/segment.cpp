@@ -714,11 +714,11 @@ JsonList FineSegmenter::toJsonList(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
   result.add("sequence", revcomp(sequence, reversed) );
   if (isSegmented()) {
     result.add("name", code_short);
-    result.add("r1", Jstart);
-    result.add("r2", Dend);
-    result.add("l1", Vend);
-    result.add("l2", Dstart);
-    result.add("Nsize", (del_V+del_J+seg_N.size()) );
+    result.add("Jstart", Jstart);
+    result.add("Dend", Dend);
+    result.add("Vend", Vend);
+    result.add("Dstart", Dstart);
+    result.add("Nlength", (del_V+del_J+seg_N.size()) );
     
     JsonArray jsonV;
     JsonArray jsonD;
