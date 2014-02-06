@@ -128,14 +128,14 @@ Model.prototype = {
 
 		//search for n_max / n2_max
 		if ((typeof(data.windows[i].sequence) != 'undefined') && 
-			(typeof(data.windows[i].Nsize) != 'undefined') &&
-			(data.windows[i].Nsize > n_max)){
-			n_max=data.windows[i].Nsize;   
+			(typeof(data.windows[i].Nlength) != 'undefined') &&
+			(data.windows[i].Nlength > n_max)){
+			n_max=data.windows[i].Nlength;   
 		}
 		
 		var n2=0;
 		if ((typeof(data.windows[i].sequence) != 'undefined') && 
-		(typeof(data.windows[i].Nsize) != 'undefined')){
+		(typeof(data.windows[i].Nlength) != 'undefined')){
 		n2=data.windows[i].name.split('/')[1];
 		if (n2>n2_max)n2_max=n2;  
 		}
@@ -337,29 +337,29 @@ Model.prototype = {
  * */
   initClones: function(){
     console.log("initClones()");
-    var maxNsize=0;
+    var maxNlength=0;
     var nsize;
     self.mapID = [];
     this.clones = [];
     
     //		NSIZE
     for(var i=0; i<this.n_windows; i++){
-      if (typeof(this.windows[i].sequence) != 'undefined' && typeof(this.windows[i].Nsize) != 'undefined' ){
-	nsize=this.windows[i].Nsize;
-	if (nsize>maxNsize){maxNsize=nsize;}
+      if (typeof(this.windows[i].sequence) != 'undefined' && typeof(this.windows[i].Nlength) != 'undefined' ){
+	nsize=this.windows[i].Nlength;
+	if (nsize>maxNlength){maxNlength=nsize;}
 			}else{
 	nsize=-1;
       }
       self.mapID[this.windows[i].window]=i;
       this.clones[i]={cluster:[i]};
       this.windows[i].display=true;
-      this.windows[i].Nsize=nsize;
+      this.windows[i].Nlength=nsize;
       this.windows[i].tag=default_tag;
     }
     
     //		COLOR_N
     for (var i=0; i<this.n_windows; i++){
-      this.windows[i].colorN=colorGenerator( ( ((this.windows[i].Nsize/maxNsize)-1)*(-250) )  ,  color_s  , color_v);
+      this.windows[i].colorN=colorGenerator( ( ((this.windows[i].Nlength/maxNlength)-1)*(-250) )  ,  color_s  , color_v);
     }
     
     //		COLOR_N2

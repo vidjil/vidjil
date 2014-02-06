@@ -525,7 +525,7 @@ ScatterPlot.prototype = {
 	d.x+=coef3*((self.positionGene[geneV]*self.resizeW)-d.x);
 	if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
 	  if (self.m.windows[d.id].N!=-1){
-	    d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].Nsize/self.m.n_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
+	    d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].Nlength/self.m.n_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
 	  }else{
 	    d.y+=coef2*((self.h*self.resizeH)-d.y);
 	  }

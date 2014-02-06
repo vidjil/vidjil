@@ -163,7 +163,7 @@ Segment.prototype = {
     spanV.className="V";
     spanV.style.color=this.m.windows[cloneID].colorV;
 
-    var v_seq=this.m.windows[cloneID].sequence.substr(0, this.m.windows[cloneID].l1+1);
+    var v_seq=this.m.windows[cloneID].sequence.substr(0, this.m.windows[cloneID].Vend+1);
     var size_marge=200-v_seq.length;
     if (size_marge>0){
       var marge="";
@@ -175,17 +175,17 @@ Segment.prototype = {
 
     spanM.appendChild(spanV);
       
-    if ( (this.m.windows[cloneID].l1+1 -this.m.windows[cloneID].r1)!=0){
+    if ( (this.m.windows[cloneID].Vend+1 -this.m.windows[cloneID].Jstart)!=0){
       var spanN = document.createElement('span');
       spanN.className="N";
-      spanN.innerHTML=this.m.windows[cloneID].sequence.substring(this.m.windows[cloneID].l1+1, this.m.windows[cloneID].r1);
+      spanN.innerHTML=this.m.windows[cloneID].sequence.substring(this.m.windows[cloneID].Vend+1, this.m.windows[cloneID].Jstart);
       spanM.appendChild(spanN);
     }
     
     var spanJ = document.createElement('span');
     spanJ.className="J";
     spanJ.style.color=this.m.windows[cloneID].colorJ;
-    spanJ.innerHTML=this.m.windows[cloneID].sequence.substr(this.m.windows[cloneID].r1);
+    spanJ.innerHTML=this.m.windows[cloneID].sequence.substr(this.m.windows[cloneID].Jstart);
     spanM.appendChild(spanJ);
     }else{
       var size_marge=220-this.m.windows[cloneID].window.length;
@@ -278,27 +278,27 @@ Segment.prototype = {
     
     if(typeof m.windows[cloneID].sequence !='undefined' && m.windows[cloneID].sequence!=0){
       
-      var newl1=getNewPosition(seq,m.windows[cloneID].l1)
-      var newr1=getNewPosition(seq,m.windows[cloneID].r1)
+      var newVend=getNewPosition(seq,m.windows[cloneID].Vend)
+      var newJstart=getNewPosition(seq,m.windows[cloneID].Jstart)
     
     var spanV = document.createElement('span');
     spanV.className="V";
     spanV.style.color=m.windows[cloneID].colorV;
     
-    spanV.innerHTML=seq.substr(0, newl1+1);
+    spanV.innerHTML=seq.substr(0, newVend+1);
     spanM.appendChild(spanV);
       
-    if ( (newl1 - newr1)!=0){
+    if ( (newVend - newJstart)!=0){
       var spanN = document.createElement('span');
       spanN.className="N";
-      spanN.innerHTML=seq.substring(newl1+1, newr1);
+      spanN.innerHTML=seq.substring(newVend+1, newJstart);
       spanM.appendChild(spanN);
     }
     
     var spanJ = document.createElement('span');
     spanJ.className="J";
     spanJ.style.color=m.windows[cloneID].colorJ;
-    spanJ.innerHTML=seq.substr(newr1);
+    spanJ.innerHTML=seq.substr(newJstart);
     spanM.appendChild(spanJ);
     }else{
       var spanJunc=document.createElement('span');
