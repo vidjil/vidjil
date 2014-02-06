@@ -448,12 +448,12 @@ Model.prototype = {
 	analysisData.custom.push(elem);
       }
       
-      if (this.windows[i].cluster.length > 1){
-	for (var j=0; j<this.windows[i].cluster.length; j++){
-	  if (this.windows[i].cluster[j] !=i){
+      if (this.clones[i].cluster.length > 1){
+	for (var j=0; j<this.clones[i].cluster.length; j++){
+	  if (this.clones[i].cluster[j] !=i){
 	    var elem ={};
 	    elem.l = this.windows[i].window;
-	    elem.f = this.windows[ this.windows[i].cluster[j] ].window ;
+	    elem.f = this.windows[ this.clones[i].cluster[j] ].window ;
 	    analysisData.cluster.push(elem);
 	  } 
 	}

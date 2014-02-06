@@ -12,6 +12,7 @@ class ListWindows:
     self.normalization_factor = []
     self.time = []
     self.windows = []
+    self.clones = []
 
   def __str__(self):
     return "<windows %s: %s %s %d>" % (self.time, self.reads_total, self.reads_segmented, len(self.windows))
@@ -47,7 +48,8 @@ def juncToJson(obj):
 		"reads_segmented": obj.reads_segmented,
 		"time": obj.time,
 		"timestamp": obj.timestamp,
-		"germline": obj.germline
+		"germline": obj.germline,
+		"clones" :obj.clones
 		}
 		raise TypeError(repr(obj) + " fail !") 
 	if isinstance(obj, Window):
@@ -117,6 +119,7 @@ def euroMrdParser(file_path):
 	out.normalization_factor = [1]
 	
 	listw = []
+	listc = []
 	total_size = 0
 	
 	fichier = open(file_path,"r")
@@ -148,9 +151,7 @@ def euroMrdParser(file_path):
 			if (tab[header_map["sequence.D-GENE and allele"]] != "") :
 				w.D=tab[header_map["sequence.D-GENE and allele"]].split('=')
 			w.J=tab[header_map["sequence.J-GENE and allele"]].split('=')
-			
 			w.name=w.V[0] + " -x/y/-z " + w.J[0]
-			
 			w.l1=20
 			w.l2=0
 			w.r1=50
@@ -159,35 +160,55 @@ def euroMrdParser(file_path):
 
 			listw.append((w , w.size[0]))
 			
-	out.reads_segmented = [total_size]
-	
-	#tri par sequence_size
+			clonotype = tab[header_map["clonotype"]].split(' ')
+			if (clonotype[0]!="") :
+				listc.append((w , clonotype[0]))
+			
+	#sort by sequence_size
 	listw = sorted(listw, key=itemgetter(1), reverse=True)
+    #sort by clonotype
+	listc = sorted(listc, key=itemgetter(1))
 	
-	#attribution d'un classement top
+	#generate data "top"
 	for index in range(len(listw)):
 		listw[index][0].top=index+1
 		out.windows.append(listw[index][0])
+		
+	
+	#cluster / clonotype
+	clone = {}
+	clone["name"] = listc[0][1]
+	clone["cluster"] = []
+	clonotype_name = clone["name"]
+	
+	for index in range(len(listc)):
+		
+		if (clonotype_name != listc[index][1]):
+			out.clones.append(clone)
+			clone = {}
+			clone["name"] = listc[index][1]
+			clone["cluster"] = []
+			clonotype_name = listc[index][1]
+		clone["cluster"].append(listw[index][0].window)
+	out.clones.append(clone)
+	
+	out.reads_segmented = [total_size]
 	return out
     
     
 def cutList(l1, limit):
   
-  out = ListWindows()
-  out.normalization_factor=l1.normalization_factor
-  out.reads_total=l1.reads_total
-  out.reads_segmented=l1.reads_segmented
-  out.timestamp=l1.timestamp
-  out.germline=l1.germline
-  
   length1 = len(l1.windows)
+  w=[]
   
   for index in range(length1): 
     if (int(l1.windows[index].top) < limit or limit == 0) :
-      out.windows.append(l1.windows[index])
+      w.append(l1.windows[index])
+
+  l1.windows=w
 
   print "! cut to %d" % limit
-  return out
+  return l1
   
     
 
