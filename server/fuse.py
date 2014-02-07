@@ -1,9 +1,31 @@
 import collections
 import json
+import argparse
 import sys
 import time
 from operator import itemgetter
  
+
+DESCRIPTION = 'Vidjil utility to parse and regroup list of clones of different timepoints or origins'
+
+#### Argument parser (argparse)
+
+parser = argparse.ArgumentParser(description= DESCRIPTION,
+                                 epilog='''Example:
+                                 python2 %(prog)s -s 2 -m 13''',
+                                 formatter_class=argparse.RawTextHelpFormatter)
+
+
+group_options= parser.add_argument_group() # title='Options and parameters')
+
+group_options.add_argument('--output', '-o', type=str, default='fused.data', help='output file (%(default)s)')
+group_options.add_argument('--max-clones', '-z', type=int, default=50, help='maximum number of clones')
+
+parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
+
+
+####
+
  
 class ListWindows:
   def __init__(self):
@@ -23,18 +45,8 @@ class Window:
     self.V = []
     self.D = []
     self.J = []
+    self.infos = {}
     
-      
-if len(sys.argv) < 4:
-  print "incorect number of argument ( minimum 3 )"
-  print "fuse.py -output_file- -top_limit- -input_file1- -input_file2- ... -input_fileX-"
-  sys.exit() 
-  
-  
-output_name=sys.argv[1]
-output_limit = int(sys.argv[2])
-input_names = sys.argv[3:]
-
 jlist1 = []
 jlist2 = []
  
@@ -63,11 +75,12 @@ def juncToJson(obj):
 			"D": obj.D,
 			"J": obj.J,
 			"name": obj.name,
-			"l1": obj.l1,
-			"l2": obj.l2,
-			"r1": obj.r1,
-			"r2": obj.r2,
-			"Nsize": obj.Nsize
+			"Vend": obj.l1,
+			"Dstart": obj.r2,
+			"Dend": obj.l2,
+			"Jstart": obj.r1,
+			"Nlength": obj.Nsize,
+                        "infos": obj.infos
 			}
 		return {
 			"sequence": obj.sequence,
@@ -101,17 +114,23 @@ def jsonToJunc(obj_dict):
 		obj.name=obj_dict["name"]
 		obj.V=obj_dict["V"]
 		obj.J=obj_dict["J"]
-		obj.l1=obj_dict["l1"]
-		obj.l2=obj_dict["l2"]
-		obj.r1=obj_dict["r1"]
-		obj.r2=obj_dict["r2"]
-		obj.Nsize=obj_dict["Nsize"]
+		obj.l1=obj_dict["Vend"]
+		obj.r1=obj_dict["Jstart"]
+		obj.Nsize=obj_dict["Nlength"]
 		if "D" in obj_dict:
 			obj.D=obj_dict["D"]
+                        obj.l2=obj_dict["Dstart"]
+                        obj.r2=obj_dict["Dend"]
+                else:
+                        ## TODO: Temporary hack, should work even without these variables
+                        obj.D = []
+                        obj.l2 = 0
+                        obj.r2 = 0
     return obj
 
-    
-def euroMrdParser(file_path):
+
+### TODO: methode .load_clntab()    
+def clntabParser(file_path):
 	
 	out = ListWindows()
 	
@@ -125,10 +144,7 @@ def euroMrdParser(file_path):
 	fichier = open(file_path,"r")
 	for ligne in fichier:
 		if "clonotype" in ligne:
-			header = ligne.split('\t')
-			header_map = {}
-			for index in range(len(header)):
-				header_map[header[index]]=index
+			header_map = ligne.split('\t')
 			
 		else :
 			if "IGH" in ligne:
@@ -138,29 +154,47 @@ def euroMrdParser(file_path):
 			else :
 				out.germline = "???"
 				
-			tab = ligne.split('\t')
+	
+                        tab = {}
+                        for index, data in enumerate(ligne.split('\t')):
+                            tab[header_map[index]] = data
+
+                        print tab
 			
 			w=Window()
-			#w.window=tab[header_map["sequence.seq id"]]	#use sequence id as window for euroMRD data
-			w.window=tab[header_map["sequence.raw nt seq"]]	#use sequence as window for euroMRD data
-			s = int(tab[ header_map["sequence.size"] ])
+                        w.infos = tab ## On verra si on ne conserve pas tout plus tard
+
+			#w.window=tab["sequence.seq id"]	#use sequence id as window for .clntab data
+			w.window=tab["sequence.raw nt seq"]	#use sequence as window for .clntab data
+			s = int(tab["sequence.size"])
 			total_size += s
 			w.size=[ s ]
-			w.sequence = tab[header_map["sequence.raw nt seq"]]
-			w.V=tab[header_map["sequence.V-GENE and allele"]].split('=')
-			if (tab[header_map["sequence.D-GENE and allele"]] != "") :
-				w.D=tab[header_map["sequence.D-GENE and allele"]].split('=')
-			w.J=tab[header_map["sequence.J-GENE and allele"]].split('=')
+
+			w.sequence = tab["sequence.raw nt seq"]
+			w.V=tab["sequence.V-GENE and allele"].split('=')
+			if (tab["sequence.D-GENE and allele"] != "") :
+				w.D=tab["sequence.D-GENE and allele"].split('=')
+			w.J=tab["sequence.J-GENE and allele"].split('=')
+
+                        # use sequence.JUNCTION to colorize output (this is not exactly V/J !)
+                        junction = tab["sequence.JUNCTION.raw nt seq"]
+                        position = w.sequence.find(junction)
+                        if position >= 0:
+                          w.r1 = position
+                          w.l1 = position + len(junction)
+                          w.Nsize = len(junction)
+                        else:
+                          w.r1 = 0
+                          w.l1 = len(w.sequence)
+                          w.Nsize = 0
+                        
 			w.name=w.V[0] + " -x/y/-z " + w.J[0]
-			w.l1=20
 			w.l2=0
-			w.r1=50
 			w.r2=0
-			w.Nsize=5
 
 			listw.append((w , w.size[0]))
 			
-			clonotype = tab[header_map["clonotype"]].split(' ')
+			clonotype = tab["clonotype"].split(' ')
 			if (clonotype[0]!="") :
 				listc.append((w , clonotype[0]))
 			
@@ -210,9 +244,12 @@ def cutList(l1, limit):
   print "! cut to %d" % limit
   return l1
   
-    
 
+### code difficilement lisible
 ### TODO, methode ListWindows.__add__(self, other) 
+### et surtout, separer de cela une methode Windows.__add__(self, other) qui fait l'ajout de 2 windows
+### il ne devrait y avoir ni tampon, ni dataseg...
+
 def fuseList(l1, l2, limit): 
 
   if l1 is None:
@@ -255,8 +292,7 @@ def fuseList(l1, l2, limit):
 	#on garde les donnees de segmentation de la liste possedant le point de suivi le plus haut
 	if ( max (l2.windows[index].size) > max (dico_size[l2.windows[index].window]) ) :
 	  dataseg[l2.windows[index].window] = l2.windows[index]
-	  
-	  
+
     #cas ou la jonction n'etait pas presente dans la 1ere liste
     if l2.windows[index].window not in dico_size:
       dico_size[l2.windows[index].window] = tampon + l2.windows[index].size
@@ -293,6 +329,7 @@ def fuseList(l1, l2, limit):
     junct.top=dico_top[key]
     junct.sequence = 0;
     if key in dataseg :
+                ## TODO: on doit juste recopier l'objet, pas tous les champs un a un...
 		junct.sequence = dataseg[key].sequence
 		junct.name=dataseg[key].name
 		junct.V=dataseg[key].V
@@ -303,6 +340,7 @@ def fuseList(l1, l2, limit):
 		junct.r2=dataseg[key].r2
 		junct.Nsize=dataseg[key].Nsize
 		junct.D=dataseg[key].D
+                junct.infos = dataseg[key].infos
       
     if (junct.top < limit or limit == 0) :
       out.windows.append(junct)
@@ -311,11 +349,13 @@ def fuseList(l1, l2, limit):
   
   
   
+args = parser.parse_args()
+print args
 
 jlist_fused = None
 times = []
 
-for path_name in input_names:
+for path_name in args.file:
     # Compute short name
     split=path_name.split("/");
     name="";
@@ -331,13 +371,13 @@ for path_name in input_names:
     
     extension = path_name.split('.')[-1]
     
-    if (extension=="json"): 
+    if (extension=="data"): 
 		with open(path_name, "r") as file:
 			jlist = json.load(file, object_hook=jsonToJunc)       
 			print jlist
 			
     elif (extension=="clntab"):
-		jlist = euroMrdParser(path_name)
+		jlist = clntabParser(path_name)
 			
     else :
 		print "\n ERROR .", extension, " invalid file extension"
@@ -350,10 +390,10 @@ for path_name in input_names:
 
 print
 
-jlist_fused = cutList(jlist_fused, output_limit)
+jlist_fused = cutList(jlist_fused, args.max_clones)
 jlist_fused.time = times
 print jlist_fused 
   
-print "==>", output_name
-with open(output_name, "w") as file:
+print "==>", args.output
+with open(args.output, "w") as file:
     json.dump(jlist_fused, file, indent=2, default=juncToJson)

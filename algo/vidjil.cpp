@@ -1,7 +1,7 @@
 /*
   This file is part of "Vidjil" <http://bioinfo.lifl.fr/vidjil>
-  Copyright (C) 2011, 2012, 2013 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
-  Contributors: Mathieu Giraud <mathieu.giraud@lifl.fr>, Mikaël Salson <mikael.salson@lifl.fr>, Marc Duez
+  Copyright (C) 2011, 2012, 2013, 2014 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
+  Contributors: Mathieu Giraud <mathieu.giraud@lifl.fr>, Mikaël Salson <mikael.salson@lifl.fr>, Marc Duez <marc.duez@lifl.fr>
 
   "Vidjil" is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -84,7 +84,7 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define EDGES_FILENAME "edges"
 #define COMP_FILENAME "comp.data"
 #define GRAPH_FILENAME "graph"
-
+#define JSON_SUFFIX ".data"
 
 // "tests/data/leukemia.fa" 
 
@@ -199,7 +199,8 @@ void usage(char *progname)
 int main (int argc, char **argv)
 {
   cout << "# Vidjil -- V(D)J recombinations analysis <http://bioinfo.lifl.fr/vidjil>" << endl
-       << "# Copyright (C) 2011, 2012, 2013 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille" << endl 
+       << "# Copyright (C) 2011, 2012, 2013, 2014 by the Vidjil team" << endl
+       << "# Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille" << endl 
        << endl ;
 
   //$$ options: defaults
@@ -1247,7 +1248,7 @@ int main (int argc, char **argv)
     }
     
     //$$ .json output: json_data_segment
-    string f_json = out_dir + prefix_filename + "data.json" ;
+    string f_json = out_dir + prefix_filename + "vidjil" + JSON_SUFFIX ; // TODO: retrieve basename from f_reads instead of "vidjil"
     cout << "  ==> " << f_json << endl ;
     ofstream out_json(f_json.c_str()) ;
     

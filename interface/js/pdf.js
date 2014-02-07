@@ -195,13 +195,13 @@
       
       y=y+5;
       if (typeof(m.windows[id].sequence) !='number'){
-	//var v_seq=windows[id].sequence.substr(0, windows[id].l1+1);
-	//var n_seq=windows[id].sequence.substr(windows[id].l1+1, windows[id].r1);
-	//var j_seq=windows[id].sequence.substr(windows[id].r1);
+	//var v_seq=windows[id].sequence.substr(0, windows[id].Vend+1);
+	//var n_seq=windows[id].sequence.substr(windows[id].Vend+1, windows[id].Jstart);
+	//var j_seq=windows[id].sequence.substr(windows[id].Jstart);
 
 	var seq=m.windows[id].sequence;
-	var seq=seq.insert(m.windows[id].r1, "     ");
-	var seq=seq.insert(m.windows[id].l1+1, "     ");
+	var seq=seq.insert(m.windows[id].Jstart, "     ");
+	var seq=seq.insert(m.windows[id].Vend+1, "     ");
 
 	for(j=0 ; j<(Math.floor(seq.length/80)+1) ; j++){
 	  doc.text(30, y, seq.substring(j*80, (j+1)*80 ));

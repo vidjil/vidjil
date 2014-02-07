@@ -15,6 +15,8 @@
                                    strand and the other, to safely attribute a
                                    segment to a given strand */
 
+#define JSON_REMEMBER_BEST  4   /* The number of V/D/J predictions to keep  */
+
 using namespace std;
 
 enum SEGMENTED { DONT_KNOW, SEG_PLUS, SEG_MINUS, UNSEG_TOO_SHORT, UNSEG_STRAND_NOT_CONSISTENT, 
@@ -34,8 +36,8 @@ class Segmenter {
 protected:
   string label;
   string sequence;
-  int left, right;
-  int left2, right2;
+  int Vend, Jstart;
+  int Dstart, Dend;
   bool reversed, segmented, dSegmented;
 
   string removeChevauchement();
