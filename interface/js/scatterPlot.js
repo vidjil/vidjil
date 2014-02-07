@@ -26,18 +26,19 @@ function ScatterPlot(id, model){
   this.max_precision=9;		//precision max atteignable ( 10^-8 par defaut TODO compute)
   
   this.positionGene={};		//position
+  this.positionUsedGene={};
   this.positionAllele={};	//
+  this.positionUsedAllele={};
   
-  this.splitMethod="gene";	//methode de répartition actuelle(defaut: gene)
+  this.splitMethod="gene_j";	//methode de répartition actuelle(defaut: gene_j)
   
   this.m.view.push(this);	//synchronisation au Model
-  
   
   this.time0 = Date.now(),
   this.time1= this.time0;
   this.fpsqueue = [];
- 
   
+  this.use_simple_v = false;
 }
 
 ScatterPlot.prototype = {
@@ -151,6 +152,7 @@ ScatterPlot.prototype = {
     this.bar_max=0;
     
     this.bar_width = 0.5*((this.w) / (this.vKey.length))
+	if (this.use_simple_v) this.bar_width = 0.5*((this.w) / Object.keys(this.m.usedV).length )
 
     //init
     for ( var i=0 ; i< this.vKey.length; i++){
@@ -217,9 +219,9 @@ ScatterPlot.prototype = {
 	var geneV="undef";
 	if (typeof(self.m.windows[d.id].V) != 'undefined' ){
 	  var geneV=self.m.windows[d.id].V[0];
-	  return self.positionGene[geneV]*self.resizeW-(self.bar_width/2)+self.marge_left; 
+	  return self.posG[geneV]*self.resizeW-(self.bar_width/2)+self.marge_left; 
 	}else{
-	  return self.positionGene["undefined V"]*self.resizeW-(self.bar_width/2)+self.marge_left;
+	  return self.posG["undefined V"]*self.resizeW-(self.bar_width/2)+self.marge_left;
 	}
       })
       .attr("height", function(d) { return self.getBarHeight(d)*self.resizeH; })
@@ -273,6 +275,20 @@ ScatterPlot.prototype = {
     this.update();
   },
 
+/* 
+ * 
+ * */
+  makeLineModel : function(type, ori, pos, text, color){
+	  result={};
+	  result.type = type;
+	  result.orientation=ori;
+	  result.pos=pos;
+	  result.text=text;
+	  result.geneColor=color;
+	  
+	  return result;
+  },
+  
 /* précalcul les grilles de répartition du scatterPlot 
  * 
  * */
@@ -280,8 +296,15 @@ ScatterPlot.prototype = {
     this.gridModel={};
     
     //VJ gridModel
-    this.gridModel["allele"]=[];
-    this.gridModel["gene"]=[];
+    this.gridModel["allele_j"]=[];
+    this.gridModel["gene_j"]=[];
+	
+    this.gridModel["allele_v"]=[];
+    this.gridModel["gene_v"]=[];
+	
+    this.gridModel["allele_v_used"]=[];
+    this.gridModel["gene_v_used"]=[];
+	
     this.gridModel["Size"]=[];
     this.gridModel["nSize"]=[];
     this.gridModel["n"]=[];
@@ -289,72 +312,88 @@ ScatterPlot.prototype = {
     
     var vKey = Object.keys(this.m.germline.v);
     var vKey2 = Object.keys(this.m.germline.vgene);
+	
     var stepV = (this.w) / (vKey2.length+1)
+	var stepV2 = (this.w) / (Object.keys(this.m.usedV).length+1)
     
     var jKey = Object.keys(this.m.germline.j);
     var jKey2 = Object.keys(this.m.germline.jgene);
     var stepJ = (this.h) / (jKey2.length+1)
-    
+
+	
     // V allele
     for (var i=0; i<vKey.length; i++){
-      var d={},d2={};
+	  
       var elem=vKey[i].split('*');
-      
-      d.type = "subline";
-      d.orientation = "vert";
-      d.pos = (this.m.germline.v[vKey[i]].gene)*stepV +
+	  var pos =(this.m.germline.v[vKey[i]].gene)*stepV +
 	      (this.m.germline.v[vKey[i]].allele+0.5) * (stepV/(this.m.germline.vgene[elem[0]].n ));
-      d.text="*"+elem[1];
-      d.geneColor=this.m.germline.v[vKey[i]].color;
+	  var pos2= (this.m.germline.v[vKey[i]].gene+0.5)*stepV;
+	  var color = this.m.germline.v[vKey[i]].color;
       
-      d2.type = "subline";
-      d2.orientation = "vert";
-      d2.pos= (this.m.germline.v[vKey[i]].gene+0.5)*stepV;
-      d2.text=" ";
-      d2.geneColor=this.m.germline.v[vKey[i]].color;
+	  this.positionAllele[vKey[i]]=pos;
+	  this.gridModel["allele_v"].push(this.makeLineModel("subline","vert",pos,"*"+elem[1],color));
+
+      this.positionGene[vKey[i]]=pos2
+      this.gridModel["gene_v"].push(this.makeLineModel("subline","vert",pos2,"",color));
       
-      this.positionAllele[vKey[i]]=d.pos;
-      this.positionGene[vKey[i]]=d2.pos
+      if (this.m.usedV[elem[0]]){
+		  pos = stepV2*this.m.usedV[elem[0]] +
+	      (this.m.germline.v[vKey[i]].allele+0.5) * (stepV2/(this.m.germline.vgene[elem[0]].n ));
+		  pos2 = stepV2*this.m.usedV[elem[0]]
+		  this.gridModel["allele_v_used"].push(this.makeLineModel("subline","vert",pos,"*"+elem[1],color));
+          this.gridModel["gene_v_used"].push(this.makeLineModel("subline","vert",pos2,"",color));
+	  }else{
+		  this.gridModel["allele_v_used"].push(this.makeLineModel("subline","vert",0,"",color));
+		  this.gridModel["gene_v_used"].push(this.makeLineModel("subline","vert",0,"",color));
+	  }
       
-      this.gridModel["allele"].push(d);
-      this.gridModel["gene"].push(d2);
-      this.gridModel["Size"].push(d2);
-      this.gridModel["nSize"].push(d2);
-      this.gridModel["n"].push(d2);
-      this.gridModel["bar"].push(d2);
+	  this.positionUsedAllele[vKey[i]] = pos
+	  this.positionUsedGene[vKey[i]] = pos2
+	  
+	  this.gridModel["allele_v_used"].push(this.makeLineModel("subline","vert",pos,"*"+elem[1],color));
+      this.gridModel["gene_v_used"].push(this.makeLineModel("subline","vert",pos2,"",color));
+
     }
     
     // V gene
     for (var i=0; i < vKey2.length; i++){
-      var d={};
-      d.type = "line";
-      d.orientation = "vert";
-      d.pos = (i+0.5)*stepV;
-      d.text=vKey2[i];
-      d.geneColor=this.m.germline.vgene[vKey2[i]].color;
       
-      this.gridModel["allele"].push(d);
-      this.gridModel["gene"].push(d);
-      this.gridModel["Size"].push(d);
-      this.gridModel["nSize"].push(d);
-      this.gridModel["n"].push(d);
-      this.gridModel["bar"].push(d);
+      var pos = (i+0.5)*stepV;
+      var color = this.m.germline.vgene[vKey2[i]].color;
+	  
+      
+      this.gridModel["allele_v"].push(this.makeLineModel("line","vert",pos,vKey2[i],color));
+      this.gridModel["gene_v"].push(this.makeLineModel("line","vert",pos,vKey2[i],color));
+	  
+	  if (this.m.usedV[vKey2[i]]){
+		pos = stepV2*this.m.usedV[vKey2[i]]
+		//TODO IGH TRG detect
+		this.gridModel["allele_v_used"].push(this.makeLineModel("line","vert",pos,vKey2[i].split("IGH")[1],color));
+		this.gridModel["gene_v_used"].push(this.makeLineModel("line","vert",pos,vKey2[i].split("IGH")[1],color));
+	  }
+      else{ 
+		pos = 0
+		this.gridModel["allele_v_used"].push(this.makeLineModel("","vert",pos,"",color));
+		this.gridModel["gene_v_used"].push(this.makeLineModel("","vert",pos,"",color));
+	  }
+	  
     }
-    var d={};
-    d.type = "line";
-    d.orientation = "vert";
-    d.pos = (vKey2.length+0.5)*stepV;
-    d.text="undefined V"
-    
-    this.gridModel["allele"].push(d);
-    this.gridModel["gene"].push(d);
-    this.gridModel["Size"].push(d);
-    this.gridModel["nSize"].push(d);
-    this.gridModel["n"].push(d);
-    this.gridModel["bar"].push(d);
-    
-    this.positionGene["undefined V"]=d.pos;
-    this.positionAllele["undefined V"]=d.pos
+
+    // undefined gene
+    var pos = (vKey2.length+0.5)*stepV;
+
+    this.gridModel["allele_v"].push(this.makeLineModel("line","vert",pos,"undefined V",""));
+    this.gridModel["gene_v"].push(this.makeLineModel("line","vert",pos,"undefined V",""));
+    this.positionGene["undefined V"]=pos
+	this.positionAllele["undefined V"]=pos
+	
+	var pos2 = (Object.keys(this.m.usedV).length+0.5)*stepV2;
+
+    this.gridModel["allele_v_used"].push(this.makeLineModel("line","vert",pos2,"undefined V",""));
+    this.gridModel["gene_v_used"].push(this.makeLineModel("line","vert",pos2,"undefined V",""));
+	this.positionUsedGene["undefined V"]=pos2
+    this.positionUsedAllele["undefined V"]=pos2
+
     
     
     //J allele
@@ -376,9 +415,11 @@ ScatterPlot.prototype = {
       
       this.positionAllele[jKey[i]]=d.pos;
       this.positionGene[jKey[i]]=d2.pos
+	  this.positionUsedAllele[jKey[i]]=d.pos;
+      this.positionUsedGene[jKey[i]]=d2.pos
       
-      this.gridModel["allele"].push(d);
-      this.gridModel["gene"].push(d2);
+      this.gridModel["allele_j"].push(d);
+      this.gridModel["gene_j"].push(d2);
     }
     
     //J gene
@@ -390,8 +431,8 @@ ScatterPlot.prototype = {
       d.text=jKey2[i];
       d.geneColor=this.m.germline.jgene[jKey2[i]].color;
       
-      this.gridModel["allele"].push(d);
-      this.gridModel["gene"].push(d);
+      this.gridModel["allele_j"].push(d);
+      this.gridModel["gene_j"].push(d);
     }
     d={};
     d.type = "line";
@@ -399,10 +440,12 @@ ScatterPlot.prototype = {
     d.pos = (jKey2.length+0.5)*stepJ;
     d.text="undefined J"
     
-    this.gridModel["allele"].push(d);
-    this.gridModel["gene"].push(d);
+    this.gridModel["allele_j"].push(d);
+    this.gridModel["gene_j"].push(d);
     this.positionGene["undefined J"]=d.pos
     this.positionAllele["undefined J"]=d.pos
+	this.positionUsedGene["undefined J"]=d.pos
+    this.positionUsedAllele["undefined J"]=d.pos
     
     //N_size
     for (var i=0 ;i<=(Math.floor(this.m.n_max/5)) ; i++){
@@ -450,6 +493,15 @@ ScatterPlot.prototype = {
       this.gridModel["bar"].push(d);
     }
  
+	//choix du gridModel V a utiliser
+	this.posG=this.positionGene
+	this.posA=this.positionAllele
+	if (Object.keys(m.germline.vgene).length > 20){
+		this.use_simple_v = true;
+		this.posG=this.positionUsedGene
+		this.posA=this.positionUsedAllele
+	}
+	
   },
   
 /* calcul d'une étape d'animation
@@ -502,19 +554,19 @@ ScatterPlot.prototype = {
 
     switch(self.splitMethod){ 
       case "bar": 
-	d.x+=coef*((self.positionGene[geneV]*self.resizeW)-d.x);
+	d.x+=coef*((self.posG[geneV]*self.resizeW)-d.x);
 	d.y+=coef*((self.h)-d.y);
 	break;
-      case "gene": 
-	d.x+=coef*((self.positionGene[geneV]*self.resizeW)-d.x);
-	d.y+=coef*((self.positionGene[geneJ]*self.resizeH)-d.y);
+      case "gene_j": 
+	d.x+=coef*((self.posG[geneV]*self.resizeW)-d.x);
+	d.y+=coef*((self.posG[geneJ]*self.resizeH)-d.y);
 	break;
-      case "allele": 
-	d.x+=coef*((self.positionAllele[geneV]*self.resizeW)-d.x);
-	d.y+=coef*((self.positionAllele[geneJ]*self.resizeH)-d.y);
+      case "allele_j": 
+	d.x+=coef*((self.posA[geneV]*self.resizeW)-d.x);
+	d.y+=coef*((self.posA[geneJ]*self.resizeH)-d.y);
 	break;
       case "Size": 
-	d.x+=coef3*((self.positionGene[geneV]*self.resizeW)-d.x);
+	d.x+=coef3*((self.posG[geneV]*self.resizeW)-d.x);
 	if (d.r1!=0){
 	  d.y+=coef2*(self.sizeScale(self.m.getSize(d.id))*self.resizeH - d.y);
 	}else{
@@ -522,7 +574,7 @@ ScatterPlot.prototype = {
 	}
       break; 
       case "nSize": 
-	d.x+=coef3*((self.positionGene[geneV]*self.resizeW)-d.x);
+	d.x+=coef3*((self.posG[geneV]*self.resizeW)-d.x);
 	if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
 	  if (self.m.windows[d.id].N!=-1){
 	    d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].Nsize/self.m.n_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
@@ -534,7 +586,7 @@ ScatterPlot.prototype = {
 	}
       break; 
       case "n": 
-	d.x+=coef3*((self.positionGene[geneV]*self.resizeW)-d.x);
+	d.x+=coef3*((self.posG[geneV]*self.resizeW)-d.x);
 	d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].n/self.m.n2_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
       break; 
       }
@@ -684,9 +736,20 @@ ScatterPlot.prototype = {
   initGrid : function(){
   self = this;
 
-  //LEGENDE
+  var x_grid = this.gridModel["gene_v"]
+  var y_grid=this.gridModel[this.splitMethod]
   
-  leg = this.axis_container.selectAll("text").data(this.gridModel[this.splitMethod]);
+  if (this.splitMethod=="allele_j") x_grid = this.gridModel["allele_v"]
+  if (this.use_simple_v){
+	  x_grid = this.gridModel["gene_v_used"]
+	  if (this.splitMethod=="allele_j") x_grid = this.gridModel["allele_v_used"]
+  }
+  
+	  
+  var grid = x_grid.concat(y_grid)
+
+  //LEGENDE
+  leg = this.axis_container.selectAll("text").data(grid);
   leg.enter().append("text");
   leg.exit()
     .remove();
@@ -716,7 +779,7 @@ ScatterPlot.prototype = {
     ;
   
   //AXIS
-  lines = this.axis_container.selectAll("line").data(this.gridModel[this.splitMethod]);
+  lines = this.axis_container.selectAll("line").data(grid);
   lines.enter().append("line");
   lines.exit()    
     .remove();
@@ -744,7 +807,7 @@ ScatterPlot.prototype = {
     })
     .attr("class", function (d) { 
       if (d.type=="subline"){
-	if (self.splitMethod!="allele") return "sp_subline_hidden";
+	if (self.splitMethod!="allele_j") return "sp_subline_hidden";
 	return "sp_subline"; 
       }
       return "sp_line"; 

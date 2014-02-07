@@ -301,6 +301,31 @@ Model.prototype = {
     self.germline.jgene[elem2].color=colorGenerator( ( 30+((i-1)/key.length)*290 ),
 						color_s, color_v );
     
+	
+    // V gene used
+	self.usedV = {}
+
+	for ( var i=0; i< self.windows.length; i++){
+		if (self.windows[i].V && self.windows[i].V[0] ){
+			var elem=self.windows[i].V[0].split('*')[0];
+			if (self.usedV[elem]){
+				self.usedV[elem]++
+			}else{
+				self.usedV[elem]=1
+			}
+		}
+	}
+	
+	var keys = Object.keys(self.germline.vgene)
+	var order=0;
+	for ( var i=0; i< keys.length; i++){
+		if (self.usedV[keys[i]]){
+			self.usedV[keys[i]]=order;
+			order++
+		}
+	}
+	
+	
     return this;
   },//end loadGermline
 

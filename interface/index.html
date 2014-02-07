@@ -80,7 +80,7 @@
 	m.load('upload_json','upload_pref', document.getElementById('limit_top').value)">start</button> 
 	-->
 	<button onclick="document.getElementById('file_menu').style.display='none';
-	m.load('upload_json','upload_pref', 200)">start</button> 
+	m.load('upload_json','upload_pref', 50)">start</button> 
 	
     </div>
     
@@ -118,8 +118,8 @@
          
       <div class="menu" onmouseover="showSelector('groupSelector');"> analysis 
       	<div id="groupSelector" class="selector">
-	  <a class="buttonSelector" onclick="sp.changeSplitMethod('gene');">V / J (genes)</a> 
-	  <a class="buttonSelector" onclick="sp.changeSplitMethod('allele');">V / J (alleles)</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_j');">V / J (genes)</a> 
+	  <a class="buttonSelector" onclick="sp.changeSplitMethod('allele_j');">V / J (alleles)</a> 
 	  <a class="buttonSelector" onclick="sp.changeSplitMethod('n');">V / N length</a> 
 	  <a class="buttonSelector" onclick="sp.changeSplitMethod('nSize');">V / N length + VJ deletions</a> 
 	  <a class="buttonSelector" onclick="sp.changeSplitMethod('Size')">V / abundance at selected timepoint</a> 
