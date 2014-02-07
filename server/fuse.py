@@ -126,8 +126,9 @@ def jsonToJunc(obj_dict):
                         obj.r2 = 0
     return obj
 
-    
-def euroMrdParser(file_path):
+
+### TODO: methode .load_clntab()    
+def clntabParser(file_path):
 	
 	out = ListWindows()
 	
@@ -141,10 +142,7 @@ def euroMrdParser(file_path):
 	fichier = open(file_path,"r")
 	for ligne in fichier:
 		if "clonotype" in ligne:
-			header = ligne.split('\t')
-			header_map = {}
-			for index in range(len(header)):
-				header_map[header[index]]=index
+			header_map = ligne.split('\t')
 			
 		else :
 			if "IGH" in ligne:
@@ -154,19 +152,24 @@ def euroMrdParser(file_path):
 			else :
 				out.germline = "???"
 				
-			tab = ligne.split('\t')
+	
+                        tab = {}
+                        for index, data in enumerate(ligne.split('\t')):
+                            tab[header_map[index]] = data
+
+                        print tab
 			
 			w=Window()
-			#w.window=tab[header_map["sequence.seq id"]]	#use sequence id as window for euroMRD data
-			w.window=tab[header_map["sequence.raw nt seq"]]	#use sequence as window for euroMRD data
-			s = int(tab[ header_map["sequence.size"] ])
+			#w.window=tab["sequence.seq id"]	#use sequence id as window for .clntab data
+			w.window=tab["sequence.raw nt seq"]	#use sequence as window for .clntab data
+			s = int(tab["sequence.size"])
 			total_size += s
 			w.size=[ s ]
-			w.sequence = tab[header_map["sequence.raw nt seq"]]
-			w.V=tab[header_map["sequence.V-GENE and allele"]].split('=')
-			if (tab[header_map["sequence.D-GENE and allele"]] != "") :
-				w.D=tab[header_map["sequence.D-GENE and allele"]].split('=')
-			w.J=tab[header_map["sequence.J-GENE and allele"]].split('=')
+			w.sequence = tab["sequence.raw nt seq"]
+			w.V=tab["sequence.V-GENE and allele"].split('=')
+			if (tab["sequence.D-GENE and allele"] != "") :
+				w.D=tab["sequence.D-GENE and allele"].split('=')
+			w.J=tab["sequence.J-GENE and allele"].split('=')
 			w.name=w.V[0] + " -x/y/-z " + w.J[0]
 			w.l1=20
 			w.l2=0
@@ -176,7 +179,7 @@ def euroMrdParser(file_path):
 
 			listw.append((w , w.size[0]))
 			
-			clonotype = tab[header_map["clonotype"]].split(' ')
+			clonotype = tab["clonotype"].split(' ')
 			if (clonotype[0]!="") :
 				listc.append((w , clonotype[0]))
 			
@@ -355,7 +358,7 @@ for path_name in args.file:
 			print jlist
 			
     elif (extension=="clntab"):
-		jlist = euroMrdParser(path_name)
+		jlist = clntabParser(path_name)
 			
     else :
 		print "\n ERROR .", extension, " invalid file extension"
