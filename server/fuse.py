@@ -45,6 +45,7 @@ class Window:
     self.V = []
     self.D = []
     self.J = []
+    self.infos = {}
     
 jlist1 = []
 jlist2 = []
@@ -78,7 +79,8 @@ def juncToJson(obj):
 			"Dstart": obj.r2,
 			"Dend": obj.l2,
 			"Jstart": obj.r1,
-			"Nlength": obj.Nsize
+			"Nlength": obj.Nsize,
+                        "infos": obj.infos
 			}
 		return {
 			"sequence": obj.sequence,
@@ -160,6 +162,8 @@ def clntabParser(file_path):
                         print tab
 			
 			w=Window()
+                        w.infos = tab ## On verra si on ne conserve pas tout plus tard
+
 			#w.window=tab["sequence.seq id"]	#use sequence id as window for .clntab data
 			w.window=tab["sequence.raw nt seq"]	#use sequence as window for .clntab data
 			s = int(tab["sequence.size"])
@@ -240,9 +244,12 @@ def cutList(l1, limit):
   print "! cut to %d" % limit
   return l1
   
-    
 
+### code difficilement lisible
 ### TODO, methode ListWindows.__add__(self, other) 
+### et surtout, separer de cela une methode Windows.__add__(self, other) qui fait l'ajout de 2 windows
+### il ne devrait y avoir ni tampon, ni dataseg...
+
 def fuseList(l1, l2, limit): 
 
   if l1 is None:
@@ -285,8 +292,7 @@ def fuseList(l1, l2, limit):
 	#on garde les donnees de segmentation de la liste possedant le point de suivi le plus haut
 	if ( max (l2.windows[index].size) > max (dico_size[l2.windows[index].window]) ) :
 	  dataseg[l2.windows[index].window] = l2.windows[index]
-	  
-	  
+
     #cas ou la jonction n'etait pas presente dans la 1ere liste
     if l2.windows[index].window not in dico_size:
       dico_size[l2.windows[index].window] = tampon + l2.windows[index].size
@@ -323,6 +329,7 @@ def fuseList(l1, l2, limit):
     junct.top=dico_top[key]
     junct.sequence = 0;
     if key in dataseg :
+                ## TODO: on doit juste recopier l'objet, pas tous les champs un a un...
 		junct.sequence = dataseg[key].sequence
 		junct.name=dataseg[key].name
 		junct.V=dataseg[key].V
@@ -333,6 +340,7 @@ def fuseList(l1, l2, limit):
 		junct.r2=dataseg[key].r2
 		junct.Nsize=dataseg[key].Nsize
 		junct.D=dataseg[key].D
+                junct.infos = dataseg[key].infos
       
     if (junct.top < limit or limit == 0) :
       out.windows.append(junct)
