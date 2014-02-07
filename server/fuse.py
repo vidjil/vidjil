@@ -165,17 +165,28 @@ def clntabParser(file_path):
 			s = int(tab["sequence.size"])
 			total_size += s
 			w.size=[ s ]
+
 			w.sequence = tab["sequence.raw nt seq"]
 			w.V=tab["sequence.V-GENE and allele"].split('=')
 			if (tab["sequence.D-GENE and allele"] != "") :
 				w.D=tab["sequence.D-GENE and allele"].split('=')
 			w.J=tab["sequence.J-GENE and allele"].split('=')
+
+                        # use sequence.JUNCTION to colorize output (this is not exactly V/J !)
+                        junction = tab["sequence.JUNCTION.raw nt seq"]
+                        position = w.sequence.find(junction)
+                        if position >= 0:
+                          w.r1 = position
+                          w.l1 = position + len(junction)
+                          w.Nsize = len(junction)
+                        else:
+                          w.r1 = 0
+                          w.l1 = len(w.sequence)
+                          w.Nsize = 0
+                        
 			w.name=w.V[0] + " -x/y/-z " + w.J[0]
-			w.l1=20
 			w.l2=0
-			w.r1=50
 			w.r2=0
-			w.Nsize=5
 
 			listw.append((w , w.size[0]))
 			
