@@ -360,7 +360,7 @@ for path_name in args.file:
     split=path_name.split("/");
     name="";
     if (len(split)>1):
-        name = split[len(split)-2]
+        name = split[len(split)-1]
     else:
         name = path_name
 
