@@ -337,9 +337,9 @@ ScatterPlot.prototype = {
       this.gridModel["gene_v"].push(this.makeLineModel("subline","vert",pos2,"",color));
       
       if (this.m.usedV[elem[0]]){
-		  pos = stepV2*this.m.usedV[elem[0]] +
-	      (this.m.germline.v[vKey[i]].allele+0.5) * (stepV2/(this.m.germline.vgene[elem[0]].n ));
-		  pos2 = stepV2*this.m.usedV[elem[0]]
+		  pos = stepV2*(this.m.usedV[elem[0]]-1) +
+	      (this.m.germline.v[vKey[i]].allele) * (stepV2/(this.m.germline.vgene[elem[0]].n ));
+		  pos2 = stepV2*(this.m.usedV[elem[0]]-0.5)
 		  this.gridModel["allele_v_used"].push(this.makeLineModel("subline","vert",pos,"*"+elem[1],color));
           this.gridModel["gene_v_used"].push(this.makeLineModel("subline","vert",pos2,"",color));
 	  }else{
@@ -349,10 +349,6 @@ ScatterPlot.prototype = {
       
 	  this.positionUsedAllele[vKey[i]] = pos
 	  this.positionUsedGene[vKey[i]] = pos2
-	  
-	  this.gridModel["allele_v_used"].push(this.makeLineModel("subline","vert",pos,"*"+elem[1],color));
-      this.gridModel["gene_v_used"].push(this.makeLineModel("subline","vert",pos2,"",color));
-
     }
     
     // V gene
@@ -366,7 +362,7 @@ ScatterPlot.prototype = {
       this.gridModel["gene_v"].push(this.makeLineModel("line","vert",pos,vKey2[i],color));
 	  
 	  if (this.m.usedV[vKey2[i]]){
-		pos = stepV2*this.m.usedV[vKey2[i]]
+		pos = stepV2*(this.m.usedV[vKey2[i]]-0.5)
 		//TODO IGH TRG detect
 		this.gridModel["allele_v_used"].push(this.makeLineModel("line","vert",pos,vKey2[i].split("IGH")[1],color));
 		this.gridModel["gene_v_used"].push(this.makeLineModel("line","vert",pos,vKey2[i].split("IGH")[1],color));

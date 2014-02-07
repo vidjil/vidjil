@@ -317,7 +317,7 @@ Model.prototype = {
 	}
 	
 	var keys = Object.keys(self.germline.vgene)
-	var order=0;
+	var order=1;
 	for ( var i=0; i< keys.length; i++){
 		if (self.usedV[keys[i]]){
 			self.usedV[keys[i]]=order;
