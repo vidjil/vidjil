@@ -499,11 +499,7 @@ int main (int argc, char **argv)
 #ifdef RELEASE_TAG
   cout << "# version: vidjil " << RELEASE_TAG << endl ;
 #else
-  cout << "# git: " ;
-  cout.flush();
-  if (system("git log -1 --pretty=format:'%h (%ci)' --abbrev-commit 2> /dev/null") != 0) {
-    cout << "<not in a git repository>";
-  }
+  if (system("git log -1 --pretty=format:'# git: %h (%ci)' --abbrev-commit 2> /dev/null") == 0){}
   cout << endl ;
 #endif
 
