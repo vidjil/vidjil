@@ -146,8 +146,12 @@ var default_tag=8;
       
   function changeStyle(newStyle){
     color=newStyle
-    less.modifyVars(color);
+    //less.modifyVars(color);
     tagColor[default_tag] = color['@default'];
+	
+	if (newStyle==solarizeD) document.getElementById("palette").href="css/dark.css";
+	if (newStyle==solarizeL) document.getElementById("palette").href="css/light.css";
+	
   }
   
 
