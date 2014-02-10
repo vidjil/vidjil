@@ -123,16 +123,6 @@ Segment.prototype = {
       
     span2.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));
       
-    var span3=document.createElement('span')
-    span3.className = "clusterBox";
-    if (this.m.clones[cloneID].cluster.length >1){
-      span3.onclick=function(){ showCluster( cloneID )}
-      span3.appendChild(document.createTextNode("+"));
-    }else{
-      span3.appendChild(document.createTextNode(' '));
-    }
-      
-    div_elem.appendChild(span3);
     div_elem.appendChild(span0);
     div_elem.appendChild(svg);
     div_elem.appendChild(span2);
