@@ -272,10 +272,10 @@ Graph.prototype = {
       var name="poly"+this.data_graph[list[i]].name;
       
       var classname="graph_line";
+	  if (this.m.windows[this.data_graph[list[i]].id].select) classname = "graph_select";
+      if (this.data_graph[list[i]].id==this.m.focus) classname = "graph_focus";
       if (!this.m.windows[this.data_graph[list[i]].id].active) classname = "graph_inactive";
       //if (this.m.windows[this.data_graph[list[i]].id].top >10) classname = "graph_inactive";
-      if (this.m.windows[this.data_graph[list[i]].id].select) classname = "graph_select";
-      if (this.data_graph[list[i]].id==this.m.focus) classname = "graph_focus";
       
       d3.select("#polyline"+list[i])
       .attr("fill","none")

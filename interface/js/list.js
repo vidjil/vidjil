@@ -145,11 +145,14 @@ List.prototype = {
     for (var i=0; i<this.m.clones[cloneID].cluster.length; i++){
       var id=this.m.clones[cloneID].cluster[i]
       var div_clone=document.createElement('div');
+	  div_clone.id="_"+id;
       div_clone.id2=id;
       div_clone.className="listElem";
+	  if (self.m.windows[id].select) div_clone.className ="listElem selected";
 
       var span_name = document.createElement('span');
       span_name.className = "nameBox2";
+	  span_name.onclick = function(){ self.select(this); }
       span_name.appendChild(document.createTextNode( this.m.getCode(id) ) );
       span_name.title=this.m.getCode(id);
 
@@ -172,6 +175,10 @@ List.prototype = {
       div_clone.appendChild(span_stat);
       div_cluster.appendChild(div_clone);
     }
+  },
+  
+  select : function(elt){
+	this.m.select(elt.parentNode.id2);
   },
  
 /* affiche une fenetre d'édition pour le nom d'un clone
@@ -227,9 +234,9 @@ List.prototype = {
       
       if (this.m.windows[list[i]].active){  
 	if (this.m.windows[list[i]].select){  
-	  document.getElementById(list[i]).className="list_select";
+	  div.className="list_select";
 	}else{
-	  document.getElementById(list[i]).className="list";
+	  div.className="list";
 	}
 	var div2 = document.createElement('div');
 	this.div_elem(div2,list[i]);
@@ -243,6 +250,16 @@ List.prototype = {
       }else{
 	div.style.display="none";
       }
+      
+      var div4 = document.getElementById("_"+list[i]);
+	  if (div4){
+		if (this.m.windows[list[i]].select){  
+			div4.className="listElem selected";
+		}else{
+			div4.className="listElem";
+		}
+	  }
+	  
     }
     
   },
