@@ -598,7 +598,7 @@ ScatterPlot.prototype = {
       if( d.r1 != d.r2){
 	var delta = d.r1-d.r2;
 	d.r2 +=0.03*delta;
-	if (d.r2<0.1) d.r2=0;
+	if (d.r2<0.01) d.r2=0;
       }
     }
   },
