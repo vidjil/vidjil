@@ -849,7 +849,10 @@ Model.prototype = {
  * */
   updateModel :function(){
     for (var i=0; i<this.n_windows; i++){
-      if (this.clones[i].cluster.length!=0 && this.windows[i].top <= this.top && tagDisplay[this.windows[i].tag] == 1 ){
+      if (this.clones[i].cluster.length!=0 
+		  && this.windows[i].top <= this.top 
+		  && tagDisplay[this.windows[i].tag] == 1 
+	      && this.windows[i].window!= "other"){
 	this.windows[i].active=true;
       }else{
 	this.windows[i].active=false;
@@ -867,7 +870,10 @@ Model.prototype = {
  * */
   updateModelElem :function(list){
     for (var i=0 ; i < list.length ; i++){
-      if (this.clones[list[i]].cluster.length!=0 && this.windows[list[i]].top <= this.top && tagDisplay[this.windows[list[i]].tag] == 1 ){
+      if (this.clones[list[i]].cluster.length!=0 
+		  && this.windows[list[i]].top <= this.top 
+		  && tagDisplay[this.windows[list[i]].tag] == 1 
+		  && this.windows[list[i]].window!= "other"){
 	this.windows[list[i]].active=true;
       }else{
 	this.windows[list[i]].active=false;

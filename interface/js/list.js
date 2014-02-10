@@ -232,7 +232,7 @@ List.prototype = {
       var div = document.getElementById(list[i]);
       div.innerHTML='';
       
-      if (this.m.windows[list[i]].active){  
+      if (this.m.windows[list[i]].active || this.m.windows[list[i]].window=="other"){  
 	if (this.m.windows[list[i]].select){  
 	  div.className="list_select";
 	}else{
