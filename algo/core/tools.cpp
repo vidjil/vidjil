@@ -91,6 +91,16 @@ string complement(const string &dna) {
   return comp;
 }
 
+Sequence create_sequence(string label_full, string label, string sequence, string quality) {
+  Sequence seq;
+  seq.label_full = label_full;
+  seq.label = label;
+  seq.sequence = sequence;
+  seq.quality = quality;
+  return seq;
+}
+
+
 string extract_from_label(string str, int field, string separator)
 {
   if (!field)
