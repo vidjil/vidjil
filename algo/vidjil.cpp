@@ -501,7 +501,7 @@ int main (int argc, char **argv)
 #else
   cout << "# git: " ;
   cout.flush();
-  if (system("git log -1 --pretty=format:'%h (%ci)' --abbrev-commit") == -1) {
+  if (system("git log -1 --pretty=format:'%h (%ci)' --abbrev-commit 2> /dev/null") != 0) {
     cout << "<not in a git repository>";
   }
   cout << endl ;
