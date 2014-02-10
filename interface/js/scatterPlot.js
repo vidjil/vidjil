@@ -338,7 +338,7 @@ ScatterPlot.prototype = {
       
       if (this.m.usedV[elem[0]]){
 		  pos = stepV2*(this.m.usedV[elem[0]]-1) +
-	      (this.m.germline.v[vKey[i]].allele) * (stepV2/(this.m.germline.vgene[elem[0]].n ));
+	      (this.m.germline.v[vKey[i]].allele+0.5) * (stepV2/(this.m.germline.vgene[elem[0]].n ));
 		  pos2 = stepV2*(this.m.usedV[elem[0]]-0.5)
 		  this.gridModel["allele_v_used"].push(this.makeLineModel("subline","vert",pos,"*"+elem[1],color));
           this.gridModel["gene_v_used"].push(this.makeLineModel("subline","vert",pos2,"",color));
