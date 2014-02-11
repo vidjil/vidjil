@@ -8,6 +8,10 @@ enum {
   TEST_FASTA_LABEL,
   TEST_FASTA_LABEL_FULL,
   TEST_FASTA_SEQUENCE,
+  TEST_CREATE_SEQUENCE_LABEL_FULL,
+  TEST_CREATE_SEQUENCE_LABEL,
+  TEST_CREATE_SEQUENCE_SEQUENCE,
+  TEST_CREATE_SEQUENCE_QUALITY,
 
   /* Storage tests */
   TEST_ARRAY_KMERSTORE,
@@ -33,6 +37,11 @@ enum {
   TEST_READ_CHOOSER_BEST,
   TEST_READ_CHOOSER_SORTED,
 
+  /* Sampler */
+  TEST_SAMPLER_LENGTH,
+  TEST_SAMPLER_LONGEST,
+  TEST_SAMPLER_RANDOM,
+
   /* Representative */
   TEST_KMER_REPRESENTATIVE,
   TEST_KMER_REPRESENTATIVE_REVCOMP,
@@ -56,6 +65,10 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_FASTA_LABEL, "Fasta/Fastq label");
   RECORD_TAP_TEST(TEST_FASTA_LABEL_FULL, "Fasta/Fastq full label");
   RECORD_TAP_TEST(TEST_FASTA_SEQUENCE, "Fasta/Fastq sequence");
+  RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_LABEL_FULL, "create_sequence: label_full field");
+  RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_LABEL, "create_sequence: label field");
+  RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_SEQUENCE, "create_sequence: sequence field");
+  RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_QUALITY, "create_sequence: quality field");
 
   RECORD_TAP_TEST(TEST_ARRAY_KMERSTORE, "Testing ArrayKmerStore");
   RECORD_TAP_TEST(TEST_MAP_KMERSTORE, "Testing MapKmerStore");
@@ -75,6 +88,10 @@ inline void declare_tests() {
 
   RECORD_TAP_TEST(TEST_READ_CHOOSER_BEST, "Test getBest() in ReadChooser");
   RECORD_TAP_TEST(TEST_READ_CHOOSER_SORTED, "Test getSorted() in ReadChooser");
+
+  RECORD_TAP_TEST(TEST_SAMPLER_LENGTH, "Test getLengthDistribution() in SequenceSampler");
+  RECORD_TAP_TEST(TEST_SAMPLER_LONGEST, "Test getLongest() in SequenceSampler");
+  RECORD_TAP_TEST(TEST_SAMPLER_RANDOM, "Test getRandom() in SequenceSampler");
 
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE, "Test KmerRepresentativeComputer computations");
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE_REVCOMP, "Test KmerRepresentativeComputer computations on a dataset and its revcomp");

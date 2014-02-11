@@ -10,6 +10,7 @@
 #include "testScore.cpp"
 #include "testChooser.cpp"
 #include "testRepresentative.cpp"
+#include "testSampler.cpp"
 
 int main(void) {
   TAP_START(NB_TESTS);
@@ -24,6 +25,7 @@ int main(void) {
   testSegmentOverlap();
   testScore();
   testChooser();
+  testSampler();
   testRepresentative();
   testRevcompRepresentative();
   
