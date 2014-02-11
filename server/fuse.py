@@ -368,7 +368,7 @@ for path_name in args.file:
 print
 
 jlist_fused = cutList(jlist_fused, args.max_clones)
-jlist_fused.time = times
+jlist_fused.d["time"] = times
 print jlist_fused 
   
 print "==>", args.output
