@@ -4,6 +4,7 @@ INCLUDE=-I ..
 LDFLAGS=
 SRC= tests.cpp
 EXEC=$(SRC:.cpp=)
+OTHER_SRC=$(wildcard *.cpp)
 LIB=../core.a
 SHOULD=$(wildcard *.should_get)
 SHOULD_LOG=$(SHOULD:.should_get=.log)
@@ -34,7 +35,7 @@ $(EXEC): % : %.o $(LIB)
 core:
 	make OPTIM=-O0 -C .. core.a
 
-%.o: %.cpp 
+%.o: %.cpp $(OTHER_SRC)
 	$(CC) -o $@ $(INCLUDE) -c $< $(CFLAGS)
 
 clean:
