@@ -5,7 +5,6 @@
 #include <string>
 #include <vector>
 #include <list>
-#include "tools.h"
 
 using namespace std;
 
@@ -22,6 +21,8 @@ typedef enum {
   FASTX_FASTQ_ID, FASTX_FASTQ_SEQ,
   FASTX_FASTQ_SEP, FASTX_FASTQ_QUAL
 } fasta_state;
+
+#include "tools.h"
 
 class Fasta
 {
