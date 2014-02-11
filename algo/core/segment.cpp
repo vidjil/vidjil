@@ -24,8 +24,6 @@
 #include <sstream>
 
 Sequence Segmenter::getSequence() const {
-  assert(isSegmented());
-
   Sequence s ;
   s.label_full = info ;
   s.label = label + " " + (reversed ? "-" : "+");
