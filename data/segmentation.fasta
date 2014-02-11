@@ -16,3 +16,5 @@ tgtgccacctgggacaggAAAAAAAAAAAAAAAAAA
 tgtgccacctgggacaggGAATTATTATAAGAAACTtgtgccacctgggacaggGAATTATTATAAGAAACT
 >seq-delta-max
 tgtgccacctgggacaggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAATTATTATAAGAAACT
+>seq-seg-no-window
+acctgggacaggGAATTATTATAA

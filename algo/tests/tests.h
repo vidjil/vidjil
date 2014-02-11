@@ -49,7 +49,15 @@ enum {
   /* Kmer segmentation */
   TEST_KMER_IS_SEGMENTED,
   TEST_KMER_SEGMENTATION_CAUSE,
+  TEST_KMER_JUNCTION,
   TEST_KMER_DATA,
+
+  /* WindowExtractor */
+  TEST_EXTRACTOR_NB_READS,
+  TEST_EXTRACTOR_NB_SEGMENTED,
+  TEST_EXTRACTOR_AVG_LENGTH,
+  TEST_EXTRACTOR_OUT_SEG,
+  TEST_EXTRACTOR_OUT_UNSEG,
 
   /* Bugs */
   TEST_BUG_SEGMENTATION,
@@ -100,7 +108,14 @@ inline void declare_tests() {
 
   RECORD_TAP_TEST(TEST_KMER_IS_SEGMENTED, "Test isSegmented() in KmerSegmenter");
   RECORD_TAP_TEST(TEST_KMER_SEGMENTATION_CAUSE, "Test getSegmentationStatus() in KmerSegmenter");
+  RECORD_TAP_TEST(TEST_KMER_JUNCTION, "Test getJunction() in KmerSegmenter");
   RECORD_TAP_TEST(TEST_KMER_DATA, "Test that data is consistent with what we expect for KmerSegmenter");
+
+  RECORD_TAP_TEST(TEST_EXTRACTOR_NB_READS, "Test getNbReads() in WindowExtractor");
+  RECORD_TAP_TEST(TEST_EXTRACTOR_NB_SEGMENTED, "Test getNbSegmented() in WindowsExtractor");
+  RECORD_TAP_TEST(TEST_EXTRACTOR_AVG_LENGTH, "Test getAverageSegmentationLength() in WindowsExtractor");
+  RECORD_TAP_TEST(TEST_EXTRACTOR_OUT_SEG, "Test segmentation output for WindowsExtractor");
+  RECORD_TAP_TEST(TEST_EXTRACTOR_OUT_UNSEG, "Test unsegmentation output for WindowsExtractor");
 
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE, "Test KmerRepresentativeComputer computations");
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE_REVCOMP, "Test KmerRepresentativeComputer computations on a dataset and its revcomp");

@@ -6,6 +6,7 @@
 #include "core/dynprog.h"
 #include "core/fasta.h"
 #include "core/segment.h"
+#include "core/windowExtractor.h"
 
 using namespace std;
 
@@ -100,10 +101,12 @@ void testSegmentationCause() {
     if (data.read(i).label == "seq-seg+") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
       TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.getJunction(30) == "GCCACCTGGGACAGGGAATTATTATAAGAA", TEST_KMER_JUNCTION, "");
       nb_checked++;
     } else if (data.read(i).label == "seq-seg-") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
       TAP_TEST(ks.getSegmentationStatus() == SEG_MINUS, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.getJunction(30) == "GCCACCTGGGACAGGGAATTATTATAAGAA", TEST_KMER_JUNCTION, "");
       nb_checked++;
     } else if (data.read(i).label == "seq-short") {
       TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
@@ -133,8 +136,65 @@ void testSegmentationCause() {
       TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
       TAP_TEST(ks.getSegmentationStatus() == UNSEG_BAD_DELTA_MAX, TEST_KMER_SEGMENTATION_CAUSE, "");
       nb_checked++;
+    } else if (data.read(i).label == "seq-seg-no-window") {
+      TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+      TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.getJunction(30) == "", TEST_KMER_JUNCTION, "");
+      TAP_TEST(ks.getJunction(20) == "CTGGGACAGGGAATTATTAT", TEST_KMER_JUNCTION,"");
+      nb_checked++;
     }
   }
   
-  TAP_TEST(nb_checked == 9, TEST_KMER_DATA, "");
+  TAP_TEST(nb_checked == 10, TEST_KMER_DATA, "");
+}
+
+void testExtractor() {
+  Fasta seqV("../../germline/TRGV.fa", 2);
+  Fasta seqJ("../../germline/TRGJ.fa", 2);
+  
+  OnlineFasta data("../../data/segmentation.fasta", 1, " ");
+
+  ArrayKmerStore<KmerAffect> index(10, true);
+  index.insert(seqV, "V");
+  index.insert(seqJ, "J");
+
+  WindowExtractor we;
+  map<string, string> labels;
+  ofstream out_seg("segmented.log");
+  ofstream out_unseg("unsegmented.log");
+  we.setSegmentedOutput(&out_seg);
+  we.setUnsegmentedOutput(&out_unseg);
+
+  WindowsStorage *ws = we.extract(&data, &index, 30, 0, 10, labels);
+
+  TAP_TEST(we.getNbReads() == 10, TEST_EXTRACTOR_NB_READS, "");
+
+  TAP_TEST(we.getNbSegmented(SEG_PLUS) == 2, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST(we.getNbSegmented(SEG_MINUS) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST(we.getNbSegmented(UNSEG_TOO_SHORT) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST(we.getNbSegmented(UNSEG_STRAND_NOT_CONSISTENT) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST(we.getNbSegmented(UNSEG_TOO_FEW_ZERO) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST(we.getNbSegmented(UNSEG_TOO_FEW_V) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST(we.getNbSegmented(UNSEG_TOO_FEW_J) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST(we.getNbSegmented(UNSEG_BAD_DELTA_MIN) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST(we.getNbSegmented(UNSEG_BAD_DELTA_MAX) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST(we.getNbSegmented(TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST(we.getNbSegmented(TOTAL_SEG_AND_WINDOW) == 2, TEST_EXTRACTOR_NB_SEGMENTED, "");
+
+  TAP_TEST(we.getAverageSegmentationLength(SEG_PLUS) == 30, TEST_EXTRACTOR_AVG_LENGTH, "");
+  TAP_TEST(we.getAverageSegmentationLength(SEG_MINUS) == 36, TEST_EXTRACTOR_AVG_LENGTH, "");
+  TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_SHORT) == 4, TEST_EXTRACTOR_AVG_LENGTH, "");
+  TAP_TEST(we.getAverageSegmentationLength(UNSEG_STRAND_NOT_CONSISTENT) == 36, TEST_EXTRACTOR_AVG_LENGTH, "");
+  TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_FEW_ZERO) == 36, TEST_EXTRACTOR_AVG_LENGTH, "");
+  TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_FEW_V) == 36, TEST_EXTRACTOR_AVG_LENGTH, "");
+  TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_FEW_J) == 36, TEST_EXTRACTOR_AVG_LENGTH, "");
+  TAP_TEST(we.getAverageSegmentationLength(UNSEG_BAD_DELTA_MIN) == 72, TEST_EXTRACTOR_AVG_LENGTH, "");
+  TAP_TEST(we.getAverageSegmentationLength(UNSEG_BAD_DELTA_MAX) == 66, TEST_EXTRACTOR_AVG_LENGTH, "");
+  TAP_TEST(we.getAverageSegmentationLength(TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW) == 24, TEST_EXTRACTOR_AVG_LENGTH, "");
+  TAP_TEST(we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW) == 36, TEST_EXTRACTOR_AVG_LENGTH, "");
+
+  TAP_TEST(out_seg.tellp() > 0, TEST_EXTRACTOR_OUT_SEG, "");
+  TAP_TEST(out_unseg.tellp() > 0, TEST_EXTRACTOR_OUT_UNSEG, "");
+
+  delete ws;
 }

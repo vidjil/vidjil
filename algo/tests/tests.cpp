@@ -24,6 +24,7 @@ int main(void) {
   testSegment();
   testSegmentOverlap();
   testSegmentationCause();
+  testExtractor();
   testScore();
   testChooser();
   testSampler();
