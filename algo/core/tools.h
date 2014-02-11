@@ -83,6 +83,11 @@ string reverse(const string &text);
  */
 Sequence create_sequence(string label_full, string label, string sequence, string quality);
 
+const Sequence NULL_SEQUENCE = create_sequence("", "", "NULL", "");
+
+bool operator==(const Sequence &s1, const Sequence &s2);
+bool operator!=(const Sequence &s1, const Sequence &s2);
+
 //////////////////////////////////////////////////
 // Template code
 //////////////////////////////////////////////////
