@@ -46,6 +46,7 @@
 #include "core/mkdir.h"
 #include "core/labels.h"
 #include "core/list_utils.h"
+#include "core/windowExtractor.h"
 
 #include "vidjil.h"
 
@@ -568,76 +569,24 @@ int main (int argc, char **argv)
 
     cout << "Loop through reads, looking for windows" ;
  
-
-    WindowsStorage windowsStorage(windows_labels);
-
-    int ok = 0 ;
-    size_t nb_total_reads = 0;
-
-    int stats_segmented[STATS_SIZE];
-    int stats_length[STATS_SIZE];
-    for (int i=0; i<STATS_SIZE; i++)
-      {
-	stats_segmented[i] = 0; 
-	stats_length[i] = 0 ;
-      }
-
-    while (reads->hasNext())
-      {
-        reads->next();
-        nb_total_reads++;
-        if (verbose)
-          cout << endl << endl << reads->getSequence().label << endl;
-       
-        KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max_kmer);
-
-        if (verbose)
-	  cout << seg;
-	  
-        if (!(ok++ % 10000))
-          {
-            cout << "." ;
-            cout.flush();
-          }
-
-        if (seg.isSegmented())
-          {
-            junction junc = seg.getJunction(w);
-
-            if (junc.size())
-              {
-		stats_segmented[TOTAL_SEG_AND_WINDOW]++ ;
-		stats_length[TOTAL_SEG_AND_WINDOW] += seg.getSequence().sequence.length() ;
-                windowsStorage.add(junc, reads->getSequence());
-              }
-	    else
-	      {
-		stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW]++ ;
-		stats_length[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] += seg.getSequence().sequence.length() ;
-	      }
-
-	    //////////////////////////////////
-	    // Output segmented
-	    //////////////////////////////////
-	    
-	    out_segmented << seg ; // Sortie du KmerSegmenter (V/N/J par left/right)
-          }
-      }
-
-    cout << endl;
+    WindowExtractor we;
+    WindowsStorage *windowsStorage = we.extract(reads, index, w, delta_min, 
+                                                delta_max_kmer, windows_labels);
+    size_t nb_total_reads = we.getNbReads();
 
 
     //$$ Display statistics on segmentation causes
 
 
-    int nb_segmented_including_too_short = stats_segmented[TOTAL_SEG_AND_WINDOW] + stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] ;
+    int nb_segmented_including_too_short = we.getNbSegmented(TOTAL_SEG_AND_WINDOW) 
+      + we.getNbSegmented(TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW);
 
     cout << "  ==> segmented " << nb_segmented_including_too_short << " reads"
 	<< " (" << setprecision(3) << 100 * (float) nb_segmented_including_too_short / nb_total_reads << "%)" 
 	<< endl ;
 
     // nb_segmented is the main denominator for the following (but will be normalized)
-    int nb_segmented = stats_segmented[TOTAL_SEG_AND_WINDOW] ;
+    int nb_segmented = we.getNbSegmented(TOTAL_SEG_AND_WINDOW);
 
     cout << "  ==> found " << windowsStorage.size() << " " << w << "-windows"
 	<< " in " << nb_segmented << " segments"
@@ -649,10 +598,11 @@ int main (int argc, char **argv)
     for (int i=0; i<STATS_SIZE; i++)
       {
 	cout << "   " << left << setw(20) << segmented_mesg[i] 
-	    << " ->" << right << setw(9) << stats_segmented[i] ;
+             << " ->" << right << setw(9) << we.getNbSegmented(static_cast<SEGMENTED>(i)) ;
 
-	if (stats_length[i])
-	  cout << "      " << setw(5) << fixed << setprecision(1) << (float) stats_length[i] / stats_segmented[i] ;
+	if (we.getAverageSegmentationLength(static_cast<SEGMENTED>(i)))
+	  cout << "      " << setw(5) << fixed << setprecision(1) 
+               << we.getAverageSegmentationLength(static_cast<SEGMENTED>(i));
 	
 	cout << endl ;
       }
