@@ -8,6 +8,7 @@
 #include "tools.h"
 #include "kmerstore.h"
 #include "kmeraffect.h"
+#include "affectanalyser.h"
 #include "json.h"
 
 #define EXTEND_D_ZONE 5
@@ -94,7 +95,6 @@ protected:
    */
   int getRightD() const;
 
-
   /**
    * @return true iff the string comes from reverse strand
    */
@@ -122,6 +122,9 @@ ostream &operator<<(ostream &out, const Segmenter &s);
 
 class KmerSegmenter : public Segmenter
 {
+ private:
+  int because;                  
+  KmerAffectAnalyser<KmerAffect> *kaa;
  protected:
   string affects;
 
@@ -136,15 +139,27 @@ class KmerSegmenter : public Segmenter
    * @param delta_min: the maximal distance between the right bound and the left bound 
    *        so that the segmentation is accepted 
    *        (left bound: end of V, right bound : start of J)
-   * @param stats: integer array (of size STATS_SIZE) to store statistics
-   * @param stats_length: integer array (of size STATS_SIZE) to store length statistics
-   * @param out_unsegmented: ostream& to output unsegmented sequences
    */
   KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index, 
-		int delta_min, int delta_max, 
-		int *stats, int *stats_length,
-		Cost custom_cost, /// TODO: custom_cost should disappear here
-		ostream &out_unsegmented);
+		int delta_min, int delta_max);
+
+  ~KmerSegmenter();
+
+  /**
+   * @return the KmerAffectAnalyser of the current sequence.
+   */
+  KmerAffectAnalyser<KmerAffect> *getKmerAffectAnalyser() const;
+
+  /**
+   * @return the status of the segmentation. Tells if the Sequence has been segmented
+   *         of if it has not, what the reason is.
+   * @assert getSegmentationStatus() == SEG_PLUS || getSegmentationStatus() == SEG_MINUS
+   *         <==> isSegmented()
+   */
+  int getSegmentationStatus() const;
+
+ private:
+  void checkUnsegmentationCause(int strand, int delta_min, int delta_max, int s);
 };
 
 class FineSegmenter : public Segmenter

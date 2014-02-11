@@ -64,17 +64,12 @@ void testSegmentOverlap()
   
   Fasta data("../../data/bug-segment-overlap.fa", 1, " ");
   
-  int stats[STATS_SIZE];
-  int stats_length[STATS_SIZE];
   ArrayKmerStore<KmerAffect> index(10, true);
   index.insert(seqV, "V");
   index.insert(seqJ, "J");
 
   for (int i = 0; i < data.size(); i++) {
-    KmerSegmenter ks(data.read(i), &index, 0, 100, 
-                     stats, stats_length, DNA, cout); // Grmph: we should not have those
-                                        // parameters. All of them are useless
-                                        // for our purpose!
+    KmerSegmenter ks(data.read(i), &index, 0, 100);
     TAP_TEST(ks.seg_V + ks.seg_N + ks.seg_J == data.sequence(i)
              || ks.seg_V + ks.seg_N + ks.seg_J == revcomp(data.sequence(i)), 
              TEST_KMER_SEGMENT_OVERLAP,

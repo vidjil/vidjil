@@ -589,9 +589,8 @@ int main (int argc, char **argv)
         if (verbose)
           cout << endl << endl << reads->getSequence().label << endl;
        
-        KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max_kmer, 
-			  stats_segmented, stats_length,
-			  segment_cost, out_unsegmented);
+        KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max_kmer);
+
         if (verbose)
 	  cout << seg;
 	  
