@@ -45,7 +45,6 @@
 #include "core/teestream.h"
 #include "core/mkdir.h"
 #include "core/labels.h"
-#include "core/representative.h"
 #include "core/list_utils.h"
 
 #include "vidjil.h"
@@ -99,7 +98,6 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define DEFAULT_DELTA_MIN_D  0
 #define DEFAULT_DELTA_MAX_D  50
 
-#define HISTOGRAM_SIZE_AUDITIONED 500
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
 #define DEFAULT_MIN_COVER_REPRESENTATIVE 5
@@ -871,77 +869,26 @@ int main (int argc, char **argv)
         out_clone << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
 	out_clone << it->first << endl;
 
-	// Choose one representative inside a list of "auditionned sequences"
-	list <Sequence> auditioned_sequences;
-
-	{
-	  // Compute histogram with length distribution
-	  int length_distribution[HISTOGRAM_SIZE_AUDITIONED];
-
-	  for (int i=0; i<HISTOGRAM_SIZE_AUDITIONED; i++)
-	    length_distribution[i] = 0 ;
-
-	  list<Sequence> seqs = windowsStorage.getReads(it->first);
-	  for (list<Sequence>::const_iterator it = seqs.begin(); it != seqs.end(); ++it) 
-	    {
-	      int length = (*it).sequence.size();
-	      if (length >= HISTOGRAM_SIZE_AUDITIONED)
-		length = HISTOGRAM_SIZE_AUDITIONED-1 ;
-	      length_distribution[length]++ ;
-	    }
-
-	  /* Display histogram */
-	  // for (int i=0; i<HISTOGRAM_SIZE_AUDITIONED; i++)
-	  //  if (length_distribution[i])
-	  //    cout << i << " -> " << length_distribution[i] << endl ;
-
-
-	  // Compute "auditionned_min_size"
-	  int to_be_auditionned = max_auditionned ;
-	  unsigned int auditionned_min_size ;
-
-	  for (auditionned_min_size=HISTOGRAM_SIZE_AUDITIONED-1; auditionned_min_size>0; auditionned_min_size--)
-	    {
-	      to_be_auditionned -= length_distribution[auditionned_min_size] ;
-	      if (to_be_auditionned < 0) 
-		break ;
-	    }
-
-	  if (verbose)
-	  cout << " --> auditionned_min_size : " << auditionned_min_size << endl ;
-
-	   // Build "auditionned_sequences"
-
-	  for (list<Sequence>::const_iterator it = seqs.begin(); it != seqs.end(); ++it) 
-	    {
-	      if ((*it).sequence.size() >= auditionned_min_size)
-		{
-		  auditioned_sequences.push_back(*it);
-		  if (auditioned_sequences.size() == max_auditionned)
-		    break ;
-		}
-	    }
-	}
 
 	// Display statistics on auditionned sequences
 	if (verbose)
 	{
 	  int total_length = 0 ;
-
-	  for (list<Sequence>::const_iterator it = auditioned_sequences.begin(); it != auditioned_sequences.end(); ++it) 
+          list<Sequence> auditioned = windowsStorage.getSample(it->first, max_auditionned);
+	  for (list<Sequence>::const_iterator it = auditioned.begin(); it != auditioned.end(); ++it) 
 	    total_length += (*it).sequence.size() ;
 	  
-	  cout << auditioned_sequences.size() << " auditioned sequences, avg length " << total_length / auditioned_sequences.size() << endl ;
+	  cout << auditioned.size() << " auditioned sequences, avg length " << total_length / auditioned.size() << endl ;
 	}
 
-        KmerRepresentativeComputer repComp(auditioned_sequences, seed);
-        repComp.compute(true, min_cover_representative, ratio_representative);
-	
+        Sequence representative 
+          = windowsStorage.getRepresentative(it->first, seed, 
+                                             min_cover_representative,
+                                             ratio_representative,
+                                             max_auditionned);
 
 	//$$ There is one representative, FineSegmenter
-        if (repComp.hasRepresentative()) {
-	  
-          Sequence representative = repComp.getRepresentative();
+        if (representative != NULL_SEQUENCE) {
           representative.label = string_of_int(it->second) + "-" 
             + representative.label;
 	  FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
@@ -1136,26 +1083,14 @@ int main (int argc, char **argv)
 	      }
 	  }
 
-	list <Sequence> auditioned_sequences;
+        Sequence representative 
+          = windowsStorage.getRepresentative(it->first, seed, 
+                                             min_cover_representative,
+                                             ratio_representative,
+                                             max_auditionned);
 
-	if (windowsStorage.getNbReads(it->first)<max_auditionned){
-	  auditioned_sequences=windowsStorage.getReads(it->first);
-	}else{
 
-	  list <Sequence>::const_iterator it2;
-	  it2=windowsStorage.getReads(it->first).begin();
-	  
-	  for (int i=0 ; i<(int) max_auditionned; i++){
-	    auditioned_sequences.push_back(*it2);
-	    it2++;
-	  }
-	}
-	
-        KmerRepresentativeComputer repComp(auditioned_sequences, seed);
-        repComp.compute(true, min_cover_representative, ratio_representative);
-
-        if (repComp.hasRepresentative()) {
-          Sequence representative = repComp.getRepresentative();
+        if (representative != NULL_SEQUENCE) {
           representative.label = string_of_int(it->second) + "-" 
             + representative.label;
 
