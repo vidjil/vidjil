@@ -37,7 +37,7 @@ list<Sequence> SequenceSampler::getLongest(size_t nb_min, size_t nb_buckets) {
   size_t sampled_min_length ;     // The minimum sequence length that will be sampled.
 
   for (sampled_min_length=nb_buckets-1; sampled_min_length>0; sampled_min_length--) {
-    if (to_be_sampled < length_distribution[sampled_min_length]) {
+    if (to_be_sampled <= length_distribution[sampled_min_length]) {
       to_be_sampled = 0;
       break;
     }
