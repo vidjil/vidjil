@@ -46,6 +46,11 @@ enum {
   TEST_KMER_REPRESENTATIVE,
   TEST_KMER_REPRESENTATIVE_REVCOMP,
 
+  /* Kmer segmentation */
+  TEST_KMER_IS_SEGMENTED,
+  TEST_KMER_SEGMENTATION_CAUSE,
+  TEST_KMER_DATA,
+
   /* Bugs */
   TEST_BUG_SEGMENTATION,
   TEST_SEGMENT_POSITION,
@@ -92,6 +97,10 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_SAMPLER_LENGTH, "Test getLengthDistribution() in SequenceSampler");
   RECORD_TAP_TEST(TEST_SAMPLER_LONGEST, "Test getLongest() in SequenceSampler");
   RECORD_TAP_TEST(TEST_SAMPLER_RANDOM, "Test getRandom() in SequenceSampler");
+
+  RECORD_TAP_TEST(TEST_KMER_IS_SEGMENTED, "Test isSegmented() in KmerSegmenter");
+  RECORD_TAP_TEST(TEST_KMER_SEGMENTATION_CAUSE, "Test getSegmentationStatus() in KmerSegmenter");
+  RECORD_TAP_TEST(TEST_KMER_DATA, "Test that data is consistent with what we expect for KmerSegmenter");
 
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE, "Test KmerRepresentativeComputer computations");
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE_REVCOMP, "Test KmerRepresentativeComputer computations on a dataset and its revcomp");

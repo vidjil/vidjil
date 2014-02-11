@@ -23,6 +23,7 @@ int main(void) {
   testCluster();
   testSegment();
   testSegmentOverlap();
+  testSegmentationCause();
   testScore();
   testChooser();
   testSampler();

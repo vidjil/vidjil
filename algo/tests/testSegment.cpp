@@ -82,3 +82,59 @@ void testSegmentOverlap()
              " V= " << fs.seg_V << ", N = " << fs.seg_N << ", J = " << fs.seg_J);
   }
 }
+
+void testSegmentationCause() {
+  Fasta seqV("../../germline/TRGV.fa", 2);
+  Fasta seqJ("../../germline/TRGJ.fa", 2);
+  
+  Fasta data("../../data/segmentation.fasta", 1, " ");
+
+  ArrayKmerStore<KmerAffect> index(10, true);
+  index.insert(seqV, "V");
+  index.insert(seqJ, "J");
+  int nb_checked = 0;
+
+  for (int i = 0; i < data.size(); i++) {
+    KmerSegmenter ks(data.read(i), &index, 0, 10);
+
+    if (data.read(i).label == "seq-seg+") {
+      TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+      TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, "");
+      nb_checked++;
+    } else if (data.read(i).label == "seq-seg-") {
+      TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+      TAP_TEST(ks.getSegmentationStatus() == SEG_MINUS, TEST_KMER_SEGMENTATION_CAUSE, "");
+      nb_checked++;
+    } else if (data.read(i).label == "seq-short") {
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_SHORT, TEST_KMER_SEGMENTATION_CAUSE, "");
+      nb_checked++;
+    } else if (data.read(i).label == "seq-strand") {
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_STRAND_NOT_CONSISTENT, TEST_KMER_SEGMENTATION_CAUSE, "");
+      nb_checked++;
+    } else if (data.read(i).label == "seq-zero") {
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_ZERO, TEST_KMER_SEGMENTATION_CAUSE, "");
+      nb_checked++;
+    } else if (data.read(i).label == "seq-fewV") {
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_V, TEST_KMER_SEGMENTATION_CAUSE, "");
+      nb_checked++;
+    } else if (data.read(i).label == "seq-fewJ") {
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_J, TEST_KMER_SEGMENTATION_CAUSE, "");
+      nb_checked++;
+    } else if (data.read(i).label == "seq-delta-min") {
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_BAD_DELTA_MIN, TEST_KMER_SEGMENTATION_CAUSE, "");
+      nb_checked++;
+    } else if (data.read(i).label == "seq-delta-max") {
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_BAD_DELTA_MAX, TEST_KMER_SEGMENTATION_CAUSE, "");
+      nb_checked++;
+    }
+  }
+  
+  TAP_TEST(nb_checked == 9, TEST_KMER_DATA, "");
+}
