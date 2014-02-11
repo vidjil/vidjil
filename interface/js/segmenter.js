@@ -206,8 +206,8 @@ Segment.prototype = {
 	request += ">" +this.m.getName(list[i])+"\n"+ this.m.windows[list[i]].window+"\n";
     }
 
-    if (adress=='IMGT') imgtPost(request);
-    if (adress=='igBlast') igBlastPost(request);
+    if (adress=='IMGT') imgtPost(request, this.m.system);
+    if (adress=='igBlast') igBlastPost(request, this.m.system);
     
   },
   

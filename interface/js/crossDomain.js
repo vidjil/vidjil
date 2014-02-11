@@ -83,10 +83,15 @@ igBlastInput["seqtype"]="TCR";
     
 
 
-function imgtPost(data) {
+function imgtPost(data, system) {
   
   imgtInput["l01p01c10"]=data;
-
+  if (system=="IGH"){
+      imgtInput["l01p01c04"]="IG";
+  }
+  if (system=="TRG"){
+      imgtInput["l01p01c04"]="TR";
+  }
   var form = document.getElementById("form");
   form.innerHTML="";
   form.target = "_blank";
@@ -105,9 +110,20 @@ function imgtPost(data) {
 
 }
 
-function igBlastPost(data){
+function igBlastPost(data,system){
 
   igBlastInput["queryseq"]=data;
+  if (system=="IGH"){
+      igBlastInput["germline_db_V"]="IG_DB/imgt.Homo_sapiens.V.f.orf.p";
+      igBlastInput["germline_db_D"]="IG_DB/imgt.Homo_sapiens.D.f.orf";
+      igBlastInput["germline_db_J"]="IG_DB/imgt.Homo_sapiens.J.f.orf";
+  }
+  if (system=="TRG"){
+      igBlastInput["germline_db_V"]="IG_DB/imgt.TR.Homo_sapiens.V.f.orf.p";
+      igBlastInput["germline_db_D"]="IG_DB/imgt.TR.Homo_sapiens.D.f.orf";
+      igBlastInput["germline_db_J"]="IG_DB/imgt.TR.Homo_sapiens.J.f.orf.p";
+  }
+  
   
   var form = document.getElementById("form");
   form.innerHTML="";
