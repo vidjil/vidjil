@@ -544,10 +544,12 @@ ScatterPlot.prototype = {
       var geneV="undefined V";
       var geneJ="undefined J";
       if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
-      var geneV=self.m.windows[d.id].V[0];
-      var geneJ=self.m.windows[d.id].J[0];
+        geneV=self.m.windows[d.id].V[0];
       }
-
+      if ( typeof(self.m.windows[d.id].J) != 'undefined' ){
+        geneJ=self.m.windows[d.id].J[0];
+      }
+      
     switch(self.splitMethod){ 
       case "bar": 
 	d.x+=coef*((self.posG[geneV]*self.resizeW)-d.x);
