@@ -33,7 +33,7 @@ $(EXEC): % : %.o $(LIB)
 ../core.a: core
 
 core:
-	make OPTIM=-O0 -C .. core.a
+	make OPTIM="-O0 -g" -C .. core.a
 
 %.o: %.cpp $(OTHER_SRC)
 	$(CC) -o $@ $(INCLUDE) -c $< $(CFLAGS)
