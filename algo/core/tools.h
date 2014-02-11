@@ -8,6 +8,7 @@
 #include <iostream>
 #include <string>
 #include <cassert>
+#include "fasta.h"
 using namespace std;
 
 #define PRINT_VAR(v) cerr << #v << " = " << v << endl
@@ -77,6 +78,15 @@ string revcomp(const string &dna, bool do_revcomp = true);
  */
 string reverse(const string &text);
 
+/**
+ * @return a Sequence whose fields are given by the parameters
+ */
+Sequence create_sequence(string label_full, string label, string sequence, string quality);
+
+const Sequence NULL_SEQUENCE = create_sequence("", "", "NULL", "");
+
+bool operator==(const Sequence &s1, const Sequence &s2);
+bool operator!=(const Sequence &s1, const Sequence &s2);
 
 //////////////////////////////////////////////////
 // Template code

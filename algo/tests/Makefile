@@ -4,7 +4,8 @@ INCLUDE=-I ..
 LDFLAGS=
 SRC= tests.cpp
 EXEC=$(SRC:.cpp=)
-DEP=../core.a
+OTHER_SRC=$(wildcard *.cpp)
+LIB=../core.a
 SHOULD=$(wildcard *.should_get)
 SHOULD_LOG=$(SHOULD:.should_get=.log)
 
@@ -25,16 +26,16 @@ should: core $(SHOULD_LOG)
 %.log: %.should_get force
 	./should-to-tap.sh $<
 
-$(EXEC): % : %.o $(DEP) 
-	$(CC) -o $@ $^ $(LDFLAGS) $(CFLAGS)
+$(EXEC): % : %.o $(LIB) 
+	$(CC) -o $@ $< $(LIB) $(LDFLAGS) $(CFLAGS)
 
 
 ../core.a: core
 
 core:
-	make OPTIM=-O0 -C .. core.a
+	make OPTIM="-O0 -g" -C .. core.a
 
-%.o: %.cpp 
+%.o: %.cpp $(OTHER_SRC)
 	$(CC) -o $@ $(INCLUDE) -c $< $(CFLAGS)
 
 clean:

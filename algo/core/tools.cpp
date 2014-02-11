@@ -91,6 +91,24 @@ string complement(const string &dna) {
   return comp;
 }
 
+Sequence create_sequence(string label_full, string label, string sequence, string quality) {
+  Sequence seq;
+  seq.label_full = label_full;
+  seq.label = label;
+  seq.sequence = sequence;
+  seq.quality = quality;
+  return seq;
+}
+
+bool operator==(const Sequence &s1, const Sequence &s2) {
+  return s1.label_full == s2.label_full && s1.sequence == s2.sequence
+    && s1.quality == s2.quality && s1.label == s2.label;
+}
+
+bool operator!=(const Sequence &s1, const Sequence &s2) {
+  return !(s1 == s2);
+}
+
 string extract_from_label(string str, int field, string separator)
 {
   if (!field)

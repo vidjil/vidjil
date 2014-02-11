@@ -45,8 +45,8 @@
 #include "core/teestream.h"
 #include "core/mkdir.h"
 #include "core/labels.h"
-#include "core/representative.h"
 #include "core/list_utils.h"
+#include "core/windowExtractor.h"
 
 #include "vidjil.h"
 
@@ -94,12 +94,11 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define DEFAULT_SEED   "#####-#####"
 
 #define DEFAULT_DELTA_MIN  -10
-#define DEFAULT_DELTA_MAX   15
+#define DEFAULT_DELTA_MAX   20
 
 #define DEFAULT_DELTA_MIN_D  0
-#define DEFAULT_DELTA_MAX_D  50
+#define DEFAULT_DELTA_MAX_D  60
 
-#define HISTOGRAM_SIZE_AUDITIONED 500
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
 #define DEFAULT_MIN_COVER_REPRESENTATIVE 5
@@ -184,6 +183,7 @@ void usage(char *progname)
     
        << "  -a            output all sequences by cluster (" << SEQUENCES_FILENAME << ")" << endl
        << "  -x            no detailed analysis of each cluster" << endl
+       << "  -u            output unsegmented sequences (default: " << UNSEGMENTED_FILENAME << ")" << endl
        << "  -v            verbose mode" << endl
        << endl        
 
@@ -252,6 +252,7 @@ int main (int argc, char **argv)
   bool output_sequences_by_cluster = false;
   bool detailed_cluster_analysis = true ;
   bool very_detailed_cluster_analysis = false ;
+  bool output_unsegmented = false;
 
   string forced_edges = "" ;
 
@@ -262,7 +263,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:")) != EOF)
+  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:u")) != EOF)
 
     switch (c)
       {
@@ -403,6 +404,10 @@ int main (int argc, char **argv)
 	
       case 't':
 	segment_cost=strToCost(optarg, VDJ);
+        break;
+
+      case 'u':
+        output_unsegmented = true;
         break;
       }
 
@@ -559,90 +564,37 @@ int main (int argc, char **argv)
     string f_segmented = out_dir + prefix_filename + SEGMENTED_FILENAME ;
     cout << "  ==> " << f_segmented << endl ;
     ofstream out_segmented(f_segmented.c_str()) ;
-
-#ifdef OUT_UNSEGMENTED
-    string f_unsegmented = out_dir + prefix_filename + UNSEGMENTED_FILENAME ;
-    cout << "  ==> " << f_unsegmented << endl ;
-    ofstream out_unsegmented(f_unsegmented.c_str()) ;
-#else
-    ofstream out_unsegmented;
-#endif
+    ofstream *out_unsegmented = NULL;
 
     cout << "Loop through reads, looking for windows" ;
  
-
-    WindowsStorage windowsStorage(windows_labels);
-
-    int ok = 0 ;
-    size_t nb_total_reads = 0;
-
-    int stats_segmented[STATS_SIZE];
-    int stats_length[STATS_SIZE];
-    for (int i=0; i<STATS_SIZE; i++)
-      {
-	stats_segmented[i] = 0; 
-	stats_length[i] = 0 ;
-      }
-
-    while (reads->hasNext())
-      {
-        reads->next();
-        nb_total_reads++;
-        if (verbose)
-          cout << endl << endl << reads->getSequence().label << endl;
-       
-        KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max_kmer, 
-			  stats_segmented, stats_length,
-			  segment_cost, out_unsegmented);
-        if (verbose)
-	  cout << seg;
-	  
-        if (!(ok++ % 10000))
-          {
-            cout << "." ;
-            cout.flush();
-          }
-
-        if (seg.isSegmented())
-          {
-            junction junc = seg.getJunction(w);
-
-            if (junc.size())
-              {
-		stats_segmented[TOTAL_SEG_AND_WINDOW]++ ;
-		stats_length[TOTAL_SEG_AND_WINDOW] += seg.getSequence().sequence.length() ;
-                windowsStorage.add(junc, reads->getSequence());
-              }
-	    else
-	      {
-		stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW]++ ;
-		stats_length[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] += seg.getSequence().sequence.length() ;
-	      }
-
-	    //////////////////////////////////
-	    // Output segmented
-	    //////////////////////////////////
-	    
-	    out_segmented << seg ; // Sortie du KmerSegmenter (V/N/J par left/right)
-          }
-      }
-
-    cout << endl;
+    WindowExtractor we;
+    we.setSegmentedOutput(&out_segmented);
+    if (output_unsegmented) {
+      string f_unsegmented = out_dir + prefix_filename + UNSEGMENTED_FILENAME ;
+      cout << "  ==> " << f_unsegmented << endl ;
+      out_unsegmented = new ofstream(f_unsegmented.c_str());
+      we.setUnsegmentedOutput(out_unsegmented);
+    }
+    WindowsStorage *windowsStorage = we.extract(reads, index, w, delta_min, 
+                                                delta_max_kmer, windows_labels);
+    size_t nb_total_reads = we.getNbReads();
 
 
     //$$ Display statistics on segmentation causes
 
 
-    int nb_segmented_including_too_short = stats_segmented[TOTAL_SEG_AND_WINDOW] + stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] ;
+    int nb_segmented_including_too_short = we.getNbSegmented(TOTAL_SEG_AND_WINDOW) 
+      + we.getNbSegmented(TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW);
 
     cout << "  ==> segmented " << nb_segmented_including_too_short << " reads"
 	<< " (" << setprecision(3) << 100 * (float) nb_segmented_including_too_short / nb_total_reads << "%)" 
 	<< endl ;
 
     // nb_segmented is the main denominator for the following (but will be normalized)
-    int nb_segmented = stats_segmented[TOTAL_SEG_AND_WINDOW] ;
+    int nb_segmented = we.getNbSegmented(TOTAL_SEG_AND_WINDOW);
 
-    cout << "  ==> found " << windowsStorage.size() << " " << w << "-windows"
+    cout << "  ==> found " << windowsStorage->size() << " " << w << "-windows"
 	<< " in " << nb_segmented << " segments"
 	<< " (" << setprecision(3) << 100 * (float) nb_segmented / nb_total_reads << "%)"
 	<< " inside " << nb_total_reads << " sequences" << endl ;
@@ -652,10 +604,11 @@ int main (int argc, char **argv)
     for (int i=0; i<STATS_SIZE; i++)
       {
 	cout << "   " << left << setw(20) << segmented_mesg[i] 
-	    << " ->" << right << setw(9) << stats_segmented[i] ;
+             << " ->" << right << setw(9) << we.getNbSegmented(static_cast<SEGMENTED>(i)) ;
 
-	if (stats_length[i])
-	  cout << "      " << setw(5) << fixed << setprecision(1) << (float) stats_length[i] / stats_segmented[i] ;
+	if (we.getAverageSegmentationLength(static_cast<SEGMENTED>(i)))
+	  cout << "      " << setw(5) << fixed << setprecision(1) 
+               << we.getAverageSegmentationLength(static_cast<SEGMENTED>(i));
 	
 	cout << endl ;
       }
@@ -667,7 +620,7 @@ int main (int argc, char **argv)
 	//$$ Sort windows
 	
         cout << "Sort windows by number of occurrences" << endl;
-        windowsStorage.sort();
+        windowsStorage->sort();
 
 	//////////////////////////////////
 	//$$ Output windows
@@ -677,10 +630,10 @@ int main (int argc, char **argv)
 	cout << "  ==> " << f_all_windows << endl ;
 
 	ofstream out_all_windows(f_all_windows.c_str());
-        windowsStorage.printSortedWindows(out_all_windows);
+        windowsStorage->printSortedWindows(out_all_windows);
 
 	//$$ Normalization
-	list< pair <float, int> > norm_list = compute_normalization_list(windowsStorage.getMap(), normalization, nb_segmented);
+	list< pair <float, int> > norm_list = compute_normalization_list(windowsStorage->getMap(), normalization, nb_segmented);
 
 
     if (command == CMD_ANALYSIS) {
@@ -689,16 +642,16 @@ int main (int argc, char **argv)
     //$$ min_reads_window (ou label)
     cout << "Considering only windows with >= " << min_reads_window << " reads and labeled windows" << endl;
 
-    pair<int, int> info_remove = windowsStorage.keepInterestingWindows((size_t) min_reads_window);
+    pair<int, int> info_remove = windowsStorage->keepInterestingWindows((size_t) min_reads_window);
 	 
-    cout << "  ==> keep " <<  windowsStorage.size() << " windows in " << info_remove.second << " reads" ;
+    cout << "  ==> keep " <<  windowsStorage->size() << " windows in " << info_remove.second << " reads" ;
     cout << " (" << setprecision(3) << 100 * (float) info_remove.second / nb_total_reads << "%)  " << endl ;
 
     //////////////////////////////////
     //$$ Clustering
 
     list <list <junction> > clones_windows;
-    comp_matrix comp=comp_matrix(windowsStorage);
+    comp_matrix comp=comp_matrix(*windowsStorage);
 
     if (epsilon || forced_edges.size())
       {
@@ -743,7 +696,7 @@ int main (int argc, char **argv)
 	int clone_nb_reads=0;
 	
         for (list <junction>::const_iterator it2 = clone.begin(); it2 != clone.end(); ++it2)
-	  clone_nb_reads += windowsStorage.getNbReads(*it2);
+	  clone_nb_reads += windowsStorage->getNbReads(*it2);
 	  
 	bool labeled = false ;
 	// Is there a labeled window ?
@@ -827,7 +780,7 @@ int main (int argc, char **argv)
       list<pair<junction, int> >sort_windows;
 
       for (list <junction>::const_iterator it = clone.begin(); it != clone.end(); ++it) {
-	int nb_reads = windowsStorage.getNbReads(*it);
+	int nb_reads = windowsStorage->getNbReads(*it);
         sort_windows.push_back(make_pair(*it, nb_reads));
       }
       sort_windows.sort(pair_occurrence_sort<junction>);
@@ -871,77 +824,26 @@ int main (int argc, char **argv)
         out_clone << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
 	out_clone << it->first << endl;
 
-	// Choose one representative inside a list of "auditionned sequences"
-	list <Sequence> auditioned_sequences;
-
-	{
-	  // Compute histogram with length distribution
-	  int length_distribution[HISTOGRAM_SIZE_AUDITIONED];
-
-	  for (int i=0; i<HISTOGRAM_SIZE_AUDITIONED; i++)
-	    length_distribution[i] = 0 ;
-
-	  list<Sequence> seqs = windowsStorage.getReads(it->first);
-	  for (list<Sequence>::const_iterator it = seqs.begin(); it != seqs.end(); ++it) 
-	    {
-	      int length = (*it).sequence.size();
-	      if (length >= HISTOGRAM_SIZE_AUDITIONED)
-		length = HISTOGRAM_SIZE_AUDITIONED-1 ;
-	      length_distribution[length]++ ;
-	    }
-
-	  /* Display histogram */
-	  // for (int i=0; i<HISTOGRAM_SIZE_AUDITIONED; i++)
-	  //  if (length_distribution[i])
-	  //    cout << i << " -> " << length_distribution[i] << endl ;
-
-
-	  // Compute "auditionned_min_size"
-	  int to_be_auditionned = max_auditionned ;
-	  unsigned int auditionned_min_size ;
-
-	  for (auditionned_min_size=HISTOGRAM_SIZE_AUDITIONED-1; auditionned_min_size>0; auditionned_min_size--)
-	    {
-	      to_be_auditionned -= length_distribution[auditionned_min_size] ;
-	      if (to_be_auditionned < 0) 
-		break ;
-	    }
-
-	  if (verbose)
-	  cout << " --> auditionned_min_size : " << auditionned_min_size << endl ;
-
-	   // Build "auditionned_sequences"
-
-	  for (list<Sequence>::const_iterator it = seqs.begin(); it != seqs.end(); ++it) 
-	    {
-	      if ((*it).sequence.size() >= auditionned_min_size)
-		{
-		  auditioned_sequences.push_back(*it);
-		  if (auditioned_sequences.size() == max_auditionned)
-		    break ;
-		}
-	    }
-	}
 
 	// Display statistics on auditionned sequences
 	if (verbose)
 	{
 	  int total_length = 0 ;
-
-	  for (list<Sequence>::const_iterator it = auditioned_sequences.begin(); it != auditioned_sequences.end(); ++it) 
+          list<Sequence> auditioned = windowsStorage->getSample(it->first, max_auditionned);
+	  for (list<Sequence>::const_iterator it = auditioned.begin(); it != auditioned.end(); ++it) 
 	    total_length += (*it).sequence.size() ;
 	  
-	  cout << auditioned_sequences.size() << " auditioned sequences, avg length " << total_length / auditioned_sequences.size() << endl ;
+	  cout << auditioned.size() << " auditioned sequences, avg length " << total_length / auditioned.size() << endl ;
 	}
 
-        KmerRepresentativeComputer repComp(auditioned_sequences, seed);
-        repComp.compute(true, min_cover_representative, ratio_representative);
-	
+        Sequence representative 
+          = windowsStorage->getRepresentative(it->first, seed, 
+                                             min_cover_representative,
+                                             ratio_representative,
+                                             max_auditionned);
 
 	//$$ There is one representative, FineSegmenter
-        if (repComp.hasRepresentative()) {
-	  
-          Sequence representative = repComp.getRepresentative();
+        if (representative != NULL_SEQUENCE) {
           representative.label = string_of_int(it->second) + "-" 
             + representative.label;
 	  FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
@@ -1128,7 +1030,7 @@ int main (int argc, char **argv)
 	    out_sequences << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
 	    out_sequences << it->first << endl;
 
-	    list<Sequence> sequences = windowsStorage.getReads(it->first);
+	    list<Sequence> &sequences = windowsStorage->getReads(it->first);
 	    
 	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
 	      {
@@ -1136,26 +1038,14 @@ int main (int argc, char **argv)
 	      }
 	  }
 
-	list <Sequence> auditioned_sequences;
+        Sequence representative 
+          = windowsStorage->getRepresentative(it->first, seed, 
+                                             min_cover_representative,
+                                             ratio_representative,
+                                             max_auditionned);
 
-	if (windowsStorage.getNbReads(it->first)<max_auditionned){
-	  auditioned_sequences=windowsStorage.getReads(it->first);
-	}else{
 
-	  list <Sequence>::const_iterator it2;
-	  it2=windowsStorage.getReads(it->first).begin();
-	  
-	  for (int i=0 ; i<(int) max_auditionned; i++){
-	    auditioned_sequences.push_back(*it2);
-	    it2++;
-	  }
-	}
-	
-        KmerRepresentativeComputer repComp(auditioned_sequences, seed);
-        repComp.compute(true, min_cover_representative, ratio_representative);
-
-        if (repComp.hasRepresentative()) {
-          Sequence representative = repComp.getRepresentative();
+        if (representative != NULL_SEQUENCE) {
           representative.label = string_of_int(it->second) + "-" 
             + representative.label;
 
@@ -1280,14 +1170,17 @@ int main (int argc, char **argv)
     //json->add("resolution1", normalization_res1);
     //json->add("resolution5", normalization_res5);
 
-    JsonArray jsonSortedWindows = windowsStorage.sortedWindowsToJsonArray(json_data_segment,
-                                                                          norm_list,
-                                                                          nb_segmented);
+    JsonArray jsonSortedWindows = windowsStorage->sortedWindowsToJsonArray(json_data_segment,
+                                                                           norm_list,
+                                                                           nb_segmented);
     json->add("windows", jsonSortedWindows);
     out_json << json->toString();
     
     delete index ;
     delete json;
+    delete windowsStorage;
+    if (output_unsegmented)
+      delete out_unsegmented;
   } else if (command == CMD_SEGMENT) {
     //$$ CMD_SEGMENT
     ////////////////////////////////////////
