@@ -473,6 +473,30 @@ ul{
   color : @select;
 }
 
+#data-container{
+  z-index:3;
+  border:solid; 
+  position: fixed; 
+  top: 50px; 
+  left: 20px + @width_left_container;
+  font-size: 14px; 
+  padding: 10px;
+  background:inherit;
+  display:none;
+  width: -moz-calc(~"100%" - @width_left_container + 60px);
+  width: -webkit-calc(~"100%" - @width_left_container + 60px);
+  width: calc(~"100%" - @width_left_container + 60px);
+  height: -moz-calc(~"100%" - 200px);
+  height: -webkit-calc(~"100%" - 200px);
+  height: calc(~"100%" - 200px);
+}
+
+#data-msg{
+  overflow: auto;
+  height : 100%;
+  width : 100%;
+}
+
 #file_menu, #menu, #listClones, #listSelect, #tagSelector, #display-menu, #bot-container, .seq-fixed{
  background : @background;
 }
@@ -641,4 +665,10 @@ span.logo
 .selector, #sort-bar, #top-container, #listClones, .separator, #bot-container, #popup-container, #file_menu, #tagSelector, .closeButton
 {
   border-color: @border; 
+}
+
+#info_window td{
+  min-width : 300px;
+  max-width : 500px;
+  overflow-wrap: break-word;
 }

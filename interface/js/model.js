@@ -460,7 +460,6 @@ Model.prototype = {
 		for (var j=0 ; j<this.dataCluster[i].cluster.length; j++){
 			new_cluster = new_cluster.concat(this.clones[this.dataCluster[i].cluster[j]].cluster);
 			this.clones[this.dataCluster[i].cluster[j]].cluster=[]
-			console.log("HAAAAAAAAA"+ new_cluster)
 		}
 		this.clones[this.dataCluster[i].cluster[0]].cluster=new_cluster
 	}
@@ -981,7 +980,33 @@ Model.prototype = {
     this.windows[this.n_windows-1].size=other;
 
   },
-  
+
+/* return info about a window in html
+ * 
+ * */  
+    getHtmlInfo : function(id){
+        var html="<div id='info_window'><table><tr><th></th>"
+        
+        for (var i=0; i<this.reads_segmented.length; i++) {
+            html+= "<th>"+this.time[i] + "</th>"
+        }
+        html += "</tr>"
+        
+        for (var key in this.windows[id] ){
+            html+="<tr><td>"+key+"</td>"
+            if (this.windows[id][key] instanceof Array){
+                for ( var i=0; i<this.windows[id][key].length; i++ ){
+                    html+="<td>"+this.windows[id][key][i]+"</td>"
+                }
+            }else{
+                html+="<td>"+this.windows[id][key]+"</td>"
+                console.log("plop")
+            }
+            html+="</tr>"
+        }
+        html+="</table></div>"
+        return html
+    },  
 
 }//end prototype Model
 
@@ -1046,13 +1071,22 @@ window.onresize = initCoef;
 
   function popupMsg(msg){
     document.getElementById("popup-container").style.display="block";
-    
     document.getElementById("popup-msg").innerHTML+=msg;
   }
   
   function closePopupMsg(){
     document.getElementById("popup-container").style.display="none";
     document.getElementById("popup-msg").innerHTML="";
+  }
+  
+  function dataBox(msg){
+    document.getElementById("data-container").style.display="block";
+    document.getElementById("data-msg").innerHTML+=msg;
+  }
+  
+  function closeDataBox(){
+    document.getElementById("data-container").style.display="none";
+    document.getElementById("data-msg").innerHTML="";
   }
   
   var msg= {
