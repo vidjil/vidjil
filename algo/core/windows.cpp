@@ -1,6 +1,8 @@
 #include "tools.h"
 #include "json.h"
 #include "windows.h"
+#include "representative.h"
+#include "sequenceSampler.h"
 
 WindowsStorage::WindowsStorage(map<string, string> &labels):windows_labels(labels) {}
 
@@ -20,6 +22,26 @@ list<Sequence> &WindowsStorage::getReads(junction window) {
   return seqs_by_window[window];
 }
 
+Sequence WindowsStorage::getRepresentative(junction window, 
+                                           string seed, size_t min_cover, 
+                                           float percent_cover,
+                                           size_t nb_sampled, 
+                                           size_t nb_buckets) {
+  list<Sequence> auditioned_sequences 
+    = getSample(window,nb_sampled, nb_buckets);
+  KmerRepresentativeComputer repComp(auditioned_sequences, seed);
+  repComp.compute(true, min_cover, percent_cover);
+  if (repComp.hasRepresentative())
+    return repComp.getRepresentative();
+  return NULL_SEQUENCE;
+}
+
+list<Sequence> WindowsStorage::getSample(junction window, size_t nb_sampled,
+                                         size_t nb_buckets) {
+  list<Sequence> reads = getReads(window);
+  return SequenceSampler(reads).getLongest(nb_sampled, nb_buckets);
+}
+ 
 size_t WindowsStorage::size() {
   return seqs_by_window.size();
 }

@@ -1,6 +1,8 @@
 #ifndef WINDOWS_H
 #define WINDOWS_H
 
+#define HISTOGRAM_SIZE_AUDITIONED 500
+
 /** 
  * A window is associated to a list of sequences. We deal with a list of
  * windows. We'd like to sort it, to output it, to remove windows not appearing
@@ -45,6 +47,29 @@ class WindowsStorage {
    * @return the list of reads supporting a given window
    */
   list<Sequence> &getReads(junction window);
+
+  /**
+   * @param window: the window shared by all the sequences
+   * @param seed: the seed used for the sequence similarity search
+   * @param min_cover: see compute() in RepresentativeComputer
+   * @param percent_cover: see compute() in RepresentativeComputer
+   * @param nb_sampled: Number of sequences sampled to get the representatives. 
+   *                    Sampling sequences allow to have a more time efficient 
+   *                    algorithm.
+   * @param nb_buckets: Number of buckets for sampling (see SequenceSampler)
+   * @return the representative sequence of a window or NULL_SEQUENCE if we 
+   *         cannot find any representative
+   */
+  Sequence getRepresentative(junction window, string seed, size_t min_cover,
+                             float percent_cover, size_t nb_sampled, 
+                             size_t nb_buckets=HISTOGRAM_SIZE_AUDITIONED);
+
+  /**
+   * @return a sample of nb_sampled sequences sharing the same window. The
+   *         returned sequences are among the longest ones but are not sorted.
+   */
+  list<Sequence> getSample(junction window, size_t nb_sampled, 
+                           size_t nb_buckets=HISTOGRAM_SIZE_AUDITIONED);
 
   /**
    * @return a list of windows together with the number of reads they appear in.
