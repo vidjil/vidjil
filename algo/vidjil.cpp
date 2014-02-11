@@ -1075,7 +1075,7 @@ int main (int argc, char **argv)
 	    out_sequences << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
 	    out_sequences << it->first << endl;
 
-	    list<Sequence> sequences = windowsStorage.getReads(it->first);
+	    list<Sequence> &sequences = windowsStorage.getReads(it->first);
 	    
 	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
 	      {
