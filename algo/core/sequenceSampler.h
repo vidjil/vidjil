@@ -38,7 +38,8 @@ class SequenceSampler {
   size_t *getLengthDistribution();
 
   /**
-   * @return at least nb_min sequences taken from the list of sequences given at construction time
+   * @return at least nb_min sequences taken from the list of sequences given at 
+   *         construction time. Those sequences are among the longest but are not sorted.
    * @param nb_min: minimal number of sequences to return
    * @param nb_buckets: the sequences are not actually sorted. See computeLengthDistribution()
    * @complexity the time complexity is proportional in the size of the input list
