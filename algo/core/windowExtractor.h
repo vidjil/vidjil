@@ -71,14 +71,14 @@ class WindowExtractor {
    * Otherwise no output will be given.
    * @param out: The output stream
    */
-  void setSegmentedOutput(ostream &out);
+  void setSegmentedOutput(ostream *out);
 
   /**
    * Defines the output stream where the unsegmented sequences will be output.
    * Otherwise no output will be given.
    * @param out: The output stream
    */
-  void setUnsegmentedOutput(ostream &out);
+  void setUnsegmentedOutput(ostream *out);
 
  private:
   /**

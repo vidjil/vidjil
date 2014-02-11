@@ -58,12 +58,12 @@ size_t WindowExtractor::getNbSegmented(SEGMENTED seg) {
   return stats_segmented[seg];
 }
 
-void WindowExtractor::setSegmentedOutput(ostream &out) {
-  out_segmented = &out;
+void WindowExtractor::setSegmentedOutput(ostream *out) {
+  out_segmented = out;
 }
 
-void WindowExtractor::setUnsegmentedOutput(ostream &out) {
-  out_unsegmented = &out;
+void WindowExtractor::setUnsegmentedOutput(ostream *out) {
+  out_unsegmented = out;
 }
 
 void WindowExtractor::init_stats() {
