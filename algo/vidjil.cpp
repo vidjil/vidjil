@@ -183,6 +183,7 @@ void usage(char *progname)
     
        << "  -a            output all sequences by cluster (" << SEQUENCES_FILENAME << ")" << endl
        << "  -x            no detailed analysis of each cluster" << endl
+       << "  -u            output unsegmented sequences (default: " << UNSEGMENTED_FILENAME << ")" << endl
        << "  -v            verbose mode" << endl
        << endl        
 
@@ -251,6 +252,7 @@ int main (int argc, char **argv)
   bool output_sequences_by_cluster = false;
   bool detailed_cluster_analysis = true ;
   bool very_detailed_cluster_analysis = false ;
+  bool output_unsegmented = false;
 
   string forced_edges = "" ;
 
@@ -261,7 +263,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:")) != EOF)
+  while ((c = getopt(argc, argv, "haG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:u")) != EOF)
 
     switch (c)
       {
@@ -402,6 +404,10 @@ int main (int argc, char **argv)
 	
       case 't':
 	segment_cost=strToCost(optarg, VDJ);
+        break;
+
+      case 'u':
+        output_unsegmented = true;
         break;
       }
 
@@ -558,18 +564,18 @@ int main (int argc, char **argv)
     string f_segmented = out_dir + prefix_filename + SEGMENTED_FILENAME ;
     cout << "  ==> " << f_segmented << endl ;
     ofstream out_segmented(f_segmented.c_str()) ;
-
-#ifdef OUT_UNSEGMENTED
-    string f_unsegmented = out_dir + prefix_filename + UNSEGMENTED_FILENAME ;
-    cout << "  ==> " << f_unsegmented << endl ;
-    ofstream out_unsegmented(f_unsegmented.c_str()) ;
-#else
-    ofstream out_unsegmented;
-#endif
+    ofstream *out_unsegmented = NULL;
 
     cout << "Loop through reads, looking for windows" ;
  
     WindowExtractor we;
+    we.setSegmentedOutput(&out_segmented);
+    if (output_unsegmented) {
+      string f_unsegmented = out_dir + prefix_filename + UNSEGMENTED_FILENAME ;
+      cout << "  ==> " << f_unsegmented << endl ;
+      out_unsegmented = new ofstream(f_unsegmented.c_str());
+      we.setUnsegmentedOutput(out_unsegmented);
+    }
     WindowsStorage *windowsStorage = we.extract(reads, index, w, delta_min, 
                                                 delta_max_kmer, windows_labels);
     size_t nb_total_reads = we.getNbReads();
@@ -1173,6 +1179,8 @@ int main (int argc, char **argv)
     delete index ;
     delete json;
     delete windowsStorage;
+    if (output_unsegmented)
+      delete out_unsegmented;
   } else if (command == CMD_SEGMENT) {
     //$$ CMD_SEGMENT
     ////////////////////////////////////////
