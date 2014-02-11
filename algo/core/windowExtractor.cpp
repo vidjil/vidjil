@@ -17,6 +17,8 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, IKmerStore<KmerAffe
        
     KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max);
 
+    stats_segmented[seg.getSegmentationStatus()]++;
+    stats_length[seg.getSegmentationStatus()] += seg.getSequence().sequence.length();
     if (seg.isSegmented()) {
       junction junc = seg.getJunction(w);
 
@@ -31,15 +33,11 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, IKmerStore<KmerAffe
 
       if (out_segmented)
         *out_segmented << seg ; // KmerSegmenter output (V/N/J)
-    } else {
-      stats_segmented[seg.getSegmentationStatus()]++;
-
-      if (out_unsegmented) {
-        *out_unsegmented << reads->getSequence();
-        *out_unsegmented << "#" << segmented_mesg[seg.getSegmentationStatus()] << endl;
-        if (seg.getSegmentationStatus() != UNSEG_TOO_SHORT) {
-          *out_unsegmented << seg.getKmerAffectAnalyser()->toString() << endl;
-        }
+    } else if (out_unsegmented) {
+      *out_unsegmented << reads->getSequence();
+      *out_unsegmented << "#" << segmented_mesg[seg.getSegmentationStatus()] << endl;
+      if (seg.getSegmentationStatus() != UNSEG_TOO_SHORT) {
+        *out_unsegmented << seg.getKmerAffectAnalyser()->toString() << endl;
       }
     }
   }
