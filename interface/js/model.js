@@ -985,24 +985,47 @@ Model.prototype = {
  * 
  * */  
     getHtmlInfo : function(id){
-        var html="<div id='info_window'><table><tr><th></th>"
+        var html = "<h2>info sequence "+this.getName(id)+"</h2>"
         
-        for (var i=0; i<this.reads_segmented.length; i++) {
-            html+= "<th>"+this.time[i] + "</th>"
+        
+        html+="<div id='info_window'><table><tr><th></th>"
+        
+        var time_length=this.reads_segmented.length
+        
+        for (var i=0; i<time_length; i++) {
+            html+= "<td>"+this.time[i] + "</td>"
         }
         html += "</tr>"
         
+        html+="<tr><td> name </td><td colspan='"+time_length+"'>"+this.windows[id].name+"</td>"
+        html+="<tr><td> sequence </td><td colspan='"+time_length+"'>"+this.windows[id].sequence+"</td>"
+        html+="<tr><td> window </td><td colspan='"+time_length+"'>"+this.windows[id].window+"</td>"
+        html+="<tr><td> V </td><td colspan='"+time_length+"'>"+this.windows[id].V+"</td>"
+        html+="<tr><td> D </td><td colspan='"+time_length+"'>"+this.windows[id].D+"</td>"
+        html+="<tr><td> J </td><td colspan='"+time_length+"'>"+this.windows[id].J+"</td>"
+        
+        html+="<tr><td> size (n-reads (total reads) )</td>"
+        for (var i=0; i<time_length; i++) {
+            html+= "<td>"+this.windows[id].size[i] + "  (" +this.reads_segmented[i] + ")</td>"
+        }
+        
+        html+="<tr><td> size (%)</td>"
+        for (var i=0; i<time_length; i++) {
+            html+= "<td>" + (this.getSize(id, i)*100).toFixed(3) + " % </td>"
+        }
+        
         for (var key in this.windows[id] ){
-            html+="<tr><td>"+key+"</td>"
-            if (this.windows[id][key] instanceof Array){
-                for ( var i=0; i<this.windows[id][key].length; i++ ){
-                    html+="<td>"+this.windows[id][key][i]+"</td>"
+            if (key[0]=="_"){
+                html+="<tr><td>"+key+"</td>"
+                if (this.windows[id][key] instanceof Array){
+                    for ( var i=0; i<this.windows[id][key].length; i++ ){
+                        html+="<td>"+this.windows[id][key][i]+"</td>"
+                    }
+                }else{
+                    html+="<td>"+this.windows[id][key]+"</td>"
                 }
-            }else{
-                html+="<td>"+this.windows[id][key]+"</td>"
-                console.log("plop")
+                html+="</tr>"
             }
-            html+="</tr>"
         }
         html+="</table></div>"
         return html
@@ -1081,7 +1104,7 @@ window.onresize = initCoef;
   
   function dataBox(msg){
     document.getElementById("data-container").style.display="block";
-    document.getElementById("data-msg").innerHTML+=msg;
+    document.getElementById("data-msg").innerHTML=msg;
   }
   
   function closeDataBox(){
