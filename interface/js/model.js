@@ -1002,7 +1002,7 @@ Model.prototype = {
  * 
  * */  
     getHtmlInfo : function(id){
-        var html = "<h2>info sequence "+this.getName(id)+"</h2>"
+        var html = "<h2>"+this.getName(id)+"</h2>"
         
         
         html+="<div id='info_window'><table><tr><th></th>"
