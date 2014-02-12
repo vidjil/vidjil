@@ -40,7 +40,7 @@
  * split
  * 
  * */
-  
+      var tmpc = {}
 
 /*Model constructor
  * 
@@ -192,25 +192,39 @@ Model.prototype = {
       self.mapID[self.windows[i].window]=i;
     }
     
+    var tmp = {}
     // init clones
     if (data.clones){
 		for ( var i=0; i< data.clones.length; i++){
 			var cl = {}
 			cl.cluster = []
 			for ( var j=0; j<data.clones[i].cluster.length; j++){
-				if (self.mapID[data.clones[i].cluster[j]] ){
+				if (self.mapID[data.clones[i].cluster[j]] || self.mapID[data.clones[i].cluster[j]]=="0"){
 					cl.cluster.push(self.mapID[data.clones[i].cluster[j]])
 				}
 			}
 			if (data.clones[i].name){
 				cl.name=data.clones[i].name
-			}
+			}else{
+                cl.name="cluster "+i
+            }
+			
+			//fuse cluster with same name
 			if (cl.cluster.length!=0){
-				cl.cluster.sort()
-				console.log(cl)
-				self.dataCluster.push(cl)
+                if (!tmpc[cl.name]){
+                    tmpc[cl.name] = cl
+                    tmpc[cl.name].cluster.sort()
+                }else{
+                    tmpc[cl.name].cluster = tmpc[cl.name].cluster.concat(cl.cluster)
+                    tmpc[cl.name].cluster.sort()
+                }
 			}
 		}
+		
+		for (var key in tmpc){
+            self.dataCluster.push(tmpc[key])
+        }
+
 	}
     
     return this
@@ -972,8 +986,11 @@ Model.prototype = {
     
     for (var i=0; i < this.n_windows-1; i++){
       for (var j=0; j < this.reads_segmented.length; j++){
-		if (this.windows[i].active==true)
-		other[j]-= this.windows[i].size[j];
+		if (this.windows[i].active==true){
+            for (var k=0; k < this.clones[i].cluster.length; k++){
+                other[j]-= this.windows[this.clones[i].cluster[k]].size[j];
+            }
+        }
       }   
     }
     
