@@ -23,6 +23,8 @@
 #include "affectanalyser.h"
 #include <sstream>
 
+Segmenter::~Segmenter() {}
+
 Sequence Segmenter::getSequence() const {
   Sequence s ;
   s.label_full = info ;
