@@ -58,6 +58,8 @@ protected:
   string seg_N1, seg_D, seg_N2;
   Cost segment_cost;
 
+  virtual ~Segmenter();
+
   /* Queries */
 
 

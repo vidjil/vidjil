@@ -23,6 +23,8 @@
 #include "affectanalyser.h"
 #include <sstream>
 
+Segmenter::~Segmenter() {}
+
 Sequence Segmenter::getSequence() const {
   Sequence s ;
   s.label_full = info ;
@@ -221,7 +223,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
 }
 
 KmerSegmenter::~KmerSegmenter() {
-  if (! kaa)
+  if (kaa)
     delete kaa;
 }
 
