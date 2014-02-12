@@ -91,8 +91,6 @@ def jsonToJunc(obj_dict):
 ### TODO: methode .load_clntab()    
 def clntabParser(file_path):
     
-    myList= []
-    
     out = ListWindows()
     out.d["timestamp"] = "1970-01-01 00:00:00"
     out.d["normalization_factor"] = [1]
@@ -151,8 +149,15 @@ def clntabParser(file_path):
             if (clonotype[0]!="") :
                 listc.append((w , clonotype[0]))
                 
+            #those data have been stored under a different name to be compatible with Vidjl
+            already_stored = ["sequence.raw nt seq", "sequence.V-GENE and allele",
+                "sequence.D-GENE and allele", "sequence.J-GENE and allele", "sequence.size"]
+            
+            #keep other data
+            info = {}
             for i in range(len(header_map)):
-                w.d["_"+header_map[i]]=[tab[header_map[i]]]
+                if header_map[i] not in already_stored:
+                    w.d["_"+header_map[i]]=[tab[header_map[i]]]
 
     #sort by sequence_size
     listw = sorted(listw, key=itemgetter(1), reverse=True)
