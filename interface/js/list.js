@@ -106,10 +106,14 @@ List.prototype = {
     var span2=document.createElement('span')
     span2.className = "sizeBox";
     span2.id="size"+cloneID;
-    span2.onclick=function(){ this.m.select(cloneID); }
+    span2.onclick=function(){ self.m.select(cloneID); }
     span2.style.color=this.m.windows[cloneID].color;
-      
     span2.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));
+    
+    var span4=document.createElement('span')
+    span4.className = "infoBox";
+    span4.onclick=function(){ dataBox(self.m.getHtmlInfo(cloneID)); }
+    span4.appendChild(document.createTextNode("I"));
       
     var span3=document.createElement('span')
     span3.className = "clusterBox";
@@ -122,8 +126,10 @@ List.prototype = {
       
     div_elem.appendChild(span3);
     div_elem.appendChild(span0);
+    div_elem.appendChild(span4);
     div_elem.appendChild(svg);
     div_elem.appendChild(span2);
+    
   },
 
 /* genere le code HTML des infos d'un cluster
