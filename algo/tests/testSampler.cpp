@@ -32,6 +32,7 @@ void testLongest() {
   // With only 10 buckets, the two longest sequences share the same bucket.
   // Due to their insertion order, the shorter will be sampled first
   l1 = s.getLongest(2, 10);
+  distrib = s.getLengthDistribution();
 
   TAP_TEST(distrib[0] == 0
            && distrib[1] == 0 && distrib[2] == 0 && distrib[3] == 0 && distrib[4] == 0
