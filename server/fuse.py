@@ -21,6 +21,8 @@ group_options= parser.add_argument_group() # title='Options and parameters')
 group_options.add_argument('--output', '-o', type=str, default='fused.data', help='output file (%(default)s)')
 group_options.add_argument('--max-clones', '-z', type=int, default=50, help='maximum number of clones')
 
+group_options.add_argument('--test', '-t', action='store_true', help='run self-tests')
+
 parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
 
 
@@ -89,7 +91,16 @@ def jsonToJunc(obj_dict):
 
 class AccessedDict(dict):
     '''Dictionary providing a .not_accessed_keys() method
-    Note that access with .get(key) are not tracked.'''
+    Note that access with .get(key) are not tracked.
+
+    >>> d = AccessedDict({1:11, 2:22, 3: 33, 4: 44})
+
+    >>> d[1], d[3]
+    (11, 33)
+
+    >>> list(d.not_accessed_keys())
+    [2, 4]
+    '''
 
     def __init__(self, *args, **kwargs):
         dict.__init__(self, *args, **kwargs)
@@ -344,7 +355,12 @@ def fuseWindow(w1, w2, t1, t2) :
     
   
 args = parser.parse_args()
-print args
+# print args
+
+if args.test:
+    import doctest
+    doctest.testmod()
+    sys.exit(0)
 
 jlist_fused = None
 times = []
