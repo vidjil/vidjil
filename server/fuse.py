@@ -146,7 +146,7 @@ def clntabParser(file_path):
             listw.append((w , w.d["size"][0]))
                 
             clonotype = tab["clonotype"].split(' ')
-            if (clonotype[0]!="") :
+            if (len(clonotype) > 1) :
                 listc.append((w , tab["clonotype"]))
                 
             #those data have been stored under a different name to be compatible with Vidjl
@@ -378,4 +378,4 @@ print jlist_fused
   
 print "==>", args.output
 with open(args.output, "w") as file:
-    json.dump(jlist_fused, file, default=juncToJson)
+    json.dump(jlist_fused, file, indent=2, default=juncToJson)
