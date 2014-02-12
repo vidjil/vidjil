@@ -147,7 +147,7 @@ def clntabParser(file_path):
                 
             clonotype = tab["clonotype"].split(' ')
             if (clonotype[0]!="") :
-                listc.append((w , clonotype[0]))
+                listc.append((w , tab["clonotype"]))
                 
             #those data have been stored under a different name to be compatible with Vidjl
             already_stored = ["sequence.raw nt seq", "sequence.V-GENE and allele",
@@ -182,8 +182,8 @@ def clntabParser(file_path):
             clone = {}
             clone["name"] = listc[index][1]
             clone["cluster"] = []
-            clonotype_name = listc[index][1]
-        clone["cluster"].append(listw[index][0].d["window"])
+        clonotype_name = listc[index][1]
+        clone["cluster"].append(listc[index][0].d["window"])
     out.d["clones"].append(clone)
     
     out.d["reads_segmented"] = [total_size]
