@@ -221,7 +221,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
 }
 
 KmerSegmenter::~KmerSegmenter() {
-  if (! kaa)
+  if (kaa)
     delete kaa;
 }
 
