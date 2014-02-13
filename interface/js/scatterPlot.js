@@ -944,12 +944,12 @@ ScatterPlot.prototype = {
             
             if (this.m.windows[i].active
                 && this.m.windows[i].display
+                && !this.m.windows[i].select
                 && this.m.getSize(i)
                 && node_x > x1 
                 && node_x < x2
                 && node_y > y1
                 && node_y < y2  ){
-                console.log(i)
                 nodes_selected.push(i)
             }
         }
@@ -962,11 +962,10 @@ ScatterPlot.prototype = {
         this.active_selector = false;
         console.log( "stopSelector : selectBox [x : "+x1+"/"+x2+", y : "+y1+"/"+y2+"]   nodes :"+ nodes_selected )
         
+        this.m.unselectAll()
         for (var i=0; i<nodes_selected.length; i++){
             this.m.select(nodes_selected[i])
         }
-        
-        if (nodes_selected.length==0) this.m.unselectAll()
         
     },
   
