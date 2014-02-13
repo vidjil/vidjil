@@ -412,11 +412,10 @@ Model.prototype = {
       if (typeof(this.windows[i].V) != 'undefined'){
 	var vGene=this.windows[i].V[0];
 	
-	console.log(i+" >> "+ vGene+" // ");
           // TODO : What if vGene isn't known? (same for J)
 	this.windows[i].colorV=this.germline.v[vGene].color;
       }else{
-	this.windows[i].colorV=color['@default'];
+	this.windows[i].colorV="";
       }
     }
     
@@ -426,7 +425,7 @@ Model.prototype = {
 	var jGene=this.windows[i].J[0];
 	this.windows[i].colorJ=this.germline.j[jGene].color;
       }else{
-	this.windows[i].colorJ=color['@default'];
+	this.windows[i].colorJ="";
       }	
     }
     
@@ -654,14 +653,14 @@ Model.prototype = {
  * */
   getColor : function(cloneID){
     if (this.focus==cloneID) {
-      return color['@select'];
+      return "";
     }
     if (!this.windows[cloneID].active) {
-      return color['@default'];
+      return "";
     }
     if (this.colorMethod=="abundance") {
       var size=this.getSize(cloneID)
-      if (size==0) return color['@default'];
+      if (size==0) "";
       return colorGenerator( this.scale_color(size*this.precision) ,  color_s  , color_v);
     }
     if (this.colorMethod=="Tag") {
@@ -681,7 +680,7 @@ Model.prototype = {
       	return this.windows[cloneID].colorN2;
       }
     }
-    return color['@default'];
+    return "";
   },
 
 /*

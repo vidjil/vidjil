@@ -109,6 +109,7 @@ ul{
 .graph_line{
   stroke-width : 2.5px;
   cursor:pointer;
+  stroke : @default;
 }
 
 .graph_inactive{
@@ -126,6 +127,7 @@ ul{
 .graph_focus{
   stroke-width : 5px;
   cursor:pointer;
+  stroke : @select;
 }
 
 #timebar{
@@ -182,6 +184,7 @@ ul{
   -o-transition: fill  0.2s;
   -ms-transition: fill 0.2s;
   transition: fill 0.2s;
+  fill : @default;
 }
 
 .circle_inactive{
@@ -193,10 +196,19 @@ ul{
   stroke-width : 2.5px;
   stroke : @select;
   cursor:pointer;
+  fill : @default;
 }
 
 .circle_focus{
   cursor:pointer;
+  fill : @select;
+}
+
+.circle_focus_select{
+  stroke-width : 2.5px;
+  stroke : @select;
+  cursor:pointer;
+  fill : @select;
 }
 
 .circle_hidden{
@@ -306,6 +318,7 @@ ul{
   height: 16px;
   display: inline-block;
   user-select :none;
+  fill : @default;
 }
 
 .infoBox{

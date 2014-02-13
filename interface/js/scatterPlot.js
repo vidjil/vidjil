@@ -119,7 +119,10 @@ ScatterPlot.prototype = {
       .attr("id", function(d) { return "circle"+d.id; })
       .attr("class", function(p) { 
 	if (!self.m.windows[p.id].active) return "circle_inactive";
-	  if (self.m.windows[p.id].select) return "circle_select";
+	  if (self.m.windows[p.id].select){
+          if (p.id==self.m.focus) return "circle_focus_select";
+          return "circle_select";
+      }
 	  if (p.id==self.m.focus) return "circle_focus";
 	  return "circle"; 
        })
@@ -247,7 +250,10 @@ ScatterPlot.prototype = {
       .attr("fill", function(d) { return (self.m.windows[d].color); })
       .attr("class", function(p) { 
 	if (!self.m.windows[p.id].active) return "circle_hidden";
-	if (self.m.windows[p.id].select) return "circle_select";
+    if (self.m.windows[p.id].select){
+        if (p.id==self.m.focus) return "circle_focus_select";
+        return "circle_select";
+    }
 	if (p.id==self.m.focus) return "circle_focus";
 	return "circle"; 
       })
@@ -736,7 +742,10 @@ ScatterPlot.prototype = {
     this.node
       .attr("class", function(p) { 
 	if (!self.m.windows[p.id].active) return "circle_hidden";
-	if (self.m.windows[p.id].select) return "circle_select";
+    if (self.m.windows[p.id].select){
+        if (p.id==self.m.focus) return "circle_focus_select";
+        return "circle_select";
+    }
 	if (p.id==self.m.focus) return "circle_focus";
 	return "circle"; 
       })
