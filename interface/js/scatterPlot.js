@@ -69,17 +69,23 @@ ScatterPlot.prototype = {
       .on("mousedown", function(){self.activeSelector();})
       .on("mousemove", function(){self.updateSelector();})
       .on("mouseup", function(){self.stopSelector()})
+      .on("mouseout", function(){self.cancelSelector()})
       //.on("click", function(){self.m.unselectAll();})
       
     this.axis_container = d3.select("#"+this.id+"_svg").append("svg:g")
       .attr("id", this.id+"_axis_container")
+      .on("mousemove", function(){self.updateSelector();})
+      .on("mouseout", function(){self.cancelSelector()})
       
     this.plot_container = d3.select("#"+this.id+"_svg").append("svg:g")
       .attr("id", this.id+"_plot_container")
       .on("mousemove", function(){self.updateSelector();})
-    
+      .on("mouseout", function(){self.cancelSelector()})
+      
     this.bar_container = d3.select("#"+this.id+"_svg").append("svg:g")
       .attr("id", this.id+"_bar_container")
+      .on("mousemove", function(){self.updateSelector();})
+      .on("mouseout", function(){self.cancelSelector()})
       
     this.selector = d3.select("#"+this.id+"_svg").append("svg:rect")
       .attr("class", "sp_selector")
@@ -904,36 +910,38 @@ ScatterPlot.prototype = {
         var x = this.selector.attr("originx")
         var y = this.selector.attr("originy")
         
-        var width = coordinates[0]-x
-        var height = coordinates[1]-y
         
-        if (width > 5){
-            this.selector.attr("width", width-3)
-            .attr("x", x)
-        }else if (width < -5){
-            this.selector
-            .attr("width",-width)
-            .attr("x",coordinates[0]+3)
-        }
-        else{
-            this.selector.attr("width", 0)
-            .attr("x", x)
-        }
-        
-        if (height >5 ){
-            this.selector.attr("height", height-3)
-            .attr("y", y)
-        }else if (height <-5){
-            this.selector
-            .attr("height", -height)
-            .attr("y", coordinates[1]+3)
-        }
-        else{
-            this.selector.attr("height", 0)
-            .attr("y", y)
-        }
+            var width = coordinates[0]-x
+            var height = coordinates[1]-y
+            
+            if (width > 5){
+                this.selector.attr("width", width-3)
+                .attr("x", x)
+            }else if (width < -5){
+                this.selector
+                .attr("width",-width)
+                .attr("x",coordinates[0]+3)
+            }
+            else{
+                this.selector.attr("width", 0)
+                .attr("x", x)
+            }
+            
+            if (height >5 ){
+                this.selector.attr("height", height-3)
+                .attr("y", y)
+            }else if (height <-5){
+                this.selector
+                .attr("height", -height)
+                .attr("y", coordinates[1]+3)
+            }
+            else{
+                this.selector.attr("height", 0)
+                .attr("y", y)
+            }
 
-        //console.log( "updateSelector " + coordinates[0] + "/" +coordinates[1] )
+            //console.log( "updateSelector " + coordinates[0] + "/" +coordinates[1] )
+
       }
   },
   
@@ -976,6 +984,31 @@ ScatterPlot.prototype = {
             this.m.select(nodes_selected[i])
         }
         
+    },
+    
+    cancelSelector : function(){
+        
+        var coordinates = [0, 0];
+        coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
+        if (coordinates[0] < 5 
+            || coordinates[1] < 5 
+            || coordinates[0] > this.marge_left+(this.w*this.resizeW)-5
+            || coordinates[1] > this.marge_top+(this.h*this.resizeH) -5 ){
+        
+            this.selector
+            .attr("x", 0)
+            .attr("y", 0)
+            .attr("width", 0)
+            .attr("height", 0)
+            this.active_selector = false;
+            console.log("cancel selector " +coordinates)
+        }
+        
+        if ( document.selection ) {
+            document.selection.empty();
+        } else if ( window.getSelection ) {
+            window.getSelection().removeAllRanges();
+        }
     },
   
 }
