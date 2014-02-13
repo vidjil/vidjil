@@ -39,6 +39,9 @@ function ScatterPlot(id, model){
   this.fpsqueue = [];
   
   this.use_simple_v = false;
+  
+  this.active_selector = false
+  
 }
 
 ScatterPlot.prototype = {
@@ -62,18 +65,30 @@ ScatterPlot.prototype = {
       .attr("class", "background_sp")
       .attr("x", 0)
       .attr("y", 0)
-      .on("click", function(){self.m.unselectAll();})
       .on("mouseover", function(){self.m.focusOut();})
-      
+      .on("mousedown", function(){self.activeSelector();})
+      .on("mousemove", function(){self.updateSelector();})
+      .on("mouseup", function(){self.stopSelector()})
+      //.on("click", function(){self.m.unselectAll();})
       
     this.axis_container = d3.select("#"+this.id+"_svg").append("svg:g")
       .attr("id", this.id+"_axis_container")
       
     this.plot_container = d3.select("#"+this.id+"_svg").append("svg:g")
       .attr("id", this.id+"_plot_container")
+      .on("mousemove", function(){self.updateSelector();})
     
     this.bar_container = d3.select("#"+this.id+"_svg").append("svg:g")
       .attr("id", this.id+"_bar_container")
+      
+    this.selector = d3.select("#"+this.id+"_svg").append("svg:rect")
+      .attr("class", "sp_selector")
+      .attr("id", this.id+"_selector")
+      .attr("x", 0)
+      .attr("y", 0)
+      .attr("rx", 5)
+      .attr("ry", 5)
+      .on("mousemove", function(){self.updateSelector();})
       
     //initialisation des nodes
     this.nodes = d3.range(this.m.n_windows).map(Object);
@@ -854,7 +869,106 @@ ScatterPlot.prototype = {
       .attr("class", function(p) { 
 	return "circle_hidden"; 
       })
-  }
+  },
+  
+  activeSelector : function(e){
+      var self=this;
+      var coordinates = [0, 0];
+      coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
+      this.selector
+      .attr("originx", coordinates[0])
+      .attr("originy", coordinates[1])
+      .attr("x", coordinates[0])
+      .attr("y", coordinates[1])
+      .attr("width", 0)
+      .attr("height", 0)
+      
+      console.log( "activeSelector " + coordinates[0] + "/" +coordinates[1] )
+      
+      this.active_selector = true;
+  },
+  
+    updateSelector : function(){
+      if (this.active_selector){
+        var coordinates = [0, 0];
+        coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
+        var x = this.selector.attr("originx")
+        var y = this.selector.attr("originy")
+        
+        var width = coordinates[0]-x
+        var height = coordinates[1]-y
+        
+        if (width > 5){
+            this.selector.attr("width", width-3)
+            .attr("x", x)
+        }else if (width < -5){
+            this.selector
+            .attr("width",-width)
+            .attr("x",coordinates[0]+3)
+        }
+        else{
+            this.selector.attr("width", 0)
+            .attr("x", x)
+        }
+        
+        if (height >5 ){
+            this.selector.attr("height", height-3)
+            .attr("y", y)
+        }else if (height <-5){
+            this.selector
+            .attr("height", -height)
+            .attr("y", coordinates[1]+3)
+        }
+        else{
+            this.selector.attr("height", 0)
+            .attr("y", y)
+        }
+
+        //console.log( "updateSelector " + coordinates[0] + "/" +coordinates[1] )
+      }
+  },
+  
+    stopSelector : function(e){
+        
+        var nodes_selected = []
+        
+        var x1 = parseInt(this.selector.attr("x"))
+        var x2 = x1 + parseInt(this.selector.attr("width"))
+        var y1 = parseInt(this.selector.attr("y"))
+        var y2 = y1 + parseInt(this.selector.attr("height"))
+        
+        for (var i=0; i<this.nodes.length; i++){
+            
+            var node_x = this.nodes[i].x+this.marge_left
+            var node_y = this.nodes[i].y+this.marge_top
+            
+            if (this.m.windows[i].active
+                && this.m.windows[i].display
+                && this.m.getSize(i)
+                && node_x > x1 
+                && node_x < x2
+                && node_y > y1
+                && node_y < y2  ){
+                console.log(i)
+                nodes_selected.push(i)
+            }
+        }
+        
+        this.selector
+        .attr("x", 0)
+        .attr("y", 0)
+        .attr("width", 0)
+        .attr("height", 0)
+        this.active_selector = false;
+        console.log( "stopSelector : selectBox [x : "+x1+"/"+x2+", y : "+y1+"/"+y2+"]   nodes :"+ nodes_selected )
+        
+        for (var i=0; i<nodes_selected.length; i++){
+            this.m.select(nodes_selected[i])
+        }
+        
+        if (nodes_selected.length==0) this.m.unselectAll()
+        
+    },
   
 }
 
