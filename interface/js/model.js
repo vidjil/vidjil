@@ -933,6 +933,17 @@ Model.prototype = {
       this.view[i].init();
     }
     this.displayTop();
+    
+    var count=0;
+    for ( var i=0; i<this.windows.length; i++){
+        if (this.windows.display) count++
+    }
+    
+    if (count <5){ 
+        this.top = 25
+        this.displayTop()
+    }
+        
   },
   
 
