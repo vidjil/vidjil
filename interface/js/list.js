@@ -247,7 +247,7 @@ List.prototype = {
       
       if (this.m.windows[list[i]].active || this.m.windows[list[i]].window=="other"){  
 	if (this.m.windows[list[i]].select){  
-	  div.className="list_select";
+	  div.className="list list_select";
 	}else{
 	  div.className="list";
 	}
@@ -308,11 +308,11 @@ List.prototype = {
       var vA="undefined V";
       var vB="undefined V";
       
-      if (typeof(self.m.windows[idA].V) != 'undefined' )
+      if (typeof(self.m.windows[idA].V) != 'undefined' && self.m.windows[idA].V[0] )
       vA=self.m.windows[idA].V[0];
-      if (typeof(self.m.windows[idB].V) != 'undefined' )
+      if (typeof(self.m.windows[idB].V) != 'undefined' && self.m.windows[idB].V[0])
       vB=self.m.windows[idB].V[0];
-      
+      console.log( vA +"/"+vB)
       //TODO ordre alpha//récupérer l'ordre correct dans le germline
       return vA>vB ? 1:-1; 
     })
@@ -328,9 +328,9 @@ List.prototype = {
       var jA="undefined J";
       var jB="undefined J";
       
-      if (typeof(self.m.windows[idA].J) != 'undefined' )
+      if (typeof(self.m.windows[idA].J) != 'undefined' && self.m.windows[idA].J[0] )
       jA=self.m.windows[idA].J[0];
-      if (typeof(self.m.windows[idB].J) != 'undefined' )
+      if (typeof(self.m.windows[idB].J) != 'undefined' && self.m.windows[idB].J[0] )
       jB=self.m.windows[idB].J[0];
       
       //TODO ordre alpha//récupérer l'ordre correct dans le germline
