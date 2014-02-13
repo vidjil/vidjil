@@ -10,3 +10,6 @@ light.css: light.less style.less
 	$(LESSC) light.less light.css
 
 
+no:
+	make LESSC="./node lessc"
+
