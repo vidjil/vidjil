@@ -33,6 +33,11 @@ ul{
 }
 
 #visu-container{
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
   height :100%;
 }
 
@@ -677,6 +682,7 @@ span.logo
   width : 300px;
   max-width : 300px;
   overflow-wrap: break-word;
+  word-wrap: break-word;
   border-style:solid;
   border-color: @border;
   border-width :1px;
@@ -688,4 +694,11 @@ span.logo
   border-style:solid;
   border-color: @border;
   border-collapse: collapse;
+}
+
+.sp_selector{
+    fill: @select;
+    stroke-width: 2px;
+    stroke: @select;
+    fill-opacity: 0.2;
 }
