@@ -161,6 +161,11 @@ List.prototype = {
 	  span_name.onclick = function(){ self.select(this); }
       span_name.appendChild(document.createTextNode( this.m.getCode(id) ) );
       span_name.title=this.m.getCode(id);
+      
+      var span_info=document.createElement('span')
+      span_info.className = "infoBox";
+      span_info.onclick=function(){ dataBox(self.m.getHtmlInfo(this.parentNode.id2)); }
+      span_info.appendChild(document.createTextNode("I"));
 
       var img=document.createElement('img');
 	      img.onclick=function(){ self.m.split(cloneID, this.parentNode.id2);
@@ -177,6 +182,7 @@ List.prototype = {
       span_stat.appendChild(document.createTextNode( (((this.m.windows[id].size[this.m.t]/this.m.reads_segmented[this.m.t])*r)/clusterSize).toFixed(1)+"%"));
 
       div_clone.appendChild(img); 
+      div_clone.appendChild(span_info);
       div_clone.appendChild(span_name);
       div_clone.appendChild(span_stat);
       div_cluster.appendChild(div_clone);
@@ -186,6 +192,7 @@ List.prototype = {
   select : function(elt){
 	this.m.select(elt.parentNode.id2);
   },
+  
  
 /* affiche une fenetre d'édition pour le nom d'un clone
  * @cloneID : identifiant du clone édité
