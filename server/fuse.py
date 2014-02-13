@@ -21,6 +21,8 @@ group_options= parser.add_argument_group() # title='Options and parameters')
 group_options.add_argument('--output', '-o', type=str, default='fused.data', help='output file (%(default)s)')
 group_options.add_argument('--max-clones', '-z', type=int, default=50, help='maximum number of clones')
 
+group_options.add_argument('--test', '-t', action='store_true', help='run self-tests')
+
 parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
 
 
@@ -87,6 +89,33 @@ def jsonToJunc(obj_dict):
         
 
 
+class AccessedDict(dict):
+    '''Dictionary providing a .not_accessed_keys() method
+    Note that access with .get(key) are not tracked.
+
+    >>> d = AccessedDict({1:11, 2:22, 3: 33, 4: 44})
+
+    >>> d[1], d[3]
+    (11, 33)
+
+    >>> list(d.not_accessed_keys())
+    [2, 4]
+    '''
+
+    def __init__(self, *args, **kwargs):
+        dict.__init__(self, *args, **kwargs)
+        self.accessed_keys = []
+
+    def __getitem__(self, key):
+        self.accessed_keys.append(key)
+        return dict.__getitem__(self, key)
+
+    def not_accessed_keys(self):
+        for key in self.keys():
+            if key in self.accessed_keys:
+                continue
+            yield key
+
 
 ### TODO: methode .load_clntab()    
 def clntabParser(file_path):
@@ -111,7 +140,7 @@ def clntabParser(file_path):
             else :
                 out.d["germline"] = ["???"]
 
-            tab = {}
+            tab = AccessedDict()
             for index, data in enumerate(ligne.split('\t')):
                 tab[header_map[index]] = data
                     
@@ -129,7 +158,7 @@ def clntabParser(file_path):
             w.d["J"]=tab["sequence.J-GENE and allele"].split('=')
 
             # use sequence.JUNCTION to colorize output (this is not exactly V/J !)
-            junction = tab["sequence.JUNCTION.raw nt seq"]
+            junction = tab.get("sequence.JUNCTION.raw nt seq")
             position = w.d["sequence"].find(junction)
             if position >= 0:
                 w.d["Jstart"] = position
@@ -144,20 +173,15 @@ def clntabParser(file_path):
             w.d["Dstart"]=0
                 
             listw.append((w , w.d["size"][0]))
-                
-            clonotype = tab["clonotype"].split(' ')
+
+            raw_clonotype = tab.get("clonotype")
+            clonotype = raw_clonotype.split(' ')
             if (len(clonotype) > 1) :
-                listc.append((w , tab["clonotype"]))
-                
-            #those data have been stored under a different name to be compatible with Vidjl
-            already_stored = ["sequence.raw nt seq", "sequence.V-GENE and allele",
-                "sequence.D-GENE and allele", "sequence.J-GENE and allele", "sequence.size"]
+                listc.append((w, raw_clonotype))
             
-            #keep other data
-            info = {}
-            for i in range(len(header_map)):
-                if header_map[i] not in already_stored:
-                    w.d["_"+header_map[i]]=[tab[header_map[i]]]
+            #keep data that has not already been stored
+            for header in tab.not_accessed_keys():
+                w.d["_"+header] = [tab[header]]
 
     #sort by sequence_size
     listw = sorted(listw, key=itemgetter(1), reverse=True)
@@ -331,7 +355,12 @@ def fuseWindow(w1, w2, t1, t2) :
     
   
 args = parser.parse_args()
-print args
+# print args
+
+if args.test:
+    import doctest
+    doctest.testmod()
+    sys.exit(0)
 
 jlist_fused = None
 times = []

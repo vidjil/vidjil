@@ -1002,7 +1002,7 @@ Model.prototype = {
  * 
  * */  
     getHtmlInfo : function(id){
-        var html = "<h2>info sequence "+this.getName(id)+"</h2>"
+        var html = "<h2>"+this.getName(id)+"</h2>"
         
         
         html+="<div id='info_window'><table><tr><th></th>"
@@ -1145,7 +1145,7 @@ window.onresize = initCoef;
     
     "welcome" : " <h2>Vidjil <span class='logo'>(beta)</span></h2>"
     +"(c) 2011-2014, the Vidjil team"
-    +"<br />Marc Duez, Mathieu Giraud and Mikaël Salson and the Vidjil team"
+    +"<br />Marc Duez, Mathieu Giraud and Mikaël Salson"
     +" &ndash; <a href='http://bioinfo.lifl.fr/vidjil'>http://bioinfo.lifl.fr/vidjil</a>"
     +"</br>"
     +"</br>Vidjil is developed by the <a href='http://www.lifl.fr/bonsai'>Bonsai bioinformatics team</a> (LIFL, CNRS, U. Lille 1, Inria Lille), in collaboration with the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille and the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille 2, IFR-114, IRCL)."

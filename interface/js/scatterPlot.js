@@ -393,15 +393,15 @@ ScatterPlot.prototype = {
     // undefined gene
     var pos = (vKey2.length+0.5)*stepV;
 
-    this.gridModel["allele_v"].push(this.makeLineModel("line","vert",pos,"undefined V",""));
-    this.gridModel["gene_v"].push(this.makeLineModel("line","vert",pos,"undefined V",""));
+    this.gridModel["allele_v"].push(this.makeLineModel("line","vert",pos,"?",""));
+    this.gridModel["gene_v"].push(this.makeLineModel("line","vert",pos,"?",""));
     this.positionGene["undefined V"]=pos
 	this.positionAllele["undefined V"]=pos
 	
 	var pos2 = (Object.keys(this.m.usedV).length+0.5)*stepV2;
 
-    this.gridModel["allele_v_used"].push(this.makeLineModel("line","vert",pos2,"undefined V",""));
-    this.gridModel["gene_v_used"].push(this.makeLineModel("line","vert",pos2,"undefined V",""));
+    this.gridModel["allele_v_used"].push(this.makeLineModel("line","vert",pos2,"?",""));
+    this.gridModel["gene_v_used"].push(this.makeLineModel("line","vert",pos2,"?",""));
 	this.positionUsedGene["undefined V"]=pos2
     this.positionUsedAllele["undefined V"]=pos2
 
@@ -449,7 +449,7 @@ ScatterPlot.prototype = {
     d.type = "line";
     d.orientation = "hori";
     d.pos = (jKey2.length+0.5)*stepJ;
-    d.text="undefined J"
+    d.text="?"
     
     this.gridModel["allele_j"].push(d);
     this.gridModel["gene_j"].push(d);

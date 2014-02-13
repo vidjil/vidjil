@@ -139,6 +139,8 @@
     doc.text(20, 35, 'germline: '+m.system);
     doc.text(20, 45, 'reads: ' + m.total_size);
 
+    doc.text(20, 55, 'This PDF export is in beta version...');
+
     svgElementToPdf(elem, doc, opt)
     doc.setFillColor(255, 255, 255);
     doc.rect(0,140, 210, 140, 'F');
