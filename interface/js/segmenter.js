@@ -111,6 +111,7 @@ Segment.prototype = {
     path.setAttribute('d', this.starPath);
     path.setAttribute('id','color'+cloneID); 
     if (typeof this.m.windows[cloneID].tag != 'undefined') path.setAttribute("fill", tagColor[this.m.windows[cloneID].tag]);
+    else path.setAttribute("fill", color['@default']);
 	
     svg.appendChild(path);
       
