@@ -931,58 +931,57 @@ ScatterPlot.prototype = {
   
     stopSelector : function(e){
         
-        var coordinates = [0, 0];
-        coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
+        if (this.active_selector) {
         
-        console.log( "stopSelector : " + coordinates)
-        
-        if (coordinates[0] < 0
-            || coordinates[1] < 0 
-            || coordinates[0] > this.marge_left+(this.w*this.resizeW)
-            || coordinates[1] > this.marge_top+(this.h*this.resizeH) ){
+            var coordinates = [0, 0];
+            coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
             
-            this.cancelSelector()
-            
-        }else{
-        
-            var nodes_selected = []
-            
-            var x1 = parseInt(this.selector.attr("x"))
-            var x2 = x1 + parseInt(this.selector.attr("width"))
-            var y1 = parseInt(this.selector.attr("y"))
-            var y2 = y1 + parseInt(this.selector.attr("height"))
-            
-            for (var i=0; i<this.nodes.length; i++){
+            if (coordinates[0] < 0
+                || coordinates[1] < 0 
+                || coordinates[0] > this.marge_left+(this.w*this.resizeW)
+                || coordinates[1] > this.marge_top+(this.h*this.resizeH) ){
                 
-                var node_x = this.nodes[i].x+this.marge_left
-                var node_y = this.nodes[i].y+this.marge_top
+                this.cancelSelector()
                 
-                if (this.m.windows[i].active
-                    && this.m.windows[i].display
-                    && !this.m.windows[i].select
-                    && this.m.getSize(i)
-                    && node_x > x1 
-                    && node_x < x2
-                    && node_y > y1
-                    && node_y < y2  ){
-                    nodes_selected.push(i)
+            }else{
+            
+                var nodes_selected = []
+                var x1 = parseInt(this.selector.attr("x"))
+                var x2 = x1 + parseInt(this.selector.attr("width"))
+                var y1 = parseInt(this.selector.attr("y"))
+                var y2 = y1 + parseInt(this.selector.attr("height"))
+                
+                for (var i=0; i<this.nodes.length; i++){
+                    
+                    var node_x = this.nodes[i].x+this.marge_left
+                    var node_y = this.nodes[i].y+this.marge_top
+                    
+                    if (this.m.windows[i].active
+                        && this.m.windows[i].display
+                        && !this.m.windows[i].select
+                        && this.m.getSize(i)
+                        && node_x > x1 
+                        && node_x < x2
+                        && node_y > y1
+                        && node_y < y2  ){
+                        nodes_selected.push(i)
+                    }
+                }
+                
+                this.selector
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", 0)
+                .attr("height", 0)
+                this.active_selector = false;
+                console.log( "stopSelector : selectBox [x : "+x1+"/"+x2+", y : "+y1+"/"+y2+"]   nodes :"+ nodes_selected )
+                
+                this.m.unselectAll()
+                for (var i=0; i<nodes_selected.length; i++){
+                    this.m.select(nodes_selected[i])
                 }
             }
-            
-            this.selector
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", 0)
-            .attr("height", 0)
-            this.active_selector = false;
-            console.log( "stopSelector : selectBox [x : "+x1+"/"+x2+", y : "+y1+"/"+y2+"]   nodes :"+ nodes_selected )
-            
-            this.m.unselectAll()
-            for (var i=0; i<nodes_selected.length; i++){
-                this.m.select(nodes_selected[i])
-            }
         }
-        
     },
     
     cancelSelector : function(){
@@ -993,7 +992,7 @@ ScatterPlot.prototype = {
             .attr("width", 0)
             .attr("height", 0)
             this.active_selector = false;
-            console.log("cancel selector " +coordinates)
+            console.log("cancel selector")
         
         if ( document.selection ) {
             document.selection.empty();
