@@ -484,6 +484,7 @@ Model.prototype = {
 			this.clones[this.dataCluster[i].cluster[j]].cluster=[]
 		}
 		this.clones[this.dataCluster[i].cluster[0]].cluster=new_cluster
+		this.clones[this.dataCluster[i].cluster[0]].name=this.dataCluster[i].name
 	}
     
     //		CUSTOM CLUSTER
@@ -574,11 +575,23 @@ Model.prototype = {
     this.updateElem([cloneID]);
   },
   
+/* return clone name
+ * or return name of the representative sequence of the clone
+ * 
+ * */
+  getName : function(cloneID){
+    if ( this.clones[cloneID].cluster.length >=2 && typeof(this.clones[cloneID].name)!='undefined' ){
+      return this.clones[cloneID].name;
+    }else{
+      return this.getSequenceName(cloneID);
+    }
+  },//end getCloneName
+  
 /* return custom name of cloneID,
  * or return segmentation name
  * 
  * */
-  getName : function(cloneID){
+  getSequenceName : function(cloneID){
     if ( typeof(this.windows[cloneID].c_name)!='undefined' ){
       return this.windows[cloneID].c_name;
     }else{
