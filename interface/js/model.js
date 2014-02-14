@@ -610,20 +610,64 @@ Model.prototype = {
   getSize : function(cloneID, time){
     time = typeof time !== 'undefined' ? time : this.t; 
     var result=0;
-	
-    for(var j=0 ;j<this.clones[cloneID].cluster.length; j++){
-      result += this.windows[this.clones[cloneID].cluster[j]].size[time];
-	}
+
+    result += this.getReads(cloneID, time)
       
 	var r=1;
 	if (this.norm){
 		r=this.normalization_factor[time];
 	}
 
-	return (result/m.reads_segmented[time])*r;
+	return (result/this.reads_segmented[time])*r;
 
   },//end getSize
   
+/* 
+ * 
+ * */
+  getSequenceSize : function(cloneID, time){
+    time = typeof time !== 'undefined' ? time : this.t; 
+    
+    var result=0;
+      result = this.getSequenceReads(cloneID, time)
+      
+    var r=1;
+    if (this.norm){
+        r=this.normalization_factor[time];
+    }
+
+    return (result/this.reads_segmented[time])*r;
+
+  },//end getSequenceSize
+  
+  
+/* compute the clone reads number ( sum of all reads of windows clustered )
+ * @t : tracking point (default value : current tracking point)
+ * */
+  getReads : function(cloneID, time){
+    time = typeof time !== 'undefined' ? time : this.t; 
+    var result=0;
+    
+    for(var j=0 ;j<this.clones[cloneID].cluster.length; j++){
+      result += this.windows[this.clones[cloneID].cluster[j]].size[time];
+    }
+
+    return result
+
+  },//end getSize
+  
+/* 
+ * 
+ * */
+  getSequenceReads : function(cloneID, time){
+    time = typeof time !== 'undefined' ? time : this.t; 
+    
+    var result=0;
+      result = this.windows[cloneID].size[time];
+
+    return result;
+
+  },//end getSequenceSize
   getV : function(cloneID){
     if ( typeof(this.windows[cloneID].sequence)!='undefined' && typeof(this.windows[cloneID].V)!='undefined' ){
       return this.windows[cloneID].V[0].split('*')[0];
