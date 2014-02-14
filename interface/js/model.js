@@ -963,10 +963,9 @@ Model.prototype = {
     top = typeof top !== 'undefined' ? top : this.top; 
     this.top=top;
     
-    var html_container=document.getElementById('rangeValue');
+    var html_container=document.getElementById('top_slider');
     if (html_container!=null){
       html_container.value=top;
-      //document.getElementById('top_display').innerHTML=top;
     }
     this.update();
   },
