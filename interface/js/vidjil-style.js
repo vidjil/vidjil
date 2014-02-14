@@ -10,6 +10,26 @@
 
 var scale_color;
 
+var solarizeD = {
+      '@default':'#839496',
+      '@background':'#002b36', 
+      '@highlight':'#073642', 
+      '@select':'#fdf6e3', 
+      '@secondary':'#586e75', 
+      '@border':'#284e55'    
+    };
+    
+var solarizeL = {
+      '@default':'#657b83', 
+      '@background':'#eee8d5', 
+      '@highlight':'#fdf6e3', 
+      '@select':'#002b36', 
+      '@secondary':'#93a1a1', 
+      '@border':'#b3c1c1'    
+    };
+    
+var color=solarizeD;
+
 var color_s = 0.8; //pureté
 var color_v = 0.72; //brightness
 
@@ -22,7 +42,7 @@ tagColor[4] = "#6c71c4";
 tagColor[5] = "#2aa198";
 tagColor[6] = "#d33682";
 tagColor[7] = "#859900";
-tagColor[8] = "";
+tagColor[8] = color['@default'];
 
 var tagName = [];
 tagName[0] = "clone 1";
@@ -124,11 +144,13 @@ var default_tag=8;
   }
 
       
-  function loadStyle(style){
+  function changeStyle(newStyle){
+    color=newStyle
+    //less.modifyVars(color);
     tagColor[default_tag] = color['@default'];
 	
-	if (newStyle=="solarizeD") document.getElementById("palette").href="css/dark.css";
-	if (newStyle=="solarizeL") document.getElementById("palette").href="css/light.css";
+	if (newStyle==solarizeD) document.getElementById("palette").href="css/dark.css";
+	if (newStyle==solarizeL) document.getElementById("palette").href="css/light.css";
 	
   }
   
