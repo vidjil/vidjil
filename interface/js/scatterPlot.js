@@ -67,28 +67,18 @@ ScatterPlot.prototype = {
       .attr("y", 0)
       .on("mouseover", function(){self.m.focusOut();})
       .on("mousedown", function(){self.activeSelector();})
-      //.on("mousemove", function(){self.updateSelector();})
-      //.on("mouseup", function(){self.stopSelector()})
-      //.on("mouseout", function(){self.cancelSelector()})
-      //.on("click", function(){self.m.unselectAll();})
       
       d3.select("body").on("mouseup", function(){self.stopSelector()})
       d3.select("body").on("mousemove", function(){self.updateSelector()})
       
     this.axis_container = d3.select("#"+this.id+"_svg").append("svg:g")
       .attr("id", this.id+"_axis_container")
-      //.on("mousemove", function(){self.updateSelector();})
-      //.on("mouseout", function(){self.cancelSelector()})
       
     this.plot_container = d3.select("#"+this.id+"_svg").append("svg:g")
       .attr("id", this.id+"_plot_container")
-      //.on("mousemove", function(){self.updateSelector();})
-      //.on("mouseout", function(){self.cancelSelector()})
       
     this.bar_container = d3.select("#"+this.id+"_svg").append("svg:g")
       .attr("id", this.id+"_bar_container")
-      //.on("mousemove", function(){self.updateSelector();})
-      //.on("mouseout", function(){self.cancelSelector()})
       
     this.selector = d3.select("#"+this.id+"_svg").append("svg:rect")
       .attr("class", "sp_selector")
