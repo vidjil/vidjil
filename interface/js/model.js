@@ -1079,8 +1079,15 @@ Model.prototype = {
     getHtmlInfo : function(id, type){
         
         if (this.clones[id].cluster.length <= 1) type="sequence" 
-        var html = "<h2>"+this.getName(id)+"</h2>"
         var time_length=this.reads_segmented.length
+        var html=""
+        
+        
+        if (type=="clone"){
+            html = "<h2>Clone info : "+this.getName(id)+"</h2>"
+        }else{
+            html = "<h2>Sequence info : "+this.getSequenceName(id)+"</h2>"
+        }
         
         html+="<div id='info_window'><table><tr><th></th>"
         
@@ -1092,8 +1099,9 @@ Model.prototype = {
         if (type=="clone"){
             
             html+="<tr><td class='header' colspan='"+(time_length+1)+"'> clone information </td></tr>"
-            
+            html+="<tr><td> clone name </td><td colspan='"+time_length+"'>"+this.getName(id)+"</td></tr>"
             html+="<tr><td> clone size (n-reads (total reads) )</td>"
+            
             for (var i=0; i<time_length; i++) {
                 html+= "<td>"+this.getReads(id, i) + "  (" +this.reads_segmented[i] + ")</td>"
             }
@@ -1107,8 +1115,8 @@ Model.prototype = {
             html+="<tr><td class='header' colspan='"+(time_length+1)+"'> representative sequence information</td></tr>"
         }
         
-        html+="<tr><td> sequence name </td><td colspan='"+time_length+"'>"+this.windows[id].name+"</td></tr>"
-        
+        html+="<tr><td> sequence name </td><td colspan='"+time_length+"'>"+this.getSequenceName(id)+"</td></tr>"
+        html+="<tr><td> code </td><td colspan='"+time_length+"'>"+this.getCode(id)+"</td></tr>"
         html+="<tr><td> size (n-reads (total reads) )</td>"
         for (var i=0; i<time_length; i++) {
             html+= "<td>"+this.getSequenceReads(id, i) + "  (" +this.reads_segmented[i] + ")</td>"
