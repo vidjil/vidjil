@@ -162,7 +162,7 @@ ScatterPlot.prototype = {
       })
       .attr("height", 50 )
       .attr("y", (this.h*self.resizeH)+self.marge_top )
-      .attr("fill", function(d) { return (self.m.windows[d].color); })
+      .style("fill", function(d) { return (self.m.windows[d].color); })
       .on("mouseover",function(d) { self.m.focusIn(d.id); } )
       .on("click", function(d) { self.m.select(d.id);})
   },
@@ -253,7 +253,7 @@ ScatterPlot.prototype = {
 	if (!self.m.windows[d.id].active) return (self.h*self.resizeH)+self.marge_top;
 	return (self.getBarPosition(d)*self.resizeH)+self.marge_top; 
       })
-      .attr("fill", function(d) { return (self.m.windows[d].color); })
+      .style("fill", function(d) { return (self.m.windows[d].color); })
       .attr("class", function(p) { 
 	if (!self.m.windows[p.id].active) return "circle_hidden";
     if (self.m.windows[p.id].select){
@@ -755,7 +755,7 @@ ScatterPlot.prototype = {
 	if (p.id==self.m.focus) return "circle_focus";
 	return "circle"; 
       })
-      .attr("fill", function(d) { return (self.m.windows[d].color); })
+      .style("fill", function(d) { return (self.m.windows[d].color); })
   },
   
 /* applique la grille correspondant a la methode de répartition définit dans this.splitMethod

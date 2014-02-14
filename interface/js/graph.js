@@ -182,7 +182,7 @@ Graph.prototype = {
       .attr("id", function(d) { return d.name; })
       .transition()
       .duration(500)
-      .attr("fill","none")
+      .style("fill","none")
       .attr("id", function(d) { return "poly"+d.name; })
     this.g_graph.exit().remove();
 
@@ -278,8 +278,8 @@ Graph.prototype = {
       //if (this.m.windows[this.data_graph[list[i]].id].top >10) classname = "graph_inactive";
       
       d3.select("#polyline"+list[i])
-      .attr("fill","none")
-      .attr("stroke", this.m.windows[list[i]].color )
+      .style("fill","none")
+      .style("stroke", this.m.windows[list[i]].color )
 	.transition()
 	.duration(500)
 	.attr("d", che)
@@ -341,8 +341,8 @@ Graph.prototype = {
       
     //courbes
     this.g_graph
-    .attr("fill","none")
-    .attr("stroke", function(d) { return self.m.windows[d.id].color; })
+    .style("fill","none")
+    .style("stroke", function(d) { return self.m.windows[d.id].color; })
       .transition()
       .duration(500)
       .attr("d", function(p) {
