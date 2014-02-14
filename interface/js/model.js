@@ -1060,38 +1060,59 @@ Model.prototype = {
 
   },
 
-/* return info about a window in html
+/* return info about a sequence/clone in html 
  * 
  * */  
-    getHtmlInfo : function(id){
-        var html = "<h2>"+this.getName(id)+"</h2>"
+    getHtmlInfo : function(id, type){
         
+        if (this.clones[id].cluster.length <= 1) type="sequence" 
+        var html = "<h2>"+this.getName(id)+"</h2>"
+        var time_length=this.reads_segmented.length
         
         html+="<div id='info_window'><table><tr><th></th>"
-        
-        var time_length=this.reads_segmented.length
         
         for (var i=0; i<time_length; i++) {
             html+= "<td>"+this.time[i] + "</td>"
         }
         html += "</tr>"
         
-        html+="<tr><td> name </td><td colspan='"+time_length+"'>"+this.windows[id].name+"</td>"
+        if (type=="clone"){
+            
+            html+="<tr><td class='header' colspan='"+(time_length+1)+"'> clone information </td></tr>"
+            
+            html+="<tr><td> clone size (n-reads (total reads) )</td>"
+            for (var i=0; i<time_length; i++) {
+                html+= "<td>"+this.getReads(id, i) + "  (" +this.reads_segmented[i] + ")</td>"
+            }
+            html += "</tr>"
+            
+            html+="<tr><td> clone size (%)</td>"
+            for (var i=0; i<time_length; i++) {
+                html+= "<td>" + (this.getSize(id, i)*100).toFixed(3) + " % </td>"
+            }
+            
+            html+="<tr><td class='header' colspan='"+(time_length+1)+"'> representative sequence information</td></tr>"
+        }
+        
+        html+="<tr><td> sequence name </td><td colspan='"+time_length+"'>"+this.windows[id].name+"</td></tr>"
+        
+        html+="<tr><td> size (n-reads (total reads) )</td>"
+        for (var i=0; i<time_length; i++) {
+            html+= "<td>"+this.getSequenceReads(id, i) + "  (" +this.reads_segmented[i] + ")</td>"
+        }
+        html += "</tr>"
+        
+        html+="<tr><td> size (%)</td>"
+        for (var i=0; i<time_length; i++) {
+            html+= "<td>" + (this.getSequenceSize(id, i)*100).toFixed(3) + " % </td>"
+        }
+        html += "</tr>"
+        
         html+="<tr><td> sequence </td><td colspan='"+time_length+"'>"+this.windows[id].sequence+"</td>"
         html+="<tr><td> window </td><td colspan='"+time_length+"'>"+this.windows[id].window+"</td>"
         html+="<tr><td> V </td><td colspan='"+time_length+"'>"+this.windows[id].V+"</td>"
         html+="<tr><td> D </td><td colspan='"+time_length+"'>"+this.windows[id].D+"</td>"
         html+="<tr><td> J </td><td colspan='"+time_length+"'>"+this.windows[id].J+"</td>"
-        
-        html+="<tr><td> size (n-reads (total reads) )</td>"
-        for (var i=0; i<time_length; i++) {
-            html+= "<td>"+this.windows[id].size[i] + "  (" +this.reads_segmented[i] + ")</td>"
-        }
-        
-        html+="<tr><td> size (%)</td>"
-        for (var i=0; i<time_length; i++) {
-            html+= "<td>" + (this.getSize(id, i)*100).toFixed(3) + " % </td>"
-        }
         
         for (var key in this.windows[id] ){
             if (key[0]=="_"){
