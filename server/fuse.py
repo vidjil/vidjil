@@ -352,7 +352,7 @@ def fuseWindow(w1, w2, t1, t2) :
 
     
     
-    
+### TODO: put all this thing in a __main__() function    
   
 args = parser.parse_args()
 # print args
@@ -390,9 +390,8 @@ for path_name in args.file:
         jlist = clntabParser(path_name)
         print jlist
             
-    else :
-        print "\n ERROR .", extension, " invalid file extension"
-        sys.exit()
+    else:
+        raise IOError ("Invalid file extension .%s" % extension)
         
     # Merge lists
     jlist_fused = fuseList(jlist_fused, jlist)
