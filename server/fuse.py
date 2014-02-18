@@ -280,8 +280,8 @@ class ListWindows:
                 junction = tab.get("sequence.JUNCTION.raw nt seq")
                 position = w.d["sequence"].find(junction)
                 if position >= 0:
-                    w.d["Jstart"] = position
-                    w.d["Vend"] = position + len(junction)
+                    w.d["Jstart"] = position + len(junction)
+                    w.d["Vend"] = position 
                     w.d["Nsize"] = len(junction)
                 else:
                     w.d["Jstart"] = 0
