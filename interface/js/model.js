@@ -1208,6 +1208,19 @@ Model.prototype = {
         this.update()
     },
 
+    
+/* 
+ * 
+ * */  
+    resetClones : function(){
+        //reset cluster
+        for (var i=0; i< this.windows.length; i++ ){
+            this.clones[i]={cluster:[i]};
+        }
+        
+        this.update()
+    },
+    
 }//end prototype Model
 
 

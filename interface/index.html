@@ -205,6 +205,18 @@
 	
       </div>
       
+
+      <div class="menu" onmouseover="showSelector('clusterSelector');" > cluster
+    <div id="clusterSelector" class="selector">
+      <a class="buttonSelector" onclick="m.resetClones();">reset</a>
+      <a class="buttonSelector" onclick="m.clusterBy('_clonotype');">clonotype</a>
+      <a class="buttonSelector" onclick="m.clusterBy('V');">V gene + allele</a>
+      <a class="buttonSelector" onclick="m.clusterBy('J');">J gene + allele</a>
+
+    </div>
+      </div>
+
+
       <div id="logo" style="float: right;" onclick="popupMsg(msg.welcome)">Vidjil <span class='logo'>(beta)</span></div>
      
       <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
