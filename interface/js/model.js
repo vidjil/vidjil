@@ -579,7 +579,7 @@ Model.prototype = {
  * 
  * */
   getName : function(cloneID){
-    if ( this.clones[cloneID].cluster.length >=2 && typeof(this.clones[cloneID].name)!='undefined' ){
+    if ( this.clones[cloneID].name ){
       return this.clones[cloneID].name;
     }else{
       return this.getSequenceName(cloneID);

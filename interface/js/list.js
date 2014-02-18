@@ -117,7 +117,7 @@ List.prototype = {
       
     var span3=document.createElement('span')
     span3.className = "clusterBox";
-    if (this.m.clones[cloneID].cluster.length >1){
+    if (this.m.clones[cloneID].cluster.length >1 || this.m.clones[cloneID].name){
       span3.onclick=function(){ showCluster( cloneID )}
       span3.appendChild(document.createTextNode("+"));
     }else{
@@ -144,7 +144,7 @@ List.prototype = {
 	
     div_cluster.id="cluster"+cloneID;
     div_cluster.id2=cloneID;
-    if (!display || this.m.clones[cloneID].cluster.length==1) div_cluster.style.display="none";
+    if (!display) div_cluster.style.display="none";
 	
     var clusterSize=this.m.getSize(cloneID)
 	
