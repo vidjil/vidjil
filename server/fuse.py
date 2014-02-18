@@ -112,18 +112,18 @@ class ListWindows:
     '''storage class for sequences informations 
     
     >>> lw1.info()
-    <ListWindows : [[25]] 2 0 >
+    <ListWindows : [[25]] 2 >
     <window : [5] 3 aaa>
     <window : [12] 2 bbb>
     
     >>> lw2.info()
-    <ListWindows : [[34]] 2 0 >
+    <ListWindows : [[34]] 2 >
     <window : [8] 4 aaa>
     <window : [2] 8 ccc>
     
     >>> lw3 = lw1 + lw2 
     >>> lw3.info()
-    <ListWindows : [[25], [34]] 3 0 >
+    <ListWindows : [[25], [34]] 3 >
     <window : [12, 0] 2 bbb>
     <window : [5, 8] 3 aaa>
     <window : [0, 2] 8 ccc>
@@ -138,7 +138,7 @@ class ListWindows:
         self.d["reads_segmented"] = [[0]]
         
     def __str__(self):
-        return "<ListWindows : %s %d %d >" % ( self.d["reads_segmented"], len(self.d["windows"]), len(self.d["clones"]) )
+        return "<ListWindows : %s %d >" % ( self.d["reads_segmented"], len(self.d["windows"]) )
 
     ### print info about each Windows stored 
     def info(self):
@@ -337,22 +337,6 @@ class ListWindows:
         for index in range(len(listw)):
             listw[index][0].d["top"]=index+1
             self.d["windows"].append(listw[index][0])
-            
-        #cluster / clonotype
-        clone = {}
-        clone["name"] = listc[0][1]
-        clone["cluster"] = []
-        clonotype_name = clone["name"]
-        
-        for index in range(len(listc)):
-            if (clonotype_name != listc[index][1]):
-                self.d["clones"].append(clone)
-                clone = {}
-                clone["name"] = listc[index][1]
-                clone["cluster"] = []
-            clonotype_name = listc[index][1]
-            clone["cluster"].append(listc[index][0].d["window"])
-        self.d["clones"].append(clone)
         
         self.d["reads_segmented"] = [total_size]
 
