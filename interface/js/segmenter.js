@@ -18,7 +18,7 @@
  */
 
 var CGI_ADRESS ="http://127.0.1.1/cgi-bin/";
-var memtab=[];
+var memTab=[];
  
 /* segment constructor
  * 
@@ -256,44 +256,59 @@ Segment.prototype = {
     var json=JSON.parse(file)
     
     for (var i = 0 ; i< json.seq.length; i++ ){
-      colorSeq(memTab[i], json.seq[i]);
-    }
-    
-  }
-  
-  function colorSeq(cloneID, seq){
-    
-    var spanM = document.getElementById("m"+cloneID);
-    spanM.innerHTML="";
-    
-    if(typeof m.windows[cloneID].sequence !='undefined' && m.windows[cloneID].sequence!=0){
-      
-      var newVend=getNewPosition(seq,m.windows[cloneID].Vend)
-      var newJstart=getNewPosition(seq,m.windows[cloneID].Jstart)
-    
-    var spanV = document.createElement('span');
-    spanV.className="V";
-    spanV.style.color=m.windows[cloneID].colorV;
-    
-    spanV.innerHTML=seq.substr(0, newVend+1);
-    spanM.appendChild(spanV);
-      
-    if ( (newVend - newJstart)!=0){
-      var spanN = document.createElement('span');
-      spanN.className="N";
-      spanN.innerHTML=seq.substring(newVend+1, newJstart);
-      spanM.appendChild(spanN);
-    }
-    
-    var spanJ = document.createElement('span');
-    spanJ.className="J";
-    spanJ.style.color=m.windows[cloneID].colorJ;
-    spanJ.innerHTML=seq.substr(newJstart);
-    spanM.appendChild(spanJ);
-    }else{
-      var spanJunc=document.createElement('span');
-      spanJunc.innerHTML=seq;
-      spanM.appendChild(spanJunc);
+        
+        // global container
+        var spanM = document.getElementById("m"+memTab[i]);
+        spanM.innerHTML="";
+        // V gene container
+        var spanV = document.createElement('span');
+        spanV.className="V";
+        spanV.style.color=m.windows[memTab[i]].colorV;
+        // N region container
+        var spanN = document.createElement('span');
+        spanN.className="N";
+        // J gene container
+        var spanJ = document.createElement('span');
+        spanJ.className="J";
+        spanJ.style.color=m.windows[memTab[i]].colorJ;
+        
+        if(typeof m.windows[memTab[i]].sequence !='undefined' && m.windows[memTab[i]].sequence!=0){
+            var newVend=getNewPosition(json.seq[i],m.windows[memTab[i]].Vend)
+            var newJstart=getNewPosition(json.seq[i],m.windows[memTab[i]].Jstart)
+            
+            console.log(m.windows[memTab[i]].Vend+"/"+m.windows[memTab[i]].Jstart+"//"
+                        +newVend+"/"+newJstart+"//"+ memTab[i]
+            )
+
+            var str = "";
+            for (var k=0; k<json.seq[i].length; k++){
+                if (json.seq[i][k] == json.seq[0][k] ){
+                    str += json.seq[i][k]
+                }else{
+                    str += "<span class='substitution'>"+json.seq[i][k]+"</span>"
+                }
+                
+                if (k==newVend+1){
+                    spanV.innerHTML=str
+                    str=""
+                }
+                
+                if (k==newJstart){
+                    spanN.innerHTML=str
+                    str=""
+                }
+                
+            }
+            spanJ.innerHTML=str
+            
+            spanM.appendChild(spanV);
+            spanM.appendChild(spanN);
+            spanM.appendChild(spanJ);
+        }else{
+            var spanJunc=document.createElement('span');
+            spanJunc.innerHTML=json.seq[i];
+            spanM.appendChild(spanJunc);
+        }
     }
     
   }
