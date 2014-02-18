@@ -1,3 +1,24 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+### fuse.py - Vidjil utility to parse and regroup list of clones of different timepoints or origins
+
+#  This file is part of "Vidjil" <http://bioinfo.lifl.fr/vidjil>
+#  Copyright (C) 2011, 2012, 2013, 2014 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
+#
+#  "Vidjil" is free software: you can redistribute it and/or modify
+#  it under the terms of the GNU General Public License as published by
+#  the Free Software Foundation, either version 3 of the License, or
+#  (at your option) any later version.
+#
+#  "Vidjil" is distributed in the hope that it will be useful,
+#  but WITHOUT ANY WARRANTY; without even the implied warranty of
+#  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+#  GNU General Public License for more details.
+#
+#  You should have received a copy of the GNU General Public License
+#  along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
+
 import collections
 import json
 import argparse
@@ -13,19 +34,19 @@ class Window:
     '''storage class for sequence informations
     with some function to group sequence informations
     
-    >>> print w1
-    <window : [5] 3 aaa>
+    >>> str(w1)
+    '<window : [5] 3 aaa>'
     
-    >>> print w3
-    <window : [8] 4 aaa>
+    >>> str(w3)
+    '<window : [8] 4 aaa>'
     
-    >>> print w1 + w3
-    <window : [5, 8] 3 aaa>
+    >>> str(w1 + w3)
+    '<window : [5, 8] 3 aaa>'
     
     
     check if other information are conserved
     
-    >>> print (w2 + w4).d["test"]
+    >>> (w2 + w4).d["test"]
     [0, 'plop']
     
     '''
@@ -109,14 +130,13 @@ class ListWindows:
     
     '''
     
-    ### init ListWindows with the minimum data required
     def __init__(self):
+        '''init ListWindows with the minimum data required'''
         self.d={}
         self.d["windows"] = []
         self.d["clones"] = []
         self.d["reads_segmented"] = [[0]]
         
-    ### print essential info about ListWindows 
     def __str__(self):
         return "<ListWindows : %s %d %d >" % ( self.d["reads_segmented"], len(self.d["windows"]), len(self.d["clones"]) )
 
@@ -126,15 +146,18 @@ class ListWindows:
         for i in range(len(self.d["windows"])):
             print self.d["windows"][i]
         
-    ### save ListWindows in json format
+    ### save / load to .json
+
     def save_json(self, output):
+        '''save ListWindows in .json format''' 
         print "==>", output
         with open(output, "w") as file:
             json.dump(self, file, indent=2, default=self.toJson)
             
-    ### init listWindows with data file
-    ### detect and select the parser according to the file extension
     def load(self, file_path):
+        '''init listWindows with data file
+        Detects and selects the parser according to the file extension.'''
+
         name = file_path.split("/")[-1]
         extension = file_path.split('.')[-1]
         
@@ -153,6 +176,7 @@ class ListWindows:
         
     ### 
     def __add__(self, other): 
+        '''Combine two ListWindows into a unique ListWindows'''
         obj = ListWindows()
         t1=[]
         t2=[]
@@ -223,8 +247,9 @@ class ListWindows:
         return result
         
     
-    ### delete all information from sequence/windows who never enter in the most represented sequences
     def cut(self, limit):
+        '''Delete all information from sequence/windows who never enter in the most represented sequences.'''
+
         length = len(self.d["windows"])
         w=[]
     
@@ -238,8 +263,9 @@ class ListWindows:
         print "! cut to %d" % limit
         return self
         
-    ### parser for clntab file
     def load_clntab(self, file_path):
+        '''Parser for .clntab file'''
+
         self.d["timestamp"] = "1970-01-01 00:00:00"
         self.d["normalization_factor"] = [1]
         
@@ -330,8 +356,9 @@ class ListWindows:
         
         self.d["reads_segmented"] = [total_size]
 
-    ### serializer for json module
+        
     def toJson(self, obj):
+        '''Serializer for json module'''
         if isinstance(obj, ListWindows):
             result = {}
             for key in obj.d :
@@ -348,8 +375,8 @@ class ListWindows:
             raise TypeError(repr(obj) + " fail !") 
 
 
-    ### reverse serializer for json module
     def toPython(self, obj_dict):
+        '''Reverse serializer for json module'''
         if "reads_total" in obj_dict:
             obj = ListWindows()
             for key in obj_dict :
