@@ -40,7 +40,6 @@
  * split
  * 
  * */
-      var tmpc = {}
 
 /*Model constructor
  * 
@@ -211,18 +210,18 @@ Model.prototype = {
 			
 			//fuse cluster with same name
 			if (cl.cluster.length!=0){
-                if (!tmpc[cl.name]){
-                    tmpc[cl.name] = cl
-                    tmpc[cl.name].cluster.sort()
+                if (!tmp[cl.name]){
+                    tmp[cl.name] = cl
+                    tmp[cl.name].cluster.sort()
                 }else{
-                    tmpc[cl.name].cluster = tmpc[cl.name].cluster.concat(cl.cluster)
-                    tmpc[cl.name].cluster.sort()
+                    tmp[cl.name].cluster = tmp[cl.name].cluster.concat(cl.cluster)
+                    tmp[cl.name].cluster.sort()
                 }
 			}
 		}
 		
-		for (var key in tmpc){
-            self.dataCluster.push(tmpc[key])
+		for (var key in tmp){
+            self.dataCluster.push(tmp[key])
         }
 
 	}
@@ -1152,7 +1151,68 @@ Model.prototype = {
         return html
     },  
 
+/* 
+ * 
+ * */  
+    clusterBy : function(data_name){
+      
+        var tmp = {}
+        for (var i=0; i<this.windows.length; i++){
+            
+            //detect key value
+            var key = "undefined"
+            
+            if (this.windows[i][data_name]){
+                if (this.windows[i][data_name] instanceof Array){
+                    for (var j=this.windows[i][data_name].length; j>=0 ; j--){
+                        if (this.windows[i][data_name][j] != 0)
+                        key = this.windows[i][data_name][j]
+                    }
+                }else{
+                    if (this.windows[i][data_name] != 0)
+                    key = this.windows[i][data_name]
+                }
+            }
+            console.log("id window/sequence : "+i+" /// cluster key : "+key)
+            
+            //store windows with same key together
+            if (key == "") key = "undefined"
+            if (tmp[key]){
+                tmp[key].push(i)
+            }else{
+                tmp[key] = [i]
+            }
+            
+        }
+        
+        //order windows with same key
+        var keys = Object.keys(tmp)
+        for (var i in tmp){
+            tmp[i].sort()
+        }
+        
+        //reset cluster
+        for (var i=0; i< this.windows.length; i++ ){
+            this.clones[i]={cluster:[i]};
+        }
+        
+        //new cluster
+        for (var i in tmp){
+            this.clones[ tmp[i][0] ].cluster = tmp[i]
+            this.clones[ tmp[i][0] ].name = i
+            
+            for (var j=1; j<tmp[i].length; j++){
+                this.clones[ tmp[i][j] ].cluster = []
+            }
+        }
+        this.update()
+    },
+
 }//end prototype Model
+
+
+
+
 
 
 
