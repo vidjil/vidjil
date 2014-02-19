@@ -213,6 +213,7 @@ class ListWindows:
                     obj.d[key] += other.d[key]
         
         obj.d["windows"]=self.fuseWindows(self.d["windows"], other.d["windows"], t1, t2)
+        obj.d["vidjil_json_version"] = VIDJIL_JSON_VERSION
 
         return obj
         
@@ -276,7 +277,8 @@ class ListWindows:
     def load_clntab(self, file_path):
         '''Parser for .clntab file'''
 
-        self.d["timestamp"] = "1970-01-01 00:00:00"
+        self.d["vidjil_json_version"] = VIDJIL_JSON_VERSION
+        self.d["timestamp"] = "1970-01-01 00:00:00" ## todo: timestamp of file_path
         self.d["normalization_factor"] = [1]
         
         listw = []
