@@ -1062,6 +1062,7 @@ Model.prototype = {
       for (var j=0; j < this.reads_segmented.length; j++){
 		if (this.windows[i].active==true){
             for (var k=0; k < this.clones[i].cluster.length; k++){
+                if (this.clones[i].cluster[k] != this.n_windows-1)
                 other[j]-= this.windows[this.clones[i].cluster[k]].size[j];
             }
         }
@@ -1157,7 +1158,7 @@ Model.prototype = {
     clusterBy : function(data_name){
       
         var tmp = {}
-        for (var i=0; i<this.windows.length; i++){
+        for (var i=0; i<this.windows.length-1; i++){
             
             //detect key value
             var key = "undefined"
