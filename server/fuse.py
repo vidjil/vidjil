@@ -308,11 +308,11 @@ class ListWindows:
                 if position >= 0:
                     w.d["Jstart"] = position + len(junction)
                     w.d["Vend"] = position 
-                    w.d["Nsize"] = len(junction)
+                    w.d["Nlength"] = len(junction)
                 else:
                     w.d["Jstart"] = 0
                     w.d["Vend"] = len(w.d["sequence"])
-                    w.d["Nsize"] = 0
+                    w.d["Nlength"] = 0
                 w.d["name"]=w.d["V"][0] + " -x/y/-z " + w.d["J"][0]
                 w.d["Dend"]=0
                 w.d["Dstart"]=0
