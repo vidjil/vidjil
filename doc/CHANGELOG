@@ -1,4 +1,12 @@
 
+2014-02-20  The Vidjil Team
+	* Refactored main vidjil.cpp (core/windows.cpp, core/windowExtractor.cpp)
+	* Removed unused html output
+	* Better json output (core/json.cpp)
+	* Updated main stdout, with representative sequence for each clone
+	* Updated parameters for FineSegmenter (delta_max) and dynprog (substition cost)
+	* Bugs closed
+
 2013-10-07  The Vidjil Team
 	* Better heuristic, segments more reads (core/segment.cpp)
         * Better and faster selection of representative read (vidjil.cpp, core/read_chooser.cpp)
