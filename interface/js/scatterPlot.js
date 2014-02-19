@@ -18,9 +18,6 @@ function ScatterPlot(id, model){
   this.resizeW=1;		//coef d'agrandissement largeur
   this.resizeH=1;		//coef d'agrandissement hauteur
   
-  this.w=1;			//largeur avant resize
-  this.h=1;			//hauteur avant resize
-  
   this.marge_left=100;		//marge 
   this.marge_top=30;		//
   this.max_precision=9;		//precision max atteignable ( 10^-8 par defaut TODO compute)
@@ -574,42 +571,84 @@ ScatterPlot.prototype = {
             
             switch(self.splitY){ 
                 case "bar": 
-                    d.x+=coef*((self.posG[geneV]*self.resizeW)-d.x);
                     d.y+=coef*(-d.y);
                     break;
                 case "gene_j": 
-                    d.x+=coef*((self.posG[geneV]*self.resizeW)-d.x);
                     d.y+=coef*((self.posG[geneJ]*self.resizeH)-d.y);
                     break;
                 case "allele_j": 
-                    d.x+=coef*((self.posA[geneV]*self.resizeW)-d.x);
                     d.y+=coef*((self.posA[geneJ]*self.resizeH)-d.y);
                     break;
+                case "gene_v_used": 
+                case "gene_v": 
+                    d.y+=coef*((self.posG[geneV]*self.resizeH)-d.y);
+                    break;
+                case "allele_v": 
+                    d.y+=coef*((self.posA[geneV]*self.resizeH)-d.y);
+                    break;
                 case "Size": 
-                    d.x+=coef3*((self.posG[geneV]*self.resizeW)-d.x);
                     if (d.r1!=0){
-                    d.y+=coef2*(self.sizeScale(self.m.getSize(d.id))*self.resizeH - d.y);
-                    }else{
-                    d.y+=coef2*(self.resizeH-d.y);
-                    }
-                    break; 
-                case "nSize": 
-                    d.x+=coef3*((self.posG[geneV]*self.resizeW)-d.x);
-                    if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
-                    if (self.m.windows[d.id].N!=-1){
-                        d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].Nlength/self.m.n_max))*(1-(2*self.marge_top)))*self.resizeH -d.y  );
+                        d.y+=coef2*(self.sizeScale(self.m.getSize(d.id))*self.resizeH - d.y);
                     }else{
                         d.y+=coef2*(self.resizeH-d.y);
                     }
+                    break; 
+                case "nSize": 
+                    if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
+                        if (self.m.windows[d.id].N!=-1){
+                            d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].Nlength/self.m.n_max))*(1-(2*self.marge_top)))*self.resizeH -d.y  );
+                        }else{
+                            d.y+=coef2*(self.resizeH-d.y);
+                        }
                     }else{
-                    d.y+=coef2*(self.resizeH-d.y);
+                        d.y+=coef2*(self.resizeH-d.y);
                     }
                     break; 
                 case "n": 
-                    d.x+=coef3*((self.posG[geneV]*self.resizeW)-d.x);
                     d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].n/self.m.n2_max))*(1-(2*self.marge_top)))*self.resizeH -d.y  );
                     break; 
             }
+
+            switch(self.splitX){
+                case "bar": 
+                    d.x+=coef*(-d.x);
+                    break;
+                case "gene_j": 
+                    d.x+=coef*((self.posG[geneJ]*self.resizeW)-d.x);
+                    break;
+                case "allele_j": 
+                    d.x+=coef*((self.posA[geneJ]*self.resizeW)-d.x);
+                    break;
+                case "gene_v_used": 
+                case "gene_v": 
+                    d.x+=coef*((self.posG[geneV]*self.resizeW)-d.x);
+                    break;
+                case "allele_v": 
+                    d.x+=coef*((self.posA[geneV]*self.resizeW)-d.x);
+                    break;
+                case "Size": 
+                    if (d.r1!=0){
+                        d.x+=coef2*(self.sizeScale(self.m.getSize(d.id))*self.resizeW - d.x);
+                    }else{
+                        d.x+=coef2*(self.resizeW-d.x);
+                    }
+                    break; 
+                case "nSize": 
+                    if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
+                        if (self.m.windows[d.id].N!=-1){
+                            d.x+=coef2*((self.marge_top + (1-(self.m.windows[d.id].Nlength/self.m.n_max))*(1-(2*self.marge_top)))*self.resizeW -d.x  );
+                        }else{
+                            d.x+=coef2*(self.resizeW-d.x);
+                        }
+                    }else{
+                        d.x+=coef2*(self.resizeW-d.x);
+                    }
+                    break; 
+                case "n": 
+                    d.x+=coef2*((self.marge_top + (1-(self.m.windows[d.id].n/self.m.n2_max))*(1-(2*self.marge_top)))*self.resizeW -d.x  );
+                    break; 
+            }
+            
         }
     },
   
@@ -894,8 +933,8 @@ ScatterPlot.prototype = {
     if (splitX=="gene_v" && this.use_simple_v) this.splitX="gene_v_used";
     if (splitX=="allele_v" && this.use_simple_v) this.splitX="allele_v_used";
     this.splitY=splitY;
-    if (splitX=="gene_v" && this.use_simple_v) this.splitX="gene_v_used";
-    if (splitX=="allele_v" && this.use_simple_v) this.splitX="allele_v_used";
+    if (splitY=="gene_v" && this.use_simple_v) this.splitY="gene_v_used";
+    if (splitY=="allele_v" && this.use_simple_v) this.splitY="allele_v_used";
     
     this.update();
   },
