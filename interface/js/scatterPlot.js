@@ -485,7 +485,7 @@ ScatterPlot.prototype = {
     //size 
     this.sizeScale = d3.scale.log()
       .domain([this.m.min_size,1])
-      .range([(1-this.marge_top),this.marge_top]);
+      .range([1,0]);
     var height=1;
     
     for (var i=0 ;i<this.max_precision ; i++){
@@ -797,11 +797,25 @@ ScatterPlot.prototype = {
 
   var x_grid = this.gridModel[this.splitX]
   var y_grid = this.gridModel[this.splitY]
-	  
-  var grid = x_grid.concat(y_grid)
 
   this.axis_x_update(x_grid);
   this.axis_y_update(y_grid);
+  },
+  
+  
+  /* 
+ * 
+ * */
+  changeXaxis : function(elem){
+    this.changeSplitMethod(elem.value, this.splitY);
+  },
+  
+  
+  /* 
+ * 
+ * */
+  changeYaxis : function(elem){
+    this.changeSplitMethod(this.splitX, elem.value);
   },
   
 /* 

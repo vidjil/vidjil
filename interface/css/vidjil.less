@@ -720,3 +720,33 @@ span .substitution{
     font-weight: lighter;
     text-decoration: underline;
 }
+
+.axis_select select {
+   background: @highlight;
+   color: @default;
+   padding: 5px;
+   line-height: 1;
+   border: 0;
+   border-radius: 0;
+   height: 25px;
+   width: 25px;
+   -webkit-appearance: none;
+}
+
+.axis_select {
+    position: relative;
+    float: left;
+    height: 0px;
+    top : 5px;
+}
+
+.axis_select_x {
+    left:50px;
+}
+.axis_select_y {
+
+}
+
+.axis_select select[selected=selected] {
+   color: @select;
+}
