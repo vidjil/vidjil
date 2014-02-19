@@ -28,6 +28,8 @@ import copy
 from operator import itemgetter
 
 
+VIDJIL_JSON_VERSION = "2014.02"
+
 ####
 
 class Window:
@@ -145,6 +147,13 @@ class ListWindows:
         print self
         for i in range(len(self.d["windows"])):
             print self.d["windows"][i]
+
+    ### check vidjil_json_version
+    def check_version(self, filepath):
+        if "vidjil_json_version" in self.d:
+            if self.d["vidjil_json_version"][0] >= VIDJIL_JSON_VERSION:
+                return
+        raise IOError ("File '%s' is too old -- please regenerate it with a newer version of Vidjil" % filepath)
         
     ### save / load to .json
 
@@ -167,6 +176,7 @@ class ListWindows:
             with open(file_path, "r") as file:
                 tmp = json.load(file, object_hook=self.toPython)       
                 self.d=tmp.d
+                self.check_version(file_path)
                 
         elif (extension=="clntab"):
             self.load_clntab(file_path)
