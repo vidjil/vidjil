@@ -511,16 +511,13 @@ int main (int argc, char **argv)
   //////////////////////////////////
   //$$ Read sequence files
 
-  cout << "Read sequence files" << endl ;
-
-
   if (!segment_D) // TODO: add other constructor to Fasta, and do not load rep_D in this case
     f_rep_D = "";
 
   Fasta rep_V(f_rep_V, 2, "|", cout);
   Fasta rep_D(f_rep_D, 2, "|", cout);
   Fasta rep_J(f_rep_J, 2, "|", cout);
-  
+
   OnlineFasta *reads;
 
   try {
@@ -539,12 +536,12 @@ int main (int argc, char **argv)
   if (command == CMD_ANALYSIS || command == CMD_WINDOWS) {
 
     //////////////////////////////////
-    cout << "# seed = " << seed << endl ;
-    cout << "    weight = " << seed_weight(seed) << endl ;
-    cout << "    span = " << seed.size() << endl ;
-    cout << "# k = " << k << endl ;
-    cout << "# w = " << w << endl ;
-    cout << "# delta = [" << delta_min << "," << delta_max << "]" << endl ;
+    cout << "# seed = " << seed << "," ;
+    cout << " weight = " << seed_weight(seed) << "," ;
+    cout << " span = " << seed.size() << endl ;
+    cout << "# k = " << k << "," ;
+    cout << " w = " << w << "," ;
+    cout << " delta = [" << delta_min << "," << delta_max << "]" << endl ;
 
 
     //////////////////////////////////
@@ -561,12 +558,13 @@ int main (int argc, char **argv)
     //////////////////////////////////
     //$$ Kmer Segmentation
 
+    cout << endl;
+    cout << "Loop through reads, looking for windows" << endl ;
+
     string f_segmented = out_dir + prefix_filename + SEGMENTED_FILENAME ;
     cout << "  ==> " << f_segmented << endl ;
     ofstream out_segmented(f_segmented.c_str()) ;
     ofstream *out_unsegmented = NULL;
-
-    cout << "Loop through reads, looking for windows" ;
  
     WindowExtractor we;
     we.setSegmentedOutput(&out_segmented);
@@ -715,7 +713,6 @@ int main (int argc, char **argv)
           sort_clones.push_back(make_pair(clone, clone_nb_reads));
       }
 
-    cout << "Sort" << endl ;
     // Sort clones
     sort_clones.sort(pair_occurrence_sort<list<junction> >);
 
@@ -739,7 +736,7 @@ int main (int argc, char **argv)
 
     cout << endl ;
 
-    cout << "## output clones in " << out_dir + prefix_filename << endl ; 
+    cout << "Output clones in " << out_dir + prefix_filename << endl ; 
 
     for (list <pair<list <junction>,int> >::const_iterator it = sort_clones.begin();
          it != sort_clones.end(); ++it) {
@@ -1106,9 +1103,8 @@ int main (int argc, char **argv)
 
     out_edges.close() ;
 
-    cout << endl;
     cout << "#### end of clones" << endl; 
-
+    cout << endl;
   
     //$$ Compare representatives of all clones
 

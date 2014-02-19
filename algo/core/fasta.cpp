@@ -47,14 +47,14 @@ Fasta::Fasta(const string &input,
       exit(1);
     }
 
-  out << "  <== " << input << endl ;
+  out << "  <== " << input ;
 
   while (is.good()) {
     is >> *this;
   }
   is.close();
 
-  out << "      " << total_size << " bp in " << size() << " sequences" << endl ;
+  out << "\t" << setw(6) << total_size << " bp in " << setw(3) << size() << " sequences" << endl ;
 }
 
 int Fasta::size() const{ return (int)reads.size(); }
@@ -86,6 +86,8 @@ OnlineFasta::OnlineFasta(const string &input,
   if (this->input->fail()) {
     throw ios_base::failure("!! Error in opening file "+input);
   }
+
+  cout << "  <== " << input << endl ;
   input_allocated = true;
   init();
 }
