@@ -30,7 +30,8 @@ function ScatterPlot(id, model){
   this.positionAllele={};	//
   this.positionUsedAllele={};
   
-  this.splitMethod="gene_j";	//methode de répartition actuelle(defaut: gene_j)
+  this.splitY="gene_j"; 	//methode de répartition actuelle(defaut: gene v/j)
+  this.splitX="gene_v";     
   
   this.m.view.push(this);	//synchronisation au Model
   
@@ -127,6 +128,7 @@ ScatterPlot.prototype = {
       .on("click", function(d) { self.m.select(d.id);})
     
     this.initGridModel();
+    this.changeSplitMethod(this.splitX, this.splitY);
     this.resize();
   },
   
@@ -165,8 +167,11 @@ ScatterPlot.prototype = {
     this.bar_v={};
     this.bar_max=0;
     
-    this.bar_width = 0.5*((this.w) / (this.vKey.length))
-	if (this.use_simple_v) this.bar_width = 0.5*((this.w) / Object.keys(this.m.usedV).length )
+	if (this.use_simple_v){
+        this.bar_width = 0.5*((this.w) / Object.keys(this.m.usedV).length )
+    }else{
+        this.bar_width = 0.5*((this.w) / (this.vKey.length))
+    }
 
     //init
     for ( var i=0 ; i< this.vKey.length; i++){
@@ -549,61 +554,61 @@ ScatterPlot.prototype = {
 /* déplace les nodes en fonction de la méthode de répartition actuelle
  * 
  * */
-  move : function(){
-    self =this;
-    return function(d) {
-      var coef = 0.005;		//
-      var coef2 = 0.01;		//force d'attraction
-      var coef3 = 0.0015;	//
-      var geneV="undefined V";
-      var geneJ="undefined J";
-      if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
-        geneV=self.m.windows[d.id].V[0];
-      }
-      if ( typeof(self.m.windows[d.id].J) != 'undefined' ){
-        geneJ=self.m.windows[d.id].J[0];
-      }
-      
-    switch(self.splitMethod){ 
-      case "bar": 
-	d.x+=coef*((self.posG[geneV]*self.resizeW)-d.x);
-	d.y+=coef*((self.h)-d.y);
-	break;
-      case "gene_j": 
-	d.x+=coef*((self.posG[geneV]*self.resizeW)-d.x);
-	d.y+=coef*((self.posG[geneJ]*self.resizeH)-d.y);
-	break;
-      case "allele_j": 
-	d.x+=coef*((self.posA[geneV]*self.resizeW)-d.x);
-	d.y+=coef*((self.posA[geneJ]*self.resizeH)-d.y);
-	break;
-      case "Size": 
-	d.x+=coef3*((self.posG[geneV]*self.resizeW)-d.x);
-	if (d.r1!=0){
-	  d.y+=coef2*(self.sizeScale(self.m.getSize(d.id))*self.resizeH - d.y);
-	}else{
-	  d.y+=coef2*(self.h*self.resizeH-d.y);
-	}
-      break; 
-      case "nSize": 
-	d.x+=coef3*((self.posG[geneV]*self.resizeW)-d.x);
-	if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
-	  if (self.m.windows[d.id].N!=-1){
-	    d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].Nlength/self.m.n_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
-	  }else{
-	    d.y+=coef2*((self.h*self.resizeH)-d.y);
-	  }
-	}else{
-	  d.y+=coef2*((self.h*self.resizeH)-d.y);
-	}
-      break; 
-      case "n": 
-	d.x+=coef3*((self.posG[geneV]*self.resizeW)-d.x);
-	d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].n/self.m.n2_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
-      break; 
-      }
-    }
-  },
+    move : function(){
+        self =this;
+        return function(d) {
+            var coef = 0.005;		//
+            var coef2 = 0.01;		//force d'attraction
+            var coef3 = 0.0015;	//
+            var geneV="undefined V";
+            var geneJ="undefined J";
+            if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
+                geneV=self.m.windows[d.id].V[0];
+            }
+            if ( typeof(self.m.windows[d.id].J) != 'undefined' ){
+                geneJ=self.m.windows[d.id].J[0];
+            }
+            
+            switch(self.splitY){ 
+                case "bar": 
+                    d.x+=coef*((self.posG[geneV]*self.resizeW)-d.x);
+                    d.y+=coef*((self.h)-d.y);
+                    break;
+                case "gene_j": 
+                    d.x+=coef*((self.posG[geneV]*self.resizeW)-d.x);
+                    d.y+=coef*((self.posG[geneJ]*self.resizeH)-d.y);
+                    break;
+                case "allele_j": 
+                    d.x+=coef*((self.posA[geneV]*self.resizeW)-d.x);
+                    d.y+=coef*((self.posA[geneJ]*self.resizeH)-d.y);
+                    break;
+                case "Size": 
+                    d.x+=coef3*((self.posG[geneV]*self.resizeW)-d.x);
+                    if (d.r1!=0){
+                    d.y+=coef2*(self.sizeScale(self.m.getSize(d.id))*self.resizeH - d.y);
+                    }else{
+                    d.y+=coef2*(self.h*self.resizeH-d.y);
+                    }
+                    break; 
+                case "nSize": 
+                    d.x+=coef3*((self.posG[geneV]*self.resizeW)-d.x);
+                    if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
+                    if (self.m.windows[d.id].N!=-1){
+                        d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].Nlength/self.m.n_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
+                    }else{
+                        d.y+=coef2*((self.h*self.resizeH)-d.y);
+                    }
+                    }else{
+                    d.y+=coef2*((self.h*self.resizeH)-d.y);
+                    }
+                    break; 
+                case "n": 
+                    d.x+=coef3*((self.posG[geneV]*self.resizeW)-d.x);
+                    d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].n/self.m.n2_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
+                    break; 
+            }
+        }
+    },
   
   
 /* 
@@ -688,7 +693,7 @@ ScatterPlot.prototype = {
     var startTime = new Date().getTime();  
     var elapsedTime = 0;  
     
-    if (this.splitMethod=="bar"){
+    if (this.splitY=="bar"){
       this.updateBar();
     }else{
     
@@ -709,7 +714,7 @@ ScatterPlot.prototype = {
  * (ne relance pas l'animation)
  * */
   updateElem : function(list){
-    if (this.splitMethod=="bar"){
+    if (this.splitY=="bar"){
       this.updateBar();
     }else{
       var flag=false;
@@ -742,21 +747,14 @@ ScatterPlot.prototype = {
       .style("fill", function(d) { return (self.m.windows[d].color); })
   },
   
-/* applique la grille correspondant a la methode de répartition définit dans this.splitMethod
+/* applique la grille correspondant a la methode de répartition définit dans this.splitX/Y
  * 
  * */
   initGrid : function(){
   self = this;
 
-  var x_grid = this.gridModel["gene_v"]
-  var y_grid=this.gridModel[this.splitMethod]
-  
-  if (this.splitMethod=="allele_j") x_grid = this.gridModel["allele_v"]
-  if (this.use_simple_v){
-	  x_grid = this.gridModel["gene_v_used"]
-	  if (this.splitMethod=="allele_j") x_grid = this.gridModel["allele_v_used"]
-  }
-  
+  var x_grid = this.gridModel[this.splitX]
+  var y_grid = this.gridModel[this.splitY]
 	  
   var grid = x_grid.concat(y_grid)
 
@@ -819,7 +817,7 @@ ScatterPlot.prototype = {
     })
     .attr("class", function (d) { 
       if (d.type=="subline"){
-	if (self.splitMethod!="allele_j") return "sp_subline_hidden";
+	if (self.splitY!="allele_j") return "sp_subline_hidden";
 	return "sp_subline"; 
       }
       return "sp_line"; 
@@ -834,17 +832,23 @@ ScatterPlot.prototype = {
 /* change la méthode de répartition du scatterPlot
  * 
  * */
-  changeSplitMethod :function(splitM){
-    if (splitM=="bar" && splitM!=this.splitMethod){
+  changeSplitMethod :function(splitX, splitY){
+    if (splitY=="bar" && splitY!=this.splitY){
       this.endPlot();
       this.initBar();
     }
     
-    if (splitM!="bar" && this.splitMethod=="bar"){
+    if (splitY!="bar" && this.splitY=="bar"){
       this.endBar();
     }
     
-    this.splitMethod=splitM;
+    this.splitX=splitX;
+    if (splitX=="gene_v" && this.use_simple_v) this.splitX="gene_v_used";
+    if (splitX=="allele_v" && this.use_simple_v) this.splitX="allele_v_used";
+    this.splitY=splitY;
+    if (splitX=="gene_v" && this.use_simple_v) this.splitX="gene_v_used";
+    if (splitX=="allele_v" && this.use_simple_v) this.splitX="allele_v_used";
+    
     this.update();
   },
 
