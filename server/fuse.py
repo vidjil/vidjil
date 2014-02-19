@@ -290,10 +290,13 @@ class ListWindows:
             if "clonotype" in ligne:
                 header_map = ligne.split('\t')
             else :
+                ## TODO: find a more universal way...
                 if "IGH" in ligne:
                     self.d["germline"] = ["IGH"]
                 elif "TRG" in ligne :
                     self.d["germline"] = ["TRG"]
+                elif "TRB" in ligne :
+                    self.d["germline"] = ["TRB"]
                 else :
                     self.d["germline"] = ["???"]
 
