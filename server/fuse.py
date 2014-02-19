@@ -167,10 +167,10 @@ class ListWindows:
         '''init listWindows with data file
         Detects and selects the parser according to the file extension.'''
 
-        name = file_path.split("/")[-1]
+        # name = file_path.split("/")[-1]
         extension = file_path.split('.')[-1]
         
-        print "<==", file_path, "\t", name, "\t", 
+        print "<==", file_path, "\t"
         
         if (extension=="data"): 
             with open(file_path, "r") as file:
@@ -271,7 +271,7 @@ class ListWindows:
         self.d["windows"]=w
         self.d["germline"]=self.d["germline"][0]
 
-        print "! cut to %d" % limit
+        print "### Cut merged file, keeping window in the top %d for at least one point" % limit
         return self
         
     def load_clntab(self, file_path):
@@ -467,7 +467,7 @@ def main():
 
     parser = argparse.ArgumentParser(description= DESCRIPTION,
                                     epilog='''Example:
-                                    python2 %(prog)s -s 2 -m 13''',
+                                    python2 %(prog)s ../out/vidjil.data''',
                                     formatter_class=argparse.RawTextHelpFormatter)
 
 
@@ -490,6 +490,10 @@ def main():
     jlist_fused = None
     times = []
 
+    print "### fuse.py -- " + DESCRIPTION
+    print
+
+    print "### Read and merge input files"
     for path_name in args.file:
         jlist = ListWindows()
         jlist.load(path_name)
@@ -498,17 +502,21 @@ def main():
         w2 = Window(2)
         w3 = w1+w2
         
-        print jlist
+        print "\t", jlist,
         # Merge lists
         if jlist_fused is None:
             jlist_fused = jlist
         else:
             jlist_fused = jlist_fused + jlist
-        print jlist_fused
-        
+        print '\t==> merge to', jlist_fused
+
+    print
     jlist_fused.cut(args.max_clones)
     jlist_fused.d["time"] = times
-    print jlist_fused 
+    print "\t", jlist_fused 
+    print
+
+    print "### Save merged file"
     jlist_fused.save_json(args.output)
 
     
