@@ -72,8 +72,11 @@ ScatterPlot.prototype = {
       d3.select("body").on("mouseup", function(){self.stopSelector()})
       d3.select("body").on("mousemove", function(){self.updateSelector()})
       
-    this.axis_container = d3.select("#"+this.id+"_svg").append("svg:g")
-      .attr("id", this.id+"_axis_container")
+    this.axis_x_container = d3.select("#"+this.id+"_svg").append("svg:g")
+      .attr("id", this.id+"_axis_x_container")
+      
+    this.axis_y_container = d3.select("#"+this.id+"_svg").append("svg:g")
+      .attr("id", this.id+"_axis_y_container")
       
     this.plot_container = d3.select("#"+this.id+"_svg").append("svg:g")
       .attr("id", this.id+"_plot_container")
@@ -758,8 +761,75 @@ ScatterPlot.prototype = {
 	  
   var grid = x_grid.concat(y_grid)
 
+  this.axis_x_update(x_grid);
+  this.axis_y_update(y_grid);
+  },
+  
+/* 
+ * 
+ * */
+  axis_x_update : function(data){
+      
+  self = this;
+   
   //LEGENDE
-  leg = this.axis_container.selectAll("text").data(grid);
+  leg = this.axis_x_container.selectAll("text").data(data);
+  leg.enter().append("text");
+  leg.exit()
+    .remove();
+  leg
+    .transition()
+    .duration(1000)
+    .attr("x", function(d) { return self.resizeW*d.pos+self.marge_left;})
+    .attr("y", function(d) { 
+      if ( d.type=="subline" ) return 25
+      else return 12;
+    })
+    .text( function (d) { return d.text; })
+    .attr("class", "sp_legend")
+    .style("fill", function (d) { 
+      if (self.m.colorMethod=="V" && (self.splitX=="gene_v" || self.splitX=="gene_v_used") && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
+      if (self.m.colorMethod=="J" && (self.splitX=="gene_j" || self.splitX=="gene_j_used") && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ;
+      return null;
+    }) ;
+    
+  //AXIS
+  lines = this.axis_x_container.selectAll("line").data(data);
+  lines.enter().append("line");
+  lines.exit()    
+    .remove();
+  lines
+    .transition()
+    .duration(1000)
+    .attr("x1", function(d) { return self.resizeW*d.pos+self.marge_left; })
+    .attr("x2", function(d) { return self.resizeW*d.pos+self.marge_left; })
+    .attr("y1", function(d) { return self.marge_top; })
+    .attr("y2", function(d) { return self.resizeH+self.marge_top; })
+    .style("stroke", function (d) { return null; })
+    .attr("class", function (d) { 
+        if (d.type=="subline"){
+            if (self.splitY!="allele_j") return "sp_subline_hidden";
+                return "sp_subline"; 
+        }
+        return "sp_line"; 
+    })
+    .style("stroke", function (d) { 
+      if (self.m.colorMethod=="V" && (self.splitX=="gene_v" || self.splitX=="gene_v_used") && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
+      if (self.m.colorMethod=="J" && (self.splitX=="gene_j" || self.splitX=="gene_j_used") && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
+      return null;
+    });
+    
+  },
+
+/* 
+ * 
+ * */
+  axis_y_update : function(data){
+      
+  self = this;
+  
+  //LEGENDE
+  leg = this.axis_y_container.selectAll("text").data(data);
   leg.enter().append("text");
   leg.exit()
     .remove();
@@ -767,68 +837,46 @@ ScatterPlot.prototype = {
     .transition()
     .duration(1000)
     .attr("x", function(d) { 
-      if (d.orientation=="vert") { return self.resizeW*d.pos+self.marge_left;
-      }else{
-	if ( d.type=="subline" ) return 80;
-	else return 40; 
-      }
+        if ( d.type=="subline" ) return 80;
+        else return 40; 
     })
-    .attr("y", function(d) { 
-      if (d.orientation=="vert") { 
-      if ( d.type=="subline" ) return 25
-      else return 12;
-      }else{ return self.resizeH*d.pos+3+self.marge_top;}
-    })
+    .attr("y", function(d) { return self.resizeH*d.pos+3+self.marge_top; })
     .text( function (d) { return d.text; })
     .attr("class", "sp_legend")
     .style("fill", function (d) { 
-      if (self.m.colorMethod=="V" && d.orientation=="vert" && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
-      if (self.m.colorMethod=="J" && d.orientation=="hori" && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
+      if (self.m.colorMethod=="V" && (self.splitY=="gene_v" || self.splitY=="gene_v_used") && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
+      if (self.m.colorMethod=="J" && (self.splitY=="gene_j" || self.splitY=="gene_j_used") && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ;
       return null;
     })
     ;
   
   //AXIS
-  lines = this.axis_container.selectAll("line").data(grid);
+  lines = this.axis_y_container.selectAll("line").data(data);
   lines.enter().append("line");
   lines.exit()    
     .remove();
   lines
     .transition()
     .duration(1000)
-    .attr("x1", function(d) { 
-      if (d.orientation=="vert") return self.resizeW*d.pos+self.marge_left;
-      else return self.marge_left
-    })
-    .attr("x2", function(d) { 
-      if (d.orientation=="vert") return self.resizeW*d.pos+self.marge_left;
-      else return self.resizeW+self.marge_left;
-    })
-    .attr("y1", function(d) {      
-      if (d.orientation=="vert") return self.marge_top;
-      else return self.resizeH*d.pos+self.marge_top;
-    })
-    .attr("y2", function(d) { 
-      if (d.orientation=="vert") return self.resizeH+self.marge_top;
-      else return self.resizeH*d.pos+self.marge_top;
-    })
-    .style("stroke", function (d) { 
-      return null ; 
-    })
+    .attr("x1", function(d) { return self.marge_left; })
+    .attr("x2", function(d) { return self.resizeW+self.marge_left; })
+    .attr("y1", function(d) { return self.resizeH*d.pos+self.marge_top; })
+    .attr("y2", function(d) { return self.resizeH*d.pos+self.marge_top; })
+    .style("stroke", function (d) { return null; })
     .attr("class", function (d) { 
-      if (d.type=="subline"){
-	if (self.splitY!="allele_j") return "sp_subline_hidden";
-	return "sp_subline"; 
-      }
-      return "sp_line"; 
+        if (d.type=="subline"){
+            if (self.splitY!="allele_j") return "sp_subline_hidden";
+                return "sp_subline"; 
+            }
+        return "sp_line"; 
     })
     .style("stroke", function (d) { 
-      if (self.m.colorMethod=="V" && d.orientation=="vert" && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
-      if (self.m.colorMethod=="J" && d.orientation=="hori" && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
+      if (self.m.colorMethod=="V" && (self.splitY=="gene_v" || self.splitY=="gene_v_used") && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
+      if (self.m.colorMethod=="J" && (self.splitY=="gene_j" || self.splitY=="gene_j_used") && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ;
       return null;
     });
+  
   },
-
 /* change la méthode de répartition du scatterPlot
  * 
  * */
