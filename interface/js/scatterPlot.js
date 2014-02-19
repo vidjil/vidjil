@@ -18,8 +18,8 @@ function ScatterPlot(id, model){
   this.resizeW=1;		//coef d'agrandissement largeur
   this.resizeH=1;		//coef d'agrandissement hauteur
   
-  this.w=1400;			//largeur avant resize
-  this.h=700;			//hauteur avant resize
+  this.w=1;			//largeur avant resize
+  this.h=1;			//hauteur avant resize
   
   this.marge_left=100;		//marge 
   this.marge_top=30;		//
@@ -106,7 +106,7 @@ ScatterPlot.prototype = {
       .friction(0.9)
       .nodes(this.nodes)
       .on("tick", this.tick.bind(this))
-      .size([this.w, this.h]);
+      .size([1, 1]);
       
     //création d'un element SVG pour chaque nodes
     this.node = this.plot_container.selectAll("circle").data(this.nodes)
@@ -153,7 +153,7 @@ ScatterPlot.prototype = {
 	}
       })
       .attr("height", 50 )
-      .attr("y", (this.h*self.resizeH)+self.marge_top )
+      .attr("y", self.resizeH+self.marge_top )
       .style("fill", function(d) { return (self.m.windows[d].color); })
       .on("mouseover",function(d) { self.m.focusIn(d.id); } )
       .on("click", function(d) { self.m.select(d.id);})
@@ -168,9 +168,9 @@ ScatterPlot.prototype = {
     this.bar_max=0;
     
 	if (this.use_simple_v){
-        this.bar_width = 0.5*((this.w) / Object.keys(this.m.usedV).length )
+        this.bar_width = (0.5*( 1/Object.keys(this.m.usedV).length ))*this.resizeW
     }else{
-        this.bar_width = 0.5*((this.w) / (this.vKey.length))
+        this.bar_width = (0.5*( 1/this.vKey.length ))*this.resizeW
     }
 
     //init
@@ -207,7 +207,7 @@ ScatterPlot.prototype = {
       var somme=0;
       for ( var j=0 ; j<this.bar_v[this.vKey[i]].clones.length ; j++){
 	somme+=this.getBarHeight(this.bar_v[this.vKey[i]].clones[j].id);
-	this.bar_v[this.vKey[i]].clones[j].pos=this.h-somme;
+	this.bar_v[this.vKey[i]].clones[j].pos=1-somme;
       }
     }
     
@@ -216,7 +216,7 @@ ScatterPlot.prototype = {
       if (this.gridModel["bar"][i].orientation=="hori"){
 	var value=this.gridModel["bar"][i].value/100;
 	if (this.bar_max<0.1) value=value/5;
-	this.gridModel["bar"][i].pos=this.h-(this.h*(value/this.bar_max));
+	this.gridModel["bar"][i].pos=1-(value/this.bar_max);
 	if (value>this.bar_max){
 	  this.gridModel["bar"][i].type = "subline";
 	  this.gridModel["bar"][i].text = ""
@@ -245,7 +245,7 @@ ScatterPlot.prototype = {
       })
       .attr("height", function(d) { return self.getBarHeight(d)*self.resizeH; })
       .attr("y", function(d) { 
-	if (!self.m.windows[d.id].active) return (self.h*self.resizeH)+self.marge_top;
+	if (!self.m.windows[d.id].active) return self.resizeH+self.marge_top;
 	return (self.getBarPosition(d)*self.resizeH)+self.marge_top; 
       })
       .style("fill", function(d) { return (self.m.windows[d].color); })
@@ -260,7 +260,7 @@ ScatterPlot.prototype = {
   
   getBarHeight : function(cloneID){
     var size= this.m.getSize(cloneID);
-    return this.h*(size/this.bar_max);
+    return size/this.bar_max;
   },
   
   getBarPosition : function(cloneID){
@@ -275,8 +275,8 @@ ScatterPlot.prototype = {
  * 
  * */
   resize :function(){
-    this.resizeW = (document.getElementById(this.id).offsetWidth-this.marge_left)/this.w;
-    this.resizeH = (document.getElementById(this.id).offsetHeight-this.marge_top)/this.h;
+    this.resizeW = document.getElementById(this.id).offsetWidth-this.marge_left;
+    this.resizeH = document.getElementById(this.id).offsetHeight-this.marge_top;
     if (this.resizeW<0.1) this.resizeW=0.1;
     if (this.resizeH<0.1) this.resizeH=0.1;
     
@@ -332,12 +332,12 @@ ScatterPlot.prototype = {
     var vKey = Object.keys(this.m.germline.v);
     var vKey2 = Object.keys(this.m.germline.vgene);
 	
-    var stepV = (this.w) / (vKey2.length+1)
-	var stepV2 = (this.w) / (Object.keys(this.m.usedV).length+1)
+    var stepV = 1/(vKey2.length+1)
+	var stepV2 = 1/(Object.keys(this.m.usedV).length+1)
     
     var jKey = Object.keys(this.m.germline.j);
     var jKey2 = Object.keys(this.m.germline.jgene);
-    var stepJ = (this.h) / (jKey2.length+1)
+    var stepJ = 1 / (jKey2.length+1)
 
 	
     // V allele
@@ -467,7 +467,7 @@ ScatterPlot.prototype = {
       var d={};
       d.type = "line";
       d.orientation = "hori";
-      d.pos = (1-((i*5)/this.m.n_max))*(this.h-(2*this.marge_top));
+      d.pos = (1-((i*5)/this.m.n_max))*(1-(2*this.marge_top));
       d.text=i*5;
       this.gridModel["nSize"].push(d);
     }
@@ -477,7 +477,7 @@ ScatterPlot.prototype = {
       var d={};
       d.type = "line";
       d.orientation = "hori";
-      d.pos = (1-((i)/this.m.n2_max))*(this.h-(2*this.marge_top));
+      d.pos = (1-((i)/this.m.n2_max))*(1-(2*this.marge_top));
       d.text=i;
       this.gridModel["n"].push(d);
     }
@@ -485,7 +485,7 @@ ScatterPlot.prototype = {
     //size 
     this.sizeScale = d3.scale.log()
       .domain([this.m.min_size,1])
-      .range([(this.h-this.marge_top),this.marge_top]);
+      .range([(1-this.marge_top),this.marge_top]);
     var height=1;
     
     for (var i=0 ;i<this.max_precision ; i++){
@@ -572,7 +572,7 @@ ScatterPlot.prototype = {
             switch(self.splitY){ 
                 case "bar": 
                     d.x+=coef*((self.posG[geneV]*self.resizeW)-d.x);
-                    d.y+=coef*((self.h)-d.y);
+                    d.y+=coef*(-d.y);
                     break;
                 case "gene_j": 
                     d.x+=coef*((self.posG[geneV]*self.resizeW)-d.x);
@@ -587,24 +587,24 @@ ScatterPlot.prototype = {
                     if (d.r1!=0){
                     d.y+=coef2*(self.sizeScale(self.m.getSize(d.id))*self.resizeH - d.y);
                     }else{
-                    d.y+=coef2*(self.h*self.resizeH-d.y);
+                    d.y+=coef2*(self.resizeH-d.y);
                     }
                     break; 
                 case "nSize": 
                     d.x+=coef3*((self.posG[geneV]*self.resizeW)-d.x);
                     if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
                     if (self.m.windows[d.id].N!=-1){
-                        d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].Nlength/self.m.n_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
+                        d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].Nlength/self.m.n_max))*(1-(2*self.marge_top)))*self.resizeH -d.y  );
                     }else{
-                        d.y+=coef2*((self.h*self.resizeH)-d.y);
+                        d.y+=coef2*(self.resizeH-d.y);
                     }
                     }else{
-                    d.y+=coef2*((self.h*self.resizeH)-d.y);
+                    d.y+=coef2*(self.resizeH-d.y);
                     }
                     break; 
                 case "n": 
                     d.x+=coef3*((self.posG[geneV]*self.resizeW)-d.x);
-                    d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].n/self.m.n2_max))*(self.h-(2*self.marge_top)))*self.resizeH -d.y  );
+                    d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].n/self.m.n2_max))*(1-(2*self.marge_top)))*self.resizeH -d.y  );
                     break; 
             }
         }
@@ -683,7 +683,7 @@ ScatterPlot.prototype = {
     if (!this.m.windows[nodeID].active) return 0;
     var size=this.m.getSize(nodeID);
     if (size==0) return 0;
-    return this.resizeCoef*Math.pow(80000*(size+0.002),(1/3) );
+    return this.resizeCoef*Math.pow((size+0.001),(1/3))/25
   },
 
 /* update les données du scatterPlot et relance une sequence d'animation
@@ -802,14 +802,14 @@ ScatterPlot.prototype = {
     })
     .attr("x2", function(d) { 
       if (d.orientation=="vert") return self.resizeW*d.pos+self.marge_left;
-      else return self.resizeW*self.w+self.marge_left;
+      else return self.resizeW+self.marge_left;
     })
     .attr("y1", function(d) {      
       if (d.orientation=="vert") return self.marge_top;
       else return self.resizeH*d.pos+self.marge_top;
     })
     .attr("y2", function(d) { 
-      if (d.orientation=="vert") return self.resizeH*self.h+self.marge_top;
+      if (d.orientation=="vert") return self.resizeH+self.marge_top;
       else return self.resizeH*d.pos+self.marge_top;
     })
     .style("stroke", function (d) { 
@@ -942,8 +942,8 @@ ScatterPlot.prototype = {
             
             if (coordinates[0] < 0
                 || coordinates[1] < 0 
-                || coordinates[0] > this.marge_left+(this.w*this.resizeW)
-                || coordinates[1] > this.marge_top+(this.h*this.resizeH) ){
+                || coordinates[0] > this.marge_left+this.resizeW
+                || coordinates[1] > this.marge_top+this.resizeH ){
                 
                 this.cancelSelector()
                 
