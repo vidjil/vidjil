@@ -55,6 +55,8 @@
 // #define RELEASE_TAG  "2013.04"
 #include "release.h"
 
+#define VIDJIL_JSON_VERSION "2014.02"
+
 //$$ #define (mainly default options)
 
 #define DEFAULT_GERMLINE_SYSTEM "TRG" 
@@ -1155,6 +1157,7 @@ int main (int argc, char **argv)
     //JsonArray normalization_res1 = json_normalization(norm_list, 1, nb_segmented);
     //JsonArray normalization_res5 = json_normalization(norm_list, 5, nb_segmented);
     
+    json->add("vidjil_json_version", VIDJIL_JSON_VERSION);
     json->add("timestamp", time_buffer);
     json->add("commandline", stream_cmdline.str());// TODO: escape "s in argv
     json->add("germline", germline_system);
