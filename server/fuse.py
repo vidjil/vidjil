@@ -138,6 +138,7 @@ class ListWindows:
         self.d["windows"] = []
         self.d["clones"] = []
         self.d["reads_segmented"] = [[0]]
+        self.d["germline"] = [""]
         
     def __str__(self):
         return "<ListWindows : %s %d >" % ( self.d["reads_segmented"], len(self.d["windows"]) )
@@ -290,16 +291,6 @@ class ListWindows:
             if "clonotype" in ligne:
                 header_map = ligne.replace('\n', '').split('\t')
             else :
-                ## TODO: find a more universal way...
-                if "IGH" in ligne:
-                    self.d["germline"] = ["IGH"]
-                elif "TRG" in ligne :
-                    self.d["germline"] = ["TRG"]
-                elif "TRB" in ligne :
-                    self.d["germline"] = ["TRB"]
-                else :
-                    self.d["germline"] = ["???"]
-
                 tab = AccessedDict()
                 for index, data in enumerate(ligne.split('\t')):
                     tab[header_map[index]] = data
@@ -478,6 +469,7 @@ def main():
     group_options.add_argument('--output', '-o', type=str, default='fused.data', help='output file (%(default)s)')
     group_options.add_argument('--max-clones', '-z', type=int, default=50, help='maximum number of clones')
     group_options.add_argument('--test', '-t', action='store_true', help='run self-tests')
+    group_options.add_argument('--germline', '-g', type=str, default='TRG', help='germline used (TRG, IGH, TRB, ...)')
 
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
   
@@ -519,6 +511,7 @@ def main():
     print
 
     print "### Save merged file"
+    jlist_fused.d['germline']=args.germline
     jlist_fused.save_json(args.output)
 
     
