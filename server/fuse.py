@@ -288,7 +288,7 @@ class ListWindows:
         fichier = open(file_path,"r")
         for ligne in fichier:
             if "clonotype" in ligne:
-                header_map = ligne.split('\t')
+                header_map = ligne.replace('\n', '').split('\t')
             else :
                 ## TODO: find a more universal way...
                 if "IGH" in ligne:
