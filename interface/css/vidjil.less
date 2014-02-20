@@ -52,8 +52,9 @@ ul{
   height: -moz-calc(~"100% - 150px");
   height: -webkit-calc(~"100% - 150px");
   height: calc(~"100% - 150px");
-  width : 100%;
-  overflow:hidden;
+  width: 100%;
+  overflow: hidden;
+  background: @background;
 }
 
 #switch{
@@ -468,7 +469,7 @@ ul{
   width:500px;
   font-size: 14px; 
   padding: 10px;
-  background:inherit;
+  background: @background;
   display:none;
   left: -moz-calc(~"50% - 250px");
   left: -webkit-calc(~"50% - 250px");
@@ -722,15 +723,12 @@ span .substitution{
 }
 
 .axis_select select {
-   background: @highlight;
-   color: @default;
-   padding: 5px;
-   line-height: 1;
-   border: 0;
-   border-radius: 0;
-   height: 25px;
-   width: 25px;
-   -webkit-appearance: none;
+    background: #073642;
+    color: @default;
+    border: 0;
+    height: 20px;
+    width: 120px;
+    -webkit-appearance: none;
 }
 
 .axis_select {
@@ -741,10 +739,9 @@ span .substitution{
 }
 
 .axis_select_x {
-    left:50px;
 }
 .axis_select_y {
-
+    top: 22px;
 }
 
 .axis_select select[selected=selected] {

@@ -18,8 +18,8 @@ function ScatterPlot(id, model){
   this.resizeW=1;		//coef d'agrandissement largeur
   this.resizeH=1;		//coef d'agrandissement hauteur
   
-  this.marge_left=100;		//marge 
-  this.marge_top=30;		//
+  this.marge_left=120;		//marge 
+  this.marge_top=45;		//
   this.max_precision=9;		//precision max atteignable ( 10^-8 par defaut TODO compute)
   
   this.positionGene={};		//position
@@ -831,8 +831,6 @@ ScatterPlot.prototype = {
   leg.exit()
     .remove();
   leg
-    .transition()
-    .duration(1000)
     .attr("x", function(d) { return self.resizeW*d.pos+self.marge_left;})
     .attr("y", function(d) { 
       if ( d.type=="subline" ) return 25
@@ -852,8 +850,6 @@ ScatterPlot.prototype = {
   lines.exit()    
     .remove();
   lines
-    .transition()
-    .duration(1000)
     .attr("x1", function(d) { return self.resizeW*d.pos+self.marge_left; })
     .attr("x2", function(d) { return self.resizeW*d.pos+self.marge_left; })
     .attr("y1", function(d) { return self.marge_top; })
@@ -861,7 +857,7 @@ ScatterPlot.prototype = {
     .style("stroke", function (d) { return null; })
     .attr("class", function (d) { 
         if (d.type=="subline"){
-            if (self.splitY!="allele_j") return "sp_subline_hidden";
+            if (self.splitX!="allele_j" && self.splitX!="allele_v" && self.splitX!="allele_v_used" ) return "sp_subline_hidden";
                 return "sp_subline"; 
         }
         return "sp_line"; 
@@ -887,8 +883,6 @@ ScatterPlot.prototype = {
   leg.exit()
     .remove();
   leg
-    .transition()
-    .duration(1000)
     .attr("x", function(d) { 
         if ( d.type=="subline" ) return 80;
         else return 40; 
@@ -909,8 +903,6 @@ ScatterPlot.prototype = {
   lines.exit()    
     .remove();
   lines
-    .transition()
-    .duration(1000)
     .attr("x1", function(d) { return self.marge_left; })
     .attr("x2", function(d) { return self.resizeW+self.marge_left; })
     .attr("y1", function(d) { return self.resizeH*d.pos+self.marge_top; })
@@ -918,7 +910,7 @@ ScatterPlot.prototype = {
     .style("stroke", function (d) { return null; })
     .attr("class", function (d) { 
         if (d.type=="subline"){
-            if (self.splitY!="allele_j") return "sp_subline_hidden";
+            if (self.splitY!="allele_j" && self.splitY!="allele_v" && self.splitY!="allele_v_used" )return "sp_subline_hidden";
                 return "sp_subline"; 
             }
         return "sp_line"; 
