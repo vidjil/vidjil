@@ -170,7 +170,7 @@ Model.prototype = {
     self.normalization_factor = data.normalization_factor;
     self.reads_segmented = data.reads_segmented;
     self.timestamp = data.timestamp;
-    self.time = data.time;
+    self.time = data.point;
     self.scale_color = d3.scale.log()
     .domain([1,self.precision])
     .range([250,0]);
