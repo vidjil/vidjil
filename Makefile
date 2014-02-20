@@ -7,7 +7,7 @@ all:
 	make -C $(VIDJIL_ALGO_SRC)
 
 test: all
-	make -C $(VIDJIL_SERVER_SRC) tests
+	# make -C $(VIDJIL_SERVER_SRC) tests
 	make -C $(VIDJIL_ALGO_SRC)/tests 
 	make should
 
