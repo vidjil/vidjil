@@ -210,10 +210,11 @@ class ListWindows:
                 if key not in obj.d :
                     obj.d[key] = t1 + other.d[key]
                 else :
+                    print key, obj.d[key], other.d[key]
                     obj.d[key] += other.d[key]
         
         obj.d["windows"]=self.fuseWindows(self.d["windows"], other.d["windows"], t1, t2)
-        obj.d["vidjil_json_version"] = VIDJIL_JSON_VERSION
+        obj.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
 
         return obj
         
@@ -277,7 +278,7 @@ class ListWindows:
     def load_clntab(self, file_path):
         '''Parser for .clntab file'''
 
-        self.d["vidjil_json_version"] = VIDJIL_JSON_VERSION
+        self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
         self.d["timestamp"] = "1970-01-01 00:00:00" ## todo: timestamp of file_path
         self.d["normalization_factor"] = [1]
         
@@ -461,8 +462,10 @@ lw2.d["windows"].append(w8)
 
  
 def main():
-    DESCRIPTION = 'Vidjil utility to parse and regroup list of clones of different timepoints or origins'
+    print "#", ' '.join(sys.argv)
 
+    DESCRIPTION = 'Vidjil utility to parse and regroup list of clones of different timepoints or origins'
+    
     #### Argument parser (argparse)
 
     parser = argparse.ArgumentParser(description= DESCRIPTION,
