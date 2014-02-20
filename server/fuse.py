@@ -384,6 +384,45 @@ class ListWindows:
         
 
 
+######
+
+def interesting_substrings(l):
+    '''Return a list with intersting substrings.
+    Now it removes common prefixes and suffixes
+
+    >>> interesting_substrings(['ec-2--bla', 'ec-512-bla', 'ec-21-bla'])
+    ['2-', '512', '21']
+    '''
+
+    if not l:
+        return {}
+
+    min_length = min(map (len, l))
+
+    common_prefix = 0
+    for i in range(min_length):
+        if all(map(lambda x: x[i] == l[0][i], l)):
+            common_prefix = i+1
+        else:
+            break
+
+    common_suffix = 0
+    for i in range(min_length - common_prefix):
+        if all(map(lambda x: x[-(i+1)] == l[0][-(i+1)], l)):
+            common_suffix = i
+        else:
+            break
+            
+    ### Build list
+    substrings = [x[common_prefix:-(common_suffix+1)] for x in l]
+    return substrings
+    
+    # ### Build dict
+    # substrings = {}
+    # for x in l:
+    #     substrings[x] = x[common_prefix:-(common_suffix+1)]
+    # return substrings
+
  
 class AccessedDict(dict):
     '''Dictionary providing a .not_accessed_keys() method
