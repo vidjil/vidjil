@@ -1,11 +1,20 @@
 /*
- * Vidjil, V(D)J repertoire browsing and analysis
- * http://bioinfo.lifl.fr/vidjil
- * (c) 2013, Marc Duez and the Vidjil Team, Bonsai bioinfomatics (LIFL, UMR 8022 CNRS, Univ. Lille 1)
- * =====
- * This is a beta version, please use it only for test purposes.
- * This file is a part of Vidjil, and can not be copied, modified and/or distributed 
- * without the express permission of the Vidjil Team.
+ * This file is part of "Vidjil" <http://bioinfo.lifl.fr/vidjil>, V(D)J repertoire browsing and analysis
+ * Copyright (C) 2013, 2014 by Marc Duez <marc.duez@lifl.fr> and the Vidjil Team
+ * Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
+ *
+ * "Vidjil" is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * "Vidjil" is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
 var scale_color;
