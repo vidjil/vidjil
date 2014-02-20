@@ -501,16 +501,17 @@ def main():
 
     parser = argparse.ArgumentParser(description= DESCRIPTION,
                                     epilog='''Example:
-                                    python2 %(prog)s ../out/vidjil.data''',
+                                    python2 %(prog)s --germline IGH ../out/vidjil.data''',
                                     formatter_class=argparse.RawTextHelpFormatter)
 
 
     group_options = parser.add_argument_group() # title='Options and parameters')
 
+    group_options.add_argument('--test', action='store_true', help='run self-tests')
+
     group_options.add_argument('--output', '-o', type=str, default='fused.data', help='output file (%(default)s)')
-    group_options.add_argument('--max-clones', '-z', type=int, default=50, help='maximum number of clones')
-    group_options.add_argument('--test', '-t', action='store_true', help='run self-tests')
-    group_options.add_argument('--germline', '-g', type=str, default='TRG', help='germline used (TRG, IGH, TRB, ...)')
+    group_options.add_argument('--top', '-t', type=int, default=50, help='keep only clones in the top TOP of some point (%(default)s')
+    group_options.add_argument('--germline', '-g', type=str, default='TRG', help='germline used (%(default)s): TRG, IGH, TRB, ...')
 
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
   
@@ -553,7 +554,7 @@ def main():
     jlist_fused.d["point"] = ll
     
     print
-    jlist_fused.cut(args.max_clones)
+    jlist_fused.cut(args.top)
     print "\t", jlist_fused 
     print
 
