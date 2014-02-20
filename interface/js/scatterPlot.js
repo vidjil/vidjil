@@ -18,8 +18,8 @@ function ScatterPlot(id, model){
   this.resizeW=1;		//coef d'agrandissement largeur
   this.resizeH=1;		//coef d'agrandissement hauteur
   
-  this.marge_left=100;		//marge 
-  this.marge_top=30;		//
+  this.marge_left=120;		//marge 
+  this.marge_top=45;		//
   this.max_precision=9;		//precision max atteignable ( 10^-8 par defaut TODO compute)
   
   this.positionGene={};		//position
