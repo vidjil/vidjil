@@ -540,7 +540,7 @@ def main():
     group_options.add_argument('--test', action='store_true', help='run self-tests')
 
     group_options.add_argument('--output', '-o', type=str, default='fused.data', help='output file (%(default)s)')
-    group_options.add_argument('--top', '-t', type=int, default=50, help='keep only clones in the top TOP of some point (%(default)s')
+    group_options.add_argument('--top', '-t', type=int, default=50, help='keep only clones in the top TOP of some point (%(default)s)')
     group_options.add_argument('--germline', '-g', type=str, default='TRG', help='germline used (%(default)s): TRG, IGH, TRB, ...')
 
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
