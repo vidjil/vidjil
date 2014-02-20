@@ -394,8 +394,6 @@ def common_substring(l):
     >>> common_substring(['abcdfffff', 'ghhhhhhhhh'])
     ''
     '''
-    common = 0
-    common_i = 0
     table = [[l[i][j:k] for j in range(len(l[i])) for k in range(j+1, len(l[i])+1)] for i in range(len(l))]
 
     # remove duplicates for a same string
