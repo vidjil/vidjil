@@ -461,8 +461,10 @@ lw2.d["windows"].append(w8)
 
  
 def main():
-    DESCRIPTION = 'Vidjil utility to parse and regroup list of clones of different timepoints or origins'
+    print "#", ' '.join(sys.argv)
 
+    DESCRIPTION = 'Vidjil utility to parse and regroup list of clones of different timepoints or origins'
+    
     #### Argument parser (argparse)
 
     parser = argparse.ArgumentParser(description= DESCRIPTION,
