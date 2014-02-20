@@ -382,9 +382,8 @@ ScatterPlot.prototype = {
 	  
 	  if (this.m.usedV[vKey2[i]]){
 		pos = stepV2*(this.m.usedV[vKey2[i]]-0.5)
-		//TODO IGH TRG detect
-		this.gridModel["allele_v_used"].push(this.makeLineModel("line","vert",pos,vKey2[i].split("IGH")[1],color));
-		this.gridModel["gene_v_used"].push(this.makeLineModel("line","vert",pos,vKey2[i].split("IGH")[1],color));
+		this.gridModel["allele_v_used"].push(this.makeLineModel("line","vert",pos,vKey2[i].split(this.m.system)[1],color));
+		this.gridModel["gene_v_used"].push(this.makeLineModel("line","vert",pos,vKey2[i].split(this.m.system)[1],color));
 	  }
       else{ 
 		pos = 0
