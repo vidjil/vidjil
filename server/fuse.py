@@ -387,13 +387,41 @@ class ListWindows:
 
 
 ######
+def common_substring(l):
+    '''Return the longest common substring among the strings in the list
+    >>> common_substring(['abcdfffff', 'ghhhhhhhhhbcd'])
+    'bcd'
+    >>> common_substring(['abcdfffff', 'ghhhhhhhhh'])
+    ''
+    '''
+    common = 0
+    common_i = 0
+    table = [[l[i][j:k] for j in range(len(l[i])) for k in range(j+1, len(l[i])+1)] for i in range(len(l))]
+
+    # remove duplicates for a same string
+    for i in range(len(l)):
+        table[i] = list(set(table[i]))
+    # flatten the list
+    table = [item for sublist in table for item in sublist]
+
+    # sort substrings by length (descending)
+    table = sorted(table, cmp=lambda x,y: cmp(len(y), len(x)))
+    # get the position of duplicates and get the first one (longest)
+    duplicates=[i for i, x in enumerate(table) if table.count(x) > 1]
+    if len(duplicates) > 0:
+        return table[duplicates[0]]
+    else:
+        return ""
 
 def interesting_substrings(l):
     '''Return a list with intersting substrings.
-    Now it removes common prefixes and suffixes
+    Now it removes common prefixes and suffixes, and then the longest 
+    common substring.
 
-    >>> interesting_substrings(['ec-2--bla', 'ec-512-bla', 'ec-21-bla'])
-    ['2-', '512', '21']
+    >>> interesting_substrings(['ec-3--bla', 'ec-512-bla', 'ec-47-bla'])
+    ['3-', '512', '47']
+    >>> interesting_substrings(['ec-A-seq-1-bla', 'ec-B-seq-512-bla', 'ec-C-seq-21-bla'])
+    ['A1', 'B512', 'C21']
     '''
 
     if not l:
@@ -417,6 +445,8 @@ def interesting_substrings(l):
             
     ### Build list
     substrings = [x[common_prefix:-(common_suffix+1)] for x in l]
+    common = common_substring(substrings)
+    substrings = [s.replace(common, '') for s in substrings]
     return substrings
     
     # ### Build dict
