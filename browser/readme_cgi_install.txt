@@ -5,8 +5,8 @@ configure Apache2
   #Add in etc/apache2/sites-available/default and change VIDJIL_PATH by your own installation directory
 
 
-	  ScriptAlias /cgi-bin/ VIDJIL_PATH/vdj/vidjil/interface/cgi/
-	  <Directory "/home/marc/bonsai/bonsai/vdj/vidjil/interface/cgi/">
+	  ScriptAlias /cgi-bin/ VIDJIL_PATH/vdj/vidjil/browser/cgi/
+	  <Directory "/home/marc/bonsai/bonsai/vdj/vidjil/browser/cgi/">
 	  AllowOverride None
 	  Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
 	  Order allow,deny
@@ -15,7 +15,7 @@ configure Apache2
 
   #Restart apache2
 
-  #In folder interface/js/segmenter.js change CGI_ADRESS with your own server adress
+  #In folder browser/js/segmenter.js change CGI_ADRESS with your own server adress
 
 	var CGI_ADRESS ="http://127.0.0.1/cgi-bin/";
 
