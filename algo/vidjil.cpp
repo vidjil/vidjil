@@ -59,13 +59,12 @@
 
 //$$ #define (mainly default options)
 
-#define DEFAULT_GERMLINE_SYSTEM "TRG" 
-#define DEFAULT_V_REP  "./germline/TRGV.fa" // IGHV 
+#define DEFAULT_GERMLINE_SYSTEM "IGH" 
+#define DEFAULT_V_REP  "./germline/IGHV.fa"
 #define DEFAULT_D_REP  "./germline/IGHD.fa" 
-#define DEFAULT_J_REP  "./germline/TRGJ.fa" // IGHJ
+#define DEFAULT_J_REP  "./germline/IGHJ.fa"
 
-// #define DEFAULT_READS  "./data/Stanford_S22.fa"
-#define DEFAULT_READS  "../bonsai/vdj/seq/chr_pgm_50k.cut.fa"
+#define DEFAULT_READS  "./data/Stanford_S22.fasta"
 #define MIN_READS_WINDOW 10
 #define MIN_READS_CLONE 10
 #define MAX_CLONES 20
@@ -191,9 +190,9 @@ void usage(char *progname)
 
        << endl 
        << "Examples (see doc/README)" << endl
-       << "  " << progname << "             -G germline/IGH  -d  data/Stanford_S22.fasta" << endl
-       << "  " << progname << " -c clones   -G germline/IGH  -d  data/Stanford_S22.fasta" << endl
-       << "  " << progname << " -c segment  -G germline/IGH  -d  data/Stanford_S22.fasta" << endl
+       << "  " << progname << "             -G germline/IGH                  -d  data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c clones   -G germline/IGH  -r 1 -R 1 -% 0  -d  data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c segment  -G germline/IGH                  -d  data/Stanford_S22.fasta" << endl
     ;
   exit(1);
 }
