@@ -1,0 +1,36 @@
+{
+  "custom": [
+    {
+      "window": "CTATTACTGTGCCACCTTCTGACATAAGAAACTCTTTGGC",
+      "tag": 3,
+      "name": "BCD-1 | B-#001 BCD-B-65.9 ACD-0.44"
+    },
+    {
+      "window": "CTGTGCCACCTGGGATGGTCCGAAGAAACTCTTTGGCAGT",
+      "tag": 3,
+      "name": "BCD-2 | BCD-C-7.43 ACD-C-2.09"
+    },
+    {
+      "window": "ACTGTGCCACCTTCTGACATAAGAAACTCTTGGCAGTGGA",
+      "tag": 3,
+      "name": "BCD-3 | B-#002 BCD-X-1.18"
+    },
+    {
+      "window": "TTACTGTGCCACCTTCTGACATAAGAAAACTCTTTGGCAG",
+      "tag": 3,
+      "name": "BCD-4 | B-#004 BCD-Y-1.13"
+    },
+    {
+      "window": "GTCTATTACTGTGCCGACCTTCTGACATAAGAAACTCTTT",
+      "tag": 3,
+      "name": "BCD-5 | BCD3-1306-0.83"
+    },
+    {
+      "window": "ACTGTGCCACCTGGGATACGAGGAATTATTATAAGAAACT",
+      "tag": 3,
+      "name": "BCD-D"
+    }
+  ],
+  "cluster": [
+  ]
+}

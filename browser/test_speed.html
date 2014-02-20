@@ -1,0 +1,104 @@
+<!doctype html>
+
+<!-- 
+  This file is part of "Vidjil" <http://bioinfo.lifl.fr/vidjil>, V(D)J repertoire browsing and analysis
+  Copyright (C) 2013, 2014 by Marc Duez <marc.duez@lifl.fr> and the Vidjil Team
+  Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
+
+  "Vidjil" is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  "Vidjil" is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
+-->
+
+<html>
+  <head>
+  
+	<meta charset="utf-8">
+	<title>Vidjil</title>
+	<link rel="stylesheet/less" type="text/css" href="css/style.less" />
+
+	<!--[if lte IE 8]><script src="js/r2d3.js" charset="utf-8"></script><![endif]-->
+	<!--[if gte IE 9]><!-->
+	<script type="text/javascript" src='js/lib/d3.v3.js'></script>
+	<!--<![endif]-->
+	<script type="text/javascript" src="js/lib/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript" src='js/lib/StackBlur.js'></script>
+	<script type="text/javascript" src='js/lib/rgbcolor.js'></script>
+	<script type="text/javascript" src='js/lib/canvg.js'></script>
+	<script type="text/javascript" src='js/lib/jspdf.js'></script>
+	<script type="text/javascript" src='js/lib/jspdf.plugin.addimage.js'></script>
+	<script type="text/javascript" src='js/lib/jspdf.plugin.svgToPdf.js'></script>
+	<script type="text/javascript" src='js/lib/jspdf.plugin.split_text_to_size.js'></script>
+	<script type="text/javascript" src='js/lib/jspdf.plugin.standard_fonts_metrics.js'></script>
+	<script type="text/javascript" src='js/lib/underscore.js'></script>
+	<script type="text/javascript" src='js/lib/file.js'></script>
+	<script type="text/javascript" src="js/lib/less-1.5.0.min.js"></script>
+
+
+	<script type="text/javascript" src='js/germline.js'></script>
+	<script type="text/javascript" src='js/model.js'></script>
+	<script type="text/javascript" src='js/segmenter.js'></script>
+	<script type="text/javascript" src='js/list.js'></script>
+        <script type="text/javascript" src="js/graph.js"> </script>
+        <script type="text/javascript" src="js/scatterPlot.js"> </script>
+	<script type="text/javascript" src='js/vidjil-style.js'></script>
+	<script type="text/javascript" src='js/crossDomain.js'></script>
+	<script type="text/javascript" src='js/pdf.js'></script>
+
+	
+  </head>
+
+  <body >
+  
+    <div id="mid-container" onmouseover="hideSelector()" style >
+      <!-- LEFT-CONTAINER -->
+      <span id="left-container">
+      
+      <div id="left">
+	
+	  <div id="listClones"></div>
+	
+	  <div id="listSelect"></div>
+
+      </div>
+	
+      </span>
+      
+      <div id="visu-container">
+	<!-- VISU -->
+	<span id="visu2">
+	  
+	</span>
+
+	<span id="visu" onclick="">
+	</span>
+	   <div id="fps"> </div>
+      </div>
+
+    </div>
+	
+
+    <div id="bot-container">
+
+      <ul id="listSeq">
+      </ul>
+    </div>
+    
+    
+    <div id="test_result"></div>
+
+  </body>
+<script type="text/javascript" src='test/dataTest.js'></script>
+<script type="text/javascript" src="js/test.js"> </script>
+</html>
+
+  

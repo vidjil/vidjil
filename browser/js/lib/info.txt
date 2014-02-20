@@ -1,0 +1,66 @@
+Views
+
+    d3-v3		: framework svg pour graphique/scatterplot
+    * @author 		Michael Bostock
+    * @link 		http://d3js.org/
+    * @license 		BSD Licensed
+    
+    r2d3 		: fallback d3 pour internet-explorer IE8- (a tester)	
+    * @version	 	v0.1.0
+    * @author 		Michael Hemesath
+    * @link 		github.com/mhemesath/r2d3/
+    * @license 		MIT Licensed
+
+Tools
+
+    Jquery		: framework généraliste 
+    * @version	 	jQuery v1.9.1 
+    * @author 		john resig and jquery team
+    * @link 		jquery.org
+    * @license 		MIT Licensed
+
+    file.js  		: load/save cross-navigator
+    * @author 		Eli Grey
+    * @link 		http://eligrey.com
+    * @license 		MIT Licensed
+
+    less.js  		: dynamic stylesheet 
+    * @version	 	less-1.5.0 
+    * @author 		Alexis Sellier 
+    * @link 		<self@cloudhead.net> / http://lesscss.org/
+    * @license 		apache v2 
+    
+PDF 
+
+    jspdf		: API pdf 
+    * @version	 	0.9.0rc2 
+    * @author 		james@snapshotmedia.co.uk
+    * @link 		https://github.com/MrRio/jsPDF
+    * @license 		MIT Licensed
+    
+    jspdf.svgToPdf.js	: API svg > pdf
+    * @author 		Florian Hülsmann <fh@cbix.de>
+    * @link 		
+    * @license 		GNU Licensed
+
+    StackBlur		: dépendance jspdf 
+    * @version 		0.5
+    * @author 		Mario Klingemann mario@quasimondo.com
+    * @link 		http://www.quasimondo.com/StackBlurForCanvas
+    * @license 		MIT Licensed 
+    
+    underscore		: dépendance jspdf.plugin.svgToPdf
+    * @version 		Underscore.js 1.5.2
+    * @author 		Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+    * @link 		http://underscorejs.org
+    * @license 		MIT Licensed 
+
+    canvg		: conversion svg>canvas (peut etre utile pour export vers image)
+    * @author 		Gabe Lerner (gabelerner@gmail.com)
+    * @link 		http://code.google.com/p/canvg/
+    * @license 		MIT Licensed 
+    
+    rgbcolor		: dépendance jspdf
+    * @author 		Stoyan Stefanov <sstoo@gmail.com>
+    * @link   		http://www.phpied.com/rgb-color-parser-in-javascript/
+    * @license 		Use it if you like it
