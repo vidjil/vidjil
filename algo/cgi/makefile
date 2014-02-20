@@ -1,6 +1,6 @@
 align: core align.o 
-	mkdir -p ../../interface/cgi
-	g++ -o ../../interface/cgi/align.cgi align.o ../core.a
+	mkdir -p ../../browser/cgi
+	g++ -o ../../browser/cgi/align.cgi align.o ../core.a
 
 align.o: align.cpp
 	g++ -c align.cpp
