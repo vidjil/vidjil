@@ -545,6 +545,14 @@ def main():
         print '\t==> merge to', jlist_fused
 
     print
+    print "### Select point names"
+    l = jlist_fused.d["point"]
+    ll = interesting_substrings(l)
+    print "  <==", l
+    print "  ==>", ll
+    jlist_fused.d["point"] = ll
+    
+    print
     jlist_fused.cut(args.max_clones)
     print "\t", jlist_fused 
     print
