@@ -520,7 +520,7 @@ def main():
 
     if args.test:
         import doctest
-        doctest.testmod()
+        doctest.testmod(verbose = True)
         sys.exit(0)
 
     jlist_fused = None
