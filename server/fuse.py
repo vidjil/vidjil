@@ -210,7 +210,6 @@ class ListWindows:
                 if key not in obj.d :
                     obj.d[key] = t1 + other.d[key]
                 else :
-                    print key, obj.d[key], other.d[key]
                     obj.d[key] += other.d[key]
         
         obj.d["windows"]=self.fuseWindows(self.d["windows"], other.d["windows"], t1, t2)
