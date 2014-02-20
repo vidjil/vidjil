@@ -330,7 +330,7 @@ Model.prototype = {
 	self.usedV = {}
 
 	for ( var i=0; i< self.windows.length; i++){
-		if (self.windows[i].V && self.windows[i].V[0] ){
+		if (self.windows[i].V && self.windows[i].V[0] && self.germline.v[self.windows[i].V[0]] ){
 			var elem=self.windows[i].V[0].split('*')[0];
 			if (self.usedV[elem]){
 				self.usedV[elem]++
