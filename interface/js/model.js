@@ -419,20 +419,17 @@ Model.prototype = {
     
     //		COLOR_V
     for (var i=0; i<this.n_windows; i++){
-      if (typeof(this.windows[i].V) != 'undefined'){
-	var vGene=this.windows[i].V[0];
-	
-	console.log(i+" >> "+ vGene+" // ");
-          // TODO : What if vGene isn't known? (same for J)
-	this.windows[i].colorV=this.germline.v[vGene].color;
-      }else{
-	this.windows[i].colorV=color['@default'];
-      }
+        if (typeof(this.windows[i].V) != 'undefined' && this.germline.v[this.windows[i].V[0]]){
+            var vGene=this.windows[i].V[0];
+            this.windows[i].colorV=this.germline.v[vGene].color;
+        }else{
+            this.windows[i].colorV=color['@default'];
+        }
     }
     
     //		COLOR_J
     for (var i=0; i<this.n_windows; i++){
-      if (typeof(this.windows[i].J) != 'undefined'){
+      if (typeof(this.windows[i].J) != 'undefined' && this.germline.j[this.windows[i].J[0]]){
 	var jGene=this.windows[i].J[0];
 	this.windows[i].colorJ=this.germline.j[jGene].color;
       }else{

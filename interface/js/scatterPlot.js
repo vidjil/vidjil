@@ -562,10 +562,10 @@ ScatterPlot.prototype = {
             var coef3 = 0.0015;	//
             var geneV="undefined V";
             var geneJ="undefined J";
-            if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
+            if ( typeof(self.m.windows[d.id].V) != 'undefined'  && self.m.germline.v[self.m.windows[d.id].V[0]]){
                 geneV=self.m.windows[d.id].V[0];
             }
-            if ( typeof(self.m.windows[d.id].J) != 'undefined' ){
+            if ( typeof(self.m.windows[d.id].J) != 'undefined'  && self.m.germline.j[self.m.windows[d.id].J[0]] ){
                 geneJ=self.m.windows[d.id].J[0];
             }
             
