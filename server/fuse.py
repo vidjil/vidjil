@@ -184,6 +184,8 @@ class ListWindows:
                 
         else:
             raise IOError ("Invalid file extension .%s" % extension)
+
+        self.d['point'] = [file_path]
         
     ### 
     def __add__(self, other): 
@@ -521,7 +523,6 @@ def main():
         sys.exit(0)
 
     jlist_fused = None
-    times = []
 
     print "### fuse.py -- " + DESCRIPTION
     print
@@ -545,7 +546,6 @@ def main():
 
     print
     jlist_fused.cut(args.max_clones)
-    jlist_fused.d["time"] = times
     print "\t", jlist_fused 
     print
 
