@@ -580,9 +580,12 @@ ScatterPlot.prototype = {
                     d.y+=coef*((self.posA[geneJ]*self.resizeH)-d.y);
                     break;
                 case "gene_v_used": 
+                    d.y+=coef*((self.posG[geneV]*self.resizeH)-d.y);
+                    break;
                 case "gene_v": 
                     d.y+=coef*((self.posG[geneV]*self.resizeH)-d.y);
                     break;
+                case "allele_v_used": 
                 case "allele_v": 
                     d.y+=coef*((self.posA[geneV]*self.resizeH)-d.y);
                     break;
@@ -623,6 +626,7 @@ ScatterPlot.prototype = {
                 case "gene_v": 
                     d.x+=coef*((self.posG[geneV]*self.resizeW)-d.x);
                     break;
+                case "allele_v_used": 
                 case "allele_v": 
                     d.x+=coef*((self.posA[geneV]*self.resizeW)-d.x);
                     break;
