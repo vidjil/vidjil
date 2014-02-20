@@ -1,0 +1,12 @@
+!LAUNCH: ../../../vidjil -c segment -d -G ../../../germline/IGH bug20131218.fa
+
+# The number of deletions in the D is larger than the D length itself.
+$ Bug with the number of deletions in the D.
+# seq          : 162  TTACTGTGCGAGATTTAAGCGCTACTGGTACTTCGATCTCTGGGGCCGTGGCACCCTGGTCACCGTCTCCTCAGGT
+#                     |||||||||||||        |||||||||||||||||||||||||||||||||||||||||||||||||||||
+#                                      ||||
+# IGHV1-69D*01 : 281  TTACTGTGCGAGAGA              
+# IGHD6-25*01  :   0          gggtatagcagcggctac
+# IGHJ2*01     :                           ctactggtacttcgatctctggggccgtggcaccctggtcactgtctcctcag
+
+f1:VDJ\\s+0 174 179 182 183 237\\s+IGHV1-69D.01 2/TTTA/9 IGHD6-25.01 5//0 IGHJ2.01
