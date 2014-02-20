@@ -393,6 +393,8 @@ def common_substring(l):
     'bcd'
     >>> common_substring(['abcdfffff', 'ghhhhhhhhh'])
     ''
+    >>> common_substring(['b-abc-123', 'tuvwxyz-abc-321', 'tuvwxyz-abc-456', 'd-abc-789'])
+    '-abc-'
     '''
     table = [[l[i][j:k] for j in range(len(l[i])) for k in range(j+1, len(l[i])+1)] for i in range(len(l))]
 
@@ -405,7 +407,7 @@ def common_substring(l):
     # sort substrings by length (descending)
     table = sorted(table, cmp=lambda x,y: cmp(len(y), len(x)))
     # get the position of duplicates and get the first one (longest)
-    duplicates=[i for i, x in enumerate(table) if table.count(x) > 1]
+    duplicates=[i for i, x in enumerate(table) if table.count(x) == len(l)]
     if len(duplicates) > 0:
         return table[duplicates[0]]
     else:
