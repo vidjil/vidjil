@@ -473,12 +473,12 @@ ScatterPlot.prototype = {
     }
     
     //n
-    for (var i=0 ;i<=(Math.floor(this.m.n2_max)) ; i++){
+    for (var i=0 ;i<=(Math.floor(this.m.n_max/5)) ; i++){
       var d={};
       d.type = "line";
       d.orientation = "hori";
-      d.pos = (1-((i)/this.m.n2_max))*(1-(2*this.marge_top));
-      d.text=i;
+      d.pos = (1-((i*5)/this.m.n_max));
+      d.text=i*5;
       this.gridModel["n"].push(d);
     }
     
@@ -596,7 +596,7 @@ ScatterPlot.prototype = {
                 case "nSize": 
                     if ( typeof(self.m.windows[d.id].V) != 'undefined' ){
                         if (self.m.windows[d.id].N!=-1){
-                            d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].Nlength/self.m.n_max))*(1-(2*self.marge_top)))*self.resizeH -d.y  );
+                            d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].Nlength/self.m.n_max))*(self.resizeH-(2*self.marge_top)))*self.resizeH -d.y  );
                         }else{
                             d.y+=coef2*(self.resizeH-d.y);
                         }
@@ -605,7 +605,7 @@ ScatterPlot.prototype = {
                     }
                     break; 
                 case "n": 
-                    d.y+=coef2*((self.marge_top + (1-(self.m.windows[d.id].n/self.m.n2_max))*(1-(2*self.marge_top)))*self.resizeH -d.y  );
+                    d.y+=coef2*((1-(self.m.windows[d.id].Nlength/self.m.n_max))*self.resizeH -d.y  );
                     break; 
             }
 
@@ -645,7 +645,7 @@ ScatterPlot.prototype = {
                     }
                     break; 
                 case "n": 
-                    d.x+=coef2*((self.marge_top + (1-(self.m.windows[d.id].n/self.m.n2_max))*(1-(2*self.marge_top)))*self.resizeW -d.x  );
+                    d.x+=coef2*((1-(self.m.windows[d.id].Nlength/self.m.n_max))*self.resizeW -d.x  );
                     break; 
             }
             
@@ -673,11 +673,11 @@ ScatterPlot.prototype = {
     return function(d) {
       if (!isFinite(d.x)){
 	d.x=Math.random()*500;
-	console.log("debug NaN x circle"+ d.id );
+	//console.log("debug NaN x circle"+ d.id );
       }
       if (!isFinite(d.y)){
 	d.y=Math.random()*500;
-	console.log("debug NaN y circle"+ d.id );
+	//console.log("debug NaN y circle"+ d.id );
       }
     }
   },

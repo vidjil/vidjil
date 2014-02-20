@@ -135,6 +135,7 @@ Model.prototype = {
 			n_max=data.windows[i].Nlength;   
 		}
 		
+		/*
 		var n2=0;
 		if ((typeof(data.windows[i].sequence) != 'undefined') && 
 		(typeof(data.windows[i].Nlength) != 'undefined')){
@@ -142,6 +143,7 @@ Model.prototype = {
 		if (n2>n2_max)n2_max=n2;  
 		}
 		data.windows[i].n=n2
+		*/
 		self.windows.push(data.windows[i]);
       } 	
     }
@@ -394,7 +396,13 @@ Model.prototype = {
     
     //		NSIZE
     for(var i=0; i<this.n_windows; i++){
-      if (typeof(this.windows[i].sequence) != 'undefined' && typeof(this.windows[i].Nlength) != 'undefined' ){
+        
+    if (!this.windows[i].Nlength){
+        this.windows[i].Nlength=0;
+    }
+    
+        
+      if (typeof(this.windows[i].sequence) != 'undefined'){
 	nsize=this.windows[i].Nlength;
 	if (nsize>maxNlength){maxNlength=nsize;}
 			}else{
@@ -406,7 +414,7 @@ Model.prototype = {
       this.windows[i].Nlength=nsize;
       this.windows[i].tag=default_tag;
     }
-    
+    console.log(maxNlength);
     //		COLOR_N
     for (var i=0; i<this.n_windows; i++){
       this.windows[i].colorN=colorGenerator( ( ((this.windows[i].Nlength/maxNlength)-1)*(-250) )  ,  color_s  , color_v);
@@ -1174,7 +1182,7 @@ Model.prototype = {
                     key = this.windows[i][data_name]
                 }
             }
-            console.log("id window/sequence : "+i+" /// cluster key : "+key)
+            //console.log("id window/sequence : "+i+" /// cluster key : "+key)
             
             //store windows with same key together
             if (key == "") key = "undefined"
