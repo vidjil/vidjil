@@ -52,14 +52,27 @@ function ScatterPlot(id, model){
 
 ScatterPlot.prototype = {
   
-/* crée le cadre svg pour le scatterplot
+/* initialize scatterplot
  * 
  * */
   init :function() {
     console.log("ScatterPlot "+this.id+": init()");
-    self = this;
     
     document.getElementById(this.id).innerHTML="";
+    
+    this.initMenu();
+    this.initSVG();
+    this.initGridModel();
+    
+    this.changeSplitMethod(this.splitX, this.splitY);
+    this.resize();
+  },
+  
+/* initialize scatterplot SVG element / D3js
+ * 
+ * */
+  initSVG :function() {
+    var self = this;
     
     //création de la fenetre SVG
     this.vis = d3.select("#"+this.id).append("svg:svg")
@@ -101,9 +114,9 @@ ScatterPlot.prototype = {
     //initialisation des nodes
     this.nodes = d3.range(this.m.n_windows).map(Object);
     for(var i=0 ;i<this.m.n_windows; i++){
-	this.nodes[i].id = i;
-	this.nodes[i].r1 = 5;
-	this.nodes[i].r2 = 5;
+    this.nodes[i].id = i;
+    this.nodes[i].r1 = 5;
+    this.nodes[i].r2 = 5;
       }
     
     //initialisation moteur physique D3
@@ -126,18 +139,64 @@ ScatterPlot.prototype = {
       .attr("stroke", "")
       .attr("id", function(d) { return "circle"+d.id; })
       .attr("class", function(p) { 
-	if (!self.m.windows[p.id].active) return "circle_inactive";
-	  if (self.m.windows[p.id].select) return "circle_select";
-	  if (p.id==self.m.focus) return "circle_focus";
-	  return "circle"; 
+    if (!self.m.windows[p.id].active) return "circle_inactive";
+      if (self.m.windows[p.id].select) return "circle_select";
+      if (p.id==self.m.focus) return "circle_focus";
+      return "circle"; 
        })
       .call(this.force.drag)
       .on("mouseover",function(d) { self.m.focusIn(d.id); } )
       .on("click", function(d) { self.m.select(d.id);})
     
-    this.initGridModel();
-    this.changeSplitMethod(this.splitX, this.splitY);
-    this.resize();
+  },
+  
+  initMenu :function() {
+    var self = this;
+    var menu = {
+        "gene_v": "gene V",
+        "gene_j": "gene J",
+        "allele_v": "allele V",
+        "allele_j": "allele J",
+        "Size": "abundance",
+        "n": "N length"
+    }
+    
+    var divParent = document.getElementById(this.id)
+    
+    var div_x = document.createElement('div');
+    div_x.className = "axis_select axis_select_x";
+
+    var div_y = document.createElement('div');
+    div_y.className = "axis_select axis_select_y";
+
+    var select_x = document.createElement('select');
+    select_x.setAttribute('name','select_x[]');
+    select_x.onchange = function(){ self.changeXaxis(this); }
+    
+    var select_y = document.createElement('select');
+    select_y.setAttribute('name','select_y[]');
+    select_y.onchange = function(){ self.changeYaxis(this); }
+          
+    for (var key in menu){
+        
+        var element = document.createElement("option");
+        element.setAttribute('value', key);
+        var text = document.createTextNode(menu[key]); 
+        element.appendChild(text);
+        
+        var element2 = element.cloneNode(true);
+        
+        select_x.appendChild(element);
+        select_y.appendChild(element2);
+        
+    }
+    
+    div_x.appendChild(select_x);
+    div_y.appendChild(select_y);
+    
+    divParent.appendChild(div_x);
+    divParent.appendChild(div_y);
+    
   },
   
   initBar :function() {
