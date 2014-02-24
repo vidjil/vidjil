@@ -39,8 +39,6 @@ function Segment(id, model){
   this.m=model;			//Model utilisé
   this.m.view.push(this);	//synchronisation au Model
   this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
-
-  
 }
 
 Segment.prototype = {
@@ -73,25 +71,21 @@ Segment.prototype = {
     
     for (var i=0; i< list.length; i++){
       
-      if (this.m.windows[list[i]].select){
-	if ( document.getElementById("seq"+list[i]) ){
-	  var spanF=document.getElementById("f"+list[i]);
-	  spanF.innerHTML="";
-	  this.div_elem(spanF, list[i]);
-	  spanF.className="seq-fixed";
-	  spanF.firstChild.nextSibling.class="nameBox2";
-	  spanF.lastChild.firstChild.id="scolor"+list[i];
-	}else{
-	  this.addToSegmenter(list[i]);
-	  this.show();
-	}
-	
-      }else{
-	if ( document.getElementById("seq"+list[i]) ){
-	  var element = document.getElementById("seq"+list[i]);
-	  element.parentNode.removeChild(element);
-	}
-      }
+        if (this.m.windows[list[i]].select){
+            if ( document.getElementById("seq"+list[i]) ){
+                var spanF=document.getElementById("f"+list[i]);
+                this.div_elem(spanF, list[i]);
+            }else{
+                this.addToSegmenter(list[i]);
+                this.show();
+            }
+            
+        }else{
+            if ( document.getElementById("seq"+list[i]) ){
+                var element = document.getElementById("seq"+list[i]);
+                element.parentNode.removeChild(element);
+            }
+        }
     }
     
   },
@@ -101,46 +95,46 @@ Segment.prototype = {
  * @cloneID : identifiant du clone a décrire
  * */   
   div_elem : function(div_elem, cloneID){
-
     var self=this;
+    
     div_elem.innerHTML='';
-    div_elem.className="listElem";
+    div_elem.className="seq-fixed";
     div_elem.style.display="block";
     
-    var span0 = document.createElement('span');
-    span0.className = "nameBox2";
-    span0.ondblclick = function(){ self.editName(cloneID, this); }
-    span0.onclick = function(){ self.m.select(cloneID); }
-    span0.appendChild(document.createTextNode(this.m.getName(cloneID)));
-    span0.title = this.m.getName(cloneID);
-    span0.style.color=this.m.windows[cloneID].color;
+    var seq_name = document.createElement('span');
+    seq_name.className = "nameBox2";
+    seq_name.onclick = function(){ self.m.select(cloneID); }
+    seq_name.appendChild(document.createTextNode(this.m.getName(cloneID)));
+    seq_name.title = this.m.getName(cloneID);
+    seq_name.style.color=this.m.windows[cloneID].color;
       
-    var svg=document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-    svg.setAttribute('class','starBox'); 
-    svg.onclick=function(){ changeTag(cloneID); }
+    var svg_star=document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+    svg_star.setAttribute('class','starBox'); 
+    svg_star.onclick=function(){ changeTag(cloneID); }
+    
     var path=document.createElementNS('http://www.w3.org/2000/svg','path')
     path.setAttribute('d', this.starPath);
     path.setAttribute('id','color'+cloneID); 
     if (typeof this.m.windows[cloneID].tag != 'undefined') path.setAttribute("fill", tagColor[this.m.windows[cloneID].tag]);
     else path.setAttribute("fill", color['@default']);
-	
-    svg.appendChild(path);
+    
+    svg_star.appendChild(path);
       
-    var span2=document.createElement('span')
-    span2.className = "sizeBox";
-    span2.id="size"+cloneID;
-    span2.onclick=function(){ this.m.select(cloneID); }
-    span2.style.color=this.m.windows[cloneID].color;
+    var seq_size=document.createElement('span')
+    seq_size.className = "sizeBox";
+    seq_size.id="size"+cloneID;
+    seq_size.onclick=function(){ this.m.select(cloneID); }
+    seq_size.style.color=this.m.windows[cloneID].color;
+    seq_size.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));
       
-    span2.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));
-      
-    div_elem.appendChild(span0);
-    div_elem.appendChild(svg);
-    div_elem.appendChild(span2);
+    div_elem.appendChild(seq_name);
+    div_elem.appendChild(svg_star);
+    div_elem.appendChild(seq_size);
   },
   
   addToSegmenter : function (cloneID){
     var self=this;
+    
     var divParent = document.getElementById("listSeq");
     var li = document.createElement('li');
     li.id="seq"+cloneID;
@@ -150,9 +144,6 @@ Segment.prototype = {
     var spanF = document.createElement('span');
     spanF.id = "f"+cloneID;
     this.div_elem(spanF, cloneID);
-    spanF.className="seq-fixed";
-    spanF.firstChild.nextSibling.class="nameBox2";
-    spanF.lastChild.firstChild.id="scolor"+cloneID;
 
     var spanM = document.createElement('span');
     spanM.id = "m"+cloneID;
@@ -263,7 +254,6 @@ Segment.prototype = {
   
   function displayAjaxResult(file){
     
-
     var json=JSON.parse(file)
     
     for (var i = 0 ; i< json.seq.length; i++ ){
