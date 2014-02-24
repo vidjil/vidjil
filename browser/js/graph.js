@@ -92,7 +92,7 @@ Graph.prototype = {
     this.text_container = d3.select("#"+this.id+"_svg").append("svg:g")
       .attr("id", "text_container")
     
-    this.data_axis=[];
+    
     this.data_graph=[];
     this.data_res=[];
 
@@ -109,59 +109,11 @@ Graph.prototype = {
     this.scale_x = d3.scale.log()
       .domain([1,this.precision])
       .range([0,this.h]);
-    
-    //abscisse
-    for (var i=0 ; i<this.m.windows[0].size.length; i++){
-      this.graph_col[i]=this.marge1 + 5 + i*(( this.w-(this.marge1+this.marge2) )/(this.m.windows[0].size.length-1) );
-    }
-    if (this.m.windows[0].size.length==1){
-      this.graph_col[0]=(this.w/2)
-    }
-    if (this.m.windows[0].size.length==2){
-      this.graph_col[0]=(this.w/4);
-      this.graph_col[1]=3*(this.w/4);
-    }
-      
-    for (var i=0 ; i<this.m.windows[0].size.length; i++){
-      var d={}
-      
-      var time_name = "fu"+(i+1);
-      if ( typeof this.m.time != "undefined" && typeof this.m.time[i] != "undefined" ){
-	time_name = this.m.time[i];
-      }
-      
-      d.type = "axis_v";
-      d.text = time_name;
-      d.orientation = "vert";
-      d.pos = this.graph_col[i];
-      d.time=i;
-      this.data_axis.push(d);
-    }
-
-    var height=1;
-
-    
-    //ordonnée
-    while((height*this.precision)>0.5){
-
-      var d={};
-      d.type = "axis_h";
-      d.text = height.toExponential(1);
-      d.orientation = "hori";
-      d.pos = this.h-this.scale_x(height*this.precision);
-      this.data_axis.push(d);
-      
-      height=height/10;
-    }
-			
-    this.mobil={};
-    this.mobil.type = "axis_m";
-    this.mobil.text = "";
-    this.mobil.orientation = "vert";
-    this.mobil.pos = this.graph_col[this.m.t];
-    this.data_axis.push(this.mobil);
   
-    
+    this.initAxis();
+      
+      
+      
     for (var i=0 ; i<this.m.n_windows; i++){
       this.data_graph[i]={id : i, name :"line"+i, path : this.constructPath(i)};
     }
@@ -176,17 +128,6 @@ Graph.prototype = {
     
     this.data_res.push({id : this.m.n_windows, name :"resolution1", path : this.constructPathR(this.resolution1) });
     this.data_res.push({id : this.m.n_windows+1, name :"resolution5", path : this.constructPathR(this.resolution5) });
-
-    
-    this.g_axis = this.axis_container.selectAll("line").data(this.data_axis);
-    this.g_axis.enter().append("line");
-    this.g_axis.exit()    
-    .remove();
-    
-    this.g_text = this.text_container.selectAll("text").data(this.data_axis);
-    this.g_text.enter().append("text");
-    this.g_text.exit()    
-    .remove();
     
     this.g_graph = this.polyline_container.selectAll("path").data(this.data_graph);
     this.g_graph.enter().append("path")
@@ -207,6 +148,71 @@ Graph.prototype = {
     this.g_res.exit().remove();
     
     this.resize();
+  },
+  
+  initAxis : function(){
+      
+    this.data_axis=[];
+    
+    //abscisse
+    for (var i=0 ; i<this.m.windows[0].size.length; i++){
+      this.graph_col[i]=this.marge1 + 5 + i*(( this.w-(this.marge1+this.marge2) )/(this.m.windows[0].size.length-1) );
+    }
+    if (this.m.windows[0].size.length==1){
+      this.graph_col[0]=(this.w/2)
+    }
+    if (this.m.windows[0].size.length==2){
+      this.graph_col[0]=(this.w/4);
+      this.graph_col[1]=3*(this.w/4);
+    }
+      
+    for (var i=0 ; i<this.m.time_order.length; i++){
+        var d={}
+        
+        var time_name = "fu"+(i+1);
+        if ( typeof this.m.time != "undefined" && typeof this.m.time[i] != "undefined" ){
+            time_name = this.m.time[i];
+        }
+        
+        d.type = "axis_v";
+        d.text = time_name;
+        d.orientation = "vert";
+        d.pos = this.graph_col[this.m.time_order[i]];
+        d.time=i;
+        this.data_axis.push(d);
+    }
+
+    var height=1;
+    
+    //ordonnée
+    while((height*this.precision)>0.5){
+
+      var d={};
+      d.type = "axis_h";
+      d.text = height.toExponential(1);
+      d.orientation = "hori";
+      d.pos = this.h-this.scale_x(height*this.precision);
+      this.data_axis.push(d);
+      
+      height=height/10;
+    }
+            
+    this.mobil={};
+    this.mobil.type = "axis_m";
+    this.mobil.text = "";
+    this.mobil.orientation = "vert";
+    this.mobil.pos = this.graph_col[this.m.t];
+    this.data_axis.push(this.mobil)
+    
+    this.g_axis = this.axis_container.selectAll("line").data(this.data_axis);
+    this.g_axis.enter().append("line");
+    this.g_axis.exit()    
+    .remove();
+    
+    this.g_text = this.text_container.selectAll("text").data(this.data_axis);
+    this.g_text.enter().append("text");
+    this.g_text.exit()    
+    .remove();
   },
   
 /* repositionne le graphique en fonction de la taille de la div le contenant
@@ -235,7 +241,9 @@ Graph.prototype = {
   update : function(){
     var startTime = new Date().getTime();  
     var elapsedTime = 0;  
-		
+	
+    this.initAxis();
+    
     if(this.m.focus!=-1){
       var line = document.getElementById("polyline"+this.m.focus);
       document.getElementById("polyline_container").appendChild(line);
