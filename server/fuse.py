@@ -396,13 +396,11 @@ def common_substring(l):
     >>> common_substring(['b-abc-123', 'tuvwxyz-abc-321', 'tuvwxyz-abc-456', 'd-abc-789'])
     '-abc-'
     '''
-    table = [[l[i][j:k] for j in range(len(l[i])) for k in range(j+1, len(l[i])+1)] for i in range(len(l))]
 
-    # remove duplicates for a same string
-    for i in range(len(l)):
-        table[i] = list(set(table[i]))
-    # flatten the list
-    table = [item for sublist in table for item in sublist]
+    table = []
+    for s in l:
+        # adds in table all substrings of s - duplicate substrings in s are added only once
+        table += set(s[j:k] for j in range(len(s)) for k in range(j+1, len(s)+1))
 
     # sort substrings by length (descending)
     table = sorted(table, cmp=lambda x,y: cmp(len(y), len(x)))
