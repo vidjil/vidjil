@@ -177,8 +177,8 @@ Graph.prototype = {
         d.type = "axis_v";
         d.text = time_name;
         d.orientation = "vert";
-        d.pos = this.graph_col[this.m.time_order[i]];
-        d.time=i;
+        d.pos = this.graph_col[this.m.time_order.indexOf(i)];
+        d.time=this.m.time_order.indexOf(i);
         this.data_axis.push(d);
     }
 
