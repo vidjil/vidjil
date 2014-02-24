@@ -67,6 +67,7 @@ function Model(){
   this.mapID={};
   this.top=10;
   this.precision=1;
+  this.time_order=[];
   
 }
 
@@ -184,6 +185,7 @@ Model.prototype = {
     self.scale_color = d3.scale.log()
     .domain([1,self.precision])
     .range([250,0]);
+    for (var i=0; i<self.time.length; i++) self.time_order.push(i);
     
     var html_container=document.getElementById("info_n_max");
     if (html_container!=null)html_container.innerHTML=" N = "+self.n_max;
@@ -645,7 +647,7 @@ Model.prototype = {
       
 	var r=1;
 	if (this.norm){
-		r=this.normalization_factor[time];
+		r=this.normalization_factor[this.time_order[time]];
 	}
 
 	return (result/this.reads_segmented[time])*r;
@@ -663,7 +665,7 @@ Model.prototype = {
       
     var r=1;
     if (this.norm){
-        r=this.normalization_factor[time];
+        r=this.normalization_factor[this.time_order[time]];
     }
 
     return (result/this.reads_segmented[time])*r;
@@ -679,7 +681,7 @@ Model.prototype = {
     var result=0;
     
     for(var j=0 ;j<this.clones[cloneID].cluster.length; j++){
-      result += this.windows[this.clones[cloneID].cluster[j]].size[time];
+      result += this.windows[this.clones[cloneID].cluster[j]].size[this.time_order[time]];
     }
 
     return result
@@ -693,7 +695,7 @@ Model.prototype = {
     time = typeof time !== 'undefined' ? time : this.t; 
     
     var result=0;
-      result = this.windows[cloneID].size[time];
+      result = this.windows[cloneID].size[this.time_order[time]];
 
     return result;
 
@@ -1240,6 +1242,16 @@ Model.prototype = {
         this.update()
     },
     
+    
+/* 
+ * 
+ * */  
+    switchTimeOrder : function(a,b){
+        var tmp = this.time_order[a];
+        this.time_order[a]=this.time_order[b]
+        this.time_order[b]=tmp;
+        this.update()
+    },
 }//end prototype Model
 
 
