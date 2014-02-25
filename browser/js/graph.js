@@ -67,7 +67,7 @@ Graph.prototype = {
     this.vis = d3.select("#"+this.id).append("svg:svg")
       .attr("id", this.id+"_svg")
       .on("mouseup", function(){self.stopDrag()})
-      .on("mousemove", function(){self.dragTimePoint()});
+      .on("mousemove", function(){self.dragTimePoint()})
 
     d3.select("#"+this.id+"_svg").append("svg:rect")
       .attr("id", this.id+"_back")
@@ -418,7 +418,6 @@ Graph.prototype = {
         if (this.drag_on){
             this.initAxis()
             this.drawAxis(0)
-            console.log("drag")
         }
     },
     
@@ -427,37 +426,32 @@ Graph.prototype = {
  * */
     stopDrag : function(time_point){
         
-        this.drag_on=false;
-        
-        //stock tuples time_point/axis position
-        var list = []
-        for (var i = 0; i < this.m.time_order.length; i++){
-            if (i==this.draged_time_point){
-                var coordinates = [0, 0];
-                coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
-                list.push( [ i, coordinates[0]/this.resizeW - this.marge4 ] );
-            }else{
-                list.push( [ i, this.graph_col[this.m.time_order.indexOf(i)] ] );
+        if (this.drag_on){
+            this.drag_on=false;
+            
+            //stock tuples time_point/axis position
+            var list = []
+            for (var i = 0; i < this.m.time_order.length; i++){
+                if (i==this.draged_time_point){
+                    var coordinates = [0, 0];
+                    coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
+                    list.push( [ i, coordinates[0]/this.resizeW - this.marge4 ] );
+                }else{
+                    list.push( [ i, this.graph_col[this.m.time_order.indexOf(i)] ] );
+                }
             }
+            
+            //sort by axis position
+            list.sort(function(a,b){return a[1]-b[1]})
+            
+            //save new time point order
+            for (var i = 0; i < this.m.time_order.length; i++){
+                this.m.time_order[i] = list[i][0]
+            }
+            
+            //call model update
+            this.m.update()
         }
-        
-        console.log("avant : "+list[0]+"/"+list[1]+"/"+list[2]+ "////"+this.m.time_order)
-        
-        //sort by axis position
-        list.sort(function(a,b){return a[1]-b[1]})
-        
-        //save new time point order
-        for (var i = 0; i < this.m.time_order.length; i++){
-            this.m.time_order[i] = list[i][0]
-        }
-        
-        console.log("apres : "+list[0]+"/"+list[1]+"/"+list[2]+ "////"+this.m.time_order)
-        
-        
-        //call model update
-        this.initAxis()
-        this.m.update()
-        console.log("stop")
     },
     
 /* 
@@ -466,7 +460,6 @@ Graph.prototype = {
     startDrag : function(time){
         this.drag_on=true;
         this.draged_time_point=time;
-        console.log("start")
     },
   
 /* construit le tableau des points par laquelle la courbe de résolution doit passer
