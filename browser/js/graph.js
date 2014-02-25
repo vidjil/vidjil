@@ -45,6 +45,12 @@ function Graph(id, model){
   this.marge4=80;	//marge droite/gauche (non influencé par le resize)
   this.marge5=25;	//marge top (non influencé par le resize)
   
+  this.data_axis=[];
+  this.mobil={};
+  
+  this.drag_on = false;
+  this.draged_time_point=0;
+  
   this.m.view.push(this)
   
 }
@@ -57,9 +63,11 @@ Graph.prototype = {
   init :function() {
     document.getElementById(this.id).innerHTML="";
     
-    self=this;
+    var self=this;
     this.vis = d3.select("#"+this.id).append("svg:svg")
-			.attr("id", this.id+"_svg");
+      .attr("id", this.id+"_svg")
+      .on("mouseup", function(){self.stopDrag()})
+      .on("mousemove", function(){self.dragTimePoint()});
 
     d3.select("#"+this.id+"_svg").append("svg:rect")
       .attr("id", this.id+"_back")
@@ -91,11 +99,10 @@ Graph.prototype = {
       .attr("id", "date_container")
     this.text_container = d3.select("#"+this.id+"_svg").append("svg:g")
       .attr("id", "text_container")
-    
-    
+
+      
     this.data_graph=[];
     this.data_res=[];
-
     this.graph_col=[];
 
     var count=this.m.min_size;
@@ -111,8 +118,6 @@ Graph.prototype = {
       .range([0,this.h]);
   
     this.initAxis();
-      
-      
       
     for (var i=0 ; i<this.m.n_windows; i++){
       this.data_graph[i]={id : i, name :"line"+i, path : this.constructPath(i)};
@@ -167,7 +172,7 @@ Graph.prototype = {
     }
       
     for (var i=0 ; i<this.m.time_order.length; i++){
-        var d={}
+        d = {}
         
         var time_name = "fu"+(i+1);
         if ( typeof this.m.time != "undefined" && typeof this.m.time[i] != "undefined" ){
@@ -177,8 +182,14 @@ Graph.prototype = {
         d.type = "axis_v";
         d.text = time_name;
         d.orientation = "vert";
-        d.pos = this.graph_col[this.m.time_order.indexOf(i)];
-        d.time=this.m.time_order.indexOf(i);
+        if (this.drag_on && i==this.draged_time_point){
+            var coordinates = [0, 0];
+            coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
+            d.pos = coordinates[0]/this.resizeW - this.marge4
+        }else{
+            d.pos = this.graph_col[this.m.time_order.indexOf(i)];
+        }
+        d.time=i;
         this.data_axis.push(d);
     }
 
@@ -196,7 +207,8 @@ Graph.prototype = {
       
       height=height/10;
     }
-            
+    
+    //current time_point
     this.mobil={};
     this.mobil.type = "axis_m";
     this.mobil.text = "";
@@ -274,38 +286,96 @@ Graph.prototype = {
 	if (this.m.windows[list[i]].active)
       	this.data_graph[this.m.clones[list[i]].cluster[j]].path = this.constructPath(list[i]);
     }
-    this.drawElem(list);
+    this.drawLines;
   },
   
 /* 
  * 
  * */ 
-  drawElem : function(list){
-
-    for (var i=0; i<list.length ; i++){
-      
-      var che=' M '+Math.floor(this.data_graph[list[i]].path[0][0]*this.resizeW+this.marge4)+','+Math.floor(this.data_graph[list[i]].path[0][1]*this.resizeH+this.marge5);
-      for (var j=1; j<this.data_graph[list[i]].path.length; j++){
-	      che+=' L '+Math.floor(this.data_graph[list[i]].path[j][0]*this.resizeW+this.marge4)+','+Math.floor(this.data_graph[list[i]].path[j][1]*this.resizeH+this.marge5);
-      }
-      var name="poly"+this.data_graph[list[i]].name;
-      
-      var classname="graph_line";
-	  if (this.m.windows[this.data_graph[list[i]].id].select) classname = "graph_select";
-      if (this.data_graph[list[i]].id==this.m.focus) classname = "graph_focus";
-      if (!this.m.windows[this.data_graph[list[i]].id].active) classname = "graph_inactive";
-      //if (this.m.windows[this.data_graph[list[i]].id].top >10) classname = "graph_inactive";
-      
-      d3.select("#polyline"+list[i])
-      .style("fill","none")
-      .style("stroke", this.m.windows[list[i]].color )
-	.transition()
-	.duration(500)
-	.attr("d", che)
-	.attr("class", classname)
-	.attr("id", name)
-    }
+  drawLines: function(speed){
+    var self=this;
+    
+    //courbes
+    this.g_graph
+        .style("fill","none")
+        .style("stroke", function(d) { return self.m.windows[d.id].color; })
+        .transition()
+        .duration(speed)
+        .attr("d", function(p) {
+                var che=' M '+Math.floor(p.path[0][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[0][1]*self.resizeH+self.marge5);
+                for (var i=1; i<p.path.length; i++){
+                    che+=' L '+Math.floor(p.path[i][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[i][1]*self.resizeH+self.marge5);
+                }
+                return che;
+            })
+        .attr("class", function(p) { 
+                if (!self.m.windows[p.id].active) return "graph_inactive";
+                if (self.m.windows[p.id].select) return "graph_select";
+                if (p.id==self.m.focus)return "graph_focus";
+                return "graph_line"; 
+            })
+        .attr("id", function(d) { return "poly"+d.name; })
   },
+  
+/* 
+ * 
+ * */ 
+  drawAxis: function(speed){
+    var self=this;
+    
+    //axes
+    this.g_axis
+        .transition()
+        .duration(speed)
+        .attr("x1", function(d) { if (d.orientation=="vert") return self.resizeW*d.pos+self.marge4; 
+                                    else return self.marge4; })
+        .attr("x2", function(d) { if (d.orientation=="vert") return self.resizeW*d.pos+self.marge4; 
+                                    else return (self.resizeW*self.w)+self.marge4 })
+        .attr("y1", function(d) { if (d.orientation=="vert") return self.marge5; 
+                                    else return (self.resizeH*d.pos)+self.marge5; })
+        .attr("y2", function(d) { if (d.orientation=="vert") return (self.resizeH*self.h)+self.marge5; 
+                                    else return (self.resizeH*d.pos)+self.marge5; })
+        .attr("class", function(d) { return d.type })
+        .attr("id", function(d) { if (d.type=="axis_m") return "timebar"
+                                    return});
+
+    //legendes
+    this.g_text
+        .transition()
+        .duration(speed)
+        .text( function (d) {return d.text;
+            })
+        .attr("class", function(d) { 
+                if (d.type=="axis_v") return "axis_button"; 
+                if (d.type=="axis_h") return "axis_leg"; 
+            })
+        .attr("id", function(d) { if (d.type=="axis_v") return ("time"+d.time); })
+        .attr("y", function(d) { 
+                if (d.type=="axis_h") return Math.floor(self.resizeH*d.pos)+self.marge5;
+                else return 15;
+            })
+        .attr("x", function(d) { 
+                if (d.type=="axis_h") return 40;
+                else return Math.floor(self.resizeW*d.pos+self.marge4);
+            })
+        .attr("class", function(d) { 
+                if (d.type=="axis_v") return "graph_time"
+                else return "graph_text";
+            });
+    
+    this.text_container.selectAll("text")
+        .on("click", function(d){
+                if (d.type=="axis_v") return self.m.changeTime(self.m.time_order.indexOf(d.time))
+            })
+        .on("dblclick", function(d){
+                if (d.type=="axis_v") return self.rename(d.time)
+            })
+        .on("mousedown", function(d){
+                if (d.type=="axis_v") return self.startDrag(d.time)
+            })
+      
+  },
+
 
 /* reconstruit le graphique
  * 
@@ -313,94 +383,94 @@ Graph.prototype = {
   draw : function(){
     var self=this;
 		
-    //axes
-    this.g_axis
-      .transition()
-      .duration(500)
-      .attr("x1", function(d) { if (d.orientation=="vert") return self.resizeW*d.pos+self.marge4; 
-				else return self.marge4; })
-      .attr("x2", function(d) { if (d.orientation=="vert") return self.resizeW*d.pos+self.marge4; 
-				else return (self.resizeW*self.w)+self.marge4 })
-      .attr("y1", function(d) { if (d.orientation=="vert") return self.marge5; 
-				else return (self.resizeH*d.pos)+self.marge5; })
-      .attr("y2", function(d) { if (d.orientation=="vert") return (self.resizeH*self.h)+self.marge5; 
-				else return (self.resizeH*d.pos)+self.marge5; })
-      .attr("class", function(d) { return d.type })
-      .attr("id", function(d) { if (d.type=="axis_m") return "timebar"
-				return});
-
-    //legendes
-    this.g_text
-      .transition()
-      .duration(500)
-      .text( function (d) {return d.text;
-      })
-      .attr("class", function(d) { 
-	if (d.type=="axis_v") return "axis_button"; 
-	if (d.type=="axis_h") return "axis_leg"; 
-      })
-      .attr("id", function(d) { if (d.type=="axis_v") return ("time"+d.time); })
-      .attr("y", function(d) { 
-	if (d.type=="axis_h") return Math.floor(self.resizeH*d.pos)+self.marge5;
-	else return 15;
-      })
-      .attr("x", function(d) { 
-	if (d.type=="axis_h") return 40;
-	else return Math.floor(self.resizeW*d.pos+self.marge4);
-      })
-      .attr("class", function(d) { 
-	if (d.type=="axis_v") return "graph_time"
-	else return "graph_text";
-      });
+    this.drawAxis(500)
+    this.drawLines(500)
     
-    this.text_container.selectAll("text")
-      .on("click", function(d){
-	if (d.type=="axis_v") return self.m.changeTime(d.time);
-      })
-      
-    //courbes
-    this.g_graph
-    .style("fill","none")
-    .style("stroke", function(d) { return self.m.windows[d.id].color; })
-      .transition()
-      .duration(500)
-      .attr("d", function(p) {
-	var che=' M '+Math.floor(p.path[0][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[0][1]*self.resizeH+self.marge5);
-	for (var i=1; i<p.path.length; i++){
-		che+=' L '+Math.floor(p.path[i][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[i][1]*self.resizeH+self.marge5);
-	}
-	return che;
-      })
-      .attr("class", function(p) { 
-	if (!self.m.windows[p.id].active) return "graph_inactive";
-	//if (self.m.windows[p.id].top > 10) return "graph_inactive";
-	if (self.m.windows[p.id].select) return "graph_select";
-	if (p.id==self.m.focus)return "graph_focus";
-	return "graph_line"; 
-       })
-      .attr("id", function(d) { return "poly"+d.name; })
-      
     //resolution
     this.g_res.selectAll("path")
-      .transition()
-      .duration(500)
-      .attr("d", function(p) {
-	var che=' M '+Math.floor(p.path[0][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[0][1]*self.resizeH+self.marge5);
-	for (var i=1; i<p.path.length; i++){
-	che+=' L '+Math.floor(p.path[i][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[i][1]*self.resizeH+self.marge5);
-	}
-	che+=' Z ';
-	return che;
-      })
+        .transition()
+        .duration(500)
+        .attr("d", function(p) {
+                var che=' M '+Math.floor(p.path[0][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[0][1]*self.resizeH+self.marge5);
+                for (var i=1; i<p.path.length; i++){
+                    che+=' L '+Math.floor(p.path[i][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[i][1]*self.resizeH+self.marge5);
+                }
+                che+=' Z ';
+                return che;
+            })
       
     this.polyline_container.selectAll("path")
-      .on("mouseover", function(d){ self.m.focusIn(d.id); })
-      .on("click", function(d){ self.m.select(d.id); });
+        .on("mouseover", function(d){ self.m.focusIn(d.id); })
+        .on("click", function(d){ self.m.select(d.id); });
   },
   
+/* 
+ * 
+ * */
+    rename : function(){
+        
+    },
+    
+/* 
+ * 
+ * */
+    dragTimePoint : function(time_point){
+        if (this.drag_on){
+            this.initAxis()
+            this.drawAxis(0)
+            console.log("drag")
+        }
+    },
+    
+/* 
+ * 
+ * */
+    stopDrag : function(time_point){
+        
+        this.drag_on=false;
+        
+        //stock tuples time_point/axis position
+        var list = []
+        for (var i = 0; i < this.m.time_order.length; i++){
+            if (i==this.draged_time_point){
+                var coordinates = [0, 0];
+                coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
+                list.push( [ i, coordinates[0]/this.resizeW - this.marge4 ] );
+            }else{
+                list.push( [ i, this.graph_col[this.m.time_order.indexOf(i)] ] );
+            }
+        }
+        
+        console.log("avant : "+list[0]+"/"+list[1]+"/"+list[2]+ "////"+this.m.time_order)
+        
+        //sort by axis position
+        list.sort(function(a,b){return a[1]-b[1]})
+        
+        //save new time point order
+        for (var i = 0; i < this.m.time_order.length; i++){
+            this.m.time_order[i] = list[i][0]
+        }
+        
+        console.log("apres : "+list[0]+"/"+list[1]+"/"+list[2]+ "////"+this.m.time_order)
+        
+        
+        //call model update
+        this.initAxis()
+        this.m.update()
+        console.log("stop")
+    },
+    
+/* 
+ * 
+ * */
+    startDrag : function(time){
+        this.drag_on=true;
+        this.draged_time_point=time;
+        console.log("start")
+    },
   
 /* construit le tableau des points par laquelle la courbe de résolution doit passer
- * 
+ *
  * */
   constructPathR : function(res){
     if (typeof res != "undefined" && res.length!=0){
