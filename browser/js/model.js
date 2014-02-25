@@ -792,7 +792,7 @@ Model.prototype = {
  * 
  * */
   changeTime : function(newT){
-    console.log("changeTime()")
+    console.log("changeTime()"+ newT)
     this.t=newT;
     this.update();
   },
