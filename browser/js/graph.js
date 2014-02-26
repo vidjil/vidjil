@@ -430,16 +430,23 @@ Graph.prototype = {
         this.drag_on=false;
         
         //stock tuples time_point/axis position
+
+	// 1. not dragged time points
         var list = []
         for (var i = 0; i < this.m.time_order.length; i++){
-            if (i==this.draged_time_point){
-                var coordinates = [0, 0];
-                coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
-                list.push( [ i, coordinates[0]/this.resizeW - this.marge4 ] );
-            }else{
+            if (i != this.draged_time_point) {
                 list.push( [ i, this.graph_col[this.m.time_order.indexOf(i)] ] );
             }
         }
+
+        // 2. draged_time_point
+        var coordinates = [0, 0];
+        coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
+        draged_col = coordinates[0]/this.resizeW - this.marge4
+        // TODO: arrondir draged_col à ce qu'il faut pour qu'il prenne la place du point le plus proche,
+        // sans qu'on ait besoin de le déplacer après ce point
+
+        list.push( [ this.draged_time_point, draged_col] );
         
         console.log("avant : "+list[0]+"/"+list[1]+"/"+list[2]+ "////"+this.m.time_order)
         
