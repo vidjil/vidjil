@@ -113,6 +113,14 @@
       polyline.setAttribute("stroke", tagColor[m.windows[i].tag]);
       // polyline.setAttribute("style","stroke-width:1px; stroke: #dddddd");
       // polyline.setAttribute("stroke","#dddddd");
+
+
+      // Hide 'other' line (TODO: really remove this line !)
+      if (m.windows[i].window == "other")
+	  {
+	      polyline.setAttribute("style","stroke-width:0px; stroke: #ffffff");
+	      polyline.setAttribute("stroke", "#ffffff");
+	  }
     }
     
     
