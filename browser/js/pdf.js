@@ -104,17 +104,22 @@
     var elem = document.getElementById("visu2_svg").cloneNode(true);
     var opt={};
     var doc = new jsPDF();
-    
+
+    // The clones should have their natural (tag) color, even if two have the same color...
+      
     for (var i = 0; i<m.n_windows; i++){
       var polyline = elem.getElementById("polyline"+i)
-      polyline.setAttribute("style","stroke-width:1px; stroke: #dddddd");
-      polyline.setAttribute("stroke","#dddddd");
+      polyline.setAttribute("style","stroke-width:1px; stroke:"+ tagColor[m.windows[i].tag]);
+      polyline.setAttribute("stroke", tagColor[m.windows[i].tag]);
+      // polyline.setAttribute("style","stroke-width:1px; stroke: #dddddd");
+      // polyline.setAttribute("stroke","#dddddd");
     }
+    
     
     for (var i = 0; i<list.length; i++){
       var polyline = elem.getElementById("polyline"+list[i])
-      polyline.setAttribute("style","stroke-width:6px; stroke:"+tagColor[i]);
-      polyline.setAttribute("stroke",tagColor[i]);
+      polyline.setAttribute("style","stroke-width:6px; stroke:"+tagColor[m.windows[i].tag]);
+      polyline.setAttribute("stroke", tagColor[m.windows[i].tag]);
       elem.getElementById("polyline_container").appendChild(polyline);
     }
     
@@ -163,7 +168,7 @@
       
       var polyline = document.getElementById("polyline"+id).cloneNode(true);
       polyline.setAttribute("style","stroke-width:40px");
-      polyline.setAttribute("stroke",tagColor[i]);
+      polyline.setAttribute("stroke",tagColor[m.windows[i].tag]);
       var res =elem.getElementById("resolution1").cloneNode(true);
       res.firstChild.setAttribute("fill","white");
       var icon=document.createElement("svg");
@@ -179,7 +184,7 @@
       doc.setDrawColor(150,150,150);
       doc.rect(10, y-2, 18, 8);
       /*
-      polyline.setAttribute("stroke",tagColor[i]);
+      polyline.setAttribute("stroke",tagColor[m.windows[i].tag]);
       polyline.setAttribute("style","stroke-width:6px");
       opt_icon.scaleX=180/document.getElementById("visu2_svg").getAttribute("width");
       opt_icon.scaleY=30/document.getElementById("visu2_svg").getAttribute("height");
@@ -189,7 +194,7 @@
       */
       
       doc.setFont('courier', 'bold');
-      doc.setTextColor(tagColor[i]);
+      doc.setTextColor(tagColor[m.windows[i].tag]);
       doc.text(30, y, m.getName(id));
       doc.setFont('courier', 'normal');
       doc.setTextColor(0,0,0);
