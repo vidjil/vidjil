@@ -182,7 +182,11 @@ Model.prototype = {
     self.reads_segmented = data.reads_segmented;
     self.reads_segmented_total = self.reads_segmented.reduce(function(a, b) { return a + b; });
     self.reads_total = data.reads_total;
-    self.reads_total_total = self.reads_total.reduce(function(a, b) { return a + b; });
+    if (self.reads_total){
+        self.reads_total_total = self.reads_total.reduce(function(a, b) { return a + b; });
+    }else{
+        self.reads_total_total=self.reads_segmented_total;
+    }
     self.timestamp = data.timestamp;
     self.time = data.point;
     self.scale_color = d3.scale.log()
