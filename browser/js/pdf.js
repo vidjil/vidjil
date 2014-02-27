@@ -140,15 +140,16 @@
     opt.y_offset=60;
 
     doc.setFontSize(12);
-    doc.text(130, 20, 'Vidjil (beta) - http://bioinfo.lifl.fr/vidjil');
+    doc.text(130, 20, 'Vidjil -- http://bioinfo.lifl.fr/vidjil');
     doc.rect(15, 15, 60, 23);
     doc.text(20, 20, document.getElementById("upload_json").files[0].name);
-    doc.text(20, 25, 'run: 2013-10-03');
+    doc.text(20, 25, 'run: 2014-xx-xx');
     doc.text(20, 30, 'analysis: '+m.timestamp[0].split(' ')[0]);
     doc.text(20, 35, 'germline: '+m.system);
-    doc.text(20, 45, 'reads: ' + m.total_size);
+    doc.text(20, 45, 'reads: ' + m.reads_segmented_total + ' / ' + m.reads_total_total 
+	     + ' (' + (100 * m.reads_segmented_total / m.reads_total_total).toFixed(3) + '%)');
 
-    doc.text(20, 55, 'This PDF export is in beta version...');
+    doc.text(130, 25, '**beta** PDF export');
 
     svgElementToPdf(elem, doc, opt)
     doc.setFillColor(255, 255, 255);
