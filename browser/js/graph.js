@@ -66,8 +66,8 @@ Graph.prototype = {
     var self=this;
     this.vis = d3.select("#"+this.id).append("svg:svg")
       .attr("id", this.id+"_svg")
-     // .on("mouseup", function(){self.stopDrag()})
-     // .on("mousemove", function(){self.dragTimePoint()});
+      .on("mouseup", function(){self.stopDrag()})
+      .on("mousemove", function(){self.dragTimePoint()});
 
     d3.select("#"+this.id+"_svg").append("svg:rect")
       .attr("id", this.id+"_back")
@@ -286,7 +286,7 @@ Graph.prototype = {
 	if (this.m.windows[list[i]].active)
       	this.data_graph[this.m.clones[list[i]].cluster[j]].path = this.constructPath(list[i]);
     }
-    this.drawLines;
+    this.drawLines(0);
   },
   
 /* 
@@ -370,9 +370,9 @@ Graph.prototype = {
         .on("dblclick", function(d){
                 if (d.type=="axis_v") return self.rename(d.time)
             })
-    //    .on("mousedown", function(d){
-    //            if (d.type=="axis_v") return self.startDrag(d.time)
-    //        })
+        .on("mousedown", function(d){
+                if (d.type=="axis_v") return self.startDrag(d.time)
+            })
       
   },
 
@@ -426,45 +426,41 @@ Graph.prototype = {
  * 
  * */
     stopDrag : function(time_point){
-        
-        this.drag_on=false;
-        
-        //stock tuples time_point/axis position
+        if (this.drag_on){
+      
+	    this.drag_on=false;
+	    
+	    //stock tuples time_point/axis position
 
-	// 1. not dragged time points
-        var list = []
-        for (var i = 0; i < this.m.time_order.length; i++){
-            if (i != this.draged_time_point) {
-                list.push( [ i, this.graph_col[this.m.time_order.indexOf(i)] ] );
-            }
-        }
+	    // 1. not dragged time points
+	    var list = []
+	    for (var i = 0; i < this.m.time_order.length; i++){
+		if (i != this.draged_time_point) {
+		    list.push( [ i, this.graph_col[this.m.time_order.indexOf(i)] ] );
+		}
+	    }
 
-        // 2. draged_time_point
-        var coordinates = [0, 0];
-        coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
-        draged_col = coordinates[0]/this.resizeW - this.marge4
-        // TODO: arrondir draged_col à ce qu'il faut pour qu'il prenne la place du point le plus proche,
-        // sans qu'on ait besoin de le déplacer après ce point
+	    // 2. draged_time_point
+	    var coordinates = [0, 0];
+	    coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
+	    draged_col = coordinates[0]/this.resizeW - this.marge4
+	    // TODO: arrondir draged_col à ce qu'il faut pour qu'il prenne la place du point le plus proche,
+	    // sans qu'on ait besoin de le déplacer après ce point
 
-        list.push( [ this.draged_time_point, draged_col] );
-        
-        console.log("avant : "+list[0]+"/"+list[1]+"/"+list[2]+ "////"+this.m.time_order)
-        
-        //sort by axis position
-        list.sort(function(a,b){return a[1]-b[1]})
-        
-        //save new time point order
-        for (var i = 0; i < this.m.time_order.length; i++){
-            this.m.time_order[i] = list[i][0]
-        }
-        
-        console.log("apres : "+list[0]+"/"+list[1]+"/"+list[2]+ "////"+this.m.time_order)
-        
-        
-        //call model update
-        this.initAxis()
-        this.m.update()
-        console.log("stop")
+	    list.push( [ this.draged_time_point, draged_col] );
+	    
+	    //sort by axis position
+	    list.sort(function(a,b){return a[1]-b[1]})
+	    
+	    //save new time point order
+	    for (var i = 0; i < this.m.time_order.length; i++){
+		this.m.time_order[i] = list[i][0]
+	    }
+	    
+	    //call model update
+	    this.m.update()
+	    
+	}
     },
     
 /* 
