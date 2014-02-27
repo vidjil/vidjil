@@ -29,6 +29,30 @@
       "window": "ACTGTGCCACCTGGGATACGAGGAATTATTATAAGAAACT",
       "tag": 3,
       "name": "BCD-D"
+    },
+    {
+      "window": "GCGAGAGATCGGGGGCCAGCGTCGTCAGTGGCTGGTAAATTTTTCCGGCCGGTACTACTA",
+      "tag": 0
+    },
+    {
+      "name": "WTK-1 | 66.3%",
+      "window": "TGTGCAAAAGATATTCTTAAATCACTTAAGCAGCAGCTGGCCACCCCGAACTGGTTCGAC",
+      "tag": 3
+    },
+    {
+      "name": "WTK-2 |  3.5%",
+      "window": "ATCAGCAGCCTAAAGGCTGAGGACACCCGACAGGGTATGGACGTCTGGGGCCAAGGGACC",
+      "tag": 3
+    },
+    {
+      "name": "WTK-3 |  2.6%",
+      "window": "GTGCAAAAGATATTCTTAAAATCACTTAAGCAGCAGCTGGCCACCCCGAACTGGTTCGAC",
+      "tag": 3
+    },
+    {
+      "name": "WTK-4 |  2.3%",
+      "window": "TATCAGCAGCCTAAAGGCTGAGGACACCCGACAGGTATGGACGTCTGGGGCCAAGGGACC",
+      "tag": 3
     }
   ],
   "cluster": [
