@@ -144,7 +144,7 @@
     doc.rect(15, 15, 60, 23);
     doc.text(20, 20, document.getElementById("upload_json").files[0].name);
     doc.text(20, 25, 'run: 2013-10-03');
-    doc.text(20, 30, 'analysis: '+m.timestamp.split(' ')[0]);
+    doc.text(20, 30, 'analysis: '+m.timestamp[0].split(' ')[0]);
     doc.text(20, 35, 'germline: '+m.system);
     doc.text(20, 45, 'reads: ' + m.total_size);
 
