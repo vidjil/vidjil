@@ -66,8 +66,8 @@ Graph.prototype = {
     var self=this;
     this.vis = d3.select("#"+this.id).append("svg:svg")
       .attr("id", this.id+"_svg")
-      .on("mouseup", function(){self.stopDrag()})
-      .on("mousemove", function(){self.dragTimePoint()});
+     // .on("mouseup", function(){self.stopDrag()})
+     // .on("mousemove", function(){self.dragTimePoint()});
 
     d3.select("#"+this.id+"_svg").append("svg:rect")
       .attr("id", this.id+"_back")
@@ -370,9 +370,9 @@ Graph.prototype = {
         .on("dblclick", function(d){
                 if (d.type=="axis_v") return self.rename(d.time)
             })
-        .on("mousedown", function(d){
-                if (d.type=="axis_v") return self.startDrag(d.time)
-            })
+    //    .on("mousedown", function(d){
+    //            if (d.type=="axis_v") return self.startDrag(d.time)
+    //        })
       
   },
 
