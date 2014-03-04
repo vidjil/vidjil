@@ -37,11 +37,8 @@ function Graph(id, model){
   this.resizeW=1;	//coeff d'agrandissement/réduction largeur				
   this.resizeH=1;	//coeff d'agrandissement/réduction hauteur		
   
-  this.w=1400;		//largeur graph avant resize
-  this.h=450;		//hauteur graph avant resize
-  
-  this.marge1=50;	//marge droite bord du graph/premiere colonne
-  this.marge2=50;	//marge gauche derniere colonne/bord du graph
+  this.marge1=0.05;	//marge droite bord du graph/premiere colonne
+  this.marge2=0.05;	//marge gauche derniere colonne/bord du graph
   this.marge4=80;	//marge droite/gauche (non influencé par le resize)
   this.marge5=25;	//marge top (non influencé par le resize)
   
@@ -115,7 +112,7 @@ Graph.prototype = {
     
     this.scale_x = d3.scale.log()
       .domain([1,this.precision])
-      .range([0,this.h]);
+      .range([0,1]);
   
     this.initAxis();
       
@@ -161,14 +158,14 @@ Graph.prototype = {
     
     //abscisse
     for (var i=0 ; i<this.m.windows[0].size.length; i++){
-      this.graph_col[i]=this.marge1 + 5 + i*(( this.w-(this.marge1+this.marge2) )/(this.m.windows[0].size.length-1) );
+      this.graph_col[i]=this.marge1 + i*(( 1-(this.marge1+this.marge2) )/(this.m.windows[0].size.length-1) );
     }
     if (this.m.windows[0].size.length==1){
-      this.graph_col[0]=(this.w/2)
+      this.graph_col[0]=1/2
     }
     if (this.m.windows[0].size.length==2){
-      this.graph_col[0]=(this.w/4);
-      this.graph_col[1]=3*(this.w/4);
+      this.graph_col[0]=1/4;
+      this.graph_col[1]=3/4;
     }
       
     for (var i=0 ; i<this.m.time_order.length; i++){
@@ -185,7 +182,8 @@ Graph.prototype = {
         if (this.drag_on && i==this.draged_time_point){
             var coordinates = [0, 0];
             coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
-            d.pos = coordinates[0]/this.resizeW - this.marge4
+            d.pos = (coordinates[0]- this.marge4)/this.resizeW 
+            console.log(d.pos)
         }else{
             d.pos = this.graph_col[this.m.time_order.indexOf(i)];
         }
@@ -202,7 +200,7 @@ Graph.prototype = {
       d.type = "axis_h";
       d.text = height.toExponential(1);
       d.orientation = "hori";
-      d.pos = this.h-this.scale_x(height*this.precision);
+      d.pos = 1-this.scale_x(height*this.precision);
       this.data_axis.push(d);
       
       height=height/10;
@@ -231,8 +229,8 @@ Graph.prototype = {
  * 
  * */
   resize : function(){
-    this.resizeW = (document.getElementById(this.id).offsetWidth-(this.marge4))/this.w;
-    this.resizeH = (document.getElementById(this.id).offsetHeight-this.marge5)/this.h;
+    this.resizeW = document.getElementById(this.id).offsetWidth-this.marge4;
+    this.resizeH = document.getElementById(this.id).offsetHeight-this.marge5;
     
     this.vis = d3.select("#"+this.id+"_svg")
       .attr("width", document.getElementById(this.id).offsetWidth)
@@ -286,7 +284,7 @@ Graph.prototype = {
 	if (this.m.windows[list[i]].active)
       	this.data_graph[this.m.clones[list[i]].cluster[j]].path = this.constructPath(list[i]);
     }
-    this.drawLines;
+    this.drawLines(0);
   },
   
 /* 
@@ -302,9 +300,13 @@ Graph.prototype = {
         .transition()
         .duration(speed)
         .attr("d", function(p) {
-                var che=' M '+Math.floor(p.path[0][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[0][1]*self.resizeH+self.marge5);
+                var x = (p.path[0][0]*self.resizeW+self.marge4)
+                var y = (p.path[0][1]*self.resizeH+self.marge5)
+                var che = ' M ' + x + ',' + y;
                 for (var i=1; i<p.path.length; i++){
-                    che+=' L '+Math.floor(p.path[i][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[i][1]*self.resizeH+self.marge5);
+                    x = (p.path[i][0]*self.resizeW+self.marge4)
+                    y = (p.path[i][1]*self.resizeH+self.marge5)
+                    che += ' L ' + x + ',' + y;
                 }
                 return che;
             })
@@ -330,10 +332,10 @@ Graph.prototype = {
         .attr("x1", function(d) { if (d.orientation=="vert") return self.resizeW*d.pos+self.marge4; 
                                     else return self.marge4; })
         .attr("x2", function(d) { if (d.orientation=="vert") return self.resizeW*d.pos+self.marge4; 
-                                    else return (self.resizeW*self.w)+self.marge4 })
+                                    else return (self.resizeW)+self.marge4 })
         .attr("y1", function(d) { if (d.orientation=="vert") return self.marge5; 
                                     else return (self.resizeH*d.pos)+self.marge5; })
-        .attr("y2", function(d) { if (d.orientation=="vert") return (self.resizeH*self.h)+self.marge5; 
+        .attr("y2", function(d) { if (d.orientation=="vert") return (self.resizeH)+self.marge5; 
                                     else return (self.resizeH*d.pos)+self.marge5; })
         .attr("class", function(d) { return d.type })
         .attr("id", function(d) { if (d.type=="axis_m") return "timebar"
@@ -382,7 +384,7 @@ Graph.prototype = {
  * */ 
   draw : function(){
     var self=this;
-		
+
     this.drawAxis(500)
     this.drawLines(500)
     
@@ -391,9 +393,13 @@ Graph.prototype = {
         .transition()
         .duration(500)
         .attr("d", function(p) {
-                var che=' M '+Math.floor(p.path[0][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[0][1]*self.resizeH+self.marge5);
+                var x = (p.path[0][0]*self.resizeW+self.marge4)
+                var y = (p.path[0][1]*self.resizeH+self.marge5)
+                var che = ' M ' + x + ',' + y;
                 for (var i=1; i<p.path.length; i++){
-                    che+=' L '+Math.floor(p.path[i][0]*self.resizeW+self.marge4)+','+Math.floor(p.path[i][1]*self.resizeH+self.marge5);
+                    x = (p.path[i][0]*self.resizeW+self.marge4)
+                    y = (p.path[i][1]*self.resizeH+self.marge5)
+                    che += ' L ' + x + ',' + y;
                 }
                 che+=' Z ';
                 return che;
@@ -435,7 +441,7 @@ Graph.prototype = {
                 if (i==this.draged_time_point){
                     var coordinates = [0, 0];
                     coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
-                    list.push( [ i, coordinates[0]/this.resizeW - this.marge4 ] );
+                    list.push( [ i, (coordinates[0]- this.marge4)/this.resizeW ] );
                 }else{
                     list.push( [ i, this.graph_col[this.m.time_order.indexOf(i)] ] );
                 }
@@ -468,18 +474,18 @@ Graph.prototype = {
   constructPathR : function(res){
     if (typeof res != "undefined" && res.length!=0){
       var p;
-      p=[ [0, this.h+100] ];
+      p=[ [0, 1+0.1] ];
 	  
 	  var r=0;
 	  if (this.m.norm==true)
 		  r=1;
-      p.push([0, ( this.h - this.scale_x(res[0][r]*this.precision) ) ]);
+      p.push([0, ( 1 - this.scale_x(res[0][r]*this.precision) ) ]);
       
       for (var i=0; i< this.graph_col.length; i++){
-	  p.push([( this.graph_col[i]), ( this.h - this.scale_x(res[i][r]*this.precision))]);
+	  p.push([( this.graph_col[i]), ( 1 - this.scale_x(res[i][r]*this.precision))]);
       }
-      p.push([this.w, ( this.h - this.scale_x(res[this.graph_col.length-1][r]*this.precision))]);
-      p.push([this.w, this.h+100]);
+      p.push([1, ( 1 - this.scale_x(res[this.graph_col.length-1][r]*this.precision))]);
+      p.push([1, 1+0.1]);
       
       return p;
     }
@@ -501,8 +507,8 @@ Graph.prototype = {
       if (this.m.getSize(cloneID, 0)==0){
 	p = [ ];
       }else{
-	p = [[ ( x + (Math.random()*50)-125 ), ( this.h - y ) ]];
-	p.push([ ( x + (Math.random()*50)+75 ), ( this.h - y ) ]);
+	p = [[ ( x + (Math.random()*0.05)-0.125 ), ( 1 - y ) ]];
+	p.push([ ( x + (Math.random()*0.05)+0.075 ), ( 1 - y ) ]);
       }
     }
     //plusieurs points de suivi
@@ -515,11 +521,11 @@ Graph.prototype = {
       if (size==0){
 			p = [ ];
 		}else{
-			p =   [[ ( x - 30  ), ( this.h - y )]];
-			p.push([ ( x )      , ( this.h - y )]);
+			p =   [[ ( x - 0.03  ), ( 1 - y )]];
+			p.push([ ( x )      , ( 1 - y )]);
 			
 			if (to==size){
-				p.push([( x + 30 ), ( this.h - y )]);
+				p.push([( x + 0.03 ), ( 1 - y )]);
 			}
       }
       
@@ -535,18 +541,18 @@ Graph.prototype = {
 			
 			if (size==0){
 				if (p.length!=0){
-					p.push([( x ),(this.h + 30)]);
+					p.push([( x ),(1 + 0.03)]);
 				}
 			}else{
 			//si premiere apparition du clone sur le graphique
 				if (p.length==0){
-					p.push([( x - 30 ), ( this.h - y )]);
+					p.push([( x - 0.03 ), ( 1 - y )]);
 				}
 				
-				p.push(  [( x ), ( this.h - y )]);
+				p.push(  [( x ), ( 1 - y )]);
 				//si derniere apparition du clone sur le graphique
 				if (to==size){
-					p.push([( x + 30 ), ( this.h - y )]);
+					p.push([( x + 0.03 ), ( 1 - y )]);
 				}
 			}
 		  }
