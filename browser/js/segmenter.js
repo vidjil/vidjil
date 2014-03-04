@@ -46,8 +46,15 @@ Segment.prototype = {
 /* 
  * 
  * */ 
-  init : function(){
-  },
+    init : function(){
+        var self = this;
+        
+        $('#toClipBoard').zclip({
+            path:'js/lib/ZeroClipboard.swf',
+            copy: function(){return self.toFasta()}
+        });
+        
+    },
   
 /*
  * 
@@ -246,7 +253,37 @@ Segment.prototype = {
 	    displayAjaxResult(result);
 	}
     });
-  }
+  },
+  
+    clipBoard : function () {
+            
+        var div = document.getElementById('clipBoard');
+        div.innerHTML = "";
+        div.appendChild(document.createTextNode(""));
+        
+        /*
+        if (document.createRange && window.getSelection) {
+            var range = document.createRange();
+            range.selectNode(div);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+        } 
+        */
+        
+    },
+    
+    toFasta : function () {
+        var selected = this.m.getSelected();
+        var result = "";
+        
+        for (var i=0; i < selected.length; i++){
+            result += "> "+this.m.getName(selected[i]) + " // " + this.m.getStrSize(selected[i]) + "\n";
+            result += this.m.windows[selected[i]].sequence + "\n";
+        }
+        return result
+    }
+    
+
 
 }//fin prototype
 

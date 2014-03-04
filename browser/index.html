@@ -41,6 +41,7 @@
 	<script type="text/javascript" src='js/lib/rgbcolor.js'></script>
 	<script type="text/javascript" src='js/lib/file.js'></script>
 	<script type="text/javascript" src="js/lib/less-1.5.0.min.js"></script>
+    <script type="text/javascript" src='js/lib/jquery.zclip.js'></script>
 
 
 	<script type="text/javascript" src='js/germline.js'></script>
@@ -52,6 +53,7 @@
 	<script type="text/javascript" src='js/vidjil-style.js'></script>
 	<script type="text/javascript" src='js/crossDomain.js'></script>
 	<script type="text/javascript" src='js/pdf.js'></script>
+
 
 	
 	<!--
@@ -495,6 +497,7 @@
 	<span class="button" onclick="segment.align()">align</span>
 	<span class="button" onclick="segment.sendTo('IMGT')">❯ to IMGT/V-QUEST</span>
 	<span class="button" onclick="segment.sendTo('igBlast')">❯ to IgBlast</span>
+    <span id="toClipBoard" class="button">❯ to clipBoard</span>
 
       </div>
     
@@ -508,6 +511,9 @@
     <span class="closeButton" onclick="closePopupMsg()">X</span>
       <div id="popup-msg">
       </div>
+    </div>
+
+    <div id="clipBoard">
     </div>
 
     <div id="data-container">
