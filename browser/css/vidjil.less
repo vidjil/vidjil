@@ -55,6 +55,11 @@ ul{
   width: 100%;
   overflow: hidden;
   background: @background;
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
 }
 
 #switch{
@@ -70,6 +75,11 @@ ul{
   height : 100%;
   overflow-y : none;
   float : left;
+  -khtml-user-select: auto;
+  -webkit-user-select: auto;
+  -moz-user-select: auto;
+  -ms-user-select: auto;
+  user-select: auto;
 }
 
 #visu, #visu2 {
@@ -750,6 +760,7 @@ span .substitution{
 
 #visu-separator {
     height: 0px;
+    cursor: move;
     cursor: -webkit-grab;
     position: relative;
     top: -20px;
