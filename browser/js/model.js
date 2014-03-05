@@ -935,9 +935,9 @@ Model.prototype = {
 /* resize all views
  * 
  * */
-  resize :function(){
+  resize :function(speed){
     for (var i=0; i<this.view.length; i++){
-      this.view[i].resize();
+      this.view[i].resize(speed);
     }
   },
   

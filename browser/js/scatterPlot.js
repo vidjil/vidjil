@@ -84,7 +84,7 @@ ScatterPlot.prototype = {
             .attr("y", 0)
             .on("mouseover", function(){self.m.focusOut();})
             .on("mousedown", function(){self.activeSelector();})
-        
+            
         d3.select("body").on("mouseup", function(){self.stopSelector()})
         d3.select("body").on("mousemove", function(){self.updateSelector()})
         
@@ -107,7 +107,6 @@ ScatterPlot.prototype = {
             .attr("y", 0)
             .attr("rx", 5)
             .attr("ry", 5)
-            .on("mousemove", function(){self.updateSelector();})
         
         //initialisation des nodes
         this.nodes = d3.range(this.m.n_windows).map(Object);
