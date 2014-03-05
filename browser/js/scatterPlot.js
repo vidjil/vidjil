@@ -43,8 +43,19 @@ function ScatterPlot(id, model){
     this.time1= this.time0;
     this.fpsqueue = [];
     
-    this.use_simple_v = false;
-    this.active_selector = false
+    this.use_simple_v = false
+    this.active_selector = false 
+    
+    //axis X text position
+    this.rotation_x = 0;
+    this.text_position_x = 15;
+    this.sub_text_position_x = 30;
+    
+    //axis Y text position
+    this.rotation_y = 0;
+    this.text_position_y = 40;
+    this.sub_text_position_y = 90;
+    
 }
 
 
@@ -886,7 +897,7 @@ ScatterPlot.prototype = {
  * 
  * */
     axis_x_update : function(data){
-            
+        
         self = this;
         
         //LEGENDE
@@ -897,11 +908,16 @@ ScatterPlot.prototype = {
         leg
             .attr("x", function(d) { return self.resizeW*d.pos+self.marge_left;})
             .attr("y", function(d) { 
-                if ( d.type=="subline" ) return 25
-                else return 12;
+                if ( d.type=="subline" ) return self.sub_text_position_x
+                else return self.text_position_x
             })
             .text( function (d) { return d.text; })
             .attr("class", "sp_legend")
+            .attr("transform", function (d) {
+                var y=self.text_position_x
+                if ( d.type=="subline" ) y=self.sub_text_position_x
+                return "rotate("+self.rotation_x+" "+(self.resizeW*d.pos+self.marge_left)+" "+y+")" 
+            })
             .style("fill", function (d) { 
                 if (self.m.colorMethod=="V" && (self.splitX=="gene_v" || self.splitX=="gene_v_used") && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
                 if (self.m.colorMethod=="J" && (self.splitX=="gene_j" || self.splitX=="gene_j_used") && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ;
@@ -948,12 +964,17 @@ ScatterPlot.prototype = {
             .remove();
         leg
             .attr("x", function(d) { 
-                if ( d.type=="subline" ) return 80;
-                else return 40; 
+                if ( d.type=="subline" ) return self.sub_text_position_y;
+                else return self.text_position_y; 
             })
-            .attr("y", function(d) { return self.resizeH*d.pos+3+self.marge_top; })
+            .attr("y", function(d) { return (self.resizeH*d.pos+self.marge_top); })
             .text( function (d) { return d.text; })
             .attr("class", "sp_legend")
+            .attr("transform", function (d) {
+                var y=self.text_position_y
+                if ( d.type=="subline" ) y=self.sub_text_position_y
+                return "rotate("+self.rotation_y+" "+(self.resizeW*d.pos+self.marge_top)+" "+y+")" 
+            })
             .style("fill", function (d) { 
                 if (self.m.colorMethod=="V" && (self.splitY=="gene_v" || self.splitY=="gene_v_used") && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
                 if (self.m.colorMethod=="J" && (self.splitY=="gene_j" || self.splitY=="gene_j_used") && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ;
