@@ -104,17 +104,30 @@
     var elem = document.getElementById("visu2_svg").cloneNode(true);
     var opt={};
     var doc = new jsPDF();
-    
+
+    // The clones should have their natural (tag) color, even if two have the same color...
+      
     for (var i = 0; i<m.n_windows; i++){
       var polyline = elem.getElementById("polyline"+i)
-      polyline.setAttribute("style","stroke-width:1px; stroke: #dddddd");
-      polyline.setAttribute("stroke","#dddddd");
+      polyline.setAttribute("style","stroke-width:1px; stroke:"+ tagColor[m.windows[i].tag]);
+      polyline.setAttribute("stroke", tagColor[m.windows[i].tag]);
+      // polyline.setAttribute("style","stroke-width:1px; stroke: #dddddd");
+      // polyline.setAttribute("stroke","#dddddd");
+
+
+      // Hide 'other' line (TODO: really remove this line !)
+      if (m.windows[i].window == "other")
+	  {
+	      polyline.setAttribute("style","stroke-width:0px; stroke: #ffffff");
+	      polyline.setAttribute("stroke", "#ffffff");
+	  }
     }
+    
     
     for (var i = 0; i<list.length; i++){
       var polyline = elem.getElementById("polyline"+list[i])
-      polyline.setAttribute("style","stroke-width:6px; stroke:"+tagColor[i]);
-      polyline.setAttribute("stroke",tagColor[i]);
+      polyline.setAttribute("style","stroke-width:6px; stroke:"+tagColor[m.windows[i].tag]);
+      polyline.setAttribute("stroke", tagColor[m.windows[i].tag]);
       elem.getElementById("polyline_container").appendChild(polyline);
     }
     
@@ -140,15 +153,16 @@
     opt.y_offset=60;
 
     doc.setFontSize(12);
-    doc.text(130, 20, 'Vidjil (beta) - http://bioinfo.lifl.fr/vidjil');
+    doc.text(130, 20, 'Vidjil -- http://bioinfo.lifl.fr/vidjil');
     doc.rect(15, 15, 60, 23);
     doc.text(20, 20, document.getElementById("upload_json").files[0].name);
-    doc.text(20, 25, 'run: 2013-10-03');
-    doc.text(20, 30, 'analysis: '+m.timestamp.split(' ')[0]);
+    doc.text(20, 25, 'run: 2014-xx-xx');
+    doc.text(20, 30, 'analysis: '+m.timestamp[0].split(' ')[0]);
     doc.text(20, 35, 'germline: '+m.system);
-    doc.text(20, 45, 'reads: ' + m.total_size);
+    doc.text(20, 45, 'reads: ' + m.reads_segmented_total + ' / ' + m.reads_total_total 
+	     + ' (' + (100 * m.reads_segmented_total / m.reads_total_total).toFixed(3) + '%)');
 
-    doc.text(20, 55, 'This PDF export is in beta version...');
+    doc.text(130, 25, '**beta** PDF export');
 
     svgElementToPdf(elem, doc, opt)
     doc.setFillColor(255, 255, 255);
@@ -162,7 +176,7 @@
       
       var polyline = document.getElementById("polyline"+id).cloneNode(true);
       polyline.setAttribute("style","stroke-width:40px");
-      polyline.setAttribute("stroke",tagColor[i]);
+      polyline.setAttribute("stroke",tagColor[m.windows[i].tag]);
       var res =elem.getElementById("resolution1").cloneNode(true);
       res.firstChild.setAttribute("fill","white");
       var icon=document.createElement("svg");
@@ -178,7 +192,7 @@
       doc.setDrawColor(150,150,150);
       doc.rect(10, y-2, 18, 8);
       /*
-      polyline.setAttribute("stroke",tagColor[i]);
+      polyline.setAttribute("stroke",tagColor[m.windows[i].tag]);
       polyline.setAttribute("style","stroke-width:6px");
       opt_icon.scaleX=180/document.getElementById("visu2_svg").getAttribute("width");
       opt_icon.scaleY=30/document.getElementById("visu2_svg").getAttribute("height");
@@ -188,7 +202,7 @@
       */
       
       doc.setFont('courier', 'bold');
-      doc.setTextColor(tagColor[i]);
+      doc.setTextColor(tagColor[m.windows[i].tag]);
       doc.text(30, y, m.getName(id));
       doc.setFont('courier', 'normal');
       doc.setTextColor(0,0,0);
