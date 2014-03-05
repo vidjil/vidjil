@@ -589,6 +589,8 @@ Model.prototype = {
  * 
  * */
   changeTag : function(cloneID, newTag){
+    newTag=""+newTag
+    newTag=newTag.replace("tag", "");
     console.log("changeTag() (clone "+cloneID+" <<"+newTag+")");
     this.windows[cloneID].tag=newTag;
     this.updateElem([cloneID]);
@@ -1044,28 +1046,6 @@ Model.prototype = {
       html_container.value=top;
     }
     this.update();
-  },
-
-
-/* increase the minimum top rank required
- * 
- * */
-  incDisplayTop : function(){
-    if (this.top<100){ 
-      this.top=this.top+5;
-      this.displayTop();
-    }
-  },
-
-
-/* decrease the minimum top rank required
- * 
- * */  
-  decDisplayTop : function(){
-    if (this.top>5){ 
-      this.top=this.top-5;
-      this.displayTop();
-    }
   },
   
 /* 
