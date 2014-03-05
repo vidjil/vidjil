@@ -22,37 +22,38 @@
 <html>
   <head>
   
-	<meta charset="utf-8">
-	<title>Vidjil</title>
-	<!--<link rel="stylesheet/less" type="text/css" href="css/style.less" />-->
-	<link id="palette" rel="stylesheet" type="text/css" href="css/dark.css" /> 
-	<!--[if lte IE 8]><script src="js/r2d3.js" charset="utf-8"></script><![endif]-->
-	<!--[if gte IE 9]><!-->
-	<script type="text/javascript" src='js/lib/d3.v3.js'></script>
-	<!--<![endif]-->
-	<script type="text/javascript" src="js/lib/jquery-1.9.1.min.js"></script>
-	<script type="text/javascript" src='js/lib/StackBlur.js'></script>
-	<script type="text/javascript" src='js/lib/jspdf.js'></script>
-	<script type="text/javascript" src='js/lib/jspdf.plugin.addimage.js'></script>
-	<script type="text/javascript" src='js/lib/jspdf.plugin.svgToPdf.js'></script>
-	<script type="text/javascript" src='js/lib/jspdf.plugin.split_text_to_size.js'></script>
-	<script type="text/javascript" src='js/lib/jspdf.plugin.standard_fonts_metrics.js'></script>
-	<script type="text/javascript" src='js/lib/underscore.js'></script>
-	<script type="text/javascript" src='js/lib/rgbcolor.js'></script>
-	<script type="text/javascript" src='js/lib/file.js'></script>
-	<script type="text/javascript" src="js/lib/less-1.5.0.min.js"></script>
+    <meta charset="utf-8">
+    <title>Vidjil</title>
+    <!--<link rel="stylesheet/less" type="text/css" href="css/style.less" />-->
+    <link id="palette" rel="stylesheet" type="text/css" href="css/dark.css" /> 
+    <!--[if lte IE 8]><script src="js/r2d3.js" charset="utf-8"></script><![endif]-->
+    <!--[if gte IE 9]><!-->
+    <script type="text/javascript" src='js/lib/d3.v3.js'></script>
+    <!--<![endif]-->
+    <script type="text/javascript" src="js/lib/jquery-1.9.1.min.js"></script>
+    <script type="text/javascript" src='js/lib/StackBlur.js'></script>
+    <script type="text/javascript" src='js/lib/jspdf.js'></script>
+    <script type="text/javascript" src='js/lib/jspdf.plugin.addimage.js'></script>
+    <script type="text/javascript" src='js/lib/jspdf.plugin.svgToPdf.js'></script>
+    <script type="text/javascript" src='js/lib/jspdf.plugin.split_text_to_size.js'></script>
+    <script type="text/javascript" src='js/lib/jspdf.plugin.standard_fonts_metrics.js'></script>
+    <script type="text/javascript" src='js/lib/underscore.js'></script>
+    <script type="text/javascript" src='js/lib/rgbcolor.js'></script>
+    <script type="text/javascript" src='js/lib/file.js'></script>
+    <script type="text/javascript" src="js/lib/less-1.5.0.min.js"></script>
     <script type="text/javascript" src='js/lib/jquery.zclip.js'></script>
 
 
-	<script type="text/javascript" src='js/germline.js'></script>
-	<script type="text/javascript" src='js/model.js'></script>
-	<script type="text/javascript" src='js/segmenter.js'></script>
-	<script type="text/javascript" src='js/list.js'></script>
-        <script type="text/javascript" src="js/graph.js"> </script>
-        <script type="text/javascript" src="js/scatterPlot.js"> </script>
-	<script type="text/javascript" src='js/vidjil-style.js'></script>
-	<script type="text/javascript" src='js/crossDomain.js'></script>
-	<script type="text/javascript" src='js/pdf.js'></script>
+    <script type="text/javascript" src='js/germline.js'></script>
+    <script type="text/javascript" src='js/model.js'></script>
+    <script type="text/javascript" src='js/segmenter.js'></script>
+    <script type="text/javascript" src='js/list.js'></script>
+    <script type="text/javascript" src="js/graph.js"> </script>
+    <script type="text/javascript" src="js/scatterPlot.js"> </script>
+    <script type="text/javascript" src='js/builder.js'></script>
+    <script type="text/javascript" src='js/vidjil-style.js'></script>
+    <script type="text/javascript" src='js/crossDomain.js'></script>
+    <script type="text/javascript" src='js/pdf.js'></script>
 
 
 	
@@ -333,12 +334,11 @@
       
       <div id="visu-container">
 	<!-- VISU -->
-	<span id="visu2">
+	<div id="visu2">
 
-
-	  
-	</span>
-
+	</div>
+    <div id="visu-separator" >...</div>
+<!--
 	<div id="switch"> 
 	  
 	    <div style="float:left; background:#333044; width:22px; height:22px; margin:5px; " onclick="switchVisu(30,70);"> 
@@ -357,9 +357,9 @@
 	      <div style="background:white; width:100%; height:100%;"></div>
 	    </div>
     </div>
+-->
 
-
-	<span id="visu" onclick="">
+	<div id="visu" onclick="">
 
     </div>
 	
