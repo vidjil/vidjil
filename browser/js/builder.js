@@ -42,8 +42,10 @@ Builder.prototype = {
             
             var height2 = position/total_height * 100 
 
-            if (height2 > 95) height2=99;
-            if (height2 < 5) height2=0;
+            if (height2 > 99 || height2 <1) this.dropSeparator()
+            
+            if (height2 > 90) height2=99;
+            if (height2 < 10) height2=0;
                 
             var height1 = 100 - height2
             
@@ -58,6 +60,10 @@ Builder.prototype = {
         if (this.drag_separator){
             this.m.resize();
             this.drag_separator = false;
+            
+            var sel = window.getSelection();
+            sel.removeAllRanges();
+            
             console.log("drop");
         }
     }
