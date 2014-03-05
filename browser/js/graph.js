@@ -431,7 +431,6 @@ Graph.prototype = {
  * 
  * */
     stopDrag : function(time_point){
-        
         if (this.drag_on){
             this.drag_on=false;
             
