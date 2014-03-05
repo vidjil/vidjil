@@ -20,513 +20,367 @@
 -->
 
 <html>
-  <head>
-  
-    <meta charset="utf-8">
-    <title>Vidjil</title>
-    <!--<link rel="stylesheet/less" type="text/css" href="css/style.less" />-->
-    <link id="palette" rel="stylesheet" type="text/css" href="css/dark.css" /> 
-    <!--[if lte IE 8]><script src="js/r2d3.js" charset="utf-8"></script><![endif]-->
-    <!--[if gte IE 9]><!-->
-    <script type="text/javascript" src='js/lib/d3.v3.js'></script>
-    <!--<![endif]-->
-    <script type="text/javascript" src="js/lib/jquery-1.9.1.min.js"></script>
-    <script type="text/javascript" src='js/lib/StackBlur.js'></script>
-    <script type="text/javascript" src='js/lib/jspdf.js'></script>
-    <script type="text/javascript" src='js/lib/jspdf.plugin.addimage.js'></script>
-    <script type="text/javascript" src='js/lib/jspdf.plugin.svgToPdf.js'></script>
-    <script type="text/javascript" src='js/lib/jspdf.plugin.split_text_to_size.js'></script>
-    <script type="text/javascript" src='js/lib/jspdf.plugin.standard_fonts_metrics.js'></script>
-    <script type="text/javascript" src='js/lib/underscore.js'></script>
-    <script type="text/javascript" src='js/lib/rgbcolor.js'></script>
-    <script type="text/javascript" src='js/lib/file.js'></script>
-    <script type="text/javascript" src="js/lib/less-1.5.0.min.js"></script>
-    <script type="text/javascript" src='js/lib/jquery.zclip.js'></script>
+    <head>
+        <meta charset="utf-8">
+        <title>Vidjil</title>
+        <!--<link rel="stylesheet/less" type="text/css" href="css/style.less" />-->
+        <link id="palette" rel="stylesheet" type="text/css" href="css/dark.css" /> 
+        <!--[if lte IE 8]><script src="js/r2d3.js" charset="utf-8"></script><![endif]-->
+        <!--[if gte IE 9]><!-->
+        <script type="text/javascript" src='js/lib/d3.v3.js'></script>
+        <!--<![endif]-->
+        <script type="text/javascript" src="js/lib/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src='js/lib/StackBlur.js'></script>
+        <script type="text/javascript" src='js/lib/jspdf.js'></script>
+        <script type="text/javascript" src='js/lib/jspdf.plugin.addimage.js'></script>
+        <script type="text/javascript" src='js/lib/jspdf.plugin.svgToPdf.js'></script>
+        <script type="text/javascript" src='js/lib/jspdf.plugin.split_text_to_size.js'></script>
+        <script type="text/javascript" src='js/lib/jspdf.plugin.standard_fonts_metrics.js'></script>
+        <script type="text/javascript" src='js/lib/underscore.js'></script>
+        <script type="text/javascript" src='js/lib/rgbcolor.js'></script>
+        <script type="text/javascript" src='js/lib/file.js'></script>
+        <script type="text/javascript" src="js/lib/less-1.5.0.min.js"></script>
+        <script type="text/javascript" src='js/lib/jquery.zclip.js'></script>
+
+        <script type="text/javascript" src='js/germline.js'></script>
+        <script type="text/javascript" src='js/model.js'></script>
+        <script type="text/javascript" src='js/segmenter.js'></script>
+        <script type="text/javascript" src='js/list.js'></script>
+        <script type="text/javascript" src="js/graph.js"> </script>
+        <script type="text/javascript" src="js/scatterPlot.js"> </script>
+        <script type="text/javascript" src='js/builder.js'></script>
+        <script type="text/javascript" src='js/vidjil-style.js'></script>
+        <script type="text/javascript" src='js/crossDomain.js'></script>
+        <script type="text/javascript" src='js/pdf.js'></script>
+
+        <!--
+        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
+        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
+        -->
+    </head>
 
 
-    <script type="text/javascript" src='js/germline.js'></script>
-    <script type="text/javascript" src='js/model.js'></script>
-    <script type="text/javascript" src='js/segmenter.js'></script>
-    <script type="text/javascript" src='js/list.js'></script>
-    <script type="text/javascript" src="js/graph.js"> </script>
-    <script type="text/javascript" src="js/scatterPlot.js"> </script>
-    <script type="text/javascript" src='js/builder.js'></script>
-    <script type="text/javascript" src='js/vidjil-style.js'></script>
-    <script type="text/javascript" src='js/crossDomain.js'></script>
-    <script type="text/javascript" src='js/pdf.js'></script>
+    <body onload="popupMsg(msg.welcome)">
+
+        <div id="file_menu" >
+            <span class="closeButton" onclick="cancel();">X</span>
+
+            <h2>Vidjil <span class='logo'>(beta)</span> &ndash; V(D)J repertoire browsing and analysis</h2>
+
+            Data file (.data):<br/>
+            <input id="upload_json" type="file" name="json" /></br>
+            <p class='help'>The data file stores a set of clones on several points.</p>
+
+            Analysis file (.analysis, optional):<br/>
+            <input id="upload_pref" type="file" name="pref" /></br>
+            <p class='help'>The analysis file stores all parameters set by the user (tags, colors, manual clusters).</p>
+            <!--
+            load only clones in the top <select id="limit_top" name="limit_top">
+            <option value="10">10</option>	
+            <option value="30">30</option>
+            <option value="100">100</option>
+            </select> </br></br>
+
+            <button onclick="document.getElementById('file_menu').style.display='none';
+            m.load('upload_json','upload_pref', document.getElementById('limit_top').value)">start</button> 
+            -->
+            <button onclick="document.getElementById('file_menu').style.display='none';
+            m.load('upload_json','upload_pref', 100)">start</button> 
+        </div>
+
+        <div id="analysis_menu" >
+            <span class="closeButton" onclick="cancel();">X</span>
+            <h2>analysis menu</h2>
+
+            Analysis file :<br/>
+            <input id="upload_analysis" type="file" name="analysis" /></br></br>
+
+            <button onclick="document.getElementById('analysis_menu').style.display='none';
+                                    m.loadAnalysis('upload_analysis');">start</button> 
+        </div>
 
 
-	
-	<!--
-	<link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
-	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-	-->
-	
-  </head>
+        <!-- TOP-CONTAINER -->
+        <div id="top-container">
 
-  <body onload="popupMsg(msg.welcome)">
-  
-    <div id="file_menu" >
-    <span class="closeButton" onclick="cancel();">X</span>
-    
-    	<h2>Vidjil <span class='logo'>(beta)</span> &ndash; V(D)J repertoire browsing and analysis</h2>
-	
+            <div class="menu" onmouseover="showSelector('loadSelector');"> file 
+                <div id="loadSelector" class="selector">
+                    <!-- <a class="buttonSelector" onclick="javascript:loadData()">load data/analysis</a> -->
+                    <a class="buttonSelector" onclick="javascript:loadAnalysis()">load analysis</a>
+                    <a class="buttonSelector" onclick="javascript:m.saveAnalysis()">save analysis</a>
+                    <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
+                    <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
+                    <a class="buttonSelector" onclick="javascript:testPDF2()">export pdf (graph + selected clones)</a>
+                </div>
+            </div>
 
-	Data file (.data):<br/>
-	<input id="upload_json" type="file" name="json" /></br>
-	<p class='help'>The data file stores a set of clones on several points.</p>
+            <div id="norm" class="menu" onmouseover="showSelector('ratioSelector');"> normalize 
+                <div id="ratioSelector" class="selector">
+                    <!--TODO generer automatiquement-->
+                    <a class="buttonSelector" onclick="m.normalization_switch(false);">off</a>
+                    <a class="buttonSelector" onclick="m.normalization_switch(true);">on</a> 
+                </div>
+            </div>
 
-	Analysis file (.analysis, optional):<br/>
-	<input id="upload_pref" type="file" name="pref" /></br>
-	<p class='help'>The analysis file stores all parameters set by the user (tags, colors, manual clusters).</p>
+            <div class="menu" onmouseover="showSelector('groupSelector');"> analysis 
+                <div id="groupSelector" class="selector">
+                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'gene_j');">V / J (genes)</a> 
+                    <a class="buttonSelector" onclick="sp.changeSplitMethod('allele_v', 'allele_j');">V / J (alleles)</a> 
+                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'n');">V / N length</a> 
+                    <!--<a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'nSize');">V / N length + VJ deletions</a> -->
+                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'Size')">V / abundance at selected timepoint</a> 
+                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'bar')">V distribution</a> 
+                </div>
+            </div>
 
-	<!--
-	load only clones in the top <select id="limit_top" name="limit_top">
-	  <option value="10">10</option>	
-	  <option value="30">30</option>
-	  <option value="100">100</option>
-	</select> </br></br>
-	
-	<button onclick="document.getElementById('file_menu').style.display='none';
-	m.load('upload_json','upload_pref', document.getElementById('limit_top').value)">start</button> 
-	-->
-	<button onclick="document.getElementById('file_menu').style.display='none';
-	m.load('upload_json','upload_pref', 100)">start</button> 
-	
-    </div>
-    
-    <div id="analysis_menu" >
-        <span class="closeButton" onclick="cancel();">X</span>
-    	<h2>analysis menu</h2>
-    	
-	Analysis file :<br/>
-	<input id="upload_analysis" type="file" name="analysis" /></br></br>
-		
-	<button onclick="document.getElementById('analysis_menu').style.display='none';
-									m.loadAnalysis('upload_analysis');">start</button> 
-    </div>
-    
-    <div id="top-container">
-    
-      <div class="menu" onmouseover="showSelector('loadSelector');"> file 
-        <div id="loadSelector" class="selector">
-	  <!-- <a class="buttonSelector" onclick="javascript:loadData()">load data/analysis</a> -->
-	  <a class="buttonSelector" onclick="javascript:loadAnalysis()">load analysis</a>
-	  <a class="buttonSelector" onclick="javascript:m.saveAnalysis()">save analysis</a>
-          <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
-	  <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
-	  <a class="buttonSelector" onclick="javascript:testPDF2()">export pdf (graph + selected clones)</a>
-	</div>
-      </div>
-
-      <div id="norm" class="menu" onmouseover="showSelector('ratioSelector');"> normalize 
-        <div id="ratioSelector" class="selector">
-        <!--TODO generer automatiquement-->
-	  <a class="buttonSelector" onclick="m.normalization_switch(false);">off</a>
-	  <a class="buttonSelector" onclick="m.normalization_switch(true);">on</a> 
-	</div>
-      </div>
-         
-      <div class="menu" onmouseover="showSelector('groupSelector');"> analysis 
-      	<div id="groupSelector" class="selector">
-	  <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'gene_j');">V / J (genes)</a> 
-	  <a class="buttonSelector" onclick="sp.changeSplitMethod('allele_v', 'allele_j');">V / J (alleles)</a> 
-	  <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'n');">V / N length</a> 
-	  <!--<a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'nSize');">V / N length + VJ deletions</a> -->
-	  <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'Size')">V / abundance at selected timepoint</a> 
-	  <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'bar')">V distribution</a> 
-	</div>
-      </div>
-
-      <div class="menu" onmouseover="showSelector('colorSelector');" > color 
-	<div id="colorSelector" class="selector">
-	  <a class="buttonSelector" onclick="m.changeColorMethod('V');">by V</a>
-	  <a class="buttonSelector" onclick="m.changeColorMethod('J');">by J</a>
-	  <a class="buttonSelector" onclick="m.changeColorMethod('N2');">by N length</a>
-	 <!-- <a class="buttonSelector" onclick="m.changeColorMethod('N');">by N length + VJ deletions</a> -->
-	  <a class="buttonSelector" onclick="m.changeColorMethod('Tag');">by tag</a>
-	  <a class="buttonSelector" onclick="m.changeColorMethod('abundance');">by abundance at selected timepoint</a>
-	</div>
-      </div>
-      
-      
-      <div id="norm" class="menu" onmouseover="showSelector('displaySelector');"> display
-        <div id="displaySelector" class="selector">
-	  <ul>
-	    
-	    <li>
-	      
-	      <div>
-          </br>
-          <!-- <input id="rangeValue" type="text" size="3" value="10" readonly="true">-->
-	      <input id="top_slider" type="range" min="5" max="100" step="5" value="10" 
-	      onchange="m.displayTop(this.value)" />
-	      </div>
-	    </li>
-	    
-
-	    <li>
-	      <div id="tagDisplay0" class="tagElem" onclick="nextDisplayTag(this)">
-	      <span class="tagColorBox tagColor0"></span> <span class="tagName0 tn"></span>
-	      </div>
-	    </li>
-	    <li>
-	      <div id="tagDisplay1" class="tagElem" onclick="nextDisplayTag(this)">
-	      <span class="tagColorBox tagColor1"></span> <span class="tagName1 tn"></span>
-	      </div>
-	    </li>
-	    <li>
-	      <div id="tagDisplay2" class="tagElem" onclick="nextDisplayTag(this)">
-	      <span class="tagColorBox tagColor2"></span> <span class="tagName2 tn"></span>
-	      </div>
-	    </li>
-	    <li>
-	      <div id="tagDisplay3" class="tagElem" onclick="nextDisplayTag(this)">
-	      <span class="tagColorBox tagColor3"></span> <span class="tagName3 tn"></span>
-	      </div>
-	    </li>
-	    <li>
-	      <div id="tagDisplay4" class="tagElem" onclick="nextDisplayTag(this)">
-	      <span class="tagColorBox tagColor4"></span> <span class="tagName4 tn"></span>
-	      </div>
-	    </li>
-	    <li>
-	      <div id="tagDisplay5" class="tagElem" onclick="nextDisplayTag(this)">
-	      <span class="tagColorBox tagColor5"></span> <span class="tagName5 tn"></span>
-	      </div>
-	    </li>
-	    <li>
-	      <div id="tagDisplay6" class="tagElem" onclick="nextDisplayTag(this)">
-	      <span class="tagColorBox tagColor6"></span> <span class="tagName6 tn"></span>
-	      </div>
-	    </li>
-	    <li>
-	      <div id="tagDisplay7" class="tagElem" onclick="nextDisplayTag(this)">
-	      <span class="tagColorBox tagColor7"></span> <span class="tagName7 tn"></span>
-	      </div>
-	    </li>
-	    <li>
-	      <div id="tagDisplay8" class="tagElem" onclick="nextDisplayTag(this)">
-	      <span class="tagColorBox tagColor8"></span> <span class="tagName8 tn"></span>
-	      </div>
-	    </li>
-	    
-	  </ul>
-
-	</div>
-	
-      </div>
-      
-
-      <div class="menu" onmouseover="showSelector('clusterSelector');" > cluster
-    <div id="clusterSelector" class="selector">
-      <a class="buttonSelector" onclick="m.resetClones();">reset</a>
-      <a class="buttonSelector" onclick="m.clusterBy('_clonotype');">clonotype</a>
-      <a class="buttonSelector" onclick="m.clusterBy('V');">V gene + allele</a>
-      <a class="buttonSelector" onclick="m.clusterBy('J');">J gene + allele</a>
-      <a class="buttonSelector" onclick="m.clusterBy('_target');">target</a>
-      <a class="buttonSelector" onclick="m.clusterBy('_target.V-GENE');">target V</a>
-      <a class="buttonSelector" onclick="m.clusterBy('_target.J-GENE');">target J</a>
+            <div class="menu" onmouseover="showSelector('colorSelector');" > color 
+                <div id="colorSelector" class="selector">
+                    <a class="buttonSelector" onclick="m.changeColorMethod('V');">by V</a>
+                    <a class="buttonSelector" onclick="m.changeColorMethod('J');">by J</a>
+                    <a class="buttonSelector" onclick="m.changeColorMethod('N2');">by N length</a>
+                    <!-- <a class="buttonSelector" onclick="m.changeColorMethod('N');">by N length + VJ deletions</a> -->
+                    <a class="buttonSelector" onclick="m.changeColorMethod('Tag');">by tag</a>
+                    <a class="buttonSelector" onclick="m.changeColorMethod('abundance');">by abundance at selected timepoint</a>
+                </div>
+            </div>
 
 
-    </div>
-      </div>
+            <div id="norm" class="menu" onmouseover="showSelector('displaySelector');"> display
+                <div id="displaySelector" class="selector">
 
+                    <ul>
+                        <li>
+                            <div>
+                                </br>
+                                <!-- <input id="rangeValue" type="text" size="3" value="10" readonly="true">-->
+                                <input id="top_slider" type="range" min="5" max="100" step="5" value="10" 
+                                onchange="m.displayTop(this.value)" />
+                            </div>
+                        </li>
+                        <li>
+                            <div id="tagDisplay0" class="tagElem" onclick="nextDisplayTag(this)">
+                                <span class="tagColorBox tagColor0"></span> <span class="tagName0 tn"></span>
+                            </div>
+                        </li>
+                        <li>
+                            <div id="tagDisplay1" class="tagElem" onclick="nextDisplayTag(this)">
+                                <span class="tagColorBox tagColor1"></span> <span class="tagName1 tn"></span>
+                            </div>
+                        </li>
+                        <li>
+                            <div id="tagDisplay2" class="tagElem" onclick="nextDisplayTag(this)">
+                                <span class="tagColorBox tagColor2"></span> <span class="tagName2 tn"></span>
+                            </div>
+                        </li>
+                        <li>
+                            <div id="tagDisplay3" class="tagElem" onclick="nextDisplayTag(this)">
+                                <span class="tagColorBox tagColor3"></span> <span class="tagName3 tn"></span>
+                            </div>
+                        </li>
+                        <li>
+                            <div id="tagDisplay4" class="tagElem" onclick="nextDisplayTag(this)">
+                                <span class="tagColorBox tagColor4"></span> <span class="tagName4 tn"></span>
+                            </div>
+                        </li>
+                        <li>
+                            <div id="tagDisplay5" class="tagElem" onclick="nextDisplayTag(this)">
+                                <span class="tagColorBox tagColor5"></span> <span class="tagName5 tn"></span>
+                            </div>
+                        </li>
+                        <li>
+                            <div id="tagDisplay6" class="tagElem" onclick="nextDisplayTag(this)">
+                                <span class="tagColorBox tagColor6"></span> <span class="tagName6 tn"></span>
+                            </div>
+                        </li>
+                        <li>
+                            <div id="tagDisplay7" class="tagElem" onclick="nextDisplayTag(this)">
+                                <span class="tagColorBox tagColor7"></span> <span class="tagName7 tn"></span>
+                            </div>
+                        </li>
+                        <li>
+                            <div id="tagDisplay8" class="tagElem" onclick="nextDisplayTag(this)">
+                                <span class="tagColorBox tagColor8"></span> <span class="tagName8 tn"></span>
+                            </div>
+                        </li>
+                    </ul>
 
-      <div id="logo" style="float: right;" onclick="popupMsg(msg.welcome)">Vidjil <span class='logo'>(beta)</span></div>
-     
-      <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
-        <div id="paletteSelector" class="selector">
-	  <a class="buttonSelector" onclick="changeStyle(solarizeD)">dark</a>
-	  <a class="buttonSelector" onclick="changeStyle(solarizeL)">light</a>
-	</div>
-      </div>
+                </div>
 
-      <div id="fps" style="float: right;"> </div>
-      
-      <span></span>
-    </div>
+            </div>
 
-    <div id="mid-container" onmouseover="hideSelector()">
-      <!-- LEFT-CONTAINER -->
-      <span id="left-container">
-      
-      <div id="left">
+            <div class="menu" onmouseover="showSelector('clusterSelector');" > cluster
+                <div id="clusterSelector" class="selector">
+                    <a class="buttonSelector" onclick="m.resetClones();">reset</a>
+                    <a class="buttonSelector" onclick="m.clusterBy('_clonotype');">clonotype</a>
+                    <a class="buttonSelector" onclick="m.clusterBy('V');">V gene + allele</a>
+                    <a class="buttonSelector" onclick="m.clusterBy('J');">J gene + allele</a>
+                    <a class="buttonSelector" onclick="m.clusterBy('_target');">target</a>
+                    <a class="buttonSelector" onclick="m.clusterBy('_target.V-GENE');">target V</a>
+                    <a class="buttonSelector" onclick="m.clusterBy('_target.J-GENE');">target J</a>
+                </div>
+            </div>
 
-	<div id="info">
-	
-	  <div id=info_data_file> &nbsp;</div>
+            <div id="logo" style="float: right;" onclick="popupMsg(msg.welcome)">Vidjil <span class='logo'>(beta)</span></div>
 
-	  <div id=info_analysis_file> &nbsp; </div>
-	    
-	  <div id="info_system"> &nbsp; </div>
-	  
-	  <div id="info_color_Tag" class="info_color" style="">tag colors
-	    <span id="fastTag0" class="tagColorBox tagColor0" onclick="nextDisplayTag(this)"></span>
-	    <span id="fastTag1" class="tagColorBox tagColor1" onclick="nextDisplayTag(this)"></span>
-	    <span id="fastTag2" class="tagColorBox tagColor2" onclick="nextDisplayTag(this)"></span>
-	    <span id="fastTag3" class="tagColorBox tagColor3" onclick="nextDisplayTag(this)"></span>
-	    <span id="fastTag4" class="tagColorBox tagColor4" onclick="nextDisplayTag(this)"></span>
-	    <span id="fastTag5" class="tagColorBox tagColor5" onclick="nextDisplayTag(this)"></span>
-	    <span id="fastTag6" class="tagColorBox tagColor6" onclick="nextDisplayTag(this)"></span>
-	    <span id="fastTag7" class="tagColorBox tagColor7" onclick="nextDisplayTag(this)"></span>
-	    <span id="fastTag8" class="tagColorBox tagColor8" onclick="nextDisplayTag(this)"></span>
-	  </div>
-	  
-	  <div id="info_color_N" class="info_color" style="display:none">N colors :
-	    <span> N=0 </span>
-	    <span class="gradient"></span>
-	    <span id="info_n_max"> N=max</span>
-	  </div>
-	  
-	  <div id="info_color_N2" class="info_color" style="display:none">N colors :
-	    <span> N=0 </span>
-	    <span class="gradient"></span>
-	    <span id="info_n2_max"> N=max</span>
-	  </div>
-	  
-	  <div id="info_color_abundance" class="info_color" style="display:none" >abundance colors :
-	    <span> 0% </span>
-	    <span class="gradient"></span>
-	    <span id="info_size_max"> 100%</span>
-	  </div>
-	  
-	</div>
-	<!--
-	<div id="display-bar">
-	  <a class="smallbutton" onclick="m.decDisplayTop();"><</a>
-	  top <span id=top_display></span>
-	  <a class="smallbutton" onclick="m.incDisplayTop();">></a>
-	  
-	  <span id="fastTag0" class="tagColorBox tagColor0" onclick="nextDisplayTag(this)"></span>
-	  <span id="fastTag1" class="tagColorBox tagColor1" onclick="nextDisplayTag(this)"></span>
-	  <span id="fastTag2" class="tagColorBox tagColor2" onclick="nextDisplayTag(this)"></span>
-	  <span id="fastTag3" class="tagColorBox tagColor3" onclick="nextDisplayTag(this)"></span>
-	  <span id="fastTag4" class="tagColorBox tagColor4" onclick="nextDisplayTag(this)"></span>
-	  <span id="fastTag5" class="tagColorBox tagColor5" onclick="nextDisplayTag(this)"></span>
-	  <span id="fastTag6" class="tagColorBox tagColor6" onclick="nextDisplayTag(this)"></span>
-	  <span id="fastTag7" class="tagColorBox tagColor7" onclick="nextDisplayTag(this)"></span>
-	  <span id="fastTag8" class="tagColorBox tagColor8" onclick="nextDisplayTag(this)"></span>
-	  <a class="button" onclick="showDisplayMenu();">>></a>
-	</div>
-	-->
+            <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
+                <div id="paletteSelector" class="selector">
+                    <a class="buttonSelector" onclick="changeStyle(solarizeD)">dark</a>
+                    <a class="buttonSelector" onclick="changeStyle(solarizeL)">light</a>
+                </div>
+            </div>
 
-	<div id="color-info" class="gradient_abundance">
-	</div>
-	
-	<div id="sort-bar">
+            <div id="fps" style="float: right;"> </div>
 
-	  sort list by 
-	  <a class="button" onclick="list.sortListByV();">V</a>
-	  <a class="button" onclick="list.sortListByJ();">J</a>
-	  <a class="button" onclick="list.sortListByTop();">top</a>
-	  <a class="button" onclick="list.sortListBySize();">abundance</a>
-	</div>
-	
-	  <div id="listClones"></div>
-	
-	  <div id="listSelect"></div>
+        </div>  
+        <!-- fin  div id="top-container"-->
+        
 
-      </div>
-	
-      </span>
-      
-      
-      <div id="visu-container">
-	<!-- VISU -->
-	<div id="visu2">
+        <!-- MID-CONTAINER -->
+        <div id="mid-container" onmouseover="hideSelector()">
+        <!-- LEFT-CONTAINER -->
+            <span id="left-container">
 
-	</div>
-    <div id="visu-separator" >...</div>
-<!--
-	<div id="switch"> 
-	  
-	    <div style="float:left; background:#333044; width:22px; height:22px; margin:5px; " onclick="switchVisu(30,70);"> 
-	      <div style="background:white; width:100%; height:25%;"></div> 
-	    </div>
-	  
-	    <div style="float:left; background:#333044; width:22px; height:22px; margin:5px; " onclick="switchVisu(50,50);"> 
-	      <div style="background:white; width:100%; height:50%;"></div>
-	    </div>
-	    
-	    <div style="float:left; background:#333044; width:22px; height:22px; margin:5px; " onclick="switchVisu(70,30);"> 
-	      <div style="background:white; width:100%; height:75%;"></div>
-	    </div>
-	    
-	    <div style="float:left; background:#333044; width:22px; height:22px; margin:5px; " onclick="switchVisu(100,0);"> 
-	      <div style="background:white; width:100%; height:100%;"></div>
-	    </div>
-    </div>
--->
+            <div id="left">
 
-	<div id="visu" onclick="">
+                <div id="info">
 
-    </div>
-	
-    <!-- BOT-CONTAINER -->
-	<!--  
-    <div id="bot-container">
-      <div id="focus-sequence"> > </div>
+                    <div id=info_data_file> &nbsp;</div>
 
-      <div id="align" style="display:none">
-	<ul id="listSeq"></ul>
-      </div>
-    </div>
-	-->
-    
-    <div id="log" style="display:none; position: fixed; top: 50px;right: 10px;width: 500px; font-family : monaco,terminal,courier,system; height: 150px;overflow-y: scroll;font-size: 14px;background-color: #333044;opacity: 0.5;padding: 10px;">log </div>
-    
-    <div id="tagSelector">
-    <span class="closeButton" onclick="$('#tagSelector').hide('fast')">X</span>
-    
-      <div>tag for <span id=tag_name></span><span id=tag_id></span></div>
-      <ul>
-	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 0), $('#tagSelector').hide('fast')">
-	  <div class="tagElem" ><span class="tagColorBox tagColor0"></span> <span class="tagName0 tn" id="tag0"></span></div>
-	</li>
-	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 1), $('#tagSelector').hide('fast')">
-	  <div class="tagElem" ><span class="tagColorBox tagColor1"></span> <span class="tagName1 tn" id="tag1"></span></div>
-	</li>
-	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 2), $('#tagSelector').hide('fast')">
-	  <div class="tagElem" ><span class="tagColorBox tagColor2"></span> <span class="tagName2 tn" id="tag2"></span></div>
-	</li>
-	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 3), $('#tagSelector').hide('fast')">
-	  <div class="tagElem" ><span class="tagColorBox tagColor3"></span> <span class="tagName3 tn" id="tag3"></span></div>
-	</li>
-	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 4), $('#tagSelector').hide('fast')">
-	  <div class="tagElem" ><span class="tagColorBox tagColor4"></span> <span class="tagName4 tn" id="tag4"></span></div>
-	</li>
-	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 5), $('#tagSelector').hide('fast')">
-	  <div class="tagElem" ><span class="tagColorBox tagColor5"></span> <span class="tagName5 tn" id="tag5"></span></div>
-	</li>
-	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 6), $('#tagSelector').hide('fast')">
-	  <div class="tagElem" ><span class="tagColorBox tagColor6"></span> <span class="tagName6 tn" id="tag6"></span></div>
-	</li>
-	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 7), $('#tagSelector').hide('fast')">
-	  <div class="tagElem" ><span class="tagColorBox tagColor7"></span> <span class="tagName7 tn" id="tag7"></span></div>
-	</li>
-	<li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML), 8 ), $('#tagSelector').hide('fast')">
-	  <div class="tagElem" ><span class="tagColorBox "></span> <span class="tagName8 tn" id="tag8"></span></div>
-	</li>
-	
-      </ul>
-    </div>
-    <!--
-    <div id="display-menu">
-      <span class="closeButton" onclick="showDisplayMenu();">X</span>
-       <h2>Display menu</h2>
-    
-      <ul>
-      
-      
-	<li>
-	  <div> top <input id="rangeValue" type="text" size="3" value="10"
-	  readonly="true">
-	  <input id="top_slider" type="range" min="5" max="100" step="5" value="10" 
-	  onchange="m.displayTop(this.value)" />
-	  </div>
-	</li>
-	<li>
-	<span class="tn"></span>
-	<span class="tagD">hide</span>
-	<span class="tagD">show</span>
-	</li>
-	<li>
-	  <div id="tagDisplay0" class="tagElem"><span class="tagColorBox tagColor0"></span> <span class="tagName0 tn"></span>
-	  <input class="tagD" type="radio" name="radio0" value=0 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio0" value=1 onclick="changeDisplayTag(this)">
-	  </div>
-	</li>
-	<li>
-	  <div id="tagDisplay1" class="tagElem"><span class="tagColorBox tagColor1"></span> <span class="tagName1 tn"></span>
-	  <input class="tagD" type="radio" name="radio1" value=0 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio1" value=1 onclick="changeDisplayTag(this)">
-	  </div>
-	</li>
-	<li>
-	  <div id="tagDisplay2" class="tagElem"><span class="tagColorBox tagColor2"></span> <span class="tagName2 tn"></span>
-	  <input class="tagD" type="radio" name="radio2" value=0 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio2" value=1 onclick="changeDisplayTag(this)">
-	  </div>
-	</li>
-	<li>
-	  <div id="tagDisplay3" class="tagElem"><span class="tagColorBox tagColor3"></span> <span class="tagName3 tn"></span>
-	  <input class="tagD" type="radio" name="radio3" value=0 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio3" value=1 onclick="changeDisplayTag(this)">
-	  </div>
-	</li>
-	<li>
-	  <div id="tagDisplay4" class="tagElem"><span class="tagColorBox tagColor4"></span> <span class="tagName4 tn"></span>
-	  <input class="tagD" type="radio" name="radio4" value=0 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio4" value=1 onclick="changeDisplayTag(this)">
-	  </div>
-	</li>
-	<li>
-	  <div id="tagDisplay5" class="tagElem"><span class="tagColorBox tagColor5"></span> <span class="tagName5 tn"></span>
-	  <input class="tagD" type="radio" name="radio5" value=0 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio5" value=1 onclick="changeDisplayTag(this)">
-	  </div>
-	</li>
-	<li>
-	  <div id="tagDisplay6" class="tagElem"><span class="tagColorBox tagColor6"></span> <span class="tagName6 tn"></span>
-	  <input class="tagD" type="radio" name="radio6" value=0 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio6" value=1 onclick="changeDisplayTag(this)">
-	  </div>
-	</li>
-	<li>
-	  <div id="tagDisplay7" class="tagElem"><span class="tagColorBox tagColor7"></span> <span class="tagName7 tn"></span>
-	  <input class="tagD" type="radio" name="radio7" value=0 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio7" value=1 onclick="changeDisplayTag(this)">
-	  </div>
-	</li>
-	<li>
-	  <div id="tagDisplay8" class="tagElem"><span class="tagColorBox tagColor8"></span> <span class="tagName8 tn"></span>
-	  <input class="tagD" type="radio" name="radio8" value=0 onclick="changeDisplayTag(this)">
-	  <input class="tagD" type="radio" name="radio8" value=1 onclick="changeDisplayTag(this)">
-	  </div>
-	</li>
-	
-      </ul>
-    </div>
-    -->
-    
-    <div id="bot-container">
-    
-      <div class="separator">
-	<span class="button" onclick="m.merge()">merge</span>
-	<span class="button" onclick="segment.align()">align</span>
-	<span class="button" onclick="segment.sendTo('IMGT')">❯ to IMGT/V-QUEST</span>
-	<span class="button" onclick="segment.sendTo('igBlast')">❯ to IgBlast</span>
-    <span id="toClipBoard" class="button">❯ to clipBoard</span>
+                    <div id=info_analysis_file> &nbsp; </div>
 
-      </div>
-    
-      <ul id="listSeq">
-      </ul>
-    </div>
-    
-    <div id="frame-container"></div>
-    
-    <div id="popup-container">
-    <span class="closeButton" onclick="closePopupMsg()">X</span>
-      <div id="popup-msg">
-      </div>
-    </div>
+                    <div id="info_system"> &nbsp; </div>
 
-    <div id="clipBoard">
-    </div>
+                    <div id="info_color_Tag" class="info_color" style="">tag colors
+                        <span id="fastTag0" class="tagColorBox tagColor0" onclick="nextDisplayTag(this)"></span>
+                        <span id="fastTag1" class="tagColorBox tagColor1" onclick="nextDisplayTag(this)"></span>
+                        <span id="fastTag2" class="tagColorBox tagColor2" onclick="nextDisplayTag(this)"></span>
+                        <span id="fastTag3" class="tagColorBox tagColor3" onclick="nextDisplayTag(this)"></span>
+                        <span id="fastTag4" class="tagColorBox tagColor4" onclick="nextDisplayTag(this)"></span>
+                        <span id="fastTag5" class="tagColorBox tagColor5" onclick="nextDisplayTag(this)"></span>
+                        <span id="fastTag6" class="tagColorBox tagColor6" onclick="nextDisplayTag(this)"></span>
+                        <span id="fastTag7" class="tagColorBox tagColor7" onclick="nextDisplayTag(this)"></span>
+                        <span id="fastTag8" class="tagColorBox tagColor8" onclick="nextDisplayTag(this)"></span>
+                    </div>
 
-    <div id="data-container">
-    <span class="closeButton" onclick="closeDataBox()">X</span>
-      <div id="data-msg">
-      </div>
-    </div>
-    
-    <form id="form">
-    </form>
+                    <div id="info_color_N" class="info_color" style="display:none">N colors :
+                        <span> N=0 </span>
+                        <span class="gradient"></span>
+                        <span id="info_n_max"> N=max</span>
+                    </div>
 
-  </body>
-            <script type="text/javascript" src="js/main.js"> </script>
+                    <div id="info_color_N2" class="info_color" style="display:none">N colors :
+                        <span> N=0 </span>
+                        <span class="gradient"></span>
+                        <span id="info_n2_max"> N=max</span>
+                    </div>
+
+                    <div id="info_color_abundance" class="info_color" style="display:none" >
+                        abundance colors :
+                        <span> 0% </span>
+                        <span class="gradient"></span>
+                        <span id="info_size_max"> 100%</span>
+                    </div>
+
+                </div>
+
+                <div id="color-info" class="gradient_abundance"></div>
+
+                <div id="sort-bar">
+                    sort list by 
+                    <a class="button" onclick="list.sortListByV();">V</a>
+                    <a class="button" onclick="list.sortListByJ();">J</a>
+                    <a class="button" onclick="list.sortListByTop();">top</a>
+                    <a class="button" onclick="list.sortListBySize();">abundance</a>
+                </div>
+
+                <div id="listClones"></div>
+
+                <div id="listSelect"></div>
+
+            </div>
+
+            </span>
+        <!-- fin left-container -->
+
+        <!-- VISU-CONTAINER / RIGHT-CONTAINER -->
+            <div id="visu-container">
+            <!-- VISU -->
+            <div id="visu2"></div>
+            <div id="visu-separator" >...</div>
+            <div id="visu" onclick=""></div>
+            </div>
+
+        </div>
+        <!-- fin mid-container -->
+
+        <!-- BOT-CONTAINER / SEGMENTER-CONTAINER -->
+        <div id="bot-container">
+            <div class="separator">
+                <span class="button" onclick="m.merge()">merge</span>
+                <span class="button" onclick="segment.align()">align</span>
+                <span class="button" onclick="segment.sendTo('IMGT')">❯ to IMGT/V-QUEST</span>
+                <span class="button" onclick="segment.sendTo('igBlast')">❯ to IgBlast</span>
+                <span id="toClipBoard" class="button">❯ to clipBoard</span>
+            </div>
+
+            <ul id="listSeq"></ul>
+        </div>
+        <!-- fin bot-container -->
+
+        <div id="tagSelector">
+            <span class="closeButton" onclick="$('#tagSelector').hide('fast')">X</span>
+
+            <div>   tag for <span id=tag_name></span><span id=tag_id></span></div>
+            
+            <ul>
+                <li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 0), $('#tagSelector').hide('fast')">
+                    <div class="tagElem" ><span class="tagColorBox tagColor0"></span> <span class="tagName0 tn" id="tag0"></span></div>
+                </li>
+                <li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 1), $('#tagSelector').hide('fast')">
+                    <div class="tagElem" ><span class="tagColorBox tagColor1"></span> <span class="tagName1 tn" id="tag1"></span></div>
+                </li>
+                <li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 2), $('#tagSelector').hide('fast')">
+                    <div class="tagElem" ><span class="tagColorBox tagColor2"></span> <span class="tagName2 tn" id="tag2"></span></div>
+                </li>
+                <li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 3), $('#tagSelector').hide('fast')">
+                    <div class="tagElem" ><span class="tagColorBox tagColor3"></span> <span class="tagName3 tn" id="tag3"></span></div>
+                </li>
+                <li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 4), $('#tagSelector').hide('fast')">
+                    <div class="tagElem" ><span class="tagColorBox tagColor4"></span> <span class="tagName4 tn" id="tag4"></span></div>
+                </li>
+                <li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 5), $('#tagSelector').hide('fast')">
+                    <div class="tagElem" ><span class="tagColorBox tagColor5"></span> <span class="tagName5 tn" id="tag5"></span></div>
+                </li>
+                <li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 6), $('#tagSelector').hide('fast')">
+                    <div class="tagElem" ><span class="tagColorBox tagColor6"></span> <span class="tagName6 tn" id="tag6"></span></div>
+                </li>
+                <li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML) , 7), $('#tagSelector').hide('fast')">
+                    <div class="tagElem" ><span class="tagColorBox tagColor7"></span> <span class="tagName7 tn" id="tag7"></span></div>
+                </li>
+                <li onClick="m.changeTag(parseInt(document.getElementById('tag_id').innerHTML), 8 ), $('#tagSelector').hide('fast')">
+                    <div class="tagElem" ><span class="tagColorBox "></span> <span class="tagName8 tn" id="tag8"></span></div>
+                </li>
+            </ul>
+        </div>
+
+        <div id="frame-container"></div>
+
+        <div id="popup-container">
+            <span class="closeButton" onclick="closePopupMsg()">X</span>
+            <div id="popup-msg"></div>
+        </div>
+
+        <div id="data-container">
+            <span class="closeButton" onclick="closeDataBox()">X</span>
+            <div id="data-msg"></div>
+        </div>
+
+        <form id="form"></form>
+
+    </body>
+
+    <script type="text/javascript" src="js/main.js"> </script>
+
 </html>
 
   
