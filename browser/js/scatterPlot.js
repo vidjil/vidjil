@@ -456,14 +456,12 @@ ScatterPlot.prototype = {
             this.gridModel["allele_v"].push(this.makeLineModel("subline",pos,"*"+elem[1],color));
 
             this.positionGene[vKey[i]]=pos2
-            this.gridModel["gene_v"].push(this.makeLineModel("subline",pos2,"",color));
             
             if (this.m.usedV[elem[0]]){
                 pos = stepV2*(this.m.usedV[elem[0]]-1) +
                 (this.m.germline.v[vKey[i]].allele+0.5) * (stepV2/(this.m.germline.vgene[elem[0]].n ));
                 pos2 = stepV2*(this.m.usedV[elem[0]]-0.5)
                 this.gridModel["allele_v_used"].push(this.makeLineModel("subline",pos,"*"+elem[1],color));
-                this.gridModel["gene_v_used"].push(this.makeLineModel("subline",pos2,"",color));
             }
             
             this.positionUsedAllele[vKey[i]] = pos
@@ -483,11 +481,6 @@ ScatterPlot.prototype = {
                 pos = stepV2*(this.m.usedV[vKey2[i]]-0.5)
                 this.gridModel["allele_v_used"].push(this.makeLineModel("line",pos,vKey2[i].replace(this.m.system, ""),color));
                 this.gridModel["gene_v_used"].push(this.makeLineModel("line",pos,vKey2[i].replace(this.m.system, ""),color));
-            }
-            else{ 
-                pos = 0
-                this.gridModel["allele_v_used"].push(this.makeLineModel("",pos,"",color));
-                this.gridModel["gene_v_used"].push(this.makeLineModel("",pos,"",color));
             }
             
         }
@@ -517,7 +510,6 @@ ScatterPlot.prototype = {
             var pos2 = (this.m.germline.j[jKey[i]].gene+0.5)*stepJ;
 
             this.gridModel["allele_j"].push(this.makeLineModel("subline", pos, "*"+elem[1], color));
-            this.gridModel["gene_j"].push(this.makeLineModel("subline", pos, " ", color));
             
             this.positionAllele[jKey[i]]=pos;
             this.positionGene[jKey[i]]=pos2;
@@ -828,7 +820,7 @@ ScatterPlot.prototype = {
 
 
 /* update les données liées au clones
- * (ne relance pas l'animation)
+ * 
  * */
     updateElem : function(list){
         if (this.splitY=="bar"){
@@ -971,9 +963,9 @@ ScatterPlot.prototype = {
             .text( function (d) { return d.text; })
             .attr("class", "sp_legend")
             .attr("transform", function (d) {
-                var y=self.text_position_y
-                if ( d.type=="subline" ) y=self.sub_text_position_y
-                return "rotate("+self.rotation_y+" "+(self.resizeW*d.pos+self.marge_top)+" "+y+")" 
+                var x=self.text_position_y
+                if ( d.type=="subline" ) x=self.sub_text_position_y
+                return "rotate("+self.rotation_y+" "+x+" "+(self.resizeH*d.pos+self.marge_top)+")" 
             })
             .style("fill", function (d) { 
                 if (self.m.colorMethod=="V" && (self.splitY=="gene_v" || self.splitY=="gene_v_used") && ( typeof(d.geneColor)!="undefined" )) return d.geneColor ; 
