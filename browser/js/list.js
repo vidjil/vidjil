@@ -95,7 +95,7 @@ List.prototype = {
     div_elem.className="listElem";
     div_elem.style.display="block";
     
-    var span0 = document.createElement('span');
+    var span0 = document.createElement('div');
     span0.className = "nameBox2";
     span0.ondblclick = function(){ self.editName(cloneID, this); }
     span0.onclick = function(){ self.m.select(cloneID); }
