@@ -103,6 +103,13 @@
         <!-- TOP-CONTAINER -->
         <div id="top-container">
 
+            <div class="menu" onmouseover="showSelector('adminSelector');" style="display:none"> admin 
+                <div id="adminSelector" class="selector">
+                    <a id="test_load_data" class="buttonSelector" onclick="m.parseJsonData(dataTest, 100).loadGermline().initClones()">
+                    test load data</a>
+                </div>
+            </div>
+
             <div class="menu" onmouseover="showSelector('loadSelector');"> file 
                 <div id="loadSelector" class="selector">
                     <!-- <a class="buttonSelector" onclick="javascript:loadData()">load data/analysis</a> -->
@@ -298,6 +305,7 @@
 
     </body>
 
+    <script type="text/javascript" src='test/dataTest.js'></script>
     <script type="text/javascript" src="js/main.js"> </script>
 </html>
 
