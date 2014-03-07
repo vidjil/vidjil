@@ -379,7 +379,7 @@ ScatterPlot.prototype = {
  * 
  * */
     resize :function(){
-        this.resizeW = document.getElementById(this.id).offsetWidth-this.marge_left;
+        this.resizeW = document.getElementById(this.id).parentNode.offsetWidth-this.marge_left;
         this.resizeH = document.getElementById(this.id).offsetHeight-this.marge_top;
         if (this.resizeW<0.1) this.resizeW=0.1;
         if (this.resizeH<0.1) this.resizeH=0.1;
@@ -388,10 +388,10 @@ ScatterPlot.prototype = {
         if (this.resizeCoef<0.1) this.resizeCoef=0.1;
         
         this.vis = d3.select("#"+this.id+"_svg")
-        .attr("width", document.getElementById(this.id).offsetWidth)	
+        .attr("width", document.getElementById(this.id).parentNode.offsetWidth)	
         .attr("height", document.getElementById(this.id).offsetHeight)
         d3.select("#"+this.id+"_back")
-        .attr("width", document.getElementById(this.id).offsetWidth)
+        .attr("width", document.getElementById(this.id).parentNode.offsetWidth)
         .attr("height", document.getElementById(this.id).offsetHeight);
         
         this.initGrid();

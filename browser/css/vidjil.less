@@ -39,6 +39,8 @@ ul{
   -ms-user-select: none;
   user-select: none;
   height :100%;
+  margin : auto;
+  overflow : hidden;
 }
 
 #top-container {
@@ -62,19 +64,21 @@ ul{
   user-select: none;
 }
 
-#switch{
-  float: right;
-  position: relative;
-  top: -50px;
-  height:0px;
+#right-container{
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+  float : right;
+  width : 0px;
 }
 
 #left-container {
   height:100%;
   width : @width_left_container;
-  height : 100%;
-  overflow-y : none;
   float : left;
+  overflow-y : none;
   -khtml-user-select: auto;
   -webkit-user-select: auto;
   -moz-user-select: auto;
@@ -85,9 +89,7 @@ ul{
 #visu, #visu2 {
   display : inline-block;
   height : 50%;
-  width: -moz-calc(~"100% - " ( @width_left_container ) );
-  width: -webkit-calc(~"100% - " ( @width_left_container ) );
-  width: calc(~"100% - " ( @width_left_container ) );
+  width : 100%;
   overflow:hidden;
 }
 
@@ -733,7 +735,7 @@ span .substitution{
 }
 
 .axis_select select {
-    background: @background;
+    background: @highlight;
     color: @default;
     border: 0;
     height: 16px;
