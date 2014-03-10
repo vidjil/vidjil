@@ -9,6 +9,7 @@ Builder.prototype = {
 
     init: function () {
         var self = this;
+        this.width_left_container = $("#left-container").css("width")
 
         d3.select("#visu-separator").on("mousedown", function () {
             self.dragSeparator()
@@ -19,7 +20,10 @@ Builder.prototype = {
         d3.select("#visu-container").on("mousemove", function () {
             self.updateSeparator()
         })
-
+        $("#toggle-left-container").click(function() {
+            self.toggle_left_container()
+        });
+        
         this.build_tagSelector()
         this.build_displaySelector()
     },
@@ -152,5 +156,23 @@ Builder.prototype = {
         
         initTag();
     },
+    
+    toggle_left_container : function () {
+        var self = this
+        
+        if ($("#left-container").css("width") == "0px" ){
+            $("#left-container").css("display", "")
+                .animate({width: self.width_left_container}, 400 , function(){
+                $("#toggle-left-container").html("< < <")
+                self.m.resize();
+            })
+        }else{
+            $("#left-container").animate({width: "0px"}, 400 , function(){
+                $(this).css("display", "none")
+                $("#toggle-left-container").html("> > >")
+                self.m.resize();
+            })
+        }
+    }
 
 }
