@@ -185,7 +185,7 @@ PDF.prototype = {
         if (this.m.reads_total) this.checkPage(30)
 
         //time point
-        this.row( 'time' , this.m.time , 'raw')
+        this.row( 'point' , this.m.time , 'raw')
         this.next_row()
 
         //info global
