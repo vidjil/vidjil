@@ -24,7 +24,7 @@ function PDF(model, graph_id) {
     this.page_width = 210
     this.page_height = 297
     
-    this.col_width = 25
+    this.col_width = 18
     this.first_col_width = 30
     this.height_row = 6
     this.height_sub_row = 4
@@ -38,8 +38,7 @@ function PDF(model, graph_id) {
     this.header()
     this.graph()
     this.info()
-    this.info_clone(0)
-    this.sequences()
+    this.info_selected_clones()
 
     this.doc.output('dataurlnewwindow');
 }
@@ -76,7 +75,7 @@ PDF.prototype = {
         this.doc.text(this.marge + 5, this.y + 5, document.getElementById("upload_json")
             .files[0].name);
         this.doc.text(this.marge + 5, this.y + 10, 'run: 2013-10-03');
-        this.doc.text(this.marge + 5, this.y + 15, 'analysis: ' + m.timestamp.split(' ')[0]);
+        this.doc.text(this.marge + 5, this.y + 15, 'analysis: ' + m.timestamp[0].split(' ')[0]);
         this.doc.text(this.marge + 5, this.y + 20, 'germline: ' + m.system);
 
         this.doc.rect(this.marge, this.y, 60, 23);
@@ -98,92 +97,6 @@ PDF.prototype = {
      */
     out: function () {
         this.doc.output('dataurlnewwindow');
-    },
-
-    /* print sequences of selected clones
-     */
-    sequences: function () {
-
-        for (var i = 0; i < this.list.length; i++) {
-
-            this.checkPage(30)
-
-            var id = this.list[i];
-            var color = tagColor[m.windows[id].tag]
-
-            this.doc.setFontSize(12);
-
-            //icone
-            var polyline = document.getElementById("polyline" + id)
-                .cloneNode(true);
-            polyline.setAttribute("style", "stroke-width:40px");
-            polyline.setAttribute("stroke", color);
-
-            var res = document.getElementById("resolution1")
-                .cloneNode(true);
-            res.firstChild.setAttribute("fill", "white");
-
-            var icon = document.createElement("svg");
-            icon.appendChild(polyline)
-            icon.appendChild(res)
-
-            var opt_icon = {};
-            opt_icon.scaleX = 18 / document.getElementById(this.graph_id)
-                .getAttribute("width");
-            opt_icon.scaleY = 8 / document.getElementById(this.graph_id)
-                .getAttribute("height");
-            opt_icon.x_offset = this.marge;
-            opt_icon.y_offset = this.y - 2;
-
-            svgElementToPdf(icon, this.doc, opt_icon)
-            this.doc.setDrawColor(150, 150, 150);
-            this.doc.rect(this.marge, this.y - 2, 18, 8);
-
-            //clone name
-            this.doc.setFont('courier', 'bold');
-            this.doc.setTextColor(color);
-            this.doc.text(this.marge + 20, this.y, this.m.getName(id));
-
-            this.doc.setFont('courier', 'normal');
-            this.doc.setTextColor(0, 0, 0);
-
-            //clone size
-            /*
-            var r=0;
-            for(var j=0 ;j<m.clones[id].cluster.length; j++){
-            r += m.windows[m.clones[id].cluster[j]].size;
-            }
-            
-            var s;
-            var size=m.getSize(id);
-            if (size<0.0001){
-            s=(size).toExponential(1); 
-            }else{
-            s=(100*size).toFixed(3)+"%";
-            }
-            
-            this.doc.text(this.marge+110, this.y, 'reads (point 0): '+r+' -- '+s);
-            */
-            this.y += 5;
-
-            //sequence
-            if (typeof (m.windows[id].sequence) != 'number') {
-
-                var seq = m.windows[id].sequence;
-                var seq = seq.insert(m.windows[id].Jstart, "     ");
-                var seq = seq.insert(m.windows[id].Vend + 1, "     ");
-
-                for (j = 0; j < (Math.floor(seq.length / 60) + 1); j++) {
-                    this.doc.text(this.marge + 20, this.y, seq.substring(j * 60, (j + 1) * 60));
-                    this.y += 5;
-                }
-
-            } else {
-                this.doc.text(this.marge + 20, this.y, "segment fail :" + m.windows[id].window);
-            }
-            this.y += 10;
-
-        }
     },
 
     /* print graph
@@ -253,7 +166,6 @@ PDF.prototype = {
 
         svgElementToPdf(elem, this.doc, opt)
 
-        this.doc.rect(this.marge, this.y, 180, 80);
         this.doc.setFillColor(255, 255, 255);
         this.doc.rect(0, this.y + 80, 210, 140, 'F');
         this.doc.setFillColor(0, 0, 0);
@@ -284,12 +196,11 @@ PDF.prototype = {
         if (this.m.reads_total){
             this.next_sub_row()
             
+            var data = []
             for (var i = 0; i < this.m.time.length; i++) {
-                var x = this.marge + this.first_col_width + (this.col_width * i)
-                var y = this.y
-                var r = (this.m.reads_segmented[i] / this.m.reads_total[i] ) * 100
-                this.doc.text(x, y, ' ' + r.toFixed(2) + ' %');
+                data[i] = this.m.reads_segmented[i] / this.m.reads_total[i]
             }
+            this.row( '', data, '%')
         }
         
         this.next_row()
@@ -311,9 +222,17 @@ PDF.prototype = {
     row : function (name, data, format) {
         this.doc.text(this.marge, this.y, name);
         
+        var light = true;
+        
         for (var i = 0; i < data.length; i++) {
             var x = this.marge + this.first_col_width + (this.col_width * i)
             var y = this.y
+            
+            if (light) this.doc.setFillColor(240, 240, 240);
+            else this.doc.setFillColor(255,255,255);
+            light = !light
+            
+            this.doc.rect(x, y-3.75, this.col_width, this.height_row, 'F');
             
             var r = data[i]
             if (format == "%") r = (r*100).toFixed(2) + ' %'
@@ -328,10 +247,12 @@ PDF.prototype = {
             
         var color = tagColor[m.windows[cloneID].tag]
 
+        this.icon(cloneID, this.marge, this.y-6)
+        
         //clone name
         this.doc.setFont('courier', 'bold');
         this.doc.setTextColor(color);
-        this.doc.text(this.marge, this.y, this.m.getName(cloneID));
+        this.doc.text(this.marge+20, this.y, this.m.getName(cloneID));
         this.doc.setFont('helvetica', 'normal');
         this.doc.setTextColor(0,0,0);
         
@@ -347,9 +268,107 @@ PDF.prototype = {
             data[i] = m.windows[cloneID].size[i] / m.reads_segmented[i]
         }
         this.row( '', data, '%')
-
         this.next_row()
+        
+        this.sequence(cloneID)
 
+    },
+    
+    sequence : function (cloneID) {
+        
+        this.doc.setFont('courier', 'normal');
+        this.doc.setTextColor(0, 0, 0)
+        
+        if (typeof (m.windows[cloneID].sequence) != 'number') {
+
+            var seq = m.windows[cloneID].sequence;
+            var seqV = seq.substring(0, this.m.windows[cloneID].Vend + 1 )
+            var seqN = seq.substring(this.m.windows[cloneID].Vend + 1 , this.m.windows[cloneID].Jstart )
+            var seqJ = seq.substring(this.m.windows[cloneID].Jstart )
+            
+            //V
+            var str;
+            for (j = 0; j < (Math.floor(seqV.length / 80) + 1); j++) {
+                str = seqV.substring(j * 80, (j + 1) * 80)
+                this.doc.text(this.marge , this.y, str);
+                this.y += 5;
+            }
+            
+            
+            //N
+            this.y -= 5
+            for (var j=0 ; j<str.length; j++){
+                seqN = ' ' + seqN
+            }
+            
+            this.doc.setFont('courier', 'bold');
+            this.doc.setTextColor(170,120,150)
+            
+            for (j = 0; j < (Math.floor(seqN.length / 80) + 1); j++) {
+                str = seqN.substring(j * 80, (j + 1) * 80)
+                this.doc.text(this.marge , this.y, str);
+                this.y += 5;
+            }
+            
+            
+            //J
+            this.y -= 5
+            for (var j=0 ; j<str.length; j++){
+                seqJ = ' ' + seqJ
+            }
+            
+            this.doc.setFont('courier', 'normal');
+            this.doc.setTextColor(0,0,0)
+            
+            for (j = 0; j < (Math.floor(seqJ.length / 80) + 1); j++) {
+                str = seqJ.substring(j * 80, (j + 1) * 80)
+                this.doc.text(this.marge , this.y, str);
+                this.y += 5;
+            }
+            
+        } else {
+            this.doc.text(this.marge + 20, this.y, "segment fail :" + m.windows[cloneID].window);
+        }
+        
+        this.y += 5;
+    },
+    
+    icon : function (cloneID, x, y) {
+        
+        var color = tagColor[m.windows[cloneID].tag]
+        
+        var polyline = document.getElementById("polyline" + cloneID)
+            .cloneNode(true);
+        polyline.setAttribute("style", "stroke-width:40px");
+        polyline.setAttribute("stroke", color);
+
+        var res = document.getElementById("resolution1")
+            .cloneNode(true);
+        res.firstChild.setAttribute("fill", "white");
+
+        var icon = document.createElement("svg");
+        icon.appendChild(polyline)
+        icon.appendChild(res)
+
+        var opt_icon = {};
+        opt_icon.scaleX = 18 / document.getElementById(this.graph_id)
+            .getAttribute("width");
+        opt_icon.scaleY = 8 / document.getElementById(this.graph_id)
+            .getAttribute("height");
+            
+        opt_icon.x_offset = x
+        opt_icon.y_offset = y;
+
+        svgElementToPdf(icon, this.doc, opt_icon)
+        this.doc.setDrawColor(150, 150, 150);
+        this.doc.rect(x, y , 18, 8);
+        this.doc.setDrawColor(0,0,0)
+    },
+    
+    info_selected_clones : function ( ) {
+        for (i=0; i<this.list.length; i++){
+            this.info_clone(this.list[i])
+        }
     },
 
 }
