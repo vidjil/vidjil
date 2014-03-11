@@ -76,7 +76,8 @@ PDF.prototype = {
 
         this.doc.text(this.marge + 5, this.y + 5, document.getElementById("upload_json")
             .files[0].name);
-        this.doc.text(this.marge + 5, this.y + 10, 'run: 2013-10-03');
+        // todo: fill again with reliable data :)
+        // this.doc.text(this.marge + 5, this.y + 10, 'run: 2013-10-03');
         this.doc.text(this.marge + 5, this.y + 15, 'analysis: ' + m.timestamp[0].split(' ')[0]);
         this.doc.text(this.marge + 5, this.y + 20, 'germline: ' + m.system);
 
