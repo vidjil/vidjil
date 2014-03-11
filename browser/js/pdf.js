@@ -34,7 +34,7 @@ function PDF(model, graph_id) {
     this.y_max = this.page_height - this.marge
 
     m.focusOut()
-    this.getList()
+    this.init()
     this.header()
     this.graph()
     this.info()
@@ -47,7 +47,7 @@ PDF.prototype = {
 
     /*init list
      */
-    getList: function () {
+    init: function () {
         this.list = m.getSelected()
 
         if (this.list.length == 0) {
@@ -59,7 +59,9 @@ PDF.prototype = {
                 }
             }
         }
-
+        
+        this.col_width = ( this.page_width - (2*this.marge) - this.first_col_width) / this.m.time.length 
+        
     },
 
     /*print Header
@@ -124,7 +126,7 @@ PDF.prototype = {
             polyline.setAttribute("style", "stroke-width:1px");
             polyline.setAttribute("stroke", color);
 
-            if (m.windows[i].window == "other") {
+            if (m.windows[i].window == "other" || !m.windows[i].active) {
                 polyline.parentNode.removeChild(polyline);
             }
         }
@@ -209,6 +211,8 @@ PDF.prototype = {
     },
     
     next_row : function ( ) {
+        this.doc.setFillColor(0,0,0);
+        this.doc.setDrawColor(0,0,0)
         this.doc.lines([
             [210 - 2 * (this.marge), 0]
         ], this.marge, this.y + 2)
@@ -361,7 +365,6 @@ PDF.prototype = {
 
         svgElementToPdf(icon, this.doc, opt_icon)
         this.doc.setDrawColor(150, 150, 150);
-        this.doc.rect(x, y , 18, 8);
         this.doc.setDrawColor(0,0,0)
     },
     
