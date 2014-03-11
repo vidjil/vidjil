@@ -20,16 +20,25 @@ function PDF(model, graph_id) {
     this.m = model;
     this.graph_id = graph_id;
     this.doc = new jsPDF();
-
+    
+    this.page_width = 210
+    this.page_height = 297
+    
+    this.col_width = 25
+    this.first_col_width = 30
+    this.height_row = 6
+    this.height_sub_row = 4
+    
     this.marge = 15
     this.y = this.marge;
-    this.y_max = 297 - this.marge
+    this.y_max = this.page_height - this.marge
 
     m.focusOut()
     this.getList()
     this.header()
     this.graph()
     this.info()
+    this.info_clone(0)
     this.sequences()
 
     this.doc.output('dataurlnewwindow');
@@ -253,92 +262,95 @@ PDF.prototype = {
 
     },
 
-    info: function () {
-
-        var col_width = 25
-        var first_col_width = 35
-        var height_row = 6
-        var height_sub_row = 4
-
-        this.doc.setFontSize(12);
+    info : function () {
+        this.doc.setFontSize(10);
         this.doc.setFont('helvetica', 'normal');
 
-        this.checkPage(15)
+        this.checkPage(20)
+        if (this.m.reads_total) this.checkPage(30)
 
         //time point
-        for (var i = 0; i < this.m.time.length; i++) {
-            var x = this.marge + first_col_width + (col_width * i)
-            var y = this.y
-            this.doc.text(x, y, ' ' + this.m.time[i]);
-        }
-
-        this.doc.lines([
-            [210 - 2 * (this.marge), 0]
-        ], this.marge, this.y + 2)
-        this.y += height_row
+        this.row( 'time' , this.m.time , 'raw')
+        this.next_row()
 
         //info global
-        this.doc.text(this.marge, this.y, 'total reads');
-
-        for (var i = 0; i < this.m.time.length; i++) {
-            var x = this.marge + first_col_width + (col_width * i)
-            var y = this.y
-            this.doc.text(x, y, ' ' + this.m.reads_segmented[i]);
+        if (this.m.reads_total){
+            this.row('total reads', this.m.reads_total, 'raw')
+            this.next_row()
         }
+        
+        this.row('total segmented', this.m.reads_segmented , 'raw');
+        
+        if (this.m.reads_total){
+            this.next_sub_row()
+            
+            for (var i = 0; i < this.m.time.length; i++) {
+                var x = this.marge + this.first_col_width + (this.col_width * i)
+                var y = this.y
+                var r = (this.m.reads_segmented[i] / this.m.reads_total[i] ) * 100
+                this.doc.text(x, y, ' ' + r.toFixed(2) + ' %');
+            }
+        }
+        
+        this.next_row()
 
+        this.y += 10
+    },
+    
+    next_row : function ( ) {
         this.doc.lines([
             [210 - 2 * (this.marge), 0]
         ], this.marge, this.y + 2)
-        this.y += height_row
-
-        //info selected clone
-        for (var j = 0; j < this.list.length; j++) {
+        this.y += this.height_row
+    },
+    
+    next_sub_row : function ( ) {
+        this.y += this.height_sub_row
+    },
+    
+    row : function (name, data, format) {
+        this.doc.text(this.marge, this.y, name);
+        
+        for (var i = 0; i < data.length; i++) {
+            var x = this.marge + this.first_col_width + (this.col_width * i)
+            var y = this.y
             
-            this.checkPage(20)
-            
-            var id = this.list[j]
-            var color = tagColor[m.windows[id].tag]
-
-            //clone name
-            this.doc.setFont('courier', 'bold');
-            this.doc.setTextColor(color);
-            this.doc.text(this.marge, this.y, this.m.getName(id));
-            this.doc.setFont('helvetica', 'normal');
-            this.doc.setTextColor(0,0,0);
-            
-            this.doc.lines([
-                [210 - 2 * (this.marge), 0]
-            ], this.marge, this.y + 2)
-            this.y += height_row
-
-            //clone reads
-            this.doc.text(this.marge + 5, this.y, 'reads');
-            for (var i = 0; i < m.time.length; i++) {
-                var x = this.marge + first_col_width + (col_width * i)
-                var y = this.y
-                this.doc.text(x, y, ' ' + this.m.windows[id].size[i]);
-            }
-
-            this.y += height_sub_row
-
-            //clone reads (%)
-            for (var i = 0; i < this.m.time.length; i++) {
-                var val = m.windows[this.list[j]].size[i] / m.reads_segmented[i]
-
-                var x = this.marge + first_col_width + (col_width * i)
-                var y = this.y
-                this.doc.text(x, y, ' ' + val.toFixed(2) + ' %');
-            }
-
-            this.doc.lines([
-                [210 - 2 * (this.marge), 0]
-            ], this.marge, this.y + 2)
-            this.y += height_row
-
+            var r = data[i]
+            if (format == "%") r = (r*100).toFixed(2) + ' %'
+                
+            this.doc.text(x, y, ' ' + r);
         }
+    },
+    
+    info_clone : function (cloneID) {
+        
+        this.checkPage(20)
+            
+        var color = tagColor[m.windows[cloneID].tag]
 
-        this.y += 10
-    }
+        //clone name
+        this.doc.setFont('courier', 'bold');
+        this.doc.setTextColor(color);
+        this.doc.text(this.marge, this.y, this.m.getName(cloneID));
+        this.doc.setFont('helvetica', 'normal');
+        this.doc.setTextColor(0,0,0);
+        
+        this.next_row()
+
+        //clone reads
+        this.row('reads',this.m.windows[cloneID].size, 'raw')
+        this.next_sub_row()
+
+        //clone reads (%)
+        var data = []
+        for (var i = 0; i < this.m.time.length; i++) {
+            data[i] = m.windows[cloneID].size[i] / m.reads_segmented[i]
+        }
+        this.row( '', data, '%')
+
+        this.next_row()
+
+    },
 
 }
 
