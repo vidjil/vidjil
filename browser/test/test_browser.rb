@@ -10,20 +10,17 @@ class TestBrowser < MiniTest::Unit::TestCase
         
     
     def test_01_start
-        folder_path = Dir.pwd
-        $index_path = 'file://' + folder_path + '/../index.html'
-        $data_path = folder_path + '/test.data'
-        
-        #$b = Watir::Browser.new :firefox
-        $b = Watir::Browser.new :chrome
-        $b.goto $index_path
-        
-        assert ($b.text.include? "Vidjil"), ">> fail to start Vidjil browser" 
-    end
-    
-    
-    def test_02_load
         begin
+            folder_path = Dir.pwd
+            $index_path = 'file://' + folder_path + '/../index.html'
+            $data_path = folder_path + '/test.data'
+            
+            #$b = Watir::Browser.new :firefox
+            $b = Watir::Browser.new :chrome
+            $b.goto $index_path
+            
+            assert ($b.text.include? "Vidjil"), ">> fail to start Vidjil browser" 
+        
             # close the welcoming popup
             $b.div(:id => 'popup-msg').button(:text => 'start').click 
 
@@ -38,7 +35,7 @@ class TestBrowser < MiniTest::Unit::TestCase
     end
     
 
-    def test_03_init
+    def test_02_init
         begin
             list = $b.div(:id => 'listClones')
             
@@ -47,12 +44,12 @@ class TestBrowser < MiniTest::Unit::TestCase
             assert ( $b.element(:id => "polyline0" ).exists?), ">>fail init : clone 0 missing in graph"
             assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.750%' ) , ">>fail init : wrong clone size "
         rescue
-            assert (false), "missing element to run test_03_init \n" 
+            assert (false), "missing element to run test_02_init \n" 
         end
     end
     
     
-    def test_04_focus
+    def test_03_focus
         begin
             
             #test hover a clone in the list
@@ -71,12 +68,12 @@ class TestBrowser < MiniTest::Unit::TestCase
             #watir unable to do hover/click on svg path
             
         rescue
-            assert (false), "missing element to run test_04_focus \n" 
+            assert (false), "missing element to run test_03_focus \n" 
         end
     end
     
     
-    def test_05_select
+    def test_04_select
         begin
             
             #test select a clone in the list
@@ -107,12 +104,12 @@ class TestBrowser < MiniTest::Unit::TestCase
             assert ( list.li(:id => '0' ).class_name == "list" )
             
         rescue
-            assert (false), "missing element to run test_05_select \n" 
+            assert (false), "missing element to run test_04_select \n" 
         end
     end
     
     
-    def test_06_cluster
+    def test_05_cluster
         begin
             list = $b.div(:id => 'listClones')
             $b.execute_script("m.clusterBy('V')")
@@ -125,12 +122,12 @@ class TestBrowser < MiniTest::Unit::TestCase
             assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.750%' ) , ">> fail reset cluster : wrong clone size "
             
         rescue
-            assert (false), "missing element to run test_06_cluster \n" 
+            assert (false), "missing element to run test_05_cluster \n" 
         end
     end
     
     
-    def test_07_normalize
+    def test_06_normalize
         begin
             list = $b.div(:id => 'listClones')
             $b.execute_script("m.normalization_switch(true)")
@@ -139,12 +136,12 @@ class TestBrowser < MiniTest::Unit::TestCase
             $b.execute_script("m.normalization_switch(false)")
             assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.750%' ) , ">> fail normalize off : wrong clone size "
         rescue
-            assert (false), "missing element to run test_07_normalize \n" 
+            assert (false), "missing element to run test_06_normalize \n" 
         end
     end
     
     
-    def test_08_displayTop
+    def test_07_displayTop
         begin
             list = $b.div(:id => 'listClones')
             $b.execute_script("m.displayTop(100)")
@@ -154,12 +151,12 @@ class TestBrowser < MiniTest::Unit::TestCase
             assert ( not list.li(:id => '120' ).visible? ) , ">> fail display : this clone shouldn't be visible"
 
         rescue
-            assert (false), "missing element to run test_08_displayTop \n" 
+            assert (false), "missing element to run test_07_displayTop \n" 
         end
     end
     
     
-    def test_09_merge
+    def test_08_merge
         begin
             list = $b.div(:id => 'listClones')
             #select 3 clones
@@ -176,16 +173,13 @@ class TestBrowser < MiniTest::Unit::TestCase
             $b.execute_script("m.resetClones()")
             assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.750%' ) , ">> fail unclustering : wrong clone size "
             
-            #unselect
-            $b.element(:id => "visu_back" ).click
-            
         rescue
-            assert (false), "missing element to run test_09_merge \n" 
+            assert (false), "missing element to run test_08_merge \n" 
         end
     end
     
     
-    def test_10_imgt
+    def test_09_imgt
         begin
             list = $b.div(:id => 'listClones')
             #select 3 clones
@@ -202,16 +196,13 @@ class TestBrowser < MiniTest::Unit::TestCase
  
             $b.window(:title => "Vidjil").use
             
-            #unselect
-            $b.element(:id => "visu_back" ).click
-            
         rescue
-            assert (false), "missing element to run test_10_imgt \n" 
+            assert (false), "missing element to run test_09_imgt \n" 
         end
     end
     
     
-    def test_11_igBlast
+    def test_10_igBlast
         begin
             list = $b.div(:id => 'listClones')
             #select 3 clones
@@ -228,12 +219,16 @@ class TestBrowser < MiniTest::Unit::TestCase
  
             $b.window(:title => "Vidjil").use
             
-            #unselect
-            $b.element(:id => "visu_back" ).click
-            
         rescue
-            assert (false), "missing element to run test_11_igBlast \n" 
+            assert (false), "missing element to run test_10_igBlast \n" 
         end
+    end
+    
+    
+    def teardown
+        #unselect
+        $b.execute_script("m.resetClones()")
+        $b.element(:id => "visu_back" ).click
     end
     
     
