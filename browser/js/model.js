@@ -1289,15 +1289,6 @@ function initCoef(){
 /*appel a chaque changement de taille du navigateur*/
 window.onresize = initCoef;
 
-
-  function switchVisu(hv1,hv2){
-  
-  $('#visu2').animate({height: hv1+"%"}, 400 , function(){
-    m.resize();
-  }); 
-  $('#visu').animate({height: hv2+"%"}, 400 ); 
-}
-
   function showDisplayMenu(){
     $('#display-menu').stop
     $('#display-menu').toggle("fast");
