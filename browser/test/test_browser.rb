@@ -5,9 +5,6 @@ require 'minitest/autorun'
 
 class TestBrowser < MiniTest::Unit::TestCase
     
-    #OMG i'm so ashamed ( best function name ever !)
-    #i_suck_and_my_tests_are_order_dependent!
-        
     $flag = nil
     $c = 0
     $max_test = 9
