@@ -310,45 +310,55 @@ List.prototype = {
     $("#listClones").html(sort);
   },
   
-  sortListByV : function(){
-    self=this;
-    var list=jQuery('.list')
-    var sort=list.sort(function(a,b){ 
-      var idA=$(a).attr("id");
-      var idB=$(b).attr("id");
-      var vA="undefined V";
-      var vB="undefined V";
-      
-      if (typeof(self.m.windows[idA].V) != 'undefined' && self.m.windows[idA].V[0] )
-      vA=self.m.windows[idA].V[0];
-      if (typeof(self.m.windows[idB].V) != 'undefined' && self.m.windows[idB].V[0])
-      vB=self.m.windows[idB].V[0];
-      console.log( vA +"/"+vB)
-      //TODO ordre alpha//récupérer l'ordre correct dans le germline
-      return vA>vB ? 1:-1; 
-    })
-    $("#listClones").html(sort);
-  },
+    sortListByV : function(){
+        self=this;
+        var list=jQuery('.list')
+        var sort=list.sort(function(a,b){ 
+        var idA=$(a).attr("id");
+        var idB=$(b).attr("id");
+        
+        var oA = 2147483647
+        var oB = 2147483647
+        
+        if (typeof(self.m.windows[idA].V) != 'undefined' && self.m.windows[idA].V[0] ){
+            var vA = self.m.windows[idA].V[0];
+            oA = this.m.germline.v[vA].gene*1000 + this.m.germline.v[vA].allele
+        }
+        
+        if (typeof(self.m.windows[idB].V) != 'undefined' && self.m.windows[idB].V[0]){
+            var vB = self.m.windows[idB].V[0];
+            oB = this.m.germline.v[vB].gene*1000 + this.m.germline.v[vB].allele
+        }
+        
+        return oA>oB ? 1:-1; 
+        })
+        $("#listClones").html(sort);
+    },
   
-  sortListByJ : function(){
-    self=this;
-    var list=jQuery('.list')
-    var sort=list.sort(function(a,b){ 
-      var idA=$(a).attr("id");
-      var idB=$(b).attr("id");
-      var jA="undefined J";
-      var jB="undefined J";
-      
-      if (typeof(self.m.windows[idA].J) != 'undefined' && self.m.windows[idA].J[0] )
-      jA=self.m.windows[idA].J[0];
-      if (typeof(self.m.windows[idB].J) != 'undefined' && self.m.windows[idB].J[0] )
-      jB=self.m.windows[idB].J[0];
-      
-      //TODO ordre alpha//récupérer l'ordre correct dans le germline
-      return jA>jB ? 1:-1; 
-    })
-    $("#listClones").html(sort);
-  }
+    sortListByJ : function(){
+        self=this;
+        var list=jQuery('.list')
+        var sort=list.sort(function(a,b){ 
+        var idA=$(a).attr("id");
+        var idB=$(b).attr("id");
+        
+        var oA = 2147483647
+        var oB = 2147483647
+        
+        if (typeof(self.m.windows[idA].J) != 'undefined' && self.m.windows[idA].J[0] ){
+            var jA = self.m.windows[idA].J[0];
+            oA = this.m.germline.j[jA].gene*1000 + this.m.germline.j[jA].allele
+        }
+        
+        if (typeof(self.m.windows[idB].J) != 'undefined' && self.m.windows[idB].J[0]){
+            var jB = self.m.windows[idB].J[0];
+            oB = this.m.germline.j[jB].gene*1000 + this.m.germline.j[jB].allele
+        }
+        
+        return oA>oB ? 1:-1; 
+        })
+        $("#listClones").html(sort);
+    }
   
   
 }//fin prototype
