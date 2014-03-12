@@ -37,7 +37,7 @@ class TestBrowser < MiniTest::Unit::TestCase
         end
     end
     
-    
+
     def test_03_init
         begin
             list = $b.div(:id => 'listClones')
@@ -168,7 +168,7 @@ class TestBrowser < MiniTest::Unit::TestCase
             $b.element(:id => "circle2" ).click
             
             #merge
-            #$b.span(:id => "merge_button" ).click
+            #$b.span(:id => "merge" ).click
             $b.execute_script("m.merge()")
             assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '75.546%' ) , ">> fail clustering : wrong clone size "
             
@@ -176,15 +176,70 @@ class TestBrowser < MiniTest::Unit::TestCase
             $b.execute_script("m.resetClones()")
             assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.750%' ) , ">> fail unclustering : wrong clone size "
             
+            #unselect
+            $b.element(:id => "visu_back" ).click
+            
         rescue
             assert (false), "missing element to run test_09_merge \n" 
         end
     end
     
     
+    def test_10_imgt
+        begin
+            list = $b.div(:id => 'listClones')
+            #select 3 clones
+            $b.element(:id => "circle0" ).click
+            $b.element(:id => "circle1" ).click
+            $b.element(:id => "circle2" ).click
+            
+            $b.span(:id => "toIMGT" ).click
+            
+            assert ( $b.window(:title => "IMGT/V-QUEST").exists? ) , ">> fail opening IMGT "
+            $b.window(:title => "IMGT/V-QUEST").use do
+                assert ($b.text.include? "Number of analysed sequences: 3"), ">> fail IMGT analysis" 
+            end
+ 
+            $b.window(:title => "Vidjil").use
+            
+            #unselect
+            $b.element(:id => "visu_back" ).click
+            
+        rescue
+            assert (false), "missing element to run test_10_imgt \n" 
+        end
+    end
+    
+    
+    def test_11_igBlast
+        begin
+            list = $b.div(:id => 'listClones')
+            #select 3 clones
+            $b.element(:id => "circle5" ).click
+            $b.element(:id => "circle8" ).click
+            $b.element(:id => "circle12" ).click
+            
+            $b.span(:id => "toIgBlast" ).click
+            
+            assert ( $b.window(:title => "IgBLAST Search Results").exists? ) , ">> fail opening igblast "
+            $b.window(:title => "IgBLAST Search Results").use do
+                assert ($b.text.include? "Index for multiple query sequences (total = 3)"), ">> fail igblast analysis" 
+            end
+ 
+            $b.window(:title => "Vidjil").use
+            
+            #unselect
+            $b.element(:id => "visu_back" ).click
+            
+        rescue
+            assert (false), "missing element to run test_11_igBlast \n" 
+        end
+    end
+    
+    
     def test_99_end
         begin
-            $b.close
+            #$b.close
         rescue
             assert (false), "missing element to run test_99_end \n" 
         end
@@ -194,7 +249,6 @@ class TestBrowser < MiniTest::Unit::TestCase
     TODO
     load_analysis
     save_analysis
-    send to imgt / igblast
     align
     clipboard
     change tag

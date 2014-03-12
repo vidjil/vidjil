@@ -282,10 +282,10 @@
         <!-- BOT-CONTAINER / SEGMENTER-CONTAINER -->
         <div id="bot-container">
             <div class="separator">
-                <span class="button" onclick="m.merge()">merge</span>
-                <span class="button" onclick="segment.align()">align</span>
-                <span class="button" onclick="segment.sendTo('IMGT')">❯ to IMGT/V-QUEST</span>
-                <span class="button" onclick="segment.sendTo('igBlast')">❯ to IgBlast</span>
+                <span id="merge" class="button" onclick="m.merge()">merge</span>
+                <span id="align" class="button" onclick="segment.align()">align</span>
+                <span id="toIMGT"  class="button" onclick="segment.sendTo('IMGT')">❯ to IMGT/V-QUEST</span>
+                <span id="toIgBlast" class="button" onclick="segment.sendTo('igBlast')">❯ to IgBlast</span>
                 <span id="toClipBoard" class="button">❯ to clipBoard</span>
             </div>
 
