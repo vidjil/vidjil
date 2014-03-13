@@ -97,7 +97,6 @@ List.prototype = {
     
     var span0 = document.createElement('div');
     span0.className = "nameBox";
-    span0.id="name"+cloneID;
     span0.ondblclick = function(){ self.editName(cloneID, this); }
     span0.onclick = function(){ self.m.select(cloneID); }
     span0.appendChild(document.createTextNode(this.m.getName(cloneID)));
@@ -117,7 +116,6 @@ List.prototype = {
       
     var span2=document.createElement('span')
     span2.className = "sizeBox";
-    span2.id="size"+cloneID;
     span2.onclick=function(){ self.m.select(cloneID); }
     span2.style.color=this.m.windows[cloneID].color;
     span2.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));
@@ -306,8 +304,8 @@ List.prototype = {
             //color
             var color = this.m.windows[list[i]].color;
             
-            document.getElementById("name"+list[i]).style.color=color
-            document.getElementById("size"+list[i]).style.color=color
+            $("#"+list[i]+" .nameBox")=color
+            $("#"+list[i]+" .sizeBox")=color
             
             //clone selected ?
             if (this.m.windows[list[i]].select){  
