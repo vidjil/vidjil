@@ -33,7 +33,7 @@ class MyMiniTest
 
         #close browser
         def after_suites
-            #$b.close
+            $b.close
         end
 
         #test suite launcher

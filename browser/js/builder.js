@@ -2,6 +2,8 @@ function Builder(model) {
     this.m = model; //Model utilisé
     this.m.view.push(this); //synchronisation au Model
 
+    this.colorMethod = "";
+    
     var drag_separator = false
 }
 
@@ -26,9 +28,16 @@ Builder.prototype = {
         
         this.build_tagSelector()
         this.build_displaySelector()
+        this.build_info_container()
     },
 
-    update: function () {},
+    update: function () {
+        if (this.colorMethod != this.m.colorMethod){
+            this.colorMethod = this.m.colorMethod
+            this.build_info_container()
+        }
+        
+    },
 
     updateElem: function () {},
 
@@ -110,7 +119,7 @@ Builder.prototype = {
             li.appendChild(div)
             listTag.appendChild(li);
         }
-        initTag();
+        
     },
     
     /*complete displaySelector menu with correct info about current tagname / top
@@ -159,20 +168,103 @@ Builder.prototype = {
     
     toggle_left_container : function () {
         var self = this
+        elem = $("#left-container")
         
-        if ($("#left-container").css("width") == "0px" ){
-            $("#left-container").css("display", "")
+        if (elem.css("width") == "0px" ){
+            elem.css("display", "")
                 .animate({width: self.width_left_container}, 400 , function(){
                 $("#toggle-left-container").html("< < <")
                 self.m.resize();
             })
         }else{
-            $("#left-container").animate({width: "0px"}, 400 , function(){
+            elem.animate({width: "0px"}, 400 , function(){
                 $(this).css("display", "none")
                 $("#toggle-left-container").html("> > >")
                 self.m.resize();
             })
         }
-    }
+    },
+    
+    build_info_container : function () {
+        var self = this
+        var parent = document.getElementById("info")
+        parent.innerHTML="";
+        
+        var div_data_file = document.createElement('div');
+        div_data_file.id = "info_data_file"
+        div_data_file.appendChild(document.createTextNode(this.m.dataFileName));
+        
+        var div_analysis_file = document.createElement('div');
+        div_analysis_file.id = "info_analysis_file"
+        div_analysis_file.appendChild(document.createTextNode(this.m.analysisFileName));
+        
+        var div_system = document.createElement('div');
+        div_system.id = "info_system"
+        div_system.appendChild(document.createTextNode(this.m.system));
+        
+        var div_color = this.build_info_color()
+        
+        parent.appendChild(div_data_file)
+        parent.appendChild(div_analysis_file)
+        parent.appendChild(div_system)
+        parent.appendChild(div_color)
+        
+        initTag();
+    },
+    
+    build_info_color : function () {
+        var self = this
+        
+        var div = document.createElement('div');
+        div.className = "info_color"
+        
+        var span1 = document.createElement('span');
+        var span2 = document.createElement('span');
+        var span3 = document.createElement('span');
+        
+        switch(this.colorMethod){
+            case "N2" :
+                div.appendChild(document.createTextNode(" colors : "));
+                
+                span1.appendChild(document.createTextNode(" N=0 "));
+                
+                span2.className = "gradient";
+            
+                span3.appendChild(document.createTextNode("N="+this.m.n2_max));
+                
+            break;
+            case "Tag" :
+                div.appendChild(document.createTextNode(" tag colors : "));
+                
+                for (var i = 0; i < tagName.length; i++) {
+                    var spantag = document.createElement('span');
+                    spantag.className = "tagColorBox tagColor"+i
+                    spantag.id = "fastTag"+i
+                    spantag.onclick = function () { 
+                        nextDisplayTag(this)
+                    }
+                    
+                    span2.appendChild(spantag);
+                }
+                
+                
+            break;
+            case "abundance" :
+                div.appendChild(document.createTextNode(" colors : "));
+                
+                span1.appendChild(document.createTextNode(" 0% "));
+                
+                span2.className = "gradient";
+                
+                span3.appendChild(document.createTextNode(" 100%"));
+            
+            break;
+        }
+        
+        div.appendChild(span1)
+        div.appendChild(span2)
+        div.appendChild(span3)
+        return div;
+    },
 
 }

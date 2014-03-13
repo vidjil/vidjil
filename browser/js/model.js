@@ -88,7 +88,6 @@ Model.prototype = {
     var oFReader = new FileReader();
     var oFile = document.getElementById(data).files[0];
     self.dataFileName= document.getElementById(data).files[0].name;
-    document.getElementById("info_data_file").innerHTML= self.dataFileName;//TODO
     oFReader.readAsText(oFile);
     
     oFReader.onload = function (oFREvent) {
@@ -782,8 +781,6 @@ Model.prototype = {
  * */
   changeColorMethod : function(colorM){
     this.colorMethod=colorM;
-    $(".info_color").hide();
-    $("#info_color_"+colorM).show();
     this.update();
   },
   
