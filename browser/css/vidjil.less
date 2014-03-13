@@ -247,8 +247,7 @@ ul{
 @width_listElem : (@width_left_container - @width_scrollbar);
 
 @margin_nameBox : 10px;
-@width_nameBox2 : (@width_listElem - @width_starBox - @width_infoBox - @width_sizeBox - @width_clusterBox - @margin_nameBox);
-@width_nameBox2 : (@width_listElem - @width_starBox - @width_infoBox - @width_sizeBox - @width_clusterBox - @margin_nameBox);
+@width_nameBox : (@width_listElem - @width_starBox - @width_infoBox - @width_sizeBox - @width_clusterBox - @margin_nameBox);
 
 
 .list:hover, .tagElem:hover{
@@ -289,8 +288,8 @@ ul{
   color : @select;
 }
 
-.nameBox2 {
-  width: @width_nameBox2;
+.nameBox {
+  width: @width_nameBox;
   margin-right: @margin_nameBox;
   overflow: hidden;
   display: inline-block;
@@ -346,15 +345,7 @@ ul{
   margin-left: 15px;
 }
 
-.nameBox {
-  width: 320px;
-  overflow: hidden;
-  display: inline-block;
-  height: 16px;
-  position: relative;
-  float:left;
 
-}
 
 #new_name{
   font-family: monospace;

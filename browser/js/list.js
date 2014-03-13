@@ -96,7 +96,8 @@ List.prototype = {
     div_elem.style.display="block";
     
     var span0 = document.createElement('div');
-    span0.className = "nameBox2";
+    span0.className = "nameBox";
+    span0.id="name"+cloneID;
     span0.ondblclick = function(){ self.editName(cloneID, this); }
     span0.onclick = function(){ self.m.select(cloneID); }
     span0.appendChild(document.createTextNode(this.m.getName(cloneID)));
@@ -251,47 +252,81 @@ List.prototype = {
 /*update une liste d'elements
  * 
  * */   
-  updateElem : function(list){
-    for ( var i=0; i<list.length ; i++){
-      
-      var displayCluster=false;
-      var cluster =$("#cluster"+list[i])
-      if (cluster.length!=0 && cluster.css("display")!="none") displayCluster=true;
-      
-      var div = document.getElementById(list[i]);
-      div.innerHTML='';
-      
-      if (this.m.windows[list[i]].active || this.m.windows[list[i]].window=="other"){  
-	if (this.m.windows[list[i]].select){  
-	  div.className="list list_select";
-	}else{
-	  div.className="list";
-	}
-	var div2 = document.createElement('div');
-	this.div_elem(div2,list[i]);
-	div.appendChild(div2);
-	
-	var div3=document.createElement('div');
-	this.div_cluster(div3, list[i], displayCluster);
-	div.appendChild(div3);
-	div.style.display="";
-	
-      }else{
-	div.style.display="none";
-      }
-      
-      var div4 = document.getElementById("_"+list[i]);
-	  if (div4){
-		if (this.m.windows[list[i]].select){  
-			div4.className="listElem selected";
-		}else{
-			div4.className="listElem";
-		}
-	  }
-	  
-    }
+    updateElem : function(list){
+        for ( var i=0; i<list.length ; i++){
+        
+            var displayCluster=false;
+            var cluster = $("#cluster"+list[i])
+            if (cluster.length!=0 && cluster.css("display")!="none") displayCluster=true;
+            
+            var div = document.getElementById(list[i]);
+            
+            
+            if (this.m.windows[list[i]].active || this.m.windows[list[i]].window=="other"){  
+                
+                div.innerHTML='';
+                
+                if (this.m.windows[list[i]].select){  
+                    div.className="list list_select";
+                }else{
+                    div.className="list";
+                }
+                
+                var div2 = document.createElement('div');
+                this.div_elem(div2,list[i]);
+                div.appendChild(div2);
+                
+                var div3=document.createElement('div');
+                this.div_cluster(div3, list[i], displayCluster);
+                div.appendChild(div3);
+                div.style.display="";
+                
+            }else{
+                div.style.display="none";
+            }
+            
+            var div4 = document.getElementById("_"+list[i]);
+            if (div4){
+                if (this.m.windows[list[i]].select){  
+                    div4.className="listElem selected";
+                }else{
+                    div4.className="listElem";
+                }
+            }
+            
+        }
+        
+    },
     
-  },
+    updateElemStyle : function(list){
+        for ( var i=0; i<list.length ; i++){
+    
+            var div = document.getElementById(list[i]);
+            
+            //color
+            var color = this.m.windows[list[i]].color;
+            
+            document.getElementById("name"+list[i]).style.color=color
+            document.getElementById("size"+list[i]).style.color=color
+            
+            //clone selected ?
+            if (this.m.windows[list[i]].select){  
+                div.className="list list_select";
+            }else{
+                div.className="list";
+            }
+            
+            //cluster sequence selected?
+            var div2 = document.getElementById("_"+list[i]);
+            if (div2){
+                if (this.m.windows[list[i]].select){  
+                    div2.className="listElem selected";
+                }else{
+                    div2.className="listElem";
+                }
+            }
+        }
+    },
   
   sortListBySize : function(){
     self=this;
