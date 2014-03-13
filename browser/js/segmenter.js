@@ -109,7 +109,7 @@ Segment.prototype = {
     div_elem.style.display="block";
     
     var seq_name = document.createElement('span');
-    seq_name.className = "nameBox2";
+    seq_name.className = "nameBox";
     seq_name.onclick = function(){ self.m.select(cloneID); }
     seq_name.appendChild(document.createTextNode(this.m.getName(cloneID)));
     seq_name.title = this.m.getName(cloneID);
