@@ -1,48 +1,88 @@
 require 'rubygems'
 require 'watir-webdriver'
-require 'minitest/autorun'
+require 'test/unit'
+require "minitest/autorun"
 
+include Test::Unit::Assertions
+MiniTest::Unit.autorun
 
-class TestBrowser < MiniTest::Unit::TestCase
-    
-    $flag = nil
-    $c = 0
-    $max_test = 9
-    
-    def setup
-        unless $flag
-            begin
-                folder_path = Dir.pwd
-                $index_path = 'file://' + folder_path + '/../index.html'
-                $data_path = folder_path + '/test.data'
-                
-                #$b = Watir::Browser.new :firefox
-                $b = Watir::Browser.new :chrome
-                $b.goto $index_path
-                
-                assert ($b.text.include? "Vidjil"), ">> fail to start Vidjil browser" 
+#custom runner
+class MyMiniTest
+    class Unit < MiniTest::Unit
+
+        #open browser and load default data
+        def before_suites
+            puts "once"
+            folder_path = Dir.pwd
+            index_path = 'file://' + folder_path + '/../index.html'
+            data_path = folder_path + '/test.data'
             
-                # close the welcoming popup
-                $b.div(:id => 'popup-msg').button(:text => 'start').click 
+            $b = Watir::Browser.new :firefox
+            #$b = Watir::Browser.new :chrome
+            $b.goto index_path
 
-                # select data file
-                $b.div(:id => 'file_menu').file_field(:name,"json").set($data_path)
-                $b.div(:id => 'file_menu').button(:text => 'start').click 
-                
-                assert ($b.text.include? "test.data"), ">> fail to load data" 
-            rescue
-                assert (false), "missing element to run test_setup \n" 
-            end
-            $flag = true
+            # close the welcoming popup
+            $b.div(:id => 'popup-msg').button(:text => 'start').click 
+
+            # select data file
+            $b.div(:id => 'file_menu').file_field(:name,"json").set(data_path)
+            $b.div(:id => 'file_menu').button(:text => 'start').click 
+            
+            sleep 2
         end
-        #unselect
-        $b.execute_script("m.resetClones()")
-        $b.element(:id => "visu_back" ).click 
+
+        #close browser
+        def after_suites
+            #$b.close
+        end
+
+        #test suite launcher
+        def _run_suites(suites, type)
+            begin
+                before_suites
+                super(suites, type)
+            ensure
+                after_suites
+            end
+        end
+
+        def _run_suite(suite, type)
+            begin
+                suite.before_suite if suite.respond_to?(:before_suite)
+                super(suite, type)
+            ensure
+                suite.after_suite if suite.respond_to?(:after_suite)
+            end
+        end
+
+    end
+end
+
+
+MiniTest::Unit.runner = MyMiniTest::Unit.new
+
+#browser test suite
+class BrowserTest < MiniTest::Unit::TestCase
+
+    #before all tests
+    def self.before_suite
         
-        $c = $c + 1
     end
 
+    #after all tests
+    def self.after_suite
+        
+    end
     
+    #after each tests
+    def teardown
+        $b.window(:title => "Vidjil").use do
+            $b.execute_script("m.resetClones()")
+            $b.element(:id => "visu_back" ).click 
+        end
+    end
+    
+
     def test_01_init
         begin
             list = $b.div(:id => 'listClones')
@@ -189,7 +229,6 @@ class TestBrowser < MiniTest::Unit::TestCase
     
     def test_08_imgt
         begin
-            list = $b.div(:id => 'listClones')
             #select 3 clones
             $b.element(:id => "circle0" ).click
             $b.element(:id => "circle1" ).click
@@ -212,7 +251,6 @@ class TestBrowser < MiniTest::Unit::TestCase
     
     def test_09_igBlast
         begin
-            list = $b.div(:id => 'listClones')
             #select 3 clones
             $b.element(:id => "circle5" ).click
             $b.element(:id => "circle8" ).click
@@ -232,20 +270,31 @@ class TestBrowser < MiniTest::Unit::TestCase
         end
     end
     
-    #bug with ruby 1.9.3
-    #MiniTest::Unit.after_tests { $b.close }
     
-    def teardown
-        if ( $c == $max_test)
-            $b.close
+    def test_10_align
+        begin
+            #select 2 clones
+            $b.element(:id => "circle1" ).click
+            $b.element(:id => "circle0" ).click
+            
+            assert ($b.text.include? "GGTCTATTACTGTGCCACCTTCTGACATAAGAAACTCTTTGGCAGTGGA"), ">> fail to display sequence"
+            
+            $b.span(:id => "align" ).click
+            
+            assert ($b.text.include? "CTT---CTG-AC-AT--AAGAAACT--CTTT-GG--C-A-G-TG---G-AA"), ">> fail to align sequences" 
+            
+        rescue
+            assert (false), "missing element to run test_10_align \n" 
         end
     end
+  
     
+end
+
 =begin
     TODO
     load_analysis
     save_analysis
-    align
     clipboard
     change tag
     edit tag
@@ -258,5 +307,3 @@ class TestBrowser < MiniTest::Unit::TestCase
     check x/y clone position on scatterplot
     check clone path 
 =end
-    
-end
