@@ -251,6 +251,7 @@ List.prototype = {
  * 
  * */   
     updateElem : function(list){
+        console.log(list)
         for ( var i=0; i<list.length ; i++){
         
             var displayCluster=false;
@@ -302,10 +303,10 @@ List.prototype = {
             var div = document.getElementById(list[i]);
             
             //color
-            var color = this.m.windows[list[i]].color;
+            var color = this.m.getColor(list[i]);
             
-            $("#"+list[i]+" .nameBox")=color
-            $("#"+list[i]+" .sizeBox")=color
+            $("#"+list[i]+" .nameBox").css("color", color )
+            $("#"+list[i]+" .sizeBox").css("color", color )
             
             //clone selected ?
             if (this.m.windows[list[i]].select){  

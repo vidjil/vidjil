@@ -100,12 +100,12 @@ Segment.prototype = {
       updateElemStyle : function(list){
         for ( var i=0; i<list.length ; i++){
             
-            if (document.getElementById(_list[i])) {
+            if (document.getElementById("_"+list[i])) {
                 //color
                 var color = this.m.windows[list[i]].color;
                 
-                $("#_"+list[i]+" .nameBox")=color
-                $("#_"+list[i]+" .sizeBox")=color
+                $("#_"+list[i]+" .nameBox").css("color", color )
+                $("#_"+list[i]+" .sizeBox").css("color", color )
             
             }
         }
@@ -143,7 +143,6 @@ Segment.prototype = {
       
     var seq_size=document.createElement('span')
     seq_size.className = "sizeBox";
-    seq_size.id="size"+cloneID;
     seq_size.onclick=function(){ this.m.select(cloneID); }
     seq_size.style.color=this.m.windows[cloneID].color;
     seq_size.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));

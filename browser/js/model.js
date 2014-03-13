@@ -588,7 +588,7 @@ Model.prototype = {
   changeName : function(cloneID, newName){
     console.log("changeName() (clone "+cloneID+" <<"+newName+")");
     this.windows[cloneID].c_name = newName;
-    this.updateElem(cloneID);
+    this.updateElem([cloneID]);
   },//fin changeName,
   
 /* give a new custom tag to a clone
@@ -807,18 +807,18 @@ Model.prototype = {
 /* put a marker on a specific clone
  * 
  * */
-  focusIn : function(cloneID){
-    var tmp=this.focus;
+    focusIn : function(cloneID){
+        var tmp=this.focus;
 
-    if (tmp!=cloneID){
-	this.focus=cloneID;
-      if (tmp!=-1){
-	this.updateElem([cloneID, tmp]);
-      }else{
-	this.updateElem([cloneID]);
-      }
-    }
-  },
+        if (tmp!=cloneID){
+            this.focus=cloneID;
+            if (tmp!=-1){
+                this.updateElemStyle([cloneID, tmp]);
+            }else{
+                this.updateElemStyle([cloneID]);
+            }
+        }
+    },
   
   
 /* remove focus marker
@@ -847,7 +847,7 @@ Model.prototype = {
     }else{
       if (list.length < 5) this.windows[cloneID].select=true;
     }
-    this.updateElem([cloneID]);
+    this.updateElemStyle([cloneID]);
   },
   
 
@@ -859,7 +859,7 @@ Model.prototype = {
     if (this.windows[cloneID].select){
       this.windows[cloneID].select=false;
     }
-    this.updateElem([cloneID]);
+    this.updateElemStyle([cloneID]);
   },
  
  
@@ -1008,13 +1008,22 @@ Model.prototype = {
 /*update a clone list in all views
  * 
  * */
-  updateElem :function(list){
-    this.updateModelElem(list);
-    for (var i=0; i<this.view.length; i++){
-      this.view[i].updateElem(list);
-    }
-  },
-
+    updateElem :function(list){
+        this.updateModelElem(list);
+        for (var i=0; i<this.view.length; i++){
+            this.view[i].updateElem(list);
+        }
+    },
+  
+/*style a clone list in all views
+ * 
+ * */
+    updateElemStyle :function(list){
+        this.updateModelElem(list);
+        for (var i=0; i<this.view.length; i++){
+            this.view[i].updateElemStyle(list);
+        }
+    },
 
 /*init all views
  * 

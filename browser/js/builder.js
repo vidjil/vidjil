@@ -41,6 +41,8 @@ Builder.prototype = {
 
     updateElem: function () {},
 
+    updateElemStyle: function () {},
+    
     resize: function () {},
 
     dragSeparator: function () {
