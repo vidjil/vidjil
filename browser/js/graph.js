@@ -274,18 +274,22 @@ Graph.prototype = {
 /*update la liste de clones passé en parametre
  * 
  * */  
-  updateElem: function (list){
-    if(this.m.focus!=-1){
-      var line = document.getElementById("polyline"+this.m.focus);
-      document.getElementById("polyline_container").appendChild(line);
-    }
-    for (var i=0; i<list.length ; i++){
-      for (var j=0 ; j<this.m.clones[list[i]].cluster.length; j++)
-	if (this.m.windows[list[i]].active)
-      	this.data_graph[this.m.clones[list[i]].cluster[j]].path = this.constructPath(list[i]);
-    }
-    this.drawLines(0);
-  },
+    updateElem: function (list){
+        for (var i=0; i<list.length ; i++){
+            for (var j=0 ; j<this.m.clones[list[i]].cluster.length; j++)
+                if (this.m.windows[list[i]].active)
+                    this.data_graph[this.m.clones[list[i]].cluster[j]].path = this.constructPath(list[i]);
+        }
+        this.updateElemStyle(list)
+    },
+  
+      updateElemStyle : function(list){
+        if(this.m.focus!=-1){
+            var line = document.getElementById("polyline"+this.m.focus);
+            document.getElementById("polyline_container").appendChild(line);   
+        }
+        this.drawLines(0);
+    },
   
 /* 
  * 

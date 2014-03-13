@@ -810,7 +810,7 @@ ScatterPlot.prototype = {
                 this.nodes[i].r1=this.getRadius(i);
             }
             this.force.start();
-            this.updateStyle();
+            this.updateElemStyle();
         }
         
         this.initGrid();
@@ -837,14 +837,16 @@ ScatterPlot.prototype = {
                 }
             }
             if (flag) this.update();
-            this.updateStyle();
+            this.updateElemStyle();
         }
     },
+    
+    
 	
 /* update l'apparence liée a l'état (focus/select/inactive) des nodes
  * (ne relance pas l'animation) 
  * */
-    updateStyle : function(){	 
+    updateElemStyle : function(){	 
         var self=this;
         this.node
         .attr("class", function(p) { 
