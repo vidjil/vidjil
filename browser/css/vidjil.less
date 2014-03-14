@@ -573,18 +573,34 @@ span.logo
   font-size: 200%;
 }
 
+.bot-bar {
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: -moz-none;
+    -ms-user-select: none;
+    user-select: none;
+    height: 20px;
+    border-bottom: solid;
+    width: 100%;
+    padding-top: 2px;
+}
+
 .menu-segmenter {
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: -moz-none;
-  -ms-user-select: none;
-  user-select: none;
-  height: 25px;
-  position: fixed;
-  margin-top: -26px;
-  border-top: solid;
-  width: @width_left_container;
-  padding-top:2px;
+    position: relative;
+    float: left;
+    width: @width_left_container;
+}
+
+.focus {
+    position: relative;
+    width: 100%;
+    text-align: center;
+}
+
+#segmenter {
+    overflow-x: scroll; 
+    overflow-y: hidden;
+    height : 100px;
 }
 
 .selector{
@@ -607,13 +623,10 @@ span.logo
   bottom: 5px;
   left: 0px;
   width: 100%;
-  overflow-x: scroll;
-  min-height:50px;
-  max-height:200px;
   overflow-y:auto;
   border-top: solid;
   border-bottom: solid;
-  height:100px;
+  height:125px;
   overflow-y: hidden;
 }
 
@@ -679,7 +692,7 @@ span.logo
   color: grey;
 }
 
-.selector, #sort-bar, #top-container, #listClones, .menu-segmenter, #bot-container, #popup-container, #file_menu, #tagSelector, .closeButton
+.selector, #sort-bar, #top-container, #listClones, .bot-bar, #bot-container, #popup-container, #file_menu, #tagSelector, .closeButton
 {
   border-color: @border; 
 }
