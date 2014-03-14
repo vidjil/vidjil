@@ -23,7 +23,6 @@
     <head>
         <meta charset="utf-8">
         <title>Vidjil</title>
-        <!--<link rel="stylesheet/less" type="text/css" href="css/style.less" />-->
         <link id="palette" rel="stylesheet" type="text/css" href="css/dark.css" /> 
         <!--[if lte IE 8]><script src="js/r2d3.js" charset="utf-8"></script><![endif]-->
         <!--[if gte IE 9]><!-->
@@ -53,10 +52,6 @@
         <script type="text/javascript" src='js/crossDomain.js'></script>
         <script type="text/javascript" src='js/pdf.js'></script>
 
-        <!--
-        <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
-        <script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>
-        -->
     </head>
 
 
@@ -74,16 +69,7 @@
             Analysis file (.analysis, optional):<br/>
             <input id="upload_pref" type="file" name="pref" /></br>
             <p class='help'>The analysis file stores all parameters set by the user (tags, colors, manual clusters).</p>
-            <!--
-            load only clones in the top <select id="limit_top" name="limit_top">
-            <option value="10">10</option>	
-            <option value="30">30</option>
-            <option value="100">100</option>
-            </select> </br></br>
 
-            <button onclick="document.getElementById('file_menu').style.display='none';
-            m.load('upload_json','upload_pref', document.getElementById('limit_top').value)">start</button> 
-            -->
             <button onclick="document.getElementById('file_menu').style.display='none';
             m.load('upload_json','upload_pref', 200)">start</button> 
         </div>
@@ -190,13 +176,10 @@
         </div>  
         <!-- fin  div id="top-container"-->
         
-
         <!-- MID-CONTAINER -->
         <div id="mid-container" onmouseover="hideSelector()">
         <!-- LEFT-CONTAINER -->
             <div id="left-container">
-
-            <div id="left">
 
                 <div id="info"> </div>
 
@@ -209,10 +192,6 @@
 
                 <div id="listClones"></div>
 
-                <div id="listSelect"></div>
-
-            </div>
-
             </div>
         <!-- fin left-container -->
 
@@ -223,13 +202,10 @@
             </div>
 
         <!-- RIGHT-CONTAINER -->
-            <div id="right-container">
-                
-            </div>
+            <div id="right-container"></div>
 
         <!-- VISU-CONTAINER  -->
             <div id="visu-container">
-                <!-- VISU -->
                 <div id="visu2"></div>
                 <div id="visu-separator" >...</div>
                 <div id="visu" onclick=""></div>
@@ -239,18 +215,7 @@
         <!-- fin mid-container -->
 
         <!-- BOT-CONTAINER / SEGMENTER-CONTAINER -->
-        <div id="bot-container">
-            <div class="separator">
-                <span id="merge" class="button" onclick="m.merge()">merge</span>
-                <span id="align" class="button" onclick="segment.align()">align</span>
-                <span id="toIMGT"  class="button" onclick="segment.sendTo('IMGT')">❯ to IMGT/V-QUEST</span>
-                <span id="toIgBlast" class="button" onclick="segment.sendTo('igBlast')">❯ to IgBlast</span>
-                <span id="toClipBoard" class="button">❯ to clipBoard</span>
-            </div>
-
-            <ul id="listSeq"></ul>
-        </div>
-        <!-- fin bot-container -->
+        <div id="bot-container"> </div>
 
         <div id="tagSelector">
             <span class="closeButton" onclick="$('#tagSelector').hide('fast')">X</span>
