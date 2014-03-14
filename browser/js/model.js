@@ -385,7 +385,6 @@ Model.prototype = {
       self = this;
       
       self.analysisFileName=document.getElementById(analysis).files[0].name;
-      document.getElementById("info_analysis_file").innerHTML= self.analysisFileName ; //TODO
       
       oFReader.readAsText(oFile);
       
