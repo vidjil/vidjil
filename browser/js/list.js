@@ -251,7 +251,6 @@ List.prototype = {
  * 
  * */   
     updateElem : function(list){
-        console.log(list)
         for ( var i=0; i<list.length ; i++){
         
             var displayCluster=false;
