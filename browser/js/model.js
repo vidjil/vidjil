@@ -818,6 +818,9 @@ Model.prototype = {
                 this.updateElemStyle([cloneID]);
             }
         }
+        
+        $(".focus").text(this.getName(cloneID))
+        
     },
   
   
@@ -828,6 +831,7 @@ Model.prototype = {
     var tmp = this.focus;
     this.focus=-1;
     if (tmp!=-1) this.updateElem([tmp]);
+    $(".focus").text("")
   },
   
 
