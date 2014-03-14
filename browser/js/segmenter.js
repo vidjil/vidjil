@@ -48,12 +48,71 @@ Segment.prototype = {
  * */ 
     init : function(){
         var self = this;
+        this.build()
+        
+    },
+    
+    build : function () {
+        var self = this
+        
+        var parent=document.getElementById(this.id)
+        parent.innerHTML="";
+        
+        //menu-segmenter
+        var div = document.createElement('div');
+        div.className = "menu-segmenter"
+        
+        //merge button
+        var span = document.createElement('span');
+        span.id = "merge"
+        span.className = "button"
+        span.onclick = function () { self.m.merge() }
+        span.appendChild(document.createTextNode("merge"));
+        div.appendChild(span)
+        
+        //align button
+        span = document.createElement('span');
+        span.id = "align"
+        span.className = "button"
+        span.onclick = function () { self.align() }
+        span.appendChild(document.createTextNode("align"));
+        div.appendChild(span)
+        
+        //toIMGT button
+        span = document.createElement('span');
+        span.id = "toIMGT"
+        span.className = "button"
+        span.onclick = function () { self.sendTo('IMGT') }
+        span.appendChild(document.createTextNode("❯ to IMGT/V-QUEST"));
+        div.appendChild(span)
+        
+        //toIgBlast button
+        span = document.createElement('span');
+        span.id = "toIgBlast"
+        span.className = "button"
+        span.onclick = function () { self.sendTo('igBlast') }
+        span.appendChild(document.createTextNode("❯ to IgBlast"));
+        div.appendChild(span)
+        
+        //toClipBoard button
+        span = document.createElement('span');
+        span.id = "toClipBoard"
+        span.className = "button"
+        span.appendChild(document.createTextNode("❯ to clipBoard"));
+        div.appendChild(span)
+        
+        parent.appendChild(div)
+        
+        //listSeq
+        ul = document.createElement('ul');
+        ul.id = "listSeq"
+        
+        parent.appendChild(ul)
         
         $('#toClipBoard').zclip({
             path:'js/lib/ZeroClipboard.swf',
             copy: function(){return self.toFasta()}
         });
-        
     },
   
 /*
@@ -97,18 +156,8 @@ Segment.prototype = {
         
     },
   
-      updateElemStyle : function(list){
-        for ( var i=0; i<list.length ; i++){
-            
-            if (document.getElementById("_"+list[i])) {
-                //color
-                var color = this.m.windows[list[i]].color;
-                
-                $("#_"+list[i]+" .nameBox").css("color", color )
-                $("#_"+list[i]+" .sizeBox").css("color", color )
-            
-            }
-        }
+    updateElemStyle : function(list){
+        this.updateElem(list)
     },
 
 /* genere le code HTML des infos d'un clone
