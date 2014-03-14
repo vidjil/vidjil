@@ -12,7 +12,6 @@ class MyMiniTest
 
         #open browser and load default data
         def before_suites
-            puts "once"
             folder_path = Dir.pwd
             index_path = 'file://' + folder_path + '/../index.html'
             data_path = folder_path + '/test.data'
@@ -272,6 +271,9 @@ class BrowserTest < MiniTest::Unit::TestCase
     
     
     def test_10_align
+        #TODO find a way to use local cgi
+        skip 
+        
         begin
             #select 2 clones
             $b.element(:id => "circle1" ).click
