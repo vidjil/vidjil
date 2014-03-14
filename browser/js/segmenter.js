@@ -58,9 +58,13 @@ Segment.prototype = {
         var parent=document.getElementById(this.id)
         parent.innerHTML="";
         
-        //menu-segmenter
+        //bot-bar
         var div = document.createElement('div');
-        div.className = "menu-segmenter"
+        div.className = "bot-bar"
+        
+        //menu-segmenter
+        var div_menu = document.createElement('div');
+        div_menu.className = "menu-segmenter"
         
         //merge button
         var span = document.createElement('span');
@@ -68,7 +72,7 @@ Segment.prototype = {
         span.className = "button"
         span.onclick = function () { self.m.merge() }
         span.appendChild(document.createTextNode("merge"));
-        div.appendChild(span)
+        div_menu.appendChild(span)
         
         //align button
         span = document.createElement('span');
@@ -76,7 +80,7 @@ Segment.prototype = {
         span.className = "button"
         span.onclick = function () { self.align() }
         span.appendChild(document.createTextNode("align"));
-        div.appendChild(span)
+        div_menu.appendChild(span)
         
         //toIMGT button
         span = document.createElement('span');
@@ -84,7 +88,7 @@ Segment.prototype = {
         span.className = "button"
         span.onclick = function () { self.sendTo('IMGT') }
         span.appendChild(document.createTextNode("❯ to IMGT/V-QUEST"));
-        div.appendChild(span)
+        div_menu.appendChild(span)
         
         //toIgBlast button
         span = document.createElement('span');
@@ -92,22 +96,31 @@ Segment.prototype = {
         span.className = "button"
         span.onclick = function () { self.sendTo('igBlast') }
         span.appendChild(document.createTextNode("❯ to IgBlast"));
-        div.appendChild(span)
+        div_menu.appendChild(span)
         
         //toClipBoard button
         span = document.createElement('span');
         span.id = "toClipBoard"
         span.className = "button"
         span.appendChild(document.createTextNode("❯ to clipBoard"));
-        div.appendChild(span)
+        div_menu.appendChild(span)
+        
+        div.appendChild(div_menu)
+        
+        var div_focus = document.createElement('div');
+        div_focus.className = "focus"
+        div.appendChild(div_focus)
         
         parent.appendChild(div)
-        
+
+        div = document.createElement('div');
+        div.id = "segmenter"
         //listSeq
         ul = document.createElement('ul');
         ul.id = "listSeq"
+        div.appendChild(ul)
         
-        parent.appendChild(ul)
+        parent.appendChild(div)
         
         $('#toClipBoard').zclip({
             path:'js/lib/ZeroClipboard.swf',
@@ -287,7 +300,7 @@ Segment.prototype = {
     if (li.length >0){
       var id=li[0].id.substr(3);
       var mid=$("#m"+id+" span:first-child").width()-250;
-      $("#bot-container").animate({scrollLeft: mid}, 0);
+      $("#segmenter").animate({scrollLeft: mid}, 0);
     }
   },
   
