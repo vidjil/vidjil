@@ -187,6 +187,33 @@ Builder.prototype = {
         }
     },
     
+    toggle_segmenter : function () {
+        var self = this
+        seg = $("#segmenter")
+        bot = $("#bot-container")
+        mid = $("#mid-container")
+        
+        if (seg.css("display") == "none" ){
+            seg.css("display", "")
+            seg.css("overflow-x", "scroll")
+            bot.animate({height: "125px"}, 400 , function(){
+                //$("#toggle-segmenter").html("+ + +")
+            })
+            mid.animate({bottom: "125px"}, 400 , function(){
+                self.m.resize();
+            })
+        }else{
+            seg.css("display", "none")
+            seg.css("overflow-x", "hidden")
+            bot.animate({height: "25px"}, 400 , function(){
+                //$("#toggle-segmenter").html("- - -")
+            })
+            mid.animate({bottom: "25px"}, 400 , function(){
+                self.m.resize();
+            })
+        }
+    },
+    
     build_info_container : function () {
         var self = this
         var parent = document.getElementById("info")
