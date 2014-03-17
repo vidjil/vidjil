@@ -65,6 +65,7 @@ Segment.prototype = {
         //menu-segmenter
         var div_menu = document.createElement('div');
         div_menu.className = "menu-segmenter"
+        div_menu.onmouseover = function () { self.m.focusOut() };
         
         //merge button
         var span = document.createElement('span');
