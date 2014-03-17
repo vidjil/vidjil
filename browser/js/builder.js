@@ -169,6 +169,40 @@ Builder.prototype = {
         $('#new_tag_name').select();
     },
     
+    /* 
+    * */  
+    editPointName : function(elem){
+        var self = this;
+        var divParent = elem.parentNode;
+        divParent.innerHTML="";
+
+        var input = document.createElement('input');
+        input.type="text";
+        input.id= "new_point_name";
+        input.value = this.m.time[this.point];
+        input.style.width="200px";
+        input.style.border="0px";
+        input.style.margin="0px";
+        input.onkeydown=function () { 
+            if (event.keyCode == 13) document.getElementById('btnSavePoint').click();
+        }
+        divParent.appendChild(input);
+        divParent.onclick="";
+
+        var a = document.createElement('a');
+        a.className="button";
+        a.appendChild(document.createTextNode("save"));
+        a.id="btnSavePoint";
+        a.onclick=function(){ 
+            console.log("hello")
+            var newPointName = document.getElementById("new_point_name").value;
+            self.m.time[self.point]=newPointName
+            self.build_info_container()
+        }
+        divParent.appendChild(a);
+        $('#new_point_name').select();
+    },
+    
     /*complete displaySelector menu with correct info about current tagname / top
      * */
     build_displaySelector: function () {
