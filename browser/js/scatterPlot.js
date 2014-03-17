@@ -854,14 +854,18 @@ ScatterPlot.prototype = {
  * */
     updateElemStyle : function(){	 
         var self=this;
-        this.node
-        .attr("class", function(p) { 
-            if (!self.m.windows[p.id].active) return "circle_hidden";
-            if (self.m.windows[p.id].select) return "circle_select";
-            if (p.id==self.m.focus) return "circle_focus";
-            return "circle"; 
-        })
-        .style("fill", function(d) { return (self.m.windows[d].color); })
+        if (this.splitY=="bar"){
+            this.updateBar();
+        }else{
+            this.node
+            .attr("class", function(p) { 
+                if (!self.m.windows[p.id].active) return "circle_hidden";
+                if (self.m.windows[p.id].select) return "circle_select";
+                if (p.id==self.m.focus) return "circle_focus";
+                return "circle"; 
+            })
+            .style("fill", function(d) { return (self.m.windows[d].color); })
+        }
     },
   
 /* applique la grille correspondant a la methode de répartition définit dans this.splitX/Y
