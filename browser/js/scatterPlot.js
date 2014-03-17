@@ -56,6 +56,16 @@ function ScatterPlot(id, model){
     this.text_position_y = 40;
     this.sub_text_position_y = 90;
     
+    //select_menu
+    this.menu = [
+        ["gene_v", "gene V"],
+        ["gene_j", "gene J"],
+        ["allele_v", "allele V"],
+        ["allele_j", "allele J"],
+        ["Size", "abundance"],
+        ["n", "N length"]
+    ]
+    
 }
 
 
@@ -164,14 +174,7 @@ ScatterPlot.prototype = {
  * */
     initMenu :function() {
         var self = this;
-        var menu = {
-            "gene_v": "gene V",
-            "gene_j": "gene J",
-            "allele_v": "allele V",
-            "allele_j": "allele J",
-            "Size": "abundance",
-            "n": "N length"
-        }
+
         
         var divParent = document.getElementById(this.id)
         
@@ -183,17 +186,19 @@ ScatterPlot.prototype = {
 
         var select_x = document.createElement('select');
         select_x.setAttribute('name','select_x[]');
+        select_x.id = "select_x"
         select_x.onchange = function(){ self.changeXaxis(this); }
         
         var select_y = document.createElement('select');
         select_y.setAttribute('name','select_y[]');
+        select_y.id = "select_y"
         select_y.onchange = function(){ self.changeYaxis(this); }
             
-        for (var key in menu){
+        for (var i=0; i<this.menu.length; i++){
             
             var element = document.createElement("option");
-            element.setAttribute('value', key);
-            var text = document.createTextNode(menu[key]); 
+            element.setAttribute('value', this.menu[i][0]);
+            var text = document.createTextNode(this.menu[i][1]); 
             element.appendChild(text);
             
             var element2 = element.cloneNode(true);
@@ -813,6 +818,7 @@ ScatterPlot.prototype = {
             this.updateElemStyle();
         }
         
+        this.updateMenu()
         this.initGrid();
         elapsedTime = new Date().getTime() - startTime;  
         console.log( "update sp: " +elapsedTime +"ms");  
@@ -1023,6 +1029,17 @@ ScatterPlot.prototype = {
         if (splitY=="allele_v" && this.use_simple_v) this.splitY="allele_v_used";
         
         this.update();
+    },
+    
+    updateMenu : function () {
+        var select_x = 0;
+        var select_y = 0
+        for ( var i=0; i<this.menu.length; i++ ){
+            if (this.menu[i][0]==this.splitX) select_x = i
+            if (this.menu[i][0]==this.splitY) select_y = i
+        }
+        document.getElementById("select_x").selectedIndex = select_x
+        document.getElementById("select_y").selectedIndex = select_y 
     },
 
     endPlot : function(){
