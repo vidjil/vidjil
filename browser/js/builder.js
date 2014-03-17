@@ -97,30 +97,71 @@ Builder.prototype = {
         listTag.innerHTML = "";
 
         for (var i = 0; i < tagName.length; i++) {
-            var li = document.createElement('li');
-            li.className="tag" + i
-            li.onclick = function () {
-                var cloneID = parseInt(document.getElementById('tag_id').innerHTML);
-                self.m.changeTag(cloneID, this.className)
-                $('#tagSelector').hide('fast')
-            }
+            (function (i) {
+                var span3 = document.createElement('span');
+                span3.onclick = function(tag){ self.editTagName(i, this); }
+                span3.appendChild(document.createTextNode("...") )
 
-            var div = document.createElement('div');
-            div.className = "tagElem"
+                var span1 = document.createElement('span');
+                span1.className = "tagColorBox tagColor" + i
 
-            var span1 = document.createElement('span');
-            span1.className = "tagColorBox tagColor" + i
+                var span2 = document.createElement('span');
+                span2.className = "tagName" + i + " tn"
+                span2.onclick = function () {
+                    var cloneID = parseInt(document.getElementById('tag_id').innerHTML);
+                    self.m.changeTag(cloneID, this.parentNode.parentNode.className)
+                    $('#tagSelector').hide('fast')
+                }
 
-            var span2 = document.createElement('span');
-            span2.className = "tagName" + i + " tn"
-            span2.id = "tag" + i
-
-            div.appendChild(span1)
-            div.appendChild(span2)
-            li.appendChild(div)
-            listTag.appendChild(li);
+                var div = document.createElement('div');
+                div.className = "tagElem"
+                div.appendChild(span1)
+                div.appendChild(span2)
+                div.appendChild(span3)
+                
+                var li = document.createElement('li');
+                li.appendChild(div)
+                
+                listTag.appendChild(li);
+            })(i)
         }
         
+    },
+    
+    /* 
+    * */  
+    editTagName : function(tagID, elem){
+        var self = this;
+        var divParent = elem.parentNode;
+        divParent.innerHTML="";
+
+        console.log("test"+tagID);
+        var input = document.createElement('input');
+        input.type="text";
+        input.id= "new_tag_name";
+        input.value = tagName[tagID];
+        input.style.width="100px";
+        input.style.border="0px";
+        input.style.margin="0px";
+        input.onkeydown=function () { 
+            if (event.keyCode == 13) document.getElementById('btnSaveTag').click();
+        }
+        divParent.appendChild(input);
+        divParent.onclick="";
+
+        var a = document.createElement('a');
+        a.className="button";
+        a.appendChild(document.createTextNode("save"));
+        a.id="btnSaveTag";
+        a.onclick=function(){ 
+            console.log("hello")
+            var newTagName = document.getElementById("new_tag_name").value;
+            tagName[tagID]=newTagName
+            self.build_tagSelector()
+            self.build_displaySelector()
+        }
+        divParent.appendChild(a);
+        $('#new_tag_name').select();
     },
     
     /*complete displaySelector menu with correct info about current tagname / top
@@ -135,25 +176,32 @@ Builder.prototype = {
         listTag.innerHTML = "";
 
         for (var i = 0; i < tagName.length; i++) {
-            var li = document.createElement('li');
+            (function (i) {
+                var span3 = document.createElement('span');
+                span3.onclick = function(tag){ self.editTagName(i, this); }
+                span3.appendChild(document.createTextNode("...") )
 
-            var div = document.createElement('div');
-            div.className = "tagElem"
-            div.id= "tagDisplay"+i
-            div.onclick = function () { 
-                nextDisplayTag(this)
-            }
+                var span1 = document.createElement('span');
+                span1.className = "tagColorBox tagColor" + i
 
-            var span1 = document.createElement('span');
-            span1.className = "tagColorBox tagColor" + i
+                var span2 = document.createElement('span');
+                span2.className = "tagName" + i + " tn"
 
-            var span2 = document.createElement('span');
-            span2.className = "tagName" + i + " tn"
-
-            div.appendChild(span1)
-            div.appendChild(span2)
-            li.appendChild(div)
-            listTag.appendChild(li);
+                var div = document.createElement('div');
+                div.className = "tagElem"
+                div.id= "tagDisplay"+i
+                div.onclick = function () { 
+                    nextDisplayTag(this)
+                }
+                div.appendChild(span1)
+                div.appendChild(span2)
+                div.appendChild(span3)
+                
+                var li = document.createElement('li');
+                li.appendChild(div)
+                
+                listTag.appendChild(li);
+            })(i)
         }
         
         var max_top = 0;
