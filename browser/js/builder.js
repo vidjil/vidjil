@@ -3,8 +3,9 @@ function Builder(model) {
     this.m.view.push(this); //synchronisation au Model
 
     this.colorMethod = "";
+    this.point = 0;
     
-    var drag_separator = false
+    this.drag_separator = false
 }
 
 Builder.prototype = {
@@ -32,7 +33,11 @@ Builder.prototype = {
     },
 
     update: function () {
-        if (this.colorMethod != this.m.colorMethod){
+        
+        if (this.colorMethod != this.m.colorMethod
+            || this.point != this.m.time_order[this.m.t])
+        {
+            this.point = this.m.time_order[this.m.t]
             this.colorMethod = this.m.colorMethod
             this.build_info_container()
         }
@@ -100,6 +105,7 @@ Builder.prototype = {
             (function (i) {
                 var span3 = document.createElement('span');
                 span3.onclick = function(tag){ self.editTagName(i, this); }
+                span3.className = "edit_button"
                 span3.appendChild(document.createTextNode("...") )
 
                 var span1 = document.createElement('span');
@@ -109,7 +115,7 @@ Builder.prototype = {
                 span2.className = "tagName" + i + " tn"
                 span2.onclick = function () {
                     var cloneID = parseInt(document.getElementById('tag_id').innerHTML);
-                    self.m.changeTag(cloneID, this.parentNode.parentNode.className)
+                    self.m.changeTag(cloneID, i)
                     $('#tagSelector').hide('fast')
                 }
 
@@ -135,7 +141,6 @@ Builder.prototype = {
         var divParent = elem.parentNode;
         divParent.innerHTML="";
 
-        console.log("test"+tagID);
         var input = document.createElement('input');
         input.type="text";
         input.id= "new_tag_name";
@@ -179,6 +184,7 @@ Builder.prototype = {
             (function (i) {
                 var span3 = document.createElement('span');
                 span3.onclick = function(tag){ self.editTagName(i, this); }
+                span3.className = "edit_button"
                 span3.appendChild(document.createTextNode("...") )
 
                 var span1 = document.createElement('span');
