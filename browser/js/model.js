@@ -186,6 +186,7 @@ Model.prototype = {
         self.reads_total_total = self.reads_total.reduce(function(a, b) { return a + b; });
     }else{
         self.reads_total_total=self.reads_segmented_total;
+        self.reads_total=self.reads_segmented;
     }
     self.timestamp = data.timestamp;
     self.time = data.point;
