@@ -93,6 +93,8 @@ ul{
   overflow:hidden;
 }
 
+                        /* left-container - info */
+
 #info{
   font-family : Courier New,monaco,terminal,courier,system; 
   font-size: 14px;
@@ -100,6 +102,26 @@ ul{
   padding:3px;
 }
 
+.info_line {
+    border-bottom: solid;
+    border-bottom-width: 1px;
+    border-color: @border;
+}
+
+.info_row {
+    padding-left: 20px;
+    min-width: 100px;
+    display: inline-block;
+}
+
+#info_point {
+    margin-top: 15px;
+}
+
+#info_data_file
+{
+  font-size: 200%;
+}
 
 						  /*Style polyline / graph*/
 
@@ -566,11 +588,6 @@ span.logo
   vertical-align: super;
   opacity: .8;
   color: #f88;
-}
-
-#info_data_file
-{
-  font-size: 200%;
 }
 
 .bot-bar {
