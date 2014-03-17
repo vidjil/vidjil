@@ -69,6 +69,7 @@ function Model(){
   this.precision=1;
   this.time_order=[];
   
+  this.checkBrowser()
 }
 
 
@@ -1248,6 +1249,41 @@ Model.prototype = {
         this.time_order[b]=tmp;
         this.update()
     },
+    
+/* 
+ * 
+ * */  
+    checkBrowser : function () {
+        this.browser_version = parseInt(navigator.appVersion,10);
+        this.browser = null
+        
+        if ((navigator.userAgent.indexOf("Chrome"))!=-1) {
+            this.browser = "Chrome";
+        }
+            
+        else if ((navigator.userAgent.indexOf("Firefox"))!=-1) {
+            this.browser = "Firefox";
+        }
+        
+        else if ((navigator.userAgent.indexOf("MSIE"))!=-1) {
+            this.browser = "Internet Explorer";
+        }
+
+        else if ((navigator.userAgent.indexOf("Safari"))!=-1) {
+            this.browser = "Safari";
+        }
+
+        //TODO check version 
+        if ( this.browser == "Chrome" || 
+            this.browser == "Firefox" || 
+            this.browser == "Safari" ){
+            popupMsg(msg.welcome)
+        }else{
+            popupMsg(msg.browser_error)
+        }
+
+    },
+    
 }//end prototype Model
 
 
@@ -1305,6 +1341,7 @@ window.onresize = initCoef;
 
 
   function popupMsg(msg){
+    document.getElementById("popup-msg").innerHTML="";
     document.getElementById("popup-container").style.display="block";
     document.getElementById("popup-msg").innerHTML+=msg;
   }
@@ -1348,10 +1385,14 @@ window.onresize = initCoef;
     + " and the <a href='http://www.euroclonality.org/'>EuroClonality-NGS</a> working group."
     +"</br>"
     +"</br>This is a beta version, please use it only for test purposes."
-/*
-+  "<br/><br/>!!! Supprimer, mettre un message d'erreur seuelement si non compatible !!! compatible with google chrome and mozilla firefox browsers"
-*/
     +"</br></br> <div class='center' > <button onclick='loadData(), closePopupMsg()'>start</button></div>",
     
+    "browser_error" : "It seems you used an incompatible web browser (too old or too weak)."
+    +"</br>We recommend to install one of those for a better experience : "
+    +"</br> <a href='http://www.mozilla.org/'> Firefox </a> "
+    +"</br> <a href='www.google.com/chrome/'> Chrome </a> "
+    +"</br> <a href='http://www.chromium.org/getting-involved/download-chromium'> Chromium </a> "
+    +"</br></br> <div class='center' > <button onclick='popupMsg(msg.welcome)'>i want to try anyway</button></div>",
+
   }
   
