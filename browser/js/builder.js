@@ -306,26 +306,61 @@ Builder.prototype = {
         var parent = document.getElementById("info")
         parent.innerHTML="";
         
+        //file name
         var div_data_file = document.createElement('div');
         div_data_file.id = "info_data_file"
         div_data_file.appendChild(document.createTextNode(this.m.dataFileName));
         
-        var div_analysis_file = document.createElement('div');
-        div_analysis_file.id = "info_analysis_file"
-        div_analysis_file.appendChild(document.createTextNode(this.m.analysisFileName));
+        //global info
+        var div_analysis_file = this.build_info_line("info_analysis_file", "analysis file" ,this.m.analysisFileName)
+        var div_system = this.build_info_line("info_system", "system" ,this.m.system)
         
-        var div_system = document.createElement('div');
-        div_system.id = "info_system"
-        div_system.appendChild(document.createTextNode(this.m.system));
+        //point info
+        var div_point = this.build_info_line("info_point", "point", this.m.time[this.point])
+        var span = document.createElement('span')
+        span.appendChild(document.createTextNode("..."));
+        span.className = "edit_button"
+        span.onclick = function(){ self.editPointName(this); }
+        div_point.appendChild(span)
+    
+        var percent= (this.m.reads_segmented[this.point]/this.m.reads_total[this.point])*100
+        var val = ""+this.m.reads_segmented[this.point] + " reads"
+                +" ("+percent.toFixed(2)+"%)"
+        var div_segmented = this.build_info_line("info_segmented", "segmented", val)
         
-        var div_color = this.build_info_color()
+        var div_total = this.build_info_line("info_total", "total" ,this.m.reads_total[this.point] + " reads")
         
         parent.appendChild(div_data_file)
         parent.appendChild(div_analysis_file)
         parent.appendChild(div_system)
-        parent.appendChild(div_color)
+        
+        parent.appendChild(div_point)
+        parent.appendChild(div_segmented)
+        parent.appendChild(div_total)
+        
+        /*TODO put this somewhere else
+        //color
+        var div_color = this.build_info_color()
+        parent.appendChild(div_color) 
+        */
         
         initTag();
+    },
+    
+    build_info_line : function (id, name, value) {
+        var span1 = document.createElement('span');
+        span1.appendChild(document.createTextNode(name+" : " ));
+        span1.className = "info_row"
+        var span2 = document.createElement('span');
+        span2.appendChild(document.createTextNode(value));
+        
+        var div = document.createElement('div');
+        div.id = id
+        div.className = "info_line"
+        div.appendChild(span1)
+        div.appendChild(span2)
+        
+        return div
     },
     
     build_info_color : function () {
