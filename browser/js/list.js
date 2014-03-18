@@ -46,24 +46,60 @@ List.prototype = {
 /* initialise la liste et crée un div pour chaque clones
  * 
  * */ 
-  init : function(){
-    
-    var self=this;
-    
-    var divParent = document.getElementById(this.id);
-    divParent.innerHTML="";
-  
-    for(var i=0 ;i<this.m.n_windows; i++){
-      var div = document.createElement('li');
-      div.className="list";
-      div.id=i;
-      div.onmouseover = function(){ self.m.focusIn(this.id); }
+    init : function(){
+        this.build_list()
+        this.update();
+    },
 
-      
-      document.getElementById("listClones").appendChild(div);
-    }
-    this.update();
-  },
+    build_list : function () {
+        var self = this
+        
+        var div_parent = document.getElementById(this.id);
+        div_parent.innerHTML="";
+
+        var div_list_menu = document.createElement('div')
+        div_list_menu.id = "list_menu"
+        
+        var a_sortV = document.createElement('a')
+        a_sortV.className = "button"
+        a_sortV.appendChild(document.createTextNode("V sort") )
+        a_sortV.onclick = function () { self.sortListByV() }
+        
+        var a_sortJ = document.createElement('a')
+        a_sortJ.className = "button"
+        a_sortJ.appendChild(document.createTextNode("J sort") )
+        a_sortJ.onclick = function () { self.sortListByJ() }
+        
+        var a_sort = document.createElement('a')
+        a_sort.className = "button"
+        a_sort.appendChild(document.createTextNode("sort") )
+        a_sort.onclick = function () { self.sortListBySize() }
+        
+        div_list_menu.appendChild(a_sortV)
+        div_list_menu.appendChild(a_sortJ)
+        div_list_menu.appendChild(a_sort)
+        
+        
+        
+        var div_list_clones = document.createElement('div')
+        div_list_clones.id = "list_clones"
+    
+        for(var i=0 ;i<this.m.n_windows; i++){
+            var div = document.createElement('li');
+            div.className="list";
+            div.id=i;
+            div.onmouseover = function(){ self.m.focusIn(this.id); }
+
+            div_list_clones.appendChild(div);
+        }
+        
+        
+        
+        div_parent.appendChild(div_list_menu)
+        div_parent.appendChild(div_list_clones)
+        
+    },
+  
 
 /*mise a jour de la liste
  * 
@@ -334,7 +370,7 @@ List.prototype = {
       var idB=$(b).attr("id");
       return self.m.getSize(idB)> self.m.getSize(idA) ? 1:-1; 
     })
-    $("#listClones").html(sort);
+    $("#list_clones").html(sort);
   },
   
   sortListByTop : function(){
@@ -345,7 +381,7 @@ List.prototype = {
       var idB=$(b).attr("id");
       return self.m.windows[idA].top> self.m.windows[idB].top ? 1:-1; 
     })
-    $("#listClones").html(sort);
+    $("#list_clones").html(sort);
   },
   
     sortListByV : function(){
@@ -370,7 +406,7 @@ List.prototype = {
         
         return oA>oB ? 1:-1; 
         })
-        $("#listClones").html(sort);
+        $("#list_clones").html(sort);
     },
   
     sortListByJ : function(){
@@ -395,7 +431,7 @@ List.prototype = {
         
         return oA>oB ? 1:-1; 
         })
-        $("#listClones").html(sort);
+        $("#list_clones").html(sort);
     }
   
   

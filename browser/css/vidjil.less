@@ -272,13 +272,17 @@ ul{
   background :@highlight;
 }
 
-#listClones{
-  overflow-y : scroll;
-  overflow-x : hidden;
-  font-weight: bold;
+#list{
   height: -moz-calc(~"100% - 190px");
   height: -webkit-calc(~"100% - 190px");
   height: calc(~"100% - 190px");
+}
+
+#list_clones{
+  overflow-y : scroll;
+  overflow-x : hidden;
+  height : 100%;
+  font-weight: bold;
   padding:2px;
 }
 
@@ -531,7 +535,7 @@ ul{
   width : 100%;
 }
 
-#file_menu, #menu, #listClones, #tagSelector, #display-menu, #bot-container, .seq-fixed{
+#file_menu, #menu, #list_clones, #tagSelector, #display-menu, #bot-container, .seq-fixed{
  background : @background;
 }
 
@@ -652,7 +656,7 @@ span.logo
   display:inline-table;
 }
 
-#sort-bar{
+#list_menu{
   -khtml-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
@@ -709,7 +713,7 @@ span.logo
   color: grey;
 }
 
-.selector, #sort-bar, #top-container, #listClones, .bot-bar, #bot-container, #popup-container, #file_menu, #tagSelector, .closeButton
+.selector, #list_menu, #top-container, .list_clones, .bot-bar, #bot-container, #popup-container, #file_menu, #tagSelector, .closeButton
 {
   border-color: @border; 
 }
