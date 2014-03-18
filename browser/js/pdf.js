@@ -60,7 +60,7 @@ PDF.prototype = {
             }
         }
         
-        this.col_width = ( this.page_width - (2*this.marge) - this.first_col_width) / this.m.time.length 
+        this.col_width = ( this.page_width - (2*this.marge) - this.first_col_width) / this.m.time_order.length 
         
     },
 
@@ -229,7 +229,7 @@ PDF.prototype = {
         
         var light = true;
         
-        for (var i = 0; i < data.length; i++) {
+        for (var i = 0; i < this.m.time_order.length; i++) {
             var x = this.marge + this.first_col_width + (this.col_width * i)
             var y = this.y
             
@@ -239,7 +239,7 @@ PDF.prototype = {
             
             this.doc.rect(x, y-3.75, this.col_width, this.height_row, 'F');
             
-            var r = data[i]
+            var r = data[this.m.time_order[i]]
             if (format == "%") r = (r*100).toFixed(2) + ' %'
                 
             this.doc.text(x, y, ' ' + r);
