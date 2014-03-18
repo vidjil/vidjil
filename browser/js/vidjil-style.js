@@ -160,6 +160,7 @@ var default_tag=8;
 	
 	if (newStyle==solarizeD) document.getElementById("palette").href="css/dark.css";
 	if (newStyle==solarizeL) document.getElementById("palette").href="css/light.css";
+    m.update()
 	
   }
   
