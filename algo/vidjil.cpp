@@ -168,7 +168,7 @@ void usage(char *progname)
        << "Limits to report a clone" << endl
        << "  -R <nb>       minimal number of reads supporting a clone (default: " << MIN_READS_CLONE << ")" << endl
        << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << RATIO_READS_CLONE << ")" << endl
-       << "  -z <nb>       maximal number of clones reported (default: " << MAX_CLONES << ")" << endl
+       << "  -z <nb>       maximal number of clones reported (0: no limit) (default: " << MAX_CLONES << ")" << endl
        << endl
 
        << "Fine segmentation options" << endl
@@ -719,7 +719,12 @@ int main (int argc, char **argv)
 
     //////////////////////////////////
     //$$ Output clones
-    cout << "Output at most " << max_clones<< " clones with >= " << min_reads_clone << " reads and with a ratio >= " << ratio_reads_clone << endl ;
+    if (max_clones > 0)
+      cout << "Output at most " << max_clones<< " clones" ;
+    else
+      cout << "Output all clones" ;
+
+    cout << " with >= " << min_reads_clone << " reads and with a ratio >= " << ratio_reads_clone << endl ;
 
     map <string, int> clones_codes ;
     map <string, string> clones_map_windows ;
@@ -747,7 +752,7 @@ int main (int argc, char **argv)
     
       ++num_clone ;
 
-      if (num_clone == (max_clones + 1))
+      if (max_clones && (num_clone == max_clones + 1))
 	  break ;
 
       cout << "#### " ;
