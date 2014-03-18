@@ -184,7 +184,6 @@ Graph.prototype = {
             var coordinates = [0, 0];
             coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
             d.pos = (coordinates[0]- this.marge4)/this.resizeW 
-            console.log(d.pos)
         }else{
             d.pos = this.graph_col[this.m.time_order.indexOf(i)];
         }
@@ -486,7 +485,7 @@ Graph.prototype = {
       p.push([0, ( 1 - this.scale_x(res[0][r]*this.precision) ) ]);
       
       for (var i=0; i< this.graph_col.length; i++){
-	  p.push([( this.graph_col[i]), ( 1 - this.scale_x(res[i][r]*this.precision))]);
+	  p.push([( this.graph_col[i]), ( 1 - this.scale_x(res[this.m.time_order[i]][r]*this.precision))]);
       }
       p.push([1, ( 1 - this.scale_x(res[this.graph_col.length-1][r]*this.precision))]);
       p.push([1, 1+0.1]);
