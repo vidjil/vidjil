@@ -155,15 +155,16 @@ Graph.prototype = {
   initAxis : function(){
       
     this.data_axis=[];
+    this.graph_col=[];
     
     //abscisse
-    for (var i=0 ; i<this.m.windows[0].size.length; i++){
-      this.graph_col[i]=this.marge1 + i*(( 1-(this.marge1+this.marge2) )/(this.m.windows[0].size.length-1) );
+    for (var i=0 ; i<this.m.time_order.length; i++){
+      this.graph_col[i]=this.marge1 + i*(( 1-(this.marge1+this.marge2) )/(this.m.time_order.length-1) );
     }
-    if (this.m.windows[0].size.length==1){
+    if (this.m.time_order.length==1){
       this.graph_col[0]=1/2
     }
-    if (this.m.windows[0].size.length==2){
+    if (this.m.time_order.length==2){
       this.graph_col[0]=1/4;
       this.graph_col[1]=3/4;
     }
