@@ -127,15 +127,20 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
    # with automatic clusterisation, distance five (-n 5)
 
 ./vidjil -c segment -G germline/IGH -d data/segment_S22.fa
-   # Segment the reads onto VDJ germline using a full comparison 
-   # (dynamic programming) with all sequences.
-   # The output is displayed in .vdj format (see below)
+   # Segment the reads onto VDJ germline (see warning below)
 
 
-### .vdj format
+### Segmentation and .vdj format
+
+Vidjil outputs include segmentation of V(D)J recombinations, obtained
+by full comparison (dynamic programming) with all germline sequences
+Such segmentations are not at the core of the Vidjil clone gathering
+method (which relies only on the 'window', see above). They are
+provided only for convenience and should be checked with other
+softwares such as iHHMune-align, IgBlast or IMGT/V-QUEST.
 
 Segmentations of V(D)J recombinations are displayed using a dedicated
-format. This format is compatible with FASTA format. A line starting
+.vdj format. This format is compatible with FASTA format. A line starting
 with a > is of the following form:
 
 >name + VDJ  startV endV   startD endD   startJ  endJ   Vgene   delV/N1/delD5'   Dgene   delD3'/N2/delJ   Jgene
