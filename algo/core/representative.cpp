@@ -111,18 +111,20 @@ void KmerRepresentativeComputer::compute() {
   Sequence sequence_longest_run;
   size_t k = getSeed().length();
   
-
   for (size_t seq = 1; seq <= sequences.size() && seq <= seq_index_longest_run + stability_limit ; seq++) {
     Sequence sequence = rc.getithBest(seq);
     if (sequence.sequence.size() <= length_longest_run) {
       break;
     }
     size_t pos_required = sequence.sequence.find(required);
-    size_t pos_end_required = pos_required + required.length();
+    if (pos_required == string::npos && revcomp)
+      pos_required = sequence.sequence.find(::revcomp(required));
 
     if (pos_required == string::npos) {
       continue;
     }
+
+    size_t pos_end_required = pos_required + required.length();
 
     vector<Kmer> counts = index->getResults(sequence.sequence);
 
