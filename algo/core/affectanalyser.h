@@ -208,7 +208,7 @@ template <class T>
 string KmerAffectAnalyser<T>::toString() const{
   string kmer;
   for (size_t i = 0; i < affectations.size(); i++) 
-    kmer += affectations[i].toString();
+    kmer += affectations[i].toString()+": "+seq.substr(i,kms.getK())+"\n";
   return kmer;
 }
 
