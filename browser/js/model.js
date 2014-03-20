@@ -655,11 +655,12 @@ Model.prototype = {
     result += this.getReads(cloneID, time)
       
 	var r=1;
+    var t=this.time_order[time]
 	if (this.norm){
-		r=this.normalization_factor[this.time_order[time]];
+		r=this.normalization_factor[t];
 	}
 
-	return (result/this.reads_segmented[time])*r;
+	return (result/this.reads_segmented[t])*r;
 
   },//end getSize
   

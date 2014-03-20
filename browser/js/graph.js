@@ -482,12 +482,12 @@ Graph.prototype = {
 	  var r=0;
 	  if (this.m.norm==true)
 		  r=1;
-      p.push([0, ( 1 - this.scale_x(res[0][r]*this.precision) ) ]);
+      p.push([0, ( 1 - this.scale_x(res[this.m.time_order[0]][r]*this.precision) ) ]);
       
       for (var i=0; i< this.graph_col.length; i++){
 	  p.push([( this.graph_col[i]), ( 1 - this.scale_x(res[this.m.time_order[i]][r]*this.precision))]);
       }
-      p.push([1, ( 1 - this.scale_x(res[this.graph_col.length-1][r]*this.precision))]);
+      p.push([1, ( 1 - this.scale_x(res[this.m.time_order[this.graph_col.length-1]][r]*this.precision))]);
       p.push([1, 1+0.1]);
       
       return p;
