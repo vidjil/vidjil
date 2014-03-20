@@ -56,6 +56,9 @@ function ScatterPlot(id, model){
     this.text_position_y = 40;
     this.sub_text_position_y = 90;
     
+    //mouse coordinates
+    this.coordinates = [0, 0];
+    
     //select_menu
     this.menu = [
         ["gene_v", "gene V"],
@@ -1059,31 +1062,28 @@ ScatterPlot.prototype = {
   
     activeSelector : function(e){
         var self=this;
-        var coordinates = [0, 0];
-        coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
+        this.coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
         this.selector
-            .attr("originx", coordinates[0])
-            .attr("originy", coordinates[1])
-            .attr("x", coordinates[0])
-            .attr("y", coordinates[1])
+            .attr("originx", this.coordinates[0])
+            .attr("originy", this.coordinates[1])
+            .attr("x", this.coordinates[0])
+            .attr("y", this.coordinates[1])
             .attr("width", 0)
             .attr("height", 0)
-        
-        console.log( "activeSelector " + coordinates[0] + "/" +coordinates[1] )
         
         this.active_selector = true;
     },
   
     updateSelector : function(){
+      this.coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
+      
       if (this.active_selector){
-        var coordinates = [0, 0];
-        coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
+          
         var x = this.selector.attr("originx")
         var y = this.selector.attr("originy")
         
-        
-            var width = coordinates[0]-x
-            var height = coordinates[1]-y
+            var width = this.coordinates[0]-x
+            var height = this.coordinates[1]-y
             
             if (width > 5){
                 this.selector.attr("width", width-3)
@@ -1091,7 +1091,7 @@ ScatterPlot.prototype = {
             }else if (width < -5){
                 this.selector
                 .attr("width",-width)
-                .attr("x",coordinates[0]+3)
+                .attr("x",this.coordinates[0]+3)
             }
             else{
                 this.selector.attr("width", 0)
@@ -1104,15 +1104,12 @@ ScatterPlot.prototype = {
             }else if (height <-5){
                 this.selector
                 .attr("height", -height)
-                .attr("y", coordinates[1]+3)
+                .attr("y", this.coordinates[1]+3)
             }
             else{
                 this.selector.attr("height", 0)
                 .attr("y", y)
             }
-
-            //console.log( "updateSelector " + coordinates[0] + "/" +coordinates[1] )
-
       }
   },
   
@@ -1120,13 +1117,12 @@ ScatterPlot.prototype = {
         
         if (this.active_selector) {
         
-            var coordinates = [0, 0];
-            coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
+            this.coordinates = d3.mouse(d3.select("#"+this.id+"_svg").node());
             
-            if (coordinates[0] < 0
-                || coordinates[1] < 0 
-                || coordinates[0] > this.marge_left+this.resizeW
-                || coordinates[1] > this.marge_top+this.resizeH ){
+            if (this.coordinates[0] < 0
+                || this.coordinates[1] < 0 
+                || this.coordinates[0] > this.marge_left+this.resizeW
+                || this.coordinates[1] > this.marge_top+this.resizeH ){
                 
                 this.cancelSelector()
                 
