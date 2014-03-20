@@ -905,7 +905,30 @@ ScatterPlot.prototype = {
  * */
     axis_x_update : function(data){
         
-        self = this;
+        var self = this;
+        /*
+         * TODO
+        
+        //detect label size 
+        var label_width = 0;
+        var line = 0
+        var sub_line =0
+        
+        for (var i=0; i< data.length; i++){
+            if (data[i].type=="line"){
+                if (data[i].text.length > label_width){
+                    label_width = data[i].text.length;
+                }
+                line++
+            }else{
+                sub_line++
+            }
+        }
+        
+        label_width = (label_width*8)
+        var space = Math.ceil(label_width/(this.resizeW/line))
+        var count=space
+        */
         
         //LEGENDE
         leg = this.axis_x_container.selectAll("text").data(data);
@@ -919,7 +942,26 @@ ScatterPlot.prototype = {
                 else return self.text_position_x
             })
             .text( function (d) { return d.text; })
-            .attr("class", "sp_legend")
+            .attr("class", function (d) {
+                return "sp_legend";
+                /*
+                 * TODO
+                if ( d.type=="line" ){
+                    count++
+                    if (self.coordinates[0] > ((self.resizeW*d.pos+self.marge_left)-(label_width/4) ) &&
+                        self.coordinates[0] < ((self.resizeW*d.pos+self.marge_left)+(label_width/4) )
+                    ){
+                        return "sp_legend_focus";
+                    }
+                    if (count >= space){
+                        count=0
+                        return "sp_legend";
+                    }else{
+                        return "sp_hidden_legend";
+                    }
+                }else{ return "sp_legend";}
+                */
+            })
             .attr("transform", function (d) {
                 var y=self.text_position_x
                 if ( d.type=="subline" ) y=self.sub_text_position_x
