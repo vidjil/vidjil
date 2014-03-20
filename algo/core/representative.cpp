@@ -7,7 +7,8 @@
 using namespace std;
 
 RepresentativeComputer::RepresentativeComputer(list<Sequence> &r)
-  :sequences(r),is_computed(false),representative() {
+  :sequences(r),is_computed(false),representative(),min_cover(1),
+   percent_cover(0.5),revcomp(true){
 }
 
 Sequence RepresentativeComputer::getRepresentative() const{
@@ -19,8 +20,37 @@ list<Sequence>& RepresentativeComputer::getSequenceList() const{
   return sequences;
 }
 
+size_t RepresentativeComputer::getMinCover() const {
+  return min_cover;
+}
+float RepresentativeComputer::getPercentCoverage() const {
+  return percent_cover;
+}
+bool RepresentativeComputer::getRevcomp() const {
+  return revcomp;
+}
+
 bool RepresentativeComputer::hasRepresentative() const{
   return is_computed;
+}
+
+void RepresentativeComputer::setMinCover(size_t min_cover) {
+  this->min_cover = min_cover;
+}
+
+void RepresentativeComputer::setOptions(bool do_revcomp, size_t min_cover, 
+                                        float percent_cover) {
+  setMinCover(min_cover);
+  setPercentCoverage(percent_cover);
+  setRevcomp(do_revcomp);
+}
+
+void RepresentativeComputer::setPercentCoverage(float percent_cover) {
+  this->percent_cover = percent_cover;
+}
+
+void RepresentativeComputer::setRevcomp(bool do_revcomp) {
+  this->revcomp = do_revcomp;
 }
 
 
@@ -44,12 +74,11 @@ KmerRepresentativeComputer::KmerRepresentativeComputer(list<Sequence> &r,
                                                        string seed)
   :RepresentativeComputer(r),seed(seed),stability_limit(DEFAULT_STABILITY_LIMIT){}
   
-void KmerRepresentativeComputer::compute(bool do_revcomp, size_t min_cover, 
-                                         float percent_cover) {
+void KmerRepresentativeComputer::compute() {
   is_computed = false;
 
   // First create an index on the set of reads
-  IKmerStore<Kmer> *index = new MapKmerStore<Kmer>(getSeed(), do_revcomp);
+  IKmerStore<Kmer> *index = new MapKmerStore<Kmer>(getSeed(), revcomp);
 
   // Add sequences to the index
   for (list<Sequence>::iterator it=sequences.begin(); it != sequences.end(); ++it) {

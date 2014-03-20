@@ -7,7 +7,11 @@ void testRepresentative() {
   KmerRepresentativeComputer krc(reads, "##############");
 
   krc.setStabilityLimit(0);
-  krc.compute(false, 1, 0.5);
+  krc.setRevcomp(false);
+  krc.setMinCover(1);
+  krc.setPercentCoverage(0.5);
+
+  krc.compute();
   Sequence representative = krc.getRepresentative();
 
   // Seq3 is the longest it should be taken when performing 0 extra iteration
@@ -15,18 +19,19 @@ void testRepresentative() {
            "If we take the first representative we should have seq3 (" << representative.label << " instead)");
 
   krc.setStabilityLimit(1);
-  krc.compute(false, 1, 0.5);
+  krc.compute();
   representative = krc.getRepresentative();
   TAP_TEST(representative.label.find("seq3") == 0, TEST_KMER_REPRESENTATIVE,
            "When allowing one step before stability, we should still have seq3 (" << representative.label << " instead)");
 
   krc.setStabilityLimit(2);
-  krc.compute(false, 1, 0.5);
+  krc.compute();
   representative = krc.getRepresentative();
   TAP_TEST(representative.label.find("seq1") == 0, TEST_KMER_REPRESENTATIVE,
            "When allowing two steps before stability, we should reach seq1 (" << representative.label << " instead)");
   
-  krc.compute(false, 4, 0.5);
+  krc.setMinCover(4);
+  krc.compute();
   TAP_TEST(! krc.hasRepresentative(), TEST_KMER_REPRESENTATIVE,
            "When requiring 4 reads to support the representative, we should not find any solution.");
 }
@@ -35,7 +40,8 @@ void testRevcompRepresentative() {
   list<Sequence> reads = Fasta("../../data/representative_revcomp.fa").getAll();
 
   KmerRepresentativeComputer krc(reads, "##############");
-  krc.compute(false, 3, 0.5);
+  krc.setOptions(false, 3, 0.5);
+  krc.compute();
   Sequence representative = krc.getRepresentative();
 
   // Computing reads revcomp
@@ -44,7 +50,8 @@ void testRevcompRepresentative() {
   }
 
   KmerRepresentativeComputer krc2(reads, "##############");
-  krc2.compute(false, 3, 0.5);
+  krc2.setOptions(false, 3, 0.5);
+  krc2.compute();
   Sequence representative2 = krc2.getRepresentative();
 
   // Check position of [ in label, so that we remove that part, and then we

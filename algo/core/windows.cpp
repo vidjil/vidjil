@@ -30,7 +30,10 @@ Sequence WindowsStorage::getRepresentative(junction window,
   list<Sequence> auditioned_sequences 
     = getSample(window,nb_sampled, nb_buckets);
   KmerRepresentativeComputer repComp(auditioned_sequences, seed);
-  repComp.compute(true, min_cover, percent_cover);
+  repComp.setRevcomp(true);
+  repComp.setMinCover(min_cover);
+  repComp.setPercentCoverage(percent_cover);
+  repComp.compute();
   if (repComp.hasRepresentative())
     return repComp.getRepresentative();
   return NULL_SEQUENCE;
