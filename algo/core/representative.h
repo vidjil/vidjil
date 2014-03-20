@@ -48,6 +48,12 @@ public:
   bool hasRepresentative() const;
 
   /**
+   * @return if the count is sufficiently elevated to be considered as expressed.
+             ie. count >= getMinCover() && count*1./max >= getPercentCoverage()
+   */
+  bool isSufficienlyExpressed(size_t count, size_t max) const;
+
+  /**
    * Compute the representative depending on the parameters set by the functions
    */
   virtual void compute() = 0;
