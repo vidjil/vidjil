@@ -44,6 +44,7 @@ enum {
 
   /* Representative */
   TEST_KMER_REPRESENTATIVE,
+  TEST_KMER_REPRESENTATIVE_REQUIRED_SEQ,
   TEST_KMER_REPRESENTATIVE_REVCOMP,
 
   /* Kmer segmentation */
@@ -118,6 +119,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_EXTRACTOR_OUT_UNSEG, "Test unsegmentation output for WindowsExtractor");
 
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE, "Test KmerRepresentativeComputer computations");
+  RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE_REQUIRED_SEQ, "Test KmerRepresentativeComputer computations with a required sequence");
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE_REVCOMP, "Test KmerRepresentativeComputer computations on a dataset and its revcomp");
   RECORD_TAP_TEST(TEST_BUG_SEGMENTATION, "Test segmentation bug");
   RECORD_TAP_TEST(TEST_SEGMENT_POSITION, "Test V,D,J position");
