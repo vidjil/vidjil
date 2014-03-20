@@ -29,7 +29,21 @@ void testRepresentative() {
   representative = krc.getRepresentative();
   TAP_TEST(representative.label.find("seq1") == 0, TEST_KMER_REPRESENTATIVE,
            "When allowing two steps before stability, we should reach seq1 (" << representative.label << " instead)");
-  
+
+  krc.setRevcomp(true);
+  krc.setRequiredSequence("ATCGCGCCCT"); // revcomp 
+  krc.compute();
+  representative = krc.getRepresentative();
+  TAP_TEST(representative.label.find("seq2-[33,52]") == 0, TEST_KMER_REPRESENTATIVE_REQUIRED_SEQ,
+           "When requiring sequence ATCGCGCCCT, we should have seq2 (" << representative.label << " instead)");
+
+  krc.setRevcomp(false);
+  krc.compute();
+  TAP_TEST(! krc.hasRepresentative(), TEST_KMER_REPRESENTATIVE_REQUIRED_SEQ,
+           "When requiring sequence AGGGCGCGAT and revcomp=false, we shouldn't find anything (the sequence is revcomp-ed)");
+
+  krc.setRequiredSequence("");
+
   krc.setMinCover(4);
   krc.compute();
   TAP_TEST(! krc.hasRepresentative(), TEST_KMER_REPRESENTATIVE,
