@@ -34,6 +34,12 @@ bool RepresentativeComputer::hasRepresentative() const{
   return is_computed;
 }
 
+bool RepresentativeComputer::isSufficienlyExpressed(size_t count,
+                                                    size_t max) const {
+  return count>= min_cover
+    && count >= max*percent_cover;
+}
+
 void RepresentativeComputer::setMinCover(size_t min_cover) {
   this->min_cover = min_cover;
 }
@@ -110,8 +116,7 @@ void KmerRepresentativeComputer::compute() {
       // Search the longest "run" of consecutive k-mers that are sufficiently
       // expressed in the read collection.
       while (i < counts.size()
-             && counts[i].count >= min_cover 
-             && counts[i].count >= max*percent_cover) {
+             && isSufficienlyExpressed(counts[i].count, max)) {
         length_run++;
         i++;
       }
