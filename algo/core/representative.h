@@ -18,6 +18,9 @@ protected:
   list<Sequence> &sequences;
   bool is_computed;
   Sequence representative;
+  size_t min_cover;
+  float percent_cover;
+  bool revcomp;
 public:
   RepresentativeComputer(list<Sequence> &r);
 
@@ -35,23 +38,44 @@ public:
    */
   list<Sequence>& getSequenceList() const;
 
+  size_t getMinCover() const;
+  float getPercentCoverage() const;
+  bool getRevcomp() const;
+
   /**
    * @return true iff compute() has been called and the criteria have been met.
    */
   bool hasRepresentative() const;
 
   /**
-   * Compute the representative depending on the specified parameters.
-   * @param do_revcomp: true iff sequences may be coming from any strand, and 
-   *                     therefore should be revcomp-ed
+   * Compute the representative depending on the parameters set by the functions
+   */
+  virtual void compute() = 0;
+
+  /**
    * @param min_cover: minimal number of reads supporting each position of the 
    *                   representative
+   */
+  void setMinCover(size_t min_cover);
+
+  /**
+   * Set some parameters by calling the corresponding setters.
+   */
+  void setOptions(bool do_revcomp, size_t min_cover, float percent_cover);
+
+  /**
    * @param percent_cover: minimal percent of the maximal coverage that is 
    *                       admissible for covering the representative.
    *                       Any position is covered by at least percent_cover %
    *                       of the maximal coverage.
    */
-  virtual void compute(bool do_revcomp, size_t min_cover, float percent_cover) = 0;
+  void setPercentCoverage(float percent_cover);
+
+  /**
+   * @param do_revcomp: true iff sequences may be coming from any strand, and 
+   *                     therefore should be revcomp-ed
+   */
+  void setRevcomp(bool do_revcomp);
 };
 
 /**
@@ -83,7 +107,7 @@ public:
   void setStabilityLimit(int limit);
 
   // Actions
-  void compute(bool do_revcomp, size_t min_cover, float percent_cover);
+  void compute();
 
 };
 
