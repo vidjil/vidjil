@@ -109,7 +109,7 @@ Segment.prototype = {
         span.id = "toClipBoard"
         span.className = "button"
         span.appendChild(document.createTextNode("❯ to clipBoard"));
-        div_menu.appendChild(span)
+        // div_menu.appendChild(span)
         
         div.appendChild(div_menu)
         
