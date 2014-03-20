@@ -293,21 +293,23 @@ PDF.prototype = {
             
             //V
             var str;
+            this.doc.setTextColor(120,120,120)
             for (j = 0; j < (Math.floor(seqV.length / 80) + 1); j++) {
                 str = seqV.substring(j * 80, (j + 1) * 80)
                 this.doc.text(this.marge , this.y, str);
                 this.y += 5;
             }
-            
-            
+
+	    // todo: light bar (not taking space) between V/N and N/J borders...
+                        
             //N
             this.y -= 5
             for (var j=0 ; j<str.length; j++){
                 seqN = ' ' + seqN
             }
             
-            this.doc.setFont('courier', 'bold');
-            this.doc.setTextColor(170,120,150)
+            this.doc.setFont('courier', 'bold'); // Underline could be better...
+            this.doc.setTextColor(0,0,40)
             
             for (j = 0; j < (Math.floor(seqN.length / 80) + 1); j++) {
                 str = seqN.substring(j * 80, (j + 1) * 80)
