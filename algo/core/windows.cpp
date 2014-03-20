@@ -33,6 +33,7 @@ Sequence WindowsStorage::getRepresentative(junction window,
   repComp.setRevcomp(true);
   repComp.setMinCover(min_cover);
   repComp.setPercentCoverage(percent_cover);
+  repComp.setRequiredSequence(window);
   repComp.compute();
   if (repComp.hasRepresentative())
     return repComp.getRepresentative();
