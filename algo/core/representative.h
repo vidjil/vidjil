@@ -21,6 +21,7 @@ protected:
   size_t min_cover;
   float percent_cover;
   bool revcomp;
+  string required;
 public:
   RepresentativeComputer(list<Sequence> &r);
 
@@ -32,6 +33,12 @@ public:
    *         purpose, plus the positions that have been extracted.   
    */
   Sequence getRepresentative() const;
+
+  /**
+   * @return the sequence that must be contained in the representative sequence 
+   *         ie. getRepresentative().find(getRequiredSequence()) != string::npos
+   */
+  string getRequiredSequence() const;
 
   /**
    * @return the input sequences we are working on
@@ -82,6 +89,12 @@ public:
    *                     therefore should be revcomp-ed
    */
   void setRevcomp(bool do_revcomp);
+
+  /**
+   * Sequence that the representative must contain absolutely.
+   * Setting the sequence is not required and it can be empty.
+   */
+  void setRequiredSequence(string sequence);
 };
 
 /**

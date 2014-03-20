@@ -8,12 +8,16 @@ using namespace std;
 
 RepresentativeComputer::RepresentativeComputer(list<Sequence> &r)
   :sequences(r),is_computed(false),representative(),min_cover(1),
-   percent_cover(0.5),revcomp(true){
+   percent_cover(0.5),revcomp(true),required("") {
 }
 
 Sequence RepresentativeComputer::getRepresentative() const{
   assert(hasRepresentative());
   return representative;
+}
+
+string RepresentativeComputer::getRequiredSequence() const {
+  return required;
 }
 
 list<Sequence>& RepresentativeComputer::getSequenceList() const{
@@ -59,6 +63,9 @@ void RepresentativeComputer::setRevcomp(bool do_revcomp) {
   this->revcomp = do_revcomp;
 }
 
+void RepresentativeComputer::setRequiredSequence(string sequence) {
+  required = sequence;
+}
 
 string KmerRepresentativeComputer::getSeed() const{
   return seed;
@@ -103,12 +110,19 @@ void KmerRepresentativeComputer::compute() {
   size_t seq_index_longest_run = 1;
   Sequence sequence_longest_run;
   size_t k = getSeed().length();
+  
 
   for (size_t seq = 1; seq <= sequences.size() && seq <= seq_index_longest_run + stability_limit ; seq++) {
     Sequence sequence = rc.getithBest(seq);
     if (sequence.sequence.size() <= length_longest_run) {
       break;
     }
+    size_t pos_required = sequence.sequence.find(required);
+
+    if (pos_required == string::npos) {
+      break;
+    }
+
     vector<Kmer> counts = index->getResults(sequence.sequence);
 
     for (size_t i =0; i < counts.size(); i++) {
@@ -124,6 +138,12 @@ void KmerRepresentativeComputer::compute() {
         // Take into account the whole k-mer, not just the starting positions
         length_run += k - 1;
       if (length_run > length_longest_run) {
+        cout << "Longest run was " << length_longest_run
+             << ", new length is " << length_run 
+             << ", pos of run is " << i - (length_run - k + 1)
+             << ", sequence with longest run is " << seq << endl
+             << sequence.sequence << endl << endl;
+          
         length_longest_run = length_run;
         pos_longest_run = i - (length_run - k + 1);
         sequence_longest_run = sequence;
