@@ -118,6 +118,7 @@ void KmerRepresentativeComputer::compute() {
       break;
     }
     size_t pos_required = sequence.sequence.find(required);
+    size_t pos_end_required = pos_required + required.length();
 
     if (pos_required == string::npos) {
       break;
@@ -125,30 +126,34 @@ void KmerRepresentativeComputer::compute() {
 
     vector<Kmer> counts = index->getResults(sequence.sequence);
 
-    for (size_t i =0; i < counts.size(); i++) {
-      size_t length_run = 0;
-      // Search the longest "run" of consecutive k-mers that are sufficiently
-      // expressed in the read collection.
-      while (i < counts.size()
-             && isSufficienlyExpressed(counts[i].count, max)) {
+    size_t length_run = 0;
+    size_t i = pos_required;
+    if (pos_required)
+      do {
+        i--;
+        length_run++;
+      } while (i > 0 && isSufficienlyExpressed(counts[i].count, max));
+    
+    for (i = pos_required; i < counts.size(); i++) {
+      while (i < counts.size() && 
+             isSufficienlyExpressed(counts[i].count, max)) {
         length_run++;
         i++;
       }
+      
       if (length_run)
         // Take into account the whole k-mer, not just the starting positions
         length_run += k - 1;
       if (length_run > length_longest_run) {
-        cout << "Longest run was " << length_longest_run
-             << ", new length is " << length_run 
-             << ", pos of run is " << i - (length_run - k + 1)
-             << ", sequence with longest run is " << seq << endl
-             << sequence.sequence << endl << endl;
-          
         length_longest_run = length_run;
         pos_longest_run = i - (length_run - k + 1);
         sequence_longest_run = sequence;
         seq_index_longest_run = seq;
       }
+      // We have a requirement. We reached it, exit.
+      if (pos_required != pos_end_required)
+        break;
+      length_run = 0;
     }
   }
 
