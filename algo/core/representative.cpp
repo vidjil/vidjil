@@ -121,7 +121,7 @@ void KmerRepresentativeComputer::compute() {
     size_t pos_end_required = pos_required + required.length();
 
     if (pos_required == string::npos) {
-      break;
+      continue;
     }
 
     vector<Kmer> counts = index->getResults(sequence.sequence);
