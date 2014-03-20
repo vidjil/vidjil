@@ -76,6 +76,11 @@ public:
   int getS() const;
 
   /**
+   * @return the seed used
+   */
+  string getSeed() const;
+
+  /**
    * @param seq: a sequence
    * @param no_revcomp: force not to revcomp the sequence, even if
    *                    the index was built with revcomp.
@@ -186,6 +191,11 @@ int IKmerStore<T>::getK() const {
 template<class T>
 int IKmerStore<T>::getS() const {
   return s;
+}
+
+template<class T>
+string IKmerStore<T>::getSeed() const {
+  return seed;
 }
 
 template<class T>
