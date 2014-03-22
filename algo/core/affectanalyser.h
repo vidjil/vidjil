@@ -207,8 +207,12 @@ int KmerAffectAnalyser<T>::last(const T &affect) const{
 template <class T>
 string KmerAffectAnalyser<T>::toString() const{
   string kmer;
-  for (size_t i = 0; i < affectations.size(); i++) 
-    kmer += affectations[i].toString()+": "+spaced(seq.substr(i,kms.getS()), kms.getSeed())+"\n";
+  for (size_t i = 0; i < affectations.size(); i++) {
+    kmer += affectations[i].toString();
+#ifdef DEBUG_KMERS
+    kmer += ": "+spaced(seq.substr(i,kms.getS()), kms.getSeed())+"\n";
+#endif
+  }
   return kmer;
 }
 
