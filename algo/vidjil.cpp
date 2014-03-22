@@ -180,13 +180,15 @@ void usage(char *progname)
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
        << endl
 
+       << "Debug" << endl
+       << "  -u            output unsegmented sequences (default: " << UNSEGMENTED_FILENAME << ")" << endl
+       << "                and display detailed k-mer affectation both on segmented and on unsegmented sequences" << endl
        << "Output" << endl
        << "  -o <dir>      output directory (default: " << OUT_DIR << ")" <<  endl
        << "  -p <string>   prefix output filenames by the specified string" << endl
     
        << "  -a            output all sequences by cluster (" << SEQUENCES_FILENAME << ")" << endl
        << "  -x            no detailed analysis of each cluster" << endl
-       << "  -u            output unsegmented sequences (default: " << UNSEGMENTED_FILENAME << ")" << endl
        << "  -v            verbose mode" << endl
        << endl        
 
