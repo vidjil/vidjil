@@ -12,6 +12,18 @@ BINDIR=..
 
 v: vidjil
 
+###
+
+kmers: cleankmers
+	make CONFIG="-DDEBUG_KMERS"
+
+nokmers: cleankmers
+	make
+
+cleankmers:
+	rm -f vidjil.o core/windowExtractor.o core/segment.o
+
+###
 
 spaced: cleanspaced
 	make
