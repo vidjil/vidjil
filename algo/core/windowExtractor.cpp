@@ -31,9 +31,13 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, IKmerStore<KmerAffe
         stats_length[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] += seg.getSequence().sequence.length() ;
       }
 
-      if (out_segmented)
+      if (out_segmented) {
         *out_segmented << seg ; // KmerSegmenter output (V/N/J)
-        *out_segmented << seg.getKmerAffectAnalyser()->toString() << endl;
+
+        if (out_unsegmented)
+	  *out_segmented << seg.getKmerAffectAnalyser()->toString() << endl;
+      }
+      
     } else if (out_unsegmented) {
       *out_unsegmented << reads->getSequence();
       *out_unsegmented << "#" << segmented_mesg[seg.getSegmentationStatus()] << endl;
