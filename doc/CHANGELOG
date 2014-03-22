@@ -1,4 +1,11 @@
 
+2014-03-26  The Vidjil Team
+	* Better default seed selection, depending on the germline, segments more reads (vidjil.cpp)
+	* Better selection of representative read XXX setRequiredSequence (core/representative.cpp)
+	* New option to output all clones (-A), for testing purposes
+	* Updated debug option (-u) to display k-mer affection (core/windowExtractor.cpp)
+	* Improved documentation
+
 2014-02-20  The Vidjil Team
 	* Refactored main vidjil.cpp (core/windows.cpp, core/windowExtractor.cpp)
 	* Removed unused html output
