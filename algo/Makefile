@@ -34,11 +34,7 @@ nospaced: cleanspaced
 cleanspaced:
 	rm -f vidjil.o core/tools.o
 
-
-unsegmented:
-	rm -f vidjil.o core/segment.o
-	make CONFIG="-DOUT_UNSEGMENTED"
-
+###
 
 all: $(EXEC)
 
