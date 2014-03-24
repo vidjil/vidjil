@@ -535,44 +535,55 @@ Model.prototype = {
   },//end initClones
   
   
-/* generate à json file from user analysis currently applied
- * 
- * */
-  saveAnalysis: function(){
-    console.log("saveAnalysis()")
-    var analysisData ={ custom :[], cluster :[]} 
-    
-    for(var i=0 ;i<this.n_windows; i++){
-      
-      if ( ( typeof this.windows[i].tag != "undefined" && this.windows[i].tag != 8 ) || 
-	typeof this.windows[i].c_name != "undefined" ){
+    /* generate à json file from user analysis currently applied
+    * 
+    * */
+    saveAnalysis: function(){
+        console.log("saveAnalysis()")
+        var analysisData ={ custom :[], cluster :[]} 
+        
+        for(var i=0 ;i<this.n_windows; i++){
+            
+            //tag and custom name
+            if ( ( typeof this.windows[i].tag != "undefined" && this.windows[i].tag != 8 ) 
+                || typeof this.windows[i].c_name != "undefined" ){
 
-	var elem = {};
-	elem.window = this.windows[i].window;
-	if ( typeof this.windows[i].tag != "undefined" && this.windows[i].tag != 8)
-	  elem.tag = this.windows[i].tag;
-	if ( typeof this.windows[i].c_name != "undefined" ) 
-	  elem.name = this.windows[i].c_name;
+                var elem = {};
+                elem.window = this.windows[i].window;
+                
+                if ( typeof this.windows[i].tag != "undefined" && this.windows[i].tag != 8)
+                    elem.tag = this.windows[i].tag;
+                if ( typeof this.windows[i].c_name != "undefined" ) 
+                    elem.name = this.windows[i].c_name;
 
-	analysisData.custom.push(elem);
-      }
-      
-      if (this.clones[i].cluster.length > 1){
-	for (var j=0; j<this.clones[i].cluster.length; j++){
-	  if (this.clones[i].cluster[j] !=i){
-	    var elem ={};
-	    elem.l = this.windows[i].window;
-	    elem.f = this.windows[ this.clones[i].cluster[j] ].window ;
-	    analysisData.cluster.push(elem);
-	  } 
-	}
-      }
-    }
-    var textToWrite = JSON.stringify(analysisData, undefined, 2);
-    var textFileAsBlob = new Blob([textToWrite], {type:'json'});
+                analysisData.custom.push(elem);
+            }
+            
+            //clones / cluster
+            if (this.clones[i].cluster.length > 1){
+                for (var j=0; j<this.clones[i].cluster.length; j++){
+                    if (this.clones[i].cluster[j] !=i){
+                        var elem ={};
+                        elem.l = this.windows[i].window;
+                        elem.f = this.windows[ this.clones[i].cluster[j] ].window ;
+                        analysisData.cluster.push(elem);
+                    } 
+                }
+            }
+        }
+        
+        //name time/point
+        analysisData.time = this.time
+        analysisData.time_order = this.time_order
+        
+        var textToWrite = JSON.stringify(analysisData, undefined, 2);
+        var textFileAsBlob = new Blob([textToWrite], {type:'json'});
 
-    saveAs(textFileAsBlob, "analysis.json");
-  },//end saveAnalysis
+        var ext = this.dataFileName.lastIndexOf(".")
+        var filename = this.dataFileName.substr(0, ext)
+        
+        saveAs(textFileAsBlob, filename+".analysis");
+    },//end saveAnalysis
   
   
 /* erase all changes 
