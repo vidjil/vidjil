@@ -196,14 +196,21 @@ Graph.prototype = {
     //ordonnée
     while((height*this.precision)>0.5){
 
-      var d={};
-      d.type = "axis_h";
-      d.text = height.toExponential(1);
-      d.orientation = "hori";
-      d.pos = 1-this.scale_x(height*this.precision);
-      this.data_axis.push(d);
-      
-      height=height/10;
+        var d={};
+        d.type = "axis_h";
+        switch (this.m.notation_type){
+            case "percent" :
+                d.text=(100*height)+"%";
+            break;
+            case "scientific" :
+                d.text = height.toExponential(1);
+            break;
+        }
+        d.orientation = "hori";
+        d.pos = 1-this.scale_x(height*this.precision);
+        this.data_axis.push(d);
+        
+        height=height/10;
     }
     
     //current time_point
