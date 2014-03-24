@@ -15,6 +15,7 @@ class MyMiniTest
             folder_path = Dir.pwd
             index_path = 'file://' + folder_path + '/../index.html'
             data_path = folder_path + '/test.data'
+            analysis_path = folder_path + '/test.analysis'
             
             $b = Watir::Browser.new :firefox
             #$b = Watir::Browser.new :chrome
@@ -84,12 +85,12 @@ class BrowserTest < MiniTest::Unit::TestCase
 
     def test_01_init
         begin
-            list = $b.div(:id => 'listClones')
+            list = $b.div(:id => 'list_clones')
             
             assert ( list.li(:id => '0' ).exists?), ">>fail init : clone 0 missing in list"
             assert ( $b.element(:id => "circle0" ).exists?), ">>fail init : clone 0 missing in scatterplot"
             assert ( $b.element(:id => "polyline0" ).exists?), ">>fail init : clone 0 missing in graph"
-            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.750%' ) , ">>fail init : wrong clone size "
+            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.75%' ) , ">>fail init : wrong clone size "
         rescue
             assert (false), "missing element to run test_01_init \n" 
         end
@@ -100,7 +101,7 @@ class BrowserTest < MiniTest::Unit::TestCase
         begin
             
             #test hover a clone in the list
-            list = $b.div(:id => 'listClones')
+            list = $b.div(:id => 'list_clones')
             list.li(:id => '0' ).hover
             
             assert ( $b.element(:id => "circle0" ).class_name == "circle_focus"), ">> fail to focus correct plot after hovering a clone in the list"
@@ -124,7 +125,7 @@ class BrowserTest < MiniTest::Unit::TestCase
         begin
             
             #test select a clone in the list
-            list = $b.div(:id => 'listClones')
+            list = $b.div(:id => 'list_clones')
             
             #list.li(:id => '0' ).div(:class => 'nameBox2').click 
             # ".click" work with chrome but not with firefox so direct call with javascript ( a bit hadrcore ...) 
@@ -158,15 +159,15 @@ class BrowserTest < MiniTest::Unit::TestCase
     
     def test_04_cluster
         begin
-            list = $b.div(:id => 'listClones')
+            list = $b.div(:id => 'list_clones')
             $b.execute_script("m.clusterBy('V')")
-            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '78.652%' ) , ">> fail cluster by V : wrong clone size "
+            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '78.65%' ) , ">> fail cluster by V : wrong clone size "
             
             $b.execute_script("m.clusterBy('J')")
-            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '69.919%' ) , ">> fail cluster by J : wrong clone size "
+            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '69.92%' ) , ">> fail cluster by J : wrong clone size "
             
             $b.execute_script("m.resetClones()")
-            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.750%' ) , ">> fail reset cluster : wrong clone size "
+            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.75%' ) , ">> fail reset cluster : wrong clone size "
             
         rescue
             assert (false), "missing element to run test_04_cluster \n" 
@@ -176,12 +177,12 @@ class BrowserTest < MiniTest::Unit::TestCase
     
     def test_05_normalize
         begin
-            list = $b.div(:id => 'listClones')
+            list = $b.div(:id => 'list_clones')
             $b.execute_script("m.normalization_switch(true)")
             assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '6.625%' ) , ">> fail normalize on : wrong clone size "
             
             $b.execute_script("m.normalization_switch(false)")
-            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.750%' ) , ">> fail normalize off : wrong clone size "
+            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.75%' ) , ">> fail normalize off : wrong clone size "
         rescue
             assert (false), "missing element to run test_05_normalize \n" 
         end
@@ -190,7 +191,7 @@ class BrowserTest < MiniTest::Unit::TestCase
     
     def test_06_displayTop
         begin
-            list = $b.div(:id => 'listClones')
+            list = $b.div(:id => 'list_clones')
             $b.execute_script("m.displayTop(100)")
             assert ( list.li(:id => '120' ).visible? ) , ">> fail display : this clone should be visible"
 
@@ -205,7 +206,7 @@ class BrowserTest < MiniTest::Unit::TestCase
     
     def test_07_merge
         begin
-            list = $b.div(:id => 'listClones')
+            list = $b.div(:id => 'list_clones')
             #select 3 clones
             $b.element(:id => "circle0" ).click
             $b.element(:id => "circle1" ).click
@@ -214,11 +215,11 @@ class BrowserTest < MiniTest::Unit::TestCase
             #merge
             #$b.span(:id => "merge" ).click
             $b.execute_script("m.merge()")
-            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '75.546%' ) , ">> fail clustering : wrong clone size "
+            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '75.55%' ) , ">> fail clustering : wrong clone size "
             
             #unmerge
             $b.execute_script("m.resetClones()")
-            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.750%' ) , ">> fail unclustering : wrong clone size "
+            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.75%' ) , ">> fail unclustering : wrong clone size "
             
         rescue
             assert (false), "missing element to run test_07_merge \n" 
