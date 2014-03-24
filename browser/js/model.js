@@ -1312,7 +1312,8 @@ Model.prototype = {
                         result=(100*size).toFixed(3)+"%";
                     }
                 }else{
-                    result=(100*size)+"%";
+                    //hack to avoid approximation due to javascript way to handle Number
+                    result=parseFloat((100*size).toFixed(10))+"%";
                 }
             break;
             case "scientific" :
