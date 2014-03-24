@@ -89,10 +89,10 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 
 // "tests/data/leukemia.fa" 
 
-#define DEFAULT_K      10
+#define DEFAULT_K      0
 #define DEFAULT_W      40
 #define DEFAULT_W_D    60
-#define DEFAULT_SEED   "#####-#####"
+#define DEFAULT_SEED   ""
 
 #define DEFAULT_DELTA_MIN  -10
 #define DEFAULT_DELTA_MAX   20
@@ -142,9 +142,10 @@ void usage(char *progname)
 
        << "Window prediction" << endl
 #ifndef NO_SPACED_SEEDS
-       << "  -s <string>   spaced seed used for the V/J affectation (default: " << DEFAULT_SEED << ")" << endl
+       << "  -s <string>   spaced seed used for the V/J affectation" << endl
+       << "                (default: #####-#####, ######-######, #######-#######, depends on germline)" << endl
 #endif
-       << "  -k <int>      k-mer size used for the V/J affectation (default: " << DEFAULT_K << ")" << endl
+       << "  -k <int>      k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)" << endl
        << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ")(default with -d: " << DEFAULT_W_D << ")" << endl
        << endl
 
@@ -179,13 +180,15 @@ void usage(char *progname)
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
        << endl
 
+       << "Debug" << endl
+       << "  -u            output unsegmented sequences (default: " << UNSEGMENTED_FILENAME << ")" << endl
+       << "                and display detailed k-mer affectation both on segmented and on unsegmented sequences" << endl
        << "Output" << endl
        << "  -o <dir>      output directory (default: " << OUT_DIR << ")" <<  endl
        << "  -p <string>   prefix output filenames by the specified string" << endl
     
        << "  -a            output all sequences by cluster (" << SEQUENCES_FILENAME << ")" << endl
        << "  -x            no detailed analysis of each cluster" << endl
-       << "  -u            output unsegmented sequences (default: " << UNSEGMENTED_FILENAME << ")" << endl
        << "  -v            verbose mode" << endl
        << endl        
 
@@ -451,6 +454,31 @@ int main (int argc, char **argv)
 
   //$$ options: post-processing+display
 
+
+
+  // Default seeds
+
+#ifndef NO_SPACED_SEEDS
+  if (k == DEFAULT_K)
+    {
+      if (germline_system.find("TRA") != string::npos)
+	seed = "#######-######" ;
+
+      else if ((germline_system.find("TRB") != string::npos)
+	       || (germline_system.find("IGH") != string::npos))
+	seed = "######-######" ; 
+      else // TRD, TRG, IGK, IGL
+	seed = "#####-#####" ; 
+
+      k = seed_weight(seed);
+    }
+#else
+  {
+    cout << "Vidjil was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
+    exit(1) ;
+  }
+#endif
+	  
 
 #ifndef NO_SPACED_SEEDS
   // Check seed buffer  
