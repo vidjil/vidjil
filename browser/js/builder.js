@@ -194,10 +194,10 @@ Builder.prototype = {
         a.appendChild(document.createTextNode("save"));
         a.id="btnSavePoint";
         a.onclick=function(){ 
-            console.log("hello")
             var newPointName = document.getElementById("new_point_name").value;
             self.m.time[self.point]=newPointName
             self.build_info_container()
+            self.m.update()
         }
         divParent.appendChild(a);
         $('#new_point_name').select();
