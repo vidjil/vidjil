@@ -573,7 +573,7 @@ ScatterPlot.prototype = {
         
         for (var i=0 ;i<this.max_precision ; i++){
             var pos = this.sizeScale(height); 
-            var text = height.toExponential(1);;
+            var text = this.m.formatSize(height, false)
             this.gridModel["Size"].push(this.makeLineModel("line", pos, text));
             height=height/10;
         }
@@ -829,7 +829,9 @@ ScatterPlot.prototype = {
         }
         
         this.updateMenu()
+        this.initGridModelSize()
         this.initGrid();
+        
         elapsedTime = new Date().getTime() - startTime;  
         console.log( "update sp: " +elapsedTime +"ms");  
     },
