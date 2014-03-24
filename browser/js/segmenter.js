@@ -49,7 +49,7 @@ Segment.prototype = {
  * */ 
     init : function(){
         
-        if (config && config.cgi_adress){
+        if (typeof config != 'undefined' && config.cgi_adress){
             this.cgi_adress = config.cgi_adress
         }
         
