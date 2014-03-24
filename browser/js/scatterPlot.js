@@ -274,11 +274,12 @@ ScatterPlot.prototype = {
             this.bar_v[this.vKey[i]].currentSize=0;
         }
         
-        //classement des clones suivant leurs gene V
-        for ( var i=0 ; i< this.m.n_windows; i++){
+        //classement des clones suivant V
+        for ( var i=0 ; i< this.m.windows.length; i++){
             if (this.m.windows[i].active){
                 var geneV= this.m.getV(i);
                 var clone={id: i}
+                if (typeof this.bar_v[geneV] == 'undefined') geneV = "undefined V"
                 this.bar_v[geneV].clones.push(clone);
                 this.bar_v[geneV].totalSize+=this.m.getSize(i);
             }
@@ -295,7 +296,7 @@ ScatterPlot.prototype = {
             });
         }
         
-        //calculs des positions 
+        //calculs des positions y
         for ( var i=0 ; i< this.vKey.length; i++){
             var somme=0;
             for ( var j=0 ; j<this.bar_v[this.vKey[i]].clones.length ; j++){
@@ -326,8 +327,7 @@ ScatterPlot.prototype = {
             .attr("id", function(d) { return "bar"+d.id; })
             .attr("width", this.bar_width)
             .attr("x", function(d) { 
-                var geneV="undef";
-                if (typeof(self.m.windows[d.id].V) != 'undefined' ){
+                if (typeof(self.m.windows[d.id].V) != 'undefined' && typeof self.posG[self.m.windows[d.id].V[0]] != 'undefined'){
                     var geneV=self.m.windows[d.id].V[0];
                     return self.posG[geneV]*self.resizeW-(self.bar_width/2)+self.marge_left; 
                 }else{
