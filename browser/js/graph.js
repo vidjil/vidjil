@@ -198,14 +198,7 @@ Graph.prototype = {
 
         var d={};
         d.type = "axis_h";
-        switch (this.m.notation_type){
-            case "percent" :
-                d.text=(100*height)+"%";
-            break;
-            case "scientific" :
-                d.text = height.toExponential(1);
-            break;
-        }
+        d.text = this.m.formatSize(height, false)
         d.orientation = "hori";
         d.pos = 1-this.scale_x(height*this.precision);
         this.data_axis.push(d);
