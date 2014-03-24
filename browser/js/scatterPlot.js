@@ -424,32 +424,27 @@ ScatterPlot.prototype = {
  * */
     initGridModel : function(){
         this.gridModel={};
-        
-        //VJ gridModel
-        this.gridModel["allele_j"]=[];
-        this.gridModel["gene_j"]=[];
+
+        this.initGridModelV()
+        this.initGridModelJ()
+        this.initGridModelN()
+        this.initGridModelSize()
+        this.initGridModelBar()
+
+    },
+    
+    initGridModelV : function () {
         
         this.gridModel["allele_v"]=[];
         this.gridModel["gene_v"]=[];
-        
         this.gridModel["allele_v_used"]=[];
         this.gridModel["gene_v_used"]=[];
-        
-        this.gridModel["Size"]=[];
-        this.gridModel["nSize"]=[];
-        this.gridModel["n"]=[];
-        this.gridModel["bar"]=[];
         
         var vKey = Object.keys(this.m.germline.v);
         var vKey2 = Object.keys(this.m.germline.vgene);
         
         var stepV = 1/(vKey2.length+1)
         var stepV2 = 1/(Object.keys(this.m.usedV).length+1)
-        
-        var jKey = Object.keys(this.m.germline.j);
-        var jKey2 = Object.keys(this.m.germline.jgene);
-        var stepJ = 1 / (jKey2.length+1)
-
         
         // V allele
         for (var i=0; i<vKey.length; i++){
@@ -507,6 +502,25 @@ ScatterPlot.prototype = {
         this.positionUsedGene["undefined V"]=pos2
         this.positionUsedAllele["undefined V"]=pos2
         
+        //choix du gridModel V a utiliser
+        this.posG=this.positionGene
+        this.posA=this.positionAllele
+        if (Object.keys(m.germline.vgene).length > 20){
+            this.use_simple_v = true;
+            this.posG=this.positionUsedGene
+            this.posA=this.positionUsedAllele
+        }
+    },
+    
+    initGridModelJ : function () {
+        
+        this.gridModel["allele_j"]=[];
+        this.gridModel["gene_j"]=[];
+        
+        var jKey = Object.keys(this.m.germline.j);
+        var jKey2 = Object.keys(this.m.germline.jgene);
+        var stepJ = 1 / (jKey2.length+1)
+        
         //J allele
         for (var i=0; i<jKey.length; i++){
 
@@ -547,20 +561,11 @@ ScatterPlot.prototype = {
         this.positionUsedGene["undefined J"]=pos
         this.positionUsedAllele["undefined J"]=pos
         
+    },
+    
+    initGridModelSize : function () {
+        this.gridModel["Size"]=[];
         
-        //N_size
-        for (var i=0 ;i<=(Math.floor(this.m.n_max/5)) ; i++){
-            var pos = (1-((i*5)/this.m.n_max))*(1-(2*this.marge_top));
-            this.gridModel["nSize"].push(this.makeLineModel("line", pos, i*5));
-        }
-        
-        //n
-        for (var i=0 ;i<=(Math.floor(this.m.n_max/5)) ; i++){
-            var pos = (1-((i*5)/this.m.n_max));
-            this.gridModel["n"].push(this.makeLineModel("line", pos, i*5));
-        }
-        
-        //size 
         this.sizeScale = d3.scale.log()
         .domain([this.m.min_size,1])
         .range([1,0]);
@@ -573,26 +578,28 @@ ScatterPlot.prototype = {
             height=height/10;
         }
         
-
-        //bar
+    },
+  
+    initGridModelN : function () {
+        this.gridModel["n"]=[];
+        
+        for (var i=0 ;i<=(Math.floor(this.m.n_max/5)) ; i++){
+            var pos = (1-((i*5)/this.m.n_max));
+            this.gridModel["n"].push(this.makeLineModel("line", pos, i*5));
+        }
+    },
+    
+    initGridModelBar : function () {
+        this.gridModel["bar"]=[];
+        
         for (var i=0 ;i<20 ; i++){
             var d={};
             d.type = "line";
             d.value=i*5;
             this.gridModel["bar"].push(d);
         }
-    
-        //choix du gridModel V a utiliser
-        this.posG=this.positionGene
-        this.posA=this.positionAllele
-        if (Object.keys(m.germline.vgene).length > 20){
-            this.use_simple_v = true;
-            this.posG=this.positionUsedGene
-            this.posA=this.positionUsedAllele
-        }
-        
     },
-  
+    
 /* calcul d'une étape d'animation
  * 
  * */
