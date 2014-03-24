@@ -1297,6 +1297,32 @@ Model.prototype = {
 
     },
     
+    formatSize : function (size, fixed) {
+        var result = "-/-"
+        
+        if (size == 0) return result
+            
+        switch (this.notation_type){
+            case "percent" :
+                if (fixed){
+                    if (size<0.0001){
+                        result=(100*size).toFixed(4)+"%";
+                    }else if (size > 0.1){
+                        result=(100*size).toFixed(2)+"%";
+                    }else{
+                        result=(100*size).toFixed(3)+"%";
+                    }
+                }else{
+                    result=(100*size)+"%";
+                }
+            break;
+            case "scientific" :
+                result=(size).toExponential(1);
+            break;
+        }
+        return result
+    },
+    
 }//end prototype Model
 
 
