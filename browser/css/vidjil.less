@@ -624,8 +624,11 @@ span.logo
 
 .focus {
     position: relative;
-    width: 100%;
     text-align: center;
+    float: left;
+    width: -moz-calc(~"100%" - @width_left_container);
+    width: -webkit-calc(~"100%" - @width_left_container);
+    width: calc(~"100%" - @width_left_container);
 }
 
 #segmenter {
