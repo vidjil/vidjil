@@ -270,7 +270,7 @@ PDF.prototype = {
         //clone reads (%)
         var data = []
         for (var i = 0; i < this.m.time.length; i++) {
-            data[i] = m.windows[cloneID].size[i] / m.reads_segmented[i]
+            data[i] = this.m.getSize(cloneID, i)
         }
         this.row( '', data, '%')
         this.next_row()
