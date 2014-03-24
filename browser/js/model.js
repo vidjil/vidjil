@@ -381,28 +381,32 @@ Model.prototype = {
 /* load the selected analysis file in the model
  * @analysis : id of the form (html element) linking to the analysis file
  * */
-  loadAnalysis: function(analysis){
-    console.log("loadAnalysis()");
-    if (document.getElementById(analysis).files.length != 0) { 
-      var oFReader = new FileReader();
-      var oFile = document.getElementById(analysis).files[0];
-      self = this;
-      
-      self.analysisFileName=document.getElementById(analysis).files[0].name;
-      
-      oFReader.readAsText(oFile);
-      
-      oFReader.onload = function (oFREvent) {
-      var text = oFREvent.target.result;
-      self.analysis = JSON.parse(text);
-      self.initClones();
-      }
-    }else{
-      self.initClones();
-    }
-    
-    return this;
-  },//end loadAnalysis
+    loadAnalysis: function(analysis){
+        console.log("loadAnalysis()");
+        if (document.getElementById(analysis).files.length != 0) { 
+            var oFReader = new FileReader();
+            var oFile = document.getElementById(analysis).files[0];
+            self = this;
+            
+            self.analysisFileName=document.getElementById(analysis).files[0].name;
+            
+            oFReader.readAsText(oFile);
+            
+            oFReader.onload = function (oFREvent) {
+                var text = oFREvent.target.result;
+                self.analysis = JSON.parse(text);
+                if (self.analysis.time && ( self.analysis.time.length == self.time.length ) ){
+                    self.time = self.analysis.time;
+                    self.time_order =self.analysis.time_order;
+                }
+                self.initClones();
+            }
+        }else{
+            self.initClones();
+        }
+        
+        return this;
+    },//end loadAnalysis
 
   
 /* initializes clones with analysis file data
