@@ -84,10 +84,12 @@ Model.prototype = {
  * impossible to use direct path to input files, need a fakepath from input form 
  * @limit : minimum top value to keep a window*/
   load : function(data, analysis, limit){
+    var self = this;
+    
     console.log("load()");
     
     if (document.getElementById(data).files.length === 0) { return; }
-    self = this;
+    
     var oFReader = new FileReader();
     var oFile = document.getElementById(data).files[0];
     self.dataFileName= document.getElementById(data).files[0].name;
@@ -382,11 +384,12 @@ Model.prototype = {
  * @analysis : id of the form (html element) linking to the analysis file
  * */
     loadAnalysis: function(analysis){
+        var self = this
+        
         console.log("loadAnalysis()");
         if (document.getElementById(analysis).files.length != 0) { 
             var oFReader = new FileReader();
             var oFile = document.getElementById(analysis).files[0];
-            self = this;
             
             self.analysisFileName=document.getElementById(analysis).files[0].name;
             
