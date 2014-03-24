@@ -69,7 +69,7 @@ function Model(){
   this.precision=1;
   this.time_order=[];
   
-  this.notation_type = "scientific"
+  this.notation_type = "percent"
   
   this.checkBrowser()
 }
