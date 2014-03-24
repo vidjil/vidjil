@@ -290,13 +290,54 @@ class BrowserTest < MiniTest::Unit::TestCase
             assert (false), "missing element to run test_10_align \n" 
         end
     end
-  
+
+    
+    def test_11_load_analysis
+        begin
+            analysis_path = Dir.pwd + '/test.analysis'
+            data_path = Dir.pwd + '/test.data'
+            
+            $b.div(:id => 'logo').click 
+            $b.div(:id => 'popup-msg').button(:text => 'start').click 
+            $b.div(:id => 'file_menu').file_field(:name,"json").set(data_path)
+            $b.div(:id => 'file_menu').file_field(:name,"pref").set(analysis_path)
+            $b.div(:id => 'file_menu').button(:text => 'start').click 
+            
+            assert ( $b.div(:id => 'info').text.include? "plop") , ">> fail load analysis: wrong selected time point "
+            
+        rescue
+            assert (false), "missing element to run test_11_load_analysis \n" 
+        end
+    end
+    
+    
+    def test_12_drag_time
+        begin
+            time=$b.element(:id => "time6" )
+            target=$b.element(:id => "time0" )
+
+            time.fire_event("onmousedown")
+            $b.driver.action.click_and_hold(time.wd).perform
+
+            sleep 2
+            $b.driver.action.move_to(target.wd).perform
+
+            sleep 2
+            target.fire_event("onmouseup")
+            
+            list = $b.div(:id => 'list_clones')
+            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '0.0005%' ) , ">> fail drag/drop : wrong clone size "
+            assert ( $b.div(:id => 'info').text.include? "Fu6.data") , ">> fail drag/drop : wrong selected time point "
+            
+        rescue
+    
+        end
+    end
     
 end
 
 =begin
     TODO
-    load_analysis
     save_analysis
     clipboard
     change tag
