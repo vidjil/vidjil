@@ -197,9 +197,9 @@ void usage(char *progname)
 
        << endl 
        << "Examples (see doc/README)" << endl
-       << "  " << progname << "             -G germline/IGH                  -d  data/Stanford_S22.fasta" << endl
-       << "  " << progname << " -c clones   -G germline/IGH  -r 1 -R 1 -% 0  -d  data/Stanford_S22.fasta" << endl
-       << "  " << progname << " -c segment  -G germline/IGH                  -d  data/Stanford_S22.fasta" << endl
+       << "  " << progname << "             -G germline/IGH             -d data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c clones   -G germline/IGH  -r 5 -R 5  -d data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c segment  -G germline/IGH             -d data/Stanford_S22.fasta" << endl
     ;
   exit(1);
 }
