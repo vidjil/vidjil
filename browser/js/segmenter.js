@@ -38,7 +38,7 @@ function Segment(id, model){
   this.m=model;			//Model utilisé
   this.m.view.push(this);	//synchronisation au Model
   this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
-  this.cgi_adress = "http://127.0.1.1/cgi-bin/"
+  this.cgi_address = "http://127.0.1.1/cgi-bin/"
     
 }
 
@@ -49,8 +49,8 @@ Segment.prototype = {
  * */ 
     init : function(){
         
-        if (typeof config != 'undefined' && config.cgi_adress){
-            this.cgi_adress = config.cgi_adress
+        if (typeof config != 'undefined' && config.cgi_address){
+            this.cgi_address = config.cgi_address
         }
         
         this.build()
