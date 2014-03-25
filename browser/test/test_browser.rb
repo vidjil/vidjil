@@ -82,7 +82,7 @@ class BrowserTest < MiniTest::Unit::TestCase
         end
     end
     
-
+    
     def test_01_init
         begin
             list = $b.div(:id => 'list_clones')
@@ -127,9 +127,9 @@ class BrowserTest < MiniTest::Unit::TestCase
             #test select a clone in the list
             list = $b.div(:id => 'list_clones')
             
-            #list.li(:id => '0' ).div(:class => 'nameBox2').click 
+            #list.li(:id => '0' ).div(:class => 'nameBox').click 
             # ".click" work with chrome but not with firefox so direct call with javascript ( a bit hadrcore ...) 
-            $b.execute_script("document.getElementById('0').getElementsByClassName('nameBox2')[0].click()")
+            $b.execute_script("document.getElementById('0').getElementsByClassName('nameBox')[0].click()")
             
             assert ( list.li(:id => '0' ).class_name == "list list_select" )
             assert ( $b.element(:id => "circle0" ).class_name == "circle_select")
@@ -330,7 +330,50 @@ class BrowserTest < MiniTest::Unit::TestCase
             assert ( $b.div(:id => 'info').text.include? "Fu6.data") , ">> fail drag/drop : wrong selected time point "
             
         rescue
+            assert (false), "missing element to run test_12_drag_time \n" 
+        end
+    end
+
     
+    def test_13_tag
+        begin
+            elem = $b.div(:id => 'list_clones').li(:id => '1')
+            tagSelector = $b.div(:id => 'tagSelector')
+            
+            elem.div(:class => 'starBox').click
+            tagSelector.span(:class => 'tagName1').click
+            $b.element(:id => "circle0" ).click
+            sleep 1
+            
+            assert (elem.div(:class => 'nameBox').style('color') ==  'rgba(203, 75, 22, 1)' ) , ">> fail tag : clone color hasn't changed"
+            
+        rescue
+            assert (false), "missing element to run test_13_tag \n" 
+        end
+    end
+    
+
+    def test_14_edit_tag
+        begin
+            elem = $b.div(:id => 'list_clones').li(:id => '1')
+            tagSelector = $b.div(:id => 'tagSelector')
+            displayMenu = $b.div(:id => 'display_menu')
+            
+            elem.div(:class => 'starBox').click
+            tagSelector.span(:class => 'edit_button').click
+            tagSelector.text_field(:id => 'new_tag_name').set 'test_tag'
+            tagSelector.a(:id => 'btnSaveTag').click 
+            
+            displayMenu.click
+            assert ( displayMenu.text.include? 'test_tag') , "fail edit tag : tag name in display menu hasn't changed"
+            
+            elem.div(:class => 'starBox').click
+            assert ( displayMenu.text.include? 'test_tag') , "fail edit tag : tag name in tag selector hasn't changed"
+            
+            tagSelector.span(:class => 'closeButton').click
+            
+        rescue
+            assert (false), "missing element to run test_14_edit_tag \n" 
         end
     end
     
@@ -340,7 +383,6 @@ end
     TODO
     save_analysis
     clipboard
-    change tag
     edit tag
     change axis scatterplot
     edit name
