@@ -1,14 +1,14 @@
 CC=g++
 OPTIM=-O2 
-CFLAGS=-W -Wall $(OPTIM) $(DEBUG) $(CONFIG)
+CXXFLAGS=-W -Wall $(OPTIM) $(DEBUG) $(CONFIG)
 LDFLAGS=-lm
 EXEC=vidjil kmer kmer_count cut count detailed_affect
-SRCCORE=$(wildcard core/*.cpp) $(wildcard core/*.h) 
 MAINCORE=$(wildcard *.cpp)
-OBJCORE=$(SRCCORE:.cpp=.o)
-LIBCORE=core.a
+LIBCORE=core/vidjil.a
 
 BINDIR=..
+
+.PHONY: all core clean forcedep
 
 v: vidjil
 
@@ -42,37 +42,24 @@ debug:
 	make clean
 	make DEBUG="-ggdb"
 
-$(EXEC): %: %.o $(LIBCORE) 
-	$(CC) -o $(BINDIR)/$@ $^ $(LDFLAGS) $(CFLAGS)
-
-core: $(LIBCORE)
-
-$(LIBCORE): $(OBJCORE)
-	rm -f $(LIBCORE)
-	ar rc $@ $^
-
-%.o: %.cpp %.h core/dynprog.h
-	$(CC) -o $@ -c $< $(CFLAGS)
-
-%.o: %.cpp 
-	$(CC) -o $@ -c $< $(CFLAGS)
+$(EXEC): %: %.o 
+	make -C core
+	$(CC) -o $(BINDIR)/$@ $^ $(LIBCORE) $(LDFLAGS) $(CXXFLAGS)
 
 clean:
-	rm -f core/*.o *.o $(LIBCORE)
+	make -C core $@
 	cd $(BINDIR) ; rm -f $(EXEC)
 	make -C tests $@
 
 forcedep:
-	g++ -M $(SRCCORE) $(MAINCORE) > dep.mk
+	g++ -M $(MAINCORE) > dep.mk
 
 DEP=$(wildcard dep.mk)
 
 ifeq (${DEP},)
-$(shell	g++ -M $(SRCCORE) $(MAINCORE) > dep.mk)
+$(shell	g++ -M $(MAINCORE) > dep.mk)
 endif
 include dep.mk
-
-
 
 
 RELEASE_H = release.h

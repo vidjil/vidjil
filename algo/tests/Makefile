@@ -1,11 +1,11 @@
 CC=g++
-CFLAGS=-W -Wall -g -O0
+CXXFLAGS=-W -Wall -g -O0
 INCLUDE=-I ..
 LDFLAGS=
 SRC= tests.cpp
 EXEC=$(SRC:.cpp=)
 OTHER_SRC=$(wildcard *.cpp)
-LIB=../core.a
+LIB=../core/vidjil.a
 SHOULD=$(wildcard *.should_get)
 SHOULD_LOG=$(SHOULD:.should_get=.log)
 
@@ -27,16 +27,16 @@ should: core $(SHOULD_LOG)
 	./should-to-tap.sh $<
 
 $(EXEC): % : %.o $(LIB) 
-	$(CC) -o $@ $< $(LIB) $(LDFLAGS) $(CFLAGS)
+	$(CC) -o $@ $< $(LIB) $(LDFLAGS) $(CXXFLAGS)
 
 
 ../core.a: core
 
 core:
-	make OPTIM="-O0 -g" -C .. core.a
+	make OPTIM="-O0 -g" -C ../core 
 
 %.o: %.cpp $(OTHER_SRC)
-	$(CC) -o $@ $(INCLUDE) -c $< $(CFLAGS)
+	$(CC) -o $@ $(INCLUDE) -c $< $(CXXFLAGS)
 
 clean:
 	rm -f *.o $(EXEC) *.tap *.log
