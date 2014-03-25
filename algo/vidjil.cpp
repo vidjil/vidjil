@@ -188,7 +188,7 @@ void usage(char *progname)
        << "  -p <string>   prefix output filenames by the specified string" << endl
     
        << "  -a            output all sequences by cluster (" << SEQUENCES_FILENAME << ")" << endl
-       << "  -x            no detailed analysis of each cluster" << endl
+       << "  -x            do not compute representative sequences" << endl
        << "  -v            verbose mode" << endl
        << endl        
 
@@ -1022,7 +1022,7 @@ int main (int argc, char **argv)
 	}
 
 
-      //$$ Very detailed cluster analysis (with sequences)
+      //$$ Very detailed cluster analysis (with sequences) // NOT USED NOW
 
       list<string> msa;
       bool good_msa = false ;
