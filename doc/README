@@ -62,7 +62,8 @@ make test                # run self-tests
 
 ### Optional dependencies
 
-clustalw (to compute alignments between windows from a same clone)
+clustalw (to compute alignments between windows from a same clone, by setting 
+          very_detailed_cluster_analysis in vidjil.cpp)
 neato (to display graph of neighbors for the automatic clusterisation)
 
 ### Vidjil parameters
@@ -118,7 +119,7 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
    # then gather them into clones (-R 1, with at least 1 read each:
    # there are many 1-read clones due to sequencing errors.) 
    # A more natural option could be -R 5.
-   # No representative selection / clustalw postprocessing (-x)
+   # No representative selection (-x)
    # Results are in out/segmented.fa, out/windows.fa-* and out/clones*
    # out/segmented.fa list segmented reads using the .vdj format (see below)
 
