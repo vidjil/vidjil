@@ -5,6 +5,7 @@
 #include <set>
 #include <vector>
 #include <cassert>
+#include <map>
 
 // Define two constant affectations: ambiguous and unknown.
 
@@ -40,7 +41,7 @@ class AffectAnalyser {
    * @param affect: An affectation
    * @return the number of times this affectation has been given in the read.
    */
-  virtual int count(const T &affect)  const = 0;
+  virtual int count(const T &affect) const = 0;
 
   /**
    * @param i: the position to consider
@@ -126,6 +127,64 @@ class KmerAffectAnalyser: public AffectAnalyser<T> {
   string toString() const;
 };
 
+/**
+ * Class that allows to count in constant time the number of affectations
+ * before or after a given point.
+ */
+template <class T>
+class CountKmerAffectAnalyser: public KmerAffectAnalyser<T> {
+ private:
+  map<T, int* >counts;
+ public:
+
+  CountKmerAffectAnalyser(IKmerStore<T> &kms, const string &seq);
+  ~CountKmerAffectAnalyser();
+
+  /**
+   * @complexity constant time
+   */
+  int count(const T &affect) const;
+
+  /**
+   * Count the number of an affectation before (strictly) than a position
+   * @complexity constant time
+   */
+  int countBefore(const T&affect, int pos) const;
+
+  /**
+   * Count the number of an affectation after (strictly) than a position)
+   * @complexity constant time
+   */
+  int countAfter(const T&affect, int pos) const;
+
+  /**
+   * @return the first position pos in the sequence such that 
+   *         countBefore(before, pos) + countAfter(after, pos) is maximal
+   *         and pos >= start.
+   * @complexity linear in getSequence().size() 
+   */
+  int firstMax(const T&before, const T&after, int start=0) const;
+
+  /**
+   * @return the last position pos in the sequence such that
+   *         countBefore(before, pos) + countAfter(after, pos) is maximal
+   *         and pos <= end (if end == -1 considers end of sequence)
+   * @complexity linear in getSequence().size()
+   */
+  int lastMax(const T&before, const T&after, int end=-1) const;
+
+ private:
+  /**
+   * Build the counts map.
+   */
+  void buildCounts();
+
+  /**
+   * Search the maximum. Used by firstMax and lastMax.
+   */
+  int searchMax(const T&before, const T &after,
+                int start, int end, int iter) const;
+};
 
 template <class T>
 KmerAffectAnalyser<T>::KmerAffectAnalyser(IKmerStore<T> &kms, 
@@ -214,6 +273,103 @@ string KmerAffectAnalyser<T>::toString() const{
 #endif
   }
   return kmer;
+}
+
+/* CountKmerAffectAnalyser */
+
+template <class T>
+CountKmerAffectAnalyser<T>::CountKmerAffectAnalyser(IKmerStore<T> &kms, const string &seq): KmerAffectAnalyser<T>(kms, seq) {
+  buildCounts();
+}
+
+template <class T>
+CountKmerAffectAnalyser<T>::~CountKmerAffectAnalyser() {
+  set<T> affects = this->getDistinctAffectations();
+
+  /* Initialize each key with a 0-integer array */
+  for (typename set<T>::iterator it = affects.begin(); 
+       it != affects.end(); it++) {
+    delete [] counts[*it];
+  }  
+}
+
+template <class T>
+int CountKmerAffectAnalyser<T>::count(const T &affect) const {
+  if (counts.count(affect) == 0)
+    return 0;
+
+  return counts.find(affect)->second[KmerAffectAnalyser<T>::count() - 1];
+}
+
+template <class T>
+int CountKmerAffectAnalyser<T>::countBefore(const T&affect, int pos) const {
+  if (pos == 0 || counts.count(affect) == 0)
+    return 0;
+  return counts.find(affect)->second[pos-1];
+}
+
+template <class T>
+int CountKmerAffectAnalyser<T>::countAfter(const T&affect, int pos) const {
+  if (counts.count(affect) == 0)
+    return 0;
+  int length = KmerAffectAnalyser<T>::count();
+  typename map<T, int*>::const_iterator it = counts.find(affect);
+  return it->second[length-1] - it->second[pos];
+}  
+
+template <class T>
+int CountKmerAffectAnalyser<T>::firstMax(const T&before, const T&after, 
+                                      int start) const {
+  return searchMax(before, after, start, KmerAffectAnalyser<T>::count()-1,1);
+}
+
+template <class T>
+int CountKmerAffectAnalyser<T>::lastMax(const T&before, const T&after, 
+                                      int end) const {
+  if (end == -1)
+    end = KmerAffectAnalyser<T>::count()-1;
+  return searchMax(before, after, end, 0, -1);
+}
+
+template <class T>
+int CountKmerAffectAnalyser<T>::searchMax(const T&before, const T& after,
+                                       int start, int end, int iter) const {
+  int first_pos_max = -1;
+  int max_value = -1;
+  for (int i = start; i <= end; i+=iter) {
+    int value = countBefore(before, i) + countAfter(after, i);
+    if (value > max_value) {
+      max_value = value;
+      first_pos_max = i;
+    }
+  }
+  return first_pos_max;
+}
+
+template <class T>
+void CountKmerAffectAnalyser<T>::buildCounts() {
+  int length = KmerAffectAnalyser<T>::count();
+  set<T> affects = this->getDistinctAffectations();
+
+  /* Initialize each key with a 0-integer array */
+  for (typename set<T>::iterator it = affects.begin(); 
+       it != affects.end(); it++) {
+    counts[*it] = new int[length];
+  }
+
+  /* Fill in the counts arrays */
+  for (int i = 0; i < length; i++) {
+    T current = this->getAffectation(i);
+    for (typename set<T>::iterator it = affects.begin(); 
+         it != affects.end(); it++) {
+      int value = (current == *it) ? 1 : 0;
+
+      if (i == 0)
+        counts[*it][i] = value;
+      else
+        counts[*it][i] = counts[*it][i-1] + value;
+    }
+  }
 }
 
 #endif
