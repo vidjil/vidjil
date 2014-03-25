@@ -775,6 +775,7 @@ int main (int argc, char **argv)
 
     VirtualReadScore *scorer = new KmerAffectReadScore(*index);
     int num_clone = 0 ;
+    int clones_without_representative = 0 ;
 
     ofstream out_edges((out_dir+prefix_filename + EDGES_FILENAME).c_str());
     int nb_edges = 0 ;
@@ -886,8 +887,16 @@ int main (int argc, char **argv)
                                              ratio_representative,
                                              max_auditionned);
 
+
+        if (representative == NULL_SEQUENCE) {
+	  clones_without_representative++ ;
+	  if (verbose)
+	    cout << "# (no representative sequence with current parameters)" ;
+
+        } else {
 	//$$ There is one representative, FineSegmenter
-        if (representative != NULL_SEQUENCE) {
+
+
           representative.label = string_of_int(it->second) + "-" 
             + representative.label;
 	  FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
@@ -1147,11 +1156,19 @@ int main (int argc, char **argv)
       SimilarityMatrix matrix = compare_all(representatives_this_clone, true);
       cout << RawOutputSimilarityMatrix(matrix, 90);
     }
+    //$$ End of very_detailed_cluster_analysis
 
     out_edges.close() ;
 
     cout << "#### end of clones" << endl; 
     cout << endl;
+
+    if (clones_without_representative > 0)
+      {
+	cout << clones_without_representative << " clones without representatives" ;
+	cout << " (requiring " << min_cover_representative << "/" << ratio_representative << " supporting reads)" << endl ;
+	cout << endl ;
+      }
   
     //$$ Compare representatives of all clones
 
