@@ -68,7 +68,7 @@
 #define MIN_READS_WINDOW 10
 #define MIN_READS_CLONE 10
 #define MAX_CLONES 20
-#define RATIO_READS_CLONE 0.1
+#define RATIO_READS_CLONE 0.0
 
 #define COMMAND_WINDOWS "windows"
 #define COMMAND_ANALYSIS "clones"
