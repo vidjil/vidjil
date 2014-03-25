@@ -110,6 +110,9 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define DEFAULT_CLUSTER_COST  Cluster
 #define DEFAULT_SEGMENT_COST   VDJ
 
+// warn
+#define WARN_RATIO_SEGMENTED 0.4
+
 // display
 #define WIDTH_NB_READS 7
 #define WIDTH_NB_CLONES 3
@@ -633,12 +636,20 @@ int main (int argc, char **argv)
 
     // nb_segmented is the main denominator for the following (but will be normalized)
     int nb_segmented = we.getNbSegmented(TOTAL_SEG_AND_WINDOW);
+    float ratio_segmented = 100 * (float) nb_segmented / nb_total_reads ;
 
     cout << "  ==> found " << windowsStorage->size() << " " << w << "-windows"
 	<< " in " << nb_segmented << " segments"
-	<< " (" << setprecision(3) << 100 * (float) nb_segmented / nb_total_reads << "%)"
+	<< " (" << setprecision(3) << ratio_segmented << "%)"
 	<< " inside " << nb_total_reads << " sequences" << endl ;
   
+    // warn if there are too few segmented sequences
+    if (ratio_segmented < WARN_RATIO_SEGMENTED)
+      {
+        cout << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
+        cout << "  ! If this is unexpected, check the germline (-G) and try to change seed parameters (-k)." << endl ;
+      }
+
     cout << "                                  #      av. length" << endl ;
 
     for (int i=0; i<STATS_SIZE; i++)
