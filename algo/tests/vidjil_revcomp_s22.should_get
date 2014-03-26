@@ -13,5 +13,5 @@ $ Keep the same number of windows
 0:==> keep 
 
 $ Same segmentation for Clone 1
-2:clone.001.representative.*0\\s+59\\s+60\\s+84\\s+97\\s+153
+2:clone.001.representative.*0\\s+74\\s+76\\s+100\\s+113\\s+169
 
