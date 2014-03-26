@@ -346,6 +346,7 @@ IKmerStore<T> *KmerStoreFactory::createIndex(string seed, bool revcomp) {
   try{
     index = new ArrayKmerStore<T>(seed, revcomp);
   }catch(exception e){
+    cout << "  (using a MapKmer to fit into memory)" << endl;
     index = new MapKmerStore<T>(seed, revcomp);
   }
   return index;

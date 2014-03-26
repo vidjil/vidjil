@@ -68,7 +68,7 @@
 #define MIN_READS_WINDOW 10
 #define MIN_READS_CLONE 10
 #define MAX_CLONES 20
-#define RATIO_READS_CLONE 0.1
+#define RATIO_READS_CLONE 0.0
 
 #define COMMAND_WINDOWS "windows"
 #define COMMAND_ANALYSIS "clones"
@@ -102,13 +102,16 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
-#define DEFAULT_MIN_COVER_REPRESENTATIVE 5
+#define MIN_COVER_REPRESENTATIVE_RATIO_MIN_READS_CLONE 1.0
 
 #define DEFAULT_EPSILON  0
 #define DEFAULT_MINPTS   10
 
 #define DEFAULT_CLUSTER_COST  Cluster
 #define DEFAULT_SEGMENT_COST   VDJ
+
+// warn
+#define WARN_RATIO_SEGMENTED 0.4
 
 // display
 #define WIDTH_NB_READS 7
@@ -188,15 +191,15 @@ void usage(char *progname)
        << "  -p <string>   prefix output filenames by the specified string" << endl
     
        << "  -a            output all sequences by cluster (" << SEQUENCES_FILENAME << ")" << endl
-       << "  -x            no detailed analysis of each cluster" << endl
+       << "  -x            do not compute representative sequences" << endl
        << "  -v            verbose mode" << endl
        << endl        
 
        << endl 
        << "Examples (see doc/README)" << endl
-       << "  " << progname << "             -G germline/IGH                  -d  data/Stanford_S22.fasta" << endl
-       << "  " << progname << " -c clones   -G germline/IGH  -r 1 -R 1 -% 0  -d  data/Stanford_S22.fasta" << endl
-       << "  " << progname << " -c segment  -G germline/IGH                  -d  data/Stanford_S22.fasta" << endl
+       << "  " << progname << "             -G germline/IGH             -d data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c clones   -G germline/IGH  -r 5 -R 5  -d data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c segment  -G germline/IGH             -d data/Stanford_S22.fasta" << endl
     ;
   exit(1);
 }
@@ -245,7 +248,6 @@ int main (int argc, char **argv)
   float ratio_reads_clone = RATIO_READS_CLONE;
   // int average_deletion = 4;     // Average number of deletion in V or J
 
-  size_t min_cover_representative = DEFAULT_MIN_COVER_REPRESENTATIVE;
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
   unsigned int max_auditionned = DEFAULT_MAX_AUDITIONED;
 
@@ -454,7 +456,7 @@ int main (int argc, char **argv)
 
   //$$ options: post-processing+display
 
-
+  size_t min_cover_representative = (size_t) (MIN_COVER_REPRESENTATIVE_RATIO_MIN_READS_CLONE * min_reads_clone) ;
 
   // Default seeds
 
@@ -633,12 +635,20 @@ int main (int argc, char **argv)
 
     // nb_segmented is the main denominator for the following (but will be normalized)
     int nb_segmented = we.getNbSegmented(TOTAL_SEG_AND_WINDOW);
+    float ratio_segmented = 100 * (float) nb_segmented / nb_total_reads ;
 
     cout << "  ==> found " << windowsStorage->size() << " " << w << "-windows"
 	<< " in " << nb_segmented << " segments"
-	<< " (" << setprecision(3) << 100 * (float) nb_segmented / nb_total_reads << "%)"
+	<< " (" << setprecision(3) << ratio_segmented << "%)"
 	<< " inside " << nb_total_reads << " sequences" << endl ;
   
+    // warn if there are too few segmented sequences
+    if (ratio_segmented < WARN_RATIO_SEGMENTED)
+      {
+        cout << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
+        cout << "  ! If this is unexpected, check the germline (-G) and try to change seed parameters (-k)." << endl ;
+      }
+
     cout << "                                  #      av. length" << endl ;
 
     for (int i=0; i<STATS_SIZE; i++)
@@ -775,6 +785,7 @@ int main (int argc, char **argv)
 
     VirtualReadScore *scorer = new KmerAffectReadScore(*index);
     int num_clone = 0 ;
+    int clones_without_representative = 0 ;
 
     ofstream out_edges((out_dir+prefix_filename + EDGES_FILENAME).c_str());
     int nb_edges = 0 ;
@@ -886,8 +897,16 @@ int main (int argc, char **argv)
                                              ratio_representative,
                                              max_auditionned);
 
+
+        if (representative == NULL_SEQUENCE) {
+	  clones_without_representative++ ;
+	  if (verbose)
+	    cout << "# (no representative sequence with current parameters)" ;
+
+        } else {
 	//$$ There is one representative, FineSegmenter
-        if (representative != NULL_SEQUENCE) {
+
+
           representative.label = string_of_int(it->second) + "-" 
             + representative.label;
 	  FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
@@ -1013,7 +1032,7 @@ int main (int argc, char **argv)
 	}
 
 
-      //$$ Very detailed cluster analysis (with sequences)
+      //$$ Very detailed cluster analysis (with sequences) // NOT USED NOW
 
       list<string> msa;
       bool good_msa = false ;
@@ -1147,11 +1166,19 @@ int main (int argc, char **argv)
       SimilarityMatrix matrix = compare_all(representatives_this_clone, true);
       cout << RawOutputSimilarityMatrix(matrix, 90);
     }
+    //$$ End of very_detailed_cluster_analysis
 
     out_edges.close() ;
 
     cout << "#### end of clones" << endl; 
     cout << endl;
+
+    if (clones_without_representative > 0)
+      {
+	cout << clones_without_representative << " clones without representatives" ;
+	cout << " (requiring " << min_cover_representative << "/" << ratio_representative << " supporting reads)" << endl ;
+	cout << endl ;
+      }
   
     //$$ Compare representatives of all clones
 
