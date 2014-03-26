@@ -117,7 +117,7 @@ Graph.prototype = {
     this.initAxis();
       
     for (var i=0 ; i<this.m.n_windows; i++){
-      this.data_graph[i]={id : i, name :"line"+i, path : this.constructPath(i)};
+      this.data_graph[i]={id : i, name :"line"+i, path : this.constructPath(i, false)};
     }
     
     this.resolution1=[]
@@ -245,40 +245,58 @@ Graph.prototype = {
     this.update();
   },
   
-/* update l'intégralité du graphique
- * 
- * */
-  update : function(){
-    var startTime = new Date().getTime();  
-    var elapsedTime = 0;  
-	
-    this.initAxis();
-    
-    if(this.m.focus!=-1){
-      var line = document.getElementById("polyline"+this.m.focus);
-      document.getElementById("polyline_container").appendChild(line);
-    }
-    this.data_res[0].path = this.constructPathR(this.resolution1);
-    this.data_res[1].path = this.constructPathR(this.resolution5);
-    
-    for (var i=0 ; i<this.m.n_windows; i++){
-      for (var j=0 ; j<this.m.clones[i].cluster.length; j++)
-	this.data_graph[this.m.clones[i].cluster[j]].path = this.constructPath(i);
-    }
-    this.mobil.pos = this.graph_col[this.m.t];
-    this.draw();
-    elapsedTime = new Date().getTime() - startTime;  
-    console.log( "update Graph: " +elapsedTime +"ms");  
-  },
+    /* update l'intégralité du graphique
+    * 
+    * */
+    update : function(){
+        var startTime = new Date().getTime();  
+        var elapsedTime = 0;  
+        
+        this.initAxis();
+        
+        if(this.m.focus!=-1){
+            var line = document.getElementById("polyline"+this.m.focus);
+            document.getElementById("polyline_container").appendChild(line);
+        }
+        this.data_res[0].path = this.constructPathR(this.resolution1);
+        this.data_res[1].path = this.constructPathR(this.resolution5);
+        
+        for (var i=0 ; i<this.m.windows.length; i++){
+            for (var j=0 ; j<this.m.clones[i].cluster.length; j++){
+                this.data_graph[this.m.clones[i].cluster[j]].path = this.constructPath(i, false);
+            }
+        }   
+        for (var i=0; i<this.m.windows.length; i++){
+            var cloneID = i
+            for (var j=0 ; j<this.m.clones[cloneID].cluster.length; j++){
+                var seqID = this.m.clones[cloneID].cluster[j]
+                if (this.m.clones[cloneID].split){
+                    this.data_graph[seqID].path = this.constructPath(seqID, true);
+                }else{
+                        this.data_graph[seqID].path = this.constructPath(cloneID, false);
+                }
+            }
+        }
+        this.mobil.pos = this.graph_col[this.m.t];
+        this.draw();
+        elapsedTime = new Date().getTime() - startTime;  
+        console.log( "update Graph: " +elapsedTime +"ms");  
+    },
 
 /*update la liste de clones passé en parametre
  * 
  * */  
     updateElem: function (list){
         for (var i=0; i<list.length ; i++){
-            for (var j=0 ; j<this.m.clones[list[i]].cluster.length; j++)
-                if (this.m.windows[list[i]].active)
-                    this.data_graph[this.m.clones[list[i]].cluster[j]].path = this.constructPath(list[i]);
+            var cloneID = list[i]
+            for (var j=0 ; j<this.m.clones[cloneID].cluster.length; j++){
+                var seqID = this.m.clones[cloneID].cluster[j]
+                if (this.m.clones[cloneID].split){
+                    this.data_graph[seqID].path = this.constructPath(seqID, true);
+                }else{
+                    this.data_graph[seqID].path = this.constructPath(cloneID, false);
+                }
+            }
         }
         this.updateElemStyle(list)
     },
@@ -288,7 +306,7 @@ Graph.prototype = {
             var line = document.getElementById("polyline"+this.m.focus);
             document.getElementById("polyline_container").appendChild(line);   
         }
-        this.drawLines(0);
+        this.drawLines(250);
     },
   
 /* 
