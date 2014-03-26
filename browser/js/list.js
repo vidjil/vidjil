@@ -167,8 +167,13 @@ List.prototype = {
         var span_cluster=document.createElement('span')
         span_cluster.className = "clusterBox";
         if (this.m.clones[cloneID].cluster.length >1 || this.m.clones[cloneID].name){
-            span_cluster.onclick=function(){ showCluster( cloneID )}
-            span_cluster.appendChild(document.createTextNode("+"));
+            if (this.m.clones[cloneID].split){
+                span_cluster.onclick = function(){ self.hideCluster( cloneID )}
+                span_cluster.appendChild(document.createTextNode("-"));
+            }else{
+                span_cluster.onclick = function(){ self.showCluster( cloneID )}
+                span_cluster.appendChild(document.createTextNode("+"));
+            }
         }else{
             span_cluster.appendChild(document.createTextNode(' '));
         }
@@ -314,7 +319,7 @@ List.prototype = {
                 div.appendChild(div2);
                 
                 var div3=document.createElement('div');
-                this.div_cluster(div3, list[i], displayCluster);
+                this.div_cluster(div3, list[i]);
                 div.appendChild(div3);
                 div.style.display="";
                 
@@ -435,8 +440,23 @@ List.prototype = {
         return oA>oB ? 1:-1; 
         })
         $("#list_clones").html(sort);
-    }
+    },
   
+    showCluster : function(cloneID){
+        var self = this
+        this.m.clones[cloneID].split = true
+        $("#cluster"+cloneID).show(50, function() {
+            self.m.updateElem([cloneID])
+        });
+    },
+    
+    hideCluster : function(cloneID){
+        var self = this
+        this.m.clones[cloneID].split = false
+        $("#cluster"+cloneID).hide(50, function() {
+            self.m.updateElem([cloneID])
+        });
+    },
   
 }//fin prototype
   
@@ -444,9 +464,7 @@ List.prototype = {
 
 
 
-  function showCluster(cloneID){
-    $("#cluster"+cloneID).toggle(50);
-  }
+
 
   
   function changeTag(cloneID){
