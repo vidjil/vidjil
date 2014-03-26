@@ -299,15 +299,11 @@ List.prototype = {
  * */   
     updateElem : function(list){
         for ( var i=0; i<list.length ; i++){
-        
-            var displayCluster=false;
-            var cluster = $("#cluster"+list[i])
-            if (cluster.length!=0 && cluster.css("display")!="none") displayCluster=true;
             
             var div = document.getElementById(list[i]);
             
-            
-            if (this.m.windows[list[i]].active || this.m.windows[list[i]].window=="other"){  
+            if ( (this.m.windows[list[i]].active && this.m.clones[list[i]].cluster.length != 0 ) 
+                || this.m.windows[list[i]].window=="other"){  
                 
                 div.innerHTML='';
                 
