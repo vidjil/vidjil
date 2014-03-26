@@ -804,16 +804,6 @@ ScatterPlot.prototype = {
             }
         };
     },
-  
-/* retourne le rayon que devrait avoir le node nodeID
- * 
- * */
-    getRadius : function(nodeID){
-        if (!this.m.windows[nodeID].active) return 0;
-        var size=this.m.getSize(nodeID);
-        if (size==0) return 0;
-        return this.resizeCoef*Math.pow((size+0.001),(1/3))/25
-    },
 
 /* update les données du scatterPlot et relance une sequence d'animation
  * 
@@ -826,7 +816,7 @@ ScatterPlot.prototype = {
             this.updateBar();
         }else{
             for(var i=0; i < this.nodes.length; i++){
-                this.nodes[i].r1=this.getRadius(i);
+                this.updateClone(i)
             }
             this.force.start();
             this.updateElemStyle();
@@ -845,24 +835,32 @@ ScatterPlot.prototype = {
  * 
  * */
     updateElem : function(list){
-        if (this.splitY=="bar"){
-            this.updateBar();
-        }else{
-            var flag=false;
-            for (var i = 0 ; i<list.length; i++){
-                var current_r = this.nodes[list[i]].r1
-                var new_r = this.getRadius(list[i]);
-                this.nodes[list[i]].r1=this.getRadius(list[i]);
-                if (current_r != new_r){
-                    flag=true;
-                    this.nodes[list[i]].r1=new_r;
-                }
-            }
-            if (flag) this.update();
-            this.updateElemStyle();
-        }
+            this.update();
     },
     
+    updateClone : function(cloneID){
+        if (this.m.windows[cloneID].active){
+            if (this.m.clones[cloneID].split){
+                for ( var i=0 ; i<this.m.clones[cloneID].cluster.length; i++){
+                    var seqID = this.m.clones[cloneID].cluster[i]
+                    var size = this.m.getSequenceSize(seqID);
+                    if (size!=0) size = this.resizeCoef*Math.pow((size+0.001),(1/3))/25 
+                    this.nodes[seqID].r1=size
+                }
+            }else{
+                for ( var i=0 ; i<this.m.clones[cloneID].cluster.length; i++){
+                    var seqID = this.m.clones[cloneID].cluster[i]
+                    this.nodes[seqID].r1=0
+                }
+                var size = this.m.getSize(cloneID);
+                if (this.m.clones[cloneID].cluster.length==0) size = this.m.getSequenceSize(cloneID);
+                if (size!=0) size = this.resizeCoef*Math.pow((size+0.001),(1/3))/25 
+                this.nodes[cloneID].r1=size
+            }
+        }else{
+            this.nodes[cloneID].r1=0
+        }
+    },
     
 	
 /* update l'apparence liée a l'état (focus/select/inactive) des nodes
@@ -1195,7 +1193,6 @@ ScatterPlot.prototype = {
                     var node_y = this.nodes[i].y+this.marge_top
                     
                     if (this.m.windows[i].active
-                        && this.m.windows[i].display
                         && !this.m.windows[i].select
                         && this.m.getSize(i)
                         && node_x > x1 
