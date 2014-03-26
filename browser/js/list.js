@@ -191,65 +191,68 @@ List.prototype = {
  * @cloneID : identifiant du clone a décrire
  * @display : affichage true/false
  * */  
-  div_cluster : function(div_cluster, cloneID, display){
+  div_cluster : function(div_cluster, cloneID){
 
     var self=this;
     div_cluster.innerHTML='';
 	
     div_cluster.id="cluster"+cloneID;
     div_cluster.id2=cloneID;
+    
+    var display = this.m.clones[cloneID].split
+    if (this.m.clones[cloneID].cluster.length < 2) display = false
+    
     if (!display) div_cluster.style.display="none";
 	
     var clusterSize=this.m.getSize(cloneID)
-	
+
     for (var i=0; i<this.m.clones[cloneID].cluster.length; i++){
-        var id=this.m.clones[cloneID].cluster[i]
-        var div_clone=document.createElement('div');
-        div_clone.id="_"+id;
-        div_clone.id2=id;
-        div_clone.className="listElem";
-        if (self.m.windows[id].select) div_clone.className ="listElem selected";
+        (function (i) {
+            var id=this.m.clones[cloneID].cluster[i]
+            var div_clone=document.createElement('div');
+            div_clone.id="_"+id;
+            div_clone.id2=id;
+            div_clone.className="listElem";
+            div_clone.onmouseover = function(){ self.m.focusIn(id); }
+            if (self.m.windows[id].select) div_clone.className ="listElem selected";
 
-        var span_name = document.createElement('span');
-        span_name.className = "nameBox2";
-        span_name.onclick = function(){ self.select(this); }
-        span_name.appendChild(document.createTextNode( this.m.getCode(id) ) );
-        span_name.title=this.m.getCode(id);
-        
-        var span_info=document.createElement('span')
-        span_info.className = "infoBox";
-        span_info.onclick=function(){ dataBox(self.m.getHtmlInfo(this.parentNode.id2, "sequence")); }
-        span_info.appendChild(document.createTextNode("I"));
+            var span_name = document.createElement('span');
+            span_name.className = "nameBox2";
+            span_name.onclick = function(){ self.m.select(id); }
+            span_name.appendChild(document.createTextNode( this.m.getCode(id) ) );
+            span_name.title=this.m.getCode(id);
+            
+            var span_info=document.createElement('span')
+            span_info.className = "infoBox";
+            span_info.onclick=function(){ dataBox(self.m.getHtmlInfo(this.parentNode.id2, "sequence")); }
+            span_info.appendChild(document.createTextNode("I"));
 
-        var img=document.createElement('img');
-            img.onclick=function(){ self.m.split(cloneID, this.parentNode.id2);
-        }
-        if (id!=parseInt(cloneID)){ img.src="images/delete.png";}
-        img.className="delBox";
+            var img=document.createElement('img');
+                img.onclick=function(){ self.m.split(cloneID, this.parentNode.id2);
+            }
+            if (id!=parseInt(cloneID)){ img.src="images/delete.png";}
+            img.className="delBox";
 
-        var span_stat=document.createElement('span');
-        span_stat.className="sizeBox";
-        
-        var r=100
-        if(this.m.norm) 
-            r=this.m.normalization_factor[this.m.t]*100
-        
-        if (clusterSize != 0){
-            span_stat.appendChild(document.createTextNode( (((this.m.windows[id].size[this.m.t]/this.m.reads_segmented[this.m.t])*r)/clusterSize).toFixed(1)+"%"));
-        }else{
-            span_stat.appendChild(document.createTextNode("0%"))
-        }
-        
-        div_clone.appendChild(img); 
-        div_clone.appendChild(span_info);
-        div_clone.appendChild(span_name);
-        div_clone.appendChild(span_stat);
-        div_cluster.appendChild(div_clone);
+            var span_stat=document.createElement('span');
+            span_stat.className="sizeBox";
+            
+            var r=100
+            if(this.m.norm) 
+                r=this.m.normalization_factor[this.m.t]*100
+            
+            if (clusterSize != 0){
+                span_stat.appendChild(document.createTextNode( (((this.m.windows[id].size[this.m.t]/this.m.reads_segmented[this.m.t])*r)/clusterSize).toFixed(1)+"%"));
+            }else{
+                span_stat.appendChild(document.createTextNode("0%"))
+            }
+            
+            div_clone.appendChild(img); 
+            div_clone.appendChild(span_info);
+            div_clone.appendChild(span_name);
+            div_clone.appendChild(span_stat);
+            div_cluster.appendChild(div_clone);
+        })(i)
     }
-  },
-  
-  select : function(elt){
-	this.m.select(elt.parentNode.id2);
   },
   
  
