@@ -437,8 +437,7 @@ Model.prototype = {
 	nsize=-1;
       }
       self.mapID[this.windows[i].window]=i;
-      this.clones[i]={cluster:[i]};
-      this.windows[i].display=true;
+      this.clones[i]={cluster:[i] , split: false};
       this.windows[i].Nlength=nsize;
       this.windows[i].tag=default_tag;
     }
@@ -964,46 +963,42 @@ Model.prototype = {
   },
   
 
-/* 
- * 
- * */
-  updateModel :function(){
-    for (var i=0; i<this.n_windows; i++){
-      if (this.clones[i].cluster.length!=0 
-		  && this.windows[i].top <= this.top 
-		  && tagDisplay[this.windows[i].tag] == 1 
-	      && this.windows[i].window!= "other"){
-	this.windows[i].active=true;
-      }else{
-	this.windows[i].active=false;
-      }
-    }   
-    this.computeOtherSize();
-    for (var i=0; i<this.n_windows; i++){
-      this.windows[i].color=this.getColor(i);
-    }
-  },
+    /* 
+    * 
+    * */
+    updateModel :function(){
+        for (var i=0; i<this.clones.length; i++){
+            // compute only non empty clones
+            if (this.clones[i].cluster.length!=0 ){
+                if (!this.clones[i].split){
+                    for (var j=0; j<this.clones[i].cluster.length; j++ ){
+                        var seq = this.clones[i].cluster[j]
+                        this.windows[seq].active=false;
+                    }
+                    this.active(i)
+                }else{
+                    for (var j=0; j<this.clones[i].cluster.length; j++ ){
+                        var seq = this.clones[i].cluster[j]
+                        this.active(seq)
+                    }
+                }
+            }
+        }   
+        this.computeOtherSize();
+        
+        for (var i=0; i<this.n_windows; i++){
+            this.windows[i].color=this.getColor(i);
+        }
+        
+    },
   
-
-/*
- * 
- * */
-  updateModelElem :function(list){
-    for (var i=0 ; i < list.length ; i++){
-      if (this.clones[list[i]].cluster.length!=0 
-		  && this.windows[list[i]].top <= this.top 
-		  && tagDisplay[this.windows[list[i]].tag] == 1 
-		  && this.windows[list[i]].window!= "other"){
-	this.windows[list[i]].active=true;
-      }else{
-	this.windows[list[i]].active=false;
-      }   
-    }
-    this.computeOtherSize();
-    for (var i=0 ; i < list.length ; i++){
-      this.windows[list[i]].color=this.getColor(list[i]);
-    }
-  },
+    active : function (id) {
+        if (this.windows[id].top <= this.top
+            && tagDisplay[this.windows[id].tag] == 1 
+            && this.windows[id].window!= "other"){
+            this.windows[id].active=true;
+        }
+    },
   
 
 /*update all views
@@ -1025,7 +1020,7 @@ Model.prototype = {
  * 
  * */
     updateElem :function(list){
-        this.updateModelElem(list);
+        this.updateModel()
         for (var i=0; i<this.view.length; i++){
             this.view[i].updateElem(list);
         }
@@ -1035,7 +1030,7 @@ Model.prototype = {
  * 
  * */
     updateElemStyle :function(list){
-        this.updateModelElem(list);
+        this.updateModel();
         for (var i=0; i<this.view.length; i++){
             this.view[i].updateElemStyle(list);
         }
@@ -1052,7 +1047,7 @@ Model.prototype = {
     
     var count=0;
     for ( var i=0; i<this.windows.length; i++){
-        if (this.windows.display) count++
+        if (this.windows[i].active) count++
     }
     
     if (count <5){ 
