@@ -672,7 +672,11 @@ ScatterPlot.prototype = {
                     break;
                 case "Size": 
                     if (d.r1!=0){
-                        d.y+=coef2*(self.sizeScale(self.m.getSize(d.id))*self.resizeH - d.y);
+                        if (self.m.clones[d.id].cluster.length == 0){
+                            d.y+=coef2*(self.sizeScale(self.m.getSequenceSize(d.id))*self.resizeH - d.y);
+                        }else{
+                            d.y+=coef2*(self.sizeScale(self.m.getSize(d.id))*self.resizeH - d.y);
+                        }
                     }else{
                         d.y+=coef2*(self.resizeH-d.y);
                     }
