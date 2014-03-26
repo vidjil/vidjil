@@ -88,7 +88,6 @@ List.prototype = {
             var div = document.createElement('li');
             div.className="list";
             div.id=i;
-            div.onmouseover = function(){ self.m.focusIn(this.id); }
 
             div_list_clones.appendChild(div);
         }
@@ -128,6 +127,7 @@ List.prototype = {
 
         var self=this;
         div_elem.innerHTML='';
+        div_elem.onmouseover = function(){ self.m.focusIn(cloneID); }
         div_elem.className="listElem";
         div_elem.style.display="block";
         
