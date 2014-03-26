@@ -495,74 +495,85 @@ Graph.prototype = {
     else return [[0,0]];
   },//fin constructPathR()
 
-/* construit le tableau des points par laquelle la courbe d'un clone doit passer
- * 
- * */
-  constructPath: function(cloneID){
-    t=0;
-    var p;
-    
-    var x = this.graph_col[0];
-    var y = this.scale_x(this.m.getSize(cloneID, 0)*this.precision)
-    
-    //cas avec un seul point de suivi
-    if (this.graph_col.length==1){
-      if (this.m.getSize(cloneID, 0)==0){
-	p = [ ];
-      }else{
-	p = [[ ( x + (Math.random()*0.05)-0.125 ), ( 1 - y ) ]];
-	p.push([ ( x + (Math.random()*0.05)+0.075 ), ( 1 - y ) ]);
-      }
-    }
-    //plusieurs points de suivi
-    else{
-      
-		var to = 0;
-		for (var k=0; k<this.graph_col.length; k++) to+=this.m.getSize(cloneID, k);
-		var size = this.m.getSize(cloneID, 0)
-      //premier point de suivi 
-      if (size==0){
-			p = [ ];
-		}else{
-			p =   [[ ( x - 0.03  ), ( 1 - y )]];
-			p.push([ ( x )      , ( 1 - y )]);
-			
-			if (to==size){
-				p.push([( x + 0.03 ), ( 1 - y )]);
-			}
-      }
-      
-      //points suivants
-      for (var i=1; i< this.graph_col.length; i++){
-		to = 0;
-		for (var k=i; k<this.graph_col.length; k++) to+=this.m.getSize(cloneID, k);
-		  
-		  if (to!=0){
-			size=this.m.getSize(cloneID, i);
-			x = this.graph_col[i];
-			y = this.scale_x(size*this.precision)
-			
-			if (size==0){
-				if (p.length!=0){
-					p.push([( x ),(1 + 0.03)]);
-				}
-			}else{
-			//si premiere apparition du clone sur le graphique
-				if (p.length==0){
-					p.push([( x - 0.03 ), ( 1 - y )]);
-				}
-				
-				p.push(  [( x ), ( 1 - y )]);
-				//si derniere apparition du clone sur le graphique
-				if (to==size){
-					p.push([( x + 0.03 ), ( 1 - y )]);
-				}
-			}
-		  }
-      }
-    }
-    return p;
-  },//fin constructPath
+    /* construit le tableau des points par laquelle la courbe d'un clone doit passer
+    * 
+    * */
+    constructPath: function(id, seq_size){
+        t=0;
+        var p;
+        
+        var size = []
+        for (var i=0; i<this.graph_col.length; i++ ){
+            if ( seq_size ) size[i] = this.m.getSequenceSize(id, i)
+            else size[i] = this.m.getSize(id, i)
+        }
+        
+        var x = this.graph_col[0];
+        var y = this.scale_x(size[0]*this.precision)
+        
+        //cas avec un seul point de suivi
+        if (this.graph_col.length==1){
+            if (size[0]==0){
+                p = [ ];
+            }else{
+                p = [[ ( x + (Math.random()*0.05)-0.125 ), ( 1 - y ) ]];
+                p.push([ ( x + (Math.random()*0.05)+0.075 ), ( 1 - y ) ]);
+            }
+        }
+        
+        //plusieurs points de suivi
+        else{
+        
+            var to = 0;
+            for (var k=0; k<this.graph_col.length; k++) to += size[k];
+            
+            //premier point de suivi 
+            if (size[0]==0){
+                p = [ ];
+            }else{
+                p =   [[ ( x - 0.03  ), ( 1 - y )]];
+                p.push([ ( x )      , ( 1 - y )]);
+                
+                if (to==size[0]){
+                    p.push([( x + 0.03 ), ( 1 - y )]);
+                }
+            }
+            
+            //points suivants
+            for (var i=1; i< this.graph_col.length; i++){
+                to = 0;
+                for (var k=i; k<this.graph_col.length; k++) to += size[k]
+                
+                if (to!=0){
+                    x = this.graph_col[i];
+                    y = this.scale_x(size[i]*this.precision)
+                    
+                    if (size[i]==0){
+                        if (p.length!=0){
+                            p.push([( x ),(1 + 0.03)]);
+                        }
+                    }else{
+                        
+                    //si premiere apparition du clone sur le graphique
+                        if (p.length==0){
+                            p.push([( x - 0.03 ), ( 1 - y )]);
+                        }
+                        
+                        p.push(  [( x ), ( 1 - y )]);
+                        
+                        //si derniere apparition du clone sur le graphique
+                        if (to==size[i]){
+                            p.push([( x + 0.03 ), ( 1 - y )]);
+                        }
+                        
+                    }
+                    
+                }
+            }
+            
+        }
+        return p;
+    },//fin constructPath
   
 }//fin Graph
 
