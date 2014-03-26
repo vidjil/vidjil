@@ -329,7 +329,7 @@ Segment.prototype = {
     $.ajax({
 	type: "POST",
 	data : request,
-	url: this.cgi_adress+"align.cgi",
+	url: this.cgi_address+"align.cgi",
 	success: function(result) {
 	    displayAjaxResult(result);
 	}
