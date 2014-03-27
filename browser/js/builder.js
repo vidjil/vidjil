@@ -142,7 +142,43 @@ Builder.prototype = {
                 listTag.appendChild(li);
             })(i)
         }
+        
 
+
+        var span1 = document.createElement('span');
+        span1.appendChild(document.createTextNode("expected size : "))
+
+        var span2 = document.createElement('span');
+        var input = document.createElement('input');
+        input.type = "number";
+        input.step = "0.0001"
+        input.id = "normalized_size";
+        
+        span2.appendChild(input)
+        
+        var span3 = document.createElement('span');
+        span3.appendChild(document.createTextNode("normalize"))
+        span3.onclick = function () {
+            var cloneID = parseInt(document.getElementById('tag_id')
+                .innerHTML);
+            var size = parseFloat(document.getElementById('normalized_size').value);
+            document.getElementById('normalized_size').value = ""
+            self.m.norm = true
+            self.m.compute_normalization(cloneID, size)
+            self.m.update()
+            $('#tagSelector')
+                .hide('fast')
+        }
+        
+        var div = document.createElement('div');
+        div.appendChild(span1)
+        div.appendChild(span2)
+        div.appendChild(span3)
+        
+        var li = document.createElement('li');
+        li.appendChild(div)
+
+        listTag.appendChild(li);
     },
 
     /* 
