@@ -119,6 +119,7 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
    # then gather them into clones (-R 1, with at least 1 read each:
    # there are many 1-read clones due to sequencing errors.) 
    # A more natural option could be -R 5.
+   # For debug purpose, if one wants all the clones, use the option -A.
    # No representative selection (-x)
    # Results are on the standard output, additional files are
    # in out/segmented.fa, out/windows.fa-* and out/clones*
