@@ -27,7 +27,7 @@ Builder.prototype = {
             .on("mousemove", function () {
                 self.updateSeparator()
             })
-        $("#toggle-left-container")
+        $("#vertical-separator")
             .click(function () {
                 self.toggle_left_container()
             });
@@ -284,18 +284,13 @@ Builder.prototype = {
                 .animate({
                     width: self.width_left_container
                 }, 400, function () {
-                    $("#toggle-left-container")
-                        .html("< < <")
                     self.m.resize();
                 })
         } else {
             elem.animate({
                 width: "0px"
             }, 400, function () {
-                $(this)
-                    .css("display", "none")
-                $("#toggle-left-container")
-                    .html("> > >")
+                $(this).css("display", "none")
                 self.m.resize();
             })
         }
