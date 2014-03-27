@@ -84,7 +84,7 @@ string Segmenter::removeChevauchement()
   if (Vend >= Jstart)
     {
       int middle = (Vend + Jstart) / 2 ;
-      chevauchement = "!" + string_of_int (Vend - Jstart) + "!" ;
+      chevauchement = " !ov " + string_of_int (Vend - Jstart + 1);
       Vend = middle ;
       Jstart = middle+1 ;
     }
@@ -141,6 +141,7 @@ ostream &operator<<(ostream &out, const Segmenter &s)
 {
   out << ">" << s.label << " " ;
   out << (s.segmented ? "" : "! ") << s.info ;
+  out << " " << s.info_extra ;
   out << endl ;
 
   if (s.segmented)
@@ -166,6 +167,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
   label = seq.label ;
   sequence = seq.sequence ;
   info = "" ;
+  info_extra = "seed";
   segmented = false;
   Dend=0;
   
@@ -217,7 +219,8 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
       because = reversed ? SEG_MINUS : SEG_PLUS ;
 
       info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS)  ;
-      info += " " + removeChevauchement();
+      // removeChevauchement is called once info was already computed: it is only to output info_extra
+      info_extra += removeChevauchement();
       finishSegmentation();
     } 
 }
@@ -441,7 +444,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
 			     int delta_min, int delta_max, Cost segment_c)
 {
 
-  
+  info_extra = "" ;
   label = seq.label ;
   sequence = seq.sequence ;
   Dend=0;
