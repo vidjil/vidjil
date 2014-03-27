@@ -411,21 +411,29 @@ def common_substring(l):
     else:
         return ""
 
-def interesting_substrings(l):
+def interesting_substrings(l, target_length=6):
     '''Return a list with intersting substrings.
     Now it removes common prefixes and suffixes, and then the longest 
-    common substring.
+    common substring. 
+    But it stops removing once all lengths are at most 'target_length'.
 
-    >>> interesting_substrings(['ec-3--bla', 'ec-512-bla', 'ec-47-bla'])
+    >>> interesting_substrings(['ec-3--bla', 'ec-512-bla', 'ec-47-bla'], target_length=0)
     ['3-', '512', '47']
-    >>> interesting_substrings(['ec-A-seq-1-bla', 'ec-B-seq-512-bla', 'ec-C-seq-21-bla'])
+    >>> interesting_substrings(['ec-A-seq-1-bla', 'ec-B-seq-512-bla', 'ec-C-seq-21-bla'], target_length=0)
     ['A1', 'B512', 'C21']
+    >>> interesting_substrings(['ec-A-seq-1-bla', 'ec-B-seq-512-bla', 'ec-C-seq-21-bla'], target_length=9)
+    ['A-seq-1', 'B-seq-512', 'C-seq-21']
     '''
 
     if not l:
         return {}
 
+    if max(map (len, l)) <= target_length:
+        return l
+
     min_length = min(map (len, l))
+
+    ### Remove prefixes
 
     common_prefix = 0
     for i in range(min_length):
@@ -434,17 +442,30 @@ def interesting_substrings(l):
         else:
             break
 
+    substrings = [x[common_prefix:] for x in l]
+
+    if max(map (len, substrings)) <= target_length:
+        return substrings
+
+    ### Remove suffixes
+
     common_suffix = 0
     for i in range(min_length - common_prefix):
         if all(map(lambda x: x[-(i+1)] == l[0][-(i+1)], l)):
             common_suffix = i
         else:
             break
-            
-    ### Build list
-    substrings = [x[common_prefix:-(common_suffix+1)] for x in l]
+
+    substrings = [x[common_prefix:-(common_suffix+1)] for x in l]            
+
+    if max(map (len, substrings)) <= target_length:
+        return substrings
+
+    ### Remove the longest common substring
+
     common = common_substring(substrings)
     substrings = [s.replace(common, '') for s in substrings]
+
     return substrings
     
     # ### Build dict
