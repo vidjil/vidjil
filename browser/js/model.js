@@ -71,6 +71,11 @@ function Model() {
     this.time_order = [];
 
     this.notation_type = "percent"
+    this.normalization = { 
+        "A" : [],
+        "B" : 0,
+        "id" : 0
+    }
 
     this.checkBrowser()
 }
