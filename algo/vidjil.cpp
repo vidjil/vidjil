@@ -111,7 +111,7 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define DEFAULT_SEGMENT_COST   VDJ
 
 // warn
-#define WARN_RATIO_SEGMENTED 0.4
+#define WARN_PERCENT_SEGMENTED 40
 
 // display
 #define WIDTH_NB_READS 7
@@ -643,7 +643,7 @@ int main (int argc, char **argv)
 	<< " inside " << nb_total_reads << " sequences" << endl ;
   
     // warn if there are too few segmented sequences
-    if (ratio_segmented < WARN_RATIO_SEGMENTED)
+    if (ratio_segmented < WARN_PERCENT_SEGMENTED)
       {
         cout << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
         cout << "  ! If this is unexpected, check the germline (-G) and try to change seed parameters (-k)." << endl ;
