@@ -18,7 +18,7 @@ body {
   height : 100%;
   margin:0px;
   color : @default;
-  background : @background;
+  background : @border;
 }
 
 h2
@@ -41,20 +41,22 @@ ul{
   height :100%;
   margin : auto;
   overflow : hidden;
+  background : @background;
 }
 
 #top-container {
   height: 28px;
   width: 100%;
-  background: inherit;
-  border-bottom: solid;
+  background: @background;
 }
 
 #mid-container {
   position : fixed;
-  top : 30px;
+  top : 28px;
   bottom : 125px ;
-  width: 100%;
+  width: -moz-calc(~"100%" - @margin + @margin);
+  width: -webkit-calc(~"100%" - @margin + @margin);
+  width: calc(~"100%" - @margin + @margin);
   overflow: hidden;
   background: @background;
   -khtml-user-select: none;
@@ -62,6 +64,7 @@ ul{
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
+  margin: @margin;
 }
 
 #right-container{
@@ -87,7 +90,6 @@ ul{
 }
 
 #visu, #visu2 {
-  display : inline-block;
   height : 50%;
   width : 100%;
   overflow:hidden;
@@ -100,6 +102,7 @@ ul{
   font-size: 14px;
   height :150px;
   padding:3px;
+  background : @background;
 }
 
 .info_line {
@@ -273,7 +276,7 @@ ul{
 @width_sizeBox : 60px;
 @width_infoBox : 20px;
 @width_listElem : (@width_left_container - @width_scrollbar);
-
+@margin : 6px;
 @margin_nameBox : 10px;
 @width_nameBox : (@width_listElem - @width_starBox - @width_infoBox - @width_sizeBox - @width_clusterBox - @margin_nameBox);
 
@@ -654,12 +657,10 @@ span.logo
 
 #bot-container {
   position: fixed;
-  bottom: 5px;
+  bottom: 0px;
   left: 0px;
   width: 100%;
   overflow-y:auto;
-  border-top: solid;
-  border-bottom: solid;
   height:125px;
   overflow-y: hidden;
 }
@@ -796,26 +797,23 @@ span .substitution{
 }
 
 #visu-separator {
-    height: 0px;
+    height: @margin;
     cursor: move;
     cursor: -webkit-grab;
-    position: relative;
-    top: -20px;
-    text-align: center;
+    background: @border;
 }
 
 #vertical-separator {
     position: relative;
     float: left;
     height: 100%;
-    width: 10px;
+    width: @margin;
     line-height: calc(100% - 1px);
+    background : @border;
 }
 
-#toggle-left-container {
-    position: relative;
-    top: calc(50% - 10px);
-    cursor :pointer;
+#visu-separator:hover , #vertical-separator:hover {
+    background: @highlight;
 }
 
 .edit_button {
