@@ -84,7 +84,7 @@ string Segmenter::removeChevauchement()
   if (Vend >= Jstart)
     {
       int middle = (Vend + Jstart) / 2 ;
-      chevauchement = " !" + string_of_int (Vend - Jstart) + "!" ;
+      chevauchement = " !ov " + string_of_int (Vend - Jstart + 1);
       Vend = middle ;
       Jstart = middle+1 ;
     }
