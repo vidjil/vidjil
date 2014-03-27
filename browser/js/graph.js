@@ -145,8 +145,8 @@ Graph.prototype = {
         this.resolution5 = []
 
         for (i = 0; i < this.m.normalization_factor.length; i++) {
-            this.resolution1.push([1 / this.m.reads_segmented[i], (1 / this.m.reads_segmented[i]) * this.m.normalization_factor[i]])
-            this.resolution5.push([5 / this.m.reads_segmented[i], (5 / this.m.reads_segmented[i]) * this.m.normalization_factor[i]])
+            this.resolution1[i] = (1 / this.m.reads_segmented[i])
+            this.resolution5[i] = (5 / this.m.reads_segmented[i])
         }
 
         this.data_res.push({
