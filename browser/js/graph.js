@@ -582,16 +582,24 @@ Graph.prototype = {
             p = [
                 [0, 1 + 0.1]
             ];
-
-            var r = 0;
-            if (this.m.norm == true)
-                r = 1;
-            p.push([0, (1 - this.scale_x(res[this.m.time_order[0]][r] * this.precision))]);
+            
+            var size = []
+            if (this.m.norm == true){
+                for (var i = 0; i < res.length; i++) {
+                    size[i] = this.m.normalize(res[this.m.time_order[i]], this.m.time_order[i])
+                }
+            }else{
+                for (var i = 0; i < res.length; i++) {
+                    size[i] = res[this.m.time_order[i]]
+                }
+            }
+                
+            p.push([0, (1 - this.scale_x(size[0] * this.precision))]);
 
             for (var i = 0; i < this.graph_col.length; i++) {
-                p.push([(this.graph_col[i]), (1 - this.scale_x(res[this.m.time_order[i]][r] * this.precision))]);
+                p.push([(this.graph_col[i]), (1 - this.scale_x(size[i] * this.precision))]);
             }
-            p.push([1, (1 - this.scale_x(res[this.m.time_order[this.graph_col.length - 1]][r] * this.precision))]);
+            p.push([1, (1 - this.scale_x(size[this.graph_col.length - 1] * this.precision))]);
             p.push([1, 1 + 0.1]);
 
             return p;
