@@ -701,35 +701,72 @@ Model.prototype = {
      * */
     getSize: function (cloneID, time) {
         time = typeof time !== 'undefined' ? time : this.t;
-        var result = 0;
 
-        result += this.getReads(cloneID, time)
-
-        var r = 1;
         var t = this.time_order[time]
+        var result = this.getReads(cloneID, time) / this.reads_segmented[t]
+        
         if (this.norm) {
-            r = this.normalization_factor[t];
+            result = this.normalize(result, time)
         }
 
-        return (result / this.reads_segmented[t]) * r;
+        return result
 
     }, //end getSize
+    
+    /*
+     * 
+     * */
+    normalize: function (original_size, time) {
+        var normalized_size = 0;
+        
+        if (this.normalization.A.length != 0 && this.normalization.A[time] != 0) {
+            var A = this.normalization.A[time]
+            var B = this.normalization.B
+            
+            if (original_size <= A){
+                normalized_size = (original_size * B) / A
+            }else{
+                normalized_size = B + ( (original_size - A) * ( (1 - B) / (1 - A) ) )
+            }
+            
+        }else{
+            normalized_size = original_size
+        }
+        
+        return normalized_size
+    },
 
+    /*compute normalization factor needed to give a clone an expected size
+     * 
+     * */
+    compute_normalization: function (cloneID, expected_size) {
+        this.normalization.A = []
+        this.normalization.B = expected_size
+        this.normalization.id = cloneID
+        
+        var tmp = this.norm
+        this.norm = false
+        
+        for (var i=0; i<this.time_order.length; i++){
+            this.normalization.A[i] = this.getSize(cloneID, i)
+        }
+        this.norm = tmp
+    },
+    
     /* 
      *
      * */
     getSequenceSize: function (cloneID, time) {
         time = typeof time !== 'undefined' ? time : this.t;
 
-        var result = 0;
-        result = this.getSequenceReads(cloneID, time)
-
-        var r = 1;
+        var t = this.time_order[time]
+        var result = this.getSequenceReads(cloneID, time) / this.reads_segmented[t]
+        
         if (this.norm) {
-            r = this.normalization_factor[this.time_order[time]];
+            result = this.normalize(result, time)
         }
 
-        return (result / this.reads_segmented[time]) * r;
+        return result
 
     }, //end getSequenceSize
 
