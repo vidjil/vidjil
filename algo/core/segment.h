@@ -49,7 +49,8 @@ protected:
   string code;
   string code_short;
   string code_light;
-  string info;
+  string info;        // .vdj.fa header, fixed fields
+  string info_extra;  // .vdj.fa header, other information, at the end of the header
   int best_V, best_J ;
   int del_V, del_D_left, del_D_right, del_J ;
   string seg_V, seg_N, seg_J;
