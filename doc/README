@@ -100,8 +100,8 @@ require the "-G germline/IGH" and the "-d" options.
 ./vidjil -G germline/IGH -d data/Stanford_S22.fasta
    # Extract (with an ultra-fast heuristic) all windows
    # Results are in out/segmented.vdj.fa, which is a FASTA file 
-   # embedding segmentation information in the headers
-   # ('.vdj' format, see below)
+   # embedding heuristic information in the headers
+   # ('.vdj' format, see warning below)
    # Summary of windows is also available in out/data.json
    # ('.json' format, see below)
 
@@ -120,7 +120,8 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
    # there are many 1-read clones due to sequencing errors.) 
    # A more natural option could be -R 5.
    # No representative selection (-x)
-   # Results are in out/segmented.fa, out/windows.fa-* and out/clones*
+   # Results are on the standard output, additional files are
+   # in out/segmented.fa, out/windows.fa-* and out/clones*
    # out/segmented.fa list segmented reads using the .vdj format (see below)
 
 ./vidjil -c clones -G germline/IGH -x -r 1 -R 5 -n 5 -d ./data/clones_simul.fa
@@ -133,18 +134,32 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 
 ### Segmentation and .vdj format
 
-Vidjil outputs include segmentation of V(D)J recombinations, obtained
-by full comparison (dynamic programming) with all germline sequences
-Such segmentations are not at the core of the Vidjil clone gathering
-method (which relies only on the 'window', see above). They are
-provided only for convenience and should be checked with other
-softwares such as iHHMune-align, IgBlast or IMGT/V-QUEST.
+Vidjil outputs include segmentation of V(D)J recombinations. This happens
+in the following situations:
+
+- in a first pass, in 'segmented.vdj.fa' file.
+
+      The goal of this ultra-fast segmentation, based on a seed
+      heuristics, is only to locate the w-window overlapping the
+      CDR3. This should not be taken as a real V(D)J segmentation, as
+      the center of the window may be shifted up to 15 bases from the
+      actual center.
+
+- in a second pass, on the standard output, at the end of the clones detection
+  (-c clones), or directly when explicitely requiring segmentation (-c segment)
+
+      This segmentation obtained by full comparison (dynamic
+      programming) with all germline sequences Such segmentation are
+      not at the core of the Vidjil clone gathering method (which
+      relies only on the 'window', see above). They are provided only
+      for convenience and should be checked with other softwares such
+      as IgBlast, iHHMune-align or IMGT/V-QUEST.
 
 Segmentations of V(D)J recombinations are displayed using a dedicated
 .vdj format. This format is compatible with FASTA format. A line starting
 with a > is of the following form:
 
->name + VDJ  startV endV   startD endD   startJ  endJ   Vgene   delV/N1/delD5'   Dgene   delD3'/N2/delJ   Jgene
+>name + VDJ  startV endV   startD endD   startJ  endJ   Vgene   delV/N1/delD5'   Dgene   delD3'/N2/delJ   Jgene   comments
 
         name          sequence name
         +             strand on which the sequence is mapped
@@ -170,13 +185,16 @@ with a > is of the following form:
 
         Jgene         name of the J gene being rearranged
         
+        comments      optional comments. In Vidjil, the following comments are now used:
+                      - "seed" when this comes for the first pass (segmented.vdj.fa). See the warning above.
+                      - "!ov x" when there is an overlap of x bases between last V seed and first J seed
 
 Following such a line, the nucleotide sequence may be given, giving in
 this case a valid FASTA file.
 
 For VJ recombinations the output is similar, the fields that are not
 applicable being removed:
->name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene
+>name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene  coments
 
 
 ### vidjil.data .json format and web interface
