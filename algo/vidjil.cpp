@@ -133,7 +133,7 @@ void usage(char *progname)
   cerr << "Command selection" << endl
        << "  -c <command> \t" << COMMAND_WINDOWS << "\t window extracting (default)" << endl 
        << "  \t\t" << COMMAND_ANALYSIS  << "  \t clone analysis" << endl 
-       << "  \t\t" << COMMAND_SEGMENT   << "  \t V(D)J segmentation" << endl
+       << "  \t\t" << COMMAND_SEGMENT   << "  \t V(D)J segmentation (not recommended)" << endl
        << endl       
 
        << "Germline databases" << endl
@@ -145,10 +145,14 @@ void usage(char *progname)
 
        << "Window prediction" << endl
 #ifndef NO_SPACED_SEEDS
+       << "  (use either -s or -k option, but not both)" << endl
        << "  -s <string>   spaced seed used for the V/J affectation" << endl
        << "                (default: #####-#####, ######-######, #######-#######, depends on germline)" << endl
 #endif
        << "  -k <int>      k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)" << endl
+#ifndef NO_SPACED_SEEDS
+       << "                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" << endl
+#endif
        << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ")(default with -d: " << DEFAULT_W_D << ")" << endl
        << endl
 
@@ -176,7 +180,7 @@ void usage(char *progname)
        << "  -A            reports all clones (-r 0 -R 1 -% 0 -z 0), to be used only on very small datasets" << endl
        << endl
 
-       << "Fine segmentation options" << endl
+       << "Fine segmentation options (second pass, see warning in doc/README)" << endl
        << "  -d            segment into V(D)J components instead of VJ " << endl
        << "  -m <int>      minimal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MIN << ") (default when -d is used: " << DEFAULT_DELTA_MIN_D << ")" << endl
        << "  -M <int>      maximal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MAX << ") (default when -d is used: " << DEFAULT_DELTA_MAX_D << ")" << endl
@@ -199,7 +203,7 @@ void usage(char *progname)
        << "Examples (see doc/README)" << endl
        << "  " << progname << "             -G germline/IGH             -d data/Stanford_S22.fasta" << endl
        << "  " << progname << " -c clones   -G germline/IGH  -r 5 -R 5  -d data/Stanford_S22.fasta" << endl
-       << "  " << progname << " -c segment  -G germline/IGH             -d data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c segment  -G germline/IGH             -d data/Stanford_S22.fasta   # (only for testing)" << endl
     ;
   exit(1);
 }
@@ -267,6 +271,8 @@ int main (int argc, char **argv)
   string normalization_file = "" ;
 
   char c ;
+
+  int options_s_k = 0 ;
 
   //$$ options: getopt
 
@@ -341,6 +347,7 @@ int main (int argc, char **argv)
       case 'k':
 	k = atoi(optarg);
 	seed = seed_contiguous(k);
+	options_s_k++ ;
         break;
 
       case 'w':
@@ -394,6 +401,7 @@ int main (int argc, char **argv)
 #ifndef NO_SPACED_SEEDS
 	seed = string(optarg);
 	k = seed_weight(seed);
+	options_s_k++ ;
 #else
         cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
 #endif
@@ -435,6 +443,12 @@ int main (int argc, char **argv)
     w = default_w ;
 
   
+  if (options_s_k > 1)
+    {
+      cout << "use at most one -s or -k option." << endl ;
+      exit(1);
+    }
+
   string out_seqdir = out_dir + "/seq/" ;
 
   if (verbose)
@@ -1261,6 +1275,14 @@ int main (int argc, char **argv)
     // déja déclaré ?
     //reads = OnlineFasta(f_reads, 1, " ");
     
+
+    cout << "* WARNING: vidjil was run with '-c segment' option" << endl
+         << "* Vidjil purpose is to extract very quickly windows overlapping the CDR3" << endl
+         << "* or to gather reads into clones (-c clones), and not to provide an accurate V(D)J segmentation." << endl
+         << "* The following segmentations are slow to compute and are provided only for convenience." << endl
+         << "* They should be checked with other softwares such as IgBlast, iHHMune-align or IMGT/V-QUEST." << endl
+      ;
+
     while (reads->hasNext()) 
       {
         reads->next();
