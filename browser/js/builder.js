@@ -68,7 +68,7 @@ Builder.prototype = {
             var total_height = document.getElementById("visu-container")
                 .offsetHeight;
 
-            if (position < 5 || total_height - position < 5) this.dropSeparator()
+            if (position < 2 || total_height - position < 2) this.dropSeparator()
 
             var height2 = position / total_height * 100
             if (height2 > 90) height2 = 100;
