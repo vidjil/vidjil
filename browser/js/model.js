@@ -131,14 +131,12 @@ Model.prototype = {
         self.windows = [];
         self.mapID = {}
         self.dataCluster = []
-        var min_size = 1;
+        var min_sizes = [];
         var n_max = 0;
         var n2_max = 0; //TODO rename
-
-        var min_nf = 1;
-        for (var k = 0; k < data.normalization_factor.length; k++) {
-            if (min_nf > data.normalization_factor[k])
-                min_nf = data.normalization_factor[k];
+        
+        for (var k = 0; k < data.windows[0].size.length; k++) {
+                min_sizes[k] = 1;
         }
 
         //keep best top value
@@ -147,10 +145,10 @@ Model.prototype = {
 
                 //search for min_size
                 for (var k = 0; k < data.windows[i].size.length; k++) {
-                    var size = (data.windows[i].size[k] / data.reads_segmented[k]) * min_nf;
+                    var size = (data.windows[i].size[k] / data.reads_segmented[k])
 
-                    if (min_size > size && data.windows[i].size[k] != 0)
-                        min_size = size;
+                    if (min_sizes[k] > size && data.windows[i].size[k] != 0)
+                        min_sizes[k] = size;
                 }
 
                 //search for n_max / n2_max
@@ -160,15 +158,6 @@ Model.prototype = {
                     n_max = data.windows[i].Nlength;
                 }
 
-                /*
-        var n2=0;
-        if ((typeof(data.windows[i].sequence) != 'undefined') && 
-        (typeof(data.windows[i].Nlength) != 'undefined')){
-        n2=data.windows[i].name.split('/')[1];
-        if (n2>n2_max)n2_max=n2;  
-        }
-        data.windows[i].n=n2
-        */
                 self.windows.push(data.windows[i]);
             }
         }
@@ -181,16 +170,8 @@ Model.prototype = {
         }
 
         self.windows.push(other);
-
-        var count = min_size;
-
-        while (count < 1) {
-            count = count * 10;
-            self.precision = self.precision * 10;
-        }
-
         self.n_windows = self.windows.length;
-        self.min_size = min_size;
+        self.min_sizes = min_sizes;
         self.n_max = n_max;
         self.n2_max = n2_max;
         self.normalization_factor = data.normalization_factor;
@@ -759,6 +740,23 @@ Model.prototype = {
         }
     },
     
+    update_precision: function () {
+        min_size = 1
+
+        for (var i=0; i<this.time_order.length; i++){
+            var t = this.time_order[i]
+            var size = this.normalize(this.min_sizes[t], i) 
+            if (size < min_size) min_size = size
+        }
+        
+        this.min_size = min_size
+        this.precision = 1
+        while (min_size < 1) {
+            min_size = min_size*10
+            this.precision=this.precision*10
+        }
+    },
+    
     /* 
      *
      * */
@@ -1084,8 +1082,9 @@ Model.prototype = {
             .getTime();
         var elapsedTime = 0;
         
-        this.update_normalization();
-        this.updateModel();
+        this.update_normalization()
+        this.update_precision()
+        this.updateModel()
         
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].update();
@@ -1104,6 +1103,7 @@ Model.prototype = {
         
         if ( list.indexOf(this.normalization.id) != -1 ){
             this.update_normalization()
+            this.update_precision()
         }
         this.updateModel()
         
