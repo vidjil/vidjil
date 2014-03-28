@@ -57,7 +57,9 @@ Graph.prototype = {
     init: function () {
         document.getElementById(this.id)
             .innerHTML = "";
-
+        
+        this.build_menu()
+            
         var self = this;
         this.vis = d3.select("#" + this.id)
             .append("svg:svg")
@@ -181,6 +183,27 @@ Graph.prototype = {
 
         this.resize();
     },
+    
+    build_menu : function() {
+        var self = this;
+        var parent = document.getElementById(this.id)
+        
+        var div = document.createElement('div')
+        div.id = "" + this.id + "_menu"
+        div.className = "graph_menu"
+        div.appendChild(document.createTextNode("others"))
+        
+        parent.appendChild(div)
+        
+        this.vis = d3.select("#" + this.id + "_menu")
+            .on("mouseup", function () {
+                self.stopDrag2()
+            })
+            .on("mousemove", function () {
+                self.dragTimePoint()
+            })
+    },
+    
 
     initAxis: function () {
 
@@ -528,7 +551,7 @@ Graph.prototype = {
     /* 
      *
      * */
-    stopDrag: function (time_point) {
+    stopDrag: function () {
         if (this.drag_on) {
             this.drag_on = false;
 
@@ -556,6 +579,27 @@ Graph.prototype = {
                 result[i] = list[i][0]
             }
 
+            this.m.changeTimeOrder(result)
+        }
+    },
+    
+    /* 
+     *
+     * */
+    stopDrag2: function () {
+        console.log("plop!!!!")
+        if (this.drag_on) {
+            this.drag_on = false;
+            
+            var result = []
+            for (var i=0; i<this.m.time_order.length; i++){
+                if (this.m.time_order[i] != this.draged_time_point){
+                    result.push(this.m.time_order[i])
+                }
+            }
+
+            console.log(result)
+            this.m.t = result[0]
             this.m.changeTimeOrder(result)
         }
     },
