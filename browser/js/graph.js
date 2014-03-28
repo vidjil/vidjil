@@ -246,7 +246,7 @@ Graph.prototype = {
         this.mobil.type = "axis_m";
         this.mobil.text = "";
         this.mobil.orientation = "vert";
-        this.mobil.pos = this.graph_col[this.m.t];
+        this.mobil.pos = this.graph_col[this.m.time_order.indexOf(this.m.t)];
         this.data_axis.push(this.mobil)
 
         this.g_axis = this.axis_container.selectAll("line")
@@ -324,7 +324,7 @@ Graph.prototype = {
                 }
             }
         }
-        this.mobil.pos = this.graph_col[this.m.t];
+        this.mobil.pos = this.graph_col[this.m.time_order.indexOf(this.m.t)];
         this.draw();
         elapsedTime = new Date()
             .getTime() - startTime;
@@ -461,7 +461,7 @@ Graph.prototype = {
 
         this.text_container.selectAll("text")
             .on("click", function (d) {
-                if (d.type == "axis_v") return self.m.changeTime(self.m.time_order.indexOf(d.time))
+                if (d.type == "axis_v") return self.m.changeTime(d.time)
             })
             .on("dblclick", function (d) {
                 if (d.type == "axis_v") return self.rename(d.time)
@@ -588,7 +588,6 @@ Graph.prototype = {
                     size[i] = res[i]
                 }
             }
-            console.log(size)
                 
             p.push([0, (1 - this.scale_x(size[0] * this.m.precision))]);
 
