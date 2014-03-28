@@ -71,7 +71,7 @@ Builder.prototype = {
             if (position < 5 || total_height - position < 5) this.dropSeparator()
 
             var height2 = position / total_height * 100
-            if (height2 > 90) height2 = 99;
+            if (height2 > 90) height2 = 100;
             if (height2 < 10) height2 = 0;
 
             var height1 = 100 - height2
