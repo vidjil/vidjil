@@ -753,6 +753,12 @@ Model.prototype = {
         this.norm = tmp
     },
     
+    update_normalization: function () {
+        if (this.normalization.B != 0){
+            this.compute_normalization( this.normalization.id, this.normalization.B)
+        }
+    },
+    
     /* 
      *
      * */
@@ -1077,10 +1083,14 @@ Model.prototype = {
         var startTime = new Date()
             .getTime();
         var elapsedTime = 0;
+        
+        this.update_normalization();
         this.updateModel();
+        
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].update();
         }
+        
         elapsedTime = new Date()
             .getTime() - startTime;
         console.log("update() : " + elapsedTime);
@@ -1091,7 +1101,12 @@ Model.prototype = {
      *
      * */
     updateElem: function (list) {
+        
+        if ( list.indexOf(this.normalisattion.id) != -1 ){
+            this.update_normalization()
+        }
         this.updateModel()
+        
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].updateElem(list);
         }
@@ -1331,6 +1346,14 @@ Model.prototype = {
         var tmp = this.time_order[a];
         this.time_order[a] = this.time_order[b]
         this.time_order[b] = tmp;
+        this.update()
+    },
+    
+    /* 
+     *
+     * */
+    changeTimeOrder: function (list) {
+        this.time_order = list
         this.update()
     },
 
