@@ -683,8 +683,7 @@ Model.prototype = {
     getSize: function (cloneID, time) {
         time = typeof time !== 'undefined' ? time : this.t;
 
-        var t = this.time_order[time]
-        var result = this.getReads(cloneID, time) / this.reads_segmented[t]
+        var result = this.getReads(cloneID, time) / this.reads_segmented[time]
         
         if (this.norm) {
             result = this.normalize(result, time)
@@ -728,7 +727,7 @@ Model.prototype = {
         var tmp = this.norm
         this.norm = false
         
-        for (var i=0; i<this.time_order.length; i++){
+        for (var i=0; i<this.time.length; i++){
             this.normalization.A[i] = this.getSize(cloneID, i)
         }
         this.norm = tmp
@@ -745,7 +744,7 @@ Model.prototype = {
 
         for (var i=0; i<this.time_order.length; i++){
             var t = this.time_order[i]
-            var size = this.normalize(this.min_sizes[t], i) 
+            var size = this.normalize(this.min_sizes[t], t) 
             if (size < min_size) min_size = size
         }
         
@@ -763,8 +762,7 @@ Model.prototype = {
     getSequenceSize: function (cloneID, time) {
         time = typeof time !== 'undefined' ? time : this.t;
 
-        var t = this.time_order[time]
-        var result = this.getSequenceReads(cloneID, time) / this.reads_segmented[t]
+        var result = this.getSequenceReads(cloneID, time) / this.reads_segmented[time]
         
         if (this.norm) {
             result = this.normalize(result, time)
@@ -783,7 +781,7 @@ Model.prototype = {
         var result = 0;
 
         for (var j = 0; j < this.clones[cloneID].cluster.length; j++) {
-            result += this.windows[this.clones[cloneID].cluster[j]].size[this.time_order[time]];
+            result += this.windows[this.clones[cloneID].cluster[j]].size[time];
         }
 
         return result
@@ -797,7 +795,7 @@ Model.prototype = {
         time = typeof time !== 'undefined' ? time : this.t;
 
         var result = 0;
-        result = this.windows[cloneID].size[this.time_order[time]];
+        result = this.windows[cloneID].size[time];
 
         return result;
 
