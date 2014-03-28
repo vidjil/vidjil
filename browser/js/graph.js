@@ -555,13 +555,13 @@ Graph.prototype = {
                 return a[1] - b[1]
             })
 
+            var result = [];
             //save new time point order
             for (var i = 0; i < this.m.time_order.length; i++) {
-                this.m.time_order[i] = list[i][0]
+                result[i] = list[i][0]
             }
 
-            //call model update
-            this.m.update()
+            this.m.changeTimeOrder(result)
         }
     },
 
