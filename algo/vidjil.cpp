@@ -272,6 +272,8 @@ int main (int argc, char **argv)
 
   char c ;
 
+  int options_s_k = 0 ;
+
   //$$ options: getopt
 
   while ((c = getopt(argc, argv, "AhaG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:u")) != EOF)
@@ -345,6 +347,7 @@ int main (int argc, char **argv)
       case 'k':
 	k = atoi(optarg);
 	seed = seed_contiguous(k);
+	options_s_k++ ;
         break;
 
       case 'w':
@@ -398,6 +401,7 @@ int main (int argc, char **argv)
 #ifndef NO_SPACED_SEEDS
 	seed = string(optarg);
 	k = seed_weight(seed);
+	options_s_k++ ;
 #else
         cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
 #endif
@@ -439,6 +443,12 @@ int main (int argc, char **argv)
     w = default_w ;
 
   
+  if (options_s_k > 1)
+    {
+      cout << "use at most one -s or -k option." << endl ;
+      exit(1);
+    }
+
   string out_seqdir = out_dir + "/seq/" ;
 
   if (verbose)
