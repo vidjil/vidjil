@@ -145,10 +145,14 @@ void usage(char *progname)
 
        << "Window prediction" << endl
 #ifndef NO_SPACED_SEEDS
+       << "  (use either -s or -k option, but not both)" << endl
        << "  -s <string>   spaced seed used for the V/J affectation" << endl
        << "                (default: #####-#####, ######-######, #######-#######, depends on germline)" << endl
 #endif
        << "  -k <int>      k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)" << endl
+#ifndef NO_SPACED_SEEDS
+       << "                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" << endl
+#endif
        << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ")(default with -d: " << DEFAULT_W_D << ")" << endl
        << endl
 
