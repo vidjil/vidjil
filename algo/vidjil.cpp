@@ -133,7 +133,7 @@ void usage(char *progname)
   cerr << "Command selection" << endl
        << "  -c <command> \t" << COMMAND_WINDOWS << "\t window extracting (default)" << endl 
        << "  \t\t" << COMMAND_ANALYSIS  << "  \t clone analysis" << endl 
-       << "  \t\t" << COMMAND_SEGMENT   << "  \t V(D)J segmentation" << endl
+       << "  \t\t" << COMMAND_SEGMENT   << "  \t V(D)J segmentation (not recommended)" << endl
        << endl       
 
        << "Germline databases" << endl
@@ -180,7 +180,7 @@ void usage(char *progname)
        << "  -A            reports all clones (-r 0 -R 1 -% 0 -z 0), to be used only on very small datasets" << endl
        << endl
 
-       << "Fine segmentation options" << endl
+       << "Fine segmentation options (second pass, see warning in doc/README)" << endl
        << "  -d            segment into V(D)J components instead of VJ " << endl
        << "  -m <int>      minimal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MIN << ") (default when -d is used: " << DEFAULT_DELTA_MIN_D << ")" << endl
        << "  -M <int>      maximal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MAX << ") (default when -d is used: " << DEFAULT_DELTA_MAX_D << ")" << endl
@@ -203,7 +203,7 @@ void usage(char *progname)
        << "Examples (see doc/README)" << endl
        << "  " << progname << "             -G germline/IGH             -d data/Stanford_S22.fasta" << endl
        << "  " << progname << " -c clones   -G germline/IGH  -r 5 -R 5  -d data/Stanford_S22.fasta" << endl
-       << "  " << progname << " -c segment  -G germline/IGH             -d data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c segment  -G germline/IGH             -d data/Stanford_S22.fasta   # (only for testing)" << endl
     ;
   exit(1);
 }
@@ -1275,6 +1275,14 @@ int main (int argc, char **argv)
     // déja déclaré ?
     //reads = OnlineFasta(f_reads, 1, " ");
     
+
+    cout << "* WARNING: vidjil was run with '-c segment' option" << endl
+         << "* Vidjil purpose is to extract very quickly windows overlapping the CDR3" << endl
+         << "* or to gather reads into clones (-c clones), and not to provide an accurate V(D)J segmentation." << endl
+         << "* The following segmentations are slow to compute and are provided only for convenience." << endl
+         << "* They should be checked with other softwares such as IgBlast, iHHMune-align or IMGT/V-QUEST." << endl
+      ;
+
     while (reads->hasNext()) 
       {
         reads->next();
