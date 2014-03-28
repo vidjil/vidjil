@@ -1102,7 +1102,7 @@ Model.prototype = {
      * */
     updateElem: function (list) {
         
-        if ( list.indexOf(this.normalisattion.id) != -1 ){
+        if ( list.indexOf(this.normalization.id) != -1 ){
             this.update_normalization()
         }
         this.updateModel()

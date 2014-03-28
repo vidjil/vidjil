@@ -382,15 +382,19 @@ Graph.prototype = {
             .transition()
             .duration(speed)
             .attr("d", function (p) {
-                var x = (p.path[0][0] * self.resizeW + self.marge4)
-                var y = (p.path[0][1] * self.resizeH + self.marge5)
-                var che = ' M ' + x + ',' + y;
-                for (var i = 1; i < p.path.length; i++) {
-                    x = (p.path[i][0] * self.resizeW + self.marge4)
-                    y = (p.path[i][1] * self.resizeH + self.marge5)
-                    che += ' L ' + x + ',' + y;
+                if (p.path.length != 0){
+                    var x = (p.path[0][0] * self.resizeW + self.marge4)
+                    var y = (p.path[0][1] * self.resizeH + self.marge5)
+                    var che = ' M ' + x + ',' + y;
+                    for (var i = 1; i < p.path.length; i++) {
+                        x = (p.path[i][0] * self.resizeW + self.marge4)
+                        y = (p.path[i][1] * self.resizeH + self.marge5)
+                        che += ' L ' + x + ',' + y;
+                    }
+                    return che;
+                }else{
+                    return ' M 0,' + self.resizeH + ' L ' + self.resizeW + ',' + self.resizeH;
                 }
-                return che;
             })
             .attr("class", function (p) {
                 if (!self.m.windows[p.id].active) return "graph_inactive";
