@@ -748,6 +748,14 @@ int main (int argc, char **argv)
 
     cout << "  ==> " << clones_windows.size() << " clones" << endl ;
  
+    if (clones_windows.size() == 0)
+      {
+	cout << "  ! No clones with current parameters." << endl;
+	cout << "  ! See the 'Limits to report a clone' options (-R, -%, -z, -A)." << endl;
+      }
+    else // clones_windows.size() > 0
+      { 
+
     //$$ Sort clones, number of occurrences
     //////////////////////////////////
     cout << "Sort clones by number of occurrences" << endl;
@@ -1229,6 +1237,9 @@ int main (int argc, char **argv)
 
     delete scorer;
     }
+
+    } // endif (clones_windows.size() > 0)
+
     
     //$$ .json output: json_data_segment
     string f_json = out_dir + prefix_filename + "vidjil" + JSON_SUFFIX ; // TODO: retrieve basename from f_reads instead of "vidjil"
