@@ -120,18 +120,6 @@ Graph.prototype = {
         this.data_res = [];
         this.graph_col = [];
 
-        var count = this.m.min_size;
-        this.precision = 1;
-
-        while (count < 1) {
-            count = count * 10;
-            this.precision = this.precision * 10;
-        }
-
-        this.scale_x = d3.scale.log()
-            .domain([1, this.precision])
-            .range([0, 1]);
-
         this.initAxis();
 
         for (var i = 0; i < this.m.n_windows; i++) {
@@ -198,7 +186,11 @@ Graph.prototype = {
 
         this.data_axis = [];
         this.graph_col = [];
-
+        
+        this.scale_x = d3.scale.log()
+            .domain([1, this.m.precision])
+            .range([0, 1]);
+        
         //abscisse
         for (var i = 0; i < this.m.time_order.length; i++) {
             this.graph_col[i] = this.marge1 + i * ((1 - (this.marge1 + this.marge2)) / (this.m.time_order.length - 1));
@@ -237,13 +229,13 @@ Graph.prototype = {
         var height = 1;
 
         //ordonnée
-        while ((height * this.precision) > 0.5) {
+        while ((height * this.m.precision) > 0.5) {
 
             var d = {};
             d.type = "axis_h";
             d.text = this.m.formatSize(height, false)
             d.orientation = "hori";
-            d.pos = 1 - this.scale_x(height * this.precision);
+            d.pos = 1 - this.scale_x(height * this.m.precision);
             this.data_axis.push(d);
 
             height = height / 10;
@@ -597,12 +589,12 @@ Graph.prototype = {
                 }
             }
                 
-            p.push([0, (1 - this.scale_x(size[0] * this.precision))]);
+            p.push([0, (1 - this.scale_x(size[0] * this.m.precision))]);
 
             for (var i = 0; i < this.graph_col.length; i++) {
-                p.push([(this.graph_col[i]), (1 - this.scale_x(size[i] * this.precision))]);
+                p.push([(this.graph_col[i]), (1 - this.scale_x(size[i] * this.m.precision))]);
             }
-            p.push([1, (1 - this.scale_x(size[this.graph_col.length - 1] * this.precision))]);
+            p.push([1, (1 - this.scale_x(size[this.graph_col.length - 1] * this.m.precision))]);
             p.push([1, 1 + 0.1]);
 
             return p;
@@ -623,7 +615,7 @@ Graph.prototype = {
         }
 
         var x = this.graph_col[0];
-        var y = this.scale_x(size[0] * this.precision)
+        var y = this.scale_x(size[0] * this.m.precision)
 
         //cas avec un seul point de suivi
         if (this.graph_col.length == 1) {
@@ -664,7 +656,7 @@ Graph.prototype = {
 
                 if (to != 0) {
                     x = this.graph_col[i];
-                    y = this.scale_x(size[i] * this.precision)
+                    y = this.scale_x(size[i] * this.m.precision)
 
                     if (size[i] == 0) {
                         if (p.length != 0) {
