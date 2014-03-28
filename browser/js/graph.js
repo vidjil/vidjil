@@ -35,7 +35,8 @@ function Graph(id, model) {
 
     this.marge1 = 0.05; //marge droite bord du graph/premiere colonne
     this.marge2 = 0.05; //marge gauche derniere colonne/bord du graph
-    this.marge4 = 80; //marge droite/gauche (non influencé par le resize)
+    this.marge3 = 50; //marge droite (non influencé par le resize)
+    this.marge4 = 80; //marge gauche (non influencé par le resize)
     this.marge5 = 25; //marge top (non influencé par le resize)
 
     this.data_axis = [];
@@ -275,26 +276,24 @@ Graph.prototype = {
      *
      * */
     resize: function () {
-        this.resizeW = document.getElementById(this.id)
-            .offsetWidth - this.marge4;
-        this.resizeH = document.getElementById(this.id)
-            .offsetHeight - this.marge5;
+        var div = document.getElementById(this.id)
+        var div_height = div.offsetHeight
+        var div_width = div.offsetWidth
+        
+        this.resizeW = div_width - this.marge4 - this.marge3;
+        this.resizeH = div_height - this.marge5;
 
         this.vis = d3.select("#" + this.id + "_svg")
-            .attr("width", document.getElementById(this.id)
-                .offsetWidth)
-            .attr("height", document.getElementById(this.id)
-                .offsetHeight)
+            .attr("width", div_width)
+            .attr("height", div_height)
+            
         d3.select("#" + this.id + "_back")
-            .attr("width", document.getElementById(this.id)
-                .offsetWidth)
-            .attr("height", document.getElementById(this.id)
-                .offsetHeight);
+            .attr("width", div_width)
+            .attr("height", div_height);
+            
         d3.select("#" + this.id + "_back2")
-            .attr("width", document.getElementById(this.id)
-                .offsetWidth - (this.marge4))
-            .attr("height", document.getElementById(this.id)
-                .offsetHeight);
+            .attr("width", this.resizeW)
+            .attr("height", div_height);
 
         this.update();
     },
