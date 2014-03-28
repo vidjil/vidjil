@@ -77,6 +77,7 @@
 enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 
 #define OUT_DIR "./out/" 
+#define CLONES_FILENAME "clones.vdj.fa"
 #define CLONE_FILENAME "clone.fa-"
 #define WINDOWS_FILENAME "windows.fa"
 #define SEQUENCES_FILENAME "sequences.fa"
@@ -620,7 +621,7 @@ int main (int argc, char **argv)
     cout << "Loop through reads, looking for windows" << endl ;
 
     string f_segmented = out_dir + prefix_filename + SEGMENTED_FILENAME ;
-    cout << "  ==> " << f_segmented << endl ;
+    cout << "  ==> " << f_segmented << "\t(result of window detection)" << endl ;
     ofstream out_segmented(f_segmented.c_str()) ;
     ofstream *out_unsegmented = NULL;
  
@@ -782,6 +783,8 @@ int main (int argc, char **argv)
     // Sort clones
     sort_clones.sort(pair_occurrence_sort<list<junction> >);
 
+    cout << endl;
+
     //////////////////////////////////
     //$$ Output clones
     if (max_clones > 0)
@@ -806,9 +809,12 @@ int main (int argc, char **argv)
     cout << "  ==> suggested edges in " << out_dir+ prefix_filename + EDGES_FILENAME
         << endl ;
 
-    cout << endl ;
+    string f_clones = out_dir + prefix_filename + CLONES_FILENAME ;
+    cout << "  ==> " << f_clones << "   \t(main result file)" << endl ;
+    ofstream out_clones(f_clones.c_str()) ;
 
-    cout << "Output clones in " << out_dir + prefix_filename << endl ; 
+    cout << "  ==> " << out_seqdir + prefix_filename + CLONE_FILENAME + "*" << "\t(detail, by clone)" << endl ; 
+    cout << endl ;
 
     for (list <pair<list <junction>,int> >::const_iterator it = sort_clones.begin();
          it != sort_clones.end(); ++it) {
@@ -1028,10 +1034,16 @@ int main (int argc, char **argv)
 		   << ">clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "-window"  << " " << windows_labels[it->first] << endl
 		   << it->first << endl ;
 
-	      // display representative, possibly segmented
+	      // display representative, possibly segmented...
+	      // (TODO: factorize)
+	      // ... on stdout
 	      cout << ">clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "-representative" << " " << seg.info << setfill(' ') << endl ;
-
 	      cout << representative.sequence << endl;
+
+	      // ... and in out_clones
+	      out_clones << ">clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "-representative" << " " << seg.info << setfill(' ') << endl ;
+	      out_clones << representative.sequence << endl;
+
               break ;
         }
         }
@@ -1183,6 +1195,7 @@ int main (int argc, char **argv)
     //$$ End of very_detailed_cluster_analysis
 
     out_edges.close() ;
+    out_clones.close();
 
     cout << "#### end of clones" << endl; 
     cout << endl;
@@ -1219,7 +1232,7 @@ int main (int argc, char **argv)
     
     //$$ .json output: json_data_segment
     string f_json = out_dir + prefix_filename + "vidjil" + JSON_SUFFIX ; // TODO: retrieve basename from f_reads instead of "vidjil"
-    cout << "  ==> " << f_json << endl ;
+    cout << "  ==> " << f_json << "\t(data file for the browser)" << endl ;
     ofstream out_json(f_json.c_str()) ;
     
     JsonList *json;
