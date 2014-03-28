@@ -712,6 +712,10 @@ int main (int argc, char **argv)
     cout << "  ==> keep " <<  windowsStorage->size() << " windows in " << info_remove.second << " reads" ;
     cout << " (" << setprecision(3) << 100 * (float) info_remove.second / nb_total_reads << "%)  " << endl ;
 
+    if (windowsStorage->size() == 0)
+      {
+	cout << "  ! No windows with current parameters." << endl;
+      }
     //////////////////////////////////
     //$$ Clustering
 
