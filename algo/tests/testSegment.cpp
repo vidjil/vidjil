@@ -10,7 +10,7 @@
 
 using namespace std;
 
-void testSegment()
+void testFineSegment()
 {
   Fasta seqV("../../germline/IGHV.fa", 2);
   Fasta seqD("../../germline/IGHD.fa", 2);
@@ -197,4 +197,11 @@ void testExtractor() {
   TAP_TEST(out_unseg.tellp() > 0, TEST_EXTRACTOR_OUT_UNSEG, "");
 
   delete ws;
+}
+
+void testSegment() {
+  testFineSegment();
+  testSegmentOverlap();
+  testSegmentationCause();
+  testExtractor();
 }
