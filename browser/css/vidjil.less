@@ -210,18 +210,28 @@ max-height: calc(~"100%" - @margin)
 
 .graph_menu{
   position: absolute;
-  top: 2px;
-  right: 2px;
-  width: 45px;
-  height: 20px;
+  top: 0px;
+  right: 0px;
+  min-width: 45px;
+  min-height: 20px;
   text-align: center;
-  border: solid;
+  border-bottom: solid;
+  border-left: solid;
   border-color: @border;
   background : @background;
 }
-.graph_menu:hover{
-  background : @highlight;
+
+.graph_list{
+  display: none;
 }
+
+.graph_listElem:hover{
+  background : @highlight;
+  width: 100%;
+  cursor: aaa;
+  cursor: webkit-grab;
+}
+
 
 							  /*style scatterPlot element*/
 
