@@ -14,7 +14,7 @@ $ Find the good number of "too short sequences" for windows of size 100
 1: SEG, but no window ->     2052
 
 $ Find the good number of segmented sequences (including "too short sequences")
-1: segmented 11216 reads .85.3%.
+1: segmented 11311 reads .86%.
 
 $ Find the good number of windows of size 100 in Stanford S22
-1: found 8224 100-windows in 9164 segments
+1: found 8314 100-windows in 9259 segments
