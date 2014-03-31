@@ -11,19 +11,23 @@ non empty lines, must be of the following form:
 where <regexp> is a regular expression passed to grep 
 (beware to escape backslashes).
 info is the number of times this regular expression should occur in the file.
-the info can be prefixed by a letter either s or f:
+the info can be prefixed by a letter either s or f or e (they can be mixed):
 s: if the test fails, we skip it
 f: even if the test fails, the script will not exit with an error code.
+e: the pattern must be searched exactly, regexp-specific characters will 
+   automatically be escaped if they're not already escaped.
 
 The script must contain a !LAUNCH: line stating what command line to be
 launched (the working directory is the directory where the input file is).  A
 line starting with !LOG: is the filename used for redirecting STDOUT from the
-command line. By default it is the input filename where the extension is
-replaced by .log. If !OUTPUT_FILE: is provided then the program is assumed to
+command line. By default it is the input should_get filename where the extension 
+is replaced by .log. If !OUTPUT_FILE: is provided then the program is assumed to
 produce a file whose filename is given after !OUTPUT_FILE:. This file will be
 parsed by the script. The !LOG: file won't be used. By default, output files
 are produced in the working directory, to change this behavior, specify an
 option after the option !OUTPUT_DIR:
+By default spaces can be replaced by any whitespaces. You can override this by
+specifying !IGNORE_WHITESPACES: 0
 
 * Environment
 ** Debug
@@ -48,7 +52,7 @@ fi
 
 debug() {
     if [ ! -z "$DEBUG" ]; then
-        echo "$*" >&2
+        echo $* >&2
     fi
 }
 
@@ -63,13 +67,14 @@ LOG_FILE=${BASE%.*}.log
 OUTPUT_FILE=
 FILE_TO_GREP=
 NO_LAUNCHER=
+IGNORE_WHITESPACES=1
 
 TMP_TAP_FILE=$(mktemp tap.XXXX)
 
 {
 nb_tests=0
 # Count number of tests to be performed
-nb_tests=`grep -c '^[^$#!]' $BASE`
+nb_tests=`grep -Pc '^[^$#!]' $BASE`
 
 echo "1.."$nb_tests
 test_nb=1
@@ -94,6 +99,8 @@ while read line; do
                 eval OUTPUT_DIR=\"${line#*:}\"
             elif [ "$type" == "NO_LAUNCHER" ]; then
                 NO_LAUNCHER=1
+            elif [ "$type" == "IGNORE_WHITESPACES" ]; then
+                IGNORE_WHITESPACES=${line#*:}
             fi
         elif [ ${line:0:1} == '$' ]; then
             msg=${line:1}
@@ -130,19 +137,35 @@ while read line; do
 
                 skip=0
                 know_to_fail=0
+                exact=0
 
                 pattern=$(cut -d: -f2- <<< "$line")
                 nb_hits=$(cut -d: -f1 <<< "$line")
 
-                if [ ${nb_hits:0:1} == "s" ]; then
-                    skip=1  # We skip the test if it fails
+                # Escape special characters for sed
+                pattern=$(sed -e 's/[/&]/\\&/g' <<< $pattern)
+
+                while ! [ "${nb_hits:0:1}" -eq "${nb_hits:0:1}" ] 2> /dev/null; do
+                    case ${nb_hits:0:1} in
+                        "s") 
+                            skip=1;;  # We skip the test if it fails
+                        "f") 
+                            know_to_fail=1;; # We know the test fails, but don't fail globally
+                        "e")
+                            # Exact: protect any character that may be part of
+                            # a regex
+                            pattern=$(sed -r 's/([^\\])(\.|\||\-|\+|\*|\[|\]|\(|\))/\1\\\2/g' <<< $pattern);;
+                    esac
                     nb_hits=${nb_hits:1}
-                elif [ ${nb_hits:0:1} == "f" ]; then
-                    know_to_fail=1 # We know the test fails, but don't fail globally
-                    nb_hits=${nb_hits:1}
+                done
+
+                # Replace whitespaces if needed
+                if [ $IGNORE_WHITESPACES -ne 0 ]; then
+                    pattern=$(sed -r 's/\s+/[[:space:]]+/g' <<< $pattern)
                 fi
-                debug "Grepping $pattern in $FILE_TO_GREP --> found "$(grep -cE "$pattern" $FILE_TO_GREP)" occurrences"
-                if [ $(grep -cE "$pattern" $FILE_TO_GREP) -eq $nb_hits -o $skip -eq 1 ]; then
+
+                debug "Grepping \"$pattern\" in $FILE_TO_GREP"
+                if [ $(sed -rn "/$pattern/p" < $FILE_TO_GREP | wc -l) -eq $nb_hits -o $skip -eq 1 ]; then
                     if [ $know_to_fail -eq 1 ]; then
                         echo "Warning: test $test_nb should have failed, but has not!" >&2
                     fi
