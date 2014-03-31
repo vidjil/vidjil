@@ -43,7 +43,7 @@ function Graph(id, model) {
     this.mobil = {};
 
     this.drag_on = false;
-    this.draged_time_point = 0;
+    this.dragged_time_point = 0;
 
     this.m.view.push(this)
 
@@ -84,6 +84,9 @@ Graph.prototype = {
             })
             .on("mouseover", function () {
                 self.m.focusOut();
+                $("#" + self.id + "_list")
+                    .stop(true, true)
+                    .hide("fast")
             })
 
         d3.select("#" + this.id + "_svg")
@@ -99,7 +102,11 @@ Graph.prototype = {
             })
             .on("mouseover", function () {
                 self.m.focusOut();
+                $("#" + self.id + "_list")
+                    .stop(true, true)
+                    .hide("fast")
             })
+
 
         this.axis_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
@@ -193,7 +200,13 @@ Graph.prototype = {
         div.className = "graph_menu"
         div.appendChild(document.createTextNode("others"))
         
+        var list = document.createElement('div')
+        list.id = "" + this.id + "_list"
+        list.className = "graph_list"
+        
+        div.appendChild(list)
         parent.appendChild(div)
+        
         
         this.vis = d3.select("#" + this.id + "_menu")
             .on("mouseup", function () {
@@ -202,6 +215,35 @@ Graph.prototype = {
             .on("mousemove", function () {
                 self.dragTimePoint()
             })
+            .on("mouseover", function () {
+                $("#" + self.id + "_list")
+                    .stop(true, true)
+                    .show("fast")
+            })
+            
+        this.build_list();
+    },
+    
+    build_list : function() {
+        var self = this;
+        
+        var list = document.getElementById("" + this.id + "_list")
+        list.innerHTML = ""
+        
+        for (var i=0; i<this.m.time.length; i++){
+            if ( this.m.time_order.indexOf(i) == -1){
+                $("<div/>", {
+                    class: "graph_listElem",
+                    text: this.m.time[i],
+                }).appendTo("#" + this.id + "_list");
+            }
+        }
+        
+        $(".graph_listElem").mousedown(function () {
+            var time = self.m.time.indexOf(this.innerHTML)
+            self.startDrag(time)
+        })
+        
     },
     
 
@@ -226,7 +268,8 @@ Graph.prototype = {
             this.graph_col[1] = 3 / 4;
         }
 
-        for (var i = 0; i < this.m.time_order.length; i++) {
+        for (var i = 0; i < this.m.time.length; i++) {
+            var t = this.m.time_order.indexOf(i)
             d = {}
 
             var time_name = "fu" + (i + 1);
@@ -237,13 +280,19 @@ Graph.prototype = {
             d.type = "axis_v";
             d.text = time_name;
             d.orientation = "vert";
-            if (this.drag_on && i == this.draged_time_point) {
+            if (this.drag_on && i == this.dragged_time_point) {
                 var coordinates = [0, 0];
                 coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
                     .node());
                 d.pos = (coordinates[0] - this.marge4) / this.resizeW
             } else {
-                d.pos = this.graph_col[this.m.time_order.indexOf(i)];
+                if (t == -1){
+                    d.pos = 1.05;
+                    d.text = "";
+                    d.type = "axis_v_hidden";
+                }else{
+                    d.pos = this.graph_col[t];
+                }
             }
             d.time = i;
             this.data_axis.push(d);
@@ -265,12 +314,14 @@ Graph.prototype = {
         }
 
         //current time_point
-        this.mobil = {};
-        this.mobil.type = "axis_m";
-        this.mobil.text = "";
-        this.mobil.orientation = "vert";
-        this.mobil.pos = this.graph_col[this.m.time_order.indexOf(this.m.t)];
-        this.data_axis.push(this.mobil)
+        if ( this.m.time_order.indexOf(this.m.t) != -1 ){
+            this.mobil = {};
+            this.mobil.type = "axis_m";
+            this.mobil.text = "";
+            this.mobil.orientation = "vert";
+            this.mobil.pos = this.graph_col[this.m.time_order.indexOf(this.m.t)];
+            this.data_axis.push(this.mobil)
+        }
 
         this.g_axis = this.axis_container.selectAll("line")
             .data(this.data_axis);
@@ -347,7 +398,6 @@ Graph.prototype = {
                 }
             }
         }
-        this.mobil.pos = this.graph_col[this.m.time_order.indexOf(this.m.t)];
         this.draw();
         elapsedTime = new Date()
             .getTime() - startTime;
@@ -407,7 +457,7 @@ Graph.prototype = {
                     }
                     return che;
                 }else{
-                    return ' M 0,' + self.resizeH + ' L ' + self.resizeW + ',' + self.resizeH;
+                    return ' M 0,' + self.resizeH;
                 }
             })
             .attr("class", function (p) {
@@ -450,10 +500,6 @@ Graph.prototype = {
             .attr("class", function (d) {
                 return d.type
             })
-            .attr("id", function (d) {
-                if (d.type == "axis_m") return "timebar"
-                return
-            });
 
         //legendes
         this.g_text
@@ -541,7 +587,7 @@ Graph.prototype = {
     /* 
      *
      * */
-    dragTimePoint: function (time_point) {
+    dragTimePoint: function () {
         if (this.drag_on) {
             this.initAxis()
             this.drawAxis(0)
@@ -555,18 +601,23 @@ Graph.prototype = {
         if (this.drag_on) {
             this.drag_on = false;
 
+            var coordinates = [0, 0];
+            coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
+                .node());
+            
             //stock tuples time_point/axis position
             var list = []
             for (var i = 0; i < this.m.time_order.length; i++) {
-                if (i == this.draged_time_point) {
-                    var coordinates = [0, 0];
-                    coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
-                        .node());
-                    list.push([i, (coordinates[0] - this.marge4) / this.resizeW]);
+                var t = this.m.time_order[i]
+                if (t == this.dragged_time_point) {
+                    list.push([t, (coordinates[0] - this.marge4) / this.resizeW]);
                 } else {
-                    list.push([i, this.graph_col[this.m.time_order.indexOf(i)]]);
+                    list.push([t, this.graph_col[i]]);
                 }
             }
+            
+            if (this.m.time_order.indexOf(this.dragged_time_point) == -1)
+                list.push([this.dragged_time_point, (coordinates[0] - this.marge4) / this.resizeW]);
 
             //sort by axis position
             list.sort(function (a, b) {
@@ -575,11 +626,13 @@ Graph.prototype = {
 
             var result = [];
             //save new time point order
-            for (var i = 0; i < this.m.time_order.length; i++) {
+            for (var i = 0; i < list.length; i++) {
                 result[i] = list[i][0]
             }
 
+            console.log(result)
             this.m.changeTimeOrder(result)
+            this.build_list();
         }
     },
     
@@ -587,20 +640,19 @@ Graph.prototype = {
      *
      * */
     stopDrag2: function () {
-        console.log("plop!!!!")
         if (this.drag_on) {
             this.drag_on = false;
             
             var result = []
             for (var i=0; i<this.m.time_order.length; i++){
-                if (this.m.time_order[i] != this.draged_time_point){
+                if (this.m.time_order[i] != this.dragged_time_point){
                     result.push(this.m.time_order[i])
                 }
             }
 
-            console.log(result)
-            this.m.t = result[0]
+            this.m.changeTime(result[0])
             this.m.changeTimeOrder(result)
+            this.build_list()
         }
     },
 
@@ -609,7 +661,7 @@ Graph.prototype = {
      * */
     startDrag: function (time) {
         this.drag_on = true;
-        this.draged_time_point = time;
+        this.dragged_time_point = time;
     },
 
     /* construit le tableau des points par laquelle la courbe de résolution doit passer
