@@ -11,5 +11,5 @@ $ Parses germline/IGHJ.fa
 1: 701 bp in  13 sequences
 
 $ Find the good number of windows in Stanford S22 (contiguous seed 14)
-1: found 10454 60-windows in 12583 segments
+1: found 10901 60-windows in 13101 segments
 
