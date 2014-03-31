@@ -155,8 +155,13 @@ PDF.prototype = {
         elem.getElementById("resolution1")
             .firstChild.setAttribute("fill", "#eeeeee");
 
-        var timebar = elem.getElementById("timebar");
-        timebar.parentNode.removeChild(timebar);
+        var timebar = elem.getElementsByClassName("axis_m");
+        timebar[0].parentNode.removeChild(timebar[0]);
+        
+        var hidden = elem.getElementsByClassName("axis_v_hidden");
+        for (var i=0; i<hidden.length; i++){
+            hidden[i].parentNode.removeChild(hidden[0]);
+        }
 
         var visu2_back = elem.getElementById("visu2_back");
         visu2_back.parentNode.removeChild(visu2_back);
