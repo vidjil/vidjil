@@ -987,8 +987,6 @@ ScatterPlot.prototype = {
     axis_x_update: function (data) {
 
         var self = this;
-        /*
-         * TODO
         
         //detect label size 
         var label_width = 0;
@@ -1007,9 +1005,21 @@ ScatterPlot.prototype = {
         }
         
         label_width = (label_width*8)
-        var space = Math.ceil(label_width/(this.resizeW/line))
-        var count=space
-        */
+        var space = (this.resizeW/line)/label_width
+        //var count=space
+        
+        var className = "sp_legend"
+        if (space < 1.1){
+            this.rotation_x = 330
+            this.text_position_x = 35;
+            this.sub_text_position_x = 50;
+            className = "sp_rotated_legend"
+        }else{
+            this.rotation_x = 0
+            className = "sp_legend"
+            this.text_position_x = 15;
+            this.sub_text_position_x = 30;
+        }
 
         //LEGENDE
         leg = this.axis_x_container.selectAll("text")
@@ -1030,7 +1040,7 @@ ScatterPlot.prototype = {
                 return d.text;
             })
             .attr("class", function (d) {
-                return "sp_legend";
+                return className;
                 /*
                  * TODO
                 if ( d.type=="line" ){
