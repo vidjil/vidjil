@@ -53,9 +53,43 @@ List.prototype = {
         var div_parent = document.getElementById(this.id);
         div_parent.innerHTML = "";
 
+        var div_list_menu = this.build_list_menu()
+
+        var div_list_clones = document.createElement('div')
+        div_list_clones.id = "list_clones"
+
+        for (var i = 0; i < this.m.n_windows; i++) {
+            var div = document.createElement('li');
+            div.className = "list";
+            div.id = i;
+
+            div_list_clones.appendChild(div);
+        }
+        
+        div_parent.appendChild(div_list_menu)
+        div_parent.appendChild(div_list_clones)
+
+    },
+    
+    build_list_menu: function () {
+        
         var div_list_menu = document.createElement('div')
         div_list_menu.id = "list_menu"
 
+        var a_split = document.createElement('a')
+        a_split.className = "button"
+        a_split.appendChild(document.createTextNode("+"))
+        a_split.onclick = function () {
+            self.m.split_all(true)
+        }
+        
+        var a_unsplit = document.createElement('a')
+        a_unsplit.className = "button"
+        a_unsplit.appendChild(document.createTextNode("-"))
+        a_unsplit.onclick = function () {
+            self.m.split_all(false)
+        }
+        
         var a_sortV = document.createElement('a')
         a_sortV.className = "button"
         a_sortV.appendChild(document.createTextNode("V sort"))
@@ -73,32 +107,19 @@ List.prototype = {
         var a_sort = document.createElement('a')
         a_sort.className = "button"
         a_sort.appendChild(document.createTextNode("sort"))
+        a_sort.style.float = "right";
+        a_sort.style.marginRight = "75px";
         a_sort.onclick = function () {
             self.sortListBySize()
         }
 
+        div_list_menu.appendChild(a_split)
+        div_list_menu.appendChild(a_unsplit)
         div_list_menu.appendChild(a_sortV)
         div_list_menu.appendChild(a_sortJ)
         div_list_menu.appendChild(a_sort)
-
-
-
-        var div_list_clones = document.createElement('div')
-        div_list_clones.id = "list_clones"
-
-        for (var i = 0; i < this.m.n_windows; i++) {
-            var div = document.createElement('li');
-            div.className = "list";
-            div.id = i;
-
-            div_list_clones.appendChild(div);
-        }
-
-
-
-        div_parent.appendChild(div_list_menu)
-        div_parent.appendChild(div_list_clones)
-
+        
+        return div_list_menu
     },
 
 
