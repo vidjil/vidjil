@@ -34,8 +34,8 @@ function Graph(id, model) {
     this.resizeH = 1; //coeff d'agrandissement/réduction hauteur        
 
     this.marge1 = 0.05; //marge droite bord du graph/premiere colonne
-    this.marge2 = 0.05; //marge gauche derniere colonne/bord du graph
-    this.marge3 = 50; //marge droite (non influencé par le resize)
+    this.marge2 = 0.08; //marge gauche derniere colonne/bord du graph
+    this.marge3 = 0; //marge droite (non influencé par le resize)
     this.marge4 = 80; //marge gauche (non influencé par le resize)
     this.marge5 = 25; //marge top (non influencé par le resize)
 
@@ -198,7 +198,7 @@ Graph.prototype = {
         var div = document.createElement('div')
         div.id = "" + this.id + "_menu"
         div.className = "graph_menu"
-        div.appendChild(document.createTextNode("others"))
+        div.appendChild(document.createTextNode("+"))
         
         var list = document.createElement('div')
         list.id = "" + this.id + "_list"
