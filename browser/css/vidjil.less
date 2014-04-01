@@ -573,7 +573,7 @@ max-height: calc(~"100%" - @margin)
   left: 20px + @width_left_container;
   font-size: 14px; 
   padding: 10px;
-  background:inherit;
+  background: @background;
   display:none;
   max-width: -moz-calc(~"100%" - @width_left_container + 60px);
   max-width: -webkit-calc(~"100%" - @width_left_container + 60px);
@@ -617,10 +617,10 @@ max-height: calc(~"100%" - @margin)
 .button {
   cursor:pointer;
   font-size: 14px;
-  padding: 2px 3px;
-  margin :3px;
+  padding: 0px 3px;
   margin-right:5px;
   margin-left:5px;
+  min-width : 16px;
   /* text-decoration:underline; */
 }
 
