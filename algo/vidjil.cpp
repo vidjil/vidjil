@@ -1052,7 +1052,10 @@ int main (int argc, char **argv)
 	      cout << representative.sequence << endl;
 
 	      // ... and in out_clones
-	      out_clones << ">clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "-representative" << " " << seg.info << setfill(' ') << endl ;
+	      out_clones << ">clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "-representative" 
+			 << "-" << setfill('0') << setw(WIDTH_NB_READS) << clone_nb_reads 
+			 << "-" << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%"
+			 << " " << seg.info << setfill(' ') << endl ;
 	      out_clones << representative.sequence << endl;
 
               break ;
