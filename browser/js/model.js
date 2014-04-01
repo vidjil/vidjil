@@ -754,6 +754,10 @@ Model.prototype = {
             min_size = min_size*10
             this.precision=this.precision*10
         }
+        
+        this.scale_color = d3.scale.log()
+            .domain([1, this.precision])
+            .range([250, 0]);
     },
     
     /* 
@@ -1414,7 +1418,14 @@ Model.prototype = {
         }
         return result
     },
-
+    
+    split_all: function (bool) {
+        for (var i=0; i < this.clones.length; i++) {
+            this.clones[i].split = bool
+        }
+        this.update()
+    },
+    
 } //end prototype Model
 
 

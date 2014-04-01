@@ -247,7 +247,7 @@ Builder.prototype = {
         a.onclick = function () {
             var newPointName = document.getElementById("new_point_name")
                 .value;
-            self.m.time[self.point] = newPointName
+            self.m.time[self.m.t] = newPointName
             self.build_info_container()
             self.m.update()
         }
@@ -382,7 +382,7 @@ Builder.prototype = {
         var div_system = this.build_info_line("info_system", "system", this.m.system)
 
         //point info
-        var div_point = this.build_info_line("info_point", "point", this.m.time[this.point])
+        var div_point = this.build_info_line("info_point", "point", this.m.time[this.m.t])
         var span = document.createElement('span')
         span.appendChild(document.createTextNode("..."));
         span.className = "edit_button"
