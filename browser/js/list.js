@@ -72,6 +72,7 @@ List.prototype = {
     },
     
     build_list_menu: function () {
+        var self = this
         
         var div_list_menu = document.createElement('div')
         div_list_menu.id = "list_menu"
