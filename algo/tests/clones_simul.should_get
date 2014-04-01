@@ -1,10 +1,10 @@
 !LAUNCH: ../../vidjil -k 14 -w 50 -c clones -G ../../germline/IGH -x -r 1 -R 1 -d ../../data/clones_simul.fa
 
 $ Junction extractions
-1:found 22 50-windows in 63 segments
+1:found 25 50-windows in 66 segments
 
 $ No clustering
-1:==> 22 clones
+1:==> 25 clones
 
 $ Clone 1 output
 1:Clone #001 .* 29 reads

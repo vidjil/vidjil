@@ -99,7 +99,7 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
 #define DEFAULT_DELTA_MAX   20
 
 #define DEFAULT_DELTA_MIN_D  0
-#define DEFAULT_DELTA_MAX_D  60
+#define DEFAULT_DELTA_MAX_D  80
 
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
@@ -259,7 +259,6 @@ int main (int argc, char **argv)
   // Admissible delta between left and right segmentation points
   int delta_min = DEFAULT_DELTA_MIN ; // Kmer+Fine
   int delta_max = DEFAULT_DELTA_MAX ; // Fine
-  int delta_max_kmer = 50 ; // TODO 
 
   bool output_sequences_by_cluster = false;
   bool detailed_cluster_analysis = true ;
@@ -634,7 +633,7 @@ int main (int argc, char **argv)
       we.setUnsegmentedOutput(out_unsegmented);
     }
     WindowsStorage *windowsStorage = we.extract(reads, index, w, delta_min, 
-                                                delta_max_kmer, windows_labels);
+                                                delta_max, windows_labels);
     size_t nb_total_reads = we.getNbReads();
 
 
