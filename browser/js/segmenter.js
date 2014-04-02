@@ -33,13 +33,13 @@ var memTab=[];
 /* segment constructor
  * 
  * */   
-function Segment(id, model){
+function Segment(id, model, cgi_address){
   this.id=id;			//ID de la div contenant le segmenteur
   this.m=model;			//Model utilisé
   this.m.view.push(this);	//synchronisation au Model
   this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
-  this.cgi_address = "http://127.0.1.1/cgi-bin/"
-    
+  this.cgi_address = cgi_address
+  
 }
 
 Segment.prototype = {
@@ -48,10 +48,6 @@ Segment.prototype = {
  * 
  * */ 
     init : function(){
-        
-        if (typeof config != 'undefined' && config.cgi_address){
-            this.cgi_address = config.cgi_address
-        }
         
         this.build()
         
@@ -284,7 +280,7 @@ Segment.prototype = {
       
   },
   
-  sendTo : function(adress){
+  sendTo : function(address){
     
     var list =this.m.getSelected()
     var request = "";
@@ -296,8 +292,8 @@ Segment.prototype = {
 	request += ">" +this.m.getName(list[i])+"\n"+ this.m.windows[list[i]].window+"\n";
     }
 
-    if (adress=='IMGT') imgtPost(request, this.m.system);
-    if (adress=='igBlast') igBlastPost(request, this.m.system);
+    if (address=='IMGT') imgtPost(request, this.m.system);
+    if (address=='igBlast') igBlastPost(request, this.m.system);
     
   },
   
