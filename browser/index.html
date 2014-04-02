@@ -165,6 +165,14 @@
                 </div>
             </div>
 
+            <div class="menu" onmouseover="showSelector('dbSelector');" > database 
+                <div id="dbSelector" class="selector">
+                    <a class="buttonSelector" onclick="db.call('patient_list');">patient list</a>
+                    <a class="buttonSelector" onclick="db.call('standard_list');">standard list</a>
+                    <a class="buttonSelector" onclick="db.call('config_list');">config list</a>
+                </div>
+            </div>
+
             <div id="logo" style="float: right;" onclick="popupMsg(msg.welcome)">Vidjil <span class='logo'>(beta)</span></div>
 
             <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
@@ -228,6 +236,12 @@
         <div id="data-container">
             <span class="closeButton" onclick="closeDataBox()">X</span>
             <div id="data-msg"></div>
+        </div>
+
+        <div id="db_div">
+            <span class="closeButton" onclick="db.close()">X</span>
+                <div id="db_msg">
+            </div>
         </div>
 
         <form id="form"></form>
