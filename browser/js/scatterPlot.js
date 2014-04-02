@@ -324,7 +324,7 @@ ScatterPlot.prototype = {
     /* Fonction permettant la mise à jour de l'élément SVG concernant le graphe 'diagramme'
      * */
     updateBar: function () {
-        self = this
+        var self = this
 
 	//Object.keys -> Retourne un tableau contenant les 'propriétés entières' en chaînes de caractères, correspondants aux éléments présents dans le tableau donné en paramètre de la fonction ==> Tableau
         this.vKey = Object.keys(this.m.germline.vgene);
