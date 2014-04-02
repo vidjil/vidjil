@@ -4,75 +4,43 @@ require 'test/unit'
 require "minitest/autorun"
 
 include Test::Unit::Assertions
-MiniTest::Unit.autorun
+MiniTest.autorun
 
-#custom runner
-class MyMiniTest
-    class Unit < MiniTest::Unit
-
-        #open browser and load default data
-        def before_suites
-            folder_path = Dir.pwd
-            index_path = 'file://' + folder_path + '/../index.html'
-            data_path = folder_path + '/test.data'
-            analysis_path = folder_path + '/test.analysis'
-            
-            $b = Watir::Browser.new :firefox
-            #$b = Watir::Browser.new :chrome
-            $b.goto index_path
-
-            # close the welcoming popup
-            $b.div(:id => 'popup-msg').button(:text => 'start').click 
-
-            # select data file
-            $b.div(:id => 'file_menu').file_field(:name,"json").set(data_path)
-            $b.div(:id => 'file_menu').button(:text => 'start').click 
-            
-            sleep 2
-        end
-
-        #close browser
-        def after_suites
-            $b.close
-        end
-
-        #test suite launcher
-        def _run_suites(suites, type)
-            begin
-                before_suites
-                super(suites, type)
-            ensure
-                after_suites
-            end
-        end
-
-        def _run_suite(suite, type)
-            begin
-                suite.before_suite if suite.respond_to?(:before_suite)
-                super(suite, type)
-            ensure
-                suite.after_suite if suite.respond_to?(:after_suite)
-            end
-        end
-
+class MySpec < MiniTest::Spec
+    class MyClass
     end
+    
+    def self.init
+        puts "hi"
+        folder_path = Dir.pwd
+        index_path = 'file://' + folder_path + '/../index.html'
+        data_path = folder_path + '/test.data'
+        analysis_path = folder_path + '/test.analysis'
+        
+        $b = Watir::Browser.new :firefox
+        #$b = Watir::Browser.new :chrome
+        $b.goto index_path
+
+        # close the welcoming popup
+        $b.div(:id => 'popup-msg').button(:text => 'start').click 
+
+        # select data file
+        $b.div(:id => 'file_menu').file_field(:name,"json").set(data_path)
+        $b.div(:id => 'file_menu').button(:text => 'start').click 
+        
+        sleep 2
+    end
+    
+    init
+    
 end
 
-
-MiniTest::Unit.runner = MyMiniTest::Unit.new
+Minitest.after_run {
+  $b.close
+}
 
 #browser test suite
-class BrowserTest < MiniTest::Unit::TestCase
-
-    #before all tests
-    def self.before_suite
-        
-    end
-
-    #after all tests
-    def self.after_suite
-        
-    end
+class Browser < MiniTest::Test
     
     #after each tests
     def teardown
