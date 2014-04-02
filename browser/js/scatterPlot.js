@@ -162,8 +162,8 @@ ScatterPlot.prototype = {
         this.force = d3.layout.force()
             .gravity(0)
             .theta(0) //0.8
-        .charge(0) //-1
-        .friction(0.9)
+            .charge(0) //-1
+            .friction(0.9)
             .nodes(this.nodes)
             .on("tick", this.tick.bind(this))
             .size([1, 1]);
@@ -253,7 +253,7 @@ ScatterPlot.prototype = {
      *
      * */
     initBar: function () {
-        self = this;
+        var self = this;
 
         //création d'un element SVG pour chaque nodes
         this.bar = this.bar_container.selectAll("rect")
@@ -293,7 +293,7 @@ ScatterPlot.prototype = {
      *
      * */
     updateBar: function () {
-        self = this
+        var = self = this
 
         this.vKey = Object.keys(this.m.germline.vgene);
         this.vKey.push("undefined V");
