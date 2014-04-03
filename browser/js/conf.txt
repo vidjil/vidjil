@@ -1,0 +1,17 @@
+/*this is a config file example replace the ".txt" extension with ".js" if you want to use it 
+ *
+ * */
+
+var config = {
+    /*cgi*/
+    "cgi_address" : "http://127.0.1.1/cgi-bin/",
+    
+    /*database */
+    "use_database" : true,
+    "db_address" : "http://134.206.11.64:8000/Vidjil/default/",
+    "login" : "",
+    "password" : "",
+    
+    
+    "debug_mode" : false
+}
