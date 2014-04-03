@@ -1,0 +1,30 @@
+{{('message' in globals())}}
+{{extend 'layout.html'}}
+
+{{if 'message' in globals():}}
+<h3>{{=message}}</h3>
+
+<h4>{{=T('Hi')}}</h4>
+
+Vidjil !! 
+premiere ebauche de l'interface de gestion 
+
+<h4>TODO</h4>
+<ol>
+    <li>nettoyer le layout</li>
+    <li>ajouter les bdd manquantes</li>
+    <li>changer le css(un peu)</li>
+    <li>toussa toussa</li>
+</ol>
+
+
+{{=A("patient list",_href=URL('patient_list'), _class='btn',
+) }}
+{{=A("user list",_href=URL('user_list'), _class='btn',
+) }}
+
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}
