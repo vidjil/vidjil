@@ -1,0 +1,33 @@
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+<div>
+    <h3>{{=message}}</h3>
+    
+    <table >
+        <tr><td> name </td>
+            <td> standard </td>
+            <td> info </td>
+            <td> command </td>
+        </tr>
+       {{ 
+       query = None
+       c_id = ""
+       query = db(db.config.standard_id==db.standard_file.id).select() 
+       for row in query :}}
+            <tr>
+                <td> {{=row.config.name }} </td>
+                <td> {{=row.standard_file.name}} </td>
+                <td> {{=row.config.info }} </td>
+                <td> {{=row.config.command }} </td>
+            </tr>
+        {{pass}}
+    </table>
+    <span class="button" onclick="db.call('add_config')"> new config </span>
+</div>
+
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}

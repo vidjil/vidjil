@@ -1,0 +1,31 @@
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+<div>
+    <h3>{{=message}}</h3>
+    
+    <table >
+        <tr><td> name </td>
+            <td> birth </td>
+            <td> info </td>
+        </tr>
+       {{ 
+       query = None
+       c_id = ""
+       query = db(db.patient).select() 
+       for row in query :}}
+        <tr onclick="db.call('patient', {'id' :'{{=row.id}}'} )" >
+                <td> {{=row.last_name + " " + row.first_name }} </td>
+                <td> {{=row.birth }} </td>
+                <td> {{=row.info }} </td>
+            </tr>
+        {{pass}}
+    </table>
+    <span class="button" onclick="db.call('add_patient')"> add patient </span>
+</div>
+
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}
