@@ -1,0 +1,79 @@
+{{('message' in globals())}}
+
+{{if 'message' in globals():}}
+
+<div class="span7">
+
+    <h3>{{=message}}  {{=request.args[0]}}</h3>
+    
+    <table class="table">
+        <thead>
+            <tr><td> file_name </td>
+                <td> sampling date </td>
+                <td> info </td>
+                <td></td>
+            </tr>
+        </thead>
+        <tbody>
+    
+            {{ 
+            query = db( 
+                ( db.auth_permission.record_id==db.patient.id ) 
+                & ( db.auth_permission.table_name=="patient" ) 
+                & ( db.auth_permission.name=="read" ) 
+                & ( db.auth_permission.group_id.belongs(auth.user_groups) ) 
+                & ( db.sequence_file.patient_id==db.patient.id ) 
+                & ( db.patient.id==request.args[0] ) 
+                ).select()
+            }}
+            
+            {{ 
+            query_perm = db( 
+                ( db.auth_permission.record_id==db.patient.id ) 
+                & ( db.auth_permission.table_name=="patient" ) 
+                & ( db.auth_permission.name=="read" ) 
+                & ( db.auth_permission.group_id== db.auth_group.id)
+                ).select(db.auth_group.role, distinct=True)
+            }}
+            
+            authorized group : 
+            {{for row in query_perm :}}
+                {{=row.role}}, 
+            {{pass}}
+            admin
+            
+            {{for row in query :}}
+
+            <tr class="tabrow" onclick="window.location = 'patient.html?id_patient={{=row.patient.id}}' ">
+                    <td> {{="plop"}} </td>
+                    <td> {{=row.sequence_file.sampling_date}} </td>
+                    <td> {{=row.sequence_file.info}} </td>
+                <td> <a class="btn" data-w2p_disable_with="default" href={{=URL(f='delete_file', args=[row.sequence_file.id])}}>delete</a> </td>
+            </tr>
+            {{pass}}
+        </tbody>
+    </table>
+    <a class="btn" data-w2p_disable_with="default" href={{=URL(f='patient_list')}}>back</a>
+    <a class="btn" data-w2p_disable_with="default" href={{=URL(f='test_upload', args=[request.args[0]])}}>add file</a>
+</div>
+
+<div class="span5">
+     <div class="well well-small">
+         <h3>
+             info
+         </h3>
+             fenetre ajax / affichage info fichier ...
+             <br>.
+             <br>.
+             <br>.
+             <br>.
+             <br>.
+    </div>
+</div>
+
+
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}

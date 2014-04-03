@@ -1,0 +1,47 @@
+{{('message' in globals())}}
+{{extend 'layout.html'}}
+
+{{if 'message' in globals():}}
+<h3>{{=message}}</h3>
+
+<table class="table">
+        <tr><td> name </td>
+            <td> email </td>
+            <td> group 
+
+        {{ 
+        c_id= ""
+    
+        for row in db(
+        (db.auth_user.id==db.auth_membership.user_id)
+        & (db.auth_group.id==db.auth_membership.group_id)
+        ).select(orderby=db.auth_user.id):}}
+                
+            {{if (c_id != row.auth_user.id) :
+                c_id = row.auth_user.id}}
+                </td>
+            </tr>
+            <tr><td> {{=row.auth_user.last_name + " " + row.auth_user.first_name }} </td>
+                <td> {{=row.auth_user.email }} </td>
+                <td> {{=row.auth_group.role }}
+
+            {{else:}}
+             {{=row.auth_group.role }}
+            {{pass}}
+                    
+        {{pass}}
+                </td>
+           </tr>
+</table>
+
+
+{{if "admin" in auth.user_groups.values():}}
+    {{=A(str(T('add membership')),_href=URL('add_membership'),_class="btn")}}
+{{pass}}
+
+
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}

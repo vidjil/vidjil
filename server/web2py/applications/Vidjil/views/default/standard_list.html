@@ -1,0 +1,31 @@
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+<div>
+    <h3>{{=message}}</h3>
+    
+    <table >
+        <tr><td> name </td>
+            <td> info </td>
+            <td> </td>
+        </tr>
+       {{ 
+       query = None
+       c_id = ""
+       query = db(db.standard_file).select() 
+       for row in query :}}
+            <tr>
+                <td> {{=row.name }} </td>
+                <td> {{=row.info}} </td>
+                <td> TODO </td>
+            </tr>
+        {{pass}}
+    </table>
+    <span class="button" onclick="db.call('add_standard')"> add standard_file </span>
+</div>
+
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}
