@@ -75,7 +75,9 @@ Database.prototype = {
                 //submit formulaire avec fichier
                 if ( document.getElementById('upload_form') ){
                     $('#upload_form')
-                        .ajaxForm({
+                    .on('submit', function (e) {
+                        e.preventDefault();
+                        $.ajax({
                             type: "POST",
                             cache: false,
                             crossDomain: true,
@@ -118,7 +120,8 @@ Database.prototype = {
                             success: function (result) {
                                 var res = jQuery.parseJSON(result);
                                 if (res.success == "true") {
-
+                                    $('#upload_percent_' + upload_n)
+                                        .html("upload success");
                                 } else {
                                     popupMsg(res.error);
                                 }
@@ -131,8 +134,10 @@ Database.prototype = {
                                 }
                             }
                         });
+                    });
                 }
             },
+            
             error: function (request, status, error) {
                 if (status === "timeout") {
                     popupMsg("timeout");
@@ -140,6 +145,7 @@ Database.prototype = {
                     popupMsg(request.responseText);
                 }
             }
+            
         });
     },
 
