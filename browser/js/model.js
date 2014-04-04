@@ -878,6 +878,19 @@ Model.prototype = {
         this.norm = newR;
         this.update();
     },
+    
+    /* use scientific notation ( true/false )
+     *
+     * */
+    notation_switch: function (newR) {
+        console.log("scientific notation : " + newR)
+        if (newR==true) {
+            this.notation_type = "scientific"
+        }else{
+            this.notation_type = "percent"
+        }
+        this.update();
+    },
 
 
     /* change the current tracking point used

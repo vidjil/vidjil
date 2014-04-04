@@ -14,7 +14,7 @@ html{
 
 body {
   font-family: Arial, Helvetica, Sans-serif;
-  font-size: 14px;
+  font-size: 13px;
   height : 100%;
   margin:0px;
   color : @default;
@@ -103,7 +103,7 @@ max-height: calc(~"100%" - @margin)
 
 #info{
   font-family : Courier New,monaco,terminal,courier,system; 
-  font-size: 14px;
+  font-size: 13px;
   height :150px;
   padding:3px;
   background : @background;
@@ -197,10 +197,16 @@ max-height: calc(~"100%" - @margin)
   opacity : 0.75;
 }
 
-.graph_text, .graph_time{
+.graph_time{
   font-weight : bold;
   fill : @secondary ;
   text-anchor:middle;
+}
+
+.graph_text{
+  font-weight : bold;
+  fill : @secondary ;
+  text-anchor:end;
 }
 
 .graph_time:hover{
@@ -346,8 +352,7 @@ max-height: calc(~"100%" - @margin)
 
 .listElem{
   width : @width_listElem;
-  font-family : Courier New,monaco,terminal,courier,system; 
-  font-size: 14px;
+  font-size: 13px;
   cursor:pointer;
   -webkit-transition: color 0.2s;
   -o-transition: color  0.2s;
@@ -442,7 +447,7 @@ max-height: calc(~"100%" - @margin)
 #listSeq {
   font-weight: bold;
   font-family: Courier New,monaco,terminal,courier,system;
-  font-size: 14px;
+  font-size: 13px;
 }
 
 .sequence-line { 
@@ -515,7 +520,7 @@ max-height: calc(~"100%" - @margin)
   min-width:400px;
   margin-left:-250px;
   left :50%;
-  font-size: 14px; 
+  font-size: 13px; 
   padding: 10px;
   background:inherit;
   display:none; 
@@ -524,7 +529,7 @@ max-height: calc(~"100%" - @margin)
 .buttonSelector {
   background : @background;
   cursor:pointer;
-  font-size: 14px;
+  font-size: 13px;
   margin :2px;
   display:block;
   text-align:left;
@@ -546,7 +551,7 @@ max-height: calc(~"100%" - @margin)
   top: 250px; 
   left:50% ;
   width:500px;
-  font-size: 14px; 
+  font-size: 13px; 
   padding: 10px;
   background: @background;
   display:none;
@@ -571,7 +576,7 @@ max-height: calc(~"100%" - @margin)
   position: fixed; 
   top: 50px; 
   left: 20px + @width_left_container;
-  font-size: 14px; 
+  font-size: 13px; 
   padding: 10px;
   background: @background;
   display:none;
@@ -616,7 +621,7 @@ max-height: calc(~"100%" - @margin)
 
 .button {
   cursor:pointer;
-  font-size: 14px;
+  font-size: 13px;
   padding: 0px 3px;
   margin-right:5px;
   margin-left:5px;
@@ -626,7 +631,7 @@ max-height: calc(~"100%" - @margin)
 
 .smallbutton {
     cursor:pointer;
-    font-size: 14px;
+    font-size: 13px;
     text-decoration:underline;
 }
 
