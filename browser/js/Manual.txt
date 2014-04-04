@@ -6,27 +6,27 @@ Class Model
 
     I Contenu
 
-      la class model contient toute les données chargées des fichiers data et analysis
-      et stock/genere un bon nombre de meta-données utile pour toutes les views
+      la class 'model' contient toute les données chargées des fichiers 'data' et 'analysis'
+      et stock/genere un bon nombre de meta-données utile pour toute 'view'
 
 	-windows
 	  -liste des fenêtres 
 	-germline
-	  -liste des genes + nombre d'alleles
+	  -liste des gènes + nombre d'allèles
 	-clones
-	  -liste des clones, un clones est basiquement un ensemble de fenêtre 
-	  -il existe autant de clones que de fenêtres et par defaut chaque clone
-	  est un ensemble d'une fenêtre    clone[1]=[window[1]] ...
+	  -liste des clones, un clone est basiquement un ensemble de fenêtres 
+	  -il existe autant de clones que de fenêtres et, par défaut, chaque clone
+	  est un ensemble d'une fenêtre    clone[1]=[windows[1]] ...
 	  -une fenêtre ne peut se trouver que dans un seul clone a la fois
-	  -un clone vide est considéré comme inactif (non affiché)
+	  -un clone vide est considéré comme inactif (non-affiché)
 	  -la taille d'un clone correspond a la somme des tailles de ses fenêtres
-	  -la fenetre representative de clone[x] est toujours la windows[x] 
+	  -la fenetre representative de clone[x] est toujours windows[x] 
 	-view
 	  -la liste des vues associées
 	-t et r
 	  -le point de suivi actuel et le ratio utilisé (normalization)
 	  -chaque window/clone possede une taille différente suivant le point de suivi
-	    et le ratio utilisé, ces valeurs sont utilisées par defaut pour les calculs
+	   et le ratio utilisé, ces valeurs sont utilisées par defaut pour les calculs
 	-f
 	  -le clone actuellement en focus
 	
@@ -153,30 +153,32 @@ Class Model
       resizeH=1;		coef d'agrandissement hauteur
       w=1400;			largeur avant resize
       h=700;			hauteur avant resize
-      marge_left=80;		
-      marge_top=50;		
-      max_precision=8;		precision max atteignable 
-      positionGene={};		positions des genes 
-      positionAllele={};	positions des alleles
+      marge_left=120;		marge à gauche initiale
+      marge_top=45;		marche à droite initiale
+      max_precision=9;		precision max atteignable 
+      positionGene={};		positions des gènes
+      positionUsedGene={}       positions des gènes que l'on utilise actuellement
+      positionAllele={};	positions des allèles
+      positionUsedAllele={}     positions des allèles que l'on utilise actuellement
       grid[]			les grilles de répartition disponibles
-      splitMethod="gene";	méthode de répartition actuelle (defaut: gene)
+      /!!splitMethod="gene";	NOTHING (méthode de répartition actuelle (defaut: gene))
     
     II fonctions spécifiques a la vue graph
     
       a/ fonction de manipulation
       
-      -initGridModel()			
-      -getRadius(cloneID) 		
-      -updateStyle()			
-      -initGrid()			
-      -changeSplitMethod(new_splitM)	
+      -initGridModel()		Précalcul les grilles de répartition du ScatterPlot	
+      /!!-getRadius(cloneID) 	NOTHING
+      /!!-updateStyle()		NOTHING	
+      -initGrid()		Initialisation de la grille en fonction du 'model' dans this.splitX/Y		
+      -changeSplitMethod(X, Y)  Changement de la séparation de la vue graph en fonction des méthodes de répartition données dans l'axe des abcisses/ordonnées
       
       b/ fonction d'animation
       
       -tick()				retrace une image
-      -move()				déplace les nodes
+      -move()				déplace les nodes (en fonction de la méthode de répartition des points)
       -updateRadius()			modifie la taille des rayons de chaque nodes
-      -debugNaN()			
+      -debugNaN()			repositionne les nodes ayant des positions impossibles à afficher
       -collide()			résolution des collisions
 
     
@@ -212,6 +214,6 @@ m.clones[15]			: retourne le clone n°15
 
 graph.update()			: met a jour le graphique
 graph.update			: retourne le code de la fonction upate() de l'objet graph
-sp.changeSplitMethod("gene")	: active la répartition par gene sur le scatterplot
+sp.changeSplitMethod("gene", ?)	: active la répartition par gene sur le scatterplot
 
 etc ...
