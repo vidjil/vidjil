@@ -1,7 +1,7 @@
 /*
  * This file is part of "Vidjil" <http://bioinfo.lifl.fr/vidjil>, V(D)J repertoire browsing and analysis
  * Copyright (C) 2013, 2014 by Marc Duez <marc.duez@lifl.fr> and the Vidjil Team
- * Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
+ * Bonsai bioinformatics at LIFL (UMR CNRS 8022, UniversitÃ© Lille) and Inria Lille
  *
  * "Vidjil" is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,8 +16,17 @@
  * You should have received a copy of the GNU General Public License
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
-// SCATTERPLOT
 
+/* Classe ScatterPlot
+ * Classe permettant de gérer tout le ScatterPlot (ou 'nuage de points') contenu dans l'affichage
+ * I -> Déclaration de l'objet
+ * II -> Déclaration des fonctions attribuées à l'objet (.prototype)
+ * Documentation modifiée le 3 Avril 2014
+ * */
+
+/*
+  Déclaration de l'objet ScatterPlot
+*/
 function ScatterPlot(id, model) {
     this.id = id; //ID de la div contenant le scatterPlot
     this.m = model; //objet Model utilisé 
@@ -26,22 +35,23 @@ function ScatterPlot(id, model) {
     this.resizeH = 1; //coef d'agrandissement hauteur
     this.marge_left = 120; //marge 
     this.marge_top = 45; //
-    this.max_precision = 9; //precision max atteignable ( 10^-8 par defaut TODO compute)
+    this.max_precision = 9; //precision max atteignable (par défaut: 9)
 
-    this.positionGene = {}; //position
-    this.positionUsedGene = {};
-    this.positionAllele = {};
-    this.positionUsedAllele = {};
+    this.positionGene = {}; //position des gènes
+    this.positionUsedGene = {}; //position des gènes que l'on utilisera
+    this.positionAllele = {}; //position des allèles
+    this.positionUsedAllele = {}; //position des allèles que l'on utilisera
 
-    this.splitY = "gene_j"; //methode de répartition actuelle(defaut: gene v/j)
-    this.splitX = "gene_v";
+    this.splitY = "gene_j"; //methode de répartition actuelle, pour l'axe des Y
+    this.splitX = "gene_v"; //methode de répartition actuelle, pour l'axe des X
 
     this.m.view.push(this); //synchronisation au Model
 
-    this.time0 = Date.now(), //frame 
-    this.time1 = this.time0;
-    this.fpsqueue = [];
+    this.time0 = Date.now(), //sauvegarde d'une date initiale
+    this.time1 = this.time0; //utilisation de cette variable afin de pouvoir calculer les frames
+    this.fpsqueue = []; //sert à calculer le nombre de frame selon les 20 dernières valeurs
 
+    //use_simple_v -> visualisation de v présents lors d'un nombre très grands de v
     this.use_simple_v = false
     this.active_selector = false
 
@@ -70,12 +80,13 @@ function ScatterPlot(id, model) {
 
 }
 
-
+/*
+  Déclaration des fonctions attribuées à l'objet
+*/
 ScatterPlot.prototype = {
 
-    /* initialize scatterplot
-     *
-     * */
+    /* Fonction permettant l'initialisation complète du ScatterPlot
+     */
     init: function () {
         console.log("ScatterPlot " + this.id + ": init()");
 
@@ -90,9 +101,8 @@ ScatterPlot.prototype = {
         this.resize();
     },
 
-    /* initialize scatterplot SVG element / D3js
-     *
-     * */
+    /* Fonction permettant l'initialisation d'un élément SVG contenu dans le Scatterplot, pour D3JS
+     */
     initSVG: function () {
         var self = this;
 
@@ -108,6 +118,7 @@ ScatterPlot.prototype = {
             .attr("class", "background_sp")
             .attr("x", 0)
             .attr("y", 0)
+	//Actions sur l'arrière-plan
             .on("mouseover", function () {
                 self.m.focusOut();
             })
@@ -115,6 +126,7 @@ ScatterPlot.prototype = {
                 self.activeSelector();
             })
 
+	//Actions sur le corps -|- aux sélections
         d3.select("body")
             .on("mouseup", function () {
                 self.stopSelector()
@@ -124,22 +136,27 @@ ScatterPlot.prototype = {
                 self.updateSelector()
             })
 
+	//Sélection du contenu de l'axe des X -> Ajout d'un attribut valant un id
         this.axis_x_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", this.id + "_axis_x_container")
 
+	//Sélection du contenu de l'axe des X -> Ajout d'un attribut valant un id
         this.axis_y_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", this.id + "_axis_y_container")
 
+	//Sélection du contenu des points -> Ajout d'un attribut valant un id
         this.plot_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", this.id + "_plot_container")
 
+	//Sélection du contenu de bar -> Ajout d'un attribut valant un id
         this.bar_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", this.id + "_bar_container")
 
+	//Initialisation du sélecteur
         this.selector = d3.select("#" + this.id + "_svg")
             .append("svg:rect")
             .attr("class", "sp_selector")
@@ -153,80 +170,92 @@ ScatterPlot.prototype = {
         this.nodes = d3.range(this.m.n_windows)
             .map(Object);
         for (var i = 0; i < this.m.n_windows; i++) {
-            this.nodes[i].id = i;
-            this.nodes[i].r1 = 5;
-            this.nodes[i].r2 = 5;
+            this.nodes[i].id = i; //L'id d'un cercle vaut le nombre de i dans la boucle
+            this.nodes[i].r1 = 5; // r1 -> ?
+            this.nodes[i].r2 = 5; // r2 -> ?
         }
 
         //initialisation moteur physique D3
         this.force = d3.layout.force()
             .gravity(0)
-            .theta(0) //0.8
-            .charge(0) //-1
+            .theta(0) //Valeur par défaut 0.8
+            .charge(0) //Valeur par défaut -1
             .friction(0.9)
-            .nodes(this.nodes)
-            .on("tick", this.tick.bind(this))
-            .size([1, 1]);
+            .nodes(this.nodes) //Initialisation du tableau de noeuds
+            .on("tick", this.tick.bind(this)) // on -> Ecoute des mises à jour -|- aux positions données/modifiées
+            .size([1, 1]); //Taille de ...?
 
-        //création d'un element SVG pour chaque nodes
+        //création d'un element SVG pour chaque nodes (this.node.[...])
         this.node = this.plot_container.selectAll("circle")
-            .data(this.nodes)
+            .data(this.nodes) //Ajout de données pour les cercles
         this.node.enter()
-            .append("svg:circle");
+            .append("svg:circle"); //Ajout d'un élément SVG (cercle) à un node
         this.node.exit()
-            .remove()
+            .remove() //On efface tous les cercles non pris en compte
 
+	//Action concernant tous les nodes présents dans le ScatterPlot
         this.plot_container.selectAll("circle")
             .attr("stroke-width", 4)
             .attr("stroke", "")
             .attr("id", function (d) {
                 return "circle" + d.id;
             })
+	//Attribution de l'activité des cercles (inactif, sélectionné, demande d'info ou autre)
             .attr("class", function (p) {
                 if (!self.m.windows[p.id].active) return "circle_inactive";
                 if (self.m.windows[p.id].select) return "circle_select";
                 if (p.id == self.m.focus) return "circle_focus";
                 return "circle";
             })
+	//Appel de la fonction drag
             .call(this.force.drag)
+	//Action -> Si la souris est pointée/fixée sur un cercle, alors on affiche l'information concernant ce cercle
             .on("mouseover", function (d) {
                 self.m.focusIn(d.id);
             })
+	//Action -> Si l'on clique sur un cercle, alors on le sélectionne
             .on("click", function (d) {
                 self.m.select(d.id);
             })
 
     },
 
-    /* initialize axis menu and other non-SVG element
-     *
+    /* Fonction permettant d'initialiser le menu contenant les axes, ainsi que tout autre élément n'étant pas du SVG
      * */
     initMenu: function () {
         var self = this;
 
-
         var divParent = document.getElementById(this.id)
 
+	//Création d'un div fils valant des infos concernant l'axe des X dans la classe
         var div_x = document.createElement('div');
         div_x.className = "axis_select axis_select_x";
 
+	//Création d'un div fils valant des infos concernant l'axe des Y dans la classe
         var div_y = document.createElement('div');
         div_y.className = "axis_select axis_select_y";
 
+	//Création d'un select (menu avec options déroulantes) pour l'axe des X
         var select_x = document.createElement('select');
+	//Initialisation du menu déroulant
         select_x.setAttribute('name', 'select_x[]');
         select_x.id = "select_x"
+	//Changement du menu en fonction de la demande
         select_x.onchange = function () {
             self.changeXaxis(this);
         }
 
+	//Création d'un select (menu avec options déroulantes) pour l'axe des Y
         var select_y = document.createElement('select');
+	//Initialisation du menu déroulant
         select_y.setAttribute('name', 'select_y[]');
         select_y.id = "select_y"
+	//Changement du menu en fonction de la demande
         select_y.onchange = function () {
             self.changeYaxis(this);
         }
 
+	//Ajout de chaque méthode de répartition dans les menus pour l'axe des X/Y
         for (var i = 0; i < this.menu.length; i++) {
 
             var element = document.createElement("option");
@@ -241,19 +270,19 @@ ScatterPlot.prototype = {
 
         }
 
+	//On ajoute ce qui a été précédemment créé aux élèments fils
         div_x.appendChild(select_x);
         div_y.appendChild(select_y);
 
+	//On ajoute les élèments fils au div parent
         divParent.appendChild(div_x);
         divParent.appendChild(div_y);
-
     },
 
-    /* init SVG element for bar graph
-     *
+    /* Fonction permettant l'initialisation d'un élément SVG pour le graphe 'diagramme'
      * */
     initBar: function () {
-        var self = this;
+        self = this;
 
         //création d'un element SVG pour chaque nodes
         this.bar = this.bar_container.selectAll("rect")
@@ -278,36 +307,41 @@ ScatterPlot.prototype = {
             })
             .attr("height", 50)
             .attr("y", self.resizeH + self.marge_top)
+	//Retourne la couleur attribuée au SVG -via CSS:style.fill- pour chaque fenÃªtre dans le contenu de l'objet model
             .style("fill", function (d) {
                 return (self.m.windows[d].color);
             })
+	//Zoom-Affichage de la fenêtre contenue dans l'objet model, via son ID
             .on("mouseover", function (d) {
                 self.m.focusIn(d.id);
             })
+	//Sélection de la fenêtre contenue dans l'objet model, via son ID
             .on("click", function (d) {
                 self.m.select(d.id);
             })
     },
 
-    /* update SVG element for bar graph
-     *
+    /* Fonction permettant la mise à jour de l'élément SVG concernant le graphe 'diagramme'
      * */
     updateBar: function () {
-        var self = this
+        self = this
 
+	//Object.keys -> Retourne un tableau contenant les 'propriétés entières' en chaînes de caractères, correspondants aux éléments présents dans le tableau donné en paramètre de la fonction ==> Tableau
         this.vKey = Object.keys(this.m.germline.vgene);
-        this.vKey.push("undefined V");
+        //Array.push() -> Ajoute des élèments en fin de tableau
+	this.vKey.push("undefined V");
         this.bar_v = {};
         this.bar_max = 0;
 
+	//Redimensionnement du bar graph en fonction de use_simple_v
         if (this.use_simple_v) {
             this.bar_width = (0.5 * (1 / Object.keys(this.m.usedV)
-                .length)) * this.resizeW
+				     .length)) * this.resizeW
         } else {
             this.bar_width = (0.5 * (1 / this.vKey.length)) * this.resizeW
         }
 
-        //init
+        //Initialisation du tableau d'objets
         for (var i = 0; i < this.vKey.length; i++) {
             this.bar_v[this.vKey[i]] = {}
             this.bar_v[this.vKey[i]].clones = [];
@@ -328,7 +362,7 @@ ScatterPlot.prototype = {
             }
         }
 
-        //trie des clones par J
+        //classement des clones suivant J
         for (var i = 0; i < this.vKey.length; i++) {
             if (this.bar_v[this.vKey[i]].totalSize > this.bar_max)
                 this.bar_max = this.bar_v[this.vKey[i]].totalSize;
@@ -339,7 +373,7 @@ ScatterPlot.prototype = {
             });
         }
 
-        //calculs des positions y
+        //calcul des positions y
         for (var i = 0; i < this.vKey.length; i++) {
             var somme = 0;
             for (var j = 0; j < this.bar_v[this.vKey[i]].clones.length; j++) {
@@ -348,7 +382,7 @@ ScatterPlot.prototype = {
             }
         }
 
-        //grid
+        //Création / Initialisation de la grille
         for (var i = 0; i < this.gridModel["bar"].length; i++) {
             var value = this.gridModel["bar"][i].value / 100;
             if (this.bar_max < 0.1) value = value / 5;
@@ -399,8 +433,7 @@ ScatterPlot.prototype = {
 
     },
 
-    /* hide SVG element for bar graph
-     *
+    /* Fonction permettant d'attribuer "circle_hidden" sur un cercle, afin de permettre de le cacher par la suite
      * */
     endBar: function () {
         this.initBar();
@@ -413,16 +446,16 @@ ScatterPlot.prototype = {
             })
     },
 
-    /* compute bar height for a clone
-     *
+    /* Fonction permettant de calculer la hauteur d'un 'bar' pour un clone donné (ID du clone)
+     * @param cloneID: l'ID du clone
      * */
     getBarHeight: function (cloneID) {
         var size = this.m.getSize(cloneID);
         return size / this.bar_max;
     },
 
-    /* compute bar x position for a clone
-     *
+    /* Fonction permettant de calculer la position d'un 'bar' pour un clone donné (ID du clone)
+     * @param cloneID: l'ID du clone
      * */
     getBarPosition: function (cloneID) {
         for (var i = 0; i < this.vKey.length; i++) {
@@ -433,37 +466,45 @@ ScatterPlot.prototype = {
         }
     },
 
-    /* recalcul les coefs d'agrandissement/réduction en fonction de la taille de la div
-     *
+    /* Recalcule les coefficients d'agrandissement/réduction, en fonction de la taille de la div
      * */
     resize: function () {
+	//On prend la largeur de la div
         this.resizeW = document.getElementById(this.id)
             .parentNode.offsetWidth - this.marge_left;
+	//On prend la hauteur de la div
         this.resizeH = document.getElementById(this.id)
             .offsetHeight - this.marge_top;
-        if (this.resizeW < 0.1) this.resizeW = 0.1;
+        
+	//Calculs
+	if (this.resizeW < 0.1) this.resizeW = 0.1;
         if (this.resizeH < 0.1) this.resizeH = 0.1;
 
         this.resizeCoef = Math.sqrt(this.resizeW * this.resizeH);
         if (this.resizeCoef < 0.1) this.resizeCoef = 0.1;
 
+	//Attributions
         this.vis = d3.select("#" + this.id + "_svg")
             .attr("width", document.getElementById(this.id)
-                .parentNode.offsetWidth)
+                  .parentNode.offsetWidth)
             .attr("height", document.getElementById(this.id)
-                .offsetHeight)
+                  .offsetHeight)
         d3.select("#" + this.id + "_back")
             .attr("width", document.getElementById(this.id)
-                .parentNode.offsetWidth)
+                  .parentNode.offsetWidth)
             .attr("height", document.getElementById(this.id)
-                .offsetHeight);
+                  .offsetHeight);
 
+	//Initialisation de la grille puis mise-à-jour
         this.initGrid();
         this.update();
     },
 
-    /* 
-     *
+    /* Fonction permettant la création et initialisation d'un objet model
+     * @param type: Le type (line, subline, ...)
+     * @param pos: La position donnée de l'élèment
+     * @param text: Le texte donné
+     * @param color: La couleur donnée pour cette création
      * */
     makeLineModel: function (type, pos, text, color) {
         result = {};
@@ -475,8 +516,7 @@ ScatterPlot.prototype = {
         return result;
     },
 
-    /* précalcul les grilles de répartition du scatterPlot 
-     *
+    /* Fonction permettant d'initialiser les grilles de répartition du ScatterPlot 
      * */
     initGridModel: function () {
         this.gridModel = {};
@@ -489,21 +529,26 @@ ScatterPlot.prototype = {
 
     },
 
+    /* Fonction permettant d'initialiser les grilles de répartition du ScatterPlot selon le modèle V
+     * */
     initGridModelV: function () {
 
+	//Initialisation des paramètres de l'objet concernant les positions des gènes/allèles V _ [gene/allele]_v_used -> Tableau contenant toutes les positions des gènes et allèles V utilisés pendant ce temps
         this.gridModel["allele_v"] = [];
         this.gridModel["gene_v"] = [];
         this.gridModel["allele_v_used"] = [];
         this.gridModel["gene_v_used"] = [];
 
+	//Obtention de toutes les clefs concernant les allèles et les gènes V
         var vKey = Object.keys(this.m.germline.v);
         var vKey2 = Object.keys(this.m.germline.vgene);
 
+	//Calcul de distances de colonnes
         var stepV = 1 / (vKey2.length + 1)
         var stepV2 = 1 / (Object.keys(this.m.usedV)
-            .length + 1)
+			  .length + 1)
 
-        // V allele
+        // Concerne toutes les allèles V -> Initialisation et calcul de position
         for (var i = 0; i < vKey.length; i++) {
 
             var elem = vKey[i].split('*');
@@ -528,7 +573,7 @@ ScatterPlot.prototype = {
             this.positionUsedGene[vKey[i]] = pos2
         }
 
-        // V gene
+        // Concerne tous les gènes V -> Initialisation et calcul de position
         for (var i = 0; i < vKey2.length; i++) {
 
             var pos = (i + 0.5) * stepV;
@@ -545,16 +590,18 @@ ScatterPlot.prototype = {
 
         }
 
-        // undefined V
+        // Concernant tous les gènes/allèles V non-définis ("undefined"), initialisation à des valeurs calculées, contenues dans pos et pos2
         var pos = (vKey2.length + 0.5) * stepV;
         var pos2 = (Object.keys(this.m.usedV)
-            .length + 0.5) * stepV2;
+		    .length + 0.5) * stepV2;
 
+	//Ajout dans l'attribut gridModel
         this.gridModel["allele_v"].push(this.makeLineModel("line", pos, "?", ""));
         this.gridModel["gene_v"].push(this.makeLineModel("line", pos, "?", ""));
         this.gridModel["allele_v_used"].push(this.makeLineModel("line", pos2, "?", ""));
         this.gridModel["gene_v_used"].push(this.makeLineModel("line", pos2, "?", ""));
 
+	//Modification des positions non-définies
         this.positionGene["undefined V"] = pos
         this.positionAllele["undefined V"] = pos
         this.positionUsedGene["undefined V"] = pos2
@@ -571,16 +618,21 @@ ScatterPlot.prototype = {
         }
     },
 
+    /* Fonction permettant d'initialiser les grilles de répartition du ScatterPlot selon le modèle J
+     * */
     initGridModelJ: function () {
 
+	//Initialisation des paramètres de l'objet concernant les positions des gènes/allèles J
         this.gridModel["allele_j"] = [];
         this.gridModel["gene_j"] = [];
 
+	//Obtention de toutes les clefs concernant les allèles et gènes J
         var jKey = Object.keys(this.m.germline.j);
         var jKey2 = Object.keys(this.m.germline.jgene);
+	//Initialisation d'un pas pour ?????
         var stepJ = 1 / (jKey2.length + 1)
 
-        //J allele
+        //Concerne toutes les allèles J -> Initialisation et calcul de position
         for (var i = 0; i < jKey.length; i++) {
 
             var elem = jKey[i].split('*');
@@ -599,7 +651,7 @@ ScatterPlot.prototype = {
 
         }
 
-        //J gene
+        //Concerne tous les gènes J -> Initialisation et calcul de position
         for (var i = 0; i < jKey2.length; i++) {
 
             var pos = (i + 0.5) * stepJ
@@ -609,7 +661,7 @@ ScatterPlot.prototype = {
             this.gridModel["gene_j"].push(this.makeLineModel("line", pos, jKey2[i], color));
         }
 
-        //undefined J
+        //Gestion de toutes les positions non-définies pour les allèles ou gènes J
         var pos = (jKey2.length + 0.5) * stepJ;
 
         this.gridModel["allele_j"].push(this.makeLineModel("line", pos, "?", color));
@@ -622,14 +674,19 @@ ScatterPlot.prototype = {
 
     },
 
+    /* Fonction permettant d'initialiser la taille de la grille, définie selon le modèle
+     * */
     initGridModelSize: function () {
+	//Déclaration
         this.gridModel["Size"] = [];
 
+	//Calcul initial
         this.sizeScale = d3.scale.log()
             .domain([this.m.min_size, 1])
             .range([1, 0]);
         var height = 1;
 
+	//Calcul selon les précisions et le modèle
         for (var i = 0; i < this.max_precision; i++) {
             var pos = this.sizeScale(height);
             var text = this.m.formatSize(height, false)
@@ -639,6 +696,7 @@ ScatterPlot.prototype = {
 
     },
 
+    //Fonction permettant d'initialiser la grille de répartition du ScatterPlot selon la répartition n ?????
     initGridModelN: function () {
         this.gridModel["n"] = [];
 
@@ -648,6 +706,7 @@ ScatterPlot.prototype = {
         }
     },
 
+    //Fonction permettant d'initialiser le 'bar' de la grille
     initGridModelBar: function () {
         this.gridModel["bar"] = [];
 
@@ -659,8 +718,7 @@ ScatterPlot.prototype = {
         }
     },
 
-    /* calcul d'une étape d'animation
-     *
+    /* Fonction permettant le calcul d'une étape d'animation
      * */
     tick: function () {
         self = this;
@@ -674,10 +732,10 @@ ScatterPlot.prototype = {
         this.node.each(this.collide());
         //élimine les valeurs NaN ou infinity pouvant apparaitre
         this.node.each(this.debugNaN())
-        //attribution des nouvelles positions/tailles
-        .attr("cx", function (d) {
-            return (d.x + self.marge_left);
-        })
+            //attribution des nouvelles positions/tailles
+            .attr("cx", function (d) {
+		return (d.x + self.marge_left);
+            })
             .attr("cy", function (d) {
                 return (d.y + self.marge_top);
             })
@@ -688,7 +746,7 @@ ScatterPlot.prototype = {
                 return (self.m.getName(d));
             })
 
-        //calcul fps
+        //Calcul d'une frame (image / seconde)
         this.time1 = Date.now();
         if (this.fpsqueue.length === 10) {
             document.getElementById("fps")
@@ -701,44 +759,50 @@ ScatterPlot.prototype = {
 
     },
 
-    /* déplace les nodes en fonction de la méthode de répartition actuelle
-     *
+    /* Fonction permettant le déplacement des nodes en fonction de la méthode de répartition utilisée à l'instant T
      * */
     move: function () {
         self = this;
         return function (d) {
-            var coef = 0.005; //
+            var coef = 0.005; //?????
             var coef2 = 0.01; //force d'attraction
-            var coef3 = 0.0015; //
-            var geneV = "undefined V";
-            var geneJ = "undefined J";
-            if (typeof (self.m.windows[d.id].V) != 'undefined' && self.m.germline.v[self.m.windows[d.id].V[0]]) {
+            var coef3 = 0.0015; //?????
+            var geneV = "undefined V"; //Gène/Allèle V de la grille à bouger
+            var geneJ = "undefined J"; //Gène/Allèle J de la grille à bouger
+            //Vérification de l'existence du gène/allèle V -> initialisation de geneV
+	    if (typeof (self.m.windows[d.id].V) != 'undefined' && self.m.germline.v[self.m.windows[d.id].V[0]]) {
                 geneV = self.m.windows[d.id].V[0];
             }
+	    //Vérification de l'existence du gène/allèle J -> initialisation de geneJ
             if (typeof (self.m.windows[d.id].J) != 'undefined' && self.m.germline.j[self.m.windows[d.id].J[0]]) {
                 geneJ = self.m.windows[d.id].J[0];
             }
 
+	    //Switch sur l'axe des Y en fonction de la méthode de répartition demandée, afin de calculer les nouvelles positions sur les axes
             switch (self.splitY) {
+		//Cas de 'bar'
             case "bar":
                 d.y += coef * (-d.y);
                 break;
+		//Cas de 'gene_j'
             case "gene_j":
                 d.y += coef * ((self.posG[geneJ] * self.resizeH) - d.y);
                 break;
+		//Cas de 'allele_j'
             case "allele_j":
                 d.y += coef * ((self.posA[geneJ] * self.resizeH) - d.y);
                 break;
+		//Cas de 'gene_v_used' et 'gene_v' (même calcul)
             case "gene_v_used":
-                d.y += coef * ((self.posG[geneV] * self.resizeH) - d.y);
-                break;
             case "gene_v":
                 d.y += coef * ((self.posG[geneV] * self.resizeH) - d.y);
                 break;
+		//Cas de 'allele_v_used' et 'allele_v' (même calcul)
             case "allele_v_used":
             case "allele_v":
                 d.y += coef * ((self.posA[geneV] * self.resizeH) - d.y);
                 break;
+		//Cas de 'Size'
             case "Size":
                 if (d.r1 != 0) {
                     if (self.m.clones[d.id].cluster.length == 0) {
@@ -750,6 +814,7 @@ ScatterPlot.prototype = {
                     d.y += coef2 * (self.resizeH - d.y);
                 }
                 break;
+		//Cas de 'nSize'
             case "nSize":
                 if (typeof (self.m.windows[d.id].V) != 'undefined') {
                     if (self.m.windows[d.id].N != -1) {
@@ -761,29 +826,37 @@ ScatterPlot.prototype = {
                     d.y += coef2 * (self.resizeH - d.y);
                 }
                 break;
+		//Cas de 'n'
             case "n":
                 d.y += coef2 * ((1 - (self.m.windows[d.id].Nlength / self.m.n_max)) * self.resizeH - d.y);
                 break;
             }
 
+	    //Switch sur l'axe des Y en fonction de la méthode de répartition demandée, afin de calculer les nouvelles positions sur les axes
             switch (self.splitX) {
+		//Cas de 'bar'
             case "bar":
                 d.x += coef * (-d.x);
                 break;
+		//Cas de 'gene_j'
             case "gene_j":
                 d.x += coef * ((self.posG[geneJ] * self.resizeW) - d.x);
                 break;
+		//Cas de 'allele_j'
             case "allele_j":
                 d.x += coef * ((self.posA[geneJ] * self.resizeW) - d.x);
                 break;
+		//Cas de 'gene_v_used' et 'gene_v' (même calcul)
             case "gene_v_used":
             case "gene_v":
                 d.x += coef * ((self.posG[geneV] * self.resizeW) - d.x);
                 break;
+		//Cas de 'allele_v_used' et 'allele_v' (même calcul)
             case "allele_v_used":
             case "allele_v":
                 d.x += coef * ((self.posA[geneV] * self.resizeW) - d.x);
                 break;
+		//Cas de 'Size'
             case "Size":
                 if (d.r1 != 0) {
                     d.x += coef2 * (self.sizeScale(self.m.getSize(d.id)) * self.resizeW - d.x);
@@ -791,6 +864,7 @@ ScatterPlot.prototype = {
                     d.x += coef2 * (self.resizeW - d.x);
                 }
                 break;
+		//Cas de 'nSize'
             case "nSize":
                 if (typeof (self.m.windows[d.id].V) != 'undefined') {
                     if (self.m.windows[d.id].N != -1) {
@@ -802,17 +876,17 @@ ScatterPlot.prototype = {
                     d.x += coef2 * (self.resizeW - d.x);
                 }
                 break;
+		//Cas de 'n'
             case "n":
                 d.x += coef2 * ((1 - (self.m.windows[d.id].Nlength / self.m.n_max)) * self.resizeW - d.x);
                 break;
             }
-
         }
     },
 
 
-    /* 
-     * r2 = rayon affiché // r1 rayon a atteindre
+    /* Fonction permettant de mettre à jour les rayons de chaque cercle
+     * Précision: r2 = rayon affiché // r1 = rayon a atteindre
      * */
     updateRadius: function () {
         return function (d) {
@@ -824,39 +898,40 @@ ScatterPlot.prototype = {
         }
     },
 
-    /* repositionne les nodes ayant des positions impossible a afficher
-     *
+    /* Fonction permettant de repositionner les nodes, ayant des positions impossibles a afficher
      * */
     debugNaN: function () {
         return function (d) {
+	    //Repositionnement dans l'axe des X si position non-déterminée/infinie
             if (!isFinite(d.x)) {
                 d.x = Math.random() * 500;
             }
+	    //Repositionnement dans l'axe des Y si position non-déterminée/infinie
             if (!isFinite(d.y)) {
                 d.y = Math.random() * 500;
             }
         }
     },
 
-    /* résolution des collisions
-     *
+    /* Fonction permettant de résoudre les collisions apportées par les nodes
      * */
     collide: function () {
+	//Création d'un arbre à 4 fils
         var quadtree = d3.geom.quadtree(this.nodes);
         self = this;
         return function (d) {
             if (d.drag != 1 && d.r1 != 0) {
                 var r = self.nodes[d.id].r2 + 1,
-                    nx1 = d.x - r,
-                    nx2 = d.x + r,
-                    ny1 = d.y - r,
-                    ny2 = d.y + r;
+                nx1 = d.x - r,
+                nx2 = d.x + r,
+                ny1 = d.y - r,
+                ny2 = d.y + r;
                 quadtree.visit(function (quad, x1, y1, x2, y2) {
                     if (quad.point && (quad.point !== d) && quad.point.r1 != 0) {
                         var x = d.x - quad.point.x,
-                            y = d.y - quad.point.y,
-                            l = Math.sqrt(x * x + y * y),
-                            r = self.nodes[d.id].r2 + self.nodes[quad.point].r2 + 1;
+                        y = d.y - quad.point.y,
+                        l = Math.sqrt(x * x + y * y),
+                        r = self.nodes[d.id].r2 + self.nodes[quad.point].r2 + 1;
                         if (l < r) {
                             l = (l - r) / l * 0.5;
                             d.x -= x *= l;
@@ -871,8 +946,7 @@ ScatterPlot.prototype = {
         };
     },
 
-    /* update les données du scatterPlot et relance une sequence d'animation
-     *
+    /* Fonction permettant de mettre à jour les données du ScatterPlot, et de relancer une sequence d'animation
      * */
     update: function () {
         var startTime = new Date()
@@ -893,25 +967,30 @@ ScatterPlot.prototype = {
         this.initGridModelSize()
         this.initGrid();
 
+	//Donne des informations quant au temps de MàJ des données
         elapsedTime = new Date()
             .getTime() - startTime;
         console.log("update sp: " + elapsedTime + "ms");
     },
 
 
-    /* update les données liées au clones
-     *
+    /* Fonction permettant de mettre à jour les données liées à tous les clones présents dans une liste -> FONCTION DEPRECATED ?????
+     * @param list: Une liste contenant tous les clones à mettre à jour ?????
      * */
     updateElem: function (list) {
         this.update();
     },
 
+    /* Fonction permettant de mettre à jour les données liées à un seul clone
+     * @param cloneID: ID d'un clone
+     * */
     updateClone: function (cloneID) {
         if (this.m.windows[cloneID].active) {
             if (this.m.clones[cloneID].split) {
                 for (var i = 0; i < this.m.clones[cloneID].cluster.length; i++) {
                     var seqID = this.m.clones[cloneID].cluster[i]
                     var size = this.m.getSequenceSize(seqID);
+		    //Math.pow(x,y) -> x**y
                     if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
                     this.nodes[seqID].r1 = size
                 }
@@ -931,8 +1010,7 @@ ScatterPlot.prototype = {
     },
 
 
-    /* update l'apparence liée a l'état (focus/select/inactive) des nodes
-     * (ne relance pas l'animation)
+    /* Fonction permettant de mettre à jour l'apparence liée a l'état (focus/select/inactive) des nodes, sans relancer l'animation
      * */
     updateElemStyle: function () {
         var self = this;
@@ -952,8 +1030,7 @@ ScatterPlot.prototype = {
         }
     },
 
-    /* applique la grille correspondant a la methode de répartition définit dans this.splitX/Y
-     *
+    /* Fonction permettant d'appliquer la grille correspondant à/aux méthode(s) de répartition définie(s) pour chaque axe
      * */
     initGrid: function () {
         self = this;
@@ -965,24 +1042,23 @@ ScatterPlot.prototype = {
         this.axis_y_update(y_grid);
     },
 
-
-    /* 
-     *
+    /* Fonction permettant de changer l'axe des X en fonction d'un élément donné en paramètre
+     * @param elem: Un élément ?????
      * */
     changeXaxis: function (elem) {
         this.changeSplitMethod(elem.value, this.splitY);
     },
 
 
-    /* 
-     *
+    /* Fonction permettant de changer l'axe des Y en fonction d'un élément donné en paramètre
+     * @param elem: un élément ?????
      * */
     changeYaxis: function (elem) {
         this.changeSplitMethod(this.splitX, elem.value);
     },
 
-    /* 
-     *
+    /* Fonction permettant de mettre à jour de l'axe des X
+     * @param data - Un tableau de données (String ?????)
      * */
     axis_x_update: function (data) {
 
@@ -1010,13 +1086,13 @@ ScatterPlot.prototype = {
         
         var className = "sp_legend"
         if (space < 1.1){
-            this.rotation_x = 330
+            this.rotation_x = 330;
             this.text_position_x = 35;
             this.sub_text_position_x = 50;
-            className = "sp_rotated_legend"
+            className = "sp_rotated_legend";
         }else{
-            this.rotation_x = 0
-            className = "sp_legend"
+            this.rotation_x = 0;
+            className = "sp_legend";
             this.text_position_x = 15;
             this.sub_text_position_x = 30;
         }
@@ -1043,20 +1119,20 @@ ScatterPlot.prototype = {
                 return className;
                 /*
                  * TODO
-                if ( d.type=="line" ){
-                    count++
-                    if (self.coordinates[0] > ((self.resizeW*d.pos+self.marge_left)-(label_width/4) ) &&
-                        self.coordinates[0] < ((self.resizeW*d.pos+self.marge_left)+(label_width/4) )
-                    ){
-                        return "sp_legend_focus";
-                    }
-                    if (count >= space){
-                        count=0
-                        return "sp_legend";
-                    }else{
-                        return "sp_hidden_legend";
-                    }
-                }else{ return "sp_legend";}
+                 if ( d.type=="line" ){
+                 count++
+                 if (self.coordinates[0] > ((self.resizeW*d.pos+self.marge_left)-(label_width/4) ) &&
+                 self.coordinates[0] < ((self.resizeW*d.pos+self.marge_left)+(label_width/4) )
+                 ){
+                 return "sp_legend_focus";
+                 }
+                 if (count >= space){
+                 count=0
+                 return "sp_legend";
+                 }else{
+                 return "sp_hidden_legend";
+                 }
+                 }else{ return "sp_legend";}
                 */
             })
             .attr("transform", function (d) {
@@ -1108,8 +1184,8 @@ ScatterPlot.prototype = {
 
     },
 
-    /* 
-     *
+    /* Fonction permettant de mettre à jour de l'axe des Y
+     * @param data - Un tableau de données (String ?????)
      * */
     axis_y_update: function (data) {
 
@@ -1183,8 +1259,9 @@ ScatterPlot.prototype = {
 
     },
 
-    /* change la méthode de répartition du scatterPlot
-     *
+    /* Fonction permettant de changer la méthode de répartition du ScatterPlot selon les X et Y (non pas par bloc)
+     * @param splitX: Méthode de répartition demandée pour l'axe des X
+     * @param splitY: Méthode de répartition demandée pour l'axe des Y
      * */
     changeSplitMethod: function (splitX, splitY) {
         if (splitY == "bar" && splitY != this.splitY) {
@@ -1207,6 +1284,8 @@ ScatterPlot.prototype = {
         this.update();
     },
 
+    /* Fonction permettant de mettre à jour le menu
+     * */
     updateMenu: function () {
         var select_x = 0;
         var select_y = 0
@@ -1220,6 +1299,8 @@ ScatterPlot.prototype = {
             .selectedIndex = select_y
     },
 
+    /* Fonction permettant de 'cacher' un node
+     * */
     endPlot: function () {
         var self = this;
         this.node
@@ -1228,13 +1309,18 @@ ScatterPlot.prototype = {
             .attr("class", function (p) {
                 return "circle_hidden";
             })
+	// Relancera le moteur physique D3
         this.force.start()
     },
 
-    activeSelector: function (e) {
+    /* Fonction permettant l'activation d'un sélecteur
+     * */
+    activeSelector: function() {
         var self = this;
         this.coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
-            .node());
+				    .node());
+	
+	//Initialisation du sélecteur
         this.selector
             .attr("originx", this.coordinates[0])
             .attr("originy", this.coordinates[1])
@@ -1243,13 +1329,17 @@ ScatterPlot.prototype = {
             .attr("width", 0)
             .attr("height", 0)
 
+	//On le rend actif en lui apposant un booléen à 'True' 
         this.active_selector = true;
     },
 
+    /* Fonction permettant de mettre à jour le sélecteur
+     * */
     updateSelector: function () {
         this.coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
-            .node());
+				    .node());
 
+	//Sélecteur actif -> Via la fonction activeSelector()
         if (this.active_selector) {
 
             var x = this.selector.attr("originx")
@@ -1284,13 +1374,16 @@ ScatterPlot.prototype = {
         }
     },
 
+    /*Fonction permettant de stopper l'exéc sélective
+     * */
     stopSelector: function (e) {
 
         if (this.active_selector) {
 
             this.coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
-                .node());
+					.node());
 
+	    //On annule la sélection
             if (this.coordinates[0] < 0 || this.coordinates[1] < 0 || this.coordinates[0] > this.marge_left + this.resizeW || this.coordinates[1] > this.marge_top + this.resizeH) {
 
                 this.cancelSelector()
@@ -1308,7 +1401,7 @@ ScatterPlot.prototype = {
                     var node_x = this.nodes[i].x + this.marge_left
                     var node_y = this.nodes[i].y + this.marge_top
 
-                    if (this.m.windows[i].active && !this.m.windows[i].select && this.m.getSequenceSize(i) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2) {
+                    if (this.m.windows[i].active && !this.m.windows[i].select && this.m.getSize(i) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2) {
                         nodes_selected.push(i)
                     }
                 }
@@ -1329,6 +1422,8 @@ ScatterPlot.prototype = {
         }
     },
 
+    /* Fonction permettant l'annulation du sélecteur
+     * */
     cancelSelector: function () {
 
         this.selector
@@ -1336,9 +1431,11 @@ ScatterPlot.prototype = {
             .attr("y", 0)
             .attr("width", 0)
             .attr("height", 0)
+	//On met le sélecteur à false -> annulation
         this.active_selector = false;
         console.log("cancel selector")
 
+	//Si sélection sur le document, on efface tout
         if (document.selection) {
             document.selection.empty();
         } else if (window.getSelection) {
