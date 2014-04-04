@@ -107,14 +107,6 @@
                 </div>
             </div>
 
-            <div id="norm" class="menu" onmouseover="showSelector('ratioSelector');"> normalize 
-                <div id="ratioSelector" class="selector">
-                    <!--TODO generer automatiquement-->
-                    <a class="buttonSelector" onclick="m.normalization_switch(false);">off</a>
-                    <a class="buttonSelector" onclick="m.normalization_switch(true);">on</a> 
-                </div>
-            </div>
-
             <div class="menu" onmouseover="showSelector('groupSelector');"> analysis 
                 <div id="groupSelector" class="selector">
                     <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'gene_j');">V / J (genes)</a> 
@@ -140,13 +132,24 @@
 
             <div id="display_menu" class="menu" onmouseover="showSelector('displaySelector');"> display
                 <div id="displaySelector" class="selector">
+
                     <div>
                         </br>
                         <input id="top_slider" type="range" min="5" max="100" step="5" value="10" 
                         onchange="m.displayTop(this.value)" />
                     </div>
+
                     <ul>
                     </ul>
+
+                    <div>normalize 
+                        <input id="normalize" type="checkbox" name="normalize" onclick="m.normalization_switch(this.checked);">
+                    </div>
+
+                    <div>scientific notation 
+                        <input id="notation" type="checkbox" name="notation"  onclick="m.notation_switch(this.checked);">
+                    </div>
+
                 </div>
             </div>
 

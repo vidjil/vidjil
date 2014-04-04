@@ -293,7 +293,7 @@ ScatterPlot.prototype = {
      *
      * */
     updateBar: function () {
-        var = self = this
+        var self = this
 
         this.vKey = Object.keys(this.m.germline.vgene);
         this.vKey.push("undefined V");
