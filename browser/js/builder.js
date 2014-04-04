@@ -263,7 +263,7 @@ Builder.prototype = {
 
         var displaySelector = document.getElementById("displaySelector")
         var listTag = displaySelector.getElementsByTagName("ul")[0]
-
+        
         //reset
         listTag.innerHTML = "";
 
@@ -307,6 +307,10 @@ Builder.prototype = {
         max_top = (Math.ceil(max_top / 5)) * 5
         document.getElementById("top_slider")
             .max = max_top;
+            
+        if (m.notation_type == "scientific") {
+            document.getElementById("notation").checked = true
+        }
 
         initTag();
     },
