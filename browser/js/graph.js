@@ -36,7 +36,7 @@ function Graph(id, model) {
     this.marge1 = 0.05; //marge droite bord du graph/premiere colonne
     this.marge2 = 0.08; //marge gauche derniere colonne/bord du graph
     this.marge3 = 0; //marge droite (non influencé par le resize)
-    this.marge4 = 80; //marge gauche (non influencé par le resize)
+    this.marge4 = 60; //marge gauche (non influencé par le resize)
     this.marge5 = 25; //marge top (non influencé par le resize)
 
     this.data_axis = [];
@@ -44,6 +44,9 @@ function Graph(id, model) {
 
     this.drag_on = false;
     this.dragged_time_point = 0;
+    
+    this.text_position_y = 15;
+    this.text_position_x = 60;
 
     this.m.view.push(this)
 
@@ -517,10 +520,10 @@ Graph.prototype = {
             })
             .attr("y", function (d) {
                 if (d.type == "axis_h") return Math.floor(self.resizeH * d.pos) + self.marge5;
-                else return 15;
+                else return self.text_position_y;
             })
             .attr("x", function (d) {
-                if (d.type == "axis_h") return 40;
+                if (d.type == "axis_h") return self.text_position_x;
                 else return Math.floor(self.resizeW * d.pos + self.marge4);
             })
             .attr("class", function (d) {
