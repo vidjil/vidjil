@@ -288,6 +288,8 @@ Model.prototype = {
         self.germline.vgene = {};
         self.germline.jgene = {};
 
+	//Caler fonction de comparaison
+
         // COLOR V
         key = Object.keys(self.germline.v);
         var n = 0,
@@ -752,7 +754,7 @@ Model.prototype = {
         this.precision = 1
         while (min_size < 1) {
             min_size = min_size*10
-            this.precision=this.precision*10
+            this.precision=this.precision*6.5
         }
         
         this.scale_color = d3.scale.log()
