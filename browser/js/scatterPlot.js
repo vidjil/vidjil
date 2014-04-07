@@ -1058,12 +1058,12 @@ ScatterPlot.prototype = {
     },
 
     /* Fonction permettant de mettre à jour de l'axe des X
-     * @param data - Un tableau de données (String ?????)
+     * @param data - Un tableau d'objets, concernant les données et les légendages (pour l'axe de X)
      * */
     axis_x_update: function (data) {
 
         var self = this;
-        
+
         //detect label size 
         var label_width = 0;
         var line = 0
@@ -1185,7 +1185,7 @@ ScatterPlot.prototype = {
     },
 
     /* Fonction permettant de mettre à jour de l'axe des Y
-     * @param data - Un tableau de données (String ?????)
+     * @param data - Un tableau d'objets, concernant les données et les légendages (pour l'axe de Y)
      * */
     axis_y_update: function (data) {
 
