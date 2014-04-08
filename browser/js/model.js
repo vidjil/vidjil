@@ -20,7 +20,7 @@
 /*
  * Model.js
  *
- * contains data models and control function
+ * contains data models, control function and a comparison function (mySortedArray)
  * data models are stocked here and can be accessed by the different views to be displayed
  * everytime a data model is modified by a control function the views are called to be updated
  */
