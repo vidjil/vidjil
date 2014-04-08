@@ -4,8 +4,10 @@ def run_vidjil(id_file, id_config):
     from subprocess import Popen, PIPE, STDOUT, os
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
-    vidjil_path = '/home/duez/bonsai/vdj/vidjil'
-    upload_folder = 'VIDJIL_PATH/interface/web2py/applications/Vidjil_test/uploads/'
+    vidjil_path = '/home/duez/git/vidjil'
+    germline_folder = vidjil_path + '/germline/'
+    upload_folder = vidjil_path + '/server/web2py/applications/Vidjil/uploads/'
+    out_folder = vidjil_path + '/out/'
     
     ## filepath du fichier de séquence
     row = db(db.sequence_file.id==id_file).select()
@@ -17,15 +19,14 @@ def run_vidjil(id_file, id_config):
     vidjil_cmd = row2[0].command
     
     ## commande complete
-    cmd = 'VIDJIL_PATH/vidjil ' + vidjil_cmd + ' ' + seq_file
-    cmd = cmd.replace('VIDJIL_PATH' , vidjil_path)
+    cmd = vidjil_path+'/vidjil ' + vidjil_cmd + ' -o  ' + out_folder + ' -G ' + germline_folder + 'TRG ' + seq_file
     
     ## execute la commande vidjil
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     output = p.stdout.read()
     
     ## récupération du fichier data.json généré
-    data_filepath = os.path.abspath("/home/duez/bonsai/vdj/vidjil/out/data.json")
+    data_filepath = os.path.abspath(out_folder+"vidjil.data")
     stream = open(data_filepath, 'rb')
     
     ## insertion dans la base de donnée
@@ -38,7 +39,7 @@ def run_vidjil(id_file, id_config):
     
     ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
     ## TODO parse result success/fail
-    return output
+    return cmd
 
 
 from gluon.scheduler import Scheduler
