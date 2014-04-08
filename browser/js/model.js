@@ -288,8 +288,34 @@ Model.prototype = {
         self.germline.vgene = {};
         self.germline.jgene = {};
 
-	//Caler fonction de comparaison
+	/*DÉBUT DU TRI*/
+	//On trie tous les élèments v contenus dans germline, via le nom des objets
+	var tmp1 = [];
+	tmp1 = Object.keys(self.germline.v).slice();
+	mySortedArray(tmp1);
+	//On trie tous les élèments j contenus dans germline, via le nom des objets 
+	var tmp2 = [];
+	tmp2 = Object.keys(self.germline.j).slice();
+	mySortedArray(tmp2);
+	
+	var list1 = {};
+	var list2 = {};
 
+	//Pour chaque objet, on fait un push sur self.germline.v
+	for (var i = 0; i<tmp1.length; i++) {
+	    list1[tmp1[i]] = self.germline.v[tmp1[i]];
+	}
+	//Pour chaque objet, on fait un push sur self.germline.j
+	for (var k = 0; k<tmp2.length; k++) {
+	    list2[tmp2[k]] = self.germline.j[tmp2[k]];
+	}
+	
+	//Réinitialisation des germlines de v et j
+	self.germline.v = list1;
+	self.germline.j = list2;
+
+	/*FIN DU TRI*/
+	
         // COLOR V
         key = Object.keys(self.germline.v);
         var n = 0,
