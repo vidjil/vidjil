@@ -267,7 +267,7 @@ def result():
             files += " applications/Vidjil_test/uploads/"+row.data_file.data_file
         
         if error == "" :
-            cmd = "python ../fuse.py "+output_file+" 50 "+files
+            cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
             p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
             
             time.sleep(1)
