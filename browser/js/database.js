@@ -22,122 +22,12 @@ Database.prototype = {
             type: "GET",
             timeout: 1000,
             crossDomain: true,
+            context: self,                          //we can't do closure with ajax event handler so we use context to keep ref
             url: self.db_adress + page + arg,
             contentType: 'text/plain',
             xhrFields: { withCredentials: false },
-            success: function (result) {
+            success: self.display_result,     
 
-                var self2 = self;
-                //rétablissement de l'adresse pour les futures requetes
-                result = result.replace("DB_ADRESS/", self.db_adress);
-                //affichage résultat
-                self.display(result);
-
-                //bind javascript
-                //le nouveau contenu apporté par l'ajax n'était pas présent durant l'initialisation du javascript
-                //les appels javascript qu'il contient ne sont donc pas linké
-                //on déclare donc les fonctions neccessaire apres l'affichage
-
-                //submit formulaire sans fichier
-                if ( document.getElementById('data_form') ){
-                    $('#data_form')
-                        .on('submit', function (e) {
-                            e.preventDefault();
-                            $.ajax({
-                                type: "POST",
-                                cache: false,
-                                timeout: 1000,
-                                crossDomain: true,
-                                url: $(this)
-                                    .attr('action'),
-                                data: $(this)
-                                    .serialize(),
-                                success: function (result) {
-                                    var res = jQuery.parseJSON(result);
-                                    if (res.success == "true") {
-                                        self2.call("patient_list")
-                                    } else {
-                                        popupMsg(res.error);
-                                    }
-                                },
-                                error: function (request, status, error) {
-                                    if (status === "timeout") {
-                                        popupMsg("timeout");
-                                    } else {
-                                        popupMsg(request.responseText);
-                                    }
-                                }
-                            });
-                        });
-                }
-
-                var upload_n = self.upload;
-                //submit formulaire avec fichier
-                if ( document.getElementById('upload_form') ){
-                    $('#upload_form')
-                    .on('submit', function (e) {
-                        e.preventDefault();
-                        $.ajax({
-                            type: "POST",
-                            cache: false,
-                            crossDomain: true,
-                            url: $(this)
-                                .attr('action'),
-                            data: $(this)
-                                .serialize(),
-                            beforeSend: function () {
-                                //crée un div qui contiendra la progression de l'upload du fichier 
-                                self2.upload++;
-                                var div = document.createElement('div');
-
-                                var spanName = document.createElement('span');
-                                spanName.innerHTML = $("#upload_file")
-                                    .val()
-                                    .split('/')
-                                    .pop()
-                                    .split('\\')
-                                    .pop();
-
-                                var spanPercent = document.createElement('span');
-                                spanPercent.id = "upload_percent_" + upload_n;
-                                spanPercent.innerHTML = '0%';
-
-                                div.appendChild(spanName);
-                                div.appendChild(spanPercent);
-
-                                var div_parent = document.getElementById("upload_list");
-                                div_parent.appendChild(div);
-
-                                self2.call("patient_list")
-
-                            },
-                            //mise a jour progressive du % d'upload
-                            uploadProgress: function (event, position, total, percentComplete) {
-                                var percentVal = percentComplete + '%';
-                                $('#upload_percent_' + upload_n)
-                                    .html(percentVal);
-                            },
-                            success: function (result) {
-                                var res = jQuery.parseJSON(result);
-                                if (res.success == "true") {
-                                    $('#upload_percent_' + upload_n)
-                                        .html("upload success");
-                                } else {
-                                    popupMsg(res.error);
-                                }
-                            },
-                            error: function (request, status, error) {
-                                if (status === "timeout") {
-                                    popupMsg("timeout");
-                                } else {
-                                    popupMsg(request.responseText);
-                                }
-                            }
-                        });
-                    });
-                }
-            },
-            
             error: function (request, status, error) {
                 if (status === "timeout") {
                     popupMsg("timeout");
@@ -148,9 +38,185 @@ Database.prototype = {
             
         });
     },
+    
+    display_result: function (result) {
+        console.log(this)       //context work !!! YEEAAHHHHHHHHHHHH
+        
+        //rétablissement de l'adresse pour les futures requetes
+        result = result.replace("DB_ADRESS/", this.db_adress);
+        
+        //affichage résultat
+        this.display(result);
 
+        var self = this //good old closure is back      /!\ this scope also contains ajax data
+        
+        //bind javascript
+        //le nouveau contenu apporté par l'ajax n'était pas présent durant l'initialisation du javascript
+        //les appels javascript qu'il contient ne sont donc pas linké
+        //on déclare donc les fonctions neccessaire apres l'affichage
+        
+        this.init_ajaxform()
+        
+    },
+    
+    init_ajaxform: function () {
+        var self = this
+        
+        //submit formulaire sans fichier
+        if ( document.getElementById('data_form') ){
+            //$('#data_form').on('submit',self.data_form ); //doesn't work :/
+            
+            $('#data_form').ajaxForm({
+                type: "POST",
+                cache: false,
+                timeout: 1000,
+                crossDomain: true,
+                url      : $(this).attr('action'),
+                data     : $(this).serialize(),
+                success: function (result) {
+                    var res = jQuery.parseJSON(result);
+                    if (res.success == "true") {
+                        self.call("patient_list")         //TODO find a way to make a closure here !!
+                    } else {
+                        popupMsg(res.error);
+                    }
+                },
+                error: function (request, status, error) {
+                    if (status === "timeout") {
+                        popupMsg("timeout");
+                    } else {
+                        popupMsg(request.responseText);
+                    }
+                }
+            });
+        }
+        
+        //submit formulaire avec fichier
+        if ( document.getElementById('upload_form') ){
+            //$('#upload_form').on('submit', self.upload_form ); // doesn't work :/
+            
+            var upload_n=this.upload
+            //rename form
+            $('#upload_form').ajaxForm({
+                type     : "POST",
+                cache: false,
+                crossDomain: true,
+                url      : $(this).attr('action'),
+                data     : $(this).serialize(),
+                beforeSubmit: function() {
+                    self.call("patient_list") 
+                    //crée un div qui contiendra la progression de l'upload du fichier 
+                    self.upload++;
+                    var div = document.createElement('div');
+                    
+                    var spanName=document.createElement('span');
+                    spanName.innerHTML = $("#upload_file").val().split('/').pop().split('\\').pop();
+                    
+                    var spanPercent=document.createElement('span');
+                    spanPercent.id = "upload_percent_"+upload_n; 
+                    spanPercent.innerHTML = '0%';
+                    
+                    div.appendChild(spanName);
+                    div.appendChild(spanPercent);
+                    
+                    var div_parent=document.getElementById("upload_list");
+                    div_parent.appendChild(div);
+                },    
+                //mise a jour progressive du % d'upload
+                uploadProgress: function(event, position, total, percentComplete) {
+                    var percentVal = percentComplete + '%';
+                    $('#upload_percent_'+upload_n).html(percentVal);
+                },
+                success  : function(result) {
+                    var res = jQuery.parseJSON( result );
+                    if (res.success=="true"){
+                        
+                    }else{
+                        popupMsg(res.error);
+                    }
+                },
+                error: function (request, status, error) {
+                    if(status==="timeout") {
+                        popupMsg("timeout");
+                    } else {
+                        popupMsg(request.responseText);
+                    } 
+                }
+            });
+            
+        }  
+        
+    },
+    
+    data_form: function (e) {
+        var self = this
 
+        e.preventDefault();
+        e.stopPropagation();
+        
+        $.ajax({
+            type: "POST",
+            cache: false,
+            timeout: 1000,
+            crossDomain: true,
+            url      : $(this).attr('action'),
+            data     : $(this).serialize(),
+            success: function (result) {
+                var res = jQuery.parseJSON(result);
+                if (res.success == "true") {
+                    //db.call("patient_list")
+                } else {
+                    popupMsg(res.error);
+                }
+            },
+            error: function (request, status, error) {
+                if (status === "timeout") {
+                    popupMsg("timeout");
+                } else {
+                    popupMsg(request.responseText);
+                }
+            }
+        });
 
+    },
+
+    upload_form: function (e) {
+        var self = this
+        var upload_n = this.upload
+        console.log(this)
+        e.stopPropagation();
+        e.preventDefault();
+        
+        $.ajax({
+            type     : "POST",
+            cache: false,
+            crossDomain: true,
+            url      : $(this).attr('action'),
+            data     : $(this).serialize(),
+            beforeSend: db.beforeSend(),
+            //mise a jour progressive du % d'upload
+            uploadProgress: function(event, position, total, percentComplete) {
+                var percentVal = percentComplete + '%';
+                $('#upload_percent_'+upload_n).html(percentVal);
+            },
+            success  : function(result) {
+                var res = jQuery.parseJSON( result );
+                if (res.success=="true"){
+                
+                }else{
+                    popupMsg(res.error);
+                }
+            },
+            error: function (request, status, error) {
+                if(status==="timeout") {
+                    popupMsg("timeout");
+                } else {
+                    popupMsg(request.responseText);
+                } 
+            }
+        });
+    },
+    
 
     //appel une fonction du serveur
     //idem que call() mais la réponse n'est pas une page html a afficher
