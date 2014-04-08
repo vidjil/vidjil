@@ -280,32 +280,10 @@ def result():
         
         return "fail"
 
-
-def user_list():
-    response.title = ""
-    return dict(message=T('user list'))
-
 def test_upload():
     response.title = ""
     return dict(message=T('test upload'))
 
-def user():
-    """
-    exposes:
-    http://..../[app]/default/user/login
-    http://..../[app]/default/user/logout
-    http://..../[app]/default/user/register
-    http://..../[app]/default/user/profile
-    http://..../[app]/default/user/retrieve_password
-    http://..../[app]/default/user/change_password
-    http://..../[app]/default/user/manage_users (requires membership in
-    use @auth.requires_login()
-        @auth.requires_membership('group name')
-        @auth.requires_permission('read','table name',record_id)
-    to decorate functions that need access control
-    """
-    response.title = ""
-    return dict(form=auth())
 
 @cache.action()
 def download():
