@@ -6,9 +6,10 @@ function Database(id, db_adress) {
 
 Database.prototype = {
 
-    //appel une page générée a partir des données du serveur
-    //page : nom de la page coté serveur
-    //args : parametres format json ( { "name_arg1" : "arg1", ... } )
+    /*appel une page générée a partir des données du serveur
+     *page : nom de la page coté serveur
+     *args : parametres format json ( { "name_arg1" : "arg1", ... } )
+     * */
     call: function (page, args) {
 
         var self = this;
@@ -39,6 +40,7 @@ Database.prototype = {
         });
     },
     
+    
     display_result: function (result) {
         console.log(this)       //context work !!! YEEAAHHHHHHHHHHHH
         
@@ -47,18 +49,15 @@ Database.prototype = {
         
         //affichage résultat
         this.display(result);
-
-        var self = this //good old closure is back      /!\ this scope also contains ajax data
         
         //bind javascript
-        //le nouveau contenu apporté par l'ajax n'était pas présent durant l'initialisation du javascript
-        //les appels javascript qu'il contient ne sont donc pas linké
-        //on déclare donc les fonctions neccessaire apres l'affichage
-        
         this.init_ajaxform()
         
     },
     
+    /* associe a un <form> un handler custom
+     * /!\ les <form> ne sont pas présent au chargement de l'interface, ils apparaissent aprés des call ajax
+     * */
     init_ajaxform: function () {
         var self = this
         
@@ -76,7 +75,7 @@ Database.prototype = {
                 success: function (result) {
                     var res = jQuery.parseJSON(result);
                     if (res.success == "true") {
-                        self.call("patient_list")         //TODO find a way to make a closure here !!
+                        self.call("patient_list")
                     } else {
                         popupMsg(res.error);
                     }
@@ -148,6 +147,8 @@ Database.prototype = {
         
     },
     
+    /* ajax event pour formulaire sans fichier 
+     * */
     data_form: function (e) {
         var self = this
 
@@ -180,6 +181,8 @@ Database.prototype = {
 
     },
 
+    /* ajax event pour formulaire avec fichier 
+     * */
     upload_form: function (e) {
         var self = this
         var upload_n = this.upload
@@ -218,9 +221,10 @@ Database.prototype = {
     },
     
 
-    //appel une fonction du serveur
-    //idem que call() mais la réponse n'est pas une page html a afficher
-    //mais simplement une confirmation que la requete a été entendu
+    /* appel une fonction du serveur
+     * idem que call() mais la réponse n'est pas une page html a afficher
+     * mais simplement une confirmation que la requete a été entendu
+     */
     request: function (controller_name, args) {
 
         var self = this;
@@ -248,7 +252,9 @@ Database.prototype = {
         });
     },
 
-
+    /*récupére et initialise le browser avec un fichier .data
+     * args => format json ( parametre attendu  > patient_id, config_id)
+     */
     load: function (args) {
 
         var self = this;
