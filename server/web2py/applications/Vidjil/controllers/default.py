@@ -242,6 +242,7 @@ def run_request():
 
 def result():
     import time
+    import gluon.contrib.simplejson
     from subprocess import Popen, PIPE, STDOUT
     if request.env.http_origin:
         response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -264,7 +265,7 @@ def result():
                    & ( db.data_file.config_id == request.vars["config_id"] )
                    ).select( orderby=db.sequence_file.sampling_date ) 
         for row in query :
-            files += " applications/Vidjil_test/uploads/"+row.data_file.data_file
+            files += " applications/Vidjil/uploads/"+row.data_file.data_file
         
         if error == "" :
             cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
@@ -278,7 +279,8 @@ def result():
             
             return output
         
-        return "fail"
+        res = {"success" : "false", "msg" : "connect error"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def test_upload():
     response.title = ""
