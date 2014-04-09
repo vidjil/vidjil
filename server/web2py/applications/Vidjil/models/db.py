@@ -100,6 +100,7 @@ db.define_table('sequence_file',
                 Field('patient_id', 'reference patient'),
                 Field('sampling_date','date'),
                 Field('info','text'),
+                Field('filename','text'),
                 Field('size_file','integer'),
                 Field('data_file', 'upload',autodelete=True, length=1000000000000))
 
