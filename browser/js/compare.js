@@ -73,7 +73,7 @@ function compare_ascii(char1, char2) {
     var charInt1 = char1.charCodeAt(0);
     var charInt2 = char2.charCodeAt(0);
     //Vérification si le caractère est bien "normal" -> lettre
-    if ((((charInt1 > 64 && charInt1 < 91) || (charInt1 > 96 && charInt1 < 123)) && ((charInt2 > 64 && charInt2 < 91) || (charInt2 > 96 && charInt2 < 123))) || ((charInt1 == term.charCodeAt(0)) && (charInt2 == term.charCodeAt(0)))) {
+    if (((charInt1 > 64 && charInt1 < 91) || (charInt1 > 96 && charInt1 < 123)) && ((charInt2 > 64 && charInt2 < 91) || (charInt2 > 96 && charInt2 < 123))) {
 	//Si le caractère ascii a un charCode inférieur au deuxième, on renvoie -1
 	if (char1.charCodeAt(0) < char2.charCodeAt(0)) {
 	    console.log("compare_ascii: "+char1+" and "+char2+" [-1].");
@@ -90,6 +90,10 @@ function compare_ascii(char1, char2) {
     }
     //Si le caractère n'est pas "normal"
     else {
+	if ((charInt1 <= 64 || charInt1 >= 91) && (charInt1 < 96 || charInt1 >= 123) && (charInt2 <= 64 || charInt2 >= 91) && (charInt2 < 96 || charInt2 >= 123)) {
+	    console.log("compare_ascii: [0] Found an error for the twice parameters.");
+	    return 0;
+	}
 	//Vérification pour le 1er paramètre
 	if ((charInt1 <= 64 || charInt1 >= 91) && (charInt1 < 96 ||  charInt1 >= 123)) {
 	    console.log("compare_ascii: [1] Found an error for the 1rst parameter.");
@@ -120,12 +124,12 @@ function compare_length(string1, string2, i) {
 	return 0;
     }
     //Si le i ne correspond seulement qu'à la longueur de la première chaîne, on renvoie -1
-    if (i == string1.length) {
+    if ((i == string1.length && string2.length != 0) || string1.length == 0) {
 	console.log("compare_length: "+string1+" and "+string2+" [-1].");
 	return -1;
     }
     //Si le i ne correspond seulement qu'à la longueur de la deuxième chaîne, on renvoie 1
-    if (i == string2.length) {
+    if ((i == string2.length && string1.length != 0) || string2.length == 0) {
 	console.log("compare_length: "+string1+" and "+string2+" [1].");
 	return 1;
     }
