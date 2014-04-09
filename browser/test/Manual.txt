@@ -1,0 +1,19 @@
+test Manual
+
+
+needed
+
+    - ruby (1.9.1+)
+        gem: - minitest-ci (3.0.3+)
+             - watir-webdriver (2.41.0+)
+             - minitest (5.3.1+)
+
+for chrome family browser you need chromedriver
+    http://chromedriver.storage.googleapis.com/index.html
+    -copy chromedriver into usr/bin folder or modify Path env variable to include it
+
+use
+
+    $ruby test_browser.rb
+
+    you can find a xunit report file in the subfolder test/report
