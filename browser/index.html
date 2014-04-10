@@ -131,8 +131,7 @@
                 </div>
             </div>
 
-
-            <div id="display_menu" class="menu" onmouseover="showSelector('displaySelector');"> display
+            <div class="menu" id="display_menu" onmouseover="showSelector('displaySelector');"> display
                 <div id="displaySelector" class="selector">
 
                     <div>
@@ -167,13 +166,18 @@
                 </div>
             </div>
 
-            <div class="menu" onmouseover="showSelector('dbSelector');" > database 
+            <div class="menu" id="database_menu" onmouseover="showSelector('dbSelector');" style="display:none"> database 
                 <div id="dbSelector" class="selector">
                     <a class="buttonSelector" onclick="db.call('patient_list');">patient list</a>
                     <a class="buttonSelector" onclick="db.call('standard_list');">standard list</a>
                     <a class="buttonSelector" onclick="db.call('config_list');">config list</a>
 
                     <div id="upload_list"></div>
+                </div>
+            </div>
+
+            <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');" style="display:none"> demo file 
+                <div id="demoSelector" class="selector">
                 </div>
             </div>
 
