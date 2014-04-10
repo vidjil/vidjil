@@ -295,6 +295,10 @@ def test_upload():
 
 @cache.action()
 def download():
+    if request.env.http_origin:
+        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Max-Age'] = 86400
     """
     allows downloading of uploaded files
     http://..../[app]/default/download/[filename]
