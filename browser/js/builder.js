@@ -46,7 +46,7 @@ Builder.prototype = {
         }
 
     },
-
+    
     updateElem: function () {},
 
     updateElemStyle: function () {},
