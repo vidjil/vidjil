@@ -19,6 +19,7 @@
     <table>
         <thead>
             <tr><td> file_name </td>
+                <td> </td>
                 <td> sampling date </td>
                 <td> info </td>
                 <td> status </td>
@@ -34,6 +35,11 @@
              <tr>
                 <td> {{ (filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)}} 
                      {{=filename}}</td>
+                 
+                        <td>  
+                            <a  href="{{=URL('download',args=row.sequence_file.data_file)}}" >dl</a>
+                        </td>
+                
                 <td> {{=row.sequence_file.sampling_date}} </td>
                 <td> {{=row.sequence_file.info}} </td>
                 <td> {{if row.data_file.id == None :}}
