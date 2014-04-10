@@ -270,6 +270,7 @@ Database.prototype = {
             url: self.db_adress + "result" + arg,
             success: function (result) {
                 json = jQuery.parseJSON(result)
+                m.reset();
                 m.parseJsonData(json, 50)
                     .loadGermline();
                 m.initClones()
