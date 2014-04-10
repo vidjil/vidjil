@@ -130,7 +130,6 @@ Model.prototype = {
 
         }
 
-
     }, //end load
 
     parseJsonData: function (data, limit) {
