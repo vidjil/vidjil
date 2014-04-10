@@ -203,10 +203,18 @@ function compare_numbers(nbr1, nbr2) {
 	var j = 0;
 	var boolnbr2 = false;
 	var subnbr2 = nbr2;
+	if (isNaN(nbr1[0]) && !isNaN(nbr2[0])) {
+	    console.log("compare_numbers: [1] Return 1 because the first parameter is not a number");
+	    return 1;
+	}
+	if (!isNaN(nbr1[0]) && isNaN(nbr2[0])) {
+	    console.log("compare_numbers: [-1] Return -1 because the first parameter is not a number");
+	    return -1;
+	}
 	//Si nbr1 n'est pas un nombre, alors on avance dans la chaîne jusqu'à temps que nous rattrapons un caaractère QUI N'EST PAS un nombre
 	if (isNaN(nbr1)) {
-	    while (i < nbr1.length && boolnbr1 == false) {
-		if (isNaN(nbr1.charAt(i)) == true) boolnbr1 = true;
+	    while (i < nbr1.length && !boolnbr1) {
+		if (isNaN(nbr1.charAt(i))) boolnbr1 = true;
 		i++;
 	    }
 	    //Substring pour nbr1
