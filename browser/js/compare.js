@@ -223,8 +223,8 @@ function compare_numbers(nbr1, nbr2) {
 	}
 	//Même chose pour nbr2
 	if (isNaN(nbr2)) {
-	    while (j < nbr2.length && boolnbr2 == false) {
-		if (!isNaN(nbr2.charAt(j)) == false) boolnbr2 = true;
+	    while (j < nbr2.length && !boolnbr2) {
+		if (isNaN(nbr2.charAt(j))) boolnbr2 = true;
 		j++;
 	    }
 	    subnbr2 = nbr2.substring(0, j-1);
