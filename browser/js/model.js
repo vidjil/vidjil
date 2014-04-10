@@ -55,33 +55,40 @@ VIDJIL_JSON_VERSION = '2014.02'
  * */
 function Model() {
     console.log("creation Model")
-    this.analysis = {
-        custom: [],
-        cluster: [],
-        date: []
-    };
-    this.t = 0;
-    this.norm = false;
-    this.focus = -1;
-    this.colorMethod = "Tag";
     this.view = [];
-    this.mapID = {};
-    this.top = 10;
-    this.precision = 1;
-    this.time_order = [];
-
-    this.notation_type = "percent"
-    this.normalization = { 
-        "A" : [],
-        "B" : 0,
-        "id" : 0
-    }
-
+    this.reset()
+    
     this.checkBrowser()
 }
 
 
 Model.prototype = {
+        
+    reset: function () {
+        this.analysis = {
+            custom: [],
+            cluster: [],
+            date: []
+        };
+        this.t = 0;
+        this.norm = false;
+        this.focus = -1;
+        this.colorMethod = "Tag";
+        this.mapID = {};
+        this.top = 10;
+        this.precision = 1;
+        this.time = [];
+        this.time_order = [];
+        this.clones = [];
+        this.windows = [];
+        this.germline = {};
+        this.notation_type = "percent"
+        this.normalization = { 
+            "A" : [],
+            "B" : 0,
+            "id" : 0
+        }
+    },
 
 
     /* load the selected data/analysis file in the model
@@ -642,7 +649,6 @@ Model.prototype = {
         };
         this.initClones();
     },
-
 
     /* give a new custom name to a clone
      *
