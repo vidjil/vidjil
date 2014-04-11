@@ -39,25 +39,37 @@ if (typeof config != 'undefined') {
 
     if (config.demo_file && config.demo_file.length != 0){
         
-        $('#demo_file_menu').css("display", "")
-        var demo_file = document.getElementById("demoSelector")
+        //detect if files are available
+        $.ajax({
+            type: "POST",
+            timeout: 5000,
+            crossDomain: true,
+            url: config.demo_file[0],
+            success: function (result) {
+                $('#demo_file_menu').css("display", "")
+                var demo_file = document.getElementById("demoSelector")
 
-        for (var i = 0; i < config.demo_file.length; i++) {
-            (function (i) {
+                for (var i = 0; i < config.demo_file.length; i++) {
+                    (function (i) {
 
-                var path = config.demo_file[i].split("/") 
-                var a = document.createElement('a');
-                a.className = "buttonSelector"
-                a.onclick = function () {
-                    m.loadDataUrl(config.demo_file[i])
+                        var path = config.demo_file[i].split("/") 
+                        var a = document.createElement('a');
+                        a.className = "buttonSelector"
+                        a.onclick = function () {
+                            m.loadDataUrl(config.demo_file[i])
+                        }
+                        
+                        a.appendChild(document.createTextNode(path[path.length-1]))
+
+                        demo_file.appendChild(a);
+                    })(i)
                 }
-                
-                a.appendChild(document.createTextNode(path[path.length-1]))
+            },
+            error: function() {
+                console.log("demo file list not available")
+            }
+        });
 
-                demo_file.appendChild(a);
-            })(i)
-        }
-        
     }
 }
 
