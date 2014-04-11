@@ -1474,6 +1474,9 @@ table.log textarea {
 .log-ERROR {
   color: red;
 }
+.log-ADMIN {
+  color: blue;
+}
 .loglink {
   color: purple;
   text-decoration: none;
