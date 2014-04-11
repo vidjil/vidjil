@@ -768,20 +768,19 @@ Model.prototype = {
     },
     
     update_precision: function () {
-        min_size = 1
-
+        var min_size = 1
+        
         for (var i=0; i<this.time_order.length; i++){
             var t = this.time_order[i]
-            var size = this.normalize(this.min_sizes[t], t) 
+            var size = this.min_sizes[t]
+            if (this.norm) size = this.normalize(this.min_sizes[t], t) 
             if (size < min_size) min_size = size
         }
         
         this.min_size = min_size
-        this.precision = 1
-        while (min_size < 1) {
-            min_size = min_size*10
-            this.precision=this.precision*6.5
-        }
+        
+        //*2 pour avoir une marge minimum d'un demi-log
+        this.precision=(1/this.min_size)*2
         
         this.scale_color = d3.scale.log()
             .domain([1, this.precision])
