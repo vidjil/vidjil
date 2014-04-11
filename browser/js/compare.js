@@ -4,6 +4,7 @@
  */
 function mySortedArray(tab) {
     tab.sort(function(a,b){return compare(a,b);});
+    //tab.sort(function(a,b){return compareString(a,b);});
 }
 
 //Caractère permettant de comparer/séparer les différents allèles; par défaut '*'
@@ -189,4 +190,51 @@ function compare_numbers(nbr1, nbr2) {
 		return result;
 	}
     }
+}
+
+
+//transforme une chaine de caractere en tableau
+// hi80-540  >>>> ["h", "i", 80, "-", 540]
+function parseString(str){
+    var result = []
+    
+    var j = 0
+    for (var i=0; i<str.length; i++){
+        if ( isFinite(parseInt(str[i])) ) {     //le char est un chiffre
+            var c=0
+            while( str[i] && isFinite(parseInt(str[i])) ){
+                c=c*10 + parseInt(str[i])
+                i++
+            }
+            i--
+            result[j]=c
+        }else{                                  //le char est une lettre
+            result[j]=str[i]
+        }
+        j++
+    }
+    return result
+}
+
+function compareString(str1, str2) {
+    str1 = parseString(str1)
+    str2 = parseString(str2)
+    
+    var minLength = str1.length
+    if (str2.length < str1.length) minLength = str2.length
+    
+    for (var i=0; i<minLength; i++) {
+        var type1 = typeof(str1[i])
+        var type2 = typeof(str2[i])
+        
+        var result=0
+        
+        if (type1=="number" && type2=="number") result = str1[i]-str2[i]
+        if (type1=="string" && type2=="string") result = str1[i].charCodeAt(0)-str2[i].charCodeAt(0);
+        if (type1=="string" && type2=="number") return 1
+        if (type1=="number" && type2=="string") return -1
+        
+        if (result !=0) return result
+    }
+    return 0
 }
