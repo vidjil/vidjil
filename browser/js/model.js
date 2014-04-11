@@ -336,7 +336,8 @@ Model.prototype = {
         self.germline.vgene = {};
         self.germline.jgene = {};
 
-	/*DÉBUT DU TRI*/
+	/*DÉBUT DU TRI (contenu dans compare.js)*/
+	
 	//On trie tous les élèments v contenus dans germline, via le nom des objets
 	var tmp1 = [];
 	tmp1 = Object.keys(self.germline.v).slice();
