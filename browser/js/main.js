@@ -42,7 +42,7 @@ if (typeof config != 'undefined') {
         $('#demo_file_menu').css("display", "")
         var demo_file = document.getElementById("demoSelector")
 
-        for (var i = 0; i < tagName.length; i++) {
+        for (var i = 0; i < config.demo_file.length; i++) {
             (function (i) {
 
                 var path = config.demo_file[i].split("/") 

@@ -131,6 +131,25 @@ Model.prototype = {
         }
 
     }, //end load
+    
+    loadDataUrl: function (url) {
+        var self = this;
+        
+        $.ajax({
+            type: "POST",
+            timeout: 5000,
+            crossDomain: true,
+            url: url,
+            success: function (result) {
+                json = jQuery.parseJSON(result)
+                m.reset();
+                m.parseJsonData(json, 50)
+                    .loadGermline();
+                m.initClones()
+            }
+        });
+
+    }, //end load
 
     parseJsonData: function (data, limit) {
         self = this;
