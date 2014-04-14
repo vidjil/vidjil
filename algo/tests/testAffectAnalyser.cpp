@@ -71,6 +71,14 @@ void testAffectAnalyser1() {
   TAP_TEST(ckaa.lastMax(aAffect, tAffect) == ckaa.count() - 1, 
            TEST_COUNT_AA_LAST_MAX, "");
 
+  // Test affectation with one affect not in the sequence
+
+  TAP_TEST(ckaa.firstMax(cAffect, tAffect) == 6, TEST_COUNT_AA_FIRST_MAX, "");
+  TAP_TEST(ckaa.lastMax(cAffect, tAffect) == ckaa.count()-1, 
+           TEST_COUNT_AA_LAST_MAX, "");
+
+  TAP_TEST(ckaa.firstMax(aAffect, gAffect) == 0, TEST_COUNT_AA_FIRST_MAX, "");
+  TAP_TEST(ckaa.lastMax(aAffect, gAffect) == 8, TEST_COUNT_AA_LAST_MAX, "");
   delete index;
 }
 
