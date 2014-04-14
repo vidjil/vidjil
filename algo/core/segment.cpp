@@ -181,7 +181,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
       return ;
     }
  
-  kaa = new KmerAffectAnalyser<KmerAffect>(*index, sequence);
+  kaa = new CountKmerAffectAnalyser<KmerAffect>(*index, sequence);
   
   // Check strand consistency among the affectations.
   int strand;
@@ -246,38 +246,40 @@ void KmerSegmenter::checkUnsegmentationCause(int strand, int delta_min, int delt
   else if (strand == 1)
     {
       // Strand +
-      Vend = kaa->last(AFFECT_V);
-      Jstart = kaa->first(AFFECT_J);
+      Vend = kaa->firstMax(AFFECT_V, AFFECT_J);
+      Jstart = kaa->lastMax(AFFECT_V, AFFECT_J);
 
-      if (Vend == (int)string::npos) 
+      if (Vend == 0) 
 	{
 	  because = UNSEG_TOO_FEW_V ;
 	}
       
-      if (Jstart == (int)string::npos)
+      if (Jstart == kaa->count()-1)
 	{
 	  because = UNSEG_TOO_FEW_J ;
 	}
 
-      Vend += s;
+      Vend += s-1;
+      Jstart++;
     } 
   else if (strand == -1)
     {
       // Strand -
-      int first = kaa->first(AFFECT_V_BWD), last = kaa->last(AFFECT_J_BWD);
+      Jstart = kaa->firstMax(AFFECT_J_BWD, AFFECT_V_BWD);
+      Vend = kaa->lastMax(AFFECT_J_BWD, AFFECT_V_BWD);
 
-      if (first == (int)string::npos)
+      if (Vend == kaa->count()-1)
 	{
 	  because = UNSEG_TOO_FEW_V ;
 	}
 
-      if (last == (int)string::npos)
+      if (Jstart == 0)
 	{
 	  because = UNSEG_TOO_FEW_J ;
 	}
 
-      Vend = sequence.size() - first ;
-      Jstart = sequence.size() - (last + s) ;
+      Vend = sequence.size() - (Vend+1) ;
+      Jstart = sequence.size() - (Jstart + s-1) ;
     }
   
   if (! because)
@@ -298,7 +300,7 @@ void KmerSegmenter::checkUnsegmentationCause(int strand, int delta_min, int delt
     segmented = false;
 }
 
-KmerAffectAnalyser<KmerAffect> *KmerSegmenter::getKmerAffectAnalyser() const {
+CountKmerAffectAnalyser<KmerAffect> *KmerSegmenter::getKmerAffectAnalyser() const {
   return kaa;
 }
 
