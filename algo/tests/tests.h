@@ -26,6 +26,11 @@ enum {
   TEST_AA_FIRST,
   TEST_AA_LAST,
   TEST_AA_PREDICATES,
+  TEST_COUNT_AA_COUNT,
+  TEST_COUNT_AA_COUNT_BEFORE,
+  TEST_COUNT_AA_COUNT_AFTER,
+  TEST_COUNT_AA_FIRST_MAX,
+  TEST_COUNT_AA_LAST_MAX,
 
   /* Cluster */
   TEST_CLUSTER,
@@ -95,6 +100,11 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_AA_FIRST, "AffectAnalyser.first()");
   RECORD_TAP_TEST(TEST_AA_LAST, "AffectAnalyser.last()");
   RECORD_TAP_TEST(TEST_AA_PREDICATES, "AffectAnalyser: isUnknown() isAmbiguous()");
+  RECORD_TAP_TEST(TEST_COUNT_AA_COUNT, "CountKmerAffectAnalyser::count");
+  RECORD_TAP_TEST(TEST_COUNT_AA_COUNT_BEFORE, "CountKmerAffectAnalyser::countBefore");
+  RECORD_TAP_TEST(TEST_COUNT_AA_COUNT_AFTER, "CountKmerAffectAnalyser::countAfter");
+  RECORD_TAP_TEST(TEST_COUNT_AA_FIRST_MAX, "CountKmerAffectAnalyser::firstMax");
+  RECORD_TAP_TEST(TEST_COUNT_AA_LAST_MAX, "CountKmerAffectAnalyser::lastMax");
 
   RECORD_TAP_TEST(TEST_CLUSTER, "Test automatic clusterisation");
 
