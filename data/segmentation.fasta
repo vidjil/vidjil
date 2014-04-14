@@ -12,8 +12,10 @@ AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
 AAAAAAAAAAAAAAAAAAGAATTATTATAAGAAACT
 >seq-fewJ
 tgtgccacctgggacaggAAAAAAAAAAAAAAAAAA
->seq-delta-min
+>seq-delta-min-old
 tgtgccacctgggacaggGAATTATTATAAGAAACTtgtgccacctgggacaggGAATTATTATAAGAAACT
+>seq-delta-min
+cttgggcagttggaacaacACTTGTTGTCACAG
 >seq-delta-max
 tgtgccacctgggacaggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAATTATTATAAGAAACT
 >seq-seg-no-window
