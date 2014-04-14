@@ -1,18 +1,29 @@
 {{('message' in globals())}}
 {{if 'message' in globals():}}
 
+{{if request.vars["config_id"]:}}
+    {{config_id = long(request.vars["config_id"])}}
+{{else:}}
+    {{config_id = 1}}
+{{pass}}
+
+
+
 <div>
     <h3>{{=message}}  {{=request.vars["id"]}}</h3>
-    
     <div>
-        choose config ( TODO : fixé sur TRG pour le moment ) <span>
-        <select id="choose_config" name="config">
-            {{ 
-            query = db(db.config).select() 
-            for row in query :}}
-            <option value="{{=row.id }}">{{=row.name }} </option>
-            {{pass}}
-        </select>
+        choose config 
+        <span>
+            <select id="choose_config" name="config" onchange="db.call('patient', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
+                {{ 
+                query = db(db.config).select() 
+                
+                for row in query :}}
+                    <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} >
+                        {{=row.name}} 
+                    </option>
+                {{pass}}
+            </select>
         </span>
     </div>
 </div></br>
@@ -27,35 +38,36 @@
         </thead>
         <tbody>
             {{ 
-             query = db( 
-             ( db.sequence_file.patient_id==db.patient.id ) 
-             & ( db.patient.id==request.vars["id"] ) 
-             ).select( left=db.data_file.on(db.data_file.sequence_file_id==db.sequence_file.id) ) 
-             for row in query :}}
-             <tr>
-                <td> {{ (filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)}} 
-                     {{=filename}}</td>
-                 
-                        <td>  
-                            <a  href="{{=URL('download', scheme='http', args=row.sequence_file.data_file)}}" >dl</a>
-                        </td>
-                
-                <td> {{=row.sequence_file.sampling_date}} </td>
-                <td> {{=row.sequence_file.info}} </td>
-                <td> {{if row.data_file.id == None :}}
-                     <span class="button" onclick="db.request('run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}' , 'config_id' : '1' } )"> run >> </span>
-                     {{else:}}
-                     ready
-                     {{pass}}
-                </td>
-            </tr>
+            query = db( 
+                (db.sequence_file.patient_id==db.patient.id) 
+                & (db.patient.id==request.vars["id"]) 
+            ).select(
+                left=db.data_file.on(
+                    (db.data_file.sequence_file_id==db.sequence_file.id) 
+                    & (db.data_file.config_id==str(config_id) ) 
+                ) 
+            ) 
+            
+            for row in query :}}
+                 <tr>
+                    <td> {{ (filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)}} {{=filename}}</td>
+                    <td>   <a  href="{{=URL('download', scheme='http', args=row.sequence_file.data_file)}}" >dl</a></td>
+                    <td> {{=row.sequence_file.sampling_date}} </td>
+                    <td> {{=row.sequence_file.info}} </td>
+                    <td> {{if row.data_file.id == None :}}
+                             <span class="button" onclick="db.request('run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}' , 'config_id' : {{=config_id}} } )"> run >> </span>
+                         {{else:}}
+                             ready
+                         {{pass}}
+                    </td>
+                </tr>
             {{pass}}
         </tbody>
     </table>
 </br>
     <span class="button" onclick="db.call('patient_list')"> back to list </span>
     <span class="button" onclick="db.call('add_file', { 'id' : '{{=request.vars["id"]}}' } )"> add file </span>
-    <span class="button" onclick="db.load( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : '1' } )" > see result </span>
+    <span class="button" onclick="db.load( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=config_id}} } )" > see result </span>
 </div>
 
 {{elif 'content' in globals():}}
