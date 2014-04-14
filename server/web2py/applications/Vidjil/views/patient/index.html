@@ -6,22 +6,22 @@
     
     <table >
         <tr><td> name </td>
+            <td> birth </td>
             <td> info </td>
-            <td> </td>
         </tr>
        {{ 
        query = None
        c_id = ""
-       query = db(db.standard_file).select() 
+       query = db(db.patient).select() 
        for row in query :}}
-            <tr>
-                <td> {{=row.name }} </td>
-                <td> {{=row.info}} </td>
-                <td> TODO </td>
+        <tr onclick="db.call('patient/info', {'id' :'{{=row.id}}'} )" >
+                <td> {{=row.last_name + " " + row.first_name }} </td>
+                <td> {{=row.birth }} </td>
+                <td> {{=row.info }} </td>
             </tr>
         {{pass}}
     </table>
-    <span class="button" onclick="db.call('add_standard')"> add standard_file </span>
+    <span class="button" onclick="db.call('patient/add')"> add patient </span>
 </div>
 
 {{elif 'content' in globals():}}

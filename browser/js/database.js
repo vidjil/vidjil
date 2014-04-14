@@ -75,7 +75,7 @@ Database.prototype = {
                 success: function (result) {
                     var res = jQuery.parseJSON(result);
                     if (res.success == "true") {
-                        self.call("patient_list")
+                        self.call("patient/index")
                     } else {
                         popupMsg(res.error);
                     }
@@ -103,7 +103,7 @@ Database.prototype = {
                 url      : $(this).attr('action'),
                 data     : $(this).serialize(),
                 beforeSubmit: function() {
-                    self.call("patient_list") 
+                    self.call("patient/index") 
                     //crée un div qui contiendra la progression de l'upload du fichier 
                     self.upload++;
                     var div = document.createElement('div');
@@ -267,7 +267,7 @@ Database.prototype = {
             type: "POST",
             timeout: 5000,
             crossDomain: true,
-            url: self.db_adress + "result" + arg,
+            url: self.db_adress + "default/result" + arg,
             success: function (result) {
                 json = jQuery.parseJSON(result)
                 m.reset();

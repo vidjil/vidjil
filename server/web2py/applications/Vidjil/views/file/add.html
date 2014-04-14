@@ -1,4 +1,4 @@
-<form id="upload_form" action="DB_ADRESS/add_file_form" enctype="multipart/form-data" method="post">
+<form id="upload_form" action="DB_ADRESS/file/add_form" enctype="multipart/form-data" method="post">
     <input type="hidden" name="patient_id" value="{{=request.vars["id"]}}" >
     
     <table>
@@ -39,7 +39,7 @@
                 <td>
                 </td>
                 <td >
-                    <span class="button" onclick="db.call('patient', { id : '{{=request.vars['id']}}' } )"> back to list </span>
+                    <span class="button" onclick="db.call('patient/info', { id : '{{=request.vars['id']}}' } )"> back to list </span>
                     <input type="submit" value="Soumettre" class="btn">
                 </td>
                 <td>
