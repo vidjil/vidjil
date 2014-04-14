@@ -1,4 +1,4 @@
-var DB_ADDRESS = "http://134.206.11.64:8000/Vidjil/default/";
+var DB_ADDRESS = "http://134.206.11.64:8000/Vidjil/";
 var CGI_ADDRESS = "http://127.0.1.1/cgi-bin/";
 
 /* Model

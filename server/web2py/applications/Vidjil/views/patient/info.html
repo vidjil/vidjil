@@ -14,7 +14,7 @@
     <div>
         choose config 
         <span>
-            <select id="choose_config" name="config" onchange="db.call('patient', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
+            <select id="choose_config" name="config" onchange="db.call('patient/info', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
                 {{ 
                 query = db(db.config).select() 
                 
@@ -65,9 +65,9 @@
         </tbody>
     </table>
 </br>
-    <span class="button" onclick="db.call('patient_list')"> back to list </span>
-    <span class="button" onclick="db.call('add_file', { 'id' : '{{=request.vars["id"]}}' } )"> add file </span>
-    <span class="button" onclick="db.load( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=config_id}} } )" > see result </span>
+<span class="button" onclick="db.call('patient/index')"> back to list </span>
+<span class="button" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> add file </span>
+<span class="button" onclick="db.load( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=config_id}} } )" > see result </span>
 </div>
 
 {{elif 'content' in globals():}}

@@ -8,7 +8,7 @@ var config = {
     
     /*database */
     "use_database" : true,
-    "db_address" : "http://134.206.11.64:8000/Vidjil/default/",
+    "db_address" : "http://134.206.11.64:8000/Vidjil/",
     "login" : "",           // un jour peut-etre ...
     "password" : "",
     
