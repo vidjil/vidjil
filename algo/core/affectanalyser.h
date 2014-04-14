@@ -140,6 +140,8 @@ class CountKmerAffectAnalyser: public KmerAffectAnalyser<T> {
   CountKmerAffectAnalyser(IKmerStore<T> &kms, const string &seq);
   ~CountKmerAffectAnalyser();
 
+  int count() const;
+
   /**
    * @complexity constant time
    */
@@ -291,6 +293,11 @@ CountKmerAffectAnalyser<T>::~CountKmerAffectAnalyser() {
        it != affects.end(); it++) {
     delete [] counts[*it];
   }  
+}
+
+template <class T>
+int CountKmerAffectAnalyser<T>::count() const {
+  return KmerAffectAnalyser<T>::count();
 }
 
 template <class T>
