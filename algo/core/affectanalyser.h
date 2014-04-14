@@ -162,18 +162,20 @@ class CountKmerAffectAnalyser: public KmerAffectAnalyser<T> {
   /**
    * @return the first position pos in the sequence such that 
    *         countBefore(before, pos) + countAfter(after, pos) is maximal
-   *         and pos >= start.
+   *         and pos >= start, and the maximum is greater than min; 
+   *         or -1 if such a position doesn't exist
    * @complexity linear in getSequence().size() 
    */
-  int firstMax(const T&before, const T&after, int start=0) const;
+  int firstMax(const T&before, const T&after, int start=0, int min=-1) const;
 
   /**
    * @return the last position pos in the sequence such that
    *         countBefore(before, pos) + countAfter(after, pos) is maximal
-   *         and pos <= end (if end == -1 considers end of sequence)
+   *         and pos <= end (if end == -1 considers end of sequence), and the 
+   *         maximum is greater than min; or -1 if such a position doesn't exist.
    * @complexity linear in getSequence().size()
    */
-  int lastMax(const T&before, const T&after, int end=-1) const;
+  int lastMax(const T&before, const T&after, int end=-1, int min=-1) const;
 
  private:
   /**
@@ -185,7 +187,7 @@ class CountKmerAffectAnalyser: public KmerAffectAnalyser<T> {
    * Search the maximum. Used by firstMax and lastMax.
    */
   int searchMax(const T&before, const T &after,
-                int start, int end, int iter) const;
+                int start, int end, int iter, int min) const;
 };
 
 template <class T>
@@ -326,24 +328,24 @@ int CountKmerAffectAnalyser<T>::countAfter(const T&affect, int pos) const {
 
 template <class T>
 int CountKmerAffectAnalyser<T>::firstMax(const T&before, const T&after, 
-                                      int start) const {
-  return searchMax(before, after, start, KmerAffectAnalyser<T>::count()-1,1);
+                                         int start, int min) const {
+  return searchMax(before, after, start, KmerAffectAnalyser<T>::count()-1,1, min);
 }
 
 template <class T>
 int CountKmerAffectAnalyser<T>::lastMax(const T&before, const T&after, 
-                                      int end) const {
+                                        int end, int min) const {
   if (end == -1)
     end = KmerAffectAnalyser<T>::count()-1;
-  return searchMax(before, after, end, 0, -1);
+  return searchMax(before, after, end, 0, -1, min);
 }
 
 template <class T>
 int CountKmerAffectAnalyser<T>::searchMax(const T&before, const T& after,
-                                       int start, int end, int iter) const {
+                                          int start, int end, int iter, int min) const {
   int first_pos_max = -1;
-  int max_value = -1;
   for (int i = start; i <= end; i+=iter) {
+  int max_value = min;
     int value = countBefore(before, i) + countAfter(after, i);
     if (value > max_value) {
       max_value = value;
