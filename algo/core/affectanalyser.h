@@ -185,6 +185,7 @@ class CountKmerAffectAnalyser: public KmerAffectAnalyser<T> {
 
   /**
    * Search the maximum. Used by firstMax and lastMax.
+   * @param iter: should be either 1 or -1
    */
   int searchMax(const T&before, const T &after,
                 int start, int end, int iter, int min) const;
@@ -344,8 +345,8 @@ template <class T>
 int CountKmerAffectAnalyser<T>::searchMax(const T&before, const T& after,
                                           int start, int end, int iter, int min) const {
   int first_pos_max = -1;
-  for (int i = start; i <= end; i+=iter) {
   int max_value = min;
+  for (int i = start; i*iter <= end; i+=iter) {
     int value = countBefore(before, i) + countAfter(after, i);
     if (value > max_value) {
       max_value = value;
