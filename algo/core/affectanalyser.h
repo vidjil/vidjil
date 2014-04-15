@@ -95,7 +95,7 @@ class AffectAnalyser {
 
 template <class T>
 class KmerAffectAnalyser: public AffectAnalyser<T> {
- private:
+ protected:
   IKmerStore<T> &kms;
   const string &seq;
   vector<T> affectations;
@@ -135,6 +135,7 @@ template <class T>
 class CountKmerAffectAnalyser: public KmerAffectAnalyser<T> {
  private:
   map<T, int* >counts;
+  int overlap;
  public:
 
   CountKmerAffectAnalyser(IKmerStore<T> &kms, const string &seq);
@@ -161,21 +162,38 @@ class CountKmerAffectAnalyser: public KmerAffectAnalyser<T> {
 
   /**
    * @return the first position pos in the sequence such that 
-   *         countBefore(before, pos) + countAfter(after, pos) is maximal
+   *         countBefore(before, pos - overlap + 1 + overlap) 
+             + countAfter(after, pos) is maximal
    *         and pos >= start, and the maximum is greater than min; 
-   *         or -1 if such a position doesn't exist
+   *         or -1 if such a position doesn't exist.
+   *         Where overlap is getAllowedOverlap().
    * @complexity linear in getSequence().size() 
    */
   int firstMax(const T&before, const T&after, int start=0, int min=-1) const;
 
   /**
    * @return the last position pos in the sequence such that
-   *         countBefore(before, pos) + countAfter(after, pos) is maximal
+   *         countBefore(before, pos - overlap + 1+ overlap) 
+   *         + countAfter(after, pos) is maximal
    *         and pos <= end (if end == -1 considers end of sequence), and the 
    *         maximum is greater than min; or -1 if such a position doesn't exist.
+   *         Where overlap is getAllowedOverlap().
    * @complexity linear in getSequence().size()
    */
   int lastMax(const T&before, const T&after, int end=-1, int min=-1) const;
+
+  /**
+   * @return the allowed overlap between two k-mers with distinct affectations
+   * (default is 0)
+   */
+  int getAllowedOverlap();
+
+  /**
+   * Set the overlap allowed between two k-mers with two different affectations,
+   * when looking for the maximum.
+   * The overlap should not be greater than the span of the seed used.
+   */
+  void setAllowedOverlap(int overlap);
 
  private:
   /**
@@ -285,6 +303,7 @@ string KmerAffectAnalyser<T>::toString() const{
 template <class T>
 CountKmerAffectAnalyser<T>::CountKmerAffectAnalyser(IKmerStore<T> &kms, const string &seq): KmerAffectAnalyser<T>(kms, seq) {
   buildCounts();
+  overlap=0;
 }
 
 template <class T>
@@ -342,12 +361,27 @@ int CountKmerAffectAnalyser<T>::lastMax(const T&before, const T&after,
 }
 
 template <class T>
+int CountKmerAffectAnalyser<T>::getAllowedOverlap() {
+  return overlap;
+}
+
+template <class T>
+void CountKmerAffectAnalyser<T>::setAllowedOverlap(int overlap) {
+  this->overlap = overlap;
+}
+
+template <class T>
 int CountKmerAffectAnalyser<T>::searchMax(const T&before, const T& after,
                                           int start, int end, int iter, int min) const {
   int first_pos_max = -1;
   int max_value = min;
-  for (int i = start; i*iter <= end; i+=iter) {
-    int value = countBefore(before, i) + countAfter(after, i);
+  int shift = KmerAffectAnalyser<T>::kms.getS() - overlap - 1;
+  for (int i = start; i*iter <= iter*end; i+=iter) {
+    int value;
+    if (iter*(i - shift) >= iter*start && iter*(i - shift) <= iter*end)
+      value= countBefore(before, i - shift) + countAfter(after, i);
+    else
+      value = countAfter(after, i);
     if (value > max_value) {
       max_value = value;
       first_pos_max = i;
