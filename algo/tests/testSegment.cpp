@@ -101,12 +101,16 @@ void testSegmentationCause() {
     if (data.read(i).label == "seq-seg+") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "seq is " << data.label(i));
       TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, "");
-      TAP_TEST(ks.getJunction(30) == "GCCACCTGGGACAGGGAATTATTATAAGAA", TEST_KMER_JUNCTION, "");
+      TAP_TEST(ks.getJunction(30) == "GCCACCTGGGACAGGGAATTATTATAAGAA"
+               || ks.getJunction(30) == "TGCCACCTGGGACAGGGAATTATTATAAGA", 
+               TEST_KMER_JUNCTION, "");
       nb_checked++;
     } else if (data.read(i).label == "seq-seg-") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
       TAP_TEST(ks.getSegmentationStatus() == SEG_MINUS, TEST_KMER_SEGMENTATION_CAUSE, "");
-      TAP_TEST(ks.getJunction(30) == "GCCACCTGGGACAGGGAATTATTATAAGAA", TEST_KMER_JUNCTION, "");
+      TAP_TEST(ks.getJunction(30) == "GCCACCTGGGACAGGGAATTATTATAAGAA"
+               || ks.getJunction(30) == "TGCCACCTGGGACAGGGAATTATTATAAGA", 
+               TEST_KMER_JUNCTION, "");
       nb_checked++;
     } else if (data.read(i).label == "seq-short") {
       TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
@@ -133,7 +137,9 @@ void testSegmentationCause() {
       // the read is segmented, now. So we keep it, but change the test
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "delta-min: " << ks.getKmerAffectAnalyser()->toString());
       TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, "");
-      TAP_TEST(ks.getJunction(30) == "GCCACCTGGGACAGGGAATTATTATAAGAA", TEST_KMER_JUNCTION, "junction: " << ks.getJunction(30));
+      TAP_TEST(ks.getJunction(30) == "GCCACCTGGGACAGGGAATTATTATAAGAA"
+               || ks.getJunction(30) == "TGCCACCTGGGACAGGGAATTATTATAAGA", 
+               TEST_KMER_JUNCTION, "junction: " << ks.getJunction(30));
       nb_checked++;
     } else if (data.read(i).label == "seq-delta-min") {
       TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "delta-min: " << ks.getKmerAffectAnalyser()->toString());
@@ -147,7 +153,8 @@ void testSegmentationCause() {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
       TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, "");
       TAP_TEST(ks.getJunction(30) == "", TEST_KMER_JUNCTION, "");
-      TAP_TEST(ks.getJunction(20) == "CTGGGACAGGGAATTATTAT", TEST_KMER_JUNCTION,"");
+      TAP_TEST(ks.getJunction(20) == "CTGGGACAGGGAATTATTAT"
+               || ks.getJunction(20) == "CCTGGGACAGGGAATTATTA", TEST_KMER_JUNCTION,"window: " << ks.getJunction(20));
       nb_checked++;
     }
   }
