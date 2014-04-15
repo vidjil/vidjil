@@ -57,6 +57,8 @@ enum {
   TEST_KMER_SEGMENTATION_CAUSE,
   TEST_KMER_JUNCTION,
   TEST_KMER_DATA,
+  TEST_KMER_LEFT,
+  TEST_KMER_RIGHT,
 
   /* WindowExtractor */
   TEST_EXTRACTOR_NB_READS,
@@ -121,6 +123,8 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_KMER_SEGMENTATION_CAUSE, "Test getSegmentationStatus() in KmerSegmenter");
   RECORD_TAP_TEST(TEST_KMER_JUNCTION, "Test getJunction() in KmerSegmenter");
   RECORD_TAP_TEST(TEST_KMER_DATA, "Test that data is consistent with what we expect for KmerSegmenter");
+  RECORD_TAP_TEST(TEST_KMER_LEFT, "Test V end (resp. J start) with KmerSegmenter on fwd (resp bwd) strand");
+  RECORD_TAP_TEST(TEST_KMER_RIGHT, "Test J start (resp. V end) with KmerSegmenter on fwd (resp bwd) strand");
 
   RECORD_TAP_TEST(TEST_EXTRACTOR_NB_READS, "Test getNbReads() in WindowExtractor");
   RECORD_TAP_TEST(TEST_EXTRACTOR_NB_SEGMENTED, "Test getNbSegmented() in WindowsExtractor");

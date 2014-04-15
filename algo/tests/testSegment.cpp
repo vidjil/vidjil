@@ -104,6 +104,8 @@ void testSegmentationCause() {
       TAP_TEST(ks.getJunction(30) == "GCCACCTGGGACAGGGAATTATTATAAGAA"
                || ks.getJunction(30) == "TGCCACCTGGGACAGGGAATTATTATAAGA", 
                TEST_KMER_JUNCTION, "");
+      TAP_TEST(ks.getLeft() == 17, TEST_KMER_LEFT, "left = " << ks.getLeft());
+      TAP_TEST(ks.getRight() == 18, TEST_KMER_RIGHT, "right = " << ks.getRight());
       nb_checked++;
     } else if (data.read(i).label == "seq-seg-") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
@@ -111,6 +113,8 @@ void testSegmentationCause() {
       TAP_TEST(ks.getJunction(30) == "GCCACCTGGGACAGGGAATTATTATAAGAA"
                || ks.getJunction(30) == "TGCCACCTGGGACAGGGAATTATTATAAGA", 
                TEST_KMER_JUNCTION, "");
+      TAP_TEST(ks.getLeft() == 17, TEST_KMER_LEFT, "left = " << ks.getLeft());
+      TAP_TEST(ks.getRight() == 18, TEST_KMER_RIGHT, "right = " << ks.getRight());
       nb_checked++;
     } else if (data.read(i).label == "seq-short") {
       TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
@@ -152,6 +156,8 @@ void testSegmentationCause() {
     } else if (data.read(i).label == "seq-seg-no-window") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
       TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.getLeft() == 11, TEST_KMER_LEFT, "left = " << ks.getLeft());
+      TAP_TEST(ks.getRight() == 12, TEST_KMER_RIGHT, "right = " << ks.getRight());
       TAP_TEST(ks.getJunction(30) == "", TEST_KMER_JUNCTION, "");
       TAP_TEST(ks.getJunction(20) == "CTGGGACAGGGAATTATTAT"
                || ks.getJunction(20) == "CCTGGGACAGGGAATTATTA", TEST_KMER_JUNCTION,"window: " << ks.getJunction(20));
