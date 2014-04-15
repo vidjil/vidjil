@@ -373,6 +373,8 @@ void CountKmerAffectAnalyser<T>::setAllowedOverlap(int overlap) {
 template <class T>
 int CountKmerAffectAnalyser<T>::searchMax(const T&before, const T& after,
                                           int start, int end, int iter, int min) const {
+  if (count(before) == 0 || count(after) == 0)
+    return -1;
   int first_pos_max = -1;
   int max_value = min;
   int shift = KmerAffectAnalyser<T>::kms.getS() - overlap - 1;
