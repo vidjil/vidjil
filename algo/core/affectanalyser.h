@@ -376,7 +376,12 @@ int CountKmerAffectAnalyser<T>::searchMax(const T&before, const T& after,
   int first_pos_max = -1;
   int max_value = min;
   int shift = KmerAffectAnalyser<T>::kms.getS() - overlap - 1;
-  for (int i = start+shift*iter; (i)*iter <= iter*end; i+=iter) {
+  int shiftedStart = start, shiftedEnd = end;
+  if (iter == 1)
+    shiftedStart += shift;
+  else
+    shiftedEnd += shift;
+  for (int i = shiftedStart; (i)*iter <= iter*shiftedEnd; i+=iter) {
     int value = countBefore(before, i - shift) + countAfter(after, i);
     if (value > max_value) {
       max_value = value;
