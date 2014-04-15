@@ -9,6 +9,7 @@
             <td> standard </td>
             <td> info </td>
             <td> command </td>
+            <td> </td>
         </tr>
        {{ 
        query = None
@@ -20,6 +21,7 @@
                 <td> {{=row.standard_file.name}} </td>
                 <td> {{=row.config.info }} </td>
                 <td> {{=row.config.command }} </td>
+                <td onclick="db.call('config/edit', {'id' :'{{=row.config.id}}'} )" > e </td>
             </tr>
         {{pass}}
     </table>
