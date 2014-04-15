@@ -258,9 +258,6 @@ void KmerSegmenter::checkUnsegmentationCause(int strand, int delta_min, int delt
 	{
 	  because = UNSEG_TOO_FEW_J ;
 	}
-
-      Vend += s-1;
-      Jstart++;
     } 
   else if (strand == -1)
     {
@@ -278,8 +275,8 @@ void KmerSegmenter::checkUnsegmentationCause(int strand, int delta_min, int delt
 	  because = UNSEG_TOO_FEW_J ;
 	}
 
-      Vend = sequence.size() - (Vend+1) ;
-      Jstart = sequence.size() - (Jstart + s-1) ;
+      Vend = sequence.size() - Vend - 1;
+      Jstart = sequence.size() - Jstart - 1;
     }
   
   if (! because)
