@@ -11,6 +11,7 @@ void testAffectAnalyser1() {
   
   KmerAffectAnalyser<KAffect> kaa(*index, "AAAACCCCCGGGGG");
   CountKmerAffectAnalyser<KAffect> ckaa(*index, "AAAACCCCCGGGGG");
+  ckaa.setAllowedOverlap(k-1);
 
   for (int i = 2; i < nb_seq-1; i++) {
     // i starts at 2 because AAAA is not found: there is an ambiguity with
@@ -91,6 +92,7 @@ void testAffectAnalyser2() {
   
   KmerAffectAnalyser<KAffect> kaa(*index, "TTTTTGGGGG");
   CountKmerAffectAnalyser<KAffect> ckaa(*index, "TTTTTGGGGG");
+  ckaa.setAllowedOverlap(k-1);
   
   TAP_TEST(kaa.getAffectation(1) == KAffect("", seq[2*(nb_seq-1)+1], -1), TEST_AA_GET_AFFECT, "");
   TAP_TEST(kaa.count(kaa.getAffectation(1)) == 1, TEST_AA_GET_AFFECT, "");
