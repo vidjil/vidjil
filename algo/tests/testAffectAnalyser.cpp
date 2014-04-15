@@ -68,18 +68,18 @@ void testAffectAnalyser1() {
   // Test affectation with two affects that are not in the sequence
   KAffect aAffect = KAffect("", seq[5], 1);
   KAffect tAffect = KAffect("", seq[7], 1);
-  TAP_TEST(ckaa.firstMax(aAffect, tAffect) == 0, TEST_COUNT_AA_FIRST_MAX, "");
-  TAP_TEST(ckaa.lastMax(aAffect, tAffect) == ckaa.count() - 1, 
+  TAP_TEST(ckaa.firstMax(aAffect, tAffect) == -1, TEST_COUNT_AA_FIRST_MAX, "");
+  TAP_TEST(ckaa.lastMax(aAffect, tAffect) == - 1, 
            TEST_COUNT_AA_LAST_MAX, "");
 
   // Test affectation with one affect not in the sequence
 
-  TAP_TEST(ckaa.firstMax(cAffect, tAffect) == 6, TEST_COUNT_AA_FIRST_MAX, "");
-  TAP_TEST(ckaa.lastMax(cAffect, tAffect) == ckaa.count()-1, 
+  TAP_TEST(ckaa.firstMax(cAffect, tAffect) == -1, TEST_COUNT_AA_FIRST_MAX, "");
+  TAP_TEST(ckaa.lastMax(cAffect, tAffect) == -1, 
            TEST_COUNT_AA_LAST_MAX, "");
 
-  TAP_TEST(ckaa.firstMax(aAffect, gAffect) == 0, TEST_COUNT_AA_FIRST_MAX, "");
-  TAP_TEST(ckaa.lastMax(aAffect, gAffect) == 8, TEST_COUNT_AA_LAST_MAX, "");
+  TAP_TEST(ckaa.firstMax(aAffect, gAffect) == -1, TEST_COUNT_AA_FIRST_MAX, "");
+  TAP_TEST(ckaa.lastMax(aAffect, gAffect) == -1, TEST_COUNT_AA_LAST_MAX, "");
   delete index;
 }
 
