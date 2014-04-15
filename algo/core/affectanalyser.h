@@ -162,22 +162,22 @@ class CountKmerAffectAnalyser: public KmerAffectAnalyser<T> {
 
   /**
    * @return the first position pos in the sequence such that 
-   *         countBefore(before, pos - overlap + 1 + overlap) 
+   *         countBefore(before, pos - s) 
              + countAfter(after, pos) is maximal
    *         and pos >= start, and the maximum is greater than min; 
    *         or -1 if such a position doesn't exist.
-   *         Where overlap is getAllowedOverlap().
+   *         Where s is kms.getS() - getAllowedOverlap() - 1.
    * @complexity linear in getSequence().size() 
    */
   int firstMax(const T&before, const T&after, int start=0, int min=-1) const;
 
   /**
    * @return the last position pos in the sequence such that
-   *         countBefore(before, pos - overlap + 1+ overlap) 
+   *         countBefore(before, pos - s) 
    *         + countAfter(after, pos) is maximal
    *         and pos <= end (if end == -1 considers end of sequence), and the 
    *         maximum is greater than min; or -1 if such a position doesn't exist.
-   *         Where overlap is getAllowedOverlap().
+   *         Where s is kms.getS() - getAllowedOverlap() - 1.
    * @complexity linear in getSequence().size()
    */
   int lastMax(const T&before, const T&after, int end=-1, int min=-1) const;
