@@ -247,33 +247,37 @@ void KmerSegmenter::checkUnsegmentationCause(int strand, int delta_min, int delt
     {
       // Strand +
       Vend = kaa->firstMax(AFFECT_V, AFFECT_J);
-      Jstart = kaa->lastMax(AFFECT_V, AFFECT_J);
 
-      if (Vend == 0) 
-	{
-	  because = UNSEG_TOO_FEW_V ;
-	}
-      
-      if (Jstart == kaa->count()-1)
+      if (Vend == -1) {
+        if (kaa->count(AFFECT_V) == 0) 
+          {
+            because = UNSEG_TOO_FEW_V ;
+          }
+        else if (kaa->count(AFFECT_J) == 0)
 	{
 	  because = UNSEG_TOO_FEW_J ;
-	}
+	} else 
+          because = UNSEG_TOO_FEW_ZERO; // Not really zero
+      } else
+        Jstart = kaa->lastMax(AFFECT_V, AFFECT_J);
+
     } 
   else if (strand == -1)
     {
       // Strand -
       Jstart = kaa->firstMax(AFFECT_J_BWD, AFFECT_V_BWD);
-      Vend = kaa->lastMax(AFFECT_J_BWD, AFFECT_V_BWD);
-
-      if (Vend == kaa->count()-1)
-	{
-	  because = UNSEG_TOO_FEW_V ;
-	}
-
-      if (Jstart == 0)
+      if (Jstart == -1) {
+        if (kaa->count(AFFECT_V_BWD) == 0) 
+          {
+            because = UNSEG_TOO_FEW_V ;
+          }
+        else if (kaa->count(AFFECT_J_BWD) == 0)
 	{
 	  because = UNSEG_TOO_FEW_J ;
-	}
+	} else 
+          because = UNSEG_TOO_FEW_ZERO; // Not really zero
+      } else 
+        Vend = kaa->lastMax(AFFECT_J_BWD, AFFECT_V_BWD);
 
       Vend = sequence.size() - Vend - 1;
       Jstart = sequence.size() - Jstart - 1;
