@@ -26,6 +26,8 @@ enum {
   TEST_AA_FIRST,
   TEST_AA_LAST,
   TEST_AA_PREDICATES,
+  TEST_AA_REVCOMP_LABEL,
+  TEST_AA_REVCOMP_STRAND,
   TEST_COUNT_AA_COUNT,
   TEST_COUNT_AA_COUNT_BEFORE,
   TEST_COUNT_AA_COUNT_AFTER,
@@ -102,6 +104,8 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_AA_FIRST, "AffectAnalyser.first()");
   RECORD_TAP_TEST(TEST_AA_LAST, "AffectAnalyser.last()");
   RECORD_TAP_TEST(TEST_AA_PREDICATES, "AffectAnalyser: isUnknown() isAmbiguous()");
+  RECORD_TAP_TEST(TEST_AA_REVCOMP_LABEL, "AffectAnalyser: check that label is the same on revcomp sequence");
+  RECORD_TAP_TEST(TEST_AA_REVCOMP_STRAND, "AffectAnalyser: check that strand is opposite on revcomp sequence");
   RECORD_TAP_TEST(TEST_COUNT_AA_COUNT, "CountKmerAffectAnalyser::count");
   RECORD_TAP_TEST(TEST_COUNT_AA_COUNT_BEFORE, "CountKmerAffectAnalyser::countBefore");
   RECORD_TAP_TEST(TEST_COUNT_AA_COUNT_AFTER, "CountKmerAffectAnalyser::countAfter");
