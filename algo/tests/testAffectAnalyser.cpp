@@ -108,9 +108,66 @@ void testAffectAnalyser2() {
   delete index;
 }
 
+/**
+ * A sequence and its revcomp are not affected in the same way.
+ */
+template<template <class> class T, template <class> class AffectA, class KAffect>
+void testBugAffectAnalyser() {
+  Fasta seqV("../../germline/IGHV.fa", 2);
+  Fasta seqJ("../../germline/IGHJ.fa", 2);
+  Fasta data("../../data/bug-revcomp.fa", 1, " ");
+
+  T<KAffect> index(9, true);
+  index.insert(seqV, "V");
+  index.insert(seqJ, "J");
+
+  TAP_TEST(data.size() == 2, TEST_FASTA_SIZE, 
+           "Should have 2 sequences (one seq and its revcomp), " 
+           << data.size() << " instead");
+
+  TAP_TEST(data.read(0).sequence.size() == data.read(1).sequence.size(),
+           TEST_FASTA_SEQUENCE, 
+           "Sequences should be of same length: sequence and its revcomp");
+
+  AffectA<KAffect> fwdAffect(index, data.read(0).sequence);
+  AffectA<KAffect> bwdAffect(index, data.read(1).sequence);
+
+  int total = fwdAffect.count();
+
+  TAP_TEST(fwdAffect.count() == bwdAffect.count(),
+           TEST_AA_COUNT,
+           "Both sequences should have the same amount of affectations. "
+           << fwdAffect.count() << " for the fwd, and " << bwdAffect.count()
+           << " for the bwd instead");
+
+  for (int i = 0; i < total; i++) {
+    const KAffect fwd = fwdAffect.getAffectation(i);
+    const KAffect bwd = bwdAffect.getAffectation(total - 1 - i);
+
+    if (fwd.isAmbiguous() || bwd.isAmbiguous()
+        || fwd.isUnknown() || bwd.isUnknown()) {
+      TAP_TEST(fwd == bwd, TEST_AA_PREDICATES, 
+               "If ambiguous or unknown, both affectations should be the same (fwd="
+               << fwd << ", bwd=" << bwd << ", i= " << i << ") "
+               << __PRETTY_FUNCTION__);
+    } else {
+      TAP_TEST(fwd.getLabel() == bwd.getLabel(), TEST_AA_REVCOMP_LABEL,
+               "Label should be the same, instead: fwd=" << fwd.getLabel()
+               << ", bwd=" << bwd.getLabel() << ", i=" <<i
+               << " " << __PRETTY_FUNCTION__);
+      TAP_TEST(-1*fwd.getStrand() == bwd.getStrand(), TEST_AA_REVCOMP_STRAND,
+               "Strands should be the opposite, instead: fwd=" << fwd.getStrand()
+               << ", bwd=" << bwd.getStrand() << ", i=" << i << " "
+               << __PRETTY_FUNCTION__);
+    }
+  }
+}
+
 void testAffectAnalyser() {
   testAffectAnalyser1<ArrayKmerStore,KmerAffect>();
   testAffectAnalyser2<ArrayKmerStore,KmerAffect>();
   testAffectAnalyser1<ArrayKmerStore,KmerStringAffect>();
   testAffectAnalyser2<ArrayKmerStore,KmerStringAffect>();
+  testBugAffectAnalyser<ArrayKmerStore, KmerAffectAnalyser, KmerAffect>();
+  testBugAffectAnalyser<ArrayKmerStore, KmerAffectAnalyser, KmerStringAffect>();
 }
