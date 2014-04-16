@@ -89,8 +89,10 @@ KmerAffect &KmerAffect::operator+=(const KmerAffect &kmer) {
     else if (affect_char(affect) == affect_char(kmer.affect)
              && (affect_strand(affect) != affect_strand(kmer.affect)))
       // Same label but different strand
-      // -> we put forward strand by default
-      affect.c |= (1 << 7);
+      // -> we put ambiguous, we could have something to say that
+      // strand is ambiguous but not the label, but we don't have enough space
+      // in 1 byte…
+      *this = AFFECT_AMBIGUOUS;
     else 
       *this = AFFECT_AMBIGUOUS;
   }
@@ -180,8 +182,8 @@ KmerStringAffect &KmerStringAffect::operator+=(const KmerStringAffect &kmer) {
       *this = kmer;
     else if (*this != KSA_AMBIGUOUS) {
       if (this->label == kmer.label)
-        // Different strand but same label, put forward by default
-        strand = 1;
+        // Different strand but same label, put ambiguous
+        *this = KSA_AMBIGUOUS;
       else
         // Ambiguous: different labels
         *this = KSA_AMBIGUOUS;
