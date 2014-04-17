@@ -116,3 +116,25 @@ def download():
     http://..../[app]/default/download/[filename]
     """
     return response.download(request, db)
+
+
+def delete():
+    import gluon.contrib.simplejson, shutil, os.path
+    if request.env.http_origin:
+        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Max-Age'] = 86400
+    
+    #delete data file 
+    query = db( (db.sequence_file.patient_id==request.vars["id"])).select() 
+    for row in query :
+        db(db.data_file.sequence_file_id == row.id).delete()
+    
+    #delete sequence file
+    db(db.sequence_file.patient_id == request.vars["id"]).delete()
+    
+    #delete patient
+    db(db.patient.id == request.vars["id"]).delete()
+    
+    res = {"success": "true" }
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
