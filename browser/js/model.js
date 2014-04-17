@@ -143,9 +143,32 @@ Model.prototype = {
             success: function (result) {
                 json = jQuery.parseJSON(result)
                 m.reset();
-                m.parseJsonData(json, 50)
+                m.parseJsonData(json, 100)
                     .loadGermline();
                 m.initClones()
+                m.loadAnalysisUrl(url)
+            }
+        });
+
+    }, //end load
+    
+    loadAnalysisUrl: function (url) {
+        var self = this;
+        
+        var url2 = url.replace(".data",".analysis");
+        
+        $.ajax({
+            type: "POST",
+            timeout: 5000,
+            crossDomain: true,
+            url: url2,
+            success: function (result) {
+                m.analysis = jQuery.parseJSON(result)
+                if (m.analysis.time && (m.analysis.time.length == m.time.length)) {
+                    m.time = m.analysis.time;
+                    m.time_order = m.analysis.time_order;
+                }
+                m.initClones();
             }
         });
 
