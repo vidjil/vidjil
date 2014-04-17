@@ -4,7 +4,7 @@
 {{if request.vars["config_id"]:}}
     {{config_id = long(request.vars["config_id"])}}
 {{else:}}
-    {{config_id = 1}}
+    {{config_id = db(db.config).select()[0].id}}
 {{pass}}
 
 
