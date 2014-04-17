@@ -173,7 +173,7 @@ class ListWindows:
         
         print "<==", file_path, "\t"
         
-        if (extension=="data"): 
+        if (extension=="data" or extension=="vidjil"): 
             with open(file_path, "r") as file:
                 tmp = json.load(file, object_hook=self.toPython)       
                 self.d=tmp.d
@@ -369,7 +369,7 @@ class ListWindows:
 
     def toPython(self, obj_dict):
         '''Reverse serializer for json module'''
-        if "reads_total" in obj_dict:
+        if "reads_segmented" in obj_dict:
             obj = ListWindows()
             for key in obj_dict :
                 if isinstance(obj_dict[key], list):
