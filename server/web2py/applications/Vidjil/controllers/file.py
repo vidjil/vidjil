@@ -49,6 +49,14 @@ def edit_form():
     res = {"success": "true" }
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+def confirm():
+    if request.env.http_origin:
+        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Max-Age'] = 86400
+    return dict(message=T('confirm sequence file deletion'))
+        
+
 def delete():
     import gluon.contrib.simplejson, shutil, os.path
     if request.env.http_origin:
