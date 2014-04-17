@@ -19,7 +19,7 @@
                 <td> {{=row.name }} </td>
                 <td> {{=row.info}} </td>
                 <td onclick="db.call('standard/edit', {'id' :'{{=row.id}}'} )" > e </td>
-                <td onclick="db.warning(msg.delete_standard, 'db.request(\'standard/delete\', {\'id\' :\'{{=row.id}}\'} )' ) " > X </td>  
+                <td onclick="db.call('standard/confirm', {'id' :'{{=row.id}}'} )" > X </td>  
             </tr>
         {{pass}}
     </table>

@@ -55,7 +55,7 @@
                     <td> {{ (filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)}} {{=filename}}</td>
                     <td> <a  href="{{=URL('download', scheme='http', args=row.sequence_file.data_file)}}" >dl</a> </td>
                     <td onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
-                    <td onclick="db.warning(msg.delete_file, 'db.request(\'file/delete\', {\'id\' :\'{{=row.sequence_file.id}}\'} )' ) " > X </td>  
+                    <td onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
                     <td> {{=row.sequence_file.sampling_date}} </td>
                     <td> {{=row.sequence_file.info}} </td>
                     <td> {{if row.data_file.id == None :}}
