@@ -251,15 +251,6 @@ Database.prototype = {
             }
         });
     },
-    
-    warning: function(msg, fct) {
-        msg +="</br></br> <div class='center' > <button onclick=\"" + fct + "\">continue</button></div>"
-        this.display(msg)
-    },
-    
-    wait: function () {
-        
-    },
 
     /*récupére et initialise le browser avec un fichier .data
      * args => format json ( parametre attendu  > patient_id, config_id)
