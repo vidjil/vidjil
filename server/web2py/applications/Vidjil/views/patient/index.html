@@ -21,7 +21,7 @@
                 <td> {{=row.birth }} </td>
                 <td> {{=row.info }} </td>
                 <td onclick="db.call('patient/edit', {'id' :'{{=row.id}}'} )" > e </td>
-                <td onclick="db.warning(msg.delete_patient, 'db.request(\'patient/delete\', {\'id\' :\'{{=row.id}}\'} )' ) " > X </td>  
+                <td onclick="db.call('patient/confirm', {'id' :'{{=row.id}}'} )" > X </td>  
             </tr>
         {{pass}}
     </table>

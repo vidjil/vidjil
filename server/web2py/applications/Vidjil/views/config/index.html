@@ -22,6 +22,7 @@
                 <td> {{=row.config.info }} </td>
                 <td> {{=row.config.command }} </td>
                 <td onclick="db.call('config/edit', {'id' :'{{=row.config.id}}'} )" > e </td>
+                <td onclick="db.call('config/confirm', {'id' :'{{=row.config.id}}'} )" > X </td>
             </tr>
         {{pass}}
     </table>
