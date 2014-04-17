@@ -236,7 +236,7 @@ Database.prototype = {
         //envoye de la requete ajax
         $.ajax({
             type: "POST",
-            timeout: 1000,
+            timeout: 2000,
             crossDomain: true,
             url: self.db_adress + controller_name + arg,
             success: function (result) {
