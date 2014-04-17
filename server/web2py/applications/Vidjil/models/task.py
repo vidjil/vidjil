@@ -15,8 +15,7 @@ def run_vidjil(id_file, id_config):
     seq_file = upload_folder+filename
     
     ## config de vidjil
-    row2 = db(db.config.id==id_config).select()
-    vidjil_cmd = row2[0].command
+    vidjil_cmd = db.config[id_config].command
     
     ## commande complete
     cmd = vidjil_path+'/vidjil ' + vidjil_cmd + ' -o  ' + out_folder + ' -G ' + germline_folder + 'TRG ' + seq_file
