@@ -1,0 +1,20 @@
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+<div>
+    <h3>{{=message}}</h3>
+    
+    Are you sure you want to delete this standard file?</br>
+    All config and data file using this standard will also be deleted.</br>
+
+    <div class="center"> 
+        <button onclick="db.call('standard/index')">back</button>
+        <button onclick="db.call('standard/delete', {'id' :'{{=request.vars["id"]}}'} )">continue</button>
+    </div>
+</div>
+    
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}
