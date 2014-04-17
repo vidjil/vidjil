@@ -8,6 +8,7 @@
         <tr><td> name </td>
             <td> info </td>
             <td> </td>
+            <td> </td>
         </tr>
        {{ 
        query = None
@@ -18,6 +19,7 @@
                 <td> {{=row.name }} </td>
                 <td> {{=row.info}} </td>
                 <td onclick="db.call('standard/edit', {'id' :'{{=row.id}}'} )" > e </td>
+                <td onclick="db.warning(msg.delete_standard, 'db.request(\'standard/delete\', {\'id\' :\'{{=row.id}}\'} )' ) " > X </td>  
             </tr>
         {{pass}}
     </table>
