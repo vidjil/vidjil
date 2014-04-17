@@ -1603,4 +1603,5 @@ var msg = {
 
     "browser_error": "It seems you used an incompatible web browser (too old or too weak)." + "</br>We recommend to install one of those for a better experience : " + "</br> <a href='http://www.mozilla.org/'> Firefox </a> " + "</br> <a href='www.google.com/chrome/'> Chrome </a> " + "</br> <a href='http://www.chromium.org/getting-involved/download-chromium'> Chromium </a> " + "</br></br> <div class='center' > <button onclick='popupMsg(msg.welcome)'>i want to try anyway</button></div>",
 
+    "delete_file": "warning, this file will be deleted, download it before if you want to keep it, all data generated with this file will also be deleted. " + "</br> are you sure you want to continue ?"
 }

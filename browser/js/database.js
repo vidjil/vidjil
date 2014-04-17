@@ -251,6 +251,15 @@ Database.prototype = {
             }
         });
     },
+    
+    warning: function(msg, fct) {
+        msg +="</br></br> <div class='center' > <button onclick=\"" + fct + "\">continue</button></div>"
+        this.display(msg)
+    },
+    
+    wait: function () {
+        
+    },
 
     /*récupére et initialise le browser avec un fichier .data
      * args => format json ( parametre attendu  > patient_id, config_id)
@@ -284,8 +293,7 @@ Database.prototype = {
             }
         });
     },
-
-
+    
     //affiche la fenetre de dialogue avec le serveur et affiche ses réponses
     display: function (msg) {
         document.getElementById("db_div")
@@ -301,5 +309,7 @@ Database.prototype = {
         document.getElementById("db_msg")
             .innerHTML = "";
     }
+    
+    
 
 }
