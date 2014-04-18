@@ -4,20 +4,20 @@
 <div>
     <h3>{{=message}}</h3>
     
-    <table >
-        <tr><td> name </td>
-            <td> birth </td>
+    <table class="db_table">
+        <tr><td class="column1"> name </td>
+            <td class="column2"> birth </td>
             <td> info </td>
-            <td> </td>
-            <td> </td>
+            <td class="column5"> </td>
+            <td class="column5"> </td>
         </tr>
        {{ 
        query = None
        c_id = ""
        query = db(db.patient).select() 
        for row in query :}}
-           <tr>
-                <td onclick="db.call('patient/info', {'id' :'{{=row.id}}'} )" > {{=row.last_name + " " + row.first_name }} </td>
+           <tr onclick="db.call('patient/info', {'id' :'{{=row.id}}'} )" >
+                <td> {{=row.last_name + " " + row.first_name }} </td>
                 <td> {{=row.birth }} </td>
                 <td> {{=row.info }} </td>
                 <td onclick="db.call('patient/edit', {'id' :'{{=row.id}}'} )" > e </td>
