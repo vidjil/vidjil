@@ -10,20 +10,33 @@ def add():
 
 #TODO check data
 def add_form(): 
-    import gluon.contrib.simplejson, shutil, os.path
+    import gluon.contrib.simplejson, shutil, os.path, datetime
     if request.env.http_origin:
         response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
         response.headers['Access-Control-Allow-Credentials'] = 'true'
         response.headers['Access-Control-Max-Age'] = 86400
         
-    id = db.sequence_file.insert(data_file = request.vars.file)
+    error = ""
+    if not request.vars.file:
+        error += "missing file"
+    try:
+        datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
+    except ValueError:
+        error += "sampling date missing or wrong format"
+
+    if error=="" :
+        id = db.sequence_file.insert(data_file = request.vars.file)
+
+        db.sequence_file[id] = dict(sampling_date=request.vars['sampling_date'],
+                                    info=request.vars['file_info'],
+                                    patient_id=request.vars['patient_id'])
     
-    db.sequence_file[id] = dict(sampling_date=request.vars['sampling_date'],
-                                info=request.vars['file_info'],
-                                patient_id=request.vars['patient_id'])
-    
-    res = {"success": "true" }
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        res = {"success": "true" }
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        
+    else :
+        res = {"success" : "false", "error" : error}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
 def edit(): 
@@ -36,18 +49,29 @@ def edit():
 
 #TODO check data
 def edit_form(): 
-    import gluon.contrib.simplejson, shutil, os.path
+    import gluon.contrib.simplejson, shutil, os.path, datetime
     if request.env.http_origin:
         response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
         response.headers['Access-Control-Allow-Credentials'] = 'true'
         response.headers['Access-Control-Max-Age'] = 86400
-  
-    db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'],
-                                                info=request.vars['file_info'],
-                                                )
+    
+    error = ""
+    try:
+        datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
+    except ValueError:
+        error += "sampling date missing or wrong format"
 
-    res = {"success": "true" }
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    if error=="" :
+        db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'],
+                                                info=request.vars['file_info'])
+            
+        res = {"success": "true" }
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+    else :
+        res = {"success" : "false", "error" : error}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+  
 
 def confirm():
     if request.env.http_origin:
