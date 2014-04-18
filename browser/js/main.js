@@ -47,7 +47,7 @@ if (typeof config != 'undefined') {
             url: config.demo_file[0],
             success: function (result) {
                 $('#demo_file_menu').css("display", "")
-                var demo_file = document.getElementById("demoSelector")
+                var demo_file = document.getElementById("demoSelector").firstChild
 
                 for (var i = 0; i < config.demo_file.length; i++) {
                     (function (i) {
