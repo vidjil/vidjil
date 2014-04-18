@@ -35,23 +35,16 @@ def add_form():
             error += "first name needed, "
         if request.vars["last_name"] == "" :
             error += "last name needed, "
-        if request.vars["birth"] == "" :
-            error += "birth date needed, "
-        '''if request.vars["birth"] == "" : 
-            error += "birth date incorrect format, "  '''
+        try:
+            datetime.datetime.strptime(""+request.vars['birth'], '%Y-%m-%d')
+        except ValueError:
+            error += "date missing or wrong format"
         
         if error=="" :
             id = db.patient.insert(first_name=request.vars["first_name"],
                                    last_name=request.vars["last_name"],
                                    birth=request.vars["birth"],
-                                   info=request.vars["info"]
-                                   )
-            '''TODO
-            db.auth_permission.insert(group_id=auth.user_group(auth.user_id),
-                                      name="read",
-                                      table_name="patient",
-                                      record_id=id)
-            '''
+                                   info=request.vars["info"])
             
             res = {"success": "true" }
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
@@ -85,8 +78,10 @@ def edit_form():
             error += "first name needed, "
         if request.vars["last_name"] == "" :
             error += "last name needed, "
-        if request.vars["birth"] == "" :
-            error += "birth date needed, "
+        try:
+            datetime.datetime.strptime(""+request.vars['birth'], '%Y-%m-%d')
+        except ValueError:
+            error += "date missing or wrong format"
         if request.vars["id"] == "" :
             error += "patient id needed, "
         
