@@ -82,6 +82,8 @@ Model.prototype = {
         this.clones = [];
         this.windows = [];
         this.germline = {};
+        this.dataFileName = '';
+        this.analysisFileName = '';
         this.notation_type = "percent"
         this.normalization = { 
             "A" : [],
@@ -135,6 +137,8 @@ Model.prototype = {
     loadDataUrl: function (url) {
         var self = this;
         
+        var url_split = url.split('/')
+        
         $.ajax({
             type: "POST",
             timeout: 5000,
@@ -142,11 +146,12 @@ Model.prototype = {
             url: url,
             success: function (result) {
                 json = jQuery.parseJSON(result)
-                m.reset();
-                m.parseJsonData(json, 100)
+                self.reset();
+                self.parseJsonData(json, 100)
                     .loadGermline();
-                m.initClones()
-                m.loadAnalysisUrl(url)
+                self.initClones()
+                self.dataFileName = url_split[url_split.length-1]
+                self.loadAnalysisUrl(url)
             }
         });
 
@@ -157,18 +162,24 @@ Model.prototype = {
         
         var url2 = url.replace(".data",".analysis");
         
+        var url_split = url2.split('/')
+        
         $.ajax({
             type: "POST",
             timeout: 5000,
             crossDomain: true,
             url: url2,
             success: function (result) {
-                m.analysis = jQuery.parseJSON(result)
-                if (m.analysis.time && (m.analysis.time.length == m.time.length)) {
-                    m.time = m.analysis.time;
-                    m.time_order = m.analysis.time_order;
+                self.analysis = jQuery.parseJSON(result)
+                if (self.analysis.time && (self.analysis.time.length == self.time.length)) {
+                    self.time = self.analysis.time;
+                    self.time_order = self.analysis.time_order;
                 }
-                m.initClones();
+                self.analysisFileName = url_split[url_split.length-1]
+                self.initClones();
+            },
+            error: function () {
+                self.update()
             }
         });
 
