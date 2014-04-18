@@ -92,47 +92,47 @@
         <div id="top-container">
 
             <div class="menu" onmouseover="showSelector('adminSelector');" style="display:none"> admin 
-                <div id="adminSelector" class="selector">
+                <div id="adminSelector" class="selector"><div>
                     <a id="test_load_data" class="buttonSelector" onclick="m.parseJsonData(dataTest, 100).loadGermline().initClones()">
                     test load data</a>
-                </div>
+                </div></div>
             </div>
 
             <div class="menu" onmouseover="showSelector('loadSelector');"> file 
-                <div id="loadSelector" class="selector">
+                <div id="loadSelector" class="selector"><div>
                     <!-- <a class="buttonSelector" onclick="javascript:loadData()">load data/analysis</a> -->
                     <!--<a class="buttonSelector" onclick="javascript:loadAnalysis()">load analysis</a> -->
                     <a class="buttonSelector" onclick="javascript:m.saveAnalysis()">save analysis</a>
                     <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
                     <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
                     <a class="buttonSelector" onclick="javascript:new PDF(m, 'visu2_svg')">export pdf (graph + selected clones)</a>
-                </div>
+                </div></div>
             </div>
 
             <div class="menu" onmouseover="showSelector('groupSelector');"> analysis 
-                <div id="groupSelector" class="selector">
+                <div id="groupSelector" class="selector"><div>
                     <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'gene_j');">V / J (genes)</a> 
                     <a class="buttonSelector" onclick="sp.changeSplitMethod('allele_v', 'allele_j');">V / J (alleles)</a> 
                     <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'n');">V / N length</a> 
                     <!--<a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'nSize');">V / N length + VJ deletions</a> -->
                     <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'Size')">V / abundance at selected timepoint</a> 
                     <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'bar')">V distribution</a> 
-                </div>
+                </div></div>
             </div>
 
             <div class="menu" onmouseover="showSelector('colorSelector');" > color 
-                <div id="colorSelector" class="selector">
+                <div id="colorSelector" class="selector"><div>
                     <a class="buttonSelector" onclick="m.changeColorMethod('V');">by V</a>
                     <a class="buttonSelector" onclick="m.changeColorMethod('J');">by J</a>
                     <a class="buttonSelector" onclick="m.changeColorMethod('N2');">by N length</a>
                     <!-- <a class="buttonSelector" onclick="m.changeColorMethod('N');">by N length + VJ deletions</a> -->
                     <a class="buttonSelector" onclick="m.changeColorMethod('Tag');">by tag</a>
                     <a class="buttonSelector" onclick="m.changeColorMethod('abundance');">by abundance at selected timepoint</a>
-                </div>
+                </div></div>
             </div>
 
             <div class="menu" id="display_menu" onmouseover="showSelector('displaySelector');"> display
-                <div id="displaySelector" class="selector">
+                <div id="displaySelector" class="selector"><div>
 
                     <div>
                         </br>
@@ -149,13 +149,13 @@
 
                     <div>scientific notation 
                         <input id="notation" type="checkbox" name="notation"  onclick="m.notation_switch(this.checked);">
-                    </div>
+                    </div></div>
 
                 </div>
             </div>
 
             <div class="menu" onmouseover="showSelector('clusterSelector');" > cluster
-                <div id="clusterSelector" class="selector">
+                <div id="clusterSelector" class="selector"><div>
                     <a class="buttonSelector" onclick="m.resetClones();">reset</a>
                     <a class="buttonSelector" onclick="m.clusterBy('_clonotype');">clonotype</a>
                     <a class="buttonSelector" onclick="m.clusterBy('V');">V gene + allele</a>
@@ -163,32 +163,31 @@
                     <a class="buttonSelector" onclick="m.clusterBy('_target');">target</a>
                     <a class="buttonSelector" onclick="m.clusterBy('_target.V-GENE');">target V</a>
                     <a class="buttonSelector" onclick="m.clusterBy('_target.J-GENE');">target J</a>
-                </div>
+                </div></div>
             </div>
 
             <div class="menu" id="database_menu" onmouseover="showSelector('dbSelector');" style="display:none"> database 
-
-                <div id="dbSelector" class="selector">
+                <div id="dbSelector" class="selector"><div>
                     <a class="buttonSelector" onclick="db.call('patient/index');">patient list</a>
                     <a class="buttonSelector" onclick="db.call('standard/index');">standard list</a>
                     <a class="buttonSelector" onclick="db.call('config/index');">config list</a>
 
                     <div id="upload_list"></div>
-                </div>
+                </div></div>
             </div>
 
             <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');" style="display:none"> demo file 
-                <div id="demoSelector" class="selector">
-                </div>
+                <div id="demoSelector" class="selector"><div>
+                </div></div>
             </div>
 
             <div id="logo" style="float: right;" onclick="popupMsg(msg.welcome)">Vidjil <span class='logo'>(beta)</span></div>
 
             <div style="float: right" class="menu" onmouseover="showSelector('paletteSelector');"> palette 
-                <div id="paletteSelector" class="selector">
+                <div id="paletteSelector" class="selector"><div>
                     <a class="buttonSelector" onclick="changeStyle(solarizeD)">dark</a>
                     <a class="buttonSelector" onclick="changeStyle(solarizeL)">light</a>
-                </div>
+                </div></div>
             </div>
 
             <div id="fps" style="float: right;"> </div>

@@ -1552,17 +1552,16 @@ function showSelector(elem) {
         $('.selector')
             .css('display', 'none');
         $('#' + elem)
+            .css('display', 'block')
             .animate({
-                height: "show",
-                display: "show"
+                height: $('#' + elem).children(":first").height()
             }, 100);
     }
 }
 
 function hideSelector() {
     $('.selector')
-        .stop();
-    $('.selector')
+        .stop()
         .animate({
             height: "hide",
             display: "none"
