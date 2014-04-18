@@ -885,3 +885,45 @@ span .substitution{
   left: -webkit-calc(~"50% - 480px");
   left: calc(~"50% - 480px");
 }
+
+.db_table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.db_table .column1{
+    width: 20%;
+}
+
+.db_table .column2{
+    width: 100px;
+}
+
+.db_table .column4{
+    width: 50px;
+}
+.db_table .column5{
+    width: 20px;
+}
+
+.db_table th{
+    border-bottom: solid;
+    border-color: @border;
+    border-width: 1px;
+} 
+
+.db_table tr{
+    border-bottom: solid;
+    border-color: @border;
+    border-width: 1px;
+    cursor: pointer;
+} 
+
+.db_table tr:hover{
+    background: @highlight;
+}
+
+.db_table td{
+    border-width:0px;
+}
+
