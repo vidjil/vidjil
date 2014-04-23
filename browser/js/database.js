@@ -1,5 +1,5 @@
-function Database(id, db_adress) {
-    this.db_adress = db_adress;
+function Database(id, db_address) {
+    this.db_address = db_address;
     this.id = id;
     this.upload = 0;
 }
@@ -17,18 +17,19 @@ Database.prototype = {
         for (var key in args) {
             arg += "" + key + "=" + args[key] + "&";
         }
-
+        
+        this.last_url = self.db_address + page + arg
+        
         //envoye de la requete ajax
         $.ajax({
-            type: "GET",
+            type: "POST",
             timeout: 1000,
             crossDomain: true,
             context: self,                          //we can't do closure with ajax event handler so we use context to keep ref
-            url: self.db_adress + page + arg,
+            url: self.db_address + page + arg,
             contentType: 'text/plain',
-            xhrFields: { withCredentials: false },
+            xhrFields: {withCredentials: true},
             success: self.display_result,     
-
             error: function (request, status, error) {
                 if (status === "timeout") {
                     popupMsg("timeout");
@@ -72,6 +73,7 @@ Database.prototype = {
                 crossDomain: true,
                 url      : $(this).attr('action'),
                 data     : $(this).serialize(),
+                xhrFields: {withCredentials: true},
                 success: function (result) {
                     var res = jQuery.parseJSON(result);
                     if (res.success == "true") {
@@ -102,6 +104,7 @@ Database.prototype = {
                 crossDomain: true,
                 url      : $(this).attr('action'),
                 data     : $(this).serialize(),
+                xhrFields: { withCredentials: true},
                 beforeSubmit: function() {
                     self.call("patient/index") 
                     //crée un div qui contiendra la progression de l'upload du fichier 
@@ -162,6 +165,7 @@ Database.prototype = {
             crossDomain: true,
             url      : $(this).attr('action'),
             data     : $(this).serialize(),
+            xhrFields: {withCredentials: true},
             success: function (result) {
                 var res = jQuery.parseJSON(result);
                 if (res.success == "true") {
@@ -196,6 +200,7 @@ Database.prototype = {
             crossDomain: true,
             url      : $(this).attr('action'),
             data     : $(this).serialize(),
+            xhrFields: {withCredentials: true},
             beforeSend: db.beforeSend(),
             //mise a jour progressive du % d'upload
             uploadProgress: function(event, position, total, percentComplete) {
@@ -267,7 +272,8 @@ Database.prototype = {
             type: "POST",
             timeout: 5000,
             crossDomain: true,
-            url: self.db_adress + "default/result" + arg,
+            url: self.db_address + "default/result" + arg,
+            xhrFields: {withCredentials: true},
             success: function (result) {
                 json = jQuery.parseJSON(result)
                 m.reset();
