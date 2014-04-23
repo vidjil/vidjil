@@ -2,10 +2,16 @@
 
 
 def index():
+    import gluon.contrib.simplejson
     if request.env.http_origin:
         response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
         response.headers['Access-Control-Allow-Credentials'] = 'true'
         response.headers['Access-Control-Max-Age'] = 86400
+        
+    if not auth.user : 
+        res = {"redirect" : "default/user/login"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
     return dict(message=T('config_list'))
 
 

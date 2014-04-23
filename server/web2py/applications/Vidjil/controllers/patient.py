@@ -9,10 +9,16 @@ def info():
     return dict(message=T('patient'))
 
 def index():
+    import gluon.contrib.simplejson
     if request.env.http_origin:
         response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
         response.headers['Access-Control-Allow-Credentials'] = 'true'
         response.headers['Access-Control-Max-Age'] = 86400
+    
+    if not auth.user : 
+        res = {"redirect" : "default/user/login"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
     return dict(message=T('patient list'))
 
 def add(): 
@@ -23,7 +29,7 @@ def add():
     return dict(message=T('add patient'))
 
 def add_form(): 
-    import gluon.contrib.simplejson
+    import gluon.contrib.simplejson, datetime
     if request.env.http_origin:
         response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
         response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -66,7 +72,7 @@ def edit():
     return dict(message=T('edit patient'))
 
 def edit_form(): 
-    import gluon.contrib.simplejson
+    import gluon.contrib.simplejson, datetime
     if request.env.http_origin:
         response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
         response.headers['Access-Control-Allow-Credentials'] = 'true'
