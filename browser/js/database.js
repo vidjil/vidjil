@@ -46,14 +46,22 @@ Database.prototype = {
         console.log(this)       //context work !!! YEEAAHHHHHHHHHHHH
         
         //rétablissement de l'adresse pour les futures requetes
-        result = result.replace("DB_ADRESS/", this.db_adress);
+        result = result.replace("DB_ADDRESS/", this.db_address);
+        result = result.replace("action=\"#\"", "action=\""+this.last_url+"\"");
         
-        //affichage résultat
-        this.display(result);
-        
-        //bind javascript
-        this.init_ajaxform()
-        
+        //hack redirection
+        try {
+            var res = jQuery.parseJSON(result);
+            this.call(res.redirect)
+        }
+        catch(err)
+        {
+            //affichage résultat
+            this.display(result);
+            
+            //bind javascript
+            this.init_ajaxform()
+        }
     },
     
     /* associe a un <form> un handler custom
