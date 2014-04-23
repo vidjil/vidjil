@@ -1,8 +1,10 @@
+{{extend 'db_layout.html'}}
+
 {{
 info = db.standard_file[request.vars["id"]]
 }}
 
-<form id="data_form" action="DB_ADRESS/standard/edit_form" enctype="multipart/form-data" method="post">
+<form id="data_form" action="DB_ADDRESS/standard/edit_form" enctype="multipart/form-data" method="post">
     <input type="HIDDEN" id="standard_id" name="id" value="{{=request.vars["id"]}}"> 
     <table>
         <tbody>
