@@ -1,9 +1,11 @@
+{{extend 'db_layout.html'}}
+
 {{
 info = db.sequence_file[request.vars["id"]]
 }}
 
 
-<form id="data_form" action="DB_ADRESS/file/edit_form" enctype="multipart/form-data" method="post">
+<form id="data_form" action="DB_ADDRESS/file/edit_form" enctype="multipart/form-data" method="post">
     <input type="hidden" id="file_id" name="id" value="{{=request.vars["id"]}}" >
     
     <table>
