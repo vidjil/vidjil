@@ -100,6 +100,32 @@ Database.prototype = {
             });
         }
         
+        //login_form
+        if ( document.getElementById('login_form') ){
+            //$('#login_form').on('submit',self.login_form );
+            
+            $('#login_form').ajaxForm({
+                type: "POST",
+                cache: false,
+                timeout: 1000,
+                crossDomain: true,
+                context: self,   
+                url      : $(this).attr('action'),
+                data     : $(this).serialize(),
+                xhrFields: {withCredentials: true},
+                success: self.display_result,
+                error: function (request, status, error) {
+                    if (status === "timeout") {
+                        popupMsg("timeout");
+                    } else {
+                        self.call("patient/index")
+                    }
+                }
+            });
+        
+        }
+
+        
         //submit formulaire avec fichier
         if ( document.getElementById('upload_form') ){
             //$('#upload_form').on('submit', self.upload_form ); // doesn't work :/
@@ -155,6 +181,33 @@ Database.prototype = {
             });
             
         }  
+        
+    },
+    
+    login_form: function (e) {
+        var self = this
+        
+        e.preventDefault();
+        e.stopPropagation();
+        
+        //login_form
+        $.ajax({
+            type: "POST",
+            cache: false,
+            timeout: 1000,
+            crossDomain: true,
+            url      : $(this).attr('action'),
+            data     : $(this).serialize(),
+            xhrFields: {withCredentials: true},
+            success: self.display_result(result),
+            error: function (request, status, error) {
+                if (status === "timeout") {
+                    popupMsg("timeout");
+                } else {
+                    popupMsg(request.responseText);
+                }
+            }
+        });
         
     },
     
