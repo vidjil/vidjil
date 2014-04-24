@@ -29,7 +29,9 @@
         </span>
     </div>
 </div>
-    <table class="db_table">
+
+<div id="db_table_container">
+    <table class="db_table" id="table">
         <thead>
             <tr><td class="column1"> file_name </td>
                 <td class="column2"> sampling date </td>
@@ -51,7 +53,7 @@
                     & (db.data_file.config_id==str(config_id) ) 
                 ) 
             ) 
-            
+
             for row in query :}}
                  <tr>
                     <td> {{ (filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)}} {{=filename}}</td>
@@ -70,6 +72,9 @@
             {{pass}}
         </tbody>
     </table>
+    <table class="db_table" id="db_fixed_header"></table>
+</div>
+    
 <span class="button" onclick="db.call('patient/index')"> back to list </span>
 <span class="button" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> add file </span>
 <span class="button" onclick="db.load( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=config_id}} } )" > see result </span>

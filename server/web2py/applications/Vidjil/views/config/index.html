@@ -6,29 +6,35 @@
 <div>
     <h3>{{=message}}</h3>
     
-    <table class="db_table">
-        <tr><td class="column2"> name </td>
-            <td class="column2"> standard </td>
-            <td> info </td>
-            <td> command </td>
-            <td class="column5"> </td>
-            <td class="column5"> </td>
-        </tr>
-       {{ 
-       query = None
-       c_id = ""
-       query = db(db.config.standard_id==db.standard_file.id).select() 
-       for row in query :}}
-            <tr>
-                <td> {{=row.config.name }} </td>
-                <td> {{=row.standard_file.name}} </td>
-                <td> {{=row.config.info }} </td>
-                <td> {{=row.config.command }} </td>
-                <td onclick="db.call('config/edit', {'id' :'{{=row.config.id}}'} )" > e </td>
-                <td onclick="db.call('config/confirm', {'id' :'{{=row.config.id}}'} )" > X </td>
-            </tr>
-        {{pass}}
-    </table>
+    <div id="db_table_container">
+        <table class="db_table" id="table">
+            <thead>
+                <tr><td class="column2"> name </td>
+                    <td class="column2"> standard </td>
+                    <td> info </td>
+                    <td> command </td>
+                    <td class="column5"> </td>
+                    <td class="column5"> </td>
+                </tr>
+            </thead>
+           {{ 
+           query = None
+           c_id = ""
+           query = db(db.config.standard_id==db.standard_file.id).select() 
+           for row in query :}}
+                <tr>
+                    <td> {{=row.config.name }} </td>
+                    <td> {{=row.standard_file.name}} </td>
+                    <td> {{=row.config.info }} </td>
+                    <td> {{=row.config.command }} </td>
+                    <td onclick="db.call('config/edit', {'id' :'{{=row.config.id}}'} )" > e </td>
+                    <td onclick="db.call('config/confirm', {'id' :'{{=row.config.id}}'} )" > X </td>
+                </tr>
+            {{pass}}
+        </table>
+        <table class="db_table" id="db_fixed_header"></table>
+    </div>
+    
     <span class="button" onclick="db.call('config/add')"> new config </span>
 </div>
 
