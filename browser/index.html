@@ -166,12 +166,9 @@
                 </div></div>
             </div>
 
-            <div class="menu" id="database_menu" onmouseover="showSelector('dbSelector');" style="display:none"> database 
+            <div class="menu" id="database_menu" onclick="db.call('patient/index');" onmouseover="showSelector('dbSelector');" style="display:none"> database 
                 <div id="dbSelector" class="selector"><div>
-                    <a class="buttonSelector" onclick="db.call('patient/index');">patient list</a>
-                    <a class="buttonSelector" onclick="db.call('standard/index');">standard list</a>
-                    <a class="buttonSelector" onclick="db.call('config/index');">config list</a>
-
+                    <a class="buttonSelector" onclick="db.call('patient/index');">connect</a>
                     <div id="upload_list"></div>
                 </div></div>
             </div>
