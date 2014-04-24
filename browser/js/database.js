@@ -57,10 +57,13 @@ Database.prototype = {
         catch(err)
         {
             //affichage résultat
-            this.display(result);
+            this.display(result)
             
             //bind javascript
             this.init_ajaxform()
+            
+            //
+            this.fixed_header()
         }
     },
     
@@ -304,7 +307,8 @@ Database.prototype = {
             type: "POST",
             timeout: 2000,
             crossDomain: true,
-            url: self.db_adress + controller_name + arg,
+            url: self.db_address + controller_name + arg,
+            xhrFields: {withCredentials: true},
             success: function (result) {
                 popupMsg(result);
             },
@@ -312,7 +316,7 @@ Database.prototype = {
                 if (status === "timeout") {
                     popupMsg("timeout");
                 } else {
-                    popupMsg(request.responseText);
+                    self.call("patient/index")
                 }
             }
         });
@@ -366,8 +370,18 @@ Database.prototype = {
             .style.display = "none";
         document.getElementById("db_msg")
             .innerHTML = "";
+    },
+    
+    fixed_header: function () {
+        var header = $("#table > thead").clone();
+        var fixedHeader = $("#db_fixed_header").append(header);
+        
+        $("#db_table_container").bind("scroll", function() {
+            var offset = $(this).scrollTop();
+
+            fixedHeader.css("top", offset)
+
+        });
     }
-    
-    
 
 }
