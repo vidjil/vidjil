@@ -14,29 +14,28 @@ if (typeof config != 'undefined') {
         $('#database_menu').css("display", "")
     }
 
-    if (config.demo_file && config.demo_file.length != 0){
+    if (config.demo && config.demo.file.length != 0){
         
         //detect if files are available
         $.ajax({
             type: "POST",
             timeout: 5000,
             crossDomain: true,
-            url: config.demo_file[0],
+            url: config.demo.path + config.demo.file[0],
             success: function (result) {
                 $('#demo_file_menu').css("display", "")
                 var demo_file = document.getElementById("demoSelector").firstChild
 
-                for (var i = 0; i < config.demo_file.length; i++) {
+                for (var i = 0; i < config.demo.file.length; i++) {
                     (function (i) {
 
-                        var path = config.demo_file[i].split("/") 
                         var a = document.createElement('a');
                         a.className = "buttonSelector"
                         a.onclick = function () {
-                            m.loadDataUrl(config.demo_file[i])
+                            m.loadDataUrl(config.demo.path + config.demo.file[i])
                         }
                         
-                        a.appendChild(document.createTextNode(path[path.length-1]))
+                        a.appendChild(document.createTextNode(config.demo.file[i]))
 
                         demo_file.appendChild(a);
                     })(i)
