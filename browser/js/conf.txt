@@ -9,17 +9,22 @@ var config = {
     /*database */
     "use_database" : true,
     "db_address" : "http://134.206.11.64:8000/Vidjil/",
-    "login" : "",           // un jour peut-etre ...
+    "login" : "",
     "password" : "",
     
     /* you can use relative path if Vidjil browser is online on the same server
      * or complete path to a CORS active server only if browser is offline or on another server 
      * use an empty array [] if you don't want demo_file menu
      */
-    "demo_file" : [
-        "/browser/demo_file/A_BCD.data",
-        "/browser/demo_file/L2-LIL-2.data"
-    ],
+    
+    "demo" : {
+        "path" : "/browser/demo_file/",
+        "file" : [
+            "A_BCD.data",
+            "L2-LIL-2.data"
+        ]
+    },
+
     
     "debug_mode" : false    //en phase de recherche
 }
