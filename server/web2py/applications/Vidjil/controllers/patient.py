@@ -52,6 +52,13 @@ def add_form():
                                    birth=request.vars["birth"],
                                    info=request.vars["info"])
             
+            
+            user_group = auth.user_group(auth.user.id)
+            admin_group = db(db.auth_group.role=='admin').select().first().id
+            
+            auth.add_permission(user_group, 'read', db.patient, id)
+            auth.add_permission(user_group, 'admin', db.patient, id)
+
             res = {"success": "true" }
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
