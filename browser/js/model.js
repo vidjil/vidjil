@@ -175,6 +175,9 @@ Model.prototype = {
                     self.time = self.analysis.time;
                     self.time_order = self.analysis.time_order;
                 }
+                if (self.analysis.normalization) {
+                    self.normalization= self.analysis.normalization;
+                }
                 self.analysisFileName = url_split[url_split.length-1]
                 self.initClones();
             },
@@ -490,6 +493,9 @@ Model.prototype = {
                     self.time = self.analysis.time;
                     self.time_order = self.analysis.time_order;
                 }
+                if (self.analysis.normalization) {
+                    self.normalization= self.analysis.normalization;
+                }
                 self.initClones();
             }
         } else {
@@ -677,6 +683,7 @@ Model.prototype = {
         //name time/point
         analysisData.time = this.time
         analysisData.time_order = this.time_order
+        analysisData.normalization = this.normalization
 
         var textToWrite = JSON.stringify(analysisData, undefined, 2);
         var textFileAsBlob = new Blob([textToWrite], {
