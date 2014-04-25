@@ -1,0 +1,77 @@
+{{extend 'db_layout.html'}}
+
+<div>
+    <h3>
+        patient acces permission
+    </h3>
+
+    <div id="db_table_container">
+        <table class="db_table" id="table">
+            <thead>
+                <tr><td class="column1"> group / user</td>
+                    <td> right </td>
+                    <td class="column5"> </td>
+                </tr>
+            </thead>
+            {{
+            query = db(
+                (db.auth_permission.table_name == "patient") &
+                (db.auth_permission.record_id == request.vars["id"]) &
+                (db.auth_permission.group_id == db.auth_group.id)
+            ).select()
+
+            for row in query :}}
+            <tr>
+                <td> {{=row.auth_group.role}} </td>
+                <td> {{=row.auth_permission.name }} </td>
+                <td> X </td>  
+            </tr>
+            {{pass}}
+        </table>
+        <table class="db_table" id="db_fixed_header"></table>    
+    </div>
+    
+    {{if auth.has_permission("admin", "patient", request.vars["id"], auth.user.id) :}}
+
+        <div>
+            add 
+            <span>
+                <select id="select_right" name="config">
+                    <option value="read">read only</option>
+                    <option value="read">admin</option>
+                </select>
+            </span>
+            permission to group
+            <span>
+                <select id="select_group" name="config">
+                    {{for row in db(db.auth_group).select():}}
+                        {{if row.role != "admin" and row.role[:5] != "user_" :}}
+                            <option value="{{=row.id }}">{{=row.role}} </option>
+                        {{pass}}
+                    {{pass}}
+                </select>
+            </span>
+        </div>
+
+        <div>
+            add 
+            <span>
+                <select id="select_right" name="config">
+                    <option value="read">read only</option>
+                    <option value="read">admin</option>
+                </select>
+            </span>
+            permission to user
+            <span>
+                <select id="select_group" name="config">
+                    {{for row in db(db.auth_user).select():}}
+                            <option value="{{=auth.user_group(row.id)}}">{{=row.first_name + " " + row.last_name}} </option>
+                    {{pass}}
+                </select>
+            </span>
+        </div>
+    {{else:}}
+        <div>you need admin access on this patient if you want to change permission </div>
+    {{pass}}
+    
+</div>
