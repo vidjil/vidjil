@@ -152,3 +152,10 @@ def delete():
     
     res = {"success": "true" }
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def permission(): 
+    if request.env.http_origin:
+        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Max-Age'] = 86400
+    return dict(message=T('permission'))
