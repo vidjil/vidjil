@@ -126,6 +126,7 @@ Model.prototype = {
                 popupMsg(msg.version_error);
                 return 0;
             }
+            self.reset()
             self.parseJsonData(data, limit)
                 .loadGermline()
                 .loadAnalysis(analysis);
