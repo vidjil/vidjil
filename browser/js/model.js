@@ -111,8 +111,7 @@ Model.prototype = {
         var oFReader = new FileReader();
         var oFile = document.getElementById(data)
             .files[0];
-        self.dataFileName = document.getElementById(data)
-            .files[0].name;
+            
         oFReader.readAsText(oFile);
 
         oFReader.onload = function (oFREvent) {
@@ -127,6 +126,8 @@ Model.prototype = {
                 return 0;
             }
             self.reset()
+            self.dataFileName = document.getElementById(data)
+                .files[0].name;
             self.parseJsonData(data, limit)
                 .loadGermline()
                 .loadAnalysis(analysis);
