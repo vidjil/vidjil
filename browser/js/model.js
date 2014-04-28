@@ -94,22 +94,22 @@ Model.prototype = {
 
 
     /* load the selected data/analysis file in the model
-     * @data : id of the form (html element) linking to the data file
+     * @id : id of the form (html element) linking to the data file
      * @analysis : id of the form (html element) linking to the analysis file
      * impossible to use direct path to input files, need a fakepath from input form
      * @limit : minimum top value to keep a window*/
-    load: function (data, analysis, limit) {
+    load: function (id, analysis, limit) {
         var self = this;
 
         console.log("load()");
 
-        if (document.getElementById(data)
+        if (document.getElementById(id)
             .files.length === 0) {
             return;
         }
 
         var oFReader = new FileReader();
-        var oFile = document.getElementById(data)
+        var oFile = document.getElementById(id)
             .files[0];
             
         oFReader.readAsText(oFile);
@@ -126,7 +126,7 @@ Model.prototype = {
                 return 0;
             }
             self.reset()
-            self.dataFileName = document.getElementById(data)
+            self.dataFileName = document.getElementById(id)
                 .files[0].name;
             self.parseJsonData(data, limit)
                 .loadGermline()
