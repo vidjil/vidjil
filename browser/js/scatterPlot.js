@@ -538,6 +538,11 @@ ScatterPlot.prototype = {
         this.gridModel["gene_v"] = [];
         this.gridModel["allele_v_used"] = [];
         this.gridModel["gene_v_used"] = [];
+        this.positionGene = {}; 
+        this.positionUsedGene = {}; 
+        this.positionAllele = {}; 
+        this.positionUsedAllele = {};
+        this.use_simple_v = false;
 
 	//Obtention de toutes les clefs concernant les allèles et les gènes V
         var vKey = Object.keys(this.m.germline.v);
