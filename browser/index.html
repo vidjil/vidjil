@@ -125,6 +125,18 @@
                 </div></div>
             </div>
 
+            <div class="menu" onmouseover="showSelector('clusterSelector');" > cluster
+                <div id="clusterSelector" class="selector"><div>
+                    <a class="buttonSelector" onclick="m.resetClones();">reset</a>
+                    <a class="buttonSelector" onclick="m.clusterBy('_clonotype');">clonotype</a>
+                    <a class="buttonSelector" onclick="m.clusterBy('V');">V gene + allele</a>
+                    <a class="buttonSelector" onclick="m.clusterBy('J');">J gene + allele</a>
+                    <a class="buttonSelector" onclick="m.clusterBy('_target');">target</a>
+                    <a class="buttonSelector" onclick="m.clusterBy('_target.V-GENE');">target V</a>
+                    <a class="buttonSelector" onclick="m.clusterBy('_target.J-GENE');">target J</a>
+                </div></div>
+            </div>
+
             <div class="menu" onmouseover="showSelector('groupSelector');"> analysis 
                 <div id="groupSelector" class="selector"><div>
                     <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'gene_j');">V / J (genes)</a> 
@@ -168,18 +180,6 @@
                     </div></div>
 
                 </div>
-            </div>
-
-            <div class="menu" onmouseover="showSelector('clusterSelector');" > cluster
-                <div id="clusterSelector" class="selector"><div>
-                    <a class="buttonSelector" onclick="m.resetClones();">reset</a>
-                    <a class="buttonSelector" onclick="m.clusterBy('_clonotype');">clonotype</a>
-                    <a class="buttonSelector" onclick="m.clusterBy('V');">V gene + allele</a>
-                    <a class="buttonSelector" onclick="m.clusterBy('J');">J gene + allele</a>
-                    <a class="buttonSelector" onclick="m.clusterBy('_target');">target</a>
-                    <a class="buttonSelector" onclick="m.clusterBy('_target.V-GENE');">target V</a>
-                    <a class="buttonSelector" onclick="m.clusterBy('_target.J-GENE');">target J</a>
-                </div></div>
             </div>
 
             <div id="logo" style="float: right;" onclick="popupMsg(msg.welcome)">Vidjil <span class='logo'>(beta)</span></div>
