@@ -1285,12 +1285,19 @@ ScatterPlot.prototype = {
         }
 
         this.splitX = splitX;
-        if (splitX == "gene_v" && this.use_simple_v) this.splitX = "gene_v_used";
-        if (splitX == "allele_v" && this.use_simple_v) this.splitX = "allele_v_used";
-
         this.splitY = splitY;
-        if (splitY == "gene_v" && this.use_simple_v) this.splitY = "gene_v_used";
-        if (splitY == "allele_v" && this.use_simple_v) this.splitY = "allele_v_used";
+        
+        if (this.splitX == "gene_v" && this.use_simple_v) this.splitX = "gene_v_used";
+        if (this.splitX == "allele_v" && this.use_simple_v) this.splitX = "allele_v_used";
+
+        if (this.splitY == "gene_v" && this.use_simple_v) this.splitY = "gene_v_used";
+        if (this.splitY == "allele_v" && this.use_simple_v) this.splitY = "allele_v_used";
+        
+        if (this.splitX == "gene_v_used" && !this.use_simple_v) this.splitX = "gene_v";
+        if (this.splitX == "allele_v_used" && !this.use_simple_v) this.splitX = "allele_v";
+
+        if (this.splitY == "gene_v_used" && !this.use_simple_v) this.splitY = "gene_v";
+        if (this.splitY == "allele_v_used" && !this.use_simple_v) this.splitY = "allele_v";
 
         this.update();
     },
