@@ -98,14 +98,30 @@
                 </div></div>
             </div>
 
-            <div class="menu" onmouseover="showSelector('loadSelector');"> file 
-                <div id="loadSelector" class="selector"><div>
-                    <!-- <a class="buttonSelector" onclick="javascript:loadData()">load data/analysis</a> -->
+
+            <div class="menu" id="database_menu" onmouseover="showSelector('dbSelector');" style="display:none"> database 
+                <div id="dbSelector" class="selector"><div>
+                    <a class="buttonSelector" onclick="db.call('patient/index');">patient list</a>
+                    <a class="buttonSelector" onclick="db.call('standard/index');">standard list</a>
+                    <a class="buttonSelector" onclick="db.call('config/index');">config list</a>
+
+                    <div id="upload_list"></div>
+                </div></div>
+            </div>
+
+            <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');"> file 
+                <div id="demoSelector" class="selector"><div>
+		    <a class="buttonSelector" onclick="javascript:loadData()">load data/analysis</a>
                     <!--<a class="buttonSelector" onclick="javascript:loadAnalysis()">load analysis</a> -->
-                    <a class="buttonSelector" onclick="javascript:m.saveAnalysis()">save analysis</a>
                     <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
                     <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
-                    <a class="buttonSelector" onclick="javascript:new PDF(m, 'visu2_svg')">export pdf (graph + selected clones)</a>
+                </div></div>
+            </div>
+
+            <div class="menu" onmouseover="showSelector('loadSelector');"> export 
+                <div id="loadSelector" class="selector"><div>
+                   <a class="buttonSelector" onclick="javascript:m.saveAnalysis()">save analysis</a>
+                   <a class="buttonSelector" onclick="javascript:new PDF(m, 'visu2_svg')">export pdf (graph + selected clones)</a>
                 </div></div>
             </div>
 
@@ -163,21 +179,6 @@
                     <a class="buttonSelector" onclick="m.clusterBy('_target');">target</a>
                     <a class="buttonSelector" onclick="m.clusterBy('_target.V-GENE');">target V</a>
                     <a class="buttonSelector" onclick="m.clusterBy('_target.J-GENE');">target J</a>
-                </div></div>
-            </div>
-
-            <div class="menu" id="database_menu" onmouseover="showSelector('dbSelector');" style="display:none"> database 
-                <div id="dbSelector" class="selector"><div>
-                    <a class="buttonSelector" onclick="db.call('patient/index');">patient list</a>
-                    <a class="buttonSelector" onclick="db.call('standard/index');">standard list</a>
-                    <a class="buttonSelector" onclick="db.call('config/index');">config list</a>
-
-                    <div id="upload_list"></div>
-                </div></div>
-            </div>
-
-            <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');" style="display:none"> demo file 
-                <div id="demoSelector" class="selector"><div>
                 </div></div>
             </div>
 
