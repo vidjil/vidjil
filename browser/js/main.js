@@ -47,6 +47,10 @@ if (typeof config != 'undefined') {
         });
 
     }
+    
+    if (config.debug_mode) {
+        $("#fps").css("display", "");
+    }
 }
 
 
