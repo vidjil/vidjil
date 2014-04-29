@@ -158,3 +158,38 @@ def permission():
         response.headers['Access-Control-Allow-Credentials'] = 'true'
         response.headers['Access-Control-Max-Age'] = 86400
     return dict(message=T('permission'))
+
+def remove_permission():
+    import gluon.contrib.simplejson
+    if request.env.http_origin:
+        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Max-Age'] = 86400
+    
+        error = ""
+        
+        if request.vars["group_id"] == "" :
+            error += "missing group_id, "
+        if request.vars["patient_id"] == "" :
+            error += "missing patient_id, "
+
+        if error=="":
+            auth.del_permission(request.vars["group_id"], 'admin', db.patient, request.vars["patient_id"])
+            auth.del_permission(request.vars["group_id"], 'read', db.patient, request.vars["patient_id"])
+            
+        res = {"redirect" : "patient/permission" , "args" : { "id" : request.vars["patient_id"]} }
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        
+
+def change_permission():
+    import gluon.contrib.simplejson
+    if request.env.http_origin:
+        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Max-Age'] = 86400
+        
+
+        auth.add_permission(request.vars["group_id"], request.vars["permission"], db.patient, request.vars["patient_id"])
+
+        res = {"redirect" : "patient/permission" , "args" : { "id" : request.vars["patient_id"]} }
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
