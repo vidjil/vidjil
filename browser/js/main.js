@@ -10,10 +10,6 @@ if (typeof config != 'undefined') {
         if (config.db_address) DB_ADDRESS = config.db_address
     }
 
-    if (config.use_database){
-        $('#database_menu').css("display", "")
-    }
-
     if (config.demo && config.demo.file.length != 0){
         
         //detect if files are available
@@ -45,6 +41,17 @@ if (typeof config != 'undefined') {
                 console.log("demo file list not available")
             }
         });
+
+    }
+    
+    if (config.use_database){
+        
+        var a = document.createElement('a');
+        a.className = "buttonSelector"
+        a.onclick = function () { db.call('patient/index') }
+        a.appendChild(document.createTextNode("database"))
+        
+        document.getElementById("demoSelector").firstChild.appendChild(a);
 
     }
     
