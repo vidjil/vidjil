@@ -52,7 +52,7 @@ Database.prototype = {
         //hack redirection
         try {
             var res = jQuery.parseJSON(result);
-            this.call(res.redirect)
+            this.call(res.redirect, res.args)
         }
         catch(err)
         {
