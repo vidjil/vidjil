@@ -18,7 +18,10 @@
                 </tr>
             </thead>
            {{ 
-           query = db(auth.accessible_query('read', db.patient)).select()
+           query = db(
+               auth.accessible_query('read', db.patient) |
+               auth.accessible_query('admin', db.patient)
+           ).select()
            for row in query :}}
                <tr onclick="db.call('patient/info', {'id' :'{{=row.id}}'} )" >
                     <td> {{=row.last_name + " " + row.first_name }} </td>
