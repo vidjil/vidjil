@@ -952,9 +952,6 @@ int main (int argc, char **argv)
 	  {
 	    
 	    // As soon as one representative is segmented
-	    
-	    representatives.push_back(seg.getSequence());
-            representatives_labels.push_back("#" + string_of_int(num_clone));
 
               // We need to find the window in the representative
               size_t window_pos = seg.getSequence().sequence.find(it->first);
@@ -1040,6 +1037,10 @@ int main (int argc, char **argv)
 
         if (seg.isSegmented() 
             || it == --(sort_windows.end())) {
+	  // Store the representative and its label
+          representatives.push_back(representative);
+          representatives_labels.push_back("#" + string_of_int(num_clone));
+
               // display window
               cout << endl 
 		   << ">clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "-window"  << " " << windows_labels[it->first] << endl
