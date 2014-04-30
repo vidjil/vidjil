@@ -53,6 +53,7 @@ clean:
 
 forcedep:
 	g++ -M $(MAINCORE) > dep.mk
+	make -C core forcedep
 
 DEP=$(wildcard dep.mk)
 
