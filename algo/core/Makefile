@@ -5,6 +5,8 @@ SRCCORE=$(wildcard *.cpp)
 OBJCORE=$(SRCCORE:.cpp=.o)
 LIBCORE=vidjil.a
 
+.PHONY: all clean forcedep
+
 all: $(LIBCORE)
 
 $(LIBCORE): $(OBJCORE)
@@ -12,6 +14,9 @@ $(LIBCORE): $(OBJCORE)
 
 clean:
 	rm -f $(OBJCORE) $(LIBCORE)
+
+forcedep:
+	g++ -M $(SRCCORE) > dep.mk
 
 DEP=$(wildcard dep.mk)
 
