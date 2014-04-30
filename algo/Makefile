@@ -1,5 +1,5 @@
 CC=g++
-OPTIM=-O2 
+OPTIM=-O2 -DNDEBUG
 CXXFLAGS=-W -Wall $(OPTIM) $(DEBUG) $(CONFIG)
 LDFLAGS=-lm
 EXEC=vidjil kmer kmer_count cut count detailed_affect
@@ -43,7 +43,7 @@ debug:
 	make DEBUG="-ggdb"
 
 $(EXEC): %: %.o 
-	make -C core
+	make -C core OPTIM="$(OPTIM)"
 	$(CC) -o $(BINDIR)/$@ $^ $(LIBCORE) $(LDFLAGS) $(CXXFLAGS)
 
 clean:
