@@ -1,0 +1,46 @@
+{{extend 'db_layout.html'}}
+
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+{{
+query = db( 
+        (db.auth_user.id == db.auth_membership.user_id) 
+        & (db.auth_membership.group_id == request.vars["id"]) 
+    ).select() 
+}}
+
+<div>
+    <h3>{{=message}}  {{=request.vars["id"]}}</h3>
+</div>
+
+<div id="db_table_container">
+    <table class="db_table" id="table">
+        <thead>
+            <tr><td class="column1"> user name </td>
+                <td> email </td>
+                <td class="column5"> </td>
+            </tr>
+        </thead>
+        <tbody>
+            {{for row in query :}}
+                 <tr>
+                    <td> {{=row.auth_user.first_name + " " + row.auth_user.last_name}}</td>
+                    <td> {{=row.auth_user.email}} </td>
+                    <td onclick="" > X </td>
+                </tr>
+            {{pass}}
+        </tbody>
+    </table>
+    <table class="db_table" id="db_fixed_header"></table>
+</div>
+    
+<span class="button" onclick="db.call('group/index')"> back to list </span>
+
+</div>
+
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}

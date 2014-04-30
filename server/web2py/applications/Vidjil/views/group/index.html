@@ -1,0 +1,46 @@
+{{extend 'db_layout.html'}}
+
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+{{
+count = db.auth_group.id.count()
+
+query = db( 
+   db.auth_membership.group_id == db.auth_group.id
+).select(db.auth_group.ALL, count, groupby = db.auth_group.id)
+}}
+<div>
+    <h3>{{=message}}</h3>
+    
+    <div id="db_table_container">
+        <table class="db_table" id="table">
+            <thead>
+                <tr><td class="column1"> group name</td>
+                    <td class="column2"> user</td>
+                    <td> info </td>
+                    <td class="column5"> </td>
+                    <td class="column5"> </td>
+                </tr>
+            </thead>
+           {{for row in query :}}
+               <tr onclick="db.call('group/info', {'id' :'{{=row.auth_group.id}}'} )">
+                    <td> {{=row.auth_group.role}} </td>
+                    <td> {{=row[count]}}  </td>
+                    <td> {{=row.auth_group.description }} </td>
+                    <td onclick="db.call('group/permission', {'id' :'{{=row.auth_group.id}}'} )" > p </td>
+                    <td onclick="db.call('group/confirm', {'id' :'{{=row.auth_group.id}}'} )" > X </td>  
+                </tr>
+           {{pass}}
+        </table>
+        <table class="db_table" id="db_fixed_header"></table>
+    </div>
+    
+    <span class="button" onclick="db.call('group/add')"> new group </span>
+</div>
+
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}
