@@ -52,7 +52,12 @@ Database.prototype = {
         //hack redirection
         try {
             var res = jQuery.parseJSON(result);
-            this.call(res.redirect, res.args)
+            
+            if (res.redirect) this.call(res.redirect, res.args)
+                
+            //TODO : implémenter un flash message
+            if (res.message) console.log(res.message)
+            
         }
         catch(err)
         {
@@ -86,12 +91,7 @@ Database.prototype = {
                 data     : $(this).serialize(),
                 xhrFields: {withCredentials: true},
                 success: function (result) {
-                    var res = jQuery.parseJSON(result);
-                    if (res.success == "true") {
-                        self.call("patient/index")
-                    } else {
-                        popupMsg(res.error);
-                    }
+                    self.display_result(result)
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
@@ -167,12 +167,7 @@ Database.prototype = {
                     $('#upload_percent_'+upload_n).html(percentVal);
                 },
                 success  : function(result) {
-                    var res = jQuery.parseJSON( result );
-                    if (res.success=="true"){
-                        
-                    }else{
-                        popupMsg(res.error);
-                    }
+                    self.display_result(result)
                 },
                 error: function (request, status, error) {
                     if(status==="timeout") {
