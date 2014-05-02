@@ -33,7 +33,7 @@ def add_form():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     else :
-        res = {"success" : "false", "error" : error}
+        res = {"success" : "false", "message" : error}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
