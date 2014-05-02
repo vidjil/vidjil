@@ -9,34 +9,62 @@ query = db(
         & (db.auth_membership.group_id == request.vars["id"]) 
     ).select() 
 }}
-
 <div>
-    <h3>{{=message}}  {{=request.vars["id"]}}</h3>
-</div>
 
-<div id="db_table_container">
-    <table class="db_table" id="table">
-        <thead>
-            <tr><td class="column1"> user name </td>
-                <td> email </td>
-                <td class="column5"> </td>
-            </tr>
-        </thead>
-        <tbody>
-            {{for row in query :}}
-                 <tr>
-                    <td> {{=row.auth_user.first_name + " " + row.auth_user.last_name}}</td>
-                    <td> {{=row.auth_user.email}} </td>
-                    <td onclick="" > X </td>
+    <div>
+        <h3>{{=message}}  {{=request.vars["id"]}}</h3>
+    </div>
+
+    <div id="db_table_container">
+        <table class="db_table" id="table">
+            <thead>
+                <tr><td class="column1"> user name </td>
+                    <td> email </td>
+                    <td class="column2"> - </td>
+                    <td class="column5"> </td>
                 </tr>
-            {{pass}}
-        </tbody>
-    </table>
-    <table class="db_table" id="db_fixed_header"></table>
-</div>
+            </thead>
+            <tbody>
+                {{for row in query :}}
+                     <tr>
+                        <td> {{=row.auth_user.first_name + " " + row.auth_user.last_name}}</td>
+                        <td> {{=row.auth_user.email}} </td>
+                        <td> {{if auth.has_permission('admin', 'auth_group', request.vars["id"], row.auth_user.id):}}
+                         admin
+                         {{pass}}</td>
+                        <td onclick="db.call('group/kick', {'user_id' :'{{=row.auth_user.id}}', 'group_id' : '{{=request.vars["id"]}}'} )" > X </td>
+                    </tr>
+                {{pass}}
+            </tbody>
+        </table>
+        <table class="db_table" id="db_fixed_header"></table>
+    </div>
     
-<span class="button" onclick="db.call('group/index')"> back to list </span>
+    <span class="button" onclick="db.call('group/index')"> back to list </span>
 
+    {{if auth.has_permission("admin", "auth_group", request.vars["id"], auth.user.id) :}}
+
+        <div>
+            invite
+            <span>
+                <select id="select_user" name="config">
+                    {{for row in db(db.auth_user).select():}}
+                            <option value="{{=row.id}}">{{=row.first_name + " " + row.last_name}} </option>
+                    {{pass}}
+                </select>
+            </span>
+            <span class="button" onclick="db.call('group/invite', {
+                                          'group_id' : {{=request.vars["id"]}} ,
+                                          'user_id' : document.getElementById('select_user').value
+                                                                             } )">
+                add
+            </span>
+        </div>
+
+    {{else:}}
+        <div>you need admin access on this group if you want to invite people </div>
+    {{pass}}
+    
 </div>
 
 {{elif 'content' in globals():}}
