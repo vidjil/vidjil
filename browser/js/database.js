@@ -43,8 +43,6 @@ Database.prototype = {
     
     
     display_result: function (result) {
-        console.log(this)       //context work !!! YEEAAHHHHHHHHHHHH
-        
         //rétablissement de l'adresse pour les futures requetes
         result = result.replace("DB_ADDRESS/", this.db_address);
         result = result.replace("action=\"#\"", "action=\""+this.last_url+"\"");
@@ -56,7 +54,7 @@ Database.prototype = {
             if (res.redirect) this.call(res.redirect, res.args)
                 
             //TODO : implémenter un flash message
-            if (res.message) console.log(res.message)
+            if (res.message) console.log("database log : "+res.message)
             
         }
         catch(err)
