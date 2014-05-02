@@ -17,8 +17,6 @@ def add_form():
         response.headers['Access-Control-Max-Age'] = 86400
         
     error = ""
-    if not request.vars.file:
-        error += "missing file"
     try:
         datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
     except ValueError:
