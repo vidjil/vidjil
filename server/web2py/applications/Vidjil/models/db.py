@@ -152,8 +152,10 @@ if db(db.auth_user.id > 0).count() == 0:
     db.auth_membership.insert(user_id=id_first_user, group_id=id_admin_group)
     db.auth_membership.insert(user_id=id_first_user, group_id=id_sa_group)
     
-    ##permission
+    ## permission
+    ## system admin have admin rights on all patients and groups
     auth.add_permission(id_admin_group, 'admin', db.patient, 0)
+    auth.add_permission(id_admin_group, 'admin', db.auth_group, 0)
 
 
 ## after defining tables, uncomment below to enable auditing
