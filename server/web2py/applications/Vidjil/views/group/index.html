@@ -17,20 +17,22 @@ query = db(
         <table class="db_table" id="table">
             <thead>
                 <tr><td class="column1"> group name</td>
-                    <td class="column2"> user</td>
+                    <td class="column2"> member</td>
                     <td> info </td>
                     <td class="column5"> </td>
                     <td class="column5"> </td>
                 </tr>
             </thead>
            {{for row in query :}}
-               <tr onclick="db.call('group/info', {'id' :'{{=row.auth_group.id}}'} )">
-                    <td> {{=row.auth_group.role}} </td>
-                    <td> {{=row[count]}}  </td>
-                    <td> {{=row.auth_group.description }} </td>
-                    <td onclick="db.call('group/permission', {'id' :'{{=row.auth_group.id}}'} )" > p </td>
-                    <td onclick="db.call('group/confirm', {'id' :'{{=row.auth_group.id}}'} )" > X </td>  
-                </tr>
+                {{if row.auth_group.role[:5] != "user_" :}}
+                   <tr onclick="db.call('group/info', {'id' :'{{=row.auth_group.id}}'} )">
+                        <td> {{=row.auth_group.role}} </td>
+                        <td> {{=row[count]}}  </td>
+                        <td> {{=row.auth_group.description }} </td>
+                        <td onclick="db.call('group/permission', {'id' :'{{=row.auth_group.id}}'} )" > p </td>
+                        <td onclick="db.call('group/confirm', {'id' :'{{=row.auth_group.id}}'} )" > X </td>  
+                    </tr>
+                {{pass}}
            {{pass}}
         </table>
         <table class="db_table" id="db_fixed_header"></table>
