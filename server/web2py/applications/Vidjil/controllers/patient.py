@@ -58,15 +58,18 @@ def add_form():
             
             auth.add_permission(user_group, 'admin', db.patient, id)
 
-            res = {"success": "true" }
+            res = {"redirect": "patient/index",
+                   "message": "new patient added"}
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
         else :
-            res = {"success" : "false", "error" : error}
+            res = {"success" : "false",
+                   "message" : error}
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
             
         
-    res2 = {"success" : "false", "error" : "connect error"}
+    res2 = {"success" : "false",
+            "message" : "connect error"}
     return gluon.contrib.simplejson.dumps(res2, separators=(',',':'))
 
 
@@ -104,11 +107,11 @@ def edit_form():
                                                    info=request.vars["info"]
                                                    )
             
-            res = {"success": "true" }
+            res = {"redirect": "patient/index" }
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
         else :
-            res = {"success" : "false", "error" : error}
+            res = {"success" : "false", "message" : error}
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
         
