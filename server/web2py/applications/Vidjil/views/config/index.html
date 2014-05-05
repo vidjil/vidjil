@@ -10,7 +10,6 @@
         <table class="db_table" id="table">
             <thead>
                 <tr><td class="column2"> name </td>
-                    <td class="column2"> standard </td>
                     <td> info </td>
                     <td> command </td>
                     <td class="column5"> </td>
@@ -20,15 +19,14 @@
            {{ 
            query = None
            c_id = ""
-           query = db(db.config.standard_id==db.standard_file.id).select() 
+           query = db(db.config).select() 
            for row in query :}}
                 <tr>
-                    <td> {{=row.config.name }} </td>
-                    <td> {{=row.standard_file.name}} </td>
-                    <td> {{=row.config.info }} </td>
-                    <td> {{=row.config.command }} </td>
-                    <td onclick="db.call('config/edit', {'id' :'{{=row.config.id}}'} )" > e </td>
-                    <td onclick="db.call('config/confirm', {'id' :'{{=row.config.id}}'} )" > X </td>
+                    <td> {{=row.name }} </td>
+                    <td> {{=row.info }} </td>
+                    <td> {{=row.command }} </td>
+                    <td onclick="db.call('config/edit', {'id' :'{{=row.id}}'} )" > e </td>
+                    <td onclick="db.call('config/confirm', {'id' :'{{=row.id}}'} )" > X </td>
                 </tr>
             {{pass}}
         </table>
