@@ -17,10 +17,16 @@ def add_form():
         response.headers['Access-Control-Max-Age'] = 86400
         
     error = ""
-    try:
-        datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
-    except ValueError:
-        error += "sampling date missing or wrong format"
+
+    if not hasattr(request.vars, 'file'):
+        error += "missing file"
+    if not hasattr(request.vars, 'sampling_date'):
+        error += "missing date"
+    else:
+        try:
+            datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
+        except ValueError:
+            error += "sampling date missing or wrong format"
 
     if error=="" :
         id = db.sequence_file.insert(data_file = request.vars.file)
