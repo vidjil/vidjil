@@ -1,5 +1,7 @@
 # coding: utf8
 
+## return patient file list
+##
 def info():
     if request.env.http_origin:
         response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -8,6 +10,8 @@ def info():
     response.title = ""
     return dict(message=T('patient'))
 
+
+## return patient list
 def index():
     import gluon.contrib.simplejson
     if request.env.http_origin:
@@ -21,6 +25,8 @@ def index():
     
     return dict(message=T('patient list'))
 
+
+## return form to create new patient
 def add(): 
     if request.env.http_origin:
         response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -28,6 +34,10 @@ def add():
         response.headers['Access-Control-Max-Age'] = 86400
     return dict(message=T('add patient'))
 
+## create a patient if the html form is complete
+## need ["first_name", "last_name", "birth_date", "info"]
+## redirect to patient list if success
+## return a flash error message if fail
 def add_form(): 
     import gluon.contrib.simplejson, datetime
     if request.env.http_origin:
@@ -72,7 +82,7 @@ def add_form():
             "message" : "connect error"}
     return gluon.contrib.simplejson.dumps(res2, separators=(',',':'))
 
-
+## return edit form 
 def edit(): 
     if request.env.http_origin:
         response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -80,6 +90,10 @@ def edit():
         response.headers['Access-Control-Max-Age'] = 86400
     return dict(message=T('edit patient'))
 
+## check edit form
+## need ["first_name", "last_name", "birth_date", "info"]
+## redirect to patient list if success
+## return a flash error message if fail
 def edit_form(): 
     import gluon.contrib.simplejson, datetime
     if request.env.http_origin:
@@ -107,14 +121,19 @@ def edit_form():
                                                    info=request.vars["info"]
                                                    )
             
-            res = {"redirect": "patient/index" }
+            res = {"redirect": "patient/index",
+                   "message": "change saved"}
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
         else :
             res = {"success" : "false", "message" : error}
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
-        
+
+## return
+## need ["first_name", "last_name", "birth_date", "info"]
+## redirect to patient list if success
+## return a flash error message if fail
 @cache.action()
 def download():
     if request.env.http_origin:
