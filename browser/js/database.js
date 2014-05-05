@@ -190,7 +190,7 @@ Database.prototype = {
         $.ajax({
             type: "POST",
             cache: false,
-            timeout: 1000,
+            timeout: 2000,
             crossDomain: true,
             url      : $(this).attr('action'),
             data     : $(this).serialize(),
