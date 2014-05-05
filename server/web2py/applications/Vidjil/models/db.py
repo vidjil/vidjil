@@ -115,7 +115,6 @@ db.define_table('standard_file',
 
 
 db.define_table('config',
-                Field('standard_id', 'reference standard_file'),
                 Field('name', 'string'),
                 Field('command', 'string'),
                 Field('info','text'))
