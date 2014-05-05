@@ -21,6 +21,13 @@ def index():
     response.flash = T("Welcome to Vidjil!")
     return dict(message=T('hello world'))
 
+def help():
+    if request.env.http_origin:
+        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Max-Age'] = 86400
+    return dict(message=T('help i\'m lost'))
+
     
 def run_request():
     import gluon.contrib.simplejson
