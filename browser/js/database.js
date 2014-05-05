@@ -43,8 +43,6 @@ Database.prototype = {
     
     
     display_result: function (result) {
-        console.log(this)       //context work !!! YEEAAHHHHHHHHHHHH
-        
         //rétablissement de l'adresse pour les futures requetes
         result = result.replace("DB_ADDRESS/", this.db_address);
         result = result.replace("action=\"#\"", "action=\""+this.last_url+"\"");
@@ -52,7 +50,12 @@ Database.prototype = {
         //hack redirection
         try {
             var res = jQuery.parseJSON(result);
-            this.call(res.redirect)
+            
+            if (res.redirect) this.call(res.redirect, res.args)
+                
+            //TODO : implémenter un flash message
+            if (res.message) console.log("database log : "+res.message)
+            
         }
         catch(err)
         {
@@ -86,12 +89,7 @@ Database.prototype = {
                 data     : $(this).serialize(),
                 xhrFields: {withCredentials: true},
                 success: function (result) {
-                    var res = jQuery.parseJSON(result);
-                    if (res.success == "true") {
-                        self.call("patient/index")
-                    } else {
-                        popupMsg(res.error);
-                    }
+                    self.display_result(result)
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
@@ -167,12 +165,7 @@ Database.prototype = {
                     $('#upload_percent_'+upload_n).html(percentVal);
                 },
                 success  : function(result) {
-                    var res = jQuery.parseJSON( result );
-                    if (res.success=="true"){
-                        
-                    }else{
-                        popupMsg(res.error);
-                    }
+                    self.display_result(result)
                 },
                 error: function (request, status, error) {
                     if(status==="timeout") {
@@ -197,7 +190,7 @@ Database.prototype = {
         $.ajax({
             type: "POST",
             cache: false,
-            timeout: 1000,
+            timeout: 2000,
             crossDomain: true,
             url      : $(this).attr('action'),
             data     : $(this).serialize(),

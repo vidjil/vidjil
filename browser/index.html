@@ -91,21 +91,10 @@
         <!-- TOP-CONTAINER -->
         <div id="top-container">
 
-            <div class="menu" onmouseover="showSelector('adminSelector');" style="display:none"> admin 
+            <div class="menu" onmouseover="showSelector('adminSelector');" style="display : none"> admin 
                 <div id="adminSelector" class="selector"><div>
                     <a id="test_load_data" class="buttonSelector" onclick="m.parseJsonData(dataTest, 100).loadGermline().initClones()">
                     test load data</a>
-                </div></div>
-            </div>
-
-
-            <div class="menu" id="database_menu" onmouseover="showSelector('dbSelector');" style="display:none"> database 
-                <div id="dbSelector" class="selector"><div>
-                    <a class="buttonSelector" onclick="db.call('patient/index');">patient list</a>
-                    <a class="buttonSelector" onclick="db.call('standard/index');">standard list</a>
-                    <a class="buttonSelector" onclick="db.call('config/index');">config list</a>
-
-                    <div id="upload_list"></div>
                 </div></div>
             </div>
 
@@ -115,6 +104,8 @@
                     <!--<a class="buttonSelector" onclick="javascript:loadAnalysis()">load analysis</a> -->
                     <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
                     <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
+                    <div id="upload_list"></br>
+                    </div>
                 </div></div>
             </div>
 

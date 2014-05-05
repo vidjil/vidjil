@@ -16,26 +16,26 @@ def add_form():
         response.headers['Access-Control-Allow-Credentials'] = 'true'
         response.headers['Access-Control-Max-Age'] = 86400
         
+    id = db.sequence_file.insert(data_file = request.vars.file)
     error = ""
-    if not request.vars.file:
-        error += "missing file"
-    try:
-        datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
-    except ValueError:
-        error += "sampling date missing or wrong format"
-
+    if request.vars['sampling_date'] != None :
+        try:
+            datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
+        except ValueError:
+            error += "date missing or wrong format"
+    
     if error=="" :
-        id = db.sequence_file.insert(data_file = request.vars.file)
-
+        
         db.sequence_file[id] = dict(sampling_date=request.vars['sampling_date'],
                                     info=request.vars['file_info'],
                                     patient_id=request.vars['patient_id'])
     
-        res = {"success": "true" }
+        res = {"redirect": "patient/index",
+               "message": "file added"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     else :
-        res = {"success" : "false", "error" : error}
+        res = {"success" : "false", "message" : error}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
@@ -65,11 +65,12 @@ def edit_form():
         db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'],
                                                 info=request.vars['file_info'])
             
-        res = {"success": "true" }
+        res = {"redirect": "patient/index",
+       "message": "change saved"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
-        res = {"success" : "false", "error" : error}
+        res = {"success" : "false", "message" : error}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
   
 
@@ -91,5 +92,6 @@ def delete():
     db(db.sequence_file.id == request.vars["id"]).delete()
     db(db.data_file.sequence_file_id == request.vars["id"]).delete()
     
-    res = {"success": "true" }
+    res = {"redirect": "patient/index",
+           "message": "sequence file deleted"}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))

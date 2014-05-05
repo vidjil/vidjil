@@ -38,8 +38,6 @@ def add_form():
         error += "name needed, "
     if request.vars['config_info'] == "" :
         error += "info needed, "
-    if request.vars['config_standard'] == "" :
-        error += "standard needed, "
     if request.vars['config_command'] == "" : 
         error += "command needed, "  
 
@@ -47,7 +45,6 @@ def add_form():
         
         db.config.insert(name=request.vars['config_name'],
                         info=request.vars['config_info'],
-                        standard_id=request.vars['config_standard'],
                         command=request.vars['config_command'],
                         )
 
@@ -80,8 +77,6 @@ def edit_form():
         error += "name needed, "
     if request.vars['config_info'] == "" :
         error += "info needed, "
-    if request.vars['config_standard'] == "" :
-        error += "standard needed, "
     if request.vars['config_command'] == "" : 
         error += "command needed, "  
 
@@ -89,11 +84,11 @@ def edit_form():
 
         db.config[request.vars["id"]] = dict(name=request.vars['config_name'],
                                             info=request.vars['config_info'],
-                                            standard_id=request.vars['config_standard'],
                                             command=request.vars['config_command'],
                                             )
 
-        res = {"success": "true" }
+        res = {"redirect": "config/index",
+               "message": "config saved"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
@@ -120,5 +115,6 @@ def delete():
     #delete config
     db(db.config.id==request.vars["id"]).delete() 
     
-    res = {"success": "true" }
+    res = {"redirect": "config/index",
+           "message": "config deleted"}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
