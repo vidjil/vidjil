@@ -11,7 +11,7 @@ Database.prototype = {
      *args : parametres format json ( { "name_arg1" : "arg1", ... } )
      * */
     call: function (page, args) {
-        event.stopPropagation();
+
         var self = this;
         var arg = "?";
         for (var key in args) {
