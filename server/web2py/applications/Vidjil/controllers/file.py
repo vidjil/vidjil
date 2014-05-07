@@ -1,11 +1,16 @@
 # coding: utf8
 
 def add(): 
+    import gluon.contrib.simplejson
     if request.env.http_origin:
         response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
         response.headers['Access-Control-Allow-Credentials'] = 'true'
         response.headers['Access-Control-Max-Age'] = 86400
-    return dict(message=T('add file'))
+    if auth.has_permission('admin', 'patient', request.vars['id'], auth.user_id):
+        return dict(message=T('add file'))
+    else :
+        res = {"success" : "false", "message" : "you need admin permission on this patient to add file"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
 #TODO check data
@@ -18,11 +23,15 @@ def add_form():
         
     id = db.sequence_file.insert(data_file = request.vars.file)
     error = ""
+    
     if request.vars['sampling_date'] != None :
         try:
             datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
         except ValueError:
-            error += "date missing or wrong format"
+            error += "date missing or wrong format, "
+            
+    if not auth.has_permission('admin', 'patient', request.vars['patient_id'], auth.user_id):
+        error += "you need admin permission on this patient to add file"
     
     if error=="" :
         
