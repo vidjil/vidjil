@@ -40,19 +40,23 @@ def add_form():
         error += "info needed, "
     if request.vars['config_command'] == "" : 
         error += "command needed, "  
+    if request.vars['config_germline'] == "" : 
+        error += "germline needed, "
 
     if error=="" :
         
         db.config.insert(name=request.vars['config_name'],
                         info=request.vars['config_info'],
                         command=request.vars['config_command'],
+                        germline=request.vars['config_germline']
                         )
 
-        res = {"success": "true" }
+        res = {"redirect": "config/index",
+               "message": "config added"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     else :
-        res = {"success" : "false", "error" : error}
+        res = {"success" : "false", "message" : error}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
@@ -78,13 +82,16 @@ def edit_form():
     if request.vars['config_info'] == "" :
         error += "info needed, "
     if request.vars['config_command'] == "" : 
-        error += "command needed, "  
+        error += "command needed, "
+    if request.vars['config_germline'] == "" : 
+        error += "germline needed, "
 
     if error=="" :
 
         db.config[request.vars["id"]] = dict(name=request.vars['config_name'],
                                             info=request.vars['config_info'],
                                             command=request.vars['config_command'],
+                                            germline=request.vars['config_germline']
                                             )
 
         res = {"redirect": "config/index",
@@ -92,7 +99,7 @@ def edit_form():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
-        res = {"success" : "false", "error" : error}
+        res = {"success" : "false", "message" : error}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def confirm():

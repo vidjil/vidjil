@@ -117,7 +117,8 @@ db.define_table('standard_file',
 db.define_table('config',
                 Field('name', 'string'),
                 Field('command', 'string'),
-                Field('info','text'))
+                Field('info','text'),
+                Field('germline', 'string'))
 
 
 db.define_table('data_file',
