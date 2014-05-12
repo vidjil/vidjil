@@ -30,8 +30,8 @@ def add_form():
         except ValueError:
             error += "date missing or wrong format, "
             
-    if not auth.has_permission('admin', 'patient', request.vars['patient_id'], auth.user_id):
-        error += "you need admin permission on this patient to add file"
+    ##if not auth.has_permission('admin', 'patient', request.vars['patient_id'], auth.user_id):
+    ##    error += "you need admin permission on this patient to add file"
     
     if error=="" :
         

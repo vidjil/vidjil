@@ -147,7 +147,6 @@ Database.prototype = {
                 crossDomain: true,
                 url      : $(this).attr('action'),
                 data     : $(this).serialize(),
-                xhrFields: { withCredentials: true},
                 beforeSubmit: function() {
                     self.call("patient/index") 
                     //crée un div qui contiendra la progression de l'upload du fichier 
