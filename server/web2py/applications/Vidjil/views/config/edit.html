@@ -13,30 +13,20 @@ info = db.config[request.vars["id"]]
                 <td > <input class="string" id="config_name" name="config_name" type="text" value="{{=info.name}}"> </td> <td >
                 </td>
             </tr>
-            <!--
-            <tr>
-                <td> <label for="config_standard" id="config_standard__label"> standard: </label> </td>
-                <td>
-                    <select id="config_standard" name="config_standard">
-                        {{ 
-                        query = db(db.standard_file).select() 
-                        for row in query :}}
-                        <option value="{{=row.id }}"
-                            {{if row.id==info.standard_id:}}
-                                selected
-                            {{pass}}
-                        >{{=row.name }} </option>
-                        {{pass}}
-                    </select>
-                </td>
-                <td> </td>
-            </tr>
-            -->
-            
             <tr>
                 <td> <label for="config_command" id="config_command__label">Command: </label> </td>
                 <td> <input class="string" id="config_command" name="config_command" type="text" value="{{=info.command}}"> </td>
                 <td> </td>
+            </tr>
+            <tr>
+                <td><label for="config_germline" id="config_germline__label"> germline: </label></td>
+                <td>
+                    <select id="config_germline" name="config_germline">
+                        <option value="TRG">TRG</option>
+                        <option value="IGH">IGH</option>
+                    </select>
+                </td>
+                <td></td>
             </tr>
             <tr>
                 <td> <label for="config_info" id="config_info__label">Info: </label> </td>
