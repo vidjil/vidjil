@@ -587,28 +587,37 @@ Model.prototype = {
         //      CUSTOM TAG / NAME
         //      EXPECTED VALUE
         var c = this.analysis.custom;
+        var max = {"id" : -1 , "size" : 0 }     //store biggest expected value ( will be used for normalization)
         for (var i = 0; i < c.length; i++) {
             if (typeof this.mapID[c[i].window] != "undefined") {
                 var f = 1;
                 if (typeof c[i].expected != "undefined") {
-                    var u = this.normalizations.indexOf("highest standard");
-                    if (u != -1) {
-                        f = this.getSize([this.mapID[c[i].window]]) / c[i].expected;
-                    } else {
-                        f = jsonData.windows[this.mapID[c[i].window]].ratios[u] / c[i].expected;
-                    }
-                }
-                if (f < 100 && f > 0.01) {
-                    if (typeof (c[i].tag) != "undefined") {
-                        this.windows[this.mapID[c[i].window]].tag = c[i].tag;
-                    }
+                    f = this.getSize([this.mapID[c[i].window]]) / c[i].expected;
+                    
+                    if (f < 100 && f > 0.01) {
+                        if (typeof (c[i].tag) != "undefined") {
+                            this.windows[this.mapID[c[i].window]].tag = c[i].tag;
+                        }
 
-                    if (typeof (c[i].name) != "undefined") {
-                        this.windows[this.mapID[c[i].window]].c_name = c[i].name;
+                        if (typeof (c[i].name) != "undefined") {
+                            this.windows[this.mapID[c[i].window]].c_name = c[i].name;
+                        }
+                        
+                        if (f>max.size){
+                            max.size = c[i].expected
+                            max.id = this.mapID[c[i].window]
+                        }
                     }
                 }
             }
         }
+        
+        //      default normalization
+        if (max.id != -1 && this.normalization.B == 0){
+            console.log(max)
+            this.compute_normalization(max.id, max.size)
+        }
+        
 
         //      DATA CLUSTER
         this.dataCluster.sort(function (a, b) {
