@@ -603,7 +603,7 @@ Model.prototype = {
                             this.windows[this.mapID[c[i].window]].c_name = c[i].name;
                         }
                         
-                        if (f>max.size){
+                        if (c[i].expected>max.size){
                             max.size = c[i].expected
                             max.id = this.mapID[c[i].window]
                         }
