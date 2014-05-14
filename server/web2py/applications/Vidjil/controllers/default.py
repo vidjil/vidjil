@@ -102,13 +102,13 @@ def result():
                    & ( db.data_file.config_id == request.vars["config_id"] )
                    ).select( orderby=db.sequence_file.sampling_date ) 
         for row in query :
-            files += " applications/Vidjil/uploads/"+row.data_file.data_file
+            files += " applications/vidjil/uploads/"+row.data_file.data_file
         
         if error == "" :
             cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
             p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
             
-            time.sleep(1)
+            p.wait()
             
             f = open(output_file, "r")
             output=f.readlines()

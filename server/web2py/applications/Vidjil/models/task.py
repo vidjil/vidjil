@@ -6,7 +6,7 @@ def run_vidjil(id_file, id_config):
     ## les chemins d'acces a vidjil / aux fichiers de sequences
     vidjil_path = '/home/duez/git/vidjil'
     germline_folder = vidjil_path + '/germline/'
-    upload_folder = vidjil_path + '/server/web2py/applications/Vidjil/uploads/'
+    upload_folder = vidjil_path + '/server/web2py/applications/vidjil/uploads/'
     out_folder = vidjil_path + '/out/'
     
     ## filepath du fichier de séquence
