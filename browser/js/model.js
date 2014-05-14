@@ -590,7 +590,9 @@ Model.prototype = {
         var max = {"id" : -1 , "size" : 0 }     //store biggest expected value ( will be used for normalization)
         for (var i = 0; i < c.length; i++) {
             if (typeof this.mapID[c[i].window] != "undefined") {
+                
                 var f = 1;
+                
                 if (typeof c[i].expected != "undefined") {
                     f = this.getSize([this.mapID[c[i].window]]) / c[i].expected;
                     
@@ -607,14 +609,23 @@ Model.prototype = {
                             max.size = c[i].expected
                             max.id = this.mapID[c[i].window]
                         }
+                    }else{
+                        console.log("windows "+ c[i].window + " : incorrect expected value")
+                    }
+                }else{
+                    if (typeof (c[i].tag) != "undefined") {
+                        this.windows[this.mapID[c[i].window]].tag = c[i].tag;
+                    }
+                    if (typeof (c[i].name) != "undefined") {
+                        this.windows[this.mapID[c[i].window]].c_name = c[i].name;
                     }
                 }
+                
             }
         }
         
         //      default normalization
         if (max.id != -1 && this.normalization.B == 0){
-            console.log(max)
             this.compute_normalization(max.id, max.size)
         }
         
