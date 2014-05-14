@@ -1,0 +1,43 @@
+{{extend 'db_layout.html'}}
+
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+{{
+count = db.auth_group.id.count()
+
+query = db( 
+   db.auth_user
+).select()
+
+}}
+
+<div>
+    <h3>{{=message}}</h3>
+    
+    <div id="db_table_container">
+        <table class="db_table" id="table">
+            <thead>
+                <tr><td class="column1"> user name</td>
+                    <td> @</td>
+                </tr>
+            </thead>
+            
+           {{for row in query :}}
+               <tr onclick="db.call('user/info', {'id' :'{{=row.id}}'} )">
+                    <td> {{=row.last_name + " " + row.first_name }} </td>
+                    <td> {{=row.email}}  </td>
+                </tr>
+           {{pass}}
+        
+        </table>
+        <table class="db_table" id="db_fixed_header"></table>
+    </div>
+
+</div>
+
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}
