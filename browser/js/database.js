@@ -232,7 +232,7 @@ Database.prototype = {
 
         $.ajax({
             type: "POST",
-            timeout: 5000,
+            timeout: 15000,
             crossDomain: true,
             url: self.db_address + "default/result" + arg,
             xhrFields: {withCredentials: true},
