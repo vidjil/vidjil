@@ -37,6 +37,7 @@
                 <td class="column2"> sampling date </td>
                 <td> info </td>
                 <td class="column4"> status </td>
+                <td class="column2"> vidjil run date </td>
                 <td class="column5"> </td>
                 <td class="column5"> </td>
                 <td class="column5"> </td>
@@ -62,9 +63,10 @@
                     <td> {{if row.data_file.id == None :}}
                         <span class="button" onclick="db.request('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}' , 'config_id' : {{=config_id}} } )"> run >> </span>
                          {{else:}}
-                             ready
+                             {{=row.data_file.status}}
                          {{pass}}
                     </td>
+                    <td> {{=row.data_file.run_date}} </td>
                     <td> <a href="{{=URL('download', scheme='http', args=row.sequence_file.data_file)}}" >dl</a> </td>
                     <td onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
                     <td onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>

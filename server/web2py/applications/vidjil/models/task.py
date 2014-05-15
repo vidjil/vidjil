@@ -1,6 +1,7 @@
 # coding: utf8
 
-def run_vidjil(id_file, id_config):
+def run_vidjil(id_file, id_config, id_data):
+    import time, datetime
     from subprocess import Popen, PIPE, STDOUT, os
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
@@ -30,10 +31,12 @@ def run_vidjil(id_file, id_config):
     stream = open(data_filepath, 'rb')
     
     ## insertion dans la base de donnée
-    id = db.data_file.insert(sequence_file_id=id_file,
-                config_id=id_config,
-                data_file=stream
-                )
+    ts = time.time()
+    
+    db.data_file[id_data] = dict(status = 'ready',
+                                 run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d'),
+                                 data_file = stream
+                                )
     
     db.commit()
     

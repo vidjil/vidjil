@@ -28,7 +28,8 @@ def help():
         response.headers['Access-Control-Max-Age'] = 86400
     return dict(message=T('help i\'m lost'))
 
-    
+
+## add a scheduller task to run vidjil on a specific sequence file
 def run_request():
     import gluon.contrib.simplejson
     if request.env.http_origin:
@@ -43,12 +44,6 @@ def run_request():
             error += "id sequence file needed, "
         if not "config_id" in request.vars:
             error += "id config needed, "
-            
-        row = db( ( db.data_file.config_id == request.vars["config_id" ] ) 
-                 & ( db.data_file.sequence_file_id == request.vars["sequence_file_id"] )  
-                 ).select()
-        if len(row) > 0 :
-            error += "run already done, "
         
         row2 = db( ( db.scheduler_task.args == '["'+request.vars["sequence_file_id"]+'", "'+request.vars["config_id"]+'"]' ) 
                  & ( db.scheduler_task.status != "FAILED"  )
@@ -61,7 +56,23 @@ def run_request():
             error += "run already registered, "
         
         if error == "" :
-            scheduler.queue_task('run', [request.vars["sequence_file_id"],request.vars["config_id"]]
+            
+            ## create or update data file state
+            row = db( ( db.data_file.config_id == request.vars["config_id" ] ) 
+             & ( db.data_file.sequence_file_id == request.vars["sequence_file_id"] )  
+             ).select()
+            
+            if len(row) > 0 : ## update
+                data_id = row[0].data_file.id
+                db.data_file[data_id] = dict(state = 'queued')
+            else:             ## create
+                data_id = db.data_file.insert(sequence_file_id = request.vars['sequence_file_id'],
+                                            config_id = request.vars['config_id'],
+                                            status = 'pending'
+                                            )
+            
+            ##add task to scheduller
+            scheduler.queue_task('run', [request.vars["sequence_file_id"],request.vars["config_id"], data_id]
                                  , repeats = 1, timeout = 6000)
             
             res = {"success": "true" , "msg": "request added" }
