@@ -124,6 +124,8 @@ db.define_table('config',
 db.define_table('data_file',
                 Field('sequence_file_id', 'reference sequence_file'),
                 Field('config_id', 'reference config'),
+                Field('run_date','date'),
+                Field('status', 'string'),
                 Field('data_file', 'upload', length=1000000000000))
 
 
