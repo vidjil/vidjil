@@ -627,11 +627,15 @@ int main (int argc, char **argv)
       // Loop through all reads
 
       int nb_reads = 0 ;
+      int total_length = 0 ;
+      int s = index->getS();
+
       while (reads->hasNext())
 	{
 	  reads->next();
 	  nb_reads++;
 	  string seq = reads->getSequence().sequence;
+	  total_length += seq.length() - s;
 
 	  KmerAffectAnalyser<KmerStringAffect> *kaa = new KmerAffectAnalyser<KmerStringAffect>(*index, seq);
 
@@ -660,10 +664,12 @@ int main (int argc, char **argv)
       cout << "  <== " << nb_reads << " reads" << endl ;
       for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
 	{
-	  cout << setw(12) << stats_kmer[*it] << "\t" << *it << endl ;
+	  cout << setw(12) << stats_kmer[*it] << "\t" ;
+	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[*it] / total_length * 100 << "%\t" ;
+	  cout << *it << endl ;
 	}
-      cout << setw(12) << stats_kmer[KMER_AMBIGUOUS] << "\t" << KMER_AMBIGUOUS << endl ;
-      cout << setw(12) << stats_kmer[KMER_UNKNOWN]   << "\t" << KMER_UNKNOWN   << endl ;
+      cout << setw(12) << stats_kmer[KMER_AMBIGUOUS] << "\t" << "\t" << KMER_AMBIGUOUS << endl ;
+      cout << setw(12) << stats_kmer[KMER_UNKNOWN]   << "\t" << "\t" << KMER_UNKNOWN   << endl ;
 
       exit(0);
     }
