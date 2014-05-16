@@ -585,6 +585,14 @@ int main (int argc, char **argv)
       list< char* > f_germlines ;
       f_germlines.push_back("germline/TRGV.fa");
       f_germlines.push_back("germline/TRGJ.fa");
+
+      f_germlines.push_back("germline/TRDV.fa"); 
+      f_germlines.push_back("germline/TRDD.fa");
+      f_germlines.push_back("germline/TRDJ.fa");
+
+      f_germlines.push_back("germline/IGKV.fa");
+      f_germlines.push_back("germline/IGKJ.fa");
+
       f_germlines.push_back("germline/IGHV.fa");
       f_germlines.push_back("germline/IGHD.fa");
       f_germlines.push_back("germline/IGHJ.fa");
