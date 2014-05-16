@@ -598,7 +598,47 @@ int main (int argc, char **argv)
 	  index->insert(rep, *it);
 	  stats_kmer[string(*it)] = 0 ;
 	}
+
+      // Open read file (copied frow below)
+
+      OnlineFasta *reads;
+
+      try {
+	reads = new OnlineFasta(f_reads, 1, " ");
+      } catch (const std::ios_base::failure e) {
+	cout << "Error while reading reads file " << f_reads << ": " << e.what()
+	     << endl;
+	exit(1);
+      }
       
+      // Loop through all reads
+
+      int nb_reads = 0 ;
+      while (reads->hasNext())
+	{
+	  reads->next();
+	  nb_reads++;
+	  string seq = reads->getSequence().sequence;
+
+	  KmerAffectAnalyser<KmerStringAffect> *kaa = new KmerAffectAnalyser<KmerStringAffect>(*index, seq);
+
+	  for (int i = 0; i < kaa->count(); i++) 
+	    { 
+	      KmerStringAffect ksa = kaa->getAffectation(i);
+	      // if (! it.isAmbiguous() && ! it.isUnknown()) { }
+
+	      stats_kmer[ksa.label]++ ;
+	    }
+	}
+
+      // Display statistics
+
+      cout << "  <== " << nb_reads << " reads" << endl ;
+      for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+	{
+	  cout << setw(12) << stats_kmer[*it] << "\t" << *it << endl ;
+	}
+
       exit(0);
     }
 
