@@ -579,7 +579,26 @@ int main (int argc, char **argv)
   /////////////////////////////////////////
   if (command == CMD_GERMLINES)
     {
+      list< char* > f_germlines ;
+      f_germlines.push_back("germline/TRGV.fa");
+      f_germlines.push_back("germline/TRGJ.fa");
+      f_germlines.push_back("germline/IGHV.fa");
+      f_germlines.push_back("germline/IGHD.fa");
+      f_germlines.push_back("germline/IGHJ.fa");
 
+      // Read germline and build one unique index
+
+      bool rc = true ;   
+      IKmerStore<KmerStringAffect>  *index = KmerStoreFactory::createIndex<KmerStringAffect>(seed, rc);
+      map <string, int> stats_kmer;
+
+      for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+	{
+	  Fasta rep(*it, 2, "|", cout);
+	  index->insert(rep, *it);
+	  stats_kmer[string(*it)] = 0 ;
+	}
+      
       exit(0);
     }
 
