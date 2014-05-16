@@ -579,6 +579,9 @@ int main (int argc, char **argv)
   /////////////////////////////////////////
   if (command == CMD_GERMLINES)
     {
+#define KMER_AMBIGUOUS "?"
+#define KMER_UNKNOWN "_"
+
       list< char* > f_germlines ;
       f_germlines.push_back("germline/TRGV.fa");
       f_germlines.push_back("germline/TRGJ.fa");
@@ -591,6 +594,8 @@ int main (int argc, char **argv)
       bool rc = true ;   
       IKmerStore<KmerStringAffect>  *index = KmerStoreFactory::createIndex<KmerStringAffect>(seed, rc);
       map <string, int> stats_kmer;
+      stats_kmer[KMER_AMBIGUOUS] = 0 ;
+      stats_kmer[KMER_UNKNOWN] = 0 ;
 
       for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
 	{
@@ -625,7 +630,18 @@ int main (int argc, char **argv)
 	  for (int i = 0; i < kaa->count(); i++) 
 	    { 
 	      KmerStringAffect ksa = kaa->getAffectation(i);
-	      // if (! it.isAmbiguous() && ! it.isUnknown()) { }
+
+	      if (ksa.isAmbiguous())
+		{
+		  stats_kmer[KMER_AMBIGUOUS]++ ;
+		  continue ;
+		}
+	      
+	      if (ksa.isUnknown()) 
+		{
+		  stats_kmer[KMER_UNKNOWN]++ ;
+		  continue ;
+		}
 
 	      stats_kmer[ksa.label]++ ;
 	    }
@@ -638,6 +654,8 @@ int main (int argc, char **argv)
 	{
 	  cout << setw(12) << stats_kmer[*it] << "\t" << *it << endl ;
 	}
+      cout << setw(12) << stats_kmer[KMER_AMBIGUOUS] << "\t" << KMER_AMBIGUOUS << endl ;
+      cout << setw(12) << stats_kmer[KMER_UNKNOWN]   << "\t" << KMER_UNKNOWN   << endl ;
 
       exit(0);
     }
