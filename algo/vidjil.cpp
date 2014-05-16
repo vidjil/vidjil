@@ -73,8 +73,9 @@
 #define COMMAND_WINDOWS "windows"
 #define COMMAND_ANALYSIS "clones"
 #define COMMAND_SEGMENT "segment"
+#define COMMAND_GERMLINES "germlines"
  
-enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
+enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define OUT_DIR "./out/" 
 #define CLONES_FILENAME "clones.vdj.fa"
@@ -135,6 +136,7 @@ void usage(char *progname)
        << "  -c <command> \t" << COMMAND_WINDOWS << "\t window extracting (default)" << endl 
        << "  \t\t" << COMMAND_ANALYSIS  << "  \t clone analysis" << endl 
        << "  \t\t" << COMMAND_SEGMENT   << "  \t V(D)J segmentation (not recommended)" << endl
+       << "  \t\t" << COMMAND_GERMLINES << "  \t discover all germlines" << endl
        << endl       
 
        << "Germline databases" << endl
@@ -205,6 +207,7 @@ void usage(char *progname)
        << "  " << progname << "             -G germline/IGH             -d data/Stanford_S22.fasta" << endl
        << "  " << progname << " -c clones   -G germline/IGH  -r 5 -R 5  -d data/Stanford_S22.fasta" << endl
        << "  " << progname << " -c segment  -G germline/IGH             -d data/Stanford_S22.fasta   # (only for testing)" << endl
+       << "  " << progname << " -c germlines                               data/Stanford_S22.fasta" << endl
     ;
   exit(1);
 }
@@ -310,6 +313,8 @@ int main (int argc, char **argv)
           command = CMD_SEGMENT;
         else if (!strcmp(COMMAND_WINDOWS,optarg))
           command = CMD_WINDOWS;
+        else if (!strcmp(COMMAND_GERMLINES,optarg))
+          command = CMD_GERMLINES;
         else {
           cerr << "Unknwown command " << optarg << endl;
 	  usage(argv[0]);
@@ -534,6 +539,8 @@ int main (int argc, char **argv)
     break;
   case CMD_SEGMENT: cout << "Segmenting V(D)J" << endl;
     break;
+  case CMD_GERMLINES: cout << "Discovering germlines" << endl;
+    break;
   }
 
   cout << "Command line: ";
@@ -565,6 +572,17 @@ int main (int argc, char **argv)
   if (system("git log -1 --pretty=format:'# git: %h (%ci)' --abbrev-commit 2> /dev/null") == 0){}
   cout << endl ;
 #endif
+
+
+  //////////////////////////////://////////
+  //         DISCOVER GERMLINES          //
+  /////////////////////////////////////////
+  if (command == CMD_GERMLINES)
+    {
+
+      exit(0);
+    }
+
 
   //////////////////////////////////
   //$$ Read sequence files
