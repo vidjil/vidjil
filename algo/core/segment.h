@@ -162,7 +162,7 @@ class KmerSegmenter : public Segmenter
   int getSegmentationStatus() const;
 
  private:
-  void checkUnsegmentationCause(int strand, int delta_min, int delta_max, int s);
+  void computeSegmentation(int strand, int delta_min, int delta_max, int s);
 };
 
 class FineSegmenter : public Segmenter
