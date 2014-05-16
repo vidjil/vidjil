@@ -203,7 +203,7 @@ List.prototype = {
 
         var span_cluster = document.createElement('span')
         span_cluster.className = "clusterBox";
-        if (this.m.clones[cloneID].cluster.length > 1 || this.m.clones[cloneID].name) {
+        if (this.m.clones[cloneID].cluster.length > 1) {
             if (this.m.clones[cloneID].split) {
                 span_cluster.onclick = function () {
                     self.hideCluster(cloneID)
@@ -260,7 +260,7 @@ List.prototype = {
                 if (self.m.windows[id].select) div_clone.className = "listElem selected";
 
                 var span_name = document.createElement('span');
-                span_name.className = "nameBox2";
+                span_name.className = "nameBox";
                 span_name.onclick = function () {
                     self.m.select(id);
                 }
