@@ -128,15 +128,18 @@ Builder.prototype = {
 
                 var span1 = document.createElement('span');
                 span1.className = "tagColorBox tagColor" + i
-
+                span1.onclick = function () {
+                    var cloneID = parseInt(document.getElementById('tag_id').innerHTML);
+                    self.m.changeTag(cloneID, i)
+                    $('#tagSelector').hide('fast')
+                }
+                
                 var span2 = document.createElement('span');
                 span2.className = "tagName" + i + " tn"
                 span2.onclick = function () {
-                    var cloneID = parseInt(document.getElementById('tag_id')
-                        .innerHTML);
+                    var cloneID = parseInt(document.getElementById('tag_id').innerHTML);
                     self.m.changeTag(cloneID, i)
-                    $('#tagSelector')
-                        .hide('fast')
+                    $('#tagSelector').hide('fast')
                 }
 
                 var div = document.createElement('div');
