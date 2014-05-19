@@ -168,18 +168,24 @@ Builder.prototype = {
         
         span2.appendChild(input)
         
-        var span3 = document.createElement('span');
-        span3.appendChild(document.createTextNode("normalize"))
+        var span3 = document.createElement('button');
+        span3.appendChild(document.createTextNode("ok"))
         span3.onclick = function () {
             var cloneID = parseInt(document.getElementById('tag_id')
                 .innerHTML);
             var size = parseFloat(document.getElementById('normalized_size').value);
-            document.getElementById('normalized_size').value = ""
-            self.m.norm = true
-            self.m.compute_normalization(cloneID, size)
-            self.m.update()
-            $('#tagSelector')
-                .hide('fast')
+            
+            if (size>0 && size<1){
+                document.getElementById('normalized_size').value = ""
+                self.m.norm = true
+                self.m.compute_normalization(cloneID, size)
+                self.m.update()
+                $('#tagSelector')
+                    .hide('fast')
+            }else{
+                popupMsg("expected input between 0.0001 and 1")
+            }
+            
         }
         
         var div = document.createElement('div');
