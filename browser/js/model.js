@@ -1581,14 +1581,8 @@ Model.prototype = {
             }
             break;
         case "scientific":
-	    if (size < 0.01) {
-		result = (size)
-                    .toExponential(1);
-            } 
-	    else {
-                result = (size)
-                    .toFixed(4);
-	    }
+            result = (size)
+                .toExponential(1);
             break;
         }
         return result
