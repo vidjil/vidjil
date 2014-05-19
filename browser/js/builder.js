@@ -239,20 +239,20 @@ Builder.prototype = {
 
     /* 
      * */
-    editPointName: function (elem) {
+    edit: function (elem, data) {
         var self = this;
         var divParent = elem.parentNode;
         divParent.innerHTML = "";
 
         var input = document.createElement('input');
         input.type = "text";
-        input.id = "new_point_name";
-        input.value = this.m.time[this.point];
+        input.id = "edit_value";
+        input.value = self.m[data][self.point];
         input.style.width = "200px";
         input.style.border = "0px";
         input.style.margin = "0px";
         input.onkeydown = function () {
-            if (event.keyCode == 13) document.getElementById('btnSavePoint')
+            if (event.keyCode == 13) document.getElementById('btnSave')
                 .click();
         }
         divParent.appendChild(input);
@@ -261,16 +261,14 @@ Builder.prototype = {
         var a = document.createElement('a');
         a.className = "button";
         a.appendChild(document.createTextNode("save"));
-        a.id = "btnSavePoint";
+        a.id = "btnSave";
         a.onclick = function () {
-            var newPointName = document.getElementById("new_point_name")
-                .value;
-            self.m.time[self.m.t] = newPointName
+            self.m[data][self.point] = document.getElementById("edit_value").value
             self.build_info_container()
             self.m.update()
         }
         divParent.appendChild(a);
-        $('#new_point_name')
+        $('#edit_value')
             .select();
     },
 
@@ -428,18 +426,27 @@ Builder.prototype = {
         div_data_file.appendChild(document.createTextNode(this.m.dataFileName));
 
         //global info
-        var div_analysis_file = this.build_info_line("info_analysis_file", "analysis file", this.m.analysisFileName)
+        var div_analysis_file = this.build_info_line("info_analysis_file", "analysis", this.m.analysisFileName)
         var div_system = this.build_info_line("info_system", "system", this.m.system)
 
         //point info
-        var div_point = this.build_info_line("info_point", "point", this.m.time[this.m.t])
+        var div_point = this.build_info_line("info_point", "point",  this.m.getStrTime(this.m.t, "name") )
         var span = document.createElement('span')
         span.appendChild(document.createTextNode("..."));
         span.className = "edit_button"
         span.onclick = function () {
-            self.editPointName(this);
+            self.edit(this, "time");
         }
         div_point.appendChild(span)
+        
+        var div_date = this.build_info_line("info_date", "date", this.m.getStrTime(this.m.t, "sampling_date") )
+        var span = document.createElement('span')
+        span.appendChild(document.createTextNode("..."));
+        span.className = "edit_button"
+        span.onclick = function () {
+            self.edit(this, "timestamp2");
+        }
+        div_date.appendChild(span)
 
         var percent = (this.m.reads_segmented[this.point] / this.m.reads_total[this.point]) * 100
         var val = "" + this.m.reads_segmented[this.point] + " reads" + " (" + percent.toFixed(2) + "%)"
@@ -452,6 +459,7 @@ Builder.prototype = {
         parent.appendChild(div_system)
 
         parent.appendChild(div_point)
+        parent.appendChild(div_date)
         parent.appendChild(div_segmented)
         parent.appendChild(div_total)
 
