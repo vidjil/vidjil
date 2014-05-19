@@ -849,6 +849,10 @@ Model.prototype = {
         for (var i=0; i<this.time.length; i++){
             this.normalization.A[i] = this.getSize(cloneID, i)
         }
+        
+        document.getElementById("normalize_info").innerHTML = this.getName(cloneID)
+        document.getElementById("normalize_value").innerHTML = expected_size
+        
         this.norm = tmp
     },
     
