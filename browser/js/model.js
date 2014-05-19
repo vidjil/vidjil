@@ -79,12 +79,15 @@ Model.prototype = {
         this.precision = 1;
         this.time = [];
         this.time_order = [];
+        this.timestamp = [];
+        this.timestamp2 = [];
         this.clones = [];
         this.windows = [];
         this.germline = {};
         this.dataFileName = '';
         this.analysisFileName = '';
         this.notation_type = "percent"
+        this.time_type = "name"
         this.normalization = { 
             "A" : [],
             "B" : 0,
@@ -994,19 +997,53 @@ Model.prototype = {
         this.update();
     },
     
-    /* use scientific notation ( true/false )
+    /* use scientific notation / percent
      *
      * */
-    notation_switch: function (newR) {
-        console.log("scientific notation : " + newR)
-        if (newR==true) {
-            this.notation_type = "scientific"
-        }else{
-            this.notation_type = "percent"
+    notation_switch: function () {
+        var radio = document.getElementsByName("notation");
+    
+        for(var elem in radio){
+            if(radio[elem].checked){
+                this.notation_type = radio[elem].value
+                this.update();
+            }
         }
-        this.update();
+    },
+    
+    /* use name / date 
+     *
+     * */
+    time_switch: function () {
+        var radio = document.getElementsByName("time");
+    
+        for(var elem in radio){
+            if(radio[elem].checked){
+                this.time_type = radio[elem].value
+                this.update();
+            }
+        }
     },
 
+    getStrTime: function (timeID, format){
+        format = typeof format !== 'undefined' ? format : this.time_type;
+        var result = "-/-"
+
+        switch (format) {
+            case "name":
+                result = this.time[timeID]
+                break;
+            case "sampling_date":
+                if ((typeof this.timestamp2 != 'undefined') && this.timestamp2[timeID])
+                    result = this.timestamp2[timeID].split(" ")[0]
+                break;
+            case "run_date":
+                if ((typeof this.timestamp != 'undefined') && this.timestamp[timeID])
+                    result = this.timestamp[timeID].split(" ")[0]
+                break;
+        }
+        return result
+    },
 
     /* change the current tracking point used
      *
