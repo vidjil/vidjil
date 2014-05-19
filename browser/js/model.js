@@ -783,7 +783,7 @@ Model.prototype = {
      * */
     getCode: function (cloneID) {
         if (typeof (this.windows[cloneID].sequence) != 'undefined' && typeof (this.windows[cloneID].name) != 'undefined') {
-            if (this.windows[cloneID].name.length > 32 && typeof (this.windows[cloneID].shortName) != 'undefined') {
+            if (this.windows[cloneID].name.length > 100 && typeof (this.windows[cloneID].shortName) != 'undefined') {
                 return this.windows[cloneID].shortName;
             } else {
                 return this.windows[cloneID].name;
