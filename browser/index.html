@@ -149,25 +149,44 @@
 
             <div class="menu" id="display_menu" onmouseover="showSelector('displaySelector');"> display
                 <div id="displaySelector" class="selector"><div>
+                    <div class="submenu">
 
-                    <div>
-                        </br>
-                        <input id="top_slider" type="range" min="5" max="100" step="5" value="10" 
-                        onchange="m.displayTop(this.value)" />
+                        <div class="menu_box">
+                            clone display</br>
+                            <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
+                        </div>
+
+                        <div class="menu_box">
+                            tag display</br>
+                            <ul>
+                            </ul>
+                        </div>
+
                     </div>
 
-                    <ul>
-                    </ul>
+                    <div class="submenu">
 
-                    <div>normalize 
-                        <input id="normalize" type="checkbox" name="normalize" onclick="m.normalization_switch(this.checked);">
+                        <div class="menu_box">
+                            normalization (<span id="normalize_value"> </span>)</br>
+                            <input id="normalize" type="checkbox" name="normalize" onclick="m.normalization_switch(this.checked);">
+                            <span id="normalize_info"></span>
+                        </div>
+
+                        <div class="menu_box">
+                            size display</br>
+                            <input type="radio" name="notation" value="scientific" onchange="m.notation_switch()">scientific notation</input></br>
+                            <input type="radio" name="notation" value="percent" onchange="m.notation_switch()" checked>percent</input>
+                        </div>
+
+                        <div class="menu_box">
+                            time display</br>
+                            <input type="radio" name="time" value="sampling_date" onchange="m.time_switch()">sampling date</input></br>
+                            <input type="radio" name="time" value="run_date" onchange="m.time_switch()" >run date</input></br>
+                            <input type="radio" name="time" value="name" onchange="m.time_switch()" checked>name</input>
+                        </div>
+
                     </div>
-
-                    <div>scientific notation 
-                        <input id="notation" type="checkbox" name="notation"  onclick="m.notation_switch(this.checked);">
-                    </div></div>
-
-                </div>
+                </div></div>
             </div>
 
             <div id="logo" style="float: right;" onclick="popupMsg(msg.welcome)">Vidjil <span class='logo'>(beta)</span></div>
