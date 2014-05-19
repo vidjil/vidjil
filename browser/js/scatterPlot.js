@@ -177,8 +177,8 @@ ScatterPlot.prototype = {
             this.nodes[i].r1 = 5; // r1 -> expected radius
             this.nodes[i].r2 = 5; // r2 -> true radius ( converge slowly to the expected radius for a smooth transition effect )
             
-            this.nodes[i].x = 500; // TODO optimize : use same system as radius/expected radius 
-            this.nodes[i].y = 250; // instead of complex move() function for each node and tick ( cost too much )
+            this.nodes[i].x = Math.random()*500; // TODO optimize : use same system as radius/expected radius 
+            this.nodes[i].y = Math.random()*250; // instead of complex move() function for each node and tick ( cost too much )
         }
 
         //initialisation moteur physique D3
@@ -735,14 +735,19 @@ ScatterPlot.prototype = {
         self = this;
         //mise a jour des rayons( maj progressive )
         this.node.each(this.updateRadius());
-        //élimine les valeurs NaN ou infinity pouvant apparaitre
-        this.node.each(this.debugNaN());
+        this.node.each(this.debugNaN())
         //deplace le node vers son objectif
         this.node.each(this.move());
         //résolution des collisions
-        this.node.each(this.collide());
-        //élimine les valeurs NaN ou infinity pouvant apparaitre
+        var quad = d3.geom.quadtree(this.nodes)
+
+        for (var i=0; i<this.nodes.length; i++) {
+            if (this.nodes[i].r1 !=0){
+                quad.visit(this.collide2(this.nodes[i]));
+            }
+        }
         this.node.each(this.debugNaN())
+        this.node
             //attribution des nouvelles positions/tailles
             .attr("cx", function (d) {
 		return (d.x + self.marge_left);
@@ -926,12 +931,10 @@ ScatterPlot.prototype = {
 
     /* Fonction permettant de résoudre les collisions apportées par les nodes
      * */
-    collide: function () {
-	//Création d'un arbre à 4 fils
-        var quadtree = d3.geom.quadtree(this.nodes);
+    collide: function (quadtree) {
         self = this;
         return function (d) {
-            if (d.drag != 1 && d.r1 != 0) {
+            if (d.r1 != 0) {
                 var r = self.nodes[d.id].r2 + 1,
                 nx1 = d.x - r,
                 nx2 = d.x + r,
@@ -940,9 +943,9 @@ ScatterPlot.prototype = {
                 quadtree.visit(function (quad, x1, y1, x2, y2) {
                     if (quad.point && (quad.point !== d) && quad.point.r1 != 0) {
                         var x = d.x - quad.point.x,
-                        y = d.y - quad.point.y,
-                        l = Math.sqrt(x * x + y * y),
-                        r = self.nodes[d.id].r2 + self.nodes[quad.point].r2 + 1;
+                            y = d.y - quad.point.y,
+                            l = Math.sqrt(x * x + y * y),
+                            r = self.nodes[d.id].r2 + self.nodes[quad.point].r2 + 1;
                         if (l < r) {
                             l = (l - r) / l * 0.5;
                             d.x -= x *= l;
@@ -956,7 +959,33 @@ ScatterPlot.prototype = {
             }
         };
     },
+    
+    collide2: function(node) {
+            var r = node.r2+5,
+                nx1 = node.x - r,
+                nx2 = node.x + r,
+                ny1 = node.y - r,
+                ny2 = node.y + r;
+            return function(quad, x1, y1, x2, y2) {
+                if (quad.point && (quad.point !== node) && quad.point.r1 != 0) {
+                    var x = node.x - quad.point.x,
+                        y = node.y - quad.point.y,
+                        l = Math.sqrt(x * x + y * y),
+                        r = node.r2 + quad.point.r2+1;
+                    if (l < r) {
+                        l = (l - r) / l * .5;
+                        node.x -= x *= l;
+                        node.y -= y *= l;
+                        quad.point.x += x;
+                        quad.point.y += y;
+                    }
+                }
+                return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+            };
+    },
 
+
+    
     /* Fonction permettant de mettre à jour les données du ScatterPlot, et de relancer une sequence d'animation
      * */
     update: function () {
