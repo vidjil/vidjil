@@ -50,7 +50,7 @@ function ScatterPlot(id, model) {
     this.time0 = Date.now(), //sauvegarde d'une date initiale
     this.time1 = this.time0; //utilisation de cette variable afin de pouvoir calculer les frames
     this.fpsqueue = []; //sert à calculer le nombre de frame selon les 20 dernières valeurs
-
+    
     //use_simple_v -> visualisation de v présents lors d'un nombre très grands de v
     this.use_simple_v = false
     this.active_selector = false

@@ -200,7 +200,6 @@ Model.prototype = {
         self.dataCluster = []
         var min_sizes = [];
         var n_max = 0;
-        var n2_max = 0; //TODO rename
         
         for (var k = 0; k < data.windows[0].size.length; k++) {
                 min_sizes[k] = 1;
@@ -217,8 +216,14 @@ Model.prototype = {
                     if (min_sizes[k] > size && data.windows[i].size[k] != 0)
                         min_sizes[k] = size;
                 }
+                
+                data.windows[i].Nlength = 0;
+                if ((typeof (data.windows[i].Jstart) != 'undefined') &&
+                    (typeof (data.windows[i].Vend) != 'undefined') ) {
+                    data.windows[i].Nlength = data.windows[i].Jstart - data.windows[i].Vend
+                }
 
-                //search for n_max / n2_max
+                //search for n_max 
                 if ((typeof (data.windows[i].sequence) != 'undefined') &&
                     (typeof (data.windows[i].Nlength) != 'undefined') &&
                     (data.windows[i].Nlength > n_max)) {
@@ -240,7 +245,6 @@ Model.prototype = {
         self.n_windows = self.windows.length;
         self.min_sizes = min_sizes;
         self.n_max = n_max;
-        self.n2_max = n2_max;
         self.normalization_factor = data.normalization_factor;
         self.reads_segmented = data.reads_segmented;
         self.reads_segmented_total = self.reads_segmented.reduce(function (a, b) {
@@ -264,9 +268,6 @@ Model.prototype = {
 
         var html_container = document.getElementById("info_n_max");
         if (html_container != null) html_container.innerHTML = " N = " + self.n_max;
-
-        html_container = document.getElementById("info_n2_max");
-        if (html_container != null) html_container.innerHTML = " N = " + self.n2_max;
 
         //extract germline
         if (typeof data.germline != 'undefined') {
@@ -524,11 +525,6 @@ Model.prototype = {
         //      NSIZE
         for (var i = 0; i < this.n_windows; i++) {
 
-            if (!this.windows[i].Nlength) {
-                this.windows[i].Nlength = 0;
-            }
-
-
             if (typeof (this.windows[i].sequence) != 'undefined') {
                 nsize = this.windows[i].Nlength;
                 if (nsize > maxNlength) {
@@ -549,11 +545,6 @@ Model.prototype = {
         //      COLOR_N
         for (var i = 0; i < this.n_windows; i++) {
             this.windows[i].colorN = colorGenerator((((this.windows[i].Nlength / maxNlength) - 1) * (-250)), color_s, color_v);
-        }
-
-        //      COLOR_N2
-        for (var i = 0; i < this.n_windows; i++) {
-            this.windows[i].colorN2 = colorGenerator((((this.windows[i].n / this.n2_max) - 1) * (-250)), color_s, color_v);
         }
 
         //      COLOR_V
@@ -976,9 +967,6 @@ Model.prototype = {
             }
             if (this.colorMethod == "N") {
                 return this.windows[cloneID].colorN;
-            }
-            if (this.colorMethod == "N2") {
-                return this.windows[cloneID].colorN2;
             }
         }
         return color['@default'];
