@@ -73,8 +73,9 @@
 #define COMMAND_WINDOWS "windows"
 #define COMMAND_ANALYSIS "clones"
 #define COMMAND_SEGMENT "segment"
+#define COMMAND_GERMLINES "germlines"
  
-enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT } ;
+enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define OUT_DIR "./out/" 
 #define CLONES_FILENAME "clones.vdj.fa"
@@ -135,6 +136,7 @@ void usage(char *progname)
        << "  -c <command> \t" << COMMAND_WINDOWS << "\t window extracting (default)" << endl 
        << "  \t\t" << COMMAND_ANALYSIS  << "  \t clone analysis" << endl 
        << "  \t\t" << COMMAND_SEGMENT   << "  \t V(D)J segmentation (not recommended)" << endl
+       << "  \t\t" << COMMAND_GERMLINES << "  \t discover all germlines" << endl
        << endl       
 
        << "Germline databases" << endl
@@ -205,6 +207,7 @@ void usage(char *progname)
        << "  " << progname << "             -G germline/IGH             -d data/Stanford_S22.fasta" << endl
        << "  " << progname << " -c clones   -G germline/IGH  -r 5 -R 5  -d data/Stanford_S22.fasta" << endl
        << "  " << progname << " -c segment  -G germline/IGH             -d data/Stanford_S22.fasta   # (only for testing)" << endl
+       << "  " << progname << " -c germlines                               data/Stanford_S22.fasta" << endl
     ;
   exit(1);
 }
@@ -310,6 +313,8 @@ int main (int argc, char **argv)
           command = CMD_SEGMENT;
         else if (!strcmp(COMMAND_WINDOWS,optarg))
           command = CMD_WINDOWS;
+        else if (!strcmp(COMMAND_GERMLINES,optarg))
+          command = CMD_GERMLINES;
         else {
           cerr << "Unknwown command " << optarg << endl;
 	  usage(argv[0]);
@@ -534,6 +539,8 @@ int main (int argc, char **argv)
     break;
   case CMD_SEGMENT: cout << "Segmenting V(D)J" << endl;
     break;
+  case CMD_GERMLINES: cout << "Discovering germlines" << endl;
+    break;
   }
 
   cout << "Command line: ";
@@ -565,6 +572,108 @@ int main (int argc, char **argv)
   if (system("git log -1 --pretty=format:'# git: %h (%ci)' --abbrev-commit 2> /dev/null") == 0){}
   cout << endl ;
 #endif
+
+
+  //////////////////////////////://////////
+  //         DISCOVER GERMLINES          //
+  /////////////////////////////////////////
+  if (command == CMD_GERMLINES)
+    {
+#define KMER_AMBIGUOUS "?"
+#define KMER_UNKNOWN "_"
+
+      list< char* > f_germlines ;
+      f_germlines.push_back("germline/TRGV.fa");
+      f_germlines.push_back("germline/TRGJ.fa");
+
+      f_germlines.push_back("germline/TRDV.fa"); 
+      f_germlines.push_back("germline/TRDD.fa");
+      f_germlines.push_back("germline/TRDJ.fa");
+
+      f_germlines.push_back("germline/IGKV.fa");
+      f_germlines.push_back("germline/IGKJ.fa");
+
+      f_germlines.push_back("germline/IGHV.fa");
+      f_germlines.push_back("germline/IGHD.fa");
+      f_germlines.push_back("germline/IGHJ.fa");
+
+      // Read germline and build one unique index
+
+      bool rc = true ;   
+      IKmerStore<KmerStringAffect>  *index = KmerStoreFactory::createIndex<KmerStringAffect>(seed, rc);
+      map <string, int> stats_kmer;
+      stats_kmer[KMER_AMBIGUOUS] = 0 ;
+      stats_kmer[KMER_UNKNOWN] = 0 ;
+
+      for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+	{
+	  Fasta rep(*it, 2, "|", cout);
+	  index->insert(rep, *it);
+	  stats_kmer[string(*it)] = 0 ;
+	}
+
+      // Open read file (copied frow below)
+
+      OnlineFasta *reads;
+
+      try {
+	reads = new OnlineFasta(f_reads, 1, " ");
+      } catch (const std::ios_base::failure e) {
+	cout << "Error while reading reads file " << f_reads << ": " << e.what()
+	     << endl;
+	exit(1);
+      }
+      
+      // Loop through all reads
+
+      int nb_reads = 0 ;
+      int total_length = 0 ;
+      int s = index->getS();
+
+      while (reads->hasNext())
+	{
+	  reads->next();
+	  nb_reads++;
+	  string seq = reads->getSequence().sequence;
+	  total_length += seq.length() - s;
+
+	  KmerAffectAnalyser<KmerStringAffect> *kaa = new KmerAffectAnalyser<KmerStringAffect>(*index, seq);
+
+	  for (int i = 0; i < kaa->count(); i++) 
+	    { 
+	      KmerStringAffect ksa = kaa->getAffectation(i);
+
+	      if (ksa.isAmbiguous())
+		{
+		  stats_kmer[KMER_AMBIGUOUS]++ ;
+		  continue ;
+		}
+	      
+	      if (ksa.isUnknown()) 
+		{
+		  stats_kmer[KMER_UNKNOWN]++ ;
+		  continue ;
+		}
+
+	      stats_kmer[ksa.label]++ ;
+	    }
+	}
+
+      // Display statistics
+
+      cout << "  <== " << nb_reads << " reads" << endl ;
+      for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+	{
+	  cout << setw(12) << stats_kmer[*it] << "\t" ;
+	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[*it] / total_length * 100 << "%\t" ;
+	  cout << *it << endl ;
+	}
+      cout << setw(12) << stats_kmer[KMER_AMBIGUOUS] << "\t" << "\t" << KMER_AMBIGUOUS << endl ;
+      cout << setw(12) << stats_kmer[KMER_UNKNOWN]   << "\t" << "\t" << KMER_UNKNOWN   << endl ;
+
+      exit(0);
+    }
+
 
   //////////////////////////////////
   //$$ Read sequence files
