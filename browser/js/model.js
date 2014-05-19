@@ -183,6 +183,9 @@ Model.prototype = {
                 if (self.analysis.normalization) {
                     self.normalization= self.analysis.normalization;
                 }
+                if (self.analysis.timestamp2) {
+                    self.timestamp2= self.analysis.timestamp2;
+                }
                 self.analysisFileName = url_split[url_split.length-1]
                 self.initClones();
             },
@@ -502,6 +505,9 @@ Model.prototype = {
                 if (self.analysis.normalization) {
                     self.normalization= self.analysis.normalization;
                 }
+                if (self.analysis.timestamp2) {
+                    self.timestamp2= self.analysis.timestamp2;
+                }
                 self.initClones();
             }
         } else {
@@ -700,6 +706,7 @@ Model.prototype = {
         analysisData.time = this.time
         analysisData.time_order = this.time_order
         analysisData.normalization = this.normalization
+        analysisData.timestamp2 = this.timestamp2
 
         var textToWrite = JSON.stringify(analysisData, undefined, 2);
         var textFileAsBlob = new Blob([textToWrite], {
