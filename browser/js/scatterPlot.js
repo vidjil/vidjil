@@ -733,11 +733,16 @@ ScatterPlot.prototype = {
      * */
     tick: function () {
         self = this;
+        
+        var active_node = this.node.select(function(d, i) { return d.r!=0 ? this : null; });
+        
         //mise a jour des rayons( maj progressive )
         this.node.each(this.updateRadius());
-        this.node.each(this.debugNaN())
+        
+        
+        active_node.each(this.debugNaN())
         //deplace le node vers son objectif
-        this.node.each(this.move());
+        active_node.each(this.move());
         //résolution des collisions
         var quad = d3.geom.quadtree(this.nodes)
 
@@ -746,8 +751,8 @@ ScatterPlot.prototype = {
                 quad.visit(this.collide2(this.nodes[i]));
             }
         }
-        this.node.each(this.debugNaN())
-        this.node
+        active_node.each(this.debugNaN())
+        active_node
             //attribution des nouvelles positions/tailles
             .attr("cx", function (d) {
 		return (d.x + self.marge_left);
