@@ -240,7 +240,7 @@ Segment.prototype = {
     spanV.style.color=this.m.windows[cloneID].colorV;
 
     var v_seq=this.m.windows[cloneID].sequence.substr(0, this.m.windows[cloneID].Vend+1);
-    var size_marge=200-v_seq.length;
+    var size_marge=300-v_seq.length;
     if (size_marge>0){
       var marge="";
       for (var i=0; i<size_marge; i++) marge+="&nbsp";
@@ -251,11 +251,26 @@ Segment.prototype = {
 
     spanM.appendChild(spanV);
       
-    if ( (this.m.windows[cloneID].Vend+1 -this.m.windows[cloneID].Jstart)!=0){
-      var spanN = document.createElement('span');
-      spanN.className="N";
-      spanN.innerHTML=this.m.windows[cloneID].sequence.substring(this.m.windows[cloneID].Vend+1, this.m.windows[cloneID].Jstart);
-      spanM.appendChild(spanN);
+    if(typeof this.m.windows[cloneID].Dstart !='undefined' && typeof this.m.windows[cloneID].Dend !='undefined'){
+        var spanN1= document.createElement('span');
+        spanN1.className="N";
+        spanN1.innerHTML=this.m.windows[cloneID].sequence.substring(this.m.windows[cloneID].Vend+1, this.m.windows[cloneID].Dstart);
+        spanM.appendChild(spanN1);
+        
+        var spanD= document.createElement('span');
+        spanD.className="D";
+        spanD.innerHTML=this.m.windows[cloneID].sequence.substring(this.m.windows[cloneID].Dstart, this.m.windows[cloneID].Dend+1);
+        spanM.appendChild(spanD);
+        
+        var spanN2= document.createElement('span');
+        spanN2.className="N";
+        spanN2.innerHTML=this.m.windows[cloneID].sequence.substring(this.m.windows[cloneID].Dend+1, this.m.windows[cloneID].Jstart);
+        spanM.appendChild(spanN2);
+    }else{
+        var spanN = document.createElement('span');
+        spanN.className="N";
+        spanN.innerHTML=this.m.windows[cloneID].sequence.substring(this.m.windows[cloneID].Vend+1, this.m.windows[cloneID].Jstart);
+        spanM.appendChild(spanN);
     }
     
     var spanJ = document.createElement('span');
@@ -264,7 +279,7 @@ Segment.prototype = {
     spanJ.innerHTML=this.m.windows[cloneID].sequence.substr(this.m.windows[cloneID].Jstart);
     spanM.appendChild(spanJ);
     }else{
-      var size_marge=220-this.m.windows[cloneID].window.length;
+      var size_marge=320-this.m.windows[cloneID].window.length;
       var marge="";
       for (var i=0; i<size_marge; i++) marge+="&nbsp";
       var spanJunc=document.createElement('span');
@@ -364,7 +379,6 @@ Segment.prototype = {
 
 }//fin prototype
 
-
   
   function displayAjaxResult(file){
     
@@ -375,13 +389,18 @@ Segment.prototype = {
         // global container
         var spanM = document.getElementById("m"+memTab[i]);
         spanM.innerHTML="";
+        
         // V gene container
         var spanV = document.createElement('span');
         spanV.className="V";
         spanV.style.color=m.windows[memTab[i]].colorV;
         // N region container
-        var spanN = document.createElement('span');
-        spanN.className="N";
+        var spanN1 = document.createElement('span');
+        spanN1.className="N";
+        var spanD = document.createElement('span');
+        spanD.className="D";
+        var spanN2 = document.createElement('span');
+        spanN2.className="N";
         // J gene container
         var spanJ = document.createElement('span');
         spanJ.className="J";
@@ -390,11 +409,14 @@ Segment.prototype = {
         if(typeof m.windows[memTab[i]].sequence !='undefined' && m.windows[memTab[i]].sequence!=0){
             var newVend=getNewPosition(json.seq[i],m.windows[memTab[i]].Vend)
             var newJstart=getNewPosition(json.seq[i],m.windows[memTab[i]].Jstart)
-            
-            console.log(m.windows[memTab[i]].Vend+"/"+m.windows[memTab[i]].Jstart+"//"
-                        +newVend+"/"+newJstart+"//"+ memTab[i]
-            )
+            var newDstart = -1
+            var newDend = -1
+            if(typeof this.m.windows[memTab[i]].Dstart !='undefined' && typeof this.m.windows[memTab[i]].Dend !='undefined'){
+                var newDstart=getNewPosition(json.seq[i],m.windows[memTab[i]].Dstart)
+                var newDend=getNewPosition(json.seq[i],m.windows[memTab[i]].Dend)
+            }
 
+            
             var str = "";
             for (var k=0; k<json.seq[i].length; k++){
                 if (json.seq[i][k] == json.seq[0][k] ){
@@ -408,8 +430,18 @@ Segment.prototype = {
                     str=""
                 }
                 
+                if (k==newDstart){
+                    spanN1.innerHTML=str
+                    str=""
+                }
+                
+                if (k==newDend){
+                    spanD.innerHTML=str
+                    str=""
+                }
+                
                 if (k==newJstart){
-                    spanN.innerHTML=str
+                    spanN2.innerHTML=str
                     str=""
                 }
                 
@@ -417,7 +449,9 @@ Segment.prototype = {
             spanJ.innerHTML=str
             
             spanM.appendChild(spanV);
-            spanM.appendChild(spanN);
+            spanM.appendChild(spanN1);
+            spanM.appendChild(spanD);
+            spanM.appendChild(spanN2);
             spanM.appendChild(spanJ);
         }else{
             var spanJunc=document.createElement('span');
