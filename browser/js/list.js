@@ -468,12 +468,16 @@ List.prototype = {
             var oA = 2147483647
             var oB = 2147483647
 
-            if (typeof (self.m.windows[idA].V) != 'undefined' && self.m.windows[idA].V[0]) {
+            if (typeof (self.m.windows[idA].V) != 'undefined' && 
+                typeof (self.m.windows[idA].V[0]) != 'undefined' &&
+                typeof (self.m.germline.v[self.m.windows[idA].V[0]]) != 'undefined') {
                 var vA = self.m.windows[idA].V[0];
                 oA = this.m.germline.v[vA].gene * 1000 + this.m.germline.v[vA].allele
             }
 
-            if (typeof (self.m.windows[idB].V) != 'undefined' && self.m.windows[idB].V[0]) {
+            if (typeof (self.m.windows[idB].V) != 'undefined' && 
+                typeof (self.m.windows[idB].V[0]) != 'undefined' &&
+                typeof (self.m.germline.v[self.m.windows[idB].V[0]]) != 'undefined') {
                 var vB = self.m.windows[idB].V[0];
                 oB = this.m.germline.v[vB].gene * 1000 + this.m.germline.v[vB].allele
             }
@@ -496,12 +500,16 @@ List.prototype = {
             var oA = 2147483647
             var oB = 2147483647
 
-            if (typeof (self.m.windows[idA].J) != 'undefined' && self.m.windows[idA].J[0]) {
+            if (typeof (self.m.windows[idA].J) != 'undefined' && 
+                typeof (self.m.windows[idA].J[0]) != 'undefined' &&
+                typeof (self.m.germline.j[self.m.windows[idA].J[0]]) != 'undefined') {
                 var jA = self.m.windows[idA].J[0];
                 oA = this.m.germline.j[jA].gene * 1000 + this.m.germline.j[jA].allele
             }
 
-            if (typeof (self.m.windows[idB].J) != 'undefined' && self.m.windows[idB].J[0]) {
+            if (typeof (self.m.windows[idB].J) != 'undefined' && 
+                typeof (self.m.windows[idB].J[0]) != 'undefined' &&
+                typeof (self.m.germline.j[self.m.windows[idB].J[0]]) != 'undefined') {
                 var jB = self.m.windows[idB].J[0];
                 oB = this.m.germline.j[jB].gene * 1000 + this.m.germline.j[jB].allele
             }
