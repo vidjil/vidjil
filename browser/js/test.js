@@ -1,13 +1,17 @@
+var DB_ADDRESS = "http://134.206.11.64:8000/Vidjil/";
+var CGI_ADDRESS = "http://127.0.1.1/cgi-bin/";
+
+
 var startTime = new Date()
     .getTime();
 var elapsedTime = 0;
 
 var m = new Model();
 
-var graph = new Graph("visu2", m);
-var list = new List("listClones", m);
-var sp = new ScatterPlot("visu", m);
-var segment = new Segment("bot_container", m);
+var graph = new Graph("visu2",m);
+var list = new List("list",m);
+var sp = new ScatterPlot("visu",m);
+var segment = new Segment("bot-container",m, CGI_ADDRESS);
 
 
 for (var i = 20; i < 101; i = i + 20) {
