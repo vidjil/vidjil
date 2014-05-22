@@ -189,6 +189,17 @@ class CountKmerAffectAnalyser: public KmerAffectAnalyser<T> {
   int getAllowedOverlap();
 
   /**
+   * @parameter forbidden: a set of forbidden affectations that must not 
+   *                       be taken into account for the max computation.
+   * @pre There must have at least one affectation that is not forbidden otherwise
+   *      the returned value is the unknown affectation.
+   * @return the affectation that is seen the most frequently in the sequence
+   *         taken apart the forbidden ones.
+   * @complexity Time: linear on the number of distinct affectations
+   */
+  T max(const set<T> forbidden = set<T>()) const;
+
+  /**
    * Set the overlap allowed between two k-mers with two different affectations,
    * when looking for the maximum.
    * The overlap should not be greater than the span of the seed used.
@@ -328,6 +339,25 @@ int CountKmerAffectAnalyser<T>::count(const T &affect) const {
     return 0;
 
   return counts.find(affect)->second[KmerAffectAnalyser<T>::count() - 1];
+}
+
+template <class T>
+T CountKmerAffectAnalyser<T>::max(const set<T> forbidden) const {
+  typename map<T, int* >::const_iterator it = counts.begin();
+  T max_affect = T::getUnknown();
+  int max_count = -1;
+
+  for (; it != counts.end(); it++) {
+    if (forbidden.count(it->first) == 0) {
+      int current_count = count(it->first);
+      if (current_count > max_count) {
+        max_affect = it->first;
+        max_count = current_count;
+      }
+    }
+  }
+
+  return max_affect;
 }
 
 template <class T>
