@@ -13,6 +13,10 @@ void testAffectAnalyser1() {
   CountKmerAffectAnalyser<KAffect> ckaa(*index, "AAAACCCCCGGGGG");
   ckaa.setAllowedOverlap(k-1);
 
+  set<KAffect> forbidden;
+  forbidden.insert(KAffect::getAmbiguous());
+  forbidden.insert(KAffect::getUnknown());
+
   for (int i = 2; i < nb_seq-1; i++) {
     // i starts at 2 because AAAA is not found: there is an ambiguity with
     // AAAA coming from AAAACAAAACAAAAC or AAAAAAAAAAAAAAA
@@ -33,6 +37,13 @@ void testAffectAnalyser1() {
   TAP_TEST((kaa.first(KAffect("", seq[2*(nb_seq-1)+1], 1)) 
           == kaa.last(KAffect("", seq[2*(nb_seq-1)+1], 1)))
            == 1, TEST_AA_FIRST, "");
+
+  TAP_TEST(ckaa.max(forbidden) == KAffect("", "C lots of", 1)
+           || ckaa.max(forbidden) == KAffect("", "G lots of", 1), 
+           TEST_COUNT_AA_MAX, "max is " << ckaa.max(forbidden));
+
+  TAP_TEST(ckaa.max() == KAffect::getUnknown(), 
+           TEST_COUNT_AA_MAX, "max is " << ckaa.max());
 
   TAP_TEST(kaa.getAffectation(3).isUnknown(), TEST_AA_PREDICATES, "");
   TAP_TEST(kaa.getAffectation(8).isUnknown(), TEST_AA_PREDICATES, "");
@@ -93,6 +104,10 @@ void testAffectAnalyser2() {
   KmerAffectAnalyser<KAffect> kaa(*index, "TTTTTGGGGG");
   CountKmerAffectAnalyser<KAffect> ckaa(*index, "TTTTTGGGGG");
   ckaa.setAllowedOverlap(k-1);
+
+  set<KAffect> forbidden;
+  forbidden.insert(KAffect::getAmbiguous());
+  forbidden.insert(KAffect::getUnknown());
   
   TAP_TEST(kaa.getAffectation(1) == KAffect("", seq[2*(nb_seq-1)+1], -1), TEST_AA_GET_AFFECT, "");
   TAP_TEST(kaa.count(kaa.getAffectation(1)) == 1, TEST_AA_GET_AFFECT, "");
@@ -104,6 +119,12 @@ void testAffectAnalyser2() {
     TAP_TEST(kaa.getAffectation(i).isUnknown(), TEST_AA_PREDICATES, "");
 
   TAP_TEST(kaa.getDistinctAffectations().size() == 3, TEST_AA_GET_DISTINCT_AFFECT, "");
+
+  TAP_TEST(ckaa.max(forbidden) == KAffect("", seq[2*(nb_seq-1)+1], -1), 
+           TEST_COUNT_AA_MAX, "max is " << ckaa.max(forbidden));
+
+  TAP_TEST(ckaa.max() == KAffect::getUnknown(), 
+           TEST_COUNT_AA_MAX, "max is " << ckaa.max());
 
   delete index;
 }
