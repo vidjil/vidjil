@@ -108,6 +108,10 @@ bool KmerAffect::hasRevcompSymetry() {
   return false;
 }
 
+KmerAffect KmerAffect::getAmbiguous() {
+  return AFFECT_AMBIGUOUS;
+}
+
 int KmerAffect::getStrand() const{
   if (isUnknown() || isAmbiguous())
     return 0;
@@ -120,6 +124,10 @@ string KmerAffect::getLabel() const {
   if (isAmbiguous())
     return "?";
   return string(1, affect_char(affect));
+}
+
+KmerAffect KmerAffect::getUnknown() {
+  return AFFECT_UNKNOWN;
 }
 
 bool KmerAffect::isAmbiguous() const {
@@ -198,12 +206,20 @@ KmerStringAffect &KmerStringAffect::operator=(const KmerStringAffect &ka) {
   return *this;
 }
 
+KmerStringAffect KmerStringAffect::getAmbiguous() {
+  return KSA_AMBIGUOUS;
+}
+
 int KmerStringAffect::getStrand() const {
   return (isUnknown() || isAmbiguous()) ? 0 : strand;
 }
 
 string KmerStringAffect::getLabel() const {
   return label;
+}
+
+KmerStringAffect KmerStringAffect::getUnknown() {
+  return KSA_UNKNOWN;
 }
 
 bool KmerStringAffect::isAmbiguous() const {
