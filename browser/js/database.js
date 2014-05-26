@@ -222,7 +222,7 @@ Database.prototype = {
     /*récupére et initialise le browser avec un fichier .data
      * args => format json ( parametre attendu  > patient_id, config_id)
      */
-    load: function (args) {
+    load_data: function (args) {
 
         var self = this;
         var arg = "?";
@@ -234,13 +234,44 @@ Database.prototype = {
             type: "POST",
             timeout: 15000,
             crossDomain: true,
-            url: self.db_address + "default/result" + arg,
+            url: self.db_address + "default/get_data" + arg,
             xhrFields: {withCredentials: true},
             success: function (result) {
                 json = jQuery.parseJSON(result)
                 m.reset();
-                m.parseJsonData(json, 50)
-                    .loadGermline();
+                m.parseJsonData(json, 100)
+                m.loadGermline();
+                m.initClones()
+                self.load_analysis(args)
+                self.last_file = args
+                m.db_key = args
+            },
+            error: function (request, status, error) {
+                if (status === "timeout") {
+                    popupMsg("timeout");
+                } else {
+                    popupMsg(request.responseText);
+                }
+            }
+        });
+    },
+    
+    load_analysis: function (args) {
+
+        var self = this;
+        var arg = "?";
+        for (var key in args) {
+            arg += "" + key + "=" + args[key] + "&";
+        }
+
+        $.ajax({
+            type: "POST",
+            timeout: 15000,
+            crossDomain: true,
+            url: self.db_address + "default/get_analysis" + arg,
+            xhrFields: {withCredentials: true},
+            success: function (result) {
+                m.parseJsonAnalysis(result)
                 m.initClones()
             },
             error: function (request, status, error) {
@@ -251,6 +282,47 @@ Database.prototype = {
                 }
             }
         });
+    },
+    
+    save_analysis: function () {
+        var self = this;
+        
+        if (self.last_file == m.db_key){
+            var arg = "?";
+            for (var key in self.last_file) {
+                arg += "" + key + "=" + self.last_file[key] + "&";
+            }
+            
+            var analysis = m.strAnalysis()
+            var blob = new Blob([analysis], {
+                type: 'json'
+            });
+            var fd = new FormData();
+            fd.append("fileToUpload", blob);
+            
+            $.ajax({
+                type: "POST",
+                timeout: 15000,
+                crossDomain: true,
+                url: self.db_address + "default/save_analysis" + arg,
+                data     : fd,
+                processData: false,
+                contentType: false,
+                xhrFields: {withCredentials: true},
+                success: function (result) {
+                    popupMsg("analysis saved")
+                },
+                error: function (request, status, error) {
+                    if (status === "timeout") {
+                        popupMsg("timeout");
+                    } else {
+                        popupMsg(request.responseText);
+                    }
+                }
+            });
+        }else{
+            popupMsg("this file is nor from the database")
+        }
     },
     
     //affiche la fenetre de dialogue avec le serveur et affiche ses réponses
