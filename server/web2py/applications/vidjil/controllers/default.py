@@ -131,7 +131,100 @@ def get_data():
         
         res = {"success" : "false", "msg" : "connect error"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
+    
+def get_analysis():
+    import gluon.contrib.simplejson
+    if request.env.http_origin:
+        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Max-Age'] = 86400
+    
+    error = ""
 
+    if not "patient_id" in request.vars :
+        error += "id patient file needed, "
+    if not "config_id" in request.vars:
+        error += "id config needed, "
+    
+    ## empty analysis file
+    res = {"custom": [],
+           "cluster" : [],
+           "info_patient" : "test info patient",
+           "info_sequence_file" : [],
+           "time": [],
+           "time_order": []
+           }
+    
+    ## récupération des infos stockées sur la base de données 
+    query = db( ( db.patient.id == db.sequence_file.patient_id )
+               & ( db.data_file.sequence_file_id == db.sequence_file.id )
+               & ( db.patient.id == request.vars["patient_id"] )
+               & ( db.data_file.config_id == request.vars["config_id"]  )
+               ).select( orderby=db.sequence_file.sampling_date ) 
+
+    order = 0
+    for row in query :
+        (filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)
+        res["time"].append(filename)
+        res["time_order"].append(order)
+        res["info_sequence_file"].append(row.sequence_file.info) 
+        order = order+1
+
+    res["info_patient"] = db.patient[request.vars["patient_id"]].info
+    
+    ## récupération des infos se trouvant dans le fichier .analysis
+    analysis_query = db(  (db.analysis_file.patient_id == 1)
+               & (db.analysis_file.config_id == 1 )  )
+
+    if not analysis_query.isempty() :
+        row = analysis_query.select().first()
+        f = open('applications/vidjil/uploads/'+row.analysis_file, "r")
+        analysis = gluon.contrib.simplejson.loads(f.read())
+        f.close()
+            
+        res["custom"] = analysis["custom"]
+        res["cluster"] = analysis["cluster"]
+    
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
+    
+def save_analysis():
+    import gluon.contrib.simplejson
+    if request.env.http_origin:
+        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Max-Age'] = 86400
+        
+    error = ""
+
+    if not "patient_id" in request.vars :
+        error += "id patient file needed, "
+    if not "config_id" in request.vars:
+        error += "id config needed, "
+        
+    if error == "" :
+        analysis_query = db(  (db.analysis_file.patient_id == 1)
+                            & (db.analysis_file.config_id == 1 )  )
+
+        f = request.vars['fileToUpload']
+        
+        if not analysis_query.isempty() :
+            analysis_id = analysis_query.select().first().id
+            db.analysis_file[analysis_id] = dict(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename))
+        else:           
+            analysis_id = db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
+                                                    config_id = request.vars['config_id'],
+                                                    patient_id = request.vars['patient_id'],
+                                                )
+        
+        
+        res = {"success" : "true", "msg" : "analysis saved"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    else :
+        res = {"success" : "false", "msg" : error}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        
 def test_upload():
     response.title = ""
     return dict(message=T('test upload'))
