@@ -1,6 +1,6 @@
 # coding: utf8
 
-def run_vidjil(id_file, id_config, id_data):
+def run_vidjil(id_file, id_config, id_data, id_fuse):
     import time, datetime
     from subprocess import Popen, PIPE, STDOUT, os
     
@@ -10,10 +10,15 @@ def run_vidjil(id_file, id_config, id_data):
     upload_folder = vidjil_path + '/server/web2py/applications/vidjil/uploads/'
     out_folder = vidjil_path + '/out/'
     
+    cmd = "rm -rf "+out_folder 
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    p.wait()
+    
     ## filepath du fichier de séquence
     row = db(db.sequence_file.id==id_file).select()
     filename = row[0].data_file
     seq_file = upload_folder+filename
+    id_patient = row[0].patient_id
     
     ## config de vidjil
     vidjil_cmd = db.config[id_config].command
@@ -21,9 +26,10 @@ def run_vidjil(id_file, id_config, id_data):
     
     ## commande complete
     cmd = vidjil_path+'/vidjil ' + vidjil_cmd + ' -o  ' + out_folder + ' -G ' + germline_folder + vidjil_germline + ' '+ seq_file
-    
+
     ## execute la commande vidjil
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    p.wait()
     output = p.stdout.read()
     
     ## récupération du fichier data.json généré
@@ -37,6 +43,28 @@ def run_vidjil(id_file, id_config, id_data):
                                  run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d'),
                                  data_file = stream
                                 )
+    
+    ## relance fuse.py 
+    output_file = out_folder+"result"
+    files = ""
+    query = db( ( db.patient.id == db.sequence_file.patient_id )
+                   & ( db.data_file.sequence_file_id == db.sequence_file.id )
+                   & ( db.patient.id == id_patient )
+                   & ( db.data_file.config_id == id_config )
+                   ).select( orderby=db.sequence_file.sampling_date ) 
+    for row in query :
+        files += " applications/vidjil/uploads/"+row.data_file.data_file
+    
+    cmd = "python ../fuse.py -o "+output_file+" -t 100 -g "+vidjil_germline+" "+files
+    
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    p.wait()
+    
+    fuse_filepath = os.path.abspath(output_file)
+    stream = open(fuse_filepath, 'rb')
+    
+    db.fused_file[id_fuse] = dict(fuse_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d'),
+                                 fused_file = stream)
     
     db.commit()
     

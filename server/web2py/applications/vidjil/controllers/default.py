@@ -70,9 +70,21 @@ def run_request():
                                             config_id = request.vars['config_id'],
                                             status = 'pending'
                                             )
+                
+            ## create or update fuse file state
+            id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
+            row = db( ( db.fused_file.config_id == request.vars["config_id"] ) & 
+                      ( db.fused_file.patient_id == id_patient )  
+                    ).select()
+
+            if len(row) > 0 : ## update
+                fuse_id = row[0].id
+            else:             ## create
+                fuse_id = db.fused_file.insert(patient_id = id_patient,
+                                                config_id = request.vars['config_id'])
             
             ##add task to scheduller
-            scheduler.queue_task('run', [request.vars["sequence_file_id"],request.vars["config_id"], data_id]
+            scheduler.queue_task('run', [request.vars["sequence_file_id"],request.vars["config_id"], data_id, fuse_id]
                                  , repeats = 1, timeout = 6000)
             
             res = {"success": "true" , "msg": "request added" }
@@ -87,8 +99,7 @@ def run_request():
     return gluon.contrib.simplejson.dumps(res2, separators=(',',':'))
 
 
-
-def result():
+def get_data():
     import time
     import gluon.contrib.simplejson
     from subprocess import Popen, PIPE, STDOUT
@@ -104,24 +115,15 @@ def result():
         if not "config_id" in request.vars:
             error += "id config needed, "
 
-        output_file = "result_patient_"+request.vars["patient_id"]+"_config_"+request.vars["config_id"]
-
-        files = ""
-        query = db( ( db.patient.id == db.sequence_file.patient_id )
-                   & ( db.data_file.sequence_file_id == db.sequence_file.id )
-                   & ( db.patient.id == request.vars["patient_id"] )
-                   & ( db.data_file.config_id == request.vars["config_id"] )
-                   ).select( orderby=db.sequence_file.sampling_date ) 
+        query = db( ( db.fused_file.patient_id == request.vars["patient_id"] )
+                   & ( db.fused_file.config_id == request.vars["config_id"] )
+                   ).select() 
         for row in query :
-            files += " applications/vidjil/uploads/"+row.data_file.data_file
+            fused_file = "applications/vidjil/uploads/"+row.fused_file
         
         if error == "" :
-            cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
-            p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-            
-            p.wait()
-            
-            f = open(output_file, "r")
+
+            f = open(fused_file, "r")
             output=f.readlines()
             f.close()
             
