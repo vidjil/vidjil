@@ -88,6 +88,7 @@ Model.prototype = {
         this.analysisFileName = '';
         this.notation_type = "percent"
         this.time_type = "name"
+        this.db_key = "" //for file who came from the database
         this.normalization = { 
             "A" : [],
             "B" : 0,

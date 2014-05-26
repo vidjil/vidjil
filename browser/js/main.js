@@ -50,9 +50,13 @@ if (typeof config != 'undefined') {
         a.className = "buttonSelector"
         a.onclick = function () { db.call('patient/index') }
         a.appendChild(document.createTextNode("database"))
-        
         document.getElementById("demoSelector").firstChild.appendChild(a);
 
+        a = document.createElement('a');
+        a.className = "buttonSelector"
+        a.onclick = function () { db.save_analysis() }
+        a.appendChild(document.createTextNode("save analysis (database)"))
+        document.getElementById("demoSelector").firstChild.appendChild(a);
     }
     
     if (config.debug_mode) {
