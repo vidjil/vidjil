@@ -88,6 +88,7 @@ Model.prototype = {
         this.analysisFileName = '';
         this.notation_type = "percent"
         this.time_type = "name"
+        this.system_selected = []
         this.db_key = "" //for file who came from the database
         this.normalization = { 
             "A" : [],
@@ -241,6 +242,7 @@ Model.prototype = {
         self.n_max = n_max;
         self.normalization_factor = data.normalization_factor;
         self.reads_segmented = data.reads_segmented;
+        self.system_segmented = data.system_segmented;
         self.reads_segmented_total = self.reads_segmented.reduce(function (a, b) {
             return a + b;
         });
@@ -813,6 +815,45 @@ Model.prototype = {
 
     }, //end getSize
     
+    /* compute the number of reads segmented for the current selected system(s) 
+     * 
+     * */
+    update_selected_system: function(){
+        
+        //reset reads_segmented
+        for (var i=0 ; i<this.reads_segmented.length; i++){
+            this.reads_segmented[i]=0
+        }
+        
+        //reset system
+        this.system_selected = []
+        
+        //check system currently selected in menu
+        for (var key in this.system_segmented) {
+            if (document.getElementById("checkbox_system_"+key).checked){
+                this.system_selected.push(key)
+            }
+        }
+        
+        //if 0 box checked in menu then all selected
+        if (this.system_selected.length == 0) {
+            for (var key in this.system_segmented) {
+                this.system_selected.push(key)
+            }
+        }
+        
+        //compute new reads_segmented value (sum of reads_segmented of selected system)
+        for (var i=0; i<this.system_selected.length; i++){
+            var key = this.system_selected[i]
+            for (var j=0; j<this.reads_segmented.length; j++){
+                this.reads_segmented[j] += this.system_segmented[key][j]
+            }
+        }
+
+        
+        this.update()
+    },
+    
     /*
      * 
      * */
@@ -1228,6 +1269,16 @@ Model.prototype = {
                 }
             }
         }
+        
+        // unactive clones from unselected system
+        if (this.system == "multi" && this.system_selected.length != 0) {
+            for (var i = 0; i < this.windows.length; i++) {
+                if (this.system_selected.indexOf(this.windows[i].system) == -1) {
+                    this.windows[i].active = false;
+                }
+            }
+        }
+        
         this.computeOtherSize();
 
         for (var i = 0; i < this.n_windows; i++) {
