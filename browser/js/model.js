@@ -177,19 +177,8 @@ Model.prototype = {
             crossDomain: true,
             url: url2,
             success: function (result) {
-                self.analysis = jQuery.parseJSON(result)
-                if (self.analysis.time && (self.analysis.time.length == self.time.length)) {
-                    self.time = self.analysis.time;
-                    self.time_order = self.analysis.time_order;
-                }
-                if (self.analysis.normalization) {
-                    self.normalization= self.analysis.normalization;
-                }
-                if (self.analysis.timestamp2) {
-                    self.timestamp2= self.analysis.timestamp2;
-                }
+                self.parseJsonAnalysis(result)
                 self.analysisFileName = url_split[url_split.length-1]
-                self.initClones();
             },
             error: function () {
                 self.update()
@@ -326,8 +315,24 @@ Model.prototype = {
 
         return this
     },
-
-
+    
+    parseJsonAnalysis: function (analysis) {
+        var self = this
+        
+        this.analysis = JSON.parse(analysis);
+        if (self.analysis.time && (self.analysis.time.length == self.time.length)) {
+            self.time = self.analysis.time;
+            self.time_order = self.analysis.time_order;
+        }
+        if (self.analysis.normalization) {
+            self.normalization= self.analysis.normalization;
+        }
+        if (self.analysis.timestamp2) {
+            self.timestamp2= self.analysis.timestamp2;
+        }
+        self.initClones();
+    },
+    
     /* charge le germline définit a l'initialisation dans le model
      * détermine le nombre d'allele pour chaque gene et y attribue une couleur
      * */
@@ -499,18 +504,7 @@ Model.prototype = {
 
             oFReader.onload = function (oFREvent) {
                 var text = oFREvent.target.result;
-                self.analysis = JSON.parse(text);
-                if (self.analysis.time && (self.analysis.time.length == self.time.length)) {
-                    self.time = self.analysis.time;
-                    self.time_order = self.analysis.time_order;
-                }
-                if (self.analysis.normalization) {
-                    self.normalization= self.analysis.normalization;
-                }
-                if (self.analysis.timestamp2) {
-                    self.timestamp2= self.analysis.timestamp2;
-                }
-                self.initClones();
+                self.parseJsonAnalysis(text)
             }
         } else {
             self.initClones();
@@ -670,6 +664,22 @@ Model.prototype = {
      * */
     saveAnalysis: function () {
         console.log("saveAnalysis()")
+
+        var textToWrite = this.strAnalysis()
+        var textFileAsBlob = new Blob([textToWrite], {
+            type: 'json'
+        });
+
+        var ext = this.dataFileName.lastIndexOf(".")
+        var filename = this.dataFileName.substr(0, ext)
+
+        saveAs(textFileAsBlob, filename + ".analysis");
+    }, //end saveAnalysis
+    
+    /* create a string with analysis
+     *
+     * */
+    strAnalysis: function() {
         var analysisData = {
             custom: [],
             cluster: []
@@ -710,17 +720,8 @@ Model.prototype = {
         analysisData.normalization = this.normalization
         analysisData.timestamp2 = this.timestamp2
 
-        var textToWrite = JSON.stringify(analysisData, undefined, 2);
-        var textFileAsBlob = new Blob([textToWrite], {
-            type: 'json'
-        });
-
-        var ext = this.dataFileName.lastIndexOf(".")
-        var filename = this.dataFileName.substr(0, ext)
-
-        saveAs(textFileAsBlob, filename + ".analysis");
-    }, //end saveAnalysis
-
+        return JSON.stringify(analysisData, undefined, 2);
+    },
 
     /* erase all changes 
      *
