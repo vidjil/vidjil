@@ -128,6 +128,20 @@ db.define_table('data_file',
                 Field('status', 'string'),
                 Field('data_file', 'upload', length=1000000000000))
 
+db.define_table('fused_file',
+                Field('patient_id', 'reference patient'),
+                Field('config_id', 'reference config'),
+                Field('fuse_date','date'),
+                Field('status', 'string'),
+                Field('fused_file', 'upload', length=1000000000000))
+
+db.define_table('analysis_file',
+                Field('patient_id', 'reference patient'),
+                Field('config_id', 'reference config'),
+                Field('analyze_date','date'),
+                Field('status', 'string'),
+                Field('analysis_file', 'upload', length=1000000000000))
+
 
 
 
