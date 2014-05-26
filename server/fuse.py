@@ -617,7 +617,9 @@ def main():
                 jlist_fused = jlist
             else:
                 jlist_fused = jlist_fused * jlist
+                
             print '\t==> merge to', jlist_fused
+        jlist_fused.d['germline'][0] = "multi"
         
     else:
         print "### Read and merge input files"
@@ -635,7 +637,9 @@ def main():
                 jlist_fused = jlist
             else:
                 jlist_fused = jlist_fused + jlist
+            
             print '\t==> merge to', jlist_fused
+        jlist_fused.d['germline'][0] = args.germline
 
     print
     print "### Select point names"
@@ -651,7 +655,6 @@ def main():
     print
 
     print "### Save merged file"
-    jlist_fused.d['germline']=args.germline
     jlist_fused.save_json(args.output)
 
     
