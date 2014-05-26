@@ -151,11 +151,6 @@
                     <div class="submenu">
 
                         <div class="menu_box">
-                            clone display</br>
-                            <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
-                        </div>
-
-                        <div class="menu_box">
                             tag display</br>
                             <ul>
                             </ul>
@@ -164,6 +159,11 @@
                     </div>
 
                     <div class="submenu">
+
+                        <div class="menu_box">
+                            clone display</br>
+                            <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
+                        </div>
 
                         <div class="menu_box">
                             normalization (<span id="normalize_value"> </span>)</br>
@@ -180,8 +180,17 @@
                         <div class="menu_box">
                             time display</br>
                             <input type="radio" name="time" value="sampling_date" onchange="m.time_switch()">sampling date</input></br>
-                            <input type="radio" name="time" value="run_date" onchange="m.time_switch()" >run date</input></br>
                             <input type="radio" name="time" value="name" onchange="m.time_switch()" checked>name</input>
+                        </div>
+
+                    </div>
+
+                    <div class="submenu" id="system_menu" style="display:none">
+
+                        <div class="menu_box">
+                            system display</br>
+                            <ul id="system_list">
+                            </ul>
                         </div>
 
                     </div>
