@@ -79,7 +79,7 @@
     
 <span class="button" onclick="db.call('patient/index')"> back to list </span>
 <span class="button" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> add file </span>
-<span class="button" onclick="db.load( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=config_id}} } )" > see result </span>
+<span class="button" onclick="db.load_data( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=config_id}} } )" > see result </span>
 </div>
 
 {{elif 'content' in globals():}}
