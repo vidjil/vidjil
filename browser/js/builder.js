@@ -279,10 +279,13 @@ Builder.prototype = {
 
         var displaySelector = document.getElementById("displaySelector")
         var listTag = displaySelector.getElementsByTagName("ul")[0]
+        var listSystem = document.getElementById("system_list")
         
         //reset
         listTag.innerHTML = "";
+        listSystem.innerHTML = "";
 
+        //init tag list
         for (var i = 0; i < tagName.length; i++) {
             (function (i) {
                 var span3 = document.createElement('span');
@@ -315,6 +318,7 @@ Builder.prototype = {
             })(i)
         }
 
+        //init slider
         var max_top = 0;
         for (var i = 0; i < this.m.windows.length; i++) {
             if (this.m.windows[i].top > max_top)
@@ -324,8 +328,39 @@ Builder.prototype = {
         document.getElementById("top_slider")
             .max = max_top;
             
-        if (m.notation_type == "scientific") {
+        //init notation
+        if (this.m.notation_type == "scientific") {
             document.getElementById("notation").checked = true
+        }
+        
+        //init system
+        if (this.m.system == "multi") {
+            $("#system_menu").css("display", "")
+            
+            for (var key in this.m.system_segmented) {
+                
+                var checkbox=document.createElement("input");
+                    checkbox.type="checkbox";
+                    checkbox.id = "checkbox_system_"+key
+                    checkbox.appendChild(document.createTextNode(key))
+                    checkbox.checked=true
+                    checkbox.onchange = function () {
+                        m.update_selected_system()
+                    }
+                    
+                var div = document.createElement('div');
+                div.appendChild(checkbox)
+                div.appendChild(document.createTextNode(key))
+                
+                var li = document.createElement('li');
+                li.appendChild(div)
+
+                listSystem.appendChild(li);
+                
+            }
+             
+        }else{
+            $("#system_menu").css("display", "none")
         }
 
         initTag();
