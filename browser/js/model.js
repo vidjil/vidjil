@@ -135,6 +135,7 @@ Model.prototype = {
             self.parseJsonData(data, limit)
                 .loadGermline()
                 .loadAnalysis(analysis);
+            self.initClones()
 
         }
 
