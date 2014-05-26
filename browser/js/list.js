@@ -32,6 +32,7 @@
 function List(id, model) {
     this.id = id; //ID de la div contenant la liste
     this.m = model; //Model utilisé
+    this.index = []
 
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
     this.m.view.push(this); //synchronisation au Model
@@ -49,6 +50,7 @@ List.prototype = {
 
     build_list: function () {
         var self = this
+        this.index = []
 
         var div_parent = document.getElementById(this.id);
         div_parent.innerHTML = "";
@@ -64,6 +66,7 @@ List.prototype = {
             div.id = i;
 
             div_list_clones.appendChild(div);
+            this.index[i] = div;
         }
         
         div_parent.appendChild(div_list_menu)
@@ -358,7 +361,7 @@ List.prototype = {
     updateElem: function (list) {
         for (var i = 0; i < list.length; i++) {
 
-            var div = document.getElementById(list[i]);
+            var div = this.index[list[i]];
 
             if ((this.m.windows[list[i]].active && this.m.clones[list[i]].cluster.length != 0) || this.m.windows[list[i]].window == "other") {
 
@@ -399,7 +402,7 @@ List.prototype = {
     updateElemStyle: function (list) {
         for (var i = 0; i < list.length; i++) {
 
-            var div = document.getElementById(list[i]);
+            var div = this.index[list[i]];
 
             //color
             var color = this.m.getColor(list[i]);
