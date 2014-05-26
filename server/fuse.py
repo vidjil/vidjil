@@ -220,6 +220,33 @@ class ListWindows:
 
         return obj
         
+    ###
+    def __mul__(self, other):
+        
+        for i in range(len(self.d["reads_segmented"])):
+            self.d["reads_segmented"][i] += other.d["reads_segmented"][i] 
+        
+        self.d["windows"] += other.d["windows"]
+        self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
+        
+        self.d["system_segmented"].update(other.d["system_segmented"])
+        
+        return self
+        
+    ###
+    def add_system_info(self):
+        
+        w = self.d["windows"]
+        germline = self.d["germline"][0]
+        system = germline[-3:]
+        
+        
+        for i in range(len(w)):
+            w[i].d["system"] = system
+        
+        self.d["system_segmented"] = {system : list(self.d["reads_segmented"]) }
+    
+        
     ### 
     def fuseWindows(self, w1, w2, t1, t2) :
         #store data in dict with "window" as key
@@ -557,6 +584,7 @@ def main():
     group_options = parser.add_argument_group() # title='Options and parameters')
 
     group_options.add_argument('--test', action='store_true', help='run self-tests')
+    group_options.add_argument('--merge', action='store_true', help='merge multiple system')
 
     group_options.add_argument('--output', '-o', type=str, default='fused.data', help='output file (%(default)s)')
     group_options.add_argument('--top', '-t', type=int, default=50, help='keep only clones in the top TOP of some point (%(default)s)')
@@ -577,22 +605,37 @@ def main():
     print "### fuse.py -- " + DESCRIPTION
     print
 
-    print "### Read and merge input files"
-    for path_name in args.file:
-        jlist = ListWindows()
-        jlist.load(path_name)
+    if args.merge:
+        for path_name in args.file:
+            jlist = ListWindows()
+            jlist.load(path_name)
+            jlist.add_system_info()
+            
+            print "\t", jlist,
+
+            if jlist_fused is None:
+                jlist_fused = jlist
+            else:
+                jlist_fused = jlist_fused * jlist
+            print '\t==> merge to', jlist_fused
         
-        w1 = Window(1)
-        w2 = Window(2)
-        w3 = w1+w2
-        
-        print "\t", jlist,
-        # Merge lists
-        if jlist_fused is None:
-            jlist_fused = jlist
-        else:
-            jlist_fused = jlist_fused + jlist
-        print '\t==> merge to', jlist_fused
+    else:
+        print "### Read and merge input files"
+        for path_name in args.file:
+            jlist = ListWindows()
+            jlist.load(path_name)
+            
+            w1 = Window(1)
+            w2 = Window(2)
+            w3 = w1+w2
+            
+            print "\t", jlist,
+            # Merge lists
+            if jlist_fused is None:
+                jlist_fused = jlist
+            else:
+                jlist_fused = jlist_fused + jlist
+            print '\t==> merge to', jlist_fused
 
     print
     print "### Select point names"
