@@ -1,0 +1,46 @@
+{{extend 'db_layout.html'}}
+
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+<div>
+    <h3>{{=message}}</h3>
+    
+    <div id="db_table_container">
+        <table class="db_table" id="table">
+            <thead>
+                <tr><td class="column1"> name </td>
+                    <td class="column2"> birth </td>
+                    <td> info </td>
+                    <td class="column5"> </td>
+                    <td class="column5"> </td>
+                    <td class="column5"> </td>
+                </tr>
+            </thead>
+           {{ 
+           query = db(
+               auth.accessible_query('read', db.patient) |
+               auth.accessible_query('admin', db.patient)
+           ).select()
+           for row in query :}}
+               <tr onclick="db.call('patient/info', {'id' :'{{=row.id}}'} )" >
+                    <td> {{=row.last_name + " " + row.first_name }} </td>
+                    <td> {{=row.birth }} </td>
+                    <td> {{=row.info }} </td>
+                    <td onclick="db.call('patient/permission', {'id' :'{{=row.id}}'} )" > p </td>
+                    <td onclick="db.call('patient/edit', {'id' :'{{=row.id}}'} )" > e </td>
+                    <td onclick="db.call('patient/confirm', {'id' :'{{=row.id}}'} )" > X </td>  
+                </tr>
+            {{pass}}
+        </table>
+        <table class="db_table" id="db_fixed_header"></table>
+    </div>
+    
+    <span class="button" onclick="db.call('patient/add')"> add patient </span>
+</div>
+
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}

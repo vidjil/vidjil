@@ -23,13 +23,15 @@
     <head>
         <meta charset="utf-8">
         <title>Vidjil</title>
-        <!--<link rel="stylesheet/less" type="text/css" href="css/style.less" />-->
+        <meta charset="utf-8">
+        <title>Vidjil</title>
         <link id="palette" rel="stylesheet" type="text/css" href="css/dark.css" /> 
         <!--[if lte IE 8]><script src="js/r2d3.js" charset="utf-8"></script><![endif]-->
         <!--[if gte IE 9]><!-->
         <script type="text/javascript" src='js/lib/d3.v3.js'></script>
         <!--<![endif]-->
         <script type="text/javascript" src="js/lib/jquery-1.9.1.min.js"></script>
+        <script type="text/javascript" src="js/lib/jquery.form.js"></script>
         <script type="text/javascript" src='js/lib/StackBlur.js'></script>
         <script type="text/javascript" src='js/lib/jspdf.js'></script>
         <script type="text/javascript" src='js/lib/jspdf.plugin.addimage.js'></script>
@@ -41,7 +43,7 @@
         <script type="text/javascript" src='js/lib/file.js'></script>
         <script type="text/javascript" src="js/lib/less-1.5.0.min.js"></script>
         <script type="text/javascript" src='js/lib/jquery.zclip.js'></script>
-
+        <script type="text/javascript" src='js/compare.js'></script>
         <script type="text/javascript" src='js/germline.js'></script>
         <script type="text/javascript" src='js/model.js'></script>
         <script type="text/javascript" src='js/segmenter.js'></script>
@@ -52,6 +54,8 @@
         <script type="text/javascript" src='js/vidjil-style.js'></script>
         <script type="text/javascript" src='js/crossDomain.js'></script>
         <script type="text/javascript" src='js/pdf.js'></script>
+        <script type="text/javascript" src='js/database.js'></script>
+        <script type="text/javascript" src='js/conf.js'></script>
 
         <!--
         <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css">
@@ -61,39 +65,63 @@
 
   <body >
   
-    <div id="mid-container" onmouseover="hideSelector()" style >
-      <!-- LEFT-CONTAINER -->
-      <span id="left-container">
-      
-      <div id="left">
-	
-	  <div id="listClones"></div>
-	
-	  <div id="listSelect"></div>
+    <!-- MID-CONTAINER -->
+    <div id="mid-container" onmouseover="hideSelector()">
 
-      </div>
-	
-      </span>
-      
-      <div id="visu-container">
-	<!-- VISU -->
-	<span id="visu2">
-	  
-	</span>
+    <!-- LEFT-CONTAINER -->
+        <div id="left-container">
 
-	<span id="visu" onclick="">
-	</span>
-	   <div id="fps"> </div>
-      </div>
+            <div id="info"> </div>
+
+            <div id="list"> </div>
+
+        </div>
+    <!-- fin left-container -->
+
+        <div id="vertical-separator">
+        </div>
+
+    <!-- RIGHT-CONTAINER -->
+        <div id="right-container"></div>
+
+    <!-- VISU-CONTAINER  -->
+        <div id="visu-container">
+            <div id="visu2"></div>
+            <div id="visu-separator" >...</div>
+            <div id="visu" onclick=""></div>
+        </div>
 
     </div>
 	
 
-    <div id="bot-container">
+    <!-- BOT-CONTAINER / SEGMENTER-CONTAINER -->
+    <div id="bot-container"> </div>
 
-      <ul id="listSeq">
-      </ul>
+    <div id="tagSelector">
+        <span class="closeButton" onclick="$('#tagSelector').hide('fast')">X</span>
+        <div>   tag for <span id=tag_name></span><span id=tag_id></span></div>
+        <ul> </ul>
     </div>
+
+    <div id="frame-container"></div>
+
+    <div id="popup-container">
+        <span class="closeButton" onclick="closePopupMsg()">X</span>
+        <div id="popup-msg"></div>
+    </div>
+
+    <div id="data-container">
+        <span class="closeButton" onclick="closeDataBox()">X</span>
+        <div id="data-msg"></div>
+    </div>
+
+    <div id="db_div">
+        <span class="closeButton" onclick="db.close()">X</span>
+            <div id="db_msg">
+        </div>
+    </div>
+
+    <form id="form"></form>
     
     
     <div id="test_result"></div>

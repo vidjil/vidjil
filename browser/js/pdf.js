@@ -73,9 +73,7 @@ PDF.prototype = {
 
         this.doc.setFontSize(12);
         this.doc.text(this.marge + 120, this.y, 'Vidjil (beta) - http://bioinfo.lifl.fr/vidjil');
-
-        this.doc.text(this.marge + 5, this.y + 5, document.getElementById("upload_json")
-            .files[0].name);
+        this.doc.text(this.marge + 5, this.y + 5, this.m.dataFileName);
         // todo: fill again with reliable data :)
         // this.doc.text(this.marge + 5, this.y + 10, 'run: 2013-10-03');
         this.doc.text(this.marge + 5, this.y + 15, 'analysis: ' + m.timestamp[0].split(' ')[0]);

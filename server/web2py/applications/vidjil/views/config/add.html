@@ -1,0 +1,62 @@
+{{extend 'db_layout.html'}}
+
+<form id="data_form" action="DB_ADDRESS/config/add_form" enctype="multipart/form-data" method="post">
+    <table>
+        <tbody>
+            <tr>
+                <td >
+                    <label for="config_name" id="config_name__label"> Name: </label>
+                </td>
+                <td >
+                    <input class="string" id="config_name" name="config_name" type="text" value="">
+                </td>
+                <td >
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="config_germline" id="config_germline__label"> germline: </label>
+                </td>
+                <td>
+                    <select id="config_germline" name="config_germline">
+                        <option value="TRG">TRG</option>
+                        <option value="IGH">IGH</option>
+                    </select>
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="config_command" id="config_command__label">Command: </label>
+                </td>
+                <td>
+                    <input class="string" id="config_command" name="config_command" type="text" value="">
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="config_info" id="config_info__label">Info: </label>
+                </td>
+                <td>
+                    <textarea class="text" cols="40" id="config_info" name="config_info" rows="10">
+                    </textarea>
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td >
+                    <span class="button" onclick="db.call('config/index')"> back to list </span>
+                    <input type="submit" value="Soumettre" class="btn">
+                </td>
+                <td>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>

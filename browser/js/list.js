@@ -32,6 +32,7 @@
 function List(id, model) {
     this.id = id; //ID de la div contenant la liste
     this.m = model; //Model utilisé
+    this.index = []
 
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
     this.m.view.push(this); //synchronisation au Model
@@ -49,6 +50,7 @@ List.prototype = {
 
     build_list: function () {
         var self = this
+        this.index = []
 
         var div_parent = document.getElementById(this.id);
         div_parent.innerHTML = "";
@@ -64,6 +66,7 @@ List.prototype = {
             div.id = i;
 
             div_list_clones.appendChild(div);
+            this.index[i] = div;
         }
         
         div_parent.appendChild(div_list_menu)
@@ -203,7 +206,7 @@ List.prototype = {
 
         var span_cluster = document.createElement('span')
         span_cluster.className = "clusterBox";
-        if (this.m.clones[cloneID].cluster.length > 1 || this.m.clones[cloneID].name) {
+        if (this.m.clones[cloneID].cluster.length > 1) {
             if (this.m.clones[cloneID].split) {
                 span_cluster.onclick = function () {
                     self.hideCluster(cloneID)
@@ -260,7 +263,7 @@ List.prototype = {
                 if (self.m.windows[id].select) div_clone.className = "listElem selected";
 
                 var span_name = document.createElement('span');
-                span_name.className = "nameBox2";
+                span_name.className = "nameBox";
                 span_name.onclick = function () {
                     self.m.select(id);
                 }
@@ -358,7 +361,7 @@ List.prototype = {
     updateElem: function (list) {
         for (var i = 0; i < list.length; i++) {
 
-            var div = document.getElementById(list[i]);
+            var div = this.index[list[i]];
 
             if ((this.m.windows[list[i]].active && this.m.clones[list[i]].cluster.length != 0) || this.m.windows[list[i]].window == "other") {
 
@@ -399,7 +402,7 @@ List.prototype = {
     updateElemStyle: function (list) {
         for (var i = 0; i < list.length; i++) {
 
-            var div = document.getElementById(list[i]);
+            var div = this.index[list[i]];
 
             //color
             var color = this.m.getColor(list[i]);
@@ -468,12 +471,16 @@ List.prototype = {
             var oA = 2147483647
             var oB = 2147483647
 
-            if (typeof (self.m.windows[idA].V) != 'undefined' && self.m.windows[idA].V[0]) {
+            if (typeof (self.m.windows[idA].V) != 'undefined' && 
+                typeof (self.m.windows[idA].V[0]) != 'undefined' &&
+                typeof (self.m.germline.v[self.m.windows[idA].V[0]]) != 'undefined') {
                 var vA = self.m.windows[idA].V[0];
                 oA = this.m.germline.v[vA].gene * 1000 + this.m.germline.v[vA].allele
             }
 
-            if (typeof (self.m.windows[idB].V) != 'undefined' && self.m.windows[idB].V[0]) {
+            if (typeof (self.m.windows[idB].V) != 'undefined' && 
+                typeof (self.m.windows[idB].V[0]) != 'undefined' &&
+                typeof (self.m.germline.v[self.m.windows[idB].V[0]]) != 'undefined') {
                 var vB = self.m.windows[idB].V[0];
                 oB = this.m.germline.v[vB].gene * 1000 + this.m.germline.v[vB].allele
             }
@@ -496,12 +503,16 @@ List.prototype = {
             var oA = 2147483647
             var oB = 2147483647
 
-            if (typeof (self.m.windows[idA].J) != 'undefined' && self.m.windows[idA].J[0]) {
+            if (typeof (self.m.windows[idA].J) != 'undefined' && 
+                typeof (self.m.windows[idA].J[0]) != 'undefined' &&
+                typeof (self.m.germline.j[self.m.windows[idA].J[0]]) != 'undefined') {
                 var jA = self.m.windows[idA].J[0];
                 oA = this.m.germline.j[jA].gene * 1000 + this.m.germline.j[jA].allele
             }
 
-            if (typeof (self.m.windows[idB].J) != 'undefined' && self.m.windows[idB].J[0]) {
+            if (typeof (self.m.windows[idB].J) != 'undefined' && 
+                typeof (self.m.windows[idB].J[0]) != 'undefined' &&
+                typeof (self.m.germline.j[self.m.windows[idB].J[0]]) != 'undefined') {
                 var jB = self.m.windows[idB].J[0];
                 oB = this.m.germline.j[jB].gene * 1000 + this.m.germline.j[jB].allele
             }

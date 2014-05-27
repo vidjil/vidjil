@@ -1,0 +1,22 @@
+{{extend 'db_layout.html'}}
+
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+<div>
+    <h3>{{=message}}</h3>
+    
+    Are you sure you want to delete this config</br>
+    All data file using this config will also be deleted ({{=db(db.data_file.config_id==request.vars["id"]).count()}} data file(s) will be deleted).</br>
+
+    <div class="center"> 
+        <button onclick="db.call('config/index')">back</button>
+        <button onclick="db.call('config/delete', {'id' :'{{=request.vars["id"]}}'} )">continue</button>
+    </div>
+</div>
+    
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}

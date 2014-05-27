@@ -8,6 +8,8 @@ function Builder(model) {
     this.drag_separator = false
 }
 
+//TODO need a reset function
+
 Builder.prototype = {
 
     init: function () {
@@ -35,18 +37,25 @@ Builder.prototype = {
         this.build_tagSelector()
         this.build_displaySelector()
         this.build_info_container()
+        this.build_clusterSelector()
     },
 
     update: function () {
 
-        if (this.colorMethod != this.m.colorMethod || this.point != this.m.time_order[this.m.t]) {
+        if (this.colorMethod != this.m.colorMethod || 
+            this.point != this.m.time_order[this.m.t] ||
+            this.dataFileName != this.m.dataFileName ||
+            this.analysisFileName != this.m.analysisFileName 
+        ) {
             this.point = this.m.time_order[this.m.t]
             this.colorMethod = this.m.colorMethod
+            this.dataFileName = this.m.dataFileName 
+            this.analysisFileName = this.m.analysisFileName 
             this.build_info_container()
         }
 
     },
-
+    
     updateElem: function () {},
 
     updateElemStyle: function () {},
@@ -119,15 +128,18 @@ Builder.prototype = {
 
                 var span1 = document.createElement('span');
                 span1.className = "tagColorBox tagColor" + i
-
+                span1.onclick = function () {
+                    var cloneID = parseInt(document.getElementById('tag_id').innerHTML);
+                    self.m.changeTag(cloneID, i)
+                    $('#tagSelector').hide('fast')
+                }
+                
                 var span2 = document.createElement('span');
                 span2.className = "tagName" + i + " tn"
                 span2.onclick = function () {
-                    var cloneID = parseInt(document.getElementById('tag_id')
-                        .innerHTML);
+                    var cloneID = parseInt(document.getElementById('tag_id').innerHTML);
                     self.m.changeTag(cloneID, i)
-                    $('#tagSelector')
-                        .hide('fast')
+                    $('#tagSelector').hide('fast')
                 }
 
                 var div = document.createElement('div');
@@ -156,18 +168,24 @@ Builder.prototype = {
         
         span2.appendChild(input)
         
-        var span3 = document.createElement('span');
-        span3.appendChild(document.createTextNode("normalize"))
+        var span3 = document.createElement('button');
+        span3.appendChild(document.createTextNode("ok"))
         span3.onclick = function () {
             var cloneID = parseInt(document.getElementById('tag_id')
                 .innerHTML);
             var size = parseFloat(document.getElementById('normalized_size').value);
-            document.getElementById('normalized_size').value = ""
-            self.m.norm = true
-            self.m.compute_normalization(cloneID, size)
-            self.m.update()
-            $('#tagSelector')
-                .hide('fast')
+            
+            if (size>0 && size<1){
+                document.getElementById('normalized_size').value = ""
+                self.m.norm = true
+                self.m.compute_normalization(cloneID, size)
+                self.m.update()
+                $('#tagSelector')
+                    .hide('fast')
+            }else{
+                popupMsg("expected input between 0.0001 and 1")
+            }
+            
         }
         
         var div = document.createElement('div');
@@ -221,20 +239,20 @@ Builder.prototype = {
 
     /* 
      * */
-    editPointName: function (elem) {
+    edit: function (elem, data) {
         var self = this;
         var divParent = elem.parentNode;
         divParent.innerHTML = "";
 
         var input = document.createElement('input');
         input.type = "text";
-        input.id = "new_point_name";
-        input.value = this.m.time[this.point];
+        input.id = "edit_value";
+        input.value = self.m[data][self.point];
         input.style.width = "200px";
         input.style.border = "0px";
         input.style.margin = "0px";
         input.onkeydown = function () {
-            if (event.keyCode == 13) document.getElementById('btnSavePoint')
+            if (event.keyCode == 13) document.getElementById('btnSave')
                 .click();
         }
         divParent.appendChild(input);
@@ -243,16 +261,14 @@ Builder.prototype = {
         var a = document.createElement('a');
         a.className = "button";
         a.appendChild(document.createTextNode("save"));
-        a.id = "btnSavePoint";
+        a.id = "btnSave";
         a.onclick = function () {
-            var newPointName = document.getElementById("new_point_name")
-                .value;
-            self.m.time[self.m.t] = newPointName
+            self.m[data][self.point] = document.getElementById("edit_value").value
             self.build_info_container()
             self.m.update()
         }
         divParent.appendChild(a);
-        $('#new_point_name')
+        $('#edit_value')
             .select();
     },
 
@@ -263,10 +279,13 @@ Builder.prototype = {
 
         var displaySelector = document.getElementById("displaySelector")
         var listTag = displaySelector.getElementsByTagName("ul")[0]
+        var listSystem = document.getElementById("system_list")
         
         //reset
         listTag.innerHTML = "";
+        listSystem.innerHTML = "";
 
+        //init tag list
         for (var i = 0; i < tagName.length; i++) {
             (function (i) {
                 var span3 = document.createElement('span');
@@ -299,6 +318,7 @@ Builder.prototype = {
             })(i)
         }
 
+        //init slider
         var max_top = 0;
         for (var i = 0; i < this.m.windows.length; i++) {
             if (this.m.windows[i].top > max_top)
@@ -308,11 +328,70 @@ Builder.prototype = {
         document.getElementById("top_slider")
             .max = max_top;
             
-        if (m.notation_type == "scientific") {
+        //init notation
+        if (this.m.notation_type == "scientific") {
             document.getElementById("notation").checked = true
+        }
+        
+        //init system
+        if (this.m.system == "multi") {
+            $("#system_menu").css("display", "")
+            
+            for (var key in this.m.system_segmented) {
+                
+                var checkbox=document.createElement("input");
+                    checkbox.type="checkbox";
+                    checkbox.id = "checkbox_system_"+key
+                    checkbox.appendChild(document.createTextNode(key))
+                    checkbox.checked=true
+                    checkbox.onchange = function () {
+                        m.update_selected_system()
+                    }
+                    
+                var div = document.createElement('div');
+                div.appendChild(checkbox)
+                div.appendChild(document.createTextNode(key))
+                
+                var li = document.createElement('li');
+                li.appendChild(div)
+
+                listSystem.appendChild(li);
+                
+            }
+             
+        }else{
+            $("#system_menu").css("display", "none")
         }
 
         initTag();
+    },
+    
+    //TODO need to build complete Selector 
+    build_clusterSelector: function () {
+        var self = this;
+
+        var clusterSelector = document.getElementById("clusterSelector").firstChild;
+        
+        if (self.m.windows[0]._target){
+        
+            var target = document.createElement('a');
+                target.className = "buttonSelector"
+                target.onclick = function () { self.m.clusterBy('_target')}
+                target.appendChild(document.createTextNode("target"));
+            clusterSelector.appendChild(target)
+            
+            var targetV = document.createElement('a');
+                targetV.className = "buttonSelector"
+                targetV.onclick = function () { self.m.clusterBy('_target.V-GENE')}
+                targetV.appendChild(document.createTextNode("target V"));
+            clusterSelector.appendChild(targetV)
+            
+            var targetJ = document.createElement('a');
+                targetJ.className = "buttonSelector"
+                targetJ.onclick = function () { self.m.clusterBy('_target.J-GENE')}
+                targetJ.appendChild(document.createTextNode("target J"));
+            clusterSelector.appendChild(targetJ)
+        }
     },
 
     toggle_left_container: function () {
@@ -382,18 +461,27 @@ Builder.prototype = {
         div_data_file.appendChild(document.createTextNode(this.m.dataFileName));
 
         //global info
-        var div_analysis_file = this.build_info_line("info_analysis_file", "analysis file", this.m.analysisFileName)
+        var div_analysis_file = this.build_info_line("info_analysis_file", "analysis", this.m.analysisFileName)
         var div_system = this.build_info_line("info_system", "system", this.m.system)
 
         //point info
-        var div_point = this.build_info_line("info_point", "point", this.m.time[this.m.t])
+        var div_point = this.build_info_line("info_point", "point",  this.m.getStrTime(this.m.t, "name") )
         var span = document.createElement('span')
         span.appendChild(document.createTextNode("..."));
         span.className = "edit_button"
         span.onclick = function () {
-            self.editPointName(this);
+            self.edit(this, "time");
         }
         div_point.appendChild(span)
+        
+        var div_date = this.build_info_line("info_date", "date", this.m.getStrTime(this.m.t, "sampling_date") )
+        var span = document.createElement('span')
+        span.appendChild(document.createTextNode("..."));
+        span.className = "edit_button"
+        span.onclick = function () {
+            self.edit(this, "timestamp2");
+        }
+        div_date.appendChild(span)
 
         var percent = (this.m.reads_segmented[this.point] / this.m.reads_total[this.point]) * 100
         var val = "" + this.m.reads_segmented[this.point] + " reads" + " (" + percent.toFixed(2) + "%)"
@@ -406,6 +494,7 @@ Builder.prototype = {
         parent.appendChild(div_system)
 
         parent.appendChild(div_point)
+        parent.appendChild(div_date)
         parent.appendChild(div_segmented)
         parent.appendChild(div_total)
 

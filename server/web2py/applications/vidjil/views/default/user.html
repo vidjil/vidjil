@@ -1,0 +1,22 @@
+{{extend 'db_layout.html'}}
+
+<h2>{{=T( request.args(0).replace('_',' ').capitalize() )}}</h2>
+
+<div>
+{{form['_id'] ="login_form"}}
+    
+{{=form}}
+    
+{{if request.args(0)=='login':}}
+    
+    {{if not 'register' in auth.settings.actions_disabled:}}
+    <button class="btn" onclick="db.call('default/user/register')">Register</button>
+    {{pass}}
+    
+    {{if not 'request_reset_password' in auth.settings.actions_disabled:}}
+        <button class="btn" onclick="db.call('default/user/request_reset_password')">Lost Password</button>
+    {{pass}}
+    
+{{pass}}
+
+</div>

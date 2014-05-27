@@ -1,0 +1,22 @@
+{{extend 'db_layout.html'}}
+
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+<div>
+    <h3>{{=message}}</h3>
+    
+    Are you sure you want to delete this sequence file?</br>
+    All data using this sequence file will also be deleted ({{=db(db.data_file.sequence_file_id==request.vars["id"]).count()}} data file(s) will be deleted).</br>
+
+    <div class="center"> 
+        <button onclick="db.call('patient/info', {'id' :'{{=request.vars["patient_id"]}}'} )">back</button>
+        <button onclick="db.call('file/delete', {'id' :'{{=request.vars["id"]}}'} )">continue</button>
+    </div>
+</div>
+    
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}

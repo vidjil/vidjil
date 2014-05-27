@@ -50,7 +50,7 @@ function ScatterPlot(id, model) {
     this.time0 = Date.now(), //sauvegarde d'une date initiale
     this.time1 = this.time0; //utilisation de cette variable afin de pouvoir calculer les frames
     this.fpsqueue = []; //sert à calculer le nombre de frame selon les 20 dernières valeurs
-
+    
     //use_simple_v -> visualisation de v présents lors d'un nombre très grands de v
     this.use_simple_v = false
     this.active_selector = false
@@ -150,6 +150,9 @@ ScatterPlot.prototype = {
         this.plot_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", this.id + "_plot_container")
+            
+        $("#" + this.id + "_plot_container").fadeTo(0, 0)
+        setTimeout(function(){$("#" + self.id + "_plot_container").fadeTo(300,1)},2000);
 
 	//Sélection du contenu de bar -> Ajout d'un attribut valant un id
         this.bar_container = d3.select("#" + this.id + "_svg")
@@ -170,9 +173,12 @@ ScatterPlot.prototype = {
         this.nodes = d3.range(this.m.n_windows)
             .map(Object);
         for (var i = 0; i < this.m.n_windows; i++) {
-            this.nodes[i].id = i; //L'id d'un cercle vaut le nombre de i dans la boucle
-            this.nodes[i].r1 = 5; // r1 -> ?
-            this.nodes[i].r2 = 5; // r2 -> ?
+            this.nodes[i].id = i; // node id == window id // each model windows have a node in the scatterplot
+            this.nodes[i].r1 = 5; // r1 -> expected radius
+            this.nodes[i].r2 = 5; // r2 -> true radius ( converge slowly to the expected radius for a smooth transition effect )
+            
+            this.nodes[i].x = Math.random()*500; // TODO optimize : use same system as radius/expected radius 
+            this.nodes[i].y = Math.random()*250; // instead of complex move() function for each node and tick ( cost too much )
         }
 
         //initialisation moteur physique D3
@@ -324,7 +330,7 @@ ScatterPlot.prototype = {
     /* Fonction permettant la mise à jour de l'élément SVG concernant le graphe 'diagramme'
      * */
     updateBar: function () {
-        self = this
+        var self = this
 
 	//Object.keys -> Retourne un tableau contenant les 'propriétés entières' en chaînes de caractères, correspondants aux éléments présents dans le tableau donné en paramètre de la fonction ==> Tableau
         this.vKey = Object.keys(this.m.germline.vgene);
@@ -538,6 +544,11 @@ ScatterPlot.prototype = {
         this.gridModel["gene_v"] = [];
         this.gridModel["allele_v_used"] = [];
         this.gridModel["gene_v_used"] = [];
+        this.positionGene = {}; 
+        this.positionUsedGene = {}; 
+        this.positionAllele = {}; 
+        this.positionUsedAllele = {};
+        this.use_simple_v = false;
 
 	//Obtention de toutes les clefs concernant les allèles et les gènes V
         var vKey = Object.keys(this.m.germline.v);
@@ -722,16 +733,26 @@ ScatterPlot.prototype = {
      * */
     tick: function () {
         self = this;
+        
+        var active_node = this.node.select(function(d, i) { return d.r!=0 ? this : null; });
+        
         //mise a jour des rayons( maj progressive )
         this.node.each(this.updateRadius());
-        //élimine les valeurs NaN ou infinity pouvant apparaitre
-        this.node.each(this.debugNaN());
+        
+        
+        active_node.each(this.debugNaN())
         //deplace le node vers son objectif
-        this.node.each(this.move());
+        active_node.each(this.move());
         //résolution des collisions
-        this.node.each(this.collide());
-        //élimine les valeurs NaN ou infinity pouvant apparaitre
-        this.node.each(this.debugNaN())
+        var quad = d3.geom.quadtree(this.nodes)
+
+        for (var i=0; i<this.nodes.length; i++) {
+            if (this.nodes[i].r1 !=0){
+                quad.visit(this.collide2(this.nodes[i]));
+            }
+        }
+        active_node.each(this.debugNaN())
+        active_node
             //attribution des nouvelles positions/tailles
             .attr("cx", function (d) {
 		return (d.x + self.marge_left);
@@ -915,12 +936,10 @@ ScatterPlot.prototype = {
 
     /* Fonction permettant de résoudre les collisions apportées par les nodes
      * */
-    collide: function () {
-	//Création d'un arbre à 4 fils
-        var quadtree = d3.geom.quadtree(this.nodes);
+    collide: function (quadtree) {
         self = this;
         return function (d) {
-            if (d.drag != 1 && d.r1 != 0) {
+            if (d.r1 != 0) {
                 var r = self.nodes[d.id].r2 + 1,
                 nx1 = d.x - r,
                 nx2 = d.x + r,
@@ -929,9 +948,9 @@ ScatterPlot.prototype = {
                 quadtree.visit(function (quad, x1, y1, x2, y2) {
                     if (quad.point && (quad.point !== d) && quad.point.r1 != 0) {
                         var x = d.x - quad.point.x,
-                        y = d.y - quad.point.y,
-                        l = Math.sqrt(x * x + y * y),
-                        r = self.nodes[d.id].r2 + self.nodes[quad.point].r2 + 1;
+                            y = d.y - quad.point.y,
+                            l = Math.sqrt(x * x + y * y),
+                            r = self.nodes[d.id].r2 + self.nodes[quad.point].r2 + 1;
                         if (l < r) {
                             l = (l - r) / l * 0.5;
                             d.x -= x *= l;
@@ -945,7 +964,33 @@ ScatterPlot.prototype = {
             }
         };
     },
+    
+    collide2: function(node) {
+            var r = node.r2+5,
+                nx1 = node.x - r,
+                nx2 = node.x + r,
+                ny1 = node.y - r,
+                ny2 = node.y + r;
+            return function(quad, x1, y1, x2, y2) {
+                if (quad.point && (quad.point !== node) && quad.point.r1 != 0) {
+                    var x = node.x - quad.point.x,
+                        y = node.y - quad.point.y,
+                        l = Math.sqrt(x * x + y * y),
+                        r = node.r2 + quad.point.r2+1;
+                    if (l < r) {
+                        l = (l - r) / l * .5;
+                        node.x -= x *= l;
+                        node.y -= y *= l;
+                        quad.point.x += x;
+                        quad.point.y += y;
+                    }
+                }
+                return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+            };
+    },
 
+
+    
     /* Fonction permettant de mettre à jour les données du ScatterPlot, et de relancer une sequence d'animation
      * */
     update: function () {
@@ -1274,12 +1319,19 @@ ScatterPlot.prototype = {
         }
 
         this.splitX = splitX;
-        if (splitX == "gene_v" && this.use_simple_v) this.splitX = "gene_v_used";
-        if (splitX == "allele_v" && this.use_simple_v) this.splitX = "allele_v_used";
-
         this.splitY = splitY;
-        if (splitY == "gene_v" && this.use_simple_v) this.splitY = "gene_v_used";
-        if (splitY == "allele_v" && this.use_simple_v) this.splitY = "allele_v_used";
+        
+        if (this.splitX == "gene_v" && this.use_simple_v) this.splitX = "gene_v_used";
+        if (this.splitX == "allele_v" && this.use_simple_v) this.splitX = "allele_v_used";
+
+        if (this.splitY == "gene_v" && this.use_simple_v) this.splitY = "gene_v_used";
+        if (this.splitY == "allele_v" && this.use_simple_v) this.splitY = "allele_v_used";
+        
+        if (this.splitX == "gene_v_used" && !this.use_simple_v) this.splitX = "gene_v";
+        if (this.splitX == "allele_v_used" && !this.use_simple_v) this.splitX = "allele_v";
+
+        if (this.splitY == "gene_v_used" && !this.use_simple_v) this.splitY = "gene_v";
+        if (this.splitY == "allele_v_used" && !this.use_simple_v) this.splitY = "allele_v";
 
         this.update();
     },

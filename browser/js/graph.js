@@ -237,13 +237,15 @@ Graph.prototype = {
             if ( this.m.time_order.indexOf(i) == -1){
                 $("<div/>", {
                     class: "graph_listElem",
-                    text: this.m.time[i],
+                    text: this.m.getStrTime(i),
+                    time: i,
                 }).appendTo("#" + this.id + "_list");
             }
         }
         
         $(".graph_listElem").mousedown(function () {
-            var time = self.m.time.indexOf(this.innerHTML)
+            var time = parseInt( $(this).attr("time") )
+            console.log(time)
             self.startDrag(time)
         })
         
@@ -277,7 +279,7 @@ Graph.prototype = {
 
             var time_name = "fu" + (i + 1);
             if (typeof this.m.time != "undefined" && typeof this.m.time[i] != "undefined") {
-                time_name = this.m.time[i];
+                time_name = this.m.getStrTime(i);
             }
 
             d.type = "axis_v";

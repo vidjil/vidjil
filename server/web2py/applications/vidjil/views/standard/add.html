@@ -1,0 +1,49 @@
+{{extend 'db_layout.html'}}
+
+<form id="upload_form" action="DB_ADDRESS/standard/add_form" enctype="multipart/form-data" method="post">
+    <table>
+        <tbody>
+            <tr>
+                <td >
+                    <label for="file" id="file__label"> File :</label>
+                </td>
+                <td >
+                    <input id="upload_file" type="file" name="file" >
+                </td>
+                <td >
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="standard_name" id="standard_name__label">Name: </label>
+                </td>
+                <td>
+                    <input class="string" id="standard_name" name="standard_name" rows="10">
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <label for="standard_info" id="standard_info__label">Info: </label>
+                </td>
+                <td>
+                    <textarea class="text" cols="40" id="standard_info" name="standard_info" rows="10">
+                    </textarea>
+                </td>
+                <td>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                </td>
+                <td >
+                    <span class="button" onclick="db.call('standard/index')"> back to list </span>
+                    <input type="submit" value="Soumettre" class="btn">
+                </td>
+                <td>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</form>
