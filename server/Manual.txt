@@ -1,0 +1,36 @@
+Vidjil Server Manual
+
+
+Install
+////////////////////////////
+
+    -Get web2py framework here  http://www.web2py.com/init/default/download
+    (Version 2.9.5-stable)
+
+    -extract web2py source archive inside this folder
+
+
+Start
+//////////////////////////
+
+    -you need python 2.5, 2.6 or 2.7
+
+    -simply run
+
+        for a local server
+        #python web2py.py -a 'your password' -i 127.0.0.1 -p 8000   
+
+        for a public server
+        #python web2py.py -a 'your password' -i 0.0.0.0 -p 8000   
+
+    -add a worker
+        if you want a worker to compute .data file for you
+        (you can have multiple workers if you think your server can 
+        handle multiple "Vidjil" instance running simultaneously)
+        #python web2py.py -K Vidjil
+
+
+Use
+//////////////////////////
+
+set db_adress in your browser conf.js file 

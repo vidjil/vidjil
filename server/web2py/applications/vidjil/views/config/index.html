@@ -1,0 +1,45 @@
+{{extend 'db_layout.html'}}
+
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+<div>
+    <h3>{{=message}}</h3>
+    
+    <div id="db_table_container">
+        <table class="db_table" id="table">
+            <thead>
+                <tr><td class="column2"> name </td>
+                    <td class="column2"> germline </td>
+                    <td class="column2"> command </td>
+                    <td> info </td>
+                    <td class="column5"> </td>
+                    <td class="column5"> </td>
+                </tr>
+            </thead>
+           {{ 
+           query = None
+           c_id = ""
+           query = db(db.config).select() 
+           for row in query :}}
+                <tr>
+                    <td> {{=row.name }} </td>
+                    <td> {{=row.germline }} </td>
+                    <td> {{=row.command }} </td>
+                    <td> {{=row.info }} </td>
+                    <td onclick="db.call('config/edit', {'id' :'{{=row.id}}'} )" > e </td>
+                    <td onclick="db.call('config/confirm', {'id' :'{{=row.id}}'} )" > X </td>
+                </tr>
+            {{pass}}
+        </table>
+        <table class="db_table" id="db_fixed_header"></table>
+    </div>
+    
+    <span class="button" onclick="db.call('config/add')"> new config </span>
+</div>
+
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}

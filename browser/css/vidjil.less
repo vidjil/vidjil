@@ -104,7 +104,7 @@ max-height: calc(~"100%" - @margin)
 #info{
   font-family : Courier New,monaco,terminal,courier,system; 
   font-size: 13px;
-  height :150px;
+  height :200px;
   padding:3px;
   background : @background;
 }
@@ -331,9 +331,9 @@ max-height: calc(~"100%" - @margin)
 }
 
 #list{
-  height: -moz-calc(~"100% - 190px");
-  height: -webkit-calc(~"100% - 190px");
-  height: calc(~"100% - 190px");
+  height: -moz-calc(~"100% - 240px");
+  height: -webkit-calc(~"100% - 240px");
+  height: calc(~"100% - 240px");
 }
 
 #list_clones{
@@ -468,6 +468,10 @@ max-height: calc(~"100%" - @margin)
   letter-spacing: 0.12em;
 }
 
+.D {
+    color: #fb000d;
+}
+
 							  /*tag*/
 
 #tagSelector{
@@ -502,6 +506,10 @@ max-height: calc(~"100%" - @margin)
   margin-top: 2px;
 }
 
+#normalized_size {
+    width: 80px;
+}
+
 							  /*menu*/
 
 .menu{
@@ -511,6 +519,19 @@ max-height: calc(~"100%" - @margin)
   cursor:pointer;
   background:inherit;
 } 
+
+.submenu{
+    width: 200px;
+    display: inline-table;
+}
+
+.menu_box {
+    margin: 0px;
+    padding: 5px;
+    border-top: solid;
+    border-width: 1px;
+    border-color:@border;
+}
 
 #file_menu, #analysis_menu{
   z-index:2;
@@ -545,7 +566,7 @@ max-height: calc(~"100%" - @margin)
 
 
 #popup-container{
-  z-index:3;
+  z-index:5;
   border:solid; 
   position: fixed; 
   top: 250px; 
@@ -699,6 +720,7 @@ span.logo
   border-top: none;
   margin-top: 4px;
   z-index:5;
+  overflow: hidden;
 }
 
 #bot-container {
@@ -866,4 +888,103 @@ span .substitution{
     float: right;
     margin-right: 2px;
     cursor: pointer;
+}
+
+#db_div{
+  z-index:3;
+  border:solid; 
+  position: fixed; 
+  top: 150px; 
+  left:50% ;
+  width:960px;
+  height :400px;
+  font-size: 14px; 
+  padding: 10px;
+  background: @background;
+  display:none;
+  left: -moz-calc(~"50% - 480px");
+  left: -webkit-calc(~"50% - 480px");
+  left: calc(~"50% - 480px");
+}
+
+.db_table{
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.db_table .column1{
+    width: 20%;
+}
+
+.db_table .column2{
+    width: 100px;
+}
+
+.db_table .column4{
+    width: 50px;
+}
+.db_table .column5{
+    width: 20px;
+}
+
+.db_table th{
+    border-bottom: solid;
+    border-color: @border;
+    border-width: 1px;
+} 
+
+.db_table tr{
+    border-bottom: solid;
+    border-color: @border;
+    border-width: 1px;
+    cursor: pointer;
+} 
+
+.db_table tr:hover{
+    background: @highlight;
+}
+
+.db_table td{
+    border-width:0px;
+}
+
+#db_header{
+    height:20px;
+}
+
+#db_menu{
+    float: left;
+}
+
+#db_auth{
+    float: right;
+}
+
+#db_table_container{
+    overflow-y: scroll;
+    height: 280px;
+    border: solid;
+    border-color: @highlight;
+    border-width: 1px;
+    position: relative;
+}
+
+#db_fixed_header { 
+    position: absolute; 
+    top: 0px; 
+    background: @highlight;
+}
+
+.db_help_desc {
+    margin-left: 150px;
+}
+
+.db_help_action {
+    margin-left: 10px;
+    font-weight: bold;
+}
+
+.db_help_p {
+    margin-top: 20px;
+    margin-left: 20px;
 }

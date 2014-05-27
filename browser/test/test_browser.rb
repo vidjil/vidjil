@@ -24,6 +24,9 @@ class MySpec < MiniTest::Spec
         # close the welcoming popup
         $b.div(:id => 'popup-msg').button(:text => 'start').click 
 
+        $b.div(:id => 'demo_file_menu').click 
+        $b.div(:id => 'demo_file_menu').a(:text => 'load data/analysis').click 
+        
         # select data file
         $b.div(:id => 'file_menu').file_field(:name,"json").set(data_path)
         $b.div(:id => 'file_menu').button(:text => 'start').click 
@@ -146,10 +149,18 @@ class Browser < MiniTest::Test
     def test_05_normalize
         begin
             list = $b.div(:id => 'list_clones')
-            $b.execute_script("m.normalization_switch(true)")
-            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '6.625%' ) , ">> fail normalize on : wrong clone size "
+            elem = $b.div(:id => 'list_clones').li(:id => '0')
+            tagSelector = $b.div(:id => 'tagSelector')
             
-            $b.execute_script("m.normalization_switch(false)")
+            elem.div(:class => 'starBox').click
+            $b.input(:id => 'normalized_size').to_subtype.set('0.01')
+            tagSelector.button(:text => 'ok').click 
+            
+            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '1.000%' ) , ">> fail normalize on : wrong clone size "
+            
+            $b.div(:id => 'display_menu').click 
+            $b.checkbox(:id => 'normalize').set
+            $b.checkbox(:id => 'normalize').clear 
             assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.75%' ) , ">> fail normalize off : wrong clone size "
         rescue
             assert (false), "missing element to run test_05_normalize \n" 
@@ -222,13 +233,12 @@ class Browser < MiniTest::Test
             #select 3 clones
             $b.element(:id => "circle5" ).click
             $b.element(:id => "circle8" ).click
-            $b.element(:id => "circle12" ).click
             
             $b.span(:id => "toIgBlast" ).click
             
             assert ( $b.window(:title => "IgBLAST Search Results").exists? ) , ">> fail opening igblast "
             $b.window(:title => "IgBLAST Search Results").use do
-                assert ($b.text.include? "Index for multiple query sequences (total = 3)"), ">> fail igblast analysis" 
+                assert ($b.text.include? "Index for multiple query sequences (total = 2)"), ">> fail igblast analysis" 
             end
  
             $b.window(:title => "Vidjil").use
@@ -265,8 +275,8 @@ class Browser < MiniTest::Test
             analysis_path = Dir.pwd + '/test.analysis'
             data_path = Dir.pwd + '/test.data'
             
-            $b.div(:id => 'logo').click 
-            $b.div(:id => 'popup-msg').button(:text => 'start').click 
+            $b.div(:id => 'demo_file_menu').click 
+            $b.div(:id => 'demo_file_menu').a(:text => 'load data/analysis').click 
             $b.div(:id => 'file_menu').file_field(:name,"json").set(data_path)
             $b.div(:id => 'file_menu').file_field(:name,"pref").set(analysis_path)
             $b.div(:id => 'file_menu').button(:text => 'start').click 
@@ -293,9 +303,11 @@ class Browser < MiniTest::Test
             sleep 2
             target.fire_event("onmouseup")
             
+            time.wd.location[0]
+            target.wd.location[0]
+            
             list = $b.div(:id => 'list_clones')
-            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '0.0005%' ) , ">> fail drag/drop : wrong clone size "
-            assert ( $b.div(:id => 'info').text.include? "Fu6.data") , ">> fail drag/drop : wrong selected time point "
+            assert ( time.wd.location[0] < target.wd.location[0] ) , ">> fail drag/drop : wrong time order"
             
         rescue
             assert (false), "missing element to run test_12_drag_time \n" 
@@ -336,7 +348,7 @@ class Browser < MiniTest::Test
             assert ( displayMenu.text.include? 'test_tag') , "fail edit tag : tag name in display menu hasn't changed"
             
             elem.div(:class => 'starBox').click
-            assert ( displayMenu.text.include? 'test_tag') , "fail edit tag : tag name in tag selector hasn't changed"
+            assert ( tagSelector.text.include? 'test_tag') , "fail edit tag : tag name in tag selector hasn't changed"
             
             tagSelector.span(:class => 'closeButton').click
             

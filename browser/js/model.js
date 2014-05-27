@@ -55,55 +55,68 @@ VIDJIL_JSON_VERSION = '2014.02'
  * */
 function Model() {
     console.log("creation Model")
-    this.analysis = {
-        custom: [],
-        cluster: [],
-        date: []
-    };
-    this.t = 0;
-    this.norm = false;
-    this.focus = -1;
-    this.colorMethod = "Tag";
     this.view = [];
-    this.mapID = {};
-    this.top = 10;
-    this.precision = 1;
-    this.time_order = [];
-
-    this.notation_type = "percent"
-    this.normalization = { 
-        "A" : [],
-        "B" : 0,
-        "id" : 0
-    }
-
+    this.reset()
+    
     this.checkBrowser()
 }
 
 
 Model.prototype = {
+        
+    reset: function () {
+        this.analysis = {
+            custom: [],
+            cluster: [],
+            date: []
+        };
+        this.t = 0;
+        this.norm = false;
+        this.focus = -1;
+        this.colorMethod = "Tag";
+        this.mapID = {};
+        this.top = 10;
+        this.precision = 1;
+        this.time = [];
+        this.time_order = [];
+        this.timestamp = [];
+        this.timestamp2 = [];
+        this.clones = [];
+        this.windows = [];
+        this.germline = {};
+        this.dataFileName = '';
+        this.analysisFileName = '';
+        this.notation_type = "percent"
+        this.time_type = "name"
+        this.system_selected = []
+        this.db_key = "" //for file who came from the database
+        this.normalization = { 
+            "A" : [],
+            "B" : 0,
+            "id" : 0
+        }
+    },
 
 
     /* load the selected data/analysis file in the model
-     * @data : id of the form (html element) linking to the data file
+     * @id : id of the form (html element) linking to the data file
      * @analysis : id of the form (html element) linking to the analysis file
      * impossible to use direct path to input files, need a fakepath from input form
      * @limit : minimum top value to keep a window*/
-    load: function (data, analysis, limit) {
+    load: function (id, analysis, limit) {
         var self = this;
 
         console.log("load()");
 
-        if (document.getElementById(data)
+        if (document.getElementById(id)
             .files.length === 0) {
             return;
         }
 
         var oFReader = new FileReader();
-        var oFile = document.getElementById(data)
+        var oFile = document.getElementById(id)
             .files[0];
-        self.dataFileName = document.getElementById(data)
-            .files[0].name;
+            
         oFReader.readAsText(oFile);
 
         oFReader.onload = function (oFREvent) {
@@ -117,12 +130,61 @@ Model.prototype = {
                 popupMsg(msg.version_error);
                 return 0;
             }
+            self.reset()
+            self.dataFileName = document.getElementById(id)
+                .files[0].name;
             self.parseJsonData(data, limit)
                 .loadGermline()
                 .loadAnalysis(analysis);
+            self.initClones()
 
         }
 
+    }, //end load
+    
+    loadDataUrl: function (url) {
+        var self = this;
+        
+        var url_split = url.split('/')
+        
+        $.ajax({
+            type: "POST",
+            timeout: 5000,
+            crossDomain: true,
+            url: url,
+            success: function (result) {
+                json = jQuery.parseJSON(result)
+                self.reset();
+                self.parseJsonData(json, 100)
+                    .loadGermline();
+                self.initClones()
+                self.dataFileName = url_split[url_split.length-1]
+                self.loadAnalysisUrl(url)
+            }
+        });
+
+    }, //end load
+    
+    loadAnalysisUrl: function (url) {
+        var self = this;
+        
+        var url2 = url.replace(".data",".analysis");
+        
+        var url_split = url2.split('/')
+        
+        $.ajax({
+            type: "POST",
+            timeout: 5000,
+            crossDomain: true,
+            url: url2,
+            success: function (result) {
+                self.parseJsonAnalysis(result)
+                self.analysisFileName = url_split[url_split.length-1]
+            },
+            error: function () {
+                self.update()
+            }
+        });
 
     }, //end load
 
@@ -133,7 +195,6 @@ Model.prototype = {
         self.dataCluster = []
         var min_sizes = [];
         var n_max = 0;
-        var n2_max = 0; //TODO rename
         
         for (var k = 0; k < data.windows[0].size.length; k++) {
                 min_sizes[k] = 1;
@@ -150,8 +211,14 @@ Model.prototype = {
                     if (min_sizes[k] > size && data.windows[i].size[k] != 0)
                         min_sizes[k] = size;
                 }
+                
+                data.windows[i].Nlength = 0;
+                if ((typeof (data.windows[i].Jstart) != 'undefined') &&
+                    (typeof (data.windows[i].Vend) != 'undefined') ) {
+                    data.windows[i].Nlength = data.windows[i].Jstart - data.windows[i].Vend
+                }
 
-                //search for n_max / n2_max
+                //search for n_max 
                 if ((typeof (data.windows[i].sequence) != 'undefined') &&
                     (typeof (data.windows[i].Nlength) != 'undefined') &&
                     (data.windows[i].Nlength > n_max)) {
@@ -173,9 +240,9 @@ Model.prototype = {
         self.n_windows = self.windows.length;
         self.min_sizes = min_sizes;
         self.n_max = n_max;
-        self.n2_max = n2_max;
         self.normalization_factor = data.normalization_factor;
         self.reads_segmented = data.reads_segmented;
+        self.system_segmented = data.system_segmented;
         self.reads_segmented_total = self.reads_segmented.reduce(function (a, b) {
             return a + b;
         });
@@ -197,9 +264,6 @@ Model.prototype = {
 
         var html_container = document.getElementById("info_n_max");
         if (html_container != null) html_container.innerHTML = " N = " + self.n_max;
-
-        html_container = document.getElementById("info_n2_max");
-        if (html_container != null) html_container.innerHTML = " N = " + self.n2_max;
 
         //extract germline
         if (typeof data.germline != 'undefined') {
@@ -253,8 +317,24 @@ Model.prototype = {
 
         return this
     },
-
-
+    
+    parseJsonAnalysis: function (analysis) {
+        var self = this
+        
+        this.analysis = JSON.parse(analysis);
+        if (self.analysis.time && (self.analysis.time.length == self.time.length)) {
+            self.time = self.analysis.time;
+            self.time_order = self.analysis.time_order;
+        }
+        if (self.analysis.normalization) {
+            self.normalization= self.analysis.normalization;
+        }
+        if (self.analysis.timestamp2) {
+            self.timestamp2= self.analysis.timestamp2;
+        }
+        self.initClones();
+    },
+    
     /* charge le germline définit a l'initialisation dans le model
      * détermine le nombre d'allele pour chaque gene et y attribue une couleur
      * */
@@ -288,7 +368,8 @@ Model.prototype = {
         self.germline.vgene = {};
         self.germline.jgene = {};
 
-	/*DÉBUT DU TRI*/
+	/*DÉBUT DU TRI (contenu dans compare.js)*/
+	
 	//On trie tous les élèments v contenus dans germline, via le nom des objets
 	var tmp1 = [];
 	tmp1 = Object.keys(self.germline.v).slice();
@@ -425,12 +506,7 @@ Model.prototype = {
 
             oFReader.onload = function (oFREvent) {
                 var text = oFREvent.target.result;
-                self.analysis = JSON.parse(text);
-                if (self.analysis.time && (self.analysis.time.length == self.time.length)) {
-                    self.time = self.analysis.time;
-                    self.time_order = self.analysis.time_order;
-                }
-                self.initClones();
+                self.parseJsonAnalysis(text)
             }
         } else {
             self.initClones();
@@ -453,11 +529,6 @@ Model.prototype = {
         //      NSIZE
         for (var i = 0; i < this.n_windows; i++) {
 
-            if (!this.windows[i].Nlength) {
-                this.windows[i].Nlength = 0;
-            }
-
-
             if (typeof (this.windows[i].sequence) != 'undefined') {
                 nsize = this.windows[i].Nlength;
                 if (nsize > maxNlength) {
@@ -478,11 +549,6 @@ Model.prototype = {
         //      COLOR_N
         for (var i = 0; i < this.n_windows; i++) {
             this.windows[i].colorN = colorGenerator((((this.windows[i].Nlength / maxNlength) - 1) * (-250)), color_s, color_v);
-        }
-
-        //      COLOR_N2
-        for (var i = 0; i < this.n_windows; i++) {
-            this.windows[i].colorN2 = colorGenerator((((this.windows[i].n / this.n2_max) - 1) * (-250)), color_s, color_v);
         }
 
         //      COLOR_V
@@ -519,28 +585,48 @@ Model.prototype = {
         //      CUSTOM TAG / NAME
         //      EXPECTED VALUE
         var c = this.analysis.custom;
+        var max = {"id" : -1 , "size" : 0 }     //store biggest expected value ( will be used for normalization)
         for (var i = 0; i < c.length; i++) {
             if (typeof this.mapID[c[i].window] != "undefined") {
+                
                 var f = 1;
+                
                 if (typeof c[i].expected != "undefined") {
-                    var u = this.normalizations.indexOf("highest standard");
-                    if (u != -1) {
-                        f = this.getSize([this.mapID[c[i].window]]) / c[i].expected;
-                    } else {
-                        f = jsonData.windows[this.mapID[c[i].window]].ratios[u] / c[i].expected;
+                    f = this.getSize([this.mapID[c[i].window]]) / c[i].expected;
+                    
+                    if (f < 100 && f > 0.01) {
+                        if (typeof (c[i].tag) != "undefined") {
+                            this.windows[this.mapID[c[i].window]].tag = c[i].tag;
+                        }
+
+                        if (typeof (c[i].name) != "undefined") {
+                            this.windows[this.mapID[c[i].window]].c_name = c[i].name;
+                        }
+                        
+                        if (c[i].expected>max.size){
+                            max.size = c[i].expected
+                            max.id = this.mapID[c[i].window]
+                        }
+                    }else{
+                        console.log("windows "+ c[i].window + " : incorrect expected value")
                     }
-                }
-                if (f < 100 && f > 0.01) {
+                }else{
                     if (typeof (c[i].tag) != "undefined") {
                         this.windows[this.mapID[c[i].window]].tag = c[i].tag;
                     }
-
                     if (typeof (c[i].name) != "undefined") {
                         this.windows[this.mapID[c[i].window]].c_name = c[i].name;
                     }
                 }
+                
             }
         }
+        
+        //      default normalization
+        if (max.id != -1 && this.normalization.B == 0){
+            this.compute_normalization(max.id, max.size)
+        }
+        
 
         //      DATA CLUSTER
         this.dataCluster.sort(function (a, b) {
@@ -580,6 +666,22 @@ Model.prototype = {
      * */
     saveAnalysis: function () {
         console.log("saveAnalysis()")
+
+        var textToWrite = this.strAnalysis()
+        var textFileAsBlob = new Blob([textToWrite], {
+            type: 'json'
+        });
+
+        var ext = this.dataFileName.lastIndexOf(".")
+        var filename = this.dataFileName.substr(0, ext)
+
+        saveAs(textFileAsBlob, filename + ".analysis");
+    }, //end saveAnalysis
+    
+    /* create a string with analysis
+     *
+     * */
+    strAnalysis: function() {
         var analysisData = {
             custom: [],
             cluster: []
@@ -617,18 +719,11 @@ Model.prototype = {
         //name time/point
         analysisData.time = this.time
         analysisData.time_order = this.time_order
+        analysisData.normalization = this.normalization
+        analysisData.timestamp2 = this.timestamp2
 
-        var textToWrite = JSON.stringify(analysisData, undefined, 2);
-        var textFileAsBlob = new Blob([textToWrite], {
-            type: 'json'
-        });
-
-        var ext = this.dataFileName.lastIndexOf(".")
-        var filename = this.dataFileName.substr(0, ext)
-
-        saveAs(textFileAsBlob, filename + ".analysis");
-    }, //end saveAnalysis
-
+        return JSON.stringify(analysisData, undefined, 2);
+    },
 
     /* erase all changes 
      *
@@ -642,7 +737,6 @@ Model.prototype = {
         };
         this.initClones();
     },
-
 
     /* give a new custom name to a clone
      *
@@ -694,7 +788,7 @@ Model.prototype = {
      * */
     getCode: function (cloneID) {
         if (typeof (this.windows[cloneID].sequence) != 'undefined' && typeof (this.windows[cloneID].name) != 'undefined') {
-            if (this.windows[cloneID].name.length > 32 && typeof (this.windows[cloneID].shortName) != 'undefined') {
+            if (this.windows[cloneID].name.length > 100 && typeof (this.windows[cloneID].shortName) != 'undefined') {
                 return this.windows[cloneID].shortName;
             } else {
                 return this.windows[cloneID].name;
@@ -720,6 +814,45 @@ Model.prototype = {
         return result
 
     }, //end getSize
+    
+    /* compute the number of reads segmented for the current selected system(s) 
+     * 
+     * */
+    update_selected_system: function(){
+        
+        //reset reads_segmented
+        for (var i=0 ; i<this.reads_segmented.length; i++){
+            this.reads_segmented[i]=0
+        }
+        
+        //reset system
+        this.system_selected = []
+        
+        //check system currently selected in menu
+        for (var key in this.system_segmented) {
+            if (document.getElementById("checkbox_system_"+key).checked){
+                this.system_selected.push(key)
+            }
+        }
+        
+        //if 0 box checked in menu then all selected
+        if (this.system_selected.length == 0) {
+            for (var key in this.system_segmented) {
+                this.system_selected.push(key)
+            }
+        }
+        
+        //compute new reads_segmented value (sum of reads_segmented of selected system)
+        for (var i=0; i<this.system_selected.length; i++){
+            var key = this.system_selected[i]
+            for (var j=0; j<this.reads_segmented.length; j++){
+                this.reads_segmented[j] += this.system_segmented[key][j]
+            }
+        }
+
+        
+        this.update()
+    },
     
     /*
      * 
@@ -758,6 +891,10 @@ Model.prototype = {
         for (var i=0; i<this.time.length; i++){
             this.normalization.A[i] = this.getSize(cloneID, i)
         }
+        
+        document.getElementById("normalize_info").innerHTML = this.getName(cloneID)
+        document.getElementById("normalize_value").innerHTML = expected_size
+        
         this.norm = tmp
     },
     
@@ -768,20 +905,19 @@ Model.prototype = {
     },
     
     update_precision: function () {
-        min_size = 1
-
+        var min_size = 1
+        
         for (var i=0; i<this.time_order.length; i++){
             var t = this.time_order[i]
-            var size = this.normalize(this.min_sizes[t], t) 
+            var size = this.min_sizes[t]
+            if (this.norm) size = this.normalize(this.min_sizes[t], t) 
             if (size < min_size) min_size = size
         }
         
         this.min_size = min_size
-        this.precision = 1
-        while (min_size < 1) {
-            min_size = min_size*10
-            this.precision=this.precision*6.5
-        }
+        
+        //*2 pour avoir une marge minimum d'un demi-log
+        this.precision=(1/this.min_size)*2
         
         this.scale_color = d3.scale.log()
             .domain([1, this.precision])
@@ -883,9 +1019,6 @@ Model.prototype = {
             if (this.colorMethod == "N") {
                 return this.windows[cloneID].colorN;
             }
-            if (this.colorMethod == "N2") {
-                return this.windows[cloneID].colorN2;
-            }
         }
         return color['@default'];
     },
@@ -907,19 +1040,53 @@ Model.prototype = {
         this.update();
     },
     
-    /* use scientific notation ( true/false )
+    /* use scientific notation / percent
      *
      * */
-    notation_switch: function (newR) {
-        console.log("scientific notation : " + newR)
-        if (newR==true) {
-            this.notation_type = "scientific"
-        }else{
-            this.notation_type = "percent"
+    notation_switch: function () {
+        var radio = document.getElementsByName("notation");
+    
+        for(var elem in radio){
+            if(radio[elem].checked){
+                this.notation_type = radio[elem].value
+                this.update();
+            }
         }
-        this.update();
+    },
+    
+    /* use name / date 
+     *
+     * */
+    time_switch: function () {
+        var radio = document.getElementsByName("time");
+    
+        for(var elem in radio){
+            if(radio[elem].checked){
+                this.time_type = radio[elem].value
+                this.update();
+            }
+        }
     },
 
+    getStrTime: function (timeID, format){
+        format = typeof format !== 'undefined' ? format : this.time_type;
+        var result = "-/-"
+
+        switch (format) {
+            case "name":
+                result = this.time[timeID]
+                break;
+            case "sampling_date":
+                if ((typeof this.timestamp2 != 'undefined') && this.timestamp2[timeID])
+                    result = this.timestamp2[timeID].split(" ")[0]
+                break;
+            case "run_date":
+                if ((typeof this.timestamp != 'undefined') && this.timestamp[timeID])
+                    result = this.timestamp[timeID].split(" ")[0]
+                break;
+        }
+        return result
+    },
 
     /* change the current tracking point used
      *
@@ -1102,6 +1269,16 @@ Model.prototype = {
                 }
             }
         }
+        
+        // unactive clones from unselected system
+        if (this.system == "multi" && this.system_selected.length != 0) {
+            for (var i = 0; i < this.windows.length; i++) {
+                if (this.system_selected.indexOf(this.windows[i].system) == -1) {
+                    this.windows[i].active = false;
+                }
+            }
+        }
+        
         this.computeOtherSize();
 
         for (var i = 0; i < this.n_windows; i++) {
@@ -1505,17 +1682,16 @@ function showSelector(elem) {
         $('.selector')
             .css('display', 'none');
         $('#' + elem)
+            .css('display', 'block')
             .animate({
-                height: "show",
-                display: "show"
+                height: $('#' + elem).children(":first").height()
             }, 100);
     }
 }
 
 function hideSelector() {
     $('.selector')
-        .stop();
-    $('.selector')
+        .stop()
         .animate({
             height: "hide",
             display: "none"
@@ -1575,8 +1751,7 @@ var msg = {
 
     "version_error": "Error &ndash; data file too old (version " + VIDJIL_JSON_VERSION + " required)" + "</br> This data file was generated by a too old version of Vidjil. " + "</br> Please regenerate a newer data file. " + "</br></br> <div class='center' > <button onclick='closePopupMsg()'>ok</button></div>",
 
-    "welcome": " <h2>Vidjil <span class='logo'>(beta)</span></h2>" + "(c) 2011-2014, the Vidjil team" + "<br />Marc Duez, Mathieu Giraud and Mikaël Salson" + " &ndash; <a href='http://bioinfo.lifl.fr/vidjil'>http://bioinfo.lifl.fr/vidjil</a>" + "</br>" + "</br>Vidjil is developed by the <a href='http://www.lifl.fr/bonsai'>Bonsai bioinformatics team</a> (LIFL, CNRS, U. Lille 1, Inria Lille), in collaboration with the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille" + " the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille 2, IFR-114, IRCL)" + " and the <a href='http://www.euroclonality.org/'>EuroClonality-NGS</a> working group." + "</br>" + "</br>This is a beta version, please use it only for test purposes." + "</br></br> <div class='center' > <button onclick='loadData(), closePopupMsg()'>start</button></div>",
+    "welcome": " <h2>Vidjil <span class='logo'>(beta)</span></h2>" + "(c) 2011-2014, the Vidjil team" + "<br />Marc Duez, Mathieu Giraud and Mikaël Salson" + " &ndash; <a href='http://bioinfo.lifl.fr/vidjil'>http://bioinfo.lifl.fr/vidjil</a>" + "</br>" + "</br>Vidjil is developed by the <a href='http://www.lifl.fr/bonsai'>Bonsai bioinformatics team</a> (LIFL, CNRS, U. Lille 1, Inria Lille), in collaboration with the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille" + " the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille 2, IFR-114, IRCL)" + " and the <a href='http://www.euroclonality.org/'>EuroClonality-NGS</a> working group." + "</br>" + "</br>This is a beta version, please use it only for test purposes." + "</br></br> <div class='center' > <button onclick='closePopupMsg()'>start</button></div>",
 
     "browser_error": "It seems you used an incompatible web browser (too old or too weak)." + "</br>We recommend to install one of those for a better experience : " + "</br> <a href='http://www.mozilla.org/'> Firefox </a> " + "</br> <a href='www.google.com/chrome/'> Chrome </a> " + "</br> <a href='http://www.chromium.org/getting-involved/download-chromium'> Chromium </a> " + "</br></br> <div class='center' > <button onclick='popupMsg(msg.welcome)'>i want to try anyway</button></div>",
-
 }

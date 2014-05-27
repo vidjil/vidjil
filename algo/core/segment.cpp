@@ -209,7 +209,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
     strand = 2;
   }
 
-  checkUnsegmentationCause(strand, delta_min, delta_max, s);
+  computeSegmentation(strand, delta_min, delta_max, s);
 
   if (segmented)
     {
@@ -230,7 +230,10 @@ KmerSegmenter::~KmerSegmenter() {
     delete kaa;
 }
 
-void KmerSegmenter::checkUnsegmentationCause(int strand, int delta_min, int delta_max, int s) {
+void KmerSegmenter::computeSegmentation(int strand, int delta_min, int delta_max, int s) {
+  // Try to segment, computing 'Vend' and 'Jstart', and 'segmented'
+  // If not segmented, put the cause of unsegmentation in 'because'
+
   segmented = true ;
   because = 0 ; // Cause of unsegmentation
 
