@@ -602,13 +602,20 @@ int main (int argc, char **argv)
       bool rc = true ;   
       IKmerStore<KmerStringAffect>  *index = KmerStoreFactory::createIndex<KmerStringAffect>(seed, rc);
       map <string, int> stats_kmer, stats_max;
-      stats_kmer[KMER_AMBIGUOUS] = 0 ;
-      stats_kmer[KMER_UNKNOWN] = 0 ;
 
       for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
 	{
 	  Fasta rep(*it, 2, "|", cout);
 	  index->insert(rep, *it);
+	}
+
+      // Initialize statistics, with two additional categories
+
+      f_germlines.push_back(KMER_AMBIGUOUS);
+      f_germlines.push_back(KMER_UNKNOWN);
+
+      for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+	{
 	  stats_kmer[string(*it)] = 0 ;
 	  stats_max[string(*it)] = 0 ;
 	}
@@ -685,8 +692,6 @@ int main (int argc, char **argv)
 
 	  cout << *it << endl ;
 	}
-      cout << setw(12) << stats_kmer[KMER_AMBIGUOUS] << "\t" << "\t" << KMER_AMBIGUOUS << endl ;
-      cout << setw(12) << stats_kmer[KMER_UNKNOWN]   << "\t" << "\t" << KMER_UNKNOWN   << endl ;
 
       exit(0);
     }
