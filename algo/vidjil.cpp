@@ -682,15 +682,18 @@ int main (int argc, char **argv)
       // Display statistics
 
       cout << "  <== " << nb_reads << " reads" << endl ;
+      cout << "\t" << " max" << "\t\t" << "        kmers" << "\n" ;
       for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
 	{
-	  cout << setw(12) << stats_max[*it] << "\t" ;
-	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_max[*it] / nb_reads * 100 << "%\t" ;
+	  cout << setw(12) << stats_max[*it] << " " ;
+	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_max[*it] / nb_reads * 100 << "%" ;
 
-	  cout << setw(12) << stats_kmer[*it] << "\t" ;
-	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[*it] / total_length * 100 << "%\t" ;
+	  cout << "     " ;
 
-	  cout << *it << endl ;
+	  cout << setw(12) << stats_kmer[*it] << " " ;
+	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[*it] / total_length * 100 << "%" ;
+
+	  cout << "     " << *it << endl ;
 	}
 
       exit(0);
