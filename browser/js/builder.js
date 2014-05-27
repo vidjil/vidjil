@@ -42,17 +42,7 @@ Builder.prototype = {
 
     update: function () {
 
-        if (this.colorMethod != this.m.colorMethod || 
-            this.point != this.m.time_order[this.m.t] ||
-            this.dataFileName != this.m.dataFileName ||
-            this.analysisFileName != this.m.analysisFileName 
-        ) {
-            this.point = this.m.time_order[this.m.t]
-            this.colorMethod = this.m.colorMethod
-            this.dataFileName = this.m.dataFileName 
-            this.analysisFileName = this.m.analysisFileName 
             this.build_info_container()
-        }
 
     },
     
