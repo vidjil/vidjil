@@ -153,6 +153,7 @@ Graph.prototype = {
             name: "resolution1",
             path: this.constructPathR(this.resolution1)
         });
+        
         this.data_res.push({
             id: this.m.n_windows + 1,
             name: "resolution5",
@@ -379,6 +380,12 @@ Graph.prototype = {
             document.getElementById("polyline_container")
                 .appendChild(line);
         }
+        
+        for (i = 0; i < this.m.time.length; i++) {
+            this.resolution1[i] = (1 / this.m.reads_segmented[i])
+            this.resolution5[i] = (5 / this.m.reads_segmented[i])
+        }
+        
         this.data_res[0].path = this.constructPathR(this.resolution1);
         this.data_res[1].path = this.constructPathR(this.resolution5);
 
