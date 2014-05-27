@@ -173,6 +173,7 @@ class ListWindows:
         
         print "<==", file_path, "\t"
         
+        
         if (extension=="data" or extension=="vidjil"): 
             with open(file_path, "r") as file:
                 tmp = json.load(file, object_hook=self.toPython)       
@@ -184,9 +185,10 @@ class ListWindows:
                 
         else:
             raise IOError ("Invalid file extension .%s" % extension)
-
-        self.d['point'] = [file_path]
         
+        if not 'point' in self.d.keys():
+            self.d['point'] = [file_path]
+
     ### 
     def __add__(self, other): 
         '''Combine two ListWindows into a unique ListWindows'''
@@ -640,15 +642,15 @@ def main():
             
             print '\t==> merge to', jlist_fused
         jlist_fused.d['germline'][0] = args.germline
+        
+        print
+        print "### Select point names"
+        l = jlist_fused.d["point"]
+        ll = interesting_substrings(l)
+        print "  <==", l
+        print "  ==>", ll
+        jlist_fused.d["point"] = ll
 
-    print
-    print "### Select point names"
-    l = jlist_fused.d["point"]
-    ll = interesting_substrings(l)
-    print "  <==", l
-    print "  ==>", ll
-    jlist_fused.d["point"] = ll
-    
     print
     jlist_fused.cut(args.top)
     print "\t", jlist_fused 
