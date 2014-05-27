@@ -58,8 +58,6 @@ Graph.prototype = {
      *
      * */
     init: function () {
-        document.getElementById(this.id)
-            .innerHTML = "";
         
         this.build_menu()
             
@@ -163,17 +161,14 @@ Graph.prototype = {
 
         this.g_graph = this.polyline_container.selectAll("path")
             .data(this.data_graph);
+            
         this.g_graph.enter()
             .append("path")
-            .attr("id", function (d) {
-                return d.name;
-            })
-            .transition()
-            .duration(500)
             .style("fill", "none")
             .attr("id", function (d) {
                 return "poly" + d.name;
             })
+            
         this.g_graph.exit()
             .remove();
 
