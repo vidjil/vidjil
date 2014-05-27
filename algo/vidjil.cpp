@@ -583,19 +583,33 @@ int main (int argc, char **argv)
 #define KMER_UNKNOWN "_"
 
       list< char* > f_germlines ;
-      f_germlines.push_back("germline/TRGV.fa");
-      f_germlines.push_back("germline/TRGJ.fa");
+
+      // TR
+      f_germlines.push_back("germline/TRAV.fa");
+      f_germlines.push_back("germline/TRAJ.fa");
+
+      f_germlines.push_back("germline/TRBV.fa");
+      f_germlines.push_back("germline/TRDJ.fa");
+      f_germlines.push_back("germline/TRBJ.fa");
 
       f_germlines.push_back("germline/TRDV.fa"); 
       f_germlines.push_back("germline/TRDD.fa");
       f_germlines.push_back("germline/TRDJ.fa");
 
-      f_germlines.push_back("germline/IGKV.fa");
-      f_germlines.push_back("germline/IGKJ.fa");
+      f_germlines.push_back("germline/TRGV.fa");
+      f_germlines.push_back("germline/TRGJ.fa");
+
+      // Ig
 
       f_germlines.push_back("germline/IGHV.fa");
       f_germlines.push_back("germline/IGHD.fa");
       f_germlines.push_back("germline/IGHJ.fa");
+
+      f_germlines.push_back("germline/IGKV.fa");
+      f_germlines.push_back("germline/IGKJ.fa");
+
+      f_germlines.push_back("germline/IGLV.fa");
+      f_germlines.push_back("germline/IGLJ.fa");
 
       // Read germline and build one unique index
 
