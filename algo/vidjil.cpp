@@ -601,7 +601,7 @@ int main (int argc, char **argv)
 
       bool rc = true ;   
       IKmerStore<KmerStringAffect>  *index = KmerStoreFactory::createIndex<KmerStringAffect>(seed, rc);
-      map <string, int> stats_kmer;
+      map <string, int> stats_kmer, stats_max;
       stats_kmer[KMER_AMBIGUOUS] = 0 ;
       stats_kmer[KMER_UNKNOWN] = 0 ;
 
@@ -610,6 +610,7 @@ int main (int argc, char **argv)
 	  Fasta rep(*it, 2, "|", cout);
 	  index->insert(rep, *it);
 	  stats_kmer[string(*it)] = 0 ;
+	  stats_max[string(*it)] = 0 ;
 	}
 
       // Open read file (copied frow below)
@@ -623,6 +624,11 @@ int main (int argc, char **argv)
 	     << endl;
 	exit(1);
       }
+      
+      // init forbidden for .max()
+      set<KmerStringAffect> forbidden;
+      forbidden.insert(KmerStringAffect::getAmbiguous());
+      forbidden.insert(KmerStringAffect::getUnknown());
       
       // Loop through all reads
 
@@ -657,6 +663,13 @@ int main (int argc, char **argv)
 
 	      stats_kmer[ksa.label]++ ;
 	    }
+
+
+	  CountKmerAffectAnalyser<KmerStringAffect> ckaa(*index, seq);
+	  ckaa.setAllowedOverlap(k-1);
+
+	  stats_max[ckaa.max(forbidden).label]++ ;
+
 	}
 
       // Display statistics
@@ -664,8 +677,12 @@ int main (int argc, char **argv)
       cout << "  <== " << nb_reads << " reads" << endl ;
       for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
 	{
+	  cout << setw(12) << stats_max[*it] << "\t" ;
+	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_max[*it] / nb_reads * 100 << "%\t" ;
+
 	  cout << setw(12) << stats_kmer[*it] << "\t" ;
 	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[*it] / total_length * 100 << "%\t" ;
+
 	  cout << *it << endl ;
 	}
       cout << setw(12) << stats_kmer[KMER_AMBIGUOUS] << "\t" << "\t" << KMER_AMBIGUOUS << endl ;
