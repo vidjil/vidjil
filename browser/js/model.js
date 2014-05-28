@@ -546,6 +546,10 @@ Model.prototype = {
             this.windows[i].tag = default_tag;
         }
         console.log(maxNlength);
+        
+        /*TODO rework color
+         * */
+        
         //      COLOR_N
         for (var i = 0; i < this.n_windows; i++) {
             this.windows[i].colorN = colorGenerator((((this.windows[i].Nlength / maxNlength) - 1) * (-250)), color_s, color_v);
@@ -570,7 +574,18 @@ Model.prototype = {
                 this.windows[i].colorJ = color['@default'];
             }
         }
-
+        
+        //color_system
+        if (this.system == "multi"){
+            this.color_system = {}
+            
+            var i = 1 
+            for (var key in this.system_segmented){
+                this.color_system[key] = tagColor[i]
+                i++
+            }
+        }
+        
         //      SHORTNAME
         for (var i = 0; i < this.n_windows; i++) {
             if (typeof (this.windows[i].sequence) != 'undefined' && typeof (this.windows[i].name) != 'undefined') {
@@ -1019,6 +1034,9 @@ Model.prototype = {
             if (this.colorMethod == "N") {
                 return this.windows[cloneID].colorN;
             }
+        }
+        if (this.colorMethod == "system") {
+            return this.color_system[this.windows[cloneID].system]
         }
         return color['@default'];
     },

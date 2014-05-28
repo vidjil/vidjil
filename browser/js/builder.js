@@ -326,6 +326,7 @@ Builder.prototype = {
         //init system
         if (this.m.system == "multi") {
             $("#system_menu").css("display", "")
+            $("#color_system_button").css("display", "")
             
             for (var key in this.m.system_segmented) {
                 
@@ -351,6 +352,7 @@ Builder.prototype = {
              
         }else{
             $("#system_menu").css("display", "none")
+            $("#color_system_button").css("display", "none")
         }
 
         initTag();
