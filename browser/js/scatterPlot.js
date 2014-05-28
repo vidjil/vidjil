@@ -38,9 +38,7 @@ function ScatterPlot(id, model) {
     this.max_precision = 9; //precision max atteignable (par défaut: 9)
 
     this.positionGene = {}; //position des gènes
-    this.positionUsedGene = {}; //position des gènes que l'on utilisera
     this.positionAllele = {}; //position des allèles
-    this.positionUsedAllele = {}; //position des allèles que l'on utilisera
 
     this.splitY = "gene_j"; //methode de répartition actuelle, pour l'axe des Y
     this.splitX = "gene_v"; //methode de répartition actuelle, pour l'axe des X
@@ -538,17 +536,17 @@ ScatterPlot.prototype = {
     /* Fonction permettant d'initialiser les grilles de répartition du ScatterPlot selon le modèle V
      * */
     initGridModelV: function () {
+        
+    if (Object.keys(m.germline.vgene).length > 20) 
+        this.use_simple_v = true;
 
 	//Initialisation des paramètres de l'objet concernant les positions des gènes/allèles V _ [gene/allele]_v_used -> Tableau contenant toutes les positions des gènes et allèles V utilisés pendant ce temps
         this.gridModel["allele_v"] = [];
         this.gridModel["gene_v"] = [];
-        this.gridModel["allele_v_used"] = [];
-        this.gridModel["gene_v_used"] = [];
+        
+        this.system = this.m.germline.system //copy current system used for germlinein model
         this.positionGene = {}; 
-        this.positionUsedGene = {}; 
         this.positionAllele = {}; 
-        this.positionUsedAllele = {};
-        this.use_simple_v = false;
 
 	//Obtention de toutes les clefs concernant les allèles et les gènes V
         var vKey = Object.keys(this.m.germline.v);
@@ -563,25 +561,25 @@ ScatterPlot.prototype = {
         for (var i = 0; i < vKey.length; i++) {
 
             var elem = vKey[i].split('*');
-            var pos = (this.m.germline.v[vKey[i]].gene) * stepV +
-                (this.m.germline.v[vKey[i]].allele + 0.5) * (stepV / (this.m.germline.vgene[elem[0]].n));
-            var pos2 = (this.m.germline.v[vKey[i]].gene + 0.5) * stepV;
             var color = this.m.germline.v[vKey[i]].color;
-
-            this.positionAllele[vKey[i]] = pos;
-            this.gridModel["allele_v"].push(this.makeLineModel("subline", pos, "*" + elem[1], color));
-
-            this.positionGene[vKey[i]] = pos2
+            
+            if (this.use_simple_v){
 
             if (this.m.usedV[elem[0]]) {
-                pos = stepV2 * (this.m.usedV[elem[0]] - 1) +
-                    (this.m.germline.v[vKey[i]].allele + 0.5) * (stepV2 / (this.m.germline.vgene[elem[0]].n));
-                pos2 = stepV2 * (this.m.usedV[elem[0]] - 0.5)
-                this.gridModel["allele_v_used"].push(this.makeLineModel("subline", pos, "*" + elem[1], color));
+                this.positionAllele[vKey[i]] = stepV2 * (this.m.usedV[elem[0]] - 1) +
+                        (this.m.germline.v[vKey[i]].allele + 0.5) * (stepV2 / (this.m.germline.vgene[elem[0]].n));
+                this.positionGene[vKey[i]] = stepV2 * (this.m.usedV[elem[0]] - 0.5)
+                this.gridModel["allele_v"].push(this.makeLineModel("subline", pos, "*" + elem[1], color));
             }
 
-            this.positionUsedAllele[vKey[i]] = pos
-            this.positionUsedGene[vKey[i]] = pos2
+
+            }else{
+                this.positionAllele[vKey[i]] = (this.m.germline.v[vKey[i]].gene) * stepV +
+                    (this.m.germline.v[vKey[i]].allele + 0.5) * (stepV / (this.m.germline.vgene[elem[0]].n));
+                this.positionGene[vKey[i]] = (this.m.germline.v[vKey[i]].gene + 0.5) * stepV;
+                    
+                this.gridModel["allele_v"].push(this.makeLineModel("subline", pos, "*" + elem[1], color));
+            }
         }
 
         // Concerne tous les gènes V -> Initialisation et calcul de position
@@ -590,43 +588,37 @@ ScatterPlot.prototype = {
             var pos = (i + 0.5) * stepV;
             var color = this.m.germline.vgene[vKey2[i]].color;
 
-            this.gridModel["allele_v"].push(this.makeLineModel("line", pos, vKey2[i], color));
-            this.gridModel["gene_v"].push(this.makeLineModel("line", pos, vKey2[i], color));
-
-            if (this.m.usedV[vKey2[i]]) {
-                pos = stepV2 * (this.m.usedV[vKey2[i]] - 0.5)
-                this.gridModel["allele_v_used"].push(this.makeLineModel("line", pos, vKey2[i].replace(this.m.system, ""), color));
-                this.gridModel["gene_v_used"].push(this.makeLineModel("line", pos, vKey2[i].replace(this.m.system, ""), color));
+            if (this.use_simple_v){
+                if (this.m.usedV[vKey2[i]]) {
+                    pos = stepV2 * (this.m.usedV[vKey2[i]] - 0.5)
+                    this.gridModel["allele_v"].push(this.makeLineModel("line", pos, vKey2[i].replace(this.m.system, ""), color));
+                    this.gridModel["gene_v"].push(this.makeLineModel("line", pos, vKey2[i].replace(this.m.system, ""), color));
+                }
+            }else{
+                this.gridModel["allele_v"].push(this.makeLineModel("line", pos, vKey2[i], color));
+                this.gridModel["gene_v"].push(this.makeLineModel("line", pos, vKey2[i], color));
             }
 
         }
 
         // Concernant tous les gènes/allèles V non-définis ("undefined"), initialisation à des valeurs calculées, contenues dans pos et pos2
         var pos = (vKey2.length + 0.5) * stepV;
-        var pos2 = (Object.keys(this.m.usedV)
-		    .length + 0.5) * stepV2;
+        if (this.use_simple_v)
+            pos = (Object.keys(this.m.usedV).length + 0.5) * stepV2;
 
 	//Ajout dans l'attribut gridModel
         this.gridModel["allele_v"].push(this.makeLineModel("line", pos, "?", ""));
         this.gridModel["gene_v"].push(this.makeLineModel("line", pos, "?", ""));
-        this.gridModel["allele_v_used"].push(this.makeLineModel("line", pos2, "?", ""));
-        this.gridModel["gene_v_used"].push(this.makeLineModel("line", pos2, "?", ""));
+
 
 	//Modification des positions non-définies
         this.positionGene["undefined V"] = pos
         this.positionAllele["undefined V"] = pos
-        this.positionUsedGene["undefined V"] = pos2
-        this.positionUsedAllele["undefined V"] = pos2
 
         //choix du gridModel V a utiliser
         this.posG = this.positionGene
         this.posA = this.positionAllele
-        if (Object.keys(m.germline.vgene)
-            .length > 20) {
-            this.use_simple_v = true;
-            this.posG = this.positionUsedGene
-            this.posA = this.positionUsedAllele
-        }
+
     },
 
     /* Fonction permettant d'initialiser les grilles de répartition du ScatterPlot selon le modèle J
@@ -657,8 +649,6 @@ ScatterPlot.prototype = {
 
             this.positionAllele[jKey[i]] = pos;
             this.positionGene[jKey[i]] = pos2;
-            this.positionUsedAllele[jKey[i]] = pos;
-            this.positionUsedGene[jKey[i]] = pos2;
 
         }
 
@@ -680,8 +670,6 @@ ScatterPlot.prototype = {
 
         this.positionGene["undefined J"] = pos
         this.positionAllele["undefined J"] = pos
-        this.positionUsedGene["undefined J"] = pos
-        this.positionUsedAllele["undefined J"] = pos
 
     },
 
@@ -813,13 +801,11 @@ ScatterPlot.prototype = {
             case "allele_j":
                 d.y += coef * ((self.posA[geneJ] * self.resizeH) - d.y);
                 break;
-		//Cas de 'gene_v_used' et 'gene_v' (même calcul)
-            case "gene_v_used":
+		//Cas de 'gene_v' (même calcul)
             case "gene_v":
                 d.y += coef * ((self.posG[geneV] * self.resizeH) - d.y);
                 break;
-		//Cas de 'allele_v_used' et 'allele_v' (même calcul)
-            case "allele_v_used":
+		//Cas de 'allele_v' (même calcul)
             case "allele_v":
                 d.y += coef * ((self.posA[geneV] * self.resizeH) - d.y);
                 break;
@@ -867,13 +853,11 @@ ScatterPlot.prototype = {
             case "allele_j":
                 d.x += coef * ((self.posA[geneJ] * self.resizeW) - d.x);
                 break;
-		//Cas de 'gene_v_used' et 'gene_v' (même calcul)
-            case "gene_v_used":
+		//Cas de 'gene_v' 
             case "gene_v":
                 d.x += coef * ((self.posG[geneV] * self.resizeW) - d.x);
                 break;
-		//Cas de 'allele_v_used' et 'allele_v' (même calcul)
-            case "allele_v_used":
+		//Cas de 'allele_v' 
             case "allele_v":
                 d.x += coef * ((self.posA[geneV] * self.resizeW) - d.x);
                 break;
@@ -1008,6 +992,10 @@ ScatterPlot.prototype = {
             this.updateElemStyle();
         }
 
+        if (this.m.germline.system != this.system){ //the system used to compute model germline changed
+            this.initGridModelV()
+            this.initGridModelJ()
+        }
         this.updateMenu()
         this.initGridModelSize()
         this.initGrid();
@@ -1186,8 +1174,8 @@ ScatterPlot.prototype = {
                 return "rotate(" + self.rotation_x + " " + (self.resizeW * d.pos + self.marge_left) + " " + y + ")"
             })
             .style("fill", function (d) {
-                if (self.m.colorMethod == "V" && (self.splitX == "gene_v" || self.splitX == "gene_v_used") && (typeof (d.geneColor) != "undefined")) return d.geneColor;
-                if (self.m.colorMethod == "J" && (self.splitX == "gene_j" || self.splitX == "gene_j_used") && (typeof (d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "V" && self.splitX == "gene_v"  && (typeof (d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "J" && self.splitX == "gene_j"  && (typeof (d.geneColor) != "undefined")) return d.geneColor;
                 return null;
             });
 
@@ -1216,14 +1204,14 @@ ScatterPlot.prototype = {
             })
             .attr("class", function (d) {
                 if (d.type == "subline") {
-                    if (self.splitX != "allele_j" && self.splitX != "allele_v" && self.splitX != "allele_v_used") return "sp_subline_hidden";
+                    if (self.splitX != "allele_j" && self.splitX != "allele_v" ) return "sp_subline_hidden";
                     return "sp_subline";
                 }
                 return "sp_line";
             })
             .style("stroke", function (d) {
-                if (self.m.colorMethod == "V" && (self.splitX == "gene_v" || self.splitX == "gene_v_used") && (typeof (d.geneColor) != "undefined")) return d.geneColor;
-                if (self.m.colorMethod == "J" && (self.splitX == "gene_j" || self.splitX == "gene_j_used") && (typeof (d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "V" && (self.splitX == "gene_v" ) && (typeof (d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "J" && (self.splitX == "gene_j" ) && (typeof (d.geneColor) != "undefined")) return d.geneColor;
                 return null;
             });
 
@@ -1261,8 +1249,8 @@ ScatterPlot.prototype = {
                 return "rotate(" + self.rotation_y + " " + x + " " + (self.resizeH * d.pos + self.marge_top) + ")"
             })
             .style("fill", function (d) {
-                if (self.m.colorMethod == "V" && (self.splitY == "gene_v" || self.splitY == "gene_v_used") && (typeof (d.geneColor) != "undefined")) return d.geneColor;
-                if (self.m.colorMethod == "J" && (self.splitY == "gene_j" || self.splitY == "gene_j_used") && (typeof (d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "V" && self.splitY == "gene_v" && (typeof (d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "J" && self.splitY == "gene_j" && (typeof (d.geneColor) != "undefined")) return d.geneColor;
                 return null;
             });
 
@@ -1291,14 +1279,14 @@ ScatterPlot.prototype = {
             })
             .attr("class", function (d) {
                 if (d.type == "subline") {
-                    if (self.splitY != "allele_j" && self.splitY != "allele_v" && self.splitY != "allele_v_used") return "sp_subline_hidden";
+                    if (self.splitY != "allele_j" && self.splitY != "allele_v" ) return "sp_subline_hidden";
                     return "sp_subline";
                 }
                 return "sp_line";
             })
             .style("stroke", function (d) {
-                if (self.m.colorMethod == "V" && (self.splitY == "gene_v" || self.splitY == "gene_v_used") && (typeof (d.geneColor) != "undefined")) return d.geneColor;
-                if (self.m.colorMethod == "J" && (self.splitY == "gene_j" || self.splitY == "gene_j_used") && (typeof (d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "V" && (self.splitY == "gene_v") && (typeof (d.geneColor) != "undefined")) return d.geneColor;
+                if (self.m.colorMethod == "J" && (self.splitY == "gene_j") && (typeof (d.geneColor) != "undefined")) return d.geneColor;
                 return null;
             });
 
@@ -1320,18 +1308,6 @@ ScatterPlot.prototype = {
 
         this.splitX = splitX;
         this.splitY = splitY;
-        
-        if (this.splitX == "gene_v" && this.use_simple_v) this.splitX = "gene_v_used";
-        if (this.splitX == "allele_v" && this.use_simple_v) this.splitX = "allele_v_used";
-
-        if (this.splitY == "gene_v" && this.use_simple_v) this.splitY = "gene_v_used";
-        if (this.splitY == "allele_v" && this.use_simple_v) this.splitY = "allele_v_used";
-        
-        if (this.splitX == "gene_v_used" && !this.use_simple_v) this.splitX = "gene_v";
-        if (this.splitX == "allele_v_used" && !this.use_simple_v) this.splitX = "allele_v";
-
-        if (this.splitY == "gene_v_used" && !this.use_simple_v) this.splitY = "gene_v";
-        if (this.splitY == "allele_v_used" && !this.use_simple_v) this.splitY = "allele_v";
 
         this.update();
     },
