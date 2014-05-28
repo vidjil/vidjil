@@ -383,6 +383,21 @@ Builder.prototype = {
                 targetJ.onclick = function () { self.m.clusterBy('_target.J-GENE')}
                 targetJ.appendChild(document.createTextNode("target J"));
             clusterSelector.appendChild(targetJ)
+            
+            var clonotype = document.createElement('a');
+                clonotype.className = "buttonSelector"
+                clonotype.onclick = function () { self.m.clusterBy('_clonotype')}
+                clonotype.appendChild(document.createTextNode("clonotype"));
+            clusterSelector.appendChild(clonotype)
+        }
+        
+        if (self.m.windows[0].system){
+            
+            var system = document.createElement('a');
+                system.className = "buttonSelector"
+                system.onclick = function () { self.m.clusterBy('system')}
+                system.appendChild(document.createTextNode("system"));
+            clusterSelector.appendChild(system)
         }
     },
 
