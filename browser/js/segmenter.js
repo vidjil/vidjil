@@ -237,6 +237,7 @@ Segment.prototype = {
     
     var spanV = document.createElement('span');
     spanV.className="V";
+    if (this.m.colorMethod == "V")
     spanV.style.color=this.m.windows[cloneID].colorV;
 
     var v_seq=this.m.windows[cloneID].sequence.substr(0, this.m.windows[cloneID].Vend+1);
@@ -275,6 +276,7 @@ Segment.prototype = {
     
     var spanJ = document.createElement('span');
     spanJ.className="J";
+    if (this.m.colorMethod == "J")
     spanJ.style.color=this.m.windows[cloneID].colorJ;
     spanJ.innerHTML=this.m.windows[cloneID].sequence.substr(this.m.windows[cloneID].Jstart);
     spanM.appendChild(spanJ);
@@ -393,6 +395,7 @@ Segment.prototype = {
         // V gene container
         var spanV = document.createElement('span');
         spanV.className="V";
+        if (this.m.colorMethod == "V")
         spanV.style.color=m.windows[memTab[i]].colorV;
         // N region container
         var spanN1 = document.createElement('span');
@@ -404,6 +407,7 @@ Segment.prototype = {
         // J gene container
         var spanJ = document.createElement('span');
         spanJ.className="J";
+        if (this.m.colorMethod == "J")
         spanJ.style.color=m.windows[memTab[i]].colorJ;
         
         if(typeof m.windows[memTab[i]].sequence !='undefined' && m.windows[memTab[i]].sequence!=0){
