@@ -362,7 +362,8 @@ Builder.prototype = {
     build_clusterSelector: function () {
         var self = this;
 
-        var clusterSelector = document.getElementById("clusterSelector").firstChild;
+        var clusterSelector = document.getElementById("clusterby_button")
+        clusterSelector.innerHTML = "";
         
         if (self.m.windows[0]._target){
         
