@@ -499,7 +499,42 @@ Model.prototype = {
         return this;
     }, //end loadGermline
 
-
+    /* 
+     * gene : kind of gene V/D/J
+     * system : system wanted IGH/TRG/TRB/...
+     * */
+    compute_gene_list: function(gene, system){
+        var list = {}
+        
+        //si le germline complet est inférieur a 20 genes on le charge entierement
+        if ( typeof germline[system+gene] != "undefined" && Object.keys(germline[system+gene]).length < 20){
+            for (var key in germline[system+gene]){
+                list[key] = 0
+            }
+        }
+        
+        if (this.system == "multi"){
+            for ( var i=0; i<this.windows.length; i++){
+                if (this.windows[i].system == system) {
+                    if (this.windows[i][gene] && this.windows[i][gene][0]){
+                        list[this.windows[i][gene][0]]=0
+                    }   
+                }
+            }
+            
+        }else{
+            for (var i=0; i<this.windows.length; i++){
+                if (this.windows[i][gene] && this.windows[i][gene][0]){
+                    list[this.windows[i][gene][0]]=0
+                }
+            }
+        }
+        
+        var result = Object.keys(list)
+        mySortedArray(result);
+        return result
+    },
+    
     /* load the selected analysis file in the model
      * @analysis : id of the form (html element) linking to the analysis file
      * */
