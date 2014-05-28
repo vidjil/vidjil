@@ -339,6 +339,8 @@ Model.prototype = {
      * détermine le nombre d'allele pour chaque gene et y attribue une couleur
      * */
     loadGermline: function () {
+        var self = this
+        
         console.log("loadGermline()");
         self.germline = {};
         self.germline.v = {}
@@ -561,7 +563,7 @@ Model.prototype = {
                 var vGene = this.windows[i].V[0];
                 this.windows[i].colorV = this.germline.v[vGene].color;
             } else {
-                this.windows[i].colorV = color['@default'];
+                this.windows[i].colorV = "";
             }
         }
 
@@ -571,7 +573,7 @@ Model.prototype = {
                 var jGene = this.windows[i].J[0];
                 this.windows[i].colorJ = this.germline.j[jGene].color;
             } else {
-                this.windows[i].colorJ = color['@default'];
+                this.windows[i].colorJ = "";
             }
         }
         
