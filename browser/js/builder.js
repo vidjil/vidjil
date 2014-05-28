@@ -270,10 +270,12 @@ Builder.prototype = {
         var displaySelector = document.getElementById("displaySelector")
         var listTag = displaySelector.getElementsByTagName("ul")[0]
         var listSystem = document.getElementById("system_list")
+        var listGermline = document.getElementById("germline_list")
         
         //reset
         listTag.innerHTML = "";
         listSystem.innerHTML = "";
+        listGermline.innerHTML = "";
 
         //init tag list
         for (var i = 0; i < tagName.length; i++) {
@@ -345,8 +347,23 @@ Builder.prototype = {
                 
                 var li = document.createElement('li');
                 li.appendChild(div)
-
                 listSystem.appendChild(li);
+                
+                var radio=document.createElement("input");
+                    radio.type="radio";
+                    radio.name="germline";
+                    radio.value=key
+                    radio.onchange = function () {
+                        m.changeGermline(this.value)
+                    }
+                    
+                div = document.createElement('div');
+                div.appendChild(radio)
+                div.appendChild(document.createTextNode(key))
+                
+                li = document.createElement('li');
+                li.appendChild(div)
+                listGermline.appendChild(li);
                 
             }
              
