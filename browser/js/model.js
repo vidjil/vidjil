@@ -335,10 +335,21 @@ Model.prototype = {
         self.initClones();
     },
     
+    
+    /* load a new germline and update 
+     * 
+     * */
+    changeGermline: function (system) {
+        this.loadGermline(system)
+        this.update()
+    },
+    
     /* charge le germline définit a l'initialisation dans le model
      * détermine le nombre d'allele pour chaque gene et y attribue une couleur
      * */
-    loadGermline: function () {
+    loadGermline: function (system) {
+        system = typeof system !== 'undefined' ? system : this.system;
+        if (system == "multi") system = Object.keys(this.system_segmented)[0]
         var self = this
         
         console.log("loadGermline()");
@@ -346,10 +357,11 @@ Model.prototype = {
         self.germline.v = {}
         self.germline.d = {}
         self.germline.j = {}
+        self.germline.system = system
         var v, j;
 
         //select germline (default TRG)
-        switch (self.system) {
+        switch (system) {
         case "IGH":
             self.germline.v = germline.IGHV;
             self.germline.j = germline.IGHJ;
