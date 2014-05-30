@@ -566,8 +566,9 @@ ScatterPlot.prototype = {
             if (this.use_simple_v){
 
             if (this.m.usedV[elem[0]]) {
-                this.positionAllele[vKey[i]] = stepV2 * (this.m.usedV[elem[0]] - 1) +
+                var pos = stepV2 * (this.m.usedV[elem[0]] - 1) +
                         (this.m.germline.v[vKey[i]].allele + 0.5) * (stepV2 / (this.m.germline.vgene[elem[0]].n));
+                this.positionAllele[vKey[i]] = pos;
                 this.positionGene[vKey[i]] = stepV2 * (this.m.usedV[elem[0]] - 0.5)
                 this.gridModel["allele_v"].push(this.makeLineModel("subline", pos, "*" + elem[1], color));
             }
@@ -585,16 +586,16 @@ ScatterPlot.prototype = {
         // Concerne tous les gènes V -> Initialisation et calcul de position
         for (var i = 0; i < vKey2.length; i++) {
 
-            var pos = (i + 0.5) * stepV;
             var color = this.m.germline.vgene[vKey2[i]].color;
 
             if (this.use_simple_v){
                 if (this.m.usedV[vKey2[i]]) {
-                    pos = stepV2 * (this.m.usedV[vKey2[i]] - 0.5)
+                    var pos = stepV2 * (this.m.usedV[vKey2[i]] - 0.5)
                     this.gridModel["allele_v"].push(this.makeLineModel("line", pos, vKey2[i].replace(this.m.system, ""), color));
                     this.gridModel["gene_v"].push(this.makeLineModel("line", pos, vKey2[i].replace(this.m.system, ""), color));
                 }
             }else{
+                var pos = (i + 0.5) * stepV;
                 this.gridModel["allele_v"].push(this.makeLineModel("line", pos, vKey2[i], color));
                 this.gridModel["gene_v"].push(this.makeLineModel("line", pos, vKey2[i], color));
             }
