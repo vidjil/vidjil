@@ -575,10 +575,10 @@ ScatterPlot.prototype = {
 
 
             }else{
-                this.positionAllele[vKey[i]] = (this.m.germline.v[vKey[i]].gene) * stepV +
+                var pos = (this.m.germline.v[vKey[i]].gene) * stepV +
                     (this.m.germline.v[vKey[i]].allele + 0.5) * (stepV / (this.m.germline.vgene[elem[0]].n));
+                this.positionAllele[vKey[i]] = pos;
                 this.positionGene[vKey[i]] = (this.m.germline.v[vKey[i]].gene + 0.5) * stepV;
-                    
                 this.gridModel["allele_v"].push(this.makeLineModel("subline", pos, "*" + elem[1], color));
             }
         }
