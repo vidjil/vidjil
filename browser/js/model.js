@@ -374,6 +374,14 @@ Model.prototype = {
             self.germline.v = germline.TRGV;
             self.germline.j = germline.TRGJ;
             break;
+        case "IGK":
+            self.germline.v = germline.IGKV;
+            self.germline.j = germline.IGKJ;
+            break;
+        case "TRD":
+            self.germline.v = germline.TRDV;
+            self.germline.j = germline.TRDJ;
+            break;
         default:
             self.germline.v = germline.TRGV;
             self.germline.j = germline.TRGJ;
