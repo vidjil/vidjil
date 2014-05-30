@@ -537,7 +537,7 @@ ScatterPlot.prototype = {
      * */
     initGridModelV: function () {
         
-    if (Object.keys(m.germline.vgene).length > 20) 
+    if (Object.keys(this.m.germline.vgene).length > 20) 
         this.use_simple_v = true;
 
 	//Initialisation des paramètres de l'objet concernant les positions des gènes/allèles V _ [gene/allele]_v_used -> Tableau contenant toutes les positions des gènes et allèles V utilisés pendant ce temps
