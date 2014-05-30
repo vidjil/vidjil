@@ -332,23 +332,6 @@ Builder.prototype = {
             
             for (var key in this.m.system_segmented) {
                 
-                var checkbox=document.createElement("input");
-                    checkbox.type="checkbox";
-                    checkbox.id = "checkbox_system_"+key
-                    checkbox.appendChild(document.createTextNode(key))
-                    checkbox.checked=true
-                    checkbox.onchange = function () {
-                        m.update_selected_system()
-                    }
-                    
-                var div = document.createElement('div');
-                div.appendChild(checkbox)
-                div.appendChild(document.createTextNode(key))
-                
-                var li = document.createElement('li');
-                li.appendChild(div)
-                listSystem.appendChild(li);
-                
                 var radio=document.createElement("input");
                     radio.type="radio";
                     radio.name="germline";
@@ -484,11 +467,20 @@ Builder.prototype = {
         var div_data_file = document.createElement('div');
         div_data_file.id = "info_data_file"
         div_data_file.appendChild(document.createTextNode(this.m.dataFileName));
+        parent.appendChild(div_data_file)
 
         //global info
         var div_analysis_file = this.build_info_line("info_analysis_file", "analysis", this.m.analysisFileName)
         var div_system = this.build_info_line("info_system", "system", this.m.system)
-
+        parent.appendChild(div_analysis_file)
+        parent.appendChild(div_system)
+        
+        //multi-system
+        if (this.m.system =="multi"){
+            var div_multi_system = this.build_multi_system()
+            parent.appendChild(div_multi_system)
+        }
+        
         //point info
         var div_point = this.build_info_line("info_point", "point",  this.m.getStrTime(this.m.t, "name") )
         var span = document.createElement('span')
@@ -498,6 +490,7 @@ Builder.prototype = {
             self.edit(this, "time");
         }
         div_point.appendChild(span)
+        parent.appendChild(div_point)
         
         var div_date = this.build_info_line("info_date", "date", this.m.getStrTime(this.m.t, "sampling_date") )
         var span = document.createElement('span')
@@ -507,20 +500,14 @@ Builder.prototype = {
             self.edit(this, "timestamp2");
         }
         div_date.appendChild(span)
+        parent.appendChild(div_date)
 
         var percent = (this.m.reads_segmented[this.point] / this.m.reads_total[this.point]) * 100
         var val = "" + this.m.reads_segmented[this.point] + " reads" + " (" + percent.toFixed(2) + "%)"
         var div_segmented = this.build_info_line("info_segmented", "segmented", val)
-
-        var div_total = this.build_info_line("info_total", "total", this.m.reads_total[this.point] + " reads")
-
-        parent.appendChild(div_data_file)
-        parent.appendChild(div_analysis_file)
-        parent.appendChild(div_system)
-
-        parent.appendChild(div_point)
-        parent.appendChild(div_date)
         parent.appendChild(div_segmented)
+        
+        var div_total = this.build_info_line("info_total", "total", this.m.reads_total[this.point] + " reads")
         parent.appendChild(div_total)
 
         /*TODO put this somewhere else
@@ -532,6 +519,41 @@ Builder.prototype = {
         initTag();
     },
 
+    build_multi_system: function () {
+        var div = document.createElement('div');
+        div.className = "info_line";
+        
+        var span1 = document.createElement('span');
+        span1.appendChild(document.createTextNode("selected : "));
+        span1.className = "info_row"
+        
+        var span2 = document.createElement('span');
+        
+        for (var key in this.m.system_segmented) {
+            
+            var checkbox=document.createElement("input");
+                checkbox.type="checkbox";
+                checkbox.id = "checkbox_system_"+key
+                checkbox.appendChild(document.createTextNode(key))
+                if (this.m.system_selected.indexOf(key) != -1)
+                    checkbox.checked=true
+                checkbox.onchange = function () {
+                    m.update_selected_system()
+                }
+                
+            var span = document.createElement('span');
+            span.appendChild(checkbox)
+            span.appendChild(document.createTextNode(key))
+            
+            span2.appendChild(span)
+        }
+        
+        div.appendChild(span1)
+        div.appendChild(span2)
+        
+        return div
+    },
+    
     build_info_line: function (id, name, value) {
         var span1 = document.createElement('span');
         span1.appendChild(document.createTextNode(name + " : "));
