@@ -591,8 +591,8 @@ ScatterPlot.prototype = {
             if (this.use_simple_v){
                 if (this.m.usedV[vKey2[i]]) {
                     var pos = stepV2 * (this.m.usedV[vKey2[i]] - 0.5)
-                    this.gridModel["allele_v"].push(this.makeLineModel("line", pos, vKey2[i].replace(this.m.system, ""), color));
-                    this.gridModel["gene_v"].push(this.makeLineModel("line", pos, vKey2[i].replace(this.m.system, ""), color));
+                    this.gridModel["allele_v"].push(this.makeLineModel("line", pos, vKey2[i], color));
+                    this.gridModel["gene_v"].push(this.makeLineModel("line", pos, vKey2[i], color));
                 }
             }else{
                 var pos = (i + 0.5) * stepV;
