@@ -58,6 +58,8 @@ Graph.prototype = {
      *
      * */
     init: function () {
+        document.getElementById(this.id)
+            .innerHTML = "";
         
         this.build_menu()
             
