@@ -269,12 +269,10 @@ Builder.prototype = {
 
         var displaySelector = document.getElementById("displaySelector")
         var listTag = displaySelector.getElementsByTagName("ul")[0]
-        var listSystem = document.getElementById("system_list")
         var listGermline = document.getElementById("germline_list")
         
         //reset
         listTag.innerHTML = "";
-        listSystem.innerHTML = "";
         listGermline.innerHTML = "";
 
         //init tag list
