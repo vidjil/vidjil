@@ -15,22 +15,31 @@ patient = db.patient[request.vars["id"]]
 
 
 <div>
+    
     <h3>{{=patient.last_name + " " + patient.first_name}}  ({{=request.vars["id"]}})</h3>
-    <div>
-        choose config 
-        <span>
-            <select id="choose_config" name="config" onchange="db.call('patient/info', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
-                {{ 
-                query = db(db.config).select() 
-                
-                for row in query :}}
-                    <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} >
-                        {{=row.name}} 
-                    </option>
-                {{pass}}
-            </select>
-        </span>
+    
+    <div class="db_top">
+        <div class="db_top_left">
+            file list
+        </div>
+        
+        <div class="db_top_right">
+            choose config 
+            <span>
+                <select id="choose_config" name="config" onchange="db.call('patient/info', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
+                    {{ 
+                    query = db(db.config).select() 
+
+                    for row in query :}}
+                        <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} >
+                            {{=row.name}} 
+                        </option>
+                    {{pass}}
+                </select>
+            </span>
+        </div>
     </div>
+    
 </div>
 
 <div id="db_table_container">
@@ -39,11 +48,15 @@ patient = db.patient[request.vars["id"]]
             <tr><td class="column1"> file_name </td>
                 <td class="column2"> sampling date </td>
                 <td> info </td>
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+                
+                <td class="column_sep"></td>
+                
                 <td class="column4"> status </td>
                 <td class="column2"> vidjil run date </td>
-                <td class="column5"> </td>
-                <td class="column5"> </td>
-                <td class="column5"> </td>
+
             </tr>
         </thead>
         <tbody>
@@ -63,6 +76,12 @@ patient = db.patient[request.vars["id"]]
                     <td> {{ (filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)}} {{=filename}}</td>
                     <td> {{=row.sequence_file.sampling_date}} </td>
                     <td> {{=row.sequence_file.info}} </td>
+                    <td> <a href="{{=URL('download', scheme='http', args=row.sequence_file.data_file)}}" >dl</a> </td>
+                    <td onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
+                    <td onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
+                     
+                    <td class="column_sep"></td>
+                     
                     <td> {{if row.data_file.id == None :}}
                         <span class="button" onclick="db.request('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}' , 'config_id' : {{=config_id}} } )"> run >> </span>
                          {{else:}}
@@ -70,9 +89,6 @@ patient = db.patient[request.vars["id"]]
                          {{pass}}
                     </td>
                     <td> {{=row.data_file.run_date}} </td>
-                    <td> <a href="{{=URL('download', scheme='http', args=row.sequence_file.data_file)}}" >dl</a> </td>
-                    <td onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
-                    <td onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
                 </tr>
             {{pass}}
         </tbody>
