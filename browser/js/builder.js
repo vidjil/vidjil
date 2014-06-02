@@ -467,14 +467,15 @@ Builder.prototype = {
 
         //global info
         var div_analysis_file = this.build_info_line("info_analysis_file", "analysis", this.m.analysisFileName)
-        var div_system = this.build_info_line("info_system", "system", this.m.system)
         parent.appendChild(div_analysis_file)
-        parent.appendChild(div_system)
         
-        //multi-system
+        //system
         if (this.m.system =="multi"){
             var div_multi_system = this.build_multi_system()
             parent.appendChild(div_multi_system)
+        }else{
+            var div_system = this.build_info_line("info_system", "system", this.m.system)
+            parent.appendChild(div_system)
         }
         
         //point info
@@ -520,7 +521,7 @@ Builder.prototype = {
         div.className = "info_line";
         
         var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode("selected : "));
+        span1.appendChild(document.createTextNode("system : "));
         span1.className = "info_row"
         
         var span2 = document.createElement('span');
