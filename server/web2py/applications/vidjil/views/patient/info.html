@@ -9,10 +9,13 @@
     {{config_id = db(db.config).select()[0].id}}
 {{pass}}
 
+{{
+patient = db.patient[request.vars["id"]]
+}}
 
 
 <div>
-    <h3>{{=message}}  {{=request.vars["id"]}}</h3>
+    <h3>{{=patient.last_name + " " + patient.first_name}}  ({{=request.vars["id"]}})</h3>
     <div>
         choose config 
         <span>
