@@ -1,9 +1,7 @@
 function Builder(model) {
     this.m = model; //Model utilisé
     this.m.view.push(this); //synchronisation au Model
-
     this.colorMethod = "";
-    this.point = 0;
 
     this.drag_separator = false
 }
@@ -237,7 +235,7 @@ Builder.prototype = {
         var input = document.createElement('input');
         input.type = "text";
         input.id = "edit_value";
-        input.value = self.m[data][self.point];
+        input.value = self.m[data][self.m.t];
         input.style.width = "200px";
         input.style.border = "0px";
         input.style.margin = "0px";
@@ -253,7 +251,7 @@ Builder.prototype = {
         a.appendChild(document.createTextNode("save"));
         a.id = "btnSave";
         a.onclick = function () {
-            self.m[data][self.point] = document.getElementById("edit_value").value
+            self.m[data][self.m.t] = document.getElementById("edit_value").value
             self.build_info_container()
             self.m.update()
         }
@@ -500,12 +498,12 @@ Builder.prototype = {
         div_date.appendChild(span)
         parent.appendChild(div_date)
 
-        var percent = (this.m.reads_segmented[this.point] / this.m.reads_total[this.point]) * 100
-        var val = "" + this.m.reads_segmented[this.point] + " reads" + " (" + percent.toFixed(2) + "%)"
+        var percent = (this.m.reads_segmented[this.m.t] / this.m.reads_total[this.m.t]) * 100
+        var val = "" + this.m.reads_segmented[this.m.t] + " reads" + " (" + percent.toFixed(2) + "%)"
         var div_segmented = this.build_info_line("info_segmented", "segmented", val)
         parent.appendChild(div_segmented)
         
-        var div_total = this.build_info_line("info_total", "total", this.m.reads_total[this.point] + " reads")
+        var div_total = this.build_info_line("info_total", "total", this.m.reads_total[this.m.t] + " reads")
         parent.appendChild(div_total)
 
         /*TODO put this somewhere else
