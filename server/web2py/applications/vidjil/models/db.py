@@ -102,7 +102,7 @@ db.define_table('sequence_file',
                 Field('info','text'),
                 Field('filename','text'),
                 Field('size_file','integer'),
-                Field('data_file', 'upload',autodelete=True, length=1000000000000))
+                Field('data_file', 'upload', length=1000000000000))
 
 
 

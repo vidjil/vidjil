@@ -21,7 +21,6 @@ def add_form():
         response.headers['Access-Control-Allow-Credentials'] = 'true'
         response.headers['Access-Control-Max-Age'] = 86400
         
-    id = db.sequence_file.insert(data_file = request.vars.file)
     error = ""
     
     if request.vars['sampling_date'] != None :
@@ -30,17 +29,16 @@ def add_form():
         except ValueError:
             error += "date missing or wrong format, "
             
-    ##if not auth.has_permission('admin', 'patient', request.vars['patient_id'], auth.user_id):
-    ##    error += "you need admin permission on this patient to add file"
-    
     if error=="" :
-        
-        db.sequence_file[id] = dict(sampling_date=request.vars['sampling_date'],
-                                    info=request.vars['file_info'],
-                                    patient_id=request.vars['patient_id'])
+        id = db.sequence_file.insert(sampling_date=request.vars['sampling_date'],
+                            info=request.vars['file_info'],
+                            patient_id=request.vars['patient_id'])
     
-        res = {"redirect": "patient/index",
-               "message": "file added"}
+        res = {"file_id" : id,
+               "message": "info file added",
+               "redirect": "patient/info",
+               "args" : {"id" : request.vars['patient_id']}
+               }
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     else :
@@ -65,21 +63,51 @@ def edit_form():
         response.headers['Access-Control-Max-Age'] = 86400
     
     error = ""
-    try:
-        datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
-    except ValueError:
-        error += "sampling date missing or wrong format"
-
-    if error=="" :
-        db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'],
-                                                info=request.vars['file_info'])
+    
+    if request.vars['id'] == None :
+        error += "missing id"
             
-        res = {"redirect": "patient/index",
-       "message": "change saved"}
+    if error=="" :
+
+        mes = "file " + request.vars['id'] + " : "
+        if request.vars['sampling_date'] != None :
+            db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'])
+            mes += "sampling date saved, "
+            
+        if request.vars['file_info'] != None :
+            db.sequence_file[request.vars["id"]] = dict(info=request.vars['file_info'])
+            mes += "info saved, "
+            
+        patient_id = db.sequence_file[request.vars["id"]].patient_id
+        
+        res = {"file_id" : request.vars['id'],
+               "redirect": "patient/info",
+               "args" : { "id" : patient_id},
+               "message": mes}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
-    else :
-        res = {"success" : "false", "message" : error}
+def upload(): 
+    import gluon.contrib.simplejson, shutil, os.path, datetime
+    if request.env.http_origin:
+        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
+        response.headers['Access-Control-Allow-Credentials'] = 'true'
+        response.headers['Access-Control-Max-Age'] = 86400
+    
+    error = ""
+    
+    if request.vars['id'] == None :
+        error += "missing id"
+            
+    if error=="" :
+            
+        mes = "file " + request.vars['id'] + " : "
+        if request.vars.file != None :
+            db.sequence_file[request.vars["id"]] = dict(data_file = request.vars.file )
+            mes += "file saved, "
+            
+        patient_id = db.sequence_file[request.vars["id"]].patient_id
+        
+        res = {"message": mes}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
   
 
