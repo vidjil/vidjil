@@ -1,7 +1,8 @@
 function Database(id, db_address) {
     this.db_address = db_address;
     this.id = id;
-    this.upload = 0;
+    this.upload = {};
+    
 }
 
 Database.prototype = {
@@ -64,6 +65,7 @@ Database.prototype = {
             //TODO : implémenter un flash message
             if (res.message) console.log("database log : "+res.message)
             
+            return res
         }
         catch(err)
         {
@@ -137,54 +139,74 @@ Database.prototype = {
         
         //submit formulaire avec fichier
         if ( document.getElementById('upload_form') ){
-            //$('#upload_form').on('submit', self.upload_form ); // doesn't work :/
             
-            var upload_n=this.upload
-            //rename form
+            var data = $('#upload_form').serialize()
+
             $('#upload_form').ajaxForm({
                 type     : "POST",
                 cache: false,
                 crossDomain: true,
+                xhrFields: {withCredentials: true},
                 url      : $(this).attr('action'),
                 data     : $(this).serialize(),
-                beforeSubmit: function() {
-                    self.call("patient/index") 
-                    //crée un div qui contiendra la progression de l'upload du fichier 
-                    self.upload++;
-                    var div = document.createElement('div');
-                    
-                    var spanName=document.createElement('span');
-                    spanName.innerHTML = $("#upload_file").val().split('/').pop().split('\\').pop();
-                    
-                    var spanPercent=document.createElement('span');
-                    spanPercent.id = "upload_percent_"+upload_n; 
-                    spanPercent.innerHTML = '0%';
-                    
-                    div.appendChild(spanName);
-                    div.appendChild(spanPercent);
-                    
-                    var div_parent=document.getElementById("upload_list");
-                    div_parent.appendChild(div);
-                },    
-                //mise a jour progressive du % d'upload
-                uploadProgress: function(event, position, total, percentComplete) {
-                    var percentVal = percentComplete + '%';
-                    $('#upload_percent_'+upload_n).html(percentVal);
-                },
                 success  : function(result) {
-                    self.display_result(result)
+                    var js = self.display_result(result)
+                    var id = js.file_id
+                    var fileSelect = document.getElementById('upload_file');
+                    var files = fileSelect.files;
+                    var data = new FormData();
+                    
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i];
+                        data.append('file', file, file.name);
+                    }
+                    data.append('id', id);
+                    
+                    self.upload_file(id, data)
                 },
                 error: function (request, status, error) {
                     if(status==="timeout") {
                         popupMsg("timeout");
                     } else {
-                        popupMsg(request.responseText);
+                        popupMsg(request + " " + status + " " + error);
                     } 
                 }
             });
             
         }  
         
+    },
+    
+    upload_file: function (id, data){
+        var self = this;
+        
+        $.ajax({
+            type: "POST",
+            crossDomain: true,
+            url: self.db_address + "file/upload",
+            processData: false,
+            contentType: false,
+            data: data,
+            beforeSend: function(){
+                self.upload[id] = 0
+            },
+            success: function (result) {
+                self.upload[id] = 1
+                self.upload_display()
+                self.display_result(result)
+            },
+            error: function (request, status, error) {
+                delete self.upload[id]; 
+                self.upload_display();
+                if (status === "timeout") {
+                    popupMsg("timeout");
+                } else {
+                    popupMsg(request.responseText);
+                }
+            }
+        });
+        
+        return data
     },
     
     /* appel une fonction du serveur
@@ -331,6 +353,19 @@ Database.prototype = {
             .style.display = "block";
         document.getElementById("db_msg")
             .innerHTML = msg;
+            
+        this.upload_display();
+    },
+    
+    upload_display: function(){
+        for (var key in this.upload){
+            if (this.upload[key]==1){
+                $("#sequence_file_"+key).html("uploaded !")
+                delete this.upload[key]; 
+            }else{
+                $("#sequence_file_"+key).html("<div class='loading_seq'></div>")
+            }
+        }
     },
 
     //efface et ferme la fenetre de dialogue avec le serveur
