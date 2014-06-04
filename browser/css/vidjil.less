@@ -1017,3 +1017,34 @@ span .substitution{
     margin-top: 20px;
     margin-left: 20px;
 }
+
+
+.loading_seq {
+    height: 15px;
+    width: 100px;
+    background-image: -webkit-linear-gradient(-45deg, @border 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, @border 50%, @border 75%, rgba(255, 154, 26, 0) 75%); 
+    background-image: -moz-linear-gradient(-45deg, @border 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, @border 50%, @border 75%, rgba(255, 154, 26, 0) 75%);
+    background-image: -o-linear-gradient(-45deg, @border 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, @border 50%, @border 75%, rgba(255, 154, 26, 0) 75%);
+    background-image: linear-gradient(-45deg, @border 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, @border 50%, @border 75%, rgba(255, 154, 26, 0) 75%);
+    background-size: 50px 50px;
+    -webkit-animation: move 2s linear infinite;
+    -moz-animation: move 2s linear infinite;
+    -o-animation: move 2s linear infinite;
+    animation: move 2s linear infinite;
+}
+
+@-webkit-keyframes move {
+    to { background-position: 50px 50px; }
+}
+
+@-moz-keyframes move {
+    to { background-position: 50px 50px; }
+}
+
+@-o-keyframes move {
+    to { background-position: 50px 50px; }
+}
+
+@-webkit-keyframes move {
+    to { background-position: 50px 50px; }
+}
