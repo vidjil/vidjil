@@ -126,9 +126,12 @@ def delete():
         response.headers['Access-Control-Allow-Credentials'] = 'true'
         response.headers['Access-Control-Max-Age'] = 86400
 
+    patient_id = db.sequence_file[request.vars["id"]].patient_id
+    
     db(db.sequence_file.id == request.vars["id"]).delete()
     db(db.data_file.sequence_file_id == request.vars["id"]).delete()
     
-    res = {"redirect": "patient/index",
+    res = {"redirect": "patient/info",
+           "args" : { "id" : patient_id},
            "message": "sequence file deleted"}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
