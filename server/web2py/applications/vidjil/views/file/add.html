@@ -1,20 +1,25 @@
 {{extend 'db_layout.html'}}
 
+<div>
+    <table>
+        <tr>
+            <td >
+                <label for="file" id="file__label"> file </label>
+            </td>
+            <td >
+                <input id="upload_file" type="file" name="file" >
+            </td>
+            <td >
+            </td>
+        </tr>
+    </table>
+</div>
+
 <form id="upload_form" action="DB_ADDRESS/file/add_form" enctype="multipart/form-data" method="post">
     <input type="hidden" name="patient_id" value="{{=request.vars["id"]}}" >
     
     <table>
         <tbody>
-            <tr>
-                <td >
-                    <label for="file" id="file__label"> file </label>
-                </td>
-                <td >
-                    <input id="upload_file" type="file" name="file" >
-                </td>
-                <td >
-                </td>
-            </tr>
             <tr>
                 <td>
                     <label for="sampling_date" id="sampling_date__label">sampling date: </label>

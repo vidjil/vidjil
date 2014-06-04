@@ -4,8 +4,19 @@
 info = db.sequence_file[request.vars["id"]]
 }}
 
+<div>
+    <table>
+        <tr>
+            <td >
+                <input id="upload_file" type="file" name="file" >
+            </td>
+            <td >
+            </td>
+        </tr>
+    </table>
+</div>
 
-<form id="data_form" action="DB_ADDRESS/file/edit_form" enctype="multipart/form-data" method="post">
+<form id="upload_form" action="DB_ADDRESS/file/edit_form" enctype="multipart/form-data" method="post">
     <input type="hidden" id="file_id" name="id" value="{{=request.vars["id"]}}" >
     
     <table>
