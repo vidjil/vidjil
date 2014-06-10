@@ -3,6 +3,20 @@
 {{('message' in globals())}}
 {{if 'message' in globals():}}
 
+{{ 
+count = db.patient.id.count()
+
+query = db(
+    (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) &
+    (db.patient.id == db.sequence_file.patient_id)
+).select(
+    db.patient.ALL,
+    count,
+    groupby=db.patient.id
+)
+}}
+
+
 <div>
     <h3>{{=message}}</h3>
     
@@ -12,24 +26,21 @@
                 <tr><td class="column1"> name </td>
                     <td class="column2"> birth </td>
                     <td> info </td>
+                    <td class="column2"> files </td>
                     <td class="column5"> </td>
                     <td class="column5"> </td>
                     <td class="column5"> </td>
                 </tr>
             </thead>
-           {{ 
-           query = db(
-               auth.accessible_query('read', db.patient) |
-               auth.accessible_query('admin', db.patient)
-           ).select()
-           for row in query :}}
-               <tr onclick="db.call('patient/info', {'id' :'{{=row.id}}'} )" >
-                    <td> {{=row.last_name + " " + row.first_name }} </td>
-                    <td> {{=row.birth }} </td>
-                    <td> {{=row.info }} </td>
-                    <td onclick="db.call('patient/permission', {'id' :'{{=row.id}}'} )" > p </td>
-                    <td onclick="db.call('patient/edit', {'id' :'{{=row.id}}'} )" > e </td>
-                    <td onclick="db.call('patient/confirm', {'id' :'{{=row.id}}'} )" > X </td>  
+           {{for row in query :}}
+               <tr onclick="db.call('patient/info', {'id' :'{{=row.patient.id}}'} )" >
+                    <td> {{=row.patient.last_name + " " + row.patient.first_name }} </td>
+                    <td> {{=row.patient.birth }} </td>
+                    <td> {{=row.patient.info }} </td>
+                    <td> {{=row[count]}}</td>
+                    <td onclick="db.call('patient/permission', {'id' :'{{=row.patient.id}}'} )" > p </td>
+                    <td onclick="db.call('patient/edit', {'id' :'{{=row.patient.id}}'} )" > e </td>
+                    <td onclick="db.call('patient/confirm', {'id' :'{{=row.patient.id}}'} )" > X </td>  
                 </tr>
             {{pass}}
         </table>
