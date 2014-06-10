@@ -4,14 +4,14 @@
 {{if 'message' in globals():}}
 
 {{ 
-count = db.patient.id.count()
+count = db.sequence_file.id.count()
 
 query = db(
-    (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) &
-    (db.patient.id == db.sequence_file.patient_id)
+    (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) 
 ).select(
     db.patient.ALL,
     count,
+    left=db.sequence_file.on(db.patient.id == db.sequence_file.patient_id),
     groupby=db.patient.id
 )
 }}
