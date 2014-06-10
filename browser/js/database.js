@@ -3,6 +3,7 @@ function Database(id, db_address) {
     this.id = id;
     this.upload = {};
     
+    this.url = ""
 }
 
 Database.prototype = {
@@ -27,18 +28,25 @@ Database.prototype = {
             arg += "" + key + "=" + args[key] + "&";
         }
         
-        this.last_url = self.db_address + page + arg
+        var url = self.db_address + page + arg
         
-        //envoye de la requete ajax
+        this.callUrl(url)
+    },
+    
+    callUrl : function (url){
+        var self=this;
+        
         $.ajax({
             type: "POST",
             timeout: 1000,
             crossDomain: true,
             context: self,                          //we can't do closure with ajax event handler so we use context to keep ref
-            url: self.db_address + page + arg,
+            url: url,
             contentType: 'text/plain',
             xhrFields: {withCredentials: true},
-            success: self.display_result,     
+            success: function (result) {
+                self.display_result(result, url)
+            }, 
             error: function (request, status, error) {
                 if (status === "timeout") {
                     popupMsg("timeout");
@@ -50,11 +58,10 @@ Database.prototype = {
         });
     },
     
-    
-    display_result: function (result) {
+    display_result: function (result, url) {
         //rétablissement de l'adresse pour les futures requetes
         result = result.replace("DB_ADDRESS/", this.db_address);
-        result = result.replace("action=\"#\"", "action=\""+this.last_url+"\"");
+        result = result.replace("action=\"#\"", "action=\""+url+"\"");
         
         //hack redirection
         try {
@@ -71,6 +78,7 @@ Database.prototype = {
         {
             //affichage résultat
             this.display(result)
+            this.url=url
             
             //bind javascript
             this.init_ajaxform()
@@ -99,7 +107,7 @@ Database.prototype = {
                 data     : $(this).serialize(),
                 xhrFields: {withCredentials: true},
                 success: function (result) {
-                    self.display_result(result)
+                    self.display_result(result, $(this).attr('action'))
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
@@ -124,7 +132,9 @@ Database.prototype = {
                 url      : $(this).attr('action'),
                 data     : $(this).serialize(),
                 xhrFields: {withCredentials: true},
-                success: self.display_result,
+                success: function (result) {
+                    self.display_result(result, $(this).attr('action'))
+                },
                 error: function (request, status, error) {
                     if (status === "timeout") {
                         popupMsg("timeout");
@@ -180,10 +190,12 @@ Database.prototype = {
     upload_file: function (id, data){
         var self = this;
         
+        var url = self.db_address + "file/upload"
+        
         $.ajax({
             type: "POST",
             crossDomain: true,
-            url: self.db_address + "file/upload",
+            url: url,
             processData: false,
             contentType: false,
             data: data,
@@ -193,7 +205,7 @@ Database.prototype = {
             success: function (result) {
                 self.upload[id] = 1
                 self.upload_display()
-                self.display_result(result)
+                self.display_result(result, url)
             },
             error: function (request, status, error) {
                 delete self.upload[id]; 
@@ -207,6 +219,11 @@ Database.prototype = {
         });
         
         return data
+    },
+    
+    /*reload the current db page*/
+    reload: function(){
+        this.callUrl(this.url)
     },
     
     /* appel une fonction du serveur
@@ -357,11 +374,12 @@ Database.prototype = {
         this.upload_display();
     },
     
+    /* update upload status  */
     upload_display: function(){
         for (var key in this.upload){
             if (this.upload[key]==1){
-                $("#sequence_file_"+key).html("uploaded !")
                 delete this.upload[key]; 
+                this.reload()
             }else{
                 $("#sequence_file_"+key).html("<div class='loading_seq'></div>")
             }
