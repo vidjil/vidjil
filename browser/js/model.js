@@ -325,6 +325,7 @@ Model.prototype = {
         if (self.analysis.time && (self.analysis.time.length == self.time.length)) {
             self.time = self.analysis.time;
             self.time_order = self.analysis.time_order;
+            self.t = self.time_order[0]
         }
         if (self.analysis.normalization) {
             self.normalization= self.analysis.normalization;
