@@ -349,38 +349,6 @@ Segment.prototype = {
         }
         return result
     },
-    
-    buildSequence2: function (cloneID){
-        
-        var spanM = document.createElement('span');
-        spanM.id = "m"+cloneID;
-        spanM.className="seq-mobil";
-        
-        var tag = []
-        
-        //balise V et J
-        tag.push( {'tag' : '<span class="V">', 'pos' : 0} )
-        tag.push( {'tag' : '</span><span class="J">', 'pos' : this.m.windows[cloneID].Jstart} )
-        tag.push( {'tag' : '</span>', 'pos' : this.m.windows[cloneID].window.length} )
-        
-        //balise N
-        tag.push( {'tag' : '</span><span class="N">', 'pos' : this.m.windows[cloneID].Vend+1} )
-        
-        //balise D
-        if(typeof this.m.windows[cloneID].Dstart !='undefined' && typeof this.m.windows[cloneID].Dend !='undefined'){
-            tag.push( {'tag' : '</span><span class="D">', 'pos' : this.m.windows[cloneID].Dstart} )
-            tag.push( {'tag' : '</span><span class="N">', 'pos' : this.m.windows[cloneID].Dend+1} )
-        }
-        
-        //balise window
-        var windowStart = this.m.windows[cloneID].sequence.indexOf(this.m.windows[cloneID].window)
-        var windowEnd = windowStart + this.m.windows[cloneID].window.length
-        tag.push( {'tag' : '<span class="w"></span>', 'pos' : windowStart} )
-        tag.push( {'tag' : '<span class="w"></span>', 'pos' : windowEnd} )
-        
-        
-        return spanM
-    },
 
 }//fin prototype
 
@@ -395,72 +363,7 @@ Segment.prototype = {
         var spanM = document.getElementById("m"+memTab[i]);
         spanM.innerHTML="";
         
-        // V gene container
-        var spanV = document.createElement('span');
-        spanV.className="V";
-        if (this.m.colorMethod == "V")
-        spanV.style.color=m.windows[memTab[i]].colorV;
-        // N region container
-        var spanN1 = document.createElement('span');
-        spanN1.className="N";
-        var spanD = document.createElement('span');
-        spanD.className="D";
-        var spanN2 = document.createElement('span');
-        spanN2.className="N";
-        // J gene container
-        var spanJ = document.createElement('span');
-        spanJ.className="J";
-        if (this.m.colorMethod == "J")
-        spanJ.style.color=m.windows[memTab[i]].colorJ;
-        
         if(typeof m.windows[memTab[i]].sequence !='undefined' && m.windows[memTab[i]].sequence!=0){
-            var newVend=getNewPosition(json.seq[i],m.windows[memTab[i]].Vend)
-            var newJstart=getNewPosition(json.seq[i],m.windows[memTab[i]].Jstart)
-            var newDstart = -1
-            var newDend = -1
-            if(typeof this.m.windows[memTab[i]].Dstart !='undefined' && typeof this.m.windows[memTab[i]].Dend !='undefined'){
-                var newDstart=getNewPosition(json.seq[i],m.windows[memTab[i]].Dstart)
-                var newDend=getNewPosition(json.seq[i],m.windows[memTab[i]].Dend)
-            }
-
-            
-            var str = "";
-            for (var k=0; k<json.seq[i].length; k++){
-                if (json.seq[i][k] == json.seq[0][k] ){
-                    str += json.seq[i][k]
-                }else{
-                    str += "<span class='substitution'>"+json.seq[i][k]+"</span>"
-                }
-                
-                if (k==newVend+1){
-                    spanV.innerHTML=str
-                    str=""
-                }
-                
-                if (k==newDstart){
-                    spanN1.innerHTML=str
-                    str=""
-                }
-                
-                if (k==newDend){
-                    spanD.innerHTML=str
-                    str=""
-                }
-                
-                if (k==newJstart){
-                    spanN2.innerHTML=str
-                    str=""
-                }
-                
-            }
-            spanJ.innerHTML=str
-            
-            spanM.appendChild(spanV);
-            spanM.appendChild(spanN1);
-            spanM.appendChild(spanD);
-            spanM.appendChild(spanN2);
-            spanM.appendChild(spanJ);
-            
             var seq = new Sequence(memTab[i], m)
             spanM.innerHTML=seq.load(json.seq[i]).diff(json.seq[0]).toString()
             
@@ -472,22 +375,7 @@ Segment.prototype = {
     }
     
   }
-  
-  function getNewPosition(seq, oldPos){
-    var k=0;
-    
-    for (var i = 0 ; i < seq.length ; i++){
-      if (seq[i]!='-') k++;
-      if (k==oldPos) return i;
-    }
-    
-  }
-  
-    function insert(string1, string2, pos){
-        return string1.substring(0,pos) + string2 + string1.substring(pos)
-    }
-    
-    
+
 function Sequence(id, model){
     this.id = id;           //clone ID
     this.m = model;         //Model utilisé
