@@ -479,6 +479,33 @@ max-height: calc(~"100%" - @margin)
 .J {
   color: #009b95;
 }
+.window1{
+    display: inline-block;
+    width: 0px;
+}
+.window2{
+    border: solid;
+    display: inline-flex;
+    height: 1em;
+    position: relative;
+    margin: -1px;
+    border-width: 1px;
+    border-color: red;
+    bottom: -2px;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: -moz-none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
+span .substitution{
+    background-color : #145065;
+    text-shadow: 1px 1px @background, 
+                1px -1px @background, 
+                -1px -1px @background, 
+                -1px 1px @background;
+}
 
 							  /*tag*/
 
@@ -838,12 +865,6 @@ span.logo
     fill-opacity: 0.2;
 }
 
-span .substitution{
-    background-color : @highlight;
-    opacity: 0.8;
-    font-weight: lighter;
-    text-decoration: underline;
-}
 
 .axis_select select {
     background: @highlight;
