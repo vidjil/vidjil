@@ -229,73 +229,46 @@ Segment.prototype = {
     spanF.id = "f"+cloneID;
     this.div_elem(spanF, cloneID);
 
-    var spanM = document.createElement('span');
-    spanM.id = "m"+cloneID;
-    spanM.className="seq-mobil";
-    
-    if(typeof this.m.windows[cloneID].sequence !='undefined' && this.m.windows[cloneID].sequence!=0){
-    
-    var spanV = document.createElement('span');
-    spanV.className="V";
-    if (this.m.colorMethod == "V")
-    spanV.style.color=this.m.windows[cloneID].colorV;
-
-    var v_seq=this.m.windows[cloneID].sequence.substr(0, this.m.windows[cloneID].Vend+1);
-    var size_marge=300-v_seq.length;
-    if (size_marge>0){
-      var marge="";
-      for (var i=0; i<size_marge; i++) marge+="&nbsp";
-      spanV.innerHTML=marge+v_seq;
-    }else{
-      spanV.innerHTML=v_seq;
-    }
-
-    spanM.appendChild(spanV);
-      
-    if(typeof this.m.windows[cloneID].Dstart !='undefined' && typeof this.m.windows[cloneID].Dend !='undefined'){
-        var spanN1= document.createElement('span');
-        spanN1.className="N";
-        spanN1.innerHTML=this.m.windows[cloneID].sequence.substring(this.m.windows[cloneID].Vend+1, this.m.windows[cloneID].Dstart);
-        spanM.appendChild(spanN1);
-        
-        var spanD= document.createElement('span');
-        spanD.className="D";
-        spanD.innerHTML=this.m.windows[cloneID].sequence.substring(this.m.windows[cloneID].Dstart, this.m.windows[cloneID].Dend+1);
-        spanM.appendChild(spanD);
-        
-        var spanN2= document.createElement('span');
-        spanN2.className="N";
-        spanN2.innerHTML=this.m.windows[cloneID].sequence.substring(this.m.windows[cloneID].Dend+1, this.m.windows[cloneID].Jstart);
-        spanM.appendChild(spanN2);
-    }else{
-        var spanN = document.createElement('span');
-        spanN.className="N";
-        spanN.innerHTML=this.m.windows[cloneID].sequence.substring(this.m.windows[cloneID].Vend+1, this.m.windows[cloneID].Jstart);
-        spanM.appendChild(spanN);
-    }
-    
-    var spanJ = document.createElement('span');
-    spanJ.className="J";
-    if (this.m.colorMethod == "J")
-    spanJ.style.color=this.m.windows[cloneID].colorJ;
-    spanJ.innerHTML=this.m.windows[cloneID].sequence.substr(this.m.windows[cloneID].Jstart);
-    spanM.appendChild(spanJ);
-    }else{
-      var size_marge=320-this.m.windows[cloneID].window.length;
-      var marge="";
-      for (var i=0; i<size_marge; i++) marge+="&nbsp";
-      var spanJunc=document.createElement('span');
-
-      spanJunc.innerHTML=marge+this.m.windows[cloneID].window;
-
-      spanM.appendChild(spanJunc);
-    }
+    var spanM = this.buildSequence(cloneID)
     
     li.appendChild(spanF);
     li.appendChild(spanM);
     divParent.appendChild(li);
       
   },
+  
+    buildSequence: function (cloneID){
+        
+        var spanM = document.createElement('span');
+        spanM.id = "m"+cloneID;
+        spanM.className="seq-mobil";
+        
+        if(typeof this.m.windows[cloneID].sequence !='undefined' && this.m.windows[cloneID].sequence!=0){
+
+            var v_length = this.m.windows[cloneID].Vend+1;
+            var size_marge = 300 - v_length;
+            var marge="";
+            if (size_marge>0){
+                for (var i=0; i<size_marge; i++) marge+="&nbsp";
+            }
+            
+            var seq = new Sequence(cloneID, this.m)
+            spanM.innerHTML=marge+seq.load().toString()
+            
+        }else{
+            var size_marge=320-this.m.windows[cloneID].window.length;
+            var marge="";
+            for (var i=0; i<size_marge; i++) marge+="&nbsp";
+            
+            var spanJunc=document.createElement('span');
+            spanJunc.innerHTML=marge+this.m.windows[cloneID].window;
+            
+            spanM.appendChild(spanJunc);
+        }
+        
+        return spanM
+    },
+    
   
   sendTo : function(address){
     
@@ -375,9 +348,39 @@ Segment.prototype = {
             result += this.m.windows[selected[i]].sequence + "\n";
         }
         return result
-    }
+    },
     
-
+    buildSequence2: function (cloneID){
+        
+        var spanM = document.createElement('span');
+        spanM.id = "m"+cloneID;
+        spanM.className="seq-mobil";
+        
+        var tag = []
+        
+        //balise V et J
+        tag.push( {'tag' : '<span class="V">', 'pos' : 0} )
+        tag.push( {'tag' : '</span><span class="J">', 'pos' : this.m.windows[cloneID].Jstart} )
+        tag.push( {'tag' : '</span>', 'pos' : this.m.windows[cloneID].window.length} )
+        
+        //balise N
+        tag.push( {'tag' : '</span><span class="N">', 'pos' : this.m.windows[cloneID].Vend+1} )
+        
+        //balise D
+        if(typeof this.m.windows[cloneID].Dstart !='undefined' && typeof this.m.windows[cloneID].Dend !='undefined'){
+            tag.push( {'tag' : '</span><span class="D">', 'pos' : this.m.windows[cloneID].Dstart} )
+            tag.push( {'tag' : '</span><span class="N">', 'pos' : this.m.windows[cloneID].Dend+1} )
+        }
+        
+        //balise window
+        var windowStart = this.m.windows[cloneID].sequence.indexOf(this.m.windows[cloneID].window)
+        var windowEnd = windowStart + this.m.windows[cloneID].window.length
+        tag.push( {'tag' : '<span class="w"></span>', 'pos' : windowStart} )
+        tag.push( {'tag' : '<span class="w"></span>', 'pos' : windowEnd} )
+        
+        
+        return spanM
+    },
 
 }//fin prototype
 
@@ -457,6 +460,10 @@ Segment.prototype = {
             spanM.appendChild(spanD);
             spanM.appendChild(spanN2);
             spanM.appendChild(spanJ);
+            
+            var seq = new Sequence(memTab[i], m)
+            spanM.innerHTML=seq.load(json.seq[i]).diff(json.seq[0]).toString()
+            
         }else{
             var spanJunc=document.createElement('span');
             spanJunc.innerHTML=json.seq[i];
@@ -476,3 +483,87 @@ Segment.prototype = {
     
   }
   
+    function insert(string1, string2, pos){
+        return string1.substring(0,pos) + string2 + string1.substring(pos)
+    }
+    
+    
+function Sequence(id, model){
+    this.id = id;           //clone ID
+    this.m = model;         //Model utilisé
+    this.seq = [];
+    this.pos = [];
+}
+
+Sequence.prototype = {
+    
+    //load sequence from model or use given argument
+    load : function(str){
+        str = typeof str !== 'undefined' ? str : this.m.windows[this.id].sequence;
+        
+        this.seq = str.split("") 
+        this.computePos()
+        
+        return this;
+    },
+    
+    //store position of each nucleotide
+    computePos : function(){
+        var j=0
+        for (var i=0; i< this.seq.length; i++){
+            if (this.seq[i] != "-"){
+                this.pos.push(j)
+                j++
+            }
+        }
+        return this;
+    },
+    
+    //compare sequence with another string and surround change
+    diff : function(str){
+        for (var i=0; i< this.seq.length; i++){
+            if (this.seq[i] != str[i] ){
+                this.seq[i] = "<span class='substitution'>" +this.seq[i]+ "</span>"
+            }
+        }
+        return this;
+    },
+    
+    //return sequence completed with html tag
+    toString : function(){
+        var seg = this.m.windows[this.id]
+        
+        //find V, D, J position
+        var endV = this.pos[ seg.Vend ]
+        var startJ = this.pos[ seg.Jstart ]
+        if(typeof seg.Dstart !='undefined' && typeof seg.Dend !='undefined'){
+            var startD = this.pos[ seg.Dstart ]
+            var endD = this.pos[ seg.Dend ]
+        }
+        
+        //V color
+        var vColor = "";
+        if (this.m.colorMethod == "V") vColor = "style='color : "+seg.colorV+"'";
+        
+        //J color
+        var jColor = "";
+        if (this.m.colorMethod == "J") jColor = "style='color : "+seg.colorJ+"'";
+        
+        //add span VDJ
+        var result = "<span class='V' " + vColor + " >"
+        for (var i=0; i< this.seq.length; i++){
+            result += this.seq[i]
+                            
+            if (i==endV)    result += "</span><span class ='N'>"
+            if (i==startD-1)  result += "</span><span class ='D'>"
+            if (i==endD)    result += "</span><span class ='N'>"
+            if (i==startJ-1)  result += "</span><span class ='J' " + jColor + " >"
+                
+        }
+        result += "</span>"
+        
+        return result
+    },
+    
+    
+}
