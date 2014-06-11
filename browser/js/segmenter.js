@@ -426,8 +426,7 @@ Sequence.prototype = {
         var j = 0
         for (var i = 0; i < this.seq.length; i++) {
             if (this.seq[i] != "-") {
-                this.pos.push(j)
-                j++
+                this.pos.push(i)
             }
         }
         return this;
