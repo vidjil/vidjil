@@ -463,6 +463,11 @@ Sequence.prototype = {
         var jColor = "";
         if (this.m.colorMethod == "J") jColor = "style='color : " + seg.colorJ + "'";
 
+        //window
+        var window_start = this.pos[seg.sequence.indexOf(seg.window)]
+        var window_end = this.pos[seg.sequence.indexOf(seg.window)+seg.window.length]
+        var window_width = "style='width : " +((window_end - window_start) * 0.7333) + "em'" //TODO fix char width
+        
         //add span VDJ
         var result = "<span class='V' " + vColor + " >"
         for (var i = 0; i < this.seq.length; i++) {
@@ -472,7 +477,8 @@ Sequence.prototype = {
             if (i == startD - 1) result += "</span><span class ='D'>"
             if (i == endD) result += "</span><span class ='N'>"
             if (i == startJ - 1) result += "</span><span class ='J' " + jColor + " >"
-
+            
+            if (i== window_start-1) result += "<span class='window1'><span class='window2' " + window_width + " ></span></span>"
         }
         result += "</span>"
 
