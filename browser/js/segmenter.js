@@ -26,7 +26,7 @@
  *
  *
  */
-var memTab = [];
+
 
 /* segment constructor
  *
@@ -38,6 +38,7 @@ function Segment(id, model, cgi_address) {
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
     this.cgi_address = cgi_address
     
+    this.memtab = [];
     this.sequence = {};
 
 }
@@ -305,7 +306,7 @@ Segment.prototype = {
         var self = this
         var list = this.m.getSelected()
         var request = "";
-        memTab = list;
+        this.memTab = list;
 
         if (list.length == 0) return;
 
@@ -362,10 +363,10 @@ Segment.prototype = {
         for (var i = 0; i < json.seq.length; i++) {
 
             // global container
-            var spanM = document.getElementById("m" + memTab[i]);
+            var spanM = document.getElementById("m" + this.memTab[i]);
             spanM.innerHTML = "";
 
-            var seq = this.sequence[memTab[i]]
+            var seq = this.sequence[this.memTab[i]]
             spanM.innerHTML = seq.load(json.seq[i])
                 .diff(json.seq[0])
                 .toString()
