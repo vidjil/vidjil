@@ -401,6 +401,7 @@ Sequence.prototype = {
 
     //store position of each nucleotide
     computePos: function () {
+        this.pos = [];
         var j = 0
         for (var i = 0; i < this.seq.length; i++) {
             if (this.seq[i] != "-") {
