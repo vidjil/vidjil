@@ -456,8 +456,11 @@ max-height: calc(~"100%" - @margin)
 }
 
 .seq-fixed {
-  position: fixed;
+  position: relative;
+  display: inline-block;
   width: (@width_left_container - @width_scrollbar);
+  margin: -2px;
+  padding: 2px;
   padding-left: 5px;
   left:0px;
   cursor:pointer;
@@ -738,7 +741,7 @@ span.logo
 
 #segmenter {
     overflow-x: scroll; 
-    overflow-y: hidden;
+    overflow-y: auto;
     height : 100px;
 }
 
