@@ -40,6 +40,7 @@ function Segment(id, model, cgi_address) {
     
     this.memtab = [];
     this.sequence = {};
+    this.is_open = false
 
 }
 
@@ -59,7 +60,7 @@ Segment.prototype = {
 
         var parent = document.getElementById(this.id)
         parent.innerHTML = "";
-
+        
         //bot-bar
         var div = document.createElement('div');
         div.className = "bot-bar"
@@ -132,7 +133,7 @@ Segment.prototype = {
         ul = document.createElement('ul');
         ul.id = "listSeq"
         div.appendChild(ul)
-
+        
         parent.appendChild(div)
 
         $('#toClipBoard')
@@ -143,10 +144,35 @@ Segment.prototype = {
                 }
             });
             
-        $('#segmenter').scroll(function(){
-            var leftScroll = $("#segmenter").scrollLeft();  
-            $('.seq-fixed').css({'left':+leftScroll});
-        });
+        $('#segmenter')
+            .scroll(function(){
+                var leftScroll = $('#segmenter').scrollLeft();  
+                $('.seq-fixed').css({'left':+leftScroll});
+            })
+            .mouseenter(function(){
+                if (!self.is_open){
+                    var seg = $('#segmenter'),
+                    curH = seg.height(),
+                    autoH = seg.css('height', 'auto').height();
+                    if (autoH > 100){
+                        seg.stop().height(curH).animate({height: autoH+5}, 250);
+                    }else{
+                        seg.stop().height(curH)
+                    }
+                    self.is_open = true
+                }
+            });
+            
+        $('#bot-container')
+            .mouseleave(function(){
+                if (self.is_open){
+                    var seg = $('#segmenter')
+                    seg.stop().animate({height: 100}, 250);
+                    self.is_open = false
+                }
+            });
+        
+        
         
     },
 
