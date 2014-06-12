@@ -1221,7 +1221,7 @@ Model.prototype = {
         if (this.windows[cloneID].select) {
             this.unselect(cloneID);
         } else {
-            if (list.length < 5) this.windows[cloneID].select = true;
+            if (list.length < 20) this.windows[cloneID].select = true;
         }
         this.updateElemStyle([cloneID]);
     },
@@ -1831,3 +1831,43 @@ var msg = {
 
     "browser_error": "It seems you used an incompatible web browser (too old or too weak)." + "</br>We recommend to install one of those for a better experience : " + "</br> <a href='http://www.mozilla.org/'> Firefox </a> " + "</br> <a href='www.google.com/chrome/'> Chrome </a> " + "</br> <a href='http://www.chromium.org/getting-involved/download-chromium'> Chromium </a> " + "</br></br> <div class='center' > <button onclick='popupMsg(msg.welcome)'>i want to try anyway</button></div>",
 }
+
+
+var rootTab = []
+
+function root(n) {
+    var startTime = new Date()
+        .getTime();
+    var elapsedTime = 0;
+    
+    for (var i=0; i<n; i++){
+        var dx = 5
+        var dy = 5+1
+        
+        rootTab[i] = Math.sqrt( dx*dx + dy*dy )
+    }
+    
+    elapsedTime = new Date()
+        .getTime() - startTime;
+    console.log("root("+n+") : " + elapsedTime);
+}
+
+function root2(n) {
+    var startTime = new Date()
+        .getTime();
+    var elapsedTime = 0;
+    
+    for (var i=0; i<n; i++){
+        var dx = Math.abs(5)
+        var dy = Math.abs(5+1)
+        
+        var min = Math.min(dx,dy)
+
+        rootTab[i] =  dx + dy - (min >> 1) - (min >> 2) + (min >> 4)
+    }
+    
+    elapsedTime = new Date()
+        .getTime() - startTime;
+    console.log("root2("+n+") : " + elapsedTime);
+}
+

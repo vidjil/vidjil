@@ -141,6 +141,12 @@ Segment.prototype = {
                     return self.toFasta()
                 }
             });
+            
+        $('#segmenter').scroll(function(){
+            var leftScroll = $("#segmenter").scrollLeft();  
+            $('.seq-fixed').css({'left':+leftScroll});
+        });
+        
     },
 
     /*
@@ -199,7 +205,6 @@ Segment.prototype = {
 
         div_elem.innerHTML = '';
         div_elem.className = "seq-fixed";
-        div_elem.style.display = "block";
 
         var seq_name = document.createElement('span');
         seq_name.className = "nameBox";
