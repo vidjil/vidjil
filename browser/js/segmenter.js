@@ -194,7 +194,14 @@ Segment.prototype = {
     },
 
     updateElemStyle: function (list) {
-        this.updateElem(list)
+        for (var i = 0; i < list.length; i++) {
+            if (this.m.windows[list[i]].select) {
+                if (document.getElementById("seq" + list[i])) {
+                    var spanF = document.getElementById("f" + list[i]);
+                    this.div_elem(spanF, list[i]);
+                }
+            }
+        }
     },
 
     /* genere le code HTML des infos d'un clone

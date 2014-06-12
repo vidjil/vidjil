@@ -1223,7 +1223,7 @@ Model.prototype = {
         } else {
             if (list.length < 20) this.windows[cloneID].select = true;
         }
-        this.updateElemStyle([cloneID]);
+        this.updateElem([cloneID]);
     },
 
 
