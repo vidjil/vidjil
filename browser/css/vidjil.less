@@ -740,7 +740,7 @@ span.logo
 }
 
 #segmenter {
-    overflow-x: scroll; 
+    overflow-x: scroll !important; 
     overflow-y: auto;
     height : 100px;
 }
@@ -766,9 +766,9 @@ span.logo
   bottom: 0px;
   left: 0px;
   width: 100%;
-  overflow-y:auto;
-  height:125px;
-  overflow-y: hidden;
+  border-top: solid;
+  border-width: 6px;
+  min-height: 125px;
 }
 
 .tn{
@@ -903,6 +903,15 @@ span.logo
     background: @border;
 }
 
+#bot-separator {
+    background: @border;
+    width: 100%;
+    height: @margin;
+    cursor: pointer;
+    position: relative;
+    top: -@margin;
+}
+
 #vertical-separator {
     position: relative;
     float: left;
@@ -913,7 +922,7 @@ span.logo
     cursor: pointer;
 }
 
-#visu-separator:hover , #vertical-separator:hover {
+#visu-separator:hover , #vertical-separator:hover, #bot-separator:hover {
     background: @highlight;
 }
 
