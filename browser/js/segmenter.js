@@ -37,6 +37,8 @@ function Segment(id, model, cgi_address) {
     this.m.view.push(this); //synchronisation au Model
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
     this.cgi_address = cgi_address
+    
+    this.sequence = {};
 
 }
 
@@ -166,6 +168,9 @@ Segment.prototype = {
                 if (document.getElementById("seq" + list[i])) {
                     var spanF = document.getElementById("f" + list[i]);
                     this.div_elem(spanF, list[i]);
+                    
+                    var spanM = document.getElementById("m" + list[i]);
+                    spanM.innerHTML = this.sequence[list[i]].toString()
                 } else {
                     this.addToSegmenter(list[i]);
                     this.show();
@@ -235,6 +240,8 @@ Segment.prototype = {
     addToSegmenter: function (cloneID) {
         var self = this;
 
+        this.sequence[cloneID] = new Sequence(cloneID, this.m)
+        
         var divParent = document.getElementById("listSeq");
         var li = document.createElement('li');
         li.id = "seq" + cloneID;
@@ -247,45 +254,15 @@ Segment.prototype = {
         spanF.id = "f" + cloneID;
         this.div_elem(spanF, cloneID);
 
-        var spanM = this.buildSequence(cloneID)
+        var spanM = document.createElement('span');
+        spanM.id = "m" + cloneID;
+        spanM.className = "seq-mobil";
+        spanM.innerHTML = this.sequence[cloneID].load().toString()
 
         li.appendChild(spanF);
         li.appendChild(spanM);
         divParent.appendChild(li);
 
-    },
-
-    buildSequence: function (cloneID) {
-
-        var spanM = document.createElement('span');
-        spanM.id = "m" + cloneID;
-        spanM.className = "seq-mobil";
-
-        if (typeof this.m.windows[cloneID].sequence != 'undefined' && this.m.windows[cloneID].sequence != 0) {
-
-            var v_length = this.m.windows[cloneID].Vend + 1;
-            var size_marge = 300 - v_length;
-            var marge = "";
-            if (size_marge > 0) {
-                for (var i = 0; i < size_marge; i++) marge += "&nbsp";
-            }
-
-            var seq = new Sequence(cloneID, this.m)
-            spanM.innerHTML = marge + seq.load()
-                .toString()
-
-        } else {
-            var size_marge = 320 - this.m.windows[cloneID].window.length;
-            var marge = "";
-            for (var i = 0; i < size_marge; i++) marge += "&nbsp";
-
-            var spanJunc = document.createElement('span');
-            spanJunc.innerHTML = marge + this.m.windows[cloneID].window;
-
-            spanM.appendChild(spanJunc);
-        }
-
-        return spanM
     },
 
 
@@ -311,8 +288,7 @@ Segment.prototype = {
             .getElementsByTagName("li");
         if (li.length > 0) {
             var id = li[0].id.substr(3);
-            var mid = $("#m" + id + " span:first-child")
-                .width() - 250;
+            var mid = 999999
             $("#segmenter")
                 .animate({
                     scrollLeft: mid
@@ -321,7 +297,7 @@ Segment.prototype = {
     },
 
     align: function () {
-
+        var self = this
         var list = this.m.getSelected()
         var request = "";
         memTab = list;
@@ -341,7 +317,7 @@ Segment.prototype = {
             data: request,
             url: this.cgi_address + "align.cgi",
             success: function (result) {
-                displayAjaxResult(result);
+                self.displayAjaxResult(result);
             }
         });
     },
@@ -373,48 +349,50 @@ Segment.prototype = {
         }
         return result
     },
+    
+    displayAjaxResult: function(file) {
 
-} //fin prototype
+        var json = JSON.parse(file)
 
+        for (var i = 0; i < json.seq.length; i++) {
 
-function displayAjaxResult(file) {
+            // global container
+            var spanM = document.getElementById("m" + memTab[i]);
+            spanM.innerHTML = "";
 
-    var json = JSON.parse(file)
-
-    for (var i = 0; i < json.seq.length; i++) {
-
-        // global container
-        var spanM = document.getElementById("m" + memTab[i]);
-        spanM.innerHTML = "";
-
-        if (typeof m.windows[memTab[i]].sequence != 'undefined' && m.windows[memTab[i]].sequence != 0) {
-            var seq = new Sequence(memTab[i], m)
+            var seq = this.sequence[memTab[i]]
             spanM.innerHTML = seq.load(json.seq[i])
                 .diff(json.seq[0])
                 .toString()
 
-        } else {
-            var spanJunc = document.createElement('span');
-            spanJunc.innerHTML = json.seq[i];
-            spanM.appendChild(spanJunc);
         }
+
     }
 
-}
+} //fin prototype Segment
+
+
+
 
 function Sequence(id, model) {
     this.id = id; //clone ID
     this.m = model; //Model utilisé
     this.seq = [];
     this.pos = [];
+    this.use_marge = true
 }
 
 Sequence.prototype = {
 
     //load sequence from model or use given argument
     load: function (str) {
+        if (typeof str !== 'undefined') this.use_marge = false
         str = typeof str !== 'undefined' ? str : this.m.windows[this.id].sequence;
 
+        if (typeof this.m.windows[this.id].sequence == 'undefined' || this.m.windows[this.id].sequence == 0) {
+            str = this.m.windows[this.id].window
+        }
+        
         this.seq = str.split("")
         this.computePos()
 
@@ -445,43 +423,61 @@ Sequence.prototype = {
     //return sequence completed with html tag
     toString: function () {
         var seg = this.m.windows[this.id]
-
-        //find V, D, J position
-        var endV = this.pos[seg.Vend]
-        var startJ = this.pos[seg.Jstart]
-        if (typeof seg.Dstart != 'undefined' && typeof seg.Dend != 'undefined') {
-            var startD = this.pos[seg.Dstart]
-            var endD = this.pos[seg.Dend]
-        }
-
-        //V color
-        var vColor = "";
-        if (this.m.colorMethod == "V") vColor = "style='color : " + seg.colorV + "'";
-
-        //J color
-        var jColor = "";
-        if (this.m.colorMethod == "J") jColor = "style='color : " + seg.colorJ + "'";
-
-        //window
-        var window_start = this.pos[seg.sequence.indexOf(seg.window)]
-        var window_end = this.pos[seg.sequence.indexOf(seg.window)+seg.window.length]
-        var window_width = "style='width : " +((window_end - window_start) * 0.7333) + "em'" //TODO fix char width
+        var result = ""
         
-        //add span VDJ
-        var result = "<span class='V' " + vColor + " >"
-        for (var i = 0; i < this.seq.length; i++) {
-            result += this.seq[i]
+        if (typeof seg.sequence != 'undefined' && seg.sequence != 0) {
+            //find V, D, J position
+            var endV = this.pos[seg.Vend]
+            var startJ = this.pos[seg.Jstart]
+            if (typeof seg.Dstart != 'undefined' && typeof seg.Dend != 'undefined') {
+                var startD = this.pos[seg.Dstart]
+                var endD = this.pos[seg.Dend]
+            }
 
-            if (i == endV) result += "</span><span class ='N'>"
-            if (i == startD - 1) result += "</span><span class ='D'>"
-            if (i == endD) result += "</span><span class ='N'>"
-            if (i == startJ - 1) result += "</span><span class ='J' " + jColor + " >"
+            //V color
+            var vColor = "";
+            if (this.m.colorMethod == "V") vColor = "style='color : " + seg.colorV + "'";
+
+            //J color
+            var jColor = "";
+            if (this.m.colorMethod == "J") jColor = "style='color : " + seg.colorJ + "'";
+
+            //window
+            var window_start = this.pos[seg.sequence.indexOf(seg.window)]
+            var window_end = this.pos[seg.sequence.indexOf(seg.window)+seg.window.length]
+            var window_width = "style='width : " +((window_end - window_start) * 0.7333) + "em'" //TODO fix char width
             
-            if (i== window_start-1) result += "<span class='window1'><span class='window2' " + window_width + " ></span></span>"
-        }
-        result += "</span>"
+            //add span VDJ
+            if (typeof seg.Vend != 'undefined') result += "<span class='V' " + vColor + " >"
+            else result += "<span>"
+            for (var i = 0; i < this.seq.length; i++) {
+                result += this.seq[i]
 
-        return result
+                if (i == endV) result += "</span><span class ='N'>"
+                if (i == startD - 1) result += "</span><span class ='D'>"
+                if (i == endD) result += "</span><span class ='N'>"
+                if (i == startJ - 1) result += "</span><span class ='J' " + jColor + " >"
+                
+                if (i== window_start-1) result += "<span class='window1'><span class='window2' " + window_width + " ></span></span>"
+            }
+            result += "</span>"
+        }else{
+            var window_start = 0
+            result += seg.window
+        }
+        
+        //marge
+        var marge = ""
+        if (this.use_marge){
+            marge += "<span>";
+            var size_marge = 300 - window_start;
+            if (size_marge > 0) {
+                for (var i = 0; i < size_marge; i++) marge += "&nbsp";
+            }
+            marge += "</span>"
+        }
+        
+        return marge + result
     },
 
 
