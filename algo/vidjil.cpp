@@ -582,7 +582,7 @@ int main (int argc, char **argv)
 #define KMER_AMBIGUOUS "?"
 #define KMER_UNKNOWN "_"
 
-      list< char* > f_germlines ;
+      list<const char* > f_germlines ;
 
       // TR
       f_germlines.push_back("germline/TRAV.fa");
@@ -617,7 +617,7 @@ int main (int argc, char **argv)
       IKmerStore<KmerStringAffect>  *index = KmerStoreFactory::createIndex<KmerStringAffect>(seed, rc);
       map <string, int> stats_kmer, stats_max;
 
-      for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+      for (list<const char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
 	{
 	  Fasta rep(*it, 2, "|", cout);
 	  index->insert(rep, *it);
@@ -628,7 +628,7 @@ int main (int argc, char **argv)
       f_germlines.push_back(KMER_AMBIGUOUS);
       f_germlines.push_back(KMER_UNKNOWN);
 
-      for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+      for (list<const char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
 	{
 	  stats_kmer[string(*it)] = 0 ;
 	  stats_max[string(*it)] = 0 ;
@@ -700,7 +700,7 @@ int main (int argc, char **argv)
 
       cout << "  <== " << nb_reads << " reads" << endl ;
       cout << "\t" << " max" << "\t\t" << "        kmers" << "\n" ;
-      for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+      for (list<const char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
 	{
 	  cout << setw(12) << stats_max[*it] << " " ;
 	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_max[*it] / nb_reads * 100 << "%" ;
