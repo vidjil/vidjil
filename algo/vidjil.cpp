@@ -685,6 +685,7 @@ int main (int argc, char **argv)
 	      stats_kmer[ksa.label]++ ;
 	    }
 
+          delete kaa;
 
 	  CountKmerAffectAnalyser<KmerStringAffect> ckaa(*index, seq);
 	  ckaa.setAllowedOverlap(k-1);
@@ -692,6 +693,8 @@ int main (int argc, char **argv)
 	  stats_max[ckaa.max(forbidden).label]++ ;
 
 	}
+
+      delete reads;
 
       // Display statistics
 
@@ -709,7 +712,8 @@ int main (int argc, char **argv)
 
 	  cout << "     " << *it << endl ;
 	}
-
+      
+      delete index;
       exit(0);
     }
 
