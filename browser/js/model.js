@@ -1754,8 +1754,6 @@ function cancel() {
 
 
 function showSelector(elem) {
-    if ($('#' + elem)
-        .css('display') == 'none') {
         $('.selector')
             .stop()
         $('.selector')
@@ -1765,7 +1763,6 @@ function showSelector(elem) {
             .animate({
                 height: $('#' + elem).children(":first").height()
             }, 100);
-    }
 }
 
 function hideSelector() {
