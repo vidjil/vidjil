@@ -2,6 +2,9 @@ function Builder(model) {
     this.m = model; //Model utilisé
     this.m.view.push(this); //synchronisation au Model
     this.colorMethod = "";
+    this.width_left_container = $("#left-container")
+        .css("width")
+
 
     this.drag_separator = false
 }
@@ -12,8 +15,6 @@ Builder.prototype = {
 
     init: function () {
         var self = this;
-        this.width_left_container = $("#left-container")
-            .css("width")
 
         d3.select("#visu-separator")
             .on("mousedown", function () {
