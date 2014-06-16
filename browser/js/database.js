@@ -68,9 +68,8 @@ Database.prototype = {
             var res = jQuery.parseJSON(result);
             
             if (res.redirect) this.call(res.redirect, res.args)
-                
-            //TODO : implémenter un flash message
-            if (res.message) console.log("database log : "+res.message)
+               
+            if (res.message) this.flash("database : "+res.message)
             
             return res
         }
@@ -404,6 +403,22 @@ Database.prototype = {
             fixedHeader.css("top", offset)
 
         });
+    },
+    
+    flash: function (str){
+        
+        var div = jQuery('<div/>', {
+            text: str,
+            style: 'display : none',
+            class: 'flash'
+        }).appendTo('#flash_mes')
+        .slideDown(200);
+        
+        setTimeout(function(){
+            div.fadeOut('slow', function() { div.remove();});
+        }, 5000);
+        
+    
     }
 
 }
