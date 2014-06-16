@@ -95,6 +95,9 @@ Model.prototype = {
             "B" : 0,
             "id" : 0
         }
+        
+        this.display_window = false
+        
     },
 
 
