@@ -13,7 +13,7 @@ html{
 }
 
 body {
-  font-family: Arial, Helvetica, Sans-serif;
+  font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
   font-size: 13px;
   height : 100%;
   margin:0px;
@@ -102,7 +102,7 @@ max-height: calc(~"100%" - @margin)
                         /* left-container - info */
 
 #info{
-  font-family : Courier New,monaco,terminal,courier,system; 
+  font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
   font-size: 13px;
   height :200px;
   padding:3px;
@@ -445,12 +445,6 @@ max-height: calc(~"100%" - @margin)
   background : @highlight;
 }
 
-#listSeq {
-  font-weight: bold;
-  font-family: Courier New,monaco,terminal,courier,system;
-  font-size: 13px;
-}
-
 .sequence-line { 
   white-space: nowrap;
 }
@@ -470,6 +464,10 @@ max-height: calc(~"100%" - @margin)
 .seq-mobil {
   margin-left: @width_left_container;
   letter-spacing: 0.12em;
+  font-weight: bold;
+  font-family : ubuntu_monoregular, Courier New,monaco,terminal,courier,system; 
+  position: relative;
+  bottom: 2px;
 }
 
 
