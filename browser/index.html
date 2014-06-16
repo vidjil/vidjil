@@ -94,13 +94,6 @@
         <!-- TOP-CONTAINER -->
         <div id="top-container">
 
-            <div class="menu" onmouseover="showSelector('adminSelector');" style="display : none"> admin 
-                <div id="adminSelector" class="selector"><div>
-                    <a id="test_load_data" class="buttonSelector" onclick="m.parseJsonData(dataTest, 100).loadGermline().initClones()">
-                    test load data</a>
-                </div></div>
-            </div>
-
             <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');"> file 
                 <div id="demoSelector" class="selector"><div>
                     <a class="buttonSelector" onclick="javascript:loadData()">load data/analysis</a></br>
@@ -199,6 +192,13 @@
                         </div>
 
                     </div>
+                </div></div>
+            </div>
+
+            <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none"> A
+                <div id="adminSelector" class="selector"><div>
+                    <input type="checkbox" onclick="m.display_window = this.checked; m.update()">highlight windows</input><br>
+                    <input type="checkbox" onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display fps</input>
                 </div></div>
             </div>
 

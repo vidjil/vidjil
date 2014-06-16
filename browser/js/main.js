@@ -60,7 +60,7 @@ if (typeof config != 'undefined') {
     }
     
     if (config.debug_mode) {
-        $("#fps").css("display", "");
+        $("#debug_menu").css("display", "");
     }
 }
 
