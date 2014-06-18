@@ -114,7 +114,7 @@
 
             <div class="menu" onmouseover="showSelector('clusterSelector');" > cluster
                 <div id="clusterSelector" class="selector"><div>
-                    <a class="buttonSelector" onclick="m.resetClones();">reset</a>
+                    <a class="buttonSelector" onclick="m.resetClones();">reset all clusters</a>
                     <a class="buttonSelector" onclick="m.restoreClones();">user</a>
                     <a class="buttonSelector" onclick="m.clusterBy('V');">V gene + allele</a>
                     <a class="buttonSelector" onclick="m.clusterBy('J');">J gene + allele</a>
@@ -135,10 +135,10 @@
 
             <div class="menu" onmouseover="showSelector('colorSelector');" > color 
                 <div id="colorSelector" class="selector"><div>
+                    <a class="buttonSelector" onclick="m.changeColorMethod('Tag');">by tag</a>
                     <a class="buttonSelector" onclick="m.changeColorMethod('V');">by V</a>
                     <a class="buttonSelector" onclick="m.changeColorMethod('J');">by J</a>
                     <a class="buttonSelector" onclick="m.changeColorMethod('N');">by N length</a>
-                    <a class="buttonSelector" onclick="m.changeColorMethod('Tag');">by tag</a>
                     <a class="buttonSelector" onclick="m.changeColorMethod('system');" 
                         id="color_system_button" style="display:none">by system</a>
                     <a class="buttonSelector" onclick="m.changeColorMethod('abundance');">by abundance at selected timepoint</a>
@@ -150,7 +150,7 @@
                     <div class="submenu">
 
                         <div class="menu_box">
-                            tag display</br>
+                            tag visibility</br>
                             <ul>
                             </ul>
                         </div>
@@ -160,7 +160,7 @@
                     <div class="submenu">
 
                         <div class="menu_box">
-                            clone display</br>
+                            number of clones</br>
                             <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
                         </div>
 
@@ -177,9 +177,9 @@
                         </div>
 
                         <div class="menu_box">
-                            time display</br>
-                            <input type="radio" name="time" value="sampling_date" onchange="m.time_switch()">sampling date</input></br>
+                            point key</br>
                             <input type="radio" name="time" value="name" onchange="m.time_switch()" checked>name</input>
+                            <input type="radio" name="time" value="sampling_date" onchange="m.time_switch()">sampling date</input></br>
                         </div>
 
                     </div>
