@@ -177,18 +177,18 @@ max-height: calc(~"100%" - @margin)
 }
 
 .axis_m{
-  stroke : @secondary ;
+  stroke : @default ;
   opacity : 0.5 ;
   stroke-width : 20px;
 }
 
 .axis_h{
-  stroke : @secondary ;
+  stroke : @default ;
   stroke-width : 2px ;
 }
 
 .axis_v{
- stroke : @secondary ;
+ stroke : @default ;
  stroke-width : 2px;
  stroke-dasharray: 6,6;
 }
@@ -213,13 +213,13 @@ max-height: calc(~"100%" - @margin)
 
 .graph_time{
   font-weight : bold;
-  fill : @secondary ;
+  fill : @default ;
   text-anchor:middle;
 }
 
 .graph_text{
   font-weight : bold;
-  fill : @secondary ;
+  fill : @default ;
   text-anchor:end;
 }
 
@@ -289,13 +289,13 @@ max-height: calc(~"100%" - @margin)
 }
 
 .sp_legend{
-  fill : @secondary ;
+  fill : @default ;
   font-weight : bold;
   text-anchor : middle;
 }
 
 .sp_rotated_legend{
-  fill : @secondary ;
+  fill : @default ;
   font-weight : bold;
   text-anchor : left;
 }
@@ -311,7 +311,7 @@ max-height: calc(~"100%" - @margin)
 }
 
 .sp_line , .sp_subline{
-  stroke : @secondary ;
+  stroke : @default ;
   stroke-width : 0.7px;
 }
 
@@ -455,7 +455,6 @@ max-height: calc(~"100%" - @margin)
   border-width : 2px;
   padding : 0px;
   border-color : @select;
-  background : @border;
 }
 
 .sequence-line { 
@@ -513,11 +512,7 @@ max-height: calc(~"100%" - @margin)
     pointer-events: none;
 }
 span .substitution{
-    background-color : #145065;
-    text-shadow: 1px 1px @background, 
-                1px -1px @background, 
-                -1px -1px @background, 
-                -1px 1px @background;
+    background-color : @border;
 }
 
 							  /*tag*/
@@ -632,7 +627,7 @@ span .substitution{
 #popup-container a {
   text-decoration: none;
   font-weight: bold;
-  color: @secondary ;
+  color: @default ;
 }
 
 #popup-container a:hover{
@@ -1113,4 +1108,8 @@ span.logo
     margin: 5px;
     background: @background;
     border-color: @border;
+}
+
+select>option:hover {
+    background-color: @border;
 }
