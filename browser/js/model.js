@@ -96,6 +96,8 @@ Model.prototype = {
             "id" : 0
         }
         
+        this.cluster_key = ""
+        
         this.display_window = false
         
     },
@@ -1568,6 +1570,12 @@ Model.prototype = {
      * */
     clusterBy: function (data_name) {
 
+        //save user cluster
+        if ( this.cluster_key==""){
+            this.clones_copy = this.clones
+            this.clones = []
+        }
+        
         var tmp = {}
         for (var i = 0; i < this.windows.length - 1; i++) {
 
@@ -1619,6 +1627,7 @@ Model.prototype = {
                 this.clones[tmp[i][j]].cluster = []
             }
         }
+        this.cluster_key = data_name
         this.update()
     },
 
@@ -1628,11 +1637,9 @@ Model.prototype = {
      * */
     resetClones: function () {
         //reset cluster
-        for (var i = 0; i < this.windows.length; i++) {
-            this.clones[i] = {
-                cluster: [i]
-            };
-        }
+        this.cluster_key = ""
+        
+        this.clones = this.clones_copy
 
         this.update()
     },
