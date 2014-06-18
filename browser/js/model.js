@@ -1653,10 +1653,11 @@ Model.prototype = {
      * */
     restoreClones: function () {
         this.cluster_key = ""
+        if ( typeof this.clones_copy != 'undefined'){
+            this.clones = this.clones_copy
+            this.update()
+        }
         
-        this.clones = this.clones_copy
-
-        this.update()
     },
 
 
