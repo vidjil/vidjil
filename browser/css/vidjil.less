@@ -21,6 +21,21 @@ body {
   background : @border;
 }
 
+
+/* texts that are not sequences nor identifiers */
+
+#info, #popup-msg, .menu, .menu a
+{
+  font-family: ubuntulight, Arial, Helvetica, Sans-serif;
+}
+
+a 
+{
+  font-family: ubuntumedium,  Arial, Helvetica, Sans-serif;
+}
+
+
+
 h2
 {
   margin-top: 2px;
@@ -102,7 +117,6 @@ max-height: calc(~"100%" - @margin)
                         /* left-container - info */
 
 #info{
-  font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
   font-size: 13px;
   height :200px;
   padding:3px;
@@ -341,7 +355,6 @@ max-height: calc(~"100%" - @margin)
   overflow-y : scroll;
   overflow-x : hidden;
   height : 100%;
-  font-weight: bold;
   padding:2px;
 }
 
