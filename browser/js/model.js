@@ -1639,6 +1639,21 @@ Model.prototype = {
         //reset cluster
         this.cluster_key = ""
         
+        for (var i = 0; i < this.windows.length; i++) {
+            this.clones[i] = {
+                cluster: [i]
+            };
+        }
+
+        this.update()
+    },
+    
+    /* 
+     *
+     * */
+    restoreClones: function () {
+        this.cluster_key = ""
+        
         this.clones = this.clones_copy
 
         this.update()
