@@ -68,7 +68,8 @@ def add_form():
             
             auth.add_permission(user_group, 'admin', db.patient, id)
 
-            res = {"redirect": "patient/index",
+            res = {"redirect": "patient/info",
+                   "args" : { "id" : id },
                    "message": "new patient added"}
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
@@ -171,7 +172,8 @@ def delete():
     #delete patient
     db(db.patient.id == request.vars["id"]).delete()
     
-    res = {"success": "true" }
+    res = {"redirect": "patient/index",
+           "success": "true" }
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def permission(): 
