@@ -202,7 +202,7 @@ Model.prototype = {
         var n_max = 0;
         
         for (var k = 0; k < data.windows[0].size.length; k++) {
-                min_sizes[k] = 1;
+                min_sizes[k] = 0.01;
         }
 
         //keep best top value
@@ -883,6 +883,7 @@ Model.prototype = {
     getSize: function (cloneID, time) {
         time = typeof time !== 'undefined' ? time : this.t;
 
+        if (this.reads_segmented[time] == 0 ) return 0
         var result = this.getReads(cloneID, time) / this.reads_segmented[time]
         
         if (this.norm) {
@@ -1007,7 +1008,8 @@ Model.prototype = {
      * */
     getSequenceSize: function (cloneID, time) {
         time = typeof time !== 'undefined' ? time : this.t;
-
+        
+        if (this.reads_segmented[time] == 0 ) return 0
         var result = this.getSequenceReads(cloneID, time) / this.reads_segmented[time]
         
         if (this.norm) {
