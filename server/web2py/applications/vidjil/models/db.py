@@ -160,7 +160,7 @@ if db(db.auth_user.id > 0).count() == 0:
     ## création des groupes de base
     id_admin_group=db.auth_group.insert(role='admin')
     id_sa_group=db.auth_group.insert(role='user_1')
-    db.auth_group.insert(role="visitor")
+    db.auth_group.insert(role="public")
             
     db.auth_membership.insert(user_id=id_first_user, group_id=id_admin_group)
     db.auth_membership.insert(user_id=id_first_user, group_id=id_sa_group)
