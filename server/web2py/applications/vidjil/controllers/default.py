@@ -70,8 +70,8 @@ def run_request():
              ).select()
             
             if len(row) > 0 : ## update
-                data_id = row[0].data_file.id
-                db.data_file[data_id] = dict(state = 'queued')
+                data_id = row[0].id
+                db.data_file[data_id] = dict(status = 'queued')
             else:             ## create
                 data_id = db.data_file.insert(sequence_file_id = request.vars['sequence_file_id'],
                                             config_id = request.vars['config_id'],
@@ -95,7 +95,8 @@ def run_request():
                                  , repeats = 1, timeout = 6000)
             
             res = {"redirect": "patient/info",
-                   "args" : { "id" : id_patient },
+                   "args" : { "id" : id_patient,
+                              "config_id" : request.vars["config_id"]},
                    "message": "request added"}
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
