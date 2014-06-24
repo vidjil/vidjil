@@ -64,9 +64,16 @@ def add_form():
 
             user_group = auth.user_group(auth.user.id)
             admin_group = db(db.auth_group.role=='admin').select().first().id
-
+            
+            #patient creator automaticaly have all rights 
             auth.add_permission(user_group, 'admin', db.patient, id)
             auth.add_permission(user_group, 'read', db.patient, id)
+            
+            #tmp: share rights with users of the same group
+            for g in auth.user_groups :
+                auth.add_permission(g, 'admin', db.patient, id)
+                auth.add_permission(g, 'read', db.patient, id)
+            
 
             res = {"redirect": "patient/info",
                    "args" : { "id" : id },
