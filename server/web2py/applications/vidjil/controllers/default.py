@@ -94,7 +94,9 @@ def run_request():
             scheduler.queue_task('run', [request.vars["sequence_file_id"],request.vars["config_id"], data_id, fuse_id]
                                  , repeats = 1, timeout = 6000)
             
-            res = {"success": "true" , "msg": "request added" }
+            res = {"redirect": "patient/info",
+                   "args" : { "id" : id_patient },
+                   "message": "request added"}
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
         else :
