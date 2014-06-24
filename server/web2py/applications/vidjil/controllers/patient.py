@@ -199,7 +199,7 @@ def permission():
 
 #
 def remove_permission():
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.has_permission('admin', 'patient', request.vars["patient_id"]) ):
         error = ""
         if request.vars["group_id"] == "" :
             error += "missing group_id, "
@@ -220,7 +220,7 @@ def remove_permission():
 
 #
 def change_permission():
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.has_permission('admin', 'patient', request.vars["patient_id"]) ):
         auth.add_permission(request.vars["group_id"], request.vars["permission"], db.patient, request.vars["patient_id"])
 
         res = {"redirect" : "patient/permission" , "args" : { "id" : request.vars["patient_id"]} }
