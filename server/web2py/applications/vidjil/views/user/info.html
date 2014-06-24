@@ -15,7 +15,14 @@ query = db(
     <div>
         <h3>{{=message}}  {{=request.vars["id"]}}</h3>
     </div>
-
+    
+    <div class="db_block">
+        <div class="db_block_left">
+            create patient <input type="checkbox" name="patient" onclick="db.patient_right(this.checked, this.name, {{=request.vars["id"]}});"></br>
+            <!--create config <input type="checkbox" name="config" onclick="db.test(this.checked, this.name, {{request.vars["id"]}});"></br>-->
+        </div>
+    </div>
+    
     <div id="db_table_container">
         <table class="db_table" id="table">
             <thead>
