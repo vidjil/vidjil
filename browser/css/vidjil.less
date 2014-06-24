@@ -978,10 +978,11 @@ span.logo
 }
 
 .db_table .column_sep {
-    width: 20px;
-    border-bottom: solid;
-    border-bottom-width: 1px;
-    border-bottom-color: @background;
+    width: 50px;
+    border: solid;
+    border-width: 1px;
+    border-color: @background;
+    background: @background;
 }
 
 .db_block {
@@ -1032,6 +1033,7 @@ span.logo
 
 #db_table_container{
     overflow-y: scroll;
+    overflow-x: hidden;
     height: 300px;
     border: solid;
     border-color: @border;
@@ -1108,6 +1110,7 @@ span.logo
     margin: 5px;
     background: @background;
     border-color: @border;
+    z-index: 10
 }
 
 select>option:hover {
