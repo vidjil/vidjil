@@ -224,38 +224,6 @@ Database.prototype = {
     reload: function(){
         this.callUrl(this.url)
     },
-    
-    /* appel une fonction du serveur
-     * idem que call() mais la réponse n'est pas une page html a afficher
-     * mais simplement une confirmation que la requete a été entendu
-     */
-    request: function (controller_name, args) {
-
-        var self = this;
-        var arg = "?";
-        for (var key in args) {
-            arg += "" + key + "=" + args[key] + "&";
-        }
-
-        //envoye de la requete ajax
-        $.ajax({
-            type: "POST",
-            timeout: 2000,
-            crossDomain: true,
-            url: self.db_address + controller_name + arg,
-            xhrFields: {withCredentials: true},
-            success: function (result) {
-                popupMsg(result);
-            },
-            error: function (request, status, error) {
-                if (status === "timeout") {
-                    popupMsg("timeout");
-                } else {
-                    self.call("patient/index")
-                }
-            }
-        });
-    },
 
     /*récupére et initialise le browser avec un fichier .data
      * args => format json ( parametre attendu  > patient_id, config_id)

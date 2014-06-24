@@ -93,7 +93,8 @@ patient = db.patient[request.vars["id"]]
                     <td class="column_sep"></td>
                      
                     <td> {{if row.data_file.id == None :}}
-                        <span class="button" onclick="db.request('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}' , 'config_id' : {{=config_id}} } )"> run >> </span>
+                        <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}',
+                                                                                      'config_id' : {{=config_id}} } )"> run >> </span>
                          {{else:}}
                              {{=row.data_file.status}}
                          {{pass}}
