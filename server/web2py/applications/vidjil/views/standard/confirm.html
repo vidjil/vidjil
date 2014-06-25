@@ -19,7 +19,6 @@ for row in query :}}
     All data file using this standard will also be deleted ({{=data_count}} data file(s) will be deleted).</br>
 
     <div class="center"> 
-        <button onclick="db.call('standard/index')">back</button>
         <button onclick="db.call('standard/delete', {'id' :'{{=request.vars["id"]}}'} )">continue</button>
     </div>
 </div>
