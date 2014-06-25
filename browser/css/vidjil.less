@@ -599,7 +599,7 @@ span .substitution{
   text-align:left;
 }
 
-.button:hover, .buttonSelector:hover{
+.button:hover, .buttonSelector:hover, .button2:hover{
   background : @border;
   color : @select;
 }
@@ -690,7 +690,18 @@ span .substitution{
   margin-right:5px;
   margin-left:5px;
   min-width : 16px;
-  /* text-decoration:underline; */
+}
+
+.button2 {
+    border: solid;
+    border-width: 1px;
+    padding: 3px;
+    margin: 3px;
+    display: inline-block;
+    cursor: pointer;
+    background: @border;
+    width: 100px;
+    text-align: center;
 }
 
 .smallbutton {
@@ -990,6 +1001,14 @@ span.logo
     display : inline-block;
 }
 
+.db_footer{
+    width: 100%;
+    display: inline-block;
+    position: absolute;
+    bottom: 5px;
+    right:0px;
+}
+
 .db_block_left {
     float : left;
 }
@@ -1032,9 +1051,9 @@ span.logo
 }
 
 #db_table_container{
-    overflow-y: scroll;
+    overflow-y: auto;
     overflow-x: hidden;
-    height: 300px;
+    max-height: 275px;
     border: solid;
     border-color: @border;
     border-width: 1px;
@@ -1060,7 +1079,6 @@ span.logo
     margin-top: 20px;
     margin-left: 20px;
 }
-
 
 .loading_seq {
     height: 15px;
