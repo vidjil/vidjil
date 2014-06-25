@@ -9,6 +9,10 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 
+if request.env.http_origin:
+    response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['Access-Control-Max-Age'] = 86400
 
 def index():
     """
@@ -22,133 +26,107 @@ def index():
     return dict(message=T('hello world'))
 
 def help():
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
     return dict(message=T('help i\'m lost'))
 
-def test():
-    import check
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
-    return check.test()
 
 ## add a scheduller task to run vidjil on a specific sequence file
 def run_request():
     import gluon.contrib.simplejson
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
-        
-        error = ""
-        
-        ##TODO check  
-        if not "sequence_file_id" in request.vars :
-            error += "id sequence file needed, "
-        if not "config_id" in request.vars:
-            error += "id config needed, "
-        
-        row2 = db( ( db.scheduler_task.args == '["'+request.vars["sequence_file_id"]+'", "'+request.vars["config_id"]+'"]' ) 
-                 & ( db.scheduler_task.status != "FAILED"  )
-                 & ( db.scheduler_task.status != "EXPIRED"  )
-                 & ( db.scheduler_task.status != "TIMEOUT"  )
-                 & ( db.scheduler_task.status != "COMPLETED"  )
-                 ).select()
-        
-        if len(row2) > 0 :
-            error += "run already registered, "
-        
-        if error == "" :
-            
-            ## create or update data file state
-            row = db( ( db.data_file.config_id == request.vars["config_id" ] ) 
-             & ( db.data_file.sequence_file_id == request.vars["sequence_file_id"] )  
+
+    error = ""
+
+    ##TODO check  
+    if not "sequence_file_id" in request.vars :
+        error += "id sequence file needed, "
+    if not "config_id" in request.vars:
+        error += "id config needed, "
+
+    row2 = db( ( db.scheduler_task.args == '["'+request.vars["sequence_file_id"]+'", "'+request.vars["config_id"]+'"]' ) 
+             & ( db.scheduler_task.status != "FAILED"  )
+             & ( db.scheduler_task.status != "EXPIRED"  )
+             & ( db.scheduler_task.status != "TIMEOUT"  )
+             & ( db.scheduler_task.status != "COMPLETED"  )
              ).select()
-            
-            if len(row) > 0 : ## update
-                data_id = row[0].id
-                db.data_file[data_id] = dict(status = 'queued')
-            else:             ## create
-                data_id = db.data_file.insert(sequence_file_id = request.vars['sequence_file_id'],
-                                            config_id = request.vars['config_id'],
-                                            status = 'pending'
-                                            )
-                
-            ## create or update fuse file state
-            id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
-            row = db( ( db.fused_file.config_id == request.vars["config_id"] ) & 
-                      ( db.fused_file.patient_id == id_patient )  
-                    ).select()
 
-            if len(row) > 0 : ## update
-                fuse_id = row[0].id
-            else:             ## create
-                fuse_id = db.fused_file.insert(patient_id = id_patient,
-                                                config_id = request.vars['config_id'])
-            
-            ##add task to scheduller
-            scheduler.queue_task('run', [request.vars["sequence_file_id"],request.vars["config_id"], data_id, fuse_id]
-                                 , repeats = 1, timeout = 6000)
-            
-            res = {"redirect": "patient/info",
-                   "args" : { "id" : id_patient,
-                              "config_id" : request.vars["config_id"]},
-                   "message": "request added"}
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-        
-        else :
-            res = {"success" : "false", "msg" : error}
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-            
-        
-    res2 = {"success" : "false", "msg" : "connect error"}
-    return gluon.contrib.simplejson.dumps(res2, separators=(',',':'))
+    if len(row2) > 0 :
+        error += "run already registered, "
 
+    if error == "" :
+
+        ## create or update data file state
+        row = db( ( db.data_file.config_id == request.vars["config_id" ] ) 
+         & ( db.data_file.sequence_file_id == request.vars["sequence_file_id"] )  
+         ).select()
+
+        if len(row) > 0 : ## update
+            data_id = row[0].id
+            db.data_file[data_id] = dict(status = 'queued')
+        else:             ## create
+            data_id = db.data_file.insert(sequence_file_id = request.vars['sequence_file_id'],
+                                        config_id = request.vars['config_id'],
+                                        status = 'pending'
+                                        )
+
+        ## create or update fuse file state
+        id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
+        row = db( ( db.fused_file.config_id == request.vars["config_id"] ) & 
+                  ( db.fused_file.patient_id == id_patient )  
+                ).select()
+
+        if len(row) > 0 : ## update
+            fuse_id = row[0].id
+        else:             ## create
+            fuse_id = db.fused_file.insert(patient_id = id_patient,
+                                            config_id = request.vars['config_id'])
+
+        ##add task to scheduller
+        scheduler.queue_task('run', [request.vars["sequence_file_id"],request.vars["config_id"], data_id, fuse_id]
+                             , repeats = 1, timeout = 6000)
+
+        res = {"redirect": "patient/info",
+               "args" : { "id" : id_patient,
+                          "config_id" : request.vars["config_id"]},
+               "message": "request added"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+    else :
+        res = {"success" : "false", "msg" : error}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
+    
 
 def get_data():
     import time
     import gluon.contrib.simplejson
     from subprocess import Popen, PIPE, STDOUT
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
 
-        error = ""
-        
-        if not "patient_id" in request.vars :
-            error += "id patient file needed, "
-        if not "config_id" in request.vars:
-            error += "id config needed, "
+    error = ""
 
-        query = db( ( db.fused_file.patient_id == request.vars["patient_id"] )
-                   & ( db.fused_file.config_id == request.vars["config_id"] )
-                   ).select() 
-        for row in query :
-            fused_file = "applications/vidjil/uploads/"+row.fused_file
-        
-        if error == "" :
+    if not "patient_id" in request.vars :
+        error += "id patient file needed, "
+    if not "config_id" in request.vars:
+        error += "id config needed, "
 
-            f = open(fused_file, "r")
-            output=f.readlines()
-            f.close()
-            
-            return output
-        
-        res = {"success" : "false", "msg" : "connect error"}
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    query = db( ( db.fused_file.patient_id == request.vars["patient_id"] )
+               & ( db.fused_file.config_id == request.vars["config_id"] )
+               ).select() 
+    for row in query :
+        fused_file = "applications/vidjil/uploads/"+row.fused_file
+
+    if error == "" :
+
+        f = open(fused_file, "r")
+        output=f.readlines()
+        f.close()
+
+        return output
+
+    res = {"success" : "false", "msg" : "connect error"}
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
     
 def get_analysis():
     import gluon.contrib.simplejson
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
     
     error = ""
 
@@ -184,8 +162,8 @@ def get_analysis():
     res["info_patient"] = db.patient[request.vars["patient_id"]].info
     
     ## récupération des infos se trouvant dans le fichier .analysis
-    analysis_query = db(  (db.analysis_file.patient_id == 1)
-               & (db.analysis_file.config_id == 1 )  )
+    analysis_query = db(  (db.analysis_file.patient_id == request.vars["patient_id"])
+               & (db.analysis_file.config_id == request.vars["config_id"] )  )
 
     if not analysis_query.isempty() :
         row = analysis_query.select().first()
@@ -201,10 +179,6 @@ def get_analysis():
     
 def save_analysis():
     import gluon.contrib.simplejson
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
         
     error = ""
 
@@ -242,10 +216,6 @@ def test_upload():
 
 @cache.action()
 def download():
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
     """
     allows downloading of uploaded files
     http://..../[app]/default/download/[filename]
@@ -356,10 +326,6 @@ def upload():
         return dict()
     
 def user():
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
     """
     exposes:
     http://..../[app]/default/user/login
