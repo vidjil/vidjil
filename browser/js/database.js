@@ -3,7 +3,7 @@ function Database(id, db_address) {
     this.id = id;
     this.upload = {};
     
-    this.url = ""
+    this.url = []
 }
 
 Database.prototype = {
@@ -40,7 +40,7 @@ Database.prototype = {
             type: "POST",
             timeout: 1000,
             crossDomain: true,
-            context: self,                          //we can't do closure with ajax event handler so we use context to keep ref
+            context: self,         //we can't do closure with ajax event handler so we use context to keepref
             url: url,
             contentType: 'text/plain',
             xhrFields: {withCredentials: true},
@@ -77,7 +77,7 @@ Database.prototype = {
         {
             //affichage résultat
             this.display(result)
-            this.url=url
+            this.url.push(url)
             
             //bind javascript
             this.init_ajaxform()
@@ -222,7 +222,51 @@ Database.prototype = {
     
     /*reload the current db page*/
     reload: function(){
-        this.callUrl(this.url)
+        url = this.url[this.url.length-1]
+        this.callUrl(url)
+        this.url.pop()
+    },
+    
+    back: function(){
+        if (this.url.length > 1){
+            this.url.pop()
+            url = this.url[this.url.length-1]
+            this.callUrl(url)
+        }
+        this.url.pop()
+    },
+    
+    
+    /* appel une fonction du serveur
+     * idem que call() mais la réponse n'est pas une page html a afficher
+     * mais simplement une confirmation que la requete a été entendu
+     */
+    request: function (controller_name, args) {
+
+        var self = this;
+        var arg = "?";
+        for (var key in args) {
+            arg += "" + key + "=" + args[key] + "&";
+        }
+
+        //envoye de la requete ajax
+        $.ajax({
+            type: "POST",
+            timeout: 2000,
+            crossDomain: true,
+            url: self.db_address + controller_name + arg,
+            xhrFields: {withCredentials: true},
+            success: function (result) {
+                popupMsg(result);
+            },
+            error: function (request, status, error) {
+                if (status === "timeout") {
+                    popupMsg("timeout");
+                } else {
+                    self.call("patient/index")
+                }
+            }
+        });
     },
 
     /*récupére et initialise le browser avec un fichier .data
@@ -322,7 +366,7 @@ Database.prototype = {
                     if (status === "timeout") {
                         popupMsg("timeout");
                     } else {
-                        popupMsg(request.responseText);
+                        self.flash(request.responseText);
                     }
                 }
             });
