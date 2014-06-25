@@ -13,15 +13,10 @@
     </div>
     
     <div id="db_auth">
-        <div>
             {{if auth.user:}}
             <a class="button" onclick="db.call('default/user/profile');">{{=auth.user.first_name}}</a>
             <a class="button" onclick="db.request('default/user/logout');">disconnect</a>
             {{pass}}
-        </div>
-        <div>
-            <a class="button" onclick="db.reload();">reload</a>
-        </div>
     </div>
     
 </div>
@@ -29,4 +24,15 @@
 
 <div>
     {{include}}
+</div>
+
+
+<div class="db_footer">
+    <div class="db_block_left">
+        <span class="button" onclick="db.back();"> << back</span>
+        <span class="button" onclick="db.reload();">reload</span>
+    </div>
+    <div class="db_block_right">
+
+    </div>
 </div>
