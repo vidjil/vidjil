@@ -8,6 +8,8 @@
 
 using namespace std;
 
+typedef string seqtype ;
+
 typedef struct read_t
 {
   string label_full;
