@@ -142,6 +142,7 @@ void OnlineFasta::next() {
   current.label.erase();
   current.sequence.erase();
   current.quality.erase();
+  current.seq = NULL;
 
   if  (hasNext()) {
     switch(line[0]) {
@@ -189,6 +190,22 @@ void OnlineFasta::next() {
 
     // Sequence in uppercase
     transform(current.sequence.begin(), current.sequence.end(), current.sequence.begin(), (int (*)(int))toupper);
+
+    // Compute seq
+    current.seq = new int[current.sequence.length()];
+    for (int i=0; i< current.sequence.length(); i++)
+      {
+	int B ;
+	switch(current.sequence[i]) {
+	case 'A': B = 0; break;
+	case 'C': B = 1; break;
+	case 'G': B = 2; break;
+	case 'T': B = 3; break;
+	  B = 4; break;
+	}
+	current.seq[i] = B ;
+      }
+
   } else
     unexpectedEOF();
 }
