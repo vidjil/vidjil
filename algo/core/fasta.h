@@ -12,8 +12,9 @@ typedef struct read_t
 {
   string label_full;
   string label;
-  string sequence;
+  string sequence; // Sequence: original string representation
   string quality;
+  int*   seq;      // Sequence: seq representation
 } Sequence;
 
 typedef enum {
