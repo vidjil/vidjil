@@ -1,13 +1,13 @@
 # coding: utf8
 
 def run_vidjil(id_file, id_config, id_data, id_fuse):
-    import time, datetime
+    import time, datetime, sys, os.path
     from subprocess import Popen, PIPE, STDOUT, os
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
-    vidjil_path = '/home/duez/git/vidjil'
+    vidjil_path = sys.path[0] + '../..'
     germline_folder = vidjil_path + '/germline/'
-    upload_folder = vidjil_path + '/server/web2py/applications/vidjil/uploads/'
+    upload_folder = sys.path[0] + 'applications/vidjil/uploads/'
     out_folder = vidjil_path + '/out/'
     
     cmd = "rm -rf "+out_folder 
@@ -31,7 +31,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
     output = p.stdout.read()
-    
+
     ## récupération du fichier data.json généré
     data_filepath = os.path.abspath(out_folder+"vidjil.data")
     stream = open(data_filepath, 'rb')
