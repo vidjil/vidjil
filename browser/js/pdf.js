@@ -274,9 +274,9 @@ PDF.prototype = {
         //clone reads (%)
         var data = []
         for (var i = 0; i < this.m.time.length; i++) {
-            data[i] = this.m.getSize(cloneID, i)
+            data[i] = this.m.getStrSize(cloneID, i)
         }
-        this.row('', data, '%')
+        this.row('', data, 'raw')
         this.next_row()
 
         this.sequence(cloneID)
