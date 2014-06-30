@@ -96,19 +96,20 @@
 
             <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');"> file 
                 <div id="demoSelector" class="selector"><div>
-                    <a class="buttonSelector" onclick="javascript:loadData()">load data/analysis</a></br>
-                    <!--<a class="buttonSelector" onclick="javascript:loadAnalysis()">load analysis</a> -->
+                    <div class="menu_box">
+                        <a class="buttonSelector" onclick="javascript:loadData()">Open </a>
+                        <a class="buttonSelector" onclick="javascript:loadAnalysis()">Open analysis file</a>
+                    </div>
                     <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
                     <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
-                    <div id="upload_list"></br>
+                    <div class="menu_box">
+                        <a class="buttonSelector" onclick="javascript:m.saveAnalysis()">Save analysis file</a>
+                        <a class="buttonSelector" onclick="javascript:new PDF(m, 'visu2_svg')">Save pdf (graph + selected clones)</a>
                     </div>
-                </div></div>
-            </div>
-
-            <div class="menu" onmouseover="showSelector('loadSelector');"> export 
-                <div id="loadSelector" class="selector"><div>
-                   <a class="buttonSelector" onclick="javascript:m.saveAnalysis()">save analysis</a>
-                   <a class="buttonSelector" onclick="javascript:new PDF(m, 'visu2_svg')">export pdf (graph + selected clones)</a>
+                    <div class="menu_box">
+                        <div id="upload_list">
+                        </div>
+                    </div>
                 </div></div>
             </div>
 
@@ -145,54 +146,48 @@
                 </div></div>
             </div>
 
-            <div class="menu" id="display_menu" onmouseover="showSelector('displaySelector');"> display
-                <div id="displaySelector" class="selector"><div>
-                    <div class="submenu">
+            <div class="menu" onmouseover="showSelector('filterSelector');" > filter
+                <div id="filterSelector" class="selector"><div>
+                    <div class="menu_box">
+                        number of clones</br>
+                        <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
+                    </div>
+                    <div class="menu_box">
+                        tag visibility</br>
+                        <ul id="tagList">
+                        </ul>
+                    </div>
+                </div></div>
+            </div>
 
-                        <div class="menu_box">
-                            tag visibility</br>
-                            <ul>
-                            </ul>
-                        </div>
-
+            <div class="menu" onmouseover="showSelector('settingsSelector');" > settings
+                <div id="settingsSelector" class="selector"><div>
+                    <div class="menu_box">
+                        normalization (<span id="normalize_value"> </span>)</br>
+                        <input id="normalize" type="checkbox" name="normalize" onclick="m.normalization_switch(this.checked);">
+                        <span id="normalize_info"></span>
                     </div>
 
-                    <div class="submenu">
+                    <div class="menu_box">
+                        size display</br>
+                        <input type="radio" name="notation" value="scientific" onchange="m.notation_switch()">scientific notation</input></br>
+                        <input type="radio" name="notation" value="percent" onchange="m.notation_switch()" checked>percent</input>
+                    </div>
 
-                        <div class="menu_box">
-                            number of clones</br>
-                            <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
-                        </div>
-
-                        <div class="menu_box">
-                            normalization (<span id="normalize_value"> </span>)</br>
-                            <input id="normalize" type="checkbox" name="normalize" onclick="m.normalization_switch(this.checked);">
-                            <span id="normalize_info"></span>
-                        </div>
-
-                        <div class="menu_box">
-                            size display</br>
-                            <input type="radio" name="notation" value="scientific" onchange="m.notation_switch()">scientific notation</input></br>
-                            <input type="radio" name="notation" value="percent" onchange="m.notation_switch()" checked>percent</input>
-                        </div>
-
-                        <div class="menu_box">
-                            point key</br>
-                            <input type="radio" name="time" value="name" onchange="m.time_switch()" checked>name</input>
-                            <input type="radio" name="time" value="sampling_date" onchange="m.time_switch()">sampling date</input></br>
-                        </div>
-
+                    <div class="menu_box">
+                        point key</br>
+                        <input type="radio" name="time" value="name" onchange="m.time_switch()" checked>name</input></br>
+                        <input type="radio" name="time" value="sampling_date" onchange="m.time_switch()">sampling date</input>
                     </div>
 
                     <div class="submenu" id="system_menu" style="display:none">
-
                         <div class="menu_box">
                             germline (for color and scatterplot)</br>
                             <ul id="germline_list">
                             </ul>
                         </div>
-
                     </div>
+
                 </div></div>
             </div>
 

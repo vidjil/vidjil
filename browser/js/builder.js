@@ -267,7 +267,7 @@ Builder.prototype = {
         var self = this;
 
         var displaySelector = document.getElementById("displaySelector")
-        var listTag = displaySelector.getElementsByTagName("ul")[0]
+        var listTag = document.getElementById("tagList")
         var listGermline = document.getElementById("germline_list")
         
         //reset
