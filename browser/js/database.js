@@ -431,6 +431,16 @@ Database.prototype = {
         }, 5000);
         
     
+    },
+    
+    user_rights: function (value, name, id) {
+        
+        var arg = {}
+        arg.value = value
+        arg.name = name
+        arg.user_id = id
+       
+        this.call( this.db_address + 'user/rights', arg)
     }
 
 }
