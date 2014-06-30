@@ -225,9 +225,19 @@ Segment.prototype = {
                 if (document.getElementById("seq" + list[i])) {
                     var spanF = document.getElementById("f" + list[i]);
                     this.div_elem(spanF, list[i]);
+                } else {
+                    this.addToSegmenter(list[i]);
+                    this.show();
+                }
+
+            } else {
+                if (document.getElementById("seq" + list[i])) {
+                    var element = document.getElementById("seq" + list[i]);
+                    element.parentNode.removeChild(element);
                 }
             }
         }
+        
     },
 
     /* genere le code HTML des infos d'un clone
