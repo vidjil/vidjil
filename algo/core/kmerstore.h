@@ -16,7 +16,7 @@ public:
   unsigned int count;
 
   Kmer();
-  Kmer(const string &kmer, const string &label="", int strand=1);
+  Kmer(const seqtype &kmer, const string &label="", int strand=1);
   Kmer &operator+=(const Kmer &);
   static bool hasRevcompSymetry();
 } ;
@@ -56,14 +56,14 @@ public:
    * @param label: label that must be associated to the given files
    * @post All the k-mers in the sequence have been indexed.
    */
-  void insert(const string &sequence,
+  void insert(const seqtype &sequence,
               const string &label);
 
   /**
    * @param word: a k-mer
    * @return the value for the kmer as stored in the structure (don't do revcomp)
    */ 
-  virtual T& get(string &word) = 0;
+  virtual T& get(seqtype &word) = 0;
 
   /**
    * @return the value of k
@@ -87,7 +87,7 @@ public:
    * @return a vector of length seq.length() - getK() + 1 containing
    * for each k-mer the corresponding value in the index.
    */
-  vector<T> getResults(const string &seq, bool no_revcomp=false);
+  vector<T> getResults(const seqtype &seq, bool no_revcomp=false);
 
   /**
    * @return true iff the revcomp is indexed
@@ -100,7 +100,7 @@ public:
    *         isRevcomp() ==> the revcomp of the k-mer may be considered
    * @pre word.length() == this->k
    */
-  virtual T& operator[](string& word) = 0;
+  virtual T& operator[](seqtype& word) = 0;
 };
 
 
@@ -108,7 +108,7 @@ template <class T>
 class MapKmerStore : public IKmerStore<T>
 {
 public:	
-  map<string, T> store;
+  map<seqtype, T> store;
 
   /**
    * @param bool: if true, will also index revcomp
@@ -116,8 +116,8 @@ public:
    */
   MapKmerStore(string seed, bool=false);
   MapKmerStore(int k, bool=false);
-  T& get(string &word);
-  T& operator[](string& word);
+  T& get(seqtype &word);
+  T& operator[](seqtype & word);
 };
 
 template <class T> 
@@ -125,7 +125,7 @@ class ArrayKmerStore : public IKmerStore<T>
 {
   T* store;
 	
-  int index(const string& word) const;
+  int index(const seqtype& word) const;
 public:
   /**
    * @param bool: if true, will also index revcomp
@@ -135,8 +135,8 @@ public:
   ArrayKmerStore(int k, bool=false);
   ~ArrayKmerStore();
 	
-  T& get(string &word);
-  T& operator[](string& word);
+  T& get(seqtype &word);
+  T& operator[](seqtype & word);
 };
 
 
@@ -162,13 +162,13 @@ void IKmerStore<T>::insert(Fasta& input,
 }
 
 template<class T> 
-void IKmerStore<T>::insert(const string &sequence,
+void IKmerStore<T>::insert(const seqtype &sequence,
                            const string &label){
   for(size_t i = 0 ; i + s < sequence.length() + 1 ; i++) {
-    string kmer = spaced(sequence.substr(i, s), seed);
+    seqtype kmer = spaced(sequence.substr(i, s), seed);
     int strand = 1;
     if (revcomp_indexed && T::hasRevcompSymetry()) {
-      string rc_kmer = revcomp(kmer);
+      seqtype rc_kmer = revcomp(kmer);
       if (rc_kmer.compare(kmer) < 0) {
         strand = -1;
         kmer = rc_kmer;
@@ -176,7 +176,7 @@ void IKmerStore<T>::insert(const string &sequence,
     }
     this->get(kmer) += T(kmer, label, strand);
     if (revcomp_indexed && ! T::hasRevcompSymetry()) {
-      string rc_kmer = revcomp(kmer);
+      seqtype rc_kmer = revcomp(kmer);
       this->get(rc_kmer) += T(rc_kmer, label, -1);
     }
   }
@@ -199,14 +199,14 @@ string IKmerStore<T>::getSeed() const {
 }
 
 template<class T>
-vector<T> IKmerStore<T>::getResults(const string &seq, bool no_revcomp) {
+vector<T> IKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
   if ((int)seq.length() < s - 1) {
     return vector<T>(0);
   }
   vector<T> result(seq.length() - s + 1);
   for (size_t i=0; i + s < seq.length() + 1; i++) {
-    string kmer = spaced(seq.substr(i, s), seed);
-    //    string kmer = seq.substr(i, s);
+    seqtype kmer = spaced(seq.substr(i, s), seed);
+    //    seqtype kmer = seq.substr(i, s);
     // cout << kmer << endl << kmer0 << endl << endl ;
     if (revcomp_indexed && no_revcomp) {
       result[i] = get(kmer);
@@ -243,14 +243,14 @@ MapKmerStore<T>::MapKmerStore(int k, bool revcomp){
 }
 
 template <class T> 
-T& MapKmerStore<T>::get(string& word){
+T& MapKmerStore<T>::get(seqtype& word){
   return store[word];
 }
 
 template <class T> 
-T& MapKmerStore<T>::operator[](string& word){
+T& MapKmerStore<T>::operator[](seqtype& word){
   if (this->isRevcomp() && T::hasRevcompSymetry()) {
-    string rc_kmer = revcomp(word);
+    seqtype rc_kmer = revcomp(word);
     if (rc_kmer.compare(word) < 0)
       word = rc_kmer;
   }
@@ -297,7 +297,7 @@ ArrayKmerStore<T>::~ArrayKmerStore(){
 	index_word = \sum_{i=0}^{k-1}B(word[i])*4^(k-i-1)
 **/
 template <class T> 
-int ArrayKmerStore<T>::index(const string& word) const{
+int ArrayKmerStore<T>::index(const seqtype& word) const{
 	int index_word = 0;
 	for(int i = 0 ; i < this->k ; i++){
 		int B = 0;
@@ -313,14 +313,14 @@ int ArrayKmerStore<T>::index(const string& word) const{
 }
 
 template <class T> 
-T& ArrayKmerStore<T>::get(string& word){
+T& ArrayKmerStore<T>::get(seqtype& word){
   return store[index(word)];
 }
 
 template <class T> 
-T& ArrayKmerStore<T>::operator[](string& word){
+T& ArrayKmerStore<T>::operator[](seqtype& word){
   if (this->isRevcomp() && T::hasRevcompSymetry()) {
-    string rc_kmer = revcomp(word);
+    seqtype rc_kmer = revcomp(word);
     if (rc_kmer.compare(word) < 0)
       word = rc_kmer;
   }

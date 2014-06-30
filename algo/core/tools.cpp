@@ -97,6 +97,7 @@ Sequence create_sequence(string label_full, string label, string sequence, strin
   seq.label = label;
   seq.sequence = sequence;
   seq.quality = quality;
+  // ! TODO: seq.seq, factorize with fasta.cpp
   return seq;
 }
 
