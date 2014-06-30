@@ -9,6 +9,7 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 
+import gluon.contrib.simplejson
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -31,8 +32,6 @@ def help():
 
 ## add a scheduller task to run vidjil on a specific sequence file
 def run_request():
-    import gluon.contrib.simplejson
-
     error = ""
 
     ##TODO check  
@@ -97,7 +96,6 @@ def run_request():
 
 def get_data():
     import time
-    import gluon.contrib.simplejson
     from subprocess import Popen, PIPE, STDOUT
 
     error = ""
@@ -126,8 +124,6 @@ def get_data():
     
     
 def get_analysis():
-    import gluon.contrib.simplejson
-    
     error = ""
 
     if not "patient_id" in request.vars :
@@ -178,8 +174,6 @@ def get_analysis():
     
     
 def save_analysis():
-    import gluon.contrib.simplejson
-        
     error = ""
 
     if not "patient_id" in request.vars :
@@ -272,7 +266,7 @@ def add_membership():
     return dict(form=form)
 
 def upload_file():
-        import gluon.contrib.simplejson, shutil, os.path
+        import shutil, os.path
         
         try:
             # Get the file from the form
