@@ -205,7 +205,8 @@ void OnlineFasta::next() {
 	case 'C': B = 1; break;
 	case 'G': B = 2; break;
 	case 'T': B = 3; break;
-	  B = 4; break;
+        default:
+          B = 4; break;
 	}
 	current.seq[i] = B ;
       }
