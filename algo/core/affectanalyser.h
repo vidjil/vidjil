@@ -428,25 +428,22 @@ void CountKmerAffectAnalyser<T>::buildCounts() {
   int length = KmerAffectAnalyser<T>::count();
   set<T> affects = this->getDistinctAffectations();
 
-  /* Initialize each key with a 0-integer array */
   for (typename set<T>::iterator it = affects.begin(); 
        it != affects.end(); it++) {
-    counts[*it] = new int[length];
-  }
+    int *array = new int[length];
+    /* Initialize each key with a 0-integer array */
+    array[0] = (this->getAffectation(0) == *it) ? 1 : 0;
 
-  /* Fill in the counts arrays */
-  for (int i = 0; i < length; i++) {
-    T current = this->getAffectation(i);
-    for (typename set<T>::iterator it = affects.begin(); 
-         it != affects.end(); it++) {
+    /* Fill the array with actual values */
+    for (int i = 1; i < length; i++) {
+      T current = this->getAffectation(i);
       int value = (current == *it) ? 1 : 0;
 
-      if (i == 0)
-        counts[*it][i] = value;
-      else
-        counts[*it][i] = counts[*it][i-1] + value;
+      array[i] = array[i-1]+value;
     }
+    counts[*it] = array;
   }
+
 }
 
 #endif
