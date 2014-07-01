@@ -115,11 +115,14 @@ OnlineFasta::OnlineFasta(const OnlineFasta &of) {
 OnlineFasta::~OnlineFasta() {
   if (input_allocated)
     delete input;
+  if (current.seq)
+    delete [] current.seq;
 }
 
 void OnlineFasta::init() {
   line_nb = 0;
   line = getInterestingLine();
+  current.seq = NULL;
 }
 
 size_t OnlineFasta::getLineNb() {
@@ -142,7 +145,8 @@ void OnlineFasta::next() {
   current.label.erase();
   current.sequence.erase();
   current.quality.erase();
-  current.seq = NULL;
+  if (current.seq)
+    delete [] current.seq;
 
   if  (hasNext()) {
     switch(line[0]) {
