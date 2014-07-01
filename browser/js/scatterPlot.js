@@ -721,10 +721,9 @@ ScatterPlot.prototype = {
     /* Fonction permettant le calcul d'une étape d'animation
      * */
     tick: function () {
-        self = this;
+        var self = this;
         
-        var active_node = this.node.select(function(d, i) { return d.r!=0 ? this : null; });
-        
+        var active_node = this.node.filter(function(d, i) { return d.r2 > 0.1; });
         //mise a jour des rayons( maj progressive )
         this.node.each(this.updateRadius());
         
@@ -736,7 +735,7 @@ ScatterPlot.prototype = {
         var quad = d3.geom.quadtree(this.nodes)
 
         for (var i=0; i<this.nodes.length; i++) {
-            if (this.nodes[i].r1 !=0){
+            if (this.nodes[i].r1 > 0.1){
                 quad.visit(this.collide2(this.nodes[i]));
             }
         }
