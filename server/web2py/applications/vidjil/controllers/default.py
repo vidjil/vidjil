@@ -39,7 +39,12 @@ def run_request():
         error += "id sequence file needed, "
     if not "config_id" in request.vars:
         error += "id config needed, "
-
+        
+    id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
+    
+    if not auth.has_permission('admin', 'patient', id_patient) :
+        error += "you don't have permission to run request for this patient ("+str(id_patient)+")"
+        
     row2 = db( ( db.scheduler_task.args == '["'+request.vars["sequence_file_id"]+'", "'+request.vars["config_id"]+'"]' ) 
              & ( db.scheduler_task.status != "FAILED"  )
              & ( db.scheduler_task.status != "EXPIRED"  )
@@ -67,7 +72,6 @@ def run_request():
                                         )
 
         ## create or update fuse file state
-        id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
         row = db( ( db.fused_file.config_id == request.vars["config_id"] ) & 
                   ( db.fused_file.patient_id == id_patient )  
                 ).select()
@@ -89,7 +93,8 @@ def run_request():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
-        res = {"success" : "false", "msg" : error}
+        res = {"success" : "false",
+               "message" : error}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
     
@@ -104,7 +109,10 @@ def get_data():
         error += "id patient file needed, "
     if not "config_id" in request.vars:
         error += "id config needed, "
-
+    if not auth.has_permission('admin', 'patient', request.vars["patient_id"]) and \
+    not auth.has_permission('read', 'patient', request.vars["patient_id"]):
+        error += "you don't have permission to consult this patient ("+id_patient+")"
+        
     query = db( ( db.fused_file.patient_id == request.vars["patient_id"] )
                & ( db.fused_file.config_id == request.vars["config_id"] )
                ).select() 
