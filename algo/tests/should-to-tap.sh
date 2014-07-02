@@ -161,7 +161,7 @@ while read line; do
 
                 # Replace whitespaces if needed
                 if [ $IGNORE_WHITESPACES -ne 0 ]; then
-                    pattern=$(sed -r 's/\s+/[[:space:]]+/g' <<< $pattern)
+                    pattern=$(sed -r 's/[[:space:]]+/[[:space:]]+/g' <<< $pattern)
                 fi
 
                 debug "Grepping \"$pattern\" in $FILE_TO_GREP"
