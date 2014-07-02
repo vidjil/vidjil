@@ -38,11 +38,11 @@ Database.prototype = {
         
         $.ajax({
             type: "POST",
-            timeout: 1000,
             crossDomain: true,
             context: self,         //we can't do closure with ajax event handler so we use context to keepref
             url: url,
             contentType: 'text/plain',
+            timeout: 1000,
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.display_result(result, url)
