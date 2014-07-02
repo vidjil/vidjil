@@ -438,9 +438,9 @@ Database.prototype = {
         var arg = {}
         arg.value = value
         arg.name = name
-        arg.user_id = id
+        arg.id = id
        
-        this.call( this.db_address + 'user/rights', arg)
+        this.call('user/rights', arg)
     }
 
 }
