@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 # This script also parse a file .should_get
 # In the .should_get format, every line starting with a # is a comment

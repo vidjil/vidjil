@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ $# -eq 0 -o "$1" == "-h" -o "$1" == "--help" ]; then
     echo "Usage: $0 <file.should_get>
