@@ -48,7 +48,7 @@
  * split
  *
  * */
-VIDJIL_JSON_VERSION = '2014.02'
+VIDJIL_JSON_VERSION = '2014.02';
 
 /*Model constructor
  *
@@ -56,14 +56,15 @@ VIDJIL_JSON_VERSION = '2014.02'
 function Model() {
     console.log("creation Model")
     this.view = [];
-    this.reset()
-    
-    this.checkBrowser()
+
+    this.reset();
+
+    this.checkBrowser();
 }
 
 
 Model.prototype = {
-        
+
     reset: function () {
         this.analysis = {
             custom: [],
@@ -94,14 +95,28 @@ Model.prototype = {
             "A" : [],
             "B" : 0,
             "id" : 0
-        }
+        };
+
+        /*Variables pour DBSCAN*/
+        this.eps = 0;
+        this.nbr = 0;
+        this.nodes = null;
+        this.edges = null;
+
+        this.clonesSelected = [];
+        //This attribute contains the last clone selected in/out the graphe
+        this.lastCloneSelected = -1;
+        this.currentCluster = "";
         
         this.cluster_key = ""
         
         this.display_window = false
-        
     },
 
+    //Fonction permettant d'ajouter l'objet Segmenter dans le Model
+    addSegment: function(segment) {
+	this.segment = segment;
+    },
 
     /* load the selected data/analysis file in the model
      * @id : id of the form (html element) linking to the data file
@@ -196,6 +211,7 @@ Model.prototype = {
     parseJsonData: function (data, limit) {
         self = this;
         self.windows = [];
+        self.links = [];
         self.mapID = {}
         self.dataCluster = []
         var min_sizes = [];
@@ -245,6 +261,7 @@ Model.prototype = {
         self.n_windows = self.windows.length;
         self.min_sizes = min_sizes;
         self.n_max = n_max;
+        self.links = data.links;
         self.normalization_factor = data.normalization_factor;
         self.reads_segmented = data.reads_segmented;
         self.system_segmented = data.system_segmented;
@@ -575,9 +592,145 @@ Model.prototype = {
             self.initClones();
         }
 
+        if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
+
         return this;
     }, //end loadAnalysis
 
+
+    /*For DBSCAN*/
+    loadRandomTab: function() {
+        this.tabRandomColor = [];
+        /*Initialisation du tableau de couleurs*/
+        for (var i = 0; i < this.n_windows; i++) {
+            this.tabRandomColor.push(i);
+        }
+        /*Fisher yates algorithm to shuffle the array*/
+        for (var i = this.n_windows - 1; i >= 1; i--) {
+            var j = Math.floor(Math.random() * i) + 1;
+            var abs = this.tabRandomColor[i];
+            this.tabRandomColor[i] = this.tabRandomColor[j];
+            this.tabRandomColor[j] = abs;
+        }
+    },
+
+    /* Fonction permettant de charger la clusterisation avec DBSCAN, mais aussi de colorer les nodes directement après en fonction de cette clusterisation
+     *
+     */
+    loadDBSCAN: function(sp) {
+        if (typeof(sp) != "undefined") this.sp = sp;
+            this.dbscan = new DBSCAN(this.sp, this.eps, this.nbr);
+            this.dbscan.runAlgorithm();
+            for (var i = 0; i < this.dbscan.clusters.length; i++)
+                for (var j = 0; j < this.dbscan.clusters[i].length; j++)
+                    this.windows[this.dbscan.clusters[i][j]].cluster = i;
+            //Color DBSCAN
+            if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
+            this.colorNodesDBSCAN();
+            //Add information about the window (Noise, Core, ...)
+            this.addTagCluster();
+            if (this.currentCluster == "cluster") this.clusterBy("cluster");
+    },
+
+    /* Fonction permettant de colorer les nodes en fonction de la clusterisation DBSCAN
+    */
+    colorNodesDBSCAN: function() {
+        /*Adding color by specific cluster*/
+        /*-> Solution provisoire quant à la couleur noire non voulue est d' "effacer" le nombre max de clusters, mais de le prendre par défaut (100), soit un intervalle de 2.7 à chaque fois*/
+        var maxCluster = this.dbscan.clusters.length;
+        for (var i = 0; i < this.n_windows; i++) {
+            if (typeof(this.windows[i].cluster) != 'undefined') {
+                this.windows[i].colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.windows[i].cluster] + 1) ), color_s, color_v);
+            }
+            else
+                this.windows[i].colorDBSCAN = color['@default'];
+        }
+    },
+
+    /* Fonction permettant d'ajouter un tab concernant un node - s'il est au coeur d'un cluster, à l'extérieur ou appartenant à...
+     */
+    addTagCluster: function() {
+        for (var i = 0; i < this.n_windows; i++)
+            if (typeof(this.windows[i].cluster) != 'undefined')
+                switch (this.dbscan.visitedTab[i].mark) {
+                case -1:
+                        this.windows[i].tagCluster = "NOISE";
+                        break;
+                case 0:
+                        this.windows[i].tagCluster = "CORE";
+                        break;
+                case 1:
+                        this.windows[i].tagCluster = "NEAR";
+                        break;
+                }
+            else
+                this.windows[i].tagCluster = null;
+    },
+
+    /* Fonction permettant de changer dynamiquement le nombre epsilon, pour DBSCAN
+    */
+    changeEps: function(newEps) {
+        //Modification de l'attribut 'Eps' contenu dans l'objet
+        this.eps = newEps;
+        //Prise en compte du slider
+        var html_container = document.getElementById('changeEps');
+        if (html_container != null) {
+            html_container.value = newEps;
+        }
+        //Création d'un nouvel objet DBSCAN
+        this.loadDBSCAN();
+        this.update();
+        //Activation du moteur et autres paramètres spé à l'affichage du graphe DBSCAN
+        if (this.sp.dbscanActive) this.sp.runGraphVisualization("dbscan");
+        //Changement de l'affichage de la valeur liée au slider
+        this.changeSliderValue(true, "DBSCANEpsSlider", "Eps ", this.eps);
+    },
+
+    /* Fonction permettant de changer dynamiquement le nombre de voisins minimum, pour DBSCAN
+    */
+    changeNbr: function(newNbr) {
+        //Modification de l'attribut 'nbr' contenu dans l'objet
+        this.nbr = newNbr;
+        //Prise en compte du slider
+        var html_container = document.getElementById('changeNbr');
+        //Changement de la valeur du slider
+        if (html_container != null) {
+            html_container.value = newNbr;
+        }
+        //Création d'un nouvel objet DBSCAN
+        this.loadDBSCAN();
+        this.update();
+        //Activation du moteur et autres paramètres spé à l'affichage du graphe DBSCAN
+        if (this.sp.dbscanActive) this.sp.runGraphVisualization("dbscan");
+        //Changement de l'affichage de la valeur liée au slider
+        this.changeSliderValue(true, "DBSCANNbrSlider", "Nbr ", this.nbr);
+    },
+
+    /* Fonction permettant de changer dynamiquement la valeur d'affichage, à côté du slider Epsilon/MinPts dans le menu Display
+    */
+    changeSliderValue: function(bool, div, name, value) {
+        var div = document.getElementById(div);
+        var text = document.createTextNode(name + value);
+        if (bool) {
+            //Suppression du précédent noeud
+            div.removeChild(div.childNodes[0]);
+        }
+        if (!bool) div.insertBefore(document.createElement('br'), div.firstChild);
+        div.insertBefore(text, div.firstChild);
+    },
+
+    /* Fonction permettant de changer dynamiquement la valeur d'affichage du slider "Edit Distance"
+    */
+    changeSliderEditDistanceValue: function(bool, value) {
+        var div = document.getElementById("EditDistanceSlider");
+        var text =  document.createTextNode("Distance: " + value);
+        if (!bool) {
+            div.removeChild(div.childNodes[0]);
+        }
+        else {
+            div.insertBefore(text, div.firstChild);
+        }
+    },
 
     /* initializes clones with analysis file data
      *
@@ -978,9 +1131,9 @@ Model.prototype = {
     },
     
     update_normalization: function () {
-        if (this.normalization.B != 0){
-            this.compute_normalization( this.normalization.id, this.normalization.B)
-        }
+        if (this.normalization.B != 0) {
+	     this.compute_normalization( this.normalization.id, this.normalization.B);
+	}
     },
     
     update_precision: function () {
@@ -1075,29 +1228,27 @@ Model.prototype = {
      *
      * */
     getColor: function (cloneID) {
-        if (this.focus == cloneID) {
+        if (this.focus == cloneID)
             return color['@select'];
-        }
-        if (!this.windows[cloneID].active) {
+        if (!this.windows[cloneID].active)
             return color['@default'];
-        }
         if (this.colorMethod == "abundance") {
             var size = this.getSize(cloneID)
             if (size == 0) return color['@default'];
             return colorGenerator(this.scale_color(size * this.precision), color_s, color_v);
         }
-        if (this.colorMethod == "Tag") {
+        if (this.colorMethod == "Tag")
             return tagColor[this.windows[cloneID].tag];
-        }
+        if (this.colorMethod == "dbscan")
+            return this.windows[cloneID].colorDBSCAN;
         if (typeof (this.windows[cloneID].V) != 'undefined') {
-            if (this.colorMethod == "V") {
-                return this.windows[cloneID].colorV;
-            }
-            if (this.colorMethod == "J") {
-                return this.windows[cloneID].colorJ;
-            }
-            if (this.colorMethod == "N") {
-                return this.windows[cloneID].colorN;
+            switch(this.colorMethod) {
+                case 'V':
+                    return this.windows[cloneID].colorV;
+                case 'J':
+                    return this.windows[cloneID].colorJ;
+                case 'N':
+                    return this.windows[cloneID].colorN;
             }
         }
         if (this.colorMethod == "system") {
@@ -1213,6 +1364,81 @@ Model.prototype = {
             .text("")
     },
 
+    /* put a marker on a specific edge, for the edit distance distribution
+     *
+     */
+    focusEdge: function(edge) {
+       $(".focus")
+            .text(this.printInformationEdge(edge));
+    },
+
+    /* remove the focus marker to the edge
+     *
+     */
+    removeFocusEdge: function() {
+        $(".focus")
+            .text("")
+    },
+
+    /* print informations of a specific edge
+     */
+    printInformationEdge: function(edge) {
+        return this.getName(edge.source)+" -- "+this.getName(edge.target)+" == "+edge.len;
+    },
+
+    /* Fonction permettant de recharger le bouton 'align' en fonction de ce qui a été selectionné dans le model
+    */
+    updateAlignmentButton: function() {
+      var self = this;
+      var align = document.getElementById("align");
+      if (align != null) {
+	if (this.clonesSelected.length > 1) {
+	  align.className = "button";
+	  align.onclick = function() {self.segment.align();};
+	}
+	else {
+	  align.className = "";
+	  align.onclick = function() {};
+	}
+      }
+    },
+
+    /* return clones currently in the selection
+     *
+     * */
+    getSelected: function () {
+        var result = []
+        for (var i = 0; i < this.n_windows; i++) {
+            if (this.windows[i].select) {
+                result.push(i);
+            }
+        }
+        return result
+    },
+
+    /*Fonction permettant d'ajouter un clône donné*/
+    addClonesSelected: function(cloneID) {
+      this.clonesSelected.push(cloneID);
+    },
+
+    /*Fonction permettant de déselectionner un clône donné*/
+    removeClonesSelected: function(cloneID) {
+      //Si suppression d'un clone parmis une liste de plusieurs, alors on supprime le clone spécifié
+      if (this.clonesSelected.length > 1) {
+        for (var i = 0; i < this.clonesSelected.length; i++) {
+	       if (this.clonesSelected[i] == cloneID) this.clonesSelected.splice(i, 1);
+        }
+        this.lastCloneSelected = this.clonesSelected[0];
+      }
+      //Sinon, on remet tout à 0
+      else this.removeAllClones();
+    },
+
+    /*Fonction permettant de déselectionner tous les clônes déjà sélectionnés*/
+    removeAllClones: function() {
+      this.clonesSelected = [];
+      this.lastCloneSelected = -1;
+    },
 
     /* put a clone in the selection
      *
@@ -1221,18 +1447,24 @@ Model.prototype = {
 
         var list = this.getSelected();
 
-        console.log("select() (clone " + cloneID + ")")
+        console.log("select() (clone " + cloneID + ")");
 
         if (cloneID == (this.n_windows - 1)) return 0
 
         if (this.windows[cloneID].select) {
             this.unselect(cloneID);
+            return;
         } else {
-            if (list.length < 20) this.windows[cloneID].select = true;
+            if (list.length < 20) {
+	      this.windows[cloneID].select = true;
+	      this.addClonesSelected(cloneID);
+	    }
         }
         this.updateElem([cloneID]);
+	    this.lastCloneSelected = cloneID;
+        this.updateElemStyle([cloneID]);
+        this.updateAlignmentButton();
     },
-
 
     /* kick a clone out of the selection
      *
@@ -1242,7 +1474,9 @@ Model.prototype = {
         if (this.windows[cloneID].select) {
             this.windows[cloneID].select = false;
         }
-        this.updateElemStyle([cloneID]);
+        this.removeClonesSelected(cloneID);
+	    this.updateElemStyle([cloneID]);
+        this.updateAlignmentButton();
     },
 
 
@@ -1256,23 +1490,9 @@ Model.prototype = {
             this.windows[list[i]].select = false;
         }
         this.updateElem(list);
+	    this.removeAllClones();
+        this.updateAlignmentButton();
     },
-
-
-    /* return clones currently in the selection
-     *
-     * */
-    getSelected: function () {
-        console.log("getSelected()")
-        var result = []
-        for (var i = 0; i < this.n_windows; i++) {
-            if (this.windows[i].select) {
-                result.push(i);
-            }
-        }
-        return result
-    },
-
 
     /* merge all clones currently in the selection into one
      *
@@ -1384,11 +1604,11 @@ Model.prototype = {
         var startTime = new Date()
             .getTime();
         var elapsedTime = 0;
-        
-        this.update_normalization()
-        this.update_precision()
-        this.updateModel()
-        
+
+        this.update_normalization();
+        this.update_precision();
+        this.updateModel();
+
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].update();
         }
@@ -1567,11 +1787,12 @@ Model.prototype = {
         return html
     },
 
-    /* 
+    /* Fonction de clusterisation
      *
      * */
     clusterBy: function (data_name) {
 
+        this.currentCluster = data_name;
         //save user cluster
         if ( this.cluster_key==""){
             this.clones_copy = this.clones
@@ -1845,10 +2066,17 @@ function closeDataBox() {
         .innerHTML = "";
 }
 
+function return_URL_CGI() {
+    if (typeof config != "undefined") return config.cgi_address;
+    else return "No_CGI_found";
+}
+
 var msg = {
-    "align_error": "Error &ndash; connection to align server (bioinfo.lifl.fr) failed" + "</br> Please check your internet connection and retry." + "</br></br> <div class='center' > <button onclick='closePopupMsg()'>ok</button></div>",
+    "align_error": "Error &ndash; connection to align server ("+return_URL_CGI()+") failed" + "</br> Please check your internet connection and retry." + "</br></br> <div class='center' > <button onclick='closePopupMsg()'>ok</button></div>",
 
     "file_error": "Error &ndash; incorrect data file" + "</br> Please check you use a .data file generated by Vidjil." + "</br></br> <div class='center' > <button onclick='closePopupMsg()'>ok</button></div>",
+
+    "json_not_found":"Error &ndash; editDistanceFile.json not found" + "</br> Please to check the specified repository in the c++ program, or to run Vidjil program with the specified datas." + "</br></br> <div class='center'><button onclick='closePopupMsg()'>ok</button></div>",
 
     "version_error": "Error &ndash; data file too old (version " + VIDJIL_JSON_VERSION + " required)" + "</br> This data file was generated by a too old version of Vidjil. " + "</br> Please regenerate a newer data file. " + "</br></br> <div class='center' > <button onclick='closePopupMsg()'>ok</button></div>",
 
