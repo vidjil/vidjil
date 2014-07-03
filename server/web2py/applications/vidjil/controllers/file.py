@@ -28,6 +28,9 @@ def add_form():
     if error=="" :
         id = db.sequence_file.insert(sampling_date=request.vars['sampling_date'],
                             info=request.vars['file_info'],
+                            pcr=request.vars['pcr'],
+                            sequencer=request.vars['sequencer'],
+                            producer=request.vars['producer'],
                             patient_id=request.vars['patient_id'])
     
         res = {"file_id" : id,
@@ -57,20 +60,19 @@ def edit_form():
     if error=="" :
 
         mes = "file " + request.vars['id'] + " : "
-        if request.vars['sampling_date'] != None :
-            db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'])
-            mes += "sampling date saved, "
-            
-        if request.vars['file_info'] != None :
-            db.sequence_file[request.vars["id"]] = dict(info=request.vars['file_info'])
-            mes += "info saved, "
+        if request.vars['sampling_date'] != None and request.vars['file_info'] != None :
+            db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'],
+                                                        info=request.vars['file_info'],
+                                                        pcr=request.vars['pcr'],
+                                                        sequencer=request.vars['sequencer'],
+                                                        producer=request.vars['producer'])
             
         patient_id = db.sequence_file[request.vars["id"]].patient_id
         
         res = {"file_id" : request.vars['id'],
                "redirect": "patient/info",
                "args" : { "id" : patient_id},
-               "message": mes}
+               "message": "change saved"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def upload(): 
