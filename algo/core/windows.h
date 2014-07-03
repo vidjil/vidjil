@@ -25,6 +25,7 @@ class WindowsStorage {
   map<junction, list<Sequence> > seqs_by_window;
   map<string, string> windows_labels;
   list<pair <junction, int> > sort_all_windows;
+  map<junction, int> id_by_window;
  public:
   /**
    * Build an empty storage, with the labels that correspond to specific
@@ -82,6 +83,16 @@ class WindowsStorage {
    * The number of windows stored
    */
   size_t size();
+
+  /**
+   * @return the id of the window, by his sequence
+   */
+  int getId(junction window);
+
+  /**
+   * Give an id to all the windows, in id_by_window map
+   */
+  void setIdToAll();
 
   /**
    * Add a new window with its list of sequences
