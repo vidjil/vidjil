@@ -24,11 +24,19 @@ query = db(
     ) 
 ) 
 
-fused_file = db(
+fused = db(
     (db.fused_file.patient_id == patient)
     & (db.fused_file.config_id == config_id)
-).count()
+)
+fused_count = fused.count()
+fused_file = fused.select()
 
+analysis = db(
+    (db.analysis_file.patient_id == patient)
+    & (db.analysis_file.config_id == config_id)
+)
+analysis_count = analysis.count()
+analysis_file = analysis.select()
 }}
 
 
@@ -115,18 +123,21 @@ fused_file = db(
     <div class="db_block_left">
         <span class="button2" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> add file </span>
     </div>
-    {{if fused_file >0:}}
+    {{if fused_count >0:}}
     <div class="db_block_right">
         <span class="button2" onclick="db.load_data( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=config_id}} } )" > see result </span>
     </div>
     {{pass}}
 </div>
 
-{{if fused_file >0:}}
+{{if fused_count >0:}}
 <div class="db_block">
     <div class="db_block_right">
-        <span class="button" onclick="" > get .data </span>
-        <span class="button" onclick="" > get .analysis </span>
+        download
+        <a class="button" href={{=URL('default', 'download', scheme='https', args=fused_file[0].fused_file, vars=dict(filename='test'))}} type="application/octet-stream" download> .data </a>
+        {{if analysis_count >0:}}
+        <a class="button" href={{=URL('default', 'download', scheme='https', args=analysis_file[0].analysis_file, vars=dict(filename='test'))}} type="application/octet-stream" download> .analysis </a>
+        {{pass}}
     </div>
 </div>
 {{pass}}
