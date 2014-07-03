@@ -187,7 +187,18 @@ Builder.prototype = {
 
         listTag.appendChild(li);
     },
-
+    
+    /* Fonction servant à "déverouiller" l'appel de la fonction compute_normalization(), ainsi qu'à apposer le 'check' au checkBox 'normalize'
+     * */
+    displayNormalizeButton: function() {
+    var normalizeDiv = document.getElementById("normalizeDiv");
+    normalizeDiv.style.display="";
+	var normalizeCheckbox = document.getElementById("normalize");
+	this.m.normalization_switch(true);
+    normalizeCheckbox.disabled = false;
+	normalizeCheckbox.checked = true;
+    },
+    
     /* 
      * */
     editTagName: function (tagID, elem) {
