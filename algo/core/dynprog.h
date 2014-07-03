@@ -55,7 +55,7 @@ const Cost IdentityToto= Cost(+1, -1, -1); // avec seuil de length-2: un homopol
 /* const Cost Identity = Cost(+1, 0, 0); */
 const Cost IdentityDirty = Cost(+1000, -1, -1); // pour avoir une estimation de longueur de l'alignement, utilise dans compare-all
 const Cost Hamming = Cost(0, -1, MINUS_INF);
-const Cost Levensthein = Cost(0, -1, -1);
+const Cost Levenshtein = Cost(0, -1, -1);
 const Cost Cluster = Cost(+1, -4, -4, 0, 0);
 
 //const Cost Hamming = Cost();

@@ -80,7 +80,7 @@ int main(int argc, char* argv[])
 		<< "		4	IdentityToto" << endl
 		<< "		5	IdentityDirty" << endl
 		<< "		6	Hamming" << endl
-		<< "		7	Levensthein" << endl
+		<< "		7	Levenshtein" << endl
 		<< "		8	Cluster" << endl
 		<<endl;
 
@@ -117,7 +117,7 @@ int main(int argc, char* argv[])
 	if ( cost == 4) dpCost = IdentityToto;
 	if ( cost == 5) dpCost = IdentityDirty;
 	if ( cost == 6) dpCost = Hamming;
-	if ( cost == 7) dpCost = Levensthein;
+	if ( cost == 7) dpCost = Levenshtein;
 	if ( cost == 8) dpCost = Cluster;	
 	i++;
 	break;
