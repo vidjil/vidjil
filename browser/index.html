@@ -137,7 +137,7 @@
                     k-->
                     <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'Size')">V / abundance at selected timepoint</a>
                     <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'bar')">V distribution</a>
-                    <a class="buttonSelector" onclick="sp.changeSplitMethod('dbscan', 'dbscan')">Graph</a>
+                    <!--<a class="buttonSelector" onclick="sp.changeSplitMethod('dbscan', 'dbscan')">Graph</a>-->
                     <!--<a class="buttonSelector" onclick="sp.changeSplitMethod('graph','graph')">Edit distance distribution</a>
                     <a class="buttonSelector" onclick="sp.changeSplitMethod('dbscan','dbscan')">DBSCAN algorithm</a>-->
                     </div>
@@ -153,7 +153,7 @@
                     <a class="buttonSelector" onclick="m.changeColorMethod('system');" 
                         id="color_system_button" style="display:none">by system</a>
                     <a class="buttonSelector" onclick="m.changeColorMethod('abundance');">by abundance at selected timepoint</a>
-                    <a class="buttonSelector" onclick="m.changeColorMethod('dbscan');">by the DBSCAN algorithm</a>
+                    <!--<a class="buttonSelector" onclick="m.changeColorMethod('dbscan');">by the DBSCAN algorithm</a>-->
                 </div></div>
             </div>
 
@@ -171,32 +171,6 @@
                 </div></div>
             </div>
 
-<!--
-                    <div class="submenu">
-
-                        <div class="menu_box">
-			    <div id="DBSCANEpsSlider">
-			    <input id="changeEps" type="range" min="0" max="40" step="1" value="0" onchange="m.changeEps(this.value)" />
-			    </div>
-			</div>
-
-			
-			<div class="menu_box">
-			    <div id="DBSCANNbrSlider">
-				<input id="changeNbr" type="range" min="0" max="100" step="1" value="0" onchange="m.changeNbr(this.value)" />
-			    </div>
-			</div>
-
-		
-			<div class="menu_box">
-			    <div id="EditDistanceSlider">
-				</br>
-				<input id="displayMax_slider" type="range" min="1" max="20" step="1" value="10" onchange="sp.displayDistanceMax(this.value)" style="display:none"/>
-			    </div>
-			</div>
-
-   
--->
             <div class="menu" onmouseover="showSelector('settingsSelector');" > settings
                 <div id="settingsSelector" class="selector"><div>
                     <div class="menu_box">
@@ -222,6 +196,31 @@
                             germline (for color and scatterplot)</br>
                             <ul id="germline_list">
                             </ul>
+                        </div>
+                    </div>
+
+                    <!--menu graph/dbscan -->
+                    <div class="submenu" style="display:none">
+
+                        <div class="menu_box">
+                            <div id="DBSCANEpsSlider">
+                            <input id="changeEps" type="range" min="0" max="40" step="1" value="0" onchange="m.changeEps(this.value)" />
+                            </div>
+                        </div>
+
+                        
+                        <div class="menu_box">
+                            <div id="DBSCANNbrSlider">
+                            <input id="changeNbr" type="range" min="0" max="100" step="1" value="0" onchange="m.changeNbr(this.value)" />
+                            </div>
+                        </div>
+
+                    
+                        <div class="menu_box">
+                            <div id="EditDistanceSlider">
+                            </br>
+                            <input id="displayMax_slider" type="range" min="1" max="20" step="1" value="10" onchange="sp.displayDistanceMax(this.value)" style="display:none"/>
+                            </div>
                         </div>
                     </div>
 
