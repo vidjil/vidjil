@@ -85,6 +85,7 @@ Segment.prototype = {
         //align button
         span = document.createElement('span');
         span.id = "align"
+	this.m.updateAlignmentButton();
         span.className = "button"
         span.onclick = function () {
             self.align()
