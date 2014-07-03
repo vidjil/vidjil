@@ -101,6 +101,9 @@ db.define_table('sequence_file',
                 Field('sampling_date','date'),
                 Field('info','text'),
                 Field('filename','text'),
+                Field('pcr','text'),
+                Field('sequencer','text'),
+                Field('producer','text'),
                 Field('size_file','integer'),
                 Field('data_file', 'upload', length=1000000000000))
 

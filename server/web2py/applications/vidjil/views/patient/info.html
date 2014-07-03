@@ -12,7 +12,9 @@
 {{pass}}
 
 {{
+
 patient = db.patient[request.vars["id"]]
+configh = db.config[request.vars["config_id"]]
 
 query = db( 
     (db.sequence_file.patient_id==db.patient.id) 
@@ -30,6 +32,7 @@ fused = db(
 )
 fused_count = fused.count()
 fused_file = fused.select()
+
 
 analysis = db(
     (db.analysis_file.patient_id == patient)
