@@ -209,7 +209,7 @@ int main (int argc, char **argv)
       tag = "\t" + string(basename(ch));
     }
 
-  // const Cost countCost = Levensthein ; 
+  // const Cost countCost = Levenshtein ; 
   const Cost countCost = Cost(0, -2, -2, 0, -1);
   out << "# using cost " << countCost << endl ;
 
