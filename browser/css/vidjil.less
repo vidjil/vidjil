@@ -114,9 +114,15 @@ ul{
 max-height: calc(~"100%" - @margin)
 }
 
+line {
+  stroke: @secondary;
+  stroke-width: 0.5;
+}
+
                         /* left-container - info */
 
 #info{
+  font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
   font-size: 13px;
   height :200px;
   padding:3px;
@@ -286,6 +292,15 @@ max-height: calc(~"100%" - @margin)
 .circle_hidden{
   -webkit-transition: fill 0.2s;
   display:none;
+}
+
+.line_active {
+  opacity: 1;
+  stroke-width: 4px;
+}
+
+.line_inactive {
+  display: none;
 }
 
 .sp_legend{
@@ -561,7 +576,20 @@ span .substitution{
   margin:5px;
   cursor:pointer;
   background:inherit;
-} 
+}
+
+.submenu{
+    width: 200px;
+    display: inline-table;
+}
+
+.menu_box {
+    margin: 0px;
+    padding: 5px;
+    border-top: solid;
+    border-width: 1px;
+    border-color:@border;
+}
 
 .submenu{
     width: 200px;
@@ -903,10 +931,17 @@ span.logo
 }
 
 .axis_select_x {
+    display: block;
 }
 
 .axis_select_y {
     top: 18px;
+    display: block;
+}
+
+.axis_select_graph {
+    top: 0px;
+    display: none;
 }
 
 .axis_select select[selected=selected] {
@@ -1060,10 +1095,10 @@ span.logo
     position: relative;
 }
 
-#db_fixed_header { 
-    position: absolute; 
-    top: 0px; 
-    background: @border;
+#db_fixed_header {
+    position: absolute;
+    top: 0px;
+    background: @highlight;
 }
 
 .db_help_desc {
