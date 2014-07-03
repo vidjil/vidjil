@@ -44,10 +44,11 @@
         <script type="text/javascript" src='js/lib/file.js'></script>
         <script type="text/javascript" src="js/lib/less-1.5.0.min.js"></script>
         <script type="text/javascript" src='js/lib/jquery.zclip.js'></script>
-	<script type="text/javascript" src='js/compare.js'></script>
+	    <script type="text/javascript" src='js/compare.js'></script>
+        <script type="text/javascript" src='js/dbscan.js'></script>
         <script type="text/javascript" src='js/germline.js'></script>
-        <script type="text/javascript" src='js/model.js'></script>
         <script type="text/javascript" src='js/segmenter.js'></script>
+        <script type="text/javascript" src='js/model.js'></script>
         <script type="text/javascript" src='js/list.js'></script>
         <script type="text/javascript" src="js/graph.js"> </script>
         <script type="text/javascript" src="js/scatterPlot.js"> </script>
@@ -57,6 +58,7 @@
         <script type="text/javascript" src='js/pdf.js'></script>
         <script type="text/javascript" src='js/database.js'></script>
         <script type="text/javascript" src='js/conf.js'></script>
+        <script type="text/javascript" src='js/stats.js'></script>
 
     </head>
 
@@ -118,19 +120,28 @@
                     <a class="buttonSelector" onclick="m.restoreClones();">user</a>
                     <a class="buttonSelector" onclick="m.clusterBy('V');">V gene + allele</a>
                     <a class="buttonSelector" onclick="m.clusterBy('J');">J gene + allele</a>
+                    <a class="buttonSelector" onclick="m.clusterBy('cluster')">DBSCAN algorithm</a>
+
                     <div id="clusterby_button"> </div>
                 </div></div>
             </div>
 
-            <div class="menu" onmouseover="showSelector('groupSelector');"> analysis 
-                <div id="groupSelector" class="selector"><div>
-                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'gene_j');">V / J (genes)</a> 
-                    <a class="buttonSelector" onclick="sp.changeSplitMethod('allele_v', 'allele_j');">V / J (alleles)</a> 
-                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'n');">V / N length</a> 
-                    <!--<a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'nSize');">V / N length + VJ deletions</a> -->
-                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'Size')">V / abundance at selected timepoint</a> 
-                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'bar')">V distribution</a> 
-                </div></div>
+            <div class="menu" onmouseover="showSelector('groupSelector');"> analysis
+                <div id="groupSelector" class="selector">
+                    <div>
+                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'gene_j');">V / J (genes)</a>
+                    <a class="buttonSelector" onclick="sp.changeSplitMethod('allele_v', 'allele_j');">V / J (alleles)</a>
+                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'n');">V / N length</a>
+                    <!--
+                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'nSize');">V / N length + VJ deletions</a>
+                    k-->
+                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'Size')">V / abundance at selected timepoint</a>
+                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'bar')">V distribution</a>
+                    <a class="buttonSelector" onclick="sp.changeSplitMethod('dbscan', 'dbscan')">Graph</a>
+                    <!--<a class="buttonSelector" onclick="sp.changeSplitMethod('graph','graph')">Edit distance distribution</a>
+                    <a class="buttonSelector" onclick="sp.changeSplitMethod('dbscan','dbscan')">DBSCAN algorithm</a>-->
+                    </div>
+                </div>
             </div>
 
             <div class="menu" onmouseover="showSelector('colorSelector');" > color 
@@ -142,6 +153,7 @@
                     <a class="buttonSelector" onclick="m.changeColorMethod('system');" 
                         id="color_system_button" style="display:none">by system</a>
                     <a class="buttonSelector" onclick="m.changeColorMethod('abundance');">by abundance at selected timepoint</a>
+                    <a class="buttonSelector" onclick="m.changeColorMethod('dbscan');">by the DBSCAN algorithm</a>
                 </div></div>
             </div>
 
@@ -163,6 +175,28 @@
                             number of clones</br>
                             <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
                         </div>
+
+                        <!--Slider for the variation of the epsilon parameter-->
+                        <div class="menu_box">
+			    <div id="DBSCANEpsSlider">
+			    <input id="changeEps" type="range" min="0" max="40" step="1" value="0" onchange="m.changeEps(this.value)" />
+			    </div>
+			</div>
+
+			<!--Slider for the variation of the min pts parameter-->
+			<div class="menu_box">
+			    <div id="DBSCANNbrSlider">
+				<input id="changeNbr" type="range" min="0" max="100" step="1" value="0" onchange="m.changeNbr(this.value)" />
+			    </div>
+			</div>
+
+			<!--Slider for the variation of the max distance-->
+			<div class="menu_box">
+			    <div id="EditDistanceSlider">
+				</br>
+				<input id="displayMax_slider" type="range" min="1" max="20" step="1" value="10" onchange="sp.displayDistanceMax(this.value)" style="display:none"/>
+			    </div>
+			</div>
 
                         <div class="menu_box">
                             normalization (<span id="normalize_value"> </span>)</br>
