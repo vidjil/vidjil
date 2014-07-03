@@ -491,6 +491,8 @@ def interesting_substrings(l, target_length=6):
         return substrings
 
     ### Remove the longest common substring
+    
+    #Have to replace '' by '_' if the removal have place between 2 substrings 
 
     common = common_substring(substrings)
     substrings = [s.replace(common, '') for s in substrings]
