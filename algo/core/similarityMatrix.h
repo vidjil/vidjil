@@ -5,6 +5,8 @@
 #include <string>
 #include <iostream>
 #include <iomanip>
+#include "json.h"
+
 using namespace std;
 
 #define LIMIT_DISPLAY 15
@@ -95,15 +97,29 @@ class OutputSimilarityMatrix {
 class RawOutputSimilarityMatrix: public OutputSimilarityMatrix {
  public:
   RawOutputSimilarityMatrix(SimilarityMatrix &m, float sim=100., int max_display = LIMIT_DISPLAY);
-}; 
+};
 
 class HTMLOutputSimilarityMatrix: public OutputSimilarityMatrix {
  public:
   HTMLOutputSimilarityMatrix(SimilarityMatrix &m, float sim=100., int max_display = LIMIT_DISPLAY);
-  
-}; 
+
+};
+
+/*Class to export a similarity matrix*/
+class JsonOutputSimilarityMatrix: public OutputSimilarityMatrix {
+ public:
+  JsonOutputSimilarityMatrix(SimilarityMatrix &m, float sim=100., int max_display = LIMIT_DISPLAY);
+};
+
+/*Class to export a windows matrix*/
+class JsonOutputWindowsMatrix: public OutputSimilarityMatrix {
+ public:
+  JsonOutputWindowsMatrix(SimilarityMatrix &m, float sim=100., int max_display = LIMIT_DISPLAY);
+};
 
 ostream &operator<<(ostream &out, const RawOutputSimilarityMatrix &matrix);
 ostream &operator<<(ostream &out, const HTMLOutputSimilarityMatrix &matrix);
+JsonArray &operator<<(JsonArray &out, const JsonOutputSimilarityMatrix &matrix);
+JsonArray &operator<<(JsonArray &out, const JsonOutputWindowsMatrix &matrix);
 
 #endif
