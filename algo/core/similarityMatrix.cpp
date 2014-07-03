@@ -20,6 +20,7 @@
 #include "similarityMatrix.h"
 #include <cassert>
 #include <limits>
+#include <math.h>
 
 SimilarityMatrix::SimilarityMatrix(int n):n(n),labels(n),descriptions(n) {
   assert(n >= 0);
@@ -106,7 +107,9 @@ int OutputSimilarityMatrix::maxDisplayed() const {
 
 RawOutputSimilarityMatrix::RawOutputSimilarityMatrix(SimilarityMatrix &m, float sim, int max_display) : OutputSimilarityMatrix(m, sim, max_display) {}
 
+JsonOutputSimilarityMatrix::JsonOutputSimilarityMatrix(SimilarityMatrix &m, float sim, int max_display) : OutputSimilarityMatrix(m, sim, max_display) {}
 
+JsonOutputWindowsMatrix::JsonOutputWindowsMatrix(SimilarityMatrix &m, float sim, int max_display) : OutputSimilarityMatrix(m, sim, max_display) {}
 
 ostream &operator<<(ostream &out, const RawOutputSimilarityMatrix &outputMatrix) {
   SimilarityMatrix &matrix = outputMatrix.matrix;
@@ -156,3 +159,44 @@ ostream &operator<<(ostream &out, const RawOutputSimilarityMatrix &outputMatrix)
   return out;
 }
 
+/*Export a similarity matrix, for the edit distance distribution & DBSCAN algorithm
+*/
+JsonArray &operator<<(JsonArray &out, const JsonOutputSimilarityMatrix &outputMatrix) {
+
+    SimilarityMatrix &matrix = outputMatrix.matrix;
+    for (int i = 0; i < matrix.size(); i++) {
+        for (int j = 0; j < matrix.size(); j++) {
+            if (i < j) {
+                //Creation of an edges objects array, which contains a source objet, a target object, and the length of the distance between them
+                JsonList lineEdge;
+                lineEdge.add("source", i);
+                lineEdge.add("target", j);
+                //100 - similarity -> distance
+                lineEdge.add("len", (100 - matrix(i,j)));
+                out.add(lineEdge);
+            }
+        }
+    }
+    return out;
+}
+
+/* Export Levenshtein distances matrix, for the edit distance distribution & DBSCAN algorithm
+*/
+JsonArray &operator<<(JsonArray &out, const JsonOutputWindowsMatrix &outputMatrix) {
+
+    SimilarityMatrix &matrix = outputMatrix.matrix;
+    for (int i = 0; i < matrix.size(); i++) {
+        for (int j = 0; j < matrix.size(); j++) {
+            if (i < j) {
+                //Creation of an edges objects array, which contains a source objet, a target object, and the length of the distance between them
+                JsonList lineEdge;
+                lineEdge.add("source", i);
+                lineEdge.add("target", j);
+                //absolute value of the score -> distance
+                lineEdge.add("len", fabs(matrix(i,j)));
+                out.add(lineEdge);
+            }
+        }
+    }
+    return out;
+}

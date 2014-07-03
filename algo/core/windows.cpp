@@ -91,12 +91,15 @@ pair <int, int> WindowsStorage::keepInterestingWindows(size_t min_reads_window) 
         it++;
       }
     }
+
+  sort_all_windows.clear();
   return make_pair(removes, nb_reads);
 }
 
 void WindowsStorage::sort() {
-  for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin(); 
-       it != seqs_by_window.end(); ++it) 
+  sort_all_windows.clear();
+  for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin();
+       it != seqs_by_window.end(); ++it)
     {
       sort_all_windows.push_back(make_pair(it->first, it->second.size()));
     }
