@@ -481,9 +481,11 @@ ScatterPlot.prototype = {
    */
   keepUsefullEdgesForDBSCANGraph: function(tmp) {
       var returnedTab = [];
-      for (var i = 0; i < tmp.length; i++){
-        if (this.m.windows[tmp[i].source].cluster == this.m.windows[tmp[i].target].cluster) {
-            returnedTab.push(tmp[i]);
+      if (typeof tmp != 'undefined'){
+        for (var i = 0; i < tmp.length; i++){
+            if (this.m.windows[tmp[i].source].cluster == this.m.windows[tmp[i].target].cluster) {
+                returnedTab.push(tmp[i]);
+            }
         }
       }
       return returnedTab;
@@ -494,15 +496,17 @@ ScatterPlot.prototype = {
    */
   keepUsefullEdgesForEditDistanceGraph: function(tmp) {
       var returnedTab = [];
-      //Sorted array, according to growing edges length
-      tmp.sort(function(a,b) {if (a.len < b.len) return -1; if (a.len > b.len) return 1; return 0});
-      for (var i = 0; i < tmp.length; i++) {
-        //Keep only edges lower or equals than distanceMax
-        if (tmp[i].len <= this.distanceMax)
-          returnedTab.push(tmp[i]);
-        else
-          break;
-      }
+        if (typeof tmp != 'undefined'){
+            //Sorted array, according to growing edges length
+            tmp.sort(function(a,b) {if (a.len < b.len) return -1; if (a.len > b.len) return 1; return 0});
+            for (var i = 0; i < tmp.length; i++) {
+                //Keep only edges lower or equals than distanceMax
+                if (tmp[i].len <= this.distanceMax)
+                returnedTab.push(tmp[i]);
+                else
+                break;
+            }
+        }
       return returnedTab
   },
 

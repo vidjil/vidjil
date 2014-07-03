@@ -68,10 +68,12 @@ function addTabOfEdges(nbrNodes, allEdges) {
     for (var i = 0; i < tabOfEdges.length; i++)
         tabOfEdges[i] = new Array(nbrNodes);
     //End of the creation of the double-entries edges array
-    for (var i = 0; i < allEdges.length; i++) {
-        //Added length/distance
-        tabOfEdges[allEdges[i].source][allEdges[i].target] = allEdges[i].len;
-        tabOfEdges[allEdges[i].target][allEdges[i].source] = allEdges[i].len;
+    if (typeof allEdges != 'undefined'){
+        for (var i = 0; i < allEdges.length; i++) {
+            //Added length/distance
+            tabOfEdges[allEdges[i].source][allEdges[i].target] = allEdges[i].len;
+            tabOfEdges[allEdges[i].target][allEdges[i].source] = allEdges[i].len;
+        }
     }
     return tabOfEdges;
 };
