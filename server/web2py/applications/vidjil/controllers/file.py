@@ -1,11 +1,12 @@
 # coding: utf8
+import gluon.contrib.simplejson
+if request.env.http_origin:
+    response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['Access-Control-Max-Age'] = 86400
+
 
 def add(): 
-    import gluon.contrib.simplejson
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
     if auth.has_permission('admin', 'patient', request.vars['id'], auth.user_id):
         return dict(message=T('add file'))
     else :
@@ -15,12 +16,7 @@ def add():
 
 #TODO check data
 def add_form(): 
-    import gluon.contrib.simplejson, shutil, os.path, datetime
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
-        
+    import shutil, os.path, datetime
     error = ""
     
     if request.vars['sampling_date'] != None :
@@ -32,6 +28,9 @@ def add_form():
     if error=="" :
         id = db.sequence_file.insert(sampling_date=request.vars['sampling_date'],
                             info=request.vars['file_info'],
+                            pcr=request.vars['pcr'],
+                            sequencer=request.vars['sequencer'],
+                            producer=request.vars['producer'],
                             patient_id=request.vars['patient_id'])
     
         res = {"file_id" : id,
@@ -47,21 +46,12 @@ def add_form():
 
 
 def edit(): 
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
     return dict(message=T('edit file'))
 
 
 #TODO check data
 def edit_form(): 
-    import gluon.contrib.simplejson, shutil, os.path, datetime
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
-    
+    import shutil, os.path, datetime
     error = ""
     
     if request.vars['id'] == None :
@@ -70,29 +60,23 @@ def edit_form():
     if error=="" :
 
         mes = "file " + request.vars['id'] + " : "
-        if request.vars['sampling_date'] != None :
-            db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'])
-            mes += "sampling date saved, "
-            
-        if request.vars['file_info'] != None :
-            db.sequence_file[request.vars["id"]] = dict(info=request.vars['file_info'])
-            mes += "info saved, "
+        if request.vars['sampling_date'] != None and request.vars['file_info'] != None :
+            db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'],
+                                                        info=request.vars['file_info'],
+                                                        pcr=request.vars['pcr'],
+                                                        sequencer=request.vars['sequencer'],
+                                                        producer=request.vars['producer'])
             
         patient_id = db.sequence_file[request.vars["id"]].patient_id
         
         res = {"file_id" : request.vars['id'],
                "redirect": "patient/info",
                "args" : { "id" : patient_id},
-               "message": mes}
+               "message": "change saved"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def upload(): 
-    import gluon.contrib.simplejson, shutil, os.path, datetime
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
-    
+    import shutil, os.path, datetime
     error = ""
     
     if request.vars['id'] == None :
@@ -112,19 +96,11 @@ def upload():
   
 
 def confirm():
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
     return dict(message=T('confirm sequence file deletion'))
         
 
 def delete():
-    import gluon.contrib.simplejson, shutil, os.path
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
+    import shutil, os.path
 
     patient_id = db.sequence_file[request.vars["id"]].patient_id
     

@@ -4,21 +4,25 @@
 {{if 'message' in globals():}}
 
 {{
+id = request.vars["id"]
 query = db( 
-        (db.auth_user.id == request.vars["id"]) 
+        (db.auth_user.id == id) 
         & (db.auth_membership.user_id == db.auth_user.id) 
         & (db.auth_membership.group_id == db.auth_group.id) 
     ).select() 
 }}
+
 <div>
 
     <div>
-        <h3>{{=message}}  {{=request.vars["id"]}}</h3>
+        <h3>{{=message}}  {{=id}}</h3>
     </div>
     
     <div class="db_block">
         <div class="db_block_left">
-            create patient <input type="checkbox" name="patient" onclick="db.patient_right(this.checked, this.name, {{=request.vars["id"]}});"></br>
+            create patient 
+            <input type="checkbox" name="patient" onclick="db.user_rights(this.checked, this.name, {{=id}});" {{if auth.has_permission('create', 'patient', 0, id) :}}{{="checked"}}{{pass}}>
+            </br>
             <!--create config <input type="checkbox" name="config" onclick="db.test(this.checked, this.name, {{request.vars["id"]}});"></br>-->
         </div>
     </div>

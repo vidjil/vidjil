@@ -614,7 +614,7 @@ span .substitution{
   left :50%;
   font-size: 13px; 
   padding: 10px;
-  background:inherit;
+  background:@background;
   display:none; 
 }
 
@@ -718,6 +718,7 @@ span .substitution{
   margin-right:5px;
   margin-left:5px;
   min-width : 16px;
+  color: @default;
 }
 
 .button2 {
@@ -877,7 +878,7 @@ span.logo
   color: grey;
 }
 
-.selector, #list_menu, #top-container, .list_clones, .bot-bar, #bot-container, #popup-container, #file_menu, #tagSelector, .closeButton
+.selector, #list_menu, #top-container, .list_clones, .bot-bar, #bot-container, #popup-container, #file_menu, #tagSelector, .closeButton, #analysis_menu
 {
   border-color: @border; 
 }
@@ -1089,9 +1090,6 @@ span.logo
     overflow-y: auto;
     overflow-x: hidden;
     max-height: 275px;
-    border: solid;
-    border-color: @border;
-    border-width: 1px;
     position: relative;
 }
 
@@ -1169,3 +1167,8 @@ span.logo
 select>option:hover {
     background-color: @border;
 }
+
+.inactive {
+    opacity: 0.5;
+}
+

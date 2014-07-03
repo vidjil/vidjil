@@ -9,11 +9,13 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 
+import gluon.contrib.simplejson
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
 
+    
 def index():
     """
     example action using the internationalization operator T and flash
@@ -31,8 +33,6 @@ def help():
 
 ## add a scheduller task to run vidjil on a specific sequence file
 def run_request():
-    import gluon.contrib.simplejson
-
     error = ""
 
     ##TODO check  
@@ -40,7 +40,12 @@ def run_request():
         error += "id sequence file needed, "
     if not "config_id" in request.vars:
         error += "id config needed, "
-
+        
+    id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
+    
+    if not auth.has_permission('admin', 'patient', id_patient) :
+        error += "you don't have permission to run request for this patient ("+str(id_patient)+")"
+        
     row2 = db( ( db.scheduler_task.args == '["'+request.vars["sequence_file_id"]+'", "'+request.vars["config_id"]+'"]' ) 
              & ( db.scheduler_task.status != "FAILED"  )
              & ( db.scheduler_task.status != "EXPIRED"  )
@@ -68,7 +73,6 @@ def run_request():
                                         )
 
         ## create or update fuse file state
-        id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
         row = db( ( db.fused_file.config_id == request.vars["config_id"] ) & 
                   ( db.fused_file.patient_id == id_patient )  
                 ).select()
@@ -90,14 +94,14 @@ def run_request():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
-        res = {"success" : "false", "msg" : error}
+        res = {"success" : "false",
+               "message" : error}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
     
 
 def get_data():
     import time
-    import gluon.contrib.simplejson
     from subprocess import Popen, PIPE, STDOUT
 
     error = ""
@@ -106,7 +110,10 @@ def get_data():
         error += "id patient file needed, "
     if not "config_id" in request.vars:
         error += "id config needed, "
-
+    if not auth.has_permission('admin', 'patient', request.vars["patient_id"]) and \
+    not auth.has_permission('read', 'patient', request.vars["patient_id"]):
+        error += "you don't have permission to consult this patient ("+id_patient+")"
+        
     query = db( ( db.fused_file.patient_id == request.vars["patient_id"] )
                & ( db.fused_file.config_id == request.vars["config_id"] )
                ).select() 
@@ -126,8 +133,6 @@ def get_data():
     
     
 def get_analysis():
-    import gluon.contrib.simplejson
-    
     error = ""
 
     if not "patient_id" in request.vars :
@@ -178,8 +183,6 @@ def get_analysis():
     
     
 def save_analysis():
-    import gluon.contrib.simplejson
-        
     error = ""
 
     if not "patient_id" in request.vars :
@@ -220,7 +223,7 @@ def download():
     allows downloading of uploaded files
     http://..../[app]/default/download/[filename]
     """
-    return response.download(request, db)
+    return response.download(request, db, download_filename=request.vars.filename)
 
 
 def call():
@@ -272,7 +275,7 @@ def add_membership():
     return dict(form=form)
 
 def upload_file():
-        import gluon.contrib.simplejson, shutil, os.path
+        import shutil, os.path
         
         try:
             # Get the file from the form

@@ -955,354 +955,334 @@ ScatterPlot.prototype = {
 
     },
 
-  /* Fonction permettant d'initialiser les grilles de répartition du ScatterPlot selon le modèle J
-  * */
-  initGridModelJ: function () {
+    /* Fonction permettant d'initialiser les grilles de répartition du ScatterPlot selon le modèle J
+     * */
+    initGridModelJ: function () {
 
-      //Initialisation des paramètres de l'objet concernant les positions des gènes/allèles J
-      this.gridModel["allele_j"] = [];
-      this.gridModel["gene_j"] = [];
+	//Initialisation des paramètres de l'objet concernant les positions des gènes/allèles J
+        this.gridModel["allele_j"] = [];
+        this.gridModel["gene_j"] = [];
 
-      //Obtention de toutes les clefs concernant les allèles et gènes J
-      var jKey = Object.keys(this.m.germline.j);
-      var jKey2 = Object.keys(this.m.germline.jgene);
-      //Initialisation d'un pas pour ?????
-      var stepJ = 1 / (jKey2.length + 1)
+	//Obtention de toutes les clefs concernant les allèles et gènes J
+        var jKey = Object.keys(this.m.germline.j);
+        var jKey2 = Object.keys(this.m.germline.jgene);
+	//Initialisation d'un pas pour ?????
+        var stepJ = 1 / (jKey2.length + 1)
 
-      //Concerne toutes les allèles J -> Initialisation et calcul de position
-      for (var i = 0; i < jKey.length; i++) {
+        //Concerne toutes les allèles J -> Initialisation et calcul de position
+        for (var i = 0; i < jKey.length; i++) {
 
-          var elem = jKey[i].split('*');
+            var elem = jKey[i].split('*');
 
-          var color = this.m.germline.j[jKey[i]].color;
-          var pos = (this.m.germline.j[jKey[i]].gene) * stepJ +
-              (this.m.germline.j[jKey[i]].allele + 0.5) * (stepJ / (this.m.germline.jgene[elem[0]].n));
-          var pos2 = (this.m.germline.j[jKey[i]].gene + 0.5) * stepJ;
+            var color = this.m.germline.j[jKey[i]].color;
+            var pos = (this.m.germline.j[jKey[i]].gene) * stepJ +
+                (this.m.germline.j[jKey[i]].allele + 0.5) * (stepJ / (this.m.germline.jgene[elem[0]].n));
+            var pos2 = (this.m.germline.j[jKey[i]].gene + 0.5) * stepJ;
 
-          this.gridModel["allele_j"].push(this.makeLineModel("subline", pos, "*" + elem[1], color));
+            this.gridModel["allele_j"].push(this.makeLineModel("subline", pos, "*" + elem[1], color));
 
-          this.positionAllele[jKey[i]] = pos;
-          this.positionGene[jKey[i]] = pos2;
+            this.positionAllele[jKey[i]] = pos;
+            this.positionGene[jKey[i]] = pos2;
 
-      }
+        }
 
-      //Concerne tous les gènes J -> Initialisation et calcul de position
-      for (var i = 0; i < jKey2.length; i++) {
+        //Concerne tous les gènes J -> Initialisation et calcul de position
+        for (var i = 0; i < jKey2.length; i++) {
 
-          var pos = (i + 0.5) * stepJ
-          var color = this.m.germline.jgene[jKey2[i]].color;
+            var pos = (i + 0.5) * stepJ
+            var color = this.m.germline.jgene[jKey2[i]].color;
 
-          this.gridModel["allele_j"].push(this.makeLineModel("line", pos, jKey2[i], color));
-          this.gridModel["gene_j"].push(this.makeLineModel("line", pos, jKey2[i], color));
-      }
+            this.gridModel["allele_j"].push(this.makeLineModel("line", pos, jKey2[i], color));
+            this.gridModel["gene_j"].push(this.makeLineModel("line", pos, jKey2[i], color));
+        }
 
-      //Gestion de toutes les positions non-définies pour les allèles ou gènes J
-      var pos = (jKey2.length + 0.5) * stepJ;
+        //Gestion de toutes les positions non-définies pour les allèles ou gènes J
+        var pos = (jKey2.length + 0.5) * stepJ;
 
-      this.gridModel["allele_j"].push(this.makeLineModel("line", pos, "?", color));
-      this.gridModel["gene_j"].push(this.makeLineModel("line", pos, "?", color));
+        this.gridModel["allele_j"].push(this.makeLineModel("line", pos, "?", color));
+        this.gridModel["gene_j"].push(this.makeLineModel("line", pos, "?", color));
 
-      this.positionGene["undefined J"] = pos
-      this.positionAllele["undefined J"] = pos
+        this.positionGene["undefined J"] = pos
+        this.positionAllele["undefined J"] = pos
 
-  },
+    },
 
-  /* Fonction permettant d'initialiser la taille de la grille, définie selon le modèle
-  * */
-  initGridModelSize: function () {
-      //Déclaration
-      this.gridModel["Size"] = [];
+    /* Fonction permettant d'initialiser la taille de la grille, définie selon le modèle
+     * */
+    initGridModelSize: function () {
+	//Déclaration
+        this.gridModel["Size"] = [];
 
-      //Calcul initial
-      this.sizeScale = d3.scale.log()
-	  .domain([this.m.min_size, 1])
-	  .range([1, 0]);
-      var height = 1;
+	//Calcul initial
+        this.sizeScale = d3.scale.log()
+            .domain([this.m.min_size, 1])
+            .range([1, 0]);
+        var height = 1;
 
-      //Calcul selon les précisions et le modèle
-      for (var i = 0; i < this.max_precision; i++) {
-          var pos = this.sizeScale(height);
-          var text = this.m.formatSize(height, false)
-          this.gridModel["Size"].push(this.makeLineModel("line", pos, text));
-          height = height / 10;
-      }
+	//Calcul selon les précisions et le modèle
+        for (var i = 0; i < this.max_precision; i++) {
+            var pos = this.sizeScale(height);
+            var text = this.m.formatSize(height, false)
+            this.gridModel["Size"].push(this.makeLineModel("line", pos, text));
+            height = height / 10;
+        }
 
-  },
+    },
 
-  //Fonction permettant d'initialiser la grille de répartition du ScatterPlot selon la répartition n ?????
-  initGridModelN: function () {
-      this.gridModel["n"] = [];
+    //Fonction permettant d'initialiser la grille de répartition du ScatterPlot selon la répartition n ?????
+    initGridModelN: function () {
+        this.gridModel["n"] = [];
 
-      for (var i = 0; i <= (Math.floor(this.m.n_max / 5)); i++) {
-          var pos = (1 - ((i * 5) / this.m.n_max));
-          this.gridModel["n"].push(this.makeLineModel("line", pos, i * 5));
-      }
-  },
+        for (var i = 0; i <= (Math.floor(this.m.n_max / 5)); i++) {
+            var pos = (1 - ((i * 5) / this.m.n_max));
+            this.gridModel["n"].push(this.makeLineModel("line", pos, i * 5));
+        }
+    },
 
-  //Fonction permettant d'initialiser le 'bar' de la grille
-  initGridModelBar: function () {
-      this.gridModel["bar"] = [];
+    //Fonction permettant d'initialiser le 'bar' de la grille
+    initGridModelBar: function () {
+        this.gridModel["bar"] = [];
 
-      for (var i = 0; i < 20; i++) {
-          var d = {};
-          d.type = "line";
-          d.value = i * 5;
-          this.gridModel["bar"].push(d);
-      }
-  },
+        for (var i = 0; i < 20; i++) {
+            var d = {};
+            d.type = "line";
+            d.value = i * 5;
+            this.gridModel["bar"].push(d);
+        }
+    },
+    
+    //Function which allows to initialize the grid, with regards to the Edit Distance visualization
+    initGridModelEditDistance: function() {
+        //No X/Y axis
+        this.axis_x_update([]);
+        this.axis_y_update([]);
+        //X/Y axis legends = "graph" (see graph_menu object, in the scatterPlot class)
+        this.splitX = "graph";
+        this.splitY = "graph";
+    },
 
-  //Function which allows to initialize the grid, with regards to the Edit Distance visualization
-  initGridModelEditDistance: function() {
-      //No X/Y axis
-      this.axis_x_update([]);
-      this.axis_y_update([]);
-      //X/Y axis legends = "graph" (see graph_menu object, in the scatterPlot class)
-      this.splitX = "graph";
-      this.splitY = "graph";
-  },
+    /* Function which allows to add a stroke attribute to all edges
+    */
+    addColor: function() {
+        this.edgeContainer
+            .style("stroke", function(d) {return d.color;});
+    },
 
-  /* Function which allows to add a stroke attribute to all edges
-  */
-  addColor: function() {
-      this.edgeContainer
-        .style("stroke", function(d) {return d.color;});
-  },
+    /*Function which permits to compute and add edges positions, according to source and target nodes
+    */
+    addPosition: function() {
+        var self = this;
+        //self.marge = margin top and left given in the scatterPlot
+        this.edgeContainer
+            //Awarding of the source position
+            .attr("x1", function(d) {return (d.source.px + self.marge_left);})
+            .attr("y1", function(d) {return (d.source.py + self.marge_top);})
+            //Awarding of the target position
+            .attr("x2", function(d) {return (d.target.px + self.marge_left);})
+            .attr("y2", function(d) {return (d.target.py + self.marge_top);});
+    },
 
-  /*Function which permits to compute and add edges positions, according to source and target nodes
-   */
-  addPosition: function() {
-      var self = this;
-      //self.marge = margin top and left given in the scatterPlot
-      this.edgeContainer
-	    //Awarding of the source position
-	    .attr("x1", function(d) {return (d.source.px + self.marge_left);})
-	    .attr("y1", function(d) {return (d.source.py + self.marge_top);})
-	    //Awarding of the target position
-	    .attr("x2", function(d) {return (d.target.px + self.marge_left);})
-	    .attr("y2", function(d) {return (d.target.py + self.marge_top);});
-  },
+    /* Fonction permettant le calcul d'une étape d'animation
+     * */
+    tick: function () {
+        var self = this;
+        
+        var active_node = this.node.filter(function(d, i) { return d.r2 > 0.1; });
+        //mise a jour des rayons( maj progressive )
+        this.node.each(this.updateRadius());
+        
+        
+        active_node.each(this.debugNaN())
+        //deplace le node vers son objectif
+        active_node.each(this.move());
+        //résolution des collisions
+        var quad = d3.geom.quadtree(this.nodes)
 
-  /* Function which allows to compute a frame
-  * */
-  tick: function () {
-      self = this;
+        for (var i=0; i<this.nodes.length; i++) {
+            if (this.nodes[i].r1 > 0.1){
+                quad.visit(this.collide2(this.nodes[i]));
+            }
+        }
+        active_node.each(this.debugNaN())
+        active_node
+            //attribution des nouvelles positions/tailles
+            .attr("cx", function (d) {
+		return (d.x + self.marge_left);
+            })
+            .attr("cy", function (d) {
+                return (d.y + self.marge_top);
+            })
+            .attr("r", function (d) {
+                return (d.r2);
+            })
+            .attr("title", function (d) {
+                return (self.m.getName(d));
+            })
 
-      var active_node = this.node.select(function(d, i) { return d.r!=0 ? this : null; });
+        //Calcul d'une frame (image / seconde)
+        this.time1 = Date.now();
+        if (this.fpsqueue.length === 10) {
+            document.getElementById("fps")
+                .innerHTML = d3.mean(this.fpsqueue)
+                .toFixed(3);
+            this.fpsqueue = [];
+        }
+        this.fpsqueue.push(Math.round(1000 / (this.time1 - this.time0)));
+        this.time0 = this.time1;
 
-      //Update radius
-      this.node.each(this.updateRadius());
+    },
 
-      active_node.each(this.debugNaN())
+    /* Fonction permettant le déplacement des nodes en fonction de la méthode de répartition utilisée à l'instant T
+     * */
+    move: function () {
+        self = this;
+        return function (d) {
+            var coef = 0.005; //?????
+            var coef2 = 0.01; //force d'attraction
+            var coef3 = 0.0015; //?????
+            var geneV = "undefined V"; //Gène/Allèle V de la grille à bouger
+            var geneJ = "undefined J"; //Gène/Allèle J de la grille à bouger
+            //Vérification de l'existence du gène/allèle V -> initialisation de geneV
+	    if (typeof (self.m.windows[d.id].V) != 'undefined' && self.m.germline.v[self.m.windows[d.id].V[0]]) {
+                geneV = self.m.windows[d.id].V[0];
+            }
+	    //Vérification de l'existence du gène/allèle J -> initialisation de geneJ
+            if (typeof (self.m.windows[d.id].J) != 'undefined' && self.m.germline.j[self.m.windows[d.id].J[0]]) {
+                geneJ = self.m.windows[d.id].J[0];
+            }
 
-      //move node in the direction of his objective
-      active_node.each(this.move());
+	    //Switch sur l'axe des Y en fonction de la méthode de répartition demandée, afin de calculer les nouvelles positions sur les axes
+            switch (self.splitY) {
+		//Cas de 'bar'
+            case "bar":
+                d.y += coef * (-d.y);
+                break;
+		//Cas de 'gene_j'
+            case "gene_j":
+                d.y += coef * ((self.posG[geneJ] * self.resizeH) - d.y);
+                break;
+		//Cas de 'allele_j'
+            case "allele_j":
+                d.y += coef * ((self.posA[geneJ] * self.resizeH) - d.y);
+                break;
+		//Cas de 'gene_v' (même calcul)
+            case "gene_v":
+                d.y += coef * ((self.posG[geneV] * self.resizeH) - d.y);
+                break;
+		//Cas de 'allele_v' (même calcul)
+            case "allele_v":
+                d.y += coef * ((self.posA[geneV] * self.resizeH) - d.y);
+                break;
+		//Cas de 'Size'
+            case "Size":
+                if (d.r1 != 0) {
+                    if (self.m.clones[d.id].cluster.length == 0) {
+                        d.y += coef2 * (self.sizeScale(self.m.getSequenceSize(d.id)) * self.resizeH - d.y);
+                    } else {
+                        d.y += coef2 * (self.sizeScale(self.m.getSize(d.id)) * self.resizeH - d.y);
+                    }
+                } else {
+                    d.y += coef2 * (self.resizeH - d.y);
+                }
+                break;
+		//Cas de 'nSize'
+            case "nSize":
+                if (typeof (self.m.windows[d.id].V) != 'undefined') {
+                    if (self.m.windows[d.id].N != -1) {
+                        d.y += coef2 * ((self.marge_top + (1 - (self.m.windows[d.id].Nlength / self.m.n_max)) * (self.resizeH - (2 * self.marge_top))) * self.resizeH - d.y);
+                    } else {
+                        d.y += coef2 * (self.resizeH - d.y);
+                    }
+                } else {
+                    d.y += coef2 * (self.resizeH - d.y);
+                }
+                break;
+		//Cas de 'n'
+            case "n":
+                d.y += coef2 * ((1 - (self.m.windows[d.id].Nlength / self.m.n_max)) * self.resizeH - d.y);
+                break;
+            }
 
-      //collisions resolution
-      var quad = d3.geom.quadtree(this.nodes)
-
-      for (var i=0; i<this.nodes.length; i++) {
-    	  if (this.nodes[i].r1 !=0){
-    	      quad.visit(this.collide2(this.nodes[i]));
-    	  }
-      }
-      active_node.each(this.debugNaN());
-      //move all no-clustering nodes in the direction of his initial place
-      if (self.dbscanActive && (!this.active_move)) self.forceNodesToStayInInitialPosition();
-      active_node
-	  //Give new positions/sizes
-	  .attr("cx", function (d) {
-	      return (d.x + self.marge_left);
-	  })
-	  .attr("cy", function (d) {
-	      return (d.y + self.marge_top);
-	  })
-	  .attr("r", function (d) {
-	      return (d.r2);
-	  })
-	  .attr("title", function (d) {
-	      return (self.m.getName(d));
-	  });
-      //If graph distribution, compute colors and positions for each nodes
-      if (this.reinit) {
-          this.addColor();
-          this.addPosition();
-      }
-      //Frame computing (picture / second)
-      this.time1 = Date.now();
-      if (this.fpsqueue.length === 10) {
-	  document.getElementById("fps")
-	      .innerHTML = d3.mean(this.fpsqueue)
-	      .toFixed(3);
-	  this.fpsqueue = [];
-      }
-      this.fpsqueue.push(Math.round(1000 / (this.time1 - this.time0)));
-      this.time0 = this.time1;
-
-  },
-
-  /* Fonction permettant le déplacement des nodes en fonction de la méthode de répartition utilisée à l'instant T
-  * */
-  move: function () {
-      self = this;
-      return function (d) {
-	  var coef = 0.005; //?????
-	  var coef2 = 0.01; //force d'attraction
-	  var coef3 = 0.0015; //?????
-	  var geneV = "undefined V"; //Gène/Allèle V de la grille à bouger
-	  var geneJ = "undefined J"; //Gène/Allèle J de la grille à bouger
-	  //Vérification de l'existence du gène/allèle V -> initialisation de geneV
-	  if (typeof (self.m.windows[d.id].V) != 'undefined' && self.m.germline.v[self.m.windows[d.id].V[0]]) {
-	      geneV = self.m.windows[d.id].V[0];
-	  }
-	  //Vérification de l'existence du gène/allèle J -> initialisation de geneJ
-	  if (typeof (self.m.windows[d.id].J) != 'undefined' && self.m.germline.j[self.m.windows[d.id].J[0]]) {
-	      geneJ = self.m.windows[d.id].J[0];
-	  }
-
-	  //Switch sur l'axe des Y en fonction de la méthode de répartition demandée, afin de calculer les nouvelles positions sur les axes
-	  switch (self.splitY) {
-	      //Cas de 'bar'
-	  case "bar":
-	      d.y += coef * (-d.y);
-	      break;
-	      //Cas de 'gene_j'
-	  case "gene_j":
-	      d.y += coef * ((self.posG[geneJ] * self.resizeH) - d.y);
-	      break;
-	      //Cas de 'allele_j'
-	  case "allele_j":
-	      d.y += coef * ((self.posA[geneJ] * self.resizeH) - d.y);
-	      break;
-	      //Cas de 'gene_v_used' et 'gene_v' (même calcul)
-	  case "gene_v_used":
-	  case "gene_v":
-	      d.y += coef * ((self.posG[geneV] * self.resizeH) - d.y);
-	      break;
-	      //Cas de 'allele_v_used' et 'allele_v' (même calcul)
-	  case "allele_v_used":
-	  case "allele_v":
-	      d.y += coef * ((self.posA[geneV] * self.resizeH) - d.y);
-	      break;
-	      //Cas de 'Size'
-	  case "Size":
-	      if (d.r1 != 0) {
-		  if (self.m.clones[d.id].cluster.length == 0) {
-		      d.y += coef2 * (self.sizeScale(self.m.getSequenceSize(d.id)) * self.resizeH - d.y);
-		  } else {
-		      d.y += coef2 * (self.sizeScale(self.m.getSize(d.id)) * self.resizeH - d.y);
-		  }
-	      } else {
-		  d.y += coef2 * (self.resizeH - d.y);
-	      }
-	      break;
-	      //Cas de 'nSize'
-	  case "nSize":
-	      if (typeof (self.m.windows[d.id].V) != 'undefined') {
-		  if (self.m.windows[d.id].N != -1) {
-		      d.y += coef2 * ((self.marge_top + (1 - (self.m.windows[d.id].Nlength / self.m.n_max)) * (self.resizeH - (2 * self.marge_top))) * self.resizeH - d.y);
-		  } else {
-		      d.y += coef2 * (self.resizeH - d.y);
-		  }
-	      } else {
-		  d.y += coef2 * (self.resizeH - d.y);
-	      }
-	      break;
-	      //Cas de 'n'
-	  case "n":
-	      d.y += coef2 * ((1 - (self.m.windows[d.id].Nlength / self.m.n_max)) * self.resizeH - d.y);
-	      break;
-	  case "graph":
-	      break;
-      case "dbscan":
-          break;
-	  }
-
-	  //Switch sur l'axe des X en fonction de la méthode de répartition demandée, afin de calculer les nouvelles positions sur les axes
-	  switch (self.splitX) {
-	      //Cas de 'bar'
-	  case "bar":
-	      d.x += coef * (-d.x);
-	      break;
-	      //Cas de 'gene_j'
-	  case "gene_j":
-	      d.x += coef * ((self.posG[geneJ] * self.resizeW) - d.x);
-	      break;
-	      //Cas de 'allele_j'
-	  case "allele_j":
-	      d.x += coef * ((self.posA[geneJ] * self.resizeW) - d.x);
-	      break;
-	      //Cas de 'gene_v_used' et 'gene_v' (même calcul)
-	  case "gene_v_used":
-	  case "gene_v":
-	      d.x += coef * ((self.posG[geneV] * self.resizeW) - d.x);
-	      break;
-	      //Cas de 'allele_v_used' et 'allele_v' (même calcul)
-	  case "allele_v_used":
-	  case "allele_v":
-	      d.x += coef * ((self.posA[geneV] * self.resizeW) - d.x);
-	      break;
-	      //Cas de 'Size'
-	  case "Size":
-	      if (d.r1 != 0) {
-		  d.x += coef2 * (self.sizeScale(self.m.getSize(d.id)) * self.resizeW - d.x);
-	      } else {
-		  d.x += coef2 * (self.resizeW - d.x);
-	      }
-	      break;
-	      //Cas de 'nSize'
-	  case "nSize":
-	      if (typeof (self.m.windows[d.id].V) != 'undefined') {
-		  if (self.m.windows[d.id].N != -1) {
-		      d.x += coef2 * ((self.marge_top + (1 - (self.m.windows[d.id].Nlength / self.m.n_max)) * (1 - (2 * self.marge_top))) * self.resizeW - d.x);
-		  } else {
-		      d.x += coef2 * (self.resizeW - d.x);
-		  }
-	      } else {
-		  d.x += coef2 * (self.resizeW - d.x);
-	      }
-	      break;
-	      //Cas de 'n'
-	  case "n":
-	      d.x += coef2 * ((1 - (self.m.windows[d.id].Nlength / self.m.n_max)) * self.resizeW - d.x);
-	      break;
-	  case "graph":
-	      break;
-      case "dbscan":
-          break;
-	  }
-      }
-  },
+	    //Switch sur l'axe des Y en fonction de la méthode de répartition demandée, afin de calculer les nouvelles positions sur les axes
+            switch (self.splitX) {
+		//Cas de 'bar'
+            case "bar":
+                d.x += coef * (-d.x);
+                break;
+		//Cas de 'gene_j'
+            case "gene_j":
+                d.x += coef * ((self.posG[geneJ] * self.resizeW) - d.x);
+                break;
+		//Cas de 'allele_j'
+            case "allele_j":
+                d.x += coef * ((self.posA[geneJ] * self.resizeW) - d.x);
+                break;
+		//Cas de 'gene_v' 
+            case "gene_v":
+                d.x += coef * ((self.posG[geneV] * self.resizeW) - d.x);
+                break;
+		//Cas de 'allele_v' 
+            case "allele_v":
+                d.x += coef * ((self.posA[geneV] * self.resizeW) - d.x);
+                break;
+		//Cas de 'Size'
+            case "Size":
+                if (d.r1 != 0) {
+                    d.x += coef2 * (self.sizeScale(self.m.getSize(d.id)) * self.resizeW - d.x);
+                } else {
+                    d.x += coef2 * (self.resizeW - d.x);
+                }
+                break;
+		//Cas de 'nSize'
+            case "nSize":
+                if (typeof (self.m.windows[d.id].V) != 'undefined') {
+                    if (self.m.windows[d.id].N != -1) {
+                        d.x += coef2 * ((self.marge_top + (1 - (self.m.windows[d.id].Nlength / self.m.n_max)) * (1 - (2 * self.marge_top))) * self.resizeW - d.x);
+                    } else {
+                        d.x += coef2 * (self.resizeW - d.x);
+                    }
+                } else {
+                    d.x += coef2 * (self.resizeW - d.x);
+                }
+                break;
+		//Cas de 'n'
+            case "n":
+                d.x += coef2 * ((1 - (self.m.windows[d.id].Nlength / self.m.n_max)) * self.resizeW - d.x);
+                break;
+            }
+        }
+    },
 
 
-  /* Fonction permettant de mettre à jour les rayons de chaque cercle
-  *  Précision: r2 = rayon affiché // r1 = rayon a atteindre
-  * */
-  updateRadius: function () {
-      return function (d) {
-          if (d.r1 != d.r2) {
-              var delta = d.r1 - d.r2;
-              d.r2 += 0.03 * delta;
-              if (d.r2 < 0.01) d.r2 = 0;
-          }
-      }
-  },
+    /* Fonction permettant de mettre à jour les rayons de chaque cercle
+     * Précision: r2 = rayon affiché // r1 = rayon a atteindre
+     * */
+    updateRadius: function () {
+        return function (d) {
+            if (d.r1 != d.r2) {
+                var delta = d.r1 - d.r2;
+                d.r2 += 0.03 * delta;
+                if (d.r2 < 0.01) d.r2 = 0;
+            }
+        }
+    },
 
-  /* Fonction permettant de repositionner les nodes, ayant des positions impossibles a afficher
-  * */
-  debugNaN: function () {
-      return function (d) {
-	  //Repositionnement dans l'axe des X si position non-déterminée/infinie
-	  if (!isFinite(d.x)) {
-	      d.x = Math.random() * 500;
-	  }
-	  //Repositionnement dans l'axe des Y si position non-déterminée/infinie
-	  if (!isFinite(d.y)) {
-	      d.y = Math.random() * 500;
-	  }
-      }
-  },
+    /* Fonction permettant de repositionner les nodes, ayant des positions impossibles a afficher
+     * */
+    debugNaN: function () {
+        return function (d) {
+	    //Repositionnement dans l'axe des X si position non-déterminée/infinie
+            if (!isFinite(d.x)) {
+                d.x = Math.random() * 500;
+            }
+	    //Repositionnement dans l'axe des Y si position non-déterminée/infinie
+            if (!isFinite(d.y)) {
+                d.y = Math.random() * 500;
+            }
+        }
+    },
 
-/* Fonction permettant de résoudre les collisions apportées par les nodes
+    /* Fonction permettant de résoudre les collisions apportées par les nodes
      * */
     collide: function (quadtree) {
         self = this;
