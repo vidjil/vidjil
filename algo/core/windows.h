@@ -73,7 +73,8 @@ class WindowsStorage {
 
   /**
    * @return a list of windows together with the number of reads they appear in.
-   * @pre sort() must have been called
+   * @pre sort() must have been called at least once and must have been called
+   *      again after calling keepInterestingWindows()
    */
   list<pair <junction, int> > &getSortedList();
 
