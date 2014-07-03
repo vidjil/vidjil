@@ -15,6 +15,7 @@ if request.env.http_origin:
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
 
+    
 def index():
     """
     example action using the internationalization operator T and flash
@@ -222,7 +223,7 @@ def download():
     allows downloading of uploaded files
     http://..../[app]/default/download/[filename]
     """
-    return response.download(request, db)
+    return response.download(request, db, download_filename=request.vars.filename)
 
 
 def call():
