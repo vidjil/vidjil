@@ -4,8 +4,8 @@
 #include <stdio.h>
 #include <string.h>
 #include <cstdlib>
-#include "core/dynprog.h"
-#include "core/fasta.h"
+#include <core/dynprog.h>
+#include <core/fasta.h>
 
 using namespace std;
 
