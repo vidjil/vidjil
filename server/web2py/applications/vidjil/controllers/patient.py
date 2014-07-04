@@ -145,7 +145,7 @@ def edit_form():
 ## return a flash error message if fail
 @cache.action()
 def download():
-    if (auth.has_permission('read', 'patient', request.vars["id"]) ):
+    if (auth.has_permission('read', 'patient', request.vars["id"]) ) or (auth.has_permission('admin', 'patient', request.vars["id"]) ):
         return response.download(request, db)
     else :
         res = {"message": "acces denied"}

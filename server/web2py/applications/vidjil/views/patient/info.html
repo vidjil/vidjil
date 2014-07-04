@@ -97,7 +97,7 @@ analysis_file = analysis.select()
             
                  <tr>
                     <td id="sequence_file_{{=row.sequence_file.id}}"> {{=filename}}</td>
-                    <td> {{if filename != '':}}<a href="{{=URL('download', scheme='https', args=row.sequence_file.data_file)}}" >dl</a>{{pass}}</td>
+                    <td> {{if filename != '':}}<a href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" >dl</a>{{pass}}</td>
                     <td> {{=row.sequence_file.sampling_date}} </td>
                     <td> {{=row.sequence_file.info}} </td>
                     <td onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
