@@ -146,9 +146,6 @@ db.define_table('analysis_file',
                 Field('analysis_file', 'upload', length=1000000000000))
 
 
-
-
-
 if db(db.auth_user.id > 0).count() == 0:
     id_first_user=""
         
