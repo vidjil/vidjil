@@ -525,7 +525,7 @@ Sequence.prototype = {
         //marge
         var marge = ""
         if (this.use_marge){
-            marge += "<span>";
+            marge += "<span class='seq-marge'>";
             var size_marge = 300 - window_start;
             if (size_marge > 0) {
                 for (var i = 0; i < size_marge; i++) marge += "&nbsp";
