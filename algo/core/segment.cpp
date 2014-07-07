@@ -181,7 +181,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
       return ;
     }
  
-  kaa = new CountKmerAffectAnalyser<KmerAffect>(*index, sequence);
+  kaa = new KmerAffectAnalyser<KmerAffect>(*index, sequence);
   
   // Check strand consistency among the affectations.
   int strand;
@@ -304,7 +304,7 @@ void KmerSegmenter::computeSegmentation(int strand, int delta_min, int delta_max
     segmented = false;
 }
 
-CountKmerAffectAnalyser<KmerAffect> *KmerSegmenter::getKmerAffectAnalyser() const {
+KmerAffectAnalyser<KmerAffect> *KmerSegmenter::getKmerAffectAnalyser() const {
   return kaa;
 }
 
