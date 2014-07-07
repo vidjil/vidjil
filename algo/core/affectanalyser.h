@@ -119,6 +119,18 @@ class KmerAffectAnalyser: public AffectAnalyser<T> {
    * @param seq: the sequence to analyse (parameter is not copied)
    */
   KmerAffectAnalyser(IKmerStore<T> &kms, const string &seq);
+
+  /**
+   * This constructor must be seen as a “toy” constructor, used for 
+   * testing.
+   * It allows to directly provide the affectation and therefore avoids
+   * the need to search a long time for good example that could be tested.
+   * @param kms: mainly used for retrieving the seed or its size
+   * @param seq: basically not used in the class
+   * @param a: the affectation we must use.
+   */
+  KmerAffectAnalyser(IKmerStore<T> &kms, const string &seq, vector<T> a);
+
   ~KmerAffectAnalyser();
 
   int count() const;
@@ -257,6 +269,12 @@ KmerAffectAnalyser<T>::KmerAffectAnalyser(IKmerStore<T> &kms,
   assert(seq.length() >=  (size_t)kms.getS());
   affectations = kms.getResults(seq, true);
 }
+
+template <class T>
+KmerAffectAnalyser<T>::KmerAffectAnalyser(IKmerStore<T> &kms,
+                                          const string &seq,
+                                          vector <T> a):
+kms(kms), seq(seq), affectations(a){}
 
 template <class T>
 KmerAffectAnalyser<T>::~KmerAffectAnalyser(){}
