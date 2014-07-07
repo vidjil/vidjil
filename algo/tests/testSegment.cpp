@@ -150,7 +150,7 @@ void testSegmentationCause() {
       TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, "");
       TAP_TEST(ks.getJunction(21) == "GGCAGTTGGAACAACACTTGT",
                TEST_KMER_JUNCTION, "window: " << ks.getJunction(21));
-      TAP_TEST(ks.getLeft() == 10, TEST_KMER_LEFT, "left = " << ks.getLeft() << ", aa = " << ks.getKmerAffectAnalyser()->toString());
+      TAP_TEST(ks.getLeft() == 9, TEST_KMER_LEFT, "left = " << ks.getLeft() << ", aa = " << ks.getKmerAffectAnalyser()->toString());
       TAP_TEST(ks.getRight() == 19, TEST_KMER_RIGHT, "right = " << ks.getRight());
       nb_checked++;
     } else if (data.read(i).label == "seq-delta-max") {
