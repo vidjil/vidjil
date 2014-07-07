@@ -129,6 +129,123 @@ void testAffectAnalyser2() {
   delete index;
 }
 
+template<template <class> class T>
+void testGetMaximum() {
+  const int k = 4;
+  const bool revcomp = true;
+  T<KmerAffect> *index = createIndex<T<KmerAffect> >(k, revcomp);
+
+  KmerAffect a[] = {AFFECT_J_BWD, AFFECT_J_BWD, AFFECT_UNKNOWN, AFFECT_UNKNOWN, AFFECT_UNKNOWN, AFFECT_UNKNOWN, AFFECT_V_BWD, AFFECT_V_BWD, AFFECT_V_BWD, AFFECT_UNKNOWN, AFFECT_UNKNOWN, AFFECT_UNKNOWN, AFFECT_J_BWD, AFFECT_J_BWD};
+  //  0 1 2 3 4 5 6 7 8 9  11  13
+  // J-J- _ _ _ _V-V-V- _ _ _J-J-
+  vector<KmerAffect> affectations(a, a+sizeof(a)/sizeof(KmerAffect));
+
+  KmerAffectAnalyser<KmerAffect> kaa(*index, "", affectations);
+  affect_infos results = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD);
+  TAP_TEST(! results.max_found, TEST_AA_GET_MAXIMUM_MAX_FOUND, 
+           "(" << results.first_pos_max
+           << ", " << results.last_pos_max << ")");
+
+  results = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 1.);
+  TAP_TEST(results.max_found , 
+           TEST_AA_GET_MAXIMUM_MAX_FOUND, "(" << results.first_pos_max
+           << ", " << results.last_pos_max << ")");
+  TAP_TEST(results.first_pos_max == 5 && results.last_pos_max == 5,
+           TEST_AA_GET_MAXIMUM_POSITIONS,"(" << results.first_pos_max
+           << ", " << results.last_pos_max << ")");
+  TAP_TEST(results.max_value == 2, TEST_AA_GET_MAXIMUM_VALUE,
+           "max = " << results.max_value);
+  TAP_TEST(results.nb_before == 4 && results.nb_after == 3,
+           TEST_AA_GET_MAXIMUM_COUNTS, "nb_before = " << results.nb_before
+           << ", nb_after = " << results.nb_after);
+
+  results = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 1., k);
+  TAP_TEST(results.max_found, 
+           TEST_AA_GET_MAXIMUM_MAX_FOUND, "(" << results.first_pos_max
+           << ", " << results.last_pos_max << ")");
+  TAP_TEST(results.first_pos_max == 1 && results.last_pos_max == 5,
+           TEST_AA_GET_MAXIMUM_POSITIONS,"(" << results.first_pos_max
+           << ", " << results.last_pos_max << ")");
+  TAP_TEST(results.max_value == 2, TEST_AA_GET_MAXIMUM_VALUE, "");
+
+  KmerAffect a2[] = {AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, 
+                     AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V,
+                     AFFECT_J, AFFECT_J, AFFECT_J,
+                     AFFECT_V, AFFECT_V, AFFECT_V};
+  //  0 1 2 3 4 5 6 7 8 9  11  13  15
+  // V+V+V+V+V+V+V+V+V+V+J+J+J+V+V+V+
+  vector<KmerAffect> affectations2(a2, a2+sizeof(a2)/sizeof(KmerAffect));
+  KmerAffectAnalyser<KmerAffect> kaa2(*index, "", affectations2);
+  results = kaa2.getMaximum(AFFECT_V, AFFECT_J);
+  TAP_TEST(! results.max_found, 
+           TEST_AA_GET_MAXIMUM_MAX_FOUND, "(" << results.first_pos_max
+           << ", " << results.last_pos_max << ")");
+  TAP_TEST(results.nb_before == 13 && results.nb_after == 3,
+           TEST_AA_GET_MAXIMUM_COUNTS, 
+           "nb_before = " << results.nb_before
+           << "nb_after = " << results.nb_after);
+
+  results = kaa2.getMaximum(AFFECT_V, AFFECT_J, 1., k);
+  TAP_TEST(! results.max_found, 
+           TEST_AA_GET_MAXIMUM_MAX_FOUND, "(" << results.first_pos_max
+           << ", " << results.last_pos_max << ")");
+  TAP_TEST(results.max_value == 10, TEST_AA_GET_MAXIMUM_VALUE,
+           "max = " << results.max_value);
+  TAP_TEST(results.first_pos_max == 9
+           && results.last_pos_max == 15, TEST_AA_GET_MAXIMUM_POSITIONS,
+           "max positions: [" << results.first_pos_max << ", " 
+           << results.last_pos_max << "]");
+  TAP_TEST(results.nb_before == 13 && results.nb_after == 3,
+           TEST_AA_GET_MAXIMUM_COUNTS, 
+           "nb_before = " << results.nb_before
+           << "nb_after = " << results.nb_after);
+  TAP_TEST(results.nb_before_right == 0 && results.nb_after_right == 0, 
+           TEST_AA_GET_MAXIMUM_COUNTS, 
+           "before right: " << results.nb_before_right
+           << ", after right: " << results.nb_after_right);
+
+  results = kaa2.getMaximum(AFFECT_V_BWD, AFFECT_J_BWD);
+  // No result
+
+  TAP_TEST(! results.max_found,
+           TEST_AA_GET_MAXIMUM_MAX_FOUND, 
+           "(" << results.first_pos_max << ", " 
+           << results.last_pos_max << ")");
+  TAP_TEST(results.max_value == 0, TEST_AA_GET_MAXIMUM_VALUE,
+           "max = " << results.max_value);
+
+  
+  KmerAffect a3[] = {AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, 
+                     AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V,
+                     AFFECT_UNKNOWN, AFFECT_UNKNOWN, AFFECT_UNKNOWN,
+                     AFFECT_UNKNOWN, AFFECT_UNKNOWN, AFFECT_UNKNOWN,
+                     AFFECT_J, AFFECT_J, AFFECT_V, AFFECT_J};
+  //  0 1 2 3 4 5 6 7 8 9  11  13  15  17  19
+  // V+V+V+V+V+V+V+V+V+V+ _ _ _ _ _ _J-J-V+J-
+  vector<KmerAffect> affectations3(a3, a3+sizeof(a3)/sizeof(KmerAffect));
+  KmerAffectAnalyser<KmerAffect> kaa3(*index, "", affectations3);
+  results = kaa3.getMaximum(AFFECT_V, AFFECT_J);
+
+  TAP_TEST(results.max_found, TEST_AA_GET_MAXIMUM_MAX_FOUND,
+           "max_found = " << results.max_found);
+  TAP_TEST(results.max_value, TEST_AA_GET_MAXIMUM_VALUE,
+           "max = " << results.max_value);
+  TAP_TEST(results.first_pos_max == 13 && results.last_pos_max == 15,
+           TEST_AA_GET_MAXIMUM_POSITIONS, 
+           "first = " << results.first_pos_max 
+           << ", last = " << results.last_pos_max);
+  TAP_TEST(results.nb_before == 11 && results.nb_after == 3,
+           TEST_AA_GET_MAXIMUM_COUNTS, "before: " << results.nb_before
+           << ", after: " << results.nb_after);
+  TAP_TEST(results.nb_before_left == 10 && results.nb_before_right == 1
+           && results.nb_after_left == 0 && results.nb_after_right == 3,
+           TEST_AA_GET_MAXIMUM_COUNTS, 
+           "before:: left: " << results.nb_before_left <<", right: " 
+           << results.nb_before_right << "\nafter:: left: " 
+           << results.nb_after_left << ", right: " 
+           << results.nb_after_right);
+}
+
 /**
  * A sequence and its revcomp are not affected in the same way.
  */
@@ -191,4 +308,5 @@ void testAffectAnalyser() {
   testAffectAnalyser2<ArrayKmerStore,KmerStringAffect>();
   testBugAffectAnalyser<ArrayKmerStore, KmerAffectAnalyser, KmerAffect>();
   testBugAffectAnalyser<ArrayKmerStore, KmerAffectAnalyser, KmerStringAffect>();
+  testGetMaximum<ArrayKmerStore>();
 }
