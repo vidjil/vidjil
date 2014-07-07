@@ -127,7 +127,7 @@ class KmerSegmenter : public Segmenter
 {
  private:
   int because;                  
-  CountKmerAffectAnalyser<KmerAffect> *kaa;
+  KmerAffectAnalyser<KmerAffect> *kaa;
  protected:
   string affects;
 
@@ -151,7 +151,7 @@ class KmerSegmenter : public Segmenter
   /**
    * @return the KmerAffectAnalyser of the current sequence.
    */
-  CountKmerAffectAnalyser<KmerAffect> *getKmerAffectAnalyser() const;
+  KmerAffectAnalyser<KmerAffect> *getKmerAffectAnalyser() const;
 
   /**
    * @return the status of the segmentation. Tells if the Sequence has been segmented
