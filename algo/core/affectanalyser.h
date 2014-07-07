@@ -414,9 +414,11 @@ int CountKmerAffectAnalyser<T>::searchMax(const T&before, const T& after,
   else
     shiftedEnd += shift;
   for (int i = shiftedStart; (i)*iter <= iter*shiftedEnd; i+=iter) {
-    int value = countBefore(before, i - shift) + countAfter(after, i);
-    if (value > max_value) {
-      max_value = value;
+    int valueBefore = countBefore(before, i - shift);
+    int valueAfter = countAfter(after, i);
+    if (valueAfter + valueBefore > max_value 
+        && valueAfter > 0 && valueBefore > 0) {
+      max_value = valueAfter + valueBefore;
       first_pos_max = i;
     }
   }
