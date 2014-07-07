@@ -11,10 +11,10 @@ $ Parses germline/IGHJ.fa
 1: 701 bp in  13 sequences
 
 $ Find the good number of "too short sequences" for windows of size 100
-1: SEG, but no window ->     2105
+1: SEG, but no window ->     2207
 
 $ Find the good number of segmented sequences (including "too short sequences")
-1: segmented 13152 reads .100%.
+1: segmented 13149 reads .100%.
 
 $ Find the good number of windows of size 100 in Stanford S22
-1: found 9907 100-windows in 11047 segments
+1: found 9811 100-windows in 10942 segments
