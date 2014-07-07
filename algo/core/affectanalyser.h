@@ -15,6 +15,19 @@ typedef enum affect_options_e {
   AO_NONE, AO_NO_CONSECUTIVE, AO_NO_MULTIPLICITY
 } affect_options_t;
 
+typedef struct affect_infos_s {
+  int first_pos_max;            /* First position of maximum */
+  int last_pos_max;             /* Last position of maximum */
+  int max_value;                /* Maximal value */
+  int nb_before;                /* Nb of affectations “before” */
+  int nb_after;                 /* Nb of affectations “after */
+  int nb_before_right;          /* Nb of “before” right of the maximum */
+  int nb_after_right;           /* Same with “after” */
+  int nb_before_left;           /* Nb of “before” left of the maximum */
+  int nb_after_left;            /* Same with “after” */
+  bool max_found;               /* We have found a maximum */
+} affect_infos;
+
 /**
  * Class that records for every k-mer of a given sequence
  * in which sequences this k-mer was also seen.
@@ -117,6 +130,23 @@ class KmerAffectAnalyser: public AffectAnalyser<T> {
   vector<T> getAllAffectations(affect_options_t options) const;
 
   set<T> getDistinctAffectations() const;
+
+  /**
+   * @return A structure where the maximum is such that those positions
+   *         maximise the number of affectations before, minus the number of
+   *         affectations after the returned positions.
+   *
+   *         The maximum reached must be above max(0, total number of
+   *         <before>) and such that the number of <before> after the
+   *         rightmost max position is <ratioMin> times less than the number
+   *         of <after> after that position. If no so much maximum is found,
+   *         the boolean <max_found> is set to false in the structure.
+   *
+   * @complexity time: linear in count(), space: constant
+   */
+  affect_infos getMaximum(const T &before, const T &after, 
+                          float ratioMin=2., 
+                          int maxOverlap=0) const;
 
   const string &getSequence() const;
 
@@ -274,6 +304,72 @@ set<T> KmerAffectAnalyser<T>::getDistinctAffectations() const{
     result.insert(affectations[i]);
   }
   return result;
+}
+
+template <class T>
+affect_infos KmerAffectAnalyser<T>::getMaximum(const T &before, 
+                                               const T &after, 
+                                               float ratioMin,
+                                               int maxOverlap) const {
+  int currentValue;
+  int span = kms.getS();
+  int length = count();
+  affect_infos results;
+
+  assert(maxOverlap <= span);
+
+
+  results.max_found = false;
+  results.max_value = 0;
+  results.first_pos_max = results.last_pos_max = -1;
+  results.nb_before_left = results.nb_before_right = results.nb_after_right = results.nb_after_left = 0;
+  currentValue = 0;
+
+  for (int i = 0; i < span - maxOverlap; i++) {
+    if (affectations[i] == after) {
+      currentValue--;
+      results.nb_after_right++;
+    }
+  }
+
+  for (int i = span - maxOverlap; i < length; i++) {
+    /* i - span + maxOverlap, to avoir overlapping k-mers */
+    if (affectations[i - span + maxOverlap] == before) {
+      currentValue++;
+      results.nb_before_right++;
+    } 
+    if (affectations[i] == after) {
+      currentValue--;
+      results.nb_after_right++;
+    }
+    
+    if (currentValue >= results.max_value) {
+      if (currentValue > results.max_value)
+        results.first_pos_max = i;
+      results.max_value = currentValue;
+      results.last_pos_max = i;
+      results.nb_after_left += results.nb_after_right;
+      results.nb_before_left += results.nb_before_right;
+      results.nb_after_right = 0;
+      results.nb_before_right = 0;
+    }
+  }
+  for (int i = length - span + maxOverlap; i < length; i++) {
+    if (affectations[i] == before)
+      results.nb_before_right++;
+  }
+
+  results.nb_before = results.nb_before_right + results.nb_before_left;
+  results.nb_after = results.nb_after_right + results.nb_after_left;
+
+  if (results.nb_after_right >= results.nb_before_right*ratioMin
+      && (results.nb_after_right > 0 || results.nb_before_right == 0)
+      && currentValue < results.max_value
+      && results.max_value > 0) {
+    results.max_found = true;
+    return results;
+  }
+  return results;
 }
 
 template <class T>
