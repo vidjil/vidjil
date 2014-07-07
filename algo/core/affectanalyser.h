@@ -144,6 +144,8 @@ class KmerAffectAnalyser: public AffectAnalyser<T> {
   set<T> getDistinctAffectations() const;
 
   /**
+   * @param maxOverlap: if greater than kms.getS(), it is automatically set
+   *                    to that value.
    * @return A structure where the maximum is such that those positions
    *         maximise the number of affectations before, minus the number of
    *         affectations after the returned positions.
@@ -158,7 +160,7 @@ class KmerAffectAnalyser: public AffectAnalyser<T> {
    */
   affect_infos getMaximum(const T &before, const T &after, 
                           float ratioMin=2., 
-                          int maxOverlap=0) const;
+                          int maxOverlap=1) const;
 
   const string &getSequence() const;
 
@@ -334,8 +336,8 @@ affect_infos KmerAffectAnalyser<T>::getMaximum(const T &before,
   int length = count();
   affect_infos results;
 
-  assert(maxOverlap <= span);
-
+  if (maxOverlap > span)
+    maxOverlap = span;
 
   results.max_found = false;
   results.max_value = 0;
