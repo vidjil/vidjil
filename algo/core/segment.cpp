@@ -246,45 +246,35 @@ void KmerSegmenter::computeSegmentation(int strand, int delta_min, int delta_max
     {
       because = UNSEG_STRAND_NOT_CONSISTENT ;
     } 
-  else if (strand == 1)
+  else
     {
       // Strand +
-      Vend = kaa->firstMax(AFFECT_V, AFFECT_J);
+      affect_infos max;
+      if (strand == 1)
+        max = kaa->getMaximum(AFFECT_V, AFFECT_J);
+      else
+        max = kaa->getMaximum(AFFECT_J_BWD, AFFECT_V_BWD);
 
-      if (Vend == -1) {
-        if (kaa->count(AFFECT_V) == 0) 
-          {
-            because = UNSEG_TOO_FEW_V ;
-          }
-        else if (kaa->count(AFFECT_J) == 0)
+      if (! max.max_found) {
+        if ((strand == 1 && max.nb_before == 0)
+            || (strand == -1 && max.nb_after == 0)) 
+          because = UNSEG_TOO_FEW_V ;
+        else if ((strand == 1 && max.nb_after == 0)
+                 || (strand == -1 && max.nb_before == 0))
 	{
 	  because = UNSEG_TOO_FEW_J ;
 	} else 
-          because = UNSEG_TOO_FEW_ZERO; // Not really zero
-      } else
-        Jstart = kaa->lastMax(AFFECT_V, AFFECT_J);
-
+          because = UNSEG_AMBIGUOUS; 
+      } else {
+        Vend = max.first_pos_max;
+        Jstart = max.last_pos_max + 1;
+        if (strand == -1) {
+          int tmp = sequence.size() - Vend - 1;
+          Vend = sequence.size() - Jstart - 1;
+          Jstart = tmp;
+        }
+      }
     } 
-  else if (strand == -1)
-    {
-      // Strand -
-      Jstart = kaa->firstMax(AFFECT_J_BWD, AFFECT_V_BWD);
-      if (Jstart == -1) {
-        if (kaa->count(AFFECT_V_BWD) == 0) 
-          {
-            because = UNSEG_TOO_FEW_V ;
-          }
-        else if (kaa->count(AFFECT_J_BWD) == 0)
-	{
-	  because = UNSEG_TOO_FEW_J ;
-	} else 
-          because = UNSEG_TOO_FEW_ZERO; // Not really zero
-      } else 
-        Vend = kaa->lastMax(AFFECT_J_BWD, AFFECT_V_BWD);
-
-      Vend = sequence.size() - Vend - 1;
-      Jstart = sequence.size() - Jstart - 1;
-    }
   
   if (! because)
     {
