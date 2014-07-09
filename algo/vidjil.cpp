@@ -1120,9 +1120,13 @@ int main (int argc, char **argv)
               string end_V ="";
 	    
               // avoid case when V is not in the window
-              if (seg.getLeft() > (int) window_pos)
-                end_V = rep_V.sequence(seg.best_V).substr(rep_V.sequence(seg.best_V).size() - ww, 
-                                                          ww - seg.del_V);
+              if (seg.getLeft() > (int) window_pos) {
+                int v_size = rep_V.sequence(seg.best_V).size();
+                int start_pos = (v_size < ww) ? 0 : v_size - ww;
+                end_V = rep_V.sequence(seg.best_V)
+                  .substr(start_pos,
+                          min(v_size - start_pos, ww - seg.del_V));
+              }
 
               string mid_D = "";
 	    
