@@ -256,11 +256,11 @@ void KmerSegmenter::computeSegmentation(int strand, int delta_min, int delta_max
         max = kaa->getMaximum(AFFECT_J_BWD, AFFECT_V_BWD);
 
       if (! max.max_found) {
-        if ((strand == 1 && max.nb_before == 0)
-            || (strand == -1 && max.nb_after == 0)) 
+        if ((strand == 1 && max.nb_before_left == 0)
+            || (strand == -1 && max.nb_after_right == 0)) 
           because = UNSEG_TOO_FEW_V ;
-        else if ((strand == 1 && max.nb_after == 0)
-                 || (strand == -1 && max.nb_before == 0))
+        else if ((strand == 1 && max.nb_after_right == 0)
+                 || (strand == -1 && max.nb_before_left == 0))
 	{
 	  because = UNSEG_TOO_FEW_J ;
 	} else 

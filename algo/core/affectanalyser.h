@@ -21,8 +21,6 @@ typedef struct affect_infos_s {
   int first_pos_max;            /* First position of maximum */
   int last_pos_max;             /* Last position of maximum */
   int max_value;                /* Maximal value */
-  int nb_before;                /* Nb of affectations “before” */
-  int nb_after;                 /* Nb of affectations “after */
   int nb_before_right;          /* Nb of “before” right of the maximum */
   int nb_after_right;           /* Same with “after” */
   int nb_before_left;           /* Nb of “before” left of the maximum */
@@ -392,9 +390,6 @@ affect_infos KmerAffectAnalyser<T>::getMaximum(const T &before,
     if (affectations[i] == before)
       results.nb_before_right++;
   }
-
-  results.nb_before = results.nb_before_right + results.nb_before_left;
-  results.nb_after = results.nb_after_right + results.nb_after_left;
 
   /* Main test: 
      1) do we have enough affectations in good positions ('before' at the left and 'after' at the right) ?
