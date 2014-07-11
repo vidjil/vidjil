@@ -15,6 +15,8 @@ typedef enum affect_options_e {
   AO_NONE, AO_NO_CONSECUTIVE, AO_NO_MULTIPLICITY
 } affect_options_t;
 
+
+/* Stores results during .getMaximum() computation */
 typedef struct affect_infos_s {
   int first_pos_max;            /* First position of maximum */
   int last_pos_max;             /* Last position of maximum */
@@ -331,6 +333,7 @@ affect_infos KmerAffectAnalyser<T>::getMaximum(const T &before,
                                                const T &after, 
                                                float ratioMin,
                                                int maxOverlap) const {
+  /* currentValue is the  { affectations[t] == before | t \in 1..i  } - | { affectations[i] == after | t \in 1..i }  */
   int currentValue;
   int span = kms.getS();
   int length = count();
@@ -339,6 +342,7 @@ affect_infos KmerAffectAnalyser<T>::getMaximum(const T &before,
   if (maxOverlap > span)
     maxOverlap = span;
 
+  /* Initialize results */
   results.max_found = false;
   results.max_value = 0;
   results.first_pos_max = results.last_pos_max = -1;
@@ -354,6 +358,11 @@ affect_infos KmerAffectAnalyser<T>::getMaximum(const T &before,
 
   for (int i = span - maxOverlap; i < length; i++) {
     /* i - span + maxOverlap, to avoir overlapping k-mers */
+
+
+    /* Read the current affectations, and store them both in currentValue and at the right of the previous maximum.
+       The affectation of 'before' is interpreted relatively to span and maxOverlap */
+
     if (affectations[i - span + maxOverlap] == before) {
       currentValue++;
       results.nb_before_right++;
@@ -362,12 +371,17 @@ affect_infos KmerAffectAnalyser<T>::getMaximum(const T &before,
       currentValue--;
       results.nb_after_right++;
     }
-    
+
+    /* Now currentValue = | { affectations[t - span + maxOverlap] == 'before' | t \in span-maxOverlap..i } | - | { affectations[i] == 'after' | t \in 0..i } | */
+
+    /* If we raise above the max, or if we continue a previous maximum (even from a distant position), store in results */
     if (currentValue >= results.max_value) {
       if (currentValue > results.max_value)
         results.first_pos_max = i;
       results.max_value = currentValue;
       results.last_pos_max = i;
+
+      /* What was at the right of the previous maximum is now at the left of the current maximum */
       results.nb_after_left += results.nb_after_right;
       results.nb_before_left += results.nb_before_right;
       results.nb_after_right = 0;
@@ -381,6 +395,12 @@ affect_infos KmerAffectAnalyser<T>::getMaximum(const T &before,
 
   results.nb_before = results.nb_before_right + results.nb_before_left;
   results.nb_after = results.nb_after_right + results.nb_after_left;
+
+  /* Main test: 
+     1) do we have enough affectations in good positions ('before' at the left and 'after' at the right) ?
+     We tolerate some of them in bad positions, but there must be 'ratioMin' more in good positions
+     2) there should be at least one 'before' and one 'after' (? CHECK ?)
+  */
 
   if (results.nb_after_right >= results.nb_before_right*ratioMin
       && (results.nb_after_right > 0 || results.nb_before_right == 0)
