@@ -438,7 +438,7 @@ def common_substring(l):
     else:
         return ""
 
-def interesting_substrings(l, target_length=6):
+def interesting_substrings(l, target_length=6, substring_replacement='-'):
     '''Return a list with intersting substrings.
     Now it removes common prefixes and suffixes, and then the longest 
     common substring. 
@@ -446,8 +446,10 @@ def interesting_substrings(l, target_length=6):
 
     >>> interesting_substrings(['ec-3--bla', 'ec-512-bla', 'ec-47-bla'], target_length=0)
     ['3-', '512', '47']
-    >>> interesting_substrings(['ec-A-seq-1-bla', 'ec-B-seq-512-bla', 'ec-C-seq-21-bla'], target_length=0)
+    >>> interesting_substrings(['ec-A-seq-1-bla', 'ec-B-seq-512-bla', 'ec-C-seq-21-bla'], target_length=0, substring_replacement='')
     ['A1', 'B512', 'C21']
+    >>> interesting_substrings(['ec-A-seq-1-bla', 'ec-B-seq-512-bla', 'ec-C-seq-21-bla'], target_length=0)
+    ['A-1', 'B-512', 'C-21']
     >>> interesting_substrings(['ec-A-seq-1-bla', 'ec-B-seq-512-bla', 'ec-C-seq-21-bla'], target_length=9)
     ['A-seq-1', 'B-seq-512', 'C-seq-21']
     '''
@@ -491,7 +493,8 @@ def interesting_substrings(l, target_length=6):
     ### Remove the longest common substring
 
     common = common_substring(substrings)
-    substrings = [s.replace(common, '') for s in substrings]
+    if common:
+        substrings = [s.replace(common, substring_replacement) for s in substrings]
 
     return substrings
     
