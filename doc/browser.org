@@ -1,0 +1,107 @@
+* Vidjil -- Browser Manual
+
+
+
+Further help can always be asked to contact@vidjil.org. We can also arrange phone or Skype meeting.
+
+The Vidjil team (Mathieu, Mikaël and Marc)
+
+** Requierements
+
+The Vidjil browser runs in any modern browser. It has been successfully tested on the following platforms
+ - Firefox version >= XX
+ - Chrome version >= XX
+ - IE version >= XX
+ - Opera version >= XX
+ - Safari version >= XX
+
+** First aid
+
+- Go to the « file » menu to access your data.
+  Your files are protected with your login and password.
+  There is always a « sample/L2-LIL.data » dataset for demonstration purposes.
+
+- You can change the number of displayed clones by moving the slider « number of clones » (menu « filter »)
+  The maximal number of clones that can be displayed depends on what has been run before (by default, 200) XXX
+
+- Due to sequencing errors, there may be several clones corresponding to a real clone. 
+   - You can select several clones (for example those sharing a same V and a same J), 
+   - inspect the sequences in the lower panel (possibly using the « align » function)
+   - click on « merge » if you think that the clones should be merged. 
+     Once several clones are merged, you can still visualize them by clicking on « + » in the list of clones.
+
+
+* The elements of the Vidjil browser
+
+** The info panel (top left panel)
+
+
+** The list of clones (left panel)
+
+- You can assign other tags (and thus colors) to clones using the « star » button.
+  The « filter » menu allows to further filter clones by tags.
+
+- The « i » button displays additional information on each clone
+
+
+** The graph
+
+- The gray zones at the bottom of the graph show, for each point, the resolution (1 read / 5 reads)
+
+- You can reorder the points by dragging them, and hide some points by dragging them on the "+" mark at the right of the points
+
+- If your dataset contains sampling dates (for example in a MRD setup), you can switch between point keys and dates in "settings > point key" 
+
+
+** The plot view
+
+- The axis of the plot (by default « V gene » / « J gene ») can be changed
+
+- Some presets are available in the « analysis » menu.
+  
+  To segregate a set of clones sharing a same V and J, it is often useful
+  to display the clones according to their 'N length' (that is N1-D-N2 in the cas of VDJ rearrangements)
+
+
+
+* Asserting the quality of your data and of the analysis
+
+To assert that the PCR, the sequencing and the Vidjil analysis went well, several.
+
+A first way is to check the number of « segmented reads » in the info panel. For each point, this shows the number of reads where Vidjil found a CDR3. 
+     
+Ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
+There can be several causes leading to bad ratios: 
+
+** analysis or biological causes
+
+  - a system (for example TRG) was analyzed and the data actually contain other systems.
+     (solution: Relaunch Vidjil with other systems :NOTNOW:)
+
+  - there are incomplete/exceptional rearrangements 
+    (Vidjil can process some of them)
+
+  - there are too many hypersomatic mutations
+    (usually Vidjil can process mutations until 10% mutation rate... above, some sequences are lost)
+
+** PCR or sequencing causes
+
+  - the read length is too short, do the reads do not span the junction zone 
+     (The Vidjil detects a "window" including the CDR3. By default this window is XX, so )
+
+  - In particular, for paired-end sequencing, one of the ends can lead to too short reads
+     (solution: ignore this end, or extend the read length)
+
+  - There were too many PCR or sequencing errors
+     (this can be asserted by inspecting the related clones, checking if there is a large dispersion around the main clone)
+ 
+
+* Reference
+
+If you use Vidjil for your research, please cite the following reference:
+
+Mathieu Giraud, Mikaël Salson, et al.,
+"Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing",
+BMC Genomics 2014, 15:409 
+http://dx.doi.org/10.1186/1471-2164-15-409
+
