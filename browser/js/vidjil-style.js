@@ -37,7 +37,7 @@ var solarizeL = {
       '@border':'#b3c1c1'    
     };
     
-var color=solarizeD;
+var color=solarizeL;
 
 var color_s = 0.8; //pureté
 var color_v = 0.72; //brightness
