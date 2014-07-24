@@ -107,7 +107,7 @@ SimilarityMatrix compare_windows(WindowsStorage &windowsStorage, const Cost theC
         string win1 = it1->first;
 
         //We compute & save only clones it the position is lower than the number of clones we want
-        if (positionIt1 > nb_clones) break;
+        if (positionIt1 >= nb_clones) break;
 
         //Process of the second junctions
         for (list<pair <junction, int> >:: const_iterator it2 = sortedList.begin();
@@ -118,7 +118,7 @@ SimilarityMatrix compare_windows(WindowsStorage &windowsStorage, const Cost theC
             //We compute only distances when first position is lower than the second
             if (positionIt1 < positionIt2) {
 
-                if (positionIt2 <= nb_clones) {
+                if (positionIt2 < nb_clones) {
 
                 //Compute all the windows, globally
                 DynProg dp = DynProg(win1, win2, DynProg::Global, theCost);
