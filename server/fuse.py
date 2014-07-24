@@ -25,6 +25,7 @@ import argparse
 import sys
 import time
 import copy
+import os.path
 from operator import itemgetter
 
 
@@ -164,14 +165,14 @@ class ListWindows:
         with open(output, "w") as file:
             json.dump(self, file, indent=2, default=self.toJson)
             
-    def load(self, file_path):
+    def load(self, file_path, pipeline):
         '''init listWindows with data file
         Detects and selects the parser according to the file extension.'''
 
         # name = file_path.split("/")[-1]
         extension = file_path.split('.')[-1]
         
-        print "<==", file_path, "\t"
+        print "<==", file_path, "\t",
         
         if (extension=="data" or extension=="vidjil"): 
             with open(file_path, "r") as file:
@@ -185,7 +186,17 @@ class ListWindows:
         else:
             raise IOError ("Invalid file extension .%s" % extension)
 
-        self.d['point'] = [file_path]
+        
+        if pipeline: 
+            # renaming, private pipeline
+            f = '/'.join(file_path.split('/')[2:-1])
+            print "[%s]" % f
+
+        else:
+            f = file_path
+            print
+        
+        self.d['point'] = [f]
         
     ### 
     def __add__(self, other): 
@@ -588,6 +599,8 @@ def main():
 
     group_options.add_argument('--test', action='store_true', help='run self-tests')
     group_options.add_argument('--merge', action='store_true', help='merge multiple system')
+    
+    group_options.add_argument('--pipeline', '-p', action='store_true', help='compress point names (internal Bonsai pipeline)')
 
     group_options.add_argument('--output', '-o', type=str, default='fused.data', help='output file (%(default)s)')
     group_options.add_argument('--top', '-t', type=int, default=50, help='keep only clones in the top TOP of some point (%(default)s)')
@@ -611,7 +624,7 @@ def main():
     if args.merge:
         for path_name in args.file:
             jlist = ListWindows()
-            jlist.load(path_name)
+            jlist.load(path_name, args.pipeline)
             jlist.add_system_info()
             
             print "\t", jlist,
@@ -628,7 +641,7 @@ def main():
         print "### Read and merge input files"
         for path_name in args.file:
             jlist = ListWindows()
-            jlist.load(path_name)
+            jlist.load(path_name, args.pipeline)
             
             w1 = Window(1)
             w2 = Window(2)
