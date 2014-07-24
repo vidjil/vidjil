@@ -288,6 +288,14 @@ void testBugAffectAnalyser() {
 }
 
 void testAffectAnalyser() {
+  testAffectAnalyser1<MapKmerStore,KmerAffect>();
+  testAffectAnalyser2<MapKmerStore,KmerAffect>();
+  testAffectAnalyser1<MapKmerStore,KmerStringAffect>();
+  testAffectAnalyser2<MapKmerStore,KmerStringAffect>();
+  testBugAffectAnalyser<MapKmerStore, KmerAffectAnalyser, KmerAffect>();
+  testBugAffectAnalyser<MapKmerStore, KmerAffectAnalyser, KmerStringAffect>();
+  testGetMaximum<MapKmerStore>();
+
   testAffectAnalyser1<ArrayKmerStore,KmerAffect>();
   testAffectAnalyser2<ArrayKmerStore,KmerAffect>();
   testAffectAnalyser1<ArrayKmerStore,KmerStringAffect>();
