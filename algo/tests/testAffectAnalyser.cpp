@@ -155,9 +155,6 @@ void testGetMaximum() {
            << ", " << results.last_pos_max << ")");
   TAP_TEST(results.max_value == 2, TEST_AA_GET_MAXIMUM_VALUE,
            "max = " << results.max_value);
-  TAP_TEST(results.nb_before == 4 && results.nb_after == 3,
-           TEST_AA_GET_MAXIMUM_COUNTS, "nb_before = " << results.nb_before
-           << ", nb_after = " << results.nb_after);
 
   results = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 1., k);
   TAP_TEST(results.max_found, 
@@ -180,10 +177,6 @@ void testGetMaximum() {
   TAP_TEST(! results.max_found, 
            TEST_AA_GET_MAXIMUM_MAX_FOUND, "(" << results.first_pos_max
            << ", " << results.last_pos_max << ")");
-  TAP_TEST(results.nb_before == 13 && results.nb_after == 3,
-           TEST_AA_GET_MAXIMUM_COUNTS, 
-           "nb_before = " << results.nb_before
-           << "nb_after = " << results.nb_after);
 
   results = kaa2.getMaximum(AFFECT_V, AFFECT_J, 1., k);
   TAP_TEST(! results.max_found, 
@@ -195,10 +188,6 @@ void testGetMaximum() {
            && results.last_pos_max == 15, TEST_AA_GET_MAXIMUM_POSITIONS,
            "max positions: [" << results.first_pos_max << ", " 
            << results.last_pos_max << "]");
-  TAP_TEST(results.nb_before == 13 && results.nb_after == 3,
-           TEST_AA_GET_MAXIMUM_COUNTS, 
-           "nb_before = " << results.nb_before
-           << "nb_after = " << results.nb_after);
   TAP_TEST(results.nb_before_right == 0 && results.nb_after_right == 0, 
            TEST_AA_GET_MAXIMUM_COUNTS, 
            "before right: " << results.nb_before_right
@@ -234,9 +223,6 @@ void testGetMaximum() {
            TEST_AA_GET_MAXIMUM_POSITIONS, 
            "first = " << results.first_pos_max 
            << ", last = " << results.last_pos_max);
-  TAP_TEST(results.nb_before == 11 && results.nb_after == 3,
-           TEST_AA_GET_MAXIMUM_COUNTS, "before: " << results.nb_before
-           << ", after: " << results.nb_after);
   TAP_TEST(results.nb_before_left == 10 && results.nb_before_right == 1
            && results.nb_after_left == 0 && results.nb_after_right == 3,
            TEST_AA_GET_MAXIMUM_COUNTS, 
