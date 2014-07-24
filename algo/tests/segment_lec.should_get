@@ -1,7 +1,7 @@
 !LAUNCH: ../../vidjil -G ../../germline/TRG -c segment ../../data/segment_lec.fa | grep '^>'
 
 $ Representative first junction Lec
-1:>Rep#01.*VJ\\s+0\\s+86\\s+89\\s+118\\s+TRGV5.01\\s+5/CC/0\\s+TRGJ1.02
+1:>Rep#01.*VJ 0 86 89 118 TRGV5.01 5/CC/0 TRGJ1.02
 
 $ Second junction lec
 #                              17   22
@@ -10,16 +10,16 @@ $ Second junction lec
 #              ||||||||||||||||||    ||||||||||||||||||
 # V10*02 : 285 TACTACTGTGCTGCGTGGGATTA
 # JP1*01 :   0                    ATACCACTGGTTGGTTCAAGATATTTGCTGAAGGGACTAAGCTCATAGTAACTTCACCTG
-1:>Junc#05.*VJ\\s+0\\s+17\\s+22\\s+39\\s+TRGV10.02\\s+5/AGAC/3\\s+TRGJP1.01
+1:>Junc#05.*VJ 0 17 22 39 TRGV10.02 5/AGAC/3 TRGJP1.01
 
 $ Representative second junction Lec
-1:>Rep#05.*VJ\\s+0\\s+59\\s+64\\s+114\\s+TRGV10.02\\s+5/AGAC/3\\s+TRGJP1.01
+1:>Rep#05.*VJ 0 59 64 114 TRGV10.02 5/AGAC/3 TRGJP1.01
 
 $ Representative first junction Lec, revcomp
-1:>Rep_rc#01\\s+-\\s+VJ\\s+0\\s+86\\s+89\\s+118\\s+TRGV5.01\\s+5/CC/0\\s+TRGJ1.02
+1:>Rep_rc#01 - VJ 0 86 89 118 TRGV5.01 5/CC/0 TRGJ1.02
 
 $ Second junction lec, revcomp
-1:>Junc_rc#05\\s+-\\s+VJ\\s+0\\s+17\\s+22\\s+39\\s+TRGV10.02\\s+5/AGAC/3\\s+TRGJP1.01
+1:>Junc_rc#05 - VJ 0 17 22 39 TRGV10.02 5/AGAC/3 TRGJP1.01
 
 $ Representative second junction Lec, revcomp
-1:>Rep_rc#05\\s+-\\s+VJ\\s+0\\s+59\\s+64\\s+114\\s+TRGV10.02\\s+5/AGAC/3\\s+TRGJP1.01
+1:>Rep_rc#05 - VJ 0 59 64 114 TRGV10.02 5/AGAC/3 TRGJP1.01
