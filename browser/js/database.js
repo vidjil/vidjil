@@ -1,7 +1,9 @@
 function Database(id, db_address) {
     this.db_address = db_address;
     this.id = id;
-    this.upload = 0;
+    this.upload = {};
+    
+    this.url = []
 }
 
 Database.prototype = {
@@ -26,18 +28,25 @@ Database.prototype = {
             arg += "" + key + "=" + args[key] + "&";
         }
         
-        this.last_url = self.db_address + page + arg
+        var url = self.db_address + page + arg
         
-        //envoye de la requete ajax
+        this.callUrl(url)
+    },
+    
+    callUrl : function (url){
+        var self=this;
+        
         $.ajax({
             type: "POST",
-            timeout: 1000,
             crossDomain: true,
-            context: self,                          //we can't do closure with ajax event handler so we use context to keep ref
-            url: self.db_address + page + arg,
+            context: self,         //we can't do closure with ajax event handler so we use context to keepref
+            url: url,
             contentType: 'text/plain',
+            timeout: 1000,
             xhrFields: {withCredentials: true},
-            success: self.display_result,     
+            success: function (result) {
+                self.display_result(result, url)
+            }, 
             error: function (request, status, error) {
                 if (status === "timeout") {
                     popupMsg("timeout");
@@ -49,26 +58,26 @@ Database.prototype = {
         });
     },
     
-    
-    display_result: function (result) {
+    display_result: function (result, url) {
         //rétablissement de l'adresse pour les futures requetes
         result = result.replace("DB_ADDRESS/", this.db_address);
-        result = result.replace("action=\"#\"", "action=\""+this.last_url+"\"");
+        result = result.replace("action=\"#\"", "action=\""+url+"\"");
         
         //hack redirection
         try {
             var res = jQuery.parseJSON(result);
             
             if (res.redirect) this.call(res.redirect, res.args)
-                
-            //TODO : implémenter un flash message
-            if (res.message) console.log("database log : "+res.message)
+               
+            if (res.message) this.flash("database : "+res.message)
             
+            return res
         }
         catch(err)
         {
             //affichage résultat
             this.display(result)
+            this.url.push(url)
             
             //bind javascript
             this.init_ajaxform()
@@ -97,7 +106,7 @@ Database.prototype = {
                 data     : $(this).serialize(),
                 xhrFields: {withCredentials: true},
                 success: function (result) {
-                    self.display_result(result)
+                    self.display_result(result, $(this).attr('action'))
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
@@ -122,7 +131,9 @@ Database.prototype = {
                 url      : $(this).attr('action'),
                 data     : $(this).serialize(),
                 xhrFields: {withCredentials: true},
-                success: self.display_result,
+                success: function (result) {
+                    self.display_result(result, $(this).attr('action'))
+                },
                 error: function (request, status, error) {
                     if (status === "timeout") {
                         popupMsg("timeout");
@@ -137,48 +148,36 @@ Database.prototype = {
         
         //submit formulaire avec fichier
         if ( document.getElementById('upload_form') ){
-            //$('#upload_form').on('submit', self.upload_form ); // doesn't work :/
             
-            var upload_n=this.upload
-            //rename form
+            var data = $('#upload_form').serialize()
+
             $('#upload_form').ajaxForm({
                 type     : "POST",
                 cache: false,
                 crossDomain: true,
+                xhrFields: {withCredentials: true},
                 url      : $(this).attr('action'),
                 data     : $(this).serialize(),
-                beforeSubmit: function() {
-                    self.call("patient/index") 
-                    //crée un div qui contiendra la progression de l'upload du fichier 
-                    self.upload++;
-                    var div = document.createElement('div');
-                    
-                    var spanName=document.createElement('span');
-                    spanName.innerHTML = $("#upload_file").val().split('/').pop().split('\\').pop();
-                    
-                    var spanPercent=document.createElement('span');
-                    spanPercent.id = "upload_percent_"+upload_n; 
-                    spanPercent.innerHTML = '0%';
-                    
-                    div.appendChild(spanName);
-                    div.appendChild(spanPercent);
-                    
-                    var div_parent=document.getElementById("upload_list");
-                    div_parent.appendChild(div);
-                },    
-                //mise a jour progressive du % d'upload
-                uploadProgress: function(event, position, total, percentComplete) {
-                    var percentVal = percentComplete + '%';
-                    $('#upload_percent_'+upload_n).html(percentVal);
-                },
                 success  : function(result) {
-                    self.display_result(result)
+                    var js = self.display_result(result)
+                    var id = js.file_id
+                    var fileSelect = document.getElementById('upload_file');
+                    var files = fileSelect.files;
+                    var data = new FormData();
+                    
+                    for (var i = 0; i < files.length; i++) {
+                        var file = files[i];
+                        data.append('file', file, file.name);
+                    }
+                    data.append('id', id);
+                    
+                    self.upload_file(id, data)
                 },
                 error: function (request, status, error) {
                     if(status==="timeout") {
                         popupMsg("timeout");
                     } else {
-                        popupMsg(request.responseText);
+                        popupMsg(request + " " + status + " " + error);
                     } 
                 }
             });
@@ -186,6 +185,57 @@ Database.prototype = {
         }  
         
     },
+    
+    upload_file: function (id, data){
+        var self = this;
+        
+        var url = self.db_address + "file/upload"
+        
+        $.ajax({
+            type: "POST",
+            crossDomain: true,
+            url: url,
+            processData: false,
+            contentType: false,
+            data: data,
+            beforeSend: function(){
+                self.upload[id] = 0
+            },
+            success: function (result) {
+                self.upload[id] = 1
+                self.upload_display()
+                self.display_result(result, url)
+            },
+            error: function (request, status, error) {
+                delete self.upload[id]; 
+                self.upload_display();
+                if (status === "timeout") {
+                    popupMsg("timeout");
+                } else {
+                    popupMsg(request.responseText);
+                }
+            }
+        });
+        
+        return data
+    },
+    
+    /*reload the current db page*/
+    reload: function(){
+        url = this.url[this.url.length-1]
+        this.callUrl(url)
+        this.url.pop()
+    },
+    
+    back: function(){
+        if (this.url.length > 1){
+            this.url.pop()
+            url = this.url[this.url.length-1]
+            this.callUrl(url)
+        }
+        this.url.pop()
+    },
+    
     
     /* appel une fonction du serveur
      * idem que call() mais la réponse n'est pas une page html a afficher
@@ -316,7 +366,7 @@ Database.prototype = {
                     if (status === "timeout") {
                         popupMsg("timeout");
                     } else {
-                        popupMsg(request.responseText);
+                        self.flash(request.responseText);
                     }
                 }
             });
@@ -331,6 +381,20 @@ Database.prototype = {
             .style.display = "block";
         document.getElementById("db_msg")
             .innerHTML = msg;
+            
+        this.upload_display();
+    },
+    
+    /* update upload status  */
+    upload_display: function(){
+        for (var key in this.upload){
+            if (this.upload[key]==1){
+                delete this.upload[key]; 
+                this.reload()
+            }else{
+                $("#sequence_file_"+key).html("<div class='loading_seq'></div>")
+            }
+        }
     },
 
     //efface et ferme la fenetre de dialogue avec le serveur
@@ -351,6 +415,32 @@ Database.prototype = {
             fixedHeader.css("top", offset)
 
         });
+    },
+    
+    flash: function (str){
+        
+        var div = jQuery('<div/>', {
+            text: str,
+            style: 'display : none',
+            class: 'flash'
+        }).appendTo('#flash_mes')
+        .slideDown(200);
+        
+        setTimeout(function(){
+            div.fadeOut('slow', function() { div.remove();});
+        }, 5000);
+        
+    
+    },
+    
+    user_rights: function (value, name, id) {
+        
+        var arg = {}
+        arg.value = value
+        arg.name = name
+        arg.id = id
+       
+        this.call('user/rights', arg)
     }
 
 }

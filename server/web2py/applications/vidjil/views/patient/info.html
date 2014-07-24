@@ -3,83 +3,152 @@
 {{('message' in globals())}}
 {{if 'message' in globals():}}
 
-{{if request.vars["config_id"]:}}
+{{if request.vars["config_id"] and not request.vars["config_id"] == -1 :}}
     {{config_id = long(request.vars["config_id"])}}
+    {{config = True}}
 {{else:}}
-    {{config_id = db(db.config).select()[0].id}}
+    {{config_id = -1}}
+    {{config = False}}
 {{pass}}
 
+{{
+
+patient = db.patient[request.vars["id"]]
+
+query = db( 
+    (db.sequence_file.patient_id==db.patient.id) 
+    & (db.patient.id==request.vars["id"]) 
+).select(
+    left=db.data_file.on(
+        (db.data_file.sequence_file_id==db.sequence_file.id) 
+        & (db.data_file.config_id==str(config_id) ) 
+    ) 
+) 
+
+patient_name = patient.first_name + " " + patient.last_name
+config_name = db.config[request.vars["config_id"]].name
+
+fused = db(
+    (db.fused_file.patient_id == patient)
+    & (db.fused_file.config_id == config_id)
+)
+fused_count = fused.count()
+fused_file = fused.select()
+fused_filename = patient_name +"_"+ config_name + ".data"
+
+
+analysis = db(
+    (db.analysis_file.patient_id == patient)
+    & (db.analysis_file.config_id == config_id)
+)
+analysis_count = analysis.count()
+analysis_file = analysis.select()
+analysis_filename = patient_name +"_"+ config_name + ".analysis"
+}}
 
 
 <div>
-    <h3>{{=message}}  {{=request.vars["id"]}}</h3>
-    <div>
-        choose config 
-        <span>
-            <select id="choose_config" name="config" onchange="db.call('patient/info', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
-                {{ 
-                query = db(db.config).select() 
-                
-                for row in query :}}
-                    <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} >
-                        {{=row.name}} 
-                    </option>
-                {{pass}}
-            </select>
-        </span>
+    
+    <h3>{{=patient.last_name + " " + patient.first_name}}  ({{=request.vars["id"]}})</h3>
+    
+    <div class="db_block">
+        <div class="db_block_left">
+            file list
+        </div>
+        
+        <div class="db_block_right">
+            choose config 
+            <span>
+                <select id="choose_config" name="config" onchange="db.call('patient/info', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
+                    <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
+                    {{for row in db(db.config).select() :}}
+                        <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} >
+                            {{=row.name}} 
+                        </option>
+                    {{pass}}
+                </select>
+            </span>
+        </div>
     </div>
+    
 </div>
 
 <div id="db_table_container">
     <table class="db_table" id="table">
         <thead>
             <tr><td class="column1"> file_name </td>
+                <td class="column5"> </td>
                 <td class="column2"> sampling date </td>
                 <td> info </td>
-                <td class="column4"> status </td>
-                <td class="column2"> vidjil run date </td>
                 <td class="column5"> </td>
                 <td class="column5"> </td>
-                <td class="column5"> </td>
+                
+                <td class="column_sep"></td>
+                
+                <td class="column2"> last run </td>
+                <td class="column4">  </td>
+
             </tr>
         </thead>
         <tbody>
-            {{ 
-            query = db( 
-                (db.sequence_file.patient_id==db.patient.id) 
-                & (db.patient.id==request.vars["id"]) 
-            ).select(
-                left=db.data_file.on(
-                    (db.data_file.sequence_file_id==db.sequence_file.id) 
-                    & (db.data_file.config_id==str(config_id) ) 
-                ) 
-            ) 
-
-            for row in query :}}
+            {{for row in query :}}
+            
+                {{if row.sequence_file.data_file is None :}}
+                    {{filename = ''}}
+                {{else:}}
+                    {{(filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)}}
+                {{pass}} 
+            
                  <tr>
-                    <td> {{ (filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)}} {{=filename}}</td>
+                    <td id="sequence_file_{{=row.sequence_file.id}}"> {{=filename}}</td>
+                    <td> {{if filename != '':}}<a href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" >dl</a>{{pass}}</td>
                     <td> {{=row.sequence_file.sampling_date}} </td>
                     <td> {{=row.sequence_file.info}} </td>
-                    <td> {{if row.data_file.id == None :}}
-                        <span class="button" onclick="db.request('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}' , 'config_id' : {{=config_id}} } )"> run >> </span>
-                         {{else:}}
-                             {{=row.data_file.status}}
-                         {{pass}}
-                    </td>
-                    <td> {{=row.data_file.run_date}} </td>
-                    <td> <a href="{{=URL('download', scheme='http', args=row.sequence_file.data_file)}}" >dl</a> </td>
                     <td onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
                     <td onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
+                     
+                    <td class="column_sep"></td>
+                     
+                    <td> {{if row.data_file.run_date :}}{{=row.data_file.run_date }}{{pass}} </td>
+                    <td> 
+                        {{if filename != '' and config_id != -1:}}
+                            {{if row.data_file.id == None or row.data_file.status == "ready" :}}
+                            <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'config_id' : {{=config_id}} } )"> run >> </span>
+                            {{else:}}
+                            {{=row.data_file.status}}
+                            {{pass}}
+                        {{pass}}
+                    </td>
                 </tr>
             {{pass}}
         </tbody>
     </table>
     <table class="db_table" id="db_fixed_header"></table>
 </div>
-    
-<span class="button" onclick="db.call('patient/index')"> back to list </span>
-<span class="button" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> add file </span>
-<span class="button" onclick="db.load_data( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=config_id}} } )" > see result </span>
+
+<div class="db_block">
+    <div class="db_block_left">
+        <span class="button2" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> add file </span>
+    </div>
+    {{if fused_count >0:}}
+    <div class="db_block_right">
+        <span class="button2" onclick="db.load_data( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=config_id}} } )" > see result </span>
+    </div>
+    {{pass}}
+</div>
+
+{{if fused_count >0:}}
+<div class="db_block">
+    <div class="db_block_right">
+        download
+        <a class="button" href={{=URL('default', 'download', scheme='https', args=fused_file[0].fused_file, vars=dict(filename=fused_filename))}} type="application/octet-stream" download> .data </a>
+        {{if analysis_count >0:}}
+        <a class="button" href={{=URL('default', 'download', scheme='https', args=analysis_file[0].analysis_file, vars=dict(filename=analysis_filename))}} type="application/octet-stream" download> .analysis </a>
+        {{pass}}
+    </div>
+</div>
+{{pass}}
+
 </div>
 
 {{elif 'content' in globals():}}

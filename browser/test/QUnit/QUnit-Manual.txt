@@ -1,0 +1,15 @@
+—
+Redacted by Carette Antonin - the Vidjil Project
+—
+
+QUnit tests:
+
+    dbscan (dbscan_test.js)
+    ------
+
+    DONE:
+        -> Existing DBSCAN object
+        -> Not null
+        -> Good clustering
+            -> 2 nodes
+            -> multiple nodes

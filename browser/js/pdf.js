@@ -274,9 +274,9 @@ PDF.prototype = {
         //clone reads (%)
         var data = []
         for (var i = 0; i < this.m.time.length; i++) {
-            data[i] = this.m.getSize(cloneID, i)
+            data[i] = this.m.getStrSize(cloneID, i)
         }
-        this.row('', data, '%')
+        this.row('', data, 'raw')
         this.next_row()
 
         this.sequence(cloneID)
@@ -297,7 +297,7 @@ PDF.prototype = {
 
             //V
             var str;
-            this.doc.setTextColor(120, 120, 120)
+            this.doc.setTextColor(255, 179, 0)
             for (j = 0; j < (Math.floor(seqV.length / 80) + 1); j++) {
                 str = seqV.substring(j * 80, (j + 1) * 80)
                 this.doc.text(this.marge, this.y, str);
@@ -312,7 +312,6 @@ PDF.prototype = {
                 seqN = ' ' + seqN
             }
 
-            this.doc.setFont('courier', 'bold'); // Underline could be better...
             this.doc.setTextColor(0, 0, 40)
 
             for (j = 0; j < (Math.floor(seqN.length / 80) + 1); j++) {
@@ -328,8 +327,7 @@ PDF.prototype = {
                 seqJ = ' ' + seqJ
             }
 
-            this.doc.setFont('courier', 'normal');
-            this.doc.setTextColor(0, 0, 0)
+            this.doc.setTextColor(0, 155, 149)
 
             for (j = 0; j < (Math.floor(seqJ.length / 80) + 1); j++) {
                 str = seqJ.substring(j * 80, (j + 1) * 80)

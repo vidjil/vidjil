@@ -10,7 +10,6 @@
     All data file using this config will also be deleted ({{=db(db.data_file.config_id==request.vars["id"]).count()}} data file(s) will be deleted).</br>
 
     <div class="center"> 
-        <button onclick="db.call('config/index')">back</button>
         <button onclick="db.call('config/delete', {'id' :'{{=request.vars["id"]}}'} )">continue</button>
     </div>
 </div>

@@ -13,13 +13,28 @@ html{
 }
 
 body {
-  font-family: Arial, Helvetica, Sans-serif;
+  font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
   font-size: 13px;
   height : 100%;
   margin:0px;
   color : @default;
   background : @border;
 }
+
+
+/* texts that are not sequences nor identifiers */
+
+#info, #popup-msg, .menu, .menu a
+{
+  font-family: ubuntulight, Arial, Helvetica, Sans-serif;
+}
+
+a 
+{
+  font-family: ubuntumedium,  Arial, Helvetica, Sans-serif;
+}
+
+
 
 h2
 {
@@ -99,10 +114,15 @@ ul{
 max-height: calc(~"100%" - @margin)
 }
 
+line {
+  stroke: @secondary;
+  stroke-width: 0.5;
+}
+
                         /* left-container - info */
 
 #info{
-  font-family : Courier New,monaco,terminal,courier,system; 
+  font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
   font-size: 13px;
   height :200px;
   padding:3px;
@@ -137,7 +157,7 @@ max-height: calc(~"100%" - @margin)
 }
 
 .background_graph2{
-  fill : @highlight
+  fill : @background
 }
 
 .graph_line{
@@ -163,18 +183,18 @@ max-height: calc(~"100%" - @margin)
 }
 
 .axis_m{
-  stroke : @secondary ;
+  stroke : @default ;
   opacity : 0.5 ;
   stroke-width : 20px;
 }
 
 .axis_h{
-  stroke : @secondary ;
+  stroke : @default ;
   stroke-width : 2px ;
 }
 
 .axis_v{
- stroke : @secondary ;
+ stroke : @default ;
  stroke-width : 2px;
  stroke-dasharray: 6,6;
 }
@@ -193,19 +213,19 @@ max-height: calc(~"100%" - @margin)
 }
 
 #resolution5{
-  fill : @background;
-  opacity : 0.75;
+    fill: @border;
+    opacity: 0.6;
 }
 
 .graph_time{
   font-weight : bold;
-  fill : @secondary ;
+  fill : @default ;
   text-anchor:middle;
 }
 
 .graph_text{
   font-weight : bold;
-  fill : @secondary ;
+  fill : @default ;
   text-anchor:end;
 }
 
@@ -232,7 +252,7 @@ max-height: calc(~"100%" - @margin)
 }
 
 .graph_listElem:hover{
-  background : @highlight;
+  background : @border;
   width: 100%;
   cursor: move;
   cursor: webkit-grab;
@@ -251,6 +271,7 @@ max-height: calc(~"100%" - @margin)
   -o-transition: fill  0.2s;
   -ms-transition: fill 0.2s;
   transition: fill 0.2s;
+  fill : @default;
 }
 
 .circle_inactive{
@@ -273,14 +294,23 @@ max-height: calc(~"100%" - @margin)
   display:none;
 }
 
+.line_active {
+  opacity: 1;
+  stroke-width: 4px;
+}
+
+.line_inactive {
+  display: none;
+}
+
 .sp_legend{
-  fill : @secondary ;
+  fill : @default ;
   font-weight : bold;
   text-anchor : middle;
 }
 
 .sp_rotated_legend{
-  fill : @secondary ;
+  fill : @default ;
   font-weight : bold;
   text-anchor : left;
 }
@@ -296,7 +326,7 @@ max-height: calc(~"100%" - @margin)
 }
 
 .sp_line , .sp_subline{
-  stroke : @secondary ;
+  stroke : @default ;
   stroke-width : 0.7px;
 }
 
@@ -327,7 +357,7 @@ max-height: calc(~"100%" - @margin)
 
 
 .list:hover, .tagElem:hover{
-  background :@highlight;
+  background :@border;
 }
 
 #list{
@@ -340,7 +370,6 @@ max-height: calc(~"100%" - @margin)
   overflow-y : scroll;
   overflow-x : hidden;
   height : 100%;
-  font-weight: bold;
   padding:2px;
 }
 
@@ -359,7 +388,7 @@ max-height: calc(~"100%" - @margin)
   -ms-transition: color 0.2s;
   transition: color 0.2s;
   font-weight : bold;
-  padding:3px;
+  padding: 1px 4px 4px 1px;
   height :14px;
 }
 
@@ -441,13 +470,6 @@ max-height: calc(~"100%" - @margin)
   border-width : 2px;
   padding : 0px;
   border-color : @select;
-  background : @highlight;
-}
-
-#listSeq {
-  font-weight: bold;
-  font-family: Courier New,monaco,terminal,courier,system;
-  font-size: 13px;
 }
 
 .sequence-line { 
@@ -455,8 +477,11 @@ max-height: calc(~"100%" - @margin)
 }
 
 .seq-fixed {
-  position: fixed;
+  position: relative;
+  display: inline-block;
   width: (@width_left_container - @width_scrollbar);
+  margin: -2px;
+  padding: 2px;
   padding-left: 5px;
   left:0px;
   cursor:pointer;
@@ -466,10 +491,48 @@ max-height: calc(~"100%" - @margin)
 .seq-mobil {
   margin-left: @width_left_container;
   letter-spacing: 0.12em;
+  font-weight: bold;
+  font-family : ubuntu_monoregular, Courier New,monaco,terminal,courier,system; 
+  position: relative;
+  bottom: 3px;
+  word-spacing: -1em;
 }
 
+.seq-marge {
+  word-spacing: normal;
+}
+
+.V {
+  color: #ffb300;
+}
 .D {
-    color: #fb000d;
+  color: #c7007d;
+}
+.J {
+  color: #009b95;
+}
+.window1{
+    display: inline-block;
+    width: 0px;
+    word-spacing: normal;
+}
+.window2{
+    border: solid;
+    display: inline-flex;
+    height: 1em;
+    position: relative;
+    margin: -1px;
+    border-width: 1px;
+    border-color: red;
+    -khtml-user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: -moz-none;
+    -ms-user-select: none;
+    user-select: none;
+    pointer-events: none;
+}
+span .substitution{
+    background-color : @border;
 }
 
 							  /*tag*/
@@ -518,7 +581,20 @@ max-height: calc(~"100%" - @margin)
   margin:5px;
   cursor:pointer;
   background:inherit;
-} 
+}
+
+.submenu{
+    width: 200px;
+    display: inline-table;
+}
+
+.menu_box {
+    margin: 0px;
+    padding: 5px;
+    border-top: solid;
+    border-width: 1px;
+    border-color:@border;
+}
 
 .submenu{
     width: 200px;
@@ -543,7 +619,7 @@ max-height: calc(~"100%" - @margin)
   left :50%;
   font-size: 13px; 
   padding: 10px;
-  background:inherit;
+  background:@background;
   display:none; 
 }
 
@@ -556,8 +632,8 @@ max-height: calc(~"100%" - @margin)
   text-align:left;
 }
 
-.button:hover, .buttonSelector:hover{
-  background : @highlight;
+.button:hover, .buttonSelector:hover, .button2:hover{
+  background : @border;
   color : @select;
 }
 
@@ -584,7 +660,7 @@ max-height: calc(~"100%" - @margin)
 #popup-container a {
   text-decoration: none;
   font-weight: bold;
-  color: @secondary ;
+  color: @default ;
 }
 
 #popup-container a:hover{
@@ -647,7 +723,19 @@ max-height: calc(~"100%" - @margin)
   margin-right:5px;
   margin-left:5px;
   min-width : 16px;
-  /* text-decoration:underline; */
+  color: @default;
+}
+
+.button2 {
+    border: solid;
+    border-width: 1px;
+    padding: 3px;
+    margin: 3px;
+    display: inline-block;
+    cursor: pointer;
+    background: @border;
+    width: 100px;
+    text-align: center;
 }
 
 .smallbutton {
@@ -702,8 +790,8 @@ span.logo
 }
 
 #segmenter {
-    overflow-x: scroll; 
-    overflow-y: hidden;
+    overflow-x: scroll !important; 
+    overflow-y: auto;
     height : 100px;
 }
 
@@ -728,9 +816,9 @@ span.logo
   bottom: 0px;
   left: 0px;
   width: 100%;
-  overflow-y:auto;
-  height:125px;
-  overflow-y: hidden;
+  border-top: solid;
+  border-width: 6px;
+  min-height: 125px;
 }
 
 .tn{
@@ -795,7 +883,7 @@ span.logo
   color: grey;
 }
 
-.selector, #list_menu, #top-container, .list_clones, .bot-bar, #bot-container, #popup-container, #file_menu, #tagSelector, .closeButton
+.selector, #list_menu, #top-container, .list_clones, .bot-bar, #bot-container, #popup-container, #file_menu, #tagSelector, .closeButton, #analysis_menu
 {
   border-color: @border; 
 }
@@ -820,7 +908,7 @@ span.logo
 
 #info_window table .header{
   border-width : 2px;
-  background-color: @highlight;
+  background-color: @border;
 }
 
 .sp_selector{
@@ -830,20 +918,15 @@ span.logo
     fill-opacity: 0.2;
 }
 
-span .substitution{
-    background-color : @highlight;
-    opacity: 0.8;
-    font-weight: lighter;
-    text-decoration: underline;
-}
 
 .axis_select select {
-    background: @highlight;
+    background: @background;
     color: @default;
-    border: 0;
     height: 16px;
     width: 110px;
     -webkit-appearance: none;
+    border: solid;
+    border-width: 1px
 }
 
 .axis_select {
@@ -854,10 +937,17 @@ span .substitution{
 }
 
 .axis_select_x {
+    display: block;
 }
 
 .axis_select_y {
     top: 18px;
+    display: block;
+}
+
+.axis_select_graph {
+    top: 0px;
+    display: none;
 }
 
 .axis_select select[selected=selected] {
@@ -871,6 +961,15 @@ span .substitution{
     background: @border;
 }
 
+#bot-separator {
+    background: @border;
+    width: 100%;
+    height: @margin;
+    cursor: pointer;
+    position: relative;
+    top: -@margin;
+}
+
 #vertical-separator {
     position: relative;
     float: left;
@@ -878,9 +977,10 @@ span .substitution{
     width: @margin;
     line-height: calc(100% - 1px);
     background : @border;
+    cursor: pointer;
 }
 
-#visu-separator:hover , #vertical-separator:hover {
+#visu-separator:hover , #vertical-separator:hover, #bot-separator:hover {
     background: @highlight;
 }
 
@@ -897,9 +997,8 @@ span .substitution{
   top: 150px; 
   left:50% ;
   width:960px;
-  height :400px;
+  height :450px;
   font-size: 14px; 
-  padding: 10px;
   background: @background;
   display:none;
   left: -moz-calc(~"50% - 480px");
@@ -907,6 +1006,9 @@ span .substitution{
   left: calc(~"50% - 480px");
 }
 
+#db_msg{
+    margin : 15px;
+}
 .db_table{
     width: 100%;
     border-collapse: collapse;
@@ -927,6 +1029,35 @@ span .substitution{
     width: 20px;
 }
 
+.db_table .column_sep {
+    width: 50px;
+    border: solid;
+    border-width: 1px;
+    border-color: @background;
+    background: @background;
+}
+
+.db_block {
+    width : 100%;
+    display : inline-block;
+}
+
+.db_footer{
+    width: 100%;
+    display: inline-block;
+    position: absolute;
+    bottom: 5px;
+    right:0px;
+}
+
+.db_block_left {
+    float : left;
+}
+
+.db_block_right {
+    float : right;
+}
+
 .db_table th{
     border-bottom: solid;
     border-color: @border;
@@ -941,7 +1072,7 @@ span .substitution{
 } 
 
 .db_table tr:hover{
-    background: @highlight;
+    background: @border;
 }
 
 .db_table td{
@@ -961,17 +1092,15 @@ span .substitution{
 }
 
 #db_table_container{
-    overflow-y: scroll;
-    height: 280px;
-    border: solid;
-    border-color: @highlight;
-    border-width: 1px;
+    overflow-y: auto;
+    overflow-x: hidden;
+    max-height: 275px;
     position: relative;
 }
 
-#db_fixed_header { 
-    position: absolute; 
-    top: 0px; 
+#db_fixed_header {
+    position: absolute;
+    top: 0px;
     background: @highlight;
 }
 
@@ -988,3 +1117,63 @@ span .substitution{
     margin-top: 20px;
     margin-left: 20px;
 }
+
+.loading_seq {
+    height: 15px;
+    width: 100px;
+    background-image: -webkit-linear-gradient(-45deg, @border 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, @border 50%, @border 75%, rgba(255, 154, 26, 0) 75%); 
+    background-image: -moz-linear-gradient(-45deg, @border 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, @border 50%, @border 75%, rgba(255, 154, 26, 0) 75%);
+    background-image: -o-linear-gradient(-45deg, @border 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, @border 50%, @border 75%, rgba(255, 154, 26, 0) 75%);
+    background-image: linear-gradient(-45deg, @border 25%, rgba(255, 154, 26, 0) 25%, rgba(255, 154, 26, 0) 50%, @border 50%, @border 75%, rgba(255, 154, 26, 0) 75%);
+    background-size: 50px 50px;
+    -webkit-animation: move 2s linear infinite;
+    -moz-animation: move 2s linear infinite;
+    -o-animation: move 2s linear infinite;
+    animation: move 2s linear infinite;
+}
+
+@-webkit-keyframes move {
+    to { background-position: 50px 50px; }
+}
+
+@-moz-keyframes move {
+    to { background-position: 50px 50px; }
+}
+
+@-o-keyframes move {
+    to { background-position: 50px 50px; }
+}
+
+@-webkit-keyframes move {
+    to { background-position: 50px 50px; }
+}
+
+#flash_mes {
+    position : absolute;
+    display : block;
+    bottom : 0px;
+    right : 0px;
+}
+
+.flash {
+    width: 350px;
+    min-height: 20px;
+    border: solid;
+    border-width: 1px;
+    display: block;
+    border-radius: 5px;
+    padding: 5px;
+    margin: 5px;
+    background: @background;
+    border-color: @border;
+    z-index: 10
+}
+
+select>option:hover {
+    background-color: @border;
+}
+
+.inactive {
+    opacity: 0.5;
+}
+

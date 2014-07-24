@@ -60,7 +60,7 @@ if (typeof config != 'undefined') {
     }
     
     if (config.debug_mode) {
-        $("#fps").css("display", "");
+        $("#debug_menu").css("display", "");
     }
 }
 
@@ -76,16 +76,36 @@ var m = new Model();
  * */
 var graph = new Graph("visu2",m);
 var list = new List("list",m);
-var sp = new ScatterPlot("visu",m);
+var sp = new ScatterPlot("visu",m, graph, stats);
 var segment = new Segment("bot-container",m, CGI_ADDRESS);
 var builder = new Builder(m);
 
+/* Stat object
+ *
+ */
+var stats = new Stats(sp);
 
-/* connections
- * 
+/* Add view in the model -> Alignment button
+ */
+m.addSegment(segment);
+
+/* Connections
+ *
  * */
 var db = new Database("plop!", DB_ADDRESS);
 
+/*Statements and functions which allows to active the ALT key, and the movement of the SVG frame*/
+document.onkeydown = keydown;
+document.onkeyup = keyup;
+
+function keydown(evt) {
+    if (evt.altKey && sp.reinit) {
+        sp.active_move = true;
+    }
+}
+
+function keyup(evt) {
+    sp.active_move = false;
+}
 
 initTag();//TODO a enlever
-

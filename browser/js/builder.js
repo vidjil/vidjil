@@ -1,9 +1,10 @@
 function Builder(model) {
     this.m = model; //Model utilisé
     this.m.view.push(this); //synchronisation au Model
-
     this.colorMethod = "";
-    this.point = 0;
+    this.width_left_container = $("#left-container")
+        .css("width")
+
 
     this.drag_separator = false
 }
@@ -14,8 +15,6 @@ Builder.prototype = {
 
     init: function () {
         var self = this;
-        this.width_left_container = $("#left-container")
-            .css("width")
 
         d3.select("#visu-separator")
             .on("mousedown", function () {
@@ -42,17 +41,7 @@ Builder.prototype = {
 
     update: function () {
 
-        if (this.colorMethod != this.m.colorMethod || 
-            this.point != this.m.time_order[this.m.t] ||
-            this.dataFileName != this.m.dataFileName ||
-            this.analysisFileName != this.m.analysisFileName 
-        ) {
-            this.point = this.m.time_order[this.m.t]
-            this.colorMethod = this.m.colorMethod
-            this.dataFileName = this.m.dataFileName 
-            this.analysisFileName = this.m.analysisFileName 
             this.build_info_container()
-        }
 
     },
     
@@ -198,7 +187,18 @@ Builder.prototype = {
 
         listTag.appendChild(li);
     },
-
+    
+    /* Fonction servant à "déverouiller" l'appel de la fonction compute_normalization(), ainsi qu'à apposer le 'check' au checkBox 'normalize'
+     * */
+    displayNormalizeButton: function() {
+    var normalizeDiv = document.getElementById("normalizeDiv");
+    normalizeDiv.style.display="";
+	var normalizeCheckbox = document.getElementById("normalize");
+	this.m.normalization_switch(true);
+    normalizeCheckbox.disabled = false;
+	normalizeCheckbox.checked = true;
+    },
+    
     /* 
      * */
     editTagName: function (tagID, elem) {
@@ -247,7 +247,7 @@ Builder.prototype = {
         var input = document.createElement('input');
         input.type = "text";
         input.id = "edit_value";
-        input.value = self.m[data][self.point];
+        input.value = self.m[data][self.m.t];
         input.style.width = "200px";
         input.style.border = "0px";
         input.style.margin = "0px";
@@ -263,7 +263,7 @@ Builder.prototype = {
         a.appendChild(document.createTextNode("save"));
         a.id = "btnSave";
         a.onclick = function () {
-            self.m[data][self.point] = document.getElementById("edit_value").value
+            self.m[data][self.m.t] = document.getElementById("edit_value").value
             self.build_info_container()
             self.m.update()
         }
@@ -278,12 +278,12 @@ Builder.prototype = {
         var self = this;
 
         var displaySelector = document.getElementById("displaySelector")
-        var listTag = displaySelector.getElementsByTagName("ul")[0]
-        var listSystem = document.getElementById("system_list")
+        var listTag = document.getElementById("tagList")
+        var listGermline = document.getElementById("germline_list")
         
         //reset
         listTag.innerHTML = "";
-        listSystem.innerHTML = "";
+        listGermline.innerHTML = "";
 
         //init tag list
         for (var i = 0; i < tagName.length; i++) {
@@ -336,31 +336,31 @@ Builder.prototype = {
         //init system
         if (this.m.system == "multi") {
             $("#system_menu").css("display", "")
+            $("#color_system_button").css("display", "")
             
             for (var key in this.m.system_segmented) {
                 
-                var checkbox=document.createElement("input");
-                    checkbox.type="checkbox";
-                    checkbox.id = "checkbox_system_"+key
-                    checkbox.appendChild(document.createTextNode(key))
-                    checkbox.checked=true
-                    checkbox.onchange = function () {
-                        m.update_selected_system()
+                var radio=document.createElement("input");
+                    radio.type="radio";
+                    radio.name="germline";
+                    radio.value=key
+                    radio.onchange = function () {
+                        m.changeGermline(this.value)
                     }
                     
-                var div = document.createElement('div');
-                div.appendChild(checkbox)
+                div = document.createElement('div');
+                div.appendChild(radio)
                 div.appendChild(document.createTextNode(key))
                 
-                var li = document.createElement('li');
+                li = document.createElement('li');
                 li.appendChild(div)
-
-                listSystem.appendChild(li);
+                listGermline.appendChild(li);
                 
             }
              
         }else{
             $("#system_menu").css("display", "none")
+            $("#color_system_button").css("display", "none")
         }
 
         initTag();
@@ -370,7 +370,8 @@ Builder.prototype = {
     build_clusterSelector: function () {
         var self = this;
 
-        var clusterSelector = document.getElementById("clusterSelector").firstChild;
+        var clusterSelector = document.getElementById("clusterby_button")
+        clusterSelector.innerHTML = "";
         
         if (self.m.windows[0]._target){
         
@@ -391,6 +392,21 @@ Builder.prototype = {
                 targetJ.onclick = function () { self.m.clusterBy('_target.J-GENE')}
                 targetJ.appendChild(document.createTextNode("target J"));
             clusterSelector.appendChild(targetJ)
+            
+            var clonotype = document.createElement('a');
+                clonotype.className = "buttonSelector"
+                clonotype.onclick = function () { self.m.clusterBy('_clonotype')}
+                clonotype.appendChild(document.createTextNode("clonotype"));
+            clusterSelector.appendChild(clonotype)
+        }
+        
+        if (self.m.windows[0].system){
+            
+            var system = document.createElement('a');
+                system.className = "buttonSelector"
+                system.onclick = function () { self.m.clusterBy('system')}
+                system.appendChild(document.createTextNode("system"));
+            clusterSelector.appendChild(system)
         }
     },
 
@@ -459,11 +475,21 @@ Builder.prototype = {
         var div_data_file = document.createElement('div');
         div_data_file.id = "info_data_file"
         div_data_file.appendChild(document.createTextNode(this.m.dataFileName));
+        parent.appendChild(div_data_file)
 
         //global info
         var div_analysis_file = this.build_info_line("info_analysis_file", "analysis", this.m.analysisFileName)
-        var div_system = this.build_info_line("info_system", "system", this.m.system)
-
+        parent.appendChild(div_analysis_file)
+        
+        //system
+        if (this.m.system =="multi"){
+            var div_multi_system = this.build_multi_system()
+            parent.appendChild(div_multi_system)
+        }else{
+            var div_system = this.build_info_line("info_system", "system", this.m.system)
+            parent.appendChild(div_system)
+        }
+        
         //point info
         var div_point = this.build_info_line("info_point", "point",  this.m.getStrTime(this.m.t, "name") )
         var span = document.createElement('span')
@@ -473,6 +499,7 @@ Builder.prototype = {
             self.edit(this, "time");
         }
         div_point.appendChild(span)
+        parent.appendChild(div_point)
         
         var div_date = this.build_info_line("info_date", "date", this.m.getStrTime(this.m.t, "sampling_date") )
         var span = document.createElement('span')
@@ -482,20 +509,14 @@ Builder.prototype = {
             self.edit(this, "timestamp2");
         }
         div_date.appendChild(span)
-
-        var percent = (this.m.reads_segmented[this.point] / this.m.reads_total[this.point]) * 100
-        var val = "" + this.m.reads_segmented[this.point] + " reads" + " (" + percent.toFixed(2) + "%)"
-        var div_segmented = this.build_info_line("info_segmented", "segmented", val)
-
-        var div_total = this.build_info_line("info_total", "total", this.m.reads_total[this.point] + " reads")
-
-        parent.appendChild(div_data_file)
-        parent.appendChild(div_analysis_file)
-        parent.appendChild(div_system)
-
-        parent.appendChild(div_point)
         parent.appendChild(div_date)
+
+        var percent = (this.m.reads_segmented[this.m.t] / this.m.reads_total[this.m.t]) * 100
+        var val = "" + this.m.reads_segmented[this.m.t] + " reads" + " (" + percent.toFixed(2) + "%)"
+        var div_segmented = this.build_info_line("info_segmented", "segmented", val)
         parent.appendChild(div_segmented)
+        
+        var div_total = this.build_info_line("info_total", "total", this.m.reads_total[this.m.t] + " reads")
         parent.appendChild(div_total)
 
         /*TODO put this somewhere else
@@ -507,6 +528,41 @@ Builder.prototype = {
         initTag();
     },
 
+    build_multi_system: function () {
+        var div = document.createElement('div');
+        div.className = "info_line";
+        
+        var span1 = document.createElement('span');
+        span1.appendChild(document.createTextNode("system : "));
+        span1.className = "info_row"
+        
+        var span2 = document.createElement('span');
+        
+        for (var key in this.m.system_segmented) {
+            
+            var checkbox=document.createElement("input");
+                checkbox.type="checkbox";
+                checkbox.id = "checkbox_system_"+key
+                checkbox.appendChild(document.createTextNode(key))
+                if (this.m.system_selected.indexOf(key) != -1)
+                    checkbox.checked=true
+                checkbox.onchange = function () {
+                    m.update_selected_system()
+                }
+                
+            var span = document.createElement('span');
+            span.appendChild(checkbox)
+            span.appendChild(document.createTextNode(key))
+            
+            span2.appendChild(span)
+        }
+        
+        div.appendChild(span1)
+        div.appendChild(span2)
+        
+        return div
+    },
+    
     build_info_line: function (id, name, value) {
         var span1 = document.createElement('span');
         span1.appendChild(document.createTextNode(name + " : "));

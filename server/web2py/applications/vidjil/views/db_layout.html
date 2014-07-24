@@ -2,19 +2,21 @@
     
     <div id="db_menu">
         <a class="button" onclick="db.call('patient/index');">patients</a>
-        <a class="button" onclick="db.call('config/index');">configs</a>
         - - -
+        {{if auth.has_membership("admin"):}}
+        <a class="button" onclick="db.call('config/index');">configs</a>
         <a class="button" onclick="db.call('group/index');">groups</a>
         <a class="button" onclick="db.call('user/index');">users</a>
         - - -
+        {{pass}}
         <a class="button" onclick="db.call('default/help');">help</a>
     </div>
     
     <div id="db_auth">
-        {{if auth.user:}}
-        <a class="button" onclick="db.call('default/user/profile');">{{=auth.user.first_name}}</a>
-        <a class="button" onclick="db.request('default/user/logout');">disconnect</a>
-        {{pass}}
+            {{if auth.user:}}
+            <a class="button" onclick="db.call('default/user/profile');">{{=auth.user.first_name}}</a>
+            <a class="button" onclick="db.request('default/user/logout');">disconnect</a>
+            {{pass}}
     </div>
     
 </div>
@@ -22,4 +24,15 @@
 
 <div>
     {{include}}
+</div>
+
+
+<div class="db_footer">
+    <div class="db_block_left">
+        <span class="button" onclick="db.back();"> << back</span>
+        <span class="button" onclick="db.reload();">reload</span>
+    </div>
+    <div class="db_block_right">
+
+    </div>
 </div>
