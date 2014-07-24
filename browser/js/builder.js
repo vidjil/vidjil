@@ -8,6 +8,8 @@ function Builder(model) {
     this.drag_separator = false
 }
 
+//TODO need a reset function
+
 Builder.prototype = {
 
     init: function () {
@@ -35,6 +37,7 @@ Builder.prototype = {
         this.build_tagSelector()
         this.build_displaySelector()
         this.build_info_container()
+        this.build_clusterSelector()
     },
 
     update: function () {
@@ -319,6 +322,34 @@ Builder.prototype = {
         }
 
         initTag();
+    },
+    
+    //TODO need to build complete Selector 
+    build_clusterSelector: function () {
+        var self = this;
+
+        var clusterSelector = document.getElementById("clusterSelector").firstChild;
+        
+        if (self.m.windows[0]._target){
+        
+            var target = document.createElement('a');
+                target.className = "buttonSelector"
+                target.onclick = function () { self.m.clusterBy('_target')}
+                target.appendChild(document.createTextNode("target"));
+            clusterSelector.appendChild(target)
+            
+            var targetV = document.createElement('a');
+                targetV.className = "buttonSelector"
+                targetV.onclick = function () { self.m.clusterBy('_target.V-GENE')}
+                targetV.appendChild(document.createTextNode("target V"));
+            clusterSelector.appendChild(targetV)
+            
+            var targetJ = document.createElement('a');
+                targetJ.className = "buttonSelector"
+                targetJ.onclick = function () { self.m.clusterBy('_target.J-GENE')}
+                targetJ.appendChild(document.createTextNode("target J"));
+            clusterSelector.appendChild(targetJ)
+        }
     },
 
     toggle_left_container: function () {
