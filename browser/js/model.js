@@ -1460,7 +1460,7 @@ Model.prototype = {
 	      this.addClonesSelected(cloneID);
 	    }
         }
-        this.updateElem([cloneID]);
+        this.updateElemStyle([cloneID]);
 	    this.lastCloneSelected = cloneID;
         this.updateElemStyle([cloneID]);
         this.updateAlignmentButton();
