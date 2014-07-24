@@ -28,8 +28,8 @@ void testAffectAnalyser1() {
   }
   for (int i = 0; i < 2; i++) {
     KAffect current_affect("", seq[2*i+1], 1);
-    TAP_TEST(kaa.count(current_affect) == 2, TEST_AA_COUNT, "");
-    TAP_TEST(ckaa.count(current_affect) == 2, TEST_COUNT_AA_COUNT, "");
+    TAP_TEST(kaa.count(current_affect) == 2, TEST_AA_COUNT, kaa.count(current_affect));
+    TAP_TEST(ckaa.count(current_affect) == 2, TEST_COUNT_AA_COUNT, ckaa.count(current_affect));
     TAP_TEST(kaa.getAffectation(kaa.first(current_affect)) == current_affect, TEST_AA_GET_AFFECT, "");
     TAP_TEST(kaa.getAffectation(kaa.last(current_affect)) == current_affect, TEST_AA_GET_AFFECT, "");
   }
