@@ -248,7 +248,7 @@ vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
       case 'G': B = 2; break;
       case 'T': B = 3; break;
       default:
-	B = 4; break;
+	B = 0; break;
       }
       intseq[i] = B ;
     }
