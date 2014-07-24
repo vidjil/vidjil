@@ -49,6 +49,34 @@ string spaced(const string &input, const string &seed) {
 
 
 
+int spaced_int(int *input, const string &seed) {
+
+#ifdef NO_SPACED_SEEDS
+  return input ;
+#endif
+
+  int j = 0 ;
+
+  // cout << input << endl << seed << endl ;
+  // assert(input.length() == seed.length()); // length is not equal, pointer
+
+  int index_word = 0;
+
+  for (size_t i = 0; i < seed.length(); i++) 
+    if (seed[i] == SEED_YES)
+	index_word = (index_word << 2) | input[i] ;
+
+#ifdef DEBUG_SPACED
+  cout << input << " => |" << index_word << "|" <<  endl ;
+#endif
+
+  return index_word;
+}
+
+
+
+
+
 string string_of_int(int number)
 {
    stringstream ss;
