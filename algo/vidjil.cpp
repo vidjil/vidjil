@@ -586,34 +586,56 @@ int main (int argc, char **argv)
 #define KMER_AMBIGUOUS "?"
 #define KMER_UNKNOWN "_"
 
-      list< char* > f_germlines ;
-      f_germlines.push_back("germline/TRGV.fa");
-      f_germlines.push_back("germline/TRGJ.fa");
+      list<const char* > f_germlines ;
+
+      // TR
+      f_germlines.push_back("germline/TRAV.fa");
+      f_germlines.push_back("germline/TRAJ.fa");
+
+      f_germlines.push_back("germline/TRBV.fa");
+      f_germlines.push_back("germline/TRDJ.fa");
+      f_germlines.push_back("germline/TRBJ.fa");
 
       f_germlines.push_back("germline/TRDV.fa"); 
       f_germlines.push_back("germline/TRDD.fa");
       f_germlines.push_back("germline/TRDJ.fa");
 
-      f_germlines.push_back("germline/IGKV.fa");
-      f_germlines.push_back("germline/IGKJ.fa");
+      f_germlines.push_back("germline/TRGV.fa");
+      f_germlines.push_back("germline/TRGJ.fa");
+
+      // Ig
 
       f_germlines.push_back("germline/IGHV.fa");
       f_germlines.push_back("germline/IGHD.fa");
       f_germlines.push_back("germline/IGHJ.fa");
 
+      f_germlines.push_back("germline/IGKV.fa");
+      f_germlines.push_back("germline/IGKJ.fa");
+
+      f_germlines.push_back("germline/IGLV.fa");
+      f_germlines.push_back("germline/IGLJ.fa");
+
       // Read germline and build one unique index
 
       bool rc = true ;   
       IKmerStore<KmerStringAffect>  *index = KmerStoreFactory::createIndex<KmerStringAffect>(seed, rc);
-      map <string, int> stats_kmer;
-      stats_kmer[KMER_AMBIGUOUS] = 0 ;
-      stats_kmer[KMER_UNKNOWN] = 0 ;
+      map <string, int> stats_kmer, stats_max;
 
-      for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+      for (list<const char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
 	{
 	  Fasta rep(*it, 2, "|", cout);
 	  index->insert(rep, *it);
+	}
+
+      // Initialize statistics, with two additional categories
+
+      f_germlines.push_back(KMER_AMBIGUOUS);
+      f_germlines.push_back(KMER_UNKNOWN);
+
+      for (list<const char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+	{
 	  stats_kmer[string(*it)] = 0 ;
+	  stats_max[string(*it)] = 0 ;
 	}
 
       // Open read file (copied frow below)
@@ -627,6 +649,11 @@ int main (int argc, char **argv)
 	     << endl;
 	exit(1);
       }
+      
+      // init forbidden for .max()
+      set<KmerStringAffect> forbidden;
+      forbidden.insert(KmerStringAffect::getAmbiguous());
+      forbidden.insert(KmerStringAffect::getUnknown());
       
       // Loop through all reads
 
@@ -661,20 +688,36 @@ int main (int argc, char **argv)
 
 	      stats_kmer[ksa.label]++ ;
 	    }
+
+          delete kaa;
+
+	  CountKmerAffectAnalyser<KmerStringAffect> ckaa(*index, seq);
+	  ckaa.setAllowedOverlap(k-1);
+
+	  stats_max[ckaa.max(forbidden).label]++ ;
+
 	}
+
+      delete reads;
 
       // Display statistics
 
       cout << "  <== " << nb_reads << " reads" << endl ;
-      for (list< char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+      cout << "\t" << " max" << "\t\t" << "        kmers" << "\n" ;
+      for (list<const char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
 	{
-	  cout << setw(12) << stats_kmer[*it] << "\t" ;
-	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[*it] / total_length * 100 << "%\t" ;
-	  cout << *it << endl ;
-	}
-      cout << setw(12) << stats_kmer[KMER_AMBIGUOUS] << "\t" << "\t" << KMER_AMBIGUOUS << endl ;
-      cout << setw(12) << stats_kmer[KMER_UNKNOWN]   << "\t" << "\t" << KMER_UNKNOWN   << endl ;
+	  cout << setw(12) << stats_max[*it] << " " ;
+	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_max[*it] / nb_reads * 100 << "%" ;
 
+	  cout << "     " ;
+
+	  cout << setw(12) << stats_kmer[*it] << " " ;
+	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[*it] / total_length * 100 << "%" ;
+
+	  cout << "     " << *it << endl ;
+	}
+      
+      delete index;
       exit(0);
     }
 
@@ -1082,9 +1125,13 @@ int main (int argc, char **argv)
               string end_V ="";
 	    
               // avoid case when V is not in the window
-              if (seg.getLeft() > (int) window_pos)
-                end_V = rep_V.sequence(seg.best_V).substr(rep_V.sequence(seg.best_V).size() - ww, 
-                                                          ww - seg.del_V);
+              if (seg.getLeft() > (int) window_pos) {
+                int v_size = rep_V.sequence(seg.best_V).size();
+                int start_pos = (v_size < ww) ? 0 : v_size - ww;
+                end_V = rep_V.sequence(seg.best_V)
+                  .substr(start_pos,
+                          min(v_size - start_pos, ww - seg.del_V));
+              }
 
               string mid_D = "";
 	    
