@@ -32,6 +32,7 @@ int seed_weight(const string &seed);
  */
 
 string spaced(const string &input, const string &seed);
+int spaced_int(int *input, const string &seed);
 
 
 /**
