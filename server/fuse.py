@@ -600,6 +600,7 @@ def main():
     group_options.add_argument('--test', action='store_true', help='run self-tests')
     group_options.add_argument('--merge', action='store_true', help='merge multiple system')
     
+    group_options.add_argument('--compress', '-c', action='store_true', help='compress point names, removing common substrings')
     group_options.add_argument('--pipeline', '-p', action='store_true', help='compress point names (internal Bonsai pipeline)')
 
     group_options.add_argument('--output', '-o', type=str, default='fused.data', help='output file (%(default)s)')
@@ -657,13 +658,14 @@ def main():
             print '\t==> merge to', jlist_fused
         jlist_fused.d['germline'][0] = args.germline
 
-    print
-    print "### Select point names"
-    l = jlist_fused.d["point"]
-    ll = interesting_substrings(l)
-    print "  <==", l
-    print "  ==>", ll
-    jlist_fused.d["point"] = ll
+    if args.compress:
+        print
+        print "### Compress point names"
+        l = jlist_fused.d["point"]
+        ll = interesting_substrings(l)
+        print "  <==", l
+        print "  ==>", ll
+        jlist_fused.d["point"] = ll
     
     print
     jlist_fused.cut(args.top)
