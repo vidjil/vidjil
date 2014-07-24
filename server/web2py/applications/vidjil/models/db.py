@@ -7,7 +7,7 @@
 
 ## if SSL/HTTPS is properly configured and you want all HTTP requests to
 ## be redirected to HTTPS, uncomment the line below:
-# request.requires_https()
+request.requires_https()
 
 if not request.env.web2py_runtime_gae:
     ## if NOT running on Google App Engine use SQLite or other DB
@@ -101,8 +101,11 @@ db.define_table('sequence_file',
                 Field('sampling_date','date'),
                 Field('info','text'),
                 Field('filename','text'),
+                Field('pcr','text'),
+                Field('sequencer','text'),
+                Field('producer','text'),
                 Field('size_file','integer'),
-                Field('data_file', 'upload',autodelete=True, length=1000000000000))
+                Field('data_file', 'upload', length=1000000000000))
 
 
 
@@ -143,9 +146,6 @@ db.define_table('analysis_file',
                 Field('analysis_file', 'upload', length=1000000000000))
 
 
-
-
-
 if db(db.auth_user.id > 0).count() == 0:
     id_first_user=""
         
@@ -160,18 +160,23 @@ if db(db.auth_user.id > 0).count() == 0:
     ## création des groupes de base
     id_admin_group=db.auth_group.insert(role='admin')
     id_sa_group=db.auth_group.insert(role='user_1')
-    db.auth_group.insert(role='group_1')
-    db.auth_group.insert(role='group_2')
-    db.auth_group.insert(role='group_3')
     db.auth_group.insert(role="public")
             
     db.auth_membership.insert(user_id=id_first_user, group_id=id_admin_group)
     db.auth_membership.insert(user_id=id_first_user, group_id=id_sa_group)
     
     ## permission
-    ## system admin have admin rights on all patients and groups
+    ## system admin have admin/read/create rights on all patients, groups and configs
     auth.add_permission(id_admin_group, 'admin', db.patient, 0)
     auth.add_permission(id_admin_group, 'admin', db.auth_group, 0)
+    auth.add_permission(id_admin_group, 'admin', db.config, 0)
+    auth.add_permission(id_admin_group, 'read', db.patient, 0)
+    auth.add_permission(id_admin_group, 'read', db.auth_group, 0)
+    auth.add_permission(id_admin_group, 'read', db.config, 0)
+    auth.add_permission(id_admin_group, 'create', db.patient, 0)
+    auth.add_permission(id_admin_group, 'create', db.auth_group, 0)
+    auth.add_permission(id_admin_group, 'create', db.config, 0)
+ 
 
 
 ## after defining tables, uncomment below to enable auditing

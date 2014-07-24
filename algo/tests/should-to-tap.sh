@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 if [ $# -eq 0 -o "$1" == "-h" -o "$1" == "--help" ]; then
     echo "Usage: $0 <file.should_get>
@@ -74,7 +74,7 @@ TMP_TAP_FILE=$(mktemp tap.XXXX)
 {
 nb_tests=0
 # Count number of tests to be performed
-nb_tests=`grep -Pc '^[^$#!]' $BASE`
+nb_tests=`grep -Ec '^[^$#!]' $BASE`
 
 echo "1.."$nb_tests
 test_nb=1
@@ -161,7 +161,7 @@ while read line; do
 
                 # Replace whitespaces if needed
                 if [ $IGNORE_WHITESPACES -ne 0 ]; then
-                    pattern=$(sed -r 's/\s+/[[:space:]]+/g' <<< $pattern)
+                    pattern=$(sed -r 's/[[:space:]]+/[[:space:]]+/g' <<< $pattern)
                 fi
 
                 debug "Grepping \"$pattern\" in $FILE_TO_GREP"

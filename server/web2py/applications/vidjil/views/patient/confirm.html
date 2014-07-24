@@ -17,7 +17,6 @@ for row in query :}}
     All data file of this patient will also be deleted ({{=data_count}} data file(s) will be deleted).</br>
 
     <div class="center"> 
-        <button onclick="db.call('patient/index')">back</button>
         <button onclick="db.call('patient/delete', {'id' :'{{=request.vars["id"]}}'} )">continue</button>
     </div>
 </div>

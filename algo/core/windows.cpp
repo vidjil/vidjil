@@ -45,9 +45,22 @@ list<Sequence> WindowsStorage::getSample(junction window, size_t nb_sampled,
   list<Sequence> &reads = getReads(window);
   return SequenceSampler(reads).getLongest(nb_sampled, nb_buckets);
 }
- 
+
 size_t WindowsStorage::size() {
   return seqs_by_window.size();
+}
+
+void WindowsStorage::setIdToAll() {
+    int id = 0;
+    for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin();
+        it != seqs_by_window.end(); ++it) {
+            id_by_window.insert(make_pair(it->first, id));
+            id++;
+    }
+}
+
+int WindowsStorage::getId(junction window) {
+    return id_by_window[window];
 }
 
 void WindowsStorage::add(junction window, Sequence sequence) {
@@ -78,12 +91,15 @@ pair <int, int> WindowsStorage::keepInterestingWindows(size_t min_reads_window) 
         it++;
       }
     }
+
+  sort_all_windows.clear();
   return make_pair(removes, nb_reads);
 }
 
 void WindowsStorage::sort() {
-  for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin(); 
-       it != seqs_by_window.end(); ++it) 
+  sort_all_windows.clear();
+  for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin();
+       it != seqs_by_window.end(); ++it)
     {
       sort_all_windows.push_back(make_pair(it->first, it->second.size()));
     }
@@ -130,7 +146,8 @@ JsonArray WindowsStorage::sortedWindowsToJsonArray(map <junction, JsonList> json
       windowsList.add("size", json_size);
       //windowsList.add("ratios", normalization_ratios);
       windowsList.add("top", top++);
-	 
+      windowsList.add("id", this->getId(it->first));
+
       windowsArray.add(windowsList);
     }
 

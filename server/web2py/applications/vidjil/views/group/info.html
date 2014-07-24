@@ -4,6 +4,8 @@
 {{if 'message' in globals():}}
 
 {{
+group = db.auth_group[request.vars["id"]]
+
 query = db( 
         (db.auth_user.id == db.auth_membership.user_id) 
         & (db.auth_membership.group_id == request.vars["id"]) 
@@ -12,7 +14,7 @@ query = db(
 <div>
 
     <div>
-        <h3>{{=message}}  {{=request.vars["id"]}}</h3>
+        <h3>group : {{=group.role}}  ({{=group.id}})</h3>
     </div>
 
     <div id="db_table_container">
@@ -39,8 +41,6 @@ query = db(
         </table>
         <table class="db_table" id="db_fixed_header"></table>
     </div>
-    
-    <span class="button" onclick="db.call('group/index')"> back to list </span>
 
     {{if auth.has_permission("admin", "auth_group", request.vars["id"], auth.user.id) :}}
 

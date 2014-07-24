@@ -189,8 +189,8 @@ class FineSegmenter : public Segmenter
   
   /**
   * extend segmentation from VJ to VDJ
-  * @param rep_J: germline for V
-  * @param rep_J: germline for D
+  * @param rep_V: germline for V
+  * @param rep_D: germline for D
   * @param rep_J: germline for J
   */
   void FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J);

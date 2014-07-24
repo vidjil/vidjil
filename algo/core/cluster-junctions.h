@@ -30,14 +30,13 @@ class comp_matrix {
         
     /**
     * init matrix with a KmerStore and compute distance value between sequences
-    * @param junctions: a MapKmerStore containing sequences to be compared
+    * @param cluster_cost
     * @param out: exit for log
     */
     void compare(ostream &out, Cost cluster_cost);
     
     /**
     * init matrix with a previous run stored 
-    * @param junctions: a MapKmerStore containing sequences
     * @param file: a file containing the distance value between sequences
     */
     void load(string file);
@@ -50,7 +49,6 @@ class comp_matrix {
     
     /**
     * @return cluster 
-    * @param junctions: a MapKmerStore containing sequences to be clusterized
     * @param forced_edges: force some sequences to be in the same cluster
     * @param w: junctions size
     * @param out: exit for log

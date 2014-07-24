@@ -10,7 +10,6 @@
     All data using this sequence file will also be deleted ({{=db(db.data_file.sequence_file_id==request.vars["id"]).count()}} data file(s) will be deleted).</br>
 
     <div class="center"> 
-        <button onclick="db.call('patient/info', {'id' :'{{=request.vars["patient_id"]}}'} )">back</button>
         <button onclick="db.call('file/delete', {'id' :'{{=request.vars["id"]}}'} )">continue</button>
     </div>
 </div>

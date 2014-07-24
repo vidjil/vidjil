@@ -9,7 +9,14 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 
+import gluon.contrib.simplejson
+if request.env.http_origin:
+    response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
+    response.headers['Access-Control-Allow-Credentials'] = 'true'
+    response.headers['Access-Control-Max-Age'] = 86400
 
+#########################################################################
+##return the default index page for vidjil (empty)
 def index():
     """
     example action using the internationalization operator T and flash
@@ -21,131 +28,138 @@ def index():
     response.flash = T("Welcome to Vidjil!")
     return dict(message=T('hello world'))
 
+#########################################################################
+##return the view default/help.html
 def help():
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
     return dict(message=T('help i\'m lost'))
 
-
+#########################################################################
 ## add a scheduller task to run vidjil on a specific sequence file
+# need sequence_file_id, config_id
+# need patient admin permission 
 def run_request():
-    import gluon.contrib.simplejson
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
+    error = ""
+
+    ##TODO check  
+    if not "sequence_file_id" in request.vars :
+        error += "id sequence file needed, "
+    if not "config_id" in request.vars:
+        error += "id config needed, "
         
-        error = ""
+    id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
+    
+    if not auth.has_permission('admin', 'patient', id_patient) :
+        error += "you don't have permission to run request for this patient ("+str(id_patient)+"), "
         
-        ##TODO check  
-        if not "sequence_file_id" in request.vars :
-            error += "id sequence file needed, "
-        if not "config_id" in request.vars:
-            error += "id config needed, "
-        
-        row2 = db( ( db.scheduler_task.args == '["'+request.vars["sequence_file_id"]+'", "'+request.vars["config_id"]+'"]' ) 
-                 & ( db.scheduler_task.status != "FAILED"  )
-                 & ( db.scheduler_task.status != "EXPIRED"  )
-                 & ( db.scheduler_task.status != "TIMEOUT"  )
-                 & ( db.scheduler_task.status != "COMPLETED"  )
-                 ).select()
-        
-        if len(row2) > 0 :
-            error += "run already registered, "
-        
-        if error == "" :
-            
-            ## create or update data file state
-            row = db( ( db.data_file.config_id == request.vars["config_id" ] ) 
-             & ( db.data_file.sequence_file_id == request.vars["sequence_file_id"] )  
+    row2 = db( ( db.scheduler_task.args == '["'+request.vars["sequence_file_id"]+'", "'+request.vars["config_id"]+'"]' ) 
+             & ( db.scheduler_task.status != "FAILED"  )
+             & ( db.scheduler_task.status != "EXPIRED"  )
+             & ( db.scheduler_task.status != "TIMEOUT"  )
+             & ( db.scheduler_task.status != "COMPLETED"  )
              ).select()
-            
-            if len(row) > 0 : ## update
-                data_id = row[0].data_file.id
-                db.data_file[data_id] = dict(state = 'queued')
-            else:             ## create
-                data_id = db.data_file.insert(sequence_file_id = request.vars['sequence_file_id'],
-                                            config_id = request.vars['config_id'],
-                                            status = 'pending'
-                                            )
-                
-            ## create or update fuse file state
-            id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
-            row = db( ( db.fused_file.config_id == request.vars["config_id"] ) & 
-                      ( db.fused_file.patient_id == id_patient )  
-                    ).select()
 
-            if len(row) > 0 : ## update
-                fuse_id = row[0].id
-            else:             ## create
-                fuse_id = db.fused_file.insert(patient_id = id_patient,
-                                                config_id = request.vars['config_id'])
-            
-            ##add task to scheduller
-            scheduler.queue_task('run', [request.vars["sequence_file_id"],request.vars["config_id"], data_id, fuse_id]
-                                 , repeats = 1, timeout = 6000)
-            
-            res = {"success": "true" , "msg": "request added" }
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    if len(row2) > 0 :
+        error += "run already registered, "
+
+    if error == "" :
+
+        ## create or update data file state
+        row = db( ( db.data_file.config_id == request.vars["config_id" ] ) 
+         & ( db.data_file.sequence_file_id == request.vars["sequence_file_id"] )  
+         ).select()
+
+        if len(row) > 0 : ## update
+            data_id = row[0].id
+            db.data_file[data_id] = dict(status = 'queued')
+        else:             ## create
+            data_id = db.data_file.insert(sequence_file_id = request.vars['sequence_file_id'],
+                                        config_id = request.vars['config_id'],
+                                        status = 'pending'
+                                        )
+
+        ## create or update fuse file state
+        row = db( ( db.fused_file.config_id == request.vars["config_id"] ) & 
+                  ( db.fused_file.patient_id == id_patient )  
+                ).select()
+
+        if len(row) > 0 : ## update
+            fuse_id = row[0].id
+        else:             ## create
+            fuse_id = db.fused_file.insert(patient_id = id_patient,
+                                            config_id = request.vars['config_id'])
+
+        ##add task to scheduller
+        scheduler.queue_task('run', [request.vars["sequence_file_id"],request.vars["config_id"], data_id, fuse_id]
+                             , repeats = 1, timeout = 6000)
         
-        else :
-            res = {"success" : "false", "msg" : error}
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-            
+        (filename, str) = db.sequence_file.data_file.retrieve(db.sequence_file[request.vars["sequence_file_id"]].data_file)
+        config_name = db.config[request.vars["config_id"]].name
+        patient_name = db.patient[id_patient].first_name + " " + db.patient[id_patient].last_name
         
-    res2 = {"success" : "false", "msg" : "connect error"}
-    return gluon.contrib.simplejson.dumps(res2, separators=(',',':'))
-
-
-def get_data():
-    import time
-    import gluon.contrib.simplejson
-    from subprocess import Popen, PIPE, STDOUT
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
-
-        error = ""
+        res = {"redirect": "patient/info",
+               "args" : { "id" : id_patient,
+                          "config_id" : request.vars["config_id"]},
+               "message": "default/run_request : request added to run config " + config_name + " on " + filename + " for " + patient_name }
         
-        if not "patient_id" in request.vars :
-            error += "id patient file needed, "
-        if not "config_id" in request.vars:
-            error += "id config needed, "
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
-        query = db( ( db.fused_file.patient_id == request.vars["patient_id"] )
-                   & ( db.fused_file.config_id == request.vars["config_id"] )
-                   ).select() 
-        for row in query :
-            fused_file = "applications/vidjil/uploads/"+row.fused_file
-        
-        if error == "" :
-
-            f = open(fused_file, "r")
-            output=f.readlines()
-            f.close()
-            
-            return output
-        
-        res = {"success" : "false", "msg" : "connect error"}
+    else :
+        res = {"success" : "false",
+               "message" : "default/run_request : " + error}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
     
-def get_analysis():
-    import gluon.contrib.simplejson
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
-    
+#########################################################################
+## return .data file
+# need patient_id, config_id
+# need patient admin or read permission 
+def get_data():
+    import time
+    from subprocess import Popen, PIPE, STDOUT
+
     error = ""
 
     if not "patient_id" in request.vars :
         error += "id patient file needed, "
     if not "config_id" in request.vars:
         error += "id config needed, "
+    if not auth.has_permission('admin', 'patient', request.vars["patient_id"]) and \
+    not auth.has_permission('read', 'patient', request.vars["patient_id"]):
+        error += "you don't have permission to consult this patient ("+id_patient+")"
+        
+    query = db( ( db.fused_file.patient_id == request.vars["patient_id"] )
+               & ( db.fused_file.config_id == request.vars["config_id"] )
+               ).select() 
+    for row in query :
+        fused_file = "applications/vidjil/uploads/"+row.fused_file
+
+    if error == "" :
+
+        f = open(fused_file, "r")
+        output=f.readlines()
+        f.close()
+
+        return output
+
+    else :
+        res = {"success" : "false",
+               "message" : "default/get_data : " + error}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
+#########################################################################
+## return .analysis file
+# need patient_id, config_id
+# need patient admin or read permission 
+def get_analysis():
+    error = ""
+
+    if not "patient_id" in request.vars :
+        error += "id patient file needed, "
+    if not "config_id" in request.vars:
+        error += "id config needed, "
+    if not auth.has_permission('admin', 'patient', request.vars["patient_id"]) and \
+    not auth.has_permission('read', 'patient', request.vars["patient_id"]):
+        error += "you don't have permission to consult this patient ("+id_patient+")"
     
     ## empty analysis file
     res = {"custom": [],
@@ -156,52 +170,57 @@ def get_analysis():
            "time_order": []
            }
     
-    ## récupération des infos stockées sur la base de données 
-    query = db( ( db.patient.id == db.sequence_file.patient_id )
-               & ( db.data_file.sequence_file_id == db.sequence_file.id )
-               & ( db.patient.id == request.vars["patient_id"] )
-               & ( db.data_file.config_id == request.vars["config_id"]  )
-               ).select( orderby=db.sequence_file.sampling_date ) 
+    if error == "" :
+        ## récupération des infos stockées sur la base de données 
+        query = db( ( db.patient.id == db.sequence_file.patient_id )
+                   & ( db.data_file.sequence_file_id == db.sequence_file.id )
+                   & ( db.patient.id == request.vars["patient_id"] )
+                   & ( db.data_file.config_id == request.vars["config_id"]  )
+                   ).select( orderby=db.sequence_file.sampling_date ) 
 
-    order = 0
-    for row in query :
-        (filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)
-        res["time"].append(filename)
-        res["time_order"].append(order)
-        res["info_sequence_file"].append(row.sequence_file.info) 
-        order = order+1
+        order = 0
+        for row in query :
+            (filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)
+            res["time"].append(filename)
+            res["time_order"].append(order)
+            res["info_sequence_file"].append(row.sequence_file.info) 
+            order = order+1
 
-    res["info_patient"] = db.patient[request.vars["patient_id"]].info
-    
-    ## récupération des infos se trouvant dans le fichier .analysis
-    analysis_query = db(  (db.analysis_file.patient_id == 1)
-               & (db.analysis_file.config_id == 1 )  )
+        res["info_patient"] = db.patient[request.vars["patient_id"]].info
 
-    if not analysis_query.isempty() :
-        row = analysis_query.select().first()
-        f = open('applications/vidjil/uploads/'+row.analysis_file, "r")
-        analysis = gluon.contrib.simplejson.loads(f.read())
-        f.close()
-            
-        res["custom"] = analysis["custom"]
-        res["cluster"] = analysis["cluster"]
-    
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-    
-    
-def save_analysis():
-    import gluon.contrib.simplejson
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
+        ## récupération des infos se trouvant dans le fichier .analysis
+        analysis_query = db(  (db.analysis_file.patient_id == request.vars["patient_id"])
+                   & (db.analysis_file.config_id == request.vars["config_id"] )  )
+
+        if not analysis_query.isempty() :
+            row = analysis_query.select().first()
+            f = open('applications/vidjil/uploads/'+row.analysis_file, "r")
+            analysis = gluon.contrib.simplejson.loads(f.read())
+            f.close()
+
+            res["custom"] = analysis["custom"]
+            res["cluster"] = analysis["cluster"]
+
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    else :
+        res = {"success" : "false",
+               "message" : "default/get_analysis : " + error}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
+    
+#########################################################################
+## upload .analysis file and store it on the database
+# need patient_id, config_id, fileToUpload
+# need patient admin permission 
+def save_analysis():
     error = ""
 
     if not "patient_id" in request.vars :
         error += "id patient file needed, "
     if not "config_id" in request.vars:
         error += "id config needed, "
+    if not auth.has_permission('admin', 'patient', request.vars['patient_id']) :
+        error += "you don't have permission to make change on this patient, "
         
     if error == "" :
         analysis_query = db(  (db.analysis_file.patient_id == 1)
@@ -218,31 +237,97 @@ def save_analysis():
                                                     patient_id = request.vars['patient_id'],
                                                 )
         
+        patient_name = db.patient[request.vars['patient_id']].first_name + " " + db.patient[request.vars['patient_id']].last_name
         
-        res = {"success" : "true", "msg" : "analysis saved"}
+        res = {"success" : "true",
+               "message" : "default/save_analysis : analysis saved ("+patient_name+")"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
-        res = {"success" : "false", "msg" : error}
+        res = {"success" : "false",
+               "message" : error}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
-def test_upload():
-    response.title = ""
-    return dict(message=T('test upload'))
+        
 
-
+#########################################################################
+## TODO make custom download for .data et .analysis
 @cache.action()
 def download():
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
     """
     allows downloading of uploaded files
     http://..../[app]/default/download/[filename]
     """
-    return response.download(request, db)
+    return response.download(request, db, download_filename=request.vars.filename)
 
 
+#########################################################################
+## 
+def create_self_signed_cert(cert_dir):
+    """
+    create a new self-signed cert and key and write them to disk
+    """
+    from OpenSSL import crypto, SSL
+    from socket import gethostname
+    from pprint import pprint
+    from time import gmtime, mktime
+    from os.path import exists, join
+ 
+    CERT_FILE = "ssl_certificate.crt"    
+    KEY_FILE = "ssl_self_signed.key"
+    ssl_created = False
+    if not exists(join(cert_dir, CERT_FILE)) \
+            or not exists(join(cert_dir, KEY_FILE)):
+        ssl_created = True    
+        # create a key pair
+        k = crypto.PKey()
+        k.generate_key(crypto.TYPE_RSA, 4096)
+ 
+        # create a self-signed cert
+        cert = crypto.X509()
+        cert.get_subject().C = "AQ"
+        cert.get_subject().ST = "State"
+        cert.get_subject().L = "City"
+        cert.get_subject().O = "Company"
+        cert.get_subject().OU = "Organization"
+        cert.get_subject().CN = gethostname()
+        cert.set_serial_number(1000)
+        cert.gmtime_adj_notBefore(0)
+        cert.gmtime_adj_notAfter(10*365*24*60*60)
+        cert.set_issuer(cert.get_subject())
+        cert.set_pubkey(k)
+        cert.sign(k, 'sha1')
+ 
+        open(join(cert_dir, CERT_FILE), "wt").write(
+            crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
+        open(join(cert_dir, KEY_FILE), "wt").write(
+            crypto.dump_privatekey(crypto.FILETYPE_PEM, k))
+ 
+        create_self_signed_cert('.')
+        
+    return(ssl_created, cert_dir, CERT_FILE, KEY_FILE)
+
+#########################################################################
+##just visit the view default/generate_ssl_key and restart web2py with the displayed command
+def generate_ssl_key():
+    ssl_created, cert_dir, CERT_FILE, KEY_FILE = create_self_signed_cert(request.folder + "private/")
+    return(dict(ssl_created=ssl_created, cert_dir=cert_dir, CERT_FILE=CERT_FILE, KEY_FILE=KEY_FILE))
+
+
+
+
+
+
+
+
+
+
+#########################################################################
+##TODO remove useless function ( maybe used by web2py internally )
+
+
+
+#########################################################################
+##not used
 def call():
     """
     exposes services. for example:
@@ -252,7 +337,8 @@ def call():
     """
     return service()
 
-
+#########################################################################
+##not used
 @auth.requires_signature()
 def data():
     """
@@ -270,7 +356,8 @@ def data():
     """
     return dict(form=crud())
 
-
+#########################################################################
+## not used
 @auth.requires_login()
 @auth.requires_membership('admin')
 def add_membership(): 
@@ -291,8 +378,10 @@ def add_membership():
         
     return dict(form=form)
 
+#########################################################################
+## not used
 def upload_file():
-        import gluon.contrib.simplejson, shutil, os.path
+        import shutil, os.path
         
         try:
             # Get the file from the form
@@ -328,7 +417,8 @@ def upload_file():
             res = dict(files=[{"name": "kuik", "size": 0, "error": "fail!!" }])
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
  
- 
+#########################################################################
+## not used
 def delete_file():
         try:
             id = request.args[0]
@@ -341,15 +431,12 @@ def delete_file():
             redirect( URL(f='patient', args=[patient_id]) )
         
 
- 
+#########################################################################
+## not used
 def upload():
         return dict()
     
 def user():
-    if request.env.http_origin:
-        response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
-        response.headers['Access-Control-Allow-Credentials'] = 'true'
-        response.headers['Access-Control-Max-Age'] = 86400
     """
     exposes:
     http://..../[app]/default/user/login

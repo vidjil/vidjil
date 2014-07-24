@@ -169,6 +169,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
   info = "" ;
   info_extra = "seed";
   segmented = false;
+  reversed = false;
   Dend=0;
   
   int s = (size_t)index->getS() ;

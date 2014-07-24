@@ -32,6 +32,7 @@
 #include <unistd.h>
 
 #include "core/tools.h"
+#include "core/json.h"
 #include "core/kmerstore.h"
 #include "core/fasta.h"
 #include "core/segment.h"
@@ -276,6 +277,9 @@ int main (int argc, char **argv)
   char c ;
 
   int options_s_k = 0 ;
+
+  //JsonArray which contains the Levenshtein distances
+  JsonArray jsonLevenshtein;
 
   //$$ options: getopt
 
@@ -786,6 +790,7 @@ int main (int argc, char **argv)
     }
     WindowsStorage *windowsStorage = we.extract(reads, index, w, delta_min, 
                                                 delta_max, windows_labels);
+    windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 
 
@@ -1362,7 +1367,13 @@ int main (int argc, char **argv)
       // compare_all(representatives_this_clone);
       SimilarityMatrix matrix = compare_all(representatives_this_clone, true);
       cout << RawOutputSimilarityMatrix(matrix, 90);
-    }
+      //Sort all windows
+      windowsStorage->sort();
+      //Compute all the edges
+      SimilarityMatrix matrixLevenshtein = compare_windows(*windowsStorage, Levenshtein, max_clones);
+      //Added distances matrix in the JsonTab
+      jsonLevenshtein << JsonOutputWindowsMatrix(matrixLevenshtein);
+      }
     //$$ End of very_detailed_cluster_analysis
 
     out_edges.close() ;
@@ -1394,8 +1405,13 @@ int main (int argc, char **argv)
     SimilarityMatrix matrix = compare_all(first_representatives, true, 
                                           representatives_labels);
     cout << RawOutputSimilarityMatrix(matrix, 90);
-
-     }
+        //Sort all windows
+        windowsStorage->sort();
+        //Compute all the edges
+        SimilarityMatrix matrixLevenshtein = compare_windows(*windowsStorage, Levenshtein, max_clones);
+        //Added distances matrix in the JsonTab
+        jsonLevenshtein << JsonOutputWindowsMatrix(matrixLevenshtein);
+  }
 
 
     delete scorer;
@@ -1446,6 +1462,9 @@ int main (int argc, char **argv)
                                                                            norm_list,
                                                                            nb_segmented);
     json->add("windows", jsonSortedWindows);
+
+    //Added edges in the json output file
+    json->add("links", jsonLevenshtein);
     out_json << json->toString();
     
     delete index ;

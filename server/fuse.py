@@ -174,6 +174,7 @@ class ListWindows:
         
         print "<==", file_path, "\t",
         
+        
         if (extension=="data" or extension=="vidjil"): 
             with open(file_path, "r") as file:
                 tmp = json.load(file, object_hook=self.toPython)       
@@ -198,6 +199,9 @@ class ListWindows:
         
         self.d['point'] = [f]
         
+        if not 'point' in self.d.keys():
+            self.d['point'] = [file_path]
+
     ### 
     def __add__(self, other): 
         '''Combine two ListWindows into a unique ListWindows'''
@@ -502,6 +506,8 @@ def interesting_substrings(l, target_length=6, substring_replacement='-'):
         return substrings
 
     ### Remove the longest common substring
+    
+    #Have to replace '' by '_' if the removal have place between 2 substrings 
 
     common = common_substring(substrings)
     if common:
@@ -657,6 +663,14 @@ def main():
             
             print '\t==> merge to', jlist_fused
         jlist_fused.d['germline'][0] = args.germline
+        
+        print
+        print "### Select point names"
+        l = jlist_fused.d["point"]
+        ll = interesting_substrings(l)
+        print "  <==", l
+        print "  ==>", ll
+        jlist_fused.d["point"] = ll
 
     if args.compress:
         print

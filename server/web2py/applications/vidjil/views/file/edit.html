@@ -4,8 +4,19 @@
 info = db.sequence_file[request.vars["id"]]
 }}
 
+<div>
+    <table>
+        <tr>
+            <td >
+                <input id="upload_file" type="file" name="file" >
+            </td>
+            <td >
+            </td>
+        </tr>
+    </table>
+</div>
 
-<form id="data_form" action="DB_ADDRESS/file/edit_form" enctype="multipart/form-data" method="post">
+<form id="upload_form" action="DB_ADDRESS/file/edit_form" enctype="multipart/form-data" method="post">
     <input type="hidden" id="file_id" name="id" value="{{=request.vars["id"]}}" >
     
     <table>
@@ -21,8 +32,23 @@ info = db.sequence_file[request.vars["id"]]
                 <td> </td>
             </tr>
             <tr>
+                <td><label for="pcr" id="pcr__label">pcr: </label></td>
+                <td><input class="text" id="pcr" name="pcr" type="text" size="40" value="{{=info.pcr}}"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><label for="sequencer" id="sequencer__label">sequencer: </label></td>
+                <td><input class="text" id="sequencer" name="sequencer" type="text" size="40" value="{{=info.sequencer}}"></td>
+                <td></td>
+            </tr>
+            <tr>
+                <td><label for="producer" id="producer__label">producer: </label></td>
+                <td><input class="text" id="producer" name="producer" type="text" size="40" value="{{=info.producer}}"></td>
+                <td></td>
+            </tr>
+            <tr>
                 <td> </td>
-                <td> <span class="button" onclick="db.call('patient/info', { id : '{{=request.vars['patient_id']}}' } )"> back to list </span> <input type="submit" value="Soumettre" class="btn"> </td>
+                <td> <input type="submit" value="Soumettre" class="btn"> </td>
                 <td> </td>
             </tr>
         </tbody>
