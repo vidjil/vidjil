@@ -87,7 +87,7 @@ public:
    * @return a vector of length seq.length() - getK() + 1 containing
    * for each k-mer the corresponding value in the index.
    */
-  vector<T> getResults(const seqtype &seq, bool no_revcomp=false);
+  virtual vector<T> getResults(const seqtype &seq, bool no_revcomp=false) = 0;
 
   /**
    * @return true iff the revcomp is indexed
@@ -116,6 +116,8 @@ public:
    */
   MapKmerStore(string seed, bool=false);
   MapKmerStore(int k, bool=false);
+
+  vector<T> getResults(const seqtype &seq, bool no_revcomp=false);
   T& get(seqtype &word);
   T& operator[](seqtype & word);
 };
@@ -134,7 +136,8 @@ public:
   ArrayKmerStore(string seed, bool=false);
   ArrayKmerStore(int k, bool=false);
   ~ArrayKmerStore();
-	
+
+  vector<T> getResults(const seqtype &seq, bool no_revcomp=false);	
   T& get(seqtype &word);
   T& operator[](seqtype & word);
 };
@@ -198,22 +201,70 @@ string IKmerStore<T>::getSeed() const {
   return seed;
 }
 
+
+// .getResults()
 template<class T>
-vector<T> IKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
+vector<T> MapKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
+
+  int s = IKmerStore<T>::getS();
+
   if ((int)seq.length() < s - 1) {
     return vector<T>(0);
   }
   vector<T> result(seq.length() - s + 1);
   for (size_t i=0; i + s < seq.length() + 1; i++) {
-    seqtype kmer = spaced(seq.substr(i, s), seed);
+    seqtype kmer = spaced(seq.substr(i, s), IKmerStore<T>::seed);
     //    seqtype kmer = seq.substr(i, s);
     // cout << kmer << endl << kmer0 << endl << endl ;
-    if (revcomp_indexed && no_revcomp) {
+    if (IKmerStore<T>::revcomp_indexed && no_revcomp) {
       result[i] = get(kmer);
     } else {
       result[i] = (*this)[kmer];
     }
   }
+  return result;
+}
+
+template<class T>
+vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
+  
+  int s = IKmerStore<T>::getS();
+
+  int N = (int)seq.length();
+
+  if (N < s - 1) {
+    return vector<T>(0);
+  }
+  vector<T> result(N - s + 1);
+
+  /* Read once the sequence, convert it to int* */
+  int* intseq = new int[N];
+  for (int i=0; i<N; i++)
+    {
+      int B ;
+      switch(seq[i]) {
+      case 'A': B = 0; break;
+      case 'C': B = 1; break;
+      case 'G': B = 2; break;
+      case 'T': B = 3; break;
+      default:
+	B = 4; break;
+      }
+      intseq[i] = B ;
+    }
+
+  /* Compute results */
+  for (size_t i=0; (int) i+s < N+1; i++) {
+    int kmer = spaced_int(intseq + i, IKmerStore<T>::seed);
+    if (IKmerStore<T>::revcomp_indexed && no_revcomp) {
+      result[i] = store[kmer]; // getfromint(kmer); // store[kmer];
+      // cout << i << "/" << N << "  " << kmer << result[i] << endl ;
+    } else {
+      // result[i] = (*this)[kmer]; // TODO
+    }
+  }
+
+  delete[] intseq ;
   return result;
 }
 
