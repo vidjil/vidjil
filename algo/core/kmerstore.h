@@ -260,7 +260,7 @@ vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
       result[i] = store[kmer]; // getfromint(kmer); // store[kmer];
       // cout << i << "/" << N << "  " << kmer << result[i] << endl ;
     } else {
-      // result[i] = (*this)[kmer]; // TODO
+      result[i] = store[kmer]; // Hum... what does this test mean ?
     }
   }
 
