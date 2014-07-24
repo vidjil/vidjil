@@ -21,7 +21,7 @@ test: all
 all: core $(EXEC)
 	@echo "All tests compiled."
 
-should: core $(SHOULD_LOG)
+should: vidjil $(SHOULD_LOG)
 
 %.log: %.should_get force
 	./should-to-tap.sh $<
@@ -31,6 +31,9 @@ $(EXEC): % : %.o $(LIB)
 
 
 ../core.a: core
+
+vidjil:
+	make OPTIM="-O0 -g" -C ../
 
 core:
 	make OPTIM="-O0 -g" -C ../core 

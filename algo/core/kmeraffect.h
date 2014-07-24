@@ -88,6 +88,11 @@ public:
   KmerAffect &operator=(const KmerAffect &ka);
 
   /**
+   * @return the ambiguous affectation
+   */
+  static KmerAffect getAmbiguous();
+
+  /**
    * @return the strand of the affectation
    *         -1 for backward
    *          1 for forward
@@ -100,6 +105,11 @@ public:
    *         In that case, the string consists of the first letter only
    */
   string getLabel() const;
+
+  /**
+   * @return the unknown affectation
+   */
+  static KmerAffect getUnknown();
 
   /**
    * @return true iff the class does not take care of the strand
@@ -185,6 +195,11 @@ public:
   KmerStringAffect &operator=(const KmerStringAffect &ka);
 
   /**
+   * @return the ambiguous affectation
+   */
+  static KmerStringAffect getAmbiguous();
+
+  /**
    * @return the strand of the affectation
    *         -1 for backward
    *          1 for forward
@@ -196,6 +211,11 @@ public:
    * @return the label of the affectation.
    */
   string getLabel() const;
+
+  /**
+   * @return the unknown affectation
+   */
+  static KmerStringAffect getUnknown();
 
   /**
    * @return true iff the class does not take care of the strand

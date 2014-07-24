@@ -247,42 +247,35 @@ void KmerSegmenter::computeSegmentation(int strand, int delta_min, int delta_max
     {
       because = UNSEG_STRAND_NOT_CONSISTENT ;
     } 
-  else if (strand == 1)
+  else
     {
       // Strand +
-      Vend = kaa->last(AFFECT_V);
-      Jstart = kaa->first(AFFECT_J);
+      affect_infos max;
+      if (strand == 1)
+        max = kaa->getMaximum(AFFECT_V, AFFECT_J);
+      else
+        max = kaa->getMaximum(AFFECT_J_BWD, AFFECT_V_BWD);
 
-      if (Vend == (int)string::npos) 
-	{
-	  because = UNSEG_TOO_FEW_V ;
-	}
-      
-      if (Jstart == (int)string::npos)
+      if (! max.max_found) {
+        if ((strand == 1 && max.nb_before_left == 0)
+            || (strand == -1 && max.nb_after_right == 0)) 
+          because = UNSEG_TOO_FEW_V ;
+        else if ((strand == 1 && max.nb_after_right == 0)
+                 || (strand == -1 && max.nb_before_left == 0))
 	{
 	  because = UNSEG_TOO_FEW_J ;
-	}
-
-      Vend += s;
+	} else 
+          because = UNSEG_AMBIGUOUS; 
+      } else {
+        Vend = max.first_pos_max;
+        Jstart = max.last_pos_max + 1;
+        if (strand == -1) {
+          int tmp = sequence.size() - Vend - 1;
+          Vend = sequence.size() - Jstart - 1;
+          Jstart = tmp;
+        }
+      }
     } 
-  else if (strand == -1)
-    {
-      // Strand -
-      int first = kaa->first(AFFECT_V_BWD), last = kaa->last(AFFECT_J_BWD);
-
-      if (first == (int)string::npos)
-	{
-	  because = UNSEG_TOO_FEW_V ;
-	}
-
-      if (last == (int)string::npos)
-	{
-	  because = UNSEG_TOO_FEW_J ;
-	}
-
-      Vend = sequence.size() - first ;
-      Jstart = sequence.size() - (last + s) ;
-    }
   
   if (! because)
     {

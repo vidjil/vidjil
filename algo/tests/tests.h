@@ -26,6 +26,18 @@ enum {
   TEST_AA_FIRST,
   TEST_AA_LAST,
   TEST_AA_PREDICATES,
+  TEST_AA_REVCOMP_LABEL,
+  TEST_AA_REVCOMP_STRAND,
+  TEST_AA_GET_MAXIMUM_MAX_FOUND,
+  TEST_AA_GET_MAXIMUM_POSITIONS,
+  TEST_AA_GET_MAXIMUM_COUNTS,
+  TEST_AA_GET_MAXIMUM_VALUE,
+  TEST_COUNT_AA_COUNT,
+  TEST_COUNT_AA_COUNT_BEFORE,
+  TEST_COUNT_AA_COUNT_AFTER,
+  TEST_COUNT_AA_FIRST_MAX,
+  TEST_COUNT_AA_LAST_MAX,
+  TEST_COUNT_AA_MAX,
 
   /* Cluster */
   TEST_CLUSTER,
@@ -52,6 +64,8 @@ enum {
   TEST_KMER_SEGMENTATION_CAUSE,
   TEST_KMER_JUNCTION,
   TEST_KMER_DATA,
+  TEST_KMER_LEFT,
+  TEST_KMER_RIGHT,
 
   /* WindowExtractor */
   TEST_EXTRACTOR_NB_READS,
@@ -95,6 +109,18 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_AA_FIRST, "AffectAnalyser.first()");
   RECORD_TAP_TEST(TEST_AA_LAST, "AffectAnalyser.last()");
   RECORD_TAP_TEST(TEST_AA_PREDICATES, "AffectAnalyser: isUnknown() isAmbiguous()");
+  RECORD_TAP_TEST(TEST_AA_REVCOMP_LABEL, "AffectAnalyser: check that label is the same on revcomp sequence");
+  RECORD_TAP_TEST(TEST_AA_REVCOMP_STRAND, "AffectAnalyser: check that strand is opposite on revcomp sequence");
+  RECORD_TAP_TEST(TEST_AA_GET_MAXIMUM_MAX_FOUND, "KmerAffectAnalyser: getMaximum() function, max_found value");
+  RECORD_TAP_TEST(TEST_AA_GET_MAXIMUM_POSITIONS, "KmerAffectAnalyser: getMaximum() function, positions of maximum");
+  RECORD_TAP_TEST(TEST_AA_GET_MAXIMUM_COUNTS, "KmerAffectAnalyser: getMaximum() function, counts of affectations");
+  RECORD_TAP_TEST(TEST_AA_GET_MAXIMUM_VALUE, "KmerAffectAnalyser: getMaximum() function, maximum value");
+  RECORD_TAP_TEST(TEST_COUNT_AA_COUNT, "CountKmerAffectAnalyser::count");
+  RECORD_TAP_TEST(TEST_COUNT_AA_COUNT_BEFORE, "CountKmerAffectAnalyser::countBefore");
+  RECORD_TAP_TEST(TEST_COUNT_AA_COUNT_AFTER, "CountKmerAffectAnalyser::countAfter");
+  RECORD_TAP_TEST(TEST_COUNT_AA_FIRST_MAX, "CountKmerAffectAnalyser::firstMax");
+  RECORD_TAP_TEST(TEST_COUNT_AA_LAST_MAX, "CountKmerAffectAnalyser::lastMax");
+  RECORD_TAP_TEST(TEST_COUNT_AA_MAX, "CountKmerAffectAnalyser::max");
 
   RECORD_TAP_TEST(TEST_CLUSTER, "Test automatic clusterisation");
 
@@ -111,6 +137,8 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_KMER_SEGMENTATION_CAUSE, "Test getSegmentationStatus() in KmerSegmenter");
   RECORD_TAP_TEST(TEST_KMER_JUNCTION, "Test getJunction() in KmerSegmenter");
   RECORD_TAP_TEST(TEST_KMER_DATA, "Test that data is consistent with what we expect for KmerSegmenter");
+  RECORD_TAP_TEST(TEST_KMER_LEFT, "Test V end (resp. J start) with KmerSegmenter on fwd (resp bwd) strand");
+  RECORD_TAP_TEST(TEST_KMER_RIGHT, "Test J start (resp. V end) with KmerSegmenter on fwd (resp bwd) strand");
 
   RECORD_TAP_TEST(TEST_EXTRACTOR_NB_READS, "Test getNbReads() in WindowExtractor");
   RECORD_TAP_TEST(TEST_EXTRACTOR_NB_SEGMENTED, "Test getNbSegmented() in WindowsExtractor");

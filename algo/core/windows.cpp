@@ -115,7 +115,7 @@ ostream &WindowsStorage::printSortedWindows(ostream &os) {
     {
       num_seq++ ;
 
-      os << windowToStream(os, it->first, num_seq, it->second);
+      windowToStream(os, it->first, num_seq, it->second);
     }
   return os;
 }

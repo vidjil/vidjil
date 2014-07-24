@@ -25,6 +25,7 @@ import argparse
 import sys
 import time
 import copy
+import os.path
 from operator import itemgetter
 
 
@@ -164,14 +165,14 @@ class ListWindows:
         with open(output, "w") as file:
             json.dump(self, file, indent=2, default=self.toJson)
             
-    def load(self, file_path):
+    def load(self, file_path, pipeline):
         '''init listWindows with data file
         Detects and selects the parser according to the file extension.'''
 
         # name = file_path.split("/")[-1]
         extension = file_path.split('.')[-1]
         
-        print "<==", file_path, "\t"
+        print "<==", file_path, "\t",
         
         
         if (extension=="data" or extension=="vidjil"): 
@@ -185,6 +186,18 @@ class ListWindows:
                 
         else:
             raise IOError ("Invalid file extension .%s" % extension)
+
+        
+        if pipeline: 
+            # renaming, private pipeline
+            f = '/'.join(file_path.split('/')[2:-1])
+            print "[%s]" % f
+
+        else:
+            f = file_path
+            print
+        
+        self.d['point'] = [f]
         
         if not 'point' in self.d.keys():
             self.d['point'] = [file_path]
@@ -440,7 +453,7 @@ def common_substring(l):
     else:
         return ""
 
-def interesting_substrings(l, target_length=6):
+def interesting_substrings(l, target_length=6, substring_replacement='-'):
     '''Return a list with intersting substrings.
     Now it removes common prefixes and suffixes, and then the longest 
     common substring. 
@@ -448,8 +461,10 @@ def interesting_substrings(l, target_length=6):
 
     >>> interesting_substrings(['ec-3--bla', 'ec-512-bla', 'ec-47-bla'], target_length=0)
     ['3-', '512', '47']
-    >>> interesting_substrings(['ec-A-seq-1-bla', 'ec-B-seq-512-bla', 'ec-C-seq-21-bla'], target_length=0)
+    >>> interesting_substrings(['ec-A-seq-1-bla', 'ec-B-seq-512-bla', 'ec-C-seq-21-bla'], target_length=0, substring_replacement='')
     ['A1', 'B512', 'C21']
+    >>> interesting_substrings(['ec-A-seq-1-bla', 'ec-B-seq-512-bla', 'ec-C-seq-21-bla'], target_length=0)
+    ['A-1', 'B-512', 'C-21']
     >>> interesting_substrings(['ec-A-seq-1-bla', 'ec-B-seq-512-bla', 'ec-C-seq-21-bla'], target_length=9)
     ['A-seq-1', 'B-seq-512', 'C-seq-21']
     '''
@@ -495,7 +510,8 @@ def interesting_substrings(l, target_length=6):
     #Have to replace '' by '_' if the removal have place between 2 substrings 
 
     common = common_substring(substrings)
-    substrings = [s.replace(common, '') for s in substrings]
+    if common:
+        substrings = [s.replace(common, substring_replacement) for s in substrings]
 
     return substrings
     
@@ -589,6 +605,9 @@ def main():
 
     group_options.add_argument('--test', action='store_true', help='run self-tests')
     group_options.add_argument('--merge', action='store_true', help='merge multiple system')
+    
+    group_options.add_argument('--compress', '-c', action='store_true', help='compress point names, removing common substrings')
+    group_options.add_argument('--pipeline', '-p', action='store_true', help='compress point names (internal Bonsai pipeline)')
 
     group_options.add_argument('--output', '-o', type=str, default='fused.data', help='output file (%(default)s)')
     group_options.add_argument('--top', '-t', type=int, default=50, help='keep only clones in the top TOP of some point (%(default)s)')
@@ -612,7 +631,7 @@ def main():
     if args.merge:
         for path_name in args.file:
             jlist = ListWindows()
-            jlist.load(path_name)
+            jlist.load(path_name, args.pipeline)
             jlist.add_system_info()
             
             print "\t", jlist,
@@ -629,7 +648,7 @@ def main():
         print "### Read and merge input files"
         for path_name in args.file:
             jlist = ListWindows()
-            jlist.load(path_name)
+            jlist.load(path_name, args.pipeline)
             
             w1 = Window(1)
             w2 = Window(2)
@@ -653,6 +672,15 @@ def main():
         print "  ==>", ll
         jlist_fused.d["point"] = ll
 
+    if args.compress:
+        print
+        print "### Compress point names"
+        l = jlist_fused.d["point"]
+        ll = interesting_substrings(l)
+        print "  <==", l
+        print "  ==>", ll
+        jlist_fused.d["point"] = ll
+    
     print
     jlist_fused.cut(args.top)
     print "\t", jlist_fused 
