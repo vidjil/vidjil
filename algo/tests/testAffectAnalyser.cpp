@@ -230,6 +230,8 @@ void testGetMaximum() {
            << results.nb_before_right << "\nafter:: left: " 
            << results.nb_after_left << ", right: " 
            << results.nb_after_right);
+
+  delete index;
 }
 
 /**
