@@ -1,4 +1,12 @@
 
+2014-07-25  The Vidjil Team
+	* Better heuristic, segment more reads (core/affectanalyser.h, core/segment.cpp)
+	  This improved heuristic was designed to implement a multi-germline analysis in a next release.
+	* New command '-c germlines', discovering germlines (vidjil.cpp)
+	* New unit tests, updated some tests
+	* Updated .json output (experimental distance graph)
+	* Bugs closed
+
 2014-03-27  The Vidjil Team
 	* Better default seed selection, depending on the germline, segments more reads (vidjil.cpp)
 	* Better selection of representative read (core/representative.cpp)
