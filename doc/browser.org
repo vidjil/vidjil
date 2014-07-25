@@ -1,5 +1,4 @@
-* Vidjil -- Browser Manual
-
+#+TITLE: Vidjil -- Browser Manual
 
 This is the help of the Vidjil browser : [[http://www.vidjil.org/browser]].
 This help will be extended in a few months.
@@ -7,7 +6,7 @@ Further help can always be asked to contact@vidjil.org. We can also arrange phon
 
 The Vidjil team (Mathieu, Mikaël and Marc)
 
-** Requirements
+* Requirements
 
 The Vidjil browser runs in any modern browser. It has been successfully tested on the following platforms
  - Firefox version >= XX
@@ -16,7 +15,8 @@ The Vidjil browser runs in any modern browser. It has been successfully tested o
  - Opera version >= XX
  - Safari version >= XX
 
-** First aid
+
+* First aid
 
 - Go to the “file” menu to access your data.
   Your files are protected with your login and password.
