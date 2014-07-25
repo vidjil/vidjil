@@ -52,10 +52,48 @@ void testDNAToInt() {
   TAP_TEST(dna_to_int("TTTT", 4) == 255, TEST_DNA_TO_INT, "");
 }
 
+void testRevcompInt() {
+  TAP_TEST(revcomp_int(dna_to_int("AA", 2), 2) == dna_to_int("TT", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("AC", 2), 2) == dna_to_int("GT", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("AG", 2), 2) == dna_to_int("CT", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("AT", 2), 2) == dna_to_int("AT", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("CA", 2), 2) == dna_to_int("TG", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("CC", 2), 2) == dna_to_int("GG", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("CG", 2), 2) == dna_to_int("CG", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("CT", 2), 2) == dna_to_int("AG", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("GA", 2), 2) == dna_to_int("TC", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("GC", 2), 2) == dna_to_int("GC", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("GT", 2), 2) == dna_to_int("AC", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("TA", 2), 2) == dna_to_int("TA", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("TC", 2), 2) == dna_to_int("GA", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("TG", 2), 2) == dna_to_int("CA", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("TT", 2), 2) == dna_to_int("AA", 2),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("AAAAAAA", 7), 7) == dna_to_int("TTTTTTT", 7),
+           TEST_REVCOMP_INT, "");
+  TAP_TEST(revcomp_int(dna_to_int("ATTAGGA", 7), 7) == dna_to_int("TCCTAAT", 7),
+           TEST_REVCOMP_INT, "revcomp: " << revcomp_int(dna_to_int("ATTAGGA", 7), 7) <<", dna_to_int: " << dna_to_int("TCCTAAT", 7));
+}
+
 void testTools() {
   testFasta1();
   testRevcomp();
   testCreateSequence();
   testNucToInt();
   testDNAToInt();
+  testRevcompInt();
 }

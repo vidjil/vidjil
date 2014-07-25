@@ -14,6 +14,7 @@ enum {
   TEST_CREATE_SEQUENCE_QUALITY,
   TEST_NUC_TO_INT,
   TEST_DNA_TO_INT,
+  TEST_REVCOMP_INT,
 
   /* Storage tests */
   TEST_ARRAY_KMERSTORE,
@@ -101,6 +102,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_QUALITY, "create_sequence: quality field");
   RECORD_TAP_TEST(TEST_NUC_TO_INT, "nuc_to_int()");
   RECORD_TAP_TEST(TEST_DNA_TO_INT, "dna_to_int()");
+  RECORD_TAP_TEST(TEST_REVCOMP_INT, "revcomp_int()");
 
   RECORD_TAP_TEST(TEST_ARRAY_KMERSTORE, "Testing ArrayKmerStore");
   RECORD_TAP_TEST(TEST_MAP_KMERSTORE, "Testing MapKmerStore");
