@@ -33,69 +33,112 @@ The Vidjil browser runs in any modern browser. It has been successfully tested o
 
 * The elements of the Vidjil browser
 
-** The info panel (top left panel)
-
+** The info panel (upper left panel)
+   - analysis :: name of the configuration file used for displaying the data
+   - system :: system used for analysing the data. In case of multisystem
+               data, you can select what system should be displayed.
+   - point :: name of the current point (you can change it by clicking on
+              another point in the graph)
+   - date :: when the run was performed (manually curated)
+   - segmented :: number of reads that contained enough meaningful informations, for that point
+   - total :: total number of reads for that point
 
 ** The list of clones (left panel)
 
 - You can assign other tags (and thus colors) to clones using the « star » button.
   The « filter » menu allows to further filter clones by tags.
+- Under the « star » button it is possible to normalise clone concentrations
+  according to this clone. You must specify the expected concentration in the
+  “expected size” textfield (e.g. 0.01 for 1%).
 
 - The « i » button displays additional information on each clone
 
+- The list can be sorted on V genes, J genes or concentrations. At the top of
+  the list you need to click respectively on “V sort”, “J sort” or “sort”.
+  The + and - allow respectively to un-merge or re-merge all clones that have
+  already been merged.
 
 ** The graph
 
-- The gray zones at the bottom of the graph show, for each point, the resolution (1 read / 5 reads)
+- The gray areas at the bottom of the graph show, for each point, the resolution (1 read / 5 reads)
 
-- You can reorder the points by dragging them, and hide some points by dragging them on the "+" mark at the right of the points
+- You can reorder the points by dragging them, and hide some points by dragging them on the "+" mark at the right of the points.
+  If you want to recover some hidden points, you need to drag them from the “+” mark to the graph.
 
-- If your dataset contains sampling dates (for example in a MRD setup), you can switch between point keys and dates in "settings > point key" 
+- If your dataset contains sampling dates (for example in a MRD setup), you can switch between point keys and dates in "settings > point key"
+
+- The vertical gray area shows the current point, you can change that by clicking on another point.
 
 
-** The plot view
+** The scatterplot view
 
-- The axis of the plot (by default « V gene » / « J gene ») can be changed
+- The axes of the plot (by default « V gene » / « J gene ») can be changed
 
 - Some presets are available in the « analysis » menu.
   
   To segregate a set of clones sharing a same V and J, it is often useful
   to display the clones according to their 'N length' (that is N1-D-N2 in the cas of VDJ rearrangements)
 
+** The aligner (bottom panel)
+   - When several clones are selected (you can select clones by clicking on
+     them either in the list, the graph or the scatterplot, or by drawing a
+     rectangle around clones to be selected in the scatterplot view), you can
+     view their sequences in the aligner.
+   - Sequences can be aligned together to see how they differ or how similar
+     they are (“align” button). After aligning them a shaded background identifies
+     substitutions and a dash identifies indels.
+   - You can remove sequences from the aligner by clicking on their name (and
+     therefore, you unselect them)
+   - You can visualize results by IMGT/V-QUEST and IgBlast on the selected sequences, in another window, by clicking on the corresponding buttons.
+   - You can unselect all sequences by clicking on the background of the scatterplot
 
+* Assessing the quality of your data and of the analysis
 
-* Asserting the quality of your data and of the analysis
+To make sure that the PCR, the sequencing and the Vidjil analysis went well, several elements can be controlled.
 
-To assert that the PCR, the sequencing and the Vidjil analysis went well, several.
-
+** Number of segmented reads
 A first way is to check the number of « segmented reads » in the info panel. For each point, this shows the number of reads where Vidjil found a CDR3. 
      
 Ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
 There can be several causes leading to bad ratios: 
 
-** analysis or biological causes
+*** analysis or biological causes
 
-  - a system (for example TRG) was analyzed and the data actually contain other systems.
-     (solution: Relaunch Vidjil with other systems :NOTNOW:)
+   - a system (for example TRG) was analyzed and the data actually contains other systems.
+      (solution: Relaunch Vidjil with other systems :NOTNOW:)
 
-  - there are incomplete/exceptional rearrangements 
-    (Vidjil can process some of them)
+   - there are incomplete/exceptional rearrangements 
+     (Vidjil can process some of them)
 
-  - there are too many hypersomatic mutations
-    (usually Vidjil can process mutations until 10% mutation rate... above, some sequences are lost)
+   - there are too many hypersomatic mutations
+     (usually Vidjil can process mutations until 10% mutation rate... above that threshold, some sequences are lost)
 
-** PCR or sequencing causes
+*** PCR or sequencing causes
 
-  - the read length is too short, do the reads do not span the junction zone 
-     (The Vidjil detects a "window" including the CDR3. By default this window is XX, so )
+   - the read length is too short, the reads do not span the junction zone 
+      (Vidjil detects a “window” including the CDR3. By default this window is 40–60bp long, so the read needs be that long)
 
-  - In particular, for paired-end sequencing, one of the ends can lead to too short reads
-     (solution: ignore this end, or extend the read length)
+   - In particular, for paired-end sequencing, one of the ends can lead to reads not fully containing the CDR3 region
+      (solution: ignore this end, or extend the read length)
 
-  - There were too many PCR or sequencing errors
-     (this can be asserted by inspecting the related clones, checking if there is a large dispersion around the main clone)
- 
+   - There were too many PCR or sequencing errors
+      (this can be asserted by inspecting the related clones, checking if there is a large dispersion around the main clone)
 
+** Control with standard/spike
+
+   - If your sample included a standard/spike control, you should first
+     identify the main standard sequence (if that's not already done) and
+     specify its expected concentration (by clicking on the star button).
+     Then the data is normalized according to that sequence.
+   - You can (de)activate normalization in the settings menu.
+
+** Steadiness verification
+   - When assessing different PCR primers, PCR enzymes, PCR cycles, one may want to see how regular the concentrations are among the points.
+   - When following a patient one may want to identify any clone that is emerging.
+   - To do so, you may want to change the color system, in the “color” menu
+     select “by abundance at selected timepoint”.  The color ranges from red
+     (high concentration) to purple (low concentration) and allows to easily
+     spot on the graph any large change in concentration.
 * Reference
 
 If you use Vidjil for your research, please cite the following reference:
