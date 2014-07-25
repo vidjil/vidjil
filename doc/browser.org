@@ -1,12 +1,13 @@
 * Vidjil -- Browser Manual
 
 
-
+This is the help of the Vidjil browser : [[http://www.vidjil.org/browser]].
+This help will be extended in a few months.
 Further help can always be asked to contact@vidjil.org. We can also arrange phone or Skype meeting.
 
 The Vidjil team (Mathieu, Mikaël and Marc)
 
-** Requierements
+** Requirements
 
 The Vidjil browser runs in any modern browser. It has been successfully tested on the following platforms
  - Firefox version >= XX
@@ -22,12 +23,12 @@ The Vidjil browser runs in any modern browser. It has been successfully tested o
   There is always a “sample/L2-LIL.data” dataset for demonstration purposes.
 
 - You can change the number of displayed clones by moving the slider “number of clones” (menu “filter”)
-  The maximal number of clones that can be displayed depends on what has been run before (by default, 200) XXX
+  The maximal number of clones that can be displayed depends on what has been run before
 
 - Due to sequencing errors, there may be several clones corresponding to a real clone. 
    - You can select several clones (for example those sharing a same V and a same J), 
-   - inspect the sequences in the lower panel (possibly using the “align” function)
-   - click on “merge” if you think that the clones should be merged. 
+   - inspect the sequences in the lower panel (possibly using the “align” function),
+   - and click on “merge” if you think that the clones should be merged. 
      Once several clones are merged, you can still visualize them by clicking on “+” in the list of clones.
 
 
@@ -35,32 +36,33 @@ The Vidjil browser runs in any modern browser. It has been successfully tested o
 
 ** The info panel (upper left panel)
    - analysis :: name of the configuration file used for displaying the data
-   - system :: system used for analysing the data. In case of multisystem
+   - system :: system used for analyzing the data. In case of multi-system
                data, you can select what system should be displayed.
-   - point :: name of the current point (you can change it by clicking on
-              another point in the graph)
-   - date :: when the run was performed (manually curated)
-   - segmented :: number of reads that contained enough meaningful informations, for that point
+   - point :: name of the current point (you can change the selected point by clicking on
+              another point in the graph). The name can be edited (“...” button).
+   - date :: when the run was performed (manually curated, with “...” button)
+   - segmented :: number of reads where Vidjil found a CDR3, for that point.
+                  See [[Number of segmented reads]] below.
    - total :: total number of reads for that point
 
 ** The list of clones (left panel)
 
-- You can assign other tags (and thus colors) to clones using the “star” button.
+- You can assign other tags (and thus colors) to clones using the “★” button.
   The “filter” menu allows to further filter clones by tags.
-- Under the “star” button it is possible to normalise clone concentrations
+- Under the “★” button it is possible to normalize clone concentrations
   according to this clone. You must specify the expected concentration in the
-  “expected size” textfield (e.g. 0.01 for 1%).
+  “expected size” field (e.g. 0.01 for 1%). See [[Control with standard/spike]] below.
 
-- The “i” button displays additional information on each clone
+- The “i” button displays additional information on each clone.
 
 - The list can be sorted on V genes, J genes or concentrations. At the top of
   the list you need to click respectively on “V sort”, “J sort” or “sort”.
-  The + and - allow respectively to un-merge or re-merge all clones that have
+  The “+” and “-” allow respectively to un-merge or re-merge all clones that have
   already been merged.
 
 ** The graph
 
-- The gray areas at the bottom of the graph show, for each point, the resolution (1 read / 5 reads)
+- The gray areas at the bottom of the graph show, for each point, the resolution (1 read / 5 reads).
 
 - You can reorder the points by dragging them, and hide some points by dragging them on the “+” mark at the right of the points.
   If you want to recover some hidden points, you need to drag them from the “+” mark to the graph.
@@ -72,12 +74,12 @@ The Vidjil browser runs in any modern browser. It has been successfully tested o
 
 ** The scatterplot view
 
-- The axes of the plot (by default “V gene” / “J gene”) can be changed
+- The axes of the plot (by default “V gene” / “J gene”) can be changed.
 
 - Some presets are available in the “analysis” menu.
   
   To segregate a set of clones sharing a same V and J, it is often useful
-  to display the clones according to their 'N length' (that is N1-D-N2 in the cas of VDJ rearrangements)
+  to display the clones according to their “N length” (that is N1-D-N2 in the case of VDJ rearrangements)
 
 ** The aligner (bottom panel)
    - When several clones are selected (you can select clones by clicking on
@@ -88,16 +90,16 @@ The Vidjil browser runs in any modern browser. It has been successfully tested o
      they are (“align” button). After aligning them a shaded background identifies
      substitutions and a dash identifies indels.
    - You can remove sequences from the aligner by clicking on their name (and
-     therefore, you unselect them)
+     therefore, you unselect them).
    - You can visualize results by IMGT/V-QUEST and IgBlast on the selected sequences, in another window, by clicking on the corresponding buttons.
-   - You can unselect all sequences by clicking on the background of the scatterplot
+   - You can unselect all sequences by clicking on the background of the scatterplot.
 
 * Assessing the quality of your data and of the analysis
 
 To make sure that the PCR, the sequencing and the Vidjil analysis went well, several elements can be controlled.
 
 ** Number of segmented reads
-A first way is to check the number of “segmented reads” in the info panel. For each point, this shows the number of reads where Vidjil found a CDR3. 
+A first control is to check the number of “segmented reads” in the info panel. For each point, this shows the number of reads where Vidjil found a CDR3. 
      
 Ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
 There can be several causes leading to bad ratios: 
@@ -105,7 +107,7 @@ There can be several causes leading to bad ratios:
 *** analysis or biological causes
 
    - a system (for example TRG) was analyzed and the data actually contains other systems.
-      (solution: Relaunch Vidjil with other systems :NOTNOW:)
+      (solution: ask that we relaunch Vidjil with other systems)
 
    - there are incomplete/exceptional rearrangements 
      (Vidjil can process some of them)
@@ -127,8 +129,8 @@ There can be several causes leading to bad ratios:
 ** Control with standard/spike
 
    - If your sample included a standard/spike control, you should first
-     identify the main standard sequence (if that's not already done) and
-     specify its expected concentration (by clicking on the star button).
+     identify the main standard sequence (if that is not already done) and
+     specify its expected concentration (by clicking on the “★” button).
      Then the data is normalized according to that sequence.
    - You can (de)activate normalization in the settings menu.
 
@@ -139,6 +141,7 @@ There can be several causes leading to bad ratios:
      select “by abundance at selected timepoint”.  The color ranges from red
      (high concentration) to purple (low concentration) and allows to easily
      spot on the graph any large change in concentration.
+
 * Reference
 
 If you use Vidjil for your research, please cite the following reference:
@@ -147,4 +150,5 @@ Mathieu Giraud, Mikaël Salson, et al.,
 “Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing”,
 BMC Genomics 2014, 15:409 
 http://dx.doi.org/10.1186/1471-2164-15-409
+
 
