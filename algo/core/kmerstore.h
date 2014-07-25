@@ -140,6 +140,7 @@ public:
   vector<T> getResults(const seqtype &seq, bool no_revcomp=false);	
   T& get(seqtype &word);
   T& operator[](seqtype & word);
+  T& operator[](int word);
 };
 
 
@@ -251,7 +252,7 @@ vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
       result[i] = store[kmer]; // getfromint(kmer); // store[kmer];
       // cout << i << "/" << N << "  " << kmer << result[i] << endl ;
     } else {
-      result[i] = store[kmer]; // Hum... what does this test mean ?
+      result[i] = (*this)[kmer]; // Deals with revcomp
     }
   }
 
@@ -350,12 +351,17 @@ T& ArrayKmerStore<T>::get(seqtype& word){
 
 template <class T> 
 T& ArrayKmerStore<T>::operator[](seqtype& word){
+  return (*this)[index(word)];
+}
+
+template <class T> 
+T& ArrayKmerStore<T>::operator[](int word){
   if (this->isRevcomp() && T::hasRevcompSymetry()) {
-    seqtype rc_kmer = revcomp(word);
-    if (rc_kmer.compare(word) < 0)
+    int rc_kmer = revcomp_int(word, IKmerStore<T>::k);
+    if (rc_kmer < word)
       word = rc_kmer;
   }
-  return store[index(word)];
+  return store[word];
 }
 
 
