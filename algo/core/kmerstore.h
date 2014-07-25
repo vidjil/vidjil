@@ -340,11 +340,7 @@ ArrayKmerStore<T>::~ArrayKmerStore(){
 **/
 template <class T> 
 int ArrayKmerStore<T>::index(const seqtype& word) const{
-	int index_word = 0;
-	for(int i = 0 ; i < this->k ; i++){
-		index_word = (index_word << 2) | nuc_to_int(word[i]);
-	}
-	return index_word;
+  return dna_to_int(word, this->k);
 }
 
 template <class T> 

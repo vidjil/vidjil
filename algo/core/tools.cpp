@@ -131,6 +131,14 @@ int nuc_to_int(char nuc) {
     | (((nuc & 8) >> 3) ^ ((nuc & 4) >> 2) ^ ((nuc & 2) >> 1));
 }
 
+int dna_to_int(const string &word, int size) {
+  int index_word = 0;
+  for(int i = 0 ; i < size ; i++){
+    index_word = (index_word << 2) | nuc_to_int(word[i]);
+  }
+  return index_word;
+}
+
 Sequence create_sequence(string label_full, string label, string sequence, string quality) {
   Sequence seq;
   seq.label_full = label_full;
