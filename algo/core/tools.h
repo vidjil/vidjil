@@ -84,15 +84,15 @@ string complement(const string &dna);
  * @return le code entier du nucléotide (respectivement 0, 1, 2 ou 3)
  */
 inline int nuc_to_int(char nuc) {
-  // A : 1000 0001
-  // C : 1000 0011
-  // G : 1000 0111
-  // T : 1001 1000
+  // A : 0100 0001
+  // C : 0100 0011
+  // G : 0100 0111
+  // T : 0101 0100
   // pos :    3210
-  // Bit de poids fort : b_3 ou b_2
-  // Bit de poids faible : xor entre b_3, b_2 et b_1
-  return (((nuc & 4) >> 1) | ((nuc & 8) >> 2)) // poids fort
-    | (((nuc & 8) >> 3) ^ ((nuc & 4) >> 2) ^ ((nuc & 2) >> 1));
+  // Bit de poids fort : b_2
+  // Bit de poids faible : xor entre b_2 et b_1
+  return ((nuc & 4) >> 1) // poids fort
+    | (((nuc & 4) >> 2) ^ ((nuc & 2) >> 1));
 }
 
 /**
