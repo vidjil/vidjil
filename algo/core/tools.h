@@ -64,6 +64,11 @@ string complement(const string &dna);
  */
 int nuc_to_int(char nuc);
 
+/**
+ * Convert size nucleotides from a DNA string to an integer.
+ */
+int dna_to_int(const string &, int size);
+
 string extract_from_label(string str, int field, string separator);
 
 /**
