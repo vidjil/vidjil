@@ -30,9 +30,30 @@ int seed_weight(const string &seed);
  * @param seed: spaced seed model, like "###-###"
  * @return the spaced key
  */
-
 string spaced(const string &input, const string &seed);
-int spaced_int(int *input, const string &seed);
+
+inline int spaced_int(int *input, const string &seed) {
+
+#ifdef NO_SPACED_SEEDS
+  return input ;
+#endif
+
+  // cout << input << endl << seed << endl ;
+  // assert(input.length() == seed.length()); // length is not equal, pointer
+
+  int index_word = 0;
+
+  for (size_t i = 0; i < seed.length(); i++) 
+    if (seed[i] == SEED_YES)
+	index_word = (index_word << 2) | input[i] ;
+
+#ifdef DEBUG_SPACED
+  cout << input << " => |" << index_word << "|" <<  endl ;
+#endif
+
+  return index_word;
+
+}
 
 
 /**
@@ -62,7 +83,17 @@ string complement(const string &dna);
  * @pre nuc est un nucléotide en majuscule (A, C, G ou T)
  * @return le code entier du nucléotide (respectivement 0, 1, 2 ou 3)
  */
-int nuc_to_int(char nuc);
+inline int nuc_to_int(char nuc) {
+  // A : 1000 0001
+  // C : 1000 0011
+  // G : 1000 0111
+  // T : 1001 1000
+  // pos :    3210
+  // Bit de poids fort : b_3 ou b_2
+  // Bit de poids faible : xor entre b_3, b_2 et b_1
+  return (((nuc & 4) >> 1) | ((nuc & 8) >> 2)) // poids fort
+    | (((nuc & 8) >> 3) ^ ((nuc & 4) >> 2) ^ ((nuc & 2) >> 1));
+}
 
 /**
  * Convert size nucleotides from a DNA string to an integer.
