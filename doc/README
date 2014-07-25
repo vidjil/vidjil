@@ -21,7 +21,8 @@ The method is described in the following paper:
 
 Mathieu Giraud, Mikaël Salson, et al.,
 "Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing",
-(submitted)
+BMC Genomics 2014, 15:409
+http://dx.doi.org/10.1186/1471-2164-15-409
 
 Vidjil is open-source, released under GNU GPLv3 license.
 
@@ -209,7 +210,7 @@ including, for each windows, the number of reads sharing this window.
 This file is currently used for development purposes, its format may
 change in future releases of Vidjil.
 
-This file will be used for a dynamic web application for visualization
+This file is used for the dynamic browser for visualization
 and analysis of clones and their tracking along different samples,
 (for example time points in a MRD setup or in a immunological study).
 This application is currently in developpement and will be released in
