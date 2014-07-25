@@ -47,8 +47,6 @@ string spaced(const string &input, const string &seed) {
 }
 
 
-
-
 string string_of_int(int number)
 {
    stringstream ss;
@@ -89,6 +87,14 @@ string complement(const string &dna) {
     comp[i] = complement_nucleotide(dna[i]);
   }
   return comp;
+}
+
+int dna_to_int(const string &word, int size) {
+  int index_word = 0;
+  for(int i = 0 ; i < size ; i++){
+    index_word = (index_word << 2) | nuc_to_int(word[i]);
+  }
+  return index_word;
 }
 
 Sequence create_sequence(string label_full, string label, string sequence, string quality) {
@@ -157,6 +163,17 @@ string revcomp(const string &dna, bool do_revcomp) {
   // cout << dna << " " << dna.length() << "  " << rcomp << " " << rcomp.length() << endl  ;
 
   return rcomp;
+}
+
+int revcomp_int(int word, int size) {
+  int revcomp = 0;
+  while (size) {
+    revcomp <<= 2;
+    revcomp |= (word & 3) ^ 3;
+    word >>= 2;
+    size--;
+  }
+  return revcomp;
 }
 
 string reverse(const string &text) {

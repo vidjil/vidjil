@@ -30,8 +30,30 @@ int seed_weight(const string &seed);
  * @param seed: spaced seed model, like "###-###"
  * @return the spaced key
  */
-
 string spaced(const string &input, const string &seed);
+
+inline int spaced_int(int *input, const string &seed) {
+
+#ifdef NO_SPACED_SEEDS
+  return input ;
+#endif
+
+  // cout << input << endl << seed << endl ;
+  // assert(input.length() == seed.length()); // length is not equal, pointer
+
+  int index_word = 0;
+
+  for (size_t i = 0; i < seed.length(); i++) 
+    if (seed[i] == SEED_YES)
+	index_word = (index_word << 2) | input[i] ;
+
+#ifdef DEBUG_SPACED
+  cout << input << " => |" << index_word << "|" <<  endl ;
+#endif
+
+  return index_word;
+
+}
 
 
 /**
@@ -57,6 +79,26 @@ char complement_nucleotide(char nuc);
  */
 string complement(const string &dna);
 
+/**
+ * @pre nuc est un nucléotide en majuscule (A, C, G ou T)
+ * @return le code entier du nucléotide (respectivement 0, 1, 2 ou 3)
+ */
+inline int nuc_to_int(char nuc) {
+  // A : 0100 0001
+  // C : 0100 0011
+  // G : 0100 0111
+  // T : 0101 0100
+  // pos :    3210
+  // Bit de poids fort : b_2
+  // Bit de poids faible : xor entre b_2 et b_1
+  return ((nuc & 4) >> 1) // poids fort
+    | (((nuc & 4) >> 2) ^ ((nuc & 2) >> 1));
+}
+
+/**
+ * Convert size nucleotides from a DNA string to an integer.
+ */
+int dna_to_int(const string &, int size);
 
 string extract_from_label(string str, int field, string separator);
 
@@ -72,6 +114,12 @@ int remove_trailing_whitespaces(string &str);
  * @return reverse(complement(dna)) if do_revcomp, otherwise dna
  */
 string revcomp(const string &dna, bool do_revcomp = true);
+
+/**
+ * @return the int value corresponding to the revcomp of the DNA sequence
+ *         represented by word, whose length (in number of nucleotides) is size.
+ */
+int revcomp_int(int word, int size);
 
 /**
  * @return the reverse of text (ie. text read from right to left)
