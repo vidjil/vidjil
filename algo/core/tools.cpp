@@ -119,6 +119,18 @@ string complement(const string &dna) {
   return comp;
 }
 
+int nuc_to_int(char nuc) {
+  // A : 1000 0001
+  // C : 1000 0011
+  // G : 1000 0111
+  // T : 1001 1000
+  // pos :    3210
+  // Bit de poids fort : b_3 ou b_2
+  // Bit de poids faible : xor entre b_3, b_2 et b_1
+  return (((nuc & 4) >> 1) | ((nuc & 8) >> 2)) // poids fort
+    | (((nuc & 8) >> 3) ^ ((nuc & 4) >> 2) ^ ((nuc & 2) >> 1));
+}
+
 Sequence create_sequence(string label_full, string label, string sequence, string quality) {
   Sequence seq;
   seq.label_full = label_full;

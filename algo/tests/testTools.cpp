@@ -38,8 +38,16 @@ void testCreateSequence() {
   TAP_TEST(seq2.quality == "", TEST_CREATE_SEQUENCE_QUALITY, "");
 }
 
+void testNucToInt() {
+  TAP_TEST(nuc_to_int('A') == 0, TEST_NUC_TO_INT, "");
+  TAP_TEST(nuc_to_int('C') == 1, TEST_NUC_TO_INT, "");
+  TAP_TEST(nuc_to_int('G') == 2, TEST_NUC_TO_INT, "");
+  TAP_TEST(nuc_to_int('T') == 3, TEST_NUC_TO_INT, "");
+}
+
 void testTools() {
   testFasta1();
   testRevcomp();
   testCreateSequence();
+  testNucToInt();
 }
