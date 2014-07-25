@@ -1,8 +1,9 @@
 #+TITLE: Vidjil -- Browser Manual
+#+AUTHOR: The Vidjil team (Mathieu, Mikaël and Marc)
 
 This is the help of the Vidjil browser : [[http://www.vidjil.org/browser]].
 This help will be extended in a few months.
-Further help can always be asked to contact@vidjil.org. We can also arrange phone or Skype meeting.
+Further help can always be asked to [[mailto:contact@vidjil.org][contact@vidjil.org]]. We can also arrange phone or Skype meeting.
 
 The Vidjil team (Mathieu, Mikaël and Marc)
 
@@ -14,7 +15,6 @@ The Vidjil browser runs in any modern browser. It has been successfully tested o
  - IE version >= XX
  - Opera version >= XX
  - Safari version >= XX
-
 
 * First aid
 
