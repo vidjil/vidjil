@@ -58,6 +58,11 @@ char complement_nucleotide(char nuc);
  */
 string complement(const string &dna);
 
+/**
+ * @pre nuc est un nucléotide en majuscule (A, C, G ou T)
+ * @return le code entier du nucléotide (respectivement 0, 1, 2 ou 3)
+ */
+int nuc_to_int(char nuc);
 
 string extract_from_label(string str, int field, string separator);
 
