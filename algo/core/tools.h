@@ -85,6 +85,12 @@ int remove_trailing_whitespaces(string &str);
 string revcomp(const string &dna, bool do_revcomp = true);
 
 /**
+ * @return the int value corresponding to the revcomp of the DNA sequence
+ *         represented by word, whose length (in number of nucleotides) is size.
+ */
+int revcomp_int(int word, int size);
+
+/**
  * @return the reverse of text (ie. text read from right to left)
  */
 string reverse(const string &text);

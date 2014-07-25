@@ -207,6 +207,17 @@ string revcomp(const string &dna, bool do_revcomp) {
   return rcomp;
 }
 
+int revcomp_int(int word, int size) {
+  int revcomp = 0;
+  while (size) {
+    revcomp <<= 2;
+    revcomp |= (word & 3) ^ 3;
+    word >>= 2;
+    size--;
+  }
+  return revcomp;
+}
+
 string reverse(const string &text) {
   return string(text.rbegin(), text.rend());
 }
