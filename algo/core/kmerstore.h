@@ -241,16 +241,7 @@ vector<T> ArrayKmerStore<T>::getResults(const seqtype &seq, bool no_revcomp) {
   int* intseq = new int[N];
   for (int i=0; i<N; i++)
     {
-      int B ;
-      switch(seq[i]) {
-      case 'A': B = 0; break;
-      case 'C': B = 1; break;
-      case 'G': B = 2; break;
-      case 'T': B = 3; break;
-      default:
-	B = 0; break;
-      }
-      intseq[i] = B ;
+      intseq[i] = nuc_to_int(seq[i]);
     }
 
   /* Compute results */
@@ -351,14 +342,7 @@ template <class T>
 int ArrayKmerStore<T>::index(const seqtype& word) const{
 	int index_word = 0;
 	for(int i = 0 ; i < this->k ; i++){
-		int B = 0;
-		switch(word[i]){
-			case 'A': B = 0; break;
-			case 'C': B = 1; break;
-			case 'G': B = 2; break;
-			case 'T': B = 3; break;
-		}
-		index_word = (index_word << 2) | B;
+		index_word = (index_word << 2) | nuc_to_int(word[i]);
 	}
 	return index_word;
 }
