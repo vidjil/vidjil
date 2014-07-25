@@ -47,36 +47,6 @@ string spaced(const string &input, const string &seed) {
 }
 
 
-
-
-int spaced_int(int *input, const string &seed) {
-
-#ifdef NO_SPACED_SEEDS
-  return input ;
-#endif
-
-  int j = 0 ;
-
-  // cout << input << endl << seed << endl ;
-  // assert(input.length() == seed.length()); // length is not equal, pointer
-
-  int index_word = 0;
-
-  for (size_t i = 0; i < seed.length(); i++) 
-    if (seed[i] == SEED_YES)
-	index_word = (index_word << 2) | input[i] ;
-
-#ifdef DEBUG_SPACED
-  cout << input << " => |" << index_word << "|" <<  endl ;
-#endif
-
-  return index_word;
-}
-
-
-
-
-
 string string_of_int(int number)
 {
    stringstream ss;
@@ -117,18 +87,6 @@ string complement(const string &dna) {
     comp[i] = complement_nucleotide(dna[i]);
   }
   return comp;
-}
-
-int nuc_to_int(char nuc) {
-  // A : 1000 0001
-  // C : 1000 0011
-  // G : 1000 0111
-  // T : 1001 1000
-  // pos :    3210
-  // Bit de poids fort : b_3 ou b_2
-  // Bit de poids faible : xor entre b_3, b_2 et b_1
-  return (((nuc & 4) >> 1) | ((nuc & 8) >> 2)) // poids fort
-    | (((nuc & 8) >> 3) ^ ((nuc & 4) >> 2) ^ ((nuc & 2) >> 1));
 }
 
 int dna_to_int(const string &word, int size) {
