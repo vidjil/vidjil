@@ -199,16 +199,7 @@ void OnlineFasta::next() {
     current.seq = new int[current.sequence.length()];
     for (int i=0; i< current.sequence.length(); i++)
       {
-	int B ;
-	switch(current.sequence[i]) {
-	case 'A': B = 0; break;
-	case 'C': B = 1; break;
-	case 'G': B = 2; break;
-	case 'T': B = 3; break;
-        default:
-          B = 4; break;
-	}
-	current.seq[i] = B ;
+	current.seq[i] = nuc_to_int(current.sequence[i]) ;
       }
 
   } else
