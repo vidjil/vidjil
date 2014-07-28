@@ -1,5 +1,7 @@
 
-2014-07-25  The Vidjil Team
+This changelog concerns the algorithmic part (C++) of Vidjil.
+
+2014-07-28  The Vidjil Team
 	* Better heuristic, segment more reads (core/affectanalyser.h, core/segment.cpp)
 	  This improved heuristic was designed to implement a multi-germline analysis in a next release.
 	* Improved computation of the heuristic affectation. Halves the time of -c windows (core/kmerstore.h)
