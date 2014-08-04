@@ -444,3 +444,56 @@ Database.prototype = {
     }
 
 }
+
+/*crée une liste de suggestion dynamique autour d'un input text*/
+function suggest_box(id, list) {
+    
+    var input_box = document.getElementById(id)
+    
+    //positionnement d'une boite vide pour contenir les suggestions
+    var suggest_box = document.createElement('div')
+    suggest_box.className = "suggest_box"
+    suggest_box.style.width = input_box.style.width
+    
+    var suggest_list = document.createElement('div')
+    suggest_list.className = "suggest_list"
+    suggest_box.appendChild(suggest_list)
+    
+    //ajout de la suggest_box apres l'input correspondant
+    if (input_box.nextSibling) {
+        input_box.parentNode.insertBefore(suggest_box, input_box.nextSibling);
+    }else{
+        input_box.parentNode.appendChild(suggest_box)
+    }
+    
+    //réactualise la liste a chaque changement d'input
+    input_box.onkeyup = function(){
+        suggest_box.style.display = "block"
+        suggest_list.innerHTML=""
+        var value = this.value.toUpperCase();
+        var count = 0
+        for (var i=0; i<list.length; i++){
+            if (list[i].toUpperCase().indexOf(value) != -1){
+                var suggestion = document.createElement("div")
+                suggestion.appendChild(document.createTextNode(list[i]))
+                suggestion.onclick = function(){
+                    input_box.value = this.innerHTML
+                    console.log("plup")
+                    setTimeout(function(){suggest_box.style.display = "none"}, 200)
+                }
+                suggest_list.appendChild(suggestion)
+                count++
+            }
+        }
+        if (count == 0){
+            var suggestion = document.createElement("div")
+            suggestion.appendChild(document.createTextNode("no suggestions ..."))
+            suggest_list.appendChild(suggestion)
+        }
+    };
+    
+    //masque la liste
+    input_box.onblur = function(){
+        setTimeout(function(){suggest_box.style.display = "none"}, 200)
+    };
+}
