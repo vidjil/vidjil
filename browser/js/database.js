@@ -83,6 +83,9 @@ Database.prototype = {
             this.init_ajaxform()
             
             //
+            this.build_suggest_box()
+            
+            //
             this.fixed_header()
         }
     },
@@ -441,6 +444,49 @@ Database.prototype = {
         arg.id = id
        
         this.call('user/rights', arg)
+    },
+    
+    build_suggest_box: function() {
+        var self = this
+        
+        if (document.getElementById("pcr")){
+            var url = self.db_address+"file/pcr_list"
+            $.ajax({
+                type: "POST",
+                crossDomain: true,
+                url: url,
+                success: function (result) {
+                    var res = jQuery.parseJSON(result);
+                    suggest_box("pcr", res.pcr)
+                }
+            });
+        }
+        
+        if (document.getElementById("sequencer")){
+            var url = self.db_address+"file/sequencer_list"
+            $.ajax({
+                type: "POST",
+                crossDomain: true,
+                url: url,
+                success: function (result) {
+                    var res = jQuery.parseJSON(result);
+                    suggest_box("sequencer", res.sequencer)
+                }
+            });
+        }
+        
+        if (document.getElementById("producer")){
+            var url = self.db_address+"file/producer_list"
+            $.ajax({
+                type: "POST",
+                crossDomain: true,
+                url: url,
+                success: function (result) {
+                    var res = jQuery.parseJSON(result);
+                    suggest_box("producer", res.producer)
+                }
+            });
+        }
     }
 
 }
@@ -478,7 +524,6 @@ function suggest_box(id, list) {
                 suggestion.appendChild(document.createTextNode(list[i]))
                 suggestion.onclick = function(){
                     input_box.value = this.innerHTML
-                    console.log("plup")
                     setTimeout(function(){suggest_box.style.display = "none"}, 200)
                 }
                 suggest_list.appendChild(suggestion)
