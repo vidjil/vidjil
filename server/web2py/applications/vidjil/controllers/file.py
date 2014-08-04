@@ -111,3 +111,30 @@ def delete():
            "args" : { "id" : patient_id},
            "message": "sequence file deleted"}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def sequencer_list():
+    sequencer_list = []
+    for row in db(db.sequence_file.sequencer != None).select(db.sequence_file.sequencer, distinct=True):
+        if row.sequencer is not "null" :
+            sequencer_list.append(row.sequencer)
+            
+    res = {"sequencer": sequencer_list}
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def pcr_list():
+    pcr_list = []
+    for row in db(db.sequence_file.pcr != None).select(db.sequence_file.pcr, distinct=True):
+        if row.pcr is not "null" :
+            pcr_list.append(row.pcr)
+            
+    res = {"pcr": pcr_list}
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def producer_list():
+    producer_list = []
+    for row in db(db.sequence_file.producer != None).select(db.sequence_file.producer, distinct=True):
+        if row.producer is not "null" :
+            producer_list.append(row.producer)
+            
+    res = {"producer": producer_list}
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
