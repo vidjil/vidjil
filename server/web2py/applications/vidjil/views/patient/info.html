@@ -3,50 +3,49 @@
 {{('message' in globals())}}
 {{if 'message' in globals():}}
 
+{{patient = db.patient[request.vars["id"]]}}
+
 {{if request.vars["config_id"] and not request.vars["config_id"] == -1 :}}
     {{config_id = long(request.vars["config_id"])}}
     {{config = True}}
+    {{
+    patient_name = patient.first_name + " " + patient.last_name
+    config_name = db.config[request.vars["config_id"]].name
+
+    fused = db(
+        (db.fused_file.patient_id == patient)
+        & (db.fused_file.config_id == config_id)
+    )
+    fused_count = fused.count()
+    fused_file = fused.select()
+    fused_filename = patient_name +"_"+ config_name + ".data"
+
+
+    analysis = db(
+        (db.analysis_file.patient_id == patient)
+        & (db.analysis_file.config_id == config_id)
+    )
+    analysis_count = analysis.count()
+    analysis_file = analysis.select()
+    analysis_filename = patient_name +"_"+ config_name + ".analysis"
+    }}
 {{else:}}
     {{config_id = -1}}
     {{config = False}}
+    {{fused_count = 0}}
 {{pass}}
 
 {{
-
-patient = db.patient[request.vars["id"]]
-
-query = db( 
-    (db.sequence_file.patient_id==db.patient.id) 
-    & (db.patient.id==request.vars["id"]) 
-).select(
-    left=db.data_file.on(
-        (db.data_file.sequence_file_id==db.sequence_file.id) 
-        & (db.data_file.config_id==str(config_id) ) 
-    ) 
-) 
-
-patient_name = patient.first_name + " " + patient.last_name
-config_name = db.config[request.vars["config_id"]].name
-
-fused = db(
-    (db.fused_file.patient_id == patient)
-    & (db.fused_file.config_id == config_id)
-)
-fused_count = fused.count()
-fused_file = fused.select()
-fused_filename = patient_name +"_"+ config_name + ".data"
-
-
-analysis = db(
-    (db.analysis_file.patient_id == patient)
-    & (db.analysis_file.config_id == config_id)
-)
-analysis_count = analysis.count()
-analysis_file = analysis.select()
-analysis_filename = patient_name +"_"+ config_name + ".analysis"
+query = db(
+            (db.sequence_file.patient_id==db.patient.id) 
+            & (db.patient.id==request.vars["id"]) 
+        ).select(
+            left=db.data_file.on(
+                (db.data_file.sequence_file_id==db.sequence_file.id) 
+                & (db.data_file.config_id==str(config_id) ) 
+            ) 
+        )
 }}
-
-
 <div>
     
     <h3>{{=patient.last_name + " " + patient.first_name}}  ({{=request.vars["id"]}})</h3>
