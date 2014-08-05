@@ -7,6 +7,8 @@
 
 using namespace std ;
 
+string escapeJsonString(const string& input);
+
 class JsonData
 {
   public:

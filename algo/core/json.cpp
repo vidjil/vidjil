@@ -5,6 +5,25 @@
 
 using namespace std ;
 
+string escapeJsonString(const string& input) {
+    ostringstream ss;
+    for (std::string::const_iterator iter = input.begin(); iter != input.end();  iter++) {
+        switch (*iter) {
+            case '\\': ss << "\\\\"; break;
+            case '"': ss << "\\\""; break;
+            case '/': ss << "\\/"; break;
+            case '\b': ss << "\\b"; break;
+            case '\f': ss << "\\f"; break;
+            case '\n': ss << "\\n"; break;
+            case '\r': ss << "\\r"; break;
+            case '\t': ss << "\\t"; break;
+            default: ss << *iter; break;
+        }
+    }
+    return ss.str();
+}
+
+
 /*
  Constructeur de JsonData
  */
@@ -34,7 +53,7 @@ void JsonList::add(string n, string d){
   JsonData elem;
   
   elem.name=n;
-  elem.data="\""+d+"\"";
+  elem.data="\""+escapeJsonString(d)+"\"";
   l.push_back(elem);
 }
 
@@ -110,7 +129,7 @@ JsonArray::JsonArray(){
  Méthode permettant d'ajouter un nom d'objet
  */
 void JsonArray::add(string d){
-  l.push_back("\""+d+"\"");
+  l.push_back("\""+escapeJsonString(d)+"\"");
 }
 
 /*
