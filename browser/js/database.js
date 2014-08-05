@@ -499,11 +499,31 @@ function suggest_box(id, list) {
     //positionnement d'une boite vide pour contenir les suggestions
     var suggest_box = document.createElement('div')
     suggest_box.className = "suggest_box"
-    suggest_box.style.width = input_box.style.width
+    suggest_box.style.width = getComputedStyle(input_box,null).width
     
     var suggest_list = document.createElement('div')
     suggest_list.className = "suggest_list"
     suggest_box.appendChild(suggest_list)
+    
+    var suggest_arrow = document.createElement('div')
+    suggest_arrow.className = "suggest_arrow"
+    suggest_arrow.title = "show all suggestions"
+    suggest_arrow.onclick = function(){
+        suggest_list.style.display = "block"
+        suggest_list.innerHTML=""
+        input_box.focus()
+        for (var i=0; i<list.length; i++){
+            var suggestion = document.createElement("div")
+            suggestion.className = "suggestion"
+            suggestion.appendChild(document.createTextNode(list[i]))
+            suggestion.onclick = function(){
+                input_box.value = this.innerHTML
+                setTimeout(function(){suggest_list.style.display = "none"}, 200)
+            }
+            suggest_list.appendChild(suggestion)
+        }
+    }
+    suggest_box.appendChild(suggest_arrow)
     
     //ajout de la suggest_box apres l'input correspondant
     if (input_box.nextSibling) {
@@ -514,17 +534,18 @@ function suggest_box(id, list) {
     
     //réactualise la liste a chaque changement d'input
     input_box.onkeyup = function(){
-        suggest_box.style.display = "block"
+        suggest_list.style.display = "block"
         suggest_list.innerHTML=""
         var value = this.value.toUpperCase();
         var count = 0
         for (var i=0; i<list.length; i++){
             if (list[i].toUpperCase().indexOf(value) != -1){
                 var suggestion = document.createElement("div")
+                suggestion.className = "suggestion"
                 suggestion.appendChild(document.createTextNode(list[i]))
                 suggestion.onclick = function(){
                     input_box.value = this.innerHTML
-                    setTimeout(function(){suggest_box.style.display = "none"}, 200)
+                    setTimeout(function(){suggest_list.style.display = "none"}, 200)
                 }
                 suggest_list.appendChild(suggestion)
                 count++
@@ -539,6 +560,6 @@ function suggest_box(id, list) {
     
     //masque la liste
     input_box.onblur = function(){
-        setTimeout(function(){suggest_box.style.display = "none"}, 200)
+        setTimeout(function(){suggest_list.style.display = "none"}, 200)
     };
 }

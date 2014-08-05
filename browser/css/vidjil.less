@@ -1185,7 +1185,7 @@ select>option:hover {
 
 .suggest_box {
     height: 0px;
-    display: none;
+    display: block;
     position: relative;
 }
 
@@ -1196,5 +1196,33 @@ select>option:hover {
     background: @background;
     border-color: @border;
     max-height: 100px;
-    display: block;
+    display: none;
+    width : 250px;
+}
+
+.suggest_arrow {
+    position : absolute;
+    width : 12px;
+    height : 16px;
+    top : -22px;
+    right : 0px;
+    cursor : pointer;
+    background: url("icon/arrow-down.png") 50% 50% no-repeat;
+}
+
+.suggestion {
+    cursor : pointer;
+}
+
+.suggestion:hover {
+    background : @highlight;
+}
+
+input:focus, textarea:focus {
+    border-color: @border;
+    -webkit-box-shadow: inset 0 1px 1px @background, 0 0 8px @border;
+    -moz-box-shadow: inset 0 1px 1px @background, 0 0 8px @border;
+    box-shadow: inset 0 1px 1px @background, 0 0 8px @border;
+    outline: 0;
+    outline: thin dotted \9;
 }
