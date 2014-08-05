@@ -44,6 +44,8 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
                                  data_file = stream
                                 )
     
+    db.commit()
+    
     ## relance fuse.py 
     output_file = out_folder+"result"
     files = ""
