@@ -796,11 +796,13 @@ int main (int argc, char **argv)
 
     //$$ Display statistics on segmentation causes
 
+        
+    ostringstream stream_segmentation_info;
 
     int nb_segmented_including_too_short = we.getNbSegmented(TOTAL_SEG_AND_WINDOW) 
       + we.getNbSegmented(TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW);
 
-    cout << "  ==> segmented " << nb_segmented_including_too_short << " reads"
+    stream_segmentation_info << "  ==> segmented " << nb_segmented_including_too_short << " reads"
 	<< " (" << setprecision(3) << 100 * (float) nb_segmented_including_too_short / nb_total_reads << "%)" 
 	<< endl ;
 
@@ -808,7 +810,7 @@ int main (int argc, char **argv)
     int nb_segmented = we.getNbSegmented(TOTAL_SEG_AND_WINDOW);
     float ratio_segmented = 100 * (float) nb_segmented / nb_total_reads ;
 
-    cout << "  ==> found " << windowsStorage->size() << " " << w << "-windows"
+    stream_segmentation_info << "  ==> found " << windowsStorage->size() << " " << w << "-windows"
 	<< " in " << nb_segmented << " segments"
 	<< " (" << setprecision(3) << ratio_segmented << "%)"
 	<< " inside " << nb_total_reads << " sequences" << endl ;
@@ -816,24 +818,25 @@ int main (int argc, char **argv)
     // warn if there are too few segmented sequences
     if (ratio_segmented < WARN_PERCENT_SEGMENTED)
       {
-        cout << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
-        cout << "  ! If this is unexpected, check the germline (-G) and try to change seed parameters (-k)." << endl ;
+        stream_segmentation_info << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
+        stream_segmentation_info << "  ! If this is unexpected, check the germline (-G) and try to change seed parameters (-k)." << endl ;
       }
 
-    cout << "                                  #      av. length" << endl ;
+    stream_segmentation_info << "                                  #      av. length" << endl ;
 
     for (int i=0; i<STATS_SIZE; i++)
       {
-	cout << "   " << left << setw(20) << segmented_mesg[i] 
+	stream_segmentation_info << "   " << left << setw(20) << segmented_mesg[i] 
              << " ->" << right << setw(9) << we.getNbSegmented(static_cast<SEGMENTED>(i)) ;
 
 	if (we.getAverageSegmentationLength(static_cast<SEGMENTED>(i)))
-	  cout << "      " << setw(5) << fixed << setprecision(1) 
+	  stream_segmentation_info << "      " << setw(5) << fixed << setprecision(1) 
                << we.getAverageSegmentationLength(static_cast<SEGMENTED>(i));
 	
-	cout << endl ;
+	stream_segmentation_info << endl ;
       }
     
+    cout << stream_segmentation_info.str();
       map <junction, JsonList> json_data_segment ;
     
 
@@ -1438,29 +1441,18 @@ int main (int argc, char **argv)
 
     JsonArray json_nb_segmented;
     json_nb_segmented.add(nb_segmented);
-	
-	JsonArray json_normalization_factor;
-    json_normalization_factor.add( (float)  compute_normalization_one(norm_list, nb_segmented));
-	
-    //JsonArray normalization_names = json_normalization_names();
-    //JsonArray normalization_res1 = json_normalization(norm_list, 1, nb_segmented);
-    //JsonArray normalization_res5 = json_normalization(norm_list, 5, nb_segmented);
+
+    JsonArray jsonSortedWindows = windowsStorage->sortedWindowsToJsonArray(json_data_segment,
+                                                                        norm_list,
+                                                                        nb_segmented);
     
     json->add("vidjil_json_version", VIDJIL_JSON_VERSION);
     json->add("timestamp", time_buffer);
     json->add("commandline", stream_cmdline.str());// TODO: escape "s in argv
+    json->add("segmentation_info", stream_segmentation_info.str());
     json->add("germline", germline_system);
     json->add("reads_total", json_nb_reads);
     json->add("reads_segmented", json_nb_segmented); 
-	json->add("normalization_factor", json_normalization_factor ); 
-	
-    //json->add("normalizations", normalization_names);
-    //json->add("resolution1", normalization_res1);
-    //json->add("resolution5", normalization_res5);
-
-    JsonArray jsonSortedWindows = windowsStorage->sortedWindowsToJsonArray(json_data_segment,
-                                                                           norm_list,
-                                                                           nb_segmented);
     json->add("windows", jsonSortedWindows);
 
     //Added edges in the json output file
