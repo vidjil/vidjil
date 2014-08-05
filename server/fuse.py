@@ -67,7 +67,7 @@ class Window:
     ### 
     def __add__(self, other):
         #data we don't need to duplicate
-        myList = [ "V", "D", "J", "Vend", "Dend", "Jstart", "Dstart", "top", "window", "Nlength", "sequence", "name" ]
+        myList = [ "V", "D", "J", "Vend", "Dend", "Jstart", "Dstart", "top", "window", "Nlength", "sequence", "name", "id"]
         obj = Window(1)
         
         t1 = []
@@ -218,13 +218,13 @@ class ListWindows:
         #concat data, if there is some missing data we use an empty buffer t1/t2 
         #with the same size as the number of missing data
         for key in self.d :
-            if key != "windows" :
+            if key != "windows" and key != "links":
                 obj.d[key] = self.d[key]
                 if key not in other.d :
                     obj.d[key] += t2
 
         for key in other.d :
-            if key != "windows" :
+            if key != "windows" and key != "links":
                 if key not in obj.d :
                     obj.d[key] = t1 + other.d[key]
                 else :
