@@ -249,6 +249,7 @@ List.prototype = {
         if (!display) div_cluster.style.display = "none";
 
         var clusterSize = this.m.getSize(cloneID)
+        var clusterReads = this.m.getReads(cloneID)
 
         for (var i = 0; i < this.m.clones[cloneID].cluster.length; i++) {
             (function (i) {
@@ -288,14 +289,10 @@ List.prototype = {
 
                 var span_stat = document.createElement('span');
                 span_stat.className = "sizeBox";
-
+                
                 var r = 100
-                if (this.m.norm)
-                    r = this.m.normalization_factor[this.m.t] * 100
-
                 if (clusterSize != 0) {
-                    span_stat.appendChild(document.createTextNode((((this.m.windows[id].size[this.m.t] / this.m.reads_segmented[this.m.t]) * r) / clusterSize)
-                        .toFixed(1) + "%"));
+                    span_stat.appendChild(document.createTextNode( (this.m.windows[id].size[this.m.t]*100/clusterReads).toFixed(1) + "%"));
                 } else {
                     span_stat.appendChild(document.createTextNode("0%"))
                 }
