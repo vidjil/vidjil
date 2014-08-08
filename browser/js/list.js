@@ -200,7 +200,7 @@ List.prototype = {
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
         span_info.onclick = function () {
-            dataBox(self.m.getHtmlInfo(cloneID, "clone"));
+            dataBox(self.m.getCloneHtmlInfo(cloneID, "clone"));
         }
         span_info.appendChild(document.createTextNode("I"));
 
@@ -273,7 +273,7 @@ List.prototype = {
                 var span_info = document.createElement('span')
                 span_info.className = "infoBox";
                 span_info.onclick = function () {
-                    dataBox(self.m.getHtmlInfo(this.parentNode.id2, "sequence"));
+                    dataBox(self.m.getcloneHtmlInfo(this.parentNode.id2, "sequence"));
                 }
                 span_info.appendChild(document.createTextNode("I"));
 

@@ -67,7 +67,7 @@ class Window:
     ### 
     def __add__(self, other):
         #data we don't need to duplicate
-        myList = [ "V", "D", "J", "Vend", "Dend", "Jstart", "Dstart", "top", "window", "Nlength", "sequence", "name", "id"]
+        myList = [ "V", "D", "J", "Vend", "Dend", "Jstart", "Dstart", "top", "window", "Nlength", "sequence", "name", "id", "status"]
         obj = Window(1)
         
         t1 = []

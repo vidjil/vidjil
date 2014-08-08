@@ -111,6 +111,23 @@ Model.prototype = {
         this.cluster_key = ""
         
         this.display_window = false
+        
+        //segmented status
+        this.segmented_mesg = ["?", 
+            "SEG_+", 
+            "SEG_-", 
+            "UNSEG too short", 
+            "UNSEG strand",  
+            "UNSEG too few (zero)", 
+            "UNSEG too few V", 
+            "UNSEG too few J",
+            "UNSEG < delta_min", 
+            "UNSEG > delta_max",
+            "UNSEG ambiguous",
+            "= SEG, with window",
+            "= SEG, but no window",
+        ];
+
     },
 
     //Fonction permettant d'ajouter l'objet Segmenter dans le Model
@@ -259,6 +276,7 @@ Model.prototype = {
 
         self.windows.push(other);
         self.n_windows = self.windows.length;
+        self.segmentation_info = data.segmentation_info;
         self.min_sizes = min_sizes;
         self.n_max = n_max;
         self.links = data.links;
@@ -1260,7 +1278,26 @@ Model.prototype = {
         }
         return color['@default'];
     },
+    
+    /* return clone segmentation status
+     * 
+     * */
+    getStatus: function (cloneID) {
+        if (typeof this.windows[cloneID].status != 'undefined'){
+            return this.segmented_mesg[this.windows[cloneID].status]
+        }else{
+            return "not specified";
+        }
+    },
 
+    getSegmentationInfo: function (timeID) {
+        if (typeof this.segmentation_info != 'undefined'){
+            return this.segmentation_info[timeID].replace(/(?:\r\n|\r|\n)/g, '<br />')
+        }else{
+            return "not specified";
+        }
+    },
+    
     /*
      *
      * */
@@ -1713,7 +1750,7 @@ Model.prototype = {
     /* return info about a sequence/clone in html 
      *
      * */
-    getHtmlInfo: function (id, type) {
+    getCloneHtmlInfo: function (id, type) {
 
         if (this.clones[id].cluster.length <= 1) type = "sequence"
         var time_length = this.reads_segmented.length
@@ -1755,6 +1792,7 @@ Model.prototype = {
 
         html += "<tr><td> sequence name </td><td colspan='" + time_length + "'>" + this.getSequenceName(id) + "</td></tr>"
         html += "<tr><td> code </td><td colspan='" + time_length + "'>" + this.getCode(id) + "</td></tr>"
+        html += "<tr><td> segmented </td><td colspan='" + time_length + "'>" + this.getStatus(id) + "</td></tr>"
         html += "<tr><td> size (n-reads (total reads) )</td>"
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + this.getSequenceReads(id, i) + "  (" + this.reads_segmented[i] + ")</td>"
@@ -1787,6 +1825,23 @@ Model.prototype = {
                 html += "</tr>"
             }
         }
+        html += "</table></div>"
+        return html
+    },
+    
+    /* return info about a timePoint in html 
+     *
+     * */
+    getPointHtmlInfo: function (timeID) {
+        var html = ""
+
+        html = "<h2>Point info : " + this.time[timeID] + "("+this.timestamp[timeID]+")</h2>"
+        html += "<div id='info_timepoint'><table><tr><th></th>"
+        html += "<tr><td> reads </td><td>" + this.reads_total[timeID] + "</td></tr>"
+        html += "<tr><td> reads segmented </td><td>" + this.reads_segmented[timeID] +
+            " ("+ (this.reads_segmented[timeID]*100/this.reads_total[timeID]).toFixed(3) + " % )</td></tr>"
+        html += "<tr><td> segmentation </td><td>" + this.getSegmentationInfo(timeID) + "</td></tr>"
+            
         html += "</table></div>"
         return html
     },

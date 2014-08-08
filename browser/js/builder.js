@@ -499,6 +499,13 @@ Builder.prototype = {
             self.edit(this, "time");
         }
         div_point.appendChild(span)
+        var span2 = document.createElement('span')
+        span2.appendChild(document.createTextNode("I"));
+        span2.className = "edit_button"
+        span2.onclick = function () {
+            dataBox(self.m.getPointHtmlInfo(self.m.t));
+        }
+        div_point.appendChild(span2)
         parent.appendChild(div_point)
         
         var div_date = this.build_info_line("info_date", "date", this.m.getStrTime(this.m.t, "sampling_date") )
