@@ -296,7 +296,11 @@ Model.prototype = {
             self.reads_total = self.reads_segmented;
         }
         self.timestamp = data.timestamp;
-        self.time = data.point;
+        if (typeof data.point != 'undefined'){
+            self.time = data.point;
+        }else{
+            self.time = data.timestamp;
+        }
         self.scale_color = d3.scale.log()
             .domain([1, self.precision])
             .range([250, 0]);
