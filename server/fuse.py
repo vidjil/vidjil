@@ -414,10 +414,11 @@ class ListWindows:
         if "reads_segmented" in obj_dict:
             obj = ListWindows()
             for key in obj_dict :
-                if isinstance(obj_dict[key], list):
-                    obj.d[key]=obj_dict[key]
-                else :
-                    obj.d[key]=[obj_dict[key]]
+                if key != "links" :
+                    if isinstance(obj_dict[key], list):
+                        obj.d[key]=obj_dict[key]
+                    else :
+                        obj.d[key]=[obj_dict[key]]
             return obj
 
         if "window" in obj_dict:
