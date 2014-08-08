@@ -523,9 +523,33 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
 
   if (!segmented)
     {
+      because = DONT_KNOW;
       info = " @" + string_of_int (Vend + FIRST_POS) + "  @" + string_of_int(Jstart + FIRST_POS) ;
+      
+      if (Jstart - Vend < delta_min)
+        {
+          because = UNSEG_BAD_DELTA_MIN  ;
+        }
+
+      if (Jstart - Vend > delta_max)
+        {
+          because = UNSEG_BAD_DELTA_MAX  ;
+        }
+        
+      if (Vend == (int) string::npos) 
+        {
+          because = UNSEG_TOO_FEW_V ;
+        }
+      
+      if (Jstart == (int) string::npos)
+        {
+          because = UNSEG_TOO_FEW_J ;
+        }
+      
       return ;
     }
+    
+    because = reversed ? SEG_MINUS : SEG_PLUS ;
     
     //overlap VJ
     if(Jstart-Vend <=0){
@@ -691,12 +715,14 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
 JsonList FineSegmenter::toJsonList(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
   JsonList result;
   
+  result.add("status", because);
   result.add("sequence", revcomp(sequence, reversed) );
   if (isSegmented()) {
     result.add("name", code_short);
     result.add("Jstart", Jstart);
     result.add("Nlength", (del_V+del_J+seg_N.size()) );
     result.add("Vend", Vend);
+
 
     JsonArray jsonV;
     JsonArray jsonJ;

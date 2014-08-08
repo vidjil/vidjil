@@ -168,6 +168,7 @@ class KmerSegmenter : public Segmenter
 class FineSegmenter : public Segmenter
 {
  public:
+   int because;
    vector<pair<int, int> > score_V;
    vector<pair<int, int> > score_D;
    vector<pair<int, int> > score_J;
