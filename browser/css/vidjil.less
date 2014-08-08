@@ -906,13 +906,24 @@ span.logo
   vertical-align: middle;
 }
 
-#info_window table{
+#info_timepoint td{
+  min-width : 300px;
+  max-width : 450px;
+  overflow-wrap: break-word;
+  word-wrap: break-word;
+  border-style:solid;
+  border-color: @border;
+  border-width :1px;
+  vertical-align: middle;
+}
+
+#info_window table, #info_timepoint table{
   border-style:solid;
   border-color: @border;
   border-collapse: collapse;
 }
 
-#info_window table .header{
+#info_window table .header, #info_timepoint table .header{
   border-width : 2px;
   background-color: @border;
 }
