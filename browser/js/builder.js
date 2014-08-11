@@ -168,6 +168,7 @@ Builder.prototype = {
                 document.getElementById('normalized_size').value = ""
                 self.m.norm = true
                 self.m.compute_normalization(cloneID, size)
+                self.m.windows[cloneID].expected=size;
                 self.m.update()
                 $('#tagSelector')
                     .hide('fast')

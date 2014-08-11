@@ -849,6 +849,7 @@ Model.prototype = {
                 var f = 1;
                 
                 if (typeof c[i].expected != "undefined") {
+                    this.windows[this.mapID[c[i].window]].expected = c[i].expected
                     f = this.getSize([this.mapID[c[i].window]]) / c[i].expected;
                     
                     if (f < 100 && f > 0.01) {
@@ -946,8 +947,10 @@ Model.prototype = {
 
         for (var i = 0; i < this.n_windows; i++) {
 
-            //tag and custom name
-            if ((typeof this.windows[i].tag != "undefined" && this.windows[i].tag != 8) || typeof this.windows[i].c_name != "undefined") {
+            //tag, custom name, expected_value
+            if ((typeof this.windows[i].tag != "undefined" && this.windows[i].tag != 8) || 
+                typeof this.windows[i].c_name != "undefined" ||
+                typeof this.windows[i].expected != "undefined") {
 
                 var elem = {};
                 elem.window = this.windows[i].window;
@@ -956,6 +959,8 @@ Model.prototype = {
                     elem.tag = this.windows[i].tag;
                 if (typeof this.windows[i].c_name != "undefined")
                     elem.name = this.windows[i].c_name;
+                if (typeof this.windows[i].expected != "undefined")
+                    elem.expected = this.windows[i].expected;
 
                 analysisData.custom.push(elem);
             }
