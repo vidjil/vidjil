@@ -1144,19 +1144,27 @@ Model.prototype = {
      * 
      * */
     compute_normalization: function (cloneID, expected_size) {
-        expected_size = typeof expected_size !== 'undefined' ? expected_size : this.windows[cloneID].expected;
-        this.normalization.A = []
-        this.normalization.B = expected_size
-        this.normalization.id = cloneID
-        
-        var tmp = this.norm
-        this.norm = false
-        
-        for (var i=0; i<this.time.length; i++){
-            this.normalization.A[i] = this.getSize(cloneID, i)
+        if (cloneID==-1){ 
+            this.norm = false
+            expected_size = 0;
+            this.normalization.id = cloneID
+        }else{
+            this.norm = true
+            expected_size = typeof expected_size !== 'undefined' ? expected_size : this.windows[cloneID].expected;
+            
+            this.normalization.A = []
+            this.normalization.B = expected_size
+            this.normalization.id = cloneID
+            
+            var tmp = this.norm
+            this.norm = false
+            
+            for (var i=0; i<this.time.length; i++){
+                this.normalization.A[i] = this.getSize(cloneID, i)
+            }
+            
+            this.norm = tmp
         }
-        
-        this.norm = tmp
     },
     
     update_normalization: function () {

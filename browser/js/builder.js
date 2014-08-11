@@ -102,9 +102,12 @@ Builder.prototype = {
         normalize_list.innerHTML=""
         
         var input = document.createElement("input")
-        input.value=-1;
         input.type = "radio"
         input.name = "normalize_list"
+        input.onclick = function () {
+            self.m.compute_normalization(-1) 
+            self.m.update()
+        }
         
         normalize_list.appendChild(input)
         normalize_list.appendChild(document.createTextNode("none"))
@@ -201,7 +204,6 @@ Builder.prototype = {
             
             if (size>0 && size<1){
                 document.getElementById('normalized_size').value = ""
-                self.m.norm = true
                 self.m.windows[cloneID].expected=size;
                 self.m.compute_normalization(cloneID, size)
                 self.m.update()
