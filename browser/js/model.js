@@ -1144,6 +1144,7 @@ Model.prototype = {
      * 
      * */
     compute_normalization: function (cloneID, expected_size) {
+        expected_size = typeof expected_size !== 'undefined' ? expected_size : this.windows[cloneID].expected;
         this.normalization.A = []
         this.normalization.B = expected_size
         this.normalization.id = cloneID
@@ -1154,9 +1155,6 @@ Model.prototype = {
         for (var i=0; i<this.time.length; i++){
             this.normalization.A[i] = this.getSize(cloneID, i)
         }
-        
-        document.getElementById("normalize_info").innerHTML = this.getName(cloneID)
-        document.getElementById("normalize_value").innerHTML = expected_size
         
         this.norm = tmp
     },

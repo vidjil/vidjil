@@ -37,6 +37,7 @@ Builder.prototype = {
         this.build_displaySelector()
         this.build_info_container()
         this.build_clusterSelector()
+        this.build_settings()
     },
 
     update: function () {
@@ -92,6 +93,40 @@ Builder.prototype = {
             sel.removeAllRanges();
 
             console.log("drop");
+        }
+    },
+    
+    build_settings: function () {
+        var self = this;
+        var normalize_list = document.getElementById("normalize_list")
+        normalize_list.innerHTML=""
+        
+        var input = document.createElement("input")
+        input.value=-1;
+        input.type = "radio"
+        input.name = "normalize_list"
+        
+        normalize_list.appendChild(input)
+        normalize_list.appendChild(document.createTextNode("none"))
+        normalize_list.appendChild(document.createElement("br"))
+        
+        for (var i=0; i<self.m.windows.length; i++){
+            if (typeof self.m.windows[i].expected != "undefined"){
+                var input = document.createElement("input")
+                var text = document.createTextNode(self.m.getName(i) + " => " +self.m.windows[i].expected)
+                input.value=i;
+                input.type = "radio"
+                input.name = "normalize_list"
+                input.onclick = function () {
+                    self.m.compute_normalization(this.value) 
+                    self.m.update()
+                }
+                if (self.m.normalization.id==i) input.checked=true;
+                
+                normalize_list.appendChild(input)
+                normalize_list.appendChild(text)
+                normalize_list.appendChild(document.createElement("br"))
+            }
         }
     },
 
@@ -167,11 +202,12 @@ Builder.prototype = {
             if (size>0 && size<1){
                 document.getElementById('normalized_size').value = ""
                 self.m.norm = true
-                self.m.compute_normalization(cloneID, size)
                 self.m.windows[cloneID].expected=size;
+                self.m.compute_normalization(cloneID, size)
                 self.m.update()
                 $('#tagSelector')
                     .hide('fast')
+                self.build_settings()
             }else{
                 popupMsg("expected input between 0.0001 and 1")
             }
