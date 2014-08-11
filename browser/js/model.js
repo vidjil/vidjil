@@ -1757,7 +1757,7 @@ Model.prototype = {
     getCloneHtmlInfo: function (id, type) {
 
         if (this.clones[id].cluster.length <= 1) type = "sequence"
-        var time_length = this.reads_segmented.length
+        var time_length = this.time_order.length
         var html = ""
 
 
@@ -1770,7 +1770,7 @@ Model.prototype = {
         html += "<div id='info_window'><table><tr><th></th>"
 
         for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.time[i] + "</td>"
+            html += "<td>" + this.time[this.time_order[i]] + "</td>"
         }
         html += "</tr>"
 
@@ -1781,13 +1781,13 @@ Model.prototype = {
             html += "<tr><td> clone size (n-reads (total reads) )</td>"
 
             for (var i = 0; i < time_length; i++) {
-                html += "<td>" + this.getReads(id, i) + "  (" + this.reads_segmented[i] + ")</td>"
+                html += "<td>" + this.getReads(id, this.time_order[i]) + "  (" + this.reads_segmented[this.time_order[i]] + ")</td>"
             }
             html += "</tr>"
 
             html += "<tr><td> clone size (%)</td>"
             for (var i = 0; i < time_length; i++) {
-                html += "<td>" + (this.getSize(id, i) * 100)
+                html += "<td>" + (this.getSize(id, this.time_order[i]) * 100)
                     .toFixed(3) + " % </td>"
             }
 
@@ -1799,13 +1799,14 @@ Model.prototype = {
         html += "<tr><td> segmented </td><td colspan='" + time_length + "'>" + this.getStatus(id) + "</td></tr>"
         html += "<tr><td> size (n-reads (total reads) )</td>"
         for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.getSequenceReads(id, i) + "  (" + this.reads_segmented[i] + ")</td>"
+            html += "<td>" + this.getSequenceReads(id, this.time_order[i]) + 
+                    "  (" + this.reads_segmented[this.time_order[i]] + ")</td>"
         }
         html += "</tr>"
 
         html += "<tr><td> size (%)</td>"
         for (var i = 0; i < time_length; i++) {
-            html += "<td>" + (this.getSequenceSize(id, i) * 100)
+            html += "<td>" + (this.getSequenceSize(id, this.time_order[i]) * 100)
                 .toFixed(3) + " % </td>"
         }
         html += "</tr>"
@@ -1820,8 +1821,8 @@ Model.prototype = {
             if (key[0] == "_") {
                 html += "<tr><td>" + key + "</td>"
                 if (this.windows[id][key] instanceof Array) {
-                    for (var i = 0; i < this.windows[id][key].length; i++) {
-                        html += "<td>" + this.windows[id][key][i] + "</td>"
+                    for (var i = 0; i < time_length; i++) {
+                        html += "<td>" + this.windows[id][key][this.time_order[i]] + "</td>"
                     }
                 } else {
                     html += "<td>" + this.windows[id][key] + "</td>"
