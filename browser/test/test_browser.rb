@@ -1,4 +1,5 @@
 require 'rubygems'
+gem "minitest"
 require 'watir-webdriver'
 require 'test/unit'
 require "minitest/autorun"
@@ -38,7 +39,7 @@ class MySpec < MiniTest::Spec
     
 end
 
-Minitest.after_run {
+MiniTest.after_run {
   $b.close
 }
 
