@@ -1976,6 +1976,33 @@ Model.prototype = {
         this.time_order = list
         this.update()
     },
+    
+    /*change timepoint for the next one in the current displayed time_order 
+     * 
+     * */
+    nextTime: function () {
+        var current_pos = this.time_order.indexOf(this.t)
+        
+        if (current_pos+1 < this.time_order.length){
+            //next one
+            this.changeTime(this.time_order[current_pos+1])
+        }else{
+            //back to the beginning
+            this.changeTime(this.time_order[0])
+        }
+    },
+    
+    previousTime: function (){
+        var current_pos = this.time_order.indexOf(this.t)
+        
+        if (current_pos == 0){
+            //teleportto the end
+            this.changeTime(this.time_order[this.time_order.length-1])
+        }else{
+            //previous one
+            this.changeTime(this.time_order[current_pos-1])
+        }
+    },
 
     /* 
      *
