@@ -80,6 +80,7 @@ Model.prototype = {
         this.precision = 1;
         this.time = [];
         this.time_order = [];
+        this.isPlaying = false;
         this.timestamp = [];
         this.timestamp2 = [];
         this.clones = [];
@@ -2019,14 +2020,35 @@ Model.prototype = {
     play: function (stop) {
         var self = this;
         this.nextTime();
+        this.isPlaying = true;
         
         //check if "stop" is still in time_order and replace it if neccesary
         if (this.time_order.indexOf(stop)==-1) stop = this.time_order[0]
         
         //continue until stop
-        if (this.t != stop) setTimeout(function(){self.play(stop)},3000);     
+        if (this.t != stop) { 
+            setTimeout(function(){
+                if (self.isPlaying){
+                    self.play(stop)
+                }else{
+                    self.update()
+                }
+            },3000);
+        }else{
+            this.isPlaying = false
+            setTimeout(function(){ 
+                self.update()
+            },1000);
+        }
     },
 
+    /* break recursive play()
+     * 
+     * */
+    stop: function (){ 
+        this.isPlaying = false;
+    },
+    
     /* 
      *
      * */
