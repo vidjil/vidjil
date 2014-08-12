@@ -1,8 +1,12 @@
+#include <iostream>
+#include <string>
 #include "tools.h"
 #include "json.h"
 #include "windows.h"
 #include "representative.h"
 #include "sequenceSampler.h"
+#include "segment.h"
+#include "json.h"
 
 WindowsStorage::WindowsStorage(map<string, string> &labels):windows_labels(labels) {}
 
@@ -16,6 +20,24 @@ list<pair <junction, int> > &WindowsStorage::getSortedList() {
 
 size_t WindowsStorage::getNbReads(junction window) {
   return seqs_by_window[window].size();
+}
+
+vector<int> WindowsStorage::getStatus(junction window) {
+  return status_by_window[window];   
+}
+
+JsonList WindowsStorage::statusToJson(junction window) {
+    JsonList result;
+    
+    for (int i=0; i<status_by_window[window].size(); i++){
+        if (status_by_window[window][i] !=0){
+            ostringstream oss; 
+            oss << i;
+            result.add(oss.str(), status_by_window[window][i]);
+        }
+    }
+    
+    return result;
 }
 
 list<Sequence> &WindowsStorage::getReads(junction window) {
@@ -63,8 +85,12 @@ int WindowsStorage::getId(junction window) {
     return id_by_window[window];
 }
 
-void WindowsStorage::add(junction window, Sequence sequence) {
+void WindowsStorage::add(junction window, Sequence sequence, int status) {
   seqs_by_window[window].push_back(sequence);
+  if (status_by_window.find(window) == status_by_window.end() ) {
+      status_by_window[window].resize(STATS_SIZE);
+  }
+  status_by_window[window][status]++;
 }
 
 pair <int, int> WindowsStorage::keepInterestingWindows(size_t min_reads_window) {
@@ -147,7 +173,8 @@ JsonArray WindowsStorage::sortedWindowsToJsonArray(map <junction, JsonList> json
       //windowsList.add("ratios", normalization_ratios);
       windowsList.add("top", top++);
       windowsList.add("id", this->getId(it->first));
-
+      JsonList seg_stat = this->statusToJson(it->first);
+      windowsList.add("seg_stat", seg_stat);
       windowsArray.add(windowsList);
     }
 

@@ -25,7 +25,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, IKmerStore<KmerAffe
       if (junc.size()) {
         stats_segmented[TOTAL_SEG_AND_WINDOW]++ ;
         stats_length[TOTAL_SEG_AND_WINDOW] += seg.getSequence().sequence.length() ;
-        windowsStorage->add(junc, reads->getSequence());
+        windowsStorage->add(junc, reads->getSequence(), seg.getSegmentationStatus());
       } else {
         stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW]++ ;
         stats_length[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] += seg.getSequence().sequence.length() ;

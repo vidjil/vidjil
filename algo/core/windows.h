@@ -15,6 +15,8 @@
 #include <string>
 #include "fasta.h"
 #include "json.h"
+#include "segment.h"
+#include "json.h"
 
 using namespace std;
 
@@ -23,6 +25,7 @@ typedef string junction ;
 class WindowsStorage {
  private:
   map<junction, list<Sequence> > seqs_by_window;
+  map<junction, vector<int> > status_by_window;
   map<string, string> windows_labels;
   list<pair <junction, int> > sort_all_windows;
   map<junction, int> id_by_window;
@@ -44,6 +47,13 @@ class WindowsStorage {
    */
   size_t getNbReads(junction window);
 
+  /**
+   * @return the segmented status of reads supporting a given window
+   */
+  vector<int> getStatus(junction window);
+  
+  JsonList statusToJson(junction window);
+  
   /**
    * @return the list of reads supporting a given window
    */
@@ -97,7 +107,7 @@ class WindowsStorage {
   /**
    * Add a new window with its list of sequences
    */
-  void add(junction window, Sequence sequence);
+  void add(junction window, Sequence sequence, int status);
 
   /**
    * Only keep windows that are interesting.  Those windows are windows
