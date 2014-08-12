@@ -1996,12 +1996,26 @@ Model.prototype = {
         var current_pos = this.time_order.indexOf(this.t)
         
         if (current_pos == 0){
-            //teleportto the end
+            //teleport to the end
             this.changeTime(this.time_order[this.time_order.length-1])
         }else{
             //previous one
             this.changeTime(this.time_order[current_pos-1])
         }
+    },
+    
+    /* recursive function calling nexTime() till encounter the specified timePoint 
+     * 
+     * */
+    play: function (stop) {
+        var self = this;
+        this.nextTime();
+        
+        //check if "stop" is still in time_order and replace it if neccesary
+        if (this.time_order.indexOf(stop)==-1) stop = this.time_order[0]
+        
+        //continue until stop
+        if (this.t != stop) setTimeout(function(){self.play(stop)},3000);     
     },
 
     /* 
