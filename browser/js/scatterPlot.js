@@ -262,7 +262,7 @@ ScatterPlot.prototype = {
 	  })
       //Action -> Si l'on clique sur un cercle, alors on le sélectionne
 	  .on("click", function (d) {
-          self.m.select(d.id);
+          self.clickNode(d.id);
 	  })
 
   },
@@ -1976,7 +1976,6 @@ ScatterPlot.prototype = {
   /*Fonction permettant de stopper l'exéc sélective
   * */
   stopSelector: function (e) {
-
       if (this.active_selector) {
 
           this.coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
@@ -2012,7 +2011,7 @@ ScatterPlot.prototype = {
                       var node_x = this.nodes[i].x + this.marge_left
                       var node_y = this.nodes[i].y + this.marge_top
 
-                      if (this.m.windows[i].active && !this.m.windows[i].select && this.m.getSize(i) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
+                      if (this.m.windows[i].active && this.m.getSize(i) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
                           nodes_selected.push(i);
                   }
 
@@ -2023,14 +2022,19 @@ ScatterPlot.prototype = {
                   .attr("height", 0)
                   this.active_selector = false;
                   console.log("stopSelector: selectBox [x : " + x1 + "/" + x2 + ", y : " + y1 + "/" + y2 + "]   nodes:" + nodes_selected);
-
-                  this.m.unselectAll()
+        
+                  if (!d3.event.ctrlKey) this.m.unselectAll()
                   for (var i = 0; i < nodes_selected.length; i++) {
                       this.m.select(nodes_selected[i])
                   }
               }
           }
       }
+  },
+  
+  clickNode: function (cloneID){
+      if (!d3.event.ctrlKey) this.m.unselectAll()
+      this.m.select(cloneID)
   },
 
   /* Fonction permettant l'annulation du sélecteur

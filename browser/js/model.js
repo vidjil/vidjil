@@ -1509,7 +1509,6 @@ Model.prototype = {
         if (cloneID == (this.n_windows - 1)) return 0
 
         if (this.windows[cloneID].select) {
-            this.unselect(cloneID);
             return;
         } else {
             if (list.length < 20) {
@@ -1549,6 +1548,14 @@ Model.prototype = {
         this.updateElem(list);
 	    this.removeAllClones();
         this.updateAlignmentButton();
+    },
+    
+    isSelected: function (cloneID) {
+        if (this.clonesSelected.indexOf(cloneID) != -1){
+            return true;
+        }else{
+            return false;
+        }
     },
 
     /* merge all clones currently in the selection into one

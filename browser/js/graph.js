@@ -582,7 +582,7 @@ Graph.prototype = {
                 self.m.focusIn(d.id);
             })
             .on("click", function (d) {
-                self.m.select(d.id);
+                self.clickGraph(d.id);
             });
     },
 
@@ -671,6 +671,11 @@ Graph.prototype = {
     startDrag: function (time) {
         this.drag_on = true;
         this.dragged_time_point = time;
+    },
+    
+    clickGraph: function (cloneID){
+        if (!d3.event.ctrlKey) this.m.unselectAll()
+        this.m.select(cloneID)
     },
 
     /* construit le tableau des points par laquelle la courbe de résolution doit passer

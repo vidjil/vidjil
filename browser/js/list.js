@@ -166,8 +166,8 @@ List.prototype = {
         span_name.ondblclick = function () {
             self.editName(cloneID, this);
         }
-        span_name.onclick = function () {
-            self.m.select(cloneID);
+        span_name.onclick = function (e) {
+            self.clickList(e, cloneID);
         }
         span_name.appendChild(document.createTextNode(this.m.getName(cloneID)));
         span_name.title = this.m.getName(cloneID);
@@ -191,8 +191,8 @@ List.prototype = {
 
         var span_size = document.createElement('span')
         span_size.className = "sizeBox";
-        span_size.onclick = function () {
-            self.m.select(cloneID);
+        span_size.onclick = function (e) {
+            self.clickList(e, cloneID);
         }
         span_size.style.color = this.m.windows[cloneID].color;
         span_size.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));
@@ -265,8 +265,8 @@ List.prototype = {
 
                 var span_name = document.createElement('span');
                 span_name.className = "nameBox";
-                span_name.onclick = function () {
-                    self.m.select(id);
+                span_name.onclick = function (e) {
+                    self.clickList(e, id);
                 }
                 span_name.appendChild(document.createTextNode(this.m.getCode(id)));
                 span_name.title = this.m.getCode(id);
@@ -536,6 +536,11 @@ List.prototype = {
             .hide(50, function () {
                 self.m.updateElem([cloneID])
             });
+    },
+    
+    clickList: function (e, cloneID) {
+        if (!e.ctrlKey) this.m.unselectAll()
+        this.m.select(cloneID)
     },
 
 } //fin prototype
