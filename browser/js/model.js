@@ -2019,8 +2019,8 @@ Model.prototype = {
      * */
     play: function (stop) {
         var self = this;
-        this.nextTime();
         this.isPlaying = true;
+        this.nextTime();
         
         //check if "stop" is still in time_order and replace it if neccesary
         if (this.time_order.indexOf(stop)==-1) stop = this.time_order[0]
@@ -2028,11 +2028,7 @@ Model.prototype = {
         //continue until stop
         if (this.t != stop) { 
             setTimeout(function(){
-                if (self.isPlaying){
-                    self.play(stop)
-                }else{
-                    self.update()
-                }
+                if (self.isPlaying) self.play(stop)
             },3000);
         }else{
             this.isPlaying = false
@@ -2047,6 +2043,7 @@ Model.prototype = {
      * */
     stop: function (){ 
         this.isPlaying = false;
+        this.update();
     },
     
     /* 

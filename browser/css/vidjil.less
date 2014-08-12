@@ -638,7 +638,7 @@ span .substitution{
   text-align:left;
 }
 
-.button:hover, .buttonSelector:hover, .button2:hover{
+.button:hover,.button_right:hover, .buttonSelector:hover, .button2:hover{
   background : @border;
   color : @select;
 }
@@ -722,7 +722,7 @@ span .substitution{
   color: @select;
 }
 
-.button {
+.button, .button_right{
   cursor:pointer;
   font-size: 13px;
   padding: 0px 3px;
@@ -730,6 +730,10 @@ span .substitution{
   margin-left:5px;
   min-width : 16px;
   color: @default;
+}
+
+.button_right{
+    float: right;
 }
 
 .button2 {

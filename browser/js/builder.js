@@ -531,26 +531,63 @@ Builder.prototype = {
         
         //point info
         var div_point = this.build_info_line("info_point", "point",  this.m.getStrTime(this.m.t, "name") )
-        var span = document.createElement('span')
-        span.appendChild(document.createTextNode("..."));
-        span.className = "edit_button"
-        span.onclick = function () {
+
+        var nextTime = document.createElement('span')
+        nextTime.appendChild(document.createTextNode(">"));
+        nextTime.className = "next_button button_right"
+        nextTime.onclick = function () {
+            self.m.nextTime();
+        }
+        div_point.appendChild(nextTime)    
+        
+        var editTimeName = document.createElement('span')
+        editTimeName.appendChild(document.createTextNode("edit"));
+        editTimeName.className = "button_right"
+        editTimeName.onclick = function () {
             self.edit(this, "time");
         }
-        div_point.appendChild(span)
-        var span2 = document.createElement('span')
-        span2.appendChild(document.createTextNode("I"));
-        span2.className = "edit_button"
-        span2.onclick = function () {
+        div_point.appendChild(editTimeName)
+        
+        if (self.m.isPlaying){
+            var stop = document.createElement('span')
+            stop.appendChild(document.createTextNode("stop"));
+            stop.className = "stop_button button_right"
+            stop.onclick = function () {
+                self.m.stop();
+            }
+            div_point.appendChild(stop)
+        }else{
+            var play = document.createElement('span')
+            play.appendChild(document.createTextNode("play"));
+            play.className = "play_button button_right"
+            play.onclick = function () {
+                self.m.play(self.m.t);
+            }
+            div_point.appendChild(play)
+        }
+        
+        var infoTime = document.createElement('span')
+        infoTime.appendChild(document.createTextNode("Info"));
+        infoTime.className = "button_right"
+        infoTime.onclick = function () {
             dataBox(self.m.getPointHtmlInfo(self.m.t));
         }
-        div_point.appendChild(span2)
+        div_point.appendChild(infoTime)
+        
+        var previousTime = document.createElement('span')
+        previousTime.appendChild(document.createTextNode("<"));
+        previousTime.className = "previous_button button_right"
+        previousTime.onclick = function () {
+            self.m.previousTime();
+        }
+        div_point.appendChild(previousTime)        
+        
         parent.appendChild(div_point)
         
         var div_date = this.build_info_line("info_date", "date", this.m.getStrTime(this.m.t, "sampling_date") )
         var span = document.createElement('span')
-        span.appendChild(document.createTextNode("..."));
-        span.className = "edit_button"
+        span.appendChild(document.createTextNode("edit"));
+        span.className = "button_right"
         span.onclick = function () {
             self.edit(this, "timestamp2");
         }
