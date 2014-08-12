@@ -1983,25 +1983,34 @@ Model.prototype = {
     nextTime: function () {
         var current_pos = this.time_order.indexOf(this.t)
         
-        if (current_pos+1 < this.time_order.length){
-            //next one
-            this.changeTime(this.time_order[current_pos+1])
+        if (current_pos != -1){
+            if (current_pos+1 < this.time_order.length){
+                //next one
+                this.changeTime(this.time_order[current_pos+1])
+            }else{
+                //back to the beginning
+                this.changeTime(this.time_order[0])
+            }
         }else{
-            //back to the beginning
-            this.changeTime(this.time_order[0])
+            this.changeTime(this.time_order[0])   
         }
     },
     
     previousTime: function (){
         var current_pos = this.time_order.indexOf(this.t)
         
-        if (current_pos == 0){
-            //teleport to the end
-            this.changeTime(this.time_order[this.time_order.length-1])
+        if (current_pos != -1){
+            if (current_pos == 0){
+                //teleport to the end
+                this.changeTime(this.time_order[this.time_order.length-1])
+            }else{
+                //previous one
+                this.changeTime(this.time_order[current_pos-1])
+            }
         }else{
-            //previous one
-            this.changeTime(this.time_order[current_pos-1])
+            this.changeTime(this.time_order[0])   
         }
+        
     },
     
     /* recursive function calling nexTime() till encounter the specified timePoint 
