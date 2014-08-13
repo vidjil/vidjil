@@ -1779,13 +1779,14 @@ Model.prototype = {
         var time_length = this.time_order.length
         var html = ""
 
-
+        //clone/sequence label
         if (type == "clone") {
             html = "<h2>Clone info : " + this.getName(id) + "</h2>"
         } else {
             html = "<h2>Sequence info : " + this.getSequenceName(id) + "</h2>"
         }
-
+        
+        //column
         html += "<div id='info_window'><table><tr><th></th>"
 
         for (var i = 0; i < time_length; i++) {
@@ -1793,36 +1794,33 @@ Model.prototype = {
         }
         html += "</tr>"
 
+        //clone info
         if (type == "clone") {
-
             html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> clone information </td></tr>"
             html += "<tr><td> clone name </td><td colspan='" + time_length + "'>" + this.getName(id) + "</td></tr>"
             html += "<tr><td> clone size (n-reads (total reads) )</td>"
-
             for (var i = 0; i < time_length; i++) {
-                html += "<td>" + this.getReads(id, this.time_order[i]) + "  (" + this.reads_segmented[this.time_order[i]] + ")</td>"
+            html += "<td>" + this.getReads(id, this.time_order[i]) + "  (" + this.reads_segmented[this.time_order[i]] + ")</td>"
             }
-            html += "</tr>"
-
-            html += "<tr><td> clone size (%)</td>"
+            html += "</tr><tr><td> clone size (%)</td>"
             for (var i = 0; i < time_length; i++) {
-                html += "<td>" + (this.getSize(id, this.time_order[i]) * 100)
-                    .toFixed(3) + " % </td>"
+            html += "<td>" + (this.getSize(id, this.time_order[i]) * 100).toFixed(3) + " % </td>"
             }
-
-            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> representative sequence information</td></tr>"
+            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> clone's main sequence information</td></tr>"
+        }else{
+            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> sequence information</td></tr>"
         }
 
+        
+        //sequence info (or clone main sequence info)
         html += "<tr><td> sequence name </td><td colspan='" + time_length + "'>" + this.getSequenceName(id) + "</td></tr>"
         html += "<tr><td> code </td><td colspan='" + time_length + "'>" + this.getCode(id) + "</td></tr>"
-        html += "<tr><td> segmented </td><td colspan='" + time_length + "'>" + this.getStatus(id) + "</td></tr>"
         html += "<tr><td> size (n-reads (total reads) )</td>"
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + this.getSequenceReads(id, this.time_order[i]) + 
                     "  (" + this.reads_segmented[this.time_order[i]] + ")</td>"
         }
         html += "</tr>"
-
         html += "<tr><td> size (%)</td>"
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + (this.getSequenceSize(id, this.time_order[i]) * 100)
@@ -1830,12 +1828,26 @@ Model.prototype = {
         }
         html += "</tr>"
 
-        html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.windows[id].sequence + "</td>"
-        html += "<tr><td> window </td><td colspan='" + time_length + "'>" + this.windows[id].window + "</td>"
-        html += "<tr><td> V </td><td colspan='" + time_length + "'>" + this.windows[id].V + "</td>"
-        html += "<tr><td> D </td><td colspan='" + time_length + "'>" + this.windows[id].D + "</td>"
-        html += "<tr><td> J </td><td colspan='" + time_length + "'>" + this.windows[id].J + "</td>"
-
+        
+        //segmentation info
+        html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation information</td></tr>"
+        html += "<tr><td> segmented </td><td colspan='" + time_length + "'>" + this.getStatus(id) + "</td></tr>"
+        var total_stat = 0;
+        for (var key in this.windows[id].seg_stat) total_stat +=  this.windows[id].seg_stat[key]
+        for (var key in this.windows[id].seg_stat){
+        html += "<tr><td> "+this.segmented_mesg[key]+" </td><td colspan='" + time_length + "'>" 
+            + this.windows[id].seg_stat[key] + " (" + ((this.windows[id].seg_stat[key]/total_stat) * 100)
+                .toFixed(1) + " %) </td></tr>" 
+        }
+        html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.windows[id].sequence + "</td></tr>"
+        html += "<tr><td> window </td><td colspan='" + time_length + "'>" + this.windows[id].window + "</td></tr>"
+        html += "<tr><td> V </td><td colspan='" + time_length + "'>" + this.windows[id].V + "</td></tr>"
+        html += "<tr><td> D </td><td colspan='" + time_length + "'>" + this.windows[id].D + "</td></tr>"
+        html += "<tr><td> J </td><td colspan='" + time_length + "'>" + this.windows[id].J + "</td></tr>"
+        
+        
+        //other info (clntab)
+        html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> other information</td></tr>"
         for (var key in this.windows[id]) {
             if (key[0] == "_") {
                 html += "<tr><td>" + key + "</td>"
