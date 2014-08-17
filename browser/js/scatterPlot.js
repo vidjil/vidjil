@@ -108,6 +108,9 @@ function ScatterPlot(id, model, graph) {
       ["dbscan", "Dbscan graph"],
       ["graph", "Edit dist. graph"]
   ]; 
+  
+  this.axisX = new Axis(this.m)
+  this.axisY = new Axis(this.m)
 }
 
 /*
@@ -126,7 +129,8 @@ ScatterPlot.prototype = {
       this.initMenu();
       this.initSVG();
       this.initGridModel();
-
+      this.axisX.useGermline(this.m.germlineV, "V")
+      this.axisY.useGermline(this.m.germlineJ, "J")
       this.changeSplitMethod(this.splitX, this.splitY);
       this.resize();
   },
@@ -599,13 +603,13 @@ ScatterPlot.prototype = {
 
   /*Function which allows to switch between initial menu and graph menu*/
   switchInitMenu: function() {
-      var axisX = document.getElementsByClassName("axis_select_x");
-      var axisY = document.getElementsByClassName("axis_select_y");
+      var axis_select_x = document.getElementsByClassName("axis_select_x");
+      var axis_select_y = document.getElementsByClassName("axis_select_y");
       var graph_selector = document.getElementsByClassName("axis_select_graph");
-      for(var i = 0; i < axisX.length; i++) 
-        axisX[i].style.display = this.reinit?"none":"block";
-      for (var i = 0; i < axisY.length; i++)
-        axisY[i].style.display = this.reinit?"none":"block";
+      for(var i = 0; i < axis_select_x.length; i++) 
+        axis_select_x[i].style.display = this.reinit?"none":"block";
+      for (var i = 0; i < axis_select_y.length; i++)
+        axis_select_y[i].style.display = this.reinit?"none":"block";
       for (var i = 0; i < graph_selector.length; i++)
         graph_selector[i].style.display = this.reinit?"block":"none";
   },
@@ -1258,6 +1262,15 @@ ScatterPlot.prototype = {
                 d.x += coef2 * ((1 - (self.m.windows[d.id].Nlength / self.m.n_max)) * self.resizeW - d.x);
                 break;
             }
+            **/
+            if (d.x != d.x2) {
+                var delta = d.x2 - d.x;
+                d.x += 0.01 * delta;
+            }
+            if (d.y != d.y2) {
+                var delta = d.y2 - d.y;
+                d.y += 0.01 * delta;
+            }
         }
     },
 
@@ -1348,6 +1361,7 @@ ScatterPlot.prototype = {
   /* Fonction permettant de mettre à jour les données du ScatterPlot, et de relancer une sequence d'animation
   * */
  update: function () {
+      var self = this;
       var startTime = new Date()
 	  .getTime();
       var elapsedTime = 0;
@@ -1370,7 +1384,7 @@ ScatterPlot.prototype = {
       this.updateMenu();
       this.initGridModelSize();
       this.initGrid();
-
+        
       //Donne des informations quant au temps de MàJ des données
       elapsedTime = new Date()
 	  .getTime() - startTime;
@@ -1412,6 +1426,10 @@ ScatterPlot.prototype = {
       else {
 	       this.nodes[cloneID].r1 = 0
       }
+      
+      this.nodes[cloneID].x2 = this.axisX.pos(cloneID)*this.resizeW
+      this.nodes[cloneID].y2 = this.axisY.pos(cloneID)*this.resizeH
+      
   },
 
   /* Function which allows to re-init all points to a (no-)fixed position
@@ -1560,8 +1578,8 @@ ScatterPlot.prototype = {
       var x_grid = this.gridModel[this.splitX]
       var y_grid = this.gridModel[this.splitY]
 
-      if (!self.reinit) this.axis_x_update(x_grid);
-      if (!self.reinit) this.axis_y_update(y_grid);
+      if (!self.reinit) this.axis_x_update(this.axisX.labels);
+      if (!self.reinit) this.axis_y_update(this.axisY.labels);
   },
 
   /* Function which allows to verify if we can switch to an accessible distribution
@@ -1707,8 +1725,7 @@ ScatterPlot.prototype = {
 	  })
 	  .attr("class", function (d) {
 	      if (d.type == "subline") {
-		  if (self.splitX != "allele_j" && self.splitX != "allele_v" && self.splitX != "allele_v_used") return "sp_subline_hidden";
-		  return "sp_subline";
+            return "sp_subline";
 	      }
 	      return "sp_line";
 	  })
@@ -1831,11 +1848,32 @@ ScatterPlot.prototype = {
       if (splitY != "bar" && this.splitY == "bar") {
 	  this.endBar();
       }
-
+      
       this.splitX = splitX;
       this.splitY = splitY;
 
+      this.updateAxis(this.axisX, this.splitX);
+      this.updateAxis(this.axisY, this.splitY);
       this.update();
+  },
+  
+  updateAxis: function(axis, splitMethod){
+      if (splitMethod == "allele_v") {
+      axis.useGermline(this.m.germlineV, "V", true)
+      }
+      if (splitMethod == "gene_v") {
+      axis.useGermline(this.m.germlineV, "V", false)
+      }
+      if (splitMethod == "allele_j") {
+      axis.useGermline(this.m.germlineJ, "J", true)
+      }
+      if (splitMethod == "gene_j") {
+      axis.useGermline(this.m.germlineJ, "J", false)
+      }
+      if (splitMethod == "Size") {
+      axis.useSize()    
+      }
+      
   },
 
   /* Fonction permettant de mettre à jour le menu
@@ -2063,4 +2101,147 @@ ScatterPlot.prototype = {
       }
   },
 
+}
+
+/* Axis object contain labels and their position on an axis (from 0 to 1)
+ * and have a function pos() who return the position of a given Clone on this axis 
+ * */
+function Axis (model) {
+    this.m = model
+    this.pos = function() {return 0};
+    this.labels = [];
+}
+
+Axis.prototype = {
+    
+    /*
+     * 
+     * */
+    init: function() {
+        this.labels = [];
+    },
+    
+    /*
+     * 
+     * */
+    label: function (type, pos, text, color) {
+        result = {};
+        result.type = type;
+        result.pos = pos;
+        result.text = text;
+        result.geneColor = color;
+
+        return result;
+    },
+
+    /* init axis with a germline object
+     * genetype > "V" "D" or "J"
+     * displayAllele > boolean ( show/hide allele)
+     * */
+    useGermline: function (germline, geneType, displayAllele) {
+        this.init()
+        this.germline = germline;
+        var self = this;
+        
+        var gene_list = self.germline.gene
+        var allele_list = self.germline.allele
+        var total_gene = Object.keys(gene_list).length
+        
+        //clone position
+        this.pos = function(cloneID) {
+            var clone = self.m.windows[cloneID] 
+            if (typeof clone[geneType] != "undefined" 
+                && typeof clone[geneType][0] != "undefined" 
+                && typeof gene_list[clone[geneType][0].split("*")[0]] != "undefined")
+            {
+                var allele = clone[geneType][0]
+                var gene = clone[geneType][0].split("*")[0]
+                var pos = ((gene_list[gene].rank+0.5)/(total_gene+1))
+                
+                if (displayAllele){
+                    var total_allele = gene_list[gene].n
+                    pos += (1/(total_gene+1)) * ((allele_list[allele].rank+0.5)/total_allele) - (0.5/(total_gene+1))
+                }
+                return pos
+            }else{
+                return ((total_gene+0.5)/(total_gene+1))
+            }
+        }
+        
+        //labels
+        for (var key in gene_list){
+            self.labels.push(self.label("line", ((gene_list[key].rank+0.5)/(total_gene+1)), key, ""));
+        }
+        
+        if (displayAllele){
+            for (var key in allele_list){
+                var gene = key.split("*")[0]
+                var allele = key.split("*")[1]
+                var total_allele = gene_list[gene].n
+                var pos = ((gene_list[gene].rank+0.5)/(total_gene+1))
+                pos += (1/(total_gene+1)) * ((allele_list[key].rank+0.5)/total_allele) - (0.5/(total_gene+1))
+                self.labels.push(self.label("subline", pos, "*"+allele, ""));
+            }
+        }
+        
+        self.labels.push(self.label("line", ((total_gene+0.5)/(total_gene+1)), "other", ""));
+    },
+    
+    
+    /* use clone size
+     * 
+     * */
+    useSize: function () {
+        this.init()
+        var self = this;
+        this.sizeScale = d3.scale.log()
+            .domain([this.m.min_size, 1])
+            .range([1, 0]);
+            
+        //clone position
+        this.pos = function(cloneID) {
+            return self.sizeScale(self.m.getSize(cloneID))
+        }
+        
+        //labels
+        var h=1
+        for (var i = 0; i < 10; i++) {
+            var pos = this.sizeScale(h);
+            var text = this.m.formatSize(h, false)
+            this.labels.push(this.label("line", pos, text));
+            h = h / 10;
+        }
+     
+    },
+    
+    /* 
+     * 
+     * */
+    useNlength: function () {
+        this.init()
+        var self = this;
+        
+        var n_min = 0;
+        var n_max = 1;
+        for (var i=0; i<this.m.windows.length; i++){
+            if (this.m.windows[i].Nlength > n_max) n_max = this.m.windows[i].Nlength;
+        }
+        
+        this.sizeScale = d3.scale.linear()
+            .domain([0, n_max])
+            .range([0, 1]);
+     
+        //clone position
+        this.pos = function(cloneID) {
+            return self.sizeScale(self.m.windows[cloneID].Nlength)
+        }
+        
+        //labels
+        var h = Math.ceil(n_max/5)
+        for (var i = 0; i < 5; i++) {
+            var pos = this.sizeScale(h*i);
+            var text = h*i
+            this.labels.push(this.label("line", pos, text));
+        }
+    }
 }
