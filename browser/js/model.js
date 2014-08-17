@@ -399,134 +399,167 @@ Model.prototype = {
         var self = this
         
         console.log("loadGermline()");
-        self.germline = {};
-        self.germline.v = {}
-        self.germline.d = {}
-        self.germline.j = {}
-        self.germline.system = system
+        self.germlineV = {}
+        self.germlineD = {}
+        self.germlineJ = {}
         var v, j;
 
         //select germline (default TRG)
         switch (system) {
         case "IGH":
-            self.germline.v = germline.IGHV;
-            self.germline.j = germline.IGHJ;
+            self.germlineV.allele = germline.IGHV;
+            self.germlineJ.allele = germline.IGHJ;
             break;
         case "IGK":
-            self.germline.v = germline.IGKV;
-            self.germline.j = germline.IGKJ;
+            self.germlineV.allele = germline.IGKV;
+            self.germlineJ.allele = germline.IGKJ;
             break;
         case "TRB":
-            self.germline.v = germline.TRBV;
-            self.germline.j = germline.TRBJ;
+            self.germlineV.allele = germline.TRBV;
+            self.germlineJ.allele = germline.TRBJ;
             break;
         case "TRG":
-            self.germline.v = germline.TRGV;
-            self.germline.j = germline.TRGJ;
+            self.germlineV.allele = germline.TRGV;
+            self.germlineJ.allele = germline.TRGJ;
             break;
         case "IGK":
-            self.germline.v = germline.IGKV;
-            self.germline.j = germline.IGKJ;
+            self.germlineV.allele = germline.IGKV;
+            self.germlineJ.allele = germline.IGKJ;
             break;
         case "TRD":
-            self.germline.v = germline.TRDV;
-            self.germline.j = germline.TRDJ;
+            self.germlineV.allele = germline.TRDV;
+            self.germlineJ.allele = germline.TRDJ;
             break;
         default:
-            self.germline.v = germline.TRGV;
-            self.germline.j = germline.TRGJ;
+            self.germlineV.allele = germline.TRGV;
+            self.germlineJ.allele = germline.TRGJ;
             break;
         }
-        self.germline.vgene = {};
-        self.germline.jgene = {};
-
+        self.germlineV.gene = {};
+        self.germlineJ.gene = {};
+        
+        
+    //reduce germline size
+    var germlineV = {}
+    var germlineJ = {}
+    for (var i=0; i<this.windows.length; i++){
+        if (typeof this.windows[i].V != "undefined" 
+            && typeof this.windows[i].V[0] != "undefined"){
+            var geneV=this.windows[i].V[0];
+            if ( typeof self.germlineV[geneV] !="undefined"){
+                germlineV[geneV] = self.germlineV[geneV]
+            }else{
+                germlineV[geneV] = "unknow sequence"
+            }
+        }
+    }
+    
+    for (var i=0; i<this.windows.length; i++){
+        if (typeof this.windows[i].J != "undefined" 
+            && typeof this.windows[i].J[0] != "undefined"){
+            var geneJ=this.windows[i].J[0];
+            if ( typeof self.germlineJ[geneJ] !="undefined"){
+                germlineJ[geneJ] = self.germlineJ[geneJ]
+            }else{
+                germlineJ[geneJ] = "unknow sequence"
+            }
+        }
+    }
+    
+    self.germlineV.allele=germlineV;
+    self.germlineJ.allele=germlineJ;
+    
 	/*DÉBUT DU TRI (contenu dans compare.js)*/
 	
 	//On trie tous les élèments v contenus dans germline, via le nom des objets
 	var tmp1 = [];
-	tmp1 = Object.keys(self.germline.v).slice();
+	tmp1 = Object.keys(self.germlineV.allele).slice();
 	mySortedArray(tmp1);
 	//On trie tous les élèments j contenus dans germline, via le nom des objets 
 	var tmp2 = [];
-	tmp2 = Object.keys(self.germline.j).slice();
+	tmp2 = Object.keys(self.germlineJ.allele).slice();
 	mySortedArray(tmp2);
 	
 	var list1 = {};
 	var list2 = {};
 
-	//Pour chaque objet, on fait un push sur self.germline.v
+	//Pour chaque objet, on fait un push sur self.germlineV.allele
 	for (var i = 0; i<tmp1.length; i++) {
-	    list1[tmp1[i]] = self.germline.v[tmp1[i]];
+	    list1[tmp1[i]] = self.germlineV.allele[tmp1[i]];
 	}
-	//Pour chaque objet, on fait un push sur self.germline.j
+	//Pour chaque objet, on fait un push sur self.germlineJ.allele
 	for (var k = 0; k<tmp2.length; k++) {
-	    list2[tmp2[k]] = self.germline.j[tmp2[k]];
+	    list2[tmp2[k]] = self.germlineJ.allele[tmp2[k]];
 	}
 	
 	//Réinitialisation des germlines de v et j
-	self.germline.v = list1;
-	self.germline.j = list2;
+	self.germlineV.allele = list1;
+	self.germlineJ.allele = list2;
 
 	/*FIN DU TRI*/
 	
         // COLOR V
-        key = Object.keys(self.germline.v);
+        key = Object.keys(self.germlineV.allele);
         var n = 0,
             n2 = 0;
         elem2 = key[0].split('*')[0];
         for (var i = 0; i < key.length; i++) {
-            var tmp = self.germline.v[key[i]];
-            self.germline.v[key[i]] = {};
-            self.germline.v[key[i]].seq = tmp;
-            self.germline.v[key[i]].color = colorGenerator((30 + (i / key.length) * 290),
+            var tmp = self.germlineV.allele[key[i]];
+            self.germlineV.allele[key[i]] = {};
+            self.germlineV.allele[key[i]].seq = tmp;
+            self.germlineV.allele[key[i]].color = colorGenerator((30 + (i / key.length) * 290),
                 color_s, color_v);
 
             var elem = key[i].split('*')[0];
             if (elem != elem2) {
-                self.germline.vgene[elem2] = {};
-                self.germline.vgene[elem2].n = n2;
-                self.germline.vgene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
+                self.germlineV.gene[elem2] = {};
+                self.germlineV.gene[elem2].n = n2;
+                self.germlineV.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
                     color_s, color_v);
+                self.germlineV.gene[elem2].rank = n;
                 n++;
                 n2 = 0;
             }
             elem2 = elem;
-            self.germline.v[key[i]].gene = n
-            self.germline.v[key[i]].allele = n2
+            self.germlineV.allele[key[i]].gene = n
+            self.germlineV.allele[key[i]].rank = n2
             n2++;
         }
-        self.germline.vgene[elem2] = {};
-        self.germline.vgene[elem2].n = n2;
-        self.germline.vgene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
+        self.germlineV.gene[elem2] = {};
+        self.germlineV.gene[elem2].n = n2;
+        self.germlineV.gene[elem2].rank = n
+        self.germlineV.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
             color_s, color_v);
 
         // COLOR J
-        key = Object.keys(self.germline.j);
+        key = Object.keys(self.germlineJ.allele);
         n = 0, n2 = 0;
         elem2 = key[0].split('*')[0];
         for (var i = 0; i < key.length; i++) {
-            var tmp = self.germline.j[key[i]];
-            self.germline.j[key[i]] = {};
-            self.germline.j[key[i]].seq = tmp;
-            self.germline.j[key[i]].color = colorGenerator((30 + (i / key.length) * 290),
+            var tmp = self.germlineJ.allele[key[i]];
+            self.germlineJ.allele[key[i]] = {};
+            self.germlineJ.allele[key[i]].seq = tmp;
+            self.germlineJ.allele[key[i]].color = colorGenerator((30 + (i / key.length) * 290),
                 color_s, color_v);
             var elem = key[i].split('*')[0];
             if (elem != elem2) {
-                self.germline.jgene[elem2] = {};
-                self.germline.jgene[elem2].n = n2;
-                self.germline.jgene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
+                self.germlineJ.gene[elem2] = {};
+                self.germlineJ.gene[elem2].n = n2;
+                self.germlineJ.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
                     color_s, color_v);
+                self.germlineJ.gene[elem2].rank = n;
                 n++;
                 n2 = 0;
             }
             elem2 = elem;
-            self.germline.j[key[i]].gene = n
-            self.germline.j[key[i]].allele = n2
+            self.germlineJ.allele[key[i]].gene = n
+            self.germlineJ.allele[key[i]].rank = n2
             n2++;
         }
-        self.germline.jgene[elem2] = {};
-        self.germline.jgene[elem2].n = n2;
-        self.germline.jgene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
+        self.germlineJ.gene[elem2] = {};
+        self.germlineJ.gene[elem2].n = n2
+        self.germlineJ.gene[elem2].rank = n;
+        self.germlineJ.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
             color_s, color_v);
 
 
@@ -534,7 +567,7 @@ Model.prototype = {
         self.usedV = {}
 
         for (var i = 0; i < self.windows.length; i++) {
-            if (self.windows[i].V && self.windows[i].V[0] && self.germline.v[self.windows[i].V[0]]) {
+            if (self.windows[i].V && self.windows[i].V[0] && self.germlineV.allele[self.windows[i].V[0]]) {
                 var elem = self.windows[i].V[0].split('*')[0];
                 if (self.usedV[elem]) {
                     self.usedV[elem]++
@@ -544,7 +577,7 @@ Model.prototype = {
             }
         }
 
-        var keys = Object.keys(self.germline.vgene)
+        var keys = Object.keys(self.germlineV.gene)
         var order = 1;
         for (var i = 0; i < keys.length; i++) {
             if (self.usedV[keys[i]]) {
@@ -800,9 +833,9 @@ Model.prototype = {
 
         //      COLOR_V
         for (var i = 0; i < this.n_windows; i++) {
-            if (typeof (this.windows[i].V) != 'undefined' && this.germline.v[this.windows[i].V[0]]) {
+            if (typeof (this.windows[i].V) != 'undefined' && this.germlineV.allele[this.windows[i].V[0]]) {
                 var vGene = this.windows[i].V[0];
-                this.windows[i].colorV = this.germline.v[vGene].color;
+                this.windows[i].colorV = this.germlineV.allele[vGene].color;
             } else {
                 this.windows[i].colorV = "";
             }
@@ -810,9 +843,9 @@ Model.prototype = {
 
         //      COLOR_J
         for (var i = 0; i < this.n_windows; i++) {
-            if (typeof (this.windows[i].J) != 'undefined' && this.germline.j[this.windows[i].J[0]]) {
+            if (typeof (this.windows[i].J) != 'undefined' && this.germlineJ.allele[this.windows[i].J[0]]) {
                 var jGene = this.windows[i].J[0];
-                this.windows[i].colorJ = this.germline.j[jGene].color;
+                this.windows[i].colorJ = this.germlineJ.allele[jGene].color;
             } else {
                 this.windows[i].colorJ = "";
             }
