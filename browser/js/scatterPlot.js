@@ -664,7 +664,7 @@ ScatterPlot.prototype = {
       self = this
 
       //Object.keys -> Retourne un tableau contenant les 'propriétés entières' en chaînes de caractères, correspondants aux éléments présents dans le tableau donné en paramètre de la fonction ==> Tableau
-      this.vKey = Object.keys(this.m.germline.vgene);
+      this.vKey = Object.keys(this.m.germlineV.gene);
       //Array.push() -> Ajoute des élèments en fin de tableau
       this.vKey.push("undefined V");
       this.bar_v = {};
@@ -866,14 +866,16 @@ ScatterPlot.prototype = {
       this.initGridModelBar()
 
   },
+    
+    
     /* Fonction permettant d'initialiser les grilles de répartition du ScatterPlot selon le modèle V
      * */
     initGridModelV: function () {
         
-    if (Object.keys(this.m.germline.vgene).length > 20) 
+    if (Object.keys(this.m.germlineV.gene).length > 20) 
         this.use_simple_v = true;
 
-    if (Object.keys(this.m.germline.vgene).length > 20)
+    if (Object.keys(this.m.germlineV.gene).length > 20)
         this.use_simple_v = true;
 
 	//Initialisation des paramètres de l'objet concernant les positions des gènes/allèles V _ [gene/allele]_v_used -> Tableau contenant toutes les positions des gènes et allèles V utilisés pendant ce temps
@@ -885,8 +887,8 @@ ScatterPlot.prototype = {
         this.positionAllele = {};
 
 	//Obtention de toutes les clefs concernant les allèles et les gènes V
-        var vKey = Object.keys(this.m.germline.v);
-        var vKey2 = Object.keys(this.m.germline.vgene);
+        var vKey = Object.keys(this.m.germlineJ.allele);
+        var vKey2 = Object.keys(this.m.germlineV.gene);
 
 	//Calcul de distances de colonnes
         var stepV = 1 / (vKey2.length + 1)
@@ -897,14 +899,14 @@ ScatterPlot.prototype = {
         for (var i = 0; i < vKey.length; i++) {
 
             var elem = vKey[i].split('*');
-            var color = this.m.germline.v[vKey[i]].color;
+            var color = this.m.germlineJ.allele[vKey[i]].color;
 
 
             if (this.use_simple_v){
 
             if (this.m.usedV[elem[0]]) {
                 var pos = stepV2 * (this.m.usedV[elem[0]] - 1) +
-                        (this.m.germline.v[vKey[i]].allele + 0.5) * (stepV2 / (this.m.germline.vgene[elem[0]].n));
+                        (this.m.germlineJ.allele[vKey[i]].allele + 0.5) * (stepV2 / (this.m.germlineV.gene[elem[0]].rank));
                 this.positionAllele[vKey[i]] = pos;
                 this.positionGene[vKey[i]] = stepV2 * (this.m.usedV[elem[0]] - 0.5)
                 this.gridModel["allele_v"].push(this.makeLineModel("subline", pos, "*" + elem[1], color));
@@ -912,10 +914,11 @@ ScatterPlot.prototype = {
 
 
             }else{
-                var pos = (this.m.germline.v[vKey[i]].gene) * stepV +
-                    (this.m.germline.v[vKey[i]].allele + 0.5) * (stepV / (this.m.germline.vgene[elem[0]].n));
+                console.log(elem[0])
+                var pos = (this.m.germlineJ.allele[vKey[i]].gene) * stepV +
+                    (this.m.germlineJ.allele[vKey[i]].allele + 0.5) * (stepV / (this.m.germlineJ.gene[elem[0]].rank));
                 this.positionAllele[vKey[i]] = pos;
-                this.positionGene[vKey[i]] = (this.m.germline.v[vKey[i]].gene + 0.5) * stepV;
+                this.positionGene[vKey[i]] = (this.m.germlineJ.allele[vKey[i]].gene + 0.5) * stepV;
                 this.gridModel["allele_v"].push(this.makeLineModel("subline", pos, "*" + elem[1], color));
             }
         }
@@ -923,7 +926,7 @@ ScatterPlot.prototype = {
         // Concerne tous les gènes V -> Initialisation et calcul de position
         for (var i = 0; i < vKey2.length; i++) {
 
-            var color = this.m.germline.vgene[vKey2[i]].color;
+            var color = this.m.germlineV.gene[vKey2[i]].color;
 
             if (this.use_simple_v){
                 if (this.m.usedV[vKey2[i]]) {
@@ -968,8 +971,8 @@ ScatterPlot.prototype = {
         this.gridModel["gene_j"] = [];
 
 	//Obtention de toutes les clefs concernant les allèles et gènes J
-        var jKey = Object.keys(this.m.germline.j);
-        var jKey2 = Object.keys(this.m.germline.jgene);
+        var jKey = Object.keys(this.m.germlineJ.allele);
+        var jKey2 = Object.keys(this.m.germlineJ.gene);
 	//Initialisation d'un pas pour ?????
         var stepJ = 1 / (jKey2.length + 1)
 
@@ -978,10 +981,10 @@ ScatterPlot.prototype = {
 
             var elem = jKey[i].split('*');
 
-            var color = this.m.germline.j[jKey[i]].color;
-            var pos = (this.m.germline.j[jKey[i]].gene) * stepJ +
-                (this.m.germline.j[jKey[i]].allele + 0.5) * (stepJ / (this.m.germline.jgene[elem[0]].n));
-            var pos2 = (this.m.germline.j[jKey[i]].gene + 0.5) * stepJ;
+            var color = this.m.germlineJ.allele[jKey[i]].color;
+            var pos = (this.m.germlineJ.allele[jKey[i]].gene) * stepJ +
+                (this.m.germlineJ.allele[jKey[i]].allele + 0.5) * (stepJ / (this.m.germlineJ.gene[elem[0]].rank));
+            var pos2 = (this.m.germlineJ.allele[jKey[i]].gene + 0.5) * stepJ;
 
             this.gridModel["allele_j"].push(this.makeLineModel("subline", pos, "*" + elem[1], color));
 
@@ -994,7 +997,7 @@ ScatterPlot.prototype = {
         for (var i = 0; i < jKey2.length; i++) {
 
             var pos = (i + 0.5) * stepJ
-            var color = this.m.germline.jgene[jKey2[i]].color;
+            var color = this.m.germlineJ.gene[jKey2[i]].color;
 
             this.gridModel["allele_j"].push(this.makeLineModel("line", pos, jKey2[i], color));
             this.gridModel["gene_j"].push(this.makeLineModel("line", pos, jKey2[i], color));
@@ -1141,17 +1144,18 @@ ScatterPlot.prototype = {
     move: function () {
         self = this;
         return function (d) {
+            /**
             var coef = 0.005; //?????
             var coef2 = 0.01; //force d'attraction
             var coef3 = 0.0015; //?????
             var geneV = "undefined V"; //Gène/Allèle V de la grille à bouger
             var geneJ = "undefined J"; //Gène/Allèle J de la grille à bouger
             //Vérification de l'existence du gène/allèle V -> initialisation de geneV
-	    if (typeof (self.m.windows[d.id].V) != 'undefined' && self.m.germline.v[self.m.windows[d.id].V[0]]) {
+	    if (typeof (self.m.windows[d.id].V) != 'undefined' && self.m.germlineJ.allele[self.m.windows[d.id].V[0]]) {
                 geneV = self.m.windows[d.id].V[0];
             }
 	    //Vérification de l'existence du gène/allèle J -> initialisation de geneJ
-            if (typeof (self.m.windows[d.id].J) != 'undefined' && self.m.germline.j[self.m.windows[d.id].J[0]]) {
+            if (typeof (self.m.windows[d.id].J) != 'undefined' && self.m.germlineJ.allele[self.m.windows[d.id].J[0]]) {
                 geneJ = self.m.windows[d.id].J[0];
             }
 
