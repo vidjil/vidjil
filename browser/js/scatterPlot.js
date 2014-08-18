@@ -26,7 +26,9 @@ function ScatterPlot(id, model, graph) {
   this.resizeH = 1; //Multiplifying factor (height)
   //Margins left/right
   this.marge_left = 120;
+  this.marge_right = 10;
   this.marge_top = 45;
+  this.marge_bot = 10;
 
   this.max_precision = 9; //Precision max (default: 9)
 
@@ -812,10 +814,10 @@ ScatterPlot.prototype = {
   resize: function () {
       //On prend la largeur de la div
       this.resizeW = document.getElementById(this.id)
-	  .parentNode.offsetWidth - this.marge_left;
+	  .parentNode.offsetWidth - this.marge_left - this.marge_right;
       //On prend la hauteur de la div
       this.resizeH = document.getElementById(this.id)
-	  .offsetHeight - this.marge_top;
+	  .offsetHeight - this.marge_top - this.marge_bot;
 
       //Calculs
       if (this.resizeW < 0.1) this.resizeW = 0.1;
@@ -1873,7 +1875,9 @@ ScatterPlot.prototype = {
       if (splitMethod == "Size") {
       axis.useSize()    
       }
-      
+      if (splitMethod == "n") {
+      axis.useNlength()    
+      }
   },
 
   /* Fonction permettant de mettre à jour le menu
