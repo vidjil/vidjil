@@ -725,20 +725,8 @@ ScatterPlot.prototype = {
 	  }
       }
 
-      //Création / Initialisation de la grille
-      for (var i = 0; i < this.gridModel["bar"].length; i++) {
-	  var value = this.gridModel["bar"][i].value / 100;
-	  if (this.bar_max < 0.1) value = value / 5;
-	  this.gridModel["bar"][i].pos = 1 - (value / this.bar_max);
-	  if (value > this.bar_max) {
-	      this.gridModel["bar"][i].type = "subline";
-	      this.gridModel["bar"][i].text = ""
-	  } else {
-	      this.gridModel["bar"][i].type = "line";
-	      this.gridModel["bar"][i].text = Math.round(value * 100) + " %"
-	  }
-      }
-
+      self.axisY.customLabels(0, this.bar_max, true, true, true);
+            
       //redraw
       this.bar = this.bar_container.selectAll("rect")
 	  .data(this.nodes)
@@ -750,12 +738,7 @@ ScatterPlot.prototype = {
 	  })
 	  .attr("width", this.bar_width)
 	  .attr("x", function (d) {
-	      if (typeof (self.m.windows[d.id].V) != 'undefined' && typeof self.posG[self.m.windows[d.id].V[0]] != 'undefined') {
-		  var geneV = self.m.windows[d.id].V[0];
-		  return self.posG[geneV] * self.resizeW - (self.bar_width / 2) + self.marge_left;
-	      } else {
-		  return self.posG["undefined V"] * self.resizeW - (self.bar_width / 2) + self.marge_left;
-	      }
+		  return self.axisX.pos(d.id) * self.resizeW - (self.bar_width / 2) + self.marge_left;
 	  })
 	  .attr("height", function (d) {
 	      return self.getBarHeight(d) * self.resizeH;
@@ -2247,5 +2230,26 @@ Axis.prototype = {
             var text = h*i
             this.labels.push(this.label("line", pos, text));
         }
-    }
+    },
+    
+    /*
+     * TODO linear/log percent/value parameter
+     * */
+    customLabels: function(min, max, reverse, percent, linear){
+        this.labels = [];
+        
+        var h = (max-min)/5
+        var delta = (max-min)
+        for (var i = 0; i < 5; i++) {
+            var pos = 0;
+            if (reverse){
+                pos = 1 - (h*i)*(1/delta);
+            }else{
+                pos = (h*i)*(1/delta);
+            }
+            var text = Math.round(min+(h*i) * 100) + " %"
+            this.labels.push(this.label("line", pos, text));
+        }
+    },
+
 }
