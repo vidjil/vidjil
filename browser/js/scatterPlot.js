@@ -1005,8 +1005,9 @@ ScatterPlot.prototype = {
            this.updateElemStyle();
       }
 
-      if (this.m.germline.system != this.system){ 
-            this.changeSplitMethod(this.splitX, this.splitY)
+      if (this.m.germlineV.system != this.system){ 
+          this.system =this.m.germlineV.system
+          this.changeSplitMethod(this.splitX, this.splitY)
       }
       this.updateMenu();
       this.initGrid();

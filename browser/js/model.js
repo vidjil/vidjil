@@ -85,7 +85,10 @@ Model.prototype = {
         this.timestamp2 = [];
         this.clones = [];
         this.windows = [];
-        this.germline = {};
+        this.germline = {}
+        this.germlineV = new Germline(this)
+        this.germlineD = new Germline(this)
+        this.germlineJ = new Germline(this)
         this.dataFileName = '';
         this.analysisFileName = '';
         this.notation_type = "percent"
@@ -396,197 +399,11 @@ Model.prototype = {
     loadGermline: function (system) {
         system = typeof system !== 'undefined' ? system : this.system;
         if (system == "multi") system = Object.keys(this.system_segmented)[0]
-        var self = this
         
-        console.log("loadGermline()");
-        self.germlineV = {}
-        self.germlineD = {}
-        self.germlineJ = {}
-        var v, j;
-
-        //select germline (default TRG)
-        switch (system) {
-        case "IGH":
-            self.germlineV.allele = germline.IGHV;
-            self.germlineJ.allele = germline.IGHJ;
-            break;
-        case "IGK":
-            self.germlineV.allele = germline.IGKV;
-            self.germlineJ.allele = germline.IGKJ;
-            break;
-        case "TRB":
-            self.germlineV.allele = germline.TRBV;
-            self.germlineJ.allele = germline.TRBJ;
-            break;
-        case "TRG":
-            self.germlineV.allele = germline.TRGV;
-            self.germlineJ.allele = germline.TRGJ;
-            break;
-        case "IGK":
-            self.germlineV.allele = germline.IGKV;
-            self.germlineJ.allele = germline.IGKJ;
-            break;
-        case "TRD":
-            self.germlineV.allele = germline.TRDV;
-            self.germlineJ.allele = germline.TRDJ;
-            break;
-        default:
-            self.germlineV.allele = germline.TRGV;
-            self.germlineJ.allele = germline.TRGJ;
-            break;
-        }
-        self.germlineV.gene = {};
-        self.germlineJ.gene = {};
+        this.germlineV.load(system, "V")
+        this.germlineD.load(system, "D")
+        this.germlineJ.load(system, "J")
         
-        
-    //reduce germline size
-    var germlineV = {}
-    var germlineJ = {}
-    for (var i=0; i<this.windows.length; i++){
-        if (typeof this.windows[i].V != "undefined" 
-            && typeof this.windows[i].V[0] != "undefined"){
-            var geneV=this.windows[i].V[0];
-            if ( typeof self.germlineV[geneV] !="undefined"){
-                germlineV[geneV] = self.germlineV[geneV]
-            }else{
-                germlineV[geneV] = "unknow sequence"
-            }
-        }
-    }
-    
-    for (var i=0; i<this.windows.length; i++){
-        if (typeof this.windows[i].J != "undefined" 
-            && typeof this.windows[i].J[0] != "undefined"){
-            var geneJ=this.windows[i].J[0];
-            if ( typeof self.germlineJ[geneJ] !="undefined"){
-                germlineJ[geneJ] = self.germlineJ[geneJ]
-            }else{
-                germlineJ[geneJ] = "unknow sequence"
-            }
-        }
-    }
-    
-    self.germlineV.allele=germlineV;
-    self.germlineJ.allele=germlineJ;
-    
-	/*DÉBUT DU TRI (contenu dans compare.js)*/
-	
-	//On trie tous les élèments v contenus dans germline, via le nom des objets
-	var tmp1 = [];
-	tmp1 = Object.keys(self.germlineV.allele).slice();
-	mySortedArray(tmp1);
-	//On trie tous les élèments j contenus dans germline, via le nom des objets 
-	var tmp2 = [];
-	tmp2 = Object.keys(self.germlineJ.allele).slice();
-	mySortedArray(tmp2);
-	
-	var list1 = {};
-	var list2 = {};
-
-	//Pour chaque objet, on fait un push sur self.germlineV.allele
-	for (var i = 0; i<tmp1.length; i++) {
-	    list1[tmp1[i]] = self.germlineV.allele[tmp1[i]];
-	}
-	//Pour chaque objet, on fait un push sur self.germlineJ.allele
-	for (var k = 0; k<tmp2.length; k++) {
-	    list2[tmp2[k]] = self.germlineJ.allele[tmp2[k]];
-	}
-	
-	//Réinitialisation des germlines de v et j
-	self.germlineV.allele = list1;
-	self.germlineJ.allele = list2;
-
-	/*FIN DU TRI*/
-	
-        // COLOR V
-        key = Object.keys(self.germlineV.allele);
-        var n = 0,
-            n2 = 0;
-        elem2 = key[0].split('*')[0];
-        for (var i = 0; i < key.length; i++) {
-            var tmp = self.germlineV.allele[key[i]];
-            self.germlineV.allele[key[i]] = {};
-            self.germlineV.allele[key[i]].seq = tmp;
-            self.germlineV.allele[key[i]].color = colorGenerator((30 + (i / key.length) * 290),
-                color_s, color_v);
-
-            var elem = key[i].split('*')[0];
-            if (elem != elem2) {
-                self.germlineV.gene[elem2] = {};
-                self.germlineV.gene[elem2].n = n2;
-                self.germlineV.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
-                    color_s, color_v);
-                self.germlineV.gene[elem2].rank = n;
-                n++;
-                n2 = 0;
-            }
-            elem2 = elem;
-            self.germlineV.allele[key[i]].gene = n
-            self.germlineV.allele[key[i]].rank = n2
-            n2++;
-        }
-        self.germlineV.gene[elem2] = {};
-        self.germlineV.gene[elem2].n = n2;
-        self.germlineV.gene[elem2].rank = n
-        self.germlineV.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
-            color_s, color_v);
-
-        // COLOR J
-        key = Object.keys(self.germlineJ.allele);
-        n = 0, n2 = 0;
-        elem2 = key[0].split('*')[0];
-        for (var i = 0; i < key.length; i++) {
-            var tmp = self.germlineJ.allele[key[i]];
-            self.germlineJ.allele[key[i]] = {};
-            self.germlineJ.allele[key[i]].seq = tmp;
-            self.germlineJ.allele[key[i]].color = colorGenerator((30 + (i / key.length) * 290),
-                color_s, color_v);
-            var elem = key[i].split('*')[0];
-            if (elem != elem2) {
-                self.germlineJ.gene[elem2] = {};
-                self.germlineJ.gene[elem2].n = n2;
-                self.germlineJ.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
-                    color_s, color_v);
-                self.germlineJ.gene[elem2].rank = n;
-                n++;
-                n2 = 0;
-            }
-            elem2 = elem;
-            self.germlineJ.allele[key[i]].gene = n
-            self.germlineJ.allele[key[i]].rank = n2
-            n2++;
-        }
-        self.germlineJ.gene[elem2] = {};
-        self.germlineJ.gene[elem2].n = n2
-        self.germlineJ.gene[elem2].rank = n;
-        self.germlineJ.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
-            color_s, color_v);
-
-
-        // V gene used
-        self.usedV = {}
-
-        for (var i = 0; i < self.windows.length; i++) {
-            if (self.windows[i].V && self.windows[i].V[0] && self.germlineV.allele[self.windows[i].V[0]]) {
-                var elem = self.windows[i].V[0].split('*')[0];
-                if (self.usedV[elem]) {
-                    self.usedV[elem]++
-                } else {
-                    self.usedV[elem] = 1
-                }
-            }
-        }
-
-        var keys = Object.keys(self.germlineV.gene)
-        var order = 1;
-        for (var i = 0; i < keys.length; i++) {
-            if (self.usedV[keys[i]]) {
-                self.usedV[keys[i]] = order;
-                order++
-            }
-        }
-
-
         return this;
     }, //end loadGermline
 
@@ -2276,7 +2093,8 @@ var msg = {
 
     "version_error": "Error &ndash; data file too old (version " + VIDJIL_JSON_VERSION + " required)" + "</br> This data file was generated by a too old version of Vidjil. " + "</br> Please regenerate a newer data file. " + "</br></br> <div class='center' > <button onclick='closePopupMsg()'>ok</button></div>",
 
-    "welcome": " <h2>Vidjil <span class='logo'>(beta)</span></h2>" + "(c) 2011-2014, the Vidjil team" + "<br />Marc Duez, Mathieu Giraud and Mikaël Salson" + " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" + "</br>" + "</br>Vidjil is developed by the <a href='http://www.lifl.fr/bonsai'>Bonsai bioinformatics team</a> (LIFL, CNRS, U. Lille 1, Inria Lille), in collaboration with the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille" + " the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille 2, IFR-114, IRCL)" + " and the <a href='http://www.euroclonality.org/'>EuroClonality-NGS</a> working group." + "</br>" + "</br>This is a beta version, please use it only for test purposes." + " " + "Please cite <a href='http://www.biomedcentral.com/1471-2164/15/409'>BMC Genomics 2014, 15:409</a> if you use Vidjil for your research." +"</br></br> <div class='center' > <button onclick='closePopupMsg()'>start</button></div>",
+    "welcome": " <h2>Vidjil <span class='logo'>(beta)</span></h2>" + "(c) 2011-2014, the Vidjil team" + "<br />Marc Duez, Mathieu Giraud and Mikaël Salson" + " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" + "</br>" + "</br>Vidjil is developed by the <a href='http://www.lifl.fr/bonsai'>Bonsai bioinformatics team</a> (LIFL, CNRS, U. Lille 1, Inria Lille), in collaboration with the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille" 
+    + " the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille 2, IFR-114, IRCL)" + " and the <a href='http://www.euroclonality.org/'>EuroClonality-NGS</a> working group." + "</br>" + "</br>This is a beta version, please use it only for test purposes." + " " + "Please cite <a href='http://www.biomedcentral.com/1471-2164/15/409'>BMC Genomics 2014, 15:409</a> if you use Vidjil for your research." +"</br></br> <div class='center' > <button onclick='closePopupMsg()'>start</button></div>",
 
     "browser_error": "It seems you used an incompatible web browser (too old or too weak)." + "</br>We recommend to install one of those for a better experience : " + "</br> <a href='http://www.mozilla.org/'> Firefox </a> " + "</br> <a href='www.google.com/chrome/'> Chrome </a> " + "</br> <a href='http://www.chromium.org/getting-involved/download-chromium'> Chromium </a> " + "</br></br> <div class='center' > <button onclick='popupMsg(msg.welcome)'>i want to try anyway</button></div>",
 }
@@ -2319,4 +2137,5 @@ function root2(n) {
         .getTime() - startTime;
     console.log("root2("+n+") : " + elapsedTime);
 }
+
 
