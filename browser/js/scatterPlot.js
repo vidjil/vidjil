@@ -73,9 +73,7 @@ function ScatterPlot(id, model, graph) {
   this.time0 = Date.now(), //Initial date saved
   this.time1 = this.time0; //Frames computed
   this.fpsqueue = []; //Numbers of frames computed, according to the 20th last values
-  
-  //use_simple_v -> visualisation de v présents lors d'un nombre très grands de v
-  this.use_simple_v = false
+
   //Booléen pour le sélecteur de nodes
   this.active_selector = false
 
@@ -130,7 +128,6 @@ ScatterPlot.prototype = {
 
       this.initMenu();
       this.initSVG();
-      this.initGridModel();
       this.axisX.useGermline(this.m.germlineV, "V")
       this.axisY.useGermline(this.m.germlineJ, "J")
       this.changeSplitMethod(this.splitX, this.splitY);
@@ -363,8 +360,6 @@ ScatterPlot.prototype = {
               this.saveInitialPositions();
            //Permission to save all positions is now delete - in order to not save initial positions of nodes when switching: DBSCAN -> Edit Distance OR Edit Distance -> DBSCAN
            this.canSavePositions = false;
-           //Removal of constraints, binds at X/Y axis legends
-           this.initGridModelEditDistance();
            //Re-init of X/Y axis
            this.switchInitMenu();
            /* Relaunch of the physic engine ->
@@ -675,14 +670,7 @@ ScatterPlot.prototype = {
       this.vKey.push("undefined V");
       this.bar_v = {};
       this.bar_max = 0;
-
-      //Redimensionnement du bar graph en fonction de use_simple_v
-      if (this.use_simple_v) {
-	  this.bar_width = (0.5 * (1 / Object.keys(this.m.usedV)
-				  .length)) * this.resizeW
-      } else {
 	  this.bar_width = (0.5 * (1 / this.vKey.length)) * this.resizeW
-      }
 
       //Initialisation du tableau d'objets
       for (var i = 0; i < this.vKey.length; i++) {
@@ -825,237 +813,6 @@ ScatterPlot.prototype = {
       this.initGrid();
       this.update();
   },
-
-  /* Fonction permettant la création et initialisation d'un objet model
-  * @param type: Le type (line, subline, ...)
-  * @param pos: La position donnée de l'élèment
-  * @param text: Le texte donné
-  * @param color: La couleur donnée pour cette création
-  * */
-  makeLineModel: function (type, pos, text, color) {
-      result = {};
-      result.type = type;
-      result.pos = pos;
-      result.text = text;
-      result.geneColor = color;
-
-      return result;
-  },
-
-  /* Fonction permettant d'initialiser les grilles de répartition du ScatterPlot
-   * Ne contient par this.initGridModelEditDistance() -> Initialisation de cette répartition quant appel via 'analysis' ou par les axes direct du scatterPlot
-  * */
-  initGridModel: function () {
-      this.gridModel = {};
-
-      this.initGridModelV()
-      this.initGridModelJ()
-      this.initGridModelN()
-      this.initGridModelSize()
-      this.initGridModelBar()
-
-  },
-    
-    
-    /* Fonction permettant d'initialiser les grilles de répartition du ScatterPlot selon le modèle V
-     * */
-    initGridModelV: function () {
-        
-    if (Object.keys(this.m.germlineV.gene).length > 20) 
-        this.use_simple_v = true;
-
-    if (Object.keys(this.m.germlineV.gene).length > 20)
-        this.use_simple_v = true;
-
-	//Initialisation des paramètres de l'objet concernant les positions des gènes/allèles V _ [gene/allele]_v_used -> Tableau contenant toutes les positions des gènes et allèles V utilisés pendant ce temps
-        this.gridModel["allele_v"] = [];
-        this.gridModel["gene_v"] = [];
-
-        this.system = this.m.germline.system //copy current system used for germlinein model
-        this.positionGene = {};
-        this.positionAllele = {};
-
-	//Obtention de toutes les clefs concernant les allèles et les gènes V
-        var vKey = Object.keys(this.m.germlineJ.allele);
-        var vKey2 = Object.keys(this.m.germlineV.gene);
-
-	//Calcul de distances de colonnes
-        var stepV = 1 / (vKey2.length + 1)
-        var stepV2 = 1 / (Object.keys(this.m.usedV)
-			  .length + 1)
-
-        // Concerne toutes les allèles V -> Initialisation et calcul de position
-        for (var i = 0; i < vKey.length; i++) {
-
-            var elem = vKey[i].split('*');
-            var color = this.m.germlineJ.allele[vKey[i]].color;
-
-
-            if (this.use_simple_v){
-
-            if (this.m.usedV[elem[0]]) {
-                var pos = stepV2 * (this.m.usedV[elem[0]] - 1) +
-                        (this.m.germlineJ.allele[vKey[i]].allele + 0.5) * (stepV2 / (this.m.germlineV.gene[elem[0]].rank));
-                this.positionAllele[vKey[i]] = pos;
-                this.positionGene[vKey[i]] = stepV2 * (this.m.usedV[elem[0]] - 0.5)
-                this.gridModel["allele_v"].push(this.makeLineModel("subline", pos, "*" + elem[1], color));
-            }
-
-
-            }else{
-                console.log(elem[0])
-                var pos = (this.m.germlineJ.allele[vKey[i]].gene) * stepV +
-                    (this.m.germlineJ.allele[vKey[i]].allele + 0.5) * (stepV / (this.m.germlineJ.gene[elem[0]].rank));
-                this.positionAllele[vKey[i]] = pos;
-                this.positionGene[vKey[i]] = (this.m.germlineJ.allele[vKey[i]].gene + 0.5) * stepV;
-                this.gridModel["allele_v"].push(this.makeLineModel("subline", pos, "*" + elem[1], color));
-            }
-        }
-
-        // Concerne tous les gènes V -> Initialisation et calcul de position
-        for (var i = 0; i < vKey2.length; i++) {
-
-            var color = this.m.germlineV.gene[vKey2[i]].color;
-
-            if (this.use_simple_v){
-                if (this.m.usedV[vKey2[i]]) {
-                    var pos = stepV2 * (this.m.usedV[vKey2[i]] - 0.5)
-                    this.gridModel["allele_v"].push(this.makeLineModel("line", pos, vKey2[i], color));
-                    this.gridModel["gene_v"].push(this.makeLineModel("line", pos, vKey2[i], color));
-                }
-            }else{
-                var pos = (i + 0.5) * stepV;
-                this.gridModel["allele_v"].push(this.makeLineModel("line", pos, vKey2[i], color));
-                this.gridModel["gene_v"].push(this.makeLineModel("line", pos, vKey2[i], color));
-            }
-
-        }
-
-        // Concernant tous les gènes/allèles V non-définis ("undefined"), initialisation à des valeurs calculées, contenues dans pos et pos2
-        var pos = (vKey2.length + 0.5) * stepV;
-        if (this.use_simple_v)
-            pos = (Object.keys(this.m.usedV).length + 0.5) * stepV2;
-
-	       //Ajout dans l'attribut gridModel
-        this.gridModel["allele_v"].push(this.makeLineModel("line", pos, "?", ""));
-        this.gridModel["gene_v"].push(this.makeLineModel("line", pos, "?", ""));
-
-
-	       //Modification des positions non-définies
-        this.positionGene["undefined V"] = pos
-        this.positionAllele["undefined V"] = pos
-
-        //choix du gridModel V a utiliser
-        this.posG = this.positionGene
-        this.posA = this.positionAllele
-
-    },
-
-    /* Fonction permettant d'initialiser les grilles de répartition du ScatterPlot selon le modèle J
-     * */
-    initGridModelJ: function () {
-
-	//Initialisation des paramètres de l'objet concernant les positions des gènes/allèles J
-        this.gridModel["allele_j"] = [];
-        this.gridModel["gene_j"] = [];
-
-	//Obtention de toutes les clefs concernant les allèles et gènes J
-        var jKey = Object.keys(this.m.germlineJ.allele);
-        var jKey2 = Object.keys(this.m.germlineJ.gene);
-	//Initialisation d'un pas pour ?????
-        var stepJ = 1 / (jKey2.length + 1)
-
-        //Concerne toutes les allèles J -> Initialisation et calcul de position
-        for (var i = 0; i < jKey.length; i++) {
-
-            var elem = jKey[i].split('*');
-
-            var color = this.m.germlineJ.allele[jKey[i]].color;
-            var pos = (this.m.germlineJ.allele[jKey[i]].gene) * stepJ +
-                (this.m.germlineJ.allele[jKey[i]].allele + 0.5) * (stepJ / (this.m.germlineJ.gene[elem[0]].rank));
-            var pos2 = (this.m.germlineJ.allele[jKey[i]].gene + 0.5) * stepJ;
-
-            this.gridModel["allele_j"].push(this.makeLineModel("subline", pos, "*" + elem[1], color));
-
-            this.positionAllele[jKey[i]] = pos;
-            this.positionGene[jKey[i]] = pos2;
-
-        }
-
-        //Concerne tous les gènes J -> Initialisation et calcul de position
-        for (var i = 0; i < jKey2.length; i++) {
-
-            var pos = (i + 0.5) * stepJ
-            var color = this.m.germlineJ.gene[jKey2[i]].color;
-
-            this.gridModel["allele_j"].push(this.makeLineModel("line", pos, jKey2[i], color));
-            this.gridModel["gene_j"].push(this.makeLineModel("line", pos, jKey2[i], color));
-        }
-
-        //Gestion de toutes les positions non-définies pour les allèles ou gènes J
-        var pos = (jKey2.length + 0.5) * stepJ;
-
-        this.gridModel["allele_j"].push(this.makeLineModel("line", pos, "?", color));
-        this.gridModel["gene_j"].push(this.makeLineModel("line", pos, "?", color));
-
-        this.positionGene["undefined J"] = pos
-        this.positionAllele["undefined J"] = pos
-
-    },
-
-    /* Fonction permettant d'initialiser la taille de la grille, définie selon le modèle
-     * */
-    initGridModelSize: function () {
-	//Déclaration
-        this.gridModel["Size"] = [];
-
-	//Calcul initial
-        this.sizeScale = d3.scale.log()
-            .domain([this.m.min_size, 1])
-            .range([1, 0]);
-        var height = 1;
-
-	//Calcul selon les précisions et le modèle
-        for (var i = 0; i < this.max_precision; i++) {
-            var pos = this.sizeScale(height);
-            var text = this.m.formatSize(height, false)
-            this.gridModel["Size"].push(this.makeLineModel("line", pos, text));
-            height = height / 10;
-        }
-
-    },
-
-    //Fonction permettant d'initialiser la grille de répartition du ScatterPlot selon la répartition n ?????
-    initGridModelN: function () {
-        this.gridModel["n"] = [];
-
-        for (var i = 0; i <= (Math.floor(this.m.n_max / 5)); i++) {
-            var pos = (1 - ((i * 5) / this.m.n_max));
-            this.gridModel["n"].push(this.makeLineModel("line", pos, i * 5));
-        }
-    },
-
-    //Fonction permettant d'initialiser le 'bar' de la grille
-    initGridModelBar: function () {
-        this.gridModel["bar"] = [];
-
-        for (var i = 0; i < 20; i++) {
-            var d = {};
-            d.type = "line";
-            d.value = i * 5;
-            this.gridModel["bar"].push(d);
-        }
-    },
-    
-    //Function which allows to initialize the grid, with regards to the Edit Distance visualization
-    initGridModelEditDistance: function() {
-        //No X/Y axis
-        this.axis_x_update([]);
-        this.axis_y_update([]);
-        //X/Y axis legends = "graph" (see graph_menu object, in the scatterPlot class)
-        this.splitX = "graph";
-        this.splitY = "graph";
-    },
 
     /* Function which allows to add a stroke attribute to all edges
     */
@@ -1362,12 +1119,10 @@ ScatterPlot.prototype = {
            this.updateElemStyle();
       }
 
-      if (this.m.germline.system != this.system){ //the system used to compute model germline changed
-            this.initGridModelV()
-            this.initGridModelJ()
+      if (this.m.germline.system != this.system){ 
+            this.changeSplitMethod(this.splitX, this.splitY)
       }
       this.updateMenu();
-      this.initGridModelSize();
       this.initGrid();
         
       //Donne des informations quant au temps de MàJ des données
@@ -1559,9 +1314,6 @@ ScatterPlot.prototype = {
 	       this.splitX = "gene_v";
 	       this.splitY = "gene_j";
       }
-
-      var x_grid = this.gridModel[this.splitX]
-      var y_grid = this.gridModel[this.splitY]
 
       if (!self.reinit) this.axis_x_update(this.axisX.labels);
       if (!self.reinit) this.axis_y_update(this.axisY.labels);
@@ -2247,6 +1999,7 @@ Axis.prototype = {
             }else{
                 pos = (h*i)*(1/delta);
             }
+            
             var text = Math.round(min+(h*i) * 100) + " %"
             this.labels.push(this.label("line", pos, text));
         }
