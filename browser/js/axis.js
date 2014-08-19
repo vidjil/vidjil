@@ -123,6 +123,7 @@ Axis.prototype = {
         for (var i = 0; i < 10; i++) {
             var pos = this.sizeScale(h);
             var text = this.m.formatSize(h, false)
+            if (pos > 0 && pos < 1)
             this.labels.push(this.label("line", pos, text));
             h = h / 10;
         }
