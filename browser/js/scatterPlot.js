@@ -174,6 +174,10 @@ ScatterPlot.prototype = {
       this.axis_x_container = d3.select("#" + this.id + "_svg")
 	  .append("svg:g")
 	  .attr("id", this.id + "_axis_x_container")
+      
+      this.label_container = d3.select("#" + this.id + "_svg")
+      .append("svg:g")
+      .attr("id", this.id + "_label_container")
 
       //Sélection du contenu de l'axe des X -> Ajout d'un attribut valant un id
       this.axis_y_container = d3.select("#" + this.id + "_svg")
@@ -1204,6 +1208,7 @@ ScatterPlot.prototype = {
 
       if (!self.reinit) this.axis_x_update(this.axisX.labels);
       if (!self.reinit) this.axis_y_update(this.axisY.labels);
+      if (!self.reinit) this.system_label_update(this.systemGrid.label);
   },
 
   /* Function which allows to verify if we can switch to an accessible distribution
@@ -1434,6 +1439,32 @@ ScatterPlot.prototype = {
 	      return null;
 	  });
 
+  },
+  
+  system_label_update: function(data) {
+      self = this;
+
+      //LEGENDE
+      leg = this.label_container.selectAll("text")
+      .data(data);
+      leg.enter()
+      .append("text");
+      leg.exit()
+      .remove();
+      leg
+      .attr("x", function (d) {
+          return d.x*self.resizeW+self.marge_left
+      })
+      .attr("y", function (d) {
+          return d.y*self.resizeH+self.marge_top
+      })
+      .text(function (d) {
+          return d.text
+      })
+      .on("click", function (d) {
+        self.m.changeGermline(d.text)
+      })
+      .attr("class", "sp_system_label")
   },
 
   /* Fonction permettant de changer la méthode de répartition du ScatterPlot selon les X et Y (non pas par bloc)
