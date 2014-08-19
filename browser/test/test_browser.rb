@@ -26,7 +26,7 @@ class MySpec < MiniTest::Spec
         $b.div(:id => 'popup-msg').button(:text => 'start').click 
 
         $b.div(:id => 'demo_file_menu').click 
-        $b.div(:id => 'demo_file_menu').a(:text => 'load data/analysis').click 
+        $b.div(:id => 'demo_file_menu').a(:text => 'Open').click 
         
         # select data file
         $b.div(:id => 'file_menu').file_field(:name,"json").set(data_path)
@@ -75,15 +75,15 @@ class Browser < MiniTest::Test
             #test hover a clone in the list
             list = $b.div(:id => 'list_clones')
             list.li(:id => '0' ).hover
-            
-            assert ( $b.element(:id => "circle0" ).class_name == "circle_focus"), ">> fail to focus correct plot after hovering a clone in the list"
-            assert ( $b.element(:id => "polyline0" ).class_name == "graph_focus"), ">> fail to focus correct graphLine after hovering a clone in the list"
+            sleep 1
+            assert ( $b.element(:id => "circle0", :class => "circle_focus" ).exists?), ">> fail to focus correct plot after hovering a clone in the list"
+            assert ( $b.element(:id => "polyline0", :class => "graph_focus" ).exists?), ">> fail to focus correct graphLine after hovering a clone in the list"
             
             #test hover a clone in the scatterplot
             $b.element(:id => "circle1" ).hover
-            
-            assert ( $b.element(:id => "circle1" ).class_name == "circle_focus"), ">> fail to focus correct plot after hovering a clone in the scatterplot"
-            assert ( $b.element(:id => "polyline1" ).class_name == "graph_focus"), ">> fail to focus correct graphLine after hovering a clone in the scatterplot"
+            sleep 1
+            assert ( $b.element(:id => "circle1", :class => "circle_focus" ).exists?), ">> fail to focus correct plot after hovering a clone in the scatterplot"
+            assert ( $b.element(:id => "polyline1", :class => "graph_focus" ).exists?), ">> fail to focus correct graphLine after hovering a clone in the scatterplot"
             
             #watir unable to do hover/click on svg path
             
@@ -102,18 +102,18 @@ class Browser < MiniTest::Test
             #list.li(:id => '0' ).div(:class => 'nameBox').click 
             # ".click" work with chrome but not with firefox so direct call with javascript ( a bit hadrcore ...) 
             $b.execute_script("document.getElementById('0').getElementsByClassName('nameBox')[0].click()")
-            
+            sleep 1
             assert ( list.li(:id => '0' ).class_name == "list list_select" )
-            assert ( $b.element(:id => "circle0" ).class_name == "circle_select")
-            assert ( $b.element(:id => "polyline0" ).class_name == "graph_select")
+            assert ( $b.element(:id => "circle0", :class => "circle_select" ).exists?)
+            assert ( $b.element(:id => "polyline0", :class => "graph_select" ).exists?)
             assert ( $b.element(:id => "seq0" ).exists? ), ">> fail to add clone to segmenter by clicking on the list"
             
             #test select a clone in the scatteplot
             $b.element(:id => "circle1" ).click
-            
+            sleep 1
             assert ( list.li(:id => '1' ).class_name == "list list_select" )
-            assert ( $b.element(:id => "circle1" ).class_name == "circle_select")
-            assert ( $b.element(:id => "polyline1" ).class_name == "graph_select")
+            assert ( $b.element(:id => "circle1", :class => "circle_select" ).exists?)
+            assert ( $b.element(:id => "polyline1", :class => "graph_select" ).exists?)
             assert ( $b.element(:id => "seq1" ).exists? ), ">> fail to add clone to segmenter by clicking on the scatterplot"
             
             #watir unable to hover/click svg path
@@ -159,9 +159,8 @@ class Browser < MiniTest::Test
             
             assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '1.000%' ) , ">> fail normalize on : wrong clone size "
             
-            $b.div(:id => 'display_menu').click 
-            $b.checkbox(:id => 'normalize').set
-            $b.checkbox(:id => 'normalize').clear 
+            $b.div(:id => 'settings_menu').click 
+            $b.radio(:id => 'reset_norm').click
             assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '64.75%' ) , ">> fail normalize off : wrong clone size "
         rescue
             assert (false), "missing element to run test_05_normalize \n" 
@@ -188,9 +187,9 @@ class Browser < MiniTest::Test
         begin
             list = $b.div(:id => 'list_clones')
             #select 3 clones
-            $b.element(:id => "circle0" ).click
-            $b.element(:id => "circle1" ).click
-            $b.element(:id => "circle2" ).click
+            $b.element(:id => "circle0" ).click(:control)
+            $b.element(:id => "circle1" ).click(:control)
+            $b.element(:id => "circle2" ).click(:control)
             
             #merge
             #$b.span(:id => "merge" ).click
@@ -210,9 +209,9 @@ class Browser < MiniTest::Test
     def test_08_imgt
         begin
             #select 3 clones
-            $b.element(:id => "circle0" ).click
-            $b.element(:id => "circle1" ).click
-            $b.element(:id => "circle2" ).click
+            $b.element(:id => "circle0" ).click(:control)
+            $b.element(:id => "circle1" ).click(:control)
+            $b.element(:id => "circle2" ).click(:control)
             
             $b.span(:id => "toIMGT" ).click
             
@@ -232,8 +231,8 @@ class Browser < MiniTest::Test
     def test_09_igBlast
         begin
             #select 3 clones
-            $b.element(:id => "circle5" ).click
-            $b.element(:id => "circle8" ).click
+            $b.element(:id => "circle5" ).click(:control)
+            $b.element(:id => "circle8" ).click(:control)
             
             $b.span(:id => "toIgBlast" ).click
             
@@ -256,8 +255,8 @@ class Browser < MiniTest::Test
         
         begin
             #select 2 clones
-            $b.element(:id => "circle1" ).click
-            $b.element(:id => "circle0" ).click
+            $b.element(:id => "circle1" ).click(:control)
+            $b.element(:id => "circle0" ).click(:control)
             
             assert ($b.text.include? "GGTCTATTACTGTGCCACCTTCTGACATAAGAAACTCTTTGGCAGTGGA"), ">> fail to display sequence"
             
@@ -277,7 +276,7 @@ class Browser < MiniTest::Test
             data_path = Dir.pwd + '/test.data'
             
             $b.div(:id => 'demo_file_menu').click 
-            $b.div(:id => 'demo_file_menu').a(:text => 'load data/analysis').click 
+            $b.div(:id => 'demo_file_menu').a(:text => 'Open').click 
             $b.div(:id => 'file_menu').file_field(:name,"json").set(data_path)
             $b.div(:id => 'file_menu').file_field(:name,"pref").set(analysis_path)
             $b.div(:id => 'file_menu').button(:text => 'start').click 
@@ -338,15 +337,15 @@ class Browser < MiniTest::Test
         begin
             elem = $b.div(:id => 'list_clones').li(:id => '1')
             tagSelector = $b.div(:id => 'tagSelector')
-            displayMenu = $b.div(:id => 'display_menu')
+            filterMenu = $b.div(:id => 'filter_menu')
             
             elem.div(:class => 'starBox').click
             tagSelector.span(:class => 'edit_button').click
             tagSelector.text_field(:id => 'new_tag_name').set 'test_tag'
             tagSelector.a(:id => 'btnSaveTag').click 
             
-            displayMenu.click
-            assert ( displayMenu.text.include? 'test_tag') , "fail edit tag : tag name in display menu hasn't changed"
+            filterMenu.click
+            assert ( filterMenu.text.include? 'test_tag') , "fail edit tag : tag name in display menu hasn't changed"
             
             elem.div(:class => 'starBox').click
             assert ( tagSelector.text.include? 'test_tag') , "fail edit tag : tag name in tag selector hasn't changed"

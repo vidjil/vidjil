@@ -103,7 +103,9 @@ Builder.prototype = {
         
         var input = document.createElement("input")
         input.type = "radio"
+        input.value= -1;
         input.name = "normalize_list"
+        input.id = "reset_norm"
         input.onclick = function () {
             self.m.compute_normalization(-1) 
             self.m.update()
