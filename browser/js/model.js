@@ -310,9 +310,6 @@ Model.prototype = {
             .range([250, 0]);
         for (var i = 0; i < self.time.length; i++) self.time_order.push(i);
 
-        var html_container = document.getElementById("info_n_max");
-        if (html_container != null) html_container.innerHTML = " N = " + self.n_max;
-
         //extract germline
         if (typeof data.germline != 'undefined') {
             var t = data.germline.split('/');
@@ -320,9 +317,6 @@ Model.prototype = {
         } else {
             self.system = "TRG";
         }
-
-        html_container = document.getElementById("info_system");
-        if (html_container != null) html_container.innerHTML = "germline: " + self.system;
 
         for (var i = 0; i < self.n_windows; i++) {
             self.mapID[self.windows[i].window] = i;
