@@ -99,7 +99,7 @@ Axis.prototype = {
             }
         }
         
-        self.labels.push(self.label("line", ((total_gene+0.5)/(total_gene+1)), "other", ""));
+        self.labels.push(self.label("line", ((total_gene+0.5)/(total_gene+1)), "?", ""));
     },
     
     
