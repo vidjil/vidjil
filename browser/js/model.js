@@ -287,6 +287,8 @@ Model.prototype = {
         self.normalization_factor = data.normalization_factor;
         self.reads_segmented = data.reads_segmented;
         self.system_segmented = data.system_segmented;
+        self.system_selected = [];
+        for (var key in self.system_segmented) self.system_selected.push(key)
         self.reads_segmented_total = self.reads_segmented.reduce(function (a, b) {
             return a + b;
         });
@@ -958,7 +960,10 @@ Model.prototype = {
             }
         }
 
+        //check if current germline is in the selected_system
+        if (this.system_selected.indexOf(this.germlineV.system) == -1 ) this.loadGermline(this.system_selected[0])
         
+        this.resize()
         this.update()
     },
     
