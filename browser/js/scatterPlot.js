@@ -67,9 +67,6 @@ function ScatterPlot(id, model, graph) {
   this.dbscanActive = false; //Boolean to know if the DSCAN visualization is on
   this.DBSCANLength = 5; //Length of the DBSCAN edges
 
-  this.positionGene = {}; //Genes position
-  this.positionAllele = {}; //Alleles position
-
   this.splitY = "gene_j"; //Distribution method, for the Y axis
   this.splitX = "gene_v"; //Distribution method, for the X axis
 
@@ -644,15 +641,6 @@ ScatterPlot.prototype = {
 	      return "bar" + d.id;
 	  })
 	  .attr("width", 30)
-	  .attr("x", function (d) {
-	      var geneV = "undef";
-	      if (typeof (self.m.windows[d.id].V) != 'undefined') {
-		  var geneV = self.m.windows[d.id].V[0];
-		  return self.positionGene[geneV] * self.resizeW - 15 + self.marge_left;
-	      } else {
-		  return self.positionGene["undefined V"] * self.resizeW - 15 + self.marge_left;
-	      }
-	  })
 	  .attr("height", 50)
 	  .attr("y", self.resizeH + self.marge_top)
       //Retourne la couleur attribuée au SVG -via CSS:style.fill- pour chaque fenÃªtre dans le contenu de l'objet model
@@ -857,7 +845,6 @@ ScatterPlot.prototype = {
 
       //Initialisation de la grille puis mise-à-jour
       this.initGrid();
-      this.update();
   },
 
     /* Function which allows to add a stroke attribute to all edges
