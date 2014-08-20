@@ -518,11 +518,11 @@ line {
 .seq-mobil {
   margin-left: @width_left_container;
   letter-spacing: 0.12em;
-  font-weight: bold;
-  font-family : ubuntu_monoregular, Courier New,monaco,terminal,courier,system; 
+  font-family : ubuntu_monobold, Courier New,monaco,terminal,courier,system; 
   position: relative;
   bottom: 3px;
   word-spacing: -1em;
+  font-size:1em;
 }
 
 .seq-marge {
@@ -1267,4 +1267,13 @@ input:focus, textarea:focus {
     box-shadow: inset 0 1px 1px @background, 0 0 8px @border;
     outline: 0;
     outline: thin dotted \9;
+}
+
+pre,
+code,
+kbd,
+samp,
+tt{
+  font-family:monospace,monospace;
+  font-size:1em;
 }
