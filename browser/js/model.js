@@ -664,17 +664,6 @@ Model.prototype = {
             }
         }
         
-        //color_system
-        if (this.system == "multi"){
-            this.color_system = {}
-            
-            var i = 1 
-            for (var key in this.system_segmented){
-                this.color_system[key] = tagColor[i]
-                i++
-            }
-        }
-        
         //      SHORTNAME
         for (var i = 0; i < this.n_windows; i++) {
             if (typeof (this.windows[i].sequence) != 'undefined' && typeof (this.windows[i].name) != 'undefined') {
@@ -1139,7 +1128,7 @@ Model.prototype = {
             }
         }
         if (this.colorMethod == "system") {
-            return this.color_system[this.windows[cloneID].system]
+            return germline.icon[this.windows[cloneID].system].color
         }
         return color['@default'];
     },
