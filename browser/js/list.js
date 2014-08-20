@@ -161,6 +161,7 @@ List.prototype = {
         div_elem.className = "listElem";
         div_elem.style.display = "block";
 
+        
         var span_name = document.createElement('div');
         span_name.className = "nameBox";
         span_name.ondblclick = function () {
@@ -173,12 +174,12 @@ List.prototype = {
         span_name.title = this.m.getName(cloneID);
         span_name.style.color = this.m.windows[cloneID].color;
 
+        
         var span_star = document.createElement('div');
         span_star.className = "starBox";
         span_star.onclick = function () {
             changeTag(cloneID);
         }
-
         var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
         var path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
         path.setAttribute('d', this.starPath);
@@ -186,9 +187,9 @@ List.prototype = {
         if (typeof this.m.windows[cloneID].tag != 'undefined') path.setAttribute("fill", tagColor[this.m.windows[cloneID].tag]);
         else path.setAttribute("fill", color['@default']);
         svg.appendChild(path);
-
         span_star.appendChild(svg)
 
+        
         var span_size = document.createElement('span')
         span_size.className = "sizeBox";
         span_size.onclick = function (e) {
@@ -197,6 +198,7 @@ List.prototype = {
         span_size.style.color = this.m.windows[cloneID].color;
         span_size.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));
 
+        
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
         span_info.onclick = function () {
@@ -204,6 +206,7 @@ List.prototype = {
         }
         span_info.appendChild(document.createTextNode("I"));
 
+        
         var span_cluster = document.createElement('span')
         span_cluster.className = "clusterBox";
         if (this.m.clones[cloneID].cluster.length > 1) {
@@ -222,7 +225,22 @@ List.prototype = {
             span_cluster.appendChild(document.createTextNode(' '));
         }
 
+        if (this.m.system=="multi"){
+            var span_system = document.createElement('span')
+            var system = this.m.windows[cloneID].system
+            span_system.className = "systemBox";
+            if (typeof system != 'undefined'){
+                span_system.appendChild(document.createTextNode(germline.icon[system].letter));
+                span_system.style.background = germline.icon[system].color
+                span_system.title = system
+            }else{
+                span_system.appendChild(document.createTextNode("?"));
+            }
+        }
+        
+        
         div_elem.appendChild(span_cluster);
+        if (this.m.system=="multi") div_elem.appendChild(span_system);
         div_elem.appendChild(span_name);
         div_elem.appendChild(span_info);
         div_elem.appendChild(span_star);

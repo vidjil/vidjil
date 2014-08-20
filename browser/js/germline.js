@@ -1002,5 +1002,14 @@ germline={
         "TRGJP*01": "tgggcaagagttgggcaaaaaaatcaaggtatttggtcccggaacaaagcttatcattacag", 
         "TRGJP1*01": "ataccactggttggttcaagatatttgctgaagggactaagctcatagtaacttcacctg", 
         "TRGJP2*01": "atagtagtgattggatcaagacgtttgcaaaagggactaggctcatagtaacttcgcctg"
+    },
+    "icon":{
+        "TRG":{ "letter" : "G", "color" : "#dc322f"},
+        "TRB":{ "letter" : "B", "color" : "#cb4b16"},
+        "TRD":{ "letter" : "D", "color" : "#b58900"},
+        "TRA":{ "letter" : "A", "color" : "#268bd2"},
+        "IGH":{ "letter" : "H", "color" : "#6c71c4"},
+        "IGK":{ "letter" : "K", "color" : "#2aa198"},
+        "IGL":{ "letter" : "L", "color" : "#d33682"},
     }
 }
