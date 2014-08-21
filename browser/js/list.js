@@ -229,12 +229,14 @@ List.prototype = {
             var span_system = document.createElement('span')
             var system = this.m.windows[cloneID].system
             span_system.className = "systemBox";
-            if (typeof system != 'undefined'){
+            if ((typeof system != 'undefined') && (typeof germline.icon[system] != 'undefined')){
                 span_system.appendChild(document.createTextNode(germline.icon[system].letter));
                 span_system.style.background = germline.icon[system].color
                 span_system.title = system
             }else{
                 span_system.appendChild(document.createTextNode("?"));
+		if (typeof system != 'undefined')
+		    span_system.title = system ;
             }
         }
         
