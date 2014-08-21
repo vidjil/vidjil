@@ -20,7 +20,7 @@ The Vidjil browser runs in any modern browser. It has been successfully tested o
 
 ** The .data files
 
-The vidjil browser displays .data files that summarizes the V(D)J
+The vidjil browser displays .data files that summarize the V(D)J
 rearrangements and the sequences found in a run. Such files can be
 obtained:
  - by sending us your .fasta/.fastq files, either through
