@@ -1,6 +1,3 @@
 
-
-tests:
-	python -m doctest -v fuse.py
-
-
+data:
+	sh get-web2py

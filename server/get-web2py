@@ -1,0 +1,9 @@
+#!/bin/sh
+
+wget https://github.com/web2py/web2py/archive/R-2.9.5.zip 
+unzip -d $(dirname $0) -n R-2.9.5.zip
+cp -nR web2py-R-2.9.5/* web2py
+rm -rf web2py-R-2.9.5/
+rm -f R-2.9.5.zip
+
+

@@ -845,6 +845,7 @@ ScatterPlot.prototype = {
 
       //Initialisation de la grille puis mise-à-jour
       this.initGrid();
+      this.update()
   },
 
     /* Function which allows to add a stroke attribute to all edges
