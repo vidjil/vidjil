@@ -90,7 +90,7 @@ WSGIDaemonProcess web2py user=www-data group=www-data processes=1 threads=1
     AllowOverride None
   </Directory>
 
-  AliasMatch ^/([^/]+)/static/(?:_[\d]+.[\d]+.[\d]+/)?(.*) \
+  AliasMatch ^/([^/]+)/static/(?:_[\d]+.[\d]+.[\d]+/)?(.*) \\
         $CWD/web2py/applications/\$1/static/\$2
 
   <Directory $CWD/web2py/applications/*/static/>
