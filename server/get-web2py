@@ -31,6 +31,7 @@ cp -nR web2py-R-2.9.5/* web2py
 mv web2py/handlers/wsgihandler.py web2py/wsgihandler.py
 rm -rf web2py-R-2.9.5/
 rm -f R-2.9.5.zip
+chown -R www-data:www-data web2py
 
 echo "setting up apache modules"
 echo "========================="
@@ -52,18 +53,21 @@ openssl x509 -noout -fingerprint -text < /etc/apache2/ssl/self_signed.cert > /et
 
 echo "rewriting your apache config file to use mod_wsgi"
 echo "================================================="
-echo '
+echo "
 WSGIDaemonProcess web2py user=www-data group=www-data processes=1 threads=1
 
 <VirtualHost *:80>
 
-  RewriteEngine On
-  RewriteCond %{HTTPS} !=on
-  RewriteRule ^/?(.*) https://%{SERVER_NAME}/$1 [R,L]
+  Alias /browser/ \"$CWD/../browser/\"
+  <Directory \"$CWD/../browser/\">
+    Order allow,deny
+    Allow from all
+  </Directory>
 
   CustomLog /var/log/apache2/access.log common
   ErrorLog /var/log/apache2/error.log
 </VirtualHost>
+
 
 <VirtualHost *:443>
   SSLEngine on
@@ -82,20 +86,24 @@ WSGIDaemonProcess web2py user=www-data group=www-data processes=1 threads=1
     </Files>
   </Directory>
 
+  <Directory $CWD/../browser>
+    AllowOverride None
+  </Directory>
+
   AliasMatch ^/([^/]+)/static/(?:_[\d]+.[\d]+.[\d]+/)?(.*) \
-        $CWD/web2py/applications/$1/static/$2
+        $CWD/web2py/applications/\$1/static/\$2
 
   <Directory $CWD/web2py/applications/*/static/>
     Options -Indexes
     ExpiresActive On
-    ExpiresDefault "access plus 1 hour"
+    ExpiresDefault \"access plus 1 hour\"
     Require all granted
   </Directory>
 
   CustomLog /var/log/apache2/ssl-access.log common
   ErrorLog /var/log/apache2/error.log
 </VirtualHost>
-' > /etc/apache2/sites-available/default.conf  # FOR 14.04
+" > /etc/apache2/sites-available/default.conf  # FOR 14.04
 
 sudo rm /etc/apache2/sites-enabled/*    # FOR 14.04
 sudo a2ensite default                   # FOR 14.04
