@@ -115,6 +115,22 @@ sudo rm /etc/apache2/sites-enabled/*    # FOR 14.04
 sudo a2ensite default                   # FOR 14.04
 sudo ln -s $CWD/../browser /var/www/browser
 
+echo "config browser"
+echo "=============="
+echo "
+var config = {
+    /*cgi*/
+    \"cgi_address\" : \"http://127.0.1.1/cgi-bin/\",
+    
+    /*database */
+    \"use_database\" : true,
+    \"db_address\" : \"default\",
+    
+    \"debug_mode\" : false  
+}
+" > $CWD/../browser/js/conf.js 
+
+
 echo "restarting apache"
 echo "================"
 
