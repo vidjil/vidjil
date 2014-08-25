@@ -165,6 +165,20 @@ if db(db.auth_user.id > 0).count() == 0:
     db.auth_membership.insert(user_id=id_first_user, group_id=id_admin_group)
     db.auth_membership.insert(user_id=id_first_user, group_id=id_sa_group)
     
+    ##création des configs de base
+    id_config_TRG = db.config.insert(
+        name = 'TRG',
+        command = '-c clones -z 20 -R 1 -r 100 ',
+        info = 'default trg config',
+        germline = 'TRG'
+    )
+    id_config_IGH = db.config.insert(
+        name = 'IGH',
+        command = '-c clones -z 20 -R 1 -r 100 ',
+        info = 'default igh config',
+        germline = 'IGH'
+    )
+    
     ## permission
     ## system admin have admin/read/create rights on all patients, groups and configs
     auth.add_permission(id_admin_group, 'admin', db.patient, 0)
