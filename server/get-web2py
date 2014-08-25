@@ -63,11 +63,20 @@ WSGIDaemonProcess web2py user=www-data group=www-data processes=1 threads=1
       Options FollowSymLinks
       AllowOverride None
     </Directory>
+
     <Directory /var/www/>
       Options Indexes FollowSymLinks MultiViews
       AllowOverride all
       Order allow,deny
       allow from all
+    </Directory>
+
+    ScriptAlias /cgi-bin/ $CWD/../browser/cgi
+    <Directory $CWD/../browser/cgi>
+      AllowOverride None
+      Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
+      Order allow,deny
+      Allow from all
     </Directory>
 
   CustomLog /var/log/apache2/access.log common
@@ -113,6 +122,7 @@ WSGIDaemonProcess web2py user=www-data group=www-data processes=1 threads=1
 
 sudo rm /etc/apache2/sites-enabled/*    # FOR 14.04
 sudo a2ensite default                   # FOR 14.04
+sudo a2enmod cgi
 sudo ln -s $CWD/../browser /var/www/browser
 
 echo "config browser"
