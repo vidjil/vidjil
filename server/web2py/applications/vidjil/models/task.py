@@ -8,7 +8,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     vidjil_path = sys.path[0] + '../..'
     germline_folder = vidjil_path + '/germline/'
     upload_folder = sys.path[0] + 'applications/vidjil/uploads/'
-    out_folder = vidjil_path + '/out/'
+    out_folder = vidjil_path + '/out'+id_config+'_'+id_data+'/'
     
     cmd = "rm -rf "+out_folder 
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
@@ -55,7 +55,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
                    & ( db.data_file.config_id == id_config )
                    ).select( orderby=db.sequence_file.sampling_date ) 
     for row in query :
-        files += " applications/vidjil/uploads/"+row.data_file.data_file
+        files += sys.path[0] + "applications/vidjil/uploads/"+row.data_file.data_file
     
     cmd = "python ../fuse.py -o "+output_file+" -t 100 -g "+vidjil_germline+" "+files
     
@@ -69,6 +69,10 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
                                  fused_file = stream)
     
     db.commit()
+    
+    clean_cmd = "rm -rf " + out_folder 
+    p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    p.wait()
     
     ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
     ## TODO parse result success/fail
