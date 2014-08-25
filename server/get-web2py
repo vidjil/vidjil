@@ -58,11 +58,17 @@ WSGIDaemonProcess web2py user=www-data group=www-data processes=1 threads=1
 
 <VirtualHost *:80>
 
-  Alias /browser/ \"$CWD/../browser/\"
-  <Directory \"$CWD/../browser/\">
-    Order allow,deny
-    Allow from all
-  </Directory>
+    DocumentRoot /var/www
+    <Directory />
+      Options FollowSymLinks
+      AllowOverride None
+    </Directory>
+    <Directory /var/www/>
+      Options Indexes FollowSymLinks MultiViews
+      AllowOverride all
+      Order allow,deny
+      allow from all
+    </Directory>
 
   CustomLog /var/log/apache2/access.log common
   ErrorLog /var/log/apache2/error.log
@@ -107,6 +113,7 @@ WSGIDaemonProcess web2py user=www-data group=www-data processes=1 threads=1
 
 sudo rm /etc/apache2/sites-enabled/*    # FOR 14.04
 sudo a2ensite default                   # FOR 14.04
+sudo ln -s $CWD/../browser /var/www/browser
 
 echo "restarting apache"
 echo "================"
