@@ -120,7 +120,7 @@ echo "=============="
 echo "
 var config = {
     /*cgi*/
-    \"cgi_address\" : \"http://127.0.1.1/cgi-bin/\",
+    \"cgi_address\" : \"default\",
     
     /*database */
     \"use_database\" : true,
