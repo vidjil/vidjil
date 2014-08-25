@@ -71,12 +71,14 @@ WSGIDaemonProcess web2py user=www-data group=www-data processes=1 threads=1
       allow from all
     </Directory>
 
-    ScriptAlias /cgi-bin/ $CWD/../browser/cgi
-    <Directory $CWD/../browser/cgi>
-      AllowOverride None
-      Options +ExecCGI -MultiViews +SymLinksIfOwnerMatch
-      Order allow,deny
-      Allow from all
+    ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+
+    <Directory /usr/lib/cgi-bin/>
+      Options Indexes FollowSymLinks
+      Options +ExecCGI
+      #AllowOverride None
+      Require all granted
+      AddHandler cgi-script cgi pl
     </Directory>
 
   CustomLog /var/log/apache2/access.log common
@@ -124,6 +126,7 @@ sudo rm /etc/apache2/sites-enabled/*    # FOR 14.04
 sudo a2ensite default                   # FOR 14.04
 sudo a2enmod cgi
 sudo ln -s $CWD/../browser /var/www/browser
+sudo ln -s $CWD/../browser/cgi/align.cgi /usr/lib/cgi-bin
 
 echo "config browser"
 echo "=============="
