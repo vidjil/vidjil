@@ -5,10 +5,10 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     from subprocess import Popen, PIPE, STDOUT, os
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
-    vidjil_path = sys.path[0] + '../..'
+    vidjil_path = os.path.abspath(os.path.dirname(sys.argv[0])) + '/../..'
     germline_folder = vidjil_path + '/germline/'
-    upload_folder = sys.path[0] + 'applications/vidjil/uploads/'
-    out_folder = vidjil_path + '/out'+id_config+'_'+id_data+'/'
+    upload_folder = os.path.abspath(os.path.dirname(sys.argv[0])) + '/applications/vidjil/uploads/'
+    out_folder = os.path.abspath(os.path.dirname(sys.argv[0])) + '/out_'+str(id_data)+'/'
     
     cmd = "rm -rf "+out_folder 
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
@@ -19,19 +19,19 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     filename = row[0].data_file
     seq_file = upload_folder+filename
     id_patient = row[0].patient_id
-    
+
     ## config de vidjil
     vidjil_cmd = db.config[id_config].command
     vidjil_germline = db.config[id_config].germline
     
     ## commande complete
     cmd = vidjil_path+'/vidjil ' + vidjil_cmd + ' -o  ' + out_folder + ' -G ' + germline_folder + vidjil_germline + ' '+ seq_file
-
+    
     ## execute la commande vidjil
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
     output = p.stdout.read()
-
+    
     ## récupération du fichier data.json généré
     data_filepath = os.path.abspath(out_folder+"vidjil.data")
     stream = open(data_filepath, 'rb')
@@ -76,7 +76,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     
     ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
     ## TODO parse result success/fail
-    return cmd
+    return output
 
 
 from gluon.scheduler import Scheduler
