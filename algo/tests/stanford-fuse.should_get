@@ -1,0 +1,9 @@
+!LAUNCH: ../../vidjil -G ../../germline/IGH -d ../../data/Stanford_S22.fasta ; python ../../server/fuse.py out/vidjil.data out/vidjil.data -o out/fused.data ; cat out/fused.data | sh format-json.sh
+
+$ Points list
+1:"point": [ "", "" ]
+
+$ Most abundant window, twice, fused 
+1:"window": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC", "id": .*, "size": [ 8, 8 ]
+
+
