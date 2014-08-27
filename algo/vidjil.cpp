@@ -593,7 +593,7 @@ int main (int argc, char **argv)
       f_germlines.push_back("germline/TRAJ.fa");
 
       f_germlines.push_back("germline/TRBV.fa");
-      f_germlines.push_back("germline/TRDJ.fa");
+      f_germlines.push_back("germline/TRBD.fa");
       f_germlines.push_back("germline/TRBJ.fa");
 
       f_germlines.push_back("germline/TRDV.fa"); 

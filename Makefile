@@ -10,7 +10,11 @@ test: all
 	# make -C $(VIDJIL_SERVER_SRC) tests
 	make -C $(VIDJIL_ALGO_SRC)/tests 
 	make should
+	make pytests
 
+pytests:
+	@echo "*** Launching python tests..."
+	python server/fuse.py --test x
 
 should: all
 	@echo
