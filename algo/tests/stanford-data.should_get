@@ -1,0 +1,10 @@
+!LAUNCH: ../../vidjil -G ../../germline/IGH -d ../../data/Stanford_S22.fasta ; cat out/vidjil.data | sh format-json.sh
+
+$ Number of reads
+1:"reads_total" : [ 13153 ] ,
+
+$ Number of segmented reads
+1:"reads_segmented" : [ 13139 ] ,
+
+$ Most abundant window
+1:"window" : "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC", "size" : [ 8 ]
