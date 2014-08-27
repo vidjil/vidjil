@@ -400,6 +400,7 @@ class ListWindows:
                 
             return result
             raise TypeError(repr(obj) + " fail !") 
+        
         if isinstance(obj, Window):
             result = {}
             for key in obj.d :
@@ -407,7 +408,14 @@ class ListWindows:
             
             return result
             raise TypeError(repr(obj) + " fail !") 
-
+        
+        if isinstance(obj, dict):
+            result = {}
+            for key in obj :
+                result[key]= obj[key]
+            
+            return result
+            raise TypeError(repr(obj) + " fail !") 
 
     def toPython(self, obj_dict):
         '''Reverse serializer for json module'''
@@ -426,6 +434,12 @@ class ListWindows:
             for key in obj_dict :
                 obj.d[key]=obj_dict[key]
             return obj
+            
+        if not "window" in obj_dict and not "reads_segmented" in obj_dict:
+            res = {}
+            for key in obj_dict :
+                res[key]=obj_dict[key]
+            return res
         
 
 

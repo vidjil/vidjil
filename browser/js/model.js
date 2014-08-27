@@ -1670,13 +1670,21 @@ Model.prototype = {
         //segmentation info
         html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation information</td></tr>"
         html += "<tr><td> segmented </td><td colspan='" + time_length + "'>" + this.getStatus(id) + "</td></tr>"
-        var total_stat = 0;
-        for (var key in this.windows[id].seg_stat) total_stat +=  this.windows[id].seg_stat[key]
-        for (var key in this.windows[id].seg_stat){
-        html += "<tr><td> "+this.segmented_mesg[key]+" </td><td colspan='" + time_length + "'>" 
-            + this.windows[id].seg_stat[key] + " (" + ((this.windows[id].seg_stat[key]/total_stat) * 100)
-                .toFixed(1) + " %) </td></tr>" 
+        
+        var total_stat = [];
+        for (var i=0; i<this.windows[id].seg_stat.length; i++) total_stat[i] = 0
+        for (var i=0; i<this.windows[id].seg_stat.length; i++){
+            for (var key in this.windows[id].seg_stat[i]) total_stat[i] +=  this.windows[id].seg_stat[i][key]
         }
+        
+        for (var key in this.windows[id].seg_stat[0]){
+            html += "<tr><td> "+this.segmented_mesg[key]+"</td>"
+            for (var i = 0; i < time_length; i++) {
+            html += "<td>"+this.windows[id].seg_stat[i][key] 
+                    + " (" + ((this.windows[id].seg_stat[i][key]/total_stat[i]) * 100).toFixed(1) + " %)</td>"
+            }
+        }
+        
         html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.windows[id].sequence + "</td></tr>"
         html += "<tr><td> window </td><td colspan='" + time_length + "'>" + this.windows[id].window + "</td></tr>"
         html += "<tr><td> V </td><td colspan='" + time_length + "'>" + this.windows[id].V + "</td></tr>"
