@@ -35,6 +35,7 @@
     {{fused_count = 0}}
 {{pass}}
 
+
 {{
 query = db(
             (db.sequence_file.patient_id==db.patient.id) 
@@ -46,6 +47,7 @@ query = db(
             ) 
         )
 }}
+
 <div>
     
     <h3>{{=patient.last_name + " " + patient.first_name}}  ({{=request.vars["id"]}})</h3>
@@ -97,6 +99,12 @@ query = db(
                 {{else:}}
                     {{(filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)}}
                 {{pass}} 
+                
+                {{if row.data_file.scheduler_task_id is None :}}
+                    {{status = '' }}
+                {{else:}}
+                    {{status = db.scheduler_task[row.data_file.scheduler_task_id ].status }}
+                {{pass}} 
             
                  <tr>
                     <td id="sequence_file_{{=row.sequence_file.id}}"> {{=filename}}</td>
@@ -111,10 +119,10 @@ query = db(
                     <td> {{if row.data_file.run_date :}}{{=row.data_file.run_date }}{{pass}} </td>
                     <td> 
                         {{if filename != '' and config_id != -1:}}
-                            {{if row.data_file.id == None or row.data_file.status == "ready" :}}
+                            {{if row.data_file.id == None or status == "COMPLETED" :}}
                             <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'config_id' : {{=config_id}} } )"> run >> </span>
                             {{else:}}
-                            {{=row.data_file.status}}
+                            {{=status}}
                             {{pass}}
                         {{pass}}
                     </td>

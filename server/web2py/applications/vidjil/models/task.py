@@ -39,7 +39,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     ## insertion dans la base de donnée
     ts = time.time()
     
-    db.data_file[id_data] = dict(status = 'ready',
+    db.data_file[id_data] = dict(status = "ready",
                                  run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d'),
                                  data_file = stream
                                 )
@@ -55,13 +55,14 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
                    & ( db.data_file.config_id == id_config )
                    ).select( orderby=db.sequence_file.sampling_date ) 
     for row in query :
-        files += sys.path[0] + "applications/vidjil/uploads/"+row.data_file.data_file
+        if row.data_file.data_file is not None :
+            files += os.path.abspath(os.path.dirname(sys.argv[0])) + "/applications/vidjil/uploads/"+row.data_file.data_file
     
     cmd = "python ../fuse.py -o "+output_file+" -t 100 -g "+vidjil_germline+" "+files
     
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
-    
+
     fuse_filepath = os.path.abspath(output_file)
     stream = open(fuse_filepath, 'rb')
     

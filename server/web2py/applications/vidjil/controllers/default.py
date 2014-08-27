@@ -70,11 +70,9 @@ def run_request():
 
         if len(row) > 0 : ## update
             data_id = row[0].id
-            db.data_file[data_id] = dict(status = 'queued')
         else:             ## create
             data_id = db.data_file.insert(sequence_file_id = request.vars['sequence_file_id'],
                                         config_id = request.vars['config_id'],
-                                        status = 'pending'
                                         )
 
         ## create or update fuse file state
@@ -89,8 +87,9 @@ def run_request():
                                             config_id = request.vars['config_id'])
 
         ##add task to scheduller
-        scheduler.queue_task('run', [request.vars["sequence_file_id"],request.vars["config_id"], data_id, fuse_id]
+        task = scheduler.queue_task('run', [request.vars["sequence_file_id"],request.vars["config_id"], data_id, fuse_id]
                              , repeats = 1, timeout = 6000)
+        db.data_file[data_id] = dict(scheduler_task_id = task.id)
         
         (filename, str) = db.sequence_file.data_file.retrieve(db.sequence_file[request.vars["sequence_file_id"]].data_file)
         config_name = db.config[request.vars["config_id"]].name
