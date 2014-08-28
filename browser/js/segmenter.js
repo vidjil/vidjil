@@ -366,10 +366,19 @@ Segment.prototype = {
             type: "POST",
             data: request,
             url: this.cgi_address + "align.cgi",
+            beforeSend: function () {
+                $(".seq-mobil").css({ opacity: 0.5 })
+            },
+            complete: function () {
+                $(".seq-mobil").css({ opacity: 1 })
+            },
             success: function (result) {
                 self.displayAjaxResult(result);
+            },
+            error: function () {
+                myConsole.flash("cgi error : impossible to connect", 2)
             }
-        });
+        })
     },
 
     clipBoard: function () {
