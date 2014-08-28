@@ -62,13 +62,14 @@ Com.prototype = {
         if (priority >= this.min_priority){
             
             var d = new Date();
-            var strDate = d.getHours()+":"+d.getMinutes() +":"+d.getMinutes()+":"+d.getSeconds();
-            while (strDate.length < 10) strDate += " "
+            var strDate = d.getHours() + ":" + d.getMinutes() + ":" + d.getSeconds();
+            while (strDate.length < 8) strDate += " "
                 
             var div = jQuery('<div/>', {
                 text: strDate+" | "+str,
                 class: 'log_'+priority
-            }).appendTo("#"+this.log_id, function(){
+            }).appendTo("#"+this.log_id)
+            .slideDown(200, function(){
                 self.log_container.scrollTop = self.log_container.scrollHeight;
             });
             
