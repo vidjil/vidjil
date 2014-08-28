@@ -432,7 +432,11 @@ class ListWindows:
         if "window" in obj_dict:
             obj = Window(1)
             for key in obj_dict :
-                obj.d[key]=obj_dict[key]
+                #hack for data file with seg_stat (first version)
+                if key == "seg_stat" and isinstance(obj_dict[key], dict) : 
+                    obj.d[key]=[obj_dict[key]]
+                else :
+                    obj.d[key]=obj_dict[key]
             return obj
             
         if not "window" in obj_dict and not "reads_segmented" in obj_dict:
