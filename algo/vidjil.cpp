@@ -56,6 +56,9 @@
 // #define RELEASE_TAG  "2013.04"
 #include "release.h"
 
+// GIT_VERSION should be defined in "git-version.h", created by "create-git-version-h.sh", to be used outside of releases
+#include "git-version.h"
+
 #define VIDJIL_JSON_VERSION "2014.02"
 
 //$$ #define (mainly default options)
@@ -573,8 +576,7 @@ int main (int argc, char **argv)
 #ifdef RELEASE_TAG
   cout << "# version: vidjil " << RELEASE_TAG << endl ;
 #else
-  if (system("git log -1 --pretty=format:'# git: %h (%ci)' --abbrev-commit 2> /dev/null") == 0){}
-  cout << endl ;
+  cout << "# development version - git: " << GIT_VERSION << endl ;
 #endif
 
 
