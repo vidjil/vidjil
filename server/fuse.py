@@ -342,17 +342,22 @@ class ListWindows:
         return result
         
     
-    def cut(self, limit):
-        '''Delete all information from sequence/windows who never enter in the most represented sequences.'''
+    def cut(self, limit, nb_points):
+        '''Remove information from sequence/windows who never enter in the most represented sequences. Put this information in 'other' windows.'''
 
         length = len(self.d["windows"])
         w=[]
-    
-        for index in range(length): 
-            if (int(self.d["windows"][index].d["top"]) < limit or limit == 0) :
-                w.append(self.d["windows"][index])
 
-        self.d["windows"]=w
+        others = OtherWindows(nb_points)
+
+        for index in range(length): 
+            win = self.d["windows"][index]
+            if (int(win.d["top"]) < limit or limit == 0) :
+                w.append(win)
+            else:
+                others += win
+
+        self.d["windows"] = w + list(others) 
         self.d["germline"]=self.d["germline"][0]
 
         print "### Cut merged file, keeping window in the top %d for at least one point" % limit
@@ -736,7 +741,7 @@ def main():
         jlist_fused.d["point"] = ll
     
     print
-    jlist_fused.cut(args.top)
+    jlist_fused.cut(args.top, len(l))
     print "\t", jlist_fused 
     print
 
