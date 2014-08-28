@@ -56,7 +56,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
                    ).select( orderby=db.sequence_file.sampling_date ) 
     for row in query :
         if row.data_file.data_file is not None :
-            files += os.path.abspath(os.path.dirname(sys.argv[0])) + "/applications/vidjil/uploads/"+row.data_file.data_file
+            files += os.path.abspath(os.path.dirname(sys.argv[0])) + "/applications/vidjil/uploads/"+row.data_file.data_file+" "
     
     cmd = "python ../fuse.py -o "+output_file+" -t 100 -g "+vidjil_germline+" "+files
     

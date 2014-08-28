@@ -119,7 +119,7 @@ query = db(
                     <td> {{if row.data_file.run_date :}}{{=row.data_file.run_date }}{{pass}} </td>
                     <td> 
                         {{if filename != '' and config_id != -1:}}
-                            {{if row.data_file.id == None or status == "COMPLETED" :}}
+                            {{if row.data_file.id == None or ( status != "RUNNING" and status != "QUEUED"):}}
                             <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'config_id' : {{=config_id}} } )"> run >> </span>
                             {{else:}}
                             {{=status}}
