@@ -107,8 +107,7 @@ class Window:
         
     ### print essential info about Window
     def __str__(self):
-        return "<window : %s %d %s>" % ( self.d["size"], self.d["top"], self.d["window"])
-        
+        return "<window : %s %s %s>" % ( self.d["size"], '*' if self.d["top"] == sys.maxint else self.d["top"], self.d["window"])
         
         
 class ListWindows:
