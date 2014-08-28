@@ -8,6 +8,8 @@ LIBCORE=core/vidjil.a
 
 BINDIR=..
 
+CREATE_VERSION_GIT_H := $(shell ./create-git-version-h.sh)
+
 .PHONY: all core clean forcedep
 
 v: vidjil

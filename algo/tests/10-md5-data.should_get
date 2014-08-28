@@ -1,5 +1,5 @@
-!LAUNCH: (cd ../../data ; md5sum *.fasta ; md5 -r *.fasta)
+!LAUNCH: (cd ../../data ; md5sum *.fasta || md5 -r *.fasta)
 
 $ Check md5 in data/
 1:985219d9156b6d9e8966807595beada3 Stanford_S22.fa
-1:859531b7451fa53d442d0e46faec4585 Stanford_S22.rc.fasta
+1:42bc0941a596bc0cf13eefcb68b55e03 Stanford_S22.rc.fasta

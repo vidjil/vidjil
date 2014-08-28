@@ -6,4 +6,5 @@ $ Points list
 $ Most abundant window, twice, fused 
 1:"window": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC", "id": .*, "size": [ 8, 8 ]
 
-
+$ Windows that are not in the top 50
+1:"window": "others-1", .* "size": [ 12962, 12962 ]

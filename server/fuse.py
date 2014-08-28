@@ -65,7 +65,19 @@ class Window:
         
         
     ### 
+
+    def __iadd__(self, other):
+        ### Not used now
+        """Add other.size to self.size in-place, without extending lists"""
+
+        assert(len(self.d['size']) == len(other.d['size']))
+        self.d['size'] = [my + her for (my, her) in zip(self.d['size'], other.d['size'])]
+
+        return self
+        
     def __add__(self, other):
+        """Concat two windows, extending lists such as 'size'"""
+
         #data we don't need to duplicate
         myList = [ "V", "D", "J", "Vend", "Dend", "Jstart", "Dstart", "top", "window", "Nlength", "sequence", "name", "id", "status"]
         obj = Window(1)
@@ -107,9 +119,48 @@ class Window:
         
     ### print essential info about Window
     def __str__(self):
-        return "<window : %s %d %s>" % ( self.d["size"], self.d["top"], self.d["window"])
+        return "<window : %s %s %s>" % ( self.d["size"], '*' if self.d["top"] == sys.maxint else self.d["top"], self.d["window"])
         
-        
+
+
+class OtherWindows:
+    
+    """Aggregate counts of windows that are discarded (due to too small 'top') for each point into several 'others-' windows."""
+
+    def __init__(self, length, ranges = [1000, 100, 10, 1]):
+        self.ranges = ranges
+        self.length = length
+        self.sizes = {}
+
+        for r in self.ranges:
+            self.sizes[r] = [0 for i in range(self.length)]
+
+
+    def __iadd__(self, window):
+        """Add to self a window. The different points may land into different 'others-' windows."""
+
+        for i, s in enumerate(window.d["size"]):
+            for r in self.ranges:
+                if s >= r:
+                     break
+            self.sizes[r][i] += s
+            ## TODO: add seg_stat
+
+        print window, '-->', self.sizes
+        return self
+
+    def __iter__(self):
+        """Yield the 'others-' windows"""
+
+        for r in self.ranges:
+            w = Window(self.length)
+            w.d['size'] = self.sizes[r]
+            w.d['window'] = 'others-%d' % r
+            w.d['top'] = 0
+
+            print '  --[others]-->', w
+            yield w
+
         
 class ListWindows:
     '''storage class for sequences informations 
@@ -303,17 +354,22 @@ class ListWindows:
         return result
         
     
-    def cut(self, limit):
-        '''Delete all information from sequence/windows who never enter in the most represented sequences.'''
+    def cut(self, limit, nb_points):
+        '''Remove information from sequence/windows who never enter in the most represented sequences. Put this information in 'other' windows.'''
 
         length = len(self.d["windows"])
         w=[]
-    
-        for index in range(length): 
-            if (int(self.d["windows"][index].d["top"]) < limit or limit == 0) :
-                w.append(self.d["windows"][index])
 
-        self.d["windows"]=w
+        others = OtherWindows(nb_points)
+
+        for index in range(length): 
+            win = self.d["windows"][index]
+            if (int(win.d["top"]) < limit or limit == 0) :
+                w.append(win)
+            else:
+                others += win
+
+        self.d["windows"] = w + list(others) 
         self.d["germline"]=self.d["germline"][0]
 
         print "### Cut merged file, keeping window in the top %d for at least one point" % limit
@@ -701,7 +757,7 @@ def main():
         jlist_fused.d["point"] = ll
     
     print
-    jlist_fused.cut(args.top)
+    jlist_fused.cut(args.top, len(l))
     print "\t", jlist_fused 
     print
 
