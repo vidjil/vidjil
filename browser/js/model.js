@@ -815,6 +815,7 @@ Model.prototype = {
 
                 var elem = {};
                 elem.window = this.windows[i].window;
+                elem.sequence = this.windows[i].sequence;
 
                 if (typeof this.windows[i].tag != "undefined" && this.windows[i].tag != 8)
                     elem.tag = this.windows[i].tag;
