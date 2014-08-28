@@ -243,7 +243,6 @@ Graph.prototype = {
         
         $(".graph_listElem").mousedown(function () {
             var time = parseInt( $(this).attr("time") )
-            console.log(time)
             self.startDrag(time)
         })
         
@@ -410,7 +409,7 @@ Graph.prototype = {
         this.draw();
         elapsedTime = new Date()
             .getTime() - startTime;
-        console.log("update Graph: " + elapsedTime + "ms");
+        myConsole.log("update Graph : " + elapsedTime + "ms", 0);
     },
 
     /*update la liste de clones passé en parametre
@@ -639,7 +638,6 @@ Graph.prototype = {
                 result[i] = list[i][0]
             }
 
-            console.log(result)
             this.m.changeTimeOrder(result)
             this.build_list();
         }

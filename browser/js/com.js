@@ -24,16 +24,17 @@
 function Com(id, id2) {
     this.flash_id = id;
     this.log_id = id2;
-    this.min_priority = 1;
+    this.min_priority = 1; // minimum required to display message
     this.log_container = document.getElementById(this.log_id);
 }
 
 Com.prototype = {
     
     /* display a flash message if priority level is sufficient
-     * always print message in log
+     * and print message in log
      * */
     flash: function (str, priority){
+        priority = typeof priority !== 'undefined' ? priority : 0;
         
         if (priority >= this.min_priority){
             var div = jQuery('<div/>', {
@@ -51,22 +52,29 @@ Com.prototype = {
         this.log(str, priority);
     },
     
-    /* print message in log_container
+    /* print message in log_container if priority level is sufficient (else use javascript default console)
      * 
      * */
     log: function(str, priority){
+        priority = typeof priority !== 'undefined' ? priority : 0;
         var self = this;
         
-        var d = new Date();
-        var strDate = d.getHours()+":"+d.getMinutes() +":"+d.getMinutes()+":"+d.getSeconds();
-        while (strDate.length < 10) strDate += " "
-        
-        var div = jQuery('<div/>', {
-            text: strDate+" | "+str,
-            class: 'log_'+priority
-        }).appendTo("#"+this.log_id, function(){
-            self.log_container.scrollTop = self.log_container.scrollHeight;
-        });
+        if (priority >= this.min_priority){
+            
+            var d = new Date();
+            var strDate = d.getHours()+":"+d.getMinutes() +":"+d.getMinutes()+":"+d.getSeconds();
+            while (strDate.length < 10) strDate += " "
+                
+            var div = jQuery('<div/>', {
+                text: strDate+" | "+str,
+                class: 'log_'+priority
+            }).appendTo("#"+this.log_id, function(){
+                self.log_container.scrollTop = self.log_container.scrollHeight;
+            });
+            
+        }else{
+            console.log(str)
+        }
         
     },
     

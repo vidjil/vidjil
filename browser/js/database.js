@@ -69,7 +69,7 @@ Database.prototype = {
             
             if (res.redirect) this.call(res.redirect, res.args)
                
-            if (res.message) this.flash("database : "+res.message)
+            if (res.message) myConsole.flash("database : " + res.message , 1)
             
             return res
         }
@@ -363,18 +363,18 @@ Database.prototype = {
                 contentType: false,
                 xhrFields: {withCredentials: true},
                 success: function (result) {
-                    popupMsg("analysis saved")
+                    myConsole.flash("server : analysis saved", 1)
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
-                        popupMsg("timeout");
+                        myConsole.flash("server : save analysis error : timeout", 2);
                     } else {
-                        self.flash(request.responseText);
+                        myConsole.flash("server : save analysis error : "+request.responseText, 2);
                     }
                 }
             });
         }else{
-            popupMsg("this file is nor from the database")
+            myConsole.flash("server : save analysis error : this file is nor from the database")
         }
     },
     

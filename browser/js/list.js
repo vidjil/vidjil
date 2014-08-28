@@ -139,7 +139,7 @@ List.prototype = {
         }
         elapsedTime = new Date()
             .getTime() - startTime;
-        console.log("update Liste: " + elapsedTime + "ms");
+        myConsole.log("update Liste: " + elapsedTime + "ms", 0);
     },
 
     /*

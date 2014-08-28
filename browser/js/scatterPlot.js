@@ -124,7 +124,7 @@ ScatterPlot.prototype = {
   /* Fonction permettant l'initialisation complète du ScatterPlot
   */
   init: function () {
-      console.log("ScatterPlot " + this.id + ": init()");
+      myConsole.log("ScatterPlot " + this.id + ": init()");
 
       document.getElementById(this.id)
 	  .innerHTML = "";
@@ -1051,7 +1051,7 @@ ScatterPlot.prototype = {
       //Donne des informations quant au temps de MàJ des données
       elapsedTime = new Date()
 	  .getTime() - startTime;
-      console.log("update sp: " + elapsedTime + "ms");
+      myConsole.log("update sp: " + elapsedTime + "ms");
   },
 
   /* Fonction permettant de mettre à jour les données liées à tous les clones présents dans une liste -> FONCTION DEPRECATED ?????
@@ -1762,7 +1762,6 @@ ScatterPlot.prototype = {
                   .attr("width", 0)
                   .attr("height", 0)
                   this.active_selector = false;
-                  console.log("stopSelector: selectBox [x : " + x1 + "/" + x2 + ", y : " + y1 + "/" + y2 + "]   nodes:" + nodes_selected);
         
                   if (!d3.event.ctrlKey) this.m.unselectAll()
                   for (var i = 0; i < nodes_selected.length; i++) {
@@ -1789,7 +1788,6 @@ ScatterPlot.prototype = {
 	  .attr("height", 0)
       //On met le sélecteur à false -> annulation
       this.active_selector = false;
-      console.log("cancel selector")
 
       //Si sélection sur le document, on efface tout
       if (document.selection) {

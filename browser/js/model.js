@@ -54,7 +54,7 @@ VIDJIL_JSON_VERSION = '2014.02';
  *
  * */
 function Model() {
-    console.log("creation Model")
+    myConsole.log("creation Model")
     this.view = [];
 
     this.reset();
@@ -147,7 +147,7 @@ Model.prototype = {
     load: function (id, analysis, limit) {
         var self = this;
 
-        console.log("load()");
+        myConsole.log("load()");
 
         if (document.getElementById(id)
             .files.length === 0) {
@@ -445,7 +445,7 @@ Model.prototype = {
     loadAnalysis: function (analysis) {
         var self = this
 
-        console.log("loadAnalysis()");
+        myConsole.log("loadAnalysis()");
         if (document.getElementById(analysis)
             .files.length != 0) {
             var oFReader = new FileReader();
@@ -609,7 +609,7 @@ Model.prototype = {
      *
      * */
     initClones: function () {
-        console.log("initClones()");
+        myConsole.log("initClones()");
         var maxNlength = 0;
         var nsize;
         self.mapID = [];
@@ -634,7 +634,7 @@ Model.prototype = {
             this.windows[i].Nlength = nsize;
             this.windows[i].tag = default_tag;
         }
-        console.log(maxNlength);
+        myConsole.log(maxNlength);
         
         /*TODO rework color
          * */
@@ -827,7 +827,7 @@ Model.prototype = {
      *
      * */
     resetAnalysis: function () {
-        console.log("resetAnalysis()");
+        myConsole.log("resetAnalysis()");
         this.analysis = {
             custom: [],
             cluster: [],
@@ -840,7 +840,7 @@ Model.prototype = {
      *
      * */
     changeName: function (cloneID, newName) {
-        console.log("changeName() (clone " + cloneID + " <<" + newName + ")");
+        myConsole.log("changeName() (clone " + cloneID + " <<" + newName + ")");
         this.windows[cloneID].c_name = newName;
         this.updateElem([cloneID]);
     }, //fin changeName,
@@ -851,7 +851,7 @@ Model.prototype = {
     changeTag: function (cloneID, newTag) {
         newTag = "" + newTag
         newTag = newTag.replace("tag", "");
-        console.log("changeTag() (clone " + cloneID + " <<" + newTag + ")");
+        myConsole.log("changeTag() (clone " + cloneID + " <<" + newTag + ")");
         this.windows[cloneID].tag = newTag;
         this.updateElem([cloneID]);
     },
@@ -1164,7 +1164,7 @@ Model.prototype = {
      *
      * */
     normalization_switch: function (newR) {
-        console.log("normalization : " + newR)
+        myConsole.log("normalization : " + newR)
         this.norm = newR;
         this.update();
     },
@@ -1221,7 +1221,7 @@ Model.prototype = {
      *
      * */
     changeTime: function (newT) {
-        console.log("changeTime()" + newT)
+        myConsole.log("changeTime()" + newT)
         this.t = newT;
         this.update();
     },
@@ -1342,7 +1342,7 @@ Model.prototype = {
 
         var list = this.getSelected();
 
-        console.log("select() (clone " + cloneID + ")");
+        myConsole.log("select() (clone " + cloneID + ")");
 
         if (cloneID == (this.n_windows - 1)) return 0
 
@@ -1364,7 +1364,7 @@ Model.prototype = {
      *
      * */
     unselect: function (cloneID) {
-        console.log("unselect() (clone " + cloneID + ")")
+        myConsole.log("unselect() (clone " + cloneID + ")")
         if (this.windows[cloneID].select) {
             this.windows[cloneID].select = false;
         }
@@ -1400,11 +1400,11 @@ Model.prototype = {
      *
      * */
     merge: function () {
-        console.log("merge()")
         var new_cluster = [];
         var list = this.getSelected()
         var leader;
         var top = 200;
+        myConsole.log("merge clones " + list)
 
         for (var i = 0; i < list.length; i++) {
             if (this.windows[list[i]].top < top) {
@@ -1425,7 +1425,7 @@ Model.prototype = {
      *
      * */
     split: function (cloneID, windowID) {
-        console.log("split() (cloneA " + cloneID + " windowB " + windowID + ")")
+        myConsole.log("split() (cloneA " + cloneID + " windowB " + windowID + ")")
         if (cloneID == windowID) return
 
         var nlist = this.clones[cloneID].cluster;
@@ -1517,7 +1517,7 @@ Model.prototype = {
         
         elapsedTime = new Date()
             .getTime() - startTime;
-        console.log("update() : " + elapsedTime);
+        myConsole.log("update() : " + elapsedTime);
     },
 
 
@@ -1757,7 +1757,6 @@ Model.prototype = {
                         key = this.windows[i][data_name]
                 }
             }
-            //console.log("id window/sequence : "+i+" /// cluster key : "+key)
 
             //store windows with same key together
             if (key == "") key = "undefined"
@@ -2128,7 +2127,7 @@ function root(n) {
     
     elapsedTime = new Date()
         .getTime() - startTime;
-    console.log("root("+n+") : " + elapsedTime);
+    myConsole.log("root("+n+") : " + elapsedTime);
 }
 
 function root2(n) {
@@ -2147,7 +2146,7 @@ function root2(n) {
     
     elapsedTime = new Date()
         .getTime() - startTime;
-    console.log("root2("+n+") : " + elapsedTime);
+    myConsole.log("root2("+n+") : " + elapsedTime);
 }
 
 

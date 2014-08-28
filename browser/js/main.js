@@ -40,7 +40,7 @@ if (typeof config != 'undefined') {
                 }
             },
             error: function() {
-                console.log("demo file list not available")
+                myConsole.flash("demo file list not available", 1)
             }
         });
 

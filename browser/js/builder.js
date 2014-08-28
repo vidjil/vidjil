@@ -54,7 +54,6 @@ Builder.prototype = {
 
     dragSeparator: function () {
         this.drag_separator = true;
-        console.log("drag");
     },
 
     updateSeparator: function () {
@@ -79,8 +78,6 @@ Builder.prototype = {
                 .style.height = height1 + "%"
             document.getElementById("visu2")
                 .style.height = height2 + "%"
-
-            console.log("update");
         }
     },
 
@@ -91,8 +88,6 @@ Builder.prototype = {
 
             var sel = window.getSelection();
             sel.removeAllRanges();
-
-            console.log("drop");
         }
     },
     
@@ -266,7 +261,6 @@ Builder.prototype = {
         a.appendChild(document.createTextNode("save"));
         a.id = "btnSaveTag";
         a.onclick = function () {
-            console.log("hello")
             var newTagName = document.getElementById("new_tag_name")
                 .value;
             tagName[tagID] = newTagName
