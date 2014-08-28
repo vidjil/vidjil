@@ -674,45 +674,61 @@ Model.prototype = {
                 this.windows[i].shortName = this.windows[i].shortName.replace(new RegExp('\\*..', 'g'), "");
             }
         }
-
+        
+        this.applyAnalysis(this.analysis.custom);
+        
+    }, //end initClones
+    
+    /* 
+     * 
+     * */
+    applyAnalysis: function (c) {
         //      CUSTOM TAG / NAME
         //      EXPECTED VALUE
-        var c = this.analysis.custom;
         var max = {"id" : -1 , "size" : 0 }     //store biggest expected value ( will be used for normalization)
         for (var i = 0; i < c.length; i++) {
-            if (typeof this.mapID[c[i].window] != "undefined") {
-                
-                var f = 1;
-                
+            
+            var id = -1
+            var f = 1;
+            //check if we have a clone with a similar window
+            if (typeof c[i].window != "undefined" && typeof this.mapID[c[i].window] != "undefined") {
+                id = this.mapID[c[i].window]
+            }
+            
+            //check if we have a window who can match the sequence
+            if (typeof c[i].sequence != "undefined" && id == -1) {
+                id = this.findWindow(c[i].sequence);
+            }
+            
+            if (id != -1){
                 if (typeof c[i].expected != "undefined") {
-                    this.windows[this.mapID[c[i].window]].expected = c[i].expected
-                    f = this.getSize([this.mapID[c[i].window]]) / c[i].expected;
+                    this.windows[id].expected = c[i].expected
+                    f = this.getSize(id) / c[i].expected;
                     
                     if (f < 100 && f > 0.01) {
                         if (typeof (c[i].tag) != "undefined") {
-                            this.windows[this.mapID[c[i].window]].tag = c[i].tag;
+                            this.windows[id].tag = c[i].tag;
                         }
 
                         if (typeof (c[i].name) != "undefined") {
-                            this.windows[this.mapID[c[i].window]].c_name = c[i].name;
+                            this.windows[id].c_name = c[i].name;
                         }
                         
                         if (c[i].expected>max.size){
                             max.size = c[i].expected
-                            max.id = this.mapID[c[i].window]
+                            max.id = id
                         }
                     }else{
-                        console.log("windows "+ c[i].window + " : incorrect expected value")
+                        myConsole.log(" apply analysis : windows "+ c[i].window + " > incorrect expected value", 0)
                     }
                 }else{
                     if (typeof (c[i].tag) != "undefined") {
-                        this.windows[this.mapID[c[i].window]].tag = c[i].tag;
+                        this.windows[id].tag = c[i].tag;
                     }
                     if (typeof (c[i].name) != "undefined") {
-                        this.windows[this.mapID[c[i].window]].c_name = c[i].name;
+                        this.windows[id].c_name = c[i].name;
                     }
                 }
-                
             }
         }
         
@@ -1363,7 +1379,6 @@ Model.prototype = {
 	      this.addClonesSelected(cloneID);
 	    }
         }
-        this.updateElemStyle([cloneID]);
 	    this.lastCloneSelected = cloneID;
         this.updateElemStyle([cloneID]);
         this.updateAlignmentButton();
