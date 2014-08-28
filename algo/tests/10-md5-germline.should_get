@@ -3,7 +3,7 @@
 $ Check md5 in germline/
 1:3a655c9d99ca04907a120f1b69febf2e IGHD.fa
 1:0d87f672c582e7e15cdcaa0fb5e08f6f IGHJ.fa
-1:4610d1696dbcc7bb4ce74a99c4632272 IGHV.fa
+1:aca4600f677ff42c9e563a64e64d9ee0 IGHV.fa
 1:1988fce96d82bcf535c59d0282ae3f12 IGKJ.fa
 1:a611399a3720aa92e4268e2c063fba31 IGKV.fa
 1:0af6000b17614230b5d7e4c43392040e IGLJ.fa
@@ -12,10 +12,9 @@ $ Check md5 in germline/
 1:46ff5f1e9c8d9f318a40ce0847fff249 TRAV.fa
 1:f66c70cda5b369aecd34ab1cd11e7415 TRBD.fa
 1:cc20222cdb7a381ff5a34030bee91e08 TRBJ.fa
-1:f44ab5a3e1317e76c9ed6b45b7c16314 TRBV.fa
+1:dadaf17bae6b0357eacd5e4ef51fe97e TRBV.fa
 1:97e784cdfd5994c10ebbbedfcf332ef6 TRDD.fa
 1:cfb6f64b2b6d9d8aa7a827ad6937fc82 TRDJ.fa
 1:35c753ccdba5a343aa40f05bd9c032d8 TRDV.fa
 1:16dfaa7a248644b484ff62fb49ae836b TRGJ.fa
 1:64e5f218e9de3443f04c4f4e81468f0d TRGV.fa
-1:d4cba219525cb697865d3be5c5ddc5a8 imgt.fa
