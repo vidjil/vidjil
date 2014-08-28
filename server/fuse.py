@@ -109,6 +109,46 @@ class Window:
     def __str__(self):
         return "<window : %s %s %s>" % ( self.d["size"], '*' if self.d["top"] == sys.maxint else self.d["top"], self.d["window"])
         
+
+
+class OtherWindows:
+    
+    """Aggregate counts of windows that are discarded (due to too small 'top') for each point into several 'others-' windows."""
+
+    def __init__(self, length, ranges = [1000, 100, 10, 1]):
+        self.ranges = ranges
+        self.length = length
+        self.sizes = {}
+
+        for r in self.ranges:
+            self.sizes[r] = [0 for i in range(self.length)]
+
+
+    def __iadd__(self, window):
+        """Add to self a window. The different points may land into different 'others-' windows."""
+
+        for i, s in enumerate(window.d["size"]):
+            for r in self.ranges:
+                if s >= r:
+                     break
+            self.sizes[r][i] += s
+            ## TODO: add seg_stat
+
+        print window, '-->', self.sizes
+        return self
+
+    def __iter__(self):
+        """Yield the 'others-' windows"""
+
+        for r in self.ranges:
+            w = Window(self.length)
+            w.d['size'] = self.sizes[r]
+            w.d['window'] = 'others-%d' % r
+            w.d['top'] = 0
+
+            print '  --[others]-->', w
+            yield w
+
         
 class ListWindows:
     '''storage class for sequences informations 
