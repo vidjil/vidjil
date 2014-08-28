@@ -752,14 +752,23 @@ Model.prototype = {
         }
 
         this.init()
-    }, //end initClones
+    },
 
+    /*
+     * 
+     */
+    findWindow: function (sequence) {
+        for ( var i=0; i<this.windows.length; i++ ){
+            if ( sequence.indexOf(this.windows[i].window) != -1 ) return i
+        }
+        return -1
+    },
 
     /* generate à json file from user analysis currently applied
      *
      * */
     saveAnalysis: function () {
-        console.log("saveAnalysis()")
+        myConsole.log("save Analysis (local)", 0)
 
         var textToWrite = this.strAnalysis()
         var textFileAsBlob = new Blob([textToWrite], {
@@ -1378,12 +1387,12 @@ Model.prototype = {
      *
      * */
     unselectAll: function () {
-        console.log("unselectAll()")
+        myConsole.log("unselectAll()")
         var list = this.getSelected();
         for (var i = 0; i < list.length; i++) {
             this.windows[list[i]].select = false;
         }
-        this.updateElem(list);
+        this.updateElemStyle(list);
 	    this.removeAllClones();
         this.updateAlignmentButton();
     },
