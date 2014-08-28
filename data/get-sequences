@@ -1,7 +1,9 @@
 #!/bin/sh
 
+rm -f Stanford_S22.zip
 wget http://www.emi.unsw.edu.au/~ihmmune/Stanford_S22.zip
 unzip -d $(dirname $0) -o Stanford_S22.zip
 rm -f Stanford_S22.zip
 
+rm -f Stanford_S22.rc.fasta
 wget http://bioinfo.lifl.fr/vidjil/seq/Stanford_S22.rc.fasta
