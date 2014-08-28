@@ -576,9 +576,12 @@ int main (int argc, char **argv)
 #ifdef RELEASE_TAG
   cout << "# version: vidjil " << RELEASE_TAG << endl ;
 #else
-  cout << "# development version - git: " << GIT_VERSION << endl ;
+  cout << "# development version" << endl ;
 #endif
 
+#ifdef GIT_VERSION
+  cout << "# git: " << GIT_VERSION << endl ;
+#endif
 
   //////////////////////////////://////////
   //         DISCOVER GERMLINES          //
