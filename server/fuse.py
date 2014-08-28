@@ -145,8 +145,8 @@ class OtherWindows:
                      break
             self.sizes[r][i] += s
             ## TODO: add seg_stat
-
-        print window, '-->', self.sizes
+            
+        # print window, '-->', self.sizes
         return self
 
     def __iter__(self):
