@@ -1196,18 +1196,37 @@ span.logo
     to { background-position: 50px 50px; }
 }
 
-#flash_mes {
+#flash_container {
     position : absolute;
     display : block;
     bottom : 0px;
     right : 0px;
 }
 
-.flash {
+#log_container {
+    height : 500px;
+    width : 400px;
+    position : absolute;
+    display : block;
+    bottom : 0px;
+    right : 0px;
+    padding: 5px;
+    margin: 5px;
+    background: @highlight;
+    border-color: @border;
+    z-index: 15;
+    border: solid;
+    border-width: 1px;
+    opacity: 0.85;
+    overflow-y: scroll;
+    display: none;
+}
+
+.flash_0, .flash_1, .flash_2 {
     width: 350px;
     min-height: 20px;
     border: solid;
-    border-width: 1px;
+    border-width: 2px;
     display: block;
     border-radius: 5px;
     padding: 5px;
@@ -1215,6 +1234,27 @@ span.logo
     background: @background;
     border-color: @border;
     z-index: 10
+}
+
+.log_0, .log_1, .log_2 {
+    width: auto;
+    min-height: 20px;
+    display: block;
+    margin: 5px;
+    background: @background;
+    border: solid;
+    border-width: 2px;
+    border-radius: 2px;
+    border-color: @background;
+}
+
+.flash_1, .log_1 {
+    font-weight: bold;
+}
+
+.flash_2, .log_2 {
+    font-weight: bold;
+    border-color: darkred;
 }
 
 select>option:hover {
