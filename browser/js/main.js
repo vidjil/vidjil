@@ -82,6 +82,11 @@ var sp = new ScatterPlot("visu",m, graph, stats);
 var segment = new Segment("bot-container",m, CGI_ADDRESS);
 var builder = new Builder(m);
 
+/*tools
+ * 
+ * */
+var myConsole = new Com("flash_container", "log_container")
+
 /* Stat object
  *
  */

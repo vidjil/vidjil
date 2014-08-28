@@ -420,22 +420,6 @@ Database.prototype = {
         });
     },
     
-    flash: function (str){
-        
-        var div = jQuery('<div/>', {
-            text: str,
-            style: 'display : none',
-            class: 'flash'
-        }).appendTo('#flash_mes')
-        .slideDown(200);
-        
-        setTimeout(function(){
-            div.fadeOut('slow', function() { div.remove();});
-        }, 5000);
-        
-    
-    },
-    
     user_rights: function (value, name, id) {
         
         var arg = {}

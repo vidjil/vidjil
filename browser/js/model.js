@@ -1978,6 +1978,22 @@ Model.prototype = {
         this.update()
     },
     
+        
+    flash: function (str){
+        
+        var div = jQuery('<div/>', {
+            text: str,
+            style: 'display : none',
+            class: 'flash'
+        }).appendTo('#flash_mes')
+        .slideDown(200);
+        
+        setTimeout(function(){
+            div.fadeOut('slow', function() { div.remove();});
+        }, 5000);
+        
+    },
+    
 } //end prototype Model
 
 
