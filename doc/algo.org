@@ -1,10 +1,9 @@
 #+TITLE: Vidjil -- Algo Manual
 #+AUTHOR: The Vidjil team (Mathieu, Mikaël and Marc)
 
-# Vidjil -- V(D)J recombinations analysis <http://bioinfo.lifl.fr/vidjil>
+# Vidjil -- V(D)J recombinations analysis -- [[http://www.vidjil.org]]
 # Copyright (C) 2011, 2012, 2013, 2014 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
 # contact@vidjil.org
-
 
 V(D)J recombinations in lymphocytes are essential for immunological
 diversity. They are also useful markers of pathologies, and in
@@ -12,12 +11,12 @@ leukemia, are used to quantify the minimal residual disease during
 patient follow-up.
 
 Vidjil process high-througput sequencing data to extract V(D)J
-junctions and gather them into clones. This analysis is based on a
-seed heuristics and is fast and scalable because in the first phase, no
-alignment is performed with database germline sequences. Vidjil starts 
+junctions and gather them into clones. Vidjil starts 
 from a set of reads and detects "windows" overlapping the actual CDR3.
 This is based on an fast and reliable seed-based heuristic and allows
-to output the most abundant clones. Vidjil can also clusterize similar
+to output the most abundant clones. The analysis is extremly fast
+because, in the first phase, no alignment is performed with database
+germline sequences. Vidjil can also clusterize similar
 clones, or leave this to the user after a manual review. 
 
 The method is described in the following paper:
@@ -28,7 +27,6 @@ BMC Genomics 2014, 15:409
 http://dx.doi.org/10.1186/1471-2164-15-409
 
 Vidjil is open-source, released under GNU GPLv3 license.
-
 
 * Supported platforms
 
@@ -217,6 +215,6 @@ This file is used for the dynamic browser for visualization
 and analysis of clones and their tracking along different samples,
 (for example time points in a MRD setup or in a immunological study).
 This application is currently in developpement and will be released in
-Q4 2014. However, code source can be already accessed on
+Q1 2015. However, code source can be already accessed on
 http://www.vidjil.org/git.  Please contact us (contact@vidjil.org) if
 you would like to have an access on the web server.
