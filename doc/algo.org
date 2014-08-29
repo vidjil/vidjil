@@ -1,3 +1,6 @@
+#+TITLE: Vidjil -- Algo Manual
+#+AUTHOR: The Vidjil team (Mathieu, Mikaël and Marc)
+
 # Vidjil -- V(D)J recombinations analysis <http://bioinfo.lifl.fr/vidjil>
 # Copyright (C) 2011, 2012, 2013, 2014 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
 # contact@vidjil.org
@@ -27,7 +30,7 @@ http://dx.doi.org/10.1186/1471-2164-15-409
 Vidjil is open-source, released under GNU GPLv3 license.
 
 
-### Supported platforms
+* Supported platforms
 
 Vidjil has been successfully tested on the following platforms :
  - CentOS 6.3 amd64
@@ -40,7 +43,7 @@ Vidjil has been successfully tested on the following platforms :
  - Ubuntu 12.04 i386
 
 
-### Installation
+* Installation
 
 make data
    # get some IGH rearrangements from a single individual, as described in:
@@ -61,18 +64,18 @@ make test                # run self-tests
 
 ./vidjil -h              # display help/usage
 
-### Optional dependencies
+* Optional dependencies
 
 clustalw (to compute alignments between windows from a same clone, by setting 
           very_detailed_cluster_analysis in vidjil.cpp)
 neato (to display graph of neighbors for the automatic clusterisation)
 
-### Vidjil parameters
+* Vidjil parameters
 
 Launching vidjil with -h option provides the list of parameters that can be
 used.
 
-### List of windows
+* List of windows
 
 Vidjil allows to specify a list of windows that must be followed
 (even if those windows are 'rare', below the -r/-R/-% thresholds).
@@ -83,7 +86,7 @@ The first column of the file is the window to be followed
 while the remaining columns consist of the window's label.
 In Vidjil output, the labels are output alongside their windows.
 
-### Manual clustering
+* Manual clustering
 
 The -e option allows to specify a file for manually clustering two windows
 considered as similar. Such a file may be automatically produced by vidjil
@@ -92,7 +95,7 @@ considered as similar. Such a file may be automatically produced by vidjil
 two windows that must be clustered.
 
 
-### Examples of use
+* Examples of use
 
 All the following examples are on a IGH VDJ recombinations : they thus
 require the "-G germline/IGH" and the "-d" options.
@@ -137,7 +140,7 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
    # Segment the reads onto VDJ germline (see warning below)
 
 
-### Segmentation and .vdj format
+* Segmentation and .vdj format
 
 Vidjil outputs include segmentation of V(D)J recombinations. This happens
 in the following situations:
@@ -203,7 +206,7 @@ applicable being removed:
 >name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene  coments
 
 
-### vidjil.data .json format and web interface
+* vidjil.data .json format and web interface
 
 A summary of extracted windows is also available in a .json format,
 including, for each windows, the number of reads sharing this window.
