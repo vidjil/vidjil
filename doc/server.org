@@ -1,25 +1,30 @@
-os : ubuntu server 14.04
+#+TITLE: Vidjil -- Server Manual
 
-les prérequis
-=============
+This is the preliminary help of the upcomping Vidjil server.
+This help is intended for server administrators. 
+Users of the should consult the browser help.
+
+* Installing and running the vidjil server
+
+These installation instruction are for Ubuntu server 14.04
+
+** Requirements
     apt-get install git
     apt-get install g++
     apt-get install make
     apt-get install unzip
 
-on récupére le projet sur son dépot préféré
-===========================================
+** Vidjil code
     git clone ....                              copy git repository
 
-installation de Vidjil
-======================
+** Vidjil (algo) installation
     /vidjil                     make            compil command line program
     /vidjil/data                make            download/unzip stanford default file
     /vidjil/germline            make            download germlines from IMGT
     /vidjil/algo/cgi            make            compil cgi
 
-installation et initialisation du serveur
-=========================================
+
+** Vidjil (server) installation and initialization
     /vidjil/server              make                            download/unzip/install web2py server
     /vidjil/server/web2py       python web2py.py -K vidjil      start web2py worker
 
