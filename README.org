@@ -1,0 +1,78 @@
+#+TITLE: Vidjil -- V(D)J recombinations analysis
+#+AUTHOR: The Vidjil team (Mathieu, Mikaël and Marc)
+
+# Vidjil -- V(D)J recombinations analysis -- [[http://www.vidjil.org]]
+# Copyright (C) 2011, 2012, 2013, 2014 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
+# [[contact@vidjil.org]]
+
+V(D)J recombinations in lymphocytes are essential for immunological
+diversity. They are also useful markers of pathologies, and in
+leukemia, are used to quantify the minimal residual disease during
+patient follow-up.
+High-throughput sequencing (NGS/HTS) now enables the deep sequencing 
+of a lymphoid population with dedicated [[http://omictools.com/rep-seq-c424-p1.html][Rep-Seq]] methods and softwares.
+
+Vidjil process high-througput sequencing data to *extract V(D)J
+junctions and gather them into clones*. Vidjil starts 
+from a set of reads and detects "windows" overlapping the actual CDR3.
+This is based on an fast and reliable seed-based heuristic and allows
+to output the most abundant clones. Vidjil can also clusterize similar
+clones, or leave this to the user after a manual review. 
+
+Vidjil also contains a *dynamic browser* for visualization and
+analysis of clones and their tracking along the time in a MRD setup or
+in a immunological study. The browser can visualize data processed by
+the algorithmic component of Vidjil or by other V(D)J analysis
+pipelines.
+
+Finally, a *server* is currently developed to link the browser and the
+algorithmic part. The goal is that the clinicians will be able to
+upload, manage and process their runs directly on the browser (with
+authentication).
+
+* Vidjil components
+
+** The algorithm
+
+- Stable releases can be downloaded from http://www.vidjil.org/
+- Development code is under [[algo/]]
+- Documentation: [[doc/algo.org]]
+
+** The browser
+
+- Access at http://www.vidjil.org/browser (demo login: vidjil, password: vidjil, then select sample/L2-LIL.data in the file menu).
+- Please contact us if you would like to test your data and have a full account on the web server
+- Development code is under [[browser/]]
+- Documentation (in progress): [[doc/browser.org]]
+
+** The server
+
+- Currently under development, code is in [[server/]]
+- Planned first release: Q1 2015
+- Documentation (in progress): [[doc/server.org]]
+
+* Code and license
+
+Vidjil is open-source, released under GNU GPLv3 license. 
+The development code is available on [[http://www.github.com/magiraud/vidjil]].
+Bug reports, issues and patches are welcome.
+
+* The Vidjil team
+
+Vidjil is developed by Marc Duez, [[http://www.lifl.fr/~giraud][Mathieu Giraud]] and [[http://www.lifl.fr/~salson][Mikaël Salson]]
+from the [[http://www.lifl.fr/bonsai][Bonsai bioinformatics team]] (LIFL, CNRS, U. Lille 1, Inria Lille).
+Vidjil is developed in collaboration with 
+the [[http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html][department of Hematology]] of CHRU Lille, 
+the [[http://www.ircl.org/plate-forme-genomique.html][Functional and Structural Genomic Platform]] (U. Lille 2, IFR-114, IRCL), 
+and the [[http://www.euroclonality.org/][EuroClonality-NGS]] working group.
+The research is supported by SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041) and by Région Nord-Pas-de-Calais (ABILES). 
+
+* Reference
+
+If you use Vidjil for your research, please cite the following reference:
+
+Mathieu Giraud, Mikaël Salson, et al.,
+“Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing”,
+BMC Genomics 2014, 15:409 
+[[http://dx.doi.org/10.1186/1471-2164-15-409]]
+
