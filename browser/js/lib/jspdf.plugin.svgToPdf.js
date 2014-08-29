@@ -217,7 +217,7 @@ var svgElementToPdf = function(element, pdf, options) {
                 }
 
                 pdf.setFontType(fontType);
-                var pdfFontSize = 9;
+                var pdfFontSize = 8;
                 if (node.hasAttribute('font-size')) {
                     pdfFontSize = parseInt(n.attr('font-size'));
                 }
@@ -229,9 +229,7 @@ var svgElementToPdf = function(element, pdf, options) {
 		
 		//var box = node.getBBox();
 		var name_length = 0;
-		//var name_length = pdf.getStringUnitWidth(text_value, fontMetrics) * pdfFontSize * kx;
-		//console.log(name_length);
-
+		var name_length = ((pdf.getStringUnitWidth(text_value, fontMetrics) * pdfFontSize)/72)*25.4;
 
                 //FIXME: use more accurate positioning!!
                 var label_offset = 0;
@@ -252,14 +250,12 @@ var svgElementToPdf = function(element, pdf, options) {
                             label_offset = 0;
                             break;
                     }
-                    x = parseInt(n.attr('x')) - label_offset;
+                    x = parseInt(n.attr('x'));
                     y = parseInt(n.attr('y'));
                 }
 
-
-
                 pdf.setFontSize(pdfFontSize).text(
-                (kx * x) + x_offset ,
+                (kx * x) + x_offset - label_offset,
                 (ky * y) + y_offset ,
                 text_value);
                 // $.each(node.attributes, function(i, a) {
