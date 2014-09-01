@@ -222,8 +222,8 @@ def save_analysis():
         error += "you don't have permission to make change on this patient, "
         
     if error == "" :
-        analysis_query = db(  (db.analysis_file.patient_id == 1)
-                            & (db.analysis_file.config_id == 1 )  )
+        analysis_query = db(  (db.analysis_file.patient_id == request.vars['patient_id'])
+                            & (db.analysis_file.config_id == request.vars['config_id'] )  )
 
         f = request.vars['fileToUpload']
         

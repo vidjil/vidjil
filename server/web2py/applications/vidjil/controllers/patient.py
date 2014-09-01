@@ -5,8 +5,6 @@ if request.env.http_origin:
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
 
-
-
 ## return patient file list
 ##
 def info():

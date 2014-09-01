@@ -76,9 +76,8 @@ def edit_form():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def upload(): 
-    import shutil, os.path, datetime
+    session.forget(response)
     error = ""
-    
     if request.vars['id'] == None :
         error += "missing id"
             
@@ -86,10 +85,9 @@ def upload():
             
         mes = "file " + request.vars['id'] + " : "
         if request.vars.file != None :
-            db.sequence_file[request.vars["id"]] = dict(data_file = request.vars.file )
+            f = request.vars.file
+            db.sequence_file[request.vars["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
             mes += "file saved, "
-            
-        patient_id = db.sequence_file[request.vars["id"]].patient_id
         
         res = {"message": mes}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))

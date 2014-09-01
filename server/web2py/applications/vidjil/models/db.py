@@ -80,7 +80,6 @@ use_janrain(auth, filename='private/janrain.key')
 #########################################################################
 
 
-
 db.define_table('patient',
                 Field('first_name','string'),
                 Field('last_name','string'),
