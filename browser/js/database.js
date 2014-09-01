@@ -193,14 +193,16 @@ Database.prototype = {
         var self = this;
         
         var url = self.db_address + "file/upload"
-        
+        //url = url.replace("https://", "http://");
         $.ajax({
             type: "POST",
+            cache: false,
             crossDomain: true,
             url: url,
             processData: false,
             contentType: false,
             data: data,
+            xhrFields: {withCredentials: false},
             beforeSend: function(){
                 self.upload[id] = 0
             },
@@ -363,7 +365,11 @@ Database.prototype = {
                 contentType: false,
                 xhrFields: {withCredentials: true},
                 success: function (result) {
-                    myConsole.flash("server : analysis saved", 1)
+                    try {
+                        var res = jQuery.parseJSON(result);
+                        if (res.message) myConsole.flash("database : " + res.message , 1)
+                    }
+                    catch(err){}
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
