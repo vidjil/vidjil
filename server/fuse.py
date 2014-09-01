@@ -65,7 +65,6 @@ class Window:
         
         
     ### 
-
     def __iadd__(self, other):
         ### Not used now
         """Add other.size to self.size in-place, without extending lists"""
@@ -77,7 +76,6 @@ class Window:
         
     def __add__(self, other):
         """Concat two windows, extending lists such as 'size'"""
-
         #data we don't need to duplicate
         myList = [ "V", "D", "J", "Vend", "Dend", "Jstart", "Dstart", "top", "window", "Nlength", "sequence", "name", "id", "status"]
         obj = Window(1)
@@ -160,7 +158,6 @@ class OtherWindows:
 
             print '  --[others]-->', w
             yield w
-
         
 class ListWindows:
     '''storage class for sequences informations 
