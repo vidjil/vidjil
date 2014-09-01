@@ -19,28 +19,17 @@
 function PDF(model, graph_id) {
     this.m = model;
     this.graph_id = graph_id;
-    this.doc = new jsPDF();
 
     this.page_width = 210
     this.page_height = 297
-
     this.col_width = 18
     this.first_col_width = 30
     this.height_row = 6
     this.height_sub_row = 4
-
     this.marge = 15
     this.y = this.marge;
     this.y_max = this.page_height - this.marge
 
-    m.focusOut()
-    this.init()
-    this.header()
-    this.graph()
-    this.info()
-    this.info_selected_clones()
-
-    this.doc.output('dataurlnewwindow');
 }
 
 PDF.prototype = {
@@ -48,12 +37,12 @@ PDF.prototype = {
     /*init list
      */
     init: function () {
-        this.list = m.getSelected()
+        this.list = this.m.getSelected()
 
         if (this.list.length == 0) {
             var flag = 5;
-            for (var i = 0; i < m.n_windows; i++) {
-                if (m.clones[i].cluster.length != 0 && flag != 0) {
+            for (var i = 0; i < this.m.n_windows; i++) {
+                if (this.m.clones[i].cluster.length != 0 && flag != 0) {
                     this.list.push(i);
                     flag--;
                 }
@@ -62,8 +51,43 @@ PDF.prototype = {
 
         this.col_width = (this.page_width - (2 * this.marge) - this.first_col_width) / this.m.time_order.length
 
+        return this;
     },
 
+    make: function () {
+        this.doc = new jsPDF();
+        this.y = this.marge;
+        this.m.focusOut()
+        this.init()
+            .header()
+            .graph()
+            .info()
+            .info_selected_clones()
+            .print()
+        
+        return this;
+    },
+    
+    makeGraph: function () {
+        this.doc = new jsPDF("l");
+        this.y = this.marge;
+        this.m.focusOut()
+        
+        var opt_graph = {"x" : 10,
+                         "y" : 5,
+                         "w" : 277,
+                         "h" : 170,
+                         "fontSize" : 10
+                        }
+        
+        this.init()
+            .graph(opt_graph)
+            .label_selected_clones(230,160)
+            .print()
+        
+        return this;
+    },
+    
     /*print Header
      */
     header: function () {
@@ -82,6 +106,14 @@ PDF.prototype = {
         this.doc.rect(this.marge, this.y, 60, 23);
 
         this.y = this.y + header_size
+        
+        return this;
+    },
+    
+    print: function () {
+        this.doc.output('dataurlnewwindow');
+        
+        return this;
     },
 
     /*check remaining space on current page
@@ -92,34 +124,45 @@ PDF.prototype = {
             this.y = this.marge
             this.doc.addPage();
         }
-    },
-
-    /* show current pdf
-     */
-    out: function () {
-        this.doc.output('dataurlnewwindow');
+        
+        return this;
     },
 
     /* print graph
      */
-    graph: function () {
+    graph: function (opt) {
+        if (typeof opt !== 'undefined'){
+            var x = opt.x;
+            var y = opt.y;
+            var w = opt.w;
+            var h = opt.h;
+            var fontSize = opt.fontSize;
+        }else{
+            var x = this.marge;
+            var y = this.y;
+            var w = 180;
+            var h = 80;
+            var fontSize = 8;
+            
+            var graph_size = 90
+            this.checkPage(graph_size)
+            this.y += graph_size
+        }
+        
         var elem = document.getElementById(this.graph_id)
             .cloneNode(true);
 
-        var graph_size = 90
-        this.checkPage(graph_size)
-
         var opt = {};
-        opt.scaleX = 180 / document.getElementById(this.graph_id)
-            .getAttribute("width");
-        opt.scaleY = 80 / document.getElementById(this.graph_id)
-            .getAttribute("height");
-        opt.x_offset = this.marge;
-        opt.y_offset = this.y;
+        opt.scaleX = w / document.getElementById(this.graph_id)
+            .offsetWidth
+        opt.scaleY = h / document.getElementById(this.graph_id)
+            .offsetHeight
+        opt.x_offset = x;
+        opt.y_offset = y;
 
         //clones style
         for (var i = 0; i < this.m.windows.length; i++) {
-            var polyline = elem.getElementById("polyline" + i)
+            var polyline = elem.querySelectorAll('[id="polyline'+i+'"]')[0]
             var color = tagColor[this.m.windows[i].tag]
 
             polyline.setAttribute("style", "stroke-width:1px");
@@ -132,13 +175,13 @@ PDF.prototype = {
 
         //selected clones style
         for (var i = 0; i < this.list.length; i++) {
-            var polyline = elem.getElementById("polyline" + this.list[i])
+            var polyline = elem.querySelectorAll('[id="polyline'+this.list[i]+'"]')[0] 
             var color = tagColor[this.m.windows[this.list[i]].tag]
 
             polyline.setAttribute("stroke", color);
             polyline.setAttribute("style", "stroke-width:6px");
 
-            elem.getElementById("polyline_container")
+            elem.querySelectorAll('[id="polyline_container"]')[0]
                 .appendChild(polyline);
         }
 
@@ -146,11 +189,16 @@ PDF.prototype = {
         var textElem = elem.getElementsByTagName("text");
 
         for (var i = 0; i < textElem.length; i++) {
-            textElem[i].setAttribute("text-anchor", "middle");
+            if (textElem[i].getAttribute("class") == "graph_time"){
+                textElem[i].setAttribute("text-anchor", "middle");
+            }else{
+                textElem[i].setAttribute("text-anchor", "end");
+            }
+            textElem[i].setAttribute("font-size", fontSize);
         }
 
         //
-        elem.getElementById("resolution1")
+        elem.querySelectorAll('[id="resolution1"]')[0]
             .firstChild.setAttribute("fill", "#eeeeee");
 
         var timebar = elem.getElementsByClassName("axis_m");
@@ -161,23 +209,23 @@ PDF.prototype = {
             hidden[i].parentNode.removeChild(hidden[0]);
         }
 
-        var visu2_back = elem.getElementById("visu2_back");
+        var visu2_back = elem.querySelectorAll('[id="visu2_back"]')[0]
         visu2_back.parentNode.removeChild(visu2_back);
 
-        var visu2_back2 = elem.getElementById("visu2_back2");
+        var visu2_back2 = elem.querySelectorAll('[id="visu2_back2"]')[0]
         visu2_back2.parentNode.removeChild(visu2_back2);
 
-        var reso5 = elem.getElementById("resolution5");
+        var reso5 = elem.querySelectorAll('[id="resolution5"]')[0]
         reso5.parentNode.removeChild(reso5);
-
+        console.log(opt)
+        console.log(elem)
         svgElementToPdf(elem, this.doc, opt)
 
         this.doc.setFillColor(255, 255, 255);
-        this.doc.rect(0, this.y + 80, 210, 140, 'F');
+        this.doc.rect(x, y+h, w, h, 'F');
         this.doc.setFillColor(0, 0, 0);
 
-        this.y += graph_size
-
+        return this;
     },
 
     info: function () {
@@ -212,6 +260,8 @@ PDF.prototype = {
         this.next_row()
 
         this.y += 10
+        
+        return this;
     },
 
     next_row: function () {
@@ -221,10 +271,14 @@ PDF.prototype = {
             [210 - 2 * (this.marge), 0]
         ], this.marge, this.y + 2)
         this.y += this.height_row
+        
+        return this;
     },
 
     next_sub_row: function () {
         this.y += this.height_sub_row
+        
+        return this;
     },
 
     row: function (name, data, format) {
@@ -248,15 +302,16 @@ PDF.prototype = {
 
             this.doc.text(x, y, ' ' + r);
         }
+        
+        return this;
     },
 
     info_clone: function (cloneID) {
-
         this.checkPage(20)
 
-        var color = tagColor[m.windows[cloneID].tag]
+        var color = tagColor[this.m.windows[cloneID].tag]
 
-        this.icon(cloneID, this.marge, this.y - 6)
+        this.icon(cloneID, this.marge, this.y - 6, 18, 8)
 
         //clone name
         this.doc.setFont('courier', 'bold');
@@ -281,6 +336,7 @@ PDF.prototype = {
 
         this.sequence(cloneID)
 
+        return this;
     },
 
     sequence: function (cloneID) {
@@ -340,15 +396,42 @@ PDF.prototype = {
         }
 
         this.y += 5;
+        
+        return this;
     },
-
-    icon: function (cloneID, x, y) {
+        
+    label_selected_clones: function (x, y) {
+        
+        var y2 = y
+        for (i = 0; i < this.list.length; i++) {
+            this.label_clone(this.list[i], x, y2)
+            y2=y2+8;
+        }
+        
+        this.doc.setDrawColor(0, 0, 0);
+        this.doc.rect(x, y, 60, this.list.length * 8, 'S');
+        this.doc.setDrawColor(255, 255, 255);
+        
+        return this;
+    },
+    
+    label_clone: function (cloneID, x, y) {
+        this.doc.setFillColor(255, 255, 255);
+        this.doc.rect(x, y, 60, 8, 'F');
+        
+        this.icon(cloneID, x, y, 18, 8) 
+        
+        this.doc.setFontSize(8);
+        this.doc.text(x+20, y+4, this.m.getName(cloneID));
+    },
+    
+    icon: function (cloneID, x, y, w, h) {
 
         var color = tagColor[m.windows[cloneID].tag]
 
         var polyline = document.getElementById("polyline" + cloneID)
             .cloneNode(true);
-        polyline.setAttribute("style", "stroke-width:40px");
+        polyline.setAttribute("style", "stroke-width:50px");
         polyline.setAttribute("stroke", color);
 
         var res = document.getElementById("resolution1")
@@ -360,10 +443,10 @@ PDF.prototype = {
         icon.appendChild(res)
 
         var opt_icon = {};
-        opt_icon.scaleX = 18 / document.getElementById(this.graph_id)
-            .getAttribute("width");
-        opt_icon.scaleY = 8 / document.getElementById(this.graph_id)
-            .getAttribute("height");
+        opt_icon.scaleX = w / document.getElementById(this.graph_id)
+            .offsetWidth
+        opt_icon.scaleY = h / document.getElementById(this.graph_id)
+            .offsetHeight
 
         opt_icon.x_offset = x
         opt_icon.y_offset = y;
@@ -371,12 +454,16 @@ PDF.prototype = {
         svgElementToPdf(icon, this.doc, opt_icon)
         this.doc.setDrawColor(150, 150, 150);
         this.doc.setDrawColor(0, 0, 0)
+        
+        return this;
     },
 
     info_selected_clones: function () {
         for (i = 0; i < this.list.length; i++) {
             this.info_clone(this.list[i])
         }
+        
+        return this;
     },
 
 }
