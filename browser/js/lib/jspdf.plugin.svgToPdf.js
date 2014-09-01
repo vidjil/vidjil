@@ -239,6 +239,7 @@ var svgElementToPdf = function(element, pdf, options) {
                 if (node.hasAttribute('text-anchor')) {
                     switch (n.attr('text-anchor')) {
                         case 'end':
+                            label_offset = name_length;
                             break;
                         case 'middle':
                             label_offset = name_length / 2;
