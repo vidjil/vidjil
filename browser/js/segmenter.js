@@ -254,7 +254,7 @@ Segment.prototype = {
         var seq_name = document.createElement('span');
         seq_name.className = "nameBox";
         seq_name.onclick = function () {
-            self.m.select(cloneID);
+            self.m.unselect(cloneID);
         }
         seq_name.appendChild(document.createTextNode(this.m.getName(cloneID)));
         seq_name.title = this.m.getName(cloneID);
@@ -277,7 +277,7 @@ Segment.prototype = {
         var seq_size = document.createElement('span')
         seq_size.className = "sizeBox";
         seq_size.onclick = function () {
-            this.m.select(cloneID);
+            this.m.unselect(cloneID);
         }
         seq_size.style.color = this.m.windows[cloneID].color;
         seq_size.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));
