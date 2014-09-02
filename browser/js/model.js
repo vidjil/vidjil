@@ -1280,7 +1280,7 @@ Model.prototype = {
     focusOut: function () {
         var tmp = this.focus;
         this.focus = -1;
-        if (tmp != -1) this.updateElem([tmp]);
+        if (tmp != -1) this.updateElemStyle([tmp]);
         $(".focus")
             .text("")
     },

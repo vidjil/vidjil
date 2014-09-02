@@ -49,7 +49,6 @@ function Graph(id, model) {
     this.text_position_x = 60;
 
     this.m.view.push(this)
-
 }
 
 Graph.prototype = {
@@ -61,6 +60,7 @@ Graph.prototype = {
         document.getElementById(this.id)
             .innerHTML = "";
         
+        this.mode = "curve";
         this.build_menu()
             
         var self = this;
@@ -300,19 +300,24 @@ Graph.prototype = {
             this.data_axis.push(d);
         }
 
-        var height = 1;
-
         //ordonnée
-        while ((height * this.m.precision) > 0.5) {
+        if (this.mode == "stack"){
+            this.data_axis.push({"type" : "axis_h", "text" : "0%" ,"orientation" : "hori", "pos" : 1});
+            this.data_axis.push({"type" : "axis_h", "text" : "50%" ,"orientation" : "hori", "pos" : 0.5});
+            this.data_axis.push({"type" : "axis_h", "text" : "100%" ,"orientation" : "hori", "pos" : 0});
+        }else{
+            var height = 1;
+            while ((height * this.m.precision) > 0.5) {
 
-            var d = {};
-            d.type = "axis_h";
-            d.text = this.m.formatSize(height, false)
-            d.orientation = "hori";
-            d.pos = 1 - this.scale_x(height * this.m.precision);
-            this.data_axis.push(d);
+                var d = {};
+                d.type = "axis_h";
+                d.text = this.m.formatSize(height, false)
+                d.orientation = "hori";
+                d.pos = 1 - this.scale_x(height * this.m.precision);
+                this.data_axis.push(d);
 
-            height = height / 10;
+                height = height / 10;
+            }
         }
 
         //current time_point
@@ -387,47 +392,65 @@ Graph.prototype = {
             this.resolution5[i] = (5 / this.m.reads_segmented[i])
         }
         
-        this.data_res[0].path = this.constructPathR(this.resolution1);
-        this.data_res[1].path = this.constructPathR(this.resolution5);
+        if(this.mode=="stack"){
+            this.updateStack();
+        }else{
+            this.data_res[0].path = this.constructPathR(this.resolution1);
+            this.data_res[1].path = this.constructPathR(this.resolution5);
 
-        for (var i = 0; i < this.m.windows.length; i++) {
-            for (var j = 0; j < this.m.clones[i].cluster.length; j++) {
-                this.data_graph[this.m.clones[i].cluster[j]].path = this.constructPath(i, false);
+            for (var i = 0; i < this.m.windows.length; i++) {
+                for (var j = 0; j < this.m.clones[i].cluster.length; j++) {
+                    this.data_graph[this.m.clones[i].cluster[j]].path = this.constructPath(i, false);
+                }
             }
-        }
-        for (var i = 0; i < this.m.windows.length; i++) {
-            var cloneID = i
-            for (var j = 0; j < this.m.clones[cloneID].cluster.length; j++) {
-                var seqID = this.m.clones[cloneID].cluster[j]
-                if (this.m.clones[cloneID].split) {
-                    this.data_graph[seqID].path = this.constructPath(seqID, true);
-                } else {
-                    this.data_graph[seqID].path = this.constructPath(cloneID, false);
+            for (var i = 0; i < this.m.windows.length; i++) {
+                var cloneID = i
+                for (var j = 0; j < this.m.clones[cloneID].cluster.length; j++) {
+                    var seqID = this.m.clones[cloneID].cluster[j]
+                    if (this.m.clones[cloneID].split) {
+                        this.data_graph[seqID].path = this.constructPath(seqID, true);
+                    } else {
+                        this.data_graph[seqID].path = this.constructPath(cloneID, false);
+                    }
                 }
             }
         }
+        
         this.draw();
         elapsedTime = new Date()
             .getTime() - startTime;
         myConsole.log("update Graph : " + elapsedTime + "ms", 0);
+    },
+    
+    updateStack: function () {
+        console.log("bam")
+        var stack = new Stack(this.m)
+        stack.compute();
+        for (var i = 0; i < this.m.windows.length; i++) {
+            this.data_graph[i].path = this.constructStack(i, stack);
+        }
     },
 
     /*update la liste de clones passé en parametre
      *
      * */
     updateElem: function (list) {
-        for (var i = 0; i < list.length; i++) {
-            var cloneID = list[i]
-            for (var j = 0; j < this.m.clones[cloneID].cluster.length; j++) {
-                var seqID = this.m.clones[cloneID].cluster[j]
-                if (this.m.clones[cloneID].split) {
-                    this.data_graph[seqID].path = this.constructPath(seqID, true);
-                } else {
-                    this.data_graph[seqID].path = this.constructPath(cloneID, false);
+        if (this.mode == "stack"){
+            this.updateStack();
+        }else{
+            for (var i = 0; i < list.length; i++) {
+                var cloneID = list[i]
+                for (var j = 0; j < this.m.clones[cloneID].cluster.length; j++) {
+                    var seqID = this.m.clones[cloneID].cluster[j]
+                    if (this.m.clones[cloneID].split) {
+                        this.data_graph[seqID].path = this.constructPath(seqID, true);
+                    } else {
+                        this.data_graph[seqID].path = this.constructPath(cloneID, false);
+                    }
                 }
             }
+            this.updateElemStyle(list)
         }
-        this.updateElemStyle(list)
     },
 
     updateElemStyle: function (list) {
@@ -445,38 +468,73 @@ Graph.prototype = {
     drawLines: function (speed) {
         var self = this;
 
-        //courbes
-        this.g_graph
-            .style("fill", "none")
-            .style("stroke", function (d) {
-                return self.m.windows[d.id].color;
-            })
-            .transition()
-            .duration(speed)
-            .attr("d", function (p) {
-                if (p.path.length != 0){
-                    var x = (p.path[0][0] * self.resizeW + self.marge4)
-                    var y = (p.path[0][1] * self.resizeH + self.marge5)
-                    var che = ' M ' + x + ',' + y;
-                    for (var i = 1; i < p.path.length; i++) {
-                        x = (p.path[i][0] * self.resizeW + self.marge4)
-                        y = (p.path[i][1] * self.resizeH + self.marge5)
-                        che += ' L ' + x + ',' + y;
+        if (this.mode=="stack"){
+            //volumes
+            this.g_graph
+                .style("fill", function (d) {
+                    return self.m.windows[d.id].color;
+                })
+                .style("stroke", "none")
+                .transition()
+                .duration(speed)
+                .attr("d", function (p) {
+                    if (p.path.length != 0){
+                        var x = (p.path[0][0] * self.resizeW + self.marge4)
+                        var y = (p.path[0][1] * self.resizeH + self.marge5)
+                        var che = ' M ' + x + ',' + y;
+                        for (var i = 1; i < p.path.length; i++) {
+                            x = (p.path[i][0] * self.resizeW + self.marge4)
+                            y = (p.path[i][1] * self.resizeH + self.marge5)
+                            che += ' L ' + x + ',' + y;
+                        }
+                        return che + ' Z';
+                    }else{
+                        return ' M 0,' + self.resizeH;
                     }
-                    return che;
-                }else{
-                    return ' M 0,' + self.resizeH;
-                }
-            })
-            .attr("class", function (p) {
-                if (!self.m.windows[p.id].active) return "graph_inactive";
-                if (self.m.windows[p.id].select) return "graph_select";
-                if (p.id == self.m.focus) return "graph_focus";
-                return "graph_line";
-            })
-            .attr("id", function (d) {
-                return "poly" + d.name;
-            })
+                })
+                .attr("class", function (p) {
+                    if (!self.m.windows[p.id].active) return "graph_inactive";
+                    if (self.m.windows[p.id].select) return "graph_select";
+                    if (p.id == self.m.focus) return "graph_focus";
+                    return "graph_line";
+                })
+                .attr("id", function (d) {
+                    return "poly" + d.name;
+                })
+        }else{
+            //courbes
+            this.g_graph
+                .style("fill", "none")
+                .style("stroke", function (d) {
+                    return self.m.windows[d.id].color;
+                })
+                .transition()
+                .duration(speed)
+                .attr("d", function (p) {
+                    if (p.path.length != 0){
+                        var x = (p.path[0][0] * self.resizeW + self.marge4)
+                        var y = (p.path[0][1] * self.resizeH + self.marge5)
+                        var che = ' M ' + x + ',' + y;
+                        for (var i = 1; i < p.path.length; i++) {
+                            x = (p.path[i][0] * self.resizeW + self.marge4)
+                            y = (p.path[i][1] * self.resizeH + self.marge5)
+                            che += ' L ' + x + ',' + y;
+                        }
+                        return che;
+                    }else{
+                        return ' M 0,' + self.resizeH;
+                    }
+                })
+                .attr("class", function (p) {
+                    if (!self.m.windows[p.id].active) return "graph_inactive";
+                    if (self.m.windows[p.id].select) return "graph_select";
+                    if (p.id == self.m.focus) return "graph_focus";
+                    return "graph_line";
+                })
+                .attr("id", function (d) {
+                    return "poly" + d.name;
+                })
+        }
     },
 
     /* 
@@ -736,6 +794,7 @@ Graph.prototype = {
                 p.push([(x + (Math.random() * 0.05) + 0.075), (1 - y)]);
             }
         }
+        
 
         //plusieurs points de suivi
         else {
@@ -792,5 +851,110 @@ Graph.prototype = {
         }
         return p;
     }, //fin constructPath
+    
+    constructStack: function (id, stack) {
+        var p = [];
+        
+        if (typeof stack.min[id] == 'undefined'){
+            return []
+        }
+        
+        for (var i=0; i<this.graph_col.length; i++){
+            var x = this.graph_col[i];
+            var y = stack.min[id][this.m.time_order[i]]
+            p.push([x,y])
+        }
+        
+        for (var i=this.graph_col.length-1; i>=0; i--){
+            var x = this.graph_col[i];
+            var y = stack.max[id][this.m.time_order[i]]
+            p.push([x,y])
+        }
+        
+        return p;
+    }
 
 } //fin Graph
+
+
+
+function Stack(model) {
+    this.m = model;
+}
+
+Stack.prototype = {
+    
+    //compute sum of all clone +others (dans un monde parfait ca devrait faire 1 mais avec la normalisation...)
+    init: function () {
+        this.total_size = []; 
+        for (j=0; j<this.m.time.length; j++){
+            this.total_size[j]=0
+            for (i=0; i<this.m.windows.length; i++){
+                if (this.m.windows[i].active) this.total_size[j] += this.m.getSize(i,j); //active clones
+            }
+            
+            this.total_size[j] += this.m.getSize(this.m.windows.length-1,j);//other clones
+        }
+    },
+    
+    //compute bot and top curve for each active clones
+    compute: function () {
+        this.sum = []; 
+        this.min = [];
+        this.max = [];
+        for (j=0; j<this.m.time.length; j++){
+            this.sum[j]=0
+        }
+        
+        for (i=0; i<this.m.windows.length; i++){
+            this.min[i] = []
+            this.max[i] = []
+            //active clones
+            if (this.m.windows[i].active) {
+                for (j=0; j<this.m.time.length; j++){
+                    this.min[i][j] = this.sum[j]
+                    this.sum[j] += this.m.getSize(i,j)
+                    this.max[i][j] = this.sum[j]
+                }
+            }else{
+                for (j=0; j<this.m.time.length; j++){
+                    this.min[i][j] = this.sum[j]
+                    this.max[i][j] = this.sum[j]
+                }
+            }
+        }
+        
+        //other
+        for (j=0; j<this.m.time.length; j++){
+            this.min[this.m.windows.length-1][j] = this.sum[j]
+            this.sum[this.m.windows.length-1] += this.m.getSize(this.m.windows.length-1,j)
+            this.max[this.m.windows.length-1][j] = this.sum[j]
+        }
+        
+    },
+
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
