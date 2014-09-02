@@ -165,8 +165,13 @@ PDF.prototype = {
             var polyline = elem.querySelectorAll('[id="polyline'+i+'"]')[0]
             var color = tagColor[this.m.windows[i].tag]
 
-            polyline.setAttribute("style", "stroke-width:1px");
-            polyline.setAttribute("stroke", color);
+            if (polyline.getAttribute("d").indexOf("Z") != -1){
+                polyline.setAttribute("style", "stroke-width:0px");
+                polyline.setAttribute("fill", color);
+            }else{
+                polyline.setAttribute("style", "stroke-width:1px");
+                polyline.setAttribute("stroke", color);
+            }
 
             if (m.windows[i].window == "other" || !m.windows[i].active) {
                 polyline.parentNode.removeChild(polyline);
@@ -431,8 +436,15 @@ PDF.prototype = {
 
         var polyline = document.getElementById("polyline" + cloneID)
             .cloneNode(true);
-        polyline.setAttribute("style", "stroke-width:50px");
-        polyline.setAttribute("stroke", color);
+        
+            
+        if (polyline.getAttribute("d").indexOf("Z") != -1){
+            polyline.setAttribute("style", "stroke-width:0px");
+            polyline.setAttribute("fill", color);
+        }else{
+            polyline.setAttribute("style", "stroke-width:50px");
+            polyline.setAttribute("stroke", color);
+        }
 
         var res = document.getElementById("resolution1")
             .cloneNode(true);
