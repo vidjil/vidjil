@@ -56,7 +56,6 @@ Germline.prototype = {
                 var gene=this.m.windows[i][type][0];
                 if (this.m.system != "multi" || this.m.windows[i].system == system){
                     if ( typeof this.allele[gene] !="undefined"){
-
                         g[gene] = this.allele[gene]
                     }else{
                         g[gene] = "unknow sequence"
@@ -76,39 +75,42 @@ Germline.prototype = {
             list1[tmp1[i]] = this.allele[tmp1[i]];
         }
         this.allele = list1;
+        console.log(system +"  "+ type)
         
         
         //color
-        var key = Object.keys(this.allele);
-        var n = 0,
-            n2 = 0;
-        var elem2 = key[0].split('*')[0];
-        for (var i = 0; i < key.length; i++) {
-            var tmp = this.allele[key[i]];
-            this.allele[key[i]] = {};
-            this.allele[key[i]].seq = tmp;
-            this.allele[key[i]].color = colorGenerator((30 + (i / key.length) * 290),
-                color_s, color_v);
-
-            var elem = key[i].split('*')[0];
-            if (elem != elem2) {
-                this.gene[elem2] = {};
-                this.gene[elem2].n = n2;
-                this.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
-                    color_s, color_v);
-                this.gene[elem2].rank = n;
-                n++;
+        var key = Object.keys(list1);
+        if (key.length != 0){
+            var n = 0,
                 n2 = 0;
+            var elem2 = key[0].split('*')[0];
+            for (var i = 0; i < key.length; i++) {
+                var tmp = this.allele[key[i]];
+                this.allele[key[i]] = {};
+                this.allele[key[i]].seq = tmp;
+                this.allele[key[i]].color = colorGenerator((30 + (i / key.length) * 290),
+                    color_s, color_v);
+
+                var elem = key[i].split('*')[0];
+                if (elem != elem2) {
+                    this.gene[elem2] = {};
+                    this.gene[elem2].n = n2;
+                    this.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
+                        color_s, color_v);
+                    this.gene[elem2].rank = n;
+                    n++;
+                    n2 = 0;
+                }
+                elem2 = elem;
+                this.allele[key[i]].gene = n
+                this.allele[key[i]].rank = n2
+                n2++;
             }
-            elem2 = elem;
-            this.allele[key[i]].gene = n
-            this.allele[key[i]].rank = n2
-            n2++;
+            this.gene[elem2] = {};
+            this.gene[elem2].n = n2;
+            this.gene[elem2].rank = n
+            this.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
+                color_s, color_v);
         }
-        this.gene[elem2] = {};
-        this.gene[elem2].n = n2;
-        this.gene[elem2].rank = n
-        this.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
-            color_s, color_v);
     }
 }
