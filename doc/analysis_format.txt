@@ -1,0 +1,82 @@
+Analysis format
+///////////////
+
+descrption of the .analysis file format used for vidjil browser
+
+
+Analysis file example
+/////////////////////
+
+    {
+        "custom": [
+            {
+                "window": "ATGTGAGTAT",
+                "sequence": "ATGACTCTGGAGTCTATTACTGTGCCACCTGGGATGTGAGTATTATAAGAAAC",
+                "tag": "0"
+                "name": "plop",
+                "expected": "0.1"
+            }
+        ],
+
+
+        "cluster": [
+            {
+                "l": "ACTGTGCCACCTGGGATGTGAGTATTATAAGAAACTCTTT",
+                "f": "TGCCACCTGGGATGTGAGTATTATAAAGAAACTCTTTGGC"
+            }
+        ],
+
+
+        "time": [
+            "diag",
+            "follow up 1"
+        ],
+
+        "time_order": [
+            0,
+            1
+        ],
+
+        "tag": {
+            "0" : "custom tag 0",
+            "5" : "spike"
+        }
+    }
+
+general layout
+//////////////
+
+    "custom" : [] ,     clone's specific customizations (see custom field)
+    "cluster": [],      manual cluster  (see cluster field)
+    "time" : [],        custom time name (list length must match the number of time point)
+    "time_order": [],   custom time order (increasing order by default), 
+    "tag": []           custom tag name (see tag field)
+
+
+custom field
+////////////
+
+a set of parameters who describe a clone (minimum fields required "window" and/or "sequence")
+
+
+    "window": "",       clone's window ( a window is a short specific nt sequence who cover the CDR3 junction / for clntab window == clone sequence)
+    "sequence": "",     clone's sequence
+    "tag": "",          tag id from 0 to 7
+    "name": "",         custom name, will replace the clone default name
+    "expected": ""      expected abundance of this clone (between 0 and 1), this will create a normalization option in the settings browser menu
+
+cluster field
+/////////////
+
+clone to be merged (in a near future it will be possible to put a list of windows instead of pair of windows)
+
+    "l": "",            first clone's window (will be used as a representative for the cluster)
+    "f": ""             second clone's window
+
+
+tag field
+/////////
+
+contain pairs of  key/value 
+
+    "key" : "value"     "key" is the tag id from 0 to 7 and "value" is the custom tag name attributed
