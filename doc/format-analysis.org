@@ -1,11 +1,12 @@
 #+TITLE: .analysis format
+#+AUTHOR: The Vidjil team
 
-The .analysis is a [[http://en.wikipedia.org/wiki/JSON.json][.json]] format describing customizations done by the user
+The .analysis is a [[http://en.wikipedia.org/wiki/JSON][.json]] format describing customizations done by the user
 (or by some automatic pre-processing) on the Vidjil browser. The browser
 can load or save such files (and possibly from/to the server).
 
-It is intended to be very small (some kilobytes), compared to the
-.data file that represent the actual data on clones (and that can
+It is intended to be very small (a few kilobytes), compared to the
+.data file that represents the actual data on clones (and that can
 reach megabytes).
 
 All settings in the .analysis file override the settings that could be
@@ -69,8 +70,8 @@ present in the .data file.
 
 * Custom list: Describing clone properties
 
-Each element in the 'custom' list describe properties of a clone.
-The minimum requiered fields are "window" and/or "sequence".
+Each element in the 'custom' list describes properties of a clone.
+The minimum required fields are "window" and/or "sequence".
 
 #+BEGIN_SRC js
   {
@@ -80,7 +81,9 @@ The minimum requiered fields are "window" and/or "sequence".
     "sequence": "",  // clone nt sequence
     "tag": "",       // tag id from 0 to 7 (see below)
     "name": "",      // custom name, will replace the clone default name
-    "expected": ""   // expected abundance of this clone (between 0 and 1), this will create a normalization option in the settings browser menu
+    "expected": ""   // expected abundance of this clone (between 0 and 1)
+                     // this will create a normalization option in the 
+                     // settings browser menu
  }
 #+END_SRC
 
