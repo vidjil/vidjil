@@ -1,7 +1,14 @@
 #+TITLE: .analysis format
 
+The .analysis is a [[http://en.wikipedia.org/wiki/JSON.json][.json]] format describing customizations done by the user
+(or by some automatic pre-processing). 
 
-descrption of the .analysis file format used for vidjil browser
+It is intended to be very small (some kilobytes), compared to the
+.data file that represent the actual data on clones (and that can
+reach megabytes).
+
+All settings in the .analysis file override the settings that could be
+present in the .data file.
 
 
 * Analysis file example
@@ -16,6 +23,7 @@ descrption of the .analysis file format used for vidjil browser
                 "name": "plop",
                 "expected": "0.1"
             }
+          // TODO: mettre une deuxième window, et des noms plus réalistes
         ],
 
 
@@ -38,46 +46,64 @@ descrption of the .analysis file format used for vidjil browser
         ],
 
         "tag": {
-            "0" : "custom tag 0",
-            "5" : "spike"
+            "0" : "main clone",
+            "3" : "spike",
+            "5" : "custom tag"
         }
     }
 #+END_SRC
 
-* general layout
+
+* General layout
 
 #+BEGIN_SRC js
-    "custom" : [] ,   // clone's specific customizations (see custom field)
-    "cluster": [],    // manual cluster  (see cluster field)
-    "time" : [],      // custom time name (list length must match the number of time point)
-    "time_order": [], // custom time order (increasing order by default),
+    "custom" : [] ,   // customized properties of clone (see below, custom field)
+    "cluster": [],    // manual clustering  (see cluster field)
     "tag": []         // custom tag name (see tag field)
+
+    "time" : [],      // custom sample names (list length must match the number of samples)
+    "time_order": [], // custom sample order (increasing order by default),
 #+END_SRC
 
-* custom field
 
-a set of parameters who describe a clone (minimum fields required "window" and/or "sequence")
+* Custom list: Describing clone properties
+
+Each element in the 'custom' list describe properties of a clone.
+The minimum requiered fields are "window" and/or "sequence".
 
 #+BEGIN_SRC js
-    "window": "",    // clone's window ( a window is a short specific nt sequence who cover the CDR3 junction / for clntab window == clone sequence)
-    "sequence": "",  // clone's sequence
-    "tag": "",       // tag id from 0 to 7
+  {
+    "window": "",    // clone identifier
+                     //          Vidjil/algo output -> the 'window'  
+                     //          Brno .clntab       -> clone sequence
+    "sequence": "",  // clone nt sequence
+    "tag": "",       // tag id from 0 to 7 (see below)
     "name": "",      // custom name, will replace the clone default name
     "expected": ""   // expected abundance of this clone (between 0 and 1), this will create a normalization option in the settings browser menu
+ }
 #+END_SRC
 
-* cluster field
 
-clone to be merged (in a near future it will be possible to put a list of windows instead of pair of windows)
+* Cluster list: merging clones
+
+Each element in the 'cluster' list says that two clones should be merged.
+In the browser, they will be 'merged'. It will be still possible to see them or to unmerge them.
 
 #+BEGIN_SRC js
-    "l": "",         // first clone's window (will be used as a representative for the cluster)
-    "f": ""          // second clone's window
+  {
+    "l": "",         // identifier of the first clone (will be used as a representative for the cluster)
+    "f": ""          // identifier of the second clone
+  }
 #+END_SRC
 
-* tag field
+Merging more than two clones has to be done in several 'cluster' elements.
+In a near future, it will be possible to put a list of windows instead of pair of windows.
 
-contain pairs of  key/value 
+
+* Tag list
+
+The 'tag' list describe the tag names.
+The default tag names are defined in [[../browser/js/vidjil-style.js]].
 
 #+BEGIN_SRC js
     "key" : "value"  // "key" is the tag id from 0 to 7 and "value" is the custom tag name attributed
