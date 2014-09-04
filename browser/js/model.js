@@ -1442,6 +1442,7 @@ Model.prototype = {
 
         this.clones[leader].cluster = new_cluster;
         this.unselectAll()
+        this.updateElem(list)
         this.select(leader)
     },
 

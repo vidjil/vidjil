@@ -428,6 +428,7 @@ PDF.prototype = {
         
         this.doc.setFontSize(8);
         this.doc.text(x+20, y+4, this.m.getName(cloneID));
+        
     },
     
     icon: function (cloneID, x, y, w, h) {
@@ -468,6 +469,13 @@ PDF.prototype = {
         this.doc.setDrawColor(0, 0, 0)
         
         return this;
+    },
+    
+    text_length: function (text, size, font, type) {
+        var fontMetrics = this.doc.internal.getFont(font, type)
+        .metadata.Unicode;
+
+        return ((this.doc.getStringUnitWidth(text, fontMetrics) * size)/72)*25.4;  
     },
 
     info_selected_clones: function () {
