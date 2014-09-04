@@ -1,7 +1,8 @@
 #+TITLE: .analysis format
 
 The .analysis is a [[http://en.wikipedia.org/wiki/JSON.json][.json]] format describing customizations done by the user
-(or by some automatic pre-processing). 
+(or by some automatic pre-processing) on the Vidjil browser. The browser
+can load or save such files (and possibly from/to the server).
 
 It is intended to be very small (some kilobytes), compared to the
 .data file that represent the actual data on clones (and that can
