@@ -277,6 +277,7 @@ Graph.prototype = {
             var time_name = "fu" + (i + 1);
             if (typeof this.m.time != "undefined" && typeof this.m.time[i] != "undefined") {
                 time_name = this.m.getStrTime(i);
+                time_name = time_name.split(".")[0]
             }
 
             d.type = "axis_v";
