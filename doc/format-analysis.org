@@ -128,8 +128,8 @@ The first clone of each line is used as a representative for the cluster.
 
 * 'Data' list
 
-Each element in the 'data' list is list of values (of size samples.number)
-showing additional data, as for example qPCR levels or spike information.
+Each element in the 'data' list is a list of values (of size samples.number)
+showing additional data for each sample, as for example qPCR levels or spike information.
 
 In the browser, it will be possible to display these data and to normalize
 against them (not implemented now).
