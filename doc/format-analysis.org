@@ -23,6 +23,7 @@ present in the .data file.
 
         "samples": {
              "number": 2, 
+             "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"],
              "names": ["diag", "fu1"],
              "order": [0, 1]
         },
