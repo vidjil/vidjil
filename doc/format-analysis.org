@@ -57,9 +57,12 @@ present in the .data file.
         },
 
         "tags": {
-            "0" : "main clone",
-            "3" : "spike",
-            "5" : "custom tag"
+            "names": {
+                "0" : "main clone",
+                "3" : "spike",
+                "5" : "custom tag"
+            },
+            "hide": [4, 5]
         }
     }
 #+END_SRC
@@ -136,7 +139,7 @@ against them (not implemented now).
 
 * 'Tags' list
 
-The 'tags' list describe the custom tag names.
+The 'tags' list describe the custom tag names as well as tags that should be hidden by default.
 The default tag names are defined in [[../browser/js/vidjil-style.js]].
 
 #+BEGIN_SRC js
