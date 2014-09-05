@@ -51,6 +51,10 @@ present in the .data file.
             }
         ],
 
+        "data": {
+             "qPCR": [0.83, 0.024],
+        },
+
         "tags": {
             "0" : "main clone",
             "3" : "spike",
@@ -109,6 +113,14 @@ Each element in the 'clusters' list describe a list of clones that are 'merged'.
 In the browser, it will be still possible to see them or to unmerge them.
 The first clone of each line is used as a representative for the cluster.
 
+
+* 'Data' list
+
+Each element in the 'data' list is list of values (of size samples.number)
+showing additional data, as for example qPCR levels or spike information.
+
+In the browser, it will be possible to display these data and to normalize
+against them (not implemented now).
 
 * 'Tags' list
 
