@@ -43,6 +43,7 @@ Vidjil has been successfully tested on the following platforms :
 
 * Installation
 
+#+BEGIN_SRC sh
 make data
    # get some IGH rearrangements from a single individual, as described in:
    # Boyd, S. D., and al. Individual variation in the germline Ig gene
@@ -61,32 +62,33 @@ make                     # compile Vijil
 make test                # run self-tests
 
 ./vidjil -h              # display help/usage
+#+END_SRC
 
 * Optional dependencies
 
-clustalw (to compute alignments between windows from a same clone, by setting 
-          very_detailed_cluster_analysis in vidjil.cpp)
-neato (to display graph of neighbors for the automatic clusterisation)
+- clustalw :: to compute alignments between windows from a same clone, by setting 
+          =very_detailed_cluster_analysis= in vidjil.cpp
+- neato :: to display graph of neighbors for the automatic clusterisation
 
 * Vidjil parameters
 
-Launching vidjil with -h option provides the list of parameters that can be
+Launching vidjil with =-h= option provides the list of parameters that can be
 used.
 
 * List of windows
 
 Vidjil allows to specify a list of windows that must be followed
 (even if those windows are 'rare', below the -r/-R/-% thresholds).
-The parameter -l is made for providing such a list in a file following
+The parameter =-l= is made for providing such a list in a file following
 the following format: window label (separed by one space)
 
 The first column of the file is the window to be followed
 while the remaining columns consist of the window's label.
 In Vidjil output, the labels are output alongside their windows.
 
-* Manual clustering
+** Manual clustering
 
-The -e option allows to specify a file for manually clustering two windows
+The =-e= option allows to specify a file for manually clustering two windows
 considered as similar. Such a file may be automatically produced by vidjil
 (out/edges), depending on the option provided. Only the two first columns 
 (separed by one space) are important to vidjil, they only consist of the 
@@ -96,9 +98,9 @@ two windows that must be clustered.
 * Examples of use
 
 All the following examples are on a IGH VDJ recombinations : they thus
-require the "-G germline/IGH" and the "-d" options.
+require the =-G germline/IGH= and the =-d= options.
 
-
+#+BEGIN_SRC sh
 ./vidjil -G germline/IGH -d data/Stanford_S22.fasta
    # Extract (with an ultra-fast heuristic) all windows
    # Results are in out/segmented.vdj.fa, which is a FASTA file 
@@ -106,16 +108,20 @@ require the "-G germline/IGH" and the "-d" options.
    # ('.vdj' format, see warning below)
    # Summary of windows is also available in out/vidjil.data
    # ('.data' format, see below)
+#+END_SRC
 
+#+BEGIN_EXAMPLE
 >8--window--1 
 CACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCCA
 >5--window--2 
 CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 (...)
+#+END_EXAMPLE
 
-   Windows of size 60 (modifiable by -w) have been extracted.
+   Windows of size 60 (modifiable by =-w=) have been extracted.
    The first window has 8 occurrences, the second window has 5 occurrences.
 
+#+BEGIN_SRC sh
 ./vidjil -c clones -G germline/IGH -x -r 1 -R 1 -d ./data/clones_simul.fa
    # Extracts the windows (-r 1, with at least 1 read each), 
    # then gather them into clones (-R 1, with at least 1 read each:
@@ -129,13 +135,19 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
    #  - in out/vidjil.data (for the browser)
    # Additional files are in out/segmented.vdj.fa, out/seq/windows.fa-* and out/seq/clone.fa-*
    # out/segmented.vdj.fa list segmented reads using the .vdj format (see below)
+#+END_SRC
 
+#+BEGIN_SRC sh
 ./vidjil -c clones -G germline/IGH -x -r 1 -R 5 -n 5 -d ./data/clones_simul.fa
    # Window extraction + clone gathering,
    # with automatic clusterisation, distance five (-n 5)
+#+END_SRC
 
+#+BEGIN_SRC sh
 ./vidjil -c segment -G germline/IGH -d data/segment_S22.fa
-   # Segment the reads onto VDJ germline (see warning below)
+   # Segment the reads onto VDJ germline 
+   # (this is slow and should only be used for testing)
+#+END_SRC
 
 
 * Segmentation and .vdj format
@@ -143,7 +155,7 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 Vidjil output includes segmentation of V(D)J recombinations. This happens
 in the following situations:
 
-- in a first pass, in 'segmented.vdj.fa' file.
+- in a first pass, in =segmented.vdj.fa= file.
 
       The goal of this ultra-fast segmentation, based on a seed
       heuristics, is only to locate the w-window overlapping the
@@ -152,8 +164,8 @@ in the following situations:
       actual center.
 
 - in a second pass, on the standard output
-    - at the end of the clones detection (-c clones, also in in 'clones.vdj.fa')
-    - or directly when explicitely requiring segmentation (-c segment)
+    - at the end of the clones detection (=-c clones=, also in in =clones.vdj.fa=)
+    - or directly when explicitly requiring segmentation (=-c segment=)
 
       This segmentation obtained by full comparison (dynamic
       programming) with all germline sequences. Such segmentation are
@@ -166,6 +178,7 @@ Segmentations of V(D)J recombinations are displayed using a dedicated
 .vdj format. This format is compatible with FASTA format. A line starting
 with a > is of the following form:
 
+#+BEGIN_EXAMPLE
 >name + VDJ  startV endV   startD endD   startJ  endJ   Vgene   delV/N1/delD5'   Dgene   delD3'/N2/delJ   Jgene   comments
 
         name          sequence name
@@ -195,6 +208,8 @@ with a > is of the following form:
         comments      optional comments. In Vidjil, the following comments are now used:
                       - "seed" when this comes for the first pass (segmented.vdj.fa). See the warning above.
                       - "!ov x" when there is an overlap of x bases between last V seed and first J seed
+
+#+END_EXAMPLE
 
 Following such a line, the nucleotide sequence may be given, giving in
 this case a valid FASTA file.
