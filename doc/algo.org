@@ -231,13 +231,8 @@ applicable being removed:
 
 A summary of extracted windows is also available in a JSON format,
 including, for each windows, the number of reads sharing this window.
-This file is currently used for development purposes, its format may
-change in future releases of Vidjil.
 
 This file is used by the dynamic browser for visualization
 and analysis of clones and their tracking along different samples,
 (for example time points in a MRD setup or in a immunological study).
-This application is currently in developpement and will be released in
-Q1 2015. However, code source can be already accessed on
-http://git.vidjil.org/.  Please contact us (contact@vidjil.org) if
-you would like to have an access on the web server.
+Please see the file [[file:browser.org][browser]].org for more information on the browser.
