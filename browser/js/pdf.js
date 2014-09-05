@@ -68,7 +68,7 @@ PDF.prototype = {
         return this;
     },
     
-    makeGraph: function () {
+    makeGraph: function (text) {
         this.doc = new jsPDF("l");
         this.y = this.marge;
         this.m.focusOut()
@@ -82,8 +82,11 @@ PDF.prototype = {
         
         this.init()
             .graph(opt_graph)
-            .label_selected_clones(230,160)
-            .print()
+            .label_selected_clones(200,170)
+            
+        this.doc.setFontSize(16);
+        this.doc.text(this.marge + 10, 190, text);
+        this.print()
         
         return this;
     },
@@ -414,7 +417,7 @@ PDF.prototype = {
         }
         
         this.doc.setDrawColor(0, 0, 0);
-        this.doc.rect(x, y, 60, this.list.length * 8, 'S');
+        //this.doc.rect(x, y, 60, this.list.length * 8, 'S');
         this.doc.setDrawColor(255, 255, 255);
         
         return this;
@@ -422,7 +425,7 @@ PDF.prototype = {
     
     label_clone: function (cloneID, x, y) {
         this.doc.setFillColor(255, 255, 255);
-        this.doc.rect(x, y, 60, 8, 'F');
+        this.doc.rect(x, y, 90, 8, 'F');
         
         this.icon(cloneID, x, y, 18, 8) 
         

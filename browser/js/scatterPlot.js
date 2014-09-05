@@ -808,6 +808,8 @@ ScatterPlot.prototype = {
       
       this.resizeCoef = Math.sqrt(this.resizeW * this.resizeH);
       if (this.resizeCoef < 0.1 || (this.resizeW * this.resizeH) < 0) this.resizeCoef = 0.1;
+      
+      return this;
   },
   
   buildSystemGrid: function () {
