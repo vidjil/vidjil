@@ -1,0 +1,5 @@
+language: cpp
+compiler: gcc
+
+before_script: make data ; make germline
+script:  make && make test
