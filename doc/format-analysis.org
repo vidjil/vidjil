@@ -78,7 +78,13 @@ present in the .data file.
 #+BEGIN_SRC js
   {
     "number": 2,      // number of samples
+
+    "original_names": []  // original sample names (with samples.number elements),
+                      // must match the names in the .data file
+
     "names": [],      // custom sample names (with samples.number elements)
+                      // These names are editable and will be used on the graphs
+
     "order": [],      // custom sample order (lexicographic order by default)
   }
 #+END_SRC
