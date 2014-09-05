@@ -773,7 +773,7 @@ def main():
     
     print
     jlist_fused.build_stat()
-    jlist_fused.cut(args.top, len(l))
+    jlist_fused.cut(args.top, len(jlist_fused.d["point"]))
     print "\t", jlist_fused 
     print
 
