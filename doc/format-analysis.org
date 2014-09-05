@@ -17,7 +17,13 @@ present in the .data file.
 
 #+BEGIN_SRC js
     {
-        "custom": [
+        "samples": {
+             "number": 2, 
+             "names": ["diag", "fu1"],
+             "order": [0, 1]
+        },
+
+        "clones": [
             {
                 "window": "ATGTGAGTAT",
                 "sequence": "ATGACTCTGGAGTCTATTACTGTGCCACCTGGGATGTGAGTATTATAAGAAAC",
@@ -28,26 +34,14 @@ present in the .data file.
           // TODO: mettre une deuxième window, et des noms plus réalistes
         ],
 
-
-        "cluster": [
+        "clusters": [
             {
                 "l": "ACTGTGCCACCTGGGATGTGAGTATTATAAGAAACTCTTT",
                 "f": "TGCCACCTGGGATGTGAGTATTATAAAGAAACTCTTTGGC"
             }
         ],
 
-
-        "time": [
-            "diag",
-            "follow up 1"
-        ],
-
-        "time_order": [
-            0,
-            1
-        ],
-
-        "tag": {
+        "tags": {
             "0" : "main clone",
             "3" : "spike",
             "5" : "custom tag"
@@ -56,21 +50,20 @@ present in the .data file.
 #+END_SRC
 
 
-* General layout
-
+* 'Samples' element
 #+BEGIN_SRC js
-    "custom" : [] ,   // customized properties of clone (see below, custom field)
-    "cluster": [],    // manual clustering  (see cluster field)
-    "tag": []         // custom tag name (see tag field)
-
-    "time" : [],      // custom sample names (list length must match the number of samples)
-    "time_order": [], // custom sample order (increasing order by default),
+  {
+    "number": 2,      // number of samples
+    "names": [],      // custom sample names (with samples.number elements)
+    "order": [],      // custom sample order (increasing order by default),
+  }
 #+END_SRC
 
 
-* Custom list: Describing clone properties
 
-Each element in the 'custom' list describes properties of a clone.
+* 'Clones' list
+
+Each element in the 'clones' list describes properties of a clone.
 The minimum required fields are "window" and/or "sequence".
 
 #+BEGIN_SRC js
@@ -88,9 +81,9 @@ The minimum required fields are "window" and/or "sequence".
 #+END_SRC
 
 
-* Cluster list: merging clones
+* 'Clusters' list
 
-Each element in the 'cluster' list says that two clones should be merged.
+Each element in the 'clusters' list says that two clones should be merged.
 In the browser, they will be 'merged'. It will be still possible to see them or to unmerge them.
 
 #+BEGIN_SRC js
@@ -104,9 +97,9 @@ Merging more than two clones has to be done in several 'cluster' elements.
 In a near future, it will be possible to put a list of windows instead of pair of windows.
 
 
-* Tag list
+* 'Tags' list
 
-The 'tag' list describe the tag names.
+The 'tags' list describe the custom tag names.
 The default tag names are defined in [[../browser/js/vidjil-style.js]].
 
 #+BEGIN_SRC js
