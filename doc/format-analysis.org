@@ -27,12 +27,6 @@ present in the .data file.
              "order": [0, 1]
         },
 
-        "samples": {
-             "number": 2, 
-             "names": ["diag", "fu1"],
-             "order": [0, 1]
-        },
-
         "clones": [
             {
                 "window": "ATGTGAGTAT",
@@ -46,8 +40,8 @@ present in the .data file.
 
         "clusters": [
             {
-                "l": "ACTGTGCCACCTGGGATGTGAGTATTATAAGAAACTCTTT",
-                "f": "TGCCACCTGGGATGTGAGTATTATAAAGAAACTCTTTGGC"
+                [ "clone-845", "clone-821", "clone-147" ],
+                [ "clone-5", "clone-10", "clone-179" ]
             }
         ],
 
@@ -102,18 +96,9 @@ The minimum required fields are "window" and/or "sequence".
 
 * 'Clusters' list
 
-Each element in the 'clusters' list says that two clones should be merged.
-In the browser, they will be 'merged'. It will be still possible to see them or to unmerge them.
-
-#+BEGIN_SRC js
-  {
-    "l": "",         // identifier of the first clone (will be used as a representative for the cluster)
-    "f": ""          // identifier of the second clone
-  }
-#+END_SRC
-
-Merging more than two clones has to be done in several 'cluster' elements.
-In a near future, it will be possible to put a list of windows instead of pair of windows.
+Each element in the 'clusters' list describe a list of clones that are 'merged'.
+In the browser, it will be still possible to see them or to unmerge them.
+The first clone of each line is used as a representative for the cluster.
 
 
 * 'Tags' list
