@@ -31,7 +31,6 @@ present in the .data file.
             {
                 "id": "clone-845",
                 "name": "Main LAL clone",
-                "sequence": "ATGACTCTGGAGTCTATTACTGTGCCACCTGGGATGTGAGTATTATAAGAAAC",
                 "tag": "0",
             },
             {
@@ -87,18 +86,20 @@ present in the .data file.
 * 'Clones' list
 
 Each element in the 'clones' list describes properties of a clone.
-The minimum required fields are "window" and/or "sequence".
 
 #+BEGIN_SRC js
   {
-    "id": "",        // clone identifier, must be unique
+    "id": "",        // clone identifier, must be unique [required]
                      //          Vidjil/algo output -> the 'window'  
                      //          Brno .clntab       -> clone sequence
 
     "name": "",      // clone custom name
                      // (the default name is computed from V/D/J information)
 
-    "sequence": "",  // clone nt sequence
+    "sequence": "",  // reference nt sequence (not really used now in the browser)
+                     // (for special clones/sequences that are known,
+                     //  such as standard/spikes or know patient clones)
+ 
     "tag": "",       // tag id from 0 to 7 (see below)
     "expected": ""   // expected abundance of this clone (between 0 and 1)
                      // this will create a normalization option in the 
