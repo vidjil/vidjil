@@ -78,7 +78,7 @@ browser. They are intented for a command-line use only.
 Launching vidjil with =-h= option provides the list of parameters that can be
 used.
 
-* List of windows
+** Force to follow some sequences
 
 Vidjil allows to specify a list of windows that must be followed
 (even if those windows are 'rare', below the -r/-R/-% thresholds).
