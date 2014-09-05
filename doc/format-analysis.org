@@ -17,6 +17,16 @@ present in the .data file.
 
 #+BEGIN_SRC js
     {
+        "producer": "user Bob, via browser",
+        "timestamp": "2014-09-01 12:00:11",
+        "vidjil_json_version": "2014.XX",
+
+        "samples": {
+             "number": 2, 
+             "names": ["diag", "fu1"],
+             "order": [0, 1]
+        },
+
         "samples": {
              "number": 2, 
              "names": ["diag", "fu1"],
@@ -47,6 +57,15 @@ present in the .data file.
             "5" : "custom tag"
         }
     }
+#+END_SRC
+
+
+* Generic information for traceability
+
+#+BEGIN_SRC js
+   "producer": "",    // arbitrary string, user/software/options producing this file
+   "timestamp": "",   // last modification date
+   "vidjil_json_version": "2014.09", // version of the format
 #+END_SRC
 
 
