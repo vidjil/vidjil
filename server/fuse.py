@@ -319,7 +319,7 @@ class ListWindows:
         
         w = self.d["windows"]
         germline = self.d["germline"][0]
-        system = germline[-3:]
+        system = germline[-4:].replace('/','')
         
         
         for i in range(len(w)):
