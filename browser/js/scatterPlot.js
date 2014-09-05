@@ -229,12 +229,15 @@ ScatterPlot.prototype = {
       this.allEdges = this.m.links;
       //Initialisation of array which contains all the usefull edges for the Edit Distane visualization
       this.edge = this.keepUsefullEdgesForEditDistanceGraph(this.allEdges);
+      
+      /*
       //DBSCAN algorithm loading
       this.m.loadDBSCAN(this);
       //DBSCAN sliders values loading
       this.m.changeSliderValue(true, "DBSCANNbrSlider", "Nbr ", this.m.nbr);
       this.m.changeSliderValue(true, "DBSCANEpsSlider", "Eps ", this.m.eps);
-
+      */
+      
       //Initialisation of the D3JS physic engine
       this.force = d3.layout.force();
       this.initMotor();

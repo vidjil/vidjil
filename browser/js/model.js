@@ -540,8 +540,9 @@ Model.prototype = {
                 this.windows[i].tagCluster = null;
     },
 
-    /* Fonction permettant de changer dynamiquement le nombre epsilon, pour DBSCAN
-    */
+    /*
+    // Fonction permettant de changer dynamiquement le nombre epsilon, pour DBSCAN
+    //
     changeEps: function(newEps) {
         //Modification de l'attribut 'Eps' contenu dans l'objet
         this.eps = newEps;
@@ -559,8 +560,8 @@ Model.prototype = {
         this.changeSliderValue(true, "DBSCANEpsSlider", "Eps ", this.eps);
     },
 
-    /* Fonction permettant de changer dynamiquement le nombre de voisins minimum, pour DBSCAN
-    */
+    // Fonction permettant de changer dynamiquement le nombre de voisins minimum, pour DBSCAN
+    //
     changeNbr: function(newNbr) {
         //Modification de l'attribut 'nbr' contenu dans l'objet
         this.nbr = newNbr;
@@ -579,6 +580,7 @@ Model.prototype = {
         this.changeSliderValue(true, "DBSCANNbrSlider", "Nbr ", this.nbr);
     },
 
+    */
     /* Fonction permettant de changer dynamiquement la valeur d'affichage, à côté du slider Epsilon/MinPts dans le menu Display
     */
     changeSliderValue: function(bool, div, name, value) {
