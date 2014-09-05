@@ -10,11 +10,11 @@ diversity. They are also useful markers of pathologies, and in
 leukemia, are used to quantify the minimal residual disease during
 patient follow-up.
 
-Vidjil process high-througput sequencing data to extract V(D)J
+Vidjil processes high-throughput sequencing data to extract V(D)J
 junctions and gather them into clones. Vidjil starts 
 from a set of reads and detects "windows" overlapping the actual CDR3.
 This is based on an fast and reliable seed-based heuristic and allows
-to output the most abundant clones. The analysis is extremly fast
+to output the most abundant clones. The analysis is extremely fast
 because, in the first phase, no alignment is performed with database
 germline sequences. Vidjil can also clusterize similar
 clones, or leave this to the user after a manual review. 
@@ -43,6 +43,7 @@ Vidjil has been successfully tested on the following platforms :
 
 * Installation
 
+#+BEGIN_SRC sh
 make data
    # get some IGH rearrangements from a single individual, as described in:
    # Boyd, S. D., and al. Individual variation in the germline Ig gene
@@ -61,32 +62,36 @@ make                     # compile Vijil
 make test                # run self-tests
 
 ./vidjil -h              # display help/usage
+#+END_SRC
 
 * Optional dependencies
 
-clustalw (to compute alignments between windows from a same clone, by setting 
-          very_detailed_cluster_analysis in vidjil.cpp)
-neato (to display graph of neighbors for the automatic clusterisation)
+These dependencies have no consequences on the visualization through the
+browser. They are intented for a command-line use only.
+
+- clustalw :: to compute alignments between windows from a same clone, by setting 
+          =very_detailed_cluster_analysis= in vidjil.cpp
+- neato :: to display graph of neighbors for the automatic clusterisation
 
 * Vidjil parameters
 
-Launching vidjil with -h option provides the list of parameters that can be
+Launching vidjil with =-h= option provides the list of parameters that can be
 used.
 
-* List of windows
+** Force to follow some sequences
 
 Vidjil allows to specify a list of windows that must be followed
 (even if those windows are 'rare', below the -r/-R/-% thresholds).
-The parameter -l is made for providing such a list in a file having
+The parameter =-l= is made for providing such a list in a file following
 the following format: window label (separed by one space)
 
 The first column of the file is the window to be followed
 while the remaining columns consist of the window's label.
 In Vidjil output, the labels are output alongside their windows.
 
-* Manual clustering
+** Manual clustering
 
-The -e option allows to specify a file for manually clustering two windows
+The =-e= option allows to specify a file for manually clustering two windows
 considered as similar. Such a file may be automatically produced by vidjil
 (out/edges), depending on the option provided. Only the two first columns 
 (separed by one space) are important to vidjil, they only consist of the 
@@ -96,26 +101,30 @@ two windows that must be clustered.
 * Examples of use
 
 All the following examples are on a IGH VDJ recombinations : they thus
-require the "-G germline/IGH" and the "-d" options.
+require the =-G germline/IGH= and the =-d= options.
 
-
+#+BEGIN_SRC sh
 ./vidjil -G germline/IGH -d data/Stanford_S22.fasta
    # Extract (with an ultra-fast heuristic) all windows
    # Results are in out/segmented.vdj.fa, which is a FASTA file 
    # embedding heuristic information in the headers
    # ('.vdj' format, see warning below)
-   # Summary of windows is also available in out/vidji.data
+   # Summary of windows is also available in out/vidjil.data
    # ('.data' format, see below)
+#+END_SRC
 
+#+BEGIN_EXAMPLE
 >8--window--1 
 CACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCCA
 >5--window--2 
 CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 (...)
+#+END_EXAMPLE
 
-   Windows of size 60 (modifiable by -w) have been extracted.
+   Windows of size 60 (modifiable by =-w=) have been extracted.
    The first window has 8 occurrences, the second window has 5 occurrences.
 
+#+BEGIN_SRC sh
 ./vidjil -c clones -G germline/IGH -x -r 1 -R 1 -d ./data/clones_simul.fa
    # Extracts the windows (-r 1, with at least 1 read each), 
    # then gather them into clones (-R 1, with at least 1 read each:
@@ -129,21 +138,32 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
    #  - in out/vidjil.data (for the browser)
    # Additional files are in out/segmented.vdj.fa, out/seq/windows.fa-* and out/seq/clone.fa-*
    # out/segmented.vdj.fa list segmented reads using the .vdj format (see below)
+#+END_SRC
 
+#+BEGIN_SRC sh
 ./vidjil -c clones -G germline/IGH -x -r 1 -R 5 -n 5 -d ./data/clones_simul.fa
    # Window extraction + clone gathering,
    # with automatic clusterisation, distance five (-n 5)
+#+END_SRC
 
+#+BEGIN_SRC sh
 ./vidjil -c segment -G germline/IGH -d data/segment_S22.fa
-   # Segment the reads onto VDJ germline (see warning below)
+   # Segment the reads onto VDJ germline 
+   # (this is slow and should only be used for testing)
+#+END_SRC
 
+#+BEGIN_SRC sh
+./vidjil -c germlines file.fastq
+   # Search for all the germlines and output statistics
+   # on the number of occurrences in each germline
+#+END_SRC
 
 * Segmentation and .vdj format
 
-Vidjil outputs include segmentation of V(D)J recombinations. This happens
+Vidjil output includes segmentation of V(D)J recombinations. This happens
 in the following situations:
 
-- in a first pass, in 'segmented.vdj.fa' file.
+- in a first pass, in =segmented.vdj.fa= file.
 
       The goal of this ultra-fast segmentation, based on a seed
       heuristics, is only to locate the w-window overlapping the
@@ -152,8 +172,8 @@ in the following situations:
       actual center.
 
 - in a second pass, on the standard output
-    - at the end of the clones detection (-c clones, also in in 'clones.vdj.fa')
-    - or directly when explicitely requiring segmentation (-c segment)
+    - at the end of the clones detection (=-c clones=, also in in =clones.vdj.fa=)
+    - or directly when explicitly requiring segmentation (=-c segment=)
 
       This segmentation obtained by full comparison (dynamic
       programming) with all germline sequences. Such segmentation are
@@ -166,6 +186,7 @@ Segmentations of V(D)J recombinations are displayed using a dedicated
 .vdj format. This format is compatible with FASTA format. A line starting
 with a > is of the following form:
 
+#+BEGIN_EXAMPLE
 >name + VDJ  startV endV   startD endD   startJ  endJ   Vgene   delV/N1/delD5'   Dgene   delD3'/N2/delJ   Jgene   comments
 
         name          sequence name
@@ -196,6 +217,8 @@ with a > is of the following form:
                       - "seed" when this comes for the first pass (segmented.vdj.fa). See the warning above.
                       - "!ov x" when there is an overlap of x bases between last V seed and first J seed
 
+#+END_EXAMPLE
+
 Following such a line, the nucleotide sequence may be given, giving in
 this case a valid FASTA file.
 
@@ -206,15 +229,10 @@ applicable being removed:
 
 * vidjil.data .json format and web interface
 
-A summary of extracted windows is also available in a .json format,
+A summary of extracted windows is also available in a JSON format,
 including, for each windows, the number of reads sharing this window.
-This file is currently used for development purposes, its format may
-change in future releases of Vidjil.
 
-This file is used for the dynamic browser for visualization
+This file is used by the dynamic browser for visualization
 and analysis of clones and their tracking along different samples,
 (for example time points in a MRD setup or in a immunological study).
-This application is currently in developpement and will be released in
-Q1 2015. However, code source can be already accessed on
-http://www.vidjil.org/git.  Please contact us (contact@vidjil.org) if
-you would like to have an access on the web server.
+Please see the file [[file:browser.org][browser]].org for more information on the browser.

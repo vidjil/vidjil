@@ -19,10 +19,11 @@ present in the .data file.
     {
         "producer": "user Bob, via browser",
         "timestamp": "2014-09-01 12:00:11",
-        "vidjil_json_version": "2014.XX",
+        "vidjil_json_version": "2014.09",
 
         "samples": {
              "number": 2, 
+             "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"],
              "names": ["diag", "fu1"],
              "order": [0, 1]
         },
@@ -31,7 +32,6 @@ present in the .data file.
             {
                 "id": "clone-845",
                 "name": "Main LAL clone",
-                "sequence": "ATGACTCTGGAGTCTATTACTGTGCCACCTGGGATGTGAGTATTATAAGAAAC",
                 "tag": "0",
             },
             {
@@ -53,12 +53,16 @@ present in the .data file.
 
         "data": {
              "qPCR": [0.83, 0.024],
+             "spikeZ": [0.01, 0.02]
         },
 
         "tags": {
-            "0" : "main clone",
-            "3" : "spike",
-            "5" : "custom tag"
+            "names": {
+                "0" : "main clone",
+                "3" : "spike",
+                "5" : "custom tag"
+            },
+            "hide": [4, 5]
         }
     }
 #+END_SRC
@@ -67,18 +71,25 @@ present in the .data file.
 * Generic information for traceability
 
 #+BEGIN_SRC js
-   "producer": "",    // arbitrary string, user/software/options producing this file
-   "timestamp": "",   // last modification date
-   "vidjil_json_version": "2014.09", // version of the format
+   "producer": "",    // arbitrary string, user/software/options producing this file [required]
+   "timestamp": "",   // last modification date [required]
+   "vidjil_json_version": "2014.09", // version of the format  [required]
 #+END_SRC
 
 
 * 'Samples' element
+
 #+BEGIN_SRC js
   {
     "number": 2,      // number of samples
+
+    "original_names": []  // original sample names (with samples.number elements),
+                      // must match the names in the .data file
+
     "names": [],      // custom sample names (with samples.number elements)
-    "order": [],      // custom sample order (increasing order by default),
+                      // These names are editable and will be used on the graphs
+
+    "order": [],      // custom sample order (lexicographic order by default)
   }
 #+END_SRC
 
@@ -86,20 +97,24 @@ present in the .data file.
 
 * 'Clones' list
 
+This section is intended to describe some specific clones.
 Each element in the 'clones' list describes properties of a clone.
-The minimum required fields are "window" and/or "sequence".
 
 #+BEGIN_SRC js
   {
-    "id": "",        // clone identifier, must be unique
+    "id": "",        // clone identifier, must be unique [required]
                      //          Vidjil/algo output -> the 'window'  
                      //          Brno .clntab       -> clone sequence
 
     "name": "",      // clone custom name
                      // (the default name is computed from V/D/J information)
 
-    "sequence": "",  // clone nt sequence
+    "sequence": "",  // reference nt sequence (not really used now in the browser)
+                     // (for special clones/sequences that are known,
+                     //  such as standard/spikes or know patient clones)
+ 
     "tag": "",       // tag id from 0 to 7 (see below)
+
     "expected": ""   // expected abundance of this clone (between 0 and 1)
                      // this will create a normalization option in the 
                      // settings browser menu
@@ -116,15 +131,15 @@ The first clone of each line is used as a representative for the cluster.
 
 * 'Data' list
 
-Each element in the 'data' list is list of values (of size samples.number)
-showing additional data, as for example qPCR levels or spike information.
+Each element in the 'data' list is a list of values (of size samples.number)
+showing additional data for each sample, as for example qPCR levels or spike information.
 
 In the browser, it will be possible to display these data and to normalize
 against them (not implemented now).
 
 * 'Tags' list
 
-The 'tags' list describe the custom tag names.
+The 'tags' list describe the custom tag names as well as tags that should be hidden by default.
 The default tag names are defined in [[../browser/js/vidjil-style.js]].
 
 #+BEGIN_SRC js
