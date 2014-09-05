@@ -152,6 +152,11 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
    # (this is slow and should only be used for testing)
 #+END_SRC
 
+#+BEGIN_SRC sh
+./vidjil -c germlines file.fastq
+   # Search for all the germlines and output statistics
+   # on the number of occurrences in each germline
+#+END_SRC
 
 * Segmentation and .vdj format
 
