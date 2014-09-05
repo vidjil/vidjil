@@ -32,7 +32,7 @@ Germline.prototype = {
     /*
      * system (igh/trg) / type (V,D,J)
      * */
-    load : function (system, type) {
+    load : function (system, type, callback) {
         var self = this;
         this.init()
         
@@ -43,7 +43,7 @@ Germline.prototype = {
         if (typeof germline[name] != 'undefined'){
             this.allele = germline[name]
         }else{
-            return
+            return callback
         }
         this.gene = {}
 
@@ -112,5 +112,7 @@ Germline.prototype = {
             this.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
                 color_s, color_v);
         }
+        
+        return callback
     }
 }

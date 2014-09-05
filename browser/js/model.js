@@ -386,21 +386,21 @@ Model.prototype = {
      * */
     changeGermline: function (system) {
         this.loadGermline(system)
-        this.update()
+            .update()
     },
     
     /* charge le germline définit a l'initialisation dans le model
      * détermine le nombre d'allele pour chaque gene et y attribue une couleur
      * */
     loadGermline: function (system) {
+        console.log("loadGermline : " + system)
         system = typeof system !== 'undefined' ? system : this.system;
         if (system == "multi") system = Object.keys(this.system_segmented)[0]
         
-        this.germlineV.load(system, "V")
-        this.germlineD.load(system, "D")
-        this.germlineJ.load(system, "J")
-        
-        return this;
+        return  this.germlineV.load(system, "V", this)
+                    .germlineD.load(system, "D", this)
+                    .germlineJ.load(system, "J", this)
+                    
     }, //end loadGermline
 
     /* 
@@ -977,11 +977,14 @@ Model.prototype = {
             }
         }
 
+        this.updateModel()
         //check if current germline is in the selected_system
-        if (this.system_selected.indexOf(this.germlineV.system) == -1 ) this.loadGermline(this.system_selected[0])
+        if (this.system_selected.indexOf(this.germlineV.system) == -1 ){
+            this.loadGermline(this.system_selected[0])
+        }
         
         this.resize()
-        this.update()
+            .update()
     },
     
     /*
@@ -1478,6 +1481,8 @@ Model.prototype = {
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].resize(speed);
         }
+        
+        return this
     },
 
 

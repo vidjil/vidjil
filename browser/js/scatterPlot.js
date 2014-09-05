@@ -1032,29 +1032,33 @@ ScatterPlot.prototype = {
       var elapsedTime = 0;
 
       this.compute_size()
-      
-      if (this.splitY == "bar" && !this.reinit) {
-	       this.updateBar();
-      }
-      else {
-           for (var i = 0; i < this.nodes.length; i++) {
-	           this.updateClone(i);
-	       }
-	       this.force.start();
-           this.updateElemStyle();
-      }
-
-      if (this.m.germlineV.system != this.system){ 
-          this.system =this.m.germlineV.system
-          this.changeSplitMethod(this.splitX, this.splitY)
-      }
-      this.updateMenu();
-      this.initGrid();
+          .updateClones()
+          .updateMenu()
+          .initGrid();
         
       //Donne des informations quant au temps de MàJ des données
       elapsedTime = new Date()
 	  .getTime() - startTime;
       myConsole.log("update sp: " + elapsedTime + "ms");
+  },
+  
+  updateClones:function(){
+    if (this.splitY == "bar" && !this.reinit) {
+        this.updateBar();
+    }
+    else {
+        for (var i = 0; i < this.nodes.length; i++) {
+            this.updateClone(i);
+        }
+        this.force.start();
+        this.updateElemStyle();
+    }
+
+    if (this.m.germlineV.system != this.system){ 
+        this.system =this.m.germlineV.system
+        this.changeSplitMethod(this.splitX, this.splitY)
+    }
+    return this;
   },
 
   /* Fonction permettant de mettre à jour les données liées à tous les clones présents dans une liste -> FONCTION DEPRECATED ?????
@@ -1254,6 +1258,8 @@ ScatterPlot.prototype = {
       if (!self.reinit) this.axis_x_update(this.axisX.labels);
       if (!self.reinit) this.axis_y_update(this.axisY.labels);
       if (!self.reinit) this.system_label_update(this.systemGrid.label);
+      
+      return this;
   },
 
   /* Function which allows to verify if we can switch to an accessible distribution
@@ -1591,6 +1597,8 @@ ScatterPlot.prototype = {
 	  .selectedIndex = select_x
       document.getElementById("select_y")
 	  .selectedIndex = select_y
+	  
+	  return this;
   },
 
   /* Fonction permettant de 'cacher' un node
