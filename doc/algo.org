@@ -10,11 +10,11 @@ diversity. They are also useful markers of pathologies, and in
 leukemia, are used to quantify the minimal residual disease during
 patient follow-up.
 
-Vidjil process high-througput sequencing data to extract V(D)J
+Vidjil processes high-throughput sequencing data to extract V(D)J
 junctions and gather them into clones. Vidjil starts 
 from a set of reads and detects "windows" overlapping the actual CDR3.
 This is based on an fast and reliable seed-based heuristic and allows
-to output the most abundant clones. The analysis is extremly fast
+to output the most abundant clones. The analysis is extremely fast
 because, in the first phase, no alignment is performed with database
 germline sequences. Vidjil can also clusterize similar
 clones, or leave this to the user after a manual review. 
@@ -77,7 +77,7 @@ used.
 
 Vidjil allows to specify a list of windows that must be followed
 (even if those windows are 'rare', below the -r/-R/-% thresholds).
-The parameter -l is made for providing such a list in a file having
+The parameter -l is made for providing such a list in a file following
 the following format: window label (separed by one space)
 
 The first column of the file is the window to be followed
@@ -104,7 +104,7 @@ require the "-G germline/IGH" and the "-d" options.
    # Results are in out/segmented.vdj.fa, which is a FASTA file 
    # embedding heuristic information in the headers
    # ('.vdj' format, see warning below)
-   # Summary of windows is also available in out/vidji.data
+   # Summary of windows is also available in out/vidjil.data
    # ('.data' format, see below)
 
 >8--window--1 
@@ -140,7 +140,7 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 
 * Segmentation and .vdj format
 
-Vidjil outputs include segmentation of V(D)J recombinations. This happens
+Vidjil output includes segmentation of V(D)J recombinations. This happens
 in the following situations:
 
 - in a first pass, in 'segmented.vdj.fa' file.
@@ -206,12 +206,12 @@ applicable being removed:
 
 * vidjil.data .json format and web interface
 
-A summary of extracted windows is also available in a .json format,
+A summary of extracted windows is also available in a JSON format,
 including, for each windows, the number of reads sharing this window.
 This file is currently used for development purposes, its format may
 change in future releases of Vidjil.
 
-This file is used for the dynamic browser for visualization
+This file is used by the dynamic browser for visualization
 and analysis of clones and their tracking along different samples,
 (for example time points in a MRD setup or in a immunological study).
 This application is currently in developpement and will be released in
