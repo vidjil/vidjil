@@ -205,8 +205,26 @@ class ListWindows:
                 return
         raise IOError ("File '%s' is too old -- please regenerate it with a newer version of Vidjil" % filepath)
         
-    ### save / load to .json
+    ### compute statistics about clones
+    def build_stat(self):
+        ranges = [1000, 100, 10, 1]
+        result = [[0 for col in range(len(self.d['reads_segmented']))] for row in range(len(ranges))]
 
+        for w in self.d["windows"]:
+            for i, s in enumerate(w.d["size"]):
+                for r in range(len(ranges)):
+                    if s >= ranges[r]:
+                        break 
+                result[r][i] += s
+                
+        print result
+        for r in range(len(ranges)):
+            self.d["reads-distribution-"+str(ranges[r])] = result[r]
+            
+        #TODO V/D/J distrib and more 
+        
+        
+    ### save / load to .json
     def save_json(self, output):
         '''save ListWindows in .json format''' 
         print "==>", output
@@ -363,8 +381,8 @@ class ListWindows:
             win = self.d["windows"][index]
             if (int(win.d["top"]) < limit or limit == 0) :
                 w.append(win)
-            else:
-                others += win
+            #else:
+                #others += win
 
         self.d["windows"] = w + list(others) 
         self.d["germline"]=self.d["germline"][0]
@@ -754,6 +772,7 @@ def main():
         jlist_fused.d["point"] = ll
     
     print
+    jlist_fused.build_stat()
     jlist_fused.cut(args.top, len(l))
     print "\t", jlist_fused 
     print
