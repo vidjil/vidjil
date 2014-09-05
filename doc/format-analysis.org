@@ -19,7 +19,7 @@ present in the .data file.
     {
         "producer": "user Bob, via browser",
         "timestamp": "2014-09-01 12:00:11",
-        "vidjil_json_version": "2014.XX",
+        "vidjil_json_version": "2014.09",
 
         "samples": {
              "number": 2, 
@@ -52,6 +52,7 @@ present in the .data file.
 
         "data": {
              "qPCR": [0.83, 0.024],
+             "spikeZ": [0.01, 0.02]
         },
 
         "tags": {
@@ -66,18 +67,19 @@ present in the .data file.
 * Generic information for traceability
 
 #+BEGIN_SRC js
-   "producer": "",    // arbitrary string, user/software/options producing this file
-   "timestamp": "",   // last modification date
-   "vidjil_json_version": "2014.09", // version of the format
+   "producer": "",    // arbitrary string, user/software/options producing this file [required]
+   "timestamp": "",   // last modification date [required]
+   "vidjil_json_version": "2014.09", // version of the format  [required]
 #+END_SRC
 
 
 * 'Samples' element
+
 #+BEGIN_SRC js
   {
     "number": 2,      // number of samples
     "names": [],      // custom sample names (with samples.number elements)
-    "order": [],      // custom sample order (increasing order by default),
+    "order": [],      // custom sample order (lexicographic order by default)
   }
 #+END_SRC
 
@@ -85,6 +87,7 @@ present in the .data file.
 
 * 'Clones' list
 
+This section is intended to describe some specific clones.
 Each element in the 'clones' list describes properties of a clone.
 
 #+BEGIN_SRC js
@@ -101,6 +104,7 @@ Each element in the 'clones' list describes properties of a clone.
                      //  such as standard/spikes or know patient clones)
  
     "tag": "",       // tag id from 0 to 7 (see below)
+
     "expected": ""   // expected abundance of this clone (between 0 and 1)
                      // this will create a normalization option in the 
                      // settings browser menu
