@@ -216,5 +216,5 @@ and analysis of clones and their tracking along different samples,
 (for example time points in a MRD setup or in a immunological study).
 This application is currently in developpement and will be released in
 Q1 2015. However, code source can be already accessed on
-http://www.vidjil.org/git.  Please contact us (contact@vidjil.org) if
+http://git.vidjil.org/.  Please contact us (contact@vidjil.org) if
 you would like to have an access on the web server.
