@@ -29,13 +29,19 @@ present in the .data file.
 
         "clones": [
             {
-                "window": "ATGTGAGTAT",
+                "id": "clone-845",
+                "name": "Main LAL clone",
                 "sequence": "ATGACTCTGGAGTCTATTACTGTGCCACCTGGGATGTGAGTATTATAAGAAAC",
-                "tag": "0"
-                "name": "plop",
+                "tag": "0",
+            },
+            {
+                "id": "spikeE",
+                "name": "spike",
+                "sequence": "ATGACTCTGGAGTCTATTACTGTGCCACCTGGGATGTGAGTATTATAAGAAAC",
+                "tag": "3",
                 "expected": "0.1"
             }
-          // TODO: mettre une deuxième window, et des noms plus réalistes
+
         ],
 
         "clusters": [
@@ -81,12 +87,15 @@ The minimum required fields are "window" and/or "sequence".
 
 #+BEGIN_SRC js
   {
-    "window": "",    // clone identifier
+    "id": "",        // clone identifier, must be unique
                      //          Vidjil/algo output -> the 'window'  
                      //          Brno .clntab       -> clone sequence
+
+    "name": "",      // clone custom name
+                     // (the default name is computed from V/D/J information)
+
     "sequence": "",  // clone nt sequence
     "tag": "",       // tag id from 0 to 7 (see below)
-    "name": "",      // custom name, will replace the clone default name
     "expected": ""   // expected abundance of this clone (between 0 and 1)
                      // this will create a normalization option in the 
                      // settings browser menu
