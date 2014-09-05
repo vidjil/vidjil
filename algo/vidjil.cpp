@@ -335,6 +335,7 @@ int main (int argc, char **argv)
 
       case 'V':
 	f_rep_V = optarg;
+	germline_system = "custom" ;
 	break;
 
       case 'D':
@@ -344,6 +345,7 @@ int main (int argc, char **argv)
         
       case 'J':
 	f_rep_J = optarg;
+	germline_system = "custom" ;
 	break;
 
       case 'G':
@@ -1459,6 +1461,8 @@ int main (int argc, char **argv)
     json->add("commandline", stream_cmdline.str());// TODO: escape "s in argv
     json->add("segmentation_info", stream_segmentation_info.str());
     json->add("germline", germline_system);
+    json->add("germline_V", f_rep_V);
+    json->add("germline_J", f_rep_J);
     json->add("reads_total", json_nb_reads);
     json->add("reads_segmented", json_nb_segmented); 
     json->add("windows", jsonSortedWindows);
