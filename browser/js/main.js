@@ -9,7 +9,7 @@ if (typeof config != 'undefined') {
         if (config.cgi_address) CGI_ADDRESS = config.cgi_address
         if (config.db_address) DB_ADDRESS = config.db_address
         if (config.db_address == "default") DB_ADDRESS = "https://"+window.location.hostname+"/vidjil/"
-        if (config.cgi_address == "default") CGI_ADDRESS = "http://"+window.location.hostname+"/cgi-bin/"
+        if (config.cgi_address == "default") CGI_ADDRESS = "http://"+window.location.hostname+"/cgi/"
     }
 
     if (config.demo && config.demo.file.length != 0){
