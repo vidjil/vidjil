@@ -1011,5 +1011,7 @@ germline={
         "IGH":{ "letter" : "H", "color" : "#6c71c4"},
         "IGK":{ "letter" : "K", "color" : "#2aa198"},
         "IGL":{ "letter" : "L", "color" : "#d33682"},
+        "DHJH": {"letter": "h", "color" : "#8e93e6"},
+        "DD" :{ "letter" : "d", "color" : "#d7ab22"}
     }
 }
