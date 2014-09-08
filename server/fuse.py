@@ -319,7 +319,7 @@ class ListWindows:
         
         w = self.d["windows"]
         germline = self.d["germline"][0]
-        system = germline[-3:]
+        system = germline[-4:].replace('/','')
         
         
         for i in range(len(w)):
@@ -694,7 +694,7 @@ def main():
     group_options = parser.add_argument_group() # title='Options and parameters')
 
     group_options.add_argument('--test', action='store_true', help='run self-tests')
-    group_options.add_argument('--merge', action='store_true', help='merge multiple system')
+    group_options.add_argument('--multi', action='store_true', help='merge multiple system')
     
     group_options.add_argument('--compress', '-c', action='store_true', help='compress point names, removing common substrings')
     group_options.add_argument('--pipeline', '-p', action='store_true', help='compress point names (internal Bonsai pipeline)')
@@ -718,7 +718,7 @@ def main():
     print "### fuse.py -- " + DESCRIPTION
     print
 
-    if args.merge:
+    if args.multi:
         for path_name in args.file:
             jlist = ListWindows()
             jlist.load(path_name, args.pipeline)
@@ -773,7 +773,7 @@ def main():
     
     print
     jlist_fused.build_stat()
-    jlist_fused.cut(args.top, len(l))
+    jlist_fused.cut(args.top, len(jlist_fused.d["point"]))
     print "\t", jlist_fused 
     print
 

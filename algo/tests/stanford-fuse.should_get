@@ -6,5 +6,6 @@ $ Points list
 $ Most abundant window, twice, fused 
 1:"window": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC", "id": .*, "size": [ 8, 8 ]
 
+# Fails since 49046ca6b97, no more 'others'
 $ Windows that are not in the top 50
-1:"window": "others-1", .* "size": [ 12962, 12962 ]
+f1:"window": "others-1", .* "size": [ 12962, 12962 ]

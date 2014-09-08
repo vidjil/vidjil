@@ -1,0 +1,45 @@
+
+
+
+Here is a procedure for installing watir and launching the browser tests
+
+* Install rvm
+
+  #+BEGIN_SRC sh
+ \curl -sSL https://get.rvm.io | bash  
+  #+END_SRC
+
+  Afterwards you may need to launch:
+  #+BEGIN_SRC sh
+  source /usr/local/rvm/scripts/rvm
+  #+END_SRC
+
+* Install ruby 2.1.1
+
+#+BEGIN_SRC sh
+rvm install 2.1.1
+#+END_SRC
+
+
+* Switch to ruby 2.1.1
+
+#+BEGIN_SRC sh
+rvm use 2.1.1
+#+END_SRC
+
+
+* Install necessary gems
+
+#+BEGIN_SRC sh
+gem install minitest
+gem install minitest-ci
+gem install watir-webdriver
+gem install test-unit
+#+END_SRC
+
+
+* Launch browser tests
+
+#+BEGIN_SRC sh
+ruby test_browser.rb
+#+END_SRC
