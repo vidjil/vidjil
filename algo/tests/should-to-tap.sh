@@ -68,6 +68,7 @@ OUTPUT_FILE=
 FILE_TO_GREP=
 NO_LAUNCHER=
 IGNORE_WHITESPACES=1
+SEPARATOR_LINE="========================================================================"
 
 TMP_TAP_FILE=$(mktemp tap.XXXX)
 
@@ -174,6 +175,12 @@ while read line; do
                     echo -n "not ok"
                     if [ $know_to_fail -eq 0 ]; then
                         error=1
+			echo >&2; echo >&2; echo $SEPARATOR_LINE >&2
+			echo "$file failed:" >&2
+			echo $line >&2
+			echo $SEPARATOR_LINE >&2
+			cat $FILE_TO_GREP >&2
+			echo $SEPARATOR_LINE >&2; echo >&2; echo >&2
                     fi
                 fi
                 echo -n " "$test_nb" "
