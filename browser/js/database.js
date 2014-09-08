@@ -123,7 +123,7 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
-                        popupMsg("timeout");
+                        myConsole.flash("database : Timeout")
                     } else {
                         popupMsg(request.responseText);
                     }
@@ -149,7 +149,7 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
-                        popupMsg("timeout");
+                        myConsole.flash("database : Timeout")
                     } else {
                         self.call("patient/index")
                     }
@@ -188,7 +188,7 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if(status==="timeout") {
-                        popupMsg("timeout");
+                        myConsole.flash("database : Timeout")
                     } else {
                         popupMsg(request + " " + status + " " + error);
                     } 
@@ -225,7 +225,7 @@ Database.prototype = {
                 delete self.upload[id]; 
                 self.upload_display();
                 if (status === "timeout") {
-                    popupMsg("timeout");
+                    myConsole.flash("database : Timeout")
                 } else {
                     popupMsg(request.responseText);
                 }
@@ -272,11 +272,11 @@ Database.prototype = {
             url: self.db_address + controller_name + arg,
             xhrFields: {withCredentials: true},
             success: function (result) {
-                popupMsg(result);
+                myConsole.flash(result)
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    popupMsg("timeout");
+                    myConsole.flash("database : Timeout")
                 } else {
                     self.call("patient/index")
                 }
@@ -313,7 +313,7 @@ Database.prototype = {
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    popupMsg("timeout");
+                    myConsole.flash("database : Timeout")
                 } else {
                     popupMsg(request.responseText);
                 }
@@ -341,7 +341,7 @@ Database.prototype = {
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    popupMsg("timeout");
+                    myConsole.flash("database : Timeout")
                 } else {
                     popupMsg(request.responseText);
                 }
