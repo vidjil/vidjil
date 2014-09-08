@@ -49,13 +49,23 @@ Database.prototype = {
             }, 
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    popupMsg("timeout");
+                    myConsole.flash("database : Timeout")
                 } else {
-                    popupMsg(request.responseText);
+                    self.check_cert()
                 }
             }
             
         });
+    },
+    
+    check_cert: function () {
+        if (typeof sslCertTrusted == 'undefined' || !sslCertTrusted){
+            var msg = " Warning : </br>"
+                    + "It seems the database you try to access don't have a valid certificate or use a self signed one. </br>" 
+                    + "If you want to use this database you need to accept this certificate, please follow this link and add this address to the trusted site list. </br>"
+                    + "<a href='"+DB_ADDRESS+"' target='_blank' > click me ! <a/>"
+            popupMsg(msg)
+        }
     },
     
     display_result: function (result, url) {
