@@ -71,7 +71,7 @@ WSGIDaemonProcess web2py user=www-data group=www-data processes=1 threads=1
       allow from all
     </Directory>
 
-    ScriptAlias /cgi-bin/ /usr/lib/cgi-bin/
+    ScriptAlias /cgi/ /usr/lib/cgi-bin/
 
     <Directory /usr/lib/cgi-bin/>
       Options Indexes FollowSymLinks
@@ -156,19 +156,6 @@ stop on shutdown
 respawn limit 8 60 # Give up if restart occurs 8 times in 60 seconds.
 exec sudo -u www-data python $CWD/web2py/web2py.py -K vidjil
 respawn" > /etc/init/web2py-scheduler.conf
-
-
-echo "web2py rocket server"
-echo "====================="
-
-echo "
-description \"web2py rocket server\"
-start on (local-filesystems and net-device-up IFACE=eth0)
-stop on shutdown
-respawn limit 8 60 # Give up if restart occurs 8 times in 60 seconds.
-exec sudo -u www-data python $CWD/web2py/web2py.py -a '1234' -i 0.0.0.0 -p 8000 -c /etc/apache2/ssl/self_signed.cert -k /etc/apache2/ssl/self_signed.key &
-respawn" > /etc/init/web2py-server.conf
-
 
 echo "restarting apache"
 echo "================"
