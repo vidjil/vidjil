@@ -195,7 +195,8 @@ void usage(char *progname)
        << endl
 
        << "Debug" << endl
-       << "  -u            output unsegmented sequences (default: " << UNSEGMENTED_FILENAME << ")" << endl
+       << "  -U            output segmented (" << SEGMENTED_FILENAME << ") sequences" << endl
+       << "  -u            output unsegmented (" << UNSEGMENTED_FILENAME << ") sequences" << endl
        << "                and display detailed k-mer affectation both on segmented and on unsegmented sequences" << endl
        << "Output" << endl
        << "  -o <dir>      output directory (default: " << OUT_DIR << ")" <<  endl
@@ -270,7 +271,7 @@ int main (int argc, char **argv)
   bool output_sequences_by_cluster = false;
   bool detailed_cluster_analysis = true ;
   bool very_detailed_cluster_analysis = false ;
-  bool output_segmented = true;
+  bool output_segmented = false;
   bool output_unsegmented = false;
 
   string forced_edges = "" ;
@@ -287,7 +288,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "AhaG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:u")) != EOF)
+  while ((c = getopt(argc, argv, "AhaG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:uU")) != EOF)
 
     switch (c)
       {
@@ -450,6 +451,9 @@ int main (int argc, char **argv)
 
       case 'u':
         output_unsegmented = true;
+        break;
+      case 'U':
+        output_segmented = true;
         break;
       }
 
