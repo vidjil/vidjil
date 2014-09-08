@@ -270,6 +270,7 @@ int main (int argc, char **argv)
   bool output_sequences_by_cluster = false;
   bool detailed_cluster_analysis = true ;
   bool very_detailed_cluster_analysis = false ;
+  bool output_segmented = true;
   bool output_unsegmented = false;
 
   string forced_edges = "" ;
@@ -782,19 +783,25 @@ int main (int argc, char **argv)
     cout << endl;
     cout << "Loop through reads, looking for windows" << endl ;
 
-    string f_segmented = out_dir + prefix_filename + SEGMENTED_FILENAME ;
-    cout << "  ==> " << f_segmented << "\t(result of window detection)" << endl ;
-    ofstream out_segmented(f_segmented.c_str()) ;
+    ofstream *out_segmented = NULL;
     ofstream *out_unsegmented = NULL;
  
     WindowExtractor we;
-    we.setSegmentedOutput(&out_segmented);
+ 
+    if (output_segmented) {
+      string f_segmented = out_dir + prefix_filename + SEGMENTED_FILENAME ;
+      cout << "  ==> " << f_segmented << endl ;
+      out_segmented = new ofstream(f_segmented.c_str());
+      we.setSegmentedOutput(out_segmented);
+    }
+
     if (output_unsegmented) {
       string f_unsegmented = out_dir + prefix_filename + UNSEGMENTED_FILENAME ;
       cout << "  ==> " << f_unsegmented << endl ;
       out_unsegmented = new ofstream(f_unsegmented.c_str());
       we.setUnsegmentedOutput(out_unsegmented);
     }
+
     WindowsStorage *windowsStorage = we.extract(reads, index, w, delta_min, 
                                                 delta_max, windows_labels);
     windowsStorage->setIdToAll();
@@ -1474,8 +1481,12 @@ int main (int argc, char **argv)
     delete index ;
     delete json;
     delete windowsStorage;
+
+    if (output_segmented)
+      delete out_segmented;
     if (output_unsegmented)
       delete out_unsegmented;
+
   } else if (command == CMD_SEGMENT) {
     //$$ CMD_SEGMENT
     ////////////////////////////////////////
