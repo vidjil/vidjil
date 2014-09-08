@@ -106,11 +106,12 @@ require the =-G germline/IGH= and the =-d= options.
 #+BEGIN_SRC sh
 ./vidjil -G germline/IGH -d data/Stanford_S22.fasta
    # Extract (with an ultra-fast heuristic) all windows
-   # Results are in out/segmented.vdj.fa, which is a FASTA file 
-   # embedding heuristic information in the headers
-   # ('.vdj' format, see warning below)
-   # Summary of windows is also available in out/vidjil.data
+   # Summary of windows is available in out/vidjil.data
    # ('.data' format, see below)
+   # To have detailed/debug results in out/segmented.vdj.fa
+   # (which is a FASTA file embedding heuristic information 
+      in the headers, '.vdj' format, see warning below)
+   # run Vidjil with option '-U'
 #+END_SRC
 
 #+BEGIN_EXAMPLE
@@ -136,8 +137,9 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
    #  - on the standard output
    #  - in out/clones.vdj.fa (fasta file to be processed by other tools)
    #  - in out/vidjil.data (for the browser)
-   # Additional files are in out/segmented.vdj.fa, out/seq/windows.fa-* and out/seq/clone.fa-*
-   # out/segmented.vdj.fa list segmented reads using the .vdj format (see below)
+   # Additional files are in out/seq/windows.fa-* and out/seq/clone.fa-*
+   # If one adds the '-U' option, an additonal out/segmented.vdj.fa file is produced,
+   # listing segmented reads using the .vdj format (see below)
 #+END_SRC
 
 #+BEGIN_SRC sh
@@ -163,7 +165,7 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 Vidjil output includes segmentation of V(D)J recombinations. This happens
 in the following situations:
 
-- in a first pass, in =segmented.vdj.fa= file.
+- in a first pass, when requested with =-U= option, in =segmented.vdj.fa= file.
 
       The goal of this ultra-fast segmentation, based on a seed
       heuristics, is only to locate the w-window overlapping the
