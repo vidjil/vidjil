@@ -31,6 +31,12 @@ from operator import itemgetter
 
 VIDJIL_JSON_VERSION = "2014.02"
 
+GERMLINES_ORDER = ['TRA', 'TRB', 'TRG', 'TRD', 'DD', 'IGH', 'DHJH', 'IJK', 'IJL'] 
+
+def ordered(d, key=None):
+    '''sorts a dictionary into an OrderedDict'''
+    return collections.OrderedDict([(k, d[k]) for k in sorted(d, key=key)])
+
 ####
 
 class Window:
@@ -733,6 +739,7 @@ def main():
                 
             print '\t==> merge to', jlist_fused
         jlist_fused.d['germline'][0] = "multi"
+        jlist_fused.d["system_segmented"] = ordered(jlist_fused.d["system_segmented"], key=lambda sys: ((GERMLINES_ORDER + [sys]).index(sys), sys))
         
     else:
         print "### Read and merge input files"
