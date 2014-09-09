@@ -44,6 +44,8 @@ Com.prototype = {
             }).appendTo("#"+this.flash_id)
             .slideDown(200);
             
+            div.css("background-color", $("#top-container").css("background-color") )
+            
             setTimeout(function(){
                 div.fadeOut('slow', function() { div.remove();});
             }, 5000);

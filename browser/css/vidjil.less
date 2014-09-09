@@ -1246,7 +1246,12 @@ span.logo
     margin: 5px;
     background: @background;
     border-color: @border;
-    z-index: 10
+    z-index: 10;
+    -webkit-transition: background 1s linear;
+    -moz-transition: background 1s linear;
+    -ms-transition: background 1s linear;
+    -o-transition: background 1s linear;
+    transition: background 1s linear;
 }
 
 .log_0, .log_1, .log_2 {
@@ -1263,11 +1268,13 @@ span.logo
 
 .flash_1, .log_1 {
     font-weight: bold;
+    background-color: darkgreen;
 }
 
 .flash_2, .log_2 {
     font-weight: bold;
     border-color: darkred;
+    background-color: darkred;
 }
 
 select>option:hover {
