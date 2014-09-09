@@ -1074,7 +1074,7 @@ ScatterPlot.prototype = {
   * @param cloneID: ID d'un clone
   * */
   updateClone: function (cloneID) {
-      if (this.m.windows[cloneID].active) {
+    if (this.m.windows[cloneID].active) {
 	   if (this.m.clones[cloneID].split) {
 	       for (var i = 0; i < this.m.clones[cloneID].cluster.length; i++) {
 		      var seqID = this.m.clones[cloneID].cluster[i]
@@ -1094,23 +1094,24 @@ ScatterPlot.prototype = {
 	       if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
 	       this.nodes[cloneID].r1 = size
        }
+    }
+    else {
+        this.nodes[cloneID].r1 = 0
+    }
        
        
-        if (this.use_system_grid && this.m.system == "multi" 
-            && typeof this.m.windows[cloneID].system != 'undefined'
-            && this.m.windows[cloneID].system != this.m.germlineV.system
-        ){
-            this.nodes[cloneID].x2 = this.systemGrid[this.m.windows[cloneID].system].x * this.resizeW
-            this.nodes[cloneID].y2 = this.systemGrid[this.m.windows[cloneID].system].y * this.resizeH
-        }else{
-            this.nodes[cloneID].x2 = this.axisX.pos(cloneID)*this.gridSizeW
-            this.nodes[cloneID].y2 = this.axisY.pos(cloneID)*this.gridSizeH
-        }
+    if (this.use_system_grid && this.m.system == "multi" 
+        && typeof this.m.windows[cloneID].system != 'undefined'
+        && this.m.windows[cloneID].system != this.m.germlineV.system
+    ){
+        this.nodes[cloneID].x2 = this.systemGrid[this.m.windows[cloneID].system].x * this.resizeW
+        this.nodes[cloneID].y2 = this.systemGrid[this.m.windows[cloneID].system].y * this.resizeH
+    }else{
+        this.nodes[cloneID].x2 = this.axisX.pos(cloneID)*this.gridSizeW
+        this.nodes[cloneID].y2 = this.axisY.pos(cloneID)*this.gridSizeH
+    }
       
-      }
-      else {
-	       this.nodes[cloneID].r1 = 0
-      }
+
       
   },
 
