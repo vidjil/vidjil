@@ -77,7 +77,8 @@ PDF.prototype = {
                          "y" : 5,
                          "w" : 277,
                          "h" : 170,
-                         "fontSize" : 10
+                         "fontSize" : 10,
+                         "strokeSize" : 5
                         }
         
         this.init()
@@ -89,6 +90,29 @@ PDF.prototype = {
         this.print()
         
         return this;
+    },
+    
+    //test
+    mini: function(){
+        this.doc = new jsPDF();
+        this.y = this.marge;
+        this.m.focusOut()
+        
+        var opt_graph = {"x" : 15,
+                         "y" : 10,
+                         "w" : 80,
+                         "h" : 50,
+                         "fontSize" : 6,
+                         "strokeSize" : 10
+                }
+        
+        this.init()
+            .graph(opt_graph)
+            
+        opt_graph.x += 100
+        this.graph(opt_graph)
+        this.print()
+        
     },
     
     /*print Header
@@ -134,18 +158,14 @@ PDF.prototype = {
     /* print graph
      */
     graph: function (opt) {
-        if (typeof opt !== 'undefined'){
-            var x = opt.x;
-            var y = opt.y;
-            var w = opt.w;
-            var h = opt.h;
-            var fontSize = opt.fontSize;
-        }else{
-            var x = this.marge;
-            var y = this.y;
-            var w = 180;
-            var h = 80;
-            var fontSize = 8;
+        if (typeof opt == 'undefined'){
+            opt = {}
+            opt.x = this.marge;
+            opt.y = this.y;
+            opt.w = 180;
+            opt.h = 80;
+            opt.fontSize = 8;
+            opt.strokeSize = 6;
             
             var graph_size = 90
             this.checkPage(graph_size)
@@ -155,13 +175,13 @@ PDF.prototype = {
         var elem = document.getElementById(this.graph_id)
             .cloneNode(true);
 
-        var opt = {};
-        opt.scaleX = w / document.getElementById(this.graph_id)
+        var opt2 = {};
+        opt2.scaleX = opt.w / document.getElementById(this.graph_id)
             .offsetWidth
-        opt.scaleY = h / document.getElementById(this.graph_id)
+        opt2.scaleY = opt.h / document.getElementById(this.graph_id)
             .offsetHeight
-        opt.x_offset = x;
-        opt.y_offset = y;
+        opt2.x_offset = opt.x;
+        opt2.y_offset = opt.y;
 
         //clones style
         for (var i = 0; i < this.m.windows.length; i++) {
@@ -187,7 +207,7 @@ PDF.prototype = {
             var color = tagColor[this.m.windows[this.list[i]].tag]
 
             polyline.setAttribute("stroke", color);
-            polyline.setAttribute("style", "stroke-width:6px");
+            polyline.setAttribute("style", "stroke-width: "+opt.strokeSize+"px");
 
             elem.querySelectorAll('[id="polyline_container"]')[0]
                 .appendChild(polyline);
@@ -202,7 +222,7 @@ PDF.prototype = {
             }else{
                 textElem[i].setAttribute("text-anchor", "end");
             }
-            textElem[i].setAttribute("font-size", fontSize);
+            textElem[i].setAttribute("font-size", opt.fontSize);
         }
 
         //
@@ -225,12 +245,12 @@ PDF.prototype = {
 
         var reso5 = elem.querySelectorAll('[id="resolution5"]')[0]
         reso5.parentNode.removeChild(reso5);
-        console.log(opt)
+        console.log(opt2)
         console.log(elem)
-        svgElementToPdf(elem, this.doc, opt)
+        svgElementToPdf(elem, this.doc, opt2)
 
         this.doc.setFillColor(255, 255, 255);
-        this.doc.rect(x, y+h, w, h, 'F');
+        this.doc.rect(opt.x, opt.y+opt.h+1, opt.w, opt.h, 'F');
         this.doc.setFillColor(0, 0, 0);
 
         return this;
