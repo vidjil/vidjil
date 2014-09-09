@@ -447,7 +447,7 @@ line {
 
 }
 
-.systemBox {
+.systemBox, .systemBoxMenu {
     display: inline-block;
     width: @width_systemBox;
     height: 16px;
@@ -455,12 +455,21 @@ line {
     border-radius: 3px;
     border-style: solid;
     border-width: 1px;
-    float: left;
     margin : 2px;
     margin-top: 0px;
     color: @select;
     font-family: monospace;
 }
+
+.systemBox {
+    float: left;
+}
+
+.systemBoxNameMenu {
+    display: inline-block;
+    min-width: 90px;
+}	      
+
 
 .clusterBox{
   width: @width_clusterBox;
