@@ -660,8 +660,10 @@ span .substitution {
   display: inline-block;
   cursor: pointer;
   background: #333333;
-  width: 100px;
+  width: auto;
   text-align: center;
+  padding-left: 10px;
+  padding-right: 10px;
 }
 .smallbutton {
   cursor: pointer;
@@ -1086,7 +1088,7 @@ span.logo {
   margin: 5px;
   background: #000000;
   border-color: #333333;
-  z-index: 10;
+  z-index: -1;
   -webkit-transition: background 1s linear;
   -moz-transition: background 1s linear;
   -ms-transition: background 1s linear;

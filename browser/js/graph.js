@@ -904,7 +904,7 @@ Stack.prototype = {
         this.min = [];
         this.max = [];
         for (j=0; j<this.m.time.length; j++){
-            this.sum[j]=0
+            this.sum[j]=1
         }
         
         for (i=0; i<this.m.windows.length; i++){
