@@ -914,7 +914,7 @@ Stack.prototype = {
             if (this.m.windows[i].active) {
                 for (j=0; j<this.m.time.length; j++){
                     this.min[i][j] = this.sum[j]
-                    this.sum[j] += this.m.getSize(i,j)
+                    this.sum[j] -= this.m.getSize(i,j)
                     this.max[i][j] = this.sum[j]
                 }
             }else{
