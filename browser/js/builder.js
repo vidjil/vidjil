@@ -616,9 +616,18 @@ Builder.prototype = {
         span1.className = "info_row"
         
         var span2 = document.createElement('span');
+        span2.className = "info_row_content"
         
+        var keys = 0 ;
+
         for (var key in this.m.system_segmented) {
             
+            if (key == "IGH" && keys > 0) {
+                span2.appendChild(document.createElement("br"));
+            }
+
+            keys += 1 ;
+
             var checkbox=document.createElement("input");
                 checkbox.type="checkbox";
                 checkbox.id = "checkbox_system_"+key
