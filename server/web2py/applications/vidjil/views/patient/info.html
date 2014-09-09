@@ -53,12 +53,14 @@ query = db(
     <h3>{{=patient.last_name + " " + patient.first_name}}  ({{=request.vars["id"]}})</h3>
     
     <div class="db_block">
+      <!--
         <div class="db_block_left">
             file list
         </div>
-        
+      -->
+
         <div class="db_block_right">
-            choose config 
+            config
             <span>
                 <select id="choose_config" name="config" onchange="db.call('patient/info', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
                     <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
@@ -77,7 +79,7 @@ query = db(
 <div id="db_table_container">
     <table class="db_table" id="table">
         <thead>
-            <tr><td class="column1"> file_name </td>
+            <tr><td class="column1"> file name </td>
                 <td class="column5"> </td>
                 <td class="column2"> sampling date </td>
                 <td> info </td>
@@ -86,7 +88,7 @@ query = db(
                 
                 <td class="column_sep"></td>
                 
-                <td class="column2"> last run </td>
+                <td class="column2"> last processing </td>
                 <td class="column4">  </td>
 
             </tr>
