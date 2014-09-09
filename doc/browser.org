@@ -113,6 +113,45 @@ obtained:
    - You can visualize results by IMGT/V-QUEST and IgBlast on the selected sequences, in another window, by clicking on the corresponding buttons.
    - You can unselect all sequences by clicking on the background of the scatterplot.
 
+
+** The database / server connection (experimental)
+
+A *server* is currently developed to link the browser and the
+algorithmic part. The goal is that the clinicians will be able to
+upload, manage and process their runs directly on the browser (with
+authentication).
+
+
+*** Patients
+      
+Once you are authentified, this page show the patient list. Here you
+can see your patients and patients whose permission has been given to you.
+
+New patients can be added ('add patient'), edited ('e') or deleted ('X').
+By default, you are the only one who can see/access this new patient.
+You can grant access to other people or group ('P'),
+people will be able to see your patient and make some action depending of the access granted.
+
+
+*** Samples
+
+Clicking on a patient give acccess the "samples" page. Each sample is
+a .fasta/.fastq file that will be processed by one or several
+pipelines.
+You can see which samples have been processed with the selected
+config, and download the sequence files if they are available ("dl").
+
+Depending on your granted accesses, you can 
+add a new sample to the list ("add file"), 
+schedule a processing for a sequence file (select a config and "run"),
+or delete a sample ("X").
+
+The processing can take a few seconds to a few hours, depending on the
+software lauched, its options and the size of the sample.
+Once the processing is finished, click on the button "see result" and
+the browser will load the data of the processed files. The first click
+on this button can take a few seconds.
+
 * Assessing the quality of your data and of the analysis
 
 To make sure that the PCR, the sequencing and the Vidjil analysis went well, several elements can be controlled.
