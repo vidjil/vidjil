@@ -151,18 +151,20 @@ query = db(
     </div>
     
     
-    {{if fused_count >0:}}
     <div class="db_block_right">
-        <span class="button2" onclick="db.load_data( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=config_id}} } )" > see result </span>
+        result :
+        {{for row in db(db.fused_file.patient_id == request.vars["id"]).select() :}}
+            <span class="button2" onclick="db.load_data( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=row.config_id}} } )" >
+                {{=db.config[row.config_id].name}} </span>
+        {{pass}} 
     </div>
-    {{pass}}
     
 </div>
 
 {{if fused_count >0:}}
 <div class="db_block">
     <div class="db_block_right">
-        download
+        download {{=db.config[config_id].name}}
         <a class="button" href={{=URL('default', 'download', scheme='https', args=fused_file[0].fused_file, vars=dict(filename=fused_filename))}} type="application/octet-stream" download> .data </a>
         {{if analysis_count >0:}}
         <a class="button" href={{=URL('default', 'download', scheme='https', args=analysis_file[0].analysis_file, vars=dict(filename=analysis_filename))}} type="application/octet-stream" download> .analysis </a>
