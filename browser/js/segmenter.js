@@ -156,6 +156,7 @@ Segment.prototype = {
                     curH = seg.height(),
                     autoH = seg.css('height', 'auto').height();
                     if (autoH > 100){
+                        if (autoH > 500) autoH = 500
                         seg.stop().height(curH).animate({height: autoH+5}, 250);
                     }else{
                         seg.stop().height(curH)

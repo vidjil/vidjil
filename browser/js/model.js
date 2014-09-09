@@ -1370,9 +1370,6 @@ Model.prototype = {
      *
      * */
     select: function (cloneID) {
-
-        var list = this.getSelected();
-
         myConsole.log("select() (clone " + cloneID + ")");
 
         if (cloneID == (this.n_windows - 1)) return 0
@@ -1380,13 +1377,26 @@ Model.prototype = {
         if (this.windows[cloneID].select) {
             return;
         } else {
-            if (list.length < 20) {
-	      this.windows[cloneID].select = true;
-	      this.addClonesSelected(cloneID);
+            this.windows[cloneID].select = true;
+            this.addClonesSelected(cloneID);
 	    }
-        }
+	    
 	    this.lastCloneSelected = cloneID;
         this.updateElemStyle([cloneID]);
+        this.updateAlignmentButton();
+    },
+    
+   multiSelect: function (list) {
+
+        myConsole.log("select() (clone " + list + ")");
+
+        for (var i=0; i<list.length; i++){
+            this.windows[list[i]].select = true;
+            this.addClonesSelected(list[i]);
+        }
+
+        this.lastCloneSelected = list[0];
+        this.updateElemStyle(list);
         this.updateAlignmentButton();
     },
 

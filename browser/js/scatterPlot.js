@@ -1777,9 +1777,7 @@ ScatterPlot.prototype = {
                   this.active_selector = false;
         
                   if (!d3.event.ctrlKey) this.m.unselectAll()
-                  for (var i = 0; i < nodes_selected.length; i++) {
-                      this.m.select(nodes_selected[i])
-                  }
+                  this.m.multiSelect(nodes_selected)
               }
           }
       }
