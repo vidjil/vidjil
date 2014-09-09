@@ -117,6 +117,9 @@ line {
   min-width: 100px;
   display: inline-block;
 }
+.info_row_content {
+  display: inline-block;
+}
 #info_point {
   margin-top: 15px;
 }
@@ -357,19 +360,26 @@ line {
   user-select: none;
   text-align: center;
 }
-.systemBox {
+.systemBox,
+.systemBoxMenu {
   display: inline-block;
-  width: 16px;
-  height: 16px;
+  width: 13px;
+  height: 13px;
   text-align: center;
   border-radius: 3px;
-  border-style: solid;
   border-width: 1px;
-  float: left;
-  margin: 2px;
-  margin-top: 0px;
+  margin: 4px;
+  margin-top: 2px;
   color: #fdf6e3;
   font-family: monospace;
+  font-size: 80%;
+}
+.systemBox {
+  float: left;
+}
+.systemBoxNameMenu {
+  display: inline-block;
+  min-width: 90px;
 }
 .clusterBox {
   width: 16px;
@@ -753,18 +763,25 @@ span.logo {
   background: #3d24b6;
   background: -moz-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* FF3.6+ */
+
   background: -webkit-gradient(linear, left top, right top, color-stop(0%, #3d24b6), color-stop(10%, #2448b5), color-stop(20%, #2487b8), color-stop(30%, #24b7ab), color-stop(40%, #24b86e), color-stop(50%, #24b730), color-stop(60%, #55b824), color-stop(70%, #92b724), color-stop(80%, #b89f24), color-stop(90%, #b25f23), color-stop(100%, #b82424));
   /* Chrome,Safari4+ */
+
   background: -webkit-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* Chrome10+,Safari5.1+ */
+
   background: -o-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* Opera 11.10+ */
+
   background: -ms-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* IE10+ */
+
   background: linear-gradient(to right, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* W3C */
+
   filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#3d24b6', endColorstr='#b82424', GradientType=1);
   /* IE6-9 */
+
   width: 180px;
   height: 16px;
   display: inline-block;
