@@ -10,11 +10,11 @@
 {{if request.args(0)=='login':}}
     
     {{if not 'register' in auth.settings.actions_disabled:}}
-    <button class="btn" onclick="db.call('default/user/register')">Register</button>
+        {{#<button class="btn" onclick="db.call('default/user/register')">Register</button>}}
     {{pass}}
     
     {{if not 'request_reset_password' in auth.settings.actions_disabled:}}
-        <button class="btn" onclick="db.call('default/user/request_reset_password')">Lost Password</button>
+        {{#<button class="btn" onclick="db.call('default/user/request_reset_password')">Lost Password</button>}}
     {{pass}}
     
 {{pass}}
