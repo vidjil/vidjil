@@ -436,12 +436,13 @@ Database.prototype = {
         });
     },
     
-    user_rights: function (value, name, id) {
+    user_rights: function (value, name, right, id) {
         
         var arg = {}
-        arg.value = value
-        arg.name = name
-        arg.id = id
+        arg.value = value       //true > add right  || false > remove right
+        arg.name = name         //on what the right apply (patient / file / config)
+        arg.right = right       //kind of write (create / delete / run)
+        arg.id = id             //user id 
        
         this.call('user/rights', arg)
     },
