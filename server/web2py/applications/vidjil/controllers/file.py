@@ -7,12 +7,14 @@ if request.env.http_origin:
 
 
 def add(): 
-    if auth.has_permission('admin', 'patient', request.vars['id'], auth.user_id):
-        return dict(message=T('add file'))
-    else :
-        res = {"success" : "false", "message" : "you need admin permission on this patient to add file"}
+    if not auth.has_permission('admin', 'patient', request.vars['id'], auth.user_id):
+        res = {"success" : "false", "message" : "you need admin permission on this patient to add files"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
+    elif not auth.has_permission('upload', 'sequence_file', request.vars['id'], auth.user_id):
+        res = {"success" : "false", "message" : "you don't have right to upload files"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    else:
+        return dict(message=T('add file'))
 
 #TODO check data
 def add_form(): 
@@ -46,7 +48,14 @@ def add_form():
 
 
 def edit(): 
-    return dict(message=T('edit file'))
+    if not auth.has_permission('admin', 'patient', request.vars['id'], auth.user_id):
+        res = {"success" : "false", "message" : "you need admin permission to edit files"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    #elif not auth.has_permission('upload', 'sequence_file', request.vars['id'], auth.user_id):
+    #    res = {"success" : "false", "message" : "you don't have right to upload files"}
+    #    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    else:
+        return dict(message=T('edit file'))
 
 
 #TODO check data
