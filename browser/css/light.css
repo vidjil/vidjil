@@ -379,7 +379,7 @@ line {
 }
 .systemBoxNameMenu {
   display: inline-block;
-  min-width: 85px;
+  min-width: 89px;
 }
 .clusterBox {
   width: 16px;
@@ -1030,6 +1030,7 @@ span.logo {
   -moz-animation: move 2s linear infinite;
   -o-animation: move 2s linear infinite;
   animation: move 2s linear infinite;
+  display: inline-block;
 }
 @-webkit-keyframes move {
   to {
