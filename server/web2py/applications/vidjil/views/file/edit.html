@@ -18,6 +18,7 @@ info = db.sequence_file[request.vars["id"]]
 
 <form id="upload_form" action="DB_ADDRESS/file/edit_form" enctype="multipart/form-data" method="post">
     <input type="hidden" id="file_id" name="id" value="{{=request.vars["id"]}}" >
+    <input type="hidden" id="filename" name="filename" type="text" value="">
     
     <table>
         <tbody>

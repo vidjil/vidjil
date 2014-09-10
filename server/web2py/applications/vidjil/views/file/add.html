@@ -17,6 +17,7 @@
 
 <form id="upload_form" action="DB_ADDRESS/file/add_form" enctype="multipart/form-data" method="post">
     <input type="hidden" name="patient_id" value="{{=request.vars["id"]}}" >
+    <input type="hidden" id="filename" name="filename" type="text" value="">
     
     <table>
         <tbody>

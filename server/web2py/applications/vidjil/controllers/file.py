@@ -26,8 +26,20 @@ def add_form():
             datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
         except ValueError:
             error += "date missing or wrong format, "
+    if request.vars['filename'] == None :
+        error += " missing filename"
             
     if error=="" :
+        query = db((db.sequence_file.patient_id==request.vars['patient_id'])).select()
+        for row in query :
+            if row.data_file is None :
+                filename= " "
+            else:
+                (filename, str) = db.sequence_file.data_file.retrieve(row.data_file)
+            if filename == request.vars['filename'] :
+                res = {"message": "this sequence file already exist for this patient"}
+                return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+            
         id = db.sequence_file.insert(sampling_date=request.vars['sampling_date'],
                             info=request.vars['file_info'],
                             pcr=request.vars['pcr'],
@@ -65,8 +77,19 @@ def edit_form():
     
     if request.vars['id'] == None :
         error += "missing id"
+    if request.vars['filename'] == None :
+        error += " missing filename"
             
     if error=="" :
+        query = db((db.sequence_file.patient_id==db.sequence_file[request.vars['id']].patient_id)).select()
+        for row in query :
+            if row.data_file is None :
+                filename = " "
+            else:
+                (filename, str) = db.sequence_file.data_file.retrieve(row.data_file)
+            if filename == request.vars['filename'] :
+                res = {"message": "this sequence file already exist for this patient"}
+                return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
         mes = "file " + request.vars['id'] + " : "
         if request.vars['sampling_date'] != None and request.vars['file_info'] != None :
@@ -89,7 +112,7 @@ def upload():
     error = ""
     if request.vars['id'] == None :
         error += "missing id"
-            
+    
     if error=="" :
             
         mes = "file " + request.vars['id'] + " : "
