@@ -1111,13 +1111,13 @@ span.logo {
 .flash_1,
 .log_1 {
   font-weight: bold;
-  background-color: darkgreen;
+  background-color: #DFF0D8;
 }
 .flash_2,
 .log_2 {
   font-weight: bold;
   border-color: darkred;
-  background-color: darkred;
+  background-color: #F2DEDE;
 }
 select > option:hover {
   background-color: #333333;
