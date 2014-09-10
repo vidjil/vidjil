@@ -122,7 +122,7 @@ query = db(
                     <td> 
                         {{if filename != '' and config_id != -1:}}
                             {{if row.data_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED"):}}
-                                {{if auth.has_permission("upload", "sequence_file") :}}
+                            {{if auth.has_permission("run", "data_file") :}}
                                 <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'config_id' : {{=config_id}} } )"> run >> </span>
                                 {{else:}}
                                 <span class="button inactive" title="you don't have permission to schedule runs"> run >> </span>
