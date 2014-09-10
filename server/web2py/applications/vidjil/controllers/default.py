@@ -45,7 +45,9 @@ def run_request():
         error += "id sequence file needed, "
     if not "config_id" in request.vars:
         error += "id config needed, "
-        
+    if not auth.has_permission("run", "data_file") :
+        error += "permission needed"
+    
     id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
     
     if not auth.has_permission('admin', 'patient', id_patient) :

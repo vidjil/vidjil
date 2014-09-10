@@ -113,9 +113,10 @@ query = db(
                     <td> {{if filename != '':}}<a href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" >dl</a>{{pass}}</td>
                     <td> {{=row.sequence_file.sampling_date}} </td>
                     <td> {{=row.sequence_file.info}} </td>
-                    <td onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
-                    <td onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
-                     
+                    {{if (auth.has_permission('admin', 'patient', request.vars["id"]) ):}}
+                        <td onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
+                        <td onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
+                    {{else:}}<td></td><td></td>{{pass}}
                     <td class="column_sep"></td>
                      
                     <td> {{if row.data_file.run_date :}}{{=row.data_file.run_date }}{{pass}} </td>
@@ -128,7 +129,7 @@ query = db(
                                 <span class="button inactive" title="you don't have permission to schedule runs"> run >> </span>
                                 {{pass}}
                             {{else:}}
-                            {{=status}}
+                                {{=status}}
                             {{pass}}
                         {{pass}}
                     </td>

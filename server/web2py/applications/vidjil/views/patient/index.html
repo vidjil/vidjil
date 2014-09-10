@@ -39,12 +39,11 @@ query = db(
                     <td> {{=row.patient.info }} </td>
                     <td> {{=row[count]}}</td>
                     {{if auth.has_membership("admin"):}}
-                    <td onclick="db.call('patient/permission', {'id' :'{{=row.patient.id}}'} )" > p </td>
-                    {{else:}}
-                    <td></td>
-                    {{pass}}
+                    <td onclick="db.call('patient/permission', {'id' :'{{=row.patient.id}}'} )" > p </td> {{else:}} <td></td> {{pass}}
+                    {{if (auth.has_permission('admin', 'patient', row.patient.id) ):}}
                     <td onclick="db.call('patient/edit', {'id' :'{{=row.patient.id}}'} )" > e </td>
                     <td onclick="db.call('patient/confirm', {'id' :'{{=row.patient.id}}'} )" > X </td>  
+                    {{else:}}  <td></td><td></td>{{pass}}
                 </tr>
             {{pass}}
         </table>
