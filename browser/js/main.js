@@ -107,7 +107,13 @@ m.addSegment(segment);
 /* Connections
  *
  * */
-var db = new Database("plop!", DB_ADDRESS);
+if (config.use_database){
+    var db = new Database("plop!", DB_ADDRESS);
+    //wait 1sec to check ssl
+    setTimeout(function () { db.call("patient/index.html")}, 1000);
+}else{
+    popupMsg(msg.welcome)
+}
 
 /*Statements and functions which allows to active the ALT key, and the movement of the SVG frame*/
 document.onkeydown = keydown;

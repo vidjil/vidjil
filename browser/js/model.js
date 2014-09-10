@@ -1973,11 +1973,9 @@ Model.prototype = {
         }
 
         //TODO check version 
-        if (this.browser == "Chrome" ||
-            this.browser == "Firefox" ||
-            this.browser == "Safari") {
-            popupMsg(msg.welcome)
-        } else {
+        if (this.browser != "Chrome" &&
+            this.browser != "Firefox" &&
+            this.browser != "Safari") {
             popupMsg(msg.browser_error)
         }
 
