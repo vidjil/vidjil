@@ -1,9 +1,23 @@
 function Database(id, db_address) {
+    var self = this;
     this.db_address = db_address;
     this.id = id;
     this.upload = {};
-    
     this.url = []
+    
+    onbeforeunload = function(e){
+        if ( self.is_uploading() ){
+            if(confirm('some uploads are incomplete, do you really want to leave')){
+                return '';
+            }
+            else {
+                e = e || event;
+                if(e.preventDefault){e.preventDefault();}
+                e.returnValue = false;
+                return 'some uploads are incomplete, do you really want to leave';
+            }
+        }
+    }
 }
 
 Database.prototype = {
@@ -66,6 +80,13 @@ Database.prototype = {
                     + "<a href='"+DB_ADDRESS+"' target='_blank' > click me ! <a/>"
             popupMsg(msg)
         }
+    },
+    
+    is_uploading: function () {
+        for (var key in this.upload){
+            if (this.upload[key].active) return true
+        }
+        return false
     },
     
     display_result: function (result, url) {
@@ -162,8 +183,15 @@ Database.prototype = {
         //submit formulaire avec fichier
         if ( document.getElementById('upload_form') ){
             
-            var data = $('#upload_form').serialize()
-
+            $('#upload_file').change(function (){
+                var filename = $("#upload_file").val();
+                var lastIndex = filename.lastIndexOf("\\");
+                if (lastIndex >= 0) {
+                    filename = filename.substring(lastIndex + 1);
+                }
+                $('#filename').val(filename);
+            })
+            
             $('#upload_form').ajaxForm({
                 type     : "POST",
                 cache: false,
@@ -173,18 +201,20 @@ Database.prototype = {
                 data     : $(this).serialize(),
                 success  : function(result) {
                     var js = self.display_result(result)
-                    var id = js.file_id
-                    var fileSelect = document.getElementById('upload_file');
-                    var files = fileSelect.files;
-                    var data = new FormData();
-                    
-                    for (var i = 0; i < files.length; i++) {
-                        var file = files[i];
-                        data.append('file', file, file.name);
+                    if (typeof js.file_id != 'undefined'){
+                        $(this).attr("action", "0")
+                        var id = js.file_id
+                        var fileSelect = document.getElementById('upload_file');
+                        var files = fileSelect.files;
+                        var data = new FormData();
+                        
+                        for (var i = 0; i < files.length; i++) {
+                            var file = files[i];
+                            data.append('file', file, file.name);
+                        }
+                        data.append('id', id);
+                        self.upload_file(id, data, $('#filename').val())
                     }
-                    data.append('id', id);
-                    
-                    self.upload_file(id, data)
                 },
                 error: function (request, status, error) {
                     if(status==="timeout") {
@@ -199,7 +229,7 @@ Database.prototype = {
         
     },
     
-    upload_file: function (id, data){
+    upload_file: function (id, data, filename){
         var self = this;
         
         var url = self.db_address + "file/upload"
@@ -213,11 +243,11 @@ Database.prototype = {
             contentType: false,
             data: data,
             xhrFields: {withCredentials: false},
-            beforeSend: function(){
-                self.upload[id] = 0
+            beforeSend: function(jqxhr){
+                self.upload[id] = { "active" :true, "jqXHR" : jqxhr, "filename" : filename }
             },
             success: function (result) {
-                self.upload[id] = 1
+                self.upload[id].active = false
                 self.upload_display()
                 self.display_result(result, url)
             },
@@ -227,7 +257,7 @@ Database.prototype = {
                 if (status === "timeout") {
                     myConsole.flash("database : Timeout")
                 } else {
-                    popupMsg(request.responseText);
+                    myConsole.flash("upload " + filename + " : " + status)
                 }
             }
         });
@@ -407,13 +437,19 @@ Database.prototype = {
     /* update upload status  */
     upload_display: function(){
         for (var key in this.upload){
-            if (this.upload[key]==1){
+            if (!this.upload[key].active){
                 delete this.upload[key]; 
                 this.reload()
             }else{
-                $("#sequence_file_"+key).html("<div class='loading_seq'></div>")
+                $("#sequence_file_"+key).html("<span class='loading_seq'></span> <span class='button' onclick='db.cancel_upload("+key+")'>cancel</span>")
             }
         }
+    },
+    
+    cancel_upload: function (id) {
+        myConsole.flash("cancel upload : " + this.upload[id].filename, 1);
+        this.upload[id].jqXHR.abort()
+        this.reload()
     },
 
     //efface et ferme la fenetre de dialogue avec le serveur
