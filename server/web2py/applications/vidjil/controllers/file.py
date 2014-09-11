@@ -60,14 +60,15 @@ def add_form():
 
 
 def edit(): 
-    if not auth.has_permission('admin', 'patient', request.vars['id'], auth.user_id):
-        res = {"success" : "false", "message" : "you need admin permission to edit files"}
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    if auth.has_permission('admin', 'patient', request.vars['patient_id']):
+        return dict(message=T('edit file'))
     #elif not auth.has_permission('upload', 'sequence_file', request.vars['id'], auth.user_id):
     #    res = {"success" : "false", "message" : "you don't have right to upload files"}
     #    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
-        return dict(message=T('edit file'))
+        res = {"success" : "false", "message" : "you need admin permission to edit files"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        
 
 
 #TODO check data
@@ -126,21 +127,30 @@ def upload():
   
 
 def confirm():
-    return dict(message=T('confirm sequence file deletion'))
+    if auth.has_permission('admin', 'patient', request.vars['patient_id']):
+        return dict(message=T('confirm sequence file deletion'))
+    else:
+        res = {"success" : "false", "message" : "you need admin permission to delete this file"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
 
 def delete():
     import shutil, os.path
-
+    
     patient_id = db.sequence_file[request.vars["id"]].patient_id
     
-    db(db.sequence_file.id == request.vars["id"]).delete()
-    db(db.data_file.sequence_file_id == request.vars["id"]).delete()
+    if auth.has_permission('admin', 'patient', patient_id):
+        db(db.sequence_file.id == request.vars["id"]).delete()
+        db(db.data_file.sequence_file_id == request.vars["id"]).delete()
+
+        res = {"redirect": "patient/info",
+               "args" : { "id" : patient_id},
+               "message": "sequence file deleted"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    else:
+        res = {"success" : "false", "message" : "you need admin permission to delete this file"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
-    res = {"redirect": "patient/info",
-           "args" : { "id" : patient_id},
-           "message": "sequence file deleted"}
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def sequencer_list():
     sequencer_list = []
