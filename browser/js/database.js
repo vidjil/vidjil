@@ -5,17 +5,12 @@ function Database(id, db_address) {
     this.upload = {};
     this.url = []
     
-    onbeforeunload = function(e){
+    window.onbeforeunload = function(e){
         if ( self.is_uploading() ){
-            if(confirm('some uploads are incomplete, do you really want to leave')){
-                return '';
-            }
-            else {
-                e = e || event;
-                if(e.preventDefault){e.preventDefault();}
-                e.returnValue = false;
-                return 'some uploads are incomplete, do you really want to leave';
-            }
+            e = e || event;
+            if(e.preventDefault){e.preventDefault();}
+            e.returnValue = false;
+            return 'some uploads are incomplete, do you really want to leave';
         }
     }
 }
