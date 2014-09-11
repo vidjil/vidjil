@@ -104,7 +104,7 @@ db.define_table('sequence_file',
                 Field('sequencer','text'),
                 Field('producer','text'),
                 Field('size_file','integer'),
-                Field('data_file', 'upload', length=1000000000000))
+                Field('data_file', 'upload', length=1000000000000, autodelete=True))
 
 
 
@@ -128,21 +128,21 @@ db.define_table('data_file',
                 Field('config_id', 'reference config'),
                 Field('run_date','date'),
                 Field('scheduler_task_id', 'integer'),
-                Field('data_file', 'upload', length=1000000000000))
+                Field('data_file', 'upload', length=1000000000000, autodelete=True))
 
 db.define_table('fused_file',
                 Field('patient_id', 'reference patient'),
                 Field('config_id', 'reference config'),
                 Field('fuse_date','date'),
                 Field('status', 'string'),
-                Field('fused_file', 'upload', length=1000000000000))
+                Field('fused_file', 'upload', length=1000000000000, autodelete=True))
 
 db.define_table('analysis_file',
                 Field('patient_id', 'reference patient'),
                 Field('config_id', 'reference config'),
                 Field('analyze_date','date'),
                 Field('status', 'string'),
-                Field('analysis_file', 'upload', length=1000000000000))
+                Field('analysis_file', 'upload', length=1000000000000, autodelete=True))
 
 
 if db(db.auth_user.id > 0).count() == 0:
