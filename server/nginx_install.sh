@@ -65,7 +65,7 @@ echo "server {
         listen          80;
         server_name     \$hostname;
 
-        location /browser/ {
+        location /browser {
             root $CWD/../browser/;
             expires max;
         }
@@ -96,7 +96,7 @@ echo "server {
             include /etc/nginx/conf.d/web2py/gzip.conf;
             ### end gzip section
 
-            client_max_body_size 1024m;
+            client_max_body_size 2048m;
         }
 
         location /cgi/ {
@@ -134,7 +134,7 @@ server {
             ### end gzip section
 
             ### remove the comments if you want to enable uploads (max 10 MB)
-            client_max_body_size 1024m;
+            client_max_body_size 2048m;
             ###
         }
         ## if you serve static files through https, copy here the section
