@@ -536,14 +536,6 @@ Builder.prototype = {
         }
         div_point.appendChild(nextTime)    
         
-        var editTimeName = document.createElement('span')
-        editTimeName.appendChild(document.createTextNode("edit"));
-        editTimeName.className = "button_right"
-        editTimeName.onclick = function () {
-            self.edit(this, "time");
-        }
-        div_point.appendChild(editTimeName)
-        
         if (self.m.isPlaying){
             var stop = document.createElement('span')
             stop.appendChild(document.createTextNode("stop"));
@@ -562,14 +554,6 @@ Builder.prototype = {
             div_point.appendChild(play)
         }
         
-        var infoTime = document.createElement('span')
-        infoTime.appendChild(document.createTextNode("Info"));
-        infoTime.className = "button_right"
-        infoTime.onclick = function () {
-            dataBox(self.m.getPointHtmlInfo(self.m.t));
-        }
-        div_point.appendChild(infoTime)
-        
         var previousTime = document.createElement('span')
         previousTime.appendChild(document.createTextNode("<"));
         previousTime.className = "previous_button button_right"
@@ -577,6 +561,22 @@ Builder.prototype = {
             self.m.previousTime();
         }
         div_point.appendChild(previousTime)        
+        
+        var editTimeName = document.createElement('span')
+        editTimeName.appendChild(document.createTextNode("edit"));
+        editTimeName.className = "button_right"
+        editTimeName.onclick = function () {
+            self.edit(this, "time");
+        }
+        div_point.appendChild(editTimeName)
+        
+        var infoTime = document.createElement('span')
+        infoTime.appendChild(document.createTextNode("Info"));
+        infoTime.className = "button_right"
+        infoTime.onclick = function () {
+            dataBox(self.m.getPointHtmlInfo(self.m.t));
+        }
+        div_point.appendChild(infoTime)
         
         parent.appendChild(div_point)
         
