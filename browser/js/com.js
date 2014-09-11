@@ -40,13 +40,17 @@ Com.prototype = {
             var div = jQuery('<div/>', {
                 text: str,
                 style: 'display : none',
-                class: 'flash_'+priority
+                class: 'flash_'+priority ,
+                click : function(){$(this).fadeOut(25, function() { $(this).remove();} );}
             }).appendTo("#"+this.flash_id)
             .slideDown(200);
             
-            setTimeout(function(){
-                div.fadeOut('slow', function() { div.remove();});
-            }, 5000);
+            if (priority !=2){
+                setTimeout(function(){
+                    div.fadeOut('slow', function() { div.remove();});
+                }, 8000);
+            }
+            
         }
         
         this.log(str, priority);
