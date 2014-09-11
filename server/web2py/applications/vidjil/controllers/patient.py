@@ -136,19 +136,8 @@ def edit_form():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
-
-## return
-## need ["first_name", "last_name", "birth_date", "info"]
-## redirect to patient list if success
-## return a flash error message if fail
-@cache.action()
 def download():
-    if (auth.has_permission('read', 'patient', request.vars["id"]) ) or (auth.has_permission('admin', 'patient', request.vars["id"]) ):
         return response.download(request, db)
-    else :
-        res = {"message": "acces denied"}
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
 
 
 #

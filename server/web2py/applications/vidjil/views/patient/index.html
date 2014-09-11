@@ -22,21 +22,29 @@ query = db(
     
     <div id="db_table_container">
         <table class="db_table" id="table">
+            
+            
             <thead>
                 <tr><td class="column1"> name </td>
                     <td class="column2"> birth </td>
                     <td> info </td>
-                    <td class="column2"> files </td>
+                    <td class="column1"> configs used</td>
+                    <td class="column4"> files </td>
                     <td class="column5"> </td>
                     <td class="column5"> </td>
                     <td class="column5"> </td>
                 </tr>
             </thead>
+            
+            
            {{for row in query :}}
                <tr onclick="db.call('patient/info', {'id' :'{{=row.patient.id}}'} )" >
                     <td> {{=row.patient.last_name + " " + row.patient.first_name }} </td>
                     <td> {{=row.patient.birth }} </td>
                     <td> {{=row.patient.info }} </td>
+                    <td> {{for row2 in db( db.fused_file.patient_id == row.patient.id ).select(db.fused_file.config_id, distinct=True) :}} 
+                        {{=db.config[row2.config_id].name}} ,
+                    {{pass}}</td>
                     <td> {{=row[count]}}</td>
                     {{if auth.has_membership("admin"):}}
                     <td onclick="db.call('patient/permission', {'id' :'{{=row.patient.id}}'} )" > p </td> {{else:}} <td></td> {{pass}}
@@ -46,6 +54,9 @@ query = db(
                     {{else:}}  <td></td><td></td>{{pass}}
                 </tr>
             {{pass}}
+            
+            
+            
         </table>
         <table class="db_table" id="db_fixed_header"></table>
     </div>
