@@ -37,7 +37,7 @@ def add_form():
             else:
                 (filename, str) = db.sequence_file.data_file.retrieve(row.data_file)
             if filename == request.vars['filename'] :
-                res = {"message": "this sequence file already exist for this patient"}
+                res = {"message": "this sequence file already exists for this patient"}
                 return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
             
         id = db.sequence_file.insert(sampling_date=request.vars['sampling_date'],
@@ -48,7 +48,7 @@ def add_form():
                             patient_id=request.vars['patient_id'])
     
         res = {"file_id" : id,
-               "message": "info file added",
+               "message": request.vars['filename'] + ": upload started",
                "redirect": "patient/info",
                "args" : {"id" : request.vars['patient_id']}
                }
@@ -89,7 +89,7 @@ def edit_form():
             else:
                 (filename, str) = db.sequence_file.data_file.retrieve(row.data_file)
             if filename == request.vars['filename'] :
-                res = {"message": "this sequence file already exist for this patient"}
+                res = {"message": "this sequence file already exists for this patient"}
                 return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
         mes = "file " + request.vars['id'] + " : "
@@ -120,7 +120,7 @@ def upload():
         if request.vars.file != None :
             f = request.vars.file
             db.sequence_file[request.vars["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
-            mes += "file saved, "
+            mes = f.filename + ": upload finished"
         
         res = {"message": mes}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))

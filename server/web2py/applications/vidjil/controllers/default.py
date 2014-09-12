@@ -243,7 +243,7 @@ def save_analysis():
         patient_name = db.patient[request.vars['patient_id']].first_name + " " + db.patient[request.vars['patient_id']].last_name
         
         res = {"success" : "true",
-               "message" : "default/save_analysis : analysis saved ("+patient_name+")"}
+               "message" : patient_name+": analysis saved"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"success" : "false",

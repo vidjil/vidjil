@@ -73,9 +73,11 @@ def add_form():
                 auth.add_permission(g, 'read', db.patient, id)
             
 
+            patient_name = request.vars["first_name"] + ' ' + request.vars["last_name"]
+
             res = {"redirect": "patient/info",
                    "args" : { "id" : id },
-                   "message": "new patient added"}
+                   "message": patient_name + ": patient added"}
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
         else :

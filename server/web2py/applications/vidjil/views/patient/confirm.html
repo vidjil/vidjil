@@ -12,9 +12,9 @@ for row in query :}}
 <div>
     <h3>{{=message}}</h3>
     
-    Are you sure you want to delete this patient</br>
-    All sequence file of this patient will also be deleted ({{=db(db.sequence_file.patient_id==request.vars["id"]).count()}} sequence file(s) will be deleted).</br>
-    All data file of this patient will also be deleted ({{=data_count}} data file(s) will be deleted).</br>
+    Are you sure you want to delete this patient ?</br>
+    This will delete {{=db(db.sequence_file.patient_id==request.vars["id"]).count()}} sequence file(s) and {{=data_count}} result files.</br>
+    This action cannot be undone.
 
     <div class="center"> 
         <button onclick="db.call('patient/delete', {'id' :'{{=request.vars["id"]}}'} )">delete</button>
