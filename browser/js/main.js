@@ -52,19 +52,8 @@ if (typeof config != 'undefined') {
 
     }
     
-    if (config.use_database){
-        
-        var a = document.createElement('a');
-        a.className = "buttonSelector"
-        a.onclick = function () { db.call('patient/index') }
-        a.appendChild(document.createTextNode("database"))
-        document.getElementById("demoSelector").firstChild.appendChild(a);
-
-        a = document.createElement('a');
-        a.className = "buttonSelector"
-        a.onclick = function () { db.save_analysis() }
-        a.appendChild(document.createTextNode("save analysis (database)"))
-        document.getElementById("demoSelector").firstChild.appendChild(a);
+    if (typeof config.use_database != 'undefined' && config.use_database){
+         $("#db_menu").css("display", "");
     }
     
     if (config.debug_mode) {

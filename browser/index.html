@@ -99,6 +99,19 @@
         <!-- TOP-CONTAINER -->
         <div id="top-container">
 
+            <div class="menu" id="db_menu" onmouseover="showSelector('dbSelector');" style="display : none"> Patient
+                <div id="dbSelector" class="selector"><div>
+                    <div class="menu_box">
+                        <a class="buttonSelector" onclick="javascript:db.reload()"> Open</a>
+                        <a class="buttonSelector" onclick="javascript:db.save_analysis()">Save</a>
+                    </div>
+                    <div class="menu_box">
+                        <div id="last_loaded_file">
+                        </div>
+                    </div>
+                </div></div>
+            </div>
+
             <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');"> file 
                 <div id="demoSelector" class="selector"><div>
                     <div class="menu_box">

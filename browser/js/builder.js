@@ -38,6 +38,8 @@ Builder.prototype = {
         this.build_info_container()
         this.build_clusterSelector()
         this.build_settings()
+        if (typeof config != 'undefined' && typeof config.use_database != 'undefined' && config.use_database) this.build_db()
+        
     },
 
     update: function () {
@@ -736,6 +738,10 @@ Builder.prototype = {
         div.appendChild(span2)
         div.appendChild(span3)
         return div;
+    },
+    
+    build_db: function(){
+        
     },
 
 }
