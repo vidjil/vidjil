@@ -375,7 +375,10 @@ Model.prototype = {
             self.normalization= self.analysis.normalization;
         }
         if (self.analysis.timestamp2) {
-            self.timestamp2= self.analysis.timestamp2;
+            self.timestamp2 = self.analysis.timestamp2;
+        }
+        if (self.analysis.patient) {
+            self.dataFileName = self.analysis.patient;
         }
         self.initClones();
     },

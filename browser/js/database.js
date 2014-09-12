@@ -316,13 +316,23 @@ Database.prototype = {
     /*récupére et initialise le browser avec un fichier .data
      * args => format json ( parametre attendu  > patient_id, config_id)
      */
-    load_data: function (args) {
+    load_data: function (args, filename) {
 
         var self = this;
         var arg = "?";
         for (var key in args) {
             arg += "" + key + "=" + args[key] + "&";
         }
+        
+        var list = document.getElementById("last_loaded_file")
+        
+        var a = document.createElement('a');
+                a.className="buttonSelector"
+                a.appendChild(document.createTextNode(filename));
+                a.onclick = function () {
+                    self.load_data(args, filename)
+                }
+                list.appendChild(a);
 
         $.ajax({
             type: "POST",
