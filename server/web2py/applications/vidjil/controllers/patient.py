@@ -22,7 +22,7 @@ def index():
         res = {"redirect" : "default/user/login"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
-    return dict(message=T('patient list'))
+    return dict(message=T(''))
 
 
 
