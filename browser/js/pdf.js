@@ -176,10 +176,8 @@ PDF.prototype = {
             .cloneNode(true);
 
         var opt2 = {};
-        opt2.scaleX = opt.w / document.getElementById(this.graph_id)
-            .offsetWidth
-        opt2.scaleY = opt.h / document.getElementById(this.graph_id)
-            .offsetHeight
+        opt2.scaleX = opt.w / document.getElementById(this.graph_id).getAttribute("width")
+        opt2.scaleY = opt.h / document.getElementById(this.graph_id).getAttribute("height")
         opt2.x_offset = opt.x;
         opt2.y_offset = opt.y;
 
@@ -479,10 +477,8 @@ PDF.prototype = {
         icon.appendChild(res)
 
         var opt_icon = {};
-        opt_icon.scaleX = w / document.getElementById(this.graph_id)
-            .offsetWidth
-        opt_icon.scaleY = h / document.getElementById(this.graph_id)
-            .offsetHeight
+        opt_icon.scaleX = w / document.getElementById(this.graph_id).getAttribute("width")
+        opt_icon.scaleY = h / document.getElementById(this.graph_id).getAttribute("height")
 
         opt_icon.x_offset = x
         opt_icon.y_offset = y;
