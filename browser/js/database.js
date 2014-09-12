@@ -323,16 +323,23 @@ Database.prototype = {
         for (var key in args) {
             arg += "" + key + "=" + args[key] + "&";
         }
-        
         var list = document.getElementById("last_loaded_file")
+        var children = list.children
         
-        var a = document.createElement('a');
-                a.className="buttonSelector"
-                a.appendChild(document.createTextNode(filename));
-                a.onclick = function () {
-                    self.load_data(args, filename)
-                }
-                list.appendChild(a);
+        var flag = false
+        for (var i=0; i<children.length; i++){
+            if (children[i].innerHTML == filename) flag = true 
+        }
+        
+        if ( !flag){
+            var a = document.createElement('a');
+                    a.className="buttonSelector"
+                    a.appendChild(document.createTextNode(filename));
+                    a.onclick = function () {
+                        self.load_data(args, filename)
+                    }
+                    list.appendChild(a);
+        }
 
         $.ajax({
             type: "POST",
