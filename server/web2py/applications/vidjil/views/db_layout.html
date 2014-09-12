@@ -2,8 +2,8 @@
     
     <div id="db_menu">
         <a class="button" onclick="db.call('patient/index');">patients</a>
-        - - -
         {{if auth.has_membership("admin"):}}
+        - - -
         <a class="button" onclick="db.call('config/index');">configs</a>
         <a class="button" onclick="db.call('group/index');">groups</a>
         <a class="button" onclick="db.call('user/index');">users</a>
