@@ -796,8 +796,7 @@ Model.prototype = {
             type: 'json'
         });
 
-        var ext = this.dataFileName.lastIndexOf(".")
-        var filename = this.dataFileName.substr(0, ext)
+        var filename = this.getPrintableAnalysisName().replace(/[ \/\\:]/,'_')
 
         saveAs(textFileAsBlob, filename + ".analysis");
     }, //end saveAnalysis
