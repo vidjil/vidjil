@@ -13,8 +13,8 @@
     
     <div id="db_auth">
             {{if auth.user:}}
-            <a class="button" onclick="db.call('default/user/profile');">{{=auth.user.first_name}}</a>
-            <a class="button" onclick="db.request('default/user/logout');">disconnect</a>
+	    {{=auth.user.first_name}}
+            <a class="button" onclick="db.request('default/user/logout');">(disconnect)</a>
             {{pass}}
     </div>
     
