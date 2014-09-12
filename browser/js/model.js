@@ -899,6 +899,19 @@ Model.prototype = {
         }
     }, //end getCloneName
 
+    /**
+     * return a name that can be displayed gracefully
+     * (either with a real filename, or a name coming from the database).
+     */
+    getPrintableAnalysisName : function() {
+        var ext = this.dataFileName.lastIndexOf(".")
+        if (ext > 0) {
+            return this.dataFileName.substr(0, ext)
+        } else {
+            return this.dataFileName
+        }
+    },
+
     /* return custom name of cloneID,
      * or return segmentation name
      *

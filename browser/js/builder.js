@@ -511,7 +511,7 @@ Builder.prototype = {
         //file name
         var div_data_file = document.createElement('div');
         div_data_file.id = "info_data_file"
-        div_data_file.appendChild(document.createTextNode(this.m.dataFileName));
+        div_data_file.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
         parent.appendChild(div_data_file)
 
         //global info
