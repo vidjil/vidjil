@@ -69,10 +69,10 @@ Database.prototype = {
     
     check_cert: function () {
         if (typeof sslCertTrusted == 'undefined' || !sslCertTrusted){
-            var msg = " Warning : </br>"
-                    + "It seems the database you try to access don't have a valid certificate or use a self signed one. </br>" 
-                    + "If you want to use this database you need to accept this certificate, please follow this link and add this address to the trusted site list. </br>"
-                    + "<a href='"+DB_ADDRESS+"' target='_blank' > click me ! <a/>"
+            var msg = " Welcome to Vidjil! </br>"
+                    + "Your browser currently does not recognize our SSL certificate. </br>"
+                    + "To use the sample database, you need to accept this certificate and/or tag this website as a trusted one. </br>"
+                    + "<a href='"+DB_ADDRESS+"' target='_blank'>Follow this link<a/>"
             popupMsg(msg)
         }
     },
