@@ -154,7 +154,8 @@ query = db(
     <div class="db_block_right">
         result :
         {{for row in db(db.fused_file.patient_id == request.vars["id"]).select() :}}
-            <span class="button2" onclick="db.load_data( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=row.config_id}} } )" >
+            {{filename = db.patient[request.vars["id"]].first_name + " " + db.patient[request.vars["id"]].last_name + " (" + db.config[row.config_id].name + ")"}}
+            <span class="button2" onclick="db.load_data( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=row.config_id}} }, '{{=filename}}' )" >
                 {{=db.config[row.config_id].name}} </span>
         {{pass}} 
     </div>
