@@ -262,9 +262,13 @@ Database.prototype = {
     
     /*reload the current db page*/
     reload: function(){
-        url = this.url[this.url.length-1]
-        this.callUrl(url)
-        this.url.pop()
+        if (this.url.length==0){
+            this.call('patient/index')
+        }else{
+            url = this.url[this.url.length-1]
+            this.callUrl(url)
+            this.url.pop()
+        }
     },
     
     back: function(){
