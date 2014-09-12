@@ -3,8 +3,7 @@
 <title>Vidjil</title>
     <script>
         function init() {
-            var browser_url = document.URL.replace("/vidjil/default/index#", "/browser")
-                                            .replace("/vidjil", "/browser")
+            var browser_url = document.URL.replace(/\/vidjil\/.*$/, "/browser")
                                             .replace("https", "http")
             
             var database_url = document.URL.replace("/default/index#", "/")
