@@ -21,7 +21,7 @@ int main(int argc, char* argv[])
   p=&ost;
   char filename[L_tmpnam];
   tmpnam(filename);
-  
+
   bool cgi_mode;
   
     if (argc <= 1){
@@ -77,7 +77,7 @@ int main(int argc, char* argv[])
     
     string seq0 = fa.sequence(0);
     
-    LazyMsa lm = LazyMsa(50, seq0);
+    LazyMsa lm = LazyMsa(fa.size(), seq0);
     
     for (int i=1; i < fa.size(); i++){
       string seq1 = fa.sequence(i);
