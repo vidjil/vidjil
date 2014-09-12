@@ -99,11 +99,11 @@
         <!-- TOP-CONTAINER -->
         <div id="top-container">
 
-            <div class="menu" id="db_menu" onmouseover="showSelector('dbSelector');" style="display : none"> Patient
+            <div class="menu" id="db_menu" onmouseover="showSelector('dbSelector');" style="display : none">patients
                 <div id="dbSelector" class="selector"><div>
                     <div class="menu_box">
-                        <a class="buttonSelector" onclick="javascript:db.reload()"> Open</a>
-                        <a class="buttonSelector" onclick="javascript:db.save_analysis()">Save</a>
+                        <a class="buttonSelector" onclick="javascript:db.reload()">open patient</a>
+                        <a class="buttonSelector" onclick="javascript:db.save_analysis()">save analysis</a>
                     </div>
                     <div class="menu_box">
                         <div id="last_loaded_file">
@@ -112,17 +112,17 @@
                 </div></div>
             </div>
 
-            <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');"> file 
+            <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');">import/export
                 <div id="demoSelector" class="selector"><div>
                     <div class="menu_box">
-                        <a class="buttonSelector" onclick="javascript:loadData()">Open </a>
-                        <a class="buttonSelector" onclick="javascript:loadAnalysis()">Open analysis file</a>
+                        <a class="buttonSelector" onclick="javascript:loadData()">import data </a>
+                        <a class="buttonSelector" onclick="javascript:loadAnalysis()">import analysis</a>
                     </div>
                     <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
                     <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
                     <div class="menu_box">
-                        <a class="buttonSelector" onclick="javascript:m.saveAnalysis()">Save analysis file</a>
-                        <a class="buttonSelector" onclick="javascript:pdf.make()">Save pdf (graph + selected clones)</a>
+                        <a class="buttonSelector" onclick="javascript:m.saveAnalysis()">export analysis</a>
+                        <a class="buttonSelector" onclick="javascript:pdf.make()">export pdf (graph + selected clones)</a>
                     </div>
                     <div class="menu_box">
                         <div id="upload_list">
