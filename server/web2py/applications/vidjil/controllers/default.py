@@ -166,6 +166,7 @@ def get_analysis():
     res = {"custom": [],
            "cluster" : [],
            "info_patient" : "test info patient",
+           "patient" : "",
            "info_sequence_file" : [],
            "time": [],
            "time_order": []
@@ -188,7 +189,8 @@ def get_analysis():
             order = order+1
 
         res["info_patient"] = db.patient[request.vars["patient_id"]].info
-
+        res["patient"] = db.patient[request.vars["patient_id"]].first_name + " " + db.patient[request.vars["patient_id"]].last_name + " (" + db.config[request.vars["config_id"]].name + ")"
+        
         ## récupération des infos se trouvant dans le fichier .analysis
         analysis_query = db(  (db.analysis_file.patient_id == request.vars["patient_id"])
                    & (db.analysis_file.config_id == request.vars["config_id"] )  )
