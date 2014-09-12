@@ -355,6 +355,7 @@ Database.prototype = {
                 m.initClones()
                 self.load_analysis(args)
                 self.last_file = args
+                self.close()
                 m.db_key = args
             },
             error: function (request, status, error) {
