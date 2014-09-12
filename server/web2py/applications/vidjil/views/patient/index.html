@@ -43,7 +43,7 @@ query = db(
                     <td> {{=row.patient.birth }} </td>
                     <td> {{=row.patient.info }} </td>
                     <td> {{for row2 in db( db.fused_file.patient_id == row.patient.id ).select(db.fused_file.config_id, distinct=True) :}} 
-                        {{=db.config[row2.config_id].name}} ,
+                        {{=db.config[row2.config_id].name}} 
                     {{pass}}</td>
                     <td> {{=row[count]}}</td>
                     {{if auth.has_membership("admin"):}}
