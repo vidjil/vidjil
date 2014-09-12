@@ -1647,6 +1647,7 @@ ScatterPlot.prototype = {
           .attr("y", this.coordinates[1])
           .attr("width", 0)
           .attr("height", 0)
+          .style("display", "");
 
       }
 
@@ -1771,8 +1772,7 @@ ScatterPlot.prototype = {
                   }
 
                   this.selector
-                  .attr("x", 0)
-                  .attr("y", 0)
+                  .style("display", "none")
                   .attr("width", 0)
                   .attr("height", 0)
                   this.active_selector = false;
@@ -1794,8 +1794,7 @@ ScatterPlot.prototype = {
   cancelSelector: function () {
 
       this.selector
-	  .attr("x", 0)
-	  .attr("y", 0)
+      .style("display", "none")
 	  .attr("width", 0)
 	  .attr("height", 0)
       //On met le sélecteur à false -> annulation
