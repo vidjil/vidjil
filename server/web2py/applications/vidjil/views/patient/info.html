@@ -38,24 +38,26 @@
 
 {{
 query = db(
-            (db.sequence_file.patient_id==db.patient.id) 
-            & (db.patient.id==request.vars["id"]) 
+            (db.sequence_file.patient_id==db.patient.id)
+            & (db.patient.id==request.vars["id"])
         ).select(
             left=db.data_file.on(
-                (db.data_file.sequence_file_id==db.sequence_file.id) 
-                & (db.data_file.config_id==str(config_id) ) 
-            ) 
+                (db.data_file.sequence_file_id==db.sequence_file.id)
+                & (db.data_file.config_id==str(config_id) )
+            )
         )
 }}
 
 <div>
-    
-    <h3>{{=patient.last_name + " " + patient.first_name + " " + patient.birth}}</h3>
-    
+
+    <h3>{{=patient.last_name + " " + patient.first_name }} ({{=patient.birth}})</h3>
+
     <div class="db_block">
+      <!--
         <div class="db_block_left">
-            {{=patient.info}}
+            file list
         </div>
+      -->
 
         <div class="db_block_right">
             config
@@ -64,14 +66,14 @@ query = db(
                     <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
                     {{for row in db(db.config).select() :}}
                         <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} >
-                            {{=row.name}} 
+                            {{=row.name}}
                         </option>
                     {{pass}}
                 </select>
             </span>
         </div>
     </div>
-    
+
 </div>
 
 <div id="db_table_container">
@@ -83,9 +85,9 @@ query = db(
                 <td> info </td>
                 <td class="column5"> </td>
                 <td class="column5"> </td>
-                
+
                 <td class="column_sep"></td>
-                
+
                 <td class="column2"> last processing </td>
                 <td class="column4">  </td>
 
@@ -93,23 +95,23 @@ query = db(
         </thead>
         <tbody>
             {{for row in query :}}
-            
+
                 {{if row.sequence_file.data_file is None :}}
                     {{filename = ''}}
                 {{else:}}
                     {{(filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)}}
-                {{pass}} 
-                
+                {{pass}}
+
                 {{if row.data_file.scheduler_task_id is None :}}
                     {{status = '' }}
                 {{else:}}
                     {{status = db.scheduler_task[row.data_file.scheduler_task_id ].status }}
-                {{pass}} 
-            
+                {{pass}}
+
                  <tr>
                     <td id="sequence_file_{{=row.sequence_file.id}}"> {{=filename}}</td>
                     <td> {{if filename == 'plop':}}<a href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" >dl</a>{{pass}}</td>
-                  
+
                     <td> {{=row.sequence_file.sampling_date}} </td>
                     <td> {{=row.sequence_file.info}} </td>
                     {{if (auth.has_permission('admin', 'patient', request.vars["id"]) ):}}
@@ -117,9 +119,9 @@ query = db(
                         <td onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
                     {{else:}}<td></td><td></td>{{pass}}
                     <td class="column_sep"></td>
-                     
+
                     <td> {{if row.data_file.run_date :}}{{=row.data_file.run_date }}{{pass}} </td>
-                    <td> 
+                    <td>
                         {{if filename != '' and config_id != -1:}}
                             {{if row.data_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED"):}}
                             {{if auth.has_permission("run", "data_file") :}}
@@ -141,7 +143,7 @@ query = db(
 
 
 <div class="db_block">
-    
+
     <div class="db_block_left">
         {{if auth.has_permission("upload", "sequence_file") :}}
         <span class="button2" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> add file </span>
@@ -149,17 +151,17 @@ query = db(
         <span class="button2 inactive" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )" title="you don't have permission to upload files"> add file </span>
         {{pass}}
     </div>
-    
-    
+
+
     <div class="db_block_right">
         result :
         {{for row in db(db.fused_file.patient_id == request.vars["id"]).select() :}}
             {{filename = db.patient[request.vars["id"]].first_name + " " + db.patient[request.vars["id"]].last_name + " (" + db.config[row.config_id].name + ")"}}
             <span class="button2" onclick="db.load_data( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=row.config_id}} }, '{{=filename}}' )" >
                 {{=db.config[row.config_id].name}} </span>
-        {{pass}} 
+        {{pass}}
     </div>
-    
+
 </div>
 
 {{if fused_count >0:}}
