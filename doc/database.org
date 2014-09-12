@@ -1,0 +1,34 @@
+
+
+* Database schema
+
+** Patients and samples
+
+A patient has several samples. A sample is an uploaded .fasta/.fastq file.
+
+** Launching and results
+
+A software/pipeline (as for example Vidjil or Brno pipeline) 
+process .fasta/.fastq file and produce a "data file".
+The options of the software/pipeline are stored in a "config". 
+
+** "Fusing" results on different samples
+
+The result "data files" of a same patient (and processed within a same "config") 
+are "fused" to a unique "fused file". 
+
+
+** Analysis
+
+All changes done by the user (on a specific "fused file") are recorded
+into a ".analysis" file and stored into the database.
+
+
+** Authentification
+
+There is a mecanism to authenticate users/groups and to grant them some accesses on the patients:
+  - read 
+  - add samples (to an existing patient, uploading .fasta/.fastq files)
+  - add patients
+  - save an analysis (with some clones merged, labeled or renamed)
+  - delete samples and patients
