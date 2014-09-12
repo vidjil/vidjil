@@ -445,14 +445,18 @@ Database.prototype = {
     
     /* update upload status  */
     upload_display: function(){
+        var flag = false
         for (var key in this.upload){
             if (!this.upload[key].active){
                 delete this.upload[key]; 
-                this.reload()
+                if ( document.getElementById("sequence_file_"+key) ){
+                    flag=true;
+                }
             }else{
                 $("#sequence_file_"+key).html("<span class='loading_seq'></span> <span class='button' onclick='db.cancel_upload("+key+")'>cancel</span>")
             }
         }
+        if (flag) this.reload();
     },
     
     cancel_upload: function (id) {
