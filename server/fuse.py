@@ -405,7 +405,7 @@ class ListWindows:
             #else:
                 #others += win
 
-        self.d["windows"] = w + list(others) 
+        self.d["windows"] = w #+ list(others) 
         self.d["germline"]=self.d["germline"][0]
 
         print "### Cut merged file, keeping window in the top %d for at least one point" % limit
