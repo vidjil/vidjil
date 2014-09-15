@@ -284,7 +284,7 @@ Builder.prototype = {
         var input = document.createElement('input');
         input.type = "text";
         input.id = "edit_value";
-        input.value = self.m[data][self.m.t];
+        input.value = self.m.samples[data][self.m.t];
         input.style.width = "200px";
         input.style.border = "0px";
         input.style.margin = "0px";
@@ -300,7 +300,7 @@ Builder.prototype = {
         a.appendChild(document.createTextNode("save"));
         a.id = "btnSave";
         a.onclick = function () {
-            self.m[data][self.m.t] = document.getElementById("edit_value").value
+            self.m.samples[data][self.m.t] = document.getElementById("edit_value").value
             self.build_info_container()
             self.m.update()
         }
@@ -568,7 +568,7 @@ Builder.prototype = {
         editTimeName.appendChild(document.createTextNode("edit"));
         editTimeName.className = "button_right"
         editTimeName.onclick = function () {
-            self.edit(this, "time");
+            self.edit(this, "names");
         }
         div_point.appendChild(editTimeName)
         
