@@ -48,7 +48,7 @@
  * split
  *
  * */
-VIDJIL_JSON_VERSION = '2014.02';
+VIDJIL_JSON_VERSION = '2014.09';
 
 /*Model constructor
  *
