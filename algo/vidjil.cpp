@@ -1475,9 +1475,6 @@ int main (int argc, char **argv)
     JsonArray json_original_names;
     json_original_names.add(f_reads);
     json_samples->add("original_names", json_original_names);
-    JsonArray json_order;
-    json_order.add(0);
-    json_samples->add("order", json_order);
     
     json->add("vidjil_json_version", VIDJIL_JSON_VERSION);
     json->add("samples", *json_samples);
