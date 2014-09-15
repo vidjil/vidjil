@@ -145,7 +145,7 @@ Graph.prototype = {
         this.resolution1 = []
         this.resolution5 = []
 
-        for (i = 0; i < this.m.time.length; i++) {
+        for (i = 0; i < this.m.samples.number; i++) {
             this.resolution1[i] = (1 / this.m.reads_segmented[i])
             this.resolution5[i] = (5 / this.m.reads_segmented[i])
         }
@@ -231,8 +231,8 @@ Graph.prototype = {
         var list = document.getElementById("" + this.id + "_list")
         list.innerHTML = ""
         
-        for (var i=0; i<this.m.time.length; i++){
-            if ( this.m.time_order.indexOf(i) == -1){
+        for (var i=0; i<this.m.samples.number; i++){
+            if ( this.m.samples.order.indexOf(i) == -1){
                 $("<div/>", {
                     class: "graph_listElem",
                     text: this.m.getStrTime(i),
@@ -259,26 +259,23 @@ Graph.prototype = {
             .range([0, 1]);
         
         //abscisse
-        for (var i = 0; i < this.m.time_order.length; i++) {
-            this.graph_col[i] = this.marge1 + i * ((1 - (this.marge1 + this.marge2)) / (this.m.time_order.length - 1));
+        for (var i = 0; i < this.m.samples.order.length; i++) {
+            this.graph_col[i] = this.marge1 + i * ((1 - (this.marge1 + this.marge2)) / (this.m.samples.order.length - 1));
         }
-        if (this.m.time_order.length == 1) {
+        if (this.m.samples.order.length == 1) {
             this.graph_col[0] = 1 / 2
         }
-        if (this.m.time_order.length == 2) {
+        if (this.m.samples.order.length == 2) {
             this.graph_col[0] = 1 / 4;
             this.graph_col[1] = 3 / 4;
         }
 
-        for (var i = 0; i < this.m.time.length; i++) {
-            var t = this.m.time_order.indexOf(i)
+        for (var i = 0; i < this.m.samples.number; i++) {
+            var t = this.m.samples.order.indexOf(i)
             d = {}
 
-            var time_name = "fu" + (i + 1);
-            if (typeof this.m.time != "undefined" && typeof this.m.time[i] != "undefined") {
-                time_name = this.m.getStrTime(i);
-                time_name = time_name.split(".")[0]
-            }
+            time_name = this.m.getStrTime(i);
+            time_name = time_name.split(".")[0]
 
             d.type = "axis_v";
             d.text = time_name;
@@ -322,12 +319,12 @@ Graph.prototype = {
         }
 
         //current time_point
-        if ( this.m.time_order.indexOf(this.m.t) != -1 ){
+        if ( this.m.samples.order.indexOf(this.m.t) != -1 ){
             this.mobil = {};
             this.mobil.type = "axis_m";
             this.mobil.text = "";
             this.mobil.orientation = "vert";
-            this.mobil.pos = this.graph_col[this.m.time_order.indexOf(this.m.t)];
+            this.mobil.pos = this.graph_col[this.m.samples.order.indexOf(this.m.t)];
             this.data_axis.push(this.mobil)
         }
 
@@ -388,7 +385,7 @@ Graph.prototype = {
                 .appendChild(line);
         }
         
-        for (i = 0; i < this.m.time.length; i++) {
+        for (i = 0; i < this.m.samples.number; i++) {
             this.resolution1[i] = (1 / this.m.reads_segmented[i])
             this.resolution5[i] = (5 / this.m.reads_segmented[i])
         }
@@ -674,8 +671,8 @@ Graph.prototype = {
             
             //stock tuples time_point/axis position
             var list = []
-            for (var i = 0; i < this.m.time_order.length; i++) {
-                var t = this.m.time_order[i]
+            for (var i = 0; i < this.m.samples.order.length; i++) {
+                var t = this.m.samples.order[i]
                 if (t == this.dragged_time_point) {
                     list.push([t, (coordinates[0] - this.marge4) / this.resizeW]);
                 } else {
@@ -683,7 +680,7 @@ Graph.prototype = {
                 }
             }
             
-            if (this.m.time_order.indexOf(this.dragged_time_point) == -1)
+            if (this.m.samples.order.indexOf(this.dragged_time_point) == -1)
                 list.push([this.dragged_time_point, (coordinates[0] - this.marge4) / this.resizeW]);
 
             //sort by axis position
@@ -710,9 +707,9 @@ Graph.prototype = {
             this.drag_on = false;
             
             var result = []
-            for (var i=0; i<this.m.time_order.length; i++){
-                if (this.m.time_order[i] != this.dragged_time_point){
-                    result.push(this.m.time_order[i])
+            for (var i=0; i<this.m.samples.order.length; i++){
+                if (this.m.samples.order[i] != this.dragged_time_point){
+                    result.push(this.m.samples.order[i])
                 }
             }
 
@@ -759,9 +756,9 @@ Graph.prototype = {
             p.push([0, (1 - this.scale_x(size[0] * this.m.precision))]);
 
             for (var i = 0; i < this.graph_col.length; i++) {
-                p.push([(this.graph_col[i]), (1 - this.scale_x(size[this.m.time_order[i]] * this.m.precision))]);
+                p.push([(this.graph_col[i]), (1 - this.scale_x(size[this.m.samples.order[i]] * this.m.precision))]);
             }
-            p.push([1, (1 - this.scale_x(size[this.m.time_order[this.graph_col.length - 1]] * this.m.precision))]);
+            p.push([1, (1 - this.scale_x(size[this.m.samples.order[this.graph_col.length - 1]] * this.m.precision))]);
             p.push([1, 1 + 0.1]);
 
             return p;
@@ -777,8 +774,8 @@ Graph.prototype = {
 
         var size = []
         for (var i = 0; i < this.graph_col.length; i++) {
-            if (seq_size) size[i] = this.m.getSequenceSize(id, this.m.time_order[i])
-            else size[i] = this.m.getSize(id, this.m.time_order[i])
+            if (seq_size) size[i] = this.m.getSequenceSize(id, this.m.samples.order[i])
+            else size[i] = this.m.getSize(id, this.m.samples.order[i])
         }
 
         var x = this.graph_col[0];
@@ -862,13 +859,13 @@ Graph.prototype = {
         
         for (var i=0; i<this.graph_col.length; i++){
             var x = this.graph_col[i];
-            var y = stack.min[id][this.m.time_order[i]]
+            var y = stack.min[id][this.m.samples.order[i]]
             p.push([x,y])
         }
         
         for (var i=this.graph_col.length-1; i>=0; i--){
             var x = this.graph_col[i];
-            var y = stack.max[id][this.m.time_order[i]]
+            var y = stack.max[id][this.m.samples.order[i]]
             p.push([x,y])
         }
         
@@ -888,7 +885,7 @@ Stack.prototype = {
     //compute sum of all clone +others (dans un monde parfait ca devrait faire 1 mais avec la normalisation...)
     init: function () {
         this.total_size = []; 
-        for (j=0; j<this.m.time.length; j++){
+        for (j=0; j<this.m.samples.number; j++){
             this.total_size[j]=0
             for (i=0; i<this.m.windows.length; i++){
                 if (this.m.windows[i].active) this.total_size[j] += this.m.getSize(i,j); //active clones
@@ -903,7 +900,7 @@ Stack.prototype = {
         this.sum = []; 
         this.min = [];
         this.max = [];
-        for (j=0; j<this.m.time.length; j++){
+        for (j=0; j<this.m.samples.number; j++){
             this.sum[j]=1
         }
         
@@ -912,13 +909,13 @@ Stack.prototype = {
             this.max[i] = []
             //active clones
             if (this.m.windows[i].active) {
-                for (j=0; j<this.m.time.length; j++){
+                for (j=0; j<this.m.samples.number; j++){
                     this.min[i][j] = this.sum[j]
                     this.sum[j] -= this.m.getSize(i,j)
                     this.max[i][j] = this.sum[j]
                 }
             }else{
-                for (j=0; j<this.m.time.length; j++){
+                for (j=0; j<this.m.samples.number; j++){
                     this.min[i][j] = this.sum[j]
                     this.max[i][j] = this.sum[j]
                 }
@@ -926,7 +923,7 @@ Stack.prototype = {
         }
         
         //other
-        for (j=0; j<this.m.time.length; j++){
+        for (j=0; j<this.m.samples.number; j++){
             this.min[this.m.windows.length-1][j] = this.sum[j]
             this.sum[this.m.windows.length-1] += this.m.getSize(this.m.windows.length-1,j)
             this.max[this.m.windows.length-1][j] = this.sum[j]
