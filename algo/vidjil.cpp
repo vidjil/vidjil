@@ -1462,12 +1462,25 @@ int main (int argc, char **argv)
     
     JsonArray json_timestamp;
     json_timestamp.add(time_buffer);
+    
 
     JsonArray jsonSortedWindows = windowsStorage->sortedWindowsToJsonArray(json_data_segment,
                                                                         norm_list,
                                                                         nb_segmented);
     
+    
+    JsonList *json_samples;
+    json_samples=new JsonList();
+    json_samples->add("number", "1");
+    JsonArray json_original_names;
+    json_original_names.add(f_reads);
+    json_samples->add("original_names", json_original_names);
+    JsonArray json_order;
+    json_order.add(0);
+    json_samples->add("order", json_order);
+    
     json->add("vidjil_json_version", VIDJIL_JSON_VERSION);
+    json->add("samples", *json_samples);
     json->add("timestamp", json_timestamp);
     json->add("commandline", stream_cmdline.str());// TODO: escape "s in argv
     json->add("segmentation_info", stream_segmentation_info.str());
@@ -1479,7 +1492,7 @@ int main (int argc, char **argv)
     json->add("windows", jsonSortedWindows);
 
     //Added edges in the json output file
-    json->add("links", jsonLevenshtein);
+    //json->add("links", jsonLevenshtein);
     out_json << json->toString();
     
     delete index ;
