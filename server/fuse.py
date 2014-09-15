@@ -288,6 +288,24 @@ class ListWindows:
         if not 'point' in self.d.keys():
             self.d['point'] = [file_path]
 
+    def getTop(self, top):
+        result = []
+        
+        for w in self.d["windows"] :
+            if w.d["top"] <= top :
+                result.append(w.d["window"])
+        return result
+        
+    def filter(self, f):
+        r = []
+        
+        for i in f:
+            for w in self.d["windows"] :
+                if w.d["window"] == i :
+                    r.append(w)
+        
+        self.d["windows"] = r
+        
     ### 
     def __add__(self, other): 
         '''Combine two ListWindows into a unique ListWindows'''
@@ -749,11 +767,21 @@ def main():
     print "### fuse.py -- " + DESCRIPTION
     print
 
+    #filtre
+    f = []
+    for path_name in args.file:
+        jlist = ListWindows()
+        jlist.load(path_name, args.pipeline)
+        f += jlist.getTop(args.top)
+    f = sorted(set(f))
+    
     if args.multi:
         for path_name in args.file:
             jlist = ListWindows()
             jlist.load(path_name, args.pipeline)
             jlist.add_system_info()
+            jlist.build_stat()
+            jlist.filter(f)
             
             print "\t", jlist,
 
@@ -771,6 +799,8 @@ def main():
         for path_name in args.file:
             jlist = ListWindows()
             jlist.load(path_name, args.pipeline)
+            jlist.build_stat()
+            jlist.filter(f)
             
             w1 = Window(1)
             w2 = Window(2)
@@ -804,7 +834,6 @@ def main():
         jlist_fused.d["point"] = ll
     
     print
-    jlist_fused.build_stat()
     jlist_fused.cut(args.top, len(jlist_fused.d["point"]))
     print "\t", jlist_fused 
     print
