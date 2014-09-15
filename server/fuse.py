@@ -125,7 +125,19 @@ class Window:
     def __str__(self):
         return "<window : %s %s %s>" % ( self.d["size"], '*' if self.d["top"] == sys.maxint else self.d["top"], self.d["window"])
         
+class Samples: 
 
+    def __init__(self):
+        self.d={}
+        self.d["number"] = "1"
+        self.d["original_names"] = [""]
+
+    def __add__(self, other):
+        obj=Samples()
+        obj.d["number"] =  str( int(self.d["number"]) + int(other.d["number"]) )
+        obj.d["original_names"] =  self.d["original_names"] + other.d["original_names"]
+        
+        return obj
 
 class OtherWindows:
     
@@ -194,6 +206,7 @@ class ListWindows:
         self.d["clones"] = []
         self.d["reads_segmented"] = [[0]]
         self.d["germline"] = [""]
+        self.d["samples"] = Samples()
         
     def __str__(self):
         return "<ListWindows : %s %d >" % ( self.d["reads_segmented"], len(self.d["windows"]) )
@@ -280,7 +293,7 @@ class ListWindows:
         obj = ListWindows()
         t1=[]
         t2=[]
-
+        
         for i in range(len(self.d["reads_segmented"])):
             t1.append(0)
     
@@ -300,9 +313,11 @@ class ListWindows:
                 if key not in obj.d :
                     obj.d[key] = t1 + other.d[key]
                 else :
-                    obj.d[key] += other.d[key]
+                    if key != "samples":
+                        obj.d[key] = obj.d[key] + other.d[key]
         
         obj.d["windows"]=self.fuseWindows(self.d["windows"], other.d["windows"], t1, t2)
+        obj.d["samples"] = [other.d["samples"][0] + self.d["samples"][0]]
         obj.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
 
         return obj
@@ -470,7 +485,18 @@ class ListWindows:
         
     def toJson(self, obj):
         '''Serializer for json module'''
-        if isinstance(obj, ListWindows):
+        if isinstance(obj, ListWindows) :
+            result = {}
+            for key in obj.d :
+                if key == "samples":
+                    result[key] = obj.d[key][0]
+                else :
+                    result[key]= obj.d[key]
+                
+            return result
+            raise TypeError(repr(obj) + " fail !") 
+        
+        elif isinstance(obj, Window) or isinstance(obj, Samples):
             result = {}
             for key in obj.d :
                 result[key]= obj.d[key]
@@ -478,15 +504,7 @@ class ListWindows:
             return result
             raise TypeError(repr(obj) + " fail !") 
         
-        if isinstance(obj, Window):
-            result = {}
-            for key in obj.d :
-                result[key]= obj.d[key]
-            
-            return result
-            raise TypeError(repr(obj) + " fail !") 
-        
-        if isinstance(obj, dict):
+        else:
             result = {}
             for key in obj :
                 result[key]= obj[key]
@@ -515,12 +533,17 @@ class ListWindows:
                 else :
                     obj.d[key]=obj_dict[key]
             return obj
-            
-        if not "window" in obj_dict and not "reads_segmented" in obj_dict:
-            res = {}
+        
+        if "original_names" in obj_dict:
+            obj = Samples()
             for key in obj_dict :
-                res[key]=obj_dict[key]
-            return res
+                obj.d[key]=obj_dict[key]
+            return [obj]
+            
+        res = {}
+        for key in obj_dict :
+            res[key]=obj_dict[key]
+        return res
         
 
 
