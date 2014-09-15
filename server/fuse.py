@@ -26,10 +26,11 @@ import sys
 import time
 import copy
 import os.path
+import datetime
 from operator import itemgetter
 
 
-VIDJIL_JSON_VERSION = "2014.02"
+VIDJIL_JSON_VERSION = "2014.09"
 
 GERMLINES_ORDER = ['TRA', 'TRB', 'TRG', 'TRD', 'DD', 'IGH', 'DHJH', 'IJK', 'IJL'] 
 
@@ -206,7 +207,7 @@ class ListWindows:
         self.d["clones"] = []
         self.d["reads_segmented"] = [[0]]
         self.d["germline"] = [""]
-        self.d["samples"] = Samples()
+        self.d["samples"] = [Samples()]
         
     def __str__(self):
         return "<ListWindows : %s %d >" % ( self.d["reads_segmented"], len(self.d["windows"]) )
@@ -415,8 +416,9 @@ class ListWindows:
         '''Parser for .clntab file'''
 
         self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
-        self.d["timestamp"] = "1970-01-01 00:00:00" ## todo: timestamp of file_path
-        self.d["normalization_factor"] = [1]
+        time = os.path.getmtime(file_path)
+        self.d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
+        self.d["samples"][0].d["original_names"] = [file_path]
         
         listw = []
         listc = []
