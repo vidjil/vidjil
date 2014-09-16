@@ -48,7 +48,7 @@
  * split
  *
  * */
-VIDJIL_JSON_VERSION = '2014.02';
+VIDJIL_JSON_VERSION = '2014.09';
 
 /*Model constructor
  *
@@ -67,7 +67,7 @@ Model.prototype = {
 
     reset: function () {
         this.analysis = {
-            custom: [],
+            clones: [],
             cluster: [],
             date: []
         };
@@ -78,8 +78,6 @@ Model.prototype = {
         this.mapID = {};
         this.top = 10;
         this.precision = 1;
-        this.time = [];
-        this.time_order = [];
         this.isPlaying = false;
         this.timestamp = [];
         this.timestamp2 = [];
@@ -270,23 +268,38 @@ Model.prototype = {
                 self.windows.push(data.windows[i]);
             }
         }
-
+        
+        self.samples = data.samples
+        self.links = data.links;
+        self.reads_segmented = data.reads_segmented;
+        self.system_segmented = data.system_segmented;
+        self.segmentation_info = data.segmentation_info;
+        
+        // synthetic window
         var other = {
             "sequence": 0,
             "window": "other",
             "top": 0,
             "size": []
         }
-
         self.windows.push(other);
+        
+        // default samples
+        if (typeof self.samples.number == 'string'){
+            self.samples.number = parseInt(self.samples.number)
+        }
+        if (typeof self.samples.order == 'undefined'){
+            self.samples.order = []
+            for (var i = 0; i < self.samples.number; i++) self.samples.order.push(i);
+        }
+        if (typeof self.samples.names =='undefined'){
+            self.samples.names = []
+            for (var i = 0; i < self.samples.number; i++) self.samples.names.push("");
+        }
+        
         self.n_windows = self.windows.length;
-        self.segmentation_info = data.segmentation_info;
         self.min_sizes = min_sizes;
         self.n_max = n_max;
-        self.links = data.links;
-        self.normalization_factor = data.normalization_factor;
-        self.reads_segmented = data.reads_segmented;
-        self.system_segmented = data.system_segmented;
         self.system_selected = [];
         for (var key in self.system_segmented) self.system_selected.push(key)
         self.reads_segmented_total = self.reads_segmented.reduce(function (a, b) {
@@ -302,15 +315,10 @@ Model.prototype = {
             self.reads_total = self.reads_segmented;
         }
         self.timestamp = data.timestamp;
-        if (typeof data.point != 'undefined'){
-            self.time = data.point;
-        }else{
-            self.time = data.timestamp;
-        }
         self.scale_color = d3.scale.log()
             .domain([1, self.precision])
             .range([250, 0]);
-        for (var i = 0; i < self.time.length; i++) self.time_order.push(i);
+        
 
         //extract germline
         if (typeof data.germline != 'undefined') {
@@ -366,14 +374,37 @@ Model.prototype = {
         var self = this
         
         this.analysis = JSON.parse(analysis);
-        if (self.analysis.time && (self.analysis.time.length == self.time.length)) {
-            self.time = self.analysis.time;
-            self.time_order = self.analysis.time_order;
-            self.t = self.time_order[0]
+        
+        //samples
+        var match = 0;
+        if (self.analysis.samples) {
+            var s = self.analysis.samples
+            
+            for (var i=0; i<s.number; i++){
+                var pos = self.samples.original_names.indexOf(s.original_names[i])
+                if (pos != -1){
+                    if (s.names[i] != "") self.samples.names[pos] = s.names[i]
+                    match++
+                }
+            }
+            
+            if (match == s.number && match == self.samples.number) self.samples.order = s.order
         }
-        if (self.analysis.normalization) {
-            self.normalization= self.analysis.normalization;
+        
+        //tags
+        if (self.analysis.tags) {
+            var s = self.analysis.tags
+            
+            var keys = Object.keys(s.names);
+            for (var i=0; i<keys.length; i++){
+                tagName[parseInt(keys[i])] = s.names[keys[i]]
+            }
+            
+            for (var i=0; i<s.hide.length; i++){
+                tagDisplay[s.hide[i]] = 0;
+            }
         }
+        
         if (self.analysis.timestamp2) {
             self.timestamp2 = self.analysis.timestamp2;
         }
@@ -680,14 +711,16 @@ Model.prototype = {
             }
         }
         
-        this.applyAnalysis(this.analysis.custom);
+        this.applyAnalysis(this.analysis);
         
     }, //end initClones
     
     /* 
      * 
      * */
-    applyAnalysis: function (c) {
+    applyAnalysis: function (analysis) {
+        var c = analysis.clones
+        
         //      CUSTOM TAG / NAME
         //      EXPECTED VALUE
         var max = {"id" : -1 , "size" : 0 }     //store biggest expected value ( will be used for normalization)
@@ -696,8 +729,8 @@ Model.prototype = {
             var id = -1
             var f = 1;
             //check if we have a clone with a similar window
-            if (typeof c[i].window != "undefined" && typeof this.mapID[c[i].window] != "undefined") {
-                id = this.mapID[c[i].window]
+            if (typeof c[i].id != "undefined" && typeof this.mapID[c[i].id] != "undefined") {
+                id = this.mapID[c[i].id]
             }
             
             //check if we have a window who can match the sequence
@@ -758,20 +791,19 @@ Model.prototype = {
         }
 
         //      CUSTOM CLUSTER
-        var cluster = this.analysis.cluster;
+        var cluster = analysis.cluster;
         for (var i = 0; i < cluster.length; i++) {
-            if (typeof self.mapID[cluster[i].l] != "undefined" && typeof self.mapID[cluster[i].f] != "undefined") {
 
-                var new_cluster = [];
-                new_cluster = new_cluster.concat(this.clones[self.mapID[cluster[i].l]].cluster);
-                new_cluster = new_cluster.concat(this.clones[self.mapID[cluster[i].f]].cluster);
-
-                this.clones[self.mapID[cluster[i].l]].cluster = new_cluster;
-                this.clones[self.mapID[cluster[i].f]].cluster = [];
-
+            var new_cluster = [];
+            var l = self.mapID[cluster[i][0]]
+            
+            for (var j=0; j<cluster[i].length;j++){
+                var cloneID = self.mapID[cluster[i][j]]
+                new_cluster = new_cluster.concat(this.clones[cloneID].cluster);
+                this.clones[cloneID].cluster = [];
             }
+            this.clones[l].cluster = new_cluster;
         }
-
         this.init()
     },
 
@@ -779,8 +811,10 @@ Model.prototype = {
      * 
      */
     findWindow: function (sequence) {
-        for ( var i=0; i<this.windows.length; i++ ){
-            if ( sequence.indexOf(this.windows[i].window) != -1 ) return i
+        if (sequence != 0){
+            for ( var i=0; i<this.windows.length; i++ ){
+                if ( sequence.indexOf(this.windows[i].window) != -1 ) return i
+            }
         }
         return -1
     },
@@ -805,9 +839,19 @@ Model.prototype = {
      *
      * */
     strAnalysis: function() {
+        
+        var date = new Date;
+        var timestamp = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() 
+                    + " " + date.getHours() + ":" + date.getMinutes() + ":" + date.getSeconds()
+        
         var analysisData = {
-            custom: [],
-            cluster: []
+            producer : "browser",
+            timestamp : timestamp,
+            vidjil_json_version : VIDJIL_JSON_VERSION,
+            samples : this.samples,
+            clones : [],
+            cluster : [],
+            tags : {}
         }
 
         for (var i = 0; i < this.n_windows; i++) {
@@ -818,7 +862,7 @@ Model.prototype = {
                 typeof this.windows[i].expected != "undefined") {
 
                 var elem = {};
-                elem.window = this.windows[i].window;
+                elem.id = this.windows[i].window;
                 elem.sequence = this.windows[i].sequence;
 
                 if (typeof this.windows[i].tag != "undefined" && this.windows[i].tag != 8)
@@ -828,25 +872,28 @@ Model.prototype = {
                 if (typeof this.windows[i].expected != "undefined")
                     elem.expected = this.windows[i].expected;
 
-                analysisData.custom.push(elem);
+                analysisData.clones.push(elem);
             }
 
             //clones / cluster
             if (this.clones[i].cluster.length > 1) {
+                var elem = [];
                 for (var j = 0; j < this.clones[i].cluster.length; j++) {
-                    if (this.clones[i].cluster[j] != i) {
-                        var elem = {};
-                        elem.l = this.windows[i].window;
-                        elem.f = this.windows[this.clones[i].cluster[j]].window;
-                        analysisData.cluster.push(elem);
-                    }
+                    elem.push(this.windows[this.clones[i].cluster[j]].window);
                 }
+                analysisData.cluster.push(elem);
             }
         }
-
-        //name time/point
-        analysisData.time = this.time
-        analysisData.time_order = this.time_order
+        
+        //tags
+        analysisData.tags.names = {}
+        analysisData.tags.hide = []
+        for (var i=0; i<tagName.length; i++){
+            analysisData.tags.names[""+i] = tagName[i]
+            if (!tagDisplay[i]) analysisData.tags.hide.push(i)
+        }
+        
+        
         analysisData.normalization = this.normalization
         analysisData.timestamp2 = this.timestamp2
 
@@ -859,7 +906,7 @@ Model.prototype = {
     resetAnalysis: function () {
         myConsole.log("resetAnalysis()");
         this.analysis = {
-            custom: [],
+            clones: [],
             cluster: [],
             date: []
         };
@@ -1044,7 +1091,7 @@ Model.prototype = {
             var tmp = this.norm
             this.norm = false
             
-            for (var i=0; i<this.time.length; i++){
+            for (var i=0; i<this.samples.number; i++){
                 this.normalization.A[i] = this.getSize(cloneID, i)
             }
             
@@ -1061,8 +1108,8 @@ Model.prototype = {
     update_precision: function () {
         var min_size = 1
         
-        for (var i=0; i<this.time_order.length; i++){
-            var t = this.time_order[i]
+        for (var i=0; i<this.samples.order.length; i++){
+            var t = this.samples.order[i]
             var size = this.min_sizes[t]
             if (this.norm) size = this.normalize(this.min_sizes[t], t) 
             if (size < min_size) min_size = size
@@ -1249,7 +1296,11 @@ Model.prototype = {
 
         switch (format) {
             case "name":
-                result = this.time[timeID]
+                if (typeof this.samples.names != 'undefined' && this.samples.names[timeID] != ""){
+                    result = this.samples.names[timeID]
+                }else{
+                    result = this.samples.original_names[timeID]
+                }
                 break;
             case "sampling_date":
                 if ((typeof this.timestamp2 != 'undefined') && this.timestamp2[timeID])
@@ -1672,7 +1723,7 @@ Model.prototype = {
     getCloneHtmlInfo: function (id, type) {
 
         if (this.clones[id].cluster.length <= 1) type = "sequence"
-        var time_length = this.time_order.length
+        var time_length = this.samples.order.length
         var html = ""
 
         //clone/sequence label
@@ -1686,7 +1737,7 @@ Model.prototype = {
         html += "<div id='info_window'><table><tr><th></th>"
 
         for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.time[this.time_order[i]] + "</td>"
+            html += "<td>" + this.getStrTime(this.samples.order[i], "name") + "</td>"
         }
         html += "</tr>"
 
@@ -1696,11 +1747,11 @@ Model.prototype = {
             html += "<tr><td> clone name </td><td colspan='" + time_length + "'>" + this.getName(id) + "</td></tr>"
             html += "<tr><td> clone size (n-reads (total reads) )</td>"
             for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.getReads(id, this.time_order[i]) + "  (" + this.reads_segmented[this.time_order[i]] + ")</td>"
+            html += "<td>" + this.getReads(id, this.samples.order[i]) + "  (" + this.reads_segmented[this.samples.order[i]] + ")</td>"
             }
             html += "</tr><tr><td> clone size (%)</td>"
             for (var i = 0; i < time_length; i++) {
-            html += "<td>" + (this.getSize(id, this.time_order[i]) * 100).toFixed(3) + " % </td>"
+            html += "<td>" + (this.getSize(id, this.samples.order[i]) * 100).toFixed(3) + " % </td>"
             }
             html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> clone's main sequence information</td></tr>"
         }else{
@@ -1713,13 +1764,13 @@ Model.prototype = {
         html += "<tr><td> code </td><td colspan='" + time_length + "'>" + this.getCode(id) + "</td></tr>"
         html += "<tr><td> size (n-reads (total reads) )</td>"
         for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.getSequenceReads(id, this.time_order[i]) + 
-                    "  (" + this.reads_segmented[this.time_order[i]] + ")</td>"
+            html += "<td>" + this.getSequenceReads(id, this.samples.order[i]) + 
+                    "  (" + this.reads_segmented[this.samples.order[i]] + ")</td>"
         }
         html += "</tr>"
         html += "<tr><td> size (%)</td>"
         for (var i = 0; i < time_length; i++) {
-            html += "<td>" + (this.getSequenceSize(id, this.time_order[i]) * 100)
+            html += "<td>" + (this.getSequenceSize(id, this.samples.order[i]) * 100)
                 .toFixed(3) + " % </td>"
         }
         html += "</tr>"
@@ -1759,7 +1810,7 @@ Model.prototype = {
                 html += "<tr><td>" + key + "</td>"
                 if (this.windows[id][key] instanceof Array) {
                     for (var i = 0; i < time_length; i++) {
-                        html += "<td>" + this.windows[id][key][this.time_order[i]] + "</td>"
+                        html += "<td>" + this.windows[id][key][this.samples.order[i]] + "</td>"
                     }
                 } else {
                     html += "<td>" + this.windows[id][key] + "</td>"
@@ -1777,7 +1828,7 @@ Model.prototype = {
     getPointHtmlInfo: function (timeID) {
         var html = ""
 
-        html = "<h2>Point info : " + this.time[timeID] + "("+this.timestamp[timeID]+")</h2>"
+        html = "<h2>Point info : " + this.getStrTime(timeID, "name") + "("+this.timestamp[timeID]+")</h2>"
         html += "<div id='info_timepoint'><table><tr><th></th>"
         html += "<tr><td> reads </td><td>" + this.reads_total[timeID] + "</td></tr>"
         html += "<tr><td> reads segmented </td><td>" + this.reads_segmented[timeID] +
@@ -1888,9 +1939,9 @@ Model.prototype = {
      *
      * */
     switchTimeOrder: function (a, b) {
-        var tmp = this.time_order[a];
-        this.time_order[a] = this.time_order[b]
-        this.time_order[b] = tmp;
+        var tmp = this.samples.order[a];
+        this.samples.order[a] = this.samples.order[b]
+        this.samples.order[b] = tmp;
         this.update()
     },
     
@@ -1898,7 +1949,7 @@ Model.prototype = {
      *
      * */
     changeTimeOrder: function (list) {
-        this.time_order = list
+        this.samples.order = list
         this.update()
     },
     
@@ -1906,34 +1957,34 @@ Model.prototype = {
      * 
      * */
     nextTime: function () {
-        var current_pos = this.time_order.indexOf(this.t)
+        var current_pos = this.samples.order.indexOf(this.t)
         
         if (current_pos != -1){
-            if (current_pos+1 < this.time_order.length){
+            if (current_pos+1 < this.samples.order.length){
                 //next one
-                this.changeTime(this.time_order[current_pos+1])
+                this.changeTime(this.samples.order[current_pos+1])
             }else{
                 //back to the beginning
-                this.changeTime(this.time_order[0])
+                this.changeTime(this.samples.order[0])
             }
         }else{
-            this.changeTime(this.time_order[0])   
+            this.changeTime(this.samples.order[0])   
         }
     },
     
     previousTime: function (){
-        var current_pos = this.time_order.indexOf(this.t)
+        var current_pos = this.samples.order.indexOf(this.t)
         
         if (current_pos != -1){
             if (current_pos == 0){
                 //teleport to the end
-                this.changeTime(this.time_order[this.time_order.length-1])
+                this.changeTime(this.samples.order[this.samples.order.length-1])
             }else{
                 //previous one
-                this.changeTime(this.time_order[current_pos-1])
+                this.changeTime(this.samples.order[current_pos-1])
             }
         }else{
-            this.changeTime(this.time_order[0])   
+            this.changeTime(this.samples.order[0])   
         }
         
     },
@@ -1947,7 +1998,7 @@ Model.prototype = {
         this.nextTime();
         
         //check if "stop" is still in time_order and replace it if neccesary
-        if (this.time_order.indexOf(stop)==-1) stop = this.time_order[0]
+        if (this.samples.order.indexOf(stop)==-1) stop = this.samples.order[0]
         
         //continue until stop
         if (this.t != stop) { 

@@ -26,10 +26,11 @@ import sys
 import time
 import copy
 import os.path
+import datetime
 from operator import itemgetter
 
 
-VIDJIL_JSON_VERSION = "2014.02"
+VIDJIL_JSON_VERSION = "2014.09"
 
 GERMLINES_ORDER = ['TRA', 'TRB', 'TRG', 'TRD', 'DD', 'IGH', 'DHJH', 'IJK', 'IJL'] 
 
@@ -125,7 +126,19 @@ class Window:
     def __str__(self):
         return "<window : %s %s %s>" % ( self.d["size"], '*' if self.d["top"] == sys.maxint else self.d["top"], self.d["window"])
         
+class Samples: 
 
+    def __init__(self):
+        self.d={}
+        self.d["number"] = "1"
+        self.d["original_names"] = [""]
+
+    def __add__(self, other):
+        obj=Samples()
+        obj.d["number"] =  str( int(self.d["number"]) + int(other.d["number"]) )
+        obj.d["original_names"] =  self.d["original_names"] + other.d["original_names"]
+        
+        return obj
 
 class OtherWindows:
     
@@ -194,6 +207,7 @@ class ListWindows:
         self.d["clones"] = []
         self.d["reads_segmented"] = [[0]]
         self.d["germline"] = [""]
+        self.d["samples"] = [Samples()]
         
     def __str__(self):
         return "<ListWindows : %s %d >" % ( self.d["reads_segmented"], len(self.d["windows"]) )
@@ -274,13 +288,31 @@ class ListWindows:
         if not 'point' in self.d.keys():
             self.d['point'] = [file_path]
 
+    def getTop(self, top):
+        result = []
+        
+        for w in self.d["windows"] :
+            if w.d["top"] <= top :
+                result.append(w.d["window"])
+        return result
+        
+    def filter(self, f):
+        r = []
+        
+        for i in f:
+            for w in self.d["windows"] :
+                if w.d["window"] == i :
+                    r.append(w)
+        
+        self.d["windows"] = r
+        
     ### 
     def __add__(self, other): 
         '''Combine two ListWindows into a unique ListWindows'''
         obj = ListWindows()
         t1=[]
         t2=[]
-
+        
         for i in range(len(self.d["reads_segmented"])):
             t1.append(0)
     
@@ -300,9 +332,11 @@ class ListWindows:
                 if key not in obj.d :
                     obj.d[key] = t1 + other.d[key]
                 else :
-                    obj.d[key] += other.d[key]
+                    if key != "samples":
+                        obj.d[key] = obj.d[key] + other.d[key]
         
         obj.d["windows"]=self.fuseWindows(self.d["windows"], other.d["windows"], t1, t2)
+        obj.d["samples"] = [other.d["samples"][0] + self.d["samples"][0]]
         obj.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
 
         return obj
@@ -390,7 +424,7 @@ class ListWindows:
             #else:
                 #others += win
 
-        self.d["windows"] = w + list(others) 
+        self.d["windows"] = w #+ list(others) 
         self.d["germline"]=self.d["germline"][0]
 
         print "### Cut merged file, keeping window in the top %d for at least one point" % limit
@@ -400,8 +434,9 @@ class ListWindows:
         '''Parser for .clntab file'''
 
         self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
-        self.d["timestamp"] = "1970-01-01 00:00:00" ## todo: timestamp of file_path
-        self.d["normalization_factor"] = [1]
+        time = os.path.getmtime(file_path)
+        self.d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
+        self.d["samples"][0].d["original_names"] = [file_path]
         
         listw = []
         listc = []
@@ -470,7 +505,18 @@ class ListWindows:
         
     def toJson(self, obj):
         '''Serializer for json module'''
-        if isinstance(obj, ListWindows):
+        if isinstance(obj, ListWindows) :
+            result = {}
+            for key in obj.d :
+                if key == "samples":
+                    result[key] = obj.d[key][0]
+                else :
+                    result[key]= obj.d[key]
+                
+            return result
+            raise TypeError(repr(obj) + " fail !") 
+        
+        elif isinstance(obj, Window) or isinstance(obj, Samples):
             result = {}
             for key in obj.d :
                 result[key]= obj.d[key]
@@ -478,15 +524,7 @@ class ListWindows:
             return result
             raise TypeError(repr(obj) + " fail !") 
         
-        if isinstance(obj, Window):
-            result = {}
-            for key in obj.d :
-                result[key]= obj.d[key]
-            
-            return result
-            raise TypeError(repr(obj) + " fail !") 
-        
-        if isinstance(obj, dict):
+        else:
             result = {}
             for key in obj :
                 result[key]= obj[key]
@@ -515,12 +553,17 @@ class ListWindows:
                 else :
                     obj.d[key]=obj_dict[key]
             return obj
-            
-        if not "window" in obj_dict and not "reads_segmented" in obj_dict:
-            res = {}
+        
+        if "original_names" in obj_dict:
+            obj = Samples()
             for key in obj_dict :
-                res[key]=obj_dict[key]
-            return res
+                obj.d[key]=obj_dict[key]
+            return [obj]
+            
+        res = {}
+        for key in obj_dict :
+            res[key]=obj_dict[key]
+        return res
         
 
 
@@ -724,11 +767,21 @@ def main():
     print "### fuse.py -- " + DESCRIPTION
     print
 
+    #filtre
+    f = []
+    for path_name in args.file:
+        jlist = ListWindows()
+        jlist.load(path_name, args.pipeline)
+        f += jlist.getTop(args.top)
+    f = sorted(set(f))
+    
     if args.multi:
         for path_name in args.file:
             jlist = ListWindows()
             jlist.load(path_name, args.pipeline)
             jlist.add_system_info()
+            jlist.build_stat()
+            jlist.filter(f)
             
             print "\t", jlist,
 
@@ -746,6 +799,8 @@ def main():
         for path_name in args.file:
             jlist = ListWindows()
             jlist.load(path_name, args.pipeline)
+            jlist.build_stat()
+            jlist.filter(f)
             
             w1 = Window(1)
             w2 = Window(2)
@@ -779,7 +834,6 @@ def main():
         jlist_fused.d["point"] = ll
     
     print
-    jlist_fused.build_stat()
     jlist_fused.cut(args.top, len(jlist_fused.d["point"]))
     print "\t", jlist_fused 
     print

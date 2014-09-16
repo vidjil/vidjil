@@ -45,10 +45,8 @@ present in the .data file.
         ],
 
         "clusters": [
-            {
-                [ "clone-845", "clone-821", "clone-147" ],
-                [ "clone-5", "clone-10", "clone-179" ]
-            }
+            [ "clone-845", "clone-821", "clone-147" ],
+            [ "clone-5", "clone-10", "clone-179" ]
         ],
 
         "data": {
