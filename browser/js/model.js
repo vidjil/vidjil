@@ -803,8 +803,8 @@ Model.prototype = {
         var normalized_size = 0;
         
         if (this.normalization.A.length != 0 && this.normalization.A[time] != 0) {
-            var A = this.normalization.A[time]
-            var B = this.normalization.B
+            var A = this.normalization.A[time] /* standard/spike at point time */
+            var B = this.normalization.B       /* standard/spike expected value */
             
             if (original_size <= A){
                 normalized_size = (original_size * B) / A
