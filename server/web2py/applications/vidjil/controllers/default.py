@@ -52,16 +52,6 @@ def run_request():
     
     if not auth.has_permission('admin', 'patient', id_patient) :
         error += "you don't have permission to run request for this patient ("+str(id_patient)+"), "
-        
-    row2 = db( ( db.scheduler_task.args == '["'+request.vars["sequence_file_id"]+'", "'+request.vars["config_id"]+'"]' ) 
-             & ( db.scheduler_task.status != "FAILED"  )
-             & ( db.scheduler_task.status != "EXPIRED"  )
-             & ( db.scheduler_task.status != "TIMEOUT"  )
-             & ( db.scheduler_task.status != "COMPLETED"  )
-             ).select()
-
-    if len(row2) > 0 :
-        error += "run already registered, "
 
     if error == "" :
         res = schedule_run(request.vars["sequence_file_id"], request.vars["config_id"])
