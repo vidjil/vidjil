@@ -89,12 +89,26 @@ def get_data():
         fused_file = "applications/vidjil/uploads/"+row.fused_file
 
     if error == "" :
-
+        
         f = open(fused_file, "r")
-        output=f.readlines()
+        data = gluon.contrib.simplejson.loads(f.read())
         f.close()
+        
+        ## récupération des infos stockées sur la base de données 
+        query = db( ( db.patient.id == db.sequence_file.patient_id )
+                   & ( db.data_file.sequence_file_id == db.sequence_file.id )
+                   & ( db.patient.id == request.vars["patient_id"] )
+                   & ( db.data_file.config_id == request.vars["config_id"]  )
+                   ).select( orderby=db.sequence_file.sampling_date ) 
 
-        return output
+        data["samples"]["original_names"] = []
+        data["samples"]["info"] = []
+        for row in query :
+            (filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)
+            data["samples"]["original_names"].append(filename)
+            data["samples"]["info"].append(row.sequence_file.info) 
+
+        return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
     else :
         res = {"success" : "false",
@@ -117,16 +131,21 @@ def get_analysis():
         error += "you don't have permission to consult this patient ("+id_patient+")"
     
     ## empty analysis file
-    res = {"custom": [],
-           "cluster" : [],
+    res = {"samples": {"number": 0,
+                      "original_names": [],
+                      "order": [],
+                      "info_sequence_file" : []
+                       },
+           "custom": [],
+           "clones" : [],
+           "tags": [],
            "info_patient" : "test info patient",
-           "patient" : "",
-           "info_sequence_file" : [],
-           "time": [],
-           "time_order": []
+           "patient" : ""
            }
     
+    
     if error == "" :
+        """
         ## récupération des infos stockées sur la base de données 
         query = db( ( db.patient.id == db.sequence_file.patient_id )
                    & ( db.data_file.sequence_file_id == db.sequence_file.id )
@@ -137,11 +156,9 @@ def get_analysis():
         order = 0
         for row in query :
             (filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)
-            res["time"].append(filename)
-            res["time_order"].append(order)
-            res["info_sequence_file"].append(row.sequence_file.info) 
-            order = order+1
-
+            res["samples"]["original_names"].append(filename)
+            res["samples"]["info_sequence_file"].append(row.sequence_file.info) 
+            """
         res["info_patient"] = db.patient[request.vars["patient_id"]].info
         res["patient"] = db.patient[request.vars["patient_id"]].first_name + " " + db.patient[request.vars["patient_id"]].last_name + " (" + db.config[request.vars["config_id"]].name + ")"
         
@@ -155,10 +172,13 @@ def get_analysis():
             analysis = gluon.contrib.simplejson.loads(f.read())
             f.close()
 
-            res["custom"] = analysis["custom"]
+            analysis["info_patient"] = db.patient[request.vars["patient_id"]].info
+            analysis["patient"] = db.patient[request.vars["patient_id"]].first_name + " " + db.patient[request.vars["patient_id"]].last_name + " (" + db.config[request.vars["config_id"]].name + ")"
             res["cluster"] = analysis["cluster"]
+            res["clones"] = analysis["clones"]
+            res["samples"]["order"] = analysis["samples"]["order"]
 
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return gluon.contrib.simplejson.dumps(analysis, separators=(',',':'))
     else :
         res = {"success" : "false",
                "message" : "default/get_analysis : " + error}
