@@ -397,6 +397,7 @@ Model.prototype = {
             if (self.analysis.samples) {
                 var s = self.analysis.samples
                 
+                //replace names
                 for (var i=0; i<s.number; i++){
                     var pos = self.samples.original_names.indexOf(s.original_names[i])
                     if (pos != -1){
@@ -405,8 +406,17 @@ Model.prototype = {
                     }
                 }
                 
-                if (match == s.number && match == self.samples.number) self.samples.order = s.order
-                self.t = self.samples.order[0]
+                self.samples.order = []
+                for (var i=0; i<s.order.length; i++){
+                    var pos = self.samples.original_names.indexOf(s.original_names[s.order[i]])
+                    if ( pos != -1) self.samples.order.push(pos)
+                }
+                
+                for (var i=0; i<self.samples.number; i++){
+                    var pos = s.original_names.indexOf(self.samples.original_names[i])
+                    if (pos == -1) self.samples.order.push(i)
+                }
+
             }
             
             //tags
