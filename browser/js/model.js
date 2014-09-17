@@ -824,40 +824,42 @@ Model.prototype = {
             var c = analysis.custom
             //      CUSTOM TAG / NAME
             //      EXPECTED VALUE
-            for (var i = 0; i < c.length; i++) {
-                
-                var id = -1
-                var f = 1;
-                //check if we have a clone with a similar window
-                if (typeof c[i].window != "undefined" && typeof this.mapID[c[i].window] != "undefined") {
-                    id = this.mapID[c[i].window]
-                }
-                
-                //check if we have a window who can match the sequence
-                if (typeof c[i].sequence != "undefined" && id == -1) {
-                    id = this.findWindow(c[i].sequence);
-                }
-                
-                if (id != -1){
-                    if (typeof c[i].expected != "undefined") {
-                        this.windows[id].expected = c[i].expected
-                        f = this.getSize(id) / c[i].expected;
-                        if (f < 100 && f > 0.01) {
+            if (typeof c != 'undefined'){
+                for (var i = 0; i < c.length; i++) {
+                    
+                    var id = -1
+                    var f = 1;
+                    //check if we have a clone with a similar window
+                    if (typeof c[i].window != "undefined" && typeof this.mapID[c[i].window] != "undefined") {
+                        id = this.mapID[c[i].window]
+                    }
+                    
+                    //check if we have a window who can match the sequence
+                    if (typeof c[i].sequence != "undefined" && id == -1) {
+                        id = this.findWindow(c[i].sequence);
+                    }
+                    
+                    if (id != -1){
+                        if (typeof c[i].expected != "undefined") {
+                            this.windows[id].expected = c[i].expected
+                            f = this.getSize(id) / c[i].expected;
+                            if (f < 100 && f > 0.01) {
+                                if (typeof (c[i].tag) != "undefined") {
+                                    this.windows[id].tag = c[i].tag;
+                                }
+                                if (typeof (c[i].name) != "undefined") {
+                                    this.windows[id].c_name = c[i].name;
+                                }
+                            }else{
+                                myConsole.log(" apply analysis : windows "+ c[i].window + " > incorrect expected value", 0)
+                            }
+                        }else{
                             if (typeof (c[i].tag) != "undefined") {
                                 this.windows[id].tag = c[i].tag;
                             }
                             if (typeof (c[i].name) != "undefined") {
                                 this.windows[id].c_name = c[i].name;
                             }
-                        }else{
-                            myConsole.log(" apply analysis : windows "+ c[i].window + " > incorrect expected value", 0)
-                        }
-                    }else{
-                        if (typeof (c[i].tag) != "undefined") {
-                            this.windows[id].tag = c[i].tag;
-                        }
-                        if (typeof (c[i].name) != "undefined") {
-                            this.windows[id].c_name = c[i].name;
                         }
                     }
                 }
