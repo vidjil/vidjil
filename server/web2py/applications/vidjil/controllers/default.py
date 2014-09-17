@@ -64,50 +64,14 @@ def run_request():
         error += "run already registered, "
 
     if error == "" :
-
-        ## create or update data file state
-        row = db( ( db.data_file.config_id == request.vars["config_id" ] ) 
-         & ( db.data_file.sequence_file_id == request.vars["sequence_file_id"] )  
-         ).select()
-
-        if len(row) > 0 : ## update
-            data_id = row[0].id
-        else:             ## create
-            data_id = db.data_file.insert(sequence_file_id = request.vars['sequence_file_id'],
-                                        config_id = request.vars['config_id'],
-                                        )
-
-        ## create or update fuse file state
-        row = db( ( db.fused_file.config_id == request.vars["config_id"] ) & 
-                  ( db.fused_file.patient_id == id_patient )  
-                ).select()
-
-        if len(row) > 0 : ## update
-            fuse_id = row[0].id
-        else:             ## create
-            fuse_id = db.fused_file.insert(patient_id = id_patient,
-                                            config_id = request.vars['config_id'])
-
-        ##add task to scheduller
-        task = scheduler.queue_task('run', [request.vars["sequence_file_id"],request.vars["config_id"], data_id, fuse_id]
-                             , repeats = 1, timeout = 6000)
-        db.data_file[data_id] = dict(scheduler_task_id = task.id)
-        
-        (filename, str) = db.sequence_file.data_file.retrieve(db.sequence_file[request.vars["sequence_file_id"]].data_file)
-        config_name = db.config[request.vars["config_id"]].name
-        patient_name = db.patient[id_patient].first_name + " " + db.patient[id_patient].last_name
-        
-        res = {"redirect": "patient/info",
-               "args" : { "id" : id_patient,
-                          "config_id" : request.vars["config_id"]},
-               "message": "default/run_request : request added to run config " + config_name + " on " + filename + " for " + patient_name }
-        
+        res = schedule_run(request.vars["sequence_file_id"], request.vars["config_id"])
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
         res = {"success" : "false",
                "message" : "default/run_request : " + error}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
     
     
 #########################################################################
