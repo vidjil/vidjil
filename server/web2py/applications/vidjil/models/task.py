@@ -1,4 +1,61 @@
 # coding: utf8
+def schedule_run(id_sequence, id_config):
+    import time, datetime, sys, os.path
+    from subprocess import Popen, PIPE, STDOUT, os
+
+    id_patient = db.sequence_file[id_sequence].patient_id
+        
+    #check data_file
+    row = db( ( db.data_file.config_id == id_config ) & 
+             ( db.data_file.sequence_file_id == id_sequence )  
+             ).select()
+    
+    if len(row) > 0 : ## update
+        data_id = row[0].id
+    else:             ## create
+        data_id = db.data_file.insert(sequence_file_id = id_sequence,
+                                    config_id = id_config )
+        
+    ## check fused_file
+    row2 = db( ( db.fused_file.config_id == id_config ) & 
+              ( db.fused_file.patient_id == id_patient )  
+            ).select()
+
+    if len(row2) > 0 : ## update
+        fuse_id = row2[0].id
+    else:             ## create
+        fuse_id = db.fused_file.insert(patient_id = id_patient,
+                                        config_id = id_config)
+        
+    ##check scheduled run
+    row3 = db( ( db.scheduler_task.args == '["' + id_sequence + '", "' + id_config + '", ' + str(data_id) + ', ' + str(fuse_id) + ']' ) 
+         & ( db.scheduler_task.status != "FAILED"  )
+         & ( db.scheduler_task.status != "EXPIRED"  )
+         & ( db.scheduler_task.status != "TIMEOUT"  )
+         & ( db.scheduler_task.status != "COMPLETED"  )
+         ).select()
+
+    if len(row3) > 0 :
+        res = {"message": "run already registered"}
+        return res
+
+
+    ##add task to scheduller
+    task = scheduler.queue_task('run', [id_sequence, id_config, data_id, fuse_id]
+                         , repeats = 1, timeout = 6000)
+    db.data_file[data_id] = dict(scheduler_task_id = task.id)
+
+    (filename, str2) = db.sequence_file.data_file.retrieve(db.sequence_file[id_sequence].data_file)
+    config_name = db.config[id_config].name
+    patient_name = db.patient[id_patient].first_name + " " + db.patient[id_patient].last_name
+
+    res = {"redirect": "patient/info",
+           "args" : { "id" : id_patient,
+                      "config_id" : id_config},
+           "message": "default/run_request : request added to run config " + config_name + " on " + filename + " for " + patient_name }
+
+    return res
+
 
 def run_vidjil(id_file, id_config, id_data, id_fuse):
     import time, datetime, sys, os.path
@@ -30,7 +87,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     ## execute la commande vidjil
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
-    output = p.stdout.read()
+    print p.stdout.read()
     
     ## récupération du fichier data.json généré
     data_filepath = os.path.abspath(out_folder+"vidjil.data")
@@ -77,7 +134,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     
     ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
     ## TODO parse result success/fail
-    return output
+    return "sucess"
 
 
 from gluon.scheduler import Scheduler

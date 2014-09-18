@@ -1,0 +1,62 @@
+{{extend 'db_layout.html'}}
+
+{{ 
+
+query = db(
+            (db.data_file.sequence_file_id==db.sequence_file.id)
+            & (db.sequence_file.patient_id==db.patient.id)
+            & (db.data_file.config_id==db.config.id)
+        ).select()
+}}
+
+
+<div>
+    <h3>Hi</h3>
+    
+    <div id="db_table_container">
+        <table class="db_table" id="table">
+            
+            
+            <thead>
+                <tr>
+                    <td class="column1">file_name</td>
+                    <td class="column2">config</td>
+                    <td> </td>
+                    <td class="column1">patient</td>
+                    <td class="column2">producer</td>
+                    <td class="column2">last process</td>
+                    <td class="column2">status</td>
+                </tr>
+            </thead>
+            
+            
+           {{for row in query :}}
+                {{if row.data_file.scheduler_task_id is None :}}
+                    {{status = '' }}
+                {{else:}}
+                    {{status = db.scheduler_task[row.data_file.scheduler_task_id ].status }}
+                {{pass}}
+               <tr>
+                   <td> {{=row.sequence_file.filename}} </td>
+                   <td> {{=row.config.name}} </td>
+                   <td></td>
+                   <td> {{=row.patient.last_name + " " + row.patient.first_name }} </td>
+                   <td> {{=row.sequence_file.producer}} </td>
+                   <td> {{=row.data_file.run_date}} </td>
+                   <td> {{=status}} </td>
+                </tr>
+            {{pass}}
+            
+            
+            
+        </table>
+        <table class="db_table" id="db_fixed_header"></table>
+    </div>
+
+    <div class="db_block">
+        <div class="db_block_right">
+             <a class="button" onclick="db.call('admin/run_all')" > run all </a>
+        </div>
+    </div>
+    
+</div>

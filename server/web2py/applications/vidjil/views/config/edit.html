@@ -22,8 +22,8 @@ info = db.config[request.vars["id"]]
                 <td><label for="config_germline" id="config_germline__label"> germline: </label></td>
                 <td>
                     <select id="config_germline" name="config_germline">
-                        <option value="TRG">TRG</option>
-                        <option value="IGH">IGH</option>
+                        <option value="TRG" {{if info.germline == "TRG":}}selected="selected"{{pass}}>TRG</option>
+                        <option value="IGH" {{if info.germline == "IGH":}}selected="selected"{{pass}}>IGH</option>
                     </select>
                 </td>
                 <td></td>
