@@ -87,7 +87,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     ## execute la commande vidjil
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
-    output = p.stdout.read()
+    print p.stdout.read()
     
     ## récupération du fichier data.json généré
     data_filepath = os.path.abspath(out_folder+"vidjil.data")
@@ -134,7 +134,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     
     ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
     ## TODO parse result success/fail
-    return output
+    return "sucess"
 
 
 from gluon.scheduler import Scheduler
