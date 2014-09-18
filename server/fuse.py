@@ -299,10 +299,13 @@ class ListWindows:
     def filter(self, f):
         r = []
         
+        reverseList = {}
+        for w in self.d["windows"] :
+            reverseList[w.d["window"]] = w
+        
         for i in f:
-            for w in self.d["windows"] :
-                if w.d["window"] == i :
-                    r.append(w)
+            if i in reverseList.keys():
+                r.append(reverseList[i])
         
         self.d["windows"] = r
         
@@ -801,7 +804,7 @@ def main():
             jlist.load(path_name, args.pipeline)
             jlist.build_stat()
             jlist.filter(f)
-            
+
             w1 = Window(1)
             w2 = Window(2)
             w3 = w1+w2
