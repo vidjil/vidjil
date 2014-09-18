@@ -300,12 +300,14 @@ class ListWindows:
         r = []
         
         reverseList = {}
-        for w in self.d["windows"] :
-            reverseList[w.d["window"]] = w
+        for i,w in enumerate(self.d["windows"]) :
+            reverseList[w.d["window"]] = i
         
-        for i in f:
-            if i in reverseList.keys():
-                r.append(reverseList[i])
+        #filteredList = { k: reverseList[k] for k in f }
+        filteredList = dict(filter(lambda t: t[0] in f, reverseList.items()))
+        
+        for i in filteredList:
+            r.append(self.d["windows"][filteredList[i]])
         
         self.d["windows"] = r
         
