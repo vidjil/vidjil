@@ -31,19 +31,13 @@ query = db(
             
             
            {{for row in query :}}
-                {{if row.sequence_file.data_file is None :}}
-                    {{filename = ''}}
-                {{else:}}
-                    {{(filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)}}
-                {{pass}}
-            
                 {{if row.data_file.scheduler_task_id is None :}}
                     {{status = '' }}
                 {{else:}}
                     {{status = db.scheduler_task[row.data_file.scheduler_task_id ].status }}
                 {{pass}}
                <tr>
-                   <td> {{=filename}} </td>
+                   <td> {{=row.sequence_file.filename}} </td>
                    <td> {{=row.config.name}} </td>
                    <td></td>
                    <td> {{=row.patient.last_name + " " + row.patient.first_name }} </td>

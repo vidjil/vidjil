@@ -95,13 +95,6 @@ query = db(
         </thead>
         <tbody>
             {{for row in query :}}
-
-                {{if row.sequence_file.data_file is None :}}
-                    {{filename = ''}}
-                {{else:}}
-                    {{(filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)}}
-                {{pass}}
-
                 {{if row.data_file.scheduler_task_id is None :}}
                     {{status = '' }}
                 {{else:}}
@@ -109,9 +102,8 @@ query = db(
                 {{pass}}
 
                  <tr>
-                    <td id="sequence_file_{{=row.sequence_file.id}}"> {{=filename}}</td>
-                    <td> {{if filename == 'plop':}}<a href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" >dl</a>{{pass}}</td>
-
+                    <td id="sequence_file_{{=row.sequence_file.id}}"> {{=row.sequence_file.filename}}</td>
+                    <td> {{if row.sequence_file.filename == 'plop':}}<a href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" >dl</a>{{pass}}</td>
                     <td> {{=row.sequence_file.sampling_date}} </td>
                     <td> {{=row.sequence_file.info}} </td>
                     {{if (auth.has_permission('admin', 'patient', request.vars["id"]) ):}}

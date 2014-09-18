@@ -104,7 +104,7 @@ def get_data():
         data["samples"]["original_names"] = []
         data["samples"]["info"] = []
         for row in query :
-            (filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)
+            filename = row.sequence_file.filename
             data["samples"]["original_names"].append(filename)
             data["samples"]["info"].append(row.sequence_file.info) 
 
