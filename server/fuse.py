@@ -299,10 +299,15 @@ class ListWindows:
     def filter(self, f):
         r = []
         
-        for i in f:
-            for w in self.d["windows"] :
-                if w.d["window"] == i :
-                    r.append(w)
+        reverseList = {}
+        for i,w in enumerate(self.d["windows"]) :
+            reverseList[w.d["window"]] = i
+        
+        #filteredList = { k: reverseList[k] for k in f }
+        filteredList = dict(filter(lambda t: t[0] in f, reverseList.items()))
+        
+        for i in filteredList:
+            r.append(self.d["windows"][filteredList[i]])
         
         self.d["windows"] = r
         
@@ -801,7 +806,7 @@ def main():
             jlist.load(path_name, args.pipeline)
             jlist.build_stat()
             jlist.filter(f)
-            
+
             w1 = Window(1)
             w2 = Window(2)
             w3 = w1+w2
