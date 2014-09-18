@@ -1,0 +1,72 @@
+{{extend 'db_layout.html'}}
+
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+{{
+data_file_id = request.vars["data_file_id"]
+data_file = db.data_file[data_file_id]
+
+config_id = db.data_file[data_file_id].config_id
+config = db.config[config_id] 
+
+sequence_file_id = db.data_file[data_file_id].sequence_file_id
+sequence_file = db.sequence_file[sequence_file_id]
+
+run = db.scheduler_run[data_file.scheduler_task_id]
+
+}}
+
+<div>
+
+    <h3>info run {{=sequence_file.filename}} ({{=config.name }}) ({{=data_file.run_date}}) </h3>
+
+    <div class="db_block">
+        <div class="db_block_left">
+        </div>
+
+        <div class="db_block_right">
+        </div>
+    </div>
+
+</div>
+
+<div id="db_table_container">
+   <table>
+       <tr>
+           <td>status :</td>
+           <td>{{=run.status}}</td>
+       </tr>
+       <tr>
+           <td>start :</td>
+           <td>{{=run.start_time}}</td>
+       </tr>
+       <tr>
+           <td>stop :</td>
+           <td>{{=run.stop_time}}</td>
+       </tr>
+    </table>
+    <table>
+       <tr><td>run result :</td></tr>
+       <tr><td><textarea class="text" cols="100"  rows="15"> {{=run.run_result}} </textarea></td></tr>
+       <tr><td>run output :</td></tr>
+       <tr><td><textarea class="text" cols="100"  rows="15"> {{=run.run_output}} </textarea></td></tr>
+       <tr><td>run traceback :</td></tr>
+       <tr><td><textarea class="text" cols="100"  rows="15"> {{=run.traceback}} </textarea></td></tr>
+    </table>
+</div>
+
+
+<div class="db_block">
+    <div class="db_block_left">
+    </div>
+
+    <div class="db_block_right">
+    </div>
+</div>
+
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}
