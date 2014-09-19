@@ -1,4 +1,5 @@
 {
+  "vidjil_json_version" : "2014.09",
   "germline": "/home/bonsai//vidjil/germline/TRG", 
   "normalization_factor": [
     0.102322, 
@@ -10,16 +11,20 @@
     0.0627885, 
     1.13907
   ], 
-  "point": [
-    "Diag.data", 
-    "Fu1.data", 
-    "Fu2.data", 
-    "Fu3.data", 
-    "Fu4.data", 
-    "Fu5.data", 
-    "Fu6.data", 
-    "Fu7.data"
-  ], 
+    "samples": {
+    "original_names": [
+        "Diag.data", 
+        "Fu1.data", 
+        "Fu2.data", 
+        "Fu3.data", 
+        "Fu4.data", 
+        "Fu5.data", 
+        "Fu6.data", 
+        "Fu7.data"
+    ], 
+    "number" : "8",
+    "order" :  [ 0,1,2,3,4,5,6,7 ] 
+    },
   "windows": [
     {
       "D": [], 
@@ -11658,8 +11663,5 @@
     870701, 
     1071860.0
   ],  
-  "vidjil_json_version": [
-    "2014.02"
-  ], 
   "clones": []
 }
