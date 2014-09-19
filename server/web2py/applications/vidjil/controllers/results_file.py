@@ -50,8 +50,21 @@ def delete():
         config_id = db.results_file[request.vars["results_file_id"]].config_id
         patient_id = db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id
         
+        #delete results_file
         db(db.results_file.id == request.vars["results_file_id"]).delete()
-
+        
+        #delete fused_file 
+        count = db((db.patient.id == patient_id) & 
+                   (db.sequence_file.patient_id == db.patient.id) &
+                   (db.sequence_file.id == db.results_file.sequence_file_id) &
+                   (db.results_file.config_id == config_id)
+                   ).count()
+        
+        if count == 0 :
+            db((db.fused_file.patient_id == patient_id ) &
+               (db.fused_file.config_id == config_id)
+               ).delete()
+        
         res = {"redirect": "patient/info",
                "args" : { "id" : patient_id,
                           "config_id" : config_id},
