@@ -118,12 +118,12 @@ query = db(
                      
                      
                     {{if row.results_file.run_date :}}
-                        <td class="button" onclick="db.call('patient/result_info', { 'results_file_file_id' : '{{=row.results_file.id}}' } )"> {{=row.results_file.run_date }}</td>
+                        <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=row.results_file.run_date }}</td>
                     {{else:}}
                         <td></td>
                     {{pass}} 
-                    {{if (auth.has_permission('admin', 'patient', request.vars["id"]) ):}}
-                        <td onclick="db.call('patient/result_confirm', {'results_file_id' :'{{=row.results_file.id}}'})" > X </td>
+                    {{if (auth.has_permission('admin', 'patient', request.vars["id"]) and auth.has_permission("run", "results_file") ) :}}
+                        <td onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}'})" > X </td>
                     {{else:}}
                         <td></td>
                     {{pass}} 

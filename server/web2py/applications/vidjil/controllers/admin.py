@@ -10,22 +10,3 @@ if request.env.http_origin:
 def index():
     if auth.has_membership("admin"):
         return dict(message=T(''))
-
-
-def result():
-    if auth.has_membership("admin"):
-        return dict(message=T(''))
-
-def run_all():
-    if auth.has_membership("admin"):
-        query = db(
-                (db.results_file_file.sequence_file_id==db.sequence_file.id)
-                & (db.results_file.config_id==db.config.id)
-            ).select()
-
-        for row in query:
-            schedule_run(row.sequence_file.id, row.config.id)
-
-        res = {"success" : "true",
-               "message" : "rerun all"}
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
