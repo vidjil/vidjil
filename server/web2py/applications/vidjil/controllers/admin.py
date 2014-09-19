@@ -19,8 +19,8 @@ def result():
 def run_all():
     if auth.has_membership("admin"):
         query = db(
-                (db.data_file.sequence_file_id==db.sequence_file.id)
-                & (db.data_file.config_id==db.config.id)
+                (db.results_file_file.sequence_file_id==db.sequence_file.id)
+                & (db.results_file.config_id==db.config.id)
             ).select()
 
         for row in query:

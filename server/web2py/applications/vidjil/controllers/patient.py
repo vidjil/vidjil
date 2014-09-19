@@ -21,7 +21,6 @@ def index():
     if not auth.user : 
         res = {"redirect" : "default/user/login"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-    
     return dict(message=T(''))
 
 
@@ -158,7 +157,7 @@ def delete():
         #delete data file 
         query = db( (db.sequence_file.patient_id==request.vars["id"])).select() 
         for row in query :
-            db(db.data_file.sequence_file_id == row.id).delete()
+            db(db.results_file.sequence_file_id == row.id).delete()
 
         #delete sequence file
         db(db.sequence_file.patient_id == request.vars["id"]).delete()
@@ -175,17 +174,17 @@ def delete():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 ## display run page result 
-## need ["data_file_id"]
+## need ["results_file_id"]
 def result_info():
-    if (auth.has_permission('admin', 'patient', db.sequence_file[db.data_file[request.vars["data_file_id"]].sequence_file_id].patient_id ) ):
+    if (auth.has_permission('admin', 'patient', db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id ) ):
         return dict(message=T('result info'))
     else :
         res = {"message": "acces denied"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 def result_confirm():
-    if (auth.has_permission('admin', 'patient', db.sequence_file[db.data_file[request.vars["data_file_id"]].sequence_file_id].patient_id )
-        & auth.has_permission("run", "data_file") ):
+    if (auth.has_permission('admin', 'patient', db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id )
+        & auth.has_permission("run", "results_file") ):
         return dict(message=T('result confirm'))
     else :
         res = {"message": "acces denied"}
@@ -193,19 +192,19 @@ def result_confirm():
     
 #
 def result_delete():
-    if (auth.has_permission('admin', 'patient', db.sequence_file[db.data_file[request.vars["data_file_id"]].sequence_file_id].patient_id )
-        & auth.has_permission("run", "data_file") ):
+    if (auth.has_permission('admin', 'patient', db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id )
+        & auth.has_permission("run", "results_file") ):
         
-        config_id = db.data_file[request.vars["data_file_id"]].config_id
-        patient_id = db.sequence_file[db.data_file[request.vars["data_file_id"]].sequence_file_id].patient_id
+        config_id = db.results_file[request.vars["results_file_id"]].config_id
+        patient_id = db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id
         
-        db(db.data_file.id == request.vars["data_file_id"]).delete()
+        db(db.results_file.id == request.vars["results_file_id"]).delete()
 
         res = {"redirect": "patient/info",
                "args" : { "id" : patient_id,
                           "config_id" : config_id},
                "success": "true",
-               "message": "run ("+str(request.vars["id"])+") deleted"}
+               "message": "run ("+str(request.vars["results_file_id"])+") deleted"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"message": "acces denied"}

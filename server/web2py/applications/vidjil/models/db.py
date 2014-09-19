@@ -123,7 +123,7 @@ db.define_table('config',
                 Field('germline', 'string'))
 
 
-db.define_table('data_file',
+db.define_table('results_file',
                 Field('sequence_file_id', 'reference sequence_file'),
                 Field('config_id', 'reference config'),
                 Field('run_date','date'),

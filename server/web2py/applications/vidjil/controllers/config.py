@@ -87,8 +87,8 @@ def confirm():
 def delete():
     import shutil, os.path
     
-    #delete data_file using this config
-    db(db.data_file.config_id==request.vars["id"]).delete()
+    #delete results_file using this config
+    db(db.results_file.config_id==request.vars["id"]).delete()
     
     #delete config
     db(db.config.id==request.vars["id"]).delete() 

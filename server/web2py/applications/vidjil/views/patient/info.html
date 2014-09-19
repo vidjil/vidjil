@@ -41,9 +41,9 @@ query = db(
             (db.sequence_file.patient_id==db.patient.id)
             & (db.patient.id==request.vars["id"])
         ).select(
-            left=db.data_file.on(
-                (db.data_file.sequence_file_id==db.sequence_file.id)
-                & (db.data_file.config_id==str(config_id) )
+            left=db.results_file.on(
+                (db.results_file.sequence_file_id==db.sequence_file.id)
+                & (db.results_file.config_id==str(config_id) )
             )
         )
 }}
@@ -97,10 +97,10 @@ query = db(
         <tbody>
             
             {{for row in query :}}
-                {{if row.data_file.scheduler_task_id is None :}}
+                {{if row.results_file.scheduler_task_id is None :}}
                     {{status = '' }}
                 {{else:}}
-                    {{status = db.scheduler_task[row.data_file.scheduler_task_id ].status }}
+                    {{status = db.scheduler_task[row.results_file.scheduler_task_id ].status }}
                 {{pass}}
 
                  <tr>
@@ -117,20 +117,20 @@ query = db(
                     <td class="column_sep"></td>
                      
                      
-                    {{if row.data_file.run_date :}}
-                        <td class="button" onclick="db.call('patient/result_info', { 'data_file_id' : '{{=row.data_file.id}}' } )"> {{=row.data_file.run_date }}</td>
+                    {{if row.results_file.run_date :}}
+                        <td class="button" onclick="db.call('patient/result_info', { 'results_file_file_id' : '{{=row.results_file.id}}' } )"> {{=row.results_file.run_date }}</td>
                     {{else:}}
                         <td></td>
                     {{pass}} 
                     {{if (auth.has_permission('admin', 'patient', request.vars["id"]) ):}}
-                        <td onclick="db.call('patient/result_confirm', {'data_file_id' :'{{=row.data_file.id}}'})" > X </td>
+                        <td onclick="db.call('patient/result_confirm', {'results_file_id' :'{{=row.results_file.id}}'})" > X </td>
                     {{else:}}
                         <td></td>
                     {{pass}} 
                     <td>
                         {{if row.sequence_file.filename != '' and config_id != -1:}}
-                            {{if row.data_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED"):}}
-                                {{if auth.has_permission("run", "data_file") :}}
+                            {{if row.results_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED"):}}
+                                {{if auth.has_permission("run", "results_file") :}}
                                     <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'config_id' : {{=config_id}} } )"> run >> </span>
                                 {{else:}}
                                     <span class="button inactive" title="you don't have permission to schedule runs"> run >> </span>

@@ -7,7 +7,7 @@
 data_count = 0 
 query = db( (db.sequence_file.patient_id==request.vars["id"])).select() 
 for row in query :}}
-    {{data_count += db(db.data_file.sequence_file_id == row.id).count()}}
+    {{data_count += db(db.results_file.sequence_file_id == row.id).count()}}
 {{pass}}
 <div>
     <h3>{{=message}}</h3>

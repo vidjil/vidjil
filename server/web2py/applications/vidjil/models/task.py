@@ -5,15 +5,15 @@ def schedule_run(id_sequence, id_config):
 
     id_patient = db.sequence_file[id_sequence].patient_id
         
-    #check data_file
-    row = db( ( db.data_file.config_id == id_config ) & 
-             ( db.data_file.sequence_file_id == id_sequence )  
+    #check results_file
+    row = db( ( db.results_file.config_id == id_config ) & 
+             ( db.results_file.sequence_file_id == id_sequence )  
              ).select()
     
     if len(row) > 0 : ## update
         data_id = row[0].id
     else:             ## create
-        data_id = db.data_file.insert(sequence_file_id = id_sequence,
+        data_id = db.results_file.insert(sequence_file_id = id_sequence,
                                     config_id = id_config )
         
     ## check fused_file
@@ -40,12 +40,12 @@ def schedule_run(id_sequence, id_config):
         return res
 
 
-    ##add task to scheduller
+    ##add task to scheduler
     task = scheduler.queue_task('run', [id_sequence, id_config, data_id, fuse_id]
                          , repeats = 1, timeout = 6000)
-    db.data_file[data_id] = dict(scheduler_task_id = task.id)
+    db.results_file[data_id] = dict(scheduler_task_id = task.id)
 
-    (filename, str2) = db.sequence_file.data_file.retrieve(db.sequence_file[id_sequence].data_file)
+    filename= db.sequence_file[id_sequence].filename
     config_name = db.config[id_config].name
     patient_name = db.patient[id_patient].first_name + " " + db.patient[id_patient].last_name
 
@@ -90,13 +90,13 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     print p.stdout.read()
     
     ## récupération du fichier data.json généré
-    data_filepath = os.path.abspath(out_folder+"vidjil.data")
-    stream = open(data_filepath, 'rb')
+    results_filepath = os.path.abspath(out_folder+"vidjil.data")
+    stream = open(results_filepath, 'rb')
     
     ## insertion dans la base de donnée
     ts = time.time()
     
-    db.data_file[id_data] = dict(status = "ready",
+    db.results_file[id_data] = dict(status = "ready",
                                  run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d'),
                                  data_file = stream
                                 )
@@ -107,13 +107,13 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     output_file = out_folder+"result"
     files = ""
     query = db( ( db.patient.id == db.sequence_file.patient_id )
-                   & ( db.data_file.sequence_file_id == db.sequence_file.id )
+                   & ( db.results_file.sequence_file_id == db.sequence_file.id )
                    & ( db.patient.id == id_patient )
-                   & ( db.data_file.config_id == id_config )
+                   & ( db.results_file.config_id == id_config )
                    ).select( orderby=db.sequence_file.sampling_date ) 
     for row in query :
-        if row.data_file.data_file is not None :
-            files += os.path.abspath(os.path.dirname(sys.argv[0])) + "/applications/vidjil/uploads/"+row.data_file.data_file+" "
+        if row.results_file.data_file is not None :
+            files += os.path.abspath(os.path.dirname(sys.argv[0])) + "/applications/vidjil/uploads/"+row.results_file.data_file+" "
     
     cmd = "python ../fuse.py -o "+output_file+" -t 100 -g "+vidjil_germline+" "+files
     
