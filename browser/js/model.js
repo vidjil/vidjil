@@ -441,17 +441,7 @@ Model.prototype = {
             }
             self.initClones();
         }else{
-            //myConsole.flash("invalid json version for analysis file")
-            //parse old json file temporary
-            if (self.analysis.time && (self.analysis.time.length == self.samples.names.length)) {
-                self.samples.names = self.analysis.time;
-                self.samples.order = self.analysis.time_order;
-                self.t = self.samples.order[0]
-            }
-            if (self.analysis.patient) {
-                self.dataFileName = self.analysis.patient;
-            }
-            self.initClones();
+            myConsole.flash("invalid json version for analysis file")
         }
     },
     
@@ -826,64 +816,6 @@ Model.prototype = {
                     this.clones[cloneID].cluster = [];
                 }
                 this.clones[l].cluster = new_cluster;
-            }
-            this.init()
-            
-        }else{
-            //parse old json file temporary
-            var c = analysis.custom
-            //      CUSTOM TAG / NAME
-            //      EXPECTED VALUE
-            if (typeof c != 'undefined'){
-                for (var i = 0; i < c.length; i++) {
-                    
-                    var id = -1
-                    var f = 1;
-                    //check if we have a clone with a similar window
-                    if (typeof c[i].window != "undefined" && typeof this.mapID[c[i].window] != "undefined") {
-                        id = this.mapID[c[i].window]
-                    }
-                    
-                    //check if we have a window who can match the sequence
-                    if (typeof c[i].sequence != "undefined" && id == -1) {
-                        id = this.findWindow(c[i].sequence);
-                    }
-                    
-                    if (id != -1){
-                        if (typeof c[i].expected != "undefined") {
-                            this.windows[id].expected = c[i].expected
-                            f = this.getSize(id) / c[i].expected;
-                            if (f < 100 && f > 0.01) {
-                                if (typeof (c[i].tag) != "undefined") {
-                                    this.windows[id].tag = c[i].tag;
-                                }
-                                if (typeof (c[i].name) != "undefined") {
-                                    this.windows[id].c_name = c[i].name;
-                                }
-                            }else{
-                                myConsole.log(" apply analysis : windows "+ c[i].window + " > incorrect expected value", 0)
-                            }
-                        }else{
-                            if (typeof (c[i].tag) != "undefined") {
-                                this.windows[id].tag = c[i].tag;
-                            }
-                            if (typeof (c[i].name) != "undefined") {
-                                this.windows[id].c_name = c[i].name;
-                            }
-                        }
-                    }
-                }
-            }
-            //      CUSTOM CLUSTER
-            var cluster = this.analysis.cluster;
-            for (var i = 0; i < cluster.length; i++) {
-                if (typeof self.mapID[cluster[i].l] != "undefined" && typeof self.mapID[cluster[i].f] != "undefined") {
-                    var new_cluster = [];
-                    new_cluster = new_cluster.concat(this.clones[self.mapID[cluster[i].l]].cluster);
-                    new_cluster = new_cluster.concat(this.clones[self.mapID[cluster[i].f]].cluster);
-                    this.clones[self.mapID[cluster[i].l]].cluster = new_cluster;
-                    this.clones[self.mapID[cluster[i].f]].cluster = [];
-                }
             }
             this.init()
         }
