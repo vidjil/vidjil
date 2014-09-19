@@ -56,7 +56,8 @@ def add_form():
             id = db.patient.insert(first_name=request.vars["first_name"],
                                    last_name=request.vars["last_name"],
                                    birth=request.vars["birth"],
-                                   info=request.vars["info"])
+                                   info=request.vars["info"],
+                                   id_label=request.vars["id_label"])
 
 
             user_group = auth.user_group(auth.user.id)
@@ -122,7 +123,8 @@ def edit_form():
             db.patient[request.vars["id"]] = dict(first_name=request.vars["first_name"],
                                                    last_name=request.vars["last_name"],
                                                    birth=request.vars["birth"],
-                                                   info=request.vars["info"]
+                                                   info=request.vars["info"],
+                                                   id_label=request.vars["id_label"]
                                                    )
 
             res = {"redirect": "patient/index",

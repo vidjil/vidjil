@@ -84,7 +84,9 @@ db.define_table('patient',
                 Field('first_name','string'),
                 Field('last_name','string'),
                 Field('birth','date'),
-                Field('info','text'))
+                Field('info','text'),
+                Field('id_label','string'),
+                )
 
 '''
 db.patient.first_name.requires = IS_NOT_EMPTY( error_message='input needed' )

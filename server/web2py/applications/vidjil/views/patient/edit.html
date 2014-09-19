@@ -24,6 +24,11 @@ info = db.patient[request.vars["id"]]
                 <td> </td>
             </tr>
             <tr>
+                <td><label for="patient_id_label" id="patient_id_label__label">ID label </label></td>
+                <td><input class="date" id="patient_id_label" name="id_label" type="text" value="{{=info.id_label}}"><span>id used by hospital administration system</span></td>
+                <td></td>
+            </tr>
+            <tr>
                 <td> <label for="patient_info" id="patient_info__label">Info: </label> </td> 
                 <td> <textarea class="text" cols="40" id="patient_info" name="info" rows="10"> {{=info.info}} </textarea> </td>
                 <td></td>
