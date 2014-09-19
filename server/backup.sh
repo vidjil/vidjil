@@ -20,7 +20,7 @@ if [ $# -ge 1 ]; then
     DIR="$1/"
 fi
 
-now=$(date +"%Y_%m_%d") 
+now=$(date +"%Y-%m-%d_%H:%M:%S") 
 if [ $COMPLETE -eq 1 ]; then
         filename="${DIR}backup_"$now
         zip -r $filename web2py/applications/vidjil/uploads/ web2py/applications/vidjil/databases/
