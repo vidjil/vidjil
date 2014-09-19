@@ -32,11 +32,7 @@ def add_form():
     if error=="" :
         query = db((db.sequence_file.patient_id==request.vars['patient_id'])).select()
         for row in query :
-            if row.data_file is None :
-                filename= " "
-            else:
-                (filename, str) = db.sequence_file.data_file.retrieve(row.data_file)
-            if filename == request.vars['filename'] :
+            if row.filename == request.vars['filename'] :
                 res = {"message": "this sequence file already exists for this patient"}
                 return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
             
@@ -45,13 +41,15 @@ def add_form():
                             pcr=request.vars['pcr'],
                             sequencer=request.vars['sequencer'],
                             producer=request.vars['producer'],
-                            patient_id=request.vars['patient_id'])
+                            patient_id=request.vars['patient_id'],
+                            filename=request.vars['filename'])
     
         res = {"file_id" : id,
                "message": request.vars['filename'] + ": upload started",
                "redirect": "patient/info",
                "args" : {"id" : request.vars['patient_id']}
                }
+        
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     else :
@@ -84,11 +82,7 @@ def edit_form():
     if error=="" :
         query = db((db.sequence_file.patient_id==db.sequence_file[request.vars['id']].patient_id)).select()
         for row in query :
-            if row.data_file is None :
-                filename = " "
-            else:
-                (filename, str) = db.sequence_file.data_file.retrieve(row.data_file)
-            if filename == request.vars['filename'] :
+            if row.filename == request.vars['filename'] :
                 res = {"message": "this sequence file already exists for this patient"}
                 return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 

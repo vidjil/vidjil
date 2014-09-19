@@ -51,7 +51,7 @@
 <row name="info" null="1" autoincrement="0">
 <datatype>VARCHAR</datatype>
 <default>NULL</default></row>
-<row name="data_file" null="1" autoincrement="0">
+<row name="results_file" null="1" autoincrement="0">
 <datatype>BLOB</datatype>
 <default>NULL</default></row>
 <row name="PCR" null="1" autoincrement="0">
@@ -87,7 +87,7 @@
 <part>id</part>
 </key>
 </table>
-<table x="432" y="404" name="data_file">
+<table x="432" y="404" name="results_file">
 <row name="id" null="1" autoincrement="1">
 <datatype>TINYINT</datatype>
 <default>NULL</default></row>
@@ -105,7 +105,7 @@
 <row name="status" null="1" autoincrement="0">
 <datatype>CHAR</datatype>
 <default>NULL</default></row>
-<row name="data_file" null="1" autoincrement="0">
+<row name="results_file" null="1" autoincrement="0">
 <datatype>BLOB</datatype>
 <default>NULL</default></row>
 <key type="PRIMARY" name="">
