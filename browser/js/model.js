@@ -441,7 +441,7 @@ Model.prototype = {
             }
             self.initClones();
         }else{
-            myConsole.flash("invalid json version for analysis file")
+            myConsole.flash("invalid json version for analysis file", 1)
         }
     },
     
@@ -509,15 +509,16 @@ Model.prototype = {
      * */
     loadAnalysis: function (analysis) {
         var self = this
-
+        
+        var input = document.getElementById(analysis)
+        
         myConsole.log("loadAnalysis()");
-        if (document.getElementById(analysis)
-            .files.length != 0) {
+        if (input.files.length != 0) {
             var oFReader = new FileReader();
-            var oFile = document.getElementById(analysis)
+            var oFile = input
                 .files[0];
 
-            self.analysisFileName = document.getElementById(analysis)
+            self.analysisFileName = input
                 .files[0].name;
 
             oFReader.readAsText(oFile);
@@ -531,7 +532,10 @@ Model.prototype = {
         }
 
         if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
-
+        
+        input = $("#"+analysis)
+        input.replaceWith(input.val('').clone(true));
+        
         return this;
     }, //end loadAnalysis
 
@@ -817,8 +821,8 @@ Model.prototype = {
                 }
                 this.clones[l].cluster = new_cluster;
             }
-            this.init()
         }
+        this.init()
     },
 
     /*
