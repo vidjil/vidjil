@@ -9,7 +9,7 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 
-import gluon.contrib.simplejson
+import gluon.contrib.simplejson, time, datetime
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -191,14 +191,19 @@ def save_analysis():
 
         f = request.vars['fileToUpload']
         
+        ts = time.time()
         if not analysis_query.isempty() :
             analysis_id = analysis_query.select().first().id
-            db.analysis_file[analysis_id] = dict(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename))
-        else:           
+            db.analysis_file[analysis_id] = dict(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
+                                                 analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+                                                 )
+        else:     
+            
             analysis_id = db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
-                                                    config_id = request.vars['config_id'],
-                                                    patient_id = request.vars['patient_id'],
-                                                )
+                                                  config_id = request.vars['config_id'],
+                                                  patient_id = request.vars['patient_id'],
+                                                  analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+                                                  )
         
         patient_name = db.patient[request.vars['patient_id']].first_name + " " + db.patient[request.vars['patient_id']].last_name
         

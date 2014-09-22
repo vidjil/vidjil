@@ -97,7 +97,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     ts = time.time()
     
     db.results_file[id_data] = dict(status = "ready",
-                                 run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d'),
+                                 run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                  data_file = stream
                                 )
     
@@ -123,7 +123,9 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     fuse_filepath = os.path.abspath(output_file)
     stream = open(fuse_filepath, 'rb')
     
-    db.fused_file[id_fuse] = dict(fuse_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d'),
+    ts = time.time()
+    
+    db.fused_file[id_fuse] = dict(fuse_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                  fused_file = stream)
     
     db.commit()

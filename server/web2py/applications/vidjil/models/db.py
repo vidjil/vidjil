@@ -128,21 +128,21 @@ db.define_table('config',
 db.define_table('results_file',
                 Field('sequence_file_id', 'reference sequence_file'),
                 Field('config_id', 'reference config'),
-                Field('run_date','date'),
+                Field('run_date','datetime'),
                 Field('scheduler_task_id', 'integer'),
                 Field('data_file', 'upload', length=1000000000000, autodelete=True))
 
 db.define_table('fused_file',
                 Field('patient_id', 'reference patient'),
                 Field('config_id', 'reference config'),
-                Field('fuse_date','date'),
+                Field('fuse_date','datetime'),
                 Field('status', 'string'),
                 Field('fused_file', 'upload', length=1000000000000, autodelete=True))
 
 db.define_table('analysis_file',
                 Field('patient_id', 'reference patient'),
                 Field('config_id', 'reference config'),
-                Field('analyze_date','date'),
+                Field('analyze_date','datetime'),
                 Field('status', 'string'),
                 Field('analysis_file', 'upload', length=1000000000000, autodelete=True))
 
