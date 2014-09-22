@@ -49,11 +49,15 @@ run = db.scheduler_run[results_file.scheduler_task_id]
     <table>
        <tr><td>run result :</td></tr>
        <tr><td><textarea class="text" cols="100"  rows="15"> 
+             {{if run.run_result:}} 
              {{=run.run_result.replace('\r', '')}}
+           {{pass}}
        </textarea></td></tr>
        <tr><td>run output :</td></tr>
        <tr><td><textarea class="text" cols="100"  rows="15"> 
+             {{if run.run_output:}} 
              {{=run.run_output.replace('\r', '')}}
+           {{pass}}
        </textarea></td></tr>
        <tr><td>run traceback :</td></tr>
        <tr><td><textarea class="text" cols="100"  rows="15">
