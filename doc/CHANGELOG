@@ -1,7 +1,7 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
-2014-09-xx  The Vidjil Team
+2014-09-23  The Vidjil Team
 	* Export cause of non-segmentation in the .data
 	* New option to output segmented reads (-U), now by default segmented reads are not output one by one
 	* Updated .data .json output (the format will change again in a next release)
