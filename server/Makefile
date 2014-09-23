@@ -1,3 +1,3 @@
 
 data:
-	sh get-web2py
+	sh nginx_install.sh
