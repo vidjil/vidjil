@@ -1,0 +1,21 @@
+{{extend 'db_layout.html'}}
+
+{{('message' in globals())}}
+{{if 'message' in globals():}}
+
+<div>
+    <h3>{{=message}}</h3>
+    
+    Are you sure you want to delete the results of this processing?</br>
+
+    <div class="center"> 
+        <button onclick="db.call('results_file/delete', {'results_file_id' :'{{=request.vars["results_file_id"]}}'} )">delete</button>
+        <button onclick="db.back();">cancel</button>
+    </div>
+</div>
+    
+{{elif 'content' in globals():}}
+{{=content}}
+{{else:}}
+{{=BEAUTIFY(response._vars)}}
+{{pass}}

@@ -84,7 +84,9 @@ db.define_table('patient',
                 Field('first_name','string'),
                 Field('last_name','string'),
                 Field('birth','date'),
-                Field('info','text'))
+                Field('info','text'),
+                Field('id_label','string'),
+                )
 
 '''
 db.patient.first_name.requires = IS_NOT_EMPTY( error_message='input needed' )
@@ -123,24 +125,24 @@ db.define_table('config',
                 Field('germline', 'string'))
 
 
-db.define_table('data_file',
+db.define_table('results_file',
                 Field('sequence_file_id', 'reference sequence_file'),
                 Field('config_id', 'reference config'),
-                Field('run_date','date'),
+                Field('run_date','datetime'),
                 Field('scheduler_task_id', 'integer'),
                 Field('data_file', 'upload', length=1000000000000, autodelete=True))
 
 db.define_table('fused_file',
                 Field('patient_id', 'reference patient'),
                 Field('config_id', 'reference config'),
-                Field('fuse_date','date'),
+                Field('fuse_date','datetime'),
                 Field('status', 'string'),
                 Field('fused_file', 'upload', length=1000000000000, autodelete=True))
 
 db.define_table('analysis_file',
                 Field('patient_id', 'reference patient'),
                 Field('config_id', 'reference config'),
-                Field('analyze_date','date'),
+                Field('analyze_date','datetime'),
                 Field('status', 'string'),
                 Field('analysis_file', 'upload', length=1000000000000, autodelete=True))
 
@@ -167,13 +169,13 @@ if db(db.auth_user.id > 0).count() == 0:
     ##création des configs de base
     id_config_TRG = db.config.insert(
         name = 'TRG',
-        command = '-c clones -z 20 -R 1 -r 100 ',
+        command = '-c clones -z 100 -R 1 -r 1 ',
         info = 'default trg config',
         germline = 'TRG'
     )
     id_config_IGH = db.config.insert(
         name = 'IGH',
-        command = '-c clones -z 20 -R 1 -r 100 ',
+        command = '-c clones -d -z 100 -R 1 -r 1 ',
         info = 'default igh config',
         germline = 'IGH'
     )

@@ -135,7 +135,7 @@ def delete():
     
     if auth.has_permission('admin', 'patient', patient_id):
         db(db.sequence_file.id == request.vars["id"]).delete()
-        db(db.data_file.sequence_file_id == request.vars["id"]).delete()
+        db(db.results_file.sequence_file_id == request.vars["id"]).delete()
 
         res = {"redirect": "patient/info",
                "args" : { "id" : patient_id},

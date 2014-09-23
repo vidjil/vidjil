@@ -741,14 +741,14 @@ def main():
 
     parser = argparse.ArgumentParser(description= DESCRIPTION,
                                     epilog='''Example:
-                                    python2 %(prog)s --germline IGH ../out/vidjil.data''',
+  python2 %(prog)s --germline IGH out/Diag/vidjil.data out/MRD-1/vidjil.data out/MRD-2/vidjil.data''',
                                     formatter_class=argparse.RawTextHelpFormatter)
 
 
     group_options = parser.add_argument_group() # title='Options and parameters')
 
     group_options.add_argument('--test', action='store_true', help='run self-tests')
-    group_options.add_argument('--multi', action='store_true', help='merge multiple system')
+    group_options.add_argument('--multi', action='store_true', help='merge multiple systems (experimental)')
     
     group_options.add_argument('--compress', '-c', action='store_true', help='compress point names, removing common substrings')
     group_options.add_argument('--pipeline', '-p', action='store_true', help='compress point names (internal Bonsai pipeline)')

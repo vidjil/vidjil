@@ -9,7 +9,7 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 
-import gluon.contrib.simplejson
+import gluon.contrib.simplejson, time, datetime
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -45,7 +45,7 @@ def run_request():
         error += "id sequence file needed, "
     if not "config_id" in request.vars:
         error += "id config needed, "
-    if not auth.has_permission("run", "data_file") :
+    if not auth.has_permission("run", "results_file") :
         error += "permission needed"
     
     id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
@@ -96,9 +96,9 @@ def get_data():
         
         ## récupération des infos stockées sur la base de données 
         query = db( ( db.patient.id == db.sequence_file.patient_id )
-                   & ( db.data_file.sequence_file_id == db.sequence_file.id )
+                   & ( db.results_file.sequence_file_id == db.sequence_file.id )
                    & ( db.patient.id == request.vars["patient_id"] )
-                   & ( db.data_file.config_id == request.vars["config_id"]  )
+                   & ( db.results_file.config_id == request.vars["config_id"]  )
                    ).select( orderby=db.sequence_file.sampling_date ) 
 
         data["samples"]["original_names"] = []
@@ -145,20 +145,6 @@ def get_analysis():
     
     
     if error == "" :
-        """
-        ## récupération des infos stockées sur la base de données 
-        query = db( ( db.patient.id == db.sequence_file.patient_id )
-                   & ( db.data_file.sequence_file_id == db.sequence_file.id )
-                   & ( db.patient.id == request.vars["patient_id"] )
-                   & ( db.data_file.config_id == request.vars["config_id"]  )
-                   ).select( orderby=db.sequence_file.sampling_date ) 
-
-        order = 0
-        for row in query :
-            (filename, str) = db.sequence_file.data_file.retrieve(row.sequence_file.data_file)
-            res["samples"]["original_names"].append(filename)
-            res["samples"]["info_sequence_file"].append(row.sequence_file.info) 
-            """
         res["info_patient"] = db.patient[request.vars["patient_id"]].info
         res["patient"] = db.patient[request.vars["patient_id"]].first_name + " " + db.patient[request.vars["patient_id"]].last_name + " (" + db.config[request.vars["config_id"]].name + ")"
         
@@ -205,14 +191,19 @@ def save_analysis():
 
         f = request.vars['fileToUpload']
         
+        ts = time.time()
         if not analysis_query.isempty() :
             analysis_id = analysis_query.select().first().id
-            db.analysis_file[analysis_id] = dict(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename))
-        else:           
+            db.analysis_file[analysis_id] = dict(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
+                                                 analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+                                                 )
+        else:     
+            
             analysis_id = db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
-                                                    config_id = request.vars['config_id'],
-                                                    patient_id = request.vars['patient_id'],
-                                                )
+                                                  config_id = request.vars['config_id'],
+                                                  patient_id = request.vars['patient_id'],
+                                                  analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+                                                  )
         
         patient_name = db.patient[request.vars['patient_id']].first_name + " " + db.patient[request.vars['patient_id']].last_name
         

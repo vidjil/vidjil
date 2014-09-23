@@ -4,22 +4,22 @@
 {{if 'message' in globals():}}
 
 {{
-data_file_id = request.vars["data_file_id"]
-data_file = db.data_file[data_file_id]
+results_file_id = request.vars["results_file_id"]
+results_file = db.results_file[results_file_id]
 
-config_id = db.data_file[data_file_id].config_id
+config_id = db.results_file[results_file_id].config_id
 config = db.config[config_id] 
 
-sequence_file_id = db.data_file[data_file_id].sequence_file_id
+sequence_file_id = db.results_file[results_file_id].sequence_file_id
 sequence_file = db.sequence_file[sequence_file_id]
 
-run = db.scheduler_run[data_file.scheduler_task_id]
+run = db.scheduler_run[results_file.scheduler_task_id]
 
 }}
 
 <div>
 
-    <h3>info run {{=sequence_file.filename}} ({{=config.name }}) ({{=data_file.run_date}}) </h3>
+    <h3>info run {{=sequence_file.filename}} ({{=config.name }}) ({{=results_file.run_date}}) </h3>
 
     <div class="db_block">
         <div class="db_block_left">
@@ -48,11 +48,23 @@ run = db.scheduler_run[data_file.scheduler_task_id]
     </table>
     <table>
        <tr><td>run result :</td></tr>
-       <tr><td><textarea class="text" cols="100"  rows="15"> {{=run.run_result}} </textarea></td></tr>
+       <tr><td><textarea class="text" cols="100"  rows="15"> 
+             {{if run.run_result:}} 
+             {{=run.run_result.replace('\r', '')}}
+           {{pass}}
+       </textarea></td></tr>
        <tr><td>run output :</td></tr>
-       <tr><td><textarea class="text" cols="100"  rows="15"> {{=run.run_output}} </textarea></td></tr>
+       <tr><td><textarea class="text" cols="100"  rows="15"> 
+             {{if run.run_output:}} 
+             {{=run.run_output.replace('\r', '')}}
+           {{pass}}
+       </textarea></td></tr>
        <tr><td>run traceback :</td></tr>
-       <tr><td><textarea class="text" cols="100"  rows="15"> {{=run.traceback}} </textarea></td></tr>
+       <tr><td><textarea class="text" cols="100"  rows="15">
+             {{if run.traceback:}} 
+             {{=run.traceback.replace('\r', '')}}
+	     {{pass}}
+       </textarea></td></tr>
     </table>
 </div>
 
