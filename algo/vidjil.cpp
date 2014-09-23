@@ -1495,6 +1495,7 @@ int main (int argc, char **argv)
     delete index ;
     delete json;
     delete windowsStorage;
+    delete json_samples;
 
     if (output_segmented)
       delete out_segmented;
