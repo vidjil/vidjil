@@ -43,6 +43,8 @@ template<class T>
 class AffectAnalyser {
  public:
 
+  virtual ~AffectAnalyser() {}
+
   /* Queries */
 
   /**
