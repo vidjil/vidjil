@@ -41,7 +41,9 @@ query = db(
                <tr onclick="db.call('patient/info', {'id' :'{{=row.patient.id}}'} )" >
                     <td> {{=row.patient.last_name + " " + row.patient.first_name }} </td>
                     <td> {{=row.patient.birth }} </td>
-                    <td> {{=row.patient.info }} </td>
+                    <td> {{=row.patient.info[:50] }}
+                         {{if len(row.patient.info) > 50: }}...{{pass}}
+                    </td>
                     <td> {{for row2 in db( db.fused_file.patient_id == row.patient.id ).select(db.fused_file.config_id, distinct=True) :}} 
                         {{=db.config[row2.config_id].name}} 
                     {{pass}}</td>
