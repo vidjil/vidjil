@@ -233,6 +233,7 @@ applicable being removed:
 
 A summary of extracted windows is also available in a JSON format,
 including, for each windows, the number of reads sharing this window.
+The format of this file may change in future releases.
 
 This file is used by the dynamic browser for visualization
 and analysis of clones and their tracking along different samples,
