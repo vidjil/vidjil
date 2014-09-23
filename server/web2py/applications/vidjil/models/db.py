@@ -169,13 +169,13 @@ if db(db.auth_user.id > 0).count() == 0:
     ##création des configs de base
     id_config_TRG = db.config.insert(
         name = 'TRG',
-        command = '-c clones -z 20 -R 1 -r 100 ',
+        command = '-c clones -z 100 -R 1 -r 1 ',
         info = 'default trg config',
         germline = 'TRG'
     )
     id_config_IGH = db.config.insert(
         name = 'IGH',
-        command = '-c clones -z 20 -R 1 -r 100 ',
+        command = '-c clones -d -z 100 -R 1 -r 1 ',
         info = 'default igh config',
         germline = 'IGH'
     )
