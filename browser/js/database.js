@@ -93,8 +93,16 @@ Database.prototype = {
         try {
             var res = jQuery.parseJSON(result);
             
-            if (res.redirect) this.call(res.redirect, res.args)
-               
+            if (res.redirect){
+                if (res.redirect == "back"){
+                    this.back()
+                } else if (res.redirect == "reload"){
+                    this.reload()
+                } else {
+                    this.call(res.redirect, res.args)
+                }
+            }
+            
             if (res.message) myConsole.flash("database : " + res.message , 1)
             
             return res
@@ -267,7 +275,6 @@ Database.prototype = {
         }else{
             url = this.url[this.url.length-1]
             this.callUrl(url)
-            this.url.pop()
         }
     },
     
