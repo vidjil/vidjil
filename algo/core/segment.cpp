@@ -175,7 +175,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
   int s = (size_t)index->getS() ;
   int length = sequence.length() ;
 
-  if (length < (size_t) s) 
+  if (length < s) 
     {
       because = UNSEG_TOO_SHORT;
       kaa = NULL;
@@ -568,7 +568,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
       // Trim J
       Jstart += b_r;
       del_J += b_r;
-        if (Jstart>=sequence.length())
+      if (Jstart>=(int) sequence.length())
 	  Jstart=sequence.length()-1;
     }
 
