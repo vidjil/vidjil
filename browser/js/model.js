@@ -1703,10 +1703,20 @@ Model.prototype = {
         top = typeof top !== 'undefined' ? top : this.top;
         this.top = top;
 
-        var html_container = document.getElementById('top_slider');
-        if (html_container != null) {
-            html_container.value = top;
+        var html_slider = document.getElementById('top_slider');
+        if (html_slider != null) {
+            html_slider.value = top;
         }
+        
+        var html_label = document.getElementById('top_label');
+        if (html_label != null) {
+            var count = 0;
+            for (var i=0; i<this.windows.length; i++){
+                if (this.windows[i].top <= top) count++;
+            }
+            html_label.innerHTML = count + ' clones (top ' + top + ')' ;
+        }
+        
         this.update();
     },
 
