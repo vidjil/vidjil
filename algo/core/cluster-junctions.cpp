@@ -112,7 +112,6 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
     
     
   typedef map<junction,list<Sequence> > mjs ;
-  typedef list<string> li ;
 
   map <string, map <string, bool> > graph ;
   
