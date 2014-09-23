@@ -49,7 +49,7 @@ PDF.prototype = {
             }
         }
 
-        this.col_width = (this.page_width - (2 * this.marge) - this.first_col_width) / this.m.time_order.length
+        this.col_width = (this.page_width - (2 * this.marge) - this.first_col_width) / this.m.samples.order.length
 
         return this;
     },
@@ -262,7 +262,11 @@ PDF.prototype = {
         if (this.m.reads_total) this.checkPage(30)
 
         //time point
-        this.row('point', this.m.time, 'raw')
+        var time = []
+        for (var i=0 ; i<this.m.samples.number; i++){
+            time[i] =  this.m.getStrTime(i).split(".")[0];
+        }
+        this.row('point', time, 'raw')
         this.next_row()
 
         //info global
@@ -277,7 +281,7 @@ PDF.prototype = {
             this.next_sub_row()
 
             var data = []
-            for (var i = 0; i < this.m.time.length; i++) {
+            for (var i = 0; i < this.m.samples.number; i++) {
                 data[i] = this.m.reads_segmented[i] / this.m.reads_total[i]
             }
             this.row('', data, '%')
@@ -312,7 +316,7 @@ PDF.prototype = {
 
         var light = true;
 
-        for (var i = 0; i < this.m.time_order.length; i++) {
+        for (var i = 0; i < this.m.samples.order.length; i++) {
             var x = this.marge + this.first_col_width + (this.col_width * i)
             var y = this.y
 
@@ -322,7 +326,7 @@ PDF.prototype = {
 
             this.doc.rect(x, y - 3.75, this.col_width, this.height_row, 'F');
 
-            var r = data[this.m.time_order[i]]
+            var r = data[this.m.samples.order[i]]
             if (format == "%") r = (r * 100)
                 .toFixed(2) + ' %'
 
@@ -354,7 +358,7 @@ PDF.prototype = {
 
         //clone reads (%)
         var data = []
-        for (var i = 0; i < this.m.time.length; i++) {
+        for (var i = 0; i < this.m.samples.number; i++) {
             data[i] = this.m.getStrSize(cloneID, i)
         }
         this.row('', data, 'raw')
