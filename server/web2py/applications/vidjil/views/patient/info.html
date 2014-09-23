@@ -53,11 +53,11 @@ query = db(
     <h3>{{=patient.last_name + " " + patient.first_name }} ({{=patient.birth}})</h3>
 
     <div class="db_block">
-      <!--
+      
         <div class="db_block_left">
-            file list
+            <span class="button" onclick="db.call('patient/edit', { 'id' : '{{=request.vars["id"]}}' } )" > edit patient info </span>
         </div>
-      -->
+      
 
         <div class="db_block_right">
             config

@@ -127,7 +127,7 @@ def edit_form():
                                                    id_label=request.vars["id_label"]
                                                    )
 
-            res = {"redirect": "patient/index",
+            res = {"redirect": "back",
                    "message": "change saved"}
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
