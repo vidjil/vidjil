@@ -38,7 +38,7 @@ obtained:
 
 * First aid
 
-- Go to the “file” menu to access your data.
+- Go to the “file”/“import/export” menu to access your data.
   Your files are protected with your login and password.
   There is always a “sample/L2-LIL.data” dataset for demonstration purposes.
 
