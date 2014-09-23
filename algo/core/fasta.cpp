@@ -197,7 +197,7 @@ void OnlineFasta::next() {
 
     // Compute seq
     current.seq = new int[current.sequence.length()];
-    for (int i=0; i< current.sequence.length(); i++)
+    for (unsigned int i=0; i< current.sequence.length(); i++)
       {
 	current.seq[i] = nuc_to_int(current.sequence[i]) ;
       }
