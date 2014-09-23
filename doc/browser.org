@@ -27,7 +27,8 @@ obtained:
    http://www.vidjil.org/submit.html or using any other method
    (e.g. your own FTP)
  - from the command-line version of Vidjil (starting from
-   .fasta/.fastq files, see doc/README in the command-line version)
+   .fasta/.fastq files, see doc/alog.org in the command-line version).
+   To gather several .data files, you have to use the [[../server/fuse.py][fuse.py]] script
  - in a next release (start of 2015), you will be able to upload,
    manage and process your runs (.fasta/.fastq files) directly on the browser (with
    authentication to ensure that you keep the control on your data).
