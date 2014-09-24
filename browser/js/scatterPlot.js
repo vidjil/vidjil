@@ -812,24 +812,35 @@ ScatterPlot.prototype = {
       return this;
   },
   
-  buildSystemGrid: function () {
-      this.systemGrid = {"label" : []}
-      var n = this.m.system_selected.length-1
-      var h = this.resizeH
-      var w = this.resizeW*0.2
-      
-      var i=0;
-      for (var key in this.m.system_selected){
-          var system = this.m.system_selected[key]
-          if (system != this.m.germlineV.system){
-            this.systemGrid[system] = {}
-            this.systemGrid[system].x = 0.9
-            this.systemGrid[system].y = ((i*2)+1)/(n*2)
-            this.systemGrid["label"].push( {"text": system, "x" : 0.9, "y" : (((i-0.4)*2)+1)/(n*2)  })
-            i++
-          }
-      }
-  },
+    buildSystemGrid: function () {
+        this.systemGrid = {"label" : []}
+        var n = this.m.system_selected.length-1
+        var h = this.resizeH
+        var w = this.resizeW*0.2
+        
+        //compute hidden position for unactivated germline (to avoid firework effect)
+        for (var key in Object.keys(this.m.system_segmented)){
+            var system = this.m.system_selected[key]
+            if (system != this.m.germlineV.system){
+                this.systemGrid[system] = { 'x' : 1 , 'y' : 1}
+            }
+        }
+        
+        //compute position for selected germline
+        var i=0;
+        for (var key in this.m.system_selected){
+            var system = this.m.system_selected[key]
+            if (system != this.m.germlineV.system){
+                this.systemGrid[system].x = 0.9
+                this.systemGrid[system].y = ((i*2)+1)/(n*2)
+                this.systemGrid["label"].push( {"text": system, "x" : 0.9, "y" : (((i-0.4)*2)+1)/(n*2)  })
+                i++
+            }
+        }
+        
+
+        
+    },
 
   /* Recalcule les coefficients d'agrandissement/réduction, en fonction de la taille de la div
   * */
@@ -1095,22 +1106,21 @@ ScatterPlot.prototype = {
             if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
             this.nodes[cloneID].r1 = size
         }
-       
-       
-        if (this.use_system_grid && this.m.system == "multi" 
-            && typeof this.m.windows[cloneID].system != 'undefined'
-            && this.m.windows[cloneID].system != this.m.germlineV.system
-        ){
-            this.nodes[cloneID].x2 = this.systemGrid[this.m.windows[cloneID].system].x * this.resizeW
-            this.nodes[cloneID].y2 = this.systemGrid[this.m.windows[cloneID].system].y * this.resizeH
-        }else{
-            this.nodes[cloneID].x2 = this.axisX.pos(cloneID)*this.gridSizeW
-            this.nodes[cloneID].y2 = this.axisY.pos(cloneID)*this.gridSizeH
-        }
         
     }
     else {
         this.nodes[cloneID].r1 = 0
+    }
+    
+    if (this.use_system_grid && this.m.system == "multi" 
+        && typeof this.m.windows[cloneID].system != 'undefined'
+        && this.m.windows[cloneID].system != this.m.germlineV.system
+    ){
+        this.nodes[cloneID].x2 = this.systemGrid[this.m.windows[cloneID].system].x * this.resizeW
+        this.nodes[cloneID].y2 = this.systemGrid[this.m.windows[cloneID].system].y * this.resizeH
+    }else{
+        this.nodes[cloneID].x2 = this.axisX.pos(cloneID)*this.gridSizeW
+        this.nodes[cloneID].y2 = this.axisY.pos(cloneID)*this.gridSizeH
     }
       
   },
