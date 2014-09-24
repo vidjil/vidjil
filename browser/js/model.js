@@ -451,6 +451,8 @@ Model.prototype = {
      * */
     changeGermline: function (system) {
         this.loadGermline(system)
+            .computeColor()
+            .resize()
             .update()
     },
     
@@ -705,16 +707,30 @@ Model.prototype = {
             this.windows[i].Nlength = nsize;
             this.windows[i].tag = default_tag;
         }
-        myConsole.log(maxNlength);
-        
-        /*TODO rework color
-         * */
         
         //      COLOR_N
         for (var i = 0; i < this.n_windows; i++) {
             this.windows[i].colorN = colorGenerator((((this.windows[i].Nlength / maxNlength) - 1) * (-250)), color_s, color_v);
         }
 
+        this.computeColor()
+        
+        //      SHORTNAME
+        for (var i = 0; i < this.n_windows; i++) {
+            if (typeof (this.windows[i].sequence) != 'undefined' && typeof (this.windows[i].name) != 'undefined') {
+                this.windows[i].shortName = this.windows[i].name.replace(new RegExp('IGHV', 'g'), "VH");
+                this.windows[i].shortName = this.windows[i].shortName.replace(new RegExp('IGHD', 'g'), "DH");
+                this.windows[i].shortName = this.windows[i].shortName.replace(new RegExp('IGHJ', 'g'), "JH");
+                this.windows[i].shortName = this.windows[i].shortName.replace(new RegExp('TRG', 'g'), "");
+                this.windows[i].shortName = this.windows[i].shortName.replace(new RegExp('\\*..', 'g'), "");
+            }
+        }
+        
+        this.applyAnalysis(this.analysis);
+        
+    }, //end initClones
+    
+    computeColor: function(){
         //      COLOR_V
         for (var i = 0; i < this.n_windows; i++) {
             if (typeof (this.windows[i].V) != 'undefined' && this.germlineV.allele[this.windows[i].V[0]]) {
@@ -735,20 +751,8 @@ Model.prototype = {
             }
         }
         
-        //      SHORTNAME
-        for (var i = 0; i < this.n_windows; i++) {
-            if (typeof (this.windows[i].sequence) != 'undefined' && typeof (this.windows[i].name) != 'undefined') {
-                this.windows[i].shortName = this.windows[i].name.replace(new RegExp('IGHV', 'g'), "VH");
-                this.windows[i].shortName = this.windows[i].shortName.replace(new RegExp('IGHD', 'g'), "DH");
-                this.windows[i].shortName = this.windows[i].shortName.replace(new RegExp('IGHJ', 'g'), "JH");
-                this.windows[i].shortName = this.windows[i].shortName.replace(new RegExp('TRG', 'g'), "");
-                this.windows[i].shortName = this.windows[i].shortName.replace(new RegExp('\\*..', 'g'), "");
-            }
-        }
-        
-        this.applyAnalysis(this.analysis);
-        
-    }, //end initClones
+        return this
+    },
     
     /* 
      * 
@@ -1060,11 +1064,11 @@ Model.prototype = {
         this.updateModel()
         //check if current germline is in the selected_system
         if (this.system_selected.indexOf(this.germlineV.system) == -1 ){
-            this.loadGermline(this.system_selected[0])
+            this.changeGermline(this.system_selected[0])
+        }else{
+            this.resize()
+                .update()
         }
-        
-        this.resize()
-            .update()
     },
     
     /*

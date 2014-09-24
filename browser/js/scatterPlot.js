@@ -820,7 +820,7 @@ ScatterPlot.prototype = {
       
       var i=0;
       for (var key in this.m.system_selected){
-          var system =this.m.system_selected[key]
+          var system = this.m.system_selected[key]
           if (system != this.m.germlineV.system){
             this.systemGrid[system] = {}
             this.systemGrid[system].x = 0.9
@@ -1075,43 +1075,43 @@ ScatterPlot.prototype = {
   * */
   updateClone: function (cloneID) {
     if (this.m.windows[cloneID].active) {
-	   if (this.m.clones[cloneID].split) {
-	       for (var i = 0; i < this.m.clones[cloneID].cluster.length; i++) {
-		      var seqID = this.m.clones[cloneID].cluster[i]
-		      var size = this.m.getSequenceSize(seqID);
-               //Math.pow(x,y) -> x**y
-		      if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
-		      this.nodes[seqID].r1 = size
-           }
-	   }
-       else {
-	       for (var i = 0; i < this.m.clones[cloneID].cluster.length; i++) {
-		      var seqID = this.m.clones[cloneID].cluster[i]
-		      this.nodes[seqID].r1 = 0
-	      }
-           var size = this.m.getSize(cloneID);
-	       if (this.m.clones[cloneID].cluster.length == 0) size = this.m.getSequenceSize(cloneID);
-	       if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
-	       this.nodes[cloneID].r1 = size
-       }
+        
+        if (this.m.clones[cloneID].split) {
+            for (var i = 0; i < this.m.clones[cloneID].cluster.length; i++) {
+                var seqID = this.m.clones[cloneID].cluster[i]
+                var size = this.m.getSequenceSize(seqID);
+                //Math.pow(x,y) -> x**y
+                if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
+                this.nodes[seqID].r1 = size
+            }
+        }
+        else {
+            for (var i = 0; i < this.m.clones[cloneID].cluster.length; i++) {
+                var seqID = this.m.clones[cloneID].cluster[i]
+                this.nodes[seqID].r1 = 0
+            }
+            var size = this.m.getSize(cloneID);
+            if (this.m.clones[cloneID].cluster.length == 0) size = this.m.getSequenceSize(cloneID);
+            if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
+            this.nodes[cloneID].r1 = size
+        }
+       
+       
+        if (this.use_system_grid && this.m.system == "multi" 
+            && typeof this.m.windows[cloneID].system != 'undefined'
+            && this.m.windows[cloneID].system != this.m.germlineV.system
+        ){
+            this.nodes[cloneID].x2 = this.systemGrid[this.m.windows[cloneID].system].x * this.resizeW
+            this.nodes[cloneID].y2 = this.systemGrid[this.m.windows[cloneID].system].y * this.resizeH
+        }else{
+            this.nodes[cloneID].x2 = this.axisX.pos(cloneID)*this.gridSizeW
+            this.nodes[cloneID].y2 = this.axisY.pos(cloneID)*this.gridSizeH
+        }
+        
     }
     else {
         this.nodes[cloneID].r1 = 0
     }
-       
-       
-    if (this.use_system_grid && this.m.system == "multi" 
-        && typeof this.m.windows[cloneID].system != 'undefined'
-        && this.m.windows[cloneID].system != this.m.germlineV.system
-    ){
-        this.nodes[cloneID].x2 = this.systemGrid[this.m.windows[cloneID].system].x * this.resizeW
-        this.nodes[cloneID].y2 = this.systemGrid[this.m.windows[cloneID].system].y * this.resizeH
-    }else{
-        this.nodes[cloneID].x2 = this.axisX.pos(cloneID)*this.gridSizeW
-        this.nodes[cloneID].y2 = this.axisY.pos(cloneID)*this.gridSizeH
-    }
-      
-
       
   },
 
