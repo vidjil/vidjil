@@ -52,7 +52,7 @@ void LazyMsa::alignOne(string *align, int one){
   
   ostringstream stream;
     
-    for (int i=0; i<ref.size(); i++){
+    for (unsigned int i=0; i<ref.size(); i++){
       for (int j=0; j<gapRef[one][i] ; j++){
 	stream <<"-";
       }
@@ -66,7 +66,7 @@ void LazyMsa::alignOne(string *align, int one){
 
   ostringstream stream2;
     
-    for (int i=0; i<sequences[one].size(); i++){
+    for (unsigned int i=0; i<sequences[one].size(); i++){
       for (int j=0; j<gapSeq[one][i] ; j++){
 	stream2 <<"-";
       }
@@ -84,19 +84,19 @@ void LazyMsa::align(string *align){
   
   int *maxGap= new int [ref.size()+1];
   
-  for (int i = 0; i< ref.size()+1; i++){
+  for (unsigned int i = 0; i< ref.size()+1; i++){
     maxGap[i]=0;
   }
   
   for (int i=0; i<sizeUsed+1; i++){
-   for (int j=0; j<ref.size()+1; j++){
+   for (unsigned int j=0; j<ref.size()+1; j++){
      if ( gapRef[i][j] > maxGap[j] ) maxGap[j]=gapRef[i][j];
    }
   }
   
   ostringstream stream;
     
-    for (int i=0; i<ref.size(); i++){
+    for (unsigned int i=0; i<ref.size(); i++){
       for (int j=0; j<maxGap[i] ; j++){
 	stream <<"-";
       }
@@ -111,11 +111,11 @@ void LazyMsa::align(string *align){
   for (int i=0; i<sizeUsed+1; i++){
     ostringstream stream2;
   
-    for (int j = 0; j< ref.size()+1; j++){
+    for (unsigned int j = 0; j< ref.size()+1; j++){
       gapSeq[i][link[i][j]]+=maxGap[j]-gapRef[i][j];
     }
     
-    for (int j=0; j<sequences[i].size(); j++){
+    for (unsigned int j=0; j<sequences[i].size(); j++){
       for (int k=0; k<gapSeq[i][j] ; k++){
 	stream2 <<"-";
       }

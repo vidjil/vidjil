@@ -26,7 +26,7 @@ if [ $COMPLETE -eq 1 ]; then
         zip -r $filename web2py/applications/vidjil/uploads/ web2py/applications/vidjil/databases/
 else
         filename="${DIR}backup_essentials_"$now
-        zip -r $filename web2py/applications/vidjil/databases/ web2py/applications/vidjil/uploads/results_file* web2py/applications/vidjil/uploads/fused_file*
+        zip -r $filename web2py/applications/vidjil/databases/ web2py/applications/vidjil/uploads/results_file* web2py/applications/vidjil/uploads/fused_file* web2py/applications/vidjil/uploads/analysis_file*
 fi
 
 echo $filename

@@ -26,7 +26,7 @@ void testCluster() {
    map<string, string> labels;
    WindowsStorage windows = WindowsStorage(labels);
 
-   Sequence seq = {"", "", "", ""};
+   Sequence seq = {"", "", "", "", NULL};
 
    windows.add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAT", seq, 0);
    windows.add("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", seq, 0);

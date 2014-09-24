@@ -72,7 +72,7 @@ Database.prototype = {
             var msg = " Welcome to Vidjil! </br>"
                     + "Your browser currently does not recognize our SSL certificate. </br>"
                     + "To use the sample database, you need to accept this certificate and/or tag this website as a trusted one. </br>"
-                    + "<a href='"+DB_ADDRESS+"' target='_blank'>Follow this link<a/>"
+                    + "<a href='"+DB_ADDRESS+"'>Follow this link<a/>"
             popupMsg(msg)
         }
     },

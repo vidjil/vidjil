@@ -60,6 +60,7 @@ void KmerAffectReadScore::setUnknownScore(float score) {
 ////////////////////////////////////////////////////////////////////////////////
 
 ReadLengthScore::ReadLengthScore(){}
+ReadLengthScore::~ReadLengthScore(){}
 
 float ReadLengthScore::getScore(const string &sequence) const {
   return sequence.size();

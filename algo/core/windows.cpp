@@ -29,7 +29,7 @@ vector<int> WindowsStorage::getStatus(junction window) {
 JsonList WindowsStorage::statusToJson(junction window) {
     JsonList result;
     
-    for (int i=0; i<status_by_window[window].size(); i++){
+    for (unsigned int i=0; i<status_by_window[window].size(); i++){
         if (status_by_window[window][i] !=0){
             ostringstream oss; 
             oss << i;

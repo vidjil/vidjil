@@ -175,7 +175,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
   int s = (size_t)index->getS() ;
   int length = sequence.length() ;
 
-  if (length < (size_t) s) 
+  if (length < s) 
     {
       because = UNSEG_TOO_SHORT;
       kaa = NULL;
@@ -568,7 +568,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
       // Trim J
       Jstart += b_r;
       del_J += b_r;
-        if (Jstart>=sequence.length())
+      if (Jstart>=(int) sequence.length())
 	  Jstart=sequence.length()-1;
     }
 
@@ -611,7 +611,6 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
     int tag_D;
     int length = 0 ;
     int begin = 0;
-    int score;
     
     // Create a zone where to look for D, adding at most EXTEND_D_ZONE nucleotides at each side
     int l = Vend - EXTEND_D_ZONE;
@@ -629,7 +628,6 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
     end = align_against_collection(str, rep_D, false, true, &tag_D, &del_D_right, &del_D_left, &begin,
 				&length, &score_D, segment_cost);
     
-    score=score_D[0].first;
     best_D = tag_D;
     
     Dstart = l + begin;

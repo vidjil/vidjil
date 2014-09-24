@@ -78,10 +78,86 @@ browser. They are intented for a command-line use only.
 Launching vidjil with =-h= option provides the list of parameters that can be
 used.
 
+** Main algorithm parameters
+
+#+BEGIN_EXAMPLE
+Window prediction
+  (use either -s or -k option, but not both)
+  -s <string>   spaced seed used for the V/J affectation
+                (default: #####-#####, ######-######, #######-#######, depends on germline)
+  -k <int>      k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)
+                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)
+  -w <int>      w-mer size used for the length of the extracted window (default: 40)(default with -d: 60)
+#+END_EXAMPLE
+
+The =-s= and =-k= options are the options of the heuristic. A detailed
+explanation can be found in the paper. More help on that will be
+available in the following months. The defaults values should work.
+
+The =-w= option fixes the size of the "window" that is the main
+identifier to gather clones. The defaults values (40 for TRG, 60 for
+IGH) were selected to ensure a high-quality clone gathering. The
+high-throughput heuristic predicts the center of the "window" that may
+be shifted by a few bases from the actual "center" of the CDR3 (for TRG,
+less than 15 bases compared to the IMGT/V-QUEST or IgBlast prediction
+in >99% of cases). The extracted window should be large enough to
+fully contain the CDR3 as well as some part of the end of the V and
+the start of the J to uniquely identify a clone.
+
+Setting =-w= to 30 for TRG and 50 for IGH may "segment" (analyze) a
+few more reads, but may in some rare cases falsely cluster reads from
+different clones.  Setting =-w= to lower values is not recommended.
+
+** Threshold on clone output
+
+The following options control how many clones are output and analyzed.
+
+#+BEGIN_EXAMPLE
+Limit to keep a window
+  -r <nb>       minimal number of reads containing a window (default: 10)
+
+Limits to report a clone
+  -R <nb>       minimal number of reads supporting a clone (default: 10)
+  -% <ratio>    minimal percentage of reads supporting a clone (default: 0)
+
+Limits to segment a clone
+  -z <nb>       maximal number of clones to be segmented (0: no limit, do not use) (default: 20)
+  -A            reports and segments all clones (-r 0 -R 1 -% 0 -z 0), to be used only on very small datasets
+#+END_EXAMPLE
+
+The =-r/-R/-%= options are strong thresholds: if a clone does not have
+the requested number of reads, the clone is discarded (except when
+using =-l=, see below).
+The =-r= option is applied before the additional clusterization, the
+=-R/-%= options after it.
+The default =-r 10 -R 10= options are meant to only output clones that
+have a significant read support. You can safely put =-r 1 -R 1= if you
+want to detect all clones starting from the first read (especially for
+MRD detection).
+
+The =-z= option limits the number of clones that are fully analyzed,
+/with their V(D)J segmentation/, in particular to enable the browser
+to display the clones on the grid (otherwise they are displayed on the
+'?/?' axis).
+If you want to analyze more clones, you should use =-z 50= or
+=-z 100=.  It is not recommended to use larger values: outputting more
+than 100 clones is often not useful since they can't be visualized easily
+in the browser, and takes large computation time.
+Note that even if a clone is not in the top 20 (or 50, or 100) but
+still passes the =-R=, =-%= options, it is still reported in the .data
+file. If the clone is at some MRD point in the top 20 (or 50, or 100),
+it will be fully analyzed/segmented by this other point (and then
+collected by the =fuse.py= script, and then, on the browser, correctly
+displayed on the grid).
+
+The =-A= option disables all these thresholds. This option should be
+used only for test and debug purposes, on very small datasets, and
+produce large file and takes huge computation times.
+
 ** Force to follow some sequences
 
 Vidjil allows to specify a list of windows that must be followed
-(even if those windows are 'rare', below the -r/-R/-% thresholds).
+(even if those windows are 'rare', below the =-r/-R/-%= thresholds).
 The parameter =-l= is made for providing such a list in a file following
 the following format: window label (separed by one space)
 

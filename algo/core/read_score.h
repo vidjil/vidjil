@@ -11,6 +11,8 @@
  */
 class VirtualReadScore {
  public:
+  virtual ~VirtualReadScore() {}
+
   /**
    * @param sequence: some text
    * @return the score associated to the sequence.
@@ -62,6 +64,7 @@ public:
 class ReadLengthScore: public VirtualReadScore {
  public:
   ReadLengthScore();
+  ~ReadLengthScore();
 
   /**
    * @return the sequence length

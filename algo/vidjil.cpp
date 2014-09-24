@@ -183,8 +183,11 @@ void usage(char *progname)
        << "Limits to report a clone" << endl
        << "  -R <nb>       minimal number of reads supporting a clone (default: " << MIN_READS_CLONE << ")" << endl
        << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << RATIO_READS_CLONE << ")" << endl
-       << "  -z <nb>       maximal number of clones reported (0: no limit) (default: " << MAX_CLONES << ")" << endl
-       << "  -A            reports all clones (-r 0 -R 1 -% 0 -z 0), to be used only on very small datasets" << endl
+       << endl
+
+       << "Limits to segment a clone" << endl
+       << "  -z <nb>       maximal number of clones to be segmented (0: no limit, do not use) (default: " << MAX_CLONES << ")" << endl
+       << "  -A            reports and segments all clones (-r 0 -R 1 -% 0 -z 0), to be used only on very small datasets" << endl
        << endl
 
        << "Fine segmentation options (second pass, see warning in doc/README)" << endl
@@ -207,6 +210,9 @@ void usage(char *progname)
        << "  -v            verbose mode" << endl
        << endl        
 
+       << "The full help is available in the doc/algo.org file."
+       << endl
+
        << endl 
        << "Examples (see doc/README)" << endl
        << "  " << progname << "             -G germline/IGH             -d data/Stanford_S22.fasta" << endl
@@ -219,7 +225,7 @@ void usage(char *progname)
 
 int main (int argc, char **argv)
 {
-  cout << "# Vidjil -- V(D)J recombinations analysis <http://bioinfo.lifl.fr/vidjil>" << endl
+  cout << "# Vidjil -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
        << "# Copyright (C) 2011, 2012, 2013, 2014 by the Vidjil team" << endl
        << "# Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille" << endl 
        << endl ;
@@ -1495,6 +1501,7 @@ int main (int argc, char **argv)
     delete index ;
     delete json;
     delete windowsStorage;
+    delete json_samples;
 
     if (output_segmented)
       delete out_segmented;

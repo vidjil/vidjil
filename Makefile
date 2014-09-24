@@ -6,15 +6,25 @@ VIDJIL_SERVER_SRC = server/
 all:
 	make -C $(VIDJIL_ALGO_SRC)
 
-test: all
-	# make -C $(VIDJIL_SERVER_SRC) tests
-	make -C $(VIDJIL_ALGO_SRC)/tests 
+test:
+	make unit
+	make should
+	# make pytests
+
+test_with_fuse:
+	make unit
 	make should
 	make pytests
+
+unit: all
+	@echo "*** Launching unit tests..."
+	make -C $(VIDJIL_ALGO_SRC)/tests 
+	@echo "*** All .should_get tests passed"
 
 pytests:
 	@echo "*** Launching python tests..."
 	python server/fuse.py --test x
+	@echo "*** All python tests passed"
 
 should: all
 	@echo
