@@ -98,7 +98,7 @@ The =-w= option fixes the size of the "window" that is the main
 identifier to gather clones. The defaults values (40 for TRG, 60 for
 IGH) were selected to ensure a high-quality clone gathering. The
 high-throughput heuristic predicts the center of the "window" that may
-shifted by a few bases from the actual "center" of the CDR3 (for TRG,
+be shifted by a few bases from the actual "center" of the CDR3 (for TRG,
 less than 15 bases compared to the IMGT/V-QUEST or IgBlast prediction
 in >99% of cases). The extracted window should be large enough to
 fully contain the CDR3 as well as some part of the end of the V and
@@ -139,14 +139,14 @@ The =-z= option limits the number of clones that are fully analyzed,
 /with their V(D)J segmentation/, in particular to enable the browser
 to display the clones on the grid (otherwise they are displayed on the
 '?/?' axis).
-If you want have to analyze more clones, you should use =-z 50= or
-=-z 100=.  It is not recommended to use larger values: outputing more
-than 100 clones is often not useful to visualize browser
-visualization, and takes large computation time.
+If you want to analyze more clones, you should use =-z 50= or
+=-z 100=.  It is not recommended to use larger values: outputting more
+than 100 clones is often not useful since they can't be visualized easily
+in the browser, and takes large computation time.
 Note that even if a clone is not in the top 20 (or 50, or 100) but
 still passes the =-R=, =-%= options, it is still reported in the .data
 file. If the clone is at some MRD point in the top 20 (or 50, or 100),
-it will be fully analyzed/segmented by this other point (and the
+it will be fully analyzed/segmented by this other point (and then
 collected by the =fuse.py= script, and then, on the browser, correctly
 displayed on the grid).
 
