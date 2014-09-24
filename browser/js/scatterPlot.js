@@ -819,10 +819,9 @@ ScatterPlot.prototype = {
         var w = this.resizeW*0.2
         
         //compute hidden position for unactivated germline (to avoid firework effect)
-        for (var key in Object.keys(this.m.system_segmented)){
-            var system = this.m.system_selected[key]
-            if (system != this.m.germlineV.system){
-                this.systemGrid[system] = { 'x' : 1 , 'y' : 1}
+        for (var key in germline.icon){
+            if (key != this.m.germlineV.system){
+                this.systemGrid[key] = { 'x' : 1 , 'y' : 1}
             }
         }
         
