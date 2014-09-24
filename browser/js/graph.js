@@ -32,6 +32,8 @@ function Graph(id, model) {
     this.m = model;
     this.resizeW = 1; //coeff d'agrandissement/réduction largeur                
     this.resizeH = 1; //coeff d'agrandissement/réduction hauteur        
+    
+    this.display_limit = 10 
 
     this.marge1 = 0.05; //marge droite bord du graph/premiere colonne
     this.marge2 = 0.08; //marge gauche derniere colonne/bord du graph
@@ -491,9 +493,11 @@ Graph.prototype = {
                     }
                 })
                 .attr("class", function (p) {
-                    if (!self.m.windows[p.id].active) return "graph_inactive";
-                    if (self.m.windows[p.id].select) return "graph_select";
+                    var clone = self.m.windows[p.id]
+                    if (!clone.active) return "graph_inactive";
+                    if (clone.select) return "graph_select";
                     if (p.id == self.m.focus) return "graph_focus";
+                    if (clone.top > self.display_limit) return "graph_inactive";
                     return "graph_line";
                 })
                 .attr("id", function (d) {
@@ -524,9 +528,11 @@ Graph.prototype = {
                     }
                 })
                 .attr("class", function (p) {
-                    if (!self.m.windows[p.id].active) return "graph_inactive";
-                    if (self.m.windows[p.id].select) return "graph_select";
+                    var clone = self.m.windows[p.id]
+                    if (!clone.active) return "graph_inactive";
+                    if (clone.select) return "graph_select";
                     if (p.id == self.m.focus) return "graph_focus";
+                    if (clone.top > self.display_limit) return "graph_inactive";
                     return "graph_line";
                 })
                 .attr("id", function (d) {
