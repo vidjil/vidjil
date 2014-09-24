@@ -275,21 +275,6 @@ def create_self_signed_cert(cert_dir):
     return(ssl_created, cert_dir, CERT_FILE, KEY_FILE)
 
 #########################################################################
-##just visit the view default/generate_ssl_key and restart web2py with the displayed command
-def generate_ssl_key():
-    ssl_created, cert_dir, CERT_FILE, KEY_FILE = create_self_signed_cert(request.folder + "private/")
-    return(dict(ssl_created=ssl_created, cert_dir=cert_dir, CERT_FILE=CERT_FILE, KEY_FILE=KEY_FILE))
-
-
-
-
-
-
-
-
-
-
-#########################################################################
 ##TODO remove useless function ( maybe used by web2py internally )
 
 
