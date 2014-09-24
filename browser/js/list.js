@@ -492,14 +492,14 @@ List.prototype = {
                 typeof (self.m.windows[idA].V[0]) != 'undefined' &&
                 typeof (self.m.germlineV.allele[self.m.windows[idA].V[0]]) != 'undefined') {
                 var vA = self.m.windows[idA].V[0];
-                oA = this.m.germlineV.allele[vA].gene * 1000 + this.m.germlineV.allele[vA].allele
+                oA = this.m.germlineV.allele[vA].gene * 1000 + this.m.germlineV.allele[vA].rank
             }
 
             if (typeof (self.m.windows[idB].V) != 'undefined' && 
                 typeof (self.m.windows[idB].V[0]) != 'undefined' &&
                 typeof (self.m.germlineV.allele[self.m.windows[idB].V[0]]) != 'undefined') {
                 var vB = self.m.windows[idB].V[0];
-                oB = this.m.germlineV.allele[vB].gene * 1000 + this.m.germlineV.allele[vB].allele
+                oB = this.m.germlineV.allele[vB].gene * 1000 + this.m.germlineV.allele[vB].rank
             }
 
             return oA > oB ? 1 : -1;
@@ -524,14 +524,14 @@ List.prototype = {
                 typeof (self.m.windows[idA].J[0]) != 'undefined' &&
                 typeof (self.m.germlineJ.allele[self.m.windows[idA].J[0]]) != 'undefined') {
                 var jA = self.m.windows[idA].J[0];
-                oA = this.m.germlineJ.allele[jA].gene * 1000 + this.m.germlineJ.allele[jA].allele
+                oA = this.m.germlineJ.allele[jA].gene * 1000 + this.m.germlineJ.allele[jA].rank
             }
 
             if (typeof (self.m.windows[idB].J) != 'undefined' && 
                 typeof (self.m.windows[idB].J[0]) != 'undefined' &&
                 typeof (self.m.germlineJ.allele[self.m.windows[idB].J[0]]) != 'undefined') {
                 var jB = self.m.windows[idB].J[0];
-                oB = this.m.germlineJ.allele[jB].gene * 1000 + this.m.germlineJ.allele[jB].allele
+                oB = this.m.germlineJ.allele[jB].gene * 1000 + this.m.germlineJ.allele[jB].rank
             }
 
             return oA > oB ? 1 : -1;
