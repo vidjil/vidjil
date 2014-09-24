@@ -210,6 +210,9 @@ void usage(char *progname)
        << "  -v            verbose mode" << endl
        << endl        
 
+       << "The full help is available in the doc/algo.org file."
+       << endl
+
        << endl 
        << "Examples (see doc/README)" << endl
        << "  " << progname << "             -G germline/IGH             -d data/Stanford_S22.fasta" << endl
