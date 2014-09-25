@@ -8,11 +8,12 @@ if request.env.http_origin:
 ## return patient file list
 ##
 def info():
-    log.info('info()')
+    log.info('patient (%s)' % request.vars["id"])
     if (auth.has_permission('read', 'patient', request.vars["id"]) ):
         return dict(message=T('patient'))
     else :
         res = {"message": "acces denied"}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
@@ -22,6 +23,7 @@ def index():
     if not auth.user : 
         res = {"redirect" : "default/user/login"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    log.info('patient list')
     return dict(message=T(''))
 
 
