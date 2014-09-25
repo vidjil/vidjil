@@ -49,7 +49,8 @@ def add_form():
                "redirect": "patient/info",
                "args" : {"id" : request.vars['patient_id']}
                }
-        
+        log.info(res)
+
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     else :
@@ -99,7 +100,8 @@ def edit_form():
         res = {"file_id" : request.vars['id'],
                "redirect": "patient/info",
                "args" : { "id" : patient_id},
-               "message": "change saved"}
+               "message": "%s: metadata saved" % request.vars['filename']}
+        log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def upload(): 
@@ -140,6 +142,7 @@ def delete():
         res = {"redirect": "patient/info",
                "args" : { "id" : patient_id},
                "message": "sequence file deleted"}
+        log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
         res = {"success" : "false", "message" : "you need admin permission to delete this file"}

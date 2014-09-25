@@ -50,8 +50,9 @@ def schedule_run(id_sequence, id_config):
     patient_name = db.patient[id_patient].first_name + " " + db.patient[id_patient].last_name
 
     res = {"redirect": "reload",
-           "message": "default/run_request : request added to run config " + config_name + " on " + filename + " for " + patient_name }
+           "message": "%s (%s) %s: process requested" % (patient_name, config_name, filename)}
 
+    log.info(res)
     return res
 
 

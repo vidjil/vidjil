@@ -60,6 +60,7 @@ def run_request():
     else :
         res = {"success" : "false",
                "message" : "default/run_request : " + error}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
     
@@ -108,11 +109,13 @@ def get_data():
             data["samples"]["original_names"].append(filename)
             data["samples"]["info"].append(row.sequence_file.info) 
 
+        log.info("get_data: %s -> %s" % (request.vars["patient_id"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
     else :
         res = {"success" : "false",
                "message" : "default/get_data : " + error}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 #########################################################################
@@ -168,6 +171,7 @@ def get_analysis():
     else :
         res = {"success" : "false",
                "message" : "default/get_analysis : " + error}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     
@@ -209,10 +213,12 @@ def save_analysis():
         
         res = {"success" : "true",
                "message" : patient_name+": analysis saved"}
+        log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"success" : "false",
                "message" : error}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
         

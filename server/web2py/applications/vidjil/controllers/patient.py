@@ -8,6 +8,7 @@ if request.env.http_origin:
 ## return patient file list
 ##
 def info():
+    log.info('info()')
     if (auth.has_permission('read', 'patient', request.vars["id"]) ):
         return dict(message=T('patient'))
     else :
@@ -78,6 +79,7 @@ def add_form():
             res = {"redirect": "patient/info",
                    "args" : { "id" : id },
                    "message": patient_name + ": patient added"}
+            log.info(res)
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
         else :
@@ -128,7 +130,8 @@ def edit_form():
                                                    )
 
             res = {"redirect": "back",
-                   "message": "change saved"}
+                   "message": "patient %s %s edited" % (request.vars["first_name"], request.vars["last_name"])}
+            log.info(res)
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
         else :
@@ -146,6 +149,7 @@ def download():
 #
 def confirm():
     if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+        log.info('patient deleted')
         return dict(message=T('confirm patient deletion'))
     else :
         res = {"message": "acces denied"}
@@ -170,9 +174,11 @@ def delete():
         res = {"redirect": "patient/index",
                "success": "true",
                "message": "patient ("+request.vars["id"]+") deleted"}
+        log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"message": "acces denied"}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     

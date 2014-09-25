@@ -75,10 +75,12 @@ def edit_form():
 
         res = {"redirect": "config/index",
                "message": "config saved"}
+        log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
         res = {"success" : "false", "message" : error}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def confirm():
