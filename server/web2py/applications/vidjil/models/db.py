@@ -206,7 +206,7 @@ class MsgUserAdapter(logging.LoggerAdapter):
     def process(self, msg, kwargs):
         if type(msg) is dict:
             msg = msg['message']
-        new_msg =  '<%s> %s' % ((auth.user.first_name if auth.user else ''), msg)
+        new_msg =  '%15s <%s> %s' % (request.client, (auth.user.first_name if auth.user else ''), msg)
         return new_msg, kwargs
     
 #
@@ -223,7 +223,7 @@ def _init_log():
         logger.setLevel(logging.DEBUG)
         handler = logging.FileHandler('/var/vidjil/vidjil.log')
         handler.setLevel(logging.DEBUG)
-        handler.setFormatter(logging.Formatter('%s' % request.client + ' [%(process)d] %(asctime)s - %(levelname)s %(filename)s:%(lineno)d - %(message)s'))
+        handler.setFormatter(logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s'))
         logger.addHandler(handler) 
         logger.info("Creating logger")
     return MsgUserAdapter(logger, {})
