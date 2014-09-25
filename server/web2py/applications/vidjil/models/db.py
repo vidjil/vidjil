@@ -196,3 +196,41 @@ if db(db.auth_user.id > 0).count() == 0:
 
 ## after defining tables, uncomment below to enable auditing
 auth.enable_record_versioning(db)
+
+## Logging
+
+import logging
+
+class MsgUserAdapter(logging.LoggerAdapter):
+
+    def process(self, msg, kwargs):
+        if type(msg) is dict:
+            msg = msg['message']
+        new_msg =  '<%s> %s' % ((auth.user.first_name if auth.user else ''), msg)
+        return new_msg, kwargs
+    
+#
+
+def _init_log():
+    """
+    adapted from http://article.gmane.org/gmane.comp.python.web2py/11091
+    """
+
+    import logging
+
+    logger = logging.getLogger('vidjil') # (request.application)
+    if not logger.handlers:
+        logger.setLevel(logging.DEBUG)
+        handler = logging.FileHandler('/var/vidjil/vidjil.log')
+        handler.setLevel(logging.DEBUG)
+        handler.setFormatter(logging.Formatter('%s' % request.client + ' [%(process)d] %(asctime)s - %(levelname)s %(filename)s:%(lineno)d - %(message)s'))
+        logger.addHandler(handler) 
+        logger.info("Creating logger")
+    return MsgUserAdapter(logger, {})
+
+log = _init_log()
+
+
+
+
+
