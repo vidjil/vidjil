@@ -290,6 +290,36 @@ def generate_ssl_key():
 
 
 
+#########################################################################
+def handle_error():
+    """
+    Custom error handler that returns correct status codes,
+    adapted from http://www.web2pyslices.com/slice/show/1529/custom-error-routing
+    """
+    
+    code = request.vars.code
+    request_url = request.vars.request_url
+    ticket = request.vars.ticket
+ 
+    log.error("[%s] %s" % (code, ticket))
+
+    if code is not None and request_url != request.url:# Make sure error url is not current url to avoid infinite loop.
+        response.status = int(code) # Assign the error status code to the current response. (Must be integer to work.)
+ 
+    if code == '403':
+        return "Not authorized"
+    elif code == '404':
+        return "Not found"
+    elif code == '500':
+        # Get ticket URL:
+        ticket_url = "<a href='%(scheme)s://%(host)s/admin/default/ticket/%(ticket)s' target='_blank'>%(ticket)s</a>" % {'scheme':'https','host':request.env.http_host,'ticket':ticket}
+ 
+        # Email a notice, etc:
+        mail.send(to=['contact@vidjil.org'],
+                  subject="[Vidjil] web2py error",
+                  message="Error Ticket:  %s" % ticket_url)
+
+    return "Server error"
 
 
 
