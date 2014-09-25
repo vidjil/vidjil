@@ -197,6 +197,18 @@ if db(db.auth_user.id > 0).count() == 0:
 ## after defining tables, uncomment below to enable auditing
 auth.enable_record_versioning(db)
 
+## Reverse IP
+
+ips = {}
+
+try:
+    for l in open('/home/vidjil/ips.txt'):
+        ip, kw = l.split()
+        ips[ip] = kw
+except:
+    pass
+
+
 ## Logging
 
 import logging
@@ -206,7 +218,10 @@ class MsgUserAdapter(logging.LoggerAdapter):
     def process(self, msg, kwargs):
         if type(msg) is dict:
             msg = msg['message']
-        new_msg =  '%15s <%s> %s' % (request.client, (auth.user.first_name if auth.user else ''), msg)
+        ip = request.client
+        if ip in ips:
+            ip = "%s/%s" % (ip, ips[ip])
+        new_msg =  '%15s <%s> %s' % (ip, (auth.user.first_name if auth.user else ''), msg)
         return new_msg, kwargs
     
 #
