@@ -228,6 +228,11 @@ int main (int argc, char **argv)
   cout << "# Vidjil -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
        << "# Copyright (C) 2011, 2012, 2013, 2014 by the Vidjil team" << endl
        << "# Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille" << endl 
+       << endl
+       << "# Vidjil is free software, and you are welcome to redistribute it" << endl
+       << "# under certain conditions -- see http://git.vidjil.org/blob/master/doc/LICENSE" << endl
+       << "# No lymphocyte was harmed in the making of this software," << endl
+       << "# however this software is for research use only and comes with no warranty." << endl
        << endl ;
 
   //$$ options: defaults
