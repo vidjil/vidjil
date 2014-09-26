@@ -1116,6 +1116,24 @@ int main (int argc, char **argv)
                                              ratio_representative,
                                              max_auditionned);
 
+	representative.label = string_of_int(it->second) + "--" + representative.label;
+
+	if (output_sequences_by_cluster) // -a option, output all sequences
+	  {
+	    out_sequences << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
+	    out_sequences << it->first << endl;
+
+	    if (representative != NULL_SEQUENCE) 
+	      out_sequences << representative ;
+
+	    list<Sequence> &sequences = windowsStorage->getReads(it->first);
+	    
+	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
+	      {
+		out_sequences << *itt ;
+	      }
+	  }
+
 
         if (representative == NULL_SEQUENCE) {
 	  clones_without_representative++ ;
@@ -1279,9 +1297,7 @@ int main (int argc, char **argv)
 	num_seq++ ;
 
 	string junc = it->first ;
-
 	// Output all sequences
-
 
         Sequence representative 
           = windowsStorage->getRepresentative(it->first, seed, 
@@ -1293,23 +1309,6 @@ int main (int argc, char **argv)
         if (representative != NULL_SEQUENCE) {
           representative.label = string_of_int(it->second) + "--" 
             + representative.label;
-
-
-	if (output_sequences_by_cluster)
-	  {
-	    out_sequences << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
-	    out_sequences << it->first << endl;
-
-	    if (representative != NULL_SEQUENCE) 
-	      out_sequences << representative ;
-
-	    list<Sequence> &sequences = windowsStorage->getReads(it->first);
-	    
-	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
-	      {
-		out_sequences << *itt ;
-	      }
-	  }
 
 	  representatives_this_clone.push_back(representative);
 	}
