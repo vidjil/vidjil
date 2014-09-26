@@ -429,7 +429,7 @@ line {
 .seq-mobil {
   margin-left: 475px;
   letter-spacing: 0.12em;
-  font-family: ubuntu_monobold, Courier New,monaco,terminal,courier,system;
+  font-family: monospace, ubuntu_monobold, Courier New,monaco,terminal,courier,system;
   position: relative;
   bottom: 3px;
   word-spacing: -1em;
