@@ -84,7 +84,7 @@ class Window:
     def __add__(self, other):
         """Concat two windows, extending lists such as 'size'"""
         #data we don't need to duplicate
-        myList = [ "V", "D", "J", "Vend", "Dend", "Jstart", "Dstart", "top", "window", "Nlength", "sequence", "name", "id", "status"]
+        myList = [ "V", "D", "J", "Vend", "Dend", "Jstart", "Dstart", "top", "window", "Nlength", "sequence", "name", "id", "status", "system"]
         obj = Window(1)
         
         t1 = []
@@ -260,19 +260,14 @@ class ListWindows:
         
         print "<==", file_path, "\t",
         
-        
-        if (extension=="data" or extension=="vidjil"): 
+        try:
             with open(file_path, "r") as file:
                 tmp = json.load(file, object_hook=self.toPython)       
                 self.d=tmp.d
                 self.check_version(file_path)
-                
-        elif (extension=="clntab"):
+        except Exception: 
             self.load_clntab(file_path)
-                
-        else:
-            raise IOError ("Invalid file extension .%s" % extension)
-
+        pass
         
         if pipeline: 
             # renaming, private pipeline
@@ -341,8 +336,28 @@ class ListWindows:
                         obj.d[key] = obj.d[key] + other.d[key]
         
         obj.d["windows"]=self.fuseWindows(self.d["windows"], other.d["windows"], t1, t2)
-        obj.d["samples"] = [other.d["samples"][0] + self.d["samples"][0]]
+        obj.d["samples"] = [self.d["samples"][0] + other.d["samples"][0]]
         obj.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
+        
+        if 'system_segmented' in self.d.keys():
+            self.d["system_segmented"] = self.d["system_segmented"][0]
+        else:
+            self.d["system_segmented"] = {}
+        if 'system_segmented' in other.d.keys():
+            other.d["system_segmented"] = other.d["system_segmented"][0]
+        else:
+            other.d["system_segmented"] = {}
+        obj.d["system_segmented"] = {}
+        for key in self.d["system_segmented"] :
+            obj.d["system_segmented"][key] = self.d["system_segmented"][key]
+            if key not in other.d["system_segmented"] :
+                obj.d["system_segmented"][key] += t2
+
+        for key in other.d["system_segmented"] :
+            if key not in obj.d["system_segmented"] :
+                obj.d["system_segmented"][key] = t1 + other.d["system_segmented"][key]
+            else :
+                obj.d["system_segmented"][key] = obj.d["system_segmented"][key] + other.d["system_segmented"][key]
 
         return obj
         
@@ -786,7 +801,6 @@ def main():
             jlist.load(path_name, args.pipeline)
             jlist.add_system_info()
             jlist.build_stat()
-            jlist.filter(f)
             
             print "\t", jlist,
 
@@ -839,7 +853,8 @@ def main():
         jlist_fused.d["point"] = ll
     
     print
-    jlist_fused.cut(args.top, len(jlist_fused.d["point"]))
+    if not args.multi:
+        jlist_fused.cut(args.top, len(jlist_fused.d["point"]))
     print "\t", jlist_fused 
     print
 
