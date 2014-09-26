@@ -57,7 +57,10 @@ authentication).
 * Code and license
 
 Vidjil is open-source, released under GNU GPLv3 license. 
-The development code is available on [[http://www.github.com/magiraud/vidjil]].
+You are welcome to redistribute it under [[http://git.vidjil.org/blob/master/doc/LICENSE][certain conditions]]. 
+This software is for research use only and comes with no warranty.
+
+The development code is available on [[http://git.vidjil.org/]].
 Bug reports, issues and patches are welcome.
 
 * The Vidjil team

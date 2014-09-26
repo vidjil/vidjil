@@ -41,7 +41,6 @@
 #include "core/dynprog.h"
 #include "core/read_score.h"
 #include "core/read_chooser.h"
-#include "core/msa.h"
 #include "core/compare-all.h"
 #include "core/teestream.h"
 #include "core/mkdir.h"
@@ -90,7 +89,6 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT, CMD_GERMLINES } ;
 #define UNSEGMENTED_FILENAME "unsegmented.fa"
 #define EDGES_FILENAME "edges"
 #define COMP_FILENAME "comp.data"
-#define GRAPH_FILENAME "graph"
 #define JSON_SUFFIX ".data"
 
 // "tests/data/leukemia.fa" 
@@ -171,10 +169,10 @@ void usage(char *progname)
        << "  -r <nb>       minimal number of reads containing a window (default: " << MIN_READS_WINDOW << ")" << endl
        << endl
 
-       << "Clusterisation" << endl
-       << "  -e <file>     manual clusterisation -- a file used to force some specific edges" << endl
-       << "  -n <int>      maximum distance between neighbors for automatic clusterisation (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
-       << "  -N <int>      minimum required neighbors for automatic clusterisation (default " << DEFAULT_MINPTS << ")" << endl
+       << "Additional clustering (not output in vidjil.data and therefore not used in the browser)" << endl
+       << "  -e <file>     manual clustering -- a file used to force some specific edges" << endl
+       << "  -n <int>      maximum distance between neighbors for automatic clustering (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
+       << "  -N <int>      minimum required neighbors for automatic clustering (default " << DEFAULT_MINPTS << ")" << endl
        << "  -S            generate and save comparative matrix for clustering" << endl
        << "  -L            load comparative matrix for clustering" << endl
        << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
@@ -205,7 +203,7 @@ void usage(char *progname)
        << "  -o <dir>      output directory (default: " << OUT_DIR << ")" <<  endl
        << "  -p <string>   prefix output filenames by the specified string" << endl
     
-       << "  -a            output all sequences by cluster (" << SEQUENCES_FILENAME << ")" << endl
+       << "  -a            output all sequences by cluster (" << SEQUENCES_FILENAME << "), to be used only on small datasets" << endl
        << "  -x            do not compute representative sequences" << endl
        << "  -v            verbose mode" << endl
        << endl        
@@ -228,6 +226,11 @@ int main (int argc, char **argv)
   cout << "# Vidjil -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
        << "# Copyright (C) 2011, 2012, 2013, 2014 by the Vidjil team" << endl
        << "# Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille" << endl 
+       << endl
+       << "# Vidjil is free software, and you are welcome to redistribute it" << endl
+       << "# under certain conditions -- see http://git.vidjil.org/blob/master/doc/LICENSE" << endl
+       << "# No lymphocyte was harmed in the making of this software," << endl
+       << "# however this software is for research use only and comes with no warranty." << endl
        << endl ;
 
   //$$ options: defaults
@@ -276,7 +279,6 @@ int main (int argc, char **argv)
 
   bool output_sequences_by_cluster = false;
   bool detailed_cluster_analysis = true ;
-  bool very_detailed_cluster_analysis = false ;
   bool output_segmented = false;
   bool output_unsegmented = false;
 
@@ -429,7 +431,7 @@ int main (int argc, char **argv)
 #endif
         break;
 	
-      // Clusterisation
+      // Clustering
 	
       case 'n':
 	epsilon = atoi(optarg);
@@ -924,7 +926,7 @@ int main (int argc, char **argv)
 	  }
        
 	clones_windows  = comp.cluster(forced_edges, w, cout, epsilon, minPts) ;
-	comp.stat_cluster(clones_windows, out_dir + prefix_filename + GRAPH_FILENAME, cout );
+	comp.stat_cluster(clones_windows, cout );
 	comp.del();
       } 
     else
@@ -1112,6 +1114,24 @@ int main (int argc, char **argv)
                                              ratio_representative,
                                              max_auditionned);
 
+	representative.label = string_of_int(it->second) + "--" + representative.label;
+
+	if (output_sequences_by_cluster) // -a option, output all sequences
+	  {
+	    out_sequences << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
+	    out_sequences << it->first << endl;
+
+	    if (representative != NULL_SEQUENCE) 
+	      out_sequences << representative ;
+
+	    list<Sequence> &sequences = windowsStorage->getReads(it->first);
+	    
+	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
+	      {
+		out_sequences << *itt ;
+	      }
+	  }
+
 
         if (representative == NULL_SEQUENCE) {
 	  clones_without_representative++ ;
@@ -1122,7 +1142,7 @@ int main (int argc, char **argv)
 	//$$ There is one representative, FineSegmenter
 
 
-          representative.label = string_of_int(it->second) + "-" 
+          representative.label = string_of_int(it->second) + "--" 
             + representative.label;
 	  FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 	
@@ -1254,154 +1274,8 @@ int main (int argc, char **argv)
 
       cout << endl ;
       out_windows.close();
-
-      if (!very_detailed_cluster_analysis)
-	{
-	  continue ;
-	}
-
-
-      //$$ Very detailed cluster analysis (with sequences) // NOT USED NOW
-
-      list<string> msa;
-      bool good_msa = false ;
-
-      // TODO: do something if no sequences have been segmented !
-      if (!more_windows)
-	{
-	  cout << "!! No segmented sequence, deleting clone" << endl ;
-	  // continue ;
-	} else 
-        {
-          msa = multiple_seq_align(windows_file_name);
-        
-          // Alignment of windows
-          
-          if (!msa.empty())
-            {
-              if (msa.size() == sort_windows.size() + more_windows)
-                {
-                  // cout << "clustalw parse: success" << endl ;
-                  good_msa = true ;
-                }
-              else
-                {
-                  cout << "! clustalw parse: failed" << endl ;
-                }
-            }
-        }
-      
-      //$$ Second pass: output clone, all representatives      
-
-      num_seq = 0 ;
-      list <Sequence> representatives_this_clone ;
-      string code_representative = "";
-
-      for (list <pair<junction, int> >::const_iterator it = sort_windows.begin(); 
-           it != sort_windows.end(); ++it) {
-
-	num_seq++ ;
-
-	string junc ;
-	
-	if (!good_msa)
-	  {
-	    junc = it->first ;
-	  }
-	else
-	  {
-	    junc = msa.back();
-	    msa.pop_back();
-	  }
-
-
-	// Output all sequences
-
-	if (output_sequences_by_cluster)
-	  {
-	    out_sequences << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
-	    out_sequences << it->first << endl;
-
-	    list<Sequence> &sequences = windowsStorage->getReads(it->first);
-	    
-	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
-	      {
-		out_sequences << *itt ;
-	      }
-	  }
-
-        Sequence representative 
-          = windowsStorage->getRepresentative(it->first, seed, 
-                                             min_cover_representative,
-                                             ratio_representative,
-                                             max_auditionned);
-
-
-        if (representative != NULL_SEQUENCE) {
-          representative.label = string_of_int(it->second) + "-" 
-            + representative.label;
-
-          FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
-
-          if (segment_D)
-            seg.FineSegmentD(rep_V, rep_D, rep_J);
-		
-          //cout << seg.toJson();
-          json_data_segment[it->first]=seg.toJsonList(rep_V, rep_D, rep_J);
-
-          if (seg.isSegmented())
-	  {
-	    representatives_this_clone.push_back(seg.getSequence());
-	  }
-
-          /// TODO: et si pas isSegmented ?
-
-          bool warning = false;
-
-          if (num_seq <= 20) /////
-            {
-              cout << setw(20) << representative.label << " " ;
-              cout << "   " << junc ;
-              cout << " " << setw(WIDTH_NB_READS) << it->second << " " ;
-              cout << (warning ? "Â§ " : "  ") ;
-              cout << seg.info ;
-              cout << endl ;
-            }
-        }
-      }
-      
-      //$$ Display msa
-      if (good_msa)
-	{
-	  cout << setw(20) << best_V << "    " << msa.back() << endl ;
-	  msa.pop_back();
-
-	  if (segment_D)
-	    {
-	      cout << setw(20) << best_D << "    " << msa.back() << endl ;
-	      msa.pop_back();
-	    }
-
-	  cout << setw(20) << best_J << "    " << msa.back() << endl ;
-	  msa.pop_back();
-	}
- 
       out_clone.close();
-      cout << endl;
-      
-      //$$ Compare representatives of this clone
-      cout << "Comparing representatives of this clone 2 by 2" << endl ;
-      // compare_all(representatives_this_clone);
-      SimilarityMatrix matrix = compare_all(representatives_this_clone, true);
-      cout << RawOutputSimilarityMatrix(matrix, 90);
-      //Sort all windows
-      windowsStorage->sort();
-      //Compute all the edges
-      SimilarityMatrix matrixLevenshtein = compare_windows(*windowsStorage, Levenshtein, max_clones);
-      //Added distances matrix in the JsonTab
-      jsonLevenshtein << JsonOutputWindowsMatrix(matrixLevenshtein);
-      }
-    //$$ End of very_detailed_cluster_analysis
+    }
 
     out_edges.close() ;
     out_clones.close();

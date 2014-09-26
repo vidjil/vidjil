@@ -16,7 +16,7 @@ from a set of reads and detects "windows" overlapping the actual CDR3.
 This is based on an fast and reliable seed-based heuristic and allows
 to output the most abundant clones. The analysis is extremely fast
 because, in the first phase, no alignment is performed with database
-germline sequences. Vidjil can also clusterize similar
+germline sequences. Vidjil can also cluster similar
 clones, or leave this to the user after a manual review. 
 
 The method is described in the following paper:
@@ -64,14 +64,6 @@ make test                # run self-tests
 ./vidjil -h              # display help/usage
 #+END_SRC
 
-* Optional dependencies
-
-These dependencies have no consequences on the visualization through the
-browser. They are intented for a command-line use only.
-
-- clustalw :: to compute alignments between windows from a same clone, by setting 
-          =very_detailed_cluster_analysis= in vidjil.cpp
-- neato :: to display graph of neighbors for the automatic clusterisation
 
 * Vidjil parameters
 
@@ -128,7 +120,7 @@ Limits to segment a clone
 The =-r/-R/-%= options are strong thresholds: if a clone does not have
 the requested number of reads, the clone is discarded (except when
 using =-l=, see below).
-The =-r= option is applied before the additional clusterization, the
+The =-r= option is applied before the additional clustering, the
 =-R/-%= options after it.
 The default =-r 10 -R 10= options are meant to only output clones that
 have a significant read support. You can safely put =-r 1 -R 1= if you
@@ -165,7 +157,14 @@ The first column of the file is the window to be followed
 while the remaining columns consist of the window's label.
 In Vidjil output, the labels are output alongside their windows.
 
-** Manual clustering
+
+** Further clustering
+
+These options have no consequences on the visualization through the
+browser. They are intented for a command-line use only.
+
+Setting the =-n= option triggers an additional automatic
+clustering using DBSCAN algorithm (Ester and al., 1996). 
 
 The =-e= option allows to specify a file for manually clustering two windows
 considered as similar. Such a file may be automatically produced by vidjil
@@ -221,7 +220,7 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 #+BEGIN_SRC sh
 ./vidjil -c clones -G germline/IGH -x -r 1 -R 5 -n 5 -d ./data/clones_simul.fa
    # Window extraction + clone gathering,
-   # with automatic clusterisation, distance five (-n 5)
+   # with automatic clustering, distance five (-n 5)
 #+END_SRC
 
 #+BEGIN_SRC sh
