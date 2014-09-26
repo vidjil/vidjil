@@ -9,28 +9,41 @@ info = db.config[request.vars["id"]]
     <table>
         <tbody>
             <tr>
-                <td > <label for="config_name" id="config_name__label"> Name: </label> </td>
-                <td > <input class="string" id="config_name" name="config_name" type="text" value="{{=info.name}}"> </td> <td >
-                </td>
+                <td > <label for="config_name" id="config_name__label">Name: </label> </td>
+                <td > <input class="string" id="config_name" name="config_name" type="text" value="{{=info.name}}"> </td> 
+                <td > </td>
             </tr>
             <tr>
-                <td> <label for="config_command" id="config_command__label">Command: </label> </td>
-                <td> <input class="string" id="config_command" name="config_command" type="text" value="{{=info.command}}"> </td>
-                <td> </td>
-            </tr>
-            <tr>
-                <td><label for="config_germline" id="config_germline__label"> germline: </label></td>
-                <td>
-                    <select id="config_germline" name="config_germline">
+                <td><label for="config_germline" id="config_germline__label">Germline: </label></td>
+                <td><select id="config_germline" name="config_germline">
                         <option value="TRG" {{if info.germline == "TRG":}}selected="selected"{{pass}}>TRG</option>
                         <option value="IGH" {{if info.germline == "IGH":}}selected="selected"{{pass}}>IGH</option>
-                    </select>
-                </td>
+                        <option value="multi" {{if info.germline == "multi":}}selected="selected"{{pass}}>multi</option>
+                    </select></td>
                 <td></td>
             </tr>
             <tr>
+                <td> <label for="config_program" id="config_program__label">Program: </label> </td>
+                <td><select id="config_program" name="config_program">
+                        <option value="none" {{if info.program == "none":}}selected="selected"{{pass}}>none</option>
+                        <option value="vidjil" {{if info.program == "vidjil":}}selected="selected"{{pass}}>vidjil</option>
+                        <option value="euro-mrd pipeline" {{if info.program == "euro-mrd pipeline":}}selected="selected"{{pass}}>euro-mrd pipeline</option>
+                    </select></td>
+                <td> </td>
+            </tr>
+            <tr>
+                <td> <label for="config_command" id="config_command__label">Command: </label> </td>
+                <td> <textarea class="text" cols="60" id="config_command" name="config_command" rows="2">{{=info.command}}</textarea> </td> 
+                <td> </td>
+            </tr>
+            <tr>
+                <td> <label for="config_fuse_command" id="config_fuse_command__label">Fuse command: </label> </td>
+                <td> <textarea class="text" cols="60" id="config_fuse_command" name="config_fuse_command" rows="2">{{=info.fuse_command}}</textarea> </td> 
+                <td> </td>
+            </tr>
+            <tr>
                 <td> <label for="config_info" id="config_info__label">Info: </label> </td>
-                <td> <textarea class="text" cols="40" id="config_info" name="config_info" rows="10"> {{=info.info}} </textarea> </td> 
+                <td> <textarea class="text" cols="80" id="config_info" name="config_info" rows="10">{{=info.info}}</textarea> </td> 
                 <td> </td>
             </tr>
             <tr>

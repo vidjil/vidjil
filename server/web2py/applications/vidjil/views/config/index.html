@@ -10,8 +10,9 @@
         <table class="db_table" id="table">
             <thead>
                 <tr><td class="column2"> name </td>
-                    <td class="column2"> germline </td>
-                    <td class="column1"> command </td>
+                    <td class="column1"> program </td>
+                    <td class="column1"> germline </td>
+                    <td class="column2"> command </td>
                     <td> info </td>
                     <td class="column5"> </td>
                     <td class="column5"> </td>
@@ -24,6 +25,7 @@
            for row in query :}}
                 <tr>
                     <td> {{=row.name }} </td>
+                    <td> {{=row.program }} </td>
                     <td> {{=row.germline }} </td>
                     <td> {{=row.command }} </td>
                     <td> {{=row.info }} </td>
