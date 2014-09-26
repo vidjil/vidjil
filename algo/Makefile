@@ -1,5 +1,5 @@
 CC=g++
-OPTIM=-O2 -DNDEBUG
+OPTIM=-O2 -DNDEBUG  $(COVERAGE)
 CXXFLAGS=-W -Wall $(OPTIM) $(DEBUG) $(CONFIG)
 LDFLAGS=-lm
 EXEC=vidjil kmer kmer_count cut count detailed_affect
@@ -50,6 +50,7 @@ $(EXEC): %: %.o
 
 clean:
 	make -C core $@
+	rm -f *.o *.gcda *.gcno *.gcov
 	cd $(BINDIR) ; rm -f $(EXEC)
 	make -C tests $@
 

@@ -1,5 +1,5 @@
 CC=g++
-CXXFLAGS=-W -Wall -g -O0
+CXXFLAGS=-W -Wall -g -O0 $(COVERAGE)
 INCLUDE=-I ..
 LDFLAGS=
 SRC= tests.cpp
@@ -33,16 +33,16 @@ $(EXEC): % : %.o $(LIB)
 ../core.a: core
 
 vidjil:
-	make OPTIM="-O0 -g" -C ../
+	make CXXFLAGS="$(CXXFLAGS)" -C ../
 
 core:
-	make OPTIM="-O0 -g" -C ../core 
+	make CXXFLAGS="$(CXXFLAGS)" -C ../core
 
 %.o: %.cpp $(OTHER_SRC)
 	$(CC) -o $@ $(INCLUDE) -c $< $(CXXFLAGS)
 
 clean:
-	rm -f *.o $(EXEC) *.tap *.log
+	rm -f *.o $(EXEC) *.tap *.log *.gcda *.gcno *.gcov
 
 forcedep:
 	g++ $(INCLUDE) -M $(SRC) > dep.mk
