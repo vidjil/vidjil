@@ -1311,33 +1311,8 @@ int main (int argc, char **argv)
 	      }
 	  }
 
-          FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
-
-          if (segment_D)
-            seg.FineSegmentD(rep_V, rep_D, rep_J);
-		
-          //cout << seg.toJson();
-          json_data_segment[it->first]=seg.toJsonList(rep_V, rep_D, rep_J);
-
-          if (seg.isSegmented())
-	  {
-	    representatives_this_clone.push_back(seg.getSequence());
-	  }
-
-          /// TODO: et si pas isSegmented ?
-
-          bool warning = false;
-
-          if (num_seq <= 20) /////
-            {
-              cout << setw(20) << representative.label << " " ;
-              cout << "   " << junc ;
-              cout << " " << setw(WIDTH_NB_READS) << it->second << " " ;
-              cout << (warning ? "Â§ " : "  ") ;
-              cout << seg.info ;
-              cout << endl ;
-            }
-        }
+	  representatives_this_clone.push_back(representative);
+	}
       }
       
       out_clone.close();
