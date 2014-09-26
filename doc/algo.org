@@ -64,13 +64,6 @@ make test                # run self-tests
 ./vidjil -h              # display help/usage
 #+END_SRC
 
-* Optional dependencies
-
-These dependencies have no consequences on the visualization through the
-browser. They are intented for a command-line use only.
-
-- clustalw :: to compute alignments between windows from a same clone (with =-a= option)
-- neato :: to display graph of neighbors for the additional clustering
 
 * Vidjil parameters
 
