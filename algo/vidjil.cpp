@@ -279,7 +279,6 @@ int main (int argc, char **argv)
 
   bool output_sequences_by_cluster = false;
   bool detailed_cluster_analysis = true ;
-  bool very_detailed_cluster_analysis = false ;
   bool output_segmented = false;
   bool output_unsegmented = false;
 
@@ -305,7 +304,6 @@ int main (int argc, char **argv)
         usage(argv[0]);
       case 'a':
 	output_sequences_by_cluster = true;
-	very_detailed_cluster_analysis = true;
 	break;
       case 'd':
 	segment_D = 1 ;
@@ -1276,60 +1274,8 @@ int main (int argc, char **argv)
 
       cout << endl ;
       out_windows.close();
-
-      if (!very_detailed_cluster_analysis)
-	{
-	  continue ;
-	}
-
-
-      //$$ Very detailed cluster analysis (with sequences, -a) 
-      
-      //$$ Second pass: output clone, all representatives      
-
-      num_seq = 0 ;
-      list <Sequence> representatives_this_clone ;
-      string code_representative = "";
-
-      for (list <pair<junction, int> >::const_iterator it = sort_windows.begin(); 
-           it != sort_windows.end(); ++it) {
-
-	num_seq++ ;
-
-	string junc = it->first ;
-	// Output all sequences
-
-        Sequence representative 
-          = windowsStorage->getRepresentative(it->first, seed, 
-                                             min_cover_representative,
-                                             ratio_representative,
-                                             max_auditionned);
-
-
-        if (representative != NULL_SEQUENCE) {
-          representative.label = string_of_int(it->second) + "--" 
-            + representative.label;
-
-	  representatives_this_clone.push_back(representative);
-	}
-      }
-      
       out_clone.close();
-      cout << endl;
-      
-      //$$ Compare representatives of this clone
-      cout << "Comparing representatives of this clone 2 by 2" << endl ;
-      // compare_all(representatives_this_clone);
-      SimilarityMatrix matrix = compare_all(representatives_this_clone, true);
-      cout << RawOutputSimilarityMatrix(matrix, 90);
-      //Sort all windows
-      windowsStorage->sort();
-      //Compute all the edges
-      SimilarityMatrix matrixLevenshtein = compare_windows(*windowsStorage, Levenshtein, max_clones);
-      //Added distances matrix in the JsonTab
-      jsonLevenshtein << JsonOutputWindowsMatrix(matrixLevenshtein);
-      }
-    //$$ End of very_detailed_cluster_analysis
+    }
 
     out_edges.close() ;
     out_clones.close();
