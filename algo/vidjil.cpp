@@ -41,7 +41,6 @@
 #include "core/dynprog.h"
 #include "core/read_score.h"
 #include "core/read_chooser.h"
-#include "core/msa.h"
 #include "core/compare-all.h"
 #include "core/teestream.h"
 #include "core/mkdir.h"
@@ -1267,35 +1266,7 @@ int main (int argc, char **argv)
 	}
 
 
-      //$$ Very detailed cluster analysis (with sequences) // NOT USED NOW
-
-      list<string> msa;
-      bool good_msa = false ;
-
-      // TODO: do something if no sequences have been segmented !
-      if (!more_windows)
-	{
-	  cout << "!! No segmented sequence, deleting clone" << endl ;
-	  // continue ;
-	} else 
-        {
-          msa = multiple_seq_align(windows_file_name);
-        
-          // Alignment of windows
-          
-          if (!msa.empty())
-            {
-              if (msa.size() == sort_windows.size() + more_windows)
-                {
-                  // cout << "clustalw parse: success" << endl ;
-                  good_msa = true ;
-                }
-              else
-                {
-                  cout << "! clustalw parse: failed" << endl ;
-                }
-            }
-        }
+      //$$ Very detailed cluster analysis (with sequences, -a) 
       
       //$$ Second pass: output clone, all representatives      
 
@@ -1308,18 +1279,7 @@ int main (int argc, char **argv)
 
 	num_seq++ ;
 
-	string junc ;
-	
-	if (!good_msa)
-	  {
-	    junc = it->first ;
-	  }
-	else
-	  {
-	    junc = msa.back();
-	    msa.pop_back();
-	  }
-
+	string junc = it->first ;
 
 	// Output all sequences
 
@@ -1381,22 +1341,6 @@ int main (int argc, char **argv)
         }
       }
       
-      //$$ Display msa
-      if (good_msa)
-	{
-	  cout << setw(20) << best_V << "    " << msa.back() << endl ;
-	  msa.pop_back();
-
-	  if (segment_D)
-	    {
-	      cout << setw(20) << best_D << "    " << msa.back() << endl ;
-	      msa.pop_back();
-	    }
-
-	  cout << setw(20) << best_J << "    " << msa.back() << endl ;
-	  msa.pop_back();
-	}
- 
       out_clone.close();
       cout << endl;
       
