@@ -171,10 +171,10 @@ void usage(char *progname)
        << "  -r <nb>       minimal number of reads containing a window (default: " << MIN_READS_WINDOW << ")" << endl
        << endl
 
-       << "Clusterisation" << endl
-       << "  -e <file>     manual clusterisation -- a file used to force some specific edges" << endl
-       << "  -n <int>      maximum distance between neighbors for automatic clusterisation (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
-       << "  -N <int>      minimum required neighbors for automatic clusterisation (default " << DEFAULT_MINPTS << ")" << endl
+       << "Additional clustering (not output in vidjil.data and therefore not used in the browser)" << endl
+       << "  -e <file>     manual clustering -- a file used to force some specific edges" << endl
+       << "  -n <int>      maximum distance between neighbors for automatic clustering (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
+       << "  -N <int>      minimum required neighbors for automatic clustering (default " << DEFAULT_MINPTS << ")" << endl
        << "  -S            generate and save comparative matrix for clustering" << endl
        << "  -L            load comparative matrix for clustering" << endl
        << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
@@ -435,7 +435,7 @@ int main (int argc, char **argv)
 #endif
         break;
 	
-      // Clusterisation
+      // Clustering
 	
       case 'n':
 	epsilon = atoi(optarg);
