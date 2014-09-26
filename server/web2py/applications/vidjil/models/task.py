@@ -40,8 +40,9 @@ def schedule_run(id_sequence, id_config):
         return res
 
 
+    program = db.config[id_config].program
     ##add task to scheduler
-    task = scheduler.queue_task('run', [id_sequence, id_config, data_id, fuse_id]
+    task = scheduler.queue_task(program, [id_sequence, id_config, data_id, fuse_id]
                          , repeats = 1, timeout = 6000)
     db.results_file[data_id] = dict(scheduler_task_id = task.id)
 
@@ -137,5 +138,67 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     return "sucess"
 
 
+
+def run_fuse_only(id_file, id_config, id_data, id_fuse):
+    import time, datetime, sys, os.path
+    from subprocess import Popen, PIPE, STDOUT, os
+    
+    ## les chemins d'acces a vidjil / aux fichiers de sequences
+    vidjil_path = os.path.abspath(os.path.dirname(sys.argv[0])) + '/../..'
+    germline_folder = vidjil_path + '/germline/'
+    upload_folder = os.path.abspath(os.path.dirname(sys.argv[0])) + '/applications/vidjil/uploads/'
+    out_folder = os.path.abspath(os.path.dirname(sys.argv[0])) + '/out_'+str(id_data)+'/'
+    
+    #clean folder
+    cmd = "rm -rf "+out_folder 
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    p.wait()
+    cmd = "mkdir "+out_folder 
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    p.wait()
+    
+    ## filepath du fichier input (data/clntab)
+    row = db(db.sequence_file.id==id_file).select()
+    filename = row[0].data_file
+    seq_file = upload_folder+filename
+    id_patient = row[0].patient_id
+    vidjil_germline = db.config[id_config].germline
+    
+    ## fuse.py 
+    output_file = out_folder+"result"
+    files = ""
+    query = db( ( db.patient.id == db.sequence_file.patient_id )
+                   & ( db.results_file.sequence_file_id == db.sequence_file.id )
+                   & ( db.patient.id == id_patient )
+                   & ( db.results_file.config_id == id_config )
+                   ).select( orderby=db.sequence_file.sampling_date ) 
+    for row in query :
+        if row.results_file.data_file is not None :
+            files += os.path.abspath(os.path.dirname(sys.argv[0])) + "/applications/vidjil/uploads/"+row.sequence_file.data_file+" "
+    
+    cmd = "python ../fuse.py -o "+output_file+" -t 100 -g "+vidjil_germline+" "+files
+    print cmd
+    
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    p.wait()
+    print p.stdout.read()
+    
+    #store fused file
+    fuse_filepath = os.path.abspath(output_file)
+    stream = open(fuse_filepath, 'rb')
+    ts = time.time()
+    db.fused_file[id_fuse] = dict(fuse_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
+                                 fused_file = stream)
+    db.commit()
+    
+    #clean tmp folder
+    clean_cmd = "rm -rf " + out_folder 
+    p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    p.wait()
+    
+    return "sucess"
+
+
 from gluon.scheduler import Scheduler
-scheduler = Scheduler(db, dict(run=run_vidjil))
+scheduler = Scheduler(db, dict(vidjil=run_vidjil,
+                               none=run_fuse_only))
