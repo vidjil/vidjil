@@ -21,21 +21,19 @@ def add():
 def add_form(): 
     error =""
 
-    if request.vars['config_name'] == "" :
-        error += "name needed, "
-    if request.vars['config_info'] == "" :
-        error += "info needed, "
-    if request.vars['config_command'] == "" : 
-        error += "command needed, "  
-    if request.vars['config_germline'] == "" : 
-        error += "germline needed, "
+    required_fields = ['config_name', 'config_command', 'config_germline', 'config_fuse_command', 'config_program']
+    for field in required_fields:
+        if request.vars[field] == "" :
+            error += field+" needed, "
 
     if error=="" :
         
         db.config.insert(name=request.vars['config_name'],
                         info=request.vars['config_info'],
                         command=request.vars['config_command'],
-                        germline=request.vars['config_germline']
+                        germline=request.vars['config_germline'],
+                        fuse_command=request.vars['config_fuse_command'],
+                        program=request.vars['config_program']
                         )
 
         res = {"redirect": "config/index",
@@ -56,22 +54,20 @@ def edit_form():
     
     error =""
 
-    if request.vars['config_name'] == "" :
-        error += "name needed, "
-    if request.vars['config_info'] == "" :
-        error += "info needed, "
-    if request.vars['config_command'] == "" : 
-        error += "command needed, "
-    if request.vars['config_germline'] == "" : 
-        error += "germline needed, "
+    required_fields = ['config_name', 'config_command', 'config_germline', 'config_fuse_command', 'config_program']
+    for field in required_fields:
+        if request.vars[field] == "" :
+            error += field+" needed, "
 
     if error=="" :
 
         db.config[request.vars["id"]] = dict(name=request.vars['config_name'],
-                                            info=request.vars['config_info'],
-                                            command=request.vars['config_command'],
-                                            germline=request.vars['config_germline']
-                                            )
+                                             info=request.vars['config_info'],
+                                             command=request.vars['config_command'],
+                                             germline=request.vars['config_germline'],
+                                             fuse_command=request.vars['config_fuse_command'],
+                                             program=request.vars['config_program']
+                                             )
 
         res = {"redirect": "config/index",
                "message": "config saved"}
