@@ -66,7 +66,7 @@ class comp_matrix {
     */
     void del();
     
-    void stat_cluster( list<list<junction> > cluster, string neato_file, ostream &out=cout);
+    void stat_cluster( list<list<junction> > cluster, ostream &out=cout);
 
  private:
     

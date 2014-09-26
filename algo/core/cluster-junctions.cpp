@@ -321,16 +321,8 @@ list<list<junction> >  comp_matrix::nocluster()
   return cluster;
 }
 
-void comp_matrix::stat_cluster( list<list<junction> > cluster, string neato_file, ostream &out )
+void comp_matrix::stat_cluster( list<list<junction> > cluster, ostream &out )
 {
-
-  ofstream f_graph;
-  f_graph.open((neato_file + ".dot").c_str());
-  f_graph << "graph pairs {" << endl ;
-  f_graph << "   ratio = 1.618 " << endl ;
-  f_graph << "   node [shape=box,colorscheme=pastel19,style=filled]" << endl ;
-  f_graph << "   graph [overlap=true]" << endl ;
-    
     int n_cluster=0;			//nombre de cluster
     int n_100cluster=0;			//nombre de cluster de taille superieur a 100
     int max_size=0;			//taille du plus gros cluster
@@ -340,7 +332,6 @@ void comp_matrix::stat_cluster( list<list<junction> > cluster, string neato_file
     float jc2=0;			//nombre de junction clusterisé(%)
     float moy=0;			//taille moyenne des clusters
     
-    int color=0;
     //recherche du plus gros cluster
    for (list <list <string> >::iterator it = cluster.begin();
     it != cluster.end(); ++it )
@@ -361,42 +352,11 @@ void comp_matrix::stat_cluster( list<list<junction> > cluster, string neato_file
       if (size> max_size) max_size=size;
       
       if (size>=100) {
-	color++;
 	n_100cluster++;
-	
-	//boucle neato
-	string j1,j2;
-	int n=0;
-	for (list<string>::iterator it2 = li.begin();
-	it2 != li.end() ; ++it2 )
-	{
-	  n++;
-	  if (n<=16){
-	    j1=*it2;
-	    if (it2 != li.begin())
-	      
-	    {
-	      f_graph << "       " <<"n"<<count[j2]<<"_"<<j2<< " -- " <<"n"<<count[j1]<<"_"<<j1<< " [style=dashed,color=red]" << endl ;
-	    }
-	    f_graph << "  " <<"n"<<count[j1]<<"_"<<j1<< " [fillcolor=" << 1+(color%9) << "]" << endl ;
-	    
-	    j2=j1;
-	  }
-	}
-	
       }
       
     }
 
-  f_graph << "}" << endl ;
-  f_graph.close();
-  string com = "neato "+neato_file+".dot -Tpdf -o "+neato_file+".pdf" ; // TODO: use out_dir + GRAPH_FILE
-  out << "  " << com << endl ;
-  if (system(com.c_str()) == -1) {
-    perror("Launching neato");
-    exit(4);
-  }
-  
       if(n_j2c!=0)
 	moy=n_j2c/n_cluster;
     

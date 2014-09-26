@@ -89,7 +89,6 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT, CMD_GERMLINES } ;
 #define UNSEGMENTED_FILENAME "unsegmented.fa"
 #define EDGES_FILENAME "edges"
 #define COMP_FILENAME "comp.data"
-#define GRAPH_FILENAME "graph"
 #define JSON_SUFFIX ".data"
 
 // "tests/data/leukemia.fa" 
@@ -929,7 +928,7 @@ int main (int argc, char **argv)
 	  }
        
 	clones_windows  = comp.cluster(forced_edges, w, cout, epsilon, minPts) ;
-	comp.stat_cluster(clones_windows, out_dir + prefix_filename + GRAPH_FILENAME, cout );
+	comp.stat_cluster(clones_windows, cout );
 	comp.del();
       } 
     else
