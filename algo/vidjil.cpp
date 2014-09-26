@@ -1128,7 +1128,7 @@ int main (int argc, char **argv)
 	//$$ There is one representative, FineSegmenter
 
 
-          representative.label = string_of_int(it->second) + "-" 
+          representative.label = string_of_int(it->second) + "--" 
             + representative.label;
 	  FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 	
@@ -1323,18 +1323,6 @@ int main (int argc, char **argv)
 
 	// Output all sequences
 
-	if (output_sequences_by_cluster)
-	  {
-	    out_sequences << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
-	    out_sequences << it->first << endl;
-
-	    list<Sequence> &sequences = windowsStorage->getReads(it->first);
-	    
-	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
-	      {
-		out_sequences << *itt ;
-	      }
-	  }
 
         Sequence representative 
           = windowsStorage->getRepresentative(it->first, seed, 
@@ -1344,8 +1332,25 @@ int main (int argc, char **argv)
 
 
         if (representative != NULL_SEQUENCE) {
-          representative.label = string_of_int(it->second) + "-" 
+          representative.label = string_of_int(it->second) + "--" 
             + representative.label;
+
+
+	if (output_sequences_by_cluster)
+	  {
+	    out_sequences << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
+	    out_sequences << it->first << endl;
+
+	    if (representative != NULL_SEQUENCE) 
+	      out_sequences << representative ;
+
+	    list<Sequence> &sequences = windowsStorage->getReads(it->first);
+	    
+	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
+	      {
+		out_sequences << *itt ;
+	      }
+	  }
 
           FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 
