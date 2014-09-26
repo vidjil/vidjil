@@ -23,6 +23,7 @@ def run_all():
 
         res = {"success" : "true",
                "message" : "rerun all"}
+        log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 ## display run page result 
@@ -69,7 +70,8 @@ def delete():
                "args" : { "id" : patient_id,
                           "config_id" : config_id},
                "success": "true",
-               "message": "run ("+str(request.vars["results_file_id"])+") deleted"}
+               "message": "process ("+str(request.vars["results_file_id"])+") deleted"}
+        log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"message": "acces denied"}

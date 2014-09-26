@@ -199,3 +199,56 @@ if db(db.auth_user.id > 0).count() == 0:
 
 ## after defining tables, uncomment below to enable auditing
 auth.enable_record_versioning(db)
+
+## Reverse IP
+
+ips = {}
+
+try:
+    for l in open('/home/vidjil/ips.txt'):
+        ip, kw = l.split()
+        ips[ip] = kw
+except:
+    pass
+
+
+## Logging
+
+import logging
+
+class MsgUserAdapter(logging.LoggerAdapter):
+
+    def process(self, msg, kwargs):
+        if type(msg) is dict:
+            msg = msg['message']
+        ip = request.client
+        if ip in ips:
+            ip = "%s/%s" % (ip, ips[ip])
+        new_msg =  '%15s <%s> %s' % (ip, (auth.user.first_name if auth.user else ''), msg)
+        return new_msg, kwargs
+    
+#
+
+def _init_log():
+    """
+    adapted from http://article.gmane.org/gmane.comp.python.web2py/11091
+    """
+
+    import logging
+
+    logger = logging.getLogger('vidjil') # (request.application)
+    if not logger.handlers:
+        logger.setLevel(logging.DEBUG)
+        handler = logging.FileHandler('/var/vidjil/vidjil.log')
+        handler.setLevel(logging.DEBUG)
+        handler.setFormatter(logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s'))
+        logger.addHandler(handler) 
+        logger.info("Creating logger")
+    return MsgUserAdapter(logger, {})
+
+log = _init_log()
+
+
+
+
+

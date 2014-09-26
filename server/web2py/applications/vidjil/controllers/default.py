@@ -60,6 +60,7 @@ def run_request():
     else :
         res = {"success" : "false",
                "message" : "default/run_request : " + error}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
     
@@ -108,11 +109,13 @@ def get_data():
             data["samples"]["original_names"].append(filename)
             data["samples"]["info"].append(row.sequence_file.info) 
 
+        log.info("get_data: %s -> %s" % (request.vars["patient_id"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
     else :
         res = {"success" : "false",
                "message" : "default/get_data : " + error}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 #########################################################################
@@ -168,6 +171,7 @@ def get_analysis():
     else :
         res = {"success" : "false",
                "message" : "default/get_analysis : " + error}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     
@@ -209,10 +213,12 @@ def save_analysis():
         
         res = {"success" : "true",
                "message" : patient_name+": analysis saved"}
+        log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"success" : "false",
                "message" : error}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
         
@@ -273,6 +279,42 @@ def create_self_signed_cert(cert_dir):
         create_self_signed_cert('.')
         
     return(ssl_created, cert_dir, CERT_FILE, KEY_FILE)
+
+
+#########################################################################
+def handle_error():
+    """
+    Custom error handler that returns correct status codes,
+    adapted from http://www.web2pyslices.com/slice/show/1529/custom-error-routing
+    """
+    
+    code = request.vars.code
+    request_url = request.vars.request_url
+    ticket = request.vars.ticket
+ 
+    log.error("[%s] %s" % (code, ticket))
+
+    if code is not None and request_url != request.url:# Make sure error url is not current url to avoid infinite loop.
+        response.status = int(code) # Assign the error status code to the current response. (Must be integer to work.)
+ 
+    if code == '403':
+        return "Not authorized"
+    elif code == '404':
+        return "Not found"
+    elif code == '500':
+        # Get ticket URL:
+        ticket_url = "<a href='%(scheme)s://%(host)s/admin/default/ticket/%(ticket)s' target='_blank'>%(ticket)s</a>" % {'scheme':'https','host':request.env.http_host,'ticket':ticket}
+ 
+        # Email a notice, etc:
+        mail.send(to=['contact@vidjil.org'],
+                  subject="[Vidjil] web2py error",
+                  message="Error Ticket:  %s" % ticket_url)
+
+    return "Server error"
+
+
+
+
 
 #########################################################################
 ##TODO remove useless function ( maybe used by web2py internally )
