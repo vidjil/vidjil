@@ -120,7 +120,9 @@ db.define_table('standard_file',
 
 db.define_table('config',
                 Field('name', 'string'),
+                Field('program', 'string'),
                 Field('command', 'string'),
+                Field('fuse_command', 'string'),
                 Field('info','text'),
                 Field('germline', 'string'))
 
@@ -173,6 +175,7 @@ if db(db.auth_user.id > 0).count() == 0:
         info = 'default trg config',
         germline = 'TRG'
     )
+    
     id_config_IGH = db.config.insert(
         name = 'IGH',
         command = '-c clones -d -z 100 -R 1 -r 1 ',
