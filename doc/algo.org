@@ -69,8 +69,7 @@ make test                # run self-tests
 These dependencies have no consequences on the visualization through the
 browser. They are intented for a command-line use only.
 
-- clustalw :: to compute alignments between windows from a same clone, by setting 
-          =very_detailed_cluster_analysis= in vidjil.cpp
+- clustalw :: to compute alignments between windows from a same clone (with =-a= option)
 - neato :: to display graph of neighbors for the automatic clusterisation
 
 * Vidjil parameters

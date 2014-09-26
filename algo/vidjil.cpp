@@ -205,7 +205,7 @@ void usage(char *progname)
        << "  -o <dir>      output directory (default: " << OUT_DIR << ")" <<  endl
        << "  -p <string>   prefix output filenames by the specified string" << endl
     
-       << "  -a            output all sequences by cluster (" << SEQUENCES_FILENAME << ")" << endl
+       << "  -a            output all sequences by cluster (" << SEQUENCES_FILENAME << "), to be used only on small datasets" << endl
        << "  -x            do not compute representative sequences" << endl
        << "  -v            verbose mode" << endl
        << endl        
@@ -307,6 +307,7 @@ int main (int argc, char **argv)
         usage(argv[0]);
       case 'a':
 	output_sequences_by_cluster = true;
+	very_detailed_cluster_analysis = true;
 	break;
       case 'd':
 	segment_D = 1 ;
