@@ -93,7 +93,7 @@ List.prototype = {
         a_unsplit.onclick = function () {
             self.m.split_all(false)
         }
-        
+        /*
         var a_sortV = document.createElement('a')
         a_sortV.className = "button"
         a_sortV.appendChild(document.createTextNode("V sort"))
@@ -107,7 +107,26 @@ List.prototype = {
         a_sortJ.onclick = function () {
             self.sortListByJ()
         }
-
+        */
+        var filter_label = document.createElement('span')
+        filter_label.appendChild(document.createTextNode("filter"))
+        
+        var filter_input = document.createElement('input')
+        filter_input.id = 'filter_input'
+        filter_input.type = 'text'
+        filter_input.onchange = function () {
+            self.filter(this.value)
+        }
+        
+        var filter_reset = document.createElement('span')
+        filter_reset.appendChild(document.createTextNode("X"))
+        filter_reset.className = "button"
+        filter_reset.onclick = function () {
+            document.getElementById('filter_input').value = ''
+            self.reset_filter(false)
+            self.m.update()
+        }
+        
         var a_sort = document.createElement('a')
         a_sort.className = "button"
         a_sort.appendChild(document.createTextNode("sort"))
@@ -119,8 +138,13 @@ List.prototype = {
 
         div_list_menu.appendChild(a_split)
         div_list_menu.appendChild(a_unsplit)
+        /*
         div_list_menu.appendChild(a_sortV)
         div_list_menu.appendChild(a_sortJ)
+        */
+        div_list_menu.appendChild(filter_label)
+        div_list_menu.appendChild(filter_input)
+        div_list_menu.appendChild(filter_reset)
         div_list_menu.appendChild(a_sort)
         
         return div_list_menu
@@ -447,7 +471,26 @@ List.prototype = {
             }
         }
     },
-
+    
+    reset_filter: function (bool) {
+        for (var i=0; i<this.m.windows.length; i++){
+            var c = this.m.windows[i]
+            c.isFiltered=bool
+        }
+    },
+    
+    filter: function (str) {
+        this.reset_filter(true)
+        for (var i=0; i<this.m.windows.length; i++){
+            var c = this.m.windows[i]
+            if (typeof (c.name) != 'undefined' && c.name.toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
+            if (typeof (c.sequence) != 'undefined' && c.sequence != 0 && c.sequence.toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
+            if (typeof (c.c_name) != 'undefined' && c.c_name.toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
+        }
+        this.m.update()
+    },
+    
+    
     sortListBySize: function () {
         self = this;
         var list = jQuery('.list')
@@ -461,6 +504,7 @@ List.prototype = {
         $("#list_clones")
             .html(sort);
     },
+    
 
     sortListByTop: function () {
         self = this;

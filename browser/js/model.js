@@ -1615,6 +1615,13 @@ Model.prototype = {
             }
         }
         
+        //unactive filtered clone
+        for (var i = 0; i < this.windows.length; i++) {
+            if (this.windows[i].isFiltered) {
+                this.windows[i].active = false;
+            }
+        }
+        
         this.computeOtherSize();
 
         for (var i = 0; i < this.n_windows; i++) {
@@ -1676,6 +1683,15 @@ Model.prototype = {
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].updateElemStyle(list);
         }
+    },
+    
+    updateStyle: function () {
+        var list = []
+        for (var i=0; i<this.windows.length; i++) list[i]=i
+        for (var i = 0; i < this.view.length; i++) {
+            this.view[i].updateElemStyle(list);
+        }
+        this.updateModel()
     },
 
     /*init all views
