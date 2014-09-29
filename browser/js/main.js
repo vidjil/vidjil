@@ -1,6 +1,14 @@
 var DB_ADDRESS = "http://134.206.11.64:8000/Vidjil/";
 var CGI_ADDRESS = "http://127.0.1.1/cgi-bin/";
 
+
+/*tools
+ * 
+ * */
+var myConsole = new Com("flash_container", "log_container")
+
+
+
 /*load user config if exist
  * 
  * */
@@ -60,12 +68,6 @@ if (typeof config != 'undefined') {
         $("#debug_menu").css("display", "");
     }
 }
-
-
-/*tools
- * 
- * */
-var myConsole = new Com("flash_container", "log_container")
 
 
 /* Model
