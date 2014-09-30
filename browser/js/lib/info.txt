@@ -54,11 +54,6 @@ PDF
     * @author 		Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
     * @link 		http://underscorejs.org
     * @license 		MIT Licensed 
-
-    canvg		: conversion svg>canvas (peut etre utile pour export vers image)
-    * @author 		Gabe Lerner (gabelerner@gmail.com)
-    * @link 		http://code.google.com/p/canvg/
-    * @license 		MIT Licensed 
     
     rgbcolor		: dépendance jspdf
     * @author 		Stoyan Stefanov <sstoo@gmail.com>
