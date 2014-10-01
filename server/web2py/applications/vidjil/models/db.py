@@ -57,6 +57,10 @@ auth.settings.registration_requires_verification = False
 auth.settings.registration_requires_approval = False
 auth.settings.reset_password_requires_verification = True
 
+# auth.settings.login_email_validate = False
+auth.settings.expiration = 3600 * 24 * 7  # one week
+auth.settings.remember_me_form = False
+
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, write your domain:api_key in private/janrain.key
 from gluon.contrib.login_methods.rpx_account import use_janrain
@@ -239,10 +243,18 @@ def _init_log():
     logger = logging.getLogger('vidjil') # (request.application)
     if not logger.handlers:
         logger.setLevel(logging.DEBUG)
-        handler = logging.FileHandler('/var/vidjil/vidjil.log')
+        formatter = logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s')
+
+        handler = logging.FileHandler('/var/vidjil/vidjil-debug.log')
         handler.setLevel(logging.DEBUG)
-        handler.setFormatter(logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s'))
+        handler.setFormatter(formatter)
         logger.addHandler(handler) 
+
+        handler = logging.FileHandler('/var/vidjil/vidjil.log')
+        handler.setLevel(logging.INFO)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler) 
+
         logger.info("Creating logger")
     return MsgUserAdapter(logger, {})
 

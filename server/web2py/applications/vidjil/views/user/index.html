@@ -25,7 +25,7 @@ query = db(
             
            {{for row in query :}}
                <tr onclick="db.call('user/info', {'id' :'{{=row.id}}'} )">
-                    <td> {{=row.last_name + " " + row.first_name }} </td>
+                    <td> {{=row.first_name + " " + row.last_name }} </td>
                     <td> {{=row.email}}  </td>
                 </tr>
            {{pass}}

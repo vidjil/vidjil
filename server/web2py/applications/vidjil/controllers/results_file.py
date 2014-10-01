@@ -23,7 +23,7 @@ def run_all():
 
         res = {"success" : "true",
                "message" : "rerun all"}
-        log.info(res)
+        log.warning(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 ## display run page result 

@@ -37,10 +37,12 @@ def add_form():
 
         res = {"redirect": "group/index",
                "message" : "group created"}
+        log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
         res = {"success" : "false", "message" : error}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
@@ -59,6 +61,7 @@ def delete():
     
     res = {"redirect": "group/index",
            "message": "group deleted"}
+    log.info(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
@@ -88,6 +91,7 @@ def remove_permission():
 
     res = {"redirect" : "group/permission" ,
            "args" : { "id" : request.vars["group_id"]} }
+    log.info(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 ## give admin right to a group member
@@ -96,6 +100,7 @@ def change_permission():
     auth.add_permission(auth.user_group(request.vars["user_id"]), 'admin', db.auth_group, request.vars["group_id"])
 
     res = {"redirect" : "group/permission" , "args" : { "id" : request.vars["group_id"]} }
+    log.info(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 ## invite an user to join the group
@@ -107,12 +112,14 @@ def invite():
         res = {"redirect" : "group/info" ,
                "args" : { "id" : request.vars["group_id"]},
                "message" : "user have been invited to join this group"}
+        log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else:
         res = {"redirect" : "group/info" ,
                "args" : { "id" : request.vars["group_id"]},
                "message" : "you don't have permission to invite people"}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
 ## revoke membership
@@ -124,10 +131,12 @@ def kick():
         res = {"redirect" : "group/info" ,
                "args" : { "id" : request.vars["group_id"]},
                "message" : "user have been kicked"}
+        log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else:
         res = {"redirect" : "group/info" ,
                "args" : { "id" : request.vars["group_id"]},
                "message" : "you don't have permission to kick people"}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
