@@ -1077,11 +1077,6 @@ int main (int argc, char **argv)
 
 	
       //$$ First pass, choose one representative per cluster
-
-      string best_V ;
-      string best_D ;
-      string best_J ;
-      int more_windows = 0 ;
       
       for (list <pair<junction, int> >::const_iterator it = sort_windows.begin(); 
            it != sort_windows.end(); ++it) {
@@ -1142,69 +1137,6 @@ int main (int argc, char **argv)
 	    
 	    // As soon as one representative is segmented
 
-              // We need to find the window in the representative
-              size_t window_pos = seg.getSequence().sequence.find(it->first);
-
-              // Default
-              int ww = 2*w/3 ; // /2 ;
-
-              if (window_pos != string::npos) {
-                // for V.
-                ww = seg.getLeft() - window_pos + seg.del_V;
-              } 
-            
-
-              string end_V ="";
-	    
-              // avoid case when V is not in the window
-              if (seg.getLeft() > (int) window_pos) {
-                int v_size = rep_V.sequence(seg.best_V).size();
-                int start_pos = (v_size < ww) ? 0 : v_size - ww;
-                end_V = rep_V.sequence(seg.best_V)
-                  .substr(start_pos,
-                          min(v_size - start_pos, ww - seg.del_V));
-              }
-
-              string mid_D = "";
-	    
-              if (segment_D)
-                mid_D = rep_D.sequence(seg.best_D).substr(seg.del_D_left, 
-                                                          rep_D.sequence(seg.best_D).size() - seg.del_D_left - seg.del_D_right );
-	   
-              if (window_pos != string::npos) {
-                // for J.
-                ww = (window_pos + w - 1) - seg.getRight() + seg.del_J;
-              }
-	    
-              string start_J = "";
-	    
-              // avoid case when J is not in the window
-              if (seg.getRight() > (int) (window_pos + w - 1))
-                start_J=rep_J.sequence(seg.best_J).substr(seg.del_J, ww);
-	      
-              best_V = rep_V.label(seg.best_V) ;
-              if (segment_D) best_D = rep_D.label(seg.best_D) ;
-              best_J = rep_J.label(seg.best_J) ;
-	    
-              // TODO: pad aux dimensions exactes
-              string pad_N = "NNNNNNNNNNNNNNNN" ;
-
-              // Add V, (D) and J to windows to be aligned
-	    
-              out_windows << ">" << best_V << "-window" << endl ;
-              out_windows << end_V << pad_N << endl ;
-              more_windows++;
-
-              if (segment_D) {
-                out_windows << ">" << best_D << "-window" << endl ;
-                out_windows << mid_D << endl ;   
-                more_windows++ ;
-              }
-	    
-              out_windows << ">" << best_J << "-window" << endl ;
-              out_windows << pad_N << start_J <<  endl ;
-              more_windows++;
-
               string code = seg.code ;
               int cc = clones_codes[code];
 
@@ -1226,6 +1158,12 @@ int main (int argc, char **argv)
 
               out_clone << seg ;
               out_clone << endl ;
+
+	      // Output best V, (D) and J germlines
+	      out_clone << rep_V.read(seg.best_V) ;
+	      if (segment_D) out_clone << rep_D.read(seg.best_D) ;
+	      out_clone << rep_J.read(seg.best_J) ;
+	      out_clone << endl;
           }
 
         if (seg.isSegmented() 
