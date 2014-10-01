@@ -84,7 +84,6 @@ enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT, CMD_GERMLINES } ;
 #define CLONES_FILENAME "clones.vdj.fa"
 #define CLONE_FILENAME "clone.fa-"
 #define WINDOWS_FILENAME "windows.fa"
-#define SEQUENCES_FILENAME "sequences.fa"
 #define SEGMENTED_FILENAME "segmented.vdj.fa"
 #define UNSEGMENTED_FILENAME "unsegmented.fa"
 #define EDGES_FILENAME "edges"
@@ -203,7 +202,7 @@ void usage(char *progname)
        << "  -o <dir>      output directory (default: " << OUT_DIR << ")" <<  endl
        << "  -p <string>   prefix output filenames by the specified string" << endl
     
-       << "  -a            output all sequences by cluster (" << SEQUENCES_FILENAME << "), to be used only on small datasets" << endl
+       << "  -a            output all sequences by cluster (" << CLONE_FILENAME << "*), to be used only on small datasets" << endl
        << "  -x            do not compute representative sequences" << endl
        << "  -v            verbose mode" << endl
        << endl        
@@ -1028,15 +1027,9 @@ int main (int argc, char **argv)
 
       string clone_file_name = out_seqdir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
       string windows_file_name = out_seqdir+ prefix_filename + WINDOWS_FILENAME + "-" + string_of_int(num_clone) ;
-      string sequences_file_name = out_seqdir+ prefix_filename + SEQUENCES_FILENAME + "-" + string_of_int(num_clone) ;
 
       ofstream out_clone(clone_file_name.c_str());
       ofstream out_windows(windows_file_name.c_str());
-      ofstream out_sequences;
-
-      if (output_sequences_by_cluster) {
-        out_sequences.open(sequences_file_name.c_str());
-      }
       
       cout << "Clone #" << right << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone ;
       cout << " – " << setfill(' ') << setw(WIDTH_NB_READS) << clone_nb_reads << " reads" ;
@@ -1116,19 +1109,14 @@ int main (int argc, char **argv)
 
 	representative.label = string_of_int(it->second) + "--" + representative.label;
 
+
 	if (output_sequences_by_cluster) // -a option, output all sequences
 	  {
-	    out_sequences << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
-	    out_sequences << it->first << endl;
-
-	    if (representative != NULL_SEQUENCE) 
-	      out_sequences << representative ;
-
 	    list<Sequence> &sequences = windowsStorage->getReads(it->first);
 	    
 	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
 	      {
-		out_sequences << *itt ;
+		out_clone << *itt ;
 	      }
 	  }
 
