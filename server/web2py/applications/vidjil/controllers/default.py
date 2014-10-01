@@ -142,12 +142,12 @@ def get_analysis():
            "custom": [],
            "clones" : [],
            "tags": [],
-           "info_patient" : "test info patient",
-           "patient" : ""
+           "vidjil_json_version" : "2014.09"
            }
     
     
     if error == "" :
+        
         res["info_patient"] = db.patient[request.vars["patient_id"]].info
         res["patient"] = db.patient[request.vars["patient_id"]].first_name + " " + db.patient[request.vars["patient_id"]].last_name + " (" + db.config[request.vars["config_id"]].name + ")"
         
@@ -160,14 +160,15 @@ def get_analysis():
             f = open('applications/vidjil/uploads/'+row.analysis_file, "r")
             analysis = gluon.contrib.simplejson.loads(f.read())
             f.close()
-
-            analysis["info_patient"] = db.patient[request.vars["patient_id"]].info
-            analysis["patient"] = db.patient[request.vars["patient_id"]].first_name + " " + db.patient[request.vars["patient_id"]].last_name + " (" + db.config[request.vars["config_id"]].name + ")"
             res["cluster"] = analysis["cluster"]
             res["clones"] = analysis["clones"]
+            res["tags"] = analysis["tags"]
             res["samples"]["order"] = analysis["samples"]["order"]
 
-        return gluon.contrib.simplejson.dumps(analysis, separators=(',',':'))
+        res["info_patient"] = db.patient[request.vars["patient_id"]].info
+        res["patient"] = db.patient[request.vars["patient_id"]].first_name + " " + db.patient[request.vars["patient_id"]].last_name + " (" + db.config[request.vars["config_id"]].name + ")"
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        
     else :
         res = {"success" : "false",
                "message" : "default/get_analysis : " + error}
