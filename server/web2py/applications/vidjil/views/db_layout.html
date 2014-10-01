@@ -14,7 +14,7 @@
     
     <div id="db_auth">
             {{if auth.user:}}
-	    {{=auth.user.first_name}}
+	    {{=auth.user.first_name}} {{=auth.user.last_name}}
             <a class="button" onclick="db.request('default/user/logout');">(logout)</a>
             {{pass}}
     </div>
