@@ -68,6 +68,8 @@ echo "server {
         location /browser {
             root $CWD/../browser/;
             expires max;
+
+            error_page 405 = $uri;
         }
 
         ###to enable correct use of response.static_version
