@@ -33,6 +33,7 @@
 
 #include "core/tools.h"
 #include "core/json.h"
+#include "core/germline.h"
 #include "core/kmerstore.h"
 #include "core/fasta.h"
 #include "core/segment.h"
@@ -780,14 +781,14 @@ int main (int argc, char **argv)
     //////////////////////////////////
     //$$ Build Kmer indexes
     cout << "Build Kmer indexes" << endl ;
-
-    bool rc = true ;
     
-    IKmerStore<KmerAffect>  *index = KmerStoreFactory::createIndex<KmerAffect>(seed, rc);
-    index->insert(rep_V, "V");
-    index->insert(rep_J, "J");
+    Germline *germline;
+    germline = new Germline(rep_V, rep_D, rep_J, seed,
+			    delta_min, delta_max);
 
-  
+    MultiGermline *multigermline;
+    multigermline = new MultiGermline(germline);
+
     //////////////////////////////////
     //$$ Kmer Segmentation
 
@@ -813,8 +814,8 @@ int main (int argc, char **argv)
       we.setUnsegmentedOutput(out_unsegmented);
     }
 
-    WindowsStorage *windowsStorage = we.extract(reads, index, w, delta_min, 
-                                                delta_max, windows_labels);
+
+    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 
@@ -929,9 +930,9 @@ int main (int argc, char **argv)
 	comp.del();
       } 
     else
-      {
-	cout << "No clustering" << endl ;
-	clones_windows  = comp.nocluster() ;
+      { 
+	cout << "No clustering" << endl ; 
+	clones_windows  = comp.nocluster() ; /// XXX SUPPRIMER
       }
 
     cout << "  ==> " << clones_windows.size() << " clones" << endl ;
@@ -996,7 +997,7 @@ int main (int argc, char **argv)
     list <Sequence> representatives ;
     list <string> representatives_labels ;
 
-    VirtualReadScore *scorer = new KmerAffectReadScore(*index);
+    VirtualReadScore *scorer = new KmerAffectReadScore(*(germline->index));
     int num_clone = 0 ;
     int clones_without_representative = 0 ;
 
@@ -1112,7 +1113,7 @@ int main (int argc, char **argv)
         } else {
 	//$$ There is one representative, FineSegmenter
 	  representative.label = string_of_int(it->second) + "--" + representative.label;
-	  FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
+	  FineSegmenter seg(representative, rep_V, rep_J, germline->delta_min, germline->delta_max, segment_cost);
 	
 	if (segment_D)
 	  seg.FineSegmentD(rep_V, rep_D, rep_J);
@@ -1294,7 +1295,7 @@ int main (int argc, char **argv)
     //json->add("links", jsonLevenshtein);
     out_json << json->toString();
     
-    delete index ;
+    delete germline ;
     delete json;
     delete windowsStorage;
     delete json_samples;

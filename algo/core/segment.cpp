@@ -161,8 +161,7 @@ ostream &operator<<(ostream &out, const Segmenter &s)
 
 // KmerSegmenter (Cheap)
 
-KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index, 
-			     int delta_min, int delta_max)
+KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
 {
   label = seq.label ;
   sequence = seq.sequence ;
@@ -172,7 +171,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
   reversed = false;
   Dend=0;
   
-  int s = (size_t)index->getS() ;
+  // Now we just take one germline
+  Germline *germline = multigermline->germlines.back(); 
+  int s = (size_t)germline->index->getS() ;
   int length = sequence.length() ;
 
   if (length < s) 
@@ -182,7 +183,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
       return ;
     }
  
-  kaa = new KmerAffectAnalyser<KmerAffect>(*index, sequence);
+  kaa = new KmerAffectAnalyser<KmerAffect>(*(germline->index), sequence);
   
   // Check strand consistency among the affectations.
   int strand;
@@ -210,7 +211,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index,
     strand = 2;
   }
 
-  computeSegmentation(strand, delta_min, delta_max, s);
+  computeSegmentation(strand, germline->delta_min, germline->delta_max, s);
 
   if (segmented)
     {

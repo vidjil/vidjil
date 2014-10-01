@@ -6,6 +6,7 @@
 #include "fasta.h"
 #include "dynprog.h"
 #include "tools.h"
+#include "germline.h"
 #include "kmerstore.h"
 #include "kmeraffect.h"
 #include "affectanalyser.h"
@@ -135,16 +136,9 @@ class KmerSegmenter : public Segmenter
   /**
    * Build a segmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file
-   * @param index: A Kmer index
-   * @param delta_min: the minimal distance between the right bound and the left bound 
-   *        so that the segmentation is accepted 
-   *        (left bound: end of V, right bound : start of J)
-   * @param delta_min: the maximal distance between the right bound and the left bound 
-   *        so that the segmentation is accepted 
-   *        (left bound: end of V, right bound : start of J)
+   * @param multigermline: the multigermline
    */
-  KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index, 
-		int delta_min, int delta_max);
+  KmerSegmenter(Sequence seq, MultiGermline *multigermline);
 
   ~KmerSegmenter();
 
