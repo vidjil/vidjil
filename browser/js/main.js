@@ -95,11 +95,24 @@ var stats = new Stats(sp);
  */
 m.addSegment(segment);
 
-/* Connections
+/* 
  *
  * */
-if (config.use_database){
-    var db = new Database("plop!", DB_ADDRESS);
+if (config.use_database) var db = new Database("plop!", DB_ADDRESS);
+
+if (location.search != ''){
+    var tmp = location.search.substring(1).split('&')
+    for (var i=0; i<tmp.length; i++){
+        var tmp2 = tmp[i].split('=')
+        if (tmp2[0] == 'data'){
+            m.loadDataUrl(tmp2[1])
+            myConsole.flash("load data from url : " + tmp2[1])
+        }
+        if (tmp2[0] == 'analysis'){
+            m.loadAnalysisUrl(tmp2[1])
+        }
+    }
+}else if (config.use_database){
     //wait 1sec to check ssl
     setTimeout(function () { db.call("patient/index.html")}, 1000);
 }else{
