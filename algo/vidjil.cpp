@@ -1085,6 +1085,8 @@ int main (int argc, char **argv)
 	out_clone << it->first << endl;
 
 
+
+	//$$ Compute a representative sequence
 	// Display statistics on auditionned sequences
 	if (verbose)
 	{
@@ -1102,20 +1104,6 @@ int main (int argc, char **argv)
                                              ratio_representative,
                                              max_auditionned);
 
-	representative.label = string_of_int(it->second) + "--" + representative.label;
-
-
-	if (output_sequences_by_cluster) // -a option, output all sequences
-	  {
-	    list<Sequence> &sequences = windowsStorage->getReads(it->first);
-	    
-	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
-	      {
-		out_clone << *itt ;
-	      }
-	  }
-
-
         if (representative == NULL_SEQUENCE) {
 	  clones_without_representative++ ;
 	  if (verbose)
@@ -1123,20 +1111,18 @@ int main (int argc, char **argv)
 
         } else {
 	//$$ There is one representative, FineSegmenter
-
+	  representative.label = string_of_int(it->second) + "--" + representative.label;
 	  FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 	
 	if (segment_D)
 	  seg.FineSegmentD(rep_V, rep_D, rep_J);
 	
-        //cout << seg.toJson();
+        // Output segmentation to .json
         json_data_segment[it->first]=seg.toJsonList(rep_V, rep_D, rep_J);
         
         if (seg.isSegmented())
 	  {
-	    
-	    // As soon as one representative is segmented
-
+	      // Check for identical code, outputs to out_edge
               string code = seg.code ;
               int cc = clones_codes[code];
 
@@ -1156,15 +1142,28 @@ int main (int argc, char **argv)
                   clones_map_windows[code] = it->first ;
                 }
 
+	      // Output segmentation to CLONE_FILENAME-*
               out_clone << seg ;
               out_clone << endl ;
 
-	      // Output best V, (D) and J germlines
+	      // Output best V, (D) and J germlines to CLONE_FILENAME-*
 	      out_clone << rep_V.read(seg.best_V) ;
 	      if (segment_D) out_clone << rep_D.read(seg.best_D) ;
 	      out_clone << rep_J.read(seg.best_J) ;
 	      out_clone << endl;
           }
+
+
+	if (output_sequences_by_cluster) // -a option, output all sequences
+	  {
+	    list<Sequence> &sequences = windowsStorage->getReads(it->first);
+	    
+	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
+	      {
+		out_clone << *itt ;
+	      }
+	  }
+
 
         if (seg.isSegmented() 
             || it == --(sort_windows.end())) {
