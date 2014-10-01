@@ -60,6 +60,7 @@ query = db(
       
 
         <div class="db_block_right">
+        {{if auth.has_permission("run", "results_file") :}}
             config
             <span>
                 <select id="choose_config" name="config" onchange="db.call('patient/info', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
@@ -71,6 +72,7 @@ query = db(
                     {{pass}}
                 </select>
             </span>
+        {{pass}}
         </div>
     </div>
 
