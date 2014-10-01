@@ -55,7 +55,7 @@ protected:
   int best_V, best_J ;
   int del_V, del_D_left, del_D_right, del_J ;
   string seg_V, seg_N, seg_J;
-  
+
   int best_D;
   string seg_N1, seg_D, seg_N2;
   Cost segment_cost;
@@ -133,6 +133,8 @@ class KmerSegmenter : public Segmenter
   string affects;
 
  public:
+  Germline *segmented_germline;
+  
   /**
    * Build a segmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file

@@ -168,6 +168,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
   info = "" ;
   info_extra = "seed";
   segmented = false;
+  segmented_germline = 0;
   reversed = false;
   Dend=0;
   
@@ -216,6 +217,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
   if (segmented)
     {
       // Yes, it is segmented
+      segmented_germline = germline;
 
       reversed = (strand == -1); 
       because = reversed ? SEG_MINUS : SEG_PLUS ;
