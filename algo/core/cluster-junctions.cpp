@@ -360,6 +360,9 @@ void comp_matrix::stat_cluster( list<list<junction> > cluster, ostream &out )
       if(n_j2c!=0)
 	moy=n_j2c/n_cluster;
     
+      return; 
+      /* The following, if useful, should not be written to a hard-coded out/ directory */
+
       ofstream stat;
       stat.open("out/stat.txt");
       
