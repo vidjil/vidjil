@@ -165,6 +165,12 @@ def run_fuse_only(id_file, id_config, id_data, id_fuse):
     id_patient = row[0].patient_id
     vidjil_germline = db.config[id_config].germline
     
+    ## insertion dans la base de donnée
+    ts = time.time()
+    db.results_file[id_data] = dict(status = "ready",
+                                 run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+                                )
+    
     ## fuse.py 
     output_file = out_folder+"result"
     files = ""
@@ -174,7 +180,7 @@ def run_fuse_only(id_file, id_config, id_data, id_fuse):
                    & ( db.results_file.config_id == id_config )
                    ).select( orderby=db.sequence_file.sampling_date ) 
     for row in query :
-        if row.results_file.data_file is not None :
+        if row.sequence_file.data_file is not None :
             files += os.path.abspath(os.path.dirname(sys.argv[0])) + "/applications/vidjil/uploads/"+row.sequence_file.data_file+" "
     
     cmd = "python ../fuse.py -o "+output_file+" -t 100 -g "+vidjil_germline+" "+files
