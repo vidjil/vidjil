@@ -109,7 +109,7 @@ def get_data():
             data["samples"]["original_names"].append(filename)
             data["samples"]["info"].append(row.sequence_file.info) 
 
-        log.info("get_data: %s -> %s" % (request.vars["patient_id"], fused_file))
+        log.debug("get_data: %s -> %s" % (request.vars["patient_id"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
     else :
