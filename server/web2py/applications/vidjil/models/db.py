@@ -243,10 +243,18 @@ def _init_log():
     logger = logging.getLogger('vidjil') # (request.application)
     if not logger.handlers:
         logger.setLevel(logging.DEBUG)
-        handler = logging.FileHandler('/var/vidjil/vidjil.log')
+        formatter = logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s')
+
+        handler = logging.FileHandler('/var/vidjil/vidjil-debug.log')
         handler.setLevel(logging.DEBUG)
-        handler.setFormatter(logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s'))
+        handler.setFormatter(formatter)
         logger.addHandler(handler) 
+
+        handler = logging.FileHandler('/var/vidjil/vidjil.log')
+        handler.setLevel(logging.INFO)
+        handler.setFormatter(formatter)
+        logger.addHandler(handler) 
+
         logger.info("Creating logger")
     return MsgUserAdapter(logger, {})
 
