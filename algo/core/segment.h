@@ -170,27 +170,17 @@ class FineSegmenter : public Segmenter
    /**
    * Build a fineSegmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file
-   * @param rep_V: germline for V
-   * @param rep_J: germline for J
-   * @param delta_min: the minimal distance between the right bound and the left bound 
-   *        so that the segmentation is accepted 
-   *        (left bound: end of V, right bound : start of J)
-   * @param delta_min: the maximal distance between the right bound and the left bound 
-   *        so that the segmentation is accepted 
-   *        (left bound: end of V, right bound : start of J)
+   * @param germline: germline used
    */
-  FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
-		int delta_min, int delta_max, Cost segment_cost);
+  FineSegmenter(Sequence seq, Germline *germline, Cost segment_cost);
   
   /**
   * extend segmentation from VJ to VDJ
-  * @param rep_V: germline for V
-  * @param rep_D: germline for D
-  * @param rep_J: germline for J
+  * @param germline: germline used
   */
-  void FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J);
+  void FineSegmentD(Germline *germline);
 
-  JsonList toJsonList(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J);
+  JsonList toJsonList(Germline *germline);
   
 };
 

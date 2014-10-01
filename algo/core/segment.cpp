@@ -438,8 +438,7 @@ string format_del(int deletions)
   return deletions ? *"(" + string_of_int(deletions) + " del)" : "" ;
 }
 
-FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J, 
-			     int delta_min, int delta_max, Cost segment_c)
+FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
 {
 
   info_extra = "" ;
@@ -462,10 +461,10 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
   vector<pair<int, int> > score_plus_V;
   vector<pair<int, int> > score_plus_J;
   
-  int plus_left = align_against_collection(sequence, rep_V, false, false, &tag_plus_V, &del_plus_V, &del2, &beg, 
+  int plus_left = align_against_collection(sequence, germline->rep_5, false, false, &tag_plus_V, &del_plus_V, &del2, &beg, 
 					   &plus_length, &score_plus_V
 					   , segment_cost);
-  int plus_right = align_against_collection(sequence, rep_J, true, false, &tag_plus_J, &del_plus_J, &del2, &beg,
+  int plus_right = align_against_collection(sequence, germline->rep_3, true, false, &tag_plus_J, &del_plus_J, &del2, &beg,
 					    &plus_length, &score_plus_J
 					    , segment_cost);
   plus_length += plus_right - plus_left ;
@@ -482,10 +481,10 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
   vector<pair<int, int> > score_minus_V;
   vector<pair<int, int> > score_minus_J;
   
-  int minus_left = align_against_collection(rc, rep_V, false, false, &tag_minus_V, &del_minus_V, &del2, &beg,
+  int minus_left = align_against_collection(rc, germline->rep_5, false, false, &tag_minus_V, &del_minus_V, &del2, &beg,
 					    &minus_length, &score_minus_V
 					    ,  segment_cost);
-  int minus_right = align_against_collection(rc, rep_J, true, false, &tag_minus_J, &del_minus_J, &del2, &beg,
+  int minus_right = align_against_collection(rc, germline->rep_3, true, false, &tag_minus_J, &del_minus_J, &del2, &beg,
 					     &minus_length, &score_minus_J
 					     , segment_cost);
   minus_length += minus_right - minus_left ;
@@ -518,7 +517,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
     }
 
   segmented = (Vend != (int) string::npos) && (Jstart != (int) string::npos) && 
-    (Jstart - Vend >= delta_min) && (Jstart - Vend <= delta_max);
+    (Jstart - Vend >= germline->delta_min) && (Jstart - Vend <= germline->delta_max);
     
   dSegmented=false;
 
@@ -527,12 +526,12 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
       because = DONT_KNOW;
       info = " @" + string_of_int (Vend + FIRST_POS) + "  @" + string_of_int(Jstart + FIRST_POS) ;
       
-      if (Jstart - Vend < delta_min)
+      if (Jstart - Vend < germline->delta_min)
         {
           because = UNSEG_BAD_DELTA_MIN  ;
         }
 
-      if (Jstart - Vend > delta_max)
+      if (Jstart - Vend > germline->delta_max)
         {
           because = UNSEG_BAD_DELTA_MAX  ;
         }
@@ -561,7 +560,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
       string seq_right = sequence.substr(Jstart);
 
       best_align(overlap, seq_left, seq_right, 
-		 rep_V.sequence(best_V), rep_J.sequence(best_J), &b_r,&b_l, segment_cost);
+		 germline->rep_5.sequence(best_V), germline->rep_3.sequence(best_J), &b_r,&b_l, segment_cost);
       // Trim V
       Vend -= b_l;
       del_V += b_l;
@@ -578,24 +577,24 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
     /// used only below, then recomputed in finishSegmentation() ;
     seg_N = revcomp(sequence, reversed).substr(Vend+1, Jstart-Vend-1); 
 
-  code = rep_V.label(best_V) +
+  code = germline->rep_5.label(best_V) +
     " "+ string_of_int(del_V) + 
     "/" + seg_N + 
     // chevauchement +
     "/" + string_of_int(del_J) +
-    " " + rep_J.label(best_J); 
+    " " + germline->rep_3.label(best_J); 
 
     stringstream code_s;
-   code_s<< rep_V.label(best_V) <<
+   code_s<< germline->rep_5.label(best_V) <<
     " -" << string_of_int(del_V) << "/" 
     << seg_N.size()
     // chevauchement +
     << "/-" << string_of_int(del_J)
-    <<" " << rep_J.label(best_J);
+    <<" " << germline->rep_3.label(best_J);
     code_short=code_s.str();
     
-  code_light = rep_V.label(best_V) +
-    "/ " + rep_J.label(best_J); 
+  code_light = germline->rep_5.label(best_V) +
+    "/ " + germline->rep_3.label(best_J); 
 
  
   info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS) ;
@@ -604,7 +603,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
 }
 
 
-void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
+void FineSegmenter::FineSegmentD(Germline *germline){
   
   if (segmented){
     
@@ -626,7 +625,7 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
     string str = getSequence().sequence.substr(l, r-l);
 
     // Align
-    end = align_against_collection(str, rep_D, false, true, &tag_D, &del_D_right, &del_D_left, &begin,
+    end = align_against_collection(str, germline->rep_4, false, true, &tag_D, &del_D_right, &del_D_left, &begin,
 				&length, &score_D, segment_cost);
     
     best_D = tag_D;
@@ -646,7 +645,7 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
       string seq_right = seq.substr(Dstart, Dend-Dstart+1);
 
       best_align(overlap, seq_left, seq_right, 
-		 rep_V.sequence(best_V), rep_D.sequence(best_D), &b_r,&b_l, segment_cost);
+		 germline->rep_5.sequence(best_V), germline->rep_4.sequence(best_D), &b_r,&b_l, segment_cost);
 
       // Trim V
       Vend -= b_l;
@@ -665,7 +664,7 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
       string seq_left = seq.substr(Jstart, seq.length()-Jstart);
 
       best_align(overlap, seq_left, seq_right, 
-		 rep_D.sequence(best_D), rep_J.sequence(best_J), &b_r,&b_l, segment_cost);
+		 germline->rep_4.sequence(best_D), germline->rep_3.sequence(best_J), &b_r,&b_l, segment_cost);
 
       // Trim D
       Dend -= b_l;
@@ -676,42 +675,42 @@ void FineSegmenter::FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
 
     }
     seg_N2 = seq.substr(Dend+1, Jstart-Dend-1) ; // From Dend+1 to right-1
-    code = rep_V.label(best_V) +
+    code = germline->rep_5.label(best_V) +
     " "+ string_of_int(del_V) + 
     "/" + seg_N1 + 
     
     "/" + string_of_int(del_D_left) +
-    " " + rep_D.label(best_D) +
+    " " + germline->rep_4.label(best_D) +
     " " + string_of_int(del_D_right) +
     
     "/" + seg_N2 +
     "/" + string_of_int(del_J) +
-    " " + rep_J.label(best_J); 
+    " " + germline->rep_3.label(best_J); 
 
     stringstream code_s;
-    code_s << rep_V.label(best_V) 
+    code_s << germline->rep_5.label(best_V) 
     << " -" << string_of_int(del_V) << "/" 
     << seg_N1.size()
     
     << "/-" << string_of_int(del_D_left) 
-    << " " << rep_D.label(best_D) 
+    << " " << germline->rep_4.label(best_D) 
     << " -" << string_of_int(del_D_right) << "/"
     
     << seg_N2.size()
     << "/-" << string_of_int(del_J) 
-    << " " << rep_J.label(best_J);
+    << " " << germline->rep_3.label(best_J);
     code_short=code_s.str();
     
     
-    code_light = rep_V.label(best_V) +
-    "/ " + rep_D.label(best_D) +
-    "/ " + rep_J.label(best_J); 
+    code_light = germline->rep_5.label(best_V) +
+    "/ " + germline->rep_4.label(best_D) +
+    "/ " + germline->rep_3.label(best_J); 
     
     finishSegmentationD();
   }
 }
 
-JsonList FineSegmenter::toJsonList(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
+JsonList FineSegmenter::toJsonList(Germline *germline){
   JsonList result;
   
   result.add("status", because);
@@ -728,7 +727,7 @@ JsonList FineSegmenter::toJsonList(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
 
     // TODO: what is going on if some list is smaller than JSON_REMEMBER_BEST ?
     
-    for (int i=0; i<JSON_REMEMBER_BEST; i++) jsonV.add( rep_V.label(score_V[i].second) ) ;
+    for (int i=0; i<JSON_REMEMBER_BEST; i++) jsonV.add( germline->rep_5.label(score_V[i].second) ) ;
     result.add("V", jsonV);
     
     
@@ -737,11 +736,11 @@ JsonList FineSegmenter::toJsonList(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J){
       result.add("Dend", Dend);      
       JsonArray jsonD;
 
-      for (int i=0; i<JSON_REMEMBER_BEST; i++) jsonD.add( rep_D.label(score_D[i].second) ) ;
+      for (int i=0; i<JSON_REMEMBER_BEST; i++) jsonD.add( germline->rep_4.label(score_D[i].second) ) ;
       result.add("D", jsonD);
     }
     
-    for (int i=0; i<JSON_REMEMBER_BEST; i++) jsonJ.add( rep_J.label(score_J[i].second) ) ;
+    for (int i=0; i<JSON_REMEMBER_BEST; i++) jsonJ.add( germline->rep_3.label(score_J[i].second) ) ;
     result.add("J", jsonJ);
   }
   return result;

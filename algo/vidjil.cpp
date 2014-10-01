@@ -1113,13 +1113,13 @@ int main (int argc, char **argv)
         } else {
 	//$$ There is one representative, FineSegmenter
 	  representative.label = string_of_int(it->second) + "--" + representative.label;
-	  FineSegmenter seg(representative, rep_V, rep_J, germline->delta_min, germline->delta_max, segment_cost);
+	  FineSegmenter seg(representative, germline, segment_cost);
 	
 	if (segment_D)
-	  seg.FineSegmentD(rep_V, rep_D, rep_J);
+	  seg.FineSegmentD(germline);
 	
         // Output segmentation to .json
-        json_data_segment[it->first]=seg.toJsonList(rep_V, rep_D, rep_J);
+        json_data_segment[it->first]=seg.toJsonList(germline);
         
         if (seg.isSegmented())
 	  {
@@ -1322,13 +1322,19 @@ int main (int argc, char **argv)
          << "* They should be checked with other softwares such as IgBlast, iHHMune-align or IMGT/V-QUEST." << endl
       ;
 
+    Germline *germline;
+
+    // Here, it could be run without building the index
+    germline = new Germline(rep_V, rep_D, rep_J, seed,
+			    delta_min, delta_max);
+
     while (reads->hasNext()) 
       {
         reads->next();
-        FineSegmenter s(reads->getSequence(), rep_V, rep_J, delta_min, delta_max, segment_cost);
+        FineSegmenter s(reads->getSequence(), germline, segment_cost);
 	if (s.isSegmented()) {
 	  if (segment_D)
-	  s.FineSegmentD(rep_V, rep_D, rep_J);
+	  s.FineSegmentD(germline);
           cout << s << endl;
         } else {
           cout << "Unable to segment" << endl;
