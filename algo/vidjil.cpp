@@ -1129,9 +1129,6 @@ int main (int argc, char **argv)
         } else {
 	//$$ There is one representative, FineSegmenter
 
-
-          representative.label = string_of_int(it->second) + "--" 
-            + representative.label;
 	  FineSegmenter seg(representative, rep_V, rep_J, delta_min, delta_max, segment_cost);
 	
 	if (segment_D)
