@@ -967,7 +967,7 @@ int main (int argc, char **argv)
     list <Sequence> representatives ;
     list <string> representatives_labels ;
 
-    VirtualReadScore *scorer = new KmerAffectReadScore(*(germline->index));
+    // VirtualReadScore *scorer = new KmerAffectReadScore(*(germline->index));
     int num_clone = 0 ;
     int clones_without_representative = 0 ;
 
@@ -1000,9 +1000,11 @@ int main (int argc, char **argv)
       string clone_file_name = out_seqdir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
 
       ofstream out_clone(clone_file_name.c_str());
+      Germline *segmented_germline = windowsStorage->getGermline(it->first);
       
       ostringstream oss;
-      oss << "clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone 
+      oss << "clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone
+	  << "--" << segmented_germline->code
 	  << "--" << setfill('0') << setw(WIDTH_NB_READS) << clone_nb_reads 
 	  << "--" << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%" ;
       string clone_id = oss.str();
@@ -1058,10 +1060,10 @@ int main (int argc, char **argv)
 	  representative.label = clone_id + "--" + representative.label;
 
 	  // FineSegmenter
-	  FineSegmenter seg(representative, germline, segment_cost);
+	  FineSegmenter seg(representative, segmented_germline, segment_cost);
 	
 	if (segment_D)
-	  seg.FineSegmentD(germline);
+	  seg.FineSegmentD(segmented_germline);
 	
 	// Output representative, possibly segmented... 
 	// to stdout, CLONES_FILENAME, and CLONE_FILENAME-*
@@ -1070,7 +1072,7 @@ int main (int argc, char **argv)
 	out_clones << seg << endl ;
 
         // Output segmentation to .json
-        json_data_segment[it->first]=seg.toJsonList(germline);
+        json_data_segment[it->first]=seg.toJsonList(segmented_germline);
         
         if (seg.isSegmented())
 	  {
@@ -1095,9 +1097,9 @@ int main (int argc, char **argv)
                 }
 
 	      // Output best V, (D) and J germlines to CLONE_FILENAME-*
-	      out_clone << rep_V.read(seg.best_V) ;
-	      if (segment_D) out_clone << rep_D.read(seg.best_D) ;
-	      out_clone << rep_J.read(seg.best_J) ;
+	      out_clone << segmented_germline->rep_5.read(seg.best_V) ;
+	      if (segment_D) out_clone << segmented_germline->rep_4.read(seg.best_D) ;
+	      out_clone << segmented_germline->rep_3.read(seg.best_J) ;
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
 
@@ -1151,7 +1153,7 @@ int main (int argc, char **argv)
         //Added distances matrix in the JsonTab
         jsonLevenshtein << JsonOutputWindowsMatrix(matrixLevenshtein);
 
-    delete scorer;
+     // delete scorer;
 
     } // endif (clones_windows.size() > 0)
 
@@ -1211,7 +1213,7 @@ int main (int argc, char **argv)
     delete json;
     delete json_samples;
 
-    delete germline ;
+    delete multigermline ;
     delete windowsStorage;
 
 
