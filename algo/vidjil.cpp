@@ -928,6 +928,7 @@ int main (int argc, char **argv)
 	clones_windows  = comp.cluster(forced_edges, w, cout, epsilon, minPts) ;
 	comp.stat_cluster(clones_windows, cout );
 	comp.del();
+	cout << "  ==> " << clones_windows.size() << " clusters" << endl ;
       } 
     else
       { 
@@ -935,50 +936,25 @@ int main (int argc, char **argv)
 	clones_windows  = comp.nocluster() ; /// XXX SUPPRIMER
       }
 
-    cout << "  ==> " << clones_windows.size() << " clones" << endl ;
+
+    // TODO: output clones_windows (.data, other places ?)
+
+    // TODO: Are these constraints checked somewhere ? keepInterestingWindows ?
+    // if (labeled 
+    //     || ((clone_nb_reads >= min_reads_clone) 
+    //		  && (clone_nb_reads * 100.0 / nb_segmented >= ratio_reads_clone)))
+
+    windowsStorage->sort();
+    list<pair <junction, int> > sort_clones = windowsStorage->getSortedList();
+    cout << "  ==> " << sort_clones.size() << " clones" << endl ;
  
-    if (clones_windows.size() == 0)
+    if (sort_clones.size() == 0)
       {
 	cout << "  ! No clones with current parameters." << endl;
 	cout << "  ! See the 'Limits to report a clone' options (-R, -%, -z, -A)." << endl;
       }
-    else // clones_windows.size() > 0
-      { 
-
-    //$$ Sort clones, number of occurrences
-    //////////////////////////////////
-    cout << "Sort clones by number of occurrences" << endl;
-
-    list<pair<list <junction>, int> >sort_clones;
-
-    for (list <list <junction> >::const_iterator it = clones_windows.begin(); it != clones_windows.end(); ++it)
+    else
       {
-        list <junction>clone = *it ;
-
-	int clone_nb_reads=0;
-	
-        for (list <junction>::const_iterator it2 = clone.begin(); it2 != clone.end(); ++it2)
-	  clone_nb_reads += windowsStorage->getNbReads(*it2);
-	  
-	bool labeled = false ;
-	// Is there a labeled window ?
-	for (list <junction>::const_iterator iit = clone.begin(); iit != clone.end(); ++iit) {
-	  if (windows_labels.find(*iit) != windows_labels.end())
-	    {
-	      labeled = true ;
-	      break ;
-	    }
-	}
-
-	  if (labeled 
-	      || ((clone_nb_reads >= min_reads_clone) 
-		  && (clone_nb_reads * 100.0 / nb_segmented >= ratio_reads_clone)))
-          // Record the clone and its number of occurrence
-          sort_clones.push_back(make_pair(clone, clone_nb_reads));
-      }
-
-    // Sort clones
-    sort_clones.sort(pair_occurrence_sort<list<junction> >);
 
     cout << endl;
 
@@ -1013,9 +989,10 @@ int main (int argc, char **argv)
     cout << "  ==> " << out_seqdir + prefix_filename + CLONE_FILENAME + "*" << "\t(detail, by clone)" << endl ; 
     cout << endl ;
 
-    for (list <pair<list <junction>,int> >::const_iterator it = sort_clones.begin();
+
+    for (list <pair<junction,int> >::const_iterator it = sort_clones.begin();
          it != sort_clones.end(); ++it) {
-      list<junction> clone = it->first;
+      junction win = it->first;
       int clone_nb_reads = it->second;
 
     
@@ -1040,47 +1017,16 @@ int main (int argc, char **argv)
 	  << compute_normalization_one(norm_list, clone_nb_reads) << " ";
       cout.flush();
 
-      //////////////////////////////////
-
-      //$$ Sort sequences by nb_reads
-      list<pair<junction, int> >sort_windows;
-
-      for (list <junction>::const_iterator it = clone.begin(); it != clone.end(); ++it) {
-	int nb_reads = windowsStorage->getNbReads(*it);
-        sort_windows.push_back(make_pair(*it, nb_reads));
-      }
-      sort_windows.sort(pair_occurrence_sort<junction>);
 
       //$$ Output windows 
 
       int num_seq = 0 ;
 
-      for (list <pair<junction, int> >::const_iterator it = sort_windows.begin(); 
-           it != sort_windows.end(); ++it) {
-	num_seq++ ;
-
         out_windows << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
 	out_windows << it->first << endl;
 
-	if ((!detailed_cluster_analysis) && (num_seq == 1))
-	  {
-	    cout << "\t" << setw(WIDTH_NB_READS) << it->second << "\t";
-	    cout << it->first ;
-	    cout << "\t" << windows_labels[it->first] ;
-	  }
-      }
-
-      if (!detailed_cluster_analysis)
-	{
-	  cout << endl ;
-	  continue ;
-	}
-
 	
-      //$$ First pass, choose one representative per cluster
-      
-      for (list <pair<junction, int> >::const_iterator it = sort_windows.begin(); 
-           it != sort_windows.end(); ++it) {
+      //$$ Output the window
 
         out_clone << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
 	out_clone << it->first << endl;
@@ -1099,7 +1045,10 @@ int main (int argc, char **argv)
 	  cout << auditioned.size() << " auditioned sequences, avg length " << total_length / auditioned.size() << endl ;
 	}
 
-        Sequence representative 
+        Sequence representative = NULL_SEQUENCE ;
+
+	if (detailed_cluster_analysis)
+	  representative 
           = windowsStorage->getRepresentative(it->first, seed, 
                                              min_cover_representative,
                                              ratio_representative,
@@ -1152,7 +1101,7 @@ int main (int argc, char **argv)
 	      if (segment_D) out_clone << rep_D.read(seg.best_D) ;
 	      out_clone << rep_J.read(seg.best_J) ;
 	      out_clone << endl;
-          }
+          } // end if (seg.isSegmented())
 
 
 	if (output_sequences_by_cluster) // -a option, output all sequences
@@ -1166,8 +1115,7 @@ int main (int argc, char **argv)
 	  }
 
 
-        if (seg.isSegmented() 
-            || it == --(sort_windows.end())) {
+        if (seg.isSegmented()) {
 	  // Store the representative and its label
           representatives.push_back(representative);
           representatives_labels.push_back("#" + string_of_int(num_clone));
@@ -1190,16 +1138,14 @@ int main (int argc, char **argv)
 			 << " " << seg.info << setfill(' ') << endl ;
 	      out_clones << representative.sequence << endl;
 
-              break ;
-        }
-        }
-      }
-
-      cout << endl ;
-      out_windows.close();
+	} // end if (seg.isSegmented())
+	} // end if (there is a representative)
+	
+	cout << endl ;
+	out_windows.close();
       out_clone.close();
-    }
-
+    } // end for clones
+	
     out_edges.close() ;
     out_clones.close();
 
@@ -1215,9 +1161,6 @@ int main (int argc, char **argv)
   
     //$$ Compare representatives of all clones
 
-    if (detailed_cluster_analysis)
-      {
-
     if (nb_edges)
       {
         cout << "Please review the " << nb_edges << " suggested edge(s) in " << out_dir+EDGES_FILENAME << endl ;
@@ -1229,21 +1172,17 @@ int main (int argc, char **argv)
     SimilarityMatrix matrix = compare_all(first_representatives, true, 
                                           representatives_labels);
     cout << RawOutputSimilarityMatrix(matrix, 90);
-        //Sort all windows
-        windowsStorage->sort();
         //Compute all the edges
+        cout << "Compute distances" << endl ;
         SimilarityMatrix matrixLevenshtein = compare_windows(*windowsStorage, Levenshtein, max_clones);
         //Added distances matrix in the JsonTab
         jsonLevenshtein << JsonOutputWindowsMatrix(matrixLevenshtein);
-  }
-
 
     delete scorer;
-    }
 
     } // endif (clones_windows.size() > 0)
 
-    
+
     //$$ .json output: json_data_segment
     string f_json = out_dir + prefix_filename + "vidjil" + JSON_SUFFIX ; // TODO: retrieve basename from f_reads instead of "vidjil"
     cout << "  ==> " << f_json << "\t(data file for the browser)" << endl ;
@@ -1295,10 +1234,14 @@ int main (int argc, char **argv)
     //json->add("links", jsonLevenshtein);
     out_json << json->toString();
     
-    delete germline ;
     delete json;
-    delete windowsStorage;
     delete json_samples;
+
+    } // end if (command == CMD_ANALYSIS) 
+
+    delete germline ;
+    delete windowsStorage;
+
 
     if (output_segmented)
       delete out_segmented;
