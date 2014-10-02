@@ -154,6 +154,11 @@ chmod 400 web2py.key
 openssl req -new -x509 -nodes -sha1 -days 1780 -key web2py.key > web2py.crt
 openssl x509 -noout -fingerprint -text < web2py.crt > web2py.info
 
+# Prepare folder for vidjil log
+sudo mkdir /var/vidjil
+sudo touch /var/vidjil/vidjil.log
+sudo touch /var/vidjil/vidjil-debug.log
+sudo chown -R www-data:www-data /var/vidjil
 
 # Prepare folders for uwsgi
 sudo mkdir /etc/uwsgi
