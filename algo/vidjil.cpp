@@ -933,7 +933,6 @@ int main (int argc, char **argv)
     else
       { 
 	cout << "No clustering" << endl ; 
-	clones_windows  = comp.nocluster() ; /// XXX SUPPRIMER
       }
 
 
