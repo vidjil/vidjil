@@ -165,10 +165,6 @@ void usage(char *progname)
        << "  -l <file>     labels for some windows -- these windows will be kept even if some limits are not reached" << endl
        << endl
 
-       << "Limit to keep a window" << endl
-       << "  -r <nb>       minimal number of reads containing a window (default: " << MIN_READS_WINDOW << ")" << endl
-       << endl
-
        << "Additional clustering (not output in vidjil.data and therefore not used in the browser)" << endl
        << "  -e <file>     manual clustering -- a file used to force some specific edges" << endl
        << "  -n <int>      maximum distance between neighbors for automatic clustering (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
@@ -179,13 +175,13 @@ void usage(char *progname)
        << endl
 
        << "Limits to report a clone" << endl
-       << "  -R <nb>       minimal number of reads supporting a clone (default: " << MIN_READS_CLONE << ")" << endl
+       << "  -r <nb>       minimal number of reads supporting a clone (default: " << MIN_READS_CLONE << ")" << endl
        << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << RATIO_READS_CLONE << ")" << endl
        << endl
 
        << "Limits to segment a clone" << endl
        << "  -z <nb>       maximal number of clones to be segmented (0: no limit, do not use) (default: " << MAX_CLONES << ")" << endl
-       << "  -A            reports and segments all clones (-r 0 -R 1 -% 0 -z 0), to be used only on very small datasets" << endl
+       << "  -A            reports and segments all clones (-r 0 -% 0 -z 0), to be used only on very small datasets" << endl
        << endl
 
        << "Fine segmentation options (second pass, see warning in doc/README)" << endl
@@ -214,7 +210,7 @@ void usage(char *progname)
        << endl 
        << "Examples (see doc/README)" << endl
        << "  " << progname << "             -G germline/IGH             -d data/Stanford_S22.fasta" << endl
-       << "  " << progname << " -c clones   -G germline/IGH  -r 5 -R 5  -d data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c clones   -G germline/IGH  -r 5       -d data/Stanford_S22.fasta" << endl
        << "  " << progname << " -c segment  -G germline/IGH             -d data/Stanford_S22.fasta   # (only for testing)" << endl
        << "  " << progname << " -c germlines                               data/Stanford_S22.fasta" << endl
     ;
@@ -265,7 +261,6 @@ int main (int argc, char **argv)
   int command = CMD_WINDOWS;
 
   int max_clones = MAX_CLONES ;
-  int min_reads_window = MIN_READS_WINDOW ;
   int min_reads_clone = MIN_READS_CLONE ;
   float ratio_reads_clone = RATIO_READS_CLONE;
   // int average_deletion = 4;     // Average number of deletion in V or J
@@ -296,7 +291,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "AhaG:V:D:J:k:r:R:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "AhaG:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:uU")) != EOF)
 
     switch (c)
       {
@@ -396,15 +391,11 @@ int main (int argc, char **argv)
 
       // Limits
 
-      case 'r':
-	min_reads_window = atoi(optarg);
-        break;
-
       case '%':
 	ratio_reads_clone = atof(optarg);
 	break;
 
-      case 'R':
+      case 'r':
 	min_reads_clone = atoi(optarg);
         break;
 
@@ -413,7 +404,6 @@ int main (int argc, char **argv)
         break;
 
       case 'A': // --all
-	min_reads_window = 1 ;
 	ratio_reads_clone = 0 ;
 	min_reads_clone = 0 ;
 	max_clones = 0 ;
@@ -889,10 +879,15 @@ int main (int argc, char **argv)
     if (command == CMD_ANALYSIS) {
 
     //////////////////////////////////
-    //$$ min_reads_window (ou label)
-    cout << "Considering only windows with >= " << min_reads_window << " reads and labeled windows" << endl;
+    //$$ min_reads_clone (ou label)
 
-    pair<int, int> info_remove = windowsStorage->keepInterestingWindows((size_t) min_reads_window);
+    int min_reads_clone_ratio = (int) (ratio_reads_clone * nb_segmented / 100.0);
+    cout << "Considering only labeled windows and windows with >= " << min_reads_clone << " reads"
+	 << " and with a ratio >= " << ratio_reads_clone << " (" << min_reads_clone_ratio << ")" << endl ;
+
+    int min_reads_clone_final = max(min_reads_clone, min_reads_clone_ratio);
+
+    pair<int, int> info_remove = windowsStorage->keepInterestingWindows((size_t) min_reads_clone_final);
 	 
     cout << "  ==> keep " <<  windowsStorage->size() << " windows in " << info_remove.second << " reads" ;
     cout << " (" << setprecision(3) << 100 * (float) info_remove.second / nb_total_reads << "%)  " << endl ;
@@ -950,7 +945,7 @@ int main (int argc, char **argv)
     if (sort_clones.size() == 0)
       {
 	cout << "  ! No clones with current parameters." << endl;
-	cout << "  ! See the 'Limits to report a clone' options (-R, -%, -z, -A)." << endl;
+	cout << "  ! See the 'Limits to report a clone' options (-r, -%, -z, -A)." << endl;
       }
     else
       {
@@ -959,12 +954,12 @@ int main (int argc, char **argv)
 
     //////////////////////////////////
     //$$ Output clones
-    if (max_clones > 0)
-      cout << "Output at most " << max_clones<< " clones" ;
-    else
-      cout << "Output all clones" ;
 
-    cout << " with >= " << min_reads_clone << " reads and with a ratio >= " << ratio_reads_clone << endl ;
+    if (max_clones > 0)
+      cout << "Detailed analysis of at most " << max_clones<< " clones" ;
+    else
+      cout << "Detailed analysis of all clones" ;
+    cout << endl ;
 
     map <string, int> clones_codes ;
     map <string, string> clones_map_windows ;
