@@ -933,6 +933,10 @@ span.logo {
 .db_table {
   width: 100%;
   border-collapse: collapse;
+  table-layout: fixed;
+}
+.db_table td {
+  overflow: hidden;
 }
 .db_table .column1 {
   width: 100px;
