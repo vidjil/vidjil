@@ -146,6 +146,7 @@ void usage(char *progname)
        << "  -D <file>     D germline multi-fasta file (automatically implies -d)" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa)" << endl
+       << "  -g            multiple germlines (experimental)" << endl
        << endl
 
        << "Window prediction" << endl
@@ -276,6 +277,7 @@ int main (int argc, char **argv)
   bool detailed_cluster_analysis = true ;
   bool output_segmented = false;
   bool output_unsegmented = false;
+  bool multi_germline = false;
 
   string forced_edges = "" ;
 
@@ -291,7 +293,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "AhaG:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "AhagG:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:uU")) != EOF)
 
     switch (c)
       {
@@ -353,6 +355,10 @@ int main (int argc, char **argv)
 	germline_system = "custom" ;
 	break;
 
+      case 'g':
+	multi_germline = true ;
+	break;
+	
       case 'G':
 	germline_system = string(optarg);
 	f_rep_V = (germline_system + "V.fa").c_str() ;
@@ -772,12 +778,20 @@ int main (int argc, char **argv)
     //$$ Build Kmer indexes
     cout << "Build Kmer indexes" << endl ;
     
-    Germline *germline;
-    germline = new Germline(rep_V, rep_D, rep_J, seed,
-			    delta_min, delta_max);
+    MultiGermline *multigermline = new MultiGermline();
 
-    MultiGermline *multigermline;
-    multigermline = new MultiGermline(germline);
+    if (multi_germline)
+      {
+	multigermline->load_default_set();
+      }
+    else
+      {
+	Germline *germline;
+	germline = new Germline(rep_V, rep_D, rep_J, seed,
+				delta_min, delta_max);
+
+	multigermline->insert(germline);
+      }
 
     //////////////////////////////////
     //$$ Kmer Segmentation
