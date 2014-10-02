@@ -1003,10 +1003,8 @@ int main (int argc, char **argv)
       cout << "#### " ;
 
       string clone_file_name = out_seqdir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
-      string windows_file_name = out_seqdir+ prefix_filename + WINDOWS_FILENAME + "-" + string_of_int(num_clone) ;
 
       ofstream out_clone(clone_file_name.c_str());
-      ofstream out_windows(windows_file_name.c_str());
       
       ostringstream oss;
       oss << "clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone 
@@ -1024,15 +1022,11 @@ int main (int argc, char **argv)
       cout << endl ;
 
 
-      //$$ Output windows 
+      //$$ Output window
 
-      int num_seq = 0 ;
-
-        out_windows << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
-	out_windows << it->first << endl;
-
-        out_clone << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
-	out_clone << it->first << endl;
+      string window_str = ">" + clone_id + "--window" + " " + windows_labels[it->first] + '\n' + it->first + '\n' ;;
+      cout << window_str ;
+      out_clone << window_str ;
 
 	//$$ Compute a representative sequence
 	// Display statistics on auditionned sequences
@@ -1083,11 +1077,6 @@ int main (int argc, char **argv)
         // Output segmentation to .json
         json_data_segment[it->first]=seg.toJsonList(germline);
         
-	// display window
-	cout 
-	     << ">clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "-window"  << " " << windows_labels[it->first] << endl
-	     << it->first << endl ;
-	
         if (seg.isSegmented())
 	  {
 	      // Check for identical code, outputs to out_edge
@@ -1132,7 +1121,6 @@ int main (int argc, char **argv)
 	  }
 	
 	cout << endl ;
-	out_windows.close();
       out_clone.close();
     } // end for clones
 	
