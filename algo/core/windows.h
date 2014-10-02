@@ -16,7 +16,7 @@
 #include "fasta.h"
 #include "json.h"
 #include "segment.h"
-#include "json.h"
+#include "germline.h"
 
 using namespace std;
 
@@ -26,6 +26,7 @@ class WindowsStorage {
  private:
   map<junction, list<Sequence> > seqs_by_window;
   map<junction, vector<int> > status_by_window;
+  map<junction, Germline* > germline_by_window;
   map<string, string> windows_labels;
   list<pair <junction, int> > sort_all_windows;
   map<junction, int> id_by_window;
@@ -51,6 +52,7 @@ class WindowsStorage {
    * @return the segmented status of reads supporting a given window
    */
   vector<int> getStatus(junction window);
+  Germline *getGermline(junction window);
   
   JsonList statusToJson(junction window);
   
@@ -107,7 +109,7 @@ class WindowsStorage {
   /**
    * Add a new window with its list of sequences
    */
-  void add(junction window, Sequence sequence, int status);
+  void add(junction window, Sequence sequence, int status, Germline *germline);
 
   /**
    * Only keep windows that are interesting.  Those windows are windows

@@ -26,6 +26,10 @@ vector<int> WindowsStorage::getStatus(junction window) {
   return status_by_window[window];   
 }
 
+Germline *WindowsStorage::getGermline(junction window) {
+  return germline_by_window[window];   
+}
+
 JsonList WindowsStorage::statusToJson(junction window) {
     JsonList result;
     
@@ -85,12 +89,14 @@ int WindowsStorage::getId(junction window) {
     return id_by_window[window];
 }
 
-void WindowsStorage::add(junction window, Sequence sequence, int status) {
+void WindowsStorage::add(junction window, Sequence sequence, int status, Germline *germline) {
   seqs_by_window[window].push_back(sequence);
   if (status_by_window.find(window) == status_by_window.end() ) {
       status_by_window[window].resize(STATS_SIZE);
   }
   status_by_window[window][status]++;
+
+  germline_by_window[window] = germline;
 }
 
 pair <int, int> WindowsStorage::keepInterestingWindows(size_t min_reads_window) {
