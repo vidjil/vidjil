@@ -12,6 +12,6 @@ $ Same number unsegmented
 $ Keep the same number of windows
 0:==> keep 
 
-$ Same segmentation for one of the main clone
-2:clone.00..representative.*0 74 76 100 113 169
+$ Same segmentation for one of the main clones
+2:clone.00..*0 74 76 100 113 169
 
