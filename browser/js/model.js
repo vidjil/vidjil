@@ -199,6 +199,9 @@ Model.prototype = {
                 self.initClones()
                 self.dataFileName = url_split[url_split.length-1]
                 self.loadAnalysisUrl(url)
+            },                
+            error: function (request, status, error) {
+                myConsole.flash("error : can't reach " + url + "file");
             }
         });
 

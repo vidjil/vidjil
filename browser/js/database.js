@@ -58,7 +58,7 @@ Database.prototype = {
             }, 
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    myConsole.flash("database : Timeout")
+                    myConsole.flash("database : Timeout",2)
                 } else {
                     self.check_cert()
                 }
@@ -103,6 +103,7 @@ Database.prototype = {
                 }
             }
             
+            //TODO server need to return message priority too ( 0=console, 1=ok, 2=error)
             if (res.message) myConsole.flash("database : " + res.message , 1)
             
             return res
@@ -147,7 +148,7 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
-                        myConsole.flash("database : Timeout")
+                        myConsole.flash("database : Timeout",2)
                     } else {
                         popupMsg(request.responseText);
                     }
@@ -173,7 +174,7 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
-                        myConsole.flash("database : Timeout")
+                        myConsole.flash("database : Timeout",2)
                     } else {
                         self.call("patient/index")
                     }
@@ -221,7 +222,7 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if(status==="timeout") {
-                        myConsole.flash("database : Timeout")
+                        myConsole.flash("database : Timeout",2)
                     } else {
                         popupMsg(request + " " + status + " " + error);
                     } 
@@ -258,9 +259,9 @@ Database.prototype = {
                 delete self.upload[id]; 
                 self.upload_display();
                 if (status === "timeout") {
-                    myConsole.flash("database : Timeout")
+                    myConsole.flash("database : Timeout",2)
                 } else {
-                    myConsole.flash("upload " + filename + " : " + status)
+                    myConsole.flash("upload " + filename + " : " + status, 2)
                 }
             }
         });
@@ -312,7 +313,7 @@ Database.prototype = {
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    myConsole.flash("database : Timeout")
+                    myConsole.flash("database : Timeout", 2)
                 } else {
                     self.call("patient/index")
                 }
@@ -367,7 +368,7 @@ Database.prototype = {
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    myConsole.flash("database : Timeout")
+                    myConsole.flash("database : Timeout", 2)
                 } else {
                     popupMsg(request.responseText);
                 }
@@ -395,7 +396,7 @@ Database.prototype = {
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    myConsole.flash("database : Timeout")
+                    myConsole.flash("database : Timeout", 2)
                 } else {
                     popupMsg(request.responseText);
                 }
@@ -444,7 +445,7 @@ Database.prototype = {
                 }
             });
         }else{
-            myConsole.flash("server : save analysis error : this file is nor from the database")
+            myConsole.flash("server : save analysis error : this file is nor from the database", 2)
         }
     },
     
