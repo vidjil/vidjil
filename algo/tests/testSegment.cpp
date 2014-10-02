@@ -2,6 +2,7 @@
 #include <fstream>
 #include <iostream>
 #include <string>
+#include "core/germline.h"
 #include "core/kmerstore.h"
 #include "core/dynprog.h"
 #include "core/fasta.h"
@@ -18,25 +19,28 @@ void testFineSegment()
   
   Fasta data("../../data/Stanford_S22.fasta", 1, " ");
 
+  Germline *germline ;
+  germline = new Germline(seqV, seqD, seqJ, "####", 0, 50);
+
   Sequence seq = data.read(2);
       
   //segmentation VJ
-  FineSegmenter s(seq, seqV, seqJ, 0, 50, VDJ);
+  FineSegmenter s(seq, germline, VDJ);
 	
   TAP_TEST(s.isSegmented(), TEST_SEGMENT_POSITION, "is segmented (VJ)") ;
   
   //segmentation D
-  s.FineSegmentD(seqV, seqD, seqJ);
+  s.FineSegmentD(germline);
   
   TAP_TEST(s.isSegmented(), TEST_SEGMENT_POSITION, "is segmented (VDJ)") ;
 
   // Revcomp sequence and tests that the results are the same.
   seq.sequence = revcomp(seq.sequence);
-  FineSegmenter s2(seq, seqV, seqJ, 0, 50, VDJ);
+  FineSegmenter s2(seq, germline, VDJ);
 
   TAP_TEST(s2.isSegmented(), TEST_SEGMENT_POSITION, "is segmented (VJ)") ;
   //segmentation D
-  s2.FineSegmentD(seqV, seqD, seqJ);
+  s2.FineSegmentD(germline);
   TAP_TEST(s2.isSegmented(), TEST_SEGMENT_POSITION, "is segmented (VDJ)") ;
   
   TAP_TEST(s.getLeft() == s2.getLeft(), TEST_SEGMENT_REVCOMP, " left segmentation position");
@@ -65,18 +69,22 @@ void testSegmentOverlap()
   
   Fasta data("../../data/bug-segment-overlap.fa", 1, " ");
   
-  ArrayKmerStore<KmerAffect> index(10, true);
-  index.insert(seqV, "V");
-  index.insert(seqJ, "J");
+  Germline *germline1 ;
+  germline1 = new Germline(seqV, seqV, seqJ, "##########", -50, 50);
+  Germline *germline2 ;
+  germline2 = new Germline(seqV, seqV, seqJ, "##########", -50, 50);
+
+  MultiGermline *multi1 ;
+  multi1 = new MultiGermline(germline1);
 
   for (int i = 0; i < data.size(); i++) {
-    KmerSegmenter ks(data.read(i), &index, 0, 100);
+    KmerSegmenter ks(data.read(i), multi1);
     TAP_TEST(ks.seg_V + ks.seg_N + ks.seg_J == data.sequence(i)
              || ks.seg_V + ks.seg_N + ks.seg_J == revcomp(data.sequence(i)), 
              TEST_KMER_SEGMENT_OVERLAP,
              " V= " << ks.seg_V << ", N = " << ks.seg_N << ", J = " << ks.seg_J);
 
-    FineSegmenter fs(data.read(i), seqV, seqJ, -50, 50, VDJ); 
+    FineSegmenter fs(data.read(i), germline2, VDJ); 
     TAP_TEST(fs.seg_V + fs.seg_N + fs.seg_J == data.sequence(i)
              || fs.seg_V + fs.seg_N + fs.seg_J == revcomp(data.sequence(i)), 
              TEST_FINE_SEGMENT_OVERLAP,
@@ -90,13 +98,16 @@ void testSegmentationCause() {
   
   Fasta data("../../data/segmentation.fasta", 1, " ");
 
-  ArrayKmerStore<KmerAffect> index(10, true);
-  index.insert(seqV, "V");
-  index.insert(seqJ, "J");
+  Germline *germline ;
+  germline = new Germline(seqV, seqV, seqJ, "##########", 0, 10);
+
+  MultiGermline *multi ;
+  multi = new MultiGermline(germline);
+
   int nb_checked = 0;
 
   for (int i = 0; i < data.size(); i++) {
-    KmerSegmenter ks(data.read(i), &index, 0, 10);
+    KmerSegmenter ks(data.read(i), multi);
 
     if (data.read(i).label == "seq-seg+") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "seq is " << data.label(i));
@@ -178,9 +189,11 @@ void testExtractor() {
   
   OnlineFasta data("../../data/segmentation.fasta", 1, " ");
 
-  ArrayKmerStore<KmerAffect> index(10, true);
-  index.insert(seqV, "V");
-  index.insert(seqJ, "J");
+  Germline *germline ;
+  germline = new Germline(seqV, seqV, seqJ, "##########", 0, 10);
+  
+  MultiGermline *multi ;
+  multi = new MultiGermline(germline);
 
   WindowExtractor we;
   map<string, string> labels;
@@ -189,7 +202,7 @@ void testExtractor() {
   we.setSegmentedOutput(&out_seg);
   we.setUnsegmentedOutput(&out_unseg);
 
-  WindowsStorage *ws = we.extract(&data, &index, 30, 0, 10, labels);
+  WindowsStorage *ws = we.extract(&data, multi, 30, labels);
 
   TAP_TEST(we.getNbReads() == 11, TEST_EXTRACTOR_NB_READS, "");
 

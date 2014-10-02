@@ -59,8 +59,6 @@ class comp_matrix {
 					int w=0,ostream &out=cout,
 					int epsilon=1, int minPts=10);
     
-    list<list<junction> >  nocluster();
-    
     /**
     * reset state 
     */

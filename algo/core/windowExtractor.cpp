@@ -4,8 +4,8 @@
 WindowExtractor::WindowExtractor(): out_segmented(NULL), out_unsegmented(NULL){}
                                     
 
-WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, IKmerStore<KmerAffect> *index,
-                                         size_t w, int delta_min, int delta_max, 
+WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *multigermline,
+					 size_t w,
                                          map<string, string> &windows_labels) {
   init_stats();
 
@@ -14,8 +14,8 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, IKmerStore<KmerAffe
   while (reads->hasNext()) {
     reads->next();
     nb_reads++;
-       
-    KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max);
+    
+    KmerSegmenter seg(reads->getSequence(), multigermline);
 
     stats_segmented[seg.getSegmentationStatus()]++;
     stats_length[seg.getSegmentationStatus()] += seg.getSequence().sequence.length();

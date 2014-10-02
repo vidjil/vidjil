@@ -14,15 +14,17 @@ void testSegmentationBug1(int delta_min, int delta_max) {
   Fasta seqV("../../germline/TRGV.fa");
   Fasta seqJ("../../germline/TRGJ.fa");
 
-  IKmerStore<KmerAffect>  *index = new ArrayKmerStore<KmerAffect>(k, rc);
-  index->insert(seqV, "V");
-  index->insert(seqJ, "J");
+  Germline *germline ;
+  germline = new Germline(seqV, seqV, seqJ, "##############", delta_min, delta_max);
+
+  MultiGermline *multi ;
+  multi = new MultiGermline(germline);
 
   OnlineFasta input(buggy_sequences);
 
   while (input.hasNext()) {
     input.next();
-    KmerAffectAnalyser<KmerAffect> *kaa = new KmerAffectAnalyser<KmerAffect>(*index, input.getSequence().sequence);
+    KmerAffectAnalyser<KmerAffect> *kaa = new KmerAffectAnalyser<KmerAffect>(*(germline->index), input.getSequence().sequence);
 
     set<KmerAffect> distinct_a = kaa->getDistinctAffectations();
     int strand = 0;
@@ -37,8 +39,8 @@ void testSegmentationBug1(int delta_min, int delta_max) {
       }
     }
 
-    Segmenter *segment = new KmerSegmenter(input.getSequence(), index, 
-                                           delta_min, delta_max);
+    Segmenter *segment = new KmerSegmenter(input.getSequence(), multi);
+
 
     if (strand == 2 
         || (strand == 1
@@ -52,7 +54,7 @@ void testSegmentationBug1(int delta_min, int delta_max) {
     delete segment;
     delete kaa;
   }
-  delete index;
+  delete germline;
 }
 
 void testBugs() {
