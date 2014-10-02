@@ -1008,13 +1008,20 @@ int main (int argc, char **argv)
       ofstream out_clone(clone_file_name.c_str());
       ofstream out_windows(windows_file_name.c_str());
       
+      ostringstream oss;
+      oss << "clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone 
+	  << "--" << setfill('0') << setw(WIDTH_NB_READS) << clone_nb_reads 
+	  << "--" << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%" ;
+      string clone_id = oss.str();
+
+      
       cout << "Clone #" << right << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone ;
       cout << " – " << setfill(' ') << setw(WIDTH_NB_READS) << clone_nb_reads << " reads" ;
       cout << " – " << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%  "  ;
 
       cout << " – " << 100 * (float) clone_nb_reads * compute_normalization_one(norm_list, clone_nb_reads) / nb_segmented << "% " 
 	  << compute_normalization_one(norm_list, clone_nb_reads) << " ";
-      cout.flush();
+      cout << endl ;
 
 
       //$$ Output windows 
@@ -1024,13 +1031,8 @@ int main (int argc, char **argv)
         out_windows << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
 	out_windows << it->first << endl;
 
-	
-      //$$ Output the window
-
         out_clone << ">" << it->second << "--window--" << num_seq << " " << windows_labels[it->first] << endl ;
 	out_clone << it->first << endl;
-
-
 
 	//$$ Compute a representative sequence
 	// Display statistics on auditionned sequences
@@ -1059,16 +1061,33 @@ int main (int argc, char **argv)
 	    cout << "# (no representative sequence with current parameters)" ;
 
         } else {
-	//$$ There is one representative, FineSegmenter
-	  representative.label = string_of_int(it->second) + "--" + representative.label;
+	//$$ There is one representative
+
+	  // Store the representative and its label
+          representatives.push_back(representative);
+          representatives_labels.push_back(string_of_int(num_clone));
+	  representative.label = clone_id + "--" + representative.label;
+
+	  // FineSegmenter
 	  FineSegmenter seg(representative, germline, segment_cost);
 	
 	if (segment_D)
 	  seg.FineSegmentD(germline);
 	
+	// Output representative, possibly segmented... 
+	// to stdout, CLONES_FILENAME, and CLONE_FILENAME-*
+	cout << seg << endl ;
+	out_clone << seg << endl ;
+	out_clones << seg << endl ;
+
         // Output segmentation to .json
         json_data_segment[it->first]=seg.toJsonList(germline);
         
+	// display window
+	cout 
+	     << ">clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "-window"  << " " << windows_labels[it->first] << endl
+	     << it->first << endl ;
+	
         if (seg.isSegmented())
 	  {
 	      // Check for identical code, outputs to out_edge
@@ -1091,16 +1110,15 @@ int main (int argc, char **argv)
                   clones_map_windows[code] = it->first ;
                 }
 
-	      // Output segmentation to CLONE_FILENAME-*
-              out_clone << seg ;
-              out_clone << endl ;
-
 	      // Output best V, (D) and J germlines to CLONE_FILENAME-*
 	      out_clone << rep_V.read(seg.best_V) ;
 	      if (segment_D) out_clone << rep_D.read(seg.best_D) ;
 	      out_clone << rep_J.read(seg.best_J) ;
 	      out_clone << endl;
-          } // end if (seg.isSegmented())
+	   } // end if (seg.isSegmented())
+
+	} // end if (there is a representative)
+
 
 
 	if (output_sequences_by_cluster) // -a option, output all sequences
@@ -1112,33 +1130,6 @@ int main (int argc, char **argv)
 		out_clone << *itt ;
 	      }
 	  }
-
-
-        if (seg.isSegmented()) {
-	  // Store the representative and its label
-          representatives.push_back(representative);
-          representatives_labels.push_back("#" + string_of_int(num_clone));
-
-              // display window
-              cout << endl 
-		   << ">clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "-window"  << " " << windows_labels[it->first] << endl
-		   << it->first << endl ;
-
-	      // display representative, possibly segmented...
-	      // (TODO: factorize)
-	      // ... on stdout
-	      cout << ">clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "-representative" << " " << seg.info << setfill(' ') << endl ;
-	      cout << representative.sequence << endl;
-
-	      // ... and in out_clones
-	      out_clones << ">clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "-representative" 
-			 << "-" << setfill('0') << setw(WIDTH_NB_READS) << clone_nb_reads 
-			 << "-" << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%"
-			 << " " << seg.info << setfill(' ') << endl ;
-	      out_clones << representative.sequence << endl;
-
-	} // end if (seg.isSegmented())
-	} // end if (there is a representative)
 	
 	cout << endl ;
 	out_windows.close();
