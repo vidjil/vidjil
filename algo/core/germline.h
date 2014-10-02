@@ -11,6 +11,7 @@ using namespace std;
 
 class Germline {
  private:
+  void build_index(string seed);
 
  public:
   /*
@@ -21,9 +22,16 @@ class Germline {
    *        so that the segmentation is accepted
    *        (left bound: end of V, right bound : start of J)
    */
-  Germline(Fasta rep_5, Fasta rep_4, Fasta rep_3,
+
+  Germline(string _code, char _shortcut, 
+  	   string f_rep_5, string f_rep_4, string f_rep_3,
+   	   string seed, 
+   	   int _delta_min, int _delta_max);
+
+  Germline(Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
 	   string seed,
-	   int delta_min, int delta_max);
+	   int _delta_min, int _delta_max);
+
   ~Germline();
 
   string code ;
@@ -52,8 +60,11 @@ class MultiGermline {
  public:
   list <Germline*> germlines;
 
-  MultiGermline(Germline *germline);
+  MultiGermline();
   MultiGermline(string f_germlines_json);
+
+  void insert(Germline *germline);
+  void load_default_set();
 };
 
 
