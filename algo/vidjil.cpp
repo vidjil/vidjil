@@ -1155,6 +1155,7 @@ int main (int argc, char **argv)
 
     } // endif (clones_windows.size() > 0)
 
+    } // end if (command == CMD_ANALYSIS) 
 
     //$$ .json output: json_data_segment
     string f_json = out_dir + prefix_filename + "vidjil" + JSON_SUFFIX ; // TODO: retrieve basename from f_reads instead of "vidjil"
@@ -1209,8 +1210,6 @@ int main (int argc, char **argv)
     
     delete json;
     delete json_samples;
-
-    } // end if (command == CMD_ANALYSIS) 
 
     delete germline ;
     delete windowsStorage;
