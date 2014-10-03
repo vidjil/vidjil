@@ -243,10 +243,10 @@ Model.prototype = {
                 min_sizes[k] = 0.01;
         }
 
+        var hash = 0
         //keep best top value
         for (var i = 0; i < data.windows.length; i++) {
             if (data.windows[i].top <= limit) {
-
                 //search for min_size
                 for (var k = 0; k < data.windows[i].size.length; k++) {
                     var size = (data.windows[i].size[k] / data.reads_segmented[k])
@@ -267,8 +267,10 @@ Model.prototype = {
                     (data.windows[i].Nlength > n_max)) {
                     n_max = data.windows[i].Nlength;
                 }
-
-                self.windows.push(data.windows[i]);
+                
+                var clone = new Clone(data.windows[i], self, hash)
+                self.windows.push(clone);
+                hash++
             }
         }
         
@@ -285,7 +287,8 @@ Model.prototype = {
             "top": 0,
             "size": []
         }
-        self.windows.push(other);
+        var clone = new Clone(other, self, hash)
+        self.windows.push(clone);
         
         // default samples
         if (typeof self.samples.number == 'string'){
