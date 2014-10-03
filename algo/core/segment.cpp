@@ -221,6 +221,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
     {
       // Yes, it is segmented
       segmented_germline = germline;
+      germline->stats.insert(length);
 
       reversed = (strand == -1); 
       because = reversed ? SEG_MINUS : SEG_PLUS ;

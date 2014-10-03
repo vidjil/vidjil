@@ -854,6 +854,8 @@ int main (int argc, char **argv)
 
     stream_segmentation_info << "                                  #      av. length" << endl ;
 
+    multigermline->out_stats(stream_segmentation_info);
+
     for (int i=0; i<STATS_SIZE; i++)
       {
 	stream_segmentation_info << "   " << left << setw(20) << segmented_mesg[i] 

@@ -17,6 +17,8 @@ Germline::Germline(string _code, char _shortcut,
   delta_max = _delta_max ;
 
   build_index(seed);
+
+  stats.setLabel(code);
 }
 
 
@@ -39,6 +41,8 @@ Germline::Germline(Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
   delta_max = _delta_max ;
 
   build_index(seed);
+
+  stats.setLabel(code);
 }
 
 void Germline::build_index(string seed)
@@ -105,3 +109,11 @@ void MultiGermline::load_default_set()
 }
 
 
+void MultiGermline::out_stats(ostream &out)
+{
+  for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
+    {
+      Germline *germline = *it ;
+      out << germline->stats ;
+    }
+}

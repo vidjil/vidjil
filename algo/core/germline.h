@@ -6,6 +6,7 @@
 #include <list>
 #include "kmeraffect.h"
 #include "kmerstore.h"
+#include "stats.h"
 
 using namespace std;
 
@@ -48,6 +49,8 @@ class Germline {
 
   int delta_min;
   int delta_max;
+
+  Stats stats;
 };
 
 
@@ -65,6 +68,8 @@ class MultiGermline {
 
   void insert(Germline *germline);
   void load_default_set();
+
+  void out_stats(ostream &out);
 };
 
 
