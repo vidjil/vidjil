@@ -18,8 +18,9 @@ void testSegmentationBug1(int delta_min, int delta_max) {
   germline = new Germline(seqV, seqV, seqJ, "##############", delta_min, delta_max);
 
   MultiGermline *multi ;
-  multi = new MultiGermline(germline);
-
+  multi = new MultiGermline();
+  multi->insert(germline);
+  
   OnlineFasta input(buggy_sequences);
 
   while (input.hasNext()) {

@@ -75,7 +75,8 @@ void testSegmentOverlap()
   germline2 = new Germline(seqV, seqV, seqJ, "##########", -50, 50);
 
   MultiGermline *multi1 ;
-  multi1 = new MultiGermline(germline1);
+  multi1 = new MultiGermline();
+  multi1->insert(germline1);
 
   for (int i = 0; i < data.size(); i++) {
     KmerSegmenter ks(data.read(i), multi1);
@@ -102,7 +103,8 @@ void testSegmentationCause() {
   germline = new Germline(seqV, seqV, seqJ, "##########", 0, 10);
 
   MultiGermline *multi ;
-  multi = new MultiGermline(germline);
+  multi = new MultiGermline();
+  multi->insert(germline);
 
   int nb_checked = 0;
 
@@ -193,7 +195,8 @@ void testExtractor() {
   germline = new Germline(seqV, seqV, seqJ, "##########", 0, 10);
   
   MultiGermline *multi ;
-  multi = new MultiGermline(germline);
+  multi = new MultiGermline();
+  multi->insert(germline);
 
   WindowExtractor we;
   map<string, string> labels;

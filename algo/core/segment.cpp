@@ -172,8 +172,11 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
   reversed = false;
   Dend=0;
   
-  // Now we just take one germline
-  Germline *germline = multigermline->germlines.back(); 
+  // Iterate over the germlines
+  for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
+    {
+      Germline *germline = *it ;
+
   int s = (size_t)germline->index->getS() ;
   int length = sequence.length() ;
 
@@ -181,7 +184,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
     {
       because = UNSEG_TOO_SHORT;
       kaa = NULL;
-      return ;
+      continue ;
     }
  
   kaa = new KmerAffectAnalyser<KmerAffect>(*(germline->index), sequence);
@@ -218,6 +221,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
     {
       // Yes, it is segmented
       segmented_germline = germline;
+      germline->stats.insert(length);
 
       reversed = (strand == -1); 
       because = reversed ? SEG_MINUS : SEG_PLUS ;
@@ -226,7 +230,10 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
       // removeChevauchement is called once info was already computed: it is only to output info_extra
       info_extra += removeChevauchement();
       finishSegmentation();
+
+      return ;
     } 
+  } // end for (Germlines)
 }
 
 KmerSegmenter::~KmerSegmenter() {

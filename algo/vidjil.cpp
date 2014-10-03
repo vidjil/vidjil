@@ -146,6 +146,7 @@ void usage(char *progname)
        << "  -D <file>     D germline multi-fasta file (automatically implies -d)" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa)" << endl
+       << "  -g            multiple germlines (experimental)" << endl
        << endl
 
        << "Window prediction" << endl
@@ -276,6 +277,7 @@ int main (int argc, char **argv)
   bool detailed_cluster_analysis = true ;
   bool output_segmented = false;
   bool output_unsegmented = false;
+  bool multi_germline = false;
 
   string forced_edges = "" ;
 
@@ -291,7 +293,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "AhaG:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "AhagG:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:uU")) != EOF)
 
     switch (c)
       {
@@ -353,6 +355,10 @@ int main (int argc, char **argv)
 	germline_system = "custom" ;
 	break;
 
+      case 'g':
+	multi_germline = true ;
+	break;
+	
       case 'G':
 	germline_system = string(optarg);
 	f_rep_V = (germline_system + "V.fa").c_str() ;
@@ -772,12 +778,20 @@ int main (int argc, char **argv)
     //$$ Build Kmer indexes
     cout << "Build Kmer indexes" << endl ;
     
-    Germline *germline;
-    germline = new Germline(rep_V, rep_D, rep_J, seed,
-			    delta_min, delta_max);
+    MultiGermline *multigermline = new MultiGermline();
 
-    MultiGermline *multigermline;
-    multigermline = new MultiGermline(germline);
+    if (multi_germline)
+      {
+	multigermline->load_default_set();
+      }
+    else
+      {
+	Germline *germline;
+	germline = new Germline(rep_V, rep_D, rep_J, seed,
+				delta_min, delta_max);
+
+	multigermline->insert(germline);
+      }
 
     //////////////////////////////////
     //$$ Kmer Segmentation
@@ -840,17 +854,9 @@ int main (int argc, char **argv)
 
     stream_segmentation_info << "                                  #      av. length" << endl ;
 
-    for (int i=0; i<STATS_SIZE; i++)
-      {
-	stream_segmentation_info << "   " << left << setw(20) << segmented_mesg[i] 
-             << " ->" << right << setw(9) << we.getNbSegmented(static_cast<SEGMENTED>(i)) ;
-
-	if (we.getAverageSegmentationLength(static_cast<SEGMENTED>(i)))
-	  stream_segmentation_info << "      " << setw(5) << fixed << setprecision(1) 
-               << we.getAverageSegmentationLength(static_cast<SEGMENTED>(i));
-	
-	stream_segmentation_info << endl ;
-      }
+    multigermline->out_stats(stream_segmentation_info);
+    stream_segmentation_info << endl;
+    we.out_stats(stream_segmentation_info);
     
     cout << stream_segmentation_info.str();
       map <junction, JsonList> json_data_segment ;
@@ -967,7 +973,7 @@ int main (int argc, char **argv)
     list <Sequence> representatives ;
     list <string> representatives_labels ;
 
-    VirtualReadScore *scorer = new KmerAffectReadScore(*(germline->index));
+    // VirtualReadScore *scorer = new KmerAffectReadScore(*(germline->index));
     int num_clone = 0 ;
     int clones_without_representative = 0 ;
 
@@ -1000,9 +1006,11 @@ int main (int argc, char **argv)
       string clone_file_name = out_seqdir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
 
       ofstream out_clone(clone_file_name.c_str());
+      Germline *segmented_germline = windowsStorage->getGermline(it->first);
       
       ostringstream oss;
-      oss << "clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone 
+      oss << "clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone
+	  << "--" << segmented_germline->code
 	  << "--" << setfill('0') << setw(WIDTH_NB_READS) << clone_nb_reads 
 	  << "--" << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%" ;
       string clone_id = oss.str();
@@ -1058,10 +1066,10 @@ int main (int argc, char **argv)
 	  representative.label = clone_id + "--" + representative.label;
 
 	  // FineSegmenter
-	  FineSegmenter seg(representative, germline, segment_cost);
+	  FineSegmenter seg(representative, segmented_germline, segment_cost);
 	
 	if (segment_D)
-	  seg.FineSegmentD(germline);
+	  seg.FineSegmentD(segmented_germline);
 	
 	// Output representative, possibly segmented... 
 	// to stdout, CLONES_FILENAME, and CLONE_FILENAME-*
@@ -1070,7 +1078,7 @@ int main (int argc, char **argv)
 	out_clones << seg << endl ;
 
         // Output segmentation to .json
-        json_data_segment[it->first]=seg.toJsonList(germline);
+        json_data_segment[it->first]=seg.toJsonList(segmented_germline);
         
         if (seg.isSegmented())
 	  {
@@ -1095,9 +1103,9 @@ int main (int argc, char **argv)
                 }
 
 	      // Output best V, (D) and J germlines to CLONE_FILENAME-*
-	      out_clone << rep_V.read(seg.best_V) ;
-	      if (segment_D) out_clone << rep_D.read(seg.best_D) ;
-	      out_clone << rep_J.read(seg.best_J) ;
+	      out_clone << segmented_germline->rep_5.read(seg.best_V) ;
+	      if (segment_D) out_clone << segmented_germline->rep_4.read(seg.best_D) ;
+	      out_clone << segmented_germline->rep_3.read(seg.best_J) ;
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
 
@@ -1151,7 +1159,7 @@ int main (int argc, char **argv)
         //Added distances matrix in the JsonTab
         jsonLevenshtein << JsonOutputWindowsMatrix(matrixLevenshtein);
 
-    delete scorer;
+     // delete scorer;
 
     } // endif (clones_windows.size() > 0)
 
@@ -1211,7 +1219,7 @@ int main (int argc, char **argv)
     delete json;
     delete json_samples;
 
-    delete germline ;
+    delete multigermline ;
     delete windowsStorage;
 
 
