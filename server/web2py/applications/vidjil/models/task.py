@@ -82,7 +82,10 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     vidjil_germline = db.config[id_config].germline
     
     ## commande complete
-    cmd = vidjil_path+'/vidjil ' + ' -o  ' + out_folder + ' -G ' + germline_folder + vidjil_germline + ' '+ vidjil_cmd+' '+ seq_file
+    cmd = vidjil_path+'/vidjil ' + ' -o  ' + out_folder
+    if not vidjil_germline == 'multi':
+        cmd += ' -G ' + germline_folder + vidjil_germline 
+    cmd += ' ' + vidjil_cmd + ' '+ seq_file
     
     ## execute la commande vidjil
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
