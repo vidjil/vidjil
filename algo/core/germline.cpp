@@ -26,9 +26,8 @@ Germline::Germline(Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
 		   string seed,
 		   int _delta_min, int _delta_max)
 {
-  code = "X" ;
+  code = "" ;
   shortcut = 'X' ;
-  description = "x" ;
 
   // affect_5 = KmerAffect("", "V", 0) ;
   // affect_3 = KmerAffect("", "J", 0) ;
@@ -61,7 +60,7 @@ Germline::~Germline()
 
 ostream &operator<<(ostream &out, const Germline &germline)
 {
-  out << germline.shortcut << " (" << germline.description << ") "
+  out << germline.code << " '" << germline.shortcut << "' "
       << germline.delta_min << "/" << germline.delta_max << endl ;
 
   return out;

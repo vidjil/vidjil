@@ -37,7 +37,6 @@ class Germline {
 
   string code ;
   char   shortcut ;
-  string description ;
 
   // KmerAffect affect_5 ;
   // KmerAffect affect_3 ;
