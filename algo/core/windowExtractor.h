@@ -16,12 +16,12 @@ using namespace std;
  */
 class WindowExtractor {
  private:
-  size_t stats_segmented[STATS_SIZE];
-  size_t stats_length[STATS_SIZE];
   size_t nb_reads;
 
   ostream *out_segmented;
   ostream *out_unsegmented;
+
+  Stats stats[STATS_SIZE];
 
  public:
 
@@ -76,6 +76,12 @@ class WindowExtractor {
    * @param out: The output stream
    */
   void setUnsegmentedOutput(ostream *out);
+
+  /**
+   * Output the segmentation stats
+   * @param out: The output stream
+   */
+  void out_stats(ostream &out);
 
  private:
   /**

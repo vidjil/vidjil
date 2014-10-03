@@ -855,18 +855,8 @@ int main (int argc, char **argv)
     stream_segmentation_info << "                                  #      av. length" << endl ;
 
     multigermline->out_stats(stream_segmentation_info);
-
-    for (int i=0; i<STATS_SIZE; i++)
-      {
-	stream_segmentation_info << "   " << left << setw(20) << segmented_mesg[i] 
-             << " ->" << right << setw(9) << we.getNbSegmented(static_cast<SEGMENTED>(i)) ;
-
-	if (we.getAverageSegmentationLength(static_cast<SEGMENTED>(i)))
-	  stream_segmentation_info << "      " << setw(5) << fixed << setprecision(1) 
-               << we.getAverageSegmentationLength(static_cast<SEGMENTED>(i));
-	
-	stream_segmentation_info << endl ;
-      }
+    stream_segmentation_info << endl;
+    we.out_stats(stream_segmentation_info);
     
     cout << stream_segmentation_info.str();
       map <junction, JsonList> json_data_segment ;
