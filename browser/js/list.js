@@ -194,9 +194,9 @@ List.prototype = {
         span_name.onclick = function (e) {
             self.clickList(e, cloneID);
         }
-        span_name.appendChild(document.createTextNode(this.m.getName(cloneID)));
-        span_name.title = this.m.getName(cloneID);
-        span_name.style.color = this.m.windows[cloneID].color;
+        span_name.appendChild(document.createTextNode(this.m.clone(cloneID).getName()));
+        span_name.title = this.m.clone(cloneID).getName();
+        span_name.style.color = this.m.clone(cloneID).getColor();
 
         
         var span_star = document.createElement('div');
@@ -208,8 +208,7 @@ List.prototype = {
         var path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
         path.setAttribute('d', this.starPath);
         path.setAttribute('id', 'color' + cloneID);
-        if (typeof this.m.windows[cloneID].tag != 'undefined') path.setAttribute("fill", tagColor[this.m.windows[cloneID].tag]);
-        else path.setAttribute("fill", color['@default']);
+        path.setAttribute("fill", tagColor[this.m.clone(cloneID).getTag()]);
         svg.appendChild(path);
         span_star.appendChild(svg)
 
@@ -219,14 +218,14 @@ List.prototype = {
         span_size.onclick = function (e) {
             self.clickList(e, cloneID);
         }
-        span_size.style.color = this.m.windows[cloneID].color;
-        span_size.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));
+        span_size.style.color = this.m.clone(cloneID).getColor();
+        span_size.appendChild(document.createTextNode(this.m.clone(cloneID).getStrSize()));
 
         
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
         span_info.onclick = function () {
-            dataBox(self.m.getCloneHtmlInfo(cloneID, "clone"));
+            dataBox(self.m.clone(cloneID).getHtmlInfo());
         }
         span_info.appendChild(document.createTextNode("I"));
 
@@ -251,7 +250,7 @@ List.prototype = {
 
         if (this.m.system=="multi"){
             var span_system = document.createElement('span')
-            var system = this.m.windows[cloneID].system
+            var system = this.m.clone(cloneID).getSystem()
             span_system.className = "systemBox";
             if ((typeof system != 'undefined') && (typeof germline.icon[system] != 'undefined')){
                 span_system.appendChild(document.createTextNode(germline.icon[system].letter));
@@ -292,8 +291,8 @@ List.prototype = {
 
         if (!display) div_cluster.style.display = "none";
 
-        var clusterSize = this.m.getSize(cloneID)
-        var clusterReads = this.m.getReads(cloneID)
+        var clusterSize = this.m.clone(cloneID).getSize()
+        var clusterReads = this.m.clone(cloneID).getReads()
 
         for (var i = 0; i < this.m.clones[cloneID].cluster.length; i++) {
             (function (i) {
@@ -305,20 +304,20 @@ List.prototype = {
                 div_clone.onmouseover = function () {
                     self.m.focusIn(id);
                 }
-                if (self.m.windows[id].select) div_clone.className = "listElem selected";
+                if (self.m.clone(id).isSelected) div_clone.className = "listElem selected";
 
                 var span_name = document.createElement('span');
                 span_name.className = "nameBox";
                 span_name.onclick = function (e) {
                     self.clickList(e, id);
                 }
-                span_name.appendChild(document.createTextNode(this.m.getCode(id)));
-                span_name.title = this.m.getCode(id);
+                span_name.appendChild(document.createTextNode(this.m.clone(id).getCode()));
+                span_name.title = this.m.clone(id).getCode();
 
                 var span_info = document.createElement('span')
                 span_info.className = "infoBox";
                 span_info.onclick = function () {
-                    dataBox(self.m.getcloneHtmlInfo(this.parentNode.id2, "sequence"));
+                    dataBox(self.m.clone(this.parentNode.id2).getHtmlInfo());
                 }
                 span_info.appendChild(document.createTextNode("I"));
 
@@ -336,7 +335,7 @@ List.prototype = {
                 
                 var r = 100
                 if (clusterSize != 0) {
-                    span_stat.appendChild(document.createTextNode( (this.m.windows[id].size[this.m.t]*100/clusterReads).toFixed(1) + "%"));
+                    span_stat.appendChild(document.createTextNode( (this.m.clone(id).getSequenceReads(this.m.t)*100/clusterReads).toFixed(1) + "%"));
                 } else {
                     span_stat.appendChild(document.createTextNode("0%"))
                 }
@@ -371,7 +370,7 @@ List.prototype = {
         var input = document.createElement('input');
         input.type = "text";
         input.id = "new_name";
-        input.value = this.m.getName(cloneID);
+        input.value = this.m.clone(cloneID).getName();
         input.style.width = "200px"; //TODO remplacer par une class css
         input.style.border = "0px";
         input.style.margin = "0px";
@@ -389,7 +388,7 @@ List.prototype = {
         a.onclick = function () {
             var newName = document.getElementById("new_name")
                 .value;
-            self.m.changeName(cloneID, newName);
+            self.m.clone(cloneID).changeName(newName);
         }
         divParent.appendChild(a);
         $('#new_name')
@@ -404,11 +403,11 @@ List.prototype = {
 
             var div = this.index[list[i]];
 
-            if ((this.m.windows[list[i]].active && this.m.clones[list[i]].cluster.length != 0) || this.m.windows[list[i]].window == "other") {
+            if ((this.m.clone(list[i]).isActive() && this.m.clones[list[i]].cluster.length != 0) || this.m.clone(list[i]).window == "other") {
 
                 div.innerHTML = '';
 
-                if (this.m.windows[list[i]].select) {
+                if (this.m.clone(list[i]).isSelected()) {
                     div.className = "list list_select";
                 } else {
                     div.className = "list";
@@ -429,7 +428,7 @@ List.prototype = {
 
             var div4 = document.getElementById("_" + list[i]);
             if (div4) {
-                if (this.m.windows[list[i]].select) {
+                if (this.m.clone(list[i]).isSelected()) {
                     div4.className = "listElem selected";
                 } else {
                     div4.className = "listElem";
@@ -446,7 +445,7 @@ List.prototype = {
             var div = this.index[list[i]];
 
             //color
-            var color = this.m.getColor(list[i]);
+            var color = this.m.clone(list[i]).getColor();
 
             $("#" + list[i] + " .nameBox")
                 .css("color", color)
@@ -454,7 +453,7 @@ List.prototype = {
                 .css("color", color)
 
             //clone selected ?
-            if (this.m.windows[list[i]].select) {
+            if (this.m.clone(list[i]).isSelected()) {
                 div.className = "list list_select";
             } else {
                 div.className = "list";
@@ -463,7 +462,7 @@ List.prototype = {
             //cluster sequence selected?
             var div2 = document.getElementById("_" + list[i]);
             if (div2) {
-                if (this.m.windows[list[i]].select) {
+                if (this.m.clone(list[i]).isSelected()) {
                     div2.className = "listElem selected";
                 } else {
                     div2.className = "listElem";
@@ -473,19 +472,19 @@ List.prototype = {
     },
     
     reset_filter: function (bool) {
-        for (var i=0; i<this.m.windows.length; i++){
-            var c = this.m.windows[i]
+        for (var i=0; i<this.m.n_windows; i++){
+            var c = this.m.clone(i)
             c.isFiltered=bool
         }
     },
     
     filter: function (str) {
         this.reset_filter(true)
-        for (var i=0; i<this.m.windows.length; i++){
-            var c = this.m.windows[i]
-            if (typeof (c.name) != 'undefined' && c.name.toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
-            if (typeof (c.sequence) != 'undefined' && c.sequence != 0 && c.sequence.toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
-            if (typeof (c.c_name) != 'undefined' && c.c_name.toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
+        for (var i=0; i<this.m.n_windows; i++){
+            var c = this.m.clone(i) 
+            if (c.getName().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
+            if (c.getSequence().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
+            if (c.getSequenceName().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
         }
         this.m.update()
     },
@@ -499,7 +498,7 @@ List.prototype = {
                 .attr("id");
             var idB = $(b)
                 .attr("id");
-            return self.m.getSize(idB) > self.m.getSize(idA) ? 1 : -1;
+            return self.m.clone(idB).getSize() > self.m.clone(idA).getSize() ? 1 : -1;
         })
         $("#list_clones")
             .html(sort);
@@ -514,7 +513,7 @@ List.prototype = {
                 .attr("id");
             var idB = $(b)
                 .attr("id");
-            return self.m.windows[idA].top > self.m.windows[idB].top ? 1 : -1;
+            return self.m.clone(idA).top > self.m.clone(idB).top ? 1 : -1;
         })
         $("#list_clones")
             .html(sort);
@@ -532,17 +531,19 @@ List.prototype = {
             var oA = 2147483647
             var oB = 2147483647
 
-            if (typeof (self.m.windows[idA].V) != 'undefined' && 
-                typeof (self.m.windows[idA].V[0]) != 'undefined' &&
-                typeof (self.m.germlineV.allele[self.m.windows[idA].V[0]]) != 'undefined') {
-                var vA = self.m.windows[idA].V[0];
+            var cA = self.m.clone(idA)
+            if (typeof (cA.V) != 'undefined' && 
+                typeof (cA.V[0]) != 'undefined' &&
+                typeof (self.m.germlineV.allele[cA.V[0]]) != 'undefined') {
+                var vA = cA.V[0];
                 oA = this.m.germlineV.allele[vA].gene * 1000 + this.m.germlineV.allele[vA].rank
             }
 
-            if (typeof (self.m.windows[idB].V) != 'undefined' && 
-                typeof (self.m.windows[idB].V[0]) != 'undefined' &&
-                typeof (self.m.germlineV.allele[self.m.windows[idB].V[0]]) != 'undefined') {
-                var vB = self.m.windows[idB].V[0];
+            var cB = self.m.clone(idB)
+            if (typeof (cB.V) != 'undefined' && 
+                typeof (cB.V[0]) != 'undefined' &&
+                typeof (self.m.germlineV.allele[cB.V[0]]) != 'undefined') {
+                var vB = cB.V[0];
                 oB = this.m.germlineV.allele[vB].gene * 1000 + this.m.germlineV.allele[vB].rank
             }
 
@@ -564,17 +565,19 @@ List.prototype = {
             var oA = 2147483647
             var oB = 2147483647
 
-            if (typeof (self.m.windows[idA].J) != 'undefined' && 
-                typeof (self.m.windows[idA].J[0]) != 'undefined' &&
-                typeof (self.m.germlineJ.allele[self.m.windows[idA].J[0]]) != 'undefined') {
-                var jA = self.m.windows[idA].J[0];
+            var cA = self.m.clone(idA)
+            if (typeof (cA.J) != 'undefined' && 
+                typeof (cA.J[0]) != 'undefined' &&
+                typeof (self.m.germlineJ.allele[cA.J[0]]) != 'undefined') {
+                var jA = cA.J[0];
                 oA = this.m.germlineJ.allele[jA].gene * 1000 + this.m.germlineJ.allele[jA].rank
             }
 
-            if (typeof (self.m.windows[idB].J) != 'undefined' && 
-                typeof (self.m.windows[idB].J[0]) != 'undefined' &&
-                typeof (self.m.germlineJ.allele[self.m.windows[idB].J[0]]) != 'undefined') {
-                var jB = self.m.windows[idB].J[0];
+            var cB = self.m.clone(idB)
+            if (typeof (cB.J) != 'undefined' && 
+                typeof (cB.J[0]) != 'undefined' &&
+                typeof (self.m.germlineJ.allele[cB.J[0]]) != 'undefined') {
+                var jB = cB.J[0];
                 oB = this.m.germlineJ.allele[jB].gene * 1000 + this.m.germlineJ.allele[jB].rank
             }
 

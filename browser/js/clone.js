@@ -147,10 +147,11 @@ Clone.prototype = {
     },
     
     getSequence : function () {
-        if (typeof (this.sequence) != 'undefined' ){
+        if (typeof (this.sequence) != 'undefined' && this.sequence != 0){
             return this.sequence
+        }else{
+            return "0";
         }
-        return "0";
     },
     
     /* return clone segmentation status
