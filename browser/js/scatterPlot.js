@@ -262,9 +262,9 @@ ScatterPlot.prototype = {
 	  })
       //Attribution de l'activité des cercles (inactif, sélectionné, demande d'info ou autre)
 	  .attr("class", function (p) {
-	      if (!self.m.windows[p.id].active) return "circle_inactive";
-	      if (self.m.windows[p.id].select) return "circle_select";
-	      if (p.id == self.m.focus) return "circle_focus";
+	      if (!self.m.clone(p.id).isActive()) return "circle_inactive";
+	      if (self.m.clone(p.id).isSelected()) return "circle_select";
+	      if (self.m.clone(p.id).isFocus()) return "circle_focus";
 	      return "circle";
 	  })
       //Appel de la fonction drag
@@ -285,7 +285,7 @@ ScatterPlot.prototype = {
   returnActiveWindows: function() {
     var activeWindows = 0;
     for (var i=0; i<this.m.n_windows;i++) {
-      if (this.m.windows[i].active) activeWindows += 1;
+      if (this.m.clone(i).isActive()) activeWindows += 1;
     }
     return activeWindows;
   },
@@ -323,7 +323,7 @@ ScatterPlot.prototype = {
                               -> CORE node = default length (see DBSCANLength) and zoom + coeff parameters
                               -> NEAR node = attribution  of a superior length
       */
-      .linkDistance(function(d) {if (self.dbscanActive && (self.m.windows[d.source].tagCluster == "CORE" || self.m.windows[d.target].tagCluster == "CORE"))
+      .linkDistance(function(d) {if (self.dbscanActive && (self.m.clone(d.source).tagCluster == "CORE" || self.m.clone(d.target).tagCluster == "CORE"))
                                       return (self.DBSCANLength * self.mouseZoom * (self.resizeCoef/((20 * self.resizeCoef)/100)));
                                  else {
                                      //Added length between nodes to let the CORE node at the middle of the cluster
@@ -454,11 +454,11 @@ ScatterPlot.prototype = {
     if (this.dbscanActive) {
         for (var i = 0; i < this.edge.length; i++) {
 	    //Yellow color attributed to edges which have source or target, with tag 'CORE'
-            if (this.m.windows[this.edge[i].source].tagCluster == "CORE" || this.m.windows[this.edge[i].target].tagCluster == "CORE")
+            if (this.m.clone(this.edge[i].source).tagCluster == "CORE" || this.m.clone(this.edge[i].target).tagCluster == "CORE")
                 this.edge[i].color = "yellow";
             else
                 //Red color attributed to edges which have source or target, with tag 'NEAR' (neighbors)
-                if (this.m.windows[this.edge[i].source].tagCluster == "NEAR" || this.m.windows[this.edge[i].target].tagCluster == "NEAR")
+                if (this.m.clone(this.edge[i].source).tagCluster == "NEAR" || this.m.clone(this.edge[i].target).tagCluster == "NEAR")
                     this.edge[i].color = "red";
         }
     }
@@ -494,7 +494,7 @@ ScatterPlot.prototype = {
       var returnedTab = [];
       if (typeof tmp != 'undefined'){
         for (var i = 0; i < tmp.length; i++){
-            if (this.m.windows[tmp[i].source].cluster == this.m.windows[tmp[i].target].cluster) {
+            if (this.m.clone(tmp[i].source).cluster == this.m.clone(tmp[i].target).cluster) {
                 returnedTab.push(tmp[i]);
             }
         }
@@ -648,7 +648,7 @@ ScatterPlot.prototype = {
 	  .attr("y", self.resizeH + self.marge_top)
       //Retourne la couleur attribuée au SVG -via CSS:style.fill- pour chaque fenÃªtre dans le contenu de l'objet model
 	  .style("fill", function (d) {
-	      return (self.m.windows[d].color);
+	      return (self.m.clone(d.id).getColor());
 	  })
       //Affichage de la fenêtre contenue dans l'objet model, via son ID
 	  .on("mouseover", function (d) {
@@ -682,15 +682,15 @@ ScatterPlot.prototype = {
       }
 
       //classement des clones suivant V
-      for (var i = 0; i < this.m.windows.length; i++) {
-	  if (this.m.windows[i].active) {
-	      var geneV = this.m.getV(i);
+      for (var i = 0; i < this.m.n_windows; i++) {
+	  if (this.m.clone(i).isActive()) {
+	      var geneV = this.m.clone(i).getV();
 	      var clone = {
-		  id: i
+            id: i
 	      }
 	      if (typeof this.bar_v[geneV] == 'undefined') geneV = "undefined V"
 	      this.bar_v[geneV].clones.push(clone);
-	      this.bar_v[geneV].totalSize += this.m.getSize(i);
+	      this.bar_v[geneV].totalSize += this.m.clone(i).getSize();
 	  }
       }
 
@@ -698,9 +698,9 @@ ScatterPlot.prototype = {
       for (var i = 0; i < this.vKey.length; i++) {
 	  if (this.bar_v[this.vKey[i]].totalSize > this.bar_max)
 	      this.bar_max = this.bar_v[this.vKey[i]].totalSize;
-	  this.bar_v[this.vKey[i]].clones.sort(function (a, b) {
-	      var ja = self.m.getJ(a.id);
-	      var jb = self.m.getJ(b.id);
+          this.bar_v[this.vKey[i]].clones.sort(function (a, b) {
+	      var ja = self.m.clone(a.id).getJ();
+	      var jb = self.m.clone(b.id).getJ();
 	      return jb - ja
 	  });
       }
@@ -733,16 +733,16 @@ ScatterPlot.prototype = {
 	      return self.getBarHeight(d) * self.resizeH;
 	  })
 	  .attr("y", function (d) {
-	      if (!self.m.windows[d.id].active) return self.resizeH + self.marge_top;
+	      if (!self.m.clone(d.id).isActive()) return self.resizeH + self.marge_top;
 	      return (self.getBarPosition(d) * self.resizeH) + self.marge_top;
 	  })
 	  .style("fill", function (d) {
-	      return (self.m.windows[d].color);
+	      return (self.m.clone(d.id).getColor());
 	  })
 	  .attr("class", function (p) {
-	      if (!self.m.windows[p.id].active) return "circle_hidden";
-	      if (self.m.windows[p.id].select) return "circle_select";
-	      if (p.id == self.m.focus) return "circle_focus";
+	      if (!self.m.clone(p.id).isActive()) return "circle_hidden";
+	      if (self.m.clone(p.id).isSelected()) return "circle_select";
+	      if (self.m.clone(p.id).isFocus()) return "circle_focus";
 	      return "circle";
 	  })
 
@@ -765,7 +765,7 @@ ScatterPlot.prototype = {
   * @param cloneID: l'ID du clone
   * */
   getBarHeight: function (cloneID) {
-      var size = this.m.getSize(cloneID);
+      var size = this.m.clone(cloneID).getSize();
       return size / this.bar_max;
   },
 
@@ -918,7 +918,7 @@ ScatterPlot.prototype = {
                 return (d.r2);
             })
             .attr("title", function (d) {
-                return (self.m.getName(d));
+                return (self.m.clone(d.id).getName());
             })
 
         //Calcul d'une frame (image / seconde)
@@ -1084,12 +1084,12 @@ ScatterPlot.prototype = {
   * @param cloneID: ID d'un clone
   * */
   updateClone: function (cloneID) {
-    if (this.m.windows[cloneID].active) {
+    if (this.m.clone(cloneID).isActive()) {
         
         if (this.m.clones[cloneID].split) {
             for (var i = 0; i < this.m.clones[cloneID].cluster.length; i++) {
                 var seqID = this.m.clones[cloneID].cluster[i]
-                var size = this.m.getSequenceSize(seqID);
+                var size = this.m.clone(seqID).getSequenceSize();
                 //Math.pow(x,y) -> x**y
                 if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
                 this.nodes[seqID].r1 = size
@@ -1100,8 +1100,8 @@ ScatterPlot.prototype = {
                 var seqID = this.m.clones[cloneID].cluster[i]
                 this.nodes[seqID].r1 = 0
             }
-            var size = this.m.getSize(cloneID);
-            if (this.m.clones[cloneID].cluster.length == 0) size = this.m.getSequenceSize(cloneID);
+            var size = this.m.clone(cloneID).getSize();
+            if (this.m.clones[cloneID].cluster.length == 0) size = this.m.clone(cloneID).getSequenceSize();
             if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
             this.nodes[cloneID].r1 = size
         }
@@ -1111,12 +1111,13 @@ ScatterPlot.prototype = {
         this.nodes[cloneID].r1 = 0
     }
     
+    var sys = this.m.clone(cloneID).getSystem()
     if (this.use_system_grid && this.m.system == "multi" 
-        && typeof this.m.windows[cloneID].system != 'undefined'
-        && this.m.windows[cloneID].system != this.m.germlineV.system
+        && typeof sys != 'undefined'
+        && sys != this.m.germlineV.system
     ){
-        this.nodes[cloneID].x2 = this.systemGrid[this.m.windows[cloneID].system].x * this.resizeW
-        this.nodes[cloneID].y2 = this.systemGrid[this.m.windows[cloneID].system].y * this.resizeH
+        this.nodes[cloneID].x2 = this.systemGrid[sys].x * this.resizeW
+        this.nodes[cloneID].y2 = this.systemGrid[sys].y * this.resizeH
     }else{
         this.nodes[cloneID].x2 = this.axisX.pos(cloneID)*this.gridSizeW
         this.nodes[cloneID].y2 = this.axisY.pos(cloneID)*this.gridSizeH
@@ -1135,8 +1136,8 @@ ScatterPlot.prototype = {
   /* Function which permits to force all no-clustered clones, to return at their initial position
   */
   forceNodesToStayInInitialPosition: function() {
-      for (var i = 0; i < this.m.windows.length; i++) {
-          if (this.m.dbscan.clusters[this.m.windows[i].cluster].length == 1) {
+      for (var i = 0; i < this.m.n_windows; i++) {
+          if (this.m.dbscan.clusters[this.m.clone(i).cluster].length == 1) {
               //Calcul du delta
               var x = this.nodes[i].x;
               var y = this.nodes[i].y;
@@ -1217,9 +1218,10 @@ ScatterPlot.prototype = {
   */
   activeLine: function() {
       var self = this;
-      if (self.m.getSelected().length > 0) {
+      var selected = self.m.getSelected()
+      if (selected.length > 0) {
         this.grpLinks.selectAll("line").attr("class", function(d) {
-	  if ((self.m.getSelected().indexOf(d.source.id) >= 0 || self.m.getSelected().indexOf(d.target.id) >= 0) && (self.m.windows[d.source].active && self.m.windows[d.target].active)) return "line_active";
+	  if ((selected.indexOf(d.source.id) >= 0 || sselected.indexOf(d.target.id) >= 0) && (self.m.clone(d.source).isActive() && self.m.clone(d.target).isActive())) return "line_active";
           else return "line_inactive"});
       }
       else this.activeAllLine(false);
@@ -1242,13 +1244,13 @@ ScatterPlot.prototype = {
       } else {
 	  this.node
 	      .attr("class", function (p) {
-    		  if (!self.m.windows[p.id].active) return "circle_hidden";
-    		  if (self.m.windows[p.id].select) return "circle_select";
-    		  if (p.id == self.m.focus) return "circle_focus";
+    		  if (!self.m.clone(p.id).isActive()) return "circle_hidden";
+    		  if (self.m.clone(p.id).isSelected()) return "circle_select";
+    		  if (self.m.clone(p.id).isFocus()) return "circle_focus";
     		  return "circle";
 	      })
 	      .style("fill", function (d) {
-		      return (self.m.windows[d].color);
+		      return (self.m.clone(d.id).getColor());
 	      })
       }
       //Activation des liens "utiles" pour le graphe
@@ -1776,7 +1778,7 @@ ScatterPlot.prototype = {
                       var node_x = this.nodes[i].x + this.marge_left
                       var node_y = this.nodes[i].y + this.marge_top
 
-                      if (this.m.windows[i].active && this.m.getSize(i) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
+                      if (this.m.clone(i).isActive() && this.m.clone(i).getSize() && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
                           nodes_selected.push(i);
                   }
 
