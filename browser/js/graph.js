@@ -398,12 +398,12 @@ Graph.prototype = {
             this.data_res[0].path = this.constructPathR(this.resolution1);
             this.data_res[1].path = this.constructPathR(this.resolution5);
 
-            for (var i = 0; i < this.m.windows.length; i++) {
+            for (var i = 0; i < this.m.n_windows; i++) {
                 for (var j = 0; j < this.m.clones[i].cluster.length; j++) {
                     this.data_graph[this.m.clones[i].cluster[j]].path = this.constructPath(i, false);
                 }
             }
-            for (var i = 0; i < this.m.windows.length; i++) {
+            for (var i = 0; i < this.m.n_windows; i++) {
                 var cloneID = i
                 for (var j = 0; j < this.m.clones[cloneID].cluster.length; j++) {
                     var seqID = this.m.clones[cloneID].cluster[j]
@@ -426,7 +426,7 @@ Graph.prototype = {
         console.log("bam")
         var stack = new Stack(this.m)
         stack.compute();
-        for (var i = 0; i < this.m.windows.length; i++) {
+        for (var i = 0; i < this.m.n_length; i++) {
             this.data_graph[i].path = this.constructStack(i, stack);
         }
     },
@@ -472,7 +472,7 @@ Graph.prototype = {
             //volumes
             this.g_graph
                 .style("fill", function (d) {
-                    return self.m.windows[d.id].color;
+                    return self.m.clone(d.id).getColor();
                 })
                 .style("stroke", "none")
                 .transition()
@@ -493,10 +493,10 @@ Graph.prototype = {
                     }
                 })
                 .attr("class", function (p) {
-                    var clone = self.m.windows[p.id]
-                    if (!clone.active) return "graph_inactive";
-                    if (clone.select) return "graph_select";
-                    if (p.id == self.m.focus) return "graph_focus";
+                    var clone = self.m.clone(p.id)
+                    if (!clone.isActive()) return "graph_inactive";
+                    if (clone.isSelected()) return "graph_select";
+                    if (clone.isFocus()) return "graph_focus";
                     if (clone.top > self.display_limit) return "graph_inactive";
                     return "graph_line";
                 })
@@ -508,7 +508,7 @@ Graph.prototype = {
             this.g_graph
                 .style("fill", "none")
                 .style("stroke", function (d) {
-                    return self.m.windows[d.id].color;
+                    return self.m.clone(d.id).getColor();
                 })
                 .transition()
                 .duration(speed)
@@ -528,10 +528,10 @@ Graph.prototype = {
                     }
                 })
                 .attr("class", function (p) {
-                    var clone = self.m.windows[p.id]
-                    if (!clone.active) return "graph_inactive";
-                    if (clone.select) return "graph_select";
-                    if (p.id == self.m.focus) return "graph_focus";
+                    var clone = self.m.clone(p.id)
+                    if (!clone.isActive()) return "graph_inactive";
+                    if (clone.isSelected()) return "graph_select";
+                    if (clone.isFocus()) return "graph_focus";
                     if (clone.top > self.display_limit) return "graph_inactive";
                     return "graph_line";
                 })
@@ -780,8 +780,8 @@ Graph.prototype = {
 
         var size = []
         for (var i = 0; i < this.graph_col.length; i++) {
-            if (seq_size) size[i] = this.m.getSequenceSize(id, this.m.samples.order[i])
-            else size[i] = this.m.getSize(id, this.m.samples.order[i])
+            if (seq_size) size[i] = this.m.clone(id).getSequenceSize(this.m.samples.order[i])
+            else size[i] = this.m.clone(id).getSize(this.m.samples.order[i])
         }
 
         var x = this.graph_col[0];
@@ -893,11 +893,11 @@ Stack.prototype = {
         this.total_size = []; 
         for (j=0; j<this.m.samples.number; j++){
             this.total_size[j]=0
-            for (i=0; i<this.m.windows.length; i++){
-                if (this.m.windows[i].active) this.total_size[j] += this.m.getSize(i,j); //active clones
+            for (i=0; i<this.m.n_windows; i++){
+                if (this.m.clone(i).isActive()) this.total_size[j] += this.m.clone(i).getSize(j); //active clones
             }
             
-            this.total_size[j] += this.m.getSize(this.m.windows.length-1,j);//other clones
+            this.total_size[j] += this.m.clone(this.m.windows.length-1).getSize(j);//other clones
         }
     },
     
@@ -910,14 +910,14 @@ Stack.prototype = {
             this.sum[j]=1
         }
         
-        for (i=0; i<this.m.windows.length; i++){
+        for (i=0; i<this.m.n_windows; i++){
             this.min[i] = []
             this.max[i] = []
             //active clones
-            if (this.m.windows[i].active) {
+            if (this.m.clone(i).isActive()) {
                 for (j=0; j<this.m.samples.number; j++){
                     this.min[i][j] = this.sum[j]
-                    this.sum[j] -= this.m.getSize(i,j)
+                    this.sum[j] -= this.m.clone(i).getSize(j)
                     this.max[i][j] = this.sum[j]
                 }
             }else{
@@ -931,7 +931,7 @@ Stack.prototype = {
         //other
         for (j=0; j<this.m.samples.number; j++){
             this.min[this.m.windows.length-1][j] = this.sum[j]
-            this.sum[this.m.windows.length-1] += this.m.getSize(this.m.windows.length-1,j)
+            this.sum[this.m.windows.length-1] += this.m.clone(this.m.windows.length-1).getSize(j)
             this.max[this.m.windows.length-1][j] = this.sum[j]
         }
         
