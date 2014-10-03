@@ -50,12 +50,12 @@ Germline.prototype = {
         //reduce germline size (keep only detected genes)
         //and add undetected genes 
         var g = {}
-        for (var i=0; i<this.m.windows.length; i++){
-            if (typeof this.m.windows[i][type] != "undefined" 
-                && typeof this.m.windows[i][type][0] != "undefined"){
-                var gene=this.m.windows[i][type][0];
-                if (this.m.system != "multi" || this.m.windows[i].system == system){
-                    if ( typeof this.allele[gene] !="undefined"){
+        for (var i=0; i<this.m.n_windows; i++){
+            if (typeof this.m.clone(i)[type] != "undefined" 
+                && typeof this.m.clone(i)[type][0] != "undefined"){
+                var gene=this.m.clone(i)[type][0];
+                if (this.m.system != "multi" || this.m.clone(i).getSystem() == system){
+                    if ( typeof this.allele[gene] != "undefined"){
                         g[gene] = this.allele[gene]
                     }else{
                         g[gene] = "unknow sequence"
