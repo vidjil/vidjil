@@ -229,19 +229,19 @@ Clone.prototype = {
             }else{
                 this.color = colorGenerator(this.m.scale_color(size * this.m.precision), color_s, color_v);
             }
-        }else if (this.colorMethod == "Tag"){
+        }else if (this.m.colorMethod == "Tag"){
             this.color =  tagColor[this.tag];
-        }else if (this.colorMethod == "dbscan"){
+        }else if (this.m.colorMethod == "dbscan"){
             this.color =  this.colorDBSCAN;
-        }else if (this.colorMethod == "V" && typeof (this.V) != 'undefined'){
+        }else if (this.m.colorMethod == "V" && typeof (this.V) != 'undefined'){
             this.color =  this.colorV;
-        }else if (this.colorMethod == "D" && typeof (this.D) != 'undefined'){
+        }else if (this.m.colorMethod == "D" && typeof (this.D) != 'undefined'){
             this.color =  this.colorD;
-        }else if (this.colorMethod == "J" && typeof (this.J) != 'undefined'){
+        }else if (this.m.colorMethod == "J" && typeof (this.J) != 'undefined'){
             this.color =  this.colorJ;
-        }else if (this.colorMethod == "N" && typeof (this.N) != 'undefined'){
+        }else if (this.m.colorMethod == "N" && typeof (this.N) != 'undefined'){
             this.color =  this.colorN;
-        }else if (this.colorMethod == "system") {
+        }else if (this.m.colorMethod == "system") {
             this.color = germline.icon[this.system].color
         }else{
             this.color = color['@default'];
