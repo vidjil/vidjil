@@ -4,8 +4,8 @@
 WindowExtractor::WindowExtractor(): out_segmented(NULL), out_unsegmented(NULL){}
                                     
 
-WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, IKmerStore<KmerAffect> *index,
-                                         size_t w, int delta_min, int delta_max, 
+WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *multigermline,
+					 size_t w,
                                          map<string, string> &windows_labels) {
   init_stats();
 
@@ -14,21 +14,19 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, IKmerStore<KmerAffe
   while (reads->hasNext()) {
     reads->next();
     nb_reads++;
-       
-    KmerSegmenter seg(reads->getSequence(), index, delta_min, delta_max);
+    
+    KmerSegmenter seg(reads->getSequence(), multigermline);
+    int read_length = seg.getSequence().sequence.length();
 
-    stats_segmented[seg.getSegmentationStatus()]++;
-    stats_length[seg.getSegmentationStatus()] += seg.getSequence().sequence.length();
+    stats[seg.getSegmentationStatus()].insert(read_length);
     if (seg.isSegmented()) {
       junction junc = seg.getJunction(w);
 
       if (junc.size()) {
-        stats_segmented[TOTAL_SEG_AND_WINDOW]++ ;
-        stats_length[TOTAL_SEG_AND_WINDOW] += seg.getSequence().sequence.length() ;
-        windowsStorage->add(junc, reads->getSequence(), seg.getSegmentationStatus());
+        stats[TOTAL_SEG_AND_WINDOW].insert(read_length) ;
+        windowsStorage->add(junc, reads->getSequence(), seg.getSegmentationStatus(), seg.segmented_germline);
       } else {
-        stats_segmented[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW]++ ;
-        stats_length[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW] += seg.getSequence().sequence.length() ;
+        stats[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW].insert(read_length) ;
       }
 
       if (out_segmented) {
@@ -50,7 +48,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, IKmerStore<KmerAffe
 }
 
 float WindowExtractor::getAverageSegmentationLength(SEGMENTED seg) {
-  return stats_length[seg]*1./getNbSegmented(seg);
+  return stats[seg].getAverageLength();
 }
 
 size_t WindowExtractor::getNbReads() {
@@ -58,7 +56,7 @@ size_t WindowExtractor::getNbReads() {
 }
 
 size_t WindowExtractor::getNbSegmented(SEGMENTED seg) {
-  return stats_segmented[seg];
+  return stats[seg].nb;
 }
 
 void WindowExtractor::setSegmentedOutput(ostream *out) {
@@ -71,8 +69,17 @@ void WindowExtractor::setUnsegmentedOutput(ostream *out) {
 
 void WindowExtractor::init_stats() {
   for (int i = 0; i < STATS_SIZE; i++) {
-    stats_segmented[i] = 0;
-    stats_length[i] = 0;
+    stats[i].label = segmented_mesg[i];
   }
   nb_reads = 0;
+}
+
+void WindowExtractor::out_stats(ostream &out)
+{
+  for (int i=0; i<STATS_SIZE; i++)
+    {
+      if (i == TOTAL_SEG_AND_WINDOW)
+	out << endl;
+      out << stats[i] ;
+    }
 }

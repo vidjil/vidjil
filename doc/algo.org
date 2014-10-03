@@ -105,11 +105,8 @@ different clones.  Setting =-w= to lower values is not recommended.
 The following options control how many clones are output and analyzed.
 
 #+BEGIN_EXAMPLE
-Limit to keep a window
-  -r <nb>       minimal number of reads containing a window (default: 10)
-
 Limits to report a clone
-  -R <nb>       minimal number of reads supporting a clone (default: 10)
+  -r <nb>       minimal number of reads supporting a clone (default: 10)
   -% <ratio>    minimal percentage of reads supporting a clone (default: 0)
 
 Limits to segment a clone
@@ -117,13 +114,11 @@ Limits to segment a clone
   -A            reports and segments all clones (-r 0 -R 1 -% 0 -z 0), to be used only on very small datasets
 #+END_EXAMPLE
 
-The =-r/-R/-%= options are strong thresholds: if a clone does not have
+The =-r/-%= options are strong thresholds: if a clone does not have
 the requested number of reads, the clone is discarded (except when
 using =-l=, see below).
-The =-r= option is applied before the additional clustering, the
-=-R/-%= options after it.
-The default =-r 10 -R 10= options are meant to only output clones that
-have a significant read support. You can safely put =-r 1 -R 1= if you
+The default =-r 10= option is meant to only output clones that
+have a significant read support. You can safely put =-r 1= if you
 want to detect all clones starting from the first read (especially for
 MRD detection).
 
@@ -136,7 +131,7 @@ If you want to analyze more clones, you should use =-z 50= or
 than 100 clones is often not useful since they can't be visualized easily
 in the browser, and takes large computation time.
 Note that even if a clone is not in the top 20 (or 50, or 100) but
-still passes the =-R=, =-%= options, it is still reported in the .data
+still passes the =-r=, =-%= options, it is still reported in the .data
 file. If the clone is at some MRD point in the top 20 (or 50, or 100),
 it will be fully analyzed/segmented by this other point (and then
 collected by the =fuse.py= script, and then, on the browser, correctly

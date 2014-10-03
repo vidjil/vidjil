@@ -3,6 +3,7 @@
 
 #include <iostream>
 #include "segment.h"
+#include "germline.h"
 #include "kmerstore.h"
 #include "kmeraffect.h"
 #include "windows.h"
@@ -15,12 +16,12 @@ using namespace std;
  */
 class WindowExtractor {
  private:
-  size_t stats_segmented[STATS_SIZE];
-  size_t stats_length[STATS_SIZE];
   size_t nb_reads;
 
   ostream *out_segmented;
   ostream *out_unsegmented;
+
+  Stats stats[STATS_SIZE];
 
  public:
 
@@ -31,20 +32,16 @@ class WindowExtractor {
    * If (un)segmented sequences must be output, the functions 
    * set(Un)SegmentedOutput() must be called before.
    * @param reads: the collection of input reads
-   * @param index: the index of the germline
+   * @param multigermline: the multigermline
    * @param w: length of the window
-   * @param delta_min: The minimal distance between the end of the V 
-   *                    and the start of the J (can be < 0)
-   * @param delta_max: The maximal distance between the end of the V
-   *                    and the start of the J.
    * @param windows_labels: Windows that must be kept and registered as such.
    * @return a pointer to a WindowsStorage that will contain all the windows.
    *         It is a pointer so that the WindowsStorage is not duplicated.
    * @post Statistics on segmentation will be provided through the getSegmentationStats() methods
    *       and getAverageSegmentationLength().
    */
-  WindowsStorage *extract(OnlineFasta *reads, IKmerStore<KmerAffect> *index,
-                          size_t w, int delta_min, int delta_max, 
+  WindowsStorage *extract(OnlineFasta *reads, MultiGermline *multigermline,
+                          size_t w,
                           map<string, string> &windows_labels);
 
   /**
@@ -79,6 +76,12 @@ class WindowExtractor {
    * @param out: The output stream
    */
   void setUnsegmentedOutput(ostream *out);
+
+  /**
+   * Output the segmentation stats
+   * @param out: The output stream
+   */
+  void out_stats(ostream &out);
 
  private:
   /**

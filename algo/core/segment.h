@@ -6,6 +6,7 @@
 #include "fasta.h"
 #include "dynprog.h"
 #include "tools.h"
+#include "germline.h"
 #include "kmerstore.h"
 #include "kmeraffect.h"
 #include "affectanalyser.h"
@@ -54,7 +55,7 @@ protected:
   int best_V, best_J ;
   int del_V, del_D_left, del_D_right, del_J ;
   string seg_V, seg_N, seg_J;
-  
+
   int best_D;
   string seg_N1, seg_D, seg_N2;
   Cost segment_cost;
@@ -132,19 +133,14 @@ class KmerSegmenter : public Segmenter
   string affects;
 
  public:
+  Germline *segmented_germline;
+  
   /**
    * Build a segmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file
-   * @param index: A Kmer index
-   * @param delta_min: the minimal distance between the right bound and the left bound 
-   *        so that the segmentation is accepted 
-   *        (left bound: end of V, right bound : start of J)
-   * @param delta_min: the maximal distance between the right bound and the left bound 
-   *        so that the segmentation is accepted 
-   *        (left bound: end of V, right bound : start of J)
+   * @param multigermline: the multigermline
    */
-  KmerSegmenter(Sequence seq, IKmerStore<KmerAffect> *index, 
-		int delta_min, int delta_max);
+  KmerSegmenter(Sequence seq, MultiGermline *multigermline);
 
   ~KmerSegmenter();
 
@@ -176,27 +172,17 @@ class FineSegmenter : public Segmenter
    /**
    * Build a fineSegmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file
-   * @param rep_V: germline for V
-   * @param rep_J: germline for J
-   * @param delta_min: the minimal distance between the right bound and the left bound 
-   *        so that the segmentation is accepted 
-   *        (left bound: end of V, right bound : start of J)
-   * @param delta_min: the maximal distance between the right bound and the left bound 
-   *        so that the segmentation is accepted 
-   *        (left bound: end of V, right bound : start of J)
+   * @param germline: germline used
    */
-  FineSegmenter(Sequence seq, Fasta &rep_V, Fasta &rep_J,
-		int delta_min, int delta_max, Cost segment_cost);
+  FineSegmenter(Sequence seq, Germline *germline, Cost segment_cost);
   
   /**
   * extend segmentation from VJ to VDJ
-  * @param rep_V: germline for V
-  * @param rep_D: germline for D
-  * @param rep_J: germline for J
+  * @param germline: germline used
   */
-  void FineSegmentD(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J);
+  void FineSegmentD(Germline *germline);
 
-  JsonList toJsonList(Fasta &rep_V, Fasta &rep_D, Fasta &rep_J);
+  JsonList toJsonList(Germline *germline);
   
 };
 
