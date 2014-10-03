@@ -941,38 +941,6 @@ Model.prototype = {
         this.initClones();
     },
 
-    /* give a new custom name to a clone
-     *
-     * */
-    changeName: function (cloneID, newName) {
-        myConsole.log("changeName() (clone " + cloneID + " <<" + newName + ")");
-        this.windows[cloneID].c_name = newName;
-        this.updateElem([cloneID]);
-    }, //fin changeName,
-
-    /* give a new custom tag to a clone
-     *
-     * */
-    changeTag: function (cloneID, newTag) {
-        newTag = "" + newTag
-        newTag = newTag.replace("tag", "");
-        myConsole.log("changeTag() (clone " + cloneID + " <<" + newTag + ")");
-        this.windows[cloneID].tag = newTag;
-        this.updateElem([cloneID]);
-    },
-
-    /* return clone name
-     * or return name of the representative sequence of the clone
-     *
-     * */
-    getName: function (cloneID) {
-        if (this.clones[cloneID].name) {
-            return this.clones[cloneID].name;
-        } else {
-            return this.getSequenceName(cloneID);
-        }
-    }, //end getCloneName
-
     /**
      * return a name that can be displayed gracefully
      * (either with a real filename, or a name coming from the database).
@@ -985,52 +953,6 @@ Model.prototype = {
             return this.dataFileName
         }
     },
-
-    /* return custom name of cloneID,
-     * or return segmentation name
-     *
-     * */
-    getSequenceName: function (cloneID) {
-        if (typeof (this.windows[cloneID].c_name) != 'undefined') {
-            return this.windows[cloneID].c_name;
-        } else {
-            return this.getCode(cloneID);
-        }
-    }, //end getName
-
-    /* return segmentation name "geneV -x/y/-z geneJ",
-     * return a short segmentation name if system == IGH,
-     *
-     * */
-    getCode: function (cloneID) {
-        if (typeof (this.windows[cloneID].sequence) != 'undefined' && typeof (this.windows[cloneID].name) != 'undefined') {
-            if (this.windows[cloneID].name.length > 100 && typeof (this.windows[cloneID].shortName) != 'undefined') {
-                return this.windows[cloneID].shortName;
-            } else {
-                return this.windows[cloneID].name;
-            }
-        } else {
-            return this.windows[cloneID].window;
-        }
-    }, //end getCode
-
-
-    /* compute the clone size ( sum of all windows clustered )
-     * @t : tracking point (default value : current tracking point)
-     * */
-    getSize: function (cloneID, time) {
-        time = typeof time !== 'undefined' ? time : this.t;
-
-        if (this.reads_segmented[time] == 0 ) return 0
-        var result = this.getReads(cloneID, time) / this.reads_segmented[time]
-        
-        if (this.norm) {
-            result = this.normalize(result, time)
-        }
-
-        return result
-
-    }, //end getSize
     
     /* compute the number of reads segmented for the current selected system(s) 
      * 
@@ -1151,118 +1073,6 @@ Model.prototype = {
         this.scale_color = d3.scale.log()
             .domain([1, this.precision])
             .range([250, 0]);
-    },
-    
-    /* 
-     *
-     * */
-    getSequenceSize: function (cloneID, time) {
-        time = typeof time !== 'undefined' ? time : this.t;
-        
-        if (this.reads_segmented[time] == 0 ) return 0
-        var result = this.getSequenceReads(cloneID, time) / this.reads_segmented[time]
-        
-        if (this.norm) {
-            result = this.normalize(result, time)
-        }
-
-        return result
-
-    }, //end getSequenceSize
-
-
-    /* compute the clone reads number ( sum of all reads of windows clustered )
-     * @t : tracking point (default value : current tracking point)
-     * */
-    getReads: function (cloneID, time) {
-        time = typeof time !== 'undefined' ? time : this.t;
-        var result = 0;
-
-        for (var j = 0; j < this.clones[cloneID].cluster.length; j++) {
-            result += this.windows[this.clones[cloneID].cluster[j]].size[time];
-        }
-
-        return result
-
-    }, //end getSize
-
-    /* 
-     *
-     * */
-    getSequenceReads: function (cloneID, time) {
-        time = typeof time !== 'undefined' ? time : this.t;
-
-        var result = 0;
-        result = this.windows[cloneID].size[time];
-
-        return result;
-
-    }, //end getSequenceSize
-    getV: function (cloneID) {
-        if (typeof (this.windows[cloneID].sequence) != 'undefined' && typeof (this.windows[cloneID].V) != 'undefined') {
-            return this.windows[cloneID].V[0].split('*')[0];
-        }
-        return "undefined V";
-    },
-
-    getJ: function (cloneID) {
-        if (typeof (this.windows[cloneID].sequence) != 'undefined' && typeof (this.windows[cloneID].J) != 'undefined') {
-            return this.windows[cloneID].J[0].split('*')[0];;
-        }
-        return "undefined J";
-    },
-
-
-    /* return the clone size with a fixed number of character
-     * use scientific notation if neccesary
-     * */
-    getStrSize: function (cloneID) {
-        var size = this.getSize(cloneID);
-        return this.formatSize(size, true)
-    },
-
-    /* return the clone color
-     *
-     * */
-    getColor: function (cloneID) {
-        if (this.focus == cloneID)
-            return color['@select'];
-        if (!this.windows[cloneID].active)
-            return color['@default'];
-        if (this.colorMethod == "abundance") {
-            var size = this.getSize(cloneID)
-            if (size == 0) return color['@default'];
-            return colorGenerator(this.scale_color(size * this.precision), color_s, color_v);
-        }
-        if (this.colorMethod == "Tag")
-            return tagColor[this.windows[cloneID].tag];
-        if (this.colorMethod == "dbscan")
-            return this.windows[cloneID].colorDBSCAN;
-        if (typeof (this.windows[cloneID].V) != 'undefined') {
-            switch(this.colorMethod) {
-                case 'V':
-                    return this.windows[cloneID].colorV;
-                case 'J':
-                    return this.windows[cloneID].colorJ;
-                case 'N':
-                    return this.windows[cloneID].colorN;
-            }
-        }
-        if (this.colorMethod == "system") {
-            return germline.icon[this.windows[cloneID].system].color
-        }
-        return color['@default'];
-    },
-    
-    /* return clone segmentation status
-     * 
-     * */
-    getStatus: function (cloneID) {
-        if (typeof this.windows[cloneID].status != 'undefined'){
-            return this.segmented_mesg[this.windows[cloneID].status]
-        }else{
-            return "not specified";
-        }
     },
 
     getSegmentationInfo: function (timeID) {
@@ -1494,20 +1304,6 @@ Model.prototype = {
         this.updateAlignmentButton();
     },
 
-    /* kick a clone out of the selection
-     *
-     * */
-    unselect: function (cloneID) {
-        myConsole.log("unselect() (clone " + cloneID + ")")
-        if (this.windows[cloneID].select) {
-            this.windows[cloneID].select = false;
-        }
-        this.removeClonesSelected(cloneID);
-	    this.updateElemStyle([cloneID]);
-        this.updateAlignmentButton();
-    },
-
-
     /* kick all clones out of the selection
      *
      * */
@@ -1515,19 +1311,11 @@ Model.prototype = {
         myConsole.log("unselectAll()")
         var list = this.getSelected();
         for (var i = 0; i < list.length; i++) {
-            this.windows[list[i]].select = false;
+            this.clone(list[i]).select = false;
         }
-        this.updateElemStyle(list);
 	    this.removeAllClones();
         this.updateAlignmentButton();
-    },
-    
-    isSelected: function (cloneID) {
-        if (this.clonesSelected.indexOf(cloneID) != -1){
-            return true;
-        }else{
-            return false;
-        }
+        this.updateElemStyle(list);
     },
 
     /* merge all clones currently in the selection into one
@@ -1631,7 +1419,7 @@ Model.prototype = {
         this.computeOtherSize();
 
         for (var i = 0; i < this.n_windows; i++) {
-            this.windows[i].color = this.getColor(i);
+            this.windows[i].updateColor()
         }
 
     },
@@ -1769,111 +1557,6 @@ Model.prototype = {
 
         this.windows[this.n_windows - 1].size = other;
 
-    },
-
-    /* return info about a sequence/clone in html 
-     *
-     * */
-    getCloneHtmlInfo: function (id, type) {
-
-        if (this.clones[id].cluster.length <= 1) type = "sequence"
-        var time_length = this.samples.order.length
-        var html = ""
-
-        //clone/sequence label
-        if (type == "clone") {
-            html = "<h2>Clone info : " + this.getName(id) + "</h2>"
-        } else {
-            html = "<h2>Sequence info : " + this.getSequenceName(id) + "</h2>"
-        }
-        
-        //column
-        html += "<div id='info_window'><table><tr><th></th>"
-
-        for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.getStrTime(this.samples.order[i], "name") + "</td>"
-        }
-        html += "</tr>"
-
-        //clone info
-        if (type == "clone") {
-            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> clone information </td></tr>"
-            html += "<tr><td> clone name </td><td colspan='" + time_length + "'>" + this.getName(id) + "</td></tr>"
-            html += "<tr><td> clone size (n-reads (total reads) )</td>"
-            for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.getReads(id, this.samples.order[i]) + "  (" + this.reads_segmented[this.samples.order[i]] + ")</td>"
-            }
-            html += "</tr><tr><td> clone size (%)</td>"
-            for (var i = 0; i < time_length; i++) {
-            html += "<td>" + (this.getSize(id, this.samples.order[i]) * 100).toFixed(3) + " % </td>"
-            }
-            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> clone's main sequence information</td></tr>"
-        }else{
-            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> sequence information</td></tr>"
-        }
-
-        
-        //sequence info (or clone main sequence info)
-        html += "<tr><td> sequence name </td><td colspan='" + time_length + "'>" + this.getSequenceName(id) + "</td></tr>"
-        html += "<tr><td> code </td><td colspan='" + time_length + "'>" + this.getCode(id) + "</td></tr>"
-        html += "<tr><td> size (n-reads (total reads) )</td>"
-        for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.getSequenceReads(id, this.samples.order[i]) + 
-                    "  (" + this.reads_segmented[this.samples.order[i]] + ")</td>"
-        }
-        html += "</tr>"
-        html += "<tr><td> size (%)</td>"
-        for (var i = 0; i < time_length; i++) {
-            html += "<td>" + (this.getSequenceSize(id, this.samples.order[i]) * 100)
-                .toFixed(3) + " % </td>"
-        }
-        html += "</tr>"
-
-        
-        //segmentation info
-        html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation information</td></tr>"
-        html += "<tr><td> segmented </td><td colspan='" + time_length + "'>" + this.getStatus(id) + "</td></tr>"
-        
-        if (typeof this.windows[id].seg_stat != 'undefined'){
-            var total_stat = [];
-            for (var i=0; i<this.windows[id].seg_stat.length; i++) total_stat[i] = 0
-            for (var i=0; i<this.windows[id].seg_stat.length; i++){
-                for (var key in this.windows[id].seg_stat[i]) total_stat[i] +=  this.windows[id].seg_stat[i][key]
-            }
-            
-            for (var key in this.windows[id].seg_stat[0]){
-                html += "<tr><td> "+this.segmented_mesg[key]+"</td>"
-                for (var i = 0; i < time_length; i++) {
-                html += "<td>"+this.windows[id].seg_stat[i][key] 
-                        + " (" + ((this.windows[id].seg_stat[i][key]/total_stat[i]) * 100).toFixed(1) + " %)</td>"
-                }
-            }
-        }
-        
-        html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.windows[id].sequence + "</td></tr>"
-        html += "<tr><td> window </td><td colspan='" + time_length + "'>" + this.windows[id].window + "</td></tr>"
-        html += "<tr><td> V </td><td colspan='" + time_length + "'>" + this.windows[id].V + "</td></tr>"
-        html += "<tr><td> D </td><td colspan='" + time_length + "'>" + this.windows[id].D + "</td></tr>"
-        html += "<tr><td> J </td><td colspan='" + time_length + "'>" + this.windows[id].J + "</td></tr>"
-        
-        
-        //other info (clntab)
-        html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> other information</td></tr>"
-        for (var key in this.windows[id]) {
-            if (key[0] == "_") {
-                html += "<tr><td>" + key + "</td>"
-                if (this.windows[id][key] instanceof Array) {
-                    for (var i = 0; i < time_length; i++) {
-                        html += "<td>" + this.windows[id][key][this.samples.order[i]] + "</td>"
-                    }
-                } else {
-                    html += "<td>" + this.windows[id][key] + "</td>"
-                }
-                html += "</tr>"
-            }
-        }
-        html += "</table></div>"
-        return html
     },
     
     /* return info about a timePoint in html 
@@ -2156,7 +1839,362 @@ Model.prototype = {
         
     },
     
+    
+    
+    
+
+    
+    
+    
+    
+    
+    isSelected: function (cloneID) {
+        if (this.clonesSelected.indexOf(cloneID) != -1){
+            return true;
+        }else{
+            return false;
+        }
+    },
+
+    /* return custom name of cloneID,
+     * or return segmentation name
+     *
+     * */
+    getSequenceName: function (cloneID) {
+        if (typeof (this.windows[cloneID].c_name) != 'undefined') {
+            return this.windows[cloneID].c_name;
+        } else {
+            return this.getCode(cloneID);
+        }
+    }, //end getName
+
+    /* return segmentation name "geneV -x/y/-z geneJ",
+     * return a short segmentation name if system == IGH,
+     *
+     * */
+    getCode: function (cloneID) {
+        if (typeof (this.windows[cloneID].sequence) != 'undefined' && typeof (this.windows[cloneID].name) != 'undefined') {
+            if (this.windows[cloneID].name.length > 100 && typeof (this.windows[cloneID].shortName) != 'undefined') {
+                return this.windows[cloneID].shortName;
+            } else {
+                return this.windows[cloneID].name;
+            }
+        } else {
+            return this.windows[cloneID].window;
+        }
+    }, //end getCode
+
+
+    /* compute the clone size ( sum of all windows clustered )
+     * @t : tracking point (default value : current tracking point)
+     * */
+    getSize: function (cloneID, time) {
+        time = typeof time !== 'undefined' ? time : this.t;
+
+        if (this.reads_segmented[time] == 0 ) return 0
+        var result = this.getReads(cloneID, time) / this.reads_segmented[time]
+        
+        if (this.norm) {
+            result = this.normalize(result, time)
+        }
+
+        return result
+
+    }, //end getSize
+    
+    /* 
+     *
+     * */
+    getSequenceSize: function (cloneID, time) {
+        time = typeof time !== 'undefined' ? time : this.t;
+        
+        if (this.reads_segmented[time] == 0 ) return 0
+        var result = this.getSequenceReads(cloneID, time) / this.reads_segmented[time]
+        
+        if (this.norm) {
+            result = this.normalize(result, time)
+        }
+
+        return result
+
+    }, //end getSequenceSize
+
+
+    /* compute the clone reads number ( sum of all reads of windows clustered )
+     * @t : tracking point (default value : current tracking point)
+     * */
+    getReads: function (cloneID, time) {
+        time = typeof time !== 'undefined' ? time : this.t;
+        var result = 0;
+
+        for (var j = 0; j < this.clones[cloneID].cluster.length; j++) {
+            result += this.windows[this.clones[cloneID].cluster[j]].size[time];
+        }
+
+        return result
+
+    }, //end getSize
+
+    /* 
+     *
+     * */
+    getSequenceReads: function (cloneID, time) {
+        time = typeof time !== 'undefined' ? time : this.t;
+
+        var result = 0;
+        result = this.windows[cloneID].size[time];
+
+        return result;
+
+    }, //end getSequenceSize
+    getV: function (cloneID) {
+        if (typeof (this.windows[cloneID].sequence) != 'undefined' && typeof (this.windows[cloneID].V) != 'undefined') {
+            return this.windows[cloneID].V[0].split('*')[0];
+        }
+        return "undefined V";
+    },
+
+    getJ: function (cloneID) {
+        if (typeof (this.windows[cloneID].sequence) != 'undefined' && typeof (this.windows[cloneID].J) != 'undefined') {
+            return this.windows[cloneID].J[0].split('*')[0];;
+        }
+        return "undefined J";
+    },
+
+
+    /* return the clone size with a fixed number of character
+     * use scientific notation if neccesary
+     * */
+    getStrSize: function (cloneID) {
+        var size = this.getSize(cloneID);
+        return this.formatSize(size, true)
+    },
+
+    /* return the clone color
+     *
+     * */
+    getColor: function (cloneID) {
+        if (this.focus == cloneID)
+            return color['@select'];
+        if (!this.windows[cloneID].active)
+            return color['@default'];
+        if (this.colorMethod == "abundance") {
+            var size = this.getSize(cloneID)
+            if (size == 0) return color['@default'];
+            return colorGenerator(this.scale_color(size * this.precision), color_s, color_v);
+        }
+        if (this.colorMethod == "Tag")
+            return tagColor[this.windows[cloneID].tag];
+        if (this.colorMethod == "dbscan")
+            return this.windows[cloneID].colorDBSCAN;
+        if (typeof (this.windows[cloneID].V) != 'undefined') {
+            switch(this.colorMethod) {
+                case 'V':
+                    return this.windows[cloneID].colorV;
+                case 'J':
+                    return this.windows[cloneID].colorJ;
+                case 'N':
+                    return this.windows[cloneID].colorN;
+            }
+        }
+        if (this.colorMethod == "system") {
+            return germline.icon[this.windows[cloneID].system].color
+        }
+        return color['@default'];
+    },
+    
+    /* return clone segmentation status
+     * 
+     * */
+    getStatus: function (cloneID) {
+        if (typeof this.windows[cloneID].status != 'undefined'){
+            return this.segmented_mesg[this.windows[cloneID].status]
+        }else{
+            return "not specified";
+        }
+    },
+    
+        /* give a new custom name to a clone
+     *
+     * */
+    changeName: function (cloneID, newName) {
+        myConsole.log("changeName() (clone " + cloneID + " <<" + newName + ")");
+        this.windows[cloneID].c_name = newName;
+        this.updateElem([cloneID]);
+    }, //fin changeName,
+
+    /* give a new custom tag to a clone
+     *
+     * */
+    changeTag: function (cloneID, newTag) {
+        newTag = "" + newTag
+        newTag = newTag.replace("tag", "");
+        myConsole.log("changeTag() (clone " + cloneID + " <<" + newTag + ")");
+        this.windows[cloneID].tag = newTag;
+        this.updateElem([cloneID]);
+    },
+
+    /* return clone name
+     * or return name of the representative sequence of the clone
+     *
+     * */
+    getName: function (cloneID) {
+        if (this.clones[cloneID].name) {
+            return this.clones[cloneID].name;
+        } else {
+            return this.getSequenceName(cloneID);
+        }
+    }, //end getCloneName
+    
+    /* kick a clone out of the selection
+     *
+     * */
+    unselect: function (cloneID) {
+        myConsole.log("unselect() (clone " + cloneID + ")")
+        if (this.windows[cloneID].select) {
+            this.windows[cloneID].select = false;
+        }
+        this.removeClonesSelected(cloneID);
+        this.updateElemStyle([cloneID]);
+        this.updateAlignmentButton();
+    },
+    
+    clone: function(hash) {
+        return this.windows[hash]
+    },
+    
+    /* return info about a sequence/clone in html 
+     *
+     * */
+    getCloneHtmlInfo: function (id, type) {
+
+        if (this.clones[id].cluster.length <= 1) type = "sequence"
+        var time_length = this.samples.order.length
+        var html = ""
+
+        //clone/sequence label
+        if (type == "clone") {
+            html = "<h2>Clone info : " + this.getName(id) + "</h2>"
+        } else {
+            html = "<h2>Sequence info : " + this.getSequenceName(id) + "</h2>"
+        }
+        
+        //column
+        html += "<div id='info_window'><table><tr><th></th>"
+
+        for (var i = 0; i < time_length; i++) {
+            html += "<td>" + this.getStrTime(this.samples.order[i], "name") + "</td>"
+        }
+        html += "</tr>"
+
+        //clone info
+        if (type == "clone") {
+            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> clone information </td></tr>"
+            html += "<tr><td> clone name </td><td colspan='" + time_length + "'>" + this.getName(id) + "</td></tr>"
+            html += "<tr><td> clone size (n-reads (total reads) )</td>"
+            for (var i = 0; i < time_length; i++) {
+            html += "<td>" + this.getReads(id, this.samples.order[i]) + "  (" + this.reads_segmented[this.samples.order[i]] + ")</td>"
+            }
+            html += "</tr><tr><td> clone size (%)</td>"
+            for (var i = 0; i < time_length; i++) {
+            html += "<td>" + (this.getSize(id, this.samples.order[i]) * 100).toFixed(3) + " % </td>"
+            }
+            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> clone's main sequence information</td></tr>"
+        }else{
+            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> sequence information</td></tr>"
+        }
+
+        
+        //sequence info (or clone main sequence info)
+        html += "<tr><td> sequence name </td><td colspan='" + time_length + "'>" + this.getSequenceName(id) + "</td></tr>"
+        html += "<tr><td> code </td><td colspan='" + time_length + "'>" + this.getCode(id) + "</td></tr>"
+        html += "<tr><td> size (n-reads (total reads) )</td>"
+        for (var i = 0; i < time_length; i++) {
+            html += "<td>" + this.getSequenceReads(id, this.samples.order[i]) + 
+                    "  (" + this.reads_segmented[this.samples.order[i]] + ")</td>"
+        }
+        html += "</tr>"
+        html += "<tr><td> size (%)</td>"
+        for (var i = 0; i < time_length; i++) {
+            html += "<td>" + (this.getSequenceSize(id, this.samples.order[i]) * 100)
+                .toFixed(3) + " % </td>"
+        }
+        html += "</tr>"
+
+        
+        //segmentation info
+        html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation information</td></tr>"
+        html += "<tr><td> segmented </td><td colspan='" + time_length + "'>" + this.getStatus(id) + "</td></tr>"
+        
+        if (typeof this.windows[id].seg_stat != 'undefined'){
+            var total_stat = [];
+            for (var i=0; i<this.windows[id].seg_stat.length; i++) total_stat[i] = 0
+            for (var i=0; i<this.windows[id].seg_stat.length; i++){
+                for (var key in this.windows[id].seg_stat[i]) total_stat[i] +=  this.windows[id].seg_stat[i][key]
+            }
+            
+            for (var key in this.windows[id].seg_stat[0]){
+                html += "<tr><td> "+this.segmented_mesg[key]+"</td>"
+                for (var i = 0; i < time_length; i++) {
+                html += "<td>"+this.windows[id].seg_stat[i][key] 
+                        + " (" + ((this.windows[id].seg_stat[i][key]/total_stat[i]) * 100).toFixed(1) + " %)</td>"
+                }
+            }
+        }
+        
+        html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.windows[id].sequence + "</td></tr>"
+        html += "<tr><td> window </td><td colspan='" + time_length + "'>" + this.windows[id].window + "</td></tr>"
+        html += "<tr><td> V </td><td colspan='" + time_length + "'>" + this.windows[id].V + "</td></tr>"
+        html += "<tr><td> D </td><td colspan='" + time_length + "'>" + this.windows[id].D + "</td></tr>"
+        html += "<tr><td> J </td><td colspan='" + time_length + "'>" + this.windows[id].J + "</td></tr>"
+        
+        
+        //other info (clntab)
+        html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> other information</td></tr>"
+        for (var key in this.windows[id]) {
+            if (key[0] == "_") {
+                html += "<tr><td>" + key + "</td>"
+                if (this.windows[id][key] instanceof Array) {
+                    for (var i = 0; i < time_length; i++) {
+                        html += "<td>" + this.windows[id][key][this.samples.order[i]] + "</td>"
+                    }
+                } else {
+                    html += "<td>" + this.windows[id][key] + "</td>"
+                }
+                html += "</tr>"
+            }
+        }
+        html += "</table></div>"
+        return html
+    },
+    
+
 } //end prototype Model
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -2284,7 +2322,6 @@ function root(n) {
     for (var i=0; i<n; i++){
         var dx = 5
         var dy = 5+1
-        
         rootTab[i] = Math.sqrt( dx*dx + dy*dy )
     }
     
