@@ -64,7 +64,7 @@ Axis.prototype = {
         
         //clone position
         this.pos = function(cloneID) {
-            var clone = self.m.windows[cloneID] 
+            var clone = self.m.clone(cloneID) 
             if (typeof clone[geneType] != "undefined" 
                 && typeof clone[geneType][0] != "undefined" 
                 && typeof gene_list[clone[geneType][0].split("*")[0]] != "undefined")

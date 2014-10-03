@@ -112,10 +112,10 @@ Builder.prototype = {
         normalize_list.appendChild(document.createTextNode("none"))
         normalize_list.appendChild(document.createElement("br"))
         
-        for (var i=0; i<self.m.windows.length; i++){
-            if (typeof self.m.windows[i].expected != "undefined"){
+        for (var i=0; i<self.m.n_windows; i++){
+            if (typeof self.m.clone(i).expected != "undefined"){
                 var input = document.createElement("input")
-                var text = document.createTextNode(self.m.getName(i) + " => " +self.m.windows[i].expected)
+                var text = document.createTextNode(self.m.clone(i).getName() + " => " +self.m.clone(i).expected)
                 input.value=i;
                 input.type = "radio"
                 input.name = "normalize_list"
@@ -156,7 +156,7 @@ Builder.prototype = {
                 span1.className = "tagColorBox tagColor" + i
                 span1.onclick = function () {
                     var cloneID = parseInt(document.getElementById('tag_id').innerHTML);
-                    self.m.changeTag(cloneID, i)
+                    self.m.clone(cloneID).changeTag(i)
                     $('#tagSelector').hide('fast')
                 }
                 
@@ -164,7 +164,7 @@ Builder.prototype = {
                 span2.className = "tagName" + i + " tn"
                 span2.onclick = function () {
                     var cloneID = parseInt(document.getElementById('tag_id').innerHTML);
-                    self.m.changeTag(cloneID, i)
+                    self.m.clone(cloneID).changeTag(i)
                     $('#tagSelector').hide('fast')
                 }
 
@@ -203,7 +203,7 @@ Builder.prototype = {
             
             if (size>0 && size<1){
                 document.getElementById('normalized_size').value = ""
-                self.m.windows[cloneID].expected=size;
+                self.m.clone(cloneID).expected=size;
                 self.m.compute_normalization(cloneID, size)
                 self.m.update()
                 $('#tagSelector')
@@ -357,9 +357,9 @@ Builder.prototype = {
 
         //init slider
         var max_top = 0;
-        for (var i = 0; i < this.m.windows.length; i++) {
-            if (this.m.windows[i].top > max_top)
-                max_top = this.m.windows[i].top
+        for (var i = 0; i < this.m.n_windows; i++) {
+            if (this.m.clone(i).top > max_top)
+                max_top = this.m.clone(i).top
         }
         max_top = (Math.ceil(max_top / 5)) * 5
         document.getElementById("top_slider")
