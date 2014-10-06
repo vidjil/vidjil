@@ -1090,23 +1090,6 @@ Model.prototype = {
         return this.getName(edge.source)+" -- "+this.getName(edge.target)+" == "+edge.len;
     },
 
-    /* Fonction permettant de recharger le bouton 'align' en fonction de ce qui a été selectionné dans le model
-    */
-    updateAlignmentButton: function() {
-      var self = this;
-      var align = document.getElementById("align");
-      if (align != null) {
-	if (this.clonesSelected.length > 1) {
-	  align.className = "button";
-	  align.onclick = function() {self.segment.align();};
-	}
-	else {
-	  align.className = "";
-	  align.onclick = function() {};
-	}
-      }
-    },
-
     /* return clones currently in the selection
      *
      * */
@@ -1161,7 +1144,6 @@ Model.prototype = {
 	    
 	    this.lastCloneSelected = cloneID;
         this.updateElemStyle([cloneID]);
-        this.updateAlignmentButton();
     },
     
    multiSelect: function (list) {
@@ -1175,7 +1157,6 @@ Model.prototype = {
 
         this.lastCloneSelected = list[0];
         this.updateElemStyle(list);
-        this.updateAlignmentButton();
     },
 
     /* kick all clones out of the selection
@@ -1188,7 +1169,6 @@ Model.prototype = {
             this.clone(list[i]).select = false;
         }
 	    this.removeAllClones();
-        this.updateAlignmentButton();
         this.updateElemStyle(list);
     },
 
@@ -1857,19 +1837,5 @@ Model.prototype = {
 
 } //end prototype Model
 
-
-
-
-
-function return_URL_CGI() {
-    if (typeof config != "undefined") return config.cgi_address;
-    else return "No_CGI_found";
-}
-
-
-
-
-/*appel a chaque changement de taille du navigateur*/
-window.onresize = function () { m.resize(); };
 
 

@@ -15,6 +15,12 @@ function Database(id, db_address) {
     }
 }
 
+
+function return_URL_CGI() {
+    if (typeof config != "undefined") return config.cgi_address;
+    else return "No_CGI_found";
+}
+
 Database.prototype = {
 
     /*appel une page générée a partir des données du serveur

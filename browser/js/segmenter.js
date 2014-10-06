@@ -85,7 +85,7 @@ Segment.prototype = {
         //align button
         span = document.createElement('span');
         span.id = "align"
-	this.m.updateAlignmentButton();
+        this.updateAlignmentButton();
         span.className = "button"
         span.onclick = function () {
             self.align()
@@ -236,8 +236,27 @@ Segment.prototype = {
                 }
             }
         }
-        
+        this.updateAlignmentButton()
     },
+    
+    /* Fonction permettant de recharger le bouton 'align' 
+    */
+    updateAlignmentButton: function() {
+        var self = this;
+        var align = document.getElementById("align");
+        if (align != null) {
+            if (this.m.clonesSelected.length > 1) {
+                align.className = "button";
+                align.onclick = function() {self.align();};
+            }
+            else {
+                align.className = "";
+                align.className = "button inactive";
+                align.onclick = function() {};
+            }
+        }
+    },
+
 
     /* genere le code HTML des infos d'un clone
      * @div_elem : element HTML a remplir

@@ -358,7 +358,6 @@ Clone.prototype = {
         }
         this.m.removeClonesSelected(this.hash);
         this.m.updateElemStyle([this.hash]);
-        this.m.updateAlignmentButton();
     },
     
     isSelected: function () {
