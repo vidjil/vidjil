@@ -182,7 +182,7 @@ Clone.prototype = {
         newTag = newTag.replace("tag", "");
         myConsole.log("changeTag() (clone " + this.hash + " <<" + newTag + ")");
         this.tag = newTag;
-        this.m.updateElem([this.m.hash]);
+        this.m.updateElem([this.hash]);
     },
 
     /* return clone name

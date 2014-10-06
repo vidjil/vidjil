@@ -620,7 +620,7 @@ function changeTag(cloneID) {
     $('#tagSelector')
         .show("fast");
     document.getElementById("tag_name")
-        .innerHTML = m.getName(cloneID);
+        .innerHTML = m.clone(cloneID).getName();
     document.getElementById("tag_id")
         .innerHTML = cloneID;
 }
