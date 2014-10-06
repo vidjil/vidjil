@@ -549,143 +549,6 @@ Model.prototype = {
         return this;
     }, //end loadAnalysis
 
-
-    /*For DBSCAN*/
-    loadRandomTab: function() {
-        this.tabRandomColor = [];
-        /*Initialisation du tableau de couleurs*/
-        for (var i = 0; i < this.n_windows; i++) {
-            this.tabRandomColor.push(i);
-        }
-        /*Fisher yates algorithm to shuffle the array*/
-        for (var i = this.n_windows - 1; i >= 1; i--) {
-            var j = Math.floor(Math.random() * i) + 1;
-            var abs = this.tabRandomColor[i];
-            this.tabRandomColor[i] = this.tabRandomColor[j];
-            this.tabRandomColor[j] = abs;
-        }
-    },
-
-    /* Fonction permettant de charger la clusterisation avec DBSCAN, mais aussi de colorer les nodes directement après en fonction de cette clusterisation
-     *
-     */
-    loadDBSCAN: function(sp) {
-        if (typeof(sp) != "undefined") this.sp = sp;
-            this.dbscan = new DBSCAN(this.sp, this.eps, this.nbr);
-            this.dbscan.runAlgorithm();
-            for (var i = 0; i < this.dbscan.clusters.length; i++)
-                for (var j = 0; j < this.dbscan.clusters[i].length; j++)
-                    this.windows[this.dbscan.clusters[i][j]].cluster = i;
-            //Color DBSCAN
-            if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
-            this.colorNodesDBSCAN();
-            //Add information about the window (Noise, Core, ...)
-            this.addTagCluster();
-            if (this.currentCluster == "cluster") this.clusterBy("cluster");
-    },
-
-    /* Fonction permettant de colorer les nodes en fonction de la clusterisation DBSCAN
-    */
-    colorNodesDBSCAN: function() {
-        /*Adding color by specific cluster*/
-        /*-> Solution provisoire quant à la couleur noire non voulue est d' "effacer" le nombre max de clusters, mais de le prendre par défaut (100), soit un intervalle de 2.7 à chaque fois*/
-        var maxCluster = this.dbscan.clusters.length;
-        for (var i = 0; i < this.n_windows; i++) {
-            if (typeof(this.clone(i).cluster) != 'undefined') {
-                this.clone(i).colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.clone(i).cluster] + 1) ), color_s, color_v);
-            }
-            else
-                this.clone(i).colorDBSCAN = color['@default'];
-        }
-    },
-
-    /* Fonction permettant d'ajouter un tab concernant un node - s'il est au coeur d'un cluster, à l'extérieur ou appartenant à...
-     */
-    addTagCluster: function() {
-        for (var i = 0; i < this.n_windows; i++)
-            if (typeof(this.clone(i).cluster) != 'undefined')
-                switch (this.dbscan.visitedTab[i].mark) {
-                case -1:
-                        this.clone(i).tagCluster = "NOISE";
-                        break;
-                case 0:
-                        this.clone(i).tagCluster = "CORE";
-                        break;
-                case 1:
-                        this.clone(i).tagCluster = "NEAR";
-                        break;
-                }
-            else
-                this.clone(i).tagCluster = null;
-    },
-
-    /*
-    // Fonction permettant de changer dynamiquement le nombre epsilon, pour DBSCAN
-    //
-    changeEps: function(newEps) {
-        //Modification de l'attribut 'Eps' contenu dans l'objet
-        this.eps = newEps;
-        //Prise en compte du slider
-        var html_container = document.getElementById('changeEps');
-        if (html_container != null) {
-            html_container.value = newEps;
-        }
-        //Création d'un nouvel objet DBSCAN
-        this.loadDBSCAN();
-        this.update();
-        //Activation du moteur et autres paramètres spé à l'affichage du graphe DBSCAN
-        if (this.sp.dbscanActive) this.sp.runGraphVisualization("dbscan");
-        //Changement de l'affichage de la valeur liée au slider
-        this.changeSliderValue(true, "DBSCANEpsSlider", "Eps ", this.eps);
-    },
-
-    // Fonction permettant de changer dynamiquement le nombre de voisins minimum, pour DBSCAN
-    //
-    changeNbr: function(newNbr) {
-        //Modification de l'attribut 'nbr' contenu dans l'objet
-        this.nbr = newNbr;
-        //Prise en compte du slider
-        var html_container = document.getElementById('changeNbr');
-        //Changement de la valeur du slider
-        if (html_container != null) {
-            html_container.value = newNbr;
-        }
-        //Création d'un nouvel objet DBSCAN
-        this.loadDBSCAN();
-        this.update();
-        //Activation du moteur et autres paramètres spé à l'affichage du graphe DBSCAN
-        if (this.sp.dbscanActive) this.sp.runGraphVisualization("dbscan");
-        //Changement de l'affichage de la valeur liée au slider
-        this.changeSliderValue(true, "DBSCANNbrSlider", "Nbr ", this.nbr);
-    },
-
-    */
-    /* Fonction permettant de changer dynamiquement la valeur d'affichage, à côté du slider Epsilon/MinPts dans le menu Display
-    */
-    changeSliderValue: function(bool, div, name, value) {
-        var div = document.getElementById(div);
-        var text = document.createTextNode(name + value);
-        if (bool) {
-            //Suppression du précédent noeud
-            div.removeChild(div.childNodes[0]);
-        }
-        if (!bool) div.insertBefore(document.createElement('br'), div.firstChild);
-        div.insertBefore(text, div.firstChild);
-    },
-
-    /* Fonction permettant de changer dynamiquement la valeur d'affichage du slider "Edit Distance"
-    */
-    changeSliderEditDistanceValue: function(bool, value) {
-        var div = document.getElementById("EditDistanceSlider");
-        var text =  document.createTextNode("Distance: " + value);
-        if (!bool) {
-            div.removeChild(div.childNodes[0]);
-        }
-        else {
-            div.insertBefore(text, div.firstChild);
-        }
-    },
-
     /* initializes clones with analysis file data
      *
      * */
@@ -1839,24 +1702,160 @@ Model.prototype = {
     },
     
 
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+    
+   /*For DBSCAN*/
+    loadRandomTab: function() {
+        this.tabRandomColor = [];
+        /*Initialisation du tableau de couleurs*/
+        for (var i = 0; i < this.n_windows; i++) {
+            this.tabRandomColor.push(i);
+        }
+        /*Fisher yates algorithm to shuffle the array*/
+        for (var i = this.n_windows - 1; i >= 1; i--) {
+            var j = Math.floor(Math.random() * i) + 1;
+            var abs = this.tabRandomColor[i];
+            this.tabRandomColor[i] = this.tabRandomColor[j];
+            this.tabRandomColor[j] = abs;
+        }
+    },
+
+    /* Fonction permettant de charger la clusterisation avec DBSCAN, mais aussi de colorer les nodes directement après en fonction de cette clusterisation
+     *
+     */
+    loadDBSCAN: function(sp) {
+        if (typeof(sp) != "undefined") this.sp = sp;
+            this.dbscan = new DBSCAN(this.sp, this.eps, this.nbr);
+            this.dbscan.runAlgorithm();
+            for (var i = 0; i < this.dbscan.clusters.length; i++)
+                for (var j = 0; j < this.dbscan.clusters[i].length; j++)
+                    this.windows[this.dbscan.clusters[i][j]].cluster = i;
+            //Color DBSCAN
+            if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
+            this.colorNodesDBSCAN();
+            //Add information about the window (Noise, Core, ...)
+            this.addTagCluster();
+            if (this.currentCluster == "cluster") this.clusterBy("cluster");
+    },
+
+    /* Fonction permettant de colorer les nodes en fonction de la clusterisation DBSCAN
+    */
+    colorNodesDBSCAN: function() {
+        /*Adding color by specific cluster*/
+        /*-> Solution provisoire quant à la couleur noire non voulue est d' "effacer" le nombre max de clusters, mais de le prendre par défaut (100), soit un intervalle de 2.7 à chaque fois*/
+        var maxCluster = this.dbscan.clusters.length;
+        for (var i = 0; i < this.n_windows; i++) {
+            if (typeof(this.clone(i).cluster) != 'undefined') {
+                this.clone(i).colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.clone(i).cluster] + 1) ), color_s, color_v);
+            }
+            else
+                this.clone(i).colorDBSCAN = color['@default'];
+        }
+    },
+
+    /* Fonction permettant d'ajouter un tab concernant un node - s'il est au coeur d'un cluster, à l'extérieur ou appartenant à...
+     */
+    addTagCluster: function() {
+        for (var i = 0; i < this.n_windows; i++)
+            if (typeof(this.clone(i).cluster) != 'undefined')
+                switch (this.dbscan.visitedTab[i].mark) {
+                case -1:
+                        this.clone(i).tagCluster = "NOISE";
+                        break;
+                case 0:
+                        this.clone(i).tagCluster = "CORE";
+                        break;
+                case 1:
+                        this.clone(i).tagCluster = "NEAR";
+                        break;
+                }
+            else
+                this.clone(i).tagCluster = null;
+    },
+
+    /*
+    // Fonction permettant de changer dynamiquement le nombre epsilon, pour DBSCAN
+    //
+    changeEps: function(newEps) {
+        //Modification de l'attribut 'Eps' contenu dans l'objet
+        this.eps = newEps;
+        //Prise en compte du slider
+        var html_container = document.getElementById('changeEps');
+        if (html_container != null) {
+            html_container.value = newEps;
+        }
+        //Création d'un nouvel objet DBSCAN
+        this.loadDBSCAN();
+        this.update();
+        //Activation du moteur et autres paramètres spé à l'affichage du graphe DBSCAN
+        if (this.sp.dbscanActive) this.sp.runGraphVisualization("dbscan");
+        //Changement de l'affichage de la valeur liée au slider
+        this.changeSliderValue(true, "DBSCANEpsSlider", "Eps ", this.eps);
+    },
+
+    // Fonction permettant de changer dynamiquement le nombre de voisins minimum, pour DBSCAN
+    //
+    changeNbr: function(newNbr) {
+        //Modification de l'attribut 'nbr' contenu dans l'objet
+        this.nbr = newNbr;
+        //Prise en compte du slider
+        var html_container = document.getElementById('changeNbr');
+        //Changement de la valeur du slider
+        if (html_container != null) {
+            html_container.value = newNbr;
+        }
+        //Création d'un nouvel objet DBSCAN
+        this.loadDBSCAN();
+        this.update();
+        //Activation du moteur et autres paramètres spé à l'affichage du graphe DBSCAN
+        if (this.sp.dbscanActive) this.sp.runGraphVisualization("dbscan");
+        //Changement de l'affichage de la valeur liée au slider
+        this.changeSliderValue(true, "DBSCANNbrSlider", "Nbr ", this.nbr);
+    },
+
+    */
+    /* Fonction permettant de changer dynamiquement la valeur d'affichage, à côté du slider Epsilon/MinPts dans le menu Display
+    */
+    changeSliderValue: function(bool, div, name, value) {
+        var div = document.getElementById(div);
+        var text = document.createTextNode(name + value);
+        if (bool) {
+            //Suppression du précédent noeud
+            div.removeChild(div.childNodes[0]);
+        }
+        if (!bool) div.insertBefore(document.createElement('br'), div.firstChild);
+        div.insertBefore(text, div.firstChild);
+    },
+
+    /* Fonction permettant de changer dynamiquement la valeur d'affichage du slider "Edit Distance"
+    */
+    changeSliderEditDistanceValue: function(bool, value) {
+        var div = document.getElementById("EditDistanceSlider");
+        var text =  document.createTextNode("Distance: " + value);
+        if (!bool) {
+            div.removeChild(div.childNodes[0]);
+        }
+        else {
+            div.insertBefore(text, div.firstChild);
+        }
+    },
+
 } //end prototype Model
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 
