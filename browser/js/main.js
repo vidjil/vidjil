@@ -116,7 +116,7 @@ if (location.search != ''){
     //wait 1sec to check ssl
     setTimeout(function () { db.call("patient/index.html")}, 1000);
 }else{
-    popupMsg(msg.welcome)
+    myConsole.popupMsg(msg.welcome)
 }
 
 /*Statements and functions which allows to active the ALT key, and the movement of the SVG frame*/

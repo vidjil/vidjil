@@ -210,7 +210,7 @@ Builder.prototype = {
                     .hide('fast')
                 self.build_settings()
             }else{
-                popupMsg("expected input between 0.0001 and 1")
+                myConsole.popupMsg("expected input between 0.0001 and 1")
             }
             
         }
@@ -576,7 +576,7 @@ Builder.prototype = {
         infoTime.appendChild(document.createTextNode("Info"));
         infoTime.className = "button_right"
         infoTime.onclick = function () {
-            dataBox(self.m.getPointHtmlInfo(self.m.t));
+            myConsole.dataBox(self.m.getPointHtmlInfo(self.m.t));
         }
         div_point.appendChild(infoTime)
         

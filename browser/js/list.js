@@ -225,7 +225,7 @@ List.prototype = {
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
         span_info.onclick = function () {
-            dataBox(self.m.clone(cloneID).getHtmlInfo());
+            myConsole.dataBox(self.m.clone(cloneID).getHtmlInfo());
         }
         span_info.appendChild(document.createTextNode("I"));
 
@@ -317,7 +317,7 @@ List.prototype = {
                 var span_info = document.createElement('span')
                 span_info.className = "infoBox";
                 span_info.onclick = function () {
-                    dataBox(self.m.clone(this.parentNode.id2).getHtmlInfo());
+                    myConsole.dataBox(self.m.clone(this.parentNode.id2).getHtmlInfo());
                 }
                 span_info.appendChild(document.createTextNode("I"));
 

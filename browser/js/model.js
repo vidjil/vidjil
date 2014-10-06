@@ -1468,7 +1468,6 @@ Model.prototype = {
      *
      * */
     updateElem: function (list) {
-        
         if ( list.indexOf(this.normalization.id) != -1 ){
             this.update_normalization()
             this.update_precision()
@@ -1834,23 +1833,7 @@ Model.prototype = {
         this.update()
     },
     
-        
-    flash: function (str){
-        
-        var div = jQuery('<div/>', {
-            text: str,
-            style: 'display : none',
-            class: 'flash'
-        }).appendTo('#flash_mes')
-        .slideDown(200);
-        
-        setTimeout(function(){
-            div.fadeOut('slow', function() { div.remove();});
-        }, 5000);
-        
-    },
-    
-    
+
     clone: function(hash) {
         return this.windows[hash]
     },
@@ -1948,35 +1931,6 @@ function showDisplayMenu() {
 }
 
 
-function popupMsg(msg) {
-    document.getElementById("popup-msg")
-        .innerHTML = "";
-    document.getElementById("popup-container")
-        .style.display = "block";
-    document.getElementById("popup-msg")
-        .innerHTML += msg;
-}
-
-function closePopupMsg() {
-    document.getElementById("popup-container")
-        .style.display = "none";
-    document.getElementById("popup-msg")
-        .innerHTML = "";
-}
-
-function dataBox(msg) {
-    document.getElementById("data-container")
-        .style.display = "block";
-    document.getElementById("data-msg")
-        .innerHTML = msg;
-}
-
-function closeDataBox() {
-    document.getElementById("data-container")
-        .style.display = "none";
-    document.getElementById("data-msg")
-        .innerHTML = "";
-}
 
 function return_URL_CGI() {
     if (typeof config != "undefined") return config.cgi_address;

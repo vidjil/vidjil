@@ -21,9 +21,12 @@
 /* Com object display/store system message
  * 
  * */
-function Com(id, id2) {
-    this.flash_id = id;
-    this.log_id = id2;
+function Com(flash_id, log_id, popup_id, data_id) {
+    this.flash_id = flash_id;
+    this.log_id = log_id;
+    this.popup_id = popup_id
+    this.data_id = data_id;
+    
     this.min_priority = 1; // minimum required to display message
     this.log_container = document.getElementById(this.log_id);
 }
@@ -90,6 +93,33 @@ Com.prototype = {
     closeLog: function () {
         $("#"+this.log_id).fadeToggle(200)
     },
+    
+    popupMsg: function (msg) {
+        document.getElementById(this.popup_id)
+            .style.display = "block";
+        document.getElementById(this.popup_id)
+            .innerHTML = msg;
+    },
 
+    closePopupMsg: function () {
+        document.getElementById(this.popup_id)
+            .style.display = "none";
+        document.getElementById(this.popup_id)
+            .innerHTML = "";
+    },
+
+    dataBox: function(msg) {
+        document.getElementById(this.data_id)
+            .style.display = "block";
+        document.getElementById(this.data_id)
+            .innerHTML = msg;
+    },
+
+    closeDataBox: function() {
+        document.getElementById(this.data_id)
+            .style.display = "none";
+        document.getElementById(this.data_id).lastElementChild
+            .innerHTML = "";
+    },
     
 }
