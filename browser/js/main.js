@@ -5,7 +5,7 @@ var CGI_ADDRESS = "http://127.0.1.1/cgi-bin/";
 /*tools
  * 
  * */
-var myConsole = new Com("flash_container", "log_container")
+var myConsole = new Com("flash_container", "log_container", "popup-container", "data-container")
 
 
 
@@ -116,7 +116,7 @@ if (location.search != ''){
     //wait 1sec to check ssl
     setTimeout(function () { db.call("patient/index.html")}, 1000);
 }else{
-    myConsole.popupMsg(msg.welcome)
+    myConsole.popupMsg(myConsole.msg.welcome)
 }
 
 /*Statements and functions which allows to active the ALT key, and the movement of the SVG frame*/
