@@ -1861,80 +1861,15 @@ Model.prototype = {
 
 
 
-
-
-
-
-
-
-
-//TODO a deplacer
-
-function loadData() {
-    document.getElementById("file_menu")
-        .style.display = "block";
-    document.getElementById("analysis_menu")
-        .style.display = "none";
-}
-
-function loadAnalysis() {
-    document.getElementById("analysis_menu")
-        .style.display = "block";
-    document.getElementById("file_menu")
-        .style.display = "none";
-}
-
-function cancel() {
-    document.getElementById("analysis_menu")
-        .style.display = "none";
-    document.getElementById("file_menu")
-        .style.display = "none";
-}
-
-
-
-function showSelector(elem) {
-        $('.selector')
-            .stop()
-        $('.selector')
-            .css('display', 'none');
-        $('#' + elem)
-            .css('display', 'block')
-            .animate({
-                height: $('#' + elem).children(":first").height()
-            }, 100);
-}
-
-function hideSelector() {
-    $('.selector')
-        .stop()
-        .animate({
-            height: "hide",
-            display: "none"
-        }, 100);
-}
-
-
-function initCoef() {
-    m.resize();
-};
-
-/*appel a chaque changement de taille du navigateur*/
-window.onresize = initCoef;
-
-function showDisplayMenu() {
-    $('#display-menu')
-        .stop
-    $('#display-menu')
-        .toggle("fast");
-}
-
-
-
 function return_URL_CGI() {
     if (typeof config != "undefined") return config.cgi_address;
     else return "No_CGI_found";
 }
 
+
+
+
+/*appel a chaque changement de taille du navigateur*/
+window.onresize = function () { m.resize(); };
 
 
