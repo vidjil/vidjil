@@ -306,20 +306,6 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
     return cluster;
     
 }
-list<list<junction> >  comp_matrix::nocluster()
-{
-  list <list < string > > cluster ;
-  
-  for (map<junction, list<Sequence> >::const_iterator it0 = windows.getMap().begin();
-       it0 != windows.getMap().end(); ++it0 )	 
-    {
-      list< string > c1;
-      c1.push_back(it0->first);
-      cluster.push_back(c1);
-    }
-  
-  return cluster;
-}
 
 void comp_matrix::stat_cluster( list<list<junction> > cluster, ostream &out )
 {

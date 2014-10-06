@@ -163,7 +163,7 @@ void KmerRepresentativeComputer::compute() {
     is_computed = true;
     representative = sequence_longest_run;
     representative.sequence = representative.sequence.substr(pos_longest_run, length_longest_run);
-    representative.label = "representative--" + representative.label + "-[" + string_of_int(pos_longest_run) + "," 
+    representative.label = representative.label + "-[" + string_of_int(pos_longest_run) + "," 
       + string_of_int(pos_longest_run + length_longest_run - 1) + "]";
   }
   delete index;
