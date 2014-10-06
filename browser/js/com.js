@@ -114,21 +114,21 @@ Com.prototype = {
     popupMsg: function (msg) {
         document.getElementById(this.popup_id)
             .style.display = "block";
-        document.getElementById(this.popup_id)
+        document.getElementById(this.popup_id).lastElementChild
             .innerHTML = msg;
     },
 
     closePopupMsg: function () {
         document.getElementById(this.popup_id)
             .style.display = "none";
-        document.getElementById(this.popup_id)
+        document.getElementById(this.popup_id).lastElementChild
             .innerHTML = "";
     },
 
     dataBox: function(msg) {
         document.getElementById(this.data_id)
             .style.display = "block";
-        document.getElementById(this.data_id)
+        document.getElementById(this.data_id).lastElementChild
             .innerHTML = msg;
     },
 
