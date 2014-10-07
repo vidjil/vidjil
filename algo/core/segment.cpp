@@ -722,7 +722,6 @@ void FineSegmenter::FineSegmentD(Germline *germline){
 JsonList FineSegmenter::toJsonList(Germline *germline){
   JsonList result;
   
-  result.add("status", because);
   result.add("sequence", revcomp(sequence, reversed) );
   if (isSegmented()) {
     result.add("name", code_short);
