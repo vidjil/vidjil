@@ -56,7 +56,7 @@ void testFineSegment()
 	   "s2 = " << s2.info);
 
   TAP_TEST(s.code == s2.code, TEST_SEGMENT_REVCOMP, " code string");
-
+  delete germline;
 }
 
 /**
@@ -93,6 +93,7 @@ void testSegmentOverlap()
   }
 
   delete multi1;
+  delete germline2;
 }
 
 void testSegmentationCause() {

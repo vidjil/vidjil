@@ -55,7 +55,7 @@ void testSegmentationBug1(int delta_min, int delta_max) {
     delete segment;
     delete kaa;
   }
-  delete germline;
+  delete multi;
 }
 
 void testBugs() {
