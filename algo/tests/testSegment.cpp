@@ -91,6 +91,8 @@ void testSegmentOverlap()
              TEST_FINE_SEGMENT_OVERLAP,
              " V= " << fs.seg_V << ", N = " << fs.seg_N << ", J = " << fs.seg_J);
   }
+
+  delete multi1;
 }
 
 void testSegmentationCause() {
@@ -183,6 +185,8 @@ void testSegmentationCause() {
   }
   
   TAP_TEST(nb_checked == 11, TEST_KMER_DATA, "");
+
+  delete multi;
 }
 
 void testExtractor() {
@@ -236,6 +240,7 @@ void testExtractor() {
   TAP_TEST(out_unseg.tellp() > 0, TEST_EXTRACTOR_OUT_UNSEG, "");
 
   delete ws;
+  delete multi;
 }
 
 void testSegment() {
