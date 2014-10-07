@@ -56,9 +56,7 @@ VIDJIL_JSON_VERSION = '2014.09';
 function Model() {
     myConsole.log("creation Model")
     this.view = [];
-
     this.reset();
-
     this.checkBrowser();
 }
 

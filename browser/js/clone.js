@@ -154,17 +154,6 @@ Clone.prototype = {
         }
     },
     
-    /* return clone segmentation status
-     * 
-     * */
-    getStatus: function () {
-        if (typeof this.status != 'undefined'){
-            return this.m.segmented_mesg[this.status]
-        }else{
-            return "not specified";
-        }
-    },
-    
     /* give a new custom name to a clone
      *
      * */
@@ -307,7 +296,6 @@ Clone.prototype = {
         
         //segmentation info
         html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation information</td></tr>"
-        html += "<tr><td> segmented </td><td colspan='" + time_length + "'>" + this.getStatus() + "</td></tr>"
         
         if (typeof this.seg_stat != 'undefined'){
             var total_stat = [];
