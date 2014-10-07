@@ -42,10 +42,10 @@ coverage: unit_coverage should_coverage
 
 unit_coverage: clean
 	make COVERAGE=1 unit
-	test -x gcovr && gcovr -r algo -e tests/ --xml > unit_coverage.xml || echo "gcovr is needed to generate a full report"
+	which gcovr > /dev/null && gcovr -r algo -e tests/ --xml > unit_coverage.xml || echo "gcovr is needed to generate a full report"
 should_coverage: clean
 	make COVERAGE=1 should
-	test -x gcovr && gcovr -r algo -e tests/ --xml > should_coverage.xml || echo "gcovr is needed to generate a full report"
+	which gcovr > /dev/null && gcovr -r algo -e tests/ --xml > should_coverage.xml || echo "gcovr is needed to generate a full report"
 
 
 data germline: %:
