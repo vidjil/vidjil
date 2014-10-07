@@ -206,14 +206,16 @@ There can be several causes leading to bad ratios:
 * Browser API
 
 The browser can be opened on a data file specified from a =data= attribute, 
+and optionally on an analysis file specified from a =analysis= attribute,
 as in the following URLs on our test server:
 
 - http://rbx.vidjil.org/browser/?data=test.data
+- http://rbx.vidjil.org/browser/?data=test.data&analysis=test.analysis
 - http://rbx.vidjil.org/browser/?data=http://rbx.vidjil.org/browser/test.data
 
 Both GET and POST requests are accepted.
-Note that the =browser/index.html= file and the =.data= file should be hosted on the same server.
-Otherwise, the server hosting the =.data= file must accept cross-domain queries.
+Note that the =browser/index.html= file and the =.data/.analysis= files should be hosted on the same server.
+Otherwise, the server hosting the =.data/.analysis= files must accept cross-domain queries.
 
 
 * Reference
