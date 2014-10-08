@@ -13,7 +13,7 @@ $(LIBCORE): $(OBJCORE)
 	ar rc $@ $^
 
 clean:
-	rm -f $(OBJCORE) $(LIBCORE)
+	rm -f $(OBJCORE) $(LIBCORE) *.gcda *.gcno *.gcov
 
 forcedep:
 	g++ -M $(SRCCORE) > dep.mk

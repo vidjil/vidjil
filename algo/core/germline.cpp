@@ -95,6 +95,12 @@ MultiGermline::MultiGermline(string f_germlines_json)
   germlines.push_back(germline);
 }
 
+MultiGermline::~MultiGermline() {
+  for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
+    {
+      delete *it ;
+    }
+}
 
 void MultiGermline::insert(Germline *germline)
 {

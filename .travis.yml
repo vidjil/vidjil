@@ -1,5 +1,11 @@
 language: cpp
 compiler: gcc
 
+before_install:
+  - sudo pip install cpp-coveralls
+
 before_script: make data ; make germline
 script:  make && make test
+
+after_success:
+  - make COVERAGE=1 unit should ; ln -s algo/core . ; coveralls --exclude algo/tests --exclude algo/tools --gcov-options '\-lp'

@@ -1,24 +1,30 @@
 
-
+COVERAGE=
 VIDJIL_ALGO_SRC = algo/
 VIDJIL_SERVER_SRC = server/
 
+ifeq (${COVERAGE},1)
+	COVERAGE_OPTION=--coverage
+else
+	COVERAGE_OPTION=
+endif
+
 all:
-	make -C $(VIDJIL_ALGO_SRC)
+	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)
 
 test:
-	make unit
+	make COVERAGE="$(COVERAGE)" unit
 	make should
 	# make pytests
 
 test_with_fuse:
-	make unit
+	make COVERAGE="$(COVERAGE)" unit
 	make should
 	make pytests
 
 unit: all
 	@echo "*** Launching unit tests..."
-	make -C $(VIDJIL_ALGO_SRC)/tests 
+	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests
 	@echo "*** All .should_get tests passed"
 
 pytests:
@@ -29,8 +35,18 @@ pytests:
 should: all
 	@echo
 	@echo "*** Launching .should_get tests..."
-	make -C $(VIDJIL_ALGO_SRC)/tests should
+	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests should
 	@echo "*** All .should_get tests passed"
+
+coverage: unit_coverage should_coverage
+
+unit_coverage: clean
+	make COVERAGE=1 unit
+	which gcovr > /dev/null && (cd algo;  gcovr -r . -e tests/ --xml > unit_coverage.xml) || echo "gcovr is needed to generate a full report"
+should_coverage: clean
+	make COVERAGE=1 should
+	which gcovr > /dev/null && (cd algo; gcovr -r . -e tests/ --xml > should_coverage.xml) || echo "gcovr is needed to generate a full report"
+
 
 data germline: %:
 	make -C $@
@@ -42,7 +58,7 @@ cleanall: clean
 	make -C data $^
 	make -C germline $^
 
-.PHONY: all test should clean cleanall distrib data germline
+.PHONY: all test should clean cleanall distrib data germline unit_coverage should_coverage coverage
 
 RELEASE_TAG="notag"
 RELEASE_H = $(VIDJIL_ALGO_SRC)/release.h

@@ -64,6 +64,7 @@ class MultiGermline {
 
   MultiGermline();
   MultiGermline(string f_germlines_json);
+  ~MultiGermline();
 
   void insert(Germline *germline);
   void load_default_set();
