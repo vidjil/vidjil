@@ -375,7 +375,7 @@ Builder.prototype = {
             $("#system_menu").css("display", "")
             $("#color_system_button").css("display", "")
             
-            for (var key in this.m.system_segmented) {
+            for (var key in this.m.reads.germline) {
                 
                 var radio=document.createElement("input");
                     radio.type="radio";
@@ -587,17 +587,17 @@ Builder.prototype = {
         span.appendChild(document.createTextNode("edit"));
         span.className = "button_right"
         span.onclick = function () {
-            self.edit(this, "timestamp2");
+            self.edit(this, "timestamp");
         }
         div_date.appendChild(span)
         parent.appendChild(div_date)
 
-        var percent = (this.m.reads_segmented[this.m.t] / this.m.reads_total[this.m.t]) * 100
-        var val = "" + this.m.reads_segmented[this.m.t] + " reads" + " (" + percent.toFixed(2) + "%)"
+        var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100
+        var val = "" + this.m.reads.segmented[this.m.t] + " reads" + " (" + percent.toFixed(2) + "%)"
         var div_segmented = this.build_info_line("info_segmented", "segmented", val)
         parent.appendChild(div_segmented)
         
-        var div_total = this.build_info_line("info_total", "total", this.m.reads_total[this.m.t] + " reads")
+        var div_total = this.build_info_line("info_total", "total", this.m.reads.total[this.m.t] + " reads")
         parent.appendChild(div_total)
 
         /*TODO put this somewhere else
@@ -622,7 +622,7 @@ Builder.prototype = {
         
         var keys = 0 ;
 
-        for (var key in this.m.system_segmented) {
+        for (var key in this.m.reads.germline) {
             
             if (key == "IGH" && keys > 0) {
                 span2.appendChild(document.createElement("br"));

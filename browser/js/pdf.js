@@ -42,7 +42,7 @@ PDF.prototype = {
         if (this.list.length == 0) {
             var flag = 5;
             for (var i = 0; i < this.m.n_windows; i++) {
-                if (this.m.clones[i].cluster.length != 0 && flag != 0) {
+                if (this.m.clusters[i].length != 0 && flag != 0) {
                     this.list.push(i);
                     flag--;
                 }
@@ -127,7 +127,7 @@ PDF.prototype = {
         this.doc.text(this.marge + 5, this.y + 5, this.m.dataFileName);
         // todo: fill again with reliable data :)
         // this.doc.text(this.marge + 5, this.y + 10, 'run: 2013-10-03');
-        this.doc.text(this.marge + 5, this.y + 15, 'analysis: ' + m.timestamp[0].split(' ')[0]);
+        this.doc.text(this.marge + 5, this.y + 15, 'analysis: ' + m.timestamp.split(' ')[0]);
         this.doc.text(this.marge + 5, this.y + 20, 'germline: ' + m.system);
 
         this.doc.rect(this.marge, this.y, 60, 23);
@@ -275,14 +275,14 @@ PDF.prototype = {
             this.next_row()
         }
 
-        this.row('total segmented', this.m.reads_segmented, 'raw');
+        this.row('total segmented', this.m.reads.segmented, 'raw');
 
         if (this.m.reads_total) {
             this.next_sub_row()
 
             var data = []
             for (var i = 0; i < this.m.samples.number; i++) {
-                data[i] = this.m.reads_segmented[i] / this.m.reads_total[i]
+                data[i] = this.m.reads.segmented[i] / this.m.reads_total[i]
             }
             this.row('', data, '%')
         }

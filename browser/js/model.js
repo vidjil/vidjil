@@ -77,9 +77,7 @@ Model.prototype = {
         this.top = 10;
         this.precision = 1;
         this.isPlaying = false;
-        this.timestamp = [];
-        this.timestamp2 = [];
-        this.clones = [];
+        this.clusters = [];
         this.windows = [];
         this.germline = {}
         this.germlineV = new Germline(this)
@@ -160,11 +158,11 @@ Model.prototype = {
             try {
                 var data = JSON.parse(oFREvent.target.result);
             } catch (e) {
-                popupMsg(myConsole.msgfile_error);
+                myConsole.popupMsg(myConsole.msg.file_error);
                 return 0
             }
             if ((typeof (data.vidjil_json_version) == 'undefined') || (data.vidjil_json_version < VIDJIL_JSON_VERSION)) {
-                popupMsg(myConsole.msgversion_error);
+                myConsole.popupMsg(myConsole.msg.version_error);
                 return 0;
             }
             self.reset()
@@ -247,7 +245,7 @@ Model.prototype = {
             if (data.windows[i].top <= limit) {
                 //search for min_size
                 for (var k = 0; k < data.windows[i].size.length; k++) {
-                    var size = (data.windows[i].size[k] / data.reads_segmented[k])
+                    var size = (data.windows[i].size[k] / data.reads.segmented[k])
 
                     if (min_sizes[k] > size && data.windows[i].size[k] != 0)
                         min_sizes[k] = size;
@@ -273,10 +271,8 @@ Model.prototype = {
         }
         
         self.samples = data.samples
+        self.reads = data.reads
         self.links = data.links;
-        self.reads_segmented = data.reads_segmented;
-        self.system_segmented = data.system_segmented;
-        self.segmentation_info = data.segmentation_info;
         
         // synthetic window
         var other = {
@@ -437,9 +433,6 @@ Model.prototype = {
                 }
             }
             
-            if (self.analysis.timestamp2) {
-                self.timestamp2 = self.analysis.timestamp2;
-            }
             if (self.analysis.patient) {
                 self.dataFileName = self.analysis.patient;
             }
@@ -466,7 +459,7 @@ Model.prototype = {
     loadGermline: function (system) {
         console.log("loadGermline : " + system)
         system = typeof system !== 'undefined' ? system : this.system;
-        if (system == "multi") system = Object.keys(this.system_segmented)[0]
+        if (system == "multi") system = Object.keys(this.reads.germline)[0]
         
         return  this.germlineV.load(system, "V", this)
                     .germlineD.load(system, "D", this)
@@ -555,7 +548,7 @@ Model.prototype = {
         var maxNlength = 0;
         var nsize;
         self.mapID = [];
-        this.clones = [];
+        this.clusters = [];
 
         //      NSIZE
         for (var i = 0; i < this.n_windows; i++) {
@@ -570,10 +563,7 @@ Model.prototype = {
                 nsize = -1;
             }
             self.mapID[clone.window] = i;
-            this.clones[i] = {
-                cluster: [i],
-                split: false
-            };
+            this.clusters[i] = [i]
             clone.Nlength = nsize;
             clone.tag = default_tag;
         }
@@ -690,18 +680,18 @@ Model.prototype = {
             }
 
             //      CUSTOM CLUSTER
-            var cluster = analysis.cluster;
-            for (var i = 0; i < cluster.length; i++) {
+            var clusters = analysis.clusters;
+            for (var i = 0; i < clusters.length; i++) {
 
                 var new_cluster = [];
-                var l = self.mapID[cluster[i][0]]
+                var l = self.mapID[clusters[i][0]]
                 
-                for (var j=0; j<cluster[i].length;j++){
-                    var cloneID = self.mapID[cluster[i][j]]
-                    new_cluster = new_cluster.concat(this.clones[cloneID].cluster);
-                    this.clones[cloneID].cluster = [];
+                for (var j=0; j<clusters[i].length;j++){
+                    var cloneID = self.mapID[clusters[i][j]]
+                    new_cluster = new_cluster.concat(this.clusters[cloneID]);
+                    this.clusters[cloneID] = [];
                 }
-                this.clones[l].cluster = new_cluster;
+                this.clusters[l] = new_cluster;
             }
         }
         this.init()
@@ -749,7 +739,7 @@ Model.prototype = {
             vidjil_json_version : VIDJIL_JSON_VERSION,
             samples : this.samples,
             clones : [],
-            cluster : [],
+            clusters : [],
             tags : {}
         }
 
@@ -776,12 +766,12 @@ Model.prototype = {
             }
 
             //clones / cluster
-            if (this.clones[i].cluster.length > 1) {
+            if (this.clusters[i].length > 1) {
                 var elem = [];
-                for (var j = 0; j < this.clones[i].cluster.length; j++) {
-                    elem.push(this.clone(this.clones[i].cluster[j]).window);
+                for (var j = 0; j < this.clusters[i].length; j++) {
+                    elem.push(this.clone(this.clusters[i][j]).window);
                 }
-                analysisData.cluster.push(elem);
+                analysisData.clusters.push(elem);
             }
         }
         
@@ -795,7 +785,6 @@ Model.prototype = {
         
         
         analysisData.normalization = this.normalization
-        analysisData.timestamp2 = this.timestamp2
 
         return JSON.stringify(analysisData, undefined, 2);
     },
@@ -831,16 +820,16 @@ Model.prototype = {
      * */
     update_selected_system: function(){
         
-        //reset reads_segmented
-        for (var i=0 ; i<this.reads_segmented.length; i++){
-            this.reads_segmented[i]=0
+        //reset reads.segmented
+        for (var i=0 ; i<this.reads.segmented.length; i++){
+            this.reads.segmented[i]=0
         }
         
         //reset system
         this.system_selected = []
         
         //check system currently selected in menu
-        for (var key in this.system_segmented) {
+        for (var key in this.reads.germline) {
             if (document.getElementById("checkbox_system_"+key).checked){
                 this.system_selected.push(key)
             }
@@ -848,16 +837,16 @@ Model.prototype = {
         
         //if 0 box checked in menu then all selected
         if (this.system_selected.length == 0) {
-            for (var key in this.system_segmented) {
+            for (var key in this.reads.germline) {
                 this.system_selected.push(key)
             }
         }
         
-        //compute new reads_segmented value (sum of reads_segmented of selected system)
+        //compute new reads.segmented value (sum of reads.segmented of selected system)
         for (var i=0; i<this.system_selected.length; i++){
             var key = this.system_selected[i]
-            for (var j=0; j<this.reads_segmented.length; j++){
-                this.reads_segmented[j] += this.system_segmented[key][j]
+            for (var j=0; j<this.reads.segmented.length; j++){
+                this.reads.segmented[j] += this.reads.germline[key][j]
             }
         }
 
@@ -948,8 +937,8 @@ Model.prototype = {
     },
 
     getSegmentationInfo: function (timeID) {
-        if (typeof this.segmentation_info != 'undefined'){
-            return this.segmentation_info[timeID].replace(/(?:\r\n|\r|\n)/g, '<br />')
+        if (typeof this.samples.segmentation_info != 'undefined'){
+            return this.samples.segmentation_info[timeID].replace(/(?:\r\n|\r|\n)/g, '<br />')
         }else{
             return "not specified";
         }
@@ -1013,12 +1002,8 @@ Model.prototype = {
                 }
                 break;
             case "sampling_date":
-                if ((typeof this.timestamp2 != 'undefined') && this.timestamp2[timeID])
-                    result = this.timestamp2[timeID].split(" ")[0]
-                break;
-            case "run_date":
-                if ((typeof this.timestamp != 'undefined') && this.timestamp[timeID])
-                    result = this.timestamp[timeID].split(" ")[0]
+                if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID])
+                    result = this.samples.timestamp[timeID].split(" ")[0]
                 break;
         }
         return result
@@ -1185,11 +1170,11 @@ Model.prototype = {
                 leader = list[i];
                 top = this.clone(list[i]).top;
             }
-            new_cluster = new_cluster.concat(this.clones[list[i]].cluster);
-            this.clones[list[i]].cluster = [];
+            new_cluster = new_cluster.concat(this.clusters[list[i]]);
+            this.clusters[list[i]] = [];
         }
 
-        this.clones[leader].cluster = new_cluster;
+        this.clusters[leader] = new_cluster;
         this.unselectAll()
         this.updateElem(list)
         this.select(leader)
@@ -1203,16 +1188,16 @@ Model.prototype = {
         myConsole.log("split() (cloneA " + cloneID + " windowB " + windowID + ")")
         if (cloneID == windowID) return
 
-        var nlist = this.clones[cloneID].cluster;
+        var nlist = this.clusters[cloneID];
         var index = nlist.indexOf(windowID);
         if (index == -1) return
 
         nlist.splice(index, 1);
 
         //le clone retrouve sa liste de windows -1
-        this.clones[cloneID].cluster = nlist;
+        this.clusters[cloneID] = nlist;
         //la window forme son propre clone a part
-        this.clones[windowID].cluster = [windowID];
+        this.clusters[windowID] = [windowID];
 
         this.updateElem([windowID, cloneID]);
     },
@@ -1234,18 +1219,18 @@ Model.prototype = {
      *
      * */
     updateModel: function () {
-        for (var i = 0; i < this.clones.length; i++) {
+        for (var i = 0; i < this.clusters.length; i++) {
             // compute only non empty clones
-            if (this.clones[i].cluster.length != 0) {
-                if (!this.clones[i].split) {
-                    for (var j = 0; j < this.clones[i].cluster.length; j++) {
-                        var seq = this.clones[i].cluster[j]
+            if (this.clusters[i].length != 0) {
+                if (!this.clone(i).split) {
+                    for (var j = 0; j < this.clusters[i].length; j++) {
+                        var seq = this.clusters[i][j]
                         this.clone(seq).active = false;
                     }
                     this.active(i)
                 } else {
-                    for (var j = 0; j < this.clones[i].cluster.length; j++) {
-                        var seq = this.clones[i].cluster[j]
+                    for (var j = 0; j < this.clusters[i].length; j++) {
+                        var seq = this.clusters[i][j]
                         this.active(seq)
                     }
                 }
@@ -1391,16 +1376,16 @@ Model.prototype = {
     computeOtherSize: function () {
         var other = [];
 
-        for (var j = 0; j < this.reads_segmented.length; j++) {
-            other[j] = this.reads_segmented[j]
+        for (var j = 0; j < this.reads.segmented.length; j++) {
+            other[j] = this.reads.segmented[j]
         }
 
         for (var i = 0; i < this.n_windows - 1; i++) {
-            for (var j = 0; j < this.reads_segmented.length; j++) {
-                if (this.clone(i).isActive) {
-                    for (var k = 0; k < this.clones[i].cluster.length; k++) {
-                        if (this.clones[i].cluster[k] != this.n_windows - 1)
-                            other[j] -= this.clone(this.clones[i].cluster[k]).size[j];
+            for (var j = 0; j < this.reads.segmented.length; j++) {
+                if (this.clone(i).isActive()) {
+                    for (var k = 0; k < this.clusters[i].length; k++) {
+                        if (this.clusters[i][k] != this.n_windows - 1)
+                            other[j] -= this.clone(this.clusters[i][k]).size[j];
                     }
                 }
             }
@@ -1416,11 +1401,11 @@ Model.prototype = {
     getPointHtmlInfo: function (timeID) {
         var html = ""
 
-        html = "<h2>Point info : " + this.getStrTime(timeID, "name") + "("+this.timestamp[timeID]+")</h2>"
+        html = "<h2>Point info : " + this.getStrTime(timeID, "name") + "("+this.samples.timestamp[timeID]+")</h2>"
         html += "<div id='info_timepoint'><table><tr><th></th>"
-        html += "<tr><td> reads </td><td>" + this.reads_total[timeID] + "</td></tr>"
-        html += "<tr><td> reads segmented </td><td>" + this.reads_segmented[timeID] +
-            " ("+ (this.reads_segmented[timeID]*100/this.reads_total[timeID]).toFixed(3) + " % )</td></tr>"
+        html += "<tr><td> reads </td><td>" + this.reads.total[timeID] + "</td></tr>"
+        html += "<tr><td> reads segmented </td><td>" + this.reads.segmented[timeID] +
+            " ("+ (this.reads.segmented[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )</td></tr>"
         html += "<tr><td> segmentation </td><td>" + this.getSegmentationInfo(timeID) + "</td></tr>"
             
         html += "</table></div>"
@@ -1435,8 +1420,8 @@ Model.prototype = {
         this.currentCluster = data_name;
         //save user cluster
         if ( this.cluster_key==""){
-            this.clones_copy = this.clones
-            this.clones = []
+            this.clusters_copy = this.clusters
+            this.clusters = []
         }
         
         var tmp = {}
@@ -1475,18 +1460,16 @@ Model.prototype = {
 
         //reset cluster
         for (var i = 0; i < this.windows.length; i++) {
-            this.clones[i] = {
-                cluster: [i]
-            };
+            this.clusters[i] = []
         }
 
         //new cluster
         for (var i in tmp) {
-            this.clones[tmp[i][0]].cluster = tmp[i]
-            this.clones[tmp[i][0]].name = i
+            this.clusters[tmp[i][0]] = tmp[i]
+            this.clusters[tmp[i][0]].name = i
 
             for (var j = 1; j < tmp[i].length; j++) {
-                this.clones[tmp[i][j]].cluster = []
+                this.clusters[tmp[i][j]] = []
             }
         }
         this.cluster_key = data_name
@@ -1502,9 +1485,7 @@ Model.prototype = {
         this.cluster_key = ""
         
         for (var i = 0; i < this.windows.length; i++) {
-            this.clones[i] = {
-                cluster: [i]
-            };
+            this.clusters[i] = []
         }
 
         this.update()
@@ -1515,8 +1496,8 @@ Model.prototype = {
      * */
     restoreClones: function () {
         this.cluster_key = ""
-        if ( typeof this.clones_copy != 'undefined'){
-            this.clones = this.clones_copy
+        if ( typeof this.clusters_copy != 'undefined'){
+            this.clusters = this.clusters_copy
             this.update()
         }
         
@@ -1630,7 +1611,7 @@ Model.prototype = {
         if (this.browser != "Chrome" &&
             this.browser != "Firefox" &&
             this.browser != "Safari") {
-            popupMsg(myConsole.msgbrowser_error)
+            myConsole.popupMsg(myConsole.msg.browser_error)
         }
 
     },
@@ -1668,8 +1649,8 @@ Model.prototype = {
     },
     
     split_all: function (bool) {
-        for (var i=0; i < this.clones.length; i++) {
-            this.clones[i].split = bool
+        for (var i=0; i < this.clusters.length; i++) {
+            this.clone(i).split = bool
         }
         this.update()
     },
@@ -1738,8 +1719,8 @@ Model.prototype = {
         /*-> Solution provisoire quant à la couleur noire non voulue est d' "effacer" le nombre max de clusters, mais de le prendre par défaut (100), soit un intervalle de 2.7 à chaque fois*/
         var maxCluster = this.dbscan.clusters.length;
         for (var i = 0; i < this.n_windows; i++) {
-            if (typeof(this.clone(i).cluster) != 'undefined') {
-                this.clone(i).colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.clone(i).cluster] + 1) ), color_s, color_v);
+            if (typeof(this.clone(i)) != 'undefined') {
+                this.clone(i).colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.clone(i)] + 1) ), color_s, color_v);
             }
             else
                 this.clone(i).colorDBSCAN = color['@default'];
@@ -1750,7 +1731,7 @@ Model.prototype = {
      */
     addTagCluster: function() {
         for (var i = 0; i < this.n_windows; i++)
-            if (typeof(this.clone(i).cluster) != 'undefined')
+            if (typeof(this.clone(i)) != 'undefined')
                 switch (this.dbscan.visitedTab[i].mark) {
                 case -1:
                         this.clone(i).tagCluster = "NOISE";

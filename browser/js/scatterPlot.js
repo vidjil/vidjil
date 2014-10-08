@@ -819,9 +819,9 @@ ScatterPlot.prototype = {
         var w = this.resizeW*0.2
         
         //compute hidden position for unactivated germline (to avoid firework effect)
-        for (var key in germline.icon){
+        for (var key in this.m.reads.germline){
             if (key != this.m.germlineV.system){
-                this.systemGrid[key] = { 'x' : 1 , 'y' : 1}
+                this.systemGrid[key] = { 'x' : 0.99 , 'y' : 0.99}
             }
         }
         
@@ -1086,9 +1086,9 @@ ScatterPlot.prototype = {
   updateClone: function (cloneID) {
     if (this.m.clone(cloneID).isActive()) {
         
-        if (this.m.clones[cloneID].split) {
-            for (var i = 0; i < this.m.clones[cloneID].cluster.length; i++) {
-                var seqID = this.m.clones[cloneID].cluster[i]
+        if (this.m.clone(cloneID).split) {
+            for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
+                var seqID = this.m.clusters[cloneID][i]
                 var size = this.m.clone(seqID).getSequenceSize();
                 //Math.pow(x,y) -> x**y
                 if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
@@ -1096,12 +1096,12 @@ ScatterPlot.prototype = {
             }
         }
         else {
-            for (var i = 0; i < this.m.clones[cloneID].cluster.length; i++) {
-                var seqID = this.m.clones[cloneID].cluster[i]
+            for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
+                var seqID = this.m.clusters[cloneID][i]
                 this.nodes[seqID].r1 = 0
             }
             var size = this.m.clone(cloneID).getSize();
-            if (this.m.clones[cloneID].cluster.length == 0) size = this.m.clone(cloneID).getSequenceSize();
+            if (this.m.clusters[cloneID].length == 0) size = this.m.clone(cloneID).getSequenceSize();
             if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
             this.nodes[cloneID].r1 = size
         }
@@ -1110,7 +1110,6 @@ ScatterPlot.prototype = {
     else {
         this.nodes[cloneID].r1 = 0
     }
-    
     var sys = this.m.clone(cloneID).getSystem()
     if (this.use_system_grid && this.m.system == "multi" 
         && typeof sys != 'undefined'

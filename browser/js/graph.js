@@ -148,8 +148,8 @@ Graph.prototype = {
         this.resolution5 = []
 
         for (i = 0; i < this.m.samples.number; i++) {
-            this.resolution1[i] = (1 / this.m.reads_segmented[i])
-            this.resolution5[i] = (5 / this.m.reads_segmented[i])
+            this.resolution1[i] = (1 / this.m.reads.segmented[i])
+            this.resolution5[i] = (5 / this.m.reads.segmented[i])
         }
 
         this.data_res.push({
@@ -388,8 +388,8 @@ Graph.prototype = {
         }
         
         for (i = 0; i < this.m.samples.number; i++) {
-            this.resolution1[i] = (1 / this.m.reads_segmented[i])
-            this.resolution5[i] = (5 / this.m.reads_segmented[i])
+            this.resolution1[i] = (1 / this.m.reads.segmented[i])
+            this.resolution5[i] = (5 / this.m.reads.segmented[i])
         }
         
         if(this.mode=="stack"){
@@ -399,15 +399,15 @@ Graph.prototype = {
             this.data_res[1].path = this.constructPathR(this.resolution5);
 
             for (var i = 0; i < this.m.n_windows; i++) {
-                for (var j = 0; j < this.m.clones[i].cluster.length; j++) {
-                    this.data_graph[this.m.clones[i].cluster[j]].path = this.constructPath(i, false);
+                for (var j = 0; j < this.m.clusters[i].length; j++) {
+                    this.data_graph[this.m.clusters[i][j]].path = this.constructPath(i, false);
                 }
             }
             for (var i = 0; i < this.m.n_windows; i++) {
                 var cloneID = i
-                for (var j = 0; j < this.m.clones[cloneID].cluster.length; j++) {
-                    var seqID = this.m.clones[cloneID].cluster[j]
-                    if (this.m.clones[cloneID].split) {
+                for (var j = 0; j < this.m.clusters[cloneID].length; j++) {
+                    var seqID = this.m.clusters[cloneID][j]
+                    if (this.m.clone(cloneID).split) {
                         this.data_graph[seqID].path = this.constructPath(seqID, true);
                     } else {
                         this.data_graph[seqID].path = this.constructPath(cloneID, false);
@@ -423,7 +423,6 @@ Graph.prototype = {
     },
     
     updateStack: function () {
-        console.log("bam")
         var stack = new Stack(this.m)
         stack.compute();
         for (var i = 0; i < this.m.n_length; i++) {
@@ -440,9 +439,9 @@ Graph.prototype = {
         }else{
             for (var i = 0; i < list.length; i++) {
                 var cloneID = list[i]
-                for (var j = 0; j < this.m.clones[cloneID].cluster.length; j++) {
-                    var seqID = this.m.clones[cloneID].cluster[j]
-                    if (this.m.clones[cloneID].split) {
+                for (var j = 0; j < this.m.clusters[cloneID].length; j++) {
+                    var seqID = this.m.clusters[cloneID][j]
+                    if (this.m.clone(cloneID).split) {
                         this.data_graph[seqID].path = this.constructPath(seqID, true);
                     } else {
                         this.data_graph[seqID].path = this.constructPath(cloneID, false);

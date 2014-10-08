@@ -232,8 +232,8 @@ List.prototype = {
         
         var span_cluster = document.createElement('span')
         span_cluster.className = "clusterBox";
-        if (this.m.clones[cloneID].cluster.length > 1) {
-            if (this.m.clones[cloneID].split) {
+        if (this.m.clusters[cloneID].length > 1) {
+            if (this.m.clone(cloneID).split) {
                 span_cluster.onclick = function () {
                     self.hideCluster(cloneID)
                 }
@@ -286,17 +286,17 @@ List.prototype = {
         div_cluster.id = "cluster" + cloneID;
         div_cluster.id2 = cloneID;
 
-        var display = this.m.clones[cloneID].split
-        if (this.m.clones[cloneID].cluster.length < 2) display = false
+        var display = this.m.clone(cloneID).split
+        if (this.m.clusters[cloneID].length < 2) display = false
 
         if (!display) div_cluster.style.display = "none";
 
         var clusterSize = this.m.clone(cloneID).getSize()
         var clusterReads = this.m.clone(cloneID).getReads()
 
-        for (var i = 0; i < this.m.clones[cloneID].cluster.length; i++) {
+        for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
             (function (i) {
-                var id = this.m.clones[cloneID].cluster[i]
+                var id = this.m.clusters[cloneID][i]
                 var div_clone = document.createElement('div');
                 div_clone.id = "_" + id;
                 div_clone.id2 = id;
@@ -403,7 +403,7 @@ List.prototype = {
 
             var div = this.index[list[i]];
 
-            if ((this.m.clone(list[i]).isActive() && this.m.clones[list[i]].cluster.length != 0) || this.m.clone(list[i]).window == "other") {
+            if ((this.m.clone(list[i]).isActive() && this.m.clusters[list[i]].length != 0) || this.m.clone(list[i]).window == "other") {
 
                 div.innerHTML = '';
 
@@ -589,7 +589,7 @@ List.prototype = {
 
     showCluster: function (cloneID) {
         var self = this
-        this.m.clones[cloneID].split = true
+        this.m.clone(cloneID).split = true
         $("#cluster" + cloneID)
             .show(50, function () {
                 self.m.updateElem([cloneID])
@@ -598,7 +598,7 @@ List.prototype = {
 
     hideCluster: function (cloneID) {
         var self = this
-        this.m.clones[cloneID].split = false
+        this.m.clone(cloneID).split = false
         $("#cluster" + cloneID)
             .hide(50, function () {
                 self.m.updateElem([cloneID])

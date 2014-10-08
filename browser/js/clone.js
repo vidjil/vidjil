@@ -20,6 +20,7 @@
 function Clone(data, model, hash) {
     this.m = model
     this.hash = hash
+    this.split = false
     var key = Object.keys(data)
     for (var i=0; i<key.length; i++ ){
         this[key[i]]=data[key[i]]
@@ -58,10 +59,8 @@ Clone.prototype = {
     }, //end getCode
 
     getSystem: function () {
-        if (typeof (this.system) != 'undefined') {
-            return this.system;
-        } else {
-            if (this.m.system != 'multi' ) return this.m.system;   
+        if (typeof (this.germline) != 'undefined') {
+            return this.germline;
         }
     }, 
 
@@ -71,8 +70,8 @@ Clone.prototype = {
     getSize: function (time) {
         time = typeof time !== 'undefined' ? time : this.m.t;
 
-        if (this.m.reads_segmented[time] == 0 ) return 0
-        var result = this.getReads(time) / this.m.reads_segmented[time]
+        if (this.m.reads.segmented[time] == 0 ) return 0
+        var result = this.getReads(time) / this.m.reads.segmented[time]
         
         if (this.m.norm) {
             result = this.m.normalize(result, time)
@@ -96,8 +95,8 @@ Clone.prototype = {
     getSequenceSize: function (time) {
         time = typeof time !== 'undefined' ? time : this.m.t;
         
-        if (this.m.reads_segmented[time] == 0 ) return 0
-        var result = this.getSequenceReads(time) / this.m.reads_segmented[time]
+        if (this.m.reads.segmented[time] == 0 ) return 0
+        var result = this.getSequenceReads(time) / this.m.reads.segmented[time]
         
         if (this.norm) {
             result = this.m.normalize(result, time)
@@ -115,8 +114,8 @@ Clone.prototype = {
         time = typeof time !== 'undefined' ? time : this.m.t;
         var result = 0;
 
-        for (var j = 0; j < this.m.clones[this.hash].cluster.length; j++) {
-            result += this.m.clone(this.m.clones[this.hash].cluster[j]).size[time];
+        for (var j = 0; j < this.m.clusters[this.hash].length; j++) {
+            result += this.m.clone(this.m.clusters[this.hash][j]).size[time];
         }
 
         return result
@@ -241,7 +240,7 @@ Clone.prototype = {
      *
      * */
     getHtmlInfo: function () {
-        var isCluster = this.m.clones[this.hash].cluster.length
+        var isCluster = this.m.clusters[this.hash].length
         var time_length = this.m.samples.order.length
         var html = ""
 
@@ -265,7 +264,7 @@ Clone.prototype = {
             html += "<tr><td> clone name </td><td colspan='" + time_length + "'>" + this.getName() + "</td></tr>"
             html += "<tr><td> clone size (n-reads (total reads) )</td>"
             for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.getReads(this.m.samples.order[i]) + "  (" + this.m.reads_segmented[this.m.samples.order[i]] + ")</td>"
+            html += "<td>" + this.getReads(this.m.samples.order[i]) + "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")</td>"
             }
             html += "</tr><tr><td> clone size (%)</td>"
             for (var i = 0; i < time_length; i++) {
@@ -283,7 +282,7 @@ Clone.prototype = {
         html += "<tr><td> size (n-reads (total reads) )</td>"
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + this.getSequenceReads(this.m.samples.order[i]) + 
-                    "  (" + this.m.reads_segmented[this.m.samples.order[i]] + ")</td>"
+                    "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")</td>"
         }
         html += "</tr>"
         html += "<tr><td> size (%)</td>"

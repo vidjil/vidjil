@@ -139,8 +139,8 @@ Axis.prototype = {
         
         var n_min = 0;
         var n_max = 1;
-        for (var i=0; i<this.m.windows.length; i++){
-            if (this.m.windows[i].Nlength > n_max) n_max = this.m.windows[i].Nlength;
+        for (var i=0; i<this.m.n_windows; i++){
+            if (this.m.clone(i).Nlength > n_max) n_max = this.m.clone(i).Nlength;
         }
         
         this.sizeScale = d3.scale.linear()
@@ -149,7 +149,7 @@ Axis.prototype = {
      
         //clone position
         this.pos = function(cloneID) {
-            return self.sizeScale(self.m.windows[cloneID].Nlength)
+            return self.sizeScale(self.m.clone(cloneID).Nlength)
         }
         
         //labels
