@@ -15,6 +15,12 @@ function Database(id, db_address) {
     }
 }
 
+
+function return_URL_CGI() {
+    if (typeof config != "undefined") return config.cgi_address;
+    else return "No_CGI_found";
+}
+
 Database.prototype = {
 
     /*appel une page générée a partir des données du serveur
@@ -73,7 +79,7 @@ Database.prototype = {
                     + "Your browser currently does not recognize our SSL certificate. </br>"
                     + "To use the sample database, you need to accept this certificate and/or tag this website as a trusted one. </br>"
                     + "<a href='"+DB_ADDRESS+"'>Follow this link<a/>"
-            popupMsg(msg)
+            myConsole.popupMsg(msg)
         }
     },
     
@@ -150,7 +156,7 @@ Database.prototype = {
                     if (status === "timeout") {
                         myConsole.flash("database : Timeout",2)
                     } else {
-                        popupMsg(request.responseText);
+                        myConsole.popupMsg(request.responseText);
                     }
                 }
             });
@@ -224,7 +230,7 @@ Database.prototype = {
                     if(status==="timeout") {
                         myConsole.flash("database : Timeout",2)
                     } else {
-                        popupMsg(request + " " + status + " " + error);
+                        myConsole.popupMsg(request + " " + status + " " + error);
                     } 
                 }
             });
@@ -370,7 +376,7 @@ Database.prototype = {
                 if (status === "timeout") {
                     myConsole.flash("database : Timeout", 2)
                 } else {
-                    popupMsg(request.responseText);
+                    myConsole.popupMsg(request.responseText);
                 }
             }
         });
@@ -398,7 +404,7 @@ Database.prototype = {
                 if (status === "timeout") {
                     myConsole.flash("database : Timeout", 2)
                 } else {
-                    popupMsg(request.responseText);
+                    myConsole.popupMsg(request.responseText);
                 }
             }
         });

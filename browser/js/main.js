@@ -5,9 +5,7 @@ var CGI_ADDRESS = "http://127.0.1.1/cgi-bin/";
 /*tools
  * 
  * */
-var myConsole = new Com("flash_container", "log_container")
-
-
+var myConsole = new Com("flash_container", "log_container", "popup-container", "data-container")
 
 /*load user config if exist
  * 
@@ -71,34 +69,28 @@ if (typeof config != 'undefined') {
 
 
 /* Model
- *
- * */
+ */
 var m = new Model();
-
+/*appel a chaque changement de taille du navigateur*/
+window.onresize = function () { m.resize(); };
 
 /* views
- * 
- * */
+ */
 var graph = new Graph("visu2",m);
 var list = new List("list",m);
 var sp = new ScatterPlot("visu",m, graph, stats);
 var segment = new Segment("bot-container",m, CGI_ADDRESS);
 var builder = new Builder(m);
-
 var pdf = new PDF(m, "visu2_svg")
+if (config.use_database) var db = new Database("plop!", DB_ADDRESS);
+
 /* Stat object
- *
  */
 var stats = new Stats(sp);
 
 /* Add view in the model -> Alignment button
  */
 m.addSegment(segment);
-
-/* 
- *
- * */
-if (config.use_database) var db = new Database("plop!", DB_ADDRESS);
 
 if (location.search != ''){
     var tmp = location.search.substring(1).split('&')
@@ -116,7 +108,7 @@ if (location.search != ''){
     //wait 1sec to check ssl
     setTimeout(function () { db.call("patient/index.html")}, 1000);
 }else{
-    popupMsg(msg.welcome)
+    myConsole.popupMsg(myConsole.msg.welcome)
 }
 
 /*Statements and functions which allows to active the ALT key, and the movement of the SVG frame*/

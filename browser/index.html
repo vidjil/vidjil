@@ -44,12 +44,15 @@
         <script type="text/javascript" src='js/lib/file.js'></script>
         <script type="text/javascript" src='js/lib/jquery.zclip.js'></script>
 
+
 	    <script type="text/javascript" src='js/compare.js'></script>
+        <script type="text/javascript" src='js/menu.js'></script>
         <script type="text/javascript" src='js/dbscan.js'></script>
         <script type="text/javascript" src='js/germline.js'></script>
         <script type="text/javascript" src='js/germline_builder.js'></script>
         <script type="text/javascript" src='js/segmenter.js'></script>
         <script type="text/javascript" src='js/model.js'></script>
+        <script type="text/javascript" src='js/clone.js'></script>
         <script type="text/javascript" src='js/list.js'></script>
         <script type="text/javascript" src="js/axis.js"> </script>
         <script type="text/javascript" src="js/graph.js"> </script>
@@ -251,7 +254,7 @@
                 </div></div>
             </div>
 
-            <div id="logo" style="float: right;" onclick="popupMsg(msg.welcome)">Vidjil <span class='logo'>(beta)</span></div>
+            <div id="logo" style="float: right;" onclick="myConsole.popupMsg(myConsole.msg.welcome)">Vidjil <span class='logo'>(beta)</span></div>
 
             <div class="menu" style="float: right"> <a href="help" target="_blank">help</a></div>
 
@@ -309,12 +312,12 @@
         <div id="frame-container"></div>
 
         <div id="popup-container">
-            <span class="closeButton" onclick="closePopupMsg()">X</span>
+            <span class="closeButton" onclick="myConsole.closePopupMsg()">X</span>
             <div id="popup-msg"></div>
         </div>
 
         <div id="data-container">
-            <span class="closeButton" onclick="closeDataBox()">X</span>
+            <span class="closeButton" onclick="myConsole.closeDataBox()">X</span>
             <div id="data-msg"></div>
         </div>
 

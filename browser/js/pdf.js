@@ -182,9 +182,9 @@ PDF.prototype = {
         opt2.y_offset = opt.y;
 
         //clones style
-        for (var i = 0; i < this.m.windows.length; i++) {
+        for (var i = 0; i < this.m.n_windows; i++) {
             var polyline = elem.querySelectorAll('[id="polyline'+i+'"]')[0]
-            var color = tagColor[this.m.windows[i].tag]
+            var color = tagColor[this.m.clone(i).getTag()]
 
             if (polyline.getAttribute("d").indexOf("Z") != -1){
                 polyline.setAttribute("style", "stroke-width:0px");
@@ -202,7 +202,7 @@ PDF.prototype = {
         //selected clones style
         for (var i = 0; i < this.list.length; i++) {
             var polyline = elem.querySelectorAll('[id="polyline'+this.list[i]+'"]')[0] 
-            var color = tagColor[this.m.windows[this.list[i]].tag]
+            var color = tagColor[this.m.clone(this.list[i]).getTag()]
 
             polyline.setAttribute("stroke", color);
             polyline.setAttribute("style", "stroke-width: "+opt.strokeSize+"px");
@@ -339,27 +339,31 @@ PDF.prototype = {
     info_clone: function (cloneID) {
         this.checkPage(20)
 
-        var color = tagColor[this.m.windows[cloneID].tag]
+        var color = tagColor[this.m.clone(cloneID).getTag()]
 
         this.icon(cloneID, this.marge, this.y - 6, 18, 8)
 
         //clone name
         this.doc.setFont('courier', 'bold');
         this.doc.setTextColor(color);
-        this.doc.text(this.marge + 20, this.y, this.m.getName(cloneID));
+        this.doc.text(this.marge + 20, this.y, this.m.clone(cloneID).getName());
         this.doc.setFont('helvetica', 'normal');
         this.doc.setTextColor(0, 0, 0);
 
         this.next_row()
 
         //clone reads
-        this.row('reads', this.m.windows[cloneID].size, 'raw')
+        var data = []
+        for (var i = 0; i < this.m.samples.number; i++) {
+            data[i] = this.m.clone(cloneID).getReads(i)
+        }
+        this.row('reads', data, 'raw')
         this.next_sub_row()
 
         //clone reads (%)
         var data = []
         for (var i = 0; i < this.m.samples.number; i++) {
-            data[i] = this.m.getStrSize(cloneID, i)
+            data[i] = this.m.clone(cloneID).getStrSize(i)
         }
         this.row('', data, 'raw')
         this.next_row()
@@ -377,9 +381,9 @@ PDF.prototype = {
         if (typeof (m.windows[cloneID].sequence) != 'number') {
 
             var seq = m.windows[cloneID].sequence;
-            var seqV = seq.substring(0, this.m.windows[cloneID].Vend + 1)
-            var seqN = seq.substring(this.m.windows[cloneID].Vend + 1, this.m.windows[cloneID].Jstart)
-            var seqJ = seq.substring(this.m.windows[cloneID].Jstart)
+            var seqV = seq.substring(0, this.m.clone(cloneID).Vend + 1)
+            var seqN = seq.substring(this.m.clone(cloneID).Vend + 1, this.m.clone(cloneID).Jstart)
+            var seqJ = seq.substring(this.m.clone(cloneID).Jstart)
 
             //V
             var str;
@@ -452,7 +456,7 @@ PDF.prototype = {
         this.icon(cloneID, x, y, 18, 8) 
         
         this.doc.setFontSize(8);
-        this.doc.text(x+20, y+4, this.m.getName(cloneID));
+        this.doc.text(x+20, y+4, this.m.clone(cloneID).getName());
         
     },
     

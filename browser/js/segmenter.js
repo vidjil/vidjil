@@ -85,7 +85,7 @@ Segment.prototype = {
         //align button
         span = document.createElement('span');
         span.id = "align"
-	this.m.updateAlignmentButton();
+        this.updateAlignmentButton();
         span.className = "button"
         span.onclick = function () {
             self.align()
@@ -198,8 +198,7 @@ Segment.prototype = {
     updateElem: function (list) {
 
         for (var i = 0; i < list.length; i++) {
-
-            if (this.m.windows[list[i]].select) {
+            if (this.m.clone(list[i]).isSelected()) {
                 if (document.getElementById("seq" + list[i])) {
                     var spanF = document.getElementById("f" + list[i]);
                     this.div_elem(spanF, list[i]);
@@ -210,7 +209,6 @@ Segment.prototype = {
                     this.addToSegmenter(list[i]);
                     this.show();
                 }
-
             } else {
                 if (document.getElementById("seq" + list[i])) {
                     var element = document.getElementById("seq" + list[i]);
@@ -223,7 +221,7 @@ Segment.prototype = {
 
     updateElemStyle: function (list) {
         for (var i = 0; i < list.length; i++) {
-            if (this.m.windows[list[i]].select) {
+            if (this.m.clone(list[i]).isSelected()) {
                 if (document.getElementById("seq" + list[i])) {
                     var spanF = document.getElementById("f" + list[i]);
                     this.div_elem(spanF, list[i]);
@@ -231,7 +229,6 @@ Segment.prototype = {
                     this.addToSegmenter(list[i]);
                     this.show();
                 }
-
             } else {
                 if (document.getElementById("seq" + list[i])) {
                     var element = document.getElementById("seq" + list[i]);
@@ -239,8 +236,27 @@ Segment.prototype = {
                 }
             }
         }
-        
+        this.updateAlignmentButton()
     },
+    
+    /* Fonction permettant de recharger le bouton 'align' 
+    */
+    updateAlignmentButton: function() {
+        var self = this;
+        var align = document.getElementById("align");
+        if (align != null) {
+            if (this.m.clonesSelected.length > 1) {
+                align.className = "button";
+                align.onclick = function() {self.align();};
+            }
+            else {
+                align.className = "";
+                align.className = "button inactive";
+                align.onclick = function() {};
+            }
+        }
+    },
+
 
     /* genere le code HTML des infos d'un clone
      * @div_elem : element HTML a remplir
@@ -255,11 +271,11 @@ Segment.prototype = {
         var seq_name = document.createElement('span');
         seq_name.className = "nameBox";
         seq_name.onclick = function () {
-            self.m.unselect(cloneID);
+            self.m.clone(cloneID).unselect();
         }
-        seq_name.appendChild(document.createTextNode(this.m.getName(cloneID)));
-        seq_name.title = this.m.getName(cloneID);
-        seq_name.style.color = this.m.windows[cloneID].color;
+        seq_name.appendChild(document.createTextNode(this.m.clone(cloneID).getName()));
+        seq_name.title = this.m.clone(cloneID).getName();
+        seq_name.style.color = this.m.clone(cloneID).color;
 
         var svg_star = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
         svg_star.setAttribute('class', 'starBox');
@@ -270,7 +286,7 @@ Segment.prototype = {
         var path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
         path.setAttribute('d', this.starPath);
         path.setAttribute('id', 'color' + cloneID);
-        if (typeof this.m.windows[cloneID].tag != 'undefined') path.setAttribute("fill", tagColor[this.m.windows[cloneID].tag]);
+        if (typeof this.m.clone(cloneID).tag != 'undefined') path.setAttribute("fill", tagColor[this.m.clone(cloneID).tag]);
         else path.setAttribute("fill", color['@default']);
 
         svg_star.appendChild(path);
@@ -280,8 +296,8 @@ Segment.prototype = {
         seq_size.onclick = function () {
             this.m.unselect(cloneID);
         }
-        seq_size.style.color = this.m.windows[cloneID].color;
-        seq_size.appendChild(document.createTextNode(this.m.getStrSize(cloneID)));
+        seq_size.style.color = this.m.clone(cloneID).color;
+        seq_size.appendChild(document.createTextNode(this.m.clone(cloneID).getStrSize()));
 
         div_elem.appendChild(seq_name);
         div_elem.appendChild(svg_star);
@@ -323,10 +339,10 @@ Segment.prototype = {
         var request = "";
 
         for (var i = 0; i < list.length; i++) {
-            if (typeof (this.m.windows[list[i]].sequence) != 'undefined' && this.m.windows[list[i]].sequence != 0)
-                request += ">" + this.m.getName(list[i]) + "\n" + this.m.windows[list[i]].sequence + "\n";
+            if (typeof (this.m.clone(list[i]).sequence) != 'undefined' && this.m.clone(list[i]).sequence != 0)
+                request += ">" + this.m.clone(list[i]).getName() + "\n" + this.m.clone(list[i]).sequence + "\n";
             else
-                request += ">" + this.m.getName(list[i]) + "\n" + this.m.windows[list[i]].window + "\n";
+                request += ">" + this.m.clone(list[i]).getName() + "\n" + this.m.clone(list[i]).window + "\n";
         }
 
         if (address == 'IMGT') imgtPost(request, this.m.system);
@@ -356,10 +372,10 @@ Segment.prototype = {
         if (list.length == 0) return;
 
         for (var i = 0; i < list.length; i++) {
-            if (typeof (this.m.windows[list[i]].sequence) != 'undefined' && this.m.windows[list[i]].sequence != 0)
-                request += ">" + list[i] + "\n" + this.m.windows[list[i]].sequence + "\n";
+            if (typeof (this.m.clone(list[i]).sequence) != 'undefined' && this.m.clone(list[i]).sequence != 0)
+                request += ">" + list[i] + "\n" + this.m.clone(list[i]).sequence + "\n";
             else
-                request += ">" + list[i] + "\n" + this.m.windows[list[i]].window + "\n";
+                request += ">" + list[i] + "\n" + this.m.clone(list[i]).window + "\n";
         }
 
 
@@ -404,8 +420,8 @@ Segment.prototype = {
         var result = "";
 
         for (var i = 0; i < selected.length; i++) {
-            result += "> " + this.m.getName(selected[i]) + " // " + this.m.getStrSize(selected[i]) + "\n";
-            result += this.m.windows[selected[i]].sequence + "\n";
+            result += "> " + this.m.clone(selected[i]).getName() + " // " + this.m.clone(selected[i]).getStrSize() + "\n";
+            result += this.m.clone(selected[i]).sequence + "\n";
         }
         return result
     },
@@ -447,10 +463,10 @@ Sequence.prototype = {
     //load sequence from model or use given argument
     load: function (str) {
         if (typeof str !== 'undefined') this.use_marge = false
-        str = typeof str !== 'undefined' ? str : this.m.windows[this.id].sequence;
+        str = typeof str !== 'undefined' ? str : this.m.clone(this.id).sequence;
 
-        if (typeof this.m.windows[this.id].sequence == 'undefined' || this.m.windows[this.id].sequence == 0) {
-            str = this.m.windows[this.id].window
+        if (typeof this.m.clone(this.id).sequence == 'undefined' || this.m.clone(this.id).sequence == 0) {
+            str = this.m.clone(this.id).window
         }
         
         this.seq = str.split("")
@@ -483,7 +499,7 @@ Sequence.prototype = {
 
     //return sequence completed with html tag
     toString: function () {
-        var seg = this.m.windows[this.id]
+        var seg = this.m.clone(this.id)
         var result = ""
         
         if (typeof seg.sequence != 'undefined' && seg.sequence != 0) {
