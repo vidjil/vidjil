@@ -112,7 +112,7 @@ Builder.prototype = {
         normalize_list.appendChild(document.createTextNode("none"))
         normalize_list.appendChild(document.createElement("br"))
         
-        for (var i=0; i<self.m.n_windows; i++){
+        for (var i=0; i<self.m.n_clones; i++){
             if (typeof self.m.clone(i).expected != "undefined"){
                 var input = document.createElement("input")
                 var text = document.createTextNode(self.m.clone(i).getName() + " => " +self.m.clone(i).expected)
@@ -357,7 +357,7 @@ Builder.prototype = {
 
         //init slider
         var max_top = 0;
-        for (var i = 0; i < this.m.n_windows; i++) {
+        for (var i = 0; i < this.m.n_clones; i++) {
             if (this.m.clone(i).top > max_top)
                 max_top = this.m.clone(i).top
         }
@@ -410,7 +410,7 @@ Builder.prototype = {
         var clusterSelector = document.getElementById("clusterby_button")
         clusterSelector.innerHTML = "";
         
-        if (self.m.windows[0]._target){
+        if (self.m.clones[0]._target){
         
             var target = document.createElement('a');
                 target.className = "buttonSelector"
@@ -437,7 +437,7 @@ Builder.prototype = {
             clusterSelector.appendChild(clonotype)
         }
         
-        if (self.m.windows[0].system){
+        if (self.m.clones[0].system){
             
             var system = document.createElement('a');
                 system.className = "buttonSelector"

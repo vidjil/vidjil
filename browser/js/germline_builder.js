@@ -50,7 +50,7 @@ Germline.prototype = {
         //reduce germline size (keep only detected genes)
         //and add undetected genes 
         var g = {}
-        for (var i=0; i<this.m.n_windows; i++){
+        for (var i=0; i<this.m.n_clones; i++){
             if (typeof this.m.clone(i)[type] != "undefined" 
                 && typeof this.m.clone(i)[type][0] != "undefined"){
                 var gene=this.m.clone(i)[type][0];

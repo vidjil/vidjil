@@ -64,7 +64,7 @@ Clone.prototype = {
         }
     }, 
 
-    /* compute the clone size ( sum of all windows clustered )
+    /* compute the clone size ( sum of all clones clustered )
      * @t : tracking point (default value : current tracking point)
      * */
     getSize: function (time) {
@@ -107,7 +107,7 @@ Clone.prototype = {
     }, //end getSequenceSize
 
 
-    /* compute the clone reads number ( sum of all reads of windows clustered )
+    /* compute the clone reads number ( sum of all reads of clones clustered )
      * @t : tracking point (default value : current tracking point)
      * */
     getReads: function (time) {

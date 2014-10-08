@@ -215,9 +215,9 @@ ScatterPlot.prototype = {
       this.grpLinks = this.plot_container.append('svg:g').attr('class', 'grpLinks');
 
       //Initialisation des nodes
-      this.nodes = d3.range(this.m.n_windows)
+      this.nodes = d3.range(this.m.n_clones)
 	  .map(Object);
-      for (var i = 0; i < this.m.n_windows; i++) {
+      for (var i = 0; i < this.m.n_clones; i++) {
 	  this.nodes[i].id = i; //L'id d'un cercle vaut le nombre de i dans la boucle
 	  this.nodes[i].r1 = 5; // longueur du rayon1
 	  this.nodes[i].r2 = 5; // longueur du rayon2
@@ -280,14 +280,14 @@ ScatterPlot.prototype = {
 
   },
 
-  /* Function which allows to return the number of active windows
+  /* Function which allows to return the number of active clones
   */
-  returnActiveWindows: function() {
-    var activeWindows = 0;
-    for (var i=0; i<this.m.n_windows;i++) {
-      if (this.m.clone(i).isActive()) activeWindows += 1;
+  returnActiveclones: function() {
+    var activeclones = 0;
+    for (var i=0; i<this.m.n_clones;i++) {
+      if (this.m.clone(i).isActive()) activeclones += 1;
     }
-    return activeWindows;
+    return activeclones;
   },
 
   /* Function which allows to initialize the D3JS engine - usefull with reinitMotor()
@@ -682,7 +682,7 @@ ScatterPlot.prototype = {
       }
 
       //classement des clones suivant V
-      for (var i = 0; i < this.m.n_windows; i++) {
+      for (var i = 0; i < this.m.n_clones; i++) {
 	  if (this.m.clone(i).isActive()) {
 	      var geneV = this.m.clone(i).getV();
 	      var clone = {
@@ -1135,7 +1135,7 @@ ScatterPlot.prototype = {
   /* Function which permits to force all no-clustered clones, to return at their initial position
   */
   forceNodesToStayInInitialPosition: function() {
-      for (var i = 0; i < this.m.n_windows; i++) {
+      for (var i = 0; i < this.m.n_clones; i++) {
           if (this.m.dbscan.clusters[this.m.clone(i).cluster].length == 1) {
               //Calcul du delta
               var x = this.nodes[i].x;

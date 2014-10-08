@@ -78,7 +78,7 @@ Model.prototype = {
         this.precision = 1;
         this.isPlaying = false;
         this.clusters = [];
-        this.windows = [];
+        this.clones = [];
         this.germline = {}
         this.germlineV = new Germline(this)
         this.germlineD = new Germline(this)
@@ -228,44 +228,44 @@ Model.prototype = {
 
     parseJsonData: function (data, limit) {
         self = this;
-        self.windows = [];
+        self.clones = [];
         self.links = [];
         self.mapID = {}
         self.dataCluster = []
         var min_sizes = [];
         var n_max = 0;
         
-        for (var k = 0; k < data.windows[0].size.length; k++) {
+        for (var k = 0; k < data.clones[0].size.length; k++) {
                 min_sizes[k] = 0.01;
         }
 
         var hash = 0
         //keep best top value
-        for (var i = 0; i < data.windows.length; i++) {
-            if (data.windows[i].top <= limit) {
+        for (var i = 0; i < data.clones.length; i++) {
+            if (data.clones[i].top <= limit) {
                 //search for min_size
-                for (var k = 0; k < data.windows[i].size.length; k++) {
-                    var size = (data.windows[i].size[k] / data.reads.segmented[k])
+                for (var k = 0; k < data.clones[i].size.length; k++) {
+                    var size = (data.clones[i].size[k] / data.reads.segmented[k])
 
-                    if (min_sizes[k] > size && data.windows[i].size[k] != 0)
+                    if (min_sizes[k] > size && data.clones[i].size[k] != 0)
                         min_sizes[k] = size;
                 }
                 
-                data.windows[i].Nlength = 0;
-                if ((typeof (data.windows[i].Jstart) != 'undefined') &&
-                    (typeof (data.windows[i].Vend) != 'undefined') ) {
-                    data.windows[i].Nlength = data.windows[i].Jstart - data.windows[i].Vend
+                data.clones[i].Nlength = 0;
+                if ((typeof (data.clones[i].Jstart) != 'undefined') &&
+                    (typeof (data.clones[i].Vend) != 'undefined') ) {
+                    data.clones[i].Nlength = data.clones[i].Jstart - data.clones[i].Vend
                 }
 
                 //search for n_max 
-                if ((typeof (data.windows[i].sequence) != 'undefined') &&
-                    (typeof (data.windows[i].Nlength) != 'undefined') &&
-                    (data.windows[i].Nlength > n_max)) {
-                    n_max = data.windows[i].Nlength;
+                if ((typeof (data.clones[i].sequence) != 'undefined') &&
+                    (typeof (data.clones[i].Nlength) != 'undefined') &&
+                    (data.clones[i].Nlength > n_max)) {
+                    n_max = data.clones[i].Nlength;
                 }
                 
-                var clone = new Clone(data.windows[i], self, hash)
-                self.windows.push(clone);
+                var clone = new Clone(data.clones[i], self, hash)
+                self.clones.push(clone);
                 hash++
             }
         }
@@ -282,7 +282,7 @@ Model.prototype = {
             "size": []
         }
         var clone = new Clone(other, self, hash)
-        self.windows.push(clone);
+        self.clones.push(clone);
         
         // default samples
         if (typeof self.samples.number == 'string'){
@@ -297,7 +297,7 @@ Model.prototype = {
             for (var i = 0; i < self.samples.number; i++) self.samples.names.push("");
         }
         
-        self.n_windows = self.windows.length;
+        self.n_clones = self.clones.length;
         self.min_sizes = min_sizes;
         self.n_max = n_max;
         self.system_selected = [];
@@ -326,8 +326,8 @@ Model.prototype = {
             self.system = germline_list[0];
         }
 
-        for (var i = 0; i < self.n_windows; i++) {
-            self.mapID[self.windows[i].window] = i;
+        for (var i = 0; i < self.n_clones; i++) {
+            self.mapID[self.clones[i].window] = i;
         }
 
         return this
@@ -431,7 +431,7 @@ Model.prototype = {
         }
         
         if (this.system == "multi"){
-            for ( var i=0; i<this.n_windows; i++){
+            for ( var i=0; i<this.n_clones; i++){
                 var clone = this.clone(i)
                 if (clone.getSystem() == system) {
                     if (clone[gene] && clone[gene][0]){
@@ -441,7 +441,7 @@ Model.prototype = {
             }
             
         }else{
-            for (var i=0; i<this.n_windows; i++){
+            for (var i=0; i<this.n_clones; i++){
                 var clone = this.clone(i)
                 if (clone[gene] && clone[gene][0]){
                     list[clone[gene][0]]=0
@@ -500,7 +500,7 @@ Model.prototype = {
         this.clusters = [];
 
         //      NSIZE
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
             
             if (typeof (clone.getSequence()) != 'undefined') {
@@ -518,7 +518,7 @@ Model.prototype = {
         }
         
         //      COLOR_N
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
             clone.colorN = colorGenerator((((clone.Nlength / maxNlength) - 1) * (-250)), color_s, color_v);
         }
@@ -526,7 +526,7 @@ Model.prototype = {
         this.computeColor()
         
         //      SHORTNAME
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
             if (typeof (clone.getSequence()) != 'undefined' && typeof (clone.name) != 'undefined') {
                 clone.shortName = clone.name.replace(new RegExp('IGHV', 'g'), "VH");
@@ -543,7 +543,7 @@ Model.prototype = {
     
     computeColor: function(){
         //      COLOR_V
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
             
             if (typeof (clone.V) != 'undefined' && this.germlineV.allele[clone.V[0]]) {
@@ -555,7 +555,7 @@ Model.prototype = {
         }
 
         //      COLOR_J
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
             
             if (typeof (clone.J) != 'undefined' && this.germlineJ.allele[clone.J[0]]) {
@@ -615,7 +615,7 @@ Model.prototype = {
                                 max.id = id
                             }
                         }else{
-                            myConsole.log(" apply analysis : windows "+ c[i].window + " > incorrect expected value", 0)
+                            myConsole.log(" apply analysis : clones "+ c[i].window + " > incorrect expected value", 0)
                         }
                     }else{
                         if (typeof (c[i].tag) != "undefined") {
@@ -651,7 +651,7 @@ Model.prototype = {
      */
     findWindow: function (sequence) {
         if (sequence != 0){
-            for ( var i=0; i<this.n_windows; i++ ){
+            for ( var i=0; i<this.n_clones; i++ ){
                 if ( sequence.indexOf(this.clone(i).window) != -1 ) return i
             }
         }
@@ -692,7 +692,7 @@ Model.prototype = {
             tags : {}
         }
 
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
 
             //tag, custom name, expected_value
@@ -1027,7 +1027,7 @@ Model.prototype = {
      * */
     getSelected: function () {
         var result = []
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             if (this.clone(i).isSelected()) {
                 result.push(i);
             }
@@ -1065,7 +1065,7 @@ Model.prototype = {
     select: function (cloneID) {
         myConsole.log("select() (clone " + cloneID + ")");
 
-        if (cloneID == (this.n_windows - 1)) return 0
+        if (cloneID == (this.n_clones - 1)) return 0
 
         if (this.clone(cloneID).isSelected()) {
             return;
@@ -1143,7 +1143,7 @@ Model.prototype = {
 
         nlist.splice(index, 1);
 
-        //le clone retrouve sa liste de windows -1
+        //le clone retrouve sa liste de clones -1
         this.clusters[cloneID] = nlist;
         //la window forme son propre clone a part
         this.clusters[windowID] = [windowID];
@@ -1188,15 +1188,15 @@ Model.prototype = {
         
         // unactive clones from unselected system
         if (this.system == "multi" && this.system_selected.length != 0) {
-            for (var i = 0; i < this.n_windows; i++) {
+            for (var i = 0; i < this.n_clones; i++) {
                 if (this.system_selected.indexOf(this.clone(i).getSystem()) == -1) {
-                    this.windows[i].active = false;
+                    this.clones[i].active = false;
                 }
             }
         }
         
         //unactive filtered clone
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             if (this.clone(i).isFiltered) {
                 this.clone(i).active = false;
             }
@@ -1204,7 +1204,7 @@ Model.prototype = {
         
         this.computeOtherSize();
 
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             this.clone(i).updateColor()
         }
 
@@ -1266,7 +1266,7 @@ Model.prototype = {
     
     updateStyle: function () {
         var list = []
-        for (var i=0; i<this.n_windows; i++) list[i]=i
+        for (var i=0; i<this.n_clones; i++) list[i]=i
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].updateElemStyle(list);
         }
@@ -1283,7 +1283,7 @@ Model.prototype = {
         this.displayTop();
 
         var count = 0;
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             if (this.clone(i).isActive()) count++
         }
 
@@ -1310,7 +1310,7 @@ Model.prototype = {
         var html_label = document.getElementById('top_label');
         if (html_label != null) {
             var count = 0;
-            for (var i=0; i<this.n_windows; i++){
+            for (var i=0; i<this.n_clones; i++){
                 if (this.clone(i).top <= top) count++;
             }
             html_label.innerHTML = count + ' clones (top ' + top + ')' ;
@@ -1329,18 +1329,18 @@ Model.prototype = {
             other[j] = this.reads.segmented[j]
         }
 
-        for (var i = 0; i < this.n_windows - 1; i++) {
+        for (var i = 0; i < this.n_clones - 1; i++) {
             for (var j = 0; j < this.reads.segmented.length; j++) {
                 if (this.clone(i).isActive()) {
                     for (var k = 0; k < this.clusters[i].length; k++) {
-                        if (this.clusters[i][k] != this.n_windows - 1)
+                        if (this.clusters[i][k] != this.n_clones - 1)
                             other[j] -= this.clone(this.clusters[i][k]).size[j];
                     }
                 }
             }
         }
 
-        this.clone(this.n_windows - 1).size = other;
+        this.clone(this.n_clones - 1).size = other;
 
     },
     
@@ -1374,7 +1374,7 @@ Model.prototype = {
         }
         
         var tmp = {}
-        for (var i = 0; i < this.n_windows - 1; i++) {
+        for (var i = 0; i < this.n_clones - 1; i++) {
 
             //detect key value
             var key = "undefined"
@@ -1391,7 +1391,7 @@ Model.prototype = {
                 }
             }
 
-            //store windows with same key together
+            //store clones with same key together
             if (key == "") key = "undefined"
             if (tmp[key]) {
                 tmp[key].push(i)
@@ -1401,14 +1401,14 @@ Model.prototype = {
 
         }
 
-        //order windows with same key
+        //order clones with same key
         var keys = Object.keys(tmp)
         for (var i in tmp) {
             tmp[i].sort()
         }
 
         //reset cluster
-        for (var i = 0; i < this.windows.length; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
             this.clusters[i] = []
         }
 
@@ -1433,7 +1433,7 @@ Model.prototype = {
         //reset cluster
         this.cluster_key = ""
         
-        for (var i = 0; i < this.windows.length; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
             this.clusters[i] = []
         }
 
@@ -1606,7 +1606,7 @@ Model.prototype = {
     
 
     clone: function(hash) {
-        return this.windows[hash]
+        return this.clones[hash]
     },
     
 
@@ -1631,11 +1631,11 @@ Model.prototype = {
     loadRandomTab: function() {
         this.tabRandomColor = [];
         /*Initialisation du tableau de couleurs*/
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             this.tabRandomColor.push(i);
         }
         /*Fisher yates algorithm to shuffle the array*/
-        for (var i = this.n_windows - 1; i >= 1; i--) {
+        for (var i = this.n_clones - 1; i >= 1; i--) {
             var j = Math.floor(Math.random() * i) + 1;
             var abs = this.tabRandomColor[i];
             this.tabRandomColor[i] = this.tabRandomColor[j];
@@ -1652,7 +1652,7 @@ Model.prototype = {
             this.dbscan.runAlgorithm();
             for (var i = 0; i < this.dbscan.clusters.length; i++)
                 for (var j = 0; j < this.dbscan.clusters[i].length; j++)
-                    this.windows[this.dbscan.clusters[i][j]].cluster = i;
+                    this.clones[this.dbscan.clusters[i][j]].cluster = i;
             //Color DBSCAN
             if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
             this.colorNodesDBSCAN();
@@ -1667,7 +1667,7 @@ Model.prototype = {
         /*Adding color by specific cluster*/
         /*-> Solution provisoire quant à la couleur noire non voulue est d' "effacer" le nombre max de clusters, mais de le prendre par défaut (100), soit un intervalle de 2.7 à chaque fois*/
         var maxCluster = this.dbscan.clusters.length;
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             if (typeof(this.clone(i)) != 'undefined') {
                 this.clone(i).colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.clone(i)] + 1) ), color_s, color_v);
             }
@@ -1679,7 +1679,7 @@ Model.prototype = {
     /* Fonction permettant d'ajouter un tab concernant un node - s'il est au coeur d'un cluster, à l'extérieur ou appartenant à...
      */
     addTagCluster: function() {
-        for (var i = 0; i < this.n_windows; i++)
+        for (var i = 0; i < this.n_clones; i++)
             if (typeof(this.clone(i)) != 'undefined')
                 switch (this.dbscan.visitedTab[i].mark) {
                 case -1:

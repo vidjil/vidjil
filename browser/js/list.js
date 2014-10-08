@@ -60,7 +60,7 @@ List.prototype = {
         var div_list_clones = document.createElement('div')
         div_list_clones.id = "list_clones"
 
-        for (var i = 0; i < this.m.n_windows; i++) {
+        for (var i = 0; i < this.m.n_clones; i++) {
             var div = document.createElement('li');
             div.className = "list";
             div.id = i;
@@ -158,7 +158,7 @@ List.prototype = {
         var startTime = new Date()
             .getTime();
         var elapsedTime = 0;
-        for (var i = 0; i < this.m.n_windows; i++) {
+        for (var i = 0; i < this.m.n_clones; i++) {
             this.updateElem([i]);
         }
         elapsedTime = new Date()
@@ -472,7 +472,7 @@ List.prototype = {
     },
     
     reset_filter: function (bool) {
-        for (var i=0; i<this.m.n_windows; i++){
+        for (var i=0; i<this.m.n_clones; i++){
             var c = this.m.clone(i)
             c.isFiltered=bool
         }
@@ -480,7 +480,7 @@ List.prototype = {
     
     filter: function (str) {
         this.reset_filter(true)
-        for (var i=0; i<this.m.n_windows; i++){
+        for (var i=0; i<this.m.n_clones; i++){
             var c = this.m.clone(i) 
             if (c.getName().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
             if (c.getSequence().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false

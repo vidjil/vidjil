@@ -41,7 +41,7 @@ PDF.prototype = {
 
         if (this.list.length == 0) {
             var flag = 5;
-            for (var i = 0; i < this.m.n_windows; i++) {
+            for (var i = 0; i < this.m.n_clones; i++) {
                 if (this.m.clusters[i].length != 0 && flag != 0) {
                     this.list.push(i);
                     flag--;
@@ -182,7 +182,7 @@ PDF.prototype = {
         opt2.y_offset = opt.y;
 
         //clones style
-        for (var i = 0; i < this.m.n_windows; i++) {
+        for (var i = 0; i < this.m.n_clones; i++) {
             var polyline = elem.querySelectorAll('[id="polyline'+i+'"]')[0]
             var color = tagColor[this.m.clone(i).getTag()]
 
@@ -194,7 +194,7 @@ PDF.prototype = {
                 polyline.setAttribute("stroke", color);
             }
 
-            if (m.windows[i].window == "other" || !m.windows[i].active) {
+            if (m.clone(i).window == "other" || !m.clone(i).isActive()) {
                 polyline.parentNode.removeChild(polyline);
             }
         }
@@ -378,9 +378,9 @@ PDF.prototype = {
         this.doc.setFont('courier', 'normal');
         this.doc.setTextColor(0, 0, 0)
 
-        if (typeof (m.windows[cloneID].sequence) != 'number') {
+        if (m.clone(cloneID).getSequence() != "0") {
 
-            var seq = m.windows[cloneID].sequence;
+            var seq = m.clone(cloneID).getSequence()
             var seqV = seq.substring(0, this.m.clone(cloneID).Vend + 1)
             var seqN = seq.substring(this.m.clone(cloneID).Vend + 1, this.m.clone(cloneID).Jstart)
             var seqJ = seq.substring(this.m.clone(cloneID).Jstart)
@@ -426,7 +426,7 @@ PDF.prototype = {
             }
 
         } else {
-            this.doc.text(this.marge + 20, this.y, "segment fail :" + m.windows[cloneID].window);
+            this.doc.text(this.marge + 20, this.y, "segment fail :" + m.clone(cloneID).window);
         }
 
         this.y += 5;
@@ -462,7 +462,7 @@ PDF.prototype = {
     
     icon: function (cloneID, x, y, w, h) {
 
-        var color = tagColor[m.windows[cloneID].tag]
+        var color = tagColor[m.clone(cloneID).tag]
 
         var polyline = document.getElementById("polyline" + cloneID)
             .cloneNode(true);

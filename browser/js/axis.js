@@ -139,7 +139,7 @@ Axis.prototype = {
         
         var n_min = 0;
         var n_max = 1;
-        for (var i=0; i<this.m.n_windows; i++){
+        for (var i=0; i<this.m.n_clones; i++){
             if (this.m.clone(i).Nlength > n_max) n_max = this.m.clone(i).Nlength;
         }
         
