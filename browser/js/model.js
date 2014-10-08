@@ -301,84 +301,33 @@ Model.prototype = {
         self.min_sizes = min_sizes;
         self.n_max = n_max;
         self.system_selected = [];
-        for (var key in self.system_segmented) self.system_selected.push(key)
-        self.reads_segmented_total = self.reads_segmented.reduce(function (a, b) {
+        for (var key in self.reads.germline) self.system_selected.push(key)
+        self.reads_segmented_total = self.reads.segmented.reduce(function (a, b) {
             return a + b;
         });
-        self.reads_total = data.reads_total;
-        if (self.reads_total) {
-            self.reads_total_total = self.reads_total.reduce(function (a, b) {
+        if (self.reads.total) {
+            self.reads_total_total = self.reads.total.reduce(function (a, b) {
                 return a + b;
             });
         } else {
             self.reads_total_total = self.reads_segmented_total;
-            self.reads_total = self.reads_segmented;
+            self.reads.total = self.reads.segmented;
         }
-        self.timestamp = data.timestamp;
         self.scale_color = d3.scale.log()
             .domain([1, self.precision])
             .range([250, 0]);
         
 
         //extract germline
-        if (typeof data.germline != 'undefined') {
-            var t = data.germline.split('/');
-            self.system = t[t.length - 1];
+        var germline_list = Object.keys(this.reads.germline)
+        if (germline_list.length >1) {
+            self.system = "multi"
         } else {
-            self.system = "TRG";
+            self.system = germline_list[0];
         }
 
         for (var i = 0; i < self.n_windows; i++) {
             self.mapID[self.windows[i].window] = i;
-        }
-
-        var tmp = {}
-        // init clones
-        if (data.clones) {
-            for (var i = 0; i < data.clones.length; i++) {
-                var cl = {}
-                cl.cluster = []
-                for (var j = 0; j < data.clones[i].cluster.length; j++) {
-                    if (self.mapID[data.clones[i].cluster[j]] || self.mapID[data.clones[i].cluster[j]] == "0") {
-                        cl.cluster.push(self.mapID[data.clones[i].cluster[j]])
-                    }
-                }
-                if (data.clones[i].name) {
-                    cl.name = data.clones[i].name
-                } else {
-                    cl.name = "cluster " + i
-                }
-
-                //fuse cluster with same name
-                if (cl.cluster.length != 0) {
-                    if (!tmp[cl.name]) {
-                        tmp[cl.name] = cl
-                        tmp[cl.name].cluster.sort()
-                    } else {
-                        tmp[cl.name].cluster = tmp[cl.name].cluster.concat(cl.cluster)
-                        tmp[cl.name].cluster.sort()
-                    }
-                }
-            }
-
-            for (var key in tmp) {
-                self.dataCluster.push(tmp[key])
-            }
-            
-            //      DATA CLUSTER
-            this.dataCluster.sort(function (a, b) {
-                return b.cluster[0] - a.cluster[0]
-            })
-            for (var i = 0; i < this.dataCluster.length; i++) {
-                var new_cluster = [];
-                for (var j = 0; j < this.dataCluster[i].cluster.length; j++) {
-                    new_cluster = new_cluster.concat(this.clones[this.dataCluster[i].cluster[j]].cluster);
-                    this.clones[this.dataCluster[i].cluster[j]].cluster = []
-                }
-                this.clones[this.dataCluster[i].cluster[0]].cluster = new_cluster
-                this.clones[this.dataCluster[i].cluster[0]].name = this.dataCluster[i].name
-            }
-
         }
 
         return this
