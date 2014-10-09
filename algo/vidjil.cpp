@@ -1009,6 +1009,9 @@ int main (int argc, char **argv)
       ofstream out_clone(clone_file_name.c_str());
       Germline *segmented_germline = windowsStorage->getGermline(it->first);
       
+      //$$ Computing labels
+
+      // Clone label
       ostringstream oss;
       oss << "clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone
 	  << "--" << segmented_germline->code
@@ -1016,14 +1019,16 @@ int main (int argc, char **argv)
 	  << "--" << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%" ;
       string clone_id = oss.str();
 
-      
-      cout << "Clone #" << right << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone ;
-      cout << " – " << setfill(' ') << setw(WIDTH_NB_READS) << clone_nb_reads << " reads" ;
-      cout << " – " << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%  "  ;
 
-      cout << " – " << 100 * (float) clone_nb_reads * compute_normalization_one(norm_list, clone_nb_reads) / nb_segmented << "% " 
-	  << compute_normalization_one(norm_list, clone_nb_reads) << " ";
-      cout << endl ;
+      // Clone label -- Human readable information (is it really useful ?)
+      ostringstream oss_human;
+      oss_human << "#### Clone #" << right << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone 
+		<< " – " << setfill(' ') << setw(WIDTH_NB_READS) << clone_nb_reads << " reads" 
+		<< " – " << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%  "  
+		<< " – " << 100 * (float) clone_nb_reads * compute_normalization_one(norm_list, clone_nb_reads) / nb_segmented << "% " 
+		 << compute_normalization_one(norm_list, clone_nb_reads) << " " ;
+      string clone_id_human = oss_human.str();
+      cout << clone_id_human << endl ;
 
 
       //$$ Output window
