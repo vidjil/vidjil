@@ -999,14 +999,6 @@ int main (int argc, char **argv)
     
       ++num_clone ;
 
-      if (max_clones && (num_clone == max_clones + 1))
-	  break ;
-
-      cout << "#### " ;
-
-      string clone_file_name = out_seqdir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
-
-      ofstream out_clone(clone_file_name.c_str());
       Germline *segmented_germline = windowsStorage->getGermline(it->first);
       
       //$$ Computing labels
@@ -1028,12 +1020,29 @@ int main (int argc, char **argv)
 		<< " – " << 100 * (float) clone_nb_reads * compute_normalization_one(norm_list, clone_nb_reads) / nb_segmented << "% " 
 		 << compute_normalization_one(norm_list, clone_nb_reads) << " " ;
       string clone_id_human = oss_human.str();
+
+      // Window label
+      string window_str = ">" + clone_id + "--window" + " " + windows_labels[it->first] + '\n' + it->first + '\n' ;
+
+
+      //$$ If max_clones is reached, we stop here but still outputs the window
+
+      if (max_clones && (num_clone >= max_clones + 1))
+	{
+	  out_clones << window_str << endl ;
+	  continue;
+	}
+
+
       cout << clone_id_human << endl ;
+
+      //$$ Open CLONE_FILENAME
+
+      string clone_file_name = out_seqdir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
+      ofstream out_clone(clone_file_name.c_str());
 
 
       //$$ Output window
-
-      string window_str = ">" + clone_id + "--window" + " " + windows_labels[it->first] + '\n' + it->first + '\n' ;;
       cout << window_str ;
       out_clone << window_str ;
 
