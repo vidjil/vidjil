@@ -322,13 +322,14 @@ class ListWindows:
         #concat data, if there is some missing data we use an empty buffer t1/t2 
         #with the same size as the number of missing data
         for key in self.d :
-            if key != "windows" and key != "links":
+            if key != "windows" and key != "links" and key != "system_segmented":
                 obj.d[key] = self.d[key]
                 if key not in other.d :
+                    print "plop : " + key
                     obj.d[key] += t2
 
         for key in other.d :
-            if key != "windows" and key != "links":
+            if key != "windows" and key != "links" and key != "system_segmented":
                 if key not in obj.d :
                     obj.d[key] = t1 + other.d[key]
                 else :
@@ -339,14 +340,12 @@ class ListWindows:
         obj.d["samples"] = [self.d["samples"][0] + other.d["samples"][0]]
         obj.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
         
-        if 'system_segmented' in self.d.keys():
-            self.d["system_segmented"] = self.d["system_segmented"][0]
-        else:
+        if not 'system_segmented' in self.d.keys():
             self.d["system_segmented"] = {}
-        if 'system_segmented' in other.d.keys():
-            other.d["system_segmented"] = other.d["system_segmented"][0]
-        else:
+            
+        if not 'system_segmented' in other.d.keys():
             other.d["system_segmented"] = {}
+            
         obj.d["system_segmented"] = {}
         for key in self.d["system_segmented"] :
             obj.d["system_segmented"][key] = self.d["system_segmented"][key]
