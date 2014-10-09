@@ -75,11 +75,11 @@
 #define RATIO_READS_CLONE 0.0
 
 #define COMMAND_WINDOWS "windows"
-#define COMMAND_ANALYSIS "clones"
+#define COMMAND_CLONES "clones"
 #define COMMAND_SEGMENT "segment"
 #define COMMAND_GERMLINES "germlines"
  
-enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT, CMD_GERMLINES } ;
+enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define OUT_DIR "./out/" 
 #define CLONES_FILENAME "clones.vdj.fa"
@@ -135,8 +135,8 @@ void usage(char *progname)
   cerr << "Usage: " << progname << " [options] <reads.fa>" << endl << endl;
 
   cerr << "Command selection" << endl
-       << "  -c <command> \t" << COMMAND_WINDOWS << "\t window extracting (default)" << endl 
-       << "  \t\t" << COMMAND_ANALYSIS  << "  \t clone analysis" << endl 
+       << "  -c <command> \t" << COMMAND_WINDOWS << "  \t window extracting" << endl 
+       << "  \t\t" << COMMAND_CLONES  << "  \t clone gathering (default)" << endl 
        << "  \t\t" << COMMAND_SEGMENT   << "  \t V(D)J segmentation (not recommended)" << endl
        << "  \t\t" << COMMAND_GERMLINES << "  \t discover all germlines" << endl
        << endl       
@@ -210,7 +210,6 @@ void usage(char *progname)
 
        << endl 
        << "Examples (see doc/README)" << endl
-       << "  " << progname << "             -G germline/IGH             -d data/Stanford_S22.fasta" << endl
        << "  " << progname << " -c clones   -G germline/IGH  -r 5       -d data/Stanford_S22.fasta" << endl
        << "  " << progname << " -c segment  -G germline/IGH             -d data/Stanford_S22.fasta   # (only for testing)" << endl
        << "  " << progname << " -c germlines                               data/Stanford_S22.fasta" << endl
@@ -259,7 +258,7 @@ int main (int argc, char **argv)
   int segment_D = 0;
   
   int verbose = 0 ;
-  int command = CMD_WINDOWS;
+  int command = CMD_CLONES;
 
   int max_clones = MAX_CLONES ;
   int min_reads_clone = MIN_READS_CLONE ;
@@ -321,8 +320,8 @@ int main (int argc, char **argv)
 	detailed_cluster_analysis = false;
 	break;
       case 'c':
-        if (!strcmp(COMMAND_ANALYSIS,optarg))
-          command = CMD_ANALYSIS;
+        if (!strcmp(COMMAND_CLONES,optarg))
+          command = CMD_CLONES;
         else if (!strcmp(COMMAND_SEGMENT,optarg))
           command = CMD_SEGMENT;
         else if (!strcmp(COMMAND_WINDOWS,optarg))
@@ -553,7 +552,7 @@ int main (int argc, char **argv)
   switch(command) {
   case CMD_WINDOWS: cout << "Extracting windows" << endl; 
     break;
-  case CMD_ANALYSIS: cout << "Analysing clones" << endl; 
+  case CMD_CLONES: cout << "Analysing clones" << endl; 
     break;
   case CMD_SEGMENT: cout << "Segmenting V(D)J" << endl;
     break;
@@ -763,7 +762,7 @@ int main (int argc, char **argv)
   ////////////////////////////////////////
   //           CLONE ANALYSIS           //
   ////////////////////////////////////////
-  if (command == CMD_ANALYSIS || command == CMD_WINDOWS) {
+  if (command == CMD_CLONES || command == CMD_WINDOWS) {
 
     //////////////////////////////////
     cout << "# seed = " << seed << "," ;
@@ -882,7 +881,7 @@ int main (int argc, char **argv)
 	list< pair <float, int> > norm_list = compute_normalization_list(windowsStorage->getMap(), normalization, nb_segmented);
 
 
-    if (command == CMD_ANALYSIS) {
+    if (command == CMD_CLONES) {
 
     //////////////////////////////////
     //$$ min_reads_clone (ou label)
@@ -1163,7 +1162,7 @@ int main (int argc, char **argv)
 
     } // endif (clones_windows.size() > 0)
 
-    } // end if (command == CMD_ANALYSIS) 
+    } // end if (command == CMD_CLONES) 
 
     //$$ .json output: json_data_segment
     string f_json = out_dir + prefix_filename + "vidjil" + JSON_SUFFIX ; // TODO: retrieve basename from f_reads instead of "vidjil"
@@ -1240,7 +1239,7 @@ int main (int argc, char **argv)
 
     cout << "* WARNING: vidjil was run with '-c segment' option" << endl
          << "* Vidjil purpose is to extract very quickly windows overlapping the CDR3" << endl
-         << "* or to gather reads into clones (-c clones), and not to provide an accurate V(D)J segmentation." << endl
+         << "* and to gather reads into clones (-c clones), and not to provide an accurate V(D)J segmentation." << endl
          << "* The following segmentations are slow to compute and are provided only for convenience." << endl
          << "* They should be checked with other softwares such as IgBlast, iHHMune-align or IMGT/V-QUEST." << endl
       ;
