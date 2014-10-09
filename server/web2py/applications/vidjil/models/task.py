@@ -87,6 +87,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     ## execute la commande vidjil
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
+    print "===Vidjil output==="
     print p.stdout.read()
     
     ## récupération du fichier data.json généré
@@ -119,6 +120,9 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
+    print "===fuse  output==="
+    print p.stdout.read()
+
 
     fuse_filepath = os.path.abspath(output_file)
     stream = open(fuse_filepath, 'rb')
