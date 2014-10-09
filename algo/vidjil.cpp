@@ -185,7 +185,7 @@ void usage(char *progname)
        << "  -A            reports and segments all clones (-r 0 -% 0 -z 0), to be used only on very small datasets" << endl
        << endl
 
-       << "Fine segmentation options (second pass, see warning in doc/README)" << endl
+       << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
        << "  -d            segment into V(D)J components instead of VJ " << endl
        << "  -m <int>      minimal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MIN << ") (default when -d is used: " << DEFAULT_DELTA_MIN_D << ")" << endl
        << "  -M <int>      maximal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MAX << ") (default when -d is used: " << DEFAULT_DELTA_MAX_D << ")" << endl
@@ -209,7 +209,7 @@ void usage(char *progname)
        << endl
 
        << endl 
-       << "Examples (see doc/README)" << endl
+       << "Examples (see doc/algo.org)" << endl
        << "  " << progname << " -c clones   -G germline/IGH  -r 5       -d data/Stanford_S22.fasta" << endl
        << "  " << progname << " -c segment  -G germline/IGH             -d data/Stanford_S22.fasta   # (only for testing)" << endl
        << "  " << progname << " -c germlines                               data/Stanford_S22.fasta" << endl
