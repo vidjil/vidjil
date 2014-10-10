@@ -16,7 +16,7 @@ list<T> keep_n_first(list<T> l, size_t count) {
   size_t i = 0;
   typename list<T>::iterator it = l.begin();
   for (; it != l.end() && i < count ; it++)
-    count++;
+    i++;
 
   return list<T>(l.begin(), it);
 }
