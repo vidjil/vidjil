@@ -270,7 +270,7 @@ Clone.prototype = {
             this.color =  this.colorD;
         }else if (this.m.colorMethod == "J" && this.seg["3"] !== undefined){
             this.color =  this.colorJ;
-        }else if (this.m.colorMethod == "N" && typeof (this.N) != 'undefined'){
+        }else if (this.m.colorMethod == "N"){
             this.color =  this.colorN;
         }else if (this.m.colorMethod == "system") {
             this.color = germline.icon[this.system].color

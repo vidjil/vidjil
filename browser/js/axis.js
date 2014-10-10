@@ -120,7 +120,7 @@ Axis.prototype = {
             
         //clone position
         this.pos = function(cloneID) {
-            return self.sizeScale(self.m.getSize(cloneID))
+            return self.sizeScale(self.m.clone(cloneID).getSize())
         }
         
         //labels

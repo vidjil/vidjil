@@ -492,6 +492,7 @@ Model.prototype = {
             this.clusters[i] = [i]
             clone.tag = default_tag;
         }
+        this.n_max = n_max
         
         //      COLOR_N
         for (var i = 0; i < this.n_clones; i++) {
