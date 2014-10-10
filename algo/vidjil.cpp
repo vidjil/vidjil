@@ -175,7 +175,7 @@ void usage(char *progname)
        << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
        << endl
 
-       << "Limits to report a clone" << endl
+       << "Limits to report a clone (or a window)" << endl
        << "  -r <nb>       minimal number of reads supporting a clone (default: " << MIN_READS_CLONE << ")" << endl
        << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << RATIO_READS_CLONE << ")" << endl
        << endl
@@ -881,7 +881,6 @@ int main (int argc, char **argv)
 	list< pair <float, int> > norm_list = compute_normalization_list(windowsStorage->getMap(), normalization, nb_segmented);
 
 
-    if (command == CMD_CLONES) {
 
     //////////////////////////////////
     //$$ min_reads_clone (ou label)
@@ -901,6 +900,9 @@ int main (int argc, char **argv)
       {
 	cout << "  ! No windows with current parameters." << endl;
       }
+
+    if (command == CMD_CLONES) {
+
     //////////////////////////////////
     //$$ Clustering
 
