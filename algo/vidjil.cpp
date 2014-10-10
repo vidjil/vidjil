@@ -979,6 +979,7 @@ int main (int argc, char **argv)
     list <string> representatives_labels ;
 
     // VirtualReadScore *scorer = new KmerAffectReadScore(*(germline->index));
+    int last_num_clone_on_stdout = 0 ;
     int num_clone = 0 ;
     int clones_without_representative = 0 ;
 
@@ -1039,6 +1040,7 @@ int main (int argc, char **argv)
 
 
       cout << clone_id_human << endl ;
+      last_num_clone_on_stdout = num_clone ;
 
       //$$ Open CLONE_FILENAME
 
@@ -1158,6 +1160,12 @@ int main (int argc, char **argv)
     out_edges.close() ;
     out_clones.close();
 
+    if (num_clone > last_num_clone_on_stdout)
+      {
+	cout << "#### Clones " 
+	     << "#" << setfill('0') << setw(WIDTH_NB_CLONES) << last_num_clone_on_stdout + 1 << " to "
+	     << "#" << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "..." << endl ;
+      }
     cout << "#### end of clones" << endl; 
     cout << endl;
 
