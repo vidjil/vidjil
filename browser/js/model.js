@@ -228,16 +228,36 @@ Model.prototype = {
 
     parseJsonData: function (data, limit) {
         self = this;
-        self.clones = [];
-        self.links = [];
         self.mapID = {}
         self.dataCluster = []
-        var min_sizes = [];
-        var n_max = 0;
         
-        self.samples = data.samples
-        self.reads = data.reads
-        self.links = data.links;
+        //copy .data file in model
+        for (var key in data){
+            self[key] = data[key]
+        }
+        
+        //filter clones
+        self.clones = [];
+        var hash = 0
+        for (var i = 0; i < data.clones.length; i++) {
+            if (data.clones[i].top <= limit) {
+                var clone = new Clone(data.clones[i], self, hash)
+                self.clones.push(clone);
+                hash++
+            }
+            self.mapID[self.clones[i].id] = hash;
+        }
+        
+        // add fake clone
+        var other = {
+            "sequence": 0,
+            "id": "other",
+            "top": 0,
+            "reads": []
+        }
+        var clone = new Clone(other, self, hash)
+        self.clones.push(clone);
+        self.n_clones = self.clones.length;
         
         // default samples
         if (typeof self.samples.number == 'string'){
@@ -252,66 +272,33 @@ Model.prototype = {
             for (var i = 0; i < self.samples.number; i++) self.samples.names.push("");
         }
         
-        for (var k = 0; k < self.samples.number; k++) {
-                min_sizes[k] = 0.01;
-        }
-
-        var hash = 0
-        //keep best top value
-        for (var i = 0; i < data.clones.length; i++) {
-            if (data.clones[i].top <= limit) {
-                
-                //search for min_size
-                for (var k = 0; k < self.samples.number; k++) {
-                    var size = (data.clones[i].reads[k] / data.reads.segmented[k])
-                    if (min_sizes[k] > size && data.clones[i].reads[k] != 0)min_sizes[k] = size;
-                }
-                
-                var clone = new Clone(data.clones[i], self, hash)
-                self.clones.push(clone);
-                hash++
+        //search for min_size
+        var min_sizes = [];
+        for (var k = 0; k < self.samples.number; k++) min_sizes[k] = 0.01;
+        
+        for (var i = 0; i < this.n_clones; i++) {
+            for (var k = 0; k < self.samples.number; k++) {
+                var size = (self.clone(i).reads[k] / data.reads.segmented[k])
+                if (min_sizes[k] > size && data.clones[i].reads[k] != 0)min_sizes[k] = size;
             }
-            self.mapID[self.clones[i].id] = hash;
         }
-        
-        // synthetic clone
-        var other = {
-            "sequence": 0,
-            "id": "other",
-            "top": 0,
-            "reads": []
-        }
-        var clone = new Clone(other, self, hash)
-        self.clones.push(clone);
-        
-        self.n_clones = self.clones.length;
         self.min_sizes = min_sizes;
-        self.n_max = n_max;
+        
+        //extract germline
         self.system_selected = [];
         for (var key in self.reads.germline) self.system_selected.push(key)
-        self.reads_segmented_total = self.reads.segmented.reduce(function (a, b) {
-            return a + b;
-        });
-        if (self.reads.total) {
-            self.reads_total_total = self.reads.total.reduce(function (a, b) {
-                return a + b;
-            });
-        } else {
-            self.reads_total_total = self.reads_segmented_total;
-            self.reads.total = self.reads.segmented;
-        }
-        self.scale_color = d3.scale.log()
-            .domain([1, self.precision])
-            .range([250, 0]);
         
-
-        //extract germline
         var germline_list = Object.keys(this.reads.germline)
         if (germline_list.length >1) {
             self.system = "multi"
         } else {
             self.system = germline_list[0];
         }
+        
+        self.scale_color = d3.scale.log()
+            .domain([1, self.precision])
+            .range([250, 0]);
+        
 
         return this
     },
@@ -477,7 +464,6 @@ Model.prototype = {
      * */
     initClones: function () {
         myConsole.log("initClones()");
-        self.mapID = [];
         this.clusters = [];
 
         //      NSIZE
@@ -485,10 +471,7 @@ Model.prototype = {
         for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
             var n = clone.getNlength();
-            
             if (n > n_max) {n_max = n; }
-
-            self.mapID[clone.id] = i;
             this.clusters[i] = [i]
             clone.tag = default_tag;
         }
