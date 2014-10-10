@@ -403,7 +403,7 @@ List.prototype = {
 
             var div = this.index[list[i]];
 
-            if ((this.m.clone(list[i]).isActive() && this.m.clusters[list[i]].length != 0) || this.m.clone(list[i]).window == "other") {
+            if ((this.m.clone(list[i]).isActive() && this.m.clusters[list[i]].length != 0) || this.m.clone(list[i]).id == "other") {
 
                 div.innerHTML = '';
 

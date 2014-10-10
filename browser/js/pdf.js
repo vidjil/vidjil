@@ -194,7 +194,7 @@ PDF.prototype = {
                 polyline.setAttribute("stroke", color);
             }
 
-            if (m.clone(i).window == "other" || !m.clone(i).isActive()) {
+            if (m.clone(i).id == "other" || !m.clone(i).isActive()) {
                 polyline.parentNode.removeChild(polyline);
             }
         }
@@ -426,7 +426,7 @@ PDF.prototype = {
             }
 
         } else {
-            this.doc.text(this.marge + 20, this.y, "segment fail :" + m.clone(cloneID).window);
+            this.doc.text(this.marge + 20, this.y, "segment fail :" + m.clone(cloneID).id);
         }
 
         this.y += 5;

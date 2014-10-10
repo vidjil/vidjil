@@ -137,7 +137,7 @@ Model.prototype = {
      * @id : id of the form (html element) linking to the data file
      * @analysis : id of the form (html element) linking to the analysis file
      * impossible to use direct path to input files, need a fakepath from input form
-     * @limit : minimum top value to keep a window*/
+     * @limit : minimum top value to keep a clone*/
     load: function (id, analysis, limit) {
         var self = this;
 
@@ -271,12 +271,13 @@ Model.prototype = {
                 self.clones.push(clone);
                 hash++
             }
+            self.mapID[self.clones[i].id] = hash;
         }
         
-        // synthetic window
+        // synthetic clone
         var other = {
             "sequence": 0,
-            "window": "other",
+            "id": "other",
             "top": 0,
             "reads": []
         }
@@ -310,10 +311,6 @@ Model.prototype = {
             self.system = "multi"
         } else {
             self.system = germline_list[0];
-        }
-
-        for (var i = 0; i < self.n_clones; i++) {
-            self.mapID[self.clones[i].window] = i;
         }
 
         return this
@@ -491,7 +488,7 @@ Model.prototype = {
             
             if (n > n_max) {n_max = n; }
 
-            self.mapID[clone.window] = i;
+            self.mapID[clone.id] = i;
             this.clusters[i] = [i]
             clone.tag = default_tag;
         }
@@ -557,7 +554,7 @@ Model.prototype = {
                 
                 var id = -1
                 var f = 1;
-                //check if we have a clone with a similar window
+                //check if we have a clone with a similar id
                 if (typeof c[i].id != "undefined" && typeof this.mapID[c[i].id] != "undefined") {
                     id = this.mapID[c[i].id]
                 }
@@ -588,7 +585,7 @@ Model.prototype = {
                                 max.id = id
                             }
                         }else{
-                            myConsole.log(" apply analysis : clones "+ c[i].window + " > incorrect expected value", 0)
+                            myConsole.log(" apply analysis : clones "+ c[i].id + " > incorrect expected value", 0)
                         }
                     }else{
                         if (typeof (c[i].tag) != "undefined") {
@@ -625,7 +622,7 @@ Model.prototype = {
     findWindow: function (sequence) {
         if (sequence != 0){
             for ( var i=0; i<this.n_clones; i++ ){
-                if ( sequence.indexOf(this.clone(i).window) != -1 ) return i
+                if ( sequence.indexOf(this.clone(i).id) != -1 ) return i
             }
         }
         return -1
@@ -674,7 +671,7 @@ Model.prototype = {
                 typeof clone.expected != "undefined") {
 
                 var elem = {};
-                elem.id = clone.window;
+                elem.id = clone.id;
                 elem.sequence = clone.sequence;
 
                 if (typeof clone.tag != "undefined" && clone.tag != 8)
@@ -691,7 +688,7 @@ Model.prototype = {
             if (this.clusters[i].length > 1) {
                 var elem = [];
                 for (var j = 0; j < this.clusters[i].length; j++) {
-                    elem.push(this.clone(this.clusters[i][j]).window);
+                    elem.push(this.clone(this.clusters[i][j]).id);
                 }
                 analysisData.clusters.push(elem);
             }
@@ -1103,25 +1100,25 @@ Model.prototype = {
     },
 
 
-    /* sépare une window d'un clone
+    /* sépare un clone d'un cluster
      *
      * */
-    split: function (cloneID, windowID) {
-        myConsole.log("split() (cloneA " + cloneID + " windowB " + windowID + ")")
-        if (cloneID == windowID) return
+    split: function (clusterID, cloneID) {
+        myConsole.log("split() (cloneA " + clusterID + " windowB " + cloneID + ")")
+        if (clusterID == cloneID) return
 
-        var nlist = this.clusters[cloneID];
-        var index = nlist.indexOf(windowID);
+        var nlist = this.clusters[clusterID];
+        var index = nlist.indexOf(cloneID);
         if (index == -1) return
 
         nlist.splice(index, 1);
 
-        //le clone retrouve sa liste de clones -1
-        this.clusters[cloneID] = nlist;
-        //la window forme son propre clone a part
-        this.clusters[windowID] = [windowID];
+        //le cluster retrouve sa liste de clones -1
+        this.clusters[clusterID] = nlist;
+        //le clone forme un cluster de 1 clone
+        this.clusters[cloneID] = [cloneID];
 
-        this.updateElem([windowID, cloneID]);
+        this.updateElem([cloneID, clusterID]);
     },
 
 
@@ -1184,7 +1181,7 @@ Model.prototype = {
     },
 
     active: function (id) {
-        if (this.clone(id).top <= this.top && tagDisplay[this.clone(id).tag] == 1 && this.clone(id).window != "other") {
+        if (this.clone(id).top <= this.top && tagDisplay[this.clone(id).tag] == 1 && this.clone(id).id != "other") {
             this.clone(id).active = true;
         }
     },

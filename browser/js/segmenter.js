@@ -342,7 +342,7 @@ Segment.prototype = {
             if (typeof (this.m.clone(list[i]).sequence) != 'undefined' && this.m.clone(list[i]).sequence != 0)
                 request += ">" + this.m.clone(list[i]).getName() + "\n" + this.m.clone(list[i]).sequence + "\n";
             else
-                request += ">" + this.m.clone(list[i]).getName() + "\n" + this.m.clone(list[i]).window + "\n";
+                request += ">" + this.m.clone(list[i]).getName() + "\n" + this.m.clone(list[i]).id + "\n";
         }
 
         if (address == 'IMGT') imgtPost(request, this.m.system);
@@ -375,7 +375,7 @@ Segment.prototype = {
             if (typeof (this.m.clone(list[i]).sequence) != 'undefined' && this.m.clone(list[i]).sequence != 0)
                 request += ">" + list[i] + "\n" + this.m.clone(list[i]).sequence + "\n";
             else
-                request += ">" + list[i] + "\n" + this.m.clone(list[i]).window + "\n";
+                request += ">" + list[i] + "\n" + this.m.clone(list[i]).id + "\n";
         }
 
 
@@ -466,7 +466,7 @@ Sequence.prototype = {
         str = typeof str !== 'undefined' ? str : this.m.clone(this.id).sequence;
 
         if (typeof this.m.clone(this.id).sequence == 'undefined' || this.m.clone(this.id).sequence == 0) {
-            str = this.m.clone(this.id).window
+            str = this.m.clone(this.id).id
         }
         
         this.seq = str.split("")
@@ -520,8 +520,8 @@ Sequence.prototype = {
             if (this.m.colorMethod == "J") jColor = "style='color : " + clone.colorJ + "'";
 
             //window
-            var window_start = this.pos[clone.sequence.indexOf(clone.window)]
-            var window_end = this.pos[clone.sequence.indexOf(clone.window)+clone.window.length]
+            var window_start = this.pos[clone.sequence.indexOf(clone.id)]
+            var window_end = this.pos[clone.sequence.indexOf(clone.id)+clone.id.length]
 
             
             //add span VDJ
@@ -545,7 +545,7 @@ Sequence.prototype = {
             result += "</span>"
         }else{
             var window_start = 0
-            result += clone.window
+            result += clone.id
         }
         
         //marge
