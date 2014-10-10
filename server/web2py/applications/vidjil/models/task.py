@@ -1,4 +1,7 @@
 # coding: utf8
+
+TASK_TIMEOUT = 2 * 3600
+
 def schedule_run(id_sequence, id_config):
     import time, datetime, sys, os.path
     from subprocess import Popen, PIPE, STDOUT, os
@@ -43,7 +46,7 @@ def schedule_run(id_sequence, id_config):
     program = db.config[id_config].program
     ##add task to scheduler
     task = scheduler.queue_task(program, [id_sequence, id_config, data_id, fuse_id]
-                         , repeats = 1, timeout = 6000)
+                                , repeats = 1, timeout = TASK_TIMEOUT)
     db.results_file[data_id] = dict(scheduler_task_id = task.id)
 
     filename= db.sequence_file[id_sequence].filename
