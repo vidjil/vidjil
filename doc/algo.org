@@ -105,37 +105,46 @@ different clones.  Setting =-w= to lower values is not recommended.
 The following options control how many clones are output and analyzed.
 
 #+BEGIN_EXAMPLE
-Limits to report a clone
+Limits to report a clone (or a window)
   -r <nb>       minimal number of reads supporting a clone (default: 10)
   -% <ratio>    minimal percentage of reads supporting a clone (default: 0)
 
-Limits to segment a clone
+Limits to further analyze some clones
+  -y <nb>       maximal number of clones computed with a representative (0: no limit) (default: 100)
   -z <nb>       maximal number of clones to be segmented (0: no limit, do not use) (default: 20)
-  -A            reports and segments all clones (-r 0 -R 1 -% 0 -z 0), to be used only on very small datasets
+  -A            reports and segments all clones (-r 0 -% 0 -z 0), to be used only on very small datasets
 #+END_EXAMPLE
 
 The =-r/-%= options are strong thresholds: if a clone does not have
 the requested number of reads, the clone is discarded (except when
 using =-l=, see below).
 The default =-r 10= option is meant to only output clones that
-have a significant read support. You can safely put =-r 1= if you
-want to detect all clones starting from the first read (especially for
+have a significant read support. *You shoud use* =-r 1= *if you
+want to detect all clones starting from the first read* (especially for
 MRD detection).
+
+The =-y= option limits the number of clones for which a representative
+sequence is computed. Usually you do not need to have more
+representatives (see below), but you can safely put =-y 0= if you want
+to compute all representative sequences.
 
 The =-z= option limits the number of clones that are fully analyzed,
 /with their V(D)J segmentation/, in particular to enable the browser
 to display the clones on the grid (otherwise they are displayed on the
-'?/?' axis).
+'?/?' axis). It should be smaller than =-y=.
 If you want to analyze more clones, you should use =-z 50= or
 =-z 100=.  It is not recommended to use larger values: outputting more
 than 100 clones is often not useful since they can't be visualized easily
 in the browser, and takes large computation time.
+
 Note that even if a clone is not in the top 20 (or 50, or 100) but
 still passes the =-r=, =-%= options, it is still reported in the .data
 file. If the clone is at some MRD point in the top 20 (or 50, or 100),
 it will be fully analyzed/segmented by this other point (and then
-collected by the =fuse.py= script, and then, on the browser, correctly
-displayed on the grid).
+collected by the =fuse.py= script, using representatives computed at this
+other point, and then, on the browser, correctly displayed on the grid). 
+*Thus is advised to leave the default* =-y 100 -z 20= *options 
+for the majority of uses.*
 
 The =-A= option disables all these thresholds. This option should be
 used only for test and debug purposes, on very small datasets, and
@@ -196,13 +205,11 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
    The first window has 8 occurrences, the second window has 5 occurrences.
 
 #+BEGIN_SRC sh
-./vidjil -c clones -G germline/IGH -x -r 1 -R 1 -d ./data/clones_simul.fa
+./vidjil -c clones -G germline/IGH -r 1 -R 1 -d ./data/clones_simul.fa
    # Extracts the windows (-r 1, with at least 1 read each), 
-   # then gather them into clones (-R 1, with at least 1 read each:
-   # there are many 1-read clones due to sequencing errors.) 
-   # A more natural option could be -R 5.
+   # then gather them into clones 
+   # A more natural option could be -r 5.
    # For debug purpose, if one wants all the clones, use the option -A.
-   # No representative selection (-x)
    # Results are both
    #  - on the standard output
    #  - in out/clones.vdj.fa (fasta file to be processed by other tools)
@@ -213,7 +220,7 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -c clones -G germline/IGH -x -r 1 -R 5 -n 5 -d ./data/clones_simul.fa
+./vidjil -c clones -G germline/IGH -r 1 -n 5 -d ./data/clones_simul.fa
    # Window extraction + clone gathering,
    # with automatic clustering, distance five (-n 5)
 #+END_SRC
