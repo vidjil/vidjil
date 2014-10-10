@@ -259,7 +259,7 @@ PDF.prototype = {
         this.doc.setFont('helvetica', 'normal');
 
         this.checkPage(20)
-        if (this.m.reads_total) this.checkPage(30)
+        if (this.m.reads.total) this.checkPage(30)
 
         //time point
         var time = []
@@ -270,19 +270,19 @@ PDF.prototype = {
         this.next_row()
 
         //info global
-        if (this.m.reads_total) {
-            this.row('total reads', this.m.reads_total, 'raw')
+        if (this.m.reads.total) {
+            this.row('total reads', this.m.reads.total, 'raw')
             this.next_row()
         }
 
         this.row('total segmented', this.m.reads.segmented, 'raw');
 
-        if (this.m.reads_total) {
+        if (this.m.reads.total) {
             this.next_sub_row()
 
             var data = []
             for (var i = 0; i < this.m.samples.number; i++) {
-                data[i] = this.m.reads.segmented[i] / this.m.reads_total[i]
+                data[i] = this.m.reads.segmented[i] / this.m.reads.total[i]
             }
             this.row('', data, '%')
         }
