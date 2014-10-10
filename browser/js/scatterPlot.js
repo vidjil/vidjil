@@ -684,7 +684,7 @@ ScatterPlot.prototype = {
       //classement des clones suivant V
       for (var i = 0; i < this.m.n_clones; i++) {
 	  if (this.m.clone(i).isActive()) {
-	      var geneV = this.m.clone(i).getV();
+	      var geneV = this.m.clone(i).getV(false);
 	      var clone = {
             id: i
 	      }

@@ -206,7 +206,7 @@ class ListWindows:
         self.d["windows"] = []
         self.d["clones"] = []
         self.d["reads_segmented"] = [[0]]
-        self.d["germline"] = [""]
+        self.d["germline"] = ""
         self.d["samples"] = [Samples()]
         
     def __str__(self):
@@ -378,8 +378,8 @@ class ListWindows:
     def add_system_info(self):
         
         w = self.d["windows"]
-        germline = self.d["germline"][0]
-        system = germline[-4:].replace('/','')
+        germline = self.d["germline"]
+        system = germline.split('/')[-1]
         
         
         for i in range(len(w)):
@@ -445,7 +445,6 @@ class ListWindows:
                 #others += win
 
         self.d["windows"] = w #+ list(others) 
-        self.d["germline"]=self.d["germline"][0]
 
         print "### Cut merged file, keeping window in the top %d for at least one point" % limit
         return self
@@ -810,7 +809,7 @@ def main():
                 jlist_fused = jlist_fused * jlist
                 
             print '\t==> merge to', jlist_fused
-        jlist_fused.d['germline'][0] = "multi"
+        jlist_fused.d['germline'] = "multi"
         jlist_fused.d["system_segmented"] = ordered(jlist_fused.d["system_segmented"], key=lambda sys: ((GERMLINES_ORDER + [sys]).index(sys), sys))
         
     else:
@@ -833,7 +832,7 @@ def main():
                 jlist_fused = jlist_fused + jlist
             
             print '\t==> merge to', jlist_fused
-        jlist_fused.d['germline'][0] = args.germline
+        jlist_fused.d['germline'] = args.germline
         
         print
         print "### Select point names"

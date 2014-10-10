@@ -531,21 +531,10 @@ List.prototype = {
             var oA = 2147483647
             var oB = 2147483647
 
-            var cA = self.m.clone(idA)
-            if (typeof (cA.V) != 'undefined' && 
-                typeof (cA.V[0]) != 'undefined' &&
-                typeof (self.m.germlineV.allele[cA.V[0]]) != 'undefined') {
-                var vA = cA.V[0];
-                oA = this.m.germlineV.allele[vA].gene * 1000 + this.m.germlineV.allele[vA].rank
-            }
-
-            var cB = self.m.clone(idB)
-            if (typeof (cB.V) != 'undefined' && 
-                typeof (cB.V[0]) != 'undefined' &&
-                typeof (self.m.germlineV.allele[cB.V[0]]) != 'undefined') {
-                var vB = cB.V[0];
-                oB = this.m.germlineV.allele[vB].gene * 1000 + this.m.germlineV.allele[vB].rank
-            }
+            var vA = self.m.clone(idA).getV(true)
+            if (vA != "undefined V") oA = this.m.germlineV.allele[vA].gene * 1000 + this.m.germlineV.allele[vA].rank
+            var vB = self.m.clone(idB).getV(true)
+            if (vB != "undefined V") oB = this.m.germlineV.allele[vB].gene * 1000 + this.m.germlineV.allele[vB].rank
 
             return oA > oB ? 1 : -1;
         })
@@ -565,21 +554,10 @@ List.prototype = {
             var oA = 2147483647
             var oB = 2147483647
 
-            var cA = self.m.clone(idA)
-            if (typeof (cA.J) != 'undefined' && 
-                typeof (cA.J[0]) != 'undefined' &&
-                typeof (self.m.germlineJ.allele[cA.J[0]]) != 'undefined') {
-                var jA = cA.J[0];
-                oA = this.m.germlineJ.allele[jA].gene * 1000 + this.m.germlineJ.allele[jA].rank
-            }
-
-            var cB = self.m.clone(idB)
-            if (typeof (cB.J) != 'undefined' && 
-                typeof (cB.J[0]) != 'undefined' &&
-                typeof (self.m.germlineJ.allele[cB.J[0]]) != 'undefined') {
-                var jB = cB.J[0];
-                oB = this.m.germlineJ.allele[jB].gene * 1000 + this.m.germlineJ.allele[jB].rank
-            }
+            var jA = self.m.clone(idA).getJ(true)
+            if (vA != "undefined V") oA = this.m.germlineJ.allele[jA].gene * 1000 + this.m.germlineJ.allele[jA].rank
+            var jB = self.m.clone(idB).getJ(true)
+            if (vB != "undefined V") oB = this.m.germlineJ.allele[jB].gene * 1000 + this.m.germlineJ.allele[jB].rank
 
             return oA > oB ? 1 : -1;
         })

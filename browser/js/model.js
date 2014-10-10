@@ -235,54 +235,9 @@ Model.prototype = {
         var min_sizes = [];
         var n_max = 0;
         
-        for (var k = 0; k < data.clones[0].size.length; k++) {
-                min_sizes[k] = 0.01;
-        }
-
-        var hash = 0
-        //keep best top value
-        for (var i = 0; i < data.clones.length; i++) {
-            if (data.clones[i].top <= limit) {
-                //search for min_size
-                for (var k = 0; k < data.clones[i].size.length; k++) {
-                    var size = (data.clones[i].size[k] / data.reads.segmented[k])
-
-                    if (min_sizes[k] > size && data.clones[i].size[k] != 0)
-                        min_sizes[k] = size;
-                }
-                
-                data.clones[i].Nlength = 0;
-                if ((typeof (data.clones[i].Jstart) != 'undefined') &&
-                    (typeof (data.clones[i].Vend) != 'undefined') ) {
-                    data.clones[i].Nlength = data.clones[i].Jstart - data.clones[i].Vend
-                }
-
-                //search for n_max 
-                if ((typeof (data.clones[i].sequence) != 'undefined') &&
-                    (typeof (data.clones[i].Nlength) != 'undefined') &&
-                    (data.clones[i].Nlength > n_max)) {
-                    n_max = data.clones[i].Nlength;
-                }
-                
-                var clone = new Clone(data.clones[i], self, hash)
-                self.clones.push(clone);
-                hash++
-            }
-        }
-        
         self.samples = data.samples
         self.reads = data.reads
         self.links = data.links;
-        
-        // synthetic window
-        var other = {
-            "sequence": 0,
-            "window": "other",
-            "top": 0,
-            "size": []
-        }
-        var clone = new Clone(other, self, hash)
-        self.clones.push(clone);
         
         // default samples
         if (typeof self.samples.number == 'string'){
@@ -296,6 +251,37 @@ Model.prototype = {
             self.samples.names = []
             for (var i = 0; i < self.samples.number; i++) self.samples.names.push("");
         }
+        
+        for (var k = 0; k < self.samples.number; k++) {
+                min_sizes[k] = 0.01;
+        }
+
+        var hash = 0
+        //keep best top value
+        for (var i = 0; i < data.clones.length; i++) {
+            if (data.clones[i].top <= limit) {
+                
+                //search for min_size
+                for (var k = 0; k < self.samples.number; k++) {
+                    var size = (data.clones[i].reads[k] / data.reads.segmented[k])
+                    if (min_sizes[k] > size && data.clones[i].reads[k] != 0)min_sizes[k] = size;
+                }
+                
+                var clone = new Clone(data.clones[i], self, hash)
+                self.clones.push(clone);
+                hash++
+            }
+        }
+        
+        // synthetic window
+        var other = {
+            "sequence": 0,
+            "window": "other",
+            "top": 0,
+            "reads": []
+        }
+        var clone = new Clone(other, self, hash)
+        self.clones.push(clone);
         
         self.n_clones = self.clones.length;
         self.min_sizes = min_sizes;
@@ -494,33 +480,26 @@ Model.prototype = {
      * */
     initClones: function () {
         myConsole.log("initClones()");
-        var maxNlength = 0;
-        var nsize;
         self.mapID = [];
         this.clusters = [];
 
         //      NSIZE
+        var n_max = 0;
         for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
+            var n = clone.getNlength();
             
-            if (typeof (clone.getSequence()) != 'undefined') {
-                nsize = clone.Nlength;
-                if (nsize > maxNlength) {
-                    maxNlength = nsize;
-                }
-            } else {
-                nsize = -1;
-            }
+            if (n > n_max) {n_max = n; }
+
             self.mapID[clone.window] = i;
             this.clusters[i] = [i]
-            clone.Nlength = nsize;
             clone.tag = default_tag;
         }
         
         //      COLOR_N
         for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
-            clone.colorN = colorGenerator((((clone.Nlength / maxNlength) - 1) * (-250)), color_s, color_v);
+            clone.colorN = colorGenerator((((clone.getNlength() / n_max) - 1) * (-250)), color_s, color_v);
         }
 
         this.computeColor()
@@ -546,26 +525,20 @@ Model.prototype = {
         for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
             
-            if (typeof (clone.V) != 'undefined' && this.germlineV.allele[clone.V[0]]) {
-                var vGene = clone.V[0];
+            var vGene = clone.getV();
+            if (typeof this.germlineV.allele[vGene] != 'undefined' ) {
                 clone.colorV = this.germlineV.allele[vGene].color;
             } else {
                 clone.colorV = "";
             }
-        }
-
-        //      COLOR_J
-        for (var i = 0; i < this.n_clones; i++) {
-            var clone = this.clone(i)
             
-            if (typeof (clone.J) != 'undefined' && this.germlineJ.allele[clone.J[0]]) {
-                var jGene = clone.J[0];
+            var jGene = clone.getJ();
+            if (typeof this.germlineJ.allele[jGene] != 'undefined' ) {
                 clone.colorJ = this.germlineJ.allele[jGene].color;
             } else {
                 clone.colorJ = "";
             }
         }
-        
         return this
     },
     
@@ -1325,22 +1298,22 @@ Model.prototype = {
     computeOtherSize: function () {
         var other = [];
 
-        for (var j = 0; j < this.reads.segmented.length; j++) {
+        for (var j = 0; j < this.samples.number; j++) {
             other[j] = this.reads.segmented[j]
         }
 
         for (var i = 0; i < this.n_clones - 1; i++) {
-            for (var j = 0; j < this.reads.segmented.length; j++) {
+            for (var j = 0; j < this.samples.number; j++) {
                 if (this.clone(i).isActive()) {
                     for (var k = 0; k < this.clusters[i].length; k++) {
                         if (this.clusters[i][k] != this.n_clones - 1)
-                            other[j] -= this.clone(this.clusters[i][k]).size[j];
+                            other[j] -= this.clone(this.clusters[i][k]).getSequenceReads(j);
                     }
                 }
             }
         }
 
-        this.clone(this.n_clones - 1).size = other;
+        this.clone(this.n_clones - 1).reads = other;
 
     },
     

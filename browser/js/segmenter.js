@@ -499,33 +499,33 @@ Sequence.prototype = {
 
     //return sequence completed with html tag
     toString: function () {
-        var seg = this.m.clone(this.id)
+        var clone = this.m.clone(this.id)
         var result = ""
         
-        if (typeof seg.sequence != 'undefined' && seg.sequence != 0) {
+        if (typeof clone.sequence != 'undefined' && clone.sequence != 0) {
             //find V, D, J position
-            var endV = this.pos[seg.Vend]
-            var startJ = this.pos[seg.Jstart]
-            if (typeof seg.Dstart != 'undefined' && typeof seg.Dend != 'undefined') {
-                var startD = this.pos[seg.Dstart]
-                var endD = this.pos[seg.Dend]
+            var endV = this.pos[clone.seg["5end"]]
+            var startJ = this.pos[clone.seg["3start"]]
+            if (typeof clone.seg["4start"] != 'undefined' && typeof clone.seg["4end"] != 'undefined') {
+                var startD = this.pos[clone.seg["4start"]]
+                var endD = this.pos[clone.seg["4end"]]
             }
 
             //V color
             var vColor = "";
-            if (this.m.colorMethod == "V") vColor = "style='color : " + seg.colorV + "'";
+            if (this.m.colorMethod == "V") vColor = "style='color : " + clone.colorV + "'";
 
             //J color
             var jColor = "";
-            if (this.m.colorMethod == "J") jColor = "style='color : " + seg.colorJ + "'";
+            if (this.m.colorMethod == "J") jColor = "style='color : " + clone.colorJ + "'";
 
             //window
-            var window_start = this.pos[seg.sequence.indexOf(seg.window)]
-            var window_end = this.pos[seg.sequence.indexOf(seg.window)+seg.window.length]
+            var window_start = this.pos[clone.sequence.indexOf(clone.window)]
+            var window_end = this.pos[clone.sequence.indexOf(clone.window)+clone.window.length]
 
             
             //add span VDJ
-            if (typeof seg.Vend != 'undefined') result += "<span class='V' " + vColor + " >"
+            if (typeof clone.seg["5end"] != 'undefined') result += "<span class='V' " + vColor + " >"
             else result += "<span>"
             for (var i = 0; i < this.seq.length; i++) {
                 result += this.seq[i]
@@ -545,7 +545,7 @@ Sequence.prototype = {
             result += "</span>"
         }else{
             var window_start = 0
-            result += seg.window
+            result += clone.window
         }
         
         //marge

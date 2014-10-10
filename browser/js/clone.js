@@ -114,8 +114,9 @@ Clone.prototype = {
         time = typeof time !== 'undefined' ? time : this.m.t;
         var result = 0;
 
-        for (var j = 0; j < this.m.clusters[this.hash].length; j++) {
-            result += this.m.clone(this.m.clusters[this.hash][j]).size[time];
+        var cluster = this.m.clusters[this.hash]
+        for (var j = 0; j < cluster.length; j++) {
+            result += this.m.clone(cluster[j]).reads[time];
         }
 
         return result
@@ -127,22 +128,64 @@ Clone.prototype = {
      * */
     getSequenceReads: function (time) {
         time = typeof time !== 'undefined' ? time : this.m.t;
-        return this.size[time];;
+        return this.reads[time];;
 
     }, //end getSequenceSize
     
-    getV: function () {
-        if (typeof (this.sequence) != 'undefined' && typeof (this.V) != 'undefined') {
-            return this.V[0].split('*')[0];
+    getV: function (withAllele) {
+        withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
+        if (typeof (this.seg) != 'undefined' && typeof (this.seg["5"]) != 'undefined') {
+            if (withAllele) {
+                return this.seg["5"][0]
+            }else{
+                return this.seg["5"][0].split('*')[0];
+            }
         }
         return "undefined V";
     },
+    
+    getD: function (withAllele) {
+        withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
+        if (typeof (this.seg) != 'undefined' && typeof (this.seg["4"]) != 'undefined') {
+            if (withAllele) {
+                return this.seg["4"][0]
+            }else{
+                return this.seg["4"][0].split('*')[0];
+            }
+        }
+        return "undefined D";
+    },
 
-    getJ: function () {
-        if (typeof (this.sequence) != 'undefined' && typeof (this.J) != 'undefined') {
-            return this.J[0].split('*')[0];;
+    getJ: function (withAllele) {
+        withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
+        if (typeof (this.seg) != 'undefined' && typeof (this.seg["3"]) != 'undefined') {
+            if (withAllele) {
+                return this.seg["3"][0]
+            }else{
+                return this.seg["3"][0].split('*')[0];
+            }
         }
         return "undefined J";
+    },
+    
+    getGene: function (type, withAllele) {
+        withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
+        if (typeof (this.seg) != 'undefined' && typeof (this.seg[type]) != 'undefined') {
+            if (withAllele) {
+                return this.seg[type][0];
+            }else{
+                return this.seg[type][0].split('*')[0];
+            }
+        }
+        return "undefined";
+    },
+    
+    getNlength: function () {
+        if (typeof this.seg != 'undefined'){
+            return this.seg['3start']-this.seg['5end']-1
+        }else{
+            return 0
+        }
     },
     
     getSequence : function () {
@@ -221,11 +264,11 @@ Clone.prototype = {
             this.color =  tagColor[this.tag];
         }else if (this.m.colorMethod == "dbscan"){
             this.color =  this.colorDBSCAN;
-        }else if (this.m.colorMethod == "V" && typeof (this.V) != 'undefined'){
+        }else if (this.m.colorMethod == "V" && this.seg["5"] !== undefined){
             this.color =  this.colorV;
-        }else if (this.m.colorMethod == "D" && typeof (this.D) != 'undefined'){
+        }else if (this.m.colorMethod == "D" && this.seg["4"] !== undefined){
             this.color =  this.colorD;
-        }else if (this.m.colorMethod == "J" && typeof (this.J) != 'undefined'){
+        }else if (this.m.colorMethod == "J" && this.seg["3"] !== undefined){
             this.color =  this.colorJ;
         }else if (this.m.colorMethod == "N" && typeof (this.N) != 'undefined'){
             this.color =  this.colorN;
@@ -314,9 +357,9 @@ Clone.prototype = {
         
         html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.sequence + "</td></tr>"
         html += "<tr><td> window </td><td colspan='" + time_length + "'>" + this.window + "</td></tr>"
-        html += "<tr><td> V </td><td colspan='" + time_length + "'>" + this.V + "</td></tr>"
-        html += "<tr><td> D </td><td colspan='" + time_length + "'>" + this.D + "</td></tr>"
-        html += "<tr><td> J </td><td colspan='" + time_length + "'>" + this.J + "</td></tr>"
+        html += "<tr><td> 5 </td><td colspan='" + time_length + "'>" + this.seg["5"] + "</td></tr>"
+        html += "<tr><td> 4 </td><td colspan='" + time_length + "'>" + this.seg["4"] + "</td></tr>"
+        html += "<tr><td> 3 </td><td colspan='" + time_length + "'>" + this.seg["3"] + "</td></tr>"
         
         
         //other info (clntab)
