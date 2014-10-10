@@ -71,6 +71,7 @@
 #define DEFAULT_READS  "./data/Stanford_S22.fasta"
 #define MIN_READS_WINDOW 10
 #define MIN_READS_CLONE 10
+#define DEFAULT_MAX_REPRESENTATIVES 100
 #define MAX_CLONES 20
 #define RATIO_READS_CLONE 0.0
 
@@ -180,7 +181,8 @@ void usage(char *progname)
        << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << RATIO_READS_CLONE << ")" << endl
        << endl
 
-       << "Limits to segment a clone" << endl
+       << "Limits to further analyze some clones" << endl
+       << "  -y <nb>       maximal number of clones computed with a representative (0: no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
        << "  -z <nb>       maximal number of clones to be segmented (0: no limit, do not use) (default: " << MAX_CLONES << ")" << endl
        << "  -A            reports and segments all clones (-r 0 -% 0 -z 0), to be used only on very small datasets" << endl
        << endl
@@ -260,6 +262,7 @@ int main (int argc, char **argv)
   int verbose = 0 ;
   int command = CMD_CLONES;
 
+  int max_representatives = DEFAULT_MAX_REPRESENTATIVES ;
   int max_clones = MAX_CLONES ;
   int min_reads_clone = MIN_READS_CLONE ;
   float ratio_reads_clone = RATIO_READS_CLONE;
@@ -273,7 +276,6 @@ int main (int argc, char **argv)
   int delta_max = DEFAULT_DELTA_MAX ; // Fine
 
   bool output_sequences_by_cluster = false;
-  bool detailed_cluster_analysis = true ;
   bool output_segmented = false;
   bool output_unsegmented = false;
   bool multi_germline = false;
@@ -292,7 +294,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "AhagG:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "AhagG:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:L%:Z:y:z:uU")) != EOF)
 
     switch (c)
       {
@@ -316,9 +318,7 @@ int main (int argc, char **argv)
       case 'Z':
 	normalization_file = optarg; 
 	break;
-      case 'x':
-	detailed_cluster_analysis = false;
-	break;
+
       case 'c':
         if (!strcmp(COMMAND_CLONES,optarg))
           command = CMD_CLONES;
@@ -402,6 +402,10 @@ int main (int argc, char **argv)
 
       case 'r':
 	min_reads_clone = atoi(optarg);
+        break;
+
+      case 'y':
+	max_representatives = atoi(optarg);
         break;
 
       case 'z':
@@ -1025,9 +1029,9 @@ int main (int argc, char **argv)
       string window_str = ">" + clone_id + "--window" + " " + windows_labels[it->first] + '\n' + it->first + '\n' ;
 
 
-      //$$ If max_clones is reached, we stop here but still outputs the window
+      //$$ If max_representatives is reached, we stop here but still outputs the window
 
-      if (max_clones && (num_clone >= max_clones + 1))
+      if (max_representatives && (num_clone >= max_representatives + 1))
 	{
 	  out_clones << window_str << endl ;
 	  continue;
@@ -1060,7 +1064,6 @@ int main (int argc, char **argv)
 
         Sequence representative = NULL_SEQUENCE ;
 
-	if (detailed_cluster_analysis)
 	  representative 
           = windowsStorage->getRepresentative(it->first, seed, 
                                              min_cover_representative,
@@ -1079,6 +1082,16 @@ int main (int argc, char **argv)
           representatives.push_back(representative);
           representatives_labels.push_back(string_of_int(num_clone));
 	  representative.label = clone_id + "--" + representative.label;
+
+	  
+	  //$$ If max_clones is reached, we stop here but still outputs the representative
+
+	  if (max_clones && (num_clone >= max_clones + 1))
+	    {
+	      out_clones << representative << endl ;
+	      continue;
+	    }
+
 
 	  // FineSegmenter
 	  FineSegmenter seg(representative, segmented_germline, segment_cost);
