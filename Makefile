@@ -38,15 +38,28 @@ should: all
 	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests should
 	@echo "*** All .should_get tests passed"
 
+### Code coverage
+
 coverage: unit_coverage should_coverage
 
 unit_coverage: clean
 	make COVERAGE=1 unit
-	which gcovr > /dev/null && (cd algo;  gcovr -r . -e tests/ --xml > unit_coverage.xml) || echo "gcovr is needed to generate a full report"
 should_coverage: clean
 	make COVERAGE=1 should
+
+### Reports with gcovr
+
+unit_gcovr: unit_coverage
+	which gcovr > /dev/null && (cd algo;  gcovr -r . -e tests/ --xml > unit_coverage.xml) || echo "gcovr is needed to generate a full report"
+should_gcovr: should_coverage
 	which gcovr > /dev/null && (cd algo; gcovr -r . -e tests/ --xml > should_coverage.xml) || echo "gcovr is needed to generate a full report"
 
+### Upload to coveralls.io
+
+unit_coveralls:
+	coveralls --exclude release --exclude algo/tests --exclude algo/tools --gcov-options '\-lp'
+should_coveralls:
+	coveralls --exclude release --exclude algo/tests --exclude algo/tools --gcov-options '\-lp' -r algo
 
 data germline: %:
 	make -C $@
