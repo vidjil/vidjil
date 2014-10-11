@@ -624,11 +624,6 @@ function suggest_box(id, list) {
                 count++
             }
         }
-        if (count == 0){
-            var suggestion = document.createElement("div")
-            suggestion.appendChild(document.createTextNode("no suggestions ..."))
-            suggest_list.appendChild(suggestion)
-        }
     };
     
     //masque la liste
