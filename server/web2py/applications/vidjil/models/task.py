@@ -1,4 +1,7 @@
 # coding: utf8
+
+TASK_TIMEOUT = 2 * 3600
+
 def schedule_run(id_sequence, id_config):
     import time, datetime, sys, os.path
     from subprocess import Popen, PIPE, STDOUT, os
@@ -43,7 +46,7 @@ def schedule_run(id_sequence, id_config):
     program = db.config[id_config].program
     ##add task to scheduler
     task = scheduler.queue_task(program, [id_sequence, id_config, data_id, fuse_id]
-                         , repeats = 1, timeout = 6000)
+                                , repeats = 1, timeout = TASK_TIMEOUT)
     db.results_file[data_id] = dict(scheduler_task_id = task.id)
 
     filename= db.sequence_file[id_sequence].filename
@@ -82,11 +85,15 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     vidjil_germline = db.config[id_config].germline
     
     ## commande complete
-    cmd = vidjil_path+'/vidjil ' + vidjil_cmd + ' -o  ' + out_folder + ' -G ' + germline_folder + vidjil_germline + ' '+ seq_file
+    cmd = vidjil_path+'/vidjil ' + ' -o  ' + out_folder
+    if not vidjil_germline == 'multi':
+        cmd += ' -G ' + germline_folder + vidjil_germline 
+    cmd += ' ' + vidjil_cmd + ' '+ seq_file
     
     ## execute la commande vidjil
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
+    print "===Vidjil output==="
     print p.stdout.read()
     
     ## récupération du fichier data.json généré
@@ -119,6 +126,9 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
+    print "===fuse  output==="
+    print p.stdout.read()
+
 
     fuse_filepath = os.path.abspath(output_file)
     stream = open(fuse_filepath, 'rb')

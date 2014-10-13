@@ -377,6 +377,7 @@ class ListWindows:
             if key != "clones" and key != "links":
                 obj.d[key] = self.d[key]
                 if key not in other.d :
+                    print "plop : " + key
                     obj.d[key] += t2
 
         for key in other.d :
@@ -391,7 +392,6 @@ class ListWindows:
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
         obj.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
-        
 
         return obj
         

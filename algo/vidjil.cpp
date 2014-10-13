@@ -71,15 +71,16 @@
 #define DEFAULT_READS  "./data/Stanford_S22.fasta"
 #define MIN_READS_WINDOW 10
 #define MIN_READS_CLONE 10
+#define DEFAULT_MAX_REPRESENTATIVES 100
 #define MAX_CLONES 20
 #define RATIO_READS_CLONE 0.0
 
 #define COMMAND_WINDOWS "windows"
-#define COMMAND_ANALYSIS "clones"
+#define COMMAND_CLONES "clones"
 #define COMMAND_SEGMENT "segment"
 #define COMMAND_GERMLINES "germlines"
  
-enum { CMD_WINDOWS, CMD_ANALYSIS, CMD_SEGMENT, CMD_GERMLINES } ;
+enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define OUT_DIR "./out/" 
 #define CLONES_FILENAME "clones.vdj.fa"
@@ -135,8 +136,8 @@ void usage(char *progname)
   cerr << "Usage: " << progname << " [options] <reads.fa>" << endl << endl;
 
   cerr << "Command selection" << endl
-       << "  -c <command> \t" << COMMAND_WINDOWS << "\t window extracting (default)" << endl 
-       << "  \t\t" << COMMAND_ANALYSIS  << "  \t clone analysis" << endl 
+       << "  -c <command> \t" << COMMAND_WINDOWS << "  \t window extracting" << endl 
+       << "  \t\t" << COMMAND_CLONES  << "  \t clone gathering (default)" << endl 
        << "  \t\t" << COMMAND_SEGMENT   << "  \t V(D)J segmentation (not recommended)" << endl
        << "  \t\t" << COMMAND_GERMLINES << "  \t discover all germlines" << endl
        << endl       
@@ -175,17 +176,18 @@ void usage(char *progname)
        << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
        << endl
 
-       << "Limits to report a clone" << endl
+       << "Limits to report a clone (or a window)" << endl
        << "  -r <nb>       minimal number of reads supporting a clone (default: " << MIN_READS_CLONE << ")" << endl
        << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << RATIO_READS_CLONE << ")" << endl
        << endl
 
-       << "Limits to segment a clone" << endl
+       << "Limits to further analyze some clones" << endl
+       << "  -y <nb>       maximal number of clones computed with a representative (0: no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
        << "  -z <nb>       maximal number of clones to be segmented (0: no limit, do not use) (default: " << MAX_CLONES << ")" << endl
        << "  -A            reports and segments all clones (-r 0 -% 0 -z 0), to be used only on very small datasets" << endl
        << endl
 
-       << "Fine segmentation options (second pass, see warning in doc/README)" << endl
+       << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
        << "  -d            segment into V(D)J components instead of VJ " << endl
        << "  -m <int>      minimal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MIN << ") (default when -d is used: " << DEFAULT_DELTA_MIN_D << ")" << endl
        << "  -M <int>      maximal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MAX << ") (default when -d is used: " << DEFAULT_DELTA_MAX_D << ")" << endl
@@ -209,8 +211,7 @@ void usage(char *progname)
        << endl
 
        << endl 
-       << "Examples (see doc/README)" << endl
-       << "  " << progname << "             -G germline/IGH             -d data/Stanford_S22.fasta" << endl
+       << "Examples (see doc/algo.org)" << endl
        << "  " << progname << " -c clones   -G germline/IGH  -r 5       -d data/Stanford_S22.fasta" << endl
        << "  " << progname << " -c segment  -G germline/IGH             -d data/Stanford_S22.fasta   # (only for testing)" << endl
        << "  " << progname << " -c germlines                               data/Stanford_S22.fasta" << endl
@@ -259,8 +260,9 @@ int main (int argc, char **argv)
   int segment_D = 0;
   
   int verbose = 0 ;
-  int command = CMD_WINDOWS;
+  int command = CMD_CLONES;
 
+  int max_representatives = DEFAULT_MAX_REPRESENTATIVES ;
   int max_clones = MAX_CLONES ;
   int min_reads_clone = MIN_READS_CLONE ;
   float ratio_reads_clone = RATIO_READS_CLONE;
@@ -274,7 +276,6 @@ int main (int argc, char **argv)
   int delta_max = DEFAULT_DELTA_MAX ; // Fine
 
   bool output_sequences_by_cluster = false;
-  bool detailed_cluster_analysis = true ;
   bool output_segmented = false;
   bool output_unsegmented = false;
   bool multi_germline = false;
@@ -293,7 +294,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "AhagG:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:Lx%:Z:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "AhagG:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:L%:Z:y:z:uU")) != EOF)
 
     switch (c)
       {
@@ -317,12 +318,10 @@ int main (int argc, char **argv)
       case 'Z':
 	normalization_file = optarg; 
 	break;
-      case 'x':
-	detailed_cluster_analysis = false;
-	break;
+
       case 'c':
-        if (!strcmp(COMMAND_ANALYSIS,optarg))
-          command = CMD_ANALYSIS;
+        if (!strcmp(COMMAND_CLONES,optarg))
+          command = CMD_CLONES;
         else if (!strcmp(COMMAND_SEGMENT,optarg))
           command = CMD_SEGMENT;
         else if (!strcmp(COMMAND_WINDOWS,optarg))
@@ -403,6 +402,10 @@ int main (int argc, char **argv)
 
       case 'r':
 	min_reads_clone = atoi(optarg);
+        break;
+
+      case 'y':
+	max_representatives = atoi(optarg);
         break;
 
       case 'z':
@@ -553,7 +556,7 @@ int main (int argc, char **argv)
   switch(command) {
   case CMD_WINDOWS: cout << "Extracting windows" << endl; 
     break;
-  case CMD_ANALYSIS: cout << "Analysing clones" << endl; 
+  case CMD_CLONES: cout << "Analysing clones" << endl; 
     break;
   case CMD_SEGMENT: cout << "Segmenting V(D)J" << endl;
     break;
@@ -763,7 +766,7 @@ int main (int argc, char **argv)
   ////////////////////////////////////////
   //           CLONE ANALYSIS           //
   ////////////////////////////////////////
-  if (command == CMD_ANALYSIS || command == CMD_WINDOWS) {
+  if (command == CMD_CLONES || command == CMD_WINDOWS) {
 
     //////////////////////////////////
     cout << "# seed = " << seed << "," ;
@@ -882,7 +885,6 @@ int main (int argc, char **argv)
 	list< pair <float, int> > norm_list = compute_normalization_list(windowsStorage->getMap(), normalization, nb_segmented);
 
 
-    if (command == CMD_ANALYSIS) {
 
     //////////////////////////////////
     //$$ min_reads_clone (ou label)
@@ -902,6 +904,9 @@ int main (int argc, char **argv)
       {
 	cout << "  ! No windows with current parameters." << endl;
       }
+
+    if (command == CMD_CLONES) {
+
     //////////////////////////////////
     //$$ Clustering
 
@@ -974,6 +979,7 @@ int main (int argc, char **argv)
     list <string> representatives_labels ;
 
     // VirtualReadScore *scorer = new KmerAffectReadScore(*(germline->index));
+    int last_num_clone_on_stdout = 0 ;
     int num_clone = 0 ;
     int clones_without_representative = 0 ;
 
@@ -998,16 +1004,11 @@ int main (int argc, char **argv)
     
       ++num_clone ;
 
-      if (max_clones && (num_clone == max_clones + 1))
-	  break ;
-
-      cout << "#### " ;
-
-      string clone_file_name = out_seqdir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
-
-      ofstream out_clone(clone_file_name.c_str());
       Germline *segmented_germline = windowsStorage->getGermline(it->first);
       
+      //$$ Computing labels
+
+      // Clone label
       ostringstream oss;
       oss << "clone-"  << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone
 	  << "--" << segmented_germline->code
@@ -1015,19 +1016,39 @@ int main (int argc, char **argv)
 	  << "--" << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%" ;
       string clone_id = oss.str();
 
-      
-      cout << "Clone #" << right << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone ;
-      cout << " – " << setfill(' ') << setw(WIDTH_NB_READS) << clone_nb_reads << " reads" ;
-      cout << " – " << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%  "  ;
 
-      cout << " – " << 100 * (float) clone_nb_reads * compute_normalization_one(norm_list, clone_nb_reads) / nb_segmented << "% " 
-	  << compute_normalization_one(norm_list, clone_nb_reads) << " ";
-      cout << endl ;
+      // Clone label -- Human readable information (is it really useful ?)
+      ostringstream oss_human;
+      oss_human << "#### Clone #" << right << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone 
+		<< " – " << setfill(' ') << setw(WIDTH_NB_READS) << clone_nb_reads << " reads" 
+		<< " – " << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%  "  
+		<< " – " << 100 * (float) clone_nb_reads * compute_normalization_one(norm_list, clone_nb_reads) / nb_segmented << "% " 
+		 << compute_normalization_one(norm_list, clone_nb_reads) << " " ;
+      string clone_id_human = oss_human.str();
+
+      // Window label
+      string window_str = ">" + clone_id + "--window" + " " + windows_labels[it->first] + '\n' + it->first + '\n' ;
+
+
+      //$$ If max_representatives is reached, we stop here but still outputs the window
+
+      if (max_representatives && (num_clone >= max_representatives + 1))
+	{
+	  out_clones << window_str << endl ;
+	  continue;
+	}
+
+
+      cout << clone_id_human << endl ;
+      last_num_clone_on_stdout = num_clone ;
+
+      //$$ Open CLONE_FILENAME
+
+      string clone_file_name = out_seqdir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
+      ofstream out_clone(clone_file_name.c_str());
 
 
       //$$ Output window
-
-      string window_str = ">" + clone_id + "--window" + " " + windows_labels[it->first] + '\n' + it->first + '\n' ;;
       cout << window_str ;
       out_clone << window_str ;
 
@@ -1045,7 +1066,6 @@ int main (int argc, char **argv)
 
         Sequence representative = NULL_SEQUENCE ;
 
-	if (detailed_cluster_analysis)
 	  representative 
           = windowsStorage->getRepresentative(it->first, seed, 
                                              min_cover_representative,
@@ -1064,6 +1084,16 @@ int main (int argc, char **argv)
           representatives.push_back(representative);
           representatives_labels.push_back(string_of_int(num_clone));
 	  representative.label = clone_id + "--" + representative.label;
+
+	  
+	  //$$ If max_clones is reached, we stop here but still outputs the representative
+
+	  if (max_clones && (num_clone >= max_clones + 1))
+	    {
+	      out_clones << representative << endl ;
+	      continue;
+	    }
+
 
 	  // FineSegmenter
 	  FineSegmenter seg(representative, segmented_germline, segment_cost);
@@ -1130,6 +1160,12 @@ int main (int argc, char **argv)
     out_edges.close() ;
     out_clones.close();
 
+    if (num_clone > last_num_clone_on_stdout)
+      {
+	cout << "#### Clones " 
+	     << "#" << setfill('0') << setw(WIDTH_NB_CLONES) << last_num_clone_on_stdout + 1 << " to "
+	     << "#" << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone << "..." << endl ;
+      }
     cout << "#### end of clones" << endl; 
     cout << endl;
 
@@ -1163,7 +1199,7 @@ int main (int argc, char **argv)
 
     } // endif (clones_windows.size() > 0)
 
-    } // end if (command == CMD_ANALYSIS) 
+    } // end if (command == CMD_CLONES) 
 
     //$$ .json output: json_data_segment
     string f_json = out_dir + prefix_filename + "vidjil" + JSON_SUFFIX ; // TODO: retrieve basename from f_reads instead of "vidjil"
@@ -1240,7 +1276,7 @@ int main (int argc, char **argv)
 
     cout << "* WARNING: vidjil was run with '-c segment' option" << endl
          << "* Vidjil purpose is to extract very quickly windows overlapping the CDR3" << endl
-         << "* or to gather reads into clones (-c clones), and not to provide an accurate V(D)J segmentation." << endl
+         << "* and to gather reads into clones (-c clones), and not to provide an accurate V(D)J segmentation." << endl
          << "* The following segmentations are slow to compute and are provided only for convenience." << endl
          << "* They should be checked with other softwares such as IgBlast, iHHMune-align or IMGT/V-QUEST." << endl
       ;
