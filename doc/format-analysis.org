@@ -29,6 +29,16 @@ present in the .data file.
              "order": [0, 1]
         },
 
+        "reads" : {
+            "total" :           [ 437164 ] ,
+            "segmented" :       [ 335662 ] ,
+            "germline" : {
+                "TRG" :         [ 250000 ] ,
+                "IGH" :         [ 35662 ] ,
+                "custom" :      [ 50000 ]
+            }
+        },
+
         "clones": [
             {
                 "id": "clone-845",
@@ -76,14 +86,19 @@ present in the .data file.
 #+END_SRC
 
 
-* Generic information [.data only, required]
+
+* 'reads' element [.data only, required]
 
 #+BEGIN_SRC js
-  "reads_total": [],     // total number of reads per sample (with samples.number elements)
-  "reads_segmented": [], // number of segmented reads per sample (with samples.number elements)
-  "log": ""
+{
+    "total" :           // total number of reads per sample (with samples.number elements)
+    "segmented" :       // number of segmented reads per sample (with samples.number elements)
+    "germline" : {      // number of segmented reads per sample/germline (with samples.number elements)
+        "TRG" :         
+        "IGH" :         
+    }
+}
 #+END_SRC js
-
 
 
  
