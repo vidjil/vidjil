@@ -272,8 +272,8 @@ Clone.prototype = {
             this.color =  this.colorJ;
         }else if (this.m.colorMethod == "N"){
             this.color =  this.colorN;
-        }else if (this.m.colorMethod == "system") {
-            this.color = germline.icon[this.system].color
+        }else if (this.m.colorMethod == "system" && typeof germline.icon[this.germline] != 'undefined') {
+            this.color = germline.icon[this.germline].color
         }else{
             this.color = color['@default'];
         }
@@ -339,18 +339,18 @@ Clone.prototype = {
         //segmentation info
         html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation information</td></tr>"
         
-        if (typeof this.seg_stat != 'undefined'){
+        if (typeof this.stats != 'undefined'){
             var total_stat = [];
-            for (var i=0; i<this.seg_stat.length; i++) total_stat[i] = 0
-            for (var i=0; i<this.seg_stat.length; i++){
-                for (var key in this.seg_stat[i]) total_stat[i] +=  this.seg_stat[i][key]
+            for (var i=0; i<this.stats.length; i++) total_stat[i] = 0
+            for (var i=0; i<this.stats.length; i++){
+                for (var key in this.stats[i]) total_stat[i] +=  this.stats[i][key]
             }
             
-            for (var key in this.seg_stat[0]){
+            for (var key in this.stats[0]){
                 html += "<tr><td> "+this.m.segmented_mesg[key]+"</td>"
                 for (var i = 0; i < time_length; i++) {
-                html += "<td>"+this.seg_stat[i][key] 
-                        + " (" + ((this.seg_stat[i][key]/total_stat[i]) * 100).toFixed(1) + " %)</td>"
+                html += "<td>"+this.stats[i][key] 
+                        + " (" + ((this.stats[i][key]/total_stat[i]) * 100).toFixed(1) + " %)</td>"
                 }
             }
         }

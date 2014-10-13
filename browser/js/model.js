@@ -840,8 +840,8 @@ Model.prototype = {
     },
 
     getSegmentationInfo: function (timeID) {
-        if (typeof this.samples.segmentation_info != 'undefined'){
-            return this.samples.segmentation_info[timeID].replace(/(?:\r\n|\r|\n)/g, '<br />')
+        if (typeof this.samples.log != 'undefined'){
+            return this.samples.log[timeID].replace(/(?:\r\n|\r|\n)/g, '<br />')
         }else{
             return "not specified";
         }
