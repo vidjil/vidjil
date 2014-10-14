@@ -417,7 +417,7 @@ int main (int argc, char **argv)
 	min_reads_clone = 0 ;
 	max_clones = 0 ;
 	break ;
-
+    
       // Seeds
 
       case 's':
