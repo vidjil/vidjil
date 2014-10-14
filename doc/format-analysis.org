@@ -55,6 +55,15 @@ present in the .data file.
 
         ],
 
+        "germline" : {
+            "custom" : {
+                "shortcut": "B",
+                "5": ["TRBV.fa"],
+                "4": ["TRBD.fa"],
+                "3": ["TRBJ.fa"]
+            }
+        },
+
         "clusters": [
             [ "clone-845", "clone-821", "clone-147" ],
             [ "clone-5", "clone-10", "clone-179" ]
@@ -188,6 +197,9 @@ In the .analysis file, this section is intended to describe some specific clones
  }
 #+END_SRC
 
+* 'Germline' list [optional][work in progress]
+
+extend the germline.data default file with a custom germline
 
 * 'Clusters' list [optional]
 
@@ -196,7 +208,7 @@ In the browser, it will be still possible to see them or to unmerge them.
 The first clone of each line is used as a representative for the cluster.
 
 
-* 'Data' list [optional]
+* 'Data' list [optional][work in progress]
 
 Each element in the 'data' list is a list of values (of size samples.number)
 showing additional data for each sample, as for example qPCR levels or spike information.
