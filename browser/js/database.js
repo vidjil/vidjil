@@ -565,7 +565,8 @@ Database.prototype = {
 
 /*crée une liste de suggestion dynamique autour d'un input text*/
 function suggest_box(id, list) {
-    
+
+    list = list.sort()
     var input_box = document.getElementById(id)
     
     //positionnement d'une boite vide pour contenir les suggestions
@@ -622,11 +623,6 @@ function suggest_box(id, list) {
                 suggest_list.appendChild(suggestion)
                 count++
             }
-        }
-        if (count == 0){
-            var suggestion = document.createElement("div")
-            suggestion.appendChild(document.createTextNode("no suggestions ..."))
-            suggest_list.appendChild(suggestion)
         }
     };
     
