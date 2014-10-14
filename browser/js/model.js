@@ -244,8 +244,8 @@ Model.prototype = {
                 var clone = new Clone(data.clones[i], self, hash)
                 self.clones.push(clone);
                 hash++
+                self.mapID[data.clones[i].id] = hash;
             }
-            self.mapID[self.clones[i].id] = hash;
         }
         
         // add fake clone
