@@ -138,10 +138,10 @@ class Samples:
         t1=[]
         t2=[]
         
-        for i in range(len(self.d["number"])):
+        for i in range(self.d["number"]):
             t1.append(0)
     
-        for i in range(len(other.d["number"])):
+        for i in range(other.d["number"]):
             t2.append(0)
     
         for key in self.d :
