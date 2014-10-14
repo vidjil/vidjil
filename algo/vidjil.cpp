@@ -463,6 +463,12 @@ int main (int argc, char **argv)
         output_segmented = true;
         break;
       }
+      
+    //remove germline path
+    string tmp_germline_system ;
+    stringstream stream(germline_system);
+    while( getline(stream, tmp_germline_system, '/') )
+        germline_system = tmp_germline_system;
 
   // If there was no -w option, then w is either DEFAULT_W or DEFAULT_W_D
   if (w == 0)
@@ -1221,33 +1227,60 @@ int main (int argc, char **argv)
     JsonArray json_nb_segmented;
     json_nb_segmented.add(nb_segmented);
     
+    JsonArray json_original_names;
+    json_original_names.add(f_reads);
+    
     JsonArray json_timestamp;
     json_timestamp.add(time_buffer);
     
+    JsonArray json_log;
+    json_log.add(stream_segmentation_info.str());
+    
+    JsonArray json_cmdline;
+    json_cmdline.add(stream_cmdline.str());// TODO: escape "s in argv
 
     JsonArray jsonSortedWindows = windowsStorage->sortedWindowsToJsonArray(json_data_segment,
                                                                         norm_list,
                                                                         nb_segmented);
     
-    
+    //samples field
     JsonList *json_samples;
     json_samples=new JsonList();
-    json_samples->add("number", "1");
-    JsonArray json_original_names;
-    json_original_names.add(f_reads);
+    json_samples->add("number", 1);
     json_samples->add("original_names", json_original_names);
+    json_samples->add("timestamp", json_timestamp);
+    json_samples->add("log", json_log);
+    json_samples->add("commandline", json_cmdline);
+    
+    //reads field
+    JsonList *json_reads;
+    json_reads=new JsonList();
+    json_reads->add("total", json_nb_reads);
+    json_reads->add("segmented", json_nb_segmented); 
+    JsonList *json_reads_germlineList;
+    json_reads_germlineList = new JsonList();
+    
+    if (multi_germline)
+      {
+        for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
+          {
+            Germline *germline = *it ;
+            JsonArray json_reads_germline;
+            json_reads_germline.add(we.getNbReadsGermline(germline->code));
+            json_reads_germlineList->add(germline->code, json_reads_germline);
+          }
+      }
+    else
+      {
+        json_reads_germlineList->add(germline_system, json_nb_segmented);
+      }
+    json_reads->add("germline", *json_reads_germlineList); 
     
     json->add("vidjil_json_version", VIDJIL_JSON_VERSION);
     json->add("samples", *json_samples);
-    json->add("timestamp", json_timestamp);
-    json->add("commandline", stream_cmdline.str());// TODO: escape "s in argv
-    json->add("segmentation_info", stream_segmentation_info.str());
+    json->add("reads", *json_reads);
     json->add("germline", germline_system);
-    json->add("germline_V", f_rep_V);
-    json->add("germline_J", f_rep_J);
-    json->add("reads_total", json_nb_reads);
-    json->add("reads_segmented", json_nb_segmented); 
-    json->add("windows", jsonSortedWindows);
+    json->add("clones", jsonSortedWindows);
 
     //Added edges in the json output file
     //json->add("links", jsonLevenshtein);
