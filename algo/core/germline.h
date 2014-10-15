@@ -8,6 +8,7 @@
 #include "kmerstore.h"
 #include "stats.h"
 
+
 using namespace std;
 
 class Germline {
