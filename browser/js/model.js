@@ -243,8 +243,8 @@ Model.prototype = {
             if (data.clones[i].top <= limit) {
                 var clone = new Clone(data.clones[i], self, hash)
                 self.clones.push(clone);
-                hash++
                 self.mapID[data.clones[i].id] = hash;
+                hash++
             }
         }
         
@@ -587,10 +587,10 @@ Model.prototype = {
             for (var i = 0; i < clusters.length; i++) {
 
                 var new_cluster = [];
-                var l = self.mapID[clusters[i][0]]
+                var l = this.mapID[clusters[i][0]]
                 
                 for (var j=0; j<clusters[i].length;j++){
-                    var cloneID = self.mapID[clusters[i][j]]
+                    var cloneID = this.mapID[clusters[i][j]]
                     new_cluster = new_cluster.concat(this.clusters[cloneID]);
                     this.clusters[cloneID] = [];
                 }
@@ -1388,7 +1388,7 @@ Model.prototype = {
         this.cluster_key = ""
         
         for (var i = 0; i < this.clones.length; i++) {
-            this.clusters[i] = []
+            this.clusters[i] = [i]
         }
 
         this.update()
