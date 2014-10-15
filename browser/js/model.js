@@ -806,7 +806,7 @@ Model.prototype = {
             this.norm = false
             
             for (var i=0; i<this.samples.number; i++){
-                this.normalization.A[i] = this.getSize(cloneID, i)
+                this.normalization.A[i] = this.clone(cloneID).getSize(i)
             }
             
             this.norm = tmp
