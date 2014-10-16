@@ -463,12 +463,6 @@ int main (int argc, char **argv)
         output_segmented = true;
         break;
       }
-      
-    //remove germline path
-    string tmp_germline_system ;
-    stringstream stream(germline_system);
-    while( getline(stream, tmp_germline_system, '/') )
-        germline_system = tmp_germline_system;
 
   // If there was no -w option, then w is either DEFAULT_W or DEFAULT_W_D
   if (w == 0)
