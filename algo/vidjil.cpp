@@ -147,7 +147,7 @@ void usage(char *progname)
        << "  -D <file>     D germline multi-fasta file (automatically implies -d)" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa)" << endl
-       << "  -g            multiple germlines (experimental)" << endl
+       << "  -g <path>     multiple germlines (experimental)" << endl
        << endl
 
        << "Window prediction" << endl
@@ -279,6 +279,7 @@ int main (int argc, char **argv)
   bool output_segmented = false;
   bool output_unsegmented = false;
   bool multi_germline = false;
+  string multi_germline_file = "";
 
   string forced_edges = "" ;
 
@@ -294,7 +295,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "AhagG:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:L%:Z:y:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:L%:Z:y:z:uU")) != EOF)
 
     switch (c)
       {
@@ -355,7 +356,8 @@ int main (int argc, char **argv)
 	break;
 
       case 'g':
-	multi_germline = true ;
+	multi_germline = true;
+	multi_germline_file = string(optarg);
 	break;
 	
       case 'G':
@@ -785,7 +787,7 @@ int main (int argc, char **argv)
 
     if (multi_germline)
       {
-	multigermline->load_default_set();
+	multigermline->load_default_set(multi_germline_file);
       }
     else
       {

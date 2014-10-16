@@ -107,10 +107,10 @@ void MultiGermline::insert(Germline *germline)
   germlines.push_back(germline);
 }
 
-void MultiGermline::load_default_set()
+void MultiGermline::load_default_set(string path)
 {
-  germlines.push_back(new Germline("TRG", 'G', "germline/TRGV.fa", "",                 "germline/TRGJ.fa", "#####-#####",   -10, 20));
-  germlines.push_back(new Germline("IGH", 'H', "germline/IGHV.fa", "germline/IGHD.fa", "germline/IGHJ.fa", "######-######",   0, 80));
+  germlines.push_back(new Germline("TRG", 'G', path + "/TRGV.fa", "",                path + "/TRGJ.fa", "#####-#####",   -10, 20));
+  germlines.push_back(new Germline("IGH", 'H', path + "/IGHV.fa", path + "/IGHD.fa", path + "/IGHJ.fa", "######-######",   0, 80));
 }
 
 
