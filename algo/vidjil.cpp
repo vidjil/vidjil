@@ -30,8 +30,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <limits.h>
-#include <stdio.h>
 
 #include "core/tools.h"
 #include "core/json.h"
@@ -149,7 +147,7 @@ void usage(char *progname)
        << "  -D <file>     D germline multi-fasta file (automatically implies -d)" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa)" << endl
-       << "  -g            multiple germlines (experimental)" << endl
+       << "  -g <path>     multiple germlines (experimental)" << endl
        << endl
 
        << "Window prediction" << endl
@@ -281,6 +279,7 @@ int main (int argc, char **argv)
   bool output_segmented = false;
   bool output_unsegmented = false;
   bool multi_germline = false;
+  string multi_germline_file = "";
 
   string forced_edges = "" ;
 
@@ -294,20 +293,9 @@ int main (int argc, char **argv)
   //JsonArray which contains the Levenshtein distances
   JsonArray jsonLevenshtein;
 
-  //replace working directory to avoid relative path problem
-  char dest[PATH_MAX];
-  char path[PATH_MAX] = "/proc/self/exe";
-  
-  if (readlink(path, dest, PATH_MAX) == -1)
-    perror("readlink");
-  string dest2(dest);
-  string dest3 = dest2.substr(0, dest2.find_last_of("\\/"));
-  cout << chdir(dest3.c_str())<<endl;
-  
-  
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "AhagG:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:L%:Z:y:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:L%:Z:y:z:uU")) != EOF)
 
     switch (c)
       {
@@ -368,7 +356,8 @@ int main (int argc, char **argv)
 	break;
 
       case 'g':
-	multi_germline = true ;
+	multi_germline = true;
+	multi_germline_file = string(optarg);
 	break;
 	
       case 'G':
@@ -476,12 +465,6 @@ int main (int argc, char **argv)
         output_segmented = true;
         break;
       }
-      
-    //remove germline path
-    string tmp_germline_system ;
-    stringstream stream(germline_system);
-    while( getline(stream, tmp_germline_system, '/') )
-        germline_system = tmp_germline_system;
 
   // If there was no -w option, then w is either DEFAULT_W or DEFAULT_W_D
   if (w == 0)
@@ -766,9 +749,6 @@ int main (int argc, char **argv)
   if (!segment_D) // TODO: add other constructor to Fasta, and do not load rep_D in this case
     f_rep_D = "";
 
-  Fasta rep_V(f_rep_V, 2, "|", cout);
-  Fasta rep_D(f_rep_D, 2, "|", cout);
-  Fasta rep_J(f_rep_J, 2, "|", cout);
 
   OnlineFasta *reads;
 
@@ -804,10 +784,14 @@ int main (int argc, char **argv)
 
     if (multi_germline)
       {
-	multigermline->load_default_set();
+	multigermline->load_default_set(multi_germline_file);
       }
     else
       {
+	Fasta rep_V(f_rep_V, 2, "|", cout);
+	Fasta rep_D(f_rep_D, 2, "|", cout);
+	Fasta rep_J(f_rep_J, 2, "|", cout);
+
 	Germline *germline;
 	germline = new Germline(germline_system, 'X',
                 rep_V, rep_D, rep_J, seed,
@@ -1327,6 +1311,11 @@ int main (int argc, char **argv)
          << "* The following segmentations are slow to compute and are provided only for convenience." << endl
          << "* They should be checked with other softwares such as IgBlast, iHHMune-align or IMGT/V-QUEST." << endl
       ;
+
+
+    Fasta rep_V(f_rep_V, 2, "|", cout);
+    Fasta rep_D(f_rep_D, 2, "|", cout);
+    Fasta rep_J(f_rep_J, 2, "|", cout);
 
     Germline *germline;
 

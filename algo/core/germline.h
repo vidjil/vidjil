@@ -8,7 +8,6 @@
 #include "kmerstore.h"
 #include "stats.h"
 
-
 using namespace std;
 
 class Germline {
@@ -69,7 +68,7 @@ class MultiGermline {
   ~MultiGermline();
 
   void insert(Germline *germline);
-  void load_default_set();
+  void load_default_set(string path);
 
   void out_stats(ostream &out);
 };
