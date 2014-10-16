@@ -30,8 +30,6 @@
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <unistd.h>
-#include <limits.h>
-#include <stdio.h>
 
 #include "core/tools.h"
 #include "core/json.h"
@@ -294,17 +292,6 @@ int main (int argc, char **argv)
   //JsonArray which contains the Levenshtein distances
   JsonArray jsonLevenshtein;
 
-  //replace working directory to avoid relative path problem
-  char dest[PATH_MAX];
-  char path[PATH_MAX] = "/proc/self/exe";
-  
-  if (readlink(path, dest, PATH_MAX) == -1)
-    perror("readlink");
-  string dest2(dest);
-  string dest3 = dest2.substr(0, dest2.find_last_of("\\/"));
-  cout << chdir(dest3.c_str())<<endl;
-  
-  
   //$$ options: getopt
 
   while ((c = getopt(argc, argv, "AhagG:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:L%:Z:y:z:uU")) != EOF)
