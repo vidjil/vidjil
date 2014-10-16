@@ -749,9 +749,6 @@ int main (int argc, char **argv)
   if (!segment_D) // TODO: add other constructor to Fasta, and do not load rep_D in this case
     f_rep_D = "";
 
-  Fasta rep_V(f_rep_V, 2, "|", cout);
-  Fasta rep_D(f_rep_D, 2, "|", cout);
-  Fasta rep_J(f_rep_J, 2, "|", cout);
 
   OnlineFasta *reads;
 
@@ -791,6 +788,10 @@ int main (int argc, char **argv)
       }
     else
       {
+	Fasta rep_V(f_rep_V, 2, "|", cout);
+	Fasta rep_D(f_rep_D, 2, "|", cout);
+	Fasta rep_J(f_rep_J, 2, "|", cout);
+
 	Germline *germline;
 	germline = new Germline(rep_V, rep_D, rep_J, seed,
 				delta_min, delta_max);
@@ -1282,6 +1283,11 @@ int main (int argc, char **argv)
          << "* The following segmentations are slow to compute and are provided only for convenience." << endl
          << "* They should be checked with other softwares such as IgBlast, iHHMune-align or IMGT/V-QUEST." << endl
       ;
+
+
+    Fasta rep_V(f_rep_V, 2, "|", cout);
+    Fasta rep_D(f_rep_D, 2, "|", cout);
+    Fasta rep_J(f_rep_J, 2, "|", cout);
 
     Germline *germline;
 
