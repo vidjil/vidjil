@@ -37,17 +37,19 @@ public:
 
   virtual ~IKmerStore();
 
+  list< pair <T, string> > labels;
+
   /**
    * @param input: A single FASTA file
    * @param label: label that must be associated to the given files
-   * @post All the sequences in the FASTA files have been indexed.
+   * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
   void insert(Fasta& input, const string& label="");
 
   /**
    * @param input: A list of FASTA files
    * @param label: label that must be associated to the given files
-   * @post All the sequences in the FASTA files have been indexed.
+   * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
   void insert(list<Fasta>& input, const string& label="");
   
@@ -163,6 +165,8 @@ void IKmerStore<T>::insert(Fasta& input,
   for (int r = 0; r < input.size(); r++) {
     insert(input.sequence(r), label);
   }
+
+  labels.push_back(make_pair(T("", label, 1), label)) ;
 }
 
 template<class T> 
