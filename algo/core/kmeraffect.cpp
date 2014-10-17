@@ -131,7 +131,7 @@ KmerAffect KmerAffect::getUnknown() {
 }
 
 bool KmerAffect::isAmbiguous() const {
-  return affect_strand(affect) == 1 && affect_char(affect) == 0;
+  return affect_strand(affect) == 1 && affect_char(affect) == 1;
 }
 
 bool KmerAffect::isUnknown() const {

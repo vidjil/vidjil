@@ -146,7 +146,7 @@ const KmerAffect AFFECT_UNKNOWN = KmerAffect("", "\0", 0);
 /**
  * Constant defining the ambiguous affectation (many possibilities)
  */
-const KmerAffect AFFECT_AMBIGUOUS = KmerAffect("", "\0", 1); 
+const KmerAffect AFFECT_AMBIGUOUS = KmerAffect("", "\1", 1); 
 
 const KmerAffect AFFECT_V = KmerAffect("", "V", 1); 
 const KmerAffect AFFECT_J = KmerAffect("", "J", 1); 
