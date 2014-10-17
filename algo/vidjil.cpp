@@ -795,8 +795,9 @@ int main (int argc, char **argv)
 
 	Germline *germline;
 	germline = new Germline(germline_system, 'X',
-                rep_V, rep_D, rep_J, seed,
+				rep_V, rep_D, rep_J, 
 				delta_min, delta_max);
+	germline->new_index(seed);
 
 	multigermline->insert(germline);
       }
@@ -1324,9 +1325,8 @@ int main (int argc, char **argv)
 
     Germline *germline;
 
-    // Here, it could be run without building the index
     germline = new Germline(germline_system, 'X',
-                rep_V, rep_D, rep_J, seed,
+			    rep_V, rep_D, rep_J,
 			    delta_min, delta_max);
 
     while (reads->hasNext()) 
