@@ -40,7 +40,54 @@ def ordered(d, key=None):
 
 ####
 
+
+def concatenate_with_padding(d, 
+                             d1, d1_size, 
+                             d2, d2_size,
+                             ignore_keys=[]):
+        '''Concatenate two dictionaries d1 and d2 into d
+        The dictionaries d1 and d2 store several values that are lists with d1_size and d2_size elements,
+        and the resulting dictionary will store values that are lists with size d1_size + d2_size elements.
+        Pads with lists [0, ... 0] data that appear in either only d1 or only d2.
+
+        >>> d = {}
+        >>> d1 = { 'a': [1, 2], 'b': [11, 22], 'z':17 }
+        >>> d2 = { 'a': [3, 4, 5], 'c': [333, 444, 555] } 
+        >>> concatenate_with_padding(d, d1, 2, d2, 5, ['z'])
+        >>> d
+        {'a': [1, 2, 3, 4, 5], 'c': [0, 0, 333, 444, 555], 'b': [11, 22, 0, 0, 0, 0, 0]}
+        '''
+
+        t1=[]
+        t2=[]
+        
+        for i in range(d1_size):
+            t1.append(0)
+    
+        for i in range(d2_size):
+            t2.append(0)
+    
+        for key in d1:
+            if key in ignore_keys:
+                continue
+            d[key] = d1[key]
+            if key not in d2 :
+                d[key] += t2
+
+        for key in d2:
+            if key in ignore_keys:
+                continue
+            if key not in d :
+                d[key] = t1 + d2[key]
+            else :
+                d[key] = d[key] + d2[key]
+
+
+
+####
+
 class Window:
+    # Should be renamed "Clone"
     '''storage class for sequence informations
     with some function to group sequence informations
     
@@ -135,26 +182,12 @@ class Samples:
 
     def __add__(self, other):
         obj=Samples()
-        t1=[]
-        t2=[]
-        
-        for i in range(self.d["number"]):
-            t1.append(0)
-    
-        for i in range(other.d["number"]):
-            t2.append(0)
-    
-        for key in self.d :
-            obj.d[key] = self.d[key]
-            if key not in other.d :
-                obj.d[key] += t2
 
-        for key in other.d :
-            if key not in obj.d :
-                obj.d[key] = t1 + other.d[key]
-            else :
-                obj.d[key] = obj.d[key] + other.d[key]
-                        
+        concatenate_with_padding(obj.d, 
+                                 self.d, self.d['number'], 
+                                 other.d, other.d['number'],
+                                 ['number'])
+
         obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])
         
         return obj
@@ -169,25 +202,11 @@ class Reads:
 
     def __add__(self, other):
         obj=Reads()
-        t1=[]
-        t2=[]
-        
-        for i in range(len(self.d["total"])):
-            t1.append(0)
-    
-        for i in range(len(other.d["total"])):
-            t2.append(0)
-    
-        for key in self.d["germline"] :
-            obj.d["germline"][key] = self.d["germline"][key]
-            if key not in other.d["germline"] :
-                obj.d["germline"][key] += t2
 
-        for key in other.d["germline"] :
-            if key not in obj.d["germline"] :
-                obj.d["germline"][key] = t1 + other.d["germline"][key]
-            else :
-                obj.d["germline"][key] = obj.d["germline"][key] + other.d["germline"][key]
+        concatenate_with_padding(obj.d['germline'], 
+                                 self.d['germline'], len(self.d['total']),
+                                 other.d['germline'], len(other.d['total']),
+                                 ['total'])
                 
         obj.d["total"] = self.d["total"] + other.d["total"]
         obj.d["segmented"] = self.d["segmented"] + other.d["segmented"]
@@ -362,33 +381,15 @@ class ListWindows:
     def __add__(self, other): 
         '''Combine two ListWindows into a unique ListWindows'''
         obj = ListWindows()
-        t1=[]
-        t2=[]
-        
-        for i in range(len(self.d["reads"].d['segmented'])):
-            t1.append(0)
-    
-        for i in range(len(other.d["reads"].d['segmented'])):
-            t2.append(0)
-    
-        #concat data, if there is some missing data we use an empty buffer t1/t2 
-        #with the same size as the number of missing data
-        for key in self.d :
-            if key != "clones" and key != "links":
-                obj.d[key] = self.d[key]
-                if key not in other.d :
-                    print "plop : " + key
-                    obj.d[key] += t2
+        l1 = len(self.d["reads"].d['segmented'])
+        l2 = len(other.d["reads"].d['segmented'])
 
-        for key in other.d :
-            if key != "clones" and key != "links":
-                if key not in obj.d :
-                    obj.d[key] = t1 + other.d[key]
-                else :
-                    if key != "samples":
-                        obj.d[key] = obj.d[key] + other.d[key]
+        concatenate_with_padding(obj.d, 
+                                 self.d, l1,
+                                 other.d, l2,
+                                 ["clones", "links"])
         
-        obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], t1, t2)
+        obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
         obj.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
@@ -409,7 +410,7 @@ class ListWindows:
         return self
         
     ### 
-    def fuseWindows(self, w1, w2, t1, t2) :
+    def fuseWindows(self, w1, w2, l1, l2) :
         #store data in dict with "id" as key
         dico1 = {}
         for i in range(len(w1)) :
@@ -426,12 +427,12 @@ class ListWindows:
             if key in dico2 :
                 dico3[key] = dico1[key] + dico2[key]
             else :
-                w=Window(len(t2))
+                w=Window(l2)
                 dico3[key] = dico1[key] + w
 
         for key in dico2 :
             if key not in dico1 :
-                w=Window(len(t1))
+                w=Window(l1)
                 dico3[key] = w + dico2[key]
         
         
