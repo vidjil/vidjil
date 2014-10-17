@@ -10,6 +10,7 @@ Germline::Germline(string _code, char _shortcut,
   index = 0 ;
 
   affect_5 = "V" ;
+  affect_4 = "";
   affect_3 = "J" ;
 
   rep_5 = Fasta(f_rep_5, 2, "|", cout);
@@ -34,6 +35,7 @@ Germline::Germline(string _code, char _shortcut,
   // affect_5 = KmerAffect("", "V", 0) ;
   // affect_3 = KmerAffect("", "J", 0) ;
   affect_5 = "V" ;
+  affect_4 = "" ;
   affect_3 = "J" ;
 
   rep_5 = _rep_5 ;
@@ -65,8 +67,13 @@ void Germline::use_index(IKmerStore<KmerAffect> *_index)
 void Germline::update_index()
 {
   index->insert(rep_5, affect_5);
+
+  if (affect_4.size())
+    index->insert(rep_4, affect_4);
+
   index->insert(rep_3, affect_3);
-  cout << "  index " << index << " updated " << affect_5 << "/" << affect_3 << endl;
+
+  cout << "  --- index " << index << " updated " << affect_5 << "/" << affect_4 << "/" << affect_3 << endl;
 }
 
 Germline::~Germline()

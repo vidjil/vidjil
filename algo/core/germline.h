@@ -43,6 +43,7 @@ class Germline {
   // KmerAffect affect_5 ;
   // KmerAffect affect_3 ;
   string affect_5 ;
+  string affect_4 ;
   string affect_3 ;
   
   Fasta  rep_5 ;
