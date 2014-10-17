@@ -785,7 +785,7 @@ int main (int argc, char **argv)
 
     if (multi_germline)
       {
-	multigermline->load_default_set(multi_germline_file);
+	multigermline->build_default_set(multi_germline_file);
       }
     else
       {
