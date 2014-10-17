@@ -660,7 +660,7 @@ int main (int argc, char **argv)
 	  reads->next();
 	  nb_reads++;
 	  string seq = reads->getSequence().sequence;
-	  total_length += seq.length() - s;
+	  total_length += seq.length() - s + 1;
 
 	  KmerAffectAnalyser<KmerAffect> *kaa = new KmerAffectAnalyser<KmerAffect>(*index, seq);
 
