@@ -63,6 +63,7 @@
 
 //$$ #define (mainly default options)
 
+#define DEFAULT_MULTIGERMLINE "germline"
 #define DEFAULT_GERMLINE_SYSTEM "IGH" 
 #define DEFAULT_V_REP  "./germline/IGHV.fa"
 #define DEFAULT_D_REP  "./germline/IGHD.fa" 
@@ -279,7 +280,7 @@ int main (int argc, char **argv)
   bool output_segmented = false;
   bool output_unsegmented = false;
   bool multi_germline = false;
-  string multi_germline_file = "";
+  string multi_germline_file = DEFAULT_MULTIGERMLINE;
 
   string forced_edges = "" ;
 
