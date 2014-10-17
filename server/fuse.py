@@ -281,13 +281,26 @@ class ListWindows:
         self.d["clusters"] = []
         
     def __str__(self):
-        return "<ListWindows : %s %d >" % ( self.d["reads"].d["segmented"], len(self.d["clones"]) )
+        return "<ListWindows: %s %d>" % ( self.d["reads"].d["segmented"], len(self) )
+
+    # Iterator and access functions
+    def __iter__(self):
+        return self.d["clones"].__iter__()
+
+    def __getitem__(self, i):
+        ### not efficient !
+        for clone in self:
+            if clone.d["id"] == i:
+                return clone
+
+    def __len__(self):
+        return len(self.d["clones"])
 
     ### print info about each Windows stored 
     def info(self):
         print self
-        for i in range(len(self.d["clones"])):
-            print self.d["clones"][i]
+        for clone in self:
+            print clone
 
     ### check vidjil_json_version
     def check_version(self, filepath):
@@ -301,8 +314,8 @@ class ListWindows:
         ranges = [1000, 100, 10, 1]
         result = [[0 for col in range(len(self.d['reads'].d["segmented"]))] for row in range(len(ranges))]
 
-        for w in self.d["clones"]:
-            for i, s in enumerate(w.d["reads"]):
+        for clone in self:
+            for i, s in enumerate(clone.d["reads"]):
                 for r in range(len(ranges)):
                     if s >= ranges[r]:
                         break 
@@ -357,9 +370,9 @@ class ListWindows:
     def getTop(self, top):
         result = []
         
-        for w in self.d["clones"] :
-            if w.d["top"] <= top :
-                result.append(w.d["id"])
+        for clone in self:
+            if clone.d["top"] <= top :
+                result.append(clone.d["id"])
         return result
         
     def filter(self, f):
@@ -453,17 +466,16 @@ class ListWindows:
     def cut(self, limit, nb_points):
         '''Remove information from sequence/windows who never enter in the most represented sequences. Put this information in 'other' windows.'''
 
-        length = len(self.d["clones"])
+        length = len(self)
         w=[]
 
         others = OtherWindows(nb_points)
 
-        for index in range(length): 
-            win = self.d["clones"][index]
-            if (int(win.d["top"]) < limit or limit == 0) :
-                w.append(win)
+        for clone in self:
+            if (int(clone.d["top"]) < limit or limit == 0) :
+                w.append(clone)
             #else:
-                #others += win
+                #others += clone
 
         self.d["clones"] = w #+ list(others) 
 
