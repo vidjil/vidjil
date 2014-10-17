@@ -9,10 +9,12 @@
 #include <ctime>
 #include "dynprog.h"
 #include "windows.h"
+#include "json.h"
 
 using namespace std ;
 
 #define SIMILAR_JUNCTIONS_THRESHOLD 1
+#define JUNCTION_LIMIT 500
 
 
 class comp_matrix {
@@ -22,6 +24,7 @@ class comp_matrix {
     map <string, int> count;
     int n_j;
     int n_j2;
+    size_t matrix_size;
     
     /**
     * create new distance matrix
@@ -65,6 +68,9 @@ class comp_matrix {
     void del();
     
     void stat_cluster( list<list<junction> > cluster, ostream &out=cout);
+    
+    JsonArray toJson( list<list<junction> > cluster);
+  
 
  private:
     
