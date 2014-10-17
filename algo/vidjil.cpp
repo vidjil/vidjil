@@ -608,57 +608,29 @@ int main (int argc, char **argv)
 #define KMER_AMBIGUOUS "?"
 #define KMER_UNKNOWN "_"
 
-      list<const char* > f_germlines ;
+      MultiGermline *multigermline = new MultiGermline();
+      multigermline->load_standard_set(multi_germline_file);
 
-      // TR
-      f_germlines.push_back("germline/TRAV.fa");
-      f_germlines.push_back("germline/TRAJ.fa");
-
-      f_germlines.push_back("germline/TRBV.fa");
-      f_germlines.push_back("germline/TRBD.fa");
-      f_germlines.push_back("germline/TRBJ.fa");
-
-      f_germlines.push_back("germline/TRDV.fa"); 
-      f_germlines.push_back("germline/TRDD.fa");
-      f_germlines.push_back("germline/TRDJ.fa");
-
-      f_germlines.push_back("germline/TRGV.fa");
-      f_germlines.push_back("germline/TRGJ.fa");
-
-      // Ig
-
-      f_germlines.push_back("germline/IGHV.fa");
-      f_germlines.push_back("germline/IGHD.fa");
-      f_germlines.push_back("germline/IGHJ.fa");
-
-      f_germlines.push_back("germline/IGKV.fa");
-      f_germlines.push_back("germline/IGKJ.fa");
-
-      f_germlines.push_back("germline/IGLV.fa");
-      f_germlines.push_back("germline/IGLJ.fa");
 
       // Read germline and build one unique index
 
       bool rc = true ;   
-      IKmerStore<KmerStringAffect>  *index = KmerStoreFactory::createIndex<KmerStringAffect>(seed, rc);
-      map <string, int> stats_kmer, stats_max;
+      IKmerStore<KmerAffect>  *index = KmerStoreFactory::createIndex<KmerAffect>(seed, rc);
+      map <char, int> stats_kmer, stats_max;
 
-      for (list<const char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
-	{
-	  Fasta rep(*it, 2, "|", cout);
-	  index->insert(rep, *it);
-	}
+      multigermline->insert_in_one_index(index);
 
       // Initialize statistics, with two additional categories
-
-      f_germlines.push_back(KMER_AMBIGUOUS);
-      f_germlines.push_back(KMER_UNKNOWN);
-
-      for (list<const char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+      index->labels.push_back(make_pair(KmerAffect::getAmbiguous(), KMER_AMBIGUOUS));
+      index->labels.push_back(make_pair(KmerAffect::getUnknown(), KMER_UNKNOWN));
+      
+      for (list< pair <KmerAffect, string> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
 	{
-	  stats_kmer[string(*it)] = 0 ;
-	  stats_max[string(*it)] = 0 ;
+	  char key = affect_char(it->first.affect) ;
+	  stats_kmer[key] = 0 ;
+	  stats_max[key] = 0 ;
 	}
+
 
       // Open read file (copied frow below)
 
@@ -673,9 +645,9 @@ int main (int argc, char **argv)
       }
       
       // init forbidden for .max()
-      set<KmerStringAffect> forbidden;
-      forbidden.insert(KmerStringAffect::getAmbiguous());
-      forbidden.insert(KmerStringAffect::getUnknown());
+      set<KmerAffect> forbidden;
+      forbidden.insert(KmerAffect::getAmbiguous());
+      forbidden.insert(KmerAffect::getUnknown());
       
       // Loop through all reads
 
@@ -690,33 +662,20 @@ int main (int argc, char **argv)
 	  string seq = reads->getSequence().sequence;
 	  total_length += seq.length() - s;
 
-	  KmerAffectAnalyser<KmerStringAffect> *kaa = new KmerAffectAnalyser<KmerStringAffect>(*index, seq);
+	  KmerAffectAnalyser<KmerAffect> *kaa = new KmerAffectAnalyser<KmerAffect>(*index, seq);
 
 	  for (int i = 0; i < kaa->count(); i++) 
 	    { 
-	      KmerStringAffect ksa = kaa->getAffectation(i);
-
-	      if (ksa.isAmbiguous())
-		{
-		  stats_kmer[KMER_AMBIGUOUS]++ ;
-		  continue ;
-		}
-	      
-	      if (ksa.isUnknown()) 
-		{
-		  stats_kmer[KMER_UNKNOWN]++ ;
-		  continue ;
-		}
-
-	      stats_kmer[ksa.label]++ ;
+	      KmerAffect ksa = kaa->getAffectation(i);
+	      stats_kmer[affect_char(ksa.affect)]++ ;
 	    }
 
           delete kaa;
 
-	  CountKmerAffectAnalyser<KmerStringAffect> ckaa(*index, seq);
+	  CountKmerAffectAnalyser<KmerAffect> ckaa(*index, seq);
 	  ckaa.setAllowedOverlap(k-1);
 
-	  stats_max[ckaa.max(forbidden).label]++ ;
+	  stats_max[ckaa.max(forbidden).affect.c]++ ;
 
 	}
 
@@ -726,17 +685,20 @@ int main (int argc, char **argv)
 
       cout << "  <== " << nb_reads << " reads" << endl ;
       cout << "\t" << " max" << "\t\t" << "        kmers" << "\n" ;
-      for (list<const char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+
+      for (list< pair <KmerAffect, string> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
 	{
-	  cout << setw(12) << stats_max[*it] << " " ;
-	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_max[*it] / nb_reads * 100 << "%" ;
+	  char key = affect_char(it->first.affect) ;
+	  
+	  cout << setw(12) << stats_max[key] << " " ;
+	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_max[key] / nb_reads * 100 << "%" ;
 
 	  cout << "     " ;
 
-	  cout << setw(12) << stats_kmer[*it] << " " ;
-	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[*it] / total_length * 100 << "%" ;
+	  cout << setw(12) << stats_kmer[key] << " " ;
+	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[key] / total_length * 100 << "%" ;
 
-	  cout << "     " << *it << endl ;
+	  cout << "     " << key << " " << it->second << endl ;
 	}
       
       delete index;
