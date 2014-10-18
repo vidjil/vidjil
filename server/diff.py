@@ -33,10 +33,24 @@ args.nb_others = 3
 
 def diff_two_clones(self, other):
     if not other or not self:
+        who = "+-"[not other]
+        print who,
         print "!!! Clone not present:", self, "/", other
         return
 
     if not self.d['reads'] == other.d['reads']:
+
+        ### Computes 'who' character identification
+        who_minus = False
+        who_plus = False
+        for reads_s, reads_o in zip(self.d['reads'], other.d['reads']):
+            if reads_o > reads_s:
+                who_plus = True
+            if reads_o < reads_s:
+                who_minus = True
+        who = ["=+", "-?"][who_minus][who_plus]
+        print who, 
+
         print "!!! Not the same number or reads:", self.d['id'], "-", self.d['reads'], "/", other.d['reads']
 
 
