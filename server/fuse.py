@@ -260,18 +260,18 @@ class ListWindows:
     '''storage class for sequences informations 
     
     >>> lw1.info()
-    <ListWindows : [[25]] 2 >
+    <ListWindows: [25] 2>
     <window : [5] 3 aaa>
     <window : [12] 2 bbb>
     
     >>> lw2.info()
-    <ListWindows : [[34]] 2 >
+    <ListWindows: [34] 2>
     <window : [8] 4 aaa>
     <window : [2] 8 ccc>
     
-    >>> lw3 = lw1 + lw2 
+    >>> lw3 = lw1 + lw2
     >>> lw3.info()
-    <ListWindows : [[25], [34]] 3 >
+    <ListWindows: [25, 34] 3>
     <window : [12, 0] 2 bbb>
     <window : [5, 8] 3 aaa>
     <window : [0, 2] 8 ccc>
@@ -757,7 +757,7 @@ w6 = Window(1)
 w6.d ={"id" : "bbb", "reads" : [12], "top" : 2 }
 
 lw1 = ListWindows()
-lw1.d["reads_segmented"]=[[25]]
+lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25] }', object_hook=lw1.toPython)
 lw1.d["clones"].append(w5)
 lw1.d["clones"].append(w6)
 
@@ -767,7 +767,7 @@ w8 = Window(1)
 w8.d ={"id" : "ccc", "reads" : [2], "top" : 8, "test" : ["plop"] }
 
 lw2 = ListWindows()
-lw2.d["reads_segmented"]=[[34]]
+lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34] }', object_hook=lw1.toPython)
 lw2.d["clones"].append(w7)
 lw2.d["clones"].append(w8)
 
