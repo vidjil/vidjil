@@ -192,6 +192,9 @@ class Samples:
         
         return obj
 
+    def __str__(self):
+        return "<Samples: %s>" % self.d
+
 class Reads: 
 
     def __init__(self):
@@ -211,6 +214,9 @@ class Reads:
         obj.d["total"] = self.d["total"] + other.d["total"]
         obj.d["segmented"] = self.d["segmented"] + other.d["segmented"]
         return obj
+
+    def __str__(self):
+        return "<Reads: %s>" % self.d
         
 class OtherWindows:
     
