@@ -158,7 +158,7 @@ class KmerSegmenter : public Segmenter
   int getSegmentationStatus() const;
 
  private:
-  void computeSegmentation(int strand, int delta_min, int delta_max, int s);
+  void computeSegmentation(int strand, Germline* germline);
 };
 
 class FineSegmenter : public Segmenter
