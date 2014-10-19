@@ -259,12 +259,13 @@ void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
     } 
   else
     {
-      // Strand +
       affect_infos max;
       if (strand == 1)
-        max = kaa->getMaximum(AFFECT_V, AFFECT_J);
+        max = kaa->getMaximum(KmerAffect(germline->affect_5, 1), 
+			      KmerAffect(germline->affect_3, 1));
       else
-        max = kaa->getMaximum(AFFECT_J_BWD, AFFECT_V_BWD);
+        max = kaa->getMaximum(KmerAffect(germline->affect_3, -1), 
+			      KmerAffect(germline->affect_5, -1));
 
       if (! max.max_found) {
         if ((strand == 1 && max.nb_before_left == 0)
