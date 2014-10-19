@@ -118,6 +118,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define DEFAULT_SEGMENT_COST   VDJ
 
 // warn
+#define WARN_MAX_CLONES 100
 #define WARN_PERCENT_SEGMENTED 40
 
 // display
@@ -611,6 +612,33 @@ int main (int argc, char **argv)
 #ifdef GIT_VERSION
   cout << "# git: " << GIT_VERSION << endl ;
 #endif
+
+
+  //////////////////////////////////
+  // Warning for non-optimal use
+
+  if (max_clones == -1 || max_clones > WARN_MAX_CLONES)
+    {
+      cout << endl
+	   << "* WARNING: vidjil was run with '-A' option or with a large '-z' option" << endl ;
+    }
+  
+  if (command == CMD_SEGMENT)
+    {
+      cout << endl
+	   << "* WARNING: vidjil was run with '-c segment' option" << endl ;
+    }
+  
+  if (max_clones == -1 || max_clones > WARN_MAX_CLONES || command == CMD_SEGMENT)
+    {
+      cout << "* Vidjil purpose is to extract very quickly windows overlapping the CDR3" << endl
+	   << "* and to gather reads into clones (-c clones), and not to provide an accurate V(D)J segmentation." << endl
+	   << "* The following segmentations are slow to compute and are provided only for convenience." << endl
+	   << "* They should be checked with other softwares such as IgBlast, iHHMune-align or IMGT/V-QUEST." << endl 
+	   << "* More information is provided in the 'doc/algo.org' file." << endl 
+	   << endl ;
+    }
+
 
   //////////////////////////////://////////
   //         DISCOVER GERMLINES          //
@@ -1284,14 +1312,6 @@ int main (int argc, char **argv)
     // déja déclaré ?
     //reads = OnlineFasta(f_reads, 1, " ");
     
-
-    cout << "* WARNING: vidjil was run with '-c segment' option" << endl
-         << "* Vidjil purpose is to extract very quickly windows overlapping the CDR3" << endl
-         << "* and to gather reads into clones (-c clones), and not to provide an accurate V(D)J segmentation." << endl
-         << "* The following segmentations are slow to compute and are provided only for convenience." << endl
-         << "* They should be checked with other softwares such as IgBlast, iHHMune-align or IMGT/V-QUEST." << endl
-      ;
-
 
     Fasta rep_V(f_rep_V, 2, "|", cout);
     Fasta rep_D(f_rep_D, 2, "|", cout);
