@@ -16,7 +16,12 @@ public:
   unsigned int count;
 
   Kmer();
+
+  /**
+   * This constructor is used via a IKmerStore<Kmer> index (hence the argument list)       
+   */
   Kmer(const seqtype &kmer, const string &label="", int strand=1);
+
   Kmer &operator+=(const Kmer &);
   static bool hasRevcompSymetry();
 } ;
