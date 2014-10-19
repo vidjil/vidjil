@@ -183,9 +183,9 @@ void usage(char *progname)
        << endl
 
        << "Limits to further analyze some clones" << endl
-       << "  -y <nb>       maximal number of clones computed with a representative (0: no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
-       << "  -z <nb>       maximal number of clones to be segmented (0: no limit, do not use) (default: " << MAX_CLONES << ")" << endl
-       << "  -A            reports and segments all clones (-r 0 -% 0 -z 0), to be used only on very small datasets" << endl
+       << "  -y <nb>       maximal number of clones computed with a representative (-1: no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
+       << "  -z <nb>       maximal number of clones to be segmented (-1: no limit, do not use) (default: " << MAX_CLONES << ")" << endl
+       << "  -A            reports and segments all clones (-r 0 -% 0 -y -1 -z -1), to be used only on very small datasets" << endl
        << endl
 
        << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
@@ -417,8 +417,9 @@ int main (int argc, char **argv)
 
       case 'A': // --all
 	ratio_reads_clone = 0 ;
-	min_reads_clone = 0 ;
-	max_clones = 0 ;
+	min_reads_clone = 1 ;
+	max_representatives = -1 ;
+	max_clones = -1 ;
 	break ;
     
       // Seeds
@@ -999,7 +1000,7 @@ int main (int argc, char **argv)
 
       //$$ If max_representatives is reached, we stop here but still outputs the window
 
-      if (max_representatives && (num_clone >= max_representatives + 1))
+      if ((max_representatives >= 0) && (num_clone >= max_representatives + 1))
 	{
 	  out_clones << window_str << endl ;
 	  continue;
@@ -1055,7 +1056,7 @@ int main (int argc, char **argv)
 	  
 	  //$$ If max_clones is reached, we stop here but still outputs the representative
 
-	  if (max_clones && (num_clone >= max_clones + 1))
+	  if ((max_clones >= 0) && (num_clone >= max_clones + 1))
 	    {
 	      out_clones << representative << endl ;
 	      continue;
