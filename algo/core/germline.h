@@ -67,6 +67,9 @@ class MultiGermline {
  public:
   list <Germline*> germlines;
 
+  // A unique index can be used
+  IKmerStore<KmerAffect> *index;
+
   MultiGermline();
   MultiGermline(string f_germlines_json);
   ~MultiGermline();
@@ -76,6 +79,7 @@ class MultiGermline {
   void load_standard_set(string path);
 
   void insert_in_one_index(IKmerStore<KmerAffect> *_index);
+  void build_with_one_index(string seed);
 
   void out_stats(ostream &out);
 };

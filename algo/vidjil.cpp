@@ -639,6 +639,41 @@ int main (int argc, char **argv)
 	   << endl ;
     }
 
+  /////////////////////////////////////////
+  //            LOAD GERMLINES           //
+  /////////////////////////////////////////
+
+  MultiGermline *multigermline = new MultiGermline();
+
+  if (command == CMD_GERMLINES || command == CMD_CLONES || command == CMD_WINDOWS) 
+    {
+      cout << "Build Kmer indexes" << endl ;
+    
+      if (multi_germline)
+	{
+	  multigermline->build_default_set(multi_germline_file);
+	}
+      else if (command == CMD_GERMLINES)
+	{
+	  multigermline->load_standard_set(multi_germline_file);
+	  multigermline->build_with_one_index(seed);
+	}
+      else
+	{
+	  // Custom germline
+	  Fasta rep_V(f_rep_V, 2, "|", cout);
+	  Fasta rep_D(f_rep_D, 2, "|", cout);
+	  Fasta rep_J(f_rep_J, 2, "|", cout);
+	  
+	  Germline *germline;
+	  germline = new Germline(germline_system, 'X',
+				  rep_V, rep_D, rep_J, 
+				  delta_min, delta_max);
+	  germline->new_index(seed);
+
+	  multigermline->insert(germline);
+	}
+    }
 
   //////////////////////////////://////////
   //         DISCOVER GERMLINES          //
@@ -648,17 +683,8 @@ int main (int argc, char **argv)
 #define KMER_AMBIGUOUS "?"
 #define KMER_UNKNOWN "_"
 
-      MultiGermline *multigermline = new MultiGermline();
-      multigermline->load_standard_set(multi_germline_file);
-
-
-      // Read germline and build one unique index
-
-      bool rc = true ;   
-      IKmerStore<KmerAffect>  *index = KmerStoreFactory::createIndex<KmerAffect>(seed, rc);
       map <char, int> stats_kmer, stats_max;
-
-      multigermline->insert_in_one_index(index);
+      IKmerStore<KmerAffect> *index = multigermline->index ;
 
       // Initialize statistics, with two additional categories
       index->labels.push_back(make_pair(KmerAffect::getAmbiguous(), KMER_AMBIGUOUS));
@@ -778,31 +804,6 @@ int main (int argc, char **argv)
     cout << " w = " << w << "," ;
     cout << " delta = [" << delta_min << "," << delta_max << "]" << endl ;
 
-
-    //////////////////////////////////
-    //$$ Build Kmer indexes
-    cout << "Build Kmer indexes" << endl ;
-    
-    MultiGermline *multigermline = new MultiGermline();
-
-    if (multi_germline)
-      {
-	multigermline->build_default_set(multi_germline_file);
-      }
-    else
-      {
-	Fasta rep_V(f_rep_V, 2, "|", cout);
-	Fasta rep_D(f_rep_D, 2, "|", cout);
-	Fasta rep_J(f_rep_J, 2, "|", cout);
-
-	Germline *germline;
-	germline = new Germline(germline_system, 'X',
-				rep_V, rep_D, rep_J, 
-				delta_min, delta_max);
-	germline->new_index(seed);
-
-	multigermline->insert(germline);
-      }
 
     //////////////////////////////////
     //$$ Kmer Segmentation

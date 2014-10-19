@@ -171,6 +171,13 @@ void MultiGermline::insert_in_one_index(IKmerStore<KmerAffect> *_index)
     }
 }
 
+void MultiGermline::build_with_one_index(string seed)
+{
+  bool rc = true ;
+  index = KmerStoreFactory::createIndex<KmerAffect>(seed, rc);
+  insert_in_one_index(index);
+}
+
 void MultiGermline::out_stats(ostream &out)
 {
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
