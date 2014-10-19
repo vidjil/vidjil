@@ -75,6 +75,7 @@
 #define DEFAULT_MAX_REPRESENTATIVES 100
 #define MAX_CLONES 20
 #define RATIO_READS_CLONE 0.0
+#define NO_LIMIT "all"
 
 #define COMMAND_WINDOWS "windows"
 #define COMMAND_CLONES "clones"
@@ -183,9 +184,9 @@ void usage(char *progname)
        << endl
 
        << "Limits to further analyze some clones" << endl
-       << "  -y <nb>       maximal number of clones computed with a representative (-1: no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
-       << "  -z <nb>       maximal number of clones to be segmented (-1: no limit, do not use) (default: " << MAX_CLONES << ")" << endl
-       << "  -A            reports and segments all clones (-r 0 -% 0 -y -1 -z -1), to be used only on very small datasets" << endl
+       << "  -y <nb>       maximal number of clones computed with a representative ('" << NO_LIMIT << "': no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
+       << "  -z <nb>       maximal number of clones to be segmented ('" << NO_LIMIT << "': no limit, do not use) (default: " << MAX_CLONES << ")" << endl
+       << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets" << endl
        << endl
 
        << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
@@ -408,10 +409,20 @@ int main (int argc, char **argv)
         break;
 
       case 'y':
+	if (!strcmp(NO_LIMIT, optarg))
+	  {
+	    max_representatives = -1;
+	    break;
+	  }
 	max_representatives = atoi(optarg);
         break;
 
       case 'z':
+	if (!strcmp(NO_LIMIT, optarg))
+	  {
+	    max_clones = -1;
+	    break;
+	  }
 	max_clones = atoi(optarg);
         break;
 
