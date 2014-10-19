@@ -20,7 +20,7 @@ public:
   /**
    * This constructor is used via a IKmerStore<Kmer> index (hence the argument list)       
    */
-  Kmer(const seqtype &kmer, const string &label="", int strand=1);
+  Kmer(const string &label, int strand=1);
 
   Kmer &operator+=(const Kmer &);
   static bool hasRevcompSymetry();
@@ -171,7 +171,7 @@ void IKmerStore<T>::insert(Fasta& input,
     insert(input.sequence(r), label);
   }
 
-  labels.push_back(make_pair(T("", label, 1), label)) ;
+  labels.push_back(make_pair(T(label, 1), label)) ;
 }
 
 template<class T> 
@@ -187,10 +187,10 @@ void IKmerStore<T>::insert(const seqtype &sequence,
         kmer = rc_kmer;
       }
     }
-    this->get(kmer) += T(kmer, label, strand);
+    this->get(kmer) += T(label, strand);
     if (revcomp_indexed && ! T::hasRevcompSymetry()) {
       seqtype rc_kmer = revcomp(kmer);
-      this->get(rc_kmer) += T(rc_kmer, label, -1);
+      this->get(rc_kmer) += T(label, -1);
     }
   }
 }

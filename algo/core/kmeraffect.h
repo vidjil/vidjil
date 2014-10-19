@@ -69,7 +69,7 @@ public:
    * Construct an affectation as stated by the parameters
    * @post affect_strand(affect) == strand AND affect_char(affect) == kmer[0]
    */
-  KmerAffect(const string &kmer, const string &label="", int strand=1);
+  KmerAffect(const string &label, int strand=1);
   /**
    * Add another affectation to the current one.
    * @post The current affectation is not modified if the parameter is the same
@@ -142,17 +142,17 @@ ostream &operator<<(ostream &os, const KmerAffect &kmer);
 /**
  * Constant defining the unknown affectation (not known yet)
  */
-const KmerAffect AFFECT_UNKNOWN = KmerAffect("", "\0", 0); 
+const KmerAffect AFFECT_UNKNOWN = KmerAffect("\0", 0); 
 /**
  * Constant defining the ambiguous affectation (many possibilities)
  */
-const KmerAffect AFFECT_AMBIGUOUS = KmerAffect("", "\1", 1); 
+const KmerAffect AFFECT_AMBIGUOUS = KmerAffect("\1", 1); 
 
-const KmerAffect AFFECT_V = KmerAffect("", "V", 1); 
-const KmerAffect AFFECT_J = KmerAffect("", "J", 1); 
+const KmerAffect AFFECT_V = KmerAffect("V", 1); 
+const KmerAffect AFFECT_J = KmerAffect("J", 1); 
 
-const KmerAffect AFFECT_V_BWD = KmerAffect("", "V", -1); 
-const KmerAffect AFFECT_J_BWD = KmerAffect("", "J", -1); 
+const KmerAffect AFFECT_V_BWD = KmerAffect("V", -1); 
+const KmerAffect AFFECT_J_BWD = KmerAffect("J", -1); 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -176,7 +176,7 @@ public:
    * Construct an affectation as stated by the parameters
    * @post affect_strand(affect) == strand AND affect_char(affect) == kmer[0]
    */
-  KmerStringAffect(const string &kmer, const string &label="", int strand=1);
+  KmerStringAffect(const string &label, int strand=1);
   /**
    * Add another affectation to the current one.
    * @post The current affectation is not modified if the parameter is the same
@@ -244,6 +244,6 @@ bool operator>=(const KmerStringAffect &k1, const KmerStringAffect &k2);
 ostream &operator<<(ostream &os, const KmerStringAffect &kmer);
 
 const KmerStringAffect KSA_UNKNOWN = KmerStringAffect();
-const KmerStringAffect KSA_AMBIGUOUS = KmerStringAffect("", "", 2);
+const KmerStringAffect KSA_AMBIGUOUS = KmerStringAffect("", 2);
 
 #endif

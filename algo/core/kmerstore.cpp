@@ -26,7 +26,7 @@
 
 Kmer::Kmer():count(0) {}
 
-Kmer::Kmer(const string &kmer, const string &label, int strand) {
+Kmer::Kmer(const string &label, int strand) {
   count = 1;
 }
 
