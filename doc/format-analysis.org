@@ -173,15 +173,15 @@ In the .analysis file, this section is intended to describe some specific clones
                      // positions are related to the 'sequence'
                      // names of V/D/J genes should match the ones in files referenced in germline/germline.data
       {
-         "5": [],
+         "5": "IGHV5*01",
          "5start": 0, 
          "5end": 0,
 
-         "4": [],
+         "4": "IGHD1*01",
          "4start": 0, 
          "4end": 0,
 
-         "3": [],
+         "3": "IGHJ3*02",
          "3start": 0, 
          "3end": 0,
       }

@@ -72,10 +72,10 @@ Axis.prototype = {
             var clone = self.m.clone(cloneID) 
             if (typeof clone.seg != "undefined" 
                 && typeof clone.seg[type2] != "undefined" 
-                && typeof gene_list[clone.seg[type2][0].split("*")[0]] != "undefined")
+                && typeof gene_list[clone.seg[type2].split("*")[0]] != "undefined")
             {
-                var allele = clone.seg[type2][0]
-                var gene = clone.seg[type2][0].split("*")[0]
+                var allele = clone.seg[type2]
+                var gene = clone.seg[type2].split("*")[0]
                 var pos = ((gene_list[gene].rank+0.5)/(total_gene+1))
                 
                 if (displayAllele){

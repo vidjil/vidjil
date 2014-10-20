@@ -136,9 +136,9 @@ Clone.prototype = {
         withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
         if (typeof (this.seg) != 'undefined' && typeof (this.seg["5"]) != 'undefined') {
             if (withAllele) {
-                return this.seg["5"][0]
+                return this.seg["5"]
             }else{
-                return this.seg["5"][0].split('*')[0];
+                return this.seg["5"].split('*')[0];
             }
         }
         return "undefined V";
@@ -148,9 +148,9 @@ Clone.prototype = {
         withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
         if (typeof (this.seg) != 'undefined' && typeof (this.seg["4"]) != 'undefined') {
             if (withAllele) {
-                return this.seg["4"][0]
+                return this.seg["4"]
             }else{
-                return this.seg["4"][0].split('*')[0];
+                return this.seg["4"].split('*')[0];
             }
         }
         return "undefined D";
@@ -160,9 +160,9 @@ Clone.prototype = {
         withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
         if (typeof (this.seg) != 'undefined' && typeof (this.seg["3"]) != 'undefined') {
             if (withAllele) {
-                return this.seg["3"][0]
+                return this.seg["3"]
             }else{
-                return this.seg["3"][0].split('*')[0];
+                return this.seg["3"].split('*')[0];
             }
         }
         return "undefined J";
@@ -172,9 +172,9 @@ Clone.prototype = {
         withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
         if (typeof (this.seg) != 'undefined' && typeof (this.seg[type]) != 'undefined') {
             if (withAllele) {
-                return this.seg[type][0];
+                return this.seg[type];
             }else{
-                return this.seg[type][0].split('*')[0];
+                return this.seg[type].split('*')[0];
             }
         }
         return "undefined";

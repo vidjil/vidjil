@@ -909,13 +909,16 @@ int main (int argc, char **argv)
 	cout << "  ! No windows with current parameters." << endl;
       }
 
-    if (command == CMD_CLONES) {
-
     //////////////////////////////////
     //$$ Clustering
-
+    windowsStorage->sort();
+    list<pair <junction, int> > sort_clones = windowsStorage->getSortedList();
+    cout << "  ==> " << sort_clones.size() << " clones" << endl ;
+    
     list <list <junction> > clones_windows;
-    comp_matrix comp=comp_matrix(*windowsStorage);
+    comp_matrix comp=comp_matrix(sort_clones);
+      
+    if (command == CMD_CLONES) {
 
     if (epsilon || forced_edges.size())
       {
@@ -953,10 +956,6 @@ int main (int argc, char **argv)
     //     || ((clone_nb_reads >= min_reads_clone) 
     //		  && (clone_nb_reads * 100.0 / nb_segmented >= ratio_reads_clone)))
 
-    windowsStorage->sort();
-    list<pair <junction, int> > sort_clones = windowsStorage->getSortedList();
-    cout << "  ==> " << sort_clones.size() << " clones" << endl ;
- 
     if (sort_clones.size() == 0)
       {
 	cout << "  ! No clones with current parameters." << endl;
@@ -1278,6 +1277,11 @@ int main (int argc, char **argv)
     json->add("reads", *json_reads);
     json->add("germline", germline_system);
     json->add("clones", jsonSortedWindows);
+    
+    if (epsilon || forced_edges.size()){
+      JsonArray json_clusters = comp.toJson(clones_windows);
+      json->add("clusters", json_clusters );
+    }
 
     //Added edges in the json output file
     //json->add("links", jsonLevenshtein);

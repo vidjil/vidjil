@@ -9,24 +9,27 @@
 #include <ctime>
 #include "dynprog.h"
 #include "windows.h"
+#include "json.h"
 
 using namespace std ;
 
 #define SIMILAR_JUNCTIONS_THRESHOLD 1
+#define JUNCTION_LIMIT 200
 
 
 class comp_matrix {
   public:
     char ** m;
-    WindowsStorage &windows;
+    list<pair <junction, int> > sort_clones;
     map <string, int> count;
     int n_j;
     int n_j2;
+    size_t matrix_size;
     
     /**
     * create new distance matrix
     */
-    comp_matrix(WindowsStorage &windows);
+    comp_matrix(list<pair <junction, int> > sc);
         
     /**
     * init matrix with a KmerStore and compute distance value between sequences
@@ -65,6 +68,9 @@ class comp_matrix {
     void del();
     
     void stat_cluster( list<list<junction> > cluster, ostream &out=cout);
+    
+    JsonArray toJson( list<list<junction> > cluster);
+  
 
  private:
     
