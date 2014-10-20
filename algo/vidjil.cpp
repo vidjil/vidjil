@@ -1275,7 +1275,6 @@ int main (int argc, char **argv)
     json->add("vidjil_json_version", VIDJIL_JSON_VERSION);
     json->add("samples", *json_samples);
     json->add("reads", *json_reads);
-    json->add("germline", germline_system);
     json->add("clones", jsonSortedWindows);
     
     if (epsilon || forced_edges.size()){

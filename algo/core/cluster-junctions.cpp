@@ -404,15 +404,17 @@ JsonArray comp_matrix::toJson(list<list<junction> > clusterList)
     for (list <list <string> >::iterator it = clusterList.begin();
     it != clusterList.end(); ++it )
     {
-      JsonArray cluster;
       list<string> li=*it;
       
-      for (list<string>::iterator it2 = li.begin();
-      it2 != li.end(); ++it2 )
-      {
-        cluster.add(*it2);
+      if (li.size() > 1 ){ 
+        JsonArray cluster;
+        for (list<string>::iterator it2 = li.begin();
+        it2 != li.end(); ++it2 )
+        {
+            cluster.add(*it2);
+        }
+        result.add(cluster);
       }
-      result.add(cluster);
     }
     
     return result;
