@@ -112,7 +112,7 @@ Builder.prototype = {
         normalize_list.appendChild(document.createTextNode("none"))
         normalize_list.appendChild(document.createElement("br"))
         
-        for (var i=0; i<self.m.n_windows; i++){
+        for (var i=0; i<self.m.n_clones; i++){
             if (typeof self.m.clone(i).expected != "undefined"){
                 var input = document.createElement("input")
                 var text = document.createTextNode(self.m.clone(i).getName() + " => " +self.m.clone(i).expected)
@@ -357,7 +357,7 @@ Builder.prototype = {
 
         //init slider
         var max_top = 0;
-        for (var i = 0; i < this.m.n_windows; i++) {
+        for (var i = 0; i < this.m.n_clones; i++) {
             if (this.m.clone(i).top > max_top)
                 max_top = this.m.clone(i).top
         }
@@ -375,7 +375,7 @@ Builder.prototype = {
             $("#system_menu").css("display", "")
             $("#color_system_button").css("display", "")
             
-            for (var key in this.m.system_segmented) {
+            for (var key in this.m.reads.germline) {
                 
                 var radio=document.createElement("input");
                     radio.type="radio";
@@ -410,7 +410,7 @@ Builder.prototype = {
         var clusterSelector = document.getElementById("clusterby_button")
         clusterSelector.innerHTML = "";
         
-        if (self.m.windows[0]._target){
+        if (self.m.clones[0]._target){
         
             var target = document.createElement('a');
                 target.className = "buttonSelector"
@@ -437,7 +437,7 @@ Builder.prototype = {
             clusterSelector.appendChild(clonotype)
         }
         
-        if (self.m.windows[0].system){
+        if (self.m.clones[0].system){
             
             var system = document.createElement('a');
                 system.className = "buttonSelector"
@@ -587,17 +587,17 @@ Builder.prototype = {
         span.appendChild(document.createTextNode("edit"));
         span.className = "button_right"
         span.onclick = function () {
-            self.edit(this, "timestamp2");
+            self.edit(this, "timestamp");
         }
         div_date.appendChild(span)
         parent.appendChild(div_date)
 
-        var percent = (this.m.reads_segmented[this.m.t] / this.m.reads_total[this.m.t]) * 100
-        var val = "" + this.m.reads_segmented[this.m.t] + " reads" + " (" + percent.toFixed(2) + "%)"
+        var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100
+        var val = "" + this.m.reads.segmented[this.m.t] + " reads" + " (" + percent.toFixed(2) + "%)"
         var div_segmented = this.build_info_line("info_segmented", "segmented", val)
         parent.appendChild(div_segmented)
         
-        var div_total = this.build_info_line("info_total", "total", this.m.reads_total[this.m.t] + " reads")
+        var div_total = this.build_info_line("info_total", "total", this.m.reads.total[this.m.t] + " reads")
         parent.appendChild(div_total)
 
         /*TODO put this somewhere else
@@ -622,7 +622,7 @@ Builder.prototype = {
         
         var keys = 0 ;
 
-        for (var key in this.m.system_segmented) {
+        for (var key in this.m.reads.germline) {
             
             if (key == "IGH" && keys > 0) {
                 span2.appendChild(document.createElement("br"));

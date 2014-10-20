@@ -11,6 +11,12 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
 
   WindowsStorage *windowsStorage = new WindowsStorage(windows_labels);
 
+  for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
+    {
+      Germline *germline = *it ;
+      nb_reads_germline[germline->code] = 0;
+    }
+  
   while (reads->hasNext()) {
     reads->next();
     nb_reads++;
@@ -36,6 +42,8 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
 	  *out_segmented << seg.getKmerAffectAnalyser()->toString() << endl;
       }
       
+      nb_reads_germline[seg.system]++;
+      
     } else if (out_unsegmented) {
       *out_unsegmented << reads->getSequence();
       *out_unsegmented << "#" << segmented_mesg[seg.getSegmentationStatus()] << endl;
@@ -57,6 +65,10 @@ size_t WindowExtractor::getNbReads() {
 
 size_t WindowExtractor::getNbSegmented(SEGMENTED seg) {
   return stats[seg].nb;
+}
+
+size_t WindowExtractor::getNbReadsGermline(string germline) {
+  return nb_reads_germline[germline];
 }
 
 void WindowExtractor::setSegmentedOutput(ostream *out) {

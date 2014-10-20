@@ -20,6 +20,7 @@
 function Clone(data, model, hash) {
     this.m = model
     this.hash = hash
+    this.split = false
     var key = Object.keys(data)
     for (var i=0; i<key.length; i++ ){
         this[key[i]]=data[key[i]]
@@ -53,26 +54,24 @@ Clone.prototype = {
                 return this.name;
             }
         } else {
-            return this.window;
+            return this.id;
         }
     }, //end getCode
 
     getSystem: function () {
-        if (typeof (this.system) != 'undefined') {
-            return this.system;
-        } else {
-            if (this.m.system != 'multi' ) return this.m.system;   
+        if (typeof (this.germline) != 'undefined') {
+            return this.germline;
         }
     }, 
 
-    /* compute the clone size ( sum of all windows clustered )
+    /* compute the clone size ( sum of all clones clustered )
      * @t : tracking point (default value : current tracking point)
      * */
     getSize: function (time) {
         time = typeof time !== 'undefined' ? time : this.m.t;
 
-        if (this.m.reads_segmented[time] == 0 ) return 0
-        var result = this.getReads(time) / this.m.reads_segmented[time]
+        if (this.m.reads.segmented[time] == 0 ) return 0
+        var result = this.getReads(time) / this.m.reads.segmented[time]
         
         if (this.m.norm) {
             result = this.m.normalize(result, time)
@@ -96,8 +95,8 @@ Clone.prototype = {
     getSequenceSize: function (time) {
         time = typeof time !== 'undefined' ? time : this.m.t;
         
-        if (this.m.reads_segmented[time] == 0 ) return 0
-        var result = this.getSequenceReads(time) / this.m.reads_segmented[time]
+        if (this.m.reads.segmented[time] == 0 ) return 0
+        var result = this.getSequenceReads(time) / this.m.reads.segmented[time]
         
         if (this.norm) {
             result = this.m.normalize(result, time)
@@ -108,15 +107,16 @@ Clone.prototype = {
     }, //end getSequenceSize
 
 
-    /* compute the clone reads number ( sum of all reads of windows clustered )
+    /* compute the clone reads number ( sum of all reads of clones clustered )
      * @t : tracking point (default value : current tracking point)
      * */
     getReads: function (time) {
         time = typeof time !== 'undefined' ? time : this.m.t;
         var result = 0;
 
-        for (var j = 0; j < this.m.clones[this.hash].cluster.length; j++) {
-            result += this.m.clone(this.m.clones[this.hash].cluster[j]).size[time];
+        var cluster = this.m.clusters[this.hash]
+        for (var j = 0; j < cluster.length; j++) {
+            result += this.m.clone(cluster[j]).reads[time];
         }
 
         return result
@@ -128,22 +128,64 @@ Clone.prototype = {
      * */
     getSequenceReads: function (time) {
         time = typeof time !== 'undefined' ? time : this.m.t;
-        return this.size[time];;
+        return this.reads[time];;
 
     }, //end getSequenceSize
     
-    getV: function () {
-        if (typeof (this.sequence) != 'undefined' && typeof (this.V) != 'undefined') {
-            return this.V[0].split('*')[0];
+    getV: function (withAllele) {
+        withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
+        if (typeof (this.seg) != 'undefined' && typeof (this.seg["5"]) != 'undefined') {
+            if (withAllele) {
+                return this.seg["5"]
+            }else{
+                return this.seg["5"].split('*')[0];
+            }
         }
         return "undefined V";
     },
+    
+    getD: function (withAllele) {
+        withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
+        if (typeof (this.seg) != 'undefined' && typeof (this.seg["4"]) != 'undefined') {
+            if (withAllele) {
+                return this.seg["4"]
+            }else{
+                return this.seg["4"].split('*')[0];
+            }
+        }
+        return "undefined D";
+    },
 
-    getJ: function () {
-        if (typeof (this.sequence) != 'undefined' && typeof (this.J) != 'undefined') {
-            return this.J[0].split('*')[0];;
+    getJ: function (withAllele) {
+        withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
+        if (typeof (this.seg) != 'undefined' && typeof (this.seg["3"]) != 'undefined') {
+            if (withAllele) {
+                return this.seg["3"]
+            }else{
+                return this.seg["3"].split('*')[0];
+            }
         }
         return "undefined J";
+    },
+    
+    getGene: function (type, withAllele) {
+        withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
+        if (typeof (this.seg) != 'undefined' && typeof (this.seg[type]) != 'undefined') {
+            if (withAllele) {
+                return this.seg[type];
+            }else{
+                return this.seg[type].split('*')[0];
+            }
+        }
+        return "undefined";
+    },
+    
+    getNlength: function () {
+        if (typeof this.seg != 'undefined'){
+            return this.seg['3start']-this.seg['5end']-1
+        }else{
+            return 0
+        }
     },
     
     getSequence : function () {
@@ -151,17 +193,6 @@ Clone.prototype = {
             return this.sequence
         }else{
             return "0";
-        }
-    },
-    
-    /* return clone segmentation status
-     * 
-     * */
-    getStatus: function () {
-        if (typeof this.status != 'undefined'){
-            return this.m.segmented_mesg[this.status]
-        }else{
-            return "not specified";
         }
     },
     
@@ -233,16 +264,16 @@ Clone.prototype = {
             this.color =  tagColor[this.tag];
         }else if (this.m.colorMethod == "dbscan"){
             this.color =  this.colorDBSCAN;
-        }else if (this.m.colorMethod == "V" && typeof (this.V) != 'undefined'){
+        }else if (this.m.colorMethod == "V" && this.seg["5"] !== undefined){
             this.color =  this.colorV;
-        }else if (this.m.colorMethod == "D" && typeof (this.D) != 'undefined'){
+        }else if (this.m.colorMethod == "D" && this.seg["4"] !== undefined){
             this.color =  this.colorD;
-        }else if (this.m.colorMethod == "J" && typeof (this.J) != 'undefined'){
+        }else if (this.m.colorMethod == "J" && this.seg["3"] !== undefined){
             this.color =  this.colorJ;
-        }else if (this.m.colorMethod == "N" && typeof (this.N) != 'undefined'){
+        }else if (this.m.colorMethod == "N"){
             this.color =  this.colorN;
-        }else if (this.m.colorMethod == "system") {
-            this.color = germline.icon[this.system].color
+        }else if (this.m.colorMethod == "system" && typeof germline.icon[this.germline] != 'undefined') {
+            this.color = germline.icon[this.germline].color
         }else{
             this.color = color['@default'];
         }
@@ -252,7 +283,7 @@ Clone.prototype = {
      *
      * */
     getHtmlInfo: function () {
-        var isCluster = this.m.clones[this.hash].cluster.length
+        var isCluster = this.m.clusters[this.hash].length
         var time_length = this.m.samples.order.length
         var html = ""
 
@@ -276,7 +307,7 @@ Clone.prototype = {
             html += "<tr><td> clone name </td><td colspan='" + time_length + "'>" + this.getName() + "</td></tr>"
             html += "<tr><td> clone size (n-reads (total reads) )</td>"
             for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.getReads(this.m.samples.order[i]) + "  (" + this.m.reads_segmented[this.m.samples.order[i]] + ")</td>"
+            html += "<td>" + this.getReads(this.m.samples.order[i]) + "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")</td>"
             }
             html += "</tr><tr><td> clone size (%)</td>"
             for (var i = 0; i < time_length; i++) {
@@ -294,7 +325,7 @@ Clone.prototype = {
         html += "<tr><td> size (n-reads (total reads) )</td>"
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + this.getSequenceReads(this.m.samples.order[i]) + 
-                    "  (" + this.m.reads_segmented[this.m.samples.order[i]] + ")</td>"
+                    "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")</td>"
         }
         html += "</tr>"
         html += "<tr><td> size (%)</td>"
@@ -307,29 +338,28 @@ Clone.prototype = {
         
         //segmentation info
         html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation information</td></tr>"
-        html += "<tr><td> segmented </td><td colspan='" + time_length + "'>" + this.getStatus() + "</td></tr>"
         
-        if (typeof this.seg_stat != 'undefined'){
+        if (typeof this.stats != 'undefined'){
             var total_stat = [];
-            for (var i=0; i<this.seg_stat.length; i++) total_stat[i] = 0
-            for (var i=0; i<this.seg_stat.length; i++){
-                for (var key in this.seg_stat[i]) total_stat[i] +=  this.seg_stat[i][key]
+            for (var i=0; i<this.stats.length; i++) total_stat[i] = 0
+            for (var i=0; i<this.stats.length; i++){
+                for (var key in this.stats[i]) total_stat[i] +=  this.stats[i][key]
             }
             
-            for (var key in this.seg_stat[0]){
+            for (var key in this.stats[0]){
                 html += "<tr><td> "+this.m.segmented_mesg[key]+"</td>"
                 for (var i = 0; i < time_length; i++) {
-                html += "<td>"+this.seg_stat[i][key] 
-                        + " (" + ((this.seg_stat[i][key]/total_stat[i]) * 100).toFixed(1) + " %)</td>"
+                html += "<td>"+this.stats[i][key] 
+                        + " (" + ((this.stats[i][key]/total_stat[i]) * 100).toFixed(1) + " %)</td>"
                 }
             }
         }
         
         html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.sequence + "</td></tr>"
-        html += "<tr><td> window </td><td colspan='" + time_length + "'>" + this.window + "</td></tr>"
-        html += "<tr><td> V </td><td colspan='" + time_length + "'>" + this.V + "</td></tr>"
-        html += "<tr><td> D </td><td colspan='" + time_length + "'>" + this.D + "</td></tr>"
-        html += "<tr><td> J </td><td colspan='" + time_length + "'>" + this.J + "</td></tr>"
+        html += "<tr><td> id </td><td colspan='" + time_length + "'>" + this.id + "</td></tr>"
+        html += "<tr><td> 5 </td><td colspan='" + time_length + "'>" + this.seg["5"] + "</td></tr>"
+        html += "<tr><td> 4 </td><td colspan='" + time_length + "'>" + this.seg["4"] + "</td></tr>"
+        html += "<tr><td> 3 </td><td colspan='" + time_length + "'>" + this.seg["3"] + "</td></tr>"
         
         
         //other info (clntab)

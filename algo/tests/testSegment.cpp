@@ -20,7 +20,8 @@ void testFineSegment()
   Fasta data("../../data/Stanford_S22.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline(seqV, seqD, seqJ, "####", 0, 50);
+  germline = new Germline("IGH", 'G', seqV, seqD, seqJ, 0, 50);
+  germline->new_index("####");
 
   Sequence seq = data.read(2);
       
@@ -70,9 +71,12 @@ void testSegmentOverlap()
   Fasta data("../../data/bug-segment-overlap.fa", 1, " ");
   
   Germline *germline1 ;
-  germline1 = new Germline(seqV, seqV, seqJ, "##########", -50, 50);
+  germline1 = new Germline("TRG", 'G', seqV, seqV, seqJ, -50, 50);
+  germline1->new_index("##########");
+
   Germline *germline2 ;
-  germline2 = new Germline(seqV, seqV, seqJ, "##########", -50, 50);
+  germline2 = new Germline("TRG2", 'G', seqV, seqV, seqJ, -50, 50);
+  germline2->new_index("##########");
 
   MultiGermline *multi1 ;
   multi1 = new MultiGermline();
@@ -103,7 +107,8 @@ void testSegmentationCause() {
   Fasta data("../../data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline(seqV, seqV, seqJ, "##########", 0, 10);
+  germline = new Germline("TRG", 'G', seqV, seqV, seqJ, 0, 10);
+  germline->new_index("##########");
 
   MultiGermline *multi ;
   multi = new MultiGermline();
@@ -197,8 +202,9 @@ void testExtractor() {
   OnlineFasta data("../../data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline(seqV, seqV, seqJ, "##########", 0, 10);
-  
+  germline = new Germline("TRG", 'G', seqV, seqV, seqJ, 0, 10);
+  germline->new_index("##########");
+
   MultiGermline *multi ;
   multi = new MultiGermline();
   multi->insert(germline);

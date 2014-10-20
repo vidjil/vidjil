@@ -122,7 +122,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
         if row.results_file.data_file is not None :
             files += os.path.abspath(os.path.dirname(sys.argv[0])) + "/applications/vidjil/uploads/"+row.results_file.data_file+" "
     
-    cmd = "python ../fuse.py -o "+output_file+" -t 100 -g "+vidjil_germline+" "+files
+    cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
     
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
@@ -193,7 +193,7 @@ def run_fuse_only(id_file, id_config, id_data, id_fuse):
         if row.sequence_file.data_file is not None :
             files += os.path.abspath(os.path.dirname(sys.argv[0])) + "/applications/vidjil/uploads/"+row.sequence_file.data_file+" "
     
-    cmd = "python ../fuse.py -o "+output_file+" -t 100 -g "+vidjil_germline+" "+files
+    cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
     print cmd
     
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)

@@ -12,7 +12,7 @@ using namespace std;
 
 class Germline {
  private:
-  void build_index(string seed);
+  void update_index();
 
  public:
   /*
@@ -26,11 +26,10 @@ class Germline {
 
   Germline(string _code, char _shortcut, 
   	   string f_rep_5, string f_rep_4, string f_rep_3,
-   	   string seed, 
    	   int _delta_min, int _delta_max);
 
-  Germline(Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
-	   string seed,
+  Germline(string _code, char _shortcut, 
+      Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
 	   int _delta_min, int _delta_max);
 
   ~Germline();
@@ -38,9 +37,15 @@ class Germline {
   string code ;
   char   shortcut ;
 
+  void new_index(string seed);
+  void use_index(IKmerStore<KmerAffect> *index);
+
   // KmerAffect affect_5 ;
   // KmerAffect affect_3 ;
-
+  string affect_5 ;
+  string affect_4 ;
+  string affect_3 ;
+  
   Fasta  rep_5 ;
   Fasta  rep_4 ;
   Fasta  rep_3 ;
@@ -62,12 +67,19 @@ class MultiGermline {
  public:
   list <Germline*> germlines;
 
+  // A unique index can be used
+  IKmerStore<KmerAffect> *index;
+
   MultiGermline();
   MultiGermline(string f_germlines_json);
   ~MultiGermline();
 
   void insert(Germline *germline);
-  void load_default_set(string path);
+  void build_default_set(string path);
+  void load_standard_set(string path);
+
+  void insert_in_one_index(IKmerStore<KmerAffect> *_index);
+  void build_with_one_index(string seed);
 
   void out_stats(ostream &out);
 };

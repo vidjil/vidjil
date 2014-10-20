@@ -24,7 +24,12 @@
     return lh.second>rh.second;
   }
 
-comp_matrix::comp_matrix(WindowsStorage &ws):windows(ws){}
+comp_matrix::comp_matrix(list<pair <junction, int> > sc)
+{
+  sort_clones = sc;
+  matrix_size = sort_clones.size();
+  if (matrix_size > JUNCTION_LIMIT) matrix_size = JUNCTION_LIMIT;
+}
 
 void comp_matrix::compare(ostream &out, Cost cluster_cost)
 {
@@ -37,30 +42,33 @@ void comp_matrix::compare(ostream &out, Cost cluster_cost)
   out << "  Using cost " << compareCost << endl ;
   
   string j1, j2;
-  m = alloc_matrix(windows.size());
+  m = alloc_matrix(sort_clones.size());
   
   int c=0;
   int c1=0;
   int c2=0;
 
-  for (mjs::const_iterator it0 = windows.getMap().begin();
-       it0 != windows.getMap().end(); ++it0 )
+  size_t i = 0;
+  for (list <pair<junction,int> >::const_iterator it0 = sort_clones.begin();
+    (it0 != sort_clones.end()) & (i<matrix_size); ++it0) 
     {
-      
+      i++;
       j1=it0->first;
       
-      for (mjs::const_iterator it1 =  it0;
-           it1 != windows.getMap().end(); ++it1 )
-      {
-	j2=it1->first;
-	DynProg dp = DynProg(j1, j2, DynProg::Local, compareCost);
-	int score=dp.compute();
-	int distance = max(j1.size(), j2.size())-score;
-	m[c2][c1]=distance;
-	m[c1][c2]=distance;
-	c1++;
-	c++;
-      }//fin it1
+      size_t k = 0;
+      for (list <pair<junction,int> >::const_iterator it1 = it0;
+        (it1 != sort_clones.end()) & (k<matrix_size); ++it1) 
+        {
+            k++;
+            j2=it1->first;
+            DynProg dp = DynProg(j1, j2, DynProg::Local, compareCost);
+            int score=dp.compute();
+            int distance = max(j1.size(), j2.size())-score;
+            m[c2][c1]=distance;
+            m[c1][c2]=distance;
+            c1++;
+            c++;
+        }//fin it1
       c2++;
       c1=c2;
     }//fin it0
@@ -69,14 +77,15 @@ void comp_matrix::compare(ostream &out, Cost cluster_cost)
 }
 
 void comp_matrix::load(string file){
-  
-  m = alloc_matrix(windows.size());
 
-  char* tampon=(char*)malloc(windows.size()*sizeof(char));
+    
+  m = alloc_matrix(sort_clones.size());
+
+  char* tampon=(char*)malloc(sort_clones.size()*sizeof(char));
   ifstream in_comp(file.c_str());
-  for(unsigned int i=0; i<windows.size();i++){
-    in_comp.read(tampon, windows.size()*sizeof(char));
-    for(unsigned int j=0;j<windows.size(); j++){
+  for(unsigned int i=0; i<sort_clones.size();i++){
+    in_comp.read(tampon, sort_clones.size()*sizeof(char));
+    for(unsigned int j=0;j<sort_clones.size(); j++){
 	m[i][j]=tampon[j];
       }
   }
@@ -90,8 +99,8 @@ void comp_matrix::save(string file){
   
   ofstream out_comp(file.c_str());
   
-  for(unsigned int i=0; i<windows.size();i++){
-    out_comp.write((char *)m[i],windows.size()*sizeof(char));
+  for(unsigned int i=0; i<sort_clones.size();i++){
+    out_comp.write((char *)m[i],sort_clones.size()*sizeof(char));
   }
   
   out_comp.close();
@@ -99,7 +108,7 @@ void comp_matrix::save(string file){
  
 
 void comp_matrix::del(){
-  for (unsigned int i=0;i<windows.size();i++){
+  for (unsigned int i=0;i<sort_clones.size();i++){
 	free(m[i]);
   }
   free(m);
@@ -125,40 +134,44 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
   int c1=0;
   int c2=0;
 
-  for (mjs::const_iterator ite = windows.getMap().begin();
-       ite != windows.getMap().end(); ++ite )
+  size_t i = 0;
+  for (list <pair<junction,int> >::const_iterator ite = sort_clones.begin();
+    (ite != sort_clones.end()) & (i<matrix_size); ++ite) 
     {
+      i++;
       n_j++;
       list <string> voisins ;
       j1=ite->first;
       neighbor[j1]=voisins;
     }
   
-  for (mjs::const_iterator it0 = windows.getMap().begin();
-       it0 != windows.getMap().end(); ++it0 )
-    {
-      
+  i = 0;
+  for (list <pair<junction,int> >::const_iterator it0 = sort_clones.begin();
+    (it0 != sort_clones.end()) & (i<matrix_size); ++it0) 
+      {
+      i++;
       j1=it0->first;
-      int k=it0->second.size();
+      int k=it0->second;
       count[j1]=k;
       n_j2+=k;
       
-      for (mjs::const_iterator it1 =  windows.getMap().begin();
-           it1 != windows.getMap().end(); ++it1 )
+      size_t j = 0; 
+      for (list <pair<junction,int> >::const_iterator it1 = sort_clones.begin();
+        (it1 != sort_clones.end()) & (j<matrix_size); ++it1) 
       {
-	j2=it1->first;
-	int distance = (int)m[c2][c1];
-        
-	if (distance <= epsilon){
-	  neighbor[j1].push_back(j2);
-	  
-	}
-	c1++;
-	c++;
-      }//fin it1
-      c2++;
-      c1=0;
-    }//fin it0
+        j++;
+        j2=it1->first;
+        int distance = (int)m[c2][c1];
+            
+        if (distance <= epsilon){
+            neighbor[j1].push_back(j2);
+        }
+        c1++;
+        c++;
+        }//fin it1
+        c2++;
+        c1=0;
+      }//fin it0
     
 /////////////////////////
 //Forced - edges
@@ -213,9 +226,11 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
    
    int noise = 0;
    int nb_comp = 0 ;
-   for (mjs::const_iterator it0 = windows.getMap().begin();
-        it0 != windows.getMap().end(); ++it0 )	 
+   i = 0;
+   for (list <pair<junction,int> >::const_iterator it0 = sort_clones.begin();
+    (it0 != sort_clones.end()) & (i<matrix_size); ++it0) 
     {
+      i++;
       j1=it0->first;
       if(visit[j1]==false && clust[j1]==false){
 	
@@ -380,6 +395,27 @@ void comp_matrix::stat_cluster( list<list<junction> > cluster, ostream &out )
       stat << jc2 <<" ";
       out << "    clusterised occurrences	: "<< n_j2c << " (" << jc2 << "%)" << endl ;
   
+}
+
+JsonArray comp_matrix::toJson(list<list<junction> > clusterList)
+{
+    JsonArray result;
+    
+    for (list <list <string> >::iterator it = clusterList.begin();
+    it != clusterList.end(); ++it )
+    {
+      JsonArray cluster;
+      list<string> li=*it;
+      
+      for (list<string>::iterator it2 = li.begin();
+      it2 != li.end(); ++it2 )
+      {
+        cluster.add(*it2);
+      }
+      result.add(cluster);
+    }
+    
+    return result;
 }
 
 char **comp_matrix::alloc_matrix(size_t s) {

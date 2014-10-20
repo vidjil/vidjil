@@ -136,7 +136,7 @@ Graph.prototype = {
 
         this.initAxis();
 
-        for (var i = 0; i < this.m.n_windows; i++) {
+        for (var i = 0; i < this.m.n_clones; i++) {
             this.data_graph[i] = {
                 id: i,
                 name: "line" + i,
@@ -148,18 +148,18 @@ Graph.prototype = {
         this.resolution5 = []
 
         for (i = 0; i < this.m.samples.number; i++) {
-            this.resolution1[i] = (1 / this.m.reads_segmented[i])
-            this.resolution5[i] = (5 / this.m.reads_segmented[i])
+            this.resolution1[i] = (1 / this.m.reads.segmented[i])
+            this.resolution5[i] = (5 / this.m.reads.segmented[i])
         }
 
         this.data_res.push({
-            id: this.m.n_windows,
+            id: this.m.n_clones,
             name: "resolution1",
             path: this.constructPathR(this.resolution1)
         });
         
         this.data_res.push({
-            id: this.m.n_windows + 1,
+            id: this.m.n_clones + 1,
             name: "resolution5",
             path: this.constructPathR(this.resolution5)
         });
@@ -388,8 +388,8 @@ Graph.prototype = {
         }
         
         for (i = 0; i < this.m.samples.number; i++) {
-            this.resolution1[i] = (1 / this.m.reads_segmented[i])
-            this.resolution5[i] = (5 / this.m.reads_segmented[i])
+            this.resolution1[i] = (1 / this.m.reads.segmented[i])
+            this.resolution5[i] = (5 / this.m.reads.segmented[i])
         }
         
         if(this.mode=="stack"){
@@ -398,16 +398,16 @@ Graph.prototype = {
             this.data_res[0].path = this.constructPathR(this.resolution1);
             this.data_res[1].path = this.constructPathR(this.resolution5);
 
-            for (var i = 0; i < this.m.n_windows; i++) {
-                for (var j = 0; j < this.m.clones[i].cluster.length; j++) {
-                    this.data_graph[this.m.clones[i].cluster[j]].path = this.constructPath(i, false);
+            for (var i = 0; i < this.m.n_clones; i++) {
+                for (var j = 0; j < this.m.clusters[i].length; j++) {
+                    this.data_graph[this.m.clusters[i][j]].path = this.constructPath(i, false);
                 }
             }
-            for (var i = 0; i < this.m.n_windows; i++) {
+            for (var i = 0; i < this.m.n_clones; i++) {
                 var cloneID = i
-                for (var j = 0; j < this.m.clones[cloneID].cluster.length; j++) {
-                    var seqID = this.m.clones[cloneID].cluster[j]
-                    if (this.m.clones[cloneID].split) {
+                for (var j = 0; j < this.m.clusters[cloneID].length; j++) {
+                    var seqID = this.m.clusters[cloneID][j]
+                    if (this.m.clone(cloneID).split) {
                         this.data_graph[seqID].path = this.constructPath(seqID, true);
                     } else {
                         this.data_graph[seqID].path = this.constructPath(cloneID, false);
@@ -423,7 +423,6 @@ Graph.prototype = {
     },
     
     updateStack: function () {
-        console.log("bam")
         var stack = new Stack(this.m)
         stack.compute();
         for (var i = 0; i < this.m.n_length; i++) {
@@ -440,9 +439,9 @@ Graph.prototype = {
         }else{
             for (var i = 0; i < list.length; i++) {
                 var cloneID = list[i]
-                for (var j = 0; j < this.m.clones[cloneID].cluster.length; j++) {
-                    var seqID = this.m.clones[cloneID].cluster[j]
-                    if (this.m.clones[cloneID].split) {
+                for (var j = 0; j < this.m.clusters[cloneID].length; j++) {
+                    var seqID = this.m.clusters[cloneID][j]
+                    if (this.m.clone(cloneID).split) {
                         this.data_graph[seqID].path = this.constructPath(seqID, true);
                     } else {
                         this.data_graph[seqID].path = this.constructPath(cloneID, false);
@@ -893,11 +892,11 @@ Stack.prototype = {
         this.total_size = []; 
         for (j=0; j<this.m.samples.number; j++){
             this.total_size[j]=0
-            for (i=0; i<this.m.n_windows; i++){
+            for (i=0; i<this.m.n_clones; i++){
                 if (this.m.clone(i).isActive()) this.total_size[j] += this.m.clone(i).getSize(j); //active clones
             }
             
-            this.total_size[j] += this.m.clone(this.m.windows.length-1).getSize(j);//other clones
+            this.total_size[j] += this.m.clone(this.m.clones.length-1).getSize(j);//other clones
         }
     },
     
@@ -910,7 +909,7 @@ Stack.prototype = {
             this.sum[j]=1
         }
         
-        for (i=0; i<this.m.n_windows; i++){
+        for (i=0; i<this.m.n_clones; i++){
             this.min[i] = []
             this.max[i] = []
             //active clones
@@ -930,9 +929,9 @@ Stack.prototype = {
         
         //other
         for (j=0; j<this.m.samples.number; j++){
-            this.min[this.m.windows.length-1][j] = this.sum[j]
-            this.sum[this.m.windows.length-1] += this.m.clone(this.m.windows.length-1).getSize(j)
-            this.max[this.m.windows.length-1][j] = this.sum[j]
+            this.min[this.m.clones.length-1][j] = this.sum[j]
+            this.sum[this.m.clones.length-1] += this.m.clone(this.m.clones.length-1).getSize(j)
+            this.max[this.m.clones.length-1][j] = this.sum[j]
         }
         
     },

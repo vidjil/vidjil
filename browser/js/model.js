@@ -56,9 +56,7 @@ VIDJIL_JSON_VERSION = '2014.09';
 function Model() {
     myConsole.log("creation Model")
     this.view = [];
-
     this.reset();
-
     this.checkBrowser();
 }
 
@@ -68,7 +66,7 @@ Model.prototype = {
     reset: function () {
         this.analysis = {
             clones: [],
-            cluster: [],
+            clusters: [],
             date: []
         };
         this.t = 0;
@@ -79,10 +77,8 @@ Model.prototype = {
         this.top = 10;
         this.precision = 1;
         this.isPlaying = false;
-        this.timestamp = [];
-        this.timestamp2 = [];
+        this.clusters = [];
         this.clones = [];
-        this.windows = [];
         this.germline = {}
         this.germlineV = new Germline(this)
         this.germlineD = new Germline(this)
@@ -141,7 +137,7 @@ Model.prototype = {
      * @id : id of the form (html element) linking to the data file
      * @analysis : id of the form (html element) linking to the analysis file
      * impossible to use direct path to input files, need a fakepath from input form
-     * @limit : minimum top value to keep a window*/
+     * @limit : minimum top value to keep a clone*/
     load: function (id, analysis, limit) {
         var self = this;
 
@@ -162,11 +158,11 @@ Model.prototype = {
             try {
                 var data = JSON.parse(oFREvent.target.result);
             } catch (e) {
-                popupMsg(myConsole.msgfile_error);
+                myConsole.popupMsg(myConsole.msg.file_error);
                 return 0
             }
             if ((typeof (data.vidjil_json_version) == 'undefined') || (data.vidjil_json_version < VIDJIL_JSON_VERSION)) {
-                popupMsg(myConsole.msgversion_error);
+                myConsole.popupMsg(myConsole.msg.version_error);
                 return 0;
             }
             self.reset()
@@ -232,63 +228,37 @@ Model.prototype = {
 
     parseJsonData: function (data, limit) {
         self = this;
-        self.windows = [];
-        self.links = [];
         self.mapID = {}
         self.dataCluster = []
-        var min_sizes = [];
-        var n_max = 0;
         
-        for (var k = 0; k < data.windows[0].size.length; k++) {
-                min_sizes[k] = 0.01;
+        //copy .data file in model
+        for (var key in data){
+            if (key != "clusters") self[key] = data[key]
         }
-
+        this.data_clusters = data.clusters;
+        
+        //filter clones
+        self.clones = [];
         var hash = 0
-        //keep best top value
-        for (var i = 0; i < data.windows.length; i++) {
-            if (data.windows[i].top <= limit) {
-                //search for min_size
-                for (var k = 0; k < data.windows[i].size.length; k++) {
-                    var size = (data.windows[i].size[k] / data.reads_segmented[k])
-
-                    if (min_sizes[k] > size && data.windows[i].size[k] != 0)
-                        min_sizes[k] = size;
-                }
-                
-                data.windows[i].Nlength = 0;
-                if ((typeof (data.windows[i].Jstart) != 'undefined') &&
-                    (typeof (data.windows[i].Vend) != 'undefined') ) {
-                    data.windows[i].Nlength = data.windows[i].Jstart - data.windows[i].Vend
-                }
-
-                //search for n_max 
-                if ((typeof (data.windows[i].sequence) != 'undefined') &&
-                    (typeof (data.windows[i].Nlength) != 'undefined') &&
-                    (data.windows[i].Nlength > n_max)) {
-                    n_max = data.windows[i].Nlength;
-                }
-                
-                var clone = new Clone(data.windows[i], self, hash)
-                self.windows.push(clone);
+        for (var i = 0; i < data.clones.length; i++) {
+            if (data.clones[i].top <= limit) {
+                var clone = new Clone(data.clones[i], self, hash)
+                self.clones.push(clone);
+                self.mapID[data.clones[i].id] = hash;
                 hash++
             }
         }
         
-        self.samples = data.samples
-        self.links = data.links;
-        self.reads_segmented = data.reads_segmented;
-        self.system_segmented = data.system_segmented;
-        self.segmentation_info = data.segmentation_info;
-        
-        // synthetic window
+        // add fake clone
         var other = {
             "sequence": 0,
-            "window": "other",
+            "id": "other",
             "top": 0,
-            "size": []
+            "reads": []
         }
         var clone = new Clone(other, self, hash)
-        self.windows.push(clone);
+        self.clones.push(clone);
+        self.n_clones = self.clones.length;
         
         // default samples
         if (typeof self.samples.number == 'string'){
@@ -303,89 +273,33 @@ Model.prototype = {
             for (var i = 0; i < self.samples.number; i++) self.samples.names.push("");
         }
         
-        self.n_windows = self.windows.length;
-        self.min_sizes = min_sizes;
-        self.n_max = n_max;
-        self.system_selected = [];
-        for (var key in self.system_segmented) self.system_selected.push(key)
-        self.reads_segmented_total = self.reads_segmented.reduce(function (a, b) {
-            return a + b;
-        });
-        self.reads_total = data.reads_total;
-        if (self.reads_total) {
-            self.reads_total_total = self.reads_total.reduce(function (a, b) {
-                return a + b;
-            });
-        } else {
-            self.reads_total_total = self.reads_segmented_total;
-            self.reads_total = self.reads_segmented;
+        //search for min_size
+        var min_sizes = [];
+        for (var k = 0; k < self.samples.number; k++) min_sizes[k] = 0.01;
+        
+        for (var i = 0; i < this.n_clones; i++) {
+            for (var k = 0; k < self.samples.number; k++) {
+                var size = (self.clone(i).reads[k] / data.reads.segmented[k])
+                if (min_sizes[k] > size && data.clones[i].reads[k] != 0)min_sizes[k] = size;
+            }
         }
-        self.timestamp = data.timestamp;
+        self.min_sizes = min_sizes;
+        
+        //extract germline
+        self.system_selected = [];
+        for (var key in self.reads.germline) self.system_selected.push(key)
+        
+        var germline_list = Object.keys(this.reads.germline)
+        if (germline_list.length >1) {
+            self.system = "multi"
+        } else {
+            self.system = germline_list[0];
+        }
+        
         self.scale_color = d3.scale.log()
             .domain([1, self.precision])
             .range([250, 0]);
         
-
-        //extract germline
-        if (typeof data.germline != 'undefined') {
-            var t = data.germline.split('/');
-            self.system = t[t.length - 1];
-        } else {
-            self.system = "TRG";
-        }
-
-        for (var i = 0; i < self.n_windows; i++) {
-            self.mapID[self.windows[i].window] = i;
-        }
-
-        var tmp = {}
-        // init clones
-        if (data.clones) {
-            for (var i = 0; i < data.clones.length; i++) {
-                var cl = {}
-                cl.cluster = []
-                for (var j = 0; j < data.clones[i].cluster.length; j++) {
-                    if (self.mapID[data.clones[i].cluster[j]] || self.mapID[data.clones[i].cluster[j]] == "0") {
-                        cl.cluster.push(self.mapID[data.clones[i].cluster[j]])
-                    }
-                }
-                if (data.clones[i].name) {
-                    cl.name = data.clones[i].name
-                } else {
-                    cl.name = "cluster " + i
-                }
-
-                //fuse cluster with same name
-                if (cl.cluster.length != 0) {
-                    if (!tmp[cl.name]) {
-                        tmp[cl.name] = cl
-                        tmp[cl.name].cluster.sort()
-                    } else {
-                        tmp[cl.name].cluster = tmp[cl.name].cluster.concat(cl.cluster)
-                        tmp[cl.name].cluster.sort()
-                    }
-                }
-            }
-
-            for (var key in tmp) {
-                self.dataCluster.push(tmp[key])
-            }
-            
-            //      DATA CLUSTER
-            this.dataCluster.sort(function (a, b) {
-                return b.cluster[0] - a.cluster[0]
-            })
-            for (var i = 0; i < this.dataCluster.length; i++) {
-                var new_cluster = [];
-                for (var j = 0; j < this.dataCluster[i].cluster.length; j++) {
-                    new_cluster = new_cluster.concat(this.clones[this.dataCluster[i].cluster[j]].cluster);
-                    this.clones[this.dataCluster[i].cluster[j]].cluster = []
-                }
-                this.clones[this.dataCluster[i].cluster[0]].cluster = new_cluster
-                this.clones[this.dataCluster[i].cluster[0]].name = this.dataCluster[i].name
-            }
-
-        }
 
         return this
     },
@@ -439,9 +353,6 @@ Model.prototype = {
                 }
             }
             
-            if (self.analysis.timestamp2) {
-                self.timestamp2 = self.analysis.timestamp2;
-            }
             if (self.analysis.patient) {
                 self.dataFileName = self.analysis.patient;
             }
@@ -468,7 +379,7 @@ Model.prototype = {
     loadGermline: function (system) {
         console.log("loadGermline : " + system)
         system = typeof system !== 'undefined' ? system : this.system;
-        if (system == "multi") system = Object.keys(this.system_segmented)[0]
+        if (system == "multi") system = Object.keys(this.reads.germline)[0]
         
         return  this.germlineV.load(system, "V", this)
                     .germlineD.load(system, "D", this)
@@ -491,7 +402,7 @@ Model.prototype = {
         }
         
         if (this.system == "multi"){
-            for ( var i=0; i<this.n_windows; i++){
+            for ( var i=0; i<this.n_clones; i++){
                 var clone = this.clone(i)
                 if (clone.getSystem() == system) {
                     if (clone[gene] && clone[gene][0]){
@@ -501,7 +412,7 @@ Model.prototype = {
             }
             
         }else{
-            for (var i=0; i<this.n_windows; i++){
+            for (var i=0; i<this.n_clones; i++){
                 var clone = this.clone(i)
                 if (clone[gene] && clone[gene][0]){
                     list[clone[gene][0]]=0
@@ -554,42 +465,29 @@ Model.prototype = {
      * */
     initClones: function () {
         myConsole.log("initClones()");
-        var maxNlength = 0;
-        var nsize;
-        self.mapID = [];
-        this.clones = [];
+        this.clusters = [];
 
         //      NSIZE
-        for (var i = 0; i < this.n_windows; i++) {
+        var n_max = 0;
+        for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
-            
-            if (typeof (clone.getSequence()) != 'undefined') {
-                nsize = clone.Nlength;
-                if (nsize > maxNlength) {
-                    maxNlength = nsize;
-                }
-            } else {
-                nsize = -1;
-            }
-            self.mapID[clone.window] = i;
-            this.clones[i] = {
-                cluster: [i],
-                split: false
-            };
-            clone.Nlength = nsize;
+            var n = clone.getNlength();
+            if (n > n_max) {n_max = n; }
+            this.clusters[i] = [i]
             clone.tag = default_tag;
         }
+        this.n_max = n_max
         
         //      COLOR_N
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
-            clone.colorN = colorGenerator((((clone.Nlength / maxNlength) - 1) * (-250)), color_s, color_v);
+            clone.colorN = colorGenerator((((clone.getNlength() / n_max) - 1) * (-250)), color_s, color_v);
         }
 
         this.computeColor()
         
         //      SHORTNAME
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
             if (typeof (clone.getSequence()) != 'undefined' && typeof (clone.name) != 'undefined') {
                 clone.shortName = clone.name.replace(new RegExp('IGHV', 'g'), "VH");
@@ -606,29 +504,23 @@ Model.prototype = {
     
     computeColor: function(){
         //      COLOR_V
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
             
-            if (typeof (clone.V) != 'undefined' && this.germlineV.allele[clone.V[0]]) {
-                var vGene = clone.V[0];
+            var vGene = clone.getV();
+            if (typeof this.germlineV.allele[vGene] != 'undefined' ) {
                 clone.colorV = this.germlineV.allele[vGene].color;
             } else {
                 clone.colorV = "";
             }
-        }
-
-        //      COLOR_J
-        for (var i = 0; i < this.n_windows; i++) {
-            var clone = this.clone(i)
             
-            if (typeof (clone.J) != 'undefined' && this.germlineJ.allele[clone.J[0]]) {
-                var jGene = clone.J[0];
+            var jGene = clone.getJ();
+            if (typeof this.germlineJ.allele[jGene] != 'undefined' ) {
                 clone.colorJ = this.germlineJ.allele[jGene].color;
             } else {
                 clone.colorJ = "";
             }
         }
-        
         return this
     },
     
@@ -647,7 +539,7 @@ Model.prototype = {
                 
                 var id = -1
                 var f = 1;
-                //check if we have a clone with a similar window
+                //check if we have a clone with a similar id
                 if (typeof c[i].id != "undefined" && typeof this.mapID[c[i].id] != "undefined") {
                     id = this.mapID[c[i].id]
                 }
@@ -678,7 +570,7 @@ Model.prototype = {
                                 max.id = id
                             }
                         }else{
-                            myConsole.log(" apply analysis : windows "+ c[i].window + " > incorrect expected value", 0)
+                            myConsole.log(" apply analysis : clones "+ c[i].id + " > incorrect expected value", 0)
                         }
                     }else{
                         if (typeof (c[i].tag) != "undefined") {
@@ -690,23 +582,34 @@ Model.prototype = {
                     }
                 }
             }
-
-            //      CUSTOM CLUSTER
-            var cluster = analysis.cluster;
-            for (var i = 0; i < cluster.length; i++) {
-
-                var new_cluster = [];
-                var l = self.mapID[cluster[i][0]]
-                
-                for (var j=0; j<cluster[i].length;j++){
-                    var cloneID = self.mapID[cluster[i][j]]
-                    new_cluster = new_cluster.concat(this.clones[cloneID].cluster);
-                    this.clones[cloneID].cluster = [];
-                }
-                this.clones[l].cluster = new_cluster;
-            }
+            this.loadCluster(this.data_clusters)
+            this.loadCluster(analysis.clusters)
         }
         this.init()
+    },
+    
+    loadCluster: function (clusters) {
+        for (var i = 0; i < clusters.length; i++) {
+
+            var new_cluster = [];
+            
+            for (var j=0; j<clusters[i].length;j++){
+                if (typeof this.mapID[clusters[i][j]] != 'undefined'){
+                    var cloneID = this.mapID[clusters[i][j]]
+                    new_cluster = new_cluster.concat(this.clusters[cloneID]);
+                    console.log(cloneID + " +++ "+new_cluster)
+                    this.clusters[cloneID] = [];
+                }
+            }
+            
+            if (new_cluster.length != 0){
+                var l = new_cluster[0]
+                for (var j=0; j<new_cluster.length;j++){
+                    if (m.clone(new_cluster[j]).top < m.clone(l).top) l = new_cluster[j]
+                }
+                this.clusters[l] = new_cluster;
+            }
+        }
     },
 
     /*
@@ -714,8 +617,8 @@ Model.prototype = {
      */
     findWindow: function (sequence) {
         if (sequence != 0){
-            for ( var i=0; i<this.n_windows; i++ ){
-                if ( sequence.indexOf(this.clone(i).window) != -1 ) return i
+            for ( var i=0; i<this.n_clones; i++ ){
+                if ( sequence.indexOf(this.clone(i).id) != -1 ) return i
             }
         }
         return -1
@@ -751,11 +654,11 @@ Model.prototype = {
             vidjil_json_version : VIDJIL_JSON_VERSION,
             samples : this.samples,
             clones : [],
-            cluster : [],
+            clusters : [],
             tags : {}
         }
 
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             var clone = this.clone(i)
 
             //tag, custom name, expected_value
@@ -764,7 +667,7 @@ Model.prototype = {
                 typeof clone.expected != "undefined") {
 
                 var elem = {};
-                elem.id = clone.window;
+                elem.id = clone.id;
                 elem.sequence = clone.sequence;
 
                 if (typeof clone.tag != "undefined" && clone.tag != 8)
@@ -778,12 +681,12 @@ Model.prototype = {
             }
 
             //clones / cluster
-            if (this.clones[i].cluster.length > 1) {
+            if (this.clusters[i].length > 1) {
                 var elem = [];
-                for (var j = 0; j < this.clones[i].cluster.length; j++) {
-                    elem.push(this.clone(this.clones[i].cluster[j]).window);
+                for (var j = 0; j < this.clusters[i].length; j++) {
+                    elem.push(this.clone(this.clusters[i][j]).id);
                 }
-                analysisData.cluster.push(elem);
+                analysisData.clusters.push(elem);
             }
         }
         
@@ -797,7 +700,6 @@ Model.prototype = {
         
         
         analysisData.normalization = this.normalization
-        analysisData.timestamp2 = this.timestamp2
 
         return JSON.stringify(analysisData, undefined, 2);
     },
@@ -833,16 +735,16 @@ Model.prototype = {
      * */
     update_selected_system: function(){
         
-        //reset reads_segmented
-        for (var i=0 ; i<this.reads_segmented.length; i++){
-            this.reads_segmented[i]=0
+        //reset reads.segmented
+        for (var i=0 ; i<this.reads.segmented.length; i++){
+            this.reads.segmented[i]=0
         }
         
         //reset system
         this.system_selected = []
         
         //check system currently selected in menu
-        for (var key in this.system_segmented) {
+        for (var key in this.reads.germline) {
             if (document.getElementById("checkbox_system_"+key).checked){
                 this.system_selected.push(key)
             }
@@ -850,16 +752,16 @@ Model.prototype = {
         
         //if 0 box checked in menu then all selected
         if (this.system_selected.length == 0) {
-            for (var key in this.system_segmented) {
+            for (var key in this.reads.germline) {
                 this.system_selected.push(key)
             }
         }
         
-        //compute new reads_segmented value (sum of reads_segmented of selected system)
+        //compute new reads.segmented value (sum of reads.segmented of selected system)
         for (var i=0; i<this.system_selected.length; i++){
             var key = this.system_selected[i]
-            for (var j=0; j<this.reads_segmented.length; j++){
-                this.reads_segmented[j] += this.system_segmented[key][j]
+            for (var j=0; j<this.reads.segmented.length; j++){
+                this.reads.segmented[j] += this.reads.germline[key][j]
             }
         }
 
@@ -916,7 +818,7 @@ Model.prototype = {
             this.norm = false
             
             for (var i=0; i<this.samples.number; i++){
-                this.normalization.A[i] = this.getSize(cloneID, i)
+                this.normalization.A[i] = this.clone(cloneID).getSize(i)
             }
             
             this.norm = tmp
@@ -950,8 +852,8 @@ Model.prototype = {
     },
 
     getSegmentationInfo: function (timeID) {
-        if (typeof this.segmentation_info != 'undefined'){
-            return this.segmentation_info[timeID].replace(/(?:\r\n|\r|\n)/g, '<br />')
+        if (typeof this.samples.log != 'undefined'){
+            return this.samples.log[timeID].replace(/(?:\r\n|\r|\n)/g, '<br />')
         }else{
             return "not specified";
         }
@@ -1015,12 +917,8 @@ Model.prototype = {
                 }
                 break;
             case "sampling_date":
-                if ((typeof this.timestamp2 != 'undefined') && this.timestamp2[timeID])
-                    result = this.timestamp2[timeID].split(" ")[0]
-                break;
-            case "run_date":
-                if ((typeof this.timestamp != 'undefined') && this.timestamp[timeID])
-                    result = this.timestamp[timeID].split(" ")[0]
+                if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID])
+                    result = this.samples.timestamp[timeID].split(" ")[0]
                 break;
         }
         return result
@@ -1095,7 +993,7 @@ Model.prototype = {
      * */
     getSelected: function () {
         var result = []
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             if (this.clone(i).isSelected()) {
                 result.push(i);
             }
@@ -1133,7 +1031,7 @@ Model.prototype = {
     select: function (cloneID) {
         myConsole.log("select() (clone " + cloneID + ")");
 
-        if (cloneID == (this.n_windows - 1)) return 0
+        if (cloneID == (this.n_clones - 1)) return 0
 
         if (this.clone(cloneID).isSelected()) {
             return;
@@ -1187,36 +1085,36 @@ Model.prototype = {
                 leader = list[i];
                 top = this.clone(list[i]).top;
             }
-            new_cluster = new_cluster.concat(this.clones[list[i]].cluster);
-            this.clones[list[i]].cluster = [];
+            new_cluster = new_cluster.concat(this.clusters[list[i]]);
+            this.clusters[list[i]] = [];
         }
 
-        this.clones[leader].cluster = new_cluster;
+        this.clusters[leader] = new_cluster;
         this.unselectAll()
         this.updateElem(list)
         this.select(leader)
     },
 
 
-    /* sépare une window d'un clone
+    /* sépare un clone d'un cluster
      *
      * */
-    split: function (cloneID, windowID) {
-        myConsole.log("split() (cloneA " + cloneID + " windowB " + windowID + ")")
-        if (cloneID == windowID) return
+    split: function (clusterID, cloneID) {
+        myConsole.log("split() (cloneA " + clusterID + " windowB " + cloneID + ")")
+        if (clusterID == cloneID) return
 
-        var nlist = this.clones[cloneID].cluster;
-        var index = nlist.indexOf(windowID);
+        var nlist = this.clusters[clusterID];
+        var index = nlist.indexOf(cloneID);
         if (index == -1) return
 
         nlist.splice(index, 1);
 
-        //le clone retrouve sa liste de windows -1
-        this.clones[cloneID].cluster = nlist;
-        //la window forme son propre clone a part
-        this.clones[windowID].cluster = [windowID];
+        //le cluster retrouve sa liste de clones -1
+        this.clusters[clusterID] = nlist;
+        //le clone forme un cluster de 1 clone
+        this.clusters[cloneID] = [cloneID];
 
-        this.updateElem([windowID, cloneID]);
+        this.updateElem([cloneID, clusterID]);
     },
 
 
@@ -1236,18 +1134,18 @@ Model.prototype = {
      *
      * */
     updateModel: function () {
-        for (var i = 0; i < this.clones.length; i++) {
+        for (var i = 0; i < this.clusters.length; i++) {
             // compute only non empty clones
-            if (this.clones[i].cluster.length != 0) {
-                if (!this.clones[i].split) {
-                    for (var j = 0; j < this.clones[i].cluster.length; j++) {
-                        var seq = this.clones[i].cluster[j]
+            if (this.clusters[i].length != 0) {
+                if (!this.clone(i).split) {
+                    for (var j = 0; j < this.clusters[i].length; j++) {
+                        var seq = this.clusters[i][j]
                         this.clone(seq).active = false;
                     }
                     this.active(i)
                 } else {
-                    for (var j = 0; j < this.clones[i].cluster.length; j++) {
-                        var seq = this.clones[i].cluster[j]
+                    for (var j = 0; j < this.clusters[i].length; j++) {
+                        var seq = this.clusters[i][j]
                         this.active(seq)
                     }
                 }
@@ -1256,15 +1154,15 @@ Model.prototype = {
         
         // unactive clones from unselected system
         if (this.system == "multi" && this.system_selected.length != 0) {
-            for (var i = 0; i < this.n_windows; i++) {
+            for (var i = 0; i < this.n_clones; i++) {
                 if (this.system_selected.indexOf(this.clone(i).getSystem()) == -1) {
-                    this.windows[i].active = false;
+                    this.clones[i].active = false;
                 }
             }
         }
         
         //unactive filtered clone
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             if (this.clone(i).isFiltered) {
                 this.clone(i).active = false;
             }
@@ -1272,14 +1170,14 @@ Model.prototype = {
         
         this.computeOtherSize();
 
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             this.clone(i).updateColor()
         }
 
     },
 
     active: function (id) {
-        if (this.clone(id).top <= this.top && tagDisplay[this.clone(id).tag] == 1 && this.clone(id).window != "other") {
+        if (this.clone(id).top <= this.top && tagDisplay[this.clone(id).tag] == 1 && this.clone(id).id != "other") {
             this.clone(id).active = true;
         }
     },
@@ -1334,7 +1232,7 @@ Model.prototype = {
     
     updateStyle: function () {
         var list = []
-        for (var i=0; i<this.n_windows; i++) list[i]=i
+        for (var i=0; i<this.n_clones; i++) list[i]=i
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].updateElemStyle(list);
         }
@@ -1351,7 +1249,7 @@ Model.prototype = {
         this.displayTop();
 
         var count = 0;
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             if (this.clone(i).isActive()) count++
         }
 
@@ -1378,7 +1276,7 @@ Model.prototype = {
         var html_label = document.getElementById('top_label');
         if (html_label != null) {
             var count = 0;
-            for (var i=0; i<this.n_windows; i++){
+            for (var i=0; i<this.n_clones; i++){
                 if (this.clone(i).top <= top) count++;
             }
             html_label.innerHTML = count + ' clones (top ' + top + ')' ;
@@ -1393,22 +1291,22 @@ Model.prototype = {
     computeOtherSize: function () {
         var other = [];
 
-        for (var j = 0; j < this.reads_segmented.length; j++) {
-            other[j] = this.reads_segmented[j]
+        for (var j = 0; j < this.samples.number; j++) {
+            other[j] = this.reads.segmented[j]
         }
 
-        for (var i = 0; i < this.n_windows - 1; i++) {
-            for (var j = 0; j < this.reads_segmented.length; j++) {
-                if (this.clone(i).isActive) {
-                    for (var k = 0; k < this.clones[i].cluster.length; k++) {
-                        if (this.clones[i].cluster[k] != this.n_windows - 1)
-                            other[j] -= this.clone(this.clones[i].cluster[k]).size[j];
+        for (var i = 0; i < this.n_clones - 1; i++) {
+            for (var j = 0; j < this.samples.number; j++) {
+                if (this.clone(i).isActive()) {
+                    for (var k = 0; k < this.clusters[i].length; k++) {
+                        if (this.clusters[i][k] != this.n_clones - 1)
+                            other[j] -= this.clone(this.clusters[i][k]).getSequenceReads(j);
                     }
                 }
             }
         }
 
-        this.clone(this.n_windows - 1).size = other;
+        this.clone(this.n_clones - 1).reads = other;
 
     },
     
@@ -1418,11 +1316,11 @@ Model.prototype = {
     getPointHtmlInfo: function (timeID) {
         var html = ""
 
-        html = "<h2>Point info : " + this.getStrTime(timeID, "name") + "("+this.timestamp[timeID]+")</h2>"
+        html = "<h2>Point info : " + this.getStrTime(timeID, "name") + "("+this.samples.timestamp[timeID]+")</h2>"
         html += "<div id='info_timepoint'><table><tr><th></th>"
-        html += "<tr><td> reads </td><td>" + this.reads_total[timeID] + "</td></tr>"
-        html += "<tr><td> reads segmented </td><td>" + this.reads_segmented[timeID] +
-            " ("+ (this.reads_segmented[timeID]*100/this.reads_total[timeID]).toFixed(3) + " % )</td></tr>"
+        html += "<tr><td> reads </td><td>" + this.reads.total[timeID] + "</td></tr>"
+        html += "<tr><td> reads segmented </td><td>" + this.reads.segmented[timeID] +
+            " ("+ (this.reads.segmented[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )</td></tr>"
         html += "<tr><td> segmentation </td><td>" + this.getSegmentationInfo(timeID) + "</td></tr>"
             
         html += "</table></div>"
@@ -1437,12 +1335,12 @@ Model.prototype = {
         this.currentCluster = data_name;
         //save user cluster
         if ( this.cluster_key==""){
-            this.clones_copy = this.clones
-            this.clones = []
+            this.clusters_copy = this.clusters
+            this.clusters = []
         }
         
         var tmp = {}
-        for (var i = 0; i < this.n_windows - 1; i++) {
+        for (var i = 0; i < this.n_clones - 1; i++) {
 
             //detect key value
             var key = "undefined"
@@ -1459,7 +1357,7 @@ Model.prototype = {
                 }
             }
 
-            //store windows with same key together
+            //store clones with same key together
             if (key == "") key = "undefined"
             if (tmp[key]) {
                 tmp[key].push(i)
@@ -1469,26 +1367,24 @@ Model.prototype = {
 
         }
 
-        //order windows with same key
+        //order clones with same key
         var keys = Object.keys(tmp)
         for (var i in tmp) {
             tmp[i].sort()
         }
 
         //reset cluster
-        for (var i = 0; i < this.windows.length; i++) {
-            this.clones[i] = {
-                cluster: [i]
-            };
+        for (var i = 0; i < this.clones.length; i++) {
+            this.clusters[i] = []
         }
 
         //new cluster
         for (var i in tmp) {
-            this.clones[tmp[i][0]].cluster = tmp[i]
-            this.clones[tmp[i][0]].name = i
+            this.clusters[tmp[i][0]] = tmp[i]
+            this.clusters[tmp[i][0]].name = i
 
             for (var j = 1; j < tmp[i].length; j++) {
-                this.clones[tmp[i][j]].cluster = []
+                this.clusters[tmp[i][j]] = []
             }
         }
         this.cluster_key = data_name
@@ -1503,10 +1399,8 @@ Model.prototype = {
         //reset cluster
         this.cluster_key = ""
         
-        for (var i = 0; i < this.windows.length; i++) {
-            this.clones[i] = {
-                cluster: [i]
-            };
+        for (var i = 0; i < this.clones.length; i++) {
+            this.clusters[i] = [i]
         }
 
         this.update()
@@ -1517,8 +1411,8 @@ Model.prototype = {
      * */
     restoreClones: function () {
         this.cluster_key = ""
-        if ( typeof this.clones_copy != 'undefined'){
-            this.clones = this.clones_copy
+        if ( typeof this.clusters_copy != 'undefined'){
+            this.clusters = this.clusters_copy
             this.update()
         }
         
@@ -1632,7 +1526,7 @@ Model.prototype = {
         if (this.browser != "Chrome" &&
             this.browser != "Firefox" &&
             this.browser != "Safari") {
-            popupMsg(myConsole.msgbrowser_error)
+            myConsole.popupMsg(myConsole.msg.browser_error)
         }
 
     },
@@ -1670,15 +1564,15 @@ Model.prototype = {
     },
     
     split_all: function (bool) {
-        for (var i=0; i < this.clones.length; i++) {
-            this.clones[i].split = bool
+        for (var i=0; i < this.clusters.length; i++) {
+            this.clone(i).split = bool
         }
         this.update()
     },
     
 
     clone: function(hash) {
-        return this.windows[hash]
+        return this.clones[hash]
     },
     
 
@@ -1703,11 +1597,11 @@ Model.prototype = {
     loadRandomTab: function() {
         this.tabRandomColor = [];
         /*Initialisation du tableau de couleurs*/
-        for (var i = 0; i < this.n_windows; i++) {
+        for (var i = 0; i < this.n_clones; i++) {
             this.tabRandomColor.push(i);
         }
         /*Fisher yates algorithm to shuffle the array*/
-        for (var i = this.n_windows - 1; i >= 1; i--) {
+        for (var i = this.n_clones - 1; i >= 1; i--) {
             var j = Math.floor(Math.random() * i) + 1;
             var abs = this.tabRandomColor[i];
             this.tabRandomColor[i] = this.tabRandomColor[j];
@@ -1724,7 +1618,7 @@ Model.prototype = {
             this.dbscan.runAlgorithm();
             for (var i = 0; i < this.dbscan.clusters.length; i++)
                 for (var j = 0; j < this.dbscan.clusters[i].length; j++)
-                    this.windows[this.dbscan.clusters[i][j]].cluster = i;
+                    this.clones[this.dbscan.clusters[i][j]].cluster = i;
             //Color DBSCAN
             if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
             this.colorNodesDBSCAN();
@@ -1739,9 +1633,9 @@ Model.prototype = {
         /*Adding color by specific cluster*/
         /*-> Solution provisoire quant à la couleur noire non voulue est d' "effacer" le nombre max de clusters, mais de le prendre par défaut (100), soit un intervalle de 2.7 à chaque fois*/
         var maxCluster = this.dbscan.clusters.length;
-        for (var i = 0; i < this.n_windows; i++) {
-            if (typeof(this.clone(i).cluster) != 'undefined') {
-                this.clone(i).colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.clone(i).cluster] + 1) ), color_s, color_v);
+        for (var i = 0; i < this.n_clones; i++) {
+            if (typeof(this.clone(i)) != 'undefined') {
+                this.clone(i).colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.clone(i)] + 1) ), color_s, color_v);
             }
             else
                 this.clone(i).colorDBSCAN = color['@default'];
@@ -1751,8 +1645,8 @@ Model.prototype = {
     /* Fonction permettant d'ajouter un tab concernant un node - s'il est au coeur d'un cluster, à l'extérieur ou appartenant à...
      */
     addTagCluster: function() {
-        for (var i = 0; i < this.n_windows; i++)
-            if (typeof(this.clone(i).cluster) != 'undefined')
+        for (var i = 0; i < this.n_clones; i++)
+            if (typeof(this.clone(i)) != 'undefined')
                 switch (this.dbscan.visitedTab[i].mark) {
                 case -1:
                         this.clone(i).tagCluster = "NOISE";

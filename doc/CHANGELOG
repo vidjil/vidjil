@@ -1,6 +1,16 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
+2014-10-XX  The Vidjil Team
+	* Streamlined filtering options (-r/-y/-z), better documented (doc/algo.org)
+	* Streamlined output files (xxxxxxxxxx)
+	* Updated .data .json output, now in the stable 2014.10 format (documented in doc/format-analysis.org)
+	* New experimental multi-germline analysis (-g). This will be improved and documented in a next release.
+	* Refactored main vidjil.cpp, objects storing germlines and statistics (core/germline.cpp, core/stats.cpp)
+	* Transferred clustering from clone output to information in .data, again simplifying vidjil.cpp
+	* Removed unused code parts as well as some files
+	* Bugs closed
+
 2014-09-23  The Vidjil Team
 	* Export cause of non-segmentation in the .data
 	* New option to output segmented reads (-U), now by default segmented reads are not output one by one

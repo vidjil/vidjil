@@ -46,14 +46,20 @@ Germline.prototype = {
             return callback
         }
         this.gene = {}
+        
+        var type2
+        if (type=="V") type2="5"
+        if (type=="D") type2="4"
+        if (type=="J") type2="3"
 
         //reduce germline size (keep only detected genes)
         //and add undetected genes 
         var g = {}
-        for (var i=0; i<this.m.n_windows; i++){
-            if (typeof this.m.clone(i)[type] != "undefined" 
-                && typeof this.m.clone(i)[type][0] != "undefined"){
-                var gene=this.m.clone(i)[type][0];
+        for (var i=0; i<this.m.n_clones; i++){
+            if (typeof this.m.clone(i).seg != "undefined" &&
+                typeof this.m.clone(i).seg[type2] != "undefined"
+            ){
+                var gene=this.m.clone(i).seg[type2];
                 if (this.m.system != "multi" || this.m.clone(i).getSystem() == system){
                     if ( typeof this.allele[gene] != "undefined"){
                         g[gene] = this.allele[gene]

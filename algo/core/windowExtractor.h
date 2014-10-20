@@ -2,6 +2,8 @@
 #define WINDOW_EXTRACTOR_H
 
 #include <iostream>
+#include <string>
+#include <map>
 #include "segment.h"
 #include "germline.h"
 #include "kmerstore.h"
@@ -17,6 +19,7 @@ using namespace std;
 class WindowExtractor {
  private:
   size_t nb_reads;
+  map<string, size_t> nb_reads_germline;
 
   ostream *out_segmented;
   ostream *out_unsegmented;
@@ -63,6 +66,13 @@ class WindowExtractor {
    */
   size_t getNbSegmented(SEGMENTED seg);
 
+   /**
+   * @return the number of reads segmented from germline
+   * @param germline_code: one of the germline code in multigermline
+   * @pre extract() must have been launched.
+   */
+  size_t getNbReadsGermline(string germline_code);
+  
   /**
    * Defines the output stream where the segmented sequences will be output.
    * Otherwise no output will be given.

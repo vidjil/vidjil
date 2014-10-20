@@ -1,17 +1,18 @@
-#+TITLE: .analysis format
+#+TITLE: .analysis and .data format
 #+AUTHOR: The Vidjil team
 
-The .analysis is a [[http://en.wikipedia.org/wiki/JSON][.json]] format describing customizations done by the user
+The .analysis and the .data files share a common [[http://en.wikipedia.org/wiki/JSON][.json]] format 
+
+The .data file represents the actual data on clones (and that can
+reach megabytes).
+
+The .analysis file describe customizations done by the user
 (or by some automatic pre-processing) on the Vidjil browser. The browser
 can load or save such files (and possibly from/to the server).
-
-It is intended to be very small (a few kilobytes), compared to the
-.data file that represents the actual data on clones (and that can
-reach megabytes).
+It is intended to be very small (a few kilobytes).
 
 All settings in the .analysis file override the settings that could be
 present in the .data file.
-
 
 * Analysis file example
 
@@ -26,6 +27,16 @@ present in the .data file.
              "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"],
              "names": ["diag", "fu1"],
              "order": [0, 1]
+        },
+
+        "reads" : {
+            "total" :           [ 437164 ] ,
+            "segmented" :       [ 335662 ] ,
+            "germline" : {
+                "TRG" :         [ 250000 ] ,
+                "IGH" :         [ 35662 ] ,
+                "custom" :      [ 50000 ]
+            }
         },
 
         "clones": [
@@ -43,6 +54,15 @@ present in the .data file.
             }
 
         ],
+
+        "germline" : {
+            "custom" : {
+                "shortcut": "B",
+                "5": ["TRBV.fa"],
+                "4": ["TRBD.fa"],
+                "3": ["TRBJ.fa"]
+            }
+        },
 
         "clusters": [
             [ "clone-845", "clone-821", "clone-147" ],
@@ -66,28 +86,49 @@ present in the .data file.
 #+END_SRC
 
 
-* Generic information for traceability
+* Generic information for traceability [required]
 
 #+BEGIN_SRC js
    "producer": "",    // arbitrary string, user/software/options producing this file [required]
    "timestamp": "",   // last modification date [required]
-   "vidjil_json_version": "2014.09", // version of the format  [required]
+   "vidjil_json_version": "2014.10draft", // version of the format  [required]
 #+END_SRC
 
 
-* 'Samples' element
+
+* 'reads' element [.data only, required]
+
+#+BEGIN_SRC js
+{
+    "total" :           // total number of reads per sample (with samples.number elements)
+    "segmented" :       // number of segmented reads per sample (with samples.number elements)
+    "germline" : {      // number of segmented reads per sample/germline (with samples.number elements)
+        "TRG" :         
+        "IGH" :         
+    }
+}
+#+END_SRC js
+
+
+ 
+* 'Samples' element [required]
 
 #+BEGIN_SRC js
   {
-    "number": 2,      // number of samples
+    "number": 2,      // number of samples [required]
 
-    "original_names": []  // original sample names (with samples.number elements),
-                      // must match the names in the .data file
+    "original_names": [],  // original sample names (with samples.number elements) [required]
+                      // the names in the .data file and in .analysis files must match
 
-    "names": [],      // custom sample names (with samples.number elements)
+    "names": [],      // custom sample names (with samples.number elements) [optional]
                       // These names are editable and will be used on the graphs
 
-    "order": [],      // custom sample order (lexicographic order by default)
+    "order": [],      // custom sample order (lexicographic order by default) [optional]
+
+
+    "producer": [],
+    "timestamp": [],
+    "log": [],
   }
 #+END_SRC
 
@@ -95,39 +136,79 @@ present in the .data file.
 
 * 'Clones' list
 
-This section is intended to describe some specific clones.
 Each element in the 'clones' list describes properties of a clone.
+
+In a .data file, this is the main part, describing all clones.
+
+In the .analysis file, this section is intended to describe some specific clones.
+
+
 
 #+BEGIN_SRC js
   {
     "id": "",        // clone identifier, must be unique [required]
                      //          Vidjil/algo output -> the 'window'  
                      //          Brno .clntab       -> clone sequence
+                     // the clone identifier in the .data file and in .analysis file must match
 
-    "name": "",      // clone custom name
-                     // (the default name is computed from V/D/J information)
+    "germline": ""   // [required for .data]
+                     // (should match a germline defined in germline/germline.data)
 
-    "sequence": "",  // reference nt sequence (not really used now in the browser)
-                     // (for special clones/sequences that are known,
+    "name": "",      // clone custom name [optional]
+                     // (the default name, in .data, is computed from V/D/J information)
+
+    "sequence": "",  // reference nt sequence [required for .data]
+                     // (for .analysis, not really used now in the browser,
+                     //  for special clones/sequences that are known,
                      //  such as standard/spikes or know patient clones)
  
-    "tag": "",       // tag id from 0 to 7 (see below)
+    "tag": "",       // tag id from 0 to 7 (see below) [optional]
 
-    "expected": ""   // expected abundance of this clone (between 0 and 1)
+    "expected": ""   // expected abundance of this clone (between 0 and 1) [optional]
                      // this will create a normalization option in the 
                      // settings browser menu
+
+    "seg":           // segmentation information [optional]
+                     // in the browser clones, that are not segmented will be shown on the grid with '?/?'
+                     // positions are related to the 'sequence'
+                     // names of V/D/J genes should match the ones in files referenced in germline/germline.data
+      {
+         "5": "IGHV5*01",
+         "5start": 0, 
+         "5end": 0,
+
+         "4": "IGHD1*01",
+         "4start": 0, 
+         "4end": 0,
+
+         "3": "IGHJ3*02",
+         "3start": 0, 
+         "3end": 0,
+      }
+
+
+    "reads": [],      // number of reads in this clones [.data only, required] 
+                      // (with samples.number elements)
+    "top": 0,
+
+    "stats": []       // (not documented now) [.data only] (with sample.number elements)
+
+
  }
 #+END_SRC
 
+* 'Germline' list [optional][work in progress]
 
-* 'Clusters' list
+extend the germline.data default file with a custom germline
+
+* 'Clusters' list [optional]
 
 Each element in the 'clusters' list describe a list of clones that are 'merged'.
 In the browser, it will be still possible to see them or to unmerge them.
 The first clone of each line is used as a representative for the cluster.
 
 
-* 'Data' list
+* 'Data' list [optional][work in progress]
 
 Each element in the 'data' list is a list of values (of size samples.number)
 showing additional data for each sample, as for example qPCR levels or spike information.
@@ -135,7 +216,7 @@ showing additional data for each sample, as for example qPCR levels or spike inf
 In the browser, it will be possible to display these data and to normalize
 against them (not implemented now).
 
-* 'Tags' list
+* 'Tags' list [optional]
 
 The 'tags' list describe the custom tag names as well as tags that should be hidden by default.
 The default tag names are defined in [[../browser/js/vidjil-style.js]].
