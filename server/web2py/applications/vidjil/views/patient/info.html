@@ -125,7 +125,7 @@ query = db(
                    {{if row.results_file.run_date :}}
                        <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=row.results_file.run_date }}</td>
                    {{else:}}<td></td>{{pass}} 
-                   <td> {{=status}} </td>
+                   <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=status}} </td>
                    <td onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}'})" > X </td>
                    <td>
                    {{if row.results_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED"):}}

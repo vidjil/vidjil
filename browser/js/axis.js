@@ -62,15 +62,20 @@ Axis.prototype = {
         var allele_list = self.germline.allele
         var total_gene = Object.keys(gene_list).length
         
+        var type2
+        if (geneType=="V") type2="5"
+        if (geneType=="D") type2="4"
+        if (geneType=="J") type2="3"
+        
         //clone position
         this.pos = function(cloneID) {
             var clone = self.m.clone(cloneID) 
-            if (typeof clone[geneType] != "undefined" 
-                && typeof clone[geneType][0] != "undefined" 
-                && typeof gene_list[clone[geneType][0].split("*")[0]] != "undefined")
+            if (typeof clone.seg != "undefined" 
+                && typeof clone.seg[type2] != "undefined" 
+                && typeof gene_list[clone.seg[type2].split("*")[0]] != "undefined")
             {
-                var allele = clone[geneType][0]
-                var gene = clone[geneType][0].split("*")[0]
+                var allele = clone.seg[type2]
+                var gene = clone.seg[type2].split("*")[0]
                 var pos = ((gene_list[gene].rank+0.5)/(total_gene+1))
                 
                 if (displayAllele){
@@ -115,7 +120,7 @@ Axis.prototype = {
             
         //clone position
         this.pos = function(cloneID) {
-            return self.sizeScale(self.m.getSize(cloneID))
+            return self.sizeScale(self.m.clone(cloneID).getSize())
         }
         
         //labels
@@ -139,8 +144,9 @@ Axis.prototype = {
         
         var n_min = 0;
         var n_max = 1;
-        for (var i=0; i<this.m.windows.length; i++){
-            if (this.m.windows[i].Nlength > n_max) n_max = this.m.windows[i].Nlength;
+        for (var i=0; i<this.m.n_clones; i++){
+            var n = this.m.clone(i).getNlength();
+            if (n > n_max) n_max = n;
         }
         
         this.sizeScale = d3.scale.linear()
@@ -149,13 +155,13 @@ Axis.prototype = {
      
         //clone position
         this.pos = function(cloneID) {
-            return self.sizeScale(self.m.windows[cloneID].Nlength)
+            return 1 - self.sizeScale(self.m.clone(cloneID).getNlength())
         }
         
         //labels
         var h = Math.ceil(n_max/5)
         for (var i = 0; i < 5; i++) {
-            var pos = this.sizeScale(h*i);
+            var pos = 1-this.sizeScale(h*i);
             var text = h*i
             this.labels.push(this.label("line", pos, text));
         }

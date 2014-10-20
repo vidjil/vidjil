@@ -4,7 +4,7 @@ $ Points list
 f1:"point": [ "", "" ]
 
 $ Most abundant window, twice, fused 
-f1:"window": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC", "id": .*, "size": [ 8, 8 ]
+f1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC", .*"reads": [ 8, 8 ]
 
 # Fails since 49046ca6b97, no more 'others'
 $ Windows that are not in the top 50

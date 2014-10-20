@@ -230,7 +230,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
       // removeChevauchement is called once info was already computed: it is only to output info_extra
       info_extra += removeChevauchement();
       finishSegmentation();
-
+      system = germline->code;
       return ;
     } 
   } // end for (Germlines)
@@ -722,35 +722,25 @@ void FineSegmenter::FineSegmentD(Germline *germline){
 JsonList FineSegmenter::toJsonList(Germline *germline){
   JsonList result;
   
-  result.add("status", because);
   result.add("sequence", revcomp(sequence, reversed) );
   if (isSegmented()) {
     result.add("name", code_short);
-    result.add("Jstart", Jstart);
-    result.add("Nlength", (del_V+del_J+seg_N.size()) );
-    result.add("Vend", Vend);
-
-
-    JsonArray jsonV;
-    JsonArray jsonJ;
-
-    // TODO: what is going on if some list is smaller than JSON_REMEMBER_BEST ?
     
-    for (int i=0; i<JSON_REMEMBER_BEST; i++) jsonV.add( germline->rep_5.label(score_V[i].second) ) ;
-    result.add("V", jsonV);
-    
+    JsonList seg;
+    seg.add("5", germline->rep_5.label(best_V));
+    seg.add("5start", 0);
+    seg.add("5end", Vend);
     
     if (score_D.size()>0){
-      result.add("Dstart", Dstart);
-      result.add("Dend", Dend);      
-      JsonArray jsonD;
-
-      for (int i=0; i<JSON_REMEMBER_BEST; i++) jsonD.add( germline->rep_4.label(score_D[i].second) ) ;
-      result.add("D", jsonD);
+      seg.add("4", germline->rep_4.label(best_D));
+      result.add("4start", Dstart);
+      result.add("4end", Dend);      
     }
     
-    for (int i=0; i<JSON_REMEMBER_BEST; i++) jsonJ.add( germline->rep_3.label(score_J[i].second) ) ;
-    result.add("J", jsonJ);
+    seg.add("3", germline->rep_3.label(best_J));
+    seg.add("3start", Jstart);
+    
+    result.add("seg", seg);
   }
   return result;
 }

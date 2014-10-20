@@ -164,7 +164,7 @@ string JsonArray::toString(){
   stream << " [ ";
   
   for ( list<string>::iterator i=l.begin(); i!= l.end(); ++i){
-    if (i!=l.begin()) stream << ", ";
+    if (i!=l.begin()) stream << ", " << endl;
     stream << (*i);
   }
   

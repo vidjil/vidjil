@@ -22,12 +22,13 @@ Germline::Germline(string _code, char _shortcut,
 }
 
 
-Germline::Germline(Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
+Germline::Germline(string _code, char _shortcut, 
+           Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
 		   string seed,
 		   int _delta_min, int _delta_max)
 {
-  code = "" ;
-  shortcut = 'X' ;
+  code = _code ;
+  shortcut = _shortcut ;
 
   // affect_5 = KmerAffect("", "V", 0) ;
   // affect_3 = KmerAffect("", "J", 0) ;
@@ -88,7 +89,8 @@ MultiGermline::MultiGermline(string f_germlines_json)
   Fasta rep_3(f_rep_3, 2, "|", cout);
 
   Germline *germline;
-  germline = new Germline(rep_5, rep_4, rep_3,
+  germline = new Germline("TRG", 'G',
+              rep_5, rep_4, rep_3,
 			  seed,
 			  delta_min, delta_max);
 

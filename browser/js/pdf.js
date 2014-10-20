@@ -41,8 +41,8 @@ PDF.prototype = {
 
         if (this.list.length == 0) {
             var flag = 5;
-            for (var i = 0; i < this.m.n_windows; i++) {
-                if (this.m.clones[i].cluster.length != 0 && flag != 0) {
+            for (var i = 0; i < this.m.n_clones; i++) {
+                if (this.m.clusters[i].length != 0 && flag != 0) {
                     this.list.push(i);
                     flag--;
                 }
@@ -127,7 +127,7 @@ PDF.prototype = {
         this.doc.text(this.marge + 5, this.y + 5, this.m.dataFileName);
         // todo: fill again with reliable data :)
         // this.doc.text(this.marge + 5, this.y + 10, 'run: 2013-10-03');
-        this.doc.text(this.marge + 5, this.y + 15, 'analysis: ' + m.timestamp[0].split(' ')[0]);
+        this.doc.text(this.marge + 5, this.y + 15, 'analysis: ' + m.timestamp.split(' ')[0]);
         this.doc.text(this.marge + 5, this.y + 20, 'germline: ' + m.system);
 
         this.doc.rect(this.marge, this.y, 60, 23);
@@ -182,7 +182,7 @@ PDF.prototype = {
         opt2.y_offset = opt.y;
 
         //clones style
-        for (var i = 0; i < this.m.n_windows; i++) {
+        for (var i = 0; i < this.m.n_clones; i++) {
             var polyline = elem.querySelectorAll('[id="polyline'+i+'"]')[0]
             var color = tagColor[this.m.clone(i).getTag()]
 
@@ -194,7 +194,7 @@ PDF.prototype = {
                 polyline.setAttribute("stroke", color);
             }
 
-            if (m.windows[i].window == "other" || !m.windows[i].active) {
+            if (m.clone(i).id == "other" || !m.clone(i).isActive()) {
                 polyline.parentNode.removeChild(polyline);
             }
         }
@@ -259,7 +259,7 @@ PDF.prototype = {
         this.doc.setFont('helvetica', 'normal');
 
         this.checkPage(20)
-        if (this.m.reads_total) this.checkPage(30)
+        if (this.m.reads.total) this.checkPage(30)
 
         //time point
         var time = []
@@ -270,19 +270,19 @@ PDF.prototype = {
         this.next_row()
 
         //info global
-        if (this.m.reads_total) {
-            this.row('total reads', this.m.reads_total, 'raw')
+        if (this.m.reads.total) {
+            this.row('total reads', this.m.reads.total, 'raw')
             this.next_row()
         }
 
-        this.row('total segmented', this.m.reads_segmented, 'raw');
+        this.row('total segmented', this.m.reads.segmented, 'raw');
 
-        if (this.m.reads_total) {
+        if (this.m.reads.total) {
             this.next_sub_row()
 
             var data = []
             for (var i = 0; i < this.m.samples.number; i++) {
-                data[i] = this.m.reads_segmented[i] / this.m.reads_total[i]
+                data[i] = this.m.reads.segmented[i] / this.m.reads.total[i]
             }
             this.row('', data, '%')
         }
@@ -378,9 +378,9 @@ PDF.prototype = {
         this.doc.setFont('courier', 'normal');
         this.doc.setTextColor(0, 0, 0)
 
-        if (typeof (m.windows[cloneID].sequence) != 'number') {
+        if (m.clone(cloneID).getSequence() != "0") {
 
-            var seq = m.windows[cloneID].sequence;
+            var seq = m.clone(cloneID).getSequence()
             var seqV = seq.substring(0, this.m.clone(cloneID).Vend + 1)
             var seqN = seq.substring(this.m.clone(cloneID).Vend + 1, this.m.clone(cloneID).Jstart)
             var seqJ = seq.substring(this.m.clone(cloneID).Jstart)
@@ -426,7 +426,7 @@ PDF.prototype = {
             }
 
         } else {
-            this.doc.text(this.marge + 20, this.y, "segment fail :" + m.windows[cloneID].window);
+            this.doc.text(this.marge + 20, this.y, "segment fail :" + m.clone(cloneID).id);
         }
 
         this.y += 5;
@@ -462,7 +462,7 @@ PDF.prototype = {
     
     icon: function (cloneID, x, y, w, h) {
 
-        var color = tagColor[m.windows[cloneID].tag]
+        var color = tagColor[m.clone(cloneID).tag]
 
         var polyline = document.getElementById("polyline" + cloneID)
             .cloneNode(true);

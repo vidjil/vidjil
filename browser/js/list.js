@@ -60,7 +60,7 @@ List.prototype = {
         var div_list_clones = document.createElement('div')
         div_list_clones.id = "list_clones"
 
-        for (var i = 0; i < this.m.n_windows; i++) {
+        for (var i = 0; i < this.m.n_clones; i++) {
             var div = document.createElement('li');
             div.className = "list";
             div.id = i;
@@ -158,7 +158,7 @@ List.prototype = {
         var startTime = new Date()
             .getTime();
         var elapsedTime = 0;
-        for (var i = 0; i < this.m.n_windows; i++) {
+        for (var i = 0; i < this.m.n_clones; i++) {
             this.updateElem([i]);
         }
         elapsedTime = new Date()
@@ -232,8 +232,8 @@ List.prototype = {
         
         var span_cluster = document.createElement('span')
         span_cluster.className = "clusterBox";
-        if (this.m.clones[cloneID].cluster.length > 1) {
-            if (this.m.clones[cloneID].split) {
+        if (this.m.clusters[cloneID].length > 1) {
+            if (this.m.clone(cloneID).split) {
                 span_cluster.onclick = function () {
                     self.hideCluster(cloneID)
                 }
@@ -286,17 +286,17 @@ List.prototype = {
         div_cluster.id = "cluster" + cloneID;
         div_cluster.id2 = cloneID;
 
-        var display = this.m.clones[cloneID].split
-        if (this.m.clones[cloneID].cluster.length < 2) display = false
+        var display = this.m.clone(cloneID).split
+        if (this.m.clusters[cloneID].length < 2) display = false
 
         if (!display) div_cluster.style.display = "none";
 
         var clusterSize = this.m.clone(cloneID).getSize()
         var clusterReads = this.m.clone(cloneID).getReads()
 
-        for (var i = 0; i < this.m.clones[cloneID].cluster.length; i++) {
+        for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
             (function (i) {
-                var id = this.m.clones[cloneID].cluster[i]
+                var id = this.m.clusters[cloneID][i]
                 var div_clone = document.createElement('div');
                 div_clone.id = "_" + id;
                 div_clone.id2 = id;
@@ -403,7 +403,7 @@ List.prototype = {
 
             var div = this.index[list[i]];
 
-            if ((this.m.clone(list[i]).isActive() && this.m.clones[list[i]].cluster.length != 0) || this.m.clone(list[i]).window == "other") {
+            if ((this.m.clone(list[i]).isActive() && this.m.clusters[list[i]].length != 0) || this.m.clone(list[i]).id == "other") {
 
                 div.innerHTML = '';
 
@@ -472,7 +472,7 @@ List.prototype = {
     },
     
     reset_filter: function (bool) {
-        for (var i=0; i<this.m.n_windows; i++){
+        for (var i=0; i<this.m.n_clones; i++){
             var c = this.m.clone(i)
             c.isFiltered=bool
         }
@@ -480,7 +480,7 @@ List.prototype = {
     
     filter: function (str) {
         this.reset_filter(true)
-        for (var i=0; i<this.m.n_windows; i++){
+        for (var i=0; i<this.m.n_clones; i++){
             var c = this.m.clone(i) 
             if (c.getName().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
             if (c.getSequence().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
@@ -531,21 +531,10 @@ List.prototype = {
             var oA = 2147483647
             var oB = 2147483647
 
-            var cA = self.m.clone(idA)
-            if (typeof (cA.V) != 'undefined' && 
-                typeof (cA.V[0]) != 'undefined' &&
-                typeof (self.m.germlineV.allele[cA.V[0]]) != 'undefined') {
-                var vA = cA.V[0];
-                oA = this.m.germlineV.allele[vA].gene * 1000 + this.m.germlineV.allele[vA].rank
-            }
-
-            var cB = self.m.clone(idB)
-            if (typeof (cB.V) != 'undefined' && 
-                typeof (cB.V[0]) != 'undefined' &&
-                typeof (self.m.germlineV.allele[cB.V[0]]) != 'undefined') {
-                var vB = cB.V[0];
-                oB = this.m.germlineV.allele[vB].gene * 1000 + this.m.germlineV.allele[vB].rank
-            }
+            var vA = self.m.clone(idA).getV(true)
+            if (vA != "undefined V") oA = this.m.germlineV.allele[vA].gene * 1000 + this.m.germlineV.allele[vA].rank
+            var vB = self.m.clone(idB).getV(true)
+            if (vB != "undefined V") oB = this.m.germlineV.allele[vB].gene * 1000 + this.m.germlineV.allele[vB].rank
 
             return oA > oB ? 1 : -1;
         })
@@ -565,21 +554,10 @@ List.prototype = {
             var oA = 2147483647
             var oB = 2147483647
 
-            var cA = self.m.clone(idA)
-            if (typeof (cA.J) != 'undefined' && 
-                typeof (cA.J[0]) != 'undefined' &&
-                typeof (self.m.germlineJ.allele[cA.J[0]]) != 'undefined') {
-                var jA = cA.J[0];
-                oA = this.m.germlineJ.allele[jA].gene * 1000 + this.m.germlineJ.allele[jA].rank
-            }
-
-            var cB = self.m.clone(idB)
-            if (typeof (cB.J) != 'undefined' && 
-                typeof (cB.J[0]) != 'undefined' &&
-                typeof (self.m.germlineJ.allele[cB.J[0]]) != 'undefined') {
-                var jB = cB.J[0];
-                oB = this.m.germlineJ.allele[jB].gene * 1000 + this.m.germlineJ.allele[jB].rank
-            }
+            var jA = self.m.clone(idA).getJ(true)
+            if (vA != "undefined V") oA = this.m.germlineJ.allele[jA].gene * 1000 + this.m.germlineJ.allele[jA].rank
+            var jB = self.m.clone(idB).getJ(true)
+            if (vB != "undefined V") oB = this.m.germlineJ.allele[jB].gene * 1000 + this.m.germlineJ.allele[jB].rank
 
             return oA > oB ? 1 : -1;
         })
@@ -589,7 +567,7 @@ List.prototype = {
 
     showCluster: function (cloneID) {
         var self = this
-        this.m.clones[cloneID].split = true
+        this.m.clone(cloneID).split = true
         $("#cluster" + cloneID)
             .show(50, function () {
                 self.m.updateElem([cloneID])
@@ -598,7 +576,7 @@ List.prototype = {
 
     hideCluster: function (cloneID) {
         var self = this
-        this.m.clones[cloneID].split = false
+        this.m.clone(cloneID).split = false
         $("#cluster" + cloneID)
             .hide(50, function () {
                 self.m.updateElem([cloneID])

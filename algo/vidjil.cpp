@@ -419,7 +419,7 @@ int main (int argc, char **argv)
 	min_reads_clone = 0 ;
 	max_clones = 0 ;
 	break ;
-
+    
       // Seeds
 
       case 's':
@@ -793,7 +793,8 @@ int main (int argc, char **argv)
 	Fasta rep_J(f_rep_J, 2, "|", cout);
 
 	Germline *germline;
-	germline = new Germline(rep_V, rep_D, rep_J, seed,
+	germline = new Germline(germline_system, 'X',
+                rep_V, rep_D, rep_J, seed,
 				delta_min, delta_max);
 
 	multigermline->insert(germline);
@@ -908,13 +909,16 @@ int main (int argc, char **argv)
 	cout << "  ! No windows with current parameters." << endl;
       }
 
-    if (command == CMD_CLONES) {
-
     //////////////////////////////////
     //$$ Clustering
-
+    windowsStorage->sort();
+    list<pair <junction, int> > sort_clones = windowsStorage->getSortedList();
+    cout << "  ==> " << sort_clones.size() << " clones" << endl ;
+    
     list <list <junction> > clones_windows;
-    comp_matrix comp=comp_matrix(*windowsStorage);
+    comp_matrix comp=comp_matrix(sort_clones);
+      
+    if (command == CMD_CLONES) {
 
     if (epsilon || forced_edges.size())
       {
@@ -952,10 +956,6 @@ int main (int argc, char **argv)
     //     || ((clone_nb_reads >= min_reads_clone) 
     //		  && (clone_nb_reads * 100.0 / nb_segmented >= ratio_reads_clone)))
 
-    windowsStorage->sort();
-    list<pair <junction, int> > sort_clones = windowsStorage->getSortedList();
-    cout << "  ==> " << sort_clones.size() << " clones" << endl ;
- 
     if (sort_clones.size() == 0)
       {
 	cout << "  ! No clones with current parameters." << endl;
@@ -1223,33 +1223,65 @@ int main (int argc, char **argv)
     JsonArray json_nb_segmented;
     json_nb_segmented.add(nb_segmented);
     
+    JsonArray json_original_names;
+    json_original_names.add(f_reads);
+    
     JsonArray json_timestamp;
     json_timestamp.add(time_buffer);
     
+    JsonArray json_log;
+    json_log.add(stream_segmentation_info.str());
+    
+    JsonArray json_cmdline;
+    json_cmdline.add(stream_cmdline.str());// TODO: escape "s in argv
 
     JsonArray jsonSortedWindows = windowsStorage->sortedWindowsToJsonArray(json_data_segment,
                                                                         norm_list,
                                                                         nb_segmented);
     
-    
+    //samples field
     JsonList *json_samples;
     json_samples=new JsonList();
-    json_samples->add("number", "1");
-    JsonArray json_original_names;
-    json_original_names.add(f_reads);
+    json_samples->add("number", 1);
     json_samples->add("original_names", json_original_names);
+    json_samples->add("timestamp", json_timestamp);
+    json_samples->add("log", json_log);
+    json_samples->add("commandline", json_cmdline);
+    
+    //reads field
+    JsonList *json_reads;
+    json_reads=new JsonList();
+    json_reads->add("total", json_nb_reads);
+    json_reads->add("segmented", json_nb_segmented); 
+    JsonList *json_reads_germlineList;
+    json_reads_germlineList = new JsonList();
+    
+    if (multi_germline)
+      {
+        for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
+          {
+            Germline *germline = *it ;
+            JsonArray json_reads_germline;
+            json_reads_germline.add(we.getNbReadsGermline(germline->code));
+            json_reads_germlineList->add(germline->code, json_reads_germline);
+          }
+      }
+    else
+      {
+        json_reads_germlineList->add(germline_system, json_nb_segmented);
+      }
+    json_reads->add("germline", *json_reads_germlineList); 
     
     json->add("vidjil_json_version", VIDJIL_JSON_VERSION);
     json->add("samples", *json_samples);
-    json->add("timestamp", json_timestamp);
-    json->add("commandline", stream_cmdline.str());// TODO: escape "s in argv
-    json->add("segmentation_info", stream_segmentation_info.str());
+    json->add("reads", *json_reads);
     json->add("germline", germline_system);
-    json->add("germline_V", f_rep_V);
-    json->add("germline_J", f_rep_J);
-    json->add("reads_total", json_nb_reads);
-    json->add("reads_segmented", json_nb_segmented); 
-    json->add("windows", jsonSortedWindows);
+    json->add("clones", jsonSortedWindows);
+    
+    if (epsilon || forced_edges.size()){
+      JsonArray json_clusters = comp.toJson(clones_windows);
+      json->add("clusters", json_clusters );
+    }
 
     //Added edges in the json output file
     //json->add("links", jsonLevenshtein);
@@ -1292,7 +1324,8 @@ int main (int argc, char **argv)
     Germline *germline;
 
     // Here, it could be run without building the index
-    germline = new Germline(rep_V, rep_D, rep_J, seed,
+    germline = new Germline(germline_system, 'X',
+                rep_V, rep_D, rep_J, seed,
 			    delta_min, delta_max);
 
     while (reads->hasNext()) 

@@ -54,7 +54,7 @@ protected:
   string info_extra;  // .vdj.fa header, other information, at the end of the header
   int best_V, best_J ;
   int del_V, del_D_left, del_D_right, del_J ;
-  string seg_V, seg_N, seg_J;
+  string seg_V, seg_N, seg_J, system;
 
   int best_D;
   string seg_N1, seg_D, seg_N2;
