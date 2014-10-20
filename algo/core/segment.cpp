@@ -215,7 +215,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
     strand = 2;
   }
 
-  computeSegmentation(strand, germline->delta_min, germline->delta_max, s);
+  computeSegmentation(strand, germline);
 
   if (segmented)
     {
@@ -241,7 +241,7 @@ KmerSegmenter::~KmerSegmenter() {
     delete kaa;
 }
 
-void KmerSegmenter::computeSegmentation(int strand, int delta_min, int delta_max, int s) {
+void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
   // Try to segment, computing 'Vend' and 'Jstart', and 'segmented'
   // If not segmented, put the cause of unsegmentation in 'because'
 
@@ -259,12 +259,13 @@ void KmerSegmenter::computeSegmentation(int strand, int delta_min, int delta_max
     } 
   else
     {
-      // Strand +
       affect_infos max;
       if (strand == 1)
-        max = kaa->getMaximum(AFFECT_V, AFFECT_J);
+        max = kaa->getMaximum(KmerAffect(germline->affect_5, 1), 
+			      KmerAffect(germline->affect_3, 1));
       else
-        max = kaa->getMaximum(AFFECT_J_BWD, AFFECT_V_BWD);
+        max = kaa->getMaximum(KmerAffect(germline->affect_3, -1), 
+			      KmerAffect(germline->affect_5, -1));
 
       if (! max.max_found) {
         if ((strand == 1 && max.nb_before_left == 0)
@@ -291,12 +292,12 @@ void KmerSegmenter::computeSegmentation(int strand, int delta_min, int delta_max
     {
       // Now we check the delta between Vend and right
    
-      if (Jstart - Vend < delta_min)
+      if (Jstart - Vend < germline->delta_min)
 	{
 	  because = UNSEG_BAD_DELTA_MIN ;
 	}
 
-      if (Jstart - Vend > delta_max)
+      if (Jstart - Vend > germline->delta_max)
 	{
 	  because = UNSEG_BAD_DELTA_MAX ;
 	}

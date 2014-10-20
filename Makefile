@@ -25,7 +25,7 @@ test_with_fuse:
 unit: all
 	@echo "*** Launching unit tests..."
 	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests
-	@echo "*** All .should_get tests passed"
+	@echo "*** All unit tests passed"
 
 pytests:
 	@echo "*** Launching python tests..."

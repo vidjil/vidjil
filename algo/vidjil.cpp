@@ -63,6 +63,7 @@
 
 //$$ #define (mainly default options)
 
+#define DEFAULT_MULTIGERMLINE "germline"
 #define DEFAULT_GERMLINE_SYSTEM "IGH" 
 #define DEFAULT_V_REP  "./germline/IGHV.fa"
 #define DEFAULT_D_REP  "./germline/IGHD.fa" 
@@ -74,6 +75,7 @@
 #define DEFAULT_MAX_REPRESENTATIVES 100
 #define MAX_CLONES 20
 #define RATIO_READS_CLONE 0.0
+#define NO_LIMIT "all"
 
 #define COMMAND_WINDOWS "windows"
 #define COMMAND_CLONES "clones"
@@ -116,6 +118,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define DEFAULT_SEGMENT_COST   VDJ
 
 // warn
+#define WARN_MAX_CLONES 100
 #define WARN_PERCENT_SEGMENTED 40
 
 // display
@@ -182,9 +185,9 @@ void usage(char *progname)
        << endl
 
        << "Limits to further analyze some clones" << endl
-       << "  -y <nb>       maximal number of clones computed with a representative (0: no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
-       << "  -z <nb>       maximal number of clones to be segmented (0: no limit, do not use) (default: " << MAX_CLONES << ")" << endl
-       << "  -A            reports and segments all clones (-r 0 -% 0 -z 0), to be used only on very small datasets" << endl
+       << "  -y <nb>       maximal number of clones computed with a representative ('" << NO_LIMIT << "': no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
+       << "  -z <nb>       maximal number of clones to be segmented ('" << NO_LIMIT << "': no limit, do not use) (default: " << MAX_CLONES << ")" << endl
+       << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets" << endl
        << endl
 
        << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
@@ -279,7 +282,7 @@ int main (int argc, char **argv)
   bool output_segmented = false;
   bool output_unsegmented = false;
   bool multi_germline = false;
-  string multi_germline_file = "";
+  string multi_germline_file = DEFAULT_MULTIGERMLINE;
 
   string forced_edges = "" ;
 
@@ -407,17 +410,28 @@ int main (int argc, char **argv)
         break;
 
       case 'y':
+	if (!strcmp(NO_LIMIT, optarg))
+	  {
+	    max_representatives = -1;
+	    break;
+	  }
 	max_representatives = atoi(optarg);
         break;
 
       case 'z':
+	if (!strcmp(NO_LIMIT, optarg))
+	  {
+	    max_clones = -1;
+	    break;
+	  }
 	max_clones = atoi(optarg);
         break;
 
       case 'A': // --all
 	ratio_reads_clone = 0 ;
-	min_reads_clone = 0 ;
-	max_clones = 0 ;
+	min_reads_clone = 1 ;
+	max_representatives = -1 ;
+	max_clones = -1 ;
 	break ;
     
       // Seeds
@@ -599,6 +613,68 @@ int main (int argc, char **argv)
   cout << "# git: " << GIT_VERSION << endl ;
 #endif
 
+
+  //////////////////////////////////
+  // Warning for non-optimal use
+
+  if (max_clones == -1 || max_clones > WARN_MAX_CLONES)
+    {
+      cout << endl
+	   << "* WARNING: vidjil was run with '-A' option or with a large '-z' option" << endl ;
+    }
+  
+  if (command == CMD_SEGMENT)
+    {
+      cout << endl
+	   << "* WARNING: vidjil was run with '-c segment' option" << endl ;
+    }
+  
+  if (max_clones == -1 || max_clones > WARN_MAX_CLONES || command == CMD_SEGMENT)
+    {
+      cout << "* Vidjil purpose is to extract very quickly windows overlapping the CDR3" << endl
+	   << "* and to gather reads into clones (-c clones), and not to provide an accurate V(D)J segmentation." << endl
+	   << "* The following segmentations are slow to compute and are provided only for convenience." << endl
+	   << "* They should be checked with other softwares such as IgBlast, iHHMune-align or IMGT/V-QUEST." << endl 
+	   << "* More information is provided in the 'doc/algo.org' file." << endl 
+	   << endl ;
+    }
+
+  /////////////////////////////////////////
+  //            LOAD GERMLINES           //
+  /////////////////////////////////////////
+
+  MultiGermline *multigermline = new MultiGermline();
+
+  if (command == CMD_GERMLINES || command == CMD_CLONES || command == CMD_WINDOWS) 
+    {
+      cout << "Build Kmer indexes" << endl ;
+    
+      if (multi_germline)
+	{
+	  multigermline->build_default_set(multi_germline_file);
+	}
+      else if (command == CMD_GERMLINES)
+	{
+	  multigermline->load_standard_set(multi_germline_file);
+	  multigermline->build_with_one_index(seed);
+	}
+      else
+	{
+	  // Custom germline
+	  Fasta rep_V(f_rep_V, 2, "|", cout);
+	  Fasta rep_D(f_rep_D, 2, "|", cout);
+	  Fasta rep_J(f_rep_J, 2, "|", cout);
+	  
+	  Germline *germline;
+	  germline = new Germline(germline_system, 'X',
+				  rep_V, rep_D, rep_J, 
+				  delta_min, delta_max);
+	  germline->new_index(seed);
+
+	  multigermline->insert(germline);
+	}
+    }
+
   //////////////////////////////://////////
   //         DISCOVER GERMLINES          //
   /////////////////////////////////////////
@@ -607,57 +683,20 @@ int main (int argc, char **argv)
 #define KMER_AMBIGUOUS "?"
 #define KMER_UNKNOWN "_"
 
-      list<const char* > f_germlines ;
-
-      // TR
-      f_germlines.push_back("germline/TRAV.fa");
-      f_germlines.push_back("germline/TRAJ.fa");
-
-      f_germlines.push_back("germline/TRBV.fa");
-      f_germlines.push_back("germline/TRBD.fa");
-      f_germlines.push_back("germline/TRBJ.fa");
-
-      f_germlines.push_back("germline/TRDV.fa"); 
-      f_germlines.push_back("germline/TRDD.fa");
-      f_germlines.push_back("germline/TRDJ.fa");
-
-      f_germlines.push_back("germline/TRGV.fa");
-      f_germlines.push_back("germline/TRGJ.fa");
-
-      // Ig
-
-      f_germlines.push_back("germline/IGHV.fa");
-      f_germlines.push_back("germline/IGHD.fa");
-      f_germlines.push_back("germline/IGHJ.fa");
-
-      f_germlines.push_back("germline/IGKV.fa");
-      f_germlines.push_back("germline/IGKJ.fa");
-
-      f_germlines.push_back("germline/IGLV.fa");
-      f_germlines.push_back("germline/IGLJ.fa");
-
-      // Read germline and build one unique index
-
-      bool rc = true ;   
-      IKmerStore<KmerStringAffect>  *index = KmerStoreFactory::createIndex<KmerStringAffect>(seed, rc);
-      map <string, int> stats_kmer, stats_max;
-
-      for (list<const char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
-	{
-	  Fasta rep(*it, 2, "|", cout);
-	  index->insert(rep, *it);
-	}
+      map <char, int> stats_kmer, stats_max;
+      IKmerStore<KmerAffect> *index = multigermline->index ;
 
       // Initialize statistics, with two additional categories
-
-      f_germlines.push_back(KMER_AMBIGUOUS);
-      f_germlines.push_back(KMER_UNKNOWN);
-
-      for (list<const char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+      index->labels.push_back(make_pair(KmerAffect::getAmbiguous(), KMER_AMBIGUOUS));
+      index->labels.push_back(make_pair(KmerAffect::getUnknown(), KMER_UNKNOWN));
+      
+      for (list< pair <KmerAffect, string> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
 	{
-	  stats_kmer[string(*it)] = 0 ;
-	  stats_max[string(*it)] = 0 ;
+	  char key = affect_char(it->first.affect) ;
+	  stats_kmer[key] = 0 ;
+	  stats_max[key] = 0 ;
 	}
+
 
       // Open read file (copied frow below)
 
@@ -672,9 +711,9 @@ int main (int argc, char **argv)
       }
       
       // init forbidden for .max()
-      set<KmerStringAffect> forbidden;
-      forbidden.insert(KmerStringAffect::getAmbiguous());
-      forbidden.insert(KmerStringAffect::getUnknown());
+      set<KmerAffect> forbidden;
+      forbidden.insert(KmerAffect::getAmbiguous());
+      forbidden.insert(KmerAffect::getUnknown());
       
       // Loop through all reads
 
@@ -687,35 +726,22 @@ int main (int argc, char **argv)
 	  reads->next();
 	  nb_reads++;
 	  string seq = reads->getSequence().sequence;
-	  total_length += seq.length() - s;
+	  total_length += seq.length() - s + 1;
 
-	  KmerAffectAnalyser<KmerStringAffect> *kaa = new KmerAffectAnalyser<KmerStringAffect>(*index, seq);
+	  KmerAffectAnalyser<KmerAffect> *kaa = new KmerAffectAnalyser<KmerAffect>(*index, seq);
 
 	  for (int i = 0; i < kaa->count(); i++) 
 	    { 
-	      KmerStringAffect ksa = kaa->getAffectation(i);
-
-	      if (ksa.isAmbiguous())
-		{
-		  stats_kmer[KMER_AMBIGUOUS]++ ;
-		  continue ;
-		}
-	      
-	      if (ksa.isUnknown()) 
-		{
-		  stats_kmer[KMER_UNKNOWN]++ ;
-		  continue ;
-		}
-
-	      stats_kmer[ksa.label]++ ;
+	      KmerAffect ksa = kaa->getAffectation(i);
+	      stats_kmer[affect_char(ksa.affect)]++ ;
 	    }
 
           delete kaa;
 
-	  CountKmerAffectAnalyser<KmerStringAffect> ckaa(*index, seq);
+	  CountKmerAffectAnalyser<KmerAffect> ckaa(*index, seq);
 	  ckaa.setAllowedOverlap(k-1);
 
-	  stats_max[ckaa.max(forbidden).label]++ ;
+	  stats_max[ckaa.max(forbidden).affect.c]++ ;
 
 	}
 
@@ -725,17 +751,20 @@ int main (int argc, char **argv)
 
       cout << "  <== " << nb_reads << " reads" << endl ;
       cout << "\t" << " max" << "\t\t" << "        kmers" << "\n" ;
-      for (list<const char* >::const_iterator it = f_germlines.begin(); it != f_germlines.end(); ++it)
+
+      for (list< pair <KmerAffect, string> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
 	{
-	  cout << setw(12) << stats_max[*it] << " " ;
-	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_max[*it] / nb_reads * 100 << "%" ;
+	  char key = affect_char(it->first.affect) ;
+	  
+	  cout << setw(12) << stats_max[key] << " " ;
+	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_max[key] / nb_reads * 100 << "%" ;
 
 	  cout << "     " ;
 
-	  cout << setw(12) << stats_kmer[*it] << " " ;
-	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[*it] / total_length * 100 << "%" ;
+	  cout << setw(12) << stats_kmer[key] << " " ;
+	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[key] / total_length * 100 << "%" ;
 
-	  cout << "     " << *it << endl ;
+	  cout << "     " << key << " " << it->second << endl ;
 	}
       
       delete index;
@@ -775,30 +804,6 @@ int main (int argc, char **argv)
     cout << " w = " << w << "," ;
     cout << " delta = [" << delta_min << "," << delta_max << "]" << endl ;
 
-
-    //////////////////////////////////
-    //$$ Build Kmer indexes
-    cout << "Build Kmer indexes" << endl ;
-    
-    MultiGermline *multigermline = new MultiGermline();
-
-    if (multi_germline)
-      {
-	multigermline->load_default_set(multi_germline_file);
-      }
-    else
-      {
-	Fasta rep_V(f_rep_V, 2, "|", cout);
-	Fasta rep_D(f_rep_D, 2, "|", cout);
-	Fasta rep_J(f_rep_J, 2, "|", cout);
-
-	Germline *germline;
-	germline = new Germline(germline_system, 'X',
-                rep_V, rep_D, rep_J, seed,
-				delta_min, delta_max);
-
-	multigermline->insert(germline);
-      }
 
     //////////////////////////////////
     //$$ Kmer Segmentation
@@ -1035,7 +1040,7 @@ int main (int argc, char **argv)
 
       //$$ If max_representatives is reached, we stop here but still outputs the window
 
-      if (max_representatives && (num_clone >= max_representatives + 1))
+      if ((max_representatives >= 0) && (num_clone >= max_representatives + 1))
 	{
 	  out_clones << window_str << endl ;
 	  continue;
@@ -1091,7 +1096,7 @@ int main (int argc, char **argv)
 	  
 	  //$$ If max_clones is reached, we stop here but still outputs the representative
 
-	  if (max_clones && (num_clone >= max_clones + 1))
+	  if ((max_clones >= 0) && (num_clone >= max_clones + 1))
 	    {
 	      out_clones << representative << endl ;
 	      continue;
@@ -1308,23 +1313,14 @@ int main (int argc, char **argv)
     //reads = OnlineFasta(f_reads, 1, " ");
     
 
-    cout << "* WARNING: vidjil was run with '-c segment' option" << endl
-         << "* Vidjil purpose is to extract very quickly windows overlapping the CDR3" << endl
-         << "* and to gather reads into clones (-c clones), and not to provide an accurate V(D)J segmentation." << endl
-         << "* The following segmentations are slow to compute and are provided only for convenience." << endl
-         << "* They should be checked with other softwares such as IgBlast, iHHMune-align or IMGT/V-QUEST." << endl
-      ;
-
-
     Fasta rep_V(f_rep_V, 2, "|", cout);
     Fasta rep_D(f_rep_D, 2, "|", cout);
     Fasta rep_J(f_rep_J, 2, "|", cout);
 
     Germline *germline;
 
-    // Here, it could be run without building the index
     germline = new Germline(germline_system, 'X',
-                rep_V, rep_D, rep_J, seed,
+			    rep_V, rep_D, rep_J,
 			    delta_min, delta_max);
 
     while (reads->hasNext()) 

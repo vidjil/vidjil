@@ -16,7 +16,12 @@ public:
   unsigned int count;
 
   Kmer();
-  Kmer(const seqtype &kmer, const string &label="", int strand=1);
+
+  /**
+   * This constructor is used via a IKmerStore<Kmer> index (hence the argument list)       
+   */
+  Kmer(const string &label, int strand=1);
+
   Kmer &operator+=(const Kmer &);
   static bool hasRevcompSymetry();
 } ;
@@ -37,17 +42,19 @@ public:
 
   virtual ~IKmerStore();
 
+  list< pair <T, string> > labels;
+
   /**
    * @param input: A single FASTA file
    * @param label: label that must be associated to the given files
-   * @post All the sequences in the FASTA files have been indexed.
+   * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
   void insert(Fasta& input, const string& label="");
 
   /**
    * @param input: A list of FASTA files
    * @param label: label that must be associated to the given files
-   * @post All the sequences in the FASTA files have been indexed.
+   * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
   void insert(list<Fasta>& input, const string& label="");
   
@@ -163,6 +170,8 @@ void IKmerStore<T>::insert(Fasta& input,
   for (int r = 0; r < input.size(); r++) {
     insert(input.sequence(r), label);
   }
+
+  labels.push_back(make_pair(T(label, 1), label)) ;
 }
 
 template<class T> 
@@ -178,10 +187,10 @@ void IKmerStore<T>::insert(const seqtype &sequence,
         kmer = rc_kmer;
       }
     }
-    this->get(kmer) += T(kmer, label, strand);
+    this->get(kmer) += T(label, strand);
     if (revcomp_indexed && ! T::hasRevcompSymetry()) {
       seqtype rc_kmer = revcomp(kmer);
-      this->get(rc_kmer) += T(rc_kmer, label, -1);
+      this->get(rc_kmer) += T(label, -1);
     }
   }
 }

@@ -75,7 +75,7 @@ KmerAffect::KmerAffect(const KmerAffect &ka) {
   affect = ka.affect;
 }
 
-KmerAffect::KmerAffect(const string &kmer, const string &label,
+KmerAffect::KmerAffect(const string &label,
                        int strand) {
   affect.c = label[0];
   if (strand == 1)
@@ -131,7 +131,7 @@ KmerAffect KmerAffect::getUnknown() {
 }
 
 bool KmerAffect::isAmbiguous() const {
-  return affect_strand(affect) == 1 && affect_char(affect) == 0;
+  return affect_strand(affect) == 1 && affect_char(affect) == 1;
 }
 
 bool KmerAffect::isUnknown() const {
@@ -177,7 +177,7 @@ KmerStringAffect::KmerStringAffect(const KmerStringAffect &ksa):
   label(ksa.label),strand(ksa.strand){}
 
 
-KmerStringAffect::KmerStringAffect(const string &kmer, const string &label,
+KmerStringAffect::KmerStringAffect(const string &label,
                                    int strand) {
   this->label = label;
   this->strand = strand;
