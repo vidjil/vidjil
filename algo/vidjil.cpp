@@ -741,7 +741,7 @@ int main (int argc, char **argv)
 	  CountKmerAffectAnalyser<KmerAffect> ckaa(*index, seq);
 	  ckaa.setAllowedOverlap(k-1);
 
-	  stats_max[ckaa.max(forbidden).affect.c]++ ;
+	  stats_max[affect_char(ckaa.max(forbidden).affect)]++ ;
 
 	}
 
