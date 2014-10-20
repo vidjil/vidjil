@@ -47,8 +47,10 @@ void testCluster() {
    windows.add("CCCCCCCCCCCCCCCCCCCCCCCCCGGGGGGTCTAGGGGG", seq, 0, 0);
    windows.add("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCATGCCCCCC", seq, 0, 0);
 
+   windows.sort();
+   list<pair <junction, int> > sort_clones = windows.getSortedList();
    
-   comp_matrix comp=comp_matrix(windows);
+   comp_matrix comp=comp_matrix(sort_clones);
    
    //create matrix using junctions 
    comp.compare( cout, Cluster);
