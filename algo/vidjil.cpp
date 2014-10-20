@@ -749,7 +749,10 @@ int main (int argc, char **argv)
 
       // Display statistics
 
-      cout << "  <== " << nb_reads << " reads" << endl ;
+      cout << "  <== "
+	   << nb_reads << " reads, "
+	   << total_length << " kmers"
+	   << endl ;
       cout << "\t" << " max" << "\t\t" << "        kmers" << "\n" ;
 
       for (list< pair <KmerAffect, string> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
