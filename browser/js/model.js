@@ -228,8 +228,9 @@ Model.prototype = {
 
     parseJsonData: function (data, limit) {
         self = this;
-        self.mapID = {}
-        self.dataCluster = []
+        this.mapID = {}
+        this.dataCluster = []
+        this.clusters = []
         
         //copy .data file in model
         for (var key in data){
@@ -259,6 +260,11 @@ Model.prototype = {
         var clone = new Clone(other, self, hash)
         self.clones.push(clone);
         self.n_clones = self.clones.length;
+        
+        //init clusters
+        for (var i = 0; i < this.n_clones; i++) {
+            this.clusters[i]=[i]
+        }
         
         // default samples
         if (typeof self.samples.number == 'string'){
@@ -300,7 +306,7 @@ Model.prototype = {
             .domain([1, self.precision])
             .range([250, 0]);
         
-
+        this.loadCluster(this.data_clusters)
         return this
     },
     
@@ -465,7 +471,6 @@ Model.prototype = {
      * */
     initClones: function () {
         myConsole.log("initClones()");
-        this.clusters = [];
 
         //      NSIZE
         var n_max = 0;
@@ -473,7 +478,6 @@ Model.prototype = {
             var clone = this.clone(i)
             var n = clone.getNlength();
             if (n > n_max) {n_max = n; }
-            this.clusters[i] = [i]
             clone.tag = default_tag;
         }
         this.n_max = n_max
@@ -582,7 +586,6 @@ Model.prototype = {
                     }
                 }
             }
-            this.loadCluster(this.data_clusters)
             this.loadCluster(analysis.clusters)
         }
         this.init()
