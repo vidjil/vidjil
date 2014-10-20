@@ -956,10 +956,6 @@ int main (int argc, char **argv)
     //     || ((clone_nb_reads >= min_reads_clone) 
     //		  && (clone_nb_reads * 100.0 / nb_segmented >= ratio_reads_clone)))
 
-    windowsStorage->sort();
-    list<pair <junction, int> > sort_clones = windowsStorage->getSortedList();
-    cout << "  ==> " << sort_clones.size() << " clones" << endl ;
- 
     if (sort_clones.size() == 0)
       {
 	cout << "  ! No clones with current parameters." << endl;

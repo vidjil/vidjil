@@ -66,7 +66,7 @@ Model.prototype = {
     reset: function () {
         this.analysis = {
             clones: [],
-            cluster: [],
+            clusters: [],
             date: []
         };
         this.t = 0;
@@ -233,8 +233,9 @@ Model.prototype = {
         
         //copy .data file in model
         for (var key in data){
-            self[key] = data[key]
+            if (key != "clusters") self[key] = data[key]
         }
+        this.data_clusters = data.clusters;
         
         //filter clones
         self.clones = [];
