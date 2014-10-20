@@ -582,23 +582,34 @@ Model.prototype = {
                     }
                 }
             }
+            this.loadCluster(this.data_clusters)
+            this.loadCluster(analysis.clusters)
+        }
+        this.init()
+    },
+    
+    loadCluster: function (clusters) {
+        for (var i = 0; i < clusters.length; i++) {
 
-            //      CUSTOM CLUSTER
-            var clusters = analysis.clusters;
-            for (var i = 0; i < clusters.length; i++) {
-
-                var new_cluster = [];
-                var l = this.mapID[clusters[i][0]]
-                
-                for (var j=0; j<clusters[i].length;j++){
+            var new_cluster = [];
+            
+            for (var j=0; j<clusters[i].length;j++){
+                if (typeof this.mapID[clusters[i][j]] != 'undefined'){
                     var cloneID = this.mapID[clusters[i][j]]
                     new_cluster = new_cluster.concat(this.clusters[cloneID]);
+                    console.log(cloneID + " +++ "+new_cluster)
                     this.clusters[cloneID] = [];
+                }
+            }
+            
+            if (new_cluster.length != 0){
+                var l = new_cluster[0]
+                for (var j=0; j<new_cluster.length;j++){
+                    if (m.clone(new_cluster[j]).top < m.clone(l).top) l = new_cluster[j]
                 }
                 this.clusters[l] = new_cluster;
             }
         }
-        this.init()
     },
 
     /*
