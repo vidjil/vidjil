@@ -40,7 +40,54 @@ def ordered(d, key=None):
 
 ####
 
+
+def concatenate_with_padding(d, 
+                             d1, d1_size, 
+                             d2, d2_size,
+                             ignore_keys=[]):
+        '''Concatenate two dictionaries d1 and d2 into d
+        The dictionaries d1 and d2 store several values that are lists with d1_size and d2_size elements,
+        and the resulting dictionary will store values that are lists with size d1_size + d2_size elements.
+        Pads with lists [0, ... 0] data that appear in either only d1 or only d2.
+
+        >>> d = {}
+        >>> d1 = { 'a': [1, 2], 'b': [11, 22], 'z':17 }
+        >>> d2 = { 'a': [3, 4, 5], 'c': [333, 444, 555] } 
+        >>> concatenate_with_padding(d, d1, 2, d2, 5, ['z'])
+        >>> d
+        {'a': [1, 2, 3, 4, 5], 'c': [0, 0, 333, 444, 555], 'b': [11, 22, 0, 0, 0, 0, 0]}
+        '''
+
+        t1=[]
+        t2=[]
+        
+        for i in range(d1_size):
+            t1.append(0)
+    
+        for i in range(d2_size):
+            t2.append(0)
+    
+        for key in d1:
+            if key in ignore_keys:
+                continue
+            d[key] = d1[key]
+            if key not in d2 :
+                d[key] += t2
+
+        for key in d2:
+            if key in ignore_keys:
+                continue
+            if key not in d :
+                d[key] = t1 + d2[key]
+            else :
+                d[key] = d[key] + d2[key]
+
+
+
+####
+
 class Window:
+    # Should be renamed "Clone"
     '''storage class for sequence informations
     with some function to group sequence informations
     
@@ -135,29 +182,18 @@ class Samples:
 
     def __add__(self, other):
         obj=Samples()
-        t1=[]
-        t2=[]
-        
-        for i in range(self.d["number"]):
-            t1.append(0)
-    
-        for i in range(other.d["number"]):
-            t2.append(0)
-    
-        for key in self.d :
-            obj.d[key] = self.d[key]
-            if key not in other.d :
-                obj.d[key] += t2
 
-        for key in other.d :
-            if key not in obj.d :
-                obj.d[key] = t1 + other.d[key]
-            else :
-                obj.d[key] = obj.d[key] + other.d[key]
-                        
+        concatenate_with_padding(obj.d, 
+                                 self.d, self.d['number'], 
+                                 other.d, other.d['number'],
+                                 ['number'])
+
         obj.d["number"] =  int(self.d["number"]) + int(other.d["number"])
         
         return obj
+
+    def __str__(self):
+        return "<Samples: %s>" % self.d
 
 class Reads: 
 
@@ -169,29 +205,18 @@ class Reads:
 
     def __add__(self, other):
         obj=Reads()
-        t1=[]
-        t2=[]
-        
-        for i in range(len(self.d["total"])):
-            t1.append(0)
-    
-        for i in range(len(other.d["total"])):
-            t2.append(0)
-    
-        for key in self.d["germline"] :
-            obj.d["germline"][key] = self.d["germline"][key]
-            if key not in other.d["germline"] :
-                obj.d["germline"][key] += t2
 
-        for key in other.d["germline"] :
-            if key not in obj.d["germline"] :
-                obj.d["germline"][key] = t1 + other.d["germline"][key]
-            else :
-                obj.d["germline"][key] = obj.d["germline"][key] + other.d["germline"][key]
+        concatenate_with_padding(obj.d['germline'], 
+                                 self.d['germline'], len(self.d['total']),
+                                 other.d['germline'], len(other.d['total']),
+                                 ['total'])
                 
         obj.d["total"] = self.d["total"] + other.d["total"]
         obj.d["segmented"] = self.d["segmented"] + other.d["segmented"]
         return obj
+
+    def __str__(self):
+        return "<Reads: %s>" % self.d
         
 class OtherWindows:
     
@@ -235,18 +260,18 @@ class ListWindows:
     '''storage class for sequences informations 
     
     >>> lw1.info()
-    <ListWindows : [[25]] 2 >
+    <ListWindows: [25] 2>
     <window : [5] 3 aaa>
     <window : [12] 2 bbb>
     
     >>> lw2.info()
-    <ListWindows : [[34]] 2 >
+    <ListWindows: [34] 2>
     <window : [8] 4 aaa>
     <window : [2] 8 ccc>
     
-    >>> lw3 = lw1 + lw2 
+    >>> lw3 = lw1 + lw2
     >>> lw3.info()
-    <ListWindows : [[25], [34]] 3 >
+    <ListWindows: [25, 34] 3>
     <window : [12, 0] 2 bbb>
     <window : [5, 8] 3 aaa>
     <window : [0, 2] 8 ccc>
@@ -262,13 +287,26 @@ class ListWindows:
         self.d["clusters"] = []
         
     def __str__(self):
-        return "<ListWindows : %s %d >" % ( self.d["reads"].d["segmented"], len(self.d["clones"]) )
+        return "<ListWindows: %s %d>" % ( self.d["reads"].d["segmented"], len(self) )
+
+    # Iterator and access functions
+    def __iter__(self):
+        return self.d["clones"].__iter__()
+
+    def __getitem__(self, i):
+        ### not efficient !
+        for clone in self:
+            if clone.d["id"] == i:
+                return clone
+
+    def __len__(self):
+        return len(self.d["clones"])
 
     ### print info about each Windows stored 
     def info(self):
         print self
-        for i in range(len(self.d["clones"])):
-            print self.d["clones"][i]
+        for clone in self:
+            print clone
 
     ### check vidjil_json_version
     def check_version(self, filepath):
@@ -282,8 +320,8 @@ class ListWindows:
         ranges = [1000, 100, 10, 1]
         result = [[0 for col in range(len(self.d['reads'].d["segmented"]))] for row in range(len(ranges))]
 
-        for w in self.d["clones"]:
-            for i, s in enumerate(w.d["reads"]):
+        for clone in self:
+            for i, s in enumerate(clone.d["reads"]):
                 for r in range(len(ranges)):
                     if s >= ranges[r]:
                         break 
@@ -338,9 +376,9 @@ class ListWindows:
     def getTop(self, top):
         result = []
         
-        for w in self.d["clones"] :
-            if w.d["top"] <= top :
-                result.append(w.d["id"])
+        for clone in self:
+            if clone.d["top"] <= top :
+                result.append(clone.d["id"])
         return result
         
     def filter(self, f):
@@ -362,33 +400,15 @@ class ListWindows:
     def __add__(self, other): 
         '''Combine two ListWindows into a unique ListWindows'''
         obj = ListWindows()
-        t1=[]
-        t2=[]
-        
-        for i in range(len(self.d["reads"].d['segmented'])):
-            t1.append(0)
-    
-        for i in range(len(other.d["reads"].d['segmented'])):
-            t2.append(0)
-    
-        #concat data, if there is some missing data we use an empty buffer t1/t2 
-        #with the same size as the number of missing data
-        for key in self.d :
-            if key != "clones" and key != "links":
-                obj.d[key] = self.d[key]
-                if key not in other.d :
-                    print "plop : " + key
-                    obj.d[key] += t2
+        l1 = len(self.d["reads"].d['segmented'])
+        l2 = len(other.d["reads"].d['segmented'])
 
-        for key in other.d :
-            if key != "clones" and key != "links":
-                if key not in obj.d :
-                    obj.d[key] = t1 + other.d[key]
-                else :
-                    if key != "samples":
-                        obj.d[key] = obj.d[key] + other.d[key]
+        concatenate_with_padding(obj.d, 
+                                 self.d, l1,
+                                 other.d, l2,
+                                 ["clones", "links"])
         
-        obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], t1, t2)
+        obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
         obj.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
@@ -409,7 +429,7 @@ class ListWindows:
         return self
         
     ### 
-    def fuseWindows(self, w1, w2, t1, t2) :
+    def fuseWindows(self, w1, w2, l1, l2) :
         #store data in dict with "id" as key
         dico1 = {}
         for i in range(len(w1)) :
@@ -426,12 +446,12 @@ class ListWindows:
             if key in dico2 :
                 dico3[key] = dico1[key] + dico2[key]
             else :
-                w=Window(len(t2))
+                w=Window(l2)
                 dico3[key] = dico1[key] + w
 
         for key in dico2 :
             if key not in dico1 :
-                w=Window(len(t1))
+                w=Window(l1)
                 dico3[key] = w + dico2[key]
         
         
@@ -452,17 +472,16 @@ class ListWindows:
     def cut(self, limit, nb_points):
         '''Remove information from sequence/windows who never enter in the most represented sequences. Put this information in 'other' windows.'''
 
-        length = len(self.d["clones"])
+        length = len(self)
         w=[]
 
         others = OtherWindows(nb_points)
 
-        for index in range(length): 
-            win = self.d["clones"][index]
-            if (int(win.d["top"]) < limit or limit == 0) :
-                w.append(win)
+        for clone in self:
+            if (int(clone.d["top"]) < limit or limit == 0) :
+                w.append(clone)
             #else:
-                #others += win
+                #others += clone
 
         self.d["clones"] = w #+ list(others) 
 
@@ -738,7 +757,7 @@ w6 = Window(1)
 w6.d ={"id" : "bbb", "reads" : [12], "top" : 2 }
 
 lw1 = ListWindows()
-lw1.d["reads_segmented"]=[[25]]
+lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25] }', object_hook=lw1.toPython)
 lw1.d["clones"].append(w5)
 lw1.d["clones"].append(w6)
 
@@ -748,7 +767,7 @@ w8 = Window(1)
 w8.d ={"id" : "ccc", "reads" : [2], "top" : 8, "test" : ["plop"] }
 
 lw2 = ListWindows()
-lw2.d["reads_segmented"]=[[34]]
+lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34] }', object_hook=lw1.toPython)
 lw2.d["clones"].append(w7)
 lw2.d["clones"].append(w8)
 
