@@ -909,12 +909,16 @@ int main (int argc, char **argv)
 	cout << "  ! No windows with current parameters." << endl;
       }
 
-    list <list <junction> > clones_windows;
-    comp_matrix comp=comp_matrix(*windowsStorage);
-      
-    if (command == CMD_CLONES) {
     //////////////////////////////////
     //$$ Clustering
+    windowsStorage->sort();
+    list<pair <junction, int> > sort_clones = windowsStorage->getSortedList();
+    cout << "  ==> " << sort_clones.size() << " clones" << endl ;
+    
+    list <list <junction> > clones_windows;
+    comp_matrix comp=comp_matrix(sort_clones);
+      
+    if (command == CMD_CLONES) {
 
     if (epsilon || forced_edges.size())
       {

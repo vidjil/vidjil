@@ -14,13 +14,13 @@
 using namespace std ;
 
 #define SIMILAR_JUNCTIONS_THRESHOLD 1
-#define JUNCTION_LIMIT 500
+#define JUNCTION_LIMIT 200
 
 
 class comp_matrix {
   public:
     char ** m;
-    WindowsStorage &windows;
+    list<pair <junction, int> > sort_clones;
     map <string, int> count;
     int n_j;
     int n_j2;
@@ -29,7 +29,7 @@ class comp_matrix {
     /**
     * create new distance matrix
     */
-    comp_matrix(WindowsStorage &windows);
+    comp_matrix(list<pair <junction, int> > sc);
         
     /**
     * init matrix with a KmerStore and compute distance value between sequences
