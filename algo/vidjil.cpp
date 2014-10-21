@@ -514,6 +514,9 @@ int main (int argc, char **argv)
 
   size_t min_cover_representative = (size_t) (MIN_COVER_REPRESENTATIVE_RATIO_MIN_READS_CLONE * min_reads_clone) ;
 
+  if (!segment_D) // TODO: add other constructor to Fasta, and do not load rep_D in this case
+    f_rep_D = "";
+
   // Default seeds
 
 #ifndef NO_SPACED_SEEDS
@@ -778,9 +781,7 @@ int main (int argc, char **argv)
   //////////////////////////////////
   //$$ Read sequence files
 
-  if (!segment_D) // TODO: add other constructor to Fasta, and do not load rep_D in this case
-    f_rep_D = "";
-
+ 
 
   OnlineFasta *reads;
 
