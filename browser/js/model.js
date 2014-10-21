@@ -603,7 +603,6 @@ Model.prototype = {
                 if (typeof this.mapID[clusters[i][j]] != 'undefined'){
                     var cloneID = this.mapID[clusters[i][j]]
                     new_cluster = new_cluster.concat(this.clusters[cloneID]);
-                    console.log(cloneID + " +++ "+new_cluster)
                     this.clusters[cloneID] = [];
                 }
             }
