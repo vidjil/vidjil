@@ -741,7 +741,7 @@ int main (int argc, char **argv)
 	  CountKmerAffectAnalyser<KmerAffect> ckaa(*index, seq);
 	  ckaa.setAllowedOverlap(k-1);
 
-	  stats_max[ckaa.max(forbidden).affect.c]++ ;
+	  stats_max[affect_char(ckaa.max(forbidden).affect)]++ ;
 
 	}
 
@@ -749,7 +749,10 @@ int main (int argc, char **argv)
 
       // Display statistics
 
-      cout << "  <== " << nb_reads << " reads" << endl ;
+      cout << "  <== "
+	   << nb_reads << " reads, "
+	   << total_length << " kmers"
+	   << endl ;
       cout << "\t" << " max" << "\t\t" << "        kmers" << "\n" ;
 
       for (list< pair <KmerAffect, string> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
@@ -1293,6 +1296,8 @@ int main (int argc, char **argv)
     
     delete json;
     delete json_samples;
+    delete json_reads;
+    delete json_reads_germlineList;
 
     delete multigermline ;
     delete windowsStorage;

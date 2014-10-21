@@ -1,0 +1,9 @@
+!LAUNCH: ../../vidjil -A
+
+$ Warning, -A
+1:WARNING
+
+$ Link to documentation
+1:algo.org
+
+
