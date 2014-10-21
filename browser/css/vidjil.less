@@ -372,7 +372,7 @@ line {
 @width_nameBox : (@width_listElem - @width_starBox - @width_infoBox - @width_sizeBox - @width_clusterBox - @margin_nameBox - @width_systemBox);
 
 
-.list:hover, .tagElem:hover{
+.list:hover, .tagElem:hover, .data:hover{
   background :@border;
 }
 
@@ -387,6 +387,20 @@ line {
   overflow-x : hidden;
   height : 100%;
   padding:2px;
+}
+
+#list_data{
+  display: block;
+}
+
+.data_name{
+  margin-left : 40px;
+  width: 300px;
+  margin-right : 10px;
+  display : inline-block;
+}
+
+.data_value{
 }
 
 .list{

@@ -292,7 +292,8 @@ line {
 /*style list element*/
 /*Metric*/
 .list:hover,
-.tagElem:hover {
+.tagElem:hover,
+.data:hover {
   background: #333333;
 }
 #list {
@@ -305,6 +306,15 @@ line {
   overflow-x: hidden;
   height: 100%;
   padding: 2px;
+}
+#list_data {
+  display: block;
+}
+.data_name {
+  margin-left: 40px;
+  width: 300px;
+  margin-right: 10px;
+  display: inline-block;
 }
 .list {
   width: 475px;
@@ -937,6 +947,15 @@ span.logo {
 }
 .db_table td {
   overflow: hidden;
+}
+.db_table .column_200 {
+  width: 200px;
+}
+.db_table .column_150 {
+  width: 150px;
+}
+.db_table .column_100 {
+  width: 100px;
 }
 .db_table .column1 {
   width: 100px;
