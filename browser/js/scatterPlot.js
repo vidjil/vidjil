@@ -1777,7 +1777,7 @@ ScatterPlot.prototype = {
                       var node_x = this.nodes[i].x + this.marge_left
                       var node_y = this.nodes[i].y + this.marge_top
 
-                      if (this.m.clone(i).isActive() && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
+                      if (this.m.clone(i).isActive() && this.m.clone(i).getSequenceSize() && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
                           nodes_selected.push(i);
                   }
 
