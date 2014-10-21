@@ -534,12 +534,14 @@ List.prototype = {
     
     sortListBySize: function () {
         self = this;
-        var list = jQuery('.list')
+        var list = jQuery('#list_clones').children()
         var sort = list.sort(function (a, b) {
             var idA = $(a)
                 .attr("id");
             var idB = $(b)
                 .attr("id");
+            if (idA == "list_data") return 1;
+            if (idB == "list_data") return -1;
             return self.m.clone(idB).getSize() > self.m.clone(idA).getSize() ? 1 : -1;
         })
         $("#list_clones")
