@@ -362,6 +362,9 @@ Model.prototype = {
             if (self.analysis.patient) {
                 self.dataFileName = self.analysis.patient;
             }
+            if (self.analysis.data) {
+                self.data = self.analysis.data
+            }
             self.initClones();
         }else{
             myConsole.flash("invalid json version for analysis file", 1)
