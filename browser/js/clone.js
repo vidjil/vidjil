@@ -202,7 +202,7 @@ Clone.prototype = {
     changeName: function (newName) {
         myConsole.log("changeName() (clone " + this.hash + " <<" + newName + ")");
         this.c_name = newName;
-        this.m.updateElem([this.m.hash]);
+        this.m.updateElem([this.hash]);
     }, //fin changeName,
 
     /* give a new custom tag to a clone
