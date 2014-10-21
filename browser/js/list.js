@@ -33,6 +33,7 @@ function List(id, model) {
     this.id = id; //ID de la div contenant la liste
     this.m = model; //Model utilisé
     this.index = []
+    this.index_data = {};
 
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
     this.m.view.push(this); //synchronisation au Model
@@ -57,9 +58,9 @@ List.prototype = {
 
         var div_list_menu = this.build_list_menu()
 
+        //clone list
         var div_list_clones = document.createElement('div')
         div_list_clones.id = "list_clones"
-
         for (var i = 0; i < this.m.n_clones; i++) {
             var div = document.createElement('li');
             div.className = "list";
@@ -69,9 +70,47 @@ List.prototype = {
             this.index[i] = div;
         }
         
+        //data list
+        var div_list_data = this.build_data_list()
+        div_list_clones.appendChild(div_list_data);
+        
         div_parent.appendChild(div_list_menu)
         div_parent.appendChild(div_list_clones)
 
+    },
+    
+    build_data_list: function () {
+        this.index_data = {}
+        
+        var div_list_data = document.createElement('div');
+        div_list_data.id = "list_data";
+        for (var key in this.m.data) {
+            
+            var div = document.createElement('div');
+            div.className = "data";
+            div.id = "data_"+key;
+            
+            var name = document.createElement('span');
+            name.appendChild(document.createTextNode(key))
+            name.className = "data_name";
+            div.appendChild(name)
+            
+            var value = document.createElement('span');
+            value.appendChild(document.createTextNode(this.m.data[key][this.m.t]))
+            value.className = "data_value";
+            div.appendChild(value)
+            
+            this.index_data[key] = value;
+            
+            div_list_data.appendChild(div);
+        }
+        return div_list_data
+    },
+    
+    update_data_list: function () {
+        for (var key in this.index_data){
+            this.index_data[key].innerHTML = this.m.data[key][this.m.t]
+        }
     },
     
     build_list_menu: function () {
@@ -158,9 +197,12 @@ List.prototype = {
         var startTime = new Date()
             .getTime();
         var elapsedTime = 0;
+        
         for (var i = 0; i < this.m.n_clones; i++) {
             this.updateElem([i]);
         }
+        this.update_data_list()
+        
         elapsedTime = new Date()
             .getTime() - startTime;
         myConsole.log("update Liste: " + elapsedTime + "ms", 0);
