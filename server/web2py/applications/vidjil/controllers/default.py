@@ -140,6 +140,7 @@ def get_analysis():
                       "info_sequence_file" : []
                        },
            "custom": [],
+           "clusters": [],
            "clones" : [],
            "tags": [],
            "vidjil_json_version" : "2014.09"
