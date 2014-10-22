@@ -51,7 +51,7 @@ def run_request():
     id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
     
     if not auth.has_permission('admin', 'patient', id_patient) :
-        error += "you don't have permission to run request for this patient ("+str(id_patient)+"), "
+        error += "you do not have permission to launch process for this patient ("+str(id_patient)+"), "
 
     if error == "" :
         res = schedule_run(request.vars["sequence_file_id"], request.vars["config_id"])
@@ -81,7 +81,7 @@ def get_data():
         error += "id config needed, "
     if not auth.has_permission('admin', 'patient', request.vars["patient_id"]) and \
     not auth.has_permission('read', 'patient', request.vars["patient_id"]):
-        error += "you don't have permission to consult this patient ("+id_patient+")"
+        error += "you do not have permission to consult this patient ("+id_patient+")"
         
     query = db( ( db.fused_file.patient_id == request.vars["patient_id"] )
                & ( db.fused_file.config_id == request.vars["config_id"] )
@@ -131,7 +131,7 @@ def get_analysis():
         error += "id config needed, "
     if not auth.has_permission('admin', 'patient', request.vars["patient_id"]) and \
     not auth.has_permission('read', 'patient', request.vars["patient_id"]):
-        error += "you don't have permission to consult this patient ("+id_patient+")"
+        error += "you do not have permission to consult this patient ("+id_patient+")"
     
     ## empty analysis file
     res = {"samples": {"number": 0,
@@ -188,7 +188,7 @@ def save_analysis():
     if not "config_id" in request.vars:
         error += "id config needed, "
     if not auth.has_permission('admin', 'patient', request.vars['patient_id']) :
-        error += "you don't have permission to make change on this patient, "
+        error += "you do not have permission to save changes on this patient"
         
     if error == "" :
         analysis_query = db(  (db.analysis_file.patient_id == request.vars['patient_id'])
