@@ -16,20 +16,24 @@ patient follow-up.
 High-throughput sequencing (NGS/HTS) now enables the deep sequencing 
 of a lymphoid population with dedicated [[http://omictools.com/rep-seq-c424-p1.html][Rep-Seq]] methods and softwares.
 
-Vidjil process high-througput sequencing data to *extract V(D)J
+The Vidjil platform contains three components. The Vidjil algorithm
+process high-througput sequencing data to *extract V(D)J
 junctions and gather them into clones*. Vidjil starts 
 from a set of reads and detects "windows" overlapping the actual CDR3.
 This is based on an fast and reliable seed-based heuristic and allows
-to output the most abundant clones. Vidjil can also clusterize similar
-clones, or leave this to the user after a manual review. 
+to output all sequenced clones. The analysis is extremely fast
+because, in the first phase, no alignment is performed with database
+germline sequences. 
 
-Vidjil also contains a *dynamic browser* for visualization and
+The Vidjil *dynamic browser* is made for the visualization and
 analysis of clones and their tracking along the time in a MRD setup or
 in a immunological study. The browser can visualize data processed by
-the algorithmic component of Vidjil or by other V(D)J analysis
-pipelines.
+the Vidjil algorithm or by other V(D)J analysis pipelines.
+The browser enables to explore further cluterings proposed
+by software and/or done manually done by the user.
 
-Finally, a *server* is currently developed to link the browser and the
+Finally, a *patient database* with a server
+is currently developed to link the browser and the
 algorithmic part. The goal is that the clinicians will be able to
 upload, manage and process their runs directly on the browser (with
 authentication).
@@ -49,7 +53,7 @@ authentication).
 - Development code is under [[browser/]]
 - Documentation (in progress): [[doc/browser.org]]
 
-** The server
+** The server and the patient database
 
 - Currently under development, code is in [[server/]]
 - Planned first release: Q1 2015
