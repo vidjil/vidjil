@@ -103,6 +103,11 @@ int dna_to_int(const string &, int size);
 string extract_from_label(string str, int field, string separator);
 
 /**
+ * @return Extract basename of a file and extracts extension (by default
+ */
+string extract_basename(string path, bool remove_ext = true);
+
+/**
  * remove_trailing_whitespaces removes the whitespaces (ie. ' ', '\t', '\r')
  * that may be at the end of the string
  * @param str: the string 

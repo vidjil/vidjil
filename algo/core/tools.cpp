@@ -139,6 +139,21 @@ string extract_from_label(string str, int field, string separator)
   return str.substr(found1+1, found2-found1-1);
 }
 
+string extract_basename(string path, bool remove_ext) {
+  size_t pos_lastdir = path.find_last_of('/');
+  if (pos_lastdir != std::string::npos) {
+    path = path.substr(pos_lastdir+1);
+  }
+
+  if (remove_ext) {
+    size_t lastdot = path.find_last_of('.');
+    if (lastdot != std::string::npos)
+      path = path.substr(0, lastdot);
+  }
+
+  return path;
+}
+
 int remove_trailing_whitespaces(string &str) {
   int count = 0;
   while (str.size() > 0 && (str[str.size() - 1] == '\r'

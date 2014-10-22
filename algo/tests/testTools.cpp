@@ -89,6 +89,21 @@ void testRevcompInt() {
            TEST_REVCOMP_INT, "revcomp: " << revcomp_int(dna_to_int("ATTAGGA", 7), 7) <<", dna_to_int: " << dna_to_int("TCCTAAT", 7));
 }
 
+void testExtractBasename() {
+  TAP_TEST(extract_basename("/var/toto/titi/tutu/bla.bli.bluc", true) == "bla.bli",
+           TEST_EXTRACT_BASENAME, extract_basename("/var/toto/titi/tutu/bla.bli.bluc", true));
+  TAP_TEST(extract_basename("/var/toto/titi/tutu/bla.bli.bluc", false) == "bla.bli.bluc",
+           TEST_EXTRACT_BASENAME, extract_basename("/var/toto/titi/tutu/bla.bli.bluc", false));
+  TAP_TEST(extract_basename("bla.bli.bluc", true) == "bla.bli",
+           TEST_EXTRACT_BASENAME, extract_basename("bla.bli.bluc", true));
+  TAP_TEST(extract_basename("bla.bli.bluc", false) == "bla.bli.bluc",
+           TEST_EXTRACT_BASENAME, extract_basename("bla.bli.bluc", false));
+  TAP_TEST(extract_basename("a_filename_without_extension", true) == "a_filename_without_extension",
+           TEST_EXTRACT_BASENAME, extract_basename("a_filename_without_extension", true));
+  TAP_TEST(extract_basename("/", true) == "",
+           TEST_EXTRACT_BASENAME, extract_basename("/", true));
+}
+
 void testTools() {
   testFasta1();
   testRevcomp();
@@ -96,4 +111,5 @@ void testTools() {
   testNucToInt();
   testDNAToInt();
   testRevcompInt();
+  testExtractBasename();
 }
