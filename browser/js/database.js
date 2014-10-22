@@ -362,9 +362,7 @@ Database.prototype = {
             url: self.db_address + "default/get_data" + arg,
             xhrFields: {withCredentials: true},
             success: function (result) {
-                json = jQuery.parseJSON(result)
-                m.reset();
-                m.parseJsonData(json, 100)
+                m.parseJsonData(result, 100)
                 m.loadGermline();
                 m.initClones()
                 self.load_analysis(args)
