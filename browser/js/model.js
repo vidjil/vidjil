@@ -153,24 +153,18 @@ Model.prototype = {
             .files[0];
             
         oFReader.readAsText(oFile);
-
         oFReader.onload = function (oFREvent) {
             try {
-                var data = JSON.parse(oFREvent.target.result);
+                var data = jQuery.parseJSON(oFREvent.target.result)
             } catch (e) {
                 myConsole.popupMsg(myConsole.msg.file_error);
                 return 0
             }
-            if ((typeof (data.vidjil_json_version) == 'undefined') || (data.vidjil_json_version < VIDJIL_JSON_VERSION)) {
-                myConsole.popupMsg(myConsole.msg.version_error);
-                return 0;
-            }
-            self.reset()
-            self.dataFileName = document.getElementById(id)
-                .files[0].name;
             self.parseJsonData(data, limit)
                 .loadGermline()
                 .loadAnalysis(analysis);
+            self.dataFileName = document.getElementById(id)
+                .files[0].name;
             self.initClones()
 
         }
@@ -188,10 +182,8 @@ Model.prototype = {
             crossDomain: true,
             url: url,
             success: function (result) {
-                json = jQuery.parseJSON(result)
-                self.reset();
-                self.parseJsonData(json, 100)
-                    .loadGermline();
+                self.parseJsonData(result, 100)
+                self.loadGermline();
                 self.initClones()
                 self.dataFileName = url_split[url_split.length-1]
                 self.loadAnalysisUrl(url)
@@ -231,6 +223,13 @@ Model.prototype = {
         this.mapID = {}
         this.dataCluster = []
         this.clusters = []
+        
+        console.log(data)
+        if ((typeof (data.vidjil_json_version) == 'undefined') || (data.vidjil_json_version < VIDJIL_JSON_VERSION)) {
+            myConsole.popupMsg(myConsole.msg.version_error);
+            return 0;
+        }
+        self.reset();
         
         //copy .data file in model
         for (var key in data){
