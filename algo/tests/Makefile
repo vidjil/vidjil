@@ -43,6 +43,7 @@ core:
 
 clean:
 	rm -f *.o $(EXEC) *.tap *.log *.gcda *.gcno *.gcov
+	rm -rf out/
 
 forcedep:
 	g++ $(INCLUDE) -M $(SRC) > dep.mk
