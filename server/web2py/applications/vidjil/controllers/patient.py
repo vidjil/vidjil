@@ -217,7 +217,9 @@ def remove_permission():
             auth.del_permission(request.vars["group_id"], 'admin', db.patient, request.vars["patient_id"])
             auth.del_permission(request.vars["group_id"], 'read', db.patient, request.vars["patient_id"])
 
-        res = {"redirect" : "patient/permission" , "args" : { "id" : request.vars["patient_id"]} }
+        res = {"redirect" : "patient/permission" , 
+               "args" : { "id" : request.vars["patient_id"]},
+               "message" : "access removed to '%s'" % request.vars["group_id"]}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
@@ -232,7 +234,9 @@ def change_permission():
     if (auth.has_permission('admin', 'patient', request.vars["patient_id"]) ):
         auth.add_permission(request.vars["group_id"], request.vars["permission"], db.patient, request.vars["patient_id"])
 
-        res = {"redirect" : "patient/permission" , "args" : { "id" : request.vars["patient_id"]} }
+        res = {"redirect" : "patient/permission" , 
+               "args" : { "id" : request.vars["patient_id"]},
+               "message" : "access '%s' granted to '%s'" % (request.vars["permission"], request.vars["group_id"])}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
