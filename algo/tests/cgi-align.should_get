@@ -1,0 +1,12 @@
+!LAUNCH: export REQUEST_METHOD=POST ; export CONTENT_TYPE=test ; ../../browser/cgi/align.cgi < ../../data/msa.fa 
+
+$ seq1 (reference sequence for lazy msa)
+1:-AT-GATCAGCC-TGAGAGATAC
+
+$ seq2
+1:-AT-CAAGAGCCATGAGAG----
+
+$ seq3
+1:GATAGAACAGC--TGAGAG----
+
+

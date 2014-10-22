@@ -18,10 +18,11 @@ These installation instruction are for Ubuntu server 14.04
     git clone ....                              copy git repository
 
 ** Vidjil (algo) installation
-    /vidjil                     make            compil command line program
+    /vidjil                     make vidjil     compil main Vidjil program
+    /vidjil                     make align.cgi  compil cgi
     /vidjil/data                make            download/unzip stanford default file
     /vidjil/germline            make            download germlines from IMGT
-    /vidjil/algo/cgi            make            compil cgi
+
 
 
 ** Vidjil (server) installation and initialization

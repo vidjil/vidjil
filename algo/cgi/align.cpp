@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include "../core/dynprog.h"
 #include "../core/fasta.h"
-#include "../core/msa.h"
 #include "../core/lazy_msa.h"
 
 using namespace std;
