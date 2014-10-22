@@ -39,7 +39,7 @@ cleanspaced:
 
 ###
 
-align.cgi: cgi/align.cpp
+align.cgi: cgi/align.o
 	make -C core OPTIM="$(OPTIM)"
 	$(CC) -o $(CGIDIR)/align.cgi cgi/align.o $(LIBCORE) $(LDFLAGS) $(CXXFLAGS)
 ###
@@ -56,7 +56,7 @@ $(EXEC): %: %.o
 
 clean:
 	make -C core $@
-	rm -f *.o *.gcda *.gcno *.gcov
+	rm -f *.o *.gcda *.gcno *.gcov cgi/*.o
 	cd $(BINDIR) ; rm -f $(EXEC)
 	make -C tests $@
 
