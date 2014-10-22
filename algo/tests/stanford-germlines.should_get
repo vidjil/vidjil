@@ -10,7 +10,7 @@ $ k-mers, IGHJ
 1:5 .* 407486 .*IGHJ
 
 $ k-mers, ambiguous
-1:98749   .*\?
+1:98749   .*\\?
 
 $ k-mers, unknown
 1:618185 .*_
