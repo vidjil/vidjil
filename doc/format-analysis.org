@@ -91,7 +91,7 @@ present in the .vidjil file.
 #+BEGIN_SRC js
    "producer": "",    // arbitrary string, user/software/options producing this file [required]
    "timestamp": "",   // last modification date [required]
-   "vidjil_json_version": "2014.10draft", // version of the format  [required]
+   "vidjil_json_version": "2014.10", // version of the format  [required]
 #+END_SRC
 
 

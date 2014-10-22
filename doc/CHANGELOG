@@ -1,14 +1,16 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
-2014-10-XX  The Vidjil Team
+2014-10-22  The Vidjil Team
 	* Streamlined filtering options (-r/-y/-z), better documented (doc/algo.org)
-	* Streamlined output files (xxxxxxxxxx)
-	* Updated .data .json output, now in the stable 2014.10 format (documented in doc/format-analysis.org)
+	* Streamlined output files, option to fix their basename (-b)
+	* Updated .data .json output, now in the better documented 2014.10 format (doc/format-analysis.org)
 	* New experimental multi-germline analysis (-g). This will be improved and documented in a next release.
+	* Faster FineSegmenter with a better memory allocation (core/dynprog.cpp)
 	* Refactored main vidjil.cpp, objects storing germlines and statistics (core/germline.cpp, core/stats.cpp)
 	* Transferred clustering from clone output to information in .data, again simplifying vidjil.cpp
 	* Removed unused code parts as well as some files
+	* New and updated unit and functional tests
 	* Bugs closed
 
 2014-09-23  The Vidjil Team
