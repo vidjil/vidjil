@@ -224,7 +224,10 @@ class MsgUserAdapter(logging.LoggerAdapter):
 
     def process(self, msg, kwargs):
         if type(msg) is dict:
-            msg = msg['message']
+            if 'message' in msg:
+                msg = msg['message']
+            else:
+                msg = '?'
         ip = request.client
         if ip in ips:
             ip = "%s/%s" % (ip, ips[ip])

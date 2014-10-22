@@ -2,7 +2,6 @@
 #+AUTHOR: The Vidjil team (Mathieu, Mikaël and Marc)
 
 This is the help of the Vidjil browser : [[http://www.vidjil.org/browser]].
-This help will be extended in a few months.
 Further help can always be asked to [[mailto:contact@vidjil.org][contact@vidjil.org]]. We can also arrange phone or Skype meeting.
 
 The Vidjil team (Mathieu, Mikaël and Marc)
@@ -12,38 +11,41 @@ The Vidjil team (Mathieu, Mikaël and Marc)
 ** Browser
 
 The Vidjil browser runs in any modern browser. It has been successfully tested on the following platforms
- - Firefox version >= XX
- - Chrome version >= XX
- - IE version >= XX
+ - Firefox version >= 32
+ - Chrome version >= 38
+ - IE version >= 10.0 (Vidjil will not run on IE 9.0 or below)
  - Opera version >= XX
- - Safari version >= XX
+ - Safari version >= 6.0
 
 ** The .vidjil files
 
 The vidjil browser displays .vidjil files that summarize the V(D)J
-rearrangements and the sequences found in a run. Such files can be
-obtained:
+rearrangements and the sequences found in a run. 
+
+If you have an access to the patient database, you are able to upload,
+manage, process your runs (.fasta/.fastq or .clntab files) directly on the browser 
+(see below 'patient database'), and the server behind the patient
+database computes these .vidjil files.
+Otherwise, such .vidjil files can be obtained:
  - by sending us your .fasta/.fastq files, either through
    http://www.vidjil.org/submit.html or using any other method
    (e.g. your own FTP)
  - from the command-line version of Vidjil (starting from
    .fasta/.fastq files, see doc/algo.org in the command-line version).
    To gather several .vidjil files, you have to use the [[../server/fuse.py][fuse.py]] script
- - in a next release (start of 2015), you will be able to upload,
-   manage and process your runs (.fasta/.fastq files) directly on the browser (with
-   authentication to ensure that you keep the control on your data).
  - or by post-processing of other V(D)J analysis pipelines (contact us
    if you are interested)
 
 
 * First aid
 
-- Go to the “file”/“import/export” menu to access your data.
-  Your files are protected with your login and password.
-  There is always a “sample/L2-LIL.data” dataset for demonstration purposes.
+- Open data by:
+    - either with “patients”/“open patient”  (if you have access to the database)
+    - or with “file”/“import/export”, manually selecting a .vidjil file
+  There is always a “LIL-L2” dataset for demonstration purposes.
 
 - You can change the number of displayed clones by moving the slider “number of clones” (menu “filter”)
-  The maximal number of clones that can be displayed depends on what has been run before
+  The maximal number of clones that can be displayed depends on the processing step before
 
 - Due to sequencing errors, there may be several clones corresponding to a real clone. 
    - You can select several clones (for example those sharing a same V and a same J), 
@@ -115,13 +117,14 @@ obtained:
    - You can unselect all sequences by clicking on the background of the scatterplot.
 
 
-** The database / server connection (experimental)
+** The patient database (experimental)
 
-A *server* is currently developed to link the browser and the
-algorithmic part. The goal is that the clinicians will be able to
-upload, manage and process their runs directly on the browser (with
-authentication).
+This part is experimental, we have provided an access to some labs to this feature.
+The release is expected to be at Q1 2015.
 
+A server links the browser and the algorithmic part. You can upload,
+manage, process your runs (.fasta/.fastq or .clntab files) directly on
+the browser.
 
 *** Patients
       
@@ -129,10 +132,8 @@ Once you are authentified, this page show the patient list. Here you
 can see your patients and patients whose permission has been given to you.
 
 New patients can be added ('add patient'), edited ('e') or deleted ('X').
-By default, you are the only one who can see/access this new patient.
-You can grant access to other people or group ('P'),
-people will be able to see your patient and make some action depending of the access granted.
-
+By default, you are the only one who can see and update this new patient.
+If you have an admin access, you can grant access to other users ('p').
 
 *** Samples
 

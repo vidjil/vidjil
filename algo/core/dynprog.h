@@ -15,6 +15,12 @@ using namespace std;
 
 float identity_percent(int score);
 
+typedef struct {
+  int i;
+  int j;
+  int type;
+} backtrack_info;
+
 class Cost
 {
  public:
@@ -103,7 +109,7 @@ class DynProg
   friend ostream& operator<<(ostream& out, const DynProg& dp);
   
   int **S;
-  int ***B;
+  backtrack_info **B;
   int *gap1 ;
   int *linkgap ;
   int *gap2 ;

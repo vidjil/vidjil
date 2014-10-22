@@ -59,7 +59,7 @@
 // GIT_VERSION should be defined in "git-version.h", created by "create-git-version-h.sh", to be used outside of releases
 #include "git-version.h"
 
-#define VIDJIL_JSON_VERSION "2014.09"
+#define VIDJIL_JSON_VERSION "2014.10"
 
 //$$ #define (mainly default options)
 
@@ -206,7 +206,6 @@ void usage(char *progname)
        << "  -b <string>   output basename (by default basename of the input file)" << endl
     
        << "  -a            output all sequences by cluster (" << CLONE_FILENAME << "*), to be used only on small datasets" << endl
-       << "  -x            do not compute representative sequences" << endl
        << "  -v            verbose mode" << endl
        << endl        
 
