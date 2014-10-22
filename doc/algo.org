@@ -138,7 +138,7 @@ than 100 clones is often not useful since they can't be visualized easily
 in the browser, and takes large computation time.
 
 Note that even if a clone is not in the top 20 (or 50, or 100) but
-still passes the =-r=, =-%= options, it is still reported in the .data
+still passes the =-r=, =-%= options, it is still reported in the .vidjil
 file. If the clone is at some MRD point in the top 20 (or 50, or 100),
 it will be fully analyzed/segmented by this other point (and then
 collected by the =fuse.py= script, using representatives computed at this
@@ -185,9 +185,9 @@ require the =-G germline/IGH= and the =-d= options.
 #+BEGIN_SRC sh
 ./vidjil -G germline/IGH -d data/Stanford_S22.fasta
    # Extract (with an ultra-fast heuristic) all windows
-   # Summary of windows is available in out/vidjil.data
-   # ('.data' format, see below)
-   # To have detailed/debug results in out/segmented.vdj.fa
+   # Summary of windows is available in out/Stanford_S22.vidjil
+   # (for the '.vidjil' format, see below)
+   # To have detailed/debug results in out/Stanford_S22.vdj.fa
    # (which is a FASTA file embedding heuristic information 
       in the headers, '.vdj' format, see warning below)
    # run Vidjil with option '-U'
@@ -212,10 +212,10 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
    # For debug purpose, if one wants all the clones, use the option -A.
    # Results are both
    #  - on the standard output
-   #  - in out/clones.vdj.fa (fasta file to be processed by other tools)
-   #  - in out/vidjil.data (for the browser)
-   # Additional files are in out/seq/windows.fa-* and out/seq/clone.fa-*
-   # If one adds the '-U' option, an additonal out/segmented.vdj.fa file is produced,
+   #  - in out/clones_simul.vdj.fa (fasta file to be processed by other tools)
+   #  - in out/clones_simul.vidjil (for the browser)
+   # Additional files are in out/clones_simul.windows.fa and out/seq/clone.fa-*
+   # If one adds the '-U' option, an additonal out/clones_simul.segmented.vdj.fa file is produced,
    # listing segmented reads using the .vdj format (see below)
 #+END_SRC
 
@@ -242,7 +242,7 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 Vidjil output includes segmentation of V(D)J recombinations. This happens
 in the following situations:
 
-- in a first pass, when requested with =-U= option, in =segmented.vdj.fa= file.
+- in a first pass, when requested with =-U= option, in a =.segmented.vdj.fa= file.
 
       The goal of this ultra-fast segmentation, based on a seed
       heuristics, is only to locate the w-window overlapping the
@@ -251,7 +251,8 @@ in the following situations:
       actual center.
 
 - in a second pass, on the standard output
-    - at the end of the clones detection (=-c clones=, also in in =clones.vdj.fa=)
+    - at the end of the clones detection (=-c clones=, also in in
+      =basename.vdj.fa=, where =basename= is the basename of the input file)
     - or directly when explicitly requiring segmentation (=-c segment=)
 
       This segmentation obtained by full comparison (dynamic
@@ -293,7 +294,7 @@ with a > is of the following form:
         Jgene         name of the J gene being rearranged
         
         comments      optional comments. In Vidjil, the following comments are now used:
-                      - "seed" when this comes for the first pass (segmented.vdj.fa). See the warning above.
+                      - "seed" when this comes for the first pass (.segmented.vdj.fa). See the warning above.
                       - "!ov x" when there is an overlap of x bases between last V seed and first J seed
 
 #+END_EXAMPLE
@@ -306,7 +307,7 @@ applicable being removed:
 >name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene  coments
 
 
-* vidjil.data .json format and web interface
+* .vidjil and .json format and web interface
 
 A summary of extracted windows is also available in a JSON format,
 including, for each windows, the number of reads sharing this window.

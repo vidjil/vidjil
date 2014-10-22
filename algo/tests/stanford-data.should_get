@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -G ../../germline/IGH -r 5 -d ../../data/Stanford_S22.fasta ; cat out/vidjil.data | sh format-json.sh
+!LAUNCH: ../../vidjil -G ../../germline/IGH -r 5 -d -b data  ../../data/Stanford_S22.fasta ; cat out/data.vidjil | sh format-json.sh
 
 $ Number of reads
 1:"total" : [ 13153 ] ,

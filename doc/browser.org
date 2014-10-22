@@ -18,17 +18,17 @@ The Vidjil browser runs in any modern browser. It has been successfully tested o
  - Opera version >= XX
  - Safari version >= XX
 
-** The .data files
+** The .vidjil files
 
-The vidjil browser displays .data files that summarize the V(D)J
+The vidjil browser displays .vidjil files that summarize the V(D)J
 rearrangements and the sequences found in a run. Such files can be
 obtained:
  - by sending us your .fasta/.fastq files, either through
    http://www.vidjil.org/submit.html or using any other method
    (e.g. your own FTP)
  - from the command-line version of Vidjil (starting from
-   .fasta/.fastq files, see doc/alog.org in the command-line version).
-   To gather several .data files, you have to use the [[../server/fuse.py][fuse.py]] script
+   .fasta/.fastq files, see doc/algo.org in the command-line version).
+   To gather several .vidjil files, you have to use the [[../server/fuse.py][fuse.py]] script
  - in a next release (start of 2015), you will be able to upload,
    manage and process your runs (.fasta/.fastq files) directly on the browser (with
    authentication to ensure that you keep the control on your data).
@@ -209,13 +209,13 @@ The browser can be opened on a data file specified from a =data= attribute,
 and optionally on an analysis file specified from a =analysis= attribute,
 as in the following URLs on our test server:
 
-- http://rbx.vidjil.org/browser/?data=test.data
-- http://rbx.vidjil.org/browser/?data=test.data&analysis=test.analysis
-- http://rbx.vidjil.org/browser/?data=http://rbx.vidjil.org/browser/test.data
+- http://rbx.vidjil.org/browser/?data=test.vidjil
+- http://rbx.vidjil.org/browser/?data=test.vidjil&analysis=test.analysis
+- http://rbx.vidjil.org/browser/?data=http://rbx.vidjil.org/browser/test.vidjil
 
 Both GET and POST requests are accepted.
-Note that the =browser/index.html= file and the =.data/.analysis= files should be hosted on the same server.
-Otherwise, the server hosting the =.data/.analysis= files must accept cross-domain queries.
+Note that the =browser/index.html= file and the =.vidjil/.analysis= files should be hosted on the same server.
+Otherwise, the server hosting the =.vidjil/.analysis= files must accept cross-domain queries.
 
 
 * Reference

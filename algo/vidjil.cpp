@@ -85,14 +85,14 @@
 enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define OUT_DIR "./out/" 
-#define CLONES_FILENAME "clones.vdj.fa"
+#define CLONES_FILENAME ".vdj.fa"
 #define CLONE_FILENAME "clone.fa-"
-#define WINDOWS_FILENAME "windows.fa"
-#define SEGMENTED_FILENAME "segmented.vdj.fa"
-#define UNSEGMENTED_FILENAME "unsegmented.fa"
-#define EDGES_FILENAME "edges"
-#define COMP_FILENAME "comp.data"
-#define JSON_SUFFIX ".data"
+#define WINDOWS_FILENAME ".windows.fa"
+#define SEGMENTED_FILENAME ".segmented.vdj.fa"
+#define UNSEGMENTED_FILENAME ".unsegmented.fa"
+#define EDGES_FILENAME ".edges"
+#define COMP_FILENAME "comp.vidjil"
+#define JSON_SUFFIX ".vidjil"
 
 // "tests/data/leukemia.fa" 
 
@@ -170,7 +170,7 @@ void usage(char *progname)
        << "  -l <file>     labels for some windows -- these windows will be kept even if some limits are not reached" << endl
        << endl
 
-       << "Additional clustering (not output in vidjil.data and therefore not used in the browser)" << endl
+       << "Additional clustering (not output in .vidjil file and therefore not used in the browser)" << endl
        << "  -e <file>     manual clustering -- a file used to force some specific edges" << endl
        << "  -n <int>      maximum distance between neighbors for automatic clustering (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
        << "  -N <int>      minimum required neighbors for automatic clustering (default " << DEFAULT_MINPTS << ")" << endl
@@ -198,12 +198,12 @@ void usage(char *progname)
        << endl
 
        << "Debug" << endl
-       << "  -U            output segmented (" << SEGMENTED_FILENAME << ") sequences" << endl
-       << "  -u            output unsegmented (" << UNSEGMENTED_FILENAME << ") sequences" << endl
+       << "  -U            output segmented (in " << SEGMENTED_FILENAME << " file) sequences" << endl
+       << "  -u            output unsegmented (in " << UNSEGMENTED_FILENAME << " file) sequences" << endl
        << "                and display detailed k-mer affectation both on segmented and on unsegmented sequences" << endl
        << "Output" << endl
        << "  -o <dir>      output directory (default: " << OUT_DIR << ")" <<  endl
-       << "  -p <string>   prefix output filenames by the specified string" << endl
+       << "  -b <string>   output basename (by default basename of the input file)" << endl
     
        << "  -a            output all sequences by cluster (" << CLONE_FILENAME << "*), to be used only on small datasets" << endl
        << "  -x            do not compute representative sequences" << endl
@@ -242,7 +242,7 @@ int main (int argc, char **argv)
   string f_rep_J = DEFAULT_J_REP ;
   string f_reads = DEFAULT_READS ;
   string seed = DEFAULT_SEED ;
-  string prefix_filename = "";
+  string f_basename = "";
 
   string out_dir = OUT_DIR;
   
@@ -297,7 +297,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:L%:y:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:b:Sn:o:L%:y:z:uU")) != EOF)
 
     switch (c)
       {
@@ -393,8 +393,8 @@ int main (int argc, char **argv)
         out_dir = optarg ;
         break;
 
-      case 'p':
-        prefix_filename = optarg;
+      case 'b':
+        f_basename = optarg;
         break;
 
       // Limits
@@ -560,6 +560,11 @@ int main (int argc, char **argv)
   if (mkpath(outseq_cstr, 0755) == -1) {
     perror("Directory creation");
     exit(2);
+  }
+
+  // Compute basename if not given as an option
+  if (f_basename == "") {
+    f_basename = extract_basename(f_reads);
   }
 
   out_dir += "/" ;
@@ -813,14 +818,14 @@ int main (int argc, char **argv)
     WindowExtractor we;
  
     if (output_segmented) {
-      string f_segmented = out_dir + prefix_filename + SEGMENTED_FILENAME ;
+      string f_segmented = out_dir + f_basename + SEGMENTED_FILENAME ;
       cout << "  ==> " << f_segmented << endl ;
       out_segmented = new ofstream(f_segmented.c_str());
       we.setSegmentedOutput(out_segmented);
     }
 
     if (output_unsegmented) {
-      string f_unsegmented = out_dir + prefix_filename + UNSEGMENTED_FILENAME ;
+      string f_unsegmented = out_dir + f_basename +  UNSEGMENTED_FILENAME ;
       cout << "  ==> " << f_unsegmented << endl ;
       out_unsegmented = new ofstream(f_unsegmented.c_str());
       we.setUnsegmentedOutput(out_unsegmented);
@@ -880,7 +885,7 @@ int main (int argc, char **argv)
 	//$$ Output windows
 	//////////////////////////////////
 
-	string f_all_windows = out_dir + prefix_filename + WINDOWS_FILENAME;
+	string f_all_windows = out_dir + f_basename + WINDOWS_FILENAME;
 	cout << "  ==> " << f_all_windows << endl ;
 
 	ofstream out_all_windows(f_all_windows.c_str());
@@ -923,7 +928,7 @@ int main (int argc, char **argv)
 
 	if (load_comp==1) 
 	  {
-	    comp.load((out_dir+prefix_filename + comp_filename).c_str());
+	    comp.load((out_dir+f_basename + "." + comp_filename).c_str());
 	  }
 	else
 	  {
@@ -932,7 +937,7 @@ int main (int argc, char **argv)
 	
 	if (save_comp==1)
 	  {
-	    comp.save(( out_dir+prefix_filename + comp_filename).c_str());
+	    comp.save(( out_dir+f_basename + "." + comp_filename).c_str());
 	  }
        
 	clones_windows  = comp.cluster(forced_edges, w, cout, epsilon, minPts) ;
@@ -983,16 +988,16 @@ int main (int argc, char **argv)
     int num_clone = 0 ;
     int clones_without_representative = 0 ;
 
-    ofstream out_edges((out_dir+prefix_filename + EDGES_FILENAME).c_str());
+    ofstream out_edges((out_dir+f_basename + EDGES_FILENAME).c_str());
     int nb_edges = 0 ;
-    cout << "  ==> suggested edges in " << out_dir+ prefix_filename + EDGES_FILENAME
+    cout << "  ==> suggested edges in " << out_dir+ f_basename + EDGES_FILENAME
         << endl ;
 
-    string f_clones = out_dir + prefix_filename + CLONES_FILENAME ;
+    string f_clones = out_dir + f_basename + CLONES_FILENAME ;
     cout << "  ==> " << f_clones << "   \t(main result file)" << endl ;
     ofstream out_clones(f_clones.c_str()) ;
 
-    cout << "  ==> " << out_seqdir + prefix_filename + CLONE_FILENAME + "*" << "\t(detail, by clone)" << endl ; 
+    cout << "  ==> " << out_seqdir + CLONE_FILENAME + "*" << "\t(detail, by clone)" << endl ; 
     cout << endl ;
 
 
@@ -1043,7 +1048,7 @@ int main (int argc, char **argv)
 
       //$$ Open CLONE_FILENAME
 
-      string clone_file_name = out_seqdir+ prefix_filename + CLONE_FILENAME + string_of_int(num_clone) ;
+      string clone_file_name = out_seqdir+ CLONE_FILENAME + string_of_int(num_clone) ;
       ofstream out_clone(clone_file_name.c_str());
 
 
@@ -1201,7 +1206,7 @@ int main (int argc, char **argv)
     } // end if (command == CMD_CLONES) 
 
     //$$ .json output: json_data_segment
-    string f_json = out_dir + prefix_filename + "vidjil" + JSON_SUFFIX ; // TODO: retrieve basename from f_reads instead of "vidjil"
+    string f_json = out_dir + f_basename + JSON_SUFFIX ;
     cout << "  ==> " << f_json << "\t(data file for the browser)" << endl ;
     ofstream out_json(f_json.c_str()) ;
     

@@ -1,9 +1,9 @@
-#+TITLE: .analysis and .data format
+#+TITLE: .analysis and .vidjil format
 #+AUTHOR: The Vidjil team
 
-The .analysis and the .data files share a common [[http://en.wikipedia.org/wiki/JSON][.json]] format 
+The .analysis and the .vidjil files share a common [[http://en.wikipedia.org/wiki/JSON][.json]] format 
 
-The .data file represents the actual data on clones (and that can
+The .vidjil file represents the actual data on clones (and that can
 reach megabytes).
 
 The .analysis file describe customizations done by the user
@@ -12,7 +12,7 @@ can load or save such files (and possibly from/to the server).
 It is intended to be very small (a few kilobytes).
 
 All settings in the .analysis file override the settings that could be
-present in the .data file.
+present in the .vidjil file.
 
 * Analysis file example
 
@@ -96,7 +96,7 @@ present in the .data file.
 
 
 
-* 'reads' element [.data only, required]
+* 'reads' element [.vidjil only, required]
 
 #+BEGIN_SRC js
 {
@@ -118,7 +118,7 @@ present in the .data file.
     "number": 2,      // number of samples [required]
 
     "original_names": [],  // original sample names (with samples.number elements) [required]
-                      // the names in the .data file and in .analysis files must match
+                      // the names in the .vidjil file and in .analysis files must match
 
     "names": [],      // custom sample names (with samples.number elements) [optional]
                       // These names are editable and will be used on the graphs
@@ -138,7 +138,7 @@ present in the .data file.
 
 Each element in the 'clones' list describes properties of a clone.
 
-In a .data file, this is the main part, describing all clones.
+In a .vidjil file, this is the main part, describing all clones.
 
 In the .analysis file, this section is intended to describe some specific clones.
 
@@ -149,15 +149,15 @@ In the .analysis file, this section is intended to describe some specific clones
     "id": "",        // clone identifier, must be unique [required]
                      //          Vidjil/algo output -> the 'window'  
                      //          Brno .clntab       -> clone sequence
-                     // the clone identifier in the .data file and in .analysis file must match
+                     // the clone identifier in the .vidjil file and in .analysis file must match
 
-    "germline": ""   // [required for .data]
+    "germline": ""   // [required for .vidjil]
                      // (should match a germline defined in germline/germline.data)
 
     "name": "",      // clone custom name [optional]
-                     // (the default name, in .data, is computed from V/D/J information)
+                     // (the default name, in .vidjil, is computed from V/D/J information)
 
-    "sequence": "",  // reference nt sequence [required for .data]
+    "sequence": "",  // reference nt sequence [required for .vidjil]
                      // (for .analysis, not really used now in the browser,
                      //  for special clones/sequences that are known,
                      //  such as standard/spikes or know patient clones)
@@ -187,11 +187,11 @@ In the .analysis file, this section is intended to describe some specific clones
       }
 
 
-    "reads": [],      // number of reads in this clones [.data only, required] 
+    "reads": [],      // number of reads in this clones [.vidjil only, required] 
                       // (with samples.number elements)
     "top": 0,
 
-    "stats": []       // (not documented now) [.data only] (with sample.number elements)
+    "stats": []       // (not documented now) [.vidjil only] (with sample.number elements)
 
 
  }
