@@ -102,12 +102,9 @@ DynProg::DynProg(const string &x, const string &y, DynProgMode mode, const Cost&
     S[i] = new int[n+1];
   }
   
-  B = new int**[m+1];
+  B = new backtrack_info*[m+1];
   for (int i = 0; i <= m; i++) {
-    B[i] = new int*[n+1];
-    for (int j = 0; j <= n; j++) {
-      B[i][j] = new int[3];
-    }
+    B[i] = new backtrack_info[n+1];
   }
   
   this -> mode = mode;
@@ -131,11 +128,6 @@ DynProg::~DynProg() {
   }
   delete [] S;
   
-  for (int i = 0; i <= m; i++) {
-    for (int j = 0; j <= n; j++) {
-      delete [] B[i][j];
-    }
-  }
   for (int i = 0; i <= m; i++) {
     delete [] B[i];
   }
@@ -209,45 +201,45 @@ int DynProg::compute()
 	    }
 	    
 	  if (best == 0){
-	    B[i][j][2] = FIN;
+	    B[i][j].type = FIN;
 	  }
 	}
       
       S[i][j] = best ;
       
       if (best==subst){
-	B[i][j][0] = i-1 ;
-	B[i][j][1] = j-1 ;
-	B[i][j][2] = SUBST ;
+	B[i][j].i = i-1 ;
+	B[i][j].j = j-1 ;
+	B[i][j].type = SUBST ;
       }
       if (best==inser){
-	B[i][j][0] = i-1 ;
-	B[i][j][1] = j ;
-	B[i][j][2] = INSER ;
+	B[i][j].i = i-1 ;
+	B[i][j].j = j ;
+	B[i][j].type = INSER ;
       }
       if (best==delet){
-	B[i][j][0] = i ;
-	B[i][j][1] = j-1 ;
-	B[i][j][2] = DELET ;
+	B[i][j].i = i ;
+	B[i][j].j = j-1 ;
+	B[i][j].type = DELET ;
       }
       if (best==homo2x){
-	B[i][j][0] = i-2 ;
-	if (B[i][j][0] < 0) B[i][j][0] = 0 ;
-	B[i][j][1] = j-1 ;
-	B[i][j][2] = HOMO2X ;
+	B[i][j].i = i-2 ;
+	if (B[i][j].i < 0) B[i][j].i = 0 ;
+	B[i][j].j = j-1 ;
+	B[i][j].type = HOMO2X ;
       }
       if (best==homo2y){
-	B[i][j][0] = i-1 ;
-	B[i][j][1] = j-2 ;
-	if (B[i][j][1] < 0) B[i][j][1] = 0 ;
-	B[i][j][2] = HOMO2Y ;
+	B[i][j].i = i-1 ;
+	B[i][j].j = j-2 ;
+	if (B[i][j].j < 0) B[i][j].j = 0 ;
+	B[i][j].type = HOMO2Y ;
       }
 
       
       if (mode == Local || mode == LocalEndWithSomeDeletions)
 	{
       	  if (best == 0){
-	    B[i][j][2] = FIN;
+	    B[i][j].type = FIN;
 	  }
 	}
       
@@ -256,10 +248,10 @@ int DynProg::compute()
   if (mode == Local || mode == LocalEndWithSomeDeletions)
     {
       for (int i=0; i<=n; i++){
-	B[0][i][2] = FIN;
+	B[0][i].type = FIN;
       }
       for (int i=0; i<=m; i++){
-	B[i][0][2] = FIN;
+	B[i][0].type = FIN;
       }
       
     }
@@ -274,12 +266,12 @@ int DynProg::compute()
 	    best_j = j ;
 	  }
       for (int i=1; i<=n; i++){
-	B[0][i][0] = 0 ;
-	B[0][i][1] = i-1 ;
-	B[0][i][2] = DELET;
+	B[0][i].i = 0 ;
+	B[0][i].j = i-1 ;
+	B[0][i].type = DELET;
       }
       for (int i=0; i<=m; i++){
-	B[i][0][2] = FIN;
+	B[i][0].type = FIN;
       }
     }
 
@@ -295,12 +287,12 @@ int DynProg::compute()
 	  }
 	  
       for (int i=0; i<=n; i++){
-	B[0][i][2] = FIN;
+	B[0][i].type = FIN;
       }
       for (int i=0; i<=m; i++){
-	B[i][0][0] = i-1 ;
-	B[i][0][1] = 0 ;
-	B[i][0][2] = INSER;
+	B[i][0].i = i-1 ;
+	B[i][0].j = 0 ;
+	B[i][0].type = INSER;
       }
     }
 
@@ -312,16 +304,16 @@ int DynProg::compute()
       best_score = S[m][n];
 
       for (int i=0; i<=m; i++){
-	B[i][0][0] = i-1 ;
-	B[i][0][1] = 0 ;
-	B[i][0][2] = INSER;
+	B[i][0].i = i-1 ;
+	B[i][0].j = 0 ;
+	B[i][0].type = INSER;
       }
       for (int i=1; i<=n; i++){
-	B[0][i][0] = 0 ;
-	B[0][i][1] = i-1 ;
-	B[0][i][2] = DELET;
+	B[0][i].i = 0 ;
+	B[0][i].j = i-1 ;
+	B[0][i].type = DELET;
       }
-      B[0][0][2] = FIN;
+      B[0][0].type = FIN;
     }
 
   if (reverse_x)
@@ -370,12 +362,12 @@ void DynProg::backtrack()
   ostringstream back;
   
   
-  while ( B[ti][tj][2] != FIN ){
+  while ( B[ti][tj].type != FIN ){
     
-    tmpi=B[ti][tj][0];
-    tmpj=B[ti][tj][1];
+    tmpi=B[ti][tj].i;
+    tmpj=B[ti][tj].j;
 
-    if (B[ti][tj][2] == SUBST ){
+    if (B[ti][tj].type == SUBST ){
       linkgap[g1]=g2;
       back_s1 << x[ti-1];
       g1--;
@@ -389,7 +381,7 @@ void DynProg::backtrack()
       }
       
     }
-    if (B[ti][tj][2] == INSER ){
+    if (B[ti][tj].type == INSER ){
       linkgap[g1]=g2;
       back_s1 << x[ti-1];
       g1--;
@@ -398,7 +390,7 @@ void DynProg::backtrack()
       back_tr << ".";
       
     }
-    if (B[ti][tj][2] == DELET){
+    if (B[ti][tj].type == DELET){
     linkgap[g1]=g2;
       back_s1 << " ";
       gap1[g1]++;
@@ -407,7 +399,7 @@ void DynProg::backtrack()
       back_tr << ".";
       
     }
-    if (B[ti][tj][2] == HOMO2X ){
+    if (B[ti][tj].type == HOMO2X ){
       linkgap[g1]=g2;
       back_s1 << x[ti-1] << x[ti-2];
       g1--;
@@ -420,7 +412,7 @@ void DynProg::backtrack()
 
     }
       
-    if (B[ti][tj][2] == HOMO2Y ){
+    if (B[ti][tj].type == HOMO2Y ){
     linkgap[g1]=g2;
       back_s1 << " " << x[ti-1] ;
       gap1[g1]++;
