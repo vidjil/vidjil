@@ -192,7 +192,7 @@ Model.prototype = {
     loadAnalysisUrl: function (url) {
         var self = this;
         
-        var url2 = url.replace(".vidjil",".analysis");
+        var url2 = url.replace(new RegExp(".vidjil" + '$'), ".analysis")
         
         var url_split = url2.split('/')
         

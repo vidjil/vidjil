@@ -796,7 +796,7 @@ def main():
     group_options.add_argument('--compress', '-c', action='store_true', help='compress point names, removing common substrings')
     group_options.add_argument('--pipeline', '-p', action='store_true', help='compress point names (internal Bonsai pipeline)')
 
-    group_options.add_argument('--output', '-o', type=str, default='fused.data', help='output file (%(default)s)')
+    group_options.add_argument('--output', '-o', type=str, default='fused.vidjil', help='output file (%(default)s)')
     group_options.add_argument('--top', '-t', type=int, default=50, help='keep only clones in the top TOP of some point (%(default)s)')
 
     parser.add_argument('file', nargs='+', help='''input files (.vidjil/.cnltab)''')
