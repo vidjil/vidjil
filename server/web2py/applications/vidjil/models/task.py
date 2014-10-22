@@ -1,4 +1,5 @@
 # coding: utf8
+import os
 
 TASK_TIMEOUT = 2 * 3600
 
@@ -76,6 +77,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     ## filepath du fichier de séquence
     row = db(db.sequence_file.id==id_file).select()
     filename = row[0].data_file
+    output_filename = os.path.splitext(row[0].data_file)[0]
     seq_file = upload_folder+filename
     id_patient = row[0].patient_id
 
@@ -84,19 +86,20 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     vidjil_germline = db.config[id_config].germline
     
     ## commande complete
-    cmd = vidjil_path+'/vidjil ' + ' -o  ' + out_folder
+    cmd = vidjil_path+'/vidjil ' + ' -o  ' + out_folder + " -b " + output_filename
     if not vidjil_germline == 'multi':
         cmd += ' -G ' + germline_folder + vidjil_germline 
     cmd += ' ' + vidjil_cmd + ' '+ seq_file
     
     ## execute la commande vidjil
+    print "===Vidjil output==="
+    print cmd
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
-    print "===Vidjil output==="
     print p.stdout.read()
     
     ## récupération du fichier data.json généré
-    results_filepath = os.path.abspath(out_folder+"vidjil.data")
+    results_filepath = os.path.abspath(out_folder+output_filename+".vidjil")
     stream = open(results_filepath, 'rb')
     
     ## insertion dans la base de donnée
@@ -123,9 +126,11 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     
     cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
     
+    
+    print "===fuse  output==="
+    print cmd
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
-    print "===fuse  output==="
     print p.stdout.read()
 
 
