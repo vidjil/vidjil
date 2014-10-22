@@ -19,11 +19,11 @@ The Vidjil browser runs in any modern browser. It has been successfully tested o
 
 ** The .vidjil files
 
-The vidjil browser displays .vidjil files that summarize the V(D)J
+The vidjil browser displays =.vidjil= files that summarize the V(D)J
 rearrangements and the sequences found in a run. 
 
 If you have an access to the patient database, you are able to upload,
-manage, process your runs (.fasta/.fastq or .clntab files) directly on the browser 
+manage, process your runs (=.fasta=, =.fastq= or =.clntab= files) directly on the browser 
 (see below 'patient database'), and the server behind the patient
 database computes these .vidjil files.
 Otherwise, such .vidjil files can be obtained:
@@ -31,8 +31,8 @@ Otherwise, such .vidjil files can be obtained:
    http://www.vidjil.org/submit.html or using any other method
    (e.g. your own FTP)
  - from the command-line version of Vidjil (starting from
-   .fasta/.fastq files, see doc/algo.org in the command-line version).
-   To gather several .vidjil files, you have to use the [[../server/fuse.py][fuse.py]] script
+   =.fasta= or =.fastq= files, see [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]])
+   To gather several .vidjil files, you have to use the [[http://git.vidjil.org/blob/master/server/fuse.py][fuse.py]] script
  - or by post-processing of other V(D)J analysis pipelines (contact us
    if you are interested)
 
