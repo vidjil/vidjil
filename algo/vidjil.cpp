@@ -676,15 +676,12 @@ int main (int argc, char **argv)
   /////////////////////////////////////////
   if (command == CMD_GERMLINES)
     {
-#define KMER_AMBIGUOUS "?"
-#define KMER_UNKNOWN "_"
-
       map <char, int> stats_kmer, stats_max;
       IKmerStore<KmerAffect> *index = multigermline->index ;
 
       // Initialize statistics, with two additional categories
-      index->labels.push_back(make_pair(KmerAffect::getAmbiguous(), KMER_AMBIGUOUS));
-      index->labels.push_back(make_pair(KmerAffect::getUnknown(), KMER_UNKNOWN));
+      index->labels.push_back(make_pair(KmerAffect::getAmbiguous(), AFFECT_AMBIGUOUS_SYMBOL));
+      index->labels.push_back(make_pair(KmerAffect::getUnknown(), AFFECT_UNKNOWN_SYMBOL));
       
       for (list< pair <KmerAffect, string> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
 	{

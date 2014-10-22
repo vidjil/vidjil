@@ -139,6 +139,10 @@ bool operator>=(const KmerAffect &a1, const KmerAffect &a2);
 bool operator!=(const KmerAffect &a1, const KmerAffect &a2);
 ostream &operator<<(ostream &os, const KmerAffect &kmer);
 
+
+#define AFFECT_AMBIGUOUS_SYMBOL "?"
+#define AFFECT_UNKNOWN_SYMBOL "_"
+
 /**
  * Constant defining the unknown affectation (not known yet)
  */
