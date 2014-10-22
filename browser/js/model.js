@@ -133,8 +133,8 @@ Model.prototype = {
 	this.segment = segment;
     },
 
-    /* load the selected data/analysis file in the model
-     * @id : id of the form (html element) linking to the data file
+    /* load the selected vidjil/analysis file in the model
+     * @id : id of the form (html element) linking to the vidjil file
      * @analysis : id of the form (html element) linking to the analysis file
      * impossible to use direct path to input files, need a fakepath from input form
      * @limit : minimum top value to keep a clone*/
@@ -192,7 +192,7 @@ Model.prototype = {
     loadAnalysisUrl: function (url) {
         var self = this;
         
-        var url2 = url.replace(".data",".analysis");
+        var url2 = url.replace(".vidjil",".analysis");
         
         var url_split = url2.split('/')
         
@@ -234,7 +234,7 @@ Model.prototype = {
         }
         self.reset();
         
-        //copy .data file in model
+        //copy .vidjil file in model
         for (var key in data){
             if (key != "clusters") self[key] = data[key]
         }
@@ -369,7 +369,7 @@ Model.prototype = {
             }
             self.initClones();
         }else{
-            myConsole.flash("invalid json version for analysis file", 1)
+            myConsole.flash("invalid version for this .analysis file", 1)
         }
     },
     

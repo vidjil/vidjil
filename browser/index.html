@@ -75,13 +75,13 @@
 
             <h2>Vidjil <span class='logo'>(beta)</span> &ndash; V(D)J repertoire browsing and analysis</h2>
 
-            Data file (.data):<br/>
+            Data file (.vidjil):<br/>
             <input id="upload_json" type="file" name="json" /></br>
-            <p class='help'>The data file stores a set of clones on several points.</p>
+            <p class='help'>The .vidjil file stores a set of clones on several points.</p>
 
             Analysis file (.analysis, optional):<br/>
             <input id="upload_pref" type="file" name="pref" /></br>
-            <p class='help'>The analysis file stores all parameters set by the user (tags, colors, manual clusters).</p>
+            <p class='help'>The .analysis file stores all parameters set by the user (tags, colors, manual clusters).</p>
 
             <button onclick="document.getElementById('file_menu').style.display='none';
             m.load('upload_json','upload_pref', 200)">start</button> 
@@ -91,7 +91,7 @@
             <span class="closeButton" onclick="cancel();">X</span>
             <h2>analysis menu</h2>
 
-            Analysis file :<br/>
+            Analysis file:<br/>
             <input id="upload_analysis" type="file" name="analysis" /></br></br>
 
             <button onclick="document.getElementById('analysis_menu').style.display='none';
