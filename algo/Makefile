@@ -7,12 +7,13 @@ MAINCORE=$(wildcard *.cpp)
 LIBCORE=core/vidjil.a
 
 BINDIR=..
+CGIDIR=../browser/cgi
 
 CREATE_VERSION_GIT_H := $(shell test -x ./create-git-version-h.sh && ./create-git-version-h.sh)
 
 .PHONY: all core clean forcedep
 
-v: vidjil
+v: vidjil align.cgi
 
 ###
 
@@ -36,6 +37,11 @@ nospaced: cleanspaced
 cleanspaced:
 	rm -f vidjil.o core/tools.o
 
+###
+
+align.cgi: cgi/align.cpp
+	make -C core OPTIM="$(OPTIM)"
+	$(CC) -o $(CGIDIR)/align.cgi cgi/align.o $(LIBCORE) $(LDFLAGS) $(CXXFLAGS)
 ###
 
 all: $(EXEC)
