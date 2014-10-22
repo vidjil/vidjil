@@ -46,8 +46,8 @@
                 (db.results_file.sequence_file_id==db.sequence_file.id)
                 & (db.results_file.config_id==str(config_id) )
             ), 
-            orderby = db.results_file.sequence_file_id|db.results_file.run_date,
-            groupby = db.results_file.sequence_file_id
+            orderby = db.sequence_file.id|db.results_file.run_date,
+            groupby = db.sequence_file.id,
         )
 }}
 {{else:}}
