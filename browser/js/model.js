@@ -154,13 +154,7 @@ Model.prototype = {
             
         oFReader.readAsText(oFile);
         oFReader.onload = function (oFREvent) {
-            try {
-                var data = jQuery.parseJSON(oFREvent.target.result)
-            } catch (e) {
-                myConsole.popupMsg(myConsole.msg.file_error);
-                return 0
-            }
-            self.parseJsonData(data, limit)
+            self.parseJsonData(oFREvent.target.result, limit)
                 .loadGermline()
                 .loadAnalysis(analysis);
             self.dataFileName = document.getElementById(id)
@@ -224,7 +218,16 @@ Model.prototype = {
         this.dataCluster = []
         this.clusters = []
         
-        console.log(data)
+        if (typeof data == "string") {
+            var json_text = data
+            try {
+                var data = jQuery.parseJSON(json_text)
+            } catch (e) {
+                    myConsole.popupMsg(myConsole.msg.file_error);
+                return 0
+            }
+        }
+        
         if ((typeof (data.vidjil_json_version) == 'undefined') || (data.vidjil_json_version < VIDJIL_JSON_VERSION)) {
             myConsole.popupMsg(myConsole.msg.version_error);
             return 0;

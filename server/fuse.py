@@ -30,7 +30,7 @@ import datetime
 from operator import itemgetter
 
 
-VIDJIL_JSON_VERSION = "2014.09"
+VIDJIL_JSON_VERSION = "2014.10"
 
 GERMLINES_ORDER = ['TRA', 'TRB', 'TRG', 'TRD', 'DD', 'IGH', 'DHJH', 'IJK', 'IJL'] 
 
