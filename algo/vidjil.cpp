@@ -206,7 +206,6 @@ void usage(char *progname)
        << "  -b <string>   output basename (by default basename of the input file)" << endl
     
        << "  -a            output all sequences by cluster (" << CLONE_FILENAME << "*), to be used only on small datasets" << endl
-       << "  -x            do not compute representative sequences" << endl
        << "  -v            verbose mode" << endl
        << endl        
 
