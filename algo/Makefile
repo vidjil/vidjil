@@ -40,6 +40,7 @@ cleanspaced:
 ###
 
 align.cgi: cgi/align.o
+	mkdir -p $(CGIDIR)
 	make -C core OPTIM="$(OPTIM)"
 	$(CC) -o $(CGIDIR)/align.cgi cgi/align.o $(LIBCORE) $(LDFLAGS) $(CXXFLAGS)
 ###
