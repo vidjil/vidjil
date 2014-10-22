@@ -172,30 +172,3 @@ string JsonArray::toString(){
   
   return stream.str();
 }
-
-/*
- Méthode permettant de retourner un tableau d'objets Json, contenant le nom des normalisations
- */
-JsonArray json_normalization_names()
-{
-  JsonArray result;
-  result.add("none");
-  result.add("highest standard");
-  result.add("all standards");
-  
-  return result;
-}
-
-/*
- Méthode permettant de retourner un tableau d'objets Json, contenant des données concernant la normalisation d'un jeu, donné en paramètre
- */
-JsonArray json_normalization( list< pair <float, int> > norm_list, int nb_reads, int nb_segmented)
-{
-  JsonArray result;
-    
-  result.add( (float) nb_reads / nb_segmented );
-  result.add( (float) nb_reads * compute_normalization_one(norm_list, nb_reads) / nb_segmented  );
-  result.add( (float) nb_reads * compute_normalization(norm_list, nb_reads) / nb_segmented );
-  
-  return result;
-}

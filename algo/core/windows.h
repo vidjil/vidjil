@@ -131,7 +131,6 @@ class WindowsStorage {
   ostream &printSortedWindows(ostream &os);
 
   JsonArray sortedWindowsToJsonArray(map<junction, JsonList> json_data_segment,
-                                     list< pair <float, int> > norm_list,
                                      int nb_segmented);
 
   /**

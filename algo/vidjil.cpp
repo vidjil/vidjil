@@ -287,7 +287,6 @@ int main (int argc, char **argv)
   string forced_edges = "" ;
 
   string windows_labels_file = "" ;
-  string normalization_file = "" ;
 
   char c ;
 
@@ -298,7 +297,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:L%:Z:y:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:p:Sn:o:L%:y:z:uU")) != EOF)
 
     switch (c)
       {
@@ -318,9 +317,6 @@ int main (int argc, char **argv)
 	break;
       case 'l':
 	windows_labels_file = optarg; 
-	break;
-      case 'Z':
-	normalization_file = optarg; 
 	break;
 
       case 'c':
@@ -568,9 +564,6 @@ int main (int argc, char **argv)
 
   /// Load labels ;
   map <string, string> windows_labels = load_map(windows_labels_file);
-
-  map <string, pair <string, float> > normalization = load_map_norm(normalization_file);
-
 
   switch(command) {
   case CMD_WINDOWS: cout << "Extracting windows" << endl; 
@@ -852,7 +845,7 @@ int main (int argc, char **argv)
 	<< " (" << setprecision(3) << 100 * (float) nb_segmented_including_too_short / nb_total_reads << "%)" 
 	<< endl ;
 
-    // nb_segmented is the main denominator for the following (but will be normalized)
+    // nb_segmented is the main denominator for the following
     int nb_segmented = we.getNbSegmented(TOTAL_SEG_AND_WINDOW);
     float ratio_segmented = 100 * (float) nb_segmented / nb_total_reads ;
 
@@ -893,10 +886,6 @@ int main (int argc, char **argv)
 
 	ofstream out_all_windows(f_all_windows.c_str());
         windowsStorage->printSortedWindows(out_all_windows);
-
-	//$$ Normalization
-	list< pair <float, int> > norm_list = compute_normalization_list(windowsStorage->getMap(), normalization, nb_segmented);
-
 
 
     //////////////////////////////////
@@ -1034,8 +1023,7 @@ int main (int argc, char **argv)
       oss_human << "#### Clone #" << right << setfill('0') << setw(WIDTH_NB_CLONES) << num_clone 
 		<< " – " << setfill(' ') << setw(WIDTH_NB_READS) << clone_nb_reads << " reads" 
 		<< " – " << setprecision(3) << 100 * (float) clone_nb_reads / nb_segmented << "%  "  
-		<< " – " << 100 * (float) clone_nb_reads * compute_normalization_one(norm_list, clone_nb_reads) / nb_segmented << "% " 
-		 << compute_normalization_one(norm_list, clone_nb_reads) << " " ;
+	;
       string clone_id_human = oss_human.str();
 
       // Window label
@@ -1245,7 +1233,6 @@ int main (int argc, char **argv)
     json_cmdline.add(stream_cmdline.str());// TODO: escape "s in argv
 
     JsonArray jsonSortedWindows = windowsStorage->sortedWindowsToJsonArray(json_data_segment,
-                                                                        norm_list,
                                                                         nb_segmented);
     
     //samples field
