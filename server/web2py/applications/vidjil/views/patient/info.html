@@ -36,8 +36,23 @@
 {{pass}}
 
 
+{{if config :}}
 {{
-query = db(
+    query = db(
+            (db.sequence_file.patient_id==db.patient.id)
+            & (db.patient.id==request.vars["id"])
+        ).select(
+            left=db.results_file.on(
+                (db.results_file.sequence_file_id==db.sequence_file.id)
+                & (db.results_file.config_id==str(config_id) )
+            ), 
+            orderby = db.results_file.sequence_file_id|db.results_file.run_date,
+            groupby = db.results_file.sequence_file_id
+        )
+}}
+{{else:}}
+{{
+    query = db(
             (db.sequence_file.patient_id==db.patient.id)
             & (db.patient.id==request.vars["id"])
         ).select(
@@ -47,6 +62,7 @@ query = db(
             )
         )
 }}
+{{pass}}
 
 <div>
 

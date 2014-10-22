@@ -13,11 +13,10 @@ def schedule_run(id_sequence, id_config):
              ( db.results_file.sequence_file_id == id_sequence )  
              ).select()
     
-    if len(row) > 0 : ## update
-        data_id = row[0].id
-    else:             ## create
-        data_id = db.results_file.insert(sequence_file_id = id_sequence,
-                                    config_id = id_config )
+    ts = time.time()
+    data_id = db.results_file.insert(sequence_file_id = id_sequence,
+                                     run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
+                                     config_id = id_config )
         
     ## check fused_file
     row2 = db( ( db.fused_file.config_id == id_config ) & 
@@ -117,7 +116,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
                    & ( db.results_file.sequence_file_id == db.sequence_file.id )
                    & ( db.patient.id == id_patient )
                    & ( db.results_file.config_id == id_config )
-                   ).select( orderby=db.sequence_file.sampling_date ) 
+                   ).select( orderby=db.results_file.sequence_file_id|db.results_file.run_date, groupby=db.results_file.sequence_file_id ) 
     for row in query :
         if row.results_file.data_file is not None :
             files += os.path.abspath(os.path.dirname(sys.argv[0])) + "/applications/vidjil/uploads/"+row.results_file.data_file+" "
