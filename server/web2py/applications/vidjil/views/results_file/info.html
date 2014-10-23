@@ -13,7 +13,7 @@ config = db.config[config_id]
 sequence_file_id = db.results_file[results_file_id].sequence_file_id
 sequence_file = db.sequence_file[sequence_file_id]
 
-run = db.scheduler_run[results_file.scheduler_task_id]
+run = db(db.scheduler_run.task_id == results_file.scheduler_task_id).select().first()
 
 }}
 
