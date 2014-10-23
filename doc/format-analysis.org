@@ -20,9 +20,9 @@ present in the =.vidjil= file.
 
 ** =.vidjil= file -- one sample
 
-This is a kind a minimal =.vidjil= file, describing clones in one sample.
+This is a minimal =.vidjil= file, describing clones in one sample.
 The segmentation is here =TRGV5*01 5/CC/0 TRGJ1*02=.
-Note that other elments could be added by some program (such as =tag= or =clusters=).
+Note that other elements could be added by some program (such as =tag= or =clusters=).
 
 #+BEGIN_SRC js
     {
@@ -63,8 +63,11 @@ Note that other elments could be added by some program (such as =tag= or =cluste
 
 ** =.vidjil= file -- several samples
 
-This a =.vidjil= file obtaining by mergin with =fuse.py= two =.vidjil= files corresponding to two samples.
+This a =.vidjil= file obtained by merging with =fuse.py= two =.vidjil= files corresponding to two samples.
 Clones that have a same =id= are gathered.
+It is the responsability of the program generating the initial =.vidjil= files to choose these =id= to
+do a correct gathering ('windows' is used by Vidjil, 'clone sequence' is used by EC-NGS/Brno pipeline, 
+and 'IMGT clonotype (AA) or (nt)' could also be used by some programs).
 
 #+BEGIN_SRC js
     {
