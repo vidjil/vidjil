@@ -161,7 +161,10 @@ def get_analysis():
             f = open('applications/vidjil/uploads/'+row.analysis_file, "r")
             analysis = gluon.contrib.simplejson.loads(f.read())
             f.close()
-            res["clusters"] = analysis["clusters"]
+            if 'cluster' in analysis:
+                res["clusters"] = analysis["cluster"]
+            if 'clusters' in analysis :
+                res["clusters"] = analysis["clusters"]
             res["clones"] = analysis["clones"]
             res["tags"] = analysis["tags"]
             res["samples"]= analysis["samples"]
