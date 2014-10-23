@@ -1,7 +1,7 @@
 # coding: utf8
 import os
 
-TASK_TIMEOUT = 2 * 3600
+TASK_TIMEOUT = 10 * 60
 
 def schedule_run(id_sequence, id_config):
     import time, datetime, sys, os.path
