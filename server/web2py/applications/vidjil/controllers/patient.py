@@ -26,9 +26,11 @@ def index():
         res = {"redirect" : "default/user/login"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     log.debug('patient list')
-    
-    count = db.sequence_file.id.count()
 
+    count = db.sequence_file.id.count()
+    
+    isAdmin = auth.has_membership("admin")
+    
     query = db(
         (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) 
     ).select(
@@ -39,7 +41,8 @@ def index():
     )
     
     return dict(query = query,
-                count = count)
+                count = count,
+                isAdmin = isAdmin)
 
 
 
