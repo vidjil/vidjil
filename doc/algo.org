@@ -1,4 +1,4 @@
-#+TITLE: Vidjil -- Algo Manual
+#+TITLE: Vidjil Algorithm -- Command-line Manual
 #+AUTHOR: The Vidjil team (Mathieu, Mikaël and Marc)
 
 # Vidjil -- V(D)J recombinations analysis -- [[http://www.vidjil.org]]
@@ -14,10 +14,11 @@ Vidjil processes high-throughput sequencing data to extract V(D)J
 junctions and gather them into clones. Vidjil starts 
 from a set of reads and detects "windows" overlapping the actual CDR3.
 This is based on an fast and reliable seed-based heuristic and allows
-to output the most abundant clones. The analysis is extremely fast
+to output all sequenced clones. The analysis is extremely fast
 because, in the first phase, no alignment is performed with database
-germline sequences. Vidjil can also cluster similar
-clones, or leave this to the user after a manual review. 
+germline sequences. At the end, only the representative sequences 
+of each clone have to be analyzed. Vidjil can also cluster similar
+clones, or leave this to the user after a manual review in the browser.
 
 The method is described in the following paper:
 
@@ -40,6 +41,7 @@ Vidjil has been successfully tested on the following platforms :
  - Ubuntu 12.04 amd64
  - Ubuntu 12.04 i386
 
+Moreover, the continuous integration of Vidjil can be checked on [[https://travis-ci.org/magiraud/vidjil][travis-ci.org]].
 
 * Installation
 
@@ -65,10 +67,54 @@ make test                # run self-tests
 #+END_SRC
 
 
+* Input and output files
+
+The main input file of Vidjil is a /set of reads/, given as a =.fasta=
+or =.fastq= file. This set of reads can reach several gigabytes. It is
+never loaded entirely in the memory, but reads are processed one by
+one by the Vidjil algorithm.
+
+The main output of Vidjil (with the default =-c clones= command) are two following files:
+
+ - The =.vidjil= file is /the file for the Vidjil browser/. 
+   The file is in a =.json= format (detailed in [[file:format-analysis.org][format-analysis.org]])
+   describing the windows and their count, the representatives (=-y=),
+   the detailed segmentation (=-z=, see warning below), and possibly
+   the results of the further clustering.
+
+   The browser takes this =.vidjil= file (possibly merged with
+   =fuse.py=) for the /visualization and analysis/ of clones and their
+   tracking along different samples (for example time points in a MRD
+   setup or in a immunological study).  
+   Please see [[file:browser.org][browser]].org for more information on the browser.
+
+ - The =.vdj.fa= file is /a FASTA file for further processing by other bioinformatics tools/.
+   The sequences are at least the windows (and their count in the headers) or
+   the representatives (=-y=) when they have been computed.
+   The headers include the count of each window, and further includes the 
+   detailed segmentation (=-z=, see warning below), given in a '.vdj' format, see below.
+   The further clustering is not output in this file.
+
+   The =.vdj.fa= output enable to use Vidjil as a /filtering tool/,
+   shrinking a large read set into a manageable number of (pre-)clones
+   that will be deeply analyzed and possibly further clustered by
+   other software.
+
+
+The default options are very conservative (large window, no further
+automatic clusterization, see below), leaving the user or other
+software making detailed analysis and decisions on the final
+clustering.
+
+By default, the two output files are named =out/basename.vidjil= in =out/basename.vdj.fa=, where:
+ - =out= is the directory where all the outputs are stored, including auxiliary output files (can be changed with the =-o= option)
+ - =basename= is the basename of the input =.fasta/.fastq= file (can be overriden with the =-b= option)
+
+
 * Vidjil parameters
 
 Launching vidjil with =-h= option provides the list of parameters that can be
-used.
+used. We detail here the options of the main =-c clones= command.
 
 ** Main algorithm parameters
 
@@ -119,7 +165,7 @@ The =-r/-%= options are strong thresholds: if a clone does not have
 the requested number of reads, the clone is discarded (except when
 using =-l=, see below).
 The default =-r 10= option is meant to only output clones that
-have a significant read support. *You shoud use* =-r 1= *if you
+have a significant read support. *You should use* =-r 1= *if you
 want to detect all clones starting from the first read* (especially for
 MRD detection).
 
@@ -135,11 +181,12 @@ to display the clones on the grid (otherwise they are displayed on the
 If you want to analyze more clones, you should use =-z 50= or
 =-z 100=.  It is not recommended to use larger values: outputting more
 than 100 clones is often not useful since they can't be visualized easily
-in the browser, and takes large computation time.
+in the browser, and takes large computation time (full dynamic programming, 
+see below).
 
 Note that even if a clone is not in the top 20 (or 50, or 100) but
-still passes the =-r=, =-%= options, it is still reported in the .vidjil
-file. If the clone is at some MRD point in the top 20 (or 50, or 100),
+still passes the =-r=, =-%= options, it is still reported in both the =.vidjil=
+and =.vdj.fa= files. If the clone is at some MRD point in the top 20 (or 50, or 100),
 it will be fully analyzed/segmented by this other point (and then
 collected by the =fuse.py= script, using representatives computed at this
 other point, and then, on the browser, correctly displayed on the grid). 
@@ -162,10 +209,11 @@ while the remaining columns consist of the window's label.
 In Vidjil output, the labels are output alongside their windows.
 
 
-** Further clustering
+** Further clustering (experimental)
 
-These options have no consequences on the visualization through the
-browser. They are intented for a command-line use only.
+These options have no consequences on the =.vdj.fa= file, but adds
+additional information in the =.vidjil= file to be visualized in the
+browser.
 
 Setting the =-n= option triggers an additional automatic
 clustering using DBSCAN algorithm (Ester and al., 1996). 
@@ -177,6 +225,8 @@ considered as similar. Such a file may be automatically produced by vidjil
 two windows that must be clustered.
 
 
+
+
 * Examples of use
 
 All the following examples are on a IGH VDJ recombinations : they thus
@@ -185,12 +235,8 @@ require the =-G germline/IGH= and the =-d= options.
 #+BEGIN_SRC sh
 ./vidjil -G germline/IGH -d data/Stanford_S22.fasta
    # Extract (with an ultra-fast heuristic) all windows
-   # Summary of windows is available in out/Stanford_S22.vidjil
-   # (for the '.vidjil' format, see below)
-   # To have detailed/debug results in out/Stanford_S22.vdj.fa
-   # (which is a FASTA file embedding heuristic information 
-      in the headers, '.vdj' format, see warning below)
-   # run Vidjil with option '-U'
+   # Summary of windows is available both in out/Stanford_S22.vdj.fa
+   # and in out/Stanford_S22.vidjil.
 #+END_SRC
 
 #+BEGIN_EXAMPLE
@@ -234,7 +280,7 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 #+BEGIN_SRC sh
 ./vidjil -c germlines file.fastq
    # Search for all the germlines and output statistics
-   # on the number of occurrences in each germline
+   # on the number of occurrences of k-mers in each germline
 #+END_SRC
 
 * Segmentation and .vdj format
@@ -250,16 +296,16 @@ in the following situations:
       the center of the window may be shifted up to 15 bases from the
       actual center.
 
-- in a second pass, on the standard output
-    - at the end of the clones detection (=-c clones=, also in in
-      =basename.vdj.fa=, where =basename= is the basename of the input file)
-    - or directly when explicitly requiring segmentation (=-c segment=)
+- in a second pass, on the standard output and in both =.vidjil= and =.vdj.fa= files
+        - at the end of the clones detection (default command =-c clones=)
+        - or directly when explicitly requiring segmentation (=-c segment=)
 
       This segmentation obtained by full comparison (dynamic
       programming) with all germline sequences. Such segmentation are
       not at the core of the Vidjil clone gathering method (which
-      relies only on the 'window', see above). They are provided only
-      for convenience and should be checked with other softwares such
+      relies only on the 'window', see above). They are slow to compute
+      and are provided only for convenience.
+      They should be checked with other softwares such
       as IgBlast, iHHMune-align or IMGT/V-QUEST.
 
 Segmentations of V(D)J recombinations are displayed using a dedicated
@@ -269,7 +315,7 @@ with a > is of the following form:
 #+BEGIN_EXAMPLE
 >name + VDJ  startV endV   startD endD   startJ  endJ   Vgene   delV/N1/delD5'   Dgene   delD3'/N2/delJ   Jgene   comments
 
-        name          sequence name
+        name          sequence name (include the number of occurrences in the read set and possibly other information)
         +             strand on which the sequence is mapped
         VDJ           type of segmentation (can be "VJ", "VDJ", 
     	              or shorter tags such as "V" for incomplete sequences).	
@@ -304,16 +350,7 @@ this case a valid FASTA file.
 
 For VJ recombinations the output is similar, the fields that are not
 applicable being removed:
+
+#+BEGIN_EXAMPLE
 >name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene  coments
-
-
-* .vidjil and .json format and web interface
-
-A summary of extracted windows is also available in a JSON format,
-including, for each windows, the number of reads sharing this window.
-The format of this file may change in future releases.
-
-This file is used by the dynamic browser for visualization
-and analysis of clones and their tracking along different samples,
-(for example time points in a MRD setup or in a immunological study).
-Please see the file [[file:browser.org][browser]].org for more information on the browser.
+#+END_EXAMPLE
