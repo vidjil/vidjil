@@ -947,6 +947,8 @@ span.logo {
 }
 .db_table td {
   overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 .db_table .column_200 {
   width: 200px;
