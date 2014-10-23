@@ -589,7 +589,7 @@ Builder.prototype = {
         span.onclick = function () {
             self.edit(this, "timestamp");
         }
-        div_date.appendChild(span)
+        // div_date.appendChild(span)
         parent.appendChild(div_date)
 
         var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100
