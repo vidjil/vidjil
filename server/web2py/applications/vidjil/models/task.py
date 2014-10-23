@@ -94,6 +94,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     ## execute la commande vidjil
     print "===Vidjil output==="
     print cmd
+    db.commit()
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
     print p.stdout.read()
@@ -129,6 +130,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     
     print "===fuse  output==="
     print cmd
+    db.commit()
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
     print p.stdout.read()
