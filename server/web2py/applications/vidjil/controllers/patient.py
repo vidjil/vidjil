@@ -26,7 +26,20 @@ def index():
         res = {"redirect" : "default/user/login"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     log.debug('patient list')
-    return dict(message=T(''))
+    
+    count = db.sequence_file.id.count()
+
+    query = db(
+        (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) 
+    ).select(
+        db.patient.ALL,
+        count,
+        left=db.sequence_file.on(db.patient.id == db.sequence_file.patient_id),
+        groupby=db.patient.id
+    )
+    
+    return dict(query = query,
+                count = count)
 
 
 

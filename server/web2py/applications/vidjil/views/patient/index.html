@@ -1,24 +1,7 @@
 {{extend 'db_layout.html'}}
 
-{{('message' in globals())}}
-{{if 'message' in globals():}}
-
-{{ 
-count = db.sequence_file.id.count()
-
-query = db(
-    (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) 
-).select(
-    db.patient.ALL,
-    count,
-    left=db.sequence_file.on(db.patient.id == db.sequence_file.patient_id),
-    groupby=db.patient.id
-)
-}}
-
-
 <div>
-    <h3>{{=message}}</h3>
+    <h3>Patient list</h3>
     
     <div id="db_table_container">
         <table class="db_table" id="table">
@@ -29,9 +12,7 @@ query = db(
                     <td class="column_100"> birth </td>
                     <td> info </td>
                     <td class="column_100"> configs </td>
-                    {{if auth.has_membership("admin"):}} 
-                    <td class="column_100"> users </td>
-		    {{pass}}
+                    {{if auth.has_membership("admin"):}} <td class="column_100"> users </td> {{pass}}
                     <td class="column_100"> files </td>
                     <td class="column5"> </td>
                     <td class="column5"> </td>
@@ -44,25 +25,23 @@ query = db(
                <tr onclick="db.call('patient/info', {'id' :'{{=row.patient.id}}'} )" >
                     <td> {{=row.patient.last_name + " " + row.patient.first_name }} </td>
                     <td> {{=row.patient.birth }} </td>
-                    <td> {{=row.patient.info[:50] }}
-                         {{if len(row.patient.info) > 50: }}...{{pass}}
-                    </td>
+                    <td> {{=row.patient.info }} </td>
                     <td> {{for row2 in db( db.fused_file.patient_id == row.patient.id ).select(db.fused_file.config_id, distinct=True) :}} 
-                        {{=db.config[row2.config_id].name}} 
-                    {{pass}}</td>
+                            {{=db.config[row2.config_id].name}} 
+                         {{pass}}</td>
 		    <!-- groups/users  -->
                     {{if auth.has_membership("admin"):}} 
                     <td> 
-		      {{for row3 in db( 
-		           (db.auth_permission.name == "read") &
-		           (db.auth_permission.table_name == "patient") &
-		           (db.auth_permission.record_id == row.patient.id)
-		          ).select( orderby=db.auth_permission.group_id, distinct=True )  :}} 
-                        {{if db.auth_permission[row3.id].group_id > 2:}}
-                           {{=db.auth_permission[row3.id].group_id}} 
-		        {{pass}}
+                      {{for row3 in db( 
+                           (db.auth_permission.name == "read") &
+                           (db.auth_permission.table_name == "patient") &
+                           (db.auth_permission.record_id == row.patient.id)
+                          ).select( orderby=db.auth_permission.group_id, distinct=True )  :}} 
+                                {{if db.auth_permission[row3.id].group_id > 2:}}
+                                   {{=db.auth_permission[row3.id].group_id}} 
+                                {{pass}}
                       {{pass}}
-		    </td>
+                    </td>
                     {{pass}}
 		    <!-- end groups/users -->
                     <td> {{=row[count]}}</td>
@@ -74,8 +53,6 @@ query = db(
                     {{else:}}  <td></td><td></td>{{pass}}
                 </tr>
             {{pass}}
-            
-            
             
         </table>
         <table class="db_table" id="db_fixed_header"></table>
@@ -90,9 +67,3 @@ query = db(
     
     
 </div>
-
-{{elif 'content' in globals():}}
-{{=content}}
-{{else:}}
-{{=BEAUTIFY(response._vars)}}
-{{pass}}
