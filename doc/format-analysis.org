@@ -16,7 +16,9 @@ It is intended to be very small (a few kilobytes).
 All settings in the =.analysis= file override the settings that could be
 present in the =.vidjil= file.
 
-* =.vidjil= file example -- one sample
+* Examples
+
+** =.vidjil= file -- one sample
 
 This is a kind a minimal =.vidjil= file, describing clones in one sample.
 Note that other elments could be added by some program (such as =tag= or =clusters=).
@@ -58,7 +60,7 @@ Note that other elments could be added by some program (such as =tag= or =cluste
     }
 #+END_SRC
 
-* =.vidjil= file example -- several samples
+** =.vidjil= file -- several samples
 
 This a =.vidjil= file obtaining by mergin with =fuse.py= two =.vidjil= files corresponding to two samples.
 Clones that have a same =id= are gathered.
@@ -101,7 +103,7 @@ Clones that have a same =id= are gathered.
 #+END_SRC
 
 
-* =.analysis= file example
+** =.analysis= file
 
 This file reflects what an user could have done with the browser (or with some other tool).
 She has manually set sample names (=names=), tagged (=tag=, =tags=) and clustered (=clusters=) 
