@@ -734,8 +734,8 @@ JsonList FineSegmenter::toJsonList(Germline *germline){
     
     if (score_D.size()>0){
       seg.add("4", germline->rep_4.label(best_D));
-      result.add("4start", Dstart);
-      result.add("4end", Dend);      
+      seg.add("4start", Dstart);
+      seg.add("4end", Dend);      
     }
     
     seg.add("3", germline->rep_3.label(best_J));
