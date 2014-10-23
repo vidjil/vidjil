@@ -164,20 +164,20 @@
     <div class="db_block_left">
         {{if auth.has_permission("upload", "sequence_file") :}}
         <span class="button2" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> add file </span>
-        {{else:}}
-        <span class="button2 inactive" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )" title="you don't have permission to upload files"> add file </span>
-        {{pass}}
 
         {{if not auth.has_permission("run", "results_file") :}}
 
         <br /> Once your data are uploaded, please 
   <a href="mailto:contact@vidjil.org?Subject=%5Bvidjil%5D%20New%20sequences&Body=%0AHi%2C%0A%0AI%20uploaded%20some%20sequences%20on%20the%20rbx.vidjil.org%20server.%0ACould%20you%20run%20Vidjil%20on%20these%20data%20%3F%0A%0A">request an analysis</a>. 
         {{pass}}
+
+        {{pass}}
+
     </div>
 
 
     <div class="db_block_right">
-        result :
+        see the result:
         {{for row in db(db.fused_file.patient_id == request.vars["id"]).select() :}}
             {{filename = db.patient[request.vars["id"]].first_name + " " + db.patient[request.vars["id"]].last_name + " (" + db.config[row.config_id].name + ")"}}
             {{if row.fused_file is not None :}}<span class="button2" onclick="db.load_data( { 'patient_id' : '{{=request.vars["id"]}}' , 'config_id' : {{=row.config_id}} }, '{{=filename}}' )" >{{pass}}
