@@ -100,7 +100,7 @@ def get_data():
                    & ( db.results_file.sequence_file_id == db.sequence_file.id )
                    & ( db.patient.id == request.vars["patient_id"] )
                    & ( db.results_file.config_id == request.vars["config_id"]  )
-                   ).select( orderby=db.sequence_file.sampling_date ) 
+                   ).select( orderby=db.sequence_file.id|db.results_file.run_date, groupby=db.sequence_file.id ) 
 
         data["samples"]["original_names"] = []
         data["samples"]["info"] = []
@@ -164,7 +164,7 @@ def get_analysis():
             res["clusters"] = analysis["clusters"]
             res["clones"] = analysis["clones"]
             res["tags"] = analysis["tags"]
-            res["samples"]["order"] = analysis["samples"]["order"]
+            res["samples"]= analysis["samples"]
 
         res["info_patient"] = db.patient[request.vars["patient_id"]].info
         res["patient"] = db.patient[request.vars["patient_id"]].first_name + " " + db.patient[request.vars["patient_id"]].last_name + " (" + db.config[request.vars["config_id"]].name + ")"

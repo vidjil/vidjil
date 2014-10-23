@@ -1052,7 +1052,7 @@ span.logo
     float: left;
     height: 100%;
     width: @margin;
-    line-height: calc(100% - 1px);
+    line-height: calc(~"100% - 1px");
     background : @border;
     cursor: pointer;
 }
@@ -1068,24 +1068,28 @@ span.logo
 }
 
 #db_div{
-  z-index:3;
+  z-index:5;
   border:solid; 
   position: fixed; 
-  top: 150px; 
+  top: 20px;
   left:50% ;
-  width:960px;
-  height :450px;
+  width:80%;
+  height: calc(~"100% - 50px");
   font-size: 14px; 
   background: @background;
   display:none;
-  left: -moz-calc(~"50% - 480px");
-  left: -webkit-calc(~"50% - 480px");
-  left: calc(~"50% - 480px");
+  left: 10%;
 }
 
 #db_msg{
     margin : 15px;
+    height : calc(~"100% - 30px")
 }
+
+#db_content{
+    height : calc(~"100% - 150px");
+}
+
 .db_table{
     width: 100%;
     border-collapse: collapse;
@@ -1094,6 +1098,8 @@ span.logo
 
 .db_table td{
     overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
 }
 
 .db_table .column_200{    width: 200px;   }
@@ -1178,9 +1184,9 @@ span.logo
 }
 
 #db_table_container{
-    overflow-y: auto;
+    overflow-y: scroll;
     overflow-x: hidden;
-    max-height: 275px;
+    height: 100%;
     position: relative;
 }
 

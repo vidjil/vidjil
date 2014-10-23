@@ -1,98 +1,65 @@
 {{extend 'db_layout.html'}}
 
-{{('message' in globals())}}
-{{if 'message' in globals():}}
+<h3>Patient list</h3>
 
-{{ 
-count = db.sequence_file.id.count()
-
-query = db(
-    (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) 
-).select(
-    db.patient.ALL,
-    count,
-    left=db.sequence_file.on(db.patient.id == db.sequence_file.patient_id),
-    groupby=db.patient.id
-)
-}}
+<div id="db_table_container">
+    <table class="db_table" id="table">
 
 
-<div>
-    <h3>{{=message}}</h3>
-    
-    <div id="db_table_container">
-        <table class="db_table" id="table">
-            
-            
-            <thead>
-                <tr><td class="column_200"> name </td>
-                    <td class="column_100"> birth </td>
-                    <td> info </td>
-                    <td class="column_100"> configs </td>
-                    {{if auth.has_membership("admin"):}} 
-                    <td class="column_100"> users </td>
-		    {{pass}}
-                    <td class="column_100"> files </td>
-                    <td class="column5"> </td>
-                    <td class="column5"> </td>
-                    <td class="column5"> </td>
-                </tr>
-            </thead>
-            
-            
-           {{for row in query :}}
-               <tr onclick="db.call('patient/info', {'id' :'{{=row.patient.id}}'} )" >
-                    <td> {{=row.patient.last_name + " " + row.patient.first_name }} </td>
-                    <td> {{=row.patient.birth }} </td>
-                    <td> {{=row.patient.info[:50] }}
-                         {{if len(row.patient.info) > 50: }}...{{pass}}
-                    </td>
-                    <td> {{for row2 in db( db.fused_file.patient_id == row.patient.id ).select(db.fused_file.config_id, distinct=True) :}} 
+        <thead>
+            <tr><td class="column_200"> name </td>
+                <td class="column_100"> birth </td>
+                <td> info </td>
+                <td class="column_100"> configs </td>
+                {{if isAdmin:}} <td class="column_100"> users </td> {{pass}}
+                <td class="column_100"> files </td>
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+            </tr>
+        </thead>
+
+
+       {{for row in query :}}
+           <tr onclick="db.call('patient/info', {'id' :'{{=row.patient.id}}'} )" >
+                <td> {{=row.patient.last_name + " " + row.patient.first_name }} </td>
+                <td> {{=row.patient.birth }} </td>
+                <td> {{=row.patient.info }} </td>
+                <td> {{for row2 in db( db.fused_file.patient_id == row.patient.id ).select(db.fused_file.config_id, distinct=True) :}} 
                         {{=db.config[row2.config_id].name}} 
-                    {{pass}}</td>
-		    <!-- groups/users  -->
-                    {{if auth.has_membership("admin"):}} 
-                    <td> 
-		      {{for row3 in db( 
-		           (db.auth_permission.name == "read") &
-		           (db.auth_permission.table_name == "patient") &
-		           (db.auth_permission.record_id == row.patient.id)
-		          ).select( orderby=db.auth_permission.group_id, distinct=True )  :}} 
-                        {{if db.auth_permission[row3.id].group_id > 2:}}
-                           {{=db.auth_permission[row3.id].group_id}} 
-		        {{pass}}
-                      {{pass}}
-		    </td>
-                    {{pass}}
-		    <!-- end groups/users -->
-                    <td> {{=row[count]}}</td>
-                    {{if auth.has_membership("admin"):}}
-                    <td onclick="db.call('patient/permission', {'id' :'{{=row.patient.id}}'} )" > p </td> {{else:}} <td></td> {{pass}}
-                    {{if (auth.has_permission('admin', 'patient', row.patient.id) ):}}
-                    <td onclick="db.call('patient/edit', {'id' :'{{=row.patient.id}}'} )" > e </td>
-                    <td onclick="db.call('patient/confirm', {'id' :'{{=row.patient.id}}'} )" > X </td>  
-                    {{else:}}  <td></td><td></td>{{pass}}
-                </tr>
-            {{pass}}
-            
-            
-            
-        </table>
-        <table class="db_table" id="db_fixed_header"></table>
-    </div>
-    
-    
-    {{if auth.has_permission("create", "patient") :}}
-    <span class="button2" onclick="db.call('patient/add')"> + new patient </span>
-    {{else:}}
-    <span class="button2 inactive" onclick="db.call('patient/add')" title="you don't have permission to create new patient"> add patient </span>
-    {{pass}}
-    
-    
+                     {{pass}}</td>
+        <!-- groups/users  -->
+                {{if isAdmin:}} 
+                <td> 
+                  {{for row3 in db( 
+                       (db.auth_permission.name == "read") &
+                       (db.auth_permission.table_name == "patient") &
+                       (db.auth_permission.record_id == row.patient.id)
+                      ).select( orderby=db.auth_permission.group_id, distinct=True )  :}} 
+                            {{if db.auth_permission[row3.id].group_id > 2:}}
+                               {{=db.auth_permission[row3.id].group_id}} 
+                            {{pass}}
+                  {{pass}}
+                </td>
+                {{pass}}
+        <!-- end groups/users -->
+                <td> {{=row[count]}}</td>
+                {{if isAdmin:}}
+                <td onclick="db.call('patient/permission', {'id' :'{{=row.patient.id}}'} )" > p </td> {{else:}} <td></td> {{pass}}
+                {{if (auth.has_permission('admin', 'patient', row.patient.id) ):}}
+                <td onclick="db.call('patient/edit', {'id' :'{{=row.patient.id}}'} )" > e </td>
+                <td onclick="db.call('patient/confirm', {'id' :'{{=row.patient.id}}'} )" > X </td>  
+                {{else:}}  <td></td><td></td>{{pass}}
+            </tr>
+        {{pass}}
+
+    </table>
+    <table class="db_table" id="db_fixed_header"></table>
 </div>
 
-{{elif 'content' in globals():}}
-{{=content}}
+
+{{if auth.has_permission("create", "patient") :}}
+<span class="button2" onclick="db.call('patient/add')"> + new patient </span>
 {{else:}}
-{{=BEAUTIFY(response._vars)}}
+<span class="button2 inactive" onclick="db.call('patient/add')" title="you don't have permission to create new patient"> add patient </span>
 {{pass}}

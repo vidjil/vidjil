@@ -10,3 +10,7 @@ if request.env.http_origin:
 def index():
     if auth.has_membership("admin"):
         return dict(message=T(''))
+    
+def worker():
+    if auth.has_membership("admin"):
+        return dict(message=T(''))
