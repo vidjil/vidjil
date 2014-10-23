@@ -319,7 +319,7 @@ Model.prototype = {
         
         this.analysis = JSON.parse(analysis);
         
-        if (typeof self.analysis.vidjil_json_version != 'undefined' && self.analysis.vidjil_json_version == "2014.09"){
+        if (typeof self.analysis.vidjil_json_version != 'undefined' && self.analysis.vidjil_json_version >= "2014.09"){
             //samples
             var match = 0;
             if (self.analysis.samples) {
