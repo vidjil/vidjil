@@ -1,32 +1,38 @@
 #+TITLE: .analysis and .vidjil format
 #+AUTHOR: The Vidjil team
 
-The .analysis and the .vidjil files share a common [[http://en.wikipedia.org/wiki/JSON][.json]] format 
+The =.analysis= and the =.vidjil= files share a common [[http://en.wikipedia.org/wiki/JSON][.json]] format.
+They are produced and used by several components of the Vidjil platform, 
+but you can also use these formats to use the Vidjil browser within 
+your own analysis pipeline.
 
-The .vidjil file represents the actual data on clones (and that can
-reach megabytes).
+The =.vidjil= file represents the actual data on clones (and that can
+reach megabytes). It should be automatically produced.
 
-The .analysis file describe customizations done by the user
+The =.analysis= file describe customizations done by the user
 (or by some automatic pre-processing) on the Vidjil browser. The browser
-can load or save such files (and possibly from/to the server).
+can load or save such files (and possibly from/to the patient database).
 It is intended to be very small (a few kilobytes).
+All settings in the =.analysis= file override the settings that could be
+present in the =.vidjil= file.
 
-All settings in the .analysis file override the settings that could be
-present in the .vidjil file.
+* Examples
 
-* Analysis file example
+** =.vidjil= file -- one sample
+
+This is a kind a minimal =.vidjil= file, describing clones in one sample.
+The segmentation is here =TRGV5*01 5/CC/0 TRGJ1*02=.
+Note that other elments could be added by some program (such as =tag= or =clusters=).
 
 #+BEGIN_SRC js
     {
-        "producer": "user Bob, via browser",
-        "timestamp": "2014-09-01 12:00:11",
-        "vidjil_json_version": "2014.09",
+        "producer": "program xyz version xyz",
+        "timestamp": "2014-10-01 12:00:11",
+        "vidjil_json_version": "2014.10",
 
         "samples": {
              "number": 2, 
-             "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"],
-             "names": ["diag", "fu1"],
-             "order": [0, 1]
+             "original_names": ["T8045-BC081-Diag.fastq"]
         },
 
         "reads" : {
@@ -34,9 +40,86 @@ present in the .vidjil file.
             "segmented" :       [ 335662 ] ,
             "germline" : {
                 "TRG" :         [ 250000 ] ,
-                "IGH" :         [ 35662 ] ,
-                "custom" :      [ 50000 ]
+                "IGH" :         [ 85662  ]
             }
+        },
+
+        "clones": [
+            {
+                "id": "clone-001",
+                "sequence": "CTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCAGTGGAAC",
+		"reads" : [ 243241 ],
+                "seg":
+                {
+		    "5": "TRGV5*01",  "5start": 0,   "5end": 86,
+		    "3": "TRGJ1*02",  "3start": 89,  "3end": 118
+		}
+
+            } // ,
+            // (other clones)
+        ]
+    }
+#+END_SRC
+
+** =.vidjil= file -- several samples
+
+This a =.vidjil= file obtaining by mergin with =fuse.py= two =.vidjil= files corresponding to two samples.
+Clones that have a same =id= are gathered.
+
+#+BEGIN_SRC js
+    {
+        "producer": "program xyz version xyz / fuse.py version xyz",
+        "timestamp": "2014-10-01 14:00:11",
+        "vidjil_json_version": "2014.10",
+
+        "samples": {
+             "number": 2, 
+             "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"]
+        },
+
+        "reads" : {
+            "total" :           [ 437164, 457810 ] ,
+            "segmented" :       [ 335662, 410124 ] ,
+            "germline" : {
+                "TRG" :         [ 250000, 300000 ] ,
+                "IGH" :         [ 85662,   10124 ]
+            }
+        },
+
+        "clones": [
+            {
+                "id": "clone-001",
+                "sequence": "CTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCAGTGGAAC",
+		"reads" : [ 243241, 14717 ],
+                "seg":
+                {
+		    "5": "TRGV5*01",  "5start": 0,   "5end": 86,
+		    "3": "TRGJ1*02",  "3start": 89,  "3end": 118
+		}
+            } // ,
+            // (other clones)
+        ]
+    }
+#+END_SRC
+
+
+** =.analysis= file
+
+This file reflects what an user could have done with the browser (or with some other tool).
+She has manually set sample names (=names=), tagged (=tag=, =tags=) and clustered (=clusters=) 
+some clones, and added external data (=data=).
+
+#+BEGIN_SRC js
+    {
+        "producer": "user Bob, via browser",
+        "timestamp": "2014-10-01 12:00:11",
+        "vidjil_json_version": "2014.10",
+
+        "samples": {
+             "number": 2, 
+             "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"],
+             "names": ["diag", "fu1"],
+             "order": [0, 1]
         },
 
         "clones": [
@@ -54,15 +137,6 @@ present in the .vidjil file.
             }
 
         ],
-
-        "germline" : {
-            "custom" : {
-                "shortcut": "B",
-                "5": ["TRBV.fa"],
-                "4": ["TRBD.fa"],
-                "3": ["TRBJ.fa"]
-            }
-        },
 
         "clusters": [
             [ "clone-845", "clone-821", "clone-147" ],
@@ -86,7 +160,9 @@ present in the .vidjil file.
 #+END_SRC
 
 
-* Generic information for traceability [required]
+* The different elements
+						     
+** Generic information for traceability [required]
 
 #+BEGIN_SRC js
    "producer": "",    // arbitrary string, user/software/options producing this file [required]
@@ -96,7 +172,7 @@ present in the .vidjil file.
 
 
 
-* 'reads' element [.vidjil only, required]
+** 'reads' element [.vidjil only, required]
 
 #+BEGIN_SRC js
 {
@@ -111,7 +187,7 @@ present in the .vidjil file.
 
 
  
-* 'Samples' element [required]
+** 'Samples' element [required]
 
 #+BEGIN_SRC js
   {
@@ -134,7 +210,7 @@ present in the .vidjil file.
 
 
 
-* 'Clones' list
+** 'Clones' list
 
 Each element in the 'clones' list describes properties of a clone.
 
@@ -197,18 +273,29 @@ In the .analysis file, this section is intended to describe some specific clones
  }
 #+END_SRC
 
-* 'Germline' list [optional][work in progress]
+** 'Germlines' list [optional][work in progress, to be documented]
 
-extend the germline.data default file with a custom germline
+extend the =germline.data= default file with a custom germline
 
-* 'Clusters' list [optional]
+#+BEGIN_SRC js
+        "germlines" : {
+            "custom" : {
+                "shortcut": "B",
+                "5": ["TRBV.fa"],
+                "4": ["TRBD.fa"],
+                "3": ["TRBJ.fa"]
+            }
+        }
+#+END_SRC
+
+** 'Clusters' list [optional]
 
 Each element in the 'clusters' list describe a list of clones that are 'merged'.
 In the browser, it will be still possible to see them or to unmerge them.
 The first clone of each line is used as a representative for the cluster.
 
 
-* 'Data' list [optional][work in progress]
+** 'Data' list [optional][work in progress, to be documented]
 
 Each element in the 'data' list is a list of values (of size samples.number)
 showing additional data for each sample, as for example qPCR levels or spike information.
@@ -216,7 +303,7 @@ showing additional data for each sample, as for example qPCR levels or spike inf
 In the browser, it will be possible to display these data and to normalize
 against them (not implemented now).
 
-* 'Tags' list [optional]
+** 'Tags' list [optional]
 
 The 'tags' list describe the custom tag names as well as tags that should be hidden by default.
 The default tag names are defined in [[../browser/js/vidjil-style.js]].
