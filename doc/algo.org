@@ -125,10 +125,12 @@ Window prediction
                 (default: #####-#####, ######-######, #######-#######, depends on germline)
   -k <int>      k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)
                 (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)
+  -m <int>      minimal admissible delta between last V and first J k-mer (default: -10) (default with -d: 0)
+  -M <int>      maximal admissible delta between last V and first J k-mer (default: 20) (default with -d: 80)
   -w <int>      w-mer size used for the length of the extracted window (default: 40)(default with -d: 60)
 #+END_EXAMPLE
 
-The =-s= and =-k= options are the options of the heuristic. A detailed
+The =-s=, =-k=, =-m= and =-M= options are the options of the seed-based heuristic. A detailed
 explanation can be found in the paper. More help on that will be
 available in the following months. The defaults values should work.
 
