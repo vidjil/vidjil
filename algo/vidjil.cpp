@@ -172,15 +172,6 @@ void usage(char *progname)
        << "  -l <file>     labels for some windows -- these windows will be kept even if some limits are not reached" << endl
        << endl
 
-       << "Additional clustering (not output in .vidjil file and therefore not used in the browser)" << endl
-       << "  -e <file>     manual clustering -- a file used to force some specific edges" << endl
-       << "  -n <int>      maximum distance between neighbors for automatic clustering (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
-       << "  -N <int>      minimum required neighbors for automatic clustering (default " << DEFAULT_MINPTS << ")" << endl
-       << "  -S            generate and save comparative matrix for clustering" << endl
-       << "  -L            load comparative matrix for clustering" << endl
-       << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
-       << endl
-
        << "Limits to report a clone (or a window)" << endl
        << "  -r <nb>       minimal number of reads supporting a clone (default: " << MIN_READS_CLONE << ")" << endl
        << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << RATIO_READS_CLONE << ")" << endl
@@ -195,6 +186,15 @@ void usage(char *progname)
        << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
        << "  -d            segment into V(D)J components instead of VJ " << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
+       << endl
+
+       << "Additional clustering" << endl
+       << "  -e <file>     manual clustering -- a file used to force some specific edges" << endl
+       << "  -n <int>      maximum distance between neighbors for automatic clustering (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
+       << "  -N <int>      minimum required neighbors for automatic clustering (default " << DEFAULT_MINPTS << ")" << endl
+       << "  -S            generate and save comparative matrix for clustering" << endl
+       << "  -L            load comparative matrix for clustering" << endl
+       << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
        << endl
 
        << "Debug" << endl
