@@ -296,7 +296,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:b:Sn:o:L%:y:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:f:l:dc:m:M:N:s:b:Sn:o:L%:y:z:uU")) != EOF)
 
     switch (c)
       {
@@ -464,7 +464,7 @@ int main (int argc, char **argv)
 	cluster_cost=strToCost(optarg, Cluster);
         break;
 	
-      case 't':
+      case 'f':
 	segment_cost=strToCost(optarg, VDJ);
         break;
 
