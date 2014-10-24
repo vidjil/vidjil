@@ -1,0 +1,9 @@
+!LAUNCH: ../../vidjil -G ../../germline/IGH -d -r 5 -l ../../data/Stanford_S22.label ../../data/Stanford_S22.fasta 
+
+$ Keep the good number of windows, including one window labeled in Stanford_S22.label
+1: keep 3 windows
+
+$ The third clone has only one windows and the good label
+1: clone-003.*0001-.* my-clone
+
+
