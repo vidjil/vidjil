@@ -149,7 +149,7 @@ void usage(char *progname)
        << "  -V <file>     V germline multi-fasta file" << endl
        << "  -D <file>     D germline multi-fasta file (automatically implies -d)" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
-       << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa)" << endl
+       << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
        << "  -g <path>     multiple germlines (experimental)" << endl
        << endl
 
@@ -363,8 +363,7 @@ int main (int argc, char **argv)
 	f_rep_V = (germline_system + "V.fa").c_str() ;
 	f_rep_D = (germline_system + "D.fa").c_str() ;
 	f_rep_J = (germline_system + "J.fa").c_str() ;
-    if (germline_system.find_last_of("/\\") != string::npos)
-        germline_system.erase(0, germline_system.find_last_of("/\\")+1);
+	germline_system = extract_basename(germline_system);
 	// TODO: if VDJ, set segment_D // NO, bad idea, depends on naming convention
 	break;
 
