@@ -69,7 +69,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     vidjil_path = os.path.abspath(os.path.dirname(sys.argv[0])) + '/../..'
     germline_folder = vidjil_path + '/germline/'
     upload_folder = os.path.abspath(os.path.dirname(sys.argv[0])) + '/applications/vidjil/uploads/'
-    out_folder = os.path.abspath(os.path.dirname(sys.argv[0])) + '/out_'+str(id_data)+'/'
+    out_folder = os.path.abspath(os.path.dirname(sys.argv[0])) + '/out-%06d' % id_data +'/'
     
     cmd = "rm -rf "+out_folder 
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
@@ -78,7 +78,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     ## filepath du fichier de séquence
     row = db(db.sequence_file.id==id_file).select()
     filename = row[0].data_file
-    output_filename = os.path.splitext(row[0].data_file)[0]
+    output_filename = "%06d" % id_data
     seq_file = upload_folder+filename
     id_patient = row[0].patient_id
 
@@ -111,7 +111,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     db.commit()
 
     ## récupération du fichier data.json généré
-    results_filepath = os.path.abspath(out_folder+output_filename+".vidjil")
+    results_filepath = os.path.abspath(out_folder+'/'+output_filename+".vidjil")
     stream = open(results_filepath, 'rb')
     
     ## insertion dans la base de donnée
