@@ -105,16 +105,12 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     sys.stdout.flush()
     db.commit()
 
-    p.wait()
+    (stdoutdata, stderrdata) = p.communicate()
 
     print "------------------------"
     sys.stdout.flush()
     db.commit()
 
-    print p.stdout.read()
-    sys.stdout.flush()
-    db.commit()
-    
     ## récupération du fichier data.json généré
     results_filepath = os.path.abspath(out_folder+output_filename+".vidjil")
     stream = open(results_filepath, 'rb')
@@ -150,9 +146,8 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     sys.stdout.flush()
     db.commit()
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-    p.wait()
-    print p.stdout.read()
 
+    (stdoutdata, stderrdata) = p.communicate()
 
     fuse_filepath = os.path.abspath(output_file)
     stream = open(fuse_filepath, 'rb')
