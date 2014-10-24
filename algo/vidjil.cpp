@@ -1038,8 +1038,7 @@ int main (int argc, char **argv)
       string clone_id_human = oss_human.str();
 
       // Window label
-      string window_str = ">" + clone_id + "--window" + " " + windows_labels[it->first] + '\n' + it->first + '\n' ;
-
+      string window_str = ">" + clone_id + "--window" + " " + windowsStorage->getLabel(it->first) + '\n' + it->first + '\n' ;
 
       //$$ If max_representatives is reached, we stop here but still outputs the window
 
