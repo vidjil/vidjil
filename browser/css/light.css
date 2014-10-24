@@ -1200,3 +1200,13 @@ tt {
   font-family: monospace,monospace;
   font-size: 1em;
 }
+
+table.log
+{
+  width: 90%;
+}
+
+table.log textarea
+{
+   width: 100%;
+}
