@@ -119,7 +119,7 @@ pair <int, int> WindowsStorage::keepInterestingWindows(size_t min_reads_window) 
       // Is it supported by enough reads?
       if (!(seqs_by_window[junc].size() >= min_reads_window) 
           // Is it a labelled junction?
-          && !(windows_labels.find(junc) == windows_labels.end()))
+          && (windows_labels.find(junc) == windows_labels.end()))
         {
           map <junction, list<Sequence> >::iterator toBeDeleted = it;
           it++;
