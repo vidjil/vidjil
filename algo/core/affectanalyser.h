@@ -349,7 +349,7 @@ affect_infos KmerAffectAnalyser<T>::getMaximum(const T &before,
   results.nb_before_left = results.nb_before_right = results.nb_after_right = results.nb_after_left = 0;
   currentValue = 0;
 
-  for (int i = 0; i < span - maxOverlap; i++) {
+  for (int i = 0; i < min(length,span - maxOverlap); i++) {
     if (affectations[i] == after) {
       currentValue--;
       results.nb_after_right++;
@@ -388,7 +388,7 @@ affect_infos KmerAffectAnalyser<T>::getMaximum(const T &before,
       results.nb_before_right = 0;
     }
   }
-  for (int i = length - span + maxOverlap; i < length; i++) {
+  for (int i = length - span + maxOverlap; i < length && i >= 0; i++) {
     if (affectations[i] == before)
       results.nb_before_right++;
   }

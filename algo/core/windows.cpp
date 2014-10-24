@@ -26,6 +26,14 @@ vector<int> WindowsStorage::getStatus(junction window) {
   return status_by_window[window];   
 }
 
+string WindowsStorage::getLabel(junction window) {
+  
+  if (windows_labels.find(window) == windows_labels.end())
+    return "" ;
+  
+  return windows_labels[window];   
+}
+
 Germline *WindowsStorage::getGermline(junction window) {
   return germline_by_window[window];   
 }
@@ -108,10 +116,10 @@ pair <int, int> WindowsStorage::keepInterestingWindows(size_t min_reads_window) 
     {
       junction junc = it->first;
       
-      // Is it supported by enough reads?
+      // Is it not supported by enough reads?
       if (!(seqs_by_window[junc].size() >= min_reads_window) 
-          // Is it a labelled junction?
-          && !(windows_labels.find(junc) == windows_labels.end()))
+          // Is it not a labelled junction?
+          && (windows_labels.find(junc) == windows_labels.end()))
         {
           map <junction, list<Sequence> >::iterator toBeDeleted = it;
           it++;
@@ -187,7 +195,7 @@ JsonArray WindowsStorage::sortedWindowsToJsonArray(map <junction, JsonList> json
 
 ostream &WindowsStorage::windowToStream(ostream &os, junction window, int num_seq, 
                                         size_t size) {
-  os << ">" << size << "--window--" << num_seq << " " << windows_labels[window] << endl ;
+  os << ">" << size << "--window--" << num_seq << " " << getLabel(window) << endl ;
   os << window << endl;
   return os;
 }
