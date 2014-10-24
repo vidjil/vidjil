@@ -47,23 +47,13 @@ run = db(db.scheduler_run.task_id == results_file.scheduler_task_id).select().fi
        </tr>
     </table>
     <table class='log'>
-       <tr><td>run result :</td></tr>
-       <tr><td><textarea class="text" rows="2"> 
-             {{if run.run_result:}} 
-             {{=run.run_result.replace('\r', '')}}
-           {{pass}}
+       <tr><td>result : <b>{{if run.run_result:}}{{=run.run_result.replace('\r', '')}}{{pass}}</b>
        </textarea></td></tr>
-       <tr><td>run output :</td></tr>
-       <tr><td><textarea class="text" rows="25"> 
-             {{if run.run_output:}} 
-             {{=run.run_output.replace('\r', '')}}
-           {{pass}}
+       <tr><td>output :</td></tr>
+       <tr><td><textarea class="text" rows="25">{{if run.run_output:}}{{=run.run_output.replace('\r', '')}}{{pass}}
        </textarea></td></tr>
-       <tr><td>run traceback :</td></tr>
-       <tr><td><textarea class="text" rows="10">
-             {{if run.traceback:}} 
-             {{=run.traceback.replace('\r', '')}}
-	     {{pass}}
+       <tr><td>traceback :</td></tr>
+       <tr><td><textarea class="text" rows="10">{{if run.traceback:}}{{=run.traceback.replace('\r', '')}}{{pass}}
        </textarea></td></tr>
     </table>
 </div>

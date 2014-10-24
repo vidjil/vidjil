@@ -14,7 +14,7 @@ info = db.patient[request.vars["id"]]
                 <td></td>
             </tr>
             <tr>
-                <td > <label for="patient_first_name" id="patient_first_name__label"> First Name: </label> </td>
+                <td > <label for="patient_first_name" id="patient_first_name__label">First Name: </label> </td>
                 <td > <input class="string" id="patient_first_name" name="first_name" type="text" value="{{=info.first_name}}"><span>*</span></td>
                 <td > </td>
             </tr>
@@ -25,12 +25,12 @@ info = db.patient[request.vars["id"]]
             </tr>
             <tr>
                 <td> <label for="patient_birth" id="patient_birth__label">Birth: </label></td>
-                <td> <input class="date" id="patient_birth" name="birth" type="text" value="{{=info.birth}}"><span>* (format: yyyy-mm-dd)</span></td>
+                <td> <input class="date" id="patient_birth" name="birth" type="text" value="{{=info.birth}}"><span>* (yyyy-mm-dd)</span></td>
                 <td> </td>
             </tr>
             <tr>
                 <td> <label for="patient_info" id="patient_info__label">Info: </label> </td> 
-                <td> <textarea class="text" cols="40" id="patient_info" name="info" rows="10"> {{=info.info}} </textarea> </td>
+                <td> <textarea class="text" cols="40" id="patient_info" name="info" rows="10">{{=info.info}}</textarea> </td>
                 <td></td>
             </tr>
             <tr>
