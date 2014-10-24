@@ -86,6 +86,10 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     vidjil_cmd = db.config[id_config].command
     vidjil_germline = db.config[id_config].germline
     
+    os.makedirs(out_folder)
+    vidjil_log_file = open(out_folder+'/'+output_filename+'.vidjil.log', 'w')
+    fuse_log_file = open(out_folder+'/'+output_filename+'.fuse.log', 'w')
+
     ## commande complete
     cmd = vidjil_path+'/vidjil ' + ' -o  ' + out_folder + " -b " + output_filename
     if not vidjil_germline == 'multi':
@@ -99,15 +103,16 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     sys.stdout.flush()
     db.commit()
 
-    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
 
     print "------------------------"
     sys.stdout.flush()
     db.commit()
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=vidjil_log_file, stderr=STDOUT, close_fds=True)
 
     (stdoutdata, stderrdata) = p.communicate()
 
     print "------------------------"
+    print "Output file in "+out_folder+'/'+output_filename+'.vidjil.log'
     sys.stdout.flush()
     db.commit()
 
@@ -145,9 +150,9 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     print "==============="
     sys.stdout.flush()
     db.commit()
-    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=fuse_log_file, stderr=STDOUT, close_fds=True)
     (stdoutdata, stderrdata) = p.communicate()
+    print "Output file in "+out_folder+'/'+output_filename+'.fuse.log'
 
     fuse_filepath = os.path.abspath(output_file)
     stream = open(fuse_filepath, 'rb')
@@ -158,10 +163,10 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
                                  fused_file = stream)
     
     db.commit()
-    
-    clean_cmd = "rm -rf " + out_folder 
-    p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-    p.wait()
+
+#    clean_cmd = "rm -rf " + out_folder 
+#    p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+#    p.wait()
     
     ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
     ## TODO parse result success/fail
