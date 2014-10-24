@@ -1,5 +1,8 @@
 {{extend 'db_layout.html'}}
 
+{{patient = db.patient[request.vars["id"]]}}
+<h3>{{=patient.last_name + " " + patient.first_name }} ({{=patient.birth}}) -- add file</h3>
+
 <div>
     <table>
         <tr>
