@@ -101,17 +101,11 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     print cmd    
     print "========================"
     sys.stdout.flush()
-    db.commit()
 
-
-    print "------------------------"
-    sys.stdout.flush()
-    db.commit()
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=vidjil_log_file, stderr=STDOUT, close_fds=True)
 
     (stdoutdata, stderrdata) = p.communicate()
 
-    print "------------------------"
     print "Output file in "+out_folder+'/'+output_filename+'.vidjil.log'
     sys.stdout.flush()
     db.commit()
