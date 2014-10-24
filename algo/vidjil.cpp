@@ -302,21 +302,6 @@ int main (int argc, char **argv)
       {
       case 'h':
         usage(argv[0]);
-      case 'a':
-	output_sequences_by_cluster = true;
-	break;
-      case 'd':
-	segment_D = 1 ;
-	delta_min = DEFAULT_DELTA_MIN_D ;
-	delta_max = DEFAULT_DELTA_MAX_D ;
-	default_w = DEFAULT_W_D ;
-	break;
-      case 'e':
-	forced_edges = optarg;
-	break;
-      case 'l':
-	windows_labels_file = optarg; 
-	break;
 
       case 'c':
         if (!strcmp(COMMAND_CLONES,optarg))
@@ -332,9 +317,7 @@ int main (int argc, char **argv)
 	  usage(argv[0]);
         }
         break;
-      case 'v':
-	verbose += 1 ;
-	break;
+
 
       // Germline
 
@@ -369,6 +352,16 @@ int main (int argc, char **argv)
 
       // Algorithm
 
+      case 's':
+#ifndef NO_SPACED_SEEDS
+	seed = string(optarg);
+	k = seed_weight(seed);
+	options_s_k++ ;
+#else
+        cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
+#endif
+        break;
+
       case 'k':
 	k = atoi(optarg);
 	seed = seed_contiguous(k);
@@ -387,6 +380,8 @@ int main (int argc, char **argv)
 	delta_max = atoi(optarg);
         break;
 
+      // Output 
+
       case 'o':
         out_dir = optarg ;
         break;
@@ -394,6 +389,14 @@ int main (int argc, char **argv)
       case 'b':
         f_basename = optarg;
         break;
+
+      case 'a':
+	output_sequences_by_cluster = true;
+	break;
+
+      case 'v':
+	verbose += 1 ;
+	break;
 
       // Limits
 
@@ -429,20 +432,16 @@ int main (int argc, char **argv)
 	max_representatives = -1 ;
 	max_clones = -1 ;
 	break ;
-    
-      // Seeds
 
-      case 's':
-#ifndef NO_SPACED_SEEDS
-	seed = string(optarg);
-	k = seed_weight(seed);
-	options_s_k++ ;
-#else
-        cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
-#endif
-        break;
-	
+      case 'l':
+	windows_labels_file = optarg; 
+	break;
+
       // Clustering
+
+      case 'e':
+	forced_edges = optarg;
+	break;
 	
       case 'n':
 	epsilon = atoi(optarg);
@@ -464,6 +463,15 @@ int main (int argc, char **argv)
 	cluster_cost=strToCost(optarg, Cluster);
         break;
 	
+      // Fine segmentation
+
+      case 'd':
+	segment_D = 1 ;
+	delta_min = DEFAULT_DELTA_MIN_D ;
+	delta_max = DEFAULT_DELTA_MAX_D ;
+	default_w = DEFAULT_W_D ;
+	break;
+
       case 'f':
 	segment_cost=strToCost(optarg, VDJ);
         break;
@@ -475,6 +483,9 @@ int main (int argc, char **argv)
         output_segmented = true;
         break;
       }
+
+
+  //$$ options: post-processing+display
 
   // If there was no -w option, then w is either DEFAULT_W or DEFAULT_W_D
   if (w == 0)
@@ -505,8 +516,6 @@ int main (int argc, char **argv)
       cout << "wrong number of arguments." << endl ;
       exit(1);
     }
-
-  //$$ options: post-processing+display
 
   size_t min_cover_representative = (size_t) (MIN_COVER_REPRESENTATIVE_RATIO_MIN_READS_CLONE * min_reads_clone) ;
 
