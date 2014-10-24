@@ -149,7 +149,7 @@ void usage(char *progname)
        << "  -V <file>     V germline multi-fasta file" << endl
        << "  -D <file>     D germline multi-fasta file (automatically implies -d)" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
-       << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa)" << endl
+       << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
        << "  -g <path>     multiple germlines (experimental)" << endl
        << endl
 
@@ -163,20 +163,13 @@ void usage(char *progname)
 #ifndef NO_SPACED_SEEDS
        << "                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" << endl
 #endif
-       << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ")(default with -d: " << DEFAULT_W_D << ")" << endl
+       << "  -m <int>      minimal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MIN << ") (default with -d: " << DEFAULT_DELTA_MIN_D << ")" << endl
+       << "  -M <int>      maximal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MAX << ") (default with -d: " << DEFAULT_DELTA_MAX_D << ")" << endl
+       << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ") (default with -d: " << DEFAULT_W_D << ")" << endl
        << endl
 
        << "Window annotations" << endl
        << "  -l <file>     labels for some windows -- these windows will be kept even if some limits are not reached" << endl
-       << endl
-
-       << "Additional clustering (not output in .vidjil file and therefore not used in the browser)" << endl
-       << "  -e <file>     manual clustering -- a file used to force some specific edges" << endl
-       << "  -n <int>      maximum distance between neighbors for automatic clustering (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
-       << "  -N <int>      minimum required neighbors for automatic clustering (default " << DEFAULT_MINPTS << ")" << endl
-       << "  -S            generate and save comparative matrix for clustering" << endl
-       << "  -L            load comparative matrix for clustering" << endl
-       << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
        << endl
 
        << "Limits to report a clone (or a window)" << endl
@@ -192,9 +185,16 @@ void usage(char *progname)
 
        << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
        << "  -d            segment into V(D)J components instead of VJ " << endl
-       << "  -m <int>      minimal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MIN << ") (default when -d is used: " << DEFAULT_DELTA_MIN_D << ")" << endl
-       << "  -M <int>      maximal admissible delta between segmentation points (default: " << DEFAULT_DELTA_MAX << ") (default when -d is used: " << DEFAULT_DELTA_MAX_D << ")" << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
+       << endl
+
+       << "Additional clustering" << endl
+       << "  -e <file>     manual clustering -- a file used to force some specific edges" << endl
+       << "  -n <int>      maximum distance between neighbors for automatic clustering (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
+       << "  -N <int>      minimum required neighbors for automatic clustering (default " << DEFAULT_MINPTS << ")" << endl
+       << "  -S            generate and save comparative matrix for clustering" << endl
+       << "  -L            load comparative matrix for clustering" << endl
+       << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
        << endl
 
        << "Debug" << endl
@@ -296,27 +296,12 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:t:l:dc:m:M:N:s:b:Sn:o:L%:y:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:f:l:dc:m:M:N:s:b:Sn:o:L%:y:z:uU")) != EOF)
 
     switch (c)
       {
       case 'h':
         usage(argv[0]);
-      case 'a':
-	output_sequences_by_cluster = true;
-	break;
-      case 'd':
-	segment_D = 1 ;
-	delta_min = DEFAULT_DELTA_MIN_D ;
-	delta_max = DEFAULT_DELTA_MAX_D ;
-	default_w = DEFAULT_W_D ;
-	break;
-      case 'e':
-	forced_edges = optarg;
-	break;
-      case 'l':
-	windows_labels_file = optarg; 
-	break;
 
       case 'c':
         if (!strcmp(COMMAND_CLONES,optarg))
@@ -332,9 +317,7 @@ int main (int argc, char **argv)
 	  usage(argv[0]);
         }
         break;
-      case 'v':
-	verbose += 1 ;
-	break;
+
 
       // Germline
 
@@ -363,12 +346,21 @@ int main (int argc, char **argv)
 	f_rep_V = (germline_system + "V.fa").c_str() ;
 	f_rep_D = (germline_system + "D.fa").c_str() ;
 	f_rep_J = (germline_system + "J.fa").c_str() ;
-    if (germline_system.find_last_of("/\\") != string::npos)
-        germline_system.erase(0, germline_system.find_last_of("/\\")+1);
+	germline_system = extract_basename(germline_system);
 	// TODO: if VDJ, set segment_D // NO, bad idea, depends on naming convention
 	break;
 
       // Algorithm
+
+      case 's':
+#ifndef NO_SPACED_SEEDS
+	seed = string(optarg);
+	k = seed_weight(seed);
+	options_s_k++ ;
+#else
+        cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
+#endif
+        break;
 
       case 'k':
 	k = atoi(optarg);
@@ -388,6 +380,8 @@ int main (int argc, char **argv)
 	delta_max = atoi(optarg);
         break;
 
+      // Output 
+
       case 'o':
         out_dir = optarg ;
         break;
@@ -395,6 +389,14 @@ int main (int argc, char **argv)
       case 'b':
         f_basename = optarg;
         break;
+
+      case 'a':
+	output_sequences_by_cluster = true;
+	break;
+
+      case 'v':
+	verbose += 1 ;
+	break;
 
       // Limits
 
@@ -430,20 +432,16 @@ int main (int argc, char **argv)
 	max_representatives = -1 ;
 	max_clones = -1 ;
 	break ;
-    
-      // Seeds
 
-      case 's':
-#ifndef NO_SPACED_SEEDS
-	seed = string(optarg);
-	k = seed_weight(seed);
-	options_s_k++ ;
-#else
-        cerr << "To enable the option -s, please compile without NO_SPACED_SEEDS" << endl;
-#endif
-        break;
-	
+      case 'l':
+	windows_labels_file = optarg; 
+	break;
+
       // Clustering
+
+      case 'e':
+	forced_edges = optarg;
+	break;
 	
       case 'n':
 	epsilon = atoi(optarg);
@@ -465,7 +463,16 @@ int main (int argc, char **argv)
 	cluster_cost=strToCost(optarg, Cluster);
         break;
 	
-      case 't':
+      // Fine segmentation
+
+      case 'd':
+	segment_D = 1 ;
+	delta_min = DEFAULT_DELTA_MIN_D ;
+	delta_max = DEFAULT_DELTA_MAX_D ;
+	default_w = DEFAULT_W_D ;
+	break;
+
+      case 'f':
 	segment_cost=strToCost(optarg, VDJ);
         break;
 
@@ -476,6 +483,9 @@ int main (int argc, char **argv)
         output_segmented = true;
         break;
       }
+
+
+  //$$ options: post-processing+display
 
   // If there was no -w option, then w is either DEFAULT_W or DEFAULT_W_D
   if (w == 0)
@@ -506,8 +516,6 @@ int main (int argc, char **argv)
       cout << "wrong number of arguments." << endl ;
       exit(1);
     }
-
-  //$$ options: post-processing+display
 
   size_t min_cover_representative = (size_t) (MIN_COVER_REPRESENTATIVE_RATIO_MIN_READS_CLONE * min_reads_clone) ;
 
