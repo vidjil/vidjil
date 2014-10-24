@@ -111,6 +111,12 @@ class WindowsStorage {
    */
   void add(junction window, Sequence sequence, int status, Germline *germline);
 
+
+  /**
+   * Return the label of a window, if it exists
+   */
+  string getLabel(junction window);
+
   /**
    * Only keep windows that are interesting.  Those windows are windows
    * supported by at least min_reads_window reads as well as windows that are
