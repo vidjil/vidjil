@@ -1,5 +1,6 @@
 # coding: utf8
 import os
+import sys
 
 TASK_TIMEOUT = 10 * 60
 
@@ -92,12 +93,27 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     cmd += ' ' + vidjil_cmd + ' '+ seq_file
     
     ## execute la commande vidjil
-    print "===Vidjil output==="
-    print cmd
+    print "=== Launching Vidjil ==="
+    print cmd    
+    print "========================"
+    sys.stdout.flush()
     db.commit()
+
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+
+    print "------------------------"
+    sys.stdout.flush()
+    db.commit()
+
     p.wait()
+
+    print "------------------------"
+    sys.stdout.flush()
+    db.commit()
+
     print p.stdout.read()
+    sys.stdout.flush()
+    db.commit()
     
     ## récupération du fichier data.json généré
     results_filepath = os.path.abspath(out_folder+output_filename+".vidjil")
@@ -128,8 +144,10 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
     
     
-    print "===fuse  output==="
+    print "=== fuse.py ==="
     print cmd
+    print "==============="
+    sys.stdout.flush()
     db.commit()
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
