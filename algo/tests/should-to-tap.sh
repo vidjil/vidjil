@@ -29,6 +29,12 @@ option after the option !OUTPUT_DIR:
 By default spaces can be replaced by any whitespaces. You can override this by
 specifying !IGNORE_WHITESPACES: 0
 
+* Requirements
+  Sometimes, to launch a test some requirements must be met. If the requirements
+  are not met we may want to skip the test. To do so, specify in the file
+  an option !REQUIRES: which will be followed by a command that is supposed
+  to exit with the error code 0. If the error code is different from 0 all the
+  tests in the file will be skipped.
 * Environment
 ** Debug
    If the environment variable DEBUG is defined, then some debug information 
@@ -67,6 +73,7 @@ LOG_FILE=${BASE%.*}.log
 OUTPUT_FILE=
 FILE_TO_GREP=
 NO_LAUNCHER=
+REQUIRE=
 IGNORE_WHITESPACES=1
 SEPARATOR_LINE="========================================================================"
 
@@ -102,6 +109,10 @@ while read line; do
                 NO_LAUNCHER=1
             elif [ "$type" == "IGNORE_WHITESPACES" ]; then
                 IGNORE_WHITESPACES=${line#*:}
+            elif [ "$type" == "REQUIRES" ]; then
+                REQUIRE=${line#*:}
+            else
+                echo "Unknown option $type" >&2
             fi
         elif [ ${line:0:1} == '$' ]; then
             msg=${line:1}
@@ -159,6 +170,10 @@ while read line; do
                     esac
                     nb_hits=${nb_hits:1}
                 done
+
+                if ! eval $REQUIRE > /dev/null 2> /dev/null; then 
+                    skip=1
+                fi
 
                 # Replace whitespaces if needed
                 if [ $IGNORE_WHITESPACES -ne 0 ]; then
