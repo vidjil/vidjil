@@ -854,6 +854,10 @@ span.logo {
   border-width: 2px;
   background-color: #333333;
 }
+
+span.warning {  color: orange;   }
+span.alert {  color: red;   }
+
 .sp_selector {
   fill: #fdf6e3;
   stroke-width: 2px;
