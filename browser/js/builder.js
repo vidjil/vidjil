@@ -594,7 +594,12 @@ Builder.prototype = {
 
         var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100
         var val = "" + this.m.reads.segmented[this.m.t] + " reads" + " (" + percent.toFixed(2) + "%)"
-        var div_segmented = this.build_info_line("info_segmented", "segmented", val)
+
+	var warning = false ;
+	if (percent < 10)  { val += " – Very few reads segmented" ;  warning = "alert" ;  }
+	else if (percent < 50)  { val += " – Few reads segmented" ;  warning = "warning" ;  }
+
+        var div_segmented = this.build_info_line("info_segmented", "segmented", val, warning)
         parent.appendChild(div_segmented)
         
         var div_total = this.build_info_line("info_total", "total", this.m.reads.total[this.m.t] + " reads")
@@ -669,11 +674,18 @@ Builder.prototype = {
         return div
     },
     
-    build_info_line: function (id, name, value) {
+    build_info_line: function (id, name, value, className) {
         var span1 = document.createElement('span');
         span1.appendChild(document.createTextNode(name + " : "));
         span1.className = "info_row"
         var span2 = document.createElement('span');
+	if (!(typeof(className) === "undefined"))
+	    {
+		if (className)
+		{
+		    span2.className = className ;
+		}
+	    }
         span2.appendChild(document.createTextNode(value));
 
         var div = document.createElement('div');
