@@ -228,6 +228,8 @@ Model.prototype = {
             }
         }
         
+	try {
+
         if ((typeof (data.vidjil_json_version) == 'undefined') || (data.vidjil_json_version < VIDJIL_JSON_VERSION)) {
             myConsole.popupMsg(myConsole.msg.version_error);
             return 0;
@@ -310,6 +312,14 @@ Model.prototype = {
         
         this.loadCluster(this.data_clusters)
         return this
+
+	}
+	catch (e) {
+            myConsole.popupMsg(myConsole.msg.parse_error);
+            throw e; 
+            return 0
+        }
+	
     },
     
     //temporary keep old parser to make the transition with new '2014.09' version
