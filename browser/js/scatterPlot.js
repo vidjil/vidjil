@@ -1051,7 +1051,7 @@ ScatterPlot.prototype = {
       //Donne des informations quant au temps de MàJ des données
       elapsedTime = new Date()
 	  .getTime() - startTime;
-      myConsole.log("update sp: " + elapsedTime + "ms");
+      myConsole.log("update sp: " + elapsedTime + "ms", -1);
   },
   
   updateClones:function(){

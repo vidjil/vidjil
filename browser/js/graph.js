@@ -419,7 +419,7 @@ Graph.prototype = {
         this.draw();
         elapsedTime = new Date()
             .getTime() - startTime;
-        myConsole.log("update Graph : " + elapsedTime + "ms", 0);
+        myConsole.log("update Graph: " + elapsedTime + "ms", -1);
     },
     
     updateStack: function () {

@@ -1222,7 +1222,7 @@ Model.prototype = {
         
         elapsedTime = new Date()
             .getTime() - startTime;
-        myConsole.log("update() : " + elapsedTime);
+        myConsole.log("update(): " + elapsedTime + "ms");
     },
 
 

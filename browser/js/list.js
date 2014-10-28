@@ -205,7 +205,7 @@ List.prototype = {
         
         elapsedTime = new Date()
             .getTime() - startTime;
-        myConsole.log("update Liste: " + elapsedTime + "ms", 0);
+        myConsole.log("update Liste: " + elapsedTime + "ms", -1);
     },
 
     /*
