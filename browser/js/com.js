@@ -28,6 +28,7 @@ function Com(flash_id, log_id, popup_id, data_id) {
     this.data_id = data_id;
     
     this.min_priority = 1; // minimum required to display message
+    this.min_priority_console = 0;
     this.log_container = document.getElementById(this.log_id);
     
     BUTTON_CLOSE_POPUP = "</br></br> <div class='center' > <button onclick='myConsole.closePopupMsg()'>ok</button></div>",
@@ -106,7 +107,7 @@ Com.prototype = {
         this.log(str, priority);
     },
     
-    /* print message in log_container if priority level is sufficient (else use javascript default console)
+    /* print message in log_container if priority level is sufficient
      * 
      * */
     log: function(str, priority){
@@ -128,6 +129,7 @@ Com.prototype = {
             });
             
         }else{
+	  if (priority >= this.min_priority_console)
             console.log(str)
         }
         
