@@ -607,6 +607,10 @@ Model.prototype = {
     },
     
     loadCluster: function (clusters) {
+
+	if (typeof (clusters) == 'undefined')
+	    return ;
+
         for (var i = 0; i < clusters.length; i++) {
 
             var new_cluster = [];
