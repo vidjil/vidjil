@@ -6,7 +6,6 @@
 #include "core/read_score.h"
 #include "core/read_chooser.h"
 #include "core/compare-all.h"
-#include "core/teestream.h"
 #include "core/mkdir.h"
 #include "core/labels.h"
 #include <iostream>
