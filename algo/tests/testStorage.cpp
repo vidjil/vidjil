@@ -46,6 +46,10 @@ void testKmerStoreWithKmer(int k, int test_id) {
       TAP_TEST(counts[j].count == counts2[j].count, test_id, "The count of kmers should be the same when reading in opposite ways" );
     }
   }
+
+  // Test with no result
+  vector<Kmer> counts = index->getResults("ATTA");
+  TAP_TEST(counts.size() == 0, test_id, "");
   
   delete index;
   delete index2;
