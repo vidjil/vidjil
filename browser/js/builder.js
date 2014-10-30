@@ -627,9 +627,13 @@ Builder.prototype = {
         
         var keys = 0 ;
 
-        for (var key in this.m.reads.germline) {
-            
-            if (key == "IGH" && keys > 0) {
+	var key_list = Object.keys(this.m.reads.germline);
+	key_list.sort();
+
+        for (var k in key_list) {
+	    key = key_list[k];
+
+            if ((key == "TRA" || key == "IGH") && keys > 0) {
                 span2.appendChild(document.createElement("br"));
             }
 
