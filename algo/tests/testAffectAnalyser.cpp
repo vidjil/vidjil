@@ -174,6 +174,9 @@ void testGetMaximum() {
            << ", " << results.last_pos_max << ")");
   TAP_TEST(results.max_value == 2, TEST_AA_GET_MAXIMUM_VALUE, "");
 
+  affect_infos results2 = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 1., k+5);
+  TAP_TEST(results == results2, TEST_AA_GET_MAXIMUM_VALUE, "");
+
   KmerAffect a2[] = {AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, 
                      AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V,
                      AFFECT_J, AFFECT_J, AFFECT_J,
