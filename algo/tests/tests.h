@@ -22,6 +22,9 @@ enum {
   TEST_MAP_KMERSTORE,
   TEST_ARRAY_KMERSTORE_RC,
   TEST_MAP_KMERSTORE_RC,
+  TEST_KMERSTORE_GET_K,
+  TEST_KMERSTORE_GET_S,
+  TEST_KMERSTORE_GET_SEED,
 
   /* Affect analyzer */
   TEST_AA_COUNT,
@@ -110,6 +113,9 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_MAP_KMERSTORE, "Testing MapKmerStore");
   RECORD_TAP_TEST(TEST_ARRAY_KMERSTORE_RC, "Testing ArrayKmerStore with revcomp");
   RECORD_TAP_TEST(TEST_MAP_KMERSTORE_RC, "Testing MapKmerStore with revcomp");
+  RECORD_TAP_TEST(TEST_KMERSTORE_GET_K, "Testing getK() in KmerStore");
+  RECORD_TAP_TEST(TEST_KMERSTORE_GET_S, "Testing getK() in KmerStore");
+  RECORD_TAP_TEST(TEST_KMERSTORE_GET_SEED, "Testing getK() in KmerStore");
 
   RECORD_TAP_TEST(TEST_AA_COUNT, "AffectAnalyser.count()");
   RECORD_TAP_TEST(TEST_AA_GET_AFFECT, "AffectAnalyser.getAffectation()");

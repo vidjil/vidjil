@@ -5,6 +5,8 @@
 template<template <class> class T>
 void testKmerStoreWithKmerSimple(int k, bool revcomp, int test_id ) {
   T<Kmer> *index = createIndex<T<Kmer> >(k, revcomp);
+
+  TAP_TEST(k == index->getK(), TEST_KMERSTORE_GET_K, "");
   
   for (int i = 0; i < nb_seq-2; i++) {
     string tmp = seq[2*i].substr(0, k);
@@ -49,6 +51,32 @@ void testKmerStoreWithKmer(int k, int test_id) {
   delete index2;
 }
 
+template<template <class> class KmerStore>
+void testKmerStoreSeed() {
+  KmerStore<Kmer> *index = new KmerStore<Kmer>(8, true);
+
+  TAP_TEST(index->getK() == 8, TEST_KMERSTORE_GET_K, "");
+  TAP_TEST(index->getS() == 8, TEST_KMERSTORE_GET_S, "");
+  TAP_TEST(index->getSeed() == "########", TEST_KMERSTORE_GET_SEED, "");
+  delete index;
+
+  string seed = "#####-#####";
+  index = new KmerStore<Kmer>(seed, true);
+  TAP_TEST(index->getK() == 10, TEST_KMERSTORE_GET_K, "");
+  TAP_TEST(index->getS() == 11, TEST_KMERSTORE_GET_S, "");
+  TAP_TEST(index->getSeed() == seed, TEST_KMERSTORE_GET_SEED, "");
+
+  delete index;
+
+  seed = "##-##-##-##";
+  index = new KmerStore<Kmer>(seed, true);
+  TAP_TEST(index->getK() == 8, TEST_KMERSTORE_GET_K, "");
+  TAP_TEST(index->getS() == 11, TEST_KMERSTORE_GET_S, "");
+  TAP_TEST(index->getSeed() == seed, TEST_KMERSTORE_GET_SEED, "");
+
+  delete index;
+}
+
 void testStorage() {
   testKmerStoreWithKmerSimple<ArrayKmerStore>(5, false, TEST_ARRAY_KMERSTORE);
   testKmerStoreWithKmerSimple<ArrayKmerStore>(5, true, TEST_ARRAY_KMERSTORE_RC);
@@ -58,4 +86,7 @@ void testStorage() {
 
   testKmerStoreWithKmer<ArrayKmerStore>(10, TEST_ARRAY_KMERSTORE_RC);
   testKmerStoreWithKmer<MapKmerStore>(14, TEST_MAP_KMERSTORE_RC);
+
+  testKmerStoreSeed<ArrayKmerStore>();
+  testKmerStoreSeed<MapKmerStore>();
 }
