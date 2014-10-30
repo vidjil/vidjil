@@ -925,6 +925,20 @@ Model.prototype = {
         }
     },
 
+
+    dateDiffInDays: function(aa, bb) {
+	// inspired by http://stackoverflow.com/questions/3224834
+	var _MS_PER_DAY = 1000 * 60 * 60 * 24 ;
+	var a = new Date(aa.split(" ")[0]);
+	var b = new Date(bb.split(" ")[0]);
+
+	// Discard the time and time-zone information.
+	var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+	var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+	
+	return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+    },
+
     getStrTime: function (timeID, format){
         format = typeof format !== 'undefined' ? format : this.time_type;
         var result = "-/-"
@@ -941,7 +955,28 @@ Model.prototype = {
                 if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID])
                     result = this.samples.timestamp[timeID].split(" ")[0]
                 break;
-        }
+
+            case "delta_date":
+
+            if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[0])
+	    {
+		var time0 = this.samples.timestamp[0];
+
+                if (timeID == '0')
+		{
+		    result = time0.split(" ")[0];
+                    break;
+		}
+		else
+		{
+                    if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID])
+		    {
+			time = this.samples.timestamp[timeID];
+			result = "+" + this.dateDiffInDays(time0, time) ;
+		    }
+		}		    		
+            }
+	}
         return result
     },
 
