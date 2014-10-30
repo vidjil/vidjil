@@ -58,6 +58,11 @@ void testAffectAnalyser1() {
 
   KAffect cAffect = KAffect(seq[1], 1);
   KAffect gAffect = KAffect(seq[3], 1);
+  TAP_TEST(ckaa.countBefore(cAffect, 0) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countBefore(gAffect, 0) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countAfter(cAffect, 10) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countAfter(gAffect, 10) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
+
   TAP_TEST(ckaa.countBefore(cAffect, 4) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
   TAP_TEST(ckaa.countBefore(cAffect, 5) == 1, TEST_COUNT_AA_COUNT_BEFORE, "");
   TAP_TEST(ckaa.countAfter(cAffect, 4) == 1, TEST_COUNT_AA_COUNT_AFTER, "");
@@ -87,6 +92,8 @@ void testAffectAnalyser1() {
   TAP_TEST(ckaa.firstMax(aAffect, tAffect) == -1, TEST_COUNT_AA_FIRST_MAX, "");
   TAP_TEST(ckaa.lastMax(aAffect, tAffect) == - 1, 
            TEST_COUNT_AA_LAST_MAX, "");
+  TAP_TEST(ckaa.countAfter(tAffect, 4) == 0, TEST_COUNT_AA_COUNT_AFTER, "");
+  TAP_TEST(ckaa.countBefore(tAffect, 4) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
 
   // Test affectation with one affect not in the sequence
 
