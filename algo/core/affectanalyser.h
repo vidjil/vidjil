@@ -28,6 +28,8 @@ typedef struct affect_infos_s {
   bool max_found;               /* We have found a maximum */
 } affect_infos;
 
+bool operator==(const affect_infos &ai1, const affect_infos &ai2);
+
 /**
  * Class that records for every k-mer of a given sequence
  * in which sequences this k-mer was also seen.
