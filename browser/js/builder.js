@@ -590,7 +590,7 @@ Builder.prototype = {
             self.edit(this, "timestamp");
         }
         // div_date.appendChild(span)
-        parent.appendChild(div_date)
+        // parent.appendChild(div_date)
 
         var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100
         var val = "" + this.m.reads.segmented[this.m.t] + " reads" + " (" + percent.toFixed(2) + "%)"
