@@ -313,8 +313,10 @@ vector<T> KmerAffectAnalyser<T>::getAllAffectations(affect_options_t options) co
   T previous = affectations[0];
   result.push_back(previous);
   for (size_t i = 1; i < affectations.size(); i++) {
-    if (! (previous == affectations[i]))
-      result.push_back(previous);
+    if (! (previous == affectations[i])) {
+      result.push_back(affectations[i]);
+      previous = affectations[i];
+    }
   }
   return result;
 }
