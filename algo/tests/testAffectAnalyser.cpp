@@ -9,13 +9,16 @@ void testAffectAnalyser1() {
   const bool revcomp = false;
   T<KAffect> *index = createIndex<T<KAffect> >(k, revcomp);
   
-  KmerAffectAnalyser<KAffect> kaa(*index, "AAAACCCCCGGGGG");
-  CountKmerAffectAnalyser<KAffect> ckaa(*index, "AAAACCCCCGGGGG");
+  string sequence = "AAAACCCCCGGGGG";
+  KmerAffectAnalyser<KAffect> kaa(*index, sequence);
+  CountKmerAffectAnalyser<KAffect> ckaa(*index, sequence);
   ckaa.setAllowedOverlap(k-1);
 
   set<KAffect> forbidden;
   forbidden.insert(KAffect::getAmbiguous());
   forbidden.insert(KAffect::getUnknown());
+
+  TAP_TEST(ckaa.getSequence() == "AAAACCCCCGGGGG", TEST_AA_GET_SEQUENCE, "actual: " << ckaa.getSequence());
 
   for (int i = 2; i < nb_seq-1; i++) {
     // i starts at 2 because AAAA is not found: there is an ambiguity with
@@ -100,15 +103,18 @@ void testAffectAnalyser2() {
   const int k = 5;
   const bool revcomp = true;
   T<KAffect> *index = createIndex<T<KAffect> >(k, revcomp);
-  
-  KmerAffectAnalyser<KAffect> kaa(*index, "TTTTTGGGGG");
-  CountKmerAffectAnalyser<KAffect> ckaa(*index, "TTTTTGGGGG");
+  string sequence = "TTTTTGGGGG";
+  KmerAffectAnalyser<KAffect> kaa(*index, sequence);
+  CountKmerAffectAnalyser<KAffect> ckaa(*index, sequence);
   ckaa.setAllowedOverlap(k-1);
 
   set<KAffect> forbidden;
   forbidden.insert(KAffect::getAmbiguous());
   forbidden.insert(KAffect::getUnknown());
   
+  TAP_TEST(kaa.getSequence() == "TTTTTGGGGG", TEST_AA_GET_SEQUENCE, "actual: ");
+  TAP_TEST(ckaa.getSequence() == "TTTTTGGGGG", TEST_AA_GET_SEQUENCE, "actual: " << ckaa.getSequence());
+
   TAP_TEST(kaa.getAffectation(1) == KAffect(seq[2*(nb_seq-1)+1], -1), TEST_AA_GET_AFFECT, "");
   TAP_TEST(kaa.count(kaa.getAffectation(1)) == 1, TEST_AA_GET_AFFECT, "");
   TAP_TEST(ckaa.count(kaa.getAffectation(1)) == 1, TEST_COUNT_AA_COUNT, "");
@@ -150,6 +156,8 @@ void testGetMaximum() {
   vector<KmerAffect> affectations(a, a+sizeof(a)/sizeof(KmerAffect));
 
   KmerAffectAnalyser<KmerAffect> kaa(*index, "", affectations);
+  TAP_TEST(kaa.getSequence() == "", TEST_AA_GET_SEQUENCE, "");
+
   affect_infos results = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 2., 0);
   TAP_TEST(! results.max_found, TEST_AA_GET_MAXIMUM_MAX_FOUND, 
            "(" << results.first_pos_max
@@ -271,6 +279,9 @@ void testBugAffectAnalyser() {
   AffectA<KAffect> bwdAffect(index, data.read(1).sequence);
 
   int total = fwdAffect.count();
+
+  TAP_TEST(fwdAffect.getSequence() == data.read(0).sequence, TEST_AA_GET_SEQUENCE, "actual: " << fwdAffect.getSequence() << ", expected: " << data.read(0).sequence);
+  TAP_TEST(bwdAffect.getSequence() == data.read(1).sequence, TEST_AA_GET_SEQUENCE, "actual: " << bwdAffect.getSequence() << ", expected: " << data.read(1).sequence);
 
   TAP_TEST(fwdAffect.count() == bwdAffect.count(),
            TEST_AA_COUNT,

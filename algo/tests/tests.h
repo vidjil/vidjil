@@ -41,6 +41,7 @@ enum {
   TEST_AA_GET_MAXIMUM_POSITIONS,
   TEST_AA_GET_MAXIMUM_COUNTS,
   TEST_AA_GET_MAXIMUM_VALUE,
+  TEST_AA_GET_SEQUENCE,
   TEST_COUNT_AA_COUNT,
   TEST_COUNT_AA_COUNT_BEFORE,
   TEST_COUNT_AA_COUNT_AFTER,
@@ -133,6 +134,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_AA_GET_MAXIMUM_POSITIONS, "KmerAffectAnalyser: getMaximum() function, positions of maximum");
   RECORD_TAP_TEST(TEST_AA_GET_MAXIMUM_COUNTS, "KmerAffectAnalyser: getMaximum() function, counts of affectations");
   RECORD_TAP_TEST(TEST_AA_GET_MAXIMUM_VALUE, "KmerAffectAnalyser: getMaximum() function, maximum value");
+  RECORD_TAP_TEST(TEST_AA_GET_SEQUENCE, "KmerAffectAnalyser: getSequence() function");
   RECORD_TAP_TEST(TEST_COUNT_AA_COUNT, "CountKmerAffectAnalyser::count");
   RECORD_TAP_TEST(TEST_COUNT_AA_COUNT_BEFORE, "CountKmerAffectAnalyser::countBefore");
   RECORD_TAP_TEST(TEST_COUNT_AA_COUNT_AFTER, "CountKmerAffectAnalyser::countAfter");
