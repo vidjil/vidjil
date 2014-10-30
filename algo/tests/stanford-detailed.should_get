@@ -1,0 +1,15 @@
+!LAUNCH: ../../vidjil -d -r 5 -a -G ../../germline/IGH ../../data/Stanford_S22.fasta ; cat out/seq/clone.fa-2
+# Testing detailed clone output (-a)
+
+$ Detailed clone output (out/seq/clone.fa-2), germline
+1:>IGHV1-8.01
+1:>IGHD3-22.01
+1:>IGHJ6.03
+
+$ Detailed clone output (out/seq/clone.fa-2), reads
+1:>lcl.FLN1FA002TBW9H.1
+1:>lcl.FLN1FA002TAWKB.1
+1:>lcl.FLN1FA001EFSW3.1
+1:>lcl.FLN1FA001ENA4H.1
+1:>lcl.FLN1FA001B2WWF.1
+

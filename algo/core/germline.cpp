@@ -143,6 +143,28 @@ void MultiGermline::build_default_set(string path)
   germline->new_index("######-######");
   germlines.push_back(germline);
 
+
+  germline = new Germline("TRA", 'A', path + "/TRAV.fa", "",  path + "/TRAJ.fa",  -10, 20);
+  germline->new_index("#######-######");
+  germlines.push_back(germline);
+
+  germline = new Germline("TRB", 'B', path + "/TRBV.fa", path + "/TRBD.fa",  path + "/TRBJ.fa",   0, 80);
+  germline->new_index("######-######");
+  germlines.push_back(germline);
+
+  germline = new Germline("TRD", 'D', path + "/TRDV.fa", path + "/TRDD.fa",  path + "/TRDJ.fa",   0, 80);
+  germline->new_index("#####-#####");
+  germlines.push_back(germline);
+
+
+  germline = new Germline("IGK", 'K', path + "/IGKV.fa", "",  path + "/IGKJ.fa",  -10, 20);
+  germline->new_index("#####-#####");
+  germlines.push_back(germline);
+
+  germline = new Germline("IGL", 'L', path + "/IGLV.fa", "",  path + "/IGLJ.fa",  -10, 20);
+  germline->new_index("#####-#####");
+  germlines.push_back(germline);
+
 }
 
 
