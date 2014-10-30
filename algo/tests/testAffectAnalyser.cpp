@@ -12,12 +12,14 @@ void testAffectAnalyser1() {
   string sequence = "AAAACCCCCGGGGG";
   KmerAffectAnalyser<KAffect> kaa(*index, sequence);
   CountKmerAffectAnalyser<KAffect> ckaa(*index, sequence);
+  TAP_TEST(ckaa.getAllowedOverlap() == 0, TEST_COUNT_AA_GET_OVERLAP, "");
   ckaa.setAllowedOverlap(k-1);
 
   set<KAffect> forbidden;
   forbidden.insert(KAffect::getAmbiguous());
   forbidden.insert(KAffect::getUnknown());
 
+  TAP_TEST(ckaa.getAllowedOverlap() == k-1, TEST_COUNT_AA_GET_OVERLAP, "");
   TAP_TEST(ckaa.getSequence() == "AAAACCCCCGGGGG", TEST_AA_GET_SEQUENCE, "actual: " << ckaa.getSequence());
 
   for (int i = 2; i < nb_seq-1; i++) {
