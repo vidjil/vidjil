@@ -26,7 +26,7 @@ void testSegmentationBug1(int delta_min, int delta_max) {
 
   while (input.hasNext()) {
     input.next();
-    KmerAffectAnalyser<KmerAffect> *kaa = new KmerAffectAnalyser<KmerAffect>(*(germline->index), input.getSequence().sequence);
+    KmerAffectAnalyser *kaa = new KmerAffectAnalyser(*(germline->index), input.getSequence().sequence);
 
     set<KmerAffect> distinct_a = kaa->getDistinctAffectations();
     int strand = 0;
