@@ -452,35 +452,6 @@ void DynProg::backtrack()
   // cout << str_back << endl ;
 }
 
-string DynProg::SemiGlobal_extract_best()
-{
-  // for count
-
-  // TODO: faire un vrai backtrack
-
-  // marche avec Identity, prend quelques caracteres avant (+ best_score)
-  int start_j = max(0, best_j - m + best_score) ;
-
-  return y.substr(start_j, best_j - start_j);
-}
-
-void DynProg::SemiGlobal_hits_threshold(vector <int> &hits, int threshold, int shift_pos, int verbose)
-{
-  // for cut
-    
-  for (int j=1; j<=n; j++)
-    {
-      if (S[m][j] > threshold)
-	{
-	  if (verbose)
-	    {
-	      cout << j << "," ;
-	    }
-	  hits.push_back(max(0, j - shift_pos)) ;
-	}
-    }
-}
-
 
 float identity_percent(int score)
 {
