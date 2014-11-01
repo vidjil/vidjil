@@ -734,7 +734,7 @@ int main (int argc, char **argv)
 	  string seq = reads->getSequence().sequence;
 	  total_length += seq.length() - s + 1;
 
-	  KmerAffectAnalyser<KmerAffect> *kaa = new KmerAffectAnalyser<KmerAffect>(*index, seq);
+	  KmerAffectAnalyser *kaa = new KmerAffectAnalyser(*index, seq);
 
 	  for (int i = 0; i < kaa->count(); i++) 
 	    { 
@@ -744,7 +744,7 @@ int main (int argc, char **argv)
 
           delete kaa;
 
-	  CountKmerAffectAnalyser<KmerAffect> ckaa(*index, seq);
+	  CountKmerAffectAnalyser ckaa(*index, seq);
 	  ckaa.setAllowedOverlap(k-1);
 
 	  stats_max[affect_char(ckaa.max(forbidden).affect)]++ ;

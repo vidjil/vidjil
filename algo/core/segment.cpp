@@ -187,7 +187,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
       continue ;
     }
  
-  kaa = new KmerAffectAnalyser<KmerAffect>(*(germline->index), sequence);
+  kaa = new KmerAffectAnalyser(*(germline->index), sequence);
   
   // Check strand consistency among the affectations.
   int strand;
@@ -306,7 +306,7 @@ void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
     segmented = false;
 }
 
-KmerAffectAnalyser<KmerAffect> *KmerSegmenter::getKmerAffectAnalyser() const {
+KmerAffectAnalyser *KmerSegmenter::getKmerAffectAnalyser() const {
   return kaa;
 }
 
