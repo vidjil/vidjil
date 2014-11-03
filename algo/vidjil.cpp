@@ -69,8 +69,7 @@
 #define DEFAULT_J_REP  "./germline/IGHJ.fa"
 
 #define DEFAULT_READS  "./data/Stanford_S22.fasta"
-#define MIN_READS_WINDOW 10
-#define MIN_READS_CLONE 10
+#define MIN_READS_CLONE 5
 #define DEFAULT_MAX_REPRESENTATIVES 100
 #define MAX_CLONES 20
 #define RATIO_READS_CLONE 0.0
