@@ -653,7 +653,6 @@ int main (int argc, char **argv)
 
   MultiGermline *multigermline = new MultiGermline();
 
-  if (command == CMD_GERMLINES || command == CMD_CLONES || command == CMD_WINDOWS) 
     {
       cout << "Build Kmer indexes" << endl ;
     
@@ -677,7 +676,9 @@ int main (int argc, char **argv)
 	  germline = new Germline(germline_system, 'X',
 				  rep_V, rep_D, rep_J, 
 				  delta_min, delta_max);
-	  germline->new_index(seed);
+
+	  if (command == CMD_WINDOWS || command == CMD_CLONES)
+	    germline->new_index(seed);
 
 	  multigermline->insert(germline);
 	}
@@ -1315,30 +1316,39 @@ int main (int argc, char **argv)
     //reads = OnlineFasta(f_reads, 1, " ");
     
 
-    Fasta rep_V(f_rep_V, 2, "|", cout);
-    Fasta rep_D(f_rep_D, 2, "|", cout);
-    Fasta rep_J(f_rep_J, 2, "|", cout);
-
-    Germline *germline;
-
-    germline = new Germline(germline_system, 'X',
-			    rep_V, rep_D, rep_J,
-			    delta_min, delta_max);
-
     while (reads->hasNext()) 
       {
         reads->next();
-        FineSegmenter s(reads->getSequence(), germline, segment_cost);
-	if (s.isSegmented()) {
-	  if (segment_D)
-	  s.FineSegmentD(germline);
-          cout << s << endl;
-        } else {
-          cout << "Unable to segment" << endl;
-          cout << reads->getSequence();
-          cout << endl << endl;
-        }
-    }     
+
+        Sequence seq = reads->getSequence() ;
+        bool segmented = false ;
+
+        for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
+          {
+            Germline *germline = *it ;
+	    
+            FineSegmenter s(seq, germline, segment_cost);
+
+            if (s.isSegmented()) 
+              {
+                if (segment_D && germline->rep_4.size())
+                  s.FineSegmentD(germline);
+                cout << s << endl;
+                segmented = true ;
+                break ;
+              }
+            else 
+              {
+                if (verbose)
+                  cout << "# " << germline->code << ": unable to segment" << endl;
+              }
+          }
+        if (!segmented)
+          {
+            seq.label += " unsegmented";
+            cout << seq << endl;
+          }
+      }
     
   } else {
     cerr << "Ooops... unknown command. I don't know what to do apart from exiting!" << endl;
