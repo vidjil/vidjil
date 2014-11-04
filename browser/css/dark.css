@@ -425,6 +425,9 @@ line {
 .sequence-line {
   white-space: nowrap;
 }
+.sequence-line:hover {
+  font-weight: bold;
+}
 .seq-fixed {
   position: relative;
   display: inline-block;
