@@ -47,14 +47,14 @@ Fasta::Fasta(const string &input,
   if (!input.size()) // Do not open empty files (D germline if not segmentD)
     return ;
 
+  out << "  <== " << input ;
   add(input);  
-
-  out << "  <== " << input
-      << "\t" << setw(6) << total_size << " bp in " << setw(3) << size() << " sequences" << endl ;
 }
 
 void Fasta::add(istream &in) {
   in >> *this;
+
+  cout << "\t" << setw(6) << total_size << " bp in " << setw(3) << size() << " sequences" << endl ;
 }
 
 void Fasta::add(const string &filename) {
@@ -64,6 +64,8 @@ void Fasta::add(const string &filename) {
       cerr << "  !! Error in opening file: " << filename << endl ;
       exit(1);
     }
+
+  cout << " <== " << filename ;
   add(is);
   is.close();
 }
