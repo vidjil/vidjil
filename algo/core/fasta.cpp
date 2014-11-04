@@ -38,23 +38,27 @@ Fasta::Fasta(const string &input,
   // oout = out;
   this -> extract_field = extract_field ;
   this -> extract_separator = extract_separator ;
+  total_size = 0;
 
-  ifstream is(input.c_str());
+  add(input);  
 
+  out << "  <== " << input
+      << "\t" << setw(6) << total_size << " bp in " << setw(3) << size() << " sequences" << endl ;
+}
+
+void Fasta::add(istream &in) {
+  in >> *this;
+}
+
+void Fasta::add(const string &filename) {
+  ifstream is(filename.c_str());
   if (is.fail())
     {
-      out << "  !! Error in opening file: " << input << endl ;
+      cerr << "  !! Error in opening file: " << filename << endl ;
       exit(1);
     }
-
-  out << "  <== " << input ;
-
-  while (is.good()) {
-    is >> *this;
-  }
+  add(is);
   is.close();
-
-  out << "\t" << setw(6) << total_size << " bp in " << setw(3) << size() << " sequences" << endl ;
 }
 
 int Fasta::size() const{ return (int)reads.size(); }
@@ -234,7 +238,6 @@ istream& operator>>(istream& in, Fasta& fasta){
 	string line;
 	Sequence read;
         OnlineFasta of(in, fasta.extract_field, fasta.extract_separator);
-	fasta.total_size = 0 ;
 
         while (of.hasNext()) {
           of.next();

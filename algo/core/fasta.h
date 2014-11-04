@@ -56,6 +56,9 @@ public:
 	const string& label_full(int index) const;
         const Sequence &read(int index) const;
 	const string& sequence(int index) const;
+
+        void add(istream &in);
+        void add(const string &filename);
 	
 	friend istream& operator>>(istream&, Fasta&);
 };
