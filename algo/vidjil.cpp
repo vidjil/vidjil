@@ -329,6 +329,9 @@ int main (int argc, char **argv)
       case 'D':
 	f_reps_D.push_back(optarg);
         segment_D = 1;
+	delta_min = DEFAULT_DELTA_MIN_D ;
+	delta_max = DEFAULT_DELTA_MAX_D ;
+	default_w = DEFAULT_W_D ;
 	break;
         
       case 'J':
