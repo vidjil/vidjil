@@ -1250,7 +1250,7 @@ int main (int argc, char **argv)
     json_samples=new JsonList();
     json_samples->add("number", 1);
     json_samples->add("original_names", json_original_names);
-    json_samples->add("timestamp", json_timestamp);
+    //json_samples->add("vidjil_timestamp", json_timestamp);
     json_samples->add("log", json_log);
     json_samples->add("commandline", json_cmdline);
     
