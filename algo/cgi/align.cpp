@@ -18,8 +18,13 @@ int main(int argc, char* argv[])
   ostringstream ost; 
   ostream * p; 
   p=&ost;
-  char filename[L_tmpnam];
-  tmpnam(filename);
+  char filename[] = "VidjilAlignXXXXXX";
+  int fd = mkstemp(filename);
+
+  if (fd == -1) {
+    perror("Creation of temporary file");
+    exit(1);
+  }
 
   bool cgi_mode;
   
@@ -48,7 +53,7 @@ int main(int argc, char* argv[])
 
       char temp[1024];
       FILE *f;
-      f = fopen(filename,"w");
+      f = fdopen(fd,"w");
       if(f == NULL){
 	cout<<",\"Error\": \"save\""<<filename<<"}"<<endl;
 
