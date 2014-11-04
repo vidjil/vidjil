@@ -44,14 +44,18 @@ Germline::Germline(string _code, char _shortcut,
   f_reps_4 = _f_reps_4 ;
   f_reps_3 = _f_reps_3 ;
 
+  rep_5 = Fasta(2, "|") ;
+  rep_4 = Fasta(2, "|") ;
+  rep_3 = Fasta(2, "|") ;
+
   for (list<string>::const_iterator it = f_reps_5.begin(); it != f_reps_5.end(); ++it)
-    rep_5 = Fasta(*it, 2, "|", cout); // TODO: something like 'rep_5 += ...'
+    rep_5.add(*it);
   
   for (list<string>::const_iterator it = f_reps_4.begin(); it != f_reps_4.end(); ++it)
-    rep_4 = Fasta(*it, 2, "|", cout);
+    rep_4.add(*it);
 
   for (list<string>::const_iterator it = f_reps_3.begin(); it != f_reps_3.end(); ++it)
-    rep_3 = Fasta(*it, 2, "|", cout);
+    rep_3.add(*it);
 }
 
 
