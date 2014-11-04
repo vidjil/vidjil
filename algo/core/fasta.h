@@ -29,6 +29,8 @@ typedef enum {
 
 class Fasta
 {
+        void init(int extract_field, string extract_separator);
+
         int total_size;
         int extract_field;
 	string extract_separator;
@@ -37,7 +39,7 @@ class Fasta
 	// ostream *oout ;
 
 public:
-	Fasta();
+        Fasta(int extract_field=0, string extract_separator="|");
         /**
          * Read all the sequences in the input filename and record them in the object.
          *

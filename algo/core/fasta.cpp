@@ -25,20 +25,27 @@
 #include <stdexcept>
 #include "fasta.h"
 
-Fasta::Fasta(){
+
+void Fasta::init(int extract_field, string extract_separator)
+{
+  this -> extract_field = extract_field ;
+  this -> extract_separator = extract_separator ; 
+  total_size = 0;
+}
+
+Fasta::Fasta(int extract_field, string extract_separator)
+{
+  init(extract_field, extract_separator);
 }
 
 Fasta::Fasta(const string &input, 
 	     int extract_field, string extract_separator,
 	     ostream &out) 
 {
+  init(extract_field, extract_separator);
+
   if (!input.size()) // Do not open empty files (D germline if not segmentD)
     return ;
-
-  // oout = out;
-  this -> extract_field = extract_field ;
-  this -> extract_separator = extract_separator ;
-  total_size = 0;
 
   add(input);  
 
