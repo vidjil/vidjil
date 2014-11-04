@@ -145,7 +145,7 @@ void usage(char *progname)
 
        << "Germline databases" << endl
        << "  -V <file>     V germline multi-fasta file" << endl
-       << "  -D <file>     D germline multi-fasta file (automatically implies -d)" << endl
+       << "  -D <file>     D germline multi-fasta file (implies -d)" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
        << "  -g <path>     multiple germlines (experimental)" << endl
@@ -182,7 +182,7 @@ void usage(char *progname)
        << endl
 
        << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
-       << "  -d            segment into V(D)J components instead of VJ " << endl
+       << "  -d            segment into V(D)J components instead of VJ (and resets -m, -M and -w options)" << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
        << endl
 
