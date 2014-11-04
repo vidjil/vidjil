@@ -12,6 +12,9 @@ using namespace std;
 
 class Germline {
  private:
+  void init(string _code, char _shortcut,
+            int _delta_min, int _delta_max);
+
   void update_index();
 
  public:
