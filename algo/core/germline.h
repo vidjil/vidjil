@@ -82,7 +82,6 @@ class MultiGermline {
   IKmerStore<KmerAffect> *index;
 
   MultiGermline();
-  MultiGermline(string f_germlines_json);
   ~MultiGermline();
 
   void insert(Germline *germline);

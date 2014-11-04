@@ -113,30 +113,6 @@ MultiGermline::MultiGermline()
 {
 }
 
-
-MultiGermline::MultiGermline(string f_germlines_json)
-{
-  // Should parse 'data/germlines.data'
-
-  string f_rep_5 = "germline/TRGV.fa";
-  string f_rep_4 = "";
-  string f_rep_3 = "germline/TRGJ.fa";
-  string seed = "#####-#####";
-  int delta_min = -10 ;
-  int delta_max = 20 ;
-
-  Fasta rep_5(f_rep_5, 2, "|", cout);
-  Fasta rep_4(f_rep_4, 2, "|", cout);
-  Fasta rep_3(f_rep_3, 2, "|", cout);
-
-  Germline *germline;
-  germline = new Germline("TRG", 'G',
-              rep_5, rep_4, rep_3,
-			  delta_min, delta_max);
-
-  germlines.push_back(germline);
-}
-
 MultiGermline::~MultiGermline() {
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
     {
