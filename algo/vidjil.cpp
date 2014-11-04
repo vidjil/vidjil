@@ -234,9 +234,11 @@ int main (int argc, char **argv)
   //$$ options: defaults
 
   string germline_system = DEFAULT_GERMLINE_SYSTEM ;
-  string f_rep_V = DEFAULT_V_REP ;
-  string f_rep_D = DEFAULT_D_REP ;
-  string f_rep_J = DEFAULT_J_REP ;
+  
+  list <string> f_reps_V ;
+  list <string> f_reps_D ;
+  list <string> f_reps_J ;
+
   string f_reads = DEFAULT_READS ;
   string seed = DEFAULT_SEED ;
   string f_basename = "";
@@ -320,17 +322,17 @@ int main (int argc, char **argv)
       // Germline
 
       case 'V':
-	f_rep_V = optarg;
+	f_reps_V.push_back(optarg);
 	germline_system = "custom" ;
 	break;
 
       case 'D':
-	f_rep_D = optarg;
+	f_reps_D.push_back(optarg);
         segment_D = 1;
 	break;
         
       case 'J':
-	f_rep_J = optarg;
+	f_reps_J.push_back(optarg);
 	germline_system = "custom" ;
 	break;
 
@@ -341,9 +343,9 @@ int main (int argc, char **argv)
 	
       case 'G':
 	germline_system = string(optarg);
-	f_rep_V = (germline_system + "V.fa").c_str() ;
-	f_rep_D = (germline_system + "D.fa").c_str() ;
-	f_rep_J = (germline_system + "J.fa").c_str() ;
+	f_reps_V.push_back((germline_system + "V.fa").c_str()) ;
+	f_reps_D.push_back((germline_system + "D.fa").c_str()) ;
+	f_reps_J.push_back((germline_system + "J.fa").c_str()) ;
 	germline_system = extract_basename(germline_system);
 	// TODO: if VDJ, set segment_D // NO, bad idea, depends on naming convention
 	break;
@@ -517,8 +519,20 @@ int main (int argc, char **argv)
 
   size_t min_cover_representative = (size_t) (MIN_COVER_REPRESENTATIVE_RATIO_MIN_READS_CLONE * min_reads_clone) ;
 
-  if (!segment_D) // TODO: add other constructor to Fasta, and do not load rep_D in this case
-    f_rep_D = "";
+
+  // Default repertoires
+
+  if (f_reps_V.empty())
+    f_reps_V.push_back(DEFAULT_V_REP) ;
+
+  if (f_reps_D.empty())
+    f_reps_D.push_back(DEFAULT_D_REP) ;
+
+  if (f_reps_J.empty())
+    f_reps_J.push_back(DEFAULT_J_REP) ;
+
+  if (!segment_D)
+    f_reps_D.clear();
 
   // Default seeds
 
@@ -668,14 +682,11 @@ int main (int argc, char **argv)
       else
 	{
 	  // Custom germline
-	  Fasta rep_V(f_rep_V, 2, "|", cout);
-	  Fasta rep_D(f_rep_D, 2, "|", cout);
-	  Fasta rep_J(f_rep_J, 2, "|", cout);
-	  
 	  Germline *germline;
 	  germline = new Germline(germline_system, 'X',
-				  rep_V, rep_D, rep_J, 
-				  delta_min, delta_max);
+                                  f_reps_V, f_reps_D, f_reps_J, 
+                                  delta_min, delta_max);
+
 
 	  if (command == CMD_WINDOWS || command == CMD_CLONES)
 	    germline->new_index(seed);
