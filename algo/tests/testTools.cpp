@@ -35,6 +35,10 @@ void testFasta1() {
     TAP_TEST(fa.label_full(i) == fq.label_full(i), TEST_FASTA_LABEL_FULL, "");
     TAP_TEST(fa.sequence(i) == fq.sequence(i), TEST_FASTA_SEQUENCE, "");
   }
+  TAP_TEST(fa.label(2) == "seq3", TEST_FASTA_LABEL, "");
+  TAP_TEST(fa.sequence(2) == "A", TEST_FASTA_SEQUENCE, "");
+  TAP_TEST(fa.label(4) == "", TEST_FASTA_LABEL, "");
+  TAP_TEST(fa.sequence(4) == "AATN", TEST_FASTA_SEQUENCE, "");
 }
 
 void testFastaAdd() {
