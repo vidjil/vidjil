@@ -153,6 +153,27 @@ void testFastaAddThrows() {
 
 }
 
+void testSequenceOutputOperator() {
+  ostringstream oss;
+  Sequence seq = {"a b c", "a", "GATTACA", "AIIIIIH", NULL};
+  oss << seq;
+
+  TAP_TEST(oss.str() == "@a\nGATTACA\n+\nAIIIIIH\n", TEST_SEQUENCE_OUT, oss.str());
+
+  ostringstream oss2;
+  seq.quality = "";
+  oss2 << seq;
+
+  TAP_TEST(oss2.str() == ">a\nGATTACA\n", TEST_SEQUENCE_OUT, oss.str());
+}
+
+void testFastaOutputOperator(){
+  ostringstream oss;
+  Fasta fa("../../data/test1.fa");
+  oss << fa;
+  TAP_TEST(oss.str() == ">seq1\nACAAC\n>seq2\nCGACCCCCAA\n>seq3\nA\n>seq4\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n>\nAATN\n", TEST_FASTA_OUT, oss.str());
+}
+
 void testRevcomp() {
   TAP_TEST(complement("AATCAGactgactagATCGAn") == "TTAGTCTGACTGATCTAGCTN", TEST_REVCOMP, "");
   TAP_TEST(revcomp("AATCAGactgactagATCGAn") == "NTCGATCTAGTCAGTCTGATT", TEST_REVCOMP, "");
@@ -248,6 +269,8 @@ void testTools() {
   testFasta1();
   testFastaAdd();
   testFastaAddThrows();
+  testSequenceOutputOperator();
+  testFastaOutputOperator();
   testRevcomp();
   testCreateSequence();
   testNucToInt();
