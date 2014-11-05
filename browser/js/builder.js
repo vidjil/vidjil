@@ -645,23 +645,12 @@ Builder.prototype = {
                     m.update_selected_system()
                 }
 
-            var span_system = document.createElement('span')
+            var span_system = this.build_systemBox(key)
             span_system.className = "systemBoxMenu";
-
-	    /* TODO: factorize with list.js */
-            if ((typeof key != 'undefined') && (typeof germline.icon[key] != 'undefined')){
-                span_system.appendChild(document.createTextNode(germline.icon[key].letter));
-                span_system.style.background = germline.icon[key].color
-                span_system.title = key
-            }else{
-                span_system.appendChild(document.createTextNode("?"));
-		if (typeof key != 'undefined')
-		    span_system.title = key ;
-            }
                 
             var span = document.createElement('span');
             span.className = "systemBoxNameMenu";
-	    span.appendChild(span_system)
+            span.appendChild(span_system)
             span.appendChild(checkbox)
             span.appendChild(document.createTextNode(key))
             
@@ -672,6 +661,21 @@ Builder.prototype = {
         div.appendChild(span2)
         
         return div
+    },
+    
+    build_systemBox: function (system){
+        var span = document.createElement('span')
+        span.className = "systemBox";
+        if ((typeof system != 'undefined') && (typeof germline.icon[system] != 'undefined')){
+            span.appendChild(document.createTextNode(germline.icon[system].letter));
+            span.style.background = germline.icon[system].color
+            span.title = system
+        }else{
+            span.appendChild(document.createTextNode("?"));
+            if (typeof system != 'undefined')
+                span.title = system ;
+        }
+        return span
     },
     
     build_info_line: function (id, name, value, className) {
