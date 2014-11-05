@@ -2,6 +2,7 @@
 #include "tests.h"
 
 #include "testTools.cpp"
+#include "testKmerAffect.cpp"
 #include "testStorage.cpp"
 #include "testAffectAnalyser.cpp"
 #include "testBugs.cpp"
@@ -18,6 +19,7 @@ int main(void) {
  
   testTools();
   testStorage();
+  testKmerAffect();
   testAffectAnalyser();
   testBugs();
   testCluster();
