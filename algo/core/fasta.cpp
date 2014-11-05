@@ -239,7 +239,7 @@ istream& operator>>(istream& in, Fasta& fasta){
 
 ostream& operator<<(ostream& out, Fasta& fasta){
 	for(int i = 0 ; i < fasta.size() ; i++){
-          out << fasta.read(i) << endl;
+          out << fasta.read(i);
 	}
 	return out;
 }
