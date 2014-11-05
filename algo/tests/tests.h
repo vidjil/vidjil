@@ -4,6 +4,9 @@
 enum {
   /* Tools tests */
   TEST_REVCOMP,
+  TEST_O_FASTA_HAS_NEXT,
+  TEST_O_FASTA_GET_SEQUENCE,
+  TEST_O_FASTA_LINE_NB,
   TEST_FASTA_SIZE,
   TEST_FASTA_LABEL,
   TEST_FASTA_LABEL_FULL,
@@ -101,6 +104,9 @@ enum {
 
 inline void declare_tests() {
   RECORD_TAP_TEST(TEST_REVCOMP, "revcomp");
+  RECORD_TAP_TEST(TEST_O_FASTA_HAS_NEXT, "OnlineFasta hasNext()");
+  RECORD_TAP_TEST(TEST_O_FASTA_GET_SEQUENCE, "OnlineFasta next()");
+  RECORD_TAP_TEST(TEST_O_FASTA_LINE_NB, "OnlineFasta getLineNb()");
   RECORD_TAP_TEST(TEST_FASTA_SIZE, "Fasta/Fastq size");
   RECORD_TAP_TEST(TEST_FASTA_LABEL, "Fasta/Fastq label");
   RECORD_TAP_TEST(TEST_FASTA_LABEL_FULL, "Fasta/Fastq full label");

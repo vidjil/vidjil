@@ -2,6 +2,29 @@
 #include <core/fasta.h>
 #include "tests.h"
 
+void testOnlineFasta1() {
+  OnlineFasta fa("../../data/test1.fa");
+  OnlineFasta fq("../../data/test1.fq");
+  int nb_seq = 0;
+
+  TAP_TEST(fa.getLineNb() == 1, TEST_O_FASTA_LINE_NB, "");
+  TAP_TEST(fq.getLineNb() == 1, TEST_O_FASTA_LINE_NB, "");
+
+  while (fa.hasNext()) {
+    TAP_TEST(fq.hasNext(), TEST_O_FASTA_HAS_NEXT, "");
+    fa.next();
+    fq.next();
+    Sequence s1 = fa.getSequence();
+    Sequence s2 = fq.getSequence();
+    TAP_TEST(s1.label == s2.label && s1.label_full == s2.label_full
+             && s1.sequence == s2.sequence, TEST_O_FASTA_GET_SEQUENCE, "fa: " << fa.getSequence() << endl << "fq: " << fq.getSequence());
+    nb_seq++;
+  }
+  TAP_TEST(fq.getLineNb() == 20, TEST_O_FASTA_LINE_NB, "");
+  TAP_TEST(! fq.hasNext(), TEST_O_FASTA_HAS_NEXT, "");
+  TAP_TEST(nb_seq == 5, TEST_O_FASTA_HAS_NEXT, "");
+}
+
 void testFasta1() {
   Fasta fa("../../data/test1.fa");
   Fasta fq("../../data/test1.fq");
@@ -123,6 +146,7 @@ void testExtractBasename() {
 }
 
 void testTools() {
+  testOnlineFasta1();
   testFasta1();
   testRevcomp();
   testCreateSequence();
