@@ -65,6 +65,7 @@ void testFastaAddThrows() {
   try {
     Fasta fa1("mlkdkklflskjfskldfj.fa");
   } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Error in opening file") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
   TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
@@ -75,6 +76,7 @@ void testFastaAddThrows() {
   try {
     fa1.add("ljk:lkjsdfsdlfjsdlfkjs.fa");
   } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Error in opening file") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
   TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
@@ -83,6 +85,7 @@ void testFastaAddThrows() {
   try {
     fa1.add("testTools.cpp");
   } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("The file seems to be malformed") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
   TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
@@ -91,6 +94,59 @@ void testFastaAddThrows() {
   try {
     OnlineFasta fa("lkjdflkdfjglkdfjg.fa");
   } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Error in opening file") != string::npos, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+
+  caught = false;
+  try {
+    Fasta fa1("../../data/malformed1.fq");
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Expected line starting with +") != string::npos, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+  caught = false;
+  try {
+    Fasta fa1("../../data/malformed2.fq");
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+  caught = false;
+  try {
+    Fasta fa1("../../data/malformed3.fq");
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Quality and sequence don't have the same length") == 0, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+  caught = false;
+  try {
+    Fasta fa1("../../data/malformed4.fq");
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+  caught = false;
+  try {
+    Fasta fa1("../../data/malformed5.fq");
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+  caught = false;
+  try {
+    // Can't test empty file with Fasta since we
+    // don't complain for empty files explicitly in Fasta constructor.
+    OnlineFasta fa1("../../data/malformed6.fq");
+    fa1.next();
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
     caught = true;
   }
   TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
