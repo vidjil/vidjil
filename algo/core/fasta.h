@@ -98,11 +98,6 @@ class OnlineFasta {
   OnlineFasta(istream &input, 
               int extract_field=0, string extract_separator="|");
 
-  /**
-   * Copy constructor
-   */
-  OnlineFasta(const OnlineFasta &of);
-
   ~OnlineFasta();
   
   /**
@@ -126,8 +121,6 @@ class OnlineFasta {
    * @post hasNext() ==> getSequence() returns the following sequence in the file.
    */
   void next();
-
-  OnlineFasta& operator=(const OnlineFasta&);
 
  private:
 

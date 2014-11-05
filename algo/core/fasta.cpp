@@ -114,16 +114,6 @@ OnlineFasta::OnlineFasta(istream &input,
   init();
 }
 
-OnlineFasta::OnlineFasta(const OnlineFasta &of) {
-  current = of.current;
-  input = of.input;
-  extract_field = of.extract_field;
-  extract_separator = of.extract_separator;
-  line = of.line;
-  input_allocated = false;
-  line_nb = of.line_nb;
-}
-
 OnlineFasta::~OnlineFasta() {
   if (input_allocated)
     delete input;
@@ -216,15 +206,6 @@ void OnlineFasta::next() {
 
   } else
     unexpectedEOF();
-}
-
-OnlineFasta& OnlineFasta::operator=(const OnlineFasta&of) {
-  current = of.current;
-  line = of.line;
-  input = of.input;
-  extract_field = of.extract_field;
-  extract_separator = of.extract_separator;
-  return *this;
 }
 
 string OnlineFasta::getInterestingLine() {
