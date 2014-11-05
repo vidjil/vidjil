@@ -47,7 +47,6 @@ Fasta::Fasta(const string &input,
   if (!input.size()) // Do not open empty files (D germline if not segmentD)
     return ;
 
-  out << "  <== " << input ;
   add(input);  
 }
 

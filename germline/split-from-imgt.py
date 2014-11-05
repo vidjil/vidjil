@@ -1,12 +1,31 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
 
 
 import sys
+
+
+IMGT_LICENSE = '''
+   # To use the IMGT germline databases (IMGT/GENE-DB), you have to agree to IMGT license: 
+   # academic research only, provided that it is referred to IMGT®,
+   # and cited as "IMGT®, the international ImMunoGeneTics information system® 
+   # http://www.imgt.org (founder and director: Marie-Paule Lefranc, Montpellier, France). 
+   # Lefranc, M.-P., IMGT®, the international ImMunoGeneTics database,
+   # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
+'''
+
+print IMGT_LICENSE
+
 
 # Parse lines in IMGT/GENE-DB such as:
 # >M12949|TRGV1*01|Homo sapiens|ORF|...
 
 open_files = {}
 current_file = None
+
+def verbose_open_w(name):
+    print " ==> %s" % name
+    return open(name, 'w')
 
 # Create isolated files for some sequences
 SPECIAL_SEQUENCES = [
@@ -30,14 +49,12 @@ for l in sys.stdin:
                     current_file = open_files[system]
                 else:
                     name = '%s.fa' % system
-                    print "  ==>", name
-                    current_file = open(name, 'w')
+                    current_file = verbose_open_w(name)
                     open_files[system] = current_file
 
             if seq in SPECIAL_SEQUENCES:
                 name = '%s.fa' % seq.replace('*', '-')
-                print "  ==>", name
-                current_special = open(name, 'w')
+                current_special = verbose_open_w(name)
 
 
     if current_file:

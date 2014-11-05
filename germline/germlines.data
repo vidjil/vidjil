@@ -55,8 +55,8 @@ germlines = {
 	"shortcut": "d",
 	"description": "Human T-cell receptor, delta locus (14q11.2), incomplete Dd2-Dd3 rearrangements",
 	"follows": "TRD",
-	"5": ["TRDD-d2.fa"],
-	"3": ["TRDD-d3.fa"]
+	"5": ["TRDV.fa", "TRDD-d2.fa"],
+	"3": ["TRDJ.fa", "TRDD-d3.fa"]
 	// "seed": "8" ? (pipeline.py)
     },
     
