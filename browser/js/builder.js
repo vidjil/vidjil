@@ -605,11 +605,9 @@ Builder.prototype = {
         var div_total = this.build_info_line("info_total", "total", this.m.reads.total[this.m.t] + " reads")
         parent.appendChild(div_total)
 
-        /*TODO put this somewhere else
-        //color
+
         var div_color = this.build_info_color()
         parent.appendChild(div_color) 
-        */
 
         initTag();
     },
@@ -707,23 +705,25 @@ Builder.prototype = {
         var div = document.createElement('div');
         div.className = "info_color"
 
+        var span0 = document.createElement('span');
+        span0.className="info_row"
         var span1 = document.createElement('span');
         var span2 = document.createElement('span');
         var span3 = document.createElement('span');
 
-        switch (this.colorMethod) {
-        case "N2":
-            div.appendChild(document.createTextNode(" colors : "));
+        switch (this.m.colorMethod) {
+        case "N":
+            span0.appendChild(document.createTextNode("color by n length : "));
 
             span1.appendChild(document.createTextNode(" N=0 "));
 
             span2.className = "gradient";
 
-            span3.appendChild(document.createTextNode("N=" + this.m.n2_max));
+            span3.appendChild(document.createTextNode("N=" + this.m.n_max));
 
             break;
         case "Tag":
-            div.appendChild(document.createTextNode(" tag colors : "));
+            span0.appendChild(document.createTextNode("color by tag: "));
 
             for (var i = 0; i < tagName.length; i++) {
                 var spantag = document.createElement('span');
@@ -735,11 +735,9 @@ Builder.prototype = {
 
                 span2.appendChild(spantag);
             }
-
-
             break;
         case "abundance":
-            div.appendChild(document.createTextNode(" colors : "));
+            span0.appendChild(document.createTextNode("color by size: "));
 
             span1.appendChild(document.createTextNode(" 0% "));
 
@@ -750,6 +748,7 @@ Builder.prototype = {
             break;
         }
 
+        div.appendChild(span0)
         div.appendChild(span1)
         div.appendChild(span2)
         div.appendChild(span3)

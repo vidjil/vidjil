@@ -394,6 +394,7 @@ line {
 .systemBoxNameMenu {
   display: inline-block;
   min-width: 89px;
+  height: 20px;
 }
 .clusterBox {
   width: 16px;
