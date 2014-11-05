@@ -14,6 +14,24 @@ void testFasta1() {
   }
 }
 
+void testFastaAdd() {
+  Fasta fa1("../../data/test1.fa");
+  Fasta fa2("../../data/test1.fa");
+  fa2.add("../../data/test1.fa");
+
+  TAP_TEST(fa1.size() * 2 == fa2.size(), TEST_FASTA_ADD, "");
+  for (int i=0; i < fa1.size(); i++) {
+    TAP_TEST(fa1.label(i) == fa2.label(i)
+             && fa1.label(i) == fa2.label(i+fa1.size()), TEST_FASTA_ADD, "");
+    TAP_TEST(fa1.label_full(i) == fa2.label_full(i)
+             && fa1.label_full(i) == fa2.label_full(i+fa1.size()), 
+             TEST_FASTA_ADD, "");
+    TAP_TEST(fa1.sequence(i) == fa2.sequence(i)
+             && fa1.sequence(i) == fa2.sequence(i+fa1.size()), 
+             TEST_FASTA_ADD, "");
+  }
+}
+
 void testRevcomp() {
   TAP_TEST(complement("AATCAGactgactagATCGAn") == "TTAGTCTGACTGATCTAGCTN", TEST_REVCOMP, "");
   TAP_TEST(revcomp("AATCAGactgactagATCGAn") == "NTCGATCTAGTCAGTCTGATT", TEST_REVCOMP, "");

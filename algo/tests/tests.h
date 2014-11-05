@@ -8,6 +8,7 @@ enum {
   TEST_FASTA_LABEL,
   TEST_FASTA_LABEL_FULL,
   TEST_FASTA_SEQUENCE,
+  TEST_FASTA_ADD,
   TEST_CREATE_SEQUENCE_LABEL_FULL,
   TEST_CREATE_SEQUENCE_LABEL,
   TEST_CREATE_SEQUENCE_SEQUENCE,
@@ -104,6 +105,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_FASTA_LABEL, "Fasta/Fastq label");
   RECORD_TAP_TEST(TEST_FASTA_LABEL_FULL, "Fasta/Fastq full label");
   RECORD_TAP_TEST(TEST_FASTA_SEQUENCE, "Fasta/Fastq sequence");
+  RECORD_TAP_TEST(TEST_FASTA_ADD, "Fasta add() method");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_LABEL_FULL, "create_sequence: label_full field");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_LABEL, "create_sequence: label field");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_SEQUENCE, "create_sequence: sequence field");

@@ -10,20 +10,8 @@
 
 WindowsStorage::WindowsStorage(map<string, string> &labels):windows_labels(labels) {}
 
-map<junction, list<Sequence> > &WindowsStorage::getMap() {
-  return seqs_by_window;
-}
-
 list<pair <junction, int> > &WindowsStorage::getSortedList() {
   return sort_all_windows;
-}
-
-size_t WindowsStorage::getNbReads(junction window) {
-  return seqs_by_window[window].size();
-}
-
-vector<int> WindowsStorage::getStatus(junction window) {
-  return status_by_window[window];   
 }
 
 string WindowsStorage::getLabel(junction window) {
@@ -91,10 +79,6 @@ void WindowsStorage::setIdToAll() {
             id_by_window.insert(make_pair(it->first, id));
             id++;
     }
-}
-
-int WindowsStorage::getId(junction window) {
-    return id_by_window[window];
 }
 
 void WindowsStorage::add(junction window, Sequence sequence, int status, Germline *germline) {

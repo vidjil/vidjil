@@ -1,26 +1,61 @@
 
 #include "germline.h"
 
-Germline::Germline(string _code, char _shortcut,
-		   string f_rep_5, string f_rep_4, string f_rep_3,
-		   int _delta_min, int _delta_max)
+void Germline::init(string _code, char _shortcut,
+                    int _delta_min, int _delta_max)
 {
   code = _code ;
   shortcut = _shortcut ;
   index = 0 ;
 
   affect_5 = "V" ;
-  affect_4 = "";
+  affect_4 = "" ;
   affect_3 = "J" ;
-
-  rep_5 = Fasta(f_rep_5, 2, "|", cout);
-  rep_4 = Fasta(f_rep_4, 2, "|", cout);
-  rep_3 = Fasta(f_rep_3, 2, "|", cout);
-
+  
   delta_min = _delta_min ;
   delta_max = _delta_max ;
 
   stats.setLabel(code);
+}
+
+Germline::Germline(string _code, char _shortcut,
+		   string f_rep_5, string f_rep_4, string f_rep_3,
+		   int _delta_min, int _delta_max)
+{
+  init(_code, _shortcut, _delta_min, _delta_max);
+
+  f_reps_5.push_back(f_rep_5);
+  f_reps_4.push_back(f_rep_4);
+  f_reps_3.push_back(f_rep_3);
+
+  rep_5 = Fasta(f_rep_5, 2, "|", cout);
+  rep_4 = Fasta(f_rep_4, 2, "|", cout);
+  rep_3 = Fasta(f_rep_3, 2, "|", cout);
+}
+
+
+Germline::Germline(string _code, char _shortcut,
+		   list <string> _f_reps_5, list <string> _f_reps_4, list <string> _f_reps_3,
+		   int _delta_min, int _delta_max)
+{
+  init(_code, _shortcut, _delta_min, _delta_max);
+
+  f_reps_5 = _f_reps_5 ;
+  f_reps_4 = _f_reps_4 ;
+  f_reps_3 = _f_reps_3 ;
+
+  rep_5 = Fasta(2, "|") ;
+  rep_4 = Fasta(2, "|") ;
+  rep_3 = Fasta(2, "|") ;
+
+  for (list<string>::const_iterator it = f_reps_5.begin(); it != f_reps_5.end(); ++it)
+    rep_5.add(*it);
+  
+  for (list<string>::const_iterator it = f_reps_4.begin(); it != f_reps_4.end(); ++it)
+    rep_4.add(*it);
+
+  for (list<string>::const_iterator it = f_reps_3.begin(); it != f_reps_3.end(); ++it)
+    rep_3.add(*it);
 }
 
 
@@ -28,24 +63,11 @@ Germline::Germline(string _code, char _shortcut,
            Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
 		   int _delta_min, int _delta_max)
 {
-  code = _code ;
-  shortcut = _shortcut ;
-  index = 0 ;
-
-  // affect_5 = KmerAffect("", "V", 0) ;
-  // affect_3 = KmerAffect("", "J", 0) ;
-  affect_5 = "V" ;
-  affect_4 = "" ;
-  affect_3 = "J" ;
+  init(_code, _shortcut, _delta_min, _delta_max);
 
   rep_5 = _rep_5 ;
   rep_4 = _rep_4 ;
   rep_3 = _rep_3 ;
-
-  delta_min = _delta_min ;
-  delta_max = _delta_max ;
-
-  stats.setLabel(code);
 }
 
 void Germline::new_index(string seed)
@@ -95,30 +117,6 @@ MultiGermline::MultiGermline()
 {
 }
 
-
-MultiGermline::MultiGermline(string f_germlines_json)
-{
-  // Should parse 'data/germlines.data'
-
-  string f_rep_5 = "germline/TRGV.fa";
-  string f_rep_4 = "";
-  string f_rep_3 = "germline/TRGJ.fa";
-  string seed = "#####-#####";
-  int delta_min = -10 ;
-  int delta_max = 20 ;
-
-  Fasta rep_5(f_rep_5, 2, "|", cout);
-  Fasta rep_4(f_rep_4, 2, "|", cout);
-  Fasta rep_3(f_rep_3, 2, "|", cout);
-
-  Germline *germline;
-  germline = new Germline("TRG", 'G',
-              rep_5, rep_4, rep_3,
-			  delta_min, delta_max);
-
-  germlines.push_back(germline);
-}
-
 MultiGermline::~MultiGermline() {
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
     {
@@ -133,6 +131,7 @@ void MultiGermline::insert(Germline *germline)
 
 void MultiGermline::build_default_set(string path)
 {
+  // Should parse 'data/germlines.data'
   Germline *germline;
   
   germline = new Germline("TRG", 'G', path + "/TRGV.fa", "",                path + "/TRGJ.fa",   -10, 20);

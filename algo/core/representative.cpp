@@ -16,24 +16,6 @@ Sequence RepresentativeComputer::getRepresentative() const{
   return representative;
 }
 
-string RepresentativeComputer::getRequiredSequence() const {
-  return required;
-}
-
-list<Sequence>& RepresentativeComputer::getSequenceList() const{
-  return sequences;
-}
-
-size_t RepresentativeComputer::getMinCover() const {
-  return min_cover;
-}
-float RepresentativeComputer::getPercentCoverage() const {
-  return percent_cover;
-}
-bool RepresentativeComputer::getRevcomp() const {
-  return revcomp;
-}
-
 bool RepresentativeComputer::hasRepresentative() const{
   return is_computed;
 }
@@ -69,14 +51,6 @@ void RepresentativeComputer::setRequiredSequence(string sequence) {
 
 string KmerRepresentativeComputer::getSeed() const{
   return seed;
-}
-
-void KmerRepresentativeComputer::setSeed(string seed) {
-  this->seed = seed;
-}
-
-int KmerRepresentativeComputer::getStabilityLimit() const {
-  return stability_limit;
 }
 
 void KmerRepresentativeComputer::setStabilityLimit(int limit) {

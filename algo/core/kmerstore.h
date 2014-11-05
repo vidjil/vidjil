@@ -135,6 +135,14 @@ class ArrayKmerStore : public IKmerStore<T>
   T* store;
 	
   int index(const seqtype& word) const;
+
+  /**
+   * Allocates memory for store
+   * @throws bad_alloc: when there is not enough memory or when the
+   *                    the total number of kmers cannot be stored in an 
+   *                    unsigned int
+   */
+  void init();
 public:
   /**
    * @param bool: if true, will also index revcomp
@@ -312,16 +320,12 @@ T& MapKmerStore<T>::operator[](seqtype& word){
 // ArrayKmerStore
 
 template <class T> 
-ArrayKmerStore<T>::ArrayKmerStore(int k, bool revcomp){
+ArrayKmerStore<T>::ArrayKmerStore(int k, bool revcomp) {
   this->seed = seed_contiguous(k);
   this->k = k;
   this->s = k;
   this->revcomp_indexed = revcomp;
-  if ((size_t)(k << 1) >= sizeof(int) * 8)
-    throw std::bad_alloc();
-  store = new T[(unsigned int)1 << (k << 1)];
-  if (! store)
-    throw std::bad_alloc();
+  init();
 }
 
 
@@ -332,9 +336,14 @@ ArrayKmerStore<T>::ArrayKmerStore(string seed, bool revcomp){
   this->k = k;
   this->s = seed.size();
   this->revcomp_indexed = revcomp;
-  if ((size_t)(k << 1) >= sizeof(int) * 8)
+  init();
+}
+
+template <class T>
+void ArrayKmerStore<T>::init() {
+  if ((size_t)(this->k << 1) >= sizeof(int) * 8)
     throw std::bad_alloc();
-  store = new T[(unsigned int)1 << (k << 1)];
+  store = new T[(unsigned int)1 << (this->k << 1)];
   if (! store)
     throw std::bad_alloc();
 }
