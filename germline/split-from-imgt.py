@@ -23,6 +23,10 @@ print IMGT_LICENSE
 open_files = {}
 current_file = None
 
+def verbose_open_w(name):
+    print " ==> %s" % name
+    return open(name, 'w')
+
 # Create isolated files for some sequences
 SPECIAL_SEQUENCES = [
     'TRDD2*01',
@@ -45,14 +49,12 @@ for l in sys.stdin:
                     current_file = open_files[system]
                 else:
                     name = '%s.fa' % system
-                    print "  ==>", name
-                    current_file = open(name, 'w')
+                    current_file = verbose_open_w(name)
                     open_files[system] = current_file
 
             if seq in SPECIAL_SEQUENCES:
                 name = '%s.fa' % seq.replace('*', '-')
-                print "  ==>", name
-                current_special = open(name, 'w')
+                current_special = verbose_open_w(name)
 
 
     if current_file:
