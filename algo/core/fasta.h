@@ -45,8 +45,7 @@ public:
          *
        */
 	Fasta(const string &input, 
-	      int extract_field=0, string extract_separator="|",
-	      ostream &out=cout);
+	      int extract_field=0, string extract_separator="|");
 	
 	int size() const;
         /**

@@ -39,8 +39,7 @@ Fasta::Fasta(int extract_field, string extract_separator)
 }
 
 Fasta::Fasta(const string &input, 
-	     int extract_field, string extract_separator,
-	     ostream &out) 
+	     int extract_field, string extract_separator) 
 {
   init(extract_field, extract_separator);
 

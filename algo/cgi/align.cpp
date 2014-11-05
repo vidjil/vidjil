@@ -53,8 +53,6 @@ int main(int argc, char* argv[])
   
   const char* fdata;
   ostringstream ost; 
-  ostream * p; 
-  p=&ost;
   char filename[] = "VidjilAlignXXXXXX";
   JsonList result;
   bool error = false;
@@ -78,11 +76,10 @@ int main(int argc, char* argv[])
     }else{
       cgi_mode=false;
       fdata = argv[1];
-      p=&cout;
     }
     
     if (!cgi_mode) cout <<ost<<endl;
-    Fasta fa(fdata, 1, " ", *p);
+    Fasta fa(fdata, 1, " ");
     
     
     string seq0 = fa.sequence(0);
