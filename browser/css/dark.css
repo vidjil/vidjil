@@ -255,13 +255,17 @@ line {
   font-weight: bold;
   text-anchor: middle;
 }
+.sp_system {
+  position: absolute;
+}
 .sp_system_label {
-  fill: #839496;
+  color: #839496;
   font-weight: bold;
-  text-anchor: middle;
+  height: 0px;
+  position: relative;
 }
 .sp_system_label:hover {
-  fill: #fdf6e3;
+  color: #fdf6e3;
   cursor: pointer;
 }
 .sp_rotated_legend {

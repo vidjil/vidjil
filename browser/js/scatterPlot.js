@@ -142,6 +142,10 @@ ScatterPlot.prototype = {
   initSVG: function () {
       var self = this;
 
+      this.label_container = d3.select("#" + this.id)
+      .append("div")
+      .attr("id", this.id + "_label_container")
+      
       //création de la fenetre SVG
       this.vis = d3.select("#" + this.id)
 	  .append("svg:svg")
@@ -177,10 +181,6 @@ ScatterPlot.prototype = {
       this.axis_x_container = d3.select("#" + this.id + "_svg")
 	  .append("svg:g")
 	  .attr("id", this.id + "_axis_x_container")
-      
-      this.label_container = d3.select("#" + this.id + "_svg")
-      .append("svg:g")
-      .attr("id", this.id + "_label_container")
 
       //Sélection du contenu de l'axe des X -> Ajout d'un attribut valant un id
       this.axis_y_container = d3.select("#" + this.id + "_svg")
@@ -1509,21 +1509,21 @@ ScatterPlot.prototype = {
       self = this;
 
       //LEGENDE
-      leg = this.label_container.selectAll("text")
+      leg = this.label_container.selectAll("div")
       .data(data);
       leg.enter()
-      .append("text");
+      .append("div");
       leg.exit()
       .remove();
       leg
-      .attr("x", function (d) {
-          return d.x*self.resizeW+self.marge_left
+      .style("left", function (d) {
+          return ""+(d.x*self.resizeW+self.marge_left)+"px"
       })
-      .attr("y", function (d) {
-          return d.y*self.resizeH+self.marge_top
+      .style("top", function (d) {
+          return ""+(d.y*self.resizeH+self.marge_top)+"px"
       })
-      .text(function (d) {
-          return d.text
+      .html(function (d) {
+          return "<div class='sp_system'>"+builder.build_systemBox(d.text).outerHTML+" "+d.text+"</div>"
       })
       .on("click", function (d) {
         self.m.changeGermline(d.text)
