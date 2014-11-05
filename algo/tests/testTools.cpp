@@ -1,6 +1,7 @@
 #include <core/tools.h>
 #include <core/fasta.h>
 #include "tests.h"
+#include <stdexcept>
 
 void testOnlineFasta1() {
   OnlineFasta fa("../../data/test1.fa");
@@ -57,6 +58,43 @@ void testFastaAdd() {
              && fa1.sequence(i) == fa2.sequence(i+fa1.size()), 
              TEST_FASTA_ADD, "");
   }
+}
+
+void testFastaAddThrows() {
+  bool caught = false;
+  try {
+    Fasta fa1("mlkdkklflskjfskldfj.fa");
+  } catch (invalid_argument e) {
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+
+  Fasta fa1("../../data/test1.fa");
+
+  caught = false;
+  try {
+    fa1.add("ljk:lkjsdfsdlfjsdlfkjs.fa");
+  } catch (invalid_argument e) {
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+
+  caught = false;
+  try {
+    fa1.add("testTools.cpp");
+  } catch (invalid_argument e) {
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+
+  caught = false;
+  try {
+    OnlineFasta fa("lkjdflkdfjglkdfjg.fa");
+  } catch (invalid_argument e) {
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+
 }
 
 void testRevcomp() {
