@@ -152,6 +152,8 @@ void testExtractBasename() {
 void testTools() {
   testOnlineFasta1();
   testFasta1();
+  testFastaAdd();
+  testFastaAddThrows();
   testRevcomp();
   testCreateSequence();
   testNucToInt();
