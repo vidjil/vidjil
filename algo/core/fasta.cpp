@@ -245,7 +245,16 @@ ostream& operator<<(ostream& out, Fasta& fasta){
 }
 
 ostream &operator<<(ostream &out, const Sequence &seq) {
-  out << ">" << seq.label << endl;
+  bool is_fastq=false;
+  if (seq.quality.length() > 0) {
+    is_fastq = true;
+    out << "@";
+  } else
+    out << ">";
+  out << seq.label << endl;
   out << seq.sequence << endl;
+  if (is_fastq) {
+    out << "+" << endl << seq.quality << endl;
+  }
   return out;
 }
