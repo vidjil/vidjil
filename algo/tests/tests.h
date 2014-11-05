@@ -32,6 +32,7 @@ enum {
   TEST_KMERSTORE_GET_K,
   TEST_KMERSTORE_GET_S,
   TEST_KMERSTORE_GET_SEED,
+  TEST_KMERSTORE_INSERT_ONE_SEQ,
 
   /* KmerAffect */
   TEST_AFFECT_STRAND,
@@ -144,6 +145,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_EXTRACT_BASENAME, "extractBasename()");
 
   RECORD_TAP_TEST(TEST_ARRAY_KMERSTORE, "Testing ArrayKmerStore");
+  RECORD_TAP_TEST(TEST_KMERSTORE_INSERT_ONE_SEQ, "Testing IKmerStore::insert() on one sequence");
   RECORD_TAP_TEST(TEST_MAP_KMERSTORE, "Testing MapKmerStore");
   RECORD_TAP_TEST(TEST_ARRAY_KMERSTORE_RC, "Testing ArrayKmerStore with revcomp");
   RECORD_TAP_TEST(TEST_MAP_KMERSTORE_RC, "Testing MapKmerStore with revcomp");
