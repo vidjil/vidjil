@@ -54,8 +54,10 @@ GermlineList.prototype = {
     },
     
     //add a list of custom germlines
-    add : function () {
-        
+    add : function (list) {
+        for ( var key in list ) {
+            this.list[key] = list[key];
+        }
     }
 }
 
