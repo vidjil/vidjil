@@ -80,7 +80,9 @@ int main(int argc, char* argv[])
     }
     
     if (!cgi_mode) cout <<ost<<endl;
-    Fasta fa(fdata, 1, " ", !cgi_mode);
+
+    if (! error) {
+      Fasta fa(fdata, 1, " ", !cgi_mode);
     
     
     string seq0 = fa.sequence(0);
@@ -124,6 +126,7 @@ int main(int argc, char* argv[])
 	j++;
       }
       
+    }
     }
       
 }
