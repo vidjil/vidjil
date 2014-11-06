@@ -53,7 +53,7 @@ int main(int argc, char* argv[])
   
   const char* fdata;
   ostringstream ost; 
-  char filename[] = "VidjilAlignXXXXXX";
+  char filename[] = "/tmp/VidjilAlignXXXXXX";
   JsonList result;
   bool error = false;
 
