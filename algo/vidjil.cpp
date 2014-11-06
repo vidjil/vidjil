@@ -1011,7 +1011,6 @@ int main (int argc, char **argv)
     // VirtualReadScore *scorer = new KmerAffectReadScore(*(germline->index));
     int last_num_clone_on_stdout = 0 ;
     int num_clone = 0 ;
-    int clones_without_representative = 0 ;
 
     ofstream out_edges((out_dir+f_basename + EDGES_FILENAME).c_str());
     int nb_edges = 0 ;
@@ -1092,21 +1091,11 @@ int main (int argc, char **argv)
 	  cout << auditioned.size() << " auditioned sequences, avg length " << total_length / auditioned.size() << endl ;
 	}
 
-        Sequence representative = NULL_SEQUENCE ;
-
-	  representative 
+        Sequence representative
           = windowsStorage->getRepresentative(it->first, seed, 
                                              min_cover_representative,
                                              ratio_representative,
                                              max_auditionned);
-
-        if (representative == NULL_SEQUENCE) {
-	  clones_without_representative++ ;
-	  if (verbose)
-	    cout << "# (no representative sequence with current parameters)" ;
-
-        } else {
-	//$$ There is one representative
 
 	  // Store the representative and its label
           representatives.push_back(representative);
@@ -1167,9 +1156,6 @@ int main (int argc, char **argv)
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
 
-	} // end if (there is a representative)
-
-
 
 	if (output_sequences_by_cluster) // -a option, output all sequences
 	  {
@@ -1197,13 +1183,6 @@ int main (int argc, char **argv)
     cout << "#### end of clones" << endl; 
     cout << endl;
 
-    if (clones_without_representative > 0)
-      {
-	cout << clones_without_representative << " clones without representatives" ;
-	cout << " (requiring " << min_cover_representative << "/" << ratio_representative << " supporting reads)" << endl ;
-	cout << endl ;
-      }
-  
     //$$ Compare representatives of all clones
 
     if (nb_edges)
