@@ -94,6 +94,7 @@ OnlineFasta::OnlineFasta(const string &input,
   extract_separator(extract_separator)
 {
   if (this->input->fail()) {
+    delete this->input;
     throw invalid_argument("!! Error in opening file "+input);
   }
 
