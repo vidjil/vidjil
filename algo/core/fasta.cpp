@@ -105,10 +105,9 @@ OnlineFasta::OnlineFasta(const string &input,
 
 OnlineFasta::OnlineFasta(istream &input, 
                          int extract_field, string extract_separator)
-  :extract_field(extract_field), 
+  :input(&input), extract_field(extract_field),
   extract_separator(extract_separator)
 {
-  this->input = &input;
   input_allocated = false;
   init();
 }
