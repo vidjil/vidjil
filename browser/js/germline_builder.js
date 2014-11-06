@@ -42,11 +42,11 @@ GermlineList.prototype = {
                     self.list = jQuery.parseJSON(json);
                 }
                 catch(err){
-                    myConsole.flash("server : germlines.data malformed");
+                    myConsole.flash("server : germlines.data malformed", 2);
                 }
             },
             error: function (request, status, error) {
-                myConsole.flash("server : error impossible to retrieve germlines.data");
+                myConsole.flash("server : error impossible to retrieve germlines.data", 2);
             },
             dataType: "text"
         });
@@ -98,10 +98,14 @@ Germline.prototype = {
         for (var i=0; i<this.m.germlineList.list[system][type2].length; i++){
             var filename = this.m.germlineList.list[system][type2][i] 
             filename = filename.split('/')[filename.split('/').length-1] //remove path
-            filename = filename.split('/')[filename.split('/').length-1] //remove file extension 
+            filename = filename.split('.')[0] //remove file extension 
             
-            for (var key in germline[filename]){
-                this.allele[key] = germline[filename][key]
+            if (typeof germline[filename] != 'undefined'){
+                for (var key in germline[filename]){
+                    this.allele[key] = germline[filename][key]
+                }
+            }else{
+                myConsole.flash("warning : this browser version doesn't have the "+filename+" germline file", 2);
             }
         }
 
