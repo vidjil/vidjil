@@ -85,48 +85,48 @@ int main(int argc, char* argv[])
       Fasta fa(fdata, 1, " ", !cgi_mode);
     
     
-    string seq0 = fa.sequence(0);
+      string seq0 = fa.sequence(0);
     
-    LazyMsa lm = LazyMsa(fa.size(), seq0);
+      LazyMsa lm = LazyMsa(fa.size(), seq0);
     
-    for (int i=1; i < fa.size(); i++){
-      string seq1 = fa.sequence(i);
-      lm.add(seq1);
-    }
+      for (int i=1; i < fa.size(); i++){
+        string seq1 = fa.sequence(i);
+        lm.add(seq1);
+      }
     
-    string *align_str;
-    align_str =new string[lm.sizeUsed+2];
-    lm.align(align_str);
+      string *align_str;
+      align_str =new string[lm.sizeUsed+2];
+      lm.align(align_str);
     
 
-    if (cgi_mode) {
-      if (! error) {
-        JsonArray alignment;
+      if (cgi_mode) {
+        if (! error) {
+          JsonArray alignment;
       
-        for (int i=0; i<lm.sizeUsed+2; i++){
-          alignment.add(align_str[i]);
+          for (int i=0; i<lm.sizeUsed+2; i++){
+            alignment.add(align_str[i]);
+          }
+          result.add("seq", alignment);
         }
-        result.add("seq", alignment);
-      }
 
-      remove(filename);
-      cout << result.toString();
-    }else{
-      int length=60;
-      int n=align_str[0].size();
-      int j=0;
+        remove(filename);
+        cout << result.toString();
+      }else{
+        int length=60;
+        int n=align_str[0].size();
+        int j=0;
       
-      while (n > 0){
-	for (int i=0; i<lm.sizeUsed+2; i++){
+        while (n > 0){
+          for (int i=0; i<lm.sizeUsed+2; i++){
 	  
-	  cout<<" >  "<<align_str[i].substr(j*length,length)<<"  <  "<<fa.label(i)<<endl;
-	}
-	cout<<endl;
-	n=n-length;
-	j++;
-      }
+            cout<<" >  "<<align_str[i].substr(j*length,length)<<"  <  "<<fa.label(i)<<endl;
+          }
+          cout<<endl;
+          n=n-length;
+          j++;
+        }
       
-    }
+      }
     }
       
 }
