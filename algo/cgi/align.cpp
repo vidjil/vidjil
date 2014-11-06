@@ -61,6 +61,7 @@ int main(int argc, char* argv[])
   
     if (argc <= 1){
       cgi_mode=true;
+      cout <<"Content-type: text/html"<<endl<<endl;
 
       error = ! check_cgi_parameters(result);
       if (! error) {
@@ -107,7 +108,6 @@ int main(int argc, char* argv[])
       }
 
       remove(filename);
-      cout <<"Content-type: text/html"<<endl<<endl;
       cout << result.toString();
     }else{
       int length=60;
