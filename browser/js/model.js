@@ -975,7 +975,8 @@ Model.prototype = {
                     if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID])
 		    {
 			time = this.samples.timestamp[timeID];
-			result = "+" + this.dateDiffInDays(time0, time) ;
+			diff = this.dateDiffInDays(time0, time);
+			result = (diff >= 0 ? '+' : '') + diff;
 		    }
 		}		    		
             }
