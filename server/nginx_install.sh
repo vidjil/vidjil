@@ -72,6 +72,13 @@ echo "server {
             error_page 405 = $uri;
         }
 
+        location /germline {
+            root $CWD/../;
+            expires max;
+
+            error_page 405 = $uri;
+        }
+
         ###to enable correct use of response.static_version
         #location ~* ^/(\w+)/static(?:/_[\d]+\.[\d]+\.[\d]+)?/(.*)$ {
         #    alias $CWD//web2py/applications/\$1/static/\$2;
