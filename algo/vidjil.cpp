@@ -1336,6 +1336,8 @@ int main (int argc, char **argv)
     delete json_samples;
     delete json_reads;
     delete json_reads_germlineList;
+    delete json_germlines;
+    delete json_custom_germline;
 
     delete multigermline ;
     delete windowsStorage;
