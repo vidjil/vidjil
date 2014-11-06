@@ -28,9 +28,9 @@ Germline::Germline(string _code, char _shortcut,
   f_reps_4.push_back(f_rep_4);
   f_reps_3.push_back(f_rep_3);
 
-  rep_5 = Fasta(f_rep_5, 2, "|", cout);
-  rep_4 = Fasta(f_rep_4, 2, "|", cout);
-  rep_3 = Fasta(f_rep_3, 2, "|", cout);
+  rep_5 = Fasta(f_rep_5, 2, "|");
+  rep_4 = Fasta(f_rep_4, 2, "|");
+  rep_3 = Fasta(f_rep_3, 2, "|");
 }
 
 

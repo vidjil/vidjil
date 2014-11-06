@@ -77,6 +77,7 @@ public:
 
   /**
    * Sequence that the representative must contain absolutely.
+   * This sequence should appear only once in a read.
    * Setting the sequence is not required and it can be empty.
    */
   void setRequiredSequence(string sequence);

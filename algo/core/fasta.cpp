@@ -39,12 +39,11 @@ Fasta::Fasta(int extract_field, string extract_separator)
 }
 
 Fasta::Fasta(const string &input, 
-	     int extract_field, string extract_separator,
-	     ostream &out) 
+	     int extract_field, string extract_separator) 
 {
   init(extract_field, extract_separator);
 
-  if (!input.size()) // Do not open empty files (D germline if not segmentD)
+  if (!input.size()) // Do not open empty filenames (D germline if not segmentD)
     return ;
 
   add(input);  
@@ -60,8 +59,7 @@ void Fasta::add(const string &filename) {
   ifstream is(filename.c_str());
   if (is.fail())
     {
-      cerr << "  !! Error in opening file: " << filename << endl ;
-      exit(1);
+      throw invalid_argument(" !! Error in opening file: "+ filename);
     }
 
   cout << " <== " << filename ;
@@ -96,7 +94,8 @@ OnlineFasta::OnlineFasta(const string &input,
   extract_separator(extract_separator)
 {
   if (this->input->fail()) {
-    throw ios_base::failure("!! Error in opening file "+input);
+    delete this->input;
+    throw invalid_argument("!! Error in opening file "+input);
   }
 
   cout << "  <== " << input << endl ;
@@ -106,22 +105,11 @@ OnlineFasta::OnlineFasta(const string &input,
 
 OnlineFasta::OnlineFasta(istream &input, 
                          int extract_field, string extract_separator)
-  :extract_field(extract_field), 
+  :input(&input), extract_field(extract_field),
   extract_separator(extract_separator)
 {
-  this->input = &input;
   input_allocated = false;
   init();
-}
-
-OnlineFasta::OnlineFasta(const OnlineFasta &of) {
-  current = of.current;
-  input = of.input;
-  extract_field = of.extract_field;
-  extract_separator = of.extract_separator;
-  line = of.line;
-  input_allocated = false;
-  line_nb = of.line_nb;
 }
 
 OnlineFasta::~OnlineFasta() {
@@ -165,7 +153,7 @@ void OnlineFasta::next() {
     case '>': state=FASTX_FASTA; break;
     case '@': state=FASTX_FASTQ_ID; break;
     default: 
-      throw runtime_error("The file seems to be malformed!");
+      throw invalid_argument("The file seems to be malformed!");
     }
     
     // Identifier line
@@ -184,14 +172,17 @@ void OnlineFasta::next() {
           break;
         case FASTX_FASTQ_SEQ:
           // FASTQ separator between sequence and quality
-          assert(line[0] == '+');
+          if (line[0] != '+')
+            throw invalid_argument("Expected line starting with + in FASTQ file");
           break;
         case FASTX_FASTQ_SEP:
           // Reading quality
           current.quality = line;
+          if (current.quality.length() != current.sequence.length())
+            throw invalid_argument("Quality and sequence don't have the same length ");
           break;
         default:
-          throw runtime_error("Unexpected state after reading identifiers line");
+          throw invalid_argument("Unexpected state after reading identifiers line");
         }
         if (state >= FASTX_FASTQ_ID && state <= FASTX_FASTQ_SEP)
           state = (fasta_state)(((int)state) + 1);
@@ -218,15 +209,6 @@ void OnlineFasta::next() {
     unexpectedEOF();
 }
 
-OnlineFasta& OnlineFasta::operator=(const OnlineFasta&of) {
-  current = of.current;
-  line = of.line;
-  input = of.input;
-  extract_field = of.extract_field;
-  extract_separator = of.extract_separator;
-  return *this;
-}
-
 string OnlineFasta::getInterestingLine() {
   string line;
   while (line.length() == 0 && hasNext() && getline(*input, line)) {
@@ -237,7 +219,7 @@ string OnlineFasta::getInterestingLine() {
 }
 
 void OnlineFasta::unexpectedEOF() {
-  throw runtime_error("Unexpected EOF while reading FASTA/FASTQ file");
+  throw invalid_argument("Unexpected EOF while reading FASTA/FASTQ file");
 }
 
 // Operators
@@ -257,14 +239,22 @@ istream& operator>>(istream& in, Fasta& fasta){
 
 ostream& operator<<(ostream& out, Fasta& fasta){
 	for(int i = 0 ; i < fasta.size() ; i++){
-          out << fasta.read(i) << endl;
+          out << fasta.read(i);
 	}
 	return out;
 }
 
 ostream &operator<<(ostream &out, const Sequence &seq) {
-  out << ">" << seq.label << endl;
+  bool is_fastq=false;
+  if (seq.quality.length() > 0) {
+    is_fastq = true;
+    out << "@";
+  } else
+    out << ">";
+  out << seq.label << endl;
   out << seq.sequence << endl;
+  if (is_fastq) {
+    out << "+" << endl << seq.quality << endl;
+  }
   return out;
 }
-

@@ -26,9 +26,12 @@
 
 Kmer::Kmer():count(0) {}
 
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-parameter"
 Kmer::Kmer(const string &label, int strand) {
   count = 1;
 }
+#pragma GCC diagnostic pop
 
 Kmer &Kmer::operator+=(const Kmer &kmer) {
   count += kmer.count;

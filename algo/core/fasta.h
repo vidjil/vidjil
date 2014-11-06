@@ -43,10 +43,11 @@ public:
         /**
          * Read all the sequences in the input filename and record them in the object.
          *
-       */
+         * @throws invalid_argument if filename or file content is not
+         *         valid
+         */
 	Fasta(const string &input, 
-	      int extract_field=0, string extract_separator="|",
-	      ostream &out=cout);
+	      int extract_field=0, string extract_separator="|");
 	
 	int size() const;
         /**
@@ -59,7 +60,15 @@ public:
         const Sequence &read(int index) const;
 	const string& sequence(int index) const;
 
+        /**
+         * Add the content of the stream to the current object
+         */
         void add(istream &in);
+        /**
+         * Add the content of the file to the current object
+         * @throws invalid_argument if the file cannot be opened or
+         *         if the content is not valid
+         */
         void add(const string &filename);
 	
 	friend istream& operator>>(istream&, Fasta&);
@@ -91,17 +100,14 @@ class OnlineFasta {
    * Open the file and read the first sequence.
    * @post getSequence() does not return the first sequence yet. 
    *       next() must be called first.
+   * @throws invalid_argument if file cannot be opened or is not
+   *         well-formed
    */
   OnlineFasta(const string &input, 
               int extract_field=0, string extract_separator="|");
 
   OnlineFasta(istream &input, 
               int extract_field=0, string extract_separator="|");
-
-  /**
-   * Copy constructor
-   */
-  OnlineFasta(const OnlineFasta &of);
 
   ~OnlineFasta();
   
@@ -124,10 +130,9 @@ class OnlineFasta {
   /**
    * Go to the next sequence in the file.
    * @post hasNext() ==> getSequence() returns the following sequence in the file.
+   * @throws invalid_argument if the file is not well formated
    */
   void next();
-
-  OnlineFasta& operator=(const OnlineFasta&);
 
  private:
 
