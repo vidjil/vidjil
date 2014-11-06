@@ -94,18 +94,20 @@ Germline.prototype = {
         if (type=="V") type2="5"
         if (type=="D") type2="4"
         if (type=="J") type2="3"
-            
-        for (var i=0; i<this.m.germlineList.list[system][type2].length; i++){
-            var filename = this.m.germlineList.list[system][type2][i] 
-            filename = filename.split('/')[filename.split('/').length-1] //remove path
-            filename = filename.split('.')[0] //remove file extension 
-            
-            if (typeof germline[filename] != 'undefined'){
-                for (var key in germline[filename]){
-                    this.allele[key] = germline[filename][key]
+        
+        if (typeof this.m.germlineList.list[system][type2] != 'undefined' ){
+            for (var i=0; i<this.m.germlineList.list[system][type2].length; i++){
+                var filename = this.m.germlineList.list[system][type2][i] 
+                filename = filename.split('/')[filename.split('/').length-1] //remove path
+                filename = filename.split('.')[0] //remove file extension 
+                
+                if (typeof germline[filename] != 'undefined'){
+                    for (var key in germline[filename]){
+                        this.allele[key] = germline[filename][key]
+                    }
+                }else{
+                    myConsole.flash("warning : this browser version doesn't have the "+filename+" germline file", 2);
                 }
-            }else{
-                myConsole.flash("warning : this browser version doesn't have the "+filename+" germline file", 2);
             }
         }
 
