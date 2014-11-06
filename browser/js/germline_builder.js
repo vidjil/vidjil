@@ -35,8 +35,9 @@ GermlineList.prototype = {
             url: window.location.origin + "/germline/germlines.data",
             success: function (result) {
                 try {
-                    //remove comment
+                    //remove comment (json don't have comment)
                     var json = result.replace(/ *\/\/[^\n]*\n */g , "")
+                    //convert from js to json (json begin with { or [, never with a var name)
                     json = json.replace("germlines = " , "")
                     self.list = jQuery.parseJSON(json);
                 }
