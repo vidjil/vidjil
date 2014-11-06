@@ -1,7 +1,8 @@
 {
-
+    
     "TRA": {
         "shortcut": "A",
+        "color" : "#268bd2",
         "description": "Human T-cell receptor, alpha locus (14q11.2)",
         "5": ["TRAV.fa"],
         "3": ["TRAJ.fa"],
@@ -12,6 +13,7 @@
 
     "TRB": {
         "shortcut": "B",
+        "color" : "#cb4b16",
         "description": "Human T-cell receptor, beta locus (7q34)",
         "5": ["TRBV.fa"],
         "4": ["TRBD.fa"],
@@ -23,6 +25,7 @@
 
     "TRG": {
         "shortcut": "G",
+        "color" : "#dc322f",
         "description": "Human T-cell receptor, gamma locus (7p14)",
         "5": ["TRGJ.fa"],
         "3": ["TRGV.fa"],
@@ -33,6 +36,7 @@
 
     "TRD": {
         "shortcut": "D",
+        "color" : "#b58900",
         "description": "Human T-cell receptor, delta locus (14q11.2)",
         "5": ["TRDV.fa"],
         "4": ["TRDD.fa"],
@@ -51,6 +55,7 @@
 
     "IGH": {
         "shortcut": "H",
+        "color" : "#6c71c4",
         "description": "Human immunoglobulin, heavy locus (14q32.33)",
         "5": ["IGHV.fa"],
         "4": ["IGHD.fa"],
@@ -69,6 +74,7 @@
 
     "IGK": {
         "shortcut": "K",
+        "color" : "#2aa198",
         "description": "Human immunoglobulin, kappa locus (2p11.2)",
         "5": ["IGKV.fa"],
         "3": ["IGKJ.fa"],
@@ -86,6 +92,7 @@
 
     "IGL": {
         "shortcut": "L",
+        "color" : "#d33682",
         "description": "Human immunoglobulin, lambda locus (22q11.2)",
         "5": ["IGLV.fa"],
         "3": ["IGLJ.fa"],

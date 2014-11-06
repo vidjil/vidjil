@@ -664,9 +664,9 @@ Builder.prototype = {
     build_systemBox: function (system){
         var span = document.createElement('span')
         span.className = "systemBox";
-        if ((typeof system != 'undefined') && (typeof germline.icon[system] != 'undefined')){
-            span.appendChild(document.createTextNode(germline.icon[system].letter));
-            span.style.background = germline.icon[system].color
+        if ((typeof system != 'undefined')){
+            span.appendChild(document.createTextNode(this.m.germlineList.list[system].shortcut));
+            span.style.background = this.m.germlineList.list[system].color
             span.title = system
         }else{
             span.appendChild(document.createTextNode("?"));
