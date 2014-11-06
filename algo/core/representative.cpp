@@ -16,24 +16,6 @@ Sequence RepresentativeComputer::getRepresentative() const{
   return representative;
 }
 
-string RepresentativeComputer::getRequiredSequence() const {
-  return required;
-}
-
-list<Sequence>& RepresentativeComputer::getSequenceList() const{
-  return sequences;
-}
-
-size_t RepresentativeComputer::getMinCover() const {
-  return min_cover;
-}
-float RepresentativeComputer::getPercentCoverage() const {
-  return percent_cover;
-}
-bool RepresentativeComputer::getRevcomp() const {
-  return revcomp;
-}
-
 bool RepresentativeComputer::hasRepresentative() const{
   return is_computed;
 }
@@ -69,14 +51,6 @@ void RepresentativeComputer::setRequiredSequence(string sequence) {
 
 string KmerRepresentativeComputer::getSeed() const{
   return seed;
-}
-
-void KmerRepresentativeComputer::setSeed(string seed) {
-  this->seed = seed;
-}
-
-int KmerRepresentativeComputer::getStabilityLimit() const {
-  return stability_limit;
 }
 
 void KmerRepresentativeComputer::setStabilityLimit(int limit) {
@@ -130,7 +104,7 @@ void KmerRepresentativeComputer::compute() {
 
     size_t length_run = 0;
     size_t i = pos_required;
-    if (pos_required)
+
       while (i > 0 && isSufficienlyExpressed(counts[i-1].count, max)) {
         i--;
         length_run++;
@@ -152,7 +126,7 @@ void KmerRepresentativeComputer::compute() {
         sequence_longest_run = sequence;
         seq_index_longest_run = seq;
       }
-      // We have a requirement. We reached it, exit.
+      // We have a requirement (ie. a non empty string). We reached it, exit.
       if (pos_required != pos_end_required)
         break;
       length_run = 0;

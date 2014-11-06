@@ -1,6 +1,30 @@
 #include <core/tools.h>
 #include <core/fasta.h>
 #include "tests.h"
+#include <stdexcept>
+
+void testOnlineFasta1() {
+  OnlineFasta fa("../../data/test1.fa");
+  OnlineFasta fq("../../data/test1.fq");
+  int nb_seq = 0;
+
+  TAP_TEST(fa.getLineNb() == 1, TEST_O_FASTA_LINE_NB, "");
+  TAP_TEST(fq.getLineNb() == 1, TEST_O_FASTA_LINE_NB, "");
+
+  while (fa.hasNext()) {
+    TAP_TEST(fq.hasNext(), TEST_O_FASTA_HAS_NEXT, "");
+    fa.next();
+    fq.next();
+    Sequence s1 = fa.getSequence();
+    Sequence s2 = fq.getSequence();
+    TAP_TEST(s1.label == s2.label && s1.label_full == s2.label_full
+             && s1.sequence == s2.sequence, TEST_O_FASTA_GET_SEQUENCE, "fa: " << fa.getSequence() << endl << "fq: " << fq.getSequence());
+    nb_seq++;
+  }
+  TAP_TEST(fq.getLineNb() == 20, TEST_O_FASTA_LINE_NB, "");
+  TAP_TEST(! fq.hasNext(), TEST_O_FASTA_HAS_NEXT, "");
+  TAP_TEST(nb_seq == 5, TEST_O_FASTA_HAS_NEXT, "");
+}
 
 void testFasta1() {
   Fasta fa("../../data/test1.fa");
@@ -12,6 +36,142 @@ void testFasta1() {
     TAP_TEST(fa.label_full(i) == fq.label_full(i), TEST_FASTA_LABEL_FULL, "");
     TAP_TEST(fa.sequence(i) == fq.sequence(i), TEST_FASTA_SEQUENCE, "");
   }
+  TAP_TEST(fa.label(2) == "seq3", TEST_FASTA_LABEL, "");
+  TAP_TEST(fa.sequence(2) == "A", TEST_FASTA_SEQUENCE, "");
+  TAP_TEST(fa.label(4) == "", TEST_FASTA_LABEL, "");
+  TAP_TEST(fa.sequence(4) == "AATN", TEST_FASTA_SEQUENCE, "");
+}
+
+void testFastaAdd() {
+  Fasta fa1("../../data/test1.fa");
+  Fasta fa2("../../data/test1.fa");
+  fa2.add("../../data/test1.fa");
+
+  TAP_TEST(fa1.size() * 2 == fa2.size(), TEST_FASTA_ADD, "");
+  for (int i=0; i < fa1.size(); i++) {
+    TAP_TEST(fa1.label(i) == fa2.label(i)
+             && fa1.label(i) == fa2.label(i+fa1.size()), TEST_FASTA_ADD, "");
+    TAP_TEST(fa1.label_full(i) == fa2.label_full(i)
+             && fa1.label_full(i) == fa2.label_full(i+fa1.size()), 
+             TEST_FASTA_ADD, "");
+    TAP_TEST(fa1.sequence(i) == fa2.sequence(i)
+             && fa1.sequence(i) == fa2.sequence(i+fa1.size()), 
+             TEST_FASTA_ADD, "");
+  }
+}
+
+void testFastaAddThrows() {
+  bool caught = false;
+  try {
+    Fasta fa1("mlkdkklflskjfskldfj.fa");
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Error in opening file") != string::npos, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+
+  Fasta fa1("../../data/test1.fa");
+
+  caught = false;
+  try {
+    fa1.add("ljk:lkjsdfsdlfjsdlfkjs.fa");
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Error in opening file") != string::npos, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+
+  caught = false;
+  try {
+    fa1.add("testTools.cpp");
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("The file seems to be malformed") != string::npos, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+
+  caught = false;
+  try {
+    OnlineFasta fa("lkjdflkdfjglkdfjg.fa");
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Error in opening file") != string::npos, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+
+  caught = false;
+  try {
+    Fasta fa1("../../data/malformed1.fq");
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Expected line starting with +") != string::npos, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+  caught = false;
+  try {
+    Fasta fa1("../../data/malformed2.fq");
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+  caught = false;
+  try {
+    Fasta fa1("../../data/malformed3.fq");
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Quality and sequence don't have the same length") == 0, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+  caught = false;
+  try {
+    Fasta fa1("../../data/malformed4.fq");
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+  caught = false;
+  try {
+    Fasta fa1("../../data/malformed5.fq");
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+  caught = false;
+  try {
+    // Can't test empty file with Fasta since we
+    // don't complain for empty files explicitly in Fasta constructor.
+    OnlineFasta fa1("../../data/malformed6.fq");
+    fa1.next();
+  } catch (invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
+
+}
+
+void testSequenceOutputOperator() {
+  ostringstream oss;
+  Sequence seq = {"a b c", "a", "GATTACA", "AIIIIIH", NULL};
+  oss << seq;
+
+  TAP_TEST(oss.str() == "@a\nGATTACA\n+\nAIIIIIH\n", TEST_SEQUENCE_OUT, oss.str());
+
+  ostringstream oss2;
+  seq.quality = "";
+  oss2 << seq;
+
+  TAP_TEST(oss2.str() == ">a\nGATTACA\n", TEST_SEQUENCE_OUT, oss.str());
+}
+
+void testFastaOutputOperator(){
+  ostringstream oss;
+  Fasta fa("../../data/test1.fa");
+  oss << fa;
+  TAP_TEST(oss.str() == ">seq1\nACAAC\n>seq2\nCGACCCCCAA\n>seq3\nA\n>seq4\nAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA\n>\nAATN\n", TEST_FASTA_OUT, oss.str());
 }
 
 void testRevcomp() {
@@ -105,7 +265,12 @@ void testExtractBasename() {
 }
 
 void testTools() {
+  testOnlineFasta1();
   testFasta1();
+  testFastaAdd();
+  testFastaAddThrows();
+  testSequenceOutputOperator();
+  testFastaOutputOperator();
   testRevcomp();
   testCreateSequence();
   testNucToInt();

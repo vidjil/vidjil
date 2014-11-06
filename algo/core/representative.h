@@ -35,21 +35,6 @@ public:
   Sequence getRepresentative() const;
 
   /**
-   * @return the sequence that must be contained in the representative sequence 
-   *         ie. getRepresentative().find(getRequiredSequence()) != string::npos
-   */
-  string getRequiredSequence() const;
-
-  /**
-   * @return the input sequences we are working on
-   */
-  list<Sequence>& getSequenceList() const;
-
-  size_t getMinCover() const;
-  float getPercentCoverage() const;
-  bool getRevcomp() const;
-
-  /**
    * @return true iff compute() has been called and the criteria have been met.
    */
   bool hasRepresentative() const;
@@ -92,6 +77,7 @@ public:
 
   /**
    * Sequence that the representative must contain absolutely.
+   * This sequence should appear only once in a read.
    * Setting the sequence is not required and it can be empty.
    */
   void setRequiredSequence(string sequence);
@@ -110,13 +96,6 @@ public:
 
   // Getters, setters
   string getSeed() const;
-
-  /**
-   * Sets the length of the k-mer used for computing the representative
-   */
-  void setSeed(string seed);
-
-  int getStabilityLimit() const;
 
   /**
    * @param limit: maximal number of iterations to be performed before reaching 

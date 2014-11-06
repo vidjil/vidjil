@@ -129,6 +129,7 @@ Database.prototype = {
             //
             this.fixed_header()
         }
+        if (this.url.length == 1) $("#db_back").addClass("inactive");
     },
     
     /* associe a un <form> un handler custom
@@ -290,8 +291,8 @@ Database.prototype = {
             this.url.pop()
             url = this.url[this.url.length-1]
             this.callUrl(url)
+            this.url.pop()
         }
-        this.url.pop()
     },
     
     

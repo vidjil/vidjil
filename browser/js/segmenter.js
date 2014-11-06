@@ -294,7 +294,7 @@ Segment.prototype = {
         var seq_size = document.createElement('span')
         seq_size.className = "sizeBox";
         seq_size.onclick = function () {
-            this.m.unselect(cloneID);
+            self.m.clone(cloneID).unselect();
         }
         seq_size.style.color = this.m.clone(cloneID).color;
         seq_size.appendChild(document.createTextNode(this.m.clone(cloneID).getStrSize()));

@@ -1,116 +1,104 @@
-// This file gives the description of germlines and "pseudo-germlines" for incomplete/irregular rearrangements
-
-germlines = {
-    
-    // TRA
+{
     
     "TRA": {
-	"shortcut": "A",
-	"description": "Human T-cell receptor, alpha locus (14q11.2)",
-	"5": ["TRAV.fa"],
-	"3": ["TRAJ.fa"],
-	"parameters": {
-	    "seed": "13s"
-	}
+        "shortcut": "A",
+        "color" : "#268bd2",
+        "description": "Human T-cell receptor, alpha locus (14q11.2)",
+        "5": ["TRAV.fa"],
+        "3": ["TRAJ.fa"],
+        "parameters": {
+            "seed": "13s"
+        }
     },
-    
-    // TRB
-    
+
     "TRB": {
-	"shortcut": "B",
-	"description": "Human T-cell receptor, beta locus (7q34)",
-	"5": ["TRBV.fa"],
-	"4": ["TRBD.fa"],
-	"3": ["TRBJ.fa"],
-	"parameters": {
-	    "seed": "12s"
-	}
+        "shortcut": "B",
+        "color" : "#cb4b16",
+        "description": "Human T-cell receptor, beta locus (7q34)",
+        "5": ["TRBV.fa"],
+        "4": ["TRBD.fa"],
+        "3": ["TRBJ.fa"],
+        "parameters": {
+            "seed": "12s"
+        }
     },
-    
-    // TRG
-    
+
     "TRG": {
-	"shortcut": "G",
-	"description": "Human T-cell receptor, gamma locus (7p14)",
-	"5": ["TRGJ.fa"],
-	"3": ["TRGV.fa"],
-	"parameters": {
-	    "seed": "10s"
-	}
+        "shortcut": "G",
+        "color" : "#dc322f",
+        "description": "Human T-cell receptor, gamma locus (7p14)",
+        "5": ["TRGJ.fa"],
+        "3": ["TRGV.fa"],
+        "parameters": {
+            "seed": "10s"
+        }
     },
-    
-    // TRD
-    
+
     "TRD": {
-	"shortcut": "D",
-	"description": "Human T-cell receptor, delta locus (14q11.2)",
-	"5": ["TRDV.fa"],
-	"4": ["TRDD.fa"],
-	"3": ["TRDJ.fa"],
-	"parameters": {
-	    "seed": "10s"
-	}
+        "shortcut": "D",
+        "color" : "#b58900",
+        "description": "Human T-cell receptor, delta locus (14q11.2)",
+        "5": ["TRDV.fa"],
+        "4": ["TRDD.fa"],
+        "3": ["TRDJ.fa"],
+        "parameters": {
+            "seed": "10s"
+        }
     },
     "TRD+": {
-	"shortcut": "d",
-	"description": "Human T-cell receptor, delta locus (14q11.2), incomplete Dd2-Dd3 rearrangements",
-	"follows": "TRD",
-	"5": ["TRDD-d2.fa"],
-	"3": ["TRDD-d3.fa"]
-	// "seed": "8" ? (pipeline.py)
+        "shortcut": "d",
+        "description": "Human T-cell receptor, delta locus (14q11.2), incomplete Dd2-Dd3 rearrangements",
+        "follows": "TRD",
+        "5": ["TRDV.fa", "TRDD-d2.fa"],
+        "3": ["TRDJ.fa", "TRDD-d3.fa"]
     },
-    
-    // IGH
-    
+
     "IGH": {
-	"shortcut": "H",
-	"description": "Human immunoglobulin, heavy locus (14q32.33)",
-	"5": ["IGHV.fa"],
-	"4": ["IGHD.fa"],
-	"3": ["IGHJ.fa"],
-	"parameters": {
-	    "seed": "12s"
-	}
+        "shortcut": "H",
+        "color" : "#6c71c4",
+        "description": "Human immunoglobulin, heavy locus (14q32.33)",
+        "5": ["IGHV.fa"],
+        "4": ["IGHD.fa"],
+        "3": ["IGHJ.fa"],
+        "parameters": {
+            "seed": "12s"
+        }
     },
-    "IGH+": { // "DHJH" ?
-	"shortcut": "h",
-	"description": "Human immunoglobulin, heavy locus (14q32.33), incomplete DH-JH rearrangements",
-	"follows": "IGH",
-	"5": ["IGHD.fa"],
-	"3": ["IGHJ.fa"]
-	// "seed": "10s" ? (pipeline.py)
+    "IGH+": {
+        "shortcut": "h",
+        "description": "Human immunoglobulin, heavy locus (14q32.33), incomplete DH-JH rearrangements",
+        "follows": "IGH",
+        "5": ["IGHD.fa"],
+        "3": ["IGHJ.fa"]
     },
-    
-    // IGK
-    
+
     "IGK": {
-	"shortcut": "K",
-	"description": "Human immunoglobulin, kappa locus (2p11.2)",
-	"5": ["IGKV.fa"],
-	"3": ["IGKJ.fa"],
-	"parameters": {
-	    "seed": "11s"
-	}
+        "shortcut": "K",
+        "color" : "#2aa198",
+        "description": "Human immunoglobulin, kappa locus (2p11.2)",
+        "5": ["IGKV.fa"],
+        "3": ["IGKJ.fa"],
+        "parameters": {
+            "seed": "11s"
+        }
     },
     "IGK+": {
-	"shortcut": "k",
-	"description": "Human immunoglobulin, kappa locus (2p11.2), Vk-KDE and Intron-KDE rearrangements",
-	"follows": "IGK",
-	"5": ["IGKV.fa", "INTRON.fa"],
-	"3": ["KDE.fa"]
-	// "seed": "10s" ? (pipeline.py)
+        "shortcut": "k",
+        "description": "Human immunoglobulin, kappa locus (2p11.2), Vk-KDE and Intron-KDE rearrangements",
+        "follows": "IGK",
+        "5": ["IGKV.fa", "INTRON.fa"],
+        "3": ["KDE.fa"]
     },
-    
-    // IGL
-    
+
     "IGL": {
-	"shortcut": "L",
-	"description": "Human immunoglobulin, lambda locus (22q11.2)",
-	"5": ["IGLV.fa"],
-	"3": ["IGLJ.fa"],
-	"parameters": {
-	    "seed": "11s"
-	}
+        "shortcut": "L",
+        "color" : "#d33682",
+        "description": "Human immunoglobulin, lambda locus (22q11.2)",
+        "5": ["IGLV.fa"],
+        "3": ["IGLJ.fa"],
+        "parameters": {
+            "seed": "11s"
+        }
     }
-    
+
 }

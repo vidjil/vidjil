@@ -4,14 +4,21 @@
 enum {
   /* Tools tests */
   TEST_REVCOMP,
+  TEST_O_FASTA_HAS_NEXT,
+  TEST_O_FASTA_GET_SEQUENCE,
+  TEST_O_FASTA_LINE_NB,
   TEST_FASTA_SIZE,
   TEST_FASTA_LABEL,
   TEST_FASTA_LABEL_FULL,
   TEST_FASTA_SEQUENCE,
+  TEST_FASTA_ADD,
+  TEST_FASTA_INVALID_FILE,
+  TEST_FASTA_OUT,
   TEST_CREATE_SEQUENCE_LABEL_FULL,
   TEST_CREATE_SEQUENCE_LABEL,
   TEST_CREATE_SEQUENCE_SEQUENCE,
   TEST_CREATE_SEQUENCE_QUALITY,
+  TEST_SEQUENCE_OUT,
   TEST_NUC_TO_INT,
   TEST_DNA_TO_INT,
   TEST_REVCOMP_INT,
@@ -22,6 +29,26 @@ enum {
   TEST_MAP_KMERSTORE,
   TEST_ARRAY_KMERSTORE_RC,
   TEST_MAP_KMERSTORE_RC,
+  TEST_KMERSTORE_GET_K,
+  TEST_KMERSTORE_GET_S,
+  TEST_KMERSTORE_GET_SEED,
+  TEST_KMERSTORE_INSERT_ONE_SEQ,
+
+  /* KmerAffect */
+  TEST_AFFECT_STRAND,
+  TEST_AFFECT_CHAR,
+  TEST_AFFECT_COMPARISON,
+  TEST_AFFECT_TO_STRING,
+  TEST_AFFECT_OUT,
+  TEST_KMERAFFECT_CONSTRUCTOR,
+  TEST_KMERAFFECT_AFFECTATION,
+  TEST_KMERAFFECT_ADD,
+  TEST_KMERAFFECT_UNKNOWN,
+  TEST_KMERAFFECT_AMBIGUOUS,
+  TEST_KMERAFFECT_STRAND,
+  TEST_KMERAFFECT_LABEL,
+  TEST_KMERAFFECT_COMPARISON,
+  TEST_KMERAFFECT_OUT,
 
   /* Affect analyzer */
   TEST_AA_COUNT,
@@ -30,12 +57,16 @@ enum {
   TEST_AA_FIRST,
   TEST_AA_LAST,
   TEST_AA_PREDICATES,
+  TEST_AA_GET_ALL_AO_NONE,
+  TEST_AA_GET_ALL_AO_NO_CONSECUTIVE,
   TEST_AA_REVCOMP_LABEL,
   TEST_AA_REVCOMP_STRAND,
   TEST_AA_GET_MAXIMUM_MAX_FOUND,
   TEST_AA_GET_MAXIMUM_POSITIONS,
   TEST_AA_GET_MAXIMUM_COUNTS,
   TEST_AA_GET_MAXIMUM_VALUE,
+  TEST_AA_GET_SEQUENCE,
+  TEST_COUNT_AA_GET_OVERLAP,
   TEST_COUNT_AA_COUNT,
   TEST_COUNT_AA_COUNT_BEFORE,
   TEST_COUNT_AA_COUNT_AFTER,
@@ -93,23 +124,50 @@ enum {
 
 inline void declare_tests() {
   RECORD_TAP_TEST(TEST_REVCOMP, "revcomp");
+  RECORD_TAP_TEST(TEST_O_FASTA_HAS_NEXT, "OnlineFasta hasNext()");
+  RECORD_TAP_TEST(TEST_O_FASTA_GET_SEQUENCE, "OnlineFasta next()");
+  RECORD_TAP_TEST(TEST_O_FASTA_LINE_NB, "OnlineFasta getLineNb()");
   RECORD_TAP_TEST(TEST_FASTA_SIZE, "Fasta/Fastq size");
   RECORD_TAP_TEST(TEST_FASTA_LABEL, "Fasta/Fastq label");
   RECORD_TAP_TEST(TEST_FASTA_LABEL_FULL, "Fasta/Fastq full label");
   RECORD_TAP_TEST(TEST_FASTA_SEQUENCE, "Fasta/Fastq sequence");
+  RECORD_TAP_TEST(TEST_FASTA_ADD, "Fasta add() method");
+  RECORD_TAP_TEST(TEST_FASTA_INVALID_FILE, "Fasta with invalid file");
+  RECORD_TAP_TEST(TEST_FASTA_OUT, "Test operator<< with Fasta");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_LABEL_FULL, "create_sequence: label_full field");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_LABEL, "create_sequence: label field");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_SEQUENCE, "create_sequence: sequence field");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_QUALITY, "create_sequence: quality field");
+  RECORD_TAP_TEST(TEST_SEQUENCE_OUT, "Test operator<< for Sequence");
   RECORD_TAP_TEST(TEST_NUC_TO_INT, "nuc_to_int()");
   RECORD_TAP_TEST(TEST_DNA_TO_INT, "dna_to_int()");
   RECORD_TAP_TEST(TEST_REVCOMP_INT, "revcomp_int()");
   RECORD_TAP_TEST(TEST_EXTRACT_BASENAME, "extractBasename()");
 
   RECORD_TAP_TEST(TEST_ARRAY_KMERSTORE, "Testing ArrayKmerStore");
+  RECORD_TAP_TEST(TEST_KMERSTORE_INSERT_ONE_SEQ, "Testing IKmerStore::insert() on one sequence");
   RECORD_TAP_TEST(TEST_MAP_KMERSTORE, "Testing MapKmerStore");
   RECORD_TAP_TEST(TEST_ARRAY_KMERSTORE_RC, "Testing ArrayKmerStore with revcomp");
   RECORD_TAP_TEST(TEST_MAP_KMERSTORE_RC, "Testing MapKmerStore with revcomp");
+  RECORD_TAP_TEST(TEST_KMERSTORE_GET_K, "Testing getK() in KmerStore");
+  RECORD_TAP_TEST(TEST_KMERSTORE_GET_S, "Testing getK() in KmerStore");
+  RECORD_TAP_TEST(TEST_KMERSTORE_GET_SEED, "Testing getK() in KmerStore");
+
+  RECORD_TAP_TEST(TEST_AFFECT_STRAND, "affect_strand()");
+  RECORD_TAP_TEST(TEST_AFFECT_CHAR, "affect_char()");
+  RECORD_TAP_TEST(TEST_AFFECT_COMPARISON, "Comparison operators for affect_t");
+  RECORD_TAP_TEST(TEST_AFFECT_TO_STRING, "toString() for affect_t");
+  RECORD_TAP_TEST(TEST_AFFECT_OUT, "operator<< for affect_t");
+  RECORD_TAP_TEST(TEST_KMERAFFECT_CONSTRUCTOR, "KmerAffect constructor");
+  RECORD_TAP_TEST(TEST_KMERAFFECT_AFFECTATION, "KmerAffect operator=");
+  RECORD_TAP_TEST(TEST_KMERAFFECT_ADD, "KmerAffect operator +=");
+  RECORD_TAP_TEST(TEST_KMERAFFECT_UNKNOWN, "KmerAffect::isUnknown()");
+  RECORD_TAP_TEST(TEST_KMERAFFECT_AMBIGUOUS, "KmerAffect::isAmbiguous()");
+  RECORD_TAP_TEST(TEST_KMERAFFECT_STRAND, "KmerAffect::getStrand()");
+  RECORD_TAP_TEST(TEST_KMERAFFECT_LABEL, "KmerAffect::getLabel()");
+  RECORD_TAP_TEST(TEST_KMERAFFECT_COMPARISON, "KmerAffect comparison operators");
+  RECORD_TAP_TEST(TEST_KMERAFFECT_OUT, "KmerAffect operator<<");
+
 
   RECORD_TAP_TEST(TEST_AA_COUNT, "AffectAnalyser.count()");
   RECORD_TAP_TEST(TEST_AA_GET_AFFECT, "AffectAnalyser.getAffectation()");
@@ -117,12 +175,16 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_AA_FIRST, "AffectAnalyser.first()");
   RECORD_TAP_TEST(TEST_AA_LAST, "AffectAnalyser.last()");
   RECORD_TAP_TEST(TEST_AA_PREDICATES, "AffectAnalyser: isUnknown() isAmbiguous()");
+  RECORD_TAP_TEST(TEST_AA_GET_ALL_AO_NONE, "AffectAnalyser: getAllAffectations() with AO_NONE");
+  RECORD_TAP_TEST(TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, "AffectAnalyser: getAllAffectations() with AO_NO_CONSECUTIVE");
   RECORD_TAP_TEST(TEST_AA_REVCOMP_LABEL, "AffectAnalyser: check that label is the same on revcomp sequence");
   RECORD_TAP_TEST(TEST_AA_REVCOMP_STRAND, "AffectAnalyser: check that strand is opposite on revcomp sequence");
   RECORD_TAP_TEST(TEST_AA_GET_MAXIMUM_MAX_FOUND, "KmerAffectAnalyser: getMaximum() function, max_found value");
   RECORD_TAP_TEST(TEST_AA_GET_MAXIMUM_POSITIONS, "KmerAffectAnalyser: getMaximum() function, positions of maximum");
   RECORD_TAP_TEST(TEST_AA_GET_MAXIMUM_COUNTS, "KmerAffectAnalyser: getMaximum() function, counts of affectations");
   RECORD_TAP_TEST(TEST_AA_GET_MAXIMUM_VALUE, "KmerAffectAnalyser: getMaximum() function, maximum value");
+  RECORD_TAP_TEST(TEST_AA_GET_SEQUENCE, "KmerAffectAnalyser: getSequence() function");
+  RECORD_TAP_TEST(TEST_COUNT_AA_GET_OVERLAP, "CountKmerAffectAnalyser::getAllowedOverlap");
   RECORD_TAP_TEST(TEST_COUNT_AA_COUNT, "CountKmerAffectAnalyser::count");
   RECORD_TAP_TEST(TEST_COUNT_AA_COUNT_BEFORE, "CountKmerAffectAnalyser::countBefore");
   RECORD_TAP_TEST(TEST_COUNT_AA_COUNT_AFTER, "CountKmerAffectAnalyser::countAfter");

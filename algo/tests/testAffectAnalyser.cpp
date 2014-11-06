@@ -3,46 +3,52 @@
 #include <core/kmerstore.h>
 #include <core/kmeraffect.h>
 
-template<template <class> class T, class KAffect>
+template<template <class> class T>
 void testAffectAnalyser1() {
   const int k = 4;
   const bool revcomp = false;
-  T<KAffect> *index = createIndex<T<KAffect> >(k, revcomp);
+
+  T<KmerAffect> *index = createIndex<T<KmerAffect> >(k, revcomp);
   
-  KmerAffectAnalyser<KAffect> kaa(*index, "AAAACCCCCGGGGG");
-  CountKmerAffectAnalyser<KAffect> ckaa(*index, "AAAACCCCCGGGGG");
+  string sequence = "AAAACCCCCGGGGG";
+  KmerAffectAnalyser kaa(*index, sequence);
+  CountKmerAffectAnalyser ckaa(*index, sequence);
+  TAP_TEST(ckaa.getAllowedOverlap() == 0, TEST_COUNT_AA_GET_OVERLAP, "");
   ckaa.setAllowedOverlap(k-1);
 
-  set<KAffect> forbidden;
-  forbidden.insert(KAffect::getAmbiguous());
-  forbidden.insert(KAffect::getUnknown());
+  set<KmerAffect> forbidden;
+  forbidden.insert(KmerAffect::getAmbiguous());
+  forbidden.insert(KmerAffect::getUnknown());
+
+  TAP_TEST(ckaa.getAllowedOverlap() == k-1, TEST_COUNT_AA_GET_OVERLAP, "");
+  TAP_TEST(ckaa.getSequence() == "AAAACCCCCGGGGG", TEST_AA_GET_SEQUENCE, "actual: " << ckaa.getSequence());
 
   for (int i = 2; i < nb_seq-1; i++) {
     // i starts at 2 because AAAA is not found: there is an ambiguity with
     // AAAA coming from AAAACAAAACAAAAC or AAAAAAAAAAAAAAA
-    KAffect current_affect(seq[2*i+1], 1);
+    KmerAffect current_affect(seq[2*i+1], 1);
     TAP_TEST(kaa.count(current_affect) == 0, TEST_AA_COUNT, "");
     TAP_TEST(ckaa.count(current_affect) == 0, TEST_COUNT_AA_COUNT, ckaa.count(current_affect));
     TAP_TEST(kaa.first(current_affect) == (int)string::npos, TEST_AA_FIRST, "");
     TAP_TEST(kaa.last(current_affect) == (int)string::npos, TEST_AA_LAST, "");
   }
   for (int i = 0; i < 2; i++) {
-    KAffect current_affect(seq[2*i+1], 1);
+    KmerAffect current_affect(seq[2*i+1], 1);
     TAP_TEST(kaa.count(current_affect) == 2, TEST_AA_COUNT, kaa.count(current_affect));
     TAP_TEST(ckaa.count(current_affect) == 2, TEST_COUNT_AA_COUNT, ckaa.count(current_affect));
     TAP_TEST(kaa.getAffectation(kaa.first(current_affect)) == current_affect, TEST_AA_GET_AFFECT, "");
     TAP_TEST(kaa.getAffectation(kaa.last(current_affect)) == current_affect, TEST_AA_GET_AFFECT, "");
   }
-  TAP_TEST(kaa.count(KAffect(seq[2*(nb_seq-1)+1], 1)) == 1, TEST_AA_COUNT, "");
-  TAP_TEST((kaa.first(KAffect(seq[2*(nb_seq-1)+1], 1)) 
-          == kaa.last(KAffect(seq[2*(nb_seq-1)+1], 1)))
+  TAP_TEST(kaa.count(KmerAffect(seq[2*(nb_seq-1)+1], 1)) == 1, TEST_AA_COUNT, "");
+  TAP_TEST((kaa.first(KmerAffect(seq[2*(nb_seq-1)+1], 1)) 
+          == kaa.last(KmerAffect(seq[2*(nb_seq-1)+1], 1)))
            == 1, TEST_AA_FIRST, "");
 
-  TAP_TEST(ckaa.max(forbidden) == KAffect("C lots of", 1)
-           || ckaa.max(forbidden) == KAffect("G lots of", 1), 
+  TAP_TEST(ckaa.max(forbidden) == KmerAffect("C lots of", 1)
+           || ckaa.max(forbidden) == KmerAffect("G lots of", 1), 
            TEST_COUNT_AA_MAX, "max is " << ckaa.max(forbidden));
 
-  TAP_TEST(ckaa.max() == KAffect::getUnknown(), 
+  TAP_TEST(ckaa.max() == KmerAffect::getUnknown(), 
            TEST_COUNT_AA_MAX, "max is " << ckaa.max());
 
   TAP_TEST(kaa.getAffectation(3).isUnknown(), TEST_AA_PREDICATES, "");
@@ -51,8 +57,13 @@ void testAffectAnalyser1() {
   
   TAP_TEST(kaa.getDistinctAffectations().size() == 5, TEST_AA_GET_DISTINCT_AFFECT, "");
 
-  KAffect cAffect = KAffect(seq[1], 1);
-  KAffect gAffect = KAffect(seq[3], 1);
+  KmerAffect cAffect = KmerAffect(seq[1], 1);
+  KmerAffect gAffect = KmerAffect(seq[3], 1);
+  TAP_TEST(ckaa.countBefore(cAffect, 0) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countBefore(gAffect, 0) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countAfter(cAffect, 10) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
+  TAP_TEST(ckaa.countAfter(gAffect, 10) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
+
   TAP_TEST(ckaa.countBefore(cAffect, 4) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
   TAP_TEST(ckaa.countBefore(cAffect, 5) == 1, TEST_COUNT_AA_COUNT_BEFORE, "");
   TAP_TEST(ckaa.countAfter(cAffect, 4) == 1, TEST_COUNT_AA_COUNT_AFTER, "");
@@ -77,11 +88,13 @@ void testAffectAnalyser1() {
   TAP_TEST(ckaa.lastMax(cAffect, gAffect) == 8, TEST_COUNT_AA_LAST_MAX, ckaa.lastMax(cAffect, gAffect));
 
   // Test affectation with two affects that are not in the sequence
-  KAffect aAffect = KAffect(seq[5], 1);
-  KAffect tAffect = KAffect(seq[7], 1);
+  KmerAffect aAffect = KmerAffect(seq[5], 1);
+  KmerAffect tAffect = KmerAffect(seq[7], 1);
   TAP_TEST(ckaa.firstMax(aAffect, tAffect) == -1, TEST_COUNT_AA_FIRST_MAX, "");
   TAP_TEST(ckaa.lastMax(aAffect, tAffect) == - 1, 
            TEST_COUNT_AA_LAST_MAX, "");
+  TAP_TEST(ckaa.countAfter(tAffect, 4) == 0, TEST_COUNT_AA_COUNT_AFTER, "");
+  TAP_TEST(ckaa.countBefore(tAffect, 4) == 0, TEST_COUNT_AA_COUNT_BEFORE, "");
 
   // Test affectation with one affect not in the sequence
 
@@ -95,21 +108,24 @@ void testAffectAnalyser1() {
 }
 
 // Test with revcomp
-template<template <class> class T, class KAffect>
+template<template <class> class T>
 void testAffectAnalyser2() {
   const int k = 5;
   const bool revcomp = true;
-  T<KAffect> *index = createIndex<T<KAffect> >(k, revcomp);
-  
-  KmerAffectAnalyser<KAffect> kaa(*index, "TTTTTGGGGG");
-  CountKmerAffectAnalyser<KAffect> ckaa(*index, "TTTTTGGGGG");
+  T<KmerAffect> *index = createIndex<T<KmerAffect> >(k, revcomp);
+  string sequence = "TTTTTGGGGG";
+  KmerAffectAnalyser kaa(*index, sequence);
+  CountKmerAffectAnalyser ckaa(*index, sequence);
   ckaa.setAllowedOverlap(k-1);
 
-  set<KAffect> forbidden;
-  forbidden.insert(KAffect::getAmbiguous());
-  forbidden.insert(KAffect::getUnknown());
+  set<KmerAffect> forbidden;
+  forbidden.insert(KmerAffect::getAmbiguous());
+  forbidden.insert(KmerAffect::getUnknown());
   
-  TAP_TEST(kaa.getAffectation(1) == KAffect(seq[2*(nb_seq-1)+1], -1), TEST_AA_GET_AFFECT, "");
+  TAP_TEST(kaa.getSequence() == "TTTTTGGGGG", TEST_AA_GET_SEQUENCE, "actual: ");
+  TAP_TEST(ckaa.getSequence() == "TTTTTGGGGG", TEST_AA_GET_SEQUENCE, "actual: " << ckaa.getSequence());
+
+  TAP_TEST(kaa.getAffectation(1) == KmerAffect(seq[2*(nb_seq-1)+1], -1), TEST_AA_GET_AFFECT, "");
   TAP_TEST(kaa.count(kaa.getAffectation(1)) == 1, TEST_AA_GET_AFFECT, "");
   TAP_TEST(ckaa.count(kaa.getAffectation(1)) == 1, TEST_COUNT_AA_COUNT, "");
   TAP_TEST(kaa.getAffectation(0) == kaa.getAffectation(10 - k), TEST_AA_GET_AFFECT, "");
@@ -120,11 +136,20 @@ void testAffectAnalyser2() {
 
   TAP_TEST(kaa.getDistinctAffectations().size() == 3, TEST_AA_GET_DISTINCT_AFFECT, "");
 
-  TAP_TEST(ckaa.max(forbidden) == KAffect(seq[2*(nb_seq-1)+1], -1), 
+  TAP_TEST(ckaa.max(forbidden) == KmerAffect(seq[2*(nb_seq-1)+1], -1), 
            TEST_COUNT_AA_MAX, "max is " << ckaa.max(forbidden));
 
-  TAP_TEST(ckaa.max() == KAffect::getUnknown(), 
+  TAP_TEST(ckaa.max() == KmerAffect::getUnknown(), 
            TEST_COUNT_AA_MAX, "max is " << ckaa.max());
+
+  for (int i = 0; i < 10 - k; i++)
+    TAP_TEST(kaa.getAffectation(i) == kaa.getAllAffectations(AO_NONE)[i], TEST_AA_GET_ALL_AO_NONE, "");
+
+  TAP_TEST(kaa.getAffectation(0) == kaa.getAllAffectations(AO_NO_CONSECUTIVE)[0], TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, "");
+  TAP_TEST(kaa.getAllAffectations(AO_NO_CONSECUTIVE).size() == 4, TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, "size = " << kaa.getAllAffectations(AO_NO_CONSECUTIVE).size());
+  TAP_TEST(kaa.getAffectation(1) == kaa.getAllAffectations(AO_NO_CONSECUTIVE)[1], TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, "actual: " << kaa.getAllAffectations(AO_NO_CONSECUTIVE)[1] << ", expected: " << kaa.getAffectation(1));
+  TAP_TEST(kaa.getAffectation(2) == kaa.getAllAffectations(AO_NO_CONSECUTIVE)[2], TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, kaa.getAllAffectations(AO_NO_CONSECUTIVE)[2] << ", expected: " << kaa.getAffectation(2));
+  TAP_TEST(kaa.getAllAffectations(AO_NO_CONSECUTIVE)[3] == kaa.getAffectation(10-k), TEST_AA_GET_ALL_AO_NO_CONSECUTIVE, kaa.getAllAffectations(AO_NO_CONSECUTIVE)[3] << ", expected: " << kaa.getAffectation(10-k));
 
   delete index;
 }
@@ -140,7 +165,9 @@ void testGetMaximum() {
   // J-J- _ _ _ _V-V-V- _ _ _J-J-
   vector<KmerAffect> affectations(a, a+sizeof(a)/sizeof(KmerAffect));
 
-  KmerAffectAnalyser<KmerAffect> kaa(*index, "", affectations);
+  KmerAffectAnalyser kaa(*index, "", affectations);
+  TAP_TEST(kaa.getSequence() == "", TEST_AA_GET_SEQUENCE, "");
+
   affect_infos results = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 2., 0);
   TAP_TEST(! results.max_found, TEST_AA_GET_MAXIMUM_MAX_FOUND, 
            "(" << results.first_pos_max
@@ -165,6 +192,9 @@ void testGetMaximum() {
            << ", " << results.last_pos_max << ")");
   TAP_TEST(results.max_value == 2, TEST_AA_GET_MAXIMUM_VALUE, "");
 
+  affect_infos results2 = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 1., k+5);
+  TAP_TEST(results == results2, TEST_AA_GET_MAXIMUM_VALUE, "");
+
   KmerAffect a2[] = {AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, 
                      AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V,
                      AFFECT_J, AFFECT_J, AFFECT_J,
@@ -172,7 +202,7 @@ void testGetMaximum() {
   //  0 1 2 3 4 5 6 7 8 9  11  13  15
   // V+V+V+V+V+V+V+V+V+V+J+J+J+V+V+V+
   vector<KmerAffect> affectations2(a2, a2+sizeof(a2)/sizeof(KmerAffect));
-  KmerAffectAnalyser<KmerAffect> kaa2(*index, "", affectations2);
+  KmerAffectAnalyser kaa2(*index, "", affectations2);
   results = kaa2.getMaximum(AFFECT_V, AFFECT_J, 2., 0);
   TAP_TEST(! results.max_found, 
            TEST_AA_GET_MAXIMUM_MAX_FOUND, "(" << results.first_pos_max
@@ -212,7 +242,7 @@ void testGetMaximum() {
   //  0 1 2 3 4 5 6 7 8 9  11  13  15  17  19
   // V+V+V+V+V+V+V+V+V+V+ _ _ _ _ _ _J-J-V+J-
   vector<KmerAffect> affectations3(a3, a3+sizeof(a3)/sizeof(KmerAffect));
-  KmerAffectAnalyser<KmerAffect> kaa3(*index, "", affectations3);
+  KmerAffectAnalyser kaa3(*index, "", affectations3);
   results = kaa3.getMaximum(AFFECT_V, AFFECT_J, 2., 0);
 
   TAP_TEST(results.max_found, TEST_AA_GET_MAXIMUM_MAX_FOUND,
@@ -237,13 +267,13 @@ void testGetMaximum() {
 /**
  * A sequence and its revcomp are not affected in the same way.
  */
-template<template <class> class T, template <class> class AffectA, class KAffect>
+template<template <class> class T>
 void testBugAffectAnalyser() {
   Fasta seqV("../../germline/IGHV.fa", 2);
   Fasta seqJ("../../germline/IGHJ.fa", 2);
   Fasta data("../../data/bug-revcomp.fa", 1, " ");
 
-  T<KAffect> index(9, true);
+  T<KmerAffect> index(9, true);
   index.insert(seqV, "V");
   index.insert(seqJ, "J");
 
@@ -255,10 +285,13 @@ void testBugAffectAnalyser() {
            TEST_FASTA_SEQUENCE, 
            "Sequences should be of same length: sequence and its revcomp");
 
-  AffectA<KAffect> fwdAffect(index, data.read(0).sequence);
-  AffectA<KAffect> bwdAffect(index, data.read(1).sequence);
+  KmerAffectAnalyser fwdAffect(index, data.read(0).sequence);
+  KmerAffectAnalyser bwdAffect(index, data.read(1).sequence);
 
   int total = fwdAffect.count();
+
+  TAP_TEST(fwdAffect.getSequence() == data.read(0).sequence, TEST_AA_GET_SEQUENCE, "actual: " << fwdAffect.getSequence() << ", expected: " << data.read(0).sequence);
+  TAP_TEST(bwdAffect.getSequence() == data.read(1).sequence, TEST_AA_GET_SEQUENCE, "actual: " << bwdAffect.getSequence() << ", expected: " << data.read(1).sequence);
 
   TAP_TEST(fwdAffect.count() == bwdAffect.count(),
            TEST_AA_COUNT,
@@ -267,8 +300,8 @@ void testBugAffectAnalyser() {
            << " for the bwd instead");
 
   for (int i = 0; i < total; i++) {
-    const KAffect fwd = fwdAffect.getAffectation(i);
-    const KAffect bwd = bwdAffect.getAffectation(total - 1 - i);
+    const KmerAffect fwd = fwdAffect.getAffectation(i);
+    const KmerAffect bwd = bwdAffect.getAffectation(total - 1 - i);
 
     if (fwd.isAmbiguous() || bwd.isAmbiguous()
         || fwd.isUnknown() || bwd.isUnknown()) {
@@ -290,19 +323,13 @@ void testBugAffectAnalyser() {
 }
 
 void testAffectAnalyser() {
-  testAffectAnalyser1<MapKmerStore,KmerAffect>();
-  testAffectAnalyser2<MapKmerStore,KmerAffect>();
-  testAffectAnalyser1<MapKmerStore,KmerStringAffect>();
-  testAffectAnalyser2<MapKmerStore,KmerStringAffect>();
-  testBugAffectAnalyser<MapKmerStore, KmerAffectAnalyser, KmerAffect>();
-  testBugAffectAnalyser<MapKmerStore, KmerAffectAnalyser, KmerStringAffect>();
+  testAffectAnalyser1<MapKmerStore>();
+  testAffectAnalyser2<MapKmerStore>();
+  testBugAffectAnalyser<MapKmerStore>();
   testGetMaximum<MapKmerStore>();
 
-  testAffectAnalyser1<ArrayKmerStore,KmerAffect>();
-  testAffectAnalyser2<ArrayKmerStore,KmerAffect>();
-  testAffectAnalyser1<ArrayKmerStore,KmerStringAffect>();
-  testAffectAnalyser2<ArrayKmerStore,KmerStringAffect>();
-  testBugAffectAnalyser<ArrayKmerStore, KmerAffectAnalyser, KmerAffect>();
-  testBugAffectAnalyser<ArrayKmerStore, KmerAffectAnalyser, KmerStringAffect>();
+  testAffectAnalyser1<ArrayKmerStore>();
+  testAffectAnalyser2<ArrayKmerStore>();
+  testBugAffectAnalyser<ArrayKmerStore>();
   testGetMaximum<ArrayKmerStore>();
 }

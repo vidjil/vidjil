@@ -290,24 +290,12 @@ List.prototype = {
             span_cluster.appendChild(document.createTextNode(' '));
         }
 
-        if (this.m.system=="multi"){
-            var span_system = document.createElement('span')
-            var system = this.m.clone(cloneID).getSystem()
-            span_system.className = "systemBox";
-            if ((typeof system != 'undefined') && (typeof germline.icon[system] != 'undefined')){
-                span_system.appendChild(document.createTextNode(germline.icon[system].letter));
-                span_system.style.background = germline.icon[system].color
-                span_system.title = system
-            }else{
-                span_system.appendChild(document.createTextNode("?"));
-		if (typeof system != 'undefined')
-		    span_system.title = system ;
-            }
-        }
-        
         
         div_elem.appendChild(span_cluster);
-        if (this.m.system=="multi") div_elem.appendChild(span_system);
+        if (this.m.system=="multi") {
+            var system = this.m.clone(cloneID).getSystem()
+            div_elem.appendChild(builder.build_systemBox(system));
+        }
         div_elem.appendChild(span_name);
         div_elem.appendChild(span_info);
         div_elem.appendChild(span_star);

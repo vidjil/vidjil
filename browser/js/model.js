@@ -58,6 +58,7 @@ function Model() {
     this.view = [];
     this.reset();
     this.checkBrowser();
+    this.germlineList = new GermlineList()
 }
 
 
@@ -79,7 +80,6 @@ Model.prototype = {
         this.isPlaying = false;
         this.clusters = [];
         this.clones = [];
-        this.germline = {}
         this.germlineV = new Germline(this)
         this.germlineD = new Germline(this)
         this.germlineJ = new Germline(this)
@@ -296,6 +296,9 @@ Model.prototype = {
         self.min_sizes = min_sizes;
         
         //extract germline
+        if (typeof self.germlines != 'undefined'){
+            self.germlineList.add(self.germlines)
+        }
         self.system_selected = [];
         for (var key in self.reads.germline) self.system_selected.push(key)
         

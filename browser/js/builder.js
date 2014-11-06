@@ -605,11 +605,9 @@ Builder.prototype = {
         var div_total = this.build_info_line("info_total", "total", this.m.reads.total[this.m.t] + " reads")
         parent.appendChild(div_total)
 
-        /*TODO put this somewhere else
-        //color
+
         var div_color = this.build_info_color()
         parent.appendChild(div_color) 
-        */
 
         initTag();
     },
@@ -649,23 +647,12 @@ Builder.prototype = {
                     m.update_selected_system()
                 }
 
-            var span_system = document.createElement('span')
+            var span_system = this.build_systemBox(key)
             span_system.className = "systemBoxMenu";
-
-	    /* TODO: factorize with list.js */
-            if ((typeof key != 'undefined') && (typeof germline.icon[key] != 'undefined')){
-                span_system.appendChild(document.createTextNode(germline.icon[key].letter));
-                span_system.style.background = germline.icon[key].color
-                span_system.title = key
-            }else{
-                span_system.appendChild(document.createTextNode("?"));
-		if (typeof key != 'undefined')
-		    span_system.title = key ;
-            }
                 
             var span = document.createElement('span');
             span.className = "systemBoxNameMenu";
-	    span.appendChild(span_system)
+            span.appendChild(span_system)
             span.appendChild(checkbox)
             span.appendChild(document.createTextNode(key))
             
@@ -676,6 +663,21 @@ Builder.prototype = {
         div.appendChild(span2)
         
         return div
+    },
+    
+    build_systemBox: function (system){
+        var span = document.createElement('span')
+        span.className = "systemBox";
+        if ((typeof system != 'undefined')){
+            span.appendChild(document.createTextNode(this.m.germlineList.list[system].shortcut));
+            span.style.background = this.m.germlineList.list[system].color
+            span.title = system
+        }else{
+            span.appendChild(document.createTextNode("?"));
+            if (typeof system != 'undefined')
+                span.title = system ;
+        }
+        return span
     },
     
     build_info_line: function (id, name, value, className) {
@@ -707,23 +709,25 @@ Builder.prototype = {
         var div = document.createElement('div');
         div.className = "info_color"
 
+        var span0 = document.createElement('span');
+        span0.className="info_row"
         var span1 = document.createElement('span');
         var span2 = document.createElement('span');
         var span3 = document.createElement('span');
 
-        switch (this.colorMethod) {
-        case "N2":
-            div.appendChild(document.createTextNode(" colors : "));
+        switch (this.m.colorMethod) {
+        case "N":
+            span0.appendChild(document.createTextNode("color by n length : "));
 
             span1.appendChild(document.createTextNode(" N=0 "));
 
             span2.className = "gradient";
 
-            span3.appendChild(document.createTextNode("N=" + this.m.n2_max));
+            span3.appendChild(document.createTextNode("N=" + this.m.n_max));
 
             break;
         case "Tag":
-            div.appendChild(document.createTextNode(" tag colors : "));
+            span0.appendChild(document.createTextNode("color by tag: "));
 
             for (var i = 0; i < tagName.length; i++) {
                 var spantag = document.createElement('span');
@@ -735,11 +739,9 @@ Builder.prototype = {
 
                 span2.appendChild(spantag);
             }
-
-
             break;
         case "abundance":
-            div.appendChild(document.createTextNode(" colors : "));
+            span0.appendChild(document.createTextNode("color by size: "));
 
             span1.appendChild(document.createTextNode(" 0% "));
 
@@ -750,6 +752,7 @@ Builder.prototype = {
             break;
         }
 
+        div.appendChild(span0)
         div.appendChild(span1)
         div.appendChild(span2)
         div.appendChild(span3)

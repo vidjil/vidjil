@@ -103,10 +103,12 @@ def get_data():
                    ).select( orderby=db.sequence_file.id|db.results_file.run_date, groupby=db.sequence_file.id ) 
 
         data["samples"]["original_names"] = []
+        data["samples"]["timestamp"] = []
         data["samples"]["info"] = []
         for row in query :
             filename = row.sequence_file.filename
             data["samples"]["original_names"].append(filename)
+            data["samples"]["timestamp"].append(str(row.sequence_file.sampling_date))
             data["samples"]["info"].append(row.sequence_file.info) 
 
         log.debug("get_data: %s -> %s" % (request.vars["patient_id"], fused_file))

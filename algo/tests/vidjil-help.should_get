@@ -4,7 +4,7 @@ $ License
 1:Vidjil is free software
 
 $ Check default filtering options
-1:minimal number of reads supporting a clone .*: 10
+1:minimal number of reads supporting a clone .*: 5
 1:minimal percentage of reads supporting a clone .*: 0
 1:maximal number of clones computed with a representative .*: 100
 1:maximal number of clones to be segmented .*: 20

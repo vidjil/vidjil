@@ -4,7 +4,7 @@ VIDJIL_ALGO_SRC = algo/
 VIDJIL_SERVER_SRC = server/
 
 ifeq (${COVERAGE},1)
-	COVERAGE_OPTION=--coverage
+	COVERAGE_OPTION=-O0 --coverage
 else
 	COVERAGE_OPTION=
 endif

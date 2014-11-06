@@ -69,8 +69,7 @@
 #define DEFAULT_J_REP  "./germline/IGHJ.fa"
 
 #define DEFAULT_READS  "./data/Stanford_S22.fasta"
-#define MIN_READS_WINDOW 10
-#define MIN_READS_CLONE 10
+#define MIN_READS_CLONE 5
 #define DEFAULT_MAX_REPRESENTATIVES 100
 #define MAX_CLONES 20
 #define RATIO_READS_CLONE 0.0
@@ -146,7 +145,7 @@ void usage(char *progname)
 
        << "Germline databases" << endl
        << "  -V <file>     V germline multi-fasta file" << endl
-       << "  -D <file>     D germline multi-fasta file (automatically implies -d)" << endl
+       << "  -D <file>     D germline multi-fasta file (implies -d)" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
        << "  -g <path>     multiple germlines (experimental)" << endl
@@ -183,7 +182,7 @@ void usage(char *progname)
        << endl
 
        << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
-       << "  -d            segment into V(D)J components instead of VJ " << endl
+       << "  -d            segment into V(D)J components instead of VJ (and resets -m, -M and -w options)" << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
        << endl
 
@@ -235,9 +234,11 @@ int main (int argc, char **argv)
   //$$ options: defaults
 
   string germline_system = DEFAULT_GERMLINE_SYSTEM ;
-  string f_rep_V = DEFAULT_V_REP ;
-  string f_rep_D = DEFAULT_D_REP ;
-  string f_rep_J = DEFAULT_J_REP ;
+  
+  list <string> f_reps_V ;
+  list <string> f_reps_D ;
+  list <string> f_reps_J ;
+
   string f_reads = DEFAULT_READS ;
   string seed = DEFAULT_SEED ;
   string f_basename = "";
@@ -321,17 +322,20 @@ int main (int argc, char **argv)
       // Germline
 
       case 'V':
-	f_rep_V = optarg;
+	f_reps_V.push_back(optarg);
 	germline_system = "custom" ;
 	break;
 
       case 'D':
-	f_rep_D = optarg;
+	f_reps_D.push_back(optarg);
         segment_D = 1;
+	delta_min = DEFAULT_DELTA_MIN_D ;
+	delta_max = DEFAULT_DELTA_MAX_D ;
+	default_w = DEFAULT_W_D ;
 	break;
         
       case 'J':
-	f_rep_J = optarg;
+	f_reps_J.push_back(optarg);
 	germline_system = "custom" ;
 	break;
 
@@ -342,9 +346,9 @@ int main (int argc, char **argv)
 	
       case 'G':
 	germline_system = string(optarg);
-	f_rep_V = (germline_system + "V.fa").c_str() ;
-	f_rep_D = (germline_system + "D.fa").c_str() ;
-	f_rep_J = (germline_system + "J.fa").c_str() ;
+	f_reps_V.push_back((germline_system + "V.fa").c_str()) ;
+	f_reps_D.push_back((germline_system + "D.fa").c_str()) ;
+	f_reps_J.push_back((germline_system + "J.fa").c_str()) ;
 	germline_system = extract_basename(germline_system);
 	// TODO: if VDJ, set segment_D // NO, bad idea, depends on naming convention
 	break;
@@ -518,8 +522,20 @@ int main (int argc, char **argv)
 
   size_t min_cover_representative = (size_t) (MIN_COVER_REPRESENTATIVE_RATIO_MIN_READS_CLONE * min_reads_clone) ;
 
-  if (!segment_D) // TODO: add other constructor to Fasta, and do not load rep_D in this case
-    f_rep_D = "";
+
+  // Default repertoires
+
+  if (f_reps_V.empty())
+    f_reps_V.push_back(DEFAULT_V_REP) ;
+
+  if (f_reps_D.empty())
+    f_reps_D.push_back(DEFAULT_D_REP) ;
+
+  if (f_reps_J.empty())
+    f_reps_J.push_back(DEFAULT_J_REP) ;
+
+  if (!segment_D)
+    f_reps_D.clear();
 
   // Default seeds
 
@@ -654,7 +670,6 @@ int main (int argc, char **argv)
 
   MultiGermline *multigermline = new MultiGermline();
 
-  if (command == CMD_GERMLINES || command == CMD_CLONES || command == CMD_WINDOWS) 
     {
       cout << "Build Kmer indexes" << endl ;
     
@@ -670,15 +685,14 @@ int main (int argc, char **argv)
       else
 	{
 	  // Custom germline
-	  Fasta rep_V(f_rep_V, 2, "|", cout);
-	  Fasta rep_D(f_rep_D, 2, "|", cout);
-	  Fasta rep_J(f_rep_J, 2, "|", cout);
-	  
 	  Germline *germline;
 	  germline = new Germline(germline_system, 'X',
-				  rep_V, rep_D, rep_J, 
-				  delta_min, delta_max);
-	  germline->new_index(seed);
+                                  f_reps_V, f_reps_D, f_reps_J, 
+                                  delta_min, delta_max);
+
+
+	  if (command == CMD_WINDOWS || command == CMD_CLONES)
+	    germline->new_index(seed);
 
 	  multigermline->insert(germline);
 	}
@@ -734,7 +748,7 @@ int main (int argc, char **argv)
 	  string seq = reads->getSequence().sequence;
 	  total_length += seq.length() - s + 1;
 
-	  KmerAffectAnalyser<KmerAffect> *kaa = new KmerAffectAnalyser<KmerAffect>(*index, seq);
+	  KmerAffectAnalyser *kaa = new KmerAffectAnalyser(*index, seq);
 
 	  for (int i = 0; i < kaa->count(); i++) 
 	    { 
@@ -744,7 +758,7 @@ int main (int argc, char **argv)
 
           delete kaa;
 
-	  CountKmerAffectAnalyser<KmerAffect> ckaa(*index, seq);
+	  CountKmerAffectAnalyser ckaa(*index, seq);
 	  ckaa.setAllowedOverlap(k-1);
 
 	  stats_max[affect_char(ckaa.max(forbidden).affect)]++ ;
@@ -1250,7 +1264,7 @@ int main (int argc, char **argv)
     json_samples=new JsonList();
     json_samples->add("number", 1);
     json_samples->add("original_names", json_original_names);
-    json_samples->add("timestamp", json_timestamp);
+    //json_samples->add("vidjil_timestamp", json_timestamp);
     json_samples->add("log", json_log);
     json_samples->add("commandline", json_cmdline);
     
@@ -1261,6 +1275,30 @@ int main (int argc, char **argv)
     json_reads->add("segmented", json_nb_segmented); 
     JsonList *json_reads_germlineList;
     json_reads_germlineList = new JsonList();
+    
+    //germlines field
+    JsonList *json_germlines;
+    json_germlines=new JsonList();
+    JsonList *json_custom_germline;
+    json_custom_germline = new JsonList();
+    
+    json_custom_germline->add("shortcut", "X");
+    JsonArray json_3;
+    JsonArray json_4;
+    JsonArray json_5;
+    for (list<string>::iterator it = f_reps_V.begin(); it != f_reps_V.end(); it++){
+        json_3.add(*it);
+    }
+    for (list<string>::iterator it = f_reps_D.begin(); it != f_reps_D.end(); it++){
+        json_4.add(*it);
+    }
+    for (list<string>::iterator it = f_reps_J.begin(); it != f_reps_J.end(); it++){
+        json_5.add(*it);
+    }
+    json_custom_germline->add("3", json_3);
+    json_custom_germline->add("4", json_4);
+    json_custom_germline->add("5", json_5);
+    json_germlines->add("custom", *json_custom_germline);
     
     if (multi_germline)
       {
@@ -1282,6 +1320,8 @@ int main (int argc, char **argv)
     json->add("samples", *json_samples);
     json->add("reads", *json_reads);
     json->add("clones", jsonSortedWindows);
+    json->add("germlines", *json_germlines);
+    
     
     if (epsilon || forced_edges.size()){
       JsonArray json_clusters = comp.toJson(clones_windows);
@@ -1316,30 +1356,39 @@ int main (int argc, char **argv)
     //reads = OnlineFasta(f_reads, 1, " ");
     
 
-    Fasta rep_V(f_rep_V, 2, "|", cout);
-    Fasta rep_D(f_rep_D, 2, "|", cout);
-    Fasta rep_J(f_rep_J, 2, "|", cout);
-
-    Germline *germline;
-
-    germline = new Germline(germline_system, 'X',
-			    rep_V, rep_D, rep_J,
-			    delta_min, delta_max);
-
     while (reads->hasNext()) 
       {
         reads->next();
-        FineSegmenter s(reads->getSequence(), germline, segment_cost);
-	if (s.isSegmented()) {
-	  if (segment_D)
-	  s.FineSegmentD(germline);
-          cout << s << endl;
-        } else {
-          cout << "Unable to segment" << endl;
-          cout << reads->getSequence();
-          cout << endl << endl;
-        }
-    }     
+
+        Sequence seq = reads->getSequence() ;
+        bool segmented = false ;
+
+        for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
+          {
+            Germline *germline = *it ;
+	    
+            FineSegmenter s(seq, germline, segment_cost);
+
+            if (s.isSegmented()) 
+              {
+                if (segment_D && germline->rep_4.size())
+                  s.FineSegmentD(germline);
+                cout << s << endl;
+                segmented = true ;
+                break ;
+              }
+            else 
+              {
+                if (verbose)
+                  cout << "# " << germline->code << ": unable to segment" << endl;
+              }
+          }
+        if (!segmented)
+          {
+            seq.label += " unsegmented";
+            cout << seq << endl;
+          }
+      }
     
   } else {
     cerr << "Ooops... unknown command. I don't know what to do apart from exiting!" << endl;

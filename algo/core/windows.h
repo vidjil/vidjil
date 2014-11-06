@@ -38,20 +38,6 @@ class WindowsStorage {
    */
   WindowsStorage(map<string, string> &labels);
 
-  /**
-   * Return the map storing the elements
-   */
-  map<junction, list<Sequence> > &getMap();
-
-  /**
-   * @return the number of reads supporting a given window
-   */
-  size_t getNbReads(junction window);
-
-  /**
-   * @return the segmented status of reads supporting a given window
-   */
-  vector<int> getStatus(junction window);
   Germline *getGermline(junction window);
   
   JsonList statusToJson(junction window);

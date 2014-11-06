@@ -17,6 +17,50 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
+function GermlineList () {
+    this.init()
+}
+
+GermlineList.prototype = {
+    
+    init : function () {
+        this.load();
+    },
+    
+    //load germlines.data file from server
+    load : function () {
+        var self=this;
+        
+        $.ajax({
+            url: window.location.origin + "/germline/germlines.data",
+            success: function (result) {
+                try {
+                    //remove comment (json don't have comment)
+                    var json = result.replace(/ *\/\/[^\n]*\n */g , "")
+                    //convert from js to json (json begin with { or [, never with a var name)
+                    json = json.replace("germlines = " , "")
+                    self.list = jQuery.parseJSON(json);
+                }
+                catch(err){
+                    myConsole.flash("server : germlines.data malformed", 2);
+                }
+            },
+            error: function (request, status, error) {
+                myConsole.flash("server : error impossible to retrieve germlines.data", 2);
+            },
+            dataType: "text"
+        });
+        
+    },
+    
+    //add a list of custom germlines
+    add : function (list) {
+        for ( var key in list ) {
+            this.list[key] = list[key];
+        }
+    }
+}
+
 function Germline (model) {
     this.m = model
 }
@@ -37,23 +81,38 @@ Germline.prototype = {
         this.init()
         
         this.system = system
-        var name = system+type
         name = name.toUpperCase()
         
-        if (typeof germline[name] != 'undefined'){
-            this.allele = germline[name]
-        }else{
+        if (typeof this.m.germlineList.list[system] == 'undefined'){
             return callback
         }
+        
+        this.allele = {}
         this.gene = {}
         
         var type2
         if (type=="V") type2="5"
         if (type=="D") type2="4"
         if (type=="J") type2="3"
+        
+        if (typeof this.m.germlineList.list[system][type2] != 'undefined' ){
+            for (var i=0; i<this.m.germlineList.list[system][type2].length; i++){
+                var filename = this.m.germlineList.list[system][type2][i] 
+                filename = filename.split('/')[filename.split('/').length-1] //remove path
+                filename = filename.split('.')[0] //remove file extension 
+                
+                if (typeof germline[filename] != 'undefined'){
+                    for (var key in germline[filename]){
+                        this.allele[key] = germline[filename][key]
+                    }
+                }else{
+                    myConsole.flash("warning : this browser version doesn't have the "+filename+" germline file", 2);
+                }
+            }
+        }
 
         //reduce germline size (keep only detected genes)
-        //and add undetected genes 
+        //and add undetected genes (missing from germline)
         var g = {}
         for (var i=0; i<this.m.n_clones; i++){
             if (typeof this.m.clone(i).seg != "undefined" &&

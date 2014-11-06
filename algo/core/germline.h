@@ -12,6 +12,9 @@ using namespace std;
 
 class Germline {
  private:
+  void init(string _code, char _shortcut,
+            int _delta_min, int _delta_max);
+
   void update_index();
 
  public:
@@ -23,6 +26,10 @@ class Germline {
    *        so that the segmentation is accepted
    *        (left bound: end of V, right bound : start of J)
    */
+
+  Germline(string _code, char _shortcut,
+           list <string> f_rep_5, list <string> f_rep_4, list <string> f_rep_3,
+           int _delta_min, int _delta_max);
 
   Germline(string _code, char _shortcut, 
   	   string f_rep_5, string f_rep_4, string f_rep_3,
@@ -39,6 +46,10 @@ class Germline {
 
   void new_index(string seed);
   void use_index(IKmerStore<KmerAffect> *index);
+
+  list <string> f_reps_5 ;
+  list <string> f_reps_4 ;
+  list <string> f_reps_3 ;
 
   // KmerAffect affect_5 ;
   // KmerAffect affect_3 ;
@@ -71,7 +82,6 @@ class MultiGermline {
   IKmerStore<KmerAffect> *index;
 
   MultiGermline();
-  MultiGermline(string f_germlines_json);
   ~MultiGermline();
 
   void insert(Germline *germline);

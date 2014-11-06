@@ -372,6 +372,8 @@ class ListWindows:
             f = file_path
             print
         
+        time = os.path.getmtime(file_path)
+        self.d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
 
     def getTop(self, top):
         result = []
@@ -411,6 +413,7 @@ class ListWindows:
         obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
+        obj.d["timestamp"] = self.d["timestamp"]
         obj.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
 
         return obj
@@ -492,8 +495,6 @@ class ListWindows:
         '''Parser for .clntab file'''
 
         self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
-        time = os.path.getmtime(file_path)
-        self.d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
         self.d["samples"][0].d["original_names"] = [file_path]
         
         listw = []
