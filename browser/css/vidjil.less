@@ -313,14 +313,19 @@ line {
   text-anchor : middle;
 }
 
+.sp_system{
+  position:absolute;
+}
+
 .sp_system_label{
-  fill : @default ;
+  color : @default ;
   font-weight : bold;
-  text-anchor : middle;
+  height:0px;
+  position:relative;
 }
 
 .sp_system_label:hover{
-  fill : @select ;
+  color : @select ;
   cursor: pointer;
 }
 
@@ -486,6 +491,7 @@ line {
 .systemBoxNameMenu {
     display: inline-block;
     min-width: 89px;
+    height: 20px;
 }	      
 
 

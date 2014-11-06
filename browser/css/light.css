@@ -255,13 +255,17 @@ line {
   font-weight: bold;
   text-anchor: middle;
 }
+.sp_system {
+  position: absolute;
+}
 .sp_system_label {
-  fill: #657b83;
+  color: #657b83;
   font-weight: bold;
-  text-anchor: middle;
+  height: 0px;
+  position: relative;
 }
 .sp_system_label:hover {
-  fill: #002b36;
+  color: #002b36;
   cursor: pointer;
 }
 .sp_rotated_legend {
@@ -390,6 +394,7 @@ line {
 .systemBoxNameMenu {
   display: inline-block;
   min-width: 89px;
+  height: 20px;
 }
 .clusterBox {
   width: 16px;
@@ -857,10 +862,12 @@ span.logo {
   border-width: 2px;
   background-color: #cccccc;
 }
-
-span.warning {  color: orange;   }
-span.alert {  color: red;   }
-
+span.warning {
+  color: orange;
+}
+span.alert {
+  color: red;
+}
 .sp_selector {
   fill: #002b36;
   stroke-width: 2px;
@@ -1031,7 +1038,7 @@ span.alert {  color: red;   }
   float: right;
 }
 #db_table_container {
-  overflow-y: auto;
+  overflow-y: scroll;
   overflow-x: hidden;
   height: 100%;
   position: relative;
@@ -1207,13 +1214,9 @@ tt {
   font-family: monospace,monospace;
   font-size: 1em;
 }
-
-table.log
-{
+table.log {
   width: 90%;
 }
-
-table.log textarea
-{
-   width: 100%;
+table.log textarea {
+  width: 100%;
 }

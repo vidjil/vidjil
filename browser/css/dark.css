@@ -862,10 +862,12 @@ span.logo {
   border-width: 2px;
   background-color: #333333;
 }
-
-span.warning {  color: orange;   }
-span.alert {  color: red;   }
-
+span.warning {
+  color: orange;
+}
+span.alert {
+  color: red;
+}
 .sp_selector {
   fill: #fdf6e3;
   stroke-width: 2px;
@@ -1036,7 +1038,7 @@ span.alert {  color: red;   }
   float: right;
 }
 #db_table_container {
-  overflow-y: auto;
+  overflow-y: scroll;
   overflow-x: hidden;
   height: 100%;
   position: relative;
@@ -1212,13 +1214,9 @@ tt {
   font-family: monospace,monospace;
   font-size: 1em;
 }
-
-table.log
-{
+table.log {
   width: 90%;
 }
-
-table.log textarea
-{
-   width: 100%;
+table.log textarea {
+  width: 100%;
 }
