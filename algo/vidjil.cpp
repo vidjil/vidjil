@@ -1276,6 +1276,30 @@ int main (int argc, char **argv)
     JsonList *json_reads_germlineList;
     json_reads_germlineList = new JsonList();
     
+    //germlines field
+    JsonList *json_germlines;
+    json_germlines=new JsonList();
+    JsonList *json_custom_germline;
+    json_custom_germline = new JsonList();
+    
+    json_custom_germline->add("shortcut", "X");
+    JsonArray json_3;
+    JsonArray json_4;
+    JsonArray json_5;
+    for (list<string>::iterator it = f_reps_V.begin(); it != f_reps_V.end(); it++){
+        json_3.add(*it);
+    }
+    for (list<string>::iterator it = f_reps_D.begin(); it != f_reps_D.end(); it++){
+        json_4.add(*it);
+    }
+    for (list<string>::iterator it = f_reps_J.begin(); it != f_reps_J.end(); it++){
+        json_5.add(*it);
+    }
+    json_custom_germline->add("3", json_3);
+    json_custom_germline->add("4", json_4);
+    json_custom_germline->add("5", json_5);
+    json_germlines->add("custom", *json_custom_germline);
+    
     if (multi_germline)
       {
         for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
@@ -1296,6 +1320,8 @@ int main (int argc, char **argv)
     json->add("samples", *json_samples);
     json->add("reads", *json_reads);
     json->add("clones", jsonSortedWindows);
+    json->add("germlines", *json_germlines);
+    
     
     if (epsilon || forced_edges.size()){
       JsonArray json_clusters = comp.toJson(clones_windows);
