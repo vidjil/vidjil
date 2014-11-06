@@ -81,23 +81,32 @@ Germline.prototype = {
         this.init()
         
         this.system = system
-        var name = system+type
         name = name.toUpperCase()
         
-        if (typeof germline[name] != 'undefined'){
-            this.allele = germline[name]
-        }else{
+        if (typeof this.m.germlineList.list[system] == 'undefined'){
             return callback
         }
+        
+        this.allele = {}
         this.gene = {}
         
         var type2
         if (type=="V") type2="5"
         if (type=="D") type2="4"
         if (type=="J") type2="3"
+            
+        for (var i=0; i<this.m.germlineList.list[system][type2].length; i++){
+            var filename = this.m.germlineList.list[system][type2][i] 
+            filename = filename.split('/')[filename.split('/').length-1] //remove path
+            filename = filename.split('/')[filename.split('/').length-1] //remove file extension 
+            
+            for (var key in germline[filename]){
+                this.allele[key] = germline[filename][key]
+            }
+        }
 
         //reduce germline size (keep only detected genes)
-        //and add undetected genes 
+        //and add undetected genes (missing from germline)
         var g = {}
         for (var i=0; i<this.m.n_clones; i++){
             if (typeof this.m.clone(i).seg != "undefined" &&
