@@ -104,7 +104,7 @@ void KmerRepresentativeComputer::compute() {
 
     size_t length_run = 0;
     size_t i = pos_required;
-    if (pos_required)
+
       while (i > 0 && isSufficienlyExpressed(counts[i-1].count, max)) {
         i--;
         length_run++;
@@ -126,7 +126,7 @@ void KmerRepresentativeComputer::compute() {
         sequence_longest_run = sequence;
         seq_index_longest_run = seq;
       }
-      // We have a requirement. We reached it, exit.
+      // We have a requirement (ie. a non empty string). We reached it, exit.
       if (pos_required != pos_end_required)
         break;
       length_run = 0;
