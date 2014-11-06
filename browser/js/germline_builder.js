@@ -17,6 +17,47 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
+function GermlineList () {
+    this.init()
+}
+
+GermlineList.prototype = {
+    
+    init : function () {
+        this.load();
+    },
+    
+    //load germlines.data file from server
+    load : function () {
+        var self=this;
+        
+        $.ajax({
+            url: window.location.origin + "/germline/germlines.data",
+            success: function (result) {
+                try {
+                    //remove comment
+                    var json = result.replace(/ *\/\/[^\n]*\n */g , "")
+                    json = json.replace("germlines = " , "")
+                    self.list = jQuery.parseJSON(json);
+                }
+                catch(err){
+                    myConsole.flash("server : germlines.data malformed");
+                }
+            },
+            error: function (request, status, error) {
+                myConsole.flash("server : error impossible to retrieve germlines.data");
+            },
+            dataType: "text"
+        });
+        
+    },
+    
+    //add a list of custom germlines
+    add : function () {
+        
+    }
+}
+
 function Germline (model) {
     this.m = model
 }

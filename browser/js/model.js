@@ -58,6 +58,7 @@ function Model() {
     this.view = [];
     this.reset();
     this.checkBrowser();
+    this.germlineList = new GermlineList()
 }
 
 
@@ -79,7 +80,6 @@ Model.prototype = {
         this.isPlaying = false;
         this.clusters = [];
         this.clones = [];
-        this.germline = {}
         this.germlineV = new Germline(this)
         this.germlineD = new Germline(this)
         this.germlineJ = new Germline(this)
