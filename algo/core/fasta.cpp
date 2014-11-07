@@ -59,7 +59,7 @@ void Fasta::add(istream &in, bool verbose) {
 }
 
 void Fasta::add(const string &filename, bool verbose) {
-  ifstream is(filename.c_str());
+  igzstream is(filename.c_str());
   if (is.fail())
     {
       throw invalid_argument(" !! Error in opening file: "+ filename);
