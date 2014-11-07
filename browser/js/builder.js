@@ -665,8 +665,8 @@ Builder.prototype = {
         var span = document.createElement('span')
         span.className = "systemBox";
         if ((typeof system != 'undefined')){
-            span.appendChild(document.createTextNode(this.m.germlineList.list[system].shortcut));
-            span.style.background = this.m.germlineList.list[system].color
+            span.appendChild(document.createTextNode(this.m.germlineList.getShortcut(system)));
+            span.style.background = this.m.germlineList.getColor(system)
             span.title = system
         }else{
             span.appendChild(document.createTextNode("?"));

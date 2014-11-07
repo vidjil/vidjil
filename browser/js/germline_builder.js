@@ -19,6 +19,7 @@
 
 function GermlineList () {
     this.init()
+    this.list = {}
 }
 
 GermlineList.prototype = {
@@ -58,7 +59,24 @@ GermlineList.prototype = {
         for ( var key in list ) {
             this.list[key] = list[key];
         }
-    }
+    },
+    
+    getColor: function (system) {
+        if (typeof this.list[system] != 'undefined' && typeof this.list[system].color != 'undefined' ){
+            return this.list[system].color
+        }else{
+            return color['@default']
+        }
+    },
+    
+    getShortcut: function (system) {
+        if (typeof this.list[system] != 'undefined' && typeof this.list[system].shortcut != 'undefined' ){
+            return this.list[system].shortcut
+        }else{
+            return "x"
+        }
+    },
+    
 }
 
 function Germline (model) {

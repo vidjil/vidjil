@@ -272,8 +272,8 @@ Clone.prototype = {
             this.color =  this.colorJ;
         }else if (this.m.colorMethod == "N"){
             this.color =  this.colorN;
-        }else if (this.m.colorMethod == "system" && typeof germline.icon[this.germline] != 'undefined') {
-            this.color = germline.icon[this.germline].color
+        }else if (this.m.colorMethod == "system") {
+            this.color = this.m.germlineList.getColor(this.germline)
         }else{
             this.color = color['@default'];
         }
