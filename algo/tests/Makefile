@@ -1,11 +1,11 @@
 CC=g++
 CXXFLAGS=-W -Wall -g -O0 $(COVERAGE)
 INCLUDE=-I ..
-LDFLAGS=
+LDFLAGS=-lz
 SRC= tests.cpp
 EXEC=$(SRC:.cpp=)
 OTHER_SRC=$(wildcard *.cpp)
-LIB=../core/vidjil.a
+LIB=../core/vidjil.a ../lib/lib.a
 SHOULD=$(wildcard *.should_get)
 SHOULD_LOG=$(SHOULD:.should_get=.log)
 
