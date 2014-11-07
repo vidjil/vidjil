@@ -1,5 +1,11 @@
 !LAUNCH: export REQUEST_METHOD=POST ; export CONTENT_TYPE=test ; ../../browser/cgi/align.cgi < ../../data/msa.fa 
 
+$ no spurious info
+0: .* bp in .* sequences
+
+$ response header
+1:Content-type: text/html
+
 $ seq1 (reference sequence for lazy msa)
 1:-AT-GATCAGCC-TGAGAGATAC
 

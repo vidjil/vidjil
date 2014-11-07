@@ -47,7 +47,8 @@ public:
          *         valid
          */
 	Fasta(const string &input, 
-	      int extract_field=0, string extract_separator="|");
+	      int extract_field=0, string extract_separator="|",
+              bool verbose=true);
 	
 	int size() const;
         /**
@@ -63,13 +64,13 @@ public:
         /**
          * Add the content of the stream to the current object
          */
-        void add(istream &in);
+        void add(istream &in, bool verbose=true);
         /**
          * Add the content of the file to the current object
          * @throws invalid_argument if the file cannot be opened or
          *         if the content is not valid
          */
-        void add(const string &filename);
+        void add(const string &filename, bool verbose=true);
 	
 	friend istream& operator>>(istream&, Fasta&);
 };

@@ -1,0 +1,8 @@
+!LAUNCH: (for i in {1..10000}; do echo '>read' ; echo ccgtgtattactgtgcgagagagctgaatacttccagcactg ; done ;) > same-igh-10k.fa ; ../../vidjil -G ../../germline/IGH -r 5000  -w 15  same-igh-10k.fa
+
+$ Find a unique clone with all reads
+1:>clone-001--IGH--0010000--100.--window
+
+$ Find a representative
+1:>clone-001--IGH--0010000--100.--read-.0,41.
+
