@@ -89,22 +89,22 @@ public:
 // function interface of the zlib. Files are compatible with gzip compression.
 // ----------------------------------------------------------------------------
 
-class igzstream : public gzstreambase, public std::istream {
+class igzstream :  public std::istream, public gzstreambase {
 public:
     igzstream() : std::istream( &buf) {} 
     igzstream( const char* name, int open_mode = std::ios::in)
-        : gzstreambase( name, open_mode), std::istream( &buf) {}  
+      : std::istream( &buf), gzstreambase( name, open_mode) {}
     gzstreambuf* rdbuf() { return gzstreambase::rdbuf(); }
     void open( const char* name, int open_mode = std::ios::in) {
         gzstreambase::open( name, open_mode);
     }
 };
 
-class ogzstream : public gzstreambase, public std::ostream {
+class ogzstream : public std::ostream, public gzstreambase  {
 public:
     ogzstream() : std::ostream( &buf) {}
     ogzstream( const char* name, int mode = std::ios::out)
-        : gzstreambase( name, mode), std::ostream( &buf) {}  
+      : std::ostream( &buf), gzstreambase( name, mode) {}
     gzstreambuf* rdbuf() { return gzstreambase::rdbuf(); }
     void open( const char* name, int open_mode = std::ios::out) {
         gzstreambase::open( name, open_mode);
