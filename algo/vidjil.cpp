@@ -107,7 +107,6 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
-#define MIN_COVER_REPRESENTATIVE_RATIO_MIN_READS_CLONE 1.0
 
 #define DEFAULT_EPSILON  0
 #define DEFAULT_MINPTS   10
@@ -520,8 +519,7 @@ int main (int argc, char **argv)
       exit(1);
     }
 
-  size_t min_cover_representative = (size_t) (MIN_COVER_REPRESENTATIVE_RATIO_MIN_READS_CLONE * min_reads_clone) ;
-
+  size_t min_cover_representative = (size_t) (min_reads_clone < (int) max_auditionned ? min_reads_clone : max_auditionned) ;
 
   // Default repertoires
 
