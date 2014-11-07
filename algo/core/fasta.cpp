@@ -25,6 +25,7 @@
 #include <stdexcept>
 #include "fasta.h"
 
+#include "../lib/gzstream.h"
 
 void Fasta::init(int extract_field, string extract_separator)
 {
@@ -92,7 +93,7 @@ OnlineFasta::OnlineFasta(int extract_field, string extract_separator):
 
 OnlineFasta::OnlineFasta(const string &input, 
                          int extract_field, string extract_separator)
-  :input(new ifstream(input.c_str())), 
+  :input(new igzstream(input.c_str())),
   extract_field(extract_field), 
   extract_separator(extract_separator)
 {
