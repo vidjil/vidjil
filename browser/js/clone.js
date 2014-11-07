@@ -357,9 +357,9 @@ Clone.prototype = {
         
         html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.sequence + "</td></tr>"
         html += "<tr><td> id </td><td colspan='" + time_length + "'>" + this.id + "</td></tr>"
-        html += "<tr><td> 5 </td><td colspan='" + time_length + "'>" + this.seg["5"] + "</td></tr>"
-        html += "<tr><td> 4 </td><td colspan='" + time_length + "'>" + this.seg["4"] + "</td></tr>"
-        html += "<tr><td> 3 </td><td colspan='" + time_length + "'>" + this.seg["3"] + "</td></tr>"
+        html += "<tr><td> 5 </td><td colspan='" + time_length + "'>" + this.getV() + "</td></tr>"
+        html += "<tr><td> 4 </td><td colspan='" + time_length + "'>" + this.getD() + "</td></tr>"
+        html += "<tr><td> 3 </td><td colspan='" + time_length + "'>" + this.getJ() + "</td></tr>"
         
         
         //other info (clntab)
