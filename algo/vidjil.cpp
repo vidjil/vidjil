@@ -116,6 +116,9 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define DEFAULT_CLUSTER_COST  Cluster
 #define DEFAULT_SEGMENT_COST   VDJ
 
+// error
+#define ERROR_STRING "[error] "
+
 // warn
 #define WARN_MAX_CLONES 100
 #define WARN_PERCENT_SEGMENTED 40
@@ -498,7 +501,7 @@ int main (int argc, char **argv)
   
   if (options_s_k > 1)
     {
-      cout << "use at most one -s or -k option." << endl ;
+      cout << ERROR_STRING << "Use at most one -s or -k option." << endl ;
       exit(1);
     }
 
@@ -517,7 +520,7 @@ int main (int argc, char **argv)
     }
   else
     {
-      cout << "wrong number of arguments." << endl ;
+      cout << ERROR_STRING << "Wrong number of arguments." << endl ;
       exit(1);
     }
 
@@ -555,7 +558,7 @@ int main (int argc, char **argv)
     }
 #else
   {
-    cout << "Vidjil was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
+    cout << ERROR_STRING << "Vidjil was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
     exit(1) ;
   }
 #endif
@@ -565,7 +568,7 @@ int main (int argc, char **argv)
   // Check seed buffer  
   if (seed.size() >= MAX_SEED_SIZE)
     {
-      cout << "Seed size is too large (MAX_SEED_SIZE). Aborting." << endl ;
+      cout << ERROR_STRING << "Seed size is too large (MAX_SEED_SIZE)." << endl ;
       exit(1);
     }
 #endif
@@ -573,7 +576,7 @@ int main (int argc, char **argv)
 
   if (w < seed_weight(seed))
     {
-      cout << "* ERROR. Too small -w. The window size should be at least equal to the seed size (" << seed_weight(seed) << ")." << endl;
+      cout << ERROR_STRING << "Too small -w. The window size should be at least equal to the seed size (" << seed_weight(seed) << ")." << endl;
       exit(1);
     }
 
@@ -581,13 +584,13 @@ int main (int argc, char **argv)
   const char *out_cstr = out_dir.c_str();
 
   if (mkpath(out_cstr, 0755) == -1) {
-    perror("Directory creation");
+    cout << ERROR_STRING << "Directory creation: " << out_dir << endl; perror("");
     exit(2);
   }
 
   const char *outseq_cstr = out_seqdir.c_str();
   if (mkpath(outseq_cstr, 0755) == -1) {
-    perror("Directory creation");
+    cout << ERROR_STRING << "Directory creation: " << out_seqdir << endl; perror("");
     exit(2);
   }
 
@@ -714,8 +717,7 @@ int main (int argc, char **argv)
   try {
     reads = new OnlineFasta(f_reads, 1, " ");
   } catch (const std::ios_base::failure e) {
-    cout << "Error while reading reads file " << f_reads << ": " << e.what()
-        << endl;
+    cout << ERROR_STRING << "Vidjil cannot open reads file " << f_reads << ": " << e.what() << endl;
     exit(1);
   }
 
