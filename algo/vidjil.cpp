@@ -69,10 +69,10 @@
 #define DEFAULT_J_REP  "./germline/IGHJ.fa"
 
 #define DEFAULT_READS  "./data/Stanford_S22.fasta"
-#define MIN_READS_CLONE 5
+#define DEFAULT_MIN_READS_CLONE 5
 #define DEFAULT_MAX_REPRESENTATIVES 100
-#define MAX_CLONES 20
-#define RATIO_READS_CLONE 0.0
+#define DEFAULT_MAX_CLONES 20
+#define DEFAULT_RATIO_READS_CLONE 0.0
 #define NO_LIMIT "all"
 
 #define COMMAND_WINDOWS "windows"
@@ -82,7 +82,9 @@
  
 enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
-#define OUT_DIR "./out/" 
+#define DEFAULT_OUT_DIR "./out/" 
+
+// Fixed filenames/suffixes
 #define CLONES_FILENAME ".vdj.fa"
 #define CLONE_FILENAME "clone.fa-"
 #define WINDOWS_FILENAME ".windows.fa"
@@ -121,7 +123,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 // display
 #define WIDTH_NB_READS 7
 #define WIDTH_NB_CLONES 3
-#define WIDTH_WINDOW_POS 14+WIDTH_NB_CLONES
+
 
 using namespace std ;
 
@@ -170,13 +172,13 @@ void usage(char *progname)
        << endl
 
        << "Limits to report a clone (or a window)" << endl
-       << "  -r <nb>       minimal number of reads supporting a clone (default: " << MIN_READS_CLONE << ")" << endl
-       << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << RATIO_READS_CLONE << ")" << endl
+       << "  -r <nb>       minimal number of reads supporting a clone (default: " << DEFAULT_MIN_READS_CLONE << ")" << endl
+       << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << DEFAULT_RATIO_READS_CLONE << ")" << endl
        << endl
 
        << "Limits to further analyze some clones" << endl
        << "  -y <nb>       maximal number of clones computed with a representative ('" << NO_LIMIT << "': no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
-       << "  -z <nb>       maximal number of clones to be segmented ('" << NO_LIMIT << "': no limit, do not use) (default: " << MAX_CLONES << ")" << endl
+       << "  -z <nb>       maximal number of clones to be segmented ('" << NO_LIMIT << "': no limit, do not use) (default: " << DEFAULT_MAX_CLONES << ")" << endl
        << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets" << endl
        << endl
 
@@ -199,7 +201,7 @@ void usage(char *progname)
        << "  -u            output unsegmented (in " << UNSEGMENTED_FILENAME << " file) sequences" << endl
        << "                and display detailed k-mer affectation both on segmented and on unsegmented sequences" << endl
        << "Output" << endl
-       << "  -o <dir>      output directory (default: " << OUT_DIR << ")" <<  endl
+       << "  -o <dir>      output directory (default: " << DEFAULT_OUT_DIR << ")" <<  endl
        << "  -b <string>   output basename (by default basename of the input file)" << endl
     
        << "  -a            output all sequences by cluster (" << CLONE_FILENAME << "*), to be used only on small datasets" << endl
@@ -242,7 +244,7 @@ int main (int argc, char **argv)
   string seed = DEFAULT_SEED ;
   string f_basename = "";
 
-  string out_dir = OUT_DIR;
+  string out_dir = DEFAULT_OUT_DIR;
   
   string comp_filename = COMP_FILENAME;
 
@@ -264,9 +266,9 @@ int main (int argc, char **argv)
   int command = CMD_CLONES;
 
   int max_representatives = DEFAULT_MAX_REPRESENTATIVES ;
-  int max_clones = MAX_CLONES ;
-  int min_reads_clone = MIN_READS_CLONE ;
-  float ratio_reads_clone = RATIO_READS_CLONE;
+  int max_clones = DEFAULT_MAX_CLONES ;
+  int min_reads_clone = DEFAULT_MIN_READS_CLONE ;
+  float ratio_reads_clone = DEFAULT_RATIO_READS_CLONE;
   // int average_deletion = 4;     // Average number of deletion in V or J
 
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
