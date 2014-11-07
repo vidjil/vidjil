@@ -570,6 +570,13 @@ int main (int argc, char **argv)
     }
 #endif
 
+
+  if (w < seed_weight(seed))
+    {
+      cout << "* ERROR. Too small -w. The window size should be at least equal to the seed size (" << seed_weight(seed) << ")." << endl;
+      exit(1);
+    }
+
   // Check that out_dir is an existing directory or creates it
   const char *out_cstr = out_dir.c_str();
 
