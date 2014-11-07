@@ -19,6 +19,7 @@
 
 function GermlineList () {
     this.init()
+    this.list = {}
 }
 
 GermlineList.prototype = {
@@ -58,7 +59,24 @@ GermlineList.prototype = {
         for ( var key in list ) {
             this.list[key] = list[key];
         }
-    }
+    },
+    
+    getColor: function (system) {
+        if (typeof this.list[system] != 'undefined' && typeof this.list[system].color != 'undefined' ){
+            return this.list[system].color
+        }else{
+            return color['@default']
+        }
+    },
+    
+    getShortcut: function (system) {
+        if (typeof this.list[system] != 'undefined' && typeof this.list[system].shortcut != 'undefined' ){
+            return this.list[system].shortcut
+        }else{
+            return "x"
+        }
+    },
+    
 }
 
 function Germline (model) {
@@ -83,10 +101,6 @@ Germline.prototype = {
         this.system = system
         name = name.toUpperCase()
         
-        if (typeof this.m.germlineList.list[system] == 'undefined'){
-            return callback
-        }
-        
         this.allele = {}
         this.gene = {}
         
@@ -95,18 +109,21 @@ Germline.prototype = {
         if (type=="D") type2="4"
         if (type=="J") type2="3"
         
-        if (typeof this.m.germlineList.list[system][type2] != 'undefined' ){
-            for (var i=0; i<this.m.germlineList.list[system][type2].length; i++){
-                var filename = this.m.germlineList.list[system][type2][i] 
-                filename = filename.split('/')[filename.split('/').length-1] //remove path
-                filename = filename.split('.')[0] //remove file extension 
-                
-                if (typeof germline[filename] != 'undefined'){
-                    for (var key in germline[filename]){
-                        this.allele[key] = germline[filename][key]
+        if (typeof this.m.germlineList.list[system] != 'undefined'){
+            
+            if (typeof this.m.germlineList.list[system][type2] != 'undefined' ){
+                for (var i=0; i<this.m.germlineList.list[system][type2].length; i++){
+                    var filename = this.m.germlineList.list[system][type2][i] 
+                    filename = filename.split('/')[filename.split('/').length-1] //remove path
+                    filename = filename.split('.')[0] //remove file extension 
+                    
+                    if (typeof germline[filename] != 'undefined'){
+                        for (var key in germline[filename]){
+                            this.allele[key] = germline[filename][key]
+                        }
+                    }else{
+                        myConsole.flash("warning : this browser version doesn't have the "+filename+" germline file", 2);
                     }
-                }else{
-                    myConsole.flash("warning : this browser version doesn't have the "+filename+" germline file", 2);
                 }
             }
         }

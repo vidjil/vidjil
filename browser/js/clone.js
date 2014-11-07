@@ -272,8 +272,8 @@ Clone.prototype = {
             this.color =  this.colorJ;
         }else if (this.m.colorMethod == "N"){
             this.color =  this.colorN;
-        }else if (this.m.colorMethod == "system" && typeof germline.icon[this.germline] != 'undefined') {
-            this.color = germline.icon[this.germline].color
+        }else if (this.m.colorMethod == "system") {
+            this.color = this.m.germlineList.getColor(this.germline)
         }else{
             this.color = color['@default'];
         }
@@ -357,9 +357,9 @@ Clone.prototype = {
         
         html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.sequence + "</td></tr>"
         html += "<tr><td> id </td><td colspan='" + time_length + "'>" + this.id + "</td></tr>"
-        html += "<tr><td> 5 </td><td colspan='" + time_length + "'>" + this.seg["5"] + "</td></tr>"
-        html += "<tr><td> 4 </td><td colspan='" + time_length + "'>" + this.seg["4"] + "</td></tr>"
-        html += "<tr><td> 3 </td><td colspan='" + time_length + "'>" + this.seg["3"] + "</td></tr>"
+        html += "<tr><td> 5 </td><td colspan='" + time_length + "'>" + this.getV() + "</td></tr>"
+        html += "<tr><td> 4 </td><td colspan='" + time_length + "'>" + this.getD() + "</td></tr>"
+        html += "<tr><td> 3 </td><td colspan='" + time_length + "'>" + this.getJ() + "</td></tr>"
         
         
         //other info (clntab)

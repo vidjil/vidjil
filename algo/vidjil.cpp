@@ -69,10 +69,10 @@
 #define DEFAULT_J_REP  "./germline/IGHJ.fa"
 
 #define DEFAULT_READS  "./data/Stanford_S22.fasta"
-#define MIN_READS_CLONE 5
+#define DEFAULT_MIN_READS_CLONE 5
 #define DEFAULT_MAX_REPRESENTATIVES 100
-#define MAX_CLONES 20
-#define RATIO_READS_CLONE 0.0
+#define DEFAULT_MAX_CLONES 20
+#define DEFAULT_RATIO_READS_CLONE 0.0
 #define NO_LIMIT "all"
 
 #define COMMAND_WINDOWS "windows"
@@ -82,7 +82,9 @@
  
 enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
-#define OUT_DIR "./out/" 
+#define DEFAULT_OUT_DIR "./out/" 
+
+// Fixed filenames/suffixes
 #define CLONES_FILENAME ".vdj.fa"
 #define CLONE_FILENAME "clone.fa-"
 #define WINDOWS_FILENAME ".windows.fa"
@@ -107,13 +109,15 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
-#define MIN_COVER_REPRESENTATIVE_RATIO_MIN_READS_CLONE 1.0
 
 #define DEFAULT_EPSILON  0
 #define DEFAULT_MINPTS   10
 
 #define DEFAULT_CLUSTER_COST  Cluster
 #define DEFAULT_SEGMENT_COST   VDJ
+
+// error
+#define ERROR_STRING "[error] "
 
 // warn
 #define WARN_MAX_CLONES 100
@@ -122,7 +126,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 // display
 #define WIDTH_NB_READS 7
 #define WIDTH_NB_CLONES 3
-#define WIDTH_WINDOW_POS 14+WIDTH_NB_CLONES
+
 
 using namespace std ;
 
@@ -171,13 +175,13 @@ void usage(char *progname)
        << endl
 
        << "Limits to report a clone (or a window)" << endl
-       << "  -r <nb>       minimal number of reads supporting a clone (default: " << MIN_READS_CLONE << ")" << endl
-       << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << RATIO_READS_CLONE << ")" << endl
+       << "  -r <nb>       minimal number of reads supporting a clone (default: " << DEFAULT_MIN_READS_CLONE << ")" << endl
+       << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << DEFAULT_RATIO_READS_CLONE << ")" << endl
        << endl
 
        << "Limits to further analyze some clones" << endl
        << "  -y <nb>       maximal number of clones computed with a representative ('" << NO_LIMIT << "': no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
-       << "  -z <nb>       maximal number of clones to be segmented ('" << NO_LIMIT << "': no limit, do not use) (default: " << MAX_CLONES << ")" << endl
+       << "  -z <nb>       maximal number of clones to be segmented ('" << NO_LIMIT << "': no limit, do not use) (default: " << DEFAULT_MAX_CLONES << ")" << endl
        << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets" << endl
        << endl
 
@@ -200,7 +204,7 @@ void usage(char *progname)
        << "  -u            output unsegmented (in " << UNSEGMENTED_FILENAME << " file) sequences" << endl
        << "                and display detailed k-mer affectation both on segmented and on unsegmented sequences" << endl
        << "Output" << endl
-       << "  -o <dir>      output directory (default: " << OUT_DIR << ")" <<  endl
+       << "  -o <dir>      output directory (default: " << DEFAULT_OUT_DIR << ")" <<  endl
        << "  -b <string>   output basename (by default basename of the input file)" << endl
     
        << "  -a            output all sequences by cluster (" << CLONE_FILENAME << "*), to be used only on small datasets" << endl
@@ -243,7 +247,7 @@ int main (int argc, char **argv)
   string seed = DEFAULT_SEED ;
   string f_basename = "";
 
-  string out_dir = OUT_DIR;
+  string out_dir = DEFAULT_OUT_DIR;
   
   string comp_filename = COMP_FILENAME;
 
@@ -265,9 +269,9 @@ int main (int argc, char **argv)
   int command = CMD_CLONES;
 
   int max_representatives = DEFAULT_MAX_REPRESENTATIVES ;
-  int max_clones = MAX_CLONES ;
-  int min_reads_clone = MIN_READS_CLONE ;
-  float ratio_reads_clone = RATIO_READS_CLONE;
+  int max_clones = DEFAULT_MAX_CLONES ;
+  int min_reads_clone = DEFAULT_MIN_READS_CLONE ;
+  float ratio_reads_clone = DEFAULT_RATIO_READS_CLONE;
   // int average_deletion = 4;     // Average number of deletion in V or J
 
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
@@ -497,7 +501,7 @@ int main (int argc, char **argv)
   
   if (options_s_k > 1)
     {
-      cout << "use at most one -s or -k option." << endl ;
+      cout << ERROR_STRING << "Use at most one -s or -k option." << endl ;
       exit(1);
     }
 
@@ -516,12 +520,11 @@ int main (int argc, char **argv)
     }
   else
     {
-      cout << "wrong number of arguments." << endl ;
+      cout << ERROR_STRING << "Wrong number of arguments." << endl ;
       exit(1);
     }
 
-  size_t min_cover_representative = (size_t) (MIN_COVER_REPRESENTATIVE_RATIO_MIN_READS_CLONE * min_reads_clone) ;
-
+  size_t min_cover_representative = (size_t) (min_reads_clone < (int) max_auditionned ? min_reads_clone : max_auditionned) ;
 
   // Default repertoires
 
@@ -555,7 +558,7 @@ int main (int argc, char **argv)
     }
 #else
   {
-    cout << "Vidjil was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
+    cout << ERROR_STRING << "Vidjil was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
     exit(1) ;
   }
 #endif
@@ -565,22 +568,29 @@ int main (int argc, char **argv)
   // Check seed buffer  
   if (seed.size() >= MAX_SEED_SIZE)
     {
-      cout << "Seed size is too large (MAX_SEED_SIZE). Aborting." << endl ;
+      cout << ERROR_STRING << "Seed size is too large (MAX_SEED_SIZE)." << endl ;
       exit(1);
     }
 #endif
+
+
+  if (w < seed_weight(seed))
+    {
+      cout << ERROR_STRING << "Too small -w. The window size should be at least equal to the seed size (" << seed_weight(seed) << ")." << endl;
+      exit(1);
+    }
 
   // Check that out_dir is an existing directory or creates it
   const char *out_cstr = out_dir.c_str();
 
   if (mkpath(out_cstr, 0755) == -1) {
-    perror("Directory creation");
+    cout << ERROR_STRING << "Directory creation: " << out_dir << endl; perror("");
     exit(2);
   }
 
   const char *outseq_cstr = out_seqdir.c_str();
   if (mkpath(outseq_cstr, 0755) == -1) {
-    perror("Directory creation");
+    cout << ERROR_STRING << "Directory creation: " << out_seqdir << endl; perror("");
     exit(2);
   }
 
@@ -698,6 +708,22 @@ int main (int argc, char **argv)
 	}
     }
 
+
+  //////////////////////////////////
+  //$$ Read sequence files
+ 
+  OnlineFasta *reads;
+
+  try {
+    reads = new OnlineFasta(f_reads, 1, " ");
+  } catch (const invalid_argument e) {
+    cout << ERROR_STRING << "Vidjil cannot open reads file " << f_reads << ": " << e.what() << endl;
+    exit(1);
+  }
+
+  out_dir += "/";
+
+
   //////////////////////////////://////////
   //         DISCOVER GERMLINES          //
   /////////////////////////////////////////
@@ -716,19 +742,6 @@ int main (int argc, char **argv)
 	  stats_kmer[key] = 0 ;
 	  stats_max[key] = 0 ;
 	}
-
-
-      // Open read file (copied frow below)
-
-      OnlineFasta *reads;
-
-      try {
-	reads = new OnlineFasta(f_reads, 1, " ");
-      } catch (const std::ios_base::failure e) {
-	cout << "Error while reading reads file " << f_reads << ": " << e.what()
-	     << endl;
-	exit(1);
-      }
       
       // init forbidden for .max()
       set<KmerAffect> forbidden;
@@ -794,23 +807,6 @@ int main (int argc, char **argv)
       exit(0);
     }
 
-
-  //////////////////////////////////
-  //$$ Read sequence files
-
- 
-
-  OnlineFasta *reads;
-
-  try {
-    reads = new OnlineFasta(f_reads, 1, " ");
-  } catch (const std::ios_base::failure e) {
-    cout << "Error while reading reads file " << f_reads << ": " << e.what()
-        << endl;
-    exit(1);
-  }
-
-  out_dir += "/";
 
   ////////////////////////////////////////
   //           CLONE ANALYSIS           //
@@ -1006,7 +1002,6 @@ int main (int argc, char **argv)
     // VirtualReadScore *scorer = new KmerAffectReadScore(*(germline->index));
     int last_num_clone_on_stdout = 0 ;
     int num_clone = 0 ;
-    int clones_without_representative = 0 ;
 
     ofstream out_edges((out_dir+f_basename + EDGES_FILENAME).c_str());
     int nb_edges = 0 ;
@@ -1087,21 +1082,11 @@ int main (int argc, char **argv)
 	  cout << auditioned.size() << " auditioned sequences, avg length " << total_length / auditioned.size() << endl ;
 	}
 
-        Sequence representative = NULL_SEQUENCE ;
-
-	  representative 
+        Sequence representative
           = windowsStorage->getRepresentative(it->first, seed, 
                                              min_cover_representative,
                                              ratio_representative,
                                              max_auditionned);
-
-        if (representative == NULL_SEQUENCE) {
-	  clones_without_representative++ ;
-	  if (verbose)
-	    cout << "# (no representative sequence with current parameters)" ;
-
-        } else {
-	//$$ There is one representative
 
 	  // Store the representative and its label
           representatives.push_back(representative);
@@ -1162,9 +1147,6 @@ int main (int argc, char **argv)
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
 
-	} // end if (there is a representative)
-
-
 
 	if (output_sequences_by_cluster) // -a option, output all sequences
 	  {
@@ -1192,13 +1174,6 @@ int main (int argc, char **argv)
     cout << "#### end of clones" << endl; 
     cout << endl;
 
-    if (clones_without_representative > 0)
-      {
-	cout << clones_without_representative << " clones without representatives" ;
-	cout << " (requiring " << min_cover_representative << "/" << ratio_representative << " supporting reads)" << endl ;
-	cout << endl ;
-      }
-  
     //$$ Compare representatives of all clones
 
     if (nb_edges)
@@ -1336,6 +1311,8 @@ int main (int argc, char **argv)
     delete json_samples;
     delete json_reads;
     delete json_reads_germlineList;
+    delete json_germlines;
+    delete json_custom_germline;
 
     delete multigermline ;
     delete windowsStorage;
@@ -1351,10 +1328,6 @@ int main (int argc, char **argv)
     ////////////////////////////////////////
     //       V(D)J SEGMENTATION           //
     ////////////////////////////////////////
-
-    // déja déclaré ?
-    //reads = OnlineFasta(f_reads, 1, " ");
-    
 
     while (reads->hasNext()) 
       {

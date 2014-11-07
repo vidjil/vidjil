@@ -39,31 +39,34 @@ Fasta::Fasta(int extract_field, string extract_separator)
 }
 
 Fasta::Fasta(const string &input, 
-	     int extract_field, string extract_separator) 
+	     int extract_field, string extract_separator,
+             bool verbose) 
 {
   init(extract_field, extract_separator);
 
   if (!input.size()) // Do not open empty filenames (D germline if not segmentD)
     return ;
 
-  add(input);  
+  add(input, verbose);  
 }
 
-void Fasta::add(istream &in) {
+void Fasta::add(istream &in, bool verbose) {
   in >> *this;
 
+  if (verbose)
   cout << "\t" << setw(6) << total_size << " bp in " << setw(3) << size() << " sequences" << endl ;
 }
 
-void Fasta::add(const string &filename) {
+void Fasta::add(const string &filename, bool verbose) {
   ifstream is(filename.c_str());
   if (is.fail())
     {
       throw invalid_argument(" !! Error in opening file: "+ filename);
     }
 
+  if (verbose)
   cout << " <== " << filename ;
-  add(is);
+  add(is, verbose);
   is.close();
 }
 

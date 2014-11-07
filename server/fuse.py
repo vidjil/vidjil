@@ -145,14 +145,16 @@ class Window:
         #concat data, if there is some missing data we use an empty buffer t1/t2 
         #with the same size as the number of misssing data
         for key in self.d :
-            if key not in myList :
+            if key not in myList and type(self.d[key]) is list:
                 obj.d[key] = self.d[key]
                 if key not in other.d :
                     obj.d[key] += t2
+            else :
+                obj.d[key] = self.d[key]
         
         for key in other.d :
-            if key not in myList :
-                if key not in obj.d :
+            if key not in myList and type(other.d[key]) is list:
+                if key not in obj.d:
                     obj.d[key] = t1 + other.d[key]
                 else :
                     obj.d[key] += other.d[key]
@@ -177,7 +179,7 @@ class Samples:
 
     def __init__(self):
         self.d={}
-        self.d["number"] = "1"
+        self.d["number"] = 1
         self.d["original_names"] = [""]
 
     def __add__(self, other):
@@ -281,10 +283,11 @@ class ListWindows:
     def __init__(self):
         '''init ListWindows with the minimum data required'''
         self.d={}
-        self.d["samples"] = [Samples()]
-        self.d["reads"] = ""
+        self.d["samples"] = Samples()
+        self.d["reads"] = Reads()
         self.d["clones"] = []
         self.d["clusters"] = []
+        self.d["germlines"] = {}
         
     def __str__(self):
         return "<ListWindows: %s %d>" % ( self.d["reads"].d["segmented"], len(self) )
@@ -311,7 +314,7 @@ class ListWindows:
     ### check vidjil_json_version
     def check_version(self, filepath):
         if "vidjil_json_version" in self.d:
-            if self.d["vidjil_json_version"][0] >= VIDJIL_JSON_VERSION:
+            if self.d["vidjil_json_version"] >= VIDJIL_JSON_VERSION:
                 return
         raise IOError ("File '%s' is too old -- please regenerate it with a newer version of Vidjil" % filepath)
         
@@ -349,20 +352,18 @@ class ListWindows:
         extension = file_path.split('.')[-1]
         
         print "<==", file_path, "\t",
-        '''
+        
         try:
-        '''
-        with open(file_path, "r") as file:
-            tmp = json.load(file, object_hook=self.toPython)     
-            tmp.d['reads'] = tmp.d['reads'][0]
-            tmp.d['samples'] = tmp.d['samples'][0]
-            self.d=tmp.d
-            self.check_version(file_path)
-        '''
+        
+            with open(file_path, "r") as file:
+                tmp = json.load(file, object_hook=self.toPython)     
+                self.d=tmp.d
+                self.check_version(file_path)
+        
         except Exception: 
             self.load_clntab(file_path)
         pass
-        '''
+        
         if pipeline: 
             # renaming, private pipeline
             f = '/'.join(file_path.split('/')[2:-1])
@@ -408,14 +409,15 @@ class ListWindows:
         concatenate_with_padding(obj.d, 
                                  self.d, l1,
                                  other.d, l2,
-                                 ["clones", "links"])
+                                 ["clones", "links", "germlines"])
         
         obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
         obj.d["timestamp"] = self.d["timestamp"]
         obj.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
-
+        obj.d["germlines"] = dict(self.d["germlines"].items() + other.d["germlines"].items())
+        
         return obj
         
     ###
@@ -495,7 +497,7 @@ class ListWindows:
         '''Parser for .clntab file'''
 
         self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
-        self.d["samples"][0].d["original_names"] = [file_path]
+        self.d["samples"].d["original_names"] = [file_path]
         
         listw = []
         listc = []
@@ -511,32 +513,35 @@ class ListWindows:
                     tab[header_map[index]] = data
                         
                 w=Window(1)
+                w.d["seg"] = {}
+                
                 #w.window=tab["sequence.seq id"] #use sequence id as window for .clntab data
                 w.d["id"]=tab["sequence.raw nt seq"] #use sequence as window for .clntab data
                 s = int(tab["sequence.size"])
                 total_size += s
-                w.d["reads"]=[ s ]
+                w.d["reads"] = [ s ]
 
                 w.d["sequence"] = tab["sequence.raw nt seq"]
-                w.d["V"]=tab["sequence.V-GENE and allele"].split('=')
+                w.d["seg"]["5"]=tab["sequence.V-GENE and allele"].split('=')[0]
                 if (tab["sequence.D-GENE and allele"] != "") :
-                    w.d["D"]=tab["sequence.D-GENE and allele"].split('=')
-                w.d["J"]=tab["sequence.J-GENE and allele"].split('=')
+                    w.d["seg"]["4"]=tab["sequence.D-GENE and allele"].split('=')[0]
+                w.d["seg"]["3"]=tab["sequence.J-GENE and allele"].split('=')[0]
 
                 # use sequence.JUNCTION to colorize output (this is not exactly V/J !)
                 junction = tab.get("sequence.JUNCTION.raw nt seq")
                 position = w.d["sequence"].find(junction)
+                
                 if position >= 0:
-                    w.d["Jstart"] = position + len(junction)
-                    w.d["Vend"] = position 
-                    w.d["Nlength"] = len(junction)
+                    w.d["seg"]["3start"] = position + len(junction)
+                    w.d["seg"]["5end"] = position 
                 else:
-                    w.d["Jstart"] = 0
-                    w.d["Vend"] = len(w.d["sequence"])
-                    w.d["Nlength"] = 0
-                w.d["name"]=w.d["V"][0] + " -x/y/-z " + w.d["J"][0]
-                w.d["Dend"]=0
-                w.d["Dstart"]=0
+                    w.d["seg"]["3start"] = 0
+                    w.d["seg"]["5end"] = len(w.d["sequence"])
+                w.d["name"]=w.d["seg"]["5"] + " -x/y/-z " + w.d["seg"]["3"]
+                w.d["seg"]["3end"]=0
+                w.d["seg"]["5start"]=0
+                w.d["seg"]["4end"]=0
+                w.d["seg"]["4start"]=0
                     
                 listw.append((w , w.d["reads"][0]))
 
@@ -559,7 +564,8 @@ class ListWindows:
             listw[index][0].d["top"]=index+1
             self.d["clones"].append(listw[index][0])
         
-        self.d["reads_segmented"] = [total_size]
+        self.d["reads"].d["segmented"] = [total_size]
+        self.d["reads"].d["total"] = [total_size]
 
         
     def toJson(self, obj):
@@ -585,10 +591,7 @@ class ListWindows:
         if "samples" in obj_dict:
             obj = ListWindows()
             for key in obj_dict :
-                if isinstance(obj_dict[key], list):
-                    obj.d[key]=obj_dict[key]
-                else :
-                    obj.d[key]=[obj_dict[key]]
+                obj.d[key]=obj_dict[key]
             return obj
 
         if "id" in obj_dict:
@@ -607,7 +610,7 @@ class ListWindows:
             obj = Samples()
             for key in obj_dict :
                 obj.d[key]=obj_dict[key]
-            return [obj]
+            return obj
             
         res = {}
         for key in obj_dict :
