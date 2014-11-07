@@ -42,7 +42,7 @@ PDF.prototype = {
         if (this.list.length == 0) {
             var flag = 5;
             for (var i = 0; i < this.m.n_clones; i++) {
-                if (this.m.clusters[i].length != 0 && flag != 0) {
+                if (this.m.clusters[i].length != 0 && flag != 0 && this.m.clone(i).isActive()) {
                     this.list.push(i);
                     flag--;
                 }
