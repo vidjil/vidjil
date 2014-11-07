@@ -1,7 +1,7 @@
-!LAUNCH: ../../vidjil -G ../../germline/IGH ../../data/clones_simul.fa > out-fa ;  ../../vidjil -G ../../germline/IGH -b clones_simul ../../data/clones_simul.fa.gz > out-fa-gz ; diff -s -I '\#' -I 'index' -I 'data/clones_simul' out-fa out-fa-gz ; wc -l out-fa-gz
+!LAUNCH: ../../vidjil -G ../../germline/IGH ../../data/clones_simul.fa > out-fa ;  ../../vidjil -G ../../germline/IGH -b clones_simul ../../data/clones_simul.fa.gz > out-fa-gz ; diff -s -I '\#' -I 'index' -I 'data/clones_simul' out-fa out-fa-gz ; echo 'Diff: '\\$?; wc -l out-fa-gz
 
 $ Identical output
-1: out-fa .* out-fa-gz .* identical
+1:Diff: 0
 
 $ Testing out-fa-gz has approximately 69 lines
 1: [67]. out-fa-gz
