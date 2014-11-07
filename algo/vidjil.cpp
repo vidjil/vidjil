@@ -716,7 +716,7 @@ int main (int argc, char **argv)
 
   try {
     reads = new OnlineFasta(f_reads, 1, " ");
-  } catch (const std::ios_base::failure e) {
+  } catch (const invalid_argument e) {
     cout << ERROR_STRING << "Vidjil cannot open reads file " << f_reads << ": " << e.what() << endl;
     exit(1);
   }
