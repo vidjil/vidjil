@@ -703,6 +703,23 @@ int main (int argc, char **argv)
 	}
     }
 
+
+  //////////////////////////////////
+  //$$ Read sequence files
+ 
+  OnlineFasta *reads;
+
+  try {
+    reads = new OnlineFasta(f_reads, 1, " ");
+  } catch (const std::ios_base::failure e) {
+    cout << "Error while reading reads file " << f_reads << ": " << e.what()
+        << endl;
+    exit(1);
+  }
+
+  out_dir += "/";
+
+
   //////////////////////////////://////////
   //         DISCOVER GERMLINES          //
   /////////////////////////////////////////
@@ -721,19 +738,6 @@ int main (int argc, char **argv)
 	  stats_kmer[key] = 0 ;
 	  stats_max[key] = 0 ;
 	}
-
-
-      // Open read file (copied frow below)
-
-      OnlineFasta *reads;
-
-      try {
-	reads = new OnlineFasta(f_reads, 1, " ");
-      } catch (const std::ios_base::failure e) {
-	cout << "Error while reading reads file " << f_reads << ": " << e.what()
-	     << endl;
-	exit(1);
-      }
       
       // init forbidden for .max()
       set<KmerAffect> forbidden;
@@ -799,23 +803,6 @@ int main (int argc, char **argv)
       exit(0);
     }
 
-
-  //////////////////////////////////
-  //$$ Read sequence files
-
- 
-
-  OnlineFasta *reads;
-
-  try {
-    reads = new OnlineFasta(f_reads, 1, " ");
-  } catch (const std::ios_base::failure e) {
-    cout << "Error while reading reads file " << f_reads << ": " << e.what()
-        << endl;
-    exit(1);
-  }
-
-  out_dir += "/";
 
   ////////////////////////////////////////
   //           CLONE ANALYSIS           //
@@ -1337,10 +1324,6 @@ int main (int argc, char **argv)
     ////////////////////////////////////////
     //       V(D)J SEGMENTATION           //
     ////////////////////////////////////////
-
-    // déja déclaré ?
-    //reads = OnlineFasta(f_reads, 1, " ");
-    
 
     while (reads->hasNext()) 
       {
