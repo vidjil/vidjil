@@ -630,6 +630,7 @@ Builder.prototype = {
             var checkbox=document.createElement("input");
                 checkbox.type="checkbox";
                 checkbox.id = "checkbox_system_"+key
+                checkbox.className = "hiddenCheckBox"
                 checkbox.appendChild(document.createTextNode(key))
                 if (this.m.system_selected.indexOf(key) != -1)
                     checkbox.checked=true
@@ -642,9 +643,14 @@ Builder.prototype = {
                 
             var span = document.createElement('span');
             span.className = "systemBoxNameMenu";
+            if (this.m.system_selected.indexOf(key) == -1)
+            span.className = "systemBoxNameMenu inactive";
             span.appendChild(span_system)
             span.appendChild(checkbox)
             span.appendChild(document.createTextNode(key))
+            span.onclick = function () {
+                this.firstChild.nextSibling.click();
+            }
             
             span2.appendChild(span)
         }

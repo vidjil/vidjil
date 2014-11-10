@@ -324,6 +324,8 @@ line {
   font-weight : bold;
   height:0px;
   position:relative;
+  -webkit-transition: left 0.5s;
+  transition: left 0.5s;
 }
 
 .sp_system_label:hover{
@@ -492,10 +494,14 @@ line {
 
 .systemBoxNameMenu {
     display: inline-block;
-    min-width: 85px;
+    min-width: 70px;
     height: 20px;
+    cursor : pointer;
 }	      
 
+.hiddenCheckBox {
+    display : none;
+}
 
 .clusterBox{
   width: @width_clusterBox;
@@ -704,7 +710,7 @@ span .substitution{
   text-align:left;
 }
 
-.button:hover,.button_right:hover, .buttonSelector:hover, .button2:hover{
+.systemBoxNameMenu:hover, .button:hover,.button_right:hover, .buttonSelector:hover, .button2:hover{
   background : @border;
   color : @select;
 }
@@ -1261,6 +1267,7 @@ span.alert {  color: red;   }
     display : block;
     bottom : 0px;
     right : 0px;
+    z-index: 100;
 }
 
 #log_container {

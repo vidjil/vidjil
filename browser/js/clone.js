@@ -264,11 +264,11 @@ Clone.prototype = {
             this.color =  tagColor[this.tag];
         }else if (this.m.colorMethod == "dbscan"){
             this.color =  this.colorDBSCAN;
-        }else if (this.m.colorMethod == "V" && this.seg["5"] !== undefined){
+        }else if (this.m.colorMethod == "V" && this.getV() != "undefined V"){
             this.color =  this.colorV;
-        }else if (this.m.colorMethod == "D" && this.seg["4"] !== undefined){
+        }else if (this.m.colorMethod == "D" && this.getD() != "undefined D"){
             this.color =  this.colorD;
-        }else if (this.m.colorMethod == "J" && this.seg["3"] !== undefined){
+        }else if (this.m.colorMethod == "J" && this.getJ() != "undefined J"){
             this.color =  this.colorJ;
         }else if (this.m.colorMethod == "N"){
             this.color =  this.colorN;

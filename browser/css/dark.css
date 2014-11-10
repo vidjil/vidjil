@@ -265,6 +265,8 @@ line {
   font-weight: bold;
   height: 0px;
   position: relative;
+  -webkit-transition: left 0.5s;
+  transition: left 0.5s;
 }
 .sp_system_label:hover {
   color: #fdf6e3;
@@ -397,6 +399,10 @@ line {
   display: inline-block;
   min-width: 85px;
   height: 20px;
+  cursor: pointer;
+}
+.hiddenCheckBox {
+  display: none;
 }
 .clusterBox {
   width: 16px;
@@ -578,6 +584,7 @@ span .substitution {
   display: block;
   text-align: left;
 }
+.systemBoxNameMenu:hover,
 .button:hover,
 .button_right:hover,
 .buttonSelector:hover,
