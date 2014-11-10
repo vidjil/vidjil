@@ -626,12 +626,6 @@ Builder.prototype = {
         var keys = 0 ;
 
         for (var key in this.m.reads.germline) {
-            
-            if (key == "IGH" && keys > 0) {
-                span2.appendChild(document.createElement("br"));
-            }
-
-            keys += 1 ;
 
             var checkbox=document.createElement("input");
                 checkbox.type="checkbox";

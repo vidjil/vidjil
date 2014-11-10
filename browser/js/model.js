@@ -938,6 +938,8 @@ Model.prototype = {
                     result = this.samples.names[timeID]
                 }else{
                     result = this.samples.original_names[timeID]
+                    result = result.split('/')[result.split('/').length-1]
+                    result = result.split('.')[0]
                 }
                 break;
             case "sampling_date":
