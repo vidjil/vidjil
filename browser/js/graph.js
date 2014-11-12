@@ -112,7 +112,6 @@ Graph.prototype = {
                     .hide("fast")
             })
 
-
         this.axis_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", "axis_container")
@@ -144,9 +143,8 @@ Graph.prototype = {
         this.data_data = [];
         var g_min, g_max;
         
-        for (var key in this.m.data) {
-            //if (this.m.data[key].isActive){
-            if(true){
+        for (var key in this.m.data_info) {
+            if (this.m.data_info[key].isActive){
                 var max = this.m.data[key][0]
                 var min = this.m.data[key][0];
                 var tab = [];
@@ -161,7 +159,8 @@ Graph.prototype = {
                 
                 this.data_data.push ({
                     name: key,
-                    tab:tab
+                    tab:tab,
+                    color:this.m.data_info[key].color
                 });
                 
                 if (typeof g_min == 'undefined' || g_min>min) g_min=min 
@@ -181,17 +180,11 @@ Graph.prototype = {
                     .range([0, 1]);
             }
         }
-        
-        this.g_data = this.data_container.selectAll("path")
-            .data(this.data_data);
-        this.g_data.enter()
-            .append("path")
-            .style("fill", "none")
-            .attr("id", function (d) {
-                return "data_g_" + d.name;
-            })
-        this.g_data.exit()
-            .remove();
+    },
+    
+    updateData : function () {
+        this.initData();
+        this.drawData()
     },
     
     initClones : function () {
@@ -940,10 +933,13 @@ Graph.prototype = {
     drawData: function (speed) {
         var self = this;
 
-        this.g_data
+        this.g_data = this.data_container.selectAll("path")
+            .data(this.data_data);
+        this.g_data.enter()
+            .append("path")
             .style("fill", "none")
             .style("stroke", function (d) {
-                return "black"
+                return d.color
             })
             .transition()
             .duration(speed)
@@ -968,6 +964,8 @@ Graph.prototype = {
             .attr("id", function (d) {
                 return "data_g_" + d.name;
             })
+        this.g_data.exit()
+            .remove();
     },
     
 

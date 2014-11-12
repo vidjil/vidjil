@@ -79,6 +79,7 @@ List.prototype = {
     },
     
     build_data_list: function () {
+        var self=this;
         this.index_data = {}
         
         var div_parent = document.getElementById(this.id_data);
@@ -86,11 +87,23 @@ List.prototype = {
         
         var div_list_data = document.createElement('div');
         div_list_data.id = "list_data";
-        for (var key in this.m.data) {
+        for (var key in this.m.data_info) {
             
             var div = document.createElement('div');
             div.className = "data";
             div.id = "data_"+key;
+            div.style.color = this.m.data_info[key].color
+            if (!this.m.data_info[key].isActive) div.style.opacity = 0.5
+            div.onclick = function () {
+                var k = this.id.replace("data_", "")
+                if (self.m.data_info[k].isActive){
+                    self.m.data_info[k].isActive = false
+                }else{
+                    self.m.data_info[k].isActive = true
+                }
+                self.build_data_list()
+                graph.updateData();
+            }
             
             var name = document.createElement('span');
             name.appendChild(document.createTextNode(key))

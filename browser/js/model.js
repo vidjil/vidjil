@@ -521,8 +521,20 @@ Model.prototype = {
         }
         
         this.applyAnalysis(this.analysis);
-        
+        this.initData();
     }, //end initClones
+    
+    initData: function () {
+        this.data_info = {}
+        var i=1;
+        for (key in this.data){
+            this.data_info[key] = {
+                "color" : tagColor[i],
+                "isActive" : false
+            }
+            i++
+        }
+    },
     
     computeColor: function(){
         //      COLOR_V
