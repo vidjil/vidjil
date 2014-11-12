@@ -1508,27 +1508,32 @@ ScatterPlot.prototype = {
   system_label_update: function(data) {
       self = this;
 
-      //LEGENDE
-      leg = this.label_container.selectAll(".sp_system_label")
-      .data(data);
-      leg.enter()
-      .append("div");
-      leg.exit()
-      .remove();
-      leg
-      .style("left", function (d) {
-          return ""+(d.x*self.resizeW+self.marge_left)+"px"
-      })
-      .style("top", function (d) {
-          return ""+(d.y*self.resizeH+self.marge_top)+"px"
-      })
-      .html(function (d) {
-          return "<div class='sp_system'>"+builder.build_systemBox(d.text).outerHTML+" "+d.text+"</div>"
-      })
-      .on("click", function (d) {
-        self.m.changeGermline(d.text)
-      })
-      .attr("class", "sp_system_label")
+      if (data.length <=1){
+            this.label_container.style("display", "none");
+      }else{
+            this.label_container.style("display", "");
+            //LEGENDE
+            leg = this.label_container.selectAll(".sp_system_label")
+            .data(data);
+            leg.enter()
+            .append("div");
+            leg.exit()
+            .remove();
+            leg
+            .style("left", function (d) {
+                return ""+(d.x*self.resizeW+self.marge_left)+"px"
+            })
+            .style("top", function (d) {
+                return ""+(d.y*self.resizeH+self.marge_top)+"px"
+            })
+            .html(function (d) {
+                return "<div class='sp_system'>"+builder.build_systemBox(d.text).outerHTML+" "+d.text+"</div>"
+            })
+            .on("click", function (d) {
+                self.m.changeGermline(d.text)
+            })
+            .attr("class", "sp_system_label")
+      }
   },
 
   /* Fonction permettant de changer la méthode de répartition du ScatterPlot selon les X et Y (non pas par bloc)
