@@ -57,9 +57,9 @@ should_gcovr: should_coverage
 ### Upload to coveralls.io
 
 unit_coveralls:
-	coveralls --exclude release --exclude algo/tests --exclude algo/tools --exclude tests --exclude tools --gcov-options '\-lp'
+	coveralls --exclude release --exclude algo/lib --exclude algo/tests --exclude algo/tools --exclude tests --exclude tools --exclude lib --gcov-options '\-lp'
 should_coveralls:
-	coveralls --exclude release --exclude algo/tests --exclude algo/tools --exclude tests --exclude tools --gcov-options '\-lp' -r algo
+	coveralls --exclude release --exclude algo/lib --exclude algo/tests --exclude algo/tools --exclude tests --exclude tools --exclude lib --gcov-options '\-lp' -r algo
 
 data germline: %:
 	make -C $@

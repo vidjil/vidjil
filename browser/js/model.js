@@ -521,8 +521,20 @@ Model.prototype = {
         }
         
         this.applyAnalysis(this.analysis);
-        
+        this.initData();
     }, //end initClones
+    
+    initData: function () {
+        this.data_info = {}
+        var i=1;
+        for (key in this.data){
+            this.data_info[key] = {
+                "color" : tagColor[i],
+                "isActive" : false
+            }
+            i++
+        }
+    },
     
     computeColor: function(){
         //      COLOR_V
@@ -945,6 +957,8 @@ Model.prototype = {
                     result = this.samples.names[timeID]
                 }else{
                     result = this.samples.original_names[timeID]
+                    result = result.split('/')[result.split('/').length-1]
+                    result = result.split('.')[0]
                 }
                 break;
             case "sampling_date":

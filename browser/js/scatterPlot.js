@@ -814,15 +814,13 @@ ScatterPlot.prototype = {
   
     buildSystemGrid: function () {
         this.systemGrid = {"label" : []}
-        var n = this.m.system_selected.length-1
+        var n = this.m.system_selected.length
         var h = this.resizeH
         var w = this.resizeW*0.2
         
         //compute hidden position for unactivated germline (to avoid firework effect)
         for (var key in this.m.reads.germline){
-            if (key != this.m.germlineV.system){
-                this.systemGrid[key] = { 'x' : 0.99 , 'y' : 0.99}
-            }
+            this.systemGrid[key] = { 'x' : 0.99 , 'y' : 0.99}
         }
         
         //compute position for selected germline
@@ -830,11 +828,13 @@ ScatterPlot.prototype = {
         for (var key in this.m.system_selected){
             var system = this.m.system_selected[key]
             if (system != this.m.germlineV.system){
-                this.systemGrid[system].x = 0.9
-                this.systemGrid[system].y = ((i*2)+1)/(n*2)
-                this.systemGrid["label"].push( {"text": system, "x" : 0.9, "y" : (((i-0.4)*2)+1)/(n*2)  })
-                i++
+                this.systemGrid["label"].push( {"text": system, "x" : 0.81, "y" : ((i*2)+1)/(n*2)  })
+            }else{
+                this.systemGrid["label"].push( {"text": system, "x" : 0.80, "y" : ((i*2)+1)/(n*2)  })
             }
+            this.systemGrid[system].x = 0.92
+            this.systemGrid[system].y = ((i*2)+1)/(n*2)
+            i++
         }
         
 
@@ -1508,27 +1508,32 @@ ScatterPlot.prototype = {
   system_label_update: function(data) {
       self = this;
 
-      //LEGENDE
-      leg = this.label_container.selectAll("div")
-      .data(data);
-      leg.enter()
-      .append("div");
-      leg.exit()
-      .remove();
-      leg
-      .style("left", function (d) {
-          return ""+(d.x*self.resizeW+self.marge_left)+"px"
-      })
-      .style("top", function (d) {
-          return ""+(d.y*self.resizeH+self.marge_top)+"px"
-      })
-      .html(function (d) {
-          return "<div class='sp_system'>"+builder.build_systemBox(d.text).outerHTML+" "+d.text+"</div>"
-      })
-      .on("click", function (d) {
-        self.m.changeGermline(d.text)
-      })
-      .attr("class", "sp_system_label")
+      if (data.length <=1){
+            this.label_container.style("display", "none");
+      }else{
+            this.label_container.style("display", "");
+            //LEGENDE
+            leg = this.label_container.selectAll(".sp_system_label")
+            .data(data);
+            leg.enter()
+            .append("div");
+            leg.exit()
+            .remove();
+            leg
+            .style("left", function (d) {
+                return ""+(d.x*self.resizeW+self.marge_left)+"px"
+            })
+            .style("top", function (d) {
+                return ""+(d.y*self.resizeH+self.marge_top)+"px"
+            })
+            .html(function (d) {
+                return "<div class='sp_system'>"+builder.build_systemBox(d.text).outerHTML+" "+d.text+"</div>"
+            })
+            .on("click", function (d) {
+                self.m.changeGermline(d.text)
+            })
+            .attr("class", "sp_system_label")
+      }
   },
 
   /* Fonction permettant de changer la méthode de répartition du ScatterPlot selon les X et Y (non pas par bloc)

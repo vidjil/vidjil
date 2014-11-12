@@ -85,6 +85,7 @@ ul {
   -moz-user-select: auto;
   -ms-user-select: auto;
   user-select: auto;
+  display: table;
 }
 #visu,
 #visu2 {
@@ -100,12 +101,17 @@ line {
   stroke-width: 0.5;
 }
 /* left-container - info */
+#info-row {
+  height: 200px;
+  display: table-row;
+}
 #info {
   font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
   font-size: 13px;
-  height: 200px;
-  padding: 3px;
+  height: 100%
+  padding:3px;
   background: #000000;
+  display: table-cell;
 }
 .info_line {
   border-bottom: solid;
@@ -119,6 +125,7 @@ line {
 }
 .info_row_content {
   display: inline-block;
+  width: 345px;
 }
 #info_point {
   margin-top: 15px;
@@ -136,6 +143,15 @@ line {
 .graph_line {
   stroke-width: 2.5px;
   cursor: pointer;
+}
+.graph_data {
+  fill: none;
+  stroke-width: 8px;
+  opacity: 0.3;
+  cursor: pointer;
+}
+.graph_data:hover {
+  opacity: 0.8;
 }
 .graph_inactive {
   stroke-width: 1.5px;
@@ -257,12 +273,15 @@ line {
 }
 .sp_system {
   position: absolute;
+  top: -0.5em;
 }
 .sp_system_label {
   color: #839496;
   font-weight: bold;
   height: 0px;
   position: relative;
+  -webkit-transition: left 0.5s;
+  transition: left 0.5s;
 }
 .sp_system_label:hover {
   color: #fdf6e3;
@@ -293,26 +312,37 @@ line {
 .sp_subline_hidden {
   stroke-width: 0px;
 }
-/*style list element*/
+/*style list/data element*/
 /*Metric*/
 .list:hover,
 .tagElem:hover,
 .data:hover {
   background: #333333;
 }
-#list {
-  height: -moz-calc(100% - 240px);
-  height: -webkit-calc(100% - 240px);
-  height: calc(100% - 240px);
+#list-row,
+#data-row {
+  display: table-row;
+}
+#list,
+#data {
+  display: table-cell;
+}
+#data-row {
+  height: 0px;
 }
 #list_clones {
   overflow-y: scroll;
   overflow-x: hidden;
-  height: 100%;
+  height: calc(100% - 30px);
+  /*100% - list_menu height */
   padding: 2px;
 }
 #list_data {
   display: block;
+  border-top: solid;
+  border-width: 4px;
+  border-color: #333333;
+  overflow-y: scroll;
 }
 .data_name {
   margin-left: 40px;
@@ -321,7 +351,7 @@ line {
   display: inline-block;
 }
 .list {
-  width: 475px;
+  width: 445px;
   display: block;
   padding: 2px;
 }
@@ -393,8 +423,12 @@ line {
 }
 .systemBoxNameMenu {
   display: inline-block;
-  min-width: 89px;
+  min-width: 70px;
   height: 20px;
+  cursor: pointer;
+}
+.hiddenCheckBox {
+  display: none;
 }
 .clusterBox {
   width: 16px;
@@ -420,7 +454,7 @@ line {
 }
 /*style segmenter element*/
 .list_select {
-  width: 475px;
+  width: 445px;
   display: block;
   border: solid;
   border-width: 2px;
@@ -576,6 +610,7 @@ span .substitution {
   display: block;
   text-align: left;
 }
+.systemBoxNameMenu:hover,
 .button:hover,
 .button_right:hover,
 .buttonSelector:hover,
@@ -1098,7 +1133,7 @@ span.alert {
   display: block;
   bottom: 0px;
   right: 0px;
-  z-index: 15;
+  z-index: 100;
 }
 #log_container {
   height: 500px;

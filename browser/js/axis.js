@@ -90,7 +90,7 @@ Axis.prototype = {
         
         //labels
         for (var key in gene_list){
-            self.labels.push(self.label("line", ((gene_list[key].rank+0.5)/(total_gene+1)), key, ""));
+            self.labels.push(self.label("line", ((gene_list[key].rank+0.5)/(total_gene+1)), key, this.germline.gene[key].color));
         }
         
         if (displayAllele){
@@ -100,7 +100,7 @@ Axis.prototype = {
                 var total_allele = gene_list[gene].n
                 var pos = ((gene_list[gene].rank+0.5)/(total_gene+1))
                 pos += (1/(total_gene+1)) * ((allele_list[key].rank+0.5)/total_allele) - (0.5/(total_gene+1))
-                self.labels.push(self.label("subline", pos, "*"+allele, ""));
+                self.labels.push(self.label("subline", pos, "*"+allele, this.germline.allele[key].color));
             }
         }
         

@@ -209,7 +209,7 @@ PDF.prototype = {
             polyline.setAttribute("stroke", color);
             polyline.setAttribute("style", "stroke-width: "+opt.strokeSize+"px");
 
-            elem.querySelectorAll('[id="polyline_container"]')[0]
+            elem.querySelectorAll('[id="clones_container"]')[0]
                 .appendChild(polyline);
         }
 

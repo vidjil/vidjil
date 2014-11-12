@@ -23,17 +23,17 @@ PARANOID= -Wall -Weffc++ -pedantic  \
     -Wunused-function  -Wunused-label  -Wunused-parameter \
     -Wunused-value  -Wunused-variable  -Wvariadic-macros \
     -Wvolatile-register-var  -Wwrite-strings
-LDFLAGS=-lm
+LDFLAGS=-lm -lz
 EXEC=vidjil
 MAINCORE=$(wildcard *.cpp)
-LIBCORE=core/vidjil.a
+LIBCORE=core/vidjil.a lib/lib.a
 
 BINDIR=..
 CGIDIR=../browser/cgi
 
 CREATE_VERSION_GIT_H := $(shell test -x ./create-git-version-h.sh && ./create-git-version-h.sh)
 
-.PHONY: all core clean forcedep
+.PHONY: all core lib clean forcedep
 
 v: vidjil align.cgi
 
@@ -80,10 +80,12 @@ debug:
 
 $(EXEC): %: %.o 
 	make -C core OPTIM="$(OPTIM)"
+	make -C lib OPTIM="$(OPTIM)"
 	$(CC) -o $(BINDIR)/$@ $^ $(LIBCORE) $(LDFLAGS) $(CXXFLAGS)
 
 clean:
 	make -C core $@
+	make -C lib $@
 	rm -f *.o *.gcda *.gcno *.gcov cgi/*.o
 	cd $(BINDIR) ; rm -f $(EXEC)
 	make -C tests $@
@@ -91,6 +93,7 @@ clean:
 forcedep:
 	g++ -M $(MAINCORE) > dep.mk
 	make -C core forcedep
+	make -C lib forcedep
 
 DEP=$(wildcard dep.mk)
 

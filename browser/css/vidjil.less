@@ -102,6 +102,7 @@ ul{
   -moz-user-select: auto;
   -ms-user-select: auto;
   user-select: auto;
+  display : table;
 }
 
 #visu, #visu2 {
@@ -121,12 +122,18 @@ line {
 
                         /* left-container - info */
 
+#info-row{
+    height : 200px;
+    display : table-row;
+}
+
 #info{
   font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
   font-size: 13px;
-  height :200px;
+  height:100%
   padding:3px;
   background : @background;
+  display : table-cell;
 }
 
 .info_line {
@@ -143,6 +150,7 @@ line {
 
 .info_row_content {
     display: inline-block;
+    width : 345px;
 }
 
 #info_point {
@@ -167,6 +175,17 @@ line {
 .graph_line{
   stroke-width : 2.5px;
   cursor:pointer;
+}
+
+.graph_data{
+    fill: none;
+    stroke-width: 8px;
+    opacity: 0.3;
+    cursor:pointer;
+}
+
+.graph_data:hover{
+    opacity:0.8;
 }
 
 .graph_inactive{
@@ -315,6 +334,7 @@ line {
 
 .sp_system{
   position:absolute;
+  top: -0.5em;
 }
 
 .sp_system_label{
@@ -322,6 +342,8 @@ line {
   font-weight : bold;
   height:0px;
   position:relative;
+  -webkit-transition: left 0.5s;
+  transition: left 0.5s;
 }
 
 .sp_system_label:hover{
@@ -359,7 +381,7 @@ line {
   stroke-width : 0px;
 }
 
-							  /*style list element*/
+							  /*style list/data element*/
 
 
 /*Metric*/
@@ -381,21 +403,31 @@ line {
   background :@border;
 }
 
-#list{
-  height: -moz-calc(~"100% - 240px");
-  height: -webkit-calc(~"100% - 240px");
-  height: calc(~"100% - 240px");
+#list-row, #data-row{
+  display: table-row;
+}
+
+#list, #data{
+  display:table-cell;
+}
+
+#data-row{
+  height : 0px;
 }
 
 #list_clones{
   overflow-y : scroll;
   overflow-x : hidden;
-  height : 100%;
+  height : calc(~"100% - 30px");  /*100% - list_menu height */
   padding:2px;
 }
 
 #list_data{
-  display: block;
+    display: block;
+    border-top: solid;
+    border-width: 4px;
+    border-color: @border;
+    overflow-y: scroll;
 }
 
 .data_name{
@@ -409,7 +441,7 @@ line {
 }
 
 .list{
-  width : 	@width_left_container;
+  width : 	445px;
   display :	block;
   padding : 	2px;
 }
@@ -490,10 +522,14 @@ line {
 
 .systemBoxNameMenu {
     display: inline-block;
-    min-width: 89px;
+    min-width: 70px;
     height: 20px;
+    cursor : pointer;
 }	      
 
+.hiddenCheckBox {
+    display : none;
+}
 
 .clusterBox{
   width: @width_clusterBox;
@@ -524,7 +560,7 @@ line {
 
 							  /*style segmenter element*/
 .list_select{
-  width : @width_left_container;
+  width : 445px;
   display : block;
   border : solid;
   border-width : 2px;
@@ -702,7 +738,7 @@ span .substitution{
   text-align:left;
 }
 
-.button:hover,.button_right:hover, .buttonSelector:hover, .button2:hover{
+.systemBoxNameMenu:hover, .button:hover,.button_right:hover, .buttonSelector:hover, .button2:hover{
   background : @border;
   color : @select;
 }
@@ -1259,7 +1295,7 @@ span.alert {  color: red;   }
     display : block;
     bottom : 0px;
     right : 0px;
-    z-index: 15;
+    z-index: 100;
 }
 
 #log_container {

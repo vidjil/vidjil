@@ -25,6 +25,7 @@
 #include <stdexcept>
 #include "fasta.h"
 
+#include "../lib/gzstream.h"
 
 void Fasta::init(int extract_field, string extract_separator)
 {
@@ -58,7 +59,7 @@ void Fasta::add(istream &in, bool verbose) {
 }
 
 void Fasta::add(const string &filename, bool verbose) {
-  ifstream is(filename.c_str());
+  igzstream is(filename.c_str());
   if (is.fail())
     {
       throw invalid_argument(" !! Error in opening file: "+ filename);
@@ -92,7 +93,7 @@ OnlineFasta::OnlineFasta(int extract_field, string extract_separator):
 
 OnlineFasta::OnlineFasta(const string &input, 
                          int extract_field, string extract_separator)
-  :input(new ifstream(input.c_str())), 
+  :input(new igzstream(input.c_str())),
   extract_field(extract_field), 
   extract_separator(extract_separator)
 {
