@@ -29,8 +29,9 @@
 /* List constructor
  *
  * */
-function List(id, model) {
-    this.id = id; //ID de la div contenant la liste
+function List(id_list, id_data, model) {
+    this.id = id_list; //ID de la div contenant la liste
+    this.id_data = id_data;
     this.m = model; //Model utilisé
     this.index = []
     this.index_data = {};
@@ -46,6 +47,7 @@ List.prototype = {
      * */
     init: function () {
         this.build_list()
+        this.build_data_list()
         this.update();
     },
 
@@ -70,10 +72,6 @@ List.prototype = {
             this.index[i] = div;
         }
         
-        //data list
-        var div_list_data = this.build_data_list()
-        div_list_clones.appendChild(div_list_data);
-        
         div_parent.appendChild(div_list_menu)
         div_parent.appendChild(div_list_clones)
 
@@ -81,6 +79,9 @@ List.prototype = {
     
     build_data_list: function () {
         this.index_data = {}
+        
+        var div_parent = document.getElementById(this.id_data);
+        div_parent.innerHTML = "";
         
         var div_list_data = document.createElement('div');
         div_list_data.id = "list_data";
@@ -104,7 +105,8 @@ List.prototype = {
             
             div_list_data.appendChild(div);
         }
-        return div_list_data
+
+        div_parent.appendChild(div_list_data);
     },
     
     update_data_list: function () {
@@ -208,10 +210,23 @@ List.prototype = {
         myConsole.log("update Liste: " + elapsedTime + "ms", -1);
     },
 
-    /*
-     * TODO
-     * */
-    resize: function () {},
+
+    resize: function () {
+        //hardcore resize (for firefox and ...)
+        //seriously 7 years after the first release of the html5 specs there is no simple way (except with chrome) to put a scrollbar inside a table-cell 
+        
+        document.getElementById("list_data").style.height = ""
+        
+        var total = document.getElementById("mid-container").offsetHeight
+        var info = document.getElementById("info-row").offsetHeight
+        var menu = document.getElementById("list_menu").offsetHeight
+        var data = document.getElementById("list_data").offsetHeight
+        if (data>100)data = 100
+            
+        console.log(total+"/"+info +"/"+menu +"/"+data +"/")
+        document.getElementById("list_clones").style.height = (total-info-menu-data)+"px"
+        document.getElementById("list_data").style.height = data+"px"
+    },
 
     /* genere le code HTML des infos d'un clone
      * @div_elem : element HTML a remplir

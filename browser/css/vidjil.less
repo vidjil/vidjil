@@ -102,6 +102,7 @@ ul{
   -moz-user-select: auto;
   -ms-user-select: auto;
   user-select: auto;
+  display : table;
 }
 
 #visu, #visu2 {
@@ -121,12 +122,18 @@ line {
 
                         /* left-container - info */
 
+#info-row{
+    height : 200px;
+    display : table-row;
+}
+
 #info{
   font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
   font-size: 13px;
-  height :200px;
+  height:100%
   padding:3px;
   background : @background;
+  display : table-cell;
 }
 
 .info_line {
@@ -363,7 +370,7 @@ line {
   stroke-width : 0px;
 }
 
-							  /*style list element*/
+							  /*style list/data element*/
 
 
 /*Metric*/
@@ -385,21 +392,31 @@ line {
   background :@border;
 }
 
-#list{
-  height: -moz-calc(~"100% - 240px");
-  height: -webkit-calc(~"100% - 240px");
-  height: calc(~"100% - 240px");
+#list-row, #data-row{
+  display: table-row;
+}
+
+#list, #data{
+  display:table-cell;
+}
+
+#data-row{
+  height : 0px;
 }
 
 #list_clones{
   overflow-y : scroll;
   overflow-x : hidden;
-  height : 100%;
+  height : calc(~"100% - 30px");  /*100% - list_menu height */
   padding:2px;
 }
 
 #list_data{
-  display: block;
+    display: block;
+    border-top: solid;
+    border-width: 4px;
+    border-color: @border;
+    overflow-y: scroll;
 }
 
 .data_name{
@@ -413,7 +430,7 @@ line {
 }
 
 .list{
-  width : 	@width_left_container;
+  width : 	445px;
   display :	block;
   padding : 	2px;
 }
