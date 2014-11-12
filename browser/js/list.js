@@ -49,6 +49,7 @@ List.prototype = {
         this.build_list()
         this.build_data_list()
         this.update();
+        this.resize();
     },
 
     build_list: function () {
@@ -223,7 +224,6 @@ List.prototype = {
         var data = document.getElementById("list_data").offsetHeight
         if (data>100)data = 100
             
-        console.log(total+"/"+info +"/"+menu +"/"+data +"/")
         document.getElementById("list_clones").style.height = (total-info-menu-data)+"px"
         document.getElementById("list_data").style.height = data+"px"
     },

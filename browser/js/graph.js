@@ -37,7 +37,7 @@ function Graph(id, model) {
 
     this.marge1 = 0.05; //marge droite bord du graph/premiere colonne
     this.marge2 = 0.08; //marge gauche derniere colonne/bord du graph
-    this.marge3 = 0; //marge droite (non influencé par le resize)
+    this.marge3 = 60; //marge droite (non influencé par le resize)
     this.marge4 = 60; //marge gauche (non influencé par le resize)
     this.marge5 = 25; //marge top (non influencé par le resize)
 
@@ -116,12 +116,15 @@ Graph.prototype = {
         this.axis_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", "axis_container")
-        this.polyline_container = d3.select("#" + this.id + "_svg")
-            .append("svg:g")
-            .attr("id", "polyline_container")
         this.reso_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", "reso_container")
+        this.data_container = d3.select("#" + this.id + "_svg")
+            .append("svg:g")
+            .attr("id", "data_container")
+        this.clones_container = d3.select("#" + this.id + "_svg")
+            .append("svg:g")
+            .attr("id", "clones_container")
         this.date_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", "date_container")
@@ -129,21 +132,93 @@ Graph.prototype = {
             .append("svg:g")
             .attr("id", "text_container")
 
-
-        this.data_graph = [];
-        this.data_res = [];
-        this.graph_col = [];
-
         this.initAxis();
+        this.initData();
+        this.initClones();
+        this.initRes();
 
+        this.resize();
+    },
+    
+    initData : function () {
+        this.data_data = [];
+        var g_min, g_max;
+        
+        for (var key in this.m.data) {
+            //if (this.m.data[key].isActive){
+            if(true){
+                var max = this.m.data[key][0]
+                var min = this.m.data[key][0];
+                var tab = [];
+                
+                for (var i = 0; i < this.m.samples.number; i++) {
+                    var t = this.m.samples.order.indexOf(i)
+                    var val = this.m.data[key][t]
+                    if (val>max) max=val;
+                    if (val<min) min=val;
+                    tab.push(val)
+                }
+                
+                this.data_data.push ({
+                    name: key,
+                    tab:tab
+                });
+                
+                if (typeof g_min == 'undefined' || g_min>min) g_min=min 
+                if (typeof g_max == 'undefined' || g_max<max) g_max=max
+            }
+        }
+        
+        if (typeof g_min != 'undefined'){
+            if ( g_min!=0 && (g_min*100)<g_max){
+                this.scale_data = d3.scale.log()
+                    .domain([g_max, g_min])
+                    .range([0, 1]);
+            }else{
+                if ( (g_min*2)<g_max) g_min = 0
+                this.scale_data = d3.scale.linear()
+                    .domain([g_max, g_min])
+                    .range([0, 1]);
+            }
+        }
+        
+        this.g_data = this.data_container.selectAll("path")
+            .data(this.data_data);
+        this.g_data.enter()
+            .append("path")
+            .style("fill", "none")
+            .attr("id", function (d) {
+                return "data_g_" + d.name;
+            })
+        this.g_data.exit()
+            .remove();
+    },
+    
+    initClones : function () {
+        this.data_clones = [];
+        
         for (var i = 0; i < this.m.n_clones; i++) {
-            this.data_graph[i] = {
+            this.data_clones[i] = {
                 id: i,
                 name: "line" + i,
                 path: this.constructPath(i, false)
             };
         }
-
+        
+        this.g_graph = this.clones_container.selectAll("path")
+            .data(this.data_clones);
+        this.g_graph.enter()
+            .append("path")
+            .style("fill", "none")
+            .attr("id", function (d) {
+                return "poly" + d.name;
+            })
+        this.g_graph.exit()
+            .remove();
+    },
+    
+    initRes : function () {
+        this.data_res = [];
         this.resolution1 = []
         this.resolution5 = []
 
@@ -164,19 +239,6 @@ Graph.prototype = {
             path: this.constructPathR(this.resolution5)
         });
 
-        this.g_graph = this.polyline_container.selectAll("path")
-            .data(this.data_graph);
-            
-        this.g_graph.enter()
-            .append("path")
-            .style("fill", "none")
-            .attr("id", function (d) {
-                return "poly" + d.name;
-            })
-            
-        this.g_graph.exit()
-            .remove();
-
         this.g_res = this.reso_container.selectAll("g")
             .data(this.data_res);
         this.g_res.enter()
@@ -190,66 +252,7 @@ Graph.prototype = {
         this.g_res.append("path")
         this.g_res.exit()
             .remove();
-
-        this.resize();
     },
-    
-    build_menu : function() {
-        var self = this;
-        var parent = document.getElementById(this.id)
-        
-        var div = document.createElement('div')
-        div.id = "" + this.id + "_menu"
-        div.className = "graph_menu"
-        div.appendChild(document.createTextNode("+"))
-        
-        var list = document.createElement('div')
-        list.id = "" + this.id + "_list"
-        list.className = "graph_list"
-        
-        div.appendChild(list)
-        parent.appendChild(div)
-        
-        
-        this.vis = d3.select("#" + this.id + "_menu")
-            .on("mouseup", function () {
-                self.stopDrag2()
-            })
-            .on("mousemove", function () {
-                self.dragTimePoint()
-            })
-            .on("mouseover", function () {
-                $("#" + self.id + "_list")
-                    .stop(true, true)
-                    .show("fast")
-            })
-            
-        this.build_list();
-    },
-    
-    build_list : function() {
-        var self = this;
-        
-        var list = document.getElementById("" + this.id + "_list")
-        list.innerHTML = ""
-        
-        for (var i=0; i<this.m.samples.number; i++){
-            if ( this.m.samples.order.indexOf(i) == -1){
-                $("<div/>", {
-                    class: "graph_listElem",
-                    text: this.m.getStrTime(i),
-                    time: i,
-                }).appendTo("#" + this.id + "_list");
-            }
-        }
-        
-        $(".graph_listElem").mousedown(function () {
-            var time = parseInt( $(this).attr("time") )
-            self.startDrag(time)
-        })
-        
-    },
-    
 
     initAxis: function () {
 
@@ -344,6 +347,62 @@ Graph.prototype = {
         this.g_text.exit()
             .remove();
     },
+    
+    build_menu : function() {
+        var self = this;
+        var parent = document.getElementById(this.id)
+        
+        var div = document.createElement('div')
+        div.id = "" + this.id + "_menu"
+        div.className = "graph_menu"
+        div.appendChild(document.createTextNode("+"))
+        
+        var list = document.createElement('div')
+        list.id = "" + this.id + "_list"
+        list.className = "graph_list"
+        
+        div.appendChild(list)
+        parent.appendChild(div)
+        
+        
+        this.vis = d3.select("#" + this.id + "_menu")
+            .on("mouseup", function () {
+                self.stopDrag2()
+            })
+            .on("mousemove", function () {
+                self.dragTimePoint()
+            })
+            .on("mouseover", function () {
+                $("#" + self.id + "_list")
+                    .stop(true, true)
+                    .show("fast")
+            })
+            
+        this.build_list();
+    },
+    
+    build_list : function() {
+        var self = this;
+        
+        var list = document.getElementById("" + this.id + "_list")
+        list.innerHTML = ""
+        
+        for (var i=0; i<this.m.samples.number; i++){
+            if ( this.m.samples.order.indexOf(i) == -1){
+                $("<div/>", {
+                    class: "graph_listElem",
+                    text: this.m.getStrTime(i),
+                    time: i,
+                }).appendTo("#" + this.id + "_list");
+            }
+        }
+        
+        $(".graph_listElem").mousedown(function () {
+            var time = parseInt( $(this).attr("time") )
+            self.startDrag(time)
+        })
+        
+    },
 
     /* repositionne le graphique en fonction de la taille de la div le contenant
      *
@@ -383,7 +442,7 @@ Graph.prototype = {
 
         if (this.m.focus != -1) {
             var line = document.getElementById("polyline" + this.m.focus);
-            document.getElementById("polyline_container")
+            document.getElementById("clones_container")
                 .appendChild(line);
         }
         
@@ -400,7 +459,7 @@ Graph.prototype = {
 
             for (var i = 0; i < this.m.n_clones; i++) {
                 for (var j = 0; j < this.m.clusters[i].length; j++) {
-                    this.data_graph[this.m.clusters[i][j]].path = this.constructPath(i, false);
+                    this.data_clones[this.m.clusters[i][j]].path = this.constructPath(i, false);
                 }
             }
             for (var i = 0; i < this.m.n_clones; i++) {
@@ -408,9 +467,9 @@ Graph.prototype = {
                 for (var j = 0; j < this.m.clusters[cloneID].length; j++) {
                     var seqID = this.m.clusters[cloneID][j]
                     if (this.m.clone(cloneID).split) {
-                        this.data_graph[seqID].path = this.constructPath(seqID, true);
+                        this.data_clones[seqID].path = this.constructPath(seqID, true);
                     } else {
-                        this.data_graph[seqID].path = this.constructPath(cloneID, false);
+                        this.data_clones[seqID].path = this.constructPath(cloneID, false);
                     }
                 }
             }
@@ -426,7 +485,7 @@ Graph.prototype = {
         var stack = new Stack(this.m)
         stack.compute();
         for (var i = 0; i < this.m.n_length; i++) {
-            this.data_graph[i].path = this.constructStack(i, stack);
+            this.data_clones[i].path = this.constructStack(i, stack);
         }
     },
 
@@ -442,9 +501,9 @@ Graph.prototype = {
                 for (var j = 0; j < this.m.clusters[cloneID].length; j++) {
                     var seqID = this.m.clusters[cloneID][j]
                     if (this.m.clone(cloneID).split) {
-                        this.data_graph[seqID].path = this.constructPath(seqID, true);
+                        this.data_clones[seqID].path = this.constructPath(seqID, true);
                     } else {
-                        this.data_graph[seqID].path = this.constructPath(cloneID, false);
+                        this.data_clones[seqID].path = this.constructPath(cloneID, false);
                     }
                 }
             }
@@ -455,7 +514,7 @@ Graph.prototype = {
     updateElemStyle: function (list) {
         if (this.m.focus != -1) {
             var line = document.getElementById("polyline" + this.m.focus);
-            document.getElementById("polyline_container")
+            document.getElementById("clones_container")
                 .appendChild(line);
         }
         this.drawLines(250);
@@ -618,6 +677,7 @@ Graph.prototype = {
         var self = this;
 
         this.drawAxis(500)
+        this.drawData(500)
         this.drawLines(500)
 
         //resolution
@@ -637,7 +697,7 @@ Graph.prototype = {
                 return che;
             })
 
-        this.polyline_container.selectAll("path")
+        this.clones_container.selectAll("path")
             .on("mouseover", function (d) {
                 self.m.focusIn(d.id);
             })
@@ -875,7 +935,41 @@ Graph.prototype = {
         }
         
         return p;
-    }
+    },
+    
+    drawData: function (speed) {
+        var self = this;
+
+        this.g_data
+            .style("fill", "none")
+            .style("stroke", function (d) {
+                return "black"
+            })
+            .transition()
+            .duration(speed)
+            .attr("d", function (p) {
+                if (p.tab.length != 0){
+                    var x = (self.graph_col[0] * self.resizeW + self.marge4)
+                    var y = (self.scale_data(p.tab[0]) * self.resizeH + self.marge5)
+                    var che = ' M ' + x + ',' + y;
+                    for (var i = 1; i < p.tab.length; i++) {
+                        x = (self.graph_col[i] * self.resizeW + self.marge4)
+                        y = (self.scale_data(p.tab[i]) * self.resizeH + self.marge5)
+                        che += ' L ' + x + ',' + y;
+                    }
+                    return che;
+                }else{
+                    return ' M 0,' + self.resizeH;
+                }
+            })
+            .attr("class", function (p) {
+                return "graph_data";
+            })
+            .attr("id", function (d) {
+                return "data_g_" + d.name;
+            })
+    },
+    
 
 } //fin Graph
 

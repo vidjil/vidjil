@@ -144,6 +144,15 @@ line {
   stroke-width: 2.5px;
   cursor: pointer;
 }
+.graph_data {
+  fill: none;
+  stroke-width: 8px;
+  opacity: 0.3;
+  cursor: pointer;
+}
+.graph_data:hover {
+  opacity: 0.8;
+}
 .graph_inactive {
   stroke-width: 1.5px;
   cursor: pointer;
@@ -445,7 +454,7 @@ line {
 }
 /*style segmenter element*/
 .list_select {
-  width: 475px;
+  width: 445px;
   display: block;
   border: solid;
   border-width: 2px;
