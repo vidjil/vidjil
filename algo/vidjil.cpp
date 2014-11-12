@@ -138,7 +138,7 @@ extern int optind, optopt, opterr;
 
 void usage(char *progname)
 {
-  cerr << "Usage: " << progname << " [options] <reads.fa>" << endl << endl;
+  cerr << "Usage: " << progname << " [options] <reads.fa/.fq/.gz>" << endl << endl;
 
   cerr << "Command selection" << endl
        << "  -c <command> \t" << COMMAND_WINDOWS << "  \t window extracting" << endl 
