@@ -773,14 +773,7 @@ Model.prototype = {
                 this.system_selected.push(key)
             }
         }
-        
-        //if 0 box checked in menu then all selected
-        if (this.system_selected.length == 0) {
-            for (var key in this.reads.germline) {
-                this.system_selected.push(key)
-            }
-        }
-        
+
         //compute new reads.segmented value (sum of reads.segmented of selected system)
         for (var i=0; i<this.system_selected.length; i++){
             var key = this.system_selected[i]
