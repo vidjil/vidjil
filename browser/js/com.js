@@ -45,6 +45,11 @@ function Com(flash_id, log_id, popup_id, data_id) {
 	    + "<a href='mailto:contact@vidjil.org?Subject=%5Bvidjil%5D%20Parse%20error&Body=%0AHi%2C%0A%0AThe%20attached%20.vidjil%20file%20does%20not%20load%20into%20the%20browser%2C%20could%20you%20check%20it%20%3F%0A%0A'>send us</a> the file"
 	    + BUTTON_CLOSE_POPUP,
 
+        "parse_analysis_error": "Error &ndash; error in parsing the .analysis file" 
+	    + "</br> The .analysis file seems broken, please check it or "
+	    + "<a href='mailto:contact@vidjil.org?Subject=%5Bvidjil%5D%20Parse%20error&Body=%0AHi%2C%0A%0AThe%20attached%20.analysis%20file%20does%20not%20load%20into%20the%20browser%2C%20could%20you%20check%20it%20%3F%0A%0A'>send us</a> the file"
+	    + BUTTON_CLOSE_POPUP,
+
         "json_not_found":"Error &ndash; editDistanceFile.json not found"
 	    + "</br> Please to check the specified repository in the c++ program, or to run Vidjil program with the specified datas." 
 	    + BUTTON_CLOSE_POPUP,

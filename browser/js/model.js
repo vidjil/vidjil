@@ -330,8 +330,15 @@ Model.prototype = {
     parseJsonAnalysis: function (analysis) {
         var self = this
         
-        this.analysis = JSON.parse(analysis);
-        
+	try {
+            this.analysis = JSON.parse(analysis);
+        }
+	catch (e) {
+            myConsole.popupMsg(myConsole.msg.parse_analysis_error);
+            throw e;
+	    return 0
+        }
+
         if (typeof self.analysis.vidjil_json_version != 'undefined' && self.analysis.vidjil_json_version >= "2014.09"){
             //samples
             var match = 0;
