@@ -1220,7 +1220,7 @@ Model.prototype = {
         }
         
         // unactive clones from unselected system
-        if (this.system == "multi" && this.system_selected.length != 0) {
+        if (this.system == "multi") {
             for (var i = 0; i < this.n_clones; i++) {
                 if (this.system_selected.indexOf(this.clone(i).getSystem()) == -1) {
                     this.clones[i].active = false;
