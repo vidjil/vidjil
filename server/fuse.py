@@ -409,7 +409,8 @@ class ListWindows:
         concatenate_with_padding(obj.d, 
                                  self.d, l1,
                                  other.d, l2,
-                                 ["clones", "links", "germlines"])
+                                 ["clones", "links", "germlines",
+                                  "vidjil_json_version"])
         
         obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
