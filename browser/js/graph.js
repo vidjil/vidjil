@@ -144,29 +144,42 @@ Graph.prototype = {
         var g_min, g_max;
         
         for (var key in this.m.data_info) {
-            if (this.m.data_info[key].isActive){
-                var max = this.m.data[key][0]
-                var min = this.m.data[key][0];
-                var tab = [];
-                
-                for (var i = 0; i < this.m.samples.number; i++) {
-                    var t = this.m.samples.order.indexOf(i)
-                    var val = this.m.data[key][t]
-                    if (val>max) max=val;
-                    if (val<min) min=val;
-                    tab.push(val)
-                }
-                
-                this.data_data.push ({
-                    name: key,
-                    tab:tab,
-                    color:this.m.data_info[key].color
-                });
-                
-                if (typeof g_min == 'undefined' || g_min>min) g_min=min 
-                if (typeof g_max == 'undefined' || g_max<max) g_max=max
+            var max = this.m.data[key][0]
+            var min = this.m.data[key][0];
+            var tab = [];
+            
+            for (var i = 0; i < this.m.samples.number; i++) {
+                var t = this.m.samples.order.indexOf(i)
+                var val = this.m.data[key][t]
+                if (val>max) max=val;
+                if (val<min) min=val;
+                tab.push(val)
             }
+            
+            this.data_data.push ({
+                name: key,
+                tab : tab,
+                color : this.m.data_info[key].color,
+                active : this.m.data_info[key].isActive
+            });
+            
+            if (typeof g_min == 'undefined' || g_min>min) g_min=min 
+            if (typeof g_max == 'undefined' || g_max<max) g_max=max
         }
+        
+        this.g_data = this.data_container.selectAll("path")
+            .data(this.data_data);
+            
+        this.g_data.enter()
+            .append("path")
+            .style("fill", "none")
+            .attr("id", function (d) {
+                return "data_g_" + d.name;
+            })
+        this.g_data.exit()
+            .remove();
+            
+        
         
         if (typeof g_min != 'undefined'){
             if ( g_min!=0 && (g_min*100)<g_max){
@@ -933,10 +946,7 @@ Graph.prototype = {
     drawData: function (speed) {
         var self = this;
 
-        this.g_data = this.data_container.selectAll("path")
-            .data(this.data_data);
-        this.g_data.enter()
-            .append("path")
+        this.g_data
             .style("fill", "none")
             .style("stroke", function (d) {
                 return d.color
@@ -944,7 +954,7 @@ Graph.prototype = {
             .transition()
             .duration(speed)
             .attr("d", function (p) {
-                if (p.tab.length != 0){
+                if (p.tab.length != 0 && p.active){
                     var x = (self.graph_col[0] * self.resizeW + self.marge4)
                     var y = (self.scale_data(p.tab[0]) * self.resizeH + self.marge5)
                     var che = ' M ' + x + ',' + y;
@@ -959,13 +969,16 @@ Graph.prototype = {
                 }
             })
             .attr("class", function (p) {
-                return "graph_data";
+                if (!p.active()){
+                    return "graph_inactive";
+                }else{
+                    return "graph_data";
+                }
             })
             .attr("id", function (d) {
                 return "data_g_" + d.name;
             })
-        this.g_data.exit()
-            .remove();
+
     },
     
 
