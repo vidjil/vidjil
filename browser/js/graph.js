@@ -665,9 +665,6 @@ Graph.prototype = {
             .on("click", function (d) {
                 if (d.type == "axis_v") return self.m.changeTime(d.time)
             })
-            .on("dblclick", function (d) {
-                if (d.type == "axis_v") return self.rename(d.time)
-            })
             .on("mousedown", function (d) {
                 if (d.type == "axis_v") return self.startDrag(d.time)
             })
@@ -709,13 +706,6 @@ Graph.prototype = {
             .on("click", function (d) {
                 self.clickGraph(d.id);
             });
-    },
-
-    /* 
-     *
-     * */
-    rename: function () {
-
     },
 
     /* 
@@ -977,7 +967,6 @@ Graph.prototype = {
             .attr("id", function (d) {
                 return "data_g_" + d.name;
             })
-
     },
     
 
