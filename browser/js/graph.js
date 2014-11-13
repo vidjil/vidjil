@@ -171,14 +171,9 @@ Graph.prototype = {
             
         this.g_data.enter()
             .append("path")
-            .style("fill", "none")
-            .attr("id", function (d) {
-                return "data_g_" + d.name;
-            })
         this.g_data.exit()
             .remove();
             
-        
         
         if (typeof g_min != 'undefined'){
             if ( g_min!=0 && (g_min*100)<g_max){
@@ -196,7 +191,7 @@ Graph.prototype = {
     
     updateData : function () {
         this.initData();
-        this.drawData()
+        this.drawData(500)
     },
     
     initClones : function () {
@@ -943,18 +938,23 @@ Graph.prototype = {
             .transition()
             .duration(speed)
             .attr("d", function (p) {
+                var x,y;
                 if (p.tab.length != 0 && p.active){
-                    var x = (self.graph_col[0] * self.resizeW + self.marge4)
-                    var y = (self.scale_data(p.tab[0]) * self.resizeH + self.marge5)
+                    x = (self.graph_col[0] * self.resizeW + self.marge4);
+                    y=(self.scale_data(p.tab[0]) * self.resizeH + self.marge5)
                     var che = ' M ' + x + ',' + y;
                     for (var i = 1; i < p.tab.length; i++) {
-                        x = (self.graph_col[i] * self.resizeW + self.marge4)
-                        y = (self.scale_data(p.tab[i]) * self.resizeH + self.marge5)
+                        x = (self.graph_col[i] * self.resizeW + self.marge4);
+                        y=(self.scale_data(p.tab[i]) * self.resizeH + self.marge5)
                         che += ' L ' + x + ',' + y;
                     }
                     return che;
                 }else{
-                    return ' M 0,' + self.resizeH;
+                    var che = ' M ' + (self.graph_col[0] * self.resizeW + self.marge4) + ',' + self.resizeH;
+                    for (var i = 1; i < p.tab.length; i++) {
+                        che += ' L ' + (self.graph_col[i] * self.resizeW + self.marge4) + ',' + self.resizeH;
+                    }
+                    return che;
                 }
             })
             .attr("class", function (p) {
