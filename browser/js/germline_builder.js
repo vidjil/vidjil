@@ -18,8 +18,8 @@
  */
 
 function GermlineList () {
-    this.init()
     this.list = {}
+    this.init()
 }
 
 GermlineList.prototype = {
@@ -30,7 +30,7 @@ GermlineList.prototype = {
     
     //load germlines.data file from server
     load : function () {
-        var self=this;
+        this.fallbackLoad() //just in case
         
         $.ajax({
             url: window.location.origin + "/germline/germlines.data",
@@ -39,19 +39,25 @@ GermlineList.prototype = {
                     //remove comment (json don't have comment)
                     var json = result.replace(/ *\/\/[^\n]*\n */g , "")
                     //convert from js to json (json begin with { or [, never with a var name)
-                    json = json.replace("germlines = " , "")
+                    json = json.replace("germline_data = " , "")
                     self.list = jQuery.parseJSON(json);
                 }
                 catch(err){
-                    myConsole.flash("server : germlines.data malformed", 2);
+                    myConsole.flash("server : germlines.data malformed, use local js file instead (can be outdated) ", 2);
+                    
                 }
             },
             error: function (request, status, error) {
-                myConsole.flash("server : error impossible to retrieve germlines.data", 2);
+                myConsole.flash("server : error impossible to retrieve germlines.data, use local js file instead (can be outdated)", 2);
             },
             dataType: "text"
         });
         
+        
+    },
+    
+    fallbackLoad : function () {
+        this.list = germline_data
     },
     
     //add a list of custom germlines

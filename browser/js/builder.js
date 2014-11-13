@@ -677,7 +677,7 @@ Builder.prototype = {
         span.className = "systemBox";
         if ((typeof system != 'undefined')){
             span.appendChild(document.createTextNode(this.m.germlineList.getShortcut(system)));
-            if (this.m.system_selected.indexOf(system) == -1) 
+            if (this.m.system_selected.indexOf(system) != -1) 
                 span.style.background = this.m.germlineList.getColor(system)
             span.title = system
         }else{

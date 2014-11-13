@@ -958,7 +958,7 @@ Graph.prototype = {
                 }
             })
             .attr("class", function (p) {
-                if (!p.active()){
+                if (!p.active){
                     return "graph_inactive";
                 }else{
                     return "graph_data";
