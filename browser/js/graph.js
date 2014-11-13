@@ -135,7 +135,6 @@ Graph.prototype = {
         this.initData();
         this.initClones();
         this.initRes();
-
         this.resize();
     },
     
