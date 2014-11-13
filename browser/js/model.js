@@ -328,41 +328,39 @@ Model.prototype = {
     //temporary keep old parser to make the transition with new '2014.09' version
     
     parseJsonAnalysis: function (analysis) {
-        var self = this
-        
         this.analysis = JSON.parse(analysis);
         
-        if (typeof self.analysis.vidjil_json_version != 'undefined' && self.analysis.vidjil_json_version >= "2014.09"){
+        if (typeof this.analysis.vidjil_json_version != 'undefined' && this.analysis.vidjil_json_version >= "2014.09"){
             //samples
             var match = 0;
-            if (self.analysis.samples) {
-                var s = self.analysis.samples
+            if (this.analysis.samples) {
+                var s = this.analysis.samples
                 
                 //replace names
                 for (var i=0; i<s.number; i++){
-                    var pos = self.samples.original_names.indexOf(s.original_names[i])
+                    var pos = this.samples.original_names.indexOf(s.original_names[i])
                     if (pos != -1){
-                        if (s.names[i] != "") self.samples.names[pos] = s.names[i]
+                        if (s.names[i] != "") this.samples.names[pos] = s.names[i]
                         match++
                     }
                 }
                 
-                self.samples.order = []
+                this.samples.order = []
                 for (var i=0; i<s.order.length; i++){
-                    var pos = self.samples.original_names.indexOf(s.original_names[s.order[i]])
-                    if ( pos != -1) self.samples.order.push(pos)
+                    var pos = this.samples.original_names.indexOf(s.original_names[s.order[i]])
+                    if ( pos != -1) this.samples.order.push(pos)
                 }
                 
-                for (var i=0; i<self.samples.number; i++){
-                    var pos = s.original_names.indexOf(self.samples.original_names[i])
-                    if (pos == -1) self.samples.order.push(i)
+                for (var i=0; i<this.samples.number; i++){
+                    var pos = s.original_names.indexOf(this.samples.original_names[i])
+                    if (pos == -1) this.samples.order.push(i)
                 }
 
             }
             
             //tags
-            if (self.analysis.tags) {
-                var s = self.analysis.tags
+            if (this.analysis.tags) {
+                var s = this.analysis.tags
                 
                 var keys = Object.keys(s.names);
                 for (var i=0; i<keys.length; i++){
@@ -374,13 +372,15 @@ Model.prototype = {
                 }
             }
             
-            if (self.analysis.patient) {
-                self.dataFileName = self.analysis.patient;
+            if (this.analysis.patient) {
+                this.dataFileName = this.analysis.patient;
             }
-            if (self.analysis.data) {
-                self.data = self.analysis.data
+            if (this.analysis.data) {
+                for (var key in this.analysis.data)
+                    this.data[key] = this.analysis.data[key]
             }
-            self.initClones();
+            this.initClones();
+            this.initData();
         }else{
             myConsole.flash("invalid version for this .analysis file", 1)
         }
@@ -528,11 +528,13 @@ Model.prototype = {
         this.data_info = {}
         var i=1;
         for (key in this.data){
-            this.data_info[key] = {
-                "color" : tagColor[i],
-                "isActive" : false
+            if (this.data[key].length == this.samples.number){
+                this.data_info[key] = {
+                    "color" : tagColor[i],
+                    "isActive" : false
+                }
+                i++
             }
-            i++
         }
     },
     
