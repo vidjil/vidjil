@@ -134,30 +134,10 @@ class Window:
         myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline"]
         obj = Window(1)
         
-        t1 = []
-        t2 = []
-        
-        for i in range(len(self.d["reads"])):
-            t1.append(0)
-        for i in range(len(other.d["reads"])):
-            t2.append(0)
-            
-        #concat data, if there is some missing data we use an empty buffer t1/t2 
-        #with the same size as the number of misssing data
-        for key in self.d :
-            if key not in myList and type(self.d[key]) is list:
-                obj.d[key] = self.d[key]
-                if key not in other.d :
-                    obj.d[key] += t2
-            else :
-                obj.d[key] = self.d[key]
-        
-        for key in other.d :
-            if key not in myList and type(other.d[key]) is list:
-                if key not in obj.d:
-                    obj.d[key] = t1 + other.d[key]
-                else :
-                    obj.d[key] += other.d[key]
+        concatenate_with_padding(obj.d,
+                                 self.d, len(self.d["reads"]),
+                                 other.d, len(other.d["reads"]),
+                                 myList)
                     
         #keep other data who don't need to be concat
         if other.d["top"] < self.d["top"] :
