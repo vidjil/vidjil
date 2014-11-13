@@ -4,7 +4,7 @@
 
 import fuse
 import sys
-#import ansi
+import ansi
 import argparse
 
 parser = argparse.ArgumentParser()
@@ -12,6 +12,15 @@ parser.add_argument('--nb', '-n', type=int, default=5, help='number of clones to
 parser.add_argument('--nb_others', '-o', type=int, default=3, help='number of clones to display from the other files (%(default)d)')
 parser.add_argument('--verbose', '-v', action='store_true', help='verbose output')
 parser.add_argument('file', nargs=2, help='''.vidjil files to be compared''')
+
+
+DIFF_COLORS = {
+    '+': ansi.Fore.GREEN,
+    '-': ansi.Fore.RED,
+    '=': ansi.Fore.BLUE,
+    '?': ansi.Fore.CYAN,
+}
+
 
 
 def format_rank(rank, colorize):
@@ -22,12 +31,12 @@ def format_rank(rank, colorize):
         s += '#%02dk' % (rank / 1000)
 
     if rank <= 5 and colorize:
-        s = ansi.Fore.RED + s + ansi.Style.RESET_ALL
+        s = ansi.Fore.BLUE + s + ansi.Style.RESET_ALL
 
     return s
 
 def format_rank_nb_reads(rank, list_nb_reads, list_total_nb_reads):
-    s = format_rank(rank, False) + ' '
+    s = format_rank(rank, True) + ' '
     for (nb_reads, total_nb_reads) in zip(list_nb_reads, list_total_nb_reads):
         s += ' %6d %6.2f%%' % (nb_reads, 100*float(nb_reads)/float(total_nb_reads))
     return s
@@ -35,8 +44,9 @@ def format_rank_nb_reads(rank, list_nb_reads, list_total_nb_reads):
 def diff_two_clones(self, other):
     if not other or not self:
         who = "+-"[not other]
-        print who,
-        print "!!! Clone not present:", self, "/", other
+        print DIFF_COLORS[who]+who,
+        print "!!! Clone not present:", self, "/", other,
+        print ansi.Style.RESET_ALL
         return
 
     if not self.d['reads'] == other.d['reads']:
@@ -50,9 +60,9 @@ def diff_two_clones(self, other):
             if reads_o < reads_s:
                 who_minus = True
         who = ["=+", "-?"][who_minus][who_plus]
-        print who, 
-
-        print "!!! Not the same number or reads:", self.d['id'], "-", self.d['reads'], "/", other.d['reads']
+        print DIFF_COLORS[who]+who, 
+        print "!!! Not the same number or reads:", self.d['id'], "-", self.d['reads'], "/", other.d['reads'],
+        print ansi.Style.RESET_ALL
 
 
 def compare(data1, data2, args):
