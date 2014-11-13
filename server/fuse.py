@@ -49,6 +49,7 @@ def concatenate_with_padding(d,
         The dictionaries d1 and d2 store several values that are lists with d1_size and d2_size elements,
         and the resulting dictionary will store values that are lists with size d1_size + d2_size elements.
         Pads with lists [0, ... 0] data that appear in either only d1 or only d2.
+        The values that are not lists are ignored (but this should not happen).
 
         >>> d = {}
         >>> d1 = { 'a': [1, 2], 'b': [11, 22], 'z':17 }
@@ -70,6 +71,9 @@ def concatenate_with_padding(d,
         for key in d1:
             if key in ignore_keys:
                 continue
+            if type(d1[key]) is not list:
+                continue
+
             d[key] = d1[key]
             if key not in d2 :
                 d[key] += t2
@@ -77,6 +81,9 @@ def concatenate_with_padding(d,
         for key in d2:
             if key in ignore_keys:
                 continue
+            if type(d2[key]) is not list:
+                continue
+
             if key not in d :
                 d[key] = t1 + d2[key]
             else :
