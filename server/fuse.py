@@ -796,7 +796,7 @@ def main():
     group_options = parser.add_argument_group() # title='Options and parameters')
 
     group_options.add_argument('--test', action='store_true', help='run self-tests')
-    group_options.add_argument('--multi', action='store_true', help='merge multiple systems (experimental)')
+    group_options.add_argument('--multi', action='store_true', help='merge different systems from a same timepoint (deprecated, do not use)')
     
     group_options.add_argument('--compress', '-c', action='store_true', help='compress point names, removing common substrings')
     group_options.add_argument('--pipeline', '-p', action='store_true', help='compress point names (internal Bonsai pipeline)')
