@@ -331,14 +331,15 @@ class ListWindows:
         with open(output, "w") as file:
             json.dump(self, file, indent=2, default=self.toJson)
             
-    def load(self, file_path, pipeline):
+    def load(self, file_path, pipeline, verbose=True):
         '''init listWindows with data file
         Detects and selects the parser according to the file extension.'''
 
         # name = file_path.split("/")[-1]
         extension = file_path.split('.')[-1]
-        
-        print "<==", file_path, "\t",
+
+        if verbose:
+            print "<==", file_path, "\t",
         
         try:
         
@@ -354,11 +355,13 @@ class ListWindows:
         if pipeline: 
             # renaming, private pipeline
             f = '/'.join(file_path.split('/')[2:-1])
-            print "[%s]" % f
+            if verbose:
+                print "[%s]" % f
 
         else:
             f = file_path
-            print
+            if verbose:
+                print
         
         time = os.path.getmtime(file_path)
         self.d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
