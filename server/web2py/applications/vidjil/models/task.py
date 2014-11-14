@@ -4,6 +4,7 @@ import sys
 
 DIR_VIDJIL = '/home/vidjil/'
 DIR_UPLOAD = '/mnt/upload/uploads/'
+DIR_RESULTS = '/mnt/result/results/'
 DIR_OUT_VIDJIL_ID = '/mnt/result/vidjil/out-%06d/'
 
 TASK_TIMEOUT = 10 * 60
@@ -142,7 +143,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
                    ).select( orderby=db.sequence_file.id|db.results_file.run_date, groupby=db.sequence_file.id ) 
     for row in query :
         if row.results_file.data_file is not None :
-            files += upload_folder+row.results_file.data_file+" "
+            files += DIR_RESULTS + row.results_file.data_file+" "
     
     cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
     
@@ -222,7 +223,7 @@ def run_fuse_only(id_file, id_config, id_data, id_fuse):
                    ).select( orderby=db.sequence_file.sampling_date ) 
     for row in query :
         if row.sequence_file.data_file is not None :
-            files += upload_folder + row.sequence_file.data_file + " "
+            files += DIR_RESULTS + row.sequence_file.data_file + " "
     
     cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
     print cmd

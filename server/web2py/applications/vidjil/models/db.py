@@ -1,5 +1,9 @@
 # -*- coding: utf-8 -*-
 
+
+DIR_UPLOADS = '/mnt/upload/uploads/'
+DIR_RESULTS = '/mnt/result/results/'
+
 #########################################################################
 ## This scaffolding model makes your app work on Google App Engine too
 ## File is released under public domain and you can use without limitations
@@ -110,7 +114,9 @@ db.define_table('sequence_file',
                 Field('sequencer','text'),
                 Field('producer','text'),
                 Field('size_file','integer'),
-                Field('data_file', 'upload', length=1000000000000, autodelete=True))
+                Field('data_file', 'upload', 
+                      uploadfolder=DIR_UPLOADS,
+                      length=1000000000000, autodelete=True))
 
 
 
@@ -118,7 +124,9 @@ db.define_table('sequence_file',
 db.define_table('standard_file',
                 Field('name', 'string'),
                 Field('info','text'),
-                Field('data_file', 'upload',autodelete=True, length=1000000000000))
+                Field('data_file', 'upload',
+                      uploadfolder=DIR_UPLOADS,
+                      autodelete=True, length=1000000000000))
 
 
 
@@ -136,21 +144,27 @@ db.define_table('results_file',
                 Field('config_id', 'reference config'),
                 Field('run_date','datetime'),
                 Field('scheduler_task_id', 'integer'),
-                Field('data_file', 'upload', length=1000000000000, autodelete=True))
+                Field('data_file', 'upload', 
+                      uploadfolder=DIR_RESULTS,
+                      length=1000000000000, autodelete=True))
 
 db.define_table('fused_file',
                 Field('patient_id', 'reference patient'),
                 Field('config_id', 'reference config'),
                 Field('fuse_date','datetime'),
                 Field('status', 'string'),
-                Field('fused_file', 'upload', length=1000000000000, autodelete=True))
+                Field('fused_file', 'upload', 
+                      uploadfolder=DIR_RESULTS,
+                      length=1000000000000, autodelete=True))
 
 db.define_table('analysis_file',
                 Field('patient_id', 'reference patient'),
                 Field('config_id', 'reference config'),
                 Field('analyze_date','datetime'),
                 Field('status', 'string'),
-                Field('analysis_file', 'upload', length=1000000000000, autodelete=True))
+                Field('analysis_file', 'upload', 
+                      uploadfolder=DIR_RESULTS,
+                      length=1000000000000, autodelete=True))
 
 
 if db(db.auth_user.id > 0).count() == 0:
