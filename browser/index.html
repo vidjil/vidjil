@@ -203,21 +203,21 @@
 
                     <div class="menu_box">
                         normalization method</br>
-                        <input type="radio" name="normalize_method" value="quantitative" onchange="m.changeNormMethod(this.value)" checked>quantitative</input></br>
-                        <input type="radio" name="normalize_method" value="rescale" onchange="m.changeNormMethod(this.value)" >rescale</input>
+                        <div class="buttonSelector" onclick="m.changeNormMethod('quantitative')" ><input type="radio" name="normalize_method" value="quantitative" checked>quantitative</input></div>
+                        <div class="buttonSelector" onclick="m.changeNormMethod('rescale')" ><input type="radio" name="normalize_method" value="rescale" >rescale</input></div>
                     </div>
 
                     <div class="menu_box">
                         size display</br>
-                        <input type="radio" name="notation" value="scientific" onchange="m.notation_switch()">scientific notation</input></br>
-                        <input type="radio" name="notation" value="percent" onchange="m.notation_switch()" checked>percent</input>
+                        <div class="buttonSelector" onclick="m.changeNotation('scientific')"><input type="radio" name="notation" value="scientific" >scientific notation</input></div>
+                        <div class="buttonSelector" onclick="m.changeNotation('percent')"><input type="radio" name="notation" value="percent" checked>percent</input></div>
                     </div>
 
                     <div class="menu_box">
                         point key</br>
-                        <input type="radio" name="time" value="name" onchange="m.time_switch()" checked>name</input></br>
-                        <input type="radio" name="time" value="sampling_date" onchange="m.time_switch()">sampling date</input></br>
-                        <input type="radio" name="time" value="delta_date" onchange="m.time_switch()">day after first sample</input>
+                        <div class="buttonSelector" onclick="m.changeTimeFormat('name')"><input type="radio" name="time" value="name"  checked>name</input></div>
+                        <div class="buttonSelector" onclick="m.changeTimeFormat('sampling_date')"><input type="radio" name="time" value="sampling_date" >sampling date</input></div>
+                        <div class="buttonSelector" onclick="m.changeTimeFormat('delta_date')"><input type="radio" name="time" value="delta_date" >day after first sample</input></div>
                     </div>
 
                     <div class="submenu" id="system_menu" style="display:none">

@@ -103,32 +103,42 @@ Builder.prototype = {
         input.value= -1;
         input.name = "normalize_list"
         input.id = "reset_norm"
-        input.onclick = function () {
-            self.m.compute_normalization(-1) 
-            self.m.update()
-        }
         input.checked=true;
         
-        normalize_list.appendChild(input)
-        normalize_list.appendChild(document.createTextNode("none"))
-        normalize_list.appendChild(document.createElement("br"))
+        var div = document.createElement("div")
+        div.onclick = function () {
+            self.m.compute_normalization(-1) 
+            this.firstChild.checked=true
+            self.m.update()
+        }
+        div.className="buttonSelector"
+        div.appendChild(input)
+        div.appendChild(document.createTextNode("none"))
+        
+        normalize_list.appendChild(div)
         
         for (var i=0; i<self.m.n_clones; i++){
             if (typeof self.m.clone(i).expected != "undefined"){
+                
                 var input = document.createElement("input")
-                var text = document.createTextNode(self.m.clone(i).getName() + " => " +self.m.clone(i).expected)
                 input.value=i;
                 input.type = "radio"
                 input.name = "normalize_list"
-                input.onclick = function () {
-                    self.m.compute_normalization(this.value) 
-                    self.m.update()
-                }
                 if (self.m.normalization.id==i) input.checked=true;
                 
-                normalize_list.appendChild(input)
-                normalize_list.appendChild(text)
-                normalize_list.appendChild(document.createElement("br"))
+                var text = document.createTextNode(self.m.clone(i).getName() + " => " +self.m.clone(i).expected)
+                
+                var div = document.createElement("div")
+                div.onclick = function () {
+                    self.m.compute_normalization(this.firstChild.value) 
+                    this.firstChild.checked=true
+                    self.m.update()
+                }
+                div.className="buttonSelector"
+                div.appendChild(input)
+                div.appendChild(text)
+                
+                normalize_list.appendChild(div)
             }
         }
     },
@@ -192,11 +202,16 @@ Builder.prototype = {
         input.type = "number";
         input.step = "0.0001"
         input.id = "normalized_size";
+        input.onkeydown = function () {
+            if (event.keyCode == 13) document.getElementById('normalized_size_button')
+                .click();
+        }
         
         span2.appendChild(input)
         
         var span3 = document.createElement('button');
         span3.appendChild(document.createTextNode("ok"))
+        span3.id = "normalized_size_button";
         span3.onclick = function () {
             var cloneID = parseInt(document.getElementById('tag_id')
                 .innerHTML);
@@ -377,24 +392,25 @@ Builder.prototype = {
             $("#color_system_button").css("display", "")
             
             for (var key in this.m.reads.germline) {
-                
-                var radio=document.createElement("input");
-                    radio.type="radio";
-                    radio.name="germline";
-                    radio.value=key
-                    if (this.m.germlineV.system==key) radio.checked=true
-                    radio.onchange = function () {
-                        m.changeGermline(this.value)
+                (function (key) {
+                    var radio=document.createElement("input");
+                        radio.type="radio";
+                        radio.name="germline";
+                        radio.value=key
+                        if (this.m.germlineV.system==key) radio.checked=true
+                        
+                    div = document.createElement('div');
+                    div.onclick = function(){
+                        m.changeGermline(key)
                     }
+                    div.className="buttonSelector"
+                    div.appendChild(radio)
+                    div.appendChild(document.createTextNode(key))
                     
-                div = document.createElement('div');
-                div.appendChild(radio)
-                div.appendChild(document.createTextNode(key))
-                
-                li = document.createElement('li');
-                li.appendChild(div)
-                listGermline.appendChild(li);
-                
+                    li = document.createElement('li');
+                    li.appendChild(div)
+                    listGermline.appendChild(li);
+                })(key)
             }
              
         }else{

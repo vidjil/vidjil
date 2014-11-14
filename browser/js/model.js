@@ -399,21 +399,6 @@ Model.prototype = {
     },
     
     
-    /* load a new germline and update 
-     * 
-     * */
-    changeGermline: function (system) {
-        this.loadGermline(system)
-            .computeColor()
-            .resize()
-            .update()
-        
-        var box_list = document.getElementsByName("germline")
-        for( var i=0; i<box_list.length; i++ ){
-            if (box_list[i].value == system) box_list[i].checked=true;
-        }
-    },
-    
     /* charge le germline définit a l'initialisation dans le model
      * détermine le nombre d'allele pour chaque gene et y attribue une couleur
      * */
@@ -845,11 +830,6 @@ Model.prototype = {
         
         return normalized_size
     },
-    
-    changeNormMethod : function (method){
-        this.normalization.method=method;
-        this.update()
-    },
 
     /*compute normalization factor needed to give a clone an expected size
      * 
@@ -936,35 +916,6 @@ Model.prototype = {
         this.update();
     },
     
-    /* use scientific notation / percent
-     *
-     * */
-    notation_switch: function () {
-        var radio = document.getElementsByName("notation");
-    
-        for(var elem in radio){
-            if(radio[elem].checked){
-                this.notation_type = radio[elem].value
-                this.update();
-            }
-        }
-    },
-    
-    /* use name / date 
-     *
-     * */
-    time_switch: function () {
-        var radio = document.getElementsByName("time");
-    
-        for(var elem in radio){
-            if(radio[elem].checked){
-                this.time_type = radio[elem].value
-                this.update();
-            }
-        }
-    },
-
-
     dateDiffInDays: function(aa, bb) {
 	// inspired by http://stackoverflow.com/questions/3224834
 	var _MS_PER_DAY = 1000 * 60 * 60 * 24 ;
@@ -1663,12 +1614,56 @@ Model.prototype = {
         return this.clones[hash]
     },
     
-
+    changeNormMethod : function (method){
+        this.normalization.method=method;
+        this.update()
+        
+        var radio = document.getElementsByName("normalize_method");
+        for(var elem in radio){
+            if(radio[elem].value == method) radio[elem].checked=true;
+        }
+    },
     
+    /* load a new germline and update 
+     * 
+     * */
+    changeGermline: function (system) {
+        this.loadGermline(system)
+            .computeColor()
+            .resize()
+            .update()
+        
+        var radio = document.getElementsByName("germline")
+        for(var elem in radio){
+            if (radio[elem].value == system) radio[elem].checked=true;
+        }
+    },
     
+    /* use scientific notation / percent
+     *
+     * */
+    changeNotation: function (notation) {
+        this.notation_type = notation
+        this.update();
+        
+        var radio = document.getElementsByName("notation");
+        for(var elem in radio){
+            if(radio[elem].value == notation) radio[elem].checked=true;
+        }
+    },
     
-    
-    
+    /* use name / date 
+     *
+     * */
+    changeTimeFormat: function (time) {
+        this.time_type = time
+        this.update();
+        
+        var radio = document.getElementsByName("time");
+        for(var elem in radio){
+            if(radio[elem].value == time) radio[elem].checked=true;
+        }
+    },
     
     
     
