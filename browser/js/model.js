@@ -1399,9 +1399,9 @@ Model.prototype = {
     /* Fonction de clusterisation
      *
      * */
-    clusterBy: function (data_name) {
+    clusterBy: function (fct) {
 
-        this.currentCluster = data_name;
+        this.currentCluster = fct;
         //save user cluster
         if ( this.cluster_key==""){
             this.clusters_copy = this.clusters
@@ -1414,17 +1414,7 @@ Model.prototype = {
             //detect key value
             var key = "undefined"
 
-            if (this.clone(i)[data_name]) {
-                if (this.clone(i)[data_name] instanceof Array) {
-                    for (var j = this.clone(i)[data_name].length; j >= 0; j--) {
-                        if (this.clone(i)[data_name][j] != 0)
-                            key = this.clone(i)[data_name][j]
-                    }
-                } else {
-                    if (this.clone(i)[data_name] != 0)
-                        key = this.clone(i)[data_name]
-                }
-            }
+            key = fct(i)
 
             //store clones with same key together
             if (key == "") key = "undefined"
@@ -1456,7 +1446,7 @@ Model.prototype = {
                 this.clusters[tmp[i][j]] = []
             }
         }
-        this.cluster_key = data_name
+        this.cluster_key = fct
         this.update()
     },
 

@@ -140,8 +140,8 @@
                 <div id="clusterSelector" class="selector"><div>
                     <a class="buttonSelector" onclick="m.resetClones();">reset all clusters</a>
                     <a class="buttonSelector" onclick="m.restoreClones();">user</a>
-                    <a class="buttonSelector" onclick="m.clusterBy('V');">V gene + allele</a>
-                    <a class="buttonSelector" onclick="m.clusterBy('J');">J gene + allele</a>
+                    <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getV()});">V gene + allele</a>
+                    <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getJ()});">J gene + allele</a>
                     <!-- <a class="buttonSelector" onclick="m.clusterBy('cluster')">DBSCAN algorithm</a> -->
 
                     <div id="clusterby_button"> </div>
