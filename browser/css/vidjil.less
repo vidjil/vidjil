@@ -403,6 +403,12 @@ line {
   background :@border;
 }
 
+#list, #data{
+    border-top: solid;
+    border-width: @margin;
+    border-color : @border;
+}
+
 #list-row, #data-row{
   display: table-row;
 }
@@ -424,7 +430,6 @@ line {
 
 #list_data{
     display: block;
-    border-top: solid;
     border-width: 4px;
     border-color: @border;
     overflow-y: scroll;
@@ -945,10 +950,10 @@ span.logo
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
-  border-top: solid;
   border-bottom:solid;
   padding:2px;
   width: 100%;
+  border-bottom-width: 2px;
 }
 
 .tagD{

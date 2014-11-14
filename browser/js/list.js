@@ -230,15 +230,16 @@ List.prototype = {
         //seriously 7 years after the first release of the html5 specs there is no simple way (except with chrome) to put a scrollbar inside a table-cell 
         
         document.getElementById("list_data").style.height = ""
+        document.getElementById("list_clones").style.height = "0px"
         
-        var total = document.getElementById("mid-container").offsetHeight
-        var info = document.getElementById("info-row").offsetHeight
-        var menu = document.getElementById("list_menu").offsetHeight
-        var data = document.getElementById("list_data").offsetHeight
+        var data = document.getElementById("data-row").offsetHeight
         if (data>100)data = 100
-            
-        document.getElementById("list_clones").style.height = (total-info-menu-data)+"px"
         document.getElementById("list_data").style.height = data+"px"
+        
+        var menu = document.getElementById("list_menu").offsetHeight
+        var list = $("#list-row").innerHeight()
+        document.getElementById("list_clones").style.height = (list-menu)+"px"
+        
     },
 
     /* genere le code HTML des infos d'un clone
