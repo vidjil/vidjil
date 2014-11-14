@@ -128,7 +128,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     db.commit()
     
     ## relance fuse.py 
-    output_file = out_folder+"result"
+    output_file = out_folder+'/'+output_filename+".fused"
     files = ""
     query = db( ( db.patient.id == db.sequence_file.patient_id )
                    & ( db.results_file.sequence_file_id == db.sequence_file.id )
@@ -180,6 +180,7 @@ def run_fuse_only(id_file, id_config, id_data, id_fuse):
     germline_folder = vidjil_path + '/germline/'
     upload_folder = DIR_UPLOAD
     out_folder = DIR_OUT_VIDJIL_ID % id_data
+    output_filename = "%06d" % id_data
     
     #clean folder
     cmd = "rm -rf "+out_folder 
@@ -203,7 +204,7 @@ def run_fuse_only(id_file, id_config, id_data, id_fuse):
                                 )
     
     ## fuse.py 
-    output_file = out_folder+"result"
+    output_file = out_folder+'/'+output_filename+'.fused'
     files = ""
     query = db( ( db.patient.id == db.sequence_file.patient_id )
                    & ( db.results_file.sequence_file_id == db.sequence_file.id )
