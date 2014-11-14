@@ -90,6 +90,7 @@ Model.prototype = {
         this.system_selected = []
         this.db_key = "" //for file who came from the database
         this.normalization = { 
+            "method" : "quantitative",
             "A" : [],
             "B" : 0,
             "id" : 0
@@ -816,7 +817,7 @@ Model.prototype = {
             var A = this.normalization.A[time] /* standard/spike at point time */
             var B = this.normalization.B       /* standard/spike expected value */
             
-            if (original_size <= A){
+            if (this.normalization.method=="rescale" || original_size <= A){
                 normalized_size = (original_size * B) / A
             }else{
                 normalized_size = B + ( (original_size - A) * ( (1 - B) / (1 - A) ) )
@@ -827,6 +828,11 @@ Model.prototype = {
         }
         
         return normalized_size
+    },
+    
+    changeNormMethod : function (method){
+        this.normalization.method=method;
+        this.update()
     },
 
     /*compute normalization factor needed to give a clone an expected size
@@ -872,7 +878,14 @@ Model.prototype = {
             if (size < min_size) min_size = size
         }
         
+        this.max_size = 1
         this.min_size = min_size
+        if (this.norm && this.normalization.method=="rescale"){
+            for (var i=0; i<this.samples.order.length; i++){
+                var max = this.normalization.B/this.normalization.A[i]
+                if (max>this.max_size) this.max_size=max;
+            }
+        }
         
         //*2 pour avoir une marge minimum d'un demi-log
         this.precision=(1/this.min_size)*2

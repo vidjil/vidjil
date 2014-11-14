@@ -202,6 +202,12 @@
                     </div>
 
                     <div class="menu_box">
+                        normalization method</br>
+                        <input type="radio" name="normalize_method" value="quantitative" onchange="m.changeNormMethod(this.value)" checked>quantitative</input></br>
+                        <input type="radio" name="normalize_method" value="rescale" onchange="m.changeNormMethod(this.value)" >rescale</input>
+                    </div>
+
+                    <div class="menu_box">
                         size display</br>
                         <input type="radio" name="notation" value="scientific" onchange="m.notation_switch()">scientific notation</input></br>
                         <input type="radio" name="notation" value="percent" onchange="m.notation_switch()" checked>percent</input>

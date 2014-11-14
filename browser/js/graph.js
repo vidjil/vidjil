@@ -260,7 +260,7 @@ Graph.prototype = {
         this.graph_col = [];
         
         this.scale_x = d3.scale.log()
-            .domain([1, this.m.precision])
+            .domain([1, this.m.precision*this.m.max_size])
             .range([0, 1]);
         
         //abscisse
@@ -484,7 +484,7 @@ Graph.prototype = {
     updateStack: function () {
         var stack = new Stack(this.m)
         stack.compute();
-        for (var i = 0; i < this.m.n_length; i++) {
+        for (var i = 0; i < this.m.n_clones; i++) {
             this.data_clones[i].path = this.constructStack(i, stack);
         }
     },
