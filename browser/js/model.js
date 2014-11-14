@@ -407,6 +407,11 @@ Model.prototype = {
             .computeColor()
             .resize()
             .update()
+        
+        var box_list = document.getElementsByName("germline")
+        for( var i=0; i<box_list.length; i++ ){
+            if (box_list[i].value == system) box_list[i].checked=true;
+        }
     },
     
     /* charge le germline définit a l'initialisation dans le model

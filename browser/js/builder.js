@@ -107,6 +107,7 @@ Builder.prototype = {
             self.m.compute_normalization(-1) 
             self.m.update()
         }
+        input.checked=true;
         
         normalize_list.appendChild(input)
         normalize_list.appendChild(document.createTextNode("none"))
@@ -381,6 +382,7 @@ Builder.prototype = {
                     radio.type="radio";
                     radio.name="germline";
                     radio.value=key
+                    if (this.m.germlineV.system==key) radio.checked=true
                     radio.onchange = function () {
                         m.changeGermline(this.value)
                     }
