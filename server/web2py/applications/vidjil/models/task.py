@@ -2,6 +2,7 @@
 import os
 import sys
 
+DIR_VIDJIL = '/home/vidjil/'
 DIR_UPLOAD = '/mnt/upload/uploads/'
 DIR_OUT_VIDJIL_ID = '/mnt/result/vidjil/out-%06d/'
 
@@ -69,8 +70,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     from subprocess import Popen, PIPE, STDOUT, os
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
-    vidjil_path = os.path.abspath(os.path.dirname(sys.argv[0])) + '/../..'
-    germline_folder = vidjil_path + '/germline/'
+    germline_folder = DIR_VIDJIL + '/germline/'
     upload_folder = DIR_UPLOAD
     out_folder = DIR_OUT_VIDJIL_ID % id_data
     
@@ -94,7 +94,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     fuse_log_file = open(out_folder+'/'+output_filename+'.fuse.log', 'w')
 
     ## commande complete
-    cmd = vidjil_path+'/vidjil ' + ' -o  ' + out_folder + " -b " + output_filename
+    cmd = DIR_VIDJIL + '/vidjil ' + ' -o  ' + out_folder + " -b " + output_filename
     if not vidjil_germline == 'multi':
         cmd += ' -G ' + germline_folder + vidjil_germline 
     cmd += ' ' + vidjil_cmd + ' '+ seq_file
@@ -176,8 +176,7 @@ def run_fuse_only(id_file, id_config, id_data, id_fuse):
     from subprocess import Popen, PIPE, STDOUT, os
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
-    vidjil_path = os.path.abspath(os.path.dirname(sys.argv[0])) + '/../..'
-    germline_folder = vidjil_path + '/germline/'
+    germline_folder = DIR_VIDJIL + '/germline/'
     upload_folder = DIR_UPLOAD
     out_folder = DIR_OUT_VIDJIL_ID % id_data
     output_filename = "%06d" % id_data
