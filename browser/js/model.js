@@ -329,9 +329,20 @@ Model.prototype = {
     //temporary keep old parser to make the transition with new '2014.09' version
     
     parseJsonAnalysis: function (analysis) {
-        this.analysis = JSON.parse(analysis);
+
+        var self = this
         
-        if (typeof this.analysis.vidjil_json_version != 'undefined' && this.analysis.vidjil_json_version >= "2014.09"){
+	try {
+            this.analysis = JSON.parse(analysis);
+        }
+	catch (e) {
+            myConsole.popupMsg(myConsole.msg.parse_analysis_error);
+            throw e;
+	    return 0
+        }
+
+        if (typeof self.analysis.vidjil_json_version != 'undefined' && self.analysis.vidjil_json_version >= "2014.09"){
+
             //samples
             var match = 0;
             if (this.analysis.samples) {

@@ -49,6 +49,7 @@ def concatenate_with_padding(d,
         The dictionaries d1 and d2 store several values that are lists with d1_size and d2_size elements,
         and the resulting dictionary will store values that are lists with size d1_size + d2_size elements.
         Pads with lists [0, ... 0] data that appear in either only d1 or only d2.
+        The values that are not lists are ignored (but this should not happen).
 
         >>> d = {}
         >>> d1 = { 'a': [1, 2], 'b': [11, 22], 'z':17 }
@@ -70,6 +71,9 @@ def concatenate_with_padding(d,
         for key in d1:
             if key in ignore_keys:
                 continue
+            if type(d1[key]) is not list:
+                continue
+
             d[key] = d1[key]
             if key not in d2 :
                 d[key] += t2
@@ -77,6 +81,9 @@ def concatenate_with_padding(d,
         for key in d2:
             if key in ignore_keys:
                 continue
+            if type(d2[key]) is not list:
+                continue
+
             if key not in d :
                 d[key] = t1 + d2[key]
             else :
@@ -134,30 +141,10 @@ class Window:
         myList = [ "seg", "top", "id", "sequence", "name", "id", "stats", "germline"]
         obj = Window(1)
         
-        t1 = []
-        t2 = []
-        
-        for i in range(len(self.d["reads"])):
-            t1.append(0)
-        for i in range(len(other.d["reads"])):
-            t2.append(0)
-            
-        #concat data, if there is some missing data we use an empty buffer t1/t2 
-        #with the same size as the number of misssing data
-        for key in self.d :
-            if key not in myList and type(self.d[key]) is list:
-                obj.d[key] = self.d[key]
-                if key not in other.d :
-                    obj.d[key] += t2
-            else :
-                obj.d[key] = self.d[key]
-        
-        for key in other.d :
-            if key not in myList and type(other.d[key]) is list:
-                if key not in obj.d:
-                    obj.d[key] = t1 + other.d[key]
-                else :
-                    obj.d[key] += other.d[key]
+        concatenate_with_padding(obj.d,
+                                 self.d, len(self.d["reads"]),
+                                 other.d, len(other.d["reads"]),
+                                 myList)
                     
         #keep other data who don't need to be concat
         if other.d["top"] < self.d["top"] :
@@ -344,14 +331,15 @@ class ListWindows:
         with open(output, "w") as file:
             json.dump(self, file, indent=2, default=self.toJson)
             
-    def load(self, file_path, pipeline):
+    def load(self, file_path, pipeline, verbose=True):
         '''init listWindows with data file
         Detects and selects the parser according to the file extension.'''
 
         # name = file_path.split("/")[-1]
         extension = file_path.split('.')[-1]
-        
-        print "<==", file_path, "\t",
+
+        if verbose:
+            print "<==", file_path, "\t",
         
         try:
         
@@ -367,11 +355,13 @@ class ListWindows:
         if pipeline: 
             # renaming, private pipeline
             f = '/'.join(file_path.split('/')[2:-1])
-            print "[%s]" % f
+            if verbose:
+                print "[%s]" % f
 
         else:
             f = file_path
-            print
+            if verbose:
+                print
         
         time = os.path.getmtime(file_path)
         self.d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
@@ -409,7 +399,8 @@ class ListWindows:
         concatenate_with_padding(obj.d, 
                                  self.d, l1,
                                  other.d, l2,
-                                 ["clones", "links", "germlines"])
+                                 ["clones", "links", "germlines",
+                                  "vidjil_json_version"])
         
         obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
@@ -795,7 +786,7 @@ def main():
     group_options = parser.add_argument_group() # title='Options and parameters')
 
     group_options.add_argument('--test', action='store_true', help='run self-tests')
-    group_options.add_argument('--multi', action='store_true', help='merge multiple systems (experimental)')
+    group_options.add_argument('--multi', action='store_true', help='merge different systems from a same timepoint (deprecated, do not use)')
     
     group_options.add_argument('--compress', '-c', action='store_true', help='compress point names, removing common substrings')
     group_options.add_argument('--pipeline', '-p', action='store_true', help='compress point names (internal Bonsai pipeline)')

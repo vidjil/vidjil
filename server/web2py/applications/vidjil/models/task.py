@@ -2,6 +2,9 @@
 import os
 import sys
 
+DIR_UPLOAD = '/mnt/upload/uploads/'
+DIR_OUT_VIDJIL_ID = '/mnt/result/vidjil/out-%06d/'
+
 TASK_TIMEOUT = 10 * 60
 
 def schedule_run(id_sequence, id_config):
@@ -68,8 +71,8 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     ## les chemins d'acces a vidjil / aux fichiers de sequences
     vidjil_path = os.path.abspath(os.path.dirname(sys.argv[0])) + '/../..'
     germline_folder = vidjil_path + '/germline/'
-    upload_folder = os.path.abspath(os.path.dirname(sys.argv[0])) + '/applications/vidjil/uploads/'
-    out_folder = os.path.abspath(os.path.dirname(sys.argv[0])) + '/out-%06d' % id_data +'/'
+    upload_folder = DIR_UPLOAD
+    out_folder = DIR_OUT_VIDJIL_ID % id_data
     
     cmd = "rm -rf "+out_folder 
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
@@ -134,7 +137,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
                    ).select( orderby=db.sequence_file.id|db.results_file.run_date, groupby=db.sequence_file.id ) 
     for row in query :
         if row.results_file.data_file is not None :
-            files += os.path.abspath(os.path.dirname(sys.argv[0])) + "/applications/vidjil/uploads/"+row.results_file.data_file+" "
+            files += upload_folder+row.results_file.data_file+" "
     
     cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
     
@@ -175,8 +178,8 @@ def run_fuse_only(id_file, id_config, id_data, id_fuse):
     ## les chemins d'acces a vidjil / aux fichiers de sequences
     vidjil_path = os.path.abspath(os.path.dirname(sys.argv[0])) + '/../..'
     germline_folder = vidjil_path + '/germline/'
-    upload_folder = os.path.abspath(os.path.dirname(sys.argv[0])) + '/applications/vidjil/uploads/'
-    out_folder = os.path.abspath(os.path.dirname(sys.argv[0])) + '/out_'+str(id_data)+'/'
+    upload_folder = DIR_UPLOAD
+    out_folder = DIR_OUT_VIDJIL_ID % id_data
     
     #clean folder
     cmd = "rm -rf "+out_folder 

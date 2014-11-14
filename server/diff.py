@@ -4,7 +4,24 @@
 
 import fuse
 import sys
-#import ansi
+import ansi
+import argparse
+
+parser = argparse.ArgumentParser()
+parser.add_argument('--nb', '-n', type=int, default=5, help='number of clones to display from the first file (%(default)d)')
+parser.add_argument('--nb_others', '-o', type=int, default=3, help='number of clones to display from the other files (%(default)d)')
+parser.add_argument('--verbose', '-v', action='store_true', help='verbose output')
+parser.add_argument('file', nargs=2, help='''.vidjil files to be compared''')
+
+
+DIFF_COLORS = {
+    '+': ansi.Fore.GREEN,
+    '-': ansi.Fore.RED,
+    '=': ansi.Fore.BLUE,
+    '?': ansi.Fore.CYAN,
+}
+
+
 
 def format_rank(rank, colorize):
     s = ''
@@ -14,28 +31,22 @@ def format_rank(rank, colorize):
         s += '#%02dk' % (rank / 1000)
 
     if rank <= 5 and colorize:
-        s = ansi.Fore.RED + s + ansi.Style.RESET_ALL
+        s = ansi.Fore.BLUE + s + ansi.Style.RESET_ALL
 
     return s
 
 def format_rank_nb_reads(rank, list_nb_reads, list_total_nb_reads):
-    s = format_rank(rank, False) + ' '
+    s = format_rank(rank, True) + ' '
     for (nb_reads, total_nb_reads) in zip(list_nb_reads, list_total_nb_reads):
         s += ' %6d %6.2f%%' % (nb_reads, 100*float(nb_reads)/float(total_nb_reads))
     return s
 
-class Args:
-    pass
-
-args = Args()
-args.nb = 5
-args.nb_others = 3
-
 def diff_two_clones(self, other):
     if not other or not self:
         who = "+-"[not other]
-        print who,
-        print "!!! Clone not present:", self, "/", other
+        print DIFF_COLORS[who]+who,
+        print "!!! Clone not present:", self, "/", other,
+        print ansi.Style.RESET_ALL
         return
 
     if not self.d['reads'] == other.d['reads']:
@@ -49,12 +60,12 @@ def diff_two_clones(self, other):
             if reads_o < reads_s:
                 who_minus = True
         who = ["=+", "-?"][who_minus][who_plus]
-        print who, 
+        print DIFF_COLORS[who]+who, 
+        print "!!! Not the same number or reads:", self.d['id'], "-", self.d['reads'], "/", other.d['reads'],
+        print ansi.Style.RESET_ALL
 
-        print "!!! Not the same number or reads:", self.d['id'], "-", self.d['reads'], "/", other.d['reads']
 
-
-def compare(data1, data2, verbose_diff=True):
+def compare(data1, data2, args):
 
     displayed_clones = []
 
@@ -62,11 +73,11 @@ def compare(data1, data2, verbose_diff=True):
         if clone in displayed_clones:
             return
 
-        if verbose_diff:
+        if args.verbose:
             print clone,
         other_clones = []
         for o in [data1] + [data2]:
-            if verbose_diff:
+            if args.verbose:
                 print "\t",
             try:
                 w = o[clone]
@@ -76,11 +87,11 @@ def compare(data1, data2, verbose_diff=True):
             if not w:
                 continue
 
-            if verbose_diff:
+            if args.verbose:
                 print format_rank_nb_reads(w.d['top'], w.d['reads'], o.d['reads'].d['segmented']),
 
         displayed_clones.append(clone)        
-        if verbose_diff:
+        if args.verbose:
             print
         
         diff_two_clones(other_clones[0], other_clones[1] if len(other_clones) > 1 else None)
@@ -91,14 +102,14 @@ def compare(data1, data2, verbose_diff=True):
     ids_2 = [clone.d['id'] for clone in data2]
  
     ### Display clones of this ListWindows
-    if verbose_diff:
+    if args.verbose:
         print "==== Diff from %s, %d first clones" % (data1, args.nb)
 
     for id in ids_1[:args.nb]:
         print_clone_in_self_and_others(id)
 
     ### Display clones of other ListWindows not present in this ListWindows
-    if verbose_diff:
+    if args.verbose:
         print
         print "==== Other clones in the top %d of other files" % args.nb_others
 
@@ -110,17 +121,25 @@ def compare(data1, data2, verbose_diff=True):
 
 
 
-datas = []
-for i in sys.argv[1:]:
-    data = fuse.ListWindows()
-    data.load(i, False)
-    datas.append(data)
+def main():
+
+    args = parser.parse_args()
+    datas = []
+
+    for i in args.file:
+        data = fuse.ListWindows()
+        data.load(i, False, verbose = args.verbose)
+        datas.append(data)
     
-data1 = datas[0]
-data2 = datas[1]
+    data1 = datas[0]
+    data2 = datas[1]
+
+    compare(data1, data2, args)
 
 
-compare(data1, data2, False)
+
+if  __name__ =='__main__':
+    main()
 
 
 
