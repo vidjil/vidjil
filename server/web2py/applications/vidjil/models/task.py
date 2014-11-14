@@ -109,7 +109,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
 
     (stdoutdata, stderrdata) = p.communicate()
 
-    print "Output file in "+out_folder+'/'+output_filename+'.vidjil.log'
+    print "Output log in "+out_folder+'/'+output_filename+'.vidjil.log'
     sys.stdout.flush()
     db.commit()
 
@@ -149,7 +149,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     db.commit()
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=fuse_log_file, stderr=STDOUT, close_fds=True)
     (stdoutdata, stderrdata) = p.communicate()
-    print "Output file in "+out_folder+'/'+output_filename+'.fuse.log'
+    print "Output log in "+out_folder+'/'+output_filename+'.fuse.log'
 
     fuse_filepath = os.path.abspath(output_file)
     stream = open(fuse_filepath, 'rb')
@@ -167,7 +167,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     
     ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
     ## TODO parse result success/fail
-    return "sucess"
+    return "SUCCESS"
 
 
 
@@ -235,7 +235,7 @@ def run_fuse_only(id_file, id_config, id_data, id_fuse):
     p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
     
-    return "sucess"
+    return "SUCCESS"
 
 
 from gluon.scheduler import Scheduler
