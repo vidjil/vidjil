@@ -1,11 +1,11 @@
 
+import defs
 import datetime
 LAST_HOURS = 24
-DIR_OUT_VIDJIL_ID = '/mnt/result/vidjil/out-%06d/'
 
 def tmp_dir(scheduler_args):
     data_id = int(scheduler_args.split(',')[2])
-    return DIR_OUT_VIDJIL_ID % data_id
+    return defs.DIR_OUT_VIDJIL_ID % data_id
 
 def ellipsis(what, max_size=30):
     ell = ' ...'

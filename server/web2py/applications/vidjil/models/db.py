@@ -1,8 +1,6 @@
 # -*- coding: utf-8 -*-
 
-
-DIR_UPLOADS = '/mnt/upload/uploads/'
-DIR_RESULTS = '/mnt/result/results/'
+import defs
 
 #########################################################################
 ## This scaffolding model makes your app work on Google App Engine too
@@ -115,7 +113,7 @@ db.define_table('sequence_file',
                 Field('producer','text'),
                 Field('size_file','integer'),
                 Field('data_file', 'upload', 
-                      uploadfolder=DIR_UPLOADS,
+                      uploadfolder=defs.DIR_SEQUENCES,
                       length=1000000000000, autodelete=True))
 
 
@@ -125,7 +123,7 @@ db.define_table('standard_file',
                 Field('name', 'string'),
                 Field('info','text'),
                 Field('data_file', 'upload',
-                      uploadfolder=DIR_UPLOADS,
+                      uploadfolder=defs.DIR_SEQUENCES,
                       autodelete=True, length=1000000000000))
 
 
@@ -145,7 +143,7 @@ db.define_table('results_file',
                 Field('run_date','datetime'),
                 Field('scheduler_task_id', 'integer'),
                 Field('data_file', 'upload', 
-                      uploadfolder=DIR_RESULTS,
+                      uploadfolder=defs.DIR_RESULTS,
                       length=1000000000000, autodelete=True))
 
 db.define_table('fused_file',
@@ -154,7 +152,7 @@ db.define_table('fused_file',
                 Field('fuse_date','datetime'),
                 Field('status', 'string'),
                 Field('fused_file', 'upload', 
-                      uploadfolder=DIR_RESULTS,
+                      uploadfolder=defs.DIR_RESULTS,
                       length=1000000000000, autodelete=True))
 
 db.define_table('analysis_file',
@@ -163,7 +161,7 @@ db.define_table('analysis_file',
                 Field('analyze_date','datetime'),
                 Field('status', 'string'),
                 Field('analysis_file', 'upload', 
-                      uploadfolder=DIR_RESULTS,
+                      uploadfolder=defs.DIR_RESULTS,
                       length=1000000000000, autodelete=True))
 
 

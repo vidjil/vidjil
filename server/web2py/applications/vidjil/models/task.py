@@ -1,11 +1,9 @@
 # coding: utf8
 import os
 import sys
+import defs
 
 DIR_VIDJIL = '/home/vidjil/'
-DIR_UPLOAD = '/mnt/upload/uploads/'
-DIR_RESULTS = '/mnt/result/results/'
-DIR_OUT_VIDJIL_ID = '/mnt/result/vidjil/out-%06d/'
 
 TASK_TIMEOUT = 10 * 60
 
@@ -72,8 +70,8 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
     germline_folder = DIR_VIDJIL + '/germline/'
-    upload_folder = DIR_UPLOAD
-    out_folder = DIR_OUT_VIDJIL_ID % id_data
+    upload_folder = defs.DIR_SEQUENCES
+    out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
     
     cmd = "rm -rf "+out_folder 
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
@@ -143,7 +141,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
                    ).select( orderby=db.sequence_file.id|db.results_file.run_date, groupby=db.sequence_file.id ) 
     for row in query :
         if row.results_file.data_file is not None :
-            files += DIR_RESULTS + row.results_file.data_file+" "
+            files += defs.DIR_RESULTS + row.results_file.data_file+" "
     
     cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
     
@@ -188,8 +186,8 @@ def run_fuse_only(id_file, id_config, id_data, id_fuse):
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
     germline_folder = DIR_VIDJIL + '/germline/'
-    upload_folder = DIR_UPLOAD
-    out_folder = DIR_OUT_VIDJIL_ID % id_data
+    upload_folder = defs.DIR_SEQUENCES
+    out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
     output_filename = "%06d" % id_data
     
     #clean folder
@@ -223,7 +221,7 @@ def run_fuse_only(id_file, id_config, id_data, id_fuse):
                    ).select( orderby=db.sequence_file.sampling_date ) 
     for row in query :
         if row.sequence_file.data_file is not None :
-            files += DIR_RESULTS + row.sequence_file.data_file + " "
+            files += defs.DIR_RESULTS + row.sequence_file.data_file + " "
     
     cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
     print cmd

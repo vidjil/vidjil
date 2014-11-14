@@ -9,7 +9,7 @@
 ## - call exposes all registered services (none by default)
 #########################################################################
 
-DIR_RESULTS = '/mnt/result/results/'
+import defs
 
 import gluon.contrib.simplejson, time, datetime
 if request.env.http_origin:
@@ -89,7 +89,7 @@ def get_data():
                & ( db.fused_file.config_id == request.vars["config_id"] )
                ).select() 
     for row in query :
-        fused_file = DIR_RESULTS+row.fused_file
+        fused_file = defs.DIR_RESULTS+'/'+row.fused_file
 
     if error == "" :
         
@@ -162,7 +162,7 @@ def get_analysis():
 
         if not analysis_query.isempty() :
             row = analysis_query.select().first()
-            f = open(DIR_RESULTS+row.analysis_file, "r")
+            f = open(defs.DIR_RESULTS+'/'+row.analysis_file, "r")
             analysis = gluon.contrib.simplejson.loads(f.read())
             f.close()
             if 'cluster' in analysis:

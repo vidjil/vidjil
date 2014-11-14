@@ -1,6 +1,5 @@
 
-DIR_SEQUENCES = '/mnt/upload/uploads'
-
+import defs
 
 for seq in db(db.sequence_file).select():
     print "===", "seq-%d" % seq.id, "\t", seq.sampling_date, "\t", seq.filename, seq.data_file
@@ -19,7 +18,7 @@ for seq in db(db.sequence_file).select():
     old = files[-2]
     new = files[-1]
     
-    com = 'python /home/vidjil/server/diff.py %s/%s %s/%s' % (DIR_SEQUENCES, old, DIR_SEQUENCES, new)
+    com = 'python /home/vidjil/server/diff.py %s/%s %s/%s' % (defs.DIR_RESULTS, old, defs.DIR_RESULTS, new)
     # print com
     os.system(com)
 
