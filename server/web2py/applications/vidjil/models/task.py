@@ -213,7 +213,7 @@ def run_fuse_only(id_file, id_config, id_data, id_fuse):
                    ).select( orderby=db.sequence_file.sampling_date ) 
     for row in query :
         if row.sequence_file.data_file is not None :
-            files += os.path.abspath(os.path.dirname(sys.argv[0])) + "/applications/vidjil/uploads/"+row.sequence_file.data_file+" "
+            files += upload_folder + row.sequence_file.data_file + " "
     
     cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
     print cmd
