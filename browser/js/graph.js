@@ -33,7 +33,9 @@ function Graph(id, model) {
     this.resizeW = 1; //coeff d'agrandissement/réduction largeur                
     this.resizeH = 1; //coeff d'agrandissement/réduction hauteur        
     
-    this.display_limit = 10 
+    this.display_limit2 = 50 //nombre max de clones pouvant etre affiché sur le graph
+    this.display_limit = 10  //les clones du top 10 sont toujours affiché (même s'il y en a plus de 50)
+     
 
     this.marge1 = 0.05; //marge droite bord du graph/premiere colonne
     this.marge2 = 0.08; //marge gauche derniere colonne/bord du graph
@@ -526,6 +528,8 @@ Graph.prototype = {
     drawLines: function (speed) {
         var self = this;
 
+        var c = 0;
+        
         if (this.mode=="stack"){
             //volumes
             this.g_graph
@@ -555,6 +559,8 @@ Graph.prototype = {
                     if (!clone.isActive()) return "graph_inactive";
                     if (clone.isSelected()) return "graph_select";
                     if (clone.isFocus()) return "graph_focus";
+                    c++
+                    if (c < self.display_limit2 ) return "graph_line";
                     if (clone.top > self.display_limit) return "graph_inactive";
                     return "graph_line";
                 })
@@ -590,6 +596,8 @@ Graph.prototype = {
                     if (!clone.isActive()) return "graph_inactive";
                     if (clone.isSelected()) return "graph_select";
                     if (clone.isFocus()) return "graph_focus";
+                    c++
+                    if (c < self.display_limit2 ) return "graph_line";
                     if (clone.top > self.display_limit) return "graph_inactive";
                     return "graph_line";
                 })
