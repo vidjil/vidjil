@@ -115,7 +115,12 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
 
     ## récupération du fichier data.json généré
     results_filepath = os.path.abspath(out_folder+'/'+output_filename+".vidjil")
-    stream = open(results_filepath, 'rb')
+
+    try:
+        stream = open(results_filepath, 'rb')
+    except IOError:
+        print "!!! Vidjil failed, no .vidjil file"
+        raise IOError
     
     ## insertion dans la base de donnée
     ts = time.time()
@@ -152,8 +157,13 @@ def run_vidjil(id_file, id_config, id_data, id_fuse):
     print "Output log in "+out_folder+'/'+output_filename+'.fuse.log'
 
     fuse_filepath = os.path.abspath(output_file)
-    stream = open(fuse_filepath, 'rb')
-    
+
+    try:
+        stream = open(fuse_filepath, 'rb')
+    except IOError:
+        print "!!! Fuse failed, no .fused file"
+        raise IOError
+
     ts = time.time()
     
     db.fused_file[id_fuse] = dict(fuse_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
@@ -223,7 +233,13 @@ def run_fuse_only(id_file, id_config, id_data, id_fuse):
     
     #store fused file
     fuse_filepath = os.path.abspath(output_file)
-    stream = open(fuse_filepath, 'rb')
+
+    try:
+        stream = open(fuse_filepath, 'rb')
+    except IOError:
+        print "!!! Fuse failed, no .fused file"
+        raise IOError
+
     ts = time.time()
     db.fused_file[id_fuse] = dict(fuse_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                  fused_file = stream)
