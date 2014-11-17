@@ -381,17 +381,26 @@ Clone.prototype = {
         return html
     },
     
+    enable: function (top) {
+        if (this.top <= top && tagDisplay[this.tag] == 1 && this.id != "other") {
+            this.active = true;
+        }
+    },
+    
+    disable: function () {
+            this.active = false;
+    },
+    
     unselect: function () {
         myConsole.log("unselect() (clone " + this.hash + ")")
         if (this.select) {
             this.select = false;
         }
-        this.m.removeClonesSelected(this.hash);
         this.m.updateElemStyle([this.hash]);
     },
     
     isSelected: function () {
-        return (this.m.clonesSelected.indexOf(this.hash) != -1)
+        return this.select
     },
     
     isActive: function () {
