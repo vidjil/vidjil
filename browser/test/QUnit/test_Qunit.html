@@ -3,15 +3,64 @@
 <head>
     <meta charset="utf-8">
     <title>QUnit - The Vidjil Project</title>
-    <link rel="stylesheet" href="../../css/qunit-1.14.0.css">
-    <script type="text/javascript" src="../../js/dbscan.js"></script>
+    <link rel="stylesheet" href="../../css/qunit-1.15.0.css">
+    <script type="text/javascript" src='../../js/lib/d3.v3.js'></script>
+    <script type="text/javascript" src="../../js/lib/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="../../js/lib/jquery.form.js"></script>
+    <script type="text/javascript" src='../../js/lib/StackBlur.js'></script>
+    <script type="text/javascript" src='../../js/lib/jspdf.js'></script>
+    <script type="text/javascript" src='../../js/lib/jspdf.plugin.addimage.js'></script>
+    <script type="text/javascript" src='../../js/lib/jspdf.plugin.svgToPdf.js'></script>
+    <script type="text/javascript" src='../../js/lib/jspdf.plugin.split_text_to_size.js'></script>
+    <script type="text/javascript" src='../../js/lib/jspdf.plugin.standard_fonts_metrics.js'></script>
+    <script type="text/javascript" src='../../js/lib/underscore.js'></script>
+    <script type="text/javascript" src='../../js/lib/rgbcolor.js'></script>
+    <script type="text/javascript" src='../../js/lib/file.js'></script>
+    <script type="text/javascript" src='../../js/lib/jquery.zclip.js'></script>
+
+    <script type="text/javascript" src='../../js/compare.js'></script>
+    <script type="text/javascript" src='../../js/menu.js'></script>
+    <script type="text/javascript" src='../../js/dbscan.js'></script>
+    <script type="text/javascript" src='../../js/germline.js'></script>
+    <script type="text/javascript" src='../../../germline/germlines.data'></script>
+    <script type="text/javascript" src='../../js/germline_builder.js'></script>
+    <script type="text/javascript" src='../../js/segmenter.js'></script>
+    <script type="text/javascript" src='../../js/model.js'></script>
+    <script type="text/javascript" src='../../js/clone.js'></script>
+    <script type="text/javascript" src='../../js/list.js'></script>
+    <script type="text/javascript" src="../../js/axis.js"> </script>
+    <script type="text/javascript" src="../../js/graph.js"> </script>
+    <script type="text/javascript" src="../../js/scatterPlot.js"> </script>
+    <script type="text/javascript" src='../../js/builder.js'></script>
+    <script type="text/javascript" src='../../js/com.js'></script>
+    <script type="text/javascript" src='../../js/vidjil-style.js'></script>
+    <script type="text/javascript" src='../../js/crossDomain.js'></script>
+    <script type="text/javascript" src='../../js/pdf.js'></script>
+    <script type="text/javascript" src='../../js/database.js'></script>
+    <script type="text/javascript" src='../../js/conf.js'></script>
+    <script type="text/javascript" src='../../js/stats.js'></script>
 </head>
 <body>
+    <div style="display:none">
+        <div id="flash_container" ></div>
+        <div id="log_container" ></div>
+        <div id="popup-container" ><div></div></div>
+        <div id="data-container" ></div>
+    </div>
+
     <div id="qunit"></div>
     <div id="qunit-fixture"></div>
     <script src="../../js/lib/qunit-1.14.0.js"></script>
-    <!--Add your .js test file here! -->
-    <!--dbscan tests-->
+    <script type="text/javascript" src="../../js/lib/qunit-tap.js"></script>
+    <script>
+    var tap_output;
+    qunitTap(QUnit, function() { 
+            if (typeof arguments != "undefined"){
+                tap_output+=arguments[0]+"\n" 
+            }
+        });
+    </script>
     <script src="./testFiles/dbscan_test.js"></script>
+    <script src="./testFiles/model_test.js"></script>
 </body>
 </html>
