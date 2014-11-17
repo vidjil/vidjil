@@ -24,30 +24,7 @@
  * data models are stocked here and can be accessed by the different views to be displayed
  * everytime a data model is modified by a control function the views are called to be updated
  */
-/*  MODEL
- *
- * load
- * loadGermline
- * loadAnalysis
- * initClones
- * saveAnalysis
- * resetAnalysis
- * changeName
- * getName
- * getCode
- * getSize
- * changeRatio
- * changeTime
- * focusIn
- * focusOut
- * select
- * unselect
- * unselectAll
- * getSelected
- * merge
- * split
- *
- * */
+
 VIDJIL_JSON_VERSION = '2014.09';
 
 /*Model constructor
@@ -102,7 +79,6 @@ Model.prototype = {
         this.nodes = null;
         this.edges = null;
 
-        this.clonesSelected = [];
         //This attribute contains the last clone selected in/out the graphe
         this.lastCloneSelected = -1;
         this.currentCluster = "";
@@ -413,43 +389,7 @@ Model.prototype = {
                     
     }, //end loadGermline
 
-    /* 
-     * gene : kind of gene V/D/J
-     * system : system wanted IGH/TRG/TRB/...
-     * */
-    compute_gene_list: function(gene, system){
-        var list = {}
-        
-        //si le germline complet est inférieur a 20 genes on le charge entierement
-        if ( typeof germline[system+gene] != "undefined" && Object.keys(germline[system+gene]).length < 20){
-            for (var key in germline[system+gene]){
-                list[key] = 0
-            }
-        }
-        
-        if (this.system == "multi"){
-            for ( var i=0; i<this.n_clones; i++){
-                var clone = this.clone(i)
-                if (clone.getSystem() == system) {
-                    if (clone[gene] && clone[gene][0]){
-                        list[clone[gene][0]]=0
-                    }   
-                }
-            }
-            
-        }else{
-            for (var i=0; i<this.n_clones; i++){
-                var clone = this.clone(i)
-                if (clone[gene] && clone[gene][0]){
-                    list[clone[gene][0]]=0
-                }
-            }
-        }
-        
-        var result = Object.keys(list)
-        mySortedArray(result);
-        return result
-    },
+
     
     /* load the selected analysis file in the model
      * @analysis : id of the form (html element) linking to the analysis file
@@ -860,8 +800,8 @@ Model.prototype = {
     
     update_normalization: function () {
         if (this.normalization.B != 0) {
-	     this.compute_normalization( this.normalization.id, this.normalization.B);
-	}
+            this.compute_normalization( this.normalization.id, this.normalization.B);
+        }
     },
     
     update_precision: function () {
@@ -898,90 +838,6 @@ Model.prototype = {
             return "not specified";
         }
     },
-    
-    /*
-     *
-     * */
-    changeColorMethod: function (colorM) {
-        this.colorMethod = colorM;
-        this.update();
-    },
-
-    /* use normalization_factor to compute clone size ( true/false )
-     *
-     * */
-    normalization_switch: function (newR) {
-        myConsole.log("normalization : " + newR)
-        this.norm = newR;
-        this.update();
-    },
-    
-    dateDiffInDays: function(aa, bb) {
-	// inspired by http://stackoverflow.com/questions/3224834
-	var _MS_PER_DAY = 1000 * 60 * 60 * 24 ;
-	var a = new Date(aa.split(" ")[0]);
-	var b = new Date(bb.split(" ")[0]);
-
-	// Discard the time and time-zone information.
-	var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
-	var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
-	
-	return Math.floor((utc2 - utc1) / _MS_PER_DAY);
-    },
-
-    getStrTime: function (timeID, format){
-        format = typeof format !== 'undefined' ? format : this.time_type;
-        var result = "-/-"
-
-        switch (format) {
-            case "name":
-                if (typeof this.samples.names != 'undefined' && this.samples.names[timeID] != ""){
-                    result = this.samples.names[timeID]
-                }else{
-                    result = this.samples.original_names[timeID]
-                    result = result.split('/')[result.split('/').length-1]
-                    result = result.split('.')[0]
-                }
-                break;
-            case "sampling_date":
-                if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID])
-                    result = this.samples.timestamp[timeID].split(" ")[0]
-                break;
-
-            case "delta_date":
-
-            if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[0])
-	    {
-		var time0 = this.samples.timestamp[0];
-
-                if (timeID == '0')
-		{
-		    result = time0.split(" ")[0];
-                    break;
-		}
-		else
-		{
-                    if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID])
-		    {
-			time = this.samples.timestamp[timeID];
-			diff = this.dateDiffInDays(time0, time);
-			result = (diff >= 0 ? '+' : '') + diff;
-		    }
-		}		    		
-            }
-	}
-        return result
-    },
-
-    /* change the current tracking point used
-     *
-     * */
-    changeTime: function (newT) {
-        myConsole.log("changeTime()" + newT)
-        this.t = newT;
-        this.update();
-    },
-
 
     /* put a marker on a specific clone
      *
@@ -1015,28 +871,6 @@ Model.prototype = {
             .text("")
     },
 
-    /* put a marker on a specific edge, for the edit distance distribution
-     *
-     */
-    focusEdge: function(edge) {
-       $(".focus")
-            .text(this.printInformationEdge(edge));
-    },
-
-    /* remove the focus marker to the edge
-     *
-     */
-    removeFocusEdge: function() {
-        $(".focus")
-            .text("")
-    },
-
-    /* print informations of a specific edge
-     */
-    printInformationEdge: function(edge) {
-        return this.getName(edge.source)+" -- "+this.getName(edge.target)+" == "+edge.len;
-    },
-
     /* return clones currently in the selection
      *
      * */
@@ -1048,30 +882,6 @@ Model.prototype = {
             }
         }
         return result
-    },
-
-    /*Fonction permettant d'ajouter un clône donné*/
-    addClonesSelected: function(cloneID) {
-      this.clonesSelected.push(cloneID);
-    },
-
-    /*Fonction permettant de déselectionner un clône donné*/
-    removeClonesSelected: function(cloneID) {
-      //Si suppression d'un clone parmis une liste de plusieurs, alors on supprime le clone spécifié
-      if (this.clonesSelected.length > 1) {
-        for (var i = 0; i < this.clonesSelected.length; i++) {
-	       if (this.clonesSelected[i] == cloneID) this.clonesSelected.splice(i, 1);
-        }
-        this.lastCloneSelected = this.clonesSelected[0];
-      }
-      //Sinon, on remet tout à 0
-      else this.removeAllClones();
-    },
-
-    /*Fonction permettant de déselectionner tous les clônes déjà sélectionnés*/
-    removeAllClones: function() {
-      this.clonesSelected = [];
-      this.lastCloneSelected = -1;
     },
 
     /* put a clone in the selection
@@ -1086,7 +896,6 @@ Model.prototype = {
             return;
         } else {
             this.clone(cloneID).select = true;
-            this.addClonesSelected(cloneID);
 	    }
 	    
 	    this.lastCloneSelected = cloneID;
@@ -1099,7 +908,6 @@ Model.prototype = {
 
         for (var i=0; i<list.length; i++){
             this.clone(list[i]).select = true;
-            this.addClonesSelected(list[i]);
         }
 
         this.lastCloneSelected = list[0];
@@ -1115,55 +923,7 @@ Model.prototype = {
         for (var i = 0; i < list.length; i++) {
             this.clone(list[i]).select = false;
         }
-	    this.removeAllClones();
         this.updateElemStyle(list);
-    },
-
-    /* merge all clones currently in the selection into one
-     *
-     * */
-    merge: function () {
-        var new_cluster = [];
-        var list = this.getSelected()
-        var leader;
-        var top = 200;
-        myConsole.log("merge clones " + list)
-
-        for (var i = 0; i < list.length; i++) {
-            if (this.clone(list[i]).top < top) {
-                leader = list[i];
-                top = this.clone(list[i]).top;
-            }
-            new_cluster = new_cluster.concat(this.clusters[list[i]]);
-            this.clusters[list[i]] = [];
-        }
-
-        this.clusters[leader] = new_cluster;
-        this.unselectAll()
-        this.updateElem(list)
-        this.select(leader)
-    },
-
-
-    /* sépare un clone d'un cluster
-     *
-     * */
-    split: function (clusterID, cloneID) {
-        myConsole.log("split() (cloneA " + clusterID + " windowB " + cloneID + ")")
-        if (clusterID == cloneID) return
-
-        var nlist = this.clusters[clusterID];
-        var index = nlist.indexOf(cloneID);
-        if (index == -1) return
-
-        nlist.splice(index, 1);
-
-        //le cluster retrouve sa liste de clones -1
-        this.clusters[clusterID] = nlist;
-        //le clone forme un cluster de 1 clone
-        this.clusters[cloneID] = [cloneID];
-
-        this.updateElem([cloneID, clusterID]);
     },
 
 
@@ -1189,13 +949,13 @@ Model.prototype = {
                 if (!this.clone(i).split) {
                     for (var j = 0; j < this.clusters[i].length; j++) {
                         var seq = this.clusters[i][j]
-                        this.clone(seq).active = false;
+                        this.clone(seq).disable();
                     }
-                    this.active(i)
+                    this.clone(i).enable(this.top)
                 } else {
                     for (var j = 0; j < this.clusters[i].length; j++) {
                         var seq = this.clusters[i][j]
-                        this.active(seq)
+                        this.clone(seq).enable(this.top)
                     }
                 }
             }
@@ -1205,7 +965,7 @@ Model.prototype = {
         if (this.system == "multi") {
             for (var i = 0; i < this.n_clones; i++) {
                 if (this.system_selected.indexOf(this.clone(i).getSystem()) == -1) {
-                    this.clones[i].active = false;
+                    this.clones[i].disable()
                 }
             }
         }
@@ -1213,7 +973,7 @@ Model.prototype = {
         //unactive filtered clone
         for (var i = 0; i < this.n_clones; i++) {
             if (this.clone(i).isFiltered) {
-                this.clone(i).active = false;
+                this.clone(i).disable();
             }
         }
         
@@ -1224,13 +984,6 @@ Model.prototype = {
         }
 
     },
-
-    active: function (id) {
-        if (this.clone(id).top <= this.top && tagDisplay[this.clone(id).tag] == 1 && this.clone(id).id != "other") {
-            this.clone(id).active = true;
-        }
-    },
-
 
     /*update all views
      *
@@ -1376,7 +1129,59 @@ Model.prototype = {
         return html
     },
 
-    /* Fonction de clusterisation
+
+////////////////////////////////////
+//// clusters functions
+////////////////////////////////////
+    
+    /* merge all clones currently in the selection into one cluster
+     *
+     * */
+    merge: function () {
+        var new_cluster = [];
+        var list = this.getSelected()
+        var leader;
+        var top = 200;
+        myConsole.log("merge clones " + list)
+
+        for (var i = 0; i < list.length; i++) {
+            if (this.clone(list[i]).top < top) {
+                leader = list[i];
+                top = this.clone(list[i]).top;
+            }
+            new_cluster = new_cluster.concat(this.clusters[list[i]]);
+            this.clusters[list[i]] = [];
+        }
+
+        this.clusters[leader] = new_cluster;
+        this.unselectAll()
+        this.updateElem(list)
+        this.select(leader)
+    },
+
+
+    /* sépare un clone d'un cluster
+     *
+     * */
+    split: function (clusterID, cloneID) {
+        myConsole.log("split() (cloneA " + clusterID + " windowB " + cloneID + ")")
+        if (clusterID == cloneID) return
+
+        var nlist = this.clusters[clusterID];
+        var index = nlist.indexOf(cloneID);
+        if (index == -1) return
+
+        nlist.splice(index, 1);
+
+        //le cluster retrouve sa liste de clones -1
+        this.clusters[clusterID] = nlist;
+        //le clone forme un cluster de 1 clone
+        this.clusters[cloneID] = [cloneID];
+
+        this.updateElem([cloneID, clusterID]);
+    },
+    
+    /* cluster clones who produce the same result with the function given in parameter
      *
      * */
     clusterBy: function (fct) {
@@ -1457,8 +1262,21 @@ Model.prototype = {
         
     },
 
-
-    /* 
+////////////////////////////////////
+//// time functions
+////////////////////////////////////
+    
+    /* change the current tracking point used
+     *
+     * */
+    changeTime: function (newT) {
+        myConsole.log("changeTime()" + newT)
+        this.t = newT;
+        this.update();
+        return this.t
+    },
+    
+    /* exchange position of 2 timepoints
      *
      * */
     switchTimeOrder: function (a, b) {
@@ -1485,13 +1303,13 @@ Model.prototype = {
         if (current_pos != -1){
             if (current_pos+1 < this.samples.order.length){
                 //next one
-                this.changeTime(this.samples.order[current_pos+1])
+                return this.changeTime(this.samples.order[current_pos+1])
             }else{
                 //back to the beginning
-                this.changeTime(this.samples.order[0])
+                return this.changeTime(this.samples.order[0])
             }
         }else{
-            this.changeTime(this.samples.order[0])   
+            return this.changeTime(this.samples.order[0])   
         }
     },
     
@@ -1501,13 +1319,13 @@ Model.prototype = {
         if (current_pos != -1){
             if (current_pos == 0){
                 //teleport to the end
-                this.changeTime(this.samples.order[this.samples.order.length-1])
+                return this.changeTime(this.samples.order[this.samples.order.length-1])
             }else{
                 //previous one
-                this.changeTime(this.samples.order[current_pos-1])
+                return this.changeTime(this.samples.order[current_pos-1])
             }
         }else{
-            this.changeTime(this.samples.order[0])   
+            return this.changeTime(this.samples.order[0])   
         }
         
     },
@@ -1543,6 +1361,65 @@ Model.prototype = {
         this.isPlaying = false;
         this.update();
     },
+    
+    dateDiffInDays: function(aa, bb) {
+    // inspired by http://stackoverflow.com/questions/3224834
+    var _MS_PER_DAY = 1000 * 60 * 60 * 24 ;
+    var a = new Date(aa.split(" ")[0]);
+    var b = new Date(bb.split(" ")[0]);
+
+    // Discard the time and time-zone information.
+    var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+    var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+    
+    return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+    },
+
+    getStrTime: function (timeID, format){
+        format = typeof format !== 'undefined' ? format : this.time_type;
+        var result = "-/-"
+
+        switch (format) {
+            case "name":
+                if (typeof this.samples.names != 'undefined' && this.samples.names[timeID] != ""){
+                    result = this.samples.names[timeID]
+                }else{
+                    result = this.samples.original_names[timeID]
+                    result = result.split('/')[result.split('/').length-1]
+                    result = result.split('.')[0]
+                }
+                break;
+            case "sampling_date":
+                if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID])
+                    result = this.samples.timestamp[timeID].split(" ")[0]
+                break;
+
+            case "delta_date":
+
+            if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[0])
+        {
+        var time0 = this.samples.timestamp[0];
+
+                if (timeID == '0')
+        {
+            result = time0.split(" ")[0];
+                    break;
+        }
+        else
+        {
+                    if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID])
+            {
+            time = this.samples.timestamp[timeID];
+            diff = this.dateDiffInDays(time0, time);
+            result = (diff >= 0 ? '+' : '') + diff;
+            }
+        }                   
+            }
+    }
+        return result
+    },
+    
+/////////////////////////////////////////////////////////////////////////////
     
     /* 
      *
@@ -1614,6 +1491,9 @@ Model.prototype = {
         return this.clones[hash]
     },
     
+    
+    
+    
     changeNormMethod : function (method){
         this.normalization.method=method;
         this.update()
@@ -1664,6 +1544,20 @@ Model.prototype = {
             if(radio[elem].value == time) radio[elem].checked=true;
         }
     },
+    
+    changeColorMethod: function (colorM) {
+        this.colorMethod = colorM;
+        this.update();
+    },
+    
+    
+    
+    
+    
+    
+    
+    
+    
     
     
     
@@ -1810,6 +1704,28 @@ Model.prototype = {
         else {
             div.insertBefore(text, div.firstChild);
         }
+    },
+    
+    /* put a marker on a specific edge, for the edit distance distribution
+     *
+     */
+    focusEdge: function(edge) {
+       $(".focus")
+            .text(this.printInformationEdge(edge));
+    },
+
+    /* remove the focus marker to the edge
+     *
+     */
+    removeFocusEdge: function() {
+        $(".focus")
+            .text("")
+    },
+
+    /* print informations of a specific edge
+     */
+    printInformationEdge: function(edge) {
+        return this.getName(edge.source)+" -- "+this.getName(edge.target)+" == "+edge.len;
     },
 
 } //end prototype Model
