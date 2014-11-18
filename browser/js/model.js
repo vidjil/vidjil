@@ -1365,8 +1365,8 @@ Model.prototype = {
     dateDiffInDays: function(aa, bb) {
     // inspired by http://stackoverflow.com/questions/3224834
     var _MS_PER_DAY = 1000 * 60 * 60 * 24 ;
-    var a = new Date(aa.split(" ")[0]);
-    var b = new Date(bb.split(" ")[0]);
+    var a = new Date(aa.split(" ")[0]+"T00:00:00.00Z");
+    var b = new Date(bb.split(" ")[0]+"T00:00:00.00Z");
 
     // Discard the time and time-zone information.
     var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
