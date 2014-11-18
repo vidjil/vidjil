@@ -1389,33 +1389,28 @@ Model.prototype = {
                     result = result.split('.')[0]
                 }
                 break;
+
             case "sampling_date":
                 if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID])
                     result = this.samples.timestamp[timeID].split(" ")[0]
                 break;
 
             case "delta_date":
+                if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[0]){
+                    var time0 = this.samples.timestamp[0];
 
-            if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[0])
-        {
-        var time0 = this.samples.timestamp[0];
-
-                if (timeID == '0')
-        {
-            result = time0.split(" ")[0];
-                    break;
+                    if (timeID == '0'){
+                        result = time0.split(" ")[0];
+                        break;
+                    }else{
+                        if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID]){
+                            time = this.samples.timestamp[timeID];
+                            diff = this.dateDiffInDays(time0, time);
+                            result = (diff >= 0 ? '+' : '') + diff;
+                        }
+                    }
+                }
         }
-        else
-        {
-                    if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID])
-            {
-            time = this.samples.timestamp[timeID];
-            diff = this.dateDiffInDays(time0, time);
-            result = (diff >= 0 ? '+' : '') + diff;
-            }
-        }                   
-            }
-    }
         return result
     },
     

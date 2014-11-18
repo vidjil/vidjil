@@ -15,8 +15,6 @@ page.open(curdir+"/test_Qunit.html", function() {
         } catch(e) {
             console.log(e);
         }
-        
-        page.render('example.png');
         phantom.exit();
         
     }, 5000);

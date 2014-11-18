@@ -2,9 +2,21 @@
 Redacted by Carette Antonin - the Vidjil Project
 —
 
+
+usage:
+
+    with browser:
+        -> open test_Qunit.html
+    with phantomjs:
+        -> install phantomJS (apt-get phantomjs)
+        -> phantomjs phantom_test.js
+
+
+
 QUnit tests:
 
     dbscan (dbscan_test.js)
+    model (model.js)
     ------
 
     DONE:
@@ -13,3 +25,9 @@ QUnit tests:
         -> Good clustering
             -> 2 nodes
             -> multiple nodes
+
+
+        -> Model object
+            -> load/parse json data
+            -> timepoint
+            
