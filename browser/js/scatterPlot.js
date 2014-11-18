@@ -361,7 +361,7 @@ ScatterPlot.prototype = {
    * -> Else, configuration by default of the engine (see 'init_motor')
    * */
   reinit_motor: function () {
-      this.m.resetClones();
+      this.m.resetClusters();
       if (!this.reinit) {
            //The configuration of the engine is active
            this.reinit = true;

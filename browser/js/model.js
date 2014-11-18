@@ -1239,7 +1239,7 @@ Model.prototype = {
     /* 
      *
      * */
-    resetClones: function () {
+    resetClusters: function () {
         //reset cluster
         this.cluster_key = ""
         
@@ -1253,7 +1253,7 @@ Model.prototype = {
     /* 
      *
      * */
-    restoreClones: function () {
+    restoreClusters: function () {
         this.cluster_key = ""
         if ( typeof this.clusters_copy != 'undefined'){
             this.clusters = this.clusters_copy
