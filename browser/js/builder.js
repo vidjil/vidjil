@@ -141,6 +141,32 @@ Builder.prototype = {
                 normalize_list.appendChild(div)
             }
         }
+        
+        for (var key in self.m.data){
+            if (typeof self.m.data[key].expected != "undefined"){
+                
+                var input = document.createElement("input")
+                input.value=key;
+                input.type = "radio"
+                input.name = "normalize_list"
+                if (self.m.normalization.id==i) input.checked=true;
+                
+                var text = document.createTextNode(key + " => " +self.m.data[key].expected)
+                
+                var div = document.createElement("div")
+                div.onclick = function () {
+                    self.m.compute_data_normalization(this.firstChild.value) 
+                    this.firstChild.checked=true
+                    self.m.update()
+                }
+                div.className="buttonSelector"
+                div.appendChild(input)
+                div.appendChild(text)
+                
+                normalize_list.appendChild(div)
+            }
+        }
+        
     },
 
     /*complete tagSelector html element with correct info about current tagname
@@ -228,7 +254,6 @@ Builder.prototype = {
             }else{
                 myConsole.popupMsg("expected input between 0.0001 and 1")
             }
-            
         }
         
         var div = document.createElement('div');
