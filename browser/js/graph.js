@@ -38,10 +38,10 @@ function Graph(id, model) {
      
 
     this.marge1 = 0.05; //marge droite bord du graph/premiere colonne
-    this.marge2 = 0.08; //marge gauche derniere colonne/bord du graph
-    this.marge3 = 60; //marge droite (non influencé par le resize)
-    this.marge4 = 60; //marge gauche (non influencé par le resize)
-    this.marge5 = 25; //marge top (non influencé par le resize)
+    this.marge2 = 0.05; //marge gauche derniere colonne/bord du graph
+    this.marge3 = 70; //marge droite (non influencé par le resize)
+    this.marge4 = 70; //marge gauche (non influencé par le resize)
+    this.marge5 = 30; //marge top (non influencé par le resize)
 
     this.data_axis = [];
     this.mobil = {};
@@ -152,6 +152,7 @@ Graph.prototype = {
             for (var i = 0; i < this.m.samples.number; i++) {
                 var t = this.m.samples.order.indexOf(i)
                 var val = this.m.data[key][t]
+                if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val,t)
                 if (val>max) max=val;
                 if (val<min) min=val;
                 tab.push(val)
@@ -312,6 +313,7 @@ Graph.prototype = {
             this.data_axis.push({"type" : "axis_h", "text" : "100%" ,"orientation" : "hori", "pos" : 0});
         }else{
             var height = 1;
+            while(height<this.m.max_size) height = height*10
             while ((height * this.m.precision) > 0.5) {
 
                 var d = {};
@@ -319,7 +321,7 @@ Graph.prototype = {
                 d.text = this.m.formatSize(height, false)
                 d.orientation = "hori";
                 d.pos = 1 - this.scale_x(height * this.m.precision);
-                this.data_axis.push(d);
+                if (d.pos>=-0.1) this.data_axis.push(d);
 
                 height = height / 10;
             }
@@ -477,6 +479,7 @@ Graph.prototype = {
             }
         }
         
+        this.initData()
         this.draw();
         elapsedTime = new Date()
             .getTime() - startTime;
