@@ -73,13 +73,23 @@ Clone.prototype = {
         if (this.m.reads.segmented[time] == 0 ) return 0
         var result = this.getReads(time) / this.m.reads.segmented[time]
         
-        if (this.m.norm) {
-            result = this.m.normalize(result, time)
-        }
+        if (this.m.norm) result = this.m.normalize(result, time)
 
         return result
-
     }, //end getSize
+    
+    //special getSize for scatterplot (ignore rescale)
+    getSize2: function (time) {
+        time = typeof time !== 'undefined' ? time : this.m.t;
+        
+        if (this.m.reads.segmented[time] == 0 ) return 0
+        var result = this.getReads(time) / this.m.reads.segmented[time]
+        
+        if (this.m.norm && this.m.normalization.method!="rescale") result = this.m.normalize(result, time)
+
+        return result
+    },
+    
     
     /* return the clone size with a fixed number of character
      * use scientific notation if neccesary

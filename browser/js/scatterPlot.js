@@ -1100,7 +1100,7 @@ ScatterPlot.prototype = {
                 var seqID = this.m.clusters[cloneID][i]
                 this.nodes[seqID].r1 = 0
             }
-            var size = this.m.clone(cloneID).getSize();
+            var size = this.m.clone(cloneID).getSize2();
             if (this.m.clusters[cloneID].length == 0) size = this.m.clone(cloneID).getSequenceSize();
             if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
             this.nodes[cloneID].r1 = size
