@@ -786,6 +786,7 @@ Model.prototype = {
             this.normalization.A = []
             this.normalization.B = expected_size
             this.normalization.id = cloneID
+            this.normalization.type = "clone"
             
             var tmp = this.norm
             this.norm = false
@@ -798,8 +799,24 @@ Model.prototype = {
         }
     },
     
+    compute_data_normalization: function (data, expected_size) {
+        expected_size = typeof expected_size !== 'undefined' ? expected_size : this.data[data].expected;
+        this.norm = true
+        
+        this.normalization.A = []
+        this.normalization.B = expected_size
+        this.normalization.id = data
+        this.normalization.type = "data"
+        this.data[data].expected = expected_size
+        
+        for (var i=0; i<this.samples.number; i++){
+            this.normalization.A[i] = this.data[data][i]
+        }
+        this.changeNormMethod("rescale")
+    },
+    
     update_normalization: function () {
-        if (this.normalization.B != 0) {
+        if (this.normalization.B != 0 && this.normalization.type=="clone") {
             this.compute_normalization( this.normalization.id, this.normalization.B);
         }
     },
@@ -1491,11 +1508,15 @@ Model.prototype = {
     
     changeNormMethod : function (method){
         this.normalization.method=method;
+        if (this.normalization.type=="data" && method !="rescale"){
+            this.normalization.method="rescale";
+        }
+        
         this.update()
         
         var radio = document.getElementsByName("normalize_method");
         for(var elem in radio){
-            if(radio[elem].value == method) radio[elem].checked=true;
+            if(radio[elem].value == this.normalization.method) radio[elem].checked=true;
         }
     },
     
