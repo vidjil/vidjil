@@ -5,7 +5,10 @@ before_install:
   - sudo pip install cpp-coveralls
 
 before_script: make data ; make germline
-script:  make COVERAGE=1 && make COVERAGE=1 test
+
+script: 
+  - make COVERAGE=1 && make COVERAGE=1 test
+  - make test_browser
 
 after_success:
   - make should_coveralls

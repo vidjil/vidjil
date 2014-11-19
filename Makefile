@@ -22,6 +22,9 @@ test_with_fuse:
 	make should
 	make pytests
 
+test_browser:
+	make -C browser/test
+
 unit: all
 	@echo "*** Launching unit tests..."
 	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests
