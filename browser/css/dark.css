@@ -355,6 +355,9 @@ line {
   margin-right: 10px;
   display: inline-block;
 }
+.data {
+  padding-right: 30px;
+}
 .list {
   width: 445px;
   display: block;
@@ -537,6 +540,16 @@ span .substitution {
   width: 220px;
   border: solid;
   display: none;
+}
+#dataMenu {
+  padding: 5px;
+  position: absolute;
+  left: 475px;
+  bottom: 195px;
+  width: 220px;
+  border: solid;
+  display: none;
+  background: #000000;
 }
 .tagElem {
   margin: 1px;
