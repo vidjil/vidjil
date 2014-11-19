@@ -663,3 +663,10 @@ function changeTag(cloneID) {
     document.getElementById("tag_id")
         .innerHTML = cloneID;
 }
+
+function openDataMenu(data) {
+    $('#dataMenu')
+        .show("fast");
+    document.getElementById("data_name")
+        .innerHTML = data;
+}

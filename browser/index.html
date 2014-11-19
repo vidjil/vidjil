@@ -316,6 +316,16 @@
             <ul> </ul>
         </div>
 
+        <div id="dataMenu">
+            <span class="closeButton" onclick="$('#dataMenu').hide('fast')">X</span>
+            <div> data :  <span id=data_name></span></div>
+            <div>
+                <span>expected size : </span>
+                <span><input type="number" step="0.0001" id="normalized_data"></span>
+                <button id="normalized_data_button">ok</button>
+            </div>
+        </div>
+
         <div id="frame-container"></div>
 
         <div id="popup-container">

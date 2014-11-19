@@ -240,6 +240,20 @@ Builder.prototype = {
         li.appendChild(div)
 
         listTag.appendChild(li);
+        
+        document.getElementById("normalized_data").onkeydown = function () {
+            if (event.keyCode == 13) document.getElementById('normalized_data_button').click();
+        }
+        document.getElementById("normalized_data_button").onclick = function () {
+            var data = document.getElementById('data_name').innerHTML
+            var size = parseFloat(document.getElementById('normalized_data').value);
+            
+            document.getElementById('normalized_data').value = ""
+            self.m.compute_data_normalization(data, size)
+            self.m.update()
+            $('#dataMenu').hide('fast')
+            self.build_settings()
+        }
     },
     
     /* Fonction servant à "déverouiller" l'appel de la fonction compute_normalization(), ainsi qu'à apposer le 'check' au checkBox 'normalize'
