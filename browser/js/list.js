@@ -94,8 +94,12 @@ List.prototype = {
             div.id = "data_"+key;
             div.style.color = this.m.data_info[key].color
             if (!this.m.data_info[key].isActive) div.style.opacity = 0.5
-            div.onclick = function () {
-                var k = this.id.replace("data_", "")
+            
+            var name = document.createElement('span');
+            name.appendChild(document.createTextNode(key))
+            name.className = "data_name";
+            name.onclick = function () {
+                var k = this.parentNode.id.replace("data_", "")
                 if (self.m.data_info[k].isActive){
                     self.m.data_info[k].isActive = false
                 }else{
@@ -104,16 +108,27 @@ List.prototype = {
                 self.build_data_list()
                 graph.updateData();
             }
-            
-            var name = document.createElement('span');
-            name.appendChild(document.createTextNode(key))
-            name.className = "data_name";
             div.appendChild(name)
             
             var value = document.createElement('span');
             value.appendChild(document.createTextNode(this.m.data[key][this.m.t]))
             value.className = "data_value";
             div.appendChild(value)
+            
+            var star = document.createElement('div');
+            star.className = "starBox";
+            (function (key) {
+                star.onclick = function () {
+                    openDataMenu(key);
+                }
+            })(key);
+            
+            var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+            var path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
+            path.setAttribute('d', this.starPath);
+            svg.appendChild(path);
+            star.appendChild(svg)
+            div.appendChild(star)
             
             this.index_data[key] = value;
             
