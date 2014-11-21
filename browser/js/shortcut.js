@@ -31,36 +31,39 @@ Shortcut.prototype = {
     
     checkKey : function (e) {
         e = e || window.event;
-        e.preventDefault()
-            
-        var key = e.keyCode;
-        if (key==0) key = e.which
+        if (document.activeElement.id == ""){
+            e.preventDefault()
+                
+            var key = e.keyCode;
+            if (key==0) key = e.which
 
-        switch(key) {
-            case 37 :   //left arrow
-                m.previousTime()
-                break;
-            case 39 :   //right arrow
-                m.nextTime()
-                break;
-            case 83 :   //ctrl+s
-                if (e.ctrlKey || e.metakey) db.save_analysis()
-                break;
-            case 65 :   //ctrl+a
-                if (e.ctrlKey || e.metakey){
-                    var d_m = $("#debug_menu")
-                    if (d_m.css("display") == "none"){
-                        $("#debug_menu").css("display", "");
-                    }else{
-                        $("#debug_menu").css("display", "none");
+            switch(key) {
+                case 37 :   //left arrow
+                    m.previousTime()
+                    break;
+                case 39 :   //right arrow
+                    m.nextTime()
+                    break;
+                case 83 :   //ctrl+s
+                    if (e.ctrlKey || e.metakey) db.save_analysis()
+                    break;
+                case 65 :   //ctrl+a
+                    if (e.ctrlKey || e.metakey){
+                        var d_m = $("#debug_menu")
+                        if (d_m.css("display") == "none"){
+                            $("#debug_menu").css("display", "");
+                        }else{
+                            $("#debug_menu").css("display", "none");
+                        }
                     }
-                }
-            default:
+                default:
+            }
         }
         
         if (e.altKey && sp.reinit) {
             sp.active_move = true;
         }
+        
     }
     
 }
