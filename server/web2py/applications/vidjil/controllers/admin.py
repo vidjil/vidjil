@@ -2,7 +2,6 @@
 import gluon.contrib.simplejson
 import os.path
 import defs
-import math
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -30,12 +29,7 @@ def repair_missing_files():
                 db.sequence_file[row.id] = dict(data_file = None)
                 flist += " : " + row.filename
             else :
-                size = os.path.getsize(seq_file)
-                size = math.floor((size/1024)/1024)
-                if size > 1024 :
-                    size = str( round( (size/1024), 3 ) ) + " Go" 
-                else :
-                    size = str( math.floor(size) ) + " Mo" 
+                size = defs.format_size(os.path.getsize(seq_file))
                 db.sequence_file[row.id] = dict(size_file = size)
                 
         res = {"success" : "true", "message" : "path of missing files have been removed from the database"+flist}
