@@ -4,21 +4,22 @@ import sys
 import time
 
     
-if len(sys.argv) < 2:
-    print "Usage: %s <FASTA input file> [JSON output file]" % sys.argv[0]
+if len(sys.argv) < 3:
+    print "Usage: %s <FASTA input file> [JSON/DATA germline file] [JSON output file]" % sys.argv[0]
     sys.exit()
 input_name = sys.argv[1]
 output_name = ""
 
-if len(sys.argv) >= 3:
+if len(sys.argv) >= 4:
     output_name = sys.argv[-1]
+    data_file = sys.argv[-2]
 
 
 table = {}
 identifiant = ""
 sequence = ""
   
-for i in range(1, len(sys.argv)-1) :
+for i in range(1, len(sys.argv)-2) :
     fasta = open(sys.argv[i], "r")
     system = sys.argv[i].split('/')[-1].split('.')[0]
 
@@ -55,3 +56,7 @@ if output_name != "":
     with open(output_name, "w") as file :
         file.write("germline = ")
         json.dump(table, file, indent=2, sort_keys=True)
+        
+        data = open(data_file, "r")
+        file.write( "\n\n" )
+        file.write( data.read() )
