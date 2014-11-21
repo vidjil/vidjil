@@ -17,6 +17,10 @@
                                    strand and the other, to safely attribute a
                                    segment to a given strand */
 
+#define AMBIGUOUS_THRESHOLD 4   /* If the number of both V and J affectations
+                                   is above this threshold, then a non-segmented
+                                   sequence will be labeled as AMBIGUOUS */
+
 #define JSON_REMEMBER_BEST  4   /* The number of V/D/J predictions to keep  */
 
 using namespace std;
