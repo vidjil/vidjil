@@ -336,17 +336,25 @@ Segment.prototype = {
     sendTo: function (address) {
 
         var list = this.m.getSelected()
-        var request = "";
+        var request, system;
+        var max=0;
 
         for (var i = 0; i < list.length; i++) {
-            if (typeof (this.m.clone(list[i]).sequence) != 'undefined' && this.m.clone(list[i]).sequence != 0)
-                request += ">" + this.m.clone(list[i]).getName() + "\n" + this.m.clone(list[i]).sequence + "\n";
-            else
-                request += ">" + this.m.clone(list[i]).getName() + "\n" + this.m.clone(list[i]).id + "\n";
+            var c = this.m.clone(list[i])
+            
+            if (typeof (c.getSequence()) != 0){
+                request += ">" + c.getName() + "\n" + c.getSequence() + "\n";
+            }else{
+                request += ">" + c.getName() + "\n" + c.id + "\n";
+            }
+            if (c.getSize()>max){
+                system=c.system
+                max=c.getSize()
+            }
         }
 
-        if (address == 'IMGT') imgtPost(request, this.m.system);
-        if (address == 'igBlast') igBlastPost(request, this.m.system);
+        if (address == 'IMGT') imgtPost(request, system);
+        if (address == 'igBlast') igBlastPost(request, system);
 
     },
 
