@@ -61,10 +61,6 @@ if (typeof config != 'undefined') {
     if (typeof config.use_database != 'undefined' && config.use_database){
          $("#db_menu").css("display", "");
     }
-    
-    if (config.debug_mode) {
-        $("#debug_menu").css("display", "");
-    }
 }
 
 
@@ -87,6 +83,7 @@ if (config.use_database) var db = new Database("plop!", DB_ADDRESS);
 /* Stat object
  */
 var stats = new Stats(sp);
+var shortcut = new Shortcut()
 
 /* Add view in the model -> Alignment button
  */
@@ -109,20 +106,6 @@ if (location.search != ''){
     setTimeout(function () { db.call("patient/index.html")}, 1000);
 }else{
     myConsole.popupMsg(myConsole.msg.welcome)
-}
-
-/*Statements and functions which allows to active the ALT key, and the movement of the SVG frame*/
-document.onkeydown = keydown;
-document.onkeyup = keyup;
-
-function keydown(evt) {
-    if (evt.altKey && sp.reinit) {
-        sp.active_move = true;
-    }
-}
-
-function keyup(evt) {
-    sp.active_move = false;
 }
 
 initTag();//TODO a enlever

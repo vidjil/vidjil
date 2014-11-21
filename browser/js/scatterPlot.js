@@ -1792,7 +1792,7 @@ ScatterPlot.prototype = {
                   .attr("height", 0)
                   this.active_selector = false;
         
-                  if (!d3.event.ctrlKey) this.m.unselectAll()
+                  if (!(d3.event.ctrlKey || d3.event.metakey)) this.m.unselectAll()
                   this.m.multiSelect(nodes_selected)
               }
           }

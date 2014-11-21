@@ -660,7 +660,7 @@ List.prototype = {
     },
     
     clickList: function (e, cloneID) {
-        if (!e.ctrlKey) this.m.unselectAll()
+        if (!(e.ctrlKey || e.metaKey)) this.m.unselectAll()
         this.m.select(cloneID)
     },
 

@@ -245,7 +245,7 @@ Segment.prototype = {
         var self = this;
         var align = document.getElementById("align");
         if (align != null) {
-            if (this.m.getSelected.length > 1) {
+            if (this.m.getSelected().length > 1) {
                 align.className = "button";
                 align.onclick = function() {self.align();};
             }
