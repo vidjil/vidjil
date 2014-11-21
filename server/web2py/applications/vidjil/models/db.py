@@ -111,7 +111,7 @@ db.define_table('sequence_file',
                 Field('pcr','text'),
                 Field('sequencer','text'),
                 Field('producer','text'),
-                Field('size_file','integer'),
+                Field('size_file','text'),
                 Field('data_file', 'upload', 
                       uploadfolder=defs.DIR_SEQUENCES,
                       length=1000000000000, autodelete=True))
@@ -274,8 +274,3 @@ def _init_log():
     return MsgUserAdapter(logger, {})
 
 log = _init_log()
-
-
-
-
-

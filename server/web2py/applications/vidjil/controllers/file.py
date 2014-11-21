@@ -1,5 +1,8 @@
 # coding: utf8
 import gluon.contrib.simplejson
+import defs
+import os
+import math
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -81,19 +84,15 @@ def edit_form():
         error += " missing filename"
             
     if error=="" :
-        query = db((db.sequence_file.patient_id==db.sequence_file[request.vars['id']].patient_id)).select()
-        for row in query :
-            if row.filename == request.vars['filename'] :
-                res = {"message": "this sequence file already exists for this patient"}
-                return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
         mes = "file " + request.vars['id'] + " : "
         if request.vars['sampling_date'] != None and request.vars['file_info'] != None :
             db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'],
                                                         info=request.vars['file_info'],
                                                         pcr=request.vars['pcr'],
                                                         sequencer=request.vars['sequencer'],
-                                                        producer=request.vars['producer'])
+                                                        producer=request.vars['producer'],
+                                                        patient_id=request.vars['patient_id'],
+                                                        filename=request.vars['filename'])
             
         patient_id = db.sequence_file[request.vars["id"]].patient_id
         
@@ -117,6 +116,15 @@ def upload():
             f = request.vars.file
             db.sequence_file[request.vars["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
             mes = f.filename + ": upload finished"
+        
+        seq_file = defs.DIR_SEQUENCES+db.sequence_file[request.vars["id"]].data_file
+        size = os.path.getsize(seq_file)
+        size = math.floor((size/1024)/1024)
+        if size > 1024 :
+            size = str( round( (size/1024), 3 ) ) + " Go" 
+        else :
+            size = str( math.floor(size) ) + " Mo" 
+        db.sequence_file[request.vars["id"]] = dict(size_file = size)
         
         res = {"message": mes}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))

@@ -5,7 +5,7 @@
 
 {{patient = db.patient[request.vars["id"]]}}
 
-{{if request.vars["config_id"] and not request.vars["config_id"] == -1 :}}
+{{if request.vars["config_id"] and request.vars["config_id"] != "-1" :}}
     {{config_id = long(request.vars["config_id"])}}
     {{config = True}}
     {{
@@ -98,10 +98,11 @@
     <table class="db_table" id="table">
         <thead>
             <tr><td class="column_200"> file name </td>
-                <td class="column5"> </td>
                 <td class="column2"> sampling date </td>
                 <td> info </td>
                 <td> pcr </td>
+                <td class="column1"> size </td>
+                <td class="column5"> </td>
                 <td class="column5"> </td>
                 <td class="column5"> </td>
 
@@ -124,16 +125,18 @@
                 {{pass}}
 
                  <tr>
-                    <td id="sequence_file_{{=row.sequence_file.id}}"> {{=row.sequence_file.filename[:20]}}
-                      {{if len(row.sequence_file.filename) > 20: }}...{{pass}}
+                    <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}  {{pass}} id="sequence_file_{{=row.sequence_file.id}}">
+                         {{=row.sequence_file.filename}}
                     </td>
-                    <td> {{if row.sequence_file.filename == 'plop':}}<a href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" >dl</a>{{pass}}</td>
                     <td> {{=row.sequence_file.sampling_date}} </td>
                     <td> {{=row.sequence_file.info}} </td>
                     <td> {{=row.sequence_file.pcr}} </td>
+                    <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} > {{=row.sequence_file.size_file}} </td>
                     {{if (auth.has_permission('admin', 'patient', request.vars["id"]) ):}}
                         <td onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
                         <td onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
+                        <td> <a {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} 
+                                {{else:}} href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" {{pass}}  >dl</a></td>
                     {{else:}}<td></td><td></td>{{pass}}
                      
                      
@@ -146,7 +149,7 @@
                    <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=status}} </td>
                    <td onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}'})" > X </td>
                    <td>
-                   {{if row.results_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED"):}}
+                   {{if row.sequence_file.data_file != None and ( row.results_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED") ):}}
                        {{if auth.has_permission("run", "results_file") :}}
                            <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'config_id' : {{=config_id}} } )"> run >> </span>
                        {{else:}}<span class="button inactive" title="you don't have permission to schedule runs"> run >> </span>{{pass}}

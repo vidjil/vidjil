@@ -21,13 +21,25 @@
 
 
        {{for row in query :}}
-           <tr onclick="db.call('patient/info', {'id' :'{{=row.patient.id}}'} )" >
+        
+        {{confs=""}}
+        {{co = db.fused_file.id.count()}}
+        {{query_conf = db( db.fused_file.patient_id == row.patient.id ).select(db.fused_file.config_id, co, groupby=db.fused_file.config_id).sort(lambda row: co)}}
+        
+        {{for row2 in query_conf:}} 
+            {{confs+=" "+db.config[row2.fused_file.config_id].name}} 
+        {{pass}}
+        
+        {{most_used_conf = -1}}
+        {{if len(query_conf) > 0 :}} 
+            {{most_used_conf = query_conf[0].fused_file.config_id}}
+        {{pass}}
+        
+           <tr onclick="db.call('patient/info', {'id' :'{{=row.patient.id}}' , 'config_id' : {{=most_used_conf}} } )" >
                 <td> {{=row.patient.last_name + " " + row.patient.first_name }} </td>
                 <td> {{=row.patient.birth }} </td>
                 <td> {{=row.patient.info }} </td>
-                <td> {{for row2 in db( db.fused_file.patient_id == row.patient.id ).select(db.fused_file.config_id, distinct=True) :}} 
-                        {{=db.config[row2.config_id].name}} 
-                     {{pass}}</td>
+                <td> {{=confs}}</td>
         <!-- groups/users  -->
                 {{if isAdmin:}} 
                 <td> 

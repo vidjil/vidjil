@@ -1,5 +1,8 @@
 # coding: utf8
 import gluon.contrib.simplejson
+import os.path
+import defs
+import math
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -14,3 +17,26 @@ def index():
 def worker():
     if auth.has_membership("admin"):
         return dict(message=T(''))
+
+## to use after change in the upload folder
+def repair_missing_files():
+    if auth.has_membership("admin"):
+        
+        flist = ""
+        for row in db(db.sequence_file.id>0 and db.sequence_file.data_file != None).select() : 
+            seq_file = defs.DIR_SEQUENCES+row.data_file
+            
+            if not os.path.exists(seq_file) :
+                db.sequence_file[row.id] = dict(data_file = None)
+                flist += " : " + row.filename
+            else :
+                size = os.path.getsize(seq_file)
+                size = math.floor((size/1024)/1024)
+                if size > 1024 :
+                    size = str( round( (size/1024), 3 ) ) + " Go" 
+                else :
+                    size = str( math.floor(size) ) + " Mo" 
+                db.sequence_file[row.id] = dict(size_file = size)
+                
+        res = {"success" : "true", "message" : "path of missing files have been removed from the database"+flist}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
