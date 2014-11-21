@@ -233,6 +233,11 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
       system = germline->code;
       return ;
     } 
+
+  // If a read is AMBIGUOUS, do not test other germlines
+  if (because == UNSEG_AMBIGUOUS)
+    return ;
+
   } // end for (Germlines)
 }
 
