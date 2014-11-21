@@ -3,4 +3,4 @@
 cd $(dirname $0)
 wget -O - http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+inframeP | python split-from-imgt.py 
 
-python fastaToJson.py *.fa ../browser/js/germline.js
+python buildBrowserGermline.py *.fa germlines.data ../browser/js/germline.js

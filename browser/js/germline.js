@@ -975,19 +975,17 @@ germline = {
     "TRBV9*03": "gattctggagtcacacaaaccccaaagcacctgatcacagcaactggacagcgagtgacgctgagatgctcccctaggtctggagacctctctgtgtactggtaccaacagagcctggaccagggcctccagttcctcattcaatattataatggagaagagagagcaaaaggaaacattcttgaacgattctccgcacaacagttccctgacttgcactctgaactaaacctgagctctctggagctgggggactcagctttgtatttctgtgccagcagc"
   }, 
   "TRDD": {
+    "TRBV9*03": "gattctggagtcacacaaaccccaaagcacctgatcacagcaactggacagcgagtgacgctgagatgctcccctaggtctggagacctctctgtgtactggtaccaacagagcctggaccagggcctccagttcctcattcaatattataatggagaagagagagcaaaaggaaacattcttgaacgattctccgcacaacagttccctgacttgcactctgaactaaacctgagctctctggagctgggggactcagctttgtatttctgtgccagcagc", 
     "TRDD1*01": "gaaatagt", 
     "TRDD2*01": "ccttcctac", 
     "TRDD3*01": "actgggggatacg"
   }, 
-  "TRDD2": {
-    "TRDD2*01": "tatactgatgtgtttcattgtgccttcctac"
-  }, 
   "TRDD2-01": {
-    "TRBV9*03": "gattctggagtcacacaaaccccaaagcacctgatcacagcaactggacagcgagtgacgctgagatgctcccctaggtctggagacctctctgtgtactggtaccaacagagcctggaccagggcctccagttcctcattcaatattataatggagaagagagagcaaaaggaaacattcttgaacgattctccgcacaacagttccctgacttgcactctgaactaaacctgagctctctggagctgggggactcagctttgtatttctgtgccagcagc", 
-    "TRDD2*01": "ccttcctac"
+    "TRDD2*01": "ccttcctac", 
+    "TRDD3*01": "actgggggatacg"
   }, 
   "TRDD3-01": {
-    "TRDD2*01": "tatactgatgtgtttcattgtgccttcctac", 
+    "TRDD2*01": "ccttcctac", 
     "TRDD3*01": "actgggggatacg"
   }, 
   "TRDJ": {
@@ -1036,4 +1034,109 @@ germline = {
     "TRGV9*02": "gcaggtcacctagagcaacctcaaatttccagtactaaaacgctgtcaaaaacagcccgcctggaatgtgtggtgtctggaataaaaatttctgcaacatctgtatattggtatcgagagagacctggtgaagtcatacagttcctggtgtccatttcatatgacggcactgtcagaaaggaatctggcattccgtcaggcaaatttgaggtggataggatacctgaaacgtctacatccactctcaccattcacaatgtagagaaacaggacatagctacctactactgtgccttgtgggaggtg", 
     "TRGVA*01": "ctcatcaggccggagcagctggcccatgtcctggggcactagggaagcttggtcatcctgcagtgcgtggtccgcaccaggatcagctacacccactggtaccagcagaagggccaggtccctgaggcactccaccagctggccatgtccaagttggatgtgcagtgggattccatcctgaaagcagataaaatcatagccaaggatggcagcagctctatcttggcagtactgaagttggagacaggcatcgagggcatgaactactgcacaacctgggccctg"
   }
+}
+
+germline_data = {
+    
+    "TRA": {
+        "shortcut": "A",
+        "color" : "#268bd2",
+        "description": "Human T-cell receptor, alpha locus (14q11.2)",
+        "5": ["TRAV.fa"],
+        "3": ["TRAJ.fa"],
+        "parameters": {
+            "seed": "13s"
+        }
+    },
+
+    "TRB": {
+        "shortcut": "B",
+        "color" : "#cb4b16",
+        "description": "Human T-cell receptor, beta locus (7q34)",
+        "5": ["TRBV.fa"],
+        "4": ["TRBD.fa"],
+        "3": ["TRBJ.fa"],
+        "parameters": {
+            "seed": "12s"
+        }
+    },
+
+    "TRG": {
+        "shortcut": "G",
+        "color" : "#dc322f",
+        "description": "Human T-cell receptor, gamma locus (7p14)",
+        "5": ["TRGJ.fa"],
+        "3": ["TRGV.fa"],
+        "parameters": {
+            "seed": "10s"
+        }
+    },
+
+    "TRD": {
+        "shortcut": "D",
+        "color" : "#b58900",
+        "description": "Human T-cell receptor, delta locus (14q11.2)",
+        "5": ["TRDV.fa"],
+        "4": ["TRDD.fa"],
+        "3": ["TRDJ.fa"],
+        "parameters": {
+            "seed": "10s"
+        }
+    },
+    "TRD+": {
+        "shortcut": "d",
+        "description": "Human T-cell receptor, delta locus (14q11.2), incomplete Dd2-Dd3 rearrangements",
+        "follows": "TRD",
+        "5": ["TRDV.fa", "TRDD-d2.fa"],
+        "3": ["TRDJ.fa", "TRDD-d3.fa"]
+    },
+
+    "IGH": {
+        "shortcut": "H",
+        "color" : "#6c71c4",
+        "description": "Human immunoglobulin, heavy locus (14q32.33)",
+        "5": ["IGHV.fa"],
+        "4": ["IGHD.fa"],
+        "3": ["IGHJ.fa"],
+        "parameters": {
+            "seed": "12s"
+        }
+    },
+    "IGH+": {
+        "shortcut": "h",
+        "description": "Human immunoglobulin, heavy locus (14q32.33), incomplete DH-JH rearrangements",
+        "follows": "IGH",
+        "5": ["IGHD.fa"],
+        "3": ["IGHJ.fa"]
+    },
+
+    "IGK": {
+        "shortcut": "K",
+        "color" : "#2aa198",
+        "description": "Human immunoglobulin, kappa locus (2p11.2)",
+        "5": ["IGKV.fa"],
+        "3": ["IGKJ.fa"],
+        "parameters": {
+            "seed": "11s"
+        }
+    },
+    "IGK+": {
+        "shortcut": "k",
+        "description": "Human immunoglobulin, kappa locus (2p11.2), Vk-KDE and Intron-KDE rearrangements",
+        "follows": "IGK",
+        "5": ["IGKV.fa", "INTRON.fa"],
+        "3": ["KDE.fa"]
+    },
+
+    "IGL": {
+        "shortcut": "L",
+        "color" : "#d33682",
+        "description": "Human immunoglobulin, lambda locus (22q11.2)",
+        "5": ["IGLV.fa"],
+        "3": ["IGLJ.fa"],
+        "parameters": {
+            "seed": "11s"
+        }
+    }
+
 }
