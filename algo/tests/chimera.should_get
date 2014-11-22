@@ -4,4 +4,5 @@ $ Do not segment on IGL by chance
 1:IGL .* 0   
 
 $ Report the sequence as AMBIGUOUS
-1:UNSEG ambiguous .* 1
+1:UNSEG ambiguous .* 2
+
