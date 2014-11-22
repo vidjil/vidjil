@@ -12,6 +12,18 @@ bool operator==(const affect_infos &ai1, const affect_infos &ai2) {
 }
 
 
+ostream &operator<<(ostream &out, const affect_infos &a)
+{
+  out << "$ " ;
+  out << "found " << a.max_found << ", " ;
+  out << "value " << a.max_value<< ", " ;
+  out << "pos " << a.first_pos_max << "-" << a.last_pos_max << ", " ;
+  out << "before " << a.nb_before_left << "/" << a.nb_before_right << ", " ;
+  out << "after " << a.nb_after_left << "/" << a.nb_after_right ;
+  out << endl ;
+
+  return out ;
+}
 
 
 KmerAffectAnalyser::KmerAffectAnalyser(IKmerStore<KmerAffect> &kms, 

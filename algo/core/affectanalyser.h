@@ -31,6 +31,7 @@ typedef struct affect_infos_s {
 } affect_infos;
 
 bool operator==(const affect_infos &ai1, const affect_infos &ai2);
+ostream &operator<<(ostream &out, const affect_infos &a);
 
 /**
  * Class that records for every k-mer of a given sequence
