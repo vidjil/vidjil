@@ -17,9 +17,11 @@
                                    strand and the other, to safely attribute a
                                    segment to a given strand */
 
-#define AMBIGUOUS_THRESHOLD 4   /* If the number of both V and J affectations
-                                   is above this threshold, then a non-segmented
-                                   sequence will be labeled as AMBIGUOUS */
+#define DETECT_THRESHOLD 10     /* If the number of total V/J affectations
+                                   is above this threshold, then the sequence
+                                   will be labeled as 'detected', and, if it
+                                   not segmented, the remaining germlines will
+                                   not be tested */
 
 #define JSON_REMEMBER_BEST  4   /* The number of V/D/J predictions to keep  */
 
@@ -131,6 +133,7 @@ ostream &operator<<(ostream &out, const Segmenter &s);
 class KmerSegmenter : public Segmenter
 {
  private:
+  int detected;
   int because;                  
   KmerAffectAnalyser *kaa;
  protected:

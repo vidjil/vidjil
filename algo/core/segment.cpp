@@ -215,6 +215,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
     strand = 2;
   }
 
+  // Are there enoguh V/J to assert that this was the correct germline (and thus that we won't test other ones) ?
+  detected = (nb_strand[0] + nb_strand[1] >= DETECT_THRESHOLD);
+
   computeSegmentation(strand, germline);
 
   if (segmented)
@@ -234,8 +237,8 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
       return ;
     } 
 
-  // If a read is AMBIGUOUS, do not test other germlines
-  if (because == UNSEG_AMBIGUOUS)
+  // If the germline was detected, do not test other germlines
+  if (detected)
     return ;
 
   } // end for (Germlines)
@@ -275,20 +278,13 @@ void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
       if (! max.max_found) {
         if ((strand == 1 && max.nb_before_left == 0)
             || (strand == -1 && max.nb_after_right == 0)) 
-          because = UNSEG_TOO_FEW_V ;
+          because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_V ;
         else if ((strand == 1 && max.nb_after_right == 0)
                  || (strand == -1 && max.nb_before_left == 0))
 	{
-	  because = UNSEG_TOO_FEW_J ;
+	  because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_J ;
 	} else 
           because = UNSEG_AMBIGUOUS; 
-
-        // The sequence is not segmented.
-        // We labeled it AMBIGUOUS if there were both enough affect_5 and enough affect_3
-        if ((max.nb_before_left + max.nb_before_right >= AMBIGUOUS_THRESHOLD)
-            && (max.nb_after_left + max.nb_after_right >= AMBIGUOUS_THRESHOLD))
-          because = UNSEG_AMBIGUOUS; 
-
       } else {
         Vend = max.first_pos_max;
         Jstart = max.last_pos_max + 1;
