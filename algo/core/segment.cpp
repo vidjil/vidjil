@@ -285,8 +285,8 @@ void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
 
         // The sequence is not segmented.
         // We labeled it AMBIGUOUS if there were both enough affect_5 and enough affect_3
-        if ((max.nb_before_left + max.nb_after_left >= AMBIGUOUS_THRESHOLD)
-            && (max.nb_before_right + max.nb_after_right >= AMBIGUOUS_THRESHOLD))
+        if ((max.nb_before_left + max.nb_before_right >= AMBIGUOUS_THRESHOLD)
+            && (max.nb_after_left + max.nb_after_right >= AMBIGUOUS_THRESHOLD))
           because = UNSEG_AMBIGUOUS; 
 
       } else {
