@@ -297,7 +297,7 @@ ScatterPlot.prototype = {
       .gravity(0) //No gravity
 	  .theta(0) //Default value: 0.8
 	  .charge(0) //Default value: -1
-	  .friction(0.9) //Velocity
+	  .friction(0.75) //Velocity
 	  .size([1,1]);
       //Previous graph destruction
       this.unsetGraphLinks();
@@ -902,7 +902,7 @@ ScatterPlot.prototype = {
 
         for (var i=0; i<this.nodes.length; i++) {
             if (this.nodes[i].r1 > 0.1){
-                quad.visit(this.collide2(this.nodes[i]));
+                quad.visit(this.collide(this.nodes[i]));
             }
         }
         active_node.each(this.debugNaN())
@@ -942,11 +942,11 @@ ScatterPlot.prototype = {
           
             if (d.x != d.x2) {
                 var delta = d.x2 - d.x;
-                d.x += 0.01 * delta;
+                d.x += 0.015 * delta;
             }
             if (d.y != d.y2) {
                 var delta = d.y2 - d.y;
-                d.y += 0.01 * delta;
+                d.y += 0.015 * delta;
             }
         }
     },
@@ -979,60 +979,29 @@ ScatterPlot.prototype = {
             }
         }
     },
-
-    /* Fonction permettant de résoudre les collisions apportées par les nodes
-     * */
-    collide: function (quadtree) {
-        self = this;
-        return function (d) {
-            if (d.r1 != 0) {
-                var r = self.nodes[d.id].r2 + 1,
-                nx1 = d.x - r,
-                nx2 = d.x + r,
-                ny1 = d.y - r,
-                ny2 = d.y + r;
-                quadtree.visit(function (quad, x1, y1, x2, y2) {
-                    if (quad.point && (quad.point !== d) && quad.point.r1 != 0) {
-                        var x = d.x - quad.point.x,
-                            y = d.y - quad.point.y,
-                            l = Math.sqrt(x * x + y * y),
-                            r = self.nodes[d.id].r2 + self.nodes[quad.point].r2 + 1;
-                        if (l < r) {
-                            l = (l - r) / l * 0.5;
-                            d.x -= x *= l;
-                            d.y -= y *= l;
-                            quad.point.x += x;
-                            quad.point.y += y;
-                        }
-                    }
-                    return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
-                });
-            }
-        };
-    },
     
-    collide2: function(node) {
-            var r = node.r2+5,
-                nx1 = node.x - r,
-                nx2 = node.x + r,
-                ny1 = node.y - r,
-                ny2 = node.y + r;
-            return function(quad, x1, y1, x2, y2) {
-                if (quad.point && (quad.point !== node) && quad.point.r1 != 0) {
-                    var x = node.x - quad.point.x,
-                        y = node.y - quad.point.y,
-                        l = Math.sqrt(x * x + y * y),
-                        r = node.r2 + quad.point.r2+1;
-                    if (l < r) {
-                        l = (l - r) / l * .5;
-                        node.x -= x *= l;
-                        node.y -= y *= l;
-                        quad.point.x += x;
-                        quad.point.y += y;
-                    }
+    collide: function(node) {
+        var r = node.r2+5,
+            nx1 = node.x - r,
+            nx2 = node.x + r,
+            ny1 = node.y - r,
+            ny2 = node.y + r;
+        return function(quad, x1, y1, x2, y2) {
+            if (quad.point && (quad.point !== node) && quad.point.r1 != 0) {
+                var x = node.x - quad.point.x,
+                    y = node.y - quad.point.y,
+                    l = Math.sqrt(x * x + y * y),
+                    r = node.r2 + quad.point.r2+1;
+                if (l < r) {
+                    l = (l - r) / l * .5;
+                    node.x -= x *= l;
+                    node.y -= y *= l;
+                    quad.point.x += x;
+                    quad.point.y += y;
                 }
-                return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
-            };
+            }
+            return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
+        };
     },
 
   /* Fonction permettant de mettre à jour les données du ScatterPlot, et de relancer une sequence d'animation
