@@ -430,26 +430,27 @@ Builder.prototype = {
             $("#system_menu").css("display", "")
             $("#color_system_button").css("display", "")
             
-            for (var key in this.m.reads.germline) {
-                (function (key) {
+            for (var key in this.m.system_available) {
+                var system = this.m.system_available[key];
+                (function (system){
                     var radio=document.createElement("input");
                         radio.type="radio";
                         radio.name="germline";
-                        radio.value=key
-                        if (this.m.germlineV.system==key) radio.checked=true
+                        radio.value=system
+                        if (this.m.germlineV.system==system) radio.checked=true
                         
                     div = document.createElement('div');
                     div.onclick = function(){
-                        m.changeGermline(key)
+                        m.changeGermline(system)
                     }
                     div.className="buttonSelector"
                     div.appendChild(radio)
-                    div.appendChild(document.createTextNode(key))
+                    div.appendChild(document.createTextNode(system))
                     
                     li = document.createElement('li');
                     li.appendChild(div)
                     listGermline.appendChild(li);
-                })(key)
+                })(system)
             }
              
         }else{
@@ -682,7 +683,7 @@ Builder.prototype = {
         
         var keys = 0 ;
 
-	var key_list = Object.keys(this.m.reads.germline);
+	var key_list = this.m.system_available;
 	key_list.sort();
 
         for (var k in key_list) {

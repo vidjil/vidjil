@@ -277,7 +277,17 @@ Model.prototype = {
             self.germlineList.add(self.germlines)
         }
         self.system_selected = [];
-        for (var key in self.reads.germline) self.system_selected.push(key)
+        self.system_available = [];
+        for (var i = 0; i < this.n_clones; i++) {
+            var system = this.clone(i).getSystem()
+            if (typeof system != "undefined" && self.system_available.indexOf(system) ==-1){
+                self.system_available.push(system)
+            }
+        }
+        for (var key in self.system_available){
+            var system = this.system_available[key]
+            self.system_selected.push(system)
+        }
         
         var germline_list = Object.keys(this.reads.germline)
         if (germline_list.length >1) {
@@ -381,7 +391,7 @@ Model.prototype = {
     loadGermline: function (system) {
         console.log("loadGermline : " + system)
         system = typeof system !== 'undefined' ? system : this.system;
-        if (system == "multi") system = Object.keys(this.reads.germline)[0]
+        if (system == "multi") system = this.system_available[0]
         
         return  this.germlineV.load(system, "V", this)
                     .germlineD.load(system, "D", this)
@@ -724,9 +734,10 @@ Model.prototype = {
         this.system_selected = []
         
         //check system currently selected in menu
-        for (var key in this.reads.germline) {
-            if (document.getElementById("checkbox_system_"+key).checked){
-                this.system_selected.push(key)
+        for (var key in this.system_available) {
+            var system = this.system_available[key]
+            if (document.getElementById("checkbox_system_"+system).checked){
+                this.system_selected.push(system)
             }
         }
 
