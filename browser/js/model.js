@@ -1096,7 +1096,7 @@ Model.prototype = {
         if (html_label != null) {
             var count = 0;
             for (var i=0; i<this.n_clones; i++){
-                if (this.clone(i).top <= top) count++;
+                if (this.clone(i).top < top) count++;
             }
             html_label.innerHTML = count + ' clones (top ' + top + ')' ;
         }
