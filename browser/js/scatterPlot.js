@@ -789,8 +789,8 @@ ScatterPlot.prototype = {
       this.resizeH = document.getElementById(this.id)
       .offsetHeight - this.marge_top - this.marge_bot;
 
-      if (this.splitX == "allele_v" || this.splitX == "gene_v" || this.splitX == "allele_j" || this.splitX == "gene_j"
-          || this.splitY == "allele_v" || this.splitY == "gene_v" || this.splitY == "allele_j" || this.splitY == "gene_j"){
+      if (this.splitY != "bar" && (this.splitX == "allele_v" || this.splitX == "gene_v" || this.splitX == "allele_j" || this.splitX == "gene_j"
+          || this.splitY == "allele_v" || this.splitY == "gene_v" || this.splitY == "allele_j" || this.splitY == "gene_j")){
           this.use_system_grid = true;
           this.buildSystemGrid()
       }else{
@@ -798,7 +798,7 @@ ScatterPlot.prototype = {
           this.systemGrid = {}
       }
       
-      if (this.use_system_grid && this.m.system == "multi" && this.m.system_selected.length >1){
+      if (this.splitY != "bar" && this.use_system_grid && this.m.system == "multi" && this.m.system_selected.length >1){
         this.gridSizeW = 0.8*this.resizeW;
         this.gridSizeH = 1*this.resizeH;
       }else{
@@ -836,9 +836,6 @@ ScatterPlot.prototype = {
             this.systemGrid[system].y = ((i*2)+1)/(n*2)
             i++
         }
-        
-
-        
     },
 
   /* Recalcule les coefficients d'agrandissement/réduction, en fonction de la taille de la div
@@ -1477,7 +1474,7 @@ ScatterPlot.prototype = {
   system_label_update: function(data) {
       self = this;
 
-      if (data.length <=1){
+      if (typeof data == "undefined" || data.length <=1){
             this.label_container.style("display", "none");
       }else{
             this.label_container.style("display", "");
