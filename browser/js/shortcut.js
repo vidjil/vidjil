@@ -32,22 +32,25 @@ Shortcut.prototype = {
     checkKey : function (e) {
         e = e || window.event;
         if (document.activeElement.id == ""){
-            e.preventDefault()
                 
             var key = e.keyCode;
             if (key==0) key = e.which
 
             switch(key) {
                 case 37 :   //left arrow
+                    e.preventDefault()
                     m.previousTime()
                     break;
                 case 39 :   //right arrow
+                    e.preventDefault()
                     m.nextTime()
                     break;
                 case 83 :   //ctrl+s
+                    e.preventDefault()
                     if (e.ctrlKey || e.metakey) db.save_analysis()
                     break;
                 case 65 :   //ctrl+a
+                    e.preventDefault()
                     if (e.ctrlKey || e.metakey){
                         var d_m = $("#debug_menu")
                         if (d_m.css("display") == "none"){
