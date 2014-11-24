@@ -17,7 +17,17 @@ def add():
         res = {"success" : "false", "message" : "you don't have right to upload files"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
-        return dict(message=T('add file'))
+        query = db((db.sequence_file.patient_id==request.vars['id'])).select()
+        if len(query) != 0 :
+            pcr = query[0].pcr
+            sequencer = query[0].sequencer
+            producer = query[0].producer
+        else:
+            pcr = sequencer = producer = ""
+        return dict(message=T('add file'),
+                    pcr=pcr,
+                    sequencer=sequencer,
+                    producer=producer)
 
 #TODO check data
 def add_form(): 
