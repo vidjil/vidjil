@@ -95,14 +95,16 @@ def edit_form():
             
     if error=="" :
         mes = "file " + request.vars['id'] + " : "
+        filename = db.sequence_file[request.vars['id']].filename
+        if request.vars['filename'] != "":
+            filename = request.vars['filename']
         if request.vars['sampling_date'] != None and request.vars['file_info'] != None :
             db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'],
                                                         info=request.vars['file_info'],
                                                         pcr=request.vars['pcr'],
                                                         sequencer=request.vars['sequencer'],
                                                         producer=request.vars['producer'],
-                                                        patient_id=request.vars['patient_id'],
-                                                        filename=request.vars['filename'])
+                                                        filename=filename)
             
         patient_id = db.sequence_file[request.vars["id"]].patient_id
         
