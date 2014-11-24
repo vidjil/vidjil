@@ -18,16 +18,26 @@
 */
 
 function Shortcut () {
-        this.init()
+    this.init()
+    
 }
 
 Shortcut.prototype = {
     
     init : function () {
         var self = this
+        
+        this.system_shortcuts = {}
+        for (var system in germline_data){
+            var keycode = germline_data[system].shortcut.charCodeAt(0)
+            this.system_shortcuts[keycode] = system
+        }
+        
         document.onkeydown = function (e) { self.checkKey(e); }
         document.onkeyup = function (e) { sp.active_move = false; }
     },
+    
+    
     
     checkKey : function (e) {
         e = e || window.event;
@@ -36,6 +46,7 @@ Shortcut.prototype = {
             var key = e.keyCode;
             if (key==0) key = e.which
 
+            
             switch(key) {
                 case 37 :   //left arrow
                     e.preventDefault()
@@ -60,6 +71,13 @@ Shortcut.prototype = {
                         }
                     }
                 default:
+            }
+            
+            console.log(key)
+            //system shortcuts
+            if (typeof this.system_shortcuts[key] != "undefined") {
+                console.log("plopppppp : " + this.system_shortcuts[key])
+                m.changeGermline(this.system_shortcuts[key])
             }
         }
         
