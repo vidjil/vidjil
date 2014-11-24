@@ -87,10 +87,10 @@ igBlastInput["seqtype"] = "TCR";
 function imgtPost(data, system) {
 
     imgtInput["l01p01c10"] = data;
-    if (system == "IGH") {
+    if (system[0] == "I") {
         imgtInput["l01p01c04"] = "IG";
     }
-    if (system == "TRG") {
+    if (system[0] == "T") {
         imgtInput["l01p01c04"] = "TR";
     }
     var form = document.getElementById("form");
@@ -114,12 +114,12 @@ function imgtPost(data, system) {
 function igBlastPost(data, system) {
 
     igBlastInput["queryseq"] = data;
-    if (system == "IGH") {
+    if (system[0] == "I") {
         igBlastInput["germline_db_V"] = "IG_DB/imgt.Homo_sapiens.V.f.orf.p";
         igBlastInput["germline_db_D"] = "IG_DB/imgt.Homo_sapiens.D.f.orf";
         igBlastInput["germline_db_J"] = "IG_DB/imgt.Homo_sapiens.J.f.orf";
     }
-    if (system == "TRG") {
+    if (system[0] == "T") {
         igBlastInput["germline_db_V"] = "IG_DB/imgt.TR.Homo_sapiens.V.f.orf.p";
         igBlastInput["germline_db_D"] = "IG_DB/imgt.TR.Homo_sapiens.D.f.orf";
         igBlastInput["germline_db_J"] = "IG_DB/imgt.TR.Homo_sapiens.J.f.orf.p";

@@ -336,7 +336,8 @@ Segment.prototype = {
     sendTo: function (address) {
 
         var list = this.m.getSelected()
-        var request, system;
+        var request = ""
+        var system;
         var max=0;
 
         for (var i = 0; i < list.length; i++) {
@@ -348,11 +349,10 @@ Segment.prototype = {
                 request += ">" + c.getName() + "\n" + c.id + "\n";
             }
             if (c.getSize()>max){
-                system=c.system
+                system=c.getSystem()
                 max=c.getSize()
             }
         }
-
         if (address == 'IMGT') imgtPost(request, system);
         if (address == 'igBlast') igBlastPost(request, system);
 
