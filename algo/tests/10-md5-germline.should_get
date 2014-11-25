@@ -1,6 +1,6 @@
 !LAUNCH: (cd ../../germline ; md5sum *.fa || md5 -r *.fa)
 
-$ Check md5 in germline/
+$ Check md5 in germline/, sequences split from IMGT
 1:3a655c9d99ca04907a120f1b69febf2e IGHD.fa
 1:0d87f672c582e7e15cdcaa0fb5e08f6f IGHJ.fa
 1:6eb42ca3084165882bb4a3aa6ef9470b IGHV.fa
@@ -18,3 +18,7 @@ $ Check md5 in germline/
 1:35c753ccdba5a343aa40f05bd9c032d8 TRDV.fa
 1:16dfaa7a248644b484ff62fb49ae836b TRGJ.fa
 1:64e5f218e9de3443f04c4f4e81468f0d TRGV.fa
+
+$ Check md5 in germline/, other sequences
+1:7d6247262807ad5478b7a4e52a59c568 IGK-INTRON.fa
+1:1147a04c4e8a8dd534aae65db1ae13ca IGK-KDE.fa
