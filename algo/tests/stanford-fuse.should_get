@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -G ../../germline/IGH -d ../../data/Stanford_S22.fasta ; python ../../server/fuse.py out/Stanford_S22.vidjil out/Stanford_S22.vidjil -o out/fused.data ; cat out/fused.data | sh format-json.sh
+!LAUNCH: ../../vidjil -G ../../germline/IGH ../../data/Stanford_S22.fasta ; python ../../server/fuse.py out/Stanford_S22.vidjil out/Stanford_S22.vidjil -o out/fused.data ; cat out/fused.data | sh format-json.sh
 
 $ Points list
 f1:"point": [ "", "" ]

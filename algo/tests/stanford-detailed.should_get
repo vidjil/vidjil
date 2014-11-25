@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -d -r 5 -a -G ../../germline/IGH ../../data/Stanford_S22.fasta ; cat out/seq/clone.fa-2
+!LAUNCH: ../../vidjil -r 5 -a -G ../../germline/IGH ../../data/Stanford_S22.fasta ; cat out/seq/clone.fa-2
 # Testing detailed clone output (-a)
 
 $ Detailed clone output (out/seq/clone.fa-2), germline

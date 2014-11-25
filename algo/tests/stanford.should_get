@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -V ../../germline/IGHV.fa -D ../../germline/IGHD.fa -J ../../germline/IGHJ.fa -d -s \\\\#\\\\#\\\\#\\\\#\\\\#\\\\#-\\\\#\\\\#\\\\#\\\\#\\\\#\\\\# ../../data/Stanford_S22.fasta
+!LAUNCH: ../../vidjil -V ../../germline/IGHV.fa -D ../../germline/IGHD.fa -J ../../germline/IGHJ.fa -s \\\\#\\\\#\\\\#\\\\#\\\\#\\\\#-\\\\#\\\\#\\\\#\\\\#\\\\#\\\\# ../../data/Stanford_S22.fasta
 
 $ Parses IGHV.fa germline
 f1: 99341 bp in 341 sequences
