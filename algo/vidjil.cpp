@@ -211,8 +211,8 @@ void usage(char *progname)
 
        << endl 
        << "Examples (see doc/algo.org)" << endl
-       << "  " << progname << " -c clones   -G germline/IGH  -r 5       -d data/Stanford_S22.fasta" << endl
-       << "  " << progname << " -c segment  -G germline/IGH             -d data/Stanford_S22.fasta   # (only for testing)" << endl
+       << "  " << progname << " -c clones   -G germline/IGH  -r 5          data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c segment  -G germline/IGH                data/Stanford_S22.fasta   # (only for testing)" << endl
        << "  " << progname << " -c germlines                               data/Stanford_S22.fasta" << endl
     ;
   exit(1);
