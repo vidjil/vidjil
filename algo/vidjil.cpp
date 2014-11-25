@@ -145,7 +145,7 @@ void usage(char *progname)
 
        << "Germline databases (one -V/(-D)/-J, or -G, or -g option must be given for all commands except -c " << COMMAND_GERMLINES << ")" << endl
        << "  -V <file>     V germline multi-fasta file" << endl
-       << "  -D <file>     D germline multi-fasta file (implies -d)" << endl
+       << "  -D <file>     D germline multi-fasta file (and resets -m, -M and -w options), will segment into V(D)J components" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
        << "  -g <path>     multiple germlines (experimental)" << endl
@@ -161,9 +161,9 @@ void usage(char *progname)
 #ifndef NO_SPACED_SEEDS
        << "                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" << endl
 #endif
-       << "  -m <int>      minimal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MIN << ") (default with -d: " << DEFAULT_DELTA_MIN_D << ")" << endl
-       << "  -M <int>      maximal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MAX << ") (default with -d: " << DEFAULT_DELTA_MAX_D << ")" << endl
-       << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ") (default with -d: " << DEFAULT_W_D << ")" << endl
+       << "  -m <int>      minimal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MIN << ") (default with -D: " << DEFAULT_DELTA_MIN_D << ")" << endl
+       << "  -M <int>      maximal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MAX << ") (default with -D: " << DEFAULT_DELTA_MAX_D << ")" << endl
+       << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ") (default with -D: " << DEFAULT_W_D << ")" << endl
        << endl
 
        << "Window annotations" << endl
@@ -182,7 +182,6 @@ void usage(char *progname)
        << endl
 
        << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
-       << "  -d            segment into V(D)J components instead of VJ (and resets -m, -M and -w options)" << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
        << endl
 
@@ -259,7 +258,6 @@ int main (int argc, char **argv)
   
   int save_comp = 0;
   int load_comp = 0;
-  int segment_D = 0;
   
   int verbose = 0 ;
   int command = CMD_CLONES;
@@ -296,7 +294,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:f:l:dc:m:M:N:s:b:Sn:o:L%:y:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uU")) != EOF)
 
     switch (c)
       {
@@ -328,7 +326,6 @@ int main (int argc, char **argv)
 
       case 'D':
 	f_reps_D.push_back(optarg);
-        segment_D = 1;
 	delta_min = DEFAULT_DELTA_MIN_D ;
 	delta_max = DEFAULT_DELTA_MAX_D ;
 	default_w = DEFAULT_W_D ;
@@ -348,10 +345,20 @@ int main (int argc, char **argv)
       case 'G':
 	germline_system = string(optarg);
 	f_reps_V.push_back((germline_system + "V.fa").c_str()) ;
-	f_reps_D.push_back((germline_system + "D.fa").c_str()) ;
+        // Takes D only if it exists
+        {
+          struct stat buffer; 
+          string putative_f_rep_D = germline_system + "D.fa" ;
+          if (stat(putative_f_rep_D.c_str(), &buffer) == 0)
+            f_reps_D.push_back(putative_f_rep_D.c_str()) ;
+
+          delta_min = DEFAULT_DELTA_MIN_D ;
+          delta_max = DEFAULT_DELTA_MAX_D ;
+          default_w = DEFAULT_W_D ;
+        }
 	f_reps_J.push_back((germline_system + "J.fa").c_str()) ;
 	germline_system = extract_basename(germline_system);
-	// TODO: if VDJ, set segment_D // NO, bad idea, depends on naming convention
+
 	break;
 
       // Algorithm
@@ -468,13 +475,6 @@ int main (int argc, char **argv)
         break;
 	
       // Fine segmentation
-
-      case 'd':
-	segment_D = 1 ;
-	delta_min = DEFAULT_DELTA_MIN_D ;
-	delta_max = DEFAULT_DELTA_MAX_D ;
-	default_w = DEFAULT_W_D ;
-	break;
 
       case 'f':
 	segment_cost=strToCost(optarg, VDJ);
@@ -1096,7 +1096,7 @@ int main (int argc, char **argv)
 	  // FineSegmenter
 	  FineSegmenter seg(representative, segmented_germline, segment_cost);
 	
-	if (segment_D)
+          if (segmented_germline->rep_4.size())
 	  seg.FineSegmentD(segmented_germline);
 	
 	// Output representative, possibly segmented... 
@@ -1132,7 +1132,7 @@ int main (int argc, char **argv)
 
 	      // Output best V, (D) and J germlines to CLONE_FILENAME-*
 	      out_clone << segmented_germline->rep_5.read(seg.best_V) ;
-	      if (segment_D) out_clone << segmented_germline->rep_4.read(seg.best_D) ;
+	      if (segmented_germline->rep_4.size()) out_clone << segmented_germline->rep_4.read(seg.best_D) ;
 	      out_clone << segmented_germline->rep_3.read(seg.best_J) ;
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
@@ -1334,7 +1334,7 @@ int main (int argc, char **argv)
 
             if (s.isSegmented()) 
               {
-                if (segment_D && germline->rep_4.size())
+                if (germline->rep_4.size())
                   s.FineSegmentD(germline);
                 cout << s << endl;
                 segmented = true ;
