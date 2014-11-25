@@ -63,10 +63,6 @@
 //$$ #define (mainly default options)
 
 #define DEFAULT_MULTIGERMLINE "germline"
-#define DEFAULT_GERMLINE_SYSTEM "IGH" 
-#define DEFAULT_V_REP  "./germline/IGHV.fa"
-#define DEFAULT_D_REP  "./germline/IGHD.fa" 
-#define DEFAULT_J_REP  "./germline/IGHJ.fa"
 
 #define DEFAULT_READS  "./data/Stanford_S22.fasta"
 #define DEFAULT_MIN_READS_CLONE 5
@@ -147,7 +143,7 @@ void usage(char *progname)
        << "  \t\t" << COMMAND_GERMLINES << "  \t discover all germlines" << endl
        << endl       
 
-       << "Germline databases" << endl
+       << "Germline databases (one -V/(-D)/-J, or -G, or -g option must be given for all commands except -c " << COMMAND_GERMLINES << ")" << endl
        << "  -V <file>     V germline multi-fasta file" << endl
        << "  -D <file>     D germline multi-fasta file (implies -d)" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
@@ -237,7 +233,7 @@ int main (int argc, char **argv)
 
   //$$ options: defaults
 
-  string germline_system = DEFAULT_GERMLINE_SYSTEM ;
+  string germline_system = "" ;
   
   list <string> f_reps_V ;
   list <string> f_reps_D ;
@@ -346,6 +342,7 @@ int main (int argc, char **argv)
       case 'g':
 	multi_germline = true;
 	multi_germline_file = string(optarg);
+	germline_system = "multi" ;
 	break;
 	
       case 'G':
@@ -494,6 +491,13 @@ int main (int argc, char **argv)
 
   //$$ options: post-processing+display
 
+
+  if (!germline_system.size() && (command != CMD_GERMLINES))
+    {
+      cout << ERROR_STRING << "At least one germline must be given with -V/(-D)/-J, or -G, or -g." << endl ;
+      exit(1);
+    }
+
   // If there was no -w option, then w is either DEFAULT_W or DEFAULT_W_D
   if (w == 0)
     w = default_w ;
@@ -525,20 +529,6 @@ int main (int argc, char **argv)
     }
 
   size_t min_cover_representative = (size_t) (min_reads_clone < (int) max_auditionned ? min_reads_clone : max_auditionned) ;
-
-  // Default repertoires
-
-  if (f_reps_V.empty())
-    f_reps_V.push_back(DEFAULT_V_REP) ;
-
-  if (f_reps_D.empty())
-    f_reps_D.push_back(DEFAULT_D_REP) ;
-
-  if (f_reps_J.empty())
-    f_reps_J.push_back(DEFAULT_J_REP) ;
-
-  if (!segment_D)
-    f_reps_D.clear();
 
   // Default seeds
 
