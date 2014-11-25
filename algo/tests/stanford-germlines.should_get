@@ -1,4 +1,4 @@
-!LAUNCH: (cd ../.. ; ./vidjil -c germlines data/Stanford_S22.fasta)
+!LAUNCH: (cd ../.. ; ./vidjil -c germlines -s '######-######' data/Stanford_S22.fasta)
 
 $ number of reads and kmers
 1:13153 reads, 3020179 kmers
