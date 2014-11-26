@@ -167,7 +167,7 @@ void usage(char *progname)
        << endl
 
        << "Window annotations" << endl
-       << "  -l <file>     labels for some windows -- these windows will be kept even if some limits are not reached" << endl
+       << "  -l <file>     labels for some windows -- these windows will be kept even if -r/-% thresholds are not reached" << endl
        << endl
 
        << "Limits to report a clone (or a window)" << endl
