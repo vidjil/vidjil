@@ -148,7 +148,7 @@ void usage(char *progname)
        << "  -D <file>     D germline multi-fasta file (and resets -m, -M and -w options), will segment into V(D)J components" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
-       << "  -g <path>     multiple germlines (experimental)" << endl
+       << "  -g <path>     multiple germlines (in the path <path>, takes TRA, TRB, TRG, TRD, IGH and IGL and sets window prediction parameters)" << endl
        << endl
 
        << "Window prediction" << endl
