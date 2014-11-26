@@ -128,7 +128,7 @@ PDF.prototype = {
         // todo: fill again with reliable data :)
         // this.doc.text(this.marge + 5, this.y + 10, 'run: 2013-10-03');
         if (typeof this.m.timestamp != 'undefined'){
-            this.doc.text(this.marge + 5, this.y + 15, 'analysis: ' + this.m.timestamp.split(' ')[0]);
+            this.doc.text(this.marge + 5, this.y + 15, 'analysis: ');// + this.m.timestamp.split(' ')[0]);
         }
         this.doc.text(this.marge + 5, this.y + 20, 'germline: ' + this.m.system);
 
