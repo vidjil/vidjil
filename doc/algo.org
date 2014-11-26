@@ -222,10 +222,16 @@ produce large file and takes huge computation times.
 ** Force to follow some sequences
 
 Vidjil allows to specify a list of windows that must be followed
-(even if those windows are 'rare', below the =-r/-R/-%= thresholds).
-The parameter =-l= is made for providing such a list in a file following
-the following format: window label (separed by one space)
+(even if those windows are 'rare', below the =-r/-%= thresholds).
+The parameter =-l= is made for providing such a list in a file giving
+one window by line like in the following example:
 
+#+BEGIN_EXAMPLE
+TGTGCGAGAGATGGACGGGATACGTAAAACGACATATGGTTCGGGGTTTGGTGCTTTTGA my-clone-1
+TGTGCGAGAGATGGACGGAATACGTTAAACGACATATGGTTCGGGGTATGGTGCTTTTGA my-clone-2 foo
+#+END_EXAMPLE
+
+Windows and labels must be separed by one space.
 The first column of the file is the window to be followed
 while the remaining columns consist of the window's label.
 In Vidjil output, the labels are output alongside their windows.
