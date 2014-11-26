@@ -512,11 +512,13 @@ Sequence.prototype = {
         
         if (typeof clone.sequence != 'undefined' && clone.sequence != 0) {
             //find V, D, J position
-            var endV = this.pos[clone.seg["5end"]]
-            var startJ = this.pos[clone.seg["3start"]]
-            if (typeof clone.seg["4start"] != 'undefined' && typeof clone.seg["4end"] != 'undefined') {
-                var startD = this.pos[clone.seg["4start"]]
-                var endD = this.pos[clone.seg["4end"]]
+            if (typeof clone.seg != 'undefined'){
+                var endV = this.pos[clone.seg["5end"]]
+                var startJ = this.pos[clone.seg["3start"]]
+                if (typeof clone.seg["4start"] != 'undefined' && typeof clone.seg["4end"] != 'undefined') {
+                    var startD = this.pos[clone.seg["4start"]]
+                    var endD = this.pos[clone.seg["4end"]]
+                }
             }
 
             //V color
@@ -533,7 +535,7 @@ Sequence.prototype = {
 
             
             //add span VDJ
-            if (typeof clone.seg["5end"] != 'undefined') result += "<span class='V' " + vColor + " >"
+            if (typeof clone.seg != 'undefined') result += "<span class='V' " + vColor + " >"
             else result += "<span>"
             for (var i = 0; i < this.seq.length; i++) {
                 result += this.seq[i]
