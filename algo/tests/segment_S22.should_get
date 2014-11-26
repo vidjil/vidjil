@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -G ../../germline/IGH -d -c segment ../../data/segment_S22.fa | grep '^>' 
+!LAUNCH: ../../vidjil -G ../../germline/IGH -c segment ../../data/segment_S22.fa | grep '^>' 
 
 $ First sequence Stanford
 #                            164        175                 195     203

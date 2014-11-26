@@ -4,3 +4,7 @@ cd $(dirname $0)
 wget -O - http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+inframeP | python split-from-imgt.py 
 
 python buildBrowserGermline.py *.fa germlines.data ../browser/js/germline.js
+
+
+wget http://rbx.vidjil.org/browser/germline/IGK-INTRON.fa
+wget http://rbx.vidjil.org/browser/germline/IGK-KDE.fa

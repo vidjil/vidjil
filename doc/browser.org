@@ -44,8 +44,9 @@ Otherwise, such .vidjil files can be obtained:
     - or with “file”/“import/export”, manually selecting a .vidjil file
   There is always a “LIL-L2” dataset for demonstration purposes.
 
-- You can change the number of displayed clones by moving the slider “number of clones” (menu “filter”)
-  The maximal number of clones that can be displayed depends on the processing step before
+- You can change the number of displayed clones by moving the slider “number of clones” (menu “filter”).
+  The maximal number of clones that can be displayed depends on the processing step before.
+  See below ("Can I see all the clones ?").
 
 - Due to sequencing errors, there may be several clones corresponding to a real clone. 
    - You can select several clones (for example those sharing a same V and a same J), 
@@ -154,7 +155,53 @@ Once the processing is finished, click on the button "see result" and
 the browser will load the data of the processed files. The first click
 on this button can take a few seconds.
 
-* Assessing the quality of your data and of the analysis
+
+
+* Can I see all the clones ?
+
+
+The interest of NGS/Rep-Seq studies is to provide a deep view of any
+V(D)J Repertoire. The underlying analysis software (such as Vidjil)
+try to analyze as much reads as possible (see below 'Number of segmented reads').
+One often wants to "see all clones", but a complete list is difficult
+to see in itself. In a typical dataset with about 10^6 reads, even in
+the presence of a dominant clone, there can be 10^4 or 10^5 different
+clones detected.
+
+** The "top" slider in the "filter" menu
+
+The "top 10" clones are the clones that are in the first 10 ones
+in *at least one* sample. As soon as one clone is in this "top 10"
+list, it is displayed for every sample, even if its concentration is
+very low in other samples.
+Most of the time, a "top 10" is enough. The hidden clones are thus the
+one that never reach the 10 first clones. With a default installation,
+the slider can be set to display clones until the "top 100" on the grid 
+(and, on the graph, until "top 20").
+
+However, in some cames, one may want to track some clones that are
+never in the "top 100", as for example:
+  - a standard/spike with low concentration
+  - a clone in a MRD following of a patient without the diagnostic point
+
+(Upcoming feature). If clone is "tagged" in the =.vidjil= or
+in the =.analysis= file, it will always be shown even if it does not
+meet the "top" filter.
+
+** The "other" clone
+
+This virtual clone in the clone list groups all clones that are hidden
+(because of the "top" or because of hiding some tags). The sum of
+ratios in the list of clones is always 100%: thus the "other" clone
+changes when one use the "filter" menu.
+
+Note that the ratios include the "other" clone: if a clone principal
+is reported to have 10.54%, this 10.54% ratio relates to the number of
+analyzed reads, including the hidden clones.
+
+
+
+* How can I assess the quality of the data and the analysis ?
 
 To make sure that the PCR, the sequencing and the Vidjil analysis went well, several elements can be controlled.
 

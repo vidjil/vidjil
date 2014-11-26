@@ -2,7 +2,6 @@
 import gluon.contrib.simplejson
 import defs
 import os
-import math
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -130,12 +129,7 @@ def upload():
             mes = f.filename + ": upload finished"
         
         seq_file = defs.DIR_SEQUENCES+db.sequence_file[request.vars["id"]].data_file
-        size = os.path.getsize(seq_file)
-        size = math.floor((size/1024)/1024)
-        if size > 1024 :
-            size = str( round( (size/1024), 3 ) ) + " Go" 
-        else :
-            size = str( math.floor(size) ) + " Mo" 
+        size = defs.format_size(os.path.getsize(seq_file))
         db.sequence_file[request.vars["id"]] = dict(size_file = size)
         
         res = {"message": mes}

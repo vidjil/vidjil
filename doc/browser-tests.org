@@ -11,7 +11,7 @@ Here is a procedure for installing watir and launching the browser tests
 
   Afterwards you may need to launch:
   #+BEGIN_SRC sh
-  source /usr/local/rvm/scripts/rvm
+  source /etc/profile.d/rvm.sh
   #+END_SRC
 
 * Install ruby 2.1.1

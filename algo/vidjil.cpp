@@ -63,10 +63,6 @@
 //$$ #define (mainly default options)
 
 #define DEFAULT_MULTIGERMLINE "germline"
-#define DEFAULT_GERMLINE_SYSTEM "IGH" 
-#define DEFAULT_V_REP  "./germline/IGHV.fa"
-#define DEFAULT_D_REP  "./germline/IGHD.fa" 
-#define DEFAULT_J_REP  "./germline/IGHJ.fa"
 
 #define DEFAULT_READS  "./data/Stanford_S22.fasta"
 #define DEFAULT_MIN_READS_CLONE 5
@@ -147,12 +143,12 @@ void usage(char *progname)
        << "  \t\t" << COMMAND_GERMLINES << "  \t discover all germlines" << endl
        << endl       
 
-       << "Germline databases" << endl
+       << "Germline databases (one -V/(-D)/-J, or -G, or -g option must be given for all commands except -c " << COMMAND_GERMLINES << ")" << endl
        << "  -V <file>     V germline multi-fasta file" << endl
-       << "  -D <file>     D germline multi-fasta file (implies -d)" << endl
+       << "  -D <file>     D germline multi-fasta file (and resets -m, -M and -w options), will segment into V(D)J components" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
-       << "  -g <path>     multiple germlines (experimental)" << endl
+       << "  -g <path>     multiple germlines (in the path <path>, takes TRA, TRB, TRG, TRD, IGH and IGL and sets window prediction parameters)" << endl
        << endl
 
        << "Window prediction" << endl
@@ -165,13 +161,13 @@ void usage(char *progname)
 #ifndef NO_SPACED_SEEDS
        << "                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" << endl
 #endif
-       << "  -m <int>      minimal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MIN << ") (default with -d: " << DEFAULT_DELTA_MIN_D << ")" << endl
-       << "  -M <int>      maximal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MAX << ") (default with -d: " << DEFAULT_DELTA_MAX_D << ")" << endl
-       << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ") (default with -d: " << DEFAULT_W_D << ")" << endl
+       << "  -m <int>      minimal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MIN << ") (default with -D: " << DEFAULT_DELTA_MIN_D << ")" << endl
+       << "  -M <int>      maximal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MAX << ") (default with -D: " << DEFAULT_DELTA_MAX_D << ")" << endl
+       << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ") (default with -D: " << DEFAULT_W_D << ")" << endl
        << endl
 
        << "Window annotations" << endl
-       << "  -l <file>     labels for some windows -- these windows will be kept even if some limits are not reached" << endl
+       << "  -l <file>     labels for some windows -- these windows will be kept even if -r/-% thresholds are not reached" << endl
        << endl
 
        << "Limits to report a clone (or a window)" << endl
@@ -186,7 +182,6 @@ void usage(char *progname)
        << endl
 
        << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
-       << "  -d            segment into V(D)J components instead of VJ (and resets -m, -M and -w options)" << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
        << endl
 
@@ -216,8 +211,8 @@ void usage(char *progname)
 
        << endl 
        << "Examples (see doc/algo.org)" << endl
-       << "  " << progname << " -c clones   -G germline/IGH  -r 5       -d data/Stanford_S22.fasta" << endl
-       << "  " << progname << " -c segment  -G germline/IGH             -d data/Stanford_S22.fasta   # (only for testing)" << endl
+       << "  " << progname << " -c clones   -G germline/IGH  -r 5          data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c segment  -G germline/IGH                data/Stanford_S22.fasta   # (only for testing)" << endl
        << "  " << progname << " -c germlines                               data/Stanford_S22.fasta" << endl
     ;
   exit(1);
@@ -237,7 +232,7 @@ int main (int argc, char **argv)
 
   //$$ options: defaults
 
-  string germline_system = DEFAULT_GERMLINE_SYSTEM ;
+  string germline_system = "" ;
   
   list <string> f_reps_V ;
   list <string> f_reps_D ;
@@ -263,7 +258,6 @@ int main (int argc, char **argv)
   
   int save_comp = 0;
   int load_comp = 0;
-  int segment_D = 0;
   
   int verbose = 0 ;
   int command = CMD_CLONES;
@@ -300,7 +294,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:f:l:dc:m:M:N:s:b:Sn:o:L%:y:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uU")) != EOF)
 
     switch (c)
       {
@@ -332,7 +326,6 @@ int main (int argc, char **argv)
 
       case 'D':
 	f_reps_D.push_back(optarg);
-        segment_D = 1;
 	delta_min = DEFAULT_DELTA_MIN_D ;
 	delta_max = DEFAULT_DELTA_MAX_D ;
 	default_w = DEFAULT_W_D ;
@@ -346,15 +339,26 @@ int main (int argc, char **argv)
       case 'g':
 	multi_germline = true;
 	multi_germline_file = string(optarg);
+	germline_system = "multi" ;
 	break;
 	
       case 'G':
 	germline_system = string(optarg);
 	f_reps_V.push_back((germline_system + "V.fa").c_str()) ;
-	f_reps_D.push_back((germline_system + "D.fa").c_str()) ;
+        // Takes D only if it exists
+        {
+          struct stat buffer; 
+          string putative_f_rep_D = germline_system + "D.fa" ;
+          if (stat(putative_f_rep_D.c_str(), &buffer) == 0)
+            f_reps_D.push_back(putative_f_rep_D.c_str()) ;
+
+          delta_min = DEFAULT_DELTA_MIN_D ;
+          delta_max = DEFAULT_DELTA_MAX_D ;
+          default_w = DEFAULT_W_D ;
+        }
 	f_reps_J.push_back((germline_system + "J.fa").c_str()) ;
 	germline_system = extract_basename(germline_system);
-	// TODO: if VDJ, set segment_D // NO, bad idea, depends on naming convention
+
 	break;
 
       // Algorithm
@@ -472,13 +476,6 @@ int main (int argc, char **argv)
 	
       // Fine segmentation
 
-      case 'd':
-	segment_D = 1 ;
-	delta_min = DEFAULT_DELTA_MIN_D ;
-	delta_max = DEFAULT_DELTA_MAX_D ;
-	default_w = DEFAULT_W_D ;
-	break;
-
       case 'f':
 	segment_cost=strToCost(optarg, VDJ);
         break;
@@ -493,6 +490,13 @@ int main (int argc, char **argv)
 
 
   //$$ options: post-processing+display
+
+
+  if (!germline_system.size() && (command != CMD_GERMLINES))
+    {
+      cout << ERROR_STRING << "At least one germline must be given with -V/(-D)/-J, or -G, or -g." << endl ;
+      exit(1);
+    }
 
   // If there was no -w option, then w is either DEFAULT_W or DEFAULT_W_D
   if (w == 0)
@@ -525,20 +529,6 @@ int main (int argc, char **argv)
     }
 
   size_t min_cover_representative = (size_t) (min_reads_clone < (int) max_auditionned ? min_reads_clone : max_auditionned) ;
-
-  // Default repertoires
-
-  if (f_reps_V.empty())
-    f_reps_V.push_back(DEFAULT_V_REP) ;
-
-  if (f_reps_D.empty())
-    f_reps_D.push_back(DEFAULT_D_REP) ;
-
-  if (f_reps_J.empty())
-    f_reps_J.push_back(DEFAULT_J_REP) ;
-
-  if (!segment_D)
-    f_reps_D.clear();
 
   // Default seeds
 
@@ -1106,7 +1096,7 @@ int main (int argc, char **argv)
 	  // FineSegmenter
 	  FineSegmenter seg(representative, segmented_germline, segment_cost);
 	
-	if (segment_D)
+          if (segmented_germline->rep_4.size())
 	  seg.FineSegmentD(segmented_germline);
 	
 	// Output representative, possibly segmented... 
@@ -1142,7 +1132,7 @@ int main (int argc, char **argv)
 
 	      // Output best V, (D) and J germlines to CLONE_FILENAME-*
 	      out_clone << segmented_germline->rep_5.read(seg.best_V) ;
-	      if (segment_D) out_clone << segmented_germline->rep_4.read(seg.best_D) ;
+	      if (segmented_germline->rep_4.size()) out_clone << segmented_germline->rep_4.read(seg.best_D) ;
 	      out_clone << segmented_germline->rep_3.read(seg.best_J) ;
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
@@ -1344,7 +1334,7 @@ int main (int argc, char **argv)
 
             if (s.isSegmented()) 
               {
-                if (segment_D && germline->rep_4.size())
+                if (germline->rep_4.size())
                   s.FineSegmentD(germline);
                 cout << s << endl;
                 segmented = true ;

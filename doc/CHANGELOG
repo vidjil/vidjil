@@ -1,6 +1,15 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
+2014-11-xx  The Vidjil Team
+	* New input method, now accepts compressed fasta files with gzip (core/fasta.cpp, gzstream/zlib)
+	* Better multi-germline analysis (-g) and documentation. This analysis can now safely be used.
+	* Streamlined input. Option -d is removed, and a germline is required with (-V/(-D)/-J, or -G, or -g)
+	* Removed unused code parts as well as some files
+	* New and updated unit and functional tests - now more than 80% code coverage
+	* New public continuous integration - travis, coveralls
+	* Bugs closed (-l, large -r)
+
 2014-10-22  The Vidjil Team
 	* Streamlined filtering options (-r/-y/-z), better documented (doc/algo.org)
 	* Streamlined output files, option to fix their basename (-b)

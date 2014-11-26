@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -s '#####-#####' -w 100 -G ../../germline/IGH -d ../../data/Stanford_S22.fasta
+!LAUNCH: ../../vidjil -s '#####-#####' -w 100 -G ../../germline/IGH ../../data/Stanford_S22.fasta
 !LOG: stanford-w100.log
 
 $ Parses IGHV.fa germline

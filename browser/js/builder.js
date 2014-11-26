@@ -650,12 +650,17 @@ Builder.prototype = {
         // div_date.appendChild(span)
         parent.appendChild(div_date)
 
+        var val = "no reads segmented" ;
+
+        if (this.m.reads.segmented[this.m.t] > 0)
+        {
         var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100
-        var val = "" + this.m.reads.segmented[this.m.t] + " reads" + " (" + percent.toFixed(2) + "%)"
+        val = this.m.reads.segmented[this.m.t] + " reads" + " (" + percent.toFixed(2) + "%)"
 
 	var warning = false ;
 	if (percent < 10)  { val += " – Very few reads segmented" ;  warning = "alert" ;  }
 	else if (percent < 50)  { val += " – Few reads segmented" ;  warning = "warning" ;  }
+        }
 
         var div_segmented = this.build_info_line("info_segmented", "segmented", val, warning)
         parent.appendChild(div_segmented)

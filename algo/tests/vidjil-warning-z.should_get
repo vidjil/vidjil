@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -z 200
+!LAUNCH: ../../vidjil -z 200 -g ../../germline
 
 $ Warning, -z
 1:WARNING
