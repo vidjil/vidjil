@@ -117,6 +117,25 @@ By default, the two output files are named =out/basename.vidjil= in =out/basenam
 Launching vidjil with =-h= option provides the list of parameters that can be
 used. We detail here the options of the main =-c clones= command.
 
+** Germline selection
+
+#+BEGIN_EXAMPLE
+Germline databases (one -V/(-D)/-J, or -G, or -g option must be given for all commands except -c germlines)
+  -V <file>     V germline multi-fasta file
+  -D <file>     D germline multi-fasta file (and resets -m, -M and -w options), will segment into V(D)J components
+  -J <file>     J germline multi-fasta file
+  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)
+  -g <path>     multiple germlines (in the path <path>, takes TRA, TRB, TRG, TRD, IGH and IGL and sets window prediction parameters)
+#+END_EXAMPLE
+
+There are three different ways
+ - Options such as =-G germline/IGH= or =-G germline/TRG= select one germline system.
+ - The =-V/(-D)/-J= options enable to select individual V, (D) and J repertoires (fasta files).
+   This allows in particular to select incomplete rearrangement using V or J repertoires.
+ - The =-g germline/= option launches the analysis on the six germlines (TRG and IGH are tested first, then the other ones).
+   Now the seed and window parameters are hard-coded for each germline. In a future release, the mechanism will be more flexible
+   and will parse the =germline/germlines.data= file.
+
 ** Main algorithm parameters
 
 #+BEGIN_EXAMPLE
