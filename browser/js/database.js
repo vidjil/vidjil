@@ -57,14 +57,14 @@ Database.prototype = {
             context: self,         //we can't do closure with ajax event handler so we use context to keepref
             url: url,
             contentType: 'text/plain',
-            timeout: 1000,
+            timeout: 5000,
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.display_result(result, url)
             }, 
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    myConsole.flash("database : Timeout",2)
+                    myConsole.flash(myConsole.msg.database_timeout, 2)
                 } else {
                     self.check_cert()
                 }
@@ -145,7 +145,7 @@ Database.prototype = {
             $('#data_form').ajaxForm({
                 type: "POST",
                 cache: false,
-                timeout: 1000,
+                timeout: 5000,
                 crossDomain: true,
                 url      : $(this).attr('action'),
                 data     : $(this).serialize(),
@@ -155,7 +155,7 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
-                        myConsole.flash("database : Timeout",2)
+                        myConsole.flash(myConsole.msg.database_timeout, 2)
                     } else {
                         myConsole.popupMsg(request.responseText);
                     }
@@ -170,7 +170,7 @@ Database.prototype = {
             $('#login_form').ajaxForm({
                 type: "POST",
                 cache: false,
-                timeout: 1000,
+                timeout: 5000,
                 crossDomain: true,
                 context: self,   
                 url      : $(this).attr('action'),
@@ -181,7 +181,7 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
-                        myConsole.flash("database : Timeout",2)
+                        myConsole.flash(myConsole.msg.database_timeout, 2)
                     } else {
                         self.call("patient/index")
                     }
@@ -229,7 +229,7 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if(status==="timeout") {
-                        myConsole.flash("database : Timeout",2)
+                        myConsole.flash(myConsole.msg.database_timeout, 2)
                     } else {
                         myConsole.popupMsg(request + " " + status + " " + error);
                     } 
@@ -266,7 +266,7 @@ Database.prototype = {
                 delete self.upload[id]; 
                 self.upload_display();
                 if (status === "timeout") {
-                    myConsole.flash("database : Timeout",2)
+                    myConsole.flash(myConsole.msg.database_timeout, 2)
                 } else {
                     myConsole.flash("upload " + filename + " : " + status, 2)
                 }
@@ -311,7 +311,7 @@ Database.prototype = {
         //envoye de la requete ajax
         $.ajax({
             type: "POST",
-            timeout: 2000,
+            timeout: 5000,
             crossDomain: true,
             url: self.db_address + controller_name + arg,
             xhrFields: {withCredentials: true},
@@ -320,7 +320,7 @@ Database.prototype = {
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    myConsole.flash("database : Timeout", 2)
+                    myConsole.flash(myConsole.msg.database_timeout, 2)
                 } else {
                     self.call("patient/index")
                 }
@@ -373,7 +373,7 @@ Database.prototype = {
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    myConsole.flash("database : Timeout", 2)
+                    myConsole.flash(myConsole.msg.database_timeout + " - unable to access patient data", 1)
                 } else {
                     myConsole.popupMsg(request.responseText);
                 }
@@ -401,7 +401,7 @@ Database.prototype = {
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    myConsole.flash("database : Timeout", 2)
+                    myConsole.flash(myConsole.msg.database_timeout + " - unable to access saved analysis", 1)
                 } else {
                     myConsole.popupMsg(request.responseText);
                 }
@@ -443,7 +443,7 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
-                        myConsole.flash("server : save analysis error : timeout", 2);
+                        myConsole.flash(myConsole.msg.database_timeout + " - unable to save analysis", 2);
                     } else {
                         myConsole.flash("server : save analysis error : "+request.responseText, 2);
                     }
