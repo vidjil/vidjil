@@ -142,7 +142,6 @@ Graph.prototype = {
     
     initData : function () {
         this.data_data = [];
-        var g_min, g_max;
         
         for (var key in this.m.data_info) {
             var max = this.m.data[key][0]
@@ -153,8 +152,6 @@ Graph.prototype = {
                 var t = this.m.samples.order.indexOf(i)
                 var val = this.m.data[key][t]
                 if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val,t)
-                if (val>max) max=val;
-                if (val<min) min=val;
                 tab.push(val)
             }
             
@@ -165,8 +162,6 @@ Graph.prototype = {
                 active : this.m.data_info[key].isActive
             });
             
-            if (typeof g_min == 'undefined' || g_min>min) g_min=min 
-            if (typeof g_max == 'undefined' || g_max<max) g_max=max
         }
         
         this.g_data = this.data_container.selectAll("path")
@@ -177,19 +172,6 @@ Graph.prototype = {
         this.g_data.exit()
             .remove();
             
-        
-        if (typeof g_min != 'undefined'){
-            if ( g_min!=0 && (g_min*100)<g_max){
-                this.scale_data = d3.scale.log()
-                    .domain([g_max, g_min])
-                    .range([0, 1]);
-            }else{
-                if ( (g_min*2)<g_max) g_min = 0
-                this.scale_data = d3.scale.linear()
-                    .domain([g_max, g_min])
-                    .range([0, 1]);
-            }
-        }
     },
     
     updateData : function () {
@@ -265,6 +247,36 @@ Graph.prototype = {
         this.scale_x = d3.scale.log()
             .domain([1, this.m.precision*this.m.max_size])
             .range([0, 1]);
+            
+        
+        var g_min=undefined
+        var g_max=undefined
+        for (var key in this.m.data_info) {
+            var max = this.m.data[key][0]
+            var min = this.m.data[key][0];
+            
+            for (var i = 0; i < this.m.samples.number; i++) {
+                var t = this.m.samples.order.indexOf(i)
+                var val = this.m.data[key][t]
+                if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val,t)
+                if (val>max) max=val;
+                if (val<min) min=val;
+            }
+            
+            if (typeof g_min == 'undefined' || g_min>min) g_min=min 
+            if (typeof g_max == 'undefined' || g_max<max) g_max=max
+        }
+        if ( g_min!=0 && (g_min*100)<g_max){
+            this.scale_data = d3.scale.log()
+                .domain([g_max, g_min])
+                .range([0, 1]);
+        }else{
+            if ( (g_min*2)<g_max) g_min = 0
+            this.scale_data = d3.scale.linear()
+                .domain([g_max, g_min])
+                .range([0, 1]);
+        }
+        
         
         //abscisse
         for (var i = 0; i < this.m.samples.order.length; i++) {
@@ -306,7 +318,7 @@ Graph.prototype = {
             this.data_axis.push(d);
         }
 
-        //ordonnée
+        //ordonnée clone
         if (this.mode == "stack"){
             this.data_axis.push({"type" : "axis_h", "text" : "0%" ,"orientation" : "hori", "pos" : 1});
             this.data_axis.push({"type" : "axis_h", "text" : "50%" ,"orientation" : "hori", "pos" : 0.5});
@@ -326,6 +338,24 @@ Graph.prototype = {
                 height = height / 10;
             }
         }
+        
+        //ordonnée data
+        if (typeof g_min != 'undefined'){
+            var height = 1;
+            while(height<g_max) height = height*10
+            while ((height ) > g_min/2 ) {
+
+                var d = {};
+                d.type = "axis_h2";
+                d.text = height
+                d.orientation = "hori";
+                d.pos = this.scale_data(height);
+                if (d.pos>=-0.1) this.data_axis.push(d);
+
+                height = height / 10;
+            }
+        }
+        
 
         //current time_point
         if ( this.m.samples.order.indexOf(this.m.t) != -1 ){
@@ -431,6 +461,11 @@ Graph.prototype = {
             .attr("width", this.resizeW)
             .attr("height", div_height);
 
+            
+        this.text_position_y = 15;
+        this.text_position_x = 60;
+        this.text_position_x2 = div_width - 60;
+    
         this.update();
     },
 
@@ -650,20 +685,23 @@ Graph.prototype = {
             .attr("class", function (d) {
                 if (d.type == "axis_v") return "axis_button";
                 if (d.type == "axis_h") return "axis_leg";
+                if (d.type == "axis_h2") return "axis_leg";
             })
             .attr("id", function (d) {
                 if (d.type == "axis_v") return ("time" + d.time);
             })
             .attr("y", function (d) {
-                if (d.type == "axis_h") return Math.floor(self.resizeH * d.pos) + self.marge5;
+                if (d.type == "axis_h" || d.type == "axis_h2") return Math.floor(self.resizeH * d.pos) + self.marge5;
                 else return self.text_position_y;
             })
             .attr("x", function (d) {
                 if (d.type == "axis_h") return self.text_position_x;
+                if (d.type == "axis_h2") return self.text_position_x2;
                 else return Math.floor(self.resizeW * d.pos + self.marge4);
             })
             .attr("class", function (d) {
                 if (d.type == "axis_v") return "graph_time"
+                else if (d.type == "axis_h2") return "graph_text2"
                 else return "graph_text";
             });
 

@@ -206,6 +206,10 @@ line {
   fill: #839496;
   text-anchor: end;
 }
+.graph_text2 {
+  font-weight: bold;
+  fill: #839496;
+}
 .graph_time:hover {
   cursor: pointer;
   fill: #fdf6e3;

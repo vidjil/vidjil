@@ -111,7 +111,6 @@ List.prototype = {
             div.appendChild(name)
             
             var value = document.createElement('span');
-            value.appendChild(document.createTextNode(this.m.data[key][this.m.t]))
             value.className = "data_value";
             div.appendChild(value)
             
@@ -136,11 +135,15 @@ List.prototype = {
         }
 
         div_parent.appendChild(div_list_data);
+        this.update_data_list()
     },
     
     update_data_list: function () {
         for (var key in this.index_data){
-            this.index_data[key].innerHTML = this.m.data[key][this.m.t]
+            var val = this.m.data[key][this.m.t]
+            if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val,this.m.t)
+            if (val > 100) this.index_data[key].innerHTML = val.toFixed(0);
+            if (val < 100) this.index_data[key].innerHTML = val.toPrecision(3);
         }
     },
     
