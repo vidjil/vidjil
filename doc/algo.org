@@ -155,8 +155,8 @@ explanation can be found in the paper. More help on that will be
 available in the following months. The defaults values should work.
 
 The =-w= option fixes the size of the "window" that is the main
-identifier to gather clones. The defaults values (40 for TRG, 60 for
-IGH) were selected to ensure a high-quality clone gathering. The
+identifier to gather clones. The defaults values (40 for VJ, 60 for
+VDJ recombinations) were selected to ensure a high-quality clone gathering. The
 high-throughput heuristic predicts the center of the "window" that may
 be shifted by a few bases from the actual "center" of the CDR3 (for TRG,
 less than 15 bases compared to the IMGT/V-QUEST or IgBlast prediction
@@ -164,7 +164,7 @@ in >99% of cases). The extracted window should be large enough to
 fully contain the CDR3 as well as some part of the end of the V and
 the start of the J to uniquely identify a clone.
 
-Setting =-w= to 30 for TRG and 50 for IGH may "segment" (analyze) a
+Setting =-w= to 30 for VJ and 50 for VDJ recombinations may "segment" (analyze) a
 few more reads, but may in some rare cases falsely cluster reads from
 different clones.  Setting =-w= to lower values is not recommended.
 
