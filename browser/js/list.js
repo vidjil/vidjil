@@ -182,7 +182,7 @@ List.prototype = {
         }
         */
         var filter_label = document.createElement('span')
-        filter_label.appendChild(document.createTextNode("filter"))
+        filter_label.appendChild(document.createTextNode("search"))
         
         var filter_input = document.createElement('input')
         filter_input.id = 'filter_input'
