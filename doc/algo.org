@@ -145,9 +145,9 @@ Window prediction
                 (default: #####-#####, ######-######, #######-#######, depends on germline)
   -k <int>      k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)
                 (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)
-  -m <int>      minimal admissible delta between last V and first J k-mer (default: -10) (default with -d: 0)
-  -M <int>      maximal admissible delta between last V and first J k-mer (default: 20) (default with -d: 80)
-  -w <int>      w-mer size used for the length of the extracted window (default: 40)(default with -d: 60)
+  -m <int>      minimal admissible delta between last V and first J k-mer (default: -10) (default with -D: 0)
+  -M <int>      maximal admissible delta between last V and first J k-mer (default: 20) (default with -D: 80)
+  -w <int>      w-mer size used for the length of the extracted window (default: 40)(default with -D: 60)
 #+END_EXAMPLE
 
 The =-s=, =-k=, =-m= and =-M= options are the options of the seed-based heuristic. A detailed
@@ -252,10 +252,10 @@ two windows that must be clustered.
 * Examples of use
 
 All the following examples are on a IGH VDJ recombinations : they thus
-require the =-G germline/IGH= and the =-d= options.
+require either the =-G germline/IGH= option, or the mutli-germline =-g germline= option.
 
 #+BEGIN_SRC sh
-./vidjil -G germline/IGH -d data/Stanford_S22.fasta
+./vidjil -G germline/IGH data/Stanford_S22.fasta
    # Extract (with an ultra-fast heuristic) all windows
    # Summary of windows is available both in out/Stanford_S22.vdj.fa
    # and in out/Stanford_S22.vidjil.
@@ -273,7 +273,7 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
    The first window has 8 occurrences, the second window has 5 occurrences.
 
 #+BEGIN_SRC sh
-./vidjil -c clones -G germline/IGH -r 1 -R 1 -d ./data/clones_simul.fa
+./vidjil -c clones -G germline/IGH -r 1 ./data/clones_simul.fa
    # Extracts the windows (-r 1, with at least 1 read each), 
    # then gather them into clones 
    # A more natural option could be -r 5.
@@ -288,13 +288,13 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -c clones -G germline/IGH -r 1 -n 5 -d ./data/clones_simul.fa
+./vidjil -c clones -G germline/IGH -r 1 -n 5 ./data/clones_simul.fa
    # Window extraction + clone gathering,
    # with automatic clustering, distance five (-n 5)
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -c segment -G germline/IGH -d data/segment_S22.fa
+./vidjil -c segment -G germline/IGH data/segment_S22.fa
    # Segment the reads onto VDJ germline 
    # (this is slow and should only be used for testing)
 #+END_SRC
