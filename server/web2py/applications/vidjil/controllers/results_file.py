@@ -9,7 +9,43 @@ if request.env.http_origin:
 ## return admin_panel
 def index():
     if auth.has_membership("admin"):
-        return dict(message=T(''))
+
+        query = db(
+            (db.results_file.sequence_file_id==db.sequence_file.id)
+            & (db.sequence_file.patient_id==db.patient.id)
+            & (db.results_file.config_id==db.config.id)
+        ).select()
+        
+        for row in query :
+            if row.results_file.scheduler_task_id is None :
+                row.status = '' 
+            else:
+                row.status = db.scheduler_task[row.results_file.scheduler_task_id ].status 
+            pass
+        
+        ##sort result
+        if request.vars["sort"] == "name" :
+            query = query.sort(lambda row : row.patient.last_name)
+        elif request.vars["sort"] == "run_date" :
+            query = query.sort(lambda row : row.results_file.run_date)
+        elif request.vars["sort"] == "config" :
+            query = query.sort(lambda row : row.config.name)
+        elif request.vars["sort"] == "patient" :
+            query = query.sort(lambda row : row.patient.last_name)
+        elif request.vars["sort"] == "status" :
+            query = query.sort(lambda row : row.status)
+        elif "sort" in request.vars and request.vars["sort"] != "":
+            query = query.sort(lambda row : row.sequence_file[request.vars["sort"]])
+
+        ##filter
+        if "filter" in request.vars and request.vars["filter"] != "":
+            for row in query :
+                row.string = (row.sequence_file.filename+row.config.name+row.patient.last_name+row.patient.first_name+row.sequence_file.producer+str(row.results_file.run_date)+row.status ).lower()
+            query = query.find(lambda row : row.string.find(request.vars["filter"].lower()) != -1)
+        else :
+            request.vars["filter"] = ""
+        
+        return dict(query = query)
 
 def run_all():
     if auth.has_membership("admin"):

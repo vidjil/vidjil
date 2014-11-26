@@ -1,74 +1,64 @@
 {{extend 'db_layout.html'}}
 
-{{ 
 
-query = db(
-            (db.results_file.sequence_file_id==db.sequence_file.id)
-            & (db.sequence_file.patient_id==db.patient.id)
-            & (db.results_file.config_id==db.config.id)
-        ).select()
-}}
+<h3>Hi</h3>
 
-
-<div>
-    <h3>Hi</h3>
-    
-    <div id="db_table_container">
-        <table class="db_table" id="table">
-            
-            
-            <thead>
-                <tr>
-                    <td class="column1">file_name</td>
-                    <td class="column2">config</td>
-                    <td> </td>
-                    <td class="column1">patient</td>
-                    <td class="column2">producer</td>
-                    <td class="column2">last process</td>
-                    <td class="column2">status</td>
-                    <td class="column5"></td>
-                    <td class="column4"></td>
-                </tr>
-            </thead>
-            
-            
-           {{for row in query :}}
-                {{if row.results_file.scheduler_task_id is None :}}
-                    {{status = '' }}
-                {{else:}}
-                    {{status = db.scheduler_task[row.results_file.scheduler_task_id ].status }}
-                {{pass}}
-               <tr>
-                   <td> {{=row.sequence_file.filename}} </td>
-                   <td> {{=row.config.name}} </td>
-                   <td></td>
-                   <td> {{=row.patient.last_name + " " + row.patient.first_name }} </td>
-                   <td> {{=row.sequence_file.producer}} </td>
-                   {{if row.results_file.run_date :}}
-                       <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=row.results_file.run_date }}</td>
-                   {{else:}}<td></td>{{pass}} 
-                   <td> {{=status}} </td>
-                   <td onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}'})" > X </td>
-                   <td>
-                   {{if row.results_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED"):}}
-                       {{if auth.has_permission("run", "results_file") :}}
-                           <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'config_id' : {{=row.config.id}} } )"> run >> </span>
-                       {{else:}}<span class="button inactive" title="you don't have permission to schedule runs"> run >> </span>{{pass}}
-                   {{pass}}
-                   </td>
-                </tr>
-            {{pass}}
-            
-            
-            
-        </table>
-        <table class="db_table" id="db_fixed_header"></table>
+<div class="db_block">
+    <div class="db_block_right">
+        filter 
+        <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}"  onchange="db.call('results_file/index', {'filter' : this.value} )">
     </div>
+</div>
 
-    <div class="db_block">
-        <div class="db_block_right">
-             <a class="button" onclick="db.call('results_file/run_all')" > run all </a>
-        </div>
+<div id="db_table_container">
+    <table class="db_table" id="table">
+
+
+        <thead>
+            <tr>
+                <td class="column1" onclick="db.call('results_file/index', {'sort' :'filename', 'filter' : '{{=request.vars["filter"]}}' })">file_name</td>
+                <td class="column2" onclick="db.call('results_file/index', {'sort' :'config', 'filter' : '{{=request.vars["filter"]}}' })">config</td>
+                <td> </td>
+                <td class="column1" onclick="db.call('results_file/index', {'sort' :'patient', 'filter' : '{{=request.vars["filter"]}}' })">patient</td>
+                <td class="column2" onclick="db.call('results_file/index', {'sort' :'producer', 'filter' : '{{=request.vars["filter"]}}' })">producer</td>
+                <td class="column2" onclick="db.call('results_file/index', {'sort' :'run_date', 'filter' : '{{=request.vars["filter"]}}' })">last process</td>
+                <td class="column2" onclick="db.call('results_file/index', {'sort' :'status', 'filter' : '{{=request.vars["filter"]}}' })">status</td>
+                <td class="column5"></td>
+                <td class="column4"></td>
+            </tr>
+        </thead>
+
+
+       {{for row in query :}}
+           <tr>
+               <td> {{=row.sequence_file.filename}} </td>
+               <td> {{=row.config.name}} </td>
+               <td></td>
+               <td> {{=row.patient.last_name + " " + row.patient.first_name }} </td>
+               <td> {{=row.sequence_file.producer}} </td>
+               {{if row.results_file.run_date :}}
+                   <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=row.results_file.run_date }}</td>
+               {{else:}}<td></td>{{pass}} 
+               <td> {{=row.status}} </td>
+               <td onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}'})" > X </td>
+               <td>
+               {{if row.results_file.id == None or ( row.status != "RUNNING" and row.status != "QUEUED" and row.status != "ASSIGNED"):}}
+                   {{if auth.has_permission("run", "results_file") :}}
+                       <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'config_id' : {{=row.config.id}} } )"> run >> </span>
+                   {{else:}}<span class="button inactive" title="you don't have permission to schedule runs"> run >> </span>{{pass}}
+               {{pass}}
+               </td>
+            </tr>
+        {{pass}}
+
+
+
+    </table>
+    <table class="db_table" id="db_fixed_header"></table>
+</div>
+
+<div class="db_block">
+    <div class="db_block_right">
+         <a class="button" onclick="db.call('results_file/run_all')" > run all </a>
     </div>
-    
 </div>
