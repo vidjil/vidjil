@@ -7,54 +7,26 @@
 
 
         <thead>
-            <tr><td class="column_200"> name </td>
-                <td class="column_100"> birth </td>
-                <td> info </td>
-                <td class="column_100"> configs </td>
-                {{if isAdmin:}} <td class="column_100"> users </td> {{pass}}
-                <td class="column_100"> files </td>
+            <tr><td class="column_200" onclick="db.call('patient/index', {'sort' :'last_name'} )"> name </td>
+                <td class="column_100" onclick="db.call('patient/index', {'sort' :'birth'} )"> birth </td>
+                <td onclick="db.call('patient/index', {'sort' :'info'} )"> info </td>
+                <td class="column_100" onclick="db.call('patient/index', {'sort' :'configs'} )"> configs </td>
+{{if isAdmin:}} <td class="column_100" onclick="db.call('patient/index', {'sort' :'groups'} )"> users </td> {{pass}}
+                <td class="column_100" onclick="db.call('patient/index', {'sort' :'files'} )"> files </td>
                 <td class="column5"> </td>
                 <td class="column5"> </td>
                 <td class="column5"> </td>
             </tr>
         </thead>
-
-
+        
        {{for row in query :}}
         
-        {{confs=""}}
-        {{co = db.fused_file.id.count()}}
-        {{query_conf = db( db.fused_file.patient_id == row.patient.id ).select(db.fused_file.config_id, co, groupby=db.fused_file.config_id).sort(lambda row: co)}}
-        
-        {{for row2 in query_conf:}} 
-            {{confs+=" "+db.config[row2.fused_file.config_id].name}} 
-        {{pass}}
-        
-        {{most_used_conf = -1}}
-        {{if len(query_conf) > 0 :}} 
-            {{most_used_conf = query_conf[0].fused_file.config_id}}
-        {{pass}}
-        
-           <tr onclick="db.call('patient/info', {'id' :'{{=row.patient.id}}' , 'config_id' : {{=most_used_conf}} } )" >
+           <tr onclick="db.call('patient/info', {'id' :'{{=row.patient.id}}' , 'config_id' : {{=row.most_used_conf}} } )" >
                 <td> {{=row.patient.last_name + " " + row.patient.first_name }} </td>
                 <td> {{=row.patient.birth }} </td>
                 <td> {{=row.patient.info }} </td>
-                <td> {{=confs}}</td>
-        <!-- groups/users  -->
-                {{if isAdmin:}} 
-                <td> 
-                  {{for row3 in db( 
-                       (db.auth_permission.name == "read") &
-                       (db.auth_permission.table_name == "patient") &
-                       (db.auth_permission.record_id == row.patient.id)
-                      ).select( orderby=db.auth_permission.group_id, distinct=True )  :}} 
-                            {{if db.auth_permission[row3.id].group_id > 2:}}
-                               {{=db.auth_permission[row3.id].group_id}} 
-                            {{pass}}
-                  {{pass}}
-                </td>
-                {{pass}}
-        <!-- end groups/users -->
+                <td> {{=row.confs}}</td>
+                {{if isAdmin:}}<td>{{=row.groups}}</td>{{pass}}
                 <td> {{=row[count]}}</td>
                 {{if isAdmin:}}
                 <td onclick="db.call('patient/permission', {'id' :'{{=row.patient.id}}'} )" > p </td> {{else:}} <td></td> {{pass}}

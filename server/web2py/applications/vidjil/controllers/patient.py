@@ -28,9 +28,9 @@ def index():
     log.debug('patient list')
 
     count = db.sequence_file.id.count()
-    
     isAdmin = auth.has_membership("admin")
     
+    ##retrieve patient list 
     query = db(
         (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) 
     ).select(
@@ -39,6 +39,40 @@ def index():
         left=db.sequence_file.on(db.patient.id == db.sequence_file.patient_id),
         groupby=db.patient.id
     )
+    
+    for row in query :
+        
+        ##add confs info for each patient
+        row.confs=""
+        co = db.fused_file.id.count()
+        query_conf = db( db.fused_file.patient_id == row.patient.id ).select(db.fused_file.config_id, co, groupby=db.fused_file.config_id).sort(lambda row: co)
+        
+        for row2 in query_conf:
+            row.confs += " " + db.config[row2.fused_file.config_id].name
+        
+        row.most_used_conf = -1
+        if len(query_conf) > 0 :
+            row.most_used_conf = query_conf[0].fused_file.config_id
+
+        ##add groups info for each patient
+        row.groups=""
+        for row3 in db( 
+           (db.auth_permission.name == "read") &
+           (db.auth_permission.table_name == "patient") &
+           (db.auth_permission.record_id == row.patient.id)
+          ).select( orderby=db.auth_permission.group_id, distinct=True )  :
+            if db.auth_permission[row3.id].group_id > 2:
+                row.groups += " " + str(db.auth_permission[row3.id].group_id)
+    
+    ##sort result
+    if request.vars["sort"] == "configs" :
+        query = query.sort(lambda row : row.confs)
+    elif request.vars["sort"] == "groups" :
+        query = query.sort(lambda row : row.groups)
+    elif request.vars["sort"] == "files" :
+        query = query.sort(lambda row : row[count])
+    elif "sort" in request.vars:
+        query = query.sort(lambda row : row.patient[request.vars["sort"]])
     
     return dict(query = query,
                 count = count,
