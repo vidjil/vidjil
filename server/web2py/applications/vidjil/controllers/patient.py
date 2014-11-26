@@ -74,6 +74,14 @@ def index():
     elif "sort" in request.vars:
         query = query.sort(lambda row : row.patient[request.vars["sort"]])
     
+    ##filter
+    if "filter" in request.vars and request.vars["filter"] != "":
+        for row in query :
+            row.string = (row.confs+row.groups+row.patient.last_name+row.patient.first_name+str(row.patient.birth)).lower()
+        query = query.find(lambda row : row.string.find(request.vars["filter"].lower()) != -1)
+    else :
+        request.vars["filter"] = ""
+        
     return dict(query = query,
                 count = count,
                 isAdmin = isAdmin)

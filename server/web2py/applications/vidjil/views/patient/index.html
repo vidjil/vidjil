@@ -2,34 +2,45 @@
 
 <h3>Patient list</h3>
 
+<div class="db_block">
+    <div class="db_block_right">
+        filter 
+        <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}"  onchange="db.call('patient/index', {'filter' : this.value} )">
+    </div>
+</div>
+
+
 <div id="db_table_container">
     <table class="db_table" id="table">
 
 
         <thead>
-            <tr><td class="column_200" onclick="db.call('patient/index', {'sort' :'last_name'} )"> name </td>
-                <td class="column_100" onclick="db.call('patient/index', {'sort' :'birth'} )"> birth </td>
-                <td onclick="db.call('patient/index', {'sort' :'info'} )"> info </td>
-                <td class="column_100" onclick="db.call('patient/index', {'sort' :'configs'} )"> configs </td>
-{{if isAdmin:}} <td class="column_100" onclick="db.call('patient/index', {'sort' :'groups'} )"> users </td> {{pass}}
-                <td class="column_100" onclick="db.call('patient/index', {'sort' :'files'} )"> files </td>
+            <tr><td class="column_200" onclick="db.call('patient/index', {'sort' :'last_name', 'filter' : '{{=request.vars["filter"]}}' })"> name </td>
+                <td class="column_100" onclick="db.call('patient/index', {'sort' :'birth', 'filter' : '{{=request.vars["filter"]}}' })"> birth </td>
+                <td onclick="db.call('patient/index', {'sort' :'info', 'filter' : '{{=request.vars["filter"]}}' })"> info </td>
+                <td class="column_100" onclick="db.call('patient/index', {'sort' :'configs', 'filter' : '{{=request.vars["filter"]}}' })"> configs </td>
+{{if isAdmin:}} <td class="column_100" onclick="db.call('patient/index', {'sort' :'groups', 'filter' : '{{=request.vars["filter"]}}' })"> users </td> {{pass}}
+                <td class="column_100" onclick="db.call('patient/index', {'sort' :'files', 'filter' : '{{=request.vars["filter"]}}' })"> files </td>
+                
+                
                 <td class="column5"> </td>
                 <td class="column5"> </td>
                 <td class="column5"> </td>
             </tr>
         </thead>
         
-       {{for row in query :}}
         
+       {{for row in query :}}
            <tr onclick="db.call('patient/info', {'id' :'{{=row.patient.id}}' , 'config_id' : {{=row.most_used_conf}} } )" >
                 <td> {{=row.patient.last_name + " " + row.patient.first_name }} </td>
                 <td> {{=row.patient.birth }} </td>
                 <td> {{=row.patient.info }} </td>
                 <td> {{=row.confs}}</td>
-                {{if isAdmin:}}<td>{{=row.groups}}</td>{{pass}}
+{{if isAdmin:}} <td> {{=row.groups}}</td>{{pass}}
                 <td> {{=row[count]}}</td>
-                {{if isAdmin:}}
-                <td onclick="db.call('patient/permission', {'id' :'{{=row.patient.id}}'} )" > p </td> {{else:}} <td></td> {{pass}}
+               
+               
+{{if isAdmin:}} <td onclick="db.call('patient/permission', {'id' :'{{=row.patient.id}}'} )" > p </td> {{else:}} <td></td> {{pass}}
                 {{if (auth.has_permission('admin', 'patient', row.patient.id) ):}}
                 <td onclick="db.call('patient/edit', {'id' :'{{=row.patient.id}}'} )" > e </td>
                 <td onclick="db.call('patient/confirm', {'id' :'{{=row.patient.id}}'} )" > X </td>  
