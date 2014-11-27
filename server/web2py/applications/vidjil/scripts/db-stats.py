@@ -28,6 +28,15 @@ for res in db((db.scheduler_task.last_run_time >= yesterday) & (db.scheduler_tas
     print "\t", tmp_dir(res.args)
 
 
+print
+print "=== Recent analysis saved, last %d hours" % LAST_HOURS
+
+for res in db((db.analysis_file.analyze_date >= yesterday) & (db.patient.id == db.analysis_file.patient_id)).select():
+    print "   ", res.analysis_file.analyze_date,
+    print "\t", "pat-%04d (%s %s)" % (res.patient.id, res.patient.first_name, res.patient.last_name),
+    print "\t", ellipsis(res.analysis_file.analysis_file, 50)
+
+
 print 
 print "=== Recent results files, last %d hours" % LAST_HOURS
 
