@@ -7,9 +7,9 @@ def format_size(n):
 
     Example:
     >>> format_size(1000000)
-    1.0 MB
-    >>> format_size(1024*1014*1024)
-    1.073 GB
+    '1.0 MB'
+    >>> format_size(1024*1024*1024)
+    '1.073 GB'
     '''
     size = math.floor((n/1000)/1000)
     if size > 1000 :
