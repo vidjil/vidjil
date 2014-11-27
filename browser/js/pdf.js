@@ -68,7 +68,7 @@ PDF.prototype = {
         return this;
     },
     
-    makeGraph: function (text) {
+    makeGraph: function () {
         this.doc = new jsPDF("l");
         this.y = this.marge;
         this.m.focusOut()
@@ -86,7 +86,7 @@ PDF.prototype = {
             .label_selected_clones(200,170)
             
         this.doc.setFontSize(16);
-        this.doc.text(this.marge + 10, 190, text);
+        this.doc.text(this.marge + 10, 190, this.m.getPrintableAnalysisName());
         this.print()
         
         return this;
@@ -250,7 +250,7 @@ PDF.prototype = {
         svgElementToPdf(elem, this.doc, opt2)
 
         this.doc.setFillColor(255, 255, 255);
-        this.doc.rect(opt.x, opt.y+opt.h+1, opt.w, opt.h, 'F');
+        this.doc.rect(opt.x+opt.w*0.05, opt.y+opt.h+1, opt.w, opt.h, 'F');
         this.doc.setFillColor(0, 0, 0);
 
         return this;
@@ -439,13 +439,15 @@ PDF.prototype = {
     label_selected_clones: function (x, y) {
         
         var y2 = y
+        var max=0;
         for (i = 0; i < this.list.length; i++) {
-            this.label_clone(this.list[i], x, y2)
-            y2=y2+8;
+            var l = this.label_clone(this.list[i], x, y2)
+            if (l>max) max=l
+            y2=y2+7;
         }
         
         this.doc.setDrawColor(0, 0, 0);
-        //this.doc.rect(x, y, 60, this.list.length * 8, 'S');
+        this.doc.rect(x, y, max, 2+this.list.length * 7, 'S');
         this.doc.setDrawColor(255, 255, 255);
         
         return this;
@@ -458,7 +460,9 @@ PDF.prototype = {
         this.icon(cloneID, x, y, 18, 8) 
         
         this.doc.setFontSize(8);
-        this.doc.text(x+20, y+4, this.m.clone(cloneID).getName());
+        var text = this.m.clone(cloneID).getName()
+        this.doc.text(x+20, y+4, text);
+        return 20 + text.length*1.5
         
     },
     

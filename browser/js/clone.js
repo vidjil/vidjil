@@ -231,7 +231,9 @@ Clone.prototype = {
      *
      * */
     getName: function () {
-        if (this.name) {
+        if (this.c_name) {
+            return this.c_name;
+        } else if (this.name) {
             return this.name;
         } else {
             return this.getSequenceName();
