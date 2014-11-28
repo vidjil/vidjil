@@ -128,10 +128,9 @@ Germline databases (one -V/(-D)/-J, or -G, or -g option must be given for all co
   -g <path>     multiple germlines (in the path <path>, takes TRA, TRB, TRG, TRD, IGH and IGL and sets window prediction parameters)
 #+END_EXAMPLE
 
-There are three different ways
  - Options such as =-G germline/IGH= or =-G germline/TRG= select one germline system.
  - The =-V/(-D)/-J= options enable to select individual V, (D) and J repertoires (fasta files).
-   This allows in particular to select incomplete rearrangement using V or J repertoires.
+   This allows in particular to select incomplete rearrangement using custom V or J repertoires with added sequences.
  - The =-g germline/= option launches the analysis on the six germlines (TRG and IGH are tested first, then the other ones).
    Now the seed and window parameters are hard-coded for each germline. In a future release, the mechanism will be more flexible
    and will parse the =germline/germlines.data= file.
