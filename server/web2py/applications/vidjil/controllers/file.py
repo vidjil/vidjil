@@ -1,6 +1,7 @@
 # coding: utf8
 import gluon.contrib.simplejson
 import defs
+import vidjil_utils
 import os
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -129,7 +130,7 @@ def upload():
             mes = f.filename + ": upload finished"
         
         seq_file = defs.DIR_SEQUENCES+db.sequence_file[request.vars["id"]].data_file
-        size = defs.format_size(os.path.getsize(seq_file))
+        size = vidjil_utils.format_size(os.path.getsize(seq_file))
         db.sequence_file[request.vars["id"]] = dict(size_file = size)
         
         res = {"message": mes}
