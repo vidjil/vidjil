@@ -91,6 +91,8 @@ m.addSegment(segment);
 
 if (location.search != ''){
     var tmp = location.search.substring(1).split('&')
+    var patient = -1
+    var config = -1
     for (var i=0; i<tmp.length; i++){
         var tmp2 = tmp[i].split('=')
         if (tmp2[0] == 'data'){
@@ -99,6 +101,12 @@ if (location.search != ''){
         }
         if (tmp2[0] == 'analysis'){
             m.loadAnalysisUrl(tmp2[1])
+        }
+        if (tmp2[0] == 'patient') patient = tmp2[1]
+        if (tmp2[0] == 'config') config = tmp2[1]
+        if (patient != "-1" && config != "-1"){
+            //wait 1sec to check ssl
+            setTimeout(function () { db.load_data( {"patient" : patient , "config" : config } , "")  }, 1000);
         }
     }
 }else if (config.use_database){
