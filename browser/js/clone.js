@@ -263,10 +263,9 @@ Clone.prototype = {
     updateColor: function () {
         if (this.m.focus == this.hash){
             this.color = color['@select'];
-        }else if (!this.active) {
-            this.color = color['@default'];
         }else if (this.m.colorMethod == "abundance") {
             var size = this.getSize()
+            if (this.m.clusters[this.hash].length==0){ size = this.getSequenceSize() }
             if (size == 0){
                 this.color = color['@default'];
             }else{

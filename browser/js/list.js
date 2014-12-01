@@ -374,9 +374,11 @@ List.prototype = {
         for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
             (function (i) {
                 var id = this.m.clusters[cloneID][i]
+                var color = this.m.clone(id).getColor();
                 var div_clone = document.createElement('div');
                 div_clone.id = "_" + id;
                 div_clone.id2 = id;
+                div_clone.style.color = color;
                 div_clone.className = "listElem";
                 div_clone.onmouseover = function () {
                     self.m.focusIn(id);
@@ -524,9 +526,13 @@ List.prototype = {
             //color
             var color = this.m.clone(list[i]).getColor();
 
-            $("#" + list[i] + " .nameBox")
+            $("#" + list[i] + " .nameBox:first")
                 .css("color", color)
-            $("#" + list[i] + " .sizeBox")
+            $("#" + list[i] + " .sizeBox:first")
+                .css("color", color)
+            $("#_" + list[i] + " .nameBox:first")
+                .css("color", color)
+            $("#_" + list[i] + " .sizeBox:first")
                 .css("color", color)
 
             //clone selected ?
