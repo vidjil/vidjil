@@ -44,6 +44,9 @@ Database.prototype = {
         }
         
         var url = self.db_address + page + arg
+        if (page.substr(0,4).toLowerCase() == "http") {
+            url = page + arg
+        }
         
         this.callUrl(url)
     },
@@ -183,7 +186,18 @@ Database.prototype = {
                     if (status === "timeout") {
                         myConsole.flash(myConsole.msg.database_timeout, 2)
                     } else {
-                        self.call("patient/index")
+                        var nexts = $('#login_form').attr('action').split("&")
+                        var next = "patient/index"
+                        for (var i=0; i<nexts.length; i++){
+                            var index = nexts[i].indexOf("_next")
+                            if (index != -1){
+                                next = nexts[i].substr(index)
+                                next = next.replace("_next=", "")
+                                next = decodeURIComponent(next)
+                            }
+                        }
+                        console.log(next)
+                        self.call(next)
                     }
                 }
             });

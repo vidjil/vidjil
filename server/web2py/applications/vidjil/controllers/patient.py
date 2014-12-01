@@ -23,7 +23,10 @@ def info():
 ## return patient list
 def index():
     if not auth.user : 
-        res = {"redirect" : "default/user/login"}
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
+                            vars=dict(_next=URL('patient', 'index', scheme=True, host=True)))
+            }
+        
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     log.debug('patient list')
 
