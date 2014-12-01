@@ -921,7 +921,7 @@ Model.prototype = {
         if (cloneID == (this.n_clones - 1)) return 0
 
         if (this.clone(cloneID).isSelected()) {
-            return;
+            this.clone(cloneID).select = false;
         } else {
             this.clone(cloneID).select = true;
 	    }
