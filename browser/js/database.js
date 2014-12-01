@@ -38,7 +38,8 @@ Database.prototype = {
         {}
         
         var self = this;
-        var arg = "?";
+        var arg = "";
+        if (typeof args != "undefined" && Object.keys(args).length) arg = "?"
         for (var key in args) {
             arg += "" + key + "=" + args[key] + "&";
         }
@@ -48,10 +49,10 @@ Database.prototype = {
             url = page + arg
         }
         
-        this.callUrl(url)
+        this.callUrl(url, args)
     },
     
-    callUrl : function (url){
+    callUrl : function (url, args){
         var self=this;
         
         $.ajax({
@@ -63,7 +64,7 @@ Database.prototype = {
             timeout: 5000,
             xhrFields: {withCredentials: true},
             success: function (result) {
-                self.display_result(result, url)
+                self.display_result(result, url, args)
             }, 
             error: function (request, status, error) {
                 if (status === "timeout") {
@@ -93,29 +94,13 @@ Database.prototype = {
         return false
     },
     
-    display_result: function (result, url) {
+    display_result: function (result, url, args) {
         //rétablissement de l'adresse pour les futures requetes
         result = result.replace("DB_ADDRESS/", this.db_address);
         result = result.replace("action=\"#\"", "action=\""+url+"\"");
         
-        //hack redirection
         try {
             var res = jQuery.parseJSON(result);
-            
-            if (res.redirect){
-                if (res.redirect == "back"){
-                    this.back()
-                } else if (res.redirect == "reload"){
-                    this.reload()
-                } else {
-                    this.call(res.redirect, res.args)
-                }
-            }
-            
-            //TODO server need to return message priority too ( 0=console, 1=ok, 2=error)
-            if (res.message) myConsole.flash("database : " + res.message , 1)
-            
-            return res
         }
         catch(err)
         {
@@ -131,7 +116,44 @@ Database.prototype = {
             
             //
             this.fixed_header()
+            
+            return 0 ;
         }
+        
+        //hack redirection
+        if (res.redirect){
+            if (res.redirect == "back"){
+                this.back()
+            } else if (res.redirect == "reload"){
+                this.reload()
+            } else {
+                this.call(res.redirect, res.args)
+            }
+        }
+        
+        //data file
+        if (res.reads){
+            m.parseJsonData(result, 100)
+            m.loadGermline();
+            m.initClones()
+            this.load_analysis(args)
+            this.last_file = args
+            this.close()
+            m.db_key = args
+            return;
+        }
+        
+        //analysis file
+        if (typeof res.clones != "undefined" && typeof res.reads == "undefined" ){
+            m.parseJsonAnalysis(result)
+            m.initClones()
+        }
+        
+        //TODO server need to return message priority too ( 0=console, 1=ok, 2=error)
+        if (res.message) myConsole.flash("database : " + res.message , 1)
+        
+        return res
+
         if (this.url.length == 1) $("#db_back").addClass("inactive");
     },
     
@@ -188,16 +210,25 @@ Database.prototype = {
                     } else {
                         var nexts = $('#login_form').attr('action').split("&")
                         var next = "patient/index"
+                        var args = {}
                         for (var i=0; i<nexts.length; i++){
                             var index = nexts[i].indexOf("_next")
                             if (index != -1){
                                 next = nexts[i].substr(index)
                                 next = next.replace("_next=", "")
                                 next = decodeURIComponent(next)
+                                if (next.split("?").length == 2){
+                                    var tmp = next.split("?")[1].split("&") 
+                                    for (var k in tmp){
+                                        var tmp2 = tmp[k].split("=")
+                                        args[tmp2[0]] = tmp2[1]
+                                    }
+                                }
+                                next = next.split("?")[0]
                             }
                         }
-                        console.log(next)
-                        self.call(next)
+                        console.log(args)
+                        self.call(next, args)
                     }
                 }
             });
@@ -377,13 +408,7 @@ Database.prototype = {
             url: self.db_address + "default/get_data" + arg,
             xhrFields: {withCredentials: true},
             success: function (result) {
-                m.parseJsonData(result, 100)
-                m.loadGermline();
-                m.initClones()
-                self.load_analysis(args)
-                self.last_file = args
-                self.close()
-                m.db_key = args
+                self.display_result(result, "", args);
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
@@ -410,8 +435,7 @@ Database.prototype = {
             url: self.db_address + "default/get_analysis" + arg,
             xhrFields: {withCredentials: true},
             success: function (result) {
-                m.parseJsonAnalysis(result)
-                m.initClones()
+                self.display_result(result)
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
