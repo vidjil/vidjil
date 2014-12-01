@@ -457,6 +457,9 @@ List.prototype = {
             if (event.keyCode == 13) document.getElementById('btnSave')
                 .click();
         }
+        $(input).focusout(function() {
+            m.update()
+        })
         divParent.appendChild(input);
         divParent.onclick = "";
 

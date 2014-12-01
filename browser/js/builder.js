@@ -310,6 +310,10 @@ Builder.prototype = {
             if (event.keyCode == 13) document.getElementById('btnSaveTag')
                 .click();
         }
+        $(input).focusout(function() {
+            self.build_tagSelector()
+            self.build_displaySelector()
+        })
         divParent.appendChild(input);
         divParent.onclick = "";
 
@@ -347,6 +351,9 @@ Builder.prototype = {
             if (event.keyCode == 13) document.getElementById('btnSave')
                 .click();
         }
+        $(input).focusout(function() {
+            m.update()
+        })
         divParent.appendChild(input);
         divParent.onclick = "";
 
