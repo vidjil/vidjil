@@ -222,7 +222,9 @@ ScatterPlot.prototype = {
 	  this.nodes[i].r1 = 5; // longueur du rayon1
 	  this.nodes[i].r2 = 5; // longueur du rayon2
 	  this.nodes[i].x = Math.random()*500; // TODO optimize : use same system as radius/expected radius
-          this.nodes[i].y = Math.random()*250; // instead of complex move() function for each node and tick ( cost too much )
+	  this.nodes[i].old_x =  [0]
+      this.nodes[i].y = Math.random()*250; // instead of complex move() function for each node and tick ( cost too much )
+      this.nodes[i].old_y =  [0]
       };
 
       //Initialisation of tmp array which contains all the edges
@@ -897,7 +899,7 @@ ScatterPlot.prototype = {
         active_node.each(this.move());
         //résolution des collisions
         var quad = d3.geom.quadtree(this.nodes)
-
+        
         for (var i=0; i<this.nodes.length; i++) {
             if (this.nodes[i].r1 > 0.1){
                 quad.visit(this.collide(this.nodes[i]));
@@ -907,10 +909,15 @@ ScatterPlot.prototype = {
         active_node
             //attribution des nouvelles positions/tailles
             .attr("cx", function (d) {
-		return (d.x + self.marge_left);
+                d.old_x.push(d.x);     
+                d.old_x.shift(); 
+                return ( d3.mean(d.old_x) + self.marge_left);
+                
             })
             .attr("cy", function (d) {
-                return (d.y + self.marge_top);
+                d.old_y.push(d.y);     
+                d.old_y.shift(); 
+                return (d3.mean(d.old_y) + self.marge_top);
             })
             .attr("r", function (d) {
                 return (d.r2);
@@ -940,11 +947,13 @@ ScatterPlot.prototype = {
           
             if (d.x != d.x2) {
                 var delta = d.x2 - d.x;
-                d.x += 0.015 * delta;
+                var s = ((d.r1/self.resizeCoef))
+                d.x += (s+0.01) * delta 
             }
             if (d.y != d.y2) {
                 var delta = d.y2 - d.y;
-                d.y += 0.015 * delta;
+                var s = ((d.r1/self.resizeCoef))
+                d.y +=  (s+0.01) * delta 
             }
         }
     },
@@ -979,7 +988,7 @@ ScatterPlot.prototype = {
     },
     
     collide: function(node) {
-        var r = node.r2+5,
+        var r = node.r2+30,
             nx1 = node.x - r,
             nx2 = node.x + r,
             ny1 = node.y - r,
@@ -989,14 +998,22 @@ ScatterPlot.prototype = {
                 var x = node.x - quad.point.x,
                     y = node.y - quad.point.y,
                     l = Math.sqrt(x * x + y * y),
-                    r = node.r2 + quad.point.r2+1;
+                    r = node.r2 + quad.point.r2+2;
+                if (l < r) {
+                    var c1 = node.s
+                    var c2 = quad.point.s
+                    var w = (c2/(c1+c2))
+                        l = (l - r) / l * w   ;
+                        node.x -= x *= l;
+                        node.y -= y *= l;
+                }/*
                 if (l < r) {
                     l = (l - r) / l * .5;
                     node.x -= x *= l;
                     node.y -= y *= l;
                     quad.point.x += x;
                     quad.point.y += y;
-                }
+                }*/
             }
             return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
         };
@@ -1057,6 +1074,7 @@ ScatterPlot.prototype = {
             for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
                 var seqID = this.m.clusters[cloneID][i]
                 var size = this.m.clone(seqID).getSequenceSize();
+                this.nodes[seqID].s = size
                 //Math.pow(x,y) -> x**y
                 if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
                 this.nodes[seqID].r1 = size
@@ -1065,10 +1083,12 @@ ScatterPlot.prototype = {
         else {
             for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
                 var seqID = this.m.clusters[cloneID][i]
+                this.nodes[seqID].s = 0
                 this.nodes[seqID].r1 = 0
             }
             var size = this.m.clone(cloneID).getSize2();
             if (this.m.clusters[cloneID].length == 0) size = this.m.clone(cloneID).getSequenceSize();
+            this.nodes[cloneID].s = size
             if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
             this.nodes[cloneID].r1 = size
         }
@@ -1076,6 +1096,7 @@ ScatterPlot.prototype = {
     }
     else {
         this.nodes[cloneID].r1 = 0
+        this.nodes[cloneID].s = 0
     }
     var sys = this.m.clone(cloneID).getSystem()
     if (this.use_system_grid && this.m.system == "multi" 
