@@ -74,19 +74,27 @@ def run_request():
 def get_data():
     import time
     from subprocess import Popen, PIPE, STDOUT
-
+    if not auth.user : 
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
+                            vars=dict(_next=URL('default', 'get_data', scheme=True, host=True,
+                                                vars=dict(patient = request.vars["patient"],
+                                                          config =request.vars["config"]))
+                                      )
+                            )}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        
     error = ""
 
-    if not "patient_id" in request.vars :
+    if not "patient" in request.vars :
         error += "id patient file needed, "
-    if not "config_id" in request.vars:
+    if not "config" in request.vars:
         error += "id config needed, "
-    if not auth.has_permission('admin', 'patient', request.vars["patient_id"]) and \
-    not auth.has_permission('read', 'patient', request.vars["patient_id"]):
-        error += "you do not have permission to consult this patient ("+id_patient+")"
+    if not auth.has_permission('admin', 'patient', request.vars["patient"]) and \
+    not auth.has_permission('read', 'patient', request.vars["patient"]):
+        error += "you do not have permission to consult this patient ("+request.vars["patient"]+")"
         
-    query = db( ( db.fused_file.patient_id == request.vars["patient_id"] )
-               & ( db.fused_file.config_id == request.vars["config_id"] )
+    query = db( ( db.fused_file.patient_id == request.vars["patient"] )
+               & ( db.fused_file.config_id == request.vars["config"] )
                ).select() 
     for row in query :
         fused_file = defs.DIR_RESULTS+'/'+row.fused_file
@@ -100,8 +108,8 @@ def get_data():
         ## récupération des infos stockées sur la base de données 
         query = db( ( db.patient.id == db.sequence_file.patient_id )
                    & ( db.results_file.sequence_file_id == db.sequence_file.id )
-                   & ( db.patient.id == request.vars["patient_id"] )
-                   & ( db.results_file.config_id == request.vars["config_id"]  )
+                   & ( db.patient.id == request.vars["patient"] )
+                   & ( db.results_file.config_id == request.vars["config"]  )
                    ).select( orderby=db.sequence_file.id|db.results_file.run_date, groupby=db.sequence_file.id ) 
 
         data["samples"]["original_names"] = []
@@ -113,7 +121,7 @@ def get_data():
             data["samples"]["timestamp"].append(str(row.sequence_file.sampling_date))
             data["samples"]["info"].append(row.sequence_file.info) 
 
-        log.debug("get_data: %s -> %s" % (request.vars["patient_id"], fused_file))
+        log.debug("get_data: %s -> %s" % (request.vars["patient"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
     else :
@@ -129,13 +137,13 @@ def get_data():
 def get_analysis():
     error = ""
 
-    if not "patient_id" in request.vars :
+    if not "patient" in request.vars :
         error += "id patient file needed, "
-    if not "config_id" in request.vars:
+    if not "config" in request.vars:
         error += "id config needed, "
-    if not auth.has_permission('admin', 'patient', request.vars["patient_id"]) and \
-    not auth.has_permission('read', 'patient', request.vars["patient_id"]):
-        error += "you do not have permission to consult this patient ("+id_patient+")"
+    if not auth.has_permission('admin', 'patient', request.vars["patient"]) and \
+    not auth.has_permission('read', 'patient', request.vars["patient"]):
+        error += "you do not have permission to consult this patient ("+request.vars["patient"]+")"
     
     ## empty analysis file
     res = {"samples": {"number": 0,
@@ -153,12 +161,12 @@ def get_analysis():
     
     if error == "" :
         
-        res["info_patient"] = db.patient[request.vars["patient_id"]].info
-        res["patient"] = db.patient[request.vars["patient_id"]].first_name + " " + db.patient[request.vars["patient_id"]].last_name + " (" + db.config[request.vars["config_id"]].name + ")"
+        res["info_patient"] = db.patient[request.vars["patient"]].info
+        res["patient"] = db.patient[request.vars["patient"]].first_name + " " + db.patient[request.vars["patient"]].last_name + " (" + db.config[request.vars["config"]].name + ")"
         
         ## récupération des infos se trouvant dans le fichier .analysis
-        analysis_query = db(  (db.analysis_file.patient_id == request.vars["patient_id"])
-                   & (db.analysis_file.config_id == request.vars["config_id"] )  )
+        analysis_query = db(  (db.analysis_file.patient_id == request.vars["patient"])
+                   & (db.analysis_file.config_id == request.vars["config"] )  )
 
         if not analysis_query.isempty() :
             row = analysis_query.select().first()
@@ -173,8 +181,8 @@ def get_analysis():
             res["tags"] = analysis["tags"]
             res["samples"]= analysis["samples"]
 
-        res["info_patient"] = db.patient[request.vars["patient_id"]].info
-        res["patient"] = db.patient[request.vars["patient_id"]].first_name + " " + db.patient[request.vars["patient_id"]].last_name + " (" + db.config[request.vars["config_id"]].name + ")"
+        res["info_patient"] = db.patient[request.vars["patient"]].info
+        res["patient"] = db.patient[request.vars["patient"]].first_name + " " + db.patient[request.vars["patient"]].last_name + " (" + db.config[request.vars["config"]].name + ")"
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     else :
@@ -455,4 +463,9 @@ def user():
         @auth.requires_permission('read','table name',record_id)
     to decorate functions that need access control
     """
+    
+    if auth.user and request.args[0] == 'login' : 
+        res = {"redirect" : URL('patient', 'index', scheme=True, host=True)}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
     return dict(form=auth())
