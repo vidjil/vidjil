@@ -28,8 +28,8 @@ Builder.prototype = {
             .on("mousemove", function () {
                 self.updateSeparator()
             })
-        $("#vertical-separator")
-            .click(function () {
+        d3.select("#vertical-separator")
+            .on("click", function () {
                 self.toggle_left_container()
             });
 
@@ -506,23 +506,16 @@ Builder.prototype = {
     },
 
     toggle_left_container: function () {
+        console.log("plop")
         var self = this
-        elem = $("#left-container")
+        var elem = $("#left-container")
 
-        if (elem.css("width") == "0px") {
+        if (elem.css("display") == "none") {
             elem.css("display", "")
-                .animate({
-                    width: self.width_left_container
-                }, 400, function () {
-                    self.m.resize();
-                })
+            self.m.resize();
         } else {
-            elem.animate({
-                width: "0px"
-            }, 400, function () {
-                $(this).css("display", "none")
-                self.m.resize();
-            })
+            elem.css("display", "none")
+            self.m.resize();
         }
     },
 
