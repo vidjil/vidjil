@@ -82,7 +82,6 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
     filename = row[0].data_file
     output_filename = "%06d" % id_data
     seq_file = upload_folder+filename
-    id_patient = row[0].patient_id
 
     ## config de vidjil
     vidjil_cmd = db.config[id_config].command
@@ -144,8 +143,60 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
 
 
 
+def run_copy(id_file, id_config, id_data, id_fuse, clean_before=False, clean_after=False):
+    import time, datetime, sys, os.path
+    from subprocess import Popen, PIPE, STDOUT, os
+    
+    ## les chemins d'acces a vidjil / aux fichiers de sequences
+    upload_folder = defs.DIR_SEQUENCES
+    output_filename = "%06d" % id_data
+    out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
+    
+    cmd = "rm -rf "+out_folder 
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    p.wait()
+    
+    ## filepath du fichier de séquence
+    row = db(db.sequence_file.id==id_file).select()
+    filename = row[0].data_file
+    
+    os.makedirs(out_folder)
+    vidjil_log_file = open(out_folder+'/'+output_filename+'.vidjil.log', 'w')
 
+    print "Output log in "+out_folder+'/'+output_filename+'.vidjil.log'
+    sys.stdout.flush()
+    db.commit()
+    
+    ## récupération du fichier 
+    results_filepath = os.path.abspath(defs.DIR_SEQUENCES+row[0].data_file)
 
+    try:
+        stream = open(results_filepath, 'rb')
+    except IOError:
+        print "!!! Vidjil failed, no .vidjil file"
+        raise IOError
+    
+    ## insertion dans la base de donnée
+    ts = time.time()
+    
+    db.results_file[id_data] = dict(status = "ready",
+                                 run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
+                                 #data_file = row[0].data_file
+                                 data_file = stream
+                                )
+    db.commit()
+    
+    if clean_after:
+        clean_cmd = "rm -rf " + out_folder 
+        p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+        p.wait()
+    
+    ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
+    ## TODO parse result success/fail
+
+    run_fuse(id_file, id_config, id_data, id_fuse, clean_before = False)
+
+    return "SUCCESS"
 
 
 
@@ -214,4 +265,4 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
 
 from gluon.scheduler import Scheduler
 scheduler = Scheduler(db, dict(vidjil=run_vidjil,
-                               none=run_fuse))
+                               none=run_copy))

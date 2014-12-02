@@ -99,6 +99,9 @@ def get_data():
     for row in query :
         fused_file = defs.DIR_RESULTS+'/'+row.fused_file
 
+    if not 'fused_file' in locals():
+        error += "file not found"
+        
     if error == "" :
         
         f = open(fused_file, "r")
