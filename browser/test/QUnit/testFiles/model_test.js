@@ -70,6 +70,7 @@ test("model : cluster", function() {
     deepEqual(m.clusters[0], [0,1], "merge 0 and 1: build cluster [0,1]");
     equal(m.clone(0).getSize(), 0.15, "cluster [0,1] : getsize = 0.15");
     
+    m.unselectAll()
     m.select(0)
     m.select(2)
     m.merge()
