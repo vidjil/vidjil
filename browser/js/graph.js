@@ -176,7 +176,9 @@ Graph.prototype = {
     
     updateData : function () {
         this.initData();
-        this.drawData(500)
+        this.initAxis();
+        this.drawData(0);
+        this.drawAxis(0);
     },
     
     initClones : function () {
