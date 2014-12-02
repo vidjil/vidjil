@@ -149,7 +149,7 @@ Builder.prototype = {
                 input.value=key;
                 input.type = "radio"
                 input.name = "normalize_list"
-                if (self.m.normalization.id==i) input.checked=true;
+                if (self.m.normalization.id==key) input.checked=true;
                 
                 var text = document.createTextNode(key + " => " +self.m.data[key].expected)
                 

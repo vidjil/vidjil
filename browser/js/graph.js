@@ -249,23 +249,30 @@ Graph.prototype = {
             .range([0, 1]);
             
         
-        var g_min=undefined
-        var g_max=undefined
+        var g_min = undefined
+        var g_max = undefined
+        var enabled = false
         for (var key in this.m.data_info) {
-            var max = this.m.data[key][0]
+            var max = this.m.data[key][0];
             var min = this.m.data[key][0];
+            if (this.m.norm && this.m.normalization.type=="data"){
+                max = this.m.normalize(max, 0)
+                min = this.m.normalize(min, 0)
+            }
             
             for (var i = 0; i < this.m.samples.number; i++) {
                 var t = this.m.samples.order.indexOf(i)
                 var val = this.m.data[key][t]
-                if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val,t)
+                if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val, t)
                 if (val>max) max=val;
                 if (val<min) min=val;
             }
             
             if (typeof g_min == 'undefined' || g_min>min) g_min=min 
             if (typeof g_max == 'undefined' || g_max<max) g_max=max
+            if (this.m.data_info[key].isActive) enabled = true
         }
+        
         if ( g_min!=0 && (g_min*100)<g_max){
             this.scale_data = d3.scale.log()
                 .domain([g_max, g_min])
@@ -340,7 +347,7 @@ Graph.prototype = {
         }
         
         //ordonnée data
-        if (typeof g_min != 'undefined'){
+        if (enabled && typeof g_min != 'undefined'){
             var height = 1;
             while(height<g_max) height = height*10
             while ((height ) > g_min/2 ) {
