@@ -222,9 +222,9 @@ ScatterPlot.prototype = {
 	  this.nodes[i].r1 = 5; // longueur du rayon1
 	  this.nodes[i].r2 = 5; // longueur du rayon2
 	  this.nodes[i].x = Math.random()*500; // TODO optimize : use same system as radius/expected radius
-	  this.nodes[i].old_x =  [0]
+	  this.nodes[i].old_x =  [0,0,0,0,0]
       this.nodes[i].y = Math.random()*250; // instead of complex move() function for each node and tick ( cost too much )
-      this.nodes[i].old_y =  [0]
+      this.nodes[i].old_y =  [0,0,0,0,0]
       };
 
       //Initialisation of tmp array which contains all the edges
@@ -948,12 +948,12 @@ ScatterPlot.prototype = {
             if (d.x != d.x2) {
                 var delta = d.x2 - d.x;
                 var s = ((d.r1/self.resizeCoef))
-                d.x += (s+0.01) * delta 
+                d.x += 0.015* delta 
             }
             if (d.y != d.y2) {
                 var delta = d.y2 - d.y;
                 var s = ((d.r1/self.resizeCoef))
-                d.y +=  (s+0.01) * delta 
+                d.y +=  0.015 * delta 
             }
         }
     },
