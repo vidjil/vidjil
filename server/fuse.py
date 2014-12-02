@@ -304,7 +304,7 @@ class ListWindows:
     ### check vidjil_json_version
     def check_version(self, filepath):
         if "vidjil_json_version" in self.d:
-            if self.d["vidjil_json_version"] >= VIDJIL_JSON_VERSION:
+            if self.d["vidjil_json_version"] <= VIDJIL_JSON_VERSION:
                 return
         raise IOError ("File '%s' is too old -- please regenerate it with a newer version of Vidjil" % filepath)
         
@@ -515,6 +515,8 @@ class ListWindows:
                 total_size += s
                 w.d["reads"] = [ s ]
 
+                w.d["germline"] = tab["sequence.V-GENE and allele"][:3] #system ...
+                
                 w.d["sequence"] = tab["sequence.raw nt seq"]
                 w.d["seg"]["5"]=tab["sequence.V-GENE and allele"].split('=')[0]
                 if (tab["sequence.D-GENE and allele"] != "") :
