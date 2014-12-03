@@ -43,6 +43,14 @@ Vidjil has been successfully tested on the following platforms :
 
 Moreover, the continuous integration of Vidjil can be checked on [[https://travis-ci.org/magiraud/vidjil][travis-ci.org]].
 
+* Requirements
+  
+  To install and use Vidjil on a computer, make sure:
+  - to be on a POSIX system ;
+  - to have a C++ compiler ;
+  - to have the =zlib= installed (=zlib1g-dev= package under Debian/Ubuntu,
+    =zlib-devel= package under Fedora/CentOS).
+
 * Installation
 
 #+BEGIN_SRC sh
