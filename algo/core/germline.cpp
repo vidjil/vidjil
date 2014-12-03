@@ -179,13 +179,13 @@ void MultiGermline::build_incomplete_set(string path)
 
   // DD2-DD3
   germline = new Germline("TRD+", 'd', path + "/TRDD2-01.fa", "", path + "/TRDJ.fa",   -10, 20);
-  germline->new_index("#####-#####");
+  germline->new_index("#########");
   germlines.push_back(germline);
   germline = new Germline("TRD+", 'd', path + "/TRDV.fa", "", path + "/TRDD3-01.fa",   -10, 20);
-  germline->new_index("#####-#####");
+  germline->new_index("#########");
   germlines.push_back(germline);
   germline = new Germline("TRD+", 'd', path + "/TRDD2-01.fa", "", path + "/TRDD3-01.fa",  -10, 20);
-  germline->new_index("#####-#####");
+  germline->new_index("#########");
   germlines.push_back(germline);
 
 
