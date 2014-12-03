@@ -45,6 +45,18 @@ germline_data = {
             "seed": "10s"
         }
     },
+
+    "VdJa": {
+        "shortcut": "a",
+        "color" : "#46abf2",
+        "description": "Human T-cell receptor, incomplete Vd-Ja rearrangements",
+        "5": ["TRDV.fa"],
+        "3": ["TRAJ.fa"],
+        "parameters": {
+            "seed": "10s"
+        }
+    },
+
     "TRD+": {
         "shortcut": "d",
         "color" : "#d5a920",

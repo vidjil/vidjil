@@ -175,6 +175,10 @@ void MultiGermline::build_incomplete_set(string path)
   germline->new_index("######-######");
   germlines.push_back(germline);
 
+  // VD-JA
+  germline = new Germline("VdJa", 'a', path + "/TRDV.fa", "",  path + "/TRAJ.fa",   -10, 80);
+  germline->new_index("#####-#####");
+  germlines.push_back(germline);
 
   // DD2-DD3
   germline = new Germline("TRD+", 'd', path + "/TRDD2-01.fa", "", path + "/TRDJ.fa",   -10, 20);
