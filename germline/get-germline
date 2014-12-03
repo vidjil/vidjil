@@ -6,5 +6,5 @@ wget -O - http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fas
 python buildBrowserGermline.py *.fa germlines.data ../browser/js/germline.js
 
 
-wget http://rbx.vidjil.org/browser/germline/IGK-INTRON.fa
-wget http://rbx.vidjil.org/browser/germline/IGK-KDE.fa
+wget -N http://rbx.vidjil.org/browser/germline/IGK-INTRON.fa
+wget -N http://rbx.vidjil.org/browser/germline/IGK-KDE.fa
