@@ -190,10 +190,10 @@ void MultiGermline::build_incomplete_set(string path)
 
 
   // IGK: KDE, INTRON
-  germline = new Germline("IGK", 'k', path + "/IGKV.fa", "",  path + "/IGK-INTRON.fa",  -10, 80);
+  germline = new Germline("IGK", 'k', path + "/IGKV.fa", "",  path + "/IGK-KDE.fa",  -10, 80);
   germline->new_index("#####-#####");
   germlines.push_back(germline);
-  germline = new Germline("IGK", 'k', path + "/IGK-KDE.fa", "",  path + "/IGK-INTRON.fa",  -10, 80);
+  germline = new Germline("IGK", 'k', path + "/IGK-INTRON.fa", "",  path + "/IGK-KDE.fa",  -10, 80);
   germline->new_index("#####-#####");
   germlines.push_back(germline);
 
