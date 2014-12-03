@@ -408,8 +408,15 @@ germline = {
     "IGHV7-40*03": "ttttcaatagaaaagtcaaataatctaagtgtcaatcagtggatgattagataaaatatgatatatgtaaatcatggaatactatgcagccagtatggtatgaattcagtgtgaccagcccctggacaagggcttgagtggatgggatggatcatcacctacactgggaacccaacatataccaacggcttcacaggacggtttctattctccatggacacctctgtcagcatggcgtatctgcagatcagcagcctaaaggctgaggacacggccgtgtatgactgtatgagaga", 
     "IGHV7-81*01": "caggtgcagctggtgcagtctggccatgaggtgaagcagcctggggcctcagtgaaggtctcctgcaaggcttctggttacagtttcaccacctatggtatgaattgggtgccacaggcccctggacaagggcttgagtggatgggatggttcaacacctacactgggaacccaacatatgcccagggcttcacaggacggtttgtcttctccatggacacctctgccagcacagcatacctgcagatcagcagcctaaaggctgaggacatggccatgtattactgtgcgagata"
   }, 
-  "IGKJ": {
+  "IGK-INTRON": {
     "IGHV7-81*01": "caggtgcagctggtgcagtctggccatgaggtgaagcagcctggggcctcagtgaaggtctcctgcaaggcttctggttacagtttcaccacctatggtatgaattgggtgccacaggcccctggacaagggcttgagtggatgggatggttcaacacctacactgggaacccaacatatgcccagggcttcacaggacggtttgtcttctccatggacacctctgccagcacagcatacctgcagatcagcagcctaaaggctgaggacatggccatgtattactgtgcgagata", 
+    "Intron": "TTCTGCCAAGAAGGCCGTGGCACCGCGAGCTGTAGACAGAGCCGCGGTCTTTCTCGATTGAGTGGCTTTGGTGGCCATGCCACCGCGCTCTTGGGGCAGCCGCCTTGCCGCTAGTGGCCGTGGCCACCCTGTGTCTGCCCGATTGATGCTGCCGTAGCCAGCTTTCCTGATG"
+  }, 
+  "IGK-KDE": {
+    "IGKJ5*01": "gatcaccttcggccaagggacacgactggagattaaac", 
+    "KDE": "GGAGCCCTAGTGGCAGCCCAGGGCGACTCCTCATGAGTCTGCAGCTGCATTTTTGCCATATCCACTATTTGGAGTCTGACCTCCCTAGGAAGCCTCCCTGCTCCCTAGGACAACCTGCTCTGACCTCTGAGGACCTGTCTGTAAACGTCCAGAGAAAAGCATGTGCCTGAAGGGTCTATGAAGGGGCTTGAGGCAAGTAGGGAGCCCAGCCCAGCTAACATTTGCAGCCATGGGATGGCTTTGTGTACCTAGAAAAGCAAAGATGAGGACTAGGCGAGCACAGGCCCCAA"
+  }, 
+  "IGKJ": {
     "IGKJ1*01": "gtggacgttcggccaagggaccaaggtggaaatcaaac", 
     "IGKJ2*01": "tgtacacttttggccaggggaccaagctggagatcaaac", 
     "IGKJ2*02": "gtgcacttttggccaggggaccaagctggagatcaaac", 
@@ -418,10 +425,10 @@ germline = {
     "IGKJ3*01": "attcactttcggccctgggaccaaagtggatatcaaac", 
     "IGKJ4*01": "gctcactttcggcggagggaccaaggtggagatcaaac", 
     "IGKJ4*02": "gctcacgttcggcggagggaccaaggtggagatcaaac", 
-    "IGKJ5*01": "gatcaccttcggccaagggacacgactggagattaaac"
+    "IGKJ5*01": "gatcaccttcggccaagggacacgactggagattaaac", 
+    "Intron": "TTCTGCCAAGAAGGCCGTGGCACCGCGAGCTGTAGACAGAGCCGCGGTCTTTCTCGATTGAGTGGCTTTGGTGGCCATGCCACCGCGCTCTTGGGGCAGCCGCCTTGCCGCTAGTGGCCGTGGCCACCCTGTGTCTGCCCGATTGATGCTGCCGTAGCCAGCTTTCCTGATG"
   }, 
   "IGKV": {
-    "IGKJ5*01": "gatcaccttcggccaagggacacgactggagattaaac", 
     "IGKV1-12*01": "gacatccagatgacccagtctccatcttccgtgtctgcatctgtaggagacagagtcaccatcacttgtcgggcgagtcagggtattagcagctggttagcctggtatcagcagaaaccagggaaagcccctaagctcctgatctatgctgcatccagtttgcaaagtggggtcccatcaaggttcagcggcagtggatctgggacagatttcactctcaccatcagcagcctgcagcctgaagattttgcaacttactattgtcaacaggctaacagtttccctcc", 
     "IGKV1-12*02": "gacatccagatgacccagtctccatcttccgtgtctgcatctgtaggagacagagtcaccatcacttgtcgggcgagtcagggtattagcagctggttagcctggtatcagcagaaaccagggaaagcccctaagctcctgatctatgctgcatccagtttgcaaagtggggtcccatcaaggttcagcggcagtggatctgggacagatttcactctcaccatcagcagcctgcagcctgaagattttgcaacttactattgtcaacaggctaacagtttcccttc", 
     "IGKV1-13*01": "gccatccagttgacccagtctccatcctccctgtctgcatctgtaggagacagagtcaccatcacttgccgggcaagtcagggcattagcagtgctttagcctgatatcagcagaaaccagggaaagctcctaagctcctgatctatgatgcctccagtttggaaagtggggtcccatcaaggttcagcggcagtggatctgggacagatttcactctcaccatcagcagcctgcagcctgaagattttgcaacttattactgtcaacagtttaataattaccctca", 
@@ -522,7 +529,8 @@ germline = {
     "IGKV6-21*01": "gaaattgtgctgactcagtctccagactttcagtctgtgactccaaaggagaaagtcaccatcacctgccgggccagtcagagcattggtagtagcttacactggtaccagcagaaaccagatcagtctccaaagctcctcatcaagtatgcttcccagtccttctcaggggtcccctcgaggttcagtggcagtggatctgggacagatttcaccctcaccatcaatagcctggaagctgaagatgctgcaacgtattactgtcatcagagtagtagtttacctca", 
     "IGKV6D-21*01": "gaaattgtgctgactcagtctccagactttcagtctgtgactccaaaggagaaagtcaccatcacctgccgggccagtcagagcattggtagtagcttacactggtaccagcagaaaccagatcagtctccaaagctcctcatcaagtatgcttcccagtccttctcaggggtcccctcgaggttcagtggcagtggatctgggacagatttcaccctcaccatcaatagcctggaagctgaagatgctgcaacgtattactgtcatcagagtagtagtttacctca", 
     "IGKV6D-41*01": "gatgttgtgatgacacagtctccagctttcctctctgtgactccaggggagaaagtcaccatcacctgccaggccagtgaaggcattggcaactacttatactggtaccagcagaaaccagatcaagccccaaagctcctcatcaagtatgcttcccagtccatctcaggggtcccctcgaggttcagtggcagtggatctgggacagatttcacctttaccatcagtagcctggaagctgaagatgctgcaacatattactgtcagcagggcaataagcaccctca", 
-    "IGKV7-3*01": "gacattgtgctgacccagtctccagcctccttggccgtgtctccaggacagagggccaccatcacctgcagagccagtgagagtgtcagtttcttgggaataaacttaattcactggtatcagcagaaaccaggacaacctcctaaactcctgatttaccaagcatccaataaagacactggggtcccagccaggttcagcggcagtgggtctgggaccgatttcaccctcacaattaatcctgtggaagctaatgatactgcaaattattactgtctgcagagtaagaattttcct"
+    "IGKV7-3*01": "gacattgtgctgacccagtctccagcctccttggccgtgtctccaggacagagggccaccatcacctgcagagccagtgagagtgtcagtttcttgggaataaacttaattcactggtatcagcagaaaccaggacaacctcctaaactcctgatttaccaagcatccaataaagacactggggtcccagccaggttcagcggcagtgggtctgggaccgatttcaccctcacaattaatcctgtggaagctaatgatactgcaaattattactgtctgcagagtaagaattttcct", 
+    "KDE": "GGAGCCCTAGTGGCAGCCCAGGGCGACTCCTCATGAGTCTGCAGCTGCATTTTTGCCATATCCACTATTTGGAGTCTGACCTCCCTAGGAAGCCTCCCTGCTCCCTAGGACAACCTGCTCTGACCTCTGAGGACCTGTCTGTAAACGTCCAGAGAAAAGCATGTGCCTGAAGGGTCTATGAAGGGGCTTGAGGCAAGTAGGGAGCCCAGCCCAGCTAACATTTGCAGCCATGGGATGGCTTTGTGTACCTAGAAAAGCAAAGATGAGGACTAGGCGAGCACAGGCCCCAA"
   }, 
   "IGLJ": {
     "IGKV7-3*01": "gacattgtgctgacccagtctccagcctccttggccgtgtctccaggacagagggccaccatcacctgcagagccagtgagagtgtcagtttcttgggaataaacttaattcactggtatcagcagaaaccaggacaacctcctaaactcctgatttaccaagcatccaataaagacactggggtcccagccaggttcagcggcagtgggtctgggaccgatttcaccctcacaattaatcctgtggaagctaatgatactgcaaattattactgtctgcagagtaagaattttcct", 
@@ -975,17 +983,19 @@ germline = {
     "TRBV9*03": "gattctggagtcacacaaaccccaaagcacctgatcacagcaactggacagcgagtgacgctgagatgctcccctaggtctggagacctctctgtgtactggtaccaacagagcctggaccagggcctccagttcctcattcaatattataatggagaagagagagcaaaaggaaacattcttgaacgattctccgcacaacagttccctgacttgcactctgaactaaacctgagctctctggagctgggggactcagctttgtatttctgtgccagcagc"
   }, 
   "TRDD": {
-    "TRBV9*03": "gattctggagtcacacaaaccccaaagcacctgatcacagcaactggacagcgagtgacgctgagatgctcccctaggtctggagacctctctgtgtactggtaccaacagagcctggaccagggcctccagttcctcattcaatattataatggagaagagagagcaaaaggaaacattcttgaacgattctccgcacaacagttccctgacttgcactctgaactaaacctgagctctctggagctgggggactcagctttgtatttctgtgccagcagc", 
     "TRDD1*01": "gaaatagt", 
     "TRDD2*01": "ccttcctac", 
     "TRDD3*01": "actgggggatacg"
   }, 
+  "TRDD2": {
+    "TRDD2*01": "tatactgatgtgtttcattgtgccttcctac"
+  }, 
   "TRDD2-01": {
-    "TRDD2*01": "ccttcctac", 
-    "TRDD3*01": "actgggggatacg"
+    "TRBV9*03": "gattctggagtcacacaaaccccaaagcacctgatcacagcaactggacagcgagtgacgctgagatgctcccctaggtctggagacctctctgtgtactggtaccaacagagcctggaccagggcctccagttcctcattcaatattataatggagaagagagagcaaaaggaaacattcttgaacgattctccgcacaacagttccctgacttgcactctgaactaaacctgagctctctggagctgggggactcagctttgtatttctgtgccagcagc", 
+    "TRDD2*01": "ccttcctac"
   }, 
   "TRDD3-01": {
-    "TRDD2*01": "ccttcctac", 
+    "TRDD2*01": "tatactgatgtgtttcattgtgccttcctac", 
     "TRDD3*01": "actgggggatacg"
   }, 
   "TRDJ": {
@@ -1085,10 +1095,11 @@ germline_data = {
     },
     "TRD+": {
         "shortcut": "d",
+        "color" : "#d5a920",
         "description": "Human T-cell receptor, delta locus (14q11.2), incomplete Dd2-Dd3 rearrangements",
         "follows": "TRD",
-        "5": ["TRDV.fa", "TRDD-d2.fa"],
-        "3": ["TRDJ.fa", "TRDD-d3.fa"]
+        "5": ["TRDV.fa", "TRDD2-01.fa"],
+        "3": ["TRDJ.fa", "TRDD3-01.fa"]
     },
 
     "IGH": {
@@ -1104,6 +1115,7 @@ germline_data = {
     },
     "IGH+": {
         "shortcut": "h",
+        "color" : "#d5a920",
         "description": "Human immunoglobulin, heavy locus (14q32.33), incomplete DH-JH rearrangements",
         "follows": "IGH",
         "5": ["IGHD.fa"],
@@ -1122,10 +1134,11 @@ germline_data = {
     },
     "IGK+": {
         "shortcut": "k",
+        "color" : "#4ac1a8",
         "description": "Human immunoglobulin, kappa locus (2p11.2), Vk-KDE and Intron-KDE rearrangements",
         "follows": "IGK",
-        "5": ["IGKV.fa", "INTRON.fa"],
-        "3": ["KDE.fa"]
+        "5": ["IGKV.fa", "IGK-INTRON.fa"],
+        "3": ["IGK-KDE.fa"]
     },
 
     "IGL": {
