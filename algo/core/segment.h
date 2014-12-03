@@ -17,7 +17,7 @@
                                    strand and the other, to safely attribute a
                                    segment to a given strand */
 
-#define DETECT_THRESHOLD 10     /* If the number of total V/J affectations
+#define DETECT_THRESHOLD 5      /* If the number of both V and J affectations
                                    is above this threshold, then the sequence
                                    will be labeled as 'detected', and, if it
                                    not segmented, the remaining germlines will

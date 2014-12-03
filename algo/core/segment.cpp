@@ -215,9 +215,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
     strand = 2;
   }
 
-  // Are there enoguh V/J to assert that this was the correct germline (and thus that we won't test other ones) ?
-  detected = (nb_strand[0] + nb_strand[1] >= DETECT_THRESHOLD);
-
+  detected = false ;
   computeSegmentation(strand, germline);
 
   if (segmented)
@@ -275,6 +273,11 @@ void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
         max = kaa->getMaximum(KmerAffect(germline->affect_3, -1), 
 			      KmerAffect(germline->affect_5, -1));
 
+
+      // We labeled it detected if there were both enough affect_5 and enough affect_3
+      detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
+        && (max.nb_after_left + max.nb_after_right >= DETECT_THRESHOLD);
+      
       if (! max.max_found) {
         if ((strand == 1 && max.nb_before_left == 0)
             || (strand == -1 && max.nb_after_right == 0)) 
