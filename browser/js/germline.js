@@ -1085,6 +1085,7 @@ germline_data = {
     },
     "TRD+": {
         "shortcut": "d",
+        "color" : "#d5a920",
         "description": "Human T-cell receptor, delta locus (14q11.2), incomplete Dd2-Dd3 rearrangements",
         "follows": "TRD",
         "5": ["TRDV.fa", "TRDD-d2.fa"],
@@ -1104,6 +1105,7 @@ germline_data = {
     },
     "IGH+": {
         "shortcut": "h",
+        "color" : "#d5a920",
         "description": "Human immunoglobulin, heavy locus (14q32.33), incomplete DH-JH rearrangements",
         "follows": "IGH",
         "5": ["IGHD.fa"],
@@ -1122,6 +1124,7 @@ germline_data = {
     },
     "IGK+": {
         "shortcut": "k",
+        "color" : "#4ac1a8",
         "description": "Human immunoglobulin, kappa locus (2p11.2), Vk-KDE and Intron-KDE rearrangements",
         "follows": "IGK",
         "5": ["IGKV.fa", "INTRON.fa"],
