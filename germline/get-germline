@@ -8,3 +8,6 @@ python buildBrowserGermline.py *.fa germlines.data ../browser/js/germline.js
 
 wget -N http://rbx.vidjil.org/browser/germline/IGK-INTRON.fa
 wget -N http://rbx.vidjil.org/browser/germline/IGK-KDE.fa
+
+wget -q -O - 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=M22153&rettype=fasta&retmode=text&to=42' | sed '1s/>gb\|/>gb|TRDD2*01/' > TRDD2-01.fa
+wget -q -O - 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&id=M22152&rettype=fasta&retmode=text&from=214&to=258' | sed '1s/>gb\|/>gb|TRDD3*01/' > TRDD3-01.fa
