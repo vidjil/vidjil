@@ -166,6 +166,39 @@ void MultiGermline::build_default_set(string path)
 
 }
 
+void MultiGermline::build_incomplete_set(string path)
+{
+  // Should parse 'data/germlines.data'
+  Germline *germline;
+
+  // DH-JH
+  germline = new Germline("IGH+", 'h', path + "/IGHD.fa", "", path + "/IGHJ.fa",   -10, 20);
+  germline->new_index("######-######");
+  germlines.push_back(germline);
+
+
+  // DD2-DD3
+  germline = new Germline("TRD+", 'd', path + "/TRDD2-01.fa", "", path + "/TRDJ.fa",   -10, 20);
+  germline->new_index("#########");
+  germlines.push_back(germline);
+  germline = new Germline("TRD+", 'd', path + "/TRDV.fa", "", path + "/TRDD3-01.fa",   -10, 20);
+  germline->new_index("#########");
+  germlines.push_back(germline);
+  germline = new Germline("TRD+", 'd', path + "/TRDD2-01.fa", "", path + "/TRDD3-01.fa",  -10, 20);
+  germline->new_index("#########");
+  germlines.push_back(germline);
+
+
+  // IGK: KDE, INTRON
+  germline = new Germline("IGK", 'k', path + "/IGKV.fa", "",  path + "/IGK-KDE.fa",  -10, 80);
+  germline->new_index("#####-#####");
+  germlines.push_back(germline);
+  germline = new Germline("IGK", 'k', path + "/IGK-INTRON.fa", "",  path + "/IGK-KDE.fa",  -10, 80);
+  germline->new_index("#####-#####");
+  germlines.push_back(germline);
+
+}
+
 
 void MultiGermline::load_standard_set(string path)
 {

@@ -1,0 +1,7 @@
+!LAUNCH: ../../vidjil -A -g ../../germline ../../data/trd-dd2-dd3.fa
+
+$ Segment only 2 reads, because there is no -i
+1:segmented 2 reads .40..
+
+
+

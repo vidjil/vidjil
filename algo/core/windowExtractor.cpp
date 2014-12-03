@@ -46,7 +46,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
       
     } else if (out_unsegmented) {
       *out_unsegmented << reads->getSequence();
-      *out_unsegmented << "#" << segmented_mesg[seg.getSegmentationStatus()] << endl;
+      *out_unsegmented << "#" << segmented_mesg[seg.getSegmentationStatus()] << " " << seg.segmented_germline->code << endl;
       if (seg.getSegmentationStatus() != UNSEG_TOO_SHORT) {
         *out_unsegmented << seg.getKmerAffectAnalyser()->toString() << endl;
       }

@@ -86,6 +86,7 @@ class MultiGermline {
 
   void insert(Germline *germline);
   void build_default_set(string path);
+  void build_incomplete_set(string path);
   void load_standard_set(string path);
 
   void insert_in_one_index(IKmerStore<KmerAffect> *_index);

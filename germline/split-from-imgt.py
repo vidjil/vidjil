@@ -29,8 +29,6 @@ def verbose_open_w(name):
 
 # Create isolated files for some sequences
 SPECIAL_SEQUENCES = [
-    'TRDD2*01',
-    'TRDD3*01',
 ]
 
 for l in sys.stdin:

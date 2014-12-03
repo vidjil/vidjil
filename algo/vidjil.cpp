@@ -149,6 +149,7 @@ void usage(char *progname)
        << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
        << "  -g <path>     multiple germlines (in the path <path>, takes TRA, TRB, TRG, TRD, IGH and IGL and sets window prediction parameters)" << endl
+       << "  -i            multiple germlines, also incomplete rearrangements (experimental, must be used with -g)" << endl
        << endl
 
        << "Window prediction" << endl
@@ -279,6 +280,7 @@ int main (int argc, char **argv)
   bool output_segmented = false;
   bool output_unsegmented = false;
   bool multi_germline = false;
+  bool multi_germline_incomplete = false;
   string multi_germline_file = DEFAULT_MULTIGERMLINE;
 
   string forced_edges = "" ;
@@ -294,7 +296,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "Ahag:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "Ahaig:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uU")) != EOF)
 
     switch (c)
       {
@@ -341,7 +343,11 @@ int main (int argc, char **argv)
 	multi_germline_file = string(optarg);
 	germline_system = "multi" ;
 	break;
-	
+
+      case 'i':
+	multi_germline_incomplete = true;
+	break;
+        
       case 'G':
 	germline_system = string(optarg);
 	f_reps_V.push_back((germline_system + "V.fa").c_str()) ;
@@ -676,6 +682,8 @@ int main (int argc, char **argv)
       if (multi_germline)
 	{
 	  multigermline->build_default_set(multi_germline_file);
+          if (multi_germline_incomplete)
+            multigermline->build_incomplete_set(multi_germline_file);
 	}
       else if (command == CMD_GERMLINES)
 	{
