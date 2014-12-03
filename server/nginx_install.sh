@@ -66,7 +66,7 @@ echo "server {
         server_name     \$hostname;
 
         location /browser {
-            root $CWD/../browser/;
+            root $CWD/../;
             expires max;
 
             error_page 405 = $uri;
