@@ -1,8 +1,6 @@
 
 var myConsole = new Com("flash_container", "log_container", "popup-container", "data-container")
 
-    var m = new Model();
-    m.parseJsonData(json_data)
     
 test("model : load", function() {
     var m = new Model();
@@ -29,7 +27,7 @@ test("model : time control", function() {
     equal(m.previousTime(), 0, "loop start to end");            // [3,1,2,0] => 0
     m.changeTimeOrder([3,2,1])                                  // [3,2,1] => 0
     deepEqual(m.samples.order, [3,2,1], "change time order to [3,2,1]")
-    
+    m.changeTimeOrder([0,1,2,3])     
     
     equal(m.getStrTime(0, "sampling_date"), "2014-10-20", "get sampling date")
     equal(m.getStrTime(0, "name"), "Leu+0_BCD", "get time original name")
@@ -59,7 +57,7 @@ test("model : select/focus", function() {
 test("model : cluster", function() {
     var m = new Model();
     m.parseJsonData(json_data,100)
-    
+
     equal(m.clone(0).getSize(), 0.05, "clone 0 : getsize = 0.05");
     equal(m.clone(1).getSize(), 0.1, "clone 1 : getsize = 0.1");
     equal(m.clone(2).getSize(), 0.125, "clone 2 : getsize = 0.125");
