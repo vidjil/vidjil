@@ -221,6 +221,11 @@ rm web2py_src.zip
 chown -R www-data:www-data web2py
 cd $CWD/web2py
 sudo -u www-data python -c "from gluon.main import save_password; save_password('$PW',443)"
+mkdir /mnt/upload
+mkdir /mnt/upload/uploads
+mkdir /mnt/result
+chown -R www-data:www-data /mnt/upload
+chown -R www-data:www-data /mnt/result
 start uwsgi-emperor
 /etc/init.d/nginx restart
 
