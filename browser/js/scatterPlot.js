@@ -215,9 +215,9 @@ ScatterPlot.prototype = {
       this.grpLinks = this.plot_container.append('svg:g').attr('class', 'grpLinks');
 
       //Initialisation des nodes
-      this.nodes = d3.range(this.m.n_clones)
+      this.nodes = d3.range(this.m.clones.length)
 	  .map(Object);
-      for (var i = 0; i < this.m.n_clones; i++) {
+      for (var i = 0; i < this.m.clones.length; i++) {
 	  this.nodes[i].id = i; //L'id d'un cercle vaut le nombre de i dans la boucle
 	  this.nodes[i].r1 = 5; // longueur du rayon1
 	  this.nodes[i].r2 = 5; // longueur du rayon2
@@ -286,7 +286,7 @@ ScatterPlot.prototype = {
   */
   returnActiveclones: function() {
     var activeclones = 0;
-    for (var i=0; i<this.m.n_clones;i++) {
+    for (var i=0; i<this.m.clones.length;i++) {
       if (this.m.clone(i).isActive()) activeclones += 1;
     }
     return activeclones;
@@ -684,7 +684,7 @@ ScatterPlot.prototype = {
       }
 
       //classement des clones suivant V
-      for (var i = 0; i < this.m.n_clones; i++) {
+      for (var i = 0; i < this.m.clones.length; i++) {
 	  if (this.m.clone(i).isActive()) {
 	      var geneV = this.m.clone(i).getV(false);
 	      var clone = {
@@ -1123,7 +1123,7 @@ ScatterPlot.prototype = {
   /* Function which permits to force all no-clustered clones, to return at their initial position
   */
   forceNodesToStayInInitialPosition: function() {
-      for (var i = 0; i < this.m.n_clones; i++) {
+      for (var i = 0; i < this.m.clones.length; i++) {
           if (this.m.dbscan.clusters[this.m.clone(i).cluster].length == 1) {
               //Calcul du delta
               var x = this.nodes[i].x;

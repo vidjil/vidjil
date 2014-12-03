@@ -41,31 +41,40 @@ function Model() {
 
 Model.prototype = {
 
+    /**/
     reset: function () {
         this.analysis = {
             clones: [],
             clusters: [],
             date: []
         };
+        
+        this.clusters = [];
+        this.clones = [];
+        
         this.t = 0;
-        this.norm = false;
         this.focus = -1;
+        this.system_selected = []
+        
         this.colorMethod = "Tag";
+        this.notation_type = "percent"
+        this.time_type = "name"
+        this.display_window = false
+        this.isPlaying = false;
+        
         this.mapID = {};
         this.top = 10;
         this.precision = 1;
-        this.isPlaying = false;
-        this.clusters = [];
-        this.clones = [];
+
         this.germlineV = new Germline(this)
         this.germlineD = new Germline(this)
         this.germlineJ = new Germline(this)
+        
         this.dataFileName = '';
         this.analysisFileName = '';
-        this.notation_type = "percent"
-        this.time_type = "name"
-        this.system_selected = []
         this.db_key = "" //for file who came from the database
+        
+        this.norm = false;
         this.normalization = { 
             "method" : "quantitative",
             "A" : [],
@@ -79,13 +88,7 @@ Model.prototype = {
         this.nodes = null;
         this.edges = null;
 
-        //This attribute contains the last clone selected in/out the graphe
-        this.lastCloneSelected = -1;
-        this.currentCluster = "";
-        
         this.cluster_key = ""
-        
-        this.display_window = false
         
         //segmented status
         this.segmented_mesg = ["?", 
@@ -105,15 +108,9 @@ Model.prototype = {
 
     },
 
-    //Fonction permettant d'ajouter l'objet Segmenter dans le Model
-    addSegment: function(segment) {
-	this.segment = segment;
-    },
-
-    /* load the selected vidjil/analysis file in the model
+    /* load the selected vidjil/analysis file from an html input file
      * @id : id of the form (html element) linking to the vidjil file
      * @analysis : id of the form (html element) linking to the analysis file
-     * impossible to use direct path to input files, need a fakepath from input form
      * @limit : minimum top value to keep a clone*/
     load: function (id, analysis, limit) {
         var self = this;
@@ -137,11 +134,49 @@ Model.prototype = {
             self.dataFileName = document.getElementById(id)
                 .files[0].name;
             self.initClones()
-
         }
 
     }, //end load
     
+    
+    /* load the selected analysis file in the model
+     * @analysis : id of the form (html element) linking to the analysis file
+     * */
+    loadAnalysis: function (analysis) {
+        var self = this
+        
+        var input = document.getElementById(analysis)
+        
+        myConsole.log("loadAnalysis()");
+        if (input.files.length != 0) {
+            var oFReader = new FileReader();
+            var oFile = input
+                .files[0];
+
+            self.analysisFileName = input
+                .files[0].name;
+
+            oFReader.readAsText(oFile);
+
+            oFReader.onload = function (oFREvent) {
+                var text = oFREvent.target.result;
+                self.parseJsonAnalysis(text)
+            }
+        } else {
+            self.initClones();
+        }
+
+        if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
+        
+        input = $("#"+analysis)
+        input.replaceWith(input.val('').clone(true));
+        
+        return this;
+    }, //end loadAnalysis 
+    
+    
+    /* load the selected vidjil/analysis file from an url
+     * */
     loadDataUrl: function (url) {
         var self = this;
         
@@ -166,6 +201,8 @@ Model.prototype = {
 
     }, //end load
     
+    /* load the selected analysis file from an url
+     * */
     loadAnalysisUrl: function (url) {
         var self = this;
         
@@ -189,12 +226,12 @@ Model.prototype = {
 
     }, //end load
 
+    
+    /* parse a json or a json_text and init model with */
     parseJsonData: function (data, limit) {
         self = this;
-        this.mapID = {}
-        this.dataCluster = []
-        this.clusters = []
         
+        //convert data to json if necessary
         if (typeof data == "string") {
             var json_text = data
             try {
@@ -206,7 +243,8 @@ Model.prototype = {
         }
         
 	try {
-
+        
+        //check version
         if ((typeof (data.vidjil_json_version) == 'undefined') || (data.vidjil_json_version < VIDJIL_JSON_VERSION)) {
             myConsole.popupMsg(myConsole.msg.version_error);
             return 0;
@@ -219,19 +257,18 @@ Model.prototype = {
         }
         this.data_clusters = data.clusters;
         
-        //filter clones
+        //filter clones (remove clone beyond the limit)
         self.clones = [];
         var hash = 0
         for (var i = 0; i < data.clones.length; i++) {
             if (data.clones[i].top <= limit) {
                 var clone = new Clone(data.clones[i], self, hash)
-                self.clones.push(clone);
                 self.mapID[data.clones[i].id] = hash;
                 hash++
             }
         }
         
-        // add fake clone
+        // add fake clone 
         var other = {
             "sequence": 0,
             "id": "other",
@@ -239,15 +276,11 @@ Model.prototype = {
             "reads": []
         }
         var clone = new Clone(other, self, hash)
-        self.clones.push(clone);
-        self.n_clones = self.clones.length;
         
         //init clusters
-        for (var i = 0; i < this.n_clones; i++) {
-            this.clusters[i]=[i]
-        }
+        this.loadCluster(this.data_clusters)
         
-        // default samples
+        // default samples (complete fields if missing)
         if (typeof self.samples.number == 'string'){
             self.samples.number = parseInt(self.samples.number)
         }
@@ -260,11 +293,11 @@ Model.prototype = {
             for (var i = 0; i < self.samples.number; i++) self.samples.names.push("");
         }
         
-        //search for min_size
+        //search for min_size (used to compute the
         var min_sizes = [];
         for (var k = 0; k < self.samples.number; k++) min_sizes[k] = 0.01;
         
-        for (var i = 0; i < this.n_clones; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
             for (var k = 0; k < self.samples.number; k++) {
                 var size = (self.clone(i).reads[k] / data.reads.segmented[k])
                 if (min_sizes[k] > size && data.clones[i].reads[k] != 0)min_sizes[k] = size;
@@ -278,7 +311,7 @@ Model.prototype = {
         }
         self.system_selected = [];
         self.system_available = [];
-        for (var i = 0; i < this.n_clones; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
             var system = this.clone(i).getSystem()
             if (typeof system != "undefined" && self.system_available.indexOf(system) ==-1){
                 self.system_available.push(system)
@@ -296,11 +329,6 @@ Model.prototype = {
             self.system = germline_list[0];
         }
         
-        self.scale_color = d3.scale.log()
-            .domain([1, self.precision])
-            .range([250, 0]);
-        
-        this.loadCluster(this.data_clusters)
         return this
 
 	}
@@ -311,22 +339,24 @@ Model.prototype = {
         }
 	
     },
-    
-    //temporary keep old parser to make the transition with new '2014.09' version
-    
-    parseJsonAnalysis: function (analysis) {
 
+     /* parse a json or a json_text and complete model with */
+    parseJsonAnalysis: function (analysis) {
         var self = this
         
-	try {
-            this.analysis = JSON.parse(analysis);
+        
+        if (typeof analysis == "string") {
+            try {
+                this.analysis = jQuery.parseJSON(analysis)
+            } catch (e) {
+                    myConsole.popupMsg(myConsole.msg.file_error);
+                return 0
+            }
+        }else{
+            this.analysis=analysis
         }
-	catch (e) {
-            myConsole.popupMsg(myConsole.msg.parse_analysis_error);
-            throw e;
-	    return 0
-        }
-
+        
+        //check version
         if (typeof self.analysis.vidjil_json_version != 'undefined' && self.analysis.vidjil_json_version >= "2014.09"){
 
             //samples
@@ -399,52 +429,15 @@ Model.prototype = {
                     
     }, //end loadGermline
 
-
-    
-    /* load the selected analysis file in the model
-     * @analysis : id of the form (html element) linking to the analysis file
-     * */
-    loadAnalysis: function (analysis) {
-        var self = this
-        
-        var input = document.getElementById(analysis)
-        
-        myConsole.log("loadAnalysis()");
-        if (input.files.length != 0) {
-            var oFReader = new FileReader();
-            var oFile = input
-                .files[0];
-
-            self.analysisFileName = input
-                .files[0].name;
-
-            oFReader.readAsText(oFile);
-
-            oFReader.onload = function (oFREvent) {
-                var text = oFREvent.target.result;
-                self.parseJsonAnalysis(text)
-            }
-        } else {
-            self.initClones();
-        }
-
-        if (typeof(this.tabRandomColor) == "undefined") this.loadRandomTab();
-        
-        input = $("#"+analysis)
-        input.replaceWith(input.val('').clone(true));
-        
-        return this;
-    }, //end loadAnalysis
-
-    /* initializes clones with analysis file data
-     *
+    /* compute some meta-data for each clones
+     * 
      * */
     initClones: function () {
         myConsole.log("initClones()");
 
         //      NSIZE
         var n_max = 0;
-        for (var i = 0; i < this.n_clones; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
             var clone = this.clone(i)
             var n = clone.getNlength();
             if (n > n_max) {n_max = n; }
@@ -453,29 +446,17 @@ Model.prototype = {
         this.n_max = n_max
         
         //      COLOR_N
-        for (var i = 0; i < this.n_clones; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
             var clone = this.clone(i)
             clone.colorN = colorGenerator((((clone.getNlength() / n_max) - 1) * (-250)), color_s, color_v);
-        }
-
-        this.computeColor()
-        
-        //      SHORTNAME
-        for (var i = 0; i < this.n_clones; i++) {
-            var clone = this.clone(i)
-            if (typeof (clone.getSequence()) != 'undefined' && typeof (clone.name) != 'undefined') {
-                clone.shortName = clone.name.replace(new RegExp('IGHV', 'g'), "VH");
-                clone.shortName = clone.shortName.replace(new RegExp('IGHD', 'g'), "DH");
-                clone.shortName = clone.shortName.replace(new RegExp('IGHJ', 'g'), "JH");
-                clone.shortName = clone.shortName.replace(new RegExp('TRG', 'g'), "");
-                clone.shortName = clone.shortName.replace(new RegExp('\\*..', 'g'), "");
-            }
         }
         
         this.applyAnalysis(this.analysis);
         this.initData();
     }, //end initClones
     
+    /* compute data_info who contain some meta-data for each "data"
+     * */
     initData: function () {
         this.data_info = {}
         var i=1;
@@ -490,29 +471,7 @@ Model.prototype = {
         }
     },
     
-    computeColor: function(){
-        //      COLOR_V
-        for (var i = 0; i < this.n_clones; i++) {
-            var clone = this.clone(i)
-            
-            var vGene = clone.getV();
-            if (typeof this.germlineV.allele[vGene] != 'undefined' ) {
-                clone.colorV = this.germlineV.allele[vGene].color;
-            } else {
-                clone.colorV = "";
-            }
-            
-            var jGene = clone.getJ();
-            if (typeof this.germlineJ.allele[jGene] != 'undefined' ) {
-                clone.colorJ = this.germlineJ.allele[jGene].color;
-            } else {
-                clone.colorJ = "";
-            }
-        }
-        return this
-    },
-    
-    /* 
+    /* complete some clones with analysis (tag / name / expected value)
      * 
      * */
     applyAnalysis: function (analysis) {
@@ -575,6 +534,7 @@ Model.prototype = {
         this.init()
     },
     
+    
     loadCluster: function (clusters) {
 
 	if (typeof (clusters) == 'undefined')
@@ -607,7 +567,7 @@ Model.prototype = {
      */
     findWindow: function (sequence) {
         if (sequence != 0){
-            for ( var i=0; i<this.n_clones; i++ ){
+            for ( var i=0; i<this.clones.length; i++ ){
                 if ( sequence.indexOf(this.clone(i).id) != -1 ) return i
             }
         }
@@ -648,7 +608,7 @@ Model.prototype = {
             tags : {}
         }
 
-        for (var i = 0; i < this.n_clones; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
             var clone = this.clone(i)
 
             //tag, custom name, expected_value
@@ -904,7 +864,7 @@ Model.prototype = {
      * */
     getSelected: function () {
         var result = []
-        for (var i = 0; i < this.n_clones; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
             if (this.clone(i).isSelected()) {
                 result.push(i);
             }
@@ -918,7 +878,7 @@ Model.prototype = {
     select: function (cloneID) {
         myConsole.log("select() (clone " + cloneID + ")");
 
-        if (cloneID == (this.n_clones - 1)) return 0
+        if (cloneID == (this.clones.length - 1)) return 0
 
         if (this.clone(cloneID).isSelected()) {
             this.clone(cloneID).select = false;
@@ -926,7 +886,6 @@ Model.prototype = {
             this.clone(cloneID).select = true;
 	    }
 	    
-	    this.lastCloneSelected = cloneID;
         this.updateElemStyle([cloneID]);
     },
     
@@ -938,7 +897,6 @@ Model.prototype = {
             this.clone(list[i]).select = true;
         }
 
-        this.lastCloneSelected = list[0];
         this.updateElemStyle(list);
     },
 
@@ -991,7 +949,7 @@ Model.prototype = {
         
         // unactive clones from unselected system
         if (this.system == "multi") {
-            for (var i = 0; i < this.n_clones; i++) {
+            for (var i = 0; i < this.clones.length; i++) {
                 if (this.system_selected.indexOf(this.clone(i).getSystem()) == -1) {
                     this.clones[i].disable()
                 }
@@ -999,7 +957,7 @@ Model.prototype = {
         }
         
         //unactive filtered clone
-        for (var i = 0; i < this.n_clones; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
             if (this.clone(i).isFiltered) {
                 this.clone(i).disable();
             }
@@ -1007,7 +965,7 @@ Model.prototype = {
         
         this.computeOtherSize();
 
-        for (var i = 0; i < this.n_clones; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
             this.clone(i).updateColor()
         }
 
@@ -1062,7 +1020,7 @@ Model.prototype = {
     
     updateStyle: function () {
         var list = []
-        for (var i=0; i<this.n_clones; i++) list[i]=i
+        for (var i=0; i<this.clones.length; i++) list[i]=i
         for (var i = 0; i < this.view.length; i++) {
             this.view[i].updateElemStyle(list);
         }
@@ -1079,7 +1037,7 @@ Model.prototype = {
         this.displayTop();
 
         var count = 0;
-        for (var i = 0; i < this.n_clones; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
             if (this.clone(i).isActive()) count++
         }
 
@@ -1106,7 +1064,7 @@ Model.prototype = {
         var html_label = document.getElementById('top_label');
         if (html_label != null) {
             var count = 0;
-            for (var i=0; i<this.n_clones; i++){
+            for (var i=0; i<this.clones.length; i++){
                 if (this.clone(i).top < top) count++;
             }
             html_label.innerHTML = count + ' clones (top ' + top + ')' ;
@@ -1125,18 +1083,18 @@ Model.prototype = {
             other[j] = this.reads.segmented[j]
         }
 
-        for (var i = 0; i < this.n_clones - 1; i++) {
+        for (var i = 0; i < this.clones.length - 1; i++) {
             for (var j = 0; j < this.samples.number; j++) {
                 if (this.clone(i).isActive()) {
                     for (var k = 0; k < this.clusters[i].length; k++) {
-                        if (this.clusters[i][k] != this.n_clones - 1)
+                        if (this.clusters[i][k] != this.clones.length - 1)
                             other[j] -= this.clone(this.clusters[i][k]).getSequenceReads(j);
                     }
                 }
             }
         }
 
-        this.clone(this.n_clones - 1).reads = other;
+        this.clone(this.clones.length - 1).reads = other;
 
     },
     
@@ -1185,6 +1143,7 @@ Model.prototype = {
         this.unselectAll()
         this.updateElem(list)
         this.select(leader)
+
     },
 
 
@@ -1214,7 +1173,6 @@ Model.prototype = {
      * */
     clusterBy: function (fct) {
 
-        this.currentCluster = fct;
         //save user cluster
         if ( this.cluster_key==""){
             this.clusters_copy = this.clusters
@@ -1222,7 +1180,7 @@ Model.prototype = {
         }
         
         var tmp = {}
-        for (var i = 0; i < this.n_clones - 1; i++) {
+        for (var i = 0; i < this.clones.length - 1; i++) {
 
             //detect key value
             var key = "undefined"
@@ -1366,7 +1324,7 @@ Model.prototype = {
         this.isPlaying = true;
         this.nextTime();
         
-        //check if "stop" is still in time_order and replace it if neccesary
+        //check if "stop" is still in time_order and replace it if necessary
         if (this.samples.order.indexOf(stop)==-1) stop = this.samples.order[0]
         
         //continue until stop
@@ -1536,7 +1494,6 @@ Model.prototype = {
      * */
     changeGermline: function (system) {
         this.loadGermline(system)
-            .computeColor()
             .resize()
             .update()
         
@@ -1601,11 +1558,11 @@ Model.prototype = {
     loadRandomTab: function() {
         this.tabRandomColor = [];
         /*Initialisation du tableau de couleurs*/
-        for (var i = 0; i < this.n_clones; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
             this.tabRandomColor.push(i);
         }
         /*Fisher yates algorithm to shuffle the array*/
-        for (var i = this.n_clones - 1; i >= 1; i--) {
+        for (var i = this.clones.length - 1; i >= 1; i--) {
             var j = Math.floor(Math.random() * i) + 1;
             var abs = this.tabRandomColor[i];
             this.tabRandomColor[i] = this.tabRandomColor[j];
@@ -1628,7 +1585,6 @@ Model.prototype = {
             this.colorNodesDBSCAN();
             //Add information about the window (Noise, Core, ...)
             this.addTagCluster();
-            if (this.currentCluster == "cluster") this.clusterBy("cluster");
     },
 
     /* Fonction permettant de colorer les nodes en fonction de la clusterisation DBSCAN
@@ -1637,7 +1593,7 @@ Model.prototype = {
         /*Adding color by specific cluster*/
         /*-> Solution provisoire quant à la couleur noire non voulue est d' "effacer" le nombre max de clusters, mais de le prendre par défaut (100), soit un intervalle de 2.7 à chaque fois*/
         var maxCluster = this.dbscan.clusters.length;
-        for (var i = 0; i < this.n_clones; i++) {
+        for (var i = 0; i < this.clones.length; i++) {
             if (typeof(this.clone(i)) != 'undefined') {
                 this.clone(i).colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.clone(i)] + 1) ), color_s, color_v);
             }
@@ -1649,7 +1605,7 @@ Model.prototype = {
     /* Fonction permettant d'ajouter un tab concernant un node - s'il est au coeur d'un cluster, à l'extérieur ou appartenant à...
      */
     addTagCluster: function() {
-        for (var i = 0; i < this.n_clones; i++)
+        for (var i = 0; i < this.clones.length; i++)
             if (typeof(this.clone(i)) != 'undefined')
                 switch (this.dbscan.visitedTab[i].mark) {
                 case -1:

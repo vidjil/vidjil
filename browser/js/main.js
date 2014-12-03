@@ -85,10 +85,6 @@ if (config.use_database) var db = new Database("plop!", DB_ADDRESS);
 var stats = new Stats(sp);
 var shortcut = new Shortcut()
 
-/* Add view in the model -> Alignment button
- */
-m.addSegment(segment);
-
 if (location.search != ''){
     var tmp = location.search.substring(1).split('&')
     var patient = -1

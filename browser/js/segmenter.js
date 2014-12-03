@@ -187,7 +187,7 @@ Segment.prototype = {
      *
      * */
     update: function () {
-        for (var i = 0; i < this.m.n_clones; i++) {
+        for (var i = 0; i < this.m.clones.length; i++) {
             this.updateElem([i]);
         }
     },

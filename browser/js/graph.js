@@ -184,7 +184,7 @@ Graph.prototype = {
     initClones : function () {
         this.data_clones = [];
         
-        for (var i = 0; i < this.m.n_clones; i++) {
+        for (var i = 0; i < this.m.clones.length; i++) {
             this.data_clones[i] = {
                 id: i,
                 name: "line" + i,
@@ -215,13 +215,13 @@ Graph.prototype = {
         }
 
         this.data_res.push({
-            id: this.m.n_clones,
+            id: this.m.clones.length,
             name: "resolution1",
             path: this.constructPathR(this.resolution1)
         });
         
         this.data_res.push({
-            id: this.m.n_clones + 1,
+            id: this.m.clones.length + 1,
             name: "resolution5",
             path: this.constructPathR(this.resolution5)
         });
@@ -505,12 +505,12 @@ Graph.prototype = {
             this.data_res[0].path = this.constructPathR(this.resolution1);
             this.data_res[1].path = this.constructPathR(this.resolution5);
 
-            for (var i = 0; i < this.m.n_clones; i++) {
+            for (var i = 0; i < this.m.clones.length; i++) {
                 for (var j = 0; j < this.m.clusters[i].length; j++) {
                     this.data_clones[this.m.clusters[i][j]].path = this.constructPath(i, false);
                 }
             }
-            for (var i = 0; i < this.m.n_clones; i++) {
+            for (var i = 0; i < this.m.clones.length; i++) {
                 var cloneID = i
                 for (var j = 0; j < this.m.clusters[cloneID].length; j++) {
                     var seqID = this.m.clusters[cloneID][j]
@@ -533,7 +533,7 @@ Graph.prototype = {
     updateStack: function () {
         var stack = new Stack(this.m)
         stack.compute();
-        for (var i = 0; i < this.m.n_clones; i++) {
+        for (var i = 0; i < this.m.clones.length; i++) {
             this.data_clones[i].path = this.constructStack(i, stack);
         }
     },
@@ -1043,7 +1043,7 @@ Stack.prototype = {
         this.total_size = []; 
         for (j=0; j<this.m.samples.number; j++){
             this.total_size[j]=0
-            for (i=0; i<this.m.n_clones; i++){
+            for (i=0; i<this.m.clones.length; i++){
                 if (this.m.clone(i).isActive()) this.total_size[j] += this.m.clone(i).getSize(j); //active clones
             }
             
@@ -1060,7 +1060,7 @@ Stack.prototype = {
             this.sum[j]=1
         }
         
-        for (i=0; i<this.m.n_clones; i++){
+        for (i=0; i<this.m.clones.length; i++){
             this.min[i] = []
             this.max[i] = []
             //active clones

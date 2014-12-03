@@ -117,7 +117,7 @@ Builder.prototype = {
         
         normalize_list.appendChild(div)
         
-        for (var i=0; i<self.m.n_clones; i++){
+        for (var i=0; i<self.m.clones.length; i++){
             if (typeof self.m.clone(i).expected != "undefined"){
                 
                 var input = document.createElement("input")
@@ -419,7 +419,7 @@ Builder.prototype = {
 
         //init slider
         var max_top = 0;
-        for (var i = 0; i < this.m.n_clones; i++) {
+        for (var i = 0; i < this.m.clones.length; i++) {
             if (this.m.clone(i).top > max_top)
                 max_top = this.m.clone(i).top
         }

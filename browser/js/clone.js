@@ -22,13 +22,42 @@ function Clone(data, model, hash) {
     this.hash = hash
     this.split = false
     var key = Object.keys(data)
+    
     for (var i=0; i<key.length; i++ ){
         this[key[i]]=data[key[i]]
     }
+    
+    if (typeof (this.getSequence()) != 'undefined' && typeof (this.name) != 'undefined') {
+        this.shortName = this.name.replace(new RegExp('IGHV', 'g'), "VH");
+        this.shortName = this.shortName.replace(new RegExp('IGHD', 'g'), "DH");
+        this.shortName = this.shortName.replace(new RegExp('IGHJ', 'g'), "JH");
+        this.shortName = this.shortName.replace(new RegExp('TRG', 'g'), "");
+        this.shortName = this.shortName.replace(new RegExp('\\*..', 'g'), "");
+    }
+    
+    this.m.clusters[hash]=[hash]
+    this.m.clones[hash]=this
 }
 
 
 Clone.prototype = {
+    
+    
+    /* return clone name
+     * or return name of the representative sequence of the clone
+     *
+     * */
+    getName: function () {
+        if (this.m.clusters[this.hash].name){
+            return this.m.clusters[this.hash].name;
+        }else if (this.c_name) {
+            return this.c_name;
+        } else if (this.name) {
+            return this.name;
+        } else {
+            return this.getSequenceName();
+        }
+    }, 
     
     /* return custom name
      * or segmentation name
@@ -57,12 +86,22 @@ Clone.prototype = {
             return this.id;
         }
     }, //end getCode
+    
+    
+    /* give a new custom name to a clone
+     *
+     * */
+    changeName: function (newName) {
+        myConsole.log("changeName() (clone " + this.hash + " <<" + newName + ")");
+        this.c_name = newName;
+        this.m.updateElem([this.hash]);
+    }, //fin changeName,
 
-    getSystem: function () {
-        if (typeof (this.germline) != 'undefined') {
-            return this.germline;
-        }
-    }, 
+    
+    
+    
+    
+
 
     /* compute the clone size ( sum of all clones clustered )
      * @t : tracking point (default value : current tracking point)
@@ -138,9 +177,23 @@ Clone.prototype = {
      * */
     getSequenceReads: function (time) {
         time = typeof time !== 'undefined' ? time : this.m.t;
-        return this.reads[time];;
+        return this.reads[time];
 
     }, //end getSequenceSize
+    
+    
+    
+    
+    
+    
+    
+    
+    getSystem: function () {
+        if (typeof (this.germline) != 'undefined') {
+            return this.germline;
+        }
+    }, 
+    
     
     getV: function (withAllele) {
         withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
@@ -206,15 +259,10 @@ Clone.prototype = {
         }
     },
     
-    /* give a new custom name to a clone
-     *
-     * */
-    changeName: function (newName) {
-        myConsole.log("changeName() (clone " + this.hash + " <<" + newName + ")");
-        this.c_name = newName;
-        this.m.updateElem([this.hash]);
-    }, //fin changeName,
-
+    
+    
+    
+    
     /* give a new custom tag to a clone
      *
      * */
@@ -225,20 +273,6 @@ Clone.prototype = {
         this.tag = newTag;
         this.m.updateElem([this.hash]);
     },
-
-    /* return clone name
-     * or return name of the representative sequence of the clone
-     *
-     * */
-    getName: function () {
-        if (this.c_name) {
-            return this.c_name;
-        } else if (this.name) {
-            return this.name;
-        } else {
-            return this.getSequenceName();
-        }
-    }, 
     
     getColor: function () {
         if (this.color) {
@@ -276,11 +310,17 @@ Clone.prototype = {
         }else if (this.m.colorMethod == "dbscan"){
             this.color =  this.colorDBSCAN;
         }else if (this.m.colorMethod == "V" && this.getV() != "undefined V"){
-            this.color =  this.colorV;
+            this.color = "";
+            var allele = this.m.germlineV.allele[this.getV()]
+            if (typeof allele != 'undefined' ) this.color = allele.color;
         }else if (this.m.colorMethod == "D" && this.getD() != "undefined D"){
-            this.color =  this.colorD;
+            this.color = "";
+            var allele = this.m.germlineD.allele[this.getD()]
+            if (typeof allele != 'undefined' ) this.color = allele.color;
         }else if (this.m.colorMethod == "J" && this.getJ() != "undefined J"){
-            this.color =  this.colorJ;
+            this.color = "";
+            var allele = this.m.germlineJ.allele[this.getJ()]
+            if (typeof allele != 'undefined' ) this.color = allele.color;
         }else if (this.m.colorMethod == "N"){
             this.color =  this.colorN;
         }else if (this.m.colorMethod == "system") {
@@ -289,6 +329,7 @@ Clone.prototype = {
             this.color = color['@default'];
         }
     },
+    
     
     /* return info about a sequence/clone in html 
      *

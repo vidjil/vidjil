@@ -41,7 +41,7 @@ PDF.prototype = {
 
         if (this.list.length == 0) {
             var flag = 5;
-            for (var i = 0; i < this.m.n_clones; i++) {
+            for (var i = 0; i < this.m.clones.length; i++) {
                 if (this.m.clusters[i].length != 0 && flag != 0 && this.m.clone(i).isActive()) {
                     this.list.push(i);
                     flag--;
@@ -184,7 +184,7 @@ PDF.prototype = {
         opt2.y_offset = opt.y;
 
         //clones style
-        for (var i = 0; i < this.m.n_clones; i++) {
+        for (var i = 0; i < this.m.clones.length; i++) {
             var polyline = elem.querySelectorAll('[id="polyline'+i+'"]')[0]
             var color = tagColor[this.m.clone(i).getTag()]
 

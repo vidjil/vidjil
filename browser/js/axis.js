@@ -144,7 +144,7 @@ Axis.prototype = {
         
         var n_min = 0;
         var n_max = 1;
-        for (var i=0; i<this.m.n_clones; i++){
+        for (var i=0; i<this.m.clones.length; i++){
             var n = this.m.clone(i).getNlength();
             if (n > n_max) n_max = n;
         }
