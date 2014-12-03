@@ -202,16 +202,16 @@ def get_analysis():
 def save_analysis():
     error = ""
 
-    if not "patient_id" in request.vars :
+    if not "patient" in request.vars :
         error += "id patient file needed, "
-    if not "config_id" in request.vars:
+    if not "config" in request.vars:
         error += "id config needed, "
-    if not auth.has_permission('admin', 'patient', request.vars['patient_id']) :
+    if not auth.has_permission('admin', 'patient', request.vars['patient']) :
         error += "you do not have permission to save changes on this patient"
         
     if error == "" :
-        analysis_query = db(  (db.analysis_file.patient_id == request.vars['patient_id'])
-                            & (db.analysis_file.config_id == request.vars['config_id'] )  )
+        analysis_query = db(  (db.analysis_file.patient_id == request.vars['patient'])
+                            & (db.analysis_file.config_id == request.vars['config'] )  )
 
         f = request.vars['fileToUpload']
         
@@ -224,12 +224,12 @@ def save_analysis():
         else:     
             
             analysis_id = db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
-                                                  config_id = request.vars['config_id'],
-                                                  patient_id = request.vars['patient_id'],
+                                                  config_id = request.vars['config'],
+                                                  patient_id = request.vars['patient'],
                                                   analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                                                   )
         
-        patient_name = db.patient[request.vars['patient_id']].first_name + " " + db.patient[request.vars['patient_id']].last_name
+        patient_name = db.patient[request.vars['patient']].first_name + " " + db.patient[request.vars['patient']].last_name
         
         res = {"success" : "true",
                "message" : patient_name+": analysis saved"}
