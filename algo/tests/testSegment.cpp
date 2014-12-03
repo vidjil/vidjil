@@ -157,6 +157,14 @@ void testSegmentationCause() {
       TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "fewJ: " << ks.getKmerAffectAnalyser()->toString());
       TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_J, TEST_KMER_SEGMENTATION_CAUSE, "");
       nb_checked++;
+    } else if (data.read(i).label == "seq-fewV2") {
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_V, TEST_KMER_SEGMENTATION_CAUSE, "");
+      nb_checked++;
+    } else if (data.read(i).label == "seq-fewJ2") {
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "fewJ: " << ks.getKmerAffectAnalyser()->toString());
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_J, TEST_KMER_SEGMENTATION_CAUSE, "");
+      nb_checked++;
     } else if (data.read(i).label == "seq-delta-min-old") {
       // This test was a test for delta_min but with the CountKmerAffectAnalyser
       // the read is segmented, now. So we keep it, but change the test
@@ -190,7 +198,7 @@ void testSegmentationCause() {
     }
   }
   
-  TAP_TEST(nb_checked == 11, TEST_KMER_DATA, "");
+  TAP_TEST(nb_checked == 13, TEST_KMER_DATA, "");
 
   delete multi;
 }
@@ -218,15 +226,15 @@ void testExtractor() {
 
   WindowsStorage *ws = we.extract(&data, multi, 30, labels);
 
-  TAP_TEST(we.getNbReads() == 11, TEST_EXTRACTOR_NB_READS, "");
+  TAP_TEST(we.getNbReads() == 13, TEST_EXTRACTOR_NB_READS, "");
 
   TAP_TEST(we.getNbSegmented(SEG_PLUS) == 4, TEST_EXTRACTOR_NB_SEGMENTED, "segPlus: " << we.getNbSegmented(SEG_PLUS));
   TAP_TEST(we.getNbSegmented(SEG_MINUS) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(UNSEG_TOO_SHORT) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(UNSEG_STRAND_NOT_CONSISTENT) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(UNSEG_TOO_FEW_ZERO) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
-  TAP_TEST(we.getNbSegmented(UNSEG_TOO_FEW_V) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
-  TAP_TEST(we.getNbSegmented(UNSEG_TOO_FEW_J) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST(we.getNbSegmented(UNSEG_TOO_FEW_V) == 2, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST(we.getNbSegmented(UNSEG_TOO_FEW_J) == 2, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(UNSEG_BAD_DELTA_MIN) == 0, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(UNSEG_BAD_DELTA_MAX) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW) == 2, TEST_EXTRACTOR_NB_SEGMENTED, "");
@@ -237,8 +245,8 @@ void testExtractor() {
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_SHORT) == 4, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_STRAND_NOT_CONSISTENT) == 36, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_FEW_ZERO) == 36, TEST_EXTRACTOR_AVG_LENGTH, "");
-  TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_FEW_V) == 36, TEST_EXTRACTOR_AVG_LENGTH, "");
-  TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_FEW_J) == 36, TEST_EXTRACTOR_AVG_LENGTH, "");
+  TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_FEW_V) == 51, TEST_EXTRACTOR_AVG_LENGTH, "");
+  TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_FEW_J) == 55, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_BAD_DELTA_MAX) == 66, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST(we.getAverageSegmentationLength(TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW) == 28.5, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST(we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW) == 48, TEST_EXTRACTOR_AVG_LENGTH, "");
