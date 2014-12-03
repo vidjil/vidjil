@@ -326,6 +326,10 @@ Graph.prototype = {
             d.time = i;
             this.data_axis.push(d);
         }
+        //padding
+        while (this.data_axis.length<20){
+            this.data_axis.push({"type" :"axis_v_hidden" , "text": "", "pos" : 1.05});
+        }
 
         //ordonnée clone
         if (this.mode == "stack"){
@@ -347,6 +351,10 @@ Graph.prototype = {
                 height = height / 10;
             }
         }
+        //padding
+        while (this.data_axis.length<40){
+            this.data_axis.push({"type" :"axis_h_hidden" , "text": "", "pos" : 0});
+        }
         
         //ordonnée data
         if (enabled && typeof g_min != 'undefined'){
@@ -364,7 +372,10 @@ Graph.prototype = {
                 height = height / 10;
             }
         }
-        
+        //padding
+        while (this.data_axis.length<60){
+            this.data_axis.push({"type" :"axis_h_hidden" , "text": "", "pos" : 1.05});
+        }
 
         //current time_point
         if ( this.m.samples.order.indexOf(this.m.t) != -1 ){
