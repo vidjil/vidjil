@@ -176,6 +176,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
   for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
     {
       Germline *germline = *it ;
+      segmented_germline = germline;
 
   int s = (size_t)germline->index->getS() ;
   int length = sequence.length() ;
@@ -221,7 +222,6 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
   if (segmented)
     {
       // Yes, it is segmented
-      segmented_germline = germline;
       germline->stats.insert(length);
 
       reversed = (strand == -1); 
