@@ -31,24 +31,33 @@ def verbose_open_w(name):
 SPECIAL_SEQUENCES = [
 ]
 
+SPECIES = {
+    "Homo sapiens": './', 
+    "Mus musculus": 'mus-musculus/',
+}
+
 for l in sys.stdin:
 
     if ">" in l:
         current_file = None
         current_special = None
 
-        if "Homo sapiens" in l and ("V-REGION" in l or "D-REGION" in l or "J-REGION" in l):
+        species = l.split('|')[2].strip()
+
+        if species in SPECIES and ("V-REGION" in l or "D-REGION" in l or "J-REGION" in l):
             seq = l.split('|')[1]
+            path = SPECIES[species]
             system = seq[:4]
+            key = path + system
 
             if system.startswith('IG') or system.startswith('TR'):
 
-                if system in open_files:
-                    current_file = open_files[system]
+                if key in open_files:
+                    current_file = open_files[key]
                 else:
-                    name = '%s.fa' % system
+                    name = '%s%s.fa' % (path, system)
                     current_file = verbose_open_w(name)
-                    open_files[system] = current_file
+                    open_files[key] = current_file
 
             if seq in SPECIAL_SEQUENCES:
                 name = '%s.fa' % seq.replace('*', '-')
