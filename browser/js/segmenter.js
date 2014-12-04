@@ -458,13 +458,16 @@ Segment.prototype = {
     },
     averageSelection: function (){
         var list = this.m.getSelected()
-        var sum = 0;
-        for (var i = 0; i < list.length; i++) {
-            sum += this.m.clone(list[i]).getSize();
+        var sumPercentage = 0;
+        var sumReads = 0;
+        var length = list.length
+        for (var i = 0; i < length; i++) {
+            sumPercentage += this.m.clone(list[i]).getSize();
+            sumReads+= this.m.clone(list[i]).getReads();
             }
-        sum = m.formatSize(sum, true);
+        sumPercentage = m.formatSize(sumPercentage, true);
         $(".average")
-            .text(sum)
+            .text(length+" clones, "+sumReads+" reads, "+sumPercentage)
 
     }
 
