@@ -55,8 +55,7 @@ Note that other elements could be added by some program (such as =tag= or =clust
 		    "3": "TRGJ1*02",  "3start": 89,  "3end": 118
 		}
 
-            } // ,
-            // (other clones)
+            }
         ]
     }
 #+END_SRC
@@ -99,8 +98,7 @@ and 'IMGT clonotype (AA) or (nt)' could also be used by some programs).
 		    "5": "TRGV5*01",  "5start": 0,   "5end": 86,
 		    "3": "TRGJ1*02",  "3start": 89,  "3end": 118
 		}
-            } // ,
-            // (other clones)
+            }
         ]
     }
 #+END_SRC
