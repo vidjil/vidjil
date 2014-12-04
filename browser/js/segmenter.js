@@ -465,10 +465,16 @@ Segment.prototype = {
             sumPercentage += this.m.clone(list[i]).getSize();
             sumReads+= this.m.clone(list[i]).getReads();
             }
-        sumPercentage = m.formatSize(sumPercentage, true);
-        $(".average")
-            .text(length+" clones, "+sumReads+" reads, "+sumPercentage)
 
+        var t = ""
+        if (sumReads > 0)
+        {
+            t += length + " clone" + (length>1 ? "s" : "") + ", "
+            t += sumReads + " read" + (sumReads>1 ? "s" : "") + ", "
+            t += sumPercentage = m.formatSize(sumPercentage, true);
+        }
+            
+        $(".average").text(t)
     }
 
 
