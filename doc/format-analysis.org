@@ -24,7 +24,7 @@ This is a minimal =.vidjil= file, describing clones in one sample.
 The segmentation is here =TRGV5*01 5/CC/0 TRGJ1*02=.
 Note that other elements could be added by some program (such as =tag= or =clusters=).
 
-#+BEGIN_SRC js
+#+BEGIN_SRC js :tangle analysis-example1.vidjil
     {
         "producer": "program xyz version xyz",
         "timestamp": "2014-10-01 12:00:11",
@@ -69,7 +69,7 @@ It is the responsability of the program generating the initial =.vidjil= files t
 do a correct gathering ('windows' is used by Vidjil, 'clone sequence' is used by EC-NGS/Brno pipeline, 
 and 'IMGT clonotype (AA) or (nt)' could also be used by some programs).
 
-#+BEGIN_SRC js
+#+BEGIN_SRC js :tangle analysis-example2.vidjil
     {
         "producer": "program xyz version xyz / fuse.py version xyz",
         "timestamp": "2014-10-01 14:00:11",
@@ -112,7 +112,7 @@ This file reflects what an user could have done with the browser (or with some o
 She has manually set sample names (=names=), tagged (=tag=, =tags=) and clustered (=clusters=) 
 some clones, and added external data (=data=).
 
-#+BEGIN_SRC js
+#+BEGIN_SRC js :tangle analysis-example1.analysis
     {
         "producer": "user Bob, via browser",
         "timestamp": "2014-10-01 12:00:11",
