@@ -31,7 +31,7 @@ Note that other elements could be added by some program (such as =tag= or =clust
         "vidjil_json_version": "2014.10",
 
         "samples": {
-             "number": 2, 
+             "number": 1, 
              "original_names": ["T8045-BC081-Diag.fastq"]
         },
 
