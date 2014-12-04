@@ -49,6 +49,8 @@ Note that other elements could be added by some program (such as =tag= or =clust
                 "id": "clone-001",
                 "sequence": "CTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCAGTGGAAC",
 		"reads" : [ 243241 ],
+                "germline": "TRG",
+                "top": 1,
                 "seg":
                 {
 		    "5": "TRGV5*01",  "5start": 0,   "5end": 86,
@@ -93,6 +95,8 @@ and 'IMGT clonotype (AA) or (nt)' could also be used by some programs).
                 "id": "clone-001",
                 "sequence": "CTCATACACCCAGGAGGTGGAGCTGGATATTGATACTACGAAATCTAATTGAAAATGATTCTGGGGTCTATTACTGTGCCACCTGGGCCTTATTATAAGAAACTCTTTGGCAGTGGAAC",
 		"reads" : [ 243241, 14717 ],
+                "germline": "TRG",
+                "top": 1,
                 "seg":
                 {
 		    "5": "TRGV5*01",  "5start": 0,   "5end": 86,
@@ -266,7 +270,7 @@ In the .analysis file, this section is intended to describe some specific clones
 
     "reads": [],      // number of reads in this clones [.vidjil only, required] 
                       // (with samples.number elements)
-    "top": 0,
+    "top": 0,         // required so that the browser displays the clone
 
     "stats": []       // (not documented now) [.vidjil only] (with sample.number elements)
 
