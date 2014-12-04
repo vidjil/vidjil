@@ -119,7 +119,7 @@
             <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');">import/export
                 <div id="demoSelector" class="selector"><div>
                     <div class="menu_box">
-                        <a class="buttonSelector" onclick="javascript:loadData()">import data </a>
+                        <a class="buttonSelector" onclick="javascript:loadData()">import data (.vidjil)</a>
                         <a class="buttonSelector" onclick="javascript:loadAnalysis()">import analysis</a>
                     </div>
                     <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
@@ -256,11 +256,12 @@
                 </div></div>
             </div>
 
-            <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none"> A
+            <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none"> development
                 <div id="adminSelector" class="selector"><div>
                     <input type="checkbox" onclick="m.display_window = this.checked; m.update()">highlight windows</input><br>
                     <input type="checkbox" onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display fps</input></br>
                     <input type="checkbox" onclick=" this.checked ? myConsole.openLog() : myConsole.closeLog() ;">log</input>
+                    <a class="buttonSelector" onclick="db.call('default/user/register')">register new user</a>
                 </div></div>
             </div>
 
