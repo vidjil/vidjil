@@ -126,6 +126,10 @@ Segment.prototype = {
         div_focus.className = "focus"
         div.appendChild(div_focus)
 
+        var div_average = document.createElement('div');
+        div_average.className = "average"
+        div.appendChild(div_average)
+
         parent.appendChild(div)
 
         div = document.createElement('div');
@@ -188,7 +192,7 @@ Segment.prototype = {
      * */
     update: function () {
         for (var i = 0; i < this.m.clones.length; i++) {
-            this.updateElem([i]);
+            this.updateElem([i]);   
         }
     },
 
@@ -196,7 +200,6 @@ Segment.prototype = {
      *
      * */
     updateElem: function (list) {
-
         for (var i = 0; i < list.length; i++) {
             if (this.m.clone(list[i]).isSelected()) {
                 if (document.getElementById("seq" + list[i])) {
@@ -215,8 +218,7 @@ Segment.prototype = {
                     element.parentNode.removeChild(element);
                 }
             }
-        }
-
+        }    
     },
 
     updateElemStyle: function (list) {
@@ -237,6 +239,8 @@ Segment.prototype = {
             }
         }
         this.updateAlignmentButton()
+        this.averageSelection();
+       
     },
     
     /* Fonction permettant de recharger le bouton 'align' 
@@ -451,7 +455,20 @@ Segment.prototype = {
 
         }
 
+    },
+    averageSelection: function (){
+        var list = this.m.getSelected()
+        var sum = 0;
+        for (var i = 0; i < list.length; i++) {
+            sum += this.m.clone(list[i]).getSize();
+            }
+        sum = m.formatSize(sum, true);
+        $(".average")
+            .text(sum)
+
     }
+
+
 
 } //fin prototype Segment
 

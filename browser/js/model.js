@@ -416,7 +416,7 @@ Model.prototype = {
     
     
     /* charge le germline définit a l'initialisation dans le model
-     * détermine le nombre d'allele pour chaque gene et y attribue une couleur
+     * détermine le nombre d'allele pour chaque gene et leur attribue une couleur
      * */
     loadGermline: function (system) {
         console.log("loadGermline : " + system)
@@ -1570,7 +1570,8 @@ Model.prototype = {
         }
     },
 
-    /* Fonction permettant de charger la clusterisation avec DBSCAN, mais aussi de colorer les nodes directement après en fonction de cette clusterisation
+    /* Fonction permettant de charger la clusterisation avec DBSCAN, mais aussi de colorer les nodes 
+    directement après en fonction de cette clusterisation
      *
      */
     loadDBSCAN: function(sp) {
@@ -1591,7 +1592,8 @@ Model.prototype = {
     */
     colorNodesDBSCAN: function() {
         /*Adding color by specific cluster*/
-        /*-> Solution provisoire quant à la couleur noire non voulue est d' "effacer" le nombre max de clusters, mais de le prendre par défaut (100), soit un intervalle de 2.7 à chaque fois*/
+        /*-> Solution provisoire quant à la couleur noire non voulue est d' "effacer" le nombre max de clusters, 
+        mais de le prendre par défaut (100), soit un intervalle de 2.7 à chaque fois*/
         var maxCluster = this.dbscan.clusters.length;
         for (var i = 0; i < this.clones.length; i++) {
             if (typeof(this.clone(i)) != 'undefined') {
@@ -1602,7 +1604,8 @@ Model.prototype = {
         }
     },
 
-    /* Fonction permettant d'ajouter un tab concernant un node - s'il est au coeur d'un cluster, à l'extérieur ou appartenant à...
+    /* Fonction permettant d'ajouter un tab concernant un node - s'il est au coeur d'un cluster, 
+    à l'extérieur ou appartenant à...
      */
     addTagCluster: function() {
         for (var i = 0; i < this.clones.length; i++)
