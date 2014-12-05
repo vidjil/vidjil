@@ -392,6 +392,7 @@ line {
 /*Metric*/
 
 @width_left_container : 475px;
+@width_stats: 200px;
 @width_scrollbar : 30px;
 @width_clusterBox :16px;
 @width_starBox : 16px;
@@ -922,9 +923,16 @@ span.logo
     position: relative;
     text-align: center;
     float: left;
-    width: -moz-calc(~"100%" - @width_left_container);
-    width: -webkit-calc(~"100%" - @width_left_container);
-    width: calc(~"100%" - @width_left_container);
+    width: -moz-calc(~"100%" - (@width_left_container + @width_stats));
+    width: -webkit-calc(~"100%" - (@width_left_container + @width_stats));
+    width: calc(~"100%" - (@width_left_container + @width_stats));
+}
+.stats {
+  position: relative;
+  text-align: right;
+  float: right;
+  width: @width_stats - 3px;
+  padding-right: 3px;
 }
 
 #segmenter {

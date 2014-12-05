@@ -780,9 +780,16 @@ span.logo {
   position: relative;
   text-align: center;
   float: left;
-  width: -moz-calc(100% - 475px);
-  width: -webkit-calc(100% - 475px);
-  width: calc(100% - 475px);
+  width: -moz-calc(100% - 675px);
+  width: -webkit-calc(100% - 675px);
+  width: calc(100% - 675px);
+}
+.stats {
+  position: relative;
+  text-align: right;
+  float: right;
+  width: 197px;
+  padding-right: 3px;
 }
 #segmenter {
   overflow-x: scroll !important;
