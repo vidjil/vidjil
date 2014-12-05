@@ -281,7 +281,7 @@ class Browser < MiniTest::Test
 
     def test_14_edit_tag
         begin
-            elem = $b.div(:id => 'list_clones').li(:id => '1')
+            elem = $b.div(:id => 'list_clones').li(:id => '0')
             tagSelector = $b.div(:id => 'tagSelector')
             filterMenu = $b.div(:id => 'filter_menu')
             
@@ -289,17 +289,24 @@ class Browser < MiniTest::Test
             tagSelector.span(:class => 'edit_button').click
             tagSelector.text_field(:id => 'new_tag_name').set 'test_tag'
             tagSelector.a(:id => 'btnSaveTag').click 
+
+            tagSelector.span(:class => 'edit_button', :index => 2).click
+            tagSelector.text_field(:id => 'new_tag_name').set 'other_test'
+            $b.send_keys :return
+
+            tagSelector.span(:class => 'closeButton').click
+            tagSelector.wait_while_present
             
             filterMenu.click
-            assert ( filterMenu.text.include? 'test_tag') , "fail edit tag : tag name in display menu hasn't changed"
+            assert ( filterMenu.text.include? 'test_tag') , "fail edit tag with mouse : tag name in display menu hasn't changed"
+            assert ( filterMenu.text.include? 'other_test') , "fail edit tag with keyboard : tag name in display menu hasn't changed"
             
             elem.div(:class => 'starBox').click
-            assert ( tagSelector.text.include? 'test_tag') , "fail edit tag : tag name in tag selector hasn't changed"
+            assert ( tagSelector.text.include? 'test_tag') , "fail edit tag with mouse : tag name in tag selector hasn't changed"
+            assert ( tagSelector.text.include? 'other_test') , "fail edit tag with keyboard : tag name in tag selector hasn't changed"
             
             tagSelector.span(:class => 'closeButton').click
             
-        rescue
-            assert (false), "missing element to run test_14_edit_tag \n" 
         end
     end
 
