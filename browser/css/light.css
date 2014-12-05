@@ -108,8 +108,8 @@ line {
 #info {
   font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
   font-size: 13px;
-  height: 100%
-  padding:3px;
+  height: 100%;
+  padding: 3px;
   background: #ffffff;
   display: table-cell;
 }
