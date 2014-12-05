@@ -126,9 +126,9 @@ Segment.prototype = {
         div_focus.className = "focus"
         div.appendChild(div_focus)
 
-        var div_average = document.createElement('div');
-        div_average.className = "average"
-        div.appendChild(div_average)
+        var div_stats = document.createElement('div');
+        div_stats.className = "stats"
+        div.appendChild(div_stats)
 
         parent.appendChild(div)
 
@@ -239,7 +239,7 @@ Segment.prototype = {
             }
         }
         this.updateAlignmentButton()
-        this.averageSelection();
+        this.updateStats();
        
     },
     
@@ -456,7 +456,7 @@ Segment.prototype = {
         }
 
     },
-    averageSelection: function (){
+    updateStats: function (){
         var list = this.m.getSelected()
         var sumPercentage = 0;
         var sumReads = 0;
@@ -474,7 +474,7 @@ Segment.prototype = {
             t += sumPercentage = m.formatSize(sumPercentage, true);
         }
             
-        $(".average").text(t)
+        $(".stats").text(t)
     }
 
 
