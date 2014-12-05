@@ -110,7 +110,6 @@ def index():
     log.debug('patient list')
 
     count = db.sequence_file.id.count()
-    size = db.sequence_file.size_file
     isAdmin = auth.has_membership("admin")
     
     ##retrieve patient list 
@@ -119,7 +118,6 @@ def index():
     ).select(
         db.patient.ALL,
         count,
-        size,
         left=db.sequence_file.on(db.patient.id == db.sequence_file.patient_id),
         groupby=db.patient.id
     )
@@ -148,8 +146,11 @@ def index():
             if db.auth_permission[row3.id].group_id > 2:
                 row.groups += " " + str(db.auth_permission[row3.id].group_id)
                 
-        if row[size] is None :
-            row[size] = 0
+        row.size = 0
+        query_size = db( db.sequence_file.patient_id == row.patient.id ).select()
+        
+        for row4 in query_size:
+            row.size += row4.size_file
     
     ##sort result
     if request.vars["sort"] == "configs" :
@@ -171,7 +172,6 @@ def index():
         
     return dict(query = query,
                 count = count,
-                size = size,
                 isAdmin = isAdmin)
 
 
