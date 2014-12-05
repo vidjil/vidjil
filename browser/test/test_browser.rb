@@ -3,6 +3,7 @@ gem "minitest"
 require 'watir-webdriver'
 require 'test/unit'
 require "minitest/autorun"
+require 'minitest/ci'
 if ENV['HEADLESS']
   require 'headless'
 end
@@ -18,15 +19,23 @@ class Browser < MiniTest::Test
   end
 
   def setup
+        if ENV['HEADLESS'] and not defined? $headless
+          $headless = Headless.new
+          $headless.start
+          print "debut\n"
+        end
+
+        if not defined? $b
+          set_browser
+        end
+  end
+
+  def set_browser
         folder_path = Dir.pwd
         index_path = 'file://' + folder_path + '/../index.html'
         data_path = folder_path + '/../../doc/analysis-example1.vidjil'
         analysis_path = folder_path + '/test.analysis'
 
-        if ENV['HEADLESS']
-          $headless = Headless.new(dimensions: "1400x900x24")
-          $headless.start
-        end
         $b = Watir::Browser.new :firefox
         #$b = Watir::Browser.new :chrome
         $b.goto index_path
@@ -43,12 +52,7 @@ class Browser < MiniTest::Test
         $b.div(:id => 'file_menu').button(:text => 'start').click 
   end
 
-  #after each tests
-  def teardown
-    $b.close
-    if ENV['HEADLESS']
-      $headless.destroy
-    end
+  def after_tests
   end
     
   def test_00_info_segmentation
@@ -285,6 +289,14 @@ class Browser < MiniTest::Test
         rescue
             assert (false), "missing element to run test_14_edit_tag \n" 
         end
+    end
+
+    # Not really a test, used to close server at the end
+    def test_zz_close_everything
+      $b.close
+      if ENV['HEADLESS']
+        $headless.destroy
+      end
     end
 
 end
