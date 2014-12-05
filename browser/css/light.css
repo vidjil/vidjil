@@ -835,6 +835,9 @@ span.logo {
   width: 100%;
   border-bottom-width: 2px;
 }
+#filter_input {
+  width: 200px;
+}
 .tagD {
   margin-left: 15px;
   width: 25px;
