@@ -3,8 +3,6 @@ import os
 import sys
 import defs
 
-DIR_VIDJIL = '/home/vidjil/'
-
 TASK_TIMEOUT = 10 * 60
 
 def schedule_run(id_sequence, id_config):
@@ -69,7 +67,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
     from subprocess import Popen, PIPE, STDOUT, os
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
-    germline_folder = DIR_VIDJIL + '/germline/'
+    germline_folder = defs.DIR_VIDJIL + '/germline/'
     upload_folder = defs.DIR_SEQUENCES
     out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
     
@@ -91,7 +89,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
     vidjil_log_file = open(out_folder+'/'+output_filename+'.vidjil.log', 'w')
 
     ## commande complete
-    cmd = DIR_VIDJIL + '/vidjil ' + ' -o  ' + out_folder + " -b " + output_filename
+    cmd = defs.DIR_VIDJIL + '/vidjil ' + ' -o  ' + out_folder + " -b " + output_filename
     if not vidjil_germline == 'multi':
         cmd += ' -G ' + germline_folder + vidjil_germline 
     cmd += ' ' + vidjil_cmd + ' '+ seq_file
@@ -230,7 +228,7 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
         if row.results_file.data_file is not None :
             files += defs.DIR_RESULTS + row.results_file.data_file + " "
     
-    cmd = "python ../fuse.py -o "+output_file+" -t 100 "+files
+    cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+output_file+" -t 100 "+files
 
 
     print "=== fuse.py ==="

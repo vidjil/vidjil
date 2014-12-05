@@ -13,4 +13,7 @@ DIR_RESULTS = '/mnt/result/results/'
 ### Formatted with 'data_id' in models/task.py
 DIR_OUT_VIDJIL_ID = '/mnt/result/tmp/out-%06d/'
 
-
+### Directory for program used in task.py
+### relative path start from server/web2py
+DIR_VIDJIL = '../../'
+DIR_FUSE = '../'
