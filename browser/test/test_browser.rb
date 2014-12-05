@@ -79,6 +79,16 @@ class Browser < MiniTest::Test
     assert ($b.element(:id => 'visu_axis_y_container').element(:class => 'sp_legend', :index => 1).text == '?'), "Bad legend for scatterplot"
   end
 
+  def test_00_info_point
+    assert (not $b.div(:id => 'info_timepoint').visible?), "Info timepoint should not be visible"
+    $b.div(:id => 'info_point').span(:text => 'Info').click
+    assert ($b.div(:id => 'info_timepoint').visible?), "After clicking info timepoint should be visible"
+
+    table = $b.div(:id => 'info_timepoint').table
+    assert (table[1][1].text == '437164'), "Incorrect  number of reads in infopoint"
+    assert (table[2][1].text.include? '335662'), "Incorrect  number of reads in infopoint"
+  end
+ 
     def test_01_init
         begin
             list = $b.div(:id => 'list_clones')
