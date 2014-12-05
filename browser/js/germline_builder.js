@@ -43,12 +43,12 @@ GermlineList.prototype = {
                     self.list = jQuery.parseJSON(json);
                 }
                 catch(err){
-                    myConsole.flash("server : germlines.data malformed, use local js file instead (can be outdated) ", 2);
+                    myConsole.flash("germlines.data malformed, use local js file instead (can be outdated) ", 2);
                     
                 }
             },
             error: function (request, status, error) {
-                myConsole.flash("server : error impossible to retrieve germlines.data, use local js file instead (can be outdated)", 2);
+                myConsole.flash("impossible to retrieve germline.data, using local germline.js", 0);
             },
             dataType: "text"
         });
