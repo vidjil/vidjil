@@ -43,3 +43,27 @@ gem install test-unit
 #+BEGIN_SRC sh
 ruby test_browser.rb
 #+END_SRC
+
+** Headless mode
+
+   On servers without a X server the browser tests can be launched in headless
+   mode.
+   For this sake one needs to install a few more dependencies:
+
+   #+BEGIN_SRC sh
+   gem install headless
+   #+END_SRC
+
+   The virtual framebuffer X server (=xvfb=) must also be installed. Depending
+   on the operating system the command will be different:
+   #+BEGIN_SRC sh
+   # On Debian/Ubuntu
+   apt-get install xvfb
+   # On Fedora/CentOS
+   yum install xvfb
+   #+END_SRC
+
+   Then the browser tests can be launched in headless mode with:
+   #+BEGIN_SRC sh
+   HEADLESS=1 ruby test_browser.rb
+   #+END_SRC
