@@ -14,20 +14,6 @@ info = db.config[request.vars["id"]]
                 <td > </td>
             </tr>
             <tr>
-                <td><label for="config_germline" id="config_germline__label">Germline: </label></td>
-                <td><select id="config_germline" name="config_germline">
-                        <option value="TRA" {{if info.germline == "TRA":}}selected="selected"{{pass}}>TRA</option>
-                        <option value="TRB" {{if info.germline == "TRB":}}selected="selected"{{pass}}>TRB</option>
-                        <option value="TRG" {{if info.germline == "TRG":}}selected="selected"{{pass}}>TRG</option>
-                        <option value="TRD" {{if info.germline == "TRD":}}selected="selected"{{pass}}>TRD</option>
-                        <option value="IGH" {{if info.germline == "IGH":}}selected="selected"{{pass}}>IGH</option>
-                        <option value="IGK" {{if info.germline == "IGK":}}selected="selected"{{pass}}>IGK</option>
-                        <option value="IGL" {{if info.germline == "IGL":}}selected="selected"{{pass}}>IGL</option>
-                        <option value="multi" {{if info.germline == "multi":}}selected="selected"{{pass}}>multi</option>
-                    </select></td>
-                <td></td>
-            </tr>
-            <tr>
                 <td> <label for="config_program" id="config_program__label">Program: </label> </td>
                 <td><select id="config_program" name="config_program">
                         <option value="none" {{if info.program == "none":}}selected="selected"{{pass}}>none</option>

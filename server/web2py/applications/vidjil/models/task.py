@@ -83,15 +83,13 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
 
     ## config de vidjil
     vidjil_cmd = db.config[id_config].command
-    vidjil_germline = db.config[id_config].germline
+    vidjil_cmd = vidjil_cmd.replace( 'germline/' ,germline_folder)
     
     os.makedirs(out_folder)
     vidjil_log_file = open(out_folder+'/'+output_filename+'.vidjil.log', 'w')
 
     ## commande complete
     cmd = defs.DIR_VIDJIL + '/vidjil ' + ' -o  ' + out_folder + " -b " + output_filename
-    if not vidjil_germline == 'multi':
-        cmd += ' -G ' + germline_folder + vidjil_germline 
     cmd += ' ' + vidjil_cmd + ' '+ seq_file
     
     ## execute la commande vidjil

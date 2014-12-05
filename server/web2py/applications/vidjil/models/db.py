@@ -137,8 +137,7 @@ db.define_table('config',
                 Field('program', 'string'),
                 Field('command', 'string'),
                 Field('fuse_command', 'string'),
-                Field('info','text'),
-                Field('germline', 'string'))
+                Field('info','text'))
 
 
 db.define_table('results_file',
@@ -191,16 +190,14 @@ if db(db.auth_user.id > 0).count() == 0:
     ##création des configs de base
     id_config_TRG = db.config.insert(
         name = 'TRG',
-        command = '-c clones -z 100 -R 1 -r 1 ',
-        info = 'default trg config',
-        germline = 'TRG'
+        command = '-c clones -z 100 -R 1 -r 1 -G germline/TRG ',
+        info = 'default trg config'
     )
     
     id_config_IGH = db.config.insert(
         name = 'IGH',
-        command = '-c clones -d -z 100 -R 1 -r 1 ',
-        info = 'default igh config',
-        germline = 'IGH'
+        command = '-c clones -d -z 100 -R 1 -r 1 -G germline/IGH ',
+        info = 'default igh config'
     )
     
     ## permission

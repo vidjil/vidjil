@@ -6,11 +6,15 @@ if request.env.http_origin:
     response.headers['Access-Control-Max-Age'] = 86400
 
 def index():
-    if not auth.user : 
-        res = {"redirect" : "default/user/login"}
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+   if not auth.user : 
+    res = {"redirect" : "default/user/login"}
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
-    return dict(message=T('config_list'))
+
+   query = db(db.config).select() 
+    
+   return dict(message=T('config_list'),
+               query=query)
 
 
 def add(): 
@@ -21,7 +25,7 @@ def add():
 def add_form(): 
     error =""
 
-    required_fields = ['config_name', 'config_command', 'config_germline', 'config_fuse_command', 'config_program']
+    required_fields = ['config_name', 'config_command', 'config_fuse_command', 'config_program']
     for field in required_fields:
         if request.vars[field] == "" :
             error += field+" needed, "
@@ -31,7 +35,6 @@ def add_form():
         db.config.insert(name=request.vars['config_name'],
                         info=request.vars['config_info'],
                         command=request.vars['config_command'],
-                        germline=request.vars['config_germline'],
                         fuse_command=request.vars['config_fuse_command'],
                         program=request.vars['config_program']
                         )
@@ -54,7 +57,7 @@ def edit_form():
     
     error =""
 
-    required_fields = ['config_name', 'config_command', 'config_germline', 'config_fuse_command', 'config_program']
+    required_fields = ['config_name', 'config_command', 'config_fuse_command', 'config_program']
     for field in required_fields:
         if request.vars[field] == "" :
             error += field+" needed, "
@@ -64,7 +67,6 @@ def edit_form():
         db.config[request.vars["id"]] = dict(name=request.vars['config_name'],
                                              info=request.vars['config_info'],
                                              command=request.vars['config_command'],
-                                             germline=request.vars['config_germline'],
                                              fuse_command=request.vars['config_fuse_command'],
                                              program=request.vars['config_program']
                                              )
