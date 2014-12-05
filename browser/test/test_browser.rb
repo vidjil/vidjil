@@ -131,6 +131,8 @@ class Browser < MiniTest::Test
 
     def test_05_focus_in_list
         begin    
+            #unselect
+            $b.element(:id => "visu_back" ).click
             #test hover a clone in the list
             list = $b.div(:id => 'list_clones')
             $b.element(:id => "circle0" ).wait_until_present
