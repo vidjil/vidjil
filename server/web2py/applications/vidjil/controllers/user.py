@@ -10,7 +10,16 @@ def index():
     query = db(db.auth_user).select()
     
     for row in query :
-        row.created_patient = db( db.patient.creator == row.id ).count()
+        row.created = db( db.patient.creator == row.id ).count()
+        
+        row.size = 0
+        row.files = 0
+        query_size = db( db.sequence_file.provider == row.id ).select()
+        
+        for row2 in query_size:
+            row.files += 1
+            row.size += row2.size_file
+            
     return dict(query=query)
 
 ## return user information
