@@ -215,6 +215,12 @@ if db(db.auth_user.id > 0).count() == 0:
     auth.add_permission(id_admin_group, 'create', db.auth_group, 0)
     auth.add_permission(id_admin_group, 'create', db.config, 0)
  
+    
+def join_public_group(form):
+    group_id = db(db.auth_group.role == 'public' ).select()[0].id
+    db.auth_membership.insert(user_id = auth.user.id, group_id = group_id)
+
+auth.settings.register_onaccept = join_public_group
 
 
 ## after defining tables, uncomment below to enable auditing
