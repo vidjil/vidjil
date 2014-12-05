@@ -45,7 +45,7 @@ class Browser < MiniTest::Test
         assert (not $b.div(:id => 'popup-msg').present?), "Popup message still present"
 
         $b.div(:id => 'demo_file_menu').click 
-        $b.div(:id => 'demo_file_menu').a(:text => 'import data').click
+        $b.div(:id => 'demo_file_menu').a(:id => 'import_data_anchor').click
         
         # select data file
         $b.div(:id => 'file_menu').file_field(:name,"json").set(data_path)
