@@ -72,6 +72,20 @@
 
 
     <body>
+
+        <div id="popup-container">
+            <span class="closeButton" onclick="myConsole.closePopupMsg()">X</span>
+            <div id="popup-msg">
+	      <noscript>
+		<style type="text/css">
+		  #popup-container { display:block; }
+		</style>
+		Your browser does not have Javascript enabled. <br />
+		<a href='http://www.vidjil.org'>Vidjil</a> needs a recent browser with Javascript enabled.
+	      </noscript>
+	    </div>
+        </div>
+
         <div id="file_menu" >
             <span class="closeButton" onclick="cancel();">X</span>
 
@@ -328,11 +342,6 @@
         </div>
 
         <div id="frame-container"></div>
-
-        <div id="popup-container">
-            <span class="closeButton" onclick="myConsole.closePopupMsg()">X</span>
-            <div id="popup-msg"></div>
-        </div>
 
         <div id="data-container">
             <span class="closeButton" onclick="myConsole.closeDataBox()">X</span>
