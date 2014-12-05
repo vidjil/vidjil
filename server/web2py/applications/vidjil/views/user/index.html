@@ -1,25 +1,14 @@
 {{extend 'db_layout.html'}}
 
-{{('message' in globals())}}
-{{if 'message' in globals():}}
-
-{{
-count = db.auth_group.id.count()
-
-query = db( 
-   db.auth_user
-).select()
-
-}}
-
 <div>
-    <h3>{{=message}}</h3>
+    <h3>User info</h3>
     
     <div id="db_table_container">
         <table class="db_table" id="table">
             <thead>
                 <tr><td class="column1"> user name</td>
                     <td> @</td>
+                    <td class="colum1">created patient</td>
                 </tr>
             </thead>
             
@@ -27,6 +16,7 @@ query = db(
                <tr onclick="db.call('user/info', {'id' :'{{=row.id}}'} )">
                     <td> {{=row.first_name + " " + row.last_name }} </td>
                     <td> {{=row.email}}  </td>
+                    <td> {{=row.created_patient}}  </td>
                 </tr>
            {{pass}}
         

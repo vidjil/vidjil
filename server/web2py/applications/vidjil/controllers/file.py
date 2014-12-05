@@ -55,7 +55,8 @@ def add_form():
                             sequencer=request.vars['sequencer'],
                             producer=request.vars['producer'],
                             patient_id=request.vars['patient_id'],
-                            filename=request.vars['filename'])
+                            filename=request.vars['filename'],
+                            provider=auth.user_id)
     
         res = {"file_id" : id,
                "message": request.vars['filename'] + ": upload started",
@@ -104,7 +105,8 @@ def edit_form():
                                                         pcr=request.vars['pcr'],
                                                         sequencer=request.vars['sequencer'],
                                                         producer=request.vars['producer'],
-                                                        filename=filename)
+                                                        filename=filename,
+                                                        provider=auth.user_id)
             
         patient_id = db.sequence_file[request.vars["id"]].patient_id
         

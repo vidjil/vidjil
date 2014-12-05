@@ -6,7 +6,12 @@ if request.env.http_origin:
         
 ## return user list
 def index():
-    return dict(message=T('user list'))
+    
+    query = db(db.auth_user).select()
+    
+    for row in query :
+        row.created_patient = db( db.patient.creator == row.id ).count()
+    return dict(query=query)
 
 ## return user information
 ## need ["id"]

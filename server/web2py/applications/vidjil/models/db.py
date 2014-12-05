@@ -94,6 +94,7 @@ db.define_table('patient',
                 Field('birth','date'),
                 Field('info','text'),
                 Field('id_label','string'),
+                Field('creator','reference auth_user')
                 )
 
 '''
