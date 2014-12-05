@@ -1,4 +1,5 @@
 {{extend 'db_layout.html'}}
+{{import vidjil_utils}}
 
 <h3>Patient list</h3>
 
@@ -37,7 +38,7 @@
                 <td> {{=row.patient.info }} </td>
                 <td> {{=row.confs}}</td>
 {{if isAdmin:}} <td> {{=row.groups}}</td>{{pass}}
-                <td> {{=row[count]}}</td>
+                <td> {{=row[count]}}  {{if row[size] is not None :}} ({{=vidjil_utils.format_size(row[size])}}) {{pass}}</td>
                
                
 {{if isAdmin:}} <td onclick="db.call('patient/permission', {'id' :'{{=row.patient.id}}'} )" > p </td> {{else:}} <td></td> {{pass}}

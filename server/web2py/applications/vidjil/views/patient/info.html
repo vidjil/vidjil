@@ -1,68 +1,7 @@
 {{extend 'db_layout.html'}}
-
-{{('message' in globals())}}
-{{if 'message' in globals():}}
-
-{{patient = db.patient[request.vars["id"]]}}
-
-{{if request.vars["config_id"] and request.vars["config_id"] != "-1" :}}
-    {{config_id = long(request.vars["config_id"])}}
-    {{config = True}}
-    {{
-    patient_name = patient.first_name + " " + patient.last_name
-    config_name = db.config[request.vars["config_id"]].name
-
-    fused = db(
-        (db.fused_file.patient_id == patient)
-        & (db.fused_file.config_id == config_id)
-    )
-    fused_count = fused.count()
-    fused_file = fused.select()
-    fused_filename = patient_name +"_"+ config_name + ".data"
+{{import vidjil_utils}}
 
 
-    analysis = db(
-        (db.analysis_file.patient_id == patient)
-        & (db.analysis_file.config_id == config_id)
-    )
-    analysis_count = analysis.count()
-    analysis_file = analysis.select()
-    analysis_filename = patient_name +"_"+ config_name + ".analysis"
-    }}
-{{else:}}
-    {{config_id = -1}}
-    {{config = False}}
-    {{fused_count = 0}}
-{{pass}}
-
-
-{{if config :}}
-{{
-    query = db(
-            (db.sequence_file.patient_id==db.patient.id)
-            & (db.patient.id==request.vars["id"])
-        ).select(
-            left=db.results_file.on(
-                (db.results_file.sequence_file_id==db.sequence_file.id)
-                & (db.results_file.config_id==str(config_id) )
-            ), 
-            orderby = db.sequence_file.id|db.results_file.run_date,
-            groupby = db.sequence_file.id,
-        )
-}}
-{{else:}}
-{{
-    query = db(
-            (db.sequence_file.patient_id==db.patient.id)
-            & (db.patient.id==request.vars["id"])
-        ).select(
-            left=db.results_file.on(
-                (db.results_file.sequence_file_id==db.sequence_file.id)
-                & (db.results_file.config_id==str(config_id) )
-            )
-        )
-}}
-{{pass}}
 
 <div>
 
@@ -131,7 +70,8 @@
                     <td> {{=row.sequence_file.sampling_date}} </td>
                     <td> {{=row.sequence_file.info}} </td>
                     <td> {{=row.sequence_file.pcr}} </td>
-                    <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} > {{=row.sequence_file.size_file}} </td>
+                    <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} > 
+                        {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
                     {{if (auth.has_permission('admin', 'patient', request.vars["id"]) ):}}
                         <td onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
                         <td onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
@@ -207,9 +147,3 @@
 {{pass}}
 
 </div>
-
-{{elif 'content' in globals():}}
-{{=content}}
-{{else:}}
-{{=BEAUTIFY(response._vars)}}
-{{pass}}

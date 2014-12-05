@@ -10,9 +10,88 @@ ACCESS_DENIED = "access denied"
 ## return patient file list
 ##
 def info():
+    
+
+    patient = db.patient[request.vars["id"]]
+
+    if request.vars["config_id"] and request.vars["config_id"] != "-1" :
+        config_id = long(request.vars["config_id"])
+        patient_name = patient.first_name + " " + patient.last_name
+        config_name = db.config[request.vars["config_id"]].name
+
+        fused = db(
+            (db.fused_file.patient_id == patient)
+            & (db.fused_file.config_id == config_id)
+        )
+
+        analysis = db(
+            (db.analysis_file.patient_id == patient)
+            & (db.analysis_file.config_id == config_id)
+        )
+        
+        
+        config = True
+        fused_count = fused.count()
+        fused_file = fused.select()
+        fused_filename = patient_name +"_"+ config_name + ".data"
+        analysis_count = analysis.count()
+        analysis_file = analysis.select()
+        analysis_filename = patient_name +"_"+ config_name + ".analysis"
+        
+    else:
+        config_id = -1
+        config = False
+        fused_count = 0
+        fused_file = ""
+        fused_filename = ""
+        analysis_count = 0
+        analysis_file = ""
+        analysis_filename = ""
+
+
+
+    if config :
+
+        query = db(
+                (db.sequence_file.patient_id==db.patient.id)
+                & (db.patient.id==request.vars["id"])
+            ).select(
+                left=db.results_file.on(
+                    (db.results_file.sequence_file_id==db.sequence_file.id)
+                    & (db.results_file.config_id==str(config_id) )
+                ), 
+                orderby = db.sequence_file.id|db.results_file.run_date,
+                groupby = db.sequence_file.id,
+            )
+
+    else:
+
+        query = db(
+                (db.sequence_file.patient_id==db.patient.id)
+                & (db.patient.id==request.vars["id"])
+            ).select(
+                left=db.results_file.on(
+                    (db.results_file.sequence_file_id==db.sequence_file.id)
+                    & (db.results_file.config_id==str(config_id) )
+                )
+            )
+
+
+    
     log.debug('patient (%s)' % request.vars["id"])
     if (auth.has_permission('read', 'patient', request.vars["id"]) ):
-        return dict(message=T('patient'))
+        return dict(query=query,
+                    patient=patient,
+                    config_id=config_id,
+                    fused_count=fused_count,
+                    fused_file=fused_file,
+                    fused_filename=fused_filename,
+                    analysis_count=analysis_count,
+                    analysis_file = analysis_file,
+                    analysis_filename = analysis_filename,
+                    config=config)
+    
+    
     else :
         res = {"message": ACCESS_DENIED}
         log.error(res)
@@ -31,6 +110,7 @@ def index():
     log.debug('patient list')
 
     count = db.sequence_file.id.count()
+    size = db.sequence_file.size_file
     isAdmin = auth.has_membership("admin")
     
     ##retrieve patient list 
@@ -39,6 +119,7 @@ def index():
     ).select(
         db.patient.ALL,
         count,
+        size,
         left=db.sequence_file.on(db.patient.id == db.sequence_file.patient_id),
         groupby=db.patient.id
     )
@@ -66,6 +147,9 @@ def index():
           ).select( orderby=db.auth_permission.group_id, distinct=True )  :
             if db.auth_permission[row3.id].group_id > 2:
                 row.groups += " " + str(db.auth_permission[row3.id].group_id)
+                
+        if row[size] is None :
+            row[size] = 0
     
     ##sort result
     if request.vars["sort"] == "configs" :
@@ -87,6 +171,7 @@ def index():
         
     return dict(query = query,
                 count = count,
+                size = size,
                 isAdmin = isAdmin)
 
 
@@ -124,7 +209,8 @@ def add_form():
                                    last_name=request.vars["last_name"],
                                    birth=request.vars["birth"],
                                    info=request.vars["info"],
-                                   id_label=request.vars["id_label"])
+                                   id_label=request.vars["id_label"],
+                                   creator=auth.user_id)
 
 
             user_group = auth.user_group(auth.user.id)
