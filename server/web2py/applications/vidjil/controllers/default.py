@@ -157,7 +157,7 @@ def get_analysis():
            "custom": [],
            "clusters": [],
            "clones" : [],
-           "tags": [],
+           "tags": {},
            "vidjil_json_version" : "2014.09"
            }
     

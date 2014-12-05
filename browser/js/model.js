@@ -387,7 +387,7 @@ Model.prototype = {
             }
             
             //tags
-            if (this.analysis.tags) {
+            if (this.analysis.tags && this.analysis.tags.names) {
                 var s = this.analysis.tags
                 
                 var keys = Object.keys(s.names);
