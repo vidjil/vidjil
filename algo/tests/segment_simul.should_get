@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -v -g ../../germline -d -c segment ../../data/segment_simul.fa | grep '^[>#]' 
+!LAUNCH: ../../vidjil -v -g ../../germline -c segment ../../data/segment_simul.fa | grep '^[>#]'
 
 
 $ First sequence, easy segmentation (no error, few deletions at the windows, small N)
