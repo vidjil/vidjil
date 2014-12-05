@@ -22,8 +22,8 @@ test_with_fuse:
 	make should
 	make pytests
 
-test_browser:
-	make -C browser/test
+test_browser: unit_browser functional_browser
+
 
 unit: all
 	@echo "*** Launching unit tests..."
@@ -40,6 +40,15 @@ should: all
 	@echo "*** Launching .should_get tests..."
 	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests should
 	@echo "*** All .should_get tests passed"
+
+unit_browser:
+	make -C browser/test unit
+
+functional_browser:
+	make -C browser/test functional
+
+headless_browser:
+	make -C browser/test headless
 
 ### Code coverage
 
