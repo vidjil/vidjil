@@ -400,7 +400,11 @@ Database.prototype = {
                     }
                     list.appendChild(a);
         }
-
+        
+        var url = document.documentURI.split('?')[0]
+        var new_location = url+"?patient="+args.patient+"&config="+args.config
+        window.history.pushState('plop', 'plop', new_location);
+        
         $.ajax({
             type: "POST",
             timeout: 15000,
