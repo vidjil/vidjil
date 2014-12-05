@@ -75,7 +75,8 @@ List.prototype = {
         
         div_parent.appendChild(div_list_menu)
         div_parent.appendChild(div_list_clones)
-
+        
+        this.sortListBySize()
     },
     
     build_data_list: function () {
