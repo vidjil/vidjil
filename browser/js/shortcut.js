@@ -29,8 +29,12 @@ Shortcut.prototype = {
         
         this.system_shortcuts = {}
         for (var system in germline_data){
-            var keycode = germline_data[system].shortcut.charCodeAt(0)
-            this.system_shortcuts[keycode] = system
+            var keycode = germline_data[system].shortcut.toUpperCase().charCodeAt(0)
+
+            if (typeof this.system_shortcuts[keycode] == "undefined")
+                this.system_shortcuts[keycode] = []
+            
+            this.system_shortcuts[keycode].push(system)
         }
         
         document.onkeydown = function (e) { self.checkKey(e); }
@@ -76,9 +80,24 @@ Shortcut.prototype = {
             console.log(key)
             //system shortcuts
             if (typeof this.system_shortcuts[key] != "undefined") {
-                console.log("plopppppp : " + this.system_shortcuts[key])
-                m.changeGermline(this.system_shortcuts[key])
-            }
+
+                var germlines = this.system_shortcuts[key].filter(function(g) {return m.system_available.indexOf(g) != -1})
+                console.log("Germlines with key " + key + ": " + germlines)
+
+                if (germlines.length == 0)
+                    return ;
+
+                // Find current germline
+                var current = -1 ;
+                for (var i = 0; i < germlines.length; i++) 
+                    {
+                        if (germlines[i] == m.germlineV.system)
+                            current = i ;
+                    }
+
+                // Cycle to next germline
+                m.changeGermline(germlines[(current+1) % germlines.length])
+            } 
         }
         
         if (e.altKey && sp.reinit) {
