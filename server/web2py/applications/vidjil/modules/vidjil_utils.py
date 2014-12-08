@@ -1,4 +1,5 @@
 import math
+from gluon import current
 
 def format_size(n, unit='B'):
     '''
@@ -36,3 +37,15 @@ def format_size(n, unit='B'):
 
     return fmt % size + ' ' + prefix + unit
 
+
+def anon(patient_id, user_id):
+    db = current.db
+    auth=current.auth
+    
+    last_name = db.patient[patient_id].last_name
+    first_name = db.patient[patient_id].first_name
+    
+    if auth.has_permission("anon", "patient", patient_id, user_id):
+        return last_name + " " + first_name
+    else:
+        return last_name[:3] + " " + first_name[:3]
