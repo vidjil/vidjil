@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 import defs
+from gluon import current
 
 #########################################################################
 ## This scaffolding model makes your app work on Google App Engine too
@@ -86,7 +87,6 @@ use_janrain(auth, filename='private/janrain.key')
 ## >>> rows=db(db.mytable.myfield=='value').select(db.mytable.ALL)
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
-
 
 db.define_table('patient',
                 Field('first_name','string'),
@@ -281,3 +281,7 @@ def _init_log():
     return MsgUserAdapter(logger, {})
 
 log = _init_log()
+
+
+current.db = db
+current.auth = auth
