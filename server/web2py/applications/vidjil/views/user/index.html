@@ -16,7 +16,7 @@
             
            {{for row in query :}}
                <tr onclick="db.call('user/info', {'id' :'{{=row.id}}'} )">
-                    <td> {{=row.first_name + " " + row.last_name }} </td>
+                    <td> {{=vidjil_utils.anon(row.id, auth.user_id)}} </td>
                     <td> {{=row.email}}  </td>
                     <td> {{=row.created}}  </td>
                     <td> {{=row.files}} ({{=vidjil_utils.format_size(row.size)}}) </td>

@@ -1,15 +1,5 @@
 {{extend 'db_layout.html'}}
 
-{{
-
-query = db(
-    (db.auth_permission.table_name == "patient") &
-    (db.auth_permission.record_id == request.vars["id"]) &
-    (db.auth_permission.group_id == db.auth_group.id)
-).select( orderby=db.auth_permission.name )
-
-}}
-
 <div>
     <h3>
         patient acces permission
@@ -19,71 +9,51 @@ query = db(
         <table class="db_table" id="table">
             <thead>
                 <tr><td class="column1"> group / user</td>
-                    <td> right </td>
-                    <td class="column5"> </td>
+                    <td> </td>
+                    <td class="column1"> read</td>
+                    <td class="column1"> admin</td>
+                    <td class="column1"> private info</td>
                 </tr>
             </thead>
 
             {{ for row in query :}}
-                {{ owner = row.auth_group.role}}
-                {{ if owner[:5] == "user_" :}}
-                    {{
-                        id = int(owner[5:])
-                        owner = db.auth_user[id].first_name + " " + db.auth_user[id].last_name 
-                    }}
-                {{pass}}
-                    <tr>
-                        <td> {{=owner}} </td>
-                        <td> {{=row.auth_permission.name }} </td>
-                        <td onclick="db.call('patient/remove_permission', {'patient_id' :'{{=request.vars["id"]}}', 'group_id' :'{{=row.auth_group.id}}' } )"> X </td>  
-                    </tr>
+                <tr>
+                    <td> {{=row.owner}} </td>
+                    <td></td>
+                    {{if auth.has_permission("admin", "patient", request.vars["id"], auth.user.id) :}}
+                        <td> <input type="checkbox" onclick="db.call('patient/change_permission', {
+                                                                      'patient_id' : {{=request.vars["id"]}} ,
+                                                                      'group_id' : {{=row.id}} ,
+                                                                      'permission' : 'read' } )"
+                                    {{if row.read :}} checked {{pass}}></td>
+                        <td> <input type="checkbox" onclick="db.call('patient/change_permission', {
+                                                                      'patient_id' : {{=request.vars["id"]}} ,
+                                                                      'group_id' : {{=row.id}} ,
+                                                                      'permission' : 'admin' } )"
+                                    {{if row.admin :}} checked {{pass}}></td>
+                        <td> <input type="checkbox" onclick="db.call('patient/change_permission', {
+                                                                      'patient_id' : {{=request.vars["id"]}} ,
+                                                                      'group_id' : {{=row.id}} ,
+                                                                      'permission' : 'anon' } )"
+                                    {{if row.anon :}} checked {{pass}}></td>  
+                    {{else:}}
+                        <td class="inactive"> <input type="checkbox" onclick="this.click()"
+                                    {{if row.read :}} checked {{pass}}></td>
+                        <td class="inactive"> <input type="checkbox" onclick="this.click()"
+                                    {{if row.admin :}} checked {{pass}}></td>
+                        <td class="inactive"> <input type="checkbox" onclick="this.click()"
+                                    {{if row.anon :}} checked {{pass}}></td>  
+                    {{pass}}
+                </tr>
             {{pass}}
         </table>
         <table class="db_table" id="db_fixed_header"></table>    
     </div>
     <span class="button" onclick="db.call('patient/index')"> back to list </span>
 
-    
-    
-    
-    
-    {{if auth.has_permission("admin", "patient", request.vars["id"], auth.user.id) :}}
-
-        <div>
-            add 
-            <span>
-                <select id="select_perm" name="config">
-                    <option value="read">read only</option>
-                    <option value="admin">admin</option>
-                </select>
-            </span>
-            permission to 
-            <span>
-                <select id="select_group" name="config">
-                    {{for row in db(db.auth_group).select():}}
-                        {{if row.role != "admin" and row.role[:5] != "user_" :}}
-                            <option value="{{=row.id }}">{{=row.role}} </option>
-                        {{pass}}
-                    {{pass}}
-                    
-                    <option> - - - </option>
-                    
-                    {{for row in db(db.auth_user).select():}}
-                            <option value="{{=auth.user_group(row.id)}}">{{=row.first_name + " " + row.last_name}} </option>
-                    {{pass}}
-                </select>
-            </span>
-            <span class="button" onclick="db.call('patient/change_permission', {
-                                          'patient_id' : {{=request.vars["id"]}} ,
-                                          'group_id' : document.getElementById('select_group').value ,
-                                          'permission' : document.getElementById('select_perm').value  
-                                                                             } )">
-                add
-            </span>
-        </div>
-
-    {{else:}}
+    {{if not auth.has_permission("admin", "patient", request.vars["id"], auth.user.id) :}}
         <div>you need admin access on this patient if you want to change permission </div>
     {{pass}}
+
     
 </div>

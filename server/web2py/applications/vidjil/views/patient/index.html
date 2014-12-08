@@ -33,7 +33,7 @@
         
        {{for row in query :}}
            <tr onclick="db.call('patient/info', {'id' :'{{=row.patient.id}}' , 'config_id' : {{=row.most_used_conf}} } )" >
-                <td> {{=row.patient.last_name + " " + row.patient.first_name }} </td>
+                <td> {{=vidjil_utils.anon(row.patient.id, auth.user_id)}} </td>
                 <td> {{=row.patient.birth }} </td>
                 <td> {{=row.patient.info }} </td>
                 <td> {{=row.confs}}</td>
