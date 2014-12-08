@@ -40,6 +40,8 @@ Builder.prototype = {
         this.build_settings()
         if (typeof config != 'undefined' && typeof config.use_database != 'undefined' && config.use_database) this.build_db()
         
+        if (this.m.samples.order.length == 1) this.resizeGraph(0) 
+        else this.resizeGraph(50) 
     },
 
     update: function () {
@@ -70,17 +72,21 @@ Builder.prototype = {
 
             if (position < 2 || total_height - position < 2) this.dropSeparator()
 
-            var height2 = position / total_height * 100
-            if (height2 > 90) height2 = 100;
-            if (height2 < 10) height2 = 0;
-
-            var height1 = 100 - height2
-
-            document.getElementById("visu")
-                .style.height = height1 + "%"
-            document.getElementById("visu2")
-                .style.height = height2 + "%"
+            var height = position / total_height * 100
+            if (height > 90) height = 100;
+            if (height < 10) height = 0;
+            
+            this.resizeGraph(height)
         }
+    },
+    
+    resizeGraph : function (graphSize) {
+        var spSize = 100 - graphSize
+
+        document.getElementById("visu")
+            .style.height = spSize + "%"
+        document.getElementById("visu2")
+            .style.height = graphSize + "%"
     },
 
     dropSeparator: function () {
@@ -588,39 +594,41 @@ Builder.prototype = {
         //point info
         var div_point = this.build_info_line("info_point", "point",  this.m.getStrTime(this.m.t, "name") )
 
-        var nextTime = document.createElement('span')
-        nextTime.appendChild(document.createTextNode(">"));
-        nextTime.className = "next_button button_right"
-        nextTime.onclick = function () {
-            self.m.nextTime();
-        }
-        div_point.appendChild(nextTime)    
-        
-        if (self.m.isPlaying){
-            var stop = document.createElement('span')
-            stop.appendChild(document.createTextNode("stop"));
-            stop.className = "stop_button button_right"
-            stop.onclick = function () {
-                self.m.stop();
+        if (this.m.samples.order.length > 1){
+            var nextTime = document.createElement('span')
+            nextTime.appendChild(document.createTextNode(">"));
+            nextTime.className = "next_button button_right"
+            nextTime.onclick = function () {
+                self.m.nextTime();
             }
-            div_point.appendChild(stop)
-        }else{
-            var play = document.createElement('span')
-            play.appendChild(document.createTextNode("play"));
-            play.className = "play_button button_right"
-            play.onclick = function () {
-                self.m.play(self.m.t);
+            div_point.appendChild(nextTime)    
+            
+            if (self.m.isPlaying){
+                var stop = document.createElement('span')
+                stop.appendChild(document.createTextNode("stop"));
+                stop.className = "stop_button button_right"
+                stop.onclick = function () {
+                    self.m.stop();
+                }
+                div_point.appendChild(stop)
+            }else{
+                var play = document.createElement('span')
+                play.appendChild(document.createTextNode("play"));
+                play.className = "play_button button_right"
+                play.onclick = function () {
+                    self.m.play(self.m.t);
+                }
+                div_point.appendChild(play)
             }
-            div_point.appendChild(play)
+            
+            var previousTime = document.createElement('span')
+            previousTime.appendChild(document.createTextNode("<"));
+            previousTime.className = "previous_button button_right"
+            previousTime.onclick = function () {
+                self.m.previousTime();
+            }
+            div_point.appendChild(previousTime)        
         }
-        
-        var previousTime = document.createElement('span')
-        previousTime.appendChild(document.createTextNode("<"));
-        previousTime.className = "previous_button button_right"
-        previousTime.onclick = function () {
-            self.m.previousTime();
-        }
-        div_point.appendChild(previousTime)        
         
         var editTimeName = document.createElement('span')
         editTimeName.appendChild(document.createTextNode("edit"));
