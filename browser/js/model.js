@@ -893,8 +893,20 @@ Model.prototype = {
 
         myConsole.log("select() (clone " + list + ")");
 
+        var tmp = []
         for (var i=0; i<list.length; i++){
-            this.clone(list[i]).select = true;
+            tmp[i] = {'id': list[i], 'size': this.clone(list[i]).getSize()}
+        }
+        
+        list=[]
+        tmp = tmp.sort(function (a, b) {
+            if (a.size < b.size) return 1;
+            return -1;
+        })
+        
+        for (var i=0; i<tmp.length; i++){
+            this.clone(tmp[i].id).select = true;
+            list[i]=tmp[i].id
         }
 
         this.updateElemStyle(list);

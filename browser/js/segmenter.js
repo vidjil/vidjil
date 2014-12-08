@@ -200,21 +200,23 @@ Segment.prototype = {
      *
      * */
     updateElem: function (list) {
+        
         for (var i = 0; i < list.length; i++) {
-            if (this.m.clone(list[i]).isSelected()) {
-                if (document.getElementById("seq" + list[i])) {
-                    var spanF = document.getElementById("f" + list[i]);
-                    this.div_elem(spanF, list[i]);
+            var id = list[i]
+            if (this.m.clone(id).isSelected()) {
+                if (document.getElementById("seq" + id)) {
+                    var spanF = document.getElementById("f" + id);
+                    this.div_elem(spanF, id);
                     
-                    var spanM = document.getElementById("m" + list[i]);
-                    spanM.innerHTML = this.sequence[list[i]].toString()
+                    var spanM = document.getElementById("m" + id);
+                    spanM.innerHTML = this.sequence[id].toString()
                 } else {
-                    this.addToSegmenter(list[i]);
+                    this.addToSegmenter(id);
                     this.show();
                 }
             } else {
-                if (document.getElementById("seq" + list[i])) {
-                    var element = document.getElementById("seq" + list[i]);
+                if (document.getElementById("seq" + id)) {
+                    var element = document.getElementById("seq" + id);
                     element.parentNode.removeChild(element);
                 }
             }
@@ -222,6 +224,7 @@ Segment.prototype = {
     },
 
     updateElemStyle: function (list) {
+        
         for (var i = 0; i < list.length; i++) {
             if (this.m.clone(list[i]).isSelected()) {
                 if (document.getElementById("seq" + list[i])) {
