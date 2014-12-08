@@ -1507,10 +1507,15 @@ Model.prototype = {
      * 
      * */
     changeGermline: function (system) {
+        
+        if (this.system_selected.indexOf(system) == -1){
+            this.system_selected.push(system)
+        }
+        
         this.loadGermline(system)
             .resize()
             .update()
-        
+            
         var radio = document.getElementsByName("germline")
         for(var elem in radio){
             if (radio[elem].value == system) radio[elem].checked=true;

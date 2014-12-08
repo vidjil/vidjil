@@ -816,7 +816,7 @@ ScatterPlot.prototype = {
   
     buildSystemGrid: function () {
         this.systemGrid = {"label" : []}
-        var n = this.m.system_selected.length
+        var n = this.m.system_available.length
         var h = this.resizeH
         var w = this.resizeW*0.2
         
@@ -828,12 +828,17 @@ ScatterPlot.prototype = {
         
         //compute position for selected germline
         var i=0;
-        for (var key in this.m.system_selected){
-            var system = this.m.system_selected[key]
+        for (var key in this.m.system_available){
+            
+            var system = this.m.system_available[key]
+            
+            var enabled = false
+            if (this.m.system_selected.indexOf(system) != -1 ) enabled = true
+            
             if (system != this.m.germlineV.system){
-                this.systemGrid["label"].push( {"text": system, "x" : 0.81, "y" : ((i*2)+1)/(n*2)  })
+                this.systemGrid["label"].push( {"text": system, "enabled": enabled, "x" : 0.81, "y" : ((i*2)+1)/(n*2)  })
             }else{
-                this.systemGrid["label"].push( {"text": system, "x" : 0.80, "y" : ((i*2)+1)/(n*2)  })
+                this.systemGrid["label"].push( {"text": system, "enabled": enabled, "x" : 0.80, "y" : ((i*2)+1)/(n*2)  })
             }
             this.systemGrid[system].x = 0.92
             this.systemGrid[system].y = ((i*2)+1)/(n*2)
@@ -1496,7 +1501,7 @@ ScatterPlot.prototype = {
   system_label_update: function(data) {
       self = this;
 
-      if (typeof data == "undefined" || data.length <=1){
+      if (typeof data == "undefined" || self.m.system_selected.length <=1){
             this.label_container.style("display", "none");
       }else{
             this.label_container.style("display", "");
@@ -1520,7 +1525,10 @@ ScatterPlot.prototype = {
             .on("click", function (d) {
                 self.m.changeGermline(d.text)
             })
-            .attr("class", "sp_system_label")
+            .attr("class", function (d) {
+                if (d.enabled) return "sp_system_label"
+                return "sp_system_label inactive"
+            })
       }
   },
 
