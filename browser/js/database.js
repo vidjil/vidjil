@@ -4,15 +4,6 @@ function Database(id, db_address) {
     this.id = id;
     this.upload = {};
     this.url = []
-    
-    window.onbeforeunload = function(e){
-        if ( self.is_uploading() ){
-            e = e || event;
-            if(e.preventDefault){e.preventDefault();}
-            e.returnValue = false;
-            return 'some uploads are incomplete, do you really want to leave';
-        }
-    }
 }
 
 
@@ -480,6 +471,7 @@ Database.prototype = {
                     try {
                         var res = jQuery.parseJSON(result);
                         if (res.message) myConsole.flash("database : " + res.message , 1)
+                        self.m.analysisHasChanged = false
                     }
                     catch(err){}
                 },

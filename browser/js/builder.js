@@ -333,6 +333,7 @@ Builder.prototype = {
             tagName[tagID] = newTagName
             self.build_tagSelector()
             self.build_displaySelector()
+            self.m.analysisHasChanged = true
         }
         divParent.appendChild(a);
         $('#new_tag_name')
@@ -371,6 +372,7 @@ Builder.prototype = {
             self.m.samples[data][self.m.t] = document.getElementById("edit_value").value
             self.build_info_container()
             self.m.update()
+            self.m.analysisHasChanged = true
         }
         divParent.appendChild(a);
         $('#edit_value')

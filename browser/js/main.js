@@ -112,4 +112,19 @@ if (location.search != ''){
     myConsole.popupMsg(myConsole.msg.welcome)
 }
 
+window.onbeforeunload = function(e){
+    if ( db.is_uploading() ){
+        e = e || event;
+        if(e.preventDefault){e.preventDefault();}
+        e.returnValue = false;
+        return 'some uploads are incomplete';
+    }
+    if ( m.analysisHasChanged ){
+        e = e || event;
+        if(e.preventDefault){e.preventDefault();}
+        e.returnValue = false;
+        return 'Some changes have not been saved';
+    }
+}
+
 initTag();//TODO a enlever

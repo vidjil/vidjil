@@ -95,6 +95,7 @@ Clone.prototype = {
         myConsole.log("changeName() (clone " + this.hash + " <<" + newName + ")");
         this.c_name = newName;
         this.m.updateElem([this.hash]);
+        this.m.analysisHasChanged = true
     }, //fin changeName,
 
     

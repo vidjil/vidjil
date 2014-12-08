@@ -588,6 +588,7 @@ Model.prototype = {
         var filename = this.getPrintableAnalysisName().replace(/[ \/\\:]/,'_')
 
         saveAs(textFileAsBlob, filename + ".analysis");
+        self.m.analysisHasChanged = false
     }, //end saveAnalysis
     
     /* create a string with analysis
@@ -1155,7 +1156,8 @@ Model.prototype = {
         this.unselectAll()
         this.updateElem(list)
         this.select(leader)
-
+        
+        this.analysisHasChanged = true
     },
 
 
