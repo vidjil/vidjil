@@ -800,9 +800,14 @@ ScatterPlot.prototype = {
           this.systemGrid = {}
       }
       
-      if (this.splitY != "bar" && this.use_system_grid && this.m.system == "multi" && this.m.system_selected.length >1){
-        this.gridSizeW = 0.8*this.resizeW;
-        this.gridSizeH = 1*this.resizeH;
+      if (this.splitY != "bar" && this.use_system_grid && this.m.system == "multi" ){
+          if (this.m.system_selected.length >1){
+            this.gridSizeW = 0.8*this.resizeW;
+            this.gridSizeH = 1*this.resizeH;
+          }else{
+            this.gridSizeW = 0.92*this.resizeW;
+            this.gridSizeH = 1*this.resizeH;
+          }
       }else{
         this.gridSizeW = this.resizeW;
         this.gridSizeH = this.resizeH;
@@ -835,10 +840,13 @@ ScatterPlot.prototype = {
             var enabled = false
             if (this.m.system_selected.indexOf(system) != -1 ) enabled = true
             
+            var xpos = 0.8
+            if (this.m.system_selected.length <= 1) xpos=0.92
+                
             if (system != this.m.germlineV.system){
-                this.systemGrid["label"].push( {"text": system, "enabled": enabled, "x" : 0.81, "y" : ((i*2)+1)/(n*2)  })
+                this.systemGrid["label"].push( {"text": system, "enabled": enabled, "x" : xpos+0.01, "y" : ((i*2)+1)/(n*2)  })
             }else{
-                this.systemGrid["label"].push( {"text": system, "enabled": enabled, "x" : 0.80, "y" : ((i*2)+1)/(n*2)  })
+                this.systemGrid["label"].push( {"text": system, "enabled": enabled, "x" : xpos, "y" : ((i*2)+1)/(n*2)  })
             }
             this.systemGrid[system].x = 0.92
             this.systemGrid[system].y = ((i*2)+1)/(n*2)
@@ -1501,7 +1509,7 @@ ScatterPlot.prototype = {
   system_label_update: function(data) {
       self = this;
 
-      if (typeof data == "undefined" || self.m.system_selected.length <=1){
+      if (typeof data == "undefined" || self.m.system_available.length <=1){
             this.label_container.style("display", "none");
       }else{
             this.label_container.style("display", "");
