@@ -15,12 +15,12 @@
                     <td class="column1"> private info</td>
                 </tr>
             </thead>
-
+            {{admin = auth.has_permission("admin", "patient", request.vars["id"], auth.user.id)}}
             {{ for row in query :}}
                 <tr>
                     <td> {{=row.owner}} </td>
                     <td></td>
-                    {{if auth.has_permission("admin", "patient", request.vars["id"], auth.user.id) :}}
+                    {{if admin :}}
                         <td> <input type="checkbox" onclick="db.call('patient/change_permission', {
                                                                       'patient_id' : {{=request.vars["id"]}} ,
                                                                       'group_id' : {{=row.id}} ,
@@ -49,7 +49,6 @@
         </table>
         <table class="db_table" id="db_fixed_header"></table>    
     </div>
-    <span class="button" onclick="db.call('patient/index')"> back to list </span>
 
     {{if not auth.has_permission("admin", "patient", request.vars["id"], auth.user.id) :}}
         <div>you need admin access on this patient if you want to change permission </div>
