@@ -65,7 +65,6 @@ class Browser < MiniTest::Test
 
   def test_00_default_point_name
     assert ($b.div(:id => 'info_point').text.include? 'T8045-BC081-Diag'), 'Incorrect point name in info box'
-    assert ($b.element(:id => 'time0').text.include? 'T8045-BC081-Diag'), 'Incorrect point name on plot'
   end
 
   def test_00_germline
@@ -153,17 +152,6 @@ class Browser < MiniTest::Test
             assert ( $b.element(:id => "polyline0", :class => "graph_focus" ).exists?), ">> fail to focus correct graphLine after hovering a clone in the scatterplot"
         rescue
             assert (false), "missing element to run test\n"
-      end
-    end
-
-    def test_07_focus_in_graph
-      begin
-        $b.element(:id => "circle0" ).wait_until_present
-        $b.element(:id => "polyline0" ).hover
-        assert ( $b.element(:id => "circle0", :class => "circle_focus" ).exists?), ">> fail to focus correct plot after hovering a clone in the graph"
-        assert ( $b.element(:id => "polyline0", :class => "graph_focus" ).exists?), ">> fail to focus correct graphLine after hovering a clone in the graph"
-      rescue
-        assert (false), "missing element to run test\n"
       end
     end
 
