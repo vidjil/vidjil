@@ -7,6 +7,7 @@ require 'minitest/ci'
 if ENV['HEADLESS']
   require 'headless'
 end
+load 'vidjil_browser.rb'
 
 include Test::Unit::Assertions
 MiniTest.autorun
@@ -36,7 +37,7 @@ class Browser < MiniTest::Test
         data_path = folder_path + '/../../doc/analysis-example1.vidjil'
         analysis_path = folder_path + '/test.analysis'
 
-        $b = Watir::Browser.new :firefox
+        $b = VidjilBrowser.new :firefox
         #$b = Watir::Browser.new :chrome
         $b.goto index_path
 
@@ -72,10 +73,10 @@ class Browser < MiniTest::Test
   end
 
   def test_00_legend_scatterplot
-    assert ($b.element(:id => 'visu_axis_x_container').element(:class => 'sp_legend', :index => 0).text == 'TRGV5'), "Bad legend for scatterplot"
-    assert ($b.element(:id => 'visu_axis_x_container').element(:class => 'sp_legend', :index => 1).text == '?'), "Bad legend for scatterplot"
-    assert ($b.element(:id => 'visu_axis_y_container').element(:class => 'sp_legend', :index => 0).text == 'TRGJ1'), "Bad legend for scatterplot"
-    assert ($b.element(:id => 'visu_axis_y_container').element(:class => 'sp_legend', :index => 1).text == '?'), "Bad legend for scatterplot"
+    assert ($b.scatterplot_x_legend(0).text == 'TRGV5'), "Bad legend for scatterplot"
+    assert ($b.scatterplot_x_legend(1).text == '?'), "Bad legend for scatterplot"
+    assert ($b.scatterplot_y_legend(0).text == 'TRGJ1'), "Bad legend for scatterplot"
+    assert ($b.scatterplot_y_legend(1).text == '?'), "Bad legend for scatterplot"
   end
 
   def test_00_info_point
@@ -90,12 +91,10 @@ class Browser < MiniTest::Test
  
     def test_01_init
         begin
-            list = $b.div(:id => 'list_clones')
-            
-            assert ( list.li(:id => '0' ).exists?), ">>fail init : clone 0 missing in list"
-            assert ( $b.element(:id => "circle0" ).exists?), ">>fail init : clone 0 missing in scatterplot"
-            assert ( $b.element(:id => "polyline0" ).exists?), ">>fail init : clone 0 missing in graph"
-            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '72.47%' ) , ">>fail init : wrong clone size "
+            assert ( $b.clone_in_list('0').exists?), ">>fail init : clone 0 missing in list"
+            assert ( $b.clone_in_scatterplot('0').exists?), ">>fail init : clone 0 missing in scatterplot"
+            assert ( $b.clone_in_graph('0').exists?), ">>fail init : clone 0 missing in graph"
+            assert ( $b.clone_info('0')[:size].text == '72.47%' ) , ">>fail init : wrong clone size "
         rescue
             assert (false), "missing element to run test_01_init \n" 
         end
@@ -110,41 +109,41 @@ class Browser < MiniTest::Test
     end
 
     def test_03_rename_clone_by_clicking
-      clone_name = $b.div(:id => 'list_clones').li(:id => '0').div(:class => 'nameBox')
+      clone_name = $b.clone_info('0')[:name]
       assert (clone_name.text == 'clone-001'), " >> clone name is no corect"
       clone_name.double_click
 
-      clone_name.text_field(:id => 'new_name').set 'toto'
-      clone_name.a(:id => 'btnSave').click
+      $b.clone_name_editor.set 'toto'
+      $b.clone_name_saver.click
       assert (clone_name.text == 'toto'), " >> clone name has not changed"
     end
 
     def test_04_rename_clone_by_enter
-      clone_name = $b.div(:id => 'list_clones').li(:id => '0').div(:class => 'nameBox')
+      clone_name = $b.clone_info('0')[:name]
       clone_name.double_click
 
-      clone_name.text_field(:id => 'new_name').set 'other test'
+      $b.clone_name_editor.set 'other test'
       $b.send_keys :return
       assert (clone_name.text == 'other test'), " >> clone name has not changed"
+
+      #unselect
+      $b.unselect
     end
 
     def check_when_list_or_scatterplot_focused
-      assert ( $b.element(:id => "circle0", :class => "circle_focus" ).exists?), ">> fail to focus correct plot after hovering a clone in the list"
-      assert ( $b.element(:id => "polyline0", :class => "graph_focus" ).exists?), ">> fail to focus correct graphLine after hovering a clone in the list"
+      assert ( $b.clone_in_scatterplot('0', :class => 'circle_focus').exists?), ">> fail to focus correct plot after hovering a clone in the list"
+      assert ( $b.clone_in_graph('0', :class => "graph_focus").exists?), ">> fail to focus correct graphLine after hovering a clone in the list"
 
-      clone_name = $b.div(:id => 'list_clones').li(:id => '0').div(:class => 'nameBox')
-      bot_container = $b.div(:id => 'bot-container')
-      assert ( bot_container.div(:class => 'focus').text == clone_name.text), ">> Clone name is not correct in focus div"
+      clone_name = $b.clone_info('0')[:name]
+      assert ( $b.infoline.text == clone_name.text), ">> Clone name is not correct in focus div"
     end
-
+ 
     def test_05_focus_in_list
-        begin    
-            #unselect
-            $b.element(:id => "visu_back" ).click
+      begin
+            $b.unselect
             #test hover a clone in the list
-            list = $b.div(:id => 'list_clones')
-            $b.element(:id => "circle0" ).wait_until_present
-            list.li(:id => '0' ).hover
+            $b.clone_in_scatterplot('0').wait_until_present
+            $b.clone_in_list('0').hover
 
             check_when_list_or_scatterplot_focused
         rescue
@@ -154,8 +153,9 @@ class Browser < MiniTest::Test
 
     def test_05_focus_in_scatterplot
       begin
-            $b.element(:id => "circle0" ).wait_until_present
-            $b.element(:id => "circle0" ).hover
+            $b.unselect
+            $b.clone_in_scatterplot('0').wait_until_present
+            $b.clone_in_scatterplot('0').hover
 
             check_when_list_or_scatterplot_focused
         rescue
@@ -164,18 +164,15 @@ class Browser < MiniTest::Test
     end
 
     def check_when_list_or_scatterplot_clicked
-      list = $b.div(:id => 'list_clones')
+      clone_name = $b.clone_info('0')[:name]
+      assert ( $b.infoline.text == clone_name.text), ">> Clone name is not correct in focus div"
 
-      clone_name = $b.div(:id => 'list_clones').li(:id => '0').div(:class => 'nameBox')
-      bot_container = $b.div(:id => 'bot-container')
-      assert ( bot_container.div(:class => 'focus').text == clone_name.text), ">> Clone name is not correct in focus div"
+      assert ( $b.clone_in_list('0').class_name == "list list_select" )
+      assert ( $b.clone_in_scatterplot('0', :class => "circle_select").exists?)
+      assert ( $b.clone_in_graph('0', :class=> "graph_select").exists?)
+      assert ( $b.clone_in_segmenter('0').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
 
-      assert ( list.li(:id => '0' ).class_name == "list list_select" )
-      assert ( $b.element(:id => "circle0", :class => "circle_select" ).exists?)
-      assert ( $b.element(:id => "polyline0", :class => "graph_select" ).exists?)
-      assert ( $b.element(:id => "seq0" ).exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
-
-      stats = bot_container.div(:class => 'stats')
+      stats = $b.statsline
       assert (stats.text.include? '1 clone'), ">> Incorrect stats, should have one clone"
       assert (stats.text.include? '243241 reads'), ">> Incorrect stats, should have 243241 reads"
       assert (stats.text.include? '72.47%'), ">> Incorrect stats, should be at 72.47%"
@@ -183,55 +180,44 @@ class Browser < MiniTest::Test
 
     def test_08_click_in_list
             #test select a clone in the list
-            list = $b.div(:id => 'list_clones')
-            
-            $b.element(:id => "circle0").wait_until_present
-            list.li(:id => '0' ).div(:class => 'nameBox').click
+            $b.clone_in_scatterplot('0').wait_until_present
+            $b.clone_info('0')[:name].click()
 
             check_when_list_or_scatterplot_clicked
 
             #unselect
-            $b.element(:id => "visu_back" ).click
-            assert ( list.li(:id => '0' ).class_name == "list" )
+            $b.unselect
+            assert ( $b.clone_in_list('0').class_name == "list" )
     end
 
     def test_08_click_in_scatterplot
-            list = $b.div(:id => 'list_clones')
-            $b.element(:id => "circle0").wait_until_present
-            $b.element(:id => "circle0" ).click
+            $b.clone_in_scatterplot('0').wait_until_present
+            $b.clone_in_scatterplot('0').click
 
             check_when_list_or_scatterplot_clicked
 
             #unselect
-            $b.element(:id => "visu_back" ).click
-            assert ( list.li(:id => '0' ).class_name == "list" )
+            $b.unselect
+            assert ( $b.clone_in_list('0').class_name == "list" )
     end
 
     def test_09_normalize
-        begin
-            list = $b.div(:id => 'list_clones')
-            elem = $b.div(:id => 'list_clones').li(:id => '0')
-            tagSelector = $b.div(:id => 'tagSelector')
+            $b.clone_info('0')[:star].click
+            $b.tag_selector_edit_normalisation.wait_until_present
+            $b.tag_selector_edit_normalisation.set('0.01')
+            $b.tag_selector_normalisation_validator.click 
             
-            elem.div(:class => 'starBox').click
-            $b.element(:id => 'normalized_size').wait_until_present
-            $b.text_field(:id => 'normalized_size').set('0.01')
-            tagSelector.button(:text => 'ok').click 
+            assert ( $b.clone_info('0')[:size].text == '1.000%' ) , ">> fail normalize on : wrong clone size "
             
-            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '1.000%' ) , ">> fail normalize on : wrong clone size "
-            
-            $b.div(:id => 'settings_menu').click 
+            $b.menu_settings.click 
             $b.radio(:id => 'reset_norm').click
-            assert ( list.li(:id => '0' ).span(:class => 'sizeBox').text == '72.47%' ) , ">> fail normalize off : wrong clone size "
-        rescue
-            assert (false), "missing element to run test_05_normalize \n"
-        end
+            assert ( $b.clone_info('0')[:size].text == '72.47%' ) , ">> fail normalize off : wrong clone size "
     end
 
     def test_10_imgt
         begin
-            $b.element(:id => "circle0").wait_until_present
-            $b.element(:id => "circle0" ).click
+            $b.clone_in_scatterplot('0').wait_until_present
+            $b.clone_in_scatterplot('0').click
             
             $b.span(:id => "toIMGT" ).click
             
@@ -252,8 +238,8 @@ class Browser < MiniTest::Test
     
     def test_11_igBlast
         begin
-            $b.element(:id => "circle0").wait_until_present
-            $b.element(:id => "circle0" ).click
+            $b.clone_in_scatterplot('0').wait_until_present
+            $b.clone_in_scatterplot('0').click
             
             $b.span(:id => "toIgBlast" ).click
             
@@ -274,15 +260,11 @@ class Browser < MiniTest::Test
 
         def test_12_tag
         begin
-            elem = $b.div(:id => 'list_clones').li(:id => '0')
-            tagSelector = $b.div(:id => 'tagSelector')
-            
-            elem.div(:class => 'starBox').click
-            tagSelector.span(:class => 'tagName0').click
-            $b.element(:id => "visu_back" ).click
+            $b.clone_info('0')[:star].click
+            $b.tag_item('0')[:name].click
+            $b.unselect
 
-            assert (elem.div(:class => 'nameBox').style('color') ==  'rgba(220, 50, 47, 1)' ) , ">> fail tag : clone color hasn't changed"
-            
+            assert ($b.clone_info('0')[:name].style('color') ==  'rgba(220, 50, 47, 1)' ) , ">> fail tag : clone color hasn't changed"
         rescue
             assert (false), "missing element to run test_13_tag \n" 
         end
@@ -291,27 +273,28 @@ class Browser < MiniTest::Test
 
     def test_14_edit_tag
         begin
-            elem = $b.div(:id => 'list_clones').li(:id => '0')
-            tagSelector = $b.div(:id => 'tagSelector')
-            filterMenu = $b.div(:id => 'filter_menu')
+            tagSelector = $b.tag_selector
+            filterMenu = $b.menu_filter
             
-            elem.div(:class => 'starBox').click
-            tagSelector.span(:class => 'edit_button').click
-            tagSelector.text_field(:id => 'new_tag_name').set 'test_tag'
-            tagSelector.a(:id => 'btnSaveTag').click 
+            $b.clone_info('0')[:star].click
+            edit = $b.tag_item('0')[:edit]
+            edit.wait_until_present
+            edit.click
+            $b.tag_selector_edit_name.set 'test_tag'
+            $b.tag_selector_name_validator.click
 
-            tagSelector.span(:class => 'edit_button', :index => 2).click
-            tagSelector.text_field(:id => 'new_tag_name').set 'other_test'
+            $b.tag_item('2')[:edit].click
+            $b.tag_selector_edit_name.set 'other_test'
             $b.send_keys :return
 
-            tagSelector.span(:class => 'closeButton').click
+            $b.tag_selector_close.click
             tagSelector.wait_while_present
             
             filterMenu.click
             assert ( filterMenu.text.include? 'test_tag') , "fail edit tag with mouse : tag name in display menu hasn't changed"
             assert ( filterMenu.text.include? 'other_test') , "fail edit tag with keyboard : tag name in display menu hasn't changed"
             
-            elem.div(:class => 'starBox').click
+            $b.clone_in_list('0')[:star].click
             assert ( tagSelector.text.include? 'test_tag') , "fail edit tag with mouse : tag name in tag selector hasn't changed"
             assert ( tagSelector.text.include? 'other_test') , "fail edit tag with keyboard : tag name in tag selector hasn't changed"
             
