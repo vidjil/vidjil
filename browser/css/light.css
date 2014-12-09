@@ -6,7 +6,7 @@ html {
   padding: 0px;
   margin: 0px;
   min-width: 1160px;
-  min-height: 650px;
+  min-height: 250px;
 }
 body {
   font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
@@ -49,6 +49,8 @@ ul {
   height: 28px;
   width: 100%;
   background: #ffffff;
+  position: fixed;
+  z-index: 1;
 }
 #mid-container {
   position: fixed;
