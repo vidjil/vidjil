@@ -128,6 +128,15 @@ class Browser < MiniTest::Test
       assert (clone_name.text == 'other test'), " >> clone name has not changed"
     end
 
+    def check_when_list_or_scatterplot_focused
+      assert ( $b.element(:id => "circle0", :class => "circle_focus" ).exists?), ">> fail to focus correct plot after hovering a clone in the list"
+      assert ( $b.element(:id => "polyline0", :class => "graph_focus" ).exists?), ">> fail to focus correct graphLine after hovering a clone in the list"
+
+      clone_name = $b.div(:id => 'list_clones').li(:id => '0').div(:class => 'nameBox')
+      bot_container = $b.div(:id => 'bot-container')
+      assert ( bot_container.div(:class => 'focus').text == clone_name.text), ">> Clone name is not correct in focus div"
+    end
+
     def test_05_focus_in_list
         begin    
             #unselect
@@ -137,22 +146,39 @@ class Browser < MiniTest::Test
             $b.element(:id => "circle0" ).wait_until_present
             list.li(:id => '0' ).hover
 
-            assert ( $b.element(:id => "circle0", :class => "circle_focus" ).exists?), ">> fail to focus correct plot after hovering a clone in the list"
-            assert ( $b.element(:id => "polyline0", :class => "graph_focus" ).exists?), ">> fail to focus correct graphLine after hovering a clone in the list"
+            check_when_list_or_scatterplot_focused
         rescue
           assert (false), "missing element to run test"
         end
     end
 
-    def test_06_focus_in_scatterplot
+    def test_05_focus_in_scatterplot
       begin
             $b.element(:id => "circle0" ).wait_until_present
             $b.element(:id => "circle0" ).hover
-            assert ( $b.element(:id => "circle0", :class => "circle_focus" ).exists?), ">> fail to focus correct plot after hovering a clone in the scatterplot"
-            assert ( $b.element(:id => "polyline0", :class => "graph_focus" ).exists?), ">> fail to focus correct graphLine after hovering a clone in the scatterplot"
+
+            check_when_list_or_scatterplot_focused
         rescue
             assert (false), "missing element to run test\n"
       end
+    end
+
+    def check_when_list_or_scatterplot_clicked
+      list = $b.div(:id => 'list_clones')
+
+      clone_name = $b.div(:id => 'list_clones').li(:id => '0').div(:class => 'nameBox')
+      bot_container = $b.div(:id => 'bot-container')
+      assert ( bot_container.div(:class => 'focus').text == clone_name.text), ">> Clone name is not correct in focus div"
+
+      assert ( list.li(:id => '0' ).class_name == "list list_select" )
+      assert ( $b.element(:id => "circle0", :class => "circle_select" ).exists?)
+      assert ( $b.element(:id => "polyline0", :class => "graph_select" ).exists?)
+      assert ( $b.element(:id => "seq0" ).exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
+
+      stats = bot_container.div(:class => 'stats')
+      assert (stats.text.include? '1 clone'), ">> Incorrect stats, should have one clone"
+      assert (stats.text.include? '243241 reads'), ">> Incorrect stats, should have 243241 reads"
+      assert (stats.text.include? '72.47%'), ">> Incorrect stats, should be at 72.47%"
     end
 
     def test_08_click_in_list
@@ -161,10 +187,8 @@ class Browser < MiniTest::Test
             
             $b.element(:id => "circle0").wait_until_present
             list.li(:id => '0' ).div(:class => 'nameBox').click
-            assert ( list.li(:id => '0' ).class_name == "list list_select" )
-            assert ( $b.element(:id => "circle0", :class => "circle_select" ).exists?)
-            assert ( $b.element(:id => "polyline0", :class => "graph_select" ).exists?)
-            assert ( $b.element(:id => "seq0" ).exists? ), ">> fail to add clone to segmenter by clicking on the list"
+
+            check_when_list_or_scatterplot_clicked
 
             #unselect
             $b.element(:id => "visu_back" ).click
@@ -175,10 +199,8 @@ class Browser < MiniTest::Test
             list = $b.div(:id => 'list_clones')
             $b.element(:id => "circle0").wait_until_present
             $b.element(:id => "circle0" ).click
-            assert ( list.li(:id => '0' ).class_name == "list list_select" )
-            assert ( $b.element(:id => "circle0", :class => "circle_select" ).exists?)
-            assert ( $b.element(:id => "polyline0", :class => "graph_select" ).exists?)
-            assert ( $b.element(:id => "seq0" ).exists? ), ">> fail to add clone to segmenter by clicking on the scatterplot"
+
+            check_when_list_or_scatterplot_clicked
 
             #unselect
             $b.element(:id => "visu_back" ).click
