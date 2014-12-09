@@ -79,7 +79,7 @@ Model.prototype = {
             "method" : "quantitative",
             "A" : [],
             "B" : 0,
-            "id" : 0
+            "id" : -1
         };
 
         /*Variables pour DBSCAN*/
