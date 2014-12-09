@@ -800,7 +800,7 @@ ScatterPlot.prototype = {
           this.systemGrid = {}
       }
       
-      if (this.splitY != "bar" && this.use_system_grid && this.m.system == "multi" ){
+      if (this.splitY != "bar" && this.use_system_grid && this.m.system_available.length > 1 ){
           if (this.m.system_selected.length >1){
             this.gridSizeW = 0.8*this.resizeW;
             this.gridSizeH = 1*this.resizeH;
