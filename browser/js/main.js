@@ -78,14 +78,16 @@ var sp = new ScatterPlot("visu",m, graph, stats);
 var segment = new Segment("bot-container",m, CGI_ADDRESS);
 var builder = new Builder(m);
 var pdf = new PDF(m, "visu2_svg")
-if (config.use_database) var db = new Database("plop!", DB_ADDRESS);
+if (typeof config != 'undefined' && config.use_database) var db = new Database("plop!", DB_ADDRESS);
 
 /* Stat object
  */
 var stats = new Stats(sp);
 var shortcut = new Shortcut()
 
-if (location.search != ''){
+
+//onStart
+if (typeof config != 'undefined' && location.search != ''){
     var tmp = location.search.substring(1).split('&')
     var patient = -1
     var config = -1
@@ -105,13 +107,14 @@ if (location.search != ''){
             setTimeout(function () { db.load_data( {"patient" : patient , "config" : config } , "")  }, 1000);
         }
     }
-}else if (config.use_database){
+}else if (typeof config != 'undefined' && config.use_database){
     //wait 1sec to check ssl
     setTimeout(function () { db.call("patient/index.html")}, 1000);
 }else{
     myConsole.popupMsg(myConsole.msg.welcome)
 }
 
+//onClose
 window.onbeforeunload = function(e){
     if ( db.is_uploading() ){
         e = e || event;
@@ -126,5 +129,7 @@ window.onbeforeunload = function(e){
         return 'Some changes have not been saved';
     }
 }
+
+
 
 initTag();//TODO a enlever
