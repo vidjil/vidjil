@@ -150,7 +150,7 @@
                 </div></div>
             </div>
 
-            <div class="menu" onmouseover="showSelector('clusterSelector');" > cluster
+            <div class="menu" id="cluster_menu" onmouseover="showSelector('clusterSelector');" > cluster
                 <div id="clusterSelector" class="selector"><div>
                     <a class="buttonSelector" onclick="m.resetClusters();">reset all clusters</a>
                     <a class="buttonSelector" onclick="m.restoreClusters();">user</a>
@@ -162,7 +162,7 @@
                 </div></div>
             </div>
 
-            <div class="menu" onmouseover="showSelector('groupSelector');"> analysis
+            <div class="menu" id="analysis_menu" onmouseover="showSelector('groupSelector');"> analysis
                 <div id="groupSelector" class="selector">
                     <div>
                     <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'gene_j');">V / J (genes)</a>
@@ -180,7 +180,7 @@
                 </div>
             </div>
 
-            <div class="menu" onmouseover="showSelector('colorSelector');" > color 
+            <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color 
                 <div id="colorSelector" class="selector"><div>
                     <a class="buttonSelector" onclick="m.changeColorMethod('Tag');">by tag</a>
                     <a class="buttonSelector" onclick="m.changeColorMethod('V');">by V</a>
