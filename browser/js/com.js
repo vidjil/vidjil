@@ -79,7 +79,10 @@ function Com(flash_id, log_id, popup_id, data_id) {
 	    + "</br> <a href='www.google.com/chrome/'> Chrome </a> " 
 	    + "</br> <a href='http://www.chromium.org/getting-involved/download-chromium'> Chromium </a> "
 	    + "</br></br> <div class='center' > <button onclick='popupMsg(msg.welcome)'>I want to try anyway</button></div>",
-	"database_timeout": "Cannot connect database, please retry in a few seconds"
+	    
+        "database_timeout": "Cannot connect database, please retry in a few seconds",
+    
+        "save_analysis": "change will be lost, are you sure you want to load another file ?"
     }
     
     

@@ -392,6 +392,16 @@ Database.prototype = {
                     list.appendChild(a);
         }
         
+        myConsole.closePopupMsg()
+        if (m.analysisHasChanged){
+            m.analysisHasChanged = false;
+            myConsole.popupMsg( myConsole.msg.save_analysis +
+                "<div class=\'center\'> <button onclick=\'db.load_data("+JSON.stringify(args)+",\""+filename+"\")\'>Continue</button> "
+                +" <button onclick='myConsole.closePopupMsg()'>Cancel</button> </div>"
+            )
+            return
+        }
+        
         var url = document.documentURI.split('?')[0]
         var new_location = url+"?patient="+args.patient+"&config="+args.config
         window.history.pushState('plop', 'plop', new_location);

@@ -642,7 +642,7 @@ span .substitution {
 }
 /*	//////////////////////////////////////////////////////////////	*/
 #popup-container {
-  z-index: 5;
+  z-index: 20;
   border: solid;
   position: fixed;
   top: 250px;

@@ -18,6 +18,17 @@
 */
 
 function loadData() {
+    
+    myConsole.closePopupMsg()
+    if (m.analysisHasChanged){
+        m.analysisHasChanged = false;
+        myConsole.popupMsg( myConsole.msg.save_analysis +
+            "<div class=\'center\'> <button onclick=\'loadData()\'>Continue</button> "
+            +" <button onclick='myConsole.closePopupMsg()'>Cancel</button> </div>"
+        )
+        return
+    }
+    
     document.getElementById("file_menu")
         .style.display = "block";
     document.getElementById("analysis_menu")
