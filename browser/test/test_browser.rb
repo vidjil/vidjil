@@ -33,9 +33,10 @@ class Browser < MiniTest::Test
 
   def set_browser
     folder_path = Dir.pwd
-    index_path = 'file://' + folder_path + '/../index.html'
-    data_path = folder_path + '/../../doc/analysis-example1.vidjil'
-    analysis_path = folder_path + '/test.analysis'
+    folder_path.sub! '/browser/test', ''
+    index_path = 'file://' + folder_path + '/browser/index.html'
+    data_path = folder_path + '/doc/analysis-example1.vidjil'
+    analysis_path = folder_path + '/browser/test/test.analysis'
 
     $b = VidjilBrowser.new :firefox
     #$b = Watir::Browser.new :chrome
