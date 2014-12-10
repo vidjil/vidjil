@@ -308,6 +308,12 @@ Graph.prototype = {
 
             d.type = "axis_v";
             d.text = time_name;
+
+            // Warns when there are very few segmented reads 
+            var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100;
+            if (percent < 10)
+                d.text += " !" ;
+
             d.orientation = "vert";
             if (this.drag_on && i == this.dragged_time_point) {
                 var coordinates = [0, 0];
