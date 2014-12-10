@@ -291,6 +291,10 @@ Clone.prototype = {
         }
     }, 
     
+    getTagName: function () {
+        return tagName[this.getTag()]
+    }, 
+    
     
     /* compute clone color
      *
@@ -435,7 +439,7 @@ Clone.prototype = {
     },
     
     toCSV: function () {
-        var csv = this.getName() + "," + this.id + "," + this.getSystem() + "," 
+        var csv = this.getName() + "," + this.id + "," + this.getSystem() + "," + this.getTagName() + "," 
                 + this.getV() + "," + this.getD() + "," + this.getJ() + "," + this.getSequence()
         
         for (var i=0; i<this.m.samples.order.length; i++) csv += "," + this.getReads(this.m.samples.order[i])

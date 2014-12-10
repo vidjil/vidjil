@@ -1556,7 +1556,7 @@ Model.prototype = {
     //convert clones to csv with the current clustering/filtering
     toCSV: function () {
         //header
-        var csv = "name,id,system,v,d,j,sequence"
+        var csv = "name,id,system,tag,v,d,j,sequence"
         for (var i=0; i<this.samples.order.length; i++) csv += ",reads_"+i
         for (var i=0; i<this.samples.order.length; i++) csv += ",size_"+i
         csv += "\n"
