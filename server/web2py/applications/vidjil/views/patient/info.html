@@ -125,7 +125,10 @@
         see the result:
         {{for row in db(db.fused_file.patient_id == request.vars["id"]).select() :}}
             {{filename = db.patient[request.vars["id"]].first_name + " " + db.patient[request.vars["id"]].last_name + " (" + db.config[row.config_id].name + ")"}}
-            {{if row.fused_file is not None :}}<span class="button2" onclick="db.load_data( { 'patient' : '{{=request.vars["id"]}}' , 'config' : {{=row.config_id}} }, '{{=filename}}' )" >{{pass}}
+            {{if row.fused_file is not None :}}
+                <span class="button2" onclick="if( event.which == 2 ) { window.open('index.html?patient={{=request.vars["id"]}}&config={{=row.config_id}}') }
+                                               else{db.load_data( { 'patient' : '{{=request.vars["id"]}}' , 'config' : {{=row.config_id}} }, '{{=filename}}' ) }" >
+            {{pass}}
                 {{=db.config[row.config_id].name}} </span>
         {{pass}}
     </div>
