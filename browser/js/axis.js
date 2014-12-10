@@ -128,7 +128,7 @@ Axis.prototype = {
         for (var i = 0; i < 10; i++) {
             var pos = this.sizeScale(h);
             var text = this.m.formatSize(h, false)
-            if (pos > 0 && pos < 1)
+            if (pos >= 0 && pos <= 1)
             this.labels.push(this.label("line", pos, text));
             h = h / 10;
         }
@@ -150,7 +150,7 @@ Axis.prototype = {
         }
         
         this.sizeScale = d3.scale.linear()
-            .domain([0, n_max])
+            .domain([0, n_max+1])
             .range([0, 1]);
      
         //clone position
@@ -170,12 +170,12 @@ Axis.prototype = {
     /*
      * TODO linear/log percent/value parameter
      * */
-    customLabels: function(min, max, reverse, percent, linear){
+    custom: function(min, max, reverse, percent, linear){
         this.labels = [];
         
         var h = (max-min)/5
         var delta = (max-min)
-        for (var i = 0; i < 5; i++) {
+        for (var i = 0; i <= 5; i++) {
             var pos = 0;
             if (reverse){
                 pos = 1 - (h*i)*(1/delta);
@@ -183,7 +183,7 @@ Axis.prototype = {
                 pos = (h*i)*(1/delta);
             }
             
-            var text = Math.round(min+(h*i) * 100) + " %"
+            var text = Math.round(min+(h*i))
             this.labels.push(this.label("line", pos, text));
         }
     },

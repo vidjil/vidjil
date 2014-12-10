@@ -39,9 +39,9 @@ json_data = {
         "top" : 1,
         "germline" : "TRG",
         "seg" : {
-            "3" : "TRGV4*01",
-            "5" : "TRGJ2*03",
-            "3start" : 15,
+            "5" : "TRGV4*01",
+            "3" : "TRGJ2*03",
+            "3start" : 6,
             "5end" : 5
         }
     },
@@ -53,8 +53,8 @@ json_data = {
         "top" : 2,
         "germline" : "TRG",
         "seg" : {
-            "3" : "TRGV5*01",
-            "5" : "TRGJ2*03",
+            "5" : "TRGV5*01",
+            "3" : "TRGJ2*04",
             "3start" : 15,
             "5end" : 5
         }
@@ -67,9 +67,9 @@ json_data = {
         "top" : 3,
         "germline" : "IGH",
         "seg" : {
-            "3" : "IGHV4*01",
+            "5" : "IGHV4*01",
             "4" : "IGHD2*03",
-            "5" : "IGHJ8*01",
+            "3" : "IGHJ8*01",
             "3start" : 15,
             "5end" : 5
         }
