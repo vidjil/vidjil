@@ -48,4 +48,4 @@ def anon(patient_id, user_id):
     if auth.has_permission("anon", "patient", patient_id, user_id):
         return last_name + " " + first_name
     else:
-        return last_name[:3] + " " + first_name[:3]
+        return last_name[:3]
