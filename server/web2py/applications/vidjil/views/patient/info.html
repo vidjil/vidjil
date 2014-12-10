@@ -5,7 +5,7 @@
 
 <div>
 
-    <h3>{{=patient.last_name + " " + patient.first_name }} ({{=patient.birth}})</h3>
+    <h3>{{=vidjil_utils.anon(request.vars['id'], auth.user.id)}}</h3>
 
     <div class="db_block">
       
