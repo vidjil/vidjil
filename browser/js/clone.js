@@ -434,6 +434,16 @@ Clone.prototype = {
         return html
     },
     
+    toCSV: function () {
+        var csv = this.getName() + "," + this.id + "," + this.getSystem() + "," 
+                + this.getV() + "," + this.getD() + "," + this.getJ() + "," + this.getSequence()
+        
+        for (var i=0; i<this.m.samples.order.length; i++) csv += "," + this.getReads(this.m.samples.order[i])
+        for (var i=0; i<this.m.samples.order.length; i++) csv += "," + this.getSize(this.m.samples.order[i])
+        
+        return csv
+    },
+    
     enable: function (top) {
         if (this.top <= top && tagDisplay[this.tag] == 1 && this.id != "other") {
             this.active = true;

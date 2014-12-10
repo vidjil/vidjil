@@ -1553,7 +1553,35 @@ Model.prototype = {
         this.update();
     },
     
+    //convert clones to csv with the current clustering/filtering
+    toCSV: function () {
+        //header
+        var csv = "name,id,system,v,d,j,sequence"
+        for (var i=0; i<this.samples.order.length; i++) csv += ",reads_"+i
+        for (var i=0; i<this.samples.order.length; i++) csv += ",size_"+i
+        csv += "\n"
+        
+        //only non-empty active clones and "other"
+        for (var i=0; i<this.clusters.length; i++){
+            if ( (this.clusters[i].length != 0 && this.clone(i).isActive()) || this.clone(i).getName()=="other" ){
+                csv += this.clone(i).toCSV()
+                csv += "\n"
+            }
+        }
+        
+        return csv
+    },
     
+    exportCSV: function () {
+        var textToWrite = this.toCSV()
+        var textFileAsBlob = new Blob([textToWrite], {
+            type: 'text'
+        });
+
+        var filename = this.getPrintableAnalysisName().replace(/[ \/\\:]/,'_')
+
+        saveAs(textFileAsBlob, filename + ".csv");
+    },
     
     
     
