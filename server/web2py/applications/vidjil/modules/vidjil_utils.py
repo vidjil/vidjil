@@ -54,4 +54,8 @@ def anon(patient_id, user_id):
             ln = last_name
         name = ln[:3]
 
+    # Admins also see the patient id
+    if auth.has_membership("admin"):
+        name += ' (%s)' % patient_id
+
     return name
