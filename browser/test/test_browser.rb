@@ -39,7 +39,7 @@ class Browser < MiniTest::Test
     analysis_path = folder_path + '/browser/test/test.analysis'
 
     $b = VidjilBrowser.new :firefox
-    #$b = Watir::Browser.new :chrome
+    #$b = VidjilBrowser.new :chrome
     $b.goto index_path
 
     # close the welcoming popup
