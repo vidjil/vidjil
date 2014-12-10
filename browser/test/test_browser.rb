@@ -249,7 +249,7 @@ class Browser < MiniTest::Test
       
       assert ( $b.window(:title => "IgBLAST Search Results").exists? ) , ">> fail opening igblast "
       $b.window(:title => "IgBLAST Search Results").use do
-        assert ($b.text.include? "Query= clone-001"), ">> fail igblast analysis"
+        assert ($b.text.include? "Length=119"), ">> igblast: was not launched on the correct sequence"
         assert ($b.text.include? "TRGV5*01"), ">> igblast: expected V not found"
         assert ($b.text.include? "TRGJ1*02,TRGJ1*01,TRGJ2*01"), ">> igblast: expected Js not found"
       end
