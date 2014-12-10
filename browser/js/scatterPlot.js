@@ -17,10 +17,9 @@
 * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 */
 
-function ScatterPlot(id, model, graph) {
+function ScatterPlot(id, model) {
   this.id = id; //ID of the scatterPlot div
   this.m = model; //Model object
-  this.graph = graph; //Graph object
   
   //size ( computed value -> resize() function)
   this.resizeCoef = 1; //Multiplifying factor, application to nodes radius
@@ -408,7 +407,7 @@ ScatterPlot.prototype = {
            //Reloading of physic engine
            this.force.start();
            //Reloading of graph distribution axis
-           this.graph.update();
+           this.m.update();
            //Edit Distance slider disabled
            this.activeSliderDistanceMax(false);
      }
@@ -942,7 +941,7 @@ ScatterPlot.prototype = {
         //Calcul d'une frame (image / seconde)
         this.time1 = Date.now();
         if (this.fpsqueue.length === 10) {
-            document.getElementById("fps")
+            $("#fps")
                 .innerHTML = d3.mean(this.fpsqueue)
                 .toFixed(3);
             this.fpsqueue = [];

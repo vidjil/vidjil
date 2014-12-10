@@ -1,10 +1,11 @@
 function Builder(model) {
-    this.m = model; //Model utilisé
-    this.m.view.push(this); //synchronisation au Model
+    if (typeof model != "undefined"){
+        this.m = model; //Model utilisé
+        this.m.view.push(this); //synchronisation au Model
+    }
     this.colorMethod = "";
     this.width_left_container = $("#left-container")
         .css("width")
-
 
     this.drag_separator = false
 }
