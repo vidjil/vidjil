@@ -42,9 +42,12 @@ class Browser < MiniTest::Test
     #$b = VidjilBrowser.new :chrome
     $b.goto index_path
 
+    # check the welcoming popup
+    assert ($b.div(:id => 'popup-msg').present?), "Popup message is not present at the opening of Vidjil"
+    
     # close the welcoming popup
     $b.div(:id => 'popup-msg').button(:text => 'ok').click
-    assert (not $b.div(:id => 'popup-msg').present?), "Popup message still present"
+    assert (not $b.div(:id => 'popup-msg').present?), "Popup message still present after trying to close it"
 
     $b.div(:id => 'demo_file_menu').click 
     $b.div(:id => 'demo_file_menu').a(:id => 'import_data_anchor').click
