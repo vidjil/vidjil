@@ -1,8 +1,9 @@
 {{extend 'db_layout.html'}}
+{{import vidjil_utils}}
 
 <div>
     <h3>
-        patient acces permission
+        Access to patient {{=vidjil_utils.anon(request.vars["id"], auth.user.id)}}
     </h3>
 
     <div id="db_table_container">
