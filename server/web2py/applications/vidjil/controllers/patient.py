@@ -221,12 +221,6 @@ def add_form():
             auth.add_permission(user_group, 'read', db.patient, id)
             auth.add_permission(user_group, 'anon', db.patient, id)
             
-            #tmp: share rights with users of the same group
-            for g in auth.user_groups :
-                auth.add_permission(g, 'admin', db.patient, id)
-                auth.add_permission(g, 'read', db.patient, id)
-            
-
             patient_name = request.vars["first_name"] + ' ' + request.vars["last_name"]
 
             res = {"redirect": "patient/info",
