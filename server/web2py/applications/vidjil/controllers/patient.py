@@ -113,6 +113,8 @@ def index():
     count = db.sequence_file.id.count()
     isAdmin = auth.has_membership("admin")
     
+    
+    
     ##retrieve patient list 
     query = db(
         (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) 
@@ -154,14 +156,17 @@ def index():
             row.size += row4.size_file
     
     ##sort result
+    reverse = False
+    if request.vars["reverse"] == "true" :
+        reverse = True
     if request.vars["sort"] == "configs" :
-        query = query.sort(lambda row : row.confs)
+        query = query.sort(lambda row : row.confs, reverse=reverse)
     elif request.vars["sort"] == "groups" :
-        query = query.sort(lambda row : row.groups)
+        query = query.sort(lambda row : row.groups, reverse=reverse)
     elif request.vars["sort"] == "files" :
-        query = query.sort(lambda row : row[count])
+        query = query.sort(lambda row : row[count], reverse=reverse)
     elif "sort" in request.vars:
-        query = query.sort(lambda row : row.patient[request.vars["sort"]])
+        query = query.sort(lambda row : row.patient[request.vars["sort"]], reverse=reverse)
     
     ##filter
     if "filter" in request.vars and request.vars["filter"] != "":
@@ -173,7 +178,8 @@ def index():
         
     return dict(query = query,
                 count = count,
-                isAdmin = isAdmin)
+                isAdmin = isAdmin,
+                reverse = reverse)
 
 
 

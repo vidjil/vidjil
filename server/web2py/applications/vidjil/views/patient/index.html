@@ -16,12 +16,18 @@
 
 
         <thead>
-            <tr><td class="column_200" onclick="db.call('patient/index', {'sort' :'last_name', 'filter' : '{{=request.vars["filter"]}}' })"> name </td>
-                <td class="column_100" onclick="db.call('patient/index', {'sort' :'birth', 'filter' : '{{=request.vars["filter"]}}' })"> birth </td>
-                <td onclick="db.call('patient/index', {'sort' :'info', 'filter' : '{{=request.vars["filter"]}}' })"> info </td>
-                <td class="column_100" onclick="db.call('patient/index', {'sort' :'configs', 'filter' : '{{=request.vars["filter"]}}' })"> configs </td>
-{{if isAdmin:}} <td class="column_100" onclick="db.call('patient/index', {'sort' :'groups', 'filter' : '{{=request.vars["filter"]}}' })"> users </td> {{pass}}
-                <td class="column_100" onclick="db.call('patient/index', {'sort' :'files', 'filter' : '{{=request.vars["filter"]}}' })"> files </td>
+            <tr><td class="column_200" onclick="db.call('patient/index', {'sort' :'last_name', 'filter' : '{{=request.vars["filter"]}}'
+                  {{if not reverse and request.vars["sort"]=="last_name" :}} , 'reverse' : true {{pass}} })"> name </td>
+                <td class="column_100" onclick="db.call('patient/index', {'sort' :'birth', 'filter' : '{{=request.vars["filter"]}}'
+                  {{if not reverse and request.vars["sort"]=="birth" :}} , 'reverse' : true {{pass}} })"> birth </td>
+                <td onclick="db.call('patient/index', {'sort' :'info', 'filter' : '{{=request.vars["filter"]}}'
+                  {{if not reverse and request.vars["sort"]=="info" :}} , 'reverse' : true {{pass}} })"> info </td>
+                <td class="column_100" onclick="db.call('patient/index', {'sort' :'configs', 'filter' : '{{=request.vars["filter"]}}'
+                  {{if not reverse and request.vars["sort"]=="configs" :}} , 'reverse' : true {{pass}} })"> configs </td>
+{{if isAdmin:}} <td class="column_100" onclick="db.call('patient/index', {'sort' :'groups', 'filter' : '{{=request.vars["filter"]}}'
+                  {{if not reverse and request.vars["sort"]=="groups" :}} , 'reverse' : true {{pass}} })"> users </td> {{pass}}
+                <td class="column_100" onclick="db.call('patient/index', {'sort' :'files', 'filter' : '{{=request.vars["filter"]}}'
+                  {{if not reverse and request.vars["sort"]=="files" :}} , 'reverse' : true {{pass}} })"> files </td>
                 
                 
                 <td class="column5"> </td>

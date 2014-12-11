@@ -24,18 +24,21 @@ def index():
             pass
         
         ##sort result
+        reverse = False
+        if request.vars["reverse"] == "true" :
+            reverse = True
         if request.vars["sort"] == "name" :
-            query = query.sort(lambda row : row.patient.last_name)
+            query = query.sort(lambda row : row.patient.last_name, reverse=reverse)
         elif request.vars["sort"] == "run_date" :
-            query = query.sort(lambda row : row.results_file.run_date)
+            query = query.sort(lambda row : row.results_file.run_date, reverse=reverse)
         elif request.vars["sort"] == "config" :
-            query = query.sort(lambda row : row.config.name)
+            query = query.sort(lambda row : row.config.name, reverse=reverse)
         elif request.vars["sort"] == "patient" :
-            query = query.sort(lambda row : row.patient.last_name)
+            query = query.sort(lambda row : row.patient.last_name, reverse=reverse)
         elif request.vars["sort"] == "status" :
-            query = query.sort(lambda row : row.status)
+            query = query.sort(lambda row : row.status, reverse=reverse)
         elif "sort" in request.vars and request.vars["sort"] != "":
-            query = query.sort(lambda row : row.sequence_file[request.vars["sort"]])
+            query = query.sort(lambda row : row.sequence_file[request.vars["sort"]], reverse=reverse)
 
         ##filter
         if "filter" in request.vars and request.vars["filter"] != "":
@@ -45,7 +48,8 @@ def index():
         else :
             request.vars["filter"] = ""
         
-        return dict(query = query)
+        return dict(query = query,
+                    reverse=reverse)
 
 def run_all():
     if auth.has_membership("admin"):

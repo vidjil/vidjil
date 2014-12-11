@@ -16,13 +16,19 @@
 
         <thead>
             <tr>
-                <td class="column1" onclick="db.call('results_file/index', {'sort' :'filename', 'filter' : '{{=request.vars["filter"]}}' })">file_name</td>
-                <td class="column2" onclick="db.call('results_file/index', {'sort' :'config', 'filter' : '{{=request.vars["filter"]}}' })">config</td>
+                <td class="column1" onclick="db.call('results_file/index', {'sort' :'filename', 'filter' : '{{=request.vars["filter"]}}' 
+                    {{if not reverse and request.vars["sort"]=="filename" :}} , 'reverse' : true {{pass}} })">file_name</td>
+                <td class="column2" onclick="db.call('results_file/index', {'sort' :'config', 'filter' : '{{=request.vars["filter"]}}' 
+                    {{if not reverse and request.vars["sort"]=="config" :}} , 'reverse' : true {{pass}} })">config</td>
                 <td> </td>
-                <td class="column1" onclick="db.call('results_file/index', {'sort' :'patient', 'filter' : '{{=request.vars["filter"]}}' })">patient</td>
-                <td class="column2" onclick="db.call('results_file/index', {'sort' :'producer', 'filter' : '{{=request.vars["filter"]}}' })">producer</td>
-                <td class="column2" onclick="db.call('results_file/index', {'sort' :'run_date', 'filter' : '{{=request.vars["filter"]}}' })">last process</td>
-                <td class="column2" onclick="db.call('results_file/index', {'sort' :'status', 'filter' : '{{=request.vars["filter"]}}' })">status</td>
+                <td class="column1" onclick="db.call('results_file/index', {'sort' :'patient', 'filter' : '{{=request.vars["filter"]}}' 
+                    {{if not reverse and request.vars["sort"]=="patient" :}} , 'reverse' : true {{pass}} })">patient</td>
+                <td class="column2" onclick="db.call('results_file/index', {'sort' :'producer', 'filter' : '{{=request.vars["filter"]}}' 
+                    {{if not reverse and request.vars["sort"]=="producer" :}} , 'reverse' : true {{pass}} })">producer</td>
+                <td class="column2" onclick="db.call('results_file/index', {'sort' :'run_date', 'filter' : '{{=request.vars["filter"]}}' 
+                    {{if not reverse and request.vars["sort"]=="run_date" :}} , 'reverse' : true {{pass}} })">last process</td>
+                <td class="column2" onclick="db.call('results_file/index', {'sort' :'status', 'filter' : '{{=request.vars["filter"]}}' 
+                    {{if not reverse and request.vars["sort"]=="status" :}} , 'reverse' : true {{pass}} })">status</td>
                 <td class="column5"></td>
                 <td class="column4"></td>
             </tr>
