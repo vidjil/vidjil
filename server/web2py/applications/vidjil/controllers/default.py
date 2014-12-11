@@ -10,6 +10,7 @@
 #########################################################################
 
 import defs
+import vidjil_utils
 
 import gluon.contrib.simplejson, time, datetime
 if request.env.http_origin:
@@ -164,9 +165,6 @@ def get_analysis():
     
     if error == "" :
         
-        res["info_patient"] = db.patient[request.vars["patient"]].info
-        res["patient"] = db.patient[request.vars["patient"]].first_name + " " + db.patient[request.vars["patient"]].last_name + " (" + db.config[request.vars["config"]].name + ")"
-        
         ## récupération des infos se trouvant dans le fichier .analysis
         analysis_query = db(  (db.analysis_file.patient_id == request.vars["patient"])
                    & (db.analysis_file.config_id == request.vars["config"] )  )
@@ -185,7 +183,7 @@ def get_analysis():
             res["samples"]= analysis["samples"]
 
         res["info_patient"] = db.patient[request.vars["patient"]].info
-        res["patient"] = db.patient[request.vars["patient"]].first_name + " " + db.patient[request.vars["patient"]].last_name + " (" + db.config[request.vars["config"]].name + ")"
+        res["patient"] = vidjil_utils.anon(db.patient[request.vars["patient"]].id, auth.user_id) + " (" + db.config[request.vars["config"]].name + ")"
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     else :

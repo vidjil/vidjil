@@ -1,5 +1,6 @@
 # coding: utf8
 import gluon.contrib.simplejson, datetime
+import vidjil_utils
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -16,7 +17,7 @@ def info():
 
     if request.vars["config_id"] and request.vars["config_id"] != "-1" :
         config_id = long(request.vars["config_id"])
-        patient_name = patient.first_name + " " + patient.last_name
+        patient_name = vidjil_utils.anon(patient.id, auth.user_id)
         config_name = db.config[request.vars["config_id"]].name
 
         fused = db(
