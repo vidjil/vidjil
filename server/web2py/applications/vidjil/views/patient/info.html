@@ -126,10 +126,12 @@
         {{for row in db(db.fused_file.patient_id == request.vars["id"]).select() :}}
             {{filename = vidjil_utils.anon(request.vars["id"], auth.user_id) + " (" + db.config[row.config_id].name + ")"}}
             {{if row.fused_file is not None :}}
-                <span class="button2" onclick="if( event.which == 2 ) { window.open('index.html?patient={{=request.vars["id"]}}&config={{=row.config_id}}') }
-                                               else{db.load_data( { 'patient' : '{{=request.vars["id"]}}' , 'config' : {{=row.config_id}} }, '{{=filename}}' ) }" >
+                <a class="button2" href="index.html?patient={{=request.vars["id"]}}&config={{=row.config_id}}" type="text/html"
+                      onclick="event.preventDefault()
+                               if( event.which == 2 ) { window.open(this.href) }
+                               else { db.load_data( { 'patient' : '{{=request.vars["id"]}}' , 'config' : {{=row.config_id}} }, '{{=filename}}' ) }" >
             {{pass}}
-                {{=db.config[row.config_id].name}} </span>
+                {{=db.config[row.config_id].name}} </a>
         {{pass}}
     </div>
 
