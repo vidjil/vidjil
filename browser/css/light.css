@@ -613,7 +613,7 @@ span .substitution {
   border-color: #cccccc;
 }
 #file_menu,
-#analysis_menu {
+#axis_choice {
   z-index: 2;
   border: solid;
   position: fixed;
@@ -896,7 +896,7 @@ span.logo {
 #file_menu,
 #tagSelector,
 .closeButton,
-#analysis_menu {
+#axis_choice {
   border-color: #cccccc;
 }
 #info_window td {
