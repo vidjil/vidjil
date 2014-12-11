@@ -46,6 +46,16 @@ def anon(patient_id, user_id):
     first_name = db.patient[patient_id].first_name
     
     if auth.has_permission("anon", "patient", patient_id, user_id):
-        return last_name + " " + first_name
+        name = last_name + " " + first_name
     else:
-        return last_name[:3] + " " + first_name[:3]
+        try:
+            ln = unicode(last_name, 'utf-8')
+        except UnicodeDecodeError:
+            ln = last_name
+        name = ln[:3]
+
+    # Admins also see the patient id
+    if auth.has_membership("admin"):
+        name += ' (%s)' % patient_id
+
+    return name
