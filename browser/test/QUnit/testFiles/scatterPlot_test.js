@@ -2,19 +2,15 @@
 var myConsole = new Com("flash_container", "log_container", "popup-container", "data-container")
 
 
-var m = new Model(m);
-m.parseJsonData(json_data,100)
-m.loadGermline()
-m.initClones()
 
-var builder = new Builder(m);
-builder.init = function(){}
-builder.update = function(){}
-
-var sp = new ScatterPlot("visu",m);
-sp.init()
 
 test("scatterplot : grid", function() {
+    var m = new Model(m);
+    m.parseJsonData(json_data,100)
+    m.loadGermline()
+    m.initClones()
+
+    var sp = new ScatterPlot("visu",m);
 
     equal(sp.returnActiveclones(), 3, "returnActiveClones -> 3");
     

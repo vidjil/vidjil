@@ -1521,7 +1521,7 @@ ScatterPlot.prototype = {
                 return ""+(d.y*self.resizeH+self.marge_top)+"px"
             })
             .html(function (d) {
-                return "<div class='sp_system'>"+builder.build_systemBox(d.text).outerHTML+" "+d.text+"</div>"
+                return "<div class='sp_system'>"+self.m.systemBox(d.text).outerHTML+" "+d.text+"</div>"
             })
             .on("click", function (d) {
                 self.m.changeGermline(d.text)

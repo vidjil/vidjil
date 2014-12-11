@@ -342,7 +342,7 @@ List.prototype = {
         div_elem.appendChild(span_cluster);
         if (this.m.system=="multi") {
             var system = this.m.clone(cloneID).getSystem()
-            div_elem.appendChild(builder.build_systemBox(system));
+            div_elem.appendChild(this.m.systemBox(system));
         }
         div_elem.appendChild(span_name);
         div_elem.appendChild(span_info);

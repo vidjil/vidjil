@@ -722,7 +722,7 @@ Builder.prototype = {
                     m.update_selected_system()
                 }
             
-            var span_system = this.build_systemBox(key)
+            var span_system = this.m.systemBox(key)
             span_system.className = "systemBoxMenu";
                 
             var span = document.createElement('span');
@@ -743,23 +743,6 @@ Builder.prototype = {
         div.appendChild(span2)
         
         return div
-    },
-    
-    build_systemBox: function (system){
-        
-        var span = document.createElement('span')
-        span.className = "systemBox";
-        if ((typeof system != 'undefined')){
-            span.appendChild(document.createTextNode(this.m.germlineList.getShortcut(system)));
-            if (this.m.system_selected.indexOf(system) != -1) 
-                span.style.background = this.m.germlineList.getColor(system)
-            span.title = system
-        }else{
-            span.appendChild(document.createTextNode("?"));
-            if (typeof system != 'undefined')
-                span.title = system ;
-        }
-        return span
     },
     
     build_info_line: function (id, name, value, className) {

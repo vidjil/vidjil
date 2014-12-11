@@ -1583,7 +1583,22 @@ Model.prototype = {
         saveAs(textFileAsBlob, filename + ".csv");
     },
     
-    
+    systemBox: function (system){
+        
+        var span = document.createElement('span')
+        span.className = "systemBox";
+        if ((typeof system != 'undefined')){
+            span.appendChild(document.createTextNode(this.germlineList.getShortcut(system)));
+            if (this.system_selected.indexOf(system) != -1) 
+                span.style.background = this.germlineList.getColor(system)
+            span.title = system
+        }else{
+            span.appendChild(document.createTextNode("?"));
+            if (typeof system != 'undefined')
+                span.title = system ;
+        }
+        return span
+    },
     
     
     
