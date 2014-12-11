@@ -421,7 +421,18 @@ Model.prototype = {
     loadGermline: function (system) {
         console.log("loadGermline : " + system)
         system = typeof system !== 'undefined' ? system : this.system;
-        if (system == "multi") system = this.system_available[0]
+        if (system == "multi"){
+            var system = this.system_available[0]
+            var max = 0;
+            for (var i=0; i<this.clones.length; i++){
+                var clone_size = this.clone(i).getSize()
+                var clone_system = this.clone(i).getSystem()
+                if (clone_size>max && typeof clone_system != "undefined"){
+                    max = clone_size
+                    system = clone_system
+                }
+            }
+        }
         
         return  this.germlineV.load(system, "V", this)
                     .germlineD.load(system, "D", this)
