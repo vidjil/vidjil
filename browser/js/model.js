@@ -76,7 +76,7 @@ Model.prototype = {
         
         this.norm = false;
         this.normalization = { 
-            "method" : "quantitative",
+            "method" : "constant",
             "A" : [],
             "B" : 0,
             "id" : -1
@@ -741,7 +741,7 @@ Model.prototype = {
             var A = this.normalization.A[time] /* standard/spike at point time */
             var B = this.normalization.B       /* standard/spike expected value */
             
-            if (this.normalization.method=="rescale" || original_size <= A){
+            if (this.normalization.method=="constant" || original_size <= A){
                 normalized_size = (original_size * B) / A
             }else{
                 normalized_size = B + ( (original_size - A) * ( (1 - B) / (1 - A) ) )
@@ -1569,7 +1569,7 @@ Model.prototype = {
         //header
         var csv = "name,id,system,tag,v,d,j,sequence"
         for (var i=0; i<this.samples.order.length; i++) csv += ",reads_"+i
-        for (var i=0; i<this.samples.order.length; i++) csv += ",size_"+i
+        for (var i=0; i<this.samples.order.length; i++) csv += ",ratio_"+i
         csv += "\n"
         
         //only non-empty active clones and "other"

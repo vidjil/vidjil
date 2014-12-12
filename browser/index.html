@@ -103,14 +103,14 @@
             m.load('upload_json','upload_pref', 200)">start</button> 
         </div>
 
-        <div id="analysis_menu" >
+        <div id="axis_choice" >
             <span class="closeButton" onclick="cancel();">X</span>
             <h2>analysis menu</h2>
 
             Analysis file:<br/>
             <input id="upload_analysis" type="file" name="analysis" /></br></br>
 
-            <button onclick="document.getElementById('analysis_menu').style.display='none';
+            <button onclick="document.getElementById('axis_choice').style.display='none';
                                     m.loadAnalysis('upload_analysis');">start</button> 
         </div>
         
@@ -142,7 +142,7 @@
                         <a class="buttonSelector" onclick="javascript:m.saveAnalysis()">export analysis</a>
                         <a class="buttonSelector" onclick="javascript:pdf.make()">export pdf (graph + selected clones)</a>
                         <a class="buttonSelector" onclick="javascript:pdf.makeGraph()">export pdf (graph)</a>
-                        <a class="buttonSelector" onclick="javascript:m.exportCSV()">export CSV</a>
+                        <a class="buttonSelector" onclick="javascript:m.exportCSV()">export csv (visible clones)</a>
                     </div>
                     <div class="menu_box">
                         <div id="upload_list">
@@ -218,8 +218,9 @@
 
                     <div class="menu_box">
                         normalization method</br>
-                        <div class="buttonSelector" onclick="m.changeNormMethod('quantitative')" ><input type="radio" name="normalize_method" value="quantitative" checked>quantitative</input></div>
-                        <div class="buttonSelector" onclick="m.changeNormMethod('rescale')" ><input type="radio" name="normalize_method" value="rescale" >rescale</input></div>
+                        <div class="buttonSelector" onclick="m.changeNormMethod('constant')" ><input type="radio" name="normalize_method" value="constant" checked >constant</input></div>
+                        <div class="buttonSelector" onclick="m.changeNormMethod('to-100')" ><input type="radio" name="normalize_method" value="to-100">to 100%</input></div>
+
                     </div>
 
                     <div class="menu_box">

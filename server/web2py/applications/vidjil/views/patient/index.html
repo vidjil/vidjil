@@ -1,10 +1,10 @@
 {{extend 'db_layout.html'}}
 {{import vidjil_utils}}
 
-<h3>Patient list</h3>
+<h3></h3>
 
 <div class="db_block">
-    <div class="db_block_right">
+    <div class="db_block_left">
         search
         <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}"  onchange="db.call('patient/index', {'filter' : this.value} )">
     </div>

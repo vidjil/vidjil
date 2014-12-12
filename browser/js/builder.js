@@ -133,7 +133,7 @@ Builder.prototype = {
                 input.name = "normalize_list"
                 if (self.m.normalization.id==i) input.checked=true;
                 
-                var text = document.createTextNode(self.m.clone(i).getName() + " => " +self.m.clone(i).expected)
+                var text = document.createTextNode(self.m.clone(i).getName() + " → " +self.m.clone(i).expected)
                 
                 var div = document.createElement("div")
                 div.onclick = function () {
@@ -158,7 +158,7 @@ Builder.prototype = {
                 input.name = "normalize_list"
                 if (self.m.normalization.id==key) input.checked=true;
                 
-                var text = document.createTextNode(key + " => " +self.m.data[key].expected)
+                var text = document.createTextNode(key + " → " +self.m.data[key].expected)
                 
                 var div = document.createElement("div")
                 div.onclick = function () {

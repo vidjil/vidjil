@@ -31,19 +31,19 @@ function loadData() {
     
     document.getElementById("file_menu")
         .style.display = "block";
-    document.getElementById("analysis_menu")
+    document.getElementById("axis_choice")
         .style.display = "none";
 }
 
 function loadAnalysis() {
-    document.getElementById("analysis_menu")
+    document.getElementById("axis_choice")
         .style.display = "block";
     document.getElementById("file_menu")
         .style.display = "none";
 }
 
 function cancel() {
-    document.getElementById("analysis_menu")
+    document.getElementById("axis_choice")
         .style.display = "none";
     document.getElementById("file_menu")
         .style.display = "none";
