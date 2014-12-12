@@ -217,6 +217,7 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
     ## fuse.py 
     output_file = out_folder+'/'+output_filename+'.fused'
     files = ""
+    sequence_file_list = ""
     query = db( ( db.patient.id == db.sequence_file.patient_id )
                    & ( db.results_file.sequence_file_id == db.sequence_file.id )
                    & ( db.patient.id == id_patient )
@@ -225,6 +226,8 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
     for row in query :
         if row.results_file.data_file is not None :
             files += defs.DIR_RESULTS + row.results_file.data_file + " "
+            sequence_file_list += str(row.results_file.sequence_file_id) + "_"
+            
     
     cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+output_file+" -t 100 "+files
 
@@ -248,7 +251,8 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
 
     ts = time.time()
     db.fused_file[id_fuse] = dict(fuse_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
-                                 fused_file = stream)
+                                 fused_file = stream,
+                                 sequence_file_list = sequence_file_list)
     db.commit()
 
     if clean_after:

@@ -154,6 +154,7 @@ db.define_table('fused_file',
                 Field('config_id', 'reference config'),
                 Field('fuse_date','datetime'),
                 Field('status', 'string'),
+                Field('sequence_file_list', 'string'),
                 Field('fused_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
                       length=1000000000000, autodelete=True))
