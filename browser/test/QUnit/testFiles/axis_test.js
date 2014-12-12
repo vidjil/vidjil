@@ -30,7 +30,7 @@ test("Axis : ", function() {
     equal(axis.pos(1).toPrecision(3), 0.500, "clone 1 (10%) position -> 0.5")
     equal(axis.pos(2).toPrecision(3), 0.452, "clone 2 (12.5%) position -> 0.452")
     
-    
+    axis.m.changeGermline("TRG")
     //germline V
     axis.useGermline(axis.m.germlineV, "V")
     deepEqual(axis.labels,  [

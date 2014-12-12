@@ -18,8 +18,8 @@ test("scatterplot : grid", function() {
     deepEqual(sp.systemGrid,  {"IGH": {"x": 0.92,"y": 0.75},
                                 "TRG": {"x": 0.92,"y": 0.25}, 
                                 "label": [
-                                    {"enabled": true,"text": "TRG","x": 0.8,"y": 0.25 },
-                                    {"enabled": true,"text": "IGH","x": 0.81,"y": 0.75}]}, 
+                                    {"enabled": true,"text": "TRG","x": 0.81,"y": 0.25 },
+                                    {"enabled": true,"text": "IGH","x": 0.80,"y": 0.75}]}, 
             "buildSystemGrid()");
     
     //deepEqual(sp.nodes[0], "","") 
