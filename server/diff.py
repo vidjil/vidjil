@@ -8,8 +8,9 @@ import ansi
 import argparse
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--nb', '-n', type=int, default=5, help='number of clones to display from the first file (%(default)d)')
+parser.add_argument('--nb', '-n', type=int, default=5, help='number of clones to display from the first file (%(default)d), 0 for all')
 parser.add_argument('--nb_others', '-o', type=int, default=3, help='number of clones to display from the other files (%(default)d)')
+parser.add_argument('--common', '-c', action='store_true', help='display common clones instead of different clones')
 parser.add_argument('--verbose', '-v', action='store_true', help='verbose output')
 parser.add_argument('file', nargs=2, help='''.vidjil files to be compared''')
 
@@ -41,7 +42,16 @@ def format_rank_nb_reads(rank, list_nb_reads, list_total_nb_reads):
         s += ' %6d %6.2f%%' % (nb_reads, 100*float(nb_reads)/float(total_nb_reads))
     return s
 
+
+def common_two_clones(self, other, seg=[1000000]):
+    if not other or not self:
+        return
+
+    print self.d['id'], '\t', format_rank_nb_reads(self.d['top'], self.d['reads'], seg),  format_rank_nb_reads(other.d['top'], other.d['reads'], seg)
+
+
 def diff_two_clones(self, other):
+
     if not other or not self:
         who = "+-"[not other]
         print DIFF_COLORS[who]+who,
@@ -93,8 +103,13 @@ def compare(data1, data2, args):
         displayed_clones.append(clone)        
         if args.verbose:
             print
-        
-        diff_two_clones(other_clones[0], other_clones[1] if len(other_clones) > 1 else None)
+
+        if args.common:
+            common_two_clones(other_clones[0], other_clones[1] if len(other_clones) > 1 else None)
+        else:
+            diff_two_clones(other_clones[0], other_clones[1] if len(other_clones) > 1 else None)
+
+
 
     ### 
 
@@ -105,7 +120,9 @@ def compare(data1, data2, args):
     if args.verbose:
         print "==== Diff from %s, %d first clones" % (data1, args.nb)
 
-    for id in ids_1[:args.nb]:
+    ids_1_cut = ids_1[:args.nb] if args.nb else ids_1
+
+    for id in ids_1_cut:
         print_clone_in_self_and_others(id)
 
     ### Display clones of other ListWindows not present in this ListWindows
