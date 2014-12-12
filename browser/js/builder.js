@@ -719,7 +719,7 @@ Builder.prototype = {
                 if (this.m.system_selected.indexOf(key) != -1)
                     checkbox.checked=true
                 checkbox.onchange = function () {
-                    m.update_selected_system()
+                    m.toggle_system(this.id.replace("checkbox_system_",""))
                 }
             
             var span_system = this.m.systemBox(key)

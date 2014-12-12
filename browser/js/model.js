@@ -692,6 +692,15 @@ Model.prototype = {
         }
     },
     
+    toggle_system: function(system){
+        if (this.system_available.indexOf(system) != -1) {
+            var pos = this.system_selected.indexOf(system) 
+            if (pos== -1){ this.system_selected.push(system) }
+            else{ this.system_selected.splice(pos, 1) }
+        }
+        this.update_selected_system()
+    },
+    
     /* compute the number of reads segmented for the current selected system(s) 
      * 
      * */
@@ -700,17 +709,6 @@ Model.prototype = {
         //reset reads.segmented
         for (var i=0 ; i<this.reads.segmented.length; i++){
             this.reads.segmented[i]=0
-        }
-        
-        //reset system
-        this.system_selected = []
-        
-        //check system currently selected in menu
-        for (var key in this.system_available) {
-            var system = this.system_available[key]
-            if (document.getElementById("checkbox_system_"+system).checked){
-                this.system_selected.push(system)
-            }
         }
 
         //compute new reads.segmented value (sum of reads.segmented of selected system)
@@ -723,7 +721,7 @@ Model.prototype = {
 
         this.updateModel()
         //check if current germline is in the selected_system
-        if (this.system_selected.indexOf(this.germlineV.system) == -1 ){
+        if (this.system_selected.indexOf(this.germlineV.system) == -1 && this.system_selected.length > 0){
             this.changeGermline(this.system_selected[0])
         }else{
             this.resize()
@@ -1520,7 +1518,7 @@ Model.prototype = {
     changeGermline: function (system) {
         
         if (this.system_selected.indexOf(system) == -1){
-            this.system_selected.push(system)
+            this.toggle_system(system)
         }
         
         this.loadGermline(system)
