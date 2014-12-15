@@ -228,7 +228,7 @@ Builder.prototype = {
 
 
         var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode("expected size : "))
+        span1.appendChild(document.createTextNode("normalize to: "))
 
         var span2 = document.createElement('span');
         var input = document.createElement('input');

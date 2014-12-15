@@ -798,7 +798,7 @@ Model.prototype = {
         for (var i=0; i<this.samples.number; i++){
             this.normalization.A[i] = this.data[data][i]
         }
-        this.changeNormMethod("rescale")
+        this.changeNormMethod("constant")
     },
     
     update_normalization: function () {
@@ -819,7 +819,7 @@ Model.prototype = {
         
         this.max_size = 1
         this.min_size = min_size
-        if (this.norm && this.normalization.method=="rescale"){
+        if (this.norm && this.normalization.method=="constant"){
             for (var i=0; i<this.samples.order.length; i++){
                 var max = this.normalization.B/this.normalization.A[i]
                 if (max>this.max_size) this.max_size=max;
@@ -1505,8 +1505,8 @@ Model.prototype = {
     
     changeNormMethod : function (method){
         this.normalization.method=method;
-        if (this.normalization.type=="data" && method !="rescale"){
-            this.normalization.method="rescale";
+        if (this.normalization.type=="data" && method !="constant"){
+            this.normalization.method="constant";
         }
         
         this.update()

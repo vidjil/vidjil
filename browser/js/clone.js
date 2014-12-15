@@ -118,14 +118,14 @@ Clone.prototype = {
         return result
     }, //end getSize
     
-    //special getSize for scatterplot (ignore rescale)
+    //special getSize for scatterplot (ignore constant)
     getSize2: function (time) {
         time = typeof time !== 'undefined' ? time : this.m.t;
         
         if (this.m.reads.segmented[time] == 0 ) return 0
         var result = this.getReads(time) / this.m.reads.segmented[time]
         
-        if (this.m.norm && this.m.normalization.method!="rescale") result = this.m.normalize(result, time)
+        if (this.m.norm && this.m.normalization.method!="constant") result = this.m.normalize(result, time)
 
         return result
     },
