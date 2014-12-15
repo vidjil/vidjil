@@ -24,6 +24,8 @@
  * content:
  *
  */
+
+
 /* constructor
  *
  * */
@@ -57,10 +59,9 @@ function Graph(id, model) {
 
 Graph.prototype = {
 
-    /* crée le cadre svg pour le graph
-     *
-     * */
-    init: function () {
+
+    
+    buildGraph : function () {
         document.getElementById(this.id)
             .innerHTML = "";
         
@@ -133,11 +134,6 @@ Graph.prototype = {
             .append("svg:g")
             .attr("id", "text_container")
 
-        this.initAxis();
-        this.initData();
-        this.initClones();
-        this.initRes();
-        this.resize();
     },
     
     initData : function () {
@@ -174,33 +170,30 @@ Graph.prototype = {
             
     },
     
-    updateData : function () {
-        this.initData();
-        this.initAxis();
-        this.drawData(0);
-        this.drawAxis(0);
-    },
     
+    /* build g_clone object 
+     * 
+     * */
     initClones : function () {
-        this.data_clones = [];
+        this.data_clone = [];
         
         for (var i = 0; i < this.m.clones.length; i++) {
-            this.data_clones[i] = {
+            this.data_clone[i] = {
                 id: i,
                 name: "line" + i,
                 path: this.constructPath(i, false)
             };
         }
         
-        this.g_graph = this.clones_container.selectAll("path")
-            .data(this.data_clones);
-        this.g_graph.enter()
+        this.g_clone = this.clones_container.selectAll("path")
+            .data(this.data_clone);
+        this.g_clone.enter()
             .append("path")
             .style("fill", "none")
             .attr("id", function (d) {
                 return "poly" + d.name;
             })
-        this.g_graph.exit()
+        this.g_clone.exit()
             .remove();
     },
     
@@ -241,172 +234,6 @@ Graph.prototype = {
             .remove();
     },
 
-    initAxis: function () {
-
-        this.data_axis = [];
-        this.graph_col = [];
-        
-        this.scale_x = d3.scale.log()
-            .domain([1, this.m.precision*this.m.max_size])
-            .range([0, 1]);
-            
-        
-        var g_min = undefined
-        var g_max = undefined
-        var enabled = false
-        for (var key in this.m.data_info) {
-            var max = this.m.data[key][0];
-            var min = this.m.data[key][0];
-            if (this.m.norm && this.m.normalization.type=="data"){
-                max = this.m.normalize(max, 0)
-                min = this.m.normalize(min, 0)
-            }
-            
-            for (var i = 0; i < this.m.samples.number; i++) {
-                var t = this.m.samples.order.indexOf(i)
-                var val = this.m.data[key][t]
-                if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val, t)
-                if (val>max) max=val;
-                if (val<min) min=val;
-            }
-            
-            if (typeof g_min == 'undefined' || g_min>min) g_min=min 
-            if (typeof g_max == 'undefined' || g_max<max) g_max=max
-            if (this.m.data_info[key].isActive) enabled = true
-        }
-        
-        if ( g_min!=0 && (g_min*100)<g_max){
-            this.scale_data = d3.scale.log()
-                .domain([g_max, g_min])
-                .range([0, 1]);
-        }else{
-            if ( (g_min*2)<g_max) g_min = 0
-            this.scale_data = d3.scale.linear()
-                .domain([g_max, g_min])
-                .range([0, 1]);
-        }
-        
-        
-        //abscisse
-        for (var i = 0; i < this.m.samples.order.length; i++) {
-            this.graph_col[i] = this.marge1 + i * ((1 - (this.marge1 + this.marge2)) / (this.m.samples.order.length - 1));
-        }
-        if (this.m.samples.order.length == 1) {
-            this.graph_col[0] = 1 / 2
-        }
-        if (this.m.samples.order.length == 2) {
-            this.graph_col[0] = 1 / 4;
-            this.graph_col[1] = 3 / 4;
-        }
-
-        for (var i = 0; i < this.m.samples.number; i++) {
-            var t = this.m.samples.order.indexOf(i)
-            d = {}
-
-            time_name = this.m.getStrTime(i);
-            time_name = time_name.split(".")[0]
-
-            d.type = "axis_v";
-            d.text = time_name;
-
-            // Warns when there are very few segmented reads 
-            var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100;
-            if (percent < 10)
-                d.text += " !" ;
-
-            d.orientation = "vert";
-            if (this.drag_on && i == this.dragged_time_point) {
-                var coordinates = [0, 0];
-                coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
-                    .node());
-                d.pos = (coordinates[0] - this.marge4) / this.resizeW
-            } else {
-                if (t == -1){
-                    d.pos = 1.05;
-                    d.text = "";
-                    d.type = "axis_v_hidden";
-                }else{
-                    d.pos = this.graph_col[t];
-                }
-            }
-            d.time = i;
-            this.data_axis.push(d);
-        }
-        //padding
-        while (this.data_axis.length<20){
-            this.data_axis.push({"type" :"axis_v_hidden" , "text": "", "pos" : 1.05});
-        }
-
-        //ordonnée clone
-        if (this.mode == "stack"){
-            this.data_axis.push({"type" : "axis_h", "text" : "0%" ,"orientation" : "hori", "pos" : 1});
-            this.data_axis.push({"type" : "axis_h", "text" : "50%" ,"orientation" : "hori", "pos" : 0.5});
-            this.data_axis.push({"type" : "axis_h", "text" : "100%" ,"orientation" : "hori", "pos" : 0});
-        }else{
-            var height = 1;
-            while(height<this.m.max_size) height = height*10
-            while ((height * this.m.precision) > 0.5) {
-
-                var d = {};
-                d.type = "axis_h";
-                d.text = this.m.formatSize(height, false)
-                d.orientation = "hori";
-                d.pos = 1 - this.scale_x(height * this.m.precision);
-                if (d.pos>=-0.1) this.data_axis.push(d);
-
-                height = height / 10;
-            }
-        }
-        //padding
-        while (this.data_axis.length<40){
-            this.data_axis.push({"type" :"axis_h_hidden" , "text": "", "pos" : 0});
-        }
-        
-        //ordonnée data
-        if (enabled && typeof g_min != 'undefined'){
-            var height = 1;
-            while(height<g_max) height = height*10
-            while ((height ) > g_min/2 ) {
-
-                var d = {};
-                d.type = "axis_h2";
-                d.text = height
-                d.orientation = "hori";
-                d.pos = this.scale_data(height);
-                if (d.pos>=-0.1) this.data_axis.push(d);
-
-                height = height / 10;
-            }
-        }
-        //padding
-        while (this.data_axis.length<60){
-            this.data_axis.push({"type" :"axis_h_hidden" , "text": "", "pos" : 1.05});
-        }
-
-        //current time_point
-        if ( this.m.samples.order.indexOf(this.m.t) != -1 ){
-            this.mobil = {};
-            this.mobil.type = "axis_m";
-            this.mobil.text = "";
-            this.mobil.orientation = "vert";
-            this.mobil.pos = this.graph_col[this.m.samples.order.indexOf(this.m.t)];
-            this.data_axis.push(this.mobil)
-        }
-
-        this.g_axis = this.axis_container.selectAll("line")
-            .data(this.data_axis);
-        this.g_axis.enter()
-            .append("line");
-        this.g_axis.exit()
-            .remove();
-
-        this.g_text = this.text_container.selectAll("text")
-            .data(this.data_axis);
-        this.g_text.enter()
-            .append("text");
-        this.g_text.exit()
-            .remove();
-    },
     
     build_menu : function() {
         var self = this;
@@ -524,7 +351,7 @@ Graph.prototype = {
 
             for (var i = 0; i < this.m.clones.length; i++) {
                 for (var j = 0; j < this.m.clusters[i].length; j++) {
-                    this.data_clones[this.m.clusters[i][j]].path = this.constructPath(i, false);
+                    this.data_clone[this.m.clusters[i][j]].path = this.constructPath(i, false);
                 }
             }
             for (var i = 0; i < this.m.clones.length; i++) {
@@ -532,9 +359,9 @@ Graph.prototype = {
                 for (var j = 0; j < this.m.clusters[cloneID].length; j++) {
                     var seqID = this.m.clusters[cloneID][j]
                     if (this.m.clone(cloneID).split) {
-                        this.data_clones[seqID].path = this.constructPath(seqID, true);
+                        this.data_clone[seqID].path = this.constructPath(seqID, true);
                     } else {
-                        this.data_clones[seqID].path = this.constructPath(cloneID, false);
+                        this.data_clone[seqID].path = this.constructPath(cloneID, false);
                     }
                 }
             }
@@ -547,11 +374,18 @@ Graph.prototype = {
         myConsole.log("update Graph: " + elapsedTime + "ms", -1);
     },
     
+    updateData : function () {
+        this.initData();
+        this.initAxis();
+        this.drawData(0);
+        this.drawAxis(0);
+    },
+    
     updateStack: function () {
         var stack = new Stack(this.m)
         stack.compute();
         for (var i = 0; i < this.m.clones.length; i++) {
-            this.data_clones[i].path = this.constructStack(i, stack);
+            this.data_clone[i].path = this.constructStack(i, stack);
         }
     },
 
@@ -567,9 +401,9 @@ Graph.prototype = {
                 for (var j = 0; j < this.m.clusters[cloneID].length; j++) {
                     var seqID = this.m.clusters[cloneID][j]
                     if (this.m.clone(cloneID).split) {
-                        this.data_clones[seqID].path = this.constructPath(seqID, true);
+                        this.data_clone[seqID].path = this.constructPath(seqID, true);
                     } else {
-                        this.data_clones[seqID].path = this.constructPath(cloneID, false);
+                        this.data_clone[seqID].path = this.constructPath(cloneID, false);
                     }
                 }
             }
@@ -583,201 +417,10 @@ Graph.prototype = {
             document.getElementById("clones_container")
                 .appendChild(line);
         }
-        this.drawLines(250);
+        this.drawClones(250);
     },
 
-    /* 
-     *
-     * */
-    drawLines: function (speed) {
-        var self = this;
-
-        var c = 0;
-        
-        if (this.mode=="stack"){
-            //volumes
-            this.g_graph
-                .style("fill", function (d) {
-                    return self.m.clone(d.id).getColor();
-                })
-                .style("stroke", "none")
-                .transition()
-                .duration(speed)
-                .attr("d", function (p) {
-                    if (p.path.length != 0){
-                        var x = (p.path[0][0] * self.resizeW + self.marge4)
-                        var y = (p.path[0][1] * self.resizeH + self.marge5)
-                        var che = ' M ' + x + ',' + y;
-                        for (var i = 1; i < p.path.length; i++) {
-                            x = (p.path[i][0] * self.resizeW + self.marge4)
-                            y = (p.path[i][1] * self.resizeH + self.marge5)
-                            che += ' L ' + x + ',' + y;
-                        }
-                        return che + ' Z';
-                    }else{
-                        return ' M 0,' + self.resizeH;
-                    }
-                })
-                .attr("class", function (p) {
-                    var clone = self.m.clone(p.id)
-                    if (!clone.isActive()) return "graph_inactive";
-                    if (clone.isSelected()) return "graph_select";
-                    if (clone.isFocus()) return "graph_focus";
-                    c++
-                    if (c < self.display_limit2 ) return "graph_line";
-                    if (clone.top > self.display_limit) return "graph_inactive";
-                    return "graph_line";
-                })
-                .attr("id", function (d) {
-                    return "poly" + d.name;
-                })
-        }else{
-            //courbes
-            this.g_graph
-                .style("fill", "none")
-                .style("stroke", function (d) {
-                    return self.m.clone(d.id).getColor();
-                })
-                .transition()
-                .duration(speed)
-                .attr("d", function (p) {
-                    if (p.path.length != 0){
-                        var x = (p.path[0][0] * self.resizeW + self.marge4)
-                        var y = (p.path[0][1] * self.resizeH + self.marge5)
-                        var che = ' M ' + x + ',' + y;
-                        for (var i = 1; i < p.path.length; i++) {
-                            x = (p.path[i][0] * self.resizeW + self.marge4)
-                            y = (p.path[i][1] * self.resizeH + self.marge5)
-                            che += ' L ' + x + ',' + y;
-                        }
-                        return che;
-                    }else{
-                        return ' M 0,' + self.resizeH;
-                    }
-                })
-                .attr("class", function (p) {
-                    var clone = self.m.clone(p.id)
-                    if (!clone.isActive()) return "graph_inactive";
-                    if (clone.isSelected()) return "graph_select";
-                    if (clone.isFocus()) return "graph_focus";
-                    c++
-                    if (c < self.display_limit2 ) return "graph_line";
-                    if (clone.top > self.display_limit) return "graph_inactive";
-                    return "graph_line";
-                })
-                .attr("id", function (d) {
-                    return "poly" + d.name;
-                })
-        }
-    },
-
-    /* 
-     *
-     * */
-    drawAxis: function (speed) {
-        var self = this;
-
-        //axes
-        this.g_axis
-            .transition()
-            .duration(speed)
-            .attr("x1", function (d) {
-                if (d.orientation == "vert") return self.resizeW * d.pos + self.marge4;
-                else return self.marge4;
-            })
-            .attr("x2", function (d) {
-                if (d.orientation == "vert") return self.resizeW * d.pos + self.marge4;
-                else return (self.resizeW) + self.marge4
-            })
-            .attr("y1", function (d) {
-                if (d.orientation == "vert") return self.marge5;
-                else return (self.resizeH * d.pos) + self.marge5;
-            })
-            .attr("y2", function (d) {
-                if (d.orientation == "vert") return (self.resizeH) + self.marge5;
-                else return (self.resizeH * d.pos) + self.marge5;
-            })
-            .attr("class", function (d) {
-                return d.type
-            })
-
-        //legendes
-        this.g_text
-            .transition()
-            .duration(speed)
-            .text(function (d) {
-                return d.text;
-            })
-            .attr("class", function (d) {
-                if (d.type == "axis_v") return "axis_button";
-                if (d.type == "axis_h") return "axis_leg";
-                if (d.type == "axis_h2") return "axis_leg";
-            })
-            .attr("id", function (d) {
-                if (d.type == "axis_v") return ("time" + d.time);
-            })
-            .attr("y", function (d) {
-                if (d.type == "axis_h" || d.type == "axis_h2") return Math.floor(self.resizeH * d.pos) + self.marge5;
-                else return self.text_position_y;
-            })
-            .attr("x", function (d) {
-                if (d.type == "axis_h") return self.text_position_x;
-                if (d.type == "axis_h2") return self.text_position_x2;
-                else return Math.floor(self.resizeW * d.pos + self.marge4);
-            })
-            .attr("class", function (d) {
-                if (d.type == "axis_v") return "graph_time"
-                else if (d.type == "axis_h2") return "graph_text2"
-                else return "graph_text";
-            });
-
-        this.text_container.selectAll("text")
-            .on("click", function (d) {
-                if (d.type == "axis_v") return self.m.changeTime(d.time)
-            })
-            .on("mousedown", function (d) {
-                if (d.type == "axis_v") return self.startDrag(d.time)
-            })
-
-    },
-
-
-    /* reconstruit le graphique
-     *
-     * */
-    draw: function () {
-        var self = this;
-
-        this.drawAxis(500)
-        this.drawData(500)
-        this.drawLines(500)
-
-        //resolution
-        this.g_res.selectAll("path")
-            .transition()
-            .duration(500)
-            .attr("d", function (p) {
-                var x = (p.path[0][0] * self.resizeW + self.marge4)
-                var y = (p.path[0][1] * self.resizeH + self.marge5)
-                var che = ' M ' + x + ',' + y;
-                for (var i = 1; i < p.path.length; i++) {
-                    x = (p.path[i][0] * self.resizeW + self.marge4)
-                    y = (p.path[i][1] * self.resizeH + self.marge5)
-                    che += ' L ' + x + ',' + y;
-                }
-                che += ' Z ';
-                return che;
-            })
-
-        this.clones_container.selectAll("path")
-            .on("mouseover", function (d) {
-                self.m.focusIn(d.id);
-            })
-            .on("click", function (d) {
-                self.clickGraph(d.id);
-            });
-    },
-
+ 
     /* 
      *
      * */
@@ -1002,6 +645,432 @@ Graph.prototype = {
         return p;
     },
     
+    
+    
+    
+/* ************************************************ *
+ * INIT FUNCTIONS
+ * 
+ * 
+ * ************************************************ */
+    
+    /* global init function
+     *
+     * */
+    init: function () {
+        this.buildGraph()
+        
+        this.initAxis()
+            .initData();
+        this.initClones();
+        this.initRes();
+        
+        this.resize();
+        
+        return this
+    },
+    
+    /* 
+     * 
+     * */
+    initAxis: function () {
+
+        this.data_axis = [];
+        this.graph_col = [];
+            
+        this.initAbscisse()
+            .initOrdinateClones()
+            .initOrdinateData()
+            .initAbscisseT()
+        
+
+        this.g_axis = this.axis_container.selectAll("line")
+            .data(this.data_axis);
+        this.g_axis.enter()
+            .append("line");
+        this.g_axis.exit()
+            .remove();
+
+        this.g_text = this.text_container.selectAll("text")
+            .data(this.data_axis);
+        this.g_text.enter()
+            .append("text");
+        this.g_text.exit()
+            .remove();
+            
+        return this
+    },
+    
+    /*
+     * 
+     * */
+    initAbscisse : function () {
+            
+        for (var i = 0; i < this.m.samples.order.length; i++) {
+            this.graph_col[i] = this.marge1 + i * ((1 - (this.marge1 + this.marge2)) / (this.m.samples.order.length - 1));
+        }
+        if (this.m.samples.order.length == 1) {
+            this.graph_col[0] = 1 / 2
+        }
+        if (this.m.samples.order.length == 2) {
+            this.graph_col[0] = 1 / 4;
+            this.graph_col[1] = 3 / 4;
+        }
+
+        for (var i = 0; i < this.m.samples.number; i++) {
+            var t = this.m.samples.order.indexOf(i)
+            d = {}
+
+            time_name = this.m.getStrTime(i);
+            time_name = time_name.split(".")[0]
+
+            d.type = "axis_v";
+            d.text = time_name;
+
+            // Warns when there are very few segmented reads 
+            var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100;
+            if (percent < 10)
+                d.text += " !" ;
+
+            d.orientation = "vert";
+            if (this.drag_on && i == this.dragged_time_point) {
+                var coordinates = [0, 0];
+                coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
+                    .node());
+                d.pos = (coordinates[0] - this.marge4) / this.resizeW
+            } else {
+                if (t == -1){
+                    d.pos = 1.05;
+                    d.text = "";
+                    d.type = "axis_v_hidden";
+                }else{
+                    d.pos = this.graph_col[t];
+                }
+            }
+            d.time = i;
+            this.data_axis.push(d);
+        }  
+        
+        return this
+    },
+    
+    /*
+     * 
+     * */
+    initOrdinateClones : function () {
+
+        var max = this.m.precision*this.m.max_size
+
+        
+        this.scale_x = d3.scale.log()
+            .domain([1, max])
+            .range([0, 1]);
+        
+        //padding
+        while (this.data_axis.length<20){
+            this.data_axis.push({"type" :"axis_v_hidden" , "text": "", "pos" : 1.05});
+        }
+
+        //ordonnée clone
+        if (this.mode == "stack"){
+            this.data_axis.push({"type" : "axis_h", "text" : "0%" ,"orientation" : "hori", "pos" : 1});
+            this.data_axis.push({"type" : "axis_h", "text" : "50%" ,"orientation" : "hori", "pos" : 0.5});
+            this.data_axis.push({"type" : "axis_h", "text" : "100%" ,"orientation" : "hori", "pos" : 0});
+        }else{
+            var height = 1;
+            while(height<this.m.max_size) height = height*10
+            while ((height * this.m.precision) > 0.5) {
+
+                var d = {};
+                d.type = "axis_h";
+                d.text = this.m.formatSize(height, false)
+                d.orientation = "hori";
+                d.pos = 1 - this.scale_x(height * this.m.precision);
+                if (d.pos>=-0.1) this.data_axis.push(d);
+
+                height = height / 10;
+            }
+        }
+        
+        return this
+    },
+    
+    /*
+     * 
+     * */
+    initOrdinateData : function () {
+        
+        var g_min = undefined
+        var g_max = undefined
+        var enabled = false
+        
+        // find min / max for
+        for (var key in this.m.data_info) {
+            var max = this.m.data[key][0];
+            var min = this.m.data[key][0];
+            
+            if (this.m.norm && this.m.normalization.type=="data"){
+                max = this.m.normalize(max, 0)
+                min = this.m.normalize(min, 0)
+            }
+            
+            for (var i = 0; i < this.m.samples.number; i++) {
+                var t = this.m.samples.order.indexOf(i)
+                var val = this.m.data[key][t]
+                if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val, t)
+                if (val>max) max=val;
+                if (val<min) min=val;
+            }
+            
+            if (typeof g_min == 'undefined' || g_min>min) g_min=min 
+            if (typeof g_max == 'undefined' || g_max<max) g_max=max
+            if (this.m.data_info[key].isActive) enabled = true
+        }
+        
+        //choose the best scale (linear/log) depending of the space between min/max
+        if ( g_min!=0 && (g_min*100)<g_max){
+            this.scale_data = d3.scale.log()
+                .domain([g_max, g_min])
+                .range([0, 1]);
+        }else{
+            if ( (g_min*2)<g_max) g_min = 0
+            this.scale_data = d3.scale.linear()
+                .domain([g_max, g_min])
+                .range([0, 1]);
+        }
+        
+        //padding
+        while (this.data_axis.length<40){
+            this.data_axis.push({"type" :"axis_h_hidden" , "text": "", "pos" : 0});
+        }
+        
+        //ordonnée data
+        if (enabled && typeof g_min != 'undefined'){
+            var height = 1;
+            while(height<g_max) height = height*10
+            while ((height ) > g_min/2 ) {
+
+                var d = {};
+                d.type = "axis_h2";
+                d.text = height
+                d.orientation = "hori";
+                d.pos = this.scale_data(height);
+                if (d.pos>=-0.1) this.data_axis.push(d);
+
+                height = height / 10;
+            }
+        }
+        
+        return this
+    },
+    
+    /*
+     * 
+     * */
+    initAbscisseT : function () {
+        //padding
+        while (this.data_axis.length<60){
+            this.data_axis.push({"type" :"axis_h_hidden" , "text": "", "pos" : 1.05});
+        }
+
+        //current time_point
+        if ( this.m.samples.order.indexOf(this.m.t) != -1 ){
+            this.mobil = {};
+            this.mobil.type = "axis_m";
+            this.mobil.text = "";
+            this.mobil.orientation = "vert";
+            this.mobil.pos = this.graph_col[this.m.samples.order.indexOf(this.m.t)];
+            this.data_axis.push(this.mobil)
+        }
+        
+        return this
+    },
+    
+
+/* ************************************************ *
+ * RENDERER FUNCTIONS
+ * ************************************************ */
+    
+    
+    /* global renderer function
+     *
+     * */
+    draw: function () {
+        var self = this;
+
+        this.drawAxis(500)
+        this.drawData(500)
+        this.drawClones(500)
+        this.drawRes(500)
+    },
+    
+    /* renderer function for axis and labels
+     *
+     * */
+    drawAxis: function (speed) {
+        var self = this;
+
+        //axes
+        this.g_axis
+            .transition()
+            .duration(speed)
+            .attr("x1", function (d) {
+                if (d.orientation == "vert") return self.resizeW * d.pos + self.marge4;
+                else return self.marge4;
+            })
+            .attr("x2", function (d) {
+                if (d.orientation == "vert") return self.resizeW * d.pos + self.marge4;
+                else return (self.resizeW) + self.marge4
+            })
+            .attr("y1", function (d) {
+                if (d.orientation == "vert") return self.marge5;
+                else return (self.resizeH * d.pos) + self.marge5;
+            })
+            .attr("y2", function (d) {
+                if (d.orientation == "vert") return (self.resizeH) + self.marge5;
+                else return (self.resizeH * d.pos) + self.marge5;
+            })
+            .attr("class", function (d) {
+                return d.type
+            })
+
+        //legendes
+        this.g_text
+            .transition()
+            .duration(speed)
+            .text(function (d) {
+                return d.text;
+            })
+            .attr("class", function (d) {
+                if (d.type == "axis_v") return "axis_button";
+                if (d.type == "axis_h") return "axis_leg";
+                if (d.type == "axis_h2") return "axis_leg";
+            })
+            .attr("id", function (d) {
+                if (d.type == "axis_v") return ("time" + d.time);
+            })
+            .attr("y", function (d) {
+                if (d.type == "axis_h" || d.type == "axis_h2") return Math.floor(self.resizeH * d.pos) + self.marge5;
+                else return self.text_position_y;
+            })
+            .attr("x", function (d) {
+                if (d.type == "axis_h") return self.text_position_x;
+                if (d.type == "axis_h2") return self.text_position_x2;
+                else return Math.floor(self.resizeW * d.pos + self.marge4);
+            })
+            .attr("class", function (d) {
+                if (d.type == "axis_v") return "graph_time"
+                else if (d.type == "axis_h2") return "graph_text2"
+                else return "graph_text";
+            });
+
+        this.text_container.selectAll("text")
+            .on("click", function (d) {
+                if (d.type == "axis_v") return self.m.changeTime(d.time)
+            })
+            .on("mousedown", function (d) {
+                if (d.type == "axis_v") return self.startDrag(d.time)
+            })
+
+    },
+    
+    /* renderer function for clones
+     *
+     * */
+    drawClones: function (speed) {
+        var self = this;
+
+        var c = 0;
+        
+        if (this.mode=="stack"){
+            //volumes
+            this.g_clone
+                .style("fill", function (d) {
+                    return self.m.clone(d.id).getColor();
+                })
+                .style("stroke", "none")
+                .transition()
+                .duration(speed)
+                .attr("d", function (p) {
+                    if (p.path.length != 0){
+                        var x = (p.path[0][0] * self.resizeW + self.marge4)
+                        var y = (p.path[0][1] * self.resizeH + self.marge5)
+                        var che = ' M ' + x + ',' + y;
+                        for (var i = 1; i < p.path.length; i++) {
+                            x = (p.path[i][0] * self.resizeW + self.marge4)
+                            y = (p.path[i][1] * self.resizeH + self.marge5)
+                            che += ' L ' + x + ',' + y;
+                        }
+                        return che + ' Z';
+                    }else{
+                        return ' M 0,' + self.resizeH;
+                    }
+                })
+                .attr("class", function (p) {
+                    var clone = self.m.clone(p.id)
+                    if (!clone.isActive()) return "graph_inactive";
+                    if (clone.isSelected()) return "graph_select";
+                    if (clone.isFocus()) return "graph_focus";
+                    c++
+                    if (c < self.display_limit2 ) return "graph_line";
+                    if (clone.top > self.display_limit) return "graph_inactive";
+                    return "graph_line";
+                })
+                .attr("id", function (d) {
+                    return "poly" + d.name;
+                })
+        }else{
+            //courbes
+            this.g_clone
+                .style("fill", "none")
+                .style("stroke", function (d) {
+                    return self.m.clone(d.id).getColor();
+                })
+                .transition()
+                .duration(speed)
+                .attr("d", function (p) {
+                    if (p.path.length != 0){
+                        var x = (p.path[0][0] * self.resizeW + self.marge4)
+                        var y = (p.path[0][1] * self.resizeH + self.marge5)
+                        var che = ' M ' + x + ',' + y;
+                        for (var i = 1; i < p.path.length; i++) {
+                            x = (p.path[i][0] * self.resizeW + self.marge4)
+                            y = (p.path[i][1] * self.resizeH + self.marge5)
+                            che += ' L ' + x + ',' + y;
+                        }
+                        return che;
+                    }else{
+                        return ' M 0,' + self.resizeH;
+                    }
+                })
+                .attr("class", function (p) {
+                    var clone = self.m.clone(p.id)
+                    if (!clone.isActive()) return "graph_inactive";
+                    if (clone.isSelected()) return "graph_select";
+                    if (clone.isFocus()) return "graph_focus";
+                    c++
+                    if (c < self.display_limit2 ) return "graph_line";
+                    if (clone.top > self.display_limit) return "graph_inactive";
+                    return "graph_line";
+                })
+                .attr("id", function (d) {
+                    return "poly" + d.name;
+                })
+        }
+        
+        this.clones_container.selectAll("path")
+            .on("mouseover", function (d) {
+                self.m.focusIn(d.id);
+            })
+            .on("click", function (d) {
+                self.clickGraph(d.id);
+            });
+    },
+
+    
+    /* renderer function for data curves
+     * 
+     * */
     drawData: function (speed) {
         var self = this;
 
@@ -1044,11 +1113,45 @@ Graph.prototype = {
             })
     },
     
+    /* renderer function for resolution curves 
+     * 
+     * */
+    drawRes: function (speed) {
+        var self = this;
+        
+        this.g_res.selectAll("path")
+            .transition()
+            .duration(speed)
+            .attr("d", function (p) {
+                var x = (p.path[0][0] * self.resizeW + self.marge4)
+                var y = (p.path[0][1] * self.resizeH + self.marge5)
+                var che = ' M ' + x + ',' + y;
+                for (var i = 1; i < p.path.length; i++) {
+                    x = (p.path[i][0] * self.resizeW + self.marge4)
+                    y = (p.path[i][1] * self.resizeH + self.marge5)
+                    che += ' L ' + x + ',' + y;
+                }
+                che += ' Z ';
+                return che;
+            })
+    },
+
 
 } //fin Graph
 
 
 
+
+
+
+
+
+
+
+
+/*
+ * 
+ * */
 function Stack(model) {
     this.m = model;
 }
