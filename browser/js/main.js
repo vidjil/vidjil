@@ -91,22 +91,33 @@ if (typeof config != 'undefined' && location.search != ''){
     var tmp = location.search.substring(1).split('&')
     var patient = -1
     var config = -1
+    var dataURL = ""
+    var analysisURL = ""
     for (var i=0; i<tmp.length; i++){
         var tmp2 = tmp[i].split('=')
-        if (tmp2[0] == 'data'){
-            m.loadDataUrl(tmp2[1])
-            myConsole.flash("load data from url : " + tmp2[1])
-        }
-        if (tmp2[0] == 'analysis'){
-            m.loadAnalysisUrl(tmp2[1])
-        }
+        
+        if (tmp2[0] == 'data') dataURL = tmp2[1]
+        if (tmp2[0] == 'analysis') analysisURL = tmp2[1]
         if (tmp2[0] == 'patient') patient = tmp2[1]
         if (tmp2[0] == 'config') config = tmp2[1]
-        if (patient != "-1" && config != "-1"){
-            //wait 1sec to check ssl
-            setTimeout(function () { db.load_data( {"patient" : patient , "config" : config } , "")  }, 1000);
+    }
+    
+    
+    if (dataURL != "") {
+        if (analysisURL != ""){
+            var callback = function() {m.loadAnalysisUrl(analysisURL)}
+            m.loadDataUrl(dataURL, callback)
+        }else{
+            m.loadDataUrl(dataURL)
         }
     }
+    
+    if (patient != "-1" && config != "-1"){
+        //wait 1sec to check ssl
+        setTimeout(function () { db.load_data( {"patient" : patient , "config" : config } , "")  }, 1000);
+    }
+        
+    
 }else if (typeof config != 'undefined' && config.use_database){
     //wait 1sec to check ssl
     setTimeout(function () { db.call("patient/index.html")}, 1000);

@@ -140,6 +140,11 @@ List.prototype = {
     },
     
     update_data_list: function () {
+        if (Object.keys(this.index_data).length != Object.keys(this.m.data_info).length){
+            this.build_data_list()
+            this.resize();
+            return
+        }
         for (var key in this.index_data){
             var val = this.m.data[key][this.m.t]
             if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val,this.m.t)

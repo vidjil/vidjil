@@ -51,6 +51,8 @@ Model.prototype = {
         
         this.clusters = [];
         this.clones = [];
+        this.data = {};
+        this.data_info = {};
         
         this.t = 0;
         this.focus = -1;
@@ -177,8 +179,9 @@ Model.prototype = {
     
     /* load the selected vidjil/analysis file from an url
      * */
-    loadDataUrl: function (url) {
+    loadDataUrl: function (url, callback) {
         var self = this;
+        callback = typeof callback !== 'undefined' ? callback : function(){self.loadAnalysisUrl(url)}
         
         var url_split = url.split('/')
         
@@ -192,7 +195,7 @@ Model.prototype = {
                 self.loadGermline();
                 self.initClones()
                 self.dataFileName = url_split[url_split.length-1]
-                self.loadAnalysisUrl(url)
+                callback()
             },                
             error: function (request, status, error) {
                 myConsole.flash("error : can't reach " + url + "file");
@@ -217,6 +220,7 @@ Model.prototype = {
             url: url2,
             success: function (result) {
                 self.parseJsonAnalysis(result)
+                self.initClones()
                 self.analysisFileName = url_split[url_split.length-1]
             },
             error: function () {
@@ -480,6 +484,7 @@ Model.prototype = {
                 i++
             }
         }
+        this.update()
     },
     
     /* complete some clones with analysis (tag / name / expected value)
