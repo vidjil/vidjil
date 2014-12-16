@@ -16,6 +16,7 @@
  * You should have received a copy of the GNU General Public License
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
+
 /*
  * graph.js
  *
@@ -23,6 +24,44 @@
  *
  * content:
  *
+ * 
+ * build_graph()
+ *  build_menu()
+ *  build_list()
+ * resize()
+ * 
+ * clickGraph()
+ * startDrag()
+ * stopDrag()
+ * stopDrag2()
+ * dragTimePoint()
+ * 
+ * constructPath()
+ * constructPathR()
+ * constructStack()
+ * 
+ * init()
+ *  initData()
+ *  initClones()
+ *  initRes()
+ *  initAxis()
+ *    initAbscisse()
+ *    initOrdinateClones()
+ *    initOrdinateData()
+ *    initAbscisseT()
+ * 
+ * update()
+ *  updateData()
+ *  updateRes()
+ *  updateClones()
+ *    updateElem()
+ *      updateElemStyle()
+ * 
+ * draw()
+ *  drawAxis()
+ *  drawData()
+ *  drawClones()
+ *  drawRes()
  */
 
 
@@ -59,14 +98,18 @@ function Graph(id, model) {
 
 Graph.prototype = {
 
-
+/* ************************************************ *
+ * BUILD FUNCTIONS
+ * ************************************************ */
     
-    buildGraph : function () {
+    /* build all layer needed for the graph and link default mouse event to them
+     * 
+     * */
+    build_graph : function () {
         document.getElementById(this.id)
             .innerHTML = "";
         
         this.mode = "curve";
-        this.build_menu()
             
         var self = this;
         this.vis = d3.select("#" + this.id)
@@ -134,107 +177,16 @@ Graph.prototype = {
             .append("svg:g")
             .attr("id", "text_container")
 
+        this.build_menu()
+            .build_list();
+        
+        return this
     },
     
-    initData : function () {
-        this.data_data = [];
-        
-        for (var key in this.m.data_info) {
-            var max = this.m.data[key][0]
-            var min = this.m.data[key][0];
-            var tab = [];
-            
-            for (var i = 0; i < this.m.samples.number; i++) {
-                var t = this.m.samples.order.indexOf(i)
-                var val = this.m.data[key][t]
-                if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val,t)
-                tab.push(val)
-            }
-            
-            this.data_data.push ({
-                name: key,
-                tab : tab,
-                color : this.m.data_info[key].color,
-                active : this.m.data_info[key].isActive
-            });
-            
-        }
-        
-        this.g_data = this.data_container.selectAll("path")
-            .data(this.data_data);
-            
-        this.g_data.enter()
-            .append("path")
-        this.g_data.exit()
-            .remove();
-            
-    },
-    
-    
-    /* build g_clone object 
+
+    /* constructor for the menu in the top-right corner of the graph
      * 
      * */
-    initClones : function () {
-        this.data_clone = [];
-        
-        for (var i = 0; i < this.m.clones.length; i++) {
-            this.data_clone[i] = {
-                id: i,
-                name: "line" + i,
-                path: this.constructPath(i, false)
-            };
-        }
-        
-        this.g_clone = this.clones_container.selectAll("path")
-            .data(this.data_clone);
-        this.g_clone.enter()
-            .append("path")
-            .style("fill", "none")
-            .attr("id", function (d) {
-                return "poly" + d.name;
-            })
-        this.g_clone.exit()
-            .remove();
-    },
-    
-    initRes : function () {
-        this.data_res = [];
-        this.resolution1 = []
-        this.resolution5 = []
-
-        for (i = 0; i < this.m.samples.number; i++) {
-            this.resolution1[i] = (1 / this.m.reads.segmented[i])
-            this.resolution5[i] = (5 / this.m.reads.segmented[i])
-        }
-
-        this.data_res.push({
-            id: this.m.clones.length,
-            name: "resolution1",
-            path: this.constructPathR(this.resolution1)
-        });
-        
-        this.data_res.push({
-            id: this.m.clones.length + 1,
-            name: "resolution5",
-            path: this.constructPathR(this.resolution5)
-        });
-
-        this.g_res = this.reso_container.selectAll("g")
-            .data(this.data_res);
-        this.g_res.enter()
-            .append("svg:g")
-            .attr("id", function (d) {
-                return d.name;
-            });
-        this.g_res.exit()
-            .remove();
-
-        this.g_res.append("path")
-        this.g_res.exit()
-            .remove();
-    },
-
-    
     build_menu : function() {
         var self = this;
         var parent = document.getElementById(this.id)
@@ -265,9 +217,12 @@ Graph.prototype = {
                     .show("fast")
             })
             
-        this.build_list();
+        return this
     },
     
+    /* used to build and update the list of disabled timepoint displayed in the top-right menu
+     * 
+     * */
     build_list : function() {
         var self = this;
         
@@ -321,80 +276,87 @@ Graph.prototype = {
     
         this.update();
     },
+    
+/* ************************************************ *
+ * UPDATE FUNCTIONS
+ * ************************************************ */
 
-    /* update l'intégralité du graphique
-     *
+    /* global update and redraw
+     * 
      * */
-    update: function () {
+    update : function () {
         var startTime = new Date()
             .getTime();
         var elapsedTime = 0;
-
-        this.initAxis();
-
-        if (this.m.focus != -1) {
-            var line = document.getElementById("polyline" + this.m.focus);
-            document.getElementById("clones_container")
-                .appendChild(line);
-        }
         
+        this.initAxis()
+            .initData()
+            .updateRes()
+            .updateClones()
+            .draw();
+        
+        elapsedTime = new Date()
+            .getTime() - startTime;
+        myConsole.log("update Graph: " + elapsedTime + "ms", -1);
+        
+        return this
+    },
+    
+    /* update resolution curves
+     * 
+     * */
+    updateRes : function () {
         for (i = 0; i < this.m.samples.number; i++) {
             this.resolution1[i] = (1 / this.m.reads.segmented[i])
             this.resolution5[i] = (5 / this.m.reads.segmented[i])
         }
         
-        if(this.mode=="stack"){
-            this.updateStack();
-        }else{
+        if(this.mode != "stack"){
             this.data_res[0].path = this.constructPathR(this.resolution1);
             this.data_res[1].path = this.constructPathR(this.resolution5);
-
-            for (var i = 0; i < this.m.clones.length; i++) {
-                for (var j = 0; j < this.m.clusters[i].length; j++) {
-                    this.data_clone[this.m.clusters[i][j]].path = this.constructPath(i, false);
-                }
-            }
-            for (var i = 0; i < this.m.clones.length; i++) {
-                var cloneID = i
-                for (var j = 0; j < this.m.clusters[cloneID].length; j++) {
-                    var seqID = this.m.clusters[cloneID][j]
-                    if (this.m.clone(cloneID).split) {
-                        this.data_clone[seqID].path = this.constructPath(seqID, true);
-                    } else {
-                        this.data_clone[seqID].path = this.constructPath(cloneID, false);
-                    }
-                }
-            }
         }
         
-        this.initData()
-        this.draw();
-        elapsedTime = new Date()
-            .getTime() - startTime;
-        myConsole.log("update Graph: " + elapsedTime + "ms", -1);
+        return this
     },
     
+    /* update data curves and axis
+     * instant redraw 
+     * */
     updateData : function () {
         this.initData();
         this.initAxis();
         this.drawData(0);
         this.drawAxis(0);
+        
+        return this
     },
     
-    updateStack: function () {
-        var stack = new Stack(this.m)
-        stack.compute();
-        for (var i = 0; i < this.m.clones.length; i++) {
-            this.data_clone[i].path = this.constructStack(i, stack);
+    /* update all clones curves or stacks
+     * 
+     * */
+    updateClones: function () {
+        if(this.mode=="stack"){
+            var stack = new Stack(this.m)
+            stack.compute();
+            for (var i = 0; i < this.m.clones.length; i++) {
+                this.data_clone[i].path = this.constructStack(i, stack);
+            }
+        }else{
+            var list = []
+            for (var i = 0; i < this.m.clones.length; i++) list.push(i)
+            this.updateElem(list)
         }
+        
+        return this
     },
 
-    /*update la liste de clones passé en parametre
+    /* update a list of selected clones
      *
      * */
     updateElem: function (list) {
         if (this.mode == "stack"){
-            this.updateStack();
+            //in stack mode we can't update only a few clones whithout updating all of them
+            this.updateClones()
         }else{
             for (var i = 0; i < list.length; i++) {
                 var cloneID = list[i]
@@ -409,19 +371,30 @@ Graph.prototype = {
             }
             this.updateElemStyle(list)
         }
+        
+        return this
     },
 
+    /* put focused clone on forground and redraw all curves to update their color/style
+     *
+     * */
     updateElemStyle: function (list) {
         if (this.m.focus != -1) {
             var line = document.getElementById("polyline" + this.m.focus);
             document.getElementById("clones_container")
                 .appendChild(line);
         }
-        this.drawClones(250);
+        this.drawClones(0);
+        
+        return this
     },
 
+    
+/* ************************************************ *
+ * CLICK/DRAG FUNCTIONS
+ * ************************************************ */
  
-    /* 
+    /* every time user move a timepoint we redraw axis
      *
      * */
     dragTimePoint: function () {
@@ -431,8 +404,8 @@ Graph.prototype = {
         }
     },
 
-    /* 
-     *
+    /* call if user drop a timepoint
+     * compute new timpoint order and update axis
      * */
     stopDrag: function () {
         if (this.drag_on) {
@@ -472,8 +445,8 @@ Graph.prototype = {
         }
     },
     
-    /* 
-     *
+    /* call if user drop a timepoint in the top-right corner menu -> disable timepoint
+     * compute new timpoint order and update axis
      * */
     stopDrag2: function () {
         if (this.drag_on) {
@@ -493,19 +466,27 @@ Graph.prototype = {
     },
 
     /* 
-     *
+     * 
      * */
     startDrag: function (time) {
         this.drag_on = true;
         this.dragged_time_point = time;
     },
     
+    /* 
+     * 
+     * */
     clickGraph: function (cloneID){
         if (!d3.event.ctrlKey) this.m.unselectAll()
         this.m.select(cloneID)
     },
 
-    /* construit le tableau des points par laquelle la courbe de résolution doit passer
+    
+/* ************************************************ *
+ * SVG PATH CONSTRUCTOR
+ * ************************************************ */
+
+    /* construit le svg path de la courbe de résolution 
      *
      * */
     constructPathR: function (res) {
@@ -533,15 +514,27 @@ Graph.prototype = {
             }
             p.push([1, (1 - this.scale_x(size[this.m.samples.order[this.graph_col.length - 1]] * this.m.precision))]);
             p.push([1, 1 + 0.1]);
-
-            return p;
+            
+            var x = (p[0][0] * self.resizeW + self.marge4)
+            var y = (p[0][1] * self.resizeH + self.marge5)
+            var che = ' M ' + x + ',' + y;
+            for (var i = 1; i < p.length; i++) {
+                x = (p[i][0] * self.resizeW + self.marge4)
+                y = (p[i][1] * self.resizeH + self.marge5)
+                che += ' L ' + x + ',' + y;
+            }
+            che += ' Z ';
+            return che;
+                
         } else return [[0, 0]];
     }, //fin constructPathR()
 
-    /* construit le tableau des points par laquelle la courbe d'un clone doit passer
+    /* construit le svg path d'un clone
      *
      * */
     constructPath: function (id, seq_size) {
+        var self = this
+        
         t = 0;
         var p;
 
@@ -620,9 +613,25 @@ Graph.prototype = {
             }
 
         }
-        return p;
+        
+        if (p.length != 0){
+            var x = (p[0][0] * self.resizeW + self.marge4)
+            var y = (p[0][1] * self.resizeH + self.marge5)
+            var che = ' M ' + x + ',' + y;
+            for (var i = 1; i < p.length; i++) {
+                x = (p[i][0] * self.resizeW + self.marge4)
+                y = (p[i][1] * self.resizeH + self.marge5)
+                che += ' L ' + x + ',' + y;
+            }
+            return che;
+        }else{
+            return ' M 0,' + self.resizeH;
+        }
     }, //fin constructPath
     
+    /* construit le svg path d'un clone en mode stack
+     *
+     * */
     constructStack: function (id, stack) {
         var p = [];
         
@@ -642,7 +651,19 @@ Graph.prototype = {
             p.push([x,y])
         }
         
-        return p;
+        if (p.length != 0){
+            var x = (p[0][0] * self.resizeW + self.marge4)
+            var y = (p[0][1] * self.resizeH + self.marge5)
+            var che = ' M ' + x + ',' + y;
+            for (var i = 1; i < p.length; i++) {
+                x = (p[i][0] * self.resizeW + self.marge4)
+                y = (p[i][1] * self.resizeH + self.marge5)
+                che += ' L ' + x + ',' + y;
+            }
+            return che + ' Z';
+        }else{
+            return ' M 0,' + self.resizeH;
+        }
     },
     
     
@@ -650,23 +671,130 @@ Graph.prototype = {
     
 /* ************************************************ *
  * INIT FUNCTIONS
- * 
- * 
  * ************************************************ */
     
     /* global init function
      *
      * */
     init: function () {
-        this.buildGraph()
+        this.build_graph()
+            .initAxis()
+            .initData()
+            .initClones()
+            .initRes()
+            .resize();
         
-        this.initAxis()
-            .initData();
-        this.initClones();
-        this.initRes();
+        return this
+    },
+    
+    
+    /*
+     * 
+     * */
+    initData : function () {
+        this.data_data = [];
         
-        this.resize();
+        for (var key in this.m.data_info) {
+            var max = this.m.data[key][0]
+            var min = this.m.data[key][0];
+            var tab = [];
+            
+            for (var i = 0; i < this.m.samples.number; i++) {
+                var t = this.m.samples.order.indexOf(i)
+                var val = this.m.data[key][t]
+                if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val,t)
+                tab.push(val)
+            }
+            
+            this.data_data.push ({
+                name: key,
+                tab : tab,
+                color : this.m.data_info[key].color,
+                active : this.m.data_info[key].isActive
+            });
+            
+        }
         
+        this.g_data = this.data_container.selectAll("path")
+            .data(this.data_data);
+            
+        this.g_data.enter()
+            .append("path")
+        this.g_data.exit()
+            .remove();
+            
+        return this
+    },
+    
+    
+    /* build g_clone object 
+     * 
+     * */
+    initClones : function () {
+        this.data_clone = [];
+        
+        for (var i = 0; i < this.m.clones.length; i++) {
+            this.data_clone[i] = {
+                id: i,
+                name: "line" + i,
+                path: this.constructPath(i, false)
+            };
+        }
+        
+        this.g_clone = this.clones_container.selectAll("path")
+            .data(this.data_clone);
+        this.g_clone.enter()
+            .append("path")
+            .style("fill", "none")
+            .attr("id", function (d) {
+                return "poly" + d.name;
+            })
+        this.g_clone.exit()
+            .remove();
+            
+        return this
+    },
+    
+    
+    /*
+     * 
+     * */
+    initRes : function () {
+        this.data_res = [];
+        this.resolution1 = []
+        this.resolution5 = []
+
+        for (i = 0; i < this.m.samples.number; i++) {
+            this.resolution1[i] = (1 / this.m.reads.segmented[i])
+            this.resolution5[i] = (5 / this.m.reads.segmented[i])
+        }
+
+        this.data_res.push({
+            id: this.m.clones.length,
+            name: "resolution1",
+            path: this.constructPathR(this.resolution1)
+        });
+        
+        this.data_res.push({
+            id: this.m.clones.length + 1,
+            name: "resolution5",
+            path: this.constructPathR(this.resolution5)
+        });
+
+        this.g_res = this.reso_container.selectAll("g")
+            .data(this.data_res);
+        this.g_res.enter()
+            .append("svg:g")
+            .attr("id", function (d) {
+                return d.name;
+            });
+        this.g_res.exit()
+            .remove();
+
+        this.g_res.append("path")
+        this.g_res.exit()
+            .remove();
+            
         return this
     },
     
@@ -909,9 +1037,9 @@ Graph.prototype = {
         var self = this;
 
         this.drawAxis(500)
-        this.drawData(500)
-        this.drawClones(500)
-        this.drawRes(500)
+            .drawData(500)
+            .drawClones(500)
+            .drawRes(500)
     },
     
     /* renderer function for axis and labels
@@ -981,7 +1109,8 @@ Graph.prototype = {
             .on("mousedown", function (d) {
                 if (d.type == "axis_v") return self.startDrag(d.time)
             })
-
+        
+        return this
     },
     
     /* renderer function for clones
@@ -1002,19 +1131,7 @@ Graph.prototype = {
                 .transition()
                 .duration(speed)
                 .attr("d", function (p) {
-                    if (p.path.length != 0){
-                        var x = (p.path[0][0] * self.resizeW + self.marge4)
-                        var y = (p.path[0][1] * self.resizeH + self.marge5)
-                        var che = ' M ' + x + ',' + y;
-                        for (var i = 1; i < p.path.length; i++) {
-                            x = (p.path[i][0] * self.resizeW + self.marge4)
-                            y = (p.path[i][1] * self.resizeH + self.marge5)
-                            che += ' L ' + x + ',' + y;
-                        }
-                        return che + ' Z';
-                    }else{
-                        return ' M 0,' + self.resizeH;
-                    }
+                    p.path
                 })
                 .attr("class", function (p) {
                     var clone = self.m.clone(p.id)
@@ -1039,19 +1156,7 @@ Graph.prototype = {
                 .transition()
                 .duration(speed)
                 .attr("d", function (p) {
-                    if (p.path.length != 0){
-                        var x = (p.path[0][0] * self.resizeW + self.marge4)
-                        var y = (p.path[0][1] * self.resizeH + self.marge5)
-                        var che = ' M ' + x + ',' + y;
-                        for (var i = 1; i < p.path.length; i++) {
-                            x = (p.path[i][0] * self.resizeW + self.marge4)
-                            y = (p.path[i][1] * self.resizeH + self.marge5)
-                            che += ' L ' + x + ',' + y;
-                        }
-                        return che;
-                    }else{
-                        return ' M 0,' + self.resizeH;
-                    }
+                    return p.path
                 })
                 .attr("class", function (p) {
                     var clone = self.m.clone(p.id)
@@ -1075,6 +1180,8 @@ Graph.prototype = {
             .on("click", function (d) {
                 self.clickGraph(d.id);
             });
+            
+        return this
     },
 
     
@@ -1121,6 +1228,8 @@ Graph.prototype = {
             .attr("id", function (d) {
                 return "data_g_" + d.name;
             })
+            
+        return this
     },
     
     /* renderer function for resolution curves 
@@ -1133,17 +1242,10 @@ Graph.prototype = {
             .transition()
             .duration(speed)
             .attr("d", function (p) {
-                var x = (p.path[0][0] * self.resizeW + self.marge4)
-                var y = (p.path[0][1] * self.resizeH + self.marge5)
-                var che = ' M ' + x + ',' + y;
-                for (var i = 1; i < p.path.length; i++) {
-                    x = (p.path[i][0] * self.resizeW + self.marge4)
-                    y = (p.path[i][1] * self.resizeH + self.marge5)
-                    che += ' L ' + x + ',' + y;
-                }
-                che += ' Z ';
-                return che;
+                p.path
             })
+            
+        return this
     },
 
 
