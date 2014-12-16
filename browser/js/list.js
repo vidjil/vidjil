@@ -459,8 +459,11 @@ List.prototype = {
         input.style.width = "200px"; //TODO remplacer par une class css
         input.style.border = "0px";
         input.style.margin = "0px";
-        input.onkeydown = function () {
-            if (event.keyCode == 13) document.getElementById('btnSave')
+        input.onkeydown = function (e) {
+            e = e || window.event;
+            var key = e.keyCode
+            if (key == 0) key = e.which 
+            if (key == 13) document.getElementById('btnSave')
                 .click();
         }
         $(input).focusout(function() {

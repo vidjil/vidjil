@@ -313,13 +313,18 @@ Builder.prototype = {
         input.style.width = "100px";
         input.style.border = "0px";
         input.style.margin = "0px";
-        input.onkeydown = function () {
-            if (event.keyCode == 13) document.getElementById('btnSaveTag')
+        input.onkeydown = function (e) {
+            e = e || window.event;
+            var key = e.keyCode
+            if (key == 0) key = e.which 
+            if (key == 13) document.getElementById('btnSaveTag')
                 .click();
         }
         $(input).focusout(function() {
-            self.build_tagSelector()
-            self.build_displaySelector()
+            setTimeout(function(){
+                self.build_tagSelector()
+                self.build_displaySelector()
+            }, 500);
         })
         divParent.appendChild(input);
         divParent.onclick = "";
@@ -328,7 +333,9 @@ Builder.prototype = {
         a.className = "button";
         a.appendChild(document.createTextNode("save"));
         a.id = "btnSaveTag";
-        a.onclick = function () {
+        a.onclick = function (event) {
+            event.stopPropagation()
+            event.preventDefault()
             var newTagName = document.getElementById("new_tag_name")
                 .value;
             tagName[tagID] = newTagName
@@ -355,12 +362,17 @@ Builder.prototype = {
         input.style.width = "200px";
         input.style.border = "0px";
         input.style.margin = "0px";
-        input.onkeydown = function () {
-            if (event.keyCode == 13) document.getElementById('btnSave')
+        input.onkeydown = function (e) {
+            e = e || window.event;
+            var key = e.keyCode
+            if (key == 0) key = e.which 
+            if (key == 13) document.getElementById('btnSave')
                 .click();
         }
         $(input).focusout(function() {
-            m.update()
+            setTimeout(function(){
+                m.update()
+            }, 500);
         })
         divParent.appendChild(input);
         divParent.onclick = "";
