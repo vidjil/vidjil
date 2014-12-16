@@ -12,9 +12,11 @@ if request.env.http_origin:
 def add(): 
     if not auth.has_permission('admin', 'patient', request.vars['id'], auth.user_id):
         res = {"success" : "false", "message" : "you need admin permission on this patient to add files"}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     elif not auth.has_permission('upload', 'sequence_file', request.vars['id'], auth.user_id):
         res = {"success" : "false", "message" : "you don't have right to upload files"}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
         query = db((db.sequence_file.patient_id==request.vars['id'])).select()
@@ -46,6 +48,7 @@ def add_form():
         query = db((db.sequence_file.patient_id==request.vars['patient_id'])).select()
         for row in query :
             if row.filename == request.vars['filename'] :
+                log.error(res)
                 res = {"message": "this sequence file already exists for this patient"}
                 return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
             
@@ -69,6 +72,7 @@ def add_form():
         
     else :
         res = {"success" : "false", "message" : error}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
@@ -80,6 +84,7 @@ def edit():
     #    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
         res = {"success" : "false", "message" : "you need admin permission to edit files"}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
 
@@ -141,6 +146,7 @@ def upload():
         db.sequence_file[request.vars["id"]] = dict(size_file = size)
         
         res = {"message": mes}
+        log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
   
 
@@ -149,6 +155,7 @@ def confirm():
         return dict(message=T('confirm sequence file deletion'))
     else:
         res = {"success" : "false", "message" : "you need admin permission to delete this file"}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
 
@@ -168,6 +175,7 @@ def delete():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
         res = {"success" : "false", "message" : "you need admin permission to delete this file"}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 
