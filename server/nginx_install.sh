@@ -105,8 +105,10 @@ echo "server {
             include /etc/nginx/conf.d/web2py/gzip.conf;
             ### end gzip section
 
-            client_max_body_size 2048m;
+            client_max_body_size 20G;
         }
+
+        client_max_body_size 20G;
 
         location /cgi/ {
             gzip off;
@@ -142,8 +144,7 @@ server {
             # include /etc/nginx/conf.d/web2py/gzip.conf;
             ### end gzip section
 
-            ### remove the comments if you want to enable uploads (max 10 MB)
-            client_max_body_size 2048m;
+            client_max_body_size 20G;
             ###
         }
         ## if you serve static files through https, copy here the section
