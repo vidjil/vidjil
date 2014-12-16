@@ -356,11 +356,12 @@ int main (int argc, char **argv)
           struct stat buffer; 
           string putative_f_rep_D = germline_system + "D.fa" ;
           if (stat(putative_f_rep_D.c_str(), &buffer) == 0)
-            f_reps_D.push_back(putative_f_rep_D.c_str()) ;
-
-          delta_min = DEFAULT_DELTA_MIN_D ;
-          delta_max = DEFAULT_DELTA_MAX_D ;
-          default_w = DEFAULT_W_D ;
+            {
+              f_reps_D.push_back(putative_f_rep_D.c_str()) ;
+              delta_min = DEFAULT_DELTA_MIN_D ;
+              delta_max = DEFAULT_DELTA_MAX_D ;
+              default_w = DEFAULT_W_D ;
+            }
         }
 	f_reps_J.push_back((germline_system + "J.fa").c_str()) ;
 	germline_system = extract_basename(germline_system);
