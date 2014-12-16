@@ -249,9 +249,11 @@ class MsgUserAdapter(logging.LoggerAdapter):
             else:
                 msg = '?'
         ip = request.client
-        if ip in ips:
-            ip = "%s/%s" % (ip, ips[ip])
-        new_msg =  '%15s <%s> %s' % (ip, (auth.user.first_name if auth.user else ''), msg)
+        if ip:
+            for ip_prefix in ips:
+                if ip.startswith(ip_prefix):
+                    ip = "%s/%s" % (ip, ips[ip_prefix])
+        new_msg =  '%30s %12s %s' % (ip, ('<%s>' % auth.user.first_name if auth.user else ''), msg)
         return new_msg, kwargs
     
 #
