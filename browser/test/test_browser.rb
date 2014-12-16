@@ -38,9 +38,20 @@ class Browser < MiniTest::Test
     data_path = folder_path + '/doc/analysis-example1.vidjil'
     analysis_path = folder_path + '/browser/test/test.analysis'
 
+    if ENV['LIVE_SERVER']
+      index_path = ENV['LIVE_SERVER'] + '/?data='
+    end
+      
+    print "Testing Vidjil browser at " + index_path + "\n"
+
     $b = VidjilBrowser.new :firefox
     #$b = VidjilBrowser.new :chrome
     $b.goto index_path
+
+    # A live server can be configured with a database.
+    # The welcome popup should not be tested.
+    
+    if not ENV['LIVE_SERVER']
 
     # check the welcoming popup
     assert ($b.div(:id => 'popup-msg').present?), "Popup message is not present at the opening of Vidjil"
@@ -49,6 +60,8 @@ class Browser < MiniTest::Test
     $b.div(:id => 'popup-msg').button(:text => 'ok').click
     assert (not $b.div(:id => 'popup-msg').present?), "Popup message still present after trying to close it"
 
+    end
+    
     $b.div(:id => 'demo_file_menu').click 
     $b.div(:id => 'demo_file_menu').a(:id => 'import_data_anchor').click
     
