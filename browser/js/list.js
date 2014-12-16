@@ -464,7 +464,7 @@ List.prototype = {
                 .click();
         }
         $(input).focusout(function() {
-            m.update()
+            setTimeout(function(){m.update()},500)
         })
         divParent.appendChild(input);
         divParent.onclick = "";
@@ -473,7 +473,9 @@ List.prototype = {
         a.className = "button";
         a.appendChild(document.createTextNode("save"));
         a.id = "btnSave";
-        a.onclick = function () {
+        a.onclick = function (event) {
+            event.preventDefault()
+            event.stopPropagation()
             var newName = document.getElementById("new_name")
                 .value;
             self.m.clone(cloneID).changeName(newName);
