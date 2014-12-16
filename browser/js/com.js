@@ -82,7 +82,9 @@ function Com(flash_id, log_id, popup_id, data_id) {
 	    
         "database_timeout": "Cannot connect database, please retry in a few seconds",
     
-        "save_analysis": "change will be lost, are you sure you want to load another file ?"
+        "save_analysis": "You made some changes in the analysis of the previous patient"
+	    + "</br>that were not saved (patients → save analysis)."
+            + "</br>These changes will now be lost, do you want to proceed anyway?"
     }
     
     
