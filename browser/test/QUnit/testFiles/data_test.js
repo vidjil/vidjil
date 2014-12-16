@@ -30,6 +30,10 @@ json_data = {
       "  ==> segmented 448435 reads (48.2%)\n  ==> found 43444 40-windows in 418595 segments (45%) inside 929901 sequences\n " 
     ]
   }, 
+  "data": {
+    "dataTest1" : [45,60,52,60],
+    "dataTest2" : [2,1,2,20]
+  },
   "clones": [
     { 
         "sequence" : "aaaaaaaaaaaaaaaaaaaaa",

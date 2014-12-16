@@ -1,9 +1,6 @@
 
 var myConsole = new Com("flash_container", "log_container", "popup-container", "data-container")
 
-
-
-
 test("scatterplot : grid", function() {
     var m = new Model(m);
     m.parseJsonData(json_data,100)
