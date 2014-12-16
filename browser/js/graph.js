@@ -102,7 +102,7 @@ Graph.prototype = {
  * BUILD FUNCTIONS
  * ************************************************ */
     
-    /* build all layer needed for the graph and link default mouse event to them
+    /* build all layers needed for the graph and link default mouse events to them
      * 
      * */
     build_graph : function () {
@@ -306,16 +306,11 @@ Graph.prototype = {
      * 
      * */
     updateRes : function () {
-        for (i = 0; i < this.m.samples.number; i++) {
-            this.resolution1[i] = (1 / this.m.reads.segmented[i])
-            this.resolution5[i] = (5 / this.m.reads.segmented[i])
-        }
-        
         if(this.mode != "stack"){
-            this.data_res[0].path = this.constructPathR(this.resolution1);
-            this.data_res[1].path = this.constructPathR(this.resolution5);
+            this.data_res[0].path = this.constructPathR(1);
+            this.data_res[1].path = this.constructPathR(5);
         }
-        
+
         return this
     },
     
@@ -489,7 +484,12 @@ Graph.prototype = {
     /* construit le svg path de la courbe de résolution 
      *
      * */
-    constructPathR: function (res) {
+    constructPathR: function (r) {
+        var res = []
+        for (i = 0; i < this.m.samples.number; i++) {
+            res[i] = (r / this.m.reads.segmented[i])
+        }
+        
         if (typeof res != "undefined" && res.length != 0) {
             var p;
             p = [
@@ -515,18 +515,18 @@ Graph.prototype = {
             p.push([1, (1 - this.scale_x(size[this.m.samples.order[this.graph_col.length - 1]] * this.m.precision))]);
             p.push([1, 1 + 0.1]);
             
-            var x = (p[0][0] * self.resizeW + self.marge4)
-            var y = (p[0][1] * self.resizeH + self.marge5)
+            var x = (p[0][0] * this.resizeW + this.marge4)
+            var y = (p[0][1] * this.resizeH + this.marge5)
             var che = ' M ' + x + ',' + y;
             for (var i = 1; i < p.length; i++) {
-                x = (p[i][0] * self.resizeW + self.marge4)
-                y = (p[i][1] * self.resizeH + self.marge5)
+                x = (p[i][0] * this.resizeW + this.marge4)
+                y = (p[i][1] * this.resizeH + this.marge5)
                 che += ' L ' + x + ',' + y;
             }
             che += ' Z ';
             return che;
                 
-        } else return [[0, 0]];
+        } else return "";
     }, //fin constructPathR()
 
     /* construit le svg path d'un clone
@@ -652,17 +652,17 @@ Graph.prototype = {
         }
         
         if (p.length != 0){
-            var x = (p[0][0] * self.resizeW + self.marge4)
-            var y = (p[0][1] * self.resizeH + self.marge5)
+            var x = (p[0][0] * this.resizeW + this.marge4)
+            var y = (p[0][1] * this.resizeH + this.marge5)
             var che = ' M ' + x + ',' + y;
             for (var i = 1; i < p.length; i++) {
-                x = (p[i][0] * self.resizeW + self.marge4)
-                y = (p[i][1] * self.resizeH + self.marge5)
+                x = (p[i][0] * this.resizeW + this.marge4)
+                y = (p[i][1] * this.resizeH + this.marge5)
                 che += ' L ' + x + ',' + y;
             }
             return che + ' Z';
         }else{
-            return ' M 0,' + self.resizeH;
+            return ' M 0,' + this.resizeH;
         }
     },
     
@@ -764,21 +764,16 @@ Graph.prototype = {
         this.resolution1 = []
         this.resolution5 = []
 
-        for (i = 0; i < this.m.samples.number; i++) {
-            this.resolution1[i] = (1 / this.m.reads.segmented[i])
-            this.resolution5[i] = (5 / this.m.reads.segmented[i])
-        }
-
         this.data_res.push({
             id: this.m.clones.length,
             name: "resolution1",
-            path: this.constructPathR(this.resolution1)
+            path: this.constructPathR(1)
         });
         
         this.data_res.push({
             id: this.m.clones.length + 1,
             name: "resolution5",
-            path: this.constructPathR(this.resolution5)
+            path: this.constructPathR(5)
         });
 
         this.g_res = this.reso_container.selectAll("g")
@@ -1131,7 +1126,7 @@ Graph.prototype = {
                 .transition()
                 .duration(speed)
                 .attr("d", function (p) {
-                    p.path
+                    return p.path
                 })
                 .attr("class", function (p) {
                     var clone = self.m.clone(p.id)
@@ -1139,8 +1134,6 @@ Graph.prototype = {
                     if (clone.isSelected()) return "graph_select";
                     if (clone.isFocus()) return "graph_focus";
                     c++
-                    if (c < self.display_limit2 ) return "graph_line";
-                    if (clone.top > self.display_limit) return "graph_inactive";
                     return "graph_line";
                 })
                 .attr("id", function (d) {
@@ -1242,7 +1235,7 @@ Graph.prototype = {
             .transition()
             .duration(speed)
             .attr("d", function (p) {
-                p.path
+                return p.path
             })
             
         return this
