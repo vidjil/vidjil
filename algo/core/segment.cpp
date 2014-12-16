@@ -142,6 +142,7 @@ ostream &operator<<(ostream &out, const Segmenter &s)
   out << ">" << s.label << " " ;
   out << (s.segmented ? "" : "! ") << s.info ;
   out << " " << s.info_extra ;
+  out << " " << s.segmented_germline->code ;
   out << endl ;
 
   if (s.segmented)
@@ -461,7 +462,7 @@ string format_del(int deletions)
 
 FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
 {
-
+  segmented_germline = germline ;
   info_extra = "" ;
   label = seq.label ;
   sequence = seq.sequence ;

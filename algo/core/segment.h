@@ -53,6 +53,7 @@ protected:
   bool finishSegmentationD();
 
  public:
+  Germline *segmented_germline;
   string code;
   string code_short;
   string code_light;
@@ -140,8 +141,6 @@ class KmerSegmenter : public Segmenter
   string affects;
 
  public:
-  Germline *segmented_germline;
-  
   /**
    * Build a segmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file
