@@ -77,7 +77,7 @@
                         <td onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
                         <td> <a {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} 
                                 {{else:}} href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" {{pass}}  >dl</a></td>
-                    {{else:}}<td></td><td></td>{{pass}}
+                    {{else:}}<td></td><td></td><td></td>{{pass}}
                      
                      
                     <td class="column_sep"></td>
