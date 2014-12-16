@@ -182,7 +182,9 @@ Model.prototype = {
     loadDataUrl: function (url, callback) {
         var self = this;
         callback = typeof callback !== 'undefined' ? callback : function(){self.loadAnalysisUrl(url)}
-        
+
+        myConsole.flash("loadDataUrl: " + url)        
+
         var url_split = url.split('/')
         
         $.ajax({
@@ -210,6 +212,7 @@ Model.prototype = {
         var self = this;
         
         var url2 = url.replace(new RegExp(".vidjil" + '$'), ".analysis")
+        myConsole.flash("loadAnalysisUrl: " + url2)
         
         var url_split = url2.split('/')
         
