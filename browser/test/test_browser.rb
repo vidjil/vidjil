@@ -48,6 +48,13 @@ class Browser < MiniTest::Test
     #$b = VidjilBrowser.new :chrome
     $b.goto index_path
 
+    # check that the browser loaded correctly
+    if not $b.div(:id => 'logo').present?
+      print "Loading of Vidjil browser failed. Do not execute remaining tests."
+      exit
+    end
+
+    
     # A live server can be configured with a database.
     # The welcome popup should not be tested.
     
