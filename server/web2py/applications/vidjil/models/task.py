@@ -42,6 +42,7 @@ def schedule_run(id_sequence, id_config):
 
     if len(row3) > 0 :
         res = {"message": "run already registered"}
+        log.error(res)
         return res
 
 
@@ -56,7 +57,7 @@ def schedule_run(id_sequence, id_config):
     patient_name = db.patient[id_patient].first_name + " " + db.patient[id_patient].last_name
 
     res = {"redirect": "reload",
-           "message": "%s (%s) %s: process requested" % (patient_name, config_name, filename)}
+           "message": "[%s] (%s): process requested - %s - %s" % (data_id, config_name, patient_name, filename)}
 
     log.info(res)
     return res
@@ -133,6 +134,11 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
     ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
     ## TODO parse result success/fail
 
+    config_name = db.config[id_config].name
+
+    res = {"message": "[%s] (%s): Vidjil finished - %s" % (id_data, config_name, out_folder)}
+    log.info(res)
+
     run_fuse(id_file, id_config, id_data, id_fuse, clean_before = False)
 
     return "SUCCESS"
@@ -189,6 +195,10 @@ def run_copy(id_file, id_config, id_data, id_fuse, clean_before=False, clean_aft
     
     ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
     ## TODO parse result success/fail
+
+    config_name = db.config[id_config].name
+    res = {"message": "[%s] (%s): 'copy' finished - %s" % (id_data, config_name, filename)}
+    log.info(res)
 
     run_fuse(id_file, id_config, id_data, id_fuse, clean_before = False)
 
@@ -260,6 +270,10 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
         p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
         p.wait()
     
+    config_name = db.config[id_config].name
+    res = {"message": "[%s] (%s): 'fuse' finished - %s" % (id_data, config_name, output_file)}
+    log.info(res)
+
     return "SUCCESS"
 
 
