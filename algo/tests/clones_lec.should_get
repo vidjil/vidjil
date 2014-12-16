@@ -1,0 +1,11 @@
+!LAUNCH: ../../vidjil -G ../../germline/TRG -c clones ../../data/segment_lec.fa
+
+$ Extract 40bp windows (TRG)
+1:found . 40-windows
+
+$ Find the good number of windows
+1: found 2 .* in 4 segments .* inside 7 sequences
+
+$ Find the good length statistics
+1: SEG_+.* 78.5
+1: SEG_-.* 91.3
