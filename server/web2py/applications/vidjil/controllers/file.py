@@ -126,6 +126,11 @@ def upload():
     if error=="" :
             
         mes = "file " + request.vars['id'] + " : "
+        res = {"message": mes + ": processing uploaded file",
+               "redirect": "patient/info",
+               "args" : {"id" : request.vars['id']}
+               }
+        log.info(res)
         if request.vars.file != None :
             f = request.vars.file
             db.sequence_file[request.vars["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
