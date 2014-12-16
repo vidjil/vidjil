@@ -77,15 +77,14 @@ Shortcut.prototype = {
                 default:
             }
             
-            console.log(key)
             //system shortcuts
             if (typeof this.system_shortcuts[key] != "undefined") {
 
                 var germlines = this.system_shortcuts[key].filter(function(g) {return m.system_available.indexOf(g) != -1})
-                console.log("Germlines with key " + key + ": " + germlines)
-
                 if (germlines.length == 0)
                     return ;
+
+                console.log("Germlines with key " + key + ": " + germlines)
 
                 // Find current germline
                 var current = -1 ;
