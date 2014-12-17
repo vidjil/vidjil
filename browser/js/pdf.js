@@ -77,7 +77,7 @@ PDF.prototype = {
                          "y" : 5,
                          "w" : 277,
                          "h" : 170,
-                         "fontSize" : 10,
+                         "fontSize" : 20,
                          "strokeSize" : 5
                         }
         
@@ -85,7 +85,7 @@ PDF.prototype = {
             .graph(opt_graph)
             .label_selected_clones(200,170)
             
-        this.doc.setFontSize(16);
+        this.doc.setFontSize(20);
         this.doc.text(this.marge + 10, 190, this.m.getPrintableAnalysisName());
         this.print()
         
@@ -447,7 +447,7 @@ PDF.prototype = {
         }
         
         this.doc.setDrawColor(0, 0, 0);
-        this.doc.rect(x, y, max, 2+this.list.length * 7, 'S');
+        // this.doc.rect(x, y, max, 2+this.list.length * 7, 'S');
         this.doc.setDrawColor(255, 255, 255);
         
         return this;
@@ -459,7 +459,7 @@ PDF.prototype = {
         
         this.icon(cloneID, x, y, 18, 8) 
         
-        this.doc.setFontSize(8);
+        this.doc.setFontSize(12);
         var text = this.m.clone(cloneID).getName()
         this.doc.text(x+20, y+4, text);
         return 20 + text.length*1.5
