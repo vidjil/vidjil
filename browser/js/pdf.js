@@ -314,7 +314,7 @@ PDF.prototype = {
     },
 
     row: function (name, data, format) {
-        this.doc.text(this.marge, this.y, name);
+        this.doc.text(this.marge, this.y - 1, name);
 
         var light = true;
 
@@ -332,7 +332,7 @@ PDF.prototype = {
             if (format == "%") r = (r * 100)
                 .toFixed(2) + ' %'
 
-            this.doc.text(x, y, ' ' + r);
+            this.doc.text(x, y - 1, ' ' + r);
         }
         
         return this;

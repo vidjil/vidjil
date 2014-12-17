@@ -1034,6 +1034,8 @@ var jsPDF = (function(global) {
 			if (!('autoencode' in flags))
 				flags.autoencode = true;
 
+                        y += activeFontSize / 5 / 2;     
+                    
 			if (typeof text === 'string') {
 				text = ESC(text);
 			} else if (text instanceof Array) {
