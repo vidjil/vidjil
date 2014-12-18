@@ -1,6 +1,12 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
+2014-12-XX  The Vidjil Team
+	* Better multi-germline analysis (-g). This will again be improved in a next release.
+	* New experimental incomplete rearrangement analysis (-i)
+	* New and updated unit and functional tests
+	* Bugs closed (-w 40 when no D germline)
+
 2014-11-28  The Vidjil Team
 	* New input method, now accepts compressed fasta files with gzip (core/fasta.cpp, gzstream/zlib)
 	* Better multi-germline analysis (-g) and documentation. This analysis can now safely be used.
