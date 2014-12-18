@@ -84,7 +84,9 @@ function Graph(id, model) {
     this.marge4 = 70; //marge gauche (non influencé par le resize)
     this.marge5 = 30; //marge top (non influencé par le resize)
 
-    this.max_ratio_between_deltas = 2.0; // maximum ratio between small and large time deltas for rescaling x axis
+    // maximum ratio between small and large time deltas for rescaling x axis
+    // if set to 1.0, no rescaling
+    this.max_ratio_between_deltas = 2.0;
 
     this.data_axis = [];
     this.mobil = {};

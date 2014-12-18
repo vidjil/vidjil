@@ -8,6 +8,7 @@ test("graph: svg path builder", function() {
     m.initClones()
 
     var graph = new Graph("visu",m)
+    graph.max_ratio_between_deltas = 1.0
     graph.init()
     
     equal(graph.constructPath(0), " M 83.2,295.74364485223595 L 103,295.74364485223595 L 301,234.25635514776397 L 499,259.7758861041419 L 697,198.2885963996698 L 716.8,198.2885963996698", "path curve clone 0")
@@ -24,6 +25,7 @@ test("graph: init", function() {
     m.initClones()
 
     var graph = new Graph("visu",m)
+    graph.max_ratio_between_deltas = 1.0
     graph.init()
     
     graph.initData()
