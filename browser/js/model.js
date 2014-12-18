@@ -60,7 +60,8 @@ Model.prototype = {
         
         this.colorMethod = "Tag";
         this.notation_type = "percent"
-        this.time_type = "name"
+        this.changeTimeFormat("name")
+                
         this.display_window = false
         this.isPlaying = false;
         
@@ -457,7 +458,7 @@ Model.prototype = {
         deltas = this.dateDiffMinMax()
         myConsole.log(deltas)
         if (deltas.max > 1)
-            this.time_type = "delta_date"
+            this.changeTimeFormat("delta_date")
         
         //      NSIZE
         var n_max = 0;
@@ -1594,9 +1595,9 @@ Model.prototype = {
     /* use name / date 
      *
      * */
-    changeTimeFormat: function (time) {
+    changeTimeFormat: function (time, update) {
         this.time_type = time
-        this.update();
+        if (update) this.update()
         
         var radio = document.getElementsByName("time");
         for(var elem in radio){
