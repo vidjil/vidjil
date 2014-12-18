@@ -1392,6 +1392,39 @@ Model.prototype = {
     return Math.floor((utc2 - utc1) / _MS_PER_DAY);
     },
 
+    dateDiffMinMax: function () {
+        // Computes the min and max delta between timepoints
+        
+        delta_min = 9999
+        delta_max = 0
+
+        try
+        {
+            previous_t = this.samples.timestamp[0]
+
+            for (var i = 1; i < this.samples.order.length; i++) {
+                t =  this.samples.timestamp[this.samples.order[i]]                    
+                delta = this.dateDiffInDays(previous_t, t)
+                
+                if (delta > delta_max)
+                    delta_max = delta
+                if (delta < delta_min)
+                    delta_min = delta
+                
+                previous_t = t
+            }
+        }
+        catch (e)
+        {
+            // The computation can fail if one of the times is badly given
+            myConsole.log("No delta times can be computed")
+            delta_min = -1
+            delta_max = -1
+        }
+
+        return { 'min': delta_min, 'max': delta_max }
+    },        
+    
     getStrTime: function (timeID, format){
         format = typeof format !== 'undefined' ? format : this.time_type;
         var result = "-/-"
