@@ -84,6 +84,8 @@ function Graph(id, model) {
     this.marge4 = 70; //marge gauche (non influencé par le resize)
     this.marge5 = 30; //marge top (non influencé par le resize)
 
+    this.max_ratio_between_deltas = 2.0; // maximum ratio between small and large time deltas for rescaling x axis
+
     this.data_axis = [];
     this.mobil = {};
 
@@ -828,7 +830,8 @@ Graph.prototype = {
      * 
      * */
     initAbscisse : function () {
-            
+
+        /* Compute coordinates of the samples / time points */
         for (var i = 0; i < this.m.samples.order.length; i++) {
             this.graph_col[i] = this.marge1 + i * ((1 - (this.marge1 + this.marge2)) / (this.m.samples.order.length - 1));
         }
@@ -840,6 +843,38 @@ Graph.prototype = {
             this.graph_col[1] = 3 / 4;
         }
 
+        /* x-rescaling taking into account time deltas */
+        if (this.m.samples.order.length >= 3) {
+
+            deltas = this.m.dateDiffMinMax()
+            myConsole.log(deltas)
+            myConsole.log(deltas.min)
+            
+            /* only if there are enough different dates */
+            if ((deltas.min >= 0) && (deltas.max >= 2))
+                {
+                    previous_t = this.m.samples.timestamp[0]
+                    total_col = 0
+                    this.graph_col[0] = total_col ;
+
+                    for (var i = 1; i < this.m.samples.order.length; i++) {
+                        t =  this.m.samples.timestamp[this.m.samples.order[i]]
+                        delta = this.m.dateDiffInDays(previous_t, t)
+                        total_col += 1 + (this.max_ratio_between_deltas - 1) * (delta - deltas.min) / (deltas.max - deltas.min)
+                        
+                        this.graph_col[i] = total_col
+                        previous_t = t
+                    }
+
+                    /* re-normalizing */
+                    for (var i = 0; i < this.m.samples.order.length; i++) {
+                        t =  this.m.samples.timestamp[i] // pas i
+                        this.graph_col[i] = this.marge1 + this.graph_col[i] * ((1 - (this.marge1 + this.marge2)) / total_col);
+                    }
+                }            
+        }
+        
+        /* Init the axis */
         for (var i = 0; i < this.m.samples.number; i++) {
             var t = this.m.samples.order.indexOf(i)
             d = {}
