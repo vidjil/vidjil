@@ -55,7 +55,7 @@ test("graph: init", function() {
     deepEqual(graph.data_axis[0], {
                                     "orientation": "vert",
                                     "pos": 0.05,
-                                    "text": "Leu+0_BCD",
+                                    "text": "2014-10-20",
                                     "time": 0,
                                     "type": "axis_v"
                                     },
