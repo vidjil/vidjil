@@ -453,6 +453,12 @@ Model.prototype = {
     initClones: function () {
         myConsole.log("initClones()");
 
+        // time_type to delta_date if we have enough different dates
+        deltas = this.dateDiffMinMax()
+        myConsole.log(deltas)
+        if (deltas.max > 1)
+            this.time_type = "delta_date"
+        
         //      NSIZE
         var n_max = 0;
         for (var i = 0; i < this.clones.length; i++) {
