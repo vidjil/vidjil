@@ -59,8 +59,8 @@ Model.prototype = {
         this.system_selected = []
         
         this.colorMethod = "Tag";
-        this.notation_type = "percent"
-        this.changeTimeFormat("name")
+        this.changeNotation("percent", false)
+        this.changeTimeFormat("name", false)
                 
         this.display_window = false
         this.isPlaying = false;
@@ -1582,10 +1582,10 @@ Model.prototype = {
     /* use scientific notation / percent
      *
      * */
-    changeNotation: function (notation) {
+    changeNotation: function (notation, update) {
         this.notation_type = notation
-        this.update();
-        
+        if (update) this.update()
+                
         var radio = document.getElementsByName("notation");
         for(var elem in radio){
             if(radio[elem].value == notation) radio[elem].checked=true;
