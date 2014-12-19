@@ -11,17 +11,17 @@ json_data = {
   "samples": {
     "timestamp": ["2014-10-20 13:59:02", "2014-10-25 14:00:32", "2014-11-20 14:03:13", "2014-12-20 14:04:48"], 
     "commandline": [
-      "./vidjil -c clones -g germline/ -r 1 -o ./out0 -z 200 -n 5 Leu+0_BCD.cut.fa ", 
-      "./vidjil -c clones -g germline/ -r 1 -o ./out1 -z 200 -n 5 Leu+1_BCD.cut.fa ", 
-      "./vidjil -c clones -g germline/ -r 1 -o ./out2 -z 200 -n 5 Leu+2_BCD.cut.fa ", 
-      "./vidjil -c clones -g germline/ -r 1 -o ./out3 -z 200 -n 5 Leu+3_BCD.cut.fa "
+      "./vidjil -c clones -g germline/ -r 1 -o ./out0 -z 200 -n 5 Diag.fa ", 
+      "./vidjil -c clones -g germline/ -r 1 -o ./out1 -z 200 -n 5 Fu-1.fa ", 
+      "./vidjil -c clones -g germline/ -r 1 -o ./out2 -z 200 -n 5 Fu-2.fa ", 
+      "./vidjil -c clones -g germline/ -r 1 -o ./out3 -z 200 -n 5 Fu-3.fa "
     ], 
     "number": 4, 
     "original_names": [
-      "Leu+0_BCD.cut.fa", 
-      "Leu+1_BCD.cut.fa", 
-      "Leu+2_BCD.cut.fa", 
-      "Leu+3_BCD.cut.fa"
+      "Diag.fa", 
+      "Fu-1.fa", 
+      "Fu-2.fa", 
+      "Fu-3.fa"
     ], 
     "log": [
       "  ==> segmented 362296 reads (38.7%)\n  ==> found 11526 40-windows in 335725 segments (35.8%) inside 937164 sequences\n ", 
@@ -38,7 +38,7 @@ json_data = {
     { 
         "sequence" : "aaaaaaaaaaaaaaaaaaaaa",
         "name" : "test1",
-        "id" : "riri",
+        "id" : "id1",
         "reads" : [10,10,15,15] ,
         "top" : 1,
         "germline" : "TRG",
@@ -52,7 +52,7 @@ json_data = {
     { 
         "sequence" : "bbbbbbbbbbbbbbb",
         "name" : "test2",
-        "id" : "fifi",
+        "id" : "id2",
         "reads" : [20,20,10,10] ,
         "top" : 2,
         "germline" : "TRG",
@@ -66,7 +66,7 @@ json_data = {
     { 
         "sequence" : "cccccccccccccccccccc",
         "name" : "test3",
-        "id" : "loulou",
+        "id" : "id3",
         "reads" : [25,25,50,50] ,
         "top" : 3,
         "germline" : "IGH",

@@ -30,7 +30,7 @@ test("model : time control", function() {
     m.changeTimeOrder([0,1,2,3])     
     
     equal(m.getStrTime(0, "sampling_date"), "2014-10-20", "get sampling date")
-    equal(m.getStrTime(0, "name"), "Leu+0_BCD", "get time original name")
+    equal(m.getStrTime(0, "name"), "Diag", "get time original name")
     equal(m.dateDiffInDays("2014-10-05", "2014-10-10"), "+5", "datediffindays")
     equal(m.getStrTime(1, "delta_date"), "+5", "get day since diag")
     
