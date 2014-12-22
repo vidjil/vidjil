@@ -1,7 +1,7 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
-2014-12-XX  The Vidjil Team
+2014-12-22  The Vidjil Team
 	* Better multi-germline analysis (-g). This will again be improved in a next release.
 	* New experimental incomplete rearrangement analysis (-i)
 	* New and updated unit and functional tests
