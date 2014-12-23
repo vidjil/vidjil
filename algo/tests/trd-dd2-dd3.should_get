@@ -1,9 +1,9 @@
-!LAUNCH: ../../vidjil -k 6 -w 20 -V ../../germline/TRDV.fa -V ../../germline/TRDD2-01.fa -J ../../germline/TRDD3-01.fa -J ../../germline/TRDJ.fa ../../data/trd-dd2-dd3.fa
+!LAUNCH: ../../vidjil -k 8 -w 20 -V ../../germline/TRDV.fa -V ../../germline/TRDD2-01.fa -J ../../germline/TRDD3-01.fa -J ../../germline/TRDJ.fa ../../data/trd-dd2-dd3.fa
 
 $ Segment all 5 reads, thanks to TRDD2 and TRDD3
 1: segmented 5 reads .100..
 
 $ Find the good number of 20-windows
-1: found 3 20-windows
+1: found 4 20-windows
 
 
