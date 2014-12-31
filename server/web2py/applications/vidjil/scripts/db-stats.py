@@ -36,6 +36,13 @@ for res in db((db.analysis_file.analyze_date >= yesterday) & (db.patient.id == d
     print "\t", "pat-%04d (%s %s)" % (res.patient.id, res.patient.first_name, res.patient.last_name),
     print "\t", ellipsis(res.analysis_file.analysis_file, 50)
 
+print 
+print "=== Recent auth events, last %d hours" % LAST_HOURS
+
+for res in db((db.auth_event.time_stamp >= yesterday) & (db.auth_user.id == db.auth_event.user_id)).select():
+    print "   ", res.auth_event.time_stamp, res.auth_event.client_ip,
+    print "\t", "%3d" % res.auth_user.id, "%-24s" % (res.auth_user.first_name + ' ' + res.auth_user.last_name),
+    print "\t", res.auth_event.description
 
 print 
 print "=== Recent results files, last %d hours" % LAST_HOURS
