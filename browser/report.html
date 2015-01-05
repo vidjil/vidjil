@@ -1,0 +1,147 @@
+<html>
+
+    <head>
+        <meta charset="utf-8">
+        <title>Vidjil report</title>
+
+        <!-- page style-->
+        <style>
+            @page {
+                size: A4;
+                margin: 1cm;
+                orphans: 4;
+                widows: 2;
+            }
+
+            @page :first {          /* first page */
+                margin-top: 2cm    
+            }
+
+            .container { page-break-inside : avoid }
+            table { page-break-inside : avoid }
+
+            html, body {
+                width: 210mm;
+                height: 297mm;        
+            }
+
+            @media print {
+                header.print {
+                    position: fixed; 
+                    top: 0; 
+                }
+                footer.print {
+                    position: fixed;
+                    bottom: 277mm;
+                }
+            }
+
+            @media screen {
+                .print {
+                    display: none;
+                }
+            }
+
+        </style>
+
+        <!--style-->
+        <style>
+            body {
+                font-family: Helvetica;
+                color: #222;
+                text-align: justify;
+            }
+
+            #header {
+                font-size : 150%;
+                font-weight :bold;
+            }
+            #header-logo {
+                float: right;
+                position: relative;
+                bottom: 0.5cm;
+            }
+            #header-title {
+                margin: 0.5cm 0cm;
+            }
+            #logo {
+                font-size: 130%;
+                padding: 5px 20px;
+            }
+            span.logo {
+                font-size: 60%;
+                vertical-align: super;
+                opacity: .8;
+                color: #F88;
+            }
+        </style>
+
+        <!-- graph style-->
+        <style>
+            .background_graph, .background_graph2, .graph_line{
+                fill : none;
+            }
+            #resolution5{
+                fill : #222;
+                opacity : 0.2;
+            }
+            #resolution1{
+                fill : #222;
+                opacity : 0.4;
+            }
+            .graph_text{
+                color: #222;
+                opacity: 0.8;
+                text-anchor: end;
+                dominant-baseline: middle;
+            }
+            .graph_time, .graph_time2{
+                color: #222;
+                opacity: 0.8;
+                text-anchor: middle;
+            }
+            .axis_h{
+                stroke-width: 1;
+                stroke: #222;
+            }
+        </style>
+
+    </head>
+    
+    <body>
+
+<!-- bug with webkit
+        <header class="print"> vidjil header : hello !! </header>
+        <footer class="print"> vidjil footer : copyright blabla / rbx.vidjil.org/browser | 2015 voodooj company </footer>
+-->
+
+        <hr>
+        
+        <div id="header" class="container">
+            <div id="header-logo"><div id="logo">Vidjil <span class="logo">(beta)</span></div></div>
+            <div id="header-title">Vidjil html report v0.1</div>
+        </div>
+        
+        <hr>
+
+        <div id="patient" class="container">
+            <h3>patient info</h3>
+            <div id="patient-name">     <span class="label">name:</span>        <span class="value">james</span>    </div>
+            <div id="patient-birth">    <span class="label">birth date:</span>  <span class="value">unknow</span>   </div>
+            <div id="patient-id">       <span class="label">ID:</span>          <span class="value">007</span>      </div>
+        </div>
+
+        <hr>
+
+        <div id="content" class="container">
+        Et olim licet otiosae sint tribus pacataeque centuriae et nulla suffragiorum certamina set Pompiliani redierit securitas temporis, per omnes tamen quotquot sunt partes terrarum, ut domina suscipitur et regina et ubique patrum reverenda cum auctoritate canities populique Romani nomen circumspectum et verecundum.
+
+        Et interdum acciderat, ut siquid in penetrali secreto nullo citerioris vitae ministro praesente paterfamilias uxori susurrasset in aurem, velut Amphiarao referente aut Marcio, quondam vatibus inclitis, postridie disceret imperator. ideoque etiam parietes arcanorum soli conscii timebantur.
+
+        Quare hoc quidem praeceptum, cuiuscumque est, ad tollendam amicitiam valet; illud potius praecipiendum fuit, ut eam diligentiam adhiberemus in amicitiis comparandis, ut ne quando amare inciperemus eum, quem aliquando odisse possemus. Quin etiam si minus felices in diligendo fuissemus, ferendum id Scipio potius quam inimicitiarum tempus cogitandum putabat.
+        </div>
+
+
+    </body>
+
+</html>
