@@ -175,12 +175,9 @@ line {
 }
 .axis_h {
   stroke: #657b83;
-  stroke-width: 2px ;
 }
 .axis_v {
-  stroke: #657b83;
-  stroke-width: 2px;
-  stroke-dasharray: 6,6;
+  display: none;
 }
 .axis_v_hidden {
   display: none;
@@ -198,9 +195,15 @@ line {
   opacity: 0.6;
 }
 .graph_time {
+  fill: #657b83;
+  text-anchor: middle;
+  font-size: 100%;
+}
+.graph_time2 {
   font-weight: bold;
   fill: #657b83;
   text-anchor: middle;
+  font-size: 120%;
 }
 .graph_text {
   font-weight: bold;
@@ -310,7 +313,6 @@ line {
 .sp_line,
 .sp_subline {
   stroke: #657b83;
-  stroke-width: 0.7px;
 }
 .sp_subline {
   stroke-width: 0.5px;

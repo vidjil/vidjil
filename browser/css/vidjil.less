@@ -214,13 +214,10 @@ line {
 
 .axis_h{
   stroke : @default ;
-  stroke-width : 2px ;
 }
 
 .axis_v{
- stroke : @default ;
- stroke-width : 2px;
- stroke-dasharray: 6,6;
+ display: none;
 }
 
 .axis_v_hidden{
@@ -242,9 +239,16 @@ line {
 }
 
 .graph_time{
+  fill : @default ;
+  text-anchor:middle;
+  font-size : 100%;
+}
+
+.graph_time2{
   font-weight : bold;
   fill : @default ;
   text-anchor:middle;
+  font-size : 120%;
 }
 
 .graph_text{
@@ -377,7 +381,6 @@ line {
 
 .sp_line , .sp_subline{
   stroke : @default ;
-  stroke-width : 0.7px;
 }
 
 .sp_subline{
