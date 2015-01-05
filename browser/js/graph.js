@@ -253,10 +253,15 @@ Graph.prototype = {
     /* repositionne le graphique en fonction de la taille de la div le contenant
      *
      * */
-    resize: function () {
+    resize: function (div_width, div_height) {
         var div = document.getElementById(this.id)
-        var div_height = div.offsetHeight
-        var div_width = div.offsetWidth
+        
+        var speed = 0
+        if (typeof div_height == 'undefined'){
+            var div_height = div.offsetHeight
+            var div_width = div.offsetWidth
+            speed = 500
+        }
         
         this.resizeW = div_width - this.marge4 - this.marge3;
         this.resizeH = div_height - this.marge5;
@@ -278,7 +283,9 @@ Graph.prototype = {
         this.text_position_x = 60;
         this.text_position_x2 = div_width - 60;
     
-        this.update();
+        this.update(speed);
+        
+        return this
     },
     
 /* ************************************************ *
@@ -288,7 +295,8 @@ Graph.prototype = {
     /* global update and redraw
      * 
      * */
-    update : function () {
+    update : function (speed) {
+        speed = typeof speed !== 'undefined' ? speed : 500;
         var startTime = new Date()
             .getTime();
         var elapsedTime = 0;
@@ -297,7 +305,7 @@ Graph.prototype = {
             .initData()
             .updateRes()
             .updateClones()
-            .draw();
+            .draw(speed);
         
         elapsedTime = new Date()
             .getTime() - startTime;
@@ -1065,13 +1073,14 @@ Graph.prototype = {
     /* global renderer function
      *
      * */
-    draw: function () {
+    draw: function (speed) {
+        speed = typeof speed !== 'undefined' ? speed : 500;
         var self = this;
 
-        this.drawAxis(500)
-            .drawData(500)
-            .drawClones(500)
-            .drawRes(500)
+        this.drawAxis(speed)
+            .drawData(speed)
+            .drawClones(speed)
+            .drawRes(speed)
     },
     
     /* renderer function for axis and labels
