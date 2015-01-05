@@ -894,6 +894,8 @@ Graph.prototype = {
 
             d.type = "axis_v";
             d.text = time_name;
+            d.class = "graph_time"
+            if ( i == this.m.t ) d.class = "graph_time2"
 
             // Warns when there are very few segmented reads 
             var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100;
@@ -911,6 +913,7 @@ Graph.prototype = {
                     d.pos = 1.05;
                     d.text = "";
                     d.type = "axis_v_hidden";
+                    d.class = "graph_text"
                 }else{
                     d.pos = this.graph_col[t];
                 }
@@ -946,14 +949,14 @@ Graph.prototype = {
         
         //padding
         while (this.data_axis.length<20){
-            this.data_axis.push({"type" :"axis_v_hidden" , "text": "", "pos" : 1.05});
+            this.data_axis.push({"type" :"axis_v_hidden", "class" : "graph_text" , "text": "", "pos" : 1.05});
         }
 
         //ordonnée clone
         if (this.mode == "stack"){
-            this.data_axis.push({"type" : "axis_h", "text" : "0%" ,"orientation" : "hori", "pos" : 1});
-            this.data_axis.push({"type" : "axis_h", "text" : "50%" ,"orientation" : "hori", "pos" : 0.5});
-            this.data_axis.push({"type" : "axis_h", "text" : "100%" ,"orientation" : "hori", "pos" : 0});
+            this.data_axis.push({"type" : "axis_h", "class" : "graph_text", "text" : "0%" ,"orientation" : "hori", "pos" : 1});
+            this.data_axis.push({"type" : "axis_h", "class" : "graph_text", "text" : "50%" ,"orientation" : "hori", "pos" : 0.5});
+            this.data_axis.push({"type" : "axis_h", "class" : "graph_text", "text" : "100%" ,"orientation" : "hori", "pos" : 0});
         }else{
             var height = 1;
             while(height<this.m.max_size) height = height*10
@@ -962,6 +965,7 @@ Graph.prototype = {
                 var d = {};
                 d.type = "axis_h";
                 d.text = this.m.formatSize(height, false)
+                d.class = "graph_text";
                 d.orientation = "hori";
                 d.pos = 1 - this.scale_x(height * this.m.precision);
                 if (d.pos>=-0.1) this.data_axis.push(d);
@@ -969,7 +973,7 @@ Graph.prototype = {
                 height = height / 10;
             }
         }
-        
+
         return this
     },
     
@@ -1019,9 +1023,9 @@ Graph.prototype = {
         
         //padding
         while (this.data_axis.length<40){
-            this.data_axis.push({"type" :"axis_h_hidden" , "text": "", "pos" : 0});
+            this.data_axis.push({"type" :"axis_h_hidden" , "text": "", "pos" : 0, "class" : "graph_text"});
         }
-        
+
         //ordonnée data
         if (enabled && typeof g_min != 'undefined'){
             var height = 1;
@@ -1030,6 +1034,7 @@ Graph.prototype = {
 
                 var d = {};
                 d.type = "axis_h2";
+                d.class = "graph_text2"
                 d.text = height
                 d.orientation = "hori";
                 d.pos = this.scale_data(height);
@@ -1038,7 +1043,7 @@ Graph.prototype = {
                 height = height / 10;
             }
         }
-        
+
         return this
     },
     
@@ -1056,6 +1061,7 @@ Graph.prototype = {
             this.mobil = {};
             this.mobil.type = "axis_m";
             this.mobil.text = "";
+            this.mobil.class = "graph_text";
             this.mobil.orientation = "vert";
             this.mobil.pos = this.graph_col[this.m.samples.order.indexOf(this.m.t)];
             this.data_axis.push(this.mobil)
@@ -1138,9 +1144,7 @@ Graph.prototype = {
                 else return Math.floor(self.resizeW * d.pos + self.marge4);
             })
             .attr("class", function (d) {
-                if (d.type == "axis_v") return "graph_time"
-                else if (d.type == "axis_h2") return "graph_text2"
-                else return "graph_text";
+                return d.class
             });
 
         this.text_container.selectAll("text")
