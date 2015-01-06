@@ -1,11 +1,61 @@
 
+function Report() {
+}
 
-function startReport() {
+Report.prototype = {
     
-    var w = window.open("report.html", "_blank", "selected=no");
+    reportHTML : function() {
+        var self = this
+        
+        this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
     
-    w.onload = function(){
-        $('<hr/>').appendTo(w.document.body);
+        var list = m.getSelected()
+        if (list.length==0) list = this.defaultList()
+            
+        this.w.onload = function(){
+            self.addGraph(list)
+                .addScatterplot()
+        }
+    },
+    
+    reportHTMLdiag : function() {
+        var self = this
+        
+        this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
+    
+        var list = m.getSelected()
+        if (list.length==0) list = this.defaultList()
+            
+        this.w.onload = function(){
+            for (var i=0; i<m.system_selected.length; i++){
+                setTimeout(function(i){
+                    var system = m.system_selected[i]
+                    self.addScatterplot(system, m.t)
+                },4000*i,i);
+            }
+        }
+    },
+    
+    defaultList: function() {
+        var list = []
+        
+        var tag=0
+        while (tag < 8 && list.length < 5) {
+            for (var i = 0; i < m.clones.length; i++) {
+                var clone_tag = m.clone(i).getTag()
+                if (clone_tag == tag && m.clone(i).isActive) list.push(i)
+            }
+            tag++
+        }
+        return list
+    },
+    
+    addGraph : function(list) {
+        
+        $('<hr/>').appendTo(this.w.document.body);
+        $('<h3/>', {
+            text: "Monitoring"
+        }).appendTo(this.w.document.body);
         
         //resize 791px ~> 21cm
         graph.resize(791,300)
@@ -14,22 +64,29 @@ function startReport() {
         var w_graph = $('<div/>', {
             id: 'graph',
             class: 'container'
-        }).appendTo(w.document.body);
+        }).appendTo(this.w.document.body);
         
         //but complete it asynchronously
-        setTimeout(function(){
+        setTimeout( function(){
             svg_graph = document.getElementById(graph.id).cloneNode(true);
             
-            for (var i = 0; i < this.m.clones.length; i++) {
+            for (var i = 0; i < m.clones.length; i++) {
                 var polyline = svg_graph.querySelectorAll('[id="polyline'+i+'"]')[0]
-                var color = tagColor[this.m.clone(i).getTag()]
+                var tag = m.clone(i).getTag()
+                var color = tagColor[tag]
                 
                 //stack
                 if (polyline.getAttribute("d").indexOf("Z") != -1){
                     polyline.setAttribute("style", "stroke-width:0px");
                     polyline.setAttribute("fill", color);
                 }else{//line
-                    polyline.setAttribute("style", "stroke-width:1px");
+                    if (list.indexOf(i) != -1){
+                        polyline.setAttribute("style", "stroke-width:3px");
+                    }else if (tag != 8){
+                        polyline.setAttribute("style", "stroke-width:1.5px");
+                    }else{
+                        polyline.setAttribute("style", "stroke-width:0.5px; opacity:0.5");
+                    }
                     polyline.setAttribute("stroke", color);
                 }
                 
@@ -41,7 +98,55 @@ function startReport() {
             
             w_graph.html(svg_graph.innerHTML)
             graph.resize();
-        },500)
+            
+        },200)
         
+        return this;
+    },
+    
+    addScatterplot : function(system, time) {
+        if (typeof system == "undefined") system = m.germlineV.system
+        m.changeGermline(system)
+        if (typeof time != "undefined") m.changeTime(time)
+        
+            
+        $('<hr/>').appendTo(this.w.document.body);
+        $('<h3/>', {
+            text: system + ' system for timepoint ' + m.getStrTime(m.t)
+        }).appendTo(this.w.document.body);
+    
+        //resize 791px ~> 21cm
+        sp.resize(791,250)
+        //sp.zap()
+        
+        //add sp container now
+        var w_sp = $('<div/>', {
+            id: 'scatterplot',
+            class: 'container'
+        }).appendTo(this.w.document.body);
+        
+        //but complete it asynchronously
+        setTimeout(function(){
+            svg_sp = document.getElementById(sp.id).cloneNode(true);
+            
+            //set viewbox (same as resize)
+            svg_sp.querySelectorAll('[id="'+sp.id+'_svg"]')[0].setAttribute("viewbox","0 0 791 250");
+            
+            
+            for (var i = 0; i < m.clones.length; i++) {
+                var circle = svg_sp.querySelectorAll('[id="circle'+i+'"]')[0]
+                var color = tagColor[m.clone(i).getTag()]
+                circle.setAttribute("stroke", color);
+                
+                //remove "other" and disabled clones
+                if (m.clone(i).germline != system || m.clone(i).id == "other" || !m.clone(i).isActive()) {
+                    circle.parentNode.removeChild(circle);
+                }
+            }
+            w_sp.html(svg_sp.innerHTML)
+            sp.resize();
+        },3000)
     }
+    
 }
+
