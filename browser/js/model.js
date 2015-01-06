@@ -429,7 +429,7 @@ Model.prototype = {
     loadGermline: function (system) {
         console.log("loadGermline : " + system)
         system = typeof system !== 'undefined' ? system : this.system;
-        if (system == "multi"){
+        if (system == "multi" || typeof system == 'undefined'){
             var system = this.system_available[0]
             var max = 0;
             for (var i=0; i<this.clones.length; i++){
@@ -721,6 +721,17 @@ Model.prototype = {
      * */
     update_selected_system: function(){
         
+        this.computeReadsSum()
+        this.updateModel()
+        //check if current germline is in the selected_system
+        if (this.system_selected.indexOf(this.germlineV.system) == -1 && this.system_selected.length > 0){
+            this.changeGermline(this.system_selected[0])
+        }else{
+            this.update()
+        }
+    },
+    
+    computeReadsSum: function() {
         //reset reads.segmented
         for (var i=0 ; i<this.reads.segmented.length; i++){
             this.reads.segmented[i]=0
@@ -732,15 +743,6 @@ Model.prototype = {
             for (var j=0; j<this.reads.segmented.length; j++){
                 this.reads.segmented[j] += this.reads.germline[key][j]
             }
-        }
-
-        this.updateModel()
-        //check if current germline is in the selected_system
-        if (this.system_selected.indexOf(this.germlineV.system) == -1 && this.system_selected.length > 0){
-            this.changeGermline(this.system_selected[0])
-        }else{
-            this.resize()
-                .update()
         }
     },
     
@@ -1570,7 +1572,6 @@ Model.prototype = {
         }
         
         this.loadGermline(system)
-            .resize()
             .update()
             
         var radio = document.getElementsByName("germline")
