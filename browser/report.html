@@ -51,7 +51,15 @@
                 color: #222;
                 text-align: justify;
             }
-
+            hr {
+                border-color: #2AA198;
+            }
+            h3 {
+                display: block;
+                font-size: 90%;
+                opacity : .75;
+                margin: -0.5em 0px 0.5em 0;
+            }
             #header {
                 font-size : 150%;
                 font-weight :bold;
@@ -74,11 +82,30 @@
                 opacity: .8;
                 color: #F88;
             }
+            .systemBox, .systemBoxMenu {
+                display: inline-block;
+                width: 13px;
+                height: 13px;
+                text-align: center;
+                border-radius: 3px;
+                border-width: 1px;
+                margin: 4px;
+                margin-top: 2px;
+                color: #002B36;
+                font-family: monospace;
+                background: #CCC;
+            }
         </style>
 
         <!-- graph style-->
         <style>
-            .background_graph, .background_graph2, .graph_line{
+            #graph {
+                font-size : 75%;
+            }
+            .graph_menu {
+                display: none;
+            }
+            .background_graph, .background_graph2, .graph_line, .graph_select, .graph_focus, .graph_inactive{
                 fill : none;
             }
             #resolution5{
@@ -101,11 +128,50 @@
                 text-anchor: middle;
             }
             .axis_h{
-                stroke-width: 1;
+                stroke-width: 0.5;
+                opacity: 0.8;
                 stroke: #222;
             }
         </style>
 
+        <!-- scatterplot style-->
+        <style>
+            #scatterplot {
+                font-size : 75%;
+            }
+            .axis_select, #visu_label_container {
+                display: none;
+            }
+            .background_sp{
+                fill : none;
+            }
+            .sp_line{
+                stroke-width: 0.5;
+                opacity: 0.8;
+                stroke: #222;
+            }
+            .sp_legend{
+                color: #222;
+                opacity: 0.8;
+                text-anchor: middle;
+                dominant-baseline: middle;
+            }
+            .sp_rotated_legend{
+                color: #222;
+                opacity: 0.8;
+            }
+            .sp_system_label {
+                height: 0px;
+                position: relative;
+            }
+            .sp_system{
+                position: absolute;
+                top: -0.5em
+            }
+            .circle{
+                stroke : none;
+            }
+        </style>
     </head>
     
     <body>
@@ -125,7 +191,7 @@
         <hr>
 
         <div id="patient" class="container">
-            <h3>patient info</h3>
+            <h3>Report info</h3>
             <div id="patient-name">     <span class="label">name:</span>        <span class="value">james</span>    </div>
             <div id="patient-birth">    <span class="label">birth date:</span>  <span class="value">unknow</span>   </div>
             <div id="patient-id">       <span class="label">ID:</span>          <span class="value">007</span>      </div>
