@@ -782,37 +782,6 @@ ScatterPlot.prototype = {
       }
   },
   
-  compute_size: function () {
-      //On prend la largeur de la div
-      this.resizeW = document.getElementById(this.id)
-      .parentNode.offsetWidth - this.marge_left - this.marge_right;
-      //On prend la hauteur de la div
-      this.resizeH = document.getElementById(this.id)
-      .offsetHeight - this.marge_top - this.marge_bot;
-
-      if (this.splitY != "bar" && (this.splitX == "allele_v" || this.splitX == "gene_v" || this.splitX == "allele_j" || this.splitX == "gene_j"
-          || this.splitY == "allele_v" || this.splitY == "gene_v" || this.splitY == "allele_j" || this.splitY == "gene_j")){
-          this.use_system_grid = true;
-          this.buildSystemGrid()
-      }else{
-          this.use_system_grid = false
-          this.systemGrid = {}
-      }
-      
-      if (this.splitY != "bar" && this.use_system_grid && this.m.system_available.length > 1 ){
-            this.gridSizeW = 0.8*this.resizeW;
-            this.gridSizeH = 1*this.resizeH;
-      }else{
-        this.gridSizeW = this.resizeW;
-        this.gridSizeH = this.resizeH;
-      }
-      
-      this.resizeCoef = Math.sqrt(this.resizeW * this.resizeH);
-      if (this.resizeCoef < 0.1 || (this.resizeW * this.resizeH) < 0) this.resizeCoef = 0.1;
-      
-      return this;
-  },
-  
     buildSystemGrid: function () {
         this.systemGrid = {"label" : []}
         var n = this.m.system_available.length
@@ -849,25 +818,61 @@ ScatterPlot.prototype = {
 
   /* Recalcule les coefficients d'agrandissement/réduction, en fonction de la taille de la div
   * */
-  resize: function () {
-      this.compute_size()
-      
-      //Attributions
-      this.vis = d3.select("#" + this.id + "_svg")
-	  .attr("width", document.getElementById(this.id)
-		.parentNode.offsetWidth)
-	  .attr("height", document.getElementById(this.id)
-		.offsetHeight)
-      d3.select("#" + this.id + "_back")
-	  .attr("width", document.getElementById(this.id)
-		.parentNode.offsetWidth)
-	  .attr("height", document.getElementById(this.id)
-		.offsetHeight);
+    resize: function (div_width, div_height) {
+        if (typeof div_height == 'undefined'){
+            var div = document.getElementById(this.id)
+            var div_height = div.offsetHeight
+            var div_width = div.offsetWidth
+        }
+        this.compute_size(div_width, div_height)
+        //Attributions
+        this.vis = d3.select("#" + this.id + "_svg")
+        .attr("width", div_width)
+        .attr("height", div_height)
+        d3.select("#" + this.id + "_back")
+        .attr("width", div_width)
+        .attr("height", div_height);
 
-      //Initialisation de la grille puis mise-à-jour
-      this.initGrid();
-      this.update()
-  },
+        //Initialisation de la grille puis mise-à-jour
+        this.initGrid()
+            .updateClones()
+            .updateMenu()
+            .initGrid();
+    },
+    
+  compute_size: function (div_width, div_height) {
+        if (typeof div_height == 'undefined'){
+            var div = document.getElementById(this.id)
+            var div_height = div.offsetHeight
+            var div_width = div.offsetWidth
+        }
+        //On prend la largeur de la div
+        this.resizeW = div_width - this.marge_left - this.marge_right;
+        //On prend la hauteur de la div
+        this.resizeH = div_height - this.marge_top - this.marge_bot;
+
+        if (this.splitY != "bar" && (this.splitX == "allele_v" || this.splitX == "gene_v" || this.splitX == "allele_j" || this.splitX == "gene_j"
+            || this.splitY == "allele_v" || this.splitY == "gene_v" || this.splitY == "allele_j" || this.splitY == "gene_j")){
+            this.use_system_grid = true;
+            this.buildSystemGrid()
+        }else{
+            this.use_system_grid = false
+            this.systemGrid = {}
+        }
+        
+        if (this.splitY != "bar" && this.use_system_grid && this.m.system_available.length > 1 ){
+                this.gridSizeW = 0.8*this.resizeW;
+                this.gridSizeH = 1*this.resizeH;
+        }else{
+            this.gridSizeW = this.resizeW;
+            this.gridSizeH = this.resizeH;
+        }
+        
+        this.resizeCoef = Math.sqrt(this.resizeW * this.resizeH);
+        if (this.resizeCoef < 0.1 || (this.resizeW * this.resizeH) < 0) this.resizeCoef = 0.1;
+        
+        return this;
+    },
 
     /* Function which allows to add a stroke attribute to all edges
     */
