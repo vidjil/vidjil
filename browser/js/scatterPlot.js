@@ -29,7 +29,7 @@ function ScatterPlot(id, model) {
   this.gridSizeH = 1;//grid height
   
   //Margins left/right ( fixed value )
-  this.marge_left = 120;
+  this.marge_left = 100;
   this.marge_right = 10;
   this.marge_top = 45;
   this.marge_bot = 10;
@@ -86,7 +86,7 @@ function ScatterPlot(id, model) {
   //axis Y text position
   this.rotation_y = 0;
   this.text_position_y = 40;
-  this.sub_text_position_y = 90;
+  this.sub_text_position_y = 80;
 
   //Clone selected
   this.cloneSelected = -1;
@@ -256,7 +256,6 @@ ScatterPlot.prototype = {
 
       //Action concernant tous les nodes présents dans le ScatterPlot
       this.plot_container.selectAll("circle")
-	  .attr("stroke-width", 4)
 	  .attr("stroke", "")
 	  .attr("id", function (d) {
 	      return "circle" + d.id;
@@ -819,12 +818,14 @@ ScatterPlot.prototype = {
   /* Recalcule les coefficients d'agrandissement/réduction, en fonction de la taille de la div
   * */
     resize: function (div_width, div_height) {
+        var print = true
         if (typeof div_height == 'undefined'){
             var div = document.getElementById(this.id)
             var div_height = div.offsetHeight
             var div_width = div.offsetWidth
+            print = false
         }
-        this.compute_size(div_width, div_height)
+        this.compute_size(div_width, div_height, print)
         //Attributions
         this.vis = d3.select("#" + this.id + "_svg")
         .attr("width", div_width)
@@ -840,7 +841,7 @@ ScatterPlot.prototype = {
             .initGrid();
     },
     
-  compute_size: function (div_width, div_height) {
+  compute_size: function (div_width, div_height, print) {
         if (typeof div_height == 'undefined'){
             var div = document.getElementById(this.id)
             var div_height = div.offsetHeight
@@ -860,7 +861,7 @@ ScatterPlot.prototype = {
             this.systemGrid = {}
         }
         
-        if (this.splitY != "bar" && this.use_system_grid && this.m.system_available.length > 1 ){
+        if (!print && this.splitY != "bar" && this.use_system_grid && this.m.system_available.length > 1 ){
                 this.gridSizeW = 0.8*this.resizeW;
                 this.gridSizeH = 1*this.resizeH;
         }else{
@@ -895,6 +896,14 @@ ScatterPlot.prototype = {
             .attr("y2", function(d) {return (d.target.py + self.marge_top);});
     },
 
+    zap : function () {
+        this.node.each(function (d) {
+            d.x = d.x2
+            d.y = d.y2
+            d.r2 = d.r1
+        })
+    },
+    
     /* Fonction permettant le calcul d'une étape d'animation
      * */
     tick: function () {
@@ -949,13 +958,12 @@ ScatterPlot.prototype = {
         this.time0 = this.time1;
 
     },
-
+    
     /* Fonction permettant le déplacement des nodes en fonction de la méthode de répartition utilisée à l'instant T
      * */
     move: function () {
         self = this;
         return function (d) {
-          
             if (d.x != d.x2) {
                 var delta = d.x2 - d.x;
                 var s = ((d.r1/self.resizeCoef))
@@ -1332,9 +1340,9 @@ ScatterPlot.prototype = {
 
       var className = "sp_legend"
       if (space < 1.1){
-	  this.rotation_x = 330;
-	  this.text_position_x = 35;
-	  this.sub_text_position_x = 50;
+	  this.rotation_x = 320;
+	  this.text_position_x = 45;
+	  this.sub_text_position_x = 55;
 	  className = "sp_rotated_legend";
       }else{
 	  this.rotation_x = 0;
