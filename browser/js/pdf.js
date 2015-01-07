@@ -73,7 +73,7 @@ PDF.prototype = {
         this.y = this.marge;
         this.m.focusOut()
         
-        var opt_graph = {"x" : 10,
+        var opt_graph = {"x" : 20,
                          "y" : 5,
                          "w" : 277,
                          "h" : 170,
@@ -83,10 +83,10 @@ PDF.prototype = {
         
         this.init()
             .graph(opt_graph)
-            .label_selected_clones(200,170)
+            .label_selected_clones(150,170)
             
         this.doc.setFontSize(20);
-        this.doc.text(this.marge + 10, 190, this.m.getPrintableAnalysisName());
+        //this.doc.text(this.marge + 10, 190, this.m.getPrintableAnalysisName());
         this.print()
         
         return this;
@@ -455,7 +455,7 @@ PDF.prototype = {
     
     label_clone: function (cloneID, x, y) {
         this.doc.setFillColor(255, 255, 255);
-        this.doc.rect(x, y, 90, 8, 'F');
+        this.doc.rect(x, y, 150, 8, 'F');
         
         this.icon(cloneID, x, y, 18, 8) 
         
