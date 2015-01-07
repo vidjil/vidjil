@@ -86,7 +86,7 @@ PDF.prototype = {
             .label_selected_clones(150,170)
             
         this.doc.setFontSize(20);
-        this.doc.text(this.marge + 10, 190, this.m.getPrintableAnalysisName());
+        //this.doc.text(this.marge + 10, 190, this.m.getPrintableAnalysisName());
         this.print()
         
         return this;
