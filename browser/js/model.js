@@ -1455,11 +1455,16 @@ Model.prototype = {
                 break;
 
             case "delta_date":
+            case "delta_date_no_zero":            
                 if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[0]){
                     var time0 = this.samples.timestamp[0];
 
                     if (timeID == '0'){
                         result = time0.split(" ")[0];
+
+                        if (format == "delta_date_no_zero")
+                            result = "";
+
                         break;
                     }else{
                         if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID]){
