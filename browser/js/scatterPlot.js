@@ -220,9 +220,9 @@ ScatterPlot.prototype = {
 	  this.nodes[i].id = i; //L'id d'un cercle vaut le nombre de i dans la boucle
 	  this.nodes[i].r1 = 5; // longueur du rayon1
 	  this.nodes[i].r2 = 5; // longueur du rayon2
-	  this.nodes[i].x = Math.random()*500; // TODO optimize : use same system as radius/expected radius
+	  this.nodes[i].x = Math.random()*500; 
 	  this.nodes[i].old_x =  [0,0,0,0,0]
-      this.nodes[i].y = Math.random()*250; // instead of complex move() function for each node and tick ( cost too much )
+      this.nodes[i].y = Math.random()*250; 
       this.nodes[i].old_y =  [0,0,0,0,0]
       };
 
@@ -896,55 +896,19 @@ ScatterPlot.prototype = {
             .attr("y2", function(d) {return (d.target.py + self.marge_top);});
     },
 
-    zap : function () {
-        this.node.each(function (d) {
-            d.x = d.x2
-            d.y = d.y2
-            d.r2 = d.r1
-        })
+    fastForward : function () {
+        this.force.stop()
+        for (var i=0;i<500;i++) this.computeFrame()
+        this.drawFrame()
     },
     
     /* Fonction permettant le calcul d'une étape d'animation
      * */
     tick: function () {
-        var self = this;
+        var self = this
         
-        var active_node = this.node.filter(function(d, i) { return d.r2 > 0.1; });
-        //mise a jour des rayons( maj progressive )
-        this.node.each(this.updateRadius());
-        
-        
-        active_node.each(this.debugNaN())
-        //deplace le node vers son objectif
-        active_node.each(this.move());
-        //résolution des collisions
-        var quad = d3.geom.quadtree(this.nodes)
-        
-        for (var i=0; i<this.nodes.length; i++) {
-            if (this.nodes[i].r1 > 0.1){
-                quad.visit(this.collide(this.nodes[i]));
-            }
-        }
-        active_node.each(this.debugNaN())
-        active_node
-            //attribution des nouvelles positions/tailles
-            .attr("cx", function (d) {
-                d.old_x.push(d.x);     
-                d.old_x.shift(); 
-                return ( d3.mean(d.old_x) + self.marge_left);
-                
-            })
-            .attr("cy", function (d) {
-                d.old_y.push(d.y);     
-                d.old_y.shift(); 
-                return (d3.mean(d.old_y) + self.marge_top);
-            })
-            .attr("r", function (d) {
-                return (d.r2);
-            })
-            .attr("title", function (d) {
-                return (self.m.clone(d.id).getName());
-            })
+        this.computeFrame()
+            .drawFrame()
 
         //Calcul d'une frame (image / seconde)
         this.time1 = Date.now();
@@ -959,16 +923,61 @@ ScatterPlot.prototype = {
 
     },
     
+    computeFrame: function() {
+        var self = this;
+        
+        this.active_node = this.node.filter(function(d, i) { return d.r2 > 0.1; });
+        
+        //mise a jour des rayons( maj progressive )
+        this.node.each(this.updateRadius());
+        
+        this.active_node.each(this.debugNaN())
+        //deplace le node vers son objectif
+        this.active_node.each(this.move());
+        //résolution des collisions
+        var quad = d3.geom.quadtree(this.nodes)
+        
+        for (var i=0; i<this.nodes.length; i++) {
+            if (this.nodes[i].r1 > 0.1){
+                quad.visit(this.collide(this.nodes[i]));
+            }
+        }
+        this.active_node.each(this.debugNaN())
+        
+        return this
+    },
+    
+    drawFrame: function(){
+        this.active_node
+        //attribution des nouvelles positions/tailles
+        .attr("cx", function (d) {
+            return ( d3.mean(d.old_x) + self.marge_left);
+        })
+        .attr("cy", function (d) {
+            return (d3.mean(d.old_y) + self.marge_top);
+        })
+        .attr("r", function (d) {
+            return (d.r2);
+        })
+        .attr("title", function (d) {
+            return (self.m.clone(d.id).getName());
+        })
+    },
+    
     /* Fonction permettant le déplacement des nodes en fonction de la méthode de répartition utilisée à l'instant T
      * */
     move: function () {
         self = this;
         return function (d) {
+            d.old_x.push(d.x);     
+            d.old_x.shift();
             if (d.x != d.x2) {
                 var delta = d.x2 - d.x;
                 var s = ((d.r1/self.resizeCoef))
                 d.x += 0.015* delta 
             }
+            d.old_y.push(d.y);     
+            d.old_y.shift(); 
             if (d.y != d.y2) {
                 var delta = d.y2 - d.y;
                 var s = ((d.r1/self.resizeCoef))
