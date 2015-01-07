@@ -284,8 +284,6 @@ Graph.prototype = {
         this.text_position_x2 = div_width - 60;
     
         this.update(speed);
-        
-        return this
     },
     
 /* ************************************************ *
@@ -1096,9 +1094,13 @@ Graph.prototype = {
         var self = this;
 
         //axes
-        this.g_axis
+        var axis = this.g_axis
+        if (speed != 0){
+            axis = axis
             .transition()
             .duration(speed)
+        }
+        axis
             .attr("x1", function (d) {
                 if (d.orientation == "vert") return self.resizeW * d.pos + self.marge4;
                 else return self.marge4;
@@ -1120,9 +1122,13 @@ Graph.prototype = {
             })
 
         //legendes
-        this.g_text
+        var label = this.g_text
+        if (speed != 0){
+            label = label
             .transition()
             .duration(speed)
+        }
+        label
             .text(function (d) {
                 return d.text;
             })
@@ -1173,11 +1179,6 @@ Graph.prototype = {
                     return self.m.clone(d.id).getColor();
                 })
                 .style("stroke", "none")
-                .transition()
-                .duration(speed)
-                .attr("d", function (p) {
-                    return p.path
-                })
                 .attr("class", function (p) {
                     var clone = self.m.clone(p.id)
                     if (!clone.isActive()) return "graph_inactive";
@@ -1196,11 +1197,6 @@ Graph.prototype = {
                 .style("stroke", function (d) {
                     return self.m.clone(d.id).getColor();
                 })
-                .transition()
-                .duration(speed)
-                .attr("d", function (p) {
-                    return p.path
-                })
                 .attr("class", function (p) {
                     var clone = self.m.clone(p.id)
                     if (!clone.isActive()) return "graph_inactive";
@@ -1214,7 +1210,18 @@ Graph.prototype = {
                 .attr("id", function (d) {
                     return "poly" + d.name;
                 })
+                
         }
+        
+        var clone = this.g_clone
+        if (speed != 0){
+            clone = clone
+            .transition()
+            .duration(speed)
+        }
+        clone.attr("d", function (p) {
+                return p.path
+            })
         
         this.clones_container.selectAll("path")
             .on("mouseover", function (d) {
@@ -1233,15 +1240,14 @@ Graph.prototype = {
      * */
     drawData: function (speed) {
         var self = this;
-
-        this.g_data
-            .style("fill", "none")
-            .style("stroke", function (d) {
-                return d.color
-            })
+        
+        var data = this.g_data
+        if (speed != 0){
+            data = data
             .transition()
             .duration(speed)
-            .attr("d", function (p) {
+        }
+        data.attr("d", function (p) {
                 var x,y;
                 if (p.tab.length != 0 && p.active){
                     x = (self.graph_col[0] * self.resizeW + self.marge4);
@@ -1260,6 +1266,12 @@ Graph.prototype = {
                     }
                     return che;
                 }
+            })
+                
+        this.g_data
+            .style("fill", "none")
+            .style("stroke", function (d) {
+                return d.color
             })
             .attr("class", function (p) {
                 if (!p.active){
@@ -1281,10 +1293,14 @@ Graph.prototype = {
     drawRes: function (speed) {
         var self = this;
         
-        this.g_res.selectAll("path")
+        var res = this.g_res.selectAll("path")
+        if (speed != 0){
+            res = res 
             .transition()
             .duration(speed)
-            .attr("d", function (p) {
+        }
+        
+        res.attr("d", function (p) {
                 return p.path
             })
             
