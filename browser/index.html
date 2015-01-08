@@ -146,10 +146,6 @@
                         <a class="buttonSelector" onclick="javascript:m.exportCSV()">export csv (visible clones)</a>
                     </div>
                     <div class="menu_box">
-                        <a class="buttonSelector" onclick="javascript:report.reportHTML()">report html</a>
-                        <a class="buttonSelector" onclick="javascript:report.reportHTMLdiag()">diag report html</a>
-                    </div>
-                    <div class="menu_box">
                         <div id="upload_list">
                         </div>
                     </div>
@@ -277,8 +273,10 @@
                 </div></div>
             </div>
 
-            <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none"> development
+            <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none"> development              
                 <div id="adminSelector" class="selector"><div>
+                    <a class="buttonSelector" onclick="javascript:report.reportHTML()">report html</a>
+                    <a class="buttonSelector" onclick="javascript:report.reportHTMLdiag()">diag report html</a>
                     <input type="checkbox" onclick="m.display_window = this.checked; m.update()">highlight windows</input><br>
                     <input type="checkbox" onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display fps</input></br>
                     <input type="checkbox" onclick=" this.checked ? myConsole.openLog() : myConsole.closeLog() ;">log</input>
