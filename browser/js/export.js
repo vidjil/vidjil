@@ -51,11 +51,6 @@ Report.prototype = {
     
     addGraph : function(list) {
         
-        $('<hr/>').appendTo(this.w.document.body);
-        $('<h3/>', {
-            text: "Monitoring"
-        }).appendTo(this.w.document.body);
-        
         //resize 791px ~> 21cm
         graph.resize(791,300)
         graph.draw(0)
@@ -66,7 +61,11 @@ Report.prototype = {
             class: 'container'
         }).appendTo(this.w.document.body);
         
-        svg_graph = document.getElementById(graph.id).cloneNode(true);
+        $('<h3/>', {
+            text: "Monitoring"
+        }).appendTo(w_graph);
+        
+        svg_graph = document.getElementById(graph.id+"_svg").cloneNode(true);
         
         for (var i = 0; i < m.clones.length; i++) {
             var polyline = svg_graph.querySelectorAll('[id="polyline'+i+'"]')[0]
@@ -94,9 +93,8 @@ Report.prototype = {
             }
         }
         
-        w_graph.html(svg_graph.innerHTML)
+        w_graph.append(svg_graph)
         graph.resize();
-
         
         return this;
     },
@@ -105,12 +103,6 @@ Report.prototype = {
         if (typeof system == "undefined") system = m.germlineV.system
         m.changeGermline(system)
         if (typeof time != "undefined") m.changeTime(time)
-        
-            
-        $('<hr/>').appendTo(this.w.document.body);
-        $('<h3/>', {
-            text: system + ' System for timepoint ' + m.getStrTime(m.t)
-        }).appendTo(this.w.document.body);
     
         //resize 791px ~> 21cm
         sp.resize(791,250)
@@ -121,10 +113,14 @@ Report.prototype = {
             class: 'container'
         }).appendTo(this.w.document.body);
         
-        svg_sp = document.getElementById(sp.id).cloneNode(true);
+        $('<h3/>', {
+            text: system + ' System for timepoint ' + m.getStrTime(m.t)
+        }).appendTo(w_sp);
+        
+        svg_sp = document.getElementById(sp.id+"_svg").cloneNode(true);
         
         //set viewbox (same as resize)
-        svg_sp.querySelectorAll('[id="'+sp.id+'_svg"]')[0].setAttribute("viewbox","0 0 791 250");
+        svg_sp.setAttribute("viewbox","0 0 791 250");
         
         
         for (var i = 0; i < m.clones.length; i++) {
@@ -137,22 +133,26 @@ Report.prototype = {
                 circle.parentNode.removeChild(circle);
             }
         }
-        w_sp.html(svg_sp.innerHTML)
+        w_sp.append(svg_sp)
         sp.resize();
 
     },
     
     readsStat: function() {
-        $('<hr/>').appendTo(this.w.document.body);
-        $('<h3/>', {
-            text: ' Reads statistics '
-        }).appendTo(this.w.document.body);
         
         var container = $('<div/>', {
-            class: 'container reads_stats'
+            class: 'container'
         }).appendTo(this.w.document.body);
         
-        var head = $('<div/>', {class: 'float-left'}).appendTo(container);
+        $('<h3/>', {
+            text: ' Reads statistics '
+        }).appendTo(container);
+        
+        var reads_stats = $('<div/>', {
+            class: 'reads_stats'
+        }).appendTo(container);
+        
+        var head = $('<div/>', {class: 'float-left'}).appendTo(reads_stats);
         $('<div/>', {class: 'case', text : ' '}).appendTo(head);
         $('<div/>', {class: 'case', text : 'total'}).appendTo(head);
         $('<div/>', {class: 'case', text : 'segmented'}).appendTo(head);
@@ -160,6 +160,7 @@ Report.prototype = {
         for (var i=0; i<m.system_selected.length; i++){
             var system = m.system_selected[i]
             var system_label = $('<div/>', {class: 'case', text : system}).appendTo(head);
+            $('<span/>', {class: 'system_colorbox', style:'background-color:'+m.germlineList.getColor(system)}).appendTo(system_label);
         }
         
         for (var i=0; i<m.samples.order.length; i++){
@@ -168,14 +169,18 @@ Report.prototype = {
             var box = $('<div/>', {class: 'float-left'})
             $('<div/>', {class: 'case centered', text : m.getStrTime(time)}).appendTo(box);
             $('<div/>', {class: 'case centered', text : m.reads.total[time]}).appendTo(box);
-            $('<div/>', {class: 'case centered', text : m.reads.segmented[time]}).appendTo(box);
+            
+            var segmented = ((m.reads.segmented[time]/m.reads.total[time])*100).toFixed(0) + "%"
+            var seg_box = $('<div/>', {class: 'case centered', text : segmented}).appendTo(box);
+            $('<div/>', {class: 'background1'}).appendTo(seg_box);
+            $('<div/>', {class: 'background2', style: 'width:'+segmented}).appendTo(seg_box);
             
             var pie = $('<div/>').appendTo(box);
             
             var pie_label = $('<div/>', {class: 'left'}).appendTo(pie);
             for (var j=0; j<m.system_selected.length; j++){
                 var system = m.system_selected[j]
-                var value = ((m.reads.germline[system][time]/m.reads.segmented[time])*100).toFixed(0) + " %"
+                var value = ((m.systemSize(system,time))*100).toFixed(0) + "%"
                 $('<div/>', {class: 'case', text : value}).appendTo(pie_label);
             }
             
@@ -184,7 +189,7 @@ Report.prototype = {
             p.setAttribute('style','margin:5px')
             pie_chart.append(p)
             
-            box.appendTo(container);
+            box.appendTo(reads_stats);
         }
         
         return this;
