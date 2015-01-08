@@ -17,13 +17,14 @@ parser.add_argument('file', nargs='+', help='''.vidjil files''')
 
 def main():
 
+    print '%%%%', ' '.join(sys.argv)
     args = parser.parse_args()
     datas = []
 
     for i in args.file:
         data = fuse.ListWindows()
         data.load(i, False, verbose = args.verbose)
-        print '  ', i
+        print '%%  ', i
         out = []
         for w in data:
             if w.d['reads'][0] >= args.min:
