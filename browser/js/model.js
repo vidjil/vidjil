@@ -1663,6 +1663,20 @@ Model.prototype = {
         return span
     },
     
+    systemSize: function(system, time) {
+        time = typeof time !== 'undefined' ? time : this.t;
+        if (typeof this.reads.germline[system] != 'undefined'){
+            return this.reads.germline[system][time]/this.reads.segmented[time]
+        }else{
+            if (this.system_available.indexOf(system) != -1 && this.system_available.length == 1){
+                return 1
+            }else{
+                return 0
+            }
+        }
+        
+    },
+    
     
     
     

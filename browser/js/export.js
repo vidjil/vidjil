@@ -206,25 +206,36 @@ Report.prototype = {
         var start = 0
         for (var i=0; i<m.system_selected.length; i++){
             var system = m.system_selected[i]
-            var angle = Math.PI*2*(m.reads.germline[system][time]/m.reads.segmented[time])
+            var value = m.systemSize(system,time)
+            var angle = Math.PI*2*(value)
             var stop = start+angle
             
-            var slice = document.createElementNS("http://www.w3.org/2000/svg", "path");
+            if (value <1){
+                var slice = document.createElementNS("http://www.w3.org/2000/svg", "path");
+                    
+                var x1 = radius * Math.sin(start);
+                var y1 = -radius * Math.cos(start);
+                var x2 = radius * Math.sin(stop);
+                var y2 = -radius * Math.cos(stop);
                 
-            var x1 = radius * Math.sin(start);
-            var y1 = -radius * Math.cos(start);
-            var x2 = radius * Math.sin(stop);
-            var y2 = -radius * Math.cos(stop);
-            
-            var longArc = (stop-start <= Math.PI) ? 0 : 1;
-            
-            //d is a string that describes the path of the slice.
-            var d = "M" + radius + "," + radius + " L" + (radius + x1) + "," + (radius + y1) + 
-                    ", A" + radius + "," + radius + " 0 "+longArc+",1" + (radius + x2) + "," + (radius + y2) + 
-                    " z";       
-            slice.setAttribute('d', d);
-            slice.setAttribute('fill', m.germlineList.getColor(system));
-            pie.appendChild(slice)
+                var longArc = (stop-start <= Math.PI) ? 0 : 1;
+                
+                //d is a string that describes the path of the slice.
+                var d = "M" + radius + "," + radius + " L" + (radius + x1) + "," + (radius + y1) + 
+                        ", A" + radius + "," + radius + " 0 "+longArc+",1" + (radius + x2) + "," + (radius + y2) + 
+                        " z";       
+                slice.setAttribute('d', d);
+                slice.setAttribute('fill', m.germlineList.getColor(system));
+                pie.appendChild(slice)
+            }else{
+                var slice = document.createElementNS("http://www.w3.org/2000/svg", "circle");
+                    
+                slice.setAttribute('r', radius)
+                slice.setAttribute('cx', radius)
+                slice.setAttribute('cy', radius)
+                slice.setAttribute('fill', m.germlineList.getColor(system));
+                pie.appendChild(slice)
+            }
             
             var start = stop;
         }
