@@ -25,10 +25,13 @@ def main():
         data = fuse.ListWindows()
         data.load(i, False, verbose = args.verbose)
         print '%%  ', i
+        print '%%  ', data.d["reads"]
+        segmented_reads = data.d['reads'].d['segmented'][0]
+
         out = []
         for w in data:
             if w.d['reads'][0] >= args.min:
-                out += [(-w.d['reads'][0], w.latex())]
+                out += [(-w.d['reads'][0], w.latex(base=segmented_reads))]
         for bla, ltx in sorted(out[:args.top]):
             print ltx
 
