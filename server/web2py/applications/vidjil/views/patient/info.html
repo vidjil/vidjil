@@ -8,11 +8,11 @@
     <h3>{{=vidjil_utils.anon(request.vars['id'], auth.user.id)}}</h3>
 
     <div class="db_block">
-      
+
         <div class="db_block_left">
             <span class="button" onclick="db.call('patient/edit', { 'id' : '{{=request.vars["id"]}}' } )" > edit patient info </span>
         </div>
-      
+
 
         <div class="db_block_right">
         {{if auth.has_permission("run", "results_file") :}}
@@ -55,7 +55,7 @@
             </tr>
         </thead>
         <tbody>
-            
+
             {{for row in query :}}
                 {{if row.results_file.scheduler_task_id is None :}}
                     {{status = '' }}
@@ -70,22 +70,22 @@
                     <td> {{=row.sequence_file.sampling_date}} </td>
                     <td> {{=row.sequence_file.info}} </td>
                     <td> {{=row.sequence_file.pcr}} </td>
-                    <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} > 
+                    <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} >
                         {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
                     {{if (auth.has_permission('admin', 'patient', request.vars["id"]) ):}}
                         <td onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
                         <td onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
-                        <td> <a {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} 
+                        <td> <a {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}
                                 {{else:}} href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" {{pass}}  >dl</a></td>
                     {{else:}}<td></td><td></td><td></td>{{pass}}
-                     
-                     
+
+
                     <td class="column_sep"></td>
-                     
+
 
                    {{if row.results_file.run_date :}}
                        <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=row.results_file.run_date }}</td>
-                   {{else:}}<td></td>{{pass}} 
+                   {{else:}}<td></td>{{pass}}
                    <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=status}} </td>
                    <td onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}'})" > X </td>
                    <td>
@@ -97,7 +97,7 @@
                    </td>
                 </tr>
             {{pass}}
-            
+
         </tbody>
     </table>
     <table class="db_table" id="db_fixed_header"></table>
@@ -112,8 +112,8 @@
 
         {{if not auth.has_permission("run", "results_file") :}}
 
-        <br /> Once your data are uploaded, please 
-  <a href="mailto:contact@vidjil.org?Subject=%5Bvidjil%5D%20New%20sequences&Body=%0AHi%2C%0A%0AI%20uploaded%20some%20sequences%20on%20the%20rbx.vidjil.org%20server.%0ACould%20you%20run%20Vidjil%20on%20these%20data%20%3F%0A%0A">request an analysis</a>. 
+        <br /> Once your data are uploaded, please
+  <a href="mailto:contact@vidjil.org?Subject=%5Bvidjil%5D%20New%20sequences&Body=%0AHi%2C%0A%0AI%20uploaded%20some%20sequences%20on%20the%20rbx.vidjil.org%20server.%0ACould%20you%20run%20Vidjil%20on%20these%20data%20%3F%0A%0A">request an analysis</a>.
         {{pass}}
 
         {{pass}}
@@ -142,6 +142,9 @@
     <div class="db_block_right">
         {{if row.fused_file is not None :}}
             download {{=db.config[config_id].name}}
+        <!--
+            <a class="button" href={{=URL('default', 'download_data', scheme='https', vars=dict(patient=request.vars["id"] ,config=request.vars["config_id"], filename=fused_filename ) )}} type="application/octet-stream" download> .data </a>
+        -->
             <a class="button" href={{=URL('default', 'download', scheme='https', args=fused_file[0].fused_file, vars=dict(filename=fused_filename))}} type="application/octet-stream" download> .data </a>
             {{if analysis_count >0:}}
             <a class="button" href={{=URL('default', 'download', scheme='https', args=analysis_file[0].analysis_file, vars=dict(filename=analysis_filename))}} type="application/octet-stream" download> .analysis </a>
