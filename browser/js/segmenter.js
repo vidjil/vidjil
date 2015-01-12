@@ -473,7 +473,7 @@ Segment.prototype = {
         if (sumReads > 0)
         {
             t += length + " clone" + (length>1 ? "s" : "") + ", "
-            t += sumReads + " read" + (sumReads>1 ? "s" : "") + ", "
+            t += this.m.toStringThousands(sumReads) + " read" + (sumReads>1 ? "s" : "") + ", "
             t += sumPercentage = m.formatSize(sumPercentage, true);
         }
             

@@ -252,7 +252,7 @@ Report.prototype = {
             
             var box = $('<div/>', {class: 'float-left'})
             $('<div/>', {class: 'case centered', text : m.getStrTime(time)}).appendTo(box);
-            $('<div/>', {class: 'case centered', text : m.reads.total[time]}).appendTo(box);
+            $('<div/>', {class: 'case centered', text : m.toStringThousands(m.reads.total[time])}).appendTo(box);
             
             var segmented = ((m.reads.segmented[time]/m.reads.total[time])*100).toFixed(0) + "%"
             var seg_box = $('<div/>', {class: 'case centered', text : segmented}).appendTo(box);
