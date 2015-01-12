@@ -232,19 +232,19 @@ Report.prototype = {
     readsStat: function() {
         var container = this.container('Reads statistics')
         
-        var reads_stats = $('<div/>', {
-            class: 'reads_stats'
-        }).appendTo(container);
+        var reads_stats = $('<div/>', {class: 'flex'}).appendTo(container);
         
         var head = $('<div/>', {class: 'float-left'}).appendTo(reads_stats);
         $('<div/>', {class: 'case', text : ' '}).appendTo(head);
         $('<div/>', {class: 'case', text : 'total'}).appendTo(head);
         $('<div/>', {class: 'case', text : 'segmented'}).appendTo(head);
         
-        for (var i=0; i<m.system_selected.length; i++){
-            var system = m.system_selected[i]
-            var system_label = $('<div/>', {class: 'case', text : system}).appendTo(head);
-            $('<span/>', {class: 'system_colorbox', style:'background-color:'+m.germlineList.getColor(system)}).appendTo(system_label);
+        if (m.system_available.length>1){
+            for (var i=0; i<m.system_selected.length; i++){
+                var system = m.system_selected[i]
+                var system_label = $('<div/>', {class: 'case', text : system}).appendTo(head);
+                $('<span/>', {class: 'system_colorbox', style:'background-color:'+m.germlineList.getColor(system)}).appendTo(system_label);
+            }
         }
         
         for (var i=0; i<m.samples.order.length; i++){
@@ -259,19 +259,21 @@ Report.prototype = {
             $('<div/>', {class: 'background1'}).appendTo(seg_box);
             $('<div/>', {class: 'background2', style: 'width:'+segmented}).appendTo(seg_box);
             
-            var pie = $('<div/>').appendTo(box);
-            
-            var pie_label = $('<div/>', {class: 'left'}).appendTo(pie);
-            for (var j=0; j<m.system_selected.length; j++){
-                var system = m.system_selected[j]
-                var value = ((m.systemSize(system,time))*100).toFixed(0) + "%"
-                $('<div/>', {class: 'case', text : value}).appendTo(pie_label);
+            if (m.system_available.length>1){
+                var pie = $('<div/>').appendTo(box);
+                
+                var pie_label = $('<div/>', {class: 'left'}).appendTo(pie);
+                for (var j=0; j<m.system_selected.length; j++){
+                    var system = m.system_selected[j]
+                    var value = ((m.systemSize(system,time))*100).toFixed(0) + "%"
+                    $('<div/>', {class: 'case', text : value}).appendTo(pie_label);
+                }
+                
+                var pie_chart = $('<div/>', {class: 'left'}).appendTo(pie)
+                var p = this.systemPie(time)
+                p.setAttribute('style','margin:5px')
+                pie_chart.append(p)
             }
-            
-            var pie_chart = $('<div/>', {class: 'left'}).appendTo(pie)
-            var p = this.systemPie(time)
-            p.setAttribute('style','margin:5px')
-            pie_chart.append(p)
             
             box.appendTo(reads_stats);
         }
