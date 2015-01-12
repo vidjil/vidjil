@@ -33,7 +33,7 @@ print "=== Recent analysis saved, last %d hours" % LAST_HOURS
 
 for res in db((db.analysis_file.analyze_date >= yesterday) & (db.patient.id == db.analysis_file.patient_id)).select():
     print "   ", res.analysis_file.analyze_date,
-    print "\t", "pat-%04d (%s %s)" % (res.patient.id, res.patient.first_name, res.patient.last_name),
+    print "\t", "pat-%04d (%s)" % (res.patient.id, res.patient.last_name[:3]),
     print "\t", ellipsis(res.analysis_file.analysis_file, 50)
 
 print 
@@ -51,7 +51,7 @@ for res in db((db.results_file.run_date >= yesterday) & RUN_CONFIG_SEQ_PATIENT).
     print "   ", "sch-%04d" % res.results_file.scheduler_task_id, "\t", res.scheduler_task.status, "   ",
     print "\t", res.results_file.run_date, "\t", res.config.name, # "\t", res.data_file,
     print "\t", "seq-%04d" % res.sequence_file.id, "%-20s" % res.sequence_file.filename,
-    print "\t", "pat-%04d (%s %s)" % (res.patient.id, res.patient.first_name, res.patient.last_name),
+    print "\t", "pat-%04d (%s)" % (res.patient.id, res.patient.last_name[:3]),
     print "\t", tmp_dir(res.scheduler_task.args), ellipsis(res.results_file.data_file)
 
 
