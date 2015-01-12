@@ -184,6 +184,9 @@ Axis.prototype = {
             }
             
             var text = Math.round(min+(h*i))
+            if (percent){
+                text = ((min+(h*i))*100).toFixed(1) + "%"
+            }
             this.labels.push(this.label("line", pos, text));
         }
     },

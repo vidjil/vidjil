@@ -714,7 +714,7 @@ ScatterPlot.prototype = {
 	  }
       }
 
-      self.axisY.customLabels(0, this.bar_max, true, true, true);
+      self.axisY.custom(0, this.bar_max, true, true, true);
             
       //redraw
       this.bar = this.bar_container.selectAll("rect")
