@@ -1477,6 +1477,26 @@ Model.prototype = {
         }
         return result
     },
+
+    toStringThousands: function (num) {
+        
+        DECIMAL_SEPARATOR = " "
+        s = num.toString()
+
+        if (num <= 9999)
+            return s
+
+        l = s.length 
+        ss = ""
+        
+        for (var i=l-1; i >= 0; i--) {
+            ss += s[l-1-i]
+            if (i && !(i % 3))
+                ss += DECIMAL_SEPARATOR
+        }
+
+        return ss
+    },
     
 /////////////////////////////////////////////////////////////////////////////
     
