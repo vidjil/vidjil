@@ -248,9 +248,9 @@ Report.prototype = {
                 var longArc = (stop-start <= Math.PI) ? 0 : 1;
                 
                 //d is a string that describes the path of the slice.
-                var d = "M" + radius + "," + radius + " L" + (radius + x1) + "," + (radius + y1) + 
-                        ", A" + radius + "," + radius + " 0 "+longArc+",1" + (radius + x2) + "," + (radius + y2) + 
-                        " z";       
+                var d = " M " + radius + " " + radius + " L " + (radius + x1) + " " + (radius + y1) + 
+                        " A " + radius + " " + radius + " 0 "+longArc+" 1 " + (radius + x2) + " " + (radius + y2) + 
+                        " z ";       
                 slice.setAttribute('d', d);
                 slice.setAttribute('fill', m.germlineList.getColor(system));
                 pie.appendChild(slice)
