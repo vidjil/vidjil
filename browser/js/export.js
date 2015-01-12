@@ -13,7 +13,8 @@ Report.prototype = {
         if (list.length==0) list = this.defaultList()
             
         this.w.onload = function(){
-            self.normalizeInfo(list)
+            self.info()
+                .normalizeInfo(list)
                 .addGraph(list)
                 .readsStat()
                 .addScatterplot()
@@ -29,6 +30,8 @@ Report.prototype = {
         if (list.length==0) list = this.defaultList()
             
         this.w.onload = function(){
+            self.info()
+                .sampleInfo(m.t)
             for (var i=0; i<m.system_selected.length; i++){
                 var system = m.system_selected[i]
                 self.addScatterplot(system, m.t)
@@ -61,6 +64,60 @@ Report.prototype = {
         }).appendTo(container);
         
         return container
+    },
+    
+    info : function() {
+        var info = this.container("Report info")
+        
+        var left = $('<div/>', {class: 'flex'}).appendTo(info);
+        
+        var date = new Date;
+        var timestamp = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() 
+        
+        var label = $('<div/>', {class: 'float-left'}).appendTo(left);
+        $('<div/>', {class: 'case label', text : "Filename:" }).appendTo(label);
+        $('<div/>', {class: 'case label', text : "Report date:" }).appendTo(label);
+        $('<div/>', {class: 'case label', text : "Soft version:" }).appendTo(label);
+        $('<div/>', {class: 'case label', text : "Run date:" }).appendTo(label);
+        
+        var value = $('<div/>', {class: 'float-left'}).appendTo(left);
+        $('<div/>', {class: 'case', text : m.dataFileName }).appendTo(value);
+        $('<div/>', {class: 'case', text : timestamp}).appendTo(value);
+        $('<div/>', {class: 'case', text : "vidjil version" }).appendTo(value);
+        $('<div/>', {class: 'case', text : m.timestamp[0].split(" ")[0] }).appendTo(value);
+        
+        var note = $('<div/>', {class: 'float-left'}).appendTo(left);
+        $('<div/>', {class: 'case label', text : "User note" }).appendTo(note);
+        $('<div/>', {class: 'note', text : m.info }).appendTo(note);
+        
+        return this
+    },
+    
+    sampleInfo : function(time) {
+        var sinfo = this.container("Sample info ("+m.getStrTime(time)+")")
+        
+        var left = $('<div/>', {class: 'flex'}).appendTo(sinfo);
+        
+        var label = $('<div/>', {class: 'float-left'}).appendTo(left);
+        $('<div/>', {class: 'case label', text : "Filename:" }).appendTo(label);
+        $('<div/>', {class: 'case label', text : "Sample date:" }).appendTo(label);
+        $('<div/>', {class: 'case label', text : "Soft version:" }).appendTo(label);
+        $('<div/>', {class: 'case label', text : "Command:" }).appendTo(label);
+        $('<div/>', {class: 'case label', text : "Run date:" }).appendTo(label);
+        
+        var value = $('<div/>', {class: 'float-left'}).appendTo(left);
+        $('<div/>', {class: 'case', text : m.samples.original_names[time]}).appendTo(value);
+        $('<div/>', {class: 'case', text : m.samples.timestamp[time]}).appendTo(value);
+        $('<div/>', {class: 'case', text : ""}).appendTo(value);
+        $('<div/>', {class: 'case', text : ""}).appendTo(value);
+        $('<div/>', {class: 'case', text : ""}).appendTo(value);
+        
+        var note = $('<div/>', {class: 'float-left'}).appendTo(left);
+        $('<div/>', {class: 'case label', text : "User note" }).appendTo(note);
+        $('<div/>', {class: 'note', text : m.samples.info[time] }).appendTo(note);
+        
+        return this
+        
     },
     
     svg_graph : function(list, norm) {

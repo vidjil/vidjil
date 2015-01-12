@@ -99,7 +99,7 @@
                 font-family: monospace;
                 background: #CCC;
             }
-            .reads_stats{
+            .flex{
                 width: 100%;
                 display: flex;
                 font-size: 80%;
@@ -112,6 +112,7 @@
             .float-left {
                 margin: 0 auto 0 0;
                 float: left;
+                min-width: 120px;
             }
             .left {
                 float: left;
@@ -140,6 +141,17 @@
                 display: inline-block;
                 float: left;
                 margin-right: 0.5em;
+            }
+            .note{
+                background-color : grey;
+                min-height: 5em;
+                width: 450px;
+                background-color: #EEE;
+                padding: 5px;
+                font-family:courier;
+            }
+            .label{
+                opacity:0.8;
             }
         </style>
 
@@ -231,14 +243,6 @@
             <div id="header-logo"><div id="logo">Vidjil <span class="logo">(beta)</span></div></div>
             <div id="header-title">Vidjil html report v0.1</div>
         </div>
-
-        <div id="info" class="container">
-            <h3>Report info</h3>
-            <div id="info-file">     <span class="label">name:</span>        <span class="value">james</span>    </div>
-            <div id="patient-birth">    <span class="label">birth date:</span>  <span class="value">unknow</span>   </div>
-            <div id="patient-id">       <span class="label">ID:</span>          <span class="value">007</span>      </div>
-        </div>
-
 
     </body>
 
