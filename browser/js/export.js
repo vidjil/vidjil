@@ -13,7 +13,8 @@ Report.prototype = {
         if (list.length==0) list = this.defaultList()
             
         this.w.onload = function(){
-            self.addGraph(list)
+            self.normalizeInfo(list)
+                .addGraph(list)
                 .readsStat()
                 .addScatterplot()
         }
@@ -49,49 +50,59 @@ Report.prototype = {
         return list
     },
     
-    addGraph : function(list) {
-        
-        //resize 791px ~> 21cm
-        graph.resize(791,300)
-        graph.draw(0)
-        
-        //add graph container now
-        var w_graph = $('<div/>', {
-            id: 'graph',
+    //add a new container to the html report 
+    container : function(title) {
+        var container = $('<div/>', {
             class: 'container'
         }).appendTo(this.w.document.body);
         
         $('<h3/>', {
-            text: "Monitoring"
-        }).appendTo(w_graph);
+            text: title
+        }).appendTo(container);
         
-        svg_graph = document.getElementById(graph.id+"_svg").cloneNode(true);
+        return container
+    },
+    
+    svg_graph : function(list, norm) {
+        if (typeof norm == "undefined") norm = -1
+        var svg_graph = document.getElementById(graph.id+"_svg").cloneNode(true);
+        svg_graph.setAttribute("viewBox","0 0 "+svg_graph.getAttribute("width")+" "+svg_graph.getAttribute("height"));
         
         for (var i = 0; i < m.clones.length; i++) {
             var polyline = svg_graph.querySelectorAll('[id="polyline'+i+'"]')[0]
             var tag = m.clone(i).getTag()
             var color = tagColor[tag]
             
-            //stack
-            if (polyline.getAttribute("d").indexOf("Z") != -1){
-                polyline.setAttribute("style", "stroke-width:0px");
-                polyline.setAttribute("fill", color);
-            }else{//line
-                if (list.indexOf(i) != -1){
-                    polyline.setAttribute("style", "stroke-width:3px");
-                }else if (tag != 8){
-                    polyline.setAttribute("style", "stroke-width:1.5px");
-                }else{
-                    polyline.setAttribute("style", "stroke-width:0.5px; opacity:0.5");
-                }
-                polyline.setAttribute("stroke", color);
+            if (i == norm) {
+                polyline.setAttribute("style", "stroke-width:12px");
+            }else if (list.indexOf(i) != -1){
+                polyline.setAttribute("style", "stroke-width:3px");
+            }else if (tag != 8){
+                polyline.setAttribute("style", "stroke-width:1.5px");
+            }else{
+                polyline.setAttribute("style", "stroke-width:0.5px; opacity:0.5");
             }
+            polyline.setAttribute("stroke", color);
             
             //remove "other" and disabled clones
-            if (m.clone(i).id == "other" || !m.clone(i).isActive()) {
+            if (i != norm && (m.clone(i).id == "other" || !m.clone(i).isActive())) {
                 polyline.parentNode.removeChild(polyline);
             }
         }
+            
+        return svg_graph
+    },
+    
+    addGraph : function(list) {
+        
+        //resize 791px ~> 21cm
+        graph.resize(791,300)
+        graph.draw(0)
+        
+        var w_graph = this.container("Monitoring")
+        w_graph.addClass("graph");
+        
+        var svg_graph = this.svg_graph(list)
         
         w_graph.append(svg_graph)
         graph.resize();
@@ -99,29 +110,52 @@ Report.prototype = {
         return this;
     },
     
+    normalizeInfo: function (list) {
+        if (m.norm){
+            var container = this.container("Normalization")
+            var norm_id = m.normalization.id
+            var norm_value = m.normalization.B
+            
+            m.compute_normalization(-1)
+            graph.resize(791,300)
+            graph.draw(0)
+            var svg_graph = this.svg_graph(list, norm_id)
+            svg_graph.setAttribute("width", "395px")
+            svg_graph.setAttribute("height", "150px")
+            container.append(svg_graph)
+            
+            m.compute_normalization(norm_id, norm_value)
+            graph.resize(791,300)
+            graph.draw(0)
+            var svg_graph = this.svg_graph(list, norm_id)
+            svg_graph.setAttribute("width", "395px")
+            svg_graph.setAttribute("height", "150px")
+            container.append(svg_graph)
+            
+            graph.resize();
+        }
+        
+        return this
+    },
+    
     addScatterplot : function(system, time) {
         if (typeof system == "undefined") system = m.germlineV.system
-        m.changeGermline(system)
         if (typeof time != "undefined") m.changeTime(time)
-    
+            
+        m.changeGermline(system)
+        sp.changeSplitMethod('gene_v', 'gene_j')
+        
         //resize 791px ~> 21cm
         sp.resize(791,250)
         sp.fastForward()
         
-        var w_sp = $('<div/>', {
-            id: 'scatterplot',
-            class: 'container'
-        }).appendTo(this.w.document.body);
+        var w_sp = this.container(system + ' System for timepoint ' + m.getStrTime(m.t))
+        w_sp.addClass("scatterplot");
         
-        $('<h3/>', {
-            text: system + ' System for timepoint ' + m.getStrTime(m.t)
-        }).appendTo(w_sp);
-        
-        svg_sp = document.getElementById(sp.id+"_svg").cloneNode(true);
+        var svg_sp = document.getElementById(sp.id+"_svg").cloneNode(true);
         
         //set viewbox (same as resize)
-        svg_sp.setAttribute("viewbox","0 0 791 250");
-        
+        svg_sp.setAttribute("viewBox","0 0 791 250");
         
         for (var i = 0; i < m.clones.length; i++) {
             var circle = svg_sp.querySelectorAll('[id="circle'+i+'"]')[0]
@@ -139,14 +173,7 @@ Report.prototype = {
     },
     
     readsStat: function() {
-        
-        var container = $('<div/>', {
-            class: 'container'
-        }).appendTo(this.w.document.body);
-        
-        $('<h3/>', {
-            text: ' Reads statistics '
-        }).appendTo(container);
+        var container = this.container('Reads statistics')
         
         var reads_stats = $('<div/>', {
             class: 'reads_stats'
