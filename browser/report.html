@@ -73,7 +73,6 @@
             }
             #logo {
                 font-size: 130%;
-                padding: 5px 20px;
             }
             span.logo {
                 font-size: 60%;
@@ -104,6 +103,7 @@
                 width: 100%;
                 display: flex;
                 font-size: 80%;
+                flex-wrap: wrap;
             }
             .case {
                 height: 1.2em;
@@ -145,7 +145,7 @@
 
         <!-- graph style-->
         <style>
-            #graph {
+            .graph {
                 font-size : 75%;
             }
             .graph_menu {
@@ -182,7 +182,7 @@
 
         <!-- scatterplot style-->
         <style>
-            #scatterplot {
+            .scatterplot {
                 font-size : 75%;
             }
             .axis_select, #visu_label_container {
@@ -232,9 +232,9 @@
             <div id="header-title">Vidjil html report v0.1</div>
         </div>
 
-        <div id="patient" class="container">
+        <div id="info" class="container">
             <h3>Report info</h3>
-            <div id="patient-name">     <span class="label">name:</span>        <span class="value">james</span>    </div>
+            <div id="info-file">     <span class="label">name:</span>        <span class="value">james</span>    </div>
             <div id="patient-birth">    <span class="label">birth date:</span>  <span class="value">unknow</span>   </div>
             <div id="patient-id">       <span class="label">ID:</span>          <span class="value">007</span>      </div>
         </div>
