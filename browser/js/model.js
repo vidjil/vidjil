@@ -1,7 +1,11 @@
 /*
- * This file is part of "Vidjil" <http://bioinfo.lifl.fr/vidjil>, V(D)J repertoire browsing and analysis
- * Copyright (C) 2013, 2014 by Marc Duez <marc.duez@lifl.fr> and the Vidjil Team
- * Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
+ * This file is part of Vidjil <http://www.vidjil.org>,
+ * High-throughput Analysis of V(D)J Immune Repertoire.
+ * Copyright (C) 2013, 2014, 2015 by Bonsai bioinformatics 
+ * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
+ * Contributors: 
+ *     Marc Duez <marc.duez@vidjil.org>
+ *     The Vidjil Team <contact@vidjil.org>
  *
  * "Vidjil" is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
