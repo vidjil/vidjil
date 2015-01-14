@@ -1,7 +1,11 @@
 /*
- * This file is part of "Vidjil" <http://bioinfo.lifl.fr/vidjil>, V(D)J repertoire browsing and analysis
- * Copyright (C) 2013, 2014 by Marc Duez <marc.duez@lifl.fr> and the Vidjil Team
- * Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
+ * This file is part of Vidjil <http://www.vidjil.org>,
+ * High-throughput Analysis of V(D)J Immune Repertoire.
+ * Copyright (C) 2013, 2014, 2015 by Bonsai bioinformatics 
+ * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
+ * Contributors: 
+ *     Marc Duez <marc.duez@vidjil.org>
+ *     The Vidjil Team <contact@vidjil.org>
  *
  * "Vidjil" is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -62,7 +66,7 @@ function Com(flash_id, log_id, popup_id, data_id) {
         "welcome": " <h2>Vidjil <span class='logo'>(beta)</span></h2>"
 	    + "(c) 2011-2014, the Vidjil team" + "<br />Marc Duez, Mathieu Giraud and Mikaël Salson" 
 	    + " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" + "</br>" 
-	    + "</br>Vidjil is developed by the <a href='http://www.lifl.fr/bonsai'>Bonsai bioinformatics team</a> (LIFL, CNRS, U. Lille 1, Inria Lille), " 
+	    + "</br>Vidjil is developed by the <a href='http://cristal.univ-lille.fr/bonsai'>Bonsai bioinformatics team</a> (CRIStAL, CNRS, Univ. Lille, Inria Lille), " 
 	    + "in collaboration with the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille, " 
             + "the <a href='http://www.ircl.org/plate-forme-genomique.html'>Functional and Structural Genomic Platform</a> (U. Lille 2, IFR-114, IRCL)" 
 	    + " and the <a href='http://www.euroclonality.org/'>EuroClonality-NGS</a> working group." 

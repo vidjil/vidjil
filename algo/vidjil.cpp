@@ -1,7 +1,11 @@
 /*
-  This file is part of "Vidjil" <http://bioinfo.lifl.fr/vidjil>
-  Copyright (C) 2011, 2012, 2013, 2014 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
-  Contributors: Mathieu Giraud <mathieu.giraud@lifl.fr>, Mikaël Salson <mikael.salson@lifl.fr>, Marc Duez <marc.duez@lifl.fr>
+  This file is part of Vidjil <http://www.vidjil.org>
+  Copyright (C) 2011, 2012, 2013, 2014, 2015 by Bonsai bioinformatics 
+  at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
+  Contributors: 
+      Mathieu Giraud <mathieu.giraud@vidjil.org>
+      Mikaël Salson <mikael.salson@vidjil.org>
+      Marc Duez <marc.duez@vidjil.org>
 
   "Vidjil" is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
@@ -222,13 +226,15 @@ void usage(char *progname)
 int main (int argc, char **argv)
 {
   cout << "# Vidjil -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
-       << "# Copyright (C) 2011, 2012, 2013, 2014 by the Vidjil team" << endl
-       << "# Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille" << endl 
+       << "# Copyright (C) 2011, 2012, 2013, 2014, 2015 by the Vidjil team" << endl
+       << "# Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille" << endl 
        << endl
        << "# Vidjil is free software, and you are welcome to redistribute it" << endl
        << "# under certain conditions -- see http://git.vidjil.org/blob/master/doc/LICENSE" << endl
        << "# No lymphocyte was harmed in the making of this software," << endl
        << "# however this software is for research use only and comes with no warranty." << endl
+       << endl
+       << "# Please cite http://biomedcentral.com/1471-2164/15/409 if you use Vidjil." 
        << endl ;
 
   //$$ options: defaults

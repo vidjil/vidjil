@@ -1,7 +1,11 @@
 /*
-  This file is part of "Vidjil" <http://bioinfo.lifl.fr/vidjil>
-  Copyright (C) 2011, 2012, 2013 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
-  Contributors: Mathieu Giraud <mathieu.giraud@lifl.fr>, Mikaël Salson <mikael.salson@lifl.fr>
+  This file is part of Vidjil <http://www.vidjil.org>
+  Copyright (C) 2011, 2012, 2013, 2014, 2015 by Bonsai bioinformatics 
+  at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
+  Contributors: 
+      Mathieu Giraud <mathieu.giraud@vidjil.org>
+      Mikaël Salson <mikael.salson@vidjil.org>
+      Marc Duez <marc.duez@vidjil.org>
 
   "Vidjil" is free software: you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by
