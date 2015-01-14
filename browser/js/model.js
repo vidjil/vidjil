@@ -1527,7 +1527,7 @@ Model.prototype = {
     },
 
     formatSize: function (size, fixed) {
-        var result = "-/-"
+        var result = "-"
 
         if (size == 0) return result
 

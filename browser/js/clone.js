@@ -134,8 +134,9 @@ Clone.prototype = {
     /* return the clone size with a fixed number of character
      * use scientific notation if neccesary
      * */
-    getStrSize: function () {
-        var size = this.getSize();
+    getStrSize: function (time) {
+        time = typeof time !== 'undefined' ? time : this.m.t;
+        var size = this.getSize(time);
         return this.m.formatSize(size, true)
     },
     
