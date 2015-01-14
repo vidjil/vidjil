@@ -17,7 +17,7 @@ Report.prototype = {
                 .normalizeInfo(list)
                 .addGraph(list)
                 .readsStat()
-                .addScatterplot()
+                .cloneList(list)
         }
     },
     
@@ -36,6 +36,7 @@ Report.prototype = {
                 var system = m.system_selected[i]
                 self.addScatterplot(system, m.t)
             }
+            self.cloneList(list)
         }
     },
     
@@ -227,6 +228,7 @@ Report.prototype = {
         w_sp.append(svg_sp)
         sp.resize();
 
+        return this
     },
     
     readsStat: function() {
@@ -327,6 +329,78 @@ Report.prototype = {
         }
 
         return pie
+    },
+    
+    cloneList : function(list) {
+        var container = this.container('Selected clones')
+        
+        for (var i=0; i<list.length; i++){
+            var cloneID = list[i]
+            
+            this.clone(cloneID).appendTo(container)
+        }
+        
+        return this
+    },
+    
+    clone : function(cloneID) {
+        
+        var clone = $('<div/>', {class: 'clone'})
+        
+        graph.resize(791,300)
+        graph.draw(0)
+        
+        var icon = $('<span/>', {class: 'icon'}).appendTo(clone);
+        var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+        var polyline = document.getElementById("polyline" + cloneID).cloneNode(true)
+        var color = tagColor[m.clone(cloneID).getTag()]
+        polyline.setAttribute("stroke", color);
+        polyline.setAttribute("style", "stroke-width:30px");
+        svg.appendChild(polyline)
+        svg.setAttribute("viewBox","0 0 791 300");
+        svg.setAttribute("width","80px");
+        svg.setAttribute("height","30px");
+        icon.append(svg)
+        
+        $('<span/>', {text: m.clone(cloneID).name}).appendTo(clone);
+        if (typeof m.clone(cloneID).c_name != "undefined"){
+            $('<span/>', {text: m.clone(cloneID).c_name}).appendTo(clone);
+        }
+        
+        var reads_stats = $('<div/>', {class: 'clone_table'}).appendTo(clone);
+        for (var i=0; i<m.samples.order.length; i++){
+            var time = m.samples.order[i]
+            
+            $('<div/>', {text : m.clone(cloneID).getStrSize(time), class: 'clone_value'}).appendTo(reads_stats);
+        }
+        
+        var sequence = $('<div/>', {class: 'sequence'}).appendTo(clone);
+        if (m.clone(cloneID).getSequence() != "0") {
+            var seg = m.clone(cloneID).seg
+            var seq = m.clone(cloneID).getSequence()
+            var seqV = seq.substring(0, seg['5end'] + 1)
+            var seqN = seq.substring(seg['5end'] + 1, seg['3start'])
+            var seqJ = seq.substring(seg['3start'])
+
+            $('<span/>', {class: 'v_gene', text: seqV}).appendTo(sequence);
+            if (m.clone(cloneID).getD() != "undefined D"){
+                var seqN1 = seq.substring(seg['5end'] + 1, seg['4start'])
+                var seqD = seq.substring(seg['4start'] , seg['4end'] + 1)
+                var seqN2 = seq.substring(seg['4end'] + 1, seg['3start'])
+                $('<span/>', {class: 'n_gene', text: seqN1}).appendTo(sequence);
+                $('<span/>', {class: 'd_gene', text: seqD}).appendTo(sequence);
+                $('<span/>', {class: 'n_gene', text: seqN2}).appendTo(sequence);
+            }else{
+                $('<span/>', {class: 'n_gene', text: seqN}).appendTo(sequence);
+            }
+            $('<span/>', {class: 'j_gene', text: seqJ}).appendTo(sequence);
+        } else {
+            $('<span/>', {text: 'segment fail'}).appendTo(sequence);
+        }
+        
+        
+        
+        return clone
     }
     
 }

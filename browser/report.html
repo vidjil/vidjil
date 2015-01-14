@@ -18,6 +18,7 @@
             }
 
             .container { page-break-inside : avoid }
+            .clone { page-break-inside : avoid }
             table { page-break-inside : avoid }
 
             html, body {
@@ -84,7 +85,7 @@
                 border-top: solid;
                 border-color: #2AA198;
                 border-width: 2px;
-                margin: 0.5em 0;
+                margin: 0.5em 0 1em 0;
             }
             .systemBox, .systemBoxMenu {
                 display: inline-block;
@@ -152,6 +153,19 @@
             }
             .label{
                 opacity:0.8;
+            }
+            .sequence{
+                overflow-wrap:break-word;
+                font-family:courier;
+            }
+            .v_gene{
+                color : #DDA800;
+            }
+            .d_gene{
+                color : #B6005D;
+            }
+            .j_gene{
+                color : #00A237;
             }
         </style>
 
@@ -228,6 +242,25 @@
             }
             .circle{
                 stroke : none;
+            }
+            .clone{
+                font-size : 75%;
+            }
+            .clone_table{
+                margin: 0 auto 0 auto;
+                float: left;
+                text-align: center;
+                border-top: solid;
+                border-bottom: solid;
+                border-width: 1px;
+                display: flex;
+                width: 100%;
+            }
+            .clone_value{
+                margin: 0 auto 0 auto;
+                flex-shrink: 0;
+                flex-basis: 0;
+                text-align: center;
             }
         </style>
     </head>
