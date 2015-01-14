@@ -53,6 +53,7 @@ test("graph: init", function() {
     
     graph.initAxis()
     deepEqual(graph.data_axis[0], {
+                                    "class": "graph_time2",
                                     "orientation": "vert",
                                     "pos": 0.05,
                                     "text": "2014-10-20",
