@@ -287,7 +287,7 @@ Report.prototype = {
         if (typeof time == "undefined") time = m.t
         var radius = 40
         var pie = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        pie.setAttribute("viewbox","0 0 100 100");
+        pie.setAttribute("viewBox","0 0 100 100");
         pie.setAttribute("width",(radius*2)+"px");
         pie.setAttribute("height",(radius*2)+"px");
         
