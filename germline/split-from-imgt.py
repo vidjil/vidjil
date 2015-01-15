@@ -14,7 +14,7 @@ IMGT_LICENSE = '''
    # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
 '''
 
-print IMGT_LICENSE
+print (IMGT_LICENSE)
 
 
 # Parse lines in IMGT/GENE-DB such as:
@@ -24,7 +24,7 @@ open_files = {}
 current_file = None
 
 def verbose_open_w(name):
-    print " ==> %s" % name
+    print (" ==> %s" % name)
     return open(name, 'w')
 
 def get_split_files(seq, split_seq):
