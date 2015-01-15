@@ -1,7 +1,11 @@
-DATA=???[VDJ].fa
+DATA=???[VDJ].fa IGK-INTRON.fa IGK-KDE.fa TRDD2-01.fa TRDD3-01.fa
 
-data:
+../browser/js/germline.js: $(DATA) germlines.data
+	python buildBrowserGermline.py $^ $@
+
+get-data:
 	sh get-germline
+	make ../browser/js/germline.js
 
 clean:
 	rm -f $(DATA)
