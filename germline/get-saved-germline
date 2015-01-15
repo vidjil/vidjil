@@ -1,0 +1,18 @@
+#!/bin/sh
+
+dir=$(dirname $0)
+
+germline_id=$(cat $dir/germline_id)
+
+echo <<EOF
+By downloading the IMGT germline databases (IMGT/GENE-DB), you
+accept the IMGT® license: academic research only, provided that it is referred
+to IMGT® and cited as "IMGT®, the international ImMunoGeneTics information
+system® http://www.imgt.org (founder and director: Marie-Paule Lefranc,
+Montpellier, France).  Lefranc, M.-P., IMGT®, the international ImMunoGeneTics
+database, Nucl. Acids Res., 29, 207-209 (2001). PMID:11125093.
+
+Otherwise please remove the files from your disk.
+EOF
+
+wget -O- http://www.vidjil.org/germlines/germline-${germline_id}.tar.gz | tar xzf - --strip-components=1 germline/
