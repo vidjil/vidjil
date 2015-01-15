@@ -1,9 +1,9 @@
 #!/bin/sh
 
-rm -f Stanford_S22.zip
-wget http://www.emi.unsw.edu.au/~ihmmune/Stanford_S22.zip
-unzip -d $(dirname $0) -o Stanford_S22.zip
-rm -f Stanford_S22.zip
+echo <<EOF
+Please pay attention that the Stanford_S22 dataset comes from Boyd,
+S. D., et al. Individual variation in the germline Ig gene repertoire inferred
+from variable region gene rearrangements. J Immunol, 184(12), 6986–92.
+EOF
 
-rm -f Stanford_S22.rc.fasta
-wget http://bioinfo.lifl.fr/vidjil/seq/Stanford_S22.rc.fasta
+wget -q -O- http://www.vidjil.org/seqs/Stanford_S22.tar.gz | tar xvzf -
