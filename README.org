@@ -42,22 +42,16 @@ authentication).
 
 ** The algorithm
 
-- Stable releases can be downloaded from http://www.vidjil.org/
+- Stable releases can be downloaded from http://bioinfo.lifl.fr/vidjil
 - Development code is under [[algo/]]
 - Documentation: [[doc/algo.org]]
 
-** The browser
+** The browser and the patient database
 
-- Access at http://www.vidjil.org/browser (demo login: vidjil, password: vidjil, then select sample/L2-LIL.data in the file menu).
+- Access at http://rbx.vidjil.org/browser (demo login: demo@vidjil, password: vidjil)
 - Please contact us if you would like to test your data and have a full account on the web server
-- Development code is under [[browser/]]
-- Documentation (in progress): [[doc/browser.org]]
-
-** The server and the patient database
-
-- Currently under development, code is in [[server/]]
-- Planned first release: Q1 2015
-- Documentation (in progress): [[doc/server.org]]
+- Development code is under [[browser/]] and [[server/]]
+- Documentation (in progress): [[doc/browser.org]] and [[doc/server.org]]
 
 * Code and license
 
