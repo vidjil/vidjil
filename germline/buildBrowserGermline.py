@@ -5,7 +5,7 @@ import time
 
     
 if len(sys.argv) < 3:
-    print "Usage: %s <FASTA input file> [JSON/DATA germline file] [JSON output file]" % sys.argv[0]
+    print("Usage: %s <FASTA input file> [JSON/DATA germline file] [JSON output file]" % sys.argv[0])
     sys.exit()
 input_name = sys.argv[1]
 output_name = ""
