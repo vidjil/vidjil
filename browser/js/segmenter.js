@@ -224,6 +224,7 @@ Segment.prototype = {
                     element.parentNode.removeChild(element);
                 }
             }
+            this.updateStats();
         }    
     },
 
@@ -467,15 +468,19 @@ Segment.prototype = {
         var list = this.m.getSelected()
         var sumPercentage = 0;
         var sumReads = 0;
-        var length = list.length
-        for (var i = 0; i < length; i++) {
-            sumPercentage += this.m.clone(list[i]).getSize();
-            sumReads+= this.m.clone(list[i]).getReads();
+        var length = 0;
+            
+        //verifier que les points sélectionnés sont dans une germline courante
+        for (var i = 0; i < list.length ; i++){   
+            if (m.clones[list[i]].isActive()) {
+                length += 1;
+                sumPercentage += this.m.clone(list[i]).getSize();
+                sumReads+= this.m.clone(list[i]).getReads(); 
             }
+        }
 
         var t = ""
-        if (sumReads > 0)
-        {
+        if (sumReads > 0) {
             t += length + " clone" + (length>1 ? "s" : "") + ", "
             t += this.m.toStringThousands(sumReads) + " read" + (sumReads>1 ? "s" : "") + ", "
             t += sumPercentage = m.formatSize(sumPercentage, true);
