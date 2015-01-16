@@ -18,6 +18,8 @@ Report.prototype = {
                 .addGraph(list)
                 .readsStat()
                 .cloneList(list)
+                
+                m.resize()
         }
     },
     
@@ -36,7 +38,9 @@ Report.prototype = {
                 var system = m.system_selected[i]
                 self.addScatterplot(system, m.t)
             }
-            self.cloneList(list)
+            self.cloneList(list, m.t)
+            
+            m.resize()
         }
     },
     
@@ -331,47 +335,55 @@ Report.prototype = {
         return pie
     },
     
-    cloneList : function(list) {
+    cloneList : function(list, time) {
+        if (typeof time == "undefined") time = -1
         var container = this.container('Selected clones')
         
         for (var i=0; i<list.length; i++){
             var cloneID = list[i]
             
-            this.clone(cloneID).appendTo(container)
+            this.clone(cloneID, time).appendTo(container)
         }
         
         return this
     },
     
-    clone : function(cloneID) {
-        
+    clone : function(cloneID, time) {
+        if (typeof time == "undefined") time = -1
+        var color = tagColor[m.clone(cloneID).getTag()]
         var clone = $('<div/>', {class: 'clone'})
         
         graph.resize(791,300)
         graph.draw(0)
         
-        var icon = $('<span/>', {class: 'icon'}).appendTo(clone);
-        var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-        var polyline = document.getElementById("polyline" + cloneID).cloneNode(true)
-        var color = tagColor[m.clone(cloneID).getTag()]
-        polyline.setAttribute("stroke", color);
-        polyline.setAttribute("style", "stroke-width:30px");
-        svg.appendChild(polyline)
-        svg.setAttribute("viewBox","0 0 791 300");
-        svg.setAttribute("width","80px");
-        svg.setAttribute("height","30px");
-        icon.append(svg)
+        var head = $('<div/>', {class: 'clone_head'}).appendTo(clone);
         
-        $('<span/>', {text: m.clone(cloneID).name}).appendTo(clone);
-        if (typeof m.clone(cloneID).c_name != "undefined"){
-            $('<span/>', {text: m.clone(cloneID).c_name}).appendTo(clone);
+        if (time == -1){
+            var icon = $('<span/>', {class: 'icon'}).appendTo(head);
+            var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+            var polyline = document.getElementById("polyline" + cloneID).cloneNode(true)
+            polyline.setAttribute("stroke", color);
+            polyline.setAttribute("style", "stroke-width:30px");
+            svg.appendChild(polyline)
+            svg.setAttribute("viewBox","0 0 791 300");
+            svg.setAttribute("width","80px");
+            svg.setAttribute("height","30px");
+            icon.append(svg)
         }
         
-        var reads_stats = $('<div/>', {class: 'clone_table'}).appendTo(clone);
-        for (var i=0; i<m.samples.order.length; i++){
-            var time = m.samples.order[i]
-            
-            $('<div/>', {text : m.clone(cloneID).getStrSize(time), class: 'clone_value'}).appendTo(reads_stats);
+        $('<span/>', {text: m.clone(cloneID).name, class: 'clone_name', style : 'color:'+color}).appendTo(head);
+        if (typeof m.clone(cloneID).c_name != "undefined"){
+            $('<span/>', {text: m.clone(cloneID).c_name, class: 'clone_name', style : 'color:'+color}).appendTo(head);
+        }
+        
+        if (time == -1){
+            var reads_stats = $('<div/>', {class: 'clone_table'}).appendTo(clone);
+            for (var i=0; i<m.samples.order.length; i++){
+                var t = m.samples.order[i]
+                $('<div/>', {text : m.clone(cloneID).getStrSize(t), class: 'clone_value'}).appendTo(reads_stats);
+            }
+        }else{
+            $('<span/>', {text : m.clone(cloneID).getStrSize(time), class: 'float-right'}).appendTo(head);
         }
         
         var sequence = $('<div/>', {class: 'sequence'}).appendTo(clone);
