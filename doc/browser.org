@@ -22,16 +22,14 @@ The Vidjil browser runs in any modern browser. It has been successfully tested o
 The vidjil browser displays =.vidjil= files that summarize the V(D)J
 rearrangements and the sequences found in a run. 
 
-If you have an access to the patient database, you are able to upload,
-manage, process your runs (=.fasta=, =.fastq= or =.clntab= files) directly on the browser 
+The easiest way to get these files is to [[http://rbx.vidjil.org/browser][request an account]] on the Vidjil server.
+You will then be able to upload,
+manage, process your runs (=.fasta=, =.fastq=, =.gz= or =.clntab= files) directly on the browser 
 (see below 'patient database'), and the server behind the patient
 database computes these .vidjil files.
 Otherwise, such .vidjil files can be obtained:
- - by sending us your .fasta/.fastq files, either through
-   http://www.vidjil.org/submit.html or using any other method
-   (e.g. your own FTP)
  - from the command-line version of Vidjil (starting from
-   =.fasta= or =.fastq= files, see [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]])
+   =.fasta= or =.fastq= files, see [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]]).
    To gather several .vidjil files, you have to use the [[http://git.vidjil.org/blob/master/server/fuse.py][fuse.py]] script
  - or by post-processing of other V(D)J analysis pipelines (contact us
    if you are interested)
@@ -118,14 +116,15 @@ Otherwise, such .vidjil files can be obtained:
    - You can unselect all sequences by clicking on the background of the scatterplot.
 
 
-** The patient database (experimental)
+** The patient database and the server
 
-This part is experimental, we have provided an access to some labs to this feature.
-The release is expected to be at Q1 2015.
+If a server with a patient database is configured with your
+installation of Vidjil (as on http://rbx.vidjil.org/browser), the
+'patient' menu gives you access to the server.
 
-A server links the browser and the algorithmic part. You can upload,
-manage, process your runs (.fasta/.fastq or .clntab files) directly on
-the browser.
+With authentication, you can add patients, then add either
+=.fasta=/=.fastq=/=.gz= files or =.clntab= files, then process your
+runs and save the results of your analysis.
 
 *** Patients
       
@@ -139,7 +138,7 @@ If you have an admin access, you can grant access to other users ('p').
 *** Samples
 
 Clicking on a patient give acccess the "samples" page. Each sample is
-a .fasta/.fastq file that will be processed by one or several
+a =.fasta=/=.fastq=/=.gz=/=.clntab= file that will be processed by one or several
 pipelines.
 You can see which samples have been processed with the selected
 config, and download the sequence files if they are available ("dl").
