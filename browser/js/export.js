@@ -9,15 +9,15 @@ Report.prototype = {
         
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
     
-        var list = m.getSelected()
-        if (list.length==0) list = this.defaultList()
+        this.list = m.getSelected()
+        if (this.list.length==0) this.list = this.defaultList()
             
         this.w.onload = function(){
             self.info()
-                .normalizeInfo(list)
-                .addGraph(list)
+                .normalizeInfo()
+                .addGraph()
                 .readsStat()
-                .cloneList(list)
+                .cloneList()
                 
                 m.resize()
         }
@@ -28,8 +28,8 @@ Report.prototype = {
         
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
     
-        var list = m.getSelected()
-        if (list.length==0) list = this.defaultList()
+        this.list = m.getSelected()
+        if (this.list.length==0) this.list = this.defaultList()
             
         this.w.onload = function(){
             self.info()
@@ -39,7 +39,6 @@ Report.prototype = {
                 var system = m.system_selected[i]
                 self.addScatterplot(system, m.t)
             }
-            self.cloneList(list, m.t)
             
             m.resize()
         }
@@ -113,20 +112,23 @@ Report.prototype = {
         
         var value = $('<div/>', {class: 'float-left'}).appendTo(left);
         $('<div/>', {class: 'case', text : m.samples.original_names[time]}).appendTo(value);
-        $('<div/>', {class: 'case', text : m.samples.timestamp[time]}).appendTo(value);
+        $('<div/>', {class: 'case', text : m.getSampleTime(time)}).appendTo(value);
         $('<div/>', {class: 'case', text : ""}).appendTo(value);
         $('<div/>', {class: 'case', text : ""}).appendTo(value);
         $('<div/>', {class: 'case', text : ""}).appendTo(value);
         
         var note = $('<div/>', {class: 'float-left'}).appendTo(left);
         $('<div/>', {class: 'case label', text : "User note" }).appendTo(note);
-        $('<div/>', {class: 'note', text : m.samples.info[time] }).appendTo(note);
+        
+        var info = "..."
+        if (typeof m.samples.info != "undefined") info = m.samples.info[time]
+        $('<div/>', {class: 'note', text : info }).appendTo(note);
         
         return this
         
     },
     
-    svg_graph : function(list, norm) {
+    svg_graph : function(norm) {
         if (typeof norm == "undefined") norm = -1
         var svg_graph = document.getElementById(graph.id+"_svg").cloneNode(true);
         svg_graph.setAttribute("viewBox","0 0 "+svg_graph.getAttribute("width")+" "+svg_graph.getAttribute("height"));
@@ -138,7 +140,7 @@ Report.prototype = {
             
             if (i == norm) {
                 polyline.setAttribute("style", "stroke-width:12px");
-            }else if (list.indexOf(i) != -1){
+            }else if (this.list.indexOf(i) != -1){
                 polyline.setAttribute("style", "stroke-width:3px");
             }else if (tag != 8){
                 polyline.setAttribute("style", "stroke-width:1.5px");
@@ -156,7 +158,7 @@ Report.prototype = {
         return svg_graph
     },
     
-    addGraph : function(list) {
+    addGraph : function() {
         
         //resize 791px ~> 21cm
         graph.resize(791,300)
@@ -165,7 +167,7 @@ Report.prototype = {
         var w_graph = this.container("Monitoring")
         w_graph.addClass("graph");
         
-        var svg_graph = this.svg_graph(list)
+        var svg_graph = this.svg_graph()
         
         w_graph.append(svg_graph)
         graph.resize();
@@ -173,7 +175,7 @@ Report.prototype = {
         return this;
     },
     
-    normalizeInfo: function (list) {
+    normalizeInfo: function () {
         if (m.norm){
             var container = this.container("Normalization")
             var norm_id = m.normalization.id
@@ -182,7 +184,7 @@ Report.prototype = {
             m.compute_normalization(-1)
             graph.resize(791,300)
             graph.draw(0)
-            var svg_graph = this.svg_graph(list, norm_id)
+            var svg_graph = this.svg_graph(norm_id)
             svg_graph.setAttribute("width", "395px")
             svg_graph.setAttribute("height", "150px")
             container.append(svg_graph)
@@ -190,7 +192,7 @@ Report.prototype = {
             m.compute_normalization(norm_id, norm_value)
             graph.resize(791,300)
             graph.draw(0)
-            var svg_graph = this.svg_graph(list, norm_id)
+            var svg_graph = this.svg_graph(norm_id)
             svg_graph.setAttribute("width", "395px")
             svg_graph.setAttribute("height", "150px")
             container.append(svg_graph)
@@ -346,12 +348,12 @@ Report.prototype = {
         return pie
     },
     
-    cloneList : function(list, time) {
+    cloneList : function(time) {
         if (typeof time == "undefined") time = -1
         var container = this.container('Selected clones')
         
-        for (var i=0; i<list.length; i++){
-            var cloneID = list[i]
+        for (var i=0; i<this.list.length; i++){
+            var cloneID = this.list[i]
             
             this.clone(cloneID, time).appendTo(this.w.document.body);
         }
@@ -382,7 +384,7 @@ Report.prototype = {
             icon.append(svg)
         }
         
-        $('<span/>', {text: ">"+m.clone(cloneID).name+'\u00a0', class: 'clone_name', style : 'color:'+color}).appendTo(head);
+        $('<span/>', {text: ">"+m.clone(cloneID).getCode()+'\u00a0', class: 'clone_name', style : 'color:'+color}).appendTo(head);
         if (typeof m.clone(cloneID).c_name != "undefined"){
             $('<span/>', {text: m.clone(cloneID).c_name+'\u00a0', class: 'clone_name', style : 'color:'+color}).appendTo(head);
         }
@@ -398,7 +400,7 @@ Report.prototype = {
         }
         
         var sequence = $('<div/>', {class: 'sequence'}).appendTo(clone);
-        if (m.clone(cloneID).getSequence() != "0") {
+        if (typeof m.clone(cloneID).seg != 'undefined'){
             var seg = m.clone(cloneID).seg
             var seq = m.clone(cloneID).getSequence()
             var seqV = seq.substring(0, seg['5end'] + 1)
@@ -417,11 +419,12 @@ Report.prototype = {
                 $('<span/>', {class: 'n_gene', text: seqN}).appendTo(sequence);
             }
             $('<span/>', {class: 'j_gene', text: seqJ}).appendTo(sequence);
+        }
+        else if (m.clone(cloneID).getSequence() != "0") {
+            $('<span/>', {class: 'n_gene', text: m.clone(cloneID).getSequence()}).appendTo(sequence);
         } else {
             $('<span/>', {text: 'segment fail'}).appendTo(sequence);
         }
-        
-        
         
         return clone
     }
