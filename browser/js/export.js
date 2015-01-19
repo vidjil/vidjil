@@ -391,10 +391,10 @@ Report.prototype = {
             var reads_stats = $('<span/>', {class: 'clone_table'}).appendTo(clone);
             for (var i=0; i<m.samples.order.length; i++){
                 var t = m.samples.order[i]
-                $('<span/>', {text : m.clone(cloneID).getStrSize(t), class: 'clone_value'}).appendTo(reads_stats);
+                $('<span/>', {text : m.clone(cloneID).getStrSize(t)+'\u00a0', class: 'clone_value'}).appendTo(reads_stats);
             }
         }else{
-            $('<span/>', {text : m.clone(cloneID).getStrSize(time), class: 'float-right'}).appendTo(head);
+            $('<span/>', {text : m.clone(cloneID).getStrSize(time)+'\u00a0', class: 'float-right'}).appendTo(head);
         }
         
         var sequence = $('<div/>', {class: 'sequence'}).appendTo(clone);
