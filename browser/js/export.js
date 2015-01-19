@@ -34,6 +34,7 @@ Report.prototype = {
         this.w.onload = function(){
             self.info()
                 .sampleInfo(m.t)
+                .readsStat(m.t)
             for (var i=0; i<m.system_selected.length; i++){
                 var system = m.system_selected[i]
                 self.addScatterplot(system, m.t)
@@ -235,7 +236,8 @@ Report.prototype = {
         return this
     },
     
-    readsStat: function() {
+    readsStat: function(time) {
+        if (typeof time == "undefined") time = -1
         var container = this.container('Reads statistics')
         
         var reads_stats = $('<div/>', {class: 'flex'}).appendTo(container);
@@ -253,38 +255,47 @@ Report.prototype = {
             }
         }
         
-        for (var i=0; i<m.samples.order.length; i++){
-            var time = m.samples.order[i]
-            
-            var box = $('<div/>', {class: 'float-left'})
-            $('<div/>', {class: 'case centered', text : m.getStrTime(time)}).appendTo(box);
-            $('<div/>', {class: 'case centered', text : m.toStringThousands(m.reads.total[time])}).appendTo(box);
-            
-            var segmented = ((m.reads.segmented[time]/m.reads.total[time])*100).toFixed(0) + "%"
-            var seg_box = $('<div/>', {class: 'case centered', text : segmented}).appendTo(box);
-            $('<div/>', {class: 'background1'}).appendTo(seg_box);
-            $('<div/>', {class: 'background2', style: 'width:'+segmented}).appendTo(seg_box);
-            
-            if (m.system_available.length>1){
-                var pie = $('<div/>').appendTo(box);
-                
-                var pie_label = $('<div/>', {class: 'left'}).appendTo(pie);
-                for (var j=0; j<m.system_selected.length; j++){
-                    var system = m.system_selected[j]
-                    var value = ((m.systemSize(system,time))*100).toFixed(0) + "%"
-                    $('<div/>', {class: 'case', text : value}).appendTo(pie_label);
-                }
-                
-                var pie_chart = $('<div/>', {class: 'left'}).appendTo(pie)
-                var p = this.systemPie(time)
-                p.setAttribute('style','margin:5px')
-                pie_chart.append(p)
+        if (time == -1){
+            for (var i=0; i<m.samples.order.length; i++){
+                var t = m.samples.order[i]
+                var box=this.readsStat2(t)
+                box.appendTo(reads_stats);
             }
-            
+        }else{
+            var box=this.readsStat2(time)
             box.appendTo(reads_stats);
         }
         
         return this;
+    },
+    
+    readsStat2: function (time){
+        var box = $('<div/>', {class: 'float-left'})
+        $('<div/>', {class: 'case centered', text : m.getStrTime(time)}).appendTo(box);
+        $('<div/>', {class: 'case centered', text : m.toStringThousands(m.reads.total[time])}).appendTo(box);
+        
+        var segmented = ((m.reads.segmented[time]/m.reads.total[time])*100).toFixed(0) + "%"
+        var seg_box = $('<div/>', {class: 'case centered', text : segmented}).appendTo(box);
+        $('<div/>', {class: 'background1'}).appendTo(seg_box);
+        $('<div/>', {class: 'background2', style: 'width:'+segmented}).appendTo(seg_box);
+        
+        if (m.system_available.length>1){
+            var pie = $('<div/>').appendTo(box);
+            
+            var pie_label = $('<div/>', {class: 'left'}).appendTo(pie);
+            for (var j=0; j<m.system_selected.length; j++){
+                var system = m.system_selected[j]
+                var value = ((m.systemSize(system,time))*100).toFixed(0) + "%"
+                $('<div/>', {class: 'case', text : value}).appendTo(pie_label);
+            }
+            
+            var pie_chart = $('<div/>', {class: 'left'}).appendTo(pie)
+            var p = this.systemPie(time)
+            p.setAttribute('style','margin:5px')
+            pie_chart.append(p)
+        }
+        
+        return box
     },
     
     systemPie: function(time) {
