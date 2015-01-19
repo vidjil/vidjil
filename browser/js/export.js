@@ -367,7 +367,7 @@ Report.prototype = {
         graph.resize(791,300)
         graph.draw(0)
         
-        var head = $('<div/>', {class: 'clone_head'}).appendTo(clone);
+        var head = $('<span/>', {class: 'clone_head'}).appendTo(clone);
         
         if (time == -1){
             var icon = $('<span/>', {class: 'icon'}).appendTo(head);
@@ -382,16 +382,16 @@ Report.prototype = {
             icon.append(svg)
         }
         
-        $('<span/>', {text: m.clone(cloneID).name, class: 'clone_name', style : 'color:'+color}).appendTo(head);
+        $('<span/>', {text: ">"+m.clone(cloneID).name+'\u00a0', class: 'clone_name', style : 'color:'+color}).appendTo(head);
         if (typeof m.clone(cloneID).c_name != "undefined"){
-            $('<span/>', {text: m.clone(cloneID).c_name, class: 'clone_name', style : 'color:'+color}).appendTo(head);
+            $('<span/>', {text: m.clone(cloneID).c_name+'\u00a0', class: 'clone_name', style : 'color:'+color}).appendTo(head);
         }
         
         if (time == -1){
-            var reads_stats = $('<div/>', {class: 'clone_table'}).appendTo(clone);
+            var reads_stats = $('<span/>', {class: 'clone_table'}).appendTo(clone);
             for (var i=0; i<m.samples.order.length; i++){
                 var t = m.samples.order[i]
-                $('<div/>', {text : m.clone(cloneID).getStrSize(t), class: 'clone_value'}).appendTo(reads_stats);
+                $('<span/>', {text : m.clone(cloneID).getStrSize(t), class: 'clone_value'}).appendTo(reads_stats);
             }
         }else{
             $('<span/>', {text : m.clone(cloneID).getStrSize(time), class: 'float-right'}).appendTo(head);
