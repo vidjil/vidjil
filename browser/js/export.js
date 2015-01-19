@@ -353,7 +353,7 @@ Report.prototype = {
         for (var i=0; i<list.length; i++){
             var cloneID = list[i]
             
-            this.clone(cloneID, time).appendTo(container)
+            this.clone(cloneID, time).appendTo(this.w.document.body);
         }
         
         return this
