@@ -711,6 +711,16 @@ Model.prototype = {
         }
     },
     
+    getSampleTime: function(time) {
+        var value = "unknow"
+        if (typeof this.samples.timestamp != 'undefined'){
+            if (typeof this.samples.timestamp[time] != 'undefined'){
+                value = this.samples.timestamp[time]
+            } 
+        }
+        return value;
+    },
+    
     toggle_system: function(system){
         if (this.system_available.indexOf(system) != -1) {
             var pos = this.system_selected.indexOf(system) 
