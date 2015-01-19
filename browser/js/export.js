@@ -252,6 +252,11 @@ Report.prototype = {
         w_sp.append(svg_sp)
         sp.resize();
 
+        for (var i=0; i<this.list.length; i++){
+            var cloneID = this.list[i]
+            if (m.clone(cloneID).germline == system) this.clone(cloneID, time).appendTo(this.w.document.body);
+        }
+        
         return this
     },
     
