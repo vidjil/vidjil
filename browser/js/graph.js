@@ -932,17 +932,15 @@ Graph.prototype = {
      * */
     initOrdinateClones : function () {
         
-        var max = 0;
+        var max = this.m.precision*this.m.max_size
         //get ready for something really dirty
         if (this.m.norm && this.m.normalization.method == "constant"){
             for (var i=0; i<this.m.samples.order.length; i++) {
                 for (var j=0; j<this.m.clones.length; j++){
-                    var size = this.m.precision*100*this.m.clone(j).getSize()
+                    var size = this.m.precision*this.m.clone(j).getSize()
                     if (size>max) max=size;
                 }
             }
-        }else{
-            max = this.m.precision*this.m.max_size
         }
         
         this.scale_x = d3.scale.log()
