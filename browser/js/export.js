@@ -47,6 +47,7 @@ Report.prototype = {
     defaultList: function() {
         var list = []
         
+        //use taged clones 
         var tag=0
         while (tag < 8 && list.length < 5) {
             for (var i = 0; i < m.clones.length; i++) {
@@ -54,6 +55,22 @@ Report.prototype = {
                 if (clone_tag == tag && m.clone(i).isActive) list.push(i)
             }
             tag++
+        }
+        
+        //add best two clones from each system
+        if (list.length <5){
+            for (var k=0; k<2; k++){
+                for (var i=0; i<m.system_available.length; i++){
+                    var system = m.system_available[i]
+                    
+                    var clone = -1
+                    for (var j=0; j<m.clones.length; j++) {
+                        if (list.indexOf(j)==-1 && m.clone(j).germline==system && 
+                            (clone==-1 || m.clone(j).top < m.clone(clone).top ) ) clone=j
+                    }
+                    if (clone!=-1) list.push(clone)
+                }
+            }
         }
         return list
     },
