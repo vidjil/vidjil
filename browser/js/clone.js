@@ -144,6 +144,26 @@ Clone.prototype = {
         return this.m.formatSize(size, true)
     },
     
+    getSystemSize: function (time) {
+        time = typeof time !== 'undefined' ? time : this.m.t;
+        
+        var system_reads = this.m.reads.segmented[time]
+        if (this.germline in this.m.reads.germline) system_reads = this.m.reads.germline[this.germline][time]
+        
+        if (system_reads == 0 ) return 0
+        var result = this.getReads(time) / system_reads
+        
+        if (this.m.norm) result = this.m.normalize(result, time)
+
+        return result
+    },
+    
+    getStrSystemSize: function (time) {
+        time = typeof time !== 'undefined' ? time : this.m.t;
+        var size = this.getSystemSize(time);
+        return this.m.formatSize(size, true)
+    },
+    
     /* 
      *
      * */

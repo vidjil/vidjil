@@ -386,13 +386,14 @@ Report.prototype = {
     clone : function(cloneID, time) {
         if (typeof time == "undefined") time = -1
         var color = tagColor[m.clone(cloneID).getTag()]
+        var system = m.clone(cloneID).germline
         var clone = $('<div/>', {class: 'clone'})
         
         graph.resize(791,300)
         graph.draw(0)
         
         var head = $('<span/>', {class: 'clone_head'}).appendTo(clone);
-        
+        //clone svg path icon
         if (time == -1){
             var icon = $('<span/>', {class: 'icon'}).appendTo(head);
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
@@ -406,21 +407,34 @@ Report.prototype = {
             icon.append(svg)
         }
         
+        //clone label
         $('<span/>', {text: ">"+m.clone(cloneID).getCode()+'\u00a0', class: 'clone_name', style : 'color:'+color}).appendTo(head);
         if (typeof m.clone(cloneID).c_name != "undefined"){
             $('<span/>', {text: m.clone(cloneID).c_name+'\u00a0', class: 'clone_name', style : 'color:'+color}).appendTo(head);
         }
         
+        //clone reads stats
         if (time == -1){
             var reads_stats = $('<span/>', {class: 'clone_table'}).appendTo(clone);
             for (var i=0; i<m.samples.order.length; i++){
                 var t = m.samples.order[i]
                 $('<span/>', {text : m.clone(cloneID).getStrSize(t)+'\u00a0', class: 'clone_value'}).appendTo(reads_stats);
             }
+            if (m.system_available.length>1){
+                var reads_system_stats = $('<span/>', {class: 'clone_table'}).appendTo(clone);
+                for (var i=0; i<m.samples.order.length; i++){
+                    var t = m.samples.order[i]
+                    $('<span/>', {text : m.clone(cloneID).getStrSystemSize(t)+'\u00a0', class: 'clone_value'}).appendTo(reads_system_stats);
+                }
+            }
         }else{
+            if (m.system_available.length>1){
+                $('<span/>', {text : '('+m.clone(cloneID).getStrSystemSize(time)+' of '+system+')\u00a0', class: 'float-right'}).appendTo(head);
+            }
             $('<span/>', {text : m.clone(cloneID).getStrSize(time)+'\u00a0', class: 'float-right'}).appendTo(head);
         }
         
+        //colorized clone sequence
         var sequence = $('<div/>', {class: 'sequence'}).appendTo(clone);
         if (typeof m.clone(cloneID).seg != 'undefined'){
             var seg = m.clone(cloneID).seg
