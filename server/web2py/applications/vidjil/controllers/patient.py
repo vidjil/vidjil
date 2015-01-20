@@ -171,7 +171,7 @@ def index():
     ##filter
     if "filter" in request.vars and request.vars["filter"] != "":
         for row in query :
-            row.string = (row.confs+row.groups+row.patient.last_name+row.patient.first_name+str(row.patient.birth)).lower()
+            row.string = (row.confs+row.groups+row.patient.last_name+row.patient.first_name+str(row.patient.birth)).lower()+row.patient.info
         query = query.find(lambda row : row.string.find(request.vars["filter"].lower()) != -1)
     else :
         request.vars["filter"] = ""
