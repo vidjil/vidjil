@@ -99,6 +99,37 @@ def info():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
+def custom():
+    if request.vars["config_id"] and request.vars["config_id"] != "-1" :
+        config_id = long(request.vars["config_id"])
+        config_name = db.config[request.vars["config_id"]].name
+        config = True
+        
+    else:
+        config_id = -1
+        config = False
+
+    if config :
+
+        query = db(
+                (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) 
+                & (db.sequence_file.patient_id==db.patient.id)
+                & (db.results_file.sequence_file_id==db.sequence_file.id)
+                & (db.results_file.config_id==str(config_id) )
+                & (db.results_file.scheduler_task_id==db.scheduler_task.id)
+                & (db.scheduler_task.status=='COMPLETED')
+            ).select(
+                orderby = db.sequence_file.patient_id|db.sequence_file.id|db.results_file.run_date,
+                groupby = db.sequence_file.id,
+            )
+
+    else:
+        query = []
+
+    return dict(query=query,
+                config_id=config_id,
+                config=config)
+    
 
 ## return patient list
 def index():

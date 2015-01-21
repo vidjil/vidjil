@@ -151,7 +151,40 @@ def get_data():
                "message" : "default/get_data : " + error}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
+#########################################################################
+def get_custom_data():
+    import time
+    from subprocess import Popen, PIPE, STDOUT
+    if not auth.user :
+        res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True)} #TODO _next
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+    error = ""
+
+    if not "custom" in request.vars :
+        error += "no file selected, "
+    else:
+        for id in request.vars["custom"] :
+            sequence_file_id = db.results_file[id].sequence_file_id
+            patient_id =db.sequence_file[sequence_file_id].patient_id
+            if not auth.has_permission('admin', 'patient', patient_id) and \
+                not auth.has_permission('read', 'patient', patient_id):
+                error += "you do not have permission to consult this patient ("+str(patient_id)+")"
+            
+    if error == "" :
+        data = custom_fuse(request.vars["custom"])
+        res = {"success" : "plop",
+               "message" : "default/get_data : "+ ",".join(request.vars["custom"])}
+
+        return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
+
+    else :
+        res = {"success" : "false",
+               "message" : "default/get_custom_data : " + error}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
 #########################################################################
 ## return .analysis file
 # need patient_id, config_id

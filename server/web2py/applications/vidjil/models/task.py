@@ -276,6 +276,45 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
 
     return "SUCCESS"
 
+def custom_fuse(file_list):
+    import time, datetime, sys, os.path, random
+    from subprocess import Popen, PIPE, STDOUT, os
+    
+    random_id = random.randint(99999999,99999999999)
+    out_folder = defs.DIR_OUT_VIDJIL_ID % random_id
+    output_filename = "%06d" % random_id
+    
+    cmd = "rm -rf "+out_folder 
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    p.wait()
+    os.makedirs(out_folder)    
+    
+    fuse_log_file = open(out_folder+'/'+output_filename+'.fuse.log', 'w')
+    
+    ## fuse.py 
+    output_file = out_folder+'/'+output_filename+'.fused'
+    files = ""
+    for id in file_list :
+        if db.results_file[id].data_file is not None :
+            files += defs.DIR_RESULTS + db.results_file[id].data_file + " "
+    
+    cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+output_file+" -t 100 "+files
+    sys.stdout.flush()
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=fuse_log_file, stderr=STDOUT, close_fds=True)
+    (stdoutdata, stderrdata) = p.communicate()
+    fuse_filepath = os.path.abspath(output_file)
+    
+    try:
+        f = open(fuse_filepath, 'rb')
+        data = gluon.contrib.simplejson.loads(f.read())
+    except IOError:
+        raise IOError
+
+    clean_cmd = "rm -rf " + out_folder 
+    p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    p.wait()
+
+    return data
 
 from gluon.scheduler import Scheduler
 scheduler = Scheduler(db, dict(vidjil=run_vidjil,
