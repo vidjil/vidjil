@@ -709,7 +709,7 @@ Model.prototype = {
     },
     
     getSampleTime: function(time) {
-        var value = "unknow"
+        var value = "–"
         if (typeof this.samples.timestamp != 'undefined'){
             if (typeof this.samples.timestamp[time] != 'undefined'){
                 value = this.samples.timestamp[time]

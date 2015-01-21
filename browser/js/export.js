@@ -20,7 +20,7 @@ Report.prototype = {
         else
             text += m.dataFileName
         if (date_max != "0" && date_min != "0")
-            text += ", " + date_min + " to " + date_max 
+            text += " – " + date_min + " → " + date_max 
             
         this.w.onload = function(){
             self.w.document.getElementById("header-title").innerHTML = text
@@ -44,9 +44,9 @@ Report.prototype = {
             text += m.patient_name
         else
             text += m.dataFileName
-        text += ": Sample "+ m.getStrTime(m.t, "name")
+        text += " – "+ m.getStrTime(m.t, "name")
         if (typeof m.samples.timestamp != 'undefined') 
-            text += "("+m.samples.timestamp[m.t].split(" ")[0]+")"
+            text += " – "+m.samples.timestamp[m.t].split(" ")[0]
         
         this.list = m.getSelected()
         if (this.list.length==0) this.list = this.defaultList()
@@ -126,9 +126,9 @@ Report.prototype = {
         var content = [
             {label: "Filename:" , value : m.dataFileName },
             {label: "Report date:"  , value : report_timestamp},
-            {label: "Soft version:" , value : m.getSoftVersion()},
-            {label: "data date:" , value : m.timestamp[0].split(" ")[0] },
-            {label: "last analysis date:" , value : analysis_timestamp}
+            {label: "Analysis saved on:" , value : analysis_timestamp},
+            {label: "Bioinfo analysis software:" , value : m.getSoftVersion()},
+            {label: "Bioinfo analysis date:" , value : m.timestamp[0].split(" ")[0] }
         ]
         
         var table = $('<table/>', {class: 'info-table float-left'}).appendTo(left);
@@ -149,24 +149,24 @@ Report.prototype = {
         var sinfo = this.container("Sample info ("+m.getStrTime(time)+")")
         var left = $('<div/>', {class: 'flex'}).appendTo(sinfo);
         
-        var soft_version = "unknow"
+        var soft_version = "–"
         if (typeof m.samples.producer != 'undefined')
             soft_version = m.samples.producer[time]
             
-        var command = "unknow"
+        var command = "–"
         if (typeof m.samples.commandline != 'undefined')
             command = m.samples.commandline[time]
             
-        var sample_timestamp = "unknow"
+        var sample_timestamp = "–"
         if (typeof m.samples.run_timestamp != 'undefined')
             sample_timestamp = m.samples.run_timestamp[time]
         
         var content = [
             {label: "Filename:" , value : m.samples.original_names[time]},
             {label: "Sample date:" , value : m.getSampleTime(time)},
-            {label: "Soft version:" , value : soft_version},
-            {label: "Command:" , value : command},
-            {label: "Run date:" , value : sample_timestamp}
+            {label: "Bioinfo analysis software:" , value : soft_version},
+            {label: "Bioinfo analysis command:" , value : command},
+            {label: "Bioinfo analysis date:" , value : sample_timestamp}
         ]
         
         var table = $('<table/>', {class: 'info-table float-left'}).appendTo(left);
@@ -273,7 +273,7 @@ Report.prototype = {
         sp.resize(791,250)
         sp.fastForward()
         
-        var w_sp = this.container(system + ' System for timepoint ' + m.getStrTime(m.t))
+        var w_sp = this.container(m.getStrTime(m.t) + ' – ' + system)
         w_sp.addClass("scatterplot");
         
         var svg_sp = document.getElementById(sp.id+"_svg").cloneNode(true);
@@ -304,8 +304,8 @@ Report.prototype = {
     
     readsStat: function(time) {
         if (typeof time == "undefined") time = -1
-        var container = this.container('Reads statistics')
-        
+        var container = this.container('Reads distribution')
+                
         var reads_stats = $('<div/>', {class: 'flex'}).appendTo(container);
         
         var head = $('<div/>', {class: 'float-left'}).appendTo(reads_stats);
