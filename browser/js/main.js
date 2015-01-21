@@ -94,6 +94,7 @@ if (typeof config != 'undefined' && location.search != ''){
     var config = -1
     var dataURL = ""
     var analysisURL = ""
+    var custom_list = []
     for (var i=0; i<tmp.length; i++){
         var tmp2 = tmp[i].split('=')
         
@@ -101,6 +102,7 @@ if (typeof config != 'undefined' && location.search != ''){
         if (tmp2[0] == 'analysis') analysisURL = tmp2[1]
         if (tmp2[0] == 'patient') patient = tmp2[1]
         if (tmp2[0] == 'config') config = tmp2[1]
+        if (tmp2[0] == 'custom') custom_list.push(tmp2[1])
     }
     
     
@@ -116,6 +118,11 @@ if (typeof config != 'undefined' && location.search != ''){
     if (patient != "-1" && config != "-1"){
         //wait 1sec to check ssl
         setTimeout(function () { db.load_data( {"patient" : patient , "config" : config } , "")  }, 1000);
+    }
+    
+    if (custom_list.length>0){
+        //wait 1sec to check ssl
+        setTimeout(function () { db.load_custom_data( {"custom" : custom_list })  }, 1000);
     }
         
     
