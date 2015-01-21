@@ -425,6 +425,58 @@ Database.prototype = {
         });
     },
     
+    load_custom_data: function(args) {
+        var self=this;
+        myConsole.closePopupMsg()
+        if (m.analysisHasChanged){
+            m.analysisHasChanged = false;
+            myConsole.popupMsg( myConsole.msg.save_analysis +
+                "<div class=\'center\'> <button onclick=\'db.load_data("+JSON.stringify(args)+",\""+filename+"\")\'>Continue</button> "
+                +" <button onclick='myConsole.closePopupMsg()'>Cancel</button> </div>"
+            )
+            return
+        }
+        
+        if (typeof args == 'undefined'){
+            args={}
+            var list=[]
+            $("input[name='custom_result[]']").each(
+                function () {
+                    if (this.checked) list.push(this.value)
+                } 
+            )
+            args["custom"]=list
+        }
+        
+        console.log("db : custom data "+list)
+        
+        var url = document.documentURI.split('?')[0]
+        var arg = "?";
+        for (var i=0; i<args["custom"].length; i++){
+            arg += "custom="+args["custom"][i]+"&" 
+        }
+        var new_location = url+arg
+        window.history.pushState('plop', 'plop', new_location);
+        
+        $.ajax({
+            type: "POST",
+            timeout: 15000,
+            crossDomain: true,
+            url: self.db_address + "default/get_custom_data" + arg,
+            xhrFields: {withCredentials: true},
+            success: function (result) {
+                self.display_result(result, "", args);
+            },
+            error: function (request, status, error) {
+                if (status === "timeout") {
+                    myConsole.flash(myConsole.msg.database_timeout + " - unable to access patient data", 1)
+                } else {
+                    myConsole.popupMsg(request.responseText);
+                }
+            }
+        });
+    },
+    
     load_analysis: function (args) {
 
         var self = this;
