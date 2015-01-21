@@ -107,6 +107,7 @@ Otherwise, such .vidjil files can be obtained:
      them either in the list, the graph or the scatterplot, or by drawing a
      rectangle around clones to be selected in the scatterplot view), you can
      view their sequences in the aligner.
+   - See "What is the sequence displayed for each clone ?" below
    - Sequences can be aligned together to see how they differ or how similar
      they are (“align” button). After aligning them a shaded background identifies
      substitutions and a dash identifies indels.
@@ -198,6 +199,25 @@ Note that the ratios include the "other" clone: if a clone principal
 is reported to have 10.54%, this 10.54% ratio relates to the number of
 analyzed reads, including the hidden clones.
 
+
+
+
+* What is the sequence displayed for each clone ?
+
+The sequences displayed for each clone are not individual reads.  
+The clones may gather thousands of reads, and all these reads can have
+some differences. Depending on the sequencing technology, the reads
+inside a clone can have different lengths or can be shifted,
+especially in the case of overlapping paired-end sequencing. There can be also
+some sequencing errors.
+The =.vidjil= file has to give one consensus sequence per clone, and
+Rep-Seq algorithms have to deal with great care to these difference in
+order to not gather reads from different clones.
+
+For the Vidjil algorithm, it is required that the window centered on
+the CDR3 is /exactly/ shared by all the reads. The other positions in
+the consensus sequence are guaranteed to be present in /at least half/
+of the reads. The consensus sequence can thus be shorter than some reads.
 
 
 * How can I assess the quality of the data and the analysis ?
