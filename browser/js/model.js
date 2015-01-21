@@ -1680,6 +1680,26 @@ Model.prototype = {
         saveAs(textFileAsBlob, filename + ".csv");
     },
     
+    exportFasta: function () {
+        var list = m.getSelected()
+        if (list.length>0){
+            var w = window.open("", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
+            
+            var fasta = '<pre>'
+            for (var i=0; i<list.length; i++){
+                fasta += '>' + this.clone(list[i]).getCode() + '\n'
+                fasta += this.clone(list[i]).getSequence() + '\n'
+            }
+            
+            var result = $('<div/>', {
+                html: fasta
+            }).appendTo(w.document.body);
+        }else{
+            myConsole("exportFasta: select clones to export before",1)
+        }
+        
+    },
+    
     systemBox: function (system){
         
         var span = document.createElement('span')
