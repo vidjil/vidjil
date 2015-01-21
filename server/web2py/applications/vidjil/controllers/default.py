@@ -174,8 +174,19 @@ def get_custom_data():
             
     if error == "" :
         data = custom_fuse(request.vars["custom"])
-        res = {"success" : "plop",
-               "message" : "default/get_data : "+ ",".join(request.vars["custom"])}
+
+        data["info"] = "custom"
+        data["samples"]["original_names"] = []
+        data["samples"]["timestamp"] = []
+        data["samples"]["info"] = []
+        
+        for id in request.vars["custom"] :
+            sequence_file_id = db.results_file[id].sequence_file_id
+            patient_id = db.sequence_file[sequence_file_id].patient_id
+            filename = db.sequence_file[sequence_file_id].filename
+            data["samples"]["original_names"].append(filename)
+            data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
+            data["samples"]["info"].append(db.sequence_file[sequence_file_id].info)
 
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
