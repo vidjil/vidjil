@@ -94,19 +94,26 @@ Report.prototype = {
         var left = $('<div/>', {class: 'flex'}).appendTo(info);
         
         var date = new Date;
-        var timestamp = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() 
+        var report_timestamp = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() 
+        var analysis_timestamp = "-"
+        if (typeof m.analysis.timestamp != "undefined")
+            analysis_timestamp = m.analysis.timestamp.split(" ")[0]
+        if (m.analysisHasChanged) 
+            analysis_timestamp = report_timestamp
         
         var label = $('<div/>', {class: 'float-left'}).appendTo(left);
         $('<div/>', {class: 'case label', text : "Filename:" }).appendTo(label);
         $('<div/>', {class: 'case label', text : "Report date:" }).appendTo(label);
         $('<div/>', {class: 'case label', text : "Soft version:" }).appendTo(label);
-        $('<div/>', {class: 'case label', text : "Run date:" }).appendTo(label);
+        $('<div/>', {class: 'case label', text : "data date:" }).appendTo(label);
+        $('<div/>', {class: 'case label', text : "last analysis date:" }).appendTo(label);
         
         var value = $('<div/>', {class: 'float-left'}).appendTo(left);
         $('<div/>', {class: 'case', text : m.dataFileName }).appendTo(value);
-        $('<div/>', {class: 'case', text : timestamp}).appendTo(value);
+        $('<div/>', {class: 'case', text : report_timestamp}).appendTo(value);
         $('<div/>', {class: 'case', text : "vidjil version" }).appendTo(value);
         $('<div/>', {class: 'case', text : m.timestamp[0].split(" ")[0] }).appendTo(value);
+        $('<div/>', {class: 'case', text : analysis_timestamp }).appendTo(value);
         
         var note = $('<div/>', {class: 'float-left'}).appendTo(left);
         $('<div/>', {class: 'case label', text : "User note" }).appendTo(note);

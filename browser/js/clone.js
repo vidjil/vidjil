@@ -298,6 +298,7 @@ Clone.prototype = {
         myConsole.log("changeTag() (clone " + this.hash + " <<" + newTag + ")");
         this.tag = newTag;
         this.m.updateElem([this.hash]);
+        this.m.analysisHasChanged = true;
     },
     
     getColor: function () {
