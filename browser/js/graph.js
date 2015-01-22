@@ -901,8 +901,10 @@ Graph.prototype = {
 
             // Warns when there are very few segmented reads 
             var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100;
+            if (percent < 50)
+                d.class += " warning" ;
             if (percent < 10)
-                d.text += " !" ;
+                d.class += " alert" ;
 
             d.orientation = "vert";
             if (this.drag_on && i == this.dragged_time_point) {

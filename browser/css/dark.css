@@ -938,8 +938,14 @@ span.logo {
 span.warning {
   color: orange;
 }
+text.warning {
+  fill: orange;
+}
 span.alert {
   color: red;
+}
+text.alert {
+  fill: red;
 }
 .sp_selector {
   fill: #fdf6e3;
