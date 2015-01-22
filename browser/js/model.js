@@ -1710,7 +1710,7 @@ Model.prototype = {
     },
     
     exportFasta: function () {
-        var list = m.getSelected()
+        var list = this.getSelected()
         if (list.length>0){
             var w = window.open("", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
             
@@ -1724,7 +1724,7 @@ Model.prototype = {
                 html: fasta
             }).appendTo(w.document.body);
         }else{
-            myConsole("exportFasta: select clones to export before",1)
+            myConsole.log("exportFasta: select clones to export before", 1)
         }
         
     },
