@@ -6,13 +6,25 @@ Report.prototype = {
     
     reportHTML : function() {
         var self = this
-        
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
-    
+        
         this.list = m.getSelected()
         if (this.list.length==0) this.list = this.defaultList()
+        
+        var text = ""
+        date_min = m.dateMin()
+        date_max = m.dateMax()
+        
+        if (typeof m.patient_name != 'undefined')
+            text += m.patient_name
+        else
+            text += m.dataFileName
+        if (date_max != "0" && date_min != "0")
+            text += ", " + date_min + " to " + date_max 
             
         this.w.onload = function(){
+            self.w.document.getElementById("header-title").innerHTML = text
+            
             self.info()
                 .normalizeInfo()
                 .addGraph()
@@ -25,13 +37,23 @@ Report.prototype = {
     
     reportHTMLdiag : function() {
         var self = this
-        
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
-    
+        
+        var text = ""
+        if (typeof m.patient_name != 'undefined')
+            text += m.patient_name
+        else
+            text += m.dataFileName
+        text += ": Sample "+ m.getStrTime(m.t, "name")
+        if (typeof m.samples.timestamp != 'undefined') 
+            text += "("+m.samples.timestamp[m.t].split(" ")[0]+")"
+        
         this.list = m.getSelected()
         if (this.list.length==0) this.list = this.defaultList()
             
         this.w.onload = function(){
+            self.w.document.getElementById("header-title").innerHTML = text
+            
             self.info()
                 .sampleInfo(m.t)
                 .readsStat(m.t)
