@@ -412,9 +412,6 @@ Model.prototype = {
                 }
             }
             
-            if (this.analysis.patient) {
-                this.dataFileName = this.analysis.patient;
-            }
             if (this.analysis.data) {
                 for (var key in this.analysis.data)
                     this.data[key] = this.analysis.data[key]

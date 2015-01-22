@@ -892,7 +892,6 @@ Graph.prototype = {
             d = {}
 
             time_name = this.m.getStrTime(i);
-            time_name = time_name.split(".")[0]
 
             d.type = "axis_v";
             d.text = time_name;
