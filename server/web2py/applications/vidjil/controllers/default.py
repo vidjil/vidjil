@@ -109,7 +109,13 @@ def get_data():
         f = open(fused_file, "r")
         data = gluon.contrib.simplejson.loads(f.read())
         f.close()
-
+        
+        patient_name = vidjil_utils.anon(request.vars["patient"], auth.user_id)
+        config_name = db.config[request.vars["config"]].name
+        
+        data["patient_name"] = patient_name
+        data["config_name"] = config_name
+        data["dataFileName"] = patient_name + " (" + config_name + ")"
         data["info"] = db.patient(request.vars["patient"]).info
         data["samples"]["original_names"] = []
         data["samples"]["timestamp"] = []
@@ -155,6 +161,7 @@ def get_data():
 #########################################################################
 def get_custom_data():
     import time
+    import vidjil_utils
     from subprocess import Popen, PIPE, STDOUT
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True)} #TODO _next
@@ -174,7 +181,8 @@ def get_custom_data():
             
     if error == "" :
         data = custom_fuse(request.vars["custom"])
-
+        
+        data["dataFileName"] = "custom"
         data["info"] = "custom"
         data["samples"]["original_names"] = []
         data["samples"]["timestamp"] = []
@@ -183,8 +191,9 @@ def get_custom_data():
         for id in request.vars["custom"] :
             sequence_file_id = db.results_file[id].sequence_file_id
             patient_id = db.sequence_file[sequence_file_id].patient_id
+            patient_name = vidjil_utils.anon(patient_id, auth.user_id)
             filename = db.sequence_file[sequence_file_id].filename
-            data["samples"]["original_names"].append(filename)
+            data["samples"]["original_names"].append(patient_name + "_" + filename)
             data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
             data["samples"]["info"].append(db.sequence_file[sequence_file_id].info)
 
@@ -245,7 +254,6 @@ def get_analysis():
             res["samples"]= analysis["samples"]
 
         res["info_patient"] = db.patient[request.vars["patient"]].info
-        res["patient"] = vidjil_utils.anon(db.patient[request.vars["patient"]].id, auth.user_id) + " (" + db.config[request.vars["config"]].name + ")"
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
