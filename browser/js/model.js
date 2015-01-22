@@ -1448,6 +1448,38 @@ Model.prototype = {
         return { 'min': delta_min, 'max': delta_max }
     },        
     
+    dateMin: function () {
+        var date_min = "0"
+        try{
+            date_min = this.samples.timestamp[this.samples.order[0]] 
+            
+            for (var i = 1; i < this.samples.order.length; i++) {
+                var date = this.samples.timestamp[this.samples.order[i]] 
+                if (this.dateDiffInDays(date_min, date)<0){
+                    date_min = date
+                }
+            }
+        } catch (e) {}
+        
+        return date_min
+    },        
+    
+    dateMax: function () {
+        var date_max = "0"
+        try{
+            var date_max = this.samples.timestamp[this.samples.order[0]] 
+        
+            for (var i = 1; i < this.samples.order.length; i++) {
+                var date = this.samples.timestamp[this.samples.order[i]] 
+                if (this.dateDiffInDays(date_max, date)>0){
+                    date_max = date
+                }
+            }
+        } catch (e) {}
+        
+        return date_max
+    },        
+    
     getStrTime: function (timeID, format){
         format = typeof format !== 'undefined' ? format : this.time_type;
         var result = "-/-"
