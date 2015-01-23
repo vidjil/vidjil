@@ -112,30 +112,31 @@ Report.prototype = {
     
     info : function() {
         var info = this.container("Report info")
-        
         var left = $('<div/>', {class: 'flex'}).appendTo(info);
         
         var date = new Date;
         var report_timestamp = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() 
+        
         var analysis_timestamp = "-"
         if (typeof m.analysis.timestamp != "undefined")
             analysis_timestamp = m.analysis.timestamp.split(" ")[0]
         if (m.analysisHasChanged) 
             analysis_timestamp = report_timestamp
         
-        var label = $('<div/>', {class: 'float-left'}).appendTo(left);
-        $('<div/>', {class: 'case label', text : "Filename:" }).appendTo(label);
-        $('<div/>', {class: 'case label', text : "Report date:" }).appendTo(label);
-        $('<div/>', {class: 'case label', text : "Soft version:" }).appendTo(label);
-        $('<div/>', {class: 'case label', text : "data date:" }).appendTo(label);
-        $('<div/>', {class: 'case label', text : "last analysis date:" }).appendTo(label);
+        var content = [
+            {label: "Filename:" , value : m.dataFileName },
+            {label: "Report date:"  , value : report_timestamp},
+            {label: "Soft version:" , value : "vidjil version"},
+            {label: "data date:" , value : m.timestamp[0].split(" ")[0] },
+            {label: "last analysis date:" , value : analysis_timestamp}
+        ]
         
-        var value = $('<div/>', {class: 'float-left'}).appendTo(left);
-        $('<div/>', {class: 'case', text : m.dataFileName }).appendTo(value);
-        $('<div/>', {class: 'case', text : report_timestamp}).appendTo(value);
-        $('<div/>', {class: 'case', text : "vidjil version" }).appendTo(value);
-        $('<div/>', {class: 'case', text : m.timestamp[0].split(" ")[0] }).appendTo(value);
-        $('<div/>', {class: 'case', text : analysis_timestamp }).appendTo(value);
+        var table = $('<table/>', {class: 'info-table float-left'}).appendTo(left);
+        for ( var v of content ){
+            var row = $('<tr/>').appendTo(table);
+            $('<td/>', {class: 'label', text: v.label}).appendTo(row);
+            $('<td/>', {text: v.value}).appendTo(row);
+        }
         
         var note = $('<div/>', {class: 'float-left'}).appendTo(left);
         $('<div/>', {class: 'case label', text : "User note" }).appendTo(note);
@@ -146,31 +147,34 @@ Report.prototype = {
     
     sampleInfo : function(time) {
         var sinfo = this.container("Sample info ("+m.getStrTime(time)+")")
-        
         var left = $('<div/>', {class: 'flex'}).appendTo(sinfo);
+        
         var soft_version = "unknow"
         if (typeof m.samples.producer != 'undefined')
             soft_version = m.samples.producer[time]
+            
         var command = "unknow"
         if (typeof m.samples.commandline != 'undefined')
             command = m.samples.commandline[time]
+            
         var sample_timestamp = "unknow"
         if (typeof m.samples.run_timestamp != 'undefined')
             sample_timestamp = m.samples.run_timestamp[time]
         
-        var label = $('<div/>', {class: 'float-left'}).appendTo(left);
-        $('<div/>', {class: 'case label', text : "Filename:" }).appendTo(label);
-        $('<div/>', {class: 'case label', text : "Sample date:" }).appendTo(label);
-        $('<div/>', {class: 'case label', text : "Soft version:" }).appendTo(label);
-        $('<div/>', {class: 'case label', text : "Command:" }).appendTo(label);
-        $('<div/>', {class: 'case label', text : "Run date:" }).appendTo(label);
+        var content = [
+            {label: "Filename:" , value : m.samples.original_names[time]},
+            {label: "Sample date:" , value : m.getSampleTime(time)},
+            {label: "Soft version:" , value : soft_version},
+            {label: "Command:" , value : command},
+            {label: "Run date:" , value : sample_timestamp}
+        ]
         
-        var value = $('<div/>', {class: 'float-left'}).appendTo(left);
-        $('<div/>', {class: 'case', text : m.samples.original_names[time]}).appendTo(value);
-        $('<div/>', {class: 'case', text : m.getSampleTime(time)}).appendTo(value);
-        $('<div/>', {class: 'case', text : soft_version}).appendTo(value);
-        $('<div/>', {class: 'case', text : command}).appendTo(value);
-        $('<div/>', {class: 'case', text : sample_timestamp}).appendTo(value);
+        var table = $('<table/>', {class: 'info-table float-left'}).appendTo(left);
+        for ( var v of content ){
+            var row = $('<tr/>').appendTo(table);
+            $('<td/>', {class: 'label', text: v.label}).appendTo(row);
+            $('<td/>', {text: v.value}).appendTo(row);
+        }
         
         var note = $('<div/>', {class: 'float-left'}).appendTo(left);
         $('<div/>', {class: 'case label', text : "User note" }).appendTo(note);
