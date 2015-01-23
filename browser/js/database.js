@@ -337,19 +337,14 @@ Database.prototype = {
      * mais simplement une confirmation que la requete a été entendu
      */
     request: function (controller_name, args) {
-
         var self = this;
-        var arg = "?";
-        for (var key in args) {
-            arg += "" + key + "=" + args[key] + "&";
-        }
 
         //envoye de la requete ajax
         $.ajax({
             type: "POST",
             timeout: 5000,
             crossDomain: true,
-            url: self.db_address + controller_name + arg,
+            url: self.db_address + controller_name + "?" + this.argsToStr(args),
             xhrFields: {withCredentials: true},
             success: function (result) {
                 myConsole.flash(result)
@@ -368,12 +363,8 @@ Database.prototype = {
      * args => format json ( parametre attendu  > patient_id, config_id)
      */
     load_data: function (args, filename) {
-
         var self = this;
-        var arg = "?";
-        for (var key in args) {
-            arg += "" + key + "=" + args[key] + "&";
-        }
+        
         var list = document.getElementById("last_loaded_file")
         var children = list.children
         
@@ -410,7 +401,7 @@ Database.prototype = {
             type: "POST",
             timeout: 15000,
             crossDomain: true,
-            url: self.db_address + "default/get_data" + arg,
+            url: self.db_address + "default/get_data" + "?" + this.argsToStr(args),
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.display_result(result, "", args);
@@ -451,10 +442,7 @@ Database.prototype = {
         console.log("db : custom data "+list)
         
         var url = document.documentURI.split('?')[0]
-        var arg = "?";
-        for (var i=0; i<args["custom"].length; i++){
-            arg += "custom="+args["custom"][i]+"&" 
-        }
+        var arg = "?" + this.argsToStr(args)
         var new_location = url+arg
         window.history.pushState('plop', 'plop', new_location);
         
@@ -480,19 +468,15 @@ Database.prototype = {
         });
     },
     
+    
     load_analysis: function (args) {
-
         var self = this;
-        var arg = "?";
-        for (var key in args) {
-            arg += "" + key + "=" + args[key] + "&";
-        }
 
         $.ajax({
             type: "POST",
             timeout: 15000,
             crossDomain: true,
-            url: self.db_address + "default/get_analysis" + arg,
+            url: self.db_address + "default/get_analysis" + "?" + this.argsToStr(args),
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.display_result(result)
@@ -511,10 +495,6 @@ Database.prototype = {
         var self = this;
         
         if (self.last_file == m.db_key){
-            var arg = "?";
-            for (var key in self.last_file) {
-                arg += "" + key + "=" + self.last_file[key] + "&";
-            }
             
             var analysis = m.strAnalysis()
             var blob = new Blob([analysis], {
@@ -527,7 +507,7 @@ Database.prototype = {
                 type: "POST",
                 timeout: 15000,
                 crossDomain: true,
-                url: self.db_address + "default/save_analysis" + arg,
+                url: self.db_address + "default/save_analysis" + "?" + this.argsToStr(self.last_file),
                 data     : fd,
                 processData: false,
                 contentType: false,
@@ -667,6 +647,45 @@ Database.prototype = {
     resume: function(){
         document.getElementById("waiting_screen").style.display = "none";
         document.getElementById("waiting_mes").innerHTML= "";
+    },
+    
+    argsToStr : function (args) {
+        var str = ""
+        
+        for (var key in args) {
+            if (args[key] instanceof Array){
+                for (var i=0; i<args[key].length; i++){
+                    str += key + "=" + args[key][i] + "&";
+                }
+            }else{
+                str += "" + key + "=" + args[key] + "&";
+            }
+        }
+        
+        return str
+    },
+    
+    strToArgs : function (str) {
+        args = {}
+        var tmp = str.split('&')
+        
+        for (var i=0; i<tmp.length; i++){
+            if (tmp[i].length > 0){
+                var tmp2 = tmp[i].split('=')
+                
+                if (tmp2[0] in args){
+                    if (args[tmp2[0]] instanceof Array){
+                        args[tmp2[0]].push(tmp2[1])
+                    }else{
+                        args[tmp2[0]]=[args[tmp2[0]],tmp2[1]]
+                    }
+                }else{
+                    args[tmp2[0]]=tmp2[1]
+                }
+            }
+        }
+        
+        return args
     }
     
 }
