@@ -126,7 +126,7 @@ Report.prototype = {
         var content = [
             {label: "Filename:" , value : m.dataFileName },
             {label: "Report date:"  , value : report_timestamp},
-            {label: "Soft version:" , value : "vidjil version"},
+            {label: "Soft version:" , value : m.getSoftVersion()},
             {label: "data date:" , value : m.timestamp[0].split(" ")[0] },
             {label: "last analysis date:" , value : analysis_timestamp}
         ]
