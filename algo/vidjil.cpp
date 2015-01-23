@@ -641,14 +641,19 @@ int main (int argc, char **argv)
   //////////////////////////////////
   // Display version information or git log
 
+  string soft_version = "vidjil ";
 #ifdef RELEASE_TAG
   cout << "# version: vidjil " << RELEASE_TAG << endl ;
+  soft_version.append(": ");
+  soft_version.append(RELEASE_TAG);
 #else
   cout << "# development version" << endl ;
 #endif
 
 #ifdef GIT_VERSION
   cout << "# git: " << GIT_VERSION << endl ;
+  soft_version.append(": ");
+  soft_version.append(GIT_VERSION);
 #endif
 
 
@@ -1230,6 +1235,9 @@ int main (int argc, char **argv)
     JsonArray json_timestamp;
     json_timestamp.add(time_buffer);
     
+    JsonArray json_soft;
+    json_soft.add(soft_version);
+    
     JsonArray json_log;
     json_log.add(stream_segmentation_info.str());
     
@@ -1244,7 +1252,8 @@ int main (int argc, char **argv)
     json_samples=new JsonList();
     json_samples->add("number", 1);
     json_samples->add("original_names", json_original_names);
-    //json_samples->add("vidjil_timestamp", json_timestamp);
+    json_samples->add("run_timestamp", json_timestamp);
+    json_samples->add("producer", json_soft);
     json_samples->add("log", json_log);
     json_samples->add("commandline", json_cmdline);
     

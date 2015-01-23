@@ -148,9 +148,15 @@ Report.prototype = {
         var sinfo = this.container("Sample info ("+m.getStrTime(time)+")")
         
         var left = $('<div/>', {class: 'flex'}).appendTo(sinfo);
+        var soft_version = "unknow"
+        if (typeof m.samples.producer != 'undefined')
+            soft_version = m.samples.producer[time]
         var command = "unknow"
         if (typeof m.samples.commandline != 'undefined')
             command = m.samples.commandline[time]
+        var sample_timestamp = "unknow"
+        if (typeof m.samples.run_timestamp != 'undefined')
+            sample_timestamp = m.samples.run_timestamp[time]
         
         var label = $('<div/>', {class: 'float-left'}).appendTo(left);
         $('<div/>', {class: 'case label', text : "Filename:" }).appendTo(label);
@@ -162,9 +168,9 @@ Report.prototype = {
         var value = $('<div/>', {class: 'float-left'}).appendTo(left);
         $('<div/>', {class: 'case', text : m.samples.original_names[time]}).appendTo(value);
         $('<div/>', {class: 'case', text : m.getSampleTime(time)}).appendTo(value);
-        $('<div/>', {class: 'case', text : ""}).appendTo(value);
+        $('<div/>', {class: 'case', text : soft_version}).appendTo(value);
         $('<div/>', {class: 'case', text : command}).appendTo(value);
-        $('<div/>', {class: 'case', text : ""}).appendTo(value);
+        $('<div/>', {class: 'case', text : sample_timestamp}).appendTo(value);
         
         var note = $('<div/>', {class: 'float-left'}).appendTo(left);
         $('<div/>', {class: 'case label', text : "User note" }).appendTo(note);
