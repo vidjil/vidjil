@@ -112,6 +112,7 @@ def get_data():
         
         patient_name = vidjil_utils.anon(request.vars["patient"], auth.user_id)
         config_name = db.config[request.vars["config"]].name
+        command = db.config[request.vars["config"]].command
         
         data["patient_name"] = patient_name
         data["config_name"] = config_name
@@ -120,12 +121,14 @@ def get_data():
         data["samples"]["original_names"] = []
         data["samples"]["timestamp"] = []
         data["samples"]["info"] = []
+        data["samples"]["commandline"] = []
 
         ## récupération des infos stockées sur la base de données
         if sequence_file_list is not None:
             sequence_file_list = sequence_file_list.split("_")
             for i in range(len(sequence_file_list)-1):
                 row = db( db.sequence_file.id == int(sequence_file_list[i]) ).select().first()
+                data["samples"]["commandline"].append(command)
                 if row is not None:
                     data["samples"]["original_names"].append(row.filename)
                     data["samples"]["timestamp"].append(str(row.sampling_date))
@@ -148,6 +151,7 @@ def get_data():
                 data["samples"]["original_names"].append(filename)
                 data["samples"]["timestamp"].append(str(row.sequence_file.sampling_date))
                 data["samples"]["info"].append(row.sequence_file.info)
+                data["samples"]["commandline"].append(command)
 
         log.debug("get_data: %s -> %s" % (request.vars["patient"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
@@ -187,15 +191,18 @@ def get_custom_data():
         data["samples"]["original_names"] = []
         data["samples"]["timestamp"] = []
         data["samples"]["info"] = []
+        data["samples"]["commandline"] = []
         
         for id in request.vars["custom"] :
             sequence_file_id = db.results_file[id].sequence_file_id
             patient_id = db.sequence_file[sequence_file_id].patient_id
+            config_id = db.results_file[id].config_id
             patient_name = vidjil_utils.anon(patient_id, auth.user_id)
             filename = db.sequence_file[sequence_file_id].filename
             data["samples"]["original_names"].append(patient_name + "_" + filename)
             data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
             data["samples"]["info"].append(db.sequence_file[sequence_file_id].info)
+            data["samples"]["commandline"].append(db.config[config_id].command)
 
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 

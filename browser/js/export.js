@@ -148,6 +148,9 @@ Report.prototype = {
         var sinfo = this.container("Sample info ("+m.getStrTime(time)+")")
         
         var left = $('<div/>', {class: 'flex'}).appendTo(sinfo);
+        var command = "unknow"
+        if (typeof m.samples.commandline != 'undefined')
+            command = m.samples.commandline[time]
         
         var label = $('<div/>', {class: 'float-left'}).appendTo(left);
         $('<div/>', {class: 'case label', text : "Filename:" }).appendTo(label);
@@ -160,7 +163,7 @@ Report.prototype = {
         $('<div/>', {class: 'case', text : m.samples.original_names[time]}).appendTo(value);
         $('<div/>', {class: 'case', text : m.getSampleTime(time)}).appendTo(value);
         $('<div/>', {class: 'case', text : ""}).appendTo(value);
-        $('<div/>', {class: 'case', text : ""}).appendTo(value);
+        $('<div/>', {class: 'case', text : command}).appendTo(value);
         $('<div/>', {class: 'case', text : ""}).appendTo(value);
         
         var note = $('<div/>', {class: 'float-left'}).appendTo(left);
