@@ -140,8 +140,11 @@
                     <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
                     <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
                     <div class="menu_box">
+                      <a class="buttonSelector" onclick="javascript:report.reportHTMLdiag()">export report (sample)</a>
+                      <a class="buttonSelector" onclick="javascript:report.reportHTML()">export report (monitor)</a>
+                    </div>
+                    <div class="menu_box">
                         <a class="buttonSelector" onclick="javascript:m.saveAnalysis()">export analysis</a>
-                        <a class="buttonSelector" onclick="javascript:pdf.make()">export pdf (graph + selected clones)</a>
                         <a class="buttonSelector" onclick="javascript:pdf.makeGraph()">export pdf (graph)</a>
                         <a class="buttonSelector" onclick="javascript:m.exportCSV()">export csv (visible clones)</a>
                         <a class="buttonSelector" onclick="javascript:m.exportFasta()">export fasta(selected clones)</a>
@@ -276,8 +279,6 @@
 
             <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none"> development              
                 <div id="adminSelector" class="selector"><div>
-                    <a class="buttonSelector" onclick="javascript:report.reportHTML()">monitor report</a>
-                    <a class="buttonSelector" onclick="javascript:report.reportHTMLdiag()">sample report</a>
                     <input type="checkbox" onclick="m.display_window = this.checked; m.update()">highlight windows</input><br>
                     <input type="checkbox" onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display fps</input></br>
                     <input type="checkbox" onclick=" this.checked ? myConsole.openLog() : myConsole.closeLog() ;">log</input>
