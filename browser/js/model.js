@@ -721,7 +721,7 @@ Model.prototype = {
     //return the soft version if available 
     //return "multiple" if different soft have been used for different samples
     getSoftVersion: function() {
-        if (this.samples.producer == "undefined"){
+        if (typeof this.samples.producer == "undefined"){
             return "unknow"
         }else{
             var soft_version = this.samples.producer[this.samples.order[0]]
