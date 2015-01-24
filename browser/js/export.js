@@ -23,6 +23,7 @@ Report.prototype = {
             text += " – " + date_min + " → " + date_max 
             
         this.w.onload = function(){
+            self.w.document.title = text
             self.w.document.getElementById("header-title").innerHTML = text
             
             self.info()
@@ -52,6 +53,7 @@ Report.prototype = {
         if (this.list.length==0) this.list = this.defaultList()
             
         this.w.onload = function(){
+            self.w.document.title = text
             self.w.document.getElementById("header-title").innerHTML = text
             
             self.info()
