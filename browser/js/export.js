@@ -119,16 +119,16 @@ Report.prototype = {
         var date = new Date;
         var report_timestamp = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() 
         
-        var analysis_timestamp = "-"
+        var analysis_timestamp = "–"
         if (typeof m.analysis.timestamp != "undefined")
             analysis_timestamp = m.analysis.timestamp.split(" ")[0]
         if (m.analysisHasChanged) 
-            analysis_timestamp = report_timestamp
+            analysis_timestamp = report_timestamp + " (not saved)"
         
         var content = [
             {label: "Filename:" , value : m.dataFileName },
             {label: "Report date:"  , value : report_timestamp},
-            {label: "Analysis saved on:" , value : analysis_timestamp},
+            {label: "Analysis updated on:" , value : analysis_timestamp},
             {label: "Bioinfo analysis software:" , value : m.getSoftVersion()},
             {label: "Bioinfo analysis date:" , value : m.timestamp[0].split(" ")[0] }
         ]
