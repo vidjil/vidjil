@@ -644,7 +644,6 @@ int main (int argc, char **argv)
   string soft_version = "vidjil ";
 #ifdef RELEASE_TAG
   cout << "# version: vidjil " << RELEASE_TAG << endl ;
-  soft_version.append(": ");
   soft_version.append(RELEASE_TAG);
 #else
   cout << "# development version" << endl ;
@@ -652,7 +651,7 @@ int main (int argc, char **argv)
 
 #ifdef GIT_VERSION
   cout << "# git: " << GIT_VERSION << endl ;
-  soft_version.append(": ");
+  soft_version.append("dev ");
   soft_version.append(GIT_VERSION);
 #endif
 
