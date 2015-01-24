@@ -501,7 +501,7 @@ Report.prototype = {
             $('<span/>', {class: 'j_gene', text: seqJ}).appendTo(sequence);
         }
         else if (m.clone(cloneID).getSequence() != "0") {
-            $('<span/>', {class: 'n_gene', text: m.clone(cloneID).getSequence()}).appendTo(sequence);
+            $('<span/>', {class: 'unseg_gene', text: m.clone(cloneID).getSequence()}).appendTo(sequence);
         } else {
             $('<span/>', {text: 'segment fail'}).appendTo(sequence);
         }
