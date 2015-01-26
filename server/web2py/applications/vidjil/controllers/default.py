@@ -186,8 +186,8 @@ def get_custom_data():
     if error == "" :
         data = custom_fuse(request.vars["custom"])
         
-        data["dataFileName"] = "custom"
-        data["info"] = "custom"
+        data["dataFileName"] = "Compare patients"
+        data["info"] = "Compare patients"
         data["samples"]["original_names"] = []
         data["samples"]["timestamp"] = []
         data["samples"]["info"] = []
