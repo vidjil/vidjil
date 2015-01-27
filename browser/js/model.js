@@ -1775,6 +1775,18 @@ Model.prototype = {
         
     },
     
+    wait: function(text){
+        document.getElementById("waiting_screen").style.display = "block";
+        document.getElementById("waiting_mes").innerHTML= text;
+        if (typeof shortcut != 'undefined') shortcut.on = false;
+    },
+    
+    resume: function(){
+        document.getElementById("waiting_screen").style.display = "none";
+        document.getElementById("waiting_mes").innerHTML= "";
+        if (typeof shortcut != 'undefined') shortcut.on = true;
+    },
+    
     
     
     

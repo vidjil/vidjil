@@ -1,9 +1,10 @@
-function Database(id, db_address) {
+function Database(id, db_address, model) {
     var self = this;
     this.db_address = db_address;
     this.id = id;
     this.upload = {};
     this.url = []
+    this.m = model
 }
 
 
@@ -446,7 +447,7 @@ Database.prototype = {
         var new_location = url+arg
         window.history.pushState('plop', 'plop', new_location);
         
-        this.wait("please wait : this operation can take a few minutes")
+        this.m.wait("please wait : this operation can take a few minutes")
         $.ajax({
             type: "POST",
             timeout: 1200000,
@@ -454,11 +455,11 @@ Database.prototype = {
             url: self.db_address + "default/get_custom_data" + arg,
             xhrFields: {withCredentials: true},
             success: function (result) {
-                self.resume()
+                self.m.resume()
                 self.display_result(result, "", args);
             },
             error: function (request, status, error) {
-                self.resume()
+                self.m.resume()
                 if (status === "timeout") {
                     myConsole.flash(myConsole.msg.database_timeout + " - unable to access patient data", 1)
                 } else {
@@ -637,16 +638,6 @@ Database.prototype = {
                 }
             });
         }
-    },
-
-    wait: function(text){
-        document.getElementById("waiting_screen").style.display = "block";
-        document.getElementById("waiting_mes").innerHTML= text;
-    },
-    
-    resume: function(){
-        document.getElementById("waiting_screen").style.display = "none";
-        document.getElementById("waiting_mes").innerHTML= "";
     },
     
     argsToStr : function (args) {

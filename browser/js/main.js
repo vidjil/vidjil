@@ -79,7 +79,7 @@ var segment = new Segment("bot-container",m, CGI_ADDRESS);
 var builder = new Builder(m);
 var pdf = new PDF(m, "visu2_svg")
 var report = new Report()
-if (typeof config != 'undefined' && config.use_database) var db = new Database("plop!", DB_ADDRESS);
+if (typeof config != 'undefined' && config.use_database) var db = new Database("plop!", DB_ADDRESS, m);
 
 /* Stat object
  */

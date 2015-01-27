@@ -24,7 +24,7 @@
 
 function Shortcut () {
     this.init()
-    
+    this.on = true
 }
 
 Shortcut.prototype = {
@@ -49,65 +49,65 @@ Shortcut.prototype = {
     
     
     checkKey : function (e) {
-        e = e || window.event;
-        if (document.activeElement.id == ""){
-                
-            var key = e.keyCode;
-            if (key==0) key = e.which
+        if (this.on){
+            e = e || window.event;
+            if (document.activeElement.id == ""){
+                    
+                var key = e.keyCode;
+                if (key==0) key = e.which
 
-            
-            switch(key) {
-                case 37 :   //left arrow
-                    e.preventDefault()
-                    m.previousTime()
-                    break;
-                case 39 :   //right arrow
-                    e.preventDefault()
-                    m.nextTime()
-                    break;
-                case 83 :   //ctrl+s
-                    e.preventDefault()
-                    if (e.ctrlKey || e.metakey) db.save_analysis()
-                    break;
-                case 65 :   //ctrl+a
-                    e.preventDefault()
-                    if (e.ctrlKey || e.metakey){
-                        var d_m = $("#debug_menu")
-                        if (d_m.css("display") == "none"){
-                            $("#debug_menu").css("display", "");
-                        }else{
-                            $("#debug_menu").css("display", "none");
+                
+                switch(key) {
+                    case 37 :   //left arrow
+                        e.preventDefault()
+                        m.previousTime()
+                        break;
+                    case 39 :   //right arrow
+                        e.preventDefault()
+                        m.nextTime()
+                        break;
+                    case 83 :   //ctrl+s
+                        e.preventDefault()
+                        if (e.ctrlKey || e.metakey) db.save_analysis()
+                        break;
+                    case 65 :   //ctrl+a
+                        e.preventDefault()
+                        if (e.ctrlKey || e.metakey){
+                            var d_m = $("#debug_menu")
+                            if (d_m.css("display") == "none"){
+                                $("#debug_menu").css("display", "");
+                            }else{
+                                $("#debug_menu").css("display", "none");
+                            }
                         }
-                    }
-                default:
+                    default:
+                }
+                
+                //system shortcuts
+                if (typeof this.system_shortcuts[key] != "undefined") {
+
+                    var germlines = this.system_shortcuts[key].filter(function(g) {return m.system_available.indexOf(g) != -1})
+                    if (germlines.length == 0)
+                        return ;
+
+                    console.log("Germlines with key " + key + ": " + germlines)
+
+                    // Find current germline
+                    var current = -1 ;
+                    for (var i = 0; i < germlines.length; i++) 
+                        {
+                            if (germlines[i] == m.germlineV.system)
+                                current = i ;
+                        }
+
+                    // Cycle to next germline
+                    m.changeGermline(germlines[(current+1) % germlines.length])
+                } 
             }
             
-            //system shortcuts
-            if (typeof this.system_shortcuts[key] != "undefined") {
-
-                var germlines = this.system_shortcuts[key].filter(function(g) {return m.system_available.indexOf(g) != -1})
-                if (germlines.length == 0)
-                    return ;
-
-                console.log("Germlines with key " + key + ": " + germlines)
-
-                // Find current germline
-                var current = -1 ;
-                for (var i = 0; i < germlines.length; i++) 
-                    {
-                        if (germlines[i] == m.germlineV.system)
-                            current = i ;
-                    }
-
-                // Cycle to next germline
-                m.changeGermline(germlines[(current+1) % germlines.length])
-            } 
+            if (e.altKey && sp.reinit) {
+                sp.active_move = true;
+            }
         }
-        
-        if (e.altKey && sp.reinit) {
-            sp.active_move = true;
-        }
-        
     }
-    
 }

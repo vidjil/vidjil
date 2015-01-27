@@ -5,6 +5,8 @@ function Report() {
 Report.prototype = {
     
     reportHTML : function() {
+        m.wait("generating report : this operation can take a few seconds")
+        
         var self = this
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
         
@@ -32,11 +34,14 @@ Report.prototype = {
                 .readsStat()
                 .cloneList()
                 
-                m.resize()
+            m.resize()
+            m.resume()
         }
     },
     
     reportHTMLdiag : function() {
+        m.wait("generating report : this operation can take a few seconds")
+        
         var self = this
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
         
@@ -65,6 +70,7 @@ Report.prototype = {
             }
             
             m.resize()
+            m.resume()
         }
     },
     
