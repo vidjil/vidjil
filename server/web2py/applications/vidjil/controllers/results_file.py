@@ -14,7 +14,9 @@ def index():
             (db.results_file.sequence_file_id==db.sequence_file.id)
             & (db.sequence_file.patient_id==db.patient.id)
             & (db.results_file.config_id==db.config.id)
-        ).select()
+        ).select(
+            orderby = ~db.results_file.run_date
+        )
         
         for row in query :
             if row.results_file.scheduler_task_id is None :

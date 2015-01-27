@@ -119,7 +119,7 @@ def custom():
                 & (db.results_file.scheduler_task_id==db.scheduler_task.id)
                 & (db.scheduler_task.status=='COMPLETED')
             ).select(
-                orderby = db.sequence_file.patient_id|db.sequence_file.id|db.results_file.run_date,
+                orderby = ~db.sequence_file.patient_id|db.sequence_file.id|db.results_file.run_date,
                 groupby = db.sequence_file.id,
             )
 
@@ -152,6 +152,7 @@ def index():
     ).select(
         db.patient.ALL,
         count,
+        orderby = ~db.patient.id,
         left=db.sequence_file.on(db.patient.id == db.sequence_file.patient_id),
         groupby=db.patient.id
     )
