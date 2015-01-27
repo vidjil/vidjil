@@ -595,32 +595,25 @@ class ListWindows:
         '''Reverse serializer for json module'''
         if "samples" in obj_dict:
             obj = ListWindows()
-            for key in obj_dict :
-                obj.d[key]=obj_dict[key]
+            obj.d=obj_dict
             return obj
 
         if "id" in obj_dict:
             obj = Window(1)
-            for key in obj_dict :
-                obj.d[key]=obj_dict[key]
+            obj.d=obj_dict
             return obj
         
         if "total" in obj_dict:
             obj = Reads()
-            for key in obj_dict :
-                obj.d[key]=obj_dict[key]
+            obj.d=obj_dict
             return obj
             
         if "original_names" in obj_dict:
             obj = Samples()
-            for key in obj_dict :
-                obj.d[key]=obj_dict[key]
+            obj.d=obj_dict
             return obj
             
-        res = {}
-        for key in obj_dict :
-            res[key]=obj_dict[key]
-        return res
+        return obj_dict
         
 
 
