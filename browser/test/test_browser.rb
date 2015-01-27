@@ -54,6 +54,7 @@ class Browser < MiniTest::Test
       exit
     end
 
+    print "Vidjil browser loaded, launching tests.\n"
     
     # A live server can be configured with a database.
     # The welcome popup should not be tested.
@@ -329,6 +330,7 @@ class Browser < MiniTest::Test
 
   # Not really a test, used to close server at the end
   def test_zz_close_everything
+    print "\nTests finished, closing browser.\n"
     $b.close
     if ENV['HEADLESS']
       $headless.destroy
