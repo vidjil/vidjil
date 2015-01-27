@@ -759,6 +759,7 @@ w6 = Window(1)
 w6.d ={"id" : "bbb", "reads" : [12], "top" : 2 }
 
 lw1 = ListWindows()
+lw1.d["timestamp"] = 'ts'
 lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25] }', object_hook=lw1.toPython)
 lw1.d["clones"].append(w5)
 lw1.d["clones"].append(w6)
@@ -769,6 +770,7 @@ w8 = Window(1)
 w8.d ={"id" : "ccc", "reads" : [2], "top" : 8, "test" : ["plop"] }
 
 lw2 = ListWindows()
+lw2.d["timestamp"] = 'ts'
 lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34] }', object_hook=lw1.toPython)
 lw2.d["clones"].append(w7)
 lw2.d["clones"].append(w8)
