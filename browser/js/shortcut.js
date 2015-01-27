@@ -80,11 +80,16 @@ Shortcut.prototype = {
                                 $("#debug_menu").css("display", "none");
                             }
                         }
+                    case 80 :   //shift+p : open patient
+                        e.preventDefault()
+                        if(e.shiftKey || e.metakey) db.reload()
+                        break;
                     default:
                 }
-                
-                //system shortcuts
-                if (typeof this.system_shortcuts[key] != "undefined") {
+            }
+            
+            //system shortcuts
+            if (typeof this.system_shortcuts[key] != "undefined") {
 
                     var germlines = this.system_shortcuts[key].filter(function(g) {return m.system_available.indexOf(g) != -1})
                     if (germlines.length == 0)
