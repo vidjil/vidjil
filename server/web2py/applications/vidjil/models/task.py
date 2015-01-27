@@ -277,7 +277,7 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
     return "SUCCESS"
 
 def custom_fuse(file_list):
-    import time, datetime, sys, os.path, random
+    import time, datetime, sys, os.path, random, xmlrpclib
     from subprocess import Popen, PIPE, STDOUT, os
     
     random_id = random.randint(99999999,99999999999)
@@ -289,8 +289,6 @@ def custom_fuse(file_list):
     p.wait()
     os.makedirs(out_folder)    
     
-    fuse_log_file = open(out_folder+'/'+output_filename+'.fuse.log', 'w')
-    
     ## fuse.py 
     output_file = out_folder+'/'+output_filename+'.fused'
     files = ""
@@ -298,11 +296,9 @@ def custom_fuse(file_list):
         if db.results_file[id].data_file is not None :
             files += defs.DIR_RESULTS + db.results_file[id].data_file + " "
     
-    cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+output_file+" -t 100 "+files
-    sys.stdout.flush()
-    p = Popen(cmd, shell=True, stdin=PIPE, stdout=fuse_log_file, stderr=STDOUT, close_fds=True)
-    (stdoutdata, stderrdata) = p.communicate()
-    fuse_filepath = os.path.abspath(output_file)
+    cmd = "python "+ os.path.abspath(defs.DIR_FUSE) +"/fuse.py -o "+output_file+" -t 100 "+files
+    proc_srvr = xmlrpclib.ServerProxy("http://localhost:12345")
+    fuse_filepath = proc_srvr.fuse(cmd, out_folder, output_filename)
     
     try:
         f = open(fuse_filepath, 'rb')
