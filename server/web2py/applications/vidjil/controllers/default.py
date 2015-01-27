@@ -225,7 +225,7 @@ def get_analysis():
         error += "id config needed, "
     if not auth.has_permission('admin', 'patient', request.vars["patient"]) and \
     not auth.has_permission('read', 'patient', request.vars["patient"]):
-        error += "you do not have permission to consult this patient ("+request.vars["patient"]+")"
+        error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
 
     ## empty analysis file
     res = {"samples": {"number": 0,
@@ -240,7 +240,9 @@ def get_analysis():
            "vidjil_json_version" : "2014.09"
            }
 
-
+    if "custom" in request.vars :
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
     if error == "" :
 
         ## récupération des infos se trouvant dans le fichier .analysis
