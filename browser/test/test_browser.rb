@@ -82,11 +82,11 @@ class Browser < MiniTest::Test
   end
   
   def test_00_info_segmentation
-    assert ($b.div(:id => 'info_segmented').text.include?  '335662 reads (76.78%)'), ' Incorrect number of segmented reads'
+    assert ($b.div(:id => 'info_segmented').text.include?  '335 662 reads (76.78%)'), ' Incorrect number of segmented reads'
   end
 
   def test_00_info_reads
-    assert ($b.div(:id => 'info_total').text.include? '437164 reads'), 'Incorrect number of reads'
+    assert ($b.div(:id => 'info_total').text.include? '437 164 reads'), 'Incorrect number of reads'
   end
 
   def test_00_default_point_name
@@ -199,7 +199,7 @@ class Browser < MiniTest::Test
 
     stats = $b.statsline
     assert (stats.text.include? '1 clone'), ">> Incorrect stats, should have one clone"
-    assert (stats.text.include? '243241 reads'), ">> Incorrect stats, should have 243241 reads"
+    assert (stats.text.include? '243 241 reads'), ">> Incorrect stats, should have 243241 reads"
     assert (stats.text.include? '72.47%'), ">> Incorrect stats, should be at 72.47%"
   end
 
