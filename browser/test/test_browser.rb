@@ -105,7 +105,7 @@ class Browser < MiniTest::Test
   end
 
   def test_00_info_point
-    assert (not $b.div(:id => 'info_timepoint').visible?), "Info timepoint should not be visible"
+    assert (not $b.div(:id => 'info_timepoint').present?), "Info timepoint should not be present"
     $b.div(:id => 'info_point').span(:text => 'Info').click
     assert ($b.div(:id => 'info_timepoint').visible?), "After clicking info timepoint should be visible"
 
