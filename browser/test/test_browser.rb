@@ -54,6 +54,7 @@ class Browser < MiniTest::Test
       exit
     end
 
+    print "Vidjil browser loaded, launching tests.\n"
     
     # A live server can be configured with a database.
     # The welcome popup should not be tested.
@@ -81,11 +82,11 @@ class Browser < MiniTest::Test
   end
   
   def test_00_info_segmentation
-    assert ($b.div(:id => 'info_segmented').text.include?  '335662 reads (76.78%)'), ' Incorrect number of segmented reads'
+    assert ($b.div(:id => 'info_segmented').text.include?  '335 662 reads (76.78%)'), ' Incorrect number of segmented reads'
   end
 
   def test_00_info_reads
-    assert ($b.div(:id => 'info_total').text.include? '437164 reads'), 'Incorrect number of reads'
+    assert ($b.div(:id => 'info_total').text.include? '437 164 reads'), 'Incorrect number of reads'
   end
 
   def test_00_default_point_name
@@ -104,7 +105,7 @@ class Browser < MiniTest::Test
   end
 
   def test_00_info_point
-    assert (not $b.div(:id => 'info_timepoint').visible?), "Info timepoint should not be visible"
+    assert (not $b.div(:id => 'info_timepoint').present?), "Info timepoint should not be present"
     $b.div(:id => 'info_point').span(:text => 'Info').click
     assert ($b.div(:id => 'info_timepoint').visible?), "After clicking info timepoint should be visible"
 
@@ -198,7 +199,7 @@ class Browser < MiniTest::Test
 
     stats = $b.statsline
     assert (stats.text.include? '1 clone'), ">> Incorrect stats, should have one clone"
-    assert (stats.text.include? '243241 reads'), ">> Incorrect stats, should have 243241 reads"
+    assert (stats.text.include? '243 241 reads'), ">> Incorrect stats, should have 243241 reads"
     assert (stats.text.include? '72.47%'), ">> Incorrect stats, should be at 72.47%"
   end
 
@@ -329,6 +330,7 @@ class Browser < MiniTest::Test
 
   # Not really a test, used to close server at the end
   def test_zz_close_everything
+    print "\nTests finished, closing browser.\n"
     $b.close
     if ENV['HEADLESS']
       $headless.destroy
