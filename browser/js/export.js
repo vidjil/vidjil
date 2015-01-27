@@ -128,9 +128,9 @@ Report.prototype = {
         var content = [
             {label: "Filename:" , value : m.dataFileName },
             {label: "Report date:"  , value : report_timestamp},
-            {label: "Analysis updated on:" , value : analysis_timestamp},
-            {label: "Bioinfo analysis software:" , value : m.getSoftVersion()},
-            {label: "Bioinfo analysis date:" , value : m.timestamp[0].split(" ")[0] }
+            {label: "Updated on:" , value : analysis_timestamp},
+            {label: "Software used:" , value : m.getSoftVersion()},
+            {label: "Analysis date:" , value : m.timestamp[0].split(" ")[0] }
         ]
         
         var table = $('<table/>', {class: 'info-table float-left'}).appendTo(left);
@@ -166,9 +166,9 @@ Report.prototype = {
         var content = [
             {label: "Filename:" , value : m.samples.original_names[time]},
             {label: "Sample date:" , value : m.getSampleTime(time)},
-            {label: "Bioinfo analysis software:" , value : soft_version},
-            {label: "Bioinfo analysis command:" , value : command},
-            {label: "Bioinfo analysis date:" , value : sample_timestamp}
+            {label: "Software used:" , value : soft_version},
+            {label: "Parameters:" , value : command},
+            {label: "Analysis date:" , value : sample_timestamp}
         ]
         
         var table = $('<table/>', {class: 'info-table float-left'}).appendTo(left);
