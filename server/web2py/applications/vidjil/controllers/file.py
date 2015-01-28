@@ -48,8 +48,8 @@ def add_form():
         query = db((db.sequence_file.patient_id==request.vars['patient_id'])).select()
         for row in query :
             if row.filename == request.vars['filename'] :
-                log.error(res)
                 res = {"message": "this sequence file already exists for this patient"}
+                log.error(res)
                 return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
             
         id = db.sequence_file.insert(sampling_date=request.vars['sampling_date'],
