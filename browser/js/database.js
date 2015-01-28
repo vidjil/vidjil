@@ -189,7 +189,6 @@ Database.prototype = {
                 cache: false,
                 timeout: 5000,
                 crossDomain: true,
-                context: self,   
                 url      : $(this).attr('action'),
                 data     : $(this).serialize(),
                 xhrFields: {withCredentials: true},
