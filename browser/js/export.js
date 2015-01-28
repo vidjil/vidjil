@@ -140,7 +140,8 @@ Report.prototype = {
         ]
         
         var table = $('<table/>', {class: 'info-table float-left'}).appendTo(left);
-        for ( var v of content ){
+        for ( var key in content ){
+            var v = content[key]
             var row = $('<tr/>').appendTo(table);
             $('<td/>', {class: 'label', text: v.label}).appendTo(row);
             $('<td/>', {text: v.value}).appendTo(row);
@@ -178,7 +179,8 @@ Report.prototype = {
         ]
         
         var table = $('<table/>', {class: 'info-table float-left'}).appendTo(left);
-        for ( var v of content ){
+        for ( var key in content ){
+            var v = content[key]
             var row = $('<tr/>').appendTo(table);
             $('<td/>', {class: 'label', text: v.label}).appendTo(row);
             $('<td/>', {text: v.value}).appendTo(row);
