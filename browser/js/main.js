@@ -77,9 +77,18 @@ var list = new List("list", "data", m);
 var sp = new ScatterPlot("visu", m);
 var segment = new Segment("bot-container",m, CGI_ADDRESS);
 var builder = new Builder(m);
+
+/* report/export
+ */
+
 var pdf = new PDF(m, "visu2_svg")
 var report = new Report()
-if (typeof config != 'undefined' && config.use_database) var db = new Database("plop!", DB_ADDRESS, m);
+/* database
+ */
+if (typeof config != 'undefined' && config.use_database){
+    var db = new Database("plop!", DB_ADDRESS, m);
+    var uploader = new Uploader()
+}
 
 /* Stat object
  */
@@ -135,7 +144,7 @@ if (typeof config != 'undefined' && location.search != ''){
 
 //onClose
 window.onbeforeunload = function(e){
-    if ( db.is_uploading() ){
+    if ( uploader.is_uploading() ){
         e = e || event;
         if(e.preventDefault){e.preventDefault();}
         e.returnValue = false;
