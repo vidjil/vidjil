@@ -1138,6 +1138,28 @@ text.alert {
   margin-top: 20px;
   margin-left: 20px;
 }
+.summary_filename {
+  width: 200px;
+  display: inline-block;
+  height: 1em;
+  overflow: hidden;
+  overflow-wrap: break-word;
+  margin-right: 10px;
+}
+.loading_gauge {
+  height: 13px;
+  width: 98px;
+  display: inline-block;
+  border: solid;
+  border-width: 1px;
+}
+.loading_bar {
+  height: 100%;
+  width: 0%;
+  background-color: #839496;
+  display: inline-block;
+  transition: width 0.2s;
+}
 .loading_seq {
   height: 15px;
   width: 100px;
@@ -1151,6 +1173,7 @@ text.alert {
   -o-animation: move 2s linear infinite;
   animation: move 2s linear infinite;
   display: inline-block;
+  text-align: center;
 }
 @-webkit-keyframes move {
   to {
