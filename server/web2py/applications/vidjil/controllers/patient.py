@@ -107,6 +107,7 @@ def custom():
         
     else:
         config_id = -1
+        config_name = None
         config = False
 
     if config :
@@ -125,6 +126,10 @@ def custom():
 
     else:
         query = []
+
+
+    res = {"message": "custom (%s)" % config_name}
+    log.info(res)
 
     return dict(query=query,
                 config_id=config_id,

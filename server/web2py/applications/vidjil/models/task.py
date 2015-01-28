@@ -288,7 +288,10 @@ def custom_fuse(file_list):
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
     os.makedirs(out_folder)    
-    
+
+    res = {"message": "'custom fuse' (%d files): %s" % (len(file_list), ' '.join(file_list))}
+    log.info(res)
+        
     ## fuse.py 
     output_file = out_folder+'/'+output_filename+'.fused'
     files = ""
@@ -304,11 +307,16 @@ def custom_fuse(file_list):
         f = open(fuse_filepath, 'rb')
         data = gluon.contrib.simplejson.loads(f.read())
     except IOError:
+        res = {"message": "'custom fuse' -> IOError"}
+        log.error(res)
         raise IOError
 
     clean_cmd = "rm -rf " + out_folder 
     p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
     p.wait()
+
+    res = {"message": "'custom fuse' -> finished"}
+    log.info(res)
 
     return data
 
