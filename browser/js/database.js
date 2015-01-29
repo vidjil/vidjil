@@ -674,7 +674,10 @@ Uploader.prototype = {
                     if (evt.lengthComputable) {
                         var percentComplete = Math.floor((evt.loaded / evt.total)*100)
                         self.queue[id].percent = percentComplete
-                        if (percentComplete == 100) self.display()
+                        if (percentComplete == 100) {
+                            self.queue[id].status = "server_check"
+                            self.display()
+                        }
                     }
                 }, false);
                 return xhr;
@@ -689,6 +692,7 @@ Uploader.prototype = {
             xhrFields: {withCredentials: false},
             beforeSend: function(jqxhr){
                 self.queue[id].status = "upload"
+                self.queue[id].jqXHR = jqxhr
             },
             success: function (result) {
                 self.queue[id].status = "completed"
@@ -735,9 +739,7 @@ Uploader.prototype = {
     update_percent : function () {
         for (var key in this.queue){
             if ( this.queue[key].status == "upload"){
-                if ( this.queue[key].percent != 100 ){
-                    $(".loading_"+key).width(this.queue[key].percent+"%")
-                }
+                $(".loading_"+key).width(this.queue[key].percent+"%")
             }
         }
     },
@@ -748,54 +750,68 @@ Uploader.prototype = {
             for (var key in this.queue){
                 var status = this.queue[key].status
 
-                var html=""
-                if (status == "queued" ){
-                    html = "<span class='loading_seq'>queued</span> "
-                    html +="<span class='button' onclick='db.cancel_upload("+key+")'>cancel</span>"
-                    $("#sequence_file_"+key).html(html)
-                }else if ( status == "upload"){
-                    if ( this.queue[key].percent == 100 ){
-                        html = "<span class='loading_seq'>server check</span>"
-                    }else{
-                        html = "<span class='loading_gauge'><span class='loading_"+key+" loading_bar'></span></span> "
-                        html +="<span class='button' onclick='db.cancel_upload("+key+")'>cancel</span>"
-                    }
-                    $("#sequence_file_"+key).html(html)
-                }
+                var html = this.statusHtml(key)
+                
+                if (status != "completed") $("#sequence_file_"+key).html(html)
             }
         }
         this.display_summary()
     },
     
     display_summary : function () {
-        $("#upload_summary").css("display","block")
+        
+        if (this.is_uploading()){
+            $("#upload_summary").css("display","block")
+            $("#upload_summary_label").html("<span class='loading_seq'>upload list</span>")
+        }else{
+            $("#upload_summary_label").html("<span class='loading_status'>upload list</span>")
+        }
+        
         for (var key in this.queue){
             var status = this.queue[key].status
             
             var html = "<span class='summary_filename'>" + this.queue[key].filename + "</span>"
-            if (status == "queued" ){
-                html += "<span class='loading_seq'>queued</span> "
-                html +="<span class='button' onclick='db.cancel_upload("+key+")'>cancel</span>"
-                
-            }else if ( status == "upload"){
-                if ( this.queue[key].percent == 100 ){
-                    html += "<span class='loading_seq'>server check</span>"
-                }else{
-                    html += "<span class='loading_gauge'><span class='loading_"+key+" loading_bar'></span></span> "
-                    html += "<span class='button' onclick='db.cancel_upload("+key+")'>cancel</span>"
-                }
-                
-            }else if ( status == "completed"){
-                html += "<span>completed</span>"
-            }
+                html += this.statusHtml(key)
+            
+            if (status == "completed") html += "<span class='loading_status'> completed </span>"
             this.queue[key].div.html(html)
         }
+    },
+    
+    statusHtml : function (id) {
+        var status = this.queue[id].status
+        
+        var html = ""
+        
+        switch(status) {
+            case "queued":
+                html += "<span class='loading_seq'>queued</span> "
+                html += "<span class='button' onclick='uploader.cancel("+id+")'>cancel</span>"
+                break;
+            case "upload":
+                html += "<span class='loading_gauge'><span class='loading_"+id+" loading_bar'></span></span> "
+                html += "<span class='button' onclick='uploader.cancel("+id+")'>cancel</span>"
+                break;
+            case "server_check":
+                html += "<span class='loading_seq'>server check</span>"
+                break;
+            case "canceled":
+                html += "<span class='loading_status'> canceled by user </span>"
+                html += "<span class='button' onclick='uploader.retry("+id+")'>try again</span>"
+                break;
+            case "upload_error":
+                html += "<span class='loading_status'> upload failed </span>"
+                html += "<span class='button' onclick='uploader.retry("+id+")'>try again</span>"
+                break;
+        }
+        
+        return html
     },
     
     is_uploading : function () {
         for (var key in this.queue){
             var status = this.queue[key].status 
-            if (status == "upload" || status == "queued") return true
+            if (status == "upload" || status == "queued" || status == "server_check") return true
         }
         return false
     }
