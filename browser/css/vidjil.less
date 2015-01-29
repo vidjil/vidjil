@@ -1313,7 +1313,7 @@ text.alert { fill: red; }
     height: 1em;
     overflow: hidden;
     overflow-wrap: break-word;
-    margin-right:10px;
+    margin-right:5px;
 }
 
 .loading_gauge {
@@ -1322,6 +1322,7 @@ text.alert { fill: red; }
     display: inline-block;
     border: solid;
     border-width: 1px;
+    margin: 0px 5px;
 }
 
 .loading_bar {
@@ -1330,6 +1331,13 @@ text.alert { fill: red; }
     background-color: @default;
     display: inline-block;
     transition: width 0.2s;
+}
+
+.loading_status{
+    width: 100px;
+    text-align: center;
+    display: inline-block;
+    margin: 0px 5px;
 }
 
 .loading_seq {
@@ -1346,6 +1354,7 @@ text.alert { fill: red; }
     animation: move 2s linear infinite;
     display: inline-block;
     text-align:center;
+    margin: 0px 5px;
 }
 
 @-webkit-keyframes move {

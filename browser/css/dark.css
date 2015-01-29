@@ -1144,7 +1144,7 @@ text.alert {
   height: 1em;
   overflow: hidden;
   overflow-wrap: break-word;
-  margin-right: 10px;
+  margin-right: 5px;
 }
 .loading_gauge {
   height: 13px;
@@ -1152,6 +1152,7 @@ text.alert {
   display: inline-block;
   border: solid;
   border-width: 1px;
+  margin: 0px 5px;
 }
 .loading_bar {
   height: 100%;
@@ -1159,6 +1160,12 @@ text.alert {
   background-color: #839496;
   display: inline-block;
   transition: width 0.2s;
+}
+.loading_status {
+  width: 100px;
+  text-align: center;
+  display: inline-block;
+  margin: 0px 5px;
 }
 .loading_seq {
   height: 15px;
