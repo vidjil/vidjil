@@ -500,15 +500,6 @@ Database.prototype = {
             
         uploader.display()
     },
-    
-    cancel_upload: function (id) {
-        myConsole.flash("function disabled (come back soon)", 2)
-        /*
-        myConsole.flash("cancel upload : " + this.upload[id].filename, 1);
-        this.upload[id].jqXHR.abort()
-        this.reload()
-        */
-    },
 
     //efface et ferme la fenetre de dialogue avec le serveur
     close: function () {
@@ -706,15 +697,30 @@ Uploader.prototype = {
                 db.display_result(result, url)
             },
             error: function (request, status, error) {
-                //delete self.upload[id]; 
-                self.display();
                 if (status === "timeout") {
                     myConsole.flash(myConsole.msg.database_timeout, 2)
                 } else {
-                    myConsole.flash("upload " + self.queue[id].filename + " : " + status, 2)
+                    if (status !== "abort"){
+                        self.queue[id].status = "upload_error"
+                        myConsole.flash("upload " + self.queue[id].filename + " : " + status, 2)
+                    }
                 }
+                self.display();
             }
         });
+    },
+    
+    cancel: function (id) {
+        myConsole.flash("cancel upload : " + this.queue[id].filename, 1);
+        this.queue[id].jqXHR.abort()
+        this.queue[id].status = "canceled"
+        this.reload(id)
+    },
+    
+    retry : function (id) {
+        this.queue[id].status = "queued"
+        this.next()
+        this.reload(id)
     },
     
     //reload page if neccesary

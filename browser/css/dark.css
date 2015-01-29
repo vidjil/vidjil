@@ -1181,6 +1181,7 @@ text.alert {
   animation: move 2s linear infinite;
   display: inline-block;
   text-align: center;
+  margin: 0px 5px;
 }
 @-webkit-keyframes move {
   to {
