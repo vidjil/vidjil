@@ -159,6 +159,7 @@ void usage(char *progname)
        << "Window prediction" << endl
 #ifndef NO_SPACED_SEEDS
        << "  (use either -s or -k option, but not both)" << endl
+       << "  (all these options, except -w, are overriden when using -g)" << endl
        << "  -s <string>   spaced seed used for the V/J affectation" << endl
        << "                (default: #####-#####, ######-######, #######-#######, depends on germline)" << endl
 #endif
