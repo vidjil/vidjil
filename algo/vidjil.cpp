@@ -688,7 +688,7 @@ int main (int argc, char **argv)
   MultiGermline *multigermline = new MultiGermline();
 
     {
-      cout << "Build Kmer indexes" << endl ;
+      cout << "Load germlines and build Kmer indexes" << endl ;
     
       if (multi_germline)
 	{
@@ -717,7 +717,12 @@ int main (int argc, char **argv)
 	}
     }
 
+    cout << endl ;
 
+    cout << "Germlines loaded" << endl ;
+    cout << *multigermline ;
+    cout << endl ;
+    
   //////////////////////////////////
   //$$ Read sequence files
  
@@ -821,15 +826,6 @@ int main (int argc, char **argv)
   //           CLONE ANALYSIS           //
   ////////////////////////////////////////
   if (command == CMD_CLONES || command == CMD_WINDOWS) {
-
-    //////////////////////////////////
-    cout << "# seed = " << seed << "," ;
-    cout << " weight = " << seed_weight(seed) << "," ;
-    cout << " span = " << seed.size() << endl ;
-    cout << "# k = " << k << "," ;
-    cout << " w = " << w << "," ;
-    cout << " delta = [" << delta_min << "," << delta_max << "]" << endl ;
-
 
     //////////////////////////////////
     //$$ Kmer Segmentation
