@@ -95,6 +95,6 @@ class MultiGermline {
   void out_stats(ostream &out);
 };
 
-
+ostream &operator<<(ostream &out, const MultiGermline &multigermline);
 
 #endif

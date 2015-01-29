@@ -248,3 +248,15 @@ void MultiGermline::out_stats(ostream &out)
       out << germline->stats ;
     }
 }
+
+
+ostream &operator<<(ostream &out, const MultiGermline &multigermline)
+{
+  for (list<Germline*>::const_iterator it = multigermline.germlines.begin(); it != multigermline.germlines.end(); ++it)
+    {
+      Germline *germline = *it ;
+      out << "   " << *germline ;
+    }
+
+  return out;
+}
