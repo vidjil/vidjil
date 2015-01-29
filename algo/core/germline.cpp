@@ -134,7 +134,7 @@ void MultiGermline::build_default_set(string path)
   // Should parse 'data/germlines.data'
   Germline *germline;
   
-  germline = new Germline("TRG", 'G', path + "/TRGV.fa", "",                path + "/TRGJ.fa",   -10, 50);
+  germline = new Germline("TRG", 'G', path + "/TRGV.fa", "",                path + "/TRGJ.fa",   -10, 30);
   germline->new_index("#####-#####");
   germlines.push_back(germline);
 
@@ -207,7 +207,7 @@ void MultiGermline::load_standard_set(string path)
 {
   germlines.push_back(new Germline("TRA", 'A', path + "/TRAV.fa", "",                path + "/TRAJ.fa",   -10, 20));
   germlines.push_back(new Germline("TRB", 'B', path + "/TRBV.fa", path + "/TRBD.fa", path + "/TRBJ.fa",   -10, 20));
-  germlines.push_back(new Germline("TRG", 'G', path + "/TRGV.fa", "",                path + "/TRGJ.fa",   -10, 50));
+  germlines.push_back(new Germline("TRG", 'G', path + "/TRGV.fa", "",                path + "/TRGJ.fa",   -10, 30));
   germlines.push_back(new Germline("TRD", 'D', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRDJ.fa",     0, 80));
 
   germlines.push_back(new Germline("IGH", 'H', path + "/IGHV.fa", path + "/IGHD.fa", path + "/IGHJ.fa",     0, 80));
