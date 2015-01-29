@@ -142,8 +142,8 @@ ostream &operator<<(ostream &os, const KmerAffect &kmer);
 
 #define AFFECT_AMBIGUOUS_SYMBOL "?"
 #define AFFECT_UNKNOWN_SYMBOL "_"
-#define AFFECT_AMBIGUOUS_CHAR '?'
-#define AFFECT_UNKNOWN_CHAR '_'
+#define AFFECT_AMBIGUOUS_CHAR (AFFECT_AMBIGUOUS_SYMBOL[0])
+#define AFFECT_UNKNOWN_CHAR (AFFECT_UNKNOWN_SYMBOL[0])
 
 /**
  * Constant defining the unknown affectation (not known yet)
