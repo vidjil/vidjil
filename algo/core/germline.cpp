@@ -108,7 +108,12 @@ ostream &operator<<(ostream &out, const Germline &germline)
 {
   out << setw(4) << left << germline.code << right << " '" << germline.shortcut << "' "
       << setw(3) << germline.delta_min << "/" << setw(3) << germline.delta_max
-      << endl;
+      << " " << germline.index ;
+
+  if (germline.index)
+    out << " s" << germline.index->getS() << " k" << germline.index->getK() << " " << germline.index->getSeed() ; // TODO: there should be a << for index
+
+  out << endl;
   return out;
 }
 
