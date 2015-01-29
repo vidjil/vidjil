@@ -106,9 +106,9 @@ Germline::~Germline()
 
 ostream &operator<<(ostream &out, const Germline &germline)
 {
-  out << germline.code << " '" << germline.shortcut << "' "
-      << germline.delta_min << "/" << germline.delta_max << endl ;
-
+  out << setw(4) << left << germline.code << right << " '" << germline.shortcut << "' "
+      << setw(3) << germline.delta_min << "/" << setw(3) << germline.delta_max
+      << endl;
   return out;
 }
 
