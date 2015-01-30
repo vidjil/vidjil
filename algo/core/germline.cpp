@@ -263,6 +263,27 @@ void MultiGermline::out_stats(ostream &out)
     }
 }
 
+/* Mark k-mers common to several germlines as ambiguous */
+void MultiGermline::mark_cross_germlines_as_ambiguous()
+{
+  for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
+    {
+      Germline *germline = *it ;
+      cout << *germline << ":" ;
+      
+      for (list<Germline*>::const_iterator it2 = germlines.begin(); it2 != germlines.end(); ++it2)
+      {
+        Germline *germline2 = *it2 ;
+        if (germline2 == germline)
+          continue ;
+
+        germline->mark_as_ambiguous(germline2);
+      }
+
+      cout << endl;
+    }
+}
+
 
 ostream &operator<<(ostream &out, const MultiGermline &multigermline)
 {

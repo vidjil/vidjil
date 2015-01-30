@@ -94,6 +94,8 @@ class MultiGermline {
   void insert_in_one_index(IKmerStore<KmerAffect> *_index);
   void build_with_one_index(string seed);
 
+  void mark_cross_germlines_as_ambiguous();
+  
   void out_stats(ostream &out);
 };
 
