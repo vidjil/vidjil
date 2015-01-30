@@ -1,5 +1,6 @@
 
 #include "germline.h"
+#include <ctype.h>
 
 void Germline::init(string _code, char _shortcut,
                     int _delta_min, int _delta_max)
@@ -277,6 +278,10 @@ void MultiGermline::mark_cross_germlines_as_ambiguous()
         if (germline2 == germline)
           continue ;
 
+        // Skip germlines on a same system, such as 'D' (TRD) and 'd' (TRD+)
+        if (toupper(germline2->shortcut) == toupper(germline->shortcut))
+          continue;
+        
         germline->mark_as_ambiguous(germline2);
       }
 
