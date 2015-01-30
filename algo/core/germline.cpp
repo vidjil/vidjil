@@ -98,6 +98,20 @@ void Germline::update_index()
   cout << "  --- index " << index << " updated " << affect_5 << "/" << affect_4 << "/" << affect_3 << endl;
 }
 
+void Germline::mark_as_ambiguous(Germline *other)
+{
+  index->insert(other->rep_5, AFFECT_AMBIGUOUS_SYMBOL);
+
+  if (other->affect_4.size())
+    index->insert(other->rep_4, AFFECT_AMBIGUOUS_SYMBOL);
+
+  index->insert(other->rep_3, AFFECT_AMBIGUOUS_SYMBOL);
+
+  cout << "  --- index " << index << " - " << code << " marked " << other->code  << endl;
+}
+
+
+
 Germline::~Germline()
 {
   if (index)

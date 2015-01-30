@@ -47,6 +47,8 @@ class Germline {
   void new_index(string seed);
   void use_index(IKmerStore<KmerAffect> *index);
 
+  void mark_as_ambiguous(Germline *other);
+    
   list <string> f_reps_5 ;
   list <string> f_reps_4 ;
   list <string> f_reps_3 ;
