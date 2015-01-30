@@ -1,0 +1,27 @@
+!LAUNCH: ../../vidjil -g ../../germline -i ../../data/multi-short.fa
+
+$ Segment all the seven reads
+1:segmented 7 reads
+
+$ Segment one read on TRA
+1:TRA .* -> .* 1 
+
+$ Segment one read on TRB
+1:TRB .* -> .* 1 
+
+$ Segment one read on TRG
+1:TRG .* -> .* 1 
+
+$ Segment one read on TRD
+1:TRD .* -> .* 1 
+
+$ Segment one read on IGH
+1:IGH .* -> .* 1 
+
+$ Segment one read on IGK
+1:IGK .* -> .* 1 
+
+$ Segment one read on IGL
+1:IGL .* -> .* 1 
+
+
