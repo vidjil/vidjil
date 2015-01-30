@@ -267,10 +267,16 @@ void MultiGermline::out_stats(ostream &out)
 /* Mark k-mers common to several germlines as ambiguous */
 void MultiGermline::mark_cross_germlines_as_ambiguous()
 {
+  string VdJa = "VdJa";
+  
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
     {
       Germline *germline = *it ;
       cout << *germline << ":" ;
+
+      // Skip VdJa
+      if (!(germline->code.compare(VdJa)))
+        continue;
       
       for (list<Germline*>::const_iterator it2 = germlines.begin(); it2 != germlines.end(); ++it2)
       {
@@ -280,6 +286,10 @@ void MultiGermline::mark_cross_germlines_as_ambiguous()
 
         // Skip germlines on a same system, such as 'D' (TRD) and 'd' (TRD+)
         if (toupper(germline2->shortcut) == toupper(germline->shortcut))
+          continue;
+
+        // Skip VdJa
+        if (!(germline2->code.compare(VdJa)))
           continue;
         
         germline->mark_as_ambiguous(germline2);
