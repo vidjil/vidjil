@@ -4,7 +4,7 @@ dir=$(dirname $0)
 
 germline_id=$(cat $dir/germline_id)
 
-echo <<EOF
+cat <<EOF
 By downloading the IMGT germline databases (IMGT/GENE-DB), you
 accept the IMGT® license: academic research only, provided that it is referred
 to IMGT® and cited as "IMGT®, the international ImMunoGeneTics information
