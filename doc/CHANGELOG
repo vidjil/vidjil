@@ -1,6 +1,12 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
+
+2015-01-31  The Vidjil Team
+	* Better TRG and TRD+ parameters (-g). The multi-germline analysis will again be improved in a next release.
+	* New experimental option (-I) to discard common kmers between different germlines (core/germline.cpp)
+	* Updated outputs for better traceability (version in .json, germlines on stdout)
+
 2014-12-22  The Vidjil Team
 	* Better multi-germline analysis (-g). This will again be improved in a next release.
 	* New experimental incomplete rearrangement analysis (-i)
