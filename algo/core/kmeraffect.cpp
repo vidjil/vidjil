@@ -123,10 +123,6 @@ int KmerAffect::getStrand() const{
 }
 
 string KmerAffect::getLabel() const {
-  if (isUnknown())
-    return AFFECT_UNKNOWN_SYMBOL;
-  if (isAmbiguous())
-    return AFFECT_AMBIGUOUS_SYMBOL;
   return string(1, affect_char(affect));
 }
 
