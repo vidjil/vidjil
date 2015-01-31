@@ -158,24 +158,12 @@ Report.prototype = {
         var sinfo = this.container("Sample info ("+m.getStrTime(time)+")")
         var left = $('<div/>', {class: 'flex'}).appendTo(sinfo);
         
-        var soft_version = "–"
-        if (typeof m.samples.producer != 'undefined')
-            soft_version = m.samples.producer[time]
-            
-        var command = "–"
-        if (typeof m.samples.commandline != 'undefined')
-            command = m.samples.commandline[time]
-            
-        var sample_timestamp = "–"
-        if (typeof m.samples.run_timestamp != 'undefined')
-            sample_timestamp = m.samples.run_timestamp[time]
-        
         var content = [
             {label: "Filename:" , value : m.samples.original_names[time]},
             {label: "Sample date:" , value : m.getSampleTime(time)},
-            {label: "Software used:" , value : soft_version},
-            {label: "Parameters:" , value : command},
-            {label: "Analysis date:" , value : sample_timestamp}
+            {label: "Software used:" , value : m.getSoftVersionTime(time)},
+            {label: "Parameters:" , value : m.getCommandTime(time)},
+            {label: "Analysis date:" , value : m.getTimestampTime(time)}
         ]
         
         var table = $('<table/>', {class: 'info-table float-left'}).appendTo(left);

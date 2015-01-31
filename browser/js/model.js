@@ -717,7 +717,28 @@ Model.prototype = {
         }
         return value;
     },
+
+    getSoftVersionTime: function(time) { 
+        var soft_version = "–"
+        if (typeof m.samples.producer != 'undefined')
+            soft_version = m.samples.producer[time]
+	return soft_version;
+    },
+
+    getCommandTime: function(time) {
+        var command = "–"
+        if (typeof m.samples.commandline != 'undefined')
+            command = m.samples.commandline[time]
+	return command;
+    },
     
+    getTimestampTime: function(time) {
+        var timestamp = "–"
+        if (typeof m.samples.run_timestamp != 'undefined')
+            timestamp = m.samples.run_timestamp[time]
+        return timestamp
+    },
+
     //return the soft version if available 
     //return "multiple" if different soft have been used for different samples
     getSoftVersion: function() {
