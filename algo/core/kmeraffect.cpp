@@ -53,12 +53,12 @@ bool operator!=(const affect_t &a1, const affect_t &a2) {
 }
 string toString(const affect_t &a) {
   string result;
-  if(a ==AFFECT_UNKNOWN)
-    result = " "AFFECT_UNKNOWN_SYMBOL;
-  else if (a == AFFECT_AMBIGUOUS)
-    result = " "AFFECT_AMBIGUOUS_SYMBOL; 
+  if((a == AFFECT_UNKNOWN) || (a == AFFECT_AMBIGUOUS))
+    result = " ";
   else
-    result = (affect_strand(a)==1 ? "+" : "-") + string(1,affect_char(a));
+    result = (affect_strand(a)==1 ? "+" : "-");
+
+  result += string(1,affect_char(a));
   return result;
 }
 ostream &operator<<(ostream &os, const affect_t &a) {
