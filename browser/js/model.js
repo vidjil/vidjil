@@ -1174,7 +1174,7 @@ Model.prototype = {
         html += "<tr><td> reads </td><td>" + this.reads.total[timeID] + "</td></tr>"
         html += "<tr><td> reads segmented </td><td>" + this.reads.segmented[timeID] +
             " ("+ (this.reads.segmented[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )</td></tr>"
-        html += "<tr><td> segmentation </td><td>" + this.getSegmentationInfo(timeID) + "</td></tr>"
+        html += "<tr><td> segmentation </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
             
         html += "</table></div>"
         return html
