@@ -115,6 +115,7 @@ def custom():
                 & (db.results_file.sequence_file_id==db.sequence_file.id)
                 & (db.results_file.scheduler_task_id==db.scheduler_task.id)
                 & (db.scheduler_task.status=='COMPLETED')
+                & (db.config.id==db.results_file.config_id)
             )
 
     if config:

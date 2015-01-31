@@ -46,6 +46,7 @@
                 <td> pcr </td>
                 <td class="column1"> size </td>
 
+		<td class="column_200"> config </td>
                 <td class="column_sep"></td>
 
                 <td class="column2">last processing</td>
@@ -66,7 +67,7 @@
                     <td> {{=row.sequence_file.pcr}} </td>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} >
                         {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
-
+		    <td> {{=row.config.name}}
                     <td class="column_sep"></td>
 
                    {{if row.results_file.run_date :}}
