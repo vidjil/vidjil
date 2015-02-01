@@ -73,6 +73,15 @@ unit_coveralls:
 should_coveralls:
 	coveralls --exclude release --exclude algo/lib --exclude algo/tests --exclude algo/tools --exclude tests --exclude tools --exclude lib --gcov-options '\-lp' -r algo
 
+
+### cppcheck
+
+cppcheck:
+	mkdir -p reports
+	cppcheck --enable=all --xml . 2>! reports/cppcheck.xml
+
+###
+
 data germline: %:
 	make -C $@
 
