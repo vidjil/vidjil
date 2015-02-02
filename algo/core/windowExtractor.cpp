@@ -21,7 +21,9 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
     reads->next();
     nb_reads++;
     
-    KmerSegmenter seg(reads->getSequence(), multigermline);
+    KmerMultiSegmenter kmseg(reads->getSequence(), multigermline);
+    
+    KmerSegmenter seg = kmseg.the_kseg ;
     int read_length = seg.getSequence().sequence.length();
 
     stats[seg.getSegmentationStatus()].insert(read_length);

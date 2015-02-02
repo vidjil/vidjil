@@ -77,6 +77,10 @@ bool Segmenter::isDSegmented() const {
   return dSegmented;
 }
 
+bool KmerSegmenter::isDetected() const {
+  return detected;
+}
+
 // Chevauchement
 
 string Segmenter::removeChevauchement()
@@ -166,23 +170,19 @@ ostream &operator<<(ostream &out, const Segmenter &s)
 
 // KmerSegmenter (Cheap)
 
-KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
+KmerSegmenter::KmerSegmenter() { kaa = 0 ; }
+
+KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
 {
   label = seq.label ;
   sequence = seq.sequence ;
   info = "" ;
   info_extra = "seed";
   segmented = false;
-  segmented_germline = 0;
+  segmented_germline = germline ;
   reversed = false;
   Dend=0;
   
-  // Iterate over the germlines
-  for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
-    {
-      Germline *germline = *it ;
-      segmented_germline = germline;
-
   int s = (size_t)germline->index->getS() ;
   int length = sequence.length() ;
 
@@ -190,7 +190,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
     {
       because = UNSEG_TOO_SHORT;
       kaa = NULL;
-      continue ;
+      return ;
     }
  
   kaa = new KmerAffectAnalyser(*(germline->index), sequence);
@@ -227,8 +227,6 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
   if (segmented)
     {
       // Yes, it is segmented
-      germline->stats.insert(length);
-
       reversed = (strand == -1); 
       because = reversed ? SEG_MINUS : SEG_PLUS ;
 
@@ -240,16 +238,39 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
       return ;
     } 
 
-  // If the germline was detected, do not test other germlines
-  if (detected)
-    return ;
-
-  } // end for (Germlines)
+ 
 }
 
 KmerSegmenter::~KmerSegmenter() {
-  if (kaa)
-    delete kaa;
+  // if (kaa)
+  //   delete kaa;
+}
+
+KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline)
+{
+  // Iterate over the germlines
+  for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
+    {
+      Germline *germline = *it ;
+
+      KmerSegmenter kseg(seq, germline);
+      the_kseg = kseg;
+      
+      if (kseg.isSegmented())
+        {
+          // Yes, it is segmented
+          germline->stats.insert(seq.sequence.length());
+          return ;
+        }
+        
+      // If the germline was detected, do not test other germlines
+      if (kseg.isDetected())
+        return ;
+      
+    } // end for (Germlines)  
+}
+
+KmerMultiSegmenter::~KmerMultiSegmenter() {
 }
 
 void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
