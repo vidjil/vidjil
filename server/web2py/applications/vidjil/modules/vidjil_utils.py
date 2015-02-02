@@ -59,3 +59,18 @@ def anon(patient_id, user_id):
         name += ' (%s)' % patient_id
 
     return name
+
+
+# take a string to check and a filter_str (list of word to find (or not)) 
+# return true if the string respect the filter list 
+def filter(str, filter_str):
+    filter_list = filter_str.split(" ")
+    
+    for f in filter_list :
+        if len(f) > 0 and f[0] == "-" :
+            if str.lower().find(f[1:].lower()) != -1 : 
+                return False
+        else :
+            if str.lower().find(f.lower()) == -1 : 
+                return False
+    return True

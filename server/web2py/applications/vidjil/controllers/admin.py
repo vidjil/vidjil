@@ -1,6 +1,7 @@
 # coding: utf8
 import gluon.contrib.simplejson, re
 import os.path
+import vidjil_utils
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -21,21 +22,16 @@ def worker():
 def log():
     if auth.has_membership("admin"):
         
+        
         lines = []
         file = open('/var/vidjil/'+request.vars["file"])
         
-        for row in reversed(file.readlines()) :
-            flag = True
+        if "filter" not in request.vars :
+            request.vars["filter"] = ""
             
-            if "filter" in request.vars :
-                filter_list = request.vars["filter"].split(' ')
-                for f in filter_list :
-                    if row.lower().find(f.lower()) == -1 : 
-                        flag = False
-            else :
-                request.vars["filter"] = ""
-                
-            if flag :
+        for row in reversed(file.readlines()) :
+
+            if vidjil_utils.filter(row, request.vars["filter"]) :
                 line = {}
 
                 tmp = re.split('\t+| +', row) 

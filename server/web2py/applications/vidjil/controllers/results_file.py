@@ -1,5 +1,7 @@
 # coding: utf8
 import gluon.contrib.simplejson
+import vidjil_utils
+
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -43,12 +45,13 @@ def index():
             query = query.sort(lambda row : row.sequence_file[request.vars["sort"]], reverse=reverse)
 
         ##filter
-        if "filter" in request.vars and request.vars["filter"] != "":
-            for row in query :
-                row.string = (row.sequence_file.filename+row.config.name+row.patient.last_name+row.patient.first_name+row.sequence_file.producer+str(row.results_file.run_date)+row.status ).lower()
-            query = query.find(lambda row : row.string.find(request.vars["filter"].lower()) != -1)
-        else :
+        ##filter
+        if "filter" not in request.vars :
             request.vars["filter"] = ""
+
+        for row in query :
+            row.string = (row.sequence_file.filename+row.config.name+row.patient.last_name+row.patient.first_name+row.sequence_file.producer+str(row.results_file.run_date)+row.status ).lower()
+        query = query.find(lambda row : vidjil_utils.filter(row.string,request.vars["filter"]) )
         
         return dict(query = query,
                     reverse=reverse)

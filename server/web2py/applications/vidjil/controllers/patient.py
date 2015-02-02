@@ -204,12 +204,14 @@ def index():
         query = query.sort(lambda row : row.patient[request.vars["sort"]], reverse=reverse)
     
     ##filter
-    if "filter" in request.vars and request.vars["filter"] != "":
-        for row in query :
-            row.string = (row.confs+row.groups+row.patient.last_name+row.patient.first_name+str(row.patient.birth)).lower()+row.patient.info
-        query = query.find(lambda row : row.string.find(request.vars["filter"].lower()) != -1)
-    else :
+    if "filter" not in request.vars :
         request.vars["filter"] = ""
+        
+    for row in query :
+        row.string = (row.confs+row.groups+row.patient.last_name+row.patient.first_name+str(row.patient.birth)).lower()+row.patient.info
+    query = query.find(lambda row : vidjil_utils.filter(row.string,request.vars["filter"]) )
+
+        
         
     return dict(query = query,
                 count = count,
