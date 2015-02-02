@@ -278,6 +278,8 @@ void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
 
   segmented = true ;
   because = 0 ; // Cause of unsegmentation
+  score = 0 ;
+  affect_infos max;
 
   // Zero information
   if (strand == 0)
@@ -290,7 +292,6 @@ void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
     } 
   else
     {
-      affect_infos max;
       if (strand == 1)
         max = kaa->getMaximum(KmerAffect(germline->affect_5, 1), 
 			      KmerAffect(germline->affect_3, 1));
@@ -340,6 +341,8 @@ void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
     } 
   if (because)
     segmented = false;
+  else
+    score = max.nb_before_left + max.nb_before_right + max.nb_after_left + max.nb_after_right;  
 }
 
 KmerAffectAnalyser *KmerSegmenter::getKmerAffectAnalyser() const {

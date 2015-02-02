@@ -142,6 +142,7 @@ class KmerSegmenter : public Segmenter
 
  public:
   bool isDetected() const;
+  int score;
 
   KmerSegmenter();
   /**
