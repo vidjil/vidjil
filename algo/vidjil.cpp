@@ -654,14 +654,12 @@ int main (int argc, char **argv)
   soft_version.append(RELEASE_TAG);
 #else
   cout << "# development version" << endl ;
-#endif
-
 #ifdef GIT_VERSION
   cout << "# git: " << GIT_VERSION << endl ;
   soft_version.append("dev ");
   soft_version.append(GIT_VERSION);
 #endif
-
+#endif
 
   //////////////////////////////////
   // Warning for non-optimal use
