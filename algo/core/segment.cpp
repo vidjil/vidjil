@@ -259,7 +259,6 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
       if (kseg.isSegmented())
         {
           // Yes, it is segmented
-          germline->stats.insert(seq.sequence.length());
           return ;
         }
         

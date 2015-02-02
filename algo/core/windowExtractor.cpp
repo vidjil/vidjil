@@ -28,6 +28,9 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
 
     stats[seg.getSegmentationStatus()].insert(read_length);
     if (seg.isSegmented()) {
+
+      seg.segmented_germline->stats.insert(read_length);
+
       junction junc = seg.getJunction(w);
 
       if (junc.size()) {
