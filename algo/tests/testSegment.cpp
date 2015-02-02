@@ -78,12 +78,9 @@ void testSegmentOverlap()
   germline2 = new Germline("TRG2", 'G', seqV, seqV, seqJ, -50, 50);
   germline2->new_index("##########");
 
-  MultiGermline *multi1 ;
-  multi1 = new MultiGermline();
-  multi1->insert(germline1);
-
   for (int i = 0; i < data.size(); i++) {
-    KmerSegmenter ks(data.read(i), multi1);
+    KmerSegmenter ks(data.read(i), germline1);
+
     TAP_TEST(ks.seg_V + ks.seg_N + ks.seg_J == data.sequence(i)
              || ks.seg_V + ks.seg_N + ks.seg_J == revcomp(data.sequence(i)), 
              TEST_KMER_SEGMENT_OVERLAP,
@@ -96,7 +93,7 @@ void testSegmentOverlap()
              " V= " << fs.seg_V << ", N = " << fs.seg_N << ", J = " << fs.seg_J);
   }
 
-  delete multi1;
+  delete germline1;
   delete germline2;
 }
 
@@ -110,15 +107,11 @@ void testSegmentationCause() {
   germline = new Germline("TRG", 'G', seqV, seqV, seqJ, 0, 10);
   germline->new_index("##########");
 
-  MultiGermline *multi ;
-  multi = new MultiGermline();
-  multi->insert(germline);
-
   int nb_checked = 0;
 
   for (int i = 0; i < data.size(); i++) {
-    KmerSegmenter ks(data.read(i), multi);
-
+    KmerSegmenter ks(data.read(i), germline);
+    
     if (data.read(i).label == "seq-seg+") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "seq is " << data.label(i));
       TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, "");
@@ -200,7 +193,7 @@ void testSegmentationCause() {
   
   TAP_TEST(nb_checked == 13, TEST_KMER_DATA, "");
 
-  delete multi;
+  delete germline;
 }
 
 void testExtractor() {

@@ -17,10 +17,6 @@ void testSegmentationBug1(int delta_min, int delta_max) {
   Germline *germline ;
   germline = new Germline("custom", 'x', seqV, seqV, seqJ, delta_min, delta_max);
   germline->new_index("##############");
-
-  MultiGermline *multi ;
-  multi = new MultiGermline();
-  multi->insert(germline);
   
   OnlineFasta input(buggy_sequences);
 
@@ -41,8 +37,7 @@ void testSegmentationBug1(int delta_min, int delta_max) {
       }
     }
 
-    Segmenter *segment = new KmerSegmenter(input.getSequence(), multi);
-
+    KmerSegmenter *segment = new KmerSegmenter(input.getSequence(), germline);
 
     if (strand == 2 
         || (strand == 1
@@ -56,7 +51,7 @@ void testSegmentationBug1(int delta_min, int delta_max) {
     delete segment;
     delete kaa;
   }
-  delete multi;
+  delete germline;
 }
 
 void testBugs() {
