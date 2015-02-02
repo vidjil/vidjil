@@ -248,23 +248,27 @@ KmerSegmenter::~KmerSegmenter() {
 
 KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline)
 {
+  int best_score = 0 ;
+  
   // Iterate over the germlines
   for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
     {
       Germline *germline = *it ;
 
       KmerSegmenter kseg(seq, germline);
-      the_kseg = kseg;
+
+      if (!best_score)
+        the_kseg = kseg;
       
       if (kseg.isSegmented())
         {
           // Yes, it is segmented
-          return ;
+          if (kseg.score > best_score)
+            {
+              the_kseg = kseg ;
+              best_score = kseg.score ;
+            }
         }
-        
-      // If the germline was detected, do not test other germlines
-      if (kseg.isDetected())
-        return ;
       
     } // end for (Germlines)  
 }
