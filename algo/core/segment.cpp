@@ -263,6 +263,12 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
           *out_unsegmented << "#"
                            << left << setw(4) << kseg.segmented_germline->code << " "
                            << left << setw(20) << segmented_mesg[kseg.getSegmentationStatus()] << " ";
+
+          if (kseg.isSegmented())
+            *out_unsegmented << right << setw(3) << kseg.score << " ";
+          else
+            *out_unsegmented << "    " ;
+          
           if (kseg.getSegmentationStatus() != UNSEG_TOO_SHORT) 
             *out_unsegmented << kseg.getKmerAffectAnalyser()->toString();
 
