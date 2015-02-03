@@ -311,6 +311,7 @@ int DynProg::compute()
 
 void DynProg::backtrack()
 {
+  // Tables for displaying the alignment
   gap1 = new int[x.size()+1];
   linkgap = new int[x.size()+1];
   gap2 = new int[y.size()+1];
@@ -329,16 +330,12 @@ void DynProg::backtrack()
   
   int i=best_i+1;
   int j=best_j+1;
-  int tmpi, tmpj;
-  tmpi=i;
-  tmpj=j;
-  
+
   // Compute backtrack strings
   
-  ostringstream back_s1;
-  ostringstream back_s2;
+  ostringstream back_x;
+  ostringstream back_y;
   ostringstream back_tr;
-  ostringstream back;
   
   while (1) {
 
@@ -352,68 +349,66 @@ void DynProg::backtrack()
       break ;
       
     // cout << "bt " << i << "/" << j << " " << B[i][j].type << " " << B[i][j].i << "," << B[i][j].j << endl ;
-        
-    tmpi=B[i][j].i;
-    tmpj=B[i][j].j;
+    
+    int next_i = B[i][j].i;
+    int next_j = B[i][j].j;
 
-    int max_k = max(i - tmpi, j - tmpj);
+    // The maximum number of characters implied by this operation
+    int max_k = max(i - next_i, j - next_j);
       
     for (int k=0; k<max_k; k++)
       {
         linkgap[g1]=g2;
-        
-        if (i-k > tmpi)
+
+        // Some character(s) from x, then fill with spaces
+        if (i-k > next_i)
           {
-            back_s1 << x[i-1-k];
+            back_x << x[i-1-k];
             g1--;
           }
         else
           {
-            back_s1 << " " ;
+            back_x << " " ;
             gap1[g1]++ ;
           }
-            
-        if (j-k > tmpj)
+
+        // Some character(s) from y, then fill with spaces
+        if (j-k > next_j)
           {
-            back_s2 << y[j-1-k];
+            back_y << y[j-1-k];
             g2--;
           }
         else
           {
-            back_s2 << " " ;
+            back_y << " " ;
             gap2[g2]++ ;
           }
-        
-        if (k < max_k-1)
-          back_tr << " " ;          
+
+        // The operation character, then fill with spaces
+        if (k == max_k-1)          
+          back_tr << B[i][j].type ;
+        else
+          back_tr << " " ;
       }
     
-    back_tr << B[i][j].type ;
-
-    i=tmpi;
-    j=tmpj;
-
-    /*
-      back_s1 << " " ;
-      back_s2 << " " ;
-      back_tr << " " ;
-    */
-
+    i = next_i;
+    j = next_j;
   }
 
   // Format backtrack strings
   
   string str1, str2, str3;
-  str1=back_s1.str();
+  str1 = back_x.str();
   str1 =string (str1.rbegin(), str1.rend());
   str1 = str1;
   str2=back_tr.str();
   str2 = string (str2.rbegin(), str2.rend());
-  str3=back_s2.str();
+  str3 = back_y.str();
   str3 = string (str3.rbegin(), str3.rend());
-  
+
+  ostringstream back;    
   back << i <<	"  >>	" << str1.substr(0, BACKSIZE-8) << endl;
-  back << " diff	" << str2.substr(0, BACKSIZE-8) << endl;
+  back << "             " << str2.substr(0, BACKSIZE-8) << endl;
   back << j <<	"  >>	" << str3.substr(0, BACKSIZE-8) << endl << endl;
   for (size_t k=0 ; (BACKSIZE-8+k*BACKSIZE)< str1.length() ; k++){
     back << str1.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl;
