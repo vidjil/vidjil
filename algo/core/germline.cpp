@@ -12,7 +12,11 @@ void Germline::init(string _code, char _shortcut,
   affect_5 = "V" ;
   affect_4 = "" ;
   affect_3 = "J" ;
-  
+
+  affect_5 = string(1, toupper(shortcut)) + "-" + code + "V";
+  affect_4 = ""; // string(1, 14 + shortcut) + "-" + code + "D";
+  affect_3 = string(1, tolower(shortcut)) + "-" + code + "J";
+     
   delta_min = _delta_min ;
   delta_max = _delta_max ;
 
@@ -240,10 +244,10 @@ void MultiGermline::insert_in_one_index(IKmerStore<KmerAffect> *_index)
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
     {
       Germline *germline = *it ;
-      germline->affect_5 = string(1, germline->shortcut) + "-" + germline->code + "V";
+
       if (germline->rep_4.size())
 	germline->affect_4 = string(1, 14 + germline->shortcut) + "-" + germline->code + "D";
-      germline->affect_3 = string(1, tolower(germline->shortcut)) + "-" + germline->code + "J";
+
       germline->use_index(_index) ;
     }
 }
