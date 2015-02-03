@@ -398,13 +398,7 @@ Database.prototype = {
         
         if (typeof args == 'undefined'){
             args={}
-            var list=[]
-            $("input[name='custom_result[]']").each(
-                function () {
-                    if (this.checked) list.push(this.value)
-                } 
-            )
-            args["custom"]=list
+            args["custom"] = this.getListInput("custom_result[]")
         }
         
         console.log("db : custom data "+list)
