@@ -372,6 +372,18 @@ Database.prototype = {
         });
     },
     
+    //check every input field in the page with the given input_name
+    //return the list of values selected 
+    getListInput : function (input_name) {
+        var list=[]
+        $("input[name='"+input_name+"']").each(
+            function () {
+                if (this.checked) list.push(this.value)
+            } 
+        )
+        return list
+    },
+    
     load_custom_data: function(args) {
         var self=this;
         myConsole.closePopupMsg()
