@@ -45,6 +45,13 @@ class Cost
   //int ins(char current, char next);
   //int del(char current, char next);
   int homo2(char xa, char xb, char y);
+
+  int open_insertion;
+  int open_deletion;
+  int extend_insertion;
+  int extend_deletion;
+
+  bool affine_gap;
 };
 
 
@@ -111,6 +118,8 @@ class DynProg
   friend ostream& operator<<(ostream& out, const DynProg& dp);
   
   operation **B;  // Score and backtrack matrix
+  operation **Bins ; // affine gap
+  operation **Bdel ; // affine gap
   int *gap1 ;
   int *linkgap ;
   int *gap2 ;

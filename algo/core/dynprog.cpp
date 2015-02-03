@@ -49,6 +49,10 @@ Cost::Cost(int match, int mismatch, int indel, int del_end, int homopolymer)
   this -> deletion = indel ;
   this -> deletion_end = del_end ;
   this -> homopolymer = (homopolymer == MINUS_INF ? indel: homopolymer);
+
+  this -> open_insertion = this -> open_deletion = -15 ;
+  this -> extend_insertion = this -> extend_deletion = -1 ;
+  this -> affine_gap = true ;
 }
 
 
@@ -107,7 +111,14 @@ DynProg::DynProg(const string &x, const string &y, DynProgMode mode, const Cost&
   for (int i = 0; i <= m; i++) {
     B[i] = new operation[n+1];
   }
-  
+  Bins = new operation*[m+1];
+  for (int i = 0; i <= m; i++) {
+    Bins[i] = new operation[n+1];
+  }
+  Bdel = new operation*[m+1];
+  for (int i = 0; i <= m; i++) {
+    Bdel[i] = new operation[n+1];
+  }  
   this -> mode = mode;
   this -> cost = cost;
 
@@ -127,8 +138,12 @@ DynProg::~DynProg() {
 
   for (int i = 0; i <= m; i++) {
     delete [] B[i];
+    delete [] Bins[i];
+    delete [] Bdel[i];
   }
   delete [] B;  
+  delete [] Bins;
+  delete [] Bdel;  
   delete [] gap1;
   delete [] gap2;
   delete [] linkgap;
@@ -141,6 +156,7 @@ void DynProg::init()
       B[i][0].type = INSER ;
       B[i][0].i = i-1 ;
       B[i][0].j = 0 ;
+      Bdel[i][0].score = Bins[i][0].score = MINUS_INF ;
     }
 
   for (int j=1; j<=n; j++)
@@ -148,6 +164,7 @@ void DynProg::init()
       B[0][j].type = DELET ;    
       B[0][j].i = 0 ;
       B[0][j].j = j-1 ;
+      Bdel[0][j].score = Bins[0][j].score = MINUS_INF ;
     }
 
   if (mode == Local || mode == LocalEndWithSomeDeletions)
@@ -196,15 +213,36 @@ int DynProg::compute()
       best.score = MINUS_INF ;
 
       // The edit operations, with their backtracking information and their score
-      
-      try_operation(best, SUBST, i-1, j-1, B[i-1][j-1].score + cost.substitution(x[i-1], y[j-1]));
-      
-      try_operation(best, INSER, i-1, j  , B[i-1][j  ].score + cost.insertion);
-      try_operation(best, DELET, i  , j-1, B[i  ][j-1].score + cost.deletion);
 
+      // Match, mismatch
+      try_operation(best, SUBST, i-1, j-1, B[i-1][j-1].score + cost.substitution(x[i-1], y[j-1]));
+
+      if (!cost.affine_gap)
+        {
+          // Regular indels
+          try_operation(best, INSER, i-1, j  , B[i-1][j  ].score + cost.insertion);
+          try_operation(best, DELET, i  , j-1, B[i  ][j-1].score + cost.deletion);
+        }
+      else
+        {
+          // Gotoh affine gaps - insertion
+          Bins[i][j].score = MINUS_INF ;
+          try_operation(Bins[i][j], 'o', i-1, j, B[i-1][j].score + cost.open_insertion);
+          try_operation(Bins[i][j], 'x', Bins[i-1][j].i, j, Bins[i-1][j].score + cost.extend_insertion);
+          try_operation(best, INSER, Bins[i][j].i, j ,Bins[i][j].score);
+
+          // Gotoh affine gaps - deletions
+          Bdel[i][j].score = MINUS_INF ;
+          try_operation(Bdel[i][j], 'o', i, j-1, B[i][j-1].score + cost.open_deletion);
+          try_operation(Bdel[i][j], 'x', i, Bdel[i][j-1].j, Bdel[i-1][j].score + cost.extend_deletion);
+          try_operation(best, DELET, i, Bdel[i][j].j,  Bdel[i][j].score);
+        }
+
+      // Homopolymers
       try_operation(best, HOMO2X, i-2, j-1, i > 1 ? B[i-2][j-1].score + cost.homo2(x[i-2], x[i-1], y[j-1]) : MINUS_INF);
       try_operation(best, HOMO2Y, i-1, j-2, j > 1 ? B[i-1][j-2].score + cost.homo2(y[j-2], y[j-1], x[i-1]) : MINUS_INF);
       
+      // Local alignment
       if (mode == Local || mode == LocalEndWithSomeDeletions)
 	try_operation(best, BEGIN, 0, 0, 0);
 
