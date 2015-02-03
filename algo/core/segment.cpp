@@ -400,11 +400,11 @@ void best_align(int overlap, string seq_left, string seq_right,
       
       for(int i=1; i<=overlap; i++){
 	if(dp.best_i-i >0)
-	score_r[i] = dp.S[dp.best_i-i][dp.best_j];
+	score_r[i] = dp.B[dp.best_i-i][dp.best_j].score;
 	else
 	score_r[i] =0;
 	if(dp1.best_i-i >0)
-	score_l[i] = dp1.S[dp1.best_i-i][dp1.best_j];	
+	score_l[i] = dp1.B[dp1.best_i-i][dp1.best_j].score;	
 	else
 	score_l[i] =0;
       }

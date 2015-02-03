@@ -110,8 +110,7 @@ class DynProg
 
   friend ostream& operator<<(ostream& out, const DynProg& dp);
   
-  int **S;        // Score matrix
-  operation **B;  // Backtrack matrix
+  operation **B;  // Score and backtrack matrix
   int *gap1 ;
   int *linkgap ;
   int *gap2 ;

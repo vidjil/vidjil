@@ -103,11 +103,6 @@ DynProg::DynProg(const string &x, const string &y, DynProgMode mode, const Cost&
   n = y.size();
   // cout << "Dynprog " << x << "(" << m << ") / " << y << "(" << n << ")" << endl ;
 
-  S = new int*[m+1];
-  for (int i = 0; i <= m; i++) {
-    S[i] = new int[n+1];
-  }
-  
   B = new operation*[m+1];
   for (int i = 0; i <= m; i++) {
     B[i] = new operation[n+1];
@@ -129,10 +124,7 @@ DynProg::DynProg(const string &x, const string &y, DynProgMode mode, const Cost&
 }
 
 DynProg::~DynProg() {
-  for (int i = 0; i <= m; i++) {
-    delete [] S[i];
-  }
-  delete [] S; 
+
   for (int i = 0; i <= m; i++) {
     delete [] B[i];
   }
@@ -160,23 +152,23 @@ void DynProg::init()
 
   if (mode == Local || mode == LocalEndWithSomeDeletions)
     for (int i=0; i<=m; i++)
-      S[i][0] = 0 ;
+      B[i][0].score = 0 ;
   else if (mode == GlobalButMostlyLocal)
     for (int i=0; i<=m; i++)
-      S[i][0] = i * cost.insertion / 2 ;
+      B[i][0].score = i * cost.insertion / 2 ;
   else // Global, SemiGlobal
     for (int i=0; i<=m; i++)
-      S[i][0] = i * cost.insertion ;
+      B[i][0].score = i * cost.insertion ;
    
   if (mode == SemiGlobal || mode == SemiGlobalTrans || mode == Local || mode == LocalEndWithSomeDeletions)
     for (int j=0; j<=n; j++)
-      S[0][j] = 0 ;
+      B[0][j].score = 0 ;
   else if (mode == GlobalButMostlyLocal)
     for (int j=0; j<=n; j++)
-      S[0][j] = j * cost.deletion / 2 ;
+      B[0][j].score = j * cost.deletion / 2 ;
   else
     for (int j=0; j<=n; j++)
-      S[0][j] = j * cost.deletion ;
+      B[0][j].score = j * cost.deletion ;
 }
 
 inline void try_operation(operation &best, int type, int i, int j, int score)
@@ -205,13 +197,13 @@ int DynProg::compute()
 
       // The edit operations, with their backtracking information and their score
       
-      try_operation(best, SUBST, i-1, j-1, S[i-1][j-1] + cost.substitution(x[i-1], y[j-1]));
+      try_operation(best, SUBST, i-1, j-1, B[i-1][j-1].score + cost.substitution(x[i-1], y[j-1]));
       
-      try_operation(best, INSER, i-1, j  , S[i-1][j  ] + cost.insertion);
-      try_operation(best, DELET, i  , j-1, S[i  ][j-1] + cost.deletion);
+      try_operation(best, INSER, i-1, j  , B[i-1][j  ].score + cost.insertion);
+      try_operation(best, DELET, i  , j-1, B[i  ][j-1].score + cost.deletion);
 
-      try_operation(best, HOMO2X, i-2, j-1, i > 1 ? S[i-2][j-1] + cost.homo2(x[i-2], x[i-1], y[j-1]) : MINUS_INF);
-      try_operation(best, HOMO2Y, i-1, j-2, j > 1 ? S[i-1][j-2] + cost.homo2(y[j-2], y[j-1], x[i-1]) : MINUS_INF);
+      try_operation(best, HOMO2X, i-2, j-1, i > 1 ? B[i-2][j-1].score + cost.homo2(x[i-2], x[i-1], y[j-1]) : MINUS_INF);
+      try_operation(best, HOMO2Y, i-1, j-2, j > 1 ? B[i-1][j-2].score + cost.homo2(y[j-2], y[j-1], x[i-1]) : MINUS_INF);
       
       if (mode == Local || mode == LocalEndWithSomeDeletions)
 	try_operation(best, BEGIN, 0, 0, 0);
@@ -220,7 +212,6 @@ int DynProg::compute()
         best.type = MISMATCH ;
 
       // Fill the score and the backtrack information
-      S[i][j] = best.score ;
       B[i][j] = best ;
       
       // cout << " " << i << "," << j << " " << best_op.type << " " <<  best_op.i << "," << best_op.j << " "  << best_op.score << " " << best << endl ;
@@ -270,9 +261,9 @@ int DynProg::compute()
       best_i = m ;
       
       for (int j=1; j<=n; j++)
-	if (S[m][j] > best_score)
+	if (B[m][j].score > best_score)
 	  {
-	    best_score = S[m][j] ;
+	    best_score = B[m][j].score ;
 	    best_j = j ;
 	  }
       for (int i=0; i<=m; i++){
@@ -285,9 +276,9 @@ int DynProg::compute()
       best_j = n ;
       
       for (int i=1; i<=m; i++)
-	if (S[i][n] > best_score)
+	if (B[i][n].score > best_score)
 	  {
-	    best_score = S[i][n] ;
+	    best_score = B[i][n].score ;
 	    best_i = i ;
 	  }
 	  
@@ -300,7 +291,7 @@ int DynProg::compute()
     {
       best_i = m ;
       best_j = n ;
-      best_score = S[m][n];
+      best_score = B[m][n].score;
     }
 
   if (reverse_x)
@@ -471,8 +462,8 @@ ostream& operator<<(ostream& out, const DynProg& dp)
 
       for (int j=0; j<=dp.n; j++)
         {
-          if (dp.S[i][j])
-            out << setw(4) << dp.S[i][j] << dp.B[i][j].type ;
+          if (dp.B[i][j].score)
+            out << setw(4) << dp.B[i][j].score << dp.B[i][j].type ;
           else
             out << "    " << dp.B[i][j].type ;
         }
