@@ -106,9 +106,16 @@ def custom():
         config = True
         
     else:
+        request.vars["config_id"] = -1
         config_id = -1
         config_name = None
         config = False
+        
+    if "custom_list" not in request.vars :
+        request.vars["custom_list"] = []
+    if type(request.vars["custom_list"]) is str :
+        request.vars["custom_list"] = [request.vars["custom_list"]]
+        
 
     q = ((auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) 
                 & (db.sequence_file.patient_id==db.patient.id)
@@ -118,14 +125,26 @@ def custom():
                 & (db.config.id==db.results_file.config_id)
             )
 
-    if config:
-        q &= (db.results_file.config_id==str(config_id) ) # || True) # not config)
-
     query = db(q).select(
                 orderby = ~db.sequence_file.patient_id|db.sequence_file.id|db.results_file.run_date,
                 groupby = db.sequence_file.id|db.results_file.config_id,
             )
 
+    ##filter
+    if "filter" not in request.vars :
+        request.vars["filter"] = ""
+        
+    for row in query :
+        row.checked = False
+        if (str(row.results_file.id) in request.vars["custom_list"]) :
+            row.checked = True
+        row.string = (vidjil_utils.anon(row.sequence_file.patient_id, auth.user_id) + row.sequence_file.filename +
+                      str(row.sequence_file.sampling_date) + row.sequence_file.info + row.sequence_file.pcr + row.config.name + str(row.results_file.run_date)).lower()
+    query = query.find(lambda row : ( vidjil_utils.filter(row.string,request.vars["filter"]) or row.checked) )
+    
+    if config :
+        query = query.find(lambda row : ( row.results_file.config_id==str(config_id) or (str(row.results_file.id) in request.vars["custom_list"])) )
+    
     res = {"message": "custom (%s)" % config_name}
     log.info(res)
 

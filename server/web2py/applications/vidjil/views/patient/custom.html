@@ -12,7 +12,12 @@
     <div class="db_block">
 
         <div class="db_block_left">
-
+            search
+            <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}" 
+                   onchange="db.call('patient/custom', {'config_id' : '{{=request.vars["config_id"]}}', 
+                                                      'filter' : this.value, 
+                                                      'custom_list' : db.getListInput('custom_result[]')} )"  >
+            <span>(multiple word accepted)</span>
         </div>
 
 
@@ -20,7 +25,9 @@
         {{if auth.has_permission("run", "results_file") :}}
             config
             <span>
-                <select id="choose_config" name="config" onchange="db.call('patient/custom', {'config_id' : this.value})">
+                <select id="choose_config" name="config" onchange="db.call('patient/custom', {'config_id' : this.value, 
+                                                                   'filter' : '{{=request.vars["filter"]}}',
+                                                                  'custom_list' : db.getListInput('custom_result[]') })">
                     <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
                     {{for row in db(db.config).select(orderby=~db.config.name) :}}
                         <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} >
@@ -57,7 +64,7 @@
             {{for row in query :}}
 
                  <tr>
-                    <td> <input type="checkbox" name="custom_result[]" value="{{=row.results_file.id}}"> </td>
+                    <td> <input type="checkbox" name="custom_result[]" value="{{=row.results_file.id}}" {{if row.checked :}} checked {{pass}}> </td>
                     <td> {{=vidjil_utils.anon(row.sequence_file.patient_id, auth.user_id)}}</td>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}  {{pass}} id="sequence_file_{{=row.sequence_file.id}}">
                          {{=row.sequence_file.filename}}
