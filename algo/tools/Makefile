@@ -1,10 +1,10 @@
 CC=g++
 OPTIM=-O2 -DNDEBUG
 CXXFLAGS=-W -Wall -I.. $(OPTIM) $(DEBUG) $(CONFIG)
-LDFLAGS=-lm
+LDFLAGS=-lm -lz
 SRC=$(wildcard *.cpp)
 EXEC=$(SRC:.cpp=)
-LIBCORE=../core/vidjil.a
+LIBCORE=../core/vidjil.a ../lib/lib.a
 
 .PHONY: all core clean forcedep
 

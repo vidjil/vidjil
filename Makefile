@@ -63,10 +63,10 @@ should_coverage: clean
 
 unit_gcovr: unit_coverage
 	mkdir -p reports
-	which gcovr > /dev/null && (cd algo;  gcovr -r . -e tests/ --xml > reports/unit_coverage.xml) || echo "gcovr is needed to generate a full report"
+	which gcovr > /dev/null && (cd algo;  gcovr -r . -e tests/ --xml > ../reports/unit_coverage.xml) || echo "gcovr is needed to generate a full report"
 should_gcovr: should_coverage
 	mkdir -p reports
-	which gcovr > /dev/null && (cd algo; gcovr -r . -e tests/ --xml > reports/should_coverage.xml) || echo "gcovr is needed to generate a full report"
+	which gcovr > /dev/null && (cd algo; gcovr -r . -e tests/ --xml > ../reports/should_coverage.xml) || echo "gcovr is needed to generate a full report"
 
 ### Upload to coveralls.io
 

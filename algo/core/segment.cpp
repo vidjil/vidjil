@@ -77,6 +77,10 @@ bool Segmenter::isDSegmented() const {
   return dSegmented;
 }
 
+bool KmerSegmenter::isDetected() const {
+  return detected;
+}
+
 // Chevauchement
 
 string Segmenter::removeChevauchement()
@@ -166,23 +170,19 @@ ostream &operator<<(ostream &out, const Segmenter &s)
 
 // KmerSegmenter (Cheap)
 
-KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
+KmerSegmenter::KmerSegmenter() { kaa = 0 ; }
+
+KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
 {
   label = seq.label ;
   sequence = seq.sequence ;
   info = "" ;
   info_extra = "seed";
   segmented = false;
-  segmented_germline = 0;
+  segmented_germline = germline ;
   reversed = false;
   Dend=0;
   
-  // Iterate over the germlines
-  for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
-    {
-      Germline *germline = *it ;
-      segmented_germline = germline;
-
   int s = (size_t)germline->index->getS() ;
   int length = sequence.length() ;
 
@@ -190,7 +190,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
     {
       because = UNSEG_TOO_SHORT;
       kaa = NULL;
-      continue ;
+      return ;
     }
  
   kaa = new KmerAffectAnalyser(*(germline->index), sequence);
@@ -227,8 +227,6 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
   if (segmented)
     {
       // Yes, it is segmented
-      germline->stats.insert(length);
-
       reversed = (strand == -1); 
       because = reversed ? SEG_MINUS : SEG_PLUS ;
 
@@ -240,16 +238,60 @@ KmerSegmenter::KmerSegmenter(Sequence seq, MultiGermline *multigermline)
       return ;
     } 
 
-  // If the germline was detected, do not test other germlines
-  if (detected)
-    return ;
-
-  } // end for (Germlines)
+ 
 }
 
 KmerSegmenter::~KmerSegmenter() {
-  if (kaa)
-    delete kaa;
+  // if (kaa)
+  //   delete kaa;
+}
+
+KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented)
+{
+  int best_score = 0 ;
+  
+  // Iterate over the germlines
+  for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
+    {
+      Germline *germline = *it ;
+
+      KmerSegmenter kseg(seq, germline);
+
+      if (out_unsegmented)
+        {
+          // Debug, display k-mer affectation and segmentation result for this germline
+          *out_unsegmented << "#"
+                           << left << setw(4) << kseg.segmented_germline->code << " "
+                           << left << setw(20) << segmented_mesg[kseg.getSegmentationStatus()] << " ";
+
+          if (kseg.isSegmented())
+            *out_unsegmented << right << setw(3) << kseg.score << " ";
+          else
+            *out_unsegmented << "    " ;
+          
+          if (kseg.getSegmentationStatus() != UNSEG_TOO_SHORT) 
+            *out_unsegmented << kseg.getKmerAffectAnalyser()->toString();
+
+          *out_unsegmented << endl ;
+        }
+
+      if (!best_score)
+        the_kseg = kseg;
+      
+      if (kseg.isSegmented())
+        {
+          // Yes, it is segmented
+          if (kseg.score > best_score)
+            {
+              the_kseg = kseg ;
+              best_score = kseg.score ;
+            }
+        }
+      
+    } // end for (Germlines)  
+}
+
+KmerMultiSegmenter::~KmerMultiSegmenter() {
 }
 
 void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
@@ -258,6 +300,8 @@ void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
 
   segmented = true ;
   because = 0 ; // Cause of unsegmentation
+  score = 0 ;
+  affect_infos max;
 
   // Zero information
   if (strand == 0)
@@ -270,7 +314,6 @@ void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
     } 
   else
     {
-      affect_infos max;
       if (strand == 1)
         max = kaa->getMaximum(KmerAffect(germline->affect_5, 1), 
 			      KmerAffect(germline->affect_3, 1));
@@ -320,6 +363,8 @@ void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
     } 
   if (because)
     segmented = false;
+  else
+    score = max.nb_before_left + max.nb_before_right + max.nb_after_left + max.nb_after_right;  
 }
 
 KmerAffectAnalyser *KmerSegmenter::getKmerAffectAnalyser() const {

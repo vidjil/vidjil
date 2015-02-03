@@ -1,12 +1,12 @@
-!LAUNCH: ../../vidjil -r 5 -o out2 -u -U -v -G ../../germline/IGH ../../data/Stanford_S22.fasta ; tail out2/Stanford_S22.segmented.vdj.fa out2/Stanford_S22.unsegmented.fa
+!LAUNCH: ../../vidjil -r 5 -o out2 -u -U -v -G ../../germline/IGH ../../data/Stanford_S22.fasta ; tail out2/Stanford_S22.segmented.vdj.fa ; grep not out2/Stanford_S22.affects
 # Testing uncommon and debug options 
 
 $ verbose (-v)
 2:auditioned sequences
 
 $ segmented.fa (-U)
-1:>lcl.FLN1FA001BCDD7.1. .* seed
+1:>lcl.FLN1FA001BCDD7.1. .* seed IGH
 
 $ unsegmented.fa (-u)
-1:>lcl.FLN1FA002PX5D6.1.
+1:>lcl.FLN1FA002PX5D6.1. not segmented
 

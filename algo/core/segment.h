@@ -141,12 +141,16 @@ class KmerSegmenter : public Segmenter
   string affects;
 
  public:
+  bool isDetected() const;
+  int score;
+
+  KmerSegmenter();
   /**
    * Build a segmenter based on KmerSegmentation
    * @param seq: An object read from a FASTA/FASTQ file
-   * @param multigermline: the multigermline
+   * @param germline: the germline
    */
-  KmerSegmenter(Sequence seq, MultiGermline *multigermline);
+  KmerSegmenter(Sequence seq, Germline *germline);
 
   ~KmerSegmenter();
 
@@ -166,6 +170,21 @@ class KmerSegmenter : public Segmenter
  private:
   void computeSegmentation(int strand, Germline* germline);
 };
+
+
+class KmerMultiSegmenter
+{
+ public:
+  /**
+   * @param seq: An object read from a FASTA/FASTQ file
+   * @param multigermline: the multigermline
+   */
+  KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented);
+  ~KmerMultiSegmenter();
+
+  KmerSegmenter the_kseg;
+};
+
 
 class FineSegmenter : public Segmenter
 {

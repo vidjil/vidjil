@@ -20,12 +20,21 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
   while (reads->hasNext()) {
     reads->next();
     nb_reads++;
+
+    if (out_unsegmented) {      
+      *out_unsegmented << reads->getSequence();
+    }
     
-    KmerSegmenter seg(reads->getSequence(), multigermline);
+    KmerMultiSegmenter kmseg(reads->getSequence(), multigermline, out_unsegmented);
+    
+    KmerSegmenter seg = kmseg.the_kseg ;
     int read_length = seg.getSequence().sequence.length();
 
     stats[seg.getSegmentationStatus()].insert(read_length);
     if (seg.isSegmented()) {
+
+      seg.segmented_germline->stats.insert(read_length);
+
       junction junc = seg.getJunction(w);
 
       if (junc.size()) {
@@ -38,18 +47,16 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
       if (out_segmented) {
         *out_segmented << seg ; // KmerSegmenter output (V/N/J)
 
-        if (out_unsegmented)
+        if (out_unsegmented) {
 	  *out_segmented << seg.getKmerAffectAnalyser()->toString() << endl;
+          *out_unsegmented << "#>" << reads->getSequence().label << " segmented on " << seg.segmented_germline->code << endl << endl;
+        }
       }
       
       nb_reads_germline[seg.system]++;
       
     } else if (out_unsegmented) {
-      *out_unsegmented << reads->getSequence();
-      *out_unsegmented << "#" << segmented_mesg[seg.getSegmentationStatus()] << " " << seg.segmented_germline->code << endl;
-      if (seg.getSegmentationStatus() != UNSEG_TOO_SHORT) {
-        *out_unsegmented << seg.getKmerAffectAnalyser()->toString() << endl;
-      }
+      *out_unsegmented << "#>" << reads->getSequence().label << " not segmented" << endl << endl;
     }
   }
   return windowsStorage;
