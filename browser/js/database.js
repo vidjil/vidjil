@@ -31,12 +31,10 @@ Database.prototype = {
         
         var self = this;
         var arg = "";
-        if (typeof args != "undefined" && Object.keys(args).length) arg = "?"
-        for (var key in args) {
-            arg += "" + key + "=" + args[key] + "&";
-        }
+        if (typeof args != "undefined" && Object.keys(args).length) 
+            var arg = this.argsToStr(args)
         
-        var url = self.db_address + page + arg
+        var url = self.db_address + page + "?" + arg
         if (page.substr(0,4).toLowerCase() == "http") {
             url = page + arg
         }
