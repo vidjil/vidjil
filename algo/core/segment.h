@@ -179,7 +179,7 @@ class KmerMultiSegmenter
    * @param seq: An object read from a FASTA/FASTQ file
    * @param multigermline: the multigermline
    */
-  KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline);
+  KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented);
   ~KmerMultiSegmenter();
 
   KmerSegmenter the_kseg;

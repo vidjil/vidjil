@@ -246,7 +246,7 @@ KmerSegmenter::~KmerSegmenter() {
   //   delete kaa;
 }
 
-KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline)
+KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented)
 {
   int best_score = 0 ;
   
@@ -256,6 +256,18 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
       Germline *germline = *it ;
 
       KmerSegmenter kseg(seq, germline);
+
+      if (out_unsegmented)
+        {
+          // Debug, display k-mer affectation and segmentation result for this germline
+          *out_unsegmented << "#"
+                           << left << setw(4) << kseg.segmented_germline->code << " "
+                           << left << setw(20) << segmented_mesg[kseg.getSegmentationStatus()] << " ";
+          if (kseg.getSegmentationStatus() != UNSEG_TOO_SHORT) 
+            *out_unsegmented << kseg.getKmerAffectAnalyser()->toString();
+
+          *out_unsegmented << endl ;
+        }
 
       if (!best_score)
         the_kseg = kseg;
