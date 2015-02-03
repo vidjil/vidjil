@@ -89,7 +89,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define CLONE_FILENAME "clone.fa-"
 #define WINDOWS_FILENAME ".windows.fa"
 #define SEGMENTED_FILENAME ".segmented.vdj.fa"
-#define UNSEGMENTED_FILENAME ".unsegmented.fa"
+#define AFFECTS_FILENAME ".affects"
 #define EDGES_FILENAME ".edges"
 #define COMP_FILENAME "comp.vidjil"
 #define JSON_SUFFIX ".vidjil"
@@ -203,8 +203,7 @@ void usage(char *progname)
 
        << "Debug" << endl
        << "  -U            output segmented (in " << SEGMENTED_FILENAME << " file) sequences" << endl
-       << "  -u            output unsegmented (in " << UNSEGMENTED_FILENAME << " file) sequences" << endl
-       << "                and display detailed k-mer affectation both on segmented and on unsegmented sequences" << endl
+       << "  -u            output detailed k-mer affectation both on segmented and on unsegmented sequences (in " << AFFECTS_FILENAME << " file)" << endl
        << "Output" << endl
        << "  -o <dir>      output directory (default: " << DEFAULT_OUT_DIR << ")" <<  endl
        << "  -b <string>   output basename (by default basename of the input file)" << endl
@@ -854,7 +853,7 @@ int main (int argc, char **argv)
     }
 
     if (output_unsegmented) {
-      string f_unsegmented = out_dir + f_basename +  UNSEGMENTED_FILENAME ;
+      string f_unsegmented = out_dir + f_basename + AFFECTS_FILENAME ;
       cout << "  ==> " << f_unsegmented << endl ;
       out_unsegmented = new ofstream(f_unsegmented.c_str());
       we.setUnsegmentedOutput(out_unsegmented);
