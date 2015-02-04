@@ -166,7 +166,7 @@ void DynProg::init()
   else if (mode == GlobalButMostlyLocal)
     for (int j=0; j<=n; j++)
       B[0][j].score = j * cost.deletion / 2 ;
-  else
+  else // Global
     for (int j=0; j<=n; j++)
       B[0][j].score = j * cost.deletion ;
 }
