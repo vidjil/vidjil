@@ -170,7 +170,7 @@ class KmerSegmenter : public Segmenter
   int getSegmentationStatus() const;
 
  private:
-  void computeSegmentation(int strand, Germline* germline);
+  void computeSegmentation(int strand, KmerAffect left, KmerAffect right);
 };
 
 

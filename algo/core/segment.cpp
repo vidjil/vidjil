@@ -208,25 +208,53 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
     }
   }
 
-  // Test on which strand we are.
+  KmerAffect before, after;
+
+  // Test on which strand we are, select the before and after KmerAffects
   if (nb_strand[0] == 0 && nb_strand[1] == 0) {
-    strand = 0;                 // No info
+    because = because = UNSEG_TOO_FEW_ZERO ;
+    return ;
   } else if (nb_strand[0] > RATIO_STRAND * nb_strand[1]) {
     strand = -1;
+    before = KmerAffect(germline->affect_3, -1); 
+    after = KmerAffect(germline->affect_5, -1);
   } else if (nb_strand[1] > RATIO_STRAND * nb_strand[0]) {
     strand = 1;
+    before = KmerAffect(germline->affect_5, 1); 
+    after = KmerAffect(germline->affect_3, 1);    
   } else {
     // Ambiguous information: we have positive and negative strands
     // and there is not enough difference to put them aparat.
-    strand = 2;
+    because = UNSEG_STRAND_NOT_CONSISTENT ;
+    return ;
   }
 
   detected = false ;
-  computeSegmentation(strand, germline);
+  computeSegmentation(strand, before, after);
 
-  if (segmented)
+  if (! because)
+    {
+      // Now we check the delta between Vend and right
+   
+      if (Jstart - Vend < germline->delta_min)
+	{
+	  because = UNSEG_BAD_DELTA_MIN ;
+	}
+
+      if (Jstart - Vend > germline->delta_max)
+	{
+	  because = UNSEG_BAD_DELTA_MAX ;
+	}
+    } 
+
+  if (because)
+    {
+      score = 0 ;
+    }
+  else
     {
       // Yes, it is segmented
+      segmented = true;
       reversed = (strand == -1); 
       because = reversed ? SEG_MINUS : SEG_PLUS ;
 
@@ -302,33 +330,15 @@ KmerMultiSegmenter::~KmerMultiSegmenter() {
     delete the_kseg;
 }
 
-void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
-  // Try to segment, computing 'Vend' and 'Jstart', and 'segmented'
+void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffect after) {
+  // Try to segment, computing 'Vend' and 'Jstart'
   // If not segmented, put the cause of unsegmentation in 'because'
 
-  segmented = true ;
   because = 0 ; // Cause of unsegmentation
   score = 0 ;
   affect_infos max;
 
-  // Zero information
-  if (strand == 0)
-    {
-      because = UNSEG_TOO_FEW_ZERO ;
-    } 
-  else if (strand == 2) // Ambiguous
-    {
-      because = UNSEG_STRAND_NOT_CONSISTENT ;
-    } 
-  else
-    {
-      if (strand == 1)
-        max = kaa->getMaximum(KmerAffect(germline->affect_5, 1), 
-			      KmerAffect(germline->affect_3, 1));
-      else
-        max = kaa->getMaximum(KmerAffect(germline->affect_3, -1), 
-			      KmerAffect(germline->affect_5, -1));
-
+  max = kaa->getMaximum(before, after); 
 
       // We labeled it detected if there were both enough affect_5 and enough affect_3
       detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
@@ -353,25 +363,7 @@ void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
           Jstart = tmp;
         }
       }
-    } 
   
-  if (! because)
-    {
-      // Now we check the delta between Vend and right
-   
-      if (Jstart - Vend < germline->delta_min)
-	{
-	  because = UNSEG_BAD_DELTA_MIN ;
-	}
-
-      if (Jstart - Vend > germline->delta_max)
-	{
-	  because = UNSEG_BAD_DELTA_MAX ;
-	}
-    } 
-  if (because)
-    segmented = false;
-  else
     score = max.nb_before_left + max.nb_before_right + max.nb_after_left + max.nb_after_right;  
 }
 
