@@ -242,56 +242,64 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
 }
 
 KmerSegmenter::~KmerSegmenter() {
-  // if (kaa)
-  //   delete kaa;
+  if (kaa)
+    delete kaa;
 }
 
 KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented)
 {
   int best_score = 0 ;
+  the_kseg = NULL;
   
   // Iterate over the germlines
   for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
     {
       Germline *germline = *it ;
 
-      KmerSegmenter kseg(seq, germline);
+      KmerSegmenter *kseg = new KmerSegmenter(seq, germline);
+      bool keep_seg = false;
 
       if (out_unsegmented)
         {
           // Debug, display k-mer affectation and segmentation result for this germline
           *out_unsegmented << "#"
-                           << left << setw(4) << kseg.segmented_germline->code << " "
-                           << left << setw(20) << segmented_mesg[kseg.getSegmentationStatus()] << " ";
+                           << left << setw(4) << kseg->segmented_germline->code << " "
+                           << left << setw(20) << segmented_mesg[kseg->getSegmentationStatus()] << " ";
 
-          if (kseg.isSegmented())
-            *out_unsegmented << right << setw(3) << kseg.score << " ";
+          if (kseg->isSegmented())
+            *out_unsegmented << right << setw(3) << kseg->score << " ";
           else
             *out_unsegmented << "    " ;
           
-          if (kseg.getSegmentationStatus() != UNSEG_TOO_SHORT) 
-            *out_unsegmented << kseg.getKmerAffectAnalyser()->toString();
+          if (kseg->getSegmentationStatus() != UNSEG_TOO_SHORT) 
+            *out_unsegmented << kseg->getKmerAffectAnalyser()->toString();
 
           *out_unsegmented << endl ;
         }
 
       if (!best_score)
-        the_kseg = kseg;
+        keep_seg = true;
       
-      if (kseg.isSegmented())
+      if (kseg->isSegmented())
         {
           // Yes, it is segmented
-          if (kseg.score > best_score)
+          if (kseg->score > best_score)
             {
-              the_kseg = kseg ;
-              best_score = kseg.score ;
+              keep_seg = true;
+              best_score = kseg->score ;
             }
         }
-      
+      if (keep_seg) {
+        the_kseg = kseg;
+      } else {
+        delete kseg;
+      }
     } // end for (Germlines)  
 }
 
 KmerMultiSegmenter::~KmerMultiSegmenter() {
+  if (the_kseg)
+    delete the_kseg;
 }
 
 void KmerSegmenter::computeSegmentation(int strand, Germline* germline) {
