@@ -316,6 +316,13 @@ Model.prototype = {
             }
         }
         self.min_sizes = min_sizes;
+
+        // save reads.segmented     
+        this.reads.segmented_all = []                                                                                                                                                                                     
+        for (var i=0 ; i<this.reads.segmented.length; i++){
+            this.reads.segmented_all[i] = this.reads.segmented[i]
+        }
+
         
         //extract germline
         if (typeof self.germlines != 'undefined'){
