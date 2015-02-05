@@ -674,6 +674,11 @@ Builder.prototype = {
         parent.appendChild(div_date)
 
 
+        // Total
+        var div_total = this.build_info_line("info_total", "total", this.m.toStringThousands(this.m.reads.total[this.m.t]) + " reads")
+        parent.appendChild(div_total)
+
+
         // Segmented reads
         var val = "no reads segmented" ;
 
@@ -709,10 +714,6 @@ Builder.prototype = {
             parent.appendChild(div_segmented)
         }
   
-        // Total
-        var div_total = this.build_info_line("info_total", "total", this.m.toStringThousands(this.m.reads.total[this.m.t]) + " reads")
-        parent.appendChild(div_total)
-
 
         var div_color = this.build_info_color()
         parent.appendChild(div_color) 
