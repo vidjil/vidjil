@@ -1200,8 +1200,8 @@ Model.prototype = {
         html = "<h2>Point info : " + this.getStrTime(timeID, "name") + "("+m.getSampleTime(timeID)+")</h2>"
         html += "<div id='info_timepoint'><table><tr><th></th>"
         html += "<tr><td> reads </td><td>" + this.reads.total[timeID] + "</td></tr>"
-        html += "<tr><td> reads segmented </td><td>" + this.reads.segmented[timeID] +
-            " ("+ (this.reads.segmented[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )</td></tr>"
+        html += "<tr><td> reads segmented </td><td>" + this.reads.segmented_all[timeID] +
+            " ("+ (this.reads.segmented_all[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )</td></tr>"
 
         html += "<tr><td> software used </td><td>" + this.getSoftVersionTime(timeID) + "</td></tr>"
         html += "<tr><td> parameters </td><td>" + this.getCommandTime(timeID) + "</td></tr>"
