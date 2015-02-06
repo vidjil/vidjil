@@ -65,6 +65,11 @@ public:
    */ 
   KmerAffect(const KmerAffect &ka);
 
+  /*
+   * Copy constructor, possibly reversing the strand if 'reverse' is true
+   */
+  KmerAffect(const KmerAffect &ka, bool reverse);
+     
   /**
    * Construct an affectation as stated by the parameters
    * @post affect_strand(affect) == strand AND affect_char(affect) == kmer[0]
