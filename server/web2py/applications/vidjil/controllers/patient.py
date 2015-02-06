@@ -116,6 +116,7 @@ def custom():
         
 
     q = ((auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) 
+                & (auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) 
                 & (db.sequence_file.patient_id==db.patient.id)
                 & (db.results_file.sequence_file_id==db.sequence_file.id)
                 & (db.results_file.scheduler_task_id==db.scheduler_task.id)
