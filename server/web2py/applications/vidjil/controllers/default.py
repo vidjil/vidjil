@@ -528,13 +528,7 @@ def delete_file():
             redirect( URL(f='patient', args=[patient_id]) )
         except:
             redirect( URL(f='patient', args=[patient_id]) )
-
-
-#########################################################################
-## not used
-def upload():
-        return dict()
-
+    
 def user():
     """
     exposes:
@@ -551,8 +545,31 @@ def user():
     to decorate functions that need access control
     """
 
+    #redirect already logged user 
     if auth.user and request.args[0] == 'login' :
         res = {"redirect" : URL('patient', 'index', scheme=True, host=True)}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
+    
+    #only authentified admin user can access register view
+    if auth.user and request.args[0] == 'register' :
+        #save admin session (the registering will automatically login the new user in order to initialize its default values)
+        admin_auth = session.auth
+        auth.is_logged_in = lambda: False
+        
+        def post_register(form):
+            #default values for new user
+            group_id = db(db.auth_group.role == 'public' ).select()[0].id
+            db.auth_membership.insert(user_id = auth.user.id, group_id = group_id)
+            #restore admin session after register
+            session.auth = admin_auth
+            auth.user = session.auth.user
+            
+        auth.settings.register_onaccept = post_register
+        return dict(form=auth.register())
+    
+    #reject others
+    if request.args[0] == 'register' :
+        res = {"message": "you need to be admin and logged to add new users"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
     return dict(form=auth())
