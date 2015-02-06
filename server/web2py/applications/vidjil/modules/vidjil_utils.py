@@ -19,6 +19,10 @@ def format_size(n, unit='B'):
     >>> format_size(42*(2**40))
     '46.2 TB'
     '''
+
+    if n == 0:
+        return '0'
+
     size = float(n)
     PREFIXES = ['', 'k', 'M', 'G', 'T', 'P']
 
