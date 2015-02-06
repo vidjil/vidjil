@@ -139,6 +139,7 @@ void KmerRepresentativeComputer::compute() {
     representative.sequence = representative.sequence.substr(pos_longest_run, length_longest_run);
     representative.label = representative.label + "-[" + string_of_int(pos_longest_run) + "," 
       + string_of_int(pos_longest_run + length_longest_run - 1) + "]";
+    representative.quality = "";
   }
   delete index;
 }
