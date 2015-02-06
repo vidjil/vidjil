@@ -48,6 +48,9 @@ def run_request():
         error += "id sequence file needed, "
     if not "config_id" in request.vars:
         error += "id config needed, "
+        id_config = None
+    else:
+        id_config = request.vars["config_id"]
     if not auth.has_permission("run", "results_file") :
         error += "permission needed"
 
@@ -56,7 +59,8 @@ def run_request():
     if not auth.has_permission('admin', 'patient', id_patient) :
         error += "you do not have permission to launch process for this patient ("+str(id_patient)+"), "
 
-    if not auth.has_permission('admin', 'config', id_config) :
+    if id_config:
+      if not auth.has_permission('admin', 'config', id_config) :
         error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
 
     if error == "" :
