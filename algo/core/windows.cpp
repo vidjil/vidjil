@@ -23,7 +23,10 @@ string WindowsStorage::getLabel(junction window) {
 }
 
 Germline *WindowsStorage::getGermline(junction window) {
-  return germline_by_window[window];   
+  map<junction, Germline *>::iterator result = germline_by_window.find(window);
+  if (result == germline_by_window.end())
+    return NULL;
+  return result->second;
 }
 
 JsonList WindowsStorage::statusToJson(junction window) {

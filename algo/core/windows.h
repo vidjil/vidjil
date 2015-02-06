@@ -39,6 +39,10 @@ class WindowsStorage {
    */
   WindowsStorage(map<string, string> &labels);
 
+  /**
+   * @return a pointer to the germline of the window
+   *         or NULL if the window doesn't exist.
+   */
   Germline *getGermline(junction window);
   
   JsonList statusToJson(junction window);
