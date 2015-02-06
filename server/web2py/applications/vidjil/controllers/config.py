@@ -97,3 +97,71 @@ def delete():
     res = {"redirect": "config/index",
            "message": "config deleted"}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+
+def permission(): 
+    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+        
+        query = db( db.auth_group.role != 'admin' ).select()
+        
+        for row in query :
+            row.owner = row.role
+            if row.owner[:5] == "user_" :
+                id = int(row.owner[5:])
+                row.owner = db.auth_user[id].first_name + " " + db.auth_user[id].last_name 
+
+            row.admin = False
+            if db(   (db.auth_permission.name == "admin")
+                  & (db.auth_permission.record_id == request.vars["id"])
+                  & (db.auth_permission.group_id == row.id)
+                  & (db.auth_permission.table_name == db.config)
+              ).count() > 0 :
+                row.admin = True
+                
+            row.read = False
+            if db(   (db.auth_permission.name == "read")
+                  & (db.auth_permission.record_id == request.vars["id"])
+                  & (db.auth_permission.group_id == row.id)
+                  & (db.auth_permission.table_name == db.config)
+              ).count() > 0 :
+                row.read = True
+        
+        return dict(query = query)
+    else :
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
+#TODO refactor with patient/change_permission
+def change_permission():
+    if (auth.has_permission('admin', 'config', request.vars["config_id"]) ):
+        error = ""
+        if request.vars["group_id"] == "" :
+            error += "missing group_id, "
+        if request.vars["config_id"] == "" :
+            error += "missing patient_id, "
+        if request.vars["permission"] == "" :
+            error += "missing permission, "
+
+        if error=="":
+            if db(   (db.auth_permission.name == request.vars["permission"])
+                      & (db.auth_permission.record_id == request.vars["config_id"])
+                      & (db.auth_permission.group_id == request.vars["group_id"])
+                      & (db.auth_permission.table_name == db.config)
+                  ).count() > 0 :
+                auth.del_permission(request.vars["group_id"], request.vars["permission"], db.config, request.vars["config_id"])
+                res = {"message" : "access '%s' deleted to '%s'" % (request.vars["permission"], db.auth_group[request.vars["group_id"]].role)}
+            else :
+                auth.add_permission(request.vars["group_id"], request.vars["permission"], db.config, request.vars["config_id"])
+                res = {"message" : "access '%s' granted to '%s'" % (request.vars["permission"], db.auth_group[request.vars["group_id"]].role)}
+            
+            log.info(res)
+            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        else :
+            res = {"message": "incomplete request : "+error }
+            log.error(res)
+            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    else :
+        res = {"message": ACCESS_DENIED}
+        log.error(res)
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
