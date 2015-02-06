@@ -1,20 +1,24 @@
 {{extend 'db_layout.html'}}
 
 </br>
-<a class="button" onclick="db.call('results_file/index');">liste des fichiers result (data)</a>
+<a class="button" onclick="db.call('default/user/register');">register new user</a>
 
 </br>
-<a class="button" onclick="db.call('admin/repair_missing_files');">fix missing files problem</a>
+<a class="button" onclick="db.call('results_file/index');">.vidjil file list</a>
+
+</br>Database maintenace:
+<a class="button" onclick="db.call('admin/repair_missing_files');">fix missing files</a>
+</br>
+
+<hr>
+
+</br>Vidjil server:
+<a class="button" onclick="db.call('admin/log', {'file' : 'vidjil.log'} );">vidjil.log</a>
+<a class="button" onclick="db.call('admin/log', {'file' : 'vidjil-debug.log'} );">debug.log</a>
+
+
 
 </br>
-<a class="button" onclick="db.call('admin/log', {'file' : 'vidjil.log'} );">log</a>
-
-</br>
-<a class="button" onclick="db.call('admin/log', {'file' : 'vidjil-debug.log'} );">debug log</a>
-
-</br>
-<a class="button" onclick="db.call('default/user/register');">register user</a>
-
 </br>
 
 <div>
