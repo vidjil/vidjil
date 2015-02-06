@@ -111,6 +111,19 @@ enum {
   TEST_EXTRACTOR_OUT_SEG,
   TEST_EXTRACTOR_OUT_UNSEG,
 
+  /* WindowsStorage */
+  TEST_WS_GET_GERMLINE,
+  TEST_WS_GET_GERMLINE_NONE,
+  TEST_WS_SIZE,
+  TEST_WS_SIZE_NONE,
+  TEST_WS_GET_LABEL_NONE,
+  TEST_WS_GET_READS_SINGLE,
+  TEST_WS_GET_READS,
+  TEST_WS_SORT,
+  TEST_WS_TOP_GERMLINES_ONE,
+  TEST_WS_TOP_GERMLINES_NONE,
+  TEST_WS_TOP_GERMLINES_MULTI,
+
   /* Bugs */
   TEST_BUG_SEGMENTATION,
   TEST_SEGMENT_POSITION,
@@ -219,6 +232,18 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_EXTRACTOR_AVG_LENGTH, "Test getAverageSegmentationLength() in WindowsExtractor");
   RECORD_TAP_TEST(TEST_EXTRACTOR_OUT_SEG, "Test segmentation output for WindowsExtractor");
   RECORD_TAP_TEST(TEST_EXTRACTOR_OUT_UNSEG, "Test unsegmentation output for WindowsExtractor");
+
+  RECORD_TAP_TEST(TEST_WS_GET_GERMLINE, "Test WindowsStorage::getGermline");
+  RECORD_TAP_TEST(TEST_WS_GET_GERMLINE_NONE, "Test WindowsStorage::getGermline() with undefined window");
+  RECORD_TAP_TEST(TEST_WS_SIZE, "Test WindowsStorage::size()");
+  RECORD_TAP_TEST(TEST_WS_SIZE_NONE, "Test WindowsStorage::size() when empty");
+  RECORD_TAP_TEST(TEST_WS_GET_LABEL_NONE, "Test WindowsStorage::getLabel() with no label");
+  RECORD_TAP_TEST(TEST_WS_GET_READS_SINGLE, "Test WindowsStorage::getReads() with single result");
+  RECORD_TAP_TEST(TEST_WS_GET_READS, "Test WindowsStorage::getReads() with several results");
+  RECORD_TAP_TEST(TEST_WS_SORT, "Test WindowsStorage is correctly sorted");
+  RECORD_TAP_TEST(TEST_WS_TOP_GERMLINES_ONE, "Test WindowsStorage::getTopGermlines() with the most abundant germline");
+  RECORD_TAP_TEST(TEST_WS_TOP_GERMLINES_NONE, "Test WindowsStorage::getTopGermlines() with no germline fulfilling the requirements");
+  RECORD_TAP_TEST(TEST_WS_TOP_GERMLINES_MULTI, "Test WindowsStorage::getTopGermlines() with several germlines");
 
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE, "Test KmerRepresentativeComputer computations");
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE_REQUIRED_SEQ, "Test KmerRepresentativeComputer computations with a required sequence");
