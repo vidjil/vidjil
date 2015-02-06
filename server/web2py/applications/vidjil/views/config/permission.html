@@ -1,0 +1,51 @@
+{{extend 'db_layout.html'}}
+{{import vidjil_utils}}
+
+<div>
+    <h3>
+        Config {{=db.config[request.vars["id"]].name}}
+    </h3>
+
+    <div id="db_table_container">
+        <table class="db_table" id="table">
+            <thead>
+                <tr><td class="column_200"> group / user</td>
+                    <td> </td>
+                    <td class="column1"> read</td>
+                    <td class="column1"> admin</td>
+                </tr>
+            </thead>
+            {{admin = auth.has_permission("admin", "config", request.vars["id"], auth.user.id)}}
+            {{ for row in query :}}
+                <tr>
+                    <td> {{=row.owner}} </td>
+                    <td></td>
+                    {{if admin :}}
+                        <td> <input type="checkbox" onclick="db.call('config/change_permission', {
+                                                                      'config_id' : {{=request.vars["id"]}} ,
+                                                                      'group_id' : {{=row.id}} ,
+                                                                      'permission' : 'read' } )"
+                                    {{if row.read :}} checked {{pass}}></td>
+                        <td> <input type="checkbox" onclick="db.call('config/change_permission', {
+                                                                      'config_id' : {{=request.vars["id"]}} ,
+                                                                      'group_id' : {{=row.id}} ,
+                                                                      'permission' : 'admin' } )"
+                                    {{if row.admin :}} checked {{pass}}></td>
+                    {{else:}}
+                        <td class="inactive"> <input type="checkbox" onclick="this.click()"
+                                    {{if row.read :}} checked {{pass}}></td>
+                        <td class="inactive"> <input type="checkbox" onclick="this.click()"
+                                    {{if row.admin :}} checked {{pass}}></td>
+                    {{pass}}
+                </tr>
+            {{pass}}
+        </table>
+        <table class="db_table" id="db_fixed_header"></table>    
+    </div>
+
+    {{if not auth.has_permission("admin", "config", request.vars["id"], auth.user.id) :}}
+        <div>you need admin access on this patient if you want to change permission </div>
+    {{pass}}
+
+    
+</div>
