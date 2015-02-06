@@ -6,11 +6,11 @@ if request.env.http_origin:
 
 ## return group list
 def index():
-    return dict(message=T('group list'))
+    return dict(message=T('Groups'))
 
 ## return an html form to add a group
 def add(): 
-    return dict(message=T('new group'))
+    return dict(message=T('New group'))
 
 
 ## create a group if the html form is complete

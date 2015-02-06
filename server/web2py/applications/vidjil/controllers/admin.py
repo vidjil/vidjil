@@ -87,5 +87,5 @@ def repair_missing_files():
                 size = os.path.getsize(seq_file)
                 db.sequence_file[row.id] = dict(size_file = size)
                 
-        res = {"success" : "true", "message" : "path of missing files have been removed from the database"+flist}
+        res = {"success" : "true", "message" : "references to missing files have been removed from the database"+flist}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))

@@ -13,13 +13,13 @@ def index():
 
    query = db((auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) ).select() 
     
-   return dict(message=T('config_list'),
+   return dict(message=T('Configs'),
                query=query,
                isAdmin = auth.has_membership("admin"))
 
 
 def add(): 
-    return dict(message=T('add config'))
+    return dict(message=T('Add config'))
 
 
 #TODO check data
