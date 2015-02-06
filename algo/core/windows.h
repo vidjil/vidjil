@@ -98,7 +98,11 @@ class WindowsStorage {
   void setIdToAll();
 
   /**
-   * Add a new window with its list of sequences
+   * Add a new window with its sequence.
+   * @param window: the window to add
+   * @param sequence: the corresponding Sequence
+   * @param status: the segmentation status
+   * @param germline: the germline where this sequence has been segmented
    */
   void add(junction window, Sequence sequence, int status, Germline *germline);
 
