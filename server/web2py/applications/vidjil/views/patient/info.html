@@ -20,7 +20,7 @@
             <span>
                 <select id="choose_config" name="config" onchange="db.call('patient/info', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
                     <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
-                    {{for row in db(db.config).select(orderby=~db.config.name) :}}
+                    {{for row in db((auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) ).select(orderby=~db.config.name) :}}
                         <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} >
                             {{=row.name}}
                         </option>
