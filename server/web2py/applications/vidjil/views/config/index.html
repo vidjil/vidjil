@@ -13,20 +13,22 @@
                     <td class="column1"> program </td>
                     <td class="column2"> command </td>
                     <td> info </td>
+                    
+                    <td class="column5"> </td>
                     <td class="column5"> </td>
                     <td class="column5"> </td>
                 </tr>
             </thead>
            {{ 
-           query = None
            c_id = ""
-           query = db(db.config).select() 
            for row in query :}}
                 <tr>
                     <td> {{=row.name }} </td>
                     <td> {{=row.program }} </td>
                     <td> {{=row.command }} </td>
                     <td> {{=row.info }} </td>
+                    
+   {{if isAdmin:}} <td onclick="db.call('config/permission', {'id' :'{{=row.id}}'} )" > p </td> {{else:}} <td></td> {{pass}}
                     <td onclick="db.call('config/edit', {'id' :'{{=row.id}}'} )" > e </td>
                     <td onclick="db.call('config/confirm', {'id' :'{{=row.id}}'} )" > X </td>
                 </tr>

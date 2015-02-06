@@ -11,10 +11,11 @@ def index():
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 
-   query = db(db.config).select() 
+   query = db((auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) ).select() 
     
    return dict(message=T('config_list'),
-               query=query)
+               query=query,
+               isAdmin = auth.has_membership("admin"))
 
 
 def add(): 
