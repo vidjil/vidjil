@@ -74,6 +74,7 @@ enum {
   TEST_COUNT_AA_FIRST_MAX,
   TEST_COUNT_AA_LAST_MAX,
   TEST_COUNT_AA_MAX,
+  TEST_COUNT_AA_MAX12,
 
   /* Cluster */
   TEST_CLUSTER,
@@ -193,6 +194,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_COUNT_AA_FIRST_MAX, "CountKmerAffectAnalyser::firstMax");
   RECORD_TAP_TEST(TEST_COUNT_AA_LAST_MAX, "CountKmerAffectAnalyser::lastMax");
   RECORD_TAP_TEST(TEST_COUNT_AA_MAX, "CountKmerAffectAnalyser::max");
+  RECORD_TAP_TEST(TEST_COUNT_AA_MAX12, "CountKmerAffectAnalyser::max12");
 
   RECORD_TAP_TEST(TEST_CLUSTER, "Test automatic clusterisation");
 
