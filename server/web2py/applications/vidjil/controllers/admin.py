@@ -1,6 +1,6 @@
 # coding: utf8
 import gluon.contrib.simplejson, re
-import os.path
+import os.path, subprocess
 import vidjil_utils
 
 if request.env.http_origin:
@@ -12,7 +12,19 @@ if request.env.http_origin:
 ## return admin_panel
 def index():
     if auth.has_membership("admin"):
-        return dict(message=T(''))
+
+        p = subprocess.Popen(["uptime"], stdout=subprocess.PIPE)
+        uptime, err = p.communicate()
+        
+        p = subprocess.Popen(["df", "-h"], stdout=subprocess.PIPE)
+        disk_use, err = p.communicate()
+        
+        return dict(worker = len(db().select(db.scheduler_worker.ALL)),
+                    in_queue = len(db(db.scheduler_task.status=='QUEUED').select()),
+                    running = len(db(db.scheduler_task.status=='RUNNING').select()),
+                    uptime=uptime,
+                    disk_use=disk_use
+                    )
     
 def worker():
     if auth.has_membership("admin"):

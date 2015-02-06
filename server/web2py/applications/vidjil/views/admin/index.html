@@ -1,8 +1,5 @@
 {{extend 'db_layout.html'}}
 
-Bientot vous trouverez içi un magnifique panneau d'administration, en attendant voila un lapin.</br>
-<img src="http://upload.wikimedia.org/wikipedia/commons/3/3b/Rabbit_in_montana.jpg" style="width:200px; height:200px;"> 
-
 </br>
 <a class="button" onclick="db.call('results_file/index');">liste des fichiers result (data)</a>
 
@@ -17,3 +14,28 @@ Bientot vous trouverez içi un magnifique panneau d'administration, en attendant
 
 </br>
 <a class="button" onclick="db.call('default/user/register');">register user</a>
+
+</br>
+
+<div>
+    Worker status
+    <div class="console-div">
+        <div class="console-flex">active worker : {{=worker}}</div>
+        <div class="console-flex">run in process : {{=running}}</div>
+        <div class="console-flex">run in queue : {{=in_queue}}</div>
+    </div>
+</div>
+
+<div>
+    Server status
+    <div class="console-div">
+        <div class="console-flex">{{=uptime}}</div>
+    </div>
+</div>
+
+<div>
+    Server disk usage
+    <div class="console-div">
+        <div class="console-flex">{{=disk_use}}</div>
+    </div>
+</div>
