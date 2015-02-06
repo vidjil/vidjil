@@ -255,6 +255,37 @@ KmerAffect CountKmerAffectAnalyser::max(const set<KmerAffect> forbidden) const {
 }
 
 
+
+pair <KmerAffect, KmerAffect> CountKmerAffectAnalyser::max12(const set<KmerAffect> forbidden) const {
+  map<KmerAffect, int* >::const_iterator it = counts.begin();
+  KmerAffect max1_affect = KmerAffect::getUnknown();
+  KmerAffect max2_affect = KmerAffect::getUnknown();
+  int max1_count = -1;
+  int max2_count = -1;
+  
+  for (; it != counts.end(); it++) {
+    if (forbidden.count(it->first) == 0) {
+      int current_count = count(it->first);
+      if (current_count > max1_count)
+        {
+          max2_affect = max1_affect ;
+          max2_count = max1_count ;
+          max1_affect = it->first ;
+          max1_count = current_count ;
+        }
+      else if (current_count > max2_count) 
+        {            
+          max2_affect = it->first;
+          max2_count = current_count;
+        }      
+    }
+  }
+
+  return make_pair(max1_affect, max2_affect);
+}
+
+
+
 int CountKmerAffectAnalyser::countBefore(const KmerAffect&affect, int pos) const {
   if (pos == 0 || counts.count(affect) == 0)
     return 0;

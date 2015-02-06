@@ -66,6 +66,13 @@ void testKmerAffectClass() {
   TAP_TEST(KAVm.affect == Vminus, TEST_KMERAFFECT_CONSTRUCTOR, "");
   TAP_TEST(KAJp.affect == Jplus, TEST_KMERAFFECT_CONSTRUCTOR, "");
 
+  KmerAffect copy1(KAVp, false);
+  KmerAffect copy2(KAVp, true);
+  TAP_TEST(copy1.getLabel() == KAVp.getLabel(), TEST_KMERAFFECT_CONSTRUCTOR_COPY_REVERSE, "");
+  TAP_TEST(copy2.getLabel() == KAVp.getLabel(), TEST_KMERAFFECT_CONSTRUCTOR_COPY_REVERSE, "");
+  TAP_TEST(copy1.getStrand() == KAVp.getStrand(), TEST_KMERAFFECT_CONSTRUCTOR_COPY_REVERSE, "");
+  TAP_TEST(copy2.getStrand() == -KAVp.getStrand(), TEST_KMERAFFECT_CONSTRUCTOR_COPY_REVERSE, "");
+    
   KmerAffect test = KAVp;
   TAP_TEST(test.affect == KAVp.affect, TEST_KMERAFFECT_AFFECTATION, "");
   test += KAVp;

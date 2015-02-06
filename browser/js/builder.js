@@ -673,12 +673,19 @@ Builder.prototype = {
         // div_date.appendChild(span)
         parent.appendChild(div_date)
 
+
+        // Total
+        var div_total = this.build_info_line("info_total", "total", this.m.toStringThousands(this.m.reads.total[this.m.t]) + " reads")
+        parent.appendChild(div_total)
+
+
+        // Segmented reads
         var val = "no reads segmented" ;
 
-        if (this.m.reads.segmented[this.m.t] > 0)
+        if (this.m.reads.segmented_all[this.m.t] > 0)
         {
-        var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100
-        val = this.m.toStringThousands(this.m.reads.segmented[this.m.t]) + " reads" + " (" + percent.toFixed(2) + "%)"
+        var percent = (this.m.reads.segmented_all[this.m.t] / this.m.reads.total[this.m.t]) * 100
+        val = this.m.toStringThousands(this.m.reads.segmented_all[this.m.t]) + " reads" + " (" + percent.toFixed(2) + "%)"
 
 	var warning = false ;
 	if (percent < 10)  { val += " – Very few reads segmented" ;  warning = "alert" ;  }
@@ -687,10 +694,26 @@ Builder.prototype = {
 
         var div_segmented = this.build_info_line("info_segmented", "segmented", val, warning)
         parent.appendChild(div_segmented)
-        
-        var div_total = this.build_info_line("info_total", "total", this.m.toStringThousands(this.m.reads.total[this.m.t]) + " reads")
-        parent.appendChild(div_total)
 
+
+        // Segmented reads, on the selected system(s)
+        if (this.m.system == "multi") {
+            var val = "no reads on selected systems" ;
+
+            if (this.m.reads.segmented[this.m.t] > 0)
+            {
+                var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100
+                val = this.m.toStringThousands(this.m.reads.segmented[this.m.t]) + " reads" + " (" + percent.toFixed(2) + "%)"
+
+                var warning = false ;
+                if (percent < 10)  { warning = "alert" ;  }
+                else if (percent < 50)  { warning = "warning" ;  }
+            }
+
+            var div_segmented = this.build_info_line("info_segmented", "on systems", val, warning)
+            parent.appendChild(div_segmented)
+        }
+  
 
         var div_color = this.build_info_color()
         parent.appendChild(div_color) 

@@ -152,6 +152,8 @@ class KmerSegmenter : public Segmenter
    */
   KmerSegmenter(Sequence seq, Germline *germline);
 
+  KmerSegmenter(const KmerSegmenter &seg);
+
   ~KmerSegmenter();
 
   /**
@@ -168,7 +170,7 @@ class KmerSegmenter : public Segmenter
   int getSegmentationStatus() const;
 
  private:
-  void computeSegmentation(int strand, Germline* germline);
+  void computeSegmentation(int strand, KmerAffect left, KmerAffect right);
 };
 
 
@@ -182,7 +184,7 @@ class KmerMultiSegmenter
   KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented);
   ~KmerMultiSegmenter();
 
-  KmerSegmenter the_kseg;
+  KmerSegmenter *the_kseg;
 };
 
 

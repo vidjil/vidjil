@@ -28,12 +28,14 @@
 #include <cstdlib>
 #include <string>
 
-#define SUBST 0
-#define INSER 1
-#define DELET 2
-#define HOMO2X 3
-#define HOMO2Y 4
-#define FIN 5
+#define SUBST '|'
+#define MISMATCH '.'
+#define INSER 'i'
+#define DELET 'd'
+#define HOMO2X 'h'
+#define HOMO2Y 'h'
+#define FIN ' '
+#define BEGIN 'B'
 #define BACKSIZE 120
 
 using namespace std;
@@ -101,14 +103,9 @@ DynProg::DynProg(const string &x, const string &y, DynProgMode mode, const Cost&
   n = y.size();
   // cout << "Dynprog " << x << "(" << m << ") / " << y << "(" << n << ")" << endl ;
 
-  S = new int*[m+1];
+  B = new operation*[m+1];
   for (int i = 0; i <= m; i++) {
-    S[i] = new int[n+1];
-  }
-  
-  B = new backtrack_info*[m+1];
-  for (int i = 0; i <= m; i++) {
-    B[i] = new backtrack_info[n+1];
+    B[i] = new operation[n+1];
   }
   
   this -> mode = mode;
@@ -127,72 +124,101 @@ DynProg::DynProg(const string &x, const string &y, DynProgMode mode, const Cost&
 }
 
 DynProg::~DynProg() {
-  for (int i = 0; i <= m; i++) {
-    delete [] S[i];
-  }
-  delete [] S;
-  
+
   for (int i = 0; i <= m; i++) {
     delete [] B[i];
   }
-  delete [] B;
-  
+  delete [] B;  
   delete [] gap1;
   delete [] gap2;
   delete [] linkgap;
 }
 
 void DynProg::init()
-{ 
+{
+  for (int i=1; i<=m; i++)
+    {
+      B[i][0].type = INSER ;
+      B[i][0].i = i-1 ;
+      B[i][0].j = 0 ;
+    }
+
+  for (int j=1; j<=n; j++)
+    {
+      B[0][j].type = DELET ;    
+      B[0][j].i = 0 ;
+      B[0][j].j = j-1 ;
+    }
+
   if (mode == Local || mode == LocalEndWithSomeDeletions)
     for (int i=0; i<=m; i++)
-      S[i][0] = 0 ;
+      B[i][0].score = 0 ;
   else if (mode == GlobalButMostlyLocal)
     for (int i=0; i<=m; i++)
-      S[i][0] = i * cost.insertion / 2 ;
+      B[i][0].score = i * cost.insertion / 2 ;
   else // Global, SemiGlobal
     for (int i=0; i<=m; i++)
-      S[i][0] = i * cost.insertion ;
+      B[i][0].score = i * cost.insertion ;
    
   if (mode == SemiGlobal || mode == SemiGlobalTrans || mode == Local || mode == LocalEndWithSomeDeletions)
     for (int j=0; j<=n; j++)
-      S[0][j] = 0 ;
+      B[0][j].score = 0 ;
   else if (mode == GlobalButMostlyLocal)
     for (int j=0; j<=n; j++)
-      S[0][j] = j * cost.deletion / 2 ;
+      B[0][j].score = j * cost.deletion / 2 ;
   else
     for (int j=0; j<=n; j++)
-      S[0][j] = j * cost.deletion ;
+      B[0][j].score = j * cost.deletion ;
+}
+
+inline void try_operation(operation &best, int type, int i, int j, int score)
+{
+  if (score > best.score)
+    {
+      best.type = type ;
+      best.i = i ;
+      best.j = j ;
+      best.score = score ;
+    }
 }
 
 int DynProg::compute()
 {
   best_score = MINUS_INF ;
+  best_i = 0 ;
+  best_j = 0 ;
+  
+  operation best ;
 
   for (int i=1; i<=m; i++)
     for (int j=1; j<=n; j++)
     {
-      int subst = S[i-1][j-1] + cost.substitution(x[i-1], y[j-1]);
+      best.score = MINUS_INF ;
 
-      int inser = S[i-1][j] + cost.insertion;
-      int delet = S[i][j-1] + cost.deletion;
+      // The edit operations, with their backtracking information and their score
       
-      // Also dealing with homopolymers (in a dirty way!)
-      // int inser = S[i-1][j] + (i > 1 ? cost.ins(x[i-2], x[i-1]) : cost.ins(0,1));
-      // int delet = S[i][j-1] + (j > 1 ? cost.del(y[j-2], y[j-1]) : cost.del(0,1));
+      try_operation(best, SUBST, i-1, j-1, B[i-1][j-1].score + cost.substitution(x[i-1], y[j-1]));
+      
+      try_operation(best, INSER, i-1, j  , B[i-1][j  ].score + cost.insertion);
+      try_operation(best, DELET, i  , j-1, B[i  ][j-1].score + cost.deletion);
 
-      int best = max(max(subst, inser), delet);
-
-      // Homopolymers (2 <-> 1)
-      int homo2x = i > 1 ? S[i-2][j-1] + cost.homo2(x[i-2], x[i-1], y[j-1]) : MINUS_INF ;
-      int homo2y = j > 1 ? S[i-1][j-2] + cost.homo2(y[j-2], y[j-1], x[i-1]) : MINUS_INF ;
-      best = max(max(homo2x, homo2y), best);
+      try_operation(best, HOMO2X, i-2, j-1, i > 1 ? B[i-2][j-1].score + cost.homo2(x[i-2], x[i-1], y[j-1]) : MINUS_INF);
+      try_operation(best, HOMO2Y, i-1, j-2, j > 1 ? B[i-1][j-2].score + cost.homo2(y[j-2], y[j-1], x[i-1]) : MINUS_INF);
       
       if (mode == Local || mode == LocalEndWithSomeDeletions)
-	{
-	  best = max(0, best); 
+	try_operation(best, BEGIN, 0, 0, 0);
 
-	  int tbest = best ;
+      if ((best.type == SUBST) && (x[i-1] != y[j-1]))
+        best.type = MISMATCH ;
+
+      // Fill the score and the backtrack information
+      B[i][j] = best ;
+      
+      // cout << " " << i << "," << j << " " << best_op.type << " " <<  best_op.i << "," << best_op.j << " "  << best_op.score << " " << best << endl ;
+
+      if (mode == Local || mode == LocalEndWithSomeDeletions)
+	{
+	  int tbest = best.score ;
 
 	  if (mode == LocalEndWithSomeDeletions)
 	    tbest += cost.deletion_end*(n-j);   
@@ -204,55 +230,26 @@ int DynProg::compute()
 	      best_j = j ;
 	    }
 	    
-	  if (best == 0){
+	  if (best.score == 0){
 	    B[i][j].type = FIN;
 	  }
 	}
-      
-      S[i][j] = best ;
-      
-      if (best==subst){
-	B[i][j].i = i-1 ;
-	B[i][j].j = j-1 ;
-	B[i][j].type = SUBST ;
-      }
-      if (best==inser){
-	B[i][j].i = i-1 ;
-	B[i][j].j = j ;
-	B[i][j].type = INSER ;
-      }
-      if (best==delet){
-	B[i][j].i = i ;
-	B[i][j].j = j-1 ;
-	B[i][j].type = DELET ;
-      }
-      if (best==homo2x){
-	B[i][j].i = i-2 ;
-	if (B[i][j].i < 0) B[i][j].i = 0 ;
-	B[i][j].j = j-1 ;
-	B[i][j].type = HOMO2X ;
-      }
-      if (best==homo2y){
-	B[i][j].i = i-1 ;
-	B[i][j].j = j-2 ;
-	if (B[i][j].j < 0) B[i][j].j = 0 ;
-	B[i][j].type = HOMO2Y ;
-      }
 
-      
       if (mode == Local || mode == LocalEndWithSomeDeletions)
 	{
-      	  if (best == 0){
+      	  if (best.score == 0){
 	    B[i][j].type = FIN;
 	  }
 	}
       
     }
 
+  // End. Find best_i and best_j, put FIN keywords where the backtrack should stop
+  
   if (mode == Local || mode == LocalEndWithSomeDeletions)
     {
-      for (int i=0; i<=n; i++){
-	B[0][i].type = FIN;
+      for (int j=0; j<=n; j++){
+	B[0][j].type = FIN;
       }
       for (int i=0; i<=m; i++){
 	B[i][0].type = FIN;
@@ -264,16 +261,11 @@ int DynProg::compute()
       best_i = m ;
       
       for (int j=1; j<=n; j++)
-	if (S[m][j] > best_score)
+	if (B[m][j].score > best_score)
 	  {
-	    best_score = S[m][j] ;
+	    best_score = B[m][j].score ;
 	    best_j = j ;
 	  }
-      for (int i=1; i<=n; i++){
-	B[0][i].i = 0 ;
-	B[0][i].j = i-1 ;
-	B[0][i].type = DELET;
-      }
       for (int i=0; i<=m; i++){
 	B[i][0].type = FIN;
       }
@@ -284,40 +276,22 @@ int DynProg::compute()
       best_j = n ;
       
       for (int i=1; i<=m; i++)
-	if (S[i][n] > best_score)
+	if (B[i][n].score > best_score)
 	  {
-	    best_score = S[i][n] ;
+	    best_score = B[i][n].score ;
 	    best_i = i ;
 	  }
 	  
       for (int i=0; i<=n; i++){
 	B[0][i].type = FIN;
-      }
-      for (int i=0; i<=m; i++){
-	B[i][0].i = i-1 ;
-	B[i][0].j = 0 ;
-	B[i][0].type = INSER;
-      }
+      }     
     }
-
 
   if ((mode == Global) || (mode == GlobalButMostlyLocal))
     {
       best_i = m ;
       best_j = n ;
-      best_score = S[m][n];
-
-      for (int i=0; i<=m; i++){
-	B[i][0].i = i-1 ;
-	B[i][0].j = 0 ;
-	B[i][0].type = INSER;
-      }
-      for (int i=1; i<=n; i++){
-	B[0][i].i = 0 ;
-	B[0][i].j = i-1 ;
-	B[0][i].type = DELET;
-      }
-      B[0][0].type = FIN;
+      best_score = B[m][n].score;
     }
 
   if (reverse_x)
@@ -326,6 +300,8 @@ int DynProg::compute()
   if (reverse_y)
     best_j = n - best_j + 1;
 
+  B[0][0].type = FIN;
+  
   // In the matrix positions start at 1, but start positions may start at 0
   best_i -= 1;   
   best_j -= 1;
@@ -335,6 +311,7 @@ int DynProg::compute()
 
 void DynProg::backtrack()
 {
+  // Tables for displaying the alignment
   gap1 = new int[x.size()+1];
   linkgap = new int[x.size()+1];
   gap2 = new int[y.size()+1];
@@ -351,105 +328,96 @@ void DynProg::backtrack()
   int g1=x.size();
   int g2=y.size();
   
-  int ti=best_i+1;
-  int tj=best_j+1;
-  int tmpi, tmpj;
-  tmpi=ti;
-  tmpj=tj;
+  int i=best_i+1;
+  int j=best_j+1;
+
+  // Compute backtrack strings
   
-  str_back = "";
-  string str1, str2, str3;
-  
-  ostringstream back_s1;
-  ostringstream back_s2;
+  ostringstream back_x;
+  ostringstream back_y;
   ostringstream back_tr;
-  ostringstream back;
   
-  
-  while ( B[ti][tj].type != FIN ){
-    
-    tmpi=B[ti][tj].i;
-    tmpj=B[ti][tj].j;
+  while (1) {
 
-    if (B[ti][tj].type == SUBST ){
-      linkgap[g1]=g2;
-      back_s1 << x[ti-1];
-      g1--;
-      back_s2 << y[tj-1];
-      g2--;
-
-      if(x[ti-1]==y[tj-1]) {
-	back_tr << "|";
-      }else{
-	back_tr << ":";
+    if ((i<0) || (j<0))
+      { 
+        cout << "Invalid backtrack: " << i << "," << j << endl ;
+        exit(1);
       }
-      
-    }
-    if (B[ti][tj].type == INSER ){
-      linkgap[g1]=g2;
-      back_s1 << x[ti-1];
-      g1--;
-      back_s2 << " ";
-      gap2[g2]++;
-      back_tr << ".";
-      
-    }
-    if (B[ti][tj].type == DELET){
-    linkgap[g1]=g2;
-      back_s1 << " ";
-      gap1[g1]++;
-      back_s2 << y[tj-1];
-      g2--;
-      back_tr << ".";
-      
-    }
-    if (B[ti][tj].type == HOMO2X ){
-      linkgap[g1]=g2;
-      back_s1 << x[ti-1] << x[ti-2];
-      g1--;
-      linkgap[g1]=g2;
-      g1--;
-      back_s2  << " " << y[tj-1];
-      gap2[g2]++;
-      g2--;
-      back_tr << " h";
 
-    }
+    if  (B[i][j].type == FIN)
+      break ;
       
-    if (B[ti][tj].type == HOMO2Y ){
-    linkgap[g1]=g2;
-      back_s1 << " " << x[ti-1] ;
-      gap1[g1]++;
-      g1--;
-      back_s2 <<  y[tj-1] << y[tj-2] ;
-      g2--;
-      g2--;
-      back_tr << " h";
-    }
+    // cout << "bt " << i << "/" << j << " " << B[i][j].type << " " << B[i][j].i << "," << B[i][j].j << endl ;
     
-    ti=tmpi;
-    tj=tmpj;
+    int next_i = B[i][j].i;
+    int next_j = B[i][j].j;
+
+    // The maximum number of characters implied by this operation
+    int max_k = max(i - next_i, j - next_j);
+      
+    for (int k=0; k<max_k; k++)
+      {
+        linkgap[g1]=g2;
+
+        // Some character(s) from x, then fill with spaces
+        if (i-k > next_i)
+          {
+            back_x << x[i-1-k];
+            g1--;
+          }
+        else
+          {
+            back_x << " " ;
+            gap1[g1]++ ;
+          }
+
+        // Some character(s) from y, then fill with spaces
+        if (j-k > next_j)
+          {
+            back_y << y[j-1-k];
+            g2--;
+          }
+        else
+          {
+            back_y << " " ;
+            gap2[g2]++ ;
+          }
+
+        // The operation character, then fill with spaces
+        if (k == max_k-1)          
+          back_tr << B[i][j].type ;
+        else
+          back_tr << " " ;
+      }
+    
+    i = next_i;
+    j = next_j;
   }
 
-  str1=back_s1.str();
+  // Format backtrack strings
+  
+  string str1, str2, str3;
+  str1 = back_x.str();
   str1 =string (str1.rbegin(), str1.rend());
   str1 = str1;
   str2=back_tr.str();
   str2 = string (str2.rbegin(), str2.rend());
-  str3=back_s2.str();
+  str3 = back_y.str();
   str3 = string (str3.rbegin(), str3.rend());
-  
-  back << ti <<	"  >>	" << str1.substr(0, BACKSIZE-8) << endl;
-  back << " diff	" << str2.substr(0, BACKSIZE-8) << endl;
-  back << tj <<	"  >>	" << str3.substr(0, BACKSIZE-8) << endl << endl;
+
+  ostringstream back;    
+  back << i <<	"  >>	" << str1.substr(0, BACKSIZE-8) << endl;
+  back << "             " << str2.substr(0, BACKSIZE-8) << endl;
+  back << j <<	"  >>	" << str3.substr(0, BACKSIZE-8) << endl << endl;
   for (size_t k=0 ; (BACKSIZE-8+k*BACKSIZE)< str1.length() ; k++){
     back << str1.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl;
     back << str2.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl;
     back << str3.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl << endl;
   }
   
-  first_i=ti;
-  first_j=tj;
+  first_i=i;
+  first_j=j;
   
   str_back=back.str();
 
@@ -488,8 +456,12 @@ ostream& operator<<(ostream& out, const DynProg& dp)
 	out << "  " ;
 
       for (int j=0; j<=dp.n; j++)
-	out << setw(4) << dp.S[i][j] << " ";
-
+        {
+          if (dp.B[i][j].score)
+            out << setw(4) << dp.B[i][j].score << dp.B[i][j].type ;
+          else
+            out << "    " << dp.B[i][j].type ;
+        }
       out << endl ;      
     }
   

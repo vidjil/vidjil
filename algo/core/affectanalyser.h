@@ -250,6 +250,12 @@ class CountKmerAffectAnalyser: public KmerAffectAnalyser {
    */
   KmerAffect max(const set<KmerAffect> forbidden = set<KmerAffect>()) const;
 
+  /*
+   * @return the two affectations that are seen the most frequently in the sequence
+   *         taken apart the forbidden ones.
+   */
+  pair <KmerAffect, KmerAffect> max12(const set<KmerAffect> forbidden) const;
+  
   /**
    * Set the overlap allowed between two k-mers with two different affectations,
    * when looking for the maximum.

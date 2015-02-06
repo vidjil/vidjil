@@ -154,6 +154,41 @@ void testAffectAnalyser2() {
   delete index;
 }
 
+
+template<template <class> class T>
+void testAffectAnalyserMaxes() {
+  const int k = 4;
+  const bool revcomp = false;
+
+  T<KmerAffect> *index = createIndex<T<KmerAffect> >(k, revcomp);
+  
+  string sequence = "ACCCCAGGGGGA";
+  CountKmerAffectAnalyser ckaa(*index, sequence);
+
+  KmerAffect cAffect = KmerAffect("C", 1);
+  KmerAffect gAffect = KmerAffect("G", 1);
+
+  set<KmerAffect> forbidden;
+  forbidden.insert(KmerAffect::getAmbiguous());
+  forbidden.insert(KmerAffect::getUnknown());
+
+  TAP_TEST(ckaa.max(forbidden) == gAffect, TEST_COUNT_AA_MAX, "max is " << ckaa.max(forbidden));
+  TAP_TEST(ckaa.max12(forbidden).first == gAffect, TEST_COUNT_AA_MAX12, "max1 is " << ckaa.max12(forbidden).first);
+  TAP_TEST(ckaa.max12(forbidden).second == cAffect, TEST_COUNT_AA_MAX12, "max2 is " << ckaa.max12(forbidden).second);
+
+  forbidden.insert(gAffect);
+  TAP_TEST(ckaa.max(forbidden) == cAffect, TEST_COUNT_AA_MAX, "max is " << ckaa.max(forbidden));
+  TAP_TEST(ckaa.max12(forbidden).first == cAffect, TEST_COUNT_AA_MAX12, "max1 is " << ckaa.max12(forbidden).first);
+  TAP_TEST(ckaa.max12(forbidden).second == KmerAffect::getUnknown(), TEST_COUNT_AA_MAX12, "max2 is " << ckaa.max12(forbidden).second);
+
+  forbidden.insert(cAffect);
+  TAP_TEST(ckaa.max(forbidden) == KmerAffect::getUnknown(), TEST_COUNT_AA_MAX, "max is " << ckaa.max(forbidden));
+  TAP_TEST(ckaa.max12(forbidden).first == KmerAffect::getUnknown(), TEST_COUNT_AA_MAX12, "max1 is " << ckaa.max12(forbidden).first);
+  TAP_TEST(ckaa.max12(forbidden).second == KmerAffect::getUnknown(), TEST_COUNT_AA_MAX12, "max2 is " << ckaa.max12(forbidden).second);
+
+  delete index;
+}
+
 template<template <class> class T>
 void testGetMaximum() {
   const int k = 4;
@@ -330,6 +365,7 @@ void testAffectAnalyser() {
 
   testAffectAnalyser1<ArrayKmerStore>();
   testAffectAnalyser2<ArrayKmerStore>();
+  testAffectAnalyserMaxes<ArrayKmerStore>();
   testBugAffectAnalyser<ArrayKmerStore>();
   testGetMaximum<ArrayKmerStore>();
 }
