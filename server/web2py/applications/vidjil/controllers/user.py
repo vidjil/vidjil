@@ -25,6 +25,8 @@ def index():
 ## return user information
 ## need ["id"]
 def info():
+    if "id" not in request.vars:
+        request.vars["id"] = db().select(db.auth_user.ALL, orderby=~db.auth_user.id)[0].id
     return dict(message=T('user info'))
 
 def rights():

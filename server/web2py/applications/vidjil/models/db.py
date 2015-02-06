@@ -63,8 +63,8 @@ auth.settings.reset_password_requires_verification = True
 # auth.settings.login_email_validate = False
 auth.settings.expiration = 3600 * 24 * 7  # one week
 auth.settings.remember_me_form = False
-auth.settings.logged_url = URL('patient', 'index')
-auth.settings.login_next = URL('patient', 'index')
+auth.settings.logged_url = URL('user', 'info')
+auth.settings.login_next = URL('user', 'info')
 
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, write your domain:api_key in private/janrain.key

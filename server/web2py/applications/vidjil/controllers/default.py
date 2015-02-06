@@ -563,8 +563,12 @@ def user():
             #restore admin session after register
             session.auth = admin_auth
             auth.user = session.auth.user
-            
         auth.settings.register_onaccept = post_register
+        
+        #redirect to the last added user view
+        auth.settings.logged_url = URL('user', 'info')
+        auth.settings.login_next = URL('user', 'info')
+        
         return dict(form=auth.register())
     
     #reject others

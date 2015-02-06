@@ -192,6 +192,8 @@ Database.prototype = {
                     } else {
                         var nexts = $('#login_form').attr('action').split("&")
                         var next = "patient/index"
+                        if ($('#login_form').attr('action').indexOf('register') != -1)
+                            next = "user/info"
                         var args = {}
                         for (var i=0; i<nexts.length; i++){
                             var index = nexts[i].indexOf("_next")
