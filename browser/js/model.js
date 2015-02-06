@@ -70,7 +70,7 @@ Model.prototype = {
         this.isPlaying = false;
         
         this.mapID = {};
-        this.top = 10;
+        this.top = 50;
         this.precision = 1;
 
         this.germlineV = new Germline(this)
@@ -1135,7 +1135,7 @@ Model.prototype = {
         }
 
         if (count < 5) {
-            this.top = 25
+            this.top = 100
             this.displayTop()
         }
 
