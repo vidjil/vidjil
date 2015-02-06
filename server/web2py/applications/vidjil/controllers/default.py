@@ -56,6 +56,9 @@ def run_request():
     if not auth.has_permission('admin', 'patient', id_patient) :
         error += "you do not have permission to launch process for this patient ("+str(id_patient)+"), "
 
+    if not auth.has_permission('admin', 'config', id_config) :
+        error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
+
     if error == "" :
         res = schedule_run(request.vars["sequence_file_id"], request.vars["config_id"])
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
