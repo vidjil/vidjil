@@ -73,6 +73,21 @@ list<Sequence> WindowsStorage::getSample(junction window, size_t nb_sampled,
   return SequenceSampler(reads).getLongest(nb_sampled, nb_buckets);
 }
 
+set<Germline *> WindowsStorage::getTopGermlines(size_t top, size_t min_reads) {
+  assert(sort_all_windows.size() == seqs_by_window.size());
+
+  set<Germline *> top_germlines;
+  size_t count = 0;
+
+  for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin();
+       it != sort_all_windows.end() && count < top && (size_t)it->second >= min_reads;
+       ++it, ++count) {
+    top_germlines.insert(getGermline(it->first));
+  }
+
+  return top_germlines;
+}
+
 size_t WindowsStorage::size() {
   return seqs_by_window.size();
 }

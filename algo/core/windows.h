@@ -11,6 +11,7 @@
 
 #include <iostream>
 #include <map>
+#include <set>
 #include <utility>
 #include <string>
 #include "fasta.h"
@@ -102,6 +103,16 @@ class WindowsStorage {
    * Return the label of a window, if it exists
    */
   string getLabel(junction window);
+
+  /**
+   * @pre sort() must have been called.
+   * @param top: Only the germlines of the top most abundant windows will
+   *             be considered
+   * @param min_reads: (optional) minimal number (inclusive) of reads the window
+   *                   must be supported by.
+   * @return a set of the most abundant germlines.
+   */
+  set<Germline *> getTopGermlines(size_t top, size_t min_reads=1);
 
   /**
    * Only keep windows that are interesting.  Those windows are windows
