@@ -35,6 +35,8 @@ class Cost
 
   // del_end -> utilise seulement pour LocalEndWithSomeDeletions
   Cost (int match, int mismatch, int indel, int del_end = 0, int homopolymer = MINUS_INF);
+  // affine gaps
+  Cost(int match, int mismatch, int open_gap, int extend_gap, int del_end, int homopolymer);
   Cost ();
 
   int insertion;
@@ -63,6 +65,7 @@ ostream& operator<<(ostream& out, const Cost& cost);
 
 const Cost DNA = Cost(+5, -4, -10, 0, 0);
 const Cost VDJ = Cost(+4, -6, -10, -1, -2);
+const Cost VDJaffine = Cost(+4, -6, -15, -1, -1, -2);
 const Cost Identity = Cost(+1, -1, -1, 0, 0);
 
 const Cost Homopolymers = Cost(+1, MINUS_INF, -1); // TODO: true homopolymer

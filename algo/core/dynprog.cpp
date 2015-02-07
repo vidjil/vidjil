@@ -50,8 +50,22 @@ Cost::Cost(int match, int mismatch, int indel, int del_end, int homopolymer)
   this -> deletion_end = del_end ;
   this -> homopolymer = (homopolymer == MINUS_INF ? indel: homopolymer);
 
-  this -> open_insertion = this -> open_deletion = -15 ;
-  this -> extend_insertion = this -> extend_deletion = -1 ;
+  this -> open_insertion = this -> open_deletion = MINUS_INF ;
+  this -> extend_insertion = this -> extend_deletion = MINUS_INF ;
+  this -> affine_gap = false ;
+}
+
+Cost::Cost(int match, int mismatch, int open_gap, int extend_gap, int del_end, int homopolymer)
+{
+  this -> match = match ;
+  this -> mismatch = mismatch ;
+  this -> insertion = MINUS_INF ;
+  this -> deletion = MINUS_INF ;
+  this -> deletion_end = del_end ;
+  this -> homopolymer = homopolymer ;
+
+  this -> open_insertion = this -> open_deletion = open_gap ;
+  this -> extend_insertion = this -> extend_deletion = extend_gap ;
   this -> affine_gap = true ;
 }
 
@@ -62,6 +76,8 @@ ostream& operator<<(ostream& out, const Cost& cost)
       << ", " << cost.mismatch
       << "/" << cost.insertion
       << "/" << cost.deletion
+      << ", " << cost.open_insertion << cost.extend_insertion
+      << "/" << cost.open_deletion << cost.extend_deletion
       << ", " << cost.deletion_end
       << ", " << cost.homopolymer
       << ")" ;
