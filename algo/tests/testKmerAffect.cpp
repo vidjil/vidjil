@@ -39,8 +39,8 @@ void testAffect() {
   TAP_TEST(toString(Vminus) == "-V", TEST_AFFECT_TO_STRING, toString(Vminus));
   TAP_TEST(toString(Vplus) == "+V", TEST_AFFECT_TO_STRING, toString(Vplus));
   TAP_TEST(toString(Jplus) == "+J", TEST_AFFECT_TO_STRING, toString(Jplus));
-  TAP_TEST(toString(AFFECT_UNKNOWN.affect) == " "AFFECT_UNKNOWN_SYMBOL, TEST_AFFECT_TO_STRING, "");
-  TAP_TEST(toString(AFFECT_AMBIGUOUS.affect) == " "AFFECT_AMBIGUOUS_SYMBOL, TEST_AFFECT_TO_STRING, "");
+  TAP_TEST(toString(AFFECT_UNKNOWN.affect) == " " AFFECT_UNKNOWN_SYMBOL, TEST_AFFECT_TO_STRING, "");
+  TAP_TEST(toString(AFFECT_AMBIGUOUS.affect) == " " AFFECT_AMBIGUOUS_SYMBOL, TEST_AFFECT_TO_STRING, "");
 
   ostringstream oss;
   oss << Vminus;
