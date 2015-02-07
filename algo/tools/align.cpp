@@ -4,160 +4,151 @@
 #include <stdio.h>
 #include <string.h>
 #include <cstdlib>
+#include <stdlib.h>   
 #include <core/dynprog.h>
 #include <core/fasta.h>
+#include "docopt.h"
 
 using namespace std;
 
 
-int main(int argc, char* argv[])
+
+// très sensible aux espaces, tabulations...
+
+static const char VERSION[] = "align beta" ;
+
+static const char USAGE[] =
+R"(Align sequences using core/dynprog.cpp
+The two sequences can be taken in either one or two fasta files.
+
+    Usage:       
+      align [options] <file>         
+      align [options] <file> <file>  
+
+    Options:
+      -h --help     Show help
+      --version     Show version
+      -i <i>        Sequence number in file1 [default: 0]
+      -j <j>        Sequence number in file2 [default: 0]
+      -m <mode>     Mode [default: 0]
+                0       loop on all modes
+                1       Local 
+                2       LocalEndWithSomeDeletions 
+                3       SemiGlobalTrans 
+                4       SemiGlobal
+                5       GlobalButMostlyLocal
+                6       Global
+      -c <cost>     Cost [default: 2]
+                1       DNA
+                2       VDJ
+                9       VDJaffine
+                5       IdentityDirty
+                6       Hammong
+                7       Levenshtein
+                8       Cluster
+      -x --matrix    Display matrix
+)";
+
+
+// Should be moved in core/dynprog
+
+DynProg::DynProgMode getdpMode(int mode)
 {
-  //initilisation par defaut
-  const char* fdata_default = "data/leukemia.fa" ; 
   DynProg::DynProgMode dpMode = DynProg::Local;
+  if (mode == 1) dpMode = DynProg::Local;
+  if (mode == 2) dpMode = DynProg::LocalEndWithSomeDeletions;
+  if (mode == 3) dpMode = DynProg::SemiGlobalTrans;
+  if (mode == 4) dpMode = DynProg::SemiGlobal;
+  if (mode == 5) dpMode = DynProg::GlobalButMostlyLocal;
+  if (mode == 6) dpMode = DynProg::Global;
+  return dpMode ;
+}
+
+Cost getCost(int cost)
+{
   Cost dpCost = VDJ;
-  int maxIteration = 9999999;
-  int optionbegin = 1;
-  int s=0;
-  int s2=0;
+
+  if (cost == 1) dpCost = DNA;
+  if (cost == 2) dpCost = VDJ;
+  if (cost == 9) dpCost = VDJaffine;
+  if (cost == 5) dpCost = IdentityDirty;
+  if (cost == 6) dpCost = Hamming;
+  if (cost == 7) dpCost = Levenshtein;
+  if (cost == 8) dpCost = Cluster;
+
+  return dpCost ;
+}  
+
+
+int main(int argc, const char** argv)
+{
+  // Options parsing
+  std::map<std::string, docopt::value> args
+    = docopt::docopt(USAGE, { argv + 1, argv + argc }, true, VERSION); 
+
+  for(auto const& arg : args) 
+    cout << arg.first << ":" <<arg.second << endl;
+  cout << endl ;
   
+  // Files
+  vector<string> files = args["<file>"].asStringList();
+  
+  const char* file1 = files.front().c_str();
+  const char* file2 = files.back().c_str();
+  
+  Fasta fasta1(file1, 1, " ");
+  Fasta fasta2(file2, 1, " ");
 
   
-  const char* fdata1 = fdata_default;
-  const char* fdata2 = fdata_default;
-  
-  //initialisation
-  if ( argc > 1 && argv[1][0] != '-'){
-    fdata1 = argv[1];
-    fdata2 = argv[1];
-    optionbegin++;
-    if ( argc > 2 && argv[2][0] != '-'){
-      fdata2 = argv[2];
-      optionbegin++;
-    }
-  }
-  
-  for (int i = optionbegin ; i < argc ; i++ ){
-    const char opt = strlen(argv[1])>1 ? argv[i][1] : 'e' ;
-    
-    switch(opt)
+  // Sequences
+  int i = atoi(args["-i"].asString().c_str());
+  int j = atoi(args["-j"].asString().c_str());
+
+  if (i >= fasta1.size())
     {
-      int mode,cost;
-      case 'e': 
-	cout << argv[i] << " << argument invalide" << endl ;
-	break;
-      case 'h':
-	cout 	<< " usage :" << endl
-		<< " inputFile ( 2 maximum, default: " << fdata_default <<  " : "<<endl
-		<< " 	si un seul fichier :" << endl
-		<< " 		compare une sequence du fichier a toutes les autres" << endl
-		<< " 	si 2 fichiers :" << endl
-		<< " 		compare une sequence du premier fichier a celles du second" << endl<<endl
-		<< " option : " << endl
-		<< "	-h 	help " << endl<<endl
-		<< "	-s 	sequences 	( choix des séquences a comparer) " << endl
-		<< "		par defaut la premiere sequence du premier fichier comparé a toute les sequences du second " << endl
-		<< "		si un seul fichier passé en parametre fichier 1 = fichier 2" << endl
-		<< "	     exemple : 		 	"<<endl
-		<< "		./align f1 -s 5		compare la sequence 5 de f1 a toute les sequences de f1" << endl
-		<< "		./align f1 -s 5 8	compare les sequences 5 et 8 de f1" << endl
-		<< "		./align f1 f2 -s 5 	compare la sequence 5 de f1 a toute les sequences de f2" << endl
-		<< "		./align f1 f2 -s 5 8	compare la sequence 5 de f1 a la sequence 8 de f2" << endl<< endl
-		<< "	-i	Iteration 	( par defaut : effectue toutes les comparaisons ) " << endl
-		<< "	     exemple :	 	"<<endl
-		<< "		./align f1 f2 -i 5	compare la premiere sequence de f1 aux 5 premieres de f2" << endl
-		<< "		./align f1 f2 -s 5 8 -i 5	compare la sequence 5 de f1 aux sequence 8,9,10,11,12 de f2" <<endl<< endl
-		<< " 	-m	mode 		( Local par defaut )" << endl
-		<< "		1  	Local " << endl
-		<< "		2  	LocalEndWithSomeDeletions " << endl
-		<< "		3  	SemiGlobalTrans " << endl
-		<< "		4  	SemiGlobal " << endl
-		<< "		5  	Global " << endl<<endl
-		<< "	-c	cost 		( VDJ par defaut)" << endl
-		<< "		1	DNA" << endl
-		<< "		2	VDJ" << endl
-		<< "		3	Identity" << endl
-		<< "		4	IdentityToto" << endl
-		<< "		5	IdentityDirty" << endl
-		<< "		6	Hamming" << endl
-		<< "		7	Levenshtein" << endl
-		<< "		8	Cluster" << endl
-		<<endl;
-
-	exit(1);
-      case 's':
-	s=atoi(argv[i+1]);
-	if (argc > i+2){
-	  if (argv[i+2][0] != '-'){
-	    s2 = atoi(argv[i+2]);
-	    maxIteration=1;
-	    i++;
-	  }
-	}
-	i++;
-	break;
-      case 'm':
-	mode=atoi(argv[i+1]);
-	if ( mode == 1) dpMode = DynProg::Local;
-	if ( mode == 2) dpMode = DynProg::LocalEndWithSomeDeletions;
-	if ( mode == 3) dpMode = DynProg::SemiGlobalTrans;
-	if ( mode == 4) dpMode = DynProg::SemiGlobal;
-	if ( mode == 5) dpMode = DynProg::Global;
-	i++;
-	break;
-      case 'i':
-	maxIteration=atoi(argv[i+1]);
-	i++;
-	break;
-      case 'c':
-	cost=atoi(argv[i+1]);
-	if ( cost == 1) dpCost = DNA;
-	if ( cost == 2) dpCost = VDJ;
-	if ( cost == 3) dpCost = Identity;
-	if ( cost == 4) dpCost = IdentityToto;
-	if ( cost == 5) dpCost = IdentityDirty;
-	if ( cost == 6) dpCost = Hamming;
-	if ( cost == 7) dpCost = Levenshtein;
-	if ( cost == 8) dpCost = Cluster;	
-	i++;
-	break;
-      default:
-	cout << argv[i] << " << argument invalide" << endl ;
-    }
-    
-  }
-
-  Fasta f(fdata1, 1, " ");
-  Fasta f2(fdata2, 1, " ");
-  
-  cout << "" << endl;
-  
-  if (f.size() <= s)
-    {
-      cout << " ERROR : la sequence "<< s << " n'existe pas dans " << fdata1 << endl ;
+      cerr << "ERROR : no sequence #" << i << " in " << file1 << endl ;
       exit(1);
     }
-  string seq0 = f.sequence(s);
   
-    if (f2.size() <= s2)
+  if (j >= fasta2.size())
     {
-      cout << " ERROR : la sequence "<< s2 << " n'existe pas dans " << fdata2 << endl ;
+      cerr << "ERROR : no sequence #" << j << " in " << file2 << endl ;
       exit(1);
     }
-  string seq1 = f2.sequence(s2);
 
-  int max = s2 + maxIteration;
-  for (  ; (s2 < f2.size() && s2 < max); s2++ ){
-    
-    seq1 = f2.sequence(s2);
-    DynProg dp = DynProg(seq0, seq1, dpMode, dpCost);
+  string seq1 = fasta1.sequence(i);
+  string seq2 = fasta2.sequence(j);
+
+  cout << ">" << fasta1.label(i) << "\t" << file1 << " " << i << endl << seq1 << endl;
+  cout << ">" << fasta2.label(i) << "\t" << file2 << " " << j << endl << seq2 << endl;
+  cout << endl;
+
+  
+  // Cost
+  Cost dpCost = getCost( atoi(args["-c"].asString().c_str()));
+  cout << "Cost: " << dpCost << endl;
+  cout << endl;
+
+  
+  // Mode
+  int m = atoi(args["-m"].asString().c_str());
+
+  for (int mm=1; mm<=6; mm++)
+    {      
+      int this_m = m > 0 ? m : mm ;
+      cout << "===== -m " << this_m << " : " << mode_description[this_m] << endl ;
+      DynProg::DynProgMode dpMode = getdpMode(this_m);
+    DynProg dp = DynProg(seq1, seq2, dpMode, dpCost);
 
     dp.compute(); 
     dp.backtrack();
+
+    if (args["--matrix"].asBool())
+      cout << dp;
     
-    cout <<"|-------------------------------------------------------------------------------|"<<endl;
-    cout <<"| "<<s<<"/"<<s2 <<"	|	" << f.label(s)<< " V/S " << f2.label(s2) << " 	|"<< endl<<endl;
     cout << dp.str_back << endl;
-    
+
+    if (m)
+      break ;      
   }
 }
