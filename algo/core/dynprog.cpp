@@ -93,18 +93,6 @@ int Cost::substitution(char a, char b)
   return (a == b) ? match : mismatch ;
 }
 
-/*
-int Cost::ins(char current, char next)
-{
-  return (next == current) ? homopolymer : insertion ;
-}
-
-int Cost::del(char current, char next)
-{
-  return (next == current) ? homopolymer : deletion ;
-}
-*/
-
 int Cost::homo2(char xa, char xb, char y)
 {
   return ((xa == xb) && (xb == y)) ? homopolymer : MINUS_INF ;
