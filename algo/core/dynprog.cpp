@@ -407,14 +407,15 @@ void DynProg::backtrack()
   str3 = string (str3.rbegin(), str3.rend());
 
   ostringstream back;    
-  back << i <<	"  >>	" << str1.substr(0, BACKSIZE-8) << endl;
-  back << "             " << str2.substr(0, BACKSIZE-8) << endl;
-  back << j <<	"  >>	" << str3.substr(0, BACKSIZE-8) << endl << endl;
+  back << setw(3) << i   << " " << str1.substr(0, BACKSIZE-8) << endl;
+  back << setw(3) << " " << " " << str2.substr(0, BACKSIZE-8) << endl;
+  back << setw(3) << j   << " " << str3.substr(0, BACKSIZE-8) << endl << endl;
   for (size_t k=0 ; (BACKSIZE-8+k*BACKSIZE)< str1.length() ; k++){
     back << str1.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl;
     back << str2.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl;
     back << str3.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl << endl;
   }
+  back << "score: " << best_score << endl;
   
   first_i=i;
   first_j=j;
