@@ -78,10 +78,22 @@ const Cost Cluster = Cost(+1, -4, -4, 0, 0);
 
 //const Cost Hamming = Cost();
 
+
+const char* const mode_description[] = {
+  "XXX",
+  "Local",
+  "LocalEndWithSomeDeletions",
+  "SemiGlobalTrans",
+  "SemiGlobal",
+  "GlobalButMostlyLocal",
+  "Global"
+} ;
+
 class DynProg
 {
  public:
   enum DynProgMode {
+    XXX,
     Local,            // partial x / partial y
     LocalEndWithSomeDeletions, // local + some deletions on __
     SemiGlobalTrans,  // start-to-partial x / partial-to-end y 
