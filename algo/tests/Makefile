@@ -1,7 +1,8 @@
 CC=g++
-CXXFLAGS=-W -Wall -g -O0 $(COVERAGE)
 INCLUDE=-I ..
-LDFLAGS=-lz
+OPTIM=-g -O0 $(COVERAGE)
+override CXXFLAGS += -W -Wall $(OPTIM)
+LDLIBS=-lz
 SRC= tests.cpp
 EXEC=$(SRC:.cpp=)
 OTHER_SRC=$(wildcard *.cpp)
@@ -27,16 +28,16 @@ should: vidjil $(SHOULD_LOG)
 	./should-to-tap.sh $<
 
 $(EXEC): % : %.o $(LIB) 
-	$(CC) -o $@ $< $(LIB) $(LDFLAGS) $(CXXFLAGS)
+	$(CC) -o $@ $< $(LIB) $(LDLIBS) $(LDFLAGS) $(CXXFLAGS)
 
 
 ../core.a: core
 
 vidjil:
-	make CXXFLAGS="$(CXXFLAGS)" -C ../
+	make -C ../
 
 core:
-	make CXXFLAGS="$(CXXFLAGS)" -C ../core
+	make -C ../core
 
 %.o: %.cpp $(OTHER_SRC)
 	$(CC) -o $@ $(INCLUDE) -c $< $(CXXFLAGS)

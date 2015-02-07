@@ -1,6 +1,6 @@
 CC=g++
-OPTIM=-O2 -DNDEBUG  $(COVERAGE)
-CXXFLAGS=-W -Wall $(OPTIM) $(DEBUG) $(CONFIG)
+OPTIM=-O2 -DNDEBUG  $(COVERAGE) $(DEBUG)
+override CXXFLAGS += -W -Wall $(OPTIM)
 
 ## inspired from http://stackoverflow.com/questions/399850/best-compiler-warning-level-for-c-c-compilers/401276
 PARANOID= -Wall -Weffc++ -pedantic  \
@@ -23,7 +23,7 @@ PARANOID= -Wall -Weffc++ -pedantic  \
     -Wunused-function  -Wunused-label  -Wunused-parameter \
     -Wunused-value  -Wunused-variable  -Wvariadic-macros \
     -Wvolatile-register-var  -Wwrite-strings
-LDFLAGS=-lm -lz
+LDLIBS=-lm -lz
 EXEC=vidjil
 MAINCORE=$(wildcard *.cpp)
 LIBCORE=core/vidjil.a lib/lib.a
@@ -69,7 +69,7 @@ cleanspaced:
 align.cgi: cgi/align.o
 	mkdir -p $(CGIDIR)
 	make -C core OPTIM="$(OPTIM)"
-	$(CC) -o $(CGIDIR)/align.cgi cgi/align.o $(LIBCORE) $(LDFLAGS) $(CXXFLAGS)
+	$(CC) -o $(CGIDIR)/align.cgi cgi/align.o $(LIBCORE) $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 ###
 
 all: $(EXEC)
@@ -81,7 +81,7 @@ debug:
 $(EXEC): %: %.o 
 	make -C core OPTIM="$(OPTIM)"
 	make -C lib OPTIM="$(OPTIM)"
-	$(CC) -o $(BINDIR)/$@ $^ $(LIBCORE) $(LDFLAGS) $(CXXFLAGS)
+	$(CC) -o $(BINDIR)/$@ $^ $(LIBCORE) $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
 clean:
 	make -C core $@

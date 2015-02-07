@@ -1,6 +1,6 @@
 CC=g++
-OPTIM=-O2 
-CXXFLAGS=-W -Wall $(OPTIM)
+OPTIM=-O2
+override CXXFLAGS += -W -Wall $(OPTIM)
 SRCCORE=$(wildcard *.cpp)
 OBJCORE=$(SRCCORE:.cpp=.o)
 LIBCORE=lib.a
