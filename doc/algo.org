@@ -49,7 +49,7 @@ The results of these automated tests can be checked on [[https://travis-ci.org/v
   
   To install and use Vidjil on a computer, make sure:
   - to be on a POSIX system ;
-  - to have a C++ compiler ;
+  - to have a C++11 compiler ;
   - to have the =zlib= installed (=zlib1g-dev= package under Debian/Ubuntu,
     =zlib-devel= package under Fedora/CentOS).
 
@@ -75,6 +75,14 @@ make test                # run self-tests
 
 ./vidjil -h              # display help/usage
 #+END_SRC
+
+** C++11 Compilation
+
+If your build system does not use C++11 by default, you should try:
+
+make CXXFLAGS='-std=gnu++0x'                         ### gcc-4.6 (as in Ubuntu 12.04 LTS)
+make CXXFLAGS='-std=c++11'                           ### gcc-4.8 (as in Ubuntu 14.04 LTS)
+make CXXFLAGS='-std=c++11' LDFLAGS='-stdlib=libc++'  ### OS X Mavericks
 
 
 * Input and output files
