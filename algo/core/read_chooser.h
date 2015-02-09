@@ -5,6 +5,17 @@
 #include "read_score.h"
 #include <map>
 
+typedef struct score_seq_s {
+  Sequence *seq;
+  float score;
+} score_seq;
+
+/**
+ * Function to compare two score_seq (used by qsort)
+ */
+int compare_score_seq(const void *si1, const void *si2);
+
+
 /**
  * This class aims at choosing the best read among a group of read.
  * As an input, the class needs a list of reads (sequence + id)
@@ -16,11 +27,12 @@
 class ReadChooser {
 
  private:
-  vector<Sequence> reads;
-  map<string, float> scores;
+  score_seq *reads;
  public:
   
   ReadChooser(list<Sequence> &r, VirtualReadScore &scorer);
+
+  ~ReadChooser();
 
   /**
    * @return the best sequence among the list of sequences that have been 
@@ -34,11 +46,6 @@ class ReadChooser {
    * @return the i-th best scored sequence 
    */
   Sequence getithBest(size_t i) const;
-
-  /**
-   * A comparison based on scorer of the two sequences.
-   */
-  bool operator()(Sequence first, Sequence second);
 };
 
 
