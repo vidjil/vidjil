@@ -1,16 +1,48 @@
 {{extend 'db_layout.html'}}
 
-Bientot vous trouverez içi un magnifique panneau d'administration, en attendant voila un lapin.</br>
-<img src="http://upload.wikimedia.org/wikipedia/commons/3/3b/Rabbit_in_montana.jpg" style="width:200px; height:200px;"> 
+
+<h3>Admin</h3>
+
+<a class="button" onclick="db.call('results_file/index');">.vidjil file list</a>
+
+</br>Database maintenace:
+<a class="button" onclick="db.call('admin/repair_missing_files');">fix missing files</a>
+</br>
+
+<hr>
+
+</br>Vidjil server:
+<a class="button" onclick="db.call('admin/log', {'file' : 'vidjil.log'} );">vidjil.log</a>
+<a class="button" onclick="db.call('admin/log', {'file' : 'vidjil-debug.log'} );">debug.log</a>
+
+</br>Ngnix:  
+<a class="button" onclick="db.call('admin/log', {'file' : '../log/nginx/access.log'} );">access.log</a>
+<a class="button" onclick="db.call('admin/log', {'file' : '../log/nginx/error.log'} );">error.log</a>
+
+
 
 </br>
-<a class="button" onclick="db.call('results_file/index');">liste des fichiers result (data)</a>
-
 </br>
-<a class="button" onclick="db.call('admin/repair_missing_files');">fix missing files problem</a>
 
-</br>
-<a class="button" onclick="db.call('admin/log', {'file' : 'vidjil.log'} );">log</a>
+<div>
+    Worker status
+    <div class="console-div">
+        <div class="console-flex">active worker : {{=worker}}</div>
+        <div class="console-flex">run in process : {{=running}}</div>
+        <div class="console-flex">run in queue : {{=in_queue}}</div>
+    </div>
+</div>
 
-</br>
-<a class="button" onclick="db.call('admin/log', {'file' : 'vidjil-debug.log'} );">debug log</a>
+<div>
+    Server status
+    <div class="console-div">
+        <div class="console-flex">{{=uptime}}</div>
+    </div>
+</div>
+
+<div>
+    Server disk usage
+    <div class="console-div">
+        <div class="console-flex">{{=disk_use}}</div>
+    </div>
+</div>

@@ -49,6 +49,24 @@ Cost::Cost(int match, int mismatch, int indel, int del_end, int homopolymer)
   this -> deletion = indel ;
   this -> deletion_end = del_end ;
   this -> homopolymer = (homopolymer == MINUS_INF ? indel: homopolymer);
+
+  this -> open_insertion = this -> open_deletion = MINUS_INF ;
+  this -> extend_insertion = this -> extend_deletion = MINUS_INF ;
+  this -> affine_gap = false ;
+}
+
+Cost::Cost(int match, int mismatch, int open_gap, int extend_gap, int del_end, int homopolymer)
+{
+  this -> match = match ;
+  this -> mismatch = mismatch ;
+  this -> insertion = MINUS_INF ;
+  this -> deletion = MINUS_INF ;
+  this -> deletion_end = del_end ;
+  this -> homopolymer = homopolymer ;
+
+  this -> open_insertion = this -> open_deletion = open_gap ;
+  this -> extend_insertion = this -> extend_deletion = extend_gap ;
+  this -> affine_gap = true ;
 }
 
 
@@ -58,6 +76,8 @@ ostream& operator<<(ostream& out, const Cost& cost)
       << ", " << cost.mismatch
       << "/" << cost.insertion
       << "/" << cost.deletion
+      << ", " << cost.open_insertion << cost.extend_insertion
+      << "/" << cost.open_deletion << cost.extend_deletion
       << ", " << cost.deletion_end
       << ", " << cost.homopolymer
       << ")" ;
@@ -72,18 +92,6 @@ int Cost::substitution(char a, char b)
 {
   return (a == b) ? match : mismatch ;
 }
-
-/*
-int Cost::ins(char current, char next)
-{
-  return (next == current) ? homopolymer : insertion ;
-}
-
-int Cost::del(char current, char next)
-{
-  return (next == current) ? homopolymer : deletion ;
-}
-*/
 
 int Cost::homo2(char xa, char xb, char y)
 {
@@ -107,7 +115,14 @@ DynProg::DynProg(const string &x, const string &y, DynProgMode mode, const Cost&
   for (int i = 0; i <= m; i++) {
     B[i] = new operation[n+1];
   }
-  
+  Bins = new operation*[m+1];
+  for (int i = 0; i <= m; i++) {
+    Bins[i] = new operation[n+1];
+  }
+  Bdel = new operation*[m+1];
+  for (int i = 0; i <= m; i++) {
+    Bdel[i] = new operation[n+1];
+  }  
   this -> mode = mode;
   this -> cost = cost;
 
@@ -127,8 +142,12 @@ DynProg::~DynProg() {
 
   for (int i = 0; i <= m; i++) {
     delete [] B[i];
+    delete [] Bins[i];
+    delete [] Bdel[i];
   }
   delete [] B;  
+  delete [] Bins;
+  delete [] Bdel;  
   delete [] gap1;
   delete [] gap2;
   delete [] linkgap;
@@ -141,6 +160,7 @@ void DynProg::init()
       B[i][0].type = INSER ;
       B[i][0].i = i-1 ;
       B[i][0].j = 0 ;
+      Bdel[i][0].score = Bins[i][0].score = MINUS_INF ;
     }
 
   for (int j=1; j<=n; j++)
@@ -148,6 +168,7 @@ void DynProg::init()
       B[0][j].type = DELET ;    
       B[0][j].i = 0 ;
       B[0][j].j = j-1 ;
+      Bdel[0][j].score = Bins[0][j].score = MINUS_INF ;
     }
 
   if (mode == Local || mode == LocalEndWithSomeDeletions)
@@ -166,7 +187,7 @@ void DynProg::init()
   else if (mode == GlobalButMostlyLocal)
     for (int j=0; j<=n; j++)
       B[0][j].score = j * cost.deletion / 2 ;
-  else
+  else // Global
     for (int j=0; j<=n; j++)
       B[0][j].score = j * cost.deletion ;
 }
@@ -196,15 +217,36 @@ int DynProg::compute()
       best.score = MINUS_INF ;
 
       // The edit operations, with their backtracking information and their score
-      
-      try_operation(best, SUBST, i-1, j-1, B[i-1][j-1].score + cost.substitution(x[i-1], y[j-1]));
-      
-      try_operation(best, INSER, i-1, j  , B[i-1][j  ].score + cost.insertion);
-      try_operation(best, DELET, i  , j-1, B[i  ][j-1].score + cost.deletion);
 
+      // Match, mismatch
+      try_operation(best, SUBST, i-1, j-1, B[i-1][j-1].score + cost.substitution(x[i-1], y[j-1]));
+
+      if (!cost.affine_gap)
+        {
+          // Regular indels
+          try_operation(best, INSER, i-1, j  , B[i-1][j  ].score + cost.insertion);
+          try_operation(best, DELET, i  , j-1, B[i  ][j-1].score + cost.deletion);
+        }
+      else
+        {
+          // Gotoh affine gaps - insertion
+          Bins[i][j].score = MINUS_INF ;
+          try_operation(Bins[i][j], 'o', i-1, j, B[i-1][j].score + cost.open_insertion);
+          try_operation(Bins[i][j], 'x', Bins[i-1][j].i, j, Bins[i-1][j].score + cost.extend_insertion);
+          try_operation(best, INSER, Bins[i][j].i, j ,Bins[i][j].score);
+
+          // Gotoh affine gaps - deletions
+          Bdel[i][j].score = MINUS_INF ;
+          try_operation(Bdel[i][j], 'o', i, j-1, B[i][j-1].score + cost.open_deletion);
+          try_operation(Bdel[i][j], 'x', i, Bdel[i][j-1].j, Bdel[i-1][j].score + cost.extend_deletion);
+          try_operation(best, DELET, i, Bdel[i][j].j,  Bdel[i][j].score);
+        }
+
+      // Homopolymers
       try_operation(best, HOMO2X, i-2, j-1, i > 1 ? B[i-2][j-1].score + cost.homo2(x[i-2], x[i-1], y[j-1]) : MINUS_INF);
       try_operation(best, HOMO2Y, i-1, j-2, j > 1 ? B[i-1][j-2].score + cost.homo2(y[j-2], y[j-1], x[i-1]) : MINUS_INF);
       
+      // Local alignment
       if (mode == Local || mode == LocalEndWithSomeDeletions)
 	try_operation(best, BEGIN, 0, 0, 0);
 
@@ -407,14 +449,15 @@ void DynProg::backtrack()
   str3 = string (str3.rbegin(), str3.rend());
 
   ostringstream back;    
-  back << i <<	"  >>	" << str1.substr(0, BACKSIZE-8) << endl;
-  back << "             " << str2.substr(0, BACKSIZE-8) << endl;
-  back << j <<	"  >>	" << str3.substr(0, BACKSIZE-8) << endl << endl;
+  back << setw(3) << i   << " " << str1.substr(0, BACKSIZE-8) << endl;
+  back << setw(3) << " " << " " << str2.substr(0, BACKSIZE-8) << endl;
+  back << setw(3) << j   << " " << str3.substr(0, BACKSIZE-8) << endl << endl;
   for (size_t k=0 ; (BACKSIZE-8+k*BACKSIZE)< str1.length() ; k++){
     back << str1.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl;
     back << str2.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl;
     back << str3.substr(BACKSIZE-8+k*BACKSIZE, BACKSIZE) << endl << endl;
   }
+  back << "score: " << best_score << endl;
   
   first_i=i;
   first_j=j;

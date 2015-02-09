@@ -39,8 +39,8 @@ void testAffect() {
   TAP_TEST(toString(Vminus) == "-V", TEST_AFFECT_TO_STRING, toString(Vminus));
   TAP_TEST(toString(Vplus) == "+V", TEST_AFFECT_TO_STRING, toString(Vplus));
   TAP_TEST(toString(Jplus) == "+J", TEST_AFFECT_TO_STRING, toString(Jplus));
-  TAP_TEST(toString(AFFECT_UNKNOWN.affect) == " "AFFECT_UNKNOWN_SYMBOL, TEST_AFFECT_TO_STRING, "");
-  TAP_TEST(toString(AFFECT_AMBIGUOUS.affect) == " "AFFECT_AMBIGUOUS_SYMBOL, TEST_AFFECT_TO_STRING, "");
+  TAP_TEST(toString(AFFECT_UNKNOWN.affect) == " " AFFECT_UNKNOWN_SYMBOL, TEST_AFFECT_TO_STRING, "");
+  TAP_TEST(toString(AFFECT_AMBIGUOUS.affect) == " " AFFECT_AMBIGUOUS_SYMBOL, TEST_AFFECT_TO_STRING, "");
 
   ostringstream oss;
   oss << Vminus;
@@ -66,6 +66,13 @@ void testKmerAffectClass() {
   TAP_TEST(KAVm.affect == Vminus, TEST_KMERAFFECT_CONSTRUCTOR, "");
   TAP_TEST(KAJp.affect == Jplus, TEST_KMERAFFECT_CONSTRUCTOR, "");
 
+  KmerAffect copy1(KAVp, false);
+  KmerAffect copy2(KAVp, true);
+  TAP_TEST(copy1.getLabel() == KAVp.getLabel(), TEST_KMERAFFECT_CONSTRUCTOR_COPY_REVERSE, "");
+  TAP_TEST(copy2.getLabel() == KAVp.getLabel(), TEST_KMERAFFECT_CONSTRUCTOR_COPY_REVERSE, "");
+  TAP_TEST(copy1.getStrand() == KAVp.getStrand(), TEST_KMERAFFECT_CONSTRUCTOR_COPY_REVERSE, "");
+  TAP_TEST(copy2.getStrand() == -KAVp.getStrand(), TEST_KMERAFFECT_CONSTRUCTOR_COPY_REVERSE, "");
+    
   KmerAffect test = KAVp;
   TAP_TEST(test.affect == KAVp.affect, TEST_KMERAFFECT_AFFECTATION, "");
   test += KAVp;

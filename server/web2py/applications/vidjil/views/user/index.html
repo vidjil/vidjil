@@ -2,7 +2,7 @@
 {{import vidjil_utils}}
 
 <div>
-    <h3>User info</h3>
+    <h3>Users</h3>
     
     <div id="db_table_container">
         <table class="db_table" id="table">
@@ -10,7 +10,7 @@
                 <tr><td class="column1"> user name</td>
                     <td> @</td>
                     <td class="colum1">patients created </td>
-                    <td class="colum1">files provided </td>
+                    <td class="colum1">files uploaded </td>
                 </tr>
             </thead>
             
@@ -24,6 +24,9 @@
            {{pass}}
         
         </table>
+	
+	<span class="button2" onclick="db.call('default/user/register');">+ new user</span>
+
         <table class="db_table" id="db_fixed_header"></table>
     </div>
 

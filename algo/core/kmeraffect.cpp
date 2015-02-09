@@ -79,6 +79,12 @@ KmerAffect::KmerAffect(const KmerAffect &ka) {
   affect = ka.affect;
 }
 
+KmerAffect::KmerAffect(const KmerAffect &ka, bool reverse) {
+  affect = ka.affect;
+  if (reverse)
+    affect.c ^= (1 << 7);
+}
+
 KmerAffect::KmerAffect(const string &label,
                        int strand) {
   affect.c = label[0];

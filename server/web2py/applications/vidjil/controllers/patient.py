@@ -49,8 +49,6 @@ def info():
         analysis_file = ""
         analysis_filename = ""
 
-
-
     if config :
 
         query = db(
@@ -118,6 +116,7 @@ def custom():
         
 
     q = ((auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) 
+                & (auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) 
                 & (db.sequence_file.patient_id==db.patient.id)
                 & (db.results_file.sequence_file_id==db.sequence_file.id)
                 & (db.results_file.scheduler_task_id==db.scheduler_task.id)
@@ -184,7 +183,10 @@ def index():
         ##add confs info for each patient
         row.confs=""
         co = db.fused_file.id.count()
-        query_conf = db( db.fused_file.patient_id == row.patient.id ).select(db.fused_file.config_id, co, groupby=db.fused_file.config_id).sort(lambda row: co)
+        query_conf = db( (auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) &
+                         (db.config.id == db.fused_file.config_id) &
+                         (db.fused_file.patient_id == row.patient.id) 
+                        ).select(db.fused_file.config_id, co, groupby=db.fused_file.config_id).sort(lambda row: co)
         
         for row2 in query_conf:
             row.confs += " " + db.config[row2.fused_file.config_id].name

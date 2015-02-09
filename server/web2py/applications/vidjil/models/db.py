@@ -63,8 +63,8 @@ auth.settings.reset_password_requires_verification = True
 # auth.settings.login_email_validate = False
 auth.settings.expiration = 3600 * 24 * 7  # one week
 auth.settings.remember_me_form = False
-auth.settings.logged_url = URL('patient', 'index')
-auth.settings.login_next = URL('patient', 'index')
+auth.settings.logged_url = URL('user', 'info')
+auth.settings.login_next = URL('user', 'info')
 
 ## if you need to use OpenID, Facebook, MySpace, Twitter, Linkedin, etc.
 ## register with janrain.com, write your domain:api_key in private/janrain.key
@@ -212,13 +212,6 @@ if db(db.auth_user.id > 0).count() == 0:
     auth.add_permission(id_admin_group, 'create', db.patient, 0)
     auth.add_permission(id_admin_group, 'create', db.auth_group, 0)
     auth.add_permission(id_admin_group, 'create', db.config, 0)
- 
-    
-def join_public_group(form):
-    group_id = db(db.auth_group.role == 'public' ).select()[0].id
-    db.auth_membership.insert(user_id = auth.user.id, group_id = group_id)
-
-auth.settings.register_onaccept = join_public_group
 
 
 ## after defining tables, uncomment below to enable auditing

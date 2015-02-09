@@ -15,7 +15,7 @@ query = db(
 <div>
 
     <div>
-        <h3>{{=message}}  {{=id}}</h3>
+        <h3>{{=message}} {{=db.auth_user[id].first_name}} {{=db.auth_user[id].last_name}} </h3>
     </div>
     
     <div class="db_block">

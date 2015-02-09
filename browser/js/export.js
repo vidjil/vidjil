@@ -310,6 +310,10 @@ Report.prototype = {
         $('<div/>', {class: 'case', text : ' '}).appendTo(head);
         $('<div/>', {class: 'case', text : 'total'}).appendTo(head);
         $('<div/>', {class: 'case', text : 'segmented'}).appendTo(head);
+
+        if (m.system_selected.length < m.system_available.length) {
+            $('<div/>', {class: 'case', text : 'segmented (selected systems)'}).appendTo(head); 
+        }
         
         if (m.system_available.length>1){
             for (var i=0; i<m.system_selected.length; i++){
@@ -338,11 +342,19 @@ Report.prototype = {
         $('<div/>', {class: 'case centered', text : m.getStrTime(time)}).appendTo(box);
         $('<div/>', {class: 'case centered', text : m.toStringThousands(m.reads.total[time])}).appendTo(box);
         
-        var segmented = ((m.reads.segmented[time]/m.reads.total[time])*100).toFixed(0) + "%"
+        var segmented = ((m.reads.segmented_all[time]/m.reads.total[time])*100).toFixed(0) + "%"
         var seg_box = $('<div/>', {class: 'case centered', text : segmented}).appendTo(box);
         $('<div/>', {class: 'background1'}).appendTo(seg_box);
         $('<div/>', {class: 'background2', style: 'width:'+segmented}).appendTo(seg_box);
         
+        if (m.system_selected.length < m.system_available.length) {
+
+            var segmented = ((m.reads.segmented[time]/m.reads.total[time])*100).toFixed(0) + "%"
+            var seg_box = $('<div/>', {class: 'case centered', text : segmented}).appendTo(box);
+            $('<div/>', {class: 'background1'}).appendTo(seg_box);
+            $('<div/>', {class: 'background2', style: 'width:'+segmented}).appendTo(seg_box);
+        }
+
         if (m.system_available.length>1){
             var pie = $('<div/>').appendTo(box);
             

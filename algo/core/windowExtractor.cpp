@@ -27,33 +27,33 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
     
     KmerMultiSegmenter kmseg(reads->getSequence(), multigermline, out_unsegmented);
     
-    KmerSegmenter seg = kmseg.the_kseg ;
-    int read_length = seg.getSequence().sequence.length();
+    KmerSegmenter *seg = kmseg.the_kseg ;
+    int read_length = seg->getSequence().sequence.length();
 
-    stats[seg.getSegmentationStatus()].insert(read_length);
-    if (seg.isSegmented()) {
+    stats[seg->getSegmentationStatus()].insert(read_length);
+    if (seg->isSegmented()) {
 
-      seg.segmented_germline->stats.insert(read_length);
+      seg->segmented_germline->stats.insert(read_length);
 
-      junction junc = seg.getJunction(w);
+      junction junc = seg->getJunction(w);
 
       if (junc.size()) {
         stats[TOTAL_SEG_AND_WINDOW].insert(read_length) ;
-        windowsStorage->add(junc, reads->getSequence(), seg.getSegmentationStatus(), seg.segmented_germline);
+        windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline);
       } else {
         stats[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW].insert(read_length) ;
       }
 
       if (out_segmented) {
-        *out_segmented << seg ; // KmerSegmenter output (V/N/J)
+        *out_segmented << *seg ; // KmerSegmenter output (V/N/J)
 
         if (out_unsegmented) {
-	  *out_segmented << seg.getKmerAffectAnalyser()->toString() << endl;
-          *out_unsegmented << "#>" << reads->getSequence().label << " segmented on " << seg.segmented_germline->code << endl << endl;
+	  *out_segmented << seg->getKmerAffectAnalyser()->toString() << endl;
+          *out_unsegmented << "#>" << reads->getSequence().label << " segmented on " << seg->segmented_germline->code << endl << endl;
         }
       }
       
-      nb_reads_germline[seg.system]++;
+      nb_reads_germline[seg->system]++;
       
     } else if (out_unsegmented) {
       *out_unsegmented << "#>" << reads->getSequence().label << " not segmented" << endl << endl;

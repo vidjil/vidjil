@@ -70,7 +70,7 @@ Model.prototype = {
         this.isPlaying = false;
         
         this.mapID = {};
-        this.top = 10;
+        this.top = 50;
         this.precision = 1;
 
         this.germlineV = new Germline(this)
@@ -316,6 +316,13 @@ Model.prototype = {
             }
         }
         self.min_sizes = min_sizes;
+
+        // save reads.segmented     
+        this.reads.segmented_all = []                                                                                                                                                                                     
+        for (var i=0 ; i<this.reads.segmented.length; i++){
+            this.reads.segmented_all[i] = this.reads.segmented[i]
+        }
+
         
         //extract germline
         if (typeof self.germlines != 'undefined'){
@@ -1128,7 +1135,7 @@ Model.prototype = {
         }
 
         if (count < 5) {
-            this.top = 25
+            this.top = 100
             this.displayTop()
         }
 
@@ -1190,11 +1197,11 @@ Model.prototype = {
     getPointHtmlInfo: function (timeID) {
         var html = ""
 
-        html = "<h2>Point info : " + this.getStrTime(timeID, "name") + "("+m.getSampleTime(timeID)+")</h2>"
+        html = "<h2>Point " + this.getStrTime(timeID, "name") + " ("+m.getSampleTime(timeID)+")</h2>"
         html += "<div id='info_timepoint'><table><tr><th></th>"
         html += "<tr><td> reads </td><td>" + this.reads.total[timeID] + "</td></tr>"
-        html += "<tr><td> reads segmented </td><td>" + this.reads.segmented[timeID] +
-            " ("+ (this.reads.segmented[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )</td></tr>"
+        html += "<tr><td> reads segmented </td><td>" + this.reads.segmented_all[timeID] +
+            " ("+ (this.reads.segmented_all[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )</td></tr>"
 
         html += "<tr><td> software used </td><td>" + this.getSoftVersionTime(timeID) + "</td></tr>"
         html += "<tr><td> parameters </td><td>" + this.getCommandTime(timeID) + "</td></tr>"
