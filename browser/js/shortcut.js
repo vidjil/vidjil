@@ -113,6 +113,5 @@ Shortcut.prototype = {
             if (e.altKey && sp.reinit) {
                 sp.active_move = true;
             }
-        }
     }
 }
