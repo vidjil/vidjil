@@ -19,7 +19,6 @@ int compare_score_seq(const void *si1, const void *si2);
 /**
  * This class aims at choosing the best read among a group of read.
  * As an input, the class needs a list of reads (sequence + id)
- * as well as the file containing all the sequences
  * and an object able to compute a score for a read.
  * The goal of the class is to find, among the reads,
  * the sequence that has the best score.
