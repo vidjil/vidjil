@@ -393,7 +393,7 @@ Clone.prototype = {
 
         //cluster info
         if (isCluster) {
-            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> clone information </td></tr>"
+            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> clone </td></tr>"
             html += "<tr><td> clone name </td><td colspan='" + time_length + "'>" + this.getName() + "</td></tr>"
             html += "<tr><td> clone size (n-reads (total reads) )</td>"
             for (var i = 0; i < time_length; i++) {
@@ -428,7 +428,7 @@ Clone.prototype = {
 
         
         //segmentation info
-        html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation information</td></tr>"
+        html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation</td></tr>"
         
         if (typeof this.stats != 'undefined'){
             var total_stat = [];
@@ -454,7 +454,7 @@ Clone.prototype = {
         
         
         //other info (clntab)
-        html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> other information</td></tr>"
+        html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> &nbsp; </td></tr>"
         for (var key in this) {
             if (key[0] == "_") {
                 html += "<tr><td>" + key + "</td>"
