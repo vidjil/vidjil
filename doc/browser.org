@@ -4,7 +4,7 @@
 This is the help of the Vidjil browser : [[http://rbx.vidjil.org/browser/]].
 Further help can always be asked to [[mailto:contact@vidjil.org][contact@vidjil.org]]. We can also arrange phone or Skype meeting.
 
-The Vidjil team (Mathieu, Mikaël and Marc)
+The Vidjil team (Mathieu, Mikaël, Marc and Tatiana)
 
 * Requirements
 
