@@ -403,15 +403,16 @@ Clone.prototype = {
             for (var i = 0; i < time_length; i++) {
             html += "<td>" + (this.getSize(this.m.samples.order[i]) * 100).toFixed(3) + " % </td>"
             }
-            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> cluster's main sequence information</td></tr>"
+            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> representative sequence</td></tr>"
         }else{
-            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> sequence information</td></tr>"
+            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> sequence</td></tr>"
         }
 
         
         //sequence info (or cluster main sequence info)
         html += "<tr><td> sequence name </td><td colspan='" + time_length + "'>" + this.getSequenceName() + "</td></tr>"
         html += "<tr><td> code </td><td colspan='" + time_length + "'>" + this.getCode() + "</td></tr>"
+        html += "<tr><td> length </td><td colspan='" + time_length + "'>" + this.getSequenceLength() + "</td></tr>"
         html += "<tr><td> size (n-reads (total reads) )</td>"
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + this.getSequenceReads(this.m.samples.order[i]) + 
