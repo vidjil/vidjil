@@ -64,7 +64,7 @@ function Com(flash_id, log_id, popup_id, data_id) {
 	    + BUTTON_CLOSE_POPUP,
 
         "welcome": " <h2>Vidjil <span class='logo'>(beta)</span></h2>"
-	    + "(c) 2011-2014, the Vidjil team" + "<br />Marc Duez, Mathieu Giraud and Mikaël Salson" 
+	    + "(c) 2011-2015, the Vidjil team" + "<br />Marc Duez, Mathieu Giraud,  Mikaël Salson and Tatiana Rocher" 
 	    + " &ndash; <a href='http://www.vidjil.org'>http://www.vidjil.org/</a>" + "</br>" 
 	    + "</br>Vidjil is developed by the <a href='http://cristal.univ-lille.fr/bonsai'>Bonsai bioinformatics team</a> (CRIStAL, CNRS, Univ. Lille, Inria Lille), " 
 	    + "in collaboration with the <a href='http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html'>department of Hematology</a> of CHRU Lille, " 
