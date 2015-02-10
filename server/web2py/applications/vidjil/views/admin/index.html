@@ -6,6 +6,7 @@
 <a class="button" onclick="db.call('results_file/index');">.vidjil file list</a>
 
 </br>Database maintenace:
+<a class="button" href="/vidjil/appadmin/index">administration</a>
 <a class="button" onclick="db.call('admin/repair_missing_files');">fix missing files</a>
 </br>
 
@@ -14,6 +15,7 @@
 </br>Vidjil server:
 <a class="button" onclick="db.call('admin/log', {'file' : 'vidjil.log'} );">vidjil.log</a>
 <a class="button" onclick="db.call('admin/log', {'file' : 'vidjil-debug.log'} );">debug.log</a>
+<a class="button" href="/admin/default/errors/vidjil">web2py tickets</a>
 
 </br>Ngnix:  
 <a class="button" onclick="db.call('admin/log', {'file' : '../log/nginx/access.log'} );">access.log</a>
