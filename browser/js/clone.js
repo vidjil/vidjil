@@ -284,7 +284,14 @@ Clone.prototype = {
             return "0";
         }
     },
-    
+
+    getSequenceLength : function () {
+        if (typeof (this.sequence) != 'undefined' && this.sequence != 0){
+            return this.sequence.length
+        }else{
+            return 0;
+        }
+    },    
     
     
     
