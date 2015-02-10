@@ -170,12 +170,12 @@ clones detected.
 
 ** The "top" slider in the "filter" menu
 
-The "top 10" clones are the clones that are in the first 10 ones
-in *at least one* sample. As soon as one clone is in this "top 10"
+The "top 50" clones are the clones that are in the first 50 ones
+in *at least one* sample. As soon as one clone is in this "top 50"
 list, it is displayed for every sample, even if its concentration is
 very low in other samples.
-Most of the time, a "top 10" is enough. The hidden clones are thus the
-one that never reach the 10 first clones. With a default installation,
+Most of the time, a "top 50" is enough. The hidden clones are thus the
+one that never reach the 50 first clones. With a default installation,
 the slider can be set to display clones until the "top 100" on the grid 
 (and, on the graph, until "top 20").
 
