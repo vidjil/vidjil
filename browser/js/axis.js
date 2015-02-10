@@ -161,13 +161,13 @@ Axis.prototype = {
      
         //clone position
         this.pos = function(cloneID) {
-            return 1 - self.sizeScale(self.m.clone(cloneID).getSequenceLength())
+            return self.sizeScale(self.m.clone(cloneID).getSequenceLength())
         }
         
         //labels
         var h = Math.ceil(n_max/5)
         for (var i = 0; i < 5; i++) {
-            var pos = 1-this.sizeScale(h*i);
+            var pos = this.sizeScale(h*i);
             var text = h*i
             this.labels.push(this.label("line", pos, text));
         }
@@ -193,13 +193,13 @@ Axis.prototype = {
      
         //clone position
         this.pos = function(cloneID) {
-            return 1 - self.sizeScale(self.m.clone(cloneID).getNlength())
+            return self.sizeScale(self.m.clone(cloneID).getNlength())
         }
         
         //labels
         var h = Math.ceil(n_max/5)
         for (var i = 0; i < 5; i++) {
-            var pos = 1-this.sizeScale(h*i);
+            var pos = this.sizeScale(h*i);
             var text = h*i
             this.labels.push(this.label("line", pos, text));
         }
