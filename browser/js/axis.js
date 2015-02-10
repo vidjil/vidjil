@@ -143,6 +143,39 @@ Axis.prototype = {
     /* 
      * 
      * */
+    useSequenceLength: function () {
+        this.init()
+        var self = this;
+        
+        var n_min = 9999;
+        var n_max = 1;
+        for (var i=0; i<this.m.clones.length; i++){
+            var n = this.m.clone(i).getSequenceLength();
+            if (n && n < n_min) n_min = n;
+            if (n > n_max) n_max = n;
+        }
+        
+        this.sizeScale = d3.scale.linear()
+            .domain([n_min-1, n_max+1])
+            .range([0, 1]);
+     
+        //clone position
+        this.pos = function(cloneID) {
+            return 1 - self.sizeScale(self.m.clone(cloneID).getSequenceLength())
+        }
+        
+        //labels
+        var h = Math.ceil(n_max/5)
+        for (var i = 0; i < 5; i++) {
+            var pos = 1-this.sizeScale(h*i);
+            var text = h*i
+            this.labels.push(this.label("line", pos, text));
+        }
+    },
+
+    /* 
+     * 
+     * */
     useNlength: function () {
         this.init()
         var self = this;

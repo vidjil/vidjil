@@ -105,6 +105,7 @@ function ScatterPlot(id, model) {
       ["allele_v", "allele V"],
       ["allele_j", "allele J"],
       ["Size", "abundance"],
+      ["sequenceLength", "clone length"],
       ["n", "N length"]
   ];
 
@@ -1619,6 +1620,9 @@ ScatterPlot.prototype = {
       }
       if (splitMethod == "Size") {
       axis.useSize()    
+      }
+      if (splitMethod == "sequenceLength") {
+      axis.useSequenceLength()    
       }
       if (splitMethod == "n") {
       axis.useNlength()    
