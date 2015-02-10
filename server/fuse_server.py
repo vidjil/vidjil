@@ -1,6 +1,8 @@
 from SimpleXMLRPCServer import SimpleXMLRPCServer, SimpleXMLRPCRequestHandler
 from subprocess import *
 
+from web2py.applications.vidjil.modules import defs
+
 def fuse(cmd, output_dir, filename):
     import time, datetime, sys, os.path, random
     from subprocess import Popen, PIPE, STDOUT, os
@@ -16,7 +18,7 @@ def fuse(cmd, output_dir, filename):
     return fuse_filepath
 
 def main():
-    server = SimpleXMLRPCServer(("localhost", 12345))
+    server = SimpleXMLRPCServer(("localhost", defs.PORT_FUSE_SERVER))
     server.register_function(fuse, "fuse")
     while True:
         server.handle_request()

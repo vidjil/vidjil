@@ -17,3 +17,7 @@ DIR_OUT_VIDJIL_ID = '/mnt/result/tmp/out-%06d/'
 ### relative path start from server/web2py
 DIR_VIDJIL = '../../'
 DIR_FUSE = '../'
+
+### Port on which to run the fuse server
+### Used in models/task.py and in /server/fuseserver.py
+PORT_FUSE_SERVER = 12789

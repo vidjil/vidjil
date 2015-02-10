@@ -300,7 +300,7 @@ def custom_fuse(file_list):
             files += defs.DIR_RESULTS + db.results_file[id].data_file + " "
     
     cmd = "python "+ os.path.abspath(defs.DIR_FUSE) +"/fuse.py -o "+output_file+" -t 100 "+files
-    proc_srvr = xmlrpclib.ServerProxy("http://localhost:12345")
+    proc_srvr = xmlrpclib.ServerProxy("http://localhost:%d" % defs.PORT_FUSE_SERVER)
     fuse_filepath = proc_srvr.fuse(cmd, out_folder, output_filename)
     
     try:
