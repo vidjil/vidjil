@@ -38,9 +38,10 @@ Otherwise, such .vidjil files can be obtained:
 * First aid
 
 - Open data by:
-    - either with “patients”/“open patient”  (if you have access to the database)
+    - either with “patients”/“open patient”  if you are connected to a patient database 
+      (in this case, there are always some "Demo" datasets for demonstration purposes),
     - or with “file”/“import/export”, manually selecting a .vidjil file
-  There is always a “LIL-L2” dataset for demonstration purposes.
+
 
 - You can change the number of displayed clones by moving the slider “number of clones” (menu “filter”).
   The maximal number of clones that can be displayed depends on the processing step before.
@@ -60,8 +61,8 @@ Otherwise, such .vidjil files can be obtained:
    - system :: system used for analyzing the data. In case of multi-system
                data, you can select what system should be displayed.
    - point :: name of the current point (you can change the selected point by clicking on
-              another point in the graph). The name can be edited (“...” button).
-   - date :: when the run was performed (manually curated, with “...” button)
+              another point in the graph). The name can be edited (“edit”).
+   - date :: when the run was performed (edit either with “...”, or with the database, on the patient tab)
    - segmented :: number of reads where Vidjil found a CDR3, for that point.
                   See [[Number of segmented reads]] below.
    - total :: total number of reads for that point
@@ -80,6 +81,10 @@ Otherwise, such .vidjil files can be obtained:
   the list you need to click respectively on “V sort”, “J sort” or “sort”.
   The “+” and “-” allow respectively to un-merge or re-merge all clones that have
   already been merged.
+
+
+- Clones can be searched (“search” box) by either their name, their custom name, 
+  or their DNA sequence.
 
 ** The graph
 
@@ -124,7 +129,7 @@ installation of Vidjil (as on http://rbx.vidjil.org/browser), the
 'patient' menu gives you access to the server.
 
 With authentication, you can add patients, then add either
-=.fasta=/=.fastq=/=.gz= files or =.clntab= files, then process your
+=.fasta=, =.fastq=, =.gz= or =.clntab= files, then process your
 runs and save the results of your analysis.
 
 *** Patients
