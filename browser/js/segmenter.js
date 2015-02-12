@@ -529,6 +529,7 @@ Sequence.prototype = {
                 this.pos.push(i)
             }
         }
+        this.pos.push(this.seq.length)
         return this;
     },
 
