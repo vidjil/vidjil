@@ -44,8 +44,14 @@ function Segment(id, model, cgi_address) {
     
     this.memtab = [];
     this.sequence = {};
-    this.is_open = false
-
+    this.is_open = false;
+    
+    //elements to be highlited in sequences
+    this.highlight = [
+        {'field' : "", 'color': "red"},
+        {'field' : "", 'color': "blue"},
+        //{'field' : "", 'color': "green"}
+    ];
 }
 
 Segment.prototype = {
@@ -127,6 +133,50 @@ Segment.prototype = {
         // div_menu.appendChild(span)
 
         div.appendChild(div_menu)
+        
+        
+        
+        //menu-highlight
+        var div_highlight = document.createElement('div');
+        div_highlight.className = "menu-highlight"
+        div_highlight.onmouseover = function () {
+            self.m.focusOut()
+        };
+        
+        for (var i in this.highlight) {
+            var input = document.createElement('select');
+            input.style.borderColor = this.highlight[i].color;
+            input.style.width = "60px";
+            input.id = "highlight_"+i
+            
+            //TODO generate list from model
+            var option0 = document.createElement('option');
+            option0.appendChild(document.createTextNode(""));
+            input.appendChild(option0)
+            var option1 = document.createElement('option');
+            option1.appendChild(document.createTextNode("_sequence.JUNCTION.raw nt seq"));
+            input.appendChild(option1)
+            var option2 = document.createElement('option');
+            option2.appendChild(document.createTextNode("id"));
+            input.appendChild(option2)
+            
+            input.onchange = function () {
+                var id = this.id.replace("highlight_","")
+                segment.highlight[id].field = this.options[this.selectedIndex].text;
+                segment.update();
+            }
+            
+            div_highlight.appendChild(input)
+        }
+        
+        div.appendChild(div_highlight)
+        
+        
+        
+        
+        
+        
+        
 
         var div_focus = document.createElement('div');
         div_focus.className = "focus"
@@ -568,9 +618,9 @@ Sequence.prototype = {
             if (this.m.colorMethod == "J") jColor = "style='color : " + clone.colorJ + "'";
 
             var highlights = [];
-            highlights.push(this.find_subseq(segment.highligth_red, "red"));
-            highlights.push(this.find_subseq(segment.highligth_blue, "blue"));
-            highlights.push(this.find_subseq(segment.highligth_green, "green"));
+            for (var i in segment.highlight){
+                highlights.push(this.find_subseq(segment.highlight[i].field, segment.highlight[i].color));
+            }
             
             //add span VDJ
             if (typeof clone.seg != 'undefined') result += "<span class='V' " + vColor + " >"

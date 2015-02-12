@@ -780,13 +780,18 @@ span.logo {
   float: left;
   width: 475px;
 }
+.menu-highlight {
+  position: relative;
+  float: left;
+  width: 250px;
+}
 .focus {
   position: relative;
   text-align: center;
   float: left;
-  width: -moz-calc(100% - 675px);
-  width: -webkit-calc(100% - 675px);
-  width: calc(100% - 675px);
+  width: -moz-calc(100% - 975px);
+  width: -webkit-calc(100% - 975px);
+  width: calc(100% - 975px);
 }
 .stats {
   position: relative;
