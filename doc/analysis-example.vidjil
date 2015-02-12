@@ -1,0 +1,1765 @@
+{
+  "germlines": {
+    "custom": {
+      "3": [], 
+      "5": [], 
+      "4": [], 
+      "shortcut": "X"
+    }
+  }, 
+  "timestamp": [
+    "2014-12-04 15:30:05"
+  ], 
+  "reads-distribution-1000": [
+    0
+  ], 
+  "vidjil_json_version": "2014.10", 
+  "reads-distribution-1": [
+    22430
+  ], 
+  "reads": {
+    "segmented": [
+      742377
+    ], 
+    "total": [
+      786861
+    ], 
+    "germline": {
+      "TRA": [
+        1415
+      ], 
+      "TRB": [
+        716036
+      ], 
+      "TRD": [
+        22239
+      ], 
+      "TRG": [
+        521
+      ], 
+      "IGL": [
+        34
+      ], 
+      "IGK": [
+        509
+      ], 
+      "IGH": [
+        1632
+      ]
+    }
+  }, 
+  "samples": {
+    "commandline": [
+      "/home/vidjil//vidjil -o /mnt/result/tmp/out-000653/ -b 000653 -g germline/mus-musculus/ /mnt/upload/uploads/sequence_file.data_file.8e82b58dd8f6ccd0.5754322e66712e617373656d626c65642e66617374712e677a.gz "
+    ], 
+    "number": 1, 
+    "original_names": [
+      "helloworld"
+    ], 
+    "log": [
+      "  ==> segmented 742386 reads (94.3%)\n  ==> found 318962 40-windows in 742377 segments (94.3%) inside 786861 sequences\n                                  #      av. length\n   TRG                  ->      521      166.0\n   IGH                  ->     1632      174.6\n   TRD                  ->    22239      173.1\n   IGK                  ->      509      163.7\n   TRA                  ->     1415      174.3\n   TRB                  ->   716036      176.6\n   IGL                  ->       34      192.5\n\n   ?                    ->        0\n   SEG_+                ->   233333      178.8\n   SEG_-                ->   509053      175.4\n   UNSEG too short      ->        0\n   UNSEG strand         ->     7588      221.8\n   UNSEG too few (zero) ->    19482      174.2\n   UNSEG too few V      ->     2012      182.6\n   UNSEG too few J      ->    14993      202.1\n   UNSEG < delta_min    ->        0\n   UNSEG > delta_max    ->      385      197.4\n   UNSEG ambiguous      ->       15      208.6\n\n   = SEG, with window   ->   742377      176.5\n   = SEG, but no window ->        9      131.7\n"
+    ]
+  }, 
+  "reads-distribution-10": [
+    159715
+  ], 
+  "clones": [
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 90, 
+      "seg_stat": [
+        {
+          "1": 143, 
+          "2": 168
+        }
+      ], 
+      "reads": [
+        311
+      ], 
+      "id": "YCCYTGTGCYGYGYCCCYYTGCTYGYGTYT"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV29*01 -2/3/-2 TRBD2*01 -2/3/-5 TRBJ2-7*01", 
+      "sequence": "GYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGTTYGYYCTGGGGGYAYTYAYGYCTYGGYCCGGYCYGGCYACGGTTTYYGYYTYYAATGTYCYYCCYAG", 
+      "top": 7, 
+      "seg": {
+        "5end": 69, 
+        "4end": 82, 
+        "5start": 0, 
+        "3": "TRBJ2-7*01", 
+        "5": "TRBV29*01", 
+        "4": "TRBD2*01", 
+        "4start": 73, 
+        "3start": 86
+      }, 
+      "reads": [
+        606
+      ], 
+      "seg_stat": [
+        {
+          "1": 217, 
+          "2": 389
+        }
+      ], 
+      "id": "TGCYGYGTTYGYYCTGGGGGYAYTYAYGYC"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 97, 
+      "seg_stat": [
+        {
+          "1": 134, 
+          "2": 169
+        }
+      ], 
+      "reads": [
+        303
+      ], 
+      "id": "YTGTGCYGYGYCCCYYGGYYAAAYCCTTGY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 50, 
+      "seg_stat": [
+        {
+          "1": 132, 
+          "2": 230
+        }
+      ], 
+      "reads": [
+        362
+      ], 
+      "id": "CTGTGCYGYGYYCTGGGGGGTYCYTYAYGYC"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 72, 
+      "seg_stat": [
+        {
+          "1": 116, 
+          "2": 216
+        }
+      ], 
+      "reads": [
+        332
+      ], 
+      "id": "CTGYCCTGYGTGYYYGGGGYAAAAYCCTTGYC"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 28, 
+      "seg_stat": [
+        {
+          "1": 151, 
+          "2": 281
+        }
+      ], 
+      "reads": [
+        432
+      ], 
+      "id": "GYCTYTGTGCYGYGYCYYYAGYTYTTTGGT"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV29*01 -5/4/-0 TRBD2*01 -0/4/-1 TRBJ2-3*01", 
+      "sequence": "GYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGYCCCGGYCTGGGGGGGCGCGGGTGYYAACGCTGYTTTTGGCYAGYACYYCTYCTGTYYYGYYTYYAATGTYCYYCCYAG", 
+      "top": 11, 
+      "seg": {
+        "5end": 66, 
+        "4end": 84, 
+        "5start": 0, 
+        "3": "TRBJ2-3*01", 
+        "5": "TRBV29*01", 
+        "4": "TRBD2*01", 
+        "4start": 71, 
+        "3start": 89
+      }, 
+      "reads": [
+        532
+      ], 
+      "seg_stat": [
+        {
+          "1": 196, 
+          "2": 336
+        }
+      ], 
+      "id": "GCYGYGYCCCGGYCTGGGGGGGCGCGGGTGYYAA"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 34, 
+      "seg_stat": [
+        {
+          "1": 159, 
+          "2": 256
+        }
+      ], 
+      "reads": [
+        415
+      ], 
+      "id": "TGYCTGYCCTGYGTGCCGYAAYYYAGYTYTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 55, 
+      "seg_stat": [
+        {
+          "1": 138, 
+          "2": 216
+        }
+      ], 
+      "reads": [
+        354
+      ], 
+      "id": "GTGCYGYGTTYTGYYAGGGGGYYCCYGYCTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 25, 
+      "seg_stat": [
+        {
+          "1": 144, 
+          "2": 302
+        }
+      ], 
+      "reads": [
+        446
+      ], 
+      "id": "CTYTGTGCYGYGYCGGYGGCYCYCYYCCTY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 38, 
+      "seg_stat": [
+        {
+          "1": 179, 
+          "2": 231
+        }
+      ], 
+      "reads": [
+        410
+      ], 
+      "id": "ACCYTGTGCYGYGYCGGYYCYAYYCCYGY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 22, 
+      "seg_stat": [
+        {
+          "1": 155, 
+          "2": 302
+        }
+      ], 
+      "reads": [
+        457
+      ], 
+      "id": "TYTGTGCYGYGTTYAAYGYACYTGCTYGYGT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 61, 
+      "seg_stat": [
+        {
+          "1": 150, 
+          "2": 198
+        }
+      ], 
+      "reads": [
+        348
+      ], 
+      "id": "TGTGCYGYGCCCCGGYYGGGGGGGYYYCCYGT"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV26*01 -4/1/-2 TRBD1*01 -6/2/-0 TRBJ2-1*01", 
+      "sequence": "CCTTGYGCCYYAATYAGYCYTYGGYGYYCYAGYCTGYCCYTGTGCYGYGYCYYCTYACYTGCTYGYGTYTYGYCYGGYYCYCYACCGYCYYGYYTYYAATGTYCYYCCYAG", 
+      "top": 17, 
+      "seg": {
+        "5end": 66, 
+        "4end": 71, 
+        "5start": 0, 
+        "3": "TRBJ2-1*01", 
+        "5": "TRBV26*01", 
+        "4": "TRBD1*01", 
+        "4start": 68, 
+        "3start": 74
+      }, 
+      "reads": [
+        471
+      ], 
+      "seg_stat": [
+        {
+          "1": 190, 
+          "2": 281
+        }
+      ], 
+      "id": "CCYTGTGCYGYGYCYYCTYACYTGCTYGYG"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 43, 
+      "seg_stat": [
+        {
+          "1": 169, 
+          "2": 211
+        }
+      ], 
+      "reads": [
+        380
+      ], 
+      "id": "CYTGTGCYGYGYTYYGYAACYTGCTYGYGT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 27, 
+      "seg_stat": [
+        {
+          "1": 185, 
+          "2": 252
+        }
+      ], 
+      "reads": [
+        437
+      ], 
+      "id": "YTGTGCYGYGYCGGYYGGGGGCTYGYGTYTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 82, 
+      "seg_stat": [
+        {
+          "1": 122, 
+          "2": 201
+        }
+      ], 
+      "reads": [
+        323
+      ], 
+      "id": "GYCCTGYGTGYCCCCGGYYGGYYCCTTGYCTT"
+    }, 
+    {
+      "germline": "TRD", 
+      "name": "TRDV1*01 -9/10/-3 TRDD2*01 -7/19/-17 TRDJ1*01", 
+      "sequence": "CCTTGYGCCYYAATYAGYCYTYGGYGYYCYAGYCTGYCCYTGTGCYGYGYTGYGGGGGYGYAAYCGCYYTTTTGYYAGYAGCCGGCYATTGTTGYYGYYTYYAATGTYCYYCCYAG", 
+      "top": 13, 
+      "seg": {
+        "5end": 57, 
+        "4end": 73, 
+        "5start": 0, 
+        "3": "TRDJ1*01", 
+        "5": "TRDV1*01", 
+        "4": "TRDD2*01", 
+        "4start": 68, 
+        "3start": 93
+      }, 
+      "reads": [
+        500
+      ], 
+      "seg_stat": [
+        {
+          "1": 245, 
+          "2": 255
+        }
+      ], 
+      "id": "GYCCYTGTGCYGYGYTGYGGGGGYGYAAYCG"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 45, 
+      "seg_stat": [
+        {
+          "1": 118, 
+          "2": 256
+        }
+      ], 
+      "reads": [
+        374
+      ], 
+      "id": "CTGTGCYGYGTTYCCTGGGGCTYTYAYGYCTY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 75, 
+      "seg_stat": [
+        {
+          "1": 127, 
+          "2": 203
+        }
+      ], 
+      "reads": [
+        330
+      ], 
+      "id": "CTGTGCYGYGYGYCTGGGGGTGGYCCGGGYGCY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 51, 
+      "seg_stat": [
+        {
+          "1": 163, 
+          "2": 198
+        }
+      ], 
+      "reads": [
+        361
+      ], 
+      "id": "YTGTGCYGYGYTGYYGGGYAAYYYAGYTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 91, 
+      "seg_stat": [
+        {
+          "1": 119, 
+          "2": 192
+        }
+      ], 
+      "reads": [
+        311
+      ], 
+      "id": "CYTGTGCYGYGCCYYGGGTTTTYYACYAAYT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 93, 
+      "seg_stat": [
+        {
+          "1": 151, 
+          "2": 159
+        }
+      ], 
+      "reads": [
+        310
+      ], 
+      "id": "CTGTGCYGYGYTGGYTGGYGYAAAYCCTTGYC"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 48, 
+      "seg_stat": [
+        {
+          "1": 167, 
+          "2": 199
+        }
+      ], 
+      "reads": [
+        366
+      ], 
+      "id": "ACTYTGTGCYGYGTYCYAAACYTGCTYGYGTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 21, 
+      "seg_stat": [
+        {
+          "1": 229, 
+          "2": 233
+        }
+      ], 
+      "reads": [
+        462
+      ], 
+      "id": "ACCYTGTGCYGYGYTGYYYYAGYTYTTTGG"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV29*01 -1/0/-0 TRBD1*01 -2/0/-5 TRBJ2-5*01", 
+      "sequence": "TACAGGGTCTCACGGAAGAAGCGGGAGCATTTCTCCCTGATTCTGGATTCTGCTAAAACAAACCAGACATCTGTGTACTTCTGTGCTAGCAGTTTATGGGACAGGGGAGACACCCAGTACTTTGGGCCAGGCACTCGGCTCCTCGTGTTAGAGGATCTGAGAAATGTGACTCCACCCAAG", 
+      "top": 1, 
+      "seg": {
+        "5end": 96, 
+        "4end": 106, 
+        "5start": 0, 
+        "3": "TRBJ2-5*01", 
+        "5": "TRBV29*01", 
+        "4": "TRBD1*01", 
+        "4start": 97, 
+        "3start": 107
+      }, 
+      "reads": [
+        962
+      ], 
+      "seg_stat": [
+        {
+          "1": 382, 
+          "2": 580
+        }
+      ], 
+      "id": "TGTGCTAGCAGTTTATGGGACAGGGGAGACACCCAGTACT"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV29*01 -5/5/-0 TRBD2*01 -3/2/-6 TRBJ2-5*01", 
+      "sequence": "YYGGGYYACGYAYAGCGGYGYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGTYCCCGGYCTGGGGGTGYYCCYGYCTTTGGGCYGGYCYGGCYCYGTGTYYGYYTYYAATGTYCYYCCYAG", 
+      "top": 14, 
+      "seg": {
+        "5end": 92, 
+        "4end": 108, 
+        "5start": 0, 
+        "3": "TRBJ2-5*01", 
+        "5": "TRBV29*01", 
+        "4": "TRBD2*01", 
+        "4start": 98, 
+        "3start": 111
+      }, 
+      "reads": [
+        497
+      ], 
+      "seg_stat": [
+        {
+          "1": 166, 
+          "2": 331
+        }
+      ], 
+      "id": "TGTGCYGYGTYCCCGGYCTGGGGGTGYYCCYGT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 67, 
+      "seg_stat": [
+        {
+          "1": 123, 
+          "2": 217
+        }
+      ], 
+      "reads": [
+        340
+      ], 
+      "id": "CTGYCCTGYGTGYGTGGYYAYTYAYGYCTY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 76, 
+      "seg_stat": [
+        {
+          "1": 130, 
+          "2": 198
+        }
+      ], 
+      "reads": [
+        328
+      ], 
+      "id": "TYTGTGCYGYGYCCCGGYYAAYYCCYGYCT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 53, 
+      "seg_stat": [
+        {
+          "1": 115, 
+          "2": 243
+        }
+      ], 
+      "reads": [
+        358
+      ], 
+      "id": "ACTGYCCTGYGTGYYGGGCYCYTYAYGYCTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 98, 
+      "seg_stat": [
+        {
+          "1": 126, 
+          "2": 176
+        }
+      ], 
+      "reads": [
+        302
+      ], 
+      "id": "TYTGTGCYGYGTGGGGGGYCCCCYGYCTTTGGGC"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 79, 
+      "seg_stat": [
+        {
+          "1": 104, 
+          "2": 221
+        }
+      ], 
+      "reads": [
+        325
+      ], 
+      "id": "CTTTGTGYAGYGCTYYYGYAAAAYCCTTGYCT"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV26*01 -4/0/-4 TRBD1*01 -5/5/-0 TRBJ1-4*02", 
+      "sequence": "CCTTGYGCCYYAATYAGYCYTYGGYGYYCYAGYCTGYCCYTGTGCYGYGYAYTTYYACYAAYTYTTTTYGGYATGYACYAGCTGYTGYCTGYGYYTYYAATGTYCYYCCYAG", 
+      "top": 5, 
+      "seg": {
+        "5end": 66, 
+        "4end": 64, 
+        "5start": 0, 
+        "3": "TRBJ1-4*02", 
+        "5": "TRBV26*01", 
+        "4": "TRBD1*01", 
+        "4start": 67, 
+        "3start": 70
+      }, 
+      "reads": [
+        644
+      ], 
+      "seg_stat": [
+        {
+          "1": 232, 
+          "2": 412
+        }
+      ], 
+      "id": "YCCYTGTGCYGYGYAYTTYYACYAAYTYT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 92, 
+      "seg_stat": [
+        {
+          "1": 119, 
+          "2": 191
+        }
+      ], 
+      "reads": [
+        310
+      ], 
+      "id": "GYCTGYCCTGYGTGYGTYACYAYYCCYGYC"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 99, 
+      "seg_stat": [
+        {
+          "1": 120, 
+          "2": 181
+        }
+      ], 
+      "reads": [
+        301
+      ], 
+      "id": "YCCTGYGTGCCCYYYGGGGGCGGGGYACYGGCT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 64, 
+      "seg_stat": [
+        {
+          "1": 140, 
+          "2": 206
+        }
+      ], 
+      "reads": [
+        346
+      ], 
+      "id": "YTGTGCYGYGCYAGGGGGCTGGGYYAACGCTGY"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV29*01 -4/1/-3 TRBD1*01 -3/7/-6 TRBJ2-5*01", 
+      "sequence": "YYGGGYYACGYAYAGCGGYGYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGTYAYGGGYYGGGYYCCYGYCTTTGGGCYGGYCYGGCYCYGTGTYYGG", 
+      "top": 4, 
+      "seg": {
+        "5end": 93, 
+        "4end": 100, 
+        "5start": 0, 
+        "3": "TRBJ2-5*01", 
+        "5": "TRBV29*01", 
+        "4": "TRBD1*01", 
+        "4start": 95, 
+        "3start": 108
+      }, 
+      "reads": [
+        662
+      ], 
+      "seg_stat": [
+        {
+          "1": 215, 
+          "2": 447
+        }
+      ], 
+      "id": "CTGTGCYGYGTYAYGGGYYGGGYYCCYGYC"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV29*01 -1/0/-5 TRBD2*01 -2/0/-0 TRBJ2-7*01", 
+      "sequence": "YYGGGYYACGYAYAGCGGYGYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGTTYTTGGGGGGCYCYTYAYGYCTYGGYCCGGYCYGGCYACGGTTTYYGYYTYYAATGTYCYYCCYAG", 
+      "top": 10, 
+      "seg": {
+        "5end": 96, 
+        "4end": 103, 
+        "5start": 0, 
+        "3": "TRBJ2-7*01", 
+        "5": "TRBV29*01", 
+        "4": "TRBD2*01", 
+        "4start": 97, 
+        "3start": 104
+      }, 
+      "reads": [
+        544
+      ], 
+      "seg_stat": [
+        {
+          "1": 202, 
+          "2": 342
+        }
+      ], 
+      "id": "CTGTGCYGYGTTYTTGGGGGGCYCYTYAYGYC"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 59, 
+      "seg_stat": [
+        {
+          "1": 171, 
+          "2": 179
+        }
+      ], 
+      "reads": [
+        350
+      ], 
+      "id": "CYTGTGCYGYGYTGCYTGYACYAYYCCYGT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 62, 
+      "seg_stat": [
+        {
+          "1": 127, 
+          "2": 221
+        }
+      ], 
+      "reads": [
+        348
+      ], 
+      "id": "YCTYTGTGCYGYGTTGGGGTGYYAACGCTGYTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 78, 
+      "seg_stat": [
+        {
+          "1": 131, 
+          "2": 195
+        }
+      ], 
+      "reads": [
+        326
+      ], 
+      "id": "CTGYCCTGYGTGYGCGYYGCYCYTYAYGYC"
+    }, 
+    {
+      "germline": "TRD", 
+      "sequence": 0, 
+      "top": 60, 
+      "seg_stat": [
+        {
+          "1": 131, 
+          "2": 218
+        }
+      ], 
+      "reads": [
+        349
+      ], 
+      "id": "GCYGYGCCYYGGTTTTTYTGYAAYCGCYYTT"
+    }, 
+    {
+      "germline": "TRD", 
+      "sequence": 0, 
+      "top": 65, 
+      "seg_stat": [
+        {
+          "1": 171, 
+          "2": 174
+        }
+      ], 
+      "reads": [
+        345
+      ], 
+      "id": "YCCYTGTGCYGYGYTYGGYGGGGGCTGYAAY"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV13-1*02 -0/1/-0 TRBD1*01 -6/0/-0 TRBJ1-3*01", 
+      "sequence": "YTYTYAYTGGTGCTGGYACCTYAAAYGYYTGYCCTYTGGGYYAGGCYCYYAYACGYAYAYCTYTYCYCTGCTGYATTGGCTYYCCYYAYYYTTTGYCTYTGTGCYGYGTYTGCGGYYTYTGYAAYCGCYYTTTTGYYAGYAGCCGGCYATTGTTGYYGYYTYYAATGTYCYYCCYAG", 
+      "top": 18, 
+      "seg": {
+        "5end": 147, 
+        "4end": 154, 
+        "5start": 0, 
+        "3": "TRBJ1-3*01", 
+        "5": "TRBV13-1*02", 
+        "4": "TRBD1*01", 
+        "4start": 149, 
+        "3start": 155
+      }, 
+      "reads": [
+        470
+      ], 
+      "seg_stat": [
+        {
+          "1": 250, 
+          "2": 220
+        }
+      ], 
+      "id": "CTGTGCYGYGTYTGCGGYYTYTGYAAYCGCY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 94, 
+      "seg_stat": [
+        {
+          "1": 103, 
+          "2": 202
+        }
+      ], 
+      "reads": [
+        305
+      ], 
+      "id": "CTGTGCYGYGTTYGYYGGGGYYCCTTGYCTTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 70, 
+      "seg_stat": [
+        {
+          "1": 140, 
+          "2": 193
+        }
+      ], 
+      "reads": [
+        333
+      ], 
+      "id": "YTGTGCYGYGYTGYYCTYTYAYGYCTYGG"
+    }, 
+    {
+      "germline": "TRD", 
+      "sequence": 0, 
+      "top": 33, 
+      "seg_stat": [
+        {
+          "1": 221, 
+          "2": 196
+        }
+      ], 
+      "reads": [
+        417
+      ], 
+      "id": "GYCCYTGTGCYGYGYTGGGGYYGTGYAAYCG"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 80, 
+      "seg_stat": [
+        {
+          "1": 134, 
+          "2": 191
+        }
+      ], 
+      "reads": [
+        325
+      ], 
+      "id": "ACTGYCCTGYGTGGCCGGYCTGGYCYTYAYGY"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV26*01 -1/0/-3 TRBD1*01 -5/0/-2 TRBJ2-3*01", 
+      "sequence": "CCTTGYGCCYYAATYAGYCYTYGGYGYYCYAGYCTGYCCYTGTGCYGYGYTGYYGTGYYAACGCTGYTTTTGGCYAGYACYYCTYCTGTYYYGYYTYYAATGTYCYYCCYAG", 
+      "top": 9, 
+      "seg": {
+        "5end": 69, 
+        "4end": 73, 
+        "5start": 0, 
+        "3": "TRBJ2-3*01", 
+        "5": "TRBV26*01", 
+        "4": "TRBD1*01", 
+        "4start": 70, 
+        "3start": 74
+      }, 
+      "reads": [
+        553
+      ], 
+      "seg_stat": [
+        {
+          "1": 223, 
+          "2": 330
+        }
+      ], 
+      "id": "CYTGTGCYGYGYTGYYGTGYYAACGCTGYTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 30, 
+      "seg_stat": [
+        {
+          "1": 189, 
+          "2": 238
+        }
+      ], 
+      "reads": [
+        427
+      ], 
+      "id": "YTGTGCYGYGTTGGGYGGGGGCYCYAAYTYTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 56, 
+      "seg_stat": [
+        {
+          "1": 134, 
+          "2": 218
+        }
+      ], 
+      "reads": [
+        352
+      ], 
+      "id": "GYCCTGYGTGYYYYGGGGGCYTGCTYGYGTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 37, 
+      "seg_stat": [
+        {
+          "1": 166, 
+          "2": 244
+        }
+      ], 
+      "reads": [
+        410
+      ], 
+      "id": "GYCCTGYGTGYYTGYGYYYACYTGCTYGY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 52, 
+      "seg_stat": [
+        {
+          "1": 145, 
+          "2": 214
+        }
+      ], 
+      "reads": [
+        359
+      ], 
+      "id": "CTYTGTGCYGYGYCYYYYACYGGCYCGCTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 71, 
+      "seg_stat": [
+        {
+          "1": 140, 
+          "2": 193
+        }
+      ], 
+      "reads": [
+        333
+      ], 
+      "id": "CTYTGTGCYGYGTTYYYGYAAAAYCCTTGYC"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 31, 
+      "seg_stat": [
+        {
+          "1": 168, 
+          "2": 256
+        }
+      ], 
+      "reads": [
+        424
+      ], 
+      "id": "CTYTGTGCYGYGTTYGGYYAAYCCGGGYGCY"
+    }, 
+    {
+      "germline": "TRD", 
+      "sequence": 0, 
+      "top": 42, 
+      "seg_stat": [
+        {
+          "1": 170, 
+          "2": 214
+        }
+      ], 
+      "reads": [
+        384
+      ], 
+      "id": "AGYYCYAGYCTGYCCYTGTGCYGYGYTYGG"
+    }, 
+    {
+      "germline": "TRD", 
+      "sequence": 0, 
+      "top": 35, 
+      "seg_stat": [
+        {
+          "1": 155, 
+          "2": 260
+        }
+      ], 
+      "reads": [
+        415
+      ], 
+      "id": "CTGTGYCTYTGTGCYGYGTYTTGYYGGYAYC"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 39, 
+      "seg_stat": [
+        {
+          "1": 142, 
+          "2": 255
+        }
+      ], 
+      "reads": [
+        397
+      ], 
+      "id": "YTTTGTGYAGYGCCGGGYYYTTYYACYAAY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 32, 
+      "seg_stat": [
+        {
+          "1": 180, 
+          "2": 238
+        }
+      ], 
+      "reads": [
+        418
+      ], 
+      "id": "TGYAGYGCTYYYCTGGGGGGCYYAACGCTGYT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 69, 
+      "seg_stat": [
+        {
+          "1": 116, 
+          "2": 223
+        }
+      ], 
+      "reads": [
+        339
+      ], 
+      "id": "YCCYTGTGCYGYGYAGGGYACYTGCTYGYGT"
+    }, 
+    {
+      "germline": "TRA", 
+      "sequence": 0, 
+      "top": 58, 
+      "seg_stat": [
+        {
+          "2": 350
+        }
+      ], 
+      "reads": [
+        350
+      ], 
+      "id": "GYCTGYCCYTGTGCYGYGYTGGYCYAACYCG"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 29, 
+      "seg_stat": [
+        {
+          "1": 154, 
+          "2": 277
+        }
+      ], 
+      "reads": [
+        431
+      ], 
+      "id": "YCTGYCCTGYGTGCTGGGGGYGTGYYAACGCTGT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 63, 
+      "seg_stat": [
+        {
+          "1": 153, 
+          "2": 194
+        }
+      ], 
+      "reads": [
+        347
+      ], 
+      "id": "GYCCYTGTGCYGCGGYYGYAAYYYAGYTY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 41, 
+      "seg_stat": [
+        {
+          "1": 155, 
+          "2": 234
+        }
+      ], 
+      "reads": [
+        389
+      ], 
+      "id": "YTGTGCYGYGTTYAGGGYGYAAYYYAGYTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 44, 
+      "seg_stat": [
+        {
+          "1": 147, 
+          "2": 229
+        }
+      ], 
+      "reads": [
+        376
+      ], 
+      "id": "YTGTGCYGYGYCCGGYYTTYGTGYYAACGCT"
+    }, 
+    {
+      "germline": "TRD", 
+      "sequence": 0, 
+      "top": 47, 
+      "seg_stat": [
+        {
+          "1": 203, 
+          "2": 163
+        }
+      ], 
+      "reads": [
+        366
+      ], 
+      "id": "CCYTGTGCYGYGYCYYGGGTTYATYTGYAAT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 49, 
+      "seg_stat": [
+        {
+          "1": 110, 
+          "2": 252
+        }
+      ], 
+      "reads": [
+        362
+      ], 
+      "id": "CTGTGCYGYGTTYYYYGGCYTYAYGYCTY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 86, 
+      "seg_stat": [
+        {
+          "1": 138, 
+          "2": 180
+        }
+      ], 
+      "reads": [
+        318
+      ], 
+      "id": "CTGTGCYGYGYTGGYYGGGGYTYAYGYCTY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 23, 
+      "seg_stat": [
+        {
+          "1": 155, 
+          "2": 295
+        }
+      ], 
+      "reads": [
+        450
+      ], 
+      "id": "GYCTYTGTGCYGYGCYYAYYYAGYTYTTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 57, 
+      "seg_stat": [
+        {
+          "1": 151, 
+          "2": 200
+        }
+      ], 
+      "reads": [
+        351
+      ], 
+      "id": "CTGTGCYGYGYTGYGGYYGYAAAYYYAGY"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV1*01 -3/4/-5 TRBD1*01 -1/0/-2 TRBJ1-1*01", 
+      "sequence": "YACTYYCGYGCTYGGCTGYAGTGGCYAYTYGCYGGGYYACCTTGYCTGYCCTGYGTGCGGGYGGGGYAYYYAGYTYTTTGGYAAGYACYYCYAYGTTGYG", 
+      "top": 16, 
+      "seg": {
+        "5end": 72, 
+        "4end": 82, 
+        "5start": 0, 
+        "3": "TRBJ1-1*01", 
+        "5": "TRBV1*01", 
+        "4": "TRBD1*01", 
+        "4start": 77, 
+        "3start": 83
+      }, 
+      "reads": [
+        473
+      ], 
+      "seg_stat": [
+        {
+          "1": 190, 
+          "2": 283
+        }
+      ], 
+      "id": "ACTGYCCTGYGTGCGGGYGGGGYAYYYAGYTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 89, 
+      "seg_stat": [
+        {
+          "1": 114, 
+          "2": 198
+        }
+      ], 
+      "reads": [
+        312
+      ], 
+      "id": "YCTGYCCTGYGTGYYGYGGGYYYAGYTYT"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV29*01 -2/0/-3 TRBD1*01 -1/0/-1 TRBJ2-3*01", 
+      "sequence": "YYGGGYYACGYAYAGCGGYGYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGTTYYGGGGGGTGYYAACGCTGYTTTTGGCYAGYACYYCTYCTGTYYYGYT", 
+      "top": 8, 
+      "seg": {
+        "5end": 95, 
+        "4end": 102, 
+        "5start": 0, 
+        "3": "TRBJ2-3*01", 
+        "5": "TRBV29*01", 
+        "4": "TRBD1*01", 
+        "4start": 96, 
+        "3start": 103
+      }, 
+      "reads": [
+        595
+      ], 
+      "seg_stat": [
+        {
+          "1": 217, 
+          "2": 378
+        }
+      ], 
+      "id": "YTGTGCYGYGTTYYGGGGGGTGYYAACGCTGY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 83, 
+      "seg_stat": [
+        {
+          "1": 123, 
+          "2": 198
+        }
+      ], 
+      "reads": [
+        321
+      ], 
+      "id": "CTGTGCYGYGTTGGYCTGGGGGGCYAAAAYCCTTG"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 54, 
+      "seg_stat": [
+        {
+          "1": 183, 
+          "2": 174
+        }
+      ], 
+      "reads": [
+        357
+      ], 
+      "id": "CYTGTGCYGYGCTTYYGGGGYAAYYYAGYT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 85, 
+      "seg_stat": [
+        {
+          "1": 145, 
+          "2": 173
+        }
+      ], 
+      "reads": [
+        318
+      ], 
+      "id": "GTGCYGYGYTGTTGCYGGGGGYAYYYAGYTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV29*01 -0/1/-5 TRBD1*01 -4/1/-4 TRBJ2-4*01", 
+      "sequence": "YYGGGYYACGYAYAGCGGYGYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGTTYYYGYAAAAYCCTTGYCTTTGGTGCGGGYCCCYCYYGGTGCYYGG", 
+      "top": 15, 
+      "seg": {
+        "5end": 97, 
+        "4end": 101, 
+        "5start": 0, 
+        "3": "TRBJ2-4*01", 
+        "5": "TRBV29*01", 
+        "4": "TRBD1*01", 
+        "4start": 99, 
+        "3start": 103
+      }, 
+      "reads": [
+        496
+      ], 
+      "seg_stat": [
+        {
+          "1": 185, 
+          "2": 311
+        }
+      ], 
+      "id": "CTGTGCYGYGTTYYYGYAAAAYCCTTGYCTTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV26*01 -2/3/-2 TRBD1*01 -6/0/-2 TRBJ2-1*01", 
+      "sequence": "CCTTGYGCCYYAATYAGYCYTYGGYGYYCYAGYCTGYCCYTGTGCYGYGYTGYAYYACYTGCTYGYGTYTYGYCYGGYYCYCYACCGYCYYGYYTYYAATGTYCYYCCYAG", 
+      "top": 3, 
+      "seg": {
+        "5end": 68, 
+        "4end": 75, 
+        "5start": 0, 
+        "3": "TRBJ2-1*01", 
+        "5": "TRBV26*01", 
+        "4": "TRBD1*01", 
+        "4start": 72, 
+        "3start": 76
+      }, 
+      "reads": [
+        704
+      ], 
+      "seg_stat": [
+        {
+          "1": 268, 
+          "2": 436
+        }
+      ], 
+      "id": "CYTGTGCYGYGYTGYAYYACYTGCTYGYGT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 81, 
+      "seg_stat": [
+        {
+          "1": 129, 
+          "2": 195
+        }
+      ], 
+      "reads": [
+        324
+      ], 
+      "id": "ACCYTGTGCYGYGYYYYACYTGCTYGYGTT"
+    }, 
+    {
+      "germline": "TRD", 
+      "sequence": 0, 
+      "top": 26, 
+      "seg_stat": [
+        {
+          "1": 195, 
+          "2": 248
+        }
+      ], 
+      "reads": [
+        443
+      ], 
+      "id": "CTGYCCYTGTGCYGYGYTYAYCTGYAAYCGC"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 87, 
+      "seg_stat": [
+        {
+          "1": 126, 
+          "2": 189
+        }
+      ], 
+      "reads": [
+        315
+      ], 
+      "id": "YTGTGCYGYGYTGTGGGYAGYAAAAYCCTTGY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 40, 
+      "seg_stat": [
+        {
+          "1": 150, 
+          "2": 240
+        }
+      ], 
+      "reads": [
+        390
+      ], 
+      "id": "YCTGYCCTGYGYAGGYCTGGYAACYTGCTYGC"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 68, 
+      "seg_stat": [
+        {
+          "1": 138, 
+          "2": 201
+        }
+      ], 
+      "reads": [
+        339
+      ], 
+      "id": "YCTYTGTGCYGYGGYYACCCYACYAAYTYT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 74, 
+      "seg_stat": [
+        {
+          "1": 129, 
+          "2": 201
+        }
+      ], 
+      "reads": [
+        330
+      ], 
+      "id": "YCTYTGTGCYGYGTGYYYACYAAYTYTTTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 95, 
+      "seg_stat": [
+        {
+          "1": 124, 
+          "2": 181
+        }
+      ], 
+      "reads": [
+        305
+      ], 
+      "id": "CTGTGCYGYGYYGYYGGGGYTYAYGYCTY"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 77, 
+      "seg_stat": [
+        {
+          "1": 99, 
+          "2": 229
+        }
+      ], 
+      "reads": [
+        328
+      ], 
+      "id": "YTGTGCYGYGTTTGGGYYGGGYYCCYGYCTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 88, 
+      "seg_stat": [
+        {
+          "1": 123, 
+          "2": 192
+        }
+      ], 
+      "reads": [
+        315
+      ], 
+      "id": "YCTYTGTGCYGYGTTGGGGYAAAAYCCTTGYCT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 73, 
+      "seg_stat": [
+        {
+          "1": 112, 
+          "2": 219
+        }
+      ], 
+      "reads": [
+        331
+      ], 
+      "id": "YTGTGCYGYGTTYYGGYYGYCTYGGYCCGG"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV29*01 -3/4/-0 TRBD1*01 -6/1/-0 TRBJ1-2*01", 
+      "sequence": "YYGGGYYACGYAYAGCGGYGYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGTTYCCCGGYYYAAACYCYCYYCCTYGGCYAGGYCYGGCTTTTGGYAYYGYYTYYAATGTYCYYCCC", 
+      "top": 6, 
+      "seg": {
+        "5end": 94, 
+        "4end": 104, 
+        "5start": 0, 
+        "3": "TRBJ1-2*01", 
+        "5": "TRBV29*01", 
+        "4": "TRBD1*01", 
+        "4start": 99, 
+        "3start": 106
+      }, 
+      "reads": [
+        623
+      ], 
+      "seg_stat": [
+        {
+          "1": 242, 
+          "2": 381
+        }
+      ], 
+      "id": "CTGTGCYGYGTTYCCCGGYYYAAACYCYCYC"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV26*01 -4/1/-1 TRBD1*01 -3/2/-5 TRBJ1-1*01", 
+      "sequence": "CCTTGYGCCYYAATYAGYCYTYGGYGYYCYAGYCTGYCCYTGTGCYGYGYCGYYGGYYYYAGYTYTTTGGYAAGYACYYCYAYGTTGYYGYYTYYAATGTYCYYCCYAG", 
+      "top": 12, 
+      "seg": {
+        "5end": 66, 
+        "4end": 75, 
+        "5start": 0, 
+        "3": "TRBJ1-1*01", 
+        "5": "TRBV26*01", 
+        "4": "TRBD1*01", 
+        "4start": 68, 
+        "3start": 78
+      }, 
+      "reads": [
+        515
+      ], 
+      "seg_stat": [
+        {
+          "1": 220, 
+          "2": 295
+        }
+      ], 
+      "id": "YTGTGCYGYGYCGYYGGYYYYAGYTYTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV29*01 -3/2/-4 TRBD1*01 -1/1/-7 TRBJ2-7*01", 
+      "sequence": "YYGGGYYACGYAYAGCGGYGYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGTTYCYGGGGGGYAYGYCTYGGYCCGGYCYGGCYACGGTTTYYGYYTYYAATGTYCYYCCYAG", 
+      "top": 2, 
+      "seg": {
+        "5end": 94, 
+        "4end": 103, 
+        "5start": 0, 
+        "3": "TRBJ2-7*01", 
+        "5": "TRBV29*01", 
+        "4": "TRBD1*01", 
+        "4start": 97, 
+        "3start": 105
+      }, 
+      "reads": [
+        838
+      ], 
+      "seg_stat": [
+        {
+          "1": 270, 
+          "2": 568
+        }
+      ], 
+      "id": "YTGTGCYGYGTTYCYGGGGGGYAYGYCTYGG"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 66, 
+      "seg_stat": [
+        {
+          "1": 133, 
+          "2": 212
+        }
+      ], 
+      "reads": [
+        345
+      ], 
+      "id": "CYTGTGCYGYGYTYAGGGYATYGCCCCYYCT"
+    }, 
+    {
+      "germline": "TRD", 
+      "sequence": 0, 
+      "top": 36, 
+      "seg_stat": [
+        {
+          "1": 178, 
+          "2": 235
+        }
+      ], 
+      "reads": [
+        413
+      ], 
+      "id": "GCYGYGTTYCGYYYTYTGYAAYCGCYYTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "name": "TRBV26*01 -4/0/-4 TRBD1*01 -0/1/-3 TRBJ1-1*01", 
+      "sequence": "CCTTGYGCCYYAATYAGYCYTYGGYGYYCYAGYCTGYCCYTGTGCYGYGYYGGGGGCYYYYAGYTYTTTGGYAAGYACYYCYAYGTTGYYGYYTYYAATGTYCYYCCYAG", 
+      "top": 20, 
+      "seg": {
+        "5end": 66, 
+        "4end": 74, 
+        "5start": 0, 
+        "3": "TRBJ1-1*01", 
+        "5": "TRBV26*01", 
+        "4": "TRBD1*01", 
+        "4start": 67, 
+        "3start": 76
+      }, 
+      "reads": [
+        462
+      ], 
+      "seg_stat": [
+        {
+          "1": 178, 
+          "2": 284
+        }
+      ], 
+      "id": "CYTGTGCYGYGYYGGGGGCYYYYAGYTYT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 46, 
+      "seg_stat": [
+        {
+          "1": 130, 
+          "2": 243
+        }
+      ], 
+      "reads": [
+        373
+      ], 
+      "id": "GYCCTGYGTGYGGCGGYYGGGYTYAYGYCTT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 96, 
+      "seg_stat": [
+        {
+          "1": 116, 
+          "2": 187
+        }
+      ], 
+      "reads": [
+        303
+      ], 
+      "id": "TYTGTGCYGYGTTYAYGGGYTGCTYGYGTYT"
+    }, 
+    {
+      "germline": "TRB", 
+      "sequence": 0, 
+      "top": 84, 
+      "seg_stat": [
+        {
+          "1": 88, 
+          "2": 230
+        }
+      ], 
+      "reads": [
+        318
+      ], 
+      "id": "YYTTTGTGYAGYGCCGYYYTGYAAYCGCYT"
+    }, 
+    {
+      "germline": "TRD", 
+      "sequence": "YYATYGCCCCYYCTTTGCGGYGGYCCCGGCYACTGTYYGYTTGCGGCTTYCYTGYAGCYCYYGCYYTYYYYAGTGYGYGTYATGTGYAYYAYGYYTYYAATGTYCYYCCYAG", 
+      "top": 19, 
+      "seg_stat": [
+        {
+          "1": 267, 
+          "2": 198
+        }
+      ], 
+      "reads": [
+        465
+      ], 
+      "id": "GGCTTYCYTGYAGCYCYYGCYYTYYYYA"
+    }, 
+    {
+      "germline": "TRD", 
+      "sequence": 0, 
+      "top": 24, 
+      "seg_stat": [
+        {
+          "1": 233, 
+          "2": 214
+        }
+      ], 
+      "reads": [
+        447
+      ], 
+      "id": "ACTGYCCYTGTGCYGYGYTGYGGYAAYCGCY"
+    }
+  ], 
+  "clusters": [], 
+  "reads-distribution-100": [
+    219648
+  ]
+}
