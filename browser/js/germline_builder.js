@@ -61,7 +61,12 @@ GermlineList.prototype = {
     },
     
     fallbackLoad : function () {
-        this.list = germline_data
+        try {
+            this.list = germline_data
+        }
+        catch(err){
+            myConsole.popupMsg("Incorrect browser installation, 'js/germline.js' is not found<br />please run 'make' in 'germline/'")
+        }
     },
     
     //add a list of custom germlines
