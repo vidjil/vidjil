@@ -517,25 +517,24 @@ line {
 .J {
   color: #009b95;
 }
-.window1 {
-  display: inline-block;
-  width: 0px;
-  word-spacing: normal;
-}
-.window2 {
+.highlight2 {
   border: solid;
   display: inline-flex;
   height: 1em;
   position: relative;
   margin: -1px;
   border-width: 1px;
-  border-color: red;
   -khtml-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
   pointer-events: none;
+}
+.highlight {
+  display: inline-block;
+  width: 0px;
+  word-spacing: normal;
 }
 span .substitution {
   background-color: #333333;

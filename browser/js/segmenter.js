@@ -183,9 +183,6 @@ Segment.prototype = {
                     self.is_open = false
                 }
             });
-        
-        
-        
     },
 
     /*
@@ -569,15 +566,24 @@ Sequence.prototype = {
             var jColor = "";
             if (this.m.colorMethod == "J") jColor = "style='color : " + clone.colorJ + "'";
 
-            //window
-            var window_start = this.pos[clone.sequence.indexOf(clone.id)]
-            var window_end = this.pos[clone.sequence.indexOf(clone.id)+clone.id.length]
-
+            var highlights = [];
+            highlights.push(this.find_subseq(segment.highligth_red, "red"));
+            highlights.push(this.find_subseq(segment.highligth_blue, "blue"));
+            highlights.push(this.find_subseq(segment.highligth_green, "green"));
             
             //add span VDJ
             if (typeof clone.seg != 'undefined') result += "<span class='V' " + vColor + " >"
             else result += "<span>"
             for (var i = 0; i < this.seq.length; i++) {
+                for (var j in highlights){
+                    var h = highlights[j];
+                    if (i == h.start){
+                        result += "<span class='highlight'><span class='highlight2' style='color:"+h.color+"'>"
+                        for (var k=0; k<(h.stop - h.start); k++) result += "&nbsp"
+                        result += "</span></span>"
+                    }
+                }
+                
                 result += this.seq[i]
 
                 if (i == endV) result += "</span><span class ='N'>"
@@ -585,12 +591,6 @@ Sequence.prototype = {
                 if (i == endD) result += "</span><span class ='N'>"
                 if (i == startJ - 1) result += "</span><span class ='J' " + jColor + " >"
                 
-                if (i== window_start-1 && this.m.display_window){
-                    result += "<span class='window1'><span class='window2'>"
-                    for (var j=0; j<(window_end - window_start); j++) result += "&nbsp"
-                    result += "</span></span>"
-                
-                }
             }
             result += "</span>"
         }else{
