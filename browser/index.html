@@ -131,6 +131,15 @@
                 </div></div>
             </div>
 
+            <div class="menu" id="static_file_menu" onmouseover="showSelector('fileSelector');" style="display : none">file
+              <div id="fileSelector" class="selector"><div>
+                    <div class="menu_box">
+                        <div id="upload_list">
+                        </div>
+                    </div>
+              </div></div>
+            </div>
+            
             <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');">import/export
                 <div id="demoSelector" class="selector"><div>
                     <div class="menu_box">
@@ -148,10 +157,6 @@
                         <a class="buttonSelector" onclick="javascript:pdf.makeGraph()">export pdf (graph)</a>
                         <a class="buttonSelector" onclick="javascript:m.exportCSV()">export csv (visible clones)</a>
                         <a class="buttonSelector" onclick="javascript:m.exportFasta()">export fasta(selected clones)</a>
-                    </div>
-                    <div class="menu_box">
-                        <div id="upload_list">
-                        </div>
                     </div>
                 </div></div>
             </div>

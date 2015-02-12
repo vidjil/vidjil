@@ -24,35 +24,35 @@ if (typeof config != 'undefined') {
         document.getElementsByTagName("head")[0].appendChild(fileref)
     }
 
-    if (config.demo && config.demo.file.length != 0){
+    if (config.file_menu && config.file_menu.file.length != 0){
         
         //detect if files are available
         $.ajax({
             type: "POST",
             timeout: 5000,
             crossDomain: true,
-            url: config.demo.path + config.demo.file[0],
+            url: config.file_menu.path + config.file_menu.file[0],
             success: function (result) {
-                $('#demo_file_menu').css("display", "")
-                var demo_file = document.getElementById("demoSelector").firstChild
+                $('#static_file_menu').css("display", "")
+                var demo_file = document.getElementById("fileSelector").firstChild
 
-                for (var i = 0; i < config.demo.file.length; i++) {
+                for (var i = 0; i < config.file_menu.file.length; i++) {
                     (function (i) {
 
                         var a = document.createElement('a');
                         a.className = "buttonSelector"
                         a.onclick = function () {
-                            m.loadDataUrl(config.demo.path + config.demo.file[i])
+                            m.loadDataUrl(config.file_menu.path + config.file_menu.file[i])
                         }
                         
-                        a.appendChild(document.createTextNode(config.demo.file[i]))
+                        a.appendChild(document.createTextNode(config.file_menu.file[i]))
 
                         demo_file.appendChild(a);
                     })(i)
                 }
             },
             error: function() {
-                myConsole.flash("demo file list not available", 1)
+                myConsole.flash("Files are not available", 1)
             }
         });
 

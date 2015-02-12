@@ -18,7 +18,7 @@ var config = {
      * use an empty array [] if you don't want demo_file menu
      */
     
-    "demo" : {
+    "file_menu" : {
         "path" : "/browser/demo_file/",
         "file" : [
             "A_BCD.data",
