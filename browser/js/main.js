@@ -100,7 +100,7 @@ var shortcut = new Shortcut()
 if (typeof config != 'undefined' && location.search != ''){
     var tmp = location.search.substring(1).split('&')
     var patient = -1
-    var config = -1
+    var dbconfig = -1
     var dataURL = ""
     var analysisURL = ""
     var custom_list = []
@@ -110,7 +110,7 @@ if (typeof config != 'undefined' && location.search != ''){
         if (tmp2[0] == 'data') dataURL = tmp2[1]
         if (tmp2[0] == 'analysis') analysisURL = tmp2[1]
         if (tmp2[0] == 'patient') patient = tmp2[1]
-        if (tmp2[0] == 'config') config = tmp2[1]
+        if (tmp2[0] == 'config') dbconfig = tmp2[1]
         if (tmp2[0] == 'custom') custom_list.push(tmp2[1])
     }
     
@@ -124,9 +124,9 @@ if (typeof config != 'undefined' && location.search != ''){
         }
     }
     
-    if (patient != "-1" && config != "-1"){
+    if (patient != "-1" && dbconfig != "-1"){
         //wait 1sec to check ssl
-        setTimeout(function () { db.load_data( {"patient" : patient , "config" : config } , "")  }, 1000);
+        setTimeout(function () { db.load_data( {"patient" : patient , "config" : dbconfig } , "")  }, 1000);
     }
     
     if (custom_list.length>0){
