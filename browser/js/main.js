@@ -96,14 +96,19 @@ var stats = new Stats(sp);
 var shortcut = new Shortcut()
 
 
-//onStart
-if (typeof config != 'undefined' && location.search != ''){
+
+/* prepare onStart
+ */
+var dataURL = ""
+var analysisURL = ""
+var patient = -1
+var dbconfig = -1
+var custom_list = []
+    
+// Process arguments given on the URL
+if (location.search != '') {
     var tmp = location.search.substring(1).split('&')
-    var patient = -1
-    var dbconfig = -1
-    var dataURL = ""
-    var analysisURL = ""
-    var custom_list = []
+
     for (var i=0; i<tmp.length; i++){
         var tmp2 = tmp[i].split('=')
         
@@ -113,8 +118,9 @@ if (typeof config != 'undefined' && location.search != ''){
         if (tmp2[0] == 'config') dbconfig = tmp2[1]
         if (tmp2[0] == 'custom') custom_list.push(tmp2[1])
     }
-    
-    
+}    
+
+//onStart
     if (dataURL != "") {
         if (analysisURL != ""){
             var callback = function() {m.loadAnalysisUrl(analysisURL)}
@@ -124,18 +130,17 @@ if (typeof config != 'undefined' && location.search != ''){
         }
     }
     
-    if (patient != "-1" && dbconfig != "-1"){
+else if (patient != "-1" && dbconfig != "-1"){
         //wait 1sec to check ssl
         setTimeout(function () { db.load_data( {"patient" : patient , "config" : dbconfig } , "")  }, 1000);
     }
     
-    if (custom_list.length>0){
+else if (custom_list.length>0){
         //wait 1sec to check ssl
         setTimeout(function () { db.load_custom_data( {"custom" : custom_list })  }, 1000);
     }
         
-    
-}else if (typeof config != 'undefined' && config.use_database){
+else if (typeof config != 'undefined' && config.use_database){
     //wait 1sec to check ssl
     setTimeout(function () { db.call("patient/index.html")}, 1000);
 }else{
