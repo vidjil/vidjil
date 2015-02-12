@@ -3,42 +3,41 @@
 {{('message' in globals())}}
 {{if 'message' in globals():}}
 
-<div>
-    <h3>{{=message}}</h3>
-    
-    <div id="db_table_container">
-        <table class="db_table" id="table">
-            <thead>
-                <tr><td class="column2"> name </td>
-                    <td class="column1"> program </td>
-                    <td class="column2"> command </td>
-                    <td> info </td>
-                    
-                    <td class="column5"> </td>
-                    <td class="column5"> </td>
-                    <td class="column5"> </td>
-                </tr>
-            </thead>
-           {{ 
-           c_id = ""
-           for row in query :}}
-                <tr>
-                    <td> {{=row.name }} </td>
-                    <td> {{=row.program }} </td>
-                    <td> {{=row.command }} </td>
-                    <td> {{=row.info }} </td>
-                    
-   {{if isAdmin:}} <td onclick="db.call('config/permission', {'id' :'{{=row.id}}'} )" > p </td> {{else:}} <td></td> {{pass}}
-                    <td onclick="db.call('config/edit', {'id' :'{{=row.id}}'} )" > e </td>
-                    <td onclick="db.call('config/confirm', {'id' :'{{=row.id}}'} )" > X </td>
-                </tr>
-            {{pass}}
-        </table>
-        <table class="db_table" id="db_fixed_header"></table>
-    </div>
-    
-    <span class="button2" onclick="db.call('config/add')"> + new config </span>
+<h3>{{=message}}</h3>
+
+<div id="db_table_container">
+    <table class="db_table" id="table">
+        <thead>
+            <tr><td class="column2"> name </td>
+                <td class="column1"> program </td>
+                <td class="column2"> command </td>
+                <td> info </td>
+
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+            </tr>
+        </thead>
+       {{ 
+       c_id = ""
+       for row in query :}}
+            <tr>
+                <td> {{=row.name }} </td>
+                <td> {{=row.program }} </td>
+                <td> {{=row.command }} </td>
+                <td> {{=row.info }} </td>
+
+{{if isAdmin:}} <td onclick="db.call('config/permission', {'id' :'{{=row.id}}'} )" > p </td> {{else:}} <td></td> {{pass}}
+                <td onclick="db.call('config/edit', {'id' :'{{=row.id}}'} )" > e </td>
+                <td onclick="db.call('config/confirm', {'id' :'{{=row.id}}'} )" > X </td>
+            </tr>
+        {{pass}}
+    </table>
+    <table class="db_table" id="db_fixed_header"></table>
 </div>
+
+<span class="button2" onclick="db.call('config/add')"> + new config </span>
+
 
 {{elif 'content' in globals():}}
 {{=content}}
