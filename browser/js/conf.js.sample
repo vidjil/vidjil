@@ -27,5 +27,4 @@ var config = {
     },
 
     
-    "debug_mode" : false    //en phase de recherche
 }
