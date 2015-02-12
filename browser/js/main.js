@@ -1,5 +1,5 @@
 var DB_ADDRESS = ""
-var CGI_ADDRESS = "http://127.0.1.1/cgi-bin/";
+var CGI_ADDRESS = ""
 
 
 /*tools

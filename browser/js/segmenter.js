@@ -87,6 +87,7 @@ Segment.prototype = {
         div_menu.appendChild(span)
 
         //align button
+        if (this.cgi_address) {
         span = document.createElement('span');
         span.id = "align"
         this.updateAlignmentButton();
@@ -96,7 +97,8 @@ Segment.prototype = {
         }
         span.appendChild(document.createTextNode("align"));
         div_menu.appendChild(span)
-
+        }
+        
         //toIMGT button
         span = document.createElement('span');
         span.id = "toIMGT"
