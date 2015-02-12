@@ -256,7 +256,7 @@ stop on shutdown
 respawn limit 8 60 # Give up if restart occurs 8 times in 60 seconds.
 exec sudo -u www-data python $CWD/web2py/web2py.py -K vidjil
 respawn
-exec sudo -u www-data python $CWD/fuse_server.py
+exec sudo -u www-data sh -c \"cd $CWD; python fuse_server.py\"
 " > /etc/init/web2py-scheduler.conf
 
 ## you can reload uwsgi with
