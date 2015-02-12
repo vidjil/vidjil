@@ -219,6 +219,7 @@ wget http://web2py.com/examples/static/web2py_src.zip
 unzip web2py_src.zip
 mv web2py/handlers/wsgihandler.py web2py/wsgihandler.py
 rm web2py_src.zip
+cp web2py/applications/vidjil/modules/defs.py.sample web2py/applications/vidjil/modules/defs.py
 chown -R www-data:www-data web2py
 cd $CWD/web2py
 sudo -u www-data python -c "from gluon.main import save_password; save_password('$PW',443)"
