@@ -7,7 +7,8 @@
     <div id="db_table_container">
         <table class="db_table" id="table">
             <thead>
-                <tr><td class="column1"> user name</td>
+                <tr><td class="column_100">id</td>
+                    <td class="column_200"> name</td>
                     <td> @</td>
                     <td class="colum1">patients created </td>
                     <td class="colum1">files uploaded </td>
@@ -16,6 +17,7 @@
             
            {{for row in query :}}
                <tr onclick="db.call('user/info', {'id' :'{{=row.id}}'} )">
+                    <td> {{=row.id}}</td>
                     <td> {{=row.first_name}} {{=row.last_name}}</td>
                     <td> {{=row.email}}  </td>
                     <td> {{=row.created}}  </td>
