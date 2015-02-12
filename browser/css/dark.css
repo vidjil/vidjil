@@ -792,6 +792,8 @@ span.logo {
   width: -moz-calc(100% - 975px);
   width: -webkit-calc(100% - 975px);
   width: calc(100% - 975px);
+  overflow: hidden;
+  height: 1em;
 }
 .stats {
   position: relative;
