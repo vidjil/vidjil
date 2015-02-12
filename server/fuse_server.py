@@ -1,7 +1,9 @@
 from SimpleXMLRPCServer import SimpleXMLRPCServer, SimpleXMLRPCRequestHandler
 from subprocess import *
 
-from web2py.applications.vidjil.modules import defs
+import sys
+sys.path.insert(0, './web2py/applications/vidjil/modules')
+import defs
 
 def fuse(cmd, output_dir, filename):
     import time, datetime, sys, os.path, random
