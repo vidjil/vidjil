@@ -1,3 +1,8 @@
+###
+### Vidjil server, main configuration file
+### This file must be named 'modules/defs.py' to be taken into account
+###
+
 ### Upload directory for .fasta/.fastq.
 ### Old sequences files could be thrown away.
 ### No regular backup.
