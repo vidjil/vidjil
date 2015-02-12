@@ -612,6 +612,37 @@ Sequence.prototype = {
         
         return marge + result
     },
+    
+    find_subseq : function (field, color) {
+        var clone = this.m.clone(this.id);
+        var p;
+        console.log(field)
+        if (typeof clone[field] != 'undefined'){
+            p = clone[field];                   //check clone meta-data
+        }else if (typeof clone[field] != 'undefined'){
+            p = clone.seg[field];               //check clone seg data
+        }else if (typeof this.m[field] != 'undefined'){
+            p = this.m[field];               //check model
+        }else{
+            return {'start' : -1, 'stop' : -1, 'color' : color};
+        }
+        
+        console.log(p)
+        if (p.constructor === Array ){
+            p = p[this.m.t];
+        }
+        console.log(">>"+p)
+        if (p.constructor === String){
+            var start = this.pos[clone.sequence.indexOf(p)]
+            var stop = this.pos[clone.sequence.indexOf(p)+p.length]
+            return {'start' : start, 'stop' : stop, 'color' : color};
+        }else if (p.constructor === Object & typeof p.start != 'undefined'){
+            return {'start' : this.pos[p.start], 'stop' : this.pos[p.stop], 'color' : color};
+        }else{
+            return {'start' : -1, 'stop' : -1, 'color' : color};
+        }
+        
+    }
 
 
 }
