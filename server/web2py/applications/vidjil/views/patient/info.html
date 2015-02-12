@@ -107,8 +107,8 @@
 <div class="db_block">
 
     <div class="db_block_left">
-        {{if auth.has_permission("upload", "sequence_file") :}}
-        <span class="button2" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> add file </span>
+        {{if auth.has_permission('admin', 'patient', request.vars["id"]):}}
+        <span class="button2" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> + add file </span>
 
         {{if not auth.has_permission("run", "results_file") :}}
 
