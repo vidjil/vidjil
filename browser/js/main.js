@@ -105,7 +105,14 @@ var patient = -1
 var dbconfig = -1
 var custom_list = []
     
-// Process arguments given on the URL
+// Process arguments in conf.js
+if (typeof config != 'undefined' && typeof config.autoload != 'undefined')
+    dataURL = config.autoload
+
+if (typeof config != 'undefined' && typeof config.autoload_analysis != 'undefined')
+    analysisURL = config.autoload_analysis
+
+// Process arguments given on the URL (overrides conf.js)
 if (location.search != '') {
     var tmp = location.search.substring(1).split('&')
 
