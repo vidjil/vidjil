@@ -1,5 +1,6 @@
-/*this is a config file example replace the ".txt" extension with ".js" if you want to use it 
- *
+/* 
+ * Vidjil browser, main configuration file
+ * This file must be named 'js/conf.js' to be taken into account
  * */
 
 var config = {
