@@ -502,7 +502,6 @@ line {
   font-family: monospace, ubuntu_monobold, Courier New,monaco,terminal,courier,system;
   position: relative;
   bottom: 3px;
-  word-spacing: -1em;
   font-size: 1em;
 }
 .seq-marge {
@@ -783,6 +782,7 @@ span.logo {
   width: 475px;
 }
 .menu-highlight {
+  display: none;
   position: relative;
   float: left;
   width: 250px;

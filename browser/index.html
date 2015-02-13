@@ -284,7 +284,7 @@
 
             <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none"> development              
                 <div id="adminSelector" class="selector"><div>
-                    <input type="checkbox" onclick="m.display_window = this.checked; m.update()">highlight windows</input><br>
+                    <input type="checkbox" onclick="$('.menu-highlight').toggle()">highlight menu</input><br>
                     <input type="checkbox" onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display fps</input></br>
                     <input type="checkbox" onclick=" this.checked ? myConsole.openLog() : myConsole.closeLog() ;">log</input>
                     <div class="buttonSelector" onclick="m.changeTimeFormat('delta_date_no_zero', true)"><input type="radio" name="time" value="delta_date_no_zero">day after first sample (no zero)</input></div>
