@@ -518,18 +518,20 @@ line {
   color: #009b95;
 }
 .highlight2 {
-  border: solid;
+  border-bottom: solid;
   display: inline-flex;
   height: 1em;
   position: relative;
   margin: -1px;
-  border-width: 1px;
+  border-width: 4px;
   -khtml-user-select: none;
   -webkit-user-select: none;
   -moz-user-select: -moz-none;
   -ms-user-select: none;
   user-select: none;
   pointer-events: none;
+  opacity: 0.3;
+  bottom: 1px;
 }
 .highlight {
   display: inline-block;
