@@ -20,7 +20,8 @@ def index():
         disk_use, err = p.communicate()
         
         return dict(worker = len(db().select(db.scheduler_worker.ALL)),
-                    in_queue = len(db(db.scheduler_task.status=='QUEUED').select()),
+                    queued = len(db(db.scheduler_task.status=='QUEUED').select()),                    
+                    assigned = len(db(db.scheduler_task.status=='ASSIGNED').select()),
                     running = len(db(db.scheduler_task.status=='RUNNING').select()),
                     uptime=uptime,
                     disk_use=disk_use
@@ -30,7 +31,8 @@ def index():
 def monitor():
     # External monitor
     return dict (worker = len(db().select(db.scheduler_worker.ALL)),
-                 in_queue = len(db(db.scheduler_task.status=='QUEUED').select()),
+                 queued = len(db(db.scheduler_task.status=='QUEUED').select()),
+                 assigned = len(db(db.scheduler_task.status=='ASSIGNED').select()),
                  running = len(db(db.scheduler_task.status=='RUNNING').select()))
     
 def worker():
