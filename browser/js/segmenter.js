@@ -143,22 +143,22 @@ Segment.prototype = {
             self.m.focusOut()
         };
         
+        var fields = this.findPotentialField();
+        var filter = ["sequence", "_sequence.trimmed nt seq"];
+        
         for (var i in this.highlight) {
             var input = document.createElement('select');
             input.style.borderColor = this.highlight[i].color;
             input.style.width = "60px";
             input.id = "highlight_"+i
             
-            //TODO generate list from model
-            var option0 = document.createElement('option');
-            option0.appendChild(document.createTextNode(""));
-            input.appendChild(option0)
-            var option1 = document.createElement('option');
-            option1.appendChild(document.createTextNode("_sequence.JUNCTION.raw nt seq"));
-            input.appendChild(option1)
-            var option2 = document.createElement('option');
-            option2.appendChild(document.createTextNode("id"));
-            input.appendChild(option2)
+            for (var i in fields){
+                if (filter.indexOf(fields[i]) == -1) {
+                    var option = document.createElement('option');
+                    option.appendChild(document.createTextNode(fields[i]));
+                    input.appendChild(option);
+                }
+            }
             
             input.onchange = function () {
                 var id = this.id.replace("highlight_","")
@@ -536,11 +536,68 @@ Segment.prototype = {
         }
             
         $(".stats").text(t)
-    }
+    },
 
-
+    findPotentialField : function () {
+        result = [""];
+        var clone = this.m.clone(1);
+        
+        for (var i in this.m) {
+            if (this.isDNA(this.m[i])){
+                result.push(i)
+            }
+        }
+        
+        for (var i in clone) {
+            if (this.isDNA(clone[i])){
+                result.push(i)
+            }
+        }
+        
+        for (var i in clone) {
+            if (this.isDNA(clone.seg[i])){
+                result.push(i)
+            }
+        }
+        
+        return result;
+    },
+    
+    isDNA : function (string) {
+        if (string == null) {
+            return false;
+        }else if (string.constructor === String) {
+            var reg = new RegExp("^[ACGT]+$")
+            return reg.test(string);
+        }else if (string.constructor === Array & string.length>0) {
+            return this.isDNA(string[0]);
+        }else{
+            return false;
+        }
+    },
+    
+    isAA : function (string) {
+        if (string == null) {
+            return false;
+        }else if (string.constructor === String) {
+            var reg = new RegExp("^[ACDEFGHIKLMNOPQRSTUVWY]+$")
+            return reg.test(string)
+        }else if (string.constructor === Array & string.length>0) {
+            return this.isAA(string[0])
+        }else{
+            return false;
+        }
+    },
 
 } //fin prototype Segment
+
+
+
+
+
+
+
+
 
 
 
@@ -616,7 +673,9 @@ Sequence.prototype = {
             //J color
             var jColor = "";
             if (this.m.colorMethod == "J") jColor = "style='color : " + clone.colorJ + "'";
-
+            
+            var window_start = this.pos[clone.sequence.indexOf(clone.id)]
+            
             var highlights = [];
             for (var i in segment.highlight){
                 highlights.push(this.find_subseq(segment.highlight[i].field, segment.highlight[i].color));
@@ -666,7 +725,7 @@ Sequence.prototype = {
     find_subseq : function (field, color) {
         var clone = this.m.clone(this.id);
         var p;
-        console.log(field)
+
         if (typeof clone[field] != 'undefined'){
             p = clone[field];                   //check clone meta-data
         }else if (typeof clone[field] != 'undefined'){
@@ -677,11 +736,10 @@ Sequence.prototype = {
             return {'start' : -1, 'stop' : -1, 'color' : color};
         }
         
-        console.log(p)
         if (p.constructor === Array ){
             p = p[this.m.t];
         }
-        console.log(">>"+p)
+        
         if (p.constructor === String){
             var start = this.pos[clone.sequence.indexOf(p)]
             var stop = this.pos[clone.sequence.indexOf(p)+p.length]
