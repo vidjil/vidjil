@@ -631,7 +631,9 @@ Sequence.prototype = {
         }
         
         this.seq = str.split("")
+        this.seqAA = str.split("")
         this.computePos()
+        this.computeAAseq()
 
         return this;
     },
@@ -647,6 +649,36 @@ Sequence.prototype = {
         }
         this.pos.push(this.seq.length)
         return this;
+    },
+    
+    computeAAseq : function () {
+        var start = 0;
+        var stop = this.seq.length;
+        
+        //for nikos we can use his cdr3 to find the correct start
+        var clone = this.m.clone(this.id);
+        if (typeof clone["<option>_sequence.JUNCTION.raw nt seq</option>"] != "undefined"){
+            start = clone.sequence.indexOf(clone["<option>_sequence.JUNCTION.raw nt seq</option>"]) % 3;
+        }
+        
+        var i=start;
+        while (i<this.seq.length){
+            var code = "";
+            var pos;
+            
+            while (code.length<3 & i<this.seq.length){
+                if (this.seq[i] != "-") {
+                    code += this.seq[i];
+                    this.seqAA[i] = "&nbsp";
+                }
+                if(code.length == 2) pos = i;
+                i++;
+            }
+            
+            if (code.length == 3){
+                this.seqAA[pos] = tableAA[code];
+            }
+        }
     },
 
     //compare sequence with another string and surround change
@@ -764,6 +796,71 @@ Sequence.prototype = {
         }
         
     }
+}
 
-
+tableAA = {
+ 'TTT' : 'F',
+ 'TTC' : 'F',
+ 'TTA' : 'L',
+ 'TTG' : 'L',
+ 'TCT' : 'S',
+ 'TCC' : 'S',
+ 'TCA' : 'S',
+ 'TCG' : 'S',
+ 'TAT' : 'Y',
+ 'TAC' : 'Y',
+ 'TAA' : '#',
+ 'TAG' : '#',
+ 'TGT' : 'C',
+ 'TGC' : 'C',
+ 'TGA' : '#',
+ 'TGG' : 'W',
+ 'CTT' : 'L',
+ 'CTC' : 'L',
+ 'CTA' : 'L',
+ 'CTG' : 'L',
+ 'CCT' : 'P',
+ 'CCC' : 'P',
+ 'CCA' : 'P',
+ 'CCG' : 'P',
+ 'CAT' : 'H',
+ 'CAC' : 'H',
+ 'CAA' : 'Q',
+ 'CAG' : 'Q',
+ 'CGT' : 'A',
+ 'CGC' : 'A',
+ 'CGA' : 'A',
+ 'CGG' : 'A',
+ 'ATT' : 'I',
+ 'ATC' : 'I',
+ 'ATA' : 'I',
+ 'ATG' : 'M',
+ 'ACT' : 'T',
+ 'ACC' : 'T',
+ 'ACA' : 'T',
+ 'ACG' : 'T',
+ 'AAT' : 'N',
+ 'AAC' : 'N',
+ 'AAA' : 'K',
+ 'AAG' : 'K',
+ 'AGT' : 'S',
+ 'AGC' : 'S',
+ 'AGA' : 'R',
+ 'AGG' : 'R',
+ 'GTT' : 'V',
+ 'GTC' : 'V',
+ 'GTA' : 'V',
+ 'GTG' : 'V',
+ 'GCT' : 'A',
+ 'GCC' : 'A',
+ 'GCA' : 'A',
+ 'GCG' : 'A',
+ 'GAT' : 'D',
+ 'GAC' : 'D',
+ 'GAA' : 'E',
+ 'GAG' : 'E',
+ 'GGT' : 'G',
+ 'GGC' : 'G',
+ 'GGA' : 'G',
+ 'GGG' : 'G'
 }
