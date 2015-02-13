@@ -25,6 +25,13 @@ def index():
                     uptime=uptime,
                     disk_use=disk_use
                     )
+
+
+def monitor():
+    # External monitor
+    return dict (worker = len(db().select(db.scheduler_worker.ALL)),
+                 in_queue = len(db(db.scheduler_task.status=='QUEUED').select()),
+                 running = len(db(db.scheduler_task.status=='RUNNING').select()))
     
 def worker():
     if auth.has_membership("admin"):
