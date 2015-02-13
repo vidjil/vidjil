@@ -45,6 +45,7 @@ function Segment(id, model, cgi_address) {
     this.memtab = [];
     this.sequence = {};
     this.is_open = false;
+    this.amino = false;
     
     //elements to be highlited in sequences
     this.highlight = [
@@ -168,10 +169,18 @@ Segment.prototype = {
             
             div_highlight.appendChild(input)
         }
+
+        var aaCheckbox = document.createElement('input');
+        aaCheckbox.type = "checkbox";
+        aaCheckbox.onclick = function () {
+            segment.amino = this.checked;
+            segment.update();
+        }
+        div_highlight.appendChild(aaCheckbox)
+        div_highlight.appendChild(document.createTextNode("AA"));
         
         div.appendChild(div_highlight)
-        
-        
+
         
         
         
@@ -607,7 +616,7 @@ function Sequence(id, model) {
     this.m = model; //Model utilisé
     this.seq = [];
     this.pos = [];
-    this.use_marge = true
+    this.use_marge = true;
 }
 
 Sequence.prototype = {
@@ -694,7 +703,11 @@ Sequence.prototype = {
                     }
                 }
                 
-                result += this.seq[i]
+                if (segment.amino) {
+                    result += this.seqAA[i]
+                }else{
+                    result += this.seq[i]
+                }
 
                 if (i == endV) result += "</span><span class ='N'>"
                 if (i == startD - 1) result += "</span><span class ='D'>"
