@@ -72,9 +72,9 @@ def filter(str, filter_str):
     
     for f in filter_list :
         if len(f) > 0 and f[0] == "-" :
-            if str.lower().find(f[1:].lower()) != -1 : 
+            if f[1:].lower() in str.lower():
                 return False
         else :
-            if str.lower().find(f.lower()) == -1 : 
+            if f.lower() not in str.lower():
                 return False
     return True
