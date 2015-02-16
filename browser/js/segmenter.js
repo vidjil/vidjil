@@ -733,7 +733,12 @@ Sequence.prototype = {
             var jColor = "";
             if (this.m.colorMethod == "J") jColor = "style='color : " + clone.colorJ + "'";
             
-            var window_start = this.pos[clone.sequence.indexOf(clone.id)]
+            var window_start = this.pos[clone.sequence.indexOf(clone.id)];
+            if (typeof clone.seg != "undefined" && typeof clone.seg["cdr3"] != "undefined"){
+                window_start = clone.seg["cdr3"].start;
+            }else if (typeof clone["<option>_sequence.JUNCTION.raw nt seq</option>"] != "undefined"){
+                window_start = clone.sequence.indexOf(clone["<option>_sequence.JUNCTION.raw nt seq</option>"]);
+            }
             
             var highlights = [];
             for (var i in segment.highlight){
@@ -791,7 +796,7 @@ Sequence.prototype = {
 
         if (typeof clone[field] != 'undefined'){
             p = clone[field];                   //check clone meta-data
-        }else if (typeof clone[field] != 'undefined'){
+        }else if (typeof clone.seg != 'undefined' &&typeof clone.seg[field] != 'undefined'){
             p = clone.seg[field];               //check clone seg data
         }else if (typeof this.m[field] != 'undefined'){
             p = this.m[field];               //check model
