@@ -671,9 +671,13 @@ Sequence.prototype = {
         
         //for nikos we can use his cdr3 to find the correct start
         var clone = this.m.clone(this.id);
-        if (typeof clone["<option>_sequence.JUNCTION.raw nt seq</option>"] != "undefined"){
+        if (typeof clone.seg != "undefined" && typeof clone.seg["cdr3"] != "undefined"){
+            start = clone.seg["cdr3"].start % 3;
+        }else if (typeof clone["<option>_sequence.JUNCTION.raw nt seq</option>"] != "undefined"){
             start = clone.sequence.indexOf(clone["<option>_sequence.JUNCTION.raw nt seq</option>"]) % 3;
         }
+        
+        for (var i=0; i<start; i++) this.seqAA[i] = "&nbsp";
         
         var i=start;
         while (i<this.seq.length){
