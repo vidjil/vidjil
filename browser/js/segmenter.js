@@ -549,26 +549,30 @@ Segment.prototype = {
 
     findPotentialField : function () {
         result = [""];
-        var clone = this.m.clone(1);
         
         for (var i in this.m) {
-            if (this.isDNA(this.m[i])){
-                result.push(i)
+            if (this.isDNA(this.m[i]) ||this.isDNA(m[i]) ){
+                if (result.indexOf(i) == -1) result.push(i);
             }
         }
         
-        for (var i in clone) {
-            if (this.isDNA(clone[i])){
-                result.push(i)
+        for (var j=0; (j<10 & j<this.m.clones.length) ; j++){
+            var clone = this.m.clone(j);
+            console.log(clone)
+            for (var i in clone) {
+                if (this.isDNA(clone[i]) || this.isPos(clone[i]) ){
+                    if (result.indexOf(i) == -1) result.push(i);
+                }
+            }
+            
+            if (typeof clone.seg != 'undefined'){
+                for (var i in clone.seg) {
+                    if (this.isDNA(clone.seg[i]) || this.isPos(clone.seg[i]) ){
+                        if (result.indexOf(i) == -1) result.push(i);
+                    }
+                }
             }
         }
-        
-        for (var i in clone) {
-            if (this.isDNA(clone.seg[i])){
-                result.push(i)
-            }
-        }
-        
         return result;
     },
     
@@ -580,6 +584,16 @@ Segment.prototype = {
             return reg.test(string);
         }else if (string.constructor === Array & string.length>0) {
             return this.isDNA(string[0]);
+        }else{
+            return false;
+        }
+    },
+    
+    isPos : function (obj) {
+        if (obj == null) {
+            return false;
+        }else if (typeof obj.start != 'undefined' && typeof obj.stop != 'undefined') {
+            return true;
         }else{
             return false;
         }
