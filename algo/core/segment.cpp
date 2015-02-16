@@ -26,6 +26,8 @@
 #include "tools.h"
 #include "affectanalyser.h"
 #include <sstream>
+#include <string>
+#include <math.h>
 
 Segmenter::~Segmenter() {}
 
@@ -669,7 +671,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
 
  
   info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS) ;
-
+  findCDR3();
   finishSegmentation();
 }
 
@@ -781,6 +783,64 @@ void FineSegmenter::FineSegmentD(Germline *germline){
   }
 }
 
+void FineSegmenter::findCDR3(){
+    string str = getSequence().sequence;
+    
+    list<string> codon_start;
+    codon_start.push_back("TGT");
+    codon_start.push_back("TGC");
+    
+    list<string> codon_end;
+    codon_end.push_back("TTT");
+    codon_end.push_back("TTC");
+    codon_end.push_back("TGG");
+    
+    list<int> p_start;
+    list<int> p_end;
+
+    size_t loc;
+    std::list<string>::const_iterator it;
+    for (it = codon_start.begin(); it != codon_start.end(); ++it) {//filter 1 : start codon must be in V
+        loc = 0;
+        while ( loc != string::npos & loc < Vend){
+            loc = str.find(*it, loc+3);
+            if (loc != string::npos & loc < Vend) {
+                p_start.push_front(loc);
+            }
+        }
+    }
+
+    for (it = codon_end.begin(); it != codon_end.end(); ++it) {//filter 2 : end codon must be in J
+        loc = Jstart;
+        while ( loc != string::npos){
+            loc = str.find(*it, loc+3);
+            if (loc != string::npos) {
+                p_end.push_back(loc);
+            }
+        }
+    }
+
+    CDR3start = 0;
+    CDR3end = 0;
+    
+    std::list<int>::const_iterator it1;
+    for (it1 = p_start.begin(); it1 != p_start.end(); ++it1) {
+        
+        std::list<int>::const_iterator it2;
+        for (it2 = p_end.begin(); it2 != p_end.end(); ++it2) {
+            
+            if ( (*it2-*it1)%3 == 0){       //filter 3 : start/stop codon must be seprated by a multiple of 3
+                
+                if ( fabs((*it2-*it1)-36 ) < fabs((CDR3end-CDR3start)-36) ){ //filter 4 : cdr3 length must be close to 12 AA
+                    CDR3start = *it1;
+                    CDR3end = *it2;
+                }
+            }
+        }
+    }
+    
+}
+
 JsonList FineSegmenter::toJsonList(Germline *germline){
   JsonList result;
   
@@ -801,6 +861,15 @@ JsonList FineSegmenter::toJsonList(Germline *germline){
     
     seg.add("3", germline->rep_3.label(best_J));
     seg.add("3start", Jstart);
+    
+    seg.add("3", germline->rep_3.label(best_J));
+    seg.add("3start", Jstart);
+    
+    JsonList *json_cdr;
+    json_cdr=new JsonList();
+    json_cdr->add("start", CDR3start);
+    json_cdr->add("stop", CDR3end);
+    seg.add("cdr3", *json_cdr);
     
     result.add("seg", seg);
   }

@@ -46,6 +46,7 @@ protected:
   string sequence;
   int Vend, Jstart;
   int Dstart, Dend;
+  int CDR3start, CDR3end;
   bool reversed, segmented, dSegmented;
 
   string removeChevauchement();
@@ -208,6 +209,7 @@ class FineSegmenter : public Segmenter
   * @param germline: germline used
   */
   void FineSegmentD(Germline *germline);
+  void findCDR3();
 
   JsonList toJsonList(Germline *germline);
   
