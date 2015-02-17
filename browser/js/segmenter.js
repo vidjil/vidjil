@@ -170,20 +170,33 @@ Segment.prototype = {
             div_highlight.appendChild(input)
         }
         */
-        
-        var cdr3Checkbox = document.createElement('input');
-        cdr3Checkbox.type = "checkbox";
-        cdr3Checkbox.onclick = function () {
-            var id = 0;
-            if (this.checked){
-                segment.highlight[id].field = "cdr3";
-            }else{
-                segment.highlight[id].field = "";
+        if (fields.indexOf("cdr3") != -1) {
+            
+            var aaCheckbox = document.createElement('input');
+            aaCheckbox.type = "checkbox";
+            aaCheckbox.onclick = function () {
+                segment.amino = this.checked;
+                segment.update();
             }
-            segment.update();
+            div_highlight.appendChild(aaCheckbox)
+            div_highlight.appendChild(document.createTextNode("AA"));
+                
+                
+            var cdr3Checkbox = document.createElement('input');
+            cdr3Checkbox.type = "checkbox";
+            cdr3Checkbox.onclick = function () {
+                var id = 0;
+                if (this.checked){
+                    segment.highlight[id].field = "cdr3";
+                }else{
+                    segment.highlight[id].field = "";
+                }
+                segment.update();
+            }
+            div_highlight.appendChild(cdr3Checkbox)
+            div_highlight.appendChild(document.createTextNode("cdr3"));
+        
         }
-        div_highlight.appendChild(cdr3Checkbox)
-        div_highlight.appendChild(document.createTextNode("cdr3"));
         
         var windowCheckbox = document.createElement('input');
         windowCheckbox.type = "checkbox";
@@ -198,15 +211,6 @@ Segment.prototype = {
         }
         div_highlight.appendChild(windowCheckbox)
         div_highlight.appendChild(document.createTextNode("vidjil_w"));
-
-        var aaCheckbox = document.createElement('input');
-        aaCheckbox.type = "checkbox";
-        aaCheckbox.onclick = function () {
-            segment.amino = this.checked;
-            segment.update();
-        }
-        div_highlight.appendChild(aaCheckbox)
-        div_highlight.appendChild(document.createTextNode("AA"));
         
         div.appendChild(div_highlight)
 
