@@ -1147,6 +1147,11 @@ Model.prototype = {
      * */
     displayTop: function (top) {
         top = typeof top !== 'undefined' ? top : this.top;
+        if (top < 0)
+            top = 0
+        if (top > this.countRealClones())
+            top = this.countRealClones()
+
         this.top = top;
 
         var html_slider = document.getElementById('top_slider');
@@ -1164,6 +1169,14 @@ Model.prototype = {
         }
         
         this.update();
+    },
+
+    /**
+     * @return the number of real clones (excluded the fake clones internally
+     * added)
+     */
+    countRealClones: function() {
+        return this.clones.length - 1
     },
 
     /* 

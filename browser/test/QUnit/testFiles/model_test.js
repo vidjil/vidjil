@@ -36,6 +36,17 @@ test("model : time control", function() {
     
 });
 
+test("model : top clones", function() {
+    var m = new Model();
+    m.parseJsonData(json_data,100)
+
+    equal(m.countRealClones(), 3, "Real clones, expected 3")
+    m.displayTop(-10)
+    equal(m.top, 0, "Top cannot be negative")
+    m.displayTop(m.countRealClones() * 2 + 10)
+    equal(m.top, m.countRealClones(), "Top cannot be greater than the number of real clones")
+});
+
 test("model : select/focus", function() {
     var m = new Model();
     m.parseJsonData(json_data,100)
