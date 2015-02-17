@@ -677,14 +677,22 @@ Sequence.prototype = {
             start = clone.sequence.indexOf(clone["<option>_sequence.JUNCTION.raw nt seq</option>"]) % 3;
         }
         
-        for (var i=0; i<start; i++) this.seqAA[i] = "&nbsp";
+        for (var i=0; i<this.seq.length; i++) this.seqAA[i] =this.seq[i]; // "&nbsp";
         
-        var i=start;
+        var i = 0
+
         while (i<this.seq.length){
+
+            if (i < start || i > stop)
+            {
+                i++
+                continue
+            }
+                
             var code = "";
             var pos;
             
-            while (code.length<3 & i<this.seq.length){
+            while (code.length<3 & i<=stop){
                 if (this.seq[i] != "-") {
                     code += this.seq[i];
                     this.seqAA[i] = "&nbsp";
