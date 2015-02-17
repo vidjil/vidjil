@@ -37,6 +37,7 @@ from operator import itemgetter
 
 
 VIDJIL_JSON_VERSION = "2014.10"
+FUSE_VERSION = "vidjil fuse"
 
 GERMLINES_ORDER = ['TRA', 'TRB', 'TRG', 'TRD', 'DD', 'IGH', 'DHJH', 'IJK', 'IJL'] 
 
@@ -288,6 +289,10 @@ class ListWindows:
         self.d["clusters"] = []
         self.d["germlines"] = {}
         
+        self.d["vidjil_json_version"] = VIDJIL_JSON_VERSION
+        self.d["producer"] = FUSE_VERSION
+        self.d["timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
     def __str__(self):
         return "<ListWindows: %s %d>" % ( self.d["reads"].d["segmented"], len(self) )
 
@@ -376,7 +381,7 @@ class ListWindows:
                 print
         
         time = os.path.getmtime(file_path)
-        self.d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
+        self.d["samples"].d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
 
     def getTop(self, top):
         result = []
@@ -417,8 +422,6 @@ class ListWindows:
         obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
-        obj.d["timestamp"] = self.d["timestamp"]
-        obj.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
         obj.d["germlines"] = dict(self.d["germlines"].items() + other.d["germlines"].items())
         
         return obj
@@ -501,6 +504,7 @@ class ListWindows:
 
         self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
         self.d["samples"].d["original_names"] = [file_path]
+        self.d["samples"].d["producer"] = ["EC-NGS central pipeline"]
         
         listw = []
         listc = []
