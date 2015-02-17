@@ -1,6 +1,7 @@
 
 COVERAGE=
 VIDJIL_ALGO_SRC = algo/
+VIDJIL_BROWSER_SRC = browser/
 VIDJIL_SERVER_SRC = server/
 
 ifeq (${COVERAGE},1)
@@ -112,6 +113,12 @@ CURRENT_DIR = vidjil
 DIST_DIR=$(CURRENT_DIR)-$(RELEASE_TAG)
 RELEASE_FILES_VID = $(RELEASE_FILES)
 
+# Browser
+RELEASE_JS = $(VIDJIL_BROWSER_SRC)/js/release.js
+RELEASE_BROWSER_ARCHIVE = vidjil-browser-$(RELEASE_TAG).tgz
+DIST_BROWSER_DIR=vidjil-browser-$(RELEASE_TAG)
+TEST_FILES_BROWSER= Makefile $(VIDJIL_BROWSER_SRC)/test/Makefile $(wildcard $(VIDJIL_BROWSER_SRC)/test/*.rb) $(wildcard $(VIDJIL_BROWSER_SRC)/test/QUnit/*)  $(wildcard $(VIDJIL_BROWSER_SRC)/test/QUnit/testFiles/*.js)
+RELEASE_FILES_BROWSER=$(TEST_FILES_BROWSER) $(wildcard $(VIDJIL_BROWSER_SRC)/*.html) $(wildcard $(VIDJIL_BROWSER_SRC)/js/*.js) $(wildcard $(VIDJIL_BROWSER_SRC)/js/lib/*.js) $(wildcard $(VIDJIL_BROWSER_SRC)/css/*.css) 
 
 # make distrib RELEASE_TAG=2013.04alpha
 distrib:	
@@ -143,6 +150,34 @@ distrib:
 	cd release/$(DIST_DIR) && make germline
 	cd release/$(DIST_DIR) && make data
 	cd release/$(DIST_DIR) && make test
+
+
+release_browser:
+	$(info ==== Browser Release $(RELEASE_TAG) ====)
+
+	# Tag the release
+	if test "$(RELEASE_TAG)" != "notag"; then \
+		git tag -f release-$(RELEASE_TAG); \
+		echo 'RELEASE_TAG = "$(RELEASE_TAG)"' > $(RELEASE_JS); \
+	fi
+
+	mkdir -p release 
+	rm -rf release/$(RELEASE_BROWSER_ARCHIVE) release/$(DIST_BROWSER_DIR)
+	mkdir -p release/$(DIST_BROWSER_DIR)
+	for file in  $(RELEASE_FILES_BROWSER); do\
+		dir=release/$(DIST_BROWSER_DIR)/`dirname "$$file"`;	\
+		mkdir -p $$dir;	\
+		cp "$$file" $$dir;	\
+	done
+	cd release && tar cvzf  $(RELEASE_BROWSER_ARCHIVE) $(DIST_BROWSER_DIR) \
+	&& rm -rf $(DIST_BROWSER_DIR)
+
+	# Untag the source
+	rm -f $(RELEASE_JS) ; touch $(RELEASE_JS)
+
+	# Check archive
+	cd release && tar xvfz $(RELEASE_BROWSER_ARCHIVE)
+	cd release/$(DIST_BROWSER_DIR) && make unit_browser
 
 
 
