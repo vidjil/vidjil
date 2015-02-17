@@ -549,26 +549,30 @@ Segment.prototype = {
 
     findPotentialField : function () {
         result = [""];
-        var clone = this.m.clone(1);
         
         for (var i in this.m) {
-            if (this.isDNA(this.m[i])){
-                result.push(i)
+            if (this.isDNA(this.m[i]) ||this.isDNA(m[i]) ){
+                if (result.indexOf(i) == -1) result.push(i);
             }
         }
         
-        for (var i in clone) {
-            if (this.isDNA(clone[i])){
-                result.push(i)
+        for (var j=0; (j<10 & j<this.m.clones.length) ; j++){
+            var clone = this.m.clone(j);
+            console.log(clone)
+            for (var i in clone) {
+                if (this.isDNA(clone[i]) || this.isPos(clone[i]) ){
+                    if (result.indexOf(i) == -1) result.push(i);
+                }
+            }
+            
+            if (typeof clone.seg != 'undefined'){
+                for (var i in clone.seg) {
+                    if (this.isDNA(clone.seg[i]) || this.isPos(clone.seg[i]) ){
+                        if (result.indexOf(i) == -1) result.push(i);
+                    }
+                }
             }
         }
-        
-        for (var i in clone) {
-            if (this.isDNA(clone.seg[i])){
-                result.push(i)
-            }
-        }
-        
         return result;
     },
     
@@ -580,6 +584,16 @@ Segment.prototype = {
             return reg.test(string);
         }else if (string.constructor === Array & string.length>0) {
             return this.isDNA(string[0]);
+        }else{
+            return false;
+        }
+    },
+    
+    isPos : function (obj) {
+        if (obj == null) {
+            return false;
+        }else if (typeof obj.start != 'undefined' && typeof obj.stop != 'undefined') {
+            return true;
         }else{
             return false;
         }
@@ -652,21 +666,36 @@ Sequence.prototype = {
     },
     
     computeAAseq : function () {
-        var start = 0;
-        var stop = this.seq.length;
-        
-        //for nikos we can use his cdr3 to find the correct start
+        var start = -1;
+        var stop = -1;
+                
         var clone = this.m.clone(this.id);
-        if (typeof clone["<option>_sequence.JUNCTION.raw nt seq</option>"] != "undefined"){
-            start = clone.sequence.indexOf(clone["<option>_sequence.JUNCTION.raw nt seq</option>"]) % 3;
+        if (typeof clone.seg != "undefined" && typeof clone.seg["cdr3"] != "undefined"){
+            start = clone.seg["cdr3"].start
+            stop = clone.seg["cdr3"].stop
+        }else if (typeof clone["_sequence.JUNCTION.raw nt seq"] != "undefined"){
+            // .clntab. TODO: move this to fuse.py
+            var junc = clone["_sequence.JUNCTION.raw nt seq"][0]
+            start = clone.sequence.indexOf(junc)
+            stop = start + junc.length
         }
         
-        var i=start;
+        for (var i=0; i<this.seq.length; i++) this.seqAA[i] =this.seq[i]; // "&nbsp";
+        
+        var i = 0
+
         while (i<this.seq.length){
+
+            if (i < start || i > stop)
+            {
+                i++
+                continue
+            }
+                
             var code = "";
             var pos;
             
-            while (code.length<3 & i<this.seq.length){
+            while (code.length<3 & i<=stop){
                 if (this.seq[i] != "-") {
                     code += this.seq[i];
                     this.seqAA[i] = "&nbsp";
@@ -715,7 +744,12 @@ Sequence.prototype = {
             var jColor = "";
             if (this.m.colorMethod == "J") jColor = "style='color : " + clone.colorJ + "'";
             
-            var window_start = this.pos[clone.sequence.indexOf(clone.id)]
+            var window_start = this.pos[clone.sequence.indexOf(clone.id)];
+            if (typeof clone.seg != "undefined" && typeof clone.seg["cdr3"] != "undefined"){
+                window_start = clone.seg["cdr3"].start;
+            }else if (typeof clone["<option>_sequence.JUNCTION.raw nt seq</option>"] != "undefined"){
+                window_start = clone.sequence.indexOf(clone["<option>_sequence.JUNCTION.raw nt seq</option>"]);
+            }
             
             var highlights = [];
             for (var i in segment.highlight){
@@ -773,7 +807,7 @@ Sequence.prototype = {
 
         if (typeof clone[field] != 'undefined'){
             p = clone[field];                   //check clone meta-data
-        }else if (typeof clone[field] != 'undefined'){
+        }else if (typeof clone.seg != 'undefined' &&typeof clone.seg[field] != 'undefined'){
             p = clone.seg[field];               //check clone seg data
         }else if (typeof this.m[field] != 'undefined'){
             p = this.m[field];               //check model
@@ -809,11 +843,11 @@ tableAA = {
  'TCG' : 'S',
  'TAT' : 'Y',
  'TAC' : 'Y',
- 'TAA' : '#',
- 'TAG' : '#',
+ 'TAA' : '*',
+ 'TAG' : '*',
  'TGT' : 'C',
  'TGC' : 'C',
- 'TGA' : '#',
+ 'TGA' : '*',
  'TGG' : 'W',
  'CTT' : 'L',
  'CTC' : 'L',
