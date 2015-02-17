@@ -520,6 +520,9 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
   Dend=0;
   segment_cost=segment_c;
 
+  CDR3start = -1;
+  CDR3end = -1;
+  
   // TODO: factoriser tout cela, peut-etre en lancant deux segmenteurs, un +, un -, puis un qui chapote
   
   // Strand +
@@ -671,7 +674,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
 
  
   info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS) ;
-  findCDR3();
   finishSegmentation();
 }
 
@@ -820,8 +822,8 @@ void FineSegmenter::findCDR3(){
         }
     }
 
-    CDR3start = 0;
-    CDR3end = 0;
+    CDR3start = -1;
+    CDR3end = -1;
     
     std::list<int>::const_iterator it1;
     for (it1 = p_start.begin(); it1 != p_start.end(); ++it1) {
@@ -861,15 +863,15 @@ JsonList FineSegmenter::toJsonList(Germline *germline){
     
     seg.add("3", germline->rep_3.label(best_J));
     seg.add("3start", Jstart);
-    
-    seg.add("3", germline->rep_3.label(best_J));
-    seg.add("3start", Jstart);
-    
+
+    if (CDR3start >= 0)
+      {
     JsonList *json_cdr;
     json_cdr=new JsonList();
     json_cdr->add("start", CDR3start);
     json_cdr->add("stop", CDR3end);
     seg.add("cdr3", *json_cdr);
+      }
     
     result.add("seg", seg);
   }

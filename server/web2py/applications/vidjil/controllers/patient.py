@@ -142,7 +142,7 @@ def custom():
     query = query.find(lambda row : ( vidjil_utils.filter(row.string,request.vars["filter"]) or row.checked) )
     
     if config :
-        query = query.find(lambda row : ( row.results_file.config_id==str(config_id) or (str(row.results_file.id) in request.vars["custom_list"])) )
+        query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.vars["custom_list"])) )
     
     res = {"message": "custom (%s)" % config_name}
     log.info(res)

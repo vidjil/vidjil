@@ -190,6 +190,7 @@ void usage(char *progname)
 
        << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
+       << "  -3            CDR3 detection (experimental)" << endl
        << endl
 
        << "Additional clustering" << endl
@@ -262,7 +263,7 @@ int main (int argc, char **argv)
   int minPts = DEFAULT_MINPTS ;
   Cost cluster_cost = DEFAULT_CLUSTER_COST ;
   Cost segment_cost = DEFAULT_SEGMENT_COST ;
-  
+  bool detect_CDR3 = false;
   
   int save_comp = 0;
   int load_comp = 0;
@@ -304,7 +305,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "AhaiIg:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uU")) != EOF)
+  while ((c = getopt(argc, argv, "AhaiIg:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uU3")) != EOF)
 
     switch (c)
       {
@@ -494,7 +495,10 @@ int main (int argc, char **argv)
         break;
 	
       // Fine segmentation
-
+      case '3':
+        detect_CDR3 = true;
+        break;
+        
       case 'f':
 	segment_cost=strToCost(optarg, VDJ);
         break;
@@ -1120,7 +1124,11 @@ int main (int argc, char **argv)
 	
           if (segmented_germline->rep_4.size())
 	  seg.FineSegmentD(segmented_germline);
-	
+
+          if (detect_CDR3)
+            seg.findCDR3();
+
+          
 	// Output representative, possibly segmented... 
 	// to stdout, CLONES_FILENAME, and CLONE_FILENAME-*
 	cout << seg << endl ;
@@ -1362,6 +1370,10 @@ int main (int argc, char **argv)
               {
                 if (germline->rep_4.size())
                   s.FineSegmentD(germline);
+
+                if (detect_CDR3)
+                  s.findCDR3();
+                
                 cout << s << endl;
                 segmented = true ;
                 break ;
