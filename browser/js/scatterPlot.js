@@ -106,7 +106,8 @@ function ScatterPlot(id, model) {
       ["allele_j", "allele J"],
       ["Size", "abundance"],
       ["sequenceLength", "clone length"],
-      ["n", "N length"]
+      ["n", "N length"],
+      ["lengthCDR3", "CDR3 length"]
   ];
 
   //Menu with graph distrib' (see initMenu function)
@@ -1626,6 +1627,9 @@ ScatterPlot.prototype = {
       }
       if (splitMethod == "n") {
       axis.useNlength()    
+      }
+      if (splitMethod == "lengthCDR3") {
+      axis.custom(function(cloneID){ return m.clone(cloneID).seg["cdr3"].length})    
       }
   },
 

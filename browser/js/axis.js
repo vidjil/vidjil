@@ -205,10 +205,51 @@ Axis.prototype = {
         }
     },
     
+    custom: function(fct){
+        var self = this;
+        this.fct = fct;
+        var min,
+            max;
+        
+        for (var i in this.m.clones){
+            var tmp;
+            try{
+                tmp = fct(i);
+            }catch(e){}
+            
+            if ( typeof tmp != "undefined" ){
+                if ( tmp > max || typeof max == "undefined") max = tmp;
+                if ( tmp < min || typeof min == "undefined") min = tmp;
+            }
+        }
+        
+        this.sizeScale = d3.scale.linear()
+            .domain([min, max+1])
+            .range([1, 0]);
+            
+        this.min = min;
+        this.max = max;
+        
+        this.pos = function(cloneID) {
+            var value;
+            try{
+                value = self.fct(cloneID);
+            }catch(e){}
+            
+            if (typeof value != "undefined"){
+                return self.sizeScale(value)
+            }else{
+                return self.min
+            }
+        }
+        
+        this.computeCustomLabels(min, max+1, true, false, true);
+    },
+    
     /*
      * TODO linear/log percent/value parameter
      * */
-    custom: function(min, max, reverse, percent, linear){
+    computeCustomLabels: function(min, max, reverse, percent, linear){
         this.labels = [];
         
         var h = (max-min)/5
