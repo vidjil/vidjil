@@ -1623,10 +1623,19 @@ ScatterPlot.prototype = {
       axis.useSize()    
       }
       if (splitMethod == "sequenceLength") {
-      axis.useSequenceLength()    
+      axis.custom(function(cloneID){ 
+          var value = m.clone(cloneID).getSequenceLength()
+          if (typeof value != "undefined" && value != 0) return value;
+          return undefined;
+        })    
       }
       if (splitMethod == "n") {
-      axis.useNlength()    
+        axis.custom(function(cloneID){ 
+          var value = m.clone(cloneID).getNlength()
+          if (typeof value != "undefined" && value != 0) return value;
+          return undefined;
+        })    
+      
       }
       if (splitMethod == "lengthCDR3") {
       axis.custom(function(cloneID){ return m.clone(cloneID).seg["cdr3"].length})    
