@@ -669,12 +669,15 @@ Sequence.prototype = {
         var start = 0;
         var stop = this.seq.length;
         
-        //for nikos we can use his cdr3 to find the correct start
         var clone = this.m.clone(this.id);
         if (typeof clone.seg != "undefined" && typeof clone.seg["cdr3"] != "undefined"){
-            start = clone.seg["cdr3"].start % 3;
-        }else if (typeof clone["<option>_sequence.JUNCTION.raw nt seq</option>"] != "undefined"){
-            start = clone.sequence.indexOf(clone["<option>_sequence.JUNCTION.raw nt seq</option>"]) % 3;
+            start = clone.seg["cdr3"].start
+            stop = clone.seg["cdr3"].stop
+        }else if (typeof clone["_sequence.JUNCTION.raw nt seq"] != "undefined"){
+            // .clntab. TODO: move this to fuse.py
+            var junc = clone["_sequence.JUNCTION.raw nt seq"][0]
+            start = clone.sequence.indexOf(junc)
+            stop = start + junc.length
         }
         
         for (var i=0; i<this.seq.length; i++) this.seqAA[i] =this.seq[i]; // "&nbsp";
