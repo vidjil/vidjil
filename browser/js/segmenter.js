@@ -587,7 +587,7 @@ Segment.prototype = {
         
         for (var j=0; (j<10 & j<this.m.clones.length) ; j++){
             var clone = this.m.clone(j);
-            console.log(clone)
+
             for (var i in clone) {
                 if (this.isDNA(clone[i]) || this.isPos(clone[i]) ){
                     if (result.indexOf(i) == -1) result.push(i);
@@ -700,13 +700,13 @@ Sequence.prototype = {
                 
         var clone = this.m.clone(this.id);
         if (typeof clone.seg != "undefined" && typeof clone.seg["cdr3"] != "undefined"){
-            start = this.pos[clone.seg["cdr3"].start];
-            stop = this.pos[clone.seg["cdr3"].stop];
-        }else if (typeof clone["_sequence.JUNCTION.raw nt seq"] != "undefined"){
-            // .clntab. TODO: move this to fuse.py
-            var junc = clone["_sequence.JUNCTION.raw nt seq"][0];
-            start = this.pos[clone.sequence.indexOf(junc)];
-            stop = this.pos[start + junc.length-1];
+            if (typeof clone.seg["cdr3"].start != "undefined") {
+                start = this.pos[clone.seg["cdr3"].start];
+                stop = this.pos[clone.seg["cdr3"].stop];
+            }else if (clone.seg["cdr3"].constructor === String){
+                start = this.pos[clone.sequence.indexOf(clone.seg["cdr3"])];
+                stop = this.pos[clone.sequence.indexOf(clone.seg["cdr3"]) + clone.seg["cdr3"].length -1];
+            }
         }
         
         for (var i=0; i<this.seq.length; i++) this.seqAA[i] =this.seq[i]; // "&nbsp";
@@ -775,9 +775,11 @@ Sequence.prototype = {
             
             var window_start = this.pos[clone.sequence.indexOf(clone.id)];
             if (typeof clone.seg != "undefined" && typeof clone.seg["cdr3"] != "undefined"){
-                window_start = clone.seg["cdr3"].start;
-            }else if (typeof clone["<option>_sequence.JUNCTION.raw nt seq</option>"] != "undefined"){
-                window_start = clone.sequence.indexOf(clone["<option>_sequence.JUNCTION.raw nt seq</option>"]);
+                if (clone.seg["cdr3"].start != "undefined"){
+                    window_start = this.pos[clone.seg["cdr3"].start];
+                }else if (clone.seg["cdr3"].constructor === String){
+                    window_start = this.pos[clone.sequence.indexOf(clone.seg["cdr3"])];
+                }
             }
             
             var highlights = [];
