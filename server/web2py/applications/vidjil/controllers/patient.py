@@ -138,7 +138,7 @@ def custom():
         if (str(row.results_file.id) in request.vars["custom_list"]) :
             row.checked = True
         row.string = (vidjil_utils.anon(row.sequence_file.patient_id, auth.user_id) + row.sequence_file.filename +
-                      str(row.sequence_file.sampling_date) + row.sequence_file.info + row.sequence_file.pcr + row.config.name + str(row.results_file.run_date)).lower()
+                      str(row.sequence_file.sampling_date) + row.sequence_file.pcr + row.config.name + str(row.results_file.run_date)).lower()
     query = query.find(lambda row : ( vidjil_utils.filter(row.string,request.vars["filter"]) or row.checked) )
     
     if config :
