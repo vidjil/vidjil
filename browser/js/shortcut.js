@@ -22,10 +22,13 @@
 * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 */
 
+
 function Shortcut () {
     this.init()
     this.on = true
 }
+
+var NB_CLONES_CHANGE = 10;
 
 Shortcut.prototype = {
     
@@ -65,6 +68,14 @@ Shortcut.prototype = {
                     case 39 :   //right arrow
                         e.preventDefault()
                         m.nextTime()
+                        break;
+                    case 54:
+                        e.preventDefault()
+                        m.displayTop(m.top - NB_CLONES_CHANGE)
+                        break;
+                    case 187:
+                        e.preventDefault()
+                        m.displayTop(m.top + NB_CLONES_CHANGE)
                         break;
                     case 83 :   //ctrl+s
                         e.preventDefault()
