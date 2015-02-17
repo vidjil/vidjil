@@ -146,7 +146,7 @@ Segment.prototype = {
         
         var fields = this.findPotentialField();
         var filter = ["sequence", "_sequence.trimmed nt seq"];
-        
+        /*
         for (var i in this.highlight) {
             var input = document.createElement('select');
             input.style.borderColor = this.highlight[i].color;
@@ -169,6 +169,35 @@ Segment.prototype = {
             
             div_highlight.appendChild(input)
         }
+        */
+        
+        var cdr3Checkbox = document.createElement('input');
+        cdr3Checkbox.type = "checkbox";
+        cdr3Checkbox.onclick = function () {
+            var id = 0;
+            if (this.checked){
+                segment.highlight[id].field = "cdr3";
+            }else{
+                segment.highlight[id].field = "";
+            }
+            segment.update();
+        }
+        div_highlight.appendChild(cdr3Checkbox)
+        div_highlight.appendChild(document.createTextNode("cdr3"));
+        
+        var windowCheckbox = document.createElement('input');
+        windowCheckbox.type = "checkbox";
+        windowCheckbox.onclick = function () {
+            var id = 1;
+            if (this.checked){
+                segment.highlight[id].field = "id";
+            }else{
+                segment.highlight[id].field = "";
+            }
+            segment.update();
+        }
+        div_highlight.appendChild(windowCheckbox)
+        div_highlight.appendChild(document.createTextNode("vidjil_w"));
 
         var aaCheckbox = document.createElement('input');
         aaCheckbox.type = "checkbox";
