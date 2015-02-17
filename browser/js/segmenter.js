@@ -671,13 +671,13 @@ Sequence.prototype = {
                 
         var clone = this.m.clone(this.id);
         if (typeof clone.seg != "undefined" && typeof clone.seg["cdr3"] != "undefined"){
-            start = clone.seg["cdr3"].start
-            stop = clone.seg["cdr3"].stop
+            start = this.pos[clone.seg["cdr3"].start];
+            stop = this.pos[clone.seg["cdr3"].stop];
         }else if (typeof clone["_sequence.JUNCTION.raw nt seq"] != "undefined"){
             // .clntab. TODO: move this to fuse.py
-            var junc = clone["_sequence.JUNCTION.raw nt seq"][0]
-            start = clone.sequence.indexOf(junc)
-            stop = start + junc.length
+            var junc = clone["_sequence.JUNCTION.raw nt seq"][0];
+            start = this.pos[clone.sequence.indexOf(junc)];
+            stop = this.pos[start + junc.length-1];
         }
         
         for (var i=0; i<this.seq.length; i++) this.seqAA[i] =this.seq[i]; // "&nbsp";
