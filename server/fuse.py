@@ -542,7 +542,6 @@ class ListWindows:
                 else:
                     w.d["seg"]["3start"] = 0
                     w.d["seg"]["5end"] = len(w.d["sequence"])
-                w.d["name"]=w.d["seg"]["5"] + " -x/y/-z " + w.d["seg"]["3"]
                 w.d["seg"]["3end"]=0
                 w.d["seg"]["5start"]=0
                 w.d["seg"]["4end"]=0
@@ -552,6 +551,8 @@ class ListWindows:
                 listw.append((w , w.d["reads"][0]))
 
                 raw_clonotype = tab.get("clonotype")
+                w.d["name"]=raw_clonotype # w.d["seg"]["5"] + " -x/y/-z " + w.d["seg"]["3"]
+
                 clonotype = raw_clonotype.split(' ')
                 if (len(clonotype) > 1) :
                     listc.append((w, raw_clonotype))
