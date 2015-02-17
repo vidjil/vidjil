@@ -862,9 +862,6 @@ JsonList FineSegmenter::toJsonList(Germline *germline){
     seg.add("3", germline->rep_3.label(best_J));
     seg.add("3start", Jstart);
     
-    seg.add("3", germline->rep_3.label(best_J));
-    seg.add("3start", Jstart);
-    
     JsonList *json_cdr;
     json_cdr=new JsonList();
     json_cdr->add("start", CDR3start);
