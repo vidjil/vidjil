@@ -666,9 +666,9 @@ Sequence.prototype = {
     },
     
     computeAAseq : function () {
-        var start = 0;
-        var stop = this.seq.length;
-        
+        var start = -1;
+        var stop = -1;
+                
         var clone = this.m.clone(this.id);
         if (typeof clone.seg != "undefined" && typeof clone.seg["cdr3"] != "undefined"){
             start = clone.seg["cdr3"].start
