@@ -194,7 +194,7 @@ Segment.prototype = {
                 segment.update();
             }
             div_highlight.appendChild(cdr3Checkbox)
-            div_highlight.appendChild(document.createTextNode("cdr3"));
+            div_highlight.appendChild(document.createTextNode("CDR3"));
         
         }
         /*
