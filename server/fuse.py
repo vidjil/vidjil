@@ -422,7 +422,11 @@ class ListWindows:
         obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
-        obj.d["germlines"] = dict(self.d["germlines"].items() + other.d["germlines"].items())
+        obj.d["germlines"] = []
+        if "germlines" in self.d: 
+            obj.d["germlines"] += self.d["germlines"].items() 
+        if "germlines" in other.d: 
+            obj.d["germlines"] += other.d["germlines"].items() 
         
         return obj
         
