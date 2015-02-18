@@ -59,29 +59,28 @@ Shortcut.prototype = {
                 var key = e.keyCode;
                 if (key==0) key = e.which
 
-                
-                switch(key) {
-                    case 37 :   //left arrow
+                switch(e.key) {
+                    case 'Left' :   //left arrow
                         e.preventDefault()
                         m.previousTime()
                         break;
-                    case 39 :   //right arrow
+                    case 'Right' :   //right arrow
                         e.preventDefault()
                         m.nextTime()
                         break;
-                    case 54:
+                    case '-':
                         e.preventDefault()
                         m.displayTop(m.top - NB_CLONES_CHANGE)
                         break;
-                    case 187:
+                    case '+':
                         e.preventDefault()
                         m.displayTop(m.top + NB_CLONES_CHANGE)
                         break;
-                    case 83 :   //ctrl+s
+                    case 's' :   //ctrl+s
                         e.preventDefault()
                         if (e.ctrlKey || e.metakey) db.save_analysis()
                         break;
-                    case 65 :   //ctrl+a
+                    case 'a' :   //ctrl+a
                         e.preventDefault()
                         if (e.ctrlKey || e.metakey){
                             var d_m = $("#debug_menu")
@@ -91,7 +90,7 @@ Shortcut.prototype = {
                                 $("#debug_menu").css("display", "none");
                             }
                         }
-                    case 80 :   //shift+p : open patient
+                    case 'p' :   //shift+p : open patient
                         e.preventDefault()
                         if(e.shiftKey || e.metakey) db.reload()
                         break;
