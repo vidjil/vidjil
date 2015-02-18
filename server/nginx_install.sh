@@ -253,11 +253,21 @@ echo "
 description \"web2py vidjil task scheduler\"
 start on (local-filesystems and net-device-up IFACE=eth0)
 stop on shutdown
-respawn limit 8 60 # Give up if restart occurs 8 times in 60 seconds.
-exec sudo -u www-data python $CWD/web2py/web2py.py -K vidjil
 respawn
-exec sudo -u www-data sh -c \"cd $CWD; python fuse_server.py\"
+respawn limit 8 60 # Give up if restart occurs 8 times in 60 seconds.
+exec  sudo -u www-data python $CWD/web2py/web2py.py -K vidjil,vidjil,vidjil
 " > /etc/init/web2py-scheduler.conf
+
+echo "
+description \"fuse server vidjil\"
+start on (local-filesystems and net-device-up IFACE=eth0)
+stop on shutdown
+respawn
+respawn limit 8 60 # Give up if restart occurs 8 times in 60 seconds.
+chdir $CWD
+exec  sudo -u www-data python fuse_server.py
+" > /etc/init/fuse-server.conf
+
 
 ## you can reload uwsgi with
 # restart uwsgi-emperor
