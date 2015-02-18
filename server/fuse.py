@@ -37,6 +37,7 @@ from operator import itemgetter
 
 
 VIDJIL_JSON_VERSION = "2014.10"
+FUSE_VERSION = "vidjil fuse"
 
 GERMLINES_ORDER = ['TRA', 'TRB', 'TRG', 'TRD', 'DD', 'IGH', 'DHJH', 'IJK', 'IJL'] 
 
@@ -288,6 +289,10 @@ class ListWindows:
         self.d["clusters"] = []
         self.d["germlines"] = {}
         
+        self.d["vidjil_json_version"] = VIDJIL_JSON_VERSION
+        self.d["producer"] = FUSE_VERSION
+        self.d["timestamp"] = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
     def __str__(self):
         return "<ListWindows: %s %d>" % ( self.d["reads"].d["segmented"], len(self) )
 
@@ -376,7 +381,7 @@ class ListWindows:
                 print
         
         time = os.path.getmtime(file_path)
-        self.d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
+        self.d["samples"].d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
 
     def getTop(self, top):
         result = []
@@ -417,8 +422,6 @@ class ListWindows:
         obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
-        obj.d["timestamp"] = self.d["timestamp"]
-        obj.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
         obj.d["germlines"] = dict(self.d["germlines"].items() + other.d["germlines"].items())
         
         return obj
@@ -501,6 +504,7 @@ class ListWindows:
 
         self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]
         self.d["samples"].d["original_names"] = [file_path]
+        self.d["samples"].d["producer"] = ["EC-NGS central pipeline"]
         
         listw = []
         listc = []
@@ -542,7 +546,6 @@ class ListWindows:
                 else:
                     w.d["seg"]["3start"] = 0
                     w.d["seg"]["5end"] = len(w.d["sequence"])
-                w.d["name"]=w.d["seg"]["5"] + " -x/y/-z " + w.d["seg"]["3"]
                 w.d["seg"]["3end"]=0
                 w.d["seg"]["5start"]=0
                 w.d["seg"]["4end"]=0
@@ -552,6 +555,8 @@ class ListWindows:
                 listw.append((w , w.d["reads"][0]))
 
                 raw_clonotype = tab.get("clonotype")
+                w.d["name"]=raw_clonotype # w.d["seg"]["5"] + " -x/y/-z " + w.d["seg"]["3"]
+
                 clonotype = raw_clonotype.split(' ')
                 if (len(clonotype) > 1) :
                     listc.append((w, raw_clonotype))
@@ -761,7 +766,7 @@ w6.d ={"id" : "bbb", "reads" : [12], "top" : 2 }
 
 lw1 = ListWindows()
 lw1.d["timestamp"] = 'ts'
-lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25] }', object_hook=lw1.toPython)
+lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25], "germline": {} }', object_hook=lw1.toPython)
 lw1.d["clones"].append(w5)
 lw1.d["clones"].append(w6)
 
@@ -772,7 +777,7 @@ w8.d ={"id" : "ccc", "reads" : [2], "top" : 8, "test" : ["plop"] }
 
 lw2 = ListWindows()
 lw2.d["timestamp"] = 'ts'
-lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34] }', object_hook=lw1.toPython)
+lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34], "germline": {} }', object_hook=lw1.toPython)
 lw2.d["clones"].append(w7)
 lw2.d["clones"].append(w8)
 
