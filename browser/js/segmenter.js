@@ -139,7 +139,7 @@ Segment.prototype = {
         
         //menu-highlight
         var div_highlight = document.createElement('div');
-        //div_highlight.className = "menu-highlight"
+        div_highlight.className = "menu-highlight"
         div_highlight.onmouseover = function () {
             self.m.focusOut()
         };

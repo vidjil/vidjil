@@ -251,6 +251,7 @@ line {
   -ms-transition: fill 0.2s;
   transition: fill 0.2s;
   fill: #657b83;
+  stroke-width: 4px;
 }
 .circle_inactive {
   cursor: pointer;
@@ -782,7 +783,6 @@ span.logo {
   width: 475px;
 }
 .menu-highlight {
-  display: none;
   position: relative;
   float: left;
   width: 250px;
@@ -874,7 +874,7 @@ span.logo {
   /* IE10+ */
   background: linear-gradient(to right, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* W3C */
-  filter: "progid:DXImageTransform.Microsoft.gradient(startColorstr='#3d24b6', endColorstr='#b82424', GradientType=1)";
+  filter: "progid:DXImageTransform.Microsoft.gradient( startColorstr='#3d24b6', endColorstr='#b82424',GradientType=1 )";
   /* IE6-9 */
   width: 180px;
   height: 16px;
