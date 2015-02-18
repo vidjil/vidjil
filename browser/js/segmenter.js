@@ -197,7 +197,7 @@ Segment.prototype = {
             div_highlight.appendChild(document.createTextNode("cdr3"));
         
         }
-        
+        /*
         var windowCheckbox = document.createElement('input');
         windowCheckbox.type = "checkbox";
         windowCheckbox.onclick = function () {
@@ -211,7 +211,7 @@ Segment.prototype = {
         }
         div_highlight.appendChild(windowCheckbox)
         div_highlight.appendChild(document.createTextNode("vidjil_w"));
-        
+        */
         div.appendChild(div_highlight)
 
         
