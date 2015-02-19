@@ -590,6 +590,14 @@ List.prototype = {
         this.m.update()
     },
     
+    focus: function () {
+        // this.reset_filter(true)
+        for (var i=0; i<this.m.clones.length; i++){
+            var c = this.m.clone(i)
+            c.isFiltered = !c.isSelected()
+        }
+        this.m.update()
+    },
     
     sortListBySize: function () {
         self = this;
