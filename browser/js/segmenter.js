@@ -226,6 +226,17 @@ Segment.prototype = {
 
         var div_stats = document.createElement('div');
         div_stats.className = "stats"
+
+        var stats_content = document.createElement('span');
+        stats_content.className = "stats_content"
+        div_stats.appendChild(stats_content)        
+
+        var focus_selected = document.createElement('a');
+        focus_selected.appendChild(document.createTextNode("(focus)"))
+        focus_selected.className = "focus_selected"
+        focus_selected.onclick = function () { list.focus() }
+        div_stats.appendChild(focus_selected)
+
         div.appendChild(div_stats)
 
         parent.appendChild(div)
@@ -575,9 +586,10 @@ Segment.prototype = {
             t += length + " clone" + (length>1 ? "s" : "") + ", "
             t += this.m.toStringThousands(sumReads) + " read" + (sumReads>1 ? "s" : "") + ", "
             t += sumPercentage = m.formatSize(sumPercentage, true);
+            t += " "
         }
             
-        $(".stats").text(t)
+        $(".stats_content").text(t)
     },
 
     findPotentialField : function () {
