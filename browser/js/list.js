@@ -596,6 +596,7 @@ List.prototype = {
             var c = this.m.clone(i)
             c.isFiltered = !c.isSelected()
         }
+        $("#filter_input").val("(focus on some clones)")
         this.m.update()
     },
     
