@@ -554,7 +554,7 @@ class ListWindows:
                 w.d["seg"]["5start"]=0
                 w.d["seg"]["4end"]=0
                 w.d["seg"]["4start"]=0
-                w.d["seg"]["cdr3"] = tab["sequence.JUNCTION.raw nt seq"]
+                w.d["seg"]["cdr3"] = tab["sequence.JUNCTION.raw nt seq"][3:-3]
                     
                 listw.append((w , w.d["reads"][0]))
 

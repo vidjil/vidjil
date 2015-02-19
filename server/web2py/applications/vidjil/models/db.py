@@ -222,7 +222,7 @@ auth.enable_record_versioning(db)
 ips = {}
 
 try:
-    for l in open('/home/vidjil/ips.txt'):
+    for l in open(defs.REVERSE_IP):
         ip, kw = l.split()
         ips[ip] = kw
 except:
@@ -263,12 +263,12 @@ def _init_log():
         logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s')
 
-        handler = logging.FileHandler('/var/vidjil/vidjil-debug.log')
+        handler = logging.FileHandler(defs.LOG_DEBUG)
         handler.setLevel(logging.DEBUG)
         handler.setFormatter(formatter)
         logger.addHandler(handler) 
 
-        handler = logging.FileHandler('/var/vidjil/vidjil.log')
+        handler = logging.FileHandler(defs.LOG_INFO)
         handler.setLevel(logging.INFO)
         handler.setFormatter(formatter)
         logger.addHandler(handler) 
