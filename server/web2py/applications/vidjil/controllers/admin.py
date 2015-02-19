@@ -45,7 +45,7 @@ def log():
         
         
         lines = []
-        file = open('/var/vidjil/'+request.vars["file"])
+        file = open(defs.DIR_LOG+request.vars["file"])
         
         if "filter" not in request.vars :
             request.vars["filter"] = ""

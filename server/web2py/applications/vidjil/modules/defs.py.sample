@@ -26,3 +26,11 @@ DIR_FUSE = '../'
 ### Port on which to run the fuse server
 ### Used in models/task.py and in /server/fuseserver.py
 PORT_FUSE_SERVER = 12789
+
+### Log files
+DIR_LOG = '/var/vidjil/'
+LOG_INFO = DIR_LOG + 'vidjil.log'
+LOG_DEBUG = DIR_LOG + 'vidjil-debug.log'
+
+### Reverse IP file
+REVERSE_IP = '/home/vidjil/ips.txt'
