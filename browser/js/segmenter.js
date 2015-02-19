@@ -587,6 +587,10 @@ Segment.prototype = {
             t += this.m.toStringThousands(sumReads) + " read" + (sumReads>1 ? "s" : "") + ", "
             t += sumPercentage = m.formatSize(sumPercentage, true);
             t += " "
+            $(".focus_selected").css("display", "")
+        }
+        else {
+            $(".focus_selected").css("display", "none")
         }
             
         $(".stats_content").text(t)
