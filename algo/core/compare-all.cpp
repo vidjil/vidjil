@@ -23,7 +23,6 @@
 
 #include "compare-all.h"
 #include "tools.h"
-#include "json.h"
 
 SimilarityMatrix compare_all(list <Sequence> sequences,
                              list <string> sequence_names)
