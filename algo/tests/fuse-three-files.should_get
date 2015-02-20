@@ -1,0 +1,8 @@
+!LAUNCH: python ../../server/fuse.py ../../data/results-two-clones.vidjil ../../data/results-two-clones.vidjil ../../data/results-two-clones.vidjil ; cat fused.vidjil
+
+$ Fuse the three files
+2: ListWindows: .1000, 1000, 1000.
+
+$ Check the producer string in output file
+1: "producer": "vidjil fuse"
+
