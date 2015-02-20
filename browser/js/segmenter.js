@@ -234,7 +234,7 @@ Segment.prototype = {
         var focus_selected = document.createElement('a');
         focus_selected.appendChild(document.createTextNode("(focus)"))
         focus_selected.className = "focus_selected"
-        focus_selected.onclick = function () { list.focus() }
+        focus_selected.onclick = function () { list_clones.focus() }
         div_stats.appendChild(focus_selected)
 
         div.appendChild(div_stats)
