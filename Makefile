@@ -32,7 +32,7 @@ unit: all
 
 pytests:
 	@echo "*** Launching python tests..."
-	python server/fuse.py --test x
+	python tools/fuse.py --test x
 	@echo "*** All python tests passed"
 
 should: all

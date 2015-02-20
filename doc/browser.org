@@ -30,7 +30,7 @@ database computes these .vidjil files.
 Otherwise, such .vidjil files can be obtained:
  - from the command-line version of Vidjil (starting from
    =.fasta= or =.fastq= files, see [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]]).
-   To gather several .vidjil files, you have to use the [[http://git.vidjil.org/blob/master/server/fuse.py][fuse.py]] script
+   To gather several .vidjil files, you have to use the [[http://git.vidjil.org/blob/master/tools/fuse.py][fuse.py]] script
  - or by post-processing of other V(D)J analysis pipelines (contact us
    if you are interested)
 
