@@ -15,6 +15,7 @@ all:
 test:
 	make COVERAGE="$(COVERAGE)" unit
 	make should
+	make test_tools
 	# make pytests
 
 test_with_fuse:
@@ -24,6 +25,8 @@ test_with_fuse:
 
 test_browser: unit_browser functional_browser
 
+test_tools:
+	make -C tools/tests
 
 unit: all
 	@echo "*** Launching unit tests..."
