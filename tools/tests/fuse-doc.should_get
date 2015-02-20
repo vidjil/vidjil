@@ -1,0 +1,7 @@
+!LAUNCH: python ../fuse.py ../../doc/analysis-example1.vidjil ../../doc/analysis-example2.vidjil | python ../format_json.py
+
+$ Fuse the two examples (three samples, two identical)
+fe1:"segmented": [335662, 335662, 410124]
+
+$ IGH and TRG germlines
+fe1:"germline": {"TRG": [250000, 250000, 300000], "IGH": [85662, 85662, 10124]}
