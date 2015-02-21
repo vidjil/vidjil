@@ -275,6 +275,30 @@ There can be several causes leading to bad ratios:
 
 
 
+* Keyboard shortcuts
+
+** Browser 
+
+  | =←= and =→=             | navigate between samples                            |
+  | =Shift-←= and =Shift-→= | decrease or increase the number of displayed clones |
+
+
+  | =a=: TRA        |                                    |
+  | =b=: TRB        |                                    |
+  | =g=: TRG        |                                    |
+  | =d=: TRD, TRD+  | Change the selected germline/locus |
+  | =h=: IGH, IGH+  |                                    |
+  | =l=: IGL        |                                    |
+  | =k=: IGK, IGK+) |                                    |
+
+
+** Browser connected to a patient databse
+
+ | =Ctrl-s=  | save the analysis         |
+ | =Shift-p= | open the 'patient' window |
+
+
+
 * Browser API
 
 The browser can be opened on a data file specified from a =data= attribute, 
