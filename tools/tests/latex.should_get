@@ -1,0 +1,7 @@
+!LAUNCH: python ../latex.py ../../data/results-two-clones-1-2.vidjil 
+
+$ Display the name of the .vidjil file
+2: data/results-two-clones-1-2.vidjil
+
+$ Output a row of a LaTeX table
+1: & .* 800 & 80.00% & name-1 .* id-1
