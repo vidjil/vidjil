@@ -62,19 +62,17 @@ Shortcut.prototype = {
                 switch(e.key) {
                     case 'Left' :   //left arrow
                         e.preventDefault()
-                        m.previousTime()
+                        if (e.shiftKey || e.metakey)
+                            m.displayTop(m.top - NB_CLONES_CHANGE)
+                        else
+                            m.previousTime();
                         break;
                     case 'Right' :   //right arrow
                         e.preventDefault()
-                        m.nextTime()
-                        break;
-                    case '-':
-                        e.preventDefault()
-                        m.displayTop(m.top - NB_CLONES_CHANGE)
-                        break;
-                    case '+':
-                        e.preventDefault()
-                        m.displayTop(m.top + NB_CLONES_CHANGE)
+                        if (e.shiftKey || e.metakey) 
+                            m.displayTop(m.top + NB_CLONES_CHANGE)
+                        else
+                            m.nextTime();
                         break;
                     case 's' :   //ctrl+s
                         e.preventDefault()
