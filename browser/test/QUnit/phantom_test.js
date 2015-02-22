@@ -1,6 +1,8 @@
 var fs = require('fs');
 
 var page = require('webpage').create();
+page.onConsoleMessage = function(msg) { console.log(msg); };
+
 var curdir = phantom.args[0] || fs.workingDirectory;
 
 page.open(curdir+"/test_Qunit.html", function() {
@@ -9,6 +11,8 @@ page.open(curdir+"/test_Qunit.html", function() {
         var tap = page.evaluate(function() {
             return tap_output;
         });
+
+        console.log(tap);
         
         try {
             fs.write("tap_output", tap, 'w');
