@@ -73,7 +73,7 @@ window.onresize = function () { m.resize(); };
 /* views
  */
 var graph = new Graph("visu2",m);
-var list = new List("list", "data", m);
+var list_clones = new List("list", "data", m);
 var sp = new ScatterPlot("visu", m);
 var segment = new Segment("bot-container",m, CGI_ADDRESS);
 var builder = new Builder(m);

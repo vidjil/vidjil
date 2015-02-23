@@ -2,6 +2,7 @@
 import gluon.contrib.simplejson, re
 import os.path, subprocess
 import vidjil_utils
+from collections import defaultdict
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -19,10 +20,8 @@ def index():
         p = subprocess.Popen(["df", "-h"], stdout=subprocess.PIPE)
         disk_use, err = p.communicate()
         
-        return dict(worker = len(db().select(db.scheduler_worker.ALL)),
-                    queued = len(db(db.scheduler_task.status=='QUEUED').select()),                    
-                    assigned = len(db(db.scheduler_task.status=='ASSIGNED').select()),
-                    running = len(db(db.scheduler_task.status=='RUNNING').select()),
+        d = monitor()
+        return dict(d,
                     uptime=uptime,
                     disk_use=disk_use
                     )
@@ -30,10 +29,18 @@ def index():
 
 def monitor():
     # External monitor
+
+    last_results = ''
+    for res in db(db.scheduler_task.id == db.results_file.scheduler_task_id).select(orderby=~db.results_file.id,
+                                                                                    limitby=(0,10)):
+        last_results += res.scheduler_task.status[0]
+
+
     return dict (worker = len(db().select(db.scheduler_worker.ALL)),
                  queued = len(db(db.scheduler_task.status=='QUEUED').select()),
                  assigned = len(db(db.scheduler_task.status=='ASSIGNED').select()),
-                 running = len(db(db.scheduler_task.status=='RUNNING').select()))
+                 running = len(db(db.scheduler_task.status=='RUNNING').select()),
+                 last_results = last_results)
     
 def worker():
     if auth.has_membership("admin"):

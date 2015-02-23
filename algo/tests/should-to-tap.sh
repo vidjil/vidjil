@@ -166,7 +166,7 @@ while read line; do
                         "e")
                             # Exact: protect any character that may be part of
                             # a regex
-                            pattern=$(sed -r 's/([^\\])(\.|\||\-|\+|\*|\[|\]|\(|\))/\1\\\2/g' <<< $pattern);;
+                            pattern=$(sed -r 's/([^\\])(\.|\||\-|\+|\*|\[|\]|\(|\)|\{|\})/\1\\\2/g' <<< $pattern);;
                     esac
                     nb_hits=${nb_hits:1}
                 done

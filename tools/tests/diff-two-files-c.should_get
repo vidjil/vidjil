@@ -1,0 +1,11 @@
+!LAUNCH: python ../diff.py ../../data/results-two-clones-1-2.vidjil ../../data/results-two-clones-1-3.vidjil -c
+
+$ Clone id-1 is a common clone, with a different number of reads 
+1:id-1 .* 800 .* 300
+
+$ Clone id-2 is not a common clone
+0:id-2
+
+$ Clone id-3 is not a common clone
+0:id-3
+

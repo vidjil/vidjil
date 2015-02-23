@@ -7,7 +7,7 @@ import sys
 import ansi
 import argparse
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(description = 'Show differences or similarities between clones in two .vidjil files')
 parser.add_argument('--nb', '-n', type=int, default=5, help='number of clones to display from the first file (%(default)d), 0 for all')
 parser.add_argument('--nb_others', '-o', type=int, default=3, help='number of clones to display from the other files (%(default)d)')
 parser.add_argument('--common', '-c', action='store_true', help='display common clones instead of different clones')

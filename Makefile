@@ -1,6 +1,7 @@
 
 COVERAGE=
 VIDJIL_ALGO_SRC = algo/
+VIDJIL_BROWSER_SRC = browser/
 VIDJIL_SERVER_SRC = server/
 
 ifeq (${COVERAGE},1)
@@ -15,6 +16,7 @@ all:
 test:
 	make COVERAGE="$(COVERAGE)" unit
 	make should
+	make test_tools
 	# make pytests
 
 test_with_fuse:
@@ -24,6 +26,8 @@ test_with_fuse:
 
 test_browser: unit_browser functional_browser
 
+test_tools:
+	make -C tools/tests
 
 unit: all
 	@echo "*** Launching unit tests..."
@@ -32,7 +36,7 @@ unit: all
 
 pytests:
 	@echo "*** Launching python tests..."
-	python server/fuse.py --test x
+	python tools/fuse.py --test x
 	@echo "*** All python tests passed"
 
 should: all
@@ -98,9 +102,9 @@ cleanall: clean
 
 RELEASE_TAG="notag"
 RELEASE_H = $(VIDJIL_ALGO_SRC)/release.h
-RELEASE_SOURCE = $(wildcard $(VIDJIL_ALGO_SRC)/*.cpp) $(wildcard $(VIDJIL_ALGO_SRC)/*.h)  $(wildcard $(VIDJIL_ALGO_SRC)/core/*.cpp)  $(wildcard $(VIDJIL_ALGO_SRC)/tests/*.cpp) $(wildcard $(VIDJIL_ALGO_SRC)/core/*.h)  $(wildcard $(VIDJIL_ALGO_SRC)/tests/*.h)  $(wildcard $(VIDJIL_ALGO_SRC)/cgi/*.cpp) $(wildcard $(VIDJIL_ALGO_SRC)/lib/*.cpp) $(wildcard $(VIDJIL_ALGO_SRC)/lib/*.h)
-RELEASE_MAKE = ./Makefile  $(VIDJIL_ALGO_SRC)/Makefile  $(VIDJIL_ALGO_SRC)/core/Makefile $(VIDJIL_ALGO_SRC)/tests/Makefile $(VIDJIL_ALGO_SRC)/lib/Makefile germline/Makefile data/Makefile
-RELEASE_TESTS =  data/get-sequences $(wildcard data/*.fa) $(wildcard data/*.fq) $(VIDJIL_ALGO_SRC)/tests/should-to-tap.sh $(wildcard $(VIDJIL_ALGO_SRC)/tests/*.should_get) $(wildcard $(VIDJIL_ALGO_SRC)/tests/bugs/*.fa)  $(wildcard $(VIDJIL_ALGO_SRC)/tests/bugs/*.should_get) $(VIDJIL_ALGO_SRC)/tests/format-json.sh
+RELEASE_SOURCE = $(wildcard $(VIDJIL_ALGO_SRC)/*.cpp) $(wildcard $(VIDJIL_ALGO_SRC)/*.h)  $(wildcard $(VIDJIL_ALGO_SRC)/core/*.cpp)  $(wildcard $(VIDJIL_ALGO_SRC)/tests/*.cpp) $(wildcard $(VIDJIL_ALGO_SRC)/core/*.h)  $(wildcard $(VIDJIL_ALGO_SRC)/tests/*.h)  $(wildcard $(VIDJIL_ALGO_SRC)/cgi/*.cpp) $(wildcard $(VIDJIL_ALGO_SRC)/lib/*.cpp) $(wildcard $(VIDJIL_ALGO_SRC)/lib/*.h) $(wildcard tools/*.py)
+RELEASE_MAKE = ./Makefile  $(VIDJIL_ALGO_SRC)/Makefile  $(VIDJIL_ALGO_SRC)/core/Makefile $(VIDJIL_ALGO_SRC)/tests/Makefile $(VIDJIL_ALGO_SRC)/lib/Makefile germline/Makefile data/Makefile tools/test/Makefile
+RELEASE_TESTS =  data/get-sequences $(wildcard data/*.fa) $(wildcard data/*.fq) $(VIDJIL_ALGO_SRC)/tests/should-to-tap.sh $(wildcard $(VIDJIL_ALGO_SRC)/tests/*.should_get) $(wildcard $(VIDJIL_ALGO_SRC)/tests/bugs/*.fa)  $(wildcard $(VIDJIL_ALGO_SRC)/tests/bugs/*.should_get) $(VIDJIL_ALGO_SRC)/tests/format-json.sh $(wildcard doc/analysis-example*.vidjil)
 RELEASE_GERMLINES = germline/germline_id germline/get-saved-germline germline/get-germline germline/split-from-imgt.py
 RELEASE_FILES = $(RELEASE_SOURCE) $(RELEASE_TESTS) $(RELEASE_MAKE) $(RELEASE_GERMLINES) doc/algo.org doc/LICENSE data/segmentation.fasta $(wildcard data/*.fa.gz) $(wildcard data/*.label)
 RELEASE_ARCHIVE = vidjil-$(RELEASE_TAG).tgz
@@ -109,6 +113,12 @@ CURRENT_DIR = vidjil
 DIST_DIR=$(CURRENT_DIR)-$(RELEASE_TAG)
 RELEASE_FILES_VID = $(RELEASE_FILES)
 
+# Browser
+RELEASE_JS = $(VIDJIL_BROWSER_SRC)/js/release.js
+RELEASE_BROWSER_ARCHIVE = vidjil-browser-$(RELEASE_TAG).tgz
+DIST_BROWSER_DIR=vidjil-browser-$(RELEASE_TAG)
+TEST_FILES_BROWSER= Makefile $(VIDJIL_BROWSER_SRC)/test/Makefile $(wildcard $(VIDJIL_BROWSER_SRC)/test/*.rb) $(wildcard $(VIDJIL_BROWSER_SRC)/test/QUnit/*)  $(wildcard $(VIDJIL_BROWSER_SRC)/test/QUnit/testFiles/*.js)
+RELEASE_FILES_BROWSER=$(TEST_FILES_BROWSER) $(wildcard $(VIDJIL_BROWSER_SRC)/*.html) $(wildcard $(VIDJIL_BROWSER_SRC)/js/*.js) $(wildcard $(VIDJIL_BROWSER_SRC)/js/lib/*.js) $(wildcard $(VIDJIL_BROWSER_SRC)/css/*.css) 
 
 # make distrib RELEASE_TAG=2013.04alpha
 distrib:	
@@ -140,6 +150,34 @@ distrib:
 	cd release/$(DIST_DIR) && make germline
 	cd release/$(DIST_DIR) && make data
 	cd release/$(DIST_DIR) && make test
+
+
+release_browser:
+	$(info ==== Browser Release $(RELEASE_TAG) ====)
+
+	# Tag the release
+	if test "$(RELEASE_TAG)" != "notag"; then \
+		git tag -f release-$(RELEASE_TAG); \
+		echo 'RELEASE_TAG = "$(RELEASE_TAG)"' > $(RELEASE_JS); \
+	fi
+
+	mkdir -p release 
+	rm -rf release/$(RELEASE_BROWSER_ARCHIVE) release/$(DIST_BROWSER_DIR)
+	mkdir -p release/$(DIST_BROWSER_DIR)
+	for file in  $(RELEASE_FILES_BROWSER); do\
+		dir=release/$(DIST_BROWSER_DIR)/`dirname "$$file"`;	\
+		mkdir -p $$dir;	\
+		cp "$$file" $$dir;	\
+	done
+	cd release && tar cvzf  $(RELEASE_BROWSER_ARCHIVE) $(DIST_BROWSER_DIR) \
+	&& rm -rf $(DIST_BROWSER_DIR)
+
+	# Untag the source
+	rm -f $(RELEASE_JS) ; touch $(RELEASE_JS)
+
+	# Check archive
+	cd release && tar xvfz $(RELEASE_BROWSER_ARCHIVE)
+	cd release/$(DIST_BROWSER_DIR) && make unit_browser
 
 
 

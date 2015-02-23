@@ -6,7 +6,7 @@
 [[https://coveralls.io/r/vidjil/vidjil][http://img.shields.io/coveralls/vidjil/vidjil.svg]]
 
 # Vidjil -- V(D)J recombinations analysis -- [[http://www.vidjil.org]]
-# Copyright (C) 2011, 2012, 2013, 2014 by Bonsai bioinformatics at LIFL (UMR CNRS 8022, Université Lille) and Inria Lille
+# Copyright (C) 2011, 2012, 2013, 2014, 2015 by Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
 # [[contact@vidjil.org]]
 
 V(D)J recombinations in lymphocytes are essential for immunological
@@ -42,7 +42,7 @@ authentication).
 
 ** The algorithm
 
-- Stable releases can be downloaded from http://bioinfo.lifl.fr/vidjil
+- Stable releases can be downloaded from http://bioinfo.lille.inria.fr/vidjil
 - Development code is under [[algo/]]
 - Documentation: [[doc/algo.org]]
 
@@ -64,8 +64,8 @@ Bug reports, issues and patches are welcome.
 
 * The Vidjil team
 
-Vidjil is developed by Marc Duez, [[http://www.lifl.fr/~giraud][Mathieu Giraud]] and [[http://www.lifl.fr/~salson][Mikaël Salson]]
-from the [[http://www.lifl.fr/bonsai][Bonsai bioinformatics team]] (LIFL, CNRS, U. Lille 1, Inria Lille).
+Vidjil is developed by Marc Duez, [[http://cristal.univ-lille.fr/~giraud][Mathieu Giraud]] and [[http://cristal.univ-lille.fr/~salson][Mikaël Salson]]
+from the [[http://cristal.univ-lille.fr/bonsai][Bonsai bioinformatics team]] (CRIStAL, CNRS, U. Lille, Inria Lille).
 Vidjil is developed in collaboration with 
 the [[http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html][department of Hematology]] of CHRU Lille, 
 the [[http://www.ircl.org/plate-forme-genomique.html][Functional and Structural Genomic Platform]] (U. Lille 2, IFR-114, IRCL), 

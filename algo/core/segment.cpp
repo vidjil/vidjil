@@ -214,7 +214,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
 
   // Test on which strand we are, select the before and after KmerAffects
   if (nb_strand[0] == 0 && nb_strand[1] == 0) {
-    because = because = UNSEG_TOO_FEW_ZERO ;
+    because = UNSEG_TOO_FEW_ZERO ;
     return ;
   } else if (nb_strand[0] > RATIO_STRAND * nb_strand[1]) {
     strand = -1;
@@ -804,9 +804,9 @@ void FineSegmenter::findCDR3(){
     std::list<string>::const_iterator it;
     for (it = codon_start.begin(); it != codon_start.end(); ++it) {//filter 1 : start codon must be in V
         loc = 0;
-        while ( loc != string::npos & loc < Vend){
+        while ( loc != string::npos && loc < (size_t)Vend){
             loc = str.find(*it, loc+3);
-            if (loc != string::npos & loc < Vend) {
+            if (loc != string::npos && loc < (size_t)Vend) {
                 p_start.push_front(loc);
             }
         }

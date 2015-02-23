@@ -1,0 +1,10 @@
+!LAUNCH: python ../diff.py ../../data/results-two-clones-1-2.vidjil ../../data/results-two-clones-1-3.vidjil
+
+$ Clone id-1 has a different number of reads 
+1:Not the same number or reads: id-1
+
+$ Clone id-2 is not in the second file
+1:[-] .* Clone not present: .* id-2
+
+$ Clone id-3 is not in the first file
+1:[+] .* Clone not present: .* id-3
