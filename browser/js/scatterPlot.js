@@ -743,7 +743,7 @@ ScatterPlot.prototype = {
                     .getJ();
                 var jb = self.m.clone(b.id)
                     .getJ();
-                return jb - ja
+                return jb.localeCompare(ja)
             });
         }
 
@@ -792,7 +792,123 @@ ScatterPlot.prototype = {
                     .isFocus()) return "circle_focus";
                 return "circle";
             })
+    },
+    
+    //tab = sp.makeBarTab(function(cloneID){v = m.clone(cloneID).getNlength(); if (v==0){return undefined}else{return v}})
+    makeBarTab: function (fct) {
+        var min, max;
+        
+        for (var i in this.m.clones) {
+            var v = fct(i);
+            if (typeof v != "undefined"){
+                if (v<min || typeof min == "undefined") min = v;
+                if (v>max || typeof max == "undefined") max = v;
+            }
+        }
+        
+        var tab = {};
+        tab["?"]=[];
+        for (var i=min; i<=max; i++) tab[i]=[];
+        
+        for (var i in this.m.clones) {
+            var v = fct(i);
+            if (typeof v == "undefined") {
+                tab["?"].push(i);
+            }else{
+                tab[v].push(i);
+            }
+        }
+        
+        return tab;
+    },
+    
+    //tab2 = sp.sortBarTab(tab, function(a){var va = m.clone(a).getJ()})
+    sortBarTab: function (tab, fct) {
+        
+        for (var i in tab) {
+            tab[i].sort(function (a,b) {
+                var va = fct(a);
+                var vb = fct(b);
+                
+                if (typeof va == "undefined") return (typeof vb == "undefined")  ? 0 :  -1;
+                if (typeof vb == "undefined") return (typeof va == "undefined")  ? 0 :  1;
+                        
+                if (va.constructor === String) {
+                    if (vb.constructor === String) return va.localeCompare(vb);
+                    if (vb.constructor === Number ) return 1
+                }
+                
+                if (va.constructor === Number) return (vb.constructor === Number ) ? (va-vb) : -1;
+            });
+        }
+        
+        return tab;
+    },
+    
+    computeBarMax : function (tab) {
+        var bar_max = 0;
+        for (var i in tab) {
+            var tmp = 0;
+            for (var j in tab[i]) {
+                var cloneID = tab[i][j]
+                if ( this.m.clone(cloneID).id != "other" ) tmp += this.m.clone(cloneID).getSize();
+            }
+            if (tmp > bar_max) bar_max = tmp;
+        }
+        
+        return bar_max;
+    },
+    
+    computeBarTab : function (tab) {
+        var bar_max = this.computeBarMax(tab);
+        var tab_length = Object.keys(tab).length;
+        var width = 0.8 / tab_length;
+        
+        k=0;
+        for (var i in tab) {
+            var y_pos = 0
+            var x_pos = k/tab_length;
+            
+            for (var j in tab[i]){
+                var cloneID = tab[i][j]
+                var height = this.m.clone(cloneID).getSize()/bar_max;
+                y_pos += height;
+                
+                this.nodes[cloneID].bar_y = y_pos;
+                this.nodes[cloneID].bar_x = x_pos;
+                this.nodes[cloneID].bar_h = height;
+                this.nodes[cloneID].bar_w = width;
+                
+            }
+            k++;
+        }
+    },
 
+    drawBarTab : function () {
+        var self = this;
+        //redraw
+        this.bar = this.bar_container.selectAll("rect")
+            .data(this.nodes)
+        this.bar_container.selectAll("rect")
+            .transition()
+            .duration(500)
+            .attr("id", function(d) {
+                return "bar" + d.id;
+            })
+            .attr("width", function(d) { return d.bar_w*self.resizeW })
+            .attr("x", function(d) { return d.bar_x*self.resizeW+ self.marge_left })
+            .attr("height", function(d) { return d.bar_h*self.resizeH })
+            .attr("y", function(d) { return (1-d.bar_y)*self.resizeH + self.marge_top })
+            .style("fill", function(d) { return (self.m.clone(d.id).getColor()) })
+            .attr("class", function(p) {
+                if (!self.m.clone(p.id)
+                    .isActive()) return "circle_hidden";
+                if (self.m.clone(p.id)
+                    .isSelected()) return "circle_select";
+                if (self.m.clone(p.id)
+                    .isFocus()) return "circle_focus";
+                return "circle";
+            })
     },
 
     /* Fonction permettant de désactiver la distribution "Bar"
