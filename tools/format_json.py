@@ -2,10 +2,18 @@ import json
 import sys
 from collections import OrderedDict
 
-f = sys.stdin
-if len(sys.argv) > 1:
-    f = open(sys.argv[1])
-s = f.read()
-print json.dumps(OrderedDict(json.loads(s, object_pairs_hook=OrderedDict))).replace('\n', ' ')
+import argparse
+
+parser = argparse.ArgumentParser(description = 'Format a .json file')
+parser.add_argument('--unsorted', '-u', action='store_true', help='do not sort the file (%(default)s)')
+parser.add_argument('--one-line', '-1', action='store_true', help='one line output (%(default)d)')
+parser.add_argument('file', nargs='?', type=argparse.FileType('r'), default=sys.stdin, help='.json file')
+
+args = parser.parse_args()
+json_data = args.file.read()
+
+print json.dumps(json.loads(json_data, object_pairs_hook=OrderedDict),
+                 sort_keys=not args.unsorted,
+                 indent=None if args.one_line else 2)
 
 
