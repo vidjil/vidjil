@@ -72,6 +72,7 @@ test("Axis : ", function() {
     
     
     //Nlength
+    /*
     axis.useNlength()
     deepEqual(axis.labels,  [
             {"geneColor": undefined,"pos": 1,"text": 0,"type": "line"},
@@ -96,5 +97,5 @@ test("Axis : ", function() {
             {"geneColor": undefined,"pos": 0.8,"text": 170,"type": "line"},
             {"geneColor": undefined,"pos": 1,"text": 200,"type": "line"}
         ], "check custom labels");
-    
+   */ 
 });
