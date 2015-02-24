@@ -1,10 +1,10 @@
-!LAUNCH: ../../vidjil -G ../../germline/IGH -r 5 -b data  ../../data/Stanford_S22.fasta ; cat out/data.vidjil | python ../../tools/format_json.py
+!LAUNCH: ../../vidjil -G ../../germline/IGH -r 5 -b data  ../../data/Stanford_S22.fasta ; cat out/data.vidjil | python ../../tools/format_json.py -1
 
 $ Number of reads
-e1:"total": [13153],
+e1:"total": [13153]
 
 $ Number of segmented reads
 e1:"segmented": [13139]
 
 $ Most abundant window
-e1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC", "reads": [8]
+1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC".*"reads": \\[8\\]
