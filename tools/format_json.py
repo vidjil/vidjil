@@ -1,3 +1,4 @@
+from __future__ import print_function
 import json
 import sys
 from collections import OrderedDict
@@ -12,8 +13,8 @@ parser.add_argument('file', nargs='?', type=argparse.FileType('r'), default=sys.
 args = parser.parse_args()
 json_data = args.file.read()
 
-print json.dumps(json.loads(json_data, object_pairs_hook=OrderedDict),
+print(json.dumps(json.loads(json_data, object_pairs_hook=OrderedDict),
                  sort_keys=not args.unsorted,
-                 indent=None if args.one_line else 2)
+                 indent=None if args.one_line else 2))
 
 
