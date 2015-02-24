@@ -3,6 +3,8 @@ compiler: gcc
 
 before_install:
   - sudo pip install cpp-coveralls
+  - sudo apt-get update
+  - sudo apt-get install org-mode
 
 before_script: make data ; make germline
 
