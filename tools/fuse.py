@@ -25,6 +25,7 @@
 #  You should have received a copy of the GNU General Public License
 #  along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 
+from __future__ import print_function
 import json
 import argparse
 import sys
@@ -68,7 +69,7 @@ class Window:
     def __init__(self, size):
         self.d={}
         self.d["id"] = ""
-        self.d["top"] = sys.maxint
+        self.d["top"] = sys.maxsize
         self.d["reads"] = []
         for i in range(size):
             self.d["reads"].append(0)
@@ -115,7 +116,7 @@ class Window:
 
     ### print essential info about Window
     def __str__(self):
-        return "<window : %s %s %s>" % ( self.d["reads"], '*' if self.d["top"] == sys.maxint else self.d["top"], self.d["id"])
+        return "<window : %s %s %s>" % ( self.d["reads"], '*' if self.d["top"] == sys.maxsize else self.d["top"], self.d["id"])
         
 class Samples: 
 
@@ -197,7 +198,7 @@ class OtherWindows:
             w.d['window'] = 'others-%d' % r
             w.d['top'] = 0
 
-            print '  --[others]-->', w
+            print('  --[others]-->', w)
             yield w
         
 class ListWindows:
@@ -253,9 +254,9 @@ class ListWindows:
 
     ### print info about each Windows stored 
     def info(self):
-        print self
+        print(self)
         for clone in self:
-            print clone
+            print(clone)
 
     ### check vidjil_json_version
     def check_version(self, filepath):
@@ -276,7 +277,7 @@ class ListWindows:
                         break 
                 result[r][i] += s
                 
-        print result
+        print(result)
         for r in range(len(ranges)):
             self.d["reads-distribution-"+str(ranges[r])] = result[r]
             
@@ -286,7 +287,7 @@ class ListWindows:
     ### save / load to .json
     def save_json(self, output):
         '''save ListWindows in .json format''' 
-        print "==>", output
+        print("==>", output)
         with open(output, "w") as file:
             json.dump(self, file, indent=2, default=self.toJson)
 
@@ -304,7 +305,7 @@ class ListWindows:
         extension = file_path.split('.')[-1]
 
         if verbose:
-            print "<==", file_path, "\t",
+            print("<==", file_path, "\t", end=' ')
         
         with open(file_path, "r") as file:
                 tmp = json.load(file, object_hook=self.toPython)     
@@ -315,12 +316,12 @@ class ListWindows:
             # renaming, private pipeline
             f = '/'.join(file_path.split('/')[2:-1])
             if verbose:
-                print "[%s]" % f
+                print("[%s]" % f)
 
         else:
             f = file_path
             if verbose:
-                print
+                print()
         
         time = os.path.getmtime(file_path)
         self.d["samples"].d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
@@ -364,7 +365,7 @@ class ListWindows:
         obj.d["clones"]=self.fuseWindows(self.d["clones"], other.d["clones"], l1, l2)
         obj.d["samples"] = self.d["samples"] + other.d["samples"]
         obj.d["reads"] = self.d["reads"] + other.d["reads"]
-        obj.d["germlines"] = dict(self.d["germlines"].items() + other.d["germlines"].items())
+        obj.d["germlines"] = dict(list(self.d["germlines"].items()) + list(other.d["germlines"].items()))
         
         return obj
         
@@ -438,7 +439,7 @@ class ListWindows:
 
         self.d["clones"] = w #+ list(others) 
 
-        print "### Cut merged file, keeping window in the top %d for at least one point" % limit
+        print("### Cut merged file, keeping window in the top %d for at least one point" % limit)
         return self
         
     def load_clntab(self, file_path, *args, **kwargs):
@@ -604,7 +605,7 @@ lw2.d["clones"].append(w8)
 
  
 def main():
-    print "#", ' '.join(sys.argv)
+    print("#", ' '.join(sys.argv))
 
     DESCRIPTION = 'Vidjil utility to parse and regroup list of clones of different timepoints or origins'
     
@@ -639,8 +640,8 @@ def main():
 
     jlist_fused = None
 
-    print "### fuse.py -- " + DESCRIPTION
-    print
+    print("### fuse.py -- " + DESCRIPTION)
+    print()
 
     #filtre
     f = []
@@ -656,18 +657,18 @@ def main():
             jlist.load(path_name, args.pipeline)
             jlist.build_stat()
             
-            print "\t", jlist,
+            print("\t", jlist, end=' ')
 
             if jlist_fused is None:
                 jlist_fused = jlist
             else:
                 jlist_fused = jlist_fused * jlist
                 
-            print '\t==> merge to', jlist_fused
+            print('\t==> merge to', jlist_fused)
         jlist_fused.d["system_segmented"] = ordered(jlist_fused.d["system_segmented"], key=lambda sys: ((GERMLINES_ORDER + [sys]).index(sys), sys))
         
     else:
-        print "### Read and merge input files"
+        print("### Read and merge input files")
         for path_name in args.file:
             jlist = ListWindows()
             jlist.load(path_name, args.pipeline)
@@ -678,31 +679,31 @@ def main():
             w2 = Window(2)
             w3 = w1+w2
             
-            print "\t", jlist,
+            print("\t", jlist, end=' ')
             # Merge lists
             if jlist_fused is None:
                 jlist_fused = jlist
             else:
                 jlist_fused = jlist_fused + jlist
             
-            print '\t==> merge to', jlist_fused
+            print('\t==> merge to', jlist_fused)
 
     if args.compress:
-        print
-        print "### Select point names"
+        print()
+        print("### Select point names")
         l = jlist_fused.d["samples"].d["original_names"]
         ll = interesting_substrings(l)
-        print "  <==", l
-        print "  ==>", ll
+        print("  <==", l)
+        print("  ==>", ll)
         jlist_fused.d["samples"].d["names"] = ll
     
-    print
+    print()
     if not args.multi:
         jlist_fused.cut(args.top, jlist_fused.d["samples"].d["number"])
-    print "\t", jlist_fused 
-    print
+    print("\t", jlist_fused) 
+    print()
 
-    print "### Save merged file"
+    print("### Save merged file")
     jlist_fused.save_json(args.output)
 
     
