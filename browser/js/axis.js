@@ -26,10 +26,11 @@
 /* Axis object contain labels and their position on an axis (from 0 to 1)
  * and have a function pos() who return the position of a given Clone on this axis 
  * */
-function Axis (model) {
+function Axis (model, reverse) {
     this.m = model
     this.pos = function() {return 0};
     this.labels = [];
+    this.reverse = reverse;
 }
 
 Axis.prototype = {
@@ -140,7 +141,6 @@ Axis.prototype = {
      
     },
     
-
     
     custom: function(fct){
         var self = this;
@@ -162,47 +162,48 @@ Axis.prototype = {
         
         this.sizeScale = d3.scale.linear()
             .domain([min, max+1])
-            .range([1, 0]);
+            .range([0, 1]);
             
         this.min = min;
         this.max = max;
         
         this.pos = function(cloneID) {
-            var value;
+            var value, pos;
             try{
                 value = self.fct(cloneID);
             }catch(e){}
             
             if (typeof value != "undefined"){
-                return self.sizeScale(value)
+                pos = self.sizeScale(value);
             }else{
-                return self.min
+                pos = self.min;
             }
+            
+            if (self.reverse) pos = 1 - pos; 
+            return pos;
         }
         
-        this.computeCustomLabels(min, max+1, true, false, true);
+        this.computeCustomLabels(min, max+1, false, true);
     },
     
     /*
      * TODO linear/log percent/value parameter
      * */
-    computeCustomLabels: function(min, max, reverse, percent, linear){
+    computeCustomLabels: function(min, max, percent, linear){
         this.labels = [];
         
         var h = (max-min)/5
         var delta = (max-min)
         for (var i = 0; i <= 5; i++) {
-            var pos = 0;
-            if (reverse){
-                pos = 1 - (h*i)*(1/delta);
-            }else{
-                pos = (h*i)*(1/delta);
-            }
+            pos = (h*i)*(1/delta);
             
             var text = Math.round(min+(h*i))
             if (percent){
                 text = ((min+(h*i))*100).toFixed(1) + "%"
             }
+            
+            if (this.reverse) pos = 1 - pos; 
+            
             this.labels.push(this.label("line", pos, text));
         }
     },
