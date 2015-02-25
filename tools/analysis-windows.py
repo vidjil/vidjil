@@ -9,6 +9,8 @@ parser.add_argument('file', nargs='+', help='''.vidjil files''')
 
 args = parser.parse_args()
 
+used_windows = []
+
 def change_window(clone, w):
     old_window = clone['id']
     pos = clone['sequence'].find(old_window)
@@ -25,8 +27,12 @@ def change_window(clone, w):
 
     new_window = clone['sequence'][new_start:new_start+w]
 
+    if new_window in used_windows:
+        print("! Window '%s' is already used - clone '%s' unchanged" % (new_window, old_window))
+        return
+    
     clone['id'] = new_window
-
+    used_windows.append(new_window)
 
 
 class Analysis():
