@@ -16,7 +16,7 @@ clean:
 	rm -f $(OBJCORE) $(LIBCORE) *.gcda *.gcno *.gcov
 
 forcedep:
-	g++ -M $(SRCCORE) > dep.mk
+	g++ $(CXXFLAGS) -M $(SRCCORE) > dep.mk
 
 DEP=$(wildcard dep.mk)
 
