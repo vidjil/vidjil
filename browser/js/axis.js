@@ -207,5 +207,25 @@ Axis.prototype = {
             this.labels.push(this.label("line", pos, text));
         }
     },
+    
+    computeCustomBarLabels : function (tab) {
+        this.labels = [];
+        var length = Object.keys(tab).length;
+        
+        var step = 1;
+        if (length>50) step = 5
+        
+        var i=1
+        for (var e in tab){
+            if (i%step == 0 ){ 
+                var pos = (i-0.5)/length;
+                if (this.reverse) pos = 1 - pos; 
+                this.labels.push(this.label("line", pos, e));
+            }
+            i++;
+        }
+        
+        
+    }
 
 }
