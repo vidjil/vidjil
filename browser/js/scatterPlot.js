@@ -34,7 +34,7 @@ function ScatterPlot(id, model) {
     //Margins left/right ( fixed value )
     this.marge_left = 100;
     this.marge_right = 10;
-    this.marge_top = 45;
+    this.marge_top = 60;
     this.marge_bot = 10;
 
     this.max_precision = 9; //Precision max (default: 9)
@@ -68,13 +68,14 @@ function ScatterPlot(id, model) {
     this.dbscanActive = false; //Boolean to know if the DSCAN visualization is on
     this.DBSCANLength = 5; //Length of the DBSCAN edges
 
+    this.mode = "plot";
     this.splitY = "gene_j"; //Distribution method, for the Y axis
     this.splitX = "gene_v"; //Distribution method, for the X axis
 
     this.m.view.push(this); //Model's sync
 
     this.time0 = Date.now(), //Initial date saved
-        this.time1 = this.time0; //Frames computed
+    this.time1 = this.time0; //Frames computed
     this.fpsqueue = []; //Numbers of frames computed, according to the 20th last values
 
     //Booléen pour le sélecteur de nodes
@@ -107,6 +108,14 @@ function ScatterPlot(id, model) {
         ["n", "N length"],
         ["lengthCDR3", "CDR3 length"]
     ];
+    
+    this.preset = { 
+        "V/J (genes)" : { "mode": "plot", "x" : "gene_v", "y": "gene_j"},
+        "V/J (alleles)" : { "mode": "plot", "x" : "allele_v", "y": "allele_j"},
+        "V/N length" : { "mode": "plot", "x" : "gene_v", "y": "n"},
+        "V/abundance" : { "mode": "plot", "x" : "gene_v", "y": "Size"},
+        "V distribution" : { "mode": "bar", "x" : "gene_v", "y": "bar"}
+    };
 
     //Menu with graph distrib' (see initMenu function)
     this.graph_menu = [
@@ -114,8 +123,8 @@ function ScatterPlot(id, model) {
         ["graph", "Edit dist. graph"]
     ];
 
-    this.axisX = new Axis(this.m)
-    this.axisY = new Axis(this.m)
+    this.axisX = new Axis(this.m, false)
+    this.axisY = new Axis(this.m, true)
     this.use_system_grid = false
 }
 
@@ -136,7 +145,7 @@ ScatterPlot.prototype = {
         this.initSVG();
         this.axisX.useGermline(this.m.germlineV, "V")
         this.axisY.useGermline(this.m.germlineJ, "J")
-        this.changeSplitMethod(this.splitX, this.splitY);
+        this.changeSplitMethod(this.splitX, this.splitY, "plot");
         this.resize();
     },
 
@@ -559,44 +568,45 @@ ScatterPlot.prototype = {
         return returnedTab
     },
 
-    /* Fonction permettant d'initialiser le menu contenant les axes, ainsi que tout autre élément n'étant pas du SVG
+    /* Fonction permettant d'initialiser le menu contenant les axes
      * */
     initMenu: function() {
         var self = this;
-
-        //Initialisation du menu sans graphes
-
-        //Création d'un div fils valant des infos concernant l'axe des X dans la classe
+        
+        var divParent = document.getElementById(this.id)
+        var anchor = document.createElement('div');
+        anchor.id = "sp_menu_anchor";
+        var menu = document.createElement('div');
+        menu.id = "sp_menu";
+        var content = document.createElement('div');
+        content.id = "sp_menu_content";
+        
         var div_x = document.createElement('div');
         div_x.className = "axis_select axis_select_x";
 
-        //Création d'un div fils valant des infos concernant l'axe des Y dans la classe
         var div_y = document.createElement('div');
         div_y.className = "axis_select axis_select_y";
+        
+        var div_preset = document.createElement('div');
+        div_preset.className = "axis_select axis_select_preset";
 
-        //Création d'un select (menu avec options déroulantes) pour l'axe des X
         var select_x = document.createElement('select');
         //Initialisation du menu déroulant
         select_x.setAttribute('name', 'select_x[]');
         select_x.id = "select_x"
-            //Changement du menu en fonction de la demande
         select_x.onchange = function() {
             self.changeXaxis(this);
         }
 
-        //Création d'un select (menu avec options déroulantes) pour l'axe des Y
         var select_y = document.createElement('select');
-        //Initialisation du menu déroulant
         select_y.setAttribute('name', 'select_y[]');
         select_y.id = "select_y"
-            //Changement du menu en fonction de la demande
         select_y.onchange = function() {
             self.changeYaxis(this);
         }
-
+        
         //Ajout de chaque méthode de répartition dans les menus pour l'axe des X/Y
         for (var i = 0; i < this.menu.length; i++) {
-
             var element = document.createElement("option");
             element.setAttribute('value', this.menu[i][0]);
             var text = document.createTextNode(this.menu[i][1]);
@@ -606,17 +616,38 @@ ScatterPlot.prototype = {
 
             select_x.appendChild(element);
             select_y.appendChild(element2);
-
         }
 
-        //On ajoute ce qui a été précédemment créé aux élèments fils
+        var select_preset = document.createElement('select');
+        //Initialisation du menu déroulant
+        select_preset.setAttribute('name', 'select_preset[]');
+        select_preset.id = "select_preset"
+        select_preset.onchange = function() {
+            self.changePreset(this);
+        }
+        
+        var element = document.createElement("option");
+        element.setAttribute('value', "custom");
+        element.appendChild(document.createTextNode("custom"));
+        select_preset.appendChild(element);
+        for (var i in this.preset) {
+            var element = document.createElement("option");
+            element.setAttribute('value', i);
+            element.appendChild(document.createTextNode(i));
+            select_preset.appendChild(element);
+        }
+        
+        div_x.appendChild(document.createTextNode("axis x: "));
         div_x.appendChild(select_x);
+        div_y.appendChild(document.createTextNode("axis y: "));
         div_y.appendChild(select_y);
+        div_preset.appendChild(document.createTextNode("preset: "));
+        div_preset.appendChild(select_preset);
 
+        
+        
         /*Graph menu initialization*/
-
-        var divParent = document.getElementById(this.id)
-
+        /*
         var div_graph = document.createElement('div');
         div_graph.className = "axis_select axis_select_graph"
 
@@ -639,11 +670,49 @@ ScatterPlot.prototype = {
         }
 
         div_graph.appendChild(select_graph);
-
+        
+        */
+        
+        var span_icon_bar = document.createElement('div');
+        span_icon_bar.className = "sp_menu_icon";
+        span_icon_bar.id = this.id+"_bar";
+        jQuery.get("img/bar.svg", function(data) {
+                var svg = jQuery(data).find('svg');
+                $(span_icon_bar).empty().append(svg);
+            }, 'xml');
+        span_icon_bar.onclick = function(){
+                self.changeMode("bar");
+            };
+        
+        span_icon_plot = document.createElement('div');
+        span_icon_plot.className = "sp_menu_icon";
+        span_icon_plot.id = this.id+"_plot";
+        jQuery.get("img/plot.svg", function(data) {
+                var svg = jQuery(data).find('svg');
+                $(span_icon_plot).empty().append(svg);
+            }, 'xml');
+        span_icon_plot.onclick = function(){
+                self.changeMode("plot");
+            };
+        
+        var div_mode = document.createElement('div');
+        div_mode.className = "sp_menu_mode";
+        div_mode.appendChild(span_icon_bar);
+        div_mode.appendChild(span_icon_plot);
+        
         //Added all childs
-        divParent.appendChild(div_x);
-        divParent.appendChild(div_y);
-        divParent.appendChild(div_graph);
+        content.appendChild(div_preset);
+        content.appendChild(div_mode);
+        content.appendChild(div_x);
+        content.appendChild(div_y);
+        //menu.appendChild(div_graph);
+        menu.appendChild(document.createTextNode("settings"));
+        menu.appendChild(content)
+        anchor.appendChild(menu);
+        divParent.appendChild(anchor);
+        
+        if (this.mode=="bar") $("#"+this.id+"_bar").addClass("sp_selected_mode")
+        if (this.mode=="plot") $("#"+this.id+"_plot").addClass("sp_selected_mode")
     },
 
     /*Function which allows to switch between initial menu and graph menu*/
@@ -703,130 +772,88 @@ ScatterPlot.prototype = {
      * */
     updateBar: function() {
         self = this
-
-        this.vKey = Object.keys(this.m.germlineV.gene);
-        this.vKey.push("undefined V");
-        this.bar_v = {};
-        this.bar_max = 0;
-        this.bar_width = (0.5 * (1 / this.vKey.length)) * this.resizeW
-
-        //Initialisation du tableau d'objets
-        for (var i = 0; i < this.vKey.length; i++) {
-            this.bar_v[this.vKey[i]] = {}
-            this.bar_v[this.vKey[i]].clones = [];
-            this.bar_v[this.vKey[i]].totalSize = 0;
-            this.bar_v[this.vKey[i]].currentSize = 0;
+        
+        switch (this.splitX) {
+            case "allele_v" :
+                this.makeBarTab(function(cloneID){return m.clone(cloneID).getV()}, Object.keys(m.germlineV.allele))
+                break;
+            case "gene_v" :
+                this.makeBarTab(function(cloneID){return m.clone(cloneID).getV(false)}, Object.keys(m.germlineV.gene))
+                break;
+            case "allele_j" :
+                this.makeBarTab(function(cloneID){return m.clone(cloneID).getJ()}, Object.keys(m.germlineV.allele))
+                break;
+            case "gene_j" :
+                this.makeBarTab(function(cloneID){return m.clone(cloneID).getJ(false)}, Object.keys(m.germlineV.gene))
+                break;
+            case "Size" :
+                //this.makeBarTab(function(cloneID){return m.clone(cloneID).getSize()})
+                break;
+            case "sequenceLength" :
+                this.makeBarTab(function(cloneID) {
+                    var value = m.clone(cloneID).getSequenceLength()
+                    if (typeof value != "undefined" && value != 0) return value;
+                    return undefined;
+                })
+                break;
+            case "n" :
+                this.makeBarTab(function(cloneID) {
+                    var value = m.clone(cloneID).getNlength()
+                    if (typeof value != "undefined" && value != 0) return value;
+                    return undefined;
+                })
+                break;
+            case "lengthCDR3" :
+                axis.makeBarTab(function(cloneID) {
+                    if (typeof m.clone(cloneID).seg != "undefined" && typeof m.clone(cloneID).seg["cdr3"] != "undefined")
+                        return m.clone(cloneID).seg["cdr3"].length
+                    return undefined;
+                })
+            break;
         }
-
-        //classement des clones suivant V
-        for (var i = 0; i < this.m.clones.length; i++) {
-            if (this.m.clone(i)
-                .isActive()) {
-                var geneV = this.m.clone(i)
-                    .getV(false);
-                var clone = {
-                    id: i
-                }
-                if (typeof this.bar_v[geneV] == 'undefined') geneV = "undefined V"
-                this.bar_v[geneV].clones.push(clone);
-                this.bar_v[geneV].totalSize += this.m.clone(i)
-                    .getSize();
-            }
-        }
-
-        //classement des clones suivant J
-        for (var i = 0; i < this.vKey.length; i++) {
-            if (this.bar_v[this.vKey[i]].totalSize > this.bar_max)
-                this.bar_max = this.bar_v[this.vKey[i]].totalSize;
-            this.bar_v[this.vKey[i]].clones.sort(function(a, b) {
-                var ja = self.m.clone(a.id)
-                    .getJ();
-                var jb = self.m.clone(b.id)
-                    .getJ();
-                return jb.localeCompare(ja)
-            });
-        }
-
-        //calcul des positions y
-        for (var i = 0; i < this.vKey.length; i++) {
-            var somme = 0;
-            for (var j = 0; j < this.bar_v[this.vKey[i]].clones.length; j++) {
-                somme += this.getBarHeight(this.bar_v[this.vKey[i]].clones[j].id);
-                this.bar_v[this.vKey[i]].clones[j].pos = 1 - somme;
-            }
-        }
-
-        self.axisY.computeCustomLabels(0, this.bar_max, true, true, true);
-
-        //redraw
-        this.bar = this.bar_container.selectAll("rect")
-            .data(this.nodes)
-        this.bar_container.selectAll("rect")
-            .transition()
-            .duration(500)
-            .attr("id", function(d) {
-                return "bar" + d.id;
-            })
-            .attr("width", this.bar_width)
-            .attr("x", function(d) {
-                return self.axisX.pos(d.id) * self.resizeW - (self.bar_width / 2) + self.marge_left;
-            })
-            .attr("height", function(d) {
-                return self.getBarHeight(d) * self.resizeH;
-            })
-            .attr("y", function(d) {
-                if (!self.m.clone(d.id)
-                    .isActive()) return self.resizeH + self.marge_top;
-                return (self.getBarPosition(d) * self.resizeH) + self.marge_top;
-            })
-            .style("fill", function(d) {
-                return (self.m.clone(d.id)
-                    .getColor());
-            })
-            .attr("class", function(p) {
-                if (!self.m.clone(p.id)
-                    .isActive()) return "circle_hidden";
-                if (self.m.clone(p.id)
-                    .isSelected()) return "circle_select";
-                if (self.m.clone(p.id)
-                    .isFocus()) return "circle_focus";
-                return "circle";
-            })
+        this.sortBarTab(function(a){return m.clone(a).getJ()});
+        this.computeBarTab();
     },
     
     //tab = sp.makeBarTab(function(cloneID){v = m.clone(cloneID).getNlength(); if (v==0){return undefined}else{return v}})
-    makeBarTab: function (fct) {
+    makeBarTab: function (fct, values) {
         var min, max;
+        this.barTab = [];
         
-        for (var i in this.m.clones) {
-            var v = fct(i);
-            if (typeof v != "undefined"){
-                if (v<min || typeof min == "undefined") min = v;
-                if (v>max || typeof max == "undefined") max = v;
+        if (typeof values == "undefined"){
+            for (var i in this.m.clones) {
+                var v = fct(i);
+                if (typeof v != "undefined"){
+                    if (v<min || typeof min == "undefined") min = v;
+                    if (v>max || typeof max == "undefined") max = v;
+                }
+            }
+            for (var i=min; i<=max; i++) this.barTab[i]=[];
+        }else{
+            for (var i in values) {
+                this.barTab[values[i]]=[];
             }
         }
         
-        var tab = {};
-        tab["?"]=[];
-        for (var i=min; i<=max; i++) tab[i]=[];
+        this.barTab["?"]=[];
         
         for (var i in this.m.clones) {
             var v = fct(i);
-            if (typeof v == "undefined") {
-                tab["?"].push(i);
+            if (typeof v == "undefined" || typeof this.barTab[v] == "undefined" ) {
+                this.barTab["?"].push(i);
             }else{
-                tab[v].push(i);
+                this.barTab[v].push(i);
             }
         }
         
-        return tab;
+        return this;
     },
     
-    //tab2 = sp.sortBarTab(tab, function(a){var va = m.clone(a).getJ()})
-    sortBarTab: function (tab, fct) {
+    //sp.sortBarTab(tab, function(a){var va = m.clone(a).getJ()})
+    sortBarTab: function (fct) {
         
-        for (var i in tab) {
-            tab[i].sort(function (a,b) {
+        for (var i in this.barTab) {
+            this.barTab[i].sort(function (a,b) {
                 var va = fct(a);
                 var vb = fct(b);
                 
@@ -842,15 +869,15 @@ ScatterPlot.prototype = {
             });
         }
         
-        return tab;
+        return this;
     },
     
-    computeBarMax : function (tab) {
+    computeBarMax : function () {
         var bar_max = 0;
-        for (var i in tab) {
+        for (var i in this.barTab) {
             var tmp = 0;
-            for (var j in tab[i]) {
-                var cloneID = tab[i][j]
+            for (var j in this.barTab[i]) {
+                var cloneID = this.barTab[i][j]
                 if ( this.m.clone(cloneID).id != "other" ) tmp += this.m.clone(cloneID).getSize();
             }
             if (tmp > bar_max) bar_max = tmp;
@@ -859,18 +886,19 @@ ScatterPlot.prototype = {
         return bar_max;
     },
     
-    computeBarTab : function (tab) {
-        var bar_max = this.computeBarMax(tab);
-        var tab_length = Object.keys(tab).length;
+    computeBarTab : function () {
+        var bar_max = this.computeBarMax();
+        var tab_length = Object.keys(this.barTab).length;
         var width = 0.8 / tab_length;
         
+        
         k=0;
-        for (var i in tab) {
+        for (var i in this.barTab) {
             var y_pos = 0
-            var x_pos = k/tab_length;
+            var x_pos = ((k+0.1)/tab_length);
             
-            for (var j in tab[i]){
-                var cloneID = tab[i][j]
+            for (var j in this.barTab[i]){
+                var cloneID = this.barTab[i][j]
                 var height = this.m.clone(cloneID).getSize()/bar_max;
                 y_pos += height;
                 
@@ -882,6 +910,12 @@ ScatterPlot.prototype = {
             }
             k++;
         }
+        this.axisY.computeCustomLabels(0, bar_max, true, true);
+        this.axisX.computeCustomBarLabels(this.barTab)
+        this.initGrid();
+        this.drawBarTab();
+        
+        return this
     },
 
     drawBarTab : function () {
@@ -895,10 +929,10 @@ ScatterPlot.prototype = {
             .attr("id", function(d) {
                 return "bar" + d.id;
             })
-            .attr("width", function(d) { return d.bar_w*self.resizeW })
-            .attr("x", function(d) { return d.bar_x*self.resizeW+ self.marge_left })
-            .attr("height", function(d) { return d.bar_h*self.resizeH })
-            .attr("y", function(d) { return (1-d.bar_y)*self.resizeH + self.marge_top })
+            .attr("width", function(d) { return d.bar_w*self.gridSizeW })
+            .attr("x", function(d) { return d.bar_x*self.gridSizeW + self.marge_left })
+            .attr("height", function(d) { return d.bar_h*self.gridSizeH })
+            .attr("y", function(d) { return (1-d.bar_y)*self.gridSizeH + self.marge_top })
             .style("fill", function(d) { return (self.m.clone(d.id).getColor()) })
             .attr("class", function(p) {
                 if (!self.m.clone(p.id)
@@ -944,6 +978,15 @@ ScatterPlot.prototype = {
             }
         }
     },
+    
+    /* switch mode between bar and plot
+     */
+    changeMode : function (mode) {
+        this.changeSplitMethod(this.splitX, this.splitY, mode);
+        $(".sp_menu_icon").removeClass("sp_selected_mode");
+        $("#"+this.id+"_"+this.mode).addClass("sp_selected_mode");
+    },
+    
 
     buildSystemGrid: function() {
         this.systemGrid = {
@@ -1031,7 +1074,8 @@ ScatterPlot.prototype = {
         //On prend la hauteur de la div
         this.resizeH = div_height - this.marge_top - this.marge_bot;
 
-        if (this.splitY != "bar" && (this.splitX == "allele_v" || this.splitX == "gene_v" || this.splitX == "allele_j" || this.splitX == "gene_j" || this.splitY == "allele_v" || this.splitY == "gene_v" || this.splitY == "allele_j" || this.splitY == "gene_j")) {
+        if (this.splitX == "allele_v" || this.splitX == "gene_v" || this.splitX == "allele_j" || this.splitX == "gene_j" ||
+            (this.mode == "plot" & (this.splitY == "allele_v" || this.splitY == "gene_v" || this.splitY == "allele_j" || this.splitY == "gene_j"))) {
             this.use_system_grid = true;
             this.buildSystemGrid()
         } else {
@@ -1259,8 +1303,8 @@ ScatterPlot.prototype = {
     },
 
     updateClones: function() {
-        if (this.splitY == "bar" && !this.reinit) {
-            this.updateBar();
+        if (this.mode == "bar" && !this.reinit) {
+            this.drawBarTab();
         } else {
             for (var i = 0; i < this.nodes.length; i++) {
                 this.updateClone(i);
@@ -1271,14 +1315,11 @@ ScatterPlot.prototype = {
 
         if (this.m.germlineV.system != this.system) {
             this.system = this.m.germlineV.system
-            this.changeSplitMethod(this.splitX, this.splitY)
+            this.changeSplitMethod(this.splitX, this.splitY, this.mode)
         }
         return this;
     },
 
-    /* Fonction permettant de mettre à jour les données liées à tous les clones présents dans une liste -> FONCTION DEPRECATED ?????
-     * @param list: Une liste contenant tous les clones à mettre à jour
-     * */
     updateElem: function(list) {
         this.update();
     },
@@ -1451,7 +1492,7 @@ ScatterPlot.prototype = {
      * */
     updateElemStyle: function() {
         var self = this;
-        if (this.splitY == "bar") {
+        if (this.mode == "bar") {
             this.updateBar();
         } else {
             this.node
@@ -1509,7 +1550,8 @@ ScatterPlot.prototype = {
 
     changeXaxis: function(elem) {
         if (this.checkGraphMethod(elem.value)) return;
-        this.changeSplitMethod(elem.value, this.splitY);
+        this.changeSplitMethod(elem.value, this.splitY, this.mode);
+        document.getElementById("select_preset").selectedIndex = 0
     },
 
 
@@ -1518,7 +1560,12 @@ ScatterPlot.prototype = {
      * */
     changeYaxis: function(elem) {
         if (this.checkGraphMethod(elem.value)) return;
-        this.changeSplitMethod(this.splitX, elem.value);
+        this.changeSplitMethod(this.splitX, elem.value, this.mode);
+        document.getElementById("select_preset").selectedIndex = 0
+    },
+    
+    changePreset: function(elem){
+        this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y, this.preset[elem.value].mode);
     },
 
     /* Fonction permettant de mettre à jour de l'axe des X
@@ -1552,7 +1599,7 @@ ScatterPlot.prototype = {
         if (space < 1.1) {
             this.rotation_x = 320;
             this.text_position_x = 45;
-            this.sub_text_position_x = 55;
+            this.sub_text_position_x = 65;
             className = "sp_rotated_legend";
         } else {
             this.rotation_x = 0;
@@ -1582,22 +1629,22 @@ ScatterPlot.prototype = {
             .attr("class", function(d) {
                 return className;
                 /*
-          * TODO
-          if ( d.type=="line" ){
-          count++
-          if (self.coordinates[0] > ((self.resizeW*d.pos+self.marge_left)-(label_width/4) ) &&
-          self.coordinates[0] < ((self.resizeW*d.pos+self.marge_left)+(label_width/4) )
-          ){
-          return "sp_legend_focus";
-          }
-          if (count >= space){
-          count=0
-          return "sp_legend";
-          }else{
-          return "sp_hidden_legend";
-          }
-          }else{ return "sp_legend";}
-          */
+                * TODO
+                if ( d.type=="line" ){
+                count++
+                if (self.coordinates[0] > ((self.resizeW*d.pos+self.marge_left)-(label_width/4) ) &&
+                self.coordinates[0] < ((self.resizeW*d.pos+self.marge_left)+(label_width/4) )
+                ){
+                return "sp_legend_focus";
+                }
+                if (count >= space){
+                count=0
+                return "sp_legend";
+                }else{
+                return "sp_hidden_legend";
+                }
+                }else{ return "sp_legend";}
+                */
             })
             .attr("transform", function(d) {
                 var y = self.text_position_x
@@ -1761,8 +1808,9 @@ ScatterPlot.prototype = {
      * @param splitX: Méthode de répartition demandée pour l'axe des X
      * @param splitY: Méthode de répartition demandée pour l'axe des Y
      * */
-    changeSplitMethod: function(splitX, splitY) {
-
+    changeSplitMethod: function(splitX, splitY, mode) {
+        
+    /*
         //if split method in the direction of a graph distribution, or if the graph split is allready activated
         if (splitX == "graph" ||  (this.reinit && splitX != "dbscan")) {
             if (this.dbscanActive) {
@@ -1772,7 +1820,7 @@ ScatterPlot.prototype = {
                 //Disable reinit to switch to DBSCAN at EditDistance after maybe...
                 if (splitX == "graph" || splitY == "graph") this.reinit = false;
                 //Reinit of the edges array - switch DBSAN -> EditDistance
-                this.edge = self.keepUsefullEdgesForEditDistanceGraph( /*self.edgeSaved*/ self.allEdges);
+                this.edge = self.keepUsefullEdgesForEditDistanceGraph(self.allEdges);
             }
             this.reinit_motor();
             this.endBar();
@@ -1784,62 +1832,72 @@ ScatterPlot.prototype = {
             this.reinit_motor();
             this.endBar();
         }
-
-        if (splitY == "bar" && splitY != this.splitY) {
+    */
+        
+        if (mode == "bar" && mode != this.mode) {
             this.endPlot();
             this.initBar();
         }
-
-        if (splitY != "bar" && this.splitY == "bar") {
+        if (mode != "bar" && this.mode == "bar") {
             this.endBar();
         }
 
         this.splitX = splitX;
         this.splitY = splitY;
+        this.mode = mode;
 
-        this.updateAxis(this.axisX, this.splitX);
-        this.updateAxis(this.axisY, this.splitY);
-        this.update();
+        if (this.mode == "plot"){
+            this.updateAxis(this.axisX, this.splitX);
+            this.updateAxis(this.axisY, this.splitY);
+            this.update();
+        }
+        
+        if (this.mode == "bar"){
+            this.updateBar();
+            this.update();
+        }
     },
 
+    
     updateAxis: function(axis, splitMethod) {
-        if (splitMethod == "allele_v") {
-            axis.useGermline(this.m.germlineV, "V", true)
-        }
-        if (splitMethod == "gene_v") {
-            axis.useGermline(this.m.germlineV, "V", false)
-        }
-        if (splitMethod == "allele_j") {
-            axis.useGermline(this.m.germlineJ, "J", true)
-        }
-        if (splitMethod == "gene_j") {
-            axis.useGermline(this.m.germlineJ, "J", false)
-        }
-        if (splitMethod == "Size") {
-            axis.useSize()
-        }
-        if (splitMethod == "sequenceLength") {
-            axis.custom(function(cloneID) {
-                var value = m.clone(cloneID)
-                    .getSequenceLength()
-                if (typeof value != "undefined" && value != 0) return value;
-                return undefined;
-            })
-        }
-        if (splitMethod == "n") {
-            axis.custom(function(cloneID) {
-                var value = m.clone(cloneID)
-                    .getNlength()
-                if (typeof value != "undefined" && value != 0) return value;
-                return undefined;
-            })
-
-        }
-        if (splitMethod == "lengthCDR3") {
-            axis.custom(function(cloneID) {
-                return m.clone(cloneID)
-                    .seg["cdr3"].length
-            })
+        switch (splitMethod) {
+            case "allele_v" :
+                axis.useGermline(this.m.germlineV, "V", true)
+                break;
+            case "gene_v" :
+                axis.useGermline(this.m.germlineV, "V", false)
+                break;
+            case "allele_j" :
+                axis.useGermline(this.m.germlineJ, "J", true)
+                break;
+            case "gene_j" :
+                axis.useGermline(this.m.germlineJ, "J", false)
+                break;
+            case "Size" :
+                axis.useSize()
+                break;
+            case "sequenceLength" :
+                axis.custom(function(cloneID) {
+                    var value = m.clone(cloneID)
+                        .getSequenceLength()
+                    if (typeof value != "undefined" && value != 0) return value;
+                    return undefined;
+                })
+                break;
+            case "n" :
+                axis.custom(function(cloneID) {
+                    var value = m.clone(cloneID)
+                        .getNlength()
+                    if (typeof value != "undefined" && value != 0) return value;
+                    return undefined;
+                })
+                break;
+            case "lengthCDR3" :
+                axis.custom(function(cloneID) {
+                    return m.clone(cloneID)
+                        .seg["cdr3"].length
+                })
+            break;
         }
     },
 
