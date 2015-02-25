@@ -173,24 +173,6 @@
                 </div></div>
             </div>
 
-            <div class="menu" id="analysis_menu" onmouseover="showSelector('groupSelector');"> analysis
-                <div id="groupSelector" class="selector">
-                    <div>
-                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'gene_j');">V / J (genes)</a>
-                    <a class="buttonSelector" onclick="sp.changeSplitMethod('allele_v', 'allele_j');">V / J (alleles)</a>
-                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'n');">V / N length</a>
-                    <!--
-                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'nSize');">V / N length + VJ deletions</a>
-                    k-->
-                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'Size')">V / abundance at selected timepoint</a>
-                    <a class="buttonSelector" onclick="sp.changeSplitMethod('gene_v', 'bar')">V distribution</a>
-                    <!--<a class="buttonSelector" onclick="sp.changeSplitMethod('dbscan', 'dbscan')">Graph</a>-->
-                    <!--<a class="buttonSelector" onclick="sp.changeSplitMethod('graph','graph')">Edit distance distribution</a>
-                    <a class="buttonSelector" onclick="sp.changeSplitMethod('dbscan','dbscan')">DBSCAN algorithm</a>-->
-                    </div>
-                </div>
-            </div>
-
             <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color 
                 <div id="colorSelector" class="selector"><div>
                     <a class="buttonSelector" onclick="m.changeColorMethod('Tag');">by tag</a>
