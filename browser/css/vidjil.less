@@ -1094,6 +1094,75 @@ text.warning { fill: orange; }
 span.alert { color: red; }
 text.alert { fill: red; }
 
+#sp_menu_anchor{
+    position: relative;
+    top: 0px;
+    left: 0px;
+    width: 0px;
+    height: 0px;
+}
+
+#sp_menu{
+    min-width: 22px;
+    min-height: 18px;
+    border-bottom: solid;
+    border-right: solid;
+    border-color: @border;
+    background : @background;
+    display: inline-block;
+    padding : 2px;
+}
+
+#sp_menu_content{
+    padding: 0px;
+    width: 0px; 
+    height: 0px; 
+    opacity: 0;
+    font-size: 0%;
+    overflow: hidden;
+    transition-property: all;
+    transition-duration: 0.2s;
+}
+
+#sp_menu:hover #sp_menu_content,
+#sp_menu_content:focus {
+    padding: 8px 0px 0px 0px;
+    width: 180px; 
+    height: 130px;
+    font-size: 100%;
+    opacity: 1;
+}
+
+.sp_menu_mode{
+    display: flex;
+}
+
+.sp_menu_icon{
+    width: 40px;
+    padding: 2px 2px 0px 2px;
+    border: solid;
+    border-width: 2px;
+    border-radius: 5px;
+    margin: 5px auto;
+    border-color : @background;
+}
+
+.sp_menu_icon:hover{
+    background : @border;
+}
+
+.sp_selected_mode{
+    border-color : @default;
+}
+
+.sp_menu_icon svg{
+    fill: @default;
+}
+
+.sp_menu_icon svg:hover{
+    fill: @highlight;
+}
+
 .sp_selector{
     fill: @select;
     stroke-width: 2px;
@@ -1101,31 +1170,22 @@ text.alert { fill: red; }
     fill-opacity: 0.2;
 }
 
+.axis_select {
+    display: flex;
+    overflow: hidden;
+    white-space: nowrap;
+}
 
 .axis_select select {
     background: @background;
     color: @default;
-    height: 16px;
-    width: 90px;
+    height: 20px;
+    width: 120px;
     -webkit-appearance: none;
     border: solid;
-    border-width: 1px
-}
-
-.axis_select {
-    position: relative;
-    float: left;
-    height: 0px;
-    top : 2px;
-}
-
-.axis_select_x {
-    display: block;
-}
-
-.axis_select_y {
-    top: 18px;
-    display: block;
+    border-width: 1px;
+    border-radius: 2px;
+    margin: 2px auto;
 }
 
 .axis_select_graph {
