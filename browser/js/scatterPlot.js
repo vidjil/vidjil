@@ -750,9 +750,10 @@ ScatterPlot.prototype = {
             .attr("id", function(d) {
                 return "bar" + d.id;
             })
-            .attr("width", 30)
-            .attr("height", 50)
-            .attr("y", self.resizeH + self.marge_top)
+            .attr("width", function(d) { return d.r2 })
+            .attr("x", function(d) { return d.x+self.marge_left-(d.r2/2) })
+            .attr("height", function(d) { return d.r2 })
+            .attr("y", function(d) { return d.y+self.marge_top-(d.r2/2) })
             //Retourne la couleur attribuée au SVG -via CSS:style.fill- pour chaque fenÃªtre dans le contenu de l'objet model
             .style("fill", function(d) {
                 return (self.m.clone(d.id)
@@ -878,7 +879,7 @@ ScatterPlot.prototype = {
             var tmp = 0;
             for (var j in this.barTab[i]) {
                 var cloneID = this.barTab[i][j]
-                if ( this.m.clone(cloneID).id != "other" ) tmp += this.m.clone(cloneID).getSize();
+                if ( this.m.clone(cloneID).id != "other") tmp += this.m.clone(cloneID).getSize();
             }
             if (tmp > bar_max) bar_max = tmp;
         }
@@ -899,33 +900,36 @@ ScatterPlot.prototype = {
             
             for (var j in this.barTab[i]){
                 var cloneID = this.barTab[i][j]
-                var height = this.m.clone(cloneID).getSize()/bar_max;
+                height = 0;
+                if ( this.m.clone(cloneID).id != "other" & this.m.clone(cloneID).isActive() ) {
+                    height = this.m.clone(cloneID).getSize()/bar_max;
+                }
                 y_pos += height;
                 
                 this.nodes[cloneID].bar_y = y_pos;
                 this.nodes[cloneID].bar_x = x_pos;
                 this.nodes[cloneID].bar_h = height;
                 this.nodes[cloneID].bar_w = width;
-                
+
             }
             k++;
         }
         this.axisY.computeCustomLabels(0, bar_max, true, true);
         this.axisX.computeCustomBarLabels(this.barTab)
         this.initGrid();
-        this.drawBarTab();
+        this.drawBarTab(500);
         
         return this
     },
 
-    drawBarTab : function () {
+    drawBarTab : function (speed) {
         var self = this;
         //redraw
         this.bar = this.bar_container.selectAll("rect")
             .data(this.nodes)
         this.bar_container.selectAll("rect")
             .transition()
-            .duration(500)
+            .duration(speed)
             .attr("id", function(d) {
                 return "bar" + d.id;
             })
@@ -1304,7 +1308,7 @@ ScatterPlot.prototype = {
 
     updateClones: function() {
         if (this.mode == "bar" && !this.reinit) {
-            this.drawBarTab();
+            this.computeBarTab();
         } else {
             for (var i = 0; i < this.nodes.length; i++) {
                 this.updateClone(i);
@@ -1364,8 +1368,8 @@ ScatterPlot.prototype = {
         var sys = this.m.clone(cloneID)
             .getSystem()
         if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.germlineV.system) {
-            this.nodes[cloneID].x2 = this.systemGrid[sys].x * this.resizeW
-            this.nodes[cloneID].y2 = this.systemGrid[sys].y * this.resizeH
+            this.nodes[cloneID].x2 = this.systemGrid[sys].x * this.resizeW;
+            this.nodes[cloneID].y2 = this.systemGrid[sys].y * this.resizeH;
         } else {
             this.nodes[cloneID].x2 = this.axisX.pos(cloneID) * this.gridSizeW
             this.nodes[cloneID].y2 = this.axisY.pos(cloneID) * this.gridSizeH
@@ -1929,7 +1933,7 @@ ScatterPlot.prototype = {
                 return "circle_hidden";
             })
             // Relancera le moteur physique D3
-        this.force.start()
+        //this.force.start()
     },
 
     /* Fonction permettant l'activation d'un sélecteur
