@@ -78,29 +78,5 @@ test("Axis : ", function() {
                 if (typeof value != "undefined" && value != 0) return value;
                 return undefined;
             })
-    deepEqual(axis.labels,  [
-            {"geneColor": undefined,"pos": 0,"text": 9,"type": "line"},
-            {"geneColor": undefined,"pos": 0.2,"text": 9,"type": "line"},
-            {"geneColor": undefined,"pos": 0.4,"text": 9,"type": "line"},
-            {"geneColor": undefined,"pos": 0.6000000000000001,"text": 10,"type": "line"},
-            {"geneColor": undefined,"pos": 0.8,"text": 10,"type": "line"},
-            {"geneColor": undefined,"pos": 1,"text": 10,"type": "line"}
-        ], "check N length labels");
-    
-    equal(axis.pos(0).toPrecision(3), "9.00", "clone 0 (n=0) position -> 1")
-    equal(axis.pos(1).toPrecision(3), "0.00", "clone 1 (n=9) position -> 0.1")
-    
-    
-    
-    //custom (labels between 50 and 200)
-    axis.computeCustomLabels(50, 200)
-    deepEqual(axis.labels,  [
-            {"geneColor": undefined,"pos": 0,"text": 50,"type": "line"},
-            {"geneColor": undefined,"pos": 0.2,"text": 80,"type": "line"},
-            {"geneColor": undefined,"pos": 0.4,"text": 110,"type": "line"},
-            {"geneColor": undefined,"pos": 0.6000000000000001,"text": 140,"type": "line"},
-            {"geneColor": undefined,"pos": 0.8,"text": 170,"type": "line"},
-            {"geneColor": undefined,"pos": 1,"text": 200,"type": "line"}
-        ], "check custom labels");
-    
+
 });

@@ -289,8 +289,14 @@ class ListWindows:
         print "==>", output
         with open(output, "w") as file:
             json.dump(self, file, indent=2, default=self.toJson)
-            
-    def load(self, file_path, pipeline, verbose=True):
+
+    def load(self, file_path, *args, **kwargs):
+        if not '.clntab' in file_path:
+            self.load_vidjil(file_path, *args, **kwargs)
+        else:
+            self.load_clntab(file_path, *args, **kwargs)
+        
+    def load_vidjil(self, file_path, pipeline, verbose=True):
         '''init listWindows with data file
         Detects and selects the parser according to the file extension.'''
 
@@ -300,16 +306,10 @@ class ListWindows:
         if verbose:
             print "<==", file_path, "\t",
         
-        try:
-        
-            with open(file_path, "r") as file:
+        with open(file_path, "r") as file:
                 tmp = json.load(file, object_hook=self.toPython)     
                 self.d=tmp.d
                 self.check_version(file_path)
-        
-        except Exception: 
-            self.load_clntab(file_path)
-        pass
         
         if pipeline: 
             # renaming, private pipeline
@@ -441,7 +441,7 @@ class ListWindows:
         print "### Cut merged file, keeping window in the top %d for at least one point" % limit
         return self
         
-    def load_clntab(self, file_path):
+    def load_clntab(self, file_path, *args, **kwargs):
         '''Parser for .clntab file'''
 
         self.d["vidjil_json_version"] = [VIDJIL_JSON_VERSION]

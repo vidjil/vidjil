@@ -17,12 +17,6 @@ test:
 	make COVERAGE="$(COVERAGE)" unit
 	make should
 	make test_tools
-	# make pytests
-
-test_with_fuse:
-	make COVERAGE="$(COVERAGE)" unit
-	make should
-	make pytests
 
 test_browser: unit_browser functional_browser
 
@@ -33,11 +27,6 @@ unit: all
 	@echo "*** Launching unit tests..."
 	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests
 	@echo "*** All unit tests passed"
-
-pytests:
-	@echo "*** Launching python tests..."
-	python tools/fuse.py --test x
-	@echo "*** All python tests passed"
 
 should: all
 	@echo
