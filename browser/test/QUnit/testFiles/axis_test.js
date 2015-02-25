@@ -79,16 +79,16 @@ test("Axis : ", function() {
                 return undefined;
             })
     deepEqual(axis.labels,  [
-            {"geneColor": undefined,"pos": 1,"text": 9,"type": "line"},
-            {"geneColor": undefined,"pos": 0.8,"text": 9,"type": "line"},
-            {"geneColor": undefined,"pos": 0.6,"text": 9,"type": "line"},
-            {"geneColor": undefined,"pos": 0.3999999999999999,"text": 10,"type": "line"},
-            {"geneColor": undefined,"pos": 0.19999999999999996,"text": 10,"type": "line"},
-            {"geneColor": undefined,"pos": 0,"text": 10,"type": "line"}
+            {"geneColor": undefined,"pos": 0,"text": 9,"type": "line"},
+            {"geneColor": undefined,"pos": 0.2,"text": 9,"type": "line"},
+            {"geneColor": undefined,"pos": 0.4,"text": 9,"type": "line"},
+            {"geneColor": undefined,"pos": 0.6000000000000001,"text": 10,"type": "line"},
+            {"geneColor": undefined,"pos": 0.8,"text": 10,"type": "line"},
+            {"geneColor": undefined,"pos": 1,"text": 10,"type": "line"}
         ], "check N length labels");
     
     equal(axis.pos(0).toPrecision(3), "9.00", "clone 0 (n=0) position -> 1")
-    equal(axis.pos(1).toPrecision(3), "1.00", "clone 1 (n=9) position -> 0.1")
+    equal(axis.pos(1).toPrecision(3), "0.00", "clone 1 (n=9) position -> 0.1")
     
     
     
