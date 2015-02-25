@@ -676,7 +676,7 @@ ScatterPlot.prototype = {
         var span_icon_bar = document.createElement('div');
         span_icon_bar.className = "sp_menu_icon";
         span_icon_bar.id = this.id+"_bar";
-        jQuery.get("img/bar.svg", function(data) {
+        jQuery.get("images/bar.svg", function(data) {
                 var svg = jQuery(data).find('svg');
                 $(span_icon_bar).empty().append(svg);
             }, 'xml');
@@ -687,7 +687,7 @@ ScatterPlot.prototype = {
         span_icon_plot = document.createElement('div');
         span_icon_plot.className = "sp_menu_icon";
         span_icon_plot.id = this.id+"_plot";
-        jQuery.get("img/plot.svg", function(data) {
+        jQuery.get("images/plot.svg", function(data) {
                 var svg = jQuery(data).find('svg');
                 $(span_icon_plot).empty().append(svg);
             }, 'xml');
