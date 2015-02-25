@@ -1,0 +1,9 @@
+!LAUNCH: (cd .. ; python analysis-windows.py -w 40 ../data/analysis-with-windows.analysis.new ; python analysis-windows.py -w 60 ../data/analysis-with-windows.analysis.new ; ./diff_json.sh ../data/analysis-with-windows.analysis{,.new.new} -s ; cat ../data/analysis-with-windows.analysis.new)
+
+$ First and last files are identical
+1:are identical
+
+$ Middle file has the good 40-bp windows
+1: "id": "CTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGAC"
+1: "id": "CTGTACCGGGGAGGAACAATATAGCAGCTGGTACTTTGAC"
+1: "id": "GTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTA"
