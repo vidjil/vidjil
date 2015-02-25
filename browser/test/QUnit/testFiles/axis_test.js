@@ -72,22 +72,28 @@ test("Axis : ", function() {
     
     
     //Nlength
-    axis.useNlength()
+    axis.custom(function(cloneID) {
+                var value = m.clone(cloneID)
+                    .getNlength()
+                if (typeof value != "undefined" && value != 0) return value;
+                return undefined;
+            })
     deepEqual(axis.labels,  [
-            {"geneColor": undefined,"pos": 1,"text": 0,"type": "line"},
-            {"geneColor": undefined,"pos": 0.8,"text": 2,"type": "line"},
-            {"geneColor": undefined,"pos": 0.6,"text": 4,"type": "line"},
-            {"geneColor": undefined,"pos": 0.3999999999999999,"text": 6,"type": "line"},
-            {"geneColor": undefined,"pos": 0.19999999999999996,"text": 8,"type": "line"}
+            {"geneColor": undefined,"pos": 1,"text": 9,"type": "line"},
+            {"geneColor": undefined,"pos": 0.8,"text": 9,"type": "line"},
+            {"geneColor": undefined,"pos": 0.6,"text": 9,"type": "line"},
+            {"geneColor": undefined,"pos": 0.3999999999999999,"text": 10,"type": "line"},
+            {"geneColor": undefined,"pos": 0.19999999999999996,"text": 10,"type": "line"},
+            {"geneColor": undefined,"pos": 0,"text": 10,"type": "line"}
         ], "check N length labels");
     
-    equal(axis.pos(0).toPrecision(3), 1, "clone 0 (n=0) position -> 1")
-    equal(axis.pos(1).toPrecision(3), 0.1, "clone 1 (n=9) position -> 0.1")
+    equal(axis.pos(0).toPrecision(3), "9.00", "clone 0 (n=0) position -> 1")
+    equal(axis.pos(1).toPrecision(3), "1.00", "clone 1 (n=9) position -> 0.1")
     
     
     
     //custom (labels between 50 and 200)
-    axis.custom(50, 200)
+    axis.computeCustomLabels(50, 200)
     deepEqual(axis.labels,  [
             {"geneColor": undefined,"pos": 0,"text": 50,"type": "line"},
             {"geneColor": undefined,"pos": 0.2,"text": 80,"type": "line"},
