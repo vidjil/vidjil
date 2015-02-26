@@ -75,6 +75,13 @@ class WindowsStorage {
   list<Sequence> getSample(junction window, size_t nb_sampled, 
                            size_t nb_buckets=HISTOGRAM_SIZE_AUDITIONED);
 
+
+  /*
+   * Fill the stats_clone member of the different Germlines
+   */
+  void fillStatsClones();
+
+
   /**
    * @return a list of windows together with the number of reads they appear in.
    * @pre sort() must have been called at least once and must have been called

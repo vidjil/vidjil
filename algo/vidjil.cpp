@@ -897,6 +897,9 @@ int main (int argc, char **argv)
         stream_segmentation_info << "  ! If this is unexpected, check the germline (-G) and try to change seed parameters (-k)." << endl ;
       }
 
+    cout << "Build clone stats" << endl;
+    windowsStorage->fillStatsClones();
+    
     stream_segmentation_info << "                                  #      av. length" << endl ;
 
     multigermline->out_stats(stream_segmentation_info);

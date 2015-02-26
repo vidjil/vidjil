@@ -114,6 +114,20 @@ void WindowsStorage::add(junction window, Sequence sequence, int status, Germlin
   germline_by_window[window] = germline;
 }
 
+void WindowsStorage::fillStatsClones()
+{
+  for (map <junction, list<Sequence> >::iterator it = seqs_by_window.begin(); 
+       it != seqs_by_window.end();
+       it++)
+    {
+      junction junc = it->first;
+      int nb_reads = it->second.size();
+      Germline *germline = germline_by_window[junc];
+
+      germline->stats_clones.insert(nb_reads);
+    }
+}
+
 pair <int, int> WindowsStorage::keepInterestingWindows(size_t min_reads_window) {
   int removes = 0 ;
   int nb_reads = 0 ;
