@@ -21,6 +21,7 @@ void Germline::init(string _code, char _shortcut,
   delta_max = _delta_max ;
 
   stats.setLabel(code);
+  stats_clones.setLabel(code + "-clones");
 }
 
 Germline::Germline(string _code, char _shortcut,
@@ -261,6 +262,7 @@ void MultiGermline::out_stats(ostream &out)
     {
       Germline *germline = *it ;
       out << germline->stats ;
+      out << germline->stats_clones ;
     }
 }
 

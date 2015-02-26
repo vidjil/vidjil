@@ -68,6 +68,7 @@ class Germline {
   int delta_max;
 
   Stats stats;
+  Stats stats_clones;
 };
 
 
