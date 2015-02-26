@@ -258,8 +258,8 @@ void MultiGermline::build_with_one_index(string seed)
 
 void MultiGermline::out_stats(ostream &out)
 {
-  out << "                              " ;
-  out << "reads    av. len   clones  av. reads" ;
+  out << "                         " ;
+  out << "reads av. len     clones av. rds" ;
   out << endl ;
 
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)

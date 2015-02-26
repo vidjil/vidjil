@@ -24,11 +24,13 @@ float Stats::getAverage()
 
 ostream &operator<<(ostream &out, Stats &stats)
 {
+  out << "  ";
+  
   if (stats.label.size())
-    out << "   " << left << setw(20) << stats.label << " ->" ;
+    out << left << setw(17) << stats.label << "->" ;
 
   out << right << setw(9) << stats.nb ;
-  out << "      " << setw(5) ;
+  out << "   " << setw(5) ;
   if (stats.nb)
     out << fixed << setprecision(1) << stats.getAverage() ;
   else
