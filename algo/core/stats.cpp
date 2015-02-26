@@ -24,13 +24,15 @@ float Stats::getAverageLength()
 
 ostream &operator<<(ostream &out, Stats &stats)
 {
-  out << "   " << left << setw(20) << stats.label
-      << " ->" << right << setw(9) << stats.nb ;
+  if (stats.label.size())
+    out << "   " << left << setw(20) << stats.label << " ->" ;
 
+  out << right << setw(9) << stats.nb ;
+  out << "      " << setw(5) ;
   if (stats.nb)
-    out << "      " << setw(5) << fixed << setprecision(1) << stats.getAverageLength() ;
+    out << fixed << setprecision(1) << stats.getAverageLength() ;
+  else
+    out << "-" ;
   
-  out << endl ;
-
   return out;
 }

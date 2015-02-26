@@ -900,8 +900,6 @@ int main (int argc, char **argv)
     cout << "Build clone stats" << endl;
     windowsStorage->fillStatsClones();
     
-    stream_segmentation_info << "                                  #      av. length" << endl ;
-
     multigermline->out_stats(stream_segmentation_info);
     stream_segmentation_info << endl;
     we.out_stats(stream_segmentation_info);

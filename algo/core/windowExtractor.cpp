@@ -99,6 +99,6 @@ void WindowExtractor::out_stats(ostream &out)
     {
       if (i == TOTAL_SEG_AND_WINDOW)
 	out << endl;
-      out << stats[i] ;
+      out << stats[i] << endl ;
     }
 }

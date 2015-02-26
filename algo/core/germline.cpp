@@ -21,7 +21,7 @@ void Germline::init(string _code, char _shortcut,
   delta_max = _delta_max ;
 
   stats_reads.setLabel(code);
-  stats_clones.setLabel(code + "-clones");
+  stats_clones.setLabel("");
 }
 
 Germline::Germline(string _code, char _shortcut,
@@ -258,11 +258,16 @@ void MultiGermline::build_with_one_index(string seed)
 
 void MultiGermline::out_stats(ostream &out)
 {
+  out << "                              " ;
+  out << "reads    av. len   clones  av. reads" ;
+  out << endl ;
+
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
     {
       Germline *germline = *it ;
       out << germline->stats_reads ;
       out << germline->stats_clones ;
+      out << endl ;
     }
 }
 
