@@ -63,7 +63,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
 }
 
 float WindowExtractor::getAverageSegmentationLength(SEGMENTED seg) {
-  return stats[seg].getAverageLength();
+  return stats[seg].getAverage();
 }
 
 size_t WindowExtractor::getNbReads() {
