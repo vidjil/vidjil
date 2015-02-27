@@ -12,3 +12,7 @@ script:
 
 after_success:
   - make should_coveralls
+
+notifications:
+  webhooks:
+    - https://buildtimetrend.herokuapp.com/travis
