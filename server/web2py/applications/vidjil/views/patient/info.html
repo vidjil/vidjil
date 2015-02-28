@@ -41,6 +41,7 @@
                 <td> info </td>
                 <td> pcr </td>
                 <td class="column1"> size </td>
+		{{if auth.has_membership('admin'):}} <td class="column_100"> uploader </td> {{pass}}
                 <td class="column5"> </td>
                 <td class="column5"> </td>
                 <td class="column5"> </td>
@@ -72,6 +73,10 @@
                     <td> {{=row.sequence_file.pcr}} </td>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} >
                         {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
+		    {{if auth.has_membership('admin'):}}
+		    <td> {{=row.sequence_file.provider}} {{if row.sequence_file.provider:}}{{=row.sequence_file.provider.last_name}}{{pass}}</td>
+		    {{pass}}
+
                     {{if (auth.has_permission('admin', 'patient', request.vars["id"]) ):}}
                         <td onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
                         <td onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
