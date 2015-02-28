@@ -8,6 +8,6 @@ python format_json.py $2 > $f2
 
 shift
 shift
-diff $f1 $f2 $@
+LANG=C diff $f1 $f2 $@
 
 
