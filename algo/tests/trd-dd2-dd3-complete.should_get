@@ -3,5 +3,11 @@
 $ Segment only 2 reads, because there is no -i
 1:segmented 2 reads .40..
 
+$ TRDV3*01-TRDD3*01 reported as "UNSEG too few J"
+1:UNSEG too few J  -> .*  1  .*  63
 
+$ TRDD2*01-TRDJ1*01 reported as "UNSEG too few V"
+1:UNSEG too few V  -> .*  1  .*  60
 
+$ TRDD2*01-TRDD3*01 reported as "UNSEG too few (0)"
+1:UNSEG too few .0.-> .*  1  .*  22
