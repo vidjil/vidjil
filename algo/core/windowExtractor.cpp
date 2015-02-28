@@ -56,7 +56,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
       nb_reads_germline[seg->system]++;
       
     } else if (out_unsegmented) {
-      *out_unsegmented << "#>" << reads->getSequence().label << " not segmented " << segmented_mesg[seg->getSegmentationStatus()] << endl << endl;
+      *out_unsegmented << "#>" << reads->getSequence().label << " not segmented " << segmented_mesg[seg->getSegmentationStatus()] << " (" << seg->segmented_germline->code << ")" << endl << endl;
     }
   }
   return windowsStorage;
