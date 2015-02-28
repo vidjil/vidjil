@@ -258,7 +258,7 @@ void MultiGermline::build_with_one_index(string seed)
 
 void MultiGermline::out_stats(ostream &out)
 {
-  out << "                         " ;
+  out << "                          " ;
   out << "reads av. len     clones av. rds" ;
   out << endl ;
 

@@ -27,7 +27,7 @@ ostream &operator<<(ostream &out, Stats &stats)
   out << "  ";
   
   if (stats.label.size())
-    out << left << setw(17) << stats.label << "->" ;
+    out << left << setw(18) << stats.label << "->" ;
 
   out << right << setw(9) << stats.nb ;
   out << "   " << setw(5) ;
