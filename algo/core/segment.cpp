@@ -184,7 +184,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
   segmented_germline = germline ;
   reversed = false;
   Dend=0;
-  
+  because = 0 ; // Cause of unsegmentation
+  score = 0 ;
+
   int s = (size_t)germline->index->getS() ;
   int length = sequence.length() ;
 
@@ -249,11 +251,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
 	}
     } 
 
-  if (because)
-    {
-      score = 0 ;
-    }
-  else
+  if (!because)
     {
       // Yes, it is segmented
       segmented = true;
@@ -296,10 +294,7 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
                            << left << setw(4) << kseg->segmented_germline->code << " "
                            << left << setw(20) << segmented_mesg[kseg->getSegmentationStatus()] << " ";
 
-          if (kseg->isSegmented())
-            *out_unsegmented << right << setw(3) << kseg->score << " ";
-          else
-            *out_unsegmented << "    " ;
+          *out_unsegmented << right << setw(3) << kseg->score << " ";
           
           if (kseg->getSegmentationStatus() != UNSEG_TOO_SHORT) 
             *out_unsegmented << kseg->getKmerAffectAnalyser()->toString();
@@ -336,8 +331,6 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   // Try to segment, computing 'Vend' and 'Jstart'
   // If not segmented, put the cause of unsegmentation in 'because'
 
-  because = 0 ; // Cause of unsegmentation
-  score = 0 ;
   affect_infos max;
 
   max = kaa->getMaximum(before, after); 
