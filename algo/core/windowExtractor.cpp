@@ -49,14 +49,14 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
 
         if (out_unsegmented) {
 	  *out_segmented << seg->getKmerAffectAnalyser()->toString() << endl;
-          *out_unsegmented << "#>" << reads->getSequence().label << " segmented on " << seg->segmented_germline->code << endl << endl;
+          *out_unsegmented << "#>" << reads->getSequence().label << " segmented " << segmented_mesg[seg->getSegmentationStatus()] << " on " << seg->segmented_germline->code << endl << endl;
         }
       }
       
       nb_reads_germline[seg->system]++;
       
     } else if (out_unsegmented) {
-      *out_unsegmented << "#>" << reads->getSequence().label << " not segmented" << endl << endl;
+      *out_unsegmented << "#>" << reads->getSequence().label << " not segmented " << segmented_mesg[seg->getSegmentationStatus()] << endl << endl;
     }
   }
   return windowsStorage;
