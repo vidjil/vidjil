@@ -25,7 +25,7 @@
                 <td class="column_100" onclick="db.call('patient/index', {'sort' :'configs', 'filter' : '{{=request.vars["filter"]}}'
                   {{if not reverse and request.vars["sort"]=="configs" :}} , 'reverse' : true {{pass}} })"> configs </td>
 {{if isAdmin:}} <td class="column_100" onclick="db.call('patient/index', {'sort' :'groups', 'filter' : '{{=request.vars["filter"]}}'
-                  {{if not reverse and request.vars["sort"]=="groups" :}} , 'reverse' : true {{pass}} })"> users </td> {{pass}}
+                  {{if not reverse and request.vars["sort"]=="groups" :}} , 'reverse' : true {{pass}} })"> groups </td> {{pass}}
 {{if isAdmin:}} <td class="column_100" onclick="db.call('patient/index', {'sort' :'creator', 'filter' : '{{=request.vars["filter"]}}'
                   {{if not reverse and request.vars["sort"]=="creator" :}} , 'reverse' : true {{pass}} })"> creator </td> {{pass}}
                 <td class="column_100" onclick="db.call('patient/index', {'sort' :'files', 'filter' : '{{=request.vars["filter"]}}'
