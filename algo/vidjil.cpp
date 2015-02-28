@@ -894,7 +894,7 @@ int main (int argc, char **argv)
     if (ratio_segmented < WARN_PERCENT_SEGMENTED)
       {
         stream_segmentation_info << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
-        stream_segmentation_info << "  ! If this is unexpected, check the germline (-G) and try to change seed parameters (-k)." << endl ;
+        stream_segmentation_info << "  ! Please check the unsegmentation causes below and refer to the documentation." << endl ;
       }
 
     cout << "Build clone stats" << endl;
