@@ -276,7 +276,7 @@ KmerSegmenter::~KmerSegmenter() {
 
 KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented)
 {
-  int best_score = 0 ;
+  int best_score_seg = 0 ; // Best score, segmented sequences
   int best_score_unseg = 0 ; // Best score, unsegmented sequences
   the_kseg = NULL;
   
@@ -311,10 +311,10 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
         {
           // Yes, it is segmented
           // Should we keep the kseg ?
-          if (kseg->score > best_score)
+          if (kseg->score > best_score_seg)
             {
               keep_seg = true;
-              best_score = kseg->score ;
+              best_score_seg = kseg->score ;
             }
         }
       else
