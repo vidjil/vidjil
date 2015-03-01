@@ -23,6 +23,7 @@ class WindowExtractor {
 
   ostream *out_segmented;
   ostream *out_unsegmented;
+  ostream *out_affects;
 
   Stats stats[STATS_SIZE];
 
@@ -86,6 +87,13 @@ class WindowExtractor {
    * @param out: The output stream
    */
   void setUnsegmentedOutput(ostream *out);
+
+  /**
+   * Defines the output stream where the detailed affects will be output.
+   * Otherwise no output will be given.
+   * @param out: The output stream
+   */
+  void setAffectsOutput(ostream *out);
 
   /**
    * Output the segmentation stats
