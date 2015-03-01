@@ -7,7 +7,7 @@ $ Same number of windows found
 f0:==> found
 
 $ Same number unsegmented
-0:UNSEG
+0:UNSEG.*->
 
 $ Keep the same number of windows
 0:==> keep 
