@@ -717,9 +717,7 @@ int main (int argc, char **argv)
                                   f_reps_V, f_reps_D, f_reps_J, 
                                   delta_min, delta_max);
 
-
-	  if (command == CMD_WINDOWS || command == CMD_CLONES)
-	    germline->new_index(seed);
+          germline->new_index(seed);
 
 	  multigermline->insert(germline);
 	}
@@ -1359,12 +1357,10 @@ int main (int argc, char **argv)
         reads->next();
 
         Sequence seq = reads->getSequence() ;
-        bool segmented = false ;
-
-        for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
-          {
-            Germline *germline = *it ;
-	    
+        KmerMultiSegmenter kmseg(reads->getSequence(), multigermline, NULL); //  out_unsegmented);
+        KmerSegmenter *seg = kmseg.the_kseg ;
+        Germline *germline = seg->segmented_germline ;
+        
             FineSegmenter s(seq, germline, segment_cost);
 
             if (s.isSegmented()) 
@@ -1374,22 +1370,9 @@ int main (int argc, char **argv)
 
                 if (detect_CDR3)
                   s.findCDR3();
-                
-                cout << s << endl;
-                segmented = true ;
-                break ;
               }
-            else 
-              {
-                if (verbose)
-                  cout << "# " << germline->code << ": unable to segment" << endl;
-              }
-          }
-        if (!segmented)
-          {
-            seq.label += " unsegmented";
-            cout << seq << endl;
-          }
+
+        cout << s << endl;        
       }
     
   } else {
