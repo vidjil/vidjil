@@ -381,7 +381,7 @@ KmerAffectAnalyser *KmerSegmenter::getKmerAffectAnalyser() const {
   return kaa;
 }
 
-int KmerSegmenter::getSegmentationStatus() const {
+int Segmenter::getSegmentationStatus() const {
   return because;
 }
 
@@ -521,6 +521,7 @@ string format_del(int deletions)
 
 FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
 {
+  because = 0 ;
   segmented_germline = germline ;
   info_extra = "" ;
   label = seq.label ;

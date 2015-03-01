@@ -48,6 +48,7 @@ protected:
   int Dstart, Dend;
   int CDR3start, CDR3end;
   bool reversed, segmented, dSegmented;
+  int because;
 
   string removeChevauchement();
   bool finishSegmentation();
@@ -122,6 +123,15 @@ protected:
    */
   bool isDSegmented() const;
 
+  /**
+   * @return the status of the segmentation. Tells if the Sequence has been segmented
+   *         of if it has not, what the reason is.
+   * @assert getSegmentationStatus() == SEG_PLUS || getSegmentationStatus() == SEG_MINUS
+   *         <==> isSegmented()
+   */
+  int getSegmentationStatus() const;
+
+  string getInfoLine() const;
 
   friend ostream &operator<<(ostream &out, const Segmenter &s);
 };
@@ -136,7 +146,6 @@ class KmerSegmenter : public Segmenter
 {
  private:
   int detected;
-  int because;                  
   KmerAffectAnalyser *kaa;
  protected:
   string affects;
@@ -162,14 +171,6 @@ class KmerSegmenter : public Segmenter
    */
   KmerAffectAnalyser *getKmerAffectAnalyser() const;
 
-  /**
-   * @return the status of the segmentation. Tells if the Sequence has been segmented
-   *         of if it has not, what the reason is.
-   * @assert getSegmentationStatus() == SEG_PLUS || getSegmentationStatus() == SEG_MINUS
-   *         <==> isSegmented()
-   */
-  int getSegmentationStatus() const;
-
  private:
   void computeSegmentation(int strand, KmerAffect left, KmerAffect right);
 };
@@ -192,7 +193,6 @@ class KmerMultiSegmenter
 class FineSegmenter : public Segmenter
 {
  public:
-   int because;
    vector<pair<int, int> > score_V;
    vector<pair<int, int> > score_D;
    vector<pair<int, int> > score_J;
