@@ -68,7 +68,7 @@ def id_line_to_tap(l, tap_id):
     l = l.strip()
     pos = l.find(' ')
     should = l[1:pos]
-    result = l[pos+1:]
+    result = l[pos+1:] + ' '
 
     # We could have something that allows some regexp (still allowing * and + without escaping)
     should_pattern = should.replace('_', ' ')
