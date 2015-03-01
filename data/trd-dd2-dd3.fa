@@ -1,19 +1,19 @@
->TRDV2*01 TRDJ1*01
+>TRDV2*01 TRDJ1*01  TRD
 gcaccatcagagagagatgaagggtcttactactgtgcctgtgacacc
 acaccgataaactcatctttggaaaaggaacccgtgtgactgtggaaccaa
 
->TRDD2*01_0//0_TRDJ1*01
+>TRDD2*01_0//0_TRDJ1*01__TRD+
 ccttcctac
 acaccgataaactcatctttggaaaaggaacccgtgtgactgtggaaccaa
 
->TRDD2*01_0//0_TRDD3*01
+>TRDD2*01_0//0_TRDD3*01__TRD+
 ccttcctac
 actgggggatacg
 
->TRDV3*01_0//0_TRDD3*01
+>TRDV3*01_0//0_TRDD3*01__TRD+
 atctctccagtaaggactgaagacagtgccacttactactgtgcctttag
 actgggggatacg
 
->TRDV3*01 TRDJ4*01
+>TRDV3*01 TRDJ4*01  TRD
 atctctccagtaaggactgaagacagtgccacttactactgtgcctttag
 ccagacccctgatctttggcaaaggaacctatctggaggtacaacaac
