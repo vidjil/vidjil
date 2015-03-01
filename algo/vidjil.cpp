@@ -89,6 +89,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define CLONE_FILENAME "clone.fa-"
 #define WINDOWS_FILENAME ".windows.fa"
 #define SEGMENTED_FILENAME ".segmented.vdj.fa"
+#define UNSEGMENTED_FILENAME ".unsegmented.vdj.fa"
 #define AFFECTS_FILENAME ".affects"
 #define EDGES_FILENAME ".edges"
 #define COMP_FILENAME "comp.vidjil"
@@ -202,9 +203,12 @@ void usage(char *progname)
        << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
        << endl
 
-       << "Debug" << endl
-       << "  -U            output segmented (in " << SEGMENTED_FILENAME << " file) sequences" << endl
-       << "  -u            output detailed k-mer affectation both on segmented and on unsegmented sequences (in " << AFFECTS_FILENAME << " file)" << endl
+       << "Detailed output per read (not recommended, large files)" << endl
+       << "  -U            output segmented reads (in " << SEGMENTED_FILENAME << " file)" << endl
+       << "  -u            output unsegmented reads (in " << UNSEGMENTED_FILENAME << " file)" << endl
+       << "  -K            output detailed k-mer affectation on all reads (in " << AFFECTS_FILENAME << " file) (use only for debug)" << endl
+       << endl
+ 
        << "Output" << endl
        << "  -o <dir>      output directory (default: " << DEFAULT_OUT_DIR << ")" <<  endl
        << "  -b <string>   output basename (by default basename of the input file)" << endl
@@ -287,6 +291,7 @@ int main (int argc, char **argv)
   bool output_sequences_by_cluster = false;
   bool output_segmented = false;
   bool output_unsegmented = false;
+  bool output_affects = false;
   bool multi_germline = false;
   bool multi_germline_incomplete = false;
   bool multi_germline_mark = false;
@@ -305,7 +310,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "AhaiIg:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uU3")) != EOF)
+  while ((c = getopt(argc, argv, "AhaiIg:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
 
     switch (c)
       {
@@ -508,6 +513,9 @@ int main (int argc, char **argv)
         break;
       case 'U':
         output_segmented = true;
+        break;
+      case 'K':
+        output_affects = true;
         break;
       }
 
@@ -844,6 +852,7 @@ int main (int argc, char **argv)
 
     ofstream *out_segmented = NULL;
     ofstream *out_unsegmented = NULL;
+    ofstream *out_affects = NULL;
  
     WindowExtractor we;
  
@@ -855,10 +864,17 @@ int main (int argc, char **argv)
     }
 
     if (output_unsegmented) {
-      string f_unsegmented = out_dir + f_basename + AFFECTS_FILENAME ;
+      string f_unsegmented = out_dir + f_basename + UNSEGMENTED_FILENAME ;
       cout << "  ==> " << f_unsegmented << endl ;
       out_unsegmented = new ofstream(f_unsegmented.c_str());
       we.setUnsegmentedOutput(out_unsegmented);
+    }
+
+    if (output_affects) {
+      string f_affects = out_dir + f_basename + AFFECTS_FILENAME ;
+      cout << "  ==> " << f_affects << endl ;
+      out_affects = new ofstream(f_affects.c_str());
+      we.setAffectsOutput(out_affects);
     }
 
 
