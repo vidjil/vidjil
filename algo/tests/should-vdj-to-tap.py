@@ -20,8 +20,12 @@ from subprocess import Popen, PIPE, STDOUT
 import os
 import argparse
 
-parser = argparse.ArgumentParser()
-parser.add_argument('--program', '-p', default='../../vidjil -c segment -i -g ../../germline %s > %s', help='program to launch on each file (%(default)s)')
+VIDJIL_FINE = '../../vidjil -c segment -i -g ../../germline %s > %s'
+VIDJIL_KMER = '../../vidjil -b out -c windows -uU -i -g ../../germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa > %s'
+
+parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
+parser.add_argument('--program', '-p', default=VIDJIL_FINE, help='program to launch on each file (%(default)s)')
+parser.add_argument('-q', dest='program', action='store_const', const=VIDJIL_KMER, help='shortcut for -p (VIDJIL_KMER), to be used with -2')
 parser.add_argument('--after-two', '-2', action='store_true', help='compare only the right part of the pattern after two underscores (locus code)')
 parser.add_argument('file', nargs='+', help='''.should-vdj.fa files''')
 
