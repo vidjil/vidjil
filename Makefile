@@ -43,18 +43,29 @@ shouldvdj: all
 	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests shouldvdj
 	@echo "*** All .should-vdj.fa tests passed"
 
-shouldvdj_generated: all
+shouldvdj_generate:
 	@echo
+	rm -rf data/gen
 	mkdir -p data/gen
 	cd germline ; python generate-recombinations.py
+
+shouldvdj_generated_kmer: all
 	@echo
-	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors)..."
+	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors) -- Kmer"
+	-cd data/gen ; python ../../algo/tests/should-vdj-to-tap.py -2q *.should-vdj.fa
+	@echo "*** Generated .should-vdj.fa tests finished -- Kmer"
+	python algo/tests/tap-stats.py data/gen/0-*.2.tap
+	python algo/tests/tap-stats.py data/gen/5-*.2.tap
+
+shouldvdj_generated_fine: all
+	@echo
+	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors) -- Fine"
 	-cd data/gen ; python ../../algo/tests/should-vdj-to-tap.py *.should-vdj.fa
-	@echo "*** All generated .should-vdj.fa tests finished"
-	python algo/tests/tap-stats.py data/gen/0-*.tap
-	python algo/tests/tap-stats.py data/gen/5-*.tap
-	@echo
-	@echo
+	@echo "*** Generated .should-vdj.fa tests finished -- Fine"
+	python algo/tests/tap-stats.py data/gen/0-*.1.tap
+	python algo/tests/tap-stats.py data/gen/5-*.1.tap
+
+
 unit_browser:
 	make -C browser/test unit
 
