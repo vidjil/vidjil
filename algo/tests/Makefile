@@ -26,6 +26,7 @@ all: core $(EXEC)
 should: vidjil $(SHOULD_LOG)
 
 shouldvdj:
+	python should-vdj-to-tap.py -2q $(SHOULD_VDJ)
 	python should-vdj-to-tap.py $(SHOULD_VDJ)
 
 %.log: %.should_get force
