@@ -18,10 +18,13 @@ import sys
 from subprocess import Popen, PIPE, STDOUT
 
 import os
+import argparse
 
-PROGRAM = os.getenv('PROGRAM')
-if not PROGRAM:
-    PROGRAM = '../../vidjil -c segment -i -g ../../germline'
+parser = argparse.ArgumentParser()
+parser.add_argument('--program', '-p', default='../../vidjil -c segment -i -g ../../germline %s > %s', help='program to launch on each file (%(default)s)')
+parser.add_argument('file', nargs='+', help='''.should-vdj.fa files''')
+
+args = parser.parse_args()
 
 SHOULD_SUFFIX = '.should-vdj.fa'
 TAP_SUFFIX = '.tap'
@@ -33,7 +36,7 @@ def fasta_id_lines_from_program(f_should):
     f_log = f_should + LOG_SUFFIX
     f_log = f_log.replace(SHOULD_SUFFIX, '')
 
-    cmd = PROGRAM + ' ' + f_should + ' > ' + f_log
+    cmd = args.program % (f_should, f_log)
     print cmd
     os.system(cmd)
 
@@ -99,7 +102,7 @@ def should_to_tap_one_file(f_should):
 
 if __name__ == '__main__':
 
-    for f_should in sys.argv[1:]:
+    for f_should in args.file:
         should_to_tap_one_file(f_should)
         print
 
