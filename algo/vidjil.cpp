@@ -142,10 +142,11 @@ void usage(char *progname)
   cerr << "Usage: " << progname << " [options] <reads.fa/.fq/.gz>" << endl << endl;
 
   cerr << "Command selection" << endl
-       << "  -c <command> \t" << COMMAND_WINDOWS << "  \t window extracting" << endl 
-       << "  \t\t" << COMMAND_CLONES  << "  \t clone gathering (default)" << endl 
-       << "  \t\t" << COMMAND_SEGMENT   << "  \t V(D)J segmentation (not recommended)" << endl
-       << "  \t\t" << COMMAND_GERMLINES << "  \t discover all germlines" << endl
+       << "  -c <command>"
+       << "\t"     << COMMAND_CLONES    << "  \t locus detection, window extraction, clone gathering (default command, most efficient, all outputs)" << endl
+       << "  \t\t" << COMMAND_WINDOWS   << "  \t locus detection, window extraction" << endl
+       << "  \t\t" << COMMAND_SEGMENT   << "  \t detailed V(D)J segmentation (not recommended)" << endl
+       << "  \t\t" << COMMAND_GERMLINES << "  \t statistics on k-mers in different germlines" << endl
        << endl       
 
        << "Germline databases (one -V/(-D)/-J, or -G, or -g option must be given for all commands except -c " << COMMAND_GERMLINES << ")" << endl
@@ -223,6 +224,8 @@ void usage(char *progname)
        << endl 
        << "Examples (see doc/algo.org)" << endl
        << "  " << progname << " -c clones   -G germline/IGH  -r 5          data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c clones   -g germline      -r 5          data/Stanford_S22.fasta   # (detect the locus for each read)" << endl
+       << "  " << progname << " -c windows  -g germline      -u -U         data/Stanford_S22.fasta   # (detect the locus, splits the reads into two (large) files)" << endl
        << "  " << progname << " -c segment  -G germline/IGH                data/Stanford_S22.fasta   # (only for testing)" << endl
        << "  " << progname << " -c germlines                               data/Stanford_S22.fasta" << endl
     ;
