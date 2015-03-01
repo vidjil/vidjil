@@ -16,9 +16,13 @@ script:
   - make COVERAGE=1 unit
   - echo -en 'travis_fold:end:script.test-algo-unit\\r'
   ###
-  - echo '"Tests, Algo (functional)..."'  && echo -en 'travis_fold:start:script.test-algo-functional\\r'
+  - echo '"Tests, Algo (functional, .should_get)..."'  && echo -en 'travis_fold:start:script.test-algo-functional\\r'
   - make COVERAGE=1 should
   - echo -en 'travis_fold:end:script.test-algo-functional\\r'
+  ###
+  - echo '"Tests, Algo (functional, .should-vdj.fa)..."'  && echo -en 'travis_fold:start:script.test-algo-functional-vdj\\r'
+  - make COVERAGE=1 shouldvdj
+  - echo -en 'travis_fold:end:script.test-algo-functional-vdj\\r'
   ###
   - echo '"Tests, Tools..."'  && echo -en 'travis_fold:start:script.test-tools\\r'
   - make test_tools
