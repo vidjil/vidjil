@@ -22,18 +22,26 @@ import argparse
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--program', '-p', default='../../vidjil -c segment -i -g ../../germline %s > %s', help='program to launch on each file (%(default)s)')
+parser.add_argument('--after-two', '-2', action='store_true', help='compare only the right part of the pattern after two underscores (locus code)')
 parser.add_argument('file', nargs='+', help='''.should-vdj.fa files''')
 
 args = parser.parse_args()
 
 SHOULD_SUFFIX = '.should-vdj.fa'
+
 TAP_SUFFIX = '.tap'
 LOG_SUFFIX = '.log'
+
+PROG_TAG = '.1'
+
+if args.after_two:
+    PROG_TAG = '.2'
+
 
 global_failed = False
 
 def fasta_id_lines_from_program(f_should):
-    f_log = f_should + LOG_SUFFIX
+    f_log = f_should + PROG_TAG + LOG_SUFFIX
     f_log = f_log.replace(SHOULD_SUFFIX, '')
 
     cmd = args.program % (f_should, f_log)
@@ -61,6 +69,13 @@ def id_line_to_tap(l, tap_id):
     # We could have something that allows some regexp (still allowing * and + without escaping)
     should_pattern = should.replace('_', ' ')
 
+    if args.after_two:
+        # Testing only the locus code
+        if '  ' in should_pattern:
+            should_pattern = should_pattern.split('  ')[1]
+        else:
+            return ''
+
     tap = ''
 
     if not should_pattern in result:
@@ -77,7 +92,7 @@ def id_line_to_tap(l, tap_id):
 
 def should_to_tap_one_file(f_should):
 
-    f_tap = f_should + TAP_SUFFIX
+    f_tap = f_should + PROG_TAG + TAP_SUFFIX
     f_tap = f_tap.replace(SHOULD_SUFFIX, '')
 
     print "<== %s" % f_should
