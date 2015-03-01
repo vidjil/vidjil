@@ -18,6 +18,8 @@ test:
 	make should
 	make shouldvdj
 	make test_tools
+	@echo
+	@echo "*** All tests passed. Congratulations !"
 
 test_browser: unit_browser functional_browser
 
