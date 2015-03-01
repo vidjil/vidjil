@@ -1,0 +1,11 @@
+
+
+### Copied from data/segment_simul.fa and algo/tests/segment_simul.should_get
+
+>IGHV5-10-1*01_2/CTTC/3_IGHD1-14*01_1/GTTA/5_IGHJ5*01
+aagtccatcagcactgcctacctgcagtggagcagcctgaaggcctcggacaccgccatgtattactgtgcga
+CTTC
+ataaccggaacca
+GTTA
+tggttcgactcctggggccaaggaaccctggtcaccgtctcctcag
+
