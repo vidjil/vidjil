@@ -5,6 +5,8 @@ import json
 import fasta
 import random
 
+random.seed(33328778554)
+
 def recombine_VJ(seq5, remove5, N, remove3, seq3):
     name = "%s %d/%s/%d %s" % (seq5.name, remove5, N, remove3, seq3.name)
     seq = seq5.seq[:len(seq5)-remove5] + '\n' + N + '\n' + seq3.seq[remove3:]
