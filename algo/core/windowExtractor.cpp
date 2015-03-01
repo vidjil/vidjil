@@ -56,8 +56,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
 
     // Last line of detailed affects output
     if (out_affects) {
-      *out_affects << "#>" << reads->getSequence().label << (seg->isSegmented() ? "" : " not") << " segmented "
-                   << segmented_mesg[seg->getSegmentationStatus()] << " on " << seg->segmented_germline->code << endl << endl;
+      *out_affects << "#" << seg->getInfoLine() << endl;
     }
   }
   return windowsStorage;

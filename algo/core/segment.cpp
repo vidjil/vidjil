@@ -147,13 +147,21 @@ bool Segmenter::finishSegmentationD()
   return true ;
 }
 
+string Segmenter::getInfoLine() const
+{
+  string s = ">" ;
+
+  s += label + " " ;
+  s += (segmented ? "" : "! ") + info ;
+  s += " " + info_extra ;
+  s += " " + segmented_germline->code ;
+  s += " " + string(segmented_mesg[because]) ;
+  return s ;
+}
+
 ostream &operator<<(ostream &out, const Segmenter &s)
 {
-  out << ">" << s.label << " " ;
-  out << (s.segmented ? "" : "! ") << s.info ;
-  out << " " << s.info_extra ;
-  out << " " << s.segmented_germline->code ;
-  out << endl ;
+  out << s.getInfoLine() << endl;
 
   if (s.segmented)
     {
