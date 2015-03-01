@@ -16,6 +16,7 @@ all:
 test:
 	make COVERAGE="$(COVERAGE)" unit
 	make should
+	make shouldvdj
 	make test_tools
 
 test_browser: unit_browser functional_browser
@@ -33,6 +34,12 @@ should: all
 	@echo "*** Launching .should_get tests..."
 	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests should
 	@echo "*** All .should_get tests passed"
+
+shouldvdj: all
+	@echo
+	@echo "*** Launching .should-vdj-fa tests..."
+	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests shouldvdj
+	@echo "*** All .should-vdj.fa tests passed"
 
 unit_browser:
 	make -C browser/test unit

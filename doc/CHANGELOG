@@ -13,6 +13,7 @@ This changelog concerns the algorithmic part (C++) of Vidjil.
 	* Refactored dynamic programming computations (core/dynprog.cpp), experimental affine gaps
 	* Removed unused code parts as well as some files
 	* Streamlined flag processing in Makefiles
+	* New mechanism for some functional tests (make shouldvdj)
 	* New and updated unit and functional tests
 
 2015-01-31  The Vidjil Team
