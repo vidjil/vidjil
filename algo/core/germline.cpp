@@ -20,7 +20,8 @@ void Germline::init(string _code, char _shortcut,
   delta_min = _delta_min ;
   delta_max = _delta_max ;
 
-  stats.setLabel(code);
+  stats_reads.setLabel(code);
+  stats_clones.setLabel("");
 }
 
 Germline::Germline(string _code, char _shortcut,
@@ -195,9 +196,9 @@ void MultiGermline::build_incomplete_set(string path)
   germline->new_index("######-######");
   germlines.push_back(germline);
 
-  // VD-JA
-  germline = new Germline("VdJa", 'a', path + "/TRDV.fa", "",  path + "/TRAJ.fa",   -10, 80);
-  germline->new_index("#####-#####");
+  // VdJa
+  germline = new Germline("VdJa", 'a', path + "/TRDV.fa", path + "/TRDD.fa",  path + "/TRAJ.fa",   -10, 80);
+  germline->new_index("#######-######");
   germlines.push_back(germline);
 
   // DD2-DD3
@@ -257,10 +258,16 @@ void MultiGermline::build_with_one_index(string seed)
 
 void MultiGermline::out_stats(ostream &out)
 {
+  out << "                          " ;
+  out << "reads av. len     clones av. rds" ;
+  out << endl ;
+
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
     {
       Germline *germline = *it ;
-      out << germline->stats ;
+      out << germline->stats_reads ;
+      out << germline->stats_clones ;
+      out << endl ;
     }
 }
 

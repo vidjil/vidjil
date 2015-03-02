@@ -147,13 +147,21 @@ bool Segmenter::finishSegmentationD()
   return true ;
 }
 
+string Segmenter::getInfoLine() const
+{
+  string s = ">" ;
+
+  s += label + " " ;
+  s += (segmented ? "" : "! ") + info ;
+  s += " " + info_extra ;
+  s += " " + segmented_germline->code ;
+  s += " " + string(segmented_mesg[because]) ;
+  return s ;
+}
+
 ostream &operator<<(ostream &out, const Segmenter &s)
 {
-  out << ">" << s.label << " " ;
-  out << (s.segmented ? "" : "! ") << s.info ;
-  out << " " << s.info_extra ;
-  out << " " << s.segmented_germline->code ;
-  out << endl ;
+  out << s.getInfoLine() << endl;
 
   if (s.segmented)
     {
@@ -184,7 +192,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
   segmented_germline = germline ;
   reversed = false;
   Dend=0;
-  
+  because = 0 ; // Cause of unsegmentation
+  score = 0 ;
+
   int s = (size_t)germline->index->getS() ;
   int length = sequence.length() ;
 
@@ -249,11 +259,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
 	}
     } 
 
-  if (because)
-    {
-      score = 0 ;
-    }
-  else
+  if (!because)
     {
       // Yes, it is segmented
       segmented = true;
@@ -278,7 +284,8 @@ KmerSegmenter::~KmerSegmenter() {
 
 KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented)
 {
-  int best_score = 0 ;
+  int best_score_seg = 0 ; // Best score, segmented sequences
+  int best_score_unseg = 0 ; // Best score, unsegmented sequences
   the_kseg = NULL;
   
   // Iterate over the germlines
@@ -296,10 +303,7 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
                            << left << setw(4) << kseg->segmented_germline->code << " "
                            << left << setw(20) << segmented_mesg[kseg->getSegmentationStatus()] << " ";
 
-          if (kseg->isSegmented())
-            *out_unsegmented << right << setw(3) << kseg->score << " ";
-          else
-            *out_unsegmented << "    " ;
+          *out_unsegmented << right << setw(3) << kseg->score << " ";
           
           if (kseg->getSegmentationStatus() != UNSEG_TOO_SHORT) 
             *out_unsegmented << kseg->getKmerAffectAnalyser()->toString();
@@ -307,18 +311,32 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
           *out_unsegmented << endl ;
         }
 
-      if (!best_score)
+      // Always remember the first kseg
+      if (the_kseg == NULL)
         keep_seg = true;
       
       if (kseg->isSegmented())
         {
           // Yes, it is segmented
-          if (kseg->score > best_score)
+          // Should we keep the kseg ?
+          if (kseg->score > best_score_seg)
             {
               keep_seg = true;
-              best_score = kseg->score ;
+              best_score_seg = kseg->score ;
             }
         }
+      else
+        {
+          // It is not segmented
+          // Should we keep the kseg (with the unsegmentation cause) ?
+            if (kseg->score > best_score_unseg)
+            {              
+              best_score_unseg = kseg->score ;
+              if (!best_score_seg)
+                keep_seg = true;
+            }
+        }
+      
       if (keep_seg) {
         the_kseg = kseg;
       } else {
@@ -336,8 +354,6 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   // Try to segment, computing 'Vend' and 'Jstart'
   // If not segmented, put the cause of unsegmentation in 'because'
 
-  because = 0 ; // Cause of unsegmentation
-  score = 0 ;
   affect_infos max;
 
   max = kaa->getMaximum(before, after); 
@@ -373,7 +389,7 @@ KmerAffectAnalyser *KmerSegmenter::getKmerAffectAnalyser() const {
   return kaa;
 }
 
-int KmerSegmenter::getSegmentationStatus() const {
+int Segmenter::getSegmentationStatus() const {
   return because;
 }
 
@@ -513,6 +529,9 @@ string format_del(int deletions)
 
 FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
 {
+  segmented = false;
+  dSegmented = false;
+  because = 0 ;
   segmented_germline = germline ;
   info_extra = "" ;
   label = seq.label ;
@@ -595,8 +614,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
   segmented = (Vend != (int) string::npos) && (Jstart != (int) string::npos) && 
     (Jstart - Vend >= germline->delta_min) && (Jstart - Vend <= germline->delta_max);
     
-  dSegmented=false;
-
   if (!segmented)
     {
       because = DONT_KNOW;
@@ -709,8 +726,16 @@ void FineSegmenter::FineSegmentD(Germline *germline){
     Dend = l + end;
 	
     string seq = getSequence().sequence;
-    
-    if (length>0) dSegmented=true;
+
+
+    // recompute remaining length for D
+    length = germline->rep_4.sequence(best_D).length() - del_D_right - del_D_left;
+
+    if (length < MIN_D_LENGTH)
+      return ;
+
+
+    dSegmented=true;
     
     //overlap VD
     if(Dstart-Vend <=0){

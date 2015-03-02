@@ -91,7 +91,7 @@ clean:
 	make -C tests $@
 
 forcedep:
-	g++ -M $(MAINCORE) > dep.mk
+	g++ $(CXXFLAGS) -M $(MAINCORE) > dep.mk
 	make -C core forcedep
 	make -C lib forcedep
 

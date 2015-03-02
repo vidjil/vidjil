@@ -1,0 +1,65 @@
+{
+  "vidjil_json_version": "2014.10",
+  
+  "reads": {
+    "germline": { "IGH": [ 13139 ] }, 
+    "segmented": [ 13139 ], 
+    "total": [ 13153 ]
+  },
+  
+  "samples": {
+    "commandline": [ "/some/cmd"  ], 
+    "log": [ "/some/log" ], 
+    "number": 1, 
+    "original_names": [ "/some.fasta" ], 
+    "producer": [ "vidjil dev 83a82c1 (2015-02-24)" ], 
+    "run_timestamp": [ "2015-02-24 23:52:34" ]
+  }, 
+  
+  "clones": [
+    {
+      "germline": "IGH", 
+      "id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC",
+      "sequence": "GCTGTACCTGCAAATGAACAGCCTGCGAGCCGAGGACACGGCCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCCAGGGGATCCTGGTCACCGTCTCCTCAG", 
+      "top": 1,
+      "name": "IGHV3-23*05 -6/18/-9 IGHD6-13*01 -0/0/-2 IGHJ4*02", 
+      "reads": [ 8 ], 
+      "seg": {
+        "3": "IGHJ4*02", 
+        "3start": 82, 
+        "4": "IGHD6-13*01", 
+        "4end": 81, 
+        "4start": 73, 
+        "5": "IGHV3-23*05", 
+        "5end": 54, 
+        "5start": 0
+      }
+    },
+    {
+      "germline": "IGH", 
+      "id": "CCACCTATTACTGTACCGGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC",
+      "sequence": "GCTGTACCTGCAAATGAACAGCCTGCGAGCCGAGGACACGGCCACCTATTACTGTACCGGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCCAGGGGATCCTGGTCACCGTCTCCTCAG", 
+      "top": 2,
+      "name": "Same than top-1, one mutation C>G at 18th position of the window", 
+      "reads": [ 6 ]
+    }, 
+    {
+      "germline": "IGH", 
+      "id": "TGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTAC",
+      "sequence": "GGACACGGCCGTGTATTACTGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTGGGGCAAAGGGACCAC", 
+      "top": 2,
+      "name": "IGHV1-8*01 -0/0/-3 IGHD3-22*01 -3/12/-5 IGHJ6*03", 
+      "reads": [ 5 ], 
+      "seg": {
+        "3": "IGHJ6*03", 
+        "3start": 67, 
+        "4": "IGHD3-22*01", 
+        "4end": 54, 
+        "4start": 30, 
+        "5": "IGHV1-8*01", 
+        "5end": 29, 
+        "5start": 0
+      }
+    }
+  ]
+}

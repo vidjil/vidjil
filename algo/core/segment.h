@@ -13,6 +13,9 @@
 #include "json.h"
 
 #define EXTEND_D_ZONE 5
+
+#define MIN_D_LENGTH 5          /* If a D-REGION is smaller than this threshold, it is not output */
+
 #define RATIO_STRAND 5          /* The ratio between the affectations in one
                                    strand and the other, to safely attribute a
                                    segment to a given strand */
@@ -34,10 +37,10 @@ enum SEGMENTED { DONT_KNOW, SEG_PLUS, SEG_MINUS, UNSEG_TOO_SHORT, UNSEG_STRAND_N
 		 TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW,
 		 STATS_SIZE } ;
 const char* const segmented_mesg[] = { "?", "SEG_+", "SEG_-", "UNSEG too short", "UNSEG strand",  
-				       "UNSEG too few (zero)", "UNSEG too few V", "UNSEG too few J",
+				       "UNSEG too few (0)", "UNSEG too few V", "UNSEG too few J",
 				       "UNSEG < delta_min", "UNSEG > delta_max", "UNSEG ambiguous",
                                        "= SEG, with window",
-                                       "= SEG, but no window",
+                                       "= SEG, no window",
                                       } ;
 
 class Segmenter {
@@ -48,6 +51,7 @@ protected:
   int Dstart, Dend;
   int CDR3start, CDR3end;
   bool reversed, segmented, dSegmented;
+  int because;
 
   string removeChevauchement();
   bool finishSegmentation();
@@ -122,6 +126,15 @@ protected:
    */
   bool isDSegmented() const;
 
+  /**
+   * @return the status of the segmentation. Tells if the Sequence has been segmented
+   *         of if it has not, what the reason is.
+   * @assert getSegmentationStatus() == SEG_PLUS || getSegmentationStatus() == SEG_MINUS
+   *         <==> isSegmented()
+   */
+  int getSegmentationStatus() const;
+
+  string getInfoLine() const;
 
   friend ostream &operator<<(ostream &out, const Segmenter &s);
 };
@@ -136,7 +149,6 @@ class KmerSegmenter : public Segmenter
 {
  private:
   int detected;
-  int because;                  
   KmerAffectAnalyser *kaa;
  protected:
   string affects;
@@ -162,14 +174,6 @@ class KmerSegmenter : public Segmenter
    */
   KmerAffectAnalyser *getKmerAffectAnalyser() const;
 
-  /**
-   * @return the status of the segmentation. Tells if the Sequence has been segmented
-   *         of if it has not, what the reason is.
-   * @assert getSegmentationStatus() == SEG_PLUS || getSegmentationStatus() == SEG_MINUS
-   *         <==> isSegmented()
-   */
-  int getSegmentationStatus() const;
-
  private:
   void computeSegmentation(int strand, KmerAffect left, KmerAffect right);
 };
@@ -192,7 +196,6 @@ class KmerMultiSegmenter
 class FineSegmenter : public Segmenter
 {
  public:
-   int because;
    vector<pair<int, int> > score_V;
    vector<pair<int, int> > score_D;
    vector<pair<int, int> > score_J;

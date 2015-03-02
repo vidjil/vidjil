@@ -1,7 +1,7 @@
 SHOULD=$(wildcard *.should_get)
 TAP=$(SHOULD:.should_get=.tap)
 
-all: $(TAP) test_fuse
+all: $(TAP) doctests
 
 fuse-doc.tap: fuse-doc.should_get force
 	make -C ../../doc analysis-example1.vidjil
@@ -10,9 +10,11 @@ fuse-doc.tap: fuse-doc.should_get force
 %.tap: %.should_get force
 	./should-to-tap.sh $<
 
-test_fuse:
+doctests:
 	@echo "*** Launching python tests..."
-	python ../fuse.py --test x
+	python -m doctest -v ../fuse.py
+	python -m doctest -v ../utils.py
+	python ../org-babel-tangle.py --test
 	@echo "*** All python tests passed"
 
 force:

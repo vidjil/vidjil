@@ -24,8 +24,12 @@ def concatenate_with_padding(d,
     >>> d1 = { 'a': [1, 2], 'b': [11, 22], 'z':17 }
     >>> d2 = { 'a': [3, 4, 5], 'c': [333, 444, 555] } 
     >>> concatenate_with_padding(d, d1, 2, d2, 5, ['z'])
-    >>> d
-    {'a': [1, 2, 3, 4, 5], 'c': [0, 0, 333, 444, 555], 'b': [11, 22, 0, 0, 0, 0, 0]}
+    >>> d['a']
+    [1, 2, 3, 4, 5]
+    >>> d['b']
+    [11, 22, 0, 0, 0, 0, 0]
+    >>> d['c']
+    [0, 0, 333, 444, 555]
     '''
 
     t1=[]
@@ -108,7 +112,7 @@ def common_substring(l):
         table += set(s[j:k] for j in range(len(s)) for k in range(j+1, len(s)+1))
 
     # sort substrings by length (descending)
-    table = sorted(table, cmp=lambda x,y: cmp(len(y), len(x)))
+    table = sorted(table, key=lambda x:-len(x))
     # get the position of duplicates and get the first one (longest)
     duplicates=[i for i, x in enumerate(table) if table.count(x) == len(l)]
     if len(duplicates) > 0:

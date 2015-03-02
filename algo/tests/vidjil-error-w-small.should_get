@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -w 10 -G ../../germline/IGH ../../data/Stanford-S22.fa
+!LAUNCH: ../../vidjil -w 10 -G ../../germline/IGH ../../data/Stanford-S22.fa 2>&1
 
 $ Error, too small -w
 1:error.* Too small -w

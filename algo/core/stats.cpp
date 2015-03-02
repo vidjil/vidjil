@@ -3,7 +3,7 @@
 Stats::Stats()
 {
   nb = 0 ;
-  length = 0 ;
+  data = 0 ;
 }
 
 void Stats::setLabel(string _label)
@@ -11,26 +11,30 @@ void Stats::setLabel(string _label)
   label = _label ;
 }
 
-void Stats::insert(int _length)
+void Stats::insert(int _data)
 {
   nb++ ;
-  length += _length ;
+  data += _data ;
 }
 
-float Stats::getAverageLength()
+float Stats::getAverage()
 {
-  return (float) length / nb ;
+  return (float) data / nb ;
 }
 
 ostream &operator<<(ostream &out, Stats &stats)
 {
-  out << "   " << left << setw(20) << stats.label
-      << " ->" << right << setw(9) << stats.nb ;
-
-  if (stats.nb)
-    out << "      " << setw(5) << fixed << setprecision(1) << stats.getAverageLength() ;
+  out << "  ";
   
-  out << endl ;
+  if (stats.label.size())
+    out << left << setw(18) << stats.label << "->" ;
 
+  out << right << setw(9) << stats.nb ;
+  out << "   " << setw(5) ;
+  if (stats.nb)
+    out << fixed << setprecision(1) << stats.getAverage() ;
+  else
+    out << "-" ;
+  
   return out;
 }

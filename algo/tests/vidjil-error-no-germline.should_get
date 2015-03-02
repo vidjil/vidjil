@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil 
+!LAUNCH: ../../vidjil 2>&1
 
 $ Error, no germlines
 1:error.* one germline must be given

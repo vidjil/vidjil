@@ -89,6 +89,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define CLONE_FILENAME "clone.fa-"
 #define WINDOWS_FILENAME ".windows.fa"
 #define SEGMENTED_FILENAME ".segmented.vdj.fa"
+#define UNSEGMENTED_FILENAME ".unsegmented.vdj.fa"
 #define AFFECTS_FILENAME ".affects"
 #define EDGES_FILENAME ".edges"
 #define COMP_FILENAME "comp.vidjil"
@@ -141,10 +142,11 @@ void usage(char *progname)
   cerr << "Usage: " << progname << " [options] <reads.fa/.fq/.gz>" << endl << endl;
 
   cerr << "Command selection" << endl
-       << "  -c <command> \t" << COMMAND_WINDOWS << "  \t window extracting" << endl 
-       << "  \t\t" << COMMAND_CLONES  << "  \t clone gathering (default)" << endl 
-       << "  \t\t" << COMMAND_SEGMENT   << "  \t V(D)J segmentation (not recommended)" << endl
-       << "  \t\t" << COMMAND_GERMLINES << "  \t discover all germlines" << endl
+       << "  -c <command>"
+       << "\t"     << COMMAND_CLONES    << "  \t locus detection, window extraction, clone gathering (default command, most efficient, all outputs)" << endl
+       << "  \t\t" << COMMAND_WINDOWS   << "  \t locus detection, window extraction" << endl
+       << "  \t\t" << COMMAND_SEGMENT   << "  \t detailed V(D)J segmentation (not recommended)" << endl
+       << "  \t\t" << COMMAND_GERMLINES << "  \t statistics on k-mers in different germlines" << endl
        << endl       
 
        << "Germline databases (one -V/(-D)/-J, or -G, or -g option must be given for all commands except -c " << COMMAND_GERMLINES << ")" << endl
@@ -202,9 +204,12 @@ void usage(char *progname)
        << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
        << endl
 
-       << "Debug" << endl
-       << "  -U            output segmented (in " << SEGMENTED_FILENAME << " file) sequences" << endl
-       << "  -u            output detailed k-mer affectation both on segmented and on unsegmented sequences (in " << AFFECTS_FILENAME << " file)" << endl
+       << "Detailed output per read (not recommended, large files)" << endl
+       << "  -U            output segmented reads (in " << SEGMENTED_FILENAME << " file)" << endl
+       << "  -u            output unsegmented reads (in " << UNSEGMENTED_FILENAME << " file)" << endl
+       << "  -K            output detailed k-mer affectation on all reads (in " << AFFECTS_FILENAME << " file) (use only for debug)" << endl
+       << endl
+ 
        << "Output" << endl
        << "  -o <dir>      output directory (default: " << DEFAULT_OUT_DIR << ")" <<  endl
        << "  -b <string>   output basename (by default basename of the input file)" << endl
@@ -219,6 +224,8 @@ void usage(char *progname)
        << endl 
        << "Examples (see doc/algo.org)" << endl
        << "  " << progname << " -c clones   -G germline/IGH  -r 5          data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c clones   -g germline      -r 5          data/Stanford_S22.fasta   # (detect the locus for each read)" << endl
+       << "  " << progname << " -c windows  -g germline      -u -U         data/Stanford_S22.fasta   # (detect the locus, splits the reads into two (large) files)" << endl
        << "  " << progname << " -c segment  -G germline/IGH                data/Stanford_S22.fasta   # (only for testing)" << endl
        << "  " << progname << " -c germlines                               data/Stanford_S22.fasta" << endl
     ;
@@ -287,6 +294,7 @@ int main (int argc, char **argv)
   bool output_sequences_by_cluster = false;
   bool output_segmented = false;
   bool output_unsegmented = false;
+  bool output_affects = false;
   bool multi_germline = false;
   bool multi_germline_incomplete = false;
   bool multi_germline_mark = false;
@@ -305,7 +313,7 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "AhaiIg:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uU3")) != EOF)
+  while ((c = getopt(argc, argv, "AhaiIg:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
 
     switch (c)
       {
@@ -509,6 +517,9 @@ int main (int argc, char **argv)
       case 'U':
         output_segmented = true;
         break;
+      case 'K':
+        output_affects = true;
+        break;
       }
 
 
@@ -517,7 +528,7 @@ int main (int argc, char **argv)
 
   if (!germline_system.size() && (command != CMD_GERMLINES))
     {
-      cout << ERROR_STRING << "At least one germline must be given with -V/(-D)/-J, or -G, or -g." << endl ;
+      cerr << ERROR_STRING << "At least one germline must be given with -V/(-D)/-J, or -G, or -g." << endl ;
       exit(1);
     }
 
@@ -528,7 +539,7 @@ int main (int argc, char **argv)
   
   if (options_s_k > 1)
     {
-      cout << ERROR_STRING << "Use at most one -s or -k option." << endl ;
+      cerr << ERROR_STRING << "Use at most one -s or -k option." << endl ;
       exit(1);
     }
 
@@ -547,7 +558,7 @@ int main (int argc, char **argv)
     }
   else
     {
-      cout << ERROR_STRING << "Wrong number of arguments." << endl ;
+      cerr << ERROR_STRING << "Wrong number of arguments." << endl ;
       exit(1);
     }
 
@@ -571,7 +582,7 @@ int main (int argc, char **argv)
     }
 #else
   {
-    cout << ERROR_STRING << "Vidjil was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
+    cerr << ERROR_STRING << "Vidjil was compiled with NO_SPACED_SEEDS: please provide a -k option." << endl;
     exit(1) ;
   }
 #endif
@@ -581,7 +592,7 @@ int main (int argc, char **argv)
   // Check seed buffer  
   if (seed.size() >= MAX_SEED_SIZE)
     {
-      cout << ERROR_STRING << "Seed size is too large (MAX_SEED_SIZE)." << endl ;
+      cerr << ERROR_STRING << "Seed size is too large (MAX_SEED_SIZE)." << endl ;
       exit(1);
     }
 #endif
@@ -589,7 +600,7 @@ int main (int argc, char **argv)
 
   if (w < seed_weight(seed))
     {
-      cout << ERROR_STRING << "Too small -w. The window size should be at least equal to the seed size (" << seed_weight(seed) << ")." << endl;
+      cerr << ERROR_STRING << "Too small -w. The window size should be at least equal to the seed size (" << seed_weight(seed) << ")." << endl;
       exit(1);
     }
 
@@ -597,13 +608,13 @@ int main (int argc, char **argv)
   const char *out_cstr = out_dir.c_str();
 
   if (mkpath(out_cstr, 0755) == -1) {
-    cout << ERROR_STRING << "Directory creation: " << out_dir << endl; perror("");
+    cerr << ERROR_STRING << "Directory creation: " << out_dir << endl; perror("");
     exit(2);
   }
 
   const char *outseq_cstr = out_seqdir.c_str();
   if (mkpath(outseq_cstr, 0755) == -1) {
-    cout << ERROR_STRING << "Directory creation: " << out_seqdir << endl; perror("");
+    cerr << ERROR_STRING << "Directory creation: " << out_seqdir << endl; perror("");
     exit(2);
   }
 
@@ -717,9 +728,7 @@ int main (int argc, char **argv)
                                   f_reps_V, f_reps_D, f_reps_J, 
                                   delta_min, delta_max);
 
-
-	  if (command == CMD_WINDOWS || command == CMD_CLONES)
-	    germline->new_index(seed);
+          germline->new_index(seed);
 
 	  multigermline->insert(germline);
 	}
@@ -742,7 +751,7 @@ int main (int argc, char **argv)
   try {
     reads = new OnlineFasta(f_reads, 1, " ");
   } catch (const invalid_argument e) {
-    cout << ERROR_STRING << "Vidjil cannot open reads file " << f_reads << ": " << e.what() << endl;
+    cerr << ERROR_STRING << "Vidjil cannot open reads file " << f_reads << ": " << e.what() << endl;
     exit(1);
   }
 
@@ -846,6 +855,7 @@ int main (int argc, char **argv)
 
     ofstream *out_segmented = NULL;
     ofstream *out_unsegmented = NULL;
+    ofstream *out_affects = NULL;
  
     WindowExtractor we;
  
@@ -857,10 +867,17 @@ int main (int argc, char **argv)
     }
 
     if (output_unsegmented) {
-      string f_unsegmented = out_dir + f_basename + AFFECTS_FILENAME ;
+      string f_unsegmented = out_dir + f_basename + UNSEGMENTED_FILENAME ;
       cout << "  ==> " << f_unsegmented << endl ;
       out_unsegmented = new ofstream(f_unsegmented.c_str());
       we.setUnsegmentedOutput(out_unsegmented);
+    }
+
+    if (output_affects) {
+      string f_affects = out_dir + f_basename + AFFECTS_FILENAME ;
+      cout << "  ==> " << f_affects << endl ;
+      out_affects = new ofstream(f_affects.c_str());
+      we.setAffectsOutput(out_affects);
     }
 
 
@@ -894,11 +911,12 @@ int main (int argc, char **argv)
     if (ratio_segmented < WARN_PERCENT_SEGMENTED)
       {
         stream_segmentation_info << "  ! There are not so many CDR3 windows found in this set of reads." << endl ;
-        stream_segmentation_info << "  ! If this is unexpected, check the germline (-G) and try to change seed parameters (-k)." << endl ;
+        stream_segmentation_info << "  ! Please check the unsegmentation causes below and refer to the documentation." << endl ;
       }
 
-    stream_segmentation_info << "                                  #      av. length" << endl ;
-
+    cout << "Build clone stats" << endl;
+    windowsStorage->fillStatsClones();
+    
     multigermline->out_stats(stream_segmentation_info);
     stream_segmentation_info << endl;
     we.out_stats(stream_segmentation_info);
@@ -1358,12 +1376,10 @@ int main (int argc, char **argv)
         reads->next();
 
         Sequence seq = reads->getSequence() ;
-        bool segmented = false ;
-
-        for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
-          {
-            Germline *germline = *it ;
-	    
+        KmerMultiSegmenter kmseg(reads->getSequence(), multigermline, NULL); //  out_unsegmented);
+        KmerSegmenter *seg = kmseg.the_kseg ;
+        Germline *germline = seg->segmented_germline ;
+        
             FineSegmenter s(seq, germline, segment_cost);
 
             if (s.isSegmented()) 
@@ -1373,22 +1389,9 @@ int main (int argc, char **argv)
 
                 if (detect_CDR3)
                   s.findCDR3();
-                
-                cout << s << endl;
-                segmented = true ;
-                break ;
               }
-            else 
-              {
-                if (verbose)
-                  cout << "# " << germline->code << ": unable to segment" << endl;
-              }
-          }
-        if (!segmented)
-          {
-            seq.label += " unsegmented";
-            cout << seq << endl;
-          }
+
+        cout << s << endl;        
       }
     
   } else {

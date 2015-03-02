@@ -12,14 +12,14 @@ class Stats {
  public:
   string label;
   int nb;
-  int length;
+  int data;
 
  public:
   Stats();
   void setLabel(string _label);
-  void insert(int _length);
+  void insert(int _data);
 
-  float getAverageLength();
+  float getAverage();
 };
 
 ostream &operator<<(ostream &out, Stats &stats);

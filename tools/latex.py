@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
+from __future__ import print_function
 import fuse
 import sys
 import argparse
@@ -18,15 +18,15 @@ parser.add_argument('file', nargs='+', help='''.vidjil files''')
 
 def main():
 
-    print '%%%%', ' '.join(sys.argv)
+    print('%%%%', ' '.join(sys.argv))
     args = parser.parse_args()
     datas = []
 
     for i in args.file:
         data = fuse.ListWindows()
         data.load(i, False, verbose = args.verbose)
-        print '%%  ', i
-        print '%%  ', data.d["reads"]
+        print('%%  ', i)
+        print('%%  ', data.d["reads"])
         segmented_reads = data.d['reads'].d['segmented'][0]
 
         out = []
@@ -36,9 +36,9 @@ def main():
             if reads >= args.min and ratio >= args.min_ratio:
                 out += [(-reads, w.latex(base=segmented_reads))]
         for bla, ltx in sorted(out[:args.top]):
-            print ltx
+            print(ltx)
 
-        print r'  \hline'
+        print(r'  \hline')
 
 if  __name__ =='__main__':
     main()

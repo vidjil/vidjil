@@ -27,8 +27,8 @@ germline_data = {
         "shortcut": "G",
         "color" : "#dc322f",
         "description": "Human T-cell receptor, gamma locus (7p14)",
-        "5": ["TRGJ.fa"],
-        "3": ["TRGV.fa"],
+        "5": ["TRGV.fa"],
+        "3": ["TRGJ.fa"],
         "parameters": {
             "seed": "10s"
         }
@@ -51,9 +51,10 @@ germline_data = {
         "color" : "#46abf2",
         "description": "Human T-cell receptor, incomplete Vd-Ja rearrangements",
         "5": ["TRDV.fa"],
+        "4": ["TRDD.fa"],
         "3": ["TRAJ.fa"],
         "parameters": {
-            "seed": "10s"
+            "seed": "13s"
         }
     },
 

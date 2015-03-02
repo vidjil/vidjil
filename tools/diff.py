@@ -1,7 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-
+from __future__ import print_function
 import fuse
 import sys
 import ansi
@@ -46,17 +46,19 @@ def format_rank_nb_reads(rank, list_nb_reads, list_total_nb_reads):
 def common_two_clones(self, other, seg=[1000000]):
     if not other or not self:
         return
-
-    print self.d['id'], '\t', format_rank_nb_reads(self.d['top'], self.d['reads'], seg),  format_rank_nb_reads(other.d['top'], other.d['reads'], seg)
+    
+    print("%s\t%s%s" % (self.d['id'],
+                        format_rank_nb_reads(self.d['top'], self.d['reads'], seg),
+                        format_rank_nb_reads(other.d['top'], other.d['reads'], seg)))
 
 
 def diff_two_clones(self, other):
 
     if not other or not self:
         who = "+-"[not other]
-        print DIFF_COLORS[who]+who,
-        print "!!! Clone not present:", self, "/", other,
-        print ansi.Style.RESET_ALL
+        print(DIFF_COLORS[who]+who, end=' ')
+        print("!!! Clone not present:", self, "/", other, end=' ')
+        print(ansi.Style.RESET_ALL)
         return
 
     if not self.d['reads'] == other.d['reads']:
@@ -70,9 +72,9 @@ def diff_two_clones(self, other):
             if reads_o < reads_s:
                 who_minus = True
         who = ["=+", "-?"][who_minus][who_plus]
-        print DIFF_COLORS[who]+who, 
-        print "!!! Not the same number or reads:", self.d['id'], "-", self.d['reads'], "/", other.d['reads'],
-        print ansi.Style.RESET_ALL
+        print(DIFF_COLORS[who]+who, end=' ')
+        print("!!! Not the same number or reads:", self.d['id'], "-", self.d['reads'], "/", other.d['reads'], end=' ')
+        print(ansi.Style.RESET_ALL)
 
 
 def compare(data1, data2, args):
@@ -84,11 +86,11 @@ def compare(data1, data2, args):
             return
 
         if args.verbose:
-            print clone,
+            print(clone, end=' ')
         other_clones = []
         for o in [data1] + [data2]:
             if args.verbose:
-                print "\t",
+                print("\t", end='')
             try:
                 w = o[clone]
                 other_clones += [w]
@@ -98,11 +100,11 @@ def compare(data1, data2, args):
                 continue
 
             if args.verbose:
-                print format_rank_nb_reads(w.d['top'], w.d['reads'], o.d['reads'].d['segmented']),
+                print(format_rank_nb_reads(w.d['top'], w.d['reads'], o.d['reads'].d['segmented']), end=' ')
 
         displayed_clones.append(clone)        
         if args.verbose:
-            print
+            print()
 
         if args.common:
             common_two_clones(other_clones[0], other_clones[1] if len(other_clones) > 1 else None)
@@ -118,7 +120,7 @@ def compare(data1, data2, args):
  
     ### Display clones of this ListWindows
     if args.verbose:
-        print "==== Diff from %s, %d first clones" % (data1, args.nb)
+        print("==== Diff from %s, %d first clones" % (data1, args.nb))
 
     ids_1_cut = ids_1[:args.nb] if args.nb else ids_1
 
@@ -127,8 +129,8 @@ def compare(data1, data2, args):
 
     ### Display clones of other ListWindows not present in this ListWindows
     if args.verbose:
-        print
-        print "==== Other clones in the top %d of other files" % args.nb_others
+        print()
+        print("==== Other clones in the top %d of other files" % args.nb_others)
 
     for o in [ids_2]:
         for id in o[:args.nb_others]:

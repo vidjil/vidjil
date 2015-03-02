@@ -1,7 +1,7 @@
 #include "windowExtractor.h"
 #include "segment.h"
 
-WindowExtractor::WindowExtractor(): out_segmented(NULL), out_unsegmented(NULL){}
+WindowExtractor::WindowExtractor(): out_segmented(NULL), out_unsegmented(NULL), out_affects(NULL){}
                                     
 
 WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *multigermline,
@@ -21,11 +21,11 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
     reads->next();
     nb_reads++;
 
-    if (out_unsegmented) {      
-      *out_unsegmented << reads->getSequence();
+    if (out_affects) {
+      *out_affects << reads->getSequence();
     }
     
-    KmerMultiSegmenter kmseg(reads->getSequence(), multigermline, out_unsegmented);
+    KmerMultiSegmenter kmseg(reads->getSequence(), multigermline, out_affects);
     
     KmerSegmenter *seg = kmseg.the_kseg ;
     int read_length = seg->getSequence().sequence.length();
@@ -33,7 +33,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
     stats[seg->getSegmentationStatus()].insert(read_length);
     if (seg->isSegmented()) {
 
-      seg->segmented_germline->stats.insert(read_length);
+      seg->segmented_germline->stats_reads.insert(read_length);
 
       junction junc = seg->getJunction(w);
 
@@ -46,24 +46,24 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
 
       if (out_segmented) {
         *out_segmented << *seg ; // KmerSegmenter output (V/N/J)
-
-        if (out_unsegmented) {
-	  *out_segmented << seg->getKmerAffectAnalyser()->toString() << endl;
-          *out_unsegmented << "#>" << reads->getSequence().label << " segmented on " << seg->segmented_germline->code << endl << endl;
-        }
       }
       
       nb_reads_germline[seg->system]++;
       
     } else if (out_unsegmented) {
-      *out_unsegmented << "#>" << reads->getSequence().label << " not segmented" << endl << endl;
+        *out_unsegmented << *seg ;
+    }
+
+    // Last line of detailed affects output
+    if (out_affects) {
+      *out_affects << "#" << seg->getInfoLine() << endl;
     }
   }
   return windowsStorage;
 }
 
 float WindowExtractor::getAverageSegmentationLength(SEGMENTED seg) {
-  return stats[seg].getAverageLength();
+  return stats[seg].getAverage();
 }
 
 size_t WindowExtractor::getNbReads() {
@@ -86,6 +86,10 @@ void WindowExtractor::setUnsegmentedOutput(ostream *out) {
   out_unsegmented = out;
 }
 
+void WindowExtractor::setAffectsOutput(ostream *out) {
+  out_affects = out;
+}
+
 void WindowExtractor::init_stats() {
   for (int i = 0; i < STATS_SIZE; i++) {
     stats[i].label = segmented_mesg[i];
@@ -99,6 +103,6 @@ void WindowExtractor::out_stats(ostream &out)
     {
       if (i == TOTAL_SEG_AND_WINDOW)
 	out << endl;
-      out << stats[i] ;
+      out << stats[i] << endl ;
     }
 }

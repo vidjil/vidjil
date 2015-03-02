@@ -9,6 +9,7 @@ OTHER_SRC=$(wildcard *.cpp)
 LIB=../core/vidjil.a ../lib/lib.a
 SHOULD=$(wildcard *.should_get)
 SHOULD_LOG=$(SHOULD:.should_get=.log)
+SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
 
 .PHONY: all force clean forcedep
 
@@ -23,6 +24,10 @@ all: core $(EXEC)
 	@echo "All tests compiled."
 
 should: vidjil $(SHOULD_LOG)
+
+shouldvdj:
+	python should-vdj-to-tap.py -2q $(SHOULD_VDJ)
+	python should-vdj-to-tap.py $(SHOULD_VDJ)
 
 %.log: %.should_get force
 	./should-to-tap.sh $<

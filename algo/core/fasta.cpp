@@ -222,6 +222,9 @@ string OnlineFasta::getInterestingLine() {
   while (line.length() == 0 && hasNext() && getline(*input, line)) {
     line_nb++;
     remove_trailing_whitespaces(line);
+
+    if (line.length() && line[0] == '#')
+      line = "" ;
   }
   return line;
 }
