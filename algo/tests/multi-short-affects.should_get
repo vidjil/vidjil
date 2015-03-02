@@ -1,0 +1,14 @@
+!LAUNCH: ../../vidjil -r 5 -K -g ../../germline ../../data/multi-short.fa ; head -n 15 out/multi-short.affects
+# Testing .affects output (-K)
+
+$ First sequence (TRA), display sequence
+1:TCTTCATTCCTTAGTCGCTCTGATAGTTATGGTTACCTCCTTCTACAGGAGCTCCAGATGAAAGACTCTGCCTCTTACTTCTGCGCTGTGAGAGAGTATGAAAGTATTACCTCCCAGTTGCAATTTGGCAAAGGAACCAGAGTTTCCACTTCTCC
+
+$ First sequence (TRA), count of k-mers
+1:.TRA .* 129
+
+$ First sequence (TRA), segmentation
+1:>TRA--V1-1.01--J1.01 .* seed TRA SEG_+
+
+
+
