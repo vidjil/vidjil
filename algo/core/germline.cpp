@@ -198,7 +198,7 @@ void MultiGermline::build_incomplete_set(string path)
 
   // VD-JA
   germline = new Germline("VdJa", 'a', path + "/TRDV.fa", "",  path + "/TRAJ.fa",   -10, 80);
-  germline->new_index("#####-#####");
+  germline->new_index("#######-######");
   germlines.push_back(germline);
 
   // DD2-DD3

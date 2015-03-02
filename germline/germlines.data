@@ -53,7 +53,7 @@ germline_data = {
         "5": ["TRDV.fa"],
         "3": ["TRAJ.fa"],
         "parameters": {
-            "seed": "10s"
+            "seed": "13s"
         }
     },
 
