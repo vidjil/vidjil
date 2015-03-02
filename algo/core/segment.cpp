@@ -529,6 +529,8 @@ string format_del(int deletions)
 
 FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
 {
+  segmented = false;
+  dSegmented = false;
   because = 0 ;
   segmented_germline = germline ;
   info_extra = "" ;
@@ -612,8 +614,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
   segmented = (Vend != (int) string::npos) && (Jstart != (int) string::npos) && 
     (Jstart - Vend >= germline->delta_min) && (Jstart - Vend <= germline->delta_max);
     
-  dSegmented=false;
-
   if (!segmented)
     {
       because = DONT_KNOW;
@@ -726,8 +726,16 @@ void FineSegmenter::FineSegmentD(Germline *germline){
     Dend = l + end;
 	
     string seq = getSequence().sequence;
-    
-    if (length>0) dSegmented=true;
+
+
+    // recompute remaining length for D
+    length = germline->rep_4.sequence(best_D).length() - del_D_right - del_D_left;
+
+    if (length < MIN_D_LENGTH)
+      return ;
+
+
+    dSegmented=true;
     
     //overlap VD
     if(Dstart-Vend <=0){

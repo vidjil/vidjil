@@ -13,6 +13,9 @@
 #include "json.h"
 
 #define EXTEND_D_ZONE 5
+
+#define MIN_D_LENGTH 5          /* If a D-REGION is smaller than this threshold, it is not output */
+
 #define RATIO_STRAND 5          /* The ratio between the affectations in one
                                    strand and the other, to safely attribute a
                                    segment to a given strand */
