@@ -1,4 +1,4 @@
->TRDV2*01 TRDJ1*01  TRD
+>TRDV2*01 TRDJ1*01  TRD     # is there a D-REGION of length 5 ?
 gcaccatcagagagagatgaagggtcttactactgtgcctgtgacacc
 acaccgataaactcatctttggaaaaggaacccgtgtgactgtggaaccaa
 
@@ -14,6 +14,6 @@ actgggggatacg
 atctctccagtaaggactgaagacagtgccacttactactgtgcctttag
 actgggggatacg
 
->TRDV3*01 TRDJ4*01  TRD
+>TRDV3*01_0//0_TRDJ4*01  TRD
 atctctccagtaaggactgaagacagtgccacttactactgtgcctttag
 ccagacccctgatctttggcaaaggaacctatctggaggtacaacaac
