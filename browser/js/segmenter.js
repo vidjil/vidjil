@@ -146,7 +146,7 @@ Segment.prototype = {
         
         var fields = this.findPotentialField();
         var filter = ["sequence", "_sequence.trimmed nt seq"];
-        /*
+
         for (var i in this.highlight) {
             var input = document.createElement('select');
             input.style.borderColor = this.highlight[i].color;
@@ -169,7 +169,7 @@ Segment.prototype = {
             
             div_highlight.appendChild(input)
         }
-        */
+
         if (fields.indexOf("cdr3") != -1) {
             
             var aaCheckbox = document.createElement('input');
@@ -210,7 +210,7 @@ Segment.prototype = {
             segment.update();
         }
         div_highlight.appendChild(windowCheckbox)
-        div_highlight.appendChild(document.createTextNode("vidjil_w"));
+        div_highlight.appendChild(document.createTextNode("id"));
         */
         div.appendChild(div_highlight)
 
