@@ -777,8 +777,10 @@ Sequence.prototype = {
         if (typeof clone.sequence != 'undefined' && clone.sequence != 0) {
             //find V, D, J position
             if (typeof clone.seg != 'undefined'){
+                var startV = 0
                 var endV = this.pos[clone.seg["5end"]]
                 var startJ = this.pos[clone.seg["3start"]]
+                var endJ = this.seq.length
                 if (typeof clone.seg["4start"] != 'undefined' && typeof clone.seg["4end"] != 'undefined') {
                     var startD = this.pos[clone.seg["4start"]]
                     var endD = this.pos[clone.seg["4end"]]
@@ -808,8 +810,7 @@ Sequence.prototype = {
             }
             
             //add span VDJ
-            if (typeof clone.seg != 'undefined') result += "<span class='V' " + vColor + " >"
-            else result += "<span>"
+            result += "<span>"
             for (var i = 0; i < this.seq.length; i++) {
                 for (var j in highlights){
                     var h = highlights[j];
@@ -820,17 +821,21 @@ Sequence.prototype = {
                     }
                 }
                 
+                // VDJ spans - begin
+                if (i == startV) result += "</span><span class='V' "+ vColor + " >"
+                if (i == startD) result += "</span><span class='D'>"
+                if (i == startJ) result += "</span><span class='J' " + jColor + " >"
+
                 if (segment.amino) {
                     result += this.seqAA[i]
                 }else{
                     result += this.seq[i]
                 }
 
+                // VDJ spans - end
                 if (i == endV) result += "</span><span class ='N'>"
-                if (i == startD - 1) result += "</span><span class ='D'>"
                 if (i == endD) result += "</span><span class ='N'>"
-                if (i == startJ - 1) result += "</span><span class ='J' " + jColor + " >"
-                
+                if (i == endJ) result += "</span><span>"
             }
             result += "</span>"
         }else{
