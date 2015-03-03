@@ -806,7 +806,7 @@ Sequence.prototype = {
             
             var highlights = [];
             for (var i in segment.highlight){
-                highlights.push(this.find_subseq(segment.highlight[i].field, segment.highlight[i].color));
+                highlights.push(this.get_positionned_highlight(segment.highlight[i].field, segment.highlight[i].color));
             }
             
             //add span VDJ
@@ -857,10 +857,12 @@ Sequence.prototype = {
         return marge + result
     },
     
-    find_subseq : function (field, color) {
+    get_positionned_highlight : function (field, color) {
         var clone = this.m.clone(this.id);
+        var h = {'start' : -1, 'stop' : -1, 'color' : color};
         var p;
 
+        // Find the good object p
         if (typeof clone[field] != 'undefined'){
             p = clone[field];                   //check clone meta-data
         }else if (typeof clone.seg != 'undefined' &&typeof clone.seg[field] != 'undefined'){
@@ -868,23 +870,23 @@ Sequence.prototype = {
         }else if (typeof this.m[field] != 'undefined'){
             p = this.m[field];               //check model
         }else{
-            return {'start' : -1, 'stop' : -1, 'color' : color};
+            return h
         }
         
         if (p.constructor === Array ){
             p = p[this.m.t];
         }
-        
+
+        // Build the highlight object from p        
         if (p.constructor === String){
-            var start = this.pos[clone.sequence.indexOf(p)]
-            var stop = this.pos[clone.sequence.indexOf(p)+p.length]
-            return {'start' : start, 'stop' : stop, 'color' : color};
+            h.start = this.pos[clone.sequence.indexOf(p)]
+            h.stop = this.pos[clone.sequence.indexOf(p)+p.length]
         }else if (p.constructor === Object & typeof p.start != 'undefined'){
-            return {'start' : this.pos[p.start], 'stop' : this.pos[p.stop], 'color' : color};
-        }else{
-            return {'start' : -1, 'stop' : -1, 'color' : color};
+            h.start = this.pos[p.start]
+            h.stop = this.pos[p.stop]
         }
-        
+
+        return h
     }
 }
 
