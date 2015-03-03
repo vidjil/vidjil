@@ -144,8 +144,9 @@ Segment.prototype = {
             self.m.focusOut()
         };
         
+        // Guessing fields, populating dropdown lists
         var fields = this.findPotentialField();
-        var filter = ["sequence", "_sequence.trimmed nt seq"];
+        var filter = ["sequence", "_sequence.trimmed nt seq"]; // Fields that are ignored
 
         for (var i in this.highlight) {
             var input = document.createElement('select');
@@ -170,6 +171,7 @@ Segment.prototype = {
             div_highlight.appendChild(input)
         }
 
+        // Checkbox for cdr3
         if (fields.indexOf("cdr3") != -1) {
             
             var aaCheckbox = document.createElement('input');
@@ -197,6 +199,8 @@ Segment.prototype = {
             div_highlight.appendChild(document.createTextNode("CDR3"));
         
         }
+
+        // Checkbox for id
         /*
         var windowCheckbox = document.createElement('input');
         windowCheckbox.type = "checkbox";
@@ -597,8 +601,10 @@ Segment.prototype = {
     },
 
     findPotentialField : function () {
+        // Guess fields for the highlight menu
         result = [""];
         
+        // What looks likes DNA everywhere
         for (var i in this.m) {
             if (this.isDNA(this.m[i]) ||this.isDNA(m[i]) ){
                 if (result.indexOf(i) == -1) result.push(i);
@@ -614,6 +620,7 @@ Segment.prototype = {
                 }
             }
             
+            // In the .seg element, What looks like DNA sequence or what is a Pos field
             if (typeof clone.seg != 'undefined'){
                 for (var i in clone.seg) {
                     if (this.isDNA(clone.seg[i]) || this.isPos(clone.seg[i]) ){
@@ -809,11 +816,14 @@ Sequence.prototype = {
                 highlights.push(this.get_positionned_highlight(segment.highlight[i].field, segment.highlight[i].color));
             }
             
-            //add span VDJ
+            // Build the sequence, adding VDJ and highlight spans
             result += "<span>"
             for (var i = 0; i < this.seq.length; i++) {
+
+                // Highlight spans
                 for (var j in highlights){
                     var h = highlights[j];
+
                     if (i == h.start){
                         result += "<span class='highlight'><span class='" + h.css + "' style='color:" + h.color + "'>"
                         result += h.seq
@@ -826,6 +836,7 @@ Sequence.prototype = {
                 if (i == startD) result += "</span><span class='D'>"
                 if (i == startJ) result += "</span><span class='J' " + jColor + " >"
 
+                // one character
                 if (segment.amino) {
                     result += this.seqAA[i]
                 }else{
