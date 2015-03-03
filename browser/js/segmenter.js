@@ -815,8 +815,8 @@ Sequence.prototype = {
                 for (var j in highlights){
                     var h = highlights[j];
                     if (i == h.start){
-                        result += "<span class='highlight'><span class='highlight2' style='color:"+h.color+"'>"
-                        for (var k=0; k<(h.stop - h.start); k++) result += "&nbsp"
+                        result += "<span class='highlight'><span class='" + h.css + "' style='color:" + h.color + "'>"
+                        result += h.seq
                         result += "</span></span>"
                     }
                 }
@@ -859,7 +859,7 @@ Sequence.prototype = {
     
     get_positionned_highlight : function (field, color) {
         var clone = this.m.clone(this.id);
-        var h = {'start' : -1, 'stop' : -1, 'color' : color};
+        var h = {'start' : -1, 'stop' : -1, 'seq': '', 'color' : color};
         var p;
 
         // Find the good object p
@@ -877,6 +877,8 @@ Sequence.prototype = {
             p = p[this.m.t];
         }
 
+        var raw_seq = ""
+
         // Build the highlight object from p        
         if (p.constructor === String){
             h.start = this.pos[clone.sequence.indexOf(p)]
@@ -884,6 +886,20 @@ Sequence.prototype = {
         }else if (p.constructor === Object & typeof p.start != 'undefined'){
             h.start = this.pos[p.start]
             h.stop = this.pos[p.stop]
+
+            if (typeof p.seq != 'undefined') {
+                raw_seq = p.seq
+            }
+        }
+
+        // Build the (possibly invisible) sequence
+        if (raw_seq == "") {
+            h.css = "highlight_border"
+            for (var k=0; k<(h.stop - h.start); k++) h.seq += "&nbsp;"
+        } else {
+            h.css = "highlight_seq"
+            // TODO, align the raw_seq using this.pos
+            h.seq = raw_seq
         }
 
         return h
