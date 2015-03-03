@@ -898,8 +898,11 @@ Sequence.prototype = {
             for (var k=0; k<(h.stop - h.start); k++) h.seq += "&nbsp;"
         } else {
             h.css = "highlight_seq"
-            // TODO, align the raw_seq using this.pos
-            h.seq = raw_seq
+            var j = 0
+            for (var k=h.start; j<raw_seq.length; k++) { // End condition on j, not on k
+                if (this.seq[k] != '-') h.seq += raw_seq[j++] ; else h.seq += "&nbsp;"
+            }
+
         }
 
         return h
