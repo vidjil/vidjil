@@ -6,14 +6,14 @@ if request.env.http_origin:
     response.headers['Access-Control-Max-Age'] = 86400
 
 def index():
-   if not auth.user : 
-    res = {"redirect" : "default/user/login"}
-    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    if not auth.user : 
+        res = {"redirect" : "default/user/login"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 
-   query = db((auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) ).select() 
-    
-   return dict(message=T('Configs'),
+    query = db((auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) ).select() 
+
+    return dict(message=T('Configs'),
                query=query,
                isAdmin = auth.has_membership("admin"))
 
@@ -58,7 +58,7 @@ def edit_form():
     
     error =""
 
-    required_fields = ['config_name', 'config_command', 'config_fuse_command', 'config_program']
+    required_fields = ['id', 'config_name', 'config_command', 'config_fuse_command', 'config_program']
     for field in required_fields:
         if request.vars[field] == "" :
             error += field+" needed, "
@@ -74,6 +74,7 @@ def edit_form():
 
         res = {"redirect": "config/index",
                "message": "config saved"}
+
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 

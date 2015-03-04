@@ -278,6 +278,6 @@ def _init_log():
 
 log = _init_log()
 
-
+current.log = log
 current.db = db
 current.auth = auth

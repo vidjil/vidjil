@@ -13,7 +13,6 @@ if request.env.http_origin:
 ## return admin_panel
 def index():
     if auth.has_membership("admin"):
-
         p = subprocess.Popen(["uptime"], stdout=subprocess.PIPE)
         uptime, err = p.communicate()
         
@@ -28,6 +27,11 @@ def index():
 
 
 def monitor():
+    """
+    >>> monitor().has_key('worker')
+    True
+    
+    """
     # External monitor
 
     last_results = ''
@@ -41,10 +45,6 @@ def monitor():
                  assigned = len(db(db.scheduler_task.status=='ASSIGNED').select()),
                  running = len(db(db.scheduler_task.status=='RUNNING').select()),
                  last_results = last_results)
-    
-def worker():
-    if auth.has_membership("admin"):
-        return dict(message=T(''))
     
     
 def log():
@@ -85,8 +85,7 @@ def log():
                 if len(lines) >= 100 :
                     return dict(lines = lines)
             
-        return dict(lines = lines
-                    )
+        return dict(lines = lines)
 
 ## to use after change in the upload folder
 def repair_missing_files():
