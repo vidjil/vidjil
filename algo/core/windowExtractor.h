@@ -46,7 +46,7 @@ class WindowExtractor {
    */
   WindowsStorage *extract(OnlineFasta *reads, MultiGermline *multigermline,
                           size_t w,
-                          map<string, string> &windows_labels);
+                          map<string, string> &windows_labels, int stop_after);
 
   /**
    * @return the average length of sequences whose segmentation has been classified as seg
