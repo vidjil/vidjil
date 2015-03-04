@@ -188,9 +188,7 @@ void usage(char *progname)
        << "  -y <nb>       maximal number of clones computed with a representative ('" << NO_LIMIT << "': no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
        << "  -z <nb>       maximal number of clones to be segmented ('" << NO_LIMIT << "': no limit, do not use) (default: " << DEFAULT_MAX_CLONES << ")" << endl
        << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets" << endl
-       ////MODIF_TAT
        << "  -X <nb>       number of clones segmented, have to be combined with -A ('" << NO_LIMIT << "' : no limit) (default: " <<WARN_MAX_CLONES << ")" << endl
-       /////END_TAT
        << endl
 
        << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
@@ -287,9 +285,7 @@ int main (int argc, char **argv)
   float ratio_reads_clone = DEFAULT_RATIO_READS_CLONE;
   // int average_deletion = 4;     // Average number of deletion in V or J
 
-  ///MODIF_TAT
   int max_clones_segmented = WARN_MAX_CLONES;
-  /// END_TAT
 
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
   unsigned int max_auditionned = DEFAULT_MAX_AUDITIONED;
@@ -321,7 +317,6 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  //// MODIF_TAT : ajouter X:  dans c
   while ((c = getopt(argc, argv, "AX:haiIg:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
 
     switch (c)
@@ -481,11 +476,9 @@ int main (int argc, char **argv)
 	max_clones = -1 ;
 	break ;
 
-  ////MODIF_TAT
       case 'X':
   max_clones_segmented = atoi(optarg);
   break;
-  ///END_TAT
 
       case 'l':
 	windows_labels_file = optarg; 
@@ -895,9 +888,7 @@ int main (int argc, char **argv)
       we.setAffectsOutput(out_affects);
     }
 
-////MODIF_TAT : + max-clone-segmented
     WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels, max_clones_segmented);
-///END_TAT
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 
