@@ -187,8 +187,8 @@ void usage(char *progname)
        << "Limits to further analyze some clones" << endl
        << "  -y <nb>       maximal number of clones computed with a representative ('" << NO_LIMIT << "': no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
        << "  -z <nb>       maximal number of clones to be segmented ('" << NO_LIMIT << "': no limit, do not use) (default: " << DEFAULT_MAX_CLONES << ")" << endl
-       << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets" << endl
-       << "  -X <nb>       number of clones segmented, have to be combined with -A ('" << NO_LIMIT << "' : no limit) (default: " <<WARN_MAX_CLONES << ")" << endl
+       << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets (for example -AX 20)" << endl
+       << "  -X <nb>       maximal number of reads to process ('" << NO_LIMIT << "': no limit, default)" << endl
        << endl
 
        << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
@@ -208,7 +208,7 @@ void usage(char *progname)
        << "Detailed output per read (not recommended, large files)" << endl
        << "  -U            output segmented reads (in " << SEGMENTED_FILENAME << " file)" << endl
        << "  -u            output unsegmented reads (in " << UNSEGMENTED_FILENAME << " file)" << endl
-       << "  -K            output detailed k-mer affectation on all reads (in " << AFFECTS_FILENAME << " file) (use only for debug)" << endl
+       << "  -K            output detailed k-mer affectation on all reads (in " << AFFECTS_FILENAME << " file) (use only for debug, for example -KX 100)" << endl
        << endl
  
        << "Output" << endl
@@ -285,7 +285,7 @@ int main (int argc, char **argv)
   float ratio_reads_clone = DEFAULT_RATIO_READS_CLONE;
   // int average_deletion = 4;     // Average number of deletion in V or J
 
-  int max_reads_processed = WARN_MAX_CLONES;
+  int max_reads_processed = -1;
 
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
   unsigned int max_auditionned = DEFAULT_MAX_AUDITIONED;
