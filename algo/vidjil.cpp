@@ -477,6 +477,11 @@ int main (int argc, char **argv)
 	break ;
 
       case 'X':
+        if (!strcmp(NO_LIMIT, optarg))
+          {
+            max_reads_processed = -1;
+            break;
+          }
         max_reads_processed = atoi(optarg);
         break;
 
