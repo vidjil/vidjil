@@ -603,7 +603,7 @@ Builder.prototype = {
             var div_multi_system = this.build_multi_system()
             parent.appendChild(div_multi_system)
         }else{
-            var div_system = this.build_info_line("info_system", "system", this.m.system)
+            var div_system = this.build_info_line("info_system", "germline", this.m.system)
             parent.appendChild(div_system)
         }
         
@@ -699,7 +699,7 @@ Builder.prototype = {
 
         // Segmented reads, on the selected system(s)
         if (this.m.system == "multi") {
-            var val = "no reads on selected systems" ;
+            var val = "no reads on selected germlines" ;
 
             if (this.m.reads.segmented[this.m.t] > 0)
             {
@@ -711,7 +711,7 @@ Builder.prototype = {
                 else if (percent < 50)  { warning = "warning" ;  }
             }
 
-            var div_segmented = this.build_info_line("info_segmented", "on systems", val, warning)
+            var div_segmented = this.build_info_line("info_segmented", "on germlines", val, warning)
             parent.appendChild(div_segmented)
         }
   

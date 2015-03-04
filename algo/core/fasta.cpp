@@ -197,7 +197,7 @@ void OnlineFasta::next() {
       } else {
         unexpectedEOF();
       }
-      line = getInterestingLine();
+      line = getInterestingLine(state);
     }
 
     if (state >= FASTX_FASTQ_ID && state < FASTX_FASTQ_QUAL) 
@@ -217,11 +217,14 @@ void OnlineFasta::next() {
     unexpectedEOF();
 }
 
-string OnlineFasta::getInterestingLine() {
+string OnlineFasta::getInterestingLine(int state) {
   string line;
   while (line.length() == 0 && hasNext() && getline(*input, line)) {
     line_nb++;
     remove_trailing_whitespaces(line);
+
+    if (line.length() && line[0] == '#' && state != FASTX_FASTQ_SEP)
+      line = "" ;
   }
   return line;
 }

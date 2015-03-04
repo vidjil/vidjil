@@ -1,7 +1,7 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
-2015-02-XX  The Vidjil Team
+2015-03-04  The Vidjil Team
 	* Better multi-germline analysis (-g), returning the best locus for each read (core/segment.cpp)
 	  The incomplete rearrangement analysis (-i) can now safely be used.
 	  The speed of this multi-germline analysis will be improved in a next release.
@@ -9,7 +9,7 @@ This changelog concerns the algorithmic part (C++) of Vidjil.
 	* Included tools (tools/*.py) to process .vidjil files
 	* New statistics on the number of clones (core/germline.cpp)
 	* New experimental CDR3 detection (-3). We still advise to use IMGT/V-QUEST for better and complete results.
-	* Better debug option -u (.affect), especially in the case of multi-germline analysis
+	* Better debug option -K (.affect), especially in the case of multi-germline analysis
 	* Refactored dynamic programming computations (core/dynprog.cpp), experimental affine gaps
 	* Removed unused code parts as well as some files
 	* Streamlined flag processing in Makefiles
