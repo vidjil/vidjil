@@ -77,7 +77,7 @@ Shortcut.prototype = {
                         e.preventDefault()
                         if (e.ctrlKey || e.metakey) db.save_analysis()
                         break;
-                    case 187 :   //ctrl+a
+                    case 65 :   //ctrl+a
                         e.preventDefault()
                         if (e.ctrlKey || e.metakey){
                             var d_m = $("#debug_menu")
