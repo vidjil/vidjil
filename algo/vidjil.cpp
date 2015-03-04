@@ -285,7 +285,7 @@ int main (int argc, char **argv)
   float ratio_reads_clone = DEFAULT_RATIO_READS_CLONE;
   // int average_deletion = 4;     // Average number of deletion in V or J
 
-  int max_clones_segmented = WARN_MAX_CLONES;
+  int max_reads_processed = WARN_MAX_CLONES;
 
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
   unsigned int max_auditionned = DEFAULT_MAX_AUDITIONED;
@@ -477,8 +477,8 @@ int main (int argc, char **argv)
 	break ;
 
       case 'X':
-  max_clones_segmented = atoi(optarg);
-  break;
+        max_reads_processed = atoi(optarg);
+        break;
 
       case 'l':
 	windows_labels_file = optarg; 
@@ -888,7 +888,7 @@ int main (int argc, char **argv)
       we.setAffectsOutput(out_affects);
     }
 
-    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels, max_clones_segmented);
+    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels, max_reads_processed);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 
