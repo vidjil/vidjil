@@ -42,7 +42,8 @@ Vidjil has been successfully tested on the following platforms :
  - Ubuntu 12.04 amd64
  - Ubuntu 12.04 i386
 
-Moreover, the continuous integration of Vidjil can be checked on [[https://travis-ci.org/magiraud/vidjil][travis-ci.org]].
+Vidjil is developed with continuous integration using systematic unit and functional testing
+The results of these automated tests can be checked on [[https://travis-ci.org/vidjil/vidjil][travis-ci.org]].
 
 * Requirements
   
@@ -134,13 +135,15 @@ Germline databases (one -V/(-D)/-J, or -G, or -g option must be given for all co
   -D <file>     D germline multi-fasta file (and resets -m, -M and -w options), will segment into V(D)J components
   -J <file>     J germline multi-fasta file
   -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)
-  -g <path>     multiple germlines (in the path <path>, takes TRA, TRB, TRG, TRD, IGH and IGL and sets window prediction parameters)
+  -g <path>     multiple germlines (in the path <path>, takes TRA, TRB, TRG, TRD, IGH, IGK and IGL and sets window prediction parameters)
+  -i            multiple germlines, also incomplete rearrangements (must be used with -g)
 #+END_EXAMPLE
 
  - Options such as =-G germline/IGH= or =-G germline/TRG= select one germline system.
  - The =-V/(-D)/-J= options enable to select individual V, (D) and J repertoires (fasta files).
    This allows in particular to select incomplete rearrangement using custom V or J repertoires with added sequences.
- - The =-g germline/= option launches the analysis on the six germlines (TRG and IGH are tested first, then the other ones).
+ - The =-g germline/= option launches the analysis on the seven germlines, selecting the best locus for each read.
+   Using =-g germline/ -i= stests also some incomplete and unusual recombinations.
    Now the seed and window parameters are hard-coded for each germline. In a future release, the mechanism will be more flexible
    and will parse the =germline/germlines.data= file.
 
@@ -159,8 +162,7 @@ Window prediction
 #+END_EXAMPLE
 
 The =-s=, =-k=, =-m= and =-M= options are the options of the seed-based heuristic. A detailed
-explanation can be found in the paper. More help on that will be
-available in the following months. The defaults values should work.
+explanation can be found in the paper. These options are for advanced usage, the defaults values should work.
 
 The =-w= option fixes the size of the "window" that is the main
 identifier to gather clones. The defaults values (40 for VJ, 60 for
@@ -266,12 +268,12 @@ two windows that must be clustered.
 * Examples of use
 
 All the following examples are on a IGH VDJ recombinations : they thus
-require either the =-G germline/IGH= option, or the mutli-germline =-g germline= option.
+require either the =-G germline/IGH= option, or the multi-germline =-g germline= option.
 
 #+BEGIN_SRC sh
 ./vidjil -G germline/IGH data/Stanford_S22.fasta
-   # Extract (with an ultra-fast heuristic) all windows
-   # Summary of windows is available both in out/Stanford_S22.vdj.fa
+   # Detects windows overlapping IGH CDR3s and gather the reads into clones
+   # Summary of clones is available both in out/Stanford_S22.vdj.fa
    # and in out/Stanford_S22.vidjil.
 #+END_SRC
 
@@ -285,6 +287,14 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 
    Windows of size 60 (modifiable by =-w=) have been extracted.
    The first window has 8 occurrences, the second window has 5 occurrences.
+
+
+#+BEGIN_SRC sh
+./vidjil -g germline -i data/reads.fasta
+   # Detects for each read the best locus
+   # Detects windows overlapping CDR3s and gather the reads into clones
+#+END_SRC
+
 
 #+BEGIN_SRC sh
 ./vidjil -c clones -G germline/IGH -r 1 ./data/clones_simul.fa
@@ -315,8 +325,7 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 
 #+BEGIN_SRC sh
 ./vidjil -c germlines file.fastq
-   # Search for all the germlines and output statistics
-   # on the number of occurrences of k-mers in each germline
+   # Output statistics on the number of occurrences of k-mers of the different germlines
 #+END_SRC
 
 * Segmentation and .vdj format
@@ -378,6 +387,8 @@ with a > is of the following form:
         comments      optional comments. In Vidjil, the following comments are now used:
                       - "seed" when this comes for the first pass (.segmented.vdj.fa). See the warning above.
                       - "!ov x" when there is an overlap of x bases between last V seed and first J seed
+                      - the name of the locus (TRA, TRB, TRG, TRD, IGH, IGL, IGK, possibly followed
+                        by a + for incomplete/unusual recombinations)
 
 #+END_EXAMPLE
 
@@ -388,5 +399,5 @@ For VJ recombinations the output is similar, the fields that are not
 applicable being removed:
 
 #+BEGIN_EXAMPLE
->name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene  coments
+>name + VJ  startV endV   startJ endJ   Vgene   delV/N1/delJ   Jgene  comments
 #+END_EXAMPLE
