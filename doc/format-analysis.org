@@ -20,7 +20,8 @@ present in the =.vidjil= file.
 
 ** =.vidjil= file -- one sample
 
-This is a minimal =.vidjil= file, describing clones in one sample.
+This is an almost minimal =.vidjil= file, describing clones in one sample.
+The =seg= element is optional.
 The segmentation is here =TRGV5*01 5/CC/0 TRGJ1*02=.
 Note that other elements could be added by some program (such as =tag= or =clusters=).
 
@@ -54,7 +55,8 @@ Note that other elements could be added by some program (such as =tag= or =clust
                 "seg":
                 {
 		    "5": "TRGV5*01",  "5start": 0,   "5end": 86,
-		    "3": "TRGJ1*02",  "3start": 89,  "3end": 118
+		    "3": "TRGJ1*02",  "3start": 89,  "3end": 118,
+                    "cdr3": { "start": 77, "stop": 104, "seq": "gccacctgggccttattataagaaactc" }
 		}
 
             }
@@ -265,6 +267,10 @@ In the .analysis file, this section is intended to describe some specific clones
          "3": "IGHJ3*02",
          "3start": 0, 
          "3end": 0,
+
+                     // any feature to be highligthen in the sequenc
+                     // the optional "seq" element gives a sequence that corresponds to this feature
+         "somefeature": { "start": 0, "stop": 0, "seq": "" }
       }
 
 

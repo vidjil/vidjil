@@ -26,31 +26,35 @@ The easiest way to get these files is to [[http://rbx.vidjil.org/browser][reques
 You will then be able to upload,
 manage, process your runs (=.fasta=, =.fastq=, =.gz= or =.clntab= files) directly on the browser 
 (see below 'patient database'), and the server behind the patient
-database computes these .vidjil files.
-Otherwise, such .vidjil files can be obtained:
+database computes these =.vidjil= files.
+Otherwise, such =.vidjil= files can be obtained:
  - from the command-line version of Vidjil (starting from
-   =.fasta= or =.fastq= files, see [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]]).
-   To gather several .vidjil files, you have to use the [[http://git.vidjil.org/blob/master/tools/fuse.py][fuse.py]] script
- - or by post-processing of other V(D)J analysis pipelines (contact us
-   if you are interested)
+   =.fasta=, =.fastq= or =.gz= files, see [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]]).
+   To gather several =.vidjil= files, you have to use the [[http://git.vidjil.org/blob/master/tools/fuse.py][fuse.py]] script
+ - or by any other V(D)J analysis pipelines able to output files
+   respecting the =.vidjil= [[format-analysis.org][file format]] (contact us if you are interested)
+
 
 
 * First aid
 
 - Open data by:
-    - either with “patients”/“open patient”  if you are connected to a patient database 
+    - either with “patients”/“open patient”  if you are connected to a patient database, such as on http://rbx.vidjil.org/
       (in this case, there are always some "Demo" datasets for demonstration purposes),
-    - or with “file”/“import/export”, manually selecting a .vidjil file
-
+    - or with “file”/“import/export”, manually selecting a =.vidjil= file
 
 - You can change the number of displayed clones by moving the slider “number of clones” (menu “filter”).
   The maximal number of clones that can be displayed depends on the processing step before.
   See below ("Can I see all the clones ?").
 
-- Due to sequencing errors, there may be several clones corresponding to a real clone. 
-   - You can select several clones (for example those sharing a same V and a same J), 
+- Clones can be selected by clicking on them either in the list, on the time graph,
+  or the grid (simple selection or rectangle selection).
+
+- There are often very similar clones, coming from either somatic hypermutations or from sequencing errors.
+  You can select such clones (for example those sharing a same V and a same J), then:
    - inspect the sequences in the lower panel (possibly using the “align” function),
-   - and click on “merge” if you think that the clones should be merged. 
+   - remove some of these sequences from the selection (clicking on their name in the lower panel)
+   - merge them (button “merge”) in a unique clone.
      Once several clones are merged, you can still visualize them by clicking on “+” in the list of clones.
 
 
@@ -58,8 +62,8 @@ Otherwise, such .vidjil files can be obtained:
 
 ** The info panel (upper left panel)
    - analysis :: name of the configuration file used for displaying the data
-   - system :: system used for analyzing the data. In case of multi-system
-               data, you can select what system should be displayed.
+   - locus :: germline used for analyzing the data. In case of multi-germline
+               data, you can select what germline should be displayed.
    - point :: name of the current point (you can change the selected point by clicking on
               another point in the graph). The name can be edited (“edit”).
    - date :: when the run was performed (edit either with “...”, or with the database, on the patient tab)
@@ -69,7 +73,7 @@ Otherwise, such .vidjil files can be obtained:
 
 ** The list of clones (left panel)
 
-- You can assign other tags (and thus colors) to clones using the “★” button.
+- You can assign other tags with colors to clones using the “★” button.
   The “filter” menu allows to further filter clones by tags.
 - Under the “★” button it is possible to normalize clone concentrations
   according to this clone. You must specify the expected concentration in the
@@ -82,11 +86,14 @@ Otherwise, such .vidjil files can be obtained:
   The “+” and “-” allow respectively to un-merge or re-merge all clones that have
   already been merged.
 
-
 - Clones can be searched (“search” box) by either their name, their custom name, 
   or their DNA sequence.
 
-** The graph
+** The time graph
+
+The time graph is hidden with there is only one timepoint.
+
+- The current point is highlighted with a vertical gray bar, you can change that by clicking on another point.
 
 - The gray areas at the bottom of the graph show, for each point, the resolution (1 read / 5 reads).
 
@@ -95,32 +102,27 @@ Otherwise, such .vidjil files can be obtained:
 
 - If your dataset contains sampling dates (for example in a MRD setup), you can switch between point keys and dates in “settings > point key”
 
-- The vertical gray area shows the current point, you can change that by clicking on another point.
 
-
-** The scatterplot view
+** The grid view
 
 - The axes of the plot (by default “V gene” / “J gene”) can be changed.
 
 - Some presets are available in the “analysis” menu.
+
+- The “focus“ button (bottom right) allows to further analyze a selection of clones.
   
-  To segregate a set of clones sharing a same V and J, it is often useful
-  to display the clones according to their “N length” (that is N1-D-N2 in the case of VDJ rearrangements)
+To further analyze a set of clones sharing a same V and J, it is often useful
+to focus on the clones, then to display them ones according to either their “clone length”
+or their “N length” (that is N1-D-N2 in the case of VDJ rearrangements)
 
 ** The aligner (bottom panel)
-   - When several clones are selected (you can select clones by clicking on
-     them either in the list, the graph or the scatterplot, or by drawing a
-     rectangle around clones to be selected in the scatterplot view), you can
-     view their sequences in the aligner.
-   - See "What is the sequence displayed for each clone ?" below
-   - Sequences can be aligned together to see how they differ or how similar
-     they are (“align” button). After aligning them a shaded background identifies
-     substitutions and a dash identifies indels.
-   - You can remove sequences from the aligner by clicking on their name (and
-     therefore, you unselect them).
-   - You can visualize results by IMGT/V-QUEST and IgBlast on the selected sequences, in another window, by clicking on the corresponding buttons.
-   - You can unselect all sequences by clicking on the background of the scatterplot.
 
+The aligner display nucleotide sequences from selected clones.
+   - See "What is the sequence displayed for each clone ?" below
+   - Sequences can be aligned together (“align” button), identifying substitutions, insertions and deletions.
+   - You can remove sequences from the aligner (and the selection) by clicking on their name
+   - You can further analyze the sequences with IMGT/V-QUEST and IgBlast on the selected sequences. This opens another window/tab.
+   - You can unselect all sequences by clicking on the background of the grid.
 
 ** The patient database and the server
 
@@ -144,7 +146,7 @@ If you have an admin access, you can grant access to other users ('p').
 *** Samples
 
 Clicking on a patient give acccess the "samples" page. Each sample is
-a =.fasta=/=.fastq=/=.gz=/=.clntab= file that will be processed by one or several
+a =.fasta=, =.fastq=, =.gz= or =.clntab= file that will be processed by one or several
 pipelines.
 You can see which samples have been processed with the selected
 config, and download the sequence files if they are available ("dl").
@@ -166,7 +168,7 @@ on this button can take a few seconds.
 
 
 The interest of NGS/Rep-Seq studies is to provide a deep view of any
-V(D)J Repertoire. The underlying analysis software (such as Vidjil)
+V(D)J repertoire. The underlying analysis softwares (such as Vidjil)
 try to analyze as much reads as possible (see below 'Number of segmented reads').
 One often wants to "see all clones", but a complete list is difficult
 to see in itself. In a typical dataset with about 10^6 reads, even in
@@ -230,29 +232,34 @@ of the reads. The consensus sequence can thus be shorter than some reads.
 To make sure that the PCR, the sequencing and the Vidjil analysis went well, several elements can be controlled.
 
 ** Number of segmented reads
-A first control is to check the number of “segmented reads” in the info panel. For each point, this shows the number of reads where Vidjil found a CDR3. 
+A first control is to check the number of “segmented reads” in the info panel (top left box).
+For each point, this shows the number of reads where Vidjil found a CDR3.
      
 Ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
+The “info“ button further detail the causes of non-segmentation (UNSEG).
 There can be several causes leading to bad ratios: 
 
-*** analysis or biological causes
+*** Analysis or biological causes
 
-   - a system (for example TRG) was analyzed and the data actually contains other systems.
-      (solution: ask that we relaunch Vidjil with other systems)
+   - The data actually contains other germline/locus that what was searched for
+      (solution: relauch Vidjil, or ask that we relaunch Vidjil, with the correct germline sequences).
 
-   - there are incomplete/exceptional rearrangements 
-     (Vidjil can process some of them)
+   - There are incomplete/exceptional recombinations
+     (Vidjil can process some of them, config =multi+inc= or command-line option =-i=).
 
-   - there are too many hypersomatic mutations
-     (usually Vidjil can process mutations until 10% mutation rate... above that threshold, some sequences are lost)
+   - There are too many hypersomatic mutations
+     (usually Vidjil can process mutations until 10% mutation rate... above that threshold, some sequences may be lost).
+
+   - There are chimeric sequences or translocations
+     (Vidjil does not process these sequences).
 
 *** PCR or sequencing causes
 
-   - the read length is too short, the reads do not span the junction zone 
-      (Vidjil detects a “window” including the CDR3. By default this window is 40–60bp long, so the read needs be that long)
+   - the read length is too short, the reads do not span the junction zone (UNSEG too few V/J).
+      (Vidjil detects a “window” including the CDR3. By default this window is 40–60bp long, so the read needs be that long centered on the junction).
 
    - In particular, for paired-end sequencing, one of the ends can lead to reads not fully containing the CDR3 region
-      (solution: ignore this end, or extend the read length)
+      (solution: ignore this end, or extend the read length, or merge the ends with very conservative parameters).
 
    - There were too many PCR or sequencing errors
       (this can be asserted by inspecting the related clones, checking if there is a large dispersion around the main clone)
@@ -289,7 +296,7 @@ There can be several causes leading to bad ratios:
   | =d=: TRD, TRD+  | Change the selected germline/locus |
   | =h=: IGH, IGH+  |                                    |
   | =l=: IGL        |                                    |
-  | =k=: IGK, IGK+) |                                    |
+  | =k=: IGK, IGK+  |                                    |
 
 
 ** Browser connected to a patient databse

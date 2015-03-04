@@ -144,9 +144,10 @@ Segment.prototype = {
             self.m.focusOut()
         };
         
+        // Guessing fields, populating dropdown lists
         var fields = this.findPotentialField();
-        var filter = ["sequence", "_sequence.trimmed nt seq"];
-        /*
+        var filter = ["sequence", "_sequence.trimmed nt seq"]; // Fields that are ignored
+
         for (var i in this.highlight) {
             var input = document.createElement('select');
             input.style.borderColor = this.highlight[i].color;
@@ -169,7 +170,8 @@ Segment.prototype = {
             
             div_highlight.appendChild(input)
         }
-        */
+
+        // Checkbox for cdr3
         if (fields.indexOf("cdr3") != -1) {
             
             var aaCheckbox = document.createElement('input');
@@ -197,6 +199,8 @@ Segment.prototype = {
             div_highlight.appendChild(document.createTextNode("CDR3"));
         
         }
+
+        // Checkbox for id
         /*
         var windowCheckbox = document.createElement('input');
         windowCheckbox.type = "checkbox";
@@ -210,7 +214,7 @@ Segment.prototype = {
             segment.update();
         }
         div_highlight.appendChild(windowCheckbox)
-        div_highlight.appendChild(document.createTextNode("vidjil_w"));
+        div_highlight.appendChild(document.createTextNode("id"));
         */
         div.appendChild(div_highlight)
 
@@ -597,8 +601,10 @@ Segment.prototype = {
     },
 
     findPotentialField : function () {
+        // Guess fields for the highlight menu
         result = [""];
         
+        // What looks likes DNA everywhere
         for (var i in this.m) {
             if (this.isDNA(this.m[i]) ||this.isDNA(m[i]) ){
                 if (result.indexOf(i) == -1) result.push(i);
@@ -614,6 +620,7 @@ Segment.prototype = {
                 }
             }
             
+            // In the .seg element, What looks like DNA sequence or what is a Pos field
             if (typeof clone.seg != 'undefined'){
                 for (var i in clone.seg) {
                     if (this.isDNA(clone.seg[i]) || this.isPos(clone.seg[i]) ){
@@ -777,8 +784,10 @@ Sequence.prototype = {
         if (typeof clone.sequence != 'undefined' && clone.sequence != 0) {
             //find V, D, J position
             if (typeof clone.seg != 'undefined'){
+                var startV = 0
                 var endV = this.pos[clone.seg["5end"]]
                 var startJ = this.pos[clone.seg["3start"]]
+                var endJ = this.seq.length
                 if (typeof clone.seg["4start"] != 'undefined' && typeof clone.seg["4end"] != 'undefined') {
                     var startD = this.pos[clone.seg["4start"]]
                     var endD = this.pos[clone.seg["4end"]]
@@ -804,33 +813,40 @@ Sequence.prototype = {
             
             var highlights = [];
             for (var i in segment.highlight){
-                highlights.push(this.find_subseq(segment.highlight[i].field, segment.highlight[i].color));
+                highlights.push(this.get_positionned_highlight(segment.highlight[i].field, segment.highlight[i].color));
             }
             
-            //add span VDJ
-            if (typeof clone.seg != 'undefined') result += "<span class='V' " + vColor + " >"
-            else result += "<span>"
+            // Build the sequence, adding VDJ and highlight spans
+            result += "<span>"
             for (var i = 0; i < this.seq.length; i++) {
+
+                // Highlight spans
                 for (var j in highlights){
                     var h = highlights[j];
+
                     if (i == h.start){
-                        result += "<span class='highlight'><span class='highlight2' style='color:"+h.color+"'>"
-                        for (var k=0; k<(h.stop - h.start); k++) result += "&nbsp"
+                        result += "<span class='highlight'><span class='" + h.css + "' style='color:" + h.color + "'>"
+                        result += h.seq
                         result += "</span></span>"
                     }
                 }
                 
+                // VDJ spans - begin
+                if (i == startV) result += "</span><span class='V' "+ vColor + " >"
+                if (i == startD) result += "</span><span class='D'>"
+                if (i == startJ) result += "</span><span class='J' " + jColor + " >"
+
+                // one character
                 if (segment.amino) {
                     result += this.seqAA[i]
                 }else{
                     result += this.seq[i]
                 }
 
+                // VDJ spans - end
                 if (i == endV) result += "</span><span class ='N'>"
-                if (i == startD - 1) result += "</span><span class ='D'>"
                 if (i == endD) result += "</span><span class ='N'>"
-                if (i == startJ - 1) result += "</span><span class ='J' " + jColor + " >"
-                
+                if (i == endJ) result += "</span><span>"
             }
             result += "</span>"
         }else{
@@ -852,10 +868,12 @@ Sequence.prototype = {
         return marge + result
     },
     
-    find_subseq : function (field, color) {
+    get_positionned_highlight : function (field, color) {
         var clone = this.m.clone(this.id);
+        var h = {'start' : -1, 'stop' : -1, 'seq': '', 'color' : color};
         var p;
 
+        // Find the good object p
         if (typeof clone[field] != 'undefined'){
             p = clone[field];                   //check clone meta-data
         }else if (typeof clone.seg != 'undefined' &&typeof clone.seg[field] != 'undefined'){
@@ -863,23 +881,42 @@ Sequence.prototype = {
         }else if (typeof this.m[field] != 'undefined'){
             p = this.m[field];               //check model
         }else{
-            return {'start' : -1, 'stop' : -1, 'color' : color};
+            return h
         }
         
         if (p.constructor === Array ){
             p = p[this.m.t];
         }
-        
+
+        var raw_seq = ""
+
+        // Build the highlight object from p        
         if (p.constructor === String){
-            var start = this.pos[clone.sequence.indexOf(p)]
-            var stop = this.pos[clone.sequence.indexOf(p)+p.length]
-            return {'start' : start, 'stop' : stop, 'color' : color};
+            h.start = this.pos[clone.sequence.indexOf(p)]
+            h.stop = this.pos[clone.sequence.indexOf(p)+p.length]
         }else if (p.constructor === Object & typeof p.start != 'undefined'){
-            return {'start' : this.pos[p.start], 'stop' : this.pos[p.stop], 'color' : color};
-        }else{
-            return {'start' : -1, 'stop' : -1, 'color' : color};
+            h.start = this.pos[p.start]
+            h.stop = this.pos[p.stop]
+
+            if (typeof p.seq != 'undefined') {
+                raw_seq = p.seq
+            }
         }
-        
+
+        // Build the (possibly invisible) sequence
+        if (raw_seq == "") {
+            h.css = "highlight_border"
+            for (var k=0; k<(h.stop - h.start); k++) h.seq += "&nbsp;"
+        } else {
+            h.css = "highlight_seq"
+            var j = 0
+            for (var k=h.start; j<raw_seq.length; k++) { // End condition on j, not on k
+                if (this.seq[k] != '-') h.seq += raw_seq[j++] ; else h.seq += "&nbsp;"
+            }
+
+        }
+
+        return h
     }
 }
 

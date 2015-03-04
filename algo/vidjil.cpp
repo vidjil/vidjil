@@ -154,7 +154,7 @@ void usage(char *progname)
        << "  -D <file>     D germline multi-fasta file (and resets -m, -M and -w options), will segment into V(D)J components" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
-       << "  -g <path>     multiple germlines (in the path <path>, takes TRA, TRB, TRG, TRD, IGH and IGL and sets window prediction parameters)" << endl
+       << "  -g <path>     multiple germlines (in the path <path>, takes TRA, TRB, TRG, TRD, IGH, IGK and IGL and sets window prediction parameters)" << endl
        << "  -i            multiple germlines, also incomplete rearrangements (must be used with -g)" << endl
        << "  -I            ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)" << endl
        << endl
@@ -187,7 +187,8 @@ void usage(char *progname)
        << "Limits to further analyze some clones" << endl
        << "  -y <nb>       maximal number of clones computed with a representative ('" << NO_LIMIT << "': no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
        << "  -z <nb>       maximal number of clones to be segmented ('" << NO_LIMIT << "': no limit, do not use) (default: " << DEFAULT_MAX_CLONES << ")" << endl
-       << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets" << endl
+       << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets (for example -AX 20)" << endl
+       << "  -X <nb>       maximal number of reads to process ('" << NO_LIMIT << "': no limit, default)" << endl
        << endl
 
        << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
@@ -207,7 +208,7 @@ void usage(char *progname)
        << "Detailed output per read (not recommended, large files)" << endl
        << "  -U            output segmented reads (in " << SEGMENTED_FILENAME << " file)" << endl
        << "  -u            output unsegmented reads (in " << UNSEGMENTED_FILENAME << " file)" << endl
-       << "  -K            output detailed k-mer affectation on all reads (in " << AFFECTS_FILENAME << " file) (use only for debug)" << endl
+       << "  -K            output detailed k-mer affectation on all reads (in " << AFFECTS_FILENAME << " file) (use only for debug, for example -KX 100)" << endl
        << endl
  
        << "Output" << endl
@@ -284,6 +285,8 @@ int main (int argc, char **argv)
   float ratio_reads_clone = DEFAULT_RATIO_READS_CLONE;
   // int average_deletion = 4;     // Average number of deletion in V or J
 
+  int max_reads_processed = -1;
+
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
   unsigned int max_auditionned = DEFAULT_MAX_AUDITIONED;
 
@@ -313,7 +316,8 @@ int main (int argc, char **argv)
 
   //$$ options: getopt
 
-  while ((c = getopt(argc, argv, "AhaiIg:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
+
+  while ((c = getopt(argc, argv, "AX:haiIg:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
 
     switch (c)
       {
@@ -471,6 +475,15 @@ int main (int argc, char **argv)
 	max_representatives = -1 ;
 	max_clones = -1 ;
 	break ;
+
+      case 'X':
+        if (!strcmp(NO_LIMIT, optarg))
+          {
+            max_reads_processed = -1;
+            break;
+          }
+        max_reads_processed = atoi(optarg);
+        break;
 
       case 'l':
 	windows_labels_file = optarg; 
@@ -880,8 +893,7 @@ int main (int argc, char **argv)
       we.setAffectsOutput(out_affects);
     }
 
-
-    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels);
+    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels, max_reads_processed);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 

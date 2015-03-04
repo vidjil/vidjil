@@ -634,11 +634,14 @@ line {
 .J {
   color: #009b95;
 }
-.highlight2{
-    border-bottom: solid;
+
+.highlight_border, .highlight_seq {
     display: inline-flex;
     height: 1em;
     position: relative;
+}
+.highlight_border {
+    border-bottom: solid;
     margin: -1px;
     border-width: 4px;
     -khtml-user-select: none;
@@ -649,6 +652,15 @@ line {
     pointer-events: none;
     opacity: 0.3;
     bottom: 1px;
+}
+.highlight_seq {
+  top: .9em;
+  padding-bottom: 1px;
+  opacity: 0.6;
+
+  font-size: 70%;
+  letter-spacing: .428em; /* (1-.7) / .7 */
+  left: .214em;
 }
 .highlight{
     display: inline-block;

@@ -147,7 +147,7 @@ class OnlineFasta {
    * non-whitespace character.
    * @return A non-empty string whose trailing whitespaces have been removed
    */
-  string getInterestingLine();
+  string getInterestingLine(int state = FASTX_UNINIT);
 
   /**
    * Called when we have an unexcepted EOF.
