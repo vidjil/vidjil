@@ -857,10 +857,13 @@ ScatterPlot.prototype = {
         
         if (typeof values == "undefined"){
             for (var i in this.m.clones) {
-                var v = fct(i);
-                if (typeof v != "undefined"){
-                    if (v<min || typeof min == "undefined") min = v;
-                    if (v>max || typeof max == "undefined") max = v;
+                var clone = this.m.clone(i)
+                if (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.getSystem() ) ){
+                    var v = fct(i);
+                    if (typeof v != "undefined"){
+                        if (v<min || typeof min == "undefined") min = v;
+                        if (v>max || typeof max == "undefined") max = v;
+                    }
                 }
             }
             for (var i=min; i<=max; i++) this.barTab[i]=[];
@@ -873,11 +876,14 @@ ScatterPlot.prototype = {
         this.barTab["?"]=[];
         
         for (var i in this.m.clones) {
-            var v = fct(i);
-            if (typeof v == "undefined" || typeof this.barTab[v] == "undefined" ) {
-                this.barTab["?"].push(i);
-            }else{
-                this.barTab[v].push(i);
+            var clone = this.m.clone(i)
+            if (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.getSystem() ) ){
+                var v = fct(i);
+                if (typeof v == "undefined" || typeof this.barTab[v] == "undefined" ) {
+                    this.barTab["?"].push(i);
+                }else{
+                    this.barTab[v].push(i);
+                }
             }
         }
         
@@ -926,6 +932,14 @@ ScatterPlot.prototype = {
         var tab_length = Object.keys(this.barTab).length;
         var width = 0.8 / tab_length;
         
+        
+        //reset (TODO improve default position )
+        for (var i in this.nodes) {
+            this.nodes[i].bar_y = 0.5;
+            this.nodes[i].bar_x = 1;
+            this.nodes[i].bar_h = 0;
+            this.nodes[i].bar_w = 0;
+        }
         
         k=0;
         for (var i in this.barTab) {
