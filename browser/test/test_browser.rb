@@ -139,19 +139,18 @@ class Browser < MiniTest::Test
     assert (clone_name.text == 'TRBV29*01 -1/0/-0 TRBD1*01 -2/0/-5 TRBJ2-5*01'), " >> clone name is not corect"
     clone_name.double_click
 
-    $b.clone_name_editor.set 'toto'
+    $b.clone_name_editor.set 'renamed_click'
     $b.clone_name_saver.click
-    assert (clone_name.text == 'toto'), " >> clone name has not changed"
+    assert (clone_name.text == 'renamed_click'), " >> clone name has not changed"
   end
 
   def test_04_rename_clone_by_enter
-    clone_name = $b.clone_info('25')[:name]
-    assert (clone_name.text == 'toto'), " >> clone name is not correct"
+    clone_name = $b.clone_info('24')[:name]
     clone_name.double_click
 
-    $b.clone_name_editor.set 'other test'
+    $b.clone_name_editor.set 'renamed_return'
     $b.send_keys :return
-    assert (clone_name.text == 'other test'), " >> clone name has not changed"
+    assert (clone_name.text == 'renamed_return'), " >> clone name has not changed"
 
     #unselect
     $b.unselect
