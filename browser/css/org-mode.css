@@ -1,0 +1,94 @@
+
+/* .css for help page, generated from .org */
+
+/*
+@import url('../css/fonts/ubuntu/stylesheet.css');
+@import url('../css/fonts/ubuntu-mono/stylesheet.css');
+*/
+
+html {
+    height: 100%;
+    padding: 0px;
+    margin: 0px;
+    min-width: 1160px;
+    min-height: 250px
+}
+
+body {
+    font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
+    font-size: 13px;
+    height : 100%;
+    margin:0px;
+    
+    /* background: url('http://www.vidjil.org/fig/vidjil-multi.png') no-repeat bottom left fixed; */    
+}
+
+a {
+    color: #959;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Layout */
+
+#content {
+    position:relative;
+    left: 350px;
+    padding: 20px ;
+    max-width: 700px;
+    background: white;
+}
+
+#table-of-contents
+{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 300px ;
+    padding: 20px ;
+    background: white;    
+    border: 6px solid #ccc; /* Same than Vidjil vertical-separator */
+}
+
+#postamble
+{
+    bottom: 0;
+    right: 0;
+}
+
+/* Table of contents */
+
+#table-of-contents h2
+{
+    display: none;
+}
+    
+#text-table-of-contents > ul
+{
+    list-style-type: none;
+    padding: 0 ;
+}
+
+#text-table-of-contents > ul > li
+{
+    margin-top: 10px;
+}
+
+#table-of-contents a {
+    text-decoration: none;
+    color: inherit ;
+    font-weight: inherit ;
+}
+
+
+/* Main content */
+
+h2 {
+    margin-top: 30px;
+    background-color: #eee;
+    padding:5px;
+}

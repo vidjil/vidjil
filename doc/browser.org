@@ -1,5 +1,6 @@
 #+TITLE: Vidjil -- Browser Manual
 #+AUTHOR: The Vidjil team (Mathieu, Mikaël, Marc and Tatiana)
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes.
 [[http://en.wikipedia.org/wiki/V(D)J_recombination][V(D)J recombinations]] in lymphocytes are essential for immunological diversity.
