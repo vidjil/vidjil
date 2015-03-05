@@ -782,10 +782,10 @@ ScatterPlot.prototype = {
                 this.makeBarTab(function(cloneID){return m.clone(cloneID).getV(false)}, Object.keys(m.germlineV.gene))
                 break;
             case "allele_j" :
-                this.makeBarTab(function(cloneID){return m.clone(cloneID).getJ()}, Object.keys(m.germlineV.allele))
+                this.makeBarTab(function(cloneID){return m.clone(cloneID).getJ()}, Object.keys(m.germlineJ.allele))
                 break;
             case "gene_j" :
-                this.makeBarTab(function(cloneID){return m.clone(cloneID).getJ(false)}, Object.keys(m.germlineV.gene))
+                this.makeBarTab(function(cloneID){return m.clone(cloneID).getJ(false)}, Object.keys(m.germlineJ.gene))
                 break;
             case "Size" :
                 //this.makeBarTab(function(cloneID){return m.clone(cloneID).getSize()})
