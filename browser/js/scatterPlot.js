@@ -1236,21 +1236,23 @@ ScatterPlot.prototype = {
     },
 
     drawFrame: function() {
-        this.active_node
-            //attribution des nouvelles positions/tailles
-            .attr("cx", function(d) {
-                return (d3.mean(d.old_x) + self.marge_left);
-            })
-            .attr("cy", function(d) {
-                return (d3.mean(d.old_y) + self.marge_top);
-            })
-            .attr("r", function(d) {
-                return (d.r2);
-            })
-            .attr("title", function(d) {
-                return (self.m.clone(d.id)
-                    .getName());
-            })
+        if (this.mode != "bar"){
+            this.active_node
+                //attribution des nouvelles positions/tailles
+                .attr("cx", function(d) {
+                    return (d3.mean(d.old_x) + self.marge_left);
+                })
+                .attr("cy", function(d) {
+                    return (d3.mean(d.old_y) + self.marge_top);
+                })
+                .attr("r", function(d) {
+                    return (d.r2);
+                })
+                .attr("title", function(d) {
+                    return (self.m.clone(d.id)
+                        .getName());
+                })
+        }
     },
 
     /* Fonction permettant le déplacement des nodes en fonction de la méthode de répartition utilisée à l'instant T
