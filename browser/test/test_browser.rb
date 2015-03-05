@@ -212,7 +212,6 @@ class Browser < MiniTest::Test
     check_when_list_or_scatterplot_clicked
 
     $b.unselect
-    $b.clone_in_scatterplot('24').click  # TODO: to be removed when $b.unselect works
     assert ($b.clone_in_list('25').class_name == "list"), ">> Incorrect class name, clone is not unselected'"
   end
 
@@ -223,7 +222,6 @@ class Browser < MiniTest::Test
     check_when_list_or_scatterplot_clicked
 
     $b.unselect
-    $b.clone_in_scatterplot('24').click  # TODO: to be removed when $b.unselect works
     assert ($b.clone_in_list('25').class_name == "list"), ">> Incorrect class name, clone is not unselected'"
   end
 
