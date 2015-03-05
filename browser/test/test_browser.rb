@@ -257,10 +257,8 @@ class Browser < MiniTest::Test
         assert ($b.text.include? "Homsap TRBJ2-5*01"), ">> IMGT expected J not found"
       end
       
-      $b.window(:title => "Vidjil").use
+      $b.window(:title => "analysis-example").use
       
-    rescue
-      assert (false), "missing element to run test_08_imgt \n" 
     end
   end
   
@@ -279,10 +277,7 @@ class Browser < MiniTest::Test
         assert ($b.text.include? "TRBJ2-5*01"), ">> igblast: expected Js not found"
       end
       
-      $b.window(:title => "Vidjil").use
-      
-    rescue
-      assert (false), "missing element to run test_09_igBlast \n" 
+      $b.window(:title => "analysis-example").use
     end
   end
 
