@@ -46,6 +46,7 @@ class Browser < MiniTest::Test
 
     $b = VidjilBrowser.new :firefox
     #$b = VidjilBrowser.new :chrome
+    $b.window.resize_to(1500, 800)
     $b.goto index_path
 
     # check that the browser loaded correctly
