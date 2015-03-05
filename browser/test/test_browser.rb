@@ -141,7 +141,7 @@ class Browser < MiniTest::Test
 
     $b.clone_name_editor.set 'renamed_click'
     $b.clone_name_saver.click
-    assert (clone_name.text == 'renamed_click'), " >> clone name has not changed"
+    assert (clone_name.text == 'renamed_click'), " >> clone name (click) has not changed"
 
     $b.unselect
   end
@@ -152,7 +152,7 @@ class Browser < MiniTest::Test
 
     $b.clone_name_editor.set 'renamed_return'
     $b.send_keys :return
-    assert (clone_name.text == 'renamed_return'), " >> clone name has not changed"
+    assert (clone_name.text == 'renamed_return'), " >> clone name (return) has not changed"
 
     $b.unselect
   end
