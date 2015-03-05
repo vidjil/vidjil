@@ -148,8 +148,7 @@ class Browser < MiniTest::Test
   end
 
   def test_04_rename_clone_by_enter
-    return ### TODO
-
+    sleep 1
     clone_name = $b.clone_info('24')[:name]
     clone_name.double_click
 
