@@ -285,12 +285,12 @@ class Browser < MiniTest::Test
   def test_12_tag
     begin
       $b.clone_info('25')[:star].click
-      $b.tag_item('0')[:name].click
-      $b.unselect
+      name = $b.tag_item('0')[:name]
+      name.wait_until_present
+      name.click
+      name.wait_while_present
 
       assert ($b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' ) , ">> fail tag : clone color hasn't changed"
-    rescue
-      assert (false), "missing element to run test_12_tag \n" 
     end
   end
   
