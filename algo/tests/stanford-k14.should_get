@@ -2,7 +2,7 @@
 !LOG: stanford-k14.log
 
 $ Parses IGHV.fa germline
-f1: 99341 bp in 341 sequences
+1: 100437 bp in 344 sequences
 
 $ Parses IGHD.fa germline
 1: 1070 bp in  44 sequences
