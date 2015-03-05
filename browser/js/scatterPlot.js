@@ -1359,13 +1359,13 @@ ScatterPlot.prototype = {
     updateClones: function() {
         if (this.mode == "bar" && !this.reinit) {
             this.computeBarTab();
-        } else {
-            for (var i = 0; i < this.nodes.length; i++) {
-                this.updateClone(i);
-            }
-            this.force.start();
-            this.updateElemStyle();
         }
+        
+        for (var i = 0; i < this.nodes.length; i++) {
+            this.updateClone(i);
+        }
+        this.force.start();
+        this.updateElemStyle();
 
         if (this.m.germlineV.system != this.system) {
             this.system = this.m.germlineV.system
@@ -1892,22 +1892,26 @@ ScatterPlot.prototype = {
             this.endPlot();
             this.initBar();
         }
+        
+        var endbar = false;
         if (mode != "bar" && this.mode == "bar") {
-            this.endBar();
+            endbar = true;
         }
 
         this.splitX = splitX;
         this.splitY = splitY;
         this.mode = mode;
 
-        if (this.mode == "plot"){
-            this.updateAxis(this.axisX, this.splitX);
-            this.updateAxis(this.axisY, this.splitY);
-            this.update();
-        }
+        this.updateAxis(this.axisX, this.splitX);
+        this.updateAxis(this.axisY, this.splitY);
         
         if (this.mode == "bar"){
             this.updateBar();
+        }
+        
+        if (endbar){
+            this.endBar();
+        }else{
             this.update();
         }
     },
