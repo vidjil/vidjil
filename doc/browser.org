@@ -57,6 +57,9 @@ Otherwise, such =.vidjil= files can be obtained:
    - merge them (button “merge”) in a unique clone.
      Once several clones are merged, you can still visualize them by clicking on “+” in the list of clones.
 
+- Your analysis (clone tagging, renaming, merging) can be saved:
+    - either with “patients”/“save analysis” if you are connected to a patient database
+    - or with “file”/“export .analysis”
 
 * The elements of the Vidjil browser
 
