@@ -750,20 +750,19 @@ ScatterPlot.prototype = {
             .attr("id", function(d) {
                 return "bar" + d.id;
             })
-            .attr("width", function(d) { return d.r2 })
-            .attr("x", function(d) { return d.x+self.marge_left-(d.r2/2) })
-            .attr("height", function(d) { return d.r2 })
-            .attr("y", function(d) { return d.y+self.marge_top-(d.r2/2) })
-            //Retourne la couleur attribuée au SVG -via CSS:style.fill- pour chaque fenÃªtre dans le contenu de l'objet model
+            
+            //use clone circle position to init the clone bar position
+            .attr("width", function(d) { return d.r2*2 })
+            .attr("x", function(d) { return d.x+self.marge_left-(d.r2) })
+            .attr("height", function(d) { return d.r2*2 })
+            .attr("y", function(d) { return d.y+self.marge_top-(d.r2) })
             .style("fill", function(d) {
                 return (self.m.clone(d.id)
                     .getColor());
             })
-            //Affichage de la fenêtre contenue dans l'objet model, via son ID
             .on("mouseover", function(d) {
                 self.m.focusIn(d.id);
             })
-            //Sélection de la fenêtre contenue dans l'objet model, via son ID
             .on("click", function(d) {
                 self.m.select(d.id);
             })
