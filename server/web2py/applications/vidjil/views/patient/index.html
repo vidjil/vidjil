@@ -24,7 +24,7 @@
                   {{if not reverse and request.vars["sort"]=="info" :}} , 'reverse' : true {{pass}} })"> info </td>
                 <td class="column_100" onclick="db.call('patient/index', {'sort' :'configs', 'filter' : '{{=request.vars["filter"]}}'
                   {{if not reverse and request.vars["sort"]=="configs" :}} , 'reverse' : true {{pass}} })"> configs </td>
-{{if isAdmin:}} <td class="column_100" onclick="db.call('patient/index', {'sort' :'groups', 'filter' : '{{=request.vars["filter"]}}'
+{{if isAdmin:}} <td class="column_50" onclick="db.call('patient/index', {'sort' :'groups', 'filter' : '{{=request.vars["filter"]}}'
                   {{if not reverse and request.vars["sort"]=="groups" :}} , 'reverse' : true {{pass}} })"> groups </td> {{pass}}
 {{if isAdmin:}} <td class="column_100" onclick="db.call('patient/index', {'sort' :'creator', 'filter' : '{{=request.vars["filter"]}}'
                   {{if not reverse and request.vars["sort"]=="creator" :}} , 'reverse' : true {{pass}} })"> creator </td> {{pass}}
