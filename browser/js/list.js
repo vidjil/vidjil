@@ -213,7 +213,7 @@ List.prototype = {
         var a_sort = document.createElement('a')
         a_sort.className = "button"
         a_sort.appendChild(document.createTextNode("sort"))
-        a_sort.style.float = "right";
+        a_sort.style['float'] = "right";
         a_sort.style.marginRight = "75px";
         a_sort.onclick = function () {
             self.sortListBySize()
@@ -698,7 +698,7 @@ List.prototype = {
     clickList: function (e, cloneID) {
         if (!(e.ctrlKey || e.metaKey)) this.m.unselectAll()
         this.m.select(cloneID)
-    },
+    }
 
 } //fin prototype
 

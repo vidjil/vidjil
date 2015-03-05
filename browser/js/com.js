@@ -21,14 +21,13 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
-
 /* Com object display/store system message
  * 
  * */
 function Com(flash_id, log_id, popup_id, data_id) {
     this.flash_id = flash_id;
     this.log_id = log_id;
-    this.popup_id = popup_id
+    this.popup_id = popup_id;
     this.data_id = data_id;
     
     this.min_priority = 1; // minimum required to display message
@@ -104,10 +103,10 @@ Com.prototype = {
         
         if (priority >= this.min_priority){
             var div = jQuery('<div/>', {
-                text: str,
-                style: 'display : none',
-                class: 'flash_'+priority ,
-                click : function(){$(this).fadeOut(25, function() { $(this).remove();} );}
+                'text': str,
+                'style': 'display : none',
+                'class': 'flash_'+priority ,
+                'click': function(){$(this).fadeOut(25, function() { $(this).remove();} );}
             }).appendTo("#"+this.flash_id)
             .slideDown(200);
             
@@ -136,8 +135,8 @@ Com.prototype = {
             while (strDate.length < 8) strDate += " "
                 
             var div = jQuery('<div/>', {
-                text: strDate+" | "+str,
-                class: 'log_'+priority
+                'text': strDate+" | "+str,
+                'class': 'log_'+priority
             }).appendTo("#"+this.log_id)
             .slideDown(200, function(){
                 self.log_container.scrollTop = self.log_container.scrollHeight;
@@ -151,11 +150,11 @@ Com.prototype = {
     },
     
     openLog: function () {
-        $("#"+this.log_id).fadeToggle(200)
+        $("#"+this.log_id).fadeToggle(200);
     },
     
     closeLog: function () {
-        $("#"+this.log_id).fadeToggle(200)
+        $("#"+this.log_id).fadeToggle(200);
     },
     
     popupMsg: function (msg) {
@@ -184,6 +183,6 @@ Com.prototype = {
             .style.display = "none";
         document.getElementById(this.data_id).lastElementChild
             .innerHTML = "";
-    },
+    }
     
 }

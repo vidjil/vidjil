@@ -108,7 +108,7 @@ Clone.prototype = {
     
 
 
-    /* compute the clone size ( sum of all clones clustered )
+    /** compute the clone size ( sum of all clones clustered )
      * @t : tracking point (default value : current tracking point)
      * */
     getSize: function (time) {
@@ -510,7 +510,7 @@ Clone.prototype = {
     
     isFocus: function () {
         return this.hash == this.m.focus
-    },
+    }
     
 }
 

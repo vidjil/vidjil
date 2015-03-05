@@ -862,6 +862,6 @@ Builder.prototype = {
     
     build_db: function(){
         
-    },
+    }
 
 }

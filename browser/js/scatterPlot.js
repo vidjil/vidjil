@@ -44,7 +44,7 @@ function ScatterPlot(id, model) {
     */
     this.mouseZoom = 1; //Zoom (scroll wheel)
     this.reinit = false; //Boolean used to know the physics engine state (reinit/init)
-    this.continue = false; //Boolean used for the nodes movements
+    this['continue'] = false; //Boolean used for the nodes movements
     this.allEdges = new Array(); //Initial edges array
     this.edgeSaved = new Array(); //Edges array saved for the Edit Distance visualization
     this.edge = new Array(); //Edges array given to the engine
@@ -2132,15 +2132,19 @@ ScatterPlot.prototype = {
                     var y1 = parseInt(this.selector.attr("y"))
                     var y2 = y1 + parseInt(this.selector.attr("height"))
                     
-                    if (this.mode != "bar"){
-                        for (var i = 0; i < this.nodes.length; i++) {
-
-                            var node_x = this.nodes[i].x + this.marge_left
-                            var node_y = this.nodes[i].y + this.marge_top
-                            var clone = this.m.clone(i)
-                            if (clone.isActive() && (clone.getSize() || clone.getSequenceSize()) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
-                                nodes_selected.push(i);
+                    
+                    for (var i = 0; i < this.nodes.length; i++) {
+                        var node = this.nodes[i]
+                        var clone = this.m.clone(i)
+                        if (this.mode != "bar"){
+                            var node_x = node.x + this.marge_left
+                            var node_y = node.y + this.marge_top
+                        }else{
+                            //TODO bar multi-selector
                         }
+                        
+                        if (clone.isActive() && (clone.getSize() || clone.getSequenceSize()) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
+                            nodes_selected.push(i);
                     }
 
                     this.selector
@@ -2179,6 +2183,6 @@ ScatterPlot.prototype = {
             window.getSelection()
                 .removeAllRanges();
         }
-    },
+    }
 
 }

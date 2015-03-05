@@ -108,11 +108,11 @@ Report.prototype = {
     //add a new container to the html report 
     container : function(title) {
         var container = $('<div/>', {
-            class: 'container'
+            'class': 'container'
         }).appendTo(this.w.document.body);
         
         $('<h3/>', {
-            text: title
+            'text': title
         }).appendTo(container);
         
         return container
@@ -120,7 +120,7 @@ Report.prototype = {
     
     info : function() {
         var info = this.container("Report info")
-        var left = $('<div/>', {class: 'flex'}).appendTo(info);
+        var left = $('<div/>', {'class': 'flex'}).appendTo(info);
         
         var date = new Date;
         var report_timestamp = date.getFullYear() + "-" + (date.getMonth()+1) + "-" + date.getDate() 
@@ -132,54 +132,54 @@ Report.prototype = {
             analysis_timestamp = report_timestamp + " (not saved)"
         
         var content = [
-            {label: "Filename:" , value : m.dataFileName },
-            {label: "Report date:"  , value : report_timestamp},
-            {label: "Updated on:" , value : analysis_timestamp},
-            {label: "Software used:" , value : m.getSoftVersion()},
-            {label: "Analysis date:" , value : m.timestamp[0].split(" ")[0] }
+            {'label': "Filename:" , 'value' : m.dataFileName },
+            {'label': "Report date:"  , 'value' : report_timestamp},
+            {'label': "Updated on:" , 'value' : analysis_timestamp},
+            {'label': "Software used:" , 'value' : m.getSoftVersion()},
+            {'label': "Analysis date:" , 'value' : m.timestamp[0].split(" ")[0] }
         ]
         
-        var table = $('<table/>', {class: 'info-table float-left'}).appendTo(left);
+        var table = $('<table/>', {'class': 'info-table float-left'}).appendTo(left);
         for ( var key in content ){
             var v = content[key]
             var row = $('<tr/>').appendTo(table);
-            $('<td/>', {class: 'label', text: v.label}).appendTo(row);
-            $('<td/>', {text: v.value}).appendTo(row);
+            $('<td/>', {'class': 'label', 'text': v.label}).appendTo(row);
+            $('<td/>', {'text': v.value}).appendTo(row);
         }
         
-        var note = $('<div/>', {class: 'float-left'}).appendTo(left);
-        $('<div/>', {class: 'case label', text : "User note" }).appendTo(note);
-        $('<div/>', {class: 'note', text : m.info }).appendTo(note);
+        var note = $('<div/>', {'class': 'float-left'}).appendTo(left);
+        $('<div/>', {'class': 'case label', 'text' : "User note" }).appendTo(note);
+        $('<div/>', {'class': 'note', 'text' : m.info }).appendTo(note);
         
         return this
     },
     
     sampleInfo : function(time) {
         var sinfo = this.container("Sample info ("+m.getStrTime(time)+")")
-        var left = $('<div/>', {class: 'flex'}).appendTo(sinfo);
+        var left = $('<div/>', {'class': 'flex'}).appendTo(sinfo);
         
         var content = [
-            {label: "Filename:" , value : m.samples.original_names[time]},
-            {label: "Sample date:" , value : m.getSampleTime(time)},
-            {label: "Software used:" , value : m.getSoftVersionTime(time)},
-            {label: "Parameters:" , value : m.getCommandTime(time)},
-            {label: "Analysis date:" , value : m.getTimestampTime(time)}
+            {'label': "Filename:" , value : m.samples.original_names[time]},
+            {'label': "Sample date:" , value : m.getSampleTime(time)},
+            {'label': "Software used:" , value : m.getSoftVersionTime(time)},
+            {'label': "Parameters:" , value : m.getCommandTime(time)},
+            {'label': "Analysis date:" , value : m.getTimestampTime(time)}
         ]
         
-        var table = $('<table/>', {class: 'info-table float-left'}).appendTo(left);
+        var table = $('<table/>', {'class': 'info-table float-left'}).appendTo(left);
         for ( var key in content ){
             var v = content[key]
             var row = $('<tr/>').appendTo(table);
-            $('<td/>', {class: 'label', text: v.label}).appendTo(row);
-            $('<td/>', {text: v.value}).appendTo(row);
+            $('<td/>', {'class': 'label', 'text': v.label}).appendTo(row);
+            $('<td/>', {'text': v.value}).appendTo(row);
         }
         
-        var note = $('<div/>', {class: 'float-left'}).appendTo(left);
-        $('<div/>', {class: 'case label', text : "User note" }).appendTo(note);
+        var note = $('<div/>', {'class': 'float-left'}).appendTo(left);
+        $('<div/>', {'class': 'case label', 'text': "User note" }).appendTo(note);
         
         var info = "..."
         if (typeof m.samples.info != "undefined") info = m.samples.info[time]
-        $('<div/>', {class: 'note', text : info }).appendTo(note);
+        $('<div/>', {'class': 'note', 'text': info }).appendTo(note);
         
         return this
         
@@ -304,22 +304,22 @@ Report.prototype = {
         if (typeof time == "undefined") time = -1
         var container = this.container('Reads distribution')
                 
-        var reads_stats = $('<div/>', {class: 'flex'}).appendTo(container);
+        var reads_stats = $('<div/>', {'class': 'flex'}).appendTo(container);
         
-        var head = $('<div/>', {class: 'float-left'}).appendTo(reads_stats);
-        $('<div/>', {class: 'case', text : ' '}).appendTo(head);
-        $('<div/>', {class: 'case', text : 'total'}).appendTo(head);
-        $('<div/>', {class: 'case', text : 'segmented'}).appendTo(head);
+        var head = $('<div/>', {'class': 'float-left'}).appendTo(reads_stats);
+        $('<div/>', {'class': 'case', 'text': ' '}).appendTo(head);
+        $('<div/>', {'class': 'case', 'text': 'total'}).appendTo(head);
+        $('<div/>', {'class': 'case', 'text': 'segmented'}).appendTo(head);
 
         if (m.system_selected.length < m.system_available.length) {
-            $('<div/>', {class: 'case', text : 'segmented (selected systems)'}).appendTo(head); 
+            $('<div/>', {'class': 'case', 'text': 'segmented (selected systems)'}).appendTo(head); 
         }
         
         if (m.system_available.length>1){
             for (var i=0; i<m.system_selected.length; i++){
                 var system = m.system_selected[i]
-                var system_label = $('<div/>', {class: 'case', text : system}).appendTo(head);
-                $('<span/>', {class: 'system_colorbox', style:'background-color:'+m.germlineList.getColor(system)}).appendTo(system_label);
+                var system_label = $('<div/>', {'class': 'case', 'text': system}).appendTo(head);
+                $('<span/>', {'class': 'system_colorbox', style:'background-color:'+m.germlineList.getColor(system)}).appendTo(system_label);
             }
         }
         
@@ -338,34 +338,34 @@ Report.prototype = {
     },
     
     readsStat2: function (time){
-        var box = $('<div/>', {class: 'float-left'})
-        $('<div/>', {class: 'case centered', text : m.getStrTime(time)}).appendTo(box);
-        $('<div/>', {class: 'case centered', text : m.toStringThousands(m.reads.total[time])}).appendTo(box);
+        var box = $('<div/>', {'class': 'float-left'})
+        $('<div/>', {'class': 'case centered', 'text': m.getStrTime(time)}).appendTo(box);
+        $('<div/>', {'class': 'case centered', 'text': m.toStringThousands(m.reads.total[time])}).appendTo(box);
         
         var segmented = ((m.reads.segmented_all[time]/m.reads.total[time])*100).toFixed(0) + "%"
-        var seg_box = $('<div/>', {class: 'case centered', text : segmented}).appendTo(box);
-        $('<div/>', {class: 'background1'}).appendTo(seg_box);
-        $('<div/>', {class: 'background2', style: 'width:'+segmented}).appendTo(seg_box);
+        var seg_box = $('<div/>', {'class': 'case centered', 'text': segmented}).appendTo(box);
+        $('<div/>', {'class': 'background1'}).appendTo(seg_box);
+        $('<div/>', {'class': 'background2', style: 'width:'+segmented}).appendTo(seg_box);
         
         if (m.system_selected.length < m.system_available.length) {
 
             var segmented = ((m.reads.segmented[time]/m.reads.total[time])*100).toFixed(0) + "%"
-            var seg_box = $('<div/>', {class: 'case centered', text : segmented}).appendTo(box);
-            $('<div/>', {class: 'background1'}).appendTo(seg_box);
-            $('<div/>', {class: 'background2', style: 'width:'+segmented}).appendTo(seg_box);
+            var seg_box = $('<div/>', {'class': 'case centered', 'text': segmented}).appendTo(box);
+            $('<div/>', {'class': 'background1'}).appendTo(seg_box);
+            $('<div/>', {'class': 'background2', style: 'width:'+segmented}).appendTo(seg_box);
         }
 
         if (m.system_available.length>1){
             var pie = $('<div/>').appendTo(box);
             
-            var pie_label = $('<div/>', {class: 'left'}).appendTo(pie);
+            var pie_label = $('<div/>', {'class': 'left'}).appendTo(pie);
             for (var j=0; j<m.system_selected.length; j++){
                 var system = m.system_selected[j]
                 var value = ((m.systemSize(system,time))*100).toFixed(0) + "%"
-                $('<div/>', {class: 'case', text : value}).appendTo(pie_label);
+                $('<div/>', {'class': 'case', 'text': value}).appendTo(pie_label);
             }
             
-            var pie_chart = $('<div/>', {class: 'left'}).appendTo(pie)
+            var pie_chart = $('<div/>', {'class': 'left'}).appendTo(pie)
             var p = this.systemPie(time)
             p.setAttribute('style','margin:5px')
             pie_chart.append(p)
@@ -439,15 +439,15 @@ Report.prototype = {
         if (typeof time == "undefined") time = -1
         var color = tagColor[m.clone(cloneID).getTag()]
         var system = m.clone(cloneID).germline
-        var clone = $('<div/>', {class: 'clone'})
+        var clone = $('<div/>', {'class': 'clone'})
         
         graph.resize(791,300)
         graph.draw(0)
         
-        var head = $('<span/>', {class: 'clone_head'}).appendTo(clone);
+        var head = $('<span/>', {'class': 'clone_head'}).appendTo(clone);
         //clone svg path icon
         if (time == -1){
-            var icon = $('<span/>', {class: 'icon'}).appendTo(head);
+            var icon = $('<span/>', {'class': 'icon'}).appendTo(head);
             var svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
             var polyline = document.getElementById("polyline" + cloneID).cloneNode(true)
             polyline.setAttribute("stroke", color);
@@ -460,34 +460,34 @@ Report.prototype = {
         }
         
         //clone label
-        $('<span/>', {text: ">"+m.clone(cloneID).getCode()+'\u00a0', class: 'clone_name', style : 'color:'+color}).appendTo(head);
+        $('<span/>', {'text': ">"+m.clone(cloneID).getCode()+'\u00a0', 'class': 'clone_name', style : 'color:'+color}).appendTo(head);
         if (typeof m.clone(cloneID).c_name != "undefined"){
-            $('<span/>', {text: m.clone(cloneID).c_name+'\u00a0', class: 'clone_name', style : 'color:'+color}).appendTo(head);
+            $('<span/>', {'text': m.clone(cloneID).c_name+'\u00a0', 'class': 'clone_name', style : 'color:'+color}).appendTo(head);
         }
         
         //clone reads stats
         if (time == -1){
-            var reads_stats = $('<span/>', {class: 'clone_table'}).appendTo(clone);
+            var reads_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
             for (var i=0; i<m.samples.order.length; i++){
                 var t = m.samples.order[i]
-                $('<span/>', {text : m.clone(cloneID).getStrSize(t)+'\u00a0', class: 'clone_value'}).appendTo(reads_stats);
+                $('<span/>', {'text': m.clone(cloneID).getStrSize(t)+'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
             }
             if (m.system_available.length>1){
-                var reads_system_stats = $('<span/>', {class: 'clone_table'}).appendTo(clone);
+                var reads_system_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
                 for (var i=0; i<m.samples.order.length; i++){
                     var t = m.samples.order[i]
-                    $('<span/>', {text : m.clone(cloneID).getStrSystemSize(t)+'\u00a0', class: 'clone_value'}).appendTo(reads_system_stats);
+                    $('<span/>', {'text': m.clone(cloneID).getStrSystemSize(t)+'\u00a0', 'class': 'clone_value'}).appendTo(reads_system_stats);
                 }
             }
         }else{
             if (m.system_available.length>1){
-                $('<span/>', {text : '('+m.clone(cloneID).getStrSystemSize(time)+' of '+system+')\u00a0', class: 'float-right'}).appendTo(head);
+                $('<span/>', {'text': '('+m.clone(cloneID).getStrSystemSize(time)+' of '+system+')\u00a0', 'class': 'float-right'}).appendTo(head);
             }
-            $('<span/>', {text : m.clone(cloneID).getStrSize(time)+'\u00a0', class: 'float-right'}).appendTo(head);
+            $('<span/>', {'text': m.clone(cloneID).getStrSize(time)+'\u00a0', 'class': 'float-right'}).appendTo(head);
         }
         
         //colorized clone sequence
-        var sequence = $('<div/>', {class: 'sequence'}).appendTo(clone);
+        var sequence = $('<div/>', {'class': 'sequence'}).appendTo(clone);
         if (typeof m.clone(cloneID).seg != 'undefined'){
             var seg = m.clone(cloneID).seg
             var seq = m.clone(cloneID).getSequence()
@@ -495,23 +495,23 @@ Report.prototype = {
             var seqN = seq.substring(seg['5end'] + 1, seg['3start'])
             var seqJ = seq.substring(seg['3start'])
 
-            $('<span/>', {class: 'v_gene', text: seqV}).appendTo(sequence);
+            $('<span/>', {'class': 'v_gene', 'text': seqV}).appendTo(sequence);
             if (m.clone(cloneID).getD() != "undefined D"){
                 var seqN1 = seq.substring(seg['5end'] + 1, seg['4start'])
                 var seqD = seq.substring(seg['4start'] , seg['4end'] + 1)
                 var seqN2 = seq.substring(seg['4end'] + 1, seg['3start'])
-                $('<span/>', {class: 'n_gene', text: seqN1}).appendTo(sequence);
-                $('<span/>', {class: 'd_gene', text: seqD}).appendTo(sequence);
-                $('<span/>', {class: 'n_gene', text: seqN2}).appendTo(sequence);
+                $('<span/>', {'class': 'n_gene', 'text': seqN1}).appendTo(sequence);
+                $('<span/>', {'class': 'd_gene', 'text': seqD}).appendTo(sequence);
+                $('<span/>', {'class': 'n_gene', 'text': seqN2}).appendTo(sequence);
             }else{
-                $('<span/>', {class: 'n_gene', text: seqN}).appendTo(sequence);
+                $('<span/>', {'class': 'n_gene', 'text': seqN}).appendTo(sequence);
             }
-            $('<span/>', {class: 'j_gene', text: seqJ}).appendTo(sequence);
+            $('<span/>', {'class': 'j_gene', 'text': seqJ}).appendTo(sequence);
         }
         else if (m.clone(cloneID).getSequence() != "0") {
-            $('<span/>', {class: 'unseg_gene', text: m.clone(cloneID).getSequence()}).appendTo(sequence);
+            $('<span/>', {'class': 'unseg_gene', 'text': m.clone(cloneID).getSequence()}).appendTo(sequence);
         } else {
-            $('<span/>', {text: 'segment fail'}).appendTo(sequence);
+            $('<span/>', {'text': 'segment fail'}).appendTo(sequence);
         }
         
         return clone

@@ -240,9 +240,9 @@ Graph.prototype = {
         for (var i=0; i<this.m.samples.number; i++){
             if ( this.m.samples.order.indexOf(i) == -1){
                 $("<div/>", {
-                    class: "graph_listElem",
-                    text: this.m.getStrTime(i),
-                    time: i,
+                    'class': "graph_listElem",
+                    'text': this.m.getStrTime(i),
+                    'time': i
                 }).appendTo("#" + this.id + "_list");
             }
         }
@@ -895,15 +895,15 @@ Graph.prototype = {
 
             d.type = "axis_v";
             d.text = time_name;
-            d.class = "graph_time"
-            if ( i == this.m.t ) d.class = "graph_time2"
+            d['class'] = "graph_time"
+            if ( i == this.m.t ) d['class'] = "graph_time2"
 
             // Warns when there are very few segmented reads 
             var percent = (this.m.reads.segmented[i] / this.m.reads.total[i]) * 100;
             if (percent < 50)
-                d.class += " warning" ;
+                d['class'] += " warning" ;
             if (percent < 10)
-                d.class += " alert" ;
+                d['class'] += " alert" ;
 
             d.orientation = "vert";
             if (this.drag_on && i == this.dragged_time_point) {
@@ -916,7 +916,7 @@ Graph.prototype = {
                     d.pos = 1.05;
                     d.text = "";
                     d.type = "axis_v_hidden";
-                    d.class = "graph_text"
+                    d['class'] = "graph_text"
                 }else{
                     d.pos = this.graph_col[t];
                 }
@@ -966,7 +966,7 @@ Graph.prototype = {
                 var d = {};
                 d.type = "axis_h";
                 d.text = this.m.formatSize(height, false)
-                d.class = "graph_text";
+                d['class'] = "graph_text";
                 d.orientation = "hori";
                 d.pos = 1 - this.scale_x(height * this.m.precision);
                 if (d.pos>=-0.1) this.data_axis.push(d);
@@ -1035,7 +1035,7 @@ Graph.prototype = {
 
                 var d = {};
                 d.type = "axis_h2";
-                d.class = "graph_text2"
+                d['class'] = "graph_text2"
                 d.text = height
                 d.orientation = "hori";
                 d.pos = this.scale_data(height);
@@ -1062,7 +1062,7 @@ Graph.prototype = {
             this.mobil = {};
             this.mobil.type = "axis_m";
             this.mobil.text = "";
-            this.mobil.class = "graph_text";
+            this.mobil['class'] = "graph_text";
             this.mobil.orientation = "vert";
             this.mobil.pos = this.graph_col[this.m.samples.order.indexOf(this.m.t)];
             this.data_axis.push(this.mobil)
@@ -1153,7 +1153,7 @@ Graph.prototype = {
                 else return Math.floor(self.resizeW * d.pos + self.marge4);
             })
             .attr("class", function (d) {
-                return d.class
+                return d['class']
             });
 
         this.text_container.selectAll("text")
@@ -1308,7 +1308,7 @@ Graph.prototype = {
             })
             
         return this
-    },
+    }
 
 
 } //fin Graph
@@ -1379,7 +1379,7 @@ Stack.prototype = {
             this.max[this.m.clones.length-1][j] = this.sum[j]
         }
         
-    },
+    }
 
 }
 
