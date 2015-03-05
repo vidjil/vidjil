@@ -142,6 +142,8 @@ class Browser < MiniTest::Test
     $b.clone_name_editor.set 'renamed_click'
     $b.clone_name_saver.click
     assert (clone_name.text == 'renamed_click'), " >> clone name has not changed"
+
+    $b.unselect
   end
 
   def test_04_rename_clone_by_enter
@@ -152,7 +154,6 @@ class Browser < MiniTest::Test
     $b.send_keys :return
     assert (clone_name.text == 'renamed_return'), " >> clone name has not changed"
 
-    #unselect
     $b.unselect
   end
 
@@ -211,8 +212,8 @@ class Browser < MiniTest::Test
 
     check_when_list_or_scatterplot_clicked
 
-    #unselect
     $b.unselect
+    $b.clone_in_scatterplot('24').click  # TODO: to be removed when $b.unselect works
     assert ($b.clone_in_list('25').class_name == "list"), ">> Incorrect class name, clone is not unselected'"
   end
 
@@ -222,8 +223,8 @@ class Browser < MiniTest::Test
 
     check_when_list_or_scatterplot_clicked
 
-    #unselect
     $b.unselect
+    $b.clone_in_scatterplot('24').click  # TODO: to be removed when $b.unselect works
     assert ($b.clone_in_list('25').class_name == "list"), ">> Incorrect class name, clone is not unselected'"
   end
 
@@ -238,6 +239,8 @@ class Browser < MiniTest::Test
     $b.menu_settings.click 
     $b.radio(:id => 'reset_norm').click
     assert ( $b.clone_info('25')[:size].text == '0.130%' ) , ">> fail normalize off : wrong clone size "
+
+    $b.unselect
   end
 
   def test_10_imgt
