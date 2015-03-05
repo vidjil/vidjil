@@ -1,7 +1,12 @@
 #+TITLE: Vidjil -- Browser Manual
-#+AUTHOR: The Vidjil team (Mathieu, Mikaël and Marc)
+#+AUTHOR: The Vidjil team (Mathieu, Mikaël, Marc and Tatiana)
 
-This is the help of the Vidjil browser : [[http://rbx.vidjil.org/browser/]].
+Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes.
+[[http://en.wikipedia.org/wiki/V(D)J_recombination][V(D)J recombinations]] in lymphocytes are essential for immunological diversity.
+They are also useful markers of pathologies, and in leukemia, are used to quantify the minimal residual disease during patient follow-up.
+High-throughput sequencing (NGS/HTS) now enables the deep sequencing of a lymphoid population with dedicated [[http://omictools.com/rep-seq-c424-p1.html][Rep-Seq]] methods and software.
+
+This is the help of the [[http://rbx.vidjil.org/browser/][Vidjil browser]].
 Further help can always be asked to [[mailto:contact@vidjil.org][contact@vidjil.org]]. We can also arrange phone or Skype meeting.
 
 The Vidjil team (Mathieu, Mikaël, Marc and Tatiana)
