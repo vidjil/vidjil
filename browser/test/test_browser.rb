@@ -300,33 +300,40 @@ class Browser < MiniTest::Test
 
   def test_14_edit_tag
     begin
-      tagSelector = $b.tag_selector
-      filterMenu = $b.menu_filter
-      
+      ## rename Tag 0
       $b.clone_info('25')[:star].click
+
       edit = $b.tag_item('0')[:edit]
       edit.wait_until_present
       edit.click
-      $b.tag_selector_edit_name.set 'test_tag'
+      $b.tag_selector_edit_name.set 'renamed_click'
       $b.tag_selector_name_validator.click
 
-      $b.clone_info('25')[:star].click
+      $b.tag_selector_close.click
+      $b.tag_selector.wait_while_present
+
+      ## rename Tag 1 (on another clone)
+      $b.clone_info('24')[:star].click
+
+      edit = $b.tag_item('1')[:edit]
       edit.wait_until_present
       edit.click
-      edit = $b.tag_item('2')[:edit].click
-      $b.tag_selector_edit_name.set 'other_test'
+      $b.tag_selector_edit_name.set 'renamed_return'
       $b.send_keys :return
 
       $b.tag_selector_close.click
-      tagSelector.wait_while_present
-      
+      $b.tag_selector.wait_while_present
 
-      $b.clone_info('25')[:star].click
-      #assert ( tagSelector.text.include? 'test_tag') , "fail edit tag with mouse : tag name in tag selector hasn't changed"
-      assert ( tagSelector.text.include? 'other_test') , "fail edit tag with keyboard : tag name in tag selector hasn't changed"
-      
-      tagSelector.span(:class => 'closeButton').click
-      
+      ## check renames (on again another clone)
+      $b.clone_info('23')[:star].click
+      edit = $b.tag_item('1')[:edit]
+      edit.wait_until_present
+
+      assert ($b.tag_selector.text.include? 'renamed_click'),  "fail edit tag with mouse : tag name in tag selector hasn't changed"
+      assert ($b.tag_selector.text.include? 'renamed_return'), "fail edit tag with keyboard : tag name in tag selector hasn't changed"
+
+      $b.tag_selector_close.click
+      $b.tag_selector.wait_while_present
     end
   end
   
