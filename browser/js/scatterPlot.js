@@ -2027,8 +2027,6 @@ ScatterPlot.prototype = {
         this.active_selector = true;
     },
 
-    /* Function which allow to update the selector
-     * */
     updateSelector: function() {
         this.coordinates = d3.mouse(d3.select("#" + this.id + "_svg")
             .node());
@@ -2133,14 +2131,16 @@ ScatterPlot.prototype = {
                     var x2 = x1 + parseInt(this.selector.attr("width"))
                     var y1 = parseInt(this.selector.attr("y"))
                     var y2 = y1 + parseInt(this.selector.attr("height"))
+                    
+                    if (this.mode != "bar"){
+                        for (var i = 0; i < this.nodes.length; i++) {
 
-                    for (var i = 0; i < this.nodes.length; i++) {
-
-                        var node_x = this.nodes[i].x + this.marge_left
-                        var node_y = this.nodes[i].y + this.marge_top
-                        var clone = this.m.clone(i)
-                        if (clone.isActive() && (clone.getSize() || clone.getSequenceSize()) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
-                            nodes_selected.push(i);
+                            var node_x = this.nodes[i].x + this.marge_left
+                            var node_y = this.nodes[i].y + this.marge_top
+                            var clone = this.m.clone(i)
+                            if (clone.isActive() && (clone.getSize() || clone.getSequenceSize()) && node_x > x1 && node_x < x2 && node_y > y1 && node_y < y2)
+                                nodes_selected.push(i);
+                        }
                     }
 
                     this.selector
