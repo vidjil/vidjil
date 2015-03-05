@@ -175,8 +175,6 @@ class Browser < MiniTest::Test
       $b.clone_in_list('25').hover
 
       check_when_list_or_scatterplot_focused
-    rescue
-      assert (false), "missing element to run test"
     end
   end
 
@@ -187,8 +185,6 @@ class Browser < MiniTest::Test
       $b.clone_in_scatterplot('25').hover
 
       check_when_list_or_scatterplot_focused
-    rescue
-      assert (false), "missing element to run test\n"
     end
   end
 
