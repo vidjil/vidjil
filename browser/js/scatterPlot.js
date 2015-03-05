@@ -986,14 +986,30 @@ ScatterPlot.prototype = {
     /* Fonction permettant de désactiver la distribution "Bar"
      * */
     endBar: function() {
-        this.initBar();
         var self = this;
+        
         this.bar_container.selectAll("rect")
             .transition()
             .duration(500)
+            //use clone circle position to init the clone bar position
+            .attr("width", function(d) { return d.r2*2 })
+            .attr("x", function(d) { return d.x+self.marge_left-(d.r2) })
+            .attr("height", function(d) { return d.r2*2 })
+            .attr("y", function(d) { return d.y+self.marge_top-(d.r2) })
+        this.node
             .attr("class", function(p) {
                 return "circle_hidden";
             })
+        
+        setTimeout(function () {
+            self.bar_container.selectAll("rect")
+                .attr("class", function(p) {
+                    return "circle_hidden";
+            })
+            self.update()
+        },500)
+
+        
     },
 
     /* Fonction permettant de calculer la hauteur d'un 'bar' pour un clone donné (ID du clone)
