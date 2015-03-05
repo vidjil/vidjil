@@ -1130,6 +1130,9 @@ text.alert {
 .db_table .column_100 {
   width: 100px;
 }
+.db_table .column_50 {
+  width: 50px;
+}
 .db_table .column1 {
   width: 100px;
 }
