@@ -213,7 +213,7 @@ class Browser < MiniTest::Test
 
     #unselect
     $b.unselect
-    assert ( $b.clone_in_list('25').class_name == "list" )
+    assert ($b.clone_in_list('25').class_name == "list"), ">> Incorrect class name, clone is not unselected'"
   end
 
   def test_08_click_in_scatterplot
@@ -224,7 +224,7 @@ class Browser < MiniTest::Test
 
     #unselect
     $b.unselect
-    assert ( $b.clone_in_list('25').class_name == "list" )
+    assert ($b.clone_in_list('25').class_name == "list"), ">> Incorrect class name, clone is not unselected'"
   end
 
   def test_09_normalize
