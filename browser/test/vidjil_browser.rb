@@ -182,8 +182,7 @@ class VidjilBrowser < Watir::Browser
 
   # Click in the back so that we unselect everything
   def unselect
-    # TODO: is not working, 'Element is not clickable at point'
-    # element(:id => "visu_back" ).click
+    $b.execute_script('m.unselectAll()')
   end
   
   # Return the div of the list of clones
