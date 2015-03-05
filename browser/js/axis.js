@@ -126,7 +126,12 @@ Axis.prototype = {
             
         //clone position
         this.pos = function(cloneID) {
-            return self.sizeScale(self.m.clone(cloneID).getSize())
+            var size = self.m.clone(cloneID).getSize()
+            if (size !=0 ) {
+                return self.sizeScale(size);
+            }else{
+                return 1;
+            }
         }
         
         //labels
