@@ -217,8 +217,7 @@ Axis.prototype = {
         this.labels = [];
         var length = Object.keys(tab).length;
         
-        var step = 1;
-        if (length>50) step = 5
+        var step = 1 + Math.floor(length / 30)
         
         var i=1
         for (var e in tab){
