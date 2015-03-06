@@ -872,6 +872,10 @@ JsonList FineSegmenter::toJsonList(Germline *germline){
   JsonList result;
 
   //string str = getSequence().sequence;
+
+  // KmerMultiSegmenter kmseg(getSequence(), multigermline, 0);
+  // KmerSegmenter *kseg = kmseg.the_kseg ;
+  
   KmerSegmenter *kseg = new KmerSegmenter(getSequence(), germline);
   result.add("sequence", revcomp(sequence, reversed) );
 
