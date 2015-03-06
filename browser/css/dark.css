@@ -583,14 +583,14 @@ span .substitution {
   color: #fdf6e3;
 }
 .tagColorBox {
-  margin-right: 3px;
-  height: 16px;
-  width: 16px;
+  margin-right: 5px;
+  height: 14px;
+  width: 14px;
   display: inline-block;
   cursor: pointer;
   user-select: none;
-  margin-bottom: -4px;
-  margin-top: 2px;
+  margin-bottom: -3px;
+  margin-top: 3px;
 }
 #normalized_size {
   width: 80px;
