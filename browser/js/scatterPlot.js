@@ -1059,8 +1059,6 @@ ScatterPlot.prototype = {
      */
     changeMode : function (mode) {
         this.changeSplitMethod(this.splitX, this.splitY, mode);
-        $(".sp_menu_icon").removeClass("sp_selected_mode");
-        $("#"+this.id+"_"+this.mode).addClass("sp_selected_mode");
     },
     
 
@@ -1996,6 +1994,8 @@ ScatterPlot.prototype = {
             .selectedIndex = select_x
         document.getElementById("select_y")
             .selectedIndex = select_y
+        $(".sp_menu_icon").removeClass("sp_selected_mode");
+        $("#"+this.id+"_"+this.mode).addClass("sp_selected_mode");
 
         return this;
     },
