@@ -941,10 +941,10 @@ ScatterPlot.prototype = {
             this.nodes[i].bar_w = 0;
         }
         
-        k=0;
+        k=1 ;
         for (var i in this.barTab) {
             var y_pos = 0
-            var x_pos = ((k+0.1)/tab_length);
+            var x_pos = this.axisX.posBarLabel(k, tab_length)
             
             for (var j in this.barTab[i]){
                 var cloneID = this.barTab[i][j]
@@ -982,7 +982,7 @@ ScatterPlot.prototype = {
                 return "bar" + d.id;
             })
             .attr("width", function(d) { return d.bar_w*self.gridSizeW })
-            .attr("x", function(d) { return d.bar_x*self.gridSizeW + self.marge_left })
+            .attr("x", function(d) { return (d.bar_x - d.bar_w/2)*self.gridSizeW + self.marge_left })
             .attr("height", function(d) { return d.bar_h*self.gridSizeH })
             .attr("y", function(d) { return (1-d.bar_y)*self.gridSizeH + self.marge_top })
             .style("fill", function(d) { return (self.m.clone(d.id).getColor()) })
