@@ -298,7 +298,7 @@ There can be several causes leading to bad ratios:
 
   | =←= and =→=             | navigate between samples                            |
   | =Shift-←= and =Shift-→= | decrease or increase the number of displayed clones |
-  | numeric keypad, =0-9=   | switch between available preset modes               |
+  | numeric keypad, =0-9=   | switch between available plot presets               |
 
 
   | =a=: TRA        |                                    |

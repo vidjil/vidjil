@@ -176,6 +176,11 @@ class KmerAffectAnalyser: public AffectAnalyser {
   int last(const KmerAffect &affect) const ;
 
   string toString() const;
+
+  string toStringValues() const;
+
+  string toStringSigns() const;
+
 };
 
 /**

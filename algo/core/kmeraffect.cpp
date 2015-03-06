@@ -61,6 +61,18 @@ string toString(const affect_t &a) {
   result += string(1,affect_char(a));
   return result;
 }
+
+string toStringValues(const affect_t &a){
+  return string(1,affect_char(a));
+}
+
+string toStringSigns(const affect_t &a){
+  if((a == AFFECT_UNKNOWN) || (a == AFFECT_AMBIGUOUS))
+    return " ";
+  else
+    return (affect_strand(a)==1 ? "+" : "-");
+}
+
 ostream &operator<<(ostream &os, const affect_t &a) {
   os << toString(a);
   return os;
@@ -147,6 +159,15 @@ bool KmerAffect::isUnknown() const {
 string KmerAffect::toString() const {
   return ::toString(affect);
 }
+
+string KmerAffect::toStringValues() const {
+  return ::toStringValues(affect);
+}
+
+string KmerAffect::toStringSigns() const {
+  return ::toStringSigns(affect);
+}
+
 
 bool operator==(const KmerAffect &a1, const KmerAffect &a2) {
   return a1.affect == a2.affect;

@@ -42,6 +42,9 @@ bool operator<=(const affect_t &a1, const affect_t &a2);
 bool operator>=(const affect_t &a1, const affect_t &a2);
 bool operator!=(const affect_t &a1, const affect_t &a2);
 string toString(const affect_t &a);
+string toStringValues(const affect_t &a);
+string toStringSigns(const affect_t &a);
+
 ostream &operator<<(ostream &os, const affect_t &a);
 
 
@@ -133,6 +136,8 @@ public:
   bool isUnknown() const;
 
   string toString() const;
+string toStringValues()const;
+string toStringSigns() const;
 };
 
 
