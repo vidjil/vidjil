@@ -1023,6 +1023,9 @@ ScatterPlot.prototype = {
                 return "circle_hidden";
             })
         
+        this.axis_x_update(this.axisX.labels);
+        this.axis_y_update(this.axisY.labels);
+            
         setTimeout(function () {
             self.bar_container.selectAll("rect")
                 .attr("class", function(p) {
