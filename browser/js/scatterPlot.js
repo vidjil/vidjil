@@ -109,13 +109,17 @@ function ScatterPlot(id, model) {
         ["lengthCDR3", "CDR3 length"]
     ];
     
+    // Plot Presets
     this.preset = { 
         "V/J (genes)" : { "mode": "plot", "x" : "gene_v", "y": "gene_j"},
         "V/J (alleles)" : { "mode": "plot", "x" : "allele_v", "y": "allele_j"},
         "V/N length" : { "mode": "plot", "x" : "gene_v", "y": "n"},
-        "V/abundance" : { "mode": "plot", "x" : "gene_v", "y": "Size"},
-        "V distribution" : { "mode": "bar", "x" : "gene_v", "y": "bar"}
+        // "V/abundance" : { "mode": "plot", "x" : "gene_v", "y": "Size"},
+        "V distribution" :            { "mode": "bar", "x" : "gene_v",         "y": "gene_j"},
+        "Clone length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "gene_v"},
+        "N length distribution" :     { "mode": "bar", "x" : "n",              "y": "gene_v"}
     };
+    this.default_preset = 1
 
     //Menu with graph distrib' (see initMenu function)
     this.graph_menu = [
@@ -145,7 +149,11 @@ ScatterPlot.prototype = {
         this.initSVG();
         this.axisX.useGermline(this.m.germlineV, "V")
         this.axisY.useGermline(this.m.germlineJ, "J")
-        this.changeSplitMethod(this.splitX, this.splitY, "plot");
+
+        var select_preset = document.getElementById("select_preset")
+        select_preset.selectedIndex = this.default_preset
+        this.changePreset(select_preset);
+
         this.resize();
     },
 
@@ -930,7 +938,7 @@ ScatterPlot.prototype = {
     computeBarTab : function () {
         var bar_max = this.computeBarMax();
         var tab_length = Object.keys(this.barTab).length;
-        var width = 0.8 / tab_length;
+        var width = Math.min(0.08, 0.8 / tab_length);
         
         
         //reset (TODO improve default position )
@@ -941,10 +949,10 @@ ScatterPlot.prototype = {
             this.nodes[i].bar_w = 0;
         }
         
-        k=0;
+        k=1 ;
         for (var i in this.barTab) {
             var y_pos = 0
-            var x_pos = ((k+0.1)/tab_length);
+            var x_pos = this.axisX.posBarLabel(k, tab_length)
             
             for (var j in this.barTab[i]){
                 var cloneID = this.barTab[i][j]
@@ -982,7 +990,7 @@ ScatterPlot.prototype = {
                 return "bar" + d.id;
             })
             .attr("width", function(d) { return d.bar_w*self.gridSizeW })
-            .attr("x", function(d) { return d.bar_x*self.gridSizeW + self.marge_left })
+            .attr("x", function(d) { return (d.bar_x - d.bar_w/2)*self.gridSizeW + self.marge_left })
             .attr("height", function(d) { return d.bar_h*self.gridSizeH })
             .attr("y", function(d) { return (1-d.bar_y)*self.gridSizeH + self.marge_top })
             .style("fill", function(d) { return (self.m.clone(d.id).getColor()) })

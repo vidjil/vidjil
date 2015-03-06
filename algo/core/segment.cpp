@@ -870,8 +870,12 @@ void FineSegmenter::findCDR3(){
 
 JsonList FineSegmenter::toJsonList(Germline *germline){
   JsonList result;
-  
+
+  //string str = getSequence().sequence;
+  KmerSegmenter *kseg = new KmerSegmenter(getSequence(), germline);
   result.add("sequence", revcomp(sequence, reversed) );
+
+
   if (isSegmented()) {
     result.add("name", code_short);
     
@@ -897,7 +901,16 @@ JsonList FineSegmenter::toJsonList(Germline *germline){
     json_cdr->add("stop", CDR3end);
     seg.add("cdr3", *json_cdr);
       }
-    
+
+  
+    JsonList *json_affect;
+    json_affect=new JsonList();
+    json_affect->add("start", 0);
+    json_affect->add("stop", sequence.size()); /// longueur sequence
+    json_affect->add("seq", kseg->getKmerAffectAnalyser()->toString());
+    seg.add("affect", *json_affect);
+      
+
     result.add("seg", seg);
   }
   return result;
