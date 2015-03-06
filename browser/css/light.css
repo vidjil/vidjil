@@ -801,6 +801,7 @@ span.logo {
   width: 475px;
 }
 .menu-highlight {
+  display: none;
   position: relative;
   float: left;
   width: 250px;

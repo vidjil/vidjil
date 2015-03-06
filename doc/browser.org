@@ -71,12 +71,12 @@ Otherwise, such =.vidjil= files can be obtained:
 
 ** The info panel (upper left panel)
    - analysis :: name of the configuration file used for displaying the data
-   - locus :: germline used for analyzing the data. In case of multi-germline
-               data, you can select what germline should be displayed.
-   - point :: name of the current point (you can change the selected point by clicking on
+   - locus :: germline used for analyzing the data. In case of multi-locus
+               data, you can select what locus should be displayed.
+   - sample :: name of the current point (you can change the selected point by clicking on
               another point in the graph). The name can be edited (“edit”).
    - date :: when the run was performed (edit either with “...”, or with the database, on the patient tab)
-   - segmented :: number of reads where Vidjil found a CDR3, for that point.
+   - segmented :: number of reads where Vidjil found a CDR3, for that sample
                   See [[Number of segmented reads]] below.
    - total :: total number of reads for that point
 
@@ -90,8 +90,7 @@ Otherwise, such =.vidjil= files can be obtained:
 
 - The “i” button displays additional information on each clone.
 
-- The list can be sorted on V genes, J genes or concentrations. At the top of
-  the list you need to click respectively on “V sort”, “J sort” or “sort”.
+- The list can be sorted on V genes, J genes or clone abundance.
   The “+” and “-” allow respectively to un-merge or re-merge all clones that have
   already been merged.
 
@@ -112,13 +111,15 @@ The time graph is hidden with there is only one timepoint.
 - If your dataset contains sampling dates (for example in a MRD setup), you can switch between point keys and dates in “settings > point key”
 
 
-** The grid view
+** The plot view
 
-- The axes of the plot (by default “V gene” / “J gene”) can be changed.
+- The "plot" menu allow to change the (grid plot, bar plot) as well as the X and Y axes of these plot
+  Some presets are available.
 
-- Some presets are available in the “analysis” menu.
+- In the bar plot mode, the Y axis corresponds to the order of clones inside each bar.
 
 - The “focus“ button (bottom right) allows to further analyze a selection of clones.
+  To exit the focus mode, click on the “X” near the search box.
   
 To further analyze a set of clones sharing a same V and J, it is often useful
 to focus on the clones, then to display them ones according to either their “clone length”
@@ -297,12 +298,13 @@ There can be several causes leading to bad ratios:
 
   | =←= and =→=             | navigate between samples                            |
   | =Shift-←= and =Shift-→= | decrease or increase the number of displayed clones |
+  | numeric keypad, =0-9=   | switch between available preset modes               |
 
 
   | =a=: TRA        |                                    |
   | =b=: TRB        |                                    |
   | =g=: TRG        |                                    |
-  | =d=: TRD, TRD+  | Change the selected germline/locus |
+  | =d=: TRD, TRD+  | change the selected germline/locus |
   | =h=: IGH, IGH+  |                                    |
   | =l=: IGL        |                                    |
   | =k=: IGK, IGK+  |                                    |
