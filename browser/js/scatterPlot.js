@@ -930,7 +930,7 @@ ScatterPlot.prototype = {
     computeBarTab : function () {
         var bar_max = this.computeBarMax();
         var tab_length = Object.keys(this.barTab).length;
-        var width = 0.8 / tab_length;
+        var width = Math.min(0.08, 0.8 / tab_length);
         
         
         //reset (TODO improve default position )
