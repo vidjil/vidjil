@@ -911,7 +911,12 @@ Sequence.prototype = {
             h.css = "highlight_seq"
             var j = 0
             for (var k=h.start; j<raw_seq.length; k++) { // End condition on j, not on k
-                if (this.seq[k] != '-') h.seq += raw_seq[j++] ; else h.seq += "&nbsp;"
+                var c = "&nbsp";
+                if (this.seq[k] != '-') {
+                    var cc = raw_seq[j++]
+                    if ((cc != '_') && (cc != ' ')) c = cc ;
+                }
+                h.seq += c
             }
 
         }
