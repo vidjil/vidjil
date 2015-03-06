@@ -223,14 +223,16 @@ Axis.prototype = {
         var i=1
         for (var e in tab){
             if (i%step == 0 ){ 
-                var pos = (i-0.5)/length;
+                var pos = this.posBarLabel(i, length)
                 if (this.reverse) pos = 1 - pos; 
                 this.labels.push(this.label("line", pos, e));
             }
             i++;
         }
-        
-        
-    }
 
+    },
+
+    posBarLabel : function (i, length) {
+        return (i-0.5)/length ;
+    }
 }
