@@ -176,21 +176,7 @@ List.prototype = {
         a_unsplit.onclick = function () {
             self.m.split_all(false)
         }
-        /*
-        var a_sortV = document.createElement('a')
-        a_sortV.className = "button"
-        a_sortV.appendChild(document.createTextNode("V sort"))
-        a_sortV.onclick = function () {
-            self.sortListByV()
-        }
 
-        var a_sortJ = document.createElement('a')
-        a_sortJ.className = "button"
-        a_sortJ.appendChild(document.createTextNode("J sort"))
-        a_sortJ.onclick = function () {
-            self.sortListByJ()
-        }
-        */
         var filter_label = document.createElement('span')
         filter_label.appendChild(document.createTextNode("search"))
         
@@ -236,7 +222,6 @@ List.prototype = {
                     self.sortListByJ()
                     break;
             }
-            
         }
         
         var sort_option = document.createElement("option");
@@ -259,14 +244,10 @@ List.prototype = {
 
         div_list_menu.appendChild(a_split)
         div_list_menu.appendChild(a_unsplit)
-        /*
-        div_list_menu.appendChild(a_sortV)
-        div_list_menu.appendChild(a_sortJ)
-        */
+
         div_list_menu.appendChild(filter_label)
         div_list_menu.appendChild(filter_input)
         div_list_menu.appendChild(filter_reset)
-        //div_list_menu.appendChild(a_sort)
         div_list_menu.appendChild(sort_span)
         
         return div_list_menu
