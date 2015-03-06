@@ -628,7 +628,7 @@ ScatterPlot.prototype = {
         
         var element = document.createElement("option");
         element.setAttribute('value', "custom");
-        element.appendChild(document.createTextNode("custom"));
+        element.appendChild(document.createTextNode("–"));
         select_preset.appendChild(element);
         for (var i in this.preset) {
             var element = document.createElement("option");
@@ -637,11 +637,11 @@ ScatterPlot.prototype = {
             select_preset.appendChild(element);
         }
         
-        div_x.appendChild(document.createTextNode("axis x: "));
+        div_x.appendChild(document.createTextNode("x "));
         div_x.appendChild(select_x);
-        div_y.appendChild(document.createTextNode("axis y: "));
+        div_y.appendChild(document.createTextNode("y "));
         div_y.appendChild(select_y);
-        div_preset.appendChild(document.createTextNode("preset: "));
+        div_preset.appendChild(document.createTextNode("preset "));
         div_preset.appendChild(select_preset);
 
         
@@ -706,7 +706,7 @@ ScatterPlot.prototype = {
         content.appendChild(div_x);
         content.appendChild(div_y);
         //menu.appendChild(div_graph);
-        menu.appendChild(document.createTextNode("settings"));
+        menu.appendChild(document.createTextNode("plot"));
         menu.appendChild(content)
         anchor.appendChild(menu);
         divParent.appendChild(anchor);
