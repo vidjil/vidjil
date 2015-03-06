@@ -218,6 +218,44 @@ List.prototype = {
         a_sort.onclick = function () {
             self.sortListBySize()
         }
+        
+        var sort_span = document.createElement('span')
+        sort_span.className = "list_sort"
+        var sort = document.createElement('select');
+        sort.setAttribute('name', 'sort_list[]');
+        sort.className = "list_sort_select"
+        sort.onchange = function() {
+            switch (this.value) {
+                case "size" :
+                    self.sortListBySize();
+                    break;
+                case "V" :
+                    self.sortListByV()
+                    break;
+                case "J" :
+                    self.sortListByJ()
+                    break;
+            }
+            
+        }
+        
+        var sort_option = document.createElement("option");
+        sort_option.setAttribute('value', "size");
+        sort_option.appendChild(document.createTextNode("size"));
+        sort.appendChild(sort_option);
+        
+        var sort_option = document.createElement("option");
+        sort_option.setAttribute('value', "V");
+        sort_option.appendChild(document.createTextNode("V"));
+        sort.appendChild(sort_option);
+        
+        var sort_option = document.createElement("option");
+        sort_option.setAttribute('value', "J");
+        sort_option.appendChild(document.createTextNode("J"));
+        sort.appendChild(sort_option);
+        
+        sort_span.appendChild(document.createTextNode("sort by "));
+        sort_span.appendChild(sort);
 
         div_list_menu.appendChild(a_split)
         div_list_menu.appendChild(a_unsplit)
@@ -228,7 +266,8 @@ List.prototype = {
         div_list_menu.appendChild(filter_label)
         div_list_menu.appendChild(filter_input)
         div_list_menu.appendChild(filter_reset)
-        div_list_menu.appendChild(a_sort)
+        //div_list_menu.appendChild(a_sort)
+        div_list_menu.appendChild(sort_span)
         
         return div_list_menu
     },
@@ -639,16 +678,27 @@ List.prototype = {
                 .attr("id");
             var idB = $(b)
                 .attr("id");
-
+            
+            var cloneA = self.m.clone(idA)
+            var cloneB = self.m.clone(idB)
+            
+            //sort by system
+            var systemA = cloneA.getSystem()
+            var systemB = cloneB.getSystem()
+            if (systemA != systemB) return systemA.localeCompare(systemB);
+            
+            //sort by V
+            var vA = cloneA.getV(true)
+            var vB = cloneB.getV(true)
+            /*
             var oA = 2147483647
             var oB = 2147483647
-
-            var vA = self.m.clone(idA).getV(true)
-            if (vA != "undefined V") oA = this.m.germlineV.allele[vA].gene * 1000 + this.m.germlineV.allele[vA].rank
-            var vB = self.m.clone(idB).getV(true)
-            if (vB != "undefined V") oB = this.m.germlineV.allele[vB].gene * 1000 + this.m.germlineV.allele[vB].rank
-
+            if (vA != "undefined V" & typeof this.m.germlineV.allele[vA] != 'undefined') oA = this.m.germlineV.allele[vA].gene * 1000 + this.m.germlineV.allele[vA].rank
+            if (vB != "undefined V" & typeof this.m.germlineV.allele[vB] != 'undefined') oB = this.m.germlineV.allele[vB].gene * 1000 + this.m.germlineV.allele[vB].rank
             return oA > oB ? 1 : -1;
+            */
+            return vA.localeCompare(vB);
+            
         })
         $("#list_clones")
             .html(sort);
@@ -663,15 +713,26 @@ List.prototype = {
             var idB = $(b)
                 .attr("id");
 
+            var cloneA = self.m.clone(idA)
+            var cloneB = self.m.clone(idB)
+            
+            //sort by system
+            var systemA = cloneA.getSystem()
+            var systemB = cloneB.getSystem()
+            if (systemA != systemB) return systemA.localeCompare(systemB);
+            
+            //sort by J
+            var jA = cloneA.getJ(true)
+            var jB = cloneB.getJ(true)
+            /*
             var oA = 2147483647
             var oB = 2147483647
-
-            var jA = self.m.clone(idA).getJ(true)
-            if (vA != "undefined V") oA = this.m.germlineJ.allele[jA].gene * 1000 + this.m.germlineJ.allele[jA].rank
-            var jB = self.m.clone(idB).getJ(true)
-            if (vB != "undefined V") oB = this.m.germlineJ.allele[jB].gene * 1000 + this.m.germlineJ.allele[jB].rank
-
+            if (jA != "undefined V" & typeof this.m.germlineJ.allele[jA] != 'undefined') oA = this.m.germlineJ.allele[jA].gene * 1000 + this.m.germlineJ.allele[jA].rank
+            if (jB != "undefined V" & typeof this.m.germlineJ.allele[jB] != 'undefined') oB = this.m.germlineJ.allele[jB].gene * 1000 + this.m.germlineJ.allele[jB].rank
             return oA > oB ? 1 : -1;
+            */
+            return jA.localeCompare(jB);
+                
         })
         $("#list_clones")
             .html(sort);

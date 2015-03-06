@@ -471,6 +471,10 @@ line {
   font-family: monospace;
   font-weight: bold;
 }
+.list_sort {
+  margin-right: 30px;
+  float: right;
+}
 /*style segmenter element*/
 .list_select {
   width: 445px;
@@ -517,8 +521,8 @@ line {
 .J {
   color: #009b95;
 }
-
-.highlight_border, .highlight_seq {
+.highlight_border,
+.highlight_seq {
   display: inline-flex;
   height: 1em;
   position: relative;
@@ -540,12 +544,11 @@ line {
   top: .9em;
   padding-bottom: 1px;
   opacity: 0.6;
-
   font-size: 70%;
-  letter-spacing: .428em; /* (1-.7) / .7 */
+  letter-spacing: .428em;
+  /* (1-.7) / .7 */
   left: .214em;
 }
-
 .highlight {
   display: inline-block;
   width: 0px;
@@ -798,7 +801,6 @@ span.logo {
   width: 475px;
 }
 .menu-highlight {
-  display: none;
   position: relative;
   float: left;
   width: 250px;
