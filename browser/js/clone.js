@@ -218,7 +218,6 @@ Clone.prototype = {
         if (typeof (this.germline) != 'undefined') {
             return this.germline;
         }
-        return "";
     }, 
     
     

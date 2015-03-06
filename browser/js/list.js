@@ -665,7 +665,9 @@ List.prototype = {
             
             //sort by system
             var systemA = cloneA.getSystem()
+            if (typeof systemA == "undefined") systemA = "";
             var systemB = cloneB.getSystem()
+            if (typeof systemB == "undefined") systemB = "";
             if (systemA != systemB) return systemA.localeCompare(systemB);
             
             //sort by V
@@ -699,7 +701,9 @@ List.prototype = {
             
             //sort by system
             var systemA = cloneA.getSystem()
+            if (typeof systemA == "undefined") systemA = "";
             var systemB = cloneB.getSystem()
+            if (typeof systemB == "undefined") systemB = "";
             if (systemA != systemB) return systemA.localeCompare(systemB);
             
             //sort by J
