@@ -109,12 +109,15 @@ function ScatterPlot(id, model) {
         ["lengthCDR3", "CDR3 length"]
     ];
     
+    // Plot Presets
     this.preset = { 
         "V/J (genes)" : { "mode": "plot", "x" : "gene_v", "y": "gene_j"},
         "V/J (alleles)" : { "mode": "plot", "x" : "allele_v", "y": "allele_j"},
         "V/N length" : { "mode": "plot", "x" : "gene_v", "y": "n"},
-        "V/abundance" : { "mode": "plot", "x" : "gene_v", "y": "Size"},
-        "V distribution" : { "mode": "bar", "x" : "gene_v", "y": "bar"}
+        // "V/abundance" : { "mode": "plot", "x" : "gene_v", "y": "Size"},
+        "V distribution" :            { "mode": "bar", "x" : "gene_v",         "y": "gene_j"},
+        "Clone length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "gene_v"},
+        "N length distribution" :     { "mode": "bar", "x" : "n",              "y": "gene_v"}
     };
 
     //Menu with graph distrib' (see initMenu function)
