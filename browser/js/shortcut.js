@@ -92,6 +92,14 @@ Shortcut.prototype = {
                         if(e.shiftKey || e.metakey) db.reload()
                         break;
                     default:
+                        if ((key >= 96) && (key <= 105)) { // Numeric keypad, 0-9
+                            var select_preset = document.getElementById("select_preset")
+                            select_preset.selectedIndex = key - 95
+                            try {
+                                sp.changePreset(select_preset)
+                            }
+                            catch (err) { } // There can be an error if the preset does not exist
+                        }
                 }
             }
             
