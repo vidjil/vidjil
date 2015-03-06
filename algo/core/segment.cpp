@@ -921,6 +921,8 @@ JsonList FineSegmenter::toJsonList(Germline *germline){
     seg.add("affectSigns", *json_affectSigns);
 
     result.add("seg", seg);
+
+    delete kseg ;
   }
   return result;
 }
