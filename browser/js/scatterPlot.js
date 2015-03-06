@@ -119,6 +119,7 @@ function ScatterPlot(id, model) {
         "Clone length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "gene_v"},
         "N length distribution" :     { "mode": "bar", "x" : "n",              "y": "gene_v"}
     };
+    this.default_preset = 1
 
     //Menu with graph distrib' (see initMenu function)
     this.graph_menu = [
@@ -148,7 +149,11 @@ ScatterPlot.prototype = {
         this.initSVG();
         this.axisX.useGermline(this.m.germlineV, "V")
         this.axisY.useGermline(this.m.germlineJ, "J")
-        this.changeSplitMethod(this.splitX, this.splitY, "plot");
+
+        var select_preset = document.getElementById("select_preset")
+        select_preset.selectedIndex = this.default_preset
+        this.changePreset(select_preset);
+
         this.resize();
     },
 
