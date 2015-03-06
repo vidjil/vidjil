@@ -603,12 +603,12 @@ Builder.prototype = {
             var div_multi_system = this.build_multi_system()
             parent.appendChild(div_multi_system)
         }else{
-            var div_system = this.build_info_line("info_system", "germline", this.m.system)
+            var div_system = this.build_info_line("info_system", "locus", this.m.system)
             parent.appendChild(div_system)
         }
         
         //point info
-        var div_point = this.build_info_line("info_point", "point",  this.m.getStrTime(this.m.t, "name") )
+        var div_point = this.build_info_line("info_point", "sample",  this.m.getStrTime(this.m.t, "name") )
 
         if (this.m.samples.order.length > 1){
             var nextTime = document.createElement('span')
@@ -699,7 +699,7 @@ Builder.prototype = {
 
         // Segmented reads, on the selected system(s)
         if (this.m.system == "multi") {
-            var val = "no reads on selected germlines" ;
+            var val = "no reads on selected locus" ;
 
             if (this.m.reads.segmented[this.m.t] > 0)
             {
@@ -711,7 +711,7 @@ Builder.prototype = {
                 else if (percent < 50)  { warning = "warning" ;  }
             }
 
-            var div_segmented = this.build_info_line("info_segmented", "on germlines", val, warning)
+            var div_segmented = this.build_info_line("info_segmented", "selected locus", val, warning)
             parent.appendChild(div_segmented)
         }
   
@@ -727,7 +727,7 @@ Builder.prototype = {
         div.className = "info_line";
         
         var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode("system : "));
+        span1.appendChild(document.createTextNode("locus"));
         span1.className = "info_row"
         
         var span2 = document.createElement('span');
@@ -783,7 +783,7 @@ Builder.prototype = {
     
     build_info_line: function (id, name, value, className) {
         var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode(name + " : "));
+        span1.appendChild(document.createTextNode(name));
         span1.className = "info_row"
         var span2 = document.createElement('span');
 	if (!(typeof(className) === "undefined"))
@@ -818,17 +818,16 @@ Builder.prototype = {
 
         switch (this.m.colorMethod) {
         case "N":
-            span0.appendChild(document.createTextNode("color by n length : "));
+            span0.appendChild(document.createTextNode("N length"));
 
-            span1.appendChild(document.createTextNode(" N=0 "));
+            span1.appendChild(document.createTextNode(" 0 "));
 
             span2.className = "gradient";
 
-            span3.appendChild(document.createTextNode("N=" + this.m.n_max));
+            span3.appendChild(document.createTextNode(" " + this.m.n_max + " "));
 
             break;
         case "Tag":
-            span0.appendChild(document.createTextNode("color by tag: "));
 
             for (var i = 0; i < tagName.length; i++) {
                 var spantag = document.createElement('span');
@@ -842,7 +841,7 @@ Builder.prototype = {
             }
             break;
         case "abundance":
-            span0.appendChild(document.createTextNode("color by size: "));
+            span0.appendChild(document.createTextNode("abundance"));
 
             span1.appendChild(document.createTextNode(" 0% "));
 
