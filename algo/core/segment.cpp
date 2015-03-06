@@ -909,7 +909,7 @@ JsonList FineSegmenter::toJsonList(Germline *germline){
     json_affectValues=new JsonList();
     json_affectValues->add("start", 0);
     json_affectValues->add("stop", sequenceSize); 
-    json_affectValues->add("seqValues", kseg->getKmerAffectAnalyser()->toStringValues());
+    json_affectValues->add("seq", kseg->getKmerAffectAnalyser()->toStringValues());
     seg.add("affectValues", *json_affectValues);
       
 
@@ -917,7 +917,7 @@ JsonList FineSegmenter::toJsonList(Germline *germline){
     json_affectSigns=new JsonList();
     json_affectSigns->add("start", 0);
     json_affectSigns->add("stop", sequenceSize); 
-    json_affectSigns->add("seqSigns", kseg->getKmerAffectAnalyser()->toStringSigns());
+    json_affectSigns->add("seq", kseg->getKmerAffectAnalyser()->toStringSigns());
     seg.add("affectSigns", *json_affectSigns);
 
     result.add("seg", seg);
