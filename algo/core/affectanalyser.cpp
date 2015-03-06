@@ -203,6 +203,22 @@ string KmerAffectAnalyser::toString() const{
   return kmer;
 }
 
+string KmerAffectAnalyser::toStringValues() const{
+    string kmer;
+  for (size_t i = 0; i < affectations.size(); i++) {
+    kmer += affectations[i].toStringValues();
+  }
+  return kmer;
+}
+
+string KmerAffectAnalyser::toStringSigns() const{
+  string kmer;
+  for (size_t i = 0; i < affectations.size(); i++) {
+    kmer += affectations[i].toStringSigns();
+  }
+  return kmer;
+}
+
 /* CountKmerAffectAnalyser */
 
 
