@@ -136,7 +136,7 @@ Report.prototype = {
             {'label': "Report date:"  , 'value' : report_timestamp},
             {'label': "Updated on:" , 'value' : analysis_timestamp},
             {'label': "Software used:" , 'value' : m.getSoftVersion()},
-            {'label': "Analysis date:" , 'value' : m.timestamp[0].split(" ")[0] }
+            {'label': "Analysis date:" , 'value' : "" }
         ]
         
         var table = $('<table/>', {'class': 'info-table float-left'}).appendTo(left);
