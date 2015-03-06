@@ -265,7 +265,7 @@ Report.prototype = {
         if (typeof time != "undefined") m.changeTime(time)
             
         m.changeGermline(system)
-        sp.changeSplitMethod('gene_v', 'gene_j')
+        sp.changeSplitMethod('gene_v', 'gene_j', 'plot')
         
         //resize 791px ~> 21cm
         sp.resize(791,250)
@@ -289,6 +289,10 @@ Report.prototype = {
                 circle.parentNode.removeChild(circle);
             }
         }
+        
+        var bar_container = svg_sp.querySelectorAll('[id="'+sp.id+'_bar_container"]')[0]
+        bar_container.parentNode.removeChild(bar_container);
+        
         w_sp.append(svg_sp)
         sp.resize();
 
