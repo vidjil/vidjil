@@ -652,13 +652,14 @@ span .substitution {
   text-align: left;
 }
 .systemBoxNameMenu:hover,
-#focus_selected:hover,
+.focus_selected:hover,
 .button:hover,
 .button_right:hover,
 .buttonSelector:hover,
 .button2:hover {
   background: #333333;
   color: #fdf6e3;
+  cursor: pointer;
 }
 /*	//////////////////////////////////////////////////////////////	*/
 #popup-container {
