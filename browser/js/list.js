@@ -34,6 +34,7 @@
  *
  * */
 function List(id_list, id_data, model) {
+    var self=this;
     this.id = id_list; //ID de la div contenant la liste
     this.id_data = id_data;
     this.m = model; //Model utilisé
@@ -42,6 +43,13 @@ function List(id_list, id_data, model) {
 
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
     this.m.view.push(this); //synchronisation au Model
+    
+    this.sort_option = {
+        "-" : function () {},
+        "size" : function(){self.sortListBySize()},
+        "V" : function(){self.sortListByV()},
+        "J" : function(){self.sortListByJ()}
+    }
 }
 
 List.prototype = {
@@ -207,37 +215,21 @@ List.prototype = {
         
         var sort_span = document.createElement('span')
         sort_span.className = "list_sort"
+        
         var sort = document.createElement('select');
         sort.setAttribute('name', 'sort_list[]');
+        sort.id = "list_sort_select"
         sort.className = "list_sort_select"
         sort.onchange = function() {
-            switch (this.value) {
-                case "size" :
-                    self.sortListBySize();
-                    break;
-                case "V" :
-                    self.sortListByV()
-                    break;
-                case "J" :
-                    self.sortListByJ()
-                    break;
-            }
+            self.sort_option[this.value]()
         }
         
-        var sort_option = document.createElement("option");
-        sort_option.setAttribute('value', "size");
-        sort_option.appendChild(document.createTextNode("size"));
-        sort.appendChild(sort_option);
-        
-        var sort_option = document.createElement("option");
-        sort_option.setAttribute('value', "V");
-        sort_option.appendChild(document.createTextNode("V"));
-        sort.appendChild(sort_option);
-        
-        var sort_option = document.createElement("option");
-        sort_option.setAttribute('value', "J");
-        sort_option.appendChild(document.createTextNode("J"));
-        sort.appendChild(sort_option);
+        for (var key in this.sort_option) {
+            var sort_option = document.createElement("option");
+            sort_option.setAttribute('value', key);
+            sort_option.appendChild(document.createTextNode(key));
+            sort.appendChild(sort_option);
+        }
         
         sort_span.appendChild(document.createTextNode("sort by "));
         sort_span.appendChild(sort);
@@ -270,6 +262,9 @@ List.prototype = {
         elapsedTime = new Date()
             .getTime() - startTime;
         myConsole.log("update Liste: " + elapsedTime + "ms", -1);
+        
+        //TODO check order 
+        document.getElementById("list_sort_select").selectedIndex = 0;
     },
 
 
