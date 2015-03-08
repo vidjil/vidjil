@@ -15,6 +15,8 @@ void testWSAdd() {
 
   TAP_TEST(ws.getGermline("ATTAG") == &germline,TEST_WS_GET_GERMLINE, "");
   TAP_TEST(ws.getGermline("A") == NULL, TEST_WS_GET_GERMLINE_NONE, "");
+  TAP_TEST(ws.hasWindow("ATTAG") == true, TEST_WS_HAS_WINDOW, "");
+  TAP_TEST(ws.hasWindow("A") == false, TEST_WS_HAS_WINDOW, "");
   TAP_TEST(ws.size() == 1, TEST_WS_SIZE, "");
   TAP_TEST(ws.getLabel("ATTAG") == "", TEST_WS_GET_LABEL_NONE, "");
   

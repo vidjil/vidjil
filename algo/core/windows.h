@@ -81,6 +81,10 @@ class WindowsStorage {
    */
   void fillStatsClones();
 
+  /**
+   * @return true iff the window has been reported.
+   */
+  bool hasWindow(junction window);
 
   /**
    * @return a list of windows together with the number of reads they appear in.

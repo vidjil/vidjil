@@ -114,6 +114,7 @@ enum {
   /* WindowsStorage */
   TEST_WS_GET_GERMLINE,
   TEST_WS_GET_GERMLINE_NONE,
+  TEST_WS_HAS_WINDOW,
   TEST_WS_SIZE,
   TEST_WS_SIZE_NONE,
   TEST_WS_GET_LABEL_NONE,
@@ -234,6 +235,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_EXTRACTOR_OUT_UNSEG, "Test unsegmentation output for WindowsExtractor");
 
   RECORD_TAP_TEST(TEST_WS_GET_GERMLINE, "Test WindowsStorage::getGermline");
+  RECORD_TAP_TEST(TEST_WS_HAS_WINDOW, "Test WindowsStorage::hasWindow");
   RECORD_TAP_TEST(TEST_WS_GET_GERMLINE_NONE, "Test WindowsStorage::getGermline() with undefined window");
   RECORD_TAP_TEST(TEST_WS_SIZE, "Test WindowsStorage::size()");
   RECORD_TAP_TEST(TEST_WS_SIZE_NONE, "Test WindowsStorage::size() when empty");

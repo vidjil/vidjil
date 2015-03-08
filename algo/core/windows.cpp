@@ -92,6 +92,11 @@ set<Germline *> WindowsStorage::getTopGermlines(size_t top, size_t min_reads) {
   return top_germlines;
 }
 
+bool WindowsStorage::hasWindow(junction window) {
+  map<junction, Germline *>::iterator result = germline_by_window.find(window);
+  return (result != germline_by_window.end());
+}
+
 size_t WindowsStorage::size() {
   return seqs_by_window.size();
 }
