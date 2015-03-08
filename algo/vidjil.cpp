@@ -161,6 +161,7 @@ void usage(char *progname)
        << "Experimental options (do not use)" << endl
        << "  -I            ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)" << endl
        << "  -1            use a unique index for all germline systems (experimental, must be used with -g, do not use)" << endl
+       << "  -!            keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example -!AX 20)" << endl
        << endl
 
        << "Window prediction" << endl
@@ -302,6 +303,8 @@ int main (int argc, char **argv)
   bool output_segmented = false;
   bool output_unsegmented = false;
   bool output_affects = false;
+  bool keep_unsegmented_as_clone = false;
+
   bool multi_germline = false;
   bool multi_germline_incomplete = false;
   bool multi_germline_mark = false;
@@ -322,7 +325,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "AX:haiI1g:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
+  while ((c = getopt(argc, argv, "A!X:haiI1g:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
 
     switch (c)
       {
@@ -430,6 +433,10 @@ int main (int argc, char **argv)
 
       case 'M':
 	delta_max = atoi(optarg);
+        break;
+
+      case '!':
+        keep_unsegmented_as_clone = true;
         break;
 
       // Output 
@@ -906,7 +913,7 @@ int main (int argc, char **argv)
       we.setAffectsOutput(out_affects);
     }
 
-    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels, max_reads_processed);
+    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels, max_reads_processed, keep_unsegmented_as_clone);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 

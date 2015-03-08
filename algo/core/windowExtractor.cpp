@@ -5,7 +5,8 @@ WindowExtractor::WindowExtractor(): out_segmented(NULL), out_unsegmented(NULL), 
                                     
 WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *multigermline,
 					 size_t w,
-                                         map<string, string> &windows_labels, int stop_after) {
+                                         map<string, string> &windows_labels,
+                                         int stop_after, bool keep_unsegmented_as_clone) {
   init_stats();
 
   WindowsStorage *windowsStorage = new WindowsStorage(windows_labels);
@@ -51,8 +52,16 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
       
       nb_reads_germline[seg->system]++;
       
-    } else if (out_unsegmented) {
+    } else {
+      if (keep_unsegmented_as_clone && (reads->getSequence().sequence.length() >= w))
+        {
+          // Keep the unsegmented read, taking the full sequence as the junction
+          windowsStorage->add(reads->getSequence().sequence, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline);
+        }
+
+      if (out_unsegmented) {
         *out_unsegmented << *seg ;
+      }
     }
 
     // Last line of detailed affects output
