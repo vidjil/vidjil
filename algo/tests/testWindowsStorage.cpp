@@ -18,6 +18,7 @@ void testWSAdd() {
   TAP_TEST(ws.hasWindow("ATTAG") == true, TEST_WS_HAS_WINDOW, "");
   TAP_TEST(ws.hasWindow("A") == false, TEST_WS_HAS_WINDOW, "");
   TAP_TEST(ws.size() == 1, TEST_WS_SIZE, "");
+  TAP_TEST(ws.getNbReads("ATTAG") == 1, TEST_WS_GET_NB_READS, "");
   TAP_TEST(ws.getLabel("ATTAG") == "", TEST_WS_GET_LABEL_NONE, "");
   
   list<Sequence> sequences = ws.getReads("ATTAG");
@@ -34,6 +35,7 @@ void testWSAdd() {
   ws.add("ATTAG", seq, SEG_PLUS, &germline);
 
   TAP_TEST(ws.size() == 1, TEST_WS_SIZE, "");
+  TAP_TEST(ws.getNbReads("ATTAG") == 11, TEST_WS_GET_NB_READS, "");
 
   sequences = ws.getReads("ATTAG");
   TAP_TEST(sequences.size() == 11, TEST_WS_GET_READS, "");

@@ -43,6 +43,11 @@ JsonList WindowsStorage::statusToJson(junction window) {
     return result;
 }
 
+size_t WindowsStorage::getNbReads(junction window) {
+  assert(hasWindow(window));
+  return reads_by_window[window];
+}
+
 list<Sequence> &WindowsStorage::getReads(junction window) {
   return seqs_by_window[window];
 }
@@ -111,10 +116,13 @@ void WindowsStorage::setIdToAll() {
 }
 
 void WindowsStorage::add(junction window, Sequence sequence, int status, Germline *germline) {
-  seqs_by_window[window].push_back(sequence);
-  if (status_by_window.find(window) == status_by_window.end() ) {
-      status_by_window[window].resize(STATS_SIZE);
+  if (! hasWindow(window)) {
+    reads_by_window[window] = 1;
+    status_by_window[window].resize(STATS_SIZE);
+  } else {
+    reads_by_window[window]++;
   }
+  seqs_by_window[window].push_back(sequence);
   status_by_window[window][status]++;
 
   germline_by_window[window] = germline;
@@ -142,9 +150,9 @@ pair <int, int> WindowsStorage::keepInterestingWindows(size_t min_reads_window) 
        it != seqs_by_window.end(); ) // We do not advance the iterator here because of the deletion
     {
       junction junc = it->first;
-      
+      size_t nb_reads_this_window = getNbReads(junc);
       // Is it not supported by enough reads?
-      if (!(seqs_by_window[junc].size() >= min_reads_window) 
+      if (!(nb_reads_this_window >= min_reads_window)
           // Is it not a labelled junction?
           && (windows_labels.find(junc) == windows_labels.end()))
         {
@@ -154,7 +162,7 @@ pair <int, int> WindowsStorage::keepInterestingWindows(size_t min_reads_window) 
           removes++ ;
         }
       else {
-        nb_reads += seqs_by_window[junc].size();
+        nb_reads += nb_reads_this_window;
         it++;
       }
     }

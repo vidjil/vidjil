@@ -28,6 +28,7 @@ class WindowsStorage {
   map<junction, list<Sequence> > seqs_by_window;
   map<junction, vector<int> > status_by_window;
   map<junction, Germline* > germline_by_window;
+  map<junction, size_t> reads_by_window;
   map<string, string> windows_labels;
   list<pair <junction, int> > sort_all_windows;
   map<junction, int> id_by_window;
@@ -46,6 +47,12 @@ class WindowsStorage {
   Germline *getGermline(junction window);
   
   JsonList statusToJson(junction window);
+
+  /**
+   * @pre hasWindow(window)
+   * @return the total number of reads supporting a window.
+   */
+  size_t getNbReads(junction window);
   
   /**
    * @return the list of reads supporting a given window
