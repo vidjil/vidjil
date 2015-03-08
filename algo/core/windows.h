@@ -32,6 +32,7 @@ class WindowsStorage {
   map<string, string> windows_labels;
   list<pair <junction, size_t> > sort_all_windows;
   map<junction, int> id_by_window;
+  size_t max_reads_per_window;
  public:
   /**
    * Build an empty storage, with the labels that correspond to specific
@@ -47,6 +48,11 @@ class WindowsStorage {
   Germline *getGermline(junction window);
   
   JsonList statusToJson(junction window);
+
+  /**
+   * @return the maximal number of reads that can be stored for a window.
+   */
+  size_t getMaximalNbReadsPerWindow();
 
   /**
    * @pre hasWindow(window)
@@ -68,6 +74,7 @@ class WindowsStorage {
    *                    Sampling sequences allow to have a more time efficient 
    *                    algorithm.
    * @param nb_buckets: Number of buckets for sampling (see SequenceSampler)
+   * @pre nb_sampled <= getMaximalNbReadsPerWindow() if hasLimitForReadsPerWindow()
    * @return the representative sequence of a window or NULL_SEQUENCE if we 
    *         cannot find any representative
    */
@@ -87,6 +94,12 @@ class WindowsStorage {
    * Fill the stats_clone member of the different Germlines
    */
   void fillStatsClones();
+
+  /**
+   * @return true iff a limit has been set for the maximal number of reads per
+   * window
+   */
+  bool hasLimitForReadsPerWindow();
 
   /**
    * @return true iff the window has been reported.
@@ -114,6 +127,21 @@ class WindowsStorage {
    * Give an id to all the windows, in id_by_window map
    */
   void setIdToAll();
+
+  /**
+   * For each window the maximal number of reads actually stored is
+   * max_reads. This applies only to future reads added. Not to reads that
+   * have been previously added.  In other words if for some window w,
+   * getReads(w).size() > max_reads, no reads will be removed. However no
+   * reads will be added for that window.  getNbReads() still returns the real
+   * number of reads for a given window, not the number of reads stored for a
+   * window.
+   * When the limit is reached the better reads are preferred over the less good
+   * therefore reads may be replaced so that the list contains the best ones.
+   * @param max_reads: Maximal number of reads stored for a window. 
+   *                   ~0 for no limit.
+   */
+  void setMaximalNbReadsPerWindow(size_t max_reads);
 
   /**
    * Add a new window with its sequence.

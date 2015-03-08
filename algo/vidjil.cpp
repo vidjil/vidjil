@@ -903,6 +903,8 @@ int main (int argc, char **argv)
     ofstream *out_affects = NULL;
  
     WindowExtractor we;
+    if (! output_sequences_by_cluster)
+      we.setMaximalNbReadsPerWindow(max_auditionned);
  
     if (output_segmented) {
       string f_segmented = out_dir + f_basename + SEGMENTED_FILENAME ;

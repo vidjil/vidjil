@@ -29,6 +29,10 @@ Germline *WindowsStorage::getGermline(junction window) {
   return result->second;
 }
 
+size_t WindowsStorage::getMaximalNbReadsPerWindow() {
+  return max_reads_per_window;
+}
+
 JsonList WindowsStorage::statusToJson(junction window) {
     JsonList result;
     
@@ -57,6 +61,7 @@ Sequence WindowsStorage::getRepresentative(junction window,
                                            float percent_cover,
                                            size_t nb_sampled, 
                                            size_t nb_buckets) {
+  assert(! hasLimitForReadsPerWindow() || nb_sampled <= getMaximalNbReadsPerWindow());
   list<Sequence> auditioned_sequences 
     = getSample(window,nb_sampled, nb_buckets);
   KmerRepresentativeComputer repComp(auditioned_sequences, seed);
@@ -95,6 +100,10 @@ set<Germline *> WindowsStorage::getTopGermlines(size_t top, size_t min_reads) {
   }
 
   return top_germlines;
+}
+
+bool WindowsStorage::hasLimitForReadsPerWindow() {
+  return max_reads_per_window != (size_t)~0;
 }
 
 bool WindowsStorage::hasWindow(junction window) {
@@ -171,6 +180,10 @@ pair <int, size_t> WindowsStorage::keepInterestingWindows(size_t min_reads_windo
   return make_pair(removes, nb_reads);
 }
 
+void WindowsStorage::setMaximalNbReadsPerWindow(size_t max_reads){
+  max_reads_per_window = max_reads;
+}
+  
 void WindowsStorage::sort() {
   sort_all_windows.clear();
   for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin();

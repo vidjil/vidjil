@@ -1,7 +1,7 @@
 #include "windowExtractor.h"
 #include "segment.h"
 
-WindowExtractor::WindowExtractor(): out_segmented(NULL), out_unsegmented(NULL), out_affects(NULL){}
+WindowExtractor::WindowExtractor(): out_segmented(NULL), out_unsegmented(NULL), out_affects(NULL), max_reads_per_window(~0){}
                                     
 WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *multigermline,
 					 size_t w,
@@ -10,7 +10,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
   init_stats();
 
   WindowsStorage *windowsStorage = new WindowsStorage(windows_labels);
-
+  windowsStorage->setMaximalNbReadsPerWindow(max_reads_per_window);
   for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
     {
       Germline *germline = *it ;
@@ -82,6 +82,10 @@ float WindowExtractor::getAverageSegmentationLength(SEGMENTED seg) {
   return stats[seg].getAverage();
 }
 
+size_t WindowExtractor::getMaximalNbReadsPerWindow() {
+  return max_reads_per_window;
+}
+
 size_t WindowExtractor::getNbReads() {
   return nb_reads;
 }
@@ -92,6 +96,10 @@ size_t WindowExtractor::getNbSegmented(SEGMENTED seg) {
 
 size_t WindowExtractor::getNbReadsGermline(string germline) {
   return nb_reads_germline[germline];
+}
+
+void WindowExtractor::setMaximalNbReadsPerWindow(size_t max_reads) {
+  max_reads_per_window = max_reads;
 }
 
 void WindowExtractor::setSegmentedOutput(ostream *out) {
