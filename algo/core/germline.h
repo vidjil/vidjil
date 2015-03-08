@@ -7,6 +7,7 @@
 #include "kmeraffect.h"
 #include "kmerstore.h"
 #include "stats.h"
+#include "tools.h"
 
 using namespace std;
 
@@ -88,6 +89,7 @@ class MultiGermline {
   ~MultiGermline();
 
   void insert(Germline *germline);
+  void add_germline(Germline *germline, string seed);
   void build_default_set(string path);
   void build_incomplete_set(string path);
   void load_standard_set(string path);

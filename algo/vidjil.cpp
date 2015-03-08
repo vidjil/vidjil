@@ -583,13 +583,13 @@ int main (int argc, char **argv)
   if (k == DEFAULT_K)
     {
       if (germline_system.find("TRA") != string::npos)
-	seed = "#######-######" ;
+	seed = SEED_S13 ;
 
       else if ((germline_system.find("TRB") != string::npos)
 	       || (germline_system.find("IGH") != string::npos))
-	seed = "######-######" ; 
+	seed = SEED_S12 ;
       else // TRD, TRG, IGK, IGL
-	seed = "#####-#####" ; 
+	seed = SEED_S10 ;
 
       k = seed_weight(seed);
     }
