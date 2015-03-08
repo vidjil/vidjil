@@ -160,4 +160,10 @@ istream& operator>>(istream& in, Fasta& fasta);
 ostream& operator<<(ostream& out, Fasta& fasta);
 ostream &operator<<(ostream &out, const Sequence &seq);
 
+/**
+ * Count the number of sequences in a Fasta file
+ * @return the number of sequences
+ */
+int nb_sequences_in_fasta(string f);
+
 #endif
