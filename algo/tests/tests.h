@@ -126,6 +126,14 @@ enum {
   TEST_WS_TOP_GERMLINES_NONE,
   TEST_WS_TOP_GERMLINES_MULTI,
 
+  /* ReadStorage */
+  TEST_BRS_SCORE_TO_BIN,
+  TEST_BRS_SBNE,
+  TEST_BRS_GET_NB_INSERTED,
+  TEST_BRS_GET_NB_STORED,
+  TEST_BRS_ADD,
+  TEST_BRS_GET_READS,
+
   /* Bugs */
   TEST_BUG_SEGMENTATION,
   TEST_SEGMENT_POSITION,
@@ -248,6 +256,13 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_WS_TOP_GERMLINES_ONE, "Test WindowsStorage::getTopGermlines() with the most abundant germline");
   RECORD_TAP_TEST(TEST_WS_TOP_GERMLINES_NONE, "Test WindowsStorage::getTopGermlines() with no germline fulfilling the requirements");
   RECORD_TAP_TEST(TEST_WS_TOP_GERMLINES_MULTI, "Test WindowsStorage::getTopGermlines() with several germlines");
+
+  RECORD_TAP_TEST(TEST_BRS_SCORE_TO_BIN, "Test the scoreToBin() method in ReadStorage");
+  RECORD_TAP_TEST(TEST_BRS_SBNE, "Test the smallest_bin_not_empty variables in ReadStorage");
+  RECORD_TAP_TEST(TEST_BRS_GET_NB_INSERTED, "Test the getNbInserted() method in ReadStorage");
+  RECORD_TAP_TEST(TEST_BRS_GET_NB_STORED, "Test the getNbStored() method in ReadStorage");
+  RECORD_TAP_TEST(TEST_BRS_ADD, "Test the add() method in ReadStorage");
+  RECORD_TAP_TEST(TEST_BRS_GET_READS, "Test the getReads() method in ReadStorage");
 
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE, "Test KmerRepresentativeComputer computations");
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE_REQUIRED_SEQ, "Test KmerRepresentativeComputer computations with a required sequence");
