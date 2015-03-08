@@ -10,7 +10,7 @@
 
 WindowsStorage::WindowsStorage(map<string, string> &labels):windows_labels(labels) {}
 
-list<pair <junction, int> > &WindowsStorage::getSortedList() {
+list<pair <junction, size_t> > &WindowsStorage::getSortedList() {
   return sort_all_windows;
 }
 
@@ -88,7 +88,7 @@ set<Germline *> WindowsStorage::getTopGermlines(size_t top, size_t min_reads) {
   set<Germline *> top_germlines;
   size_t count = 0;
 
-  for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin();
+  for (list<pair <junction, size_t> >::const_iterator it = sort_all_windows.begin();
        it != sort_all_windows.end() && count < top && (size_t)it->second >= min_reads;
        ++it, ++count) {
     top_germlines.insert(getGermline(it->first));
@@ -142,9 +142,9 @@ void WindowsStorage::fillStatsClones()
     }
 }
 
-pair <int, int> WindowsStorage::keepInterestingWindows(size_t min_reads_window) {
+pair <int, size_t> WindowsStorage::keepInterestingWindows(size_t min_reads_window) {
   int removes = 0 ;
-  int nb_reads = 0 ;
+  size_t nb_reads = 0 ;
 
   for (map <junction, list<Sequence> >::iterator it = seqs_by_window.begin(); 
        it != seqs_by_window.end(); ) // We do not advance the iterator here because of the deletion
@@ -185,7 +185,7 @@ void WindowsStorage::sort() {
 ostream &WindowsStorage::printSortedWindows(ostream &os) {
   int num_seq = 0 ;
 
-  for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
+  for (list<pair <junction, size_t> >::const_iterator it = sort_all_windows.begin();
        it != sort_all_windows.end(); ++it) 
     {
       num_seq++ ;
@@ -200,7 +200,7 @@ JsonArray WindowsStorage::sortedWindowsToJsonArray(map <junction, JsonList> json
   JsonArray windowsArray;
   int top = 1;
     
-  for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
+  for (list<pair <junction, size_t> >::const_iterator it = sort_all_windows.begin();
        it != sort_all_windows.end(); ++it) 
     {
 	   

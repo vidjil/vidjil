@@ -995,7 +995,7 @@ int main (int argc, char **argv)
 
     int min_reads_clone_final = max(min_reads_clone, min_reads_clone_ratio);
 
-    pair<int, int> info_remove = windowsStorage->keepInterestingWindows((size_t) min_reads_clone_final);
+    pair<int, size_t> info_remove = windowsStorage->keepInterestingWindows((size_t) min_reads_clone_final);
 	 
     cout << "  ==> keep " <<  windowsStorage->size() << " windows in " << info_remove.second << " reads" ;
     cout << " (" << setprecision(3) << 100 * (float) info_remove.second / nb_total_reads << "%)  " << endl ;
@@ -1008,7 +1008,7 @@ int main (int argc, char **argv)
     //////////////////////////////////
     //$$ Clustering
     windowsStorage->sort();
-    list<pair <junction, int> > sort_clones = windowsStorage->getSortedList();
+    list<pair <junction, size_t> > sort_clones = windowsStorage->getSortedList();
     cout << "  ==> " << sort_clones.size() << " clones" << endl ;
     
     list <list <junction> > clones_windows;
@@ -1094,10 +1094,10 @@ int main (int argc, char **argv)
     cout << endl ;
 
 
-    for (list <pair<junction,int> >::const_iterator it = sort_clones.begin();
+    for (list <pair<junction,size_t> >::const_iterator it = sort_clones.begin();
          it != sort_clones.end(); ++it) {
       junction win = it->first;
-      int clone_nb_reads = it->second;
+      size_t clone_nb_reads = it->second;
 
     
       ++num_clone ;

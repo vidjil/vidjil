@@ -20,7 +20,7 @@ using namespace std ;
 class comp_matrix {
   public:
     char ** m;
-    list<pair <junction, int> > sort_clones;
+    list<pair <junction, size_t> > sort_clones;
     map <string, int> count;
     int n_j;
     int n_j2;
@@ -29,7 +29,7 @@ class comp_matrix {
     /**
     * create new distance matrix
     */
-    comp_matrix(list<pair <junction, int> > sc);
+    comp_matrix(list<pair <junction, size_t> > sc);
         
     /**
     * init matrix with a KmerStore and compute distance value between sequences

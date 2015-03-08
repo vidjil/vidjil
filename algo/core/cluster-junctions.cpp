@@ -28,7 +28,7 @@
     return lh.second>rh.second;
   }
 
-comp_matrix::comp_matrix(list<pair <junction, int> > sc)
+comp_matrix::comp_matrix(list<pair <junction, size_t> > sc)
 {
   sort_clones = sc;
   matrix_size = sort_clones.size();
@@ -53,14 +53,14 @@ void comp_matrix::compare(ostream &out, Cost cluster_cost)
   int c2=0;
 
   size_t i = 0;
-  for (list <pair<junction,int> >::const_iterator it0 = sort_clones.begin();
+  for (list <pair<junction,size_t> >::const_iterator it0 = sort_clones.begin();
     (it0 != sort_clones.end()) & (i<matrix_size); ++it0) 
     {
       i++;
       j1=it0->first;
       
       size_t k = 0;
-      for (list <pair<junction,int> >::const_iterator it1 = it0;
+      for (list <pair<junction,size_t> >::const_iterator it1 = it0;
         (it1 != sort_clones.end()) & (k<matrix_size); ++it1) 
         {
             k++;
@@ -139,7 +139,7 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
   int c2=0;
 
   size_t i = 0;
-  for (list <pair<junction,int> >::const_iterator ite = sort_clones.begin();
+  for (list <pair<junction,size_t> >::const_iterator ite = sort_clones.begin();
     (ite != sort_clones.end()) & (i<matrix_size); ++ite) 
     {
       i++;
@@ -150,7 +150,7 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
     }
   
   i = 0;
-  for (list <pair<junction,int> >::const_iterator it0 = sort_clones.begin();
+  for (list <pair<junction,size_t> >::const_iterator it0 = sort_clones.begin();
     (it0 != sort_clones.end()) & (i<matrix_size); ++it0) 
       {
       i++;
@@ -160,7 +160,7 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
       n_j2+=k;
       
       size_t j = 0; 
-      for (list <pair<junction,int> >::const_iterator it1 = sort_clones.begin();
+      for (list <pair<junction,size_t> >::const_iterator it1 = sort_clones.begin();
         (it1 != sort_clones.end()) & (j<matrix_size); ++it1) 
       {
         j++;
@@ -231,7 +231,7 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
    int noise = 0;
    int nb_comp = 0 ;
    i = 0;
-   for (list <pair<junction,int> >::const_iterator it0 = sort_clones.begin();
+   for (list <pair<junction,size_t> >::const_iterator it0 = sort_clones.begin();
     (it0 != sort_clones.end()) & (i<matrix_size); ++it0) 
     {
       i++;

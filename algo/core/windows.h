@@ -30,7 +30,7 @@ class WindowsStorage {
   map<junction, Germline* > germline_by_window;
   map<junction, size_t> reads_by_window;
   map<string, string> windows_labels;
-  list<pair <junction, int> > sort_all_windows;
+  list<pair <junction, size_t> > sort_all_windows;
   map<junction, int> id_by_window;
  public:
   /**
@@ -98,7 +98,7 @@ class WindowsStorage {
    * @pre sort() must have been called at least once and must have been called
    *      again after calling keepInterestingWindows()
    */
-  list<pair <junction, int> > &getSortedList();
+  list<pair <junction, size_t> > &getSortedList();
 
   /**
    * The number of windows stored
@@ -147,7 +147,7 @@ class WindowsStorage {
    * @return the number of windows removed as well as the number of
    * reads finally kept.
    */
-  pair<int, int> keepInterestingWindows(size_t min_reads_window);
+  pair<int, size_t> keepInterestingWindows(size_t min_reads_window);
 
   /**
    * sort windows according to the number of reads they appear in

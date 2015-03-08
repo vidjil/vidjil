@@ -78,8 +78,8 @@ void testWSAdd() {
   }
   
   ws.sort();
-  list<pair<junction, int> >sorted = ws.getSortedList();
-  list<pair<junction, int> >::iterator it2 = sorted.begin();
+  list<pair<junction, size_t> >sorted = ws.getSortedList();
+  list<pair<junction, size_t> >::iterator it2 = sorted.begin();
 
   TAP_TEST(ws.size() == 4, TEST_WS_SIZE, "");
   TAP_TEST(sorted.size() == ws.size() , TEST_WS_SORT, "");
