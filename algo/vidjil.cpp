@@ -242,6 +242,12 @@ void usage(char *progname, bool advanced)
   exit(1);
 }
 
+
+int atoi_NO_LIMIT(char *optarg)
+{
+  return strcmp(NO_LIMIT, optarg) ? atoi(optarg) : -1 ;
+}
+
 int main (int argc, char **argv)
 {
   cout << "# Vidjil -- V(D)J recombinations analysis <http://www.vidjil.org/>" << endl
@@ -475,21 +481,11 @@ int main (int argc, char **argv)
         break;
 
       case 'y':
-	if (!strcmp(NO_LIMIT, optarg))
-	  {
-	    max_representatives = -1;
-	    break;
-	  }
-	max_representatives = atoi(optarg);
+	max_representatives = atoi_NO_LIMIT(optarg);
         break;
 
       case 'z':
-	if (!strcmp(NO_LIMIT, optarg))
-	  {
-	    max_clones = -1;
-	    break;
-	  }
-	max_clones = atoi(optarg);
+	max_clones = atoi_NO_LIMIT(optarg);
         break;
 
       case 'A': // --all
@@ -500,12 +496,7 @@ int main (int argc, char **argv)
 	break ;
 
       case 'X':
-        if (!strcmp(NO_LIMIT, optarg))
-          {
-            max_reads_processed = -1;
-            break;
-          }
-        max_reads_processed = atoi(optarg);
+        max_reads_processed = atoi_NO_LIMIT(optarg);
         break;
 
       case 'l':
