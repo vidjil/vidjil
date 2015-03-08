@@ -64,6 +64,7 @@ Sequence WindowsStorage::getRepresentative(junction window,
   // We should always have a representative, because
   // - there is at least min('min_reads_clone', 'max_auditioned') sequences in auditioned_sequences
   // - and 'min_cover' = min('min_reads_clone', 'max_auditioned')
+  // - and these sequence are at least as long as the seed
   if (!repComp.hasRepresentative())
     throw invalid_argument("No representative for junction " + window);
 
