@@ -8,7 +8,8 @@
 #include "segment.h"
 #include "json.h"
 
-WindowsStorage::WindowsStorage(map<string, string> &labels):windows_labels(labels) {}
+WindowsStorage::WindowsStorage(map<string, string> &labels)
+  :windows_labels(labels),max_reads_per_window(~0),nb_bins(NB_BINS),max_value_bins(MAX_VALUE_BINS) {}
 
 list<pair <junction, size_t> > &WindowsStorage::getSortedList() {
   return sort_all_windows;
@@ -49,11 +50,11 @@ JsonList WindowsStorage::statusToJson(junction window) {
 
 size_t WindowsStorage::getNbReads(junction window) {
   assert(hasWindow(window));
-  return reads_by_window[window];
+  return seqs_by_window[window].getNbInserted();
 }
 
 list<Sequence> &WindowsStorage::getReads(junction window) {
-  return seqs_by_window[window];
+  return seqs_by_window[window].getReads();
 }
 
 Sequence WindowsStorage::getRepresentative(junction window, 
@@ -115,9 +116,14 @@ size_t WindowsStorage::size() {
   return seqs_by_window.size();
 }
 
+void WindowsStorage::setBinParameters(size_t nb, size_t max_value) {
+  nb_bins = nb;
+  max_value_bins = max_value;
+}
+
 void WindowsStorage::setIdToAll() {
     int id = 0;
-    for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin();
+    for (map <junction, BinReadStorage >::const_iterator it = seqs_by_window.begin();
         it != seqs_by_window.end(); ++it) {
             id_by_window.insert(make_pair(it->first, id));
             id++;
@@ -126,12 +132,13 @@ void WindowsStorage::setIdToAll() {
 
 void WindowsStorage::add(junction window, Sequence sequence, int status, Germline *germline) {
   if (! hasWindow(window)) {
-    reads_by_window[window] = 1;
+    // First time we see that window: init
     status_by_window[window].resize(STATS_SIZE);
-  } else {
-    reads_by_window[window]++;
+    seqs_by_window[window].init(nb_bins, max_value_bins, &scorer);
+    seqs_by_window[window].setMaxNbReadsStored(getMaximalNbReadsPerWindow());
   }
-  seqs_by_window[window].push_back(sequence);
+
+  seqs_by_window[window].add(sequence);
   status_by_window[window][status]++;
 
   germline_by_window[window] = germline;
@@ -139,12 +146,12 @@ void WindowsStorage::add(junction window, Sequence sequence, int status, Germlin
 
 void WindowsStorage::fillStatsClones()
 {
-  for (map <junction, list<Sequence> >::iterator it = seqs_by_window.begin(); 
+  for (map <junction, BinReadStorage >::iterator it = seqs_by_window.begin();
        it != seqs_by_window.end();
        it++)
     {
       junction junc = it->first;
-      int nb_reads = it->second.size();
+      int nb_reads = it->second.getNbInserted();
       Germline *germline = germline_by_window[junc];
 
       germline->stats_clones.insert(nb_reads);
@@ -155,7 +162,7 @@ pair <int, size_t> WindowsStorage::keepInterestingWindows(size_t min_reads_windo
   int removes = 0 ;
   size_t nb_reads = 0 ;
 
-  for (map <junction, list<Sequence> >::iterator it = seqs_by_window.begin(); 
+  for (map <junction, BinReadStorage >::iterator it = seqs_by_window.begin();
        it != seqs_by_window.end(); ) // We do not advance the iterator here because of the deletion
     {
       junction junc = it->first;
@@ -165,7 +172,7 @@ pair <int, size_t> WindowsStorage::keepInterestingWindows(size_t min_reads_windo
           // Is it not a labelled junction?
           && (windows_labels.find(junc) == windows_labels.end()))
         {
-          map <junction, list<Sequence> >::iterator toBeDeleted = it;
+          map <junction, BinReadStorage >::iterator toBeDeleted = it;
           it++;
           seqs_by_window.erase(toBeDeleted);
           removes++ ;
@@ -186,10 +193,10 @@ void WindowsStorage::setMaximalNbReadsPerWindow(size_t max_reads){
   
 void WindowsStorage::sort() {
   sort_all_windows.clear();
-  for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin();
+  for (map <junction, BinReadStorage >::const_iterator it = seqs_by_window.begin();
        it != seqs_by_window.end(); ++it)
     {
-      sort_all_windows.push_back(make_pair(it->first, it->second.size()));
+      sort_all_windows.push_back(make_pair(it->first, it->second.getNbInserted()));
     }
 
   sort_all_windows.sort(pair_occurrence_sort<junction>);

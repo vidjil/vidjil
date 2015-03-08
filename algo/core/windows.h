@@ -18,6 +18,11 @@
 #include "json.h"
 #include "segment.h"
 #include "germline.h"
+#include "read_storage.h"
+#include "read_score.h"
+
+#define NB_BINS 15
+#define MAX_VALUE_BINS 500
 
 using namespace std;
 
@@ -25,14 +30,18 @@ typedef string junction ;
 
 class WindowsStorage {
  private:
-  map<junction, list<Sequence> > seqs_by_window;
+  map<junction, BinReadStorage > seqs_by_window;
   map<junction, vector<int> > status_by_window;
   map<junction, Germline* > germline_by_window;
-  map<junction, size_t> reads_by_window;
   map<string, string> windows_labels;
   list<pair <junction, size_t> > sort_all_windows;
   map<junction, int> id_by_window;
   size_t max_reads_per_window;
+  ReadLengthScore scorer;
+
+  /* Parameters for the read storage */
+  size_t nb_bins;
+  size_t max_value_bins;
  public:
   /**
    * Build an empty storage, with the labels that correspond to specific
@@ -122,6 +131,15 @@ class WindowsStorage {
    * @return the id of the window, by his sequence
    */
   int getId(junction window);
+
+  /**
+   * Sets the parameters of the bins used for storing the reads.
+   * @param nb: Number of bins (>= 0)
+   * @param max_value: maximal value to be stored (>= 0).
+   *        Any value greater than max_value will be put
+   *        in an additional bin.
+   */
+  void setBinParameters(size_t nb, size_t max_value);
 
   /**
    * Give an id to all the windows, in id_by_window map

@@ -107,6 +107,39 @@ void testWSAdd() {
   TAP_TEST(*(germlines.find(&germline3)) == &germline3, TEST_WS_TOP_GERMLINES_MULTI, "");
 }
 
+void testWSAddWithLimit() {
+  map<string, string> labels;
+  WindowsStorage ws(labels);
+  ws.setMaximalNbReadsPerWindow(3);
+  ws.setBinParameters(1, 20);
+  Sequence seq = {"label", "l", "GATACATTAGACAGCT", "", NULL};
+  Sequence seq_long = {"label", "l", "GATACATTAGACAGCTTATATATATATTTATAT", "", NULL};
+  Germline germline("Test", 't', "../../data/small_V.fa", "", "../../data/small_J.fa", -10, 50);
+
+  ws.add("ATTAG", seq, SEG_PLUS, &germline);
+  ws.add("ATTAG", seq, SEG_PLUS, &germline);
+  ws.add("ATTAG", seq, SEG_PLUS, &germline);
+  ws.add("ATTAG", seq, SEG_PLUS, &germline);
+  ws.add("ATTAG", seq, SEG_PLUS, &germline);
+
+  TAP_TEST(ws.getReads("ATTAG").size() == 3, TEST_WS_LIMIT_READS_COUNT, "nb reads: " << ws.getReads("ATTAG").size());
+  TAP_TEST(ws.getNbReads("ATTAG") == 5, TEST_WS_LIMIT_READS_COUNT, "");
+
+  ws.add("ATTAG", seq_long, SEG_PLUS, &germline);
+  ws.add("ATTAG", seq_long, SEG_PLUS, &germline);
+  ws.add("ATTAG", seq_long, SEG_PLUS, &germline);
+  ws.add("ATTAG", seq_long, SEG_PLUS, &germline);
+  TAP_TEST(ws.getReads("ATTAG").size() == 3, TEST_WS_LIMIT_READS_COUNT, "");
+  TAP_TEST(ws.getNbReads("ATTAG") == 9, TEST_WS_LIMIT_READS_COUNT, "");
+
+  list<Sequence> sequences = ws.getReads("ATTAG");
+  for (list<Sequence>::iterator it = sequences.begin(); it != sequences.end(); it++) {
+    TAP_TEST(*it == seq_long, TEST_WS_LIMIT_READS_CONTENT, "label_full: " << it->label_full << ", label: " << it->label << ", seq: " << it->sequence << ", qual: " << it->quality);
+  }
+}
+
+
 void testWindowStorage() {
   testWSAdd();
+  testWSAddWithLimit();
 }

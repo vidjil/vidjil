@@ -125,6 +125,8 @@ enum {
   TEST_WS_TOP_GERMLINES_ONE,
   TEST_WS_TOP_GERMLINES_NONE,
   TEST_WS_TOP_GERMLINES_MULTI,
+  TEST_WS_LIMIT_READS_COUNT,
+  TEST_WS_LIMIT_READS_CONTENT,
 
   /* ReadStorage */
   TEST_BRS_SCORE_TO_BIN,
@@ -256,6 +258,8 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_WS_TOP_GERMLINES_ONE, "Test WindowsStorage::getTopGermlines() with the most abundant germline");
   RECORD_TAP_TEST(TEST_WS_TOP_GERMLINES_NONE, "Test WindowsStorage::getTopGermlines() with no germline fulfilling the requirements");
   RECORD_TAP_TEST(TEST_WS_TOP_GERMLINES_MULTI, "Test WindowsStorage::getTopGermlines() with several germlines");
+  RECORD_TAP_TEST(TEST_WS_LIMIT_READS_COUNT, "Test that with setMaximalNbReadsPerWindow, the count is correct");
+  RECORD_TAP_TEST(TEST_WS_LIMIT_READS_CONTENT, "Test that with setMaximalNbReadsPerWindow, the sequences are correct");
 
   RECORD_TAP_TEST(TEST_BRS_SCORE_TO_BIN, "Test the scoreToBin() method in ReadStorage");
   RECORD_TAP_TEST(TEST_BRS_SBNE, "Test the smallest_bin_not_empty variables in ReadStorage");
