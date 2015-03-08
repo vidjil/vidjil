@@ -57,6 +57,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
         {
           // Keep the unsegmented read, taking the full sequence as the junction
           windowsStorage->add(reads->getSequence().sequence, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline);
+          stats[TOTAL_SEG_AND_WINDOW].insert(read_length) ; // TODO: rather count that in a pseudo-germline such as 'TRG!'
         }
 
       if (out_unsegmented) {
