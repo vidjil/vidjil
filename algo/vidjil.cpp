@@ -194,7 +194,8 @@ void usage(char *progname, bool advanced)
        << "  -y <nb>       maximal number of clones computed with a representative ('" << NO_LIMIT << "': no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
        << "  -z <nb>       maximal number of clones to be segmented ('" << NO_LIMIT << "': no limit, do not use) (default: " << DEFAULT_MAX_CLONES << ")" << endl
        << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets (for example -AX 20)" << endl
-       << "  -X <nb>       maximal number of reads to process ('" << NO_LIMIT << "': no limit, default)" << endl
+       << "  -x <nb>       maximal number of reads to process ('" << NO_LIMIT << "': no limit, default), only first reads" << endl
+       << "  -X <nb>       maximal number of reads to process ('" << NO_LIMIT << "': no limit, default), sampled reads" << endl
        << endl ;
 
   if (advanced)
@@ -301,6 +302,7 @@ int main (int argc, char **argv)
   // int average_deletion = 4;     // Average number of deletion in V or J
 
   int max_reads_processed = -1;
+  int max_reads_processed_sample = -1;
 
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
   unsigned int max_auditionned = DEFAULT_MAX_AUDITIONED;
@@ -335,7 +337,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!X:hHaiI1g:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHaiI1g:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
 
     switch (c)
       {
@@ -496,6 +498,10 @@ int main (int argc, char **argv)
 	break ;
 
       case 'X':
+        max_reads_processed_sample = atoi_NO_LIMIT(optarg);
+        break;
+
+      case 'x':
         max_reads_processed = atoi_NO_LIMIT(optarg);
         break;
 
@@ -881,6 +887,14 @@ int main (int argc, char **argv)
     //////////////////////////////////
     //$$ Kmer Segmentation
 
+    int only_nth_read = 1 ;
+    if (max_reads_processed_sample > 0)
+      {
+        only_nth_read = nb_sequences_in_fasta(f_reads) / max_reads_processed_sample;
+        max_reads_processed = max_reads_processed_sample ;
+        cout << "Processing every " << only_nth_read << "th read" << endl ;
+      }
+
     cout << endl;
     cout << "Loop through reads, looking for windows" << endl ;
 
@@ -911,7 +925,7 @@ int main (int argc, char **argv)
       we.setAffectsOutput(out_affects);
     }
 
-    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels, max_reads_processed, keep_unsegmented_as_clone);
+    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels, max_reads_processed, only_nth_read, keep_unsegmented_as_clone);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 

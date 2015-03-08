@@ -6,7 +6,7 @@ WindowExtractor::WindowExtractor(): out_segmented(NULL), out_unsegmented(NULL), 
 WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *multigermline,
 					 size_t w,
                                          map<string, string> &windows_labels,
-                                         int stop_after, bool keep_unsegmented_as_clone) {
+                                         int stop_after, int only_nth_read, bool keep_unsegmented_as_clone) {
   init_stats();
 
   WindowsStorage *windowsStorage = new WindowsStorage(windows_labels);
@@ -17,11 +17,16 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
       nb_reads_germline[germline->code] = 0;
     }
 
-  int stop=0;
-  while (reads->hasNext() && stop != stop_after) {
+  int nb_reads_all = 0;
+
+  while (reads->hasNext() && (int) nb_reads != stop_after) {
     reads->next();
+    nb_reads_all++;
+
+    if (nb_reads_all % only_nth_read)
+      continue ;
+
     nb_reads++;
-    stop++;
 
     if (out_affects) {
       *out_affects << reads->getSequence();
