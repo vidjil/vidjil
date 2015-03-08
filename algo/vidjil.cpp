@@ -137,7 +137,7 @@ extern char *optarg;
 
 extern int optind, optopt, opterr;
 
-void usage(char *progname)
+void usage(char *progname, bool advanced)
 {
   cerr << "Usage: " << progname << " [options] <reads.fa/.fq/.gz>" << endl << endl;
 
@@ -156,9 +156,10 @@ void usage(char *progname)
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
        << "  -g <path>     multiple germlines (in the path <path>, takes TRA, TRB, TRG, TRD, IGH, IGK and IGL and sets window prediction parameters)" << endl
        << "  -i            multiple germlines, also incomplete rearrangements (must be used with -g)" << endl
-       << endl
+       << endl ;
 
-       << "Experimental options (do not use)" << endl
+  if (advanced)
+  cerr << "Experimental options (do not use)" << endl
        << "  -I            ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)" << endl
        << "  -1            use a unique index for all germline systems (experimental, must be used with -g, do not use)" << endl
        << "  -!            keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example -!AX 20)" << endl
@@ -182,9 +183,9 @@ void usage(char *progname)
 
        << "Window annotations" << endl
        << "  -l <file>     labels for some windows -- these windows will be kept even if -r/-% thresholds are not reached" << endl
-       << endl
+       << endl ;
 
-       << "Limits to report a clone (or a window)" << endl
+  cerr << "Limits to report a clone (or a window)" << endl
        << "  -r <nb>       minimal number of reads supporting a clone (default: " << DEFAULT_MIN_READS_CLONE << ")" << endl
        << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << DEFAULT_RATIO_READS_CLONE << ")" << endl
        << endl
@@ -194,23 +195,24 @@ void usage(char *progname)
        << "  -z <nb>       maximal number of clones to be segmented ('" << NO_LIMIT << "': no limit, do not use) (default: " << DEFAULT_MAX_CLONES << ")" << endl
        << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets (for example -AX 20)" << endl
        << "  -X <nb>       maximal number of reads to process ('" << NO_LIMIT << "': no limit, default)" << endl
-       << endl
+       << endl ;
 
-       << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
+  if (advanced)
+  cerr << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
        << "  -3            CDR3 detection (experimental)" << endl
        << endl
 
-       << "Additional clustering" << endl
+       << "Additional clustering (experimental)" << endl
        << "  -e <file>     manual clustering -- a file used to force some specific edges" << endl
        << "  -n <int>      maximum distance between neighbors for automatic clustering (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
        << "  -N <int>      minimum required neighbors for automatic clustering (default " << DEFAULT_MINPTS << ")" << endl
        << "  -S            generate and save comparative matrix for clustering" << endl
        << "  -L            load comparative matrix for clustering" << endl
        << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
-       << endl
+       << endl ;
 
-       << "Detailed output per read (not recommended, large files)" << endl
+  cerr << "Detailed output per read (not recommended, large files)" << endl
        << "  -U            output segmented reads (in " << SEGMENTED_FILENAME << " file)" << endl
        << "  -u            output unsegmented reads (in " << UNSEGMENTED_FILENAME << " file)" << endl
        << "  -K            output detailed k-mer affectation on all reads (in " << AFFECTS_FILENAME << " file) (use only for debug, for example -KX 100)" << endl
@@ -224,6 +226,8 @@ void usage(char *progname)
        << "  -v            verbose mode" << endl
        << endl        
 
+       << "  -h            help" << endl
+       << "  -H            help, including experimental and advanced options" << endl
        << "The full help is available in the doc/algo.org file."
        << endl
 
@@ -325,12 +329,15 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!X:haiI1g:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
+  while ((c = getopt(argc, argv, "A!X:hHaiI1g:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
 
     switch (c)
       {
       case 'h':
-        usage(argv[0]);
+        usage(argv[0], false);
+
+      case 'H':
+        usage(argv[0], true);
 
       case 'c':
         if (!strcmp(COMMAND_CLONES,optarg))
@@ -343,7 +350,7 @@ int main (int argc, char **argv)
           command = CMD_GERMLINES;
         else {
           cerr << "Unknwown command " << optarg << endl;
-	  usage(argv[0]);
+	  usage(argv[0], false);
         }
         break;
 
