@@ -597,7 +597,7 @@ int main (int argc, char **argv)
       else if ((germline_system.find("TRB") != string::npos)
 	       || (germline_system.find("IGH") != string::npos))
 	seed = SEED_S12 ;
-      else // TRD, TRG, IGK, IGL
+      else // TRD, TRG, IGK, IGL, custom, multi
 	seed = SEED_S10 ;
 
       k = seed_weight(seed);
