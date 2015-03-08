@@ -156,7 +156,11 @@ void usage(char *progname)
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
        << "  -g <path>     multiple germlines (in the path <path>, takes TRA, TRB, TRG, TRD, IGH, IGK and IGL and sets window prediction parameters)" << endl
        << "  -i            multiple germlines, also incomplete rearrangements (must be used with -g)" << endl
+       << endl
+
+       << "Experimental options (do not use)" << endl
        << "  -I            ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)" << endl
+       << "  -1            use a unique index for all germline systems (experimental, must be used with -g, do not use)" << endl
        << endl
 
        << "Window prediction" << endl
@@ -318,7 +322,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "AX:haiIg:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
+  while ((c = getopt(argc, argv, "AX:haiI1g:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
 
     switch (c)
       {
@@ -373,6 +377,10 @@ int main (int argc, char **argv)
       case 'I':
         multi_germline_mark = true;
 	break;
+
+      case '1':
+        multi_germline_one_index_per_germline = false ;
+        break;
         
       case 'G':
 	germline_system = string(optarg);
