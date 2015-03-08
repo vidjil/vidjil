@@ -140,9 +140,18 @@ MultiGermline::MultiGermline(bool _one_index_per_germline)
 }
 
 MultiGermline::~MultiGermline() {
+  bool first = true ;
+
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
     {
+      if (!one_index_per_germline && !first)
+        {
+          // The index was already deleted in the first germline
+          (*it) -> index = 0 ;
+        }
       delete *it ;
+
+      first = false ;
     }
 }
 
