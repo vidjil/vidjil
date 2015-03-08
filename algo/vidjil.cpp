@@ -301,6 +301,7 @@ int main (int argc, char **argv)
   bool multi_germline = false;
   bool multi_germline_incomplete = false;
   bool multi_germline_mark = false;
+  bool multi_germline_one_index_per_germline = true;
   string multi_germline_file = DEFAULT_MULTIGERMLINE;
 
   string forced_edges = "" ;
@@ -717,7 +718,13 @@ int main (int argc, char **argv)
   //            LOAD GERMLINES           //
   /////////////////////////////////////////
 
-  MultiGermline *multigermline = new MultiGermline();
+  if (command == CMD_GERMLINES)
+    {
+      multi_germline = true ;
+      multi_germline_one_index_per_germline = false ;
+    }
+
+  MultiGermline *multigermline = new MultiGermline(multi_germline_one_index_per_germline);
 
     {
       cout << "Load germlines and build Kmer indexes" << endl ;
@@ -727,11 +734,6 @@ int main (int argc, char **argv)
 	  multigermline->build_default_set(multi_germline_file);
           if (multi_germline_incomplete)
             multigermline->build_incomplete_set(multi_germline_file);
-	}
-      else if (command == CMD_GERMLINES)
-	{
-	  multigermline->load_standard_set(multi_germline_file);
-	  multigermline->build_with_one_index(seed);
 	}
       else
 	{
@@ -748,6 +750,9 @@ int main (int argc, char **argv)
     }
 
     cout << endl ;
+
+    if (!multi_germline_one_index_per_germline)
+      multigermline->build_with_one_index(seed);
 
     if (multi_germline_mark)
       multigermline->mark_cross_germlines_as_ambiguous();

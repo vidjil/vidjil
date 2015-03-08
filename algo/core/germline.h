@@ -78,6 +78,7 @@ ostream &operator<<(ostream &out, const Germline &germline);
 
 class MultiGermline {
  private:
+  bool one_index_per_germline;
 
  public:
   list <Germline*> germlines;
@@ -85,14 +86,13 @@ class MultiGermline {
   // A unique index can be used
   IKmerStore<KmerAffect> *index;
 
-  MultiGermline();
+  MultiGermline(bool one_index_per_germline = true);
   ~MultiGermline();
 
   void insert(Germline *germline);
   void add_germline(Germline *germline, string seed);
   void build_default_set(string path);
   void build_incomplete_set(string path);
-  void load_standard_set(string path);
 
   void insert_in_one_index(IKmerStore<KmerAffect> *_index);
   void build_with_one_index(string seed);
