@@ -1178,9 +1178,29 @@ int main (int argc, char **argv)
 	out_clone << seg << endl ;
 	out_clones << seg << endl ;
 
-        // Output segmentation to .json
-        json_data_segment[it->first]=seg.toJsonList(segmented_germline);
+
+        // Prepare .json data segment
+        JsonList json_clone;
+        JsonList json_seg;
+
+        // From FineSegmenter
+        json_clone.add("sequence", seg.getSequence().sequence);
         
+        if (seg.isSegmented())
+          json_clone.add("name", seg.code_short);
+
+        seg.toJsonList(&json_seg);
+
+        // Re-launch also a KmerMultiSegmenter, for debug purposes
+        KmerMultiSegmenter kmseg(seg.getSequence(), multigermline, 0);
+        KmerSegmenter *kseg = kmseg.the_kseg ;
+        kseg->toJsonList(&json_seg);
+
+        // Save .json data segment
+        json_clone.add("seg", json_seg);
+        json_data_segment[it->first] = json_clone;
+
+
         if (seg.isSegmented())
 	  {
 	      // Check for identical code, outputs to out_edge

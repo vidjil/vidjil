@@ -174,6 +174,8 @@ class KmerSegmenter : public Segmenter
    */
   KmerAffectAnalyser *getKmerAffectAnalyser() const;
 
+  void toJsonList(JsonList *seg);
+
  private:
   void computeSegmentation(int strand, KmerAffect left, KmerAffect right);
 };
@@ -214,7 +216,7 @@ class FineSegmenter : public Segmenter
   void FineSegmentD(Germline *germline);
   void findCDR3();
 
-  JsonList toJsonList(Germline *germline);
+  void toJsonList(JsonList *seg);
   
 };
 
