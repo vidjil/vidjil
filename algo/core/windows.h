@@ -72,7 +72,7 @@ class WindowsStorage {
   /**
    * @return the list of reads supporting a given window
    */
-  list<Sequence> &getReads(junction window);
+  list<Sequence> getReads(junction window);
 
   /**
    * @param window: the window shared by all the sequences

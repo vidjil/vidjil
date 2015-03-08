@@ -1254,7 +1254,7 @@ int main (int argc, char **argv)
 
 	if (output_sequences_by_cluster) // -a option, output all sequences
 	  {
-	    list<Sequence> &sequences = windowsStorage->getReads(it->first);
+	    list<Sequence> sequences = windowsStorage->getReads(it->first);
 	    
 	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
 	      {

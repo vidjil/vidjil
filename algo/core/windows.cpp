@@ -53,7 +53,7 @@ size_t WindowsStorage::getNbReads(junction window) {
   return seqs_by_window[window].getNbInserted();
 }
 
-list<Sequence> &WindowsStorage::getReads(junction window) {
+list<Sequence> WindowsStorage::getReads(junction window) {
   return seqs_by_window[window].getReads();
 }
 
@@ -84,7 +84,7 @@ Sequence WindowsStorage::getRepresentative(junction window,
 
 list<Sequence> WindowsStorage::getSample(junction window, size_t nb_sampled,
                                          size_t nb_buckets) {
-  list<Sequence> &reads = getReads(window);
+  list<Sequence> reads = getReads(window);
   return SequenceSampler(reads).getLongest(nb_sampled, nb_buckets);
 }
 
