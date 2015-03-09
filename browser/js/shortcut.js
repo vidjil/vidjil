@@ -121,7 +121,12 @@ Shortcut.prototype = {
                         }
 
                     // Cycle to next germline
-                    m.changeGermline(germlines[(current+1) % germlines.length])
+                    next_germline = germlines[(current+1) % germlines.length]
+                    if (e.shiftKey) {
+                        m.keep_one_active_system(next_germline)
+                    } else {
+                        m.changeGermline(next_germline)
+                    }
                 } 
             }
             
