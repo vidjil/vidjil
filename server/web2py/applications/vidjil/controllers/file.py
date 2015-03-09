@@ -10,11 +10,11 @@ if request.env.http_origin:
 
 
 def add(): 
-    if not auth.has_permission('admin', 'patient', request.vars['id'], auth.user_id):
+    if not auth.has_permission('admin', 'patient', request.vars['id'], auth.user_id) and not auth.has_membership("admin"):
         res = {"success" : "false", "message" : "you need admin permission on this patient to add files"}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-    elif not auth.has_permission('upload', 'sequence_file', request.vars['id'], auth.user_id):
+    elif not auth.has_permission('upload', 'sequence_file', request.vars['id'], auth.user_id) and not auth.has_membership("admin"):
         res = {"success" : "false", "message" : "you don't have right to upload files"}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
@@ -100,7 +100,7 @@ def edit_form():
         error += " missing filename"
             
     if error=="" :
-        mes = "file " + request.vars['id'] + " : "
+        mes = "file " + str(request.vars['id']) + " : "
         filename = db.sequence_file[request.vars['id']].filename
         if request.vars['filename'] != "":
             filename = request.vars['filename']
@@ -118,7 +118,7 @@ def edit_form():
         res = {"file_id" : request.vars['id'],
                "redirect": "patient/info",
                "args" : { "id" : patient_id},
-               "message": "%s: metadata saved" % request.vars['filename']}
+               "message": "%s: metadata saved" % str(request.vars['filename'])}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -130,7 +130,7 @@ def upload():
     
     if error=="" :
             
-        mes = "file " + request.vars['id'] + " : "
+        mes = "file " + str(request.vars['id']) + " : "
         res = {"message": mes + ": processing uploaded file",
                "redirect": "patient/info",
                "args" : {"id" : request.vars['id']}
@@ -151,7 +151,7 @@ def upload():
   
 
 def confirm():
-    if auth.has_permission('admin', 'patient', request.vars['patient_id']):
+    if auth.has_permission('admin', 'patient', request.vars['patient_id']) or auth.has_membership("admin"):
         return dict(message=T('confirm sequence file deletion'))
     else:
         res = {"success" : "false", "message" : "you need admin permission to delete this file"}
