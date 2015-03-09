@@ -308,6 +308,8 @@ There can be several causes leading to bad ratios:
   | =h=: IGH, IGH+  |                                    |
   | =l=: IGL        |                                    |
   | =k=: IGK, IGK+  |                                    |
+  Note: You can select just one locus by holding the Shift key while pressing
+  the letter corresponding to the locus of interest
 
 
 ** Browser connected to a patient databse

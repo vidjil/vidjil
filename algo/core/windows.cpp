@@ -8,9 +8,10 @@
 #include "segment.h"
 #include "json.h"
 
-WindowsStorage::WindowsStorage(map<string, string> &labels):windows_labels(labels) {}
+WindowsStorage::WindowsStorage(map<string, string> &labels)
+  :windows_labels(labels),max_reads_per_window(~0),nb_bins(NB_BINS),max_value_bins(MAX_VALUE_BINS) {}
 
-list<pair <junction, int> > &WindowsStorage::getSortedList() {
+list<pair <junction, size_t> > &WindowsStorage::getSortedList() {
   return sort_all_windows;
 }
 
@@ -29,6 +30,10 @@ Germline *WindowsStorage::getGermline(junction window) {
   return result->second;
 }
 
+size_t WindowsStorage::getMaximalNbReadsPerWindow() {
+  return max_reads_per_window;
+}
+
 JsonList WindowsStorage::statusToJson(junction window) {
     JsonList result;
     
@@ -43,8 +48,13 @@ JsonList WindowsStorage::statusToJson(junction window) {
     return result;
 }
 
-list<Sequence> &WindowsStorage::getReads(junction window) {
-  return seqs_by_window[window];
+size_t WindowsStorage::getNbReads(junction window) {
+  assert(hasWindow(window));
+  return seqs_by_window[window].getNbInserted();
+}
+
+list<Sequence> WindowsStorage::getReads(junction window) {
+  return seqs_by_window[window].getReads();
 }
 
 Sequence WindowsStorage::getRepresentative(junction window, 
@@ -52,6 +62,7 @@ Sequence WindowsStorage::getRepresentative(junction window,
                                            float percent_cover,
                                            size_t nb_sampled, 
                                            size_t nb_buckets) {
+  assert(! hasLimitForReadsPerWindow() || nb_sampled <= getMaximalNbReadsPerWindow());
   list<Sequence> auditioned_sequences 
     = getSample(window,nb_sampled, nb_buckets);
   KmerRepresentativeComputer repComp(auditioned_sequences, seed);
@@ -64,6 +75,7 @@ Sequence WindowsStorage::getRepresentative(junction window,
   // We should always have a representative, because
   // - there is at least min('min_reads_clone', 'max_auditioned') sequences in auditioned_sequences
   // - and 'min_cover' = min('min_reads_clone', 'max_auditioned')
+  // - and these sequence are at least as long as the seed
   if (!repComp.hasRepresentative())
     throw invalid_argument("No representative for junction " + window);
 
@@ -72,7 +84,9 @@ Sequence WindowsStorage::getRepresentative(junction window,
 
 list<Sequence> WindowsStorage::getSample(junction window, size_t nb_sampled,
                                          size_t nb_buckets) {
-  list<Sequence> &reads = getReads(window);
+  list<Sequence> reads = getReads(window);
+  if (reads.size() <= nb_sampled)
+    return reads;
   return SequenceSampler(reads).getLongest(nb_sampled, nb_buckets);
 }
 
@@ -82,7 +96,7 @@ set<Germline *> WindowsStorage::getTopGermlines(size_t top, size_t min_reads) {
   set<Germline *> top_germlines;
   size_t count = 0;
 
-  for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin();
+  for (list<pair <junction, size_t> >::const_iterator it = sort_all_windows.begin();
        it != sort_all_windows.end() && count < top && (size_t)it->second >= min_reads;
        ++it, ++count) {
     top_germlines.insert(getGermline(it->first));
@@ -91,13 +105,27 @@ set<Germline *> WindowsStorage::getTopGermlines(size_t top, size_t min_reads) {
   return top_germlines;
 }
 
+bool WindowsStorage::hasLimitForReadsPerWindow() {
+  return max_reads_per_window != (size_t)~0;
+}
+
+bool WindowsStorage::hasWindow(junction window) {
+  map<junction, Germline *>::iterator result = germline_by_window.find(window);
+  return (result != germline_by_window.end());
+}
+
 size_t WindowsStorage::size() {
   return seqs_by_window.size();
 }
 
+void WindowsStorage::setBinParameters(size_t nb, size_t max_value) {
+  nb_bins = nb;
+  max_value_bins = max_value;
+}
+
 void WindowsStorage::setIdToAll() {
     int id = 0;
-    for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin();
+    for (map <junction, BinReadStorage >::const_iterator it = seqs_by_window.begin();
         it != seqs_by_window.end(); ++it) {
             id_by_window.insert(make_pair(it->first, id));
             id++;
@@ -105,10 +133,14 @@ void WindowsStorage::setIdToAll() {
 }
 
 void WindowsStorage::add(junction window, Sequence sequence, int status, Germline *germline) {
-  seqs_by_window[window].push_back(sequence);
-  if (status_by_window.find(window) == status_by_window.end() ) {
-      status_by_window[window].resize(STATS_SIZE);
+  if (! hasWindow(window)) {
+    // First time we see that window: init
+    status_by_window[window].resize(STATS_SIZE);
+    seqs_by_window[window].init(nb_bins, max_value_bins, &scorer);
+    seqs_by_window[window].setMaxNbReadsStored(getMaximalNbReadsPerWindow());
   }
+
+  seqs_by_window[window].add(sequence);
   status_by_window[window][status]++;
 
   germline_by_window[window] = germline;
@@ -116,39 +148,39 @@ void WindowsStorage::add(junction window, Sequence sequence, int status, Germlin
 
 void WindowsStorage::fillStatsClones()
 {
-  for (map <junction, list<Sequence> >::iterator it = seqs_by_window.begin(); 
+  for (map <junction, BinReadStorage >::iterator it = seqs_by_window.begin();
        it != seqs_by_window.end();
        it++)
     {
       junction junc = it->first;
-      int nb_reads = it->second.size();
+      int nb_reads = it->second.getNbInserted();
       Germline *germline = germline_by_window[junc];
 
       germline->stats_clones.insert(nb_reads);
     }
 }
 
-pair <int, int> WindowsStorage::keepInterestingWindows(size_t min_reads_window) {
+pair <int, size_t> WindowsStorage::keepInterestingWindows(size_t min_reads_window) {
   int removes = 0 ;
-  int nb_reads = 0 ;
+  size_t nb_reads = 0 ;
 
-  for (map <junction, list<Sequence> >::iterator it = seqs_by_window.begin(); 
+  for (map <junction, BinReadStorage >::iterator it = seqs_by_window.begin();
        it != seqs_by_window.end(); ) // We do not advance the iterator here because of the deletion
     {
       junction junc = it->first;
-      
+      size_t nb_reads_this_window = getNbReads(junc);
       // Is it not supported by enough reads?
-      if (!(seqs_by_window[junc].size() >= min_reads_window) 
+      if (!(nb_reads_this_window >= min_reads_window)
           // Is it not a labelled junction?
           && (windows_labels.find(junc) == windows_labels.end()))
         {
-          map <junction, list<Sequence> >::iterator toBeDeleted = it;
+          map <junction, BinReadStorage >::iterator toBeDeleted = it;
           it++;
           seqs_by_window.erase(toBeDeleted);
           removes++ ;
         }
       else {
-        nb_reads += seqs_by_window[junc].size();
+        nb_reads += nb_reads_this_window;
         it++;
       }
     }
@@ -157,12 +189,16 @@ pair <int, int> WindowsStorage::keepInterestingWindows(size_t min_reads_window) 
   return make_pair(removes, nb_reads);
 }
 
+void WindowsStorage::setMaximalNbReadsPerWindow(size_t max_reads){
+  max_reads_per_window = max_reads;
+}
+  
 void WindowsStorage::sort() {
   sort_all_windows.clear();
-  for (map <junction, list<Sequence> >::const_iterator it = seqs_by_window.begin();
+  for (map <junction, BinReadStorage >::const_iterator it = seqs_by_window.begin();
        it != seqs_by_window.end(); ++it)
     {
-      sort_all_windows.push_back(make_pair(it->first, it->second.size()));
+      sort_all_windows.push_back(make_pair(it->first, it->second.getNbInserted()));
     }
 
   sort_all_windows.sort(pair_occurrence_sort<junction>);
@@ -171,7 +207,7 @@ void WindowsStorage::sort() {
 ostream &WindowsStorage::printSortedWindows(ostream &os) {
   int num_seq = 0 ;
 
-  for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
+  for (list<pair <junction, size_t> >::const_iterator it = sort_all_windows.begin();
        it != sort_all_windows.end(); ++it) 
     {
       num_seq++ ;
@@ -186,7 +222,7 @@ JsonArray WindowsStorage::sortedWindowsToJsonArray(map <junction, JsonList> json
   JsonArray windowsArray;
   int top = 1;
     
-  for (list<pair <junction, int> >::const_iterator it = sort_all_windows.begin(); 
+  for (list<pair <junction, size_t> >::const_iterator it = sort_all_windows.begin();
        it != sort_all_windows.end(); ++it) 
     {
 	   

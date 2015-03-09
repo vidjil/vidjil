@@ -62,7 +62,7 @@ def add_form():
                             provider=auth.user_id)
     
         res = {"file_id" : id,
-               "message": request.vars['filename'] + ": upload started",
+               "message": "(%s) upload started: %s" % (request.vars['patient_id'], request.vars['filename']),
                "redirect": "patient/info",
                "args" : {"id" : request.vars['patient_id']}
                }
@@ -139,7 +139,7 @@ def upload():
         if request.vars.file != None :
             f = request.vars.file
             db.sequence_file[request.vars["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
-            mes = f.filename + ": upload finished"
+            mes = "upload finished: %s" % f.filename
         
         seq_file = defs.DIR_SEQUENCES+db.sequence_file[request.vars["id"]].data_file
         size = os.path.getsize(seq_file)
@@ -170,7 +170,7 @@ def delete():
 
         res = {"redirect": "patient/info",
                "args" : { "id" : patient_id},
-               "message": "sequence file deleted"}
+               "message": "(%s) sequence file deleted" % patient_id}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:

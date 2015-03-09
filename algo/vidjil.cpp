@@ -137,7 +137,7 @@ extern char *optarg;
 
 extern int optind, optopt, opterr;
 
-void usage(char *progname)
+void usage(char *progname, bool advanced)
 {
   cerr << "Usage: " << progname << " [options] <reads.fa/.fq/.gz>" << endl << endl;
 
@@ -156,7 +156,13 @@ void usage(char *progname)
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
        << "  -g <path>     multiple germlines (in the path <path>, takes TRA, TRB, TRG, TRD, IGH, IGK and IGL and sets window prediction parameters)" << endl
        << "  -i            multiple germlines, also incomplete rearrangements (must be used with -g)" << endl
+       << endl ;
+
+  if (advanced)
+  cerr << "Experimental options (do not use)" << endl
        << "  -I            ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)" << endl
+       << "  -1            use a unique index for all germline systems (experimental, must be used with -g, do not use)" << endl
+       << "  -!            keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example -!AX 20)" << endl
        << endl
 
        << "Window prediction" << endl
@@ -177,9 +183,9 @@ void usage(char *progname)
 
        << "Window annotations" << endl
        << "  -l <file>     labels for some windows -- these windows will be kept even if -r/-% thresholds are not reached" << endl
-       << endl
+       << endl ;
 
-       << "Limits to report a clone (or a window)" << endl
+  cerr << "Limits to report a clone (or a window)" << endl
        << "  -r <nb>       minimal number of reads supporting a clone (default: " << DEFAULT_MIN_READS_CLONE << ")" << endl
        << "  -% <ratio>    minimal percentage of reads supporting a clone (default: " << DEFAULT_RATIO_READS_CLONE << ")" << endl
        << endl
@@ -188,24 +194,26 @@ void usage(char *progname)
        << "  -y <nb>       maximal number of clones computed with a representative ('" << NO_LIMIT << "': no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
        << "  -z <nb>       maximal number of clones to be segmented ('" << NO_LIMIT << "': no limit, do not use) (default: " << DEFAULT_MAX_CLONES << ")" << endl
        << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets (for example -AX 20)" << endl
-       << "  -X <nb>       maximal number of reads to process ('" << NO_LIMIT << "': no limit, default)" << endl
-       << endl
+       << "  -x <nb>       maximal number of reads to process ('" << NO_LIMIT << "': no limit, default), only first reads" << endl
+       << "  -X <nb>       maximal number of reads to process ('" << NO_LIMIT << "': no limit, default), sampled reads" << endl
+       << endl ;
 
-       << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
+  if (advanced)
+  cerr << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
        << "  -3            CDR3 detection (experimental)" << endl
        << endl
 
-       << "Additional clustering" << endl
+       << "Additional clustering (experimental)" << endl
        << "  -e <file>     manual clustering -- a file used to force some specific edges" << endl
        << "  -n <int>      maximum distance between neighbors for automatic clustering (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
        << "  -N <int>      minimum required neighbors for automatic clustering (default " << DEFAULT_MINPTS << ")" << endl
        << "  -S            generate and save comparative matrix for clustering" << endl
        << "  -L            load comparative matrix for clustering" << endl
        << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
-       << endl
+       << endl ;
 
-       << "Detailed output per read (not recommended, large files)" << endl
+  cerr << "Detailed output per read (not recommended, large files)" << endl
        << "  -U            output segmented reads (in " << SEGMENTED_FILENAME << " file)" << endl
        << "  -u            output unsegmented reads (in " << UNSEGMENTED_FILENAME << " file)" << endl
        << "  -K            output detailed k-mer affectation on all reads (in " << AFFECTS_FILENAME << " file) (use only for debug, for example -KX 100)" << endl
@@ -219,6 +227,8 @@ void usage(char *progname)
        << "  -v            verbose mode" << endl
        << endl        
 
+       << "  -h            help" << endl
+       << "  -H            help, including experimental and advanced options" << endl
        << "The full help is available in the doc/algo.org file."
        << endl
 
@@ -231,6 +241,12 @@ void usage(char *progname)
        << "  " << progname << " -c germlines                               data/Stanford_S22.fasta" << endl
     ;
   exit(1);
+}
+
+
+int atoi_NO_LIMIT(char *optarg)
+{
+  return strcmp(NO_LIMIT, optarg) ? atoi(optarg) : -1 ;
 }
 
 int main (int argc, char **argv)
@@ -286,6 +302,7 @@ int main (int argc, char **argv)
   // int average_deletion = 4;     // Average number of deletion in V or J
 
   int max_reads_processed = -1;
+  int max_reads_processed_sample = -1;
 
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
   unsigned int max_auditionned = DEFAULT_MAX_AUDITIONED;
@@ -298,9 +315,12 @@ int main (int argc, char **argv)
   bool output_segmented = false;
   bool output_unsegmented = false;
   bool output_affects = false;
+  bool keep_unsegmented_as_clone = false;
+
   bool multi_germline = false;
   bool multi_germline_incomplete = false;
   bool multi_germline_mark = false;
+  bool multi_germline_one_index_per_germline = true;
   string multi_germline_file = DEFAULT_MULTIGERMLINE;
 
   string forced_edges = "" ;
@@ -317,12 +337,15 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "AX:haiIg:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHaiI1g:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
 
     switch (c)
       {
       case 'h':
-        usage(argv[0]);
+        usage(argv[0], false);
+
+      case 'H':
+        usage(argv[0], true);
 
       case 'c':
         if (!strcmp(COMMAND_CLONES,optarg))
@@ -335,7 +358,7 @@ int main (int argc, char **argv)
           command = CMD_GERMLINES;
         else {
           cerr << "Unknwown command " << optarg << endl;
-	  usage(argv[0]);
+	  usage(argv[0], false);
         }
         break;
 
@@ -372,6 +395,10 @@ int main (int argc, char **argv)
       case 'I':
         multi_germline_mark = true;
 	break;
+
+      case '1':
+        multi_germline_one_index_per_germline = false ;
+        break;
         
       case 'G':
 	germline_system = string(optarg);
@@ -423,6 +450,10 @@ int main (int argc, char **argv)
 	delta_max = atoi(optarg);
         break;
 
+      case '!':
+        keep_unsegmented_as_clone = true;
+        break;
+
       // Output 
 
       case 'o':
@@ -452,21 +483,11 @@ int main (int argc, char **argv)
         break;
 
       case 'y':
-	if (!strcmp(NO_LIMIT, optarg))
-	  {
-	    max_representatives = -1;
-	    break;
-	  }
-	max_representatives = atoi(optarg);
+	max_representatives = atoi_NO_LIMIT(optarg);
         break;
 
       case 'z':
-	if (!strcmp(NO_LIMIT, optarg))
-	  {
-	    max_clones = -1;
-	    break;
-	  }
-	max_clones = atoi(optarg);
+	max_clones = atoi_NO_LIMIT(optarg);
         break;
 
       case 'A': // --all
@@ -477,12 +498,11 @@ int main (int argc, char **argv)
 	break ;
 
       case 'X':
-        if (!strcmp(NO_LIMIT, optarg))
-          {
-            max_reads_processed = -1;
-            break;
-          }
-        max_reads_processed = atoi(optarg);
+        max_reads_processed_sample = atoi_NO_LIMIT(optarg);
+        break;
+
+      case 'x':
+        max_reads_processed = atoi_NO_LIMIT(optarg);
         break;
 
       case 'l':
@@ -583,13 +603,13 @@ int main (int argc, char **argv)
   if (k == DEFAULT_K)
     {
       if (germline_system.find("TRA") != string::npos)
-	seed = "#######-######" ;
+	seed = SEED_S13 ;
 
       else if ((germline_system.find("TRB") != string::npos)
 	       || (germline_system.find("IGH") != string::npos))
-	seed = "######-######" ; 
-      else // TRD, TRG, IGK, IGL
-	seed = "#####-#####" ; 
+	seed = SEED_S12 ;
+      else // TRD, TRG, IGK, IGL, custom, multi
+	seed = SEED_S10 ;
 
       k = seed_weight(seed);
     }
@@ -717,7 +737,13 @@ int main (int argc, char **argv)
   //            LOAD GERMLINES           //
   /////////////////////////////////////////
 
-  MultiGermline *multigermline = new MultiGermline();
+  if (command == CMD_GERMLINES)
+    {
+      multi_germline = true ;
+      multi_germline_one_index_per_germline = false ;
+    }
+
+  MultiGermline *multigermline = new MultiGermline(multi_germline_one_index_per_germline);
 
     {
       cout << "Load germlines and build Kmer indexes" << endl ;
@@ -727,11 +753,6 @@ int main (int argc, char **argv)
 	  multigermline->build_default_set(multi_germline_file);
           if (multi_germline_incomplete)
             multigermline->build_incomplete_set(multi_germline_file);
-	}
-      else if (command == CMD_GERMLINES)
-	{
-	  multigermline->load_standard_set(multi_germline_file);
-	  multigermline->build_with_one_index(seed);
 	}
       else
 	{
@@ -748,6 +769,9 @@ int main (int argc, char **argv)
     }
 
     cout << endl ;
+
+    if (!multi_germline_one_index_per_germline)
+      multigermline->build_with_one_index(seed);
 
     if (multi_germline_mark)
       multigermline->mark_cross_germlines_as_ambiguous();
@@ -863,6 +887,14 @@ int main (int argc, char **argv)
     //////////////////////////////////
     //$$ Kmer Segmentation
 
+    int only_nth_read = 1 ;
+    if (max_reads_processed_sample > 0)
+      {
+        only_nth_read = nb_sequences_in_fasta(f_reads) / max_reads_processed_sample;
+        max_reads_processed = max_reads_processed_sample ;
+        cout << "Processing every " << only_nth_read << "th read" << endl ;
+      }
+
     cout << endl;
     cout << "Loop through reads, looking for windows" << endl ;
 
@@ -871,6 +903,8 @@ int main (int argc, char **argv)
     ofstream *out_affects = NULL;
  
     WindowExtractor we;
+    if (! output_sequences_by_cluster)
+      we.setMaximalNbReadsPerWindow(max_auditionned);
  
     if (output_segmented) {
       string f_segmented = out_dir + f_basename + SEGMENTED_FILENAME ;
@@ -893,7 +927,7 @@ int main (int argc, char **argv)
       we.setAffectsOutput(out_affects);
     }
 
-    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels, max_reads_processed);
+    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels, max_reads_processed, only_nth_read, keep_unsegmented_as_clone);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 
@@ -963,7 +997,7 @@ int main (int argc, char **argv)
 
     int min_reads_clone_final = max(min_reads_clone, min_reads_clone_ratio);
 
-    pair<int, int> info_remove = windowsStorage->keepInterestingWindows((size_t) min_reads_clone_final);
+    pair<int, size_t> info_remove = windowsStorage->keepInterestingWindows((size_t) min_reads_clone_final);
 	 
     cout << "  ==> keep " <<  windowsStorage->size() << " windows in " << info_remove.second << " reads" ;
     cout << " (" << setprecision(3) << 100 * (float) info_remove.second / nb_total_reads << "%)  " << endl ;
@@ -976,7 +1010,7 @@ int main (int argc, char **argv)
     //////////////////////////////////
     //$$ Clustering
     windowsStorage->sort();
-    list<pair <junction, int> > sort_clones = windowsStorage->getSortedList();
+    list<pair <junction, size_t> > sort_clones = windowsStorage->getSortedList();
     cout << "  ==> " << sort_clones.size() << " clones" << endl ;
     
     list <list <junction> > clones_windows;
@@ -1062,10 +1096,10 @@ int main (int argc, char **argv)
     cout << endl ;
 
 
-    for (list <pair<junction,int> >::const_iterator it = sort_clones.begin();
+    for (list <pair<junction,size_t> >::const_iterator it = sort_clones.begin();
          it != sort_clones.end(); ++it) {
       junction win = it->first;
-      int clone_nb_reads = it->second;
+      size_t clone_nb_reads = it->second;
 
     
       ++num_clone ;
@@ -1165,9 +1199,29 @@ int main (int argc, char **argv)
 	out_clone << seg << endl ;
 	out_clones << seg << endl ;
 
-        // Output segmentation to .json
-        json_data_segment[it->first]=seg.toJsonList(segmented_germline);
+
+        // Prepare .json data segment
+        JsonList json_clone;
+        JsonList json_seg;
+
+        // From FineSegmenter
+        json_clone.add("sequence", seg.getSequence().sequence);
         
+        if (seg.isSegmented())
+          json_clone.add("name", seg.code_short);
+
+        seg.toJsonList(&json_seg);
+
+        // Re-launch also a KmerMultiSegmenter, for debug purposes
+        KmerMultiSegmenter kmseg(seg.getSequence(), multigermline, 0);
+        KmerSegmenter *kseg = kmseg.the_kseg ;
+        kseg->toJsonList(&json_seg);
+
+        // Save .json data segment
+        json_clone.add("seg", json_seg);
+        json_data_segment[it->first] = json_clone;
+
+
         if (seg.isSegmented())
 	  {
 	      // Check for identical code, outputs to out_edge
@@ -1200,7 +1254,7 @@ int main (int argc, char **argv)
 
 	if (output_sequences_by_cluster) // -a option, output all sequences
 	  {
-	    list<Sequence> &sequences = windowsStorage->getReads(it->first);
+	    list<Sequence> sequences = windowsStorage->getReads(it->first);
 	    
 	    for (list<Sequence>::const_iterator itt = sequences.begin(); itt != sequences.end(); ++itt)
 	      {

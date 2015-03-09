@@ -47,7 +47,7 @@ void testCluster() {
    windows.add("CCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCATGCCCCCC", seq, 0, 0);
 
    windows.sort();
-   list<pair <junction, int> > sort_clones = windows.getSortedList();
+   list<pair <junction, size_t> > sort_clones = windows.getSortedList();
    
    comp_matrix comp=comp_matrix(sort_clones);
    

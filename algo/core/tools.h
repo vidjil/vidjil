@@ -16,8 +16,11 @@ using namespace std;
 
 #define SEED_YES '#'
 
-
-
+// Common seeds
+#define SEED_9   "#########"
+#define SEED_S10 "#####-#####"
+#define SEED_S12 "######-######"
+#define SEED_S13 "#######-######"
 
 string seed_contiguous(int k);
 

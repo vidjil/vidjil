@@ -97,14 +97,14 @@ SimilarityMatrix compare_windows(WindowsStorage &windowsStorage, const Cost theC
         return matrix;
 
     //Creation of a pair list, which contains junctions/windows (index) and the number of occurences of this (value)
-    list<pair <junction, int> > sortedList = windowsStorage.getSortedList();
+    list<pair <junction, size_t> > sortedList = windowsStorage.getSortedList();
 
     //Positions of the array
     int positionIt1 = 0;
     int positionIt2 = 0;
 
     //Process of the junctions (windows)
-    for (list<pair <junction, int> >:: const_iterator it1 = sortedList.begin();
+    for (list<pair <junction, size_t> >:: const_iterator it1 = sortedList.begin();
         it1 != sortedList.end(); ++it1) {
 
         //We save the name of the junction
@@ -114,7 +114,7 @@ SimilarityMatrix compare_windows(WindowsStorage &windowsStorage, const Cost theC
         if (positionIt1 >= nb_clones) break;
 
         //Process of the second junctions
-        for (list<pair <junction, int> >:: const_iterator it2 = sortedList.begin();
+        for (list<pair <junction, size_t> >:: const_iterator it2 = sortedList.begin();
         it2 != sortedList.end(); ++it2) {
 
             string win2 = it2->first;

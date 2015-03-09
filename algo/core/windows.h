@@ -18,6 +18,11 @@
 #include "json.h"
 #include "segment.h"
 #include "germline.h"
+#include "read_storage.h"
+#include "read_score.h"
+
+#define NB_BINS 15
+#define MAX_VALUE_BINS 500
 
 using namespace std;
 
@@ -25,12 +30,18 @@ typedef string junction ;
 
 class WindowsStorage {
  private:
-  map<junction, list<Sequence> > seqs_by_window;
+  map<junction, BinReadStorage > seqs_by_window;
   map<junction, vector<int> > status_by_window;
   map<junction, Germline* > germline_by_window;
   map<string, string> windows_labels;
-  list<pair <junction, int> > sort_all_windows;
+  list<pair <junction, size_t> > sort_all_windows;
   map<junction, int> id_by_window;
+  size_t max_reads_per_window;
+  ReadLengthScore scorer;
+
+  /* Parameters for the read storage */
+  size_t nb_bins;
+  size_t max_value_bins;
  public:
   /**
    * Build an empty storage, with the labels that correspond to specific
@@ -46,11 +57,22 @@ class WindowsStorage {
   Germline *getGermline(junction window);
   
   JsonList statusToJson(junction window);
+
+  /**
+   * @return the maximal number of reads that can be stored for a window.
+   */
+  size_t getMaximalNbReadsPerWindow();
+
+  /**
+   * @pre hasWindow(window)
+   * @return the total number of reads supporting a window.
+   */
+  size_t getNbReads(junction window);
   
   /**
    * @return the list of reads supporting a given window
    */
-  list<Sequence> &getReads(junction window);
+  list<Sequence> getReads(junction window);
 
   /**
    * @param window: the window shared by all the sequences
@@ -61,6 +83,7 @@ class WindowsStorage {
    *                    Sampling sequences allow to have a more time efficient 
    *                    algorithm.
    * @param nb_buckets: Number of buckets for sampling (see SequenceSampler)
+   * @pre nb_sampled <= getMaximalNbReadsPerWindow() if hasLimitForReadsPerWindow()
    * @return the representative sequence of a window or NULL_SEQUENCE if we 
    *         cannot find any representative
    */
@@ -81,13 +104,23 @@ class WindowsStorage {
    */
   void fillStatsClones();
 
+  /**
+   * @return true iff a limit has been set for the maximal number of reads per
+   * window
+   */
+  bool hasLimitForReadsPerWindow();
+
+  /**
+   * @return true iff the window has been reported.
+   */
+  bool hasWindow(junction window);
 
   /**
    * @return a list of windows together with the number of reads they appear in.
    * @pre sort() must have been called at least once and must have been called
    *      again after calling keepInterestingWindows()
    */
-  list<pair <junction, int> > &getSortedList();
+  list<pair <junction, size_t> > &getSortedList();
 
   /**
    * The number of windows stored
@@ -100,9 +133,33 @@ class WindowsStorage {
   int getId(junction window);
 
   /**
+   * Sets the parameters of the bins used for storing the reads.
+   * @param nb: Number of bins (>= 0)
+   * @param max_value: maximal value to be stored (>= 0).
+   *        Any value greater than max_value will be put
+   *        in an additional bin.
+   */
+  void setBinParameters(size_t nb, size_t max_value);
+
+  /**
    * Give an id to all the windows, in id_by_window map
    */
   void setIdToAll();
+
+  /**
+   * For each window the maximal number of reads actually stored is
+   * max_reads. This applies only to future reads added. Not to reads that
+   * have been previously added.  In other words if for some window w,
+   * getReads(w).size() > max_reads, no reads will be removed. However no
+   * reads will be added for that window.  getNbReads() still returns the real
+   * number of reads for a given window, not the number of reads stored for a
+   * window.
+   * When the limit is reached the better reads are preferred over the less good
+   * therefore reads may be replaced so that the list contains the best ones.
+   * @param max_reads: Maximal number of reads stored for a window. 
+   *                   ~0 for no limit.
+   */
+  void setMaximalNbReadsPerWindow(size_t max_reads);
 
   /**
    * Add a new window with its sequence.
@@ -136,7 +193,7 @@ class WindowsStorage {
    * @return the number of windows removed as well as the number of
    * reads finally kept.
    */
-  pair<int, int> keepInterestingWindows(size_t min_reads_window);
+  pair<int, size_t> keepInterestingWindows(size_t min_reads_window);
 
   /**
    * sort windows according to the number of reads they appear in

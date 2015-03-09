@@ -868,34 +868,21 @@ void FineSegmenter::findCDR3(){
     
 }
 
-JsonList FineSegmenter::toJsonList(Germline *germline){
-  JsonList result;
-
-  //string str = getSequence().sequence;
-
-  // KmerMultiSegmenter kmseg(getSequence(), multigermline, 0);
-  // KmerSegmenter *kseg = kmseg.the_kseg ;
-  
-  KmerSegmenter *kseg = new KmerSegmenter(getSequence(), germline);
-  result.add("sequence", revcomp(sequence, reversed) );
-
+void FineSegmenter::toJsonList(JsonList *seg){
 
   if (isSegmented()) {
-    result.add("name", code_short);
-    
-    JsonList seg;
-    seg.add("5", germline->rep_5.label(best_V));
-    seg.add("5start", 0);
-    seg.add("5end", Vend);
+    seg->add("5", segmented_germline->rep_5.label(best_V));
+    seg->add("5start", 0);
+    seg->add("5end", Vend);
     
     if (score_D.size()>0){
-      seg.add("4", germline->rep_4.label(best_D));
-      seg.add("4start", Dstart);
-      seg.add("4end", Dend);      
+      seg->add("4", segmented_germline->rep_4.label(best_D));
+      seg->add("4start", Dstart);
+      seg->add("4end", Dend);
     }
     
-    seg.add("3", germline->rep_3.label(best_J));
-    seg.add("3start", Jstart);
+    seg->add("3", segmented_germline->rep_3.label(best_J));
+    seg->add("3start", Jstart);
 
     if (CDR3start >= 0)
       {
@@ -903,32 +890,30 @@ JsonList FineSegmenter::toJsonList(Germline *germline){
     json_cdr=new JsonList();
     json_cdr->add("start", CDR3start);
     json_cdr->add("stop", CDR3end);
-    seg.add("cdr3", *json_cdr);
+    seg->add("cdr3", *json_cdr);
       }
 
+  }
+}
 
+void KmerSegmenter::toJsonList(JsonList *seg)
+{
     int sequenceSize = sequence.size();
 
     JsonList *json_affectValues;
     json_affectValues=new JsonList();
     json_affectValues->add("start", 0);
     json_affectValues->add("stop", sequenceSize); 
-    json_affectValues->add("seq", kseg->getKmerAffectAnalyser()->toStringValues());
-    seg.add("affectValues", *json_affectValues);
+    json_affectValues->add("seq", getKmerAffectAnalyser()->toStringValues());
+    seg->add("affectValues", *json_affectValues);
       
 
-     JsonList *json_affectSigns;
+    JsonList *json_affectSigns;
     json_affectSigns=new JsonList();
     json_affectSigns->add("start", 0);
     json_affectSigns->add("stop", sequenceSize); 
-    json_affectSigns->add("seq", kseg->getKmerAffectAnalyser()->toStringSigns());
-    seg.add("affectSigns", *json_affectSigns);
-
-    result.add("seg", seg);
-
-    delete kseg ;
-  }
-  return result;
+    json_affectSigns->add("seq", getKmerAffectAnalyser()->toStringSigns());
+    seg->add("affectSigns", *json_affectSigns);
 }
 
 

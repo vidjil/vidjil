@@ -115,7 +115,7 @@ def delete():
                "args" : { "id" : patient_id,
                           "config_id" : config_id},
                "success": "true",
-               "message": "process ("+str(request.vars["results_file_id"])+") deleted"}
+               "message": "[%s] (%s) c%s: process deleted " % (request.vars["results_file_id"], patient_id, config_id)}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :

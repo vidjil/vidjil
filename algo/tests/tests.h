@@ -114,6 +114,8 @@ enum {
   /* WindowsStorage */
   TEST_WS_GET_GERMLINE,
   TEST_WS_GET_GERMLINE_NONE,
+  TEST_WS_GET_NB_READS,
+  TEST_WS_HAS_WINDOW,
   TEST_WS_SIZE,
   TEST_WS_SIZE_NONE,
   TEST_WS_GET_LABEL_NONE,
@@ -123,6 +125,16 @@ enum {
   TEST_WS_TOP_GERMLINES_ONE,
   TEST_WS_TOP_GERMLINES_NONE,
   TEST_WS_TOP_GERMLINES_MULTI,
+  TEST_WS_LIMIT_READS_COUNT,
+  TEST_WS_LIMIT_READS_CONTENT,
+
+  /* ReadStorage */
+  TEST_BRS_SCORE_TO_BIN,
+  TEST_BRS_SBNE,
+  TEST_BRS_GET_NB_INSERTED,
+  TEST_BRS_GET_NB_STORED,
+  TEST_BRS_ADD,
+  TEST_BRS_GET_READS,
 
   /* Bugs */
   TEST_BUG_SEGMENTATION,
@@ -234,7 +246,9 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_EXTRACTOR_OUT_UNSEG, "Test unsegmentation output for WindowsExtractor");
 
   RECORD_TAP_TEST(TEST_WS_GET_GERMLINE, "Test WindowsStorage::getGermline");
+  RECORD_TAP_TEST(TEST_WS_HAS_WINDOW, "Test WindowsStorage::hasWindow");
   RECORD_TAP_TEST(TEST_WS_GET_GERMLINE_NONE, "Test WindowsStorage::getGermline() with undefined window");
+  RECORD_TAP_TEST(TEST_WS_GET_NB_READS, "Test WindowsStorage::getNbReads");
   RECORD_TAP_TEST(TEST_WS_SIZE, "Test WindowsStorage::size()");
   RECORD_TAP_TEST(TEST_WS_SIZE_NONE, "Test WindowsStorage::size() when empty");
   RECORD_TAP_TEST(TEST_WS_GET_LABEL_NONE, "Test WindowsStorage::getLabel() with no label");
@@ -244,6 +258,15 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_WS_TOP_GERMLINES_ONE, "Test WindowsStorage::getTopGermlines() with the most abundant germline");
   RECORD_TAP_TEST(TEST_WS_TOP_GERMLINES_NONE, "Test WindowsStorage::getTopGermlines() with no germline fulfilling the requirements");
   RECORD_TAP_TEST(TEST_WS_TOP_GERMLINES_MULTI, "Test WindowsStorage::getTopGermlines() with several germlines");
+  RECORD_TAP_TEST(TEST_WS_LIMIT_READS_COUNT, "Test that with setMaximalNbReadsPerWindow, the count is correct");
+  RECORD_TAP_TEST(TEST_WS_LIMIT_READS_CONTENT, "Test that with setMaximalNbReadsPerWindow, the sequences are correct");
+
+  RECORD_TAP_TEST(TEST_BRS_SCORE_TO_BIN, "Test the scoreToBin() method in ReadStorage");
+  RECORD_TAP_TEST(TEST_BRS_SBNE, "Test the smallest_bin_not_empty variables in ReadStorage");
+  RECORD_TAP_TEST(TEST_BRS_GET_NB_INSERTED, "Test the getNbInserted() method in ReadStorage");
+  RECORD_TAP_TEST(TEST_BRS_GET_NB_STORED, "Test the getNbStored() method in ReadStorage");
+  RECORD_TAP_TEST(TEST_BRS_ADD, "Test the add() method in ReadStorage");
+  RECORD_TAP_TEST(TEST_BRS_GET_READS, "Test the getReads() method in ReadStorage");
 
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE, "Test KmerRepresentativeComputer computations");
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE_REQUIRED_SEQ, "Test KmerRepresentativeComputer computations with a required sequence");

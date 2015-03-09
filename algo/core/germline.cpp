@@ -134,14 +134,24 @@ ostream &operator<<(ostream &out, const Germline &germline)
 }
 
 
-MultiGermline::MultiGermline()
+MultiGermline::MultiGermline(bool _one_index_per_germline)
 {
+  one_index_per_germline = _one_index_per_germline;
 }
 
 MultiGermline::~MultiGermline() {
+  bool first = true ;
+
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
     {
+      if (!one_index_per_germline && !first)
+        {
+          // The index was already deleted in the first germline
+          (*it) -> index = 0 ;
+        }
       delete *it ;
+
+      first = false ;
     }
 }
 
@@ -150,40 +160,26 @@ void MultiGermline::insert(Germline *germline)
   germlines.push_back(germline);
 }
 
+void MultiGermline::add_germline(Germline *germline, string seed)
+{
+  if (one_index_per_germline)
+    germline->new_index(seed);
+  germlines.push_back(germline);
+}
+
 void MultiGermline::build_default_set(string path)
 {
   // Should parse 'data/germlines.data'
   Germline *germline;
-  
-  germline = new Germline("TRG", 'G', path + "/TRGV.fa", "",                path + "/TRGJ.fa",   -10, 30);
-  germline->new_index("#####-#####");
-  germlines.push_back(germline);
 
-  germline = new Germline("IGH", 'H', path + "/IGHV.fa", path + "/IGHD.fa",  path + "/IGHJ.fa",   0, 80);
-  germline->new_index("######-######");
-  germlines.push_back(germline);
+  add_germline(new Germline("TRA", 'A', path + "/TRAV.fa", "",                path + "/TRAJ.fa", -10, 20), SEED_S13);
+  add_germline(new Germline("TRB", 'B', path + "/TRBV.fa", path + "/TRBD.fa", path + "/TRBJ.fa",   0, 80), SEED_S12);
+  add_germline(new Germline("TRG", 'G', path + "/TRGV.fa", "",                path + "/TRGJ.fa", -10, 30), SEED_S10);
+  add_germline(new Germline("TRD", 'D', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRDJ.fa",   0, 80), SEED_S10);
 
-  germline = new Germline("TRD", 'D', path + "/TRDV.fa", path + "/TRDD.fa",  path + "/TRDJ.fa",   0, 80);
-  germline->new_index("#####-#####");
-  germlines.push_back(germline);
-
-  germline = new Germline("IGK", 'K', path + "/IGKV.fa", "",  path + "/IGKJ.fa",  -10, 20);
-  germline->new_index("#####-#####");
-  germlines.push_back(germline);
-
-
-  germline = new Germline("TRA", 'A', path + "/TRAV.fa", "",  path + "/TRAJ.fa",  -10, 20);
-  germline->new_index("#######-######");
-  germlines.push_back(germline);
-
-  germline = new Germline("TRB", 'B', path + "/TRBV.fa", path + "/TRBD.fa",  path + "/TRBJ.fa",   0, 80);
-  germline->new_index("######-######");
-  germlines.push_back(germline);
-
-  germline = new Germline("IGL", 'L', path + "/IGLV.fa", "",  path + "/IGLJ.fa",  -10, 20);
-  germline->new_index("#####-#####");
-  germlines.push_back(germline);
-
+  add_germline(new Germline("IGH", 'H', path + "/IGHV.fa", path + "/IGHD.fa", path + "/IGHJ.fa",   0, 80), SEED_S12);
+  add_germline(new Germline("IGK", 'K', path + "/IGKV.fa", "",                path + "/IGKJ.fa", -10, 20), SEED_S10);
+  add_germline(new Germline("IGL", 'L', path + "/IGLV.fa", "",                path + "/IGLJ.fa", -10, 20), SEED_S10);
 }
 
 void MultiGermline::build_incomplete_set(string path)
@@ -191,51 +187,23 @@ void MultiGermline::build_incomplete_set(string path)
   // Should parse 'data/germlines.data'
   Germline *germline;
 
-  // DH-JH
-  germline = new Germline("IGH+", 'h', path + "/IGHD.fa", "", path + "/IGHJ.fa",   -10, 20);
-  germline->new_index("######-######");
-  germlines.push_back(germline);
-
   // VdJa
-  germline = new Germline("VdJa", 'a', path + "/TRDV.fa", path + "/TRDD.fa",  path + "/TRAJ.fa",   -10, 80);
-  germline->new_index("#######-######");
-  germlines.push_back(germline);
+  add_germline(new Germline("VdJa", 'a', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRAJ.fa", -10, 80), SEED_S13);
 
   // DD2-DD3
-  germline = new Germline("TRD+", 'd', path + "/TRDD2-01.fa", "", path + "/TRDJ.fa",   -10, 60);
-  germline->new_index("#########");
-  germlines.push_back(germline);
-  germline = new Germline("TRD+", 'd', path + "/TRDV.fa", "", path + "/TRDD3-01.fa",   -10, 50);
-  germline->new_index("#########");
-  germlines.push_back(germline);
-  germline = new Germline("TRD+", 'd', path + "/TRDD2-01.fa", "", path + "/TRDD3-01.fa",  -10, 50);
-  germline->new_index("#########");
-  germlines.push_back(germline);
+  add_germline(new Germline("TRD+", 'd', path + "/TRDD2-01.fa",   "", path + "/TRDJ.fa",     -10, 60), SEED_9);
+  add_germline(new Germline("TRD+", 'd', path + "/TRDV.fa",       "", path + "/TRDD3-01.fa", -10, 50), SEED_9);
+  add_germline(new Germline("TRD+", 'd', path + "/TRDD2-01.fa",   "", path + "/TRDD3-01.fa", -10, 50), SEED_9);
 
+  // DH-JH
+  add_germline(new Germline("IGH+", 'h', path + "/IGHD.fa",       "", path + "/IGHJ.fa",     -10, 20), SEED_S12);
 
   // IGK: KDE, INTRON
-  germline = new Germline("IGK+", 'k', path + "/IGK-INTRON.fa", "",  path + "/IGK-KDE.fa",  -10, 80);
-  germline->new_index("#####-#####");
-  germlines.push_back(germline);
-  germline = new Germline("IGK+", 'k', path + "/IGKV.fa", "",  path + "/IGK-KDE.fa",  -10, 80);
-  germline->new_index("#####-#####");
-  germlines.push_back(germline);
-
+  add_germline(new Germline("IGK+", 'k', path + "/IGK-INTRON.fa", "", path + "/IGK-KDE.fa",  -10, 80), SEED_S10);
+  add_germline(new Germline("IGK+", 'k', path + "/IGKV.fa",       "", path + "/IGK-KDE.fa",  -10, 80), SEED_S10);
 }
 
-
-void MultiGermline::load_standard_set(string path)
-{
-  germlines.push_back(new Germline("TRA", 'A', path + "/TRAV.fa", "",                path + "/TRAJ.fa",   -10, 20));
-  germlines.push_back(new Germline("TRB", 'B', path + "/TRBV.fa", path + "/TRBD.fa", path + "/TRBJ.fa",   -10, 20));
-  germlines.push_back(new Germline("TRG", 'G', path + "/TRGV.fa", "",                path + "/TRGJ.fa",   -10, 30));
-  germlines.push_back(new Germline("TRD", 'D', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRDJ.fa",     0, 80));
-
-  germlines.push_back(new Germline("IGH", 'H', path + "/IGHV.fa", path + "/IGHD.fa", path + "/IGHJ.fa",     0, 80));
-  germlines.push_back(new Germline("IGK", 'K', path + "/IGKV.fa", "",                path + "/IGKJ.fa",   -10, 20));
-  germlines.push_back(new Germline("IGL", 'L', path + "/IGLV.fa", "",                path + "/IGLJ.fa",   -10, 20));
-}
-
+/* if 'one_index_per_germline' was not set, this should be called once all germlines have been loaded */
 void MultiGermline::insert_in_one_index(IKmerStore<KmerAffect> *_index)
 {
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)

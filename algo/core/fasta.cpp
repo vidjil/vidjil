@@ -269,3 +269,18 @@ ostream &operator<<(ostream &out, const Sequence &seq) {
   }
   return out;
 }
+
+int nb_sequences_in_fasta(string f)
+{
+  OnlineFasta *sequences = new OnlineFasta(f, 1, " ");
+  int nb_sequences = 0 ;
+
+  while (sequences->hasNext())
+    {
+      sequences->next();
+      nb_sequences++ ;
+    }
+
+  cout << "  ==> " << nb_sequences << " sequences" << endl;
+  return nb_sequences ;
+}

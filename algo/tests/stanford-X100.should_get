@@ -1,5 +1,0 @@
-!LAUNCH: ../../vidjil -X 100 -G ../../germline/IGH ../../data/Stanford_S22.fasta
-!LOG: stanford-X100.log
-
-$ Analyse the good number of sequences in Stanford S22 
-1: found 98 60-windows in 99 segments .99.. inside 100 sequences

@@ -26,7 +26,7 @@ class WindowExtractor {
   ostream *out_affects;
 
   Stats stats[STATS_SIZE];
-
+  size_t max_reads_per_window;
  public:
 
   WindowExtractor();
@@ -46,7 +46,8 @@ class WindowExtractor {
    */
   WindowsStorage *extract(OnlineFasta *reads, MultiGermline *multigermline,
                           size_t w,
-                          map<string, string> &windows_labels, int stop_after=-1);
+                          map<string, string> &windows_labels,
+                          int stop_after=-1, int only_nth_reads=1, bool keep_unsegmented_as_clone=false);
 
   /**
    * @return the average length of sequences whose segmentation has been classified as seg
@@ -54,6 +55,11 @@ class WindowExtractor {
    * @pre extract() must have been launched.
    */
   float getAverageSegmentationLength(SEGMENTED seg);
+
+  /**
+   * cf. WindowsStorage::getMaximalNbReadsPerWindow()
+   */
+  size_t getMaximalNbReadsPerWindow();
 
   /**
    * @return Total number of processed reads by the previous call to extract()
@@ -73,7 +79,12 @@ class WindowExtractor {
    * @pre extract() must have been launched.
    */
   size_t getNbReadsGermline(string germline_code);
-  
+
+  /**
+   * cf. WindowsStorage::setMaximalNbReadsPerWindow()
+   */
+  void setMaximalNbReadsPerWindow(size_t max_reads);
+
   /**
    * Defines the output stream where the segmented sequences will be output.
    * Otherwise no output will be given.

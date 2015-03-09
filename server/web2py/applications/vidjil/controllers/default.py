@@ -160,12 +160,12 @@ def get_data():
                 data["samples"]["info"].append(row.sequence_file.info)
                 data["samples"]["commandline"].append(command)
 
-        log.debug("get_data: %s -> %s" % (request.vars["patient"], fused_file))
+        log.debug("get_data (%s) c%s -> %s" % (request.vars["patient"], request.vars["config"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
     else :
         res = {"success" : "false",
-               "message" : "default/get_data : " + error}
+               "message" : "get_data (%s) c%s : %s " % (request.vars["patient"], request.vars["config"], error)}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
@@ -316,7 +316,7 @@ def save_analysis():
         patient_name = db.patient[request.vars['patient']].first_name + " " + db.patient[request.vars['patient']].last_name
 
         res = {"success" : "true",
-               "message" : patient_name+": analysis saved"}
+               "message" : "%s (%s) c%s: analysis saved" % (patient_name, request.vars['patient'], request.vars['config'])}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
