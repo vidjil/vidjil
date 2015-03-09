@@ -768,8 +768,12 @@ Builder.prototype = {
             span.appendChild(span_system)
             span.appendChild(checkbox)
             span.appendChild(document.createTextNode(key))
-            span.onclick = function () {
-                this.firstChild.nextSibling.click();
+            span.onclick = function (e) {
+                if (e.shiftKey) {
+                    m.keep_one_active_system(this.firstChild.nextSibling.textContent)
+                } else {
+                    this.firstChild.nextSibling.click();
+                }
             }
             
             span2.appendChild(span)
