@@ -87,6 +87,7 @@ Shortcut.prototype = {
                                 $("#debug_menu").css("display", "none");
                             }
                         }
+                        break;
                     case 80 :   //shift+p : open patient
                         e.preventDefault()
                         if(e.shiftKey || e.metakey) db.reload()
