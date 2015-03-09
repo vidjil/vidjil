@@ -1,14 +1,15 @@
 var myConsole = new Com("flash_container", "log_container", "popup-container", "data-container")
 
 
-var m = new Model(m);
-m.parseJsonData(json_data,100)
-m.loadGermline()
-m.initClones()
-
-var axis = new Axis(m);
 
 test("Axis : ", function() {
+    
+    var m = new Model(m);
+    m.parseJsonData(json_data,100)
+    m.loadGermline()
+    m.initClones()
+
+    var axis = new Axis(m);
 
     /* Axis object give you label list(with position/color/...)
      * and a pos(cloneID) function to place a clone on it
