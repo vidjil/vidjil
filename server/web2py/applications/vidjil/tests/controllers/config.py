@@ -33,6 +33,7 @@ class ConfigController(unittest.TestCase):
             pass
         log.info = f
         log.error = f
+        log.debug = f
         
         
     def testIndex(self):      
@@ -114,7 +115,6 @@ class ConfigController(unittest.TestCase):
         
         #add permission to "popipo" a config
         resp = change_permission()
-        print str(resp)
         self.assertTrue( auth.has_permission('popipo', 'config', id_config), "fail to add a permission")
         
         

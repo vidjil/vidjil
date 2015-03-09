@@ -30,6 +30,7 @@ ndegroot0@gmail.com
 
 
 from gluon import current
+import gluon
 from gluon.tools import Auth
 import unittest
 import glob

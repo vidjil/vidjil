@@ -25,6 +25,14 @@ class AdminController(unittest.TestCase):
         auth = Auth(globals(), db)
         auth.login_bare("test@vidjil.org", "1234")
         
+        # rewrite info / error functions 
+        # for some reasons we lost them between the testRunner and the testCase but we need them to avoid error so ...
+        def f(a):
+            pass
+        log.info = f
+        log.error = f
+        log.debug = f
+        
         
     def testIndex(self):      
         resp = index()
