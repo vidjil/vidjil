@@ -40,9 +40,11 @@ class DefaultController(unittest.TestCase):
         resp = index()
         self.assertTrue(resp.has_key('message'), "index() has returned an incomplete response")
         
+        
     def testHelp(self):      
         resp = index()
         self.assertTrue(resp.has_key('message'), "help() has returned an incomplete response")
+        
         
     def testRunRequest(self):
         #this will test only the scheduller not the worker
@@ -52,14 +54,42 @@ class DefaultController(unittest.TestCase):
         resp = run_request()
         self.assertNotEqual(resp.find('process requested'), -1, "run_request doesn't return a valid message")
         
+        
     def testGetData(self):
         request.vars['config'] = fake_config_id
         request.vars['patient'] = fake_patient_id
         
         resp = get_data()
-        #self.assertNotEqual(resp.find('"dataFileName":"plo (37) (config_test_popipo)"'), -1, "get_data doesn't return a valid json")
+        self.assertNotEqual(resp.find('segmented":[742377]'), -1, "get_data doesn't return a valid json")
+        self.assertNotEqual(resp.find('(config_test_popipo)'), -1, "get_data doesn't return a valid json")
+        
         
     def testCustomData(self):
         request.vars['custom'] = [str(fake_result_id), str(fake_result_id)]
         
         resp = get_custom_data()
+        self.assertNotEqual(resp.find('"segmented":[742377,742377]'), -1, "get_custom_data doesn't return a valid json")
+        
+        
+    def testGetAnalysis(self):
+        request.vars['config'] = fake_config_id
+        request.vars['patient'] = fake_patient_id
+        
+        resp = get_analysis()
+        self.assertNotEqual(resp.find('"info_patient":"plop"'), -1, "get_analysis doesn't return a valid json")
+
+    def testSaveAnalysis(self):
+        class emptyClass( object ):
+            pass
+        
+        plop = emptyClass()
+        setattr(plop, 'file',  open("../../doc/analysis-example.vidjil", 'rb'))
+        setattr(plop, 'filename', 'plopapou')
+        
+        request.vars['fileToUpload'] = plop
+        request.vars['config'] = fake_config_id
+        request.vars['patient'] = fake_patient_id
+        
+        resp = save_analysis()
+        self.assertNotEqual(resp.find('analysis saved","success":"true"'), -1, "save_analysis failed")
+        
