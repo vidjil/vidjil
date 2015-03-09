@@ -97,20 +97,17 @@ fake_file_id = db.sequence_file.insert(sampling_date="1903-02-02",
 
 # and a fake result for this file
 stream = open("../../doc/analysis-example.vidjil", 'rb')
-gluon.contrib.simplejson.loads(stream.read())
 fake_result_id = db.results_file.insert(sequence_file_id = fake_file_id,
                                     config_id = fake_config_id,
                                     run_date = "2014-09-19 00:00:00",
                                     data_file = db.results_file.data_file.store(stream, "plop.data")
                                     )
-                                    
-stream = open("../../doc/analysis-example.vidjil", 'rb')
+stream.seek(0)
 fake_fused_id = db.fused_file.insert(patient_id = fake_patient_id,
                                     config_id = fake_config_id,
                                     fuse_date = "2014-09-19 00:00:00",
                                     fused_file = db.fused_file.fused_file.store(stream, "plop.data")
                                     )
-                                    
 db.commit()
 
 
