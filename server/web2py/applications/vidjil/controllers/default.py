@@ -19,16 +19,8 @@ if request.env.http_origin:
     response.headers['Access-Control-Max-Age'] = 86400
 
 #########################################################################
-##return the default index page for vidjil (empty)
+##return the default index page for vidjil (redirect to the browser)
 def index():
-    """
-    example action using the internationalization operator T and flash
-    rendered by views/default/index.html or views/generic.html
-
-    if you need a simple wiki simply replace the two lines below with:
-    return auth.wiki()
-    """
-    response.flash = T("Welcome to Vidjil!")
     return dict(message=T('hello world'))
 
 #########################################################################
@@ -51,7 +43,7 @@ def run_request():
         id_config = None
     else:
         id_config = request.vars["config_id"]
-    if not auth.has_permission("run", "results_file") :
+    if not auth.has_permission("run", "results_file") and not auth.has_membership("admin") :
         error += "permission needed"
 
     id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
@@ -159,7 +151,7 @@ def get_data():
                 data["samples"]["timestamp"].append(str(row.sequence_file.sampling_date))
                 data["samples"]["info"].append(row.sequence_file.info)
                 data["samples"]["commandline"].append(command)
-
+                
         log.debug("get_data (%s) c%s -> %s" % (request.vars["patient"], request.vars["config"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
@@ -342,51 +334,6 @@ def download_data():
     file = "test"
     return response.stream( file, chunk_size=4096, filename=request.vars.filename)
 
-#########################################################################
-##
-def create_self_signed_cert(cert_dir):
-    """
-    create a new self-signed cert and key and write them to disk
-    """
-    from OpenSSL import crypto, SSL
-    from socket import gethostname
-    from pprint import pprint
-    from time import gmtime, mktime
-    from os.path import exists, join
-
-    CERT_FILE = "ssl_certificate.crt"
-    KEY_FILE = "ssl_self_signed.key"
-    ssl_created = False
-    if not exists(join(cert_dir, CERT_FILE)) \
-            or not exists(join(cert_dir, KEY_FILE)):
-        ssl_created = True
-        # create a key pair
-        k = crypto.PKey()
-        k.generate_key(crypto.TYPE_RSA, 4096)
-
-        # create a self-signed cert
-        cert = crypto.X509()
-        cert.get_subject().C = "AQ"
-        cert.get_subject().ST = "State"
-        cert.get_subject().L = "City"
-        cert.get_subject().O = "Company"
-        cert.get_subject().OU = "Organization"
-        cert.get_subject().CN = gethostname()
-        cert.set_serial_number(1000)
-        cert.gmtime_adj_notBefore(0)
-        cert.gmtime_adj_notAfter(10*365*24*60*60)
-        cert.set_issuer(cert.get_subject())
-        cert.set_pubkey(k)
-        cert.sign(k, 'sha1')
-
-        open(join(cert_dir, CERT_FILE), "wt").write(
-            crypto.dump_certificate(crypto.FILETYPE_PEM, cert))
-        open(join(cert_dir, KEY_FILE), "wt").write(
-            crypto.dump_privatekey(crypto.FILETYPE_PEM, k))
-
-        create_self_signed_cert('.')
-
-    return(ssl_created, cert_dir, CERT_FILE, KEY_FILE)
 
 
 #########################################################################
@@ -420,118 +367,6 @@ def handle_error():
 
     return "Server error"
 
-
-
-
-
-#########################################################################
-##TODO remove useless function ( maybe used by web2py internally )
-
-
-
-#########################################################################
-##not used
-def call():
-    """
-    exposes services. for example:
-    http://..../[app]/default/call/jsonrpc
-    decorate with @services.jsonrpc the functions to expose
-    supports xml, json, xmlrpc, jsonrpc, amfrpc, rss, csv
-    """
-    return service()
-
-#########################################################################
-##not used
-@auth.requires_signature()
-def data():
-    """
-    http://..../[app]/default/data/tables
-    http://..../[app]/default/data/create/[table]
-    http://..../[app]/default/data/read/[table]/[id]
-    http://..../[app]/default/data/update/[table]/[id]
-    http://..../[app]/default/data/delete/[table]/[id]
-    http://..../[app]/default/data/select/[table]
-    http://..../[app]/default/data/search/[table]
-    but URLs must be signed, i.e. linked with
-      A('table',_href=URL('data/tables',user_signature=True))
-    or with the signed load operator
-      LOAD('default','data.load',args='tables',ajax=True,user_signature=True)
-    """
-    return dict(form=crud())
-
-#########################################################################
-## not used
-@auth.requires_login()
-@auth.requires_membership('admin')
-def add_membership():
-    response.title = ""
-
-    user_query = db(db.auth_user).select()
-    group_query = db(~(db.auth_group.role.like("user%"))).select()
-
-    form = SQLFORM.factory(
-        Field('user', requires=IS_IN_SET([r.id for r in user_query], labels=[r.first_name+" "+r.last_name for r in user_query])),
-        Field('group', requires=IS_IN_SET([r.id for r in group_query], labels=[r.role for r in group_query]))
-        )
-
-    if form.validate():
-        db.auth_membership.insert(user_id=form.vars.user,
-                                  group_id=form.vars.group)
-        response.flash = "membership added"
-
-    return dict(form=form)
-
-#########################################################################
-## not used
-def upload_file():
-        import shutil, os.path
-
-        try:
-            # Get the file from the form
-            f = request.vars['files[]']
-            p = request.vars['patient_id[]']
-            i = request.vars['info[]']
-            d = request.vars['date[]']
-
-            # Store file
-            id = db.sequence_file.insert(data_file = db.sequence_file.data_file.store(f.file, f.filename))
-
-            record = db.sequence_file[id]
-            path_list = []
-            path_list.append(request.folder)
-            path_list.append('uploads')
-            path_list.append(record['data_file'])
-            size =  shutil.os.path.getsize(shutil.os.path.join(*path_list))
-
-            db.sequence_file[id] = dict(size_file=size ,
-                                        patient_id=p,
-                                        sampling_date=d,
-                                        info=i)
-
-            File = db(db.sequence_file.id==id).select()[0]
-            res = dict(files=[{"name": str(f.filename),
-                               "size": size,
-                               "url": URL(f='download', args=[File['data_file']])
-                               }])
-
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
-        except:
-            res = dict(files=[{"name": "kuik", "size": 0, "error": "fail!!" }])
-            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
-#########################################################################
-## not used
-def delete_file():
-        try:
-            id = request.args[0]
-            query=db(db.sequence_file.id==id)
-            patient_id=query.select()[0].patient_id
-            query.delete()
-            session.flash = "file deleted"
-            redirect( URL(f='patient', args=[patient_id]) )
-        except:
-            redirect( URL(f='patient', args=[patient_id]) )
     
 def user():
     """
