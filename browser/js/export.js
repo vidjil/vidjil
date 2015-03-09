@@ -264,7 +264,7 @@ Report.prototype = {
         if (typeof system == "undefined") system = m.germlineV.system
         if (typeof time != "undefined") m.changeTime(time)
             
-        m.changeGermline(system)
+        m.changeGermline(system, false)
         sp.changeSplitMethod('gene_v', 'gene_j', 'plot')
         
         //resize 791px ~> 21cm

@@ -469,7 +469,7 @@ Builder.prototype = {
                         
                     div = document.createElement('div');
                     div.onclick = function(){
-                        m.changeGermline(system)
+                        m.changeGermline(system, false)
                     }
                     div.className="buttonSelector"
                     div.appendChild(radio)
