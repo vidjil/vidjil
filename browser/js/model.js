@@ -760,6 +760,26 @@ Model.prototype = {
             return soft_version
         }
     },
+
+    /**
+     * Keep only one system activated, the one given as a parameter
+     */
+    keep_one_active_system: function (system) {
+        this.system_selected = [system]
+        this.update_selected_system()
+    },
+
+    /**
+     * Toggle all system on (if the parameter is true) or off (otherwise)
+     */
+    toggle_all_systems: function(is_on) {
+        if (is_on) {
+            this.system_selected = this.system_available
+        } else {
+            this.system_selected = []
+        }
+        this.update_selected_system()
+    },
     
     toggle_system: function(system){
         if (this.system_available.indexOf(system) != -1) {
