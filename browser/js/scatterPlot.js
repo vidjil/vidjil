@@ -1871,7 +1871,7 @@ ScatterPlot.prototype = {
                         .outerHTML + " " + d.text + "</div>"
                 })
                 .on("click", function(d) {
-                    self.m.changeGermline(d.text)
+                    self.m.changeGermline(d.text, false) // How can we get the shiftKey here ?
                 })
                 .attr("class", function(d) {
                     if (d.enabled) return "sp_system_label"

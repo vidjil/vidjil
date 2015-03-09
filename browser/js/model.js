@@ -799,7 +799,7 @@ Model.prototype = {
         this.updateModel()
         //check if current germline is in the selected_system
         if (this.system_selected.indexOf(this.germlineV.system) == -1 && this.system_selected.length > 0){
-            this.changeGermline(this.system_selected[0])
+            this.changeGermline(this.system_selected[0], false)
         }else{
             this.update()
         }
@@ -1713,7 +1713,13 @@ Model.prototype = {
     /* load a new germline and update 
      * 
      * */
-    changeGermline: function (system) {
+    changeGermline: function (system, only_this_system) {
+
+        if (only_this_system)
+        {
+            this.keep_one_active_system(system);
+            return ;
+        }
         
         if (this.system_selected.indexOf(system) == -1){
             this.toggle_system(system)
