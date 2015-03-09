@@ -53,11 +53,9 @@ def schedule_run(id_sequence, id_config):
     db.results_file[data_id] = dict(scheduler_task_id = task.id)
 
     filename= db.sequence_file[id_sequence].filename
-    config_name = db.config[id_config].name
-    patient_name = db.patient[id_patient].first_name + " " + db.patient[id_patient].last_name
 
     res = {"redirect": "reload",
-           "message": "[%s] (%s): process requested - %s - %s" % (data_id, config_name, patient_name, filename)}
+           "message": "[%s] (%s) c%s: process requested - %s" % (data_id, id_patient, id_config, filename)}
 
     log.info(res)
     return res
@@ -136,7 +134,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
 
     config_name = db.config[id_config].name
 
-    res = {"message": "[%s] (%s): Vidjil finished - %s" % (id_data, config_name, out_folder)}
+    res = {"message": "[%s] c%s: Vidjil finished - %s" % (id_data, id_config, out_folder)}
     log.info(res)
 
     run_fuse(id_file, id_config, id_data, id_fuse, clean_before = False)
@@ -196,8 +194,7 @@ def run_copy(id_file, id_config, id_data, id_fuse, clean_before=False, clean_aft
     ## l'output de Vidjil est stocké comme resultat pour l'ordonnanceur
     ## TODO parse result success/fail
 
-    config_name = db.config[id_config].name
-    res = {"message": "[%s] (%s): 'copy' finished - %s" % (id_data, config_name, filename)}
+    res = {"message": "[%s] c%s: 'copy' finished - %s" % (id_data, id_config, filename)}
     log.info(res)
 
     run_fuse(id_file, id_config, id_data, id_fuse, clean_before = False)
@@ -270,8 +267,7 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
         p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
         p.wait()
     
-    config_name = db.config[id_config].name
-    res = {"message": "[%s] (%s): 'fuse' finished - %s" % (id_data, config_name, output_file)}
+    res = {"message": "[%s] c%s: 'fuse' finished - %s" % (id_data, id_config, output_file)}
     log.info(res)
 
     return "SUCCESS"
