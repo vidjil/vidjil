@@ -45,7 +45,7 @@ from copy import copy
 
 
 # create a test database by copying the original db
-shutil.copy2('applications/vidjil/databases/storage.sqlite', 'applications/vidjil/databases/testing.sqlite')
+shutil.copy2('applications/vidjil/databases/storage.sqlite', 'applications/vidjil/tests/databases/testing.sqlite')
 test_db = DAL('sqlite://testing.sqlite')
 for tablename in db.tables:  # Copy tables!
     table_copy = [copy(f) for f in db[tablename]]
