@@ -100,7 +100,29 @@ test("model : cluster", function() {
     deepEqual(m.clusters, [[0],[1],[2],[3]], "resetClusters");
 });
 
+test("model: system selection", function() {
+    var m = new Model();
+    m.parseJsonData(json_data, 100)
 
+    notEqual(m.system_available.indexOf("IGH"), -1, "IGH system is available")
+    notEqual(m.system_available.indexOf("TRG"), -1, "TRG system is available")
+    equal(m.system_selected.length, 2, "We just have 2 systems: TRG and IGH")
+
+    deepEqual(m.system_selected, m.system_available, "All systems should be selected by default")
+
+    m.toggle_all_systems(false)
+    equal(m.system_selected.length, 0, "unselect all systems")
+
+    m.toggle_all_systems(true)
+    equal(m.system_selected.length, 2, "select all systems")
+
+    m.toggle_all_systems(false)
+    m.toggle_system("toto")
+    equal(m.system_selected.length, 0, "no such system -> not added to the list")
+    m.toggle_system("IGH")
+    equal(m.system_selected.length, 1, "one system selected (IGH)")
+    notEqual(m.system_selected.indexOf("IGH"), 1, "IGH selected")
+});
 
 
 
