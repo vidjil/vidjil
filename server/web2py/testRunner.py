@@ -54,10 +54,7 @@ for tablename in db.tables:  # Copy tables!
 db = test_db
 
 
-
-
-
-# use a tester
+# use a fake user
 user_id = db.auth_user.insert(
     first_name='Testers',
     last_name='Inc',
@@ -73,6 +70,48 @@ db.auth_membership.insert(user_id=user_id, group_id=group_id)
 
 
 
+# add fake config
+fake_config_id = db.config.insert(name="config_test_popipo",
+                                    info="popapipapo",
+                                    command="-plop",
+                                    fuse_command="-plop",
+                                    program="plop.cpp"
+                                    )
+# add fake patient
+fake_patient_id = db.patient.insert(first_name="plop",
+                                   last_name="plop",
+                                   birth="1902-02-02",
+                                   info="plop",
+                                   id_label="plop",
+                                   creator=user_id)
+
+# and a fake file for this patient
+fake_file_id = db.sequence_file.insert(sampling_date="1903-02-02",
+                                    info="plop",
+                                    pcr="plop",
+                                    sequencer="plop",
+                                    producer="plop",
+                                    patient_id=fake_patient_id,
+                                    filename="plop",
+                                    provider=user_id)
+
+# and a fake result for this file
+stream = open("../../doc/analysis-example.vidjil", 'rb')
+gluon.contrib.simplejson.loads(stream.read())
+fake_result_id = db.results_file.insert(sequence_file_id = fake_file_id,
+                                    config_id = fake_config_id,
+                                    run_date = "2014-09-19 00:00:00",
+                                    data_file = db.results_file.data_file.store(stream, "plop.data")
+                                    )
+                                    
+stream = open("../../doc/analysis-example.vidjil", 'rb')
+fake_fused_id = db.fused_file.insert(patient_id = fake_patient_id,
+                                    config_id = fake_config_id,
+                                    fuse_date = "2014-09-19 00:00:00",
+                                    fused_file = db.fused_file.fused_file.store(stream, "plop.data")
+                                    )
+                                    
+db.commit()
 
 
 #fake log to avoid polluting log
