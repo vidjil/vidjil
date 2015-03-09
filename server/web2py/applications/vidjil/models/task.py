@@ -33,7 +33,7 @@ def schedule_run(id_sequence, id_config):
                                         config_id = id_config)
         
     ##check scheduled run
-    row3 = db( ( db.scheduler_task.args == '["' + id_sequence + '", "' + id_config + '", ' + str(data_id) + ', ' + str(fuse_id) + ']' ) 
+    row3 = db( ( db.scheduler_task.args == '["' + str(id_sequence) + '", "' + str(id_config) + '", ' + str(data_id) + ', ' + str(fuse_id) + ']' ) 
          & ( db.scheduler_task.status != "FAILED"  )
          & ( db.scheduler_task.status != "EXPIRED"  )
          & ( db.scheduler_task.status != "TIMEOUT"  )
