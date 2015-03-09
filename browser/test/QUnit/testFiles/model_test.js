@@ -112,6 +112,7 @@ test("model: system selection", function() {
 
     m.toggle_all_systems(false)
     equal(m.system_selected.length, 0, "unselect all systems")
+    equal(m.reads.segmented[0], 0, "no read segmented (no system selected)")
 
     m.toggle_all_systems(true)
     equal(m.system_selected.length, 2, "select all systems")
@@ -121,6 +122,7 @@ test("model: system selection", function() {
     equal(m.system_selected.length, 0, "no such system -> not added to the list")
     m.toggle_system("IGH")
     equal(m.system_selected.length, 1, "one system selected (IGH)")
+    equal(m.reads.segmented[0], 100, "100 reads segmented on IGH")
     notEqual(m.system_selected.indexOf("IGH"), 1, "IGH selected")
 });
 
