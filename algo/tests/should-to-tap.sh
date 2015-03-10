@@ -129,7 +129,7 @@ while read line; do
                         # Yes, we should.
                         # Do we need to specify the place where LAUNCHER should be?
                         if [[ "$cmd" != *'$LAUNCHER'* ]]; then
-                            cmd='$LAUNCHER '"$cmd"
+                            cmd="$LAUNCHER ""$cmd"
                         fi
                     fi
                     echo "Launching '$cmd'" >&2
