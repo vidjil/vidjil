@@ -338,6 +338,8 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
         }
       
       if (keep_seg) {
+        if (the_kseg)
+          delete the_kseg;
         the_kseg = kseg;
       } else {
         delete kseg;
