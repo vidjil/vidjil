@@ -557,6 +557,15 @@ Segment.prototype = {
         }
         return result
     },
+
+    resetAlign: function() {
+        var selected = this.m.getSelected();
+
+        for (var i = 0; i < selected.length; i++) {
+            var spanM = document.getElementById("m" + selected[i])
+            spanM.innerHTML =  this.sequence[selected[i]].load().toString()
+        }
+    },
     
     displayAjaxResult: function(file) {
 
