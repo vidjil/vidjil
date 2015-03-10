@@ -46,6 +46,7 @@ function Segment(id, model, cgi_address) {
     this.sequence = {};
     this.is_open = false;
     this.amino = false;
+    this.aligned = false;
     
     //elements to be highlited in sequences
     this.highlight = [
@@ -100,7 +101,7 @@ Segment.prototype = {
         this.updateAlignmentButton();
         span.className = "button"
         span.onclick = function () {
-            self.align()
+            self.toggleAlign()
         }
         span.appendChild(document.createTextNode("align"));
         div_menu.appendChild(span)
@@ -365,7 +366,7 @@ Segment.prototype = {
         if (align != null) {
             if (this.m.getSelected().length > 1) {
                 align.className = "button";
-                align.onclick = function() {self.align();};
+                align.onclick = function() {self.toggleAlign();};
             }
             else {
                 align.className = "";
@@ -431,6 +432,7 @@ Segment.prototype = {
     addToSegmenter: function (cloneID) {
         var self = this;
 
+        this.aligned = false ;
         this.sequence[cloneID] = new Sequence(cloneID, this.m)
         
         var divParent = document.getElementById("listSeq");
@@ -495,6 +497,13 @@ Segment.prototype = {
         }
     },
 
+    toggleAlign: function () {
+        if (this.aligned)
+            this.resetAlign() ;
+        else
+            this.align() ;
+    },
+
     align: function () {
         var self = this
         var list = this.m.getSelected()
@@ -523,6 +532,7 @@ Segment.prototype = {
             },
             success: function (result) {
                 self.displayAjaxResult(result);
+                self.aligned = true ;
             },
             error: function () {
                 myConsole.flash("cgi error : impossible to connect", 2)
@@ -565,6 +575,8 @@ Segment.prototype = {
             var spanM = document.getElementById("m" + selected[i])
             spanM.innerHTML =  this.sequence[selected[i]].load().toString()
         }
+
+        this.aligned = false
     },
     
     displayAjaxResult: function(file) {
