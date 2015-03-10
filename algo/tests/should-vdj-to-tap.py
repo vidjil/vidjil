@@ -20,13 +20,14 @@ from subprocess import Popen, PIPE, STDOUT
 import os
 import argparse
 
-VIDJIL_FINE = '../../vidjil -c segment -i -g ../../germline %s > %s'
-VIDJIL_KMER = '../../vidjil -b out -c windows -uU -i -g ../../germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa > %s'
+VIDJIL_FINE = '{directory}/vidjil -c segment -i -g {directory}/germline %s > %s'
+VIDJIL_KMER = '{directory}/vidjil -b out -c windows -uU -i -g {directory}/germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa > %s'
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('--program', '-p', default=VIDJIL_FINE, help='program to launch on each file (%(default)s)')
 parser.add_argument('-q', dest='program', action='store_const', const=VIDJIL_KMER, help='shortcut for -p (VIDJIL_KMER), to be used with -2')
 parser.add_argument('--after-two', '-2', action='store_true', help='compare only the right part of the pattern after two underscores (locus code)')
+parser.add_argument('--directory', '-d', default='../..', help='base directory where Vidjil is. This value is used by the default -p and -q values (%(default)s)')
 parser.add_argument('file', nargs='+', help='''.should-vdj.fa files''')
 
 args = parser.parse_args()
@@ -48,7 +49,8 @@ def fasta_id_lines_from_program(f_should):
     f_log = f_should + PROG_TAG + LOG_SUFFIX
     f_log = f_log.replace(SHOULD_SUFFIX, '')
 
-    cmd = args.program % (f_should, f_log)
+    program = args.program.replace('{directory}',args.directory)
+    cmd = program % (f_should, f_log)
     print cmd
     os.system(cmd)
 
