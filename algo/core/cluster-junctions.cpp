@@ -40,8 +40,6 @@ void comp_matrix::compare(ostream &out, Cost cluster_cost)
   // DEBUG // out << "  DEBUT COMPARE JUNCTION" << endl ;
   //     clock_t start = clock();
    
-  typedef map<junction,list<Sequence> > mjs ;
-  
   Cost compareCost = cluster_cost;
   out << "  Using cost " << compareCost << endl ;
   
@@ -124,8 +122,6 @@ list<list<junction> >  comp_matrix::cluster(string forced_edges, int w, ostream 
   // out << "  eps: " << epsilon << " / minPts: " << minPts << endl ;
     
     
-  typedef map<junction,list<Sequence> > mjs ;
-
   map <string, map <string, bool> > graph ;
   
 ////////////////////////

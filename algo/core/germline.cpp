@@ -170,8 +170,6 @@ void MultiGermline::add_germline(Germline *germline, string seed)
 void MultiGermline::build_default_set(string path)
 {
   // Should parse 'data/germlines.data'
-  Germline *germline;
-
   add_germline(new Germline("TRA", 'A', path + "/TRAV.fa", "",                path + "/TRAJ.fa", -10, 20), SEED_S13);
   add_germline(new Germline("TRB", 'B', path + "/TRBV.fa", path + "/TRBD.fa", path + "/TRBJ.fa",   0, 80), SEED_S12);
   add_germline(new Germline("TRG", 'G', path + "/TRGV.fa", "",                path + "/TRGJ.fa", -10, 30), SEED_S10);
@@ -185,8 +183,6 @@ void MultiGermline::build_default_set(string path)
 void MultiGermline::build_incomplete_set(string path)
 {
   // Should parse 'data/germlines.data'
-  Germline *germline;
-
   // VdJa
   add_germline(new Germline("VdJa", 'a', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRAJ.fa", -10, 80), SEED_S13);
 
