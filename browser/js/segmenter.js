@@ -391,7 +391,7 @@ Segment.prototype = {
 
         var del = document.createElement('img')
         del.className = "delBox"
-        del.src = "images/delete.png"
+        del.src = "images/delete-gray.png"
         seq_name.appendChild(del);
 
         del.onclick = function () {
