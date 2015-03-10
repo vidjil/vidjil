@@ -388,7 +388,13 @@ Segment.prototype = {
 
         var seq_name = document.createElement('span');
         seq_name.className = "nameBox";
-        seq_name.onclick = function () {
+
+        var del = document.createElement('img')
+        del.className = "delBox"
+        del.src = "images/delete.png"
+        seq_name.appendChild(del);
+
+        del.onclick = function () {
             self.m.clone(cloneID).unselect();
         }
         seq_name.appendChild(document.createTextNode(this.m.clone(cloneID).getName()));
