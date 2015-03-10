@@ -41,7 +41,8 @@ $(EXEC): % : %.o $(LIB)
 ../core.a: core
 
 vidjil:
-	make -C ../
+	make -C ../ clean
+	make -C ../ OPTIM="$(OPTIM)"
 
 core:
 	make -C ../core
