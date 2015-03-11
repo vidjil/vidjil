@@ -163,17 +163,47 @@ Clone.prototype = {
         return this.m.formatSize(size, true)
     },
 
+
+    /* Ratio relative to the system group */
+    getSystemGroupSize: function (time) {
+        var group_reads = this.m.systemGroupSize(this.germline, this.m.getTime(time))
+
+        if (group_reads == 0 ) return 0 ;
+        var result = this.getReads(time) / group_reads
+        if (this.norm) result = this.normalize(result, time)
+        return result
+
+    },
+
+    getStrSystemGroupSize: function (time) {
+        time = this.m.getTime(time)
+        var size = this.getSystemGroupSize(time)
+        return this.m.formatSize(size, true)
+    },
+
     /* return a printable size such as either '26.32%' or '26.32% (33.66% of IGH)' (when there are several systems) */
     getPrintableSize: function (time) {
 
         var size = this.getReads(time)
         s = size + ' read' + (size > 1 ? 's' : '') + ' '
 
+        s += '('
         s += this.getStrSize(time)
 
         if (this.m.system_available.length>1) {
-            s += ' (' + this.getStrSystemSize(time) + ' of ' + this.germline + ')'
+
+            systemGroup = this.m.systemGroup(this.germline)
+            if (systemGroup.indexOf('/') > -1) // if the system group has more than one germline
+            {
+                s += ', '
+                s += this.getStrSystemGroupSize(time) + ' of ' + systemGroup
+            }
+
+            s += ', '
+            s += this.getStrSystemSize(time) + ' of ' + this.germline
         }
+
+        s += ')'
         return s
     },
 
