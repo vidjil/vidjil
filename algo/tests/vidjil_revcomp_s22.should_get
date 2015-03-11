@@ -1,10 +1,10 @@
-!LAUNCH: $LAUNCHER ../../vidjil -k 9 -G ../../germline/IGH -% 0.001 -r 4 -c clones ../../data/Stanford_S22.fasta > vidjil_s22.log && $LAUNCHER ../../vidjil -k 9 -G ../../germline/IGH -% 0.001 -r 4 -c clones ../../data/Stanford_S22.rc.fasta > vidjil_s22_rc.log && diff vidjil_s22.log vidjil_s22_rc.log
+!LAUNCH: $LAUNCHER ../../vidjil -k 9 -G ../../germline/IGH -% 0.001 -r 2 -x 1000 -y 1 -c clones ../../data/Stanford_S22.fasta > vidjil_s22.log && $LAUNCHER ../../vidjil -k 9 -G ../../germline/IGH -% 0.001 -r 2 -x 1000 -y 1 -c clones ../../data/Stanford_S22.rc.fasta > vidjil_s22_rc.log && diff vidjil_s22.log vidjil_s22_rc.log
 
 $ Same number segmented
 0:==> segmented
 
 $ Same number of windows found
-f0:==> found
+0:==> found
 
 $ Same number unsegmented
 0:UNSEG.*->
@@ -12,6 +12,6 @@ $ Same number unsegmented
 $ Keep the same number of windows
 0:==> keep 
 
-$ Same segmentation for one of the main clones
-2:clone.00..*0 74 76 100 113 169
+$ Same segmentation for the main clone
+2:clone.001.*0 114 118 131 137 180
 
