@@ -176,7 +176,7 @@ Clone.prototype = {
 
     getFasta: function() {
         fasta = ''
-        fasta += '>' + this.getCode() + '\n'
+        fasta += '>' + this.getCode() + '    ' + this.getPrintableSize() + '\n'
         fasta += this.getSequence() + '\n'
 
         return fasta
