@@ -914,6 +914,9 @@ void KmerSegmenter::toJsonList(JsonList *seg)
     json_affectSigns->add("stop", sequenceSize); 
     json_affectSigns->add("seq", getKmerAffectAnalyser()->toStringSigns());
     seg->add("affectSigns", *json_affectSigns);
+
+    delete json_affectValues;
+    delete json_affectSigns;
 }
 
 
