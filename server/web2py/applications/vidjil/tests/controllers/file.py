@@ -81,7 +81,7 @@ class FileController(unittest.TestCase):
         
         
         resp = edit_form()
-        self.assertNotEqual(resp.find('"message":"plopapi: metadata saved"'), "edit_form() failed")
+        self.assertNotEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
        
        
     def testUpload(self):
@@ -96,14 +96,51 @@ class FileController(unittest.TestCase):
         request.vars['id'] = fake_file_id
     
         resp = upload()
-        self.assertNotEqual(resp.find('"message":"upload finished: plopapi"'), "edit_form() failed")
+        self.assertNotEqual(resp.find('"message":"upload finished: plopapi"'), -1, "edit_form() failed")
         
     def testConfirm(self):
         resp = confirm()
         self.assertTrue(resp.has_key('message'), "confirm() has returned an incomplete response")
     
     
-    
-    
-    
+    def testDelete(self):
+        test_file_id = db.sequence_file.insert(sampling_date="1903-02-02",
+                                    info="plop",
+                                    pcr="plop",
+                                    sequencer="plop",
+                                    producer="plop",
+                                    patient_id=fake_patient_id,
+                                    filename="babibou",
+                                    provider=user_id)
         
+        self.assertTrue(db.sequence_file[test_file_id].filename == "babibou" , "file have been added")
+        
+        request.vars['id'] = test_file_id
+        
+        resp = delete()
+        self.assertTrue(db.sequence_file[test_file_id] == None , "file have been deleted")
+        
+        
+    def testSequencerList(self):
+        
+        resp = sequencer_list()
+        self.assertNotEqual(resp.find('"sequencer":['), -1, "sequencer_list() doesn't return a valid json")
+        
+            
+    def testPcrList(self):
+        
+        resp = pcr_list()
+        self.assertNotEqual(resp.find('"pcr":['), -1, "pcr_list() doesn't return a valid json")
+        
+            
+    def testProducerList(self):
+        
+        resp = producer_list()
+        self.assertNotEqual(resp.find('"producer":['), -1, "producer_list() doesn't return a valid json")
+            
+            
+            
+            
+            
+            
+            
