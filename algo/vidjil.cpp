@@ -1288,7 +1288,7 @@ int main (int argc, char **argv)
     cout << "Comparing clone representatives 2 by 2" << endl ;
     list<Sequence> first_representatives = keep_n_first<Sequence>(representatives,
                                                                   LIMIT_DISPLAY);
-    SimilarityMatrix matrix = compare_all(first_representatives, true, 
+    SimilarityMatrix matrix = compare_all(first_representatives,
                                           representatives_labels);
     cout << RawOutputSimilarityMatrix(matrix, 90);
     /*
@@ -1338,8 +1338,7 @@ int main (int argc, char **argv)
     JsonArray json_cmdline;
     json_cmdline.add(stream_cmdline.str());// TODO: escape "s in argv
 
-    JsonArray jsonSortedWindows = windowsStorage->sortedWindowsToJsonArray(json_data_segment,
-                                                                        nb_segmented);
+    JsonArray jsonSortedWindows = windowsStorage->sortedWindowsToJsonArray(json_data_segment);
     
     //samples field
     JsonList *json_samples;

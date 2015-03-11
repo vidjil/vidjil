@@ -8,7 +8,7 @@
 #include "similarityMatrix.h"
 #include "windows.h"
 
-SimilarityMatrix compare_all(list <Sequence> sequences, bool min_size,
+SimilarityMatrix compare_all(list <Sequence> sequences,
                              list <string> sequence_names=list<string>());
 
 /*Object to compare windows to build a distances matrix between windows

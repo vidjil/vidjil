@@ -25,7 +25,7 @@
 #include "tools.h"
 #include "json.h"
 
-SimilarityMatrix compare_all(list <Sequence> sequences, bool min_size,
+SimilarityMatrix compare_all(list <Sequence> sequences,
                              list <string> sequence_names)
 {
   SimilarityMatrix matrix(sequences.size());
@@ -71,12 +71,6 @@ SimilarityMatrix compare_all(list <Sequence> sequences, bool min_size,
 	  int score = dp.compute() ;
 	  float identity = identity_percent(score);
 
-	  /*
-	  int size = min_size 
-	    ? min(seq1.size(), seq2.size())
-	    : max(seq1.size(), seq2.size()) ;
-	  */
-	  
           matrix.setScore(num, num_num, identity);
 	  
         }
