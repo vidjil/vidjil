@@ -249,6 +249,17 @@ void testRevcompInt() {
            TEST_REVCOMP_INT, "revcomp: " << revcomp_int(dna_to_int("ATTAGGA", 7), 7) <<", dna_to_int: " << dna_to_int("TCCTAAT", 7));
 }
 
+void testExtendedNucleotides() {
+  TAP_TEST(is_extended_nucleotide('A') == false, TEST_EXTENDED_NUCL, "");
+  TAP_TEST(is_extended_nucleotide('a') == false, TEST_EXTENDED_NUCL, "");
+  TAP_TEST(is_extended_nucleotide('N') == true,  TEST_EXTENDED_NUCL, "");
+  TAP_TEST(is_extended_nucleotide(' ') == true,  TEST_EXTENDED_NUCL, "");
+
+  TAP_TEST(has_extended_nucleotides("") == false, TEST_EXTENDED_NUCL, "");
+  TAP_TEST(has_extended_nucleotides("ACGTacgt") == false, TEST_EXTENDED_NUCL, "");
+  TAP_TEST(has_extended_nucleotides("ACGTnacgt") == true, TEST_EXTENDED_NUCL, "");
+ }
+
 void testExtractBasename() {
   TAP_TEST(extract_basename("/var/toto/titi/tutu/bla.bli.bluc", true) == "bla.bli",
            TEST_EXTRACT_BASENAME, extract_basename("/var/toto/titi/tutu/bla.bli.bluc", true));
@@ -276,5 +287,6 @@ void testTools() {
   testNucToInt();
   testDNAToInt();
   testRevcompInt();
+  testExtendedNucleotides();
   testExtractBasename();
 }
