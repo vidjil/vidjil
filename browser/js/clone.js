@@ -112,7 +112,7 @@ Clone.prototype = {
      * @t : tracking point (default value : current tracking point)
      * */
     getSize: function (time) {
-        time = typeof time !== 'undefined' ? time : this.m.t;
+        time = this.m.getTime(time)
 
         if (this.m.reads.segmented[time] == 0 ) return 0
         var result = this.getReads(time) / this.m.reads.segmented[time]
@@ -124,7 +124,7 @@ Clone.prototype = {
     
     //special getSize for scatterplot (ignore constant)
     getSize2: function (time) {
-        time = typeof time !== 'undefined' ? time : this.m.t;
+        time = this.m.getTime(time)
         
         if (this.m.reads.segmented[time] == 0 ) return 0
         var result = this.getReads(time) / this.m.reads.segmented[time]
@@ -139,13 +139,12 @@ Clone.prototype = {
      * use scientific notation if neccesary
      * */
     getStrSize: function (time) {
-        time = typeof time !== 'undefined' ? time : this.m.t;
-        var size = this.getSize(time);
+        var size = this.getSize(this.m.getTime(time));
         return this.m.formatSize(size, true)
     },
     
     getSystemSize: function (time) {
-        time = typeof time !== 'undefined' ? time : this.m.t;
+        time = this.m.getTime(time)
         
         var system_reads = this.m.reads.segmented[time]
         if (this.germline in this.m.reads.germline) system_reads = this.m.reads.germline[this.germline][time]
@@ -159,7 +158,7 @@ Clone.prototype = {
     },
     
     getStrSystemSize: function (time) {
-        time = typeof time !== 'undefined' ? time : this.m.t;
+        time = this.m.getTime(time)
         var size = this.getSystemSize(time);
         return this.m.formatSize(size, true)
     },
@@ -186,7 +185,7 @@ Clone.prototype = {
      *
      * */
     getSequenceSize: function (time) {
-        time = typeof time !== 'undefined' ? time : this.m.t;
+        time = this.m.getTime(time)
         
         if (this.m.reads.segmented[time] == 0 ) return 0
         var result = this.getSequenceReads(time) / this.m.reads.segmented[time]
@@ -204,7 +203,7 @@ Clone.prototype = {
      * @t : tracking point (default value : current tracking point)
      * */
     getReads: function (time) {
-        time = typeof time !== 'undefined' ? time : this.m.t;
+        time = this.m.getTime(time)
         var result = 0;
 
         var cluster = this.m.clusters[this.hash]
@@ -220,7 +219,7 @@ Clone.prototype = {
      *
      * */
     getSequenceReads: function (time) {
-        time = typeof time !== 'undefined' ? time : this.m.t;
+        time = this.m.getTime(time)
         return this.reads[time];
 
     }, //end getSequenceSize

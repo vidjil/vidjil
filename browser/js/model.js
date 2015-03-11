@@ -702,6 +702,10 @@ Model.prototype = {
         this.initClones();
     },
 
+    getTime: function(time) {
+        return typeof time !== 'undefined' ? time : this.t
+    },
+
     /**
      * return a name that can be displayed gracefully
      * (either with a real filename, or a name coming from the database).
@@ -1832,7 +1836,7 @@ Model.prototype = {
     },
     
     systemSize: function(system, time) {
-        time = typeof time !== 'undefined' ? time : this.t;
+        time = this.getTime(time)
         if (typeof this.reads.germline[system] != 'undefined'){
             return this.reads.germline[system][time]/this.reads.segmented[time]
         }else{
