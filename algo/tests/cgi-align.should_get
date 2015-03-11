@@ -1,4 +1,4 @@
-!LAUNCH: export REQUEST_METHOD=POST ; export CONTENT_TYPE=test ; ../../browser/cgi/align.cgi < ../../data/msa.fa 
+!LAUNCH: export REQUEST_METHOD=POST ; export CONTENT_TYPE=test ; $LAUNCHER ../../browser/cgi/align.cgi < ../../data/msa.fa
 
 $ no spurious info
 0: .* bp in .* sequences

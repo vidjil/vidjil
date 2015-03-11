@@ -1,3 +1,4 @@
+!NO_LAUNCHER:
 !LAUNCH: (cd ../../germline ; md5sum *.fa || md5 -r *.fa)
 
 $ Check md5 in germline/, sequences split from IMGT

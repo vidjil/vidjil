@@ -1,3 +1,4 @@
+!NO_LAUNCHER:
 !LAUNCH: (cd ../../data ; md5sum *.fasta || md5 -r *.fasta)
 
 $ Check md5 in data/
