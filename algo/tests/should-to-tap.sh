@@ -128,7 +128,7 @@ while read line; do
                     if [ ! -z "$LAUNCHER" -a -z "$NO_LAUNCHER" ]; then
                         # Yes, we should.
                         # Do we need to specify the place where LAUNCHER should be?
-                        if [[ "$cmd" != *'$LAUNCHER'* ]]; then
+                        if [[ "$cmd" != *'$LAUNCHER'* && "$cmd" != *"$LAUNCHER"* ]]; then
                             cmd="$LAUNCHER ""$cmd"
                         fi
                     fi
