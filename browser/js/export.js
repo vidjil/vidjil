@@ -474,20 +474,10 @@ Report.prototype = {
             var reads_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
             for (var i=0; i<m.samples.order.length; i++){
                 var t = m.samples.order[i]
-                $('<span/>', {'text': m.clone(cloneID).getStrSize(t)+'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
-            }
-            if (m.system_available.length>1){
-                var reads_system_stats = $('<span/>', {'class': 'clone_table'}).appendTo(clone);
-                for (var i=0; i<m.samples.order.length; i++){
-                    var t = m.samples.order[i]
-                    $('<span/>', {'text': m.clone(cloneID).getStrSystemSize(t)+'\u00a0', 'class': 'clone_value'}).appendTo(reads_system_stats);
-                }
+                $('<span/>', {'text': m.clone(cloneID).getPrintableSize(t)+'\u00a0', 'class': 'clone_value'}).appendTo(reads_stats);
             }
         }else{
-            if (m.system_available.length>1){
-                $('<span/>', {'text': '('+m.clone(cloneID).getStrSystemSize(time)+' of '+system+')\u00a0', 'class': 'float-right'}).appendTo(head);
-            }
-            $('<span/>', {'text': m.clone(cloneID).getStrSize(time)+'\u00a0', 'class': 'float-right'}).appendTo(head);
+            $('<span/>', {'text': m.clone(cloneID).getPrintableSize(time)+'\u00a0', 'class': 'float-right'}).appendTo(head);
         }
         
         //colorized clone sequence
