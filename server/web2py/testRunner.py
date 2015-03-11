@@ -12,8 +12,12 @@ class DefaultController(unittest.TestCase)
 
 BEWARE that the name is NOT in plural (controllers->Controller)
 
+require: 
+pip install unittest2
+pip install unittest-xml-reporting
+
 Execute with:
->   python web2py.py -S appname -M -R testRunner.py
+>   python web2py.py -S vidjil -M -R testRunner.py
 
 
 
@@ -29,10 +33,12 @@ ndegroot0@gmail.com
 
 
 
+
 from gluon import current
 import gluon
 from gluon.tools import Auth
 import unittest
+import xmlrunner
 import glob
 import sys
 import doctest
@@ -45,14 +51,13 @@ from copy import copy
 
 
 # create a test database by copying the original db
-shutil.copy2('applications/vidjil/databases/storage.sqlite', 'applications/vidjil/tests/databases/testing.sqlite')
+shutil.copy2('applications/vidjil/databases/storage.sqlite', 'applications/vidjil/databases/testing.sqlite')
 test_db = DAL('sqlite://testing.sqlite')
 for tablename in db.tables:  # Copy tables!
     table_copy = [copy(f) for f in db[tablename]]
     test_db.define_table(tablename, *table_copy)
 
 db = test_db
-
 
 # use a fake user
 user_id = db.auth_user.insert(
@@ -67,8 +72,6 @@ db.auth_membership.insert(user_id=user_id, group_id=unique_group)
 # with admin privilege
 group_id = 1 #admin group
 db.auth_membership.insert(user_id=user_id, group_id=group_id)
-
-
 
 # add fake config
 fake_config_id = db.config.insert(name="config_test_popipo",
@@ -198,4 +201,5 @@ for test_file in test_files:
 
     suite.addTest(unittest.makeSuite(globals()[filename+directory]))
 
-unittest.TextTestRunner(verbosity=2).run(suite)
+#unittest.TextTestRunner(verbosity=2).run(suite)
+xmlrunner.XMLTestRunner(output='test-reports', verbosity=1).run(suite)
