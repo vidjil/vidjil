@@ -1338,8 +1338,7 @@ int main (int argc, char **argv)
     JsonArray json_cmdline;
     json_cmdline.add(stream_cmdline.str());// TODO: escape "s in argv
 
-    JsonArray jsonSortedWindows = windowsStorage->sortedWindowsToJsonArray(json_data_segment,
-                                                                        nb_segmented);
+    JsonArray jsonSortedWindows = windowsStorage->sortedWindowsToJsonArray(json_data_segment);
     
     //samples field
     JsonList *json_samples;

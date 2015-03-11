@@ -217,8 +217,7 @@ ostream &WindowsStorage::printSortedWindows(ostream &os) {
   return os;
 }
 
-JsonArray WindowsStorage::sortedWindowsToJsonArray(map <junction, JsonList> json_data_segment,
-                                                   int nb_segmented) {
+JsonArray WindowsStorage::sortedWindowsToJsonArray(map <junction, JsonList> json_data_segment) {
   JsonArray windowsArray;
   int top = 1;
     

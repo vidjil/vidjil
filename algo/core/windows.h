@@ -205,8 +205,7 @@ class WindowsStorage {
    */ 
   ostream &printSortedWindows(ostream &os);
 
-  JsonArray sortedWindowsToJsonArray(map<junction, JsonList> json_data_segment,
-                                     int nb_segmented);
+  JsonArray sortedWindowsToJsonArray(map<junction, JsonList> json_data_segment);
 
   /**
    * Display a window with its in size in a somewhat FASTA format
