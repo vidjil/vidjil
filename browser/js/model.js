@@ -702,6 +702,10 @@ Model.prototype = {
         this.initClones();
     },
 
+    getTime: function(time) {
+        return typeof time !== 'undefined' ? time : this.t
+    },
+
     /**
      * return a name that can be displayed gracefully
      * (either with a real filename, or a name coming from the database).
@@ -1802,8 +1806,7 @@ Model.prototype = {
             
             var fasta = '<pre>'
             for (var i=0; i<list.length; i++){
-                fasta += '>' + this.clone(list[i]).getCode() + '\n'
-                fasta += this.clone(list[i]).getSequence() + '\n'
+                fasta += this.clone(list[i]).getFasta() + '\n'
             }
             
             var result = $('<div/>', {
@@ -1833,7 +1836,7 @@ Model.prototype = {
     },
     
     systemSize: function(system, time) {
-        time = typeof time !== 'undefined' ? time : this.t;
+        time = this.getTime(time)
         if (typeof this.reads.germline[system] != 'undefined'){
             return this.reads.germline[system][time]/this.reads.segmented[time]
         }else{
@@ -1845,6 +1848,45 @@ Model.prototype = {
         }
         
     },
+
+
+    /* Two systems are in the same group when then only differs by '+' */
+
+    sameSystemGroup: function(system1, system2) {
+        system1 = system1.replace('+', '')
+        system2 = system2.replace('+', '')
+        return (system1 == system2)
+    },
+
+    /* Representation of a system group, such as 'TRD/TRD+' */
+
+    systemGroup: function(system) {
+        list = ''
+        for (var germline in this.reads.germline) {
+            if (this.sameSystemGroup(germline, system)) {
+                if (list) list += '/'
+                list += germline
+            }
+        }
+        return list
+    },
+
+    /* Returns the number of reads of a given system group at a given time */
+
+    systemGroupSize: function(system, time) {
+        time = this.getTime(time)
+        reads = 0
+
+        for (var germline in this.reads.germline) {
+            if (this.sameSystemGroup(germline, system)) {
+                reads += this.reads.germline[germline][time]
+            }
+        }
+
+        return reads
+    },
+
+
     
     wait: function(text){
         document.getElementById("waiting_screen").style.display = "block";
