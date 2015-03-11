@@ -1848,6 +1848,45 @@ Model.prototype = {
         }
         
     },
+
+
+    /* Two systems are in the same group when then only differs by '+' */
+
+    sameSystemGroup: function(system1, system2) {
+        system1 = system1.replace('+', '')
+        system2 = system2.replace('+', '')
+        return (system1 == system2)
+    },
+
+    /* Representation of a system group, such as 'TRD/TRD+' */
+
+    systemGroup: function(system) {
+        list = ''
+        for (var germline in this.reads.germline) {
+            if (this.sameSystemGroup(germline, system)) {
+                if (list) list += '/'
+                list += germline
+            }
+        }
+        return list
+    },
+
+    /* Returns the number of reads of a given system group at a given time */
+
+    systemGroupSize: function(system, time) {
+        time = this.getTime(time)
+        reads = 0
+
+        for (var germline in this.reads.germline) {
+            if (this.sameSystemGroup(germline, system)) {
+                reads += this.reads.germline[germline][time]
+            }
+        }
+
+        return reads
+    },
+
+
     
     wait: function(text){
         document.getElementById("waiting_screen").style.display = "block";
