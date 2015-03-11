@@ -165,7 +165,11 @@ Clone.prototype = {
 
     /* return a printable size such as either '26.32%' or '26.32% (33.66% of IGH)' (when there are several systems) */
     getPrintableSize: function (time) {
-        s = this.getStrSize(time)
+
+        var size = this.getReads(time)
+        s = size + ' read' + (size > 1 ? 's' : '') + ' '
+
+        s += this.getStrSize(time)
 
         if (this.m.system_available.length>1) {
             s += ' (' + this.getStrSystemSize(time) + ' of ' + this.germline + ')'
