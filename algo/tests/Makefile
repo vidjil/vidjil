@@ -32,7 +32,7 @@ shouldvdj:
 %.log: %.should_get force
 	./should-to-tap.sh $<
 valgrind:
-	LAUNCHER='valgrind --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file=$$(mktemp --tmpdir=. --suffix=.valgrind)' make should
+	LAUNCHER='valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file=$$(mktemp ../../reports/valgrind.xml.XXXXXX)' make should
 
 $(EXEC): % : %.o $(LIB) 
 	$(CC) -o $@ $< $(LIB) $(LDLIBS) $(LDFLAGS) $(CXXFLAGS)
