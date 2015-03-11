@@ -1862,6 +1862,10 @@ Model.prototype = {
 
     systemGroup: function(system) {
         list = ''
+        if (typeof system == 'undefined'){
+            return "?"
+        }
+
         for (var germline in this.reads.germline) {
             if (this.sameSystemGroup(germline, system)) {
                 if (list) list += '/'
