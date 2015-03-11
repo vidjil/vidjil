@@ -399,3 +399,21 @@ def user():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
     return dict(form=auth())
+
+## TODO make custom download for .data et .analysis
+@cache.action()
+def download():
+    """
+    allows downloading of uploaded files
+    http://..../[app]/default/download/[filename]
+    """
+    return response.download(request, db, download_filename=request.vars.filename)
+
+def download_data():
+
+    file = "test"
+    return response.stream( file, chunk_size=4096, filename=request.vars.filename)
+
+
+
+#########################################################################
