@@ -1,8 +1,11 @@
-!LAUNCH: $LAUNCHER ../../vidjil -k 9 -G ../../germline/IGH  -K -c clones ../../data/revcomp.fa
+!LAUNCH: $LAUNCHER ../../vidjil -k 9 -G ../../germline/IGH  -K -c clones ../../data/revcomp.fa ; grep '#IGH' out/revcomp.affects | sed 's/[^X]//g'  | awk '{ print length }'
 
 $ Segments both reads, normal and revers
 1:segmented 2 reads
 
+$ Same number of 'V' affectations in both reads
+2:143
+
 $ Only one window
-f1:==> found 1 60-window
+1:==> found 1 60-window
 
