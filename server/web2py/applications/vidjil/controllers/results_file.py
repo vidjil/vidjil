@@ -82,7 +82,7 @@ def info():
     
 def confirm():
     if (auth.has_permission('admin', 'patient', db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id )
-        & auth.has_permission("run", "results_file") ):
+        & auth.has_permission("run", "results_file") ) or auth.has_membership("admin"):
         return dict(message=T('result confirm'))
     else :
         res = {"message": "acces denied"}
@@ -91,7 +91,7 @@ def confirm():
 #
 def delete():
     if (auth.has_permission('admin', 'patient', db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id )
-        & auth.has_permission("run", "results_file") ):
+        & auth.has_permission("run", "results_file") ) or auth.has_membership("admin"):
         
         config_id = db.results_file[request.vars["results_file_id"]].config_id
         patient_id = db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id

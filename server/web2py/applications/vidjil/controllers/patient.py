@@ -360,7 +360,7 @@ def edit_form():
 
 
 def download():
-        return response.download(request, db)
+    return response.download(request, db)
 
 
 #
@@ -391,7 +391,7 @@ def delete():
 
         res = {"redirect": "patient/index",
                "success": "true",
-               "message": "patient ("+request.vars["id"]+") deleted"}
+               "message": "patient ("+str(request.vars["id"])+") deleted"}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
