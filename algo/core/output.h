@@ -3,7 +3,6 @@
 
 #include "fasta.h"
 #include "kmerstore.h"
-#include "kmersignals.h"
 
 template<class T>
 class IOutput
