@@ -10,6 +10,7 @@ LIB=../core/vidjil.a ../lib/lib.a
 SHOULD=$(wildcard *.should_get)
 SHOULD_LOG=$(SHOULD:.should_get=.log)
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
+VALGRIND=valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file=$$(mktemp ../../reports/valgrind.xml.XXXXXX)
 
 .PHONY: all force clean forcedep
 
@@ -31,8 +32,10 @@ shouldvdj:
 
 %.log: %.should_get force
 	./should-to-tap.sh $<
-valgrind:
-	LAUNCHER='valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file=$$(mktemp ../../reports/valgrind.xml.XXXXXX)' make should
+valgrind_should:
+	LAUNCHER="$(VALGRIND)" make should
+valgrind_tests: vidjil tests
+	$(VALGRIND) ./tests
 
 $(EXEC): % : %.o $(LIB) 
 	$(CC) -o $@ $< $(LIB) $(LDLIBS) $(LDFLAGS) $(CXXFLAGS)
