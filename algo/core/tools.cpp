@@ -75,9 +75,11 @@ char complement_nucleotide(char nuc) {
   case 'H': case 'h': return 'D'; // not G
   case 'V': case 'v': return 'B'; // not T
 
+  case 'N': case 'n': return 'N';
+
   case ' ': return ' '; // ne devrait pas arriver...
 
-  default: return 'N';
+  default: return '?';
   }
 }
 

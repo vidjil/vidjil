@@ -72,7 +72,7 @@ bool pair_occurrence_sort(pair<T, int> a, pair<T, int> b);
 string string_of_int(int number);
 
 /**
- * @param nuc is A, C, G, T or N (or lowercase)
+ * @param nuc is A, C, G, T or any extended nucleotide (or lowercase)
  * @return the complementary nucleotide of nuc
  */
 char complement_nucleotide(char nuc);
