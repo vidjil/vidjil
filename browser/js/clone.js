@@ -173,6 +173,14 @@ Clone.prototype = {
         }
         return s
     },
+
+    getFasta: function() {
+        fasta = ''
+        fasta += '>' + this.getCode() + '\n'
+        fasta += this.getSequence() + '\n'
+
+        return fasta
+    },
     
     /* 
      *

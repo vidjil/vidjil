@@ -1802,8 +1802,7 @@ Model.prototype = {
             
             var fasta = '<pre>'
             for (var i=0; i<list.length; i++){
-                fasta += '>' + this.clone(list[i]).getCode() + '\n'
-                fasta += this.clone(list[i]).getSequence() + '\n'
+                fasta += this.clone(list[i]).getFasta() + '\n'
             }
             
             var result = $('<div/>', {
