@@ -1,0 +1,8 @@
+!LAUNCH: $LAUNCHER ../../vidjil -k 9 -G ../../germline/IGH  -K -c clones ../../data/revcomp.fa
+
+$ Segments both reads, normal and revers
+1:segmented 2 reads
+
+$ Only one window
+f1:==> found 1 60-window
+
