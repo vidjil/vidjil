@@ -33,6 +33,11 @@ shouldvdj:
 
 %.tap: %.should_get force
 	./should-to-tap.sh $<
+
+valgrind_should:
+	make -C $(REPORTS_PATH) clean_valgrind
+	LAUNCHER="$(VALGRIND)" make should
+
 valgrind_%:
 	LAUNCHER="$(VALGRIND)" make $(patsubst valgrind_%,%,$@)
 
