@@ -33,8 +33,9 @@ shouldvdj:
 
 %.tap: %.should_get force
 	./should-to-tap.sh $<
-valgrind_should:
-	LAUNCHER="$(VALGRIND)" make should
+valgrind_%:
+	LAUNCHER="$(VALGRIND)" make $(patsubst valgrind_%,%,$@)
+
 valgrind_tests: vidjil tests
 	$(VALGRIND) ./tests
 
