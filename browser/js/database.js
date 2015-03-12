@@ -1,10 +1,40 @@
-function Database(id, db_address, model) {
+DB_ADDRESS = ""
+
+function Database(id, model) {
     var self = this;
-    this.db_address = db_address;
-    this.id = id;
-    this.upload = {};
-    this.url = []
-    this.m = model
+    
+    if (typeof config != 'undefined' && config.use_database != undefined && config.use_database) {
+
+        if (config.db_address) { DB_ADDRESS = config.db_address}
+        if (config.db_address == "default") DB_ADDRESS = "https://"+window.location.hostname+"/vidjil/"
+        var fileref=document.createElement('script')
+        fileref.setAttribute("type","text/javascript")
+        fileref.setAttribute("src", DB_ADDRESS + "static/js/checkSSL.js")
+        document.getElementsByTagName("head")[0].appendChild(fileref)
+        
+        this.db_address = DB_ADDRESS;
+        this.id = id;
+        this.upload = {};
+        this.url = []
+        this.m = model
+        this.uploader = new Uploader()
+        
+        
+        window.onbeforeunload = function(e){
+            if ( self.uploader.is_uploading() ){
+                e = e || event;
+                if(e.preventDefault){e.preventDefault();}
+                e.returnValue = false;
+                return 'some uploads are incomplete';
+            }
+            if ( self.m.analysisHasChanged ){
+                e = e || event;
+                if(e.preventDefault){e.preventDefault();}
+                e.returnValue = false;
+                return 'Some changes have not been saved';
+            }
+        }
+    }
 }
 
 
@@ -254,7 +284,7 @@ Database.prototype = {
                         }
                         data.append('id', id);
                         var filename = $('#filename').val()
-                        uploader.add(id, data, filename)
+                        self.uploader.add(id, data, filename)
                     }
                 },
                 error: function (request, status, error) {
@@ -504,7 +534,7 @@ Database.prototype = {
         document.getElementById("db_msg")
             .innerHTML = msg;
             
-        uploader.display()
+        this.uploader.display()
     },
 
     //efface et ferme la fenetre de dialogue avec le serveur
@@ -632,6 +662,7 @@ function Uploader() {
             self.update_percent()
         }
     },200)
+
 }
 
 Uploader.prototype = {
@@ -792,22 +823,22 @@ Uploader.prototype = {
         switch(status) {
             case "queued":
                 html += "<span class='loading_seq'>queued</span> "
-                html += "<span class='button' onclick='uploader.cancel("+id+")'>cancel</span>"
+                html += "<span class='button' onclick='db.uploader.cancel("+id+")'>cancel</span>"
                 break;
             case "upload":
                 html += "<span class='loading_gauge'><span class='loading_"+id+" loading_bar'></span></span> "
-                html += "<span class='button' onclick='uploader.cancel("+id+")'>cancel</span>"
+                html += "<span class='button' onclick='db.uploader.cancel("+id+")'>cancel</span>"
                 break;
             case "server_check":
                 html += "<span class='loading_seq'>server check</span>"
                 break;
             case "canceled":
                 html += "<span class='loading_status'> canceled by user </span>"
-                html += "<span class='button' onclick='uploader.retry("+id+")'>try again</span>"
+                html += "<span class='button' onclick='db.uploader.retry("+id+")'>try again</span>"
                 break;
             case "upload_error":
                 html += "<span class='loading_status'> upload failed </span>"
-                html += "<span class='button' onclick='uploader.retry("+id+")'>try again</span>"
+                html += "<span class='button' onclick='db.uploader.retry("+id+")'>try again</span>"
                 break;
         }
         
