@@ -40,6 +40,10 @@ function Model() {
     this.reset();
     this.checkBrowser();
     this.germlineList = new GermlineList()
+    
+    window.onresize = function () { m.resize(); };
+    
+    this.start()
 }
 
 
@@ -112,6 +116,66 @@ Model.prototype = {
             "= SEG, with window",
             "= SEG, but no window",
         ];
+
+    },
+    
+    
+    start: function() {
+        var self = this;
+        var dataURL = ""
+        var analysisURL = ""
+        var patient = -1
+        var dbconfig = -1
+        var custom_list = []
+            
+        // Process arguments in conf.js
+        if (typeof config != 'undefined' && typeof config.autoload != 'undefined')
+            dataURL = config.autoload
+
+        if (typeof config != 'undefined' && typeof config.autoload_analysis != 'undefined')
+            analysisURL = config.autoload_analysis
+
+        // Process arguments given on the URL (overrides conf.js)
+        if (location.search != '') {
+            var tmp = location.search.substring(1).split('&')
+
+            for (var i=0; i<tmp.length; i++){
+                var tmp2 = tmp[i].split('=')
+                
+                if (tmp2[0] == 'data') dataURL = tmp2[1]
+                if (tmp2[0] == 'analysis') analysisURL = tmp2[1]
+                if (tmp2[0] == 'patient') patient = tmp2[1]
+                if (tmp2[0] == 'config') dbconfig = tmp2[1]
+                if (tmp2[0] == 'custom') custom_list.push(tmp2[1])
+            }
+        }    
+
+        //onStart
+        if (dataURL != "") {
+            if (analysisURL != ""){
+                var callback = function() {self.loadAnalysisUrl(analysisURL)}
+                this.loadDataUrl(dataURL, callback)
+            }else{
+                this.loadDataUrl(dataURL)
+            }
+        }
+            
+        else if (patient != "-1" && dbconfig != "-1"){
+            //wait 1sec to check ssl
+            setTimeout(function () { db.load_data( {"patient" : patient , "config" : dbconfig } , "")  }, 1000);
+        }
+            
+        else if (custom_list.length>0){
+            //wait 1sec to check ssl
+            setTimeout(function () { db.load_custom_data( {"custom" : custom_list })  }, 1000);
+        }
+                
+        else if (typeof config != 'undefined' && config.use_database){
+            //wait 1sec to check ssl
+            setTimeout(function () { db.call("patient/index.html")}, 1000);
+        }else{
+            myConsole.popupMsg(myConsole.msg.welcome)
+        }
 
     },
 
