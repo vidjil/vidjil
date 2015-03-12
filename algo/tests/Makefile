@@ -8,7 +8,7 @@ EXEC=$(SRC:.cpp=)
 OTHER_SRC=$(wildcard *.cpp)
 LIB=../core/vidjil.a ../lib/lib.a
 SHOULD=$(wildcard *.should_get)
-SHOULD_LOG=$(SHOULD:.should_get=.log)
+SHOULD_LOG=$(SHOULD:.should_get=.tap)
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
 REPORTS_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
 VALGRIND=valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file=\"$$(mktemp "$(REPORTS_PATH)/valgrind.xml.XXXXXX")\"
@@ -31,7 +31,7 @@ shouldvdj:
 	python should-vdj-to-tap.py -2q $(SHOULD_VDJ)
 	python should-vdj-to-tap.py $(SHOULD_VDJ)
 
-%.log: %.should_get force
+%.tap: %.should_get force
 	./should-to-tap.sh $<
 valgrind_should:
 	LAUNCHER="$(VALGRIND)" make should
