@@ -21,6 +21,49 @@
 * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 */
 
+function initMenu () {
+    if (typeof config != 'undefined') {
+
+        if (config.file_menu && config.file_menu.file.length != 0){
+            
+            //detect if files are available
+            $.ajax({
+                type: "POST",
+                timeout: 5000,
+                crossDomain: true,
+                url: config.file_menu.path + config.file_menu.file[0],
+                success: function (result) {
+                    $('#static_file_menu').css("display", "")
+                    var demo_file = document.getElementById("fileSelector").firstChild
+
+                    for (var i = 0; i < config.file_menu.file.length; i++) {
+                        (function (i) {
+
+                            var a = document.createElement('a');
+                            a.className = "buttonSelector"
+                            a.onclick = function () {
+                                m.loadDataUrl(config.file_menu.path + config.file_menu.file[i])
+                            }
+                            
+                            a.appendChild(document.createTextNode(config.file_menu.file[i]))
+
+                            demo_file.appendChild(a);
+                        })(i)
+                    }
+                },
+                error: function() {
+                    myConsole.flash("Files are not available", 1)
+                }
+            });
+
+        }
+        
+        if (typeof config.use_database != 'undefined' && config.use_database){
+            $("#db_menu").css("display", "");
+        }
+    }
+}
+
 function loadData() {
     
     myConsole.closePopupMsg()
