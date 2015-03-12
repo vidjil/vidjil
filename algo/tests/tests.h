@@ -22,6 +22,7 @@ enum {
   TEST_NUC_TO_INT,
   TEST_DNA_TO_INT,
   TEST_REVCOMP_INT,
+  TEST_EXTENDED_NUCL,
   TEST_EXTRACT_BASENAME,
 
   /* Storage tests */

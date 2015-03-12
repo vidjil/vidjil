@@ -187,6 +187,10 @@ void IKmerStore<T>::insert(const seqtype &sequence,
                            const string &label){
   for(size_t i = 0 ; i + s < sequence.length() + 1 ; i++) {
     seqtype kmer = spaced(sequence.substr(i, s), seed);
+
+    if (has_extended_nucleotides(kmer))
+      continue;
+
     int strand = 1;
     if (revcomp_indexed && T::hasRevcompSymetry()) {
       seqtype rc_kmer = revcomp(kmer);

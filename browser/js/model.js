@@ -1839,6 +1839,7 @@ Model.prototype = {
         var csv = "name,id,system,tag,v,d,j,sequence"
         for (var i=0; i<this.samples.order.length; i++) csv += ",reads_"+i
         for (var i=0; i<this.samples.order.length; i++) csv += ",ratio_"+i
+        for (var i=0; i<this.samples.order.length; i++) csv += ",ratios_"+i
         csv += "\n"
         
         //only non-empty active clones and "other"
@@ -1926,6 +1927,10 @@ Model.prototype = {
 
     systemGroup: function(system) {
         list = ''
+        if (typeof system == 'undefined'){
+            return "?"
+        }
+
         for (var germline in this.reads.germline) {
             if (this.sameSystemGroup(germline, system)) {
                 if (list) list += '/'

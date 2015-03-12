@@ -55,6 +55,27 @@ string string_of_int(int number)
 }
 
 
+bool is_extended_nucleotide(char nuc) {
+  switch(nuc) {
+  case 'A': case 'a':
+  case 'C': case 'c':
+  case 'G': case 'g':
+  case 'T': case 't':
+    return false ;
+
+  default:
+    return true;
+  }
+}
+
+bool has_extended_nucleotides(string s) {
+  for (unsigned int i = 0; i<s.length(); i++)
+    if (is_extended_nucleotide(s[i]))
+      return true ;
+
+  return false ;
+}
+
 
 char complement_nucleotide(char nuc) {
   switch(nuc) {
@@ -75,9 +96,11 @@ char complement_nucleotide(char nuc) {
   case 'H': case 'h': return 'D'; // not G
   case 'V': case 'v': return 'B'; // not T
 
+  case 'N': case 'n': return 'N';
+
   case ' ': return ' '; // ne devrait pas arriver...
 
-  default: return 'N';
+  default: return '?';
   }
 }
 

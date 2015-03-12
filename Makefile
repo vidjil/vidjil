@@ -65,8 +65,11 @@ shouldvdj_generated_fine: all
 	python algo/tests/tap-stats.py data/gen/0-*.1.tap
 	python algo/tests/tap-stats.py data/gen/5-*.1.tap
 
-valgrind_test:
-	make -C algo/tests valgrind
+valgrind_unit:
+	make -C algo/tests valgrind_tests
+
+valgrind_should:
+	make -C algo/tests valgrind_should
 
 unit_browser:
 	make -C browser/test unit
