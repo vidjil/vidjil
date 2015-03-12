@@ -32,15 +32,24 @@
  */
 
 
+CGI_ADDRESS = ""
 /* segment constructor
  *
  * */
-function Segment(id, model, cgi_address) {
+function Segment(id, model) {
+    
+    if (typeof config != 'undefined') {
+        if (config.cgi_address){
+            if (config.cgi_address) CGI_ADDRESS = config.cgi_address
+            if (config.cgi_address == "default") CGI_ADDRESS = "http://"+window.location.hostname+"/cgi/"
+        }
+    }
+    
     this.id = id; //ID de la div contenant le segmenteur
     this.m = model; //Model utilisé
     this.m.view.push(this); //synchronisation au Model
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
-    this.cgi_address = cgi_address
+    this.cgi_address = CGI_ADDRESS
     
     this.memtab = [];
     this.sequence = {};
@@ -255,14 +264,15 @@ Segment.prototype = {
         
         parent.appendChild(div)
 
-        $('#toClipBoard')
+       /* $('#toClipBoard')
             .zclip({
                 path: 'js/lib/ZeroClipboard.swf',
                 copy: function () {
                     return self.toFasta()
                 }
             });
-            
+        */
+       
         $('#segmenter')
             .scroll(function(){
                 var leftScroll = $('#segmenter').scrollLeft();  
