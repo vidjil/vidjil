@@ -329,7 +329,7 @@ Model.prototype = {
         
         //copy .vidjil file in model
         for (var key in data){
-            if (key != "clusters") self[key] = data[key]
+            if (key != "clusters") self[key] = jQuery.parseJSON(JSON.stringify(data[key]))
         }
         this.data_clusters = data.clusters;
         

@@ -39,6 +39,7 @@ Builder.prototype = {
         this.build_info_container()
         this.build_clusterSelector()
         this.build_settings()
+        this.initTag();
         if (typeof config != 'undefined' && typeof config.use_database != 'undefined' && config.use_database) this.build_db()
         
         if (this.m.samples.order.length == 1) this.resizeGraph(0) 
@@ -47,8 +48,8 @@ Builder.prototype = {
 
     update: function () {
 
-            this.build_info_container()
-
+        this.build_info_container()
+        this.updateTagBox();
     },
     
     updateElem: function () {},
@@ -425,7 +426,7 @@ Builder.prototype = {
                 div.className = "tagElem"
                 div.id = "tagDisplay" + i
                 div.onclick = function () {
-                    nextDisplayTag(this)
+                    self.nextDisplayTag(this)
                 }
                 div.appendChild(span1)
                 div.appendChild(span2)
@@ -486,7 +487,7 @@ Builder.prototype = {
             $("#color_system_button").css("display", "none")
         }
 
-        initTag();
+        this.initTag();
     },
     
     //TODO need to build complete Selector 
@@ -719,7 +720,7 @@ Builder.prototype = {
         var div_color = this.build_info_color()
         parent.appendChild(div_color) 
 
-        initTag();
+        this.initTag();
     },
 
     build_multi_system: function () {
@@ -838,7 +839,7 @@ Builder.prototype = {
                 spantag.className = "tagColorBox tagColor" + i
                 spantag.id = "fastTag" + i
                 spantag.onclick = function () {
-                    nextDisplayTag(this)
+                    self.nextDisplayTag(this)
                 }
 
                 span2.appendChild(spantag);
@@ -861,6 +862,32 @@ Builder.prototype = {
         div.appendChild(span2)
         div.appendChild(span3)
         return div;
+    },
+    
+    initTag: function (){
+        for (var i =0; i<tag.length; i++){
+            $(".tagColor"+i).prop("title", tag[i].name);
+            $(".tagName"+i).html(tag[i].name);
+        }
+        this.updateTagBox();
+    },
+    
+  
+    updateTagBox: function(){
+        for (var i =0; i<tag.length; i++){
+            if (tag[i].display){
+                $(".tagColor"+i).removeClass("inactiveTag")
+            }else{
+                $(".tagColor"+i).addClass("inactiveTag")
+            }
+        }
+    },
+    
+    nextDisplayTag: function(elem){
+        var id_tag = elem.id.charAt( elem.id.length-1 ) 
+        var s = tag[id_tag].display;
+        tag[id_tag].display = !s;
+        this.m.update();
     },
     
     build_db: function(){

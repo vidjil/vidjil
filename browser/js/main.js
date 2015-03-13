@@ -22,5 +22,3 @@ var db = new Database("plop!", m);
 
 var shortcut = new Shortcut()
 
-
-initTag();//TODO a enlever

@@ -39,32 +39,6 @@ tag = [
 
 var default_tag=8;
   
-  function nextDisplayTag(elem){
-    var id_tag = elem.id.charAt( elem.id.length-1 ) 
-    var s = tag[id_tag].display;
-    tag[id_tag].display = !s;
-    updateTagBox();
-    m.update();
-  }
- 
-  function initTag(){
-    for (var i =0; i<tag.length; i++){
-      $(".tagColor"+i).prop("title", tag[i].name);
-      $(".tagName"+i).html(tag[i].name);
-    }
-    updateTagBox();
-  }
-  
-  function updateTagBox(){
-    for (var i =0; i<tag.length; i++){
-      if (tag[i].display){
-        $(".tagColor"+i).removeClass("inactiveTag")
-      }else{
-        $(".tagColor"+i).addClass("inactiveTag")
-      }
-    }
-  }
-  
   /*ressort une couleur format RGB*/
   function colorGenerator(h,s,v){
     h=h/60;
