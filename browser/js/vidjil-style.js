@@ -21,26 +21,11 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
-var color_s = 0.8; //pureté
-var color_v = 0.72; //brightness
-
-
-tag = [
-        {"color" : "#dc322f", "name" : "clone 1", "display" : true},
-        {"color" : "#cb4b16", "name" : "clone 2", "display" : true},
-        {"color" : "#b58900", "name" : "clone 3", "display" : true},
-        {"color" : "#268bd2", "name" : "standard", "display" : true},
-        {"color" : "#6c71c4", "name" : "standard (noise)", "display" : true},
-        {"color" : "#2aa198", "name" : "custom 1", "display" : true},
-        {"color" : "#d33682", "name" : "custom 2", "display" : true},
-        {"color" : "#859900", "name" : "custom 3", "display" : true},
-        {"color" : "", "name" : "-/-", "display" : true}
-    ]
-
-var default_tag=8;
   
   /*ressort une couleur format RGB*/
   function colorGenerator(h,s,v){
+    s = typeof s !== 'undefined' ? s : 0.8
+    v = typeof v !== 'undefined' ? v : 0.72
     h=h/60;
     var i=Math.floor(h);
     var f=h-i;
@@ -69,11 +54,5 @@ var default_tag=8;
     }
   }
 
-      
-  function changeStyle(newStyle){
-	if (newStyle=="solarizeD") document.getElementById("palette").href="css/dark.css";
-	if (newStyle=="solarizeL") document.getElementById("palette").href="css/light.css";
-    m.update()
-  }
   
 

@@ -188,7 +188,7 @@ Builder.prototype = {
         //reset
         listTag.innerHTML = "";
 
-        for (var i = 0; i < tag.length; i++) {
+        for (var i = 0; i < this.m.tag.length; i++) {
             (function (i) {
                 var span3 = document.createElement('span');
                 span3.onclick = function (tag) {
@@ -310,7 +310,7 @@ Builder.prototype = {
         var input = document.createElement('input');
         input.type = "text";
         input.id = "new_tag_name";
-        input.value = tag[tagID].name;
+        input.value = this.m.tag[tagID].name;
         input.style.width = "100px";
         input.style.border = "0px";
         input.style.margin = "0px";
@@ -339,7 +339,7 @@ Builder.prototype = {
             event.preventDefault()
             var newTagName = document.getElementById("new_tag_name")
                 .value;
-            tag[tagID].name = newTagName
+            this.m.tag[tagID].name = newTagName
             self.build_tagSelector()
             self.build_displaySelector()
             self.m.analysisHasChanged = true
@@ -407,7 +407,7 @@ Builder.prototype = {
         listGermline.innerHTML = "";
 
         //init tag list
-        for (var i = 0; i < tag.length; i++) {
+        for (var i = 0; i < this.m.tag.length; i++) {
             (function (i) {
                 var span3 = document.createElement('span');
                 span3.onclick = function (tag) {
@@ -834,7 +834,7 @@ Builder.prototype = {
             break;
         case "Tag":
 
-            for (var i = 0; i < tag.length; i++) {
+            for (var i = 0; i < this.m.tag.length; i++) {
                 var spantag = document.createElement('span');
                 spantag.className = "tagColorBox tagColor" + i
                 spantag.id = "fastTag" + i
@@ -865,17 +865,17 @@ Builder.prototype = {
     },
     
     initTag: function (){
-        for (var i =0; i<tag.length; i++){
-            $(".tagColor"+i).prop("title", tag[i].name);
-            $(".tagName"+i).html(tag[i].name);
+        for (var i =0; i<this.m.tag.length; i++){
+            $(".tagColor"+i).prop("title", this.m.tag[i].name);
+            $(".tagName"+i).html(this.m.tag[i].name);
         }
         this.updateTagBox();
     },
     
   
     updateTagBox: function(){
-        for (var i =0; i<tag.length; i++){
-            if (tag[i].display){
+        for (var i =0; i<this.m.tag.length; i++){
+            if (this.m.tag[i].display){
                 $(".tagColor"+i).removeClass("inactiveTag")
             }else{
                 $(".tagColor"+i).addClass("inactiveTag")
@@ -885,8 +885,8 @@ Builder.prototype = {
     
     nextDisplayTag: function(elem){
         var id_tag = elem.id.charAt( elem.id.length-1 ) 
-        var s = tag[id_tag].display;
-        tag[id_tag].display = !s;
+        var s = this.m.tag[id_tag].display;
+        this.m.tag[id_tag].display = !s;
         this.m.update();
     },
     

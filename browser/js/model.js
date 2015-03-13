@@ -98,7 +98,6 @@ Model.prototype = {
         this.nbr = 0;
         this.nodes = null;
         this.edges = null;
-
         this.cluster_key = ""
         
         //segmented status
@@ -117,7 +116,23 @@ Model.prototype = {
             "= SEG, but no window",
         ];
 
+        this.tag = [
+            {"color" : "#dc322f", "name" : "clone 1", "display" : true},
+            {"color" : "#cb4b16", "name" : "clone 2", "display" : true},
+            {"color" : "#b58900", "name" : "clone 3", "display" : true},
+            {"color" : "#268bd2", "name" : "standard", "display" : true},
+            {"color" : "#6c71c4", "name" : "standard (noise)", "display" : true},
+            {"color" : "#2aa198", "name" : "custom 1", "display" : true},
+            {"color" : "#d33682", "name" : "custom 2", "display" : true},
+            {"color" : "#859900", "name" : "custom 3", "display" : true},
+            {"color" : "", "name" : "-/-", "display" : true}
+        ]
+
+        this.default_tag=8;
+        
     },
+    
+    
     
     
     start: function() {
@@ -475,11 +490,11 @@ Model.prototype = {
                 
                 var keys = Object.keys(s.names);
                 for (var i=0; i<keys.length; i++){
-                    tag[parseInt(keys[i])].name = s.names[keys[i]]
+                    this.tag[parseInt(keys[i])].name = s.names[keys[i]]
                 }
                 
                 for (var i=0; i<s.hide.length; i++){
-                    tag[s.hide[i]].display = false;
+                    this.tag[s.hide[i]].display = false;
                 }
             }
             
@@ -544,7 +559,7 @@ Model.prototype = {
         //      COLOR_N
         for (var i = 0; i < this.clones.length; i++) {
             var clone = this.clone(i)
-            clone.colorN = colorGenerator((((clone.getNlength() / n_max) - 1) * (-250)), color_s, color_v);
+            clone.colorN = colorGenerator((((clone.getNlength() / n_max) - 1) * (-250)));
         }
         
         this.applyAnalysis(this.analysis);
@@ -559,7 +574,7 @@ Model.prototype = {
         for (key in this.data){
             if (this.data[key].length == this.samples.number){
                 this.data_info[key] = {
-                    "color" : tag[i].color,
+                    "color" : this.tag[i].color,
                     "isActive" : false
                 }
                 i++
@@ -741,9 +756,9 @@ Model.prototype = {
         //tags
         analysisData.tags.names = {}
         analysisData.tags.hide = []
-        for (var i=0; i<tag.length; i++){
-            analysisData.tags.names[""+i] = tag[i].name
-            if (!tag[i].display) analysisData.tags.hide.push(i)
+        for (var i=0; i<this.tag.length; i++){
+            analysisData.tags.names[""+i] = this.tag[i].name
+            if (!this.tag[i].display) analysisData.tags.hide.push(i)
         }
         
         
@@ -2027,7 +2042,7 @@ Model.prototype = {
         var maxCluster = this.dbscan.clusters.length;
         for (var i = 0; i < this.clones.length; i++) {
             if (typeof(this.clone(i)) != 'undefined') {
-                this.clone(i).colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.clone(i)] + 1) ), color_s, color_v);
+                this.clone(i).colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.clone(i)] + 1) ));
             }
             else
                 this.clone(i).colorDBSCAN = "";

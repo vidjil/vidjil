@@ -16,7 +16,7 @@ var segment = new Segment("bot-container",m);
 
 var builder = new Builder(m);
 var pdf = new PDF(m, "visu2_svg")
-var report = new Report()
+var report = new Report(m)
 var db = new Database("plop!", m);
 
 

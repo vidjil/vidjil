@@ -64,6 +64,12 @@ function initMenu () {
     }
 }
 
+function changeStyle(newStyle){
+    if (newStyle=="solarizeD") document.getElementById("palette").href="css/dark.css";
+    if (newStyle=="solarizeL") document.getElementById("palette").href="css/light.css";
+    m.update()
+}
+
 function loadData() {
     
     myConsole.closePopupMsg()

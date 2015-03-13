@@ -372,12 +372,12 @@ Clone.prototype = {
         if (this.tag) {
             return this.tag;
         } else {
-            return default_tag;
+            return this.m.default_tag;
         }
     }, 
     
     getTagName: function () {
-        return tag[this.getTag()].name
+        return this.m.tag[this.getTag()].name
     }, 
     
     
@@ -393,10 +393,10 @@ Clone.prototype = {
             if (size == 0){
                 this.color = "";
             }else{
-                this.color = colorGenerator(this.m.scale_color(size * this.m.precision), color_s, color_v);
+                this.color = colorGenerator(this.m.scale_color(size * this.m.precision));
             }
         }else if (this.m.colorMethod == "Tag"){
-            this.color =  tag[this.getTag()].color;
+            this.color =  this.m.tag[this.getTag()].color;
         }else if (this.m.colorMethod == "dbscan"){
             this.color =  this.colorDBSCAN;
         }else if (this.m.colorMethod == "V" && this.getV() != "undefined V"){
@@ -536,7 +536,7 @@ Clone.prototype = {
     },
     
     enable: function (top) {
-        if (this.top <= top && tag[this.getTag()].display && this.id != "other") {
+        if (this.top <= top && this.m.tag[this.getTag()].display && this.id != "other") {
             this.active = true;
         }
     },

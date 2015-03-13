@@ -185,15 +185,13 @@ Germline.prototype = {
                 var tmp = this.allele[key[i]];
                 this.allele[key[i]] = {};
                 this.allele[key[i]].seq = tmp;
-                this.allele[key[i]].color = colorGenerator((30 + (i / key.length) * 290),
-                    color_s, color_v);
+                this.allele[key[i]].color = colorGenerator((30 + (i / key.length) * 290));
 
                 var elem = key[i].split('*')[0];
                 if (elem != elem2) {
                     this.gene[elem2] = {};
                     this.gene[elem2].n = n2;
-                    this.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
-                        color_s, color_v);
+                    this.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290));
                     this.gene[elem2].rank = n;
                     n++;
                     n2 = 0;
@@ -206,8 +204,7 @@ Germline.prototype = {
             this.gene[elem2] = {};
             this.gene[elem2].n = n2;
             this.gene[elem2].rank = n
-            this.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290),
-                color_s, color_v);
+            this.gene[elem2].color = colorGenerator((30 + ((i - 1) / key.length) * 290));
         }
         
         return callback

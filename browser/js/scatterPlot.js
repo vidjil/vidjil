@@ -521,7 +521,7 @@ ScatterPlot.prototype = {
                 //If the link's length is lower than distanceMax, color the link
                 if (this.edge[i].len <= this.distanceMax)
                 //colorGenerator usage for color red (0) to blue (270), by gap: 270/distanceMax
-                    this.edge[i].color = colorGenerator((270 / this.distanceMax) * this.edge[i].len, color_s, color_v);
+                    this.edge[i].color = colorGenerator((270 / this.distanceMax) * this.edge[i].len);
                 //If the link is not interesting, we attribute the white color (usefull for the activeAllLine() function)
                 else this.edge[i].color = "white";
             }

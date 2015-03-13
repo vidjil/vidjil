@@ -322,7 +322,7 @@ List.prototype = {
         var path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
         path.setAttribute('d', this.starPath);
         path.setAttribute('id', 'color' + cloneID);
-        path.setAttribute("fill", tag[this.m.clone(cloneID).getTag()].color);
+        path.setAttribute("fill", this.m.tag[this.m.clone(cloneID).getTag()].color);
         svg.appendChild(path);
         span_star.appendChild(svg)
 
