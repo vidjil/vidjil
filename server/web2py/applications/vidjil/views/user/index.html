@@ -7,11 +7,13 @@
     <div id="db_table_container">
         <table class="db_table" id="table">
             <thead>
-                <tr><td class="column_100">id</td>
+                <tr><td class="column_50">id</td>
                     <td class="column_200"> name</td>
-                    <td> @</td>
-                    <td class="colum1">patients created </td>
-                    <td class="colum1">files uploaded </td>
+                    <td class="column_200"> @</td>
+                    <td class="column_50">access</td>
+                    <td class="column_100">groups</td>
+                    <td class="column_50">patients created </td>
+                    <td class="column_100">files uploaded </td>
                 </tr>
             </thead>
             
@@ -20,6 +22,8 @@
                     <td> {{=row.id}}</td>
                     <td> {{=row.first_name}} {{=row.last_name}}</td>
                     <td> {{=row.email}}  </td>
+                    <td> {{=row.access}}  </td>
+                    <td> {{=row.groups}}  </td>
                     <td> {{=row.created}}  </td>
                     <td> {{=row.files}} ({{=vidjil_utils.format_size(row.size)}}) </td>
                 </tr>
