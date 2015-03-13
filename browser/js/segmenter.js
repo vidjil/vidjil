@@ -294,8 +294,8 @@ Segment.prototype = {
             });
             
         $('#bot-container')
-            .mouseleave(function(){
-                if (self.is_open){
+            .mouseleave(function(e){
+                if (e.relatedTarget != null && self.is_open){
                     var seg = $('#segmenter')
                     seg.stop().animate({height: 100}, 250);
                     self.is_open = false
