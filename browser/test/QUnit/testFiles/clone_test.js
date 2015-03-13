@@ -121,7 +121,7 @@ test("clone : tag / color", function() {
 
     equal(c1.getTag(), 8, "getTag() >> default tag : 8");
     c1.updateColor()
-    equal(c1.getColor(), "#657b83", "getColor() >> default tag color : ");
+    equal(c1.getColor(), undefined, "getColor() >> default tag color : ");
     
     c1.changeTag(5)
     c1.updateColor()
