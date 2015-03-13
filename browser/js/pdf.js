@@ -190,7 +190,7 @@ PDF.prototype = {
         //clones style
         for (var i = 0; i < this.m.clones.length; i++) {
             var polyline = elem.querySelectorAll('[id="polyline'+i+'"]')[0]
-            var color = tagColor[this.m.clone(i).getTag()]
+            var color = tag[this.m.clone(i).getTag()].color
 
             if (polyline.getAttribute("d").indexOf("Z") != -1){
                 polyline.setAttribute("style", "stroke-width:0px");
@@ -208,7 +208,7 @@ PDF.prototype = {
         //selected clones style
         for (var i = 0; i < this.list.length; i++) {
             var polyline = elem.querySelectorAll('[id="polyline'+this.list[i]+'"]')[0] 
-            var color = tagColor[this.m.clone(this.list[i]).getTag()]
+            var color = tag[this.m.clone(this.list[i]).getTag()].color
 
             polyline.setAttribute("stroke", color);
             polyline.setAttribute("style", "stroke-width: "+opt.strokeSize+"px");
@@ -345,7 +345,7 @@ PDF.prototype = {
     info_clone: function (cloneID) {
         this.checkPage(20)
 
-        var color = tagColor[this.m.clone(cloneID).getTag()]
+        var color = tag[this.m.clone(cloneID).getTag()].color
 
         this.icon(cloneID, this.marge, this.y - 6, 18, 8)
 
@@ -472,7 +472,7 @@ PDF.prototype = {
     
     icon: function (cloneID, x, y, w, h) {
 
-        var color = tagColor[m.clone(cloneID).tag]
+        var color = tag[m.clone(cloneID).tag].color
 
         var polyline = document.getElementById("polyline" + cloneID)
             .cloneNode(true);

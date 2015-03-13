@@ -41,6 +41,7 @@ function Clone(data, model, hash) {
     
     this.m.clusters[hash]=[hash]
     this.m.clones[hash]=this
+    this.tag = this.getTag();
 }
 
 
@@ -363,7 +364,7 @@ Clone.prototype = {
         if (this.color) {
             return this.color;
         } else {
-            return color['@default'];
+            "";
         }
     }, 
     
@@ -376,7 +377,7 @@ Clone.prototype = {
     }, 
     
     getTagName: function () {
-        return tagName[this.getTag()]
+        return tag[this.getTag()].name
     }, 
     
     
@@ -385,17 +386,17 @@ Clone.prototype = {
      * */
     updateColor: function () {
         if (this.m.focus == this.hash){
-            this.color = color['@select'];
+            this.color = "";
         }else if (this.m.colorMethod == "abundance") {
             var size = this.getSize()
             if (this.m.clusters[this.hash].length==0){ size = this.getSequenceSize() }
             if (size == 0){
-                this.color = color['@default'];
+                this.color = "";
             }else{
                 this.color = colorGenerator(this.m.scale_color(size * this.m.precision), color_s, color_v);
             }
         }else if (this.m.colorMethod == "Tag"){
-            this.color =  tagColor[this.tag];
+            this.color =  tag[this.getTag()].color;
         }else if (this.m.colorMethod == "dbscan"){
             this.color =  this.colorDBSCAN;
         }else if (this.m.colorMethod == "V" && this.getV() != "undefined V"){
@@ -415,7 +416,7 @@ Clone.prototype = {
         }else if (this.m.colorMethod == "system") {
             this.color = this.m.germlineList.getColor(this.germline)
         }else{
-            this.color = color['@default'];
+            this.color = "";
         }
     },
     
@@ -535,7 +536,7 @@ Clone.prototype = {
     },
     
     enable: function (top) {
-        if (this.top <= top && tagDisplay[this.tag] == 1 && this.id != "other") {
+        if (this.top <= top && tag[this.getTag()].display && this.id != "other") {
             this.active = true;
         }
     },

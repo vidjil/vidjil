@@ -1,6 +1,7 @@
 /* default color solarizeL */
 /* base Vidjil style */
 /* @default, @background, @highlight, @select, @secondary and @border have to be defined */
+/* default tag color */
 html {
   height: 100%;
   padding: 0px;
@@ -144,6 +145,7 @@ line {
 .graph_line {
   stroke-width: 2.5px;
   cursor: pointer;
+  stroke: #657b83;
 }
 .graph_data {
   fill: none;
@@ -167,6 +169,7 @@ line {
 .graph_focus {
   stroke-width: 5px;
   cursor: pointer;
+  stroke: #002b36;
 }
 .axis_m {
   stroke: #657b83;
@@ -261,9 +264,11 @@ line {
   stroke-width: 2.5px;
   stroke: #002b36;
   cursor: pointer;
+  fill: #657b83;
 }
 .circle_focus {
   cursor: pointer;
+  fill: #002b36;
 }
 .circle_hidden {
   -webkit-transition: fill 0.2s;
@@ -1438,4 +1443,34 @@ table.log textarea {
 }
 .console-flex {
   flex-grow: 1;
+}
+.tagColor0 {
+  background: #dc322f;
+}
+.tagColor1 {
+  background: #cb4b16;
+}
+.tagColor2 {
+  background: #b58900;
+}
+.tagColor3 {
+  background: #268bd2;
+}
+.tagColor4 {
+  background: #6c71c4;
+}
+.tagColor5 {
+  background: #2aa198;
+}
+.tagColor6 {
+  background: #d33682;
+}
+.tagColor7 {
+  background: #859900;
+}
+.tagColor8 {
+  background: #657b83;
+}
+.inactiveTag {
+  background-image: linear-gradient(45deg, transparent -25%, #ffffff 100%, #ffffff 100%, transparent 0%);
 }

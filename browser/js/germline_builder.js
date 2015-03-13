@@ -80,7 +80,7 @@ GermlineList.prototype = {
         if (typeof this.list[system] != 'undefined' && typeof this.list[system].color != 'undefined' ){
             return this.list[system].color
         }else{
-            return color['@default']
+            return "";
         }
     },
     

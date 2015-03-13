@@ -21,107 +21,46 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
-var scale_color;
-
-var solarizeD = {
-      '@default':'#839496',
-      '@background':'#002b36', 
-      '@highlight':'#073642', 
-      '@select':'#fdf6e3', 
-      '@secondary':'#586e75', 
-      '@border':'#284e55'    
-    };
-    
-var solarizeL = {
-      '@default':'#657b83', 
-      '@background':'#eee8d5', 
-      '@highlight':'#fdf6e3', 
-      '@select':'#002b36', 
-      '@secondary':'#93a1a1', 
-      '@border':'#b3c1c1'    
-    };
-    
-var color=solarizeL;
-
 var color_s = 0.8; //pureté
 var color_v = 0.72; //brightness
 
-var tagColor = [];
-tagColor[0] = "#dc322f";
-tagColor[1] = "#cb4b16";
-tagColor[2] = "#b58900";
-tagColor[3] = "#268bd2";
-tagColor[4] = "#6c71c4";
-tagColor[5] = "#2aa198";
-tagColor[6] = "#d33682";
-tagColor[7] = "#859900";
-tagColor[8] = color['@default'];
 
-var tagName = [];
-tagName[0] = "clone 1";
-tagName[1] = "clone 2";
-tagName[2] = "clone 3";
-tagName[3] = "standard";
-tagName[4] = "standard (noise)";
-tagName[5] = "custom 1";
-tagName[6] = "custom 2";
-tagName[7] = "custom 3";
-tagName[8] = "-/-";
-
-//default tag display 
-//0=hidden  -  1=show  
-var tagDisplay = [];
-tagDisplay[0] = 1;
-tagDisplay[1] = 1;
-tagDisplay[2] = 1;
-tagDisplay[3] = 1;
-tagDisplay[4] = 1;
-tagDisplay[5] = 1;
-tagDisplay[6] = 1;
-tagDisplay[7] = 1;
-tagDisplay[8] = 1;
+tag = [
+        {"color" : "#dc322f", "name" : "clone 1", "display" : true},
+        {"color" : "#cb4b16", "name" : "clone 2", "display" : true},
+        {"color" : "#b58900", "name" : "clone 3", "display" : true},
+        {"color" : "#268bd2", "name" : "standard", "display" : true},
+        {"color" : "#6c71c4", "name" : "standard (noise)", "display" : true},
+        {"color" : "#2aa198", "name" : "custom 1", "display" : true},
+        {"color" : "#d33682", "name" : "custom 2", "display" : true},
+        {"color" : "#859900", "name" : "custom 3", "display" : true},
+        {"color" : "", "name" : "-/-", "display" : true}
+    ]
 
 var default_tag=8;
-
-  function changeDisplayTag(elem){
-    var tag = elem.parentNode.id.substr(10);
-    tagDisplay[tag]=elem.value;
-    updateTagBox();
-  }
   
   function nextDisplayTag(elem){
-    var tag = elem.id.charAt( elem.id.length-1 ) 
-    var s =tagDisplay[tag]+1;
-    if (s > 1) s=0;
-    tagDisplay[tag]=s;
+    var id_tag = elem.id.charAt( elem.id.length-1 ) 
+    var s = tag[id_tag].display;
+    tag[id_tag].display = !s;
     updateTagBox();
     m.update();
   }
  
   function initTag(){
-    for (var i =0; i<tagColor.length; i++){
-      $(".tagColor"+i).prop("title", tagName[i]);
-      $(".tagName"+i).html(tagName[i]);
+    for (var i =0; i<tag.length; i++){
+      $(".tagColor"+i).prop("title", tag[i].name);
+      $(".tagName"+i).html(tag[i].name);
     }
     updateTagBox();
   }
   
   function updateTagBox(){
-    for (var i =0; i<tagColor.length; i++){
-      if (tagDisplay[i]==1){
-	$(".tagColor"+i).css({
-	  background : tagColor[i] 
-	});
+    for (var i =0; i<tag.length; i++){
+      if (tag[i].display){
+        $(".tagColor"+i).removeClass("inactiveTag")
       }else{
-	if (tagDisplay[i]==0){
-	  $(".tagColor"+i).css({
-            "background-color" : tagColor[i],
-            "background-image" : 'linear-gradient(45deg, transparent -25%, '+color['@background']+' 100%, '+color['@background']+' 100%, transparent 0%)',
-            "background" : '-moz-linear-gradient(45deg, transparent -25%, '+color['@background']+' 100%, '+color['@background']+' 100%, transparent 0%) repeat scroll 0 0 '+tagColor[i], //firefox
-            "background-image" : '-webkit-linear-gradient(45deg, transparent -25%, '+color['@background']+' 100%, '+color['@background']+' 100%, transparent 0%)'  //chrome
-	  })
-	}
-	
+        $(".tagColor"+i).addClass("inactiveTag")
       }
     }
   }
@@ -158,14 +97,9 @@ var default_tag=8;
 
       
   function changeStyle(newStyle){
-    color=newStyle
-    //less.modifyVars(color);
-    tagColor[default_tag] = color['@default'];
-	
-	if (newStyle==solarizeD) document.getElementById("palette").href="css/dark.css";
-	if (newStyle==solarizeL) document.getElementById("palette").href="css/light.css";
+	if (newStyle=="solarizeD") document.getElementById("palette").href="css/dark.css";
+	if (newStyle=="solarizeL") document.getElementById("palette").href="css/light.css";
     m.update()
-	
   }
   
 

@@ -193,7 +193,7 @@ Report.prototype = {
         for (var i = 0; i < m.clones.length; i++) {
             var polyline = svg_graph.querySelectorAll('[id="polyline'+i+'"]')[0]
             var tag = m.clone(i).getTag()
-            var color = tagColor[tag]
+            var color = tag[tag].color
             
             if (i == norm) {
                 polyline.setAttribute("style", "stroke-width:12px");
@@ -281,7 +281,7 @@ Report.prototype = {
         
         for (var i = 0; i < m.clones.length; i++) {
             var circle = svg_sp.querySelectorAll('[id="circle'+i+'"]')[0]
-            var color = tagColor[m.clone(i).getTag()]
+            var color = tag[m.clone(i).getTag()].color
             circle.setAttribute("stroke", color);
             
             //remove "other" and disabled clones
@@ -441,7 +441,7 @@ Report.prototype = {
     
     clone : function(cloneID, time) {
         if (typeof time == "undefined") time = -1
-        var color = tagColor[m.clone(cloneID).getTag()]
+        var color = tag[m.clone(cloneID).getTag()].color
         var system = m.clone(cloneID).germline
         var clone = $('<div/>', {'class': 'clone'})
         

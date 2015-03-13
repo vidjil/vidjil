@@ -291,7 +291,11 @@ ScatterPlot.prototype = {
                 if (!self.m.clone(p.id)
                     .isActive()) return "circle_inactive";
                 if (self.m.clone(p.id)
-                    .isSelected()) return "circle_select";
+                    .isSelected()){
+                    if (self.m.clone(p.id)
+                        .isFocus()) return "circle_focus circle_select";
+                    return "circle_select";
+                }
                 if (self.m.clone(p.id)
                     .isFocus()) return "circle_focus";
                 return "circle";
@@ -998,7 +1002,11 @@ ScatterPlot.prototype = {
                 if (!self.m.clone(p.id)
                     .isActive()) return "circle_hidden";
                 if (self.m.clone(p.id)
-                    .isSelected()) return "circle_select";
+                    .isSelected()){
+                    if (self.m.clone(p.id)
+                        .isFocus()) return "circle_focus circle_select";
+                    return "circle_select";
+                }
                 if (self.m.clone(p.id)
                     .isFocus()) return "circle_focus";
                 return "circle";
@@ -1579,7 +1587,11 @@ ScatterPlot.prototype = {
                     if (!self.m.clone(p.id)
                         .isActive()) return "circle_hidden";
                     if (self.m.clone(p.id)
-                        .isSelected()) return "circle_select";
+                        .isSelected()){
+                        if (self.m.clone(p.id)
+                            .isFocus()) return "circle_focus circle_select";
+                        return "circle_select";
+                    }
                     if (self.m.clone(p.id)
                         .isFocus()) return "circle_focus";
                     return "circle";

@@ -475,11 +475,11 @@ Model.prototype = {
                 
                 var keys = Object.keys(s.names);
                 for (var i=0; i<keys.length; i++){
-                    tagName[parseInt(keys[i])] = s.names[keys[i]]
+                    tag[parseInt(keys[i])].name = s.names[keys[i]]
                 }
                 
                 for (var i=0; i<s.hide.length; i++){
-                    tagDisplay[s.hide[i]] = 0;
+                    tag[s.hide[i]].display = false;
                 }
             }
             
@@ -538,7 +538,6 @@ Model.prototype = {
             var clone = this.clone(i)
             var n = clone.getNlength();
             if (n > n_max) {n_max = n; }
-            clone.tag = default_tag;
         }
         this.n_max = n_max
         
@@ -560,7 +559,7 @@ Model.prototype = {
         for (key in this.data){
             if (this.data[key].length == this.samples.number){
                 this.data_info[key] = {
-                    "color" : tagColor[i],
+                    "color" : tag[i].color,
                     "isActive" : false
                 }
                 i++
@@ -742,9 +741,9 @@ Model.prototype = {
         //tags
         analysisData.tags.names = {}
         analysisData.tags.hide = []
-        for (var i=0; i<tagName.length; i++){
-            analysisData.tags.names[""+i] = tagName[i]
-            if (!tagDisplay[i]) analysisData.tags.hide.push(i)
+        for (var i=0; i<tag.length; i++){
+            analysisData.tags.names[""+i] = tag[i].name
+            if (!tag[i].display) analysisData.tags.hide.push(i)
         }
         
         
@@ -2031,7 +2030,7 @@ Model.prototype = {
                 this.clone(i).colorDBSCAN = colorGenerator( ( (270 / maxCluster) * (this.tabRandomColor[this.clone(i)] + 1) ), color_s, color_v);
             }
             else
-                this.clone(i).colorDBSCAN = color['@default'];
+                this.clone(i).colorDBSCAN = "";
         }
     },
 

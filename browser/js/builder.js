@@ -187,7 +187,7 @@ Builder.prototype = {
         //reset
         listTag.innerHTML = "";
 
-        for (var i = 0; i < tagName.length; i++) {
+        for (var i = 0; i < tag.length; i++) {
             (function (i) {
                 var span3 = document.createElement('span');
                 span3.onclick = function (tag) {
@@ -309,7 +309,7 @@ Builder.prototype = {
         var input = document.createElement('input');
         input.type = "text";
         input.id = "new_tag_name";
-        input.value = tagName[tagID];
+        input.value = tag[tagID].name;
         input.style.width = "100px";
         input.style.border = "0px";
         input.style.margin = "0px";
@@ -338,7 +338,7 @@ Builder.prototype = {
             event.preventDefault()
             var newTagName = document.getElementById("new_tag_name")
                 .value;
-            tagName[tagID] = newTagName
+            tag[tagID].name = newTagName
             self.build_tagSelector()
             self.build_displaySelector()
             self.m.analysisHasChanged = true
@@ -406,7 +406,7 @@ Builder.prototype = {
         listGermline.innerHTML = "";
 
         //init tag list
-        for (var i = 0; i < tagName.length; i++) {
+        for (var i = 0; i < tag.length; i++) {
             (function (i) {
                 var span3 = document.createElement('span');
                 span3.onclick = function (tag) {
@@ -833,7 +833,7 @@ Builder.prototype = {
             break;
         case "Tag":
 
-            for (var i = 0; i < tagName.length; i++) {
+            for (var i = 0; i < tag.length; i++) {
                 var spantag = document.createElement('span');
                 spantag.className = "tagColorBox tagColor" + i
                 spantag.id = "fastTag" + i

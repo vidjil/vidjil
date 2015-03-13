@@ -421,8 +421,8 @@ Segment.prototype = {
         var path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
         path.setAttribute('d', this.starPath);
         path.setAttribute('id', 'color' + cloneID);
-        if (typeof this.m.clone(cloneID).tag != 'undefined') path.setAttribute("fill", tagColor[this.m.clone(cloneID).tag]);
-        else path.setAttribute("fill", color['@default']);
+        if (typeof this.m.clone(cloneID).tag != 'undefined') path.setAttribute("fill", tag[this.m.clone(cloneID).tag].color);
+        else path.setAttribute("fill", "");
 
         svg_star.appendChild(path);
 
