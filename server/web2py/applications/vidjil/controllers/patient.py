@@ -345,7 +345,7 @@ def edit_form():
                                                    )
 
             res = {"redirect": "back",
-                   "message": "patient %s %s edited" % (request.vars["first_name"], request.vars["last_name"])}
+                   "message": "%s %s (%s): patient edited" % (request.vars["first_name"], request.vars["last_name"], request.vars["id"])}
             log.info(res)
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
