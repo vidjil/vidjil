@@ -80,6 +80,8 @@ def log():
                     for i in range(6,len(tmp)):
                         line["mes"] += tmp[i] + " "
 
+                line["mes"] = vidjil_utils.log_links(line["mes"])
+
                 lines.append(line)
 
                 if len(lines) >= 100 :

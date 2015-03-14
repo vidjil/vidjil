@@ -33,7 +33,7 @@
             <td> {{=line["user"]}} </td>
             <td> {{=line["type"]}} </td>
             <td> {{=line["file"]}} </td>
-            <td> {{=line["mes"]}} </td>
+            <td> {{=XML(line["mes"])}} </td>
         </tr>
         {{pass}}
     </table>
