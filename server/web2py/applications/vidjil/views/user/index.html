@@ -18,7 +18,7 @@
             </thead>
             
            {{for row in query :}}
-               <tr onclick="db.call('user/info', {'id' :'{{=row.id}}'} )">
+               <tr class="pointer" onclick="db.call('user/info', {'id' :'{{=row.id}}'} )">
                     <td> {{=row.id}}</td>
                     <td> {{=row.first_name}} {{=row.last_name}}</td>
                     <td> {{=row.email}}  </td>

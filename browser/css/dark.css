@@ -1188,7 +1188,10 @@ text.alert {
   border-bottom: solid;
   border-color: #333333;
   border-width: 1px;
-  cursor: pointer;
+}
+.pointer
+{
+    cursor: pointer;
 }
 .db_table tr:hover {
   background: #333333;

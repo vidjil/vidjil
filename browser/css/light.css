@@ -1188,6 +1188,9 @@ text.alert {
   border-bottom: solid;
   border-color: #cccccc;
   border-width: 1px;
+}
+.pointer
+{
   cursor: pointer;
 }
 .db_table tr:hover {
