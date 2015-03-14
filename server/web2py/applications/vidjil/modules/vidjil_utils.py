@@ -129,6 +129,6 @@ def log_links(s):
         link = '''onclick="db.call('%s', %s)"''' % (call, str(args))
 
     if link:
-        s = '%s<a class="loglink" %s>%s</a>%s' % (s[:start], link, s[start:end], s[end:])
+        s = '%s<a class="loglink pointer" %s>%s</a>%s' % (s[:start], link, s[start:end], s[end:])
 
     return s
