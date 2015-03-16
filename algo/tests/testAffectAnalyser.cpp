@@ -176,6 +176,9 @@ void testAffectAnalyserMaxes() {
   TAP_TEST(ckaa.max12(forbidden).first == gAffect, TEST_COUNT_AA_MAX12, "max1 is " << ckaa.max12(forbidden).first);
   TAP_TEST(ckaa.max12(forbidden).second == cAffect, TEST_COUNT_AA_MAX12, "max2 is " << ckaa.max12(forbidden).second);
 
+  TAP_TEST(ckaa.sortLeftRight(ckaa.max12(forbidden)).first == cAffect, TEST_AA_SORT_LEFT_RIGHT, "bad max12, left");
+  TAP_TEST(ckaa.sortLeftRight(ckaa.max12(forbidden)).second == gAffect, TEST_AA_SORT_LEFT_RIGHT, "bad max12, right");
+
   forbidden.insert(gAffect);
   TAP_TEST(ckaa.max(forbidden) == cAffect, TEST_COUNT_AA_MAX, "max is " << ckaa.max(forbidden));
   TAP_TEST(ckaa.max12(forbidden).first == cAffect, TEST_COUNT_AA_MAX12, "max1 is " << ckaa.max12(forbidden).first);
