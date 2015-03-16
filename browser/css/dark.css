@@ -165,6 +165,7 @@ line {
   stroke-width: 5px;
   cursor: pointer;
   stroke-dasharray: 20px,5px ;
+  stroke: #839496;
 }
 .graph_focus {
   stroke-width: 5px;
