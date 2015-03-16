@@ -1,8 +1,11 @@
 
-
-//console = new Com("flash_container", "log_container", "popup-container", "data-container", console)
+/* replace the default javascript console with a custom one (optional)
+ * display important error/log message in popup/flash message instead of the default javascript terminal
+ * */
+console = new Com(console)
 
 /* Model 
+ * 
  */
 var m = new Model();
 

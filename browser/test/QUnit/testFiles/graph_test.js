@@ -1,5 +1,5 @@
 
-var console = new Com("flash_container", "log_container", "popup-container", "data-container", console)
+var console = new Com(console)
 
 test("graph: svg path builder", function() {
     var m = new Model(m);
