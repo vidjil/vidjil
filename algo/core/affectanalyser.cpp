@@ -191,6 +191,35 @@ const string &KmerAffectAnalyser::getSequence() const{
 }
 
 
+pair <KmerAffect, KmerAffect> KmerAffectAnalyser::sortLeftRight(const pair <KmerAffect, KmerAffect> ka12) const {
+
+  KmerAffect ka1 = ka12.first;
+  KmerAffect ka2 = ka12.second;
+
+  int ka1_count = 0; int ka1_pos = 0;
+  int ka2_count = 0; int ka2_pos = 0;
+
+  for (size_t i = 0; i < affectations.size(); i++) {
+
+    if (affectations[i] == ka1)
+      {
+        ka1_count++ ; ka1_pos += i ;
+      }
+    else if (affectations[i] == ka2)
+      {
+        ka2_count++ ; ka2_pos += i ;
+      }
+  }
+
+  // Is ka1 'more on the left' than ka2 ?
+  // We check for (k1_pos / ka1_count > ka2_pos / ka2_count), but without floats
+  if (ka1_pos * ka2_count < ka2_pos * ka1_count)
+    return make_pair(ka1, ka2);
+  else
+    return make_pair(ka2, ka1);
+}
+
+
 int KmerAffectAnalyser::first(const KmerAffect &affect) const{
   for (size_t i = 0; i < affectations.size(); i++) 
     if (affect == affectations[i])
