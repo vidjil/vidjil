@@ -40,6 +40,9 @@ class Germline {
       Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
 	   int _delta_min, int _delta_max);
 
+  Germline(string _code, char _shortcut,
+	   int _delta_min, int _delta_max);
+
   ~Germline();
 
   string code ;

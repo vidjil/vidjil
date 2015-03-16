@@ -24,6 +24,14 @@ void Germline::init(string _code, char _shortcut,
   stats_clones.setLabel("");
 }
 
+
+Germline::Germline(string _code, char _shortcut,
+		   int _delta_min, int _delta_max)
+{
+  init(_code, _shortcut, _delta_min, _delta_max);
+}
+
+
 Germline::Germline(string _code, char _shortcut,
 		   string f_rep_5, string f_rep_4, string f_rep_3,
 		   int _delta_min, int _delta_max)
