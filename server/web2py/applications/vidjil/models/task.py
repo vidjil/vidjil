@@ -2,6 +2,7 @@
 import os
 import sys
 import defs
+import re
 
 TASK_TIMEOUT = 15 * 60
 
@@ -85,7 +86,8 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
     vidjil_cmd = vidjil_cmd.replace( 'germline/' ,germline_folder)
     
     os.makedirs(out_folder)
-    vidjil_log_file = open(out_folder+'/'+output_filename+'.vidjil.log', 'w')
+    out_log = out_folder+'/'+output_filename+'.vidjil.log'
+    vidjil_log_file = open(out_log, 'w')
 
     ## commande complete
     cmd = defs.DIR_VIDJIL + '/vidjil ' + ' -o  ' + out_folder + " -b " + output_filename
@@ -114,6 +116,33 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
         print "!!! Vidjil failed, no .vidjil file"
         raise IOError
     
+    ## Parse some info in .log
+    vidjil_log_file.close()
+
+    segmented = re.compile("==> segmented (\d+) reads \((\d*\.\d+|\d+)%\)")
+    windows = re.compile("==> found (\d+) .*-windows in .* segments .* inside (\d+) sequences")
+    info = ''
+    reads = None
+    segs = None
+    ratio = None
+    wins = None
+    for l in open(out_log):
+        m = segmented.search(l)
+        if m:
+            print l,
+            segs = int(m.group(1))
+            ratio = m.group(2)
+            info = "%d segmented (%s%%)" % (segs, ratio)
+            continue
+        m = windows.search(l)
+        if m:
+            print l,
+            wins = int(m.group(1))
+            reads = int(m.group(2))
+            info = "%d reads, " % reads + info + ", %d windows" % wins
+            break
+
+
     ## insertion dans la base de donnée
     ts = time.time()
     
@@ -134,7 +163,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
 
     config_name = db.config[id_config].name
 
-    res = {"message": "[%s] c%s: Vidjil finished - %s" % (id_data, id_config, out_folder)}
+    res = {"message": "[%s] c%s: Vidjil finished - %s - %s" % (id_data, id_config, info, out_folder)}
     log.info(res)
 
     run_fuse(id_file, id_config, id_data, id_fuse, clean_before = False)
