@@ -105,13 +105,13 @@ Com.prototype = {
             if (typeof obj.msg != "undefined") text += obj.msg
             switch (obj.type) {
                 case "flash":
-                    this.flash(obj.msg, obj.priority)
+                    this.flash(text, obj.priority)
                     break;
                 case "popup":
-                    this.popupMsg(obj.msg)
+                    this.popupMsg(text)
                     break;
                 case "log":
-                    this.customLog(obj.msg, obj.priority)
+                    this.customLog(text, obj.priority)
                     break;
             }
         }
