@@ -1,4 +1,4 @@
-var myConsole = new Com("flash_container", "log_container", "popup-container", "data-container")
+var console = new Com("flash_container", "log_container", "popup-container", "data-container", console)
 
 
 
