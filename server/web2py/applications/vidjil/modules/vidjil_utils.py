@@ -1,4 +1,5 @@
 import math
+import re
 from gluon import current
 
 def format_size(n, unit='B'):
@@ -78,3 +79,56 @@ def filter(str, filter_str):
             if f.lower() not in str.lower():
                 return False
     return True
+
+
+log_patient = re.compile('\((\d+)\)')
+log_config = re.compile(' c(\d+)')
+
+def log_links(s):
+    '''Add HTML links to a log string
+
+    >>> log_links("abcdef")
+    'abcdef'
+    >>> log_links("abcdef(234)")
+    'abcdef(<a class="loglink" onclick="db.call(\\'patient/info\\', {\\'id\\': \\'234\\'})">234</a>)'
+    >>> log_links("abcdef(234)abcdef c11")
+    'abcdef(234)abcdef <a class="loglink" href="?patient=234&config=11">c11</a>'
+    '''
+
+    ### Parses the input string
+
+    m_patient = log_patient.search(s)
+    patient = m_patient.group(1) if m_patient else None
+
+    m_config = log_config.search(s)
+    config = m_config.group(1) if m_config else None
+
+    ### Rules
+
+    url = ''  # href link
+    call = '' # call to db
+
+    if patient and config:
+        url = "?patient=%s&config=%s" % (patient, config)
+        (start, end) = m_config.span()
+        start += 1
+
+    elif patient:
+        call = "patient/info"
+        args = {'id': patient}
+        (start, end) = m_patient.span()
+        start += 1
+        end -= 1
+
+    ### Build final string
+
+    link = ''
+    if url:
+        link = 'href="%s"' % url
+    if call:
+        link = '''onclick="db.call('%s', %s)"''' % (call, str(args))
+
+    if link:
+        s = '%s<a class="loglink pointer" %s>%s</a>%s' % (s[:start], link, s[start:end], s[end:])
+
+    return s

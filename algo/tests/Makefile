@@ -10,8 +10,8 @@ LIB=../core/vidjil.a ../lib/lib.a
 SHOULD=$(wildcard *.should_get)
 SHOULD_LOG=$(SHOULD:.should_get=.tap)
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
-REPORTS_PATH := $(dir $(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
-VALGRIND=valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file=\"$$(mktemp "$(REPORTS_PATH)/valgrind.xml.XXXXXX")\"
+REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
+VALGRIND=valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file="$$(mktemp "$(REPORTS_PATH)/valgrind.xml.XXXXXX")"
 
 .PHONY: all force clean forcedep
 

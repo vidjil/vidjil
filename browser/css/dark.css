@@ -1189,7 +1189,10 @@ text.alert {
   border-bottom: solid;
   border-color: #333333;
   border-width: 1px;
-  cursor: pointer;
+}
+.pointer
+{
+    cursor: pointer;
 }
 .db_table tr:hover {
   background: #333333;
@@ -1419,6 +1422,10 @@ table.log {
 }
 table.log textarea {
   width: 100%;
+}
+.loglink {
+  color: purple;
+  text-decoration: none;
 }
 #waiting_screen {
   background: rgba(0, 0, 0, 0.5);

@@ -273,7 +273,7 @@ def _init_log():
         handler.setFormatter(formatter)
         logger.addHandler(handler) 
 
-        logger.info("Creating logger")
+        logger.debug("Creating logger")
     return MsgUserAdapter(logger, {})
 
 log = _init_log()

@@ -62,7 +62,7 @@ def add_form():
                             provider=auth.user_id)
     
         res = {"file_id" : id,
-               "message": "(%s) upload started: %s" % (request.vars['patient_id'], request.vars['filename']),
+               "message": "file %s (%s): upload started: %s" % (id, request.vars['patient_id'], request.vars['filename']),
                "redirect": "patient/info",
                "args" : {"id" : request.vars['patient_id']}
                }
@@ -118,7 +118,7 @@ def edit_form():
         res = {"file_id" : request.vars['id'],
                "redirect": "patient/info",
                "args" : { "id" : patient_id},
-               "message": "%s: metadata saved" % str(request.vars['filename'])}
+               "message": "file %s: metadata saved" % request.vars["id"]}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -129,20 +129,22 @@ def upload():
         error += "missing id"
     
     if error=="" :
-            
-        mes = "file " + str(request.vars['id']) + " : "
-        res = {"message": mes + ": processing uploaded file",
+
+        patient_id = db.sequence_file[request.vars["id"]].patient_id            
+        mes = "file %s (%s): " % (request.vars['id'], patient_id)
+        res = {"message": mes + "processing uploaded file",
                "redirect": "patient/info",
                "args" : {"id" : request.vars['id']}
                }
-        log.info(res)
+        log.debug(res)
         if request.vars.file != None :
             f = request.vars.file
             db.sequence_file[request.vars["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
-            mes = "upload finished: %s" % f.filename
+            mes += "upload finished"
         
         seq_file = defs.DIR_SEQUENCES+db.sequence_file[request.vars["id"]].data_file
         size = os.path.getsize(seq_file)
+        mes += ' (%s)' % vidjil_utils.format_size(size)
         db.sequence_file[request.vars["id"]] = dict(size_file = size)
         
         res = {"message": mes}
@@ -170,7 +172,7 @@ def delete():
 
         res = {"redirect": "patient/info",
                "args" : { "id" : patient_id},
-               "message": "(%s) sequence file deleted" % patient_id}
+               "message": "file %s (%s): sequence file deleted" % (request.vars["id"], patient_id)}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:

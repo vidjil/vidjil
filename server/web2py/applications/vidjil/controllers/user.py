@@ -8,10 +8,19 @@ if request.env.http_origin:
 def index():
     
     query = db(db.auth_user).select()
-    
+
     for row in query :
         row.created = db( db.patient.creator == row.id ).count()
         
+        row.access = ''
+        if auth.has_permission('create', 'patient', 0, row.id): row.access += 'c'
+        if auth.has_permission('upload', 'sequence_file', 0, row.id): row.access += 'u'
+        if auth.has_permission('run', 'results_file', 0, row.id): row.access += 'r'
+
+        q = [g.group_id for g in db(db.auth_membership.user_id==row.id).select()]
+        q.sort()
+        row.groups = ' '.join([str(g) for g in q])
+
         row.size = 0
         row.files = 0
         query_size = db( db.sequence_file.provider == row.id ).select()
