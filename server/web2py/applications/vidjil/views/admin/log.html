@@ -7,7 +7,7 @@
     <div class="db_block_left">
         search
         <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}" 
-               onchange="db.call('admin/log', {'file' : '{{=request.vars["file"]}}', 'filter' : this.value} )"  >
+               onchange="db.call('admin/log', {'file' : '{{=request.vars["file"]}}', 'filter' : this.value, 'format': '{{=request.vars["format"]}}' } )"  >
     </div>
 </div>
 
@@ -17,22 +17,26 @@
         
         <thead>
             <tr>
+              {{ if format: }}
                 <td class="column_100"> date </td>
                 <td class="column_100"> </td>
                 <td class="column_200"> user </td>
                 <td class="column_100"> type </td>
                 <td class="column_100"> file </td>
+             {{ pass }}
                 <td>  </td>
             </tr>
         </thead>
         
         {{for line in lines :}}
         <tr>
+            {{ if format: }}
             <td> {{=line["date"]}} </td>
             <td> {{=line["date2"]}} </td>
             <td> {{=line["user"]}} </td>
             <td> {{=line["type"]}} </td>
             <td> {{=line["file"]}} </td>
+           {{ pass }}
             <td> {{=XML(line["mes"])}} </td>
         </tr>
         {{pass}}

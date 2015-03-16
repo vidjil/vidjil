@@ -53,13 +53,20 @@ def log():
         
         lines = []
         file = open(defs.DIR_LOG+request.vars["file"])
-        
+        log_format = request.vars['format'] if 'format' in request.vars else ''
+
         if "filter" not in request.vars :
             request.vars["filter"] = ""
             
         for row in reversed(file.readlines()) :
 
-            if vidjil_utils.filter(row, request.vars["filter"]) :
+            if not vidjil_utils.filter(row, request.vars["filter"]) :
+                continue
+
+            if not log_format: # == 'vidjil'
+                line = { 'mes': row, 'date': '', 'date2': '', 'user': '', 'type':'', 'file':''}
+
+            else:
                 # Parses lines such as
                 # [11889] 2015-02-01 12:01:28,367     INFO - default.py:312 1.23.45.67/user/Toto <Toto> xxxxx log message
                 # [11889] 2015-02-01 12:01:28,367     INFO - default.py:312 1.23.45.67 log message
@@ -87,12 +94,13 @@ def log():
 
                 line["mes"] = vidjil_utils.log_links(line["mes"])
 
-                lines.append(line)
+            ### Stores log line
+            lines.append(line)
 
-                if len(lines) >= 100 :
-                    return dict(lines = lines)
+            if len(lines) >= 100 :
+                break
             
-        return dict(lines = lines)
+        return {'lines': lines, 'format': log_format}
 
 ## to use after change in the upload folder
 def repair_missing_files():
