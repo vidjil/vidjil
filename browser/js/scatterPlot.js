@@ -150,9 +150,8 @@ ScatterPlot.prototype = {
         this.axisX.useGermline(this.m.germlineV, "V")
         this.axisY.useGermline(this.m.germlineJ, "J")
 
-        var select_preset = document.getElementById("select_preset")
-        select_preset.selectedIndex = this.default_preset
-        this.changePreset(select_preset);
+        this.select_preset.selectedIndex = this.default_preset
+        this.changePreset();
 
         this.resize();
     },
@@ -587,11 +586,11 @@ ScatterPlot.prototype = {
         
         var divParent = document.getElementById(this.id)
         var anchor = document.createElement('div');
-        anchor.id = "sp_menu_anchor";
+        anchor.className = "sp_menu_anchor";
         var menu = document.createElement('div');
-        menu.id = "sp_menu";
+        menu.className = "sp_menu";
         var content = document.createElement('div');
-        content.id = "sp_menu_content";
+        content.className = "sp_menu_content";
         
         var div_x = document.createElement('div');
         div_x.className = "axis_select axis_select_x";
@@ -602,19 +601,17 @@ ScatterPlot.prototype = {
         var div_preset = document.createElement('div');
         div_preset.className = "axis_select axis_select_preset";
 
-        var select_x = document.createElement('select');
+        this.select_x = document.createElement('select');
         //Initialisation du menu déroulant
-        select_x.setAttribute('name', 'select_x[]');
-        select_x.id = "select_x"
-        select_x.onchange = function() {
-            self.changeXaxis(this);
+        this.select_x.setAttribute('name', 'select_x[]');
+        this.select_x.onchange = function() {
+            self.changeXaxis();
         }
 
-        var select_y = document.createElement('select');
-        select_y.setAttribute('name', 'select_y[]');
-        select_y.id = "select_y"
-        select_y.onchange = function() {
-            self.changeYaxis(this);
+        this.select_y = document.createElement('select');
+        this.select_y.setAttribute('name', 'select_y[]');
+        this.select_y.onchange = function() {
+            self.changeYaxis();
         }
         
         //Ajout de chaque méthode de répartition dans les menus pour l'axe des X/Y
@@ -626,35 +623,34 @@ ScatterPlot.prototype = {
 
             var element2 = element.cloneNode(true);
 
-            select_x.appendChild(element);
-            select_y.appendChild(element2);
+            this.select_x.appendChild(element);
+            this.select_y.appendChild(element2);
         }
 
-        var select_preset = document.createElement('select');
+        this.select_preset = document.createElement('select');
         //Initialisation du menu déroulant
-        select_preset.setAttribute('name', 'select_preset[]');
-        select_preset.id = "select_preset"
-        select_preset.onchange = function() {
-            self.changePreset(this);
+        this.select_preset.setAttribute('name', 'select_preset[]');
+        this.select_preset.onchange = function() {
+            self.changePreset();
         }
         
         var element = document.createElement("option");
         element.setAttribute('value', "custom");
         element.appendChild(document.createTextNode("–"));
-        select_preset.appendChild(element);
+        this.select_preset.appendChild(element);
         for (var i in this.preset) {
             var element = document.createElement("option");
             element.setAttribute('value', i);
             element.appendChild(document.createTextNode(i));
-            select_preset.appendChild(element);
+            this.select_preset.appendChild(element);
         }
         
         div_x.appendChild(document.createTextNode("x "));
-        div_x.appendChild(select_x);
+        div_x.appendChild(this.select_x);
         div_y.appendChild(document.createTextNode("y "));
-        div_y.appendChild(select_y);
+        div_y.appendChild(this.select_y);
         div_preset.appendChild(document.createTextNode("preset "));
-        div_preset.appendChild(select_preset);
+        div_preset.appendChild(this.select_preset);
 
         
         
@@ -668,7 +664,7 @@ ScatterPlot.prototype = {
         select_graph.id = "select_graph"
 
         select_graph.onchange = function() {
-            self.changeXaxis(this);
+            self.changeXaxis();
         }
 
         for (var i = 0; i < this.graph_menu.length; i++) {
@@ -1639,23 +1635,23 @@ ScatterPlot.prototype = {
         return false;
     },
 
-    changeXaxis: function(elem) {
+    changeXaxis: function() {
+        var elem = this.select_x;
         if (this.checkGraphMethod(elem.value)) return;
         this.changeSplitMethod(elem.value, this.splitY, this.mode);
-        document.getElementById("select_preset").selectedIndex = 0
+        this.select_preset.selectedIndex = 0
     },
 
 
-    /* Fonction permettant de changer l'axe des Y en fonction d'un élément donné en paramètre
-     * @param elem: un élément ?????
-     * */
-    changeYaxis: function(elem) {
+    changeYaxis: function() {
+        var elem = this.select_y;
         if (this.checkGraphMethod(elem.value)) return;
         this.changeSplitMethod(this.splitX, elem.value, this.mode);
-        document.getElementById("select_preset").selectedIndex = 0
+        this.select_preset.selectedIndex = 0
     },
     
-    changePreset: function(elem){
+    changePreset: function(){
+        var elem = this.select_preset;
         this.changeSplitMethod(this.preset[elem.value].x, this.preset[elem.value].y, this.preset[elem.value].mode);
     },
 
@@ -2005,10 +2001,8 @@ ScatterPlot.prototype = {
             if (this.menu[i][0] == this.splitX) select_x = i
             if (this.menu[i][0] == this.splitY) select_y = i
         }
-        document.getElementById("select_x")
-            .selectedIndex = select_x
-        document.getElementById("select_y")
-            .selectedIndex = select_y
+        this.select_x.selectedIndex = select_x
+        this.select_y.selectedIndex = select_y
         $(".sp_menu_icon").removeClass("sp_selected_mode");
         $("#"+this.id+"_"+this.mode).addClass("sp_selected_mode");
 

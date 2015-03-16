@@ -255,14 +255,14 @@ Segment.prototype = {
 
         parent.appendChild(div)
 
-        div = document.createElement('div');
-        div.id = "segmenter"
+        this.div_segmenter = document.createElement('div');
+        this.div_segmenter.className = "segmenter"
         //listSeq
         ul = document.createElement('ul');
         ul.id = "listSeq"
-        div.appendChild(ul)
+        this.div_segmenter.appendChild(ul)
         
-        parent.appendChild(div)
+        parent.appendChild(this.div_segmenter)
 
        /* $('#toClipBoard')
             .zclip({
@@ -273,14 +273,14 @@ Segment.prototype = {
             });
         */
        
-        $('#segmenter')
+        $(this.div_segmenter)
             .scroll(function(){
-                var leftScroll = $('#segmenter').scrollLeft();  
+                var leftScroll = $(self.div_segmenter).scrollLeft();  
                 $('.seq-fixed').css({'left':+leftScroll});
             })
             .mouseenter(function(){
                 if (!self.is_open){
-                    var seg = $('#segmenter'),
+                    var seg = $(self.div_segmenter),
                     curH = seg.height(),
                     autoH = seg.css('height', 'auto').height();
                     if (autoH > 100){
@@ -293,10 +293,10 @@ Segment.prototype = {
                 }
             });
             
-        $('#bot-container')
+        $('#'+this.id)
             .mouseleave(function(e){
                 if (e.relatedTarget != null && self.is_open){
-                    var seg = $('#segmenter')
+                    var seg = $(self.div_segmenter)
                     seg.stop().animate({height: 100}, 250);
                     self.is_open = false
                 }
@@ -500,7 +500,7 @@ Segment.prototype = {
         if (li.length > 0) {
             var id = li[0].id.substr(3);
             var mid = 999999
-            $("#segmenter")
+            $(this.div_segmenter)
                 .animate({
                     scrollLeft: mid
                 }, 0);
