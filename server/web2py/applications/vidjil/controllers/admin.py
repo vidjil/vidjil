@@ -4,6 +4,8 @@ import os.path, subprocess
 import vidjil_utils
 from collections import defaultdict
 
+MAX_LOG_LINES = 200
+
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -97,7 +99,7 @@ def log():
             ### Stores log line
             lines.append(line)
 
-            if len(lines) >= 100 :
+            if len(lines) >= MAX_LOG_LINES :
                 break
             
         return {'lines': lines, 'format': log_format}
