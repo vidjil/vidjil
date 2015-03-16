@@ -60,6 +60,10 @@ def log():
         for row in reversed(file.readlines()) :
 
             if vidjil_utils.filter(row, request.vars["filter"]) :
+                # Parses lines such as
+                # [11889] 2015-02-01 12:01:28,367     INFO - default.py:312 1.23.45.67/user/Toto <Toto> xxxxx log message
+                # [11889] 2015-02-01 12:01:28,367     INFO - default.py:312 1.23.45.67 log message
+                # [11889] 2015-02-01 12:01:28,367     INFO - default.py:312 log message
                 line = {}
 
                 tmp = re.split('\t+| +', row) 
@@ -70,15 +74,16 @@ def log():
                 line["file"] = tmp[5]
 
                 if tmp[6] != "Creating":
-                    line["user"] = tmp[7]
-                    line["mes"] = ""
-                    for i in range(8,len(tmp)):
-                        line["mes"] += tmp[i] + " "
+                    if '<' in tmp[8]:
+                        line["user"] = tmp[8] + ' ' + tmp[7]
+                        j = 9
+                    else:
+                        line["user"] = tmp[7]
+                        j = 8
+                    line["mes"] = " ".join(tmp[j:])
                 else:
                     line["user"] = ""
-                    line["mes"] = ""
-                    for i in range(6,len(tmp)):
-                        line["mes"] += tmp[i] + " "
+                    line["mes"] = " ".join(tmp[6:])
 
                 line["mes"] = vidjil_utils.log_links(line["mes"])
 
