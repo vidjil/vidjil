@@ -9,6 +9,8 @@
 #include "stats.h"
 #include "tools.h"
 
+#define PSEUDO_GERMLINE_MAX12 "xxx"
+
 using namespace std;
 
 class Germline {
