@@ -19,7 +19,7 @@ body {
 }
 /* texts that are not sequences nor identifiers */
 #info,
-#popup-msg,
+.popup_msg,
 .menu,
 .menu a {
   font-family: ubuntulight, Arial, Helvetica, Sans-serif;
@@ -672,7 +672,7 @@ span .substitution {
   cursor: pointer;
 }
 /*	//////////////////////////////////////////////////////////////	*/
-#popup-container {
+.popup_container {
   z-index: 20;
   border: solid;
   position: fixed;
@@ -687,12 +687,12 @@ span .substitution {
   left: -webkit-calc(50% - 250px);
   left: calc(50% - 250px);
 }
-#popup-container a {
+.popup_container a {
   text-decoration: none;
   font-weight: bold;
   color: #657b83;
 }
-#popup-container a:hover {
+.popup_container a:hover {
   color: #002b36;
 }
 #data-container {
@@ -930,7 +930,7 @@ span.logo {
 .list_clones,
 .bot-bar,
 #bot-container,
-#popup-container,
+.popup_container,
 #file_menu,
 #tagSelector,
 .closeButton,
@@ -1293,14 +1293,14 @@ text.alert {
     background-position: 50px 50px;
   }
 }
-#flash_container {
+.flash_container {
   position: absolute;
   display: block;
   bottom: 0px;
   right: 0px;
   z-index: 100;
 }
-#log_container {
+.log_container {
   height: 500px;
   width: 400px;
   position: absolute;

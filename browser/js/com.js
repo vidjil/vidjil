@@ -24,16 +24,13 @@
 /* Com object display/store system message
  * 
  * */
-function Com(flash_id, log_id, popup_id, data_id, default_console) {
-    this.flash_id = flash_id;
-    this.log_id = log_id;
-    this.popup_id = popup_id;
-    this.data_id = data_id;
+function Com(default_console) {
+    this.data_id = "data-container"; //TODO
     this.default = default_console;
     
     this.min_priority = 1; // minimum required to display message
     this.min_priority_console = 0;
-    this.log_container = document.getElementById(this.log_id);
+    this.build()
     
     BUTTON_CLOSE_POPUP = "</br></br> <div class='center' > <button onclick='console.closePopupMsg()'>ok</button></div> ",
 
@@ -96,6 +93,8 @@ function Com(flash_id, log_id, popup_id, data_id, default_console) {
 
 Com.prototype = {
     
+    /*Parse log message and display it in a popup,flash or standard log 
+     * */
     log: function(obj){
         if (typeof obj !== 'object'){
             this.default.log(obj)
@@ -117,6 +116,35 @@ Com.prototype = {
         }
     },
     
+    build: function(){
+        var self = this;
+        
+        this.flash_container = document.createElement("div")
+        this.flash_container.className = "flash_container";
+        
+        this.log_container = document.createElement("div")
+        this.log_container.className = "log_container";
+        
+        this.popup_container = document.createElement("div")
+        this.popup_container.className = "popup_container";
+        
+        var close_popup = document.createElement("span")
+        close_popup.onclick = function(){
+            self.closePopupMsg();
+        }
+        close_popup.className = "closeButton";
+        close_popup.appendChild(document.createTextNode("X"));
+        this.popup_msg = document.createElement("div")
+        this.popup_msg.className = "popup_msg";
+        
+        this.popup_container.appendChild(close_popup)
+        this.popup_container.appendChild(this.popup_msg)
+        
+        document.body.appendChild(this.flash_container);
+        document.body.appendChild(this.log_container);
+        document.body.appendChild(this.popup_container);
+    },
+
     
     /* display a flash message if priority level is sufficient
      * and print message in log
@@ -130,7 +158,7 @@ Com.prototype = {
                 'style': 'display : none',
                 'class': 'flash_'+priority ,
                 'click': function(){$(this).fadeOut(25, function() { $(this).remove();} );}
-            }).appendTo("#"+this.flash_id)
+            }).appendTo(this.flash_container)
             .slideDown(200);
             
             if (priority !=2){
@@ -160,7 +188,7 @@ Com.prototype = {
             var div = jQuery('<div/>', {
                 'text': strDate+" | "+str,
                 'class': 'log_'+priority
-            }).appendTo("#"+this.log_id)
+            }).appendTo(this.log_container)
             .slideDown(200, function(){
                 self.log_container.scrollTop = self.log_container.scrollHeight;
             });
@@ -173,24 +201,22 @@ Com.prototype = {
     },
     
     openLog: function () {
-        $("#"+this.log_id).fadeToggle(200);
+        $(this.log_container).fadeToggle(200);
     },
     
     closeLog: function () {
-        $("#"+this.log_id).fadeToggle(200);
+        $(this.log_container).fadeToggle(200);
     },
     
     popupMsg: function (msg) {
-        document.getElementById(this.popup_id)
-            .style.display = "block";
-        document.getElementById(this.popup_id).lastElementChild
+        this.popup_container.style.display = "block";
+        this.popup_container.lastElementChild
             .innerHTML = msg;
     },
 
     closePopupMsg: function () {
-        document.getElementById(this.popup_id)
-            .style.display = "none";
-        document.getElementById(this.popup_id).lastElementChild
+        this.popup_container.style.display = "none";
+        this.popup_container.lastElementChild
             .innerHTML = "";
     },
 

@@ -34,7 +34,7 @@ body {
 
 /* texts that are not sequences nor identifiers */
 
-#info, #popup-msg, .menu, .menu a
+#info, .popup_msg, .menu, .menu a
 {
   font-family: ubuntulight, Arial, Helvetica, Sans-serif;
 }
@@ -815,7 +815,7 @@ span .substitution{
 /*	//////////////////////////////////////////////////////////////	*/
 
 
-#popup-container{
+.popup_container{
   z-index:20;
   border:solid; 
   position: fixed; 
@@ -831,13 +831,13 @@ span .substitution{
   left: calc(~"50% - 250px");
 }
 
-#popup-container a {
+.popup_container a {
   text-decoration: none;
   font-weight: bold;
   color: @default ;
 }
 
-#popup-container a:hover{
+.popup_container a:hover{
   color : @select;
 }
 
@@ -1085,7 +1085,7 @@ span.logo
   color: grey;
 }
 
-.selector, #list_menu, #top-container, .list_clones, .bot-bar, #bot-container, #popup-container, #file_menu, #tagSelector, .closeButton, #axis_choice
+.selector, #list_menu, #top-container, .list_clones, .bot-bar, #bot-container, .popup_container, #file_menu, #tagSelector, .closeButton, #axis_choice
 {
   border-color: @border; 
 }
@@ -1478,7 +1478,7 @@ text.alert { fill: red; }
     to { background-position: 50px 50px; }
 }
 
-#flash_container {
+.flash_container {
     position : absolute;
     display : block;
     bottom : 0px;
@@ -1486,7 +1486,7 @@ text.alert { fill: red; }
     z-index: 100;
 }
 
-#log_container {
+.log_container {
     height : 500px;
     width : 400px;
     position : absolute;
