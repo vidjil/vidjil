@@ -243,7 +243,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
       forbidden.insert(KmerAffect::getUnknown());
 
       CountKmerAffectAnalyser ckaa(*(germline->index), sequence);
-      pair <KmerAffect, KmerAffect> max12 = ckaa.max12(forbidden);
+      pair <KmerAffect, KmerAffect> max12 = ckaa.sortLeftRight(ckaa.max12(forbidden));
 
       strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
       computeSegmentation(strand, max12.first, max12.second);
