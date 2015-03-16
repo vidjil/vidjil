@@ -596,6 +596,9 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
   CDR3start = -1;
   CDR3end = -1;
   
+  if (!germline->rep_5.size() || !germline->rep_3.size())
+    return ;
+
   // TODO: factoriser tout cela, peut-etre en lancant deux segmenteurs, un +, un -, puis un qui chapote
   
   // Strand +
