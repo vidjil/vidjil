@@ -67,14 +67,14 @@ echo "server {
 
         location /browser {
             root $CWD/../;
-            expires max;
+            expires 1h;
 
             error_page 405 = $uri;
         }
 
         location /germline {
             root $CWD/../;
-            expires max;
+            expires 1h;
 
             error_page 405 = $uri;
         }
