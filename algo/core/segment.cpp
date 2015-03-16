@@ -26,6 +26,7 @@
 #include "tools.h"
 #include "affectanalyser.h"
 #include <sstream>
+#include <cstring>
 #include <string>
 
 Segmenter::~Segmenter() {}
@@ -196,6 +197,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
   sequence = seq.sequence ;
   info = "" ;
   info_extra = "seed";
+  detected = false ;
   segmented = false;
   segmented_germline = germline ;
   reversed = false;
@@ -233,6 +235,26 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
 
   KmerAffect before, after;
 
+  if (!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12))
+    { // Pseudo-germline, max12
+
+      set<KmerAffect> forbidden;
+      forbidden.insert(KmerAffect::getAmbiguous());
+      forbidden.insert(KmerAffect::getUnknown());
+
+      CountKmerAffectAnalyser ckaa(*(germline->index), sequence);
+      pair <KmerAffect, KmerAffect> max12 = ckaa.max12(forbidden);
+
+      strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
+      computeSegmentation(strand, max12.first, max12.second);
+
+      // The pseudo-germline should never take precedence over the regular germlines
+      score = 1 ;
+    }
+
+  else
+    { // Regular germline
+
   // Test on which strand we are, select the before and after KmerAffects
   if (nb_strand[0] == 0 && nb_strand[1] == 0) {
     because = UNSEG_TOO_FEW_ZERO ;
@@ -252,8 +274,10 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
     return ;
   }
 
-  detected = false ;
   computeSegmentation(strand, before, after);
+
+    } // endif Pseudo-germline
+
 
   if (! because)
     {
