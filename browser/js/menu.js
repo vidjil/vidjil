@@ -52,7 +52,7 @@ function initMenu () {
                     }
                 },
                 error: function() {
-                    myConsole.flash("Files are not available", 1)
+                    console.log({"type": "flash", "msg": "Files are not available" , "priority": 1});
                 }
             });
 
@@ -72,13 +72,11 @@ function changeStyle(newStyle){
 
 function loadData() {
     
-    myConsole.closePopupMsg()
     if (m.analysisHasChanged){
         m.analysisHasChanged = false;
-        myConsole.popupMsg( myConsole.msg.save_analysis +
-            "<div class=\'center\'> <button onclick=\'loadData()\'>Continue</button> "
-            +" <button onclick='myConsole.closePopupMsg()'>Cancel</button> </div>"
-        )
+        console.log({"type": "popup", "default": "save_analysis", 
+                    "msg": "<div class=\'center\'> <button onclick=\'loadData()\'>Continue</button> "
+                    + " <button onclick='console.closePopupMsg()'>Cancel</button> </div>"});
         return
     }
     

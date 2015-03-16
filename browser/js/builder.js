@@ -260,7 +260,7 @@ Builder.prototype = {
                     .hide('fast')
                 self.build_settings()
             }else{
-                myConsole.popupMsg("expected input between 0.0001 and 1")
+                console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
             }
         }
         
@@ -535,7 +535,6 @@ Builder.prototype = {
     },
 
     toggle_left_container: function () {
-        console.log("plop")
         var self = this
         var elem = $("#left-container")
 
@@ -659,7 +658,7 @@ Builder.prototype = {
         infoTime.appendChild(document.createTextNode("Info"));
         infoTime.className = "button_right"
         infoTime.onclick = function () {
-            myConsole.dataBox(self.m.getPointHtmlInfo(self.m.t));
+            console.dataBox(self.m.getPointHtmlInfo(self.m.t));
         }
         div_point.appendChild(infoTime)
         

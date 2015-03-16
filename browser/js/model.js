@@ -35,7 +35,7 @@ VIDJIL_JSON_VERSION = '2014.09';
  *
  * */
 function Model() {
-    myConsole.log("creation Model")
+    console.log("creation Model")
     this.view = [];
     this.reset();
     this.checkBrowser();
@@ -189,7 +189,7 @@ Model.prototype = {
             //wait 1sec to check ssl
             setTimeout(function () { db.call("patient/index.html")}, 1000);
         }else{
-            myConsole.popupMsg(myConsole.msg.welcome)
+            console.log({"type":"popup", "default":"welcome" })
         }
 
     },
@@ -201,7 +201,7 @@ Model.prototype = {
     load: function (id, analysis, limit) {
         var self = this;
 
-        myConsole.log("load()");
+        console.log("load()");
 
         if (document.getElementById(id)
             .files.length === 0) {
@@ -233,7 +233,7 @@ Model.prototype = {
         
         var input = document.getElementById(analysis)
         
-        myConsole.log("loadAnalysis()");
+        console.log("loadAnalysis()");
         if (input.files.length != 0) {
             var oFReader = new FileReader();
             var oFile = input
@@ -266,8 +266,8 @@ Model.prototype = {
     loadDataUrl: function (url, callback) {
         var self = this;
         callback = typeof callback !== 'undefined' ? callback : function(){self.loadAnalysisUrl(url)}
-
-        myConsole.flash("loadDataUrl: " + url)        
+        
+        console.log({"type": "flash", "msg": "loadDataUrl: " + url , "priority": 1});
 
         var url_split = url.split('/')
         
@@ -284,7 +284,7 @@ Model.prototype = {
                 callback()
             },                
             error: function (request, status, error) {
-                myConsole.flash("error : can't reach " + url + "file");
+                console.log({"type": "flash", "msg": "error : can't reach " + url + "file", "priority": 2 });
             }
         });
 
@@ -296,7 +296,7 @@ Model.prototype = {
         var self = this;
         
         var url2 = url.replace(new RegExp(".vidjil" + '$'), ".analysis")
-        myConsole.flash("loadAnalysisUrl: " + url2)
+        console.log({"type": "flash", "msg": "loadAnalysisUrl: " + url2 , "priority": 1});
         
         var url_split = url2.split('/')
         
@@ -328,7 +328,7 @@ Model.prototype = {
             try {
                 var data = jQuery.parseJSON(json_text)
             } catch (e) {
-                    myConsole.popupMsg(myConsole.msg.file_error);
+                console.log({"type": "popup", "default": "file_error"});
                 return 0
             }
         }
@@ -337,7 +337,7 @@ Model.prototype = {
         
         //check version
         if ((typeof (data.vidjil_json_version) == 'undefined') || (data.vidjil_json_version < VIDJIL_JSON_VERSION)) {
-            myConsole.popupMsg(myConsole.msg.version_error);
+            console.log({"type": "popup", "default": "version_error"});
             return 0;
         }
         self.reset();
@@ -431,7 +431,7 @@ Model.prototype = {
 
 	}
 	catch (e) {
-            myConsole.popupMsg(myConsole.msg.parse_error);
+            console.log({"type": "popup", "default": "parse_error"});
             throw e; 
             return 0
         }
@@ -447,7 +447,7 @@ Model.prototype = {
             try {
                 this.analysis = jQuery.parseJSON(analysis)
             } catch (e) {
-                    myConsole.popupMsg(myConsole.msg.file_error);
+                    console.log({"type": "popup", "default": "file_error"});
                 return 0
             }
         }else{
@@ -505,7 +505,7 @@ Model.prototype = {
             this.initClones();
             this.initData();
         }else{
-            myConsole.flash("invalid version for this .analysis file", 1)
+            console.log({"type": "flash", "msg": "invalid version for this .analysis file" , "priority": 1});
         }
     },
     
@@ -539,11 +539,10 @@ Model.prototype = {
      * 
      * */
     initClones: function () {
-        myConsole.log("initClones()");
+        console.log("initClones()");
 
         // time_type to delta_date if we have enough different dates
         deltas = this.dateDiffMinMax()
-        myConsole.log(deltas)
         if (deltas.max > 1)
             this.changeTimeFormat("delta_date")
         
@@ -629,7 +628,7 @@ Model.prototype = {
                                 max.id = id
                             }
                         }else{
-                            myConsole.log(" apply analysis : clones "+ c[i].id + " > incorrect expected value", 0)
+                            console.log(" apply analysis : clones "+ c[i].id + " > incorrect expected value", 0)
                         }
                     }else{
                         if (typeof (c[i].tag) != "undefined") {
@@ -690,7 +689,7 @@ Model.prototype = {
      *
      * */
     saveAnalysis: function () {
-        myConsole.log("save Analysis (local)", 0)
+        console.log("save Analysis (local)")
 
         var textToWrite = this.strAnalysis()
         var textFileAsBlob = new Blob([textToWrite], {
@@ -771,7 +770,7 @@ Model.prototype = {
      *
      * */
     resetAnalysis: function () {
-        myConsole.log("resetAnalysis()");
+        console.log("resetAnalysis()");
         this.analysis = {
             clones: [],
             cluster: [],
@@ -1059,7 +1058,7 @@ Model.prototype = {
      *
      * */
     select: function (cloneID) {
-        myConsole.log("select() (clone " + cloneID + ")");
+        console.log("select() (clone " + cloneID + ")");
 
         if (cloneID == (this.clones.length - 1)) return 0
 
@@ -1074,7 +1073,7 @@ Model.prototype = {
     
    multiSelect: function (list) {
 
-        myConsole.log("select() (clone " + list + ")");
+        console.log("select() (clone " + list + ")");
 
         var tmp = []
         for (var i=0; i<list.length; i++){
@@ -1099,7 +1098,7 @@ Model.prototype = {
      *
      * */
     unselectAll: function () {
-        myConsole.log("unselectAll()")
+        console.log("unselectAll()")
         var list = this.getSelected();
         for (var i = 0; i < list.length; i++) {
             this.clone(list[i]).select = false;
@@ -1184,7 +1183,7 @@ Model.prototype = {
         
         elapsedTime = new Date()
             .getTime() - startTime;
-        myConsole.log("update(): " + elapsedTime + "ms");
+        console.log("update(): " + elapsedTime + "ms");
     },
 
 
@@ -1340,7 +1339,7 @@ Model.prototype = {
         var list = this.getSelected()
         var leader;
         var top = 200;
-        myConsole.log("merge clones " + list)
+        console.log("merge clones " + list)
 
         for (var i = 0; i < list.length; i++) {
             if (this.clone(list[i]).top < top) {
@@ -1364,7 +1363,7 @@ Model.prototype = {
      *
      * */
     split: function (clusterID, cloneID) {
-        myConsole.log("split() (cloneA " + clusterID + " windowB " + cloneID + ")")
+        console.log("split() (cloneA " + clusterID + " windowB " + cloneID + ")")
         if (clusterID == cloneID) return
 
         var nlist = this.clusters[clusterID];
@@ -1469,7 +1468,7 @@ Model.prototype = {
      *
      * */
     changeTime: function (newT) {
-        myConsole.log("changeTime()" + newT)
+        console.log("changeTime()" + newT)
         this.t = newT;
         this.update();
         return this.t
@@ -1599,7 +1598,7 @@ Model.prototype = {
         catch (e)
         {
             // The computation can fail if one of the times is badly given
-            myConsole.log("No delta times can be computed")
+            console.log("No delta times can be computed")
             delta_min = -1
             delta_max = -1
         }
@@ -1726,7 +1725,7 @@ Model.prototype = {
         if (this.browser != "Chrome" &&
             this.browser != "Firefox" &&
             this.browser != "Safari") {
-            myConsole.popupMsg(myConsole.msg.browser_error)
+            console.log({"type": "popup", "default": "browser_error"});
         }
 
     },
@@ -1892,7 +1891,7 @@ Model.prototype = {
                 html: fasta
             }).appendTo(w.document.body);
         }else{
-            myConsole.log("exportFasta: select clones to export before", 1)
+            console.log("exportFasta: select clones to export before")
         }
         
     },

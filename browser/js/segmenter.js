@@ -545,7 +545,7 @@ Segment.prototype = {
                 self.aligned = true ;
             },
             error: function () {
-                myConsole.flash("cgi error : impossible to connect", 2)
+                console.log({"type": "flash", "msg": "cgi error : impossible to connect", "priority": 2});
             }
         })
     },

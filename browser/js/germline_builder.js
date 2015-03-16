@@ -47,12 +47,11 @@ GermlineList.prototype = {
                     self.list = jQuery.parseJSON(json);
                 }
                 catch(err){
-                    myConsole.flash("germlines.data malformed, use local js file instead (can be outdated) ", 2);
-                    
+                    console.log({"type": "flash", "msg": "germlines.data malformed, use local js file instead (can be outdated) " , "priority": 2});
                 }
             },
             error: function (request, status, error) {
-                myConsole.flash("impossible to retrieve germline.data, using local germline.js", 0);
+                console.log({"type": "flash", "msg": "impossible to retrieve germline.data, using local germline.js", "priority": 0});
             },
             dataType: "text"
         });
@@ -65,7 +64,7 @@ GermlineList.prototype = {
             this.list = germline_data
         }
         catch(err){
-            myConsole.popupMsg("Incorrect browser installation, 'js/germline.js' is not found<br />please run 'make' in 'germline/'")
+            console.log({"type": "popup", "msg": "Incorrect browser installation, 'js/germline.js' is not found<br />please run 'make' in 'germline/'"});
         }
     },
     
@@ -137,7 +136,7 @@ Germline.prototype = {
                             this.allele[key] = germline[filename][key]
                         }
                     }else{
-                        myConsole.flash("warning : this browser version doesn't have the "+filename+" germline file", 2);
+                        console.log({"type": "flash", "msg": "warning : this browser version doesn't have the "+filename+" germline file", "priority": 2});
                     }
                 }
             }

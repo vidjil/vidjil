@@ -38,7 +38,7 @@
     <body>
 
         <div id="popup-container">
-            <span class="closeButton" onclick="myConsole.closePopupMsg()">X</span>
+            <span class="closeButton" onclick="console.closePopupMsg()">X</span>
             <div id="popup-msg">
 	      <noscript>
 		<style type="text/css">
@@ -231,12 +231,12 @@
                 <div id="adminSelector" class="selector"><div>
                     <input type="checkbox" onclick="$('.menu-highlight').toggle()">highlight menu</input><br>
                     <input type="checkbox" onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display fps</input></br>
-                    <input type="checkbox" onclick=" this.checked ? myConsole.openLog() : myConsole.closeLog() ;">log</input>
+                    <input type="checkbox" onclick=" this.checked ? console.openLog() : console.closeLog() ;">log</input>
                     <div class="buttonSelector" onclick="m.changeTimeFormat('delta_date_no_zero', true)"><input type="radio" name="time" value="delta_date_no_zero">day after first sample (no zero)</input></div>
                 </div></div>
             </div>
 
-            <div id="logo" style="float: right;" onclick="myConsole.popupMsg(myConsole.msg.welcome)">Vidjil <span class='logo'>(beta)</span></div>
+            <div id="logo" style="float: right;" onclick="console.log({'type': 'popup', 'default':'welcome'})">Vidjil <span class='logo'>(beta)</span></div>
 
             <div class="menu" style="float: right"> <a href="help" target="_blank">help</a></div>
 
@@ -307,16 +307,22 @@
 
         <div id="frame-container"></div>
 
+
+
         <div id="data-container">
-            <span class="closeButton" onclick="myConsole.closeDataBox()">X</span>
+            <span class="closeButton" onclick="console.closeDataBox()">X</span>
             <div id="data-msg"></div>
         </div>
+
+
 
         <div id="db_div">
             <span class="closeButton" onclick="db.close()">X</span>
             <div id="db_msg"></div>
         </div>
         
+
+
         <div id="flash_container"></div>
         <div id="log_container"></div>
         <form id="form"></form>

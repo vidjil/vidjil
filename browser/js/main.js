@@ -1,13 +1,12 @@
-var myConsole = new Com("flash_container", "log_container", "popup-container", "data-container")
 
 
-initMenu()
+//console = new Com("flash_container", "log_container", "popup-container", "data-container", console)
 
-/* Model
+/* Model 
  */
 var m = new Model();
 
-/* views
+/* Views/Modules
  */
 var graph = new Graph("visu2",m);
 var list_clones = new List("list", "data", m);
@@ -19,6 +18,8 @@ var pdf = new PDF(m, "visu2_svg")
 var report = new Report(m)
 var db = new Database("plop!", m);
 
-
+initMenu();
+/*
+ */
 var shortcut = new Shortcut()
 

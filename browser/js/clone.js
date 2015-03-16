@@ -97,7 +97,7 @@ Clone.prototype = {
      *
      * */
     changeName: function (newName) {
-        myConsole.log("changeName() (clone " + this.hash + " <<" + newName + ")");
+        console.log("changeName() (clone " + this.hash + " <<" + newName + ")");
         this.c_name = newName;
         this.m.updateElem([this.hash]);
         this.m.analysisHasChanged = true
@@ -354,7 +354,7 @@ Clone.prototype = {
     changeTag: function (newTag) {
         newTag = "" + newTag
         newTag = newTag.replace("tag", "");
-        myConsole.log("changeTag() (clone " + this.hash + " <<" + newTag + ")");
+        console.log("changeTag() (clone " + this.hash + " <<" + newTag + ")");
         this.tag = newTag;
         this.m.updateElem([this.hash]);
         this.m.analysisHasChanged = true;
@@ -546,7 +546,7 @@ Clone.prototype = {
     },
     
     unselect: function () {
-        myConsole.log("unselect() (clone " + this.hash + ")")
+        console.log("unselect() (clone " + this.hash + ")")
         if (this.select) {
             this.select = false;
         }

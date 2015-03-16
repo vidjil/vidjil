@@ -140,7 +140,7 @@ ScatterPlot.prototype = {
     /* Fonction permettant l'initialisation complète du ScatterPlot
      */
     init: function() {
-        myConsole.log("ScatterPlot " + this.id + ": init()");
+        console.log("ScatterPlot " + this.id + ": init()");
 
         document.getElementById(this.id)
             .innerHTML = "";
@@ -1382,7 +1382,7 @@ ScatterPlot.prototype = {
         //Donne des informations quant au temps de MàJ des données
         elapsedTime = new Date()
             .getTime() - startTime;
-        myConsole.log("update sp: " + elapsedTime + "ms", -1);
+        console.log("update sp: " + elapsedTime + "ms");
     },
 
     updateClones: function() {

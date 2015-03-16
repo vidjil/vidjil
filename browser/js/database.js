@@ -88,7 +88,7 @@ Database.prototype = {
             }, 
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    myConsole.flash(myConsole.msg.database_timeout, 2)
+                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                 } else {
                     self.check_cert()
                 }
@@ -103,7 +103,7 @@ Database.prototype = {
                     + "Your browser currently does not recognize our SSL certificate. </br>"
                     + "To use the sample database, you need to accept this certificate and/or tag this website as a trusted one. </br>"
                     + "<a href='"+DB_ADDRESS+"'>Follow this link<a/>"
-            myConsole.popupMsg(msg)
+            console.log({"type": "popup", "msg": msg})
         }
     },
     
@@ -163,7 +163,7 @@ Database.prototype = {
         }
         
         //TODO server need to return message priority too ( 0=console, 1=ok, 2=error)
-        if (res.message) myConsole.flash("database : " + res.message , 1)
+        if (res.message) console.log({"type": "flash", "msg": "database : " + res.message , "priority": 1})
         
         return res
 
@@ -193,9 +193,9 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
-                        myConsole.flash(myConsole.msg.database_timeout, 2)
+                        console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                     } else {
-                        myConsole.popupMsg(request.responseText);
+                        console.log({"type": "popup", "msg": request.responseText})
                     }
                 }
             });
@@ -218,7 +218,7 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
-                        myConsole.flash(myConsole.msg.database_timeout, 2)
+                        console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                     } else {
                         var nexts = $('#login_form').attr('action').split("&")
                         var next = "patient/index"
@@ -289,9 +289,9 @@ Database.prototype = {
                 },
                 error: function (request, status, error) {
                     if(status==="timeout") {
-                        myConsole.flash(myConsole.msg.database_timeout, 2)
+                        console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                     } else {
-                        myConsole.popupMsg(request + " " + status + " " + error);
+                        console.log({"type": "popup", "msg": request + " " + status + " " + error});
                     } 
                 }
             });
@@ -335,11 +335,11 @@ Database.prototype = {
             url: self.db_address + controller_name + "?" + this.argsToStr(args),
             xhrFields: {withCredentials: true},
             success: function (result) {
-                myConsole.flash(result)
+                console.log({"type": "flash", "msg": result , "priority": 1});
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    myConsole.flash(myConsole.msg.database_timeout, 2)
+                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                 } else {
                     self.call("patient/index")
                 }
@@ -371,13 +371,13 @@ Database.prototype = {
                     list.appendChild(a);
         }
         
-        myConsole.closePopupMsg()
         if (m.analysisHasChanged){
             m.analysisHasChanged = false;
-            myConsole.popupMsg( myConsole.msg.save_analysis +
-                "<div class=\'center\'> <button onclick=\'db.load_data("+JSON.stringify(args)+",\""+filename+"\")\'>Continue</button> "
-                +" <button onclick='myConsole.closePopupMsg()'>Cancel</button> </div>"
-            )
+            console.log({"type": "popup",
+                        "default" : "save_analysis",
+                        "msg": "<div class=\'center\'> <button onclick=\'db.load_data("+JSON.stringify(args)+",\""+filename+"\")\'>Continue</button> "
+                        +" <button onclick='console.closePopupMsg()'>Cancel</button> </div>",
+                        "priority": 2});
             return
         }
         
@@ -396,9 +396,9 @@ Database.prototype = {
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    myConsole.flash(myConsole.msg.database_timeout + " - unable to access patient data", 1)
+                    console.log({"type": "flash", "default" : "database_timeout", "msg" : " - unable to access patient data" , "priority": 1});
                 } else {
-                    myConsole.popupMsg(request.responseText);
+                    console.log({"type": "popup", "msg": request.responseText});
                 }
             }
         });
@@ -418,13 +418,12 @@ Database.prototype = {
     
     load_custom_data: function(args) {
         var self=this;
-        myConsole.closePopupMsg()
         if (m.analysisHasChanged){
             m.analysisHasChanged = false;
-            myConsole.popupMsg( myConsole.msg.save_analysis +
-                "<div class=\'center\'> <button onclick=\'db.load_data("+JSON.stringify(args)+",\""+filename+"\")\'>Continue</button> "
-                +" <button onclick='myConsole.closePopupMsg()'>Cancel</button> </div>"
-            )
+            console.log({"type": "popup", 
+                        "default" : "save_analysis", 
+                        "msg": "<div class=\'center\'> <button onclick=\'db.load_data("+JSON.stringify(args)+",\""+filename+"\")\'>Continue</button> "
+                        +" <button onclick='console.closePopupMsg()'>Cancel</button> </div>"});
             return
         }
         
@@ -454,9 +453,9 @@ Database.prototype = {
             error: function (request, status, error) {
                 self.m.resume()
                 if (status === "timeout") {
-                    myConsole.flash(myConsole.msg.database_timeout + " - unable to access patient data", 1)
+                    console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to access patient data" , "priority": 1});
                 } else {
-                    myConsole.popupMsg(request.responseText);
+                    console.log({"type": "popup", "msg": request.responseText});
                 }
             }
         });
@@ -477,9 +476,9 @@ Database.prototype = {
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    myConsole.flash(myConsole.msg.database_timeout + " - unable to access saved analysis", 1)
+                    console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to access patient data" , "priority": 1});
                 } else {
-                    myConsole.popupMsg(request.responseText);
+                    console.log({"type": "popup", "msg": request.responseText});
                 }
             }
         });
@@ -509,21 +508,21 @@ Database.prototype = {
                 success: function (result) {
                     try {
                         var res = jQuery.parseJSON(result);
-                        if (res.message) myConsole.flash("database : " + res.message , 1)
+                        if (res.message) console.log({"type": "flash", "msg": "database : " + res.message  , "priority": 1});
                         self.m.analysisHasChanged = false
                     }
                     catch(err){}
                 },
                 error: function (request, status, error) {
                     if (status === "timeout") {
-                        myConsole.flash(myConsole.msg.database_timeout + " - unable to save analysis", 2);
+                        console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to save analysis" , "priority": 2});
                     } else {
-                        myConsole.flash("server : save analysis error : "+request.responseText, 2);
+                        console.log({"type": "flash", "msg": "server : save analysis error : "+request.responseText , "priority": 2});
                     }
                 }
             });
         }else{
-            myConsole.flash("server : save analysis error : this file is nor from the database", 2)
+            console.log({"type": "flash", "msg": "server : save analysis error : this file is nor from the database" , "priority": 2});
         }
     },
     
@@ -739,11 +738,11 @@ Uploader.prototype = {
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    myConsole.flash(myConsole.msg.database_timeout, 2)
+                    console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                 } else {
                     if (status !== "abort"){
                         self.queue[id].status = "upload_error"
-                        myConsole.flash("upload " + self.queue[id].filename + " : " + status, 2)
+                        console.log({"type": "flash", "msg": "upload " + self.queue[id].filename + " : " + status , "priority": 2});
                     }
                 }
                 self.display();
@@ -752,7 +751,7 @@ Uploader.prototype = {
     },
     
     cancel: function (id) {
-        myConsole.flash("cancel upload : " + this.queue[id].filename, 1);
+        console.log({"type": "flash", "msg": "cancel upload : " + this.queue[id].filename, "priority": 1});
         this.queue[id].jqXHR.abort()
         this.queue[id].status = "canceled"
         this.reload(id)

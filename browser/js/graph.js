@@ -311,7 +311,7 @@ Graph.prototype = {
         
         elapsedTime = new Date()
             .getTime() - startTime;
-        myConsole.log("update Graph: " + elapsedTime + "ms", -1);
+        console.log("update Graph: " + elapsedTime + "ms");
         
         return this
     },
@@ -859,8 +859,6 @@ Graph.prototype = {
         if (this.m.samples.order.length >= 3) {
 
             deltas = this.m.dateDiffMinMax()
-            myConsole.log(deltas)
-            myConsole.log(deltas.min)
             
             /* only if there are enough different dates */
             if ((deltas.min >= 0) && (deltas.max >= 2))

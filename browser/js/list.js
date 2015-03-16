@@ -261,7 +261,7 @@ List.prototype = {
         
         elapsedTime = new Date()
             .getTime() - startTime;
-        myConsole.log("update Liste: " + elapsedTime + "ms", -1);
+        console.log("update Liste: " + elapsedTime + "ms");
         
         //TODO check order 
         document.getElementById("list_sort_select").selectedIndex = 0;
@@ -339,7 +339,7 @@ List.prototype = {
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
         span_info.onclick = function () {
-            myConsole.dataBox(self.m.clone(cloneID).getHtmlInfo());
+            console.dataBox(self.m.clone(cloneID).getHtmlInfo());
         }
         span_info.appendChild(document.createTextNode("I"));
 
@@ -421,7 +421,7 @@ List.prototype = {
                 var span_info = document.createElement('span')
                 span_info.className = "infoBox";
                 span_info.onclick = function () {
-                    myConsole.dataBox(self.m.clone(this.parentNode.id2).getHtmlInfo());
+                    console.dataBox(self.m.clone(this.parentNode.id2).getHtmlInfo());
                 }
                 span_info.appendChild(document.createTextNode("I"));
 

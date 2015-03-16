@@ -5,7 +5,7 @@ requirejs.config({
         jquery: 'jquery-2.1.1.min'
     }
 });
-    
+
 require(["d3.v3",
         "jquery.form",
         "StackBlur",
@@ -35,10 +35,15 @@ require(["d3.v3",
         "../crossDomain",
         "../pdf",
         "../database",
-        "../conf",
         "../stats",
         "../shortcut",
         "../export"
         ], function(){
-    require(["../main"]);
-});
+            try {
+                require(["../conf"], function(){
+                    require(["../main"]);
+                })
+            }catch(err) {
+                require(["../main"]);
+            }
+        });

@@ -24,17 +24,18 @@
 /* Com object display/store system message
  * 
  * */
-function Com(flash_id, log_id, popup_id, data_id) {
+function Com(flash_id, log_id, popup_id, data_id, default_console) {
     this.flash_id = flash_id;
     this.log_id = log_id;
     this.popup_id = popup_id;
     this.data_id = data_id;
+    this.default = default_console;
     
     this.min_priority = 1; // minimum required to display message
     this.min_priority_console = 0;
     this.log_container = document.getElementById(this.log_id);
     
-    BUTTON_CLOSE_POPUP = "</br></br> <div class='center' > <button onclick='myConsole.closePopupMsg()'>ok</button></div>",
+    BUTTON_CLOSE_POPUP = "</br></br> <div class='center' > <button onclick='console.closePopupMsg()'>ok</button></div> ",
 
     this.msg = {
         "align_error": "Error &ndash; connection to align server ("+return_URL_CGI()+") failed"
@@ -81,19 +82,41 @@ function Com(flash_id, log_id, popup_id, data_id) {
 	    + "</br> <a href='http://www.mozilla.org/'> Firefox </a> " 
 	    + "</br> <a href='www.google.com/chrome/'> Chrome </a> " 
 	    + "</br> <a href='http://www.chromium.org/getting-involved/download-chromium'> Chromium </a> "
-	    + "</br></br> <div class='center' > <button onclick='popupMsg(msg.welcome)'>I want to try anyway</button></div>",
+	    + "</br></br> <div class='center' > <button onclick='popupMsg(msg.welcome)'>I want to try anyway</button></div> ",
 	    
-        "database_timeout": "Cannot connect database, please retry in a few seconds",
+        "database_timeout": "Cannot connect database, please retry in a few seconds ",
     
         "save_analysis": "You made some changes in the analysis of the previous patient"
 	    + "</br>that were not saved (patients → save analysis)."
-            + "</br>These changes will now be lost, do you want to proceed anyway?"
+            + "</br>These changes will now be lost, do you want to proceed anyway? "
     }
     
     
 }
 
 Com.prototype = {
+    
+    log: function(obj){
+        if (typeof obj !== 'object'){
+            this.default.log(obj)
+        }else{
+            var text = ""
+            if (typeof obj.default != "undefined") text += this.msg[obj.default]
+            if (typeof obj.msg != "undefined") text += obj.msg
+            switch (obj.type) {
+                case "flash":
+                    this.flash(obj.msg, obj.priority)
+                    break;
+                case "popup":
+                    this.popupMsg(obj.msg)
+                    break;
+                case "log":
+                    this.customLog(obj.msg, obj.priority)
+                    break;
+            }
+        }
+    },
+    
     
     /* display a flash message if priority level is sufficient
      * and print message in log
@@ -124,7 +147,7 @@ Com.prototype = {
     /* print message in log_container if priority level is sufficient
      * 
      * */
-    log: function(str, priority){
+    customLog: function(str, priority){
         priority = typeof priority !== 'undefined' ? priority : 0;
         var self = this;
         
@@ -144,7 +167,7 @@ Com.prototype = {
             
         }else{
 	  if (priority >= this.min_priority_console)
-            console.log(str)
+            this.default.log(str)
         }
         
     },
