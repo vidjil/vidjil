@@ -1,5 +1,6 @@
 import math
 import re
+import defs
 from gluon import current
 
 def format_size(n, unit='B'):
@@ -83,6 +84,7 @@ def filter(str, filter_str):
 
 log_patient = re.compile('\((\d+)\)')
 log_config = re.compile(' c(\d+)')
+log_task = re.compile('\[(\d+)\]')
 
 def log_links(s):
     '''Add HTML links to a log string
@@ -103,6 +105,9 @@ def log_links(s):
     m_config = log_config.search(s)
     config = m_config.group(1) if m_config else None
 
+    m_task = log_task.search(s)
+    task = int(m_task.group(1)) if m_task else None
+
     ### Rules
 
     url = ''  # href link
@@ -117,6 +122,13 @@ def log_links(s):
         call = "patient/info"
         args = {'id': patient}
         (start, end) = m_patient.span()
+        start += 1
+        end -= 1
+
+    elif task:
+        call = "admin/log"
+        args = {'file': '../../' + defs.DIR_OUT_VIDJIL_ID % task + 'vidjil.log'}
+        (start, end) = m_task.span()
         start += 1
         end -= 1
 
