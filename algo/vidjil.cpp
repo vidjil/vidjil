@@ -768,8 +768,6 @@ int main (int argc, char **argv)
       if (multi_germline)
 	{
 	  multigermline->build_default_set(multi_germline_file);
-          if (multi_germline_incomplete)
-            multigermline->build_incomplete_set(multi_germline_file);
 	}
       else
 	{
@@ -799,6 +797,12 @@ int main (int argc, char **argv)
         Germline *pseudo = new Germline(PSEUDO_GERMLINE_MAX12, 'x', -10, 80);
         pseudo->index = multigermline->index ;
         multigermline->germlines.push_back(pseudo);
+    }
+
+      // Should come after the initialization of regular (and possibly pseudo) germlines
+    if (multi_germline_incomplete) {
+      multigermline->one_index_per_germline = true; // Starting from now, creates new indexes
+      multigermline->build_incomplete_set(multi_germline_file);
     }
 
     if (multi_germline_mark)

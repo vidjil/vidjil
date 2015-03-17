@@ -83,9 +83,9 @@ ostream &operator<<(ostream &out, const Germline &germline);
 
 class MultiGermline {
  private:
-  bool one_index_per_germline;
 
  public:
+  bool one_index_per_germline;
   list <Germline*> germlines;
 
   // A unique index can be used
