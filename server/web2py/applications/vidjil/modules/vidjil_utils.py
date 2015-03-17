@@ -91,10 +91,12 @@ def log_links(s):
 
     >>> log_links("abcdef")
     'abcdef'
+    >>> log_links("[1234]abcdef")
+    '[<a class="loglink pointer" onclick="db.call(\\'admin/log\\', {\\'file\\': \\'../../mnt/result/tmp/out-001234/\\'})">1234</a>]abcdef'
     >>> log_links("abcdef(234)")
-    'abcdef(<a class="loglink" onclick="db.call(\\'patient/info\\', {\\'id\\': \\'234\\'})">234</a>)'
+    'abcdef(<a class="loglink pointer" onclick="db.call(\\'patient/info\\', {\\'id\\': \\'234\\'})">234</a>)'
     >>> log_links("abcdef(234)abcdef c11")
-    'abcdef(234)abcdef <a class="loglink" href="?patient=234&config=11">c11</a>'
+    'abcdef(234)abcdef <a class="loglink pointer" href="?patient=234&config=11">c11</a>'
     '''
 
     ### Parses the input string
