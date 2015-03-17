@@ -154,7 +154,7 @@ void KmerRepresentativeComputer::compute() {
     representative.quality = "";
 
     int length = stats_length.getAverage();
-    float ratio = length_longest_run / length;
+    float ratio = (float) length_longest_run / length;
 
     coverage = string_of_int(length_longest_run) + " bp"
       + " (" + string_of_int(100 * ratio) + "% of " + string_of_int(length) + " bp)";
