@@ -9,7 +9,7 @@ using namespace std;
 
 RepresentativeComputer::RepresentativeComputer(list<Sequence> &r)
   :sequences(r),is_computed(false),representative(),min_cover(1),
-   percent_cover(0.5),revcomp(true),required("") {
+   percent_cover(0.5),revcomp(true),required(""),coverage("") {
 }
 
 Sequence RepresentativeComputer::getRepresentative() const{
@@ -52,6 +52,10 @@ void RepresentativeComputer::setRequiredSequence(string sequence) {
 
 string KmerRepresentativeComputer::getSeed() const{
   return seed;
+}
+
+string KmerRepresentativeComputer::getCoverage() const{
+  return coverage;
 }
 
 void KmerRepresentativeComputer::setStabilityLimit(int limit) {
@@ -151,8 +155,11 @@ void KmerRepresentativeComputer::compute() {
 
     int length = stats_length.getAverage();
     float ratio = length_longest_run / length;
-    representative.label += " - " + string_of_int(length_longest_run) + " bp"
+
+    coverage = string_of_int(length_longest_run) + " bp"
       + " (" + string_of_int(100 * ratio) + "% of " + string_of_int(length) + " bp)";
+
+    representative.label += " - " + coverage ;
   }
   delete index;
 }
