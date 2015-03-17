@@ -57,7 +57,7 @@ list<Sequence> WindowsStorage::getReads(junction window) {
   return seqs_by_window[window].getReads();
 }
 
-Sequence WindowsStorage::getRepresentative(junction window, 
+KmerRepresentativeComputer WindowsStorage::getRepresentativeComputer(junction window,
                                            string seed, size_t min_cover, 
                                            float percent_cover,
                                            size_t nb_sampled, 
@@ -79,7 +79,7 @@ Sequence WindowsStorage::getRepresentative(junction window,
   if (!repComp.hasRepresentative())
     throw invalid_argument("No representative for junction " + window);
 
-  return repComp.getRepresentative();
+  return repComp;
 }
 
 list<Sequence> WindowsStorage::getSample(junction window, size_t nb_sampled,
