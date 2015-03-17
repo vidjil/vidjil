@@ -18,8 +18,6 @@ class Germline {
   void init(string _code, char _shortcut,
             int _delta_min, int _delta_max);
 
-  void update_index();
-
  public:
   /*
    * @param delta_min: the minimal distance between the right bound and the left bound
@@ -51,7 +49,9 @@ class Germline {
   char   shortcut ;
 
   void new_index(string seed);
-  void use_index(IKmerStore<KmerAffect> *index);
+  void set_index(IKmerStore<KmerAffect> *index);
+
+  void update_index(IKmerStore<KmerAffect> *_index = NULL);
 
   void mark_as_ambiguous(Germline *other);
     
@@ -99,8 +99,10 @@ class MultiGermline {
   void build_default_set(string path);
   void build_incomplete_set(string path);
 
-  void insert_in_one_index(IKmerStore<KmerAffect> *_index);
-  void build_with_one_index(string seed);
+  // Creates and update an unique index for all the germlines
+  // If 'set_index' is set, set this index as the index for all germlines
+  void insert_in_one_index(IKmerStore<KmerAffect> *_index, bool set_index);
+  void build_with_one_index(string seed, bool set_index);
 
   void mark_cross_germlines_as_ambiguous();
   

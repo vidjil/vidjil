@@ -788,7 +788,7 @@ int main (int argc, char **argv)
     cout << endl ;
 
     if (!multi_germline_one_index_per_germline) {
-      multigermline->build_with_one_index(seed);
+      multigermline->build_with_one_index(seed, true);
 
       if (multi_germline_unexpected_recombinations) {
         Germline *pseudo = new Germline(PSEUDO_GERMLINE_MAX12, 'x', -10, 80);
