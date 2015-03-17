@@ -440,51 +440,8 @@ Builder.prototype = {
     },
 
     toggle_left_container: function () {
-        var self = this
-        var elem = $("#left-container")
-
-        if (elem.css("display") == "none") {
-            elem.css("display", "")
-            self.m.resize();
-        } else {
-            elem.css("display", "none")
-            self.m.resize();
-        }
-    },
-
-    toggle_segmenter: function () {
-        var self = this
-        seg = $("#segmenter")
-        bot = $("#bot-container")
-        mid = $("#mid-container")
-
-        if (seg.css("display") == "none") {
-            seg.css("display", "")
-            seg.css("overflow-x", "scroll")
-            bot.animate({
-                height: "125px"
-            }, 400, function () {
-                //$("#toggle-segmenter").html("+ + +")
-            })
-            mid.animate({
-                bottom: "125px"
-            }, 400, function () {
-                self.m.resize();
-            })
-        } else {
-            seg.css("display", "none")
-            seg.css("overflow-x", "hidden")
-            bot.animate({
-                height: "25px"
-            }, 400, function () {
-                //$("#toggle-segmenter").html("- - -")
-            })
-            mid.animate({
-                bottom: "25px"
-            }, 400, function () {
-                self.m.resize();
-            })
-        }
+        $("#left-container").toggle()
+        this.m.resize();
     },
 
     build_info_container: function () {
@@ -793,9 +750,6 @@ Builder.prototype = {
         this.m.tag[id_tag].display = !s;
         this.m.update();
     },
-    
-    build_db: function(){
-        
-    }
+
 
 }
