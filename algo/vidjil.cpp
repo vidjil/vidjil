@@ -162,7 +162,7 @@ void usage(char *progname, bool advanced)
   cerr << "Experimental options (do not use)" << endl
        << "  -I            ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)" << endl
        << "  -1            use a unique index for all germline systems (experimental, must be used with -g, do not use)" << endl
-       << "  -2            try to detect unexpected recombinations (experimental, must be used with -g1, do not use)" << endl
+       << "  -2            try to detect unexpected recombinations (experimental, must be used with -g, do not use)" << endl
        << "  -!            keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example -!AX 20)" << endl
        << endl
 
@@ -789,12 +789,16 @@ int main (int argc, char **argv)
 
     if (!multi_germline_one_index_per_germline) {
       multigermline->build_with_one_index(seed, true);
+    }
 
       if (multi_germline_unexpected_recombinations) {
+        if (!multigermline->index) {
+          multigermline->build_with_one_index(seed, false);
+        }
+
         Germline *pseudo = new Germline(PSEUDO_GERMLINE_MAX12, 'x', -10, 80);
         pseudo->index = multigermline->index ;
         multigermline->germlines.push_back(pseudo);
-      }
     }
 
     if (multi_germline_mark)
