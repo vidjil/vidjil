@@ -2,6 +2,7 @@
 #include "kmerstore.h"
 #include "read_score.h"
 #include "read_chooser.h"
+#include "stats.h"
 
 #include <iostream>
 using namespace std;
@@ -84,11 +85,16 @@ void KmerRepresentativeComputer::compute() {
   size_t seq_index_longest_run = 1;
   Sequence sequence_longest_run;
   size_t k = getSeed().length();
+
+  Stats stats_length;
   
   for (size_t seq = 1; seq <= sequences.size() && seq <= seq_index_longest_run + stability_limit ; seq++) {
     Sequence sequence = rc.getithBest(seq);
+
+    stats_length.insert(sequence.sequence.size());
+
     if (sequence.sequence.size() <= length_longest_run) {
-      break;
+      continue;
     }
     size_t pos_required = sequence.sequence.find(required);
     if (pos_required == string::npos && revcomp)
@@ -142,6 +148,11 @@ void KmerRepresentativeComputer::compute() {
       + "-#" + string_of_int(seq_index_longest_run);
 
     representative.quality = "";
+
+    int length = stats_length.getAverage();
+    float ratio = length_longest_run / length;
+    representative.label += " - " + string_of_int(length_longest_run) + " bp"
+      + " (" + string_of_int(100 * ratio) + "% of " + string_of_int(length) + " bp)";
   }
   delete index;
 }
