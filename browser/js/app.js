@@ -6,6 +6,8 @@ requirejs.config({
     }
 });
 
+require(['../conf'], function () {}, function(err) {});
+
 require(["d3.v3",
         "jquery.form",
         "StackBlur",
@@ -39,11 +41,5 @@ require(["d3.v3",
         "../shortcut",
         "../export"
         ], function(){
-            try {
-                require(["../conf"], function(){
-                    require(["../main"]);
-                })
-            }catch(err) {
-                require(["../main"]);
-            }
-        });
+            require(["../main"]);
+        })
