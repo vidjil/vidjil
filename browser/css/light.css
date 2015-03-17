@@ -1102,7 +1102,7 @@ text.alert {
   margin-right: 2px;
   cursor: pointer;
 }
-#db_div {
+.db_div {
   z-index: 5;
   border: solid;
   position: fixed;
@@ -1115,7 +1115,7 @@ text.alert {
   display: none;
   left: 10%;
 }
-#db_msg {
+.db_msg {
   margin: 15px;
   height: calc(100% - 30px);
 }
@@ -1190,8 +1190,7 @@ text.alert {
   border-color: #cccccc;
   border-width: 1px;
 }
-.pointer
-{
+.pointer {
   cursor: pointer;
 }
 .db_table tr:hover {
@@ -1427,7 +1426,7 @@ table.log textarea {
   color: purple;
   text-decoration: none;
 }
-#waiting_screen {
+.waiting_screen {
   background: rgba(0, 0, 0, 0.5);
   position: absolute;
   width: 100%;
@@ -1435,7 +1434,7 @@ table.log textarea {
   z-index: 1000;
   display: none;
 }
-#waiting_mes {
+.waiting_msg {
   text-align: center;
   font-size: 200%;
   margin-top: 200px;
