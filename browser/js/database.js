@@ -1,19 +1,22 @@
 DB_ADDRESS = ""
 
-function Database(id, model) {
+function Database(model, address) {
     var self = this;
     
     if (typeof config != 'undefined' && config.use_database != undefined && config.use_database) {
-
         if (config.db_address) { DB_ADDRESS = config.db_address}
         if (config.db_address == "default") DB_ADDRESS = "https://"+window.location.hostname+"/vidjil/"
+    }
+    if (typeof address != "undefined"){ DB_ADDRESS = address }
+    
+    if (DB_ADDRESS != ""){
+        console.log("plapipo"+DB_ADDRESS)
         var fileref=document.createElement('script')
         fileref.setAttribute("type","text/javascript")
         fileref.setAttribute("src", DB_ADDRESS + "static/js/checkSSL.js")
         document.getElementsByTagName("head")[0].appendChild(fileref)
         
         this.db_address = DB_ADDRESS;
-        this.id = id;
         this.upload = {};
         this.url = []
         this.m = model
