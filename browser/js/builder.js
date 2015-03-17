@@ -38,9 +38,7 @@ Builder.prototype = {
         this.build_displaySelector()
         this.build_info_container()
         this.build_clusterSelector()
-        this.build_settings()
         this.initTag();
-        if (typeof config != 'undefined' && typeof config.use_database != 'undefined' && config.use_database) this.build_db()
         
         if (this.m.samples.order.length == 1) this.resizeGraph(0) 
         else this.resizeGraph(50) 
@@ -193,7 +191,6 @@ Builder.prototype = {
             self.m.compute_data_normalization(data, size)
             self.m.update()
             $('#dataMenu').hide('fast')
-            self.build_settings()
         }
     },
     
