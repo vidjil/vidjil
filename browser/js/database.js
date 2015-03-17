@@ -18,7 +18,7 @@ function Database(id, model) {
         this.url = []
         this.m = model
         this.uploader = new Uploader()
-        
+        this.build()
         
         window.onbeforeunload = function(e){
             if ( self.uploader.is_uploading() ){
@@ -44,7 +44,26 @@ function return_URL_CGI() {
 }
 
 Database.prototype = {
-
+    
+    build: function () {
+        this.div = document.createElement("div")
+        this.div.className = "db_div";
+        
+        var close_popup = document.createElement("span")
+        close_popup.onclick = function(){
+            self.close();
+        }
+        close_popup.className = "closeButton";
+        close_popup.appendChild(document.createTextNode("X"));
+        this.msg = document.createElement("div")
+        this.msg.className = "popup_msg";
+        
+        this.div.appendChild(close_popup)
+        this.div.appendChild(this.msg)
+        
+        document.body.appendChild(this.div);
+    },
+    
     /*appel une page générée a partir des données du serveur
      *page : nom de la page coté serveur
      *args : parametres format json ( { "name_arg1" : "arg1", ... } )
@@ -538,10 +557,8 @@ Database.prototype = {
 
     //efface et ferme la fenetre de dialogue avec le serveur
     close: function () {
-        document.getElementById("db_div")
-            .style.display = "none";
-        document.getElementById("db_msg")
-            .innerHTML = "";
+        this.div.style.display = "none";
+        this.msg.innerHTML = "";
     },
     
     fixed_header: function () {
