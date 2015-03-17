@@ -40,7 +40,7 @@ function Model() {
     this.reset();
     this.checkBrowser();
     this.germlineList = new GermlineList()
-    
+    this.build();
     window.onresize = function () { m.resize(); };
     
     this.start()
@@ -48,7 +48,17 @@ function Model() {
 
 
 Model.prototype = {
-
+    build: function () {
+        this.waiting_screen = document.createElement("div");
+        this.waiting_screen.className = "waiting_screen";
+        
+        this.waiting_msg = document.createElement("div")
+        this.waiting_msg.className = "waiting_msg";
+        
+        this.waiting_screen.appendChild(this.waiting_msg);
+        document.body.appendChild(this.waiting_screen);
+    },
+    
     /**/
     reset: function () {
         this.analysis = {
@@ -1971,14 +1981,14 @@ Model.prototype = {
 
     
     wait: function(text){
-        document.getElementById("waiting_screen").style.display = "block";
-        document.getElementById("waiting_mes").innerHTML= text;
+        this.waiting_screen.style.display = "block";
+        this.waiting_msg.innerHTML= text;
         if (typeof shortcut != 'undefined') shortcut.on = false;
     },
     
     resume: function(){
-        document.getElementById("waiting_screen").style.display = "none";
-        document.getElementById("waiting_mes").innerHTML= "";
+        this.waiting_screen.style.display = "none";
+        this.waiting_msg.innerHTML= "";
         if (typeof shortcut != 'undefined') shortcut.on = true;
     },
     
