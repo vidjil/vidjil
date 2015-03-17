@@ -1206,7 +1206,9 @@ int main (int argc, char **argv)
         JsonList json_clone;
         JsonList json_seg;
 
-        json_clone.add("coverage", repComp.getCoverage());
+        JsonArray json_coverage;
+        json_coverage.add(repComp.getCoverage());
+        json_clone.add("_coverage", json_coverage);
 
         // From FineSegmenter
         json_clone.add("sequence", seg.getSequence().sequence);
