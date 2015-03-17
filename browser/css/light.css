@@ -574,7 +574,7 @@ span .substitution {
   display: none;
   background: #ffffff;
 }
-#dataMenu {
+.dataMenu {
   padding: 5px;
   position: absolute;
   left: 475px;

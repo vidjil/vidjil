@@ -74,10 +74,22 @@ List.prototype = {
         this.tagSelector.appendChild(this.tagSelectorList);
         
         
+        this.dataMenu = document.createElement("div");
+        this.dataMenu.className = "dataMenu";
         
+        var closedataMenu = document.createElement("span");
+        closedataMenu.className = "closeButton" ;
+        closedataMenu.appendChild(document.createTextNode("X"));
+        closedataMenu.onclick = function() {$(this).parent().hide('fast')};
+        this.dataMenu.appendChild(closedataMenu);
         
+        this.dataMenuInfo = document.createElement("div")
+        this.dataMenu.appendChild(this.dataMenuInfo);
+        
+        this.dataMenu.innerHTML += "<div><span>normalize to: </span><span><input type='number' step='0.0001' id='normalized_data'></span><button id='normalized_data_button'>ok</button> </div></div>"
         
         document.body.appendChild(this.tagSelector);
+        document.body.appendChild(this.dataMenu);
     },
     
     /* initialise la liste et crée un div pour chaque clones
@@ -157,7 +169,7 @@ List.prototype = {
             star.className = "starBox";
             (function (key) {
                 star.onclick = function () {
-                    openDataMenu(key);
+                    self.openDataMenu(key);
                 }
             })(key);
             
@@ -850,6 +862,11 @@ List.prototype = {
         $(this.tagSelector).show("fast");
         this.tagSelectorInfo.innerHTML = "tag for "+m.clone(cloneID).getName()+"("+cloneID+")"; 
     },
+    
+    openDataMenu : function (data) {
+        $(this.dataMenu).show("fast");
+        this.dataMenuInfo.innerHTML = data;
+    },
 
 } //fin prototype
 
@@ -858,9 +875,4 @@ List.prototype = {
 
 
 
-function openDataMenu(data) {
-    $('#dataMenu')
-        .show("fast");
-    document.getElementById("data_name")
-        .innerHTML = data;
-}
+
