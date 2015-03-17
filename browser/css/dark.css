@@ -564,7 +564,7 @@ span .substitution {
   background-color: #333333;
 }
 /*tag*/
-#tagSelector {
+.tagSelector {
   padding: 5px;
   position: absolute;
   left: 475px;
@@ -572,6 +572,7 @@ span .substitution {
   width: 220px;
   border: solid;
   display: none;
+  background: #000000;
 }
 #dataMenu {
   padding: 5px;
@@ -932,7 +933,7 @@ span.logo {
 #bot-container,
 .popup_container,
 #file_menu,
-#tagSelector,
+.tagSelector,
 .closeButton,
 #axis_choice {
   border-color: #333333;

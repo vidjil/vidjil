@@ -180,103 +180,11 @@ Builder.prototype = {
     /*complete tagSelector html element with correct info about current tagname
      * */
     build_tagSelector: function () {
-        var self = this;
-
-        var tagSelector = document.getElementById("tagSelector")
-        var listTag = tagSelector.getElementsByTagName("ul")[0]
-
-        //reset
-        listTag.innerHTML = "";
-
-        for (var i = 0; i < this.m.tag.length; i++) {
-            (function (i) {
-                var span3 = document.createElement('span');
-                span3.onclick = function (tag) {
-                    self.editTagName(i, this);
-                }
-                span3.className = "edit_button"
-                span3.appendChild(document.createTextNode("..."))
-
-                var span1 = document.createElement('span');
-                span1.className = "tagColorBox tagColor" + i
-                span1.onclick = function () {
-                    var cloneID = parseInt(document.getElementById('tag_id').innerHTML);
-                    self.m.clone(cloneID).changeTag(i)
-                    $('#tagSelector').hide('fast')
-                }
-                
-                var span2 = document.createElement('span');
-                span2.className = "tagName" + i + " tn"
-                span2.onclick = function () {
-                    var cloneID = parseInt(document.getElementById('tag_id').innerHTML);
-                    self.m.clone(cloneID).changeTag(i)
-                    $('#tagSelector').hide('fast')
-                }
-
-                var div = document.createElement('div');
-                div.className = "tagElem"
-                div.appendChild(span1)
-                div.appendChild(span2)
-                div.appendChild(span3)
-
-                var li = document.createElement('li');
-                li.appendChild(div)
-
-                listTag.appendChild(li);
-            })(i)
-        }
-        
-
-
-        var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode("normalize to: "))
-
-        var span2 = document.createElement('span');
-        var input = document.createElement('input');
-        input.type = "number";
-        input.step = "0.0001"
-        input.id = "normalized_size";
-        input.onkeydown = function () {
-            if (event.keyCode == 13) document.getElementById('normalized_size_button')
-                .click();
-        }
-        
-        span2.appendChild(input)
-        
-        var span3 = document.createElement('button');
-        span3.appendChild(document.createTextNode("ok"))
-        span3.id = "normalized_size_button";
-        span3.onclick = function () {
-            var cloneID = parseInt(document.getElementById('tag_id')
-                .innerHTML);
-            var size = parseFloat(document.getElementById('normalized_size').value);
-            
-            if (size>0 && size<1){
-                document.getElementById('normalized_size').value = ""
-                self.m.clone(cloneID).expected=size;
-                self.m.compute_normalization(cloneID, size)
-                self.m.update()
-                $('#tagSelector')
-                    .hide('fast')
-                self.build_settings()
-            }else{
-                console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
-            }
-        }
-        
-        var div = document.createElement('div');
-        div.appendChild(span1)
-        div.appendChild(span2)
-        div.appendChild(span3)
-        
-        var li = document.createElement('li');
-        li.appendChild(div)
-
-        listTag.appendChild(li);
         
         document.getElementById("normalized_data").onkeydown = function () {
             if (event.keyCode == 13) document.getElementById('normalized_data_button').click();
         }
+        
         document.getElementById("normalized_data_button").onclick = function () {
             var data = document.getElementById('data_name').innerHTML
             var size = parseFloat(document.getElementById('normalized_data').value);
@@ -339,7 +247,7 @@ Builder.prototype = {
             event.preventDefault()
             var newTagName = document.getElementById("new_tag_name")
                 .value;
-            this.m.tag[tagID].name = newTagName
+            self.m.tag[tagID].name = newTagName
             self.build_tagSelector()
             self.build_displaySelector()
             self.m.analysisHasChanged = true

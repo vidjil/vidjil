@@ -30,6 +30,7 @@
  *
  *
  */
+
 /* List constructor
  *
  * */
@@ -43,6 +44,7 @@ function List(id_list, id_data, model) {
 
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
     this.m.view.push(this); //synchronisation au Model
+    this.build();
     
     this.sort_option = {
         "-" : function () {},
@@ -54,6 +56,30 @@ function List(id_list, id_data, model) {
 
 List.prototype = {
 
+    build: function () {
+        
+        this.tagSelector = document.createElement("div");
+        this.tagSelector.className = "tagSelector";
+        
+        var closeTag = document.createElement("span");
+        closeTag.className = "closeButton" ;
+        closeTag.appendChild(document.createTextNode("X"));
+        closeTag.onclick = function() {$(this).parent().hide('fast')};
+        this.tagSelector.appendChild(closeTag);
+        
+        this.tagSelectorInfo = document.createElement("div")
+        this.tagSelector.appendChild(this.tagSelectorInfo);
+        
+        this.tagSelectorList = document.createElement("ul")
+        this.tagSelector.appendChild(this.tagSelectorList);
+        
+        
+        
+        
+        
+        document.body.appendChild(this.tagSelector);
+    },
+    
     /* initialise la liste et crée un div pour chaque clones
      *
      * */
@@ -316,7 +342,7 @@ List.prototype = {
         var span_star = document.createElement('div');
         span_star.className = "starBox";
         span_star.onclick = function () {
-            changeTag(cloneID);
+            self.openTagSelector(cloneID);
         }
         var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
         var path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
@@ -739,22 +765,98 @@ List.prototype = {
     clickList: function (e, cloneID) {
         if (!(e.ctrlKey || e.metaKey)) this.m.unselectAll()
         this.m.select(cloneID)
-    }
+    },
+    
+    openTagSelector: function (cloneID) {
+        var self = this;
+        cloneID = typeof cloneID !== 'undefined' ? cloneID : this.cloneID;
+        this.tagSelectorList.innerHTML = "";
+        this.cloneID=cloneID
+        
+        for (var i = 0; i < this.m.tag.length; i++) {
+            (function (i) {
+                var span1 = document.createElement('span');
+                span1.className = "tagColorBox tagColor" + i
+                span1.onclick = function () {
+                    self.m.clone(cloneID).changeTag(i)
+                    $(self.tagSelector).hide('fast')
+                }
+                
+                var span2 = document.createElement('span');
+                span2.className = "tagName" + i + " tn"
+                span2.appendChild(document.createTextNode(self.m.tag[i].name))
+                span2.onclick = function () {
+                    self.m.clone(cloneID).changeTag(i)
+                    $(self.tagSelector).hide('fast')
+                }
+
+                var div = document.createElement('div');
+                div.className = "tagElem"
+                div.appendChild(span1)
+                div.appendChild(span2)
+
+                var li = document.createElement('li');
+                li.appendChild(div)
+
+                self.tagSelectorList.appendChild(li);
+            })(i)
+        }
+        
+        var span1 = document.createElement('span');
+        span1.appendChild(document.createTextNode("normalize to: "))
+
+        var span2 = document.createElement('span');
+        var input = document.createElement('input');
+        input.type = "number";
+        input.step = "0.0001"
+        input.id = "normalized_size";
+        input.onkeydown = function () {
+            if (event.keyCode == 13) document.getElementById('normalized_size_button')
+                .click();
+        }
+        
+        span2.appendChild(input)
+        
+        var span3 = document.createElement('button');
+        span3.appendChild(document.createTextNode("ok"))
+        span3.id = "normalized_size_button";
+        span3.onclick = function () {
+            var cloneID = self.cloneID;
+            var size = parseFloat(document.getElementById('normalized_size').value);
+            
+            if (size>0 && size<1){
+                document.getElementById('normalized_size').value = ""
+                self.m.clone(cloneID).expected=size;
+                self.m.compute_normalization(cloneID, size)
+                self.m.update()
+                $(self.tagSelector).hide('fast')
+            }else{
+                console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
+            }
+        }
+        
+        var div = document.createElement('div');
+        div.appendChild(span1)
+        div.appendChild(span2)
+        div.appendChild(span3)
+        
+        var li = document.createElement('li');
+        li.appendChild(div)
+
+        this.tagSelectorList.appendChild(li);
+        
+        
+        if (cloneID[0] == "s") cloneID = cloneID.substr(3);
+        $(this.tagSelector).show("fast");
+        this.tagSelectorInfo.innerHTML = "tag for "+m.clone(cloneID).getName()+"("+cloneID+")"; 
+    },
 
 } //fin prototype
 
 
 
 
-function changeTag(cloneID) {
-    if (cloneID[0] == "s") cloneID = cloneID.substr(3);
-    $('#tagSelector')
-        .show("fast");
-    document.getElementById("tag_name")
-        .innerHTML = m.clone(cloneID).getName();
-    document.getElementById("tag_id")
-        .innerHTML = cloneID;
-}
+
 
 function openDataMenu(data) {
     $('#dataMenu')
