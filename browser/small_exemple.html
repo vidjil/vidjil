@@ -1,0 +1,96 @@
+<!doctype html>
+
+<!-- 
+  This file is part of "Vidjil" <http://bioinfo.lille.inria.fr/vidjil>, V(D)J repertoire browsing and analysis
+  Copyright (C) 2013, 2014 by Marc Duez <marc.duez@lifl.fr> and the Vidjil Team
+  Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
+
+  "Vidjil" is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 3 of the License, or
+  (at your option) any later version.
+
+  "Vidjil" is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+
+  You should have received a copy of the GNU General Public License
+  along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
+-->
+
+<html>
+    <head>
+
+        <meta charset="utf-8">
+        <link id="palette" rel="stylesheet" type="text/css" href="css/light.css" /> 
+
+        <script type="text/javascript"> 
+            
+            //vidjil file (json format)
+            var vidjil_file = {
+                "vidjil_json_version": ["2014.09"], 
+                "reads": {
+                    "segmented": [200,100], 
+                    "total": [200,100], 
+                    "germline": {"TRG": [100,50], "IGH": [100,50]}
+                }, 
+                "samples": {
+                    "timestamp": ["2014-10-20 13:59:02", "2014-10-25 14:00:32"], 
+                    "number": 2, 
+                    "original_names": ["Diag.fa", "Fu-1.fa"]},
+                "clones": [
+                    { "sequence" : "ATGCACACACACACAGAGAGAGAGAGAGCACACACACACTATGGTAG",
+                        "name" : "test1",
+                        "id" : "id1",
+                        "reads" : [10,10],
+                        "top" : 1,
+                        "germline" : "TRG",
+                        "seg" : { "5" : "TRGV4*01", "3" : "TRGJ2*03", "3start" : 6, "5end" : 5 }},
+                    { "sequence" : "GATACAGATCAGATCAGTACAGATACAGATACAGATACA",
+                        "name" : "test2",
+                        "id" : "id2",
+                        "reads" : [20,20],
+                        "top" : 2,
+                        "germline" : "IGH",
+                        "seg" : { "5" : "IGHV5*01","3" : "IGHJ2*04", "3start" : 15,"5end" : 5 }}]
+            }
+            
+
+            //build the interface using vidjil API
+            function main () {
+                //override server config
+                config = undefined 
+
+                //create model
+                m = new Model();
+                
+                //bind views
+                new Graph("div1", m)
+                new ScatterPlot("div2", m)
+                new ScatterPlot("div3", m)
+                
+
+                //load vidjil file (will be simplified soon ..)
+                m.parseJsonData(vidjil_file,100)
+                m.loadGermline()
+                m.initClones()
+            };
+        </script>
+
+    </head>
+
+
+    <body>
+        
+        <div style="width:100%; height:100%;">
+            <div id="div1" style="border:solid; margin-left:20%; width:80%; height:33%;"></div>    
+            <div id="div2" style="border:solid; margin-left:10%; width:80%; height:33%;"></div>
+            <div id="div3" style="border:solid; width:80%; height:33%;"></div>
+        </div>
+
+    </body> 
+
+
+    <script data-main="js/app.js" src="js/lib/require.js"></script>
+</html>
