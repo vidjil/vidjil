@@ -41,5 +41,9 @@ require(["d3.v3",
         "../shortcut",
         "../export"
         ], function(){
-            require(["../main"]);
+            if (typeof main == "undefined"){
+                require(["../main"]);
+            }else{
+                main();
+            }
         })
