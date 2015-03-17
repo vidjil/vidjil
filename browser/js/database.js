@@ -46,6 +46,8 @@ function return_URL_CGI() {
 Database.prototype = {
     
     build: function () {
+        var self = this;
+        
         this.div = document.createElement("div")
         this.div.className = "db_div";
         
@@ -56,7 +58,7 @@ Database.prototype = {
         close_popup.className = "closeButton";
         close_popup.appendChild(document.createTextNode("X"));
         this.msg = document.createElement("div")
-        this.msg.className = "popup_msg";
+        this.msg.className = "db_msg";
         
         this.div.appendChild(close_popup)
         this.div.appendChild(this.msg)
@@ -547,10 +549,8 @@ Database.prototype = {
     
     //affiche la fenetre de dialogue avec le serveur et affiche ses réponses
     display: function (msg) {
-        document.getElementById("db_div")
-            .style.display = "block";
-        document.getElementById("db_msg")
-            .innerHTML = msg;
+        this.div.style.display = "block";
+        this.msg.innerHTML = msg;
             
         this.uploader.display()
     },
