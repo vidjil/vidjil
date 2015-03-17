@@ -1162,11 +1162,13 @@ int main (int argc, char **argv)
 	  cout << auditioned.size() << " auditioned sequences, avg length " << total_length / auditioned.size() << endl ;
 	}
 
-        Sequence representative
-          = windowsStorage->getRepresentative(it->first, seed, 
+        KmerRepresentativeComputer repComp
+          = windowsStorage->getRepresentativeComputer(it->first, seed,
                                              min_cover_representative,
                                              ratio_representative,
                                              max_auditionned);
+
+        Sequence representative = repComp.getRepresentative();
 
 	  // Store the representative and its label
           representatives.push_back(representative);

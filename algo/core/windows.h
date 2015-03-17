@@ -20,6 +20,7 @@
 #include "germline.h"
 #include "read_storage.h"
 #include "read_score.h"
+#include "representative.h"
 
 #define NB_BINS 15
 #define MAX_VALUE_BINS 500
@@ -84,10 +85,10 @@ class WindowsStorage {
    *                    algorithm.
    * @param nb_buckets: Number of buckets for sampling (see SequenceSampler)
    * @pre nb_sampled <= getMaximalNbReadsPerWindow() if hasLimitForReadsPerWindow()
-   * @return the representative sequence of a window or NULL_SEQUENCE if we 
-   *         cannot find any representative
+   * @return the representative computer
    */
-  Sequence getRepresentative(junction window, string seed, size_t min_cover,
+
+  KmerRepresentativeComputer getRepresentativeComputer(junction window, string seed, size_t min_cover,
                              float percent_cover, size_t nb_sampled, 
                              size_t nb_buckets=HISTOGRAM_SIZE_AUDITIONED);
 
