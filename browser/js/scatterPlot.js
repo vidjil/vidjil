@@ -189,14 +189,14 @@ ScatterPlot.prototype = {
             })
 
         //Actions sur le corps -|- aux sélections
-        d3.select("body")
-            .on("mouseup", function() {
-                self.stopSelector()
-            })
-        d3.select("body")
-            .on("mousemove", function() {
-                self.updateSelector()
-            })
+        $("body").bind("mouseup", function(e) {
+            d3.event = e;
+            self.stopSelector()
+        })
+        $("body").bind("mousemove", function(e) {
+            d3.event = e;
+            self.updateSelector()
+        })
 
         //Sélection du contenu de l'axe des X -> Ajout d'un attribut valant un id
         this.axis_x_container = d3.select("#" + this.id + "_svg")
