@@ -57,7 +57,9 @@ function List(id_list, id_data, model) {
 List.prototype = {
 
     build: function () {
+        var self =this;
         
+        //build tagSelector
         this.tagSelector = document.createElement("div");
         this.tagSelector.className = "tagSelector";
         
@@ -74,6 +76,7 @@ List.prototype = {
         this.tagSelector.appendChild(this.tagSelectorList);
         
         
+        //build dataMenu
         this.dataMenu = document.createElement("div");
         this.dataMenu.className = "dataMenu";
         
@@ -83,11 +86,35 @@ List.prototype = {
         closedataMenu.onclick = function() {$(this).parent().hide('fast')};
         this.dataMenu.appendChild(closedataMenu);
         
-        this.dataMenuInfo = document.createElement("div")
+        this.dataMenuInfo = document.createElement("div");
         this.dataMenu.appendChild(this.dataMenuInfo);
         
-        this.dataMenu.innerHTML += "<div><span>normalize to: </span><span><input type='number' step='0.0001' id='normalized_data'></span><button id='normalized_data_button'>ok</button> </div></div>"
+        var div_normalize = document.createElement("div");
+        div_normalize.appendChild(document.createElement("span").appendChild(document.createTextNode("normalize to: ")));
+        this.data_norm_input = document.createElement("input");
+        this.data_norm_input.step = '0.0001';
+        this.data_norm_input.type = 'number';
+        div_normalize.appendChild(document.createElement("span").appendChild(this.data_norm_input));
+        this.data_norm_input_button = document.createElement("BUTTON");
+        this.data_norm_input_button.appendChild(document.createTextNode("ok"));
+        div_normalize.appendChild(this.data_norm_input_button);
+        this.dataMenu.appendChild(div_normalize);
         
+        this.data_norm_input.onkeydown = function () {
+            if (event.keyCode == 13) self.data_norm_input_button.click();
+        }
+        
+        this.data_norm_input_button.onclick = function () {
+            var data = self.dataMenuInfo.innerHTML
+            var size = parseFloat(self.data_norm_input.value);
+            
+            self.data_norm_input.value = ""
+            self.m.compute_data_normalization(data, size)
+            self.m.update()
+            $(self.dataMenu).hide('fast')
+        }
+        
+        //add to body
         document.body.appendChild(this.tagSelector);
         document.body.appendChild(this.dataMenu);
     },
