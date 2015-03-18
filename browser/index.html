@@ -136,7 +136,7 @@
                 </div></div>
             </div>
 
-            <div class="menu" id="filter_menu" onmouseover="showSelector('filterSelector');" > filter
+            <div class="menu" id="filter_menu" onmouseover="builder.build_displaySelector(); showSelector('filterSelector');" > filter
                 <div id="filterSelector" class="selector"><div>
                     <div class="menu_box">
                         <span id="top_label"></span></br>
@@ -275,6 +275,7 @@
 
         <!-- BOT-CONTAINER / SEGMENTER-CONTAINER -->
         <div id="bot-container"> </div>
+
 
         <div id="data-container">
             <span class="closeButton" onclick="console.closeDataBox()">X</span>

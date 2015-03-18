@@ -34,7 +34,6 @@ Builder.prototype = {
                 self.toggle_left_container()
             });
 
-        this.build_displaySelector()
         this.build_info_container()
         this.build_clusterSelector()
         this.initTag();
@@ -207,11 +206,6 @@ Builder.prototype = {
             if (key == 13) document.getElementById('btnSaveTag')
                 .click();
         }
-        $(input).focusout(function() {
-            setTimeout(function(){
-                self.build_displaySelector()
-            }, 500);
-        })
         divParent.appendChild(input);
         divParent.onclick = "";
 
@@ -225,7 +219,6 @@ Builder.prototype = {
             var newTagName = document.getElementById("new_tag_name")
                 .value;
             self.m.tag[tagID].name = newTagName
-            self.build_displaySelector()
             self.m.analysisHasChanged = true
         }
         divParent.appendChild(a);
