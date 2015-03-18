@@ -786,81 +786,81 @@ ScatterPlot.prototype = {
         //split clones into bar (axisX)
         switch (this.splitX) {
             case "allele_v" :
-                this.makeBarTab(function(cloneID){return m.clone(cloneID).getV()}, Object.keys(m.germlineV.allele))
+                this.makeBarTab(function(cloneID){return self.self.m.clone(cloneID).getV()}, Object.keys(self.m.germlineV.allele))
                 break;
             case "gene_v" :
-                this.makeBarTab(function(cloneID){return m.clone(cloneID).getV(false)}, Object.keys(m.germlineV.gene))
+                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getV(false)}, Object.keys(self.m.germlineV.gene))
                 break;
             case "allele_j" :
-                this.makeBarTab(function(cloneID){return m.clone(cloneID).getJ()}, Object.keys(m.germlineJ.allele))
+                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getJ()}, Object.keys(self.m.germlineJ.allele))
                 break;
             case "gene_j" :
-                this.makeBarTab(function(cloneID){return m.clone(cloneID).getJ(false)}, Object.keys(m.germlineJ.gene))
+                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getJ(false)}, Object.keys(self.m.germlineJ.gene))
                 break;
             case "Size" :
-                //this.makeBarTab(function(cloneID){return m.clone(cloneID).getSize()})
+                //this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getSize()})
                 break;
             case "sequenceLength" :
                 this.makeBarTab(function(cloneID) {
-                    var value = m.clone(cloneID).getSequenceLength()
+                    var value = self.m.clone(cloneID).getSequenceLength()
                     if (typeof value != "undefined" && value != 0) return value;
                     return undefined;
                 })
                 break;
             case "GCContent" :
                 this.makeBarTab(function(cloneID) {
-                    var value = m.clone(cloneID).getGCContent()
+                    var value = self.m.clone(cloneID).getGCContent()
                     if (typeof value != "undefined" && value != 0) return value;
                     return undefined;
                 })
                 break;
             case "n" :
                 this.makeBarTab(function(cloneID) {
-                    var value = m.clone(cloneID).getNlength()
+                    var value = self.m.clone(cloneID).getNlength()
                     if (typeof value != "undefined" && value != 0) return value;
                     return undefined;
                 })
                 break;
             case "lengthCDR3" :
                 this.makeBarTab(function(cloneID) {
-                    if (typeof m.clone(cloneID).seg != "undefined" && typeof m.clone(cloneID).seg["cdr3"] != "undefined")
-                        return m.clone(cloneID).seg["cdr3"].length
+                    if (typeof self.m.clone(cloneID).seg != "undefined" && typeof self.m.clone(cloneID).seg["cdr3"] != "undefined")
+                        return self.m.clone(cloneID).seg["cdr3"].length
                     return undefined;
                 })
             break;
         }
         
         //sort each bar (axisY)
-        this.sortBarTab(function(a){return m.clone(a).getJ()});
+        this.sortBarTab(function(a){return self.m.clone(a).getJ()});
         switch (this.splitY) {
             case "allele_v" :
-                this.sortBarTab(function(cloneID){return m.clone(cloneID).getV()});
+                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getV()});
                 break;
             case "gene_v" :
-                this.sortBarTab(function(cloneID){return m.clone(cloneID).getV(false)});
+                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getV(false)});
                 break;
             case "allele_j" :
-                this.sortBarTab(function(cloneID){return m.clone(cloneID).getJ()});
+                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getJ()});
                 break;
             case "gene_j" :
-                this.sortBarTab(function(cloneID){return m.clone(cloneID).getJ(false)});
+                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getJ(false)});
                 break;
             case "Size" :
-                this.sortBarTab(function(cloneID){return m.clone(cloneID).getSize()});
+                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getSize()});
                 break;
             case "sequenceLength" :
-                this.sortBarTab(function(cloneID) {return m.clone(cloneID).getSequenceLength()})
+                this.sortBarTab(function(cloneID) {return self.m.clone(cloneID).getSequenceLength()})
                 break;
             case "GCContent" :
-                this.sortBarTab(function(cloneID) {return m.clone(cloneID).getGCContent()})
+                this.sortBarTab(function(cloneID) {return self.m.clone(cloneID).getGCContent()})
                 break;
             case "n" :
-                this.sortBarTab(function(cloneID) {return m.clone(cloneID).getNlength()})
+                this.sortBarTab(function(cloneID) {return self.m.clone(cloneID).getNlength()})
                 break;
             case "lengthCDR3" :
                 this.sortBarTab(function(cloneID) {
-                    if (typeof m.clone(cloneID).seg != "undefined" && typeof m.clone(cloneID).seg["cdr3"] != "undefined")
-                        return m.clone(cloneID).seg["cdr3"].length
+                    if (typeof self.m.clone(cloneID).seg != "undefined" && typeof self.m.clone(cloneID).seg["cdr3"] != "undefined")
+                        return self.m.clone(cloneID).seg["cdr3"].length
                     return undefined;
                 })
             break;
@@ -870,7 +870,6 @@ ScatterPlot.prototype = {
         this.computeBarTab();
     },
     
-    //tab = sp.makeBarTab(function(cloneID){v = m.clone(cloneID).getNlength(); if (v==0){return undefined}else{return v}})
     makeBarTab: function (fct, values) {
         var min, max;
         this.barTab = [];
