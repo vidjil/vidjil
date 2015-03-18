@@ -34,7 +34,6 @@ Builder.prototype = {
                 self.toggle_left_container()
             });
 
-        this.build_tagSelector()
         this.build_displaySelector()
         this.build_info_container()
         this.build_clusterSelector()
@@ -175,11 +174,6 @@ Builder.prototype = {
         
     },
 
-    /*complete tagSelector html element with correct info about current tagname
-     * */
-    build_tagSelector: function () {
-        
-    },
     
     /* Fonction servant à "déverouiller" l'appel de la fonction compute_normalization(), ainsi qu'à apposer le 'check' au checkBox 'normalize'
      * */
@@ -215,7 +209,6 @@ Builder.prototype = {
         }
         $(input).focusout(function() {
             setTimeout(function(){
-                self.build_tagSelector()
                 self.build_displaySelector()
             }, 500);
         })
@@ -232,7 +225,6 @@ Builder.prototype = {
             var newTagName = document.getElementById("new_tag_name")
                 .value;
             self.m.tag[tagID].name = newTagName
-            self.build_tagSelector()
             self.build_displaySelector()
             self.m.analysisHasChanged = true
         }
