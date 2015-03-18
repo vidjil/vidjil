@@ -93,7 +93,7 @@ function imgtPost(data, system) {
     if (system[0] == "T") {
         imgtInput["l01p01c04"] = "TR";
     }
-    var form = document.createElement("form");
+    var form = document.getElementById("form");
     form.innerHTML = "";
     form.target = "_blank";
     form.action = "http://www.imgt.org/IMGT_vquest/vquest";
@@ -126,7 +126,7 @@ function igBlastPost(data, system) {
     }
 
 
-    var form = document.createElement("form");
+    var form = document.getElementById("form");
     form.innerHTML = "";
     form.target = "_blank";
     form.action = "http://www.ncbi.nlm.nih.gov/igblast/igblast.cgi";
