@@ -254,6 +254,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
       strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
       computeSegmentation(strand, max12.first, max12.second);
 
+      if (!detected)
+        because = UNSEG_TOO_FEW_ZERO ;
+
       // The pseudo-germline should never take precedence over the regular germlines
       score = 1 ;
     }
