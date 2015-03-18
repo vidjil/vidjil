@@ -1,0 +1,6 @@
+!LAUNCH: ../../vidjil -g ../../germline -i ../../data/chimera-fake.fa
+
+$ Do not segment on any germline, even incomplete
+1:segmented 0 reads
+
+
