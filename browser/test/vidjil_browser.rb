@@ -152,7 +152,7 @@ class VidjilBrowser < Watir::Browser
   
   # Return the div containing the tag selector
   def tag_selector
-    return div(:id => 'tagSelector')
+    return div(:class => 'tagSelector')
   end
 
   # Return the close button for tag selector
