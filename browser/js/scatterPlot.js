@@ -115,6 +115,7 @@ function ScatterPlot(id, model) {
         "V/J (genes)" : { "mode": "plot", "x" : "gene_v", "y": "gene_j"},
         "V/J (alleles)" : { "mode": "plot", "x" : "allele_v", "y": "allele_j"},
         "V/N length" : { "mode": "plot", "x" : "gene_v", "y": "n"},
+        "clone length / GC content " : { "mode": "plot", "x": "sequenceLength", "y" : "GCContent"},
         // "V/abundance" : { "mode": "plot", "x" : "gene_v", "y": "Size"},
         "V distribution" :            { "mode": "bar", "x" : "gene_v",         "y": "gene_j"},
         "Clone length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "gene_v"},
