@@ -164,6 +164,7 @@ ScatterPlot.prototype = {
         var self = this;
 
         this.label_container = d3.select("#" + this.id)
+            .attr("class", "scatterplot")
             .append("div")
             .attr("id", this.id + "_label_container")
 

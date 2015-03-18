@@ -121,6 +121,7 @@ Graph.prototype = {
             
         var self = this;
         this.vis = d3.select("#" + this.id)
+            .attr("class", "graph")
             .append("svg:svg")
             .attr("id", this.id + "_svg")
             .on("mouseup", function () {

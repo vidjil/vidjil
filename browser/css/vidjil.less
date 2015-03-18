@@ -77,6 +77,15 @@ ul{
   z-index:1;
 }
 
+.scatterplot, .graph{
+  -khtml-user-select: none;
+  -webkit-user-select: none;
+  -moz-user-select: -moz-none;
+  -ms-user-select: none;
+  user-select: none;
+  overflow:hidden;
+}
+
 #mid-container {
   position : fixed;
   top : 28px;
@@ -86,11 +95,6 @@ ul{
   width: calc(~"100%" - @margin + @margin);
   overflow: hidden;
   background: @background;
-  -khtml-user-select: none;
-  -webkit-user-select: none;
-  -moz-user-select: -moz-none;
-  -ms-user-select: none;
-  user-select: none;
   margin: @margin;
 }
 
@@ -120,7 +124,6 @@ ul{
 #visu, #visu2 {
   height : 50%;
   width : 100%;
-  overflow:hidden;
 }
 
 #visu2 {
