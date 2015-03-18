@@ -63,11 +63,11 @@ class Browser < MiniTest::Test
     if not ENV['LIVE_SERVER']
 
     # check the welcoming popup
-    assert ($b.div(:id => 'popup-msg').present?), "Popup message is not present at the opening of Vidjil"
+    assert ($b.div(:class => 'popup_msg').present?), "Popup message is not present at the opening of Vidjil"
     
     # close the welcoming popup
-    $b.div(:id => 'popup-msg').button(:text => 'ok').click
-    assert (not $b.div(:id => 'popup-msg').present?), "Popup message still present after trying to close it"
+    $b.div(:class => 'popup_msg').button(:text => 'ok').click
+    assert (not $b.div(:class => 'popup_msg').present?), "Popup message still present after trying to close it"
 
     end
     
