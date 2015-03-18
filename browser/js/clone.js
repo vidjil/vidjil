@@ -42,6 +42,7 @@ function Clone(data, model, hash) {
     this.m.clusters[hash]=[hash]
     this.m.clones[hash]=this
     this.tag = this.getTag();
+    this.computeGCContent()
 }
 
 
@@ -334,6 +335,28 @@ Clone.prototype = {
             return this.sequence
         }else{
             return "0";
+        }
+    },
+
+    computeGCContent: function () {
+        if (typeof (this.sequence) == 'undefined') {
+            this.GCContent = '?'
+            return
+        }
+
+        var gc = 0
+        for (var i in this.sequence) {
+            if ("GgCc".indexOf(this.sequence[i]) > -1)
+                gc++ }
+
+        this.GCContent = 100 * gc / this.sequence.length
+    },
+
+    getGCContent : function () {
+        if (typeof (this.GCContent) != 'undefined'){
+            return this.GCContent
+        }else{
+            return 0;
         }
     },
 
