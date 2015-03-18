@@ -105,6 +105,7 @@ function ScatterPlot(id, model) {
         ["allele_j", "allele J"],
         ["Size", "abundance"],
         ["sequenceLength", "clone length"],
+        ["GCContent", "GC content"],
         ["n", "N length"],
         ["lengthCDR3", "CDR3 length"]
     ];
@@ -805,6 +806,13 @@ ScatterPlot.prototype = {
                     return undefined;
                 })
                 break;
+            case "GCContent" :
+                this.makeBarTab(function(cloneID) {
+                    var value = m.clone(cloneID).getGCContent()
+                    if (typeof value != "undefined" && value != 0) return value;
+                    return undefined;
+                })
+                break;
             case "n" :
                 this.makeBarTab(function(cloneID) {
                     var value = m.clone(cloneID).getNlength()
@@ -841,6 +849,9 @@ ScatterPlot.prototype = {
                 break;
             case "sequenceLength" :
                 this.sortBarTab(function(cloneID) {return m.clone(cloneID).getSequenceLength()})
+                break;
+            case "GCContent" :
+                this.sortBarTab(function(cloneID) {return m.clone(cloneID).getGCContent()})
                 break;
             case "n" :
                 this.sortBarTab(function(cloneID) {return m.clone(cloneID).getNlength()})
@@ -1975,6 +1986,15 @@ ScatterPlot.prototype = {
                     return undefined;
                 })
                 break;
+            case "GCContent" :
+                axis.custom(function(cloneID) {
+                    var value = m.clone(cloneID)
+                        .getGCContent()
+                    if (typeof value != "undefined" && value != 0) return value;
+                    return undefined;
+                })
+                break;
+
             case "n" :
                 axis.custom(function(cloneID) {
                     var value = m.clone(cloneID)
