@@ -79,15 +79,19 @@
                 m = new Model();
                 
                 //bind views
-                new Graph("div1", m)
-                new ScatterPlot("div2", m)
-                new ScatterPlot("div3", m)
-                
+                gr = new Graph("div1", m)
+                sp1 = new ScatterPlot("div2", m)
+                sp2 = new ScatterPlot("div3", m)
 
                 //load vidjil file (will be simplified soon ..)
                 m.parseJsonData(vidjil_file,100)
                 m.loadGermline()
                 m.initClones()
+
+                //some interaction
+                m.changeColorMethod('V')
+                sp1.changeSplitMethod("sequenceLength", "gene_v", "bar")
+
             };
         </script>
 
