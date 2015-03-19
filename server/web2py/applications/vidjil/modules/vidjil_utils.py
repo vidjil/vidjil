@@ -92,7 +92,7 @@ def log_links(s):
     >>> log_links("abcdef")
     'abcdef'
     >>> log_links("[1234]abcdef")
-    '[<a class="loglink pointer" onclick="db.call(\\'admin/log\\', {\\'file\\': \\'../../mnt/result/tmp/out-001234/\\'})">1234</a>]abcdef'
+    '[<a class="loglink pointer" onclick="db.call(\\'admin/log\\', {\\'file\\': \\'../..//mnt/result/tmp/out-001234/001234.vidjil.log\\', \\'format\\': \\'raw\\'})">1234</a>]abcdef'
     >>> log_links("abcdef(234)")
     'abcdef(<a class="loglink pointer" onclick="db.call(\\'patient/info\\', {\\'id\\': \\'234\\'})">234</a>)'
     >>> log_links("abcdef(234)abcdef c11")
