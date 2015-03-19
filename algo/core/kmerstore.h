@@ -64,7 +64,8 @@ public:
    * @post All the k-mers in the sequence have been indexed.
    */
   void insert(const seqtype &sequence,
-              const string &label);
+              const string &label,
+              bool ignore_extended_nucleotides=true);
 
   /**
    * @param word: a k-mer
@@ -184,11 +185,12 @@ void IKmerStore<T>::insert(Fasta& input,
 
 template<class T> 
 void IKmerStore<T>::insert(const seqtype &sequence,
-                           const string &label){
+                           const string &label,
+                           bool ignore_extended_nucleotides){
   for(size_t i = 0 ; i + s < sequence.length() + 1 ; i++) {
     seqtype kmer = spaced(sequence.substr(i, s), seed);
 
-    if (has_extended_nucleotides(kmer))
+    if (ignore_extended_nucleotides && has_extended_nucleotides(kmer))
       continue;
 
     int strand = 1;

@@ -72,9 +72,9 @@ void KmerRepresentativeComputer::compute() {
   // First create an index on the set of reads
   IKmerStore<Kmer> *index = new MapKmerStore<Kmer>(getSeed(), revcomp);
 
-  // Add sequences to the index
+  // Add sequences to the index, allowing extended nucleotides (false)
   for (list<Sequence>::iterator it=sequences.begin(); it != sequences.end(); ++it) {
-    index->insert(it->sequence, it->label);
+    index->insert(it->sequence, it->label, false);
   }
   
   size_t max = sequences.size();
