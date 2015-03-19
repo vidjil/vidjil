@@ -78,7 +78,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
     ## filepath du fichier de séquence
     row = db(db.sequence_file.id==id_file).select()
     filename = row[0].data_file
-    output_filename = "%06d" % id_data
+    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
     seq_file = upload_folder+filename
 
     ## config de vidjil
@@ -178,7 +178,7 @@ def run_copy(id_file, id_config, id_data, id_fuse, clean_before=False, clean_aft
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
     upload_folder = defs.DIR_SEQUENCES
-    output_filename = "%06d" % id_data
+    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
     out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
     
     cmd = "rm -rf "+out_folder 
@@ -237,7 +237,7 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
     from subprocess import Popen, PIPE, STDOUT, os
     
     out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
-    output_filename = "%06d" % id_data
+    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
     
     if clean_before:
         cmd = "rm -rf "+out_folder 
@@ -307,7 +307,7 @@ def custom_fuse(file_list):
     
     random_id = random.randint(99999999,99999999999)
     out_folder = defs.DIR_OUT_VIDJIL_ID % random_id
-    output_filename = "%06d" % random_id
+    output_filename = defs.BASENAME_OUT_VIDJIL_ID % random_id
     
     cmd = "rm -rf "+out_folder 
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
