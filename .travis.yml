@@ -36,5 +36,7 @@ after_success:
   - make should_coveralls
 
 notifications:
+  email:
+    - notifications@vidjil.org
   webhooks:
     - https://buildtimetrend.herokuapp.com/travis
