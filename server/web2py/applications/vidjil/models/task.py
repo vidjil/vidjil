@@ -114,6 +114,8 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
         stream = open(results_filepath, 'rb')
     except IOError:
         print "!!! Vidjil failed, no .vidjil file"
+        res = {"message": "[%s] c%s: Vidjil FAILED - %s" % (id_data, id_config, out_folder)}
+        log.error(res)
         raise IOError
     
     ## Parse some info in .log
@@ -202,7 +204,9 @@ def run_copy(id_file, id_config, id_data, id_fuse, clean_before=False, clean_aft
     try:
         stream = open(results_filepath, 'rb')
     except IOError:
-        print "!!! Vidjil failed, no .vidjil file"
+        print "!!! 'copy' failed, no file"
+        res = {"message": "[%s] c%s: 'copy' FAILED - %s - %s" % (id_data, id_config, info, out_folder)}
+        log.error(res)
         raise IOError
     
     ## insertion dans la base de donnée
@@ -283,6 +287,8 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
         stream = open(fuse_filepath, 'rb')
     except IOError:
         print "!!! Fuse failed, no .fused file"
+        res = {"message": "[%s] c%s: 'fuse' FAILED - %s" % (id_data, id_config, output_file)}
+        log.error(res)
         raise IOError
 
     ts = time.time()
