@@ -1,0 +1,8 @@
+!LAUNCH: ../../vidjil -A -G ../../germline/TRG ./should-vdj-tests/ext-nucleotides-N.should-vdj.fa
+
+$ Segments on TRG
+1: TRG .* -> .* 1
+
+$ Computes a representative
+1:clone-001.* 48 bp
+
