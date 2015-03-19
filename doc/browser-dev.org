@@ -21,6 +21,7 @@ as well with the locus selection.
 - The link with the patient database/server is done with the =Database= object (=js/database.js=)
 
 - Other objects: =Report=, =Shortcut=
+  Extends functionalities but cannot be currently used outside the default vidjil browser.
 
 
 ** Integrating the browser
@@ -37,6 +38,7 @@ as well with the locus selection.
     <script data-main="js/app.js" src="js/lib/require.js"></script>
 
   - =js/main.js= is the main file that creates the different views and binds them to the model.
+    Or you can define a function named "main()" and use it to build your own interface (see =small_example.html=)
 
 
 
