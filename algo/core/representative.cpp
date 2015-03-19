@@ -115,11 +115,13 @@ void KmerRepresentativeComputer::compute() {
     size_t length_run = 0;
     size_t i = pos_required;
 
+    // Extend to the left, starting from 'pos_required'
       while (i > 0 && isSufficienlyExpressed(counts[i-1].count, max)) {
         i--;
         length_run++;
       }
     
+    // Extend to the right, starting from 'pos_required'
     for (i = pos_required; i < counts.size(); i++) {
       while (i < counts.size() && 
              isSufficienlyExpressed(counts[i].count, max)) {
