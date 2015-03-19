@@ -1451,6 +1451,8 @@ table.log textarea {
   color: white;
   font-family: monospace;
   white-space: pre-line;
+  overflow: auto;
+  max-height: 100%;
 }
 .console-flex {
   flex-grow: 1;
