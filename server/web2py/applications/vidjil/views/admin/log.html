@@ -3,6 +3,14 @@
 
 <h3></h3>
 
+{{ if format == 'raw': }}
+
+ <div class="console-div">
+        <div class="console-flex">{{ =raw }}</div>
+ </div>
+
+{{ else: }}
+
 <div class="db_block">
     <div class="db_block_left">
         search
@@ -43,3 +51,5 @@
     </table>
     <table class="db_table" id="db_fixed_header"></table>
 </div>
+
+{{ pass }}

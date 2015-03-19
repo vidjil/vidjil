@@ -57,6 +57,9 @@ def log():
         file = open(defs.DIR_LOG+request.vars["file"])
         log_format = request.vars['format'] if 'format' in request.vars else ''
 
+        if log_format == 'raw':
+            return {'raw': ''.join(file.readlines()), 'format': log_format}
+
         if "filter" not in request.vars :
             request.vars["filter"] = ""
             
