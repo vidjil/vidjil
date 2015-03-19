@@ -40,7 +40,27 @@ as well with the locus selection.
   - =js/main.js= creates the different views and binds them to the model.
     Another option is to directly define a function named =main()=, as in =small_example.html=.
 
+*** JSON .vidjil data
+
+Clone lists can be passed to the model through several ways:
+  - directly by the user (import/export)
+  - from a patient database (needs a database)
+  - trough the API (see below)
+  - or by directly providing data through Javascript (as in =small_example.html=)
+
+The first three solutions needs some further elements from the full =index.html=.
 
 
+**** Browser API
 
+The browser can be opened on a data file specified from a =data= attribute,
+and optionally on an analysis file specified from a =analysis= attribute,
+as in the following URLs on our test server:
 
+- http://rbx.vidjil.org/browser/?data=test.vidjil
+- http://rbx.vidjil.org/browser/?data=test.vidjil&analysis=test.analysis
+- http://rbx.vidjil.org/browser/?data=http://rbx.vidjil.org/browser/test.vidjil
+
+Both GET and POST requests are accepted.
+Note that the =browser/index.html= file and the =.vidjil/.analysis= files should be hosted on the same server.
+Otherwise, the server hosting the =.vidjil/.analysis= files must accept cross-domain queries.
