@@ -127,7 +127,7 @@ def log_links(s):
         start += 1
         end -= 1
 
-    elif task:
+    if task:
         call = "admin/log"
         args = {'file': '../../' + defs.DIR_OUT_VIDJIL_ID % task + defs.BASENAME_OUT_VIDJIL_ID % task + '.vidjil.log', 'format': 'raw'}
         (start, end) = m_task.span()
