@@ -2,8 +2,8 @@
 #include "segment.h"
 
 // Progress bar
-#define PROGRESS_POINT 10000
-#define PROGRESS_LINE 20
+#define PROGRESS_POINT 25000
+#define PROGRESS_LINE 40
 
 WindowExtractor::WindowExtractor(): out_segmented(NULL), out_unsegmented(NULL), out_affects(NULL), max_reads_per_window(~0){}
                                     
@@ -88,7 +88,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
 	cout << "." ;
 
 	if (!(nb_reads % (PROGRESS_POINT * PROGRESS_LINE)))
-	  cout << setw(6) << nb_reads / 1000 << "k reads " << fixed << setprecision(3) << setw(14) << bp_total / 1E6 << " Mbp" << endl ;
+	  cout << setw(10) << nb_reads / 1000 << "k reads " << fixed << setprecision(2) << setw(14) << bp_total / 1E6 << " Mbp" << endl ;
 
 	cout.flush() ;
       }
