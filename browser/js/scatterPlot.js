@@ -1964,6 +1964,11 @@ ScatterPlot.prototype = {
         }else{
             this.update();
         }
+
+        if (typeof m.graph != "undefined") {
+            m.graph.setOtherVisibility(this.splitX == "otherSize" || this.splitY == "otherSize")
+        }
+
     },
 
     
