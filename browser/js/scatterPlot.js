@@ -103,7 +103,8 @@ function ScatterPlot(id, model) {
         ["gene_j", "gene J"],
         ["allele_v", "allele V"],
         ["allele_j", "allele J"],
-        ["Size", "abundance"],
+        ["Size", "size"],
+        ["otherSize", "size (other point)"],
         ["sequenceLength", "clone length"],
         ["GCContent", "GC content"],
         ["n", "N length"],
@@ -119,7 +120,8 @@ function ScatterPlot(id, model) {
         // "V/abundance" : { "mode": "plot", "x" : "gene_v", "y": "Size"},
         "V distribution" :            { "mode": "bar", "x" : "gene_v",         "y": "gene_j"},
         "Clone length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "gene_v"},
-        "N length distribution" :     { "mode": "bar", "x" : "n",              "y": "gene_v"}
+        "N length distribution" :     { "mode": "bar", "x" : "n",              "y": "gene_v"},
+        "compare two samples" : { "mode": "plot", "x" : "Size", "y": "otherSize"}
     };
     this.default_preset = 1
 
@@ -845,6 +847,9 @@ ScatterPlot.prototype = {
                 break;
             case "gene_j" :
                 this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getJ(false)});
+                break;
+            case "otherSize" :
+                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getSize(m.tOther)});
                 break;
             case "Size" :
                 this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getSize()});
@@ -1976,8 +1981,11 @@ ScatterPlot.prototype = {
             case "gene_j" :
                 axis.useGermline(this.m.germlineJ, "J", false)
                 break;
+            case "otherSize" :
+                axis.useSize(true)
+                break;
             case "Size" :
-                axis.useSize()
+                axis.useSize(false)
                 break;
             case "sequenceLength" :
                 axis.custom(function(cloneID) {

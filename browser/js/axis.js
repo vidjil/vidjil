@@ -117,7 +117,7 @@ Axis.prototype = {
     /* use clone size
      * 
      * */
-    useSize: function () {
+    useSize: function (other) {
         this.init()
         var self = this;
         this.sizeScale = d3.scale.log()
@@ -126,7 +126,8 @@ Axis.prototype = {
             
         //clone position
         this.pos = function(cloneID) {
-            var size = self.m.clone(cloneID).getSize()
+            var time = other ? self.m.tOther : self.m.t
+            var size = self.m.clone(cloneID).getSize(time)
             if (size !=0 ) {
                 return self.sizeScale(size);
             }else{
