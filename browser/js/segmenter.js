@@ -50,6 +50,8 @@ function Segment(id, model) {
     this.m.view.push(this); //synchronisation au Model
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
     this.cgi_address = CGI_ADDRESS
+
+    this.first_clone = 0 ; // id of sequence at the top of the segmenter
     
     this.memtab = [];
     this.sequence = {};
@@ -447,6 +449,13 @@ Segment.prototype = {
         this.sequence[cloneID] = new Sequence(cloneID, this.m)
         
         var divParent = document.getElementById("listSeq");
+
+        // Am I the first clone in this segmenter ?
+        var previous_li = document.getElementById("listSeq").getElementsByTagName("li");
+        if (previous_li.length == 0) {
+            this.first_clone = cloneID
+        }
+
         var li = document.createElement('li');
         li.id = "seq" + cloneID;
         li.className = "sequence-line";
