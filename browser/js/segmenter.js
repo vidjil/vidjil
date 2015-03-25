@@ -611,7 +611,6 @@ Segment.prototype = {
 
             var seq = this.sequence[this.memTab[i]]
             spanM.innerHTML = seq.load(json.seq[i])
-                .diff(json.seq[0])
                 .toString()
 
         }
@@ -814,13 +813,13 @@ Sequence.prototype = {
     },
 
     //compare sequence with another string and surround change
-    diff: function (str) {
-        for (var i = 0; i < this.seq.length; i++) {
-            if (this.seq[i] != str[i]) {
-                this.seq[i] = "<span class='substitution'>" + this.seq[i] + "</span>"
-            }
+    spanify_mutation: function (self, other) {
+        if (segment.aligned && self != other) {
+            return "<span class='substitution' other='" + other + '-' + segment.first_clone + "'>" + self + "</span>"
         }
-        return this;
+	else {
+            return self
+	}
     },
 
     //return sequence completed with html tag
@@ -885,9 +884,9 @@ Sequence.prototype = {
 
                 // one character
                 if (segment.amino) {
-                    result += this.seqAA[i]
+                    result += this.spanify_mutation(this.seqAA[i], segment.sequence[segment.first_clone].seqAA[i])
                 }else{
-                    result += this.seq[i]
+                    result += this.spanify_mutation(this.seq[i], segment.sequence[segment.first_clone].seq[i])
                 }
 
                 // VDJ spans - end
