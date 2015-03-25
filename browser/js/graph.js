@@ -1066,6 +1066,17 @@ Graph.prototype = {
             this.mobil.pos = this.graph_col[this.m.samples.order.indexOf(this.m.t)];
             this.data_axis.push(this.mobil)
         }
+
+        //other selected time_point
+        if ( this.m.samples.order.indexOf(this.m.tOther) != -1 ){
+            this.mobilOther = {};
+            this.mobilOther.type = "axis_m_previous";
+            this.mobilOther.text = "";
+            this.mobilOther['class'] = "graph_text";
+            this.mobilOther.orientation = "vert";
+            this.mobilOther.pos = this.graph_col[this.m.samples.order.indexOf(this.m.tOther)];
+            this.data_axis.push(this.mobilOther)
+        }
         
         return this
     },

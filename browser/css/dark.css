@@ -180,6 +180,11 @@ line {
   opacity: 0.5 ;
   stroke-width: 20px;
 }
+.axis_m_other {
+  stroke: #839496;
+  opacity: 0.25 ;
+  stroke-width: 10px;
+}
 .axis_h {
   stroke: #839496;
 }
