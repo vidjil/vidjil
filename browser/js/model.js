@@ -72,7 +72,8 @@ Model.prototype = {
         this.data = {};
         this.data_info = {};
         
-        this.t = 0;
+        this.t = 0;          // Selected time/sample
+        this.tOther = 0;  // Other (previously) selected time/sample
         this.focus = -1;
         this.system_selected = []
         
@@ -389,6 +390,10 @@ Model.prototype = {
             self.samples.order = []
             for (var i = 0; i < self.samples.number; i++) self.samples.order.push(i);
         }
+        if (self.samples.order.length >= 2) {
+            self.tOther = 1
+        }
+
         if (typeof self.samples.names =='undefined'){
             self.samples.names = []
             for (var i = 0; i < self.samples.number; i++) self.samples.names.push("");
@@ -1479,6 +1484,7 @@ Model.prototype = {
      * */
     changeTime: function (newT) {
         console.log("changeTime()" + newT)
+        this.tOther = this.t
         this.t = newT;
         this.update();
         return this.t
