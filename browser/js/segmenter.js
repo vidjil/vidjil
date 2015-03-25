@@ -551,8 +551,8 @@ Segment.prototype = {
                 $(".seq-mobil").css({ opacity: 1 })
             },
             success: function (result) {
-                self.displayAjaxResult(result);
                 self.aligned = true ;
+                self.displayAjaxResult(result);
             },
             error: function () {
                 console.log({"type": "flash", "msg": "cgi error : impossible to connect", "priority": 2});
@@ -591,28 +591,30 @@ Segment.prototype = {
     resetAlign: function() {
         var selected = this.m.getSelected();
 
+        this.aligned = false
+
         for (var i = 0; i < selected.length; i++) {
             var spanM = document.getElementById("m" + selected[i])
             spanM.innerHTML =  this.sequence[selected[i]].load().toString()
         }
-
-        this.aligned = false
     },
     
     displayAjaxResult: function(file) {
 
         var json = JSON.parse(file)
 
+	// Load all (aligned) sequences
+        for (var i = 0; i < json.seq.length; i++) {
+            this.sequence[this.memTab[i]].load(json.seq[i])
+	}
+
+	// Render all (aligned) sequences
         for (var i = 0; i < json.seq.length; i++) {
 
             // global container
             var spanM = document.getElementById("m" + this.memTab[i]);
-            spanM.innerHTML = "";
-
             var seq = this.sequence[this.memTab[i]]
-            spanM.innerHTML = seq.load(json.seq[i])
-                .toString()
-
+            spanM.innerHTML = seq.toString()
         }
 
     },
