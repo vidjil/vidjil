@@ -166,15 +166,16 @@ def index():
     isAdmin = auth.has_membership("admin")
     
     
-    
     ##retrieve patient list 
     query = db(
-        (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) 
+        (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) &
+        (auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) 
     ).select(
         db.patient.ALL,
         count,
         orderby = ~db.patient.id,
-        left=db.sequence_file.on(db.patient.id == db.sequence_file.patient_id),
+        left=[db.sequence_file.on(db.patient.id == db.sequence_file.patient_id), 
+              db.config.on(db.fused_file.config_id == db.config.id)],
         groupby=db.patient.id
     )
     
@@ -194,7 +195,8 @@ def index():
         row.most_used_conf = -1
         if len(query_conf) > 0 :
             row.most_used_conf = query_conf[0].fused_file.config_id
-
+        
+        
         ##add groups info for each patient
         row.groups=""
         for row3 in db( 
@@ -210,7 +212,7 @@ def index():
         
         for row4 in query_size:
             row.size += row4.size_file
-    
+
     ##sort result
     reverse = False
     if request.vars["reverse"] == "true" :
@@ -229,7 +231,7 @@ def index():
         request.vars["filter"] = ""
         
     for row in query :
-        row.string = (row.confs+row.groups+row.patient.last_name+row.patient.first_name+str(row.patient.birth)).lower()+row.patient.info
+        row.string = (row.confs+row.groups+row.patient.last_name+row.patient.first_name+str(row.patient.birth)).lower()+str(row.patient.info)
     query = query.find(lambda row : vidjil_utils.filter(row.string,request.vars["filter"]) )
 
         
