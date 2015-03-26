@@ -15,6 +15,7 @@ request.requires_https()
 if not request.env.web2py_runtime_gae:
     ## if NOT running on Google App Engine use SQLite or other DB
     db = DAL('sqlite://storage.sqlite',pool_size=1,check_reserved=['all'])
+    ## db = DAL('mysql://root:password@localhost/vidjil5',pool_size=1,check_reserved=['all'])
 else:
     ## connect to Google BigTable (optional 'google:datastore://namespace')
     db = DAL('google:datastore')
@@ -94,8 +95,7 @@ db.define_table('patient',
                 Field('birth','date'),
                 Field('info','text'),
                 Field('id_label','string'),
-                Field('creator','reference auth_user')
-                )
+                Field('creator','reference auth_user'))
 
 '''
 db.patient.first_name.requires = IS_NOT_EMPTY( error_message='input needed' )
@@ -118,7 +118,7 @@ db.define_table('sequence_file',
                 Field('provider','reference auth_user'),
                 Field('data_file', 'upload', 
                       uploadfolder=defs.DIR_SEQUENCES,
-                      length=1000000000000, autodelete=True))
+                      length=4294967295, autodelete=True))
 
 
 
@@ -128,7 +128,7 @@ db.define_table('standard_file',
                 Field('info','text'),
                 Field('data_file', 'upload',
                       uploadfolder=defs.DIR_SEQUENCES,
-                      autodelete=True, length=1000000000000))
+                      autodelete=True, length=4294967295))
 
 
 
@@ -147,17 +147,17 @@ db.define_table('results_file',
                 Field('scheduler_task_id', 'integer'),
                 Field('data_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
-                      length=1000000000000, autodelete=True))
+                      length=4294967295, autodelete=True))
 
 db.define_table('fused_file',
                 Field('patient_id', 'reference patient'),
                 Field('config_id', 'reference config'),
-                Field('fuse_date','datetime'),
+                Field('fuse_date','datetime', default="1970-01-01 00:00:00"),
                 Field('status', 'string'),
                 Field('sequence_file_list', 'string'),
                 Field('fused_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
-                      length=1000000000000, autodelete=True))
+                      length=4294967295, autodelete=True))
 
 db.define_table('analysis_file',
                 Field('patient_id', 'reference patient'),
@@ -166,52 +166,8 @@ db.define_table('analysis_file',
                 Field('status', 'string'),
                 Field('analysis_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
-                      length=1000000000000, autodelete=True))
+                      length=4294967295, autodelete=True))
 
-
-if db(db.auth_user.id > 0).count() == 0:
-    id_first_user=""
-        
-    ## création du premier user
-    id_first_user=db.auth_user.insert(
-        password = db.auth_user.password.validate('1234')[0],
-        email = 'plop@plop.com',
-        first_name = 'System',
-        last_name = 'Administrator'
-    )
-            
-    ## création des groupes de base
-    id_admin_group=db.auth_group.insert(role='admin')
-    id_sa_group=db.auth_group.insert(role='user_1')
-    db.auth_group.insert(role="public")
-            
-    db.auth_membership.insert(user_id=id_first_user, group_id=id_admin_group)
-    db.auth_membership.insert(user_id=id_first_user, group_id=id_sa_group)
-    
-    ##création des configs de base
-    id_config_TRG = db.config.insert(
-        name = 'TRG',
-        command = '-c clones -z 100 -R 1 -r 1 -G germline/TRG ',
-        info = 'default trg config'
-    )
-    
-    id_config_IGH = db.config.insert(
-        name = 'IGH',
-        command = '-c clones -d -z 100 -R 1 -r 1 -G germline/IGH ',
-        info = 'default igh config'
-    )
-    
-    ## permission
-    ## system admin have admin/read/create rights on all patients, groups and configs
-    auth.add_permission(id_admin_group, 'admin', db.patient, 0)
-    auth.add_permission(id_admin_group, 'admin', db.auth_group, 0)
-    auth.add_permission(id_admin_group, 'admin', db.config, 0)
-    auth.add_permission(id_admin_group, 'read', db.patient, 0)
-    auth.add_permission(id_admin_group, 'read', db.auth_group, 0)
-    auth.add_permission(id_admin_group, 'read', db.config, 0)
-    auth.add_permission(id_admin_group, 'create', db.patient, 0)
-    auth.add_permission(id_admin_group, 'create', db.auth_group, 0)
-    auth.add_permission(id_admin_group, 'create', db.config, 0)
 
 
 ## after defining tables, uncomment below to enable auditing
