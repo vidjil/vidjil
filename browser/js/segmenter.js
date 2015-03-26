@@ -50,6 +50,8 @@ function Segment(id, model) {
     this.m.view.push(this); //synchronisation au Model
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
     this.cgi_address = CGI_ADDRESS
+
+    this.first_clone = 0 ; // id of sequence at the top of the segmenter
     
     this.memtab = [];
     this.sequence = {};
@@ -447,6 +449,13 @@ Segment.prototype = {
         this.sequence[cloneID] = new Sequence(cloneID, this.m)
         
         var divParent = document.getElementById("listSeq");
+
+        // Am I the first clone in this segmenter ?
+        var previous_li = document.getElementById("listSeq").getElementsByTagName("li");
+        if (previous_li.length == 0) {
+            this.first_clone = cloneID
+        }
+
         var li = document.createElement('li');
         li.id = "seq" + cloneID;
         li.className = "sequence-line";
@@ -542,8 +551,8 @@ Segment.prototype = {
                 $(".seq-mobil").css({ opacity: 1 })
             },
             success: function (result) {
-                self.displayAjaxResult(result);
                 self.aligned = true ;
+                self.displayAjaxResult(result);
             },
             error: function () {
                 console.log({"type": "flash", "msg": "cgi error : impossible to connect", "priority": 2});
@@ -582,29 +591,30 @@ Segment.prototype = {
     resetAlign: function() {
         var selected = this.m.getSelected();
 
+        this.aligned = false
+
         for (var i = 0; i < selected.length; i++) {
             var spanM = document.getElementById("m" + selected[i])
             spanM.innerHTML =  this.sequence[selected[i]].load().toString()
         }
-
-        this.aligned = false
     },
     
     displayAjaxResult: function(file) {
 
         var json = JSON.parse(file)
 
+	// Load all (aligned) sequences
+        for (var i = 0; i < json.seq.length; i++) {
+            this.sequence[this.memTab[i]].load(json.seq[i])
+	}
+
+	// Render all (aligned) sequences
         for (var i = 0; i < json.seq.length; i++) {
 
             // global container
             var spanM = document.getElementById("m" + this.memTab[i]);
-            spanM.innerHTML = "";
-
             var seq = this.sequence[this.memTab[i]]
-            spanM.innerHTML = seq.load(json.seq[i])
-                .diff(json.seq[0])
-                .toString()
-
+            spanM.innerHTML = seq.toString()
         }
 
     },
@@ -805,13 +815,13 @@ Sequence.prototype = {
     },
 
     //compare sequence with another string and surround change
-    diff: function (str) {
-        for (var i = 0; i < this.seq.length; i++) {
-            if (this.seq[i] != str[i]) {
-                this.seq[i] = "<span class='substitution'>" + this.seq[i] + "</span>"
-            }
+    spanify_mutation: function (self, other) {
+        if (segment.aligned && self != other) {
+            return "<span class='substitution' other='" + other + '-' + segment.first_clone + "'>" + self + "</span>"
         }
-        return this;
+	else {
+            return self
+	}
     },
 
     //return sequence completed with html tag
@@ -876,9 +886,9 @@ Sequence.prototype = {
 
                 // one character
                 if (segment.amino) {
-                    result += this.seqAA[i]
+                    result += this.spanify_mutation(this.seqAA[i], segment.sequence[segment.first_clone].seqAA[i])
                 }else{
-                    result += this.seq[i]
+                    result += this.spanify_mutation(this.seq[i], segment.sequence[segment.first_clone].seq[i])
                 }
 
                 // VDJ spans - end

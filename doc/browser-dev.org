@@ -1,4 +1,4 @@
-#+TITLE: Vidjil Algorithm -- Browser development documentation
+#+TITLE: Vidjil Browser -- development documentation
 #+AUTHOR: The Vidjil team (Marc, Mathieu, Mikaël and Tatiana)
 
 
@@ -21,7 +21,7 @@ as well with the locus selection.
 - The link with the patient database/server is done with the =Database= object (=js/database.js=)
 
 - Other objects: =Report=, =Shortcut=
-  Extends functionalities but cannot be currently used outside the default vidjil browser.
+  Extends functionalities but requires elements from the full =index.html=.
 
 
 ** Integrating the browser
@@ -37,10 +37,30 @@ as well with the locus selection.
   - The wonderful library =require.js= is used, so there is only one file to include
     <script data-main="js/app.js" src="js/lib/require.js"></script>
 
-  - =js/main.js= is the main file that creates the different views and binds them to the model.
-    Or you can define a function named "main()" and use it to build your own interface (see =small_example.html=)
+  - =js/main.js= creates the different views and binds them to the model.
+    Another option is to directly define a function named =main()=, as in =small_example.html=.
+
+*** JSON .vidjil data
+
+Clone lists can be passed to the model through several ways:
+  - directly by the user (import/export)
+  - from a patient database (needs a database)
+  - trough the API (see below)
+  - or by directly providing data through Javascript (as in =small_example.html=)
+
+The first three solutions needs some further elements from the full =index.html=.
 
 
+**** Browser API
 
+The browser can be opened on a data file specified from a =data= attribute,
+and optionally on an analysis file specified from a =analysis= attribute,
+as in the following URLs on our test server:
 
+- http://rbx.vidjil.org/browser/?data=test.vidjil
+- http://rbx.vidjil.org/browser/?data=test.vidjil&analysis=test.analysis
+- http://rbx.vidjil.org/browser/?data=http://rbx.vidjil.org/browser/test.vidjil
 
+Both GET and POST requests are accepted.
+Note that the =browser/index.html= file and the =.vidjil/.analysis= files should be hosted on the same server.
+Otherwise, the server hosting the =.vidjil/.analysis= files must accept cross-domain queries.

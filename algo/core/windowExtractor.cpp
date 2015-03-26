@@ -1,6 +1,10 @@
 #include "windowExtractor.h"
 #include "segment.h"
 
+// Progress bar
+#define PROGRESS_POINT 25000
+#define PROGRESS_LINE 40
+
 WindowExtractor::WindowExtractor(): out_segmented(NULL), out_unsegmented(NULL), out_affects(NULL), max_reads_per_window(~0){}
                                     
 WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *multigermline,
@@ -18,6 +22,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
     }
 
   int nb_reads_all = 0;
+  int bp_total = 0;
 
   while (reads->hasNext() && (int) nb_reads != stop_after) {
     reads->next();
@@ -74,7 +79,23 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
     if (out_affects) {
       *out_affects << "#" << seg->getInfoLine() << endl;
     }
+
+    // Progress bar
+    bp_total += read_length;
+
+    if (!(nb_reads % PROGRESS_POINT))
+      {
+	cout << "." ;
+
+	if (!(nb_reads % (PROGRESS_POINT * PROGRESS_LINE)))
+	  cout << setw(10) << nb_reads / 1000 << "k reads " << fixed << setprecision(2) << setw(14) << bp_total / 1E6 << " Mbp" << endl ;
+
+	cout.flush() ;
+      }
   }
+
+  cout << endl ;
+
   return windowsStorage;
 }
 

@@ -47,6 +47,8 @@ SPLIT_SEQUENCES = {'/DV': ['TRAV', 'TRDV']}
 SPECIES = {
     "Homo sapiens": './', 
     "Mus musculus": 'mus-musculus/',
+    "Rattus norvegicus": 'rattus-norvegicus/',
+    "Rattus norvegicus_BN/SsNHsdMCW": 'rattus-norvegicus/',
 }
 
 for l in sys.stdin:

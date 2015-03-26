@@ -102,6 +102,7 @@ function Graph(id, model) {
     this.text_position_x = 60;
 
     this.m.view.push(this)
+    this.m.graph = this // TODO: find a better way to do this
 }
 
 Graph.prototype = {
@@ -1066,10 +1067,28 @@ Graph.prototype = {
             this.mobil.pos = this.graph_col[this.m.samples.order.indexOf(this.m.t)];
             this.data_axis.push(this.mobil)
         }
+
+        //other selected time_point
+        if ( this.m.samples.order.indexOf(this.m.tOther) != -1 ){
+            this.mobilOther = {};
+            this.mobilOther.type = "axis_m_other";
+            this.mobilOther.text = "";
+            this.mobilOther['class'] = "graph_text";
+            this.mobilOther.orientation = "vert";
+            this.mobilOther.pos = this.graph_col[this.m.samples.order.indexOf(this.m.tOther)];
+            this.data_axis.push(this.mobilOther)
+        }
         
         return this
     },
-    
+
+    setOtherVisibility: function (visible) {
+        if (visible) {
+            $(".axis_m_other").show("fast")
+        } else {
+            $(".axis_m_other").hide("fast")
+        }
+    },
 
 /* ************************************************ *
  * RENDERER FUNCTIONS
