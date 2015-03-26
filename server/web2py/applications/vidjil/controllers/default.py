@@ -28,6 +28,58 @@ def index():
 def help():
     return dict(message=T('help i\'m lost'))
 
+
+def init_db():
+    if db(db.auth_user.id > 0).count() == 0:
+        id_first_user=""
+
+        ## création du premier user
+        id_first_user=db.auth_user.insert(
+            password = db.auth_user.password.validate('1234')[0],
+            email = 'plop@plop.com',
+            first_name = 'System',
+            last_name = 'Administrator'
+        )
+
+        ## création des groupes de base
+        id_admin_group=db.auth_group.insert(role='admin')
+        id_sa_group=db.auth_group.insert(role='user_1')
+        db.auth_group.insert(role="public")
+
+        db.auth_membership.insert(user_id=id_first_user, group_id=id_admin_group)
+        db.auth_membership.insert(user_id=id_first_user, group_id=id_sa_group)
+
+        ##création des configs de base
+        id_config_TRG = db.config.insert(
+            name = 'TRG',
+            command = '-c clones -z 100 -R 1 -r 1 -G germline/TRG ',
+            info = 'default trg config'
+        )
+
+        id_config_IGH = db.config.insert(
+            name = 'IGH',
+            command = '-c clones -d -z 100 -R 1 -r 1 -G germline/IGH ',
+            info = 'default igh config'
+        )
+
+        ## permission
+        ## system admin have admin/read/create rights on all patients, groups and configs
+        auth.add_permission(id_admin_group, 'admin', db.patient, 0)
+        auth.add_permission(id_admin_group, 'admin', db.auth_group, 0)
+        auth.add_permission(id_admin_group, 'admin', db.config, 0)
+        auth.add_permission(id_admin_group, 'read', db.patient, 0)
+        auth.add_permission(id_admin_group, 'read', db.auth_group, 0)
+        auth.add_permission(id_admin_group, 'read', db.config, 0)
+        auth.add_permission(id_admin_group, 'create', db.patient, 0)
+        auth.add_permission(id_admin_group, 'create', db.auth_group, 0)
+        auth.add_permission(id_admin_group, 'create', db.config, 0)
+
+def init_from_csv():
+    if db(db.auth_user.id > 0).count() == 0:
+        db.import_from_csv_file(open('backup.csv', 'rb'), null='')
+        db.scheduler_task.truncate()
+        db.scheduler_run.truncate()
+
 #########################################################################
 ## add a scheduller task to run vidjil on a specific sequence file
 # need sequence_file_id, config_id
