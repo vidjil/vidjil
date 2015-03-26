@@ -56,9 +56,8 @@
             </tr>
         </thead>
         <tbody>
-
             {{for row in query :}}
-                {{if row.results_file.scheduler_task_id is None :}}
+                {{if row.results_file.scheduler_task_id is None or db.scheduler_task[row.results_file.scheduler_task_id ] is None:}}
                     {{status = '' }}
                 {{else:}}
                     {{status = db.scheduler_task[row.results_file.scheduler_task_id ].status }}

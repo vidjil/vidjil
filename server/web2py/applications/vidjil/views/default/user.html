@@ -3,6 +3,15 @@
 <h2>{{=T( request.args(0).replace('_',' ').capitalize() )}}</h2>
 
 <div>
+{{if db(db.auth_user.id > 0).count() == 0:}}
+
+<a class="button" onclick="db.call('default/init_db');">init database</a>
+<a class="button" onclick="db.call('default/init_from_csv');">load backup</a>
+    
+{{else:}}
+    
+    
+    
 {{form['_id'] ="login_form"}}
     
 {{=form}}
@@ -52,6 +61,7 @@ This software is for research use only and comes with no warranty.
   concerning storage and processing of health-related personal data.
 </p>
 
+{{pass}}
 {{pass}}
 
 </div>
