@@ -117,10 +117,55 @@ def repair_missing_files():
             
             if not os.path.exists(seq_file) :
                 db.sequence_file[row.id] = dict(data_file = None)
-                flist += " : " + row.filename
+                flist += " : " + str(row.filename)
             else :
                 size = os.path.getsize(seq_file)
                 db.sequence_file[row.id] = dict(size_file = size)
                 
         res = {"success" : "true", "message" : "references to missing files have been removed from the database"+flist}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+    
+def make_backup():
+    if auth.has_membership("admin"):
+        
+        db.export_to_csv_file(open('backup.csv', 'wb'))
+                
+        res = {"success" : "true", "message" : ""}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
+    
+def repair():
+    if auth.has_membership("admin"):
+        
+        flist = "fix creator "
+        for row in db(db.patient.creator == None).select() : 
+            flist += " : " + str(row.id)
+            db.patient[row.id] = dict(creator = auth.user_id)
+            
+        flist += "fix event "
+        for row in db(db.auth_event.user_id == None).select() : 
+            flist += " : " + str(row.id)
+            db.auth_event[row.id] = dict(user_id = auth.user_id)
+            
+        flist += "fix permission "
+        db(db.auth_permission.group_id == None).delete();
+        
+        flist += "fix sequence_file provider "
+        for row in db(db.sequence_file.provider == None).select() :
+            flist += " : " + str(row.id)
+            db.sequence_file[row.id] = dict(provider = auth.user_id)
+      
+        flist += "fix sequence_file patient "
+        db(db.sequence_file.patient_id == None).delete();
+        
+        flist += "fix results_file "
+        db(db.results_file.sequence_file_id == None).delete()
+    
+        flist += "fix fused file "
+        for row in db(db.fused_file.fuse_date == None).select() :
+            flist += " : " + str(row.id)
+            db.fused_file[row.id] = dict(fuse_date = "1970-01-01 00:00:00")
+        
+        res = {"success" : "true", "message" : "plop!! " + flist}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
