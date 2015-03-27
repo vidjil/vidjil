@@ -849,7 +849,7 @@ Uploader.prototype = {
                 html += "<span class='button' onclick='db.uploader.cancel("+id+")'>cancel</span>"
                 break;
             case "server_check":
-                html += "<span class='loading_seq'>server check</span>"
+                html += "<span class='loading_seq'> processing file on server </span>"
                 break;
             case "canceled":
                 html += "<span class='loading_status'> canceled by user </span>"
