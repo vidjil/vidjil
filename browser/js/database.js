@@ -1,4 +1,7 @@
 DB_ADDRESS = ""
+DB_TIMEOUT_CALL = 5000                // Regular call
+DB_TIMEOUT_GET_DATA = 15000           // Get patient/sample .data
+DB_TIMEOUT_GET_CUSTOM_DATA = 1200000  // Launch custum fused sample .data
 
 function Database(model, address) {
     var self = this;
@@ -105,7 +108,7 @@ Database.prototype = {
             context: self,         //we can't do closure with ajax event handler so we use context to keepref
             url: url,
             contentType: 'text/plain',
-            timeout: 5000,
+            timeout: DB_TIMEOUT_CALL,
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.display_result(result, url, args)
@@ -207,7 +210,7 @@ Database.prototype = {
             $('#data_form').ajaxForm({
                 type: "POST",
                 cache: false,
-                timeout: 5000,
+                timeout: DB_TIMEOUT_CALL,
                 crossDomain: true,
                 url      : $(this).attr('action'),
                 data     : $(this).serialize(),
@@ -232,7 +235,7 @@ Database.prototype = {
             $('#login_form').ajaxForm({
                 type: "POST",
                 cache: false,
-                timeout: 5000,
+                timeout: DB_TIMEOUT_CALL,
                 crossDomain: true,
                 url      : $(this).attr('action'),
                 data     : $(this).serialize(),
@@ -354,7 +357,7 @@ Database.prototype = {
         //envoye de la requete ajax
         $.ajax({
             type: "POST",
-            timeout: 5000,
+            timeout: DB_TIMEOUT_CALL,
             crossDomain: true,
             url: self.db_address + controller_name + "?" + this.argsToStr(args),
             xhrFields: {withCredentials: true},
@@ -411,7 +414,7 @@ Database.prototype = {
         
         $.ajax({
             type: "POST",
-            timeout: 15000,
+            timeout: DB_TIMEOUT_GET_DATA,
             crossDomain: true,
             url: self.db_address + "default/get_data" + "?" + this.argsToStr(args),
             xhrFields: {withCredentials: true},
@@ -466,7 +469,7 @@ Database.prototype = {
         this.m.wait("please wait : this operation can take a few minutes")
         $.ajax({
             type: "POST",
-            timeout: 1200000,
+            timeout: DB_TIMEOUT_GET_CUSTOM_DATA,
             crossDomain: true,
             url: self.db_address + "default/get_custom_data" + arg,
             xhrFields: {withCredentials: true},
