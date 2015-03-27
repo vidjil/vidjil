@@ -41,13 +41,13 @@
         
        {{for row in query :}}
            <tr class="pointer" onclick="db.call('patient/info', {'id' :'{{=row.patient.id}}' , 'config_id' : {{=row.most_used_conf}} } )" >
-                <td> {{=vidjil_utils.anon(row.patient.id, auth.user_id)}} </td>
+                <td> {{=row.name}} </td>
                 <td> {{=row.patient.birth }} </td>
                 <td> {{=row.patient.info }} </td>
                 <td> {{=row.confs}}</td>
 {{if isAdmin:}} <td> {{=row.groups}}</td>{{pass}}
 {{if isAdmin:}} <td> {{=row.patient.creator}} {{if db.auth_user[row.patient.creator] :}}{{=db.auth_user[row.patient.creator].last_name}}{{pass}}</td>{{pass}}
-                <td> {{=row[count]}} ({{=vidjil_utils.format_size(row.size)}}) </td>
+                <td> {{=row.file_count}} ({{=vidjil_utils.format_size(row.size)}}) </td>
                
                
 {{if isAdmin:}} <td onclick="db.call('patient/permission', {'id' :'{{=row.patient.id}}'} )" > p </td> {{else:}} <td></td> {{pass}}

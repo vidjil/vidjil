@@ -165,78 +165,84 @@ def index():
     count = db.sequence_file.id.count()
     isAdmin = auth.has_membership("admin")
     
+    query_anon = query = db((db.auth_permission.name == "anon") & (db.auth_permission.table_name == "patient")).select(
+        db.patient.ALL, db.auth_permission.ALL,
+        left=[db.auth_permission.on(db.patient.id == db.auth_permission.record_id )])
+    anon={}
+    for row in query_anon:
+        anon[row.patient.id] = row.auth_permission.name
     
     ##retrieve patient list 
     query = db(
         (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) &
-        (auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) 
+        (auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) &
+        (db.auth_permission.name == "read") & (db.auth_permission.table_name == "patient")
     ).select(
-        db.patient.ALL,
-        count,
+        db.patient.ALL, db.fused_file.ALL, db.config.ALL, db.sequence_file.ALL, db.auth_permission.ALL,
         orderby = ~db.patient.id,
         left=[db.sequence_file.on(db.patient.id == db.sequence_file.patient_id), 
-              db.config.on(db.fused_file.config_id == db.config.id)],
-        groupby=db.patient.id
+              db.fused_file.on( db.patient.id == db.fused_file.patient_id),
+              db.config.on(db.fused_file.config_id == db.config.id),
+              db.auth_permission.on(db.patient.id == db.auth_permission.record_id )]
     )
-    
-    for row in query :
-        
-        ##add confs info for each patient
-        row.confs=""
-        co = db.fused_file.id.count()
-        query_conf = db( (auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) &
-                         (db.config.id == db.fused_file.config_id) &
-                         (db.fused_file.patient_id == row.patient.id) 
-                        ).select(db.fused_file.config_id, co, groupby=db.fused_file.config_id).sort(lambda row: co)
-        
-        for row2 in query_conf:
-            row.confs += " " + db.config[row2.fused_file.config_id].name
-        
-        row.most_used_conf = -1
-        if len(query_conf) > 0 :
-            row.most_used_conf = query_conf[0].fused_file.config_id
-        
-        
-        ##add groups info for each patient
-        row.groups=""
-        for row3 in db( 
-           (db.auth_permission.name == "read") &
-           (db.auth_permission.table_name == "patient") &
-           (db.auth_permission.record_id == row.patient.id)
-          ).select( orderby=db.auth_permission.group_id, distinct=True )  :
-            if db.auth_permission[row3.id].group_id > 2:
-                row.groups += " " + str(db.auth_permission[row3.id].group_id)
-                
-        row.size = 0
-        query_size = db( db.sequence_file.patient_id == row.patient.id ).select()
-        
-        for row4 in query_size:
-            row.size += row4.size_file
 
+    result = []
+    patient_id = 0
+    sequence_file_id = 0
+    
+    for i, row in enumerate(query) :
+        if row.patient.id != patient_id :
+            patient_id = row.patient.id
+            row2 = row
+            row2.conf_list = []
+            row2.group_list = []
+            row2.file_count = 0
+            row2.size = 0
+            result.append(row2)
+                
+        if row.sequence_file.id != sequence_file_id :
+            row2.file_count += 1
+            row2.size += row.sequence_file.size_file
+            
+        row2.conf_list.append(row.config.name)
+        row2.group_list.append(str(row.auth_permission.group_id))
+        
+
+    for row in result :
+        row.most_used_conf = max(set(row.conf_list), key=row.conf_list.count)
+        row.confs = ", ".join(list(set(row.conf_list)))
+        row.groups = ", ".join(list(set(row2.group_list)))
+        row.name = row.patient.last_name + " " + row.patient.first_name
+        if row.patient.id in anon.keys() :
+            try:
+                ln = unicode(row.patient.last_name, 'utf-8')
+            except UnicodeDecodeError:
+                ln = row.patient.last_name
+            row.name = ln[:3]
+
+        
     ##sort result
     reverse = False
     if request.vars["reverse"] == "true" :
         reverse = True
     if request.vars["sort"] == "configs" :
-        query = query.sort(lambda row : row.confs, reverse=reverse)
+        result = sorted(result, key = lambda row : row.confs, reverse=reverse)
     elif request.vars["sort"] == "groups" :
-        query = query.sort(lambda row : row.groups, reverse=reverse)
+        result = sorted(result, key = lambda row : row.groups, reverse=reverse)
     elif request.vars["sort"] == "files" :
-        query = query.sort(lambda row : row[count], reverse=reverse)
+        result = sorted(result, key = lambda row : row[count], reverse=reverse)
     elif "sort" in request.vars:
-        query = query.sort(lambda row : row.patient[request.vars["sort"]], reverse=reverse)
+        result = sorted(result, key = lambda row : row.patient[request.vars["sort"]], reverse=reverse)
     
     ##filter
     if "filter" not in request.vars :
         request.vars["filter"] = ""
         
-    for row in query :
+    for row in result :
         row.string = (row.confs+row.groups+row.patient.last_name+row.patient.first_name+str(row.patient.birth)).lower()+str(row.patient.info)
-    query = query.find(lambda row : vidjil_utils.filter(row.string,request.vars["filter"]) )
+    result = filter(lambda row : vidjil_utils.filter(row.string,request.vars["filter"]), result )
 
-        
-        
-    return dict(query = query,
+    return dict(query = result,
                 count = count,
                 isAdmin = isAdmin,
                 reverse = reverse)
