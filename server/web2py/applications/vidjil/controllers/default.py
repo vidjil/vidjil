@@ -38,7 +38,7 @@ def logger():
 
     try:
         lvl = int(request.vars['lvl'])
-    else:
+    except:
         lvl = logging.INFO
     log.log(lvl, res)
 
