@@ -764,6 +764,7 @@ Uploader.prototype = {
                 self.queue[id].jqXHR = jqxhr
             },
             success: function (result) {
+                db.info("upload completed - " + self.queue[id].filename)
                 self.queue[id].status = "completed"
                 self.next()
                 self.reload(id)
@@ -774,6 +775,7 @@ Uploader.prototype = {
                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                 } else {
                     if (status !== "abort"){
+                        db.warning("upload may have failed - " + self.queue[id].filename)
                         self.queue[id].status = "upload_error"
                         console.log({"type": "flash", "msg": "upload " + self.queue[id].filename + " : " + status , "priority": 2});
                     }
@@ -784,7 +786,8 @@ Uploader.prototype = {
     },
     
     cancel: function (id) {
-        console.log({"type": "flash", "msg": "cancel upload : " + this.queue[id].filename, "priority": 1});
+        db.warning("upload canceled - " + this.queue[id].filename)
+        console.log({"type": "flash", "msg": "upload canceled : " + this.queue[id].filename, "priority": 1});
         this.queue[id].jqXHR.abort()
         this.queue[id].status = "canceled"
         this.reload(id)
