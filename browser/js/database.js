@@ -672,7 +672,15 @@ Database.prototype = {
         }
         
         return args
-    }
+    },
+
+
+    log : function (lvl, msg) { this.request('default/logger', {'lvl': lvl, 'msg': msg}, true) },
+    debug:    function(msg) { this.log(10, msg) },
+    info:     function(msg) { this.log(20, msg) },
+    warn:     function(msg) { this.log(30, msg) },
+    error:    function(msg) { this.log(40, msg) },
+    critical: function(msg) { this.log(50, msg) }
     
 }
 
