@@ -351,7 +351,7 @@ Database.prototype = {
      * idem que call() mais la réponse n'est pas une page html a afficher
      * mais simplement une confirmation que la requete a été entendu
      */
-    request: function (controller_name, args) {
+    request: function (controller_name, args, quiet) {
         var self = this;
 
         //envoye de la requete ajax
@@ -362,9 +362,11 @@ Database.prototype = {
             url: self.db_address + controller_name + "?" + this.argsToStr(args),
             xhrFields: {withCredentials: true},
             success: function (result) {
+                if (typeof quiet == 'undefined')
                 console.log({"type": "flash", "msg": result , "priority": 1});
             },
             error: function (request, status, error) {
+                if (typeof quiet == 'undefined')
                 if (status === "timeout") {
                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                 } else {
