@@ -11,6 +11,7 @@
 
 import defs
 import vidjil_utils
+import logging
 
 import gluon.contrib.simplejson, time, datetime
 if request.env.http_origin:
@@ -28,6 +29,18 @@ def index():
 def help():
     return dict(message=T('help i\'m lost'))
 
+
+
+def logger():
+    '''Log to the server'''
+    res = {"success" : "false",
+           "message" : "/client/: %s" % request.vars['msg']}
+
+    try:
+        lvl = int(request.vars['lvl'])
+    else:
+        lvl = logging.INFO
+    log.log(lvl, res)
 
 def init_db():
     if db(db.auth_user.id > 0).count() == 0:
