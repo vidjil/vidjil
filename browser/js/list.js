@@ -41,6 +41,7 @@ function List(id_list, id_data, model) {
     this.m = model; //Model utilisé
     this.index = []
     this.index_data = {};
+    this.clone_info = -1;
 
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
     this.m.view.push(this); //synchronisation au Model
@@ -421,7 +422,7 @@ List.prototype = {
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
         span_info.onclick = function () {
-            self.displayInfoBox(self.m.clone(cloneID).getHtmlInfo());
+            self.displayInfoBox(cloneID);
         }
         span_info.appendChild(document.createTextNode("I"));
 
@@ -912,12 +913,23 @@ List.prototype = {
         this.dataMenuInfo.innerHTML = data;
     },
     
-    displayInfoBox: function(msg) {
+    displayInfoBox: function(cloneID) {
+        $(this.index[this.clone_info]).find(".infoBox").removeClass("infoBox-open")
+        
+        if (this.clone_info == cloneID) {
+            this.closeInfoBox();
+            return;
+        }
+        
+        this.clone_info = cloneID;
         this.infoBox.style.display = "block";
-        this.infoBox.lastElementChild.innerHTML = msg;
+        this.infoBox.lastElementChild.innerHTML = self.m.clone(cloneID).getHtmlInfo();
+        $(this.index[cloneID]).find(".infoBox").addClass("infoBox-open")
     },
 
     closeInfoBox: function() {
+        $(this.index[this.clone_info]).find(".infoBox").removeClass("infoBox-open")
+        this.clone_info = -1;
         this.infoBox.style.display = "none";
         this.infoBox.lastElementChild.innerHTML = "";
     }

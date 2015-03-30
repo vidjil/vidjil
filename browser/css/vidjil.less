@@ -541,13 +541,22 @@ line {
 }
 
 .infoBox{
-  width: @width_infoBox;
+  width: 18px;
   float: right;
-  height: 16px;
+  height: 18px;
   display: inline-block;
-  user-select :none;
+  user-select: none;
   text-align: center;
-
+  border: solid;
+  border-width: 1px;
+  border-color: @background;
+  border-radius: 5px;
+}
+.infoBox:hiver{
+  background: @highlight;
+}
+.infoBox-open{
+  background: @border;
 }
 
 .systemBox, .systemBoxMenu {

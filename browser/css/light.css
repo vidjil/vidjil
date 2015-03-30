@@ -430,12 +430,22 @@ line {
   overflow: hidden;
 }
 .infoBox {
-  width: 20px;
+  width: 18px;
   float: right;
-  height: 16px;
+  height: 18px;
   display: inline-block;
   user-select: none;
   text-align: center;
+  border: solid;
+  border-width: 1px;
+  border-color: #ffffff;
+  border-radius: 5px;
+}
+.infoBox:hiver {
+  background: #fdf6e3;
+}
+.infoBox-open {
+  background: #cccccc;
 }
 .systemBox,
 .systemBoxMenu {
