@@ -492,7 +492,7 @@ Builder.prototype = {
         infoTime.appendChild(document.createTextNode("Info"));
         infoTime.className = "button_right"
         infoTime.onclick = function () {
-            console.dataBox(self.m.getPointHtmlInfo(self.m.t));
+            console.log({"type": "big-popup", "msg": self.m.getPointHtmlInfo(self.m.t)});
         }
         div_point.appendChild(infoTime)
         

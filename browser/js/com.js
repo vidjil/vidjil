@@ -112,6 +112,9 @@ Com.prototype = {
                 case "log":
                     this.customLog(text, obj.priority)
                     break;
+                case "big-popup":
+                    this.dataBox(text)
+                    break;
             }
         }
     },
