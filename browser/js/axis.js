@@ -148,27 +148,41 @@ Axis.prototype = {
     },
     
     
-    custom: function(fct){
+    custom: function(fct, default_min, default_max, percent, use_log){
+        percent = typeof percent !== 'undefined' ? percent : false;
+        use_log= typeof percent !== 'undefined' ? use_log : false;
         var self = this;
         this.fct = fct;
-        var min,
-            max;
+        var min = default_min;
+        var max = default_max;
         
         for (var i in this.m.clones){
             var tmp;
             try{
                 tmp = fct(i);
+                if (tmp == 0) tmp = undefined;
             }catch(e){}
             
-            if ( typeof tmp != "undefined" ){
+            if ( typeof tmp != "undefined"){
                 if ( tmp > max || typeof max == "undefined") max = tmp;
                 if ( tmp < min || typeof min == "undefined") min = tmp;
             }
         }
         
-        this.sizeScale = d3.scale.linear()
-            .domain([min, max+1])
+        if (typeof min == "undefined"){ 
+            min = 0;
+            max = 1;
+        }
+        
+        if (use_log){
+            this.sizeScale = d3.scale.log()
+            .domain([min, max])
             .range([0, 1]);
+        }else{
+            this.sizeScale = d3.scale.linear()
+                .domain([min, max])
+                .range([0, 1]);
+        }
             
         this.min = min;
         this.max = max;
@@ -189,28 +203,40 @@ Axis.prototype = {
             return pos;
         }
         
-        this.computeCustomLabels(min, max+1, false, true);
+        this.computeCustomLabels(min, max, percent, use_log);
     },
     
     /*
      * TODO linear/log percent/value parameter
      * */
-    computeCustomLabels: function(min, max, percent, linear){
+    computeCustomLabels: function(min, max, percent, use_log){
         this.labels = [];
         
-        var h = (max-min)/5
-        var delta = (max-min)
-        for (var i = 0; i <= 5; i++) {
-            pos = (h*i)*(1/delta);
-            
-            var text = Math.round(min+(h*i))
-            if (percent){
-                text = ((min+(h*i))*100).toFixed(1) + "%"
+        if (use_log){
+            var h=1
+            for (var i = 0; i < 10; i++) {
+                var pos = this.sizeScale(h);
+                var text = this.m.formatSize(h, false)
+                if (this.reverse) pos = 1 - pos; 
+                if (pos >= 0 && pos <= 1)
+                this.labels.push(this.label("line", pos, text));
+                h = h / 10;
             }
-            
-            if (this.reverse) pos = 1 - pos; 
-            
-            this.labels.push(this.label("line", pos, text));
+        }else{
+            var h = (max-min)/5
+            var delta = (max-min)
+            for (var i = 0; i <= 5; i++) {
+                pos = (h*i)*(1/delta);
+                
+                var text = Math.round(min+(h*i))
+                if (percent){
+                    text = ((min+(h*i))*100).toFixed(1) + "%"
+                }
+                
+                if (this.reverse) pos = 1 - pos; 
+                
+                this.labels.push(this.label("line", pos, text));
+            }
         }
     },
     

@@ -35,7 +35,7 @@ function ScatterPlot(id, model) {
     this.marge_left = 100;
     this.marge_right = 10;
     this.marge_top = 60;
-    this.marge_bot = 10;
+    this.marge_bot = 25;
 
     this.max_precision = 9; //Precision max (default: 9)
 
@@ -110,6 +110,16 @@ function ScatterPlot(id, model) {
         ["n", "N length"],
         ["lengthCDR3", "CDR3 length"]
     ];
+    
+    // Plot axis
+    this.available_axis = {
+        "sequenceLength" : { "fct" : function(cloneID) {return m.clone(cloneID).getSequenceLength()} },
+        "GCContent" : { "fct" : function(cloneID) {return m.clone(cloneID).getGCContent()} },
+        "n" : { "fct" : function(cloneID) {return m.clone(cloneID).getNlength()} },
+        "lengthCDR3" : { "fct" : function(cloneID) {return m.clone(cloneID).seg["cdr3"].length} },
+        "Size" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSize()}, "max" : 1, "percent" : true, "log" :true  },
+        "otherSize" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSize()}, "max" : 1, "percent" : true, "log" :true  }
+    }
     
     // Plot Presets
     this.preset = { 
@@ -789,7 +799,7 @@ ScatterPlot.prototype = {
         //split clones into bar (axisX)
         switch (this.splitX) {
             case "allele_v" :
-                this.makeBarTab(function(cloneID){return self.self.m.clone(cloneID).getV()}, Object.keys(self.m.germlineV.allele))
+                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getV()}, Object.keys(self.m.germlineV.allele))
                 break;
             case "gene_v" :
                 this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getV(false)}, Object.keys(self.m.germlineV.gene))
@@ -800,36 +810,9 @@ ScatterPlot.prototype = {
             case "gene_j" :
                 this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getJ(false)}, Object.keys(self.m.germlineJ.gene))
                 break;
-            case "Size" :
-                //this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getSize()})
-                break;
-            case "sequenceLength" :
-                this.makeBarTab(function(cloneID) {
-                    var value = self.m.clone(cloneID).getSequenceLength()
-                    if (typeof value != "undefined" && value != 0) return value;
-                    return undefined;
-                })
-                break;
-            case "GCContent" :
-                this.makeBarTab(function(cloneID) {
-                    var value = self.m.clone(cloneID).getGCContent()
-                    if (typeof value != "undefined" && value != 0) return value;
-                    return undefined;
-                })
-                break;
-            case "n" :
-                this.makeBarTab(function(cloneID) {
-                    var value = self.m.clone(cloneID).getNlength()
-                    if (typeof value != "undefined" && value != 0) return value;
-                    return undefined;
-                })
-                break;
-            case "lengthCDR3" :
-                this.makeBarTab(function(cloneID) {
-                    if (typeof self.m.clone(cloneID).seg != "undefined" && typeof self.m.clone(cloneID).seg["cdr3"] != "undefined")
-                        return self.m.clone(cloneID).seg["cdr3"].length
-                    return undefined;
-                })
+            default :
+                if (typeof this.available_axis[this.splitX])
+                    this.makeBarTab(this.available_axis[this.splitX].fct);
             break;
         }
         
@@ -848,27 +831,9 @@ ScatterPlot.prototype = {
             case "gene_j" :
                 this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getJ(false)});
                 break;
-            case "otherSize" :
-                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getSize(m.tOther)});
-                break;
-            case "Size" :
-                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getSize()});
-                break;
-            case "sequenceLength" :
-                this.sortBarTab(function(cloneID) {return self.m.clone(cloneID).getSequenceLength()})
-                break;
-            case "GCContent" :
-                this.sortBarTab(function(cloneID) {return self.m.clone(cloneID).getGCContent()})
-                break;
-            case "n" :
-                this.sortBarTab(function(cloneID) {return self.m.clone(cloneID).getNlength()})
-                break;
-            case "lengthCDR3" :
-                this.sortBarTab(function(cloneID) {
-                    if (typeof self.m.clone(cloneID).seg != "undefined" && typeof self.m.clone(cloneID).seg["cdr3"] != "undefined")
-                        return self.m.clone(cloneID).seg["cdr3"].length
-                    return undefined;
-                })
+            default :
+                if (typeof this.available_axis[this.splitY])
+                    this.sortBarTab(this.available_axis[this.splitY].fct);
             break;
         }
         
@@ -884,8 +849,11 @@ ScatterPlot.prototype = {
             for (var i in this.m.clones) {
                 var clone = this.m.clone(i)
                 if (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.getSystem() ) ){
-                    var v = fct(i);
-                    if (typeof v != "undefined"){
+                    var v;
+                    try{
+                        var v = fct(i);
+                    }catch(e){}
+                    if (typeof v != "undefined" && v != 0){
                         if (v<min || typeof min == "undefined") min = v;
                         if (v>max || typeof max == "undefined") max = v;
                     }
@@ -903,7 +871,10 @@ ScatterPlot.prototype = {
         for (var i in this.m.clones) {
             var clone = this.m.clone(i)
             if (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.getSystem() ) ){
-                var v = fct(i);
+                var v;
+                try{
+                    var v = fct(i);
+                }catch(e){}
                 if (typeof v == "undefined" || typeof this.barTab[v] == "undefined" ) {
                     this.barTab["?"].push(i);
                 }else{
@@ -920,8 +891,14 @@ ScatterPlot.prototype = {
         
         for (var i in this.barTab) {
             this.barTab[i].sort(function (a,b) {
-                var va = fct(a);
-                var vb = fct(b);
+                var va;
+                try{
+                    var v = fct(a);
+                }catch(e){}
+                var vb;
+                try{
+                    var v = fct(b);
+                }catch(e){}
                 
                 if (typeof va == "undefined") return (typeof vb == "undefined")  ? 0 :  -1;
                 if (typeof vb == "undefined") return (typeof va == "undefined")  ? 0 :  1;
@@ -1986,42 +1963,11 @@ ScatterPlot.prototype = {
             case "gene_j" :
                 axis.useGermline(this.m.germlineJ, "J", false)
                 break;
-            case "otherSize" :
-                axis.useSize(true)
-                break;
-            case "Size" :
-                axis.useSize(false)
-                break;
-            case "sequenceLength" :
-                axis.custom(function(cloneID) {
-                    var value = m.clone(cloneID)
-                        .getSequenceLength()
-                    if (typeof value != "undefined" && value != 0) return value;
-                    return undefined;
-                })
-                break;
-            case "GCContent" :
-                axis.custom(function(cloneID) {
-                    var value = m.clone(cloneID)
-                        .getGCContent()
-                    if (typeof value != "undefined" && value != 0) return value;
-                    return undefined;
-                })
-                break;
-
-            case "n" :
-                axis.custom(function(cloneID) {
-                    var value = m.clone(cloneID)
-                        .getNlength()
-                    if (typeof value != "undefined" && value != 0) return value;
-                    return undefined;
-                })
-                break;
-            case "lengthCDR3" :
-                axis.custom(function(cloneID) {
-                    return m.clone(cloneID)
-                        .seg["cdr3"].length
-                })
+            default :
+                if (typeof this.available_axis[splitMethod]){
+                    var a = this.available_axis[splitMethod];
+                    axis.custom(a.fct, a.min, a.max, a.percent, a.log)
+                }
             break;
         }
     },

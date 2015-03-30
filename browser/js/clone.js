@@ -323,7 +323,7 @@ Clone.prototype = {
     },
     
     getNlength: function () {
-        if (typeof this.seg != 'undefined'){
+        if (typeof this.seg != 'undefined' && typeof this.seg['3start'] != 'undefined'){
             return this.seg['3start']-this.seg['5end']-1
         }else{
             return 0
