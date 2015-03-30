@@ -195,6 +195,7 @@ def index():
             patient_id = row.patient.id
             row2 = row
             row2.conf_list = []
+            row2.conf_id_list = []
             row2.group_list = []
             row2.file_count = 0
             row2.size = 0
@@ -205,11 +206,12 @@ def index():
             row2.size += row.sequence_file.size_file
             
         row2.conf_list.append(row.config.name)
+        row2.conf_id_list.append(row.config.id)
         row2.group_list.append(str(row.auth_permission.group_id))
         
 
     for row in result :
-        row.most_used_conf = max(set(row.conf_list), key=row.conf_list.count)
+        row.most_used_conf = max(set(row.conf_id_list), key=row.conf_id_list.count)
         row.confs = ", ".join(list(set(row.conf_list)))
         row.groups = ", ".join(list(set(row2.group_list)))
         row.name = row.patient.last_name + " " + row.patient.first_name
