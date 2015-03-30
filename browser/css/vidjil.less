@@ -852,7 +852,7 @@ span .substitution{
   color : @select;
 }
 
-#data-container{
+.data-container, .info-container{
   z-index:3;
   border:solid; 
   position: fixed; 
@@ -870,8 +870,8 @@ span .substitution{
   height: calc(~"100%" - 200px);
 }
 
-#data-msg{
-  overflow: auto;
+.data-msg, .info-msg{
+  overflow-x: hidden;
   height : 100%;
   width : 100%;
 }

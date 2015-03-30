@@ -114,9 +114,26 @@ List.prototype = {
             $(self.dataMenu).hide('fast')
         }
         
+        //build infoBox
+        
+        this.infoBox = document.createElement("div");
+        this.infoBox.className = "info-container";
+        
+        var closeinfoBox = document.createElement("span");
+        closeinfoBox.className = "closeButton" ;
+        closeinfoBox.appendChild(document.createTextNode("X"));
+        closeinfoBox.onclick = function() {self.closeInfoBox()};
+        this.infoBox.appendChild(closeinfoBox);
+        
+        var div_info = document.createElement("div");
+        div_info.className = "info-msg";
+        this.infoBox.appendChild(div_info);
+        
         //add to body
         document.body.appendChild(this.tagSelector);
         document.body.appendChild(this.dataMenu);
+        document.body.appendChild(this.infoBox);
+        
     },
     
     /* initialise la liste et crée un div pour chaque clones
@@ -404,7 +421,7 @@ List.prototype = {
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
         span_info.onclick = function () {
-            console.dataBox(self.m.clone(cloneID).getHtmlInfo());
+            self.displayInfoBox(self.m.clone(cloneID).getHtmlInfo());
         }
         span_info.appendChild(document.createTextNode("I"));
 
@@ -486,7 +503,7 @@ List.prototype = {
                 var span_info = document.createElement('span')
                 span_info.className = "infoBox";
                 span_info.onclick = function () {
-                    console.dataBox(self.m.clone(this.parentNode.id2).getHtmlInfo());
+                    self.displayInfoBox(self.m.clone(this.parentNode.id2).getHtmlInfo());
                 }
                 span_info.appendChild(document.createTextNode("I"));
 
@@ -894,6 +911,16 @@ List.prototype = {
         $(this.dataMenu).show("fast");
         this.dataMenuInfo.innerHTML = data;
     },
+    
+    displayInfoBox: function(msg) {
+        this.infoBox.style.display = "block";
+        this.infoBox.lastElementChild.innerHTML = msg;
+    },
+
+    closeInfoBox: function() {
+        this.infoBox.style.display = "none";
+        this.infoBox.lastElementChild.innerHTML = "";
+    }
 
 } //fin prototype
 

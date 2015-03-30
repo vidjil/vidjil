@@ -143,6 +143,23 @@ Com.prototype = {
         document.body.appendChild(this.flash_container);
         document.body.appendChild(this.log_container);
         document.body.appendChild(this.popup_container);
+        
+        
+        
+        this.div_dataBox = document.createElement("div");
+        this.div_dataBox.className = "data-container";
+        
+        var closedataBox = document.createElement("span");
+        closedataBox.className = "closeButton" ;
+        closedataBox.appendChild(document.createTextNode("X"));
+        closedataBox.onclick = function() {self.closeDataBox()};
+        this.div_dataBox.appendChild(closedataBox);
+        
+        var div_data = document.createElement("div");
+        div_data.className = "data-msg";
+        this.div_dataBox.appendChild(div_data);
+        
+        document.body.appendChild(this.div_dataBox);
     },
 
     
@@ -221,17 +238,13 @@ Com.prototype = {
     },
 
     dataBox: function(msg) {
-        document.getElementById(this.data_id)
-            .style.display = "block";
-        document.getElementById(this.data_id).lastElementChild
-            .innerHTML = msg;
+        this.div_dataBox.style.display = "block";
+        this.div_dataBox.lastElementChild.innerHTML = msg;
     },
 
     closeDataBox: function() {
-        document.getElementById(this.data_id)
-            .style.display = "none";
-        document.getElementById(this.data_id).lastElementChild
-            .innerHTML = "";
+        this.div_dataBox.style.display = "none";
+        this.div_dataBox.lastElementChild.innerHTML = "";
     }
     
 }
