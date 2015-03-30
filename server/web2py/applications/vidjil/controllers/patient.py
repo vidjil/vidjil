@@ -144,8 +144,8 @@ def custom():
     if config :
         query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.vars["custom_list"])) )
     
-    res = {"message": "custom (%s)" % config_name}
-    log.info(res)
+    res = {"message": "custom list (%s)" % config_name}
+    log.debug(res)
 
     return dict(query=query,
                 config_id=config_id,

@@ -1,4 +1,7 @@
 DB_ADDRESS = ""
+DB_TIMEOUT_CALL = 5000                // Regular call
+DB_TIMEOUT_GET_DATA = 15000           // Get patient/sample .data
+DB_TIMEOUT_GET_CUSTOM_DATA = 1200000  // Launch custum fused sample .data
 
 function Database(model, address) {
     var self = this;
@@ -105,7 +108,7 @@ Database.prototype = {
             context: self,         //we can't do closure with ajax event handler so we use context to keepref
             url: url,
             contentType: 'text/plain',
-            timeout: 5000,
+            timeout: DB_TIMEOUT_CALL,
             xhrFields: {withCredentials: true},
             success: function (result) {
                 self.display_result(result, url, args)
@@ -207,7 +210,7 @@ Database.prototype = {
             $('#data_form').ajaxForm({
                 type: "POST",
                 cache: false,
-                timeout: 5000,
+                timeout: DB_TIMEOUT_CALL,
                 crossDomain: true,
                 url      : $(this).attr('action'),
                 data     : $(this).serialize(),
@@ -232,7 +235,7 @@ Database.prototype = {
             $('#login_form').ajaxForm({
                 type: "POST",
                 cache: false,
-                timeout: 5000,
+                timeout: DB_TIMEOUT_CALL,
                 crossDomain: true,
                 url      : $(this).attr('action'),
                 data     : $(this).serialize(),
@@ -348,20 +351,22 @@ Database.prototype = {
      * idem que call() mais la réponse n'est pas une page html a afficher
      * mais simplement une confirmation que la requete a été entendu
      */
-    request: function (controller_name, args) {
+    request: function (controller_name, args, quiet) {
         var self = this;
 
         //envoye de la requete ajax
         $.ajax({
             type: "POST",
-            timeout: 5000,
+            timeout: DB_TIMEOUT_CALL,
             crossDomain: true,
             url: self.db_address + controller_name + "?" + this.argsToStr(args),
             xhrFields: {withCredentials: true},
             success: function (result) {
+                if (typeof quiet == 'undefined')
                 console.log({"type": "flash", "msg": result , "priority": 1});
             },
             error: function (request, status, error) {
+                if (typeof quiet == 'undefined')
                 if (status === "timeout") {
                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                 } else {
@@ -411,7 +416,7 @@ Database.prototype = {
         
         $.ajax({
             type: "POST",
-            timeout: 15000,
+            timeout: DB_TIMEOUT_GET_DATA,
             crossDomain: true,
             url: self.db_address + "default/get_data" + "?" + this.argsToStr(args),
             xhrFields: {withCredentials: true},
@@ -466,7 +471,7 @@ Database.prototype = {
         this.m.wait("please wait : this operation can take a few minutes")
         $.ajax({
             type: "POST",
-            timeout: 1200000,
+            timeout: DB_TIMEOUT_GET_CUSTOM_DATA,
             crossDomain: true,
             url: self.db_address + "default/get_custom_data" + arg,
             xhrFields: {withCredentials: true},
@@ -667,7 +672,15 @@ Database.prototype = {
         }
         
         return args
-    }
+    },
+
+
+    log : function (lvl, msg) { this.request('default/logger', {'lvl': lvl, 'msg': msg}, true) },
+    debug:    function(msg) { this.log(10, msg) },
+    info:     function(msg) { this.log(20, msg) },
+    warn:     function(msg) { this.log(30, msg) },
+    error:    function(msg) { this.log(40, msg) },
+    critical: function(msg) { this.log(50, msg) }
     
 }
 
@@ -751,6 +764,7 @@ Uploader.prototype = {
                 self.queue[id].jqXHR = jqxhr
             },
             success: function (result) {
+                db.info("upload completed - " + self.queue[id].filename)
                 self.queue[id].status = "completed"
                 self.next()
                 self.reload(id)
@@ -761,6 +775,7 @@ Uploader.prototype = {
                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                 } else {
                     if (status !== "abort"){
+                        db.warning("upload may have failed - " + self.queue[id].filename)
                         self.queue[id].status = "upload_error"
                         console.log({"type": "flash", "msg": "upload " + self.queue[id].filename + " : " + status , "priority": 2});
                     }
@@ -771,7 +786,8 @@ Uploader.prototype = {
     },
     
     cancel: function (id) {
-        console.log({"type": "flash", "msg": "cancel upload : " + this.queue[id].filename, "priority": 1});
+        db.warning("upload canceled - " + this.queue[id].filename)
+        console.log({"type": "flash", "msg": "upload canceled : " + this.queue[id].filename, "priority": 1});
         this.queue[id].jqXHR.abort()
         this.queue[id].status = "canceled"
         this.reload(id)
@@ -849,7 +865,7 @@ Uploader.prototype = {
                 html += "<span class='button' onclick='db.uploader.cancel("+id+")'>cancel</span>"
                 break;
             case "server_check":
-                html += "<span class='loading_seq'>server check</span>"
+                html += "<span class='loading_seq'> processing file on server </span>"
                 break;
             case "canceled":
                 html += "<span class='loading_status'> canceled by user </span>"

@@ -4,7 +4,7 @@ import os.path, subprocess
 import vidjil_utils
 from collections import defaultdict
 
-MAX_LOG_LINES = 200
+MAX_LOG_LINES = 500
 
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
