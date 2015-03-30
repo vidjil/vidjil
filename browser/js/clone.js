@@ -212,7 +212,7 @@ Clone.prototype = {
     getFasta: function() {
         fasta = ''
         fasta += '>' + this.getCode() + '    ' + this.getPrintableSize() + '\n'
-        fasta += this.getSequence() + '\n'
+        fasta += this.getPrintableSegSequence() + '\n'
 
         return fasta
     },
@@ -336,6 +336,22 @@ Clone.prototype = {
         }else{
             return "0";
         }
+    },
+
+    getPrintableSegSequence: function () {
+        if (typeof this.seg == 'undefined' || typeof this.seg['5end'] == 'undefined' || typeof this.seg['3start'] == 'undefined') {
+            return this.getSequence()
+        }
+
+        var s = ''
+        s += this.sequence.substring(0,  this.seg['5end'])
+        s += '\n'
+        if (this.seg['5end'] < this.seg['3start'] - 1) {
+            s += this.sequence.substring(this.seg['5end'], this.seg['3start'] - 1)
+            s += '\n'
+        }
+        s += this.sequence.substring(this.seg['3start'] - 1)
+        return s
     },
 
     computeGCContent: function () {
