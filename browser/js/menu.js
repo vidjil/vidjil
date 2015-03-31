@@ -21,6 +21,15 @@
 * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 */
 
+function Menu () {
+
+}
+
+Menu.prototype = {
+
+}
+
+
 function initMenu () {
     if (typeof config != 'undefined') {
 

@@ -601,12 +601,14 @@ List.prototype = {
             if ((this.m.clone(list[i]).isActive() && this.m.clusters[list[i]].length != 0) || this.m.clone(list[i]).id == "other") {
 
                 div.innerHTML = '';
-
+                div.className = "list";
+                
                 if (this.m.clone(list[i]).isSelected()) {
-                    div.className = "list list_select";
-                } else {
-                    div.className = "list";
-                }
+                    $(div).addClass("list_select");
+                } 
+                if (this.m.focus ==list[i]) {
+                    $(div).addClass("list_focus");
+                } 
 
                 var div2 = document.createElement('div');
                 this.div_elem(div2, list[i]);

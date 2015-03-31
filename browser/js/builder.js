@@ -370,8 +370,8 @@ Builder.prototype = {
     //TODO need to build complete Selector 
     build_clusterSelector: function () {
         var self = this;
-
-        var clusterSelector = document.getElementById("clusterby_button")
+    /*
+        var clusterSelector = document.getElementById("cluster_menu")
         clusterSelector.innerHTML = "";
         
         if (self.m.clones[0]._target){
@@ -400,15 +400,7 @@ Builder.prototype = {
                 clonotype.appendChild(document.createTextNode("clonotype"));
             clusterSelector.appendChild(clonotype)
         }
-        
-        if (self.m.clones[0].germline){
-            
-            var system = document.createElement('a');
-                system.className = "buttonSelector"
-                system.onclick = function () { m.clusterBy(function(id){return m.clone(id).getSystem()});} 
-                system.appendChild(document.createTextNode("system"));
-            clusterSelector.appendChild(system)
-        }
+    */
     },
 
     toggle_left_container: function () {
