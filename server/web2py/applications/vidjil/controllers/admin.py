@@ -129,9 +129,9 @@ def repair_missing_files():
 def make_backup():
     if auth.has_membership("admin"):
         
-        db.export_to_csv_file(open('backup.csv', 'wb'))
+        db.export_to_csv_file(open(defs.DB_BACKUP_FILE, 'wb'))
                 
-        res = {"success" : "true", "message" : ""}
+        res = {"success" : "true", "message" : "DB backup -> %s" % defs.DB_BACKUP_FILE}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
     
