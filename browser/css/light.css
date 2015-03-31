@@ -438,7 +438,7 @@ line {
   text-align: center;
   border: solid;
   border-width: 1px;
-  border-color: #FFF;
+  border-color: #ffffff;
   border-radius: 5px;
   margin: 0px 1px;
 }
@@ -446,6 +446,11 @@ line {
   background: #fdf6e3;
 }
 .infoBox-open {
+  margin: -1px;
+  border: solid;
+  border-width: 1px;
+  border-color: #ffffff;
+  border-radius: 5px;
   background: #cccccc;
 }
 .systemBox,
@@ -1364,7 +1369,8 @@ text.alert {
 }
 .flash_0,
 .flash_1,
-.flash_2 {
+.flash_2,
+.flash_3 {
   width: 350px;
   min-height: 20px;
   border: solid;
@@ -1383,7 +1389,8 @@ text.alert {
 }
 .log_0,
 .log_1,
-.log_2 {
+.log_2,
+.log_3 {
   width: auto;
   min-height: 20px;
   display: block;
@@ -1401,6 +1408,11 @@ text.alert {
 }
 .flash_2,
 .log_2 {
+  font-weight: bold;
+  background-color: #F2DEAE;
+}
+.flash_3,
+.log_3 {
   font-weight: bold;
   border-color: darkred;
   background-color: #F2DEDE;

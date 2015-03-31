@@ -27,9 +27,14 @@
 function Com(default_console) {
     this.data_id = "data-container"; //TODO
     this.default = default_console;
+
+    this.DEBUG = 0
+    this.INFO = 1
+    this.WARN = 2
+    this.ERROR = 3
     
-    this.min_priority = 1; // minimum required to display message
-    this.min_priority_console = 0;
+    this.min_priority = this.INFO // minimum required to display message
+    this.min_priority_console = this.DEBUG
     this.build()
     
     BUTTON_CLOSE_POPUP = "</br></br> <div class='center' > <button onclick='console.closePopupMsg()'>ok</button></div> ",
@@ -181,7 +186,7 @@ Com.prototype = {
             }).appendTo(this.flash_container)
             .slideDown(200);
             
-            if (priority !=2){
+            if (priority < this.ERROR){
                 setTimeout(function(){
                     div.fadeOut('slow', function() { div.remove();});
                 }, 8000);
