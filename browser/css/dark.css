@@ -446,11 +446,6 @@ line {
   background: #073642;
 }
 .infoBox-open {
-  margin: -1px;
-  border: solid;
-  border-width: 1px;
-  border-color: #000000;
-  border-radius: 5px;
   background: #333333;
 }
 .systemBox,
