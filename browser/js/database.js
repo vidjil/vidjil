@@ -188,10 +188,11 @@ Database.prototype = {
             m.parseJsonAnalysis(result)
             m.initClones()
         }
-        
-        //TODO server need to return message priority too ( 0=console, 1=ok, 2=error)
-        if (res.message) console.log({"type": "flash", "msg": "database : " + res.message , "priority": 1})
-        
+
+        // server message
+        if (res.message) console.log({"type": "flash",
+                                      "msg": "database : " + res.message,
+                                      "priority": res.success == "false" ? 2 : 1}) // res.success can be 'undefined'
         return res
 
         if (this.url.length == 1) $("#db_back").addClass("inactive");
