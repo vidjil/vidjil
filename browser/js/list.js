@@ -654,11 +654,14 @@ List.prototype = {
                 .css("color", color)
 
             //clone selected ?
+            div.className = "list";
+            
             if (this.m.clone(list[i]).isSelected()) {
-                div.className = "list list_select";
-            } else {
-                div.className = "list";
-            }
+                $(div).addClass("list_select");
+            } 
+            if (this.m.focus ==list[i]) {
+                $(div).addClass("list_focus");
+            } 
 
             //cluster sequence selected?
             var div2 = document.getElementById("_" + list[i]);
