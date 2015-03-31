@@ -442,7 +442,7 @@ line {
   border-radius: 5px;
   margin: 0px 1px;
 }
-.infoBox:hiver {
+.infoBox:hover {
   background: #073642;
 }
 .infoBox-open {
