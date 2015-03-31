@@ -1399,7 +1399,8 @@ Model.prototype = {
      *
      * */
     clusterBy: function (fct) {
-
+        var self = this;
+        
         //save user cluster
         if ( this.cluster_key==""){
             this.clusters_copy = this.clusters
@@ -1427,7 +1428,9 @@ Model.prototype = {
         //order clones with same key
         var keys = Object.keys(tmp)
         for (var i in tmp) {
-            tmp[i].sort()
+            tmp[i].sort(function(a, b) {
+                return self.clone(a).top - self.clone(b).top;
+            });
         }
 
         //reset cluster
