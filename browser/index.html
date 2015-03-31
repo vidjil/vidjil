@@ -111,29 +111,24 @@
                 </div></div>
             </div>
 
-            <div class="menu" id="cluster_menu" onmouseover="showSelector('clusterSelector');" > cluster
-                <div id="clusterSelector" class="selector"><div>
-                    <a class="buttonSelector" onclick="m.resetClusters();">reset all clusters</a>
-                    <a class="buttonSelector" onclick="m.restoreClusters();">user</a>
-                    <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getV()});">V gene + allele</a>
-                    <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getJ()});">J gene + allele</a>
-                    <!-- <a class="buttonSelector" onclick="m.clusterBy('cluster')">DBSCAN algorithm</a> -->
-
-                    <div id="clusterby_button"> </div>
-                </div></div>
+            <div class="menu" id="cluster_menu" onmouseover="showSelector('clusterSelector');" > display
+                <div class="div-menu-selector"><select class="menu-selector" onchange="this.options[this.selectedIndex].onclick(this);">
+                    <option value="" onclick="m.restoreClusters();">clones</option>
+                    <option value="" onclick="m.clusterBy(function(id){return m.clone(id).getV()});">V genes</option>
+                    <option value="" onclick="m.clusterBy(function(id){return m.clone(id).getJ()});">J genes</option>
+                    <option value="" onclick="m.clusterBy(function(id){return m.clone(id).getSystem()});">locus</option>
+                </select></div>
             </div>
 
-            <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color 
-                <div id="colorSelector" class="selector"><div>
-                    <a class="buttonSelector" onclick="m.changeColorMethod('Tag');">by tag</a>
-                    <a class="buttonSelector" onclick="m.changeColorMethod('V');">by V</a>
-                    <a class="buttonSelector" onclick="m.changeColorMethod('J');">by J</a>
-                    <a class="buttonSelector" onclick="m.changeColorMethod('N');">by N length</a>
-                    <a class="buttonSelector" onclick="m.changeColorMethod('system');" 
-                        id="color_system_button" style="display:none">by locus/germline</a>
-                    <a class="buttonSelector" onclick="m.changeColorMethod('abundance');">by abundance at selected timepoint</a>
-                    <!--<a class="buttonSelector" onclick="m.changeColorMethod('dbscan');">by the DBSCAN algorithm</a>-->
-                </div></div>
+            <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color by
+                <div class="div-menu-selector"><select class="menu-selector" onchange="m.changeColorMethod(this.value)">
+                    <option value="Tag">tag</option>
+                    <option value="V">V</option>
+                    <option value="J">J</option>
+                    <option value="N">N</option>
+                    <option value="system" id="color_system_button" style="display:none">locus/germline</option>
+                    <option value="abundance">abundance</option>
+                </select></div>
             </div>
 
             <div class="menu" id="filter_menu" onmouseenter="builder.build_displaySelector();" onmouseover="showSelector('filterSelector');" > filter
