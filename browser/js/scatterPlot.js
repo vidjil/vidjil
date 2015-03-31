@@ -964,7 +964,7 @@ ScatterPlot.prototype = {
             }
             k++;
         }
-        this.axisY.computeCustomLabels(0, bar_max, true, true);
+        this.axisY.computeCustomLabels(0, bar_max, true, false);
         this.axisX.computeCustomBarLabels(this.barTab)
         this.initGrid();
         this.drawBarTab(500);

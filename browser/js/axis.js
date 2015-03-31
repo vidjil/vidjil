@@ -203,7 +203,7 @@ Axis.prototype = {
             return pos;
         }
         
-        this.computeCustomLabels(min, max, percent, use_log);
+        this.computeCustomLabels(min, max, percent, use_log)
     },
     
     /*
