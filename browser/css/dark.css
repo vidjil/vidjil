@@ -47,7 +47,7 @@ ul {
   background: #000000;
 }
 #top-container {
-  height: 28px;
+  height: 32px;
   width: 100%;
   background: #000000;
   position: fixed;
@@ -64,7 +64,7 @@ ul {
 }
 #mid-container {
   position: fixed;
-  top: 28px;
+  top: 32px;
   bottom: 125px ;
   width: -moz-calc(100% - 12px);
   width: -webkit-calc(100% - 12px);
@@ -430,16 +430,17 @@ line {
   overflow: hidden;
 }
 .infoBox {
-  width: 18px;
+  width: 15px;
   float: right;
-  height: 18px;
+  height: 15px;
   display: inline-block;
   user-select: none;
   text-align: center;
   border: solid;
   border-width: 1px;
-  border-color: #000000;
+  border-color: #FFF;
   border-radius: 5px;
+  margin: 0px 1px;
 }
 .infoBox:hiver {
   background: #073642;
@@ -508,6 +509,9 @@ line {
   border-width: 2px;
   padding: 0px;
   border-color: #fdf6e3;
+}
+.list_focus {
+  background: #333333;
 }
 .sequence-line {
   white-space: nowrap;
@@ -658,6 +662,20 @@ span .substitution {
   border-top: solid;
   border-width: 1px;
   border-color: #333333;
+}
+.div-menu-selector {
+  float: right;
+  margin: -2px 0px 0px 5px;
+}
+.menu-selector {
+  background: #000000;
+  color: #657B83;
+  height: 18px;
+  width: 60px;
+  -webkit-appearance: none;
+  border: solid;
+  border-width: 1px;
+  border-radius: 2px;
 }
 #file_menu,
 #axis_choice {
@@ -867,7 +885,9 @@ span.logo {
   min-width: 150px;
   margin-left: -6px;
   border-top: none;
-  margin-top: 4px;
+  margin-top: -moz-calc(8px);
+  margin-top: -webkit-calc(8px);
+  margin-top: calc(8px);
   z-index: 5;
   overflow: hidden;
 }
