@@ -6,6 +6,10 @@
 ### address for the sql database
 ###
 DB_ADDRESS = 'sqlite://storage.sqlite'
+DB_ADDRESS = 'mysql://vidjil:XXXXXXXX@localhost/vidjil'
+
+### Backup file
+DB_BACKUP_FILE = 'backup.csv'
 
 ### Upload directory for .fasta/.fastq.
 ### Old sequences files could be thrown away.
