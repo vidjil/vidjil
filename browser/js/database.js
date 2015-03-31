@@ -426,7 +426,7 @@ Database.prototype = {
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "msg" : " - unable to access patient data" , "priority": 1});
+                    console.log({"type": "flash", "default" : "database_timeout", "msg" : " - unable to access patient data" , "priority": 2});
                 } else {
                     console.log({"type": "popup", "msg": request.responseText});
                 }
@@ -483,7 +483,7 @@ Database.prototype = {
             error: function (request, status, error) {
                 self.m.resume()
                 if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to access patient data" , "priority": 1});
+                    console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to access patient data" , "priority": 2});
                 } else {
                     console.log({"type": "popup", "msg": request.responseText});
                 }
@@ -506,7 +506,7 @@ Database.prototype = {
             },
             error: function (request, status, error) {
                 if (status === "timeout") {
-                    console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to access patient data" , "priority": 1});
+                    console.log({"type": "flash", "default" : "database_timeout", "msg": " - unable to access patient data" , "priority": 2});
                 } else {
                     console.log({"type": "popup", "msg": request.responseText});
                 }
