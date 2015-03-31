@@ -1345,7 +1345,8 @@ text.alert {
 }
 .flash_0,
 .flash_1,
-.flash_2 {
+.flash_2,
+.flash_3 {
   width: 350px;
   min-height: 20px;
   border: solid;
@@ -1364,7 +1365,8 @@ text.alert {
 }
 .log_0,
 .log_1,
-.log_2 {
+.log_2,
+.log_3 {
   width: auto;
   min-height: 20px;
   display: block;
@@ -1382,6 +1384,11 @@ text.alert {
 }
 .flash_2,
 .log_2 {
+  font-weight: bold;
+  background-color: #F2DEAE;
+}
+.flash_3,
+.log_3 {
   font-weight: bold;
   border-color: darkred;
   background-color: #F2DEDE;
