@@ -282,12 +282,13 @@ KmerSegmenter::~KmerSegmenter() {
     delete kaa;
 }
 
-KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented)
+KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented, double threshold)
 {
   int best_score_seg = 0 ; // Best score, segmented sequences
   int best_score_unseg = 0 ; // Best score, unsegmented sequences
   the_kseg = NULL;
   multi_germline = multigermline;
+  threshold_nb_expected = threshold;
   
   // Iterate over the germlines
   for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
@@ -345,7 +346,19 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
       } else {
         delete kseg;
       }
-    } // end for (Germlines)  
+    } // end for (Germlines)
+  if (the_kseg->isSegmented() && getNbExpected() > threshold_nb_expected)
+    the_kseg->setSegmentationStatus(UNSEG_NOISY);
+}
+
+double KmerMultiSegmenter::getNbExpected() const {
+  int max = the_kseg->score;
+  double proba = 0;
+  int n = the_kseg->getSequence().sequence.size() - the_kseg->getKmerAffectAnalyser()->getIndex().getS();
+  for (int i = max; i<  n; i++) {
+    proba += nChoosek(n, i) * pow(the_kseg->getKmerAffectAnalyser()->getIndex().getIndexLoad(), i);
+  }
+  return multi_germline->germlines.size() * proba;
 }
 
 KmerMultiSegmenter::~KmerMultiSegmenter() {

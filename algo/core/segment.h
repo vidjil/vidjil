@@ -28,6 +28,8 @@
 
 #define JSON_REMEMBER_BEST  4   /* The number of V/D/J predictions to keep  */
 
+#define THRESHOLD_NB_EXPECTED 1E-6 /* Threshold of the accepted expected value for number of found k-mers */
+
 using namespace std;
 
 enum SEGMENTED { DONT_KNOW, SEG_PLUS, SEG_MINUS, UNSEG_TOO_SHORT, UNSEG_STRAND_NOT_CONSISTENT, 
@@ -189,12 +191,23 @@ class KmerSegmenter : public Segmenter
 
 class KmerMultiSegmenter
 {
+ private:
+  double threshold_nb_expected;
  public:
   /**
    * @param seq: An object read from a FASTA/FASTQ file
-   * @param multigermline: the multigermline
+   * @param multigermline: the multigerm
+   * @param threshold: threshold of randomly expected segmentation
    */
-  KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented);
+  KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented,
+                     double threshold = THRESHOLD_NB_EXPECTED);
+
+  /**
+   * @return true iff the best score is sufficiently different from the scores
+   * of the other segmenters.
+   */
+  double getNbExpected() const;
+
   ~KmerMultiSegmenter();
 
   KmerSegmenter *the_kseg;
