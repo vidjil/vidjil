@@ -22,7 +22,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
     }
 
   int nb_reads_all = 0;
-  int bp_total = 0;
+  unsigned long long int bp_total = 0;
 
   while (reads->hasNext() && (int) nb_reads != stop_after) {
     reads->next();
