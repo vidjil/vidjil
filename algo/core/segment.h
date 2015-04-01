@@ -208,8 +208,7 @@ class KmerMultiSegmenter
                      double threshold = THRESHOLD_NB_EXPECTED);
 
   /**
-   * @return true iff the best score is sufficiently different from the scores
-   * of the other segmenters.
+   * @return expected number of Segmenter that would have yield the maximum score by chance
    */
   double getNbExpected() const;
 
