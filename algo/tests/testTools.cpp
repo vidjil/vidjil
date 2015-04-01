@@ -275,6 +275,13 @@ void testExtractBasename() {
            TEST_EXTRACT_BASENAME, extract_basename("/", true));
 }
 
+void testNChooseK() {
+  TAP_TEST(nChoosek(1, 10) == 0, TEST_N_CHOOSE_K, "");
+  TAP_TEST(nChoosek(1, 1) == 1, TEST_N_CHOOSE_K, "");
+  TAP_TEST(nChoosek(5, 2) == 10, TEST_N_CHOOSE_K, "");
+  TAP_TEST(nChoosek(8, 4) == 70, TEST_N_CHOOSE_K, "");
+}
+
 void testTools() {
   testOnlineFasta1();
   testFasta1();
@@ -289,4 +296,5 @@ void testTools() {
   testRevcompInt();
   testExtendedNucleotides();
   testExtractBasename();
+  testNChooseK();
 }

@@ -217,3 +217,17 @@ int revcomp_int(int word, int size) {
 string reverse(const string &text) {
   return string(text.rbegin(), text.rend());
 }
+
+double nChoosek(unsigned n, unsigned k)
+{
+    if (k > n) return 0;
+    if (k * 2 > n) k = n-k;
+    if (k == 0) return 1;
+
+    double result = n;
+    for( unsigned i = 2; i <= k; ++i ) {
+        result *= (n-i+1);
+        result /= i;
+    }
+    return result;
+}

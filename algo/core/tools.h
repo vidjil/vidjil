@@ -149,6 +149,13 @@ string reverse(const string &text);
  */
 Sequence create_sequence(string label_full, string label, string sequence, string quality);
 
+/**
+ * @return the combinatorial of k among n
+ * @see http://stackoverflow.com/a/9331125/1192742
+ */
+double nChoosek(unsigned n, unsigned k);
+
+
 const Sequence NULL_SEQUENCE = create_sequence("", "", "NULL", "");
 
 bool operator==(const Sequence &s1, const Sequence &s2);
