@@ -179,6 +179,7 @@ void usage(char *progname, bool advanced)
        << "  -m <int>      minimal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MIN << ") (default with -D: " << DEFAULT_DELTA_MIN_D << ")" << endl
        << "  -M <int>      maximal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MAX << ") (default with -D: " << DEFAULT_DELTA_MAX_D << ")" << endl
        << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ") (default with -D: " << DEFAULT_W_D << ")" << endl
+       << "  -p <float>    maximal e-value for determining if a segmentation can be trusted (default: " << THRESHOLD_NB_EXPECTED <<")" << endl
        << endl
 
        << "Window annotations" << endl
@@ -331,13 +332,15 @@ int main (int argc, char **argv)
 
   int options_s_k = 0 ;
 
+  double expected_value = THRESHOLD_NB_EXPECTED;
+
   //JsonArray which contains the Levenshtein distances
   JsonArray jsonLevenshtein;
 
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHaiI1g:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHaiI1g:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3p:")) != EOF)
 
     switch (c)
       {
@@ -452,6 +455,10 @@ int main (int argc, char **argv)
 
       case '!':
         keep_unsegmented_as_clone = true;
+        break;
+
+      case 'p':
+        expected_value = atof(optarg);
         break;
 
       // Output 
@@ -927,7 +934,7 @@ int main (int argc, char **argv)
       we.setAffectsOutput(out_affects);
     }
 
-    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels, max_reads_processed, only_nth_read, keep_unsegmented_as_clone);
+    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels, max_reads_processed, only_nth_read, keep_unsegmented_as_clone, expected_value);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
 
