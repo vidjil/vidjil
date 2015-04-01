@@ -135,6 +135,11 @@ public:
    */
   bool isUnknown() const;
 
+  /**
+   * @return true iff the value is the same as the one given by default constructor
+   */
+  bool isNull() const;
+
   string toString() const;
 string toStringValues()const;
 string toStringSigns() const;

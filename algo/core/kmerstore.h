@@ -24,6 +24,11 @@ public:
 
   Kmer &operator+=(const Kmer &);
   static bool hasRevcompSymetry();
+
+  /**
+   * @return true if the element is the same as when initialised with default constructor.
+   */
+  bool isNull();
 } ;
 ostream &operator<<(ostream &os, const Kmer &kmer);
 

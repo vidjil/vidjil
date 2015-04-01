@@ -152,6 +152,10 @@ bool KmerAffect::isAmbiguous() const {
   return affect_strand(affect) == 1 && affect_char(affect) == AFFECT_AMBIGUOUS_CHAR;
 }
 
+bool KmerAffect::isNull() const {
+  return isUnknown();
+}
+
 bool KmerAffect::isUnknown() const {
   return affect.c == (int) AFFECT_UNKNOWN_CHAR;
 }
