@@ -120,6 +120,16 @@ void testSegmentationCause() {
                TEST_KMER_JUNCTION, "");
       TAP_TEST(ks.getLeft() == 17, TEST_KMER_LEFT, "left = " << ks.getLeft());
       TAP_TEST(ks.getRight() == 18, TEST_KMER_RIGHT, "right = " << ks.getRight());
+
+      ks.setSegmentationStatus(DONT_KNOW);
+      TAP_TEST(! ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.getSegmentationStatus() == DONT_KNOW, TEST_SET_SEGMENTATION_CAUSE, "");
+      ks.setSegmentationStatus(UNSEG_NOISY);
+      TAP_TEST(! ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_NOISY, TEST_SET_SEGMENTATION_CAUSE, "");
+      ks.setSegmentationStatus(SEG_PLUS);
+      TAP_TEST(ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.getSegmentationStatus(), TEST_SET_SEGMENTATION_CAUSE, "");
       nb_checked++;
     } else if (data.read(i).label == "seq-seg-") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");

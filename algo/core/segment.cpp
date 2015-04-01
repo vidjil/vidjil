@@ -396,6 +396,11 @@ int Segmenter::getSegmentationStatus() const {
   return because;
 }
 
+void Segmenter::setSegmentationStatus(int status) {
+  because = status;
+  segmented = (status == SEG_PLUS || status == SEG_MINUS);
+}
+
 // FineSegmenter
 
 void best_align(int overlap, string seq_left, string seq_right,

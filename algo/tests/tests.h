@@ -101,6 +101,7 @@ enum {
   /* Kmer segmentation */
   TEST_KMER_IS_SEGMENTED,
   TEST_KMER_SEGMENTATION_CAUSE,
+  TEST_SET_SEGMENTATION_CAUSE,
   TEST_KMER_JUNCTION,
   TEST_KMER_DATA,
   TEST_KMER_LEFT,
@@ -237,6 +238,7 @@ inline void declare_tests() {
 
   RECORD_TAP_TEST(TEST_KMER_IS_SEGMENTED, "Test isSegmented() in KmerSegmenter");
   RECORD_TAP_TEST(TEST_KMER_SEGMENTATION_CAUSE, "Test getSegmentationStatus() in KmerSegmenter");
+  RECORD_TAP_TEST(TEST_SET_SEGMENTATION_CAUSE, "Test setSegmentationStatus() in KmerSegmenter");
   RECORD_TAP_TEST(TEST_KMER_JUNCTION, "Test getJunction() in KmerSegmenter");
   RECORD_TAP_TEST(TEST_KMER_DATA, "Test that data is consistent with what we expect for KmerSegmenter");
   RECORD_TAP_TEST(TEST_KMER_LEFT, "Test V end (resp. J start) with KmerSegmenter on fwd (resp bwd) strand");
