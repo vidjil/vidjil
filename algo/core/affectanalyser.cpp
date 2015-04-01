@@ -89,6 +89,9 @@ set<KmerAffect> KmerAffectAnalyser::getDistinctAffectations() const{
   return result;
 }
 
+IKmerStore<KmerAffect> &KmerAffectAnalyser::getIndex() const{
+  return kms;
+}
 
 affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before, 
                                                const KmerAffect &after, 

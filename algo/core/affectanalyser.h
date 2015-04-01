@@ -150,6 +150,8 @@ class KmerAffectAnalyser: public AffectAnalyser {
 
   set<KmerAffect> getDistinctAffectations() const;
 
+  IKmerStore<KmerAffect> &getIndex() const;
+
   /**
    * @param maxOverlap: if greater than kms.getS(), it is automatically set
    *                    to that value.
