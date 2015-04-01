@@ -192,6 +192,7 @@ class KmerMultiSegmenter
   ~KmerMultiSegmenter();
 
   KmerSegmenter *the_kseg;
+  MultiGermline *multi_germline;
 };
 
 

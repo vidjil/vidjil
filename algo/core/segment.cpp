@@ -287,6 +287,7 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
   int best_score_seg = 0 ; // Best score, segmented sequences
   int best_score_unseg = 0 ; // Best score, unsegmented sequences
   the_kseg = NULL;
+  multi_germline = multigermline;
   
   // Iterate over the germlines
   for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
