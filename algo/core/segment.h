@@ -178,6 +178,11 @@ class KmerSegmenter : public Segmenter
   ~KmerSegmenter();
 
   /**
+   * @return probability that the score of the segmenter is 'at_least' or more
+   */
+  double getProbabilityAtLeastOrAbove(int at_least) const;
+
+  /**
    * @return the KmerAffectAnalyser of the current sequence.
    */
   KmerAffectAnalyser *getKmerAffectAnalyser() const;

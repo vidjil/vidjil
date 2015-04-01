@@ -351,13 +351,22 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
     the_kseg->setSegmentationStatus(UNSEG_NOISY);
 }
 
-double KmerMultiSegmenter::getNbExpected() const {
-  int max = the_kseg->score;
+double KmerSegmenter::getProbabilityAtLeastOrAbove(int at_least) const {
+
+  // n: number of kmers in the sequence
+  int n = getSequence().sequence.size() - getKmerAffectAnalyser()->getIndex().getS();
+  float index_load = getKmerAffectAnalyser()->getIndex().getIndexLoad() ;
+
   double proba = 0;
-  int n = the_kseg->getSequence().sequence.size() - the_kseg->getKmerAffectAnalyser()->getIndex().getS();
-  for (int i = max; i<  n; i++) {
-    proba += nChoosek(n, i) * pow(the_kseg->getKmerAffectAnalyser()->getIndex().getIndexLoad(), i);
+  for (int i=at_least; i<n; i++) {
+    proba += nChoosek(n, i) * pow(index_load, i);
   }
+
+  return proba;
+}
+
+double KmerMultiSegmenter::getNbExpected() const {
+  double proba = the_kseg->getProbabilityAtLeastOrAbove(the_kseg->score);
   return multi_germline->germlines.size() * proba;
 }
 
