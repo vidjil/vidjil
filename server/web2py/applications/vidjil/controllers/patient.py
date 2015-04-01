@@ -173,6 +173,7 @@ def index():
         anon[row.patient.id] = row.auth_permission.name
     
     ##retrieve patient list 
+    log.debug("DB query for patient list")
     query = db(
         (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) &
         (auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) &
@@ -185,6 +186,7 @@ def index():
               db.config.on(db.fused_file.config_id == db.config.id),
               db.auth_permission.on(db.patient.id == db.auth_permission.record_id )]
     )
+    log.debug("DB query done")
 
     result = []
     patient_id = 0
@@ -243,6 +245,7 @@ def index():
     for row in result :
         row.string = (row.confs+row.groups+row.patient.last_name+row.patient.first_name+str(row.patient.birth)).lower()+str(row.patient.info)
     result = filter(lambda row : vidjil_utils.filter(row.string,request.vars["filter"]), result )
+    log.debug("patient list: done filtering")
 
     return dict(query = result,
                 count = count,
