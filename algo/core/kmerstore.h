@@ -42,6 +42,7 @@ protected:
   int k; // weight of the seed
   int s; // span of the seed (s >= k)
   string seed ;
+  size_t nb_kmers_inserted;
 
 public:
 
@@ -77,6 +78,11 @@ public:
    * @return the value for the kmer as stored in the structure (don't do revcomp)
    */ 
   virtual T& get(seqtype &word) = 0;
+
+  /**
+   * @return the percentage of kmers that are set in the index
+   */
+  float getIndexLoad() const;
 
   /**
    * @return the value of k
@@ -133,6 +139,9 @@ public:
   vector<T> getResults(const seqtype &seq, bool no_revcomp=false);
   T& get(seqtype &word);
   T& operator[](seqtype & word);
+
+ private:
+  void init();
 };
 
 template <class T> 
@@ -206,14 +215,25 @@ void IKmerStore<T>::insert(const seqtype &sequence,
         kmer = rc_kmer;
       }
     }
-    this->get(kmer) += T(label, strand);
+    T &this_kmer = this->get(kmer);
+    if (this_kmer.isNull()) {
+      nb_kmers_inserted++;
+    }
+    this_kmer += T(label, strand);
     if (revcomp_indexed && ! T::hasRevcompSymetry()) {
       seqtype rc_kmer = revcomp(kmer);
-      this->get(rc_kmer) += T(label, -1);
+      T &this_rc_kmer = this->get(rc_kmer);
+      if (this_rc_kmer.isNull())
+        nb_kmers_inserted++;
+      this_rc_kmer += T(label, -1);
     }
   }
 }
-  
+
+template<class T>
+float IKmerStore<T>::getIndexLoad() const {
+  return nb_kmers_inserted*1. / (1 << (2 * k));
+}
 
 template<class T>
 int IKmerStore<T>::getK() const {
@@ -303,6 +323,7 @@ MapKmerStore<T>::MapKmerStore(string seed, bool revcomp){
   this->k = k;
   this->s = seed.size();
   this->revcomp_indexed = revcomp;
+  init();
 }
 
 template <class T>
@@ -311,6 +332,12 @@ MapKmerStore<T>::MapKmerStore(int k, bool revcomp){
   this->k = k;
   this->s = k;
   this->revcomp_indexed = revcomp;
+  init();
+}
+
+template <class T>
+void MapKmerStore<T>::init() {
+  this->nb_kmers_inserted = 0;
 }
 
 template <class T> 
@@ -352,6 +379,7 @@ ArrayKmerStore<T>::ArrayKmerStore(string seed, bool revcomp){
 
 template <class T>
 void ArrayKmerStore<T>::init() {
+  this->nb_kmers_inserted = 0;
   if ((size_t)(this->k << 1) >= sizeof(int) * 8)
     throw std::bad_alloc();
   store = new T[(unsigned int)1 << (this->k << 1)];
