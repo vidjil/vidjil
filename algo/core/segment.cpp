@@ -358,8 +358,12 @@ double KmerSegmenter::getProbabilityAtLeastOrAbove(int at_least) const {
   float index_load = getKmerAffectAnalyser()->getIndex().getIndexLoad() ;
 
   double proba = 0;
+  double probability_having_system = pow(index_load, at_least);
+  double probability_not_having_system = pow(1 - index_load, n - at_least);
   for (int i=at_least; i<n; i++) {
-    proba += nChoosek(n, i) * pow(index_load, i) * pow(1-index_load, n-i);
+    proba += nChoosek(n, i) * probability_having_system * probability_not_having_system;
+    probability_having_system *= index_load;
+    probability_not_having_system /= index_load;
   }
 
   return proba;
