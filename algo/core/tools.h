@@ -22,6 +22,8 @@ using namespace std;
 #define SEED_S12 "######-######"
 #define SEED_S13 "#######-######"
 
+#define NB_N_CHOOSE_K_STORED 500
+
 string seed_contiguous(int k);
 
 int seed_weight(const string &seed);
@@ -149,6 +151,7 @@ string reverse(const string &text);
  */
 Sequence create_sequence(string label_full, string label, string sequence, string quality);
 
+extern double nChoosek_stored[NB_N_CHOOSE_K_STORED][NB_N_CHOOSE_K_STORED];
 /**
  * @return the combinatorial of k among n
  * @see http://stackoverflow.com/a/9331125/1192742
