@@ -359,7 +359,7 @@ double KmerSegmenter::getProbabilityAtLeastOrAbove(int at_least) const {
 
   double proba = 0;
   for (int i=at_least; i<n; i++) {
-    proba += nChoosek(n, i) * pow(index_load, i);
+    proba += nChoosek(n, i) * pow(index_load, i) * pow(1-index_load, n-i);
   }
 
   return proba;
