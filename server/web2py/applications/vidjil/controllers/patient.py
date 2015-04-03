@@ -157,7 +157,6 @@ def index():
     import time
     
     start = time.time()
-    time_log = ""
     if not auth.user : 
         res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
                             vars=dict(_next=URL('patient', 'index', scheme=True, host=True)))
@@ -176,7 +175,6 @@ def index():
         db.patient.ALL,
         orderby = ~db.patient.id
     )
-    time_log += "1 : " +str(time.time()-start) + " // " 
     result = {}
     
     for i, row in enumerate(query) :
@@ -225,7 +223,6 @@ def index():
     ).select(
         db.patient.ALL, db.auth_user.ALL
     )
-    time_log += "2 : " +str(time.time()-start) + " // " 
     for i, row in enumerate(query) :
         if row.patient.id in keys :
             result[row.patient.id]['creator'] = row.auth_user.last_name
@@ -235,7 +232,6 @@ def index():
     ).select(
         db.patient.ALL, db.sequence_file.ALL
     )
-    time_log += "3 : " +str(time.time()-start) + " // " 
     for i, row in enumerate(query) :
         if row.patient.id in keys :
             result[row.patient.id]['file_count'] += 1
@@ -252,7 +248,6 @@ def index():
         if row.patient.id in keys :
             result[row.patient.id]['conf_list'].append(row.config.name)
             result[row.patient.id]['conf_id_list'].append(row.config.id)
-    time_log += "4 : " +str(time.time()-start) + " // " 
     query = db(
         ((db.patient.id == db.auth_permission.record_id) | (db.auth_permission.record_id == 0)) &
         (db.auth_permission.table_name == 'patient') &
@@ -261,7 +256,6 @@ def index():
     ).select(
         db.patient.ALL, db.auth_group.ALL
     )
-    time_log += "5 : " +str(time.time()-start) + " // " 
     for i, row in enumerate(query) :
         if row.patient.id in keys :
             result[row.patient.id]['group_list'].append(row.auth_group.role)
@@ -310,11 +304,9 @@ def index():
         row['string'] = (row['last_name']+row['first_name']+row['confs']+row['groups']+str(row['birth'])).lower()+str(row['info'])
     result = filter(lambda row : vidjil_utils.filter(row['string'],request.vars["filter"]), result )
     log.debug("patient list: done filtering " + str(time.time()-start))
-    time_log += "6 : " +str(time.time()-start) + " // " 
     return dict(query = result,
                 isAdmin = isAdmin,
-                reverse = reverse,
-                time = time_log)
+                reverse = reverse)
 
 
 
