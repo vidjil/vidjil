@@ -156,6 +156,10 @@ string Segmenter::getInfoLine() const
   s += " " + info_extra ;
   s += " " + segmented_germline->code ;
   s += " " + string(segmented_mesg[because]) ;
+
+  if (evalue > NO_LIMIT_VALUE)
+    s += " " + scientific_string_of_double(evalue);
+
   return s ;
 }
 
@@ -581,6 +585,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
   sequence = seq.sequence ;
   Dend=0;
   segment_cost=segment_c;
+  evalue = NO_LIMIT_VALUE;
 
   CDR3start = -1;
   CDR3end = -1;

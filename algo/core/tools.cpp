@@ -54,6 +54,13 @@ string string_of_int(int number)
    return ss.str();
 }
 
+string scientific_string_of_double(double number)
+{
+   stringstream ss;
+   ss << scientific << number ;
+   return ss.str();
+}
+
 
 bool is_extended_nucleotide(char nuc) {
   switch(nuc) {

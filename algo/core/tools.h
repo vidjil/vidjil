@@ -72,7 +72,7 @@ bool pair_occurrence_sort(pair<T, int> a, pair<T, int> b);
 
 
 string string_of_int(int number);
-
+string scientific_string_of_double(double number);
 
 /**
  * @param nuc is A, C, G, T or any extended nucleotide (or lowercase)
