@@ -138,7 +138,7 @@ def custom():
         if (str(row.results_file.id) in request.vars["custom_list"]) :
             row.checked = True
         row.string = (vidjil_utils.anon(row.sequence_file.patient_id, auth.user_id) + row.sequence_file.filename +
-                      str(row.sequence_file.sampling_date) + row.sequence_file.pcr + row.config.name + str(row.results_file.run_date)).lower()
+                      str(row.sequence_file.sampling_date) + str(row.sequence_file.pcr) + str(row.config.name) + str(row.results_file.run_date)).lower()
     query = query.find(lambda row : ( vidjil_utils.filter(row.string,request.vars["filter"]) or row.checked) )
     
     if config :
@@ -154,100 +154,162 @@ def custom():
 
 ## return patient list
 def index():
+    import time
+    
+    start = time.time()
+    time_log = ""
     if not auth.user : 
         res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
                             vars=dict(_next=URL('patient', 'index', scheme=True, host=True)))
             }
         
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-    log.debug('patient list')
-
-    count = db.sequence_file.id.count()
-    isAdmin = auth.has_membership("admin")
     
-    query_anon = query = db((db.auth_permission.name == "anon") & (db.auth_permission.table_name == "patient")).select(
-        db.patient.ALL, db.auth_permission.ALL,
-        left=[db.auth_permission.on(db.patient.id == db.auth_permission.record_id )])
-    anon={}
-    for row in query_anon:
-        anon[row.patient.id] = row.auth_permission.name
+    log.debug('patient list')
+    isAdmin = auth.has_membership("admin")
     
     ##retrieve patient list 
     query = db(
-        (auth.accessible_query('read', db.patient) | auth.accessible_query('admin', db.patient) ) &
-        (auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) &
-        (db.auth_permission.name == "read") & (db.auth_permission.table_name == "patient")
+        auth.accessible_query('read', db.patient)
     ).select(
-        db.patient.ALL, db.fused_file.ALL, db.config.ALL, db.sequence_file.ALL, db.auth_permission.ALL,
-        orderby = ~db.patient.id,
-        left=[db.sequence_file.on(db.patient.id == db.sequence_file.patient_id), 
-              db.fused_file.on( db.patient.id == db.fused_file.patient_id),
-              db.config.on(db.fused_file.config_id == db.config.id),
-              db.auth_permission.on(db.patient.id == db.auth_permission.record_id )]
+        db.patient.ALL,
+        orderby = ~db.patient.id
     )
-
-    result = []
-    patient_id = 0
-    sequence_file_id = 0
+    time_log += "1 : " +str(time.time()-start) + " // " 
+    result = {}
     
     for i, row in enumerate(query) :
-        if row.patient.id != patient_id :
-            patient_id = row.patient.id
-            row2 = row
-            row2.conf_list = []
-            row2.conf_id_list = []
-            row2.group_list = []
-            row2.file_count = 0
-            row2.size = 0
-            result.append(row2)
-                
-        if row.sequence_file.id != sequence_file_id :
-            row2.file_count += 1
-            row2.size += row.sequence_file.size_file
+        try:
+            ln = unicode(row.last_name, 'utf-8')
+        except UnicodeDecodeError:
+            ln = row.last_name
+        result[row.id] = {
+            "id" :int(row.id),
+            "last_name" : row.last_name,
+            "first_name" : row.first_name,
+            "has_permission" : False,
+            "name" : ln[:3],
+            "birth" : row.birth,
+            "info" : row.info,
+            "creator" : row.creator,
+            "confs" : "",
+            "conf_list" : [],
+            "conf_id_list" : [-1],
+            "most_used_conf" : "",
+            "groups" : "",
+            "group_list" : [],
+            "file_count" : 0,
+            "size" : 0
+        }
+        
+    keys = result.keys() 
+    
+    (auth.has_permission('admin', 'patient', row['id']) )
+    query = db(
+        (db.auth_permission.name == "admin") & 
+        (db.auth_permission.table_name == "patient") &
+        (db.patient.id == db.auth_permission.record_id ) &
+        (auth.user_group() == db.auth_permission.group_id )
+    ).select(
+        db.patient.ALL, db.auth_permission.ALL
+    )
+
+    for i, row in enumerate(query) :
+        if row.patient.id in keys :
+            result[row.patient.id]['has_permission'] = True
             
-        row2.conf_list.append(row.config.name)
-        row2.conf_id_list.append(row.config.id)
-        row2.group_list.append(str(row.auth_permission.group_id))
-        
+    query = db(
+        db.patient.creator == db.auth_user.id
+    ).select(
+        db.patient.ALL, db.auth_user.ALL
+    )
+    time_log += "2 : " +str(time.time()-start) + " // " 
+    for i, row in enumerate(query) :
+        if row.patient.id in keys :
+            result[row.patient.id]['creator'] = row.auth_user.last_name
+    
+    query = db(
+        db.patient.id == db.sequence_file.patient_id
+    ).select(
+        db.patient.ALL, db.sequence_file.ALL
+    )
+    time_log += "3 : " +str(time.time()-start) + " // " 
+    for i, row in enumerate(query) :
+        if row.patient.id in keys :
+            result[row.patient.id]['file_count'] += 1
+            result[row.patient.id]['size'] += row.sequence_file.size_file
+    
+    query = db(
+        (db.patient.id == db.fused_file.patient_id) &
+        (db.fused_file.config_id == db.config.id)
+    ).select(
+        db.patient.ALL, db.fused_file.ALL, db.config.ALL
+    )
+    
+    for i, row in enumerate(query) :
+        if row.patient.id in keys :
+            result[row.patient.id]['conf_list'].append(row.config.name)
+            result[row.patient.id]['conf_id_list'].append(row.config.id)
+    time_log += "4 : " +str(time.time()-start) + " // " 
+    query = db(
+        ((db.patient.id == db.auth_permission.record_id) | (db.auth_permission.record_id == 0)) &
+        (db.auth_permission.table_name == 'patient') &
+        (db.auth_permission.name == 'read') &
+        (db.auth_group.id == db.auth_permission.group_id)
+    ).select(
+        db.patient.ALL, db.auth_group.ALL
+    )
+    time_log += "5 : " +str(time.time()-start) + " // " 
+    for i, row in enumerate(query) :
+        if row.patient.id in keys :
+            result[row.patient.id]['group_list'].append(row.auth_group.role)
+            
+    query = db(
+        (db.auth_permission.name == "anon") & 
+        (db.auth_permission.table_name == "patient") &
+        (db.patient.id == db.auth_permission.record_id ) &
+        (auth.user_group() == db.auth_permission.group_id )
+    ).select(
+        db.patient.ALL, db.auth_permission.ALL
+    )
 
-    for row in result :
-        row.most_used_conf = max(set(row.conf_id_list), key=row.conf_id_list.count)
-        row.confs = ", ".join(list(set(row.conf_list)))
-        row.groups = ", ".join(list(set(row2.group_list)))
-        row.name = row.patient.last_name + " " + row.patient.first_name
-        if row.patient.id in anon.keys() :
-            try:
-                ln = unicode(row.patient.last_name, 'utf-8')
-            except UnicodeDecodeError:
-                ln = row.patient.last_name
-            row.name = ln[:3]
+    for i, row in enumerate(query) :
+        if row.patient.id in keys :
+            result[row.patient.id]['name'] = row.patient.last_name + " " + row.patient.first_name
 
         
+    for key, row in result.iteritems():
+        row['most_used_conf'] = max(set(row['conf_id_list']), key=row['conf_id_list'].count)
+        row['confs'] = ", ".join(list(set(row['conf_list'])))
+        row['groups'] = ", ".join(list(set(row['group_list'])))
+        
+    result = result.values()
+
     ##sort result
     reverse = False
     if request.vars["reverse"] == "true" :
         reverse = True
     if request.vars["sort"] == "configs" :
-        result = sorted(result, key = lambda row : row.confs, reverse=reverse)
+        result = sorted(result, key = lambda row : row['confs'], reverse=reverse)
     elif request.vars["sort"] == "groups" :
-        result = sorted(result, key = lambda row : row.groups, reverse=reverse)
+        result = sorted(result, key = lambda row : row['groups'], reverse=reverse)
     elif request.vars["sort"] == "files" :
-        result = sorted(result, key = lambda row : row[count], reverse=reverse)
+        result = sorted(result, key = lambda row : row['file_count'], reverse=reverse)
     elif "sort" in request.vars:
-        result = sorted(result, key = lambda row : row.patient[request.vars["sort"]], reverse=reverse)
+        result = sorted(result, key = lambda row : row[request.vars["sort"]], reverse=reverse)
     
     ##filter
     if "filter" not in request.vars :
         request.vars["filter"] = ""
-        
-    for row in result :
-        row.string = (row.confs+row.groups+row.patient.last_name+row.patient.first_name+str(row.patient.birth)).lower()+str(row.patient.info)
-    result = filter(lambda row : vidjil_utils.filter(row.string,request.vars["filter"]), result )
 
+    for row in result :
+        row['string'] = (row['last_name']+row['first_name']+row['confs']+row['groups']+str(row['birth'])).lower()+str(row['info'])
+    result = filter(lambda row : vidjil_utils.filter(row['string'],request.vars["filter"]), result )
+    time_log += "6 : " +str(time.time()-start) + " // " 
     return dict(query = result,
-                count = count,
                 isAdmin = isAdmin,
-                reverse = reverse)
+                reverse = reverse,
+                time = time_log)
 
 
 
