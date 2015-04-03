@@ -62,8 +62,11 @@ core:
 	$(CC) -o $@ $(INCLUDE) -c $< $(CXXFLAGS)
 
 clean:
-	rm -f *.o $(EXEC) *.tap *.log *.gcda *.gcno *.gcov should-vdj-tests/*.tap should-vdj-tests/*.log
+	rm -f *.o $(EXEC) *.tap *.log should-vdj-tests/*.tap should-vdj-tests/*.log
 	rm -rf out/
+
+cleancoverage:
+	rm -f *.gcda *.gcno *.gcov
 
 forcedep:
 	g++ $(INCLUDE) -M $(SRC) > dep.mk

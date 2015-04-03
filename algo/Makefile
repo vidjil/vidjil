@@ -86,9 +86,14 @@ $(EXEC): %: %.o
 clean:
 	make -C core $@
 	make -C lib $@
-	rm -f *.o *.gcda *.gcno *.gcov cgi/*.o
+	rm -f *.o cgi/*.o
 	cd $(BINDIR) ; rm -f $(EXEC)
 	make -C tests $@
+
+cleancoverage: clean
+	rm -f *.gcda *.gcno *.gcov
+	make -C core cleancoverage
+	make -C lib cleancoverage
 
 forcedep:
 	g++ $(CXXFLAGS) -M $(MAINCORE) > dep.mk
