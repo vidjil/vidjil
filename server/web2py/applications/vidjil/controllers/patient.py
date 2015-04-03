@@ -258,7 +258,7 @@ def index():
     )
     for i, row in enumerate(query) :
         if row.patient.id in keys :
-            result[row.patient.id]['group_list'].append(row.auth_group.role)
+            result[row.patient.id]['group_list'].append(row.auth_group.role.replace('user_','u'))
             
     query = db(
         (db.auth_permission.name == "anon") & 
@@ -277,7 +277,7 @@ def index():
     for key, row in result.iteritems():
         row['most_used_conf'] = max(set(row['conf_id_list']), key=row['conf_id_list'].count)
         row['confs'] = ", ".join(list(set(row['conf_list'])))
-        row['groups'] = ", ".join(list(set(row['group_list'])))
+        row['groups'] = ", ".join(filter(lambda g: g != 'admin', set(row['group_list'])))
         
     result = result.values()
 
