@@ -299,7 +299,9 @@ def index():
         result = sorted(result, key = lambda row : row['file_count'], reverse=reverse)
     elif "sort" in request.vars:
         result = sorted(result, key = lambda row : row[request.vars["sort"]], reverse=reverse)
-    
+    else:
+        result = sorted(result, key = lambda row : row['id'], reverse=not reverse)
+
     ##filter
     if "filter" not in request.vars :
         request.vars["filter"] = ""
