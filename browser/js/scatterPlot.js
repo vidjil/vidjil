@@ -118,7 +118,7 @@ function ScatterPlot(id, model) {
         "n" : { "fct" : function(cloneID) {return m.clone(cloneID).getNlength()} },
         "lengthCDR3" : { "fct" : function(cloneID) {return m.clone(cloneID).seg["cdr3"].length} },
         "Size" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSize()}, "max" : 1, "percent" : true, "log" :true  },
-        "otherSize" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSize()}, "max" : 1, "percent" : true, "log" :true  }
+        "otherSize" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSize(self.m.tOther)}, "max" : 1, "percent" : true, "log" :true  }
     }
     
     // Plot Presets
