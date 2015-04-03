@@ -249,7 +249,7 @@ int atoi_NO_LIMIT(char *optarg)
 {
   return strcmp(NO_LIMIT, optarg) ? atoi(optarg) : NO_LIMIT_VALUE ;
 }
-int atof_NO_LIMIT(char *optarg)
+double atof_NO_LIMIT(char *optarg)
 {
   return strcmp(NO_LIMIT, optarg) ? atof(optarg) : NO_LIMIT_VALUE ;
 }
