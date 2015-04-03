@@ -949,7 +949,7 @@ void KmerSegmenter::toJsonList(JsonList *seg)
     int sequenceSize = sequence.size();
 
     if (evalue > NO_LIMIT_VALUE)
-      seg->add("evalue", evalue);
+      seg->add("evalue", scientific_string_of_double(evalue));
 
     JsonList *json_affectValues;
     json_affectValues=new JsonList();
