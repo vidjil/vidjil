@@ -1237,6 +1237,8 @@ int main (int argc, char **argv)
         KmerMultiSegmenter kmseg(seg.getSequence(), multigermline, 0, expected_value);
         KmerSegmenter *kseg = kmseg.the_kseg ;
         kseg->toJsonList(&json_seg);
+        if (verbose)
+          cout << "KmerSegmenter: " << kseg->getInfoLine() << endl;
 
         // Save .json data segment
         json_clone.add("seg", json_seg);
