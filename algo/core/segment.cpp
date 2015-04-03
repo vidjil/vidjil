@@ -194,6 +194,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
   Dend=0;
   because = 0 ; // Cause of unsegmentation
   score = 0 ;
+  evalue = NO_LIMIT_VALUE;
 
   int s = (size_t)germline->index->getS() ;
   int length = sequence.length() ;
@@ -348,9 +349,15 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
       }
     } // end for (Germlines)
 
+  // E-value threshold
   if (threshold_nb_expected > NO_LIMIT_VALUE)
-    if (the_kseg->isSegmented() && getNbExpected() > threshold_nb_expected)
-      the_kseg->setSegmentationStatus(UNSEG_NOISY);
+    if (the_kseg->isSegmented()) {
+        // the_kseg->evalue also depends on the number of germlines from the *Multi*KmerSegmenter
+        the_kseg->evalue = getNbExpected();
+        if (the_kseg->evalue > threshold_nb_expected) {
+          the_kseg->setSegmentationStatus(UNSEG_NOISY);
+        }
+      }
 }
 
 double KmerSegmenter::getProbabilityAtLeastOrAbove(int at_least) const {
@@ -935,6 +942,9 @@ void FineSegmenter::toJsonList(JsonList *seg){
 void KmerSegmenter::toJsonList(JsonList *seg)
 {
     int sequenceSize = sequence.size();
+
+    if (evalue > NO_LIMIT_VALUE)
+      seg->add("evalue", evalue);
 
     JsonList *json_affectValues;
     json_affectValues=new JsonList();

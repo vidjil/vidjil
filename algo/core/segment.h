@@ -76,6 +76,7 @@ protected:
   string seg_V, seg_N, seg_J, system;
 
   int best_D;
+  int evalue;
   string seg_N1, seg_D, seg_N2;
   Cost segment_cost;
 

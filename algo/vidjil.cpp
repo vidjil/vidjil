@@ -1233,8 +1233,8 @@ int main (int argc, char **argv)
 
         seg.toJsonList(&json_seg);
 
-        // Re-launch also a KmerMultiSegmenter, for debug purposes
-        KmerMultiSegmenter kmseg(seg.getSequence(), multigermline, 0);
+        // Re-launch also a KmerMultiSegmenter, for control purposes (affectations, evalue)
+        KmerMultiSegmenter kmseg(seg.getSequence(), multigermline, 0, expected_value);
         KmerSegmenter *kseg = kmseg.the_kseg ;
         kseg->toJsonList(&json_seg);
 
