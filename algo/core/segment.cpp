@@ -347,8 +347,10 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
         delete kseg;
       }
     } // end for (Germlines)
-  if (the_kseg->isSegmented() && getNbExpected() > threshold_nb_expected)
-    the_kseg->setSegmentationStatus(UNSEG_NOISY);
+
+  if (threshold_nb_expected > NO_LIMIT_VALUE)
+    if (the_kseg->isSegmented() && getNbExpected() > threshold_nb_expected)
+      the_kseg->setSegmentationStatus(UNSEG_NOISY);
 }
 
 double KmerSegmenter::getProbabilityAtLeastOrAbove(int at_least) const {

@@ -179,7 +179,7 @@ void usage(char *progname, bool advanced)
        << "  -m <int>      minimal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MIN << ") (default with -D: " << DEFAULT_DELTA_MIN_D << ")" << endl
        << "  -M <int>      maximal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MAX << ") (default with -D: " << DEFAULT_DELTA_MAX_D << ")" << endl
        << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ") (default with -D: " << DEFAULT_W_D << ")" << endl
-       << "  -p <float>    maximal e-value for determining if a segmentation can be trusted (default: " << THRESHOLD_NB_EXPECTED <<")" << endl
+       << "  -p <float>    maximal e-value for determining if a segmentation can be trusted (default: '" << NO_LIMIT << "': no limit)" << endl
        << endl
 
        << "Window annotations" << endl
@@ -247,7 +247,11 @@ void usage(char *progname, bool advanced)
 
 int atoi_NO_LIMIT(char *optarg)
 {
-  return strcmp(NO_LIMIT, optarg) ? atoi(optarg) : -1 ;
+  return strcmp(NO_LIMIT, optarg) ? atoi(optarg) : NO_LIMIT_VALUE ;
+}
+int atof_NO_LIMIT(char *optarg)
+{
+  return strcmp(NO_LIMIT, optarg) ? atof(optarg) : NO_LIMIT_VALUE ;
 }
 
 int main (int argc, char **argv)
@@ -458,7 +462,7 @@ int main (int argc, char **argv)
         break;
 
       case 'p':
-        expected_value = atof(optarg);
+        expected_value = atof_NO_LIMIT(optarg);
         break;
 
       // Output 

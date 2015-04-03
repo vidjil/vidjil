@@ -28,7 +28,11 @@
 
 #define JSON_REMEMBER_BEST  4   /* The number of V/D/J predictions to keep  */
 
-#define THRESHOLD_NB_EXPECTED 100 /* Threshold of the accepted expected value for number of found k-mers */
+#define NO_LIMIT_VALUE  -1
+
+#define THRESHOLD_NB_EXPECTED NO_LIMIT_VALUE /* Threshold of the accepted expected value for number of found k-mers */
+
+
 
 using namespace std;
 
