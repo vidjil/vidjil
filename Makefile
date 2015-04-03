@@ -15,8 +15,7 @@ all:
 
 test:
 	make COVERAGE="$(COVERAGE)" unit
-	make should
-	make shouldvdj
+	make functional
 	make test_tools
 	@echo
 	@echo "*** All tests passed. Congratulations !"
@@ -30,6 +29,10 @@ unit: all
 	@echo "*** Launching unit tests..."
 	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests
 	@echo "*** All unit tests passed"
+
+functional: all
+	make should
+	make shouldvdj
 
 should: all
 	@echo
@@ -87,7 +90,7 @@ coverage: unit_coverage should_coverage
 unit_coverage: clean
 	make COVERAGE=1 unit
 should_coverage: clean
-	make COVERAGE=1 should
+	make COVERAGE=1 functional
 
 ### Reports with gcovr
 
