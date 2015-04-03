@@ -111,13 +111,16 @@
                 </div></div>
             </div>
 
-            <div class="menu" id="cluster_menu" onmouseover="showSelector('clusterSelector');" > display
-                <div class="div-menu-selector"><select class="menu-selector" onchange="this.options[this.selectedIndex].onclick(this);">
-                    <option value="" onclick="m.restoreClusters();">clones</option>
-                    <option value="" onclick="m.clusterBy(function(id){return m.clone(id).getV()});">V genes</option>
-                    <option value="" onclick="m.clusterBy(function(id){return m.clone(id).getJ()});">J genes</option>
-                    <option value="" onclick="m.clusterBy(function(id){return m.clone(id).getSystem()});">locus</option>
-                </select></div>
+            <div class="menu" id="cluster_menu" onmouseover="showSelector('clusterSelector');" > cluster
+                <div id="clusterSelector" class="selector"><div>
+                    <a class="buttonSelector" onclick="m.restoreClusters();">clones merged by user</a>
+                    <a class="buttonSelector" onclick="m.resetClusters();">reset all user clones</a>
+                    <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getV()});">cluster by V gene + allele</a>
+                    <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getJ()});">cluster by J gene + allele</a>
+                    <!-- <a class="buttonSelector" onclick="m.clusterBy('cluster')">DBSCAN algorithm</a> -->
+
+                    <div id="clusterby_button"> </div>
+                </div></div>
             </div>
 
             <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color by
