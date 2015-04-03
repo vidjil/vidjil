@@ -62,7 +62,7 @@ core:
 	$(CC) -o $@ $(INCLUDE) -c $< $(CXXFLAGS)
 
 clean:
-	rm -f *.o $(EXEC) *.tap *.log *.gcda *.gcno *.gcov
+	rm -f *.o $(EXEC) *.tap *.log *.gcda *.gcno *.gcov should-vdj-tests/*.tap should-vdj-tests/*.log
 	rm -rf out/
 
 forcedep:
