@@ -164,11 +164,9 @@ def index():
         
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
-    log.debug('patient list')
     isAdmin = auth.has_membership("admin")
     
     ##retrieve patient list 
-    log.debug("DB query for patient list")
     query = db(
         auth.accessible_query('read', db.patient)
     ).select(
@@ -212,7 +210,6 @@ def index():
     ).select(
         db.patient.ALL, db.auth_permission.ALL
     )
-    log.debug("DB query done")
 
     for i, row in enumerate(query) :
         if row.patient.id in keys :
@@ -302,7 +299,7 @@ def index():
     for row in result :
         row['string'] = (row['last_name']+row['first_name']+row['confs']+row['groups']+str(row['birth'])).lower()+str(row['info'])
     result = filter(lambda row : vidjil_utils.filter(row['string'],request.vars["filter"]), result )
-    log.debug("patient list: done filtering " + str(time.time()-start))
+    log.debug("patient list (%.3fs)" % (time.time()-start))
     return dict(query = result,
                 isAdmin = isAdmin,
                 reverse = reverse)
