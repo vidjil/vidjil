@@ -71,6 +71,8 @@ public:
          *         if the content is not valid
          */
         void add(const string &filename, bool verbose=true);
+
+        void add(const Sequence sequence);
 	
 	friend istream& operator>>(istream&, Fasta&);
 };
