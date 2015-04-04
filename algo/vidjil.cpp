@@ -162,6 +162,7 @@ void usage(char *progname, bool advanced)
   cerr << "Experimental options (do not use)" << endl
        << "  -I            ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)" << endl
        << "  -1            use a unique index for all germline systems (experimental, must be used with -g, do not use)" << endl
+       << "  -2            try to detect unexpected recombinations (experimental, must be used with -g1, do not use)" << endl
        << "  -!            keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example -!AX 20)" << endl
        << endl
 
@@ -326,6 +327,7 @@ int main (int argc, char **argv)
   bool multi_germline_incomplete = false;
   bool multi_germline_mark = false;
   bool multi_germline_one_index_per_germline = true;
+  bool multi_germline_unexpected_recombinations = false;
   string multi_germline_file = DEFAULT_MULTIGERMLINE;
 
   string forced_edges = "" ;
@@ -344,7 +346,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHaiI1g:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3E:")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHaiI12g:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3E:")) != EOF)
 
     switch (c)
       {
@@ -406,7 +408,11 @@ int main (int argc, char **argv)
       case '1':
         multi_germline_one_index_per_germline = false ;
         break;
-        
+
+      case '2':
+        multi_germline_unexpected_recombinations = true ;
+        break;
+
       case 'G':
 	germline_system = string(optarg);
 	f_reps_V.push_back((germline_system + "V.fa").c_str()) ;
@@ -781,8 +787,15 @@ int main (int argc, char **argv)
 
     cout << endl ;
 
-    if (!multi_germline_one_index_per_germline)
+    if (!multi_germline_one_index_per_germline) {
       multigermline->build_with_one_index(seed);
+
+      if (multi_germline_unexpected_recombinations) {
+        Germline *pseudo = new Germline(PSEUDO_GERMLINE_MAX12, 'x', -10, 80);
+        pseudo->index = multigermline->index ;
+        multigermline->germlines.push_back(pseudo);
+      }
+    }
 
     if (multi_germline_mark)
       multigermline->mark_cross_germlines_as_ambiguous();
