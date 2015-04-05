@@ -63,3 +63,5 @@ for (res, seq) in last_result_by_first_point_by_patient():
     print "\t", "# pat-%04d (%s %s)" % (res.patient.id, res.patient.first_name, res.patient.last_name)
 
 
+log.debug("=== links.py completed ===")
+
