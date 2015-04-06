@@ -96,12 +96,11 @@ IKmerStore<KmerAffect> &KmerAffectAnalyser::getIndex() const{
 affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before, 
                                                const KmerAffect &after, 
                                                float ratioMin,
-                                               int maxOverlap) const {
+                                               int maxOverlap) {
   /* currentValue is the  { affectations[t] == before | t \in 1..i  } - | { affectations[i] == after | t \in 1..i }  */
   int currentValue;
   int span = kms.getS();
   int length = count();
-  affect_infos results;
 
   if (maxOverlap > span)
     maxOverlap = span;
@@ -176,6 +175,13 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
 
 double KmerAffectAnalyser::getProbabilityAtLeastOrAbove(int at_least) const {
   return kms.getProbabilityAtLeastOrAbove(at_least, seq.size());
+}
+
+pair <double, double> KmerAffectAnalyser::getLeftRightProbabilityAtLeastOrAbove() const {
+  int pos = (results.first_pos_max + results.last_pos_max) / 2 ;
+
+  return make_pair(kms.getProbabilityAtLeastOrAbove(results.nb_before_left, pos),
+                   kms.getProbabilityAtLeastOrAbove(results.nb_after_right, seq.size()-pos));
 }
 
 const string &KmerAffectAnalyser::getSequence() const{
