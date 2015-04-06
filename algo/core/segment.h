@@ -77,6 +77,8 @@ protected:
 
   int best_D;
   double evalue;
+  double evalue_left;
+  double evalue_right;
   string seg_N1, seg_D, seg_N2;
   Cost segment_cost;
 

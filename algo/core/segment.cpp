@@ -159,6 +159,11 @@ string Segmenter::getInfoLine() const
   if (evalue > NO_LIMIT_VALUE)
     s += " " + scientific_string_of_double(evalue);
 
+  if (evalue_left > NO_LIMIT_VALUE)
+    s += " " + scientific_string_of_double(evalue_left);
+  if (evalue_right > NO_LIMIT_VALUE)
+    s += "/" + scientific_string_of_double(evalue_right);
+
   return s ;
 }
 
@@ -359,6 +364,17 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
         the_kseg->evalue = getNbExpected();
         if (the_kseg->evalue > threshold_nb_expected) {
           the_kseg->setSegmentationStatus(UNSEG_NOISY);
+        }
+
+        pair <double, double> p = the_kseg->getKmerAffectAnalyser()->getLeftRightProbabilityAtLeastOrAbove();
+        the_kseg->evalue_left = p.first;
+        the_kseg->evalue_right = p.second;
+
+        if (the_kseg->evalue_left > threshold_nb_expected) {
+          the_kseg->setSegmentationStatus(UNSEG_NOISY); // TOO_FEW_V ?
+        }
+        if (the_kseg->evalue_right > threshold_nb_expected) {
+          the_kseg->setSegmentationStatus(UNSEG_NOISY); // TOO_FEW_J ?
         }
       }
 }
@@ -567,6 +583,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
   Dend=0;
   segment_cost=segment_c;
   evalue = NO_LIMIT_VALUE;
+  evalue_left = NO_LIMIT_VALUE;
+  evalue_right = NO_LIMIT_VALUE;
 
   CDR3start = -1;
   CDR3end = -1;
@@ -931,6 +949,10 @@ void KmerSegmenter::toJsonList(JsonList *seg)
 
     if (evalue > NO_LIMIT_VALUE)
       seg->add("_evalue", scientific_string_of_double(evalue));
+    if (evalue_left > NO_LIMIT_VALUE)
+      seg->add("_evalue_left", scientific_string_of_double(evalue_left));
+    if (evalue_right > NO_LIMIT_VALUE)
+      seg->add("_evalue_right", scientific_string_of_double(evalue_right));
 
     JsonList *json_affectValues;
     json_affectValues=new JsonList();
