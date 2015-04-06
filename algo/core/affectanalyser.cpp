@@ -174,6 +174,10 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
 }
 
 
+double KmerAffectAnalyser::getProbabilityAtLeastOrAbove(int at_least) const {
+  return kms.getProbabilityAtLeastOrAbove(at_least, seq.size());
+}
+
 const string &KmerAffectAnalyser::getSequence() const{
   return seq;
 }

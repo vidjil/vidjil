@@ -171,6 +171,12 @@ class KmerAffectAnalyser: public AffectAnalyser {
                           float ratioMin=2., 
                           int maxOverlap=1) const;
 
+
+  /**
+   * @return probability that the number of kmers is 'at_least' or more
+   */
+  double getProbabilityAtLeastOrAbove(int at_least) const;
+
   const string &getSequence() const;
 
   int first(const KmerAffect &affect) const;

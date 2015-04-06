@@ -363,14 +363,8 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
       }
 }
 
-double KmerSegmenter::getProbabilityAtLeastOrAbove(int at_least) const {
-
-  return getKmerAffectAnalyser()->getIndex().getProbabilityAtLeastOrAbove(at_least,
-                                                                          getSequence().sequence.size());
-}
-
 double KmerMultiSegmenter::getNbExpected() const {
-  double proba = the_kseg->getProbabilityAtLeastOrAbove(the_kseg->score);
+  double proba = the_kseg->getKmerAffectAnalyser()->getProbabilityAtLeastOrAbove(the_kseg->score);
   return multi_germline->germlines.size() * proba;
 }
 
