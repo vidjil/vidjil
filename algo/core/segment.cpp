@@ -203,6 +203,8 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
   because = 0 ; // Cause of unsegmentation
   score = 0 ;
   evalue = NO_LIMIT_VALUE;
+  evalue_left = NO_LIMIT_VALUE;
+  evalue_right = NO_LIMIT_VALUE;
 
   int s = (size_t)germline->index->getS() ;
   int length = sequence.length() ;
