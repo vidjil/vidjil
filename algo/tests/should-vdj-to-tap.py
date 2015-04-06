@@ -82,7 +82,7 @@ def id_line_to_tap(l, tap_id):
         if '  ' in should_pattern:
             should_pattern = should_pattern.split('  ')[1]
         else:
-            return ''
+            return '# %d - not tested (no locus)' % tap_id
 
     tap = ''
     should_not_found = (not should_pattern in result) \
