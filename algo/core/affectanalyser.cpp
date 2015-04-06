@@ -178,10 +178,8 @@ double KmerAffectAnalyser::getProbabilityAtLeastOrAbove(int at_least) const {
 }
 
 pair <double, double> KmerAffectAnalyser::getLeftRightProbabilityAtLeastOrAbove() const {
-  int pos = (results.first_pos_max + results.last_pos_max) / 2 ;
-
-  return make_pair(kms.getProbabilityAtLeastOrAbove(results.nb_before_left, pos),
-                   kms.getProbabilityAtLeastOrAbove(results.nb_after_right, seq.size()-pos));
+  return make_pair(kms.getProbabilityAtLeastOrAbove(results.nb_before_left, results.first_pos_max + kms.getS()),
+                   kms.getProbabilityAtLeastOrAbove(results.nb_after_right, seq.size() - results.last_pos_max));
 }
 
 const string &KmerAffectAnalyser::getSequence() const{
