@@ -6,6 +6,7 @@
 #include <list>
 #include <stdexcept>
 #include <stdint.h>
+#include <math.h>
 #include "fasta.h"
 #include "tools.h"
 
@@ -83,6 +84,11 @@ public:
    * @return the percentage of kmers that are set in the index
    */
   float getIndexLoad() const;
+
+  /**
+   * @return probability that the number of kmers is 'at_least' or more in a sequence of length 'length'
+   */
+  double getProbabilityAtLeastOrAbove(int at_least, int length) const;
 
   /**
    * @return the value of k
@@ -234,6 +240,28 @@ template<class T>
 float IKmerStore<T>::getIndexLoad() const {
   return nb_kmers_inserted*1. / (1 << (2 * k));
 }
+
+
+template<class T>
+double IKmerStore<T>::getProbabilityAtLeastOrAbove(int at_least, int length) const {
+
+  // n: number of kmers in the sequence
+  int n = length - getS() + 1;
+  float index_load = getIndexLoad() ;
+
+  double proba = 0;
+  double probability_having_system = pow(index_load, at_least);
+  double probability_not_having_system = pow(1 - index_load, n - at_least);
+  for (int i=at_least; i<=n; i++) {
+    proba += nChoosek(n, i) * probability_having_system * probability_not_having_system;
+    probability_having_system *= index_load;
+    probability_not_having_system /= (1 - index_load);
+  }
+
+  return proba;
+}
+
+
 
 template<class T>
 int IKmerStore<T>::getK() const {

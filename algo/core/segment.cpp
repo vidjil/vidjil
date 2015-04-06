@@ -27,7 +27,6 @@
 #include "affectanalyser.h"
 #include <sstream>
 #include <string>
-#include <math.h>
 
 Segmenter::~Segmenter() {}
 
@@ -366,20 +365,8 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
 
 double KmerSegmenter::getProbabilityAtLeastOrAbove(int at_least) const {
 
-  // n: number of kmers in the sequence
-  int n = getSequence().sequence.size() - getKmerAffectAnalyser()->getIndex().getS() + 1;
-  float index_load = getKmerAffectAnalyser()->getIndex().getIndexLoad() ;
-
-  double proba = 0;
-  double probability_having_system = pow(index_load, at_least);
-  double probability_not_having_system = pow(1 - index_load, n - at_least);
-  for (int i=at_least; i<=n; i++) {
-    proba += nChoosek(n, i) * probability_having_system * probability_not_having_system;
-    probability_having_system *= index_load;
-    probability_not_having_system /= (1 - index_load);
-  }
-
-  return proba;
+  return getKmerAffectAnalyser()->getIndex().getProbabilityAtLeastOrAbove(at_least,
+                                                                          getSequence().sequence.size());
 }
 
 double KmerMultiSegmenter::getNbExpected() const {
