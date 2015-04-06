@@ -302,10 +302,13 @@ void testProbability() {
   Sequence seq = {"to_segment", "to_segment", "TATCG", "", NULL};
   KmerSegmenter kseg(seq, &germline);
 
-  TAP_TEST(kseg.getProbabilityAtLeastOrAbove(2) == .75 * .75, TEST_PROBABILITY_SEGMENTATION, "");
-  TAP_TEST(kseg.getProbabilityAtLeastOrAbove(1) == .75 * 2 * .25 + kseg.getProbabilityAtLeastOrAbove(2),
+  KmerAffectAnalyser *kaa = kseg.getKmerAffectAnalyser();
+
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(3) == 0, TEST_PROBABILITY_SEGMENTATION, "");
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(2) == .75 * .75, TEST_PROBABILITY_SEGMENTATION, "");
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(1) == .75 * 2 * .25 + kaa->getProbabilityAtLeastOrAbove(2),
             TEST_PROBABILITY_SEGMENTATION, "");
-  TAP_TEST(kseg.getProbabilityAtLeastOrAbove(0) == 1, TEST_PROBABILITY_SEGMENTATION, "");
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(0) == 1, TEST_PROBABILITY_SEGMENTATION, "");
 }
 
 void testSegment() {
