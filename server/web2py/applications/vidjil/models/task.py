@@ -320,7 +320,7 @@ def custom_fuse(file_list):
     p.wait()
     os.makedirs(out_folder)    
 
-    res = {"message": "'custom fuse' (%d files): %s" % (len(file_list), ' '.join(file_list))}
+    res = {"message": "'custom fuse' (%d files): %s" % (len(file_list), ','.join(file_list))}
     log.info(res)
         
     ## fuse.py 
