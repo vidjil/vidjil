@@ -119,7 +119,7 @@ class KmerAffectAnalyser: public AffectAnalyser {
   IKmerStore<KmerAffect> &kms;
   const string &seq;
   vector<KmerAffect> affectations;
-  affect_infos results ;
+  double left_evalue, right_evalue;
 
  public:
   /**
