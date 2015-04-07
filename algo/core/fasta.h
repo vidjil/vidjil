@@ -91,6 +91,7 @@ class OnlineFasta {
   string line;
   bool input_allocated;
   size_t line_nb;
+  unsigned long long char_nb;
 
  public:
 
@@ -113,7 +114,12 @@ class OnlineFasta {
               int extract_field=0, string extract_separator="|");
 
   ~OnlineFasta();
-  
+
+  /**
+   * @return the position in the file
+   */
+  unsigned long long getPos();
+
   /**
    * @return the current line number
    */

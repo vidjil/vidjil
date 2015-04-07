@@ -133,9 +133,14 @@ OnlineFasta::~OnlineFasta() {
 }
 
 void OnlineFasta::init() {
+  char_nb = 0;
   line_nb = 0;
   line = getInterestingLine();
   current.seq = NULL;
+}
+
+unsigned long long OnlineFasta::getPos() {
+  return char_nb;
 }
 
 size_t OnlineFasta::getLineNb() {
@@ -226,6 +231,7 @@ string OnlineFasta::getInterestingLine(int state) {
   string line;
   while (line.length() == 0 && hasNext() && getline(*input, line)) {
     line_nb++;
+    char_nb += line.length() + 1;
     remove_trailing_whitespaces(line);
 
     if (line.length() && line[0] == '#' && state != FASTX_FASTQ_SEP)
