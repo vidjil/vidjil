@@ -32,14 +32,19 @@ def recombine_VJ_with_removes(seq5, remove5, Nlength, remove3, seq3):
     return recombine_VJ(seq5, remove5, random_sequence(available, Nlength), remove3, seq3)
 
 
-def select_genes(rep5, rep3, at_least=0):
-    nb = 0
+def select_genes(rep5, rep3, at_most=0):
+    if at_most > 0 and len(rep5) * len(rep3) > at_most:
+        return select_genes_randomly(rep5, rep3, at_most)
+    return select_all_genes(rep5, rep3)
+
+def select_all_genes(rep5, rep3):
     for seq5 in rep5:
         for seq3 in rep3:
             yield (seq5, seq3)
-            nb +=1
 
-    while nb < at_least:
+def select_genes_randomly(rep5, rep3, at_most):
+    nb = 0
+    while nb < at_most:
         yield (random.choice(rep5), random.choice(rep3))
         nb += 1
 
