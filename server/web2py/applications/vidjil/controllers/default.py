@@ -128,7 +128,7 @@ def run_request():
         error += "you do not have permission to launch process for this patient ("+str(id_patient)+"), "
 
     if id_config:
-      if not auth.has_permission('admin', 'config', id_config) :
+      if not auth.has_permission('read', 'config', id_config) :
         error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
 
     if error == "" :
