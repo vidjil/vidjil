@@ -40,7 +40,10 @@
         
        {{for row in query :}}
            <tr class="pointer" onclick="db.call('patient/info', {'id' :'{{=row['id']}}' , 'config_id' : {{=row['most_used_conf']}} } )" >
-                <td> {{=row['name']}} </td>
+                <td>
+		     {{ if isAdmin: }} ({{=row['id']}}) {{ pass }}
+                     {{=row['name']}}
+                </td>
                 <td> {{=row['birth'] }} </td>
                 <td> {{=row['info'] }} </td>
                 <td> {{=row['confs']}}</td>
