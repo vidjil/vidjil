@@ -89,9 +89,20 @@ def init_db():
 
 def init_from_csv():
     if db(db.auth_user.id > 0).count() == 0:
-        db.import_from_csv_file(open('backup.csv', 'rb'), null='')
-        db.scheduler_task.truncate()
-        db.scheduler_run.truncate()
+        res = {"success" : "true", "message" : "Importing " + defs.DB_BACKUP_FILE}
+        log.info(res)
+
+        try:
+            db.import_from_csv_file(open(defs.DB_BACKUP_FILE, 'rb'), null='')
+            db.scheduler_task.truncate()
+            db.scheduler_run.truncate()
+        except Exception as e:
+            res = {"success": "false", "message": "!" + str(e)}
+            log.error(res)
+            raise
+
+        res = {"success" : "true", "message" : "coucou"}
+        log.info(res)
 
 #########################################################################
 ## add a scheduller task to run vidjil on a specific sequence file

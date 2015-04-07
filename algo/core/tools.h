@@ -22,6 +22,8 @@ using namespace std;
 #define SEED_S12 "######-######"
 #define SEED_S13 "#######-######"
 
+#define NB_N_CHOOSE_K_STORED 500
+
 string seed_contiguous(int k);
 
 int seed_weight(const string &seed);
@@ -70,7 +72,7 @@ bool pair_occurrence_sort(pair<T, int> a, pair<T, int> b);
 
 
 string string_of_int(int number);
-
+string scientific_string_of_double(double number);
 
 /**
  * @param nuc is A, C, G, T or any extended nucleotide (or lowercase)
@@ -148,6 +150,14 @@ string reverse(const string &text);
  * @return a Sequence whose fields are given by the parameters
  */
 Sequence create_sequence(string label_full, string label, string sequence, string quality);
+
+extern double nChoosek_stored[NB_N_CHOOSE_K_STORED][NB_N_CHOOSE_K_STORED];
+/**
+ * @return the combinatorial of k among n
+ * @see http://stackoverflow.com/a/9331125/1192742
+ */
+double nChoosek(unsigned n, unsigned k);
+
 
 const Sequence NULL_SEQUENCE = create_sequence("", "", "NULL", "");
 

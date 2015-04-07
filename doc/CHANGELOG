@@ -1,6 +1,19 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
+2015-04-XX  The Vidjil Team
+        * New experimental e-value threshold (-e) (core/segment.cpp)
+        * New preview/debug options to stop after a given number of reads (-x), possibly sampled throughout the file (-X)
+        * New preview/debug option to output unsegmented reads as clones (-!)
+        * New progress bar during computation
+        * Better memory management for the reads taken into account for the representative (core/read_storage.cpp)
+        * Updated .json output, with k-mer affectation results
+        * Updated .json output, with the 'coverage' of the representative (core/representative.cpp)
+        * Removed unused code parts as well as some files
+        * Updated help, separing basic (-h) and advanced/experimental options (-H)
+        * Bugs closed (extended nucleotides and revcomp)
+        * New and updated unit and functional tests
+
 2015-03-04  The Vidjil Team
 	* Better multi-germline analysis (-g), returning the best locus for each read (core/segment.cpp)
 	  The incomplete rearrangement analysis (-i) can now safely be used.

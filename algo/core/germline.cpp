@@ -126,8 +126,10 @@ ostream &operator<<(ostream &out, const Germline &germline)
       << setw(3) << germline.delta_min << "/" << setw(3) << germline.delta_max
       << " " << germline.index ;
 
-  if (germline.index)
+  if (germline.index) {
+    out << fixed << setprecision(3) << setw(8) << 100 * germline.index->getIndexLoad() << "%";
     out << " s" << germline.index->getS() << " k" << germline.index->getK() << " " << germline.index->getSeed() ; // TODO: there should be a << for index
+  }
 
   out << endl;
   return out;

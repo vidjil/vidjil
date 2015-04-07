@@ -119,6 +119,8 @@ class KmerAffectAnalyser: public AffectAnalyser {
   IKmerStore<KmerAffect> &kms;
   const string &seq;
   vector<KmerAffect> affectations;
+  affect_infos results ;
+
  public:
   /**
    * @param kms: the index storing the affectation for the k-mers
@@ -150,6 +152,8 @@ class KmerAffectAnalyser: public AffectAnalyser {
 
   set<KmerAffect> getDistinctAffectations() const;
 
+  IKmerStore<KmerAffect> &getIndex() const;
+
   /**
    * @param maxOverlap: if greater than kms.getS(), it is automatically set
    *                    to that value.
@@ -167,7 +171,18 @@ class KmerAffectAnalyser: public AffectAnalyser {
    */
   affect_infos getMaximum(const KmerAffect &before, const KmerAffect &after, 
                           float ratioMin=2., 
-                          int maxOverlap=1) const;
+                          int maxOverlap=1);
+
+
+  /**
+   * @return probability that the number of kmers is 'at_least' or more
+   */
+  double getProbabilityAtLeastOrAbove(int at_least) const;
+
+  /**
+   * @return probabilities that the number of left/right kmers is 'at_least' or more
+   */
+  pair <double, double> getLeftRightProbabilityAtLeastOrAbove() const;
 
   const string &getSequence() const;
 

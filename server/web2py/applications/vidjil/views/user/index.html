@@ -1,7 +1,6 @@
 {{extend 'db_layout.html'}}
 {{import vidjil_utils}}
 
-<div>
     <h3>Users</h3>
     
     <div id="db_table_container">
@@ -30,10 +29,9 @@
            {{pass}}
         
         </table>
-	
-	<span class="button2" onclick="db.call('default/user/register');">+ new user</span>
 
         <table class="db_table" id="db_fixed_header"></table>
     </div>
 
-</div>
+<span class="button2" onclick="db.call('default/user/register');">+ new user</span>
+

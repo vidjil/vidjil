@@ -159,6 +159,7 @@ Window prediction
   -m <int>      minimal admissible delta between last V and first J k-mer (default: -10) (default with -D: 0)
   -M <int>      maximal admissible delta between last V and first J k-mer (default: 20) (default with -D: 80)
   -w <int>      w-mer size used for the length of the extracted window (default: 40)(default with -D: 60)
+  -e <float>    maximal e-value for determining if a segmentation can be trusted (default: 'all', no limit)
 #+END_EXAMPLE
 
 The =-s=, =-k=, =-m= and =-M= options are the options of the seed-based heuristic. A detailed
@@ -177,6 +178,12 @@ the start of the J to uniquely identify a clone.
 Setting =-w= to 30 for VJ and 50 for VDJ recombinations may "segment" (analyze) a
 few more reads, but may in some rare cases falsely cluster reads from
 different clones.  Setting =-w= to lower values is not recommended.
+
+The =-e= option sets the maximal e-value accepted for segmenting a sequence.
+If a segmentation has a higher e-value, it will not be segmented.
+The default value is 'all', but the recommended value is to use something
+like 1e-6 for datasets with a billion of reads.
+Further help on this point will come in next releases.
 
 ** Threshold on clone output
 
@@ -256,7 +263,7 @@ browser.
 Setting the =-n= option triggers an additional automatic
 clustering using DBSCAN algorithm (Ester and al., 1996). 
 
-The =-e= option allows to specify a file for manually clustering two windows
+The =-E= option allows to specify a file for manually clustering two windows
 considered as similar. Such a file may be automatically produced by vidjil
 (out/edges), depending on the option provided. Only the two first columns 
 (separed by one space) are important to vidjil, they only consist of the 

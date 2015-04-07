@@ -20,8 +20,8 @@ from subprocess import Popen, PIPE, STDOUT
 import os
 import argparse
 
-VIDJIL_FINE = '{directory}/vidjil -c segment -i -g {directory}/germline %s > %s'
-VIDJIL_KMER = '{directory}/vidjil -b out -c windows -uU -i -g {directory}/germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa > %s'
+VIDJIL_FINE = '{directory}/vidjil -e 1e-6 -c segment -i -g {directory}/germline %s > %s'
+VIDJIL_KMER = '{directory}/vidjil -e 1e-6 -b out -c windows -uU -i -g {directory}/germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa > %s'
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('--program', '-p', default=VIDJIL_FINE, help='program to launch on each file (%(default)s)')
@@ -64,6 +64,8 @@ def id_line_to_tap(l, tap_id):
     '''
     Parses lines such as:
     >TRDD2*01_1/AGG/1_TRDD3*01__TRD+ + VJ 	0 84 88 187	TRDD2*01 1/AGG/1 TRDD3*01  TRD+
+    or
+    >TRDV3*01_0//0_TRDJ4*01 ! + VJ	0 49 50 97       TRD UNSEG noisy
     and return a .tap line
     '''
 
@@ -80,17 +82,19 @@ def id_line_to_tap(l, tap_id):
         if '  ' in should_pattern:
             should_pattern = should_pattern.split('  ')[1]
         else:
-            return ''
+            return '# %d - not tested (no locus)' % tap_id
 
     tap = ''
+    should_not_found = (not should_pattern in result) \
+                       or (should_pattern + ' UNSEG' in result)
 
-    if not should_pattern in result:
+    if should_not_found:
         globals()['global_failed'] = True
         tap += 'not '
 
     tap += 'ok %d - %s' % (tap_id, should_pattern)
 
-    if not should_pattern in result:
+    if should_not_found:
         tap += ' - found instead ' + result
 
     return tap

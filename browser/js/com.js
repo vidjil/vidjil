@@ -237,6 +237,7 @@ Com.prototype = {
         this.popup_container.style.display = "block";
         this.popup_container.lastElementChild
             .innerHTML = msg;
+        $(this.popup_container).find('button').focus();
     },
 
     closePopupMsg: function () {

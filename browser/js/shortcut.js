@@ -58,6 +58,8 @@ Shortcut.prototype = {
                     
                 var key = e.keyCode;
                 if (key==0) key = e.which
+                console.log(e)
+                console.log(key)
                 switch(key) {
                     case 37 :   //left arrow
                         e.preventDefault()
@@ -73,7 +75,7 @@ Shortcut.prototype = {
                         else
                             m.nextTime();
                         break;
-                    case 54 :   //ctrl+s
+                    case 83 :   //ctrl+s
                         e.preventDefault()
                         if (e.ctrlKey || e.metakey) db.save_analysis()
                         break;

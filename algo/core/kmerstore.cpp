@@ -46,6 +46,10 @@ bool Kmer::hasRevcompSymetry() {
   return true;
 }
 
+bool Kmer::isNull() {
+  return count == 0;
+}
+
 ostream &operator<<(ostream &os, const Kmer &kmer) {
   os << kmer.count << ",";
   return os;

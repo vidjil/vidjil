@@ -4,5 +4,5 @@ $ Segments on TRG
 1: TRG .* -> .* 1
 
 $ Computes a representative
-1:clone-001.* 48 bp
+1:clone-001.* 66 bp
 

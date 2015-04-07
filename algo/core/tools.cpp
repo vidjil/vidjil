@@ -54,6 +54,13 @@ string string_of_int(int number)
    return ss.str();
 }
 
+string scientific_string_of_double(double number)
+{
+   stringstream ss;
+   ss << scientific << number ;
+   return ss.str();
+}
+
 
 bool is_extended_nucleotide(char nuc) {
   switch(nuc) {
@@ -216,4 +223,27 @@ int revcomp_int(int word, int size) {
 
 string reverse(const string &text) {
   return string(text.rbegin(), text.rend());
+}
+
+double nChoosek_stored[NB_N_CHOOSE_K_STORED][NB_N_CHOOSE_K_STORED] = {};
+double nChoosek(unsigned n, unsigned k)
+{
+    if (k > n) return 0;
+    if (k * 2 > n) k = n-k;
+    if (k == 0) return 1;
+
+    if (n >= NB_N_CHOOSE_K_STORED || nChoosek_stored[n][k] == 0) {
+      double result = 1;
+      unsigned i;
+      for (i = 0; i < k && ((n-i) >= NB_N_CHOOSE_K_STORED || nChoosek_stored[n-i][k-i] == 0); i++ ) {
+        result *= (n - i)*1./(k - i);
+      }
+      if (i < k) {
+        result *= nChoosek_stored[n-i][k-i];
+      }
+      if (n < NB_N_CHOOSE_K_STORED)
+        nChoosek_stored[n][k] = result;
+      return result;
+    }
+    return nChoosek_stored[n][k];
 }

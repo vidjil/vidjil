@@ -120,6 +120,16 @@ void testSegmentationCause() {
                TEST_KMER_JUNCTION, "");
       TAP_TEST(ks.getLeft() == 17, TEST_KMER_LEFT, "left = " << ks.getLeft());
       TAP_TEST(ks.getRight() == 18, TEST_KMER_RIGHT, "right = " << ks.getRight());
+
+      ks.setSegmentationStatus(DONT_KNOW);
+      TAP_TEST(! ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.getSegmentationStatus() == DONT_KNOW, TEST_SET_SEGMENTATION_CAUSE, "");
+      ks.setSegmentationStatus(UNSEG_NOISY);
+      TAP_TEST(! ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_NOISY, TEST_SET_SEGMENTATION_CAUSE, "");
+      ks.setSegmentationStatus(SEG_PLUS);
+      TAP_TEST(ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.getSegmentationStatus(), TEST_SET_SEGMENTATION_CAUSE, "");
       nb_checked++;
     } else if (data.read(i).label == "seq-seg-") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
@@ -251,9 +261,60 @@ void testExtractor() {
   delete multi;
 }
 
+void testProbability() {
+  string v_seq[] = {"AAAA", "AAAC", "AAAG", "AAAT", "AACA", "AACC",
+                "AACG", "AACT", "AAGA", "AAGC", "AAGG", "AAGT",
+                    "AATA", "AATC", "AATG", "AATT", "ACAA", "ACAC",
+                "ACAG", "ACAT", "ACCA", "ACCC", "ACCG", "ACCT",
+                "ACGA", "ACGC", "ACGG", "ACGT", "ACTA", "ACTC",
+                "ACTG", "ACTT", "AGAA", "AGAC", "AGAG", "AGAT",
+                "AGCA", "AGCC", "AGCG", "AGCT", "AGGA", "AGGC",
+                "AGGG", "AGGT", "AGTA", "AGTC", "AGTG", "AGTT",
+                "ATAA", "ATAC", "ATAG", "ATAT", "ATCA", "ATCC",
+                "ATCG", "ATCT", "ATGA", "ATGC", "ATGG", "ATGT",
+                "ATTA", "ATTC", "ATTG", "ATTT"};
+  string j_seq[] = {"CAAA", "CAAC",
+                "CAAG", "CAAT", "CACA", "CACC", "CACG", "CACT",
+                "CAGA", "CAGC", "CAGG", "CAGT", "CATA", "CATC",
+                "CATG", "CATT", "CCAA", "CCAC", "CCAG", "CCAT",
+                "CCCA", "CCCC", "CCCG", "CCCT", "CCGA", "CCGC",
+                "CCGG", "CCGT", "CCTA", "CCTC", "CCTG", "CCTT",
+                "CGAA", "CGAC", "CGAG", "CGAT", "CGCA", "CGCC",
+                "CGCG", "CGCT", "CGGA", "CGGC", "CGGG", "CGGT",
+                "CGTA", "CGTC", "CGTG", "CGTT", "CTAA", "CTAC",
+                "CTAG", "CTAT", "CTCA", "CTCC", "CTCG", "CTCT",
+                "CTGA", "CTGC", "CTGG", "CTGT", "CTTA", "CTTC",
+                "CTTG", "CTTT"};
+  Fasta V, J;
+  for (int i = 0; i < 64; i++) {
+    Sequence v = {"V_"+(i+33), "V"+(i+33), v_seq[i], "", NULL};
+    Sequence j = {"J_"+(i+33), "J"+(i+33), j_seq[i], "", NULL};
+    V.add(v);
+    J.add(j);
+  }
+  Germline germline("Test", 'T', V, Fasta(), J, 0, 30);
+  germline.new_index("####");
+
+
+  TAP_TEST(germline.index->getIndexLoad() == .75, TEST_GET_INDEX_LOAD, "");
+
+
+  Sequence seq = {"to_segment", "to_segment", "TATCG", "", NULL};
+  KmerSegmenter kseg(seq, &germline);
+
+  KmerAffectAnalyser *kaa = kseg.getKmerAffectAnalyser();
+
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(3) == 0, TEST_PROBABILITY_SEGMENTATION, "");
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(2) == .75 * .75, TEST_PROBABILITY_SEGMENTATION, "");
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(1) == .75 * 2 * .25 + kaa->getProbabilityAtLeastOrAbove(2),
+            TEST_PROBABILITY_SEGMENTATION, "");
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(0) == 1, TEST_PROBABILITY_SEGMENTATION, "");
+}
+
 void testSegment() {
   testFineSegment();
   testSegmentOverlap();
   testSegmentationCause();
   testExtractor();
+  testProbability();
 }

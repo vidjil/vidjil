@@ -13,7 +13,10 @@ $(LIBCORE): $(OBJCORE)
 	ar rc $@ $^
 
 clean:
-	rm -f $(OBJCORE) $(LIBCORE) *.gcda *.gcno *.gcov
+	rm -f $(OBJCORE) $(LIBCORE)
+
+cleancoverage:
+	rm -f *.gcda *.gcno *.gcov
 
 forcedep:
 	g++ $(CXXFLAGS) -M $(SRCCORE) > dep.mk

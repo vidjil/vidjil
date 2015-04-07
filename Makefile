@@ -15,8 +15,7 @@ all:
 
 test:
 	make COVERAGE="$(COVERAGE)" unit
-	make should
-	make shouldvdj
+	make functional
 	make test_tools
 	@echo
 	@echo "*** All tests passed. Congratulations !"
@@ -30,6 +29,10 @@ unit: all
 	@echo "*** Launching unit tests..."
 	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests
 	@echo "*** All unit tests passed"
+
+functional: all
+	make should
+	make shouldvdj
 
 should: all
 	@echo
@@ -49,7 +52,7 @@ shouldvdj_generate:
 	mkdir -p data/gen
 	cd germline ; python generate-recombinations.py
 
-shouldvdj_generated_kmer: all
+shouldvdj_generated_kmer: all shouldvdj_generate
 	@echo
 	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors) -- Kmer"
 	-cd data/gen ; python ../../algo/tests/should-vdj-to-tap.py -2q *.should-vdj.fa
@@ -57,7 +60,7 @@ shouldvdj_generated_kmer: all
 	python algo/tests/tap-stats.py data/gen/0-*.2.tap
 	python algo/tests/tap-stats.py data/gen/5-*.2.tap
 
-shouldvdj_generated_fine: all
+shouldvdj_generated_fine: all shouldvdj_generate
 	@echo
 	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors) -- Fine"
 	-cd data/gen ; python ../../algo/tests/should-vdj-to-tap.py *.should-vdj.fa
@@ -87,7 +90,7 @@ coverage: unit_coverage should_coverage
 unit_coverage: clean
 	make COVERAGE=1 unit
 should_coverage: clean
-	make COVERAGE=1 should
+	make COVERAGE=1 functional
 
 ### Reports with gcovr
 
@@ -123,6 +126,7 @@ clean:
 cleanall: clean
 	make -C data $^
 	make -C germline $^
+	make -C $(VIDJIL_ALGO_SRC) cleancoverage
 
 .PHONY: all test should clean cleanall distrib data germline unit_coverage should_coverage coverage
 

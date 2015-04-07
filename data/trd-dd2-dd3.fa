@@ -2,15 +2,15 @@
 gcaccatcagagagagatgaagggtcttactactgtgcctgtgacacc
 acaccgataaactcatctttggaaaaggaacccgtgtgactgtggaaccaa
 
->TRDD2*01_0//0_TRDJ1*01__TRD+
+>TRDD2*01_0//0_TRDJ1*01  TRD+
 ccttcctac
 acaccgataaactcatctttggaaaaggaacccgtgtgactgtggaaccaa
 
->TRDD2*01_0//0_TRDD3*01__TRD+
+>TRDD2*01_0//0_TRDD3*01  TRD+
 ccttcctac
 actgggggatacg
 
->TRDV3*01_0//0_TRDD3*01__TRD+
+>TRDV3*01_0//0_TRDD3*01  TRD+
 atctctccagtaaggactgaagacagtgccacttactactgtgcctttag
 actgggggatacg
 

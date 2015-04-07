@@ -10,6 +10,7 @@ LIB=../core/vidjil.a ../lib/lib.a
 SHOULD=$(wildcard *.should_get)
 SHOULD_LOG=$(SHOULD:.should_get=.tap)
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
+SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
 VALGRIND=valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file="$$(mktemp "$(REPORTS_PATH)/valgrind.xml.XXXXXX")"
 
@@ -27,8 +28,8 @@ all: core $(EXEC)
 
 should: vidjil $(SHOULD_LOG)
 
-shouldvdj:
-	python should-vdj-to-tap.py -2q $(SHOULD_VDJ)
+shouldvdj: vidjil
+	python should-vdj-to-tap.py -2q $(SHOULD_VDJ) $(SHOULD_LOCUS)
 	python should-vdj-to-tap.py $(SHOULD_VDJ)
 
 %.tap: %.should_get force
@@ -61,8 +62,11 @@ core:
 	$(CC) -o $@ $(INCLUDE) -c $< $(CXXFLAGS)
 
 clean:
-	rm -f *.o $(EXEC) *.tap *.log *.gcda *.gcno *.gcov
+	rm -f *.o $(EXEC) *.tap *.log should-vdj-tests/*.tap should-vdj-tests/*.log
 	rm -rf out/
+
+cleancoverage:
+	rm -f *.gcda *.gcno *.gcov
 
 forcedep:
 	g++ $(INCLUDE) -M $(SRC) > dep.mk

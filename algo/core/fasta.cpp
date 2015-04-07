@@ -75,6 +75,11 @@ void Fasta::add(const string &filename, bool verbose) {
   is.close();
 }
 
+void Fasta::add(Sequence seq) {
+  reads.push_back(seq);
+  total_size += seq.sequence.size();
+}
+
 int Fasta::size() const{ return (int)reads.size(); }
 list<Sequence> Fasta::getAll() const {
   list<Sequence> reads;
@@ -242,8 +247,7 @@ istream& operator>>(istream& in, Fasta& fasta){
 
         while (of.hasNext()) {
           of.next();
-          fasta.reads.push_back(of.getSequence());
-          fasta.total_size += of.getSequence().sequence.size();
+          fasta.add(of.getSequence());
         }
 	return in;
 }

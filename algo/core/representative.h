@@ -22,7 +22,8 @@ protected:
   float percent_cover;
   bool revcomp;
   string required;
-  string coverage;
+  float coverage;
+  string coverage_info;
 public:
   RepresentativeComputer(list<Sequence> &r);
 
@@ -97,7 +98,8 @@ public:
 
   // Getters, setters
   string getSeed() const;
-  string getCoverage() const;
+  float getCoverage() const;
+  string getCoverageInfo() const;
 
   /**
    * @param limit: maximal number of iterations to be performed before reaching 

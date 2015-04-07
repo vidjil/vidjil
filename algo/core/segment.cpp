@@ -27,7 +27,6 @@
 #include "affectanalyser.h"
 #include <sstream>
 #include <string>
-#include <math.h>
 
 Segmenter::~Segmenter() {}
 
@@ -156,6 +155,15 @@ string Segmenter::getInfoLine() const
   s += " " + info_extra ;
   s += " " + segmented_germline->code ;
   s += " " + string(segmented_mesg[because]) ;
+
+  if (evalue > NO_LIMIT_VALUE)
+    s += " " + scientific_string_of_double(evalue);
+
+  if (evalue_left > NO_LIMIT_VALUE)
+    s += " " + scientific_string_of_double(evalue_left);
+  if (evalue_right > NO_LIMIT_VALUE)
+    s += "/" + scientific_string_of_double(evalue_right);
+
   return s ;
 }
 
@@ -194,6 +202,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
   Dend=0;
   because = 0 ; // Cause of unsegmentation
   score = 0 ;
+  evalue = NO_LIMIT_VALUE;
+  evalue_left = NO_LIMIT_VALUE;
+  evalue_right = NO_LIMIT_VALUE;
 
   int s = (size_t)germline->index->getS() ;
   int length = sequence.length() ;
@@ -282,11 +293,13 @@ KmerSegmenter::~KmerSegmenter() {
     delete kaa;
 }
 
-KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented)
+KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented, double threshold)
 {
   int best_score_seg = 0 ; // Best score, segmented sequences
   int best_score_unseg = 0 ; // Best score, unsegmented sequences
   the_kseg = NULL;
+  multi_germline = multigermline;
+  threshold_nb_expected = threshold;
   
   // Iterate over the germlines
   for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
@@ -344,7 +357,33 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
       } else {
         delete kseg;
       }
-    } // end for (Germlines)  
+    } // end for (Germlines)
+
+  // E-value threshold
+  if (threshold_nb_expected > NO_LIMIT_VALUE)
+    if (the_kseg->isSegmented()) {
+        // the_kseg->evalue also depends on the number of germlines from the *Multi*KmerSegmenter
+        the_kseg->evalue = getNbExpected();
+        if (the_kseg->evalue > threshold_nb_expected) {
+          the_kseg->setSegmentationStatus(UNSEG_NOISY);
+        }
+
+        pair <double, double> p = the_kseg->getKmerAffectAnalyser()->getLeftRightProbabilityAtLeastOrAbove();
+        the_kseg->evalue_left = p.first;
+        the_kseg->evalue_right = p.second;
+
+        if (the_kseg->evalue_left > threshold_nb_expected) {
+          the_kseg->setSegmentationStatus(UNSEG_NOISY); // TOO_FEW_V ?
+        }
+        if (the_kseg->evalue_right > threshold_nb_expected) {
+          the_kseg->setSegmentationStatus(UNSEG_NOISY); // TOO_FEW_J ?
+        }
+      }
+}
+
+double KmerMultiSegmenter::getNbExpected() const {
+  double proba = the_kseg->getKmerAffectAnalyser()->getProbabilityAtLeastOrAbove(the_kseg->score);
+  return multi_germline->germlines.size() * proba;
 }
 
 KmerMultiSegmenter::~KmerMultiSegmenter() {
@@ -393,6 +432,11 @@ KmerAffectAnalyser *KmerSegmenter::getKmerAffectAnalyser() const {
 
 int Segmenter::getSegmentationStatus() const {
   return because;
+}
+
+void Segmenter::setSegmentationStatus(int status) {
+  because = status;
+  segmented = (status == SEG_PLUS || status == SEG_MINUS);
 }
 
 // FineSegmenter
@@ -540,6 +584,9 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
   sequence = seq.sequence ;
   Dend=0;
   segment_cost=segment_c;
+  evalue = NO_LIMIT_VALUE;
+  evalue_left = NO_LIMIT_VALUE;
+  evalue_right = NO_LIMIT_VALUE;
 
   CDR3start = -1;
   CDR3end = -1;
@@ -901,6 +948,13 @@ void FineSegmenter::toJsonList(JsonList *seg){
 void KmerSegmenter::toJsonList(JsonList *seg)
 {
     int sequenceSize = sequence.size();
+
+    if (evalue > NO_LIMIT_VALUE)
+      seg->add("_evalue", scientific_string_of_double(evalue));
+    if (evalue_left > NO_LIMIT_VALUE)
+      seg->add("_evalue_left", scientific_string_of_double(evalue_left));
+    if (evalue_right > NO_LIMIT_VALUE)
+      seg->add("_evalue_right", scientific_string_of_double(evalue_right));
 
     JsonList *json_affectValues;
     json_affectValues=new JsonList();
