@@ -31,6 +31,14 @@
 
 #include "../lib/gzstream.h"
 
+
+// http://stackoverflow.com/a/5840160/4475279
+unsigned long long filesize(const char* filename)
+{
+    std::ifstream in(filename, std::ifstream::ate | std::ifstream::binary);
+    return in.tellg();
+}
+
 void Fasta::init(int extract_field, string extract_separator)
 {
   this -> extract_field = extract_field ;
@@ -280,8 +288,11 @@ ostream &operator<<(ostream &out, const Sequence &seq) {
   return out;
 }
 
-int nb_sequences_in_fasta(string f)
+int nb_sequences_in_fasta(string f, bool approx)
 {
+  if (approx)
+    return approx_nb_sequences_in_fasta(f);
+
   OnlineFasta *sequences = new OnlineFasta(f, 1, " ");
   int nb_sequences = 0 ;
 
@@ -292,5 +303,33 @@ int nb_sequences_in_fasta(string f)
     }
 
   cout << "  ==> " << nb_sequences << " sequences" << endl;
+  return nb_sequences ;
+}
+
+
+#define SAMPLE_APPROX_NB_SEQUENCES 200
+
+int approx_nb_sequences_in_fasta(string f)
+{
+  OnlineFasta *sequences = new OnlineFasta(f, 1, " ");
+  int nb_sequences = 0 ;
+
+  while (nb_sequences < SAMPLE_APPROX_NB_SEQUENCES && sequences->hasNext())
+    {
+      sequences->next();
+      nb_sequences++ ;
+    }
+
+  cout << "  ==> " ;
+
+  if (sequences->hasNext())
+    {
+      cout << "approx. " ;
+      float ratio = (float) filesize(f.c_str()) / (float) sequences->getPos();
+      nb_sequences = (int) (ratio * nb_sequences);
+    }
+
+  cout << nb_sequences << " sequences" << endl;
+
   return nb_sequences ;
 }
