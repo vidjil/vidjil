@@ -103,12 +103,22 @@ def delete():
 def permission(): 
     if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
         
-        query = db( db.auth_group.role != 'admin' ).select()
+        query = db( (db.auth_group.role != 'admin') ).select()
+        
+        query2 = db( (db.auth_group.role != 'admin') &
+                    (db.auth_membership.group_id == db.auth_group.id) &
+                    (db.auth_membership.user_id == db.auth_user.id)    
+                  ).select()
+        
+        usermap = {}
+        for row in query2 : 
+            if row.auth_group.role[:5] == "user_" :
+                usermap[row.auth_group.role] = row.auth_user.id 
         
         for row in query :
             row.owner = row.role
             if row.owner[:5] == "user_" :
-                id = int(row.owner[5:])
+                id = usermap[row.owner]
                 row.owner = db.auth_user[id].first_name + " " + db.auth_user[id].last_name 
 
             row.admin = False
