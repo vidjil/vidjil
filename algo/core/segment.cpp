@@ -364,13 +364,16 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
     if (the_kseg->isSegmented()) {
         // the_kseg->evalue also depends on the number of germlines from the *Multi*KmerSegmenter
         the_kseg->evalue = getNbExpected();
-        if (the_kseg->evalue > threshold_nb_expected) {
-          the_kseg->setSegmentationStatus(UNSEG_NOISY);
-        }
 
         pair <double, double> p = getNbExpectedLeftRight();
         the_kseg->evalue_left = p.first;
         the_kseg->evalue_right = p.second;
+
+        if (the_kseg->evalue > threshold_nb_expected
+            && the_kseg->evalue_left <= threshold_nb_expected
+            && the_kseg->evalue_right <= threshold_nb_expected) {
+          the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_ZERO);
+        }
 
         if (the_kseg->evalue_left > threshold_nb_expected) {
           the_kseg->setSegmentationStatus(UNSEG_NOISY); // TOO_FEW_V ?
