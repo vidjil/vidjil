@@ -106,6 +106,7 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
     maxOverlap = span;
 
   /* Initialize results */
+  affect_infos results;
   results.max_found = false;
   results.max_value = 0;
   results.first_pos_max = results.last_pos_max = -1;
@@ -156,6 +157,10 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
       results.nb_before_right++;
   }
 
+  left_evalue = kms.getProbabilityAtLeastOrAbove(results.nb_before_left,
+                                                 results.first_pos_max + kms.getS());
+  right_evalue = kms.getProbabilityAtLeastOrAbove(results.nb_after_right, seq.size() - results.last_pos_max);
+
   /* Main test: 
      1) do we have enough affectations in good positions ('before' at the left and 'after' at the right) ?
      We tolerate some of them in bad positions, but there must be 'ratioMin' more in good positions
@@ -178,8 +183,7 @@ double KmerAffectAnalyser::getProbabilityAtLeastOrAbove(int at_least) const {
 }
 
 pair <double, double> KmerAffectAnalyser::getLeftRightProbabilityAtLeastOrAbove() const {
-  return make_pair(kms.getProbabilityAtLeastOrAbove(results.nb_before_left, results.first_pos_max + kms.getS()),
-                   kms.getProbabilityAtLeastOrAbove(results.nb_after_right, seq.size() - results.last_pos_max));
+  return make_pair(left_evalue, right_evalue);
 }
 
 const string &KmerAffectAnalyser::getSequence() const{

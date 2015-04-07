@@ -364,26 +364,31 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
     if (the_kseg->isSegmented()) {
         // the_kseg->evalue also depends on the number of germlines from the *Multi*KmerSegmenter
         the_kseg->evalue = getNbExpected();
-        if (the_kseg->evalue > threshold_nb_expected) {
-          the_kseg->setSegmentationStatus(UNSEG_NOISY);
-        }
 
-        pair <double, double> p = the_kseg->getKmerAffectAnalyser()->getLeftRightProbabilityAtLeastOrAbove();
+        pair <double, double> p = getNbExpectedLeftRight();
         the_kseg->evalue_left = p.first;
         the_kseg->evalue_right = p.second;
 
-        if (the_kseg->evalue_left > threshold_nb_expected) {
-          the_kseg->setSegmentationStatus(UNSEG_NOISY); // TOO_FEW_V ?
-        }
-        if (the_kseg->evalue_right > threshold_nb_expected) {
-          the_kseg->setSegmentationStatus(UNSEG_NOISY); // TOO_FEW_J ?
+        if (the_kseg->evalue > threshold_nb_expected
+            && the_kseg->evalue_left <= threshold_nb_expected
+            && the_kseg->evalue_right <= threshold_nb_expected) {
+          the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_ZERO);
+        } else if (the_kseg->evalue_left > threshold_nb_expected) {
+          the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_V);
+        } else if (the_kseg->evalue_right > threshold_nb_expected) {
+          the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_J);
         }
       }
 }
 
 double KmerMultiSegmenter::getNbExpected() const {
-  double proba = the_kseg->getKmerAffectAnalyser()->getProbabilityAtLeastOrAbove(the_kseg->score);
-  return multi_germline->germlines.size() * proba;
+  pair <double, double> p = getNbExpectedLeftRight();
+  return (p.first + p.second);
+}
+
+pair<double,double> KmerMultiSegmenter::getNbExpectedLeftRight() const {
+  pair <double, double> p = the_kseg->getKmerAffectAnalyser()->getLeftRightProbabilityAtLeastOrAbove();
+  return pair<double, double>(p.first * multi_germline->germlines.size(), p.second * multi_germline->germlines.size());
 }
 
 KmerMultiSegmenter::~KmerMultiSegmenter() {

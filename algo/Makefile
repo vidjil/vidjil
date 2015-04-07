@@ -95,6 +95,9 @@ cleancoverage: clean
 	make -C core cleancoverage
 	make -C lib cleancoverage
 
+cleanall: cleancoverage
+	make -C tests cleanall
+
 forcedep:
 	g++ $(CXXFLAGS) -M $(MAINCORE) > dep.mk
 	make -C core forcedep

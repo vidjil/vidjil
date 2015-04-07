@@ -126,7 +126,7 @@ clean:
 cleanall: clean
 	make -C data $^
 	make -C germline $^
-	make -C $(VIDJIL_ALGO_SRC) cleancoverage
+	make -C $(VIDJIL_ALGO_SRC) cleanall
 
 .PHONY: all test should clean cleanall distrib data germline unit_coverage should_coverage coverage
 

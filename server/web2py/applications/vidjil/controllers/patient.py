@@ -218,65 +218,64 @@ def index():
         if row.patient.id in keys :
             result[row.patient.id]['has_permission'] = True
             
-    query = db(
+    query1 = db(
         db.patient.creator == db.auth_user.id
     ).select(
-        db.patient.ALL, db.auth_user.ALL
+        db.patient.id, db.auth_user.last_name
     )
-    for i, row in enumerate(query) :
+    for i, row in enumerate(query1) :
         if row.patient.id in keys :
             result[row.patient.id]['creator'] = row.auth_user.last_name
-    
-    query = db(
+       
+    query2 = db(
         db.patient.id == db.sequence_file.patient_id
     ).select(
-        db.patient.ALL, db.sequence_file.ALL
+        db.patient.id, db.sequence_file.size_file
     )
-    for i, row in enumerate(query) :
+    for i, row in enumerate(query2) :
         if row.patient.id in keys :
             result[row.patient.id]['file_count'] += 1
             result[row.patient.id]['size'] += row.sequence_file.size_file
     
-    query = db(
+    query3 = db(
         (db.patient.id == db.fused_file.patient_id) &
         (db.fused_file.config_id == db.config.id)
     ).select(
-        db.patient.ALL, db.fused_file.ALL, db.config.ALL
+        db.patient.id, db.config.name, db.config.id
     )
-    
-    for i, row in enumerate(query) :
+    for i, row in enumerate(query3) :
         if row.patient.id in keys :
             result[row.patient.id]['conf_list'].append(row.config.name)
             result[row.patient.id]['conf_id_list'].append(row.config.id)
-    query = db(
+    
+    query4 = db(
         ((db.patient.id == db.auth_permission.record_id) | (db.auth_permission.record_id == 0)) &
         (db.auth_permission.table_name == 'patient') &
         (db.auth_permission.name == 'read') &
         (db.auth_group.id == db.auth_permission.group_id)
     ).select(
-        db.patient.ALL, db.auth_group.ALL
+        db.patient.id, db.auth_group.role
     )
-    for i, row in enumerate(query) :
+    for i, row in enumerate(query4) :
         if row.patient.id in keys :
             result[row.patient.id]['group_list'].append(row.auth_group.role.replace('user_','u'))
             
-    query = db(
+    query5 = db(
         (db.auth_permission.name == "anon") & 
         (db.auth_permission.table_name == "patient") &
         (db.patient.id == db.auth_permission.record_id ) &
         (auth.user_group() == db.auth_permission.group_id )
     ).select(
-        db.patient.ALL, db.auth_permission.ALL
+        db.patient.id, db.patient.last_name, db.patient.first_name
     )
-
-    for i, row in enumerate(query) :
+    for i, row in enumerate(query5) :
         if row.patient.id in keys :
             result[row.patient.id]['name'] = row.patient.last_name + " " + row.patient.first_name
 
         
     for key, row in result.iteritems():
         row['most_used_conf'] = max(set(row['conf_id_list']), key=row['conf_id_list'].count)
-        row['confs'] = ", ".join(list(set(row['conf_list'])))
+        row['confs'] = ", ".join(list(set(row['conf_list']))) 
         row['groups'] = ", ".join(filter(lambda g: g != 'admin', set(row['group_list'])))
         
     result = result.values()
