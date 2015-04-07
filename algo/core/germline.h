@@ -9,14 +9,14 @@
 #include "stats.h"
 #include "tools.h"
 
+#define PSEUDO_GERMLINE_MAX12 "xxx"
+
 using namespace std;
 
 class Germline {
  private:
   void init(string _code, char _shortcut,
             int _delta_min, int _delta_max);
-
-  void update_index();
 
  public:
   /*
@@ -40,13 +40,18 @@ class Germline {
       Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
 	   int _delta_min, int _delta_max);
 
+  Germline(string _code, char _shortcut,
+	   int _delta_min, int _delta_max);
+
   ~Germline();
 
   string code ;
   char   shortcut ;
 
   void new_index(string seed);
-  void use_index(IKmerStore<KmerAffect> *index);
+  void set_index(IKmerStore<KmerAffect> *index);
+
+  void update_index(IKmerStore<KmerAffect> *_index = NULL);
 
   void mark_as_ambiguous(Germline *other);
     
@@ -78,9 +83,9 @@ ostream &operator<<(ostream &out, const Germline &germline);
 
 class MultiGermline {
  private:
-  bool one_index_per_germline;
 
  public:
+  bool one_index_per_germline;
   list <Germline*> germlines;
 
   // A unique index can be used
@@ -94,8 +99,10 @@ class MultiGermline {
   void build_default_set(string path);
   void build_incomplete_set(string path);
 
-  void insert_in_one_index(IKmerStore<KmerAffect> *_index);
-  void build_with_one_index(string seed);
+  // Creates and update an unique index for all the germlines
+  // If 'set_index' is set, set this index as the index for all germlines
+  void insert_in_one_index(IKmerStore<KmerAffect> *_index, bool set_index);
+  void build_with_one_index(string seed, bool set_index);
 
   void mark_cross_germlines_as_ambiguous();
   

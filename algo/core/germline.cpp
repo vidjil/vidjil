@@ -24,6 +24,14 @@ void Germline::init(string _code, char _shortcut,
   stats_clones.setLabel("");
 }
 
+
+Germline::Germline(string _code, char _shortcut,
+		   int _delta_min, int _delta_max)
+{
+  init(_code, _shortcut, _delta_min, _delta_max);
+}
+
+
 Germline::Germline(string _code, char _shortcut,
 		   string f_rep_5, string f_rep_4, string f_rep_3,
 		   int _delta_min, int _delta_max)
@@ -84,22 +92,22 @@ void Germline::new_index(string seed)
   update_index();
 }
 
-void Germline::use_index(IKmerStore<KmerAffect> *_index)
+void Germline::set_index(IKmerStore<KmerAffect> *_index)
 {
   index = _index;
-
-  update_index();
 }
 
 
-void Germline::update_index()
+void Germline::update_index(IKmerStore<KmerAffect> *_index)
 {
-  index->insert(rep_5, affect_5);
+  if (!_index) _index = index ;
+
+  _index->insert(rep_5, affect_5);
 
   if (affect_4.size())
-    index->insert(rep_4, affect_4);
+    _index->insert(rep_4, affect_4);
 
-  index->insert(rep_3, affect_3);
+  _index->insert(rep_3, affect_3);
 }
 
 void Germline::mark_as_ambiguous(Germline *other)
@@ -138,6 +146,7 @@ ostream &operator<<(ostream &out, const Germline &germline)
 
 MultiGermline::MultiGermline(bool _one_index_per_germline)
 {
+  index = NULL;
   one_index_per_germline = _one_index_per_germline;
 }
 
@@ -202,7 +211,7 @@ void MultiGermline::build_incomplete_set(string path)
 }
 
 /* if 'one_index_per_germline' was not set, this should be called once all germlines have been loaded */
-void MultiGermline::insert_in_one_index(IKmerStore<KmerAffect> *_index)
+void MultiGermline::insert_in_one_index(IKmerStore<KmerAffect> *_index, bool set_index)
 {
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
     {
@@ -211,15 +220,18 @@ void MultiGermline::insert_in_one_index(IKmerStore<KmerAffect> *_index)
       if (germline->rep_4.size())
 	germline->affect_4 = string(1, 14 + germline->shortcut) + "-" + germline->code + "D";
 
-      germline->use_index(_index) ;
+      germline->update_index(_index);
+
+      if (set_index)
+        germline->set_index(_index);
     }
 }
 
-void MultiGermline::build_with_one_index(string seed)
+void MultiGermline::build_with_one_index(string seed, bool set_index)
 {
   bool rc = true ;
   index = KmerStoreFactory::createIndex<KmerAffect>(seed, rc);
-  insert_in_one_index(index);
+  insert_in_one_index(index, set_index);
 }
 
 void MultiGermline::out_stats(ostream &out)

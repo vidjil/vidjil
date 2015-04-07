@@ -186,6 +186,13 @@ class KmerAffectAnalyser: public AffectAnalyser {
 
   const string &getSequence() const;
 
+  /**
+   * @param  A pair of KmerAffects
+   * @return The same pair of KmerAffects, but sorted.
+   *         The first one is 'more on the left' than the second one.
+   */
+  pair <KmerAffect, KmerAffect> sortLeftRight(const pair <KmerAffect, KmerAffect> ka12) const;
+
   int first(const KmerAffect &affect) const;
 
   int last(const KmerAffect &affect) const ;
