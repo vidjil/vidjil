@@ -26,6 +26,7 @@
 #include "tools.h"
 #include "affectanalyser.h"
 #include <sstream>
+#include <cstring>
 #include <string>
 
 Segmenter::~Segmenter() {}
@@ -76,10 +77,6 @@ bool Segmenter::isSegmented() const {
 
 bool Segmenter::isDSegmented() const {
   return dSegmented;
-}
-
-bool KmerSegmenter::isDetected() const {
-  return detected;
 }
 
 // Chevauchement
@@ -196,6 +193,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
   sequence = seq.sequence ;
   info = "" ;
   info_extra = "seed";
+  detected = false ;
   segmented = false;
   segmented_germline = germline ;
   reversed = false;
@@ -233,6 +231,26 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
 
   KmerAffect before, after;
 
+  if (!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12))
+    { // Pseudo-germline, max12
+
+      set<KmerAffect> forbidden;
+      forbidden.insert(KmerAffect::getAmbiguous());
+      forbidden.insert(KmerAffect::getUnknown());
+
+      CountKmerAffectAnalyser ckaa(*(germline->index), sequence);
+      pair <KmerAffect, KmerAffect> max12 = ckaa.sortLeftRight(ckaa.max12(forbidden));
+
+      strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
+      computeSegmentation(strand, max12.first, max12.second);
+
+      // The pseudo-germline should never take precedence over the regular germlines
+      score = 1 ;
+    }
+
+  else
+    { // Regular germline
+
   // Test on which strand we are, select the before and after KmerAffects
   if (nb_strand[0] == 0 && nb_strand[1] == 0) {
     because = UNSEG_TOO_FEW_ZERO ;
@@ -252,8 +270,10 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
     return ;
   }
 
-  detected = false ;
   computeSegmentation(strand, before, after);
+
+    } // endif Pseudo-germline
+
 
   if (! because)
     {
@@ -405,10 +425,12 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   max = kaa->getMaximum(before, after); 
 
       // We labeled it detected if there were both enough affect_5 and enough affect_3
-      detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
+       bool detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
         && (max.nb_after_left + max.nb_after_right >= DETECT_THRESHOLD);
       
       if (! max.max_found) {
+        // ----------------------------
+        // This code is only here to set the UNSEG cause. It could be streamlined.
         if ((strand == 1 && max.nb_before_left == 0)
             || (strand == -1 && max.nb_after_right == 0)) 
           because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_V ;
@@ -418,6 +440,7 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
 	  because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_J ;
 	} else 
           because = UNSEG_AMBIGUOUS; 
+        // ----------------------------
       } else {
         Vend = max.first_pos_max;
         Jstart = max.last_pos_max + 1;
@@ -596,6 +619,9 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
   CDR3start = -1;
   CDR3end = -1;
   
+  if (!germline->rep_5.size() || !germline->rep_3.size())
+    return ;
+
   // TODO: factoriser tout cela, peut-etre en lancant deux segmenteurs, un +, un -, puis un qui chapote
   
   // Strand +

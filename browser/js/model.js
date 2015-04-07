@@ -172,7 +172,14 @@ Model.prototype = {
                 if (tmp2[0] == 'analysis') analysisURL = tmp2[1]
                 if (tmp2[0] == 'patient') patient = tmp2[1]
                 if (tmp2[0] == 'config') dbconfig = tmp2[1]
-                if (tmp2[0] == 'custom') custom_list.push(tmp2[1])
+                if (tmp2[0] == 'custom') {
+		    custom_split = tmp2[1].split(',')
+		    for (var j=0; j<custom_split.length; j++) {
+			custom_list.push(custom_split[j])
+		    }
+		    console.log(custom_list.join('+'))
+		}
+
             }
         }    
 

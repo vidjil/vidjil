@@ -22,3 +22,4 @@ for seq in db(db.sequence_file).select():
     # print com
     os.system(com)
 
+log.debug("=== compare-last-results.py completed ===")

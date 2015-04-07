@@ -63,3 +63,5 @@ for table in db.tables:
 
 
 print
+
+log.debug("=== db-stats.py completed ===")

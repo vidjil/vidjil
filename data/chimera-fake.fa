@@ -1,0 +1,13 @@
+# Fake chimera sequences, 2 x (first 60 bp) of some V genes
+
+>TRAV1-1*01--TRB--V1*01
+ggacaaagccttgagcagccctctgaagtgacagctgtggaaggagccattgtccagata
+gatactggaattacccagacaccaaaatacctggtcacagcaatggggagtaaaaggaca
+
+>TRGV1*01--TRDV1*01
+tcttccaacttggaagggagaacgaagtcagtcaccaggctgactgggtcatctgctgaa
+gcccagaaggttactcaagcccagtcatcagtatccatgccagtgaggaaagcagtcacc
+
+>IGHV1-18*01--IGKV1-12*01
+caggttcagctggtgcagtctggagctgaggtgaagaagcctggggcctcagtgaaggtc
+gacatccagatgacccagtctccatcttccgtgtctgcatctgtaggagacagagtcacc
