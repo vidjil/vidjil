@@ -214,6 +214,12 @@ class KmerMultiSegmenter
    */
   double getNbExpected() const;
 
+  /**
+   * @return expected number of Segmenter that would have yield the maximum score by chance
+   *         on the left part of the read and on the right part of the read respectively.
+   */
+  pair<double,double> getNbExpectedLeftRight() const;
+
   ~KmerMultiSegmenter();
 
   KmerSegmenter *the_kseg;

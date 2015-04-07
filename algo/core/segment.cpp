@@ -384,6 +384,10 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
 double KmerMultiSegmenter::getNbExpected() const {
   double proba = the_kseg->getKmerAffectAnalyser()->getProbabilityAtLeastOrAbove(the_kseg->score);
   return multi_germline->germlines.size() * proba;
+
+pair<double,double> KmerMultiSegmenter::getNbExpectedLeftRight() const {
+  pair <double, double> p = the_kseg->getKmerAffectAnalyser()->getLeftRightProbabilityAtLeastOrAbove();
+  return pair<double, double>(p.first * multi_germline->germlines.size(), p.second * multi_germline->germlines.size());
 }
 
 KmerMultiSegmenter::~KmerMultiSegmenter() {
