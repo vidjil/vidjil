@@ -79,10 +79,6 @@ bool Segmenter::isDSegmented() const {
   return dSegmented;
 }
 
-bool KmerSegmenter::isDetected() const {
-  return detected;
-}
-
 // Chevauchement
 
 string Segmenter::removeChevauchement()
@@ -429,10 +425,12 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   max = kaa->getMaximum(before, after); 
 
       // We labeled it detected if there were both enough affect_5 and enough affect_3
-      detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
+       bool detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
         && (max.nb_after_left + max.nb_after_right >= DETECT_THRESHOLD);
       
       if (! max.max_found) {
+        // ----------------------------
+        // This code is only here to set the UNSEG cause. It could be streamlined.
         if ((strand == 1 && max.nb_before_left == 0)
             || (strand == -1 && max.nb_after_right == 0)) 
           because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_V ;
@@ -442,6 +440,7 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
 	  because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_J ;
 	} else 
           because = UNSEG_AMBIGUOUS; 
+        // ----------------------------
       } else {
         Vend = max.first_pos_max;
         Jstart = max.last_pos_max + 1;
