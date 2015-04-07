@@ -270,7 +270,7 @@ def index():
     )
     for i, row in enumerate(query5) :
         if row.patient.id in keys :
-            result[row.patient.id]['name'] = row.patient.last_name + " " + row.patient.first_name
+            result[row.id]['name'] = row.last_name + " " + row.first_name
 
         
     for key, row in result.iteritems():
