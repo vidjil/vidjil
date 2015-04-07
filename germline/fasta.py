@@ -24,7 +24,13 @@ def parse(fasta, endline=''):
             
     if header or sequence:
         yield (header, sequence)
-        
+
+def extract_field_if_exists(str, separator, field_number):
+    fields = str.split(separator)
+    if len(fields) > field_number:
+        return fields[field_number]
+    return str
+
 def parse_as_Fasta(fasta):
     for (header, sequence) in parse(fasta):
         yield Fasta(header, sequence)
@@ -38,11 +44,11 @@ class Fasta():
 
     @property
     def name(self):
-        return self.header.split('|')[1]
+        return extract_field_if_exists(self.header, '|', 1)
 
     @property
     def species(self):
-        return self.header.split('|')[2]
+        return extract_field_if_exists(self.header, '|', 2)
 
     def __len__(self):
         return len(self.seq)
