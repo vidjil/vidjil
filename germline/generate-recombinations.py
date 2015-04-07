@@ -44,18 +44,33 @@ def select_genes(rep5, rep3, at_least=0):
         nb += 1
 
 
-def generate_to_file(rep5, rep3, f, recomb_function):
-    print("  ==>", f)
+def write_seq_to_file(seq, code, file):
+    seq.header = seq.header.replace(' ', '_')+"__"+code
+    file.write(str(seq2))
 
+def generate_to_file_rec(rep5, rep4, rep3, code, f, recomb_function):
+    if rep4 == []:
+        recomb1_left = rep5
+    else:
+        recomb1_left = rep4
+    recomb1_right = rep3
+
+    nb = 0
     with open(f, 'w') as ff:
-        nb = 0
-        for seq5, seq3 in select_genes(rep5, rep3):
-            nb += 1
+        for seq5, seq3 in select_genes(recomb1_left, recomb1_right):
             seq = recomb_function(seq5, seq3)
-            seq.header = seq.header.replace(' ', '_')
-            ff.write(str(seq))
+            if rep4 != []:
+                nb += generate_to_file_rec(rep5, [], [seq], code, f, recomb_function)
+            else:
+                seq.header = seq.header.replace(' ', '_')+"__"+code
+                ff.write(str(seq))
+                nb += 1
+    return nb
 
-    print("  ==> %d recombinations" % nb)
+def generate_to_file(rep5, rep4, rep3, code, f, recomb_function):
+    print("  ==>", f)
+    print("  ==> %d recombinations" % generate_to_file_rec(rep5, rep4, rep3, code, f, recomb_function))
+
 
 
 germlines_json = open('germlines.data').read().replace('germline_data = ', '')
@@ -66,20 +81,23 @@ for code in germlines:
     g = germlines[code]
     print("--- %s - %-4s - %s"  % (g['shortcut'], code, g['description']))
 
-    if '4' in g:
-        continue
-
     # Read germlines
 
     rep5 = []
     for r5 in g['5']:
         rep5 += list(fasta.parse_as_Fasta(open(r5)))
 
+    rep4 = []
+    if '4' in g:
+        for r4 in g['4']:
+            rep4 += list(fasta.parse_as_Fasta(open(r4)))
+
     rep3 = []
     for r3 in g['3']:
         rep3 += list(fasta.parse_as_Fasta(open(r3)))
 
     print("      5: %3d sequences" % len(rep5),
+          "      4: %3d sequences" % len(rep4),
           "      3: %3d sequences" % len(rep3))
 
 
