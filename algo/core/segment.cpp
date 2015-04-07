@@ -241,6 +241,12 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
       CountKmerAffectAnalyser ckaa(*(germline->index), sequence);
       pair <KmerAffect, KmerAffect> max12 = ckaa.sortLeftRight(ckaa.max12(forbidden));
 
+      if (max12.first.isUnknown() || max12.second.isUnknown())
+        {
+          because = UNSEG_TOO_FEW_ZERO ;
+          return ;
+        }
+
       strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
       computeSegmentation(strand, max12.first, max12.second);
 
