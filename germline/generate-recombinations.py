@@ -7,8 +7,8 @@ import random
 
 random.seed(33328778554)
 
-def recombine_VJ(seq5, remove5, N, remove3, seq3, code):
-    name = "%s %d/%s/%d %s  %s " % (seq5.name, remove5, N, remove3, seq3.name, code)
+def recombine_VJ(seq5, remove5, N, remove3, seq3):
+    name = "%s %d/%s/%d %s" % (seq5.name, remove5, N, remove3, seq3.name)
     seq = seq5.seq[:len(seq5)-remove5] + '\n' + N + '\n' + seq3.seq[remove3:]
 
     return fasta.Fasta(name, seq)
@@ -17,7 +17,7 @@ def recombine_VJ(seq5, remove5, N, remove3, seq3, code):
 def random_sequence(characters, length):
     return ''.join([random.choice(characters) for x in range(length)])
 
-def recombine_VJ_with_removes(seq5, remove5, Nlength, remove3, seq3, code):
+def recombine_VJ_with_removes(seq5, remove5, Nlength, remove3, seq3):
     '''Recombine V and J with a random N, ensuring that the bases in N are not the same that what was ultimately removed from V or J'''
     assert(Nlength >= 1)
 
@@ -29,7 +29,7 @@ def recombine_VJ_with_removes(seq5, remove5, Nlength, remove3, seq3, code):
         if c in available:
             available.remove(c)
 
-    return recombine_VJ(seq5, remove5, random_sequence(available, Nlength), remove3, seq3, code)
+    return recombine_VJ(seq5, remove5, random_sequence(available, Nlength), remove3, seq3)
 
 
 def select_genes(rep5, rep3, at_least=0):
@@ -85,10 +85,10 @@ for code in germlines:
 
     # Generate recombinations
 
-    generate_to_file(rep5, rep3, '../data/gen/0-removes-%s.should-vdj.fa' % code,
-                     (lambda seq5, seq3: recombine_VJ(seq5, 0, 'ATCG', 0, seq3, code)))
+    generate_to_file(rep5, rep4, rep3, code, '../data/gen/0-removes-%s.should-vdj.fa' % code,
+                     (lambda seq5, seq3: recombine_VJ(seq5, 0, 'ATCG', 0, seq3)))
 
-    generate_to_file(rep5, rep3, '../data/gen/5-removes-%s.should-vdj.fa' % code,
-                     (lambda seq5, seq3: recombine_VJ_with_removes(seq5, 5, 4, 5, seq3, code)))
+    generate_to_file(rep5, rep4, rep3, code, '../data/gen/5-removes-%s.should-vdj.fa' % code,
+                     (lambda seq5, seq3: recombine_VJ_with_removes(seq5, 5, 4, 5, seq3)))
 
     print()
