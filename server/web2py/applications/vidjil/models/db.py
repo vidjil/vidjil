@@ -89,6 +89,8 @@ use_janrain(auth, filename='private/janrain.key')
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
 
+autodelete = True
+
 db.define_table('patient',
                 Field('first_name','string'),
                 Field('last_name','string'),
@@ -118,7 +120,7 @@ db.define_table('sequence_file',
                 Field('provider','reference auth_user'),
                 Field('data_file', 'upload', 
                       uploadfolder=defs.DIR_SEQUENCES,
-                      length=4294967295, autodelete=True))
+                      length=4294967295, autodelete=autodelete))
 
 
 
@@ -128,7 +130,7 @@ db.define_table('standard_file',
                 Field('info','text'),
                 Field('data_file', 'upload',
                       uploadfolder=defs.DIR_SEQUENCES,
-                      autodelete=True, length=4294967295))
+                      autodelete=autodelete, length=4294967295))
 
 
 
@@ -147,7 +149,7 @@ db.define_table('results_file',
                 Field('scheduler_task_id', 'integer'),
                 Field('data_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
-                      length=4294967295, autodelete=True))
+                      length=4294967295, autodelete=autodelete))
 
 db.define_table('fused_file',
                 Field('patient_id', 'reference patient'),
@@ -157,7 +159,7 @@ db.define_table('fused_file',
                 Field('sequence_file_list', 'string'),
                 Field('fused_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
-                      length=4294967295, autodelete=True))
+                      length=4294967295, autodelete=autodelete))
 
 db.define_table('analysis_file',
                 Field('patient_id', 'reference patient'),
@@ -166,7 +168,7 @@ db.define_table('analysis_file',
                 Field('status', 'string'),
                 Field('analysis_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
-                      length=4294967295, autodelete=True))
+                      length=4294967295, autodelete=autodelete))
 
 
 
