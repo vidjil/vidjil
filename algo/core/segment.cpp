@@ -373,13 +373,10 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
             && the_kseg->evalue_left <= threshold_nb_expected
             && the_kseg->evalue_right <= threshold_nb_expected) {
           the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_ZERO);
-        }
-
-        if (the_kseg->evalue_left > threshold_nb_expected) {
-          the_kseg->setSegmentationStatus(UNSEG_NOISY); // TOO_FEW_V ?
-        }
-        if (the_kseg->evalue_right > threshold_nb_expected) {
-          the_kseg->setSegmentationStatus(UNSEG_NOISY); // TOO_FEW_J ?
+        } else if (the_kseg->evalue_left > threshold_nb_expected) {
+          the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_V);
+        } else if (the_kseg->evalue_right > threshold_nb_expected) {
+          the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_J);
         }
       }
 }
