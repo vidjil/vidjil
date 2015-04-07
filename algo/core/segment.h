@@ -169,6 +169,7 @@ class KmerSegmenter : public Segmenter
   string affects;
 
  public:
+  bool isDetected() const;
   int score;
 
   KmerSegmenter();
