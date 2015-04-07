@@ -35,12 +35,9 @@ def recombine_VJ_with_removes(seq5, remove5, Nlength, remove3, seq3, code):
 def select_genes(rep5, rep3, at_least=0):
     nb = 0
     for seq5 in rep5:
-        yield (seq5, random.choice(rep3))
-        nb += 1
-
-    for seq3 in rep3:
-        yield (random.choice(rep5), seq3)
-        nb += 1
+        for seq3 in rep3:
+            yield (seq5, seq3)
+            nb +=1
 
     while nb < at_least:
         yield (random.choice(rep5), random.choice(rep3))
