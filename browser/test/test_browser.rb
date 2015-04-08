@@ -114,7 +114,7 @@ class Browser < MiniTest::Test
     table = $b.div(:id => 'info_timepoint').table
     assert (table[1][1].text == '786861'), "Incorrect  number of reads in infopoint"
     assert (table[2][1].text.include? '742377'), "Incorrect  number of reads in infopoint"
-    $b.div(:id => 'data-container').span(:class => 'closeButton').click
+    $b.div(:class => 'data-container').span(:class => 'closeButton').click
     assert (not $b.div(:id => 'info_timepoint').present?), "Info timepoint should not be present"
   end
 
