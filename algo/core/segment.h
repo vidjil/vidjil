@@ -207,18 +207,18 @@ class KmerMultiSegmenter
    * @param threshold: threshold of randomly expected segmentation
    */
   KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented,
-                     double threshold = THRESHOLD_NB_EXPECTED);
+                     double threshold = THRESHOLD_NB_EXPECTED, int nb_reads_for_evalue = 1);
 
   /**
    * @return expected number of Segmenter that would have yield the maximum score by chance
    */
-  double getNbExpected() const;
+  double getNbExpected(int multiplier) const;
 
   /**
    * @return expected number of Segmenter that would have yield the maximum score by chance
    *         on the left part of the read and on the right part of the read respectively.
    */
-  pair<double,double> getNbExpectedLeftRight() const;
+  pair<double,double> getNbExpectedLeftRight(int multiplier) const;
 
   ~KmerMultiSegmenter();
 

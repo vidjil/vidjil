@@ -40,6 +40,7 @@ class WindowExtractor {
    * @param w: length of the window
    * @param windows_labels: Windows that must be kept and registered as such.
    * @param nb_expected: maximal e-value of the segmentation
+   * @param nb_reads_for_evalue: number of reads, used for e-value computation. Can be approximate or faked.
    * @return a pointer to a WindowsStorage that will contain all the windows.
    *         It is a pointer so that the WindowsStorage is not duplicated.
    * @post Statistics on segmentation will be provided through the getSegmentationStats() methods
@@ -49,7 +50,7 @@ class WindowExtractor {
                           size_t w,
                           map<string, string> &windows_labels,
                           int stop_after=-1, int only_nth_reads=1, bool keep_unsegmented_as_clone=false,
-                          double nb_expected = THRESHOLD_NB_EXPECTED);
+                          double nb_expected = THRESHOLD_NB_EXPECTED, int nb_reads_for_evalue = 1);
 
   /**
    * @return the average length of sequences whose segmentation has been classified as seg
