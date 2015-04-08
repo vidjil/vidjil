@@ -21,6 +21,8 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 function ScatterPlot(id, model) {
+    var self = this;
+    
     this.id = id; //ID of the scatterPlot div
     this.m = model; //Model object
 
@@ -113,12 +115,16 @@ function ScatterPlot(id, model) {
     
     // Plot axis
     this.available_axis = {
-        "sequenceLength" : { "fct" : function(cloneID) {return m.clone(cloneID).getSequenceLength()} },
-        "GCContent" : { "fct" : function(cloneID) {return m.clone(cloneID).getGCContent()} },
-        "n" : { "fct" : function(cloneID) {return m.clone(cloneID).getNlength()} },
-        "lengthCDR3" : { "fct" : function(cloneID) {return m.clone(cloneID).seg["cdr3"].length} },
-        "Size" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSize()}, "max" : 1, "percent" : true, "log" :true  },
-        "otherSize" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSize(self.m.tOther)}, "max" : 1, "percent" : true, "log" :true  }
+        "sequenceLength" : { "fct" : function(cloneID) {return self.m.clone(cloneID).getSequenceLength()} },
+        "GCContent" : { "fct" : function(cloneID) {return self.m.clone(cloneID).getGCContent()} },
+        "n" : { "fct" : function(cloneID) {return self.m.clone(cloneID).getNlength()} },
+        "lengthCDR3" : { "fct" : function(cloneID) {return self.m.clone(cloneID).seg["cdr3"].length} },
+        "Size" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSizeZero()}, 
+                    "min" : function(){return self.m.min_size},
+                    "max" : 1, "percent" : true, "log" :true  },
+        "otherSize" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSizeZero(m.tOther)}, 
+                        "min" : function(){return self.m.min_size}, 
+                        "max" : 1, "percent" : true, "log" :true  }
     }
     
     // Plot Presets
