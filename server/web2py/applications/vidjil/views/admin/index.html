@@ -16,13 +16,13 @@
 <hr>
 
 </br>Vidjil server:
-<a class="button" onclick="db.call('admin/log', {'file' : 'vidjil.log', 'format': 'vidjil'} );">vidjil.log</a>
-<a class="button" onclick="db.call('admin/log', {'file' : 'vidjil-debug.log', 'format': 'vidjil'} );">debug.log</a>
+<a class="button" onclick="db.call('admin/showlog', {'file' : 'vidjil.log', 'format': 'vidjil'} );">vidjil.log</a>
+<a class="button" onclick="db.call('admin/showlog', {'file' : 'vidjil-debug.log', 'format': 'vidjil'} );">debug.log</a>
 <a class="button" href="/admin/default/errors/vidjil">web2py tickets</a>
 
 </br>Ngnix:  
-<a class="button" onclick="db.call('admin/log', {'file' : '../log/nginx/access.log'} );">access.log</a>
-<a class="button" onclick="db.call('admin/log', {'file' : '../log/nginx/error.log'} );">error.log</a>
+<a class="button" onclick="db.call('admin/showlog', {'file' : '../log/nginx/access.log'} );">access.log</a>
+<a class="button" onclick="db.call('admin/showlog', {'file' : '../log/nginx/error.log'} );">error.log</a>
 
 
 
