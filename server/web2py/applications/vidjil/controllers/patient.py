@@ -81,6 +81,7 @@ def info():
     if (auth.has_permission('read', 'patient', request.vars["id"]) ):
         return dict(query=query,
                     patient=patient,
+                    birth=vidjil_utils.anon_birth(request.vars["id"], auth.user.id),
                     config_id=config_id,
                     fused_count=fused_count,
                     fused_file=fused_file,
