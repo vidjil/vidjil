@@ -114,15 +114,24 @@ Clone.prototype = {
      * @t : tracking point (default value : current tracking point)
      * */
     getSize: function (time) {
-        time = this.m.getTime(time)
-
-        if (this.m.reads.segmented[time] == 0 ) return 0
-        var result = this.getReads(time) / this.m.reads.segmented[time]
+        time = this.m.getTime(time);
         
-        if (this.m.norm) result = this.m.normalize(result, time)
+        if (this.m.reads.segmented[time] == 0 ) return 0;
+        var result = this.getReads(time) / this.m.reads.segmented[time];
+        
+        if (this.m.norm) result = this.m.normalize(result, time);
 
-        return result
+        return result;
     }, //end getSize
+    
+    
+    getSizeZero: function (time) {
+        time = this.m.getTime(time);
+        
+        result = this.getSize(time);
+        if (result == 0) return undefined;
+        return result;
+    }, 
     
     //special getSize for scatterplot (ignore constant)
     getSize2: function (time) {
