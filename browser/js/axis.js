@@ -153,14 +153,16 @@ Axis.prototype = {
         use_log= typeof percent !== 'undefined' ? use_log : false;
         var self = this;
         this.fct = fct;
+        
         var min = default_min;
         var max = default_max;
-        
+        if (typeof min === 'function') min = min();
+        if (typeof min === 'function') max = max();
+            
         for (var i in this.m.clones){
             var tmp;
             try{
                 tmp = fct(i);
-                if (tmp == 0) tmp = undefined;
             }catch(e){}
             
             if ( typeof tmp != "undefined"){
@@ -174,14 +176,16 @@ Axis.prototype = {
             max = 1;
         }
         
+        var range = [0,1]
+        if (self.reverse) range = [1,0]
         if (use_log){
             this.sizeScale = d3.scale.log()
             .domain([min, max])
-            .range([0, 1]);
+            .range(range);
         }else{
             this.sizeScale = d3.scale.linear()
                 .domain([min, max])
-                .range([0, 1]);
+                .range(range);
         }
             
         this.min = min;
@@ -196,10 +200,9 @@ Axis.prototype = {
             if (typeof value != "undefined"){
                 pos = self.sizeScale(value);
             }else{
-                pos = self.min;
+                pos = self.sizeScale(self.min);
             }
             
-            if (self.reverse) pos = 1 - pos; 
             return pos;
         }
         
