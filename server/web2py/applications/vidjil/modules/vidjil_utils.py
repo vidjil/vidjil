@@ -2,6 +2,7 @@ import math
 import re
 import defs
 from gluon import current
+from datetime import date
 
 def format_size(n, unit='B'):
     '''
@@ -43,6 +44,25 @@ def format_size(n, unit='B'):
 
     return fmt % size + ' ' + prefix + unit
 
+
+
+
+def age_years_months(birth, months_below_year=4):
+    '''Get the age in years, and possibly months.'''
+
+    today = date.today()
+    years = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
+    age = '%dy' % years
+
+    if years >= months_below_year:
+        return age
+
+    months = today.month - birth.month - (today.day < birth.day)
+    if months < 0:
+        months += 12
+
+    age += ' %dm' % months
+    return age
 
 def anon(patient_id, user_id):
     db = current.db
