@@ -331,5 +331,7 @@ int approx_nb_sequences_in_fasta(string f)
 
   cout << nb_sequences << " sequences" << endl;
 
+  delete sequences ;
+
   return nb_sequences ;
 }
