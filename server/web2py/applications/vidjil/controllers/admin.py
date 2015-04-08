@@ -49,7 +49,7 @@ def monitor():
                  last_results = last_results)
     
     
-def log():
+def showlog():
     if auth.has_membership("admin"):
         
         
