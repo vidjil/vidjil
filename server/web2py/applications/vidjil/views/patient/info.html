@@ -10,7 +10,7 @@
     <div class="db_block">
 
         <div class="db_block_left">
-            <span class="button" onclick="db.call('patient/edit', { 'id' : '{{=request.vars["id"]}}' } )" > edit patient info </span>
+	  {{=patient.id_label}} &nbsp; {{=birth}}
         </div>
 
 
@@ -105,6 +105,11 @@
         </tbody>
     </table>
     <table class="db_table" id="db_fixed_header"></table>
+
+   <br /><br />
+   {{=patient.info}}
+   <span class="button" onclick="db.call('patient/edit', { 'id' : '{{=request.vars["id"]}}' } )" > (edit patient data) </span>
+
 </div>
 
 
