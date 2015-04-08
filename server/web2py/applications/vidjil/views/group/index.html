@@ -10,7 +10,7 @@ query = db(
    db.auth_membership.group_id == db.auth_group.id
 ).select(db.auth_group.ALL, count, groupby = db.auth_group.id)
 }}
-<div>
+
     <h3>{{=message}}</h3>
     
     <div id="db_table_container">
@@ -36,10 +36,11 @@ query = db(
            {{pass}}
         </table>
         <table class="db_table" id="db_fixed_header"></table>
-    </div>
     
-    <span class="button2" onclick="db.call('group/add')"> + new group </span>
 </div>
+
+<span class="button2" onclick="db.call('group/add')"> + new group </span>
+
 
 {{elif 'content' in globals():}}
 {{=content}}

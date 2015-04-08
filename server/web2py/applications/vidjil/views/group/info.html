@@ -11,7 +11,6 @@ query = db(
         & (db.auth_membership.group_id == request.vars["id"]) 
     ).select() 
 }}
-<div>
 
     <div>
         <h3>group : {{=group.role}}  ({{=group.id}})</h3>
@@ -65,7 +64,6 @@ query = db(
         <div>you need admin access on this group if you want to invite people </div>
     {{pass}}
     
-</div>
 
 {{elif 'content' in globals():}}
 {{=content}}
