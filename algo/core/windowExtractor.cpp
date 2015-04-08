@@ -11,7 +11,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
 					 size_t w,
                                          map<string, string> &windows_labels,
                                          int stop_after, int only_nth_read, bool keep_unsegmented_as_clone,
-                                         double nb_expected) {
+                                         double nb_expected, int nb_reads_for_evalue) {
   init_stats();
 
   WindowsStorage *windowsStorage = new WindowsStorage(windows_labels);
@@ -38,7 +38,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
       *out_affects << reads->getSequence();
     }
     
-    KmerMultiSegmenter kmseg(reads->getSequence(), multigermline, out_affects, nb_expected);
+    KmerMultiSegmenter kmseg(reads->getSequence(), multigermline, out_affects, nb_expected, nb_reads_for_evalue);
     
     KmerSegmenter *seg = kmseg.the_kseg ;
     int read_length = seg->getSequence().sequence.length();

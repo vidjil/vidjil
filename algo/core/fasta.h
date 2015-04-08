@@ -27,6 +27,8 @@ typedef enum {
 
 #include "tools.h"
 
+unsigned long long filesize(const char* filename);
+
 class Fasta
 {
         void init(int extract_field, string extract_separator);
@@ -91,6 +93,7 @@ class OnlineFasta {
   string line;
   bool input_allocated;
   size_t line_nb;
+  unsigned long long char_nb;
 
  public:
 
@@ -113,7 +116,12 @@ class OnlineFasta {
               int extract_field=0, string extract_separator="|");
 
   ~OnlineFasta();
-  
+
+  /**
+   * @return the position in the file
+   */
+  unsigned long long getPos();
+
   /**
    * @return the current line number
    */
@@ -166,6 +174,7 @@ ostream &operator<<(ostream &out, const Sequence &seq);
  * Count the number of sequences in a Fasta file
  * @return the number of sequences
  */
-int nb_sequences_in_fasta(string f);
+int nb_sequences_in_fasta(string f, bool approx = false);
+int approx_nb_sequences_in_fasta(string f);
 
 #endif

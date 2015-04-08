@@ -14,6 +14,7 @@ enum {
   TEST_FASTA_ADD,
   TEST_FASTA_INVALID_FILE,
   TEST_FASTA_OUT,
+  TEST_FASTA_NB_SEQUENCES,
   TEST_CREATE_SEQUENCE_LABEL_FULL,
   TEST_CREATE_SEQUENCE_LABEL,
   TEST_CREATE_SEQUENCE_SEQUENCE,
@@ -167,6 +168,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_FASTA_ADD, "Fasta add() method");
   RECORD_TAP_TEST(TEST_FASTA_INVALID_FILE, "Fasta with invalid file");
   RECORD_TAP_TEST(TEST_FASTA_OUT, "Test operator<< with Fasta");
+  RECORD_TAP_TEST(TEST_FASTA_NB_SEQUENCES, "Nb sequences in Fasta");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_LABEL_FULL, "create_sequence: label_full field");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_LABEL, "create_sequence: label field");
   RECORD_TAP_TEST(TEST_CREATE_SEQUENCE_SEQUENCE, "create_sequence: sequence field");

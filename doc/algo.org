@@ -181,8 +181,10 @@ different clones.  Setting =-w= to lower values is not recommended.
 
 The =-e= option sets the maximal e-value accepted for segmenting a sequence.
 If a segmentation has a higher e-value, it will not be segmented.
+The e-value computation takes into account both the number of reads in the
+input sequence and the number of locus searched for.
 The default value is 'all', but the recommended value is to use something
-like 1e-6 for datasets with a billion of reads.
+like 1, 1e-2 or 1.
 Further help on this point will come in next releases.
 
 ** Threshold on clone output

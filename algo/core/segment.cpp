@@ -79,6 +79,10 @@ bool Segmenter::isDSegmented() const {
   return dSegmented;
 }
 
+bool KmerSegmenter::isDetected() const {
+  return detected;
+}
+
 // Chevauchement
 
 string Segmenter::removeChevauchement()
@@ -241,8 +245,17 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
       CountKmerAffectAnalyser ckaa(*(germline->index), sequence);
       pair <KmerAffect, KmerAffect> max12 = ckaa.sortLeftRight(ckaa.max12(forbidden));
 
+      if (max12.first.isUnknown() || max12.second.isUnknown())
+        {
+          because = UNSEG_TOO_FEW_ZERO ;
+          return ;
+        }
+
       strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
       computeSegmentation(strand, max12.first, max12.second);
+
+      if (!detected)
+        because = UNSEG_TOO_FEW_ZERO ;
 
       // The pseudo-germline should never take precedence over the regular germlines
       score = 1 ;
@@ -313,7 +326,8 @@ KmerSegmenter::~KmerSegmenter() {
     delete kaa;
 }
 
-KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented, double threshold)
+KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented,
+                                       double threshold, int nb_reads_for_evalue)
 {
   int best_score_seg = 0 ; // Best score, segmented sequences
   int best_score_unseg = 0 ; // Best score, unsegmented sequences
@@ -383,9 +397,9 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
   if (threshold_nb_expected > NO_LIMIT_VALUE)
     if (the_kseg->isSegmented()) {
         // the_kseg->evalue also depends on the number of germlines from the *Multi*KmerSegmenter
-        the_kseg->evalue = getNbExpected();
+        the_kseg->evalue = getNbExpected(nb_reads_for_evalue);
 
-        pair <double, double> p = getNbExpectedLeftRight();
+        pair <double, double> p = getNbExpectedLeftRight(nb_reads_for_evalue);
         the_kseg->evalue_left = p.first;
         the_kseg->evalue_right = p.second;
 
@@ -401,14 +415,14 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
       }
 }
 
-double KmerMultiSegmenter::getNbExpected() const {
-  pair <double, double> p = getNbExpectedLeftRight();
+double KmerMultiSegmenter::getNbExpected(int multiplier) const {
+  pair <double, double> p = getNbExpectedLeftRight(multiplier);
   return (p.first + p.second);
 }
 
-pair<double,double> KmerMultiSegmenter::getNbExpectedLeftRight() const {
+pair<double,double> KmerMultiSegmenter::getNbExpectedLeftRight(int multiplier) const {
   pair <double, double> p = the_kseg->getKmerAffectAnalyser()->getLeftRightProbabilityAtLeastOrAbove();
-  return pair<double, double>(p.first * multi_germline->germlines.size(), p.second * multi_germline->germlines.size());
+  return pair<double, double>(p.first * multiplier * multi_germline->germlines.size(), p.second * multiplier * multi_germline->germlines.size());
 }
 
 KmerMultiSegmenter::~KmerMultiSegmenter() {
@@ -425,12 +439,10 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   max = kaa->getMaximum(before, after); 
 
       // We labeled it detected if there were both enough affect_5 and enough affect_3
-       bool detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
+      detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
         && (max.nb_after_left + max.nb_after_right >= DETECT_THRESHOLD);
       
       if (! max.max_found) {
-        // ----------------------------
-        // This code is only here to set the UNSEG cause. It could be streamlined.
         if ((strand == 1 && max.nb_before_left == 0)
             || (strand == -1 && max.nb_after_right == 0)) 
           because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_V ;
@@ -440,7 +452,6 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
 	  because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_J ;
 	} else 
           because = UNSEG_AMBIGUOUS; 
-        // ----------------------------
       } else {
         Vend = max.first_pos_max;
         Jstart = max.last_pos_max + 1;

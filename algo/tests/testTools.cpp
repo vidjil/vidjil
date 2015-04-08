@@ -26,6 +26,18 @@ void testOnlineFasta1() {
   TAP_TEST(nb_seq == 5, TEST_O_FASTA_HAS_NEXT, "");
 }
 
+
+void testFastaNbSequences() {
+  TAP_TEST(nb_sequences_in_fasta("../../germline/IGHV.fa") == 344, TEST_FASTA_NB_SEQUENCES, "ccc");
+
+  int a1 = approx_nb_sequences_in_fasta("../../germline/IGHV.fa");
+  TAP_TEST(a1 >= 340 && a1 <= 348, TEST_FASTA_NB_SEQUENCES, "");
+
+  int a2 = nb_sequences_in_fasta("../../data/Stanford_S22.fasta", true);
+  TAP_TEST(a2 >= 13100 && a2 <= 13200, TEST_FASTA_NB_SEQUENCES, "");
+}
+
+
 void testFasta1() {
   Fasta fa("../../data/test1.fa");
   Fasta fq("../../data/test1.fq");
@@ -284,6 +296,7 @@ void testNChooseK() {
 
 void testTools() {
   testOnlineFasta1();
+  testFastaNbSequences();
   testFasta1();
   testFastaAdd();
   testFastaAddThrows();
