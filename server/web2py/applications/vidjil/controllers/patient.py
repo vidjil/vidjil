@@ -266,7 +266,7 @@ def index():
         db.patient.id, db.patient.last_name, db.patient.first_name
     )
     for i, row in enumerate(query5) :
-        if row.patient.id in keys :
+        if row.id in keys :
             result[row.id]['name'] = row.last_name + " " + row.first_name
 
         
