@@ -199,7 +199,8 @@ def get_data():
         data["samples"]["commandline"] = []
 
         ## récupération des infos stockées sur la base de données
-        if sequence_file_list is not None:
+        #if sequence_file_list is not None:
+	if False :
             sequence_file_list = sequence_file_list.split("_")
             for i in range(len(sequence_file_list)-1):
                 row = db( db.sequence_file.id == int(sequence_file_list[i]) ).select().first()
