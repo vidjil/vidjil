@@ -3,7 +3,8 @@
 import defs
 from gluon import current
 
-AUTODELETE = False
+# AUTODELETE should be set to False before any maintenance operation on the DB
+AUTODELETE = True
 
 #########################################################################
 ## This scaffolding model makes your app work on Google App Engine too
@@ -169,7 +170,6 @@ db.define_table('analysis_file',
                 Field('analysis_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
                       length=4294967295, autodelete=AUTODELETE))
-
 
 
 ## after defining tables, uncomment below to enable auditing
