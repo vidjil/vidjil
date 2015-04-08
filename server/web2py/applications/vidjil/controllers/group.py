@@ -36,7 +36,7 @@ def add_form():
         auth.add_permission(user_group, 'admin', db.auth_group, id)
 
         res = {"redirect": "group/index",
-               "message" : "group created"}
+               "message" : "group '%s' created" % id}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -60,7 +60,7 @@ def delete():
     db(db.auth_group.id == request.vars["id"]).delete()
     
     res = {"redirect": "group/index",
-           "message": "group deleted"}
+           "message": "group '%s' deleted" % request.vars["id"]}
     log.info(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -111,7 +111,7 @@ def invite():
         auth.add_membership(request.vars["group_id"], request.vars["user_id"])
         res = {"redirect" : "group/info" ,
                "args" : { "id" : request.vars["group_id"]},
-               "message" : "user have been invited to join this group"}
+               "message" : "user '%s' added to group '%s'" % (request.vars["user_id"], request.vars["group_id"])}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
@@ -130,7 +130,7 @@ def kick():
         auth.del_membership(request.vars["group_id"], request.vars["user_id"])
         res = {"redirect" : "group/info" ,
                "args" : { "id" : request.vars["group_id"]},
-               "message" : "user have been kicked"}
+               "message" : "user '%s' removed from group '%s'" % (request.vars["user_id"], request.vars["group_id"])}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
