@@ -64,7 +64,21 @@ def age_years_months(birth, months_below_year=4):
     age += ' %dm' % months
     return age
 
+def anon_birth(patient_id, user_id):
+    '''Anonymize birth date. Only the 'anon' access see the full birth date.'''
+    db = current.db
+    auth=current.auth
+
+    birth = db.patient[patient_id].birth
+    age = age_years_months(birth)
+
+    if auth.has_permission("anon", "patient", patient_id, user_id):
+        return "%s (%s)" % (birth, age)
+    else:
+        return age
+
 def anon(patient_id, user_id):
+    '''Anonymize patient name. Only the 'anon' access see the full patient name.'''
     db = current.db
     auth=current.auth
     
