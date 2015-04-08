@@ -50,8 +50,9 @@ def info():
         analysis_filename = ""
 
     if config :
-
-        query = db(
+	query =[]
+	
+        query2 = db(
                 (db.sequence_file.patient_id==db.patient.id)
                 & (db.patient.id==request.vars["id"])
             ).select(
@@ -59,9 +60,13 @@ def info():
                     (db.results_file.sequence_file_id==db.sequence_file.id)
                     & (db.results_file.config_id==str(config_id) )
                 ), 
-                orderby = db.sequence_file.id|db.results_file.run_date,
-                groupby = db.sequence_file.id,
+                orderby = db.sequence_file.id|~db.results_file.run_date
             )
+	previous=-1
+	for row in query2 :
+	    if row.sequence_file.id != previous : 
+		query.append(row)
+		previous=row.sequence_file.id
 
     else:
 
