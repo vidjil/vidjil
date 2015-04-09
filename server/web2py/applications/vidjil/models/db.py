@@ -6,6 +6,9 @@ from gluon import current
 # AUTODELETE should be set to False before any maintenance operation on the DB
 AUTODELETE = True
 
+# Length of the upload field
+LENGTH_UPLOAD = 400
+
 #########################################################################
 ## This scaffolding model makes your app work on Google App Engine too
 ## File is released under public domain and you can use without limitations
@@ -121,7 +124,7 @@ db.define_table('sequence_file',
                 Field('provider','reference auth_user'),
                 Field('data_file', 'upload', 
                       uploadfolder=defs.DIR_SEQUENCES,
-                      length=4294967295, autodelete=AUTODELETE))
+                      length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 
 
@@ -131,7 +134,7 @@ db.define_table('standard_file',
                 Field('info','text'),
                 Field('data_file', 'upload',
                       uploadfolder=defs.DIR_SEQUENCES,
-                      autodelete=AUTODELETE, length=4294967295))
+                      autodelete=AUTODELETE, length=LENGTH_UPLOAD))
 
 
 
@@ -150,7 +153,7 @@ db.define_table('results_file',
                 Field('scheduler_task_id', 'integer'),
                 Field('data_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
-                      length=4294967295, autodelete=AUTODELETE))
+                      length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 db.define_table('fused_file',
                 Field('patient_id', 'reference patient'),
@@ -160,7 +163,7 @@ db.define_table('fused_file',
                 Field('sequence_file_list', 'string'),
                 Field('fused_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
-                      length=4294967295, autodelete=AUTODELETE))
+                      length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 db.define_table('analysis_file',
                 Field('patient_id', 'reference patient'),
@@ -169,7 +172,7 @@ db.define_table('analysis_file',
                 Field('status', 'string'),
                 Field('analysis_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
-                      length=4294967295, autodelete=AUTODELETE))
+                      length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 
 ## after defining tables, uncomment below to enable auditing
