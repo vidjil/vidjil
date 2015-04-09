@@ -193,41 +193,30 @@ def get_data():
         data["config_name"] = config_name
         data["dataFileName"] = patient_name + " (" + config_name + ")"
         data["info"] = db.patient(request.vars["patient"]).info
-        data["samples"]["original_names"] = []
-        data["samples"]["timestamp"] = []
+        
         data["samples"]["info"] = []
-        data["samples"]["commandline"] = []
+        data["samples"]["timestamp"] = []
+        for i in range(len(data["samples"]["original_names"])) :
+            data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
+            data["samples"]["info"].append('')
+            data["samples"]["timestamp"].append('')
 
         ## récupération des infos stockées sur la base de données
-        #if sequence_file_list is not None:
-	if False :
-            sequence_file_list = sequence_file_list.split("_")
-            for i in range(len(sequence_file_list)-1):
-                row = db( db.sequence_file.id == int(sequence_file_list[i]) ).select().first()
-                data["samples"]["commandline"].append(command)
-                if row is not None:
-                    data["samples"]["original_names"].append(row.filename)
-                    data["samples"]["timestamp"].append(str(row.sampling_date))
-                    data["samples"]["info"].append(row.info)
-                else :
-                    data["samples"]["original_names"].append("unknow")
-                    data["samples"]["timestamp"].append("")
-                    data["samples"]["info"].append("")
+        query = db( ( db.patient.id == db.sequence_file.patient_id )
+                   & ( db.results_file.sequence_file_id == db.sequence_file.id )
+                   & ( db.patient.id == request.vars["patient"] )
+                   & ( db.results_file.config_id == request.vars["config"]  )
+                   ).select( orderby=db.sequence_file.id|db.results_file.run_date, groupby=db.sequence_file.id )
 
-        else :
-            ## old method
-            query = db( ( db.patient.id == db.sequence_file.patient_id )
-                       & ( db.results_file.sequence_file_id == db.sequence_file.id )
-                       & ( db.patient.id == request.vars["patient"] )
-                       & ( db.results_file.config_id == request.vars["config"]  )
-                       ).select( orderby=db.sequence_file.id|db.results_file.run_date, groupby=db.sequence_file.id )
-
-            for row in query :
-                filename = row.sequence_file.filename
-                data["samples"]["original_names"].append(filename)
-                data["samples"]["timestamp"].append(str(row.sequence_file.sampling_date))
-                data["samples"]["info"].append(row.sequence_file.info)
-                data["samples"]["commandline"].append(command)
+        for row in query :
+            filename = row.sequence_file.filename
+            for i in range(len(data["samples"]["original_names"])) :
+                data_file = data["samples"]["original_names"][i]
+                if row.sequence_file.data_file == data_file :
+                    data["samples"]["original_names"][i] = filename
+                    data["samples"]["timestamp"][i] = str(row.sequence_file.sampling_date)
+                    data["samples"]["info"][i] = row.sequence_file.info
+                    data["samples"]["commandline"][i] = command
                 
         log.debug("get_data (%s) c%s -> %s" % (request.vars["patient"], request.vars["config"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
