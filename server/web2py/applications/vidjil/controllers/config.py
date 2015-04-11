@@ -42,7 +42,7 @@ def add_form():
 
         res = {"redirect": "config/index",
                "message": "config '%s' added" % request.vars['config_name']}
-        log.info(res)
+        log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     else :
@@ -77,7 +77,7 @@ def edit_form():
         res = {"redirect": "config/index",
                "message": "config '%s' updated" % request.vars['config_name']}
 
-        log.info(res)
+        log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
@@ -99,7 +99,7 @@ def delete():
     
     res = {"redirect": "config/index",
            "message": "config '%s' deleted" % request.vars["id"]}
-    log.info(res)
+    log.admin(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
@@ -169,7 +169,7 @@ def change_permission():
                 auth.add_permission(request.vars["group_id"], request.vars["permission"], db.config, request.vars["config_id"])
                 res = {"message" : "access '%s' granted to '%s'" % (request.vars["permission"], db.auth_group[request.vars["group_id"]].role)}
             
-            log.info(res)
+            log.admin(res)
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         else :
             res = {"message": "incomplete request : "+error }

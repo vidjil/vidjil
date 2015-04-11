@@ -123,7 +123,7 @@ def repair_missing_files():
                 db.sequence_file[row.id] = dict(size_file = size)
                 
         res = {"success" : "true", "message" : "DB: references to missing files have been removed: "+flist}
-        log.info(res)
+        log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     
@@ -133,7 +133,7 @@ def make_backup():
         db.export_to_csv_file(open(defs.DB_BACKUP_FILE, 'wb'))
                 
         res = {"success" : "true", "message" : "DB backup -> %s" % defs.DB_BACKUP_FILE}
-        log.info(res)
+        log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
     
@@ -170,5 +170,5 @@ def repair():
             db.fused_file[row.id] = dict(fuse_date = "1970-01-01 00:00:00")
         
         res = {"success" : "true", "message" : "DB repaired: " + flist}
-        log.info(res)
+        log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
