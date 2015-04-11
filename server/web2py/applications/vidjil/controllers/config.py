@@ -42,10 +42,12 @@ def add_form():
 
         res = {"redirect": "config/index",
                "message": "config '%s' added" % request.vars['config_name']}
+        log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     else :
         res = {"success" : "false", "message" : error}
+        log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
@@ -73,7 +75,7 @@ def edit_form():
                                              )
 
         res = {"redirect": "config/index",
-               "message": "config '%s' saved" % request.vars['config_name']}
+               "message": "config '%s' updated" % request.vars['config_name']}
 
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
@@ -96,7 +98,8 @@ def delete():
     db(db.config.id==request.vars["id"]).delete() 
     
     res = {"redirect": "config/index",
-           "message": "config deleted"}
+           "message": "config '%s' deleted" % request.vars["id"]}
+    log.info(res)
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
