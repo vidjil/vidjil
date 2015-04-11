@@ -30,7 +30,7 @@
 
 #define NO_LIMIT_VALUE  -1
 
-#define THRESHOLD_NB_EXPECTED NO_LIMIT_VALUE /* Threshold of the accepted expected value for number of found k-mers */
+#define THRESHOLD_NB_EXPECTED 1.0 /* Threshold of the accepted expected value for number of found k-mers */
 
 
 
