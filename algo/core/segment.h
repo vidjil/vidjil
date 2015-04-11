@@ -171,6 +171,8 @@ class KmerSegmenter : public Segmenter
  public:
   bool isDetected() const;
   int score;
+  int pvalue_left;
+  int pvalue_right;
 
   KmerSegmenter();
   /**
@@ -178,7 +180,7 @@ class KmerSegmenter : public Segmenter
    * @param seq: An object read from a FASTA/FASTQ file
    * @param germline: the germline
    */
-  KmerSegmenter(Sequence seq, Germline *germline);
+  KmerSegmenter(Sequence seq, Germline *germline, int multiplier=1);
 
   KmerSegmenter(const KmerSegmenter &seg);
 
@@ -192,7 +194,7 @@ class KmerSegmenter : public Segmenter
   void toJsonList(JsonList *seg);
 
  private:
-  void computeSegmentation(int strand, KmerAffect left, KmerAffect right);
+  void computeSegmentation(int strand, KmerAffect left, KmerAffect right, int multiplier);
 };
 
 
@@ -208,17 +210,6 @@ class KmerMultiSegmenter
    */
   KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented,
                      double threshold = THRESHOLD_NB_EXPECTED, int nb_reads_for_evalue = 1);
-
-  /**
-   * @return expected number of Segmenter that would have yield the maximum score by chance
-   */
-  double getNbExpected(int multiplier) const;
-
-  /**
-   * @return expected number of Segmenter that would have yield the maximum score by chance
-   *         on the left part of the read and on the right part of the read respectively.
-   */
-  pair<double,double> getNbExpectedLeftRight(int multiplier) const;
 
   ~KmerMultiSegmenter();
 

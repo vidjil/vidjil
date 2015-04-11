@@ -191,7 +191,7 @@ ostream &operator<<(ostream &out, const Segmenter &s)
 
 KmerSegmenter::KmerSegmenter() { kaa = 0 ; }
 
-KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
+KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, int multiplier)
 {
   label = seq.label ;
   sequence = seq.sequence ;
@@ -252,7 +252,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
         }
 
       strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
-      computeSegmentation(strand, max12.first, max12.second);
+      computeSegmentation(strand, max12.first, max12.second, multiplier);
 
       if (!detected)
         because = UNSEG_TOO_FEW_ZERO ;
@@ -283,7 +283,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline)
     return ;
   }
 
-  computeSegmentation(strand, before, after);
+  computeSegmentation(strand, before, after, multiplier);
 
     } // endif Pseudo-germline
 
@@ -334,13 +334,16 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
   the_kseg = NULL;
   multi_germline = multigermline;
   threshold_nb_expected = threshold;
+
+  // E-value multiplier
+  int multiplier = multi_germline->germlines.size() * nb_reads_for_evalue;
   
   // Iterate over the germlines
   for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
     {
       Germline *germline = *it ;
 
-      KmerSegmenter *kseg = new KmerSegmenter(seq, germline);
+      KmerSegmenter *kseg = new KmerSegmenter(seq, germline, multiplier);
       bool keep_seg = false;
 
       if (out_unsegmented)
@@ -396,13 +399,6 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
   // E-value threshold
   if (threshold_nb_expected > NO_LIMIT_VALUE)
     if (the_kseg->isSegmented()) {
-        // the_kseg->evalue also depends on the number of germlines from the *Multi*KmerSegmenter
-        the_kseg->evalue = getNbExpected(nb_reads_for_evalue);
-
-        pair <double, double> p = getNbExpectedLeftRight(nb_reads_for_evalue);
-        the_kseg->evalue_left = p.first;
-        the_kseg->evalue_right = p.second;
-
         if (the_kseg->evalue > threshold_nb_expected
             && the_kseg->evalue_left <= threshold_nb_expected
             && the_kseg->evalue_right <= threshold_nb_expected) {
@@ -415,28 +411,21 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
       }
 }
 
-double KmerMultiSegmenter::getNbExpected(int multiplier) const {
-  pair <double, double> p = getNbExpectedLeftRight(multiplier);
-  return (p.first + p.second);
-}
-
-pair<double,double> KmerMultiSegmenter::getNbExpectedLeftRight(int multiplier) const {
-  pair <double, double> p = the_kseg->getKmerAffectAnalyser()->getLeftRightProbabilityAtLeastOrAbove();
-  return pair<double, double>(p.first * multiplier * multi_germline->germlines.size(), p.second * multiplier * multi_germline->germlines.size());
-}
-
 KmerMultiSegmenter::~KmerMultiSegmenter() {
   if (the_kseg)
     delete the_kseg;
 }
 
-void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffect after) {
+void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffect after, int multiplier) {
   // Try to segment, computing 'Vend' and 'Jstart'
   // If not segmented, put the cause of unsegmentation in 'because'
 
   affect_infos max;
+  max = kaa->getMaximum(before, after);
 
-  max = kaa->getMaximum(before, after); 
+  pair <double, double> pvalues = kaa->getLeftRightProbabilityAtLeastOrAbove();
+  evalue_left = pvalues.first * multiplier ;
+  evalue_right = pvalues.second * multiplier ;
 
       // We labeled it detected if there were both enough affect_5 and enough affect_3
       detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
