@@ -397,7 +397,7 @@ def save_analysis():
 
 
 #########################################################################
-def handle_error():
+def error():
     """
     Custom error handler that returns correct status codes,
     adapted from http://www.web2pyslices.com/slice/show/1529/custom-error-routing
@@ -405,25 +405,22 @@ def handle_error():
 
     code = request.vars.code
     request_url = request.vars.request_url
+    requested_uri = request.vars.requested_uri
     ticket = request.vars.ticket
+    response.status = int(code)
 
-    log.error("[%s] %s" % (code, ticket))
+    assert(response.status == 500 and request_url != request.url) # avoid infinite loop
 
-    if code is not None and request_url != request.url:# Make sure error url is not current url to avoid infinite loop.
-        response.status = int(code) # Assign the error status code to the current response. (Must be integer to work.)
+    ticket_url = '<a href="https://%(host)s/admin/default/ticket/%(ticket)s">%(ticket)s</a>' % { 'host':request.env.http_host,
+                                                                                                 'ticket':ticket }
+    log.error("Server error // %s" % ticket_url)
 
-    if code == '403':
-        return "Not authorized"
-    elif code == '404':
-        return "Not found"
-    elif code == '500':
-        # Get ticket URL:
-        ticket_url = "<a href='%(scheme)s://%(host)s/admin/default/ticket/%(ticket)s' target='_blank'>%(ticket)s</a>" % {'scheme':'https','host':request.env.http_host,'ticket':ticket}
+    user_str, x = log.process('', None)
+    user_str = user_str.replace('<','').replace('>','')
 
-        # Email a notice, etc:
-        mail.send(to=['contact@vidjil.org'],
-                  subject="[Vidjil] web2py error",
-                  message="Error Ticket:  %s" % ticket_url)
+    mail.send(to=defs.ADMIN_EMAILS,
+              subject="[Vidjil] Server error - %s" % user_str,
+              message="<html>Ticket: %s<br/>At: %s<br />User: %s</html>" % (ticket_url, requested_uri, user_str))
 
     return "Server error"
 
