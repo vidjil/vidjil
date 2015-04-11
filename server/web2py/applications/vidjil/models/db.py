@@ -194,6 +194,9 @@ except:
 
 import logging
 
+logging.ADMIN = logging.INFO + 1
+logging.addLevelName(logging.ADMIN, 'ADMIN')
+
 class MsgUserAdapter(logging.LoggerAdapter):
 
     def process(self, msg, kwargs):
@@ -210,6 +213,8 @@ class MsgUserAdapter(logging.LoggerAdapter):
         new_msg =  '%30s %12s %s' % (ip, ('<%s>' % auth.user.first_name.replace(' ','-') if auth.user else ''), msg)
         return new_msg, kwargs
     
+    def admin(self, msg):
+        self.log(logging.ADMIN, msg)
 #
 
 def _init_log():
