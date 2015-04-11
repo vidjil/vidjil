@@ -180,12 +180,12 @@ few more reads, but may in some rare cases falsely cluster reads from
 different clones.  Setting =-w= to lower values is not recommended.
 
 The =-e= option sets the maximal e-value accepted for segmenting a sequence.
-If a segmentation has a higher e-value, it will not be segmented.
+It is an upper bound on the number of exepcted windows found by chance by the seed-based heuristic.
 The e-value computation takes into account both the number of reads in the
 input sequence and the number of locus searched for.
-The default value is 'all', but the recommended value is to use something
-like 1, 1e-2 or 1.
-Further help on this point will come in next releases.
+The default value is 1.0, but values such as 1000, 1e-3 or even less can be used
+to have a more or less permissive segmentation.
+The threshold can be disabled with =-e all=.
 
 ** Threshold on clone output
 
