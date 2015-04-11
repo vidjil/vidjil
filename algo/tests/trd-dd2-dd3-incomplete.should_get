@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -A -i -g ../../germline ../../data/trd-dd2-dd3.fa
+!LAUNCH: ../../vidjil -e 10 -A -i -g ../../germline ../../data/trd-dd2-dd3.fa
 
 $ Segment all 5 reads, thanks to -i
 1:segmented 5 reads .100..

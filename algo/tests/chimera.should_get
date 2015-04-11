@@ -1,7 +1,7 @@
 !LAUNCH: ../../vidjil -A -uU -g ../../germline ../../data/chimera-trg.fa
 
 $ Do not segment on IGL by chance
-f1:IGL .* -> .* 0   
+1:IGL .* -> .* 0
 
 $ Report the sequence as AMBIGUOUS
 f1:UNSEG ambiguous .* 2
