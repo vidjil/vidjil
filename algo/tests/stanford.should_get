@@ -9,6 +9,12 @@ $ Parses IGHD.fa germline
 $ Parses germline/IGHJ.fa
 1: 701 bp in  13 sequences
 
+$ Find the good index load
+1:custom .*  0.158. s13 k12
+
+$ Find approximately the good number of sequences for e-value computation
+1: approx. 131.. sequences
+
 $ Find the good number of windows in Stanford S22
 1: found 10935 60-windows in 13138 segments
 
