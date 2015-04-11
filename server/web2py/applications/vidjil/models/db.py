@@ -207,7 +207,7 @@ class MsgUserAdapter(logging.LoggerAdapter):
             for ip_prefix in ips:
                 if ip.startswith(ip_prefix):
                     ip = "%s/%s" % (ip, ips[ip_prefix])
-        new_msg =  '%30s %12s %s' % (ip, ('<%s>' % auth.user.first_name if auth.user else ''), msg)
+        new_msg =  '%30s %12s %s' % (ip, ('<%s>' % auth.user.first_name.replace(' ','-') if auth.user else ''), msg)
         return new_msg, kwargs
     
 #
