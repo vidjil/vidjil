@@ -164,6 +164,9 @@ def custom():
 STATS_READLINES = 1000 # approx. size in which the stats are searched
 
 def stats():
+    import time
+    start = time.time()
+
     d = custom()
 
     stats_regex = [
@@ -212,6 +215,7 @@ def stats():
                         row[key] = val.replace('\\', '')
                     break
 
+    log.debug("patient/stats (%.3fs)" % (time.time()-start))
     return d
 
 ## return patient list
