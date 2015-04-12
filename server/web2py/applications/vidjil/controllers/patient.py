@@ -208,7 +208,7 @@ def stats():
                 m = r.search(line)
                 if m:
                     for (key, val) in m.groupdict().items():
-                        row[key] = val
+                        row[key] = val.replace('\\', '')
                     break
 
     return d
