@@ -239,6 +239,9 @@ class Browser < MiniTest::Test
   end
 
   def test_0a_shortcuts_numpad
+    $b.clone_in_scatterplot('25').wait_until_present
+    $b.clone_in_scatterplot('25').click
+
     assert ($b.preset_selector.selected? "V/J (genes)"), ">> preset selector badly set"
     $b.send_keys :numpad2
     assert ($b.preset_selector.selected? "V/N length"), ">> preset selector not properly changed"
