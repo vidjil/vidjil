@@ -161,6 +161,7 @@ def custom():
                 config=config)
     
 
+STATS_READLINES = 1000 # approx. size in which the stats are searched
 
 def stats():
     d = custom()
@@ -196,7 +197,7 @@ def stats():
     for row in d['query']:
         results_f = defs.DIR_RESULTS + row.results_file.data_file
         try:
-            results = open(results_f).readlines()
+            results = open(results_f).readlines(STATS_READLINES)
         except IOError:
             results = []
 
