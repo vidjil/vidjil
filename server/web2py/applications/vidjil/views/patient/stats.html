@@ -1,4 +1,4 @@
-{{extend 'db_layout.html'}}
+
 {{import vidjil_utils}}
 
 
@@ -6,7 +6,7 @@
 <div>
 
     <h3>Stats</h3>
-
+<!--
     <div class="db_block">
 
         <div class="db_block_left">
@@ -38,11 +38,12 @@
     </div>
 
 </div>
+-->
 
 <div id="db_table_container">
-    <table class="db_table" id="table">
+    <table class="db_table" id="table" border="1">
         <thead>
-            <tr><td class="column1"> </td>
+            <tr> <!-- <td class="column1"> </td> -->
                 <td class="column_200"> patient </td>
                 <td class="column_200"> file name </td>
 
@@ -52,9 +53,11 @@
                 {{ pass }}
                 <!-- ----- -->
 
+          <!--
                 <td class="column2"> sampling date </td>
                 <td> info </td>
                 <td> pcr </td>
+            -->
                 <td class="column1"> size </td>
 
 		<td class="column_200"> config </td>
@@ -68,7 +71,7 @@
             {{for row in query :}}
 
                  <tr>
-                    <td> <input type="checkbox" name="custom_result[]" value="{{=row.results_file.id}}" {{if row.checked :}} checked {{pass}}> </td>
+                   <!--      <td> <input type="checkbox" name="custom_result[]" value="{{=row.results_file.id}}" {{if row.checked :}} checked {{pass}}> </td> -->
                     <td> {{=vidjil_utils.anon(row.sequence_file.patient_id, auth.user_id)}}</td>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}  {{pass}} id="sequence_file_{{=row.sequence_file.id}}">
                          {{=row.sequence_file.filename}}
@@ -77,10 +80,11 @@
                    {{ for key in stats: }}
                    <td>{{ =row[key] }}</td>
                    {{ pass }}
-
+              <!--
                     <td> {{=row.sequence_file.sampling_date}} </td>
                     <td> {{=row.sequence_file.info}} </td>
                     <td> {{=row.sequence_file.pcr}} </td>
+              -->
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} >
                         {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
 		    <td> {{=row.config.name}}
@@ -97,7 +101,7 @@
     <table class="db_table" id="db_fixed_header"></table>
 </div>
 
-
+<!--
 <div class="db_block">
 
     <div class="db_block_left">
@@ -109,6 +113,6 @@
     </div>
 
 </div>
-
+-->
 
 </div>
