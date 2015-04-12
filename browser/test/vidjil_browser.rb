@@ -180,9 +180,10 @@ class VidjilBrowser < Watir::Browser
     return tag_selector.button(:text => 'ok')
   end
 
-  # Click in the back so that we unselect everything
+  # Unselect everything, both on clones, and move away from menus (as if we click on the back)
   def unselect
     $b.execute_script('m.unselectAll()')
+    $b.execute_script('showSelector("x")')
   end
   
   # Return the div of the list of clones
