@@ -131,7 +131,7 @@ def custom():
 
     query = db(q).select(
                 db.patient.id, db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date, 
-                db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.sequence_file.filename, 
+                db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
                 db.sequence_file.patient_id, db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
                 db.sequence_file.size_file,
                 orderby = ~db.sequence_file.patient_id|db.sequence_file.id|db.results_file.run_date,
@@ -160,6 +160,43 @@ def custom():
                 config_id=config_id,
                 config=config)
     
+
+
+def stats():
+    d = custom()
+
+    stats_regex = [
+        '"producer" :  [[] "(?P<version>.*)"',
+    ]
+
+    keys = []
+    regex = []
+    for sr in stats_regex:
+        r = re.compile(sr)
+        regex += [r]
+        keys += r.groupindex.keys()
+
+    d['stats'] = keys
+
+    for row in d['query']:
+        results_f = defs.DIR_RESULTS + row.results_file.data_file
+        try:
+            results = open(results_f).readlines()
+        except IOError:
+            results = []
+
+        for key in keys:
+            row[key] = ''
+
+        for r in regex:
+            for line in results:
+                m = r.search(line)
+                if m:
+                    for (key, val) in m.groupdict().items():
+                        row[key] = val
+                    break
+
+    return d
 
 ## return patient list
 def index():
