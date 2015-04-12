@@ -649,6 +649,7 @@ ScatterPlot.prototype = {
         }
 
         this.select_preset = document.createElement('select');
+        this.select_preset.className = "axis_select_preset_select";
         //Initialisation du menu déroulant
         this.select_preset.setAttribute('name', 'select_preset[]');
         this.select_preset.onchange = function() {

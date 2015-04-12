@@ -96,7 +96,7 @@ Shortcut.prototype = {
                         break;
                     default:
                         if ((key >= 96) && (key <= 105)) { // Numeric keypad, 0-9
-                            var select_preset = document.getElementById("select_preset")
+                            var select_preset = document.getElementsByClassName("axis_select_preset_select")[0]
                             select_preset.selectedIndex = key - 95
                             try {
                                 sp.changePreset(select_preset)
