@@ -150,6 +150,11 @@ class VidjilBrowser < Watir::Browser
             edit: ts.li(:index => id.to_i).span(:class => 'edit_button')}
   end
   
+  # Return the select containing the preset selector in the graph
+  def preset_selector
+    return select_list(:class => 'axis_select_preset_select')
+  end
+
   # Return the div containing the tag selector
   def tag_selector
     return div(:class => 'tagSelector')
