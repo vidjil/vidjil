@@ -290,7 +290,7 @@ class Browser < MiniTest::Test
   end
   
 
-  def test_14_edit_tag
+  def TODO_test_14_edit_tag
     begin
       ## rename Tag 0
       $b.clone_info('25')[:star].click
