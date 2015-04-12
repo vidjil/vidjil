@@ -5,16 +5,14 @@
 
 <div>
 
-    <h3>Compare samples from different patients</h3>
-
-    <p>Select up to 10 samples to be compared.</p>
+    <h3>Stats</h3>
 
     <div class="db_block">
 
         <div class="db_block_left">
             search
             <input id="db_filter_input" type="text" value="{{=request.vars["filter"]}}" 
-                   onchange="db.call('patient/custom', {'config_id' : '{{=request.vars["config_id"]}}', 
+                   onchange="db.call('patient/stats', {'config_id' : '{{=request.vars["config_id"]}}',
                                                       'filter' : this.value, 
                                                       'custom_list' : db.getListInput('custom_result[]')} )"  >
         </div>
@@ -24,7 +22,7 @@
         {{if auth.has_permission("run", "results_file") :}}
             config
             <span>
-                <select id="choose_config" name="config" onchange="db.call('patient/custom', {'config_id' : this.value, 
+                <select id="choose_config" name="config" onchange="db.call('patient/stats', {'config_id' : this.value,
                                                                    'filter' : '{{=request.vars["filter"]}}',
                                                                   'custom_list' : db.getListInput('custom_result[]') })">
                     <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
@@ -47,6 +45,13 @@
             <tr><td class="column1"> </td>
                 <td class="column_200"> patient </td>
                 <td class="column_200"> file name </td>
+
+                <!-- Stats -->
+                {{ for key in stats: }}
+                <td>{{ =key }}</td>
+                {{ pass }}
+                <!-- ----- -->
+
                 <td class="column2"> sampling date </td>
                 <td> info </td>
                 <td> pcr </td>
@@ -68,6 +73,11 @@
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}  {{pass}} id="sequence_file_{{=row.sequence_file.id}}">
                          {{=row.sequence_file.filename}}
                     </td>
+
+                   {{ for key in stats: }}
+                   <td>{{ =row[key] }}</td>
+                   {{ pass }}
+
                     <td> {{=row.sequence_file.sampling_date}} </td>
                     <td> {{=row.sequence_file.info}} </td>
                     <td> {{=row.sequence_file.pcr}} </td>
