@@ -166,6 +166,21 @@ def stats():
     d = custom()
 
     stats_regex = [
+        # found 771265 40-windows in 2620561 segments (85.4%) inside 3068713 sequences
+        'in (?P<seg>\d+) segments \((?P<seg_ratio>.*?)\) inside (?P<reads>\d+) sequences',
+
+        # locus
+        'log.* TRG.*?->\s*?(?P<TRG_reads>\d+)\s+(?P<TRG_av_len>[0-9.]+)\s+(?P<TRG_clones>\d+)\s+(?P<TRG_av_reads>[0-9.]+)\s*.n',
+        'log.* IGH.*?->\s*?(?P<IGH_reads>\d+)\s+(?P<IGH_av_len>[0-9.]+)\s+(?P<IGH_clones>\d+)\s+(?P<IGH_av_reads>[0-9.]+)\s*.n',
+
+        # segmentation causes
+        'log.* SEG_[+].*?-> (?P<SEG_plus>.*?).n',
+        'log.* SEG_[-].*?-> (?P<SEG_minus>.*?).n',
+
+        # main clone
+        '"name".*"(?P<main_clone>.*)"',
+        '"reads" :  [[] (?P<main_clone_reads>\d+) ',
+
         '"producer" :  [[] "(?P<version>.*)"',
     ]
 
