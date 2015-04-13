@@ -213,7 +213,7 @@ void testExtractor() {
   OnlineFasta data("../../data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, seqV, seqJ, 0, 10);
+  germline = new Germline("TRG", 'G', seqV, seqV, seqJ, 0, 10, 0);
   germline->new_index("##########");
 
   MultiGermline *multi ;
