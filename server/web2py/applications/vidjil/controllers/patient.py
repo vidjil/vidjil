@@ -184,9 +184,14 @@ def stats():
         # main clone
         '"name".*"(?P<main_clone>.*)"',
         '"reads" :  [[] (?P<main_clone_reads>\d+) ',
-
-        '"producer" :  [[] "(?P<version>.*)"',
     ]
+
+    json_paths = {'reads distribution [1,9]': 'reads-distribution-1',
+                  'reads distribution [10,99]': 'reads-distribution-10',
+                  'reads distribution [100,999]': 'reads-distribution-100',
+                  'reads distribution 1000+': 'reads-distribution-1000',
+                  'producer': 'samples/producer',
+    }
 
     keys = []
     regex = []
@@ -195,14 +200,27 @@ def stats():
         regex += [r]
         keys += r.groupindex.keys()
 
+    keys += json_paths.keys()
     d['stats'] = keys
 
     for row in d['query']:
         results_f = row.results_file.data_file
         row_result = vidjil_utils.search_first_regex_in_file(regex, defs.DIR_RESULTS + results_f, STATS_READLINES)
 
+        fused_file = db((db.fused_file.sequence_file_list.contains('%d_' % row.sequence_file.id)) & (db.fused_file.config_id == row.results_file.config_id)).select(orderby = ~db.fused_file.id, limitby=(0,1))
+        if len(fused_file) > 0:
+            index_of_id = fused_file[0].sequence_file_list.find('%d_' % row.sequence_file.id)
+            pos_in_list = fused_file[0].sequence_file_list.count('_', 0, index_of_id)
+            row_fused = vidjil_utils.extract_fields_from_json(json_paths, pos_in_list, defs.DIR_RESULTS + fused_file[0].fused_file)
+        else:
+            row_fused = {}
         for key in keys:
-            row[key] = ''
+            if key in row_result:
+                row[key] = row_result[key]
+            elif key in row_fused:
+                row[key] = row_fused[key]
+            else:
+                row[key] = ''
 
     log.debug("patient/stats (%.3fs)" % (time.time()-start))
     return d
