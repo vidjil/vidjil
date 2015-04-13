@@ -15,8 +15,11 @@ using namespace std;
 
 class Germline {
  private:
+  int max_indexing;
+
   void init(string _code, char _shortcut,
-            int _delta_min, int _delta_max);
+            int _delta_min, int _delta_max,
+            int max_indexing);
 
  public:
   /*
@@ -26,22 +29,27 @@ class Germline {
    * @param delta_min: the maximal distance between the right bound and the left bound
    *        so that the segmentation is accepted
    *        (left bound: end of V, right bound : start of J)
+   * @param max_indexing: maximal length of the sequence to be indexed (0: all)
    */
 
   Germline(string _code, char _shortcut,
            list <string> f_rep_5, list <string> f_rep_4, list <string> f_rep_3,
-           int _delta_min, int _delta_max);
+           int _delta_min, int _delta_max,
+            int max_indexing=0);
 
   Germline(string _code, char _shortcut, 
   	   string f_rep_5, string f_rep_4, string f_rep_3,
-   	   int _delta_min, int _delta_max);
+	   int _delta_min, int _delta_max,
+            int max_indexing=0);
 
   Germline(string _code, char _shortcut, 
       Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
-	   int _delta_min, int _delta_max);
+	   int _delta_min, int _delta_max,
+            int max_indexing=0);
 
   Germline(string _code, char _shortcut,
-	   int _delta_min, int _delta_max);
+	   int _delta_min, int _delta_max,
+            int max_indexing=0);
 
   ~Germline();
 
@@ -96,8 +104,8 @@ class MultiGermline {
 
   void insert(Germline *germline);
   void add_germline(Germline *germline, string seed);
-  void build_default_set(string path);
-  void build_incomplete_set(string path);
+  void build_default_set(string path, int max_indexing);
+  void build_incomplete_set(string path, int max_indexing);
 
   // Creates and update an unique index for all the germlines
   // If 'set_index' is set, set this index as the index for all germlines
