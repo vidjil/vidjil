@@ -198,22 +198,11 @@ def stats():
     d['stats'] = keys
 
     for row in d['query']:
-        results_f = defs.DIR_RESULTS + row.results_file.data_file
-        try:
-            results = open(results_f).readlines(STATS_READLINES)
-        except IOError:
-            results = []
+        results_f = row.results_file.data_file
+        row_result = vidjil_utils.search_first_regex_in_file(regex, defs.DIR_RESULTS + results_f, STATS_READLINES)
 
         for key in keys:
             row[key] = ''
-
-        for r in regex:
-            for line in results:
-                m = r.search(line)
-                if m:
-                    for (key, val) in m.groupdict().items():
-                        row[key] = val.replace('\\', '')
-                    break
 
     log.debug("patient/stats (%.3fs)" % (time.time()-start))
     return d

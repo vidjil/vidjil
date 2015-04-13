@@ -116,6 +116,26 @@ def filter(str, filter_str):
     return True
 
 
+#### Utilities on regex
+def search_first_regex_in_file(regex, filename, max_nb_line=None):
+    try:
+        if max_nb_line is None:
+            results = open(filename).readlines()
+        else:
+            results = open(filename).readlines(max_nb_line)
+    except IOError as e:
+        results = []
+
+    matched_keys = {}
+    for r in regex:
+        for line in results:
+            m = r.search(line)
+            if m:
+                for (key, val) in m.groupdict().items():
+                    matched_keys[key] = val.replace('\\', '')
+                break
+    return matched_keys
+
 log_patient = re.compile('\((\d+)\)')
 log_config = re.compile(' c(\d+)')
 log_task = re.compile('\[(\d+)\]')
