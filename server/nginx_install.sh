@@ -101,6 +101,7 @@ echo "server {
             uwsgi_param     UWSGI_SCHEME \$scheme;
             uwsgi_param     SERVER_SOFTWARE    nginx/\$nginx_version;
 
+            proxy_read_timeout 600;
             ###remove the comments to turn on if you want gzip compression of your pages
             include /etc/nginx/conf.d/web2py/gzip.conf;
             ### end gzip section
@@ -144,6 +145,7 @@ server {
             # include /etc/nginx/conf.d/web2py/gzip.conf;
             ### end gzip section
 
+            proxy_read_timeout 600;
             client_max_body_size 20G;
             ###
         }
@@ -180,7 +182,7 @@ pythonpath = $CWD/web2py/
 mount = /=wsgihandler:application
 processes = 4
 master = true
-harakiri = 60
+harakiri = 1200
 reload-mercy = 8
 cpu-affinity = 1
 stats = /tmp/stats.socket
@@ -192,6 +194,7 @@ uid = www-data
 gid = www-data
 cron = 0 0 -1 -1 -1 python $CWD/web2py/web2py.py -Q -S welcome -M -R scripts/sessions2trash.py -A -o
 no-orphans = true
+ignore-sigpipe = true
 " >/etc/uwsgi/web2py.ini
 
 #Create a configuration file for uwsgi in emperor-mode
