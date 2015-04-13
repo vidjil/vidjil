@@ -416,7 +416,7 @@ def error():
     log.error("Server error // %s" % ticket_url)
 
     user_str, x = log.process('', None)
-    user_str = user_str.replace('<','').replace('>','')
+    user_str = user_str.replace('<','').replace('>','').strip()
 
     mail.send(to=defs.ADMIN_EMAILS,
               subject="[Vidjil] Server error - %s" % user_str,
