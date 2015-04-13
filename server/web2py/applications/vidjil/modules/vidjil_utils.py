@@ -175,10 +175,11 @@ def extract_fields_from_json(json_fields, pos_in_list, filename):
     matched_keys = {}
     for field in json_fields:
         value = extract_value_from_json_path(json_fields[field], json_dict)
-        if  not isinstance(value, basestring):
-            matched_keys[field] = value[pos_in_list]
-        else:
-            matched_keys[field] = value
+        if value is not None:
+            if  not isinstance(value, basestring) and len(value) > pos_in_list:
+                matched_keys[field] = value[pos_in_list]
+            else:
+                matched_keys[field] = value
 
     return matched_keys
 
