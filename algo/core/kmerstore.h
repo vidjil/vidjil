@@ -56,14 +56,14 @@ public:
    * @param label: label that must be associated to the given files
    * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
-  void insert(Fasta& input, const string& label="");
+  void insert(Fasta& input, const string& label="", int keep_only = 0);
 
   /**
    * @param input: A list of FASTA files
    * @param label: label that must be associated to the given files
    * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
-  void insert(list<Fasta>& input, const string& label="");
+  void insert(list<Fasta>& input, const string& label="", int keep_only = 0);
   
   /**
    * @param input: A sequence to be cut in k-mers
@@ -191,17 +191,19 @@ IKmerStore<T>::~IKmerStore(){}
 
 template<class T> 
 void IKmerStore<T>::insert(list<Fasta>& input,
-                           const string &label){
+                           const string &label,
+                           int keep_only){
   for(list<Fasta>::iterator it = input.begin() ; it != input.end() ; it++){
-    insert(*it, label);
+    insert(*it, label, keep_only);
   }
 }
 
 template<class T> 
 void IKmerStore<T>::insert(Fasta& input,
-                           const string &label){
+                           const string &label,
+                           int keep_only){
   for (int r = 0; r < input.size(); r++) {
-    insert(input.sequence(r), label);
+    insert(input.sequence(r), label, true, keep_only);
   }
 
   labels.push_back(make_pair(T(label, 1), label)) ;
