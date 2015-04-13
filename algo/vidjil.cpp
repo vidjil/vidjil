@@ -116,6 +116,8 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define DEFAULT_CLUSTER_COST  Cluster
 #define DEFAULT_SEGMENT_COST   VDJ
 
+#define DEFAULT_TRIM 100
+
 // error
 #define ERROR_STRING "[error] "
 
@@ -180,6 +182,7 @@ void usage(char *progname, bool advanced)
        << "  -M <int>      maximal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MAX << ") (default with -D: " << DEFAULT_DELTA_MAX_D << ")" << endl
        << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ")" << endl
        << "  -e <float>    maximal e-value for determining if a segmentation can be trusted (default: " << THRESHOLD_NB_EXPECTED << ")" << endl
+       << "  -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: " << DEFAULT_TRIM << ")" << endl
        << endl
 
        << "Labeled windows (these windows will be kept even if -r/-% thresholds are not reached)" << endl
@@ -316,6 +319,7 @@ int main (int argc, char **argv)
   // Admissible delta between left and right segmentation points
   int delta_min = DEFAULT_DELTA_MIN ; // Kmer+Fine
   int delta_max = DEFAULT_DELTA_MAX ; // Fine
+  int trim_sequences = DEFAULT_TRIM;
 
   bool output_sequences_by_cluster = false;
   bool output_segmented = false;
@@ -348,7 +352,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHaiI12g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:M:N:s:b:Sn:o:L%:y:z:uUK3E:")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHaiI12g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:M:N:s:b:Sn:o:L%:y:z:uUK3E:t:")) != EOF)
 
     switch (c)
       {
@@ -484,6 +488,10 @@ int main (int argc, char **argv)
       case 'a':
 	output_sequences_by_cluster = true;
 	break;
+
+      case 't':
+        trim_sequences = atoi(optarg);
+        break;
 
       case 'v':
 	verbose += 1 ;
@@ -772,7 +780,7 @@ int main (int argc, char **argv)
     
       if (multi_germline)
 	{
-	  multigermline->build_default_set(multi_germline_file);
+	  multigermline->build_default_set(multi_germline_file, trim_sequences);
 	}
       else
 	{
@@ -780,7 +788,7 @@ int main (int argc, char **argv)
 	  Germline *germline;
 	  germline = new Germline(germline_system, 'X',
                                   f_reps_V, f_reps_D, f_reps_J, 
-                                  delta_min, delta_max);
+                                  delta_min, delta_max, trim_sequences);
 
           germline->new_index(seed);
 
@@ -799,7 +807,7 @@ int main (int argc, char **argv)
           multigermline->build_with_one_index(seed, false);
         }
 
-        Germline *pseudo = new Germline(PSEUDO_GERMLINE_MAX12, 'x', -10, 80);
+        Germline *pseudo = new Germline(PSEUDO_GERMLINE_MAX12, 'x', -10, 80, trim_sequences);
         pseudo->index = multigermline->index ;
         multigermline->germlines.push_back(pseudo);
     }
@@ -807,7 +815,7 @@ int main (int argc, char **argv)
       // Should come after the initialization of regular (and possibly pseudo) germlines
     if (multi_germline_incomplete) {
       multigermline->one_index_per_germline = true; // Starting from now, creates new indexes
-      multigermline->build_incomplete_set(multi_germline_file);
+      multigermline->build_incomplete_set(multi_germline_file, trim_sequences);
     }
 
     if (multi_germline_mark)
