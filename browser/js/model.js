@@ -21,33 +21,42 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
-/*
+/* @module utils */
+
+/**
  * Model.js
  *
  * contains data models, control function and a comparison function (mySortedArray)
  * data models are stocked here and can be accessed by the different views to be displayed
  * everytime a data model is modified by a control function the views are called to be updated
- */
+ * */
 
 VIDJIL_JSON_VERSION = '2014.09';
 
-/*Model constructor
- *
+/** Model constructor
+ * Used to parse a .vidjil file (local file or from url) and store his content in a more convenient way, <br>
+ * provide manipulation function, <br>
+ * takes care to warn all linked views when changes happens. <br>
+ * @class Model
+ * @constructor 
  * */
 function Model() {
     console.log("creation Model")
     this.view = [];
-    this.reset();
     this.checkBrowser();
     this.germlineList = new GermlineList()
     this.build();
     window.onresize = function () { m.resize(); };
     
     this.start()
+    
 }
 
 
 Model.prototype = {
+    /**
+     * Build html elements used by model
+     * */
     build: function () {
         this.waiting_screen = document.createElement("div");
         this.waiting_screen.className = "waiting_screen";
@@ -59,7 +68,9 @@ Model.prototype = {
         document.body.appendChild(this.waiting_screen);
     },
     
-    /**/
+    /**
+     * remove all elements from the previous .vidjil file but keep current user parameters and linked views
+     * */
     reset: function () {
         this.analysis = {
             clones: [],
@@ -144,8 +155,9 @@ Model.prototype = {
     },
     
     
-    
-    
+    /**
+     * check vidjil config file and url to determine what to do onstart.
+     * */
     start: function() {
         var self = this;
         var dataURL = ""
@@ -153,15 +165,15 @@ Model.prototype = {
         var patient = -1
         var dbconfig = -1
         var custom_list = []
-            
-        // Process arguments in conf.js
+        
+        /** Process arguments in conf.js */
         if (typeof config != 'undefined' && typeof config.autoload != 'undefined')
             dataURL = config.autoload
 
         if (typeof config != 'undefined' && typeof config.autoload_analysis != 'undefined')
             analysisURL = config.autoload_analysis
 
-        // Process arguments given on the URL (overrides conf.js)
+        /** Process arguments given on the URL (overrides conf.js) */
         if (location.search != '') {
             var tmp = location.search.substring(1).split('&')
 
@@ -173,17 +185,17 @@ Model.prototype = {
                 if (tmp2[0] == 'patient') patient = tmp2[1]
                 if (tmp2[0] == 'config') dbconfig = tmp2[1]
                 if (tmp2[0] == 'custom') {
-		    custom_split = tmp2[1].split(',')
-		    for (var j=0; j<custom_split.length; j++) {
-			custom_list.push(custom_split[j])
-		    }
-		    console.log(custom_list.join('+'))
-		}
+                    custom_split = tmp2[1].split(',')
+                    for (var j=0; j<custom_split.length; j++) {
+                    custom_list.push(custom_split[j])
+                    }
+                    console.log(custom_list.join('+'))
+                }
 
             }
         }    
 
-        //onStart
+        /** load the default vidjil file, open the database or display the welcome popup depending on the case*/
         if (dataURL != "") {
             if (analysisURL != ""){
                 var callback = function() {self.loadAnalysisUrl(analysisURL)}
@@ -212,10 +224,12 @@ Model.prototype = {
 
     },
 
-    /* load the selected vidjil/analysis file from an html input file
-     * @id : id of the form (html element) linking to the vidjil file
-     * @analysis : id of the form (html element) linking to the analysis file
-     * @limit : minimum top value to keep a clone*/
+    /** 
+     * load the selected vidjil/analysis file from an html input file
+     * @param {string} id - id of the form (html element) linking to the vidjil file
+     * @param {string} analysis - id of the form (html element) linking to the analysis file
+     * @param {int} limit - minimum top value to keep a clone
+     * */
     load: function (id, analysis, limit) {
         var self = this;
 
@@ -240,11 +254,12 @@ Model.prototype = {
             self.initClones()
         }
 
-    }, //end load
+    }, 
     
     
-    /* load the selected analysis file in the model
-     * @analysis : id of the form (html element) linking to the analysis file
+    /** 
+     * load the selected analysis file in the model
+     * @param {string} analysis - id of the form (html element) linking to the analysis file
      * */
     loadAnalysis: function (analysis) {
         var self = this
@@ -276,10 +291,13 @@ Model.prototype = {
         input.replaceWith(input.val('').clone(true));
         
         return this;
-    }, //end loadAnalysis 
+    },
     
     
-    /* load the selected vidjil/analysis file from an url
+    /**
+     * load the selected vidjil file from an url
+     * @param {string} url - url of the vidjil file
+     * @param {function} [callback=loadAnalysisUrl()] - function called onsuccess
      * */
     loadDataUrl: function (url, callback) {
         var self = this;
@@ -306,9 +324,11 @@ Model.prototype = {
             }
         });
 
-    }, //end load
+    }, 
     
-    /* load the selected analysis file from an url
+    /**
+     * load the selected analysis file from an url
+     * @param {string} url - url of the analysis file
      * */
     loadAnalysisUrl: function (url) {
         var self = this;
@@ -336,7 +356,11 @@ Model.prototype = {
     }, //end load
 
     
-    /* parse a json or a json_text and init model with */
+    /**
+     * parse a json or a json_text and init the model with it 
+     * @param {string} data - json_text / content of .vidjil file
+     * @param {int} limit - minimum top value to keep a clone
+     * */
     parseJsonData: function (data, limit) {
         self = this;
         
@@ -460,7 +484,10 @@ Model.prototype = {
 	
     },
 
-     /* parse a json or a json_text and complete model with */
+    /**
+     * parse a json or a json_text and complete the model with it's content
+     * @param {string} analysis - json_text / content of .analysis file
+     * */ 
     parseJsonAnalysis: function (analysis) {
         var self = this
         
@@ -532,8 +559,9 @@ Model.prototype = {
     },
     
     
-    /* charge le germline définit a l'initialisation dans le model
-     * détermine le nombre d'allele pour chaque gene et leur attribue une couleur
+    /**
+     * load a germline / attribute a color for each genes / and compute some info
+     * @param {string} [system=current_system] system name ('TRG'/'IGH'), see germline.js for a list of available germlines 
      * */
     loadGermline: function (system) {
         console.log("loadGermline : " + system)
@@ -557,8 +585,8 @@ Model.prototype = {
                     
     }, //end loadGermline
 
-    /* compute some meta-data for each clones
-     * 
+    /**
+     * compute some meta-data for each clones
      * */
     initClones: function () {
         console.log("initClones()");
@@ -587,7 +615,8 @@ Model.prototype = {
         this.initData();
     }, //end initClones
     
-    /* compute data_info who contain some meta-data for each "data"
+    /**
+     * compute data_info who contain some meta-data for each "data"
      * */
     initData: function () {
         this.data_info = {}
@@ -604,8 +633,9 @@ Model.prototype = {
         this.update()
     },
     
-    /* complete some clones with analysis (tag / name / expected value)
-     * 
+    /**
+     * complete some clones with informations found in the analysis file (tag / name / expected value)
+     * @param {object} analysis / json content of .analysis file
      * */
     applyAnalysis: function (analysis) {
         
@@ -667,7 +697,10 @@ Model.prototype = {
         this.init()
     },
     
-    
+    /**
+     * merge clones together using a list of clones to be merged
+     * @param {integer[]} clusters - an array of list of clone_id
+     * */
     loadCluster: function (clusters) {
 
 	if (typeof (clusters) == 'undefined')
@@ -695,9 +728,11 @@ Model.prototype = {
         }
     },
 
-    /*
-     * 
-     */
+    /**
+     * search in the clone list, a clone who share his window with the given sequence.
+     * @param {string} sequence
+     * @return {integer} clone_id - index of the clone in the clone list (or -1 if not found)
+     * */
     findWindow: function (sequence) {
         if (sequence != 0){
             for ( var i=0; i<this.clones.length; i++ ){
@@ -707,8 +742,8 @@ Model.prototype = {
         return -1
     },
 
-    /* generate à json file from user analysis currently applied
-     *
+    /**
+     * generate à json file from user analysis currently applied and save it on the disk
      * */
     saveAnalysis: function () {
         console.log("save Analysis (local)")
@@ -724,8 +759,9 @@ Model.prototype = {
         self.m.analysisHasChanged = false
     }, //end saveAnalysis
     
-    /* create a string with analysis
-     *
+    /**
+     * create a json string with analysis currently applied 
+     * @return {string} analysis - analysis string in json format
      * */
     strAnalysis: function() {
         var date = new Date;
@@ -788,8 +824,8 @@ Model.prototype = {
         return JSON.stringify(analysisData, undefined, 2);
     },
 
-    /* erase all changes 
-     *
+    /** 
+     * erase all changes made by user or from the .analysis file
      * */
     resetAnalysis: function () {
         console.log("resetAnalysis()");
@@ -801,14 +837,19 @@ Model.prototype = {
         this.initClones();
     },
 
+    /**
+     * return the given time index if exist, or the one currently used as default
+     * @return {integer} time - time index 
+     * */
     getTime: function(time) {
         return typeof time !== 'undefined' ? time : this.t
     },
 
     /**
-     * return a name that can be displayed gracefully
+     * return a name that can be displayed gracefully <br>
      * (either with a real filename, or a name coming from the database).
-     */
+     * @return {string} filename - clean analysis filename
+     * */
     getPrintableAnalysisName : function() {
         var ext = this.dataFileName.lastIndexOf(".")
         if (ext > 0) {
@@ -818,6 +859,10 @@ Model.prototype = {
         }
     },
     
+    /**
+     * return date of a timepoint given a time/sample index 
+     * @return {string} timestamp - sample date
+     * */
     getSampleTime: function(time) {
         var value = "–"
         if (typeof this.samples.timestamp != 'undefined'){
@@ -827,21 +872,33 @@ Model.prototype = {
         }
         return value;
     },
-
+    
+    /**
+     * return name of the soft used to produce sample result given a time/sample index 
+     * @return {string} soft - name of the software used 
+     * */
     getSoftVersionTime: function(time) { 
         var soft_version = "–"
         if (typeof m.samples.producer != 'undefined')
             soft_version = m.samples.producer[time]
-	return soft_version;
+        return soft_version;
     },
 
+    /**
+     * return commandline used to produce sample result given a time/sample index <br>
+     * @return {string} command - sample command
+     * */
     getCommandTime: function(time) {
         var command = "–"
         if (typeof m.samples.commandline != 'undefined')
             command = m.samples.commandline[time]
-	return command;
+        return command;
     },
     
+    /**
+     * return date of software run given a time/sample index <br>
+     * @return {string} command - sample command
+     * */
     getTimestampTime: function(time) {
         var timestamp = "–"
         if (typeof m.samples.run_timestamp != 'undefined')
@@ -849,8 +906,11 @@ Model.prototype = {
         return timestamp
     },
 
-    //return the soft version if available 
-    //return "multiple" if different soft have been used for different samples
+    /**
+     * return the soft version used to produce all samples results <br>
+     * return "multiple" if different soft have been used for different samples
+     * @return {string} software - name of the software used 
+     * */
     getSoftVersion: function() {
         if (typeof this.samples.producer == "undefined"){
             return "–"
@@ -866,7 +926,8 @@ Model.prototype = {
 
     /**
      * Keep only one system activated, the one given as a parameter
-     */
+     * @param {string} system - system string id
+     * */
     keep_one_active_system: function (system) {
         this.system_selected = [system]
         this.update_selected_system()
@@ -874,7 +935,8 @@ Model.prototype = {
 
     /**
      * Toggle all system on (if the parameter is true) or off (otherwise)
-     */
+     * @param {bool} is_on 
+     * */
     toggle_all_systems: function(is_on) {
         if (is_on) {
             this.system_selected = this.system_available
@@ -884,6 +946,9 @@ Model.prototype = {
         this.update_selected_system()
     },
     
+    /**
+     * Toggle the selected system
+     * */
     toggle_system: function(system){
         if (this.system_available.indexOf(system) != -1) {
             var pos = this.system_selected.indexOf(system) 
@@ -893,22 +958,10 @@ Model.prototype = {
         this.update_selected_system()
     },
     
-    /* compute the number of reads segmented for the current selected system(s) 
-     * 
+    /**
+     * compute the number of reads segmented for the current selected system(s)
      * */
     update_selected_system: function(){
-        
-        this.computeReadsSum()
-        this.updateModel()
-        //check if current germline is in the selected_system
-        if (this.system_selected.indexOf(this.germlineV.system) == -1 && this.system_selected.length > 0){
-            this.changeGermline(this.system_selected[0], false)
-        }else{
-            this.update()
-        }
-    },
-    
-    computeReadsSum: function() {
         //reset reads.segmented
         for (var i=0 ; i<this.reads.segmented.length; i++){
             this.reads.segmented[i]=0
@@ -921,10 +974,21 @@ Model.prototype = {
                 this.reads.segmented[j] += this.reads.germline[key][j]
             }
         }
+        
+        this.updateModel()
+        //check if current germline is in the selected_system
+        if (this.system_selected.indexOf(this.germlineV.system) == -1 && this.system_selected.length > 0){
+            this.changeGermline(this.system_selected[0], false)
+        }else{
+            this.update()
+        }
     },
     
-    /*
-     * 
+    /**
+     * normalize a size to match the normalization done on a given time/sample
+     * @param {float} original_size - size before normalization
+     * @param {integer} time - time/sample index of the timepoint where happen the normalization
+     * @return {float} normalized_size - size after normalization
      * */
     normalize: function (original_size, time) {
         var normalized_size = 0;
@@ -946,8 +1010,10 @@ Model.prototype = {
         return normalized_size
     },
 
-    /*compute normalization factor needed to give a clone an expected size
-     * 
+    /**
+     * compute normalization factor needed to give a clone an expected size
+     * @param {integer} cloneID - index of the clone used as pivot for normalization
+     * @param {float} expected_size - the size the should have the clone after normalization
      * */
     compute_normalization: function (cloneID, expected_size) {
         if (cloneID==-1){ 
@@ -974,6 +1040,11 @@ Model.prototype = {
         }
     },
     
+    /**
+     * compute normalization factor needed to give a data an expected size
+     * @param {integer} data - index of the data used as pivot for normalization
+     * @param {float} expected_size - the size the should have the clone after normalization
+     * */
     compute_data_normalization: function (data, expected_size) {
         expected_size = typeof expected_size !== 'undefined' ? expected_size : this.data[data].expected;
         this.norm = true
@@ -990,12 +1061,20 @@ Model.prototype = {
         this.changeNormMethod("constant")
     },
     
+    /**
+     * compute the last normalization again <br>
+     * clones sizes can change depending the parameters so it's neccesary to recompute normalization from time to time
+     * */
     update_normalization: function () {
         if (this.normalization.B != 0 && this.normalization.type=="clone") {
             this.compute_normalization( this.normalization.id, this.normalization.B);
         }
     },
     
+    /**
+     * compute min/max clones sizes and abundance color scale<br>
+     * clone size can change depending the parameter so it's neccesary to recompute precision from time to time
+     * */
     update_precision: function () {
         var min_size = 1
         
@@ -1023,6 +1102,10 @@ Model.prototype = {
             .range([250, 0]);
     },
 
+    /**
+     * return log of a given sample (if exist) 
+     * @param {integer} timeID - time/sample index
+     * */
     getSegmentationInfo: function (timeID) {
         if (typeof this.samples.log != 'undefined'){
             return this.samples.log[timeID].replace(/(?:\r\n|\r|\n)/g, '<br />')
@@ -1031,8 +1114,9 @@ Model.prototype = {
         }
     },
 
-    /* put a marker on a specific clone
-     *
+    /**
+     * put a marker on a specific clone
+     * @param {integer} cloneID - index of the clone to focus 
      * */
     focusIn: function (cloneID) {
         var tmp = this.focus;
@@ -1052,8 +1136,8 @@ Model.prototype = {
     },
 
 
-    /* remove focus marker
-     *
+    /**
+     * release the current focused clone
      * */
     focusOut: function () {
         var tmp = this.focus;
@@ -1063,8 +1147,9 @@ Model.prototype = {
             .text("")
     },
 
-    /* return clones currently in the selection
-     *
+    /**
+     * return clones currently in the selection
+     * @return {integer[]} clone_list - array of clone index
      * */
     getSelected: function () {
         var result = []
@@ -1076,8 +1161,9 @@ Model.prototype = {
         return result
     },
 
-    /* put a clone in the selection
-     *
+    /**
+     * put a clone in the selection
+     * @param {integer} - cloneID - index of the clone to add to the selection
      * */
     select: function (cloneID) {
         console.log("select() (clone " + cloneID + ")");
@@ -1088,12 +1174,16 @@ Model.prototype = {
             this.clone(cloneID).select = false;
         } else {
             this.clone(cloneID).select = true;
-	    }
-	    
+        }
+        
         this.updateElemStyle([cloneID]);
     },
     
-   multiSelect: function (list) {
+    /**
+     * put a list of clones in the selection
+     * @param {integer[]} - list - array of clone index
+     * */
+    multiSelect: function (list) {
 
         console.log("select() (clone " + list + ")");
 
@@ -1116,8 +1206,8 @@ Model.prototype = {
         this.updateElemStyle(list);
     },
 
-    /* kick all clones out of the selection
-     *
+    /**
+     * kick all clones out of the selection
      * */
     unselectAll: function () {
         console.log("unselectAll()")
@@ -1129,8 +1219,9 @@ Model.prototype = {
     },
 
 
-    /* resize all views
-     *
+    /**
+     * ask all linked views to do a resize
+     * @param {integer} [speed] - speed of the resize used by views able to do a transition
      * */
     resize: function (speed) {
         for (var i = 0; i < this.view.length; i++) {
@@ -1141,8 +1232,10 @@ Model.prototype = {
     },
 
 
-    /* 
-     *
+    /**
+     * enable/disable clones using the current model state <br>
+     * recompute the clone 'other' size <br>
+     * update clones colors
      * */
     updateModel: function () {
         for (var i = 0; i < this.clusters.length; i++) {
@@ -1187,8 +1280,9 @@ Model.prototype = {
 
     },
 
-    /*update all views
-     *
+    /**
+     * ask all linked views to do a complete update <br>
+     * this function must be call for major change in the model
      * */
     update: function () {
         var startTime = new Date()
@@ -1209,8 +1303,9 @@ Model.prototype = {
     },
 
 
-    /*update a clone list in all views
-     *
+    /**
+     * ask all linked views to update a clone list
+     * @param {integer[]} - list - array of clone index
      * */
     updateElem: function (list) {
         if ( list.indexOf(this.normalization.id) != -1 ){
@@ -1224,8 +1319,9 @@ Model.prototype = {
         }
     },
 
-    /*style a clone list in all views
-     *
+    /**
+     * ask all linked views to update the style of a clone list
+     * @param {integer[]} - list - array of clone index
      * */
     updateElemStyle: function (list) {
         this.updateModel();
@@ -1234,6 +1330,9 @@ Model.prototype = {
         }
     },
     
+    /**
+     * ask all linked views to update the style of all clones
+     * */
     updateStyle: function () {
         var list = []
         for (var i=0; i<this.clones.length; i++) list[i]=i
@@ -1243,8 +1342,9 @@ Model.prototype = {
         this.updateModel()
     },
 
-    /*init all views
-     *
+    /**
+     * ask all linked views to init <br>
+     * reset the display limit
      * */
     init: function () {
         for (var i = 0; i < this.view.length; i++) {
@@ -1265,8 +1365,9 @@ Model.prototype = {
     },
 
 
-    /* define a minimum top rank required for a clone to be displayed
-     *
+    /**
+     * define a minimum top rank required for a clone to be displayed
+     * @param {integer} top - minimum rank required to display
      * */
     displayTop: function (top) {
         top = typeof top !== 'undefined' ? top : this.top;
@@ -1295,15 +1396,15 @@ Model.prototype = {
     },
 
     /**
-     * @return the number of real clones (excluded the fake clones internally
+     * @return {integer} the number of real clones (excluded the fake clones internally
      * added)
-     */
+     * */
     countRealClones: function() {
         return this.clones.length - 1
     },
 
-    /* 
-     *
+    /**
+     * sum all the unsegmented/undisplayed clones reads and put them in the 'other' clone
      * */
     computeOtherSize: function () {
         var other = [];
@@ -1327,8 +1428,10 @@ Model.prototype = {
 
     },
     
-    /* return info about a timePoint in html 
-     *
+    /**
+     * return info about a timePoint in html 
+     * @param {integer} timeID - time/sample index
+     * @return {string} html 
      * */
     getPointHtmlInfo: function (timeID) {
         var html = ""
@@ -1353,8 +1456,8 @@ Model.prototype = {
 //// clusters functions
 ////////////////////////////////////
     
-    /* merge all clones currently in the selection into one cluster
-     *
+    /**
+     * merge all clones currently in the selection into one cluster
      * */
     merge: function () {
         var new_cluster = [];
@@ -1381,8 +1484,10 @@ Model.prototype = {
     },
 
 
-    /* sépare un clone d'un cluster
-     *
+    /**
+     * remove a clone from a cluster
+     * @param {integer} clusterID - cluster index
+     * @param {integer} cloneID - clone index
      * */
     split: function (clusterID, cloneID) {
         console.log("split() (cloneA " + clusterID + " windowB " + cloneID + ")")
@@ -1402,8 +1507,10 @@ Model.prototype = {
         this.updateElem([cloneID, clusterID]);
     },
     
-    /* cluster clones who produce the same result with the function given in parameter
-     *
+    /** 
+     * cluster clones who produce the same result with the function given in parameter <br>
+     * save a copy of clusters made by user 
+     * @param {function} fct 
      * */
     clusterBy: function (fct) {
         var self = this;
@@ -1459,8 +1566,8 @@ Model.prototype = {
     },
 
 
-    /* 
-     *
+    /**
+     * reset clusters to default
      * */
     resetClusters: function () {
         //reset cluster
@@ -1473,8 +1580,8 @@ Model.prototype = {
         this.update()
     },
     
-    /* 
-     *
+    /**
+     * restore clusters made by user
      * */
     restoreClusters: function () {
         this.cluster_key = ""
@@ -1489,8 +1596,9 @@ Model.prototype = {
 //// time functions
 ////////////////////////////////////
     
-    /* change the current tracking point used
-     *
+    /** 
+     * change the current tracking point used
+     * @param {integer} newT - time/sample index to use
      * */
     changeTime: function (newT) {
         console.log("changeTime()" + newT)
@@ -1500,8 +1608,10 @@ Model.prototype = {
         return this.t
     },
     
-    /* exchange position of 2 timepoints
-     *
+    /**
+     * exchange position of 2 timepoints
+     * @param {integer} a - time/sample index
+     * @param {integer} b - time/sample index
      * */
     switchTimeOrder: function (a, b) {
         var tmp = this.samples.order[a];
@@ -1510,16 +1620,17 @@ Model.prototype = {
         this.update()
     },
     
-    /* 
-     *
+    /**
+     * replace the current time order with a new one
+     * @param {integer[]} list - list of time/sample index
      * */
     changeTimeOrder: function (list) {
         this.samples.order = list
         this.update()
     },
     
-    /*change timepoint for the next one in the current displayed time_order 
-     * 
+    /**
+     * change timepoint for the next one in the current displayed time_order 
      * */
     nextTime: function () {
         var current_pos = this.samples.order.indexOf(this.t)
@@ -1537,6 +1648,9 @@ Model.prototype = {
         }
     },
     
+    /**
+     * change timepoint for the previous one in the current displayed time_order 
+     * */
     previousTime: function (){
         var current_pos = this.samples.order.indexOf(this.t)
         
@@ -1554,8 +1668,9 @@ Model.prototype = {
         
     },
     
-    /* recursive function calling nexTime() till encounter the specified timePoint 
-     * 
+    /**
+     * recursive function calling nexTime() till encounter the specified timePoint 
+     * @param {integer} stop - time/sample index
      * */
     play: function (stop) {
         var self = this;
@@ -1578,27 +1693,37 @@ Model.prototype = {
         }
     },
 
-    /* break recursive play()
-     * 
+    /** 
+     * break recursive play()
      * */
     stop: function (){ 
         this.isPlaying = false;
         this.update();
     },
     
+    /**
+     * return the number of days between two date
+     * @param {string} aa - timestamp a
+     * @param {string} bb - timestamp b
+     * @return {integer} days
+     * */
     dateDiffInDays: function(aa, bb) {
-    // inspired by http://stackoverflow.com/questions/3224834
-    var _MS_PER_DAY = 1000 * 60 * 60 * 24 ;
-    var a = new Date(aa.split(" ")[0]+"T00:00:00.00Z");
-    var b = new Date(bb.split(" ")[0]+"T00:00:00.00Z");
+        // inspired by http://stackoverflow.com/questions/3224834
+        var _MS_PER_DAY = 1000 * 60 * 60 * 24 ;
+        var a = new Date(aa.split(" ")[0]+"T00:00:00.00Z");
+        var b = new Date(bb.split(" ")[0]+"T00:00:00.00Z");
 
-    // Discard the time and time-zone information.
-    var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
-    var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
-    
-    return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+        // Discard the time and time-zone information.
+        var utc1 = Date.UTC(a.getFullYear(), a.getMonth(), a.getDate());
+        var utc2 = Date.UTC(b.getFullYear(), b.getMonth(), b.getDate());
+        
+        return Math.floor((utc2 - utc1) / _MS_PER_DAY);
     },
 
+    /**
+     * return the min/max number of days between two consecutive timepoints
+     * @return {{min : number, max : number}} days
+     * */
     dateDiffMinMax: function () {
         // Computes the min and max delta between timepoints
         
@@ -1632,6 +1757,10 @@ Model.prototype = {
         return { 'min': delta_min, 'max': delta_max }
     },        
     
+    /**
+     * return the sample date of the oldest sample/timepoint
+     * @return {string} date_min - timestamp
+     * */
     dateMin: function () {
         var date_min = "0"
         try{
@@ -1648,6 +1777,10 @@ Model.prototype = {
         return date_min
     },        
     
+    /**
+     * return the sample date of the most recent sample/timepoint
+     * @return {string} date_max - timestamp
+     * */
     dateMax: function () {
         var date_max = "0"
         try{
@@ -1664,6 +1797,12 @@ Model.prototype = {
         return date_max
     },        
     
+    /**
+     * return sample/time name in a specified format
+     * @param {integer} timeID - sample/time index
+     * @param {string} [format] - can be 'name', 'sampling_date', 'delta_date', 'delta_date_no_zero', 
+     * @return {string} sample name
+     * */
     getStrTime: function (timeID, format){
         format = typeof format !== 'undefined' ? format : this.time_type;
         var result = "-/-"
@@ -1708,6 +1847,9 @@ Model.prototype = {
         return result
     },
 
+    /**
+     * 
+     * */
     toStringThousands: function (num) {
         
         DECIMAL_SEPARATOR = " "
@@ -1730,8 +1872,8 @@ Model.prototype = {
     
 /////////////////////////////////////////////////////////////////////////////
     
-    /* 
-     *
+    /**
+     * check browser version and display an error message for incompatible version
      * */
     checkBrowser: function () {
         this.browser_version = parseInt(navigator.appVersion, 10);
@@ -1756,6 +1898,11 @@ Model.prototype = {
 
     },
 
+    /**
+     * format size with the default format in use (model.notation_type) 
+     * @param {float} size 
+     * @param {bool} fixed - use a fixed size 
+     * */
     formatSize: function (size, fixed) {
         var result = "-"
 
@@ -1788,6 +1935,10 @@ Model.prototype = {
         return result
     },
     
+    /**
+     * change the split of all clusters
+     * @param {bool} bool - new value for all clones
+     * */
     split_all: function (bool) {
         for (var i=0; i < this.clusters.length; i++) {
             this.clone(i).split = bool
@@ -1795,14 +1946,21 @@ Model.prototype = {
         this.update()
     },
     
-
-    clone: function(hash) {
-        return this.clones[hash]
+    /**
+     * return clone by index
+     * @param {integer} clone index
+     * @return {clone} 
+     * */
+    clone: function(cloneID) {
+        return this.clones[cloneID]
     },
     
     
     
-    
+    /**
+     * change the strategy for normalization
+     * @param {string} method - can be 'constant' or 'to-100'
+     * */
     changeNormMethod : function (method){
         this.normalization.method=method;
         if (this.normalization.type=="data" && method !="constant"){
@@ -1817,8 +1975,10 @@ Model.prototype = {
         }
     },
     
-    /* load a new germline and update 
-     * 
+    /**
+     * load a new germline and update 
+     * @param {string} system - system string to load
+     * @param {bool} only_this_system -
      * */
     changeGermline: function (system, only_this_system) {
 
@@ -1841,8 +2001,10 @@ Model.prototype = {
         }
     },
     
-    /* use scientific notation / percent
-     *
+    /**
+     * change default notation display for sizes
+     * @param {string} notation - notation type ('scientific' , 'percent')
+     * @pram {bool} update - will update the display after
      * */
     changeNotation: function (notation, update) {
         this.notation_type = notation
@@ -1854,8 +2016,10 @@ Model.prototype = {
         }
     },
     
-    /* use name / date 
-     *
+    /**
+     * change default time format for sample/time names
+     * @param {string} notation - format ('name', 'sampling_date', 'delta_date', 'delta_date_no_zero')
+     * @pram {bool} update - will update the display after
      * */
     changeTimeFormat: function (time, update) {
         this.time_type = time
@@ -1867,12 +2031,19 @@ Model.prototype = {
         }
     },
     
+    /**
+     * change default color method
+     * @param {string} colorM - TODO 
+     * */
     changeColorMethod: function (colorM) {
         this.colorMethod = colorM;
         this.update();
     },
     
-    //convert clones to csv with the current clustering/filtering
+    /**
+     * convert visible clones to csv 
+     * @return {string} csv 
+     * */
     toCSV: function () {
         //header
         var csv = "name,id,system,tag,v,d,j,sequence"
@@ -1892,6 +2063,10 @@ Model.prototype = {
         return csv
     },
     
+    /**
+     * save a csv file of the currently visibles clones.
+     * @return {string} csv 
+     * */
     exportCSV: function () {
         var textToWrite = this.toCSV()
         var textFileAsBlob = new Blob([textToWrite], {
@@ -1903,6 +2078,10 @@ Model.prototype = {
         saveAs(textFileAsBlob, filename + ".csv");
     },
     
+    /**
+     * save a csv file of the currently visibles clones.
+     * @return {string} csv 
+     * */
     exportFasta: function () {
         var list = this.getSelected()
         if (list.length>0){
@@ -1922,6 +2101,11 @@ Model.prototype = {
         
     },
     
+    /**
+     * produce an html systemBox of the given system
+     * @param {string} system - system string ('trg', 'igh', ...)
+     * @return {dom_element} span
+     * */
     systemBox: function (system){
         
         var span = document.createElement('span')
@@ -1938,7 +2122,13 @@ Model.prototype = {
         }
         return span
     },
-    
+
+    /**
+     * return the system size
+     * @param {string} system - system string ('trg', 'igh', ...)
+     * @param {integer} time - sample/time index 
+     * @return {float} size - system size in the given time/sample
+     * */ 
     systemSize: function(system, time) {
         time = this.getTime(time)
         if (typeof this.reads.germline[system] != 'undefined'){

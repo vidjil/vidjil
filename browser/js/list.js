@@ -31,8 +31,10 @@
  *
  */
 
-/* List constructor
- *
+
+/** List constructor
+ * @class List
+ * @constructor 
  * */
 function List(id_list, id_data, model) {
     var self=this;
@@ -56,7 +58,10 @@ function List(id_list, id_data, model) {
 }
 
 List.prototype = {
-
+    
+    /**
+     * 
+     */
     build: function () {
         var self =this;
         
@@ -137,7 +142,7 @@ List.prototype = {
         
     },
     
-    /* initialise la liste et crée un div pour chaque clones
+    /** initialise la liste et crée un div pour chaque clones
      *
      * */
     init: function () {
@@ -174,6 +179,9 @@ List.prototype = {
         this.sortListBySize()
     },
     
+    /**
+     * 
+     */
     build_data_list: function () {
         var self=this;
         this.index_data = {}
