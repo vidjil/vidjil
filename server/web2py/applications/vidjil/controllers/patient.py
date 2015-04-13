@@ -201,7 +201,7 @@ def stats():
         keys += r.groupindex.keys()
 
     keys += sorted(json_paths.keys())
-    d['stats'] = keys
+    found = {}
 
     for row in d['query']:
         results_f = row.results_file.data_file
@@ -217,10 +217,18 @@ def stats():
         for key in keys:
             if key in row_result:
                 row[key] = row_result[key]
+                found[key] = True
             elif key in row_fused:
                 row[key] = row_fused[key]
+                found[key] = True
             else:
                 row[key] = ''
+
+    # Keep only non-empty columns
+    d['stats'] = []
+    for key in keys:
+        if key in found:
+            d['stats'] += [key]
 
     log.debug("patient/stats (%.3fs)" % (time.time()-start))
     return d
