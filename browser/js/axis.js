@@ -218,9 +218,8 @@ Axis.prototype = {
         if (use_log){
             var h=1
             for (var i = 0; i < 10; i++) {
-                var pos = this.sizeScale(h);
+                var pos = this.sizeScale(h); // pos is possibly already reversed
                 var text = this.m.formatSize(h, false)
-                if (this.reverse) pos = 1 - pos; 
                 if (pos >= 0 && pos <= 1)
                 this.labels.push(this.label("line", pos, text));
                 h = h / 10;

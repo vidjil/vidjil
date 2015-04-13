@@ -3,6 +3,12 @@
 ### This file must be named 'modules/defs.py' to be taken into account
 ###
 
+### Email notifications for server errors
+SMTP_SERVER = 'localhost'
+# SMTP_SERVER = 'logging' # no mail
+FROM_EMAIL = 'rbx@vidjil.org'
+ADMIN_EMAILS = ['notifications@vidjil.org']
+
 ### address for the sql database
 ###
 DB_ADDRESS = 'sqlite://storage.sqlite'

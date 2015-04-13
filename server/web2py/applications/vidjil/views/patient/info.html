@@ -96,7 +96,7 @@
                    {{if row.sequence_file.data_file != None and ( row.results_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED") ):}}
                        {{if auth.has_permission("run", "results_file") :}}
                            <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'config_id' : {{=config_id}} } )"> run >> </span>
-                       {{else:}}<span class="button inactive" title="you don't have permission to schedule runs"> run >> </span>{{pass}}
+                       {{pass}}
                    {{pass}}
                    </td>
                 </tr>

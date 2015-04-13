@@ -191,8 +191,7 @@ class Browser < MiniTest::Test
   def check_when_list_or_scatterplot_clicked
     clone_name = $b.clone_info('25')[:name]
     assert ( $b.infoline.text == clone_name.text), ">> Clone name is not correct in focus div"
-
-    assert ( $b.clone_in_list('25').class_name == "list list_select" )
+    assert ( $b.clone_in_list('25').class_name.include? "list_select" ), ">> Incorrect class name, clone is not selected"
     assert ( $b.clone_in_scatterplot('25', :class => "circle_select").exists?)
     assert ( $b.clone_in_graph('25', :class=> "graph_select").exists?)
     assert ( $b.clone_in_segmenter('25').exists? ), ">> fail to add clone to segmenter by clicking on the list or scatterplot"
@@ -211,7 +210,7 @@ class Browser < MiniTest::Test
     check_when_list_or_scatterplot_clicked
 
     $b.unselect
-    assert ($b.clone_in_list('25').class_name == "list"), ">> Incorrect class name, clone is not unselected'"
+    assert (not $b.clone_in_list('25').class_name.include? "list_select"), ">> Incorrect class name, clone is not unselected'"
   end
 
   def test_08_click_in_scatterplot
@@ -221,7 +220,7 @@ class Browser < MiniTest::Test
     check_when_list_or_scatterplot_clicked
 
     $b.unselect
-    assert ($b.clone_in_list('25').class_name == "list"), ">> Incorrect class name, clone is not unselected'"
+    assert (not $b.clone_in_list('25').class_name.include? "list_select"), ">> Incorrect class name, clone is not unselected'"
   end
 
   def test_09_normalize
@@ -237,6 +236,15 @@ class Browser < MiniTest::Test
     assert ( $b.clone_info('25')[:size].text == '0.130%' ) , ">> fail normalize off : wrong clone size "
 
     $b.unselect
+  end
+
+  def test_0a_shortcuts_numpad
+    $b.clone_in_scatterplot('25').wait_until_present
+    $b.clone_in_scatterplot('25').click
+
+    assert ($b.preset_selector.selected? "V/J (genes)"), ">> preset selector badly set"
+    $b.send_keys :numpad2
+    assert ($b.preset_selector.selected? "V/N length"), ">> preset selector not properly changed"
   end
 
   def test_10_imgt
@@ -291,7 +299,7 @@ class Browser < MiniTest::Test
   end
   
 
-  def test_14_edit_tag
+  def TODO_test_14_edit_tag
     begin
       ## rename Tag 0
       $b.clone_info('25')[:star].click

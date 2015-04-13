@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -k 8 -w 20 -V ../../germline/TRDV.fa -V ../../germline/TRDD2-01.fa -J ../../germline/TRDD3-01.fa -J ../../germline/TRDJ.fa ../../data/trd-dd2-dd3.fa
+!LAUNCH: ../../vidjil -e 10 -k 8 -w 20 -V ../../germline/TRDV.fa -V ../../germline/TRDD2-01.fa -J ../../germline/TRDD3-01.fa -J ../../germline/TRDJ.fa ../../data/trd-dd2-dd3.fa
 
 $ Segment all 5 reads, thanks to TRDD2 and TRDD3
 1: segmented 5 reads .100..

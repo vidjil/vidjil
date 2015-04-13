@@ -1,8 +1,9 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
-2015-04-XX  The Vidjil Team
+2015-04-09  The Vidjil Team
         * New experimental e-value threshold (-e) (core/segment.cpp)
+        * New experimental unexpected recombination analysis (-2) (core/segment.cpp)
         * New preview/debug options to stop after a given number of reads (-x), possibly sampled throughout the file (-X)
         * New preview/debug option to output unsegmented reads as clones (-!)
         * New progress bar during computation

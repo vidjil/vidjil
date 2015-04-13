@@ -6,6 +6,9 @@ from gluon import current
 # AUTODELETE should be set to False before any maintenance operation on the DB
 AUTODELETE = True
 
+# Length of the upload field
+LENGTH_UPLOAD = 400
+
 #########################################################################
 ## This scaffolding model makes your app work on Google App Engine too
 ## File is released under public domain and you can use without limitations
@@ -55,9 +58,9 @@ auth.define_tables(username=False, signature=False)
 
 ## configure email
 mail = auth.settings.mailer
-mail.settings.server = 'logging' or 'smtp.gmail.com:587'
-mail.settings.sender = 'you@gmail.com'
-mail.settings.login = 'username:password'
+mail.settings.server = defs.SMTP_SERVER
+mail.settings.sender = defs.FROM_EMAIL
+mail.settings.login = None
 
 ## configure auth policy
 auth.settings.registration_requires_verification = False
@@ -121,7 +124,7 @@ db.define_table('sequence_file',
                 Field('provider','reference auth_user'),
                 Field('data_file', 'upload', 
                       uploadfolder=defs.DIR_SEQUENCES,
-                      length=4294967295, autodelete=AUTODELETE))
+                      length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 
 
@@ -131,7 +134,7 @@ db.define_table('standard_file',
                 Field('info','text'),
                 Field('data_file', 'upload',
                       uploadfolder=defs.DIR_SEQUENCES,
-                      autodelete=AUTODELETE, length=4294967295))
+                      autodelete=AUTODELETE, length=LENGTH_UPLOAD))
 
 
 
@@ -150,7 +153,7 @@ db.define_table('results_file',
                 Field('scheduler_task_id', 'integer'),
                 Field('data_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
-                      length=4294967295, autodelete=AUTODELETE))
+                      length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 db.define_table('fused_file',
                 Field('patient_id', 'reference patient'),
@@ -160,7 +163,7 @@ db.define_table('fused_file',
                 Field('sequence_file_list', 'string'),
                 Field('fused_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
-                      length=4294967295, autodelete=AUTODELETE))
+                      length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 db.define_table('analysis_file',
                 Field('patient_id', 'reference patient'),
@@ -169,7 +172,7 @@ db.define_table('analysis_file',
                 Field('status', 'string'),
                 Field('analysis_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
-                      length=4294967295, autodelete=AUTODELETE))
+                      length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
 
 ## after defining tables, uncomment below to enable auditing
@@ -191,6 +194,9 @@ except:
 
 import logging
 
+logging.ADMIN = logging.INFO + 1
+logging.addLevelName(logging.ADMIN, 'ADMIN')
+
 class MsgUserAdapter(logging.LoggerAdapter):
 
     def process(self, msg, kwargs):
@@ -204,9 +210,11 @@ class MsgUserAdapter(logging.LoggerAdapter):
             for ip_prefix in ips:
                 if ip.startswith(ip_prefix):
                     ip = "%s/%s" % (ip, ips[ip_prefix])
-        new_msg =  '%30s %12s %s' % (ip, ('<%s>' % auth.user.first_name if auth.user else ''), msg)
+        new_msg =  '%30s %12s %s' % (ip, ('<%s>' % auth.user.first_name.replace(' ','-') if auth.user else ''), msg)
         return new_msg, kwargs
     
+    def admin(self, msg):
+        self.log(logging.ADMIN, msg)
 #
 
 def _init_log():

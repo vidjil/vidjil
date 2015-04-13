@@ -131,7 +131,7 @@ def custom():
 
     query = db(q).select(
                 db.patient.id, db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date, 
-                db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.sequence_file.filename, 
+                db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
                 db.sequence_file.patient_id, db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
                 db.sequence_file.size_file,
                 orderby = ~db.sequence_file.patient_id|db.sequence_file.id|db.results_file.run_date,
@@ -160,6 +160,63 @@ def custom():
                 config_id=config_id,
                 config=config)
     
+
+STATS_READLINES = 1000 # approx. size in which the stats are searched
+
+def stats():
+    import time
+    start = time.time()
+
+    d = custom()
+
+    stats_regex = [
+        # found 771265 40-windows in 2620561 segments (85.4%) inside 3068713 sequences
+        'in (?P<seg>\d+) segments \((?P<seg_ratio>.*?)\) inside (?P<reads>\d+) sequences',
+
+        # locus
+        'log.* TRG.*?->\s*?(?P<TRG_reads>\d+)\s+(?P<TRG_av_len>[0-9.]+)\s+(?P<TRG_clones>\d+)\s+(?P<TRG_av_reads>[0-9.]+)\s*.n',
+        'log.* IGH.*?->\s*?(?P<IGH_reads>\d+)\s+(?P<IGH_av_len>[0-9.]+)\s+(?P<IGH_clones>\d+)\s+(?P<IGH_av_reads>[0-9.]+)\s*.n',
+
+        # segmentation causes
+        'log.* SEG_[+].*?-> (?P<SEG_plus>.*?).n',
+        'log.* SEG_[-].*?-> (?P<SEG_minus>.*?).n',
+
+        # main clone
+        '"name".*"(?P<main_clone>.*)"',
+        '"reads" :  [[] (?P<main_clone_reads>\d+) ',
+
+        '"producer" :  [[] "(?P<version>.*)"',
+    ]
+
+    keys = []
+    regex = []
+    for sr in stats_regex:
+        r = re.compile(sr)
+        regex += [r]
+        keys += r.groupindex.keys()
+
+    d['stats'] = keys
+
+    for row in d['query']:
+        results_f = defs.DIR_RESULTS + row.results_file.data_file
+        try:
+            results = open(results_f).readlines(STATS_READLINES)
+        except IOError:
+            results = []
+
+        for key in keys:
+            row[key] = ''
+
+        for r in regex:
+            for line in results:
+                m = r.search(line)
+                if m:
+                    for (key, val) in m.groupdict().items():
+                        row[key] = val.replace('\\', '')
+                    break
+
+    log.debug("patient/stats (%.3fs)" % (time.time()-start))
+    return d
 
 ## return patient list
 def index():

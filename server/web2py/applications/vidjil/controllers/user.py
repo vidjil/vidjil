@@ -54,7 +54,7 @@ def rights():
         res = { "redirect": "user/info",
                 "args" : {"id" : id },
                 "message": msg}
-        log.info(res)
+        log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
         res = {"message": "admin only"}

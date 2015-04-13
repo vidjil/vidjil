@@ -37,7 +37,7 @@
         </thead>
         
         {{for line in lines :}}
-        <tr>
+        <tr class='log-{{=line["type"]}}'>
             {{ if format: }}
             <td> {{=line["date"]}} </td>
             <td> {{=line["date2"]}} </td>
