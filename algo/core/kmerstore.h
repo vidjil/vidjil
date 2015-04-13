@@ -68,11 +68,15 @@ public:
   /**
    * @param input: A sequence to be cut in k-mers
    * @param label: label that must be associated to the given files
+   * @param keep_only: if > 0 will keep at most the last keep_only nucleotides
+   *                   of the sequence. if < 0 will keep at most the first
+   *                   keep_only nucleotides of the sequence. if == 0,
+   *                   will keep all the sequence.
    * @post All the k-mers in the sequence have been indexed.
    */
   void insert(const seqtype &sequence,
               const string &label,
-              bool ignore_extended_nucleotides=true);
+              bool ignore_extended_nucleotides=true, int keep_only = 0);
 
   /**
    * @param word: a k-mer
@@ -206,8 +210,16 @@ void IKmerStore<T>::insert(Fasta& input,
 template<class T> 
 void IKmerStore<T>::insert(const seqtype &sequence,
                            const string &label,
-                           bool ignore_extended_nucleotides){
-  for(size_t i = 0 ; i + s < sequence.length() + 1 ; i++) {
+                           bool ignore_extended_nucleotides,
+                           int keep_only){
+  size_t start_indexing = 0;
+  size_t end_indexing = sequence.length();
+  if (keep_only > 0 && sequence.length() > (size_t)keep_only) {
+    start_indexing = sequence.length() - keep_only;
+  } else if (keep_only < 0 && sequence.length() > (size_t) -keep_only) {
+    end_indexing = -keep_only;
+  }
+  for(size_t i = start_indexing ; i + s < end_indexing + 1 ; i++) {
     seqtype substr = sequence.substr(i, s);
     seqtype kmer = spaced(substr, seed);
 
