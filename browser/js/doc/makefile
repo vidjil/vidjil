@@ -1,2 +1,2 @@
 doc: conf.json
-	jsdoc -c conf.json ../model.js ../list.js
+	jsdoc -c conf.json ../model.js ../list.js ../model_loader.js
