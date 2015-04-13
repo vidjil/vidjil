@@ -189,7 +189,7 @@ def stats():
     json_paths = {'reads distribution [1,9]': 'reads-distribution-1',
                   'reads distribution [10,99]': 'reads-distribution-10',
                   'reads distribution [100,999]': 'reads-distribution-100',
-                  'reads distribution 1000+': 'reads-distribution-1000',
+                  'reads distribution [1000+]': 'reads-distribution-1000',
                   'producer': 'samples/producer',
     }
 
@@ -200,7 +200,7 @@ def stats():
         regex += [r]
         keys += r.groupindex.keys()
 
-    keys += json_paths.keys()
+    keys += sorted(json_paths.keys())
     d['stats'] = keys
 
     for row in d['query']:
