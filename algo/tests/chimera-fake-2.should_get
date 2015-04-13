@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -g ../../germline -2 -i ../../data/chimera-fake.fa
+!LAUNCH: ../../vidjil -t 0 -g ../../germline -2 -i ../../data/chimera-fake.fa
 
 $ Segment all reads
 1:junction detected in 3 reads
