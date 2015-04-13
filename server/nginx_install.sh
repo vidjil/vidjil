@@ -190,6 +190,7 @@ max-requests = 2000
 limit-as = 512
 reload-on-as = 256
 reload-on-rss = 192
+touch-reload = $CWD/web2py/applications/vidjil/modules/defs.py
 uid = www-data
 gid = www-data
 cron = 0 0 -1 -1 -1 python $CWD/web2py/web2py.py -Q -S welcome -M -R scripts/sessions2trash.py -A -o
