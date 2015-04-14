@@ -225,7 +225,16 @@ class ListWindows:
     <window : [12, 0] 2 bbb>
     <window : [5, 8] 3 aaa>
     <window : [0, 2] 8 ccc>
-    
+    >>> lw3.build_stat()
+    >>> lw3.d['reads'].d['distribution']['0.1']
+    [17, 8]
+    >>> lw3.d['reads'].d['distribution']['0.01']
+    [0, 2]
+    >>> lw3.d['reads'].d['distribution']['0.001']
+    [0, 0]
+    >>> lw3.d['reads'].d['distribution']['0.0001']
+    [0, 0]
+
     '''
     
     def __init__(self):
@@ -591,7 +600,7 @@ w6.d ={"id" : "bbb", "reads" : [12], "top" : 2 }
 
 lw1 = ListWindows()
 lw1.d["timestamp"] = 'ts'
-lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25], "germline": {} }', object_hook=lw1.toPython)
+lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25], "germline": {}, "distribution": {}}', object_hook=lw1.toPython)
 lw1.d["clones"].append(w5)
 lw1.d["clones"].append(w6)
 
@@ -602,7 +611,7 @@ w8.d ={"id" : "ccc", "reads" : [2], "top" : 8, "test" : ["plop"] }
 
 lw2 = ListWindows()
 lw2.d["timestamp"] = 'ts'
-lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34], "germline": {} }', object_hook=lw1.toPython)
+lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34], "germline": {}, "distribution": {}}', object_hook=lw1.toPython)
 lw2.d["clones"].append(w7)
 lw2.d["clones"].append(w8)
 
