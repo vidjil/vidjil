@@ -186,10 +186,11 @@ def stats():
         '"reads" :  [[] (?P<main_clone_reads>\d+) ',
     ]
 
-    json_paths = {'reads distribution [1,9]': 'reads-distribution-1',
-                  'reads distribution [10,99]': 'reads-distribution-10',
-                  'reads distribution [100,999]': 'reads-distribution-100',
-                  'reads distribution [1000+]': 'reads-distribution-1000',
+    json_paths = {'reads distribution [>= 10%]': 'reads/distribution/0.1',
+                  'reads distribution [>= 1% < 10%]': 'reads/distribution/0.01',
+                  'reads distribution [>= .01% < 1%]': 'reads/distribution/0.001',
+                  'reads distribution [>= .001% < .01%]': 'reads/distribution/0.0001',
+                  'reads distribution [>= .0001% < .001%]': 'reads/distribution/0.00001',
                   'producer': 'samples/producer',
     }
 
