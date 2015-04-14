@@ -103,11 +103,10 @@ function Graph(id, model) {
     this.text_position_y = 15;
     this.text_position_x = 60;
 
-    this.m.view.push(this)
     this.m.graph = this // TODO: find a better way to do this
 }
 
-Graph.prototype = $.extend(Object.create(View.prototype), {
+Graph.prototype = {
 
 /* ************************************************ *
  * BUILD FUNCTIONS
@@ -1331,8 +1330,8 @@ Graph.prototype = $.extend(Object.create(View.prototype), {
     }
 
 
-}); //fin Graph
-
+} //fin Graph
+Graph.prototype = $.extend(Object.create(View.prototype), Graph.prototype);
 
 
 

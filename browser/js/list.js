@@ -32,7 +32,8 @@
  */
 
 
-/** List constructor
+/** 
+ * 
  * @class List
  * @constructor 
  * */
@@ -48,7 +49,6 @@ function List(id_list, id_data, model) {
     this.clone_info = -1;
 
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
-    this.m.view.push(this); //synchronisation au Model
     this.build();
     
     this.sort_option = {
@@ -59,11 +59,11 @@ function List(id_list, id_data, model) {
     }
 }
 
-List.prototype = $.extend(Object.create(View.prototype), {
+List.prototype = {
     
     /**
-     * 
-     */
+     * Build html elements needed
+     * */
     build: function () {
         var self =this;
         
@@ -600,8 +600,8 @@ List.prototype = $.extend(Object.create(View.prototype), {
             .select();
     },
 
-    /*update une liste d'elements
-     *
+    /** update une liste d'elements
+     * @augments View
      * */
     updateElem: function (list) {
         for (var i = 0; i < list.length; i++) {
@@ -949,8 +949,8 @@ List.prototype = $.extend(Object.create(View.prototype), {
         this.infoBox.lastElementChild.innerHTML = "";
     }
 
-}); //fin prototype
-
+} //fin prototype
+List.prototype = $.extend(Object.create(View.prototype), List.prototype);
 
 
 

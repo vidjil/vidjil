@@ -75,8 +75,6 @@ function ScatterPlot(id, model) {
     this.splitY = "gene_j"; //Distribution method, for the Y axis
     this.splitX = "gene_v"; //Distribution method, for the X axis
 
-    this.m.view.push(this); //Model's sync
-
     this.time0 = Date.now(), //Initial date saved
     this.time1 = this.time0; //Frames computed
     this.fpsqueue = []; //Numbers of frames computed, according to the 20th last values
@@ -156,7 +154,7 @@ function ScatterPlot(id, model) {
 /*
 Déclaration des fonctions attribuées à l'objet
 */
-ScatterPlot.prototype = $.extend(Object.create(View.prototype), {
+ScatterPlot.prototype = {
 
     /* Fonction permettant l'initialisation complète du ScatterPlot
      */
@@ -2204,4 +2202,5 @@ ScatterPlot.prototype = $.extend(Object.create(View.prototype), {
         }
     }
 
-});
+}
+ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype);

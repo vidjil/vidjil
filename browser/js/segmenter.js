@@ -49,7 +49,6 @@ function Segment(id, model) {
     }
     
     this.id = id; //ID de la div contenant le segmenteur
-    this.m.view.push(this); //synchronisation au Model
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
     this.cgi_address = CGI_ADDRESS
 
@@ -70,7 +69,7 @@ function Segment(id, model) {
 }
 
 
-Segment.prototype = $.extend(Object.create(View.prototype), {
+Segment.prototype = {
 
     /* 
      *
@@ -709,7 +708,7 @@ Segment.prototype = $.extend(Object.create(View.prototype), {
     },
 
 } //fin prototype Segment
-);
+Segment.prototype = $.extend(Object.create(View.prototype), Segment.prototype);
 
 
 
