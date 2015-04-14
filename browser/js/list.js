@@ -38,9 +38,11 @@
  * */
 function List(id_list, id_data, model) {
     var self=this;
+    
+    View.call(this, model);
+    
     this.id = id_list; //ID de la div contenant la liste
     this.id_data = id_data;
-    this.m = model; //Model utilisé
     this.index = []
     this.index_data = {};
     this.clone_info = -1;
@@ -57,7 +59,7 @@ function List(id_list, id_data, model) {
     }
 }
 
-List.prototype = {
+List.prototype = $.extend(Object.create(View.prototype), {
     
     /**
      * 
@@ -947,7 +949,7 @@ List.prototype = {
         this.infoBox.lastElementChild.innerHTML = "";
     }
 
-} //fin prototype
+}); //fin prototype
 
 
 

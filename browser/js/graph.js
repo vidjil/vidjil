@@ -69,12 +69,14 @@
  */
 
 
-/* constructor
+/** constructor
  *
  * */
 function Graph(id, model) {
+    //
+    View.call(this, model); 
+    
     this.id = id;
-    this.m = model;
     this.resizeW = 1; //coeff d'agrandissement/réduction largeur                
     this.resizeH = 1; //coeff d'agrandissement/réduction hauteur        
     
@@ -105,7 +107,7 @@ function Graph(id, model) {
     this.m.graph = this // TODO: find a better way to do this
 }
 
-Graph.prototype = {
+Graph.prototype = $.extend(Object.create(View.prototype), {
 
 /* ************************************************ *
  * BUILD FUNCTIONS
@@ -1329,7 +1331,7 @@ Graph.prototype = {
     }
 
 
-} //fin Graph
+}); //fin Graph
 
 
 

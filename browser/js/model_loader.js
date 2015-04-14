@@ -22,8 +22,8 @@
  */
 
 
-/** Model_loader constructor
- * model function to load and save .vidjil/.analysis files
+/** Model_loader constructor <br>
+ * model functions to load and save .vidjil/.analysis files
  * @class Model_loader
  * @constructor 
  * */

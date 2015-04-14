@@ -23,8 +23,9 @@
 function ScatterPlot(id, model) {
     var self = this;
     
+    View.call(this, model);
+    
     this.id = id; //ID of the scatterPlot div
-    this.m = model; //Model object
 
     //size ( computed value -> resize() function)
     this.resizeCoef = 1; //Multiplifying factor, application to nodes radius
@@ -155,7 +156,7 @@ function ScatterPlot(id, model) {
 /*
 Déclaration des fonctions attribuées à l'objet
 */
-ScatterPlot.prototype = {
+ScatterPlot.prototype = $.extend(Object.create(View.prototype), {
 
     /* Fonction permettant l'initialisation complète du ScatterPlot
      */
@@ -2203,4 +2204,4 @@ ScatterPlot.prototype = {
         }
     }
 
-}
+});

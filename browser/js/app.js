@@ -8,7 +8,8 @@ requirejs.config({
 
 require(['../conf'], function () {}, function(err) {});
 
-require(["d3.v3",
+require(["jquery",
+        "d3.v3",
         "jquery.form",
         "StackBlur",
         "jspdf",
@@ -19,6 +20,7 @@ require(["d3.v3",
         "underscore",
         "rgbcolor",
         "file",
+        "../view",
         "../compare", 
         "../menu", 
         "../dbscan", 
