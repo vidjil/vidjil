@@ -130,7 +130,7 @@ def custom():
             )
 
     query = db(q).select(
-                db.patient.id, db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date, 
+                db.patient.id, db.patient.info, db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
                 db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
                 db.sequence_file.patient_id, db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
                 db.sequence_file.size_file,
@@ -193,7 +193,11 @@ def stats():
                   'producer': 'samples/producer',
     }
 
+    keys_patient = [ 'info' ]
+
     keys = []
+    keys += keys_patient
+
     regex = []
     for sr in stats_regex:
         r = re.compile(sr)
@@ -220,6 +224,9 @@ def stats():
                 found[key] = True
             elif key in row_fused:
                 row[key] = row_fused[key]
+                found[key] = True
+            elif key in keys_patient:
+                row[key] = row.patient.info # todo, should not be hardcoded
                 found[key] = True
             else:
                 row[key] = ''
