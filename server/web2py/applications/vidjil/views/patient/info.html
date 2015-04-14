@@ -152,7 +152,7 @@
 {{if fused_count >0:}}
 <div class="db_block">
     <div class="db_block_right">
-        {{if row.fused_file is not None :}}
+        {{if fused_file is not None :}}
             download {{=db.config[config_id].name}}
         <!--
             <a class="button" href={{=URL('default', 'download_data', scheme='https', vars=dict(patient=request.vars["id"] ,config=request.vars["config_id"], filename=fused_filename ) )}} type="application/octet-stream" download> .data </a>
