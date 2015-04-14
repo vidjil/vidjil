@@ -267,13 +267,13 @@ class ListWindows:
         
     ### compute statistics about clones
     def build_stat(self):
-        ranges = [1000, 100, 10, 1]
+        ranges = [.1, .01, .001, .0001, .00001, .000001, .0000001]
         result = [[0 for col in range(len(self.d['reads'].d["segmented"]))] for row in range(len(ranges))]
 
         for clone in self:
             for i, s in enumerate(clone.d["reads"]):
                 for r in range(len(ranges)):
-                    if s >= ranges[r]:
+                    if s*1. / self.d['reads'].d['segmented'][i] >= ranges[r]:
                         break 
                 result[r][i] += s
                 
