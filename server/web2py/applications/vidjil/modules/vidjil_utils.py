@@ -1,6 +1,7 @@
 import math
 import re
 import defs
+import json
 from gluon import current
 from datetime import date
 
@@ -115,6 +116,74 @@ def filter(str, filter_str):
                 return False
     return True
 
+
+#### Utilities on regex
+def search_first_regex_in_file(regex, filename, max_nb_line=None):
+    try:
+        if max_nb_line is None:
+            results = open(filename).readlines()
+        else:
+            results = open(filename).readlines(max_nb_line)
+    except IOError as e:
+        results = []
+
+    matched_keys = {}
+    for r in regex:
+        for line in results:
+            m = r.search(line)
+            if m:
+                for (key, val) in m.groupdict().items():
+                    matched_keys[key] = val.replace('\\', '')
+                break
+    return matched_keys
+
+
+#### Utilities on JSON
+
+def extract_value_from_json_path(json_path, json):
+    '''
+    Highly inspired from http://stackoverflow.com/a/7320664/1192742
+
+    Takes a path (for instance field1/field2/field3) and returns
+    the value at that path.
+
+    If the value doesn't exist None will be returned.
+    '''
+    elem = json
+    try:
+        for x in json_path.strip("/").split("/"):
+            elem = elem.get(x)
+    except:
+        pass
+
+    return elem
+
+def extract_fields_from_json(json_fields, pos_in_list, filename):
+    '''
+    Takes a map of JSON fields (the key is a common name
+    and the value is a path) and return a similar map
+    where the values are the values from the JSON filename.
+
+    If the value retrieved from a JSON is an array, we will
+    get only the item at position <pos_in_list>
+    '''
+    try:
+        json_dict = json.loads(open(filename).read())
+    except IOError:
+        json_dict = {}
+
+    matched_keys = {}
+    for field in json_fields:
+        value = extract_value_from_json_path(json_fields[field], json_dict)
+        if value is not None:
+            if  not isinstance(value, basestring) and len(value) > pos_in_list:
+                matched_keys[field] = value[pos_in_list]
+            else:
+                matched_keys[field] = value
+
+    return matched_keys
+
+####
 
 log_patient = re.compile('\((\d+)\)')
 log_config = re.compile(' c(\d+)')

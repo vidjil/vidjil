@@ -64,14 +64,12 @@ def showlog():
             request.vars["filter"] = ""
             
         for row in reversed(file.readlines()) :
+            parsed = False
 
             if not vidjil_utils.filter(row, request.vars["filter"]) :
                 continue
 
-            if not log_format: # == 'vidjil'
-                line = { 'mes': row, 'date': '', 'date2': '', 'user': '', 'type':'', 'file':''}
-
-            else:
+            if log_format: # == 'vidjil'
                 # Parses lines such as
                 # [11889] 2015-02-01 12:01:28,367     INFO - default.py:312 1.23.45.67/user/Toto <Toto> xxxxx log message
                 # [11889] 2015-02-01 12:01:28,367     INFO - default.py:312 1.23.45.67 log message
@@ -80,24 +78,32 @@ def showlog():
 
                 tmp = re.split('\t+| +', row) 
 
-                line["date"] = tmp[1]
-                line["date2"] = tmp[2].split(',')[0]
-                line["type"] = tmp[3]
-                line["file"] = tmp[5]
+                if len(tmp) >= 7:
+                    parsed = True
+                    line["date"] = tmp[1]
+                    line["date2"] = tmp[2].split(',')[0]
+                    line["type"] = tmp[3]
+                    line["file"] = tmp[5]
 
-                if tmp[6] != "Creating":
-                    if '<' in tmp[8]:
-                        line["user"] = tmp[8] + ' ' + tmp[7]
-                        j = 9
+                    if tmp[6] != "Creating":
+                        if len(tmp) < 9:
+                            j = 0
+                            parsed = False
+                        elif '<' in tmp[8]:
+                            line["user"] = tmp[8] + ' ' + tmp[7]
+                            j = 9
+                        else:
+                            line["user"] = tmp[7]
+                            j = 8
+                        line["mes"] = " ".join(tmp[j:])
                     else:
-                        line["user"] = tmp[7]
-                        j = 8
-                    line["mes"] = " ".join(tmp[j:])
-                else:
-                    line["user"] = ""
-                    line["mes"] = " ".join(tmp[6:])
+                        line["user"] = ""
+                        line["mes"] = " ".join(tmp[6:])
 
-                line["mes"] = vidjil_utils.log_links(line["mes"])
+                    line["mes"] = vidjil_utils.log_links(line["mes"])
+
+            if not parsed:
+                line = { 'mes': row, 'date': '', 'date2': '', 'user': '', 'type':'', 'file':''}
 
             ### Stores log line
             lines.append(line)
