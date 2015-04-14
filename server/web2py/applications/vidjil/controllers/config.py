@@ -164,10 +164,12 @@ def change_permission():
                       & (db.auth_permission.table_name == db.config)
                   ).count() > 0 :
                 auth.del_permission(request.vars["group_id"], request.vars["permission"], db.config, request.vars["config_id"])
-                res = {"message" : "access '%s' deleted to '%s'" % (request.vars["permission"], db.auth_group[request.vars["group_id"]].role)}
+                res = {"message" : "c%s: access '%s' deleted to '%s'" % (request.vars["config_id"],
+                                                                         request.vars["permission"], db.auth_group[request.vars["group_id"]].role)}
             else :
                 auth.add_permission(request.vars["group_id"], request.vars["permission"], db.config, request.vars["config_id"])
-                res = {"message" : "access '%s' granted to '%s'" % (request.vars["permission"], db.auth_group[request.vars["group_id"]].role)}
+                res = {"message" : "c%s: access '%s' granted to '%s'" % (request.vars["config_id"],
+                                                                         request.vars["permission"], db.auth_group[request.vars["group_id"]].role)}
             
             log.admin(res)
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
