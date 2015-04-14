@@ -224,6 +224,16 @@ def stats():
             else:
                 row[key] = ''
 
+    # Re-process some data
+    keys += ['IGH_av_clones']
+    for row in d['query']:
+        if 'IGH_av_reads' in row:
+            try:
+                row['IGH_av_clones'] = '%.4f' % (1.0 / float(row['IGH_av_reads']))
+                found['IGH_av_clones'] = True
+            except:
+                pass
+
     # Keep only non-empty columns
     d['stats'] = []
     for key in keys:
