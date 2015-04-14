@@ -147,6 +147,7 @@ class Reads:
         self.d["total"] = ["0"]
         self.d["segmented"] = ["0"]
         self.d["germline"] = {}
+        self.d['distribution'] = {}
 
     def __add__(self, other):
         obj=Reads()
@@ -154,6 +155,10 @@ class Reads:
         concatenate_with_padding(obj.d['germline'], 
                                  self.d['germline'], len(self.d['total']),
                                  other.d['germline'], len(other.d['total']),
+                                 ['total'])
+        concatenate_with_padding(obj.d['distribution'],
+                                 self.d['distribution'], len(self.d['total']),
+                                 other.d['distribution'], len(other.d['total']),
                                  ['total'])
                 
         obj.d["total"] = self.d["total"] + other.d["total"]
@@ -277,9 +282,9 @@ class ListWindows:
                         break 
                 result[r][i] += s
                 
-        print(result)
         for r in range(len(ranges)):
-            self.d["reads-distribution-"+str(ranges[r])] = result[r]
+            ratio_in_string = '{0:.10f}'.format(ranges[r]).rstrip('0')
+            self.d['reads'].d['distribution'][ratio_in_string] = result[r]
             
         #TODO V/D/J distrib and more 
         
@@ -312,6 +317,8 @@ class ListWindows:
                 self.d=tmp.d
                 self.check_version(file_path)
         
+        if 'distribution' not in self.d['reads'].d:
+            self.d['reads'].d['distribution'] = {}
         if pipeline: 
             # renaming, private pipeline
             f = '/'.join(file_path.split('/')[2:-1])
