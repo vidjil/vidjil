@@ -244,6 +244,7 @@ def stats():
     # Re-process some data
     keys += ['IGH_av_clones']
     for row in d['query']:
+        row['IGH_av_clones'] = ''
         if 'IGH_av_reads' in row:
             try:
                 row['IGH_av_clones'] = '%.4f' % (1.0 / float(row['IGH_av_reads']))
@@ -257,7 +258,7 @@ def stats():
         if key in found:
             d['stats'] += [key]
 
-    log.debug("patient/stats (%.3fs)" % (time.time()-start))
+    log.debug("patient/stats (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
     return d
 
 ## return patient list
@@ -407,7 +408,7 @@ def index():
     for row in result :
         row['string'] = (row['last_name']+row['first_name']+row['confs']+row['groups']+str(row['birth'])).lower()+str(row['info'])
     result = filter(lambda row : vidjil_utils.filter(row['string'],request.vars["filter"]), result )
-    log.debug("patient list (%.3fs)" % (time.time()-start))
+    log.debug("patient list (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
     return dict(query = result,
                 isAdmin = isAdmin,
                 reverse = reverse)
