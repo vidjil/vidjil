@@ -22,7 +22,11 @@
 * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 */
 
-
+/**
+ * provide a bunch of shortkey to manipulate views/model
+ * @class Shortcut
+ * @constructor
+ * */
 function Shortcut () {
     this.init()
     this.on = true
@@ -32,6 +36,9 @@ var NB_CLONES_CHANGE = 10;
 
 Shortcut.prototype = {
     
+    /**
+     * compute system list and add event listener to document
+     * */
     init : function () {
         var self = this
         
@@ -50,7 +57,11 @@ Shortcut.prototype = {
     },
     
     
-    
+    /**
+     * called each time a key is pressed <br>
+     * triggers the related function
+     * @param {event} e - onkeydown event
+     * */
     checkKey : function (e) {
         if (this.on){
             e = e || window.event;
