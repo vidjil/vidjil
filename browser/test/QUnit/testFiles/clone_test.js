@@ -1,6 +1,4 @@
 
-var console = new Com(console)
-    
     var json_clone1 = {
         "sequence" : "abcdefghijklmnopqrstuvwxyz",
         "name" : "hello",

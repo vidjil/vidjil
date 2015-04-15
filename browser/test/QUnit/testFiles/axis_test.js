@@ -1,6 +1,3 @@
-var console = new Com(console)
-
-
 
 test("Axis : ", function() {
     

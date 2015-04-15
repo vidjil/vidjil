@@ -1,7 +1,5 @@
 
-var console = new Com(console)
-
-    
+   
 test("model : load", function() {
     var m = new Model();
     m.parseJsonData(json_data)
