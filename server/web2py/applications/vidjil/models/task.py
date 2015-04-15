@@ -258,11 +258,18 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
     output_file = out_folder+'/'+output_filename+'.fused'
     files = ""
     sequence_file_list = ""
-    query = db( ( db.patient.id == db.sequence_file.patient_id )
+    query2 = db( ( db.patient.id == db.sequence_file.patient_id )
                    & ( db.results_file.sequence_file_id == db.sequence_file.id )
                    & ( db.patient.id == id_patient )
                    & ( db.results_file.config_id == id_config )
-                   ).select( orderby=db.sequence_file.id|db.results_file.run_date, groupby=db.sequence_file.id ) 
+                   ).select( orderby=db.sequence_file.id|db.results_file.run_date) 
+    query = []
+    sequence_file_id = 0
+    for row in query2 : 
+        if row.sequence_file.id != sequence_file_id :
+            query.append(row)
+            sequence_file_id = row.sequence_file.id
+            
     for row in query :
         if row.results_file.data_file is not None :
             files += defs.DIR_RESULTS + row.results_file.data_file + " "
