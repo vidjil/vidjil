@@ -21,12 +21,31 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
-/* Com object display/store system message
+/**
+ * Com object - replacement for the default javascript console
  * 
  * */
 function Com(default_console) {
-    this.data_id = "data-container"; //TODO
+    var self = this;
     this.default = default_console;
+    
+    var wrapper = function(key) {
+        return function() {
+            var args = Array.prototype.slice.call(arguments)[0];
+            return self.default[key](args);
+        }
+    };
+    
+    for (var key in default_console){
+        if (typeof this.default[key] == 'function') {
+            this[key] = wrapper(key)
+        }else{
+            this[key] = this.default[key]
+        }
+    }
+    
+    this.data_id = "data-container"; //TODO
+    
 
     this.DEBUG = 0
     this.INFO = 1
