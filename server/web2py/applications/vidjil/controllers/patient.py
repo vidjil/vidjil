@@ -244,6 +244,7 @@ def stats():
     # Re-process some data
     keys += ['IGH_av_clones']
     for row in d['query']:
+        row['IGH_av_clones'] = ''
         if 'IGH_av_reads' in row:
             try:
                 row['IGH_av_clones'] = '%.4f' % (1.0 / float(row['IGH_av_reads']))
