@@ -24,7 +24,7 @@
 
 /** View constructor <br>
  * super-class for all view <br>
- * contain all functions required by the model to interact with a view.
+ * contains all functions required by the model to interact with a view.
  * @class View
  * @constructor 
  * */
