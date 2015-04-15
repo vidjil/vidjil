@@ -968,7 +968,7 @@ int main (int argc, char **argv)
     int nb_segmented_including_too_short = we.getNbSegmented(TOTAL_SEG_AND_WINDOW) 
       + we.getNbSegmented(UNSEG_TOO_SHORT_FOR_WINDOW);
 
-    stream_segmentation_info << "  ==> segmented " << nb_segmented_including_too_short << " reads"
+    stream_segmentation_info << "  ==> junction detected in " << nb_segmented_including_too_short << " reads"
 	<< " (" << setprecision(3) << 100 * (float) nb_segmented_including_too_short / nb_total_reads << "%)" 
 	<< endl ;
 
@@ -977,9 +977,8 @@ int main (int argc, char **argv)
     float ratio_segmented = 100 * (float) nb_segmented / nb_total_reads ;
 
     stream_segmentation_info << "  ==> found " << windowsStorage->size() << " " << w << "-windows"
-	<< " in " << nb_segmented << " segments"
-	<< " (" << setprecision(3) << ratio_segmented << "%)"
-	<< " inside " << nb_total_reads << " sequences" << endl ;
+	<< " in " << nb_segmented << " reads"
+	<< " (" << setprecision(3) << ratio_segmented << "% of " <<  nb_total_reads << " reads)" << endl ;
   
     // warn if there are too few segmented sequences
     if (ratio_segmented < WARN_PERCENT_SEGMENTED)
