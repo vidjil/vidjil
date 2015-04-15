@@ -5,6 +5,12 @@
 
 <div>
 
+{{if auth.has_membership('admin'):}}
+  <span class="button" onclick="db.call('patient/info', {'next': '1', 'id' :'{{=request.vars['id']}}', 'config_id' : '{{=request.vars['config_id']}}'})">prev</span>
+  <span class="button" onclick="db.call('patient/info', {'next': '-1', 'id' :'{{=request.vars['id']}}', 'config_id' : '{{=request.vars['config_id']}}'})">next</span>
+{{ pass }}
+
+
     <h3>{{=vidjil_utils.anon(request.vars['id'], auth.user.id)}}</h3>
 
     <div class="db_block">
@@ -152,7 +158,7 @@
 {{if fused_count >0:}}
 <div class="db_block">
     <div class="db_block_right">
-        {{if row.fused_file is not None :}}
+        {{if fused_file is not None :}}
             download {{=db.config[config_id].name}}
         <!--
             <a class="button" href={{=URL('default', 'download_data', scheme='https', vars=dict(patient=request.vars["id"] ,config=request.vars["config_id"], filename=fused_filename ) )}} type="application/octet-stream" download> .data </a>

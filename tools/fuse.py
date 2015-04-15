@@ -147,6 +147,7 @@ class Reads:
         self.d["total"] = ["0"]
         self.d["segmented"] = ["0"]
         self.d["germline"] = {}
+        self.d['distribution'] = {}
 
     def __add__(self, other):
         obj=Reads()
@@ -154,6 +155,10 @@ class Reads:
         concatenate_with_padding(obj.d['germline'], 
                                  self.d['germline'], len(self.d['total']),
                                  other.d['germline'], len(other.d['total']),
+                                 ['total'])
+        concatenate_with_padding(obj.d['distribution'],
+                                 self.d['distribution'], len(self.d['total']),
+                                 other.d['distribution'], len(other.d['total']),
                                  ['total'])
                 
         obj.d["total"] = self.d["total"] + other.d["total"]
@@ -220,7 +225,16 @@ class ListWindows:
     <window : [12, 0] 2 bbb>
     <window : [5, 8] 3 aaa>
     <window : [0, 2] 8 ccc>
-    
+    >>> lw3.build_stat()
+    >>> lw3.d['reads'].d['distribution']['0.1']
+    [17, 8]
+    >>> lw3.d['reads'].d['distribution']['0.01']
+    [0, 2]
+    >>> lw3.d['reads'].d['distribution']['0.001']
+    [0, 0]
+    >>> lw3.d['reads'].d['distribution']['0.0001']
+    [0, 0]
+
     '''
     
     def __init__(self):
@@ -267,19 +281,19 @@ class ListWindows:
         
     ### compute statistics about clones
     def build_stat(self):
-        ranges = [1000, 100, 10, 1]
+        ranges = [.1, .01, .001, .0001, .00001, .000001, .0000001]
         result = [[0 for col in range(len(self.d['reads'].d["segmented"]))] for row in range(len(ranges))]
 
         for clone in self:
             for i, s in enumerate(clone.d["reads"]):
                 for r in range(len(ranges)):
-                    if s >= ranges[r]:
+                    if s*1. / self.d['reads'].d['segmented'][i] >= ranges[r]:
                         break 
                 result[r][i] += s
                 
-        print(result)
         for r in range(len(ranges)):
-            self.d["reads-distribution-"+str(ranges[r])] = result[r]
+            ratio_in_string = '{0:.10f}'.format(ranges[r]).rstrip('0')
+            self.d['reads'].d['distribution'][ratio_in_string] = result[r]
             
         #TODO V/D/J distrib and more 
         
@@ -312,6 +326,8 @@ class ListWindows:
                 self.d=tmp.d
                 self.check_version(file_path)
         
+        if 'distribution' not in self.d['reads'].d:
+            self.d['reads'].d['distribution'] = {}
         if pipeline: 
             # renaming, private pipeline
             f = '/'.join(file_path.split('/')[2:-1])
@@ -584,7 +600,7 @@ w6.d ={"id" : "bbb", "reads" : [12], "top" : 2 }
 
 lw1 = ListWindows()
 lw1.d["timestamp"] = 'ts'
-lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25], "germline": {} }', object_hook=lw1.toPython)
+lw1.d["reads"] = json.loads('{"total": [30], "segmented": [25], "germline": {}, "distribution": {}}', object_hook=lw1.toPython)
 lw1.d["clones"].append(w5)
 lw1.d["clones"].append(w6)
 
@@ -595,7 +611,7 @@ w8.d ={"id" : "ccc", "reads" : [2], "top" : 8, "test" : ["plop"] }
 
 lw2 = ListWindows()
 lw2.d["timestamp"] = 'ts'
-lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34], "germline": {} }', object_hook=lw1.toPython)
+lw2.d["reads"] = json.loads('{"total": [40], "segmented": [34], "germline": {}, "distribution": {}}', object_hook=lw1.toPython)
 lw2.d["clones"].append(w7)
 lw2.d["clones"].append(w8)
 

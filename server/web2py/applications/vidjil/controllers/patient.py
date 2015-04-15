@@ -11,7 +11,16 @@ ACCESS_DENIED = "access denied"
 ## return patient file list
 ##
 def info():
-    
+
+    if 'next' in request.vars:
+        try:
+            new_id = request.vars["id"]
+            new_id = str(int(new_id)+int(request.vars["next"]))
+            while db.patient[new_id] is None and int(new_id) > 0:
+                new_id = str(int(new_id)+int(request.vars["next"]))
+            request.vars["id"] = new_id
+        except:
+            pass
 
     patient = db.patient[request.vars["id"]]
 
@@ -130,7 +139,7 @@ def custom():
             )
 
     query = db(q).select(
-                db.patient.id, db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date, 
+                db.patient.id, db.patient.info, db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
                 db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
                 db.sequence_file.patient_id, db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
                 db.sequence_file.size_file,
@@ -186,14 +195,19 @@ def stats():
         '"reads" :  [[] (?P<main_clone_reads>\d+) ',
     ]
 
-    json_paths = {'reads distribution [1,9]': 'reads-distribution-1',
-                  'reads distribution [10,99]': 'reads-distribution-10',
-                  'reads distribution [100,999]': 'reads-distribution-100',
-                  'reads distribution [1000+]': 'reads-distribution-1000',
+    json_paths = {'reads distribution [>= 10%]': 'reads/distribution/0.1',
+                  'reads distribution [>= 1% < 10%]': 'reads/distribution/0.01',
+                  'reads distribution [>= .01% < 1%]': 'reads/distribution/0.001',
+                  'reads distribution [>= .001% < .01%]': 'reads/distribution/0.0001',
+                  'reads distribution [>= .0001% < .001%]': 'reads/distribution/0.00001',
                   'producer': 'samples/producer',
     }
 
+    keys_patient = [ 'info' ]
+
     keys = []
+    keys += keys_patient
+
     regex = []
     for sr in stats_regex:
         r = re.compile(sr)
@@ -221,8 +235,21 @@ def stats():
             elif key in row_fused:
                 row[key] = row_fused[key]
                 found[key] = True
+            elif key in keys_patient:
+                row[key] = row.patient.info # todo, should not be hardcoded
+                found[key] = True
             else:
                 row[key] = ''
+
+    # Re-process some data
+    keys += ['IGH_av_clones']
+    for row in d['query']:
+        if 'IGH_av_reads' in row:
+            try:
+                row['IGH_av_clones'] = '%.4f' % (1.0 / float(row['IGH_av_reads']))
+                found['IGH_av_clones'] = True
+            except:
+                pass
 
     # Keep only non-empty columns
     d['stats'] = []
