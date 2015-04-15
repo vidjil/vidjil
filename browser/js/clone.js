@@ -611,6 +611,16 @@ Clone.prototype = {
     
     isFocus: function () {
         return this.index == this.m.focus
+    },
+    
+    get: function (field_name) {
+        if (typeof this[field_name] != 'undefined'){
+            return this[field_name]
+        }
+        if (typeof this.seg != 'undefined' && typeof this.seg[field_name] != 'undefined'){
+            return this.seg[field_name]
+        }
+        return 'undefined'
     }
     
 }

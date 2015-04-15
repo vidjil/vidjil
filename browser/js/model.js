@@ -700,6 +700,22 @@ Model.prototype = {
     },
     
     /**
+     * put clones who match the description in the selection
+     * @param {Array} - desc
+     * */
+    selectBy: function (desc) {
+        for (var i=0; i<this.clones.length; i++){
+            var clone = this.clone(i);
+            var select = true;
+            for (var key in desc) {
+                select = (select && (clone.get(key) == desc[key]))
+            }
+            clone.select = select;
+        }
+        this.updateStyle();
+    },
+    
+    /**
      * put a list of clones in the selection
      * @param {integer[]} - list - array of clone index
      * */
