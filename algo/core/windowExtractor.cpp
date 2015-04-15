@@ -41,28 +41,33 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
     KmerMultiSegmenter kmseg(reads->getSequence(), multigermline, out_affects, nb_expected, nb_reads_for_evalue);
     
     KmerSegmenter *seg = kmseg.the_kseg ;
+
+    // Window length threshold
+    junction junc ;
+    if (seg->isSegmented()) {
+      junc = seg->getJunction(w);
+      if (!junc.size()) {
+        seg->setSegmentationStatus(UNSEG_TOO_SHORT_FOR_WINDOW);
+      }
+    }
+
     int read_length = seg->getSequence().sequence.length();
 
+    // Update stats
     stats[seg->getSegmentationStatus()].insert(read_length);
+
     if (seg->isSegmented()) {
+      // Store the window
+      windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline);
 
+      // Update stats
       seg->segmented_germline->stats_reads.insert(read_length);
-
-      junction junc = seg->getJunction(w);
-
-      if (junc.size()) {
-        stats[TOTAL_SEG_AND_WINDOW].insert(read_length) ;
-        windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline);
-      } else {
-        stats[UNSEG_TOO_SHORT_FOR_WINDOW].insert(read_length) ;
-      }
+      stats[TOTAL_SEG_AND_WINDOW].insert(read_length) ;
+      nb_reads_germline[seg->system]++;
 
       if (out_segmented) {
         *out_segmented << *seg ; // KmerSegmenter output (V/N/J)
       }
-      
-      nb_reads_germline[seg->system]++;
-      
     } else {
       if (keep_unsegmented_as_clone && (reads->getSequence().sequence.length() >= w))
         {
