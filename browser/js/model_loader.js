@@ -269,12 +269,12 @@ Model_loader.prototype = {
         
         //filter clones (remove clone beyond the limit)
         self.clones = [];
-        var hash = 0
+        var index = 0
         for (var i = 0; i < data.clones.length; i++) {
             if (data.clones[i].top <= limit) {
-                var clone = new Clone(data.clones[i], self, hash)
-                self.mapID[data.clones[i].id] = hash;
-                hash++
+                var clone = new Clone(data.clones[i], self, index)
+                self.mapID[data.clones[i].id] = index;
+                index++
             }
         }
         
@@ -285,7 +285,7 @@ Model_loader.prototype = {
             "top": 0,
             "reads": []
         }
-        var clone = new Clone(other, self, hash)
+        var clone = new Clone(other, self, index)
         
         //init clusters
         this.loadCluster(this.data_clusters)

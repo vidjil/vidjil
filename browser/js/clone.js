@@ -21,9 +21,9 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
-function Clone(data, model, hash) {
+function Clone(data, model, index) {
     this.m = model
-    this.hash = hash
+    this.index = index
     this.split = false
     var key = Object.keys(data)
     
@@ -39,8 +39,8 @@ function Clone(data, model, hash) {
         this.shortName = this.shortName.replace(new RegExp('\\*..', 'g'), "");
     }
     
-    this.m.clusters[hash]=[hash]
-    this.m.clones[hash]=this
+    this.m.clusters[index]=[index]
+    this.m.clones[index]=this
     this.tag = this.getTag();
     this.computeGCContent()
 }
@@ -54,8 +54,8 @@ Clone.prototype = {
      *
      * */
     getName: function () {
-        if (this.m.clusters[this.hash].name){
-            return this.m.clusters[this.hash].name;
+        if (this.m.clusters[this.index].name){
+            return this.m.clusters[this.index].name;
         }else if (this.c_name) {
             return this.c_name;
         } else if (this.name) {
@@ -98,9 +98,9 @@ Clone.prototype = {
      *
      * */
     changeName: function (newName) {
-        console.log("changeName() (clone " + this.hash + " <<" + newName + ")");
+        console.log("changeName() (clone " + this.index + " <<" + newName + ")");
         this.c_name = newName;
-        this.m.updateElem([this.hash]);
+        this.m.updateElem([this.index]);
         this.m.analysisHasChanged = true
     }, //fin changeName,
 
@@ -251,7 +251,7 @@ Clone.prototype = {
         time = this.m.getTime(time)
         var result = 0;
 
-        var cluster = this.m.clusters[this.hash]
+        var cluster = this.m.clusters[this.index]
         for (var j = 0; j < cluster.length; j++) {
             result += this.m.clone(cluster[j]).reads[time];
         }
@@ -402,9 +402,9 @@ Clone.prototype = {
     changeTag: function (newTag) {
         newTag = "" + newTag
         newTag = newTag.replace("tag", "");
-        console.log("changeTag() (clone " + this.hash + " <<" + newTag + ")");
+        console.log("changeTag() (clone " + this.index + " <<" + newTag + ")");
         this.tag = newTag;
-        this.m.updateElem([this.hash]);
+        this.m.updateElem([this.index]);
         this.m.analysisHasChanged = true;
     },
     
@@ -433,11 +433,11 @@ Clone.prototype = {
      *
      * */
     updateColor: function () {
-        if (this.m.focus == this.hash){
+        if (this.m.focus == this.index){
             this.color = "";
         }else if (this.m.colorMethod == "abundance") {
             var size = this.getSize()
-            if (this.m.clusters[this.hash].length==0){ size = this.getSequenceSize() }
+            if (this.m.clusters[this.index].length==0){ size = this.getSequenceSize() }
             if (size == 0){
                 this.color = "";
             }else{
@@ -473,7 +473,7 @@ Clone.prototype = {
      *
      * */
     getHtmlInfo: function () {
-        var isCluster = this.m.clusters[this.hash].length
+        var isCluster = this.m.clusters[this.index].length
         var time_length = this.m.samples.order.length
         var html = ""
 
@@ -590,15 +590,15 @@ Clone.prototype = {
     },
     
     disable: function () {
-            this.active = false;
+        this.active = false;
     },
     
     unselect: function () {
-        console.log("unselect() (clone " + this.hash + ")")
+        console.log("unselect() (clone " + this.index + ")")
         if (this.select) {
             this.select = false;
         }
-        this.m.updateElemStyle([this.hash]);
+        this.m.updateElemStyle([this.index]);
     },
     
     isSelected: function () {
@@ -610,7 +610,7 @@ Clone.prototype = {
     },
     
     isFocus: function () {
-        return this.hash == this.m.focus
+        return this.index == this.m.focus
     }
     
 }
