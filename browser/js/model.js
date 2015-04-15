@@ -41,6 +41,7 @@ VIDJIL_JSON_VERSION = '2014.09';
  * @constructor 
  * */
 function Model() {
+    var self=this;
     console.log("creation Model")
     
     for (f in Model_loader.prototype) {
@@ -51,7 +52,7 @@ function Model() {
     this.checkBrowser();
     this.germlineList = new GermlineList()
     this.build();
-    window.onresize = function () { m.resize(); };
+    window.onresize = function () { self.resize(); };
     
     this.start()
     
