@@ -11,7 +11,16 @@ ACCESS_DENIED = "access denied"
 ## return patient file list
 ##
 def info():
-    
+
+    if 'next' in request.vars:
+        try:
+            new_id = request.vars["id"]
+            new_id = str(int(new_id)+int(request.vars["next"]))
+            while db.patient[new_id] is None and int(new_id) > 0:
+                new_id = str(int(new_id)+int(request.vars["next"]))
+            request.vars["id"] = new_id
+        except:
+            pass
 
     patient = db.patient[request.vars["id"]]
 
