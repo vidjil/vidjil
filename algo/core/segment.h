@@ -39,15 +39,15 @@ using namespace std;
 enum SEGMENTED { DONT_KNOW, SEG_PLUS, SEG_MINUS, UNSEG_TOO_SHORT, UNSEG_STRAND_NOT_CONSISTENT, 
 		 UNSEG_TOO_FEW_ZERO,  UNSEG_TOO_FEW_V, UNSEG_TOO_FEW_J, 
 		 UNSEG_BAD_DELTA_MIN, UNSEG_BAD_DELTA_MAX, UNSEG_AMBIGUOUS, UNSEG_NOISY,
+		 UNSEG_TOO_SHORT_FOR_WINDOW,
 		 TOTAL_SEG_AND_WINDOW, 
-		 TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW,
 		 STATS_SIZE } ;
 const char* const segmented_mesg[] = { "?", "SEG_+", "SEG_-", "UNSEG too short", "UNSEG strand",  
 				       "UNSEG too few (0)", "UNSEG too few V", "UNSEG too few J",
 				       "UNSEG < delta_min", "UNSEG > delta_max", "UNSEG ambiguous",
                                        "UNSEG noisy",
-                                       "= SEG, with window",
-                                       "= SEG, no window",
+                                       "UNSEG too short w",
+                                       "SEG",
                                       } ;
 
 class Segmenter {

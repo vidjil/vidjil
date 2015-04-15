@@ -966,7 +966,7 @@ int main (int argc, char **argv)
     ostringstream stream_segmentation_info;
 
     int nb_segmented_including_too_short = we.getNbSegmented(TOTAL_SEG_AND_WINDOW) 
-      + we.getNbSegmented(TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW);
+      + we.getNbSegmented(UNSEG_TOO_SHORT_FOR_WINDOW);
 
     stream_segmentation_info << "  ==> segmented " << nb_segmented_including_too_short << " reads"
 	<< " (" << setprecision(3) << 100 * (float) nb_segmented_including_too_short / nb_total_reads << "%)" 

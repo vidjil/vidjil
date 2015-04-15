@@ -54,7 +54,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
         stats[TOTAL_SEG_AND_WINDOW].insert(read_length) ;
         windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline);
       } else {
-        stats[TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW].insert(read_length) ;
+        stats[UNSEG_TOO_SHORT_FOR_WINDOW].insert(read_length) ;
       }
 
       if (out_segmented) {
