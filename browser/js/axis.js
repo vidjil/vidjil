@@ -23,8 +23,11 @@
 */
 
 
-/* Axis object contain labels and their position on an axis (from 0 to 1)
- * and have a function pos() who return the position of a given Clone on this axis 
+/**
+ * Axis object contain labels and their position on an axis (from 0 to 1) <br>
+ * can provide the position of a clone on it
+ * @param {Model} model 
+ * @reverse {boolean} reverse - by default axis go from low to high but can be revsersed
  * */
 function Axis (model, reverse) {
     this.m = model
@@ -35,15 +38,20 @@ function Axis (model, reverse) {
 
 Axis.prototype = {
     
-    /*
-     * 
+    /**
+     * init/reset Axis
      * */
     init: function() {
         this.labels = [];
     },
     
-    /*
-     * 
+    /**
+     * build a label descriptor
+     * @param {string} type - 'line' or 'subline'
+     * @param {float} pos - position on axis between 0 and 1
+     * @param {string} text - text label
+     * @param {string} color - label color
+     * @return {object} label
      * */
     label: function (type, pos, text, color) {
         result = {};
@@ -55,9 +63,11 @@ Axis.prototype = {
         return result;
     },
 
-    /* init axis with a germline object
-     * genetype > "V" "D" or "J"
-     * displayAllele > boolean ( show/hide allele)
+    /**
+     * init axis with a germline object
+     * @param {Germline} germline
+     * @param {string} genetype - "V" "D" or "J"
+     * @param {boolean} displayAllele - (show/hide allele)
      * */
     useGermline: function (germline, geneType, displayAllele) {
         this.init()
@@ -114,7 +124,7 @@ Axis.prototype = {
     },
     
     
-    /* use clone size
+    /** use clone size
      * 
      * */
     useSize: function (other) {
