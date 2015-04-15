@@ -33,9 +33,14 @@
 
 
 /** 
- * 
+ * List view - build a list of clones/data and keep them up to date with the model
+ * @param {string} id_list - dom id of the html who will contain the clone list
+ * @param {string} id_data - dom id of the html who will contain the data list
+ * @param {Model} model 
  * @class List
  * @constructor 
+ * @augments View
+ * @this View
  * */
 function List(id_list, id_data, model) {
     var self=this;
@@ -62,7 +67,8 @@ function List(id_list, id_data, model) {
 List.prototype = {
     
     /**
-     * Build html elements needed
+     * Build html elements needed (except clone and data list)<br>
+     * need to be done only once
      * */
     build: function () {
         var self =this;
@@ -144,8 +150,9 @@ List.prototype = {
         
     },
     
-    /** initialise la liste et crée un div pour chaque clones
-     *
+    /** 
+     * build html elements for clone and data list <br>
+     * need to be done after each .vidjil file change
      * */
     init: function () {
         this.build_list()
@@ -154,6 +161,10 @@ List.prototype = {
         this.resize();
     },
 
+    /** 
+     * reset/build clone list <br>
+     * build an index for a quick access
+     * */
     build_list: function () {
         var self = this
         this.index = []
@@ -181,9 +192,10 @@ List.prototype = {
         this.sortListBySize()
     },
     
-    /**
-     * 
-     */
+    /** 
+     * reset/build data list <br>
+     * build an index for a quick access
+     * */
     build_data_list: function () {
         var self=this;
         this.index_data = {}
@@ -244,20 +256,9 @@ List.prototype = {
         this.update_data_list()
     },
     
-    update_data_list: function () {
-        if (Object.keys(this.index_data).length != Object.keys(this.m.data_info).length){
-            this.build_data_list()
-            this.resize();
-            return
-        }
-        for (var key in this.index_data){
-            var val = this.m.data[key][this.m.t]
-            if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val,this.m.t)
-            if (val > 100) this.index_data[key].innerHTML = val.toFixed(0);
-            if (val < 100) this.index_data[key].innerHTML = val.toPrecision(3);
-        }
-    },
-    
+    /**
+     * reset/build the sort/search menu for the list
+     * */
     build_list_menu: function () {
         var self = this
         
@@ -337,10 +338,10 @@ List.prototype = {
         
         return div_list_menu
     },
-
-
-    /*mise a jour de la liste
-     *
+    
+    
+    /**
+     * update all content for list and data list
      * */
     update: function () {
         var startTime = new Date()
@@ -360,7 +361,26 @@ List.prototype = {
         document.getElementById("list_sort_select").selectedIndex = 0;
     },
 
+    /**
+     * update content only for data list
+     * */
+    update_data_list: function () {
+        if (Object.keys(this.index_data).length != Object.keys(this.m.data_info).length){
+            this.build_data_list()
+            this.resize();
+            return
+        }
+        for (var key in this.index_data){
+            var val = this.m.data[key][this.m.t]
+            if (this.m.norm && this.m.normalization.type=="data") val = this.m.normalize(val,this.m.t)
+            if (val > 100) this.index_data[key].innerHTML = val.toFixed(0);
+            if (val < 100) this.index_data[key].innerHTML = val.toPrecision(3);
+        }
+    },
 
+    /**
+     * resize List view to match his div size
+     * */
     resize: function () {
         //hardcore resize (for firefox and ...)
         //seriously 7 years after the first release of the html5 specs there is no simple way (except with chrome) to put a scrollbar inside a table-cell 
@@ -378,9 +398,10 @@ List.prototype = {
         
     },
 
-    /* genere le code HTML des infos d'un clone
-     * @div_elem : element HTML a remplir
-     * @cloneID : identifiant du clone a décrire
+    /** 
+     * fill a div with clone informations
+     * @param {dom_object} div_elem - html element to complete
+     * @pram {integer} cloneID - clone index
      * */
     div_elem: function (div_elem, cloneID) {
 
@@ -468,10 +489,10 @@ List.prototype = {
 
     },
 
-    /* genere le code HTML des infos d'un cluster
-     * @div_cluster : element HTML a remplir
-     * @cloneID : identifiant du clone a décrire
-     * @display : affichage true/false
+    /** 
+     * fill a div with cluster informations
+     * @param {dom_object} div_cluster - html element to complete
+     * @pram {integer} cloneID - index of the cluster main clone
      * */
     div_cluster: function (div_cluster, cloneID) {
 
@@ -547,9 +568,10 @@ List.prototype = {
     },
 
 
-    /* affiche une fenetre d'édition pour le nom d'un clone
-     * @cloneID : identifiant du clone édité
-     * @elem : element HTML acceuillant la fenetre d'édition
+    /**
+     * display an edit field to change a clone name
+     * @param {integer} cloneID - clone index
+     * @param {dom_object} elem - div where will be the edit field
      * */
     editName: function (cloneID, elem) {
         var self = this;
@@ -600,8 +622,10 @@ List.prototype = {
             .select();
     },
 
-    /** update une liste d'elements
+    /** 
+     * update(size/style/position) a list of selected clones
      * @augments View
+     * param {integer[]} list - array of clone index
      * */
     updateElem: function (list) {
         for (var i = 0; i < list.length; i++) {
@@ -646,6 +670,11 @@ List.prototype = {
 
     },
 
+    /**
+     * update (style only) a list of selected clones
+     * @augments View
+     * @param {integer[]} list - array of clone index
+     * */
     updateElemStyle: function (list) {
         for (var i = 0; i < list.length; i++) {
 
@@ -685,6 +714,11 @@ List.prototype = {
         }
     },
     
+    /**
+     * apply a boolean isFiltered too all Clones<br>
+     * filtered clone will be hidden in all views
+     * @param {boolean} bool - isFiltered value given to all clones
+     * */
     reset_filter: function (bool) {
         for (var i=0; i<this.m.clones.length; i++){
             var c = this.m.clone(i)
@@ -692,6 +726,12 @@ List.prototype = {
         }
     },
     
+    /**
+     * apply a filter to all clones <br> 
+     * a clone need to contain a given string to pass the filter (search through name/nt sequence/sequenceName) (case insensitive)<br>
+     * filtered clone will be hidden in all views
+     * @param {string} str - required string to pass the filter
+     * */
     filter: function (str) {
         this.reset_filter(true)
         for (var i=0; i<this.m.clones.length; i++){
@@ -703,6 +743,9 @@ List.prototype = {
         this.m.update()
     },
     
+    /**
+     * filter, keep only currently selected clones <br> 
+     * */
     focus: function () {
         // this.reset_filter(true)
         for (var i=0; i<this.m.clones.length; i++){
@@ -713,6 +756,10 @@ List.prototype = {
         this.m.update()
     },
     
+    /**
+     * sort clone list by size (reorder html elements in the clone list/ no rebuild)
+     * TODO more generic function for sorting
+     * */
     sortListBySize: function () {
         self = this;
         var list = jQuery('#list_clones').children()
@@ -729,7 +776,10 @@ List.prototype = {
             .html(sort);
     },
     
-
+    /**
+     * sort clone list by Top (reorder html elements in the clone list/ no rebuild)
+     * TODO more generic function for sorting
+     * */
     sortListByTop: function () {
         self = this;
         var list = jQuery('.list')
@@ -744,6 +794,10 @@ List.prototype = {
             .html(sort);
     },
 
+    /**
+     * sort clone list by V gene (reorder html elements in the clone list/ no rebuild)
+     * TODO more generic function for sorting
+     * */
     sortListByV: function () {
         self = this;
         var list = jQuery('.list')
@@ -766,13 +820,6 @@ List.prototype = {
             //sort by V
             var vA = cloneA.getV(true)
             var vB = cloneB.getV(true)
-            /*
-            var oA = 2147483647
-            var oB = 2147483647
-            if (vA != "undefined V" & typeof this.m.germlineV.allele[vA] != 'undefined') oA = this.m.germlineV.allele[vA].gene * 1000 + this.m.germlineV.allele[vA].rank
-            if (vB != "undefined V" & typeof this.m.germlineV.allele[vB] != 'undefined') oB = this.m.germlineV.allele[vB].gene * 1000 + this.m.germlineV.allele[vB].rank
-            return oA > oB ? 1 : -1;
-            */
             return vA.localeCompare(vB);
             
         })
@@ -780,6 +827,10 @@ List.prototype = {
             .html(sort);
     },
 
+    /**
+     * sort clone list by J gene (reorder html elements in the clone list/ no rebuild)
+     * TODO more generic function for sorting
+     * */
     sortListByJ: function () {
         self = this;
         var list = jQuery('.list')
@@ -802,13 +853,6 @@ List.prototype = {
             //sort by J
             var jA = cloneA.getJ(true)
             var jB = cloneB.getJ(true)
-            /*
-            var oA = 2147483647
-            var oB = 2147483647
-            if (jA != "undefined V" & typeof this.m.germlineJ.allele[jA] != 'undefined') oA = this.m.germlineJ.allele[jA].gene * 1000 + this.m.germlineJ.allele[jA].rank
-            if (jB != "undefined V" & typeof this.m.germlineJ.allele[jB] != 'undefined') oB = this.m.germlineJ.allele[jB].gene * 1000 + this.m.germlineJ.allele[jB].rank
-            return oA > oB ? 1 : -1;
-            */
             return jA.localeCompare(jB);
                 
         })
@@ -816,6 +860,10 @@ List.prototype = {
             .html(sort);
     },
 
+    /**
+     * toggle on the display for a given clone of all clones merged with it
+     * @param {integer} cloneID - 
+     * */
     showCluster: function (cloneID) {
         var self = this
         this.m.clone(cloneID).split = true
@@ -825,6 +873,10 @@ List.prototype = {
             });
     },
 
+    /**
+     * toggle off the display for a given clone of all clones merged with it
+     * @param {integer} cloneID - 
+     * */
     hideCluster: function (cloneID) {
         var self = this
         this.m.clone(cloneID).split = false
@@ -834,11 +886,22 @@ List.prototype = {
             });
     },
     
+    /**
+     * custom event for list click <br>
+     * simple click -> select only the clicked clone <br>
+     * ctrl+click -> add the clicked clone to the selected clones
+     * @param {event} e - click event
+     * @param {integer} cloneID - clone index
+     * */
     clickList: function (e, cloneID) {
         if (!(e.ctrlKey || e.metaKey)) this.m.unselectAll()
         this.m.select(cloneID)
     },
     
+    /**
+     * open/build the tag/normalize menu for a clone
+     * @param {integer} cloneID - clone index
+     * */
     openTagSelector: function (cloneID) {
         var self = this;
         cloneID = typeof cloneID !== 'undefined' ? cloneID : this.cloneID;
@@ -923,11 +986,16 @@ List.prototype = {
         this.tagSelectorInfo.innerHTML = "tag for "+m.clone(cloneID).getName()+"("+cloneID+")"; 
     },
     
+    
     openDataMenu : function (data) {
         $(this.dataMenu).show("fast");
         this.dataMenuInfo.innerHTML = data;
     },
     
+    /**
+     * compute and display clone information in a window
+     * @param {integer} cloneID - clone index
+     * */
     displayInfoBox: function(cloneID) {
         $(this.index[this.clone_info]).find(".infoBox").removeClass("infoBox-open")
         
@@ -942,6 +1010,9 @@ List.prototype = {
         $(this.index[cloneID]).find(".infoBox").addClass("infoBox-open")
     },
 
+    /**
+     * close clone information box
+     * */
     closeInfoBox: function() {
         $(this.index[this.clone_info]).find(".infoBox").removeClass("infoBox-open")
         this.clone_info = -1;
