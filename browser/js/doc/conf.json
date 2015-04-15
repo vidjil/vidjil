@@ -17,7 +17,7 @@
         "monospaceLinks": false,
         "systemName"            : "vidjil javascript doc",
         "copyright"             : "voodooj 2015",
-        "navType"               : "inline",
+        "navType"               : "vertical",
         "theme"                 : "yeti",
         "linenums"              : true,
         "collapseSymbols"       : true,

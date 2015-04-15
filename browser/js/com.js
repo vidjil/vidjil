@@ -21,9 +21,14 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
+
 /**
- * Com object - replacement for the default javascript console
- * 
+ * Com object - replacement for the default javascript console <br>
+ * provide flash and popup message through the log function <br>
+ * optional, vidjil browser can work whithout it but all log will be displayed only in the console
+ * @class Com
+ * @constructor 
+ * @param {object} default_console)
  * */
 function Com(default_console) {
     var self = this;
@@ -38,7 +43,7 @@ function Com(default_console) {
     
     for (var key in default_console){
         if (typeof this.default[key] == 'function') {
-            this[key] = wrapper(key)
+            if (key!='log') this[key] = wrapper(key)
         }else{
             this[key] = this.default[key]
         }
@@ -117,7 +122,17 @@ function Com(default_console) {
 
 Com.prototype = {
     
-    /*Parse log message and display it in a popup,flash or standard log 
+    /**
+     * Replacement function for console.log <br>
+     * Parse log message and display it in a popup, flash or standard log 
+     * @param {string|object} obj 
+     * 
+     * @example
+     * console.log('hello')                                     //will display a standard log message with 'hello'
+     * console.log({msg: 'hello', type: 'log'})                 //will display a log message with 'hello'
+     * console.log({msg: 'hello', type: 'popup'})               //will display a popup message with 'hello'
+     * console.log({default: 'browser_error', type: 'popup'})   //will display a flash message with the default 'browser_error' message
+     * console.log({msg: 'bug!!', type: 'flash', priority: 3})  //will display a flash message with 'bug!!' (high priority => red message)
      * */
     log: function(obj){
         if (typeof obj !== 'object'){
@@ -143,6 +158,9 @@ Com.prototype = {
         }
     },
     
+    /**
+     * build html elements for flash, log and popup message
+     * */ 
     build: function(){
         var self = this;
         
@@ -190,8 +208,11 @@ Com.prototype = {
     },
 
     
-    /* display a flash message if priority level is sufficient
+    /**
+     * display a flash message if priority level is sufficient
      * and print message in log
+     * @param {string} str - message to display
+     * @param {integr} priority 
      * */
     flash: function (str, priority){
         priority = typeof priority !== 'undefined' ? priority : 0;
@@ -216,8 +237,10 @@ Com.prototype = {
         this.log(str, priority);
     },
     
-    /* print message in log_container if priority level is sufficient
-     * 
+    /**
+     * print message in log_container if priority level is sufficient
+     * @param {string} str - message to print
+     * @param {integr} priority 
      * */
     customLog: function(str, priority){
         priority = typeof priority !== 'undefined' ? priority : 0;
@@ -244,14 +267,24 @@ Com.prototype = {
         
     },
     
+    /**
+     * open the log window 
+     * */
     openLog: function () {
         $(this.log_container).fadeToggle(200);
     },
     
+    /**
+     * close the log window 
+     * */
     closeLog: function () {
         $(this.log_container).fadeToggle(200);
     },
     
+    /**
+     * display a popup message in a small window
+     * @param {string} msg
+     * */
     popupMsg: function (msg) {
         this.popup_container.style.display = "block";
         this.popup_container.lastElementChild
@@ -259,17 +292,27 @@ Com.prototype = {
         $(this.popup_container).find('button').focus();
     },
 
+    /**
+     * close popup window 
+     * */
     closePopupMsg: function () {
         this.popup_container.style.display = "none";
         this.popup_container.lastElementChild
             .innerHTML = "";
     },
 
+    /**
+     * display a popup message in a big window
+     * @param {string} msg
+     * */
     dataBox: function(msg) {
         this.div_dataBox.style.display = "block";
         this.div_dataBox.lastElementChild.innerHTML = msg;
     },
 
+    /**
+     * close databox window 
+     * */
     closeDataBox: function() {
         this.div_dataBox.style.display = "none";
         this.div_dataBox.lastElementChild.innerHTML = "";
