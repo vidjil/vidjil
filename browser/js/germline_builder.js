@@ -21,18 +21,23 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
+/** 
+ * GermlineList - store a raw list of germline unsorted and unfiltered
+ * @class GermlineList
+ * @constructor 
+ * */
 function GermlineList () {
     this.list = {}
-    this.init()
+    this.load()
 }
+
 
 GermlineList.prototype = {
     
-    init : function () {
-        this.load();
-    },
-    
-    //load germlines.data file from server
+    /**
+    * retrieve the default germline list from server <br>
+    * germline.js contain a copy of the germline list used if the server is unavailable
+    * */
     load : function () {
         this.fallbackLoad() //just in case
         
@@ -59,6 +64,10 @@ GermlineList.prototype = {
         
     },
     
+    /**
+    * retrieve the default germline list from germline.js <br>
+    * germline.js should be rebuild from time to time to keep thegermlines up to date (if you want to use the browser in offline mode)
+    * */
     fallbackLoad : function () {
         try {
             this.list = germline_data
@@ -68,13 +77,21 @@ GermlineList.prototype = {
         }
     },
     
-    //add a list of custom germlines
+    /**
+    * add a list of germlines to the default germline list<br>
+    * list {object[]} list 
+    * */
     add : function (list) {
         for ( var key in list ) {
             this.list[key] = list[key];
         }
     },
     
+    /**
+     * return the color of a certain germline/system
+     * @param {string} system - system key ('IGH', 'TRG', ...)
+     * @return {string} color
+     * */
     getColor: function (system) {
         if (typeof this.list[system] != 'undefined' && typeof this.list[system].color != 'undefined' ){
             return this.list[system].color
@@ -83,6 +100,11 @@ GermlineList.prototype = {
         }
     },
     
+    /**
+     * return the shortcut of a certain germline/system
+     * @param {string} system - system key ('IGH', 'TRG', ...)
+     * @return {string} shortcut
+     * */
     getShortcut: function (system) {
         if (typeof this.list[system] != 'undefined' && typeof this.list[system].shortcut != 'undefined' ){
             return this.list[system].shortcut
@@ -93,24 +115,34 @@ GermlineList.prototype = {
     
 }
 
+
+/** 
+ * Germline object, contain the list of genes/alleles for a germline <br>
+ * compute some information for each gene(rank/color) and order them <br>
+ * use a model GermlineList object
+ * @param {Model} model - 
+ * @class Germline
+ * @constructor 
+ * */
 function Germline (model) {
     this.m = model
+    this.allele = {};
+    this.gene = {};
+    this.system = ""
 }
 
 Germline.prototype = {
     
-    init : function(){
-        this.allele = {};
-        this.gene = {};
-        this.system = ""
-    },
-    
-    /*
-     * system (igh/trg) / type (V,D,J)
+    /**
+     * load the list of gene <br>
+     * reduce germline size (keep only detected genes in clones) <br>
+     * and add undetected genes (missing from germline)
+     * @param {string} system - system key ('IGH', 'TRG', ...)
+     * @param {string} type - V,D or J
+     * @param {function} callback
      * */
     load : function (system, type, callback) {
         var self = this;
-        this.init()
         
         this.system = system
         name = name.toUpperCase()
