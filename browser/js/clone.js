@@ -21,6 +21,13 @@
  * along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
  */
 
+/**
+ * Clone object, store clone information and provide useful access function
+ * @constructor Clone
+ * @param {object} data - json style object, come directly from .vidjil file
+ * @param {Model} model
+ * @param {integer} index - clone index, it's just the clone position in the model's clone array
+ * */
 function Clone(data, model, index) {
     this.m = model
     this.index = index
@@ -50,9 +57,10 @@ function Clone(data, model, index) {
 Clone.prototype = {
     
     
-    /* return clone name
-     * or return name of the representative sequence of the clone
-     *
+    /** 
+     * return clone's most important name <br>
+     * cluster name > custom_name > segmentation name > window
+     * @return {string} name
      * */
     getName: function () {
         if (this.m.clusters[this.index].name){
@@ -66,9 +74,10 @@ Clone.prototype = {
         }
     }, 
     
-    /* return custom name
+    /**
+     * return custom name <br>
      * or segmentation name
-     *
+     * @return {string} name
      * */
     getSequenceName: function () {
         if (typeof (this.c_name) != 'undefined') {
@@ -78,9 +87,10 @@ Clone.prototype = {
         }
     }, //end getName
 
-    /* return segmentation name "geneV -x/y/-z geneJ",
-     * return a short segmentation name if system == IGH,
-     *
+    /**
+     * return segmentation name "geneV -x/y/-z geneJ", <br>
+     * return a short segmentation name if default segmentation name is too long
+     * @return {string} segmentation name
      * */
     getCode: function () {
         if (typeof (this.sequence) != 'undefined' && typeof (this.name) != 'undefined') {
@@ -95,8 +105,9 @@ Clone.prototype = {
     }, //end getCode
     
     
-    /* give a new custom name to a clone
-     *
+    /**
+     * change/add custom name
+     * @param {string} name
      * */
     changeName: function (newName) {
         console.log("changeName() (clone " + this.index + " <<" + newName + ")");
@@ -111,8 +122,10 @@ Clone.prototype = {
     
 
 
-    /** compute the clone size ( sum of all clones clustered )
-     * @t : tracking point (default value : current tracking point)
+    /**
+     * compute the clone size ( sum of all clones clustered ) at a given time
+     * @param {integer} time - tracking point (default value : current tracking point)
+     * @return {float} size
      * */
     getSize: function (time) {
         time = this.m.getTime(time);
@@ -125,7 +138,12 @@ Clone.prototype = {
         return result;
     }, //end getSize
     
-    
+    /**
+     * compute the clone size (sum of all clones clustered) at a given time <br>
+     * return 'undefined' in case of empty clone <br>
+     * @param {integer} time - tracking point (default value : current tracking point)
+     * @return {float} size
+     * */
     getSizeZero: function (time) {
         time = this.m.getTime(time);
         
@@ -134,7 +152,11 @@ Clone.prototype = {
         return result;
     }, 
     
-    //special getSize for scatterplot (ignore constant)
+    /**
+     * special getSize for scatterplot (ignore constant normalization)<br>
+     * @param {integer} time - tracking point (default value : current tracking point)
+     * @return {float} size
+     * */
     getSize2: function (time) {
         time = this.m.getTime(time)
         
@@ -147,14 +169,23 @@ Clone.prototype = {
     },
     
     
-    /* return the clone size with a fixed number of character
-     * use scientific notation if neccesary
+    /**
+     * return the clone size with a fixed number of character
+     * use notation defined in model
+     * @param {integer} time - tracking point (default value : current tracking point)
+     * @return {string} size
      * */
     getStrSize: function (time) {
         var size = this.getSize(this.m.getTime(time));
         return this.m.formatSize(size, true)
     },
     
+    /**
+     * return the clone's system size
+     * use notation defined in model
+     * @param {integer} time - tracking point (default value : current tracking point)
+     * @return {float} size
+     * */
     getSystemSize: function (time) {
         time = this.m.getTime(time)
         
@@ -168,7 +199,13 @@ Clone.prototype = {
 
         return result
     },
-    
+
+    /**
+     * return the clone's system size with a fixed number of character
+     * use notation defined in model
+     * @param {integer} time - tracking point (default value : current tracking point)
+     * @return {string} size
+     * */
     getStrSystemSize: function (time) {
         time = this.m.getTime(time)
         var size = this.getSystemSize(time);
