@@ -262,7 +262,7 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
                    & ( db.results_file.sequence_file_id == db.sequence_file.id )
                    & ( db.patient.id == id_patient )
                    & ( db.results_file.config_id == id_config )
-                   ).select( orderby=db.sequence_file.id|db.results_file.run_date) 
+                   ).select( orderby=db.sequence_file.id|~db.results_file.run_date) 
     query = []
     sequence_file_id = 0
     for row in query2 : 
