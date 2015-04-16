@@ -13,5 +13,8 @@ $ Keep the same number of windows
 0:==> keep 
 
 $ Same segmentation for the main clone
-2:clone.001.*0 114 118 131 137 180
+2:clone.001.*0 31 38 57 66 111
+
+$ Same representative for the main clone
+2:clone.001.* 112 bp .45. of 247 bp.
 

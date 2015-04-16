@@ -7,5 +7,5 @@ $ Same number of 'V' affectations in both reads
 2:143
 
 $ Only one window
-1:==> found 1 60-window
+1:==> found 1 ..-window
 
