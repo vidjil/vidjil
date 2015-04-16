@@ -72,7 +72,7 @@ Otherwise, such =.vidjil= files can be obtained:
 ** The info panel (upper left panel)
    - analysis :: name of the configuration file used for displaying the data
    - locus :: germline used for analyzing the data. In case of multi-locus
-               data, you can select what locus should be displayed.
+               data, you can select what locus should be displayed (see [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]])
    - sample :: name of the current point (you can change the selected point by clicking on
               another point in the graph). The name can be edited (“edit”).
    - date :: when the run was performed (edit either with “...”, or with the database, on the patient tab)
@@ -253,6 +253,7 @@ There can be several causes leading to bad ratios:
 
    - The data actually contains other germline/locus that what was searched for
       (solution: relauch Vidjil, or ask that we relaunch Vidjil, with the correct germline sequences).
+      See [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for information on the analyzable locus.
 
    - There are incomplete/exceptional recombinations
      (Vidjil can process some of them, config =multi+inc= or command-line option =-i=).

@@ -144,6 +144,7 @@ Germline databases (one -V/(-D)/-J, or -G, or -g option must be given for all co
    This allows in particular to select incomplete rearrangement using custom V or J repertoires with added sequences.
  - The =-g germline/= option launches the analysis on the seven germlines, selecting the best locus for each read.
    Using =-g germline/ -i= stests also some incomplete and unusual recombinations.
+   See [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for information on the analyzable locus.
    Now the seed and window parameters are hard-coded for each germline. In a future release, the mechanism will be more flexible
    and will parse the =germline/germlines.data= file.
 
