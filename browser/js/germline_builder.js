@@ -182,7 +182,7 @@ Germline.prototype = {
                 typeof this.m.clone(i).seg[type2] != "undefined"
             ){
                 var gene=this.m.clone(i).seg[type2];
-                if (this.m.system != "multi" || this.m.clone(i).getSystem() == system){
+                if (this.m.system != "multi" || this.m.clone(i).get('germline') == system){
                     if ( typeof this.allele[gene] != "undefined"){
                         g[gene] = this.allele[gene]
                     }else{

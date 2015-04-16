@@ -491,7 +491,7 @@ Report.prototype = {
             var seqJ = seq.substring(seg['3start'])
 
             $('<span/>', {'class': 'v_gene', 'text': seqV}).appendTo(sequence);
-            if (this.m.clone(cloneID).getD() != "undefined D"){
+            if (this.m.clone(cloneID).getGene("4") != "undefined D"){
                 var seqN1 = seq.substring(seg['5end'] + 1, seg['4start'])
                 var seqD = seq.substring(seg['4start'] , seg['4end'] + 1)
                 var seqN2 = seq.substring(seg['4end'] + 1, seg['3start'])

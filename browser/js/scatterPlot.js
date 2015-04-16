@@ -805,16 +805,16 @@ ScatterPlot.prototype = {
         //split clones into bar (axisX)
         switch (this.splitX) {
             case "allele_v" :
-                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getV()}, Object.keys(self.m.germlineV.allele))
+                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getGene("5")}, Object.keys(self.m.germlineV.allele))
                 break;
             case "gene_v" :
-                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getV(false)}, Object.keys(self.m.germlineV.gene))
+                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getGene("5",false)}, Object.keys(self.m.germlineV.gene))
                 break;
             case "allele_j" :
-                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getJ()}, Object.keys(self.m.germlineJ.allele))
+                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getGene("3")}, Object.keys(self.m.germlineJ.allele))
                 break;
             case "gene_j" :
-                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getJ(false)}, Object.keys(self.m.germlineJ.gene))
+                this.makeBarTab(function(cloneID){return self.m.clone(cloneID).getGene("3",false)}, Object.keys(self.m.germlineJ.gene))
                 break;
             default :
                 if (typeof this.available_axis[this.splitX])
@@ -823,19 +823,19 @@ ScatterPlot.prototype = {
         }
         
         //sort each bar (axisY)
-        this.sortBarTab(function(a){return self.m.clone(a).getJ()});
+        this.sortBarTab(function(a){return self.m.clone(a).getGene("3")});
         switch (this.splitY) {
             case "allele_v" :
-                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getV()});
+                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getGene("5")});
                 break;
             case "gene_v" :
-                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getV(false)});
+                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getGene("5",false)});
                 break;
             case "allele_j" :
-                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getJ()});
+                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getGene("3")});
                 break;
             case "gene_j" :
-                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getJ(false)});
+                this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getGene("3",false)});
                 break;
             default :
                 if (typeof this.available_axis[this.splitY])
@@ -854,7 +854,7 @@ ScatterPlot.prototype = {
         if (typeof values == "undefined"){
             for (var i in this.m.clones) {
                 var clone = this.m.clone(i)
-                if (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.getSystem() ) ){
+                if (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.get('germline') ) ){
                     var v;
                     try{
                         var v = fct(i);
@@ -876,7 +876,7 @@ ScatterPlot.prototype = {
         
         for (var i in this.m.clones) {
             var clone = this.m.clone(i)
-            if (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.getSystem() ) ){
+            if (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.get('germline') ) ){
                 var v;
                 try{
                     var v = fct(i);
@@ -1445,7 +1445,7 @@ ScatterPlot.prototype = {
             this.nodes[cloneID].s = 0
         }
         var sys = this.m.clone(cloneID)
-            .getSystem()
+            .get('germline')
         if (this.use_system_grid && this.m.system == "multi" && typeof sys != 'undefined' && sys != this.m.germlineV.system) {
             this.nodes[cloneID].x2 = this.systemGrid[sys].x * this.resizeW;
             this.nodes[cloneID].y2 = this.systemGrid[sys].y * this.resizeH;

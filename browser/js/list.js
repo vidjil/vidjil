@@ -479,7 +479,7 @@ List.prototype = {
         
         div_elem.appendChild(span_cluster);
         if (this.m.system=="multi") {
-            var system = this.m.clone(cloneID).getSystem()
+            var system = this.m.clone(cloneID).get('germline')
             div_elem.appendChild(this.m.systemBox(system));
         }
         div_elem.appendChild(span_name);
@@ -553,7 +553,7 @@ List.prototype = {
                 
                 var r = 100
                 if (clusterSize != 0) {
-                    span_stat.appendChild(document.createTextNode( (this.m.clone(id).getSequenceReads(this.m.t)*100/clusterReads).toFixed(1) + "%"));
+                    span_stat.appendChild(document.createTextNode( (this.m.clone(id).get('reads', this.m.t)*100/clusterReads).toFixed(1) + "%"));
                 } else {
                     span_stat.appendChild(document.createTextNode("0%"))
                 }
@@ -811,15 +811,15 @@ List.prototype = {
             var cloneB = self.m.clone(idB)
             
             //sort by system
-            var systemA = cloneA.getSystem()
+            var systemA = cloneA.get('germline')
             if (typeof systemA == "undefined") systemA = "";
-            var systemB = cloneB.getSystem()
+            var systemB = cloneB.get('germline')
             if (typeof systemB == "undefined") systemB = "";
             if (systemA != systemB) return systemA.localeCompare(systemB);
             
             //sort by V
-            var vA = cloneA.getV(true)
-            var vB = cloneB.getV(true)
+            var vA = cloneA.getGene("5",true)
+            var vB = cloneB.getGene("5",true)
             return vA.localeCompare(vB);
             
         })
@@ -844,15 +844,15 @@ List.prototype = {
             var cloneB = self.m.clone(idB)
             
             //sort by system
-            var systemA = cloneA.getSystem()
+            var systemA = cloneA.get('germline')
             if (typeof systemA == "undefined") systemA = "";
-            var systemB = cloneB.getSystem()
+            var systemB = cloneB.get('germline')
             if (typeof systemB == "undefined") systemB = "";
             if (systemA != systemB) return systemA.localeCompare(systemB);
             
             //sort by J
-            var jA = cloneA.getJ(true)
-            var jB = cloneB.getJ(true)
+            var jA = cloneA.getGene("3",true)
+            var jB = cloneB.getGene("3",true)
             return jA.localeCompare(jB);
                 
         })

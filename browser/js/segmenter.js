@@ -486,7 +486,7 @@ Segment.prototype = {
                 request += ">" + c.getName() + "\n" + c.id + "\n";
             }
             if (c.getSize()>max){
-                system=c.getSystem()
+                system=c.get('germline')
                 max=c.getSize()
             }
         }

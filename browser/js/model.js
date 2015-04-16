@@ -174,7 +174,7 @@ Model.prototype = {
             var max = 0;
             for (var i=0; i<this.clones.length; i++){
                 var clone_size = this.clone(i).getSize()
-                var clone_system = this.clone(i).getSystem()
+                var clone_system = this.clone(i).get('germline')
                 if (clone_size>max && typeof clone_system != "undefined"){
                     max = clone_size
                     system = clone_system
@@ -796,7 +796,7 @@ Model.prototype = {
         // unactive clones from unselected system
         if (this.system == "multi") {
             for (var i = 0; i < this.clones.length; i++) {
-                if (this.system_selected.indexOf(this.clone(i).getSystem()) == -1) {
+                if (this.system_selected.indexOf(this.clone(i).get('germline')) == -1) {
                     this.clones[i].disable()
                 }
             }
@@ -955,7 +955,7 @@ Model.prototype = {
                 if (this.clone(i).isActive()) {
                     for (var k = 0; k < this.clusters[i].length; k++) {
                         if (this.clusters[i][k] != this.clones.length - 1)
-                            other[j] -= this.clone(this.clusters[i][k]).getSequenceReads(j);
+                            other[j] -= this.clone(this.clusters[i][k]).get('reads', j);
                     }
                 }
             }

@@ -333,7 +333,7 @@ Model_loader.prototype = {
         self.system_selected = [];
         self.system_available = [];
         for (var i = 0; i < this.clones.length; i++) {
-            var system = this.clone(i).getSystem()
+            var system = this.clone(i).get('germline')
             if (typeof system != "undefined" && self.system_available.indexOf(system) ==-1){
                 self.system_available.push(system)
             }

@@ -271,7 +271,7 @@ Clone.prototype = {
         time = this.m.getTime(time)
         
         if (this.m.reads.segmented[time] == 0 ) return 0
-        var result = this.getSequenceReads(time) / this.m.reads.segmented[time]
+        var result = this.get('reads',time) / this.m.reads.segmented[time]
         
         if (this.norm) {
             result = this.m.normalize(result, time)
@@ -298,27 +298,8 @@ Clone.prototype = {
 
     }, //end getSize
 
-    /* 
-     *
-     * */
-    getSequenceReads: function (time) {
-        time = this.m.getTime(time)
-        return this.reads[time];
 
-    }, //end getSequenceSize
     
-    
-    
-    
-    
-    
-    
-    
-    getSystem: function () {
-        if (typeof (this.germline) != 'undefined') {
-            return this.germline;
-        }
-    }, 
     
     getGene: function (type, withAllele) {
         withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
@@ -523,7 +504,7 @@ Clone.prototype = {
         html += "<tr><td> length </td><td colspan='" + time_length + "'>" + this.getSequenceLength() + "</td></tr>"
         html += "<tr><td> size (n-reads (total reads) )</td>"
         for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.getSequenceReads(this.m.samples.order[i]) + 
+            html += "<td>" + this.get('reads',this.m.samples.order[i]) + 
                     "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")</td>"
         }
         html += "</tr>"
@@ -557,7 +538,7 @@ Clone.prototype = {
         html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.sequence + "</td></tr>"
         html += "<tr><td> id </td><td colspan='" + time_length + "'>" + this.id + "</td></tr>"
         html += "<tr><td> 5 </td><td colspan='" + time_length + "'>" + this.getGene("5") + "</td></tr>"
-        html += "<tr><td> 4 </td><td colspan='" + time_length + "'>" + this.getgene("4") + "</td></tr>"
+        html += "<tr><td> 4 </td><td colspan='" + time_length + "'>" + this.getGene("4") + "</td></tr>"
         html += "<tr><td> 3 </td><td colspan='" + time_length + "'>" + this.getGene("3") + "</td></tr>"
         
         
@@ -581,7 +562,7 @@ Clone.prototype = {
     },
     
     toCSV: function () {
-        var csv = this.getName() + "," + this.id + "," + this.getSystem() + "," + this.getTagName() + "," 
+        var csv = this.getName() + "," + this.id + "," + this.get('germline') + "," + this.getTagName() + "," 
                 + this.getGene("5") + "," + this.getGene("4") + "," + this.getGene("3") + "," + this.getSequence()
         
         for (var i=0; i<this.m.samples.order.length; i++) csv += "," + this.getReads(this.m.samples.order[i])
