@@ -26,12 +26,12 @@
 /**
  * Axis object contain labels and their position on an axis (from 0 to 1) <br>
  * can provide the position of a clone on it
+ * @constructor
  * @param {Model} model 
  * @reverse {boolean} reverse - by default axis go from low to high but can be revsersed
  * */
 function Axis (model, reverse) {
     this.m = model
-    this.pos = function() {return 0};
     this.labels = [];
     this.reverse = reverse;
 }
@@ -43,6 +43,16 @@ Axis.prototype = {
      * */
     init: function() {
         this.labels = [];
+    },
+    
+    /**
+     * for a clone's index will return a value between 0 and 1 representing the clone's position on this axis. <br>
+     * this function is empty and will be overided depending on what the axis must represent.
+     * @param {integer} cloneID - clone index
+     * @return {float} pos - clone's position
+     * */
+    pos : function(cloneID) {
+        return 0;
     },
     
     /**
@@ -123,41 +133,16 @@ Axis.prototype = {
         self.labels.push(self.label("line", ((total_gene+0.5)/(total_gene+1)), "?", ""));
     },
     
-    
-    /** use clone size
-     * 
+    /**
+     * compute axis using a given function <br>
+     * find min/max value possible with the given function and use them as range <br>
+     * TODO make it works with non numerical value
+     * @param {function} fct - must take a clone index in arg and return a numerical value
+     * @param {number|function} default_min - the minimal boundary can't be over default_min 
+     * @param {number|function} default_min - the maximal boundary can't be under default_max
+     * @param {boolean} percent - display label as percent ( value 1 => 100%)
+     * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * */
-    useSize: function (other) {
-        this.init()
-        var self = this;
-        this.sizeScale = d3.scale.log()
-            .domain([this.m.min_size, 1])
-            .range([1, 0]);
-            
-        //clone position
-        this.pos = function(cloneID) {
-            var time = other ? self.m.tOther : self.m.t
-            var size = self.m.clone(cloneID).getSize(time)
-            if (size !=0 ) {
-                return self.sizeScale(size);
-            }else{
-                return 1;
-            }
-        }
-        
-        //labels
-        var h=1
-        for (var i = 0; i < 10; i++) {
-            var pos = this.sizeScale(h);
-            var text = this.m.formatSize(h, false)
-            if (pos >= 0 && pos <= 1)
-            this.labels.push(this.label("line", pos, text));
-            h = h / 10;
-        }
-     
-    },
-    
-    
     custom: function(fct, default_min, default_max, percent, use_log){
         percent = typeof percent !== 'undefined' ? percent : false;
         use_log= typeof percent !== 'undefined' ? use_log : false;
@@ -219,8 +204,13 @@ Axis.prototype = {
         this.computeCustomLabels(min, max, percent, use_log)
     },
     
-    /*
-     * TODO linear/log percent/value parameter
+    /**
+     * reset and build labels <br>
+     * TODO make it works with non numerical value
+     * @param {number} min - minimal label value
+     * @param {number} max - maximal label value
+     * @param {boolean} percent - display label as percent ( value 1 => 100%)
+     * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * */
     computeCustomLabels: function(min, max, percent, use_log){
         this.labels = [];
@@ -252,6 +242,10 @@ Axis.prototype = {
         }
     },
     
+    /**
+     * add labels for barplot <br>
+     * @param {Array} tab - barplot descriptor like the one made by Model.computeBarTab()
+     * */
     computeCustomBarLabels : function (tab) {
         this.labels = [];
         var length = Object.keys(tab).length;
@@ -261,7 +255,7 @@ Axis.prototype = {
         var i=1
         for (var e in tab){
             if (i%step == 0 ){ 
-                var pos = this.posBarLabel(i, length)
+                var pos = (i-0.5)/length ;
                 if (this.reverse) pos = 1 - pos; 
                 this.labels.push(this.label("line", pos, e));
             }
@@ -273,4 +267,5 @@ Axis.prototype = {
     posBarLabel : function (i, length) {
         return (i-0.5)/length ;
     }
+
 }
