@@ -282,43 +282,6 @@ Clone.prototype = {
         }
     }, 
     
-    
-    getV: function (withAllele) {
-        withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
-        if (typeof (this.seg) != 'undefined' && typeof (this.seg["5"]) != 'undefined') {
-            if (withAllele) {
-                return this.seg["5"]
-            }else{
-                return this.seg["5"].split('*')[0];
-            }
-        }
-        return "undefined V";
-    },
-    
-    getD: function (withAllele) {
-        withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
-        if (typeof (this.seg) != 'undefined' && typeof (this.seg["4"]) != 'undefined') {
-            if (withAllele) {
-                return this.seg["4"]
-            }else{
-                return this.seg["4"].split('*')[0];
-            }
-        }
-        return "undefined D";
-    },
-
-    getJ: function (withAllele) {
-        withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
-        if (typeof (this.seg) != 'undefined' && typeof (this.seg["3"]) != 'undefined') {
-            if (withAllele) {
-                return this.seg["3"]
-            }else{
-                return this.seg["3"].split('*')[0];
-            }
-        }
-        return "undefined J";
-    },
-    
     getGene: function (type, withAllele) {
         withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
         if (typeof (this.seg) != 'undefined' && typeof (this.seg[type]) != 'undefined') {
@@ -328,7 +291,14 @@ Clone.prototype = {
                 return this.seg[type].split('*')[0];
             }
         }
-        return "undefined";
+        switch (type) {
+            case "5" :
+                return "undefined V";
+            case "4" :
+                return "undefined D";
+            case "3" :
+                return "undefined J";
+        }
     },
     
     getNlength: function () {
@@ -447,17 +417,17 @@ Clone.prototype = {
             this.color =  this.m.tag[this.getTag()].color;
         }else if (this.m.colorMethod == "dbscan"){
             this.color =  this.colorDBSCAN;
-        }else if (this.m.colorMethod == "V" && this.getV() != "undefined V"){
+        }else if (this.m.colorMethod == "V" && this.getGene("5") != "undefined V"){
             this.color = "";
-            var allele = this.m.germlineV.allele[this.getV()]
+            var allele = this.m.germlineV.allele[this.getGene("5")]
             if (typeof allele != 'undefined' ) this.color = allele.color;
-        }else if (this.m.colorMethod == "D" && this.getD() != "undefined D"){
+        }else if (this.m.colorMethod == "D" && this.getGene("4") != "undefined D"){
             this.color = "";
-            var allele = this.m.germlineD.allele[this.getD()]
+            var allele = this.m.germlineD.allele[this.getGene("4")]
             if (typeof allele != 'undefined' ) this.color = allele.color;
-        }else if (this.m.colorMethod == "J" && this.getJ() != "undefined J"){
+        }else if (this.m.colorMethod == "J" && this.getGene("3") != "undefined J"){
             this.color = "";
-            var allele = this.m.germlineJ.allele[this.getJ()]
+            var allele = this.m.germlineJ.allele[this.getGene("3")]
             if (typeof allele != 'undefined' ) this.color = allele.color;
         }else if (this.m.colorMethod == "N"){
             this.color =  this.colorN;
@@ -548,9 +518,9 @@ Clone.prototype = {
         
         html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.sequence + "</td></tr>"
         html += "<tr><td> id </td><td colspan='" + time_length + "'>" + this.id + "</td></tr>"
-        html += "<tr><td> 5 </td><td colspan='" + time_length + "'>" + this.getV() + "</td></tr>"
-        html += "<tr><td> 4 </td><td colspan='" + time_length + "'>" + this.getD() + "</td></tr>"
-        html += "<tr><td> 3 </td><td colspan='" + time_length + "'>" + this.getJ() + "</td></tr>"
+        html += "<tr><td> 5 </td><td colspan='" + time_length + "'>" + this.getGene("5") + "</td></tr>"
+        html += "<tr><td> 4 </td><td colspan='" + time_length + "'>" + this.getgene("4") + "</td></tr>"
+        html += "<tr><td> 3 </td><td colspan='" + time_length + "'>" + this.getGene("3") + "</td></tr>"
         
         
         //other info (clntab)
@@ -574,7 +544,7 @@ Clone.prototype = {
     
     toCSV: function () {
         var csv = this.getName() + "," + this.id + "," + this.getSystem() + "," + this.getTagName() + "," 
-                + this.getV() + "," + this.getD() + "," + this.getJ() + "," + this.getSequence()
+                + this.getGene("5") + "," + this.getGene("4") + "," + this.getGene("3") + "," + this.getSequence()
         
         for (var i=0; i<this.m.samples.order.length; i++) csv += "," + this.getReads(this.m.samples.order[i])
         for (var i=0; i<this.m.samples.order.length; i++) csv += "," + this.getSize(this.m.samples.order[i])
