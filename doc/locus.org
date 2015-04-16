@@ -1,0 +1,42 @@
+#+TITLE: Vidjil -- Analyzed locus
+#+AUTHOR: The Vidjil team (Mathieu, Mikaël, Marc and Tatiana)
+#+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
+#+OPTIONS: toc:nil
+
+The Vidjil browser is able to display multi-locus data, as long as this information
+is provided in the =.vidjil= file computed by the analysis program.
+The Vidjil algorithm currently analyzes the following locus,
+selecting the best locus for each read.
+
+
+|----------------------+-------+-------------------------+--------+-----------------------------------|
+|                      |       | complete recombinations |        | incomplete/special recombinations |
+|----------------------+-------+-------------------------+--------+-----------------------------------|
+|                      | *TRA* | Va-Ja                   |        |                                   |
+|                      | *TRB* | Vb-(Db)-Jb              |        |                                   |
+|                      | *TRD* | Vd-(Dd)-Jd              | *TRD+* | Vd-Dd3, Dd2-Jd, Dd2-Dd3           |
+|                      |       |                         | *VdJa* | Vd-(Dd)-Ja                        |
+|                      | *TRG* | Vg-Jg                   |        |                                   |
+|----------------------+-------+-------------------------+--------+-----------------------------------|
+|                      | *IGH* | Vh-(Dh)-Jh              | *IGH+* | Dh-Jh                             |
+|                      | *IGL* | Vl-Jl                   |        |                                   |
+|                      | *IGK* | Vk-Jk                   | *IGK+* | Vk-KDE, INTRON-KDE                |
+|----------------------+-------+-------------------------+--------+-----------------------------------|
+| command-line option  |       | =-g germline=           |        | =-g germline -i=                  |
+| server configuration |       | =multi=                 |        | =multi+inc=                       |
+|----------------------+-------+-------------------------+--------+-----------------------------------|
+
+
+The detection of complete recombinations is reliable and should work provided that the reads
+are long enough (especially the J region).
+
+The detection of incomplete/special recombinaisons is more challenging and may fail in some cases.
+In particular, as D genes may be very short, detecting TRD+ (Dd2/Dd3) and IGH+ (Dh-Jh) recombinations
+require to have reads with fairly conserved D genes.
+
+/Development note./
+The algorithm parameters are hard-coded for each locus, it is defined in the =algo/core/germline.cpp= files.
+In a future release, the mechanism will be more flexible and will parse the =germline/germlines.data= file.
+
+
+
