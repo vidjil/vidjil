@@ -25,6 +25,7 @@ function Clone(data, model, index) {
     this.m = model
     this.index = index
     this.split = false
+    this.seg = {};
     var key = Object.keys(data)
     
     for (var i=0; i<key.length; i++ ){
@@ -583,14 +584,19 @@ Clone.prototype = {
         return this.index == this.m.focus
     },
     
-    get: function (field_name) {
+    get: function (field_name, time) {
         if (typeof this[field_name] != 'undefined'){
-            return this[field_name]
+            var field = this[field_name]
+        }else if (typeof this.seg[field_name] != 'undefined'){
+            var field = this.seg[field_name]
         }
-        if (typeof this.seg != 'undefined' && typeof this.seg[field_name] != 'undefined'){
-            return this.seg[field_name]
+        
+        if (typeof field != 'object'){
+            return field;
+        }else{
+            time = this.m.getTime(time)
+            return field[time]
         }
-        return 'undefined'
     }
     
 }
