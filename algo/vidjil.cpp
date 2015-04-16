@@ -98,8 +98,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 // "tests/data/leukemia.fa" 
 
 #define DEFAULT_K      0
-#define DEFAULT_W      40
-#define DEFAULT_W_D    60
+#define DEFAULT_W      50
 #define DEFAULT_SEED   ""
 
 #define DEFAULT_DELTA_MIN  -10
@@ -179,7 +178,7 @@ void usage(char *progname, bool advanced)
 #endif
        << "  -m <int>      minimal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MIN << ") (default with -D: " << DEFAULT_DELTA_MIN_D << ")" << endl
        << "  -M <int>      maximal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MAX << ") (default with -D: " << DEFAULT_DELTA_MAX_D << ")" << endl
-       << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ") (default with -D: " << DEFAULT_W_D << ")" << endl
+       << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ")" << endl
        << "  -e <float>    maximal e-value for determining if a segmentation can be trusted (default: " << THRESHOLD_NB_EXPECTED << ")" << endl
        << endl
 
@@ -286,8 +285,7 @@ int main (int argc, char **argv)
   string comp_filename = COMP_FILENAME;
 
   int k = DEFAULT_K ;
-  int w = 0 ;
-  int default_w = DEFAULT_W ;
+  int w = DEFAULT_W ;
 
   int epsilon = DEFAULT_EPSILON ;
   int minPts = DEFAULT_MINPTS ;
@@ -383,7 +381,6 @@ int main (int argc, char **argv)
 	f_reps_D.push_back(optarg);
 	delta_min = DEFAULT_DELTA_MIN_D ;
 	delta_max = DEFAULT_DELTA_MAX_D ;
-	default_w = DEFAULT_W_D ;
 	break;
         
       case 'J':
@@ -425,7 +422,6 @@ int main (int argc, char **argv)
               f_reps_D.push_back(putative_f_rep_D.c_str()) ;
               delta_min = DEFAULT_DELTA_MIN_D ;
               delta_max = DEFAULT_DELTA_MAX_D ;
-              default_w = DEFAULT_W_D ;
             }
         }
 	f_reps_J.push_back((germline_system + "J.fa").c_str()) ;
@@ -582,11 +578,6 @@ int main (int argc, char **argv)
       exit(1);
     }
 
-  // If there was no -w option, then w is either DEFAULT_W or DEFAULT_W_D
-  if (w == 0)
-    w = default_w ;
-
-  
   if (options_s_k > 1)
     {
       cerr << ERROR_STRING << "Use at most one -s or -k option." << endl ;
