@@ -1,6 +1,4 @@
 
-var console = new Com(console)
-
 test("graph: svg path builder", function() {
     var m = new Model(m);
     m.parseJsonData(json_data,100)

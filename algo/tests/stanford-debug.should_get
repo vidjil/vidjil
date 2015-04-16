@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -r 5 -o out2 -u -U -v -G ../../germline/IGH ../../data/Stanford_S22.fasta ; tail out2/Stanford_S22.segmented.vdj.fa ; grep UNSEG out2/Stanford_S22.unsegmented.vdj.fa
+!LAUNCH: ../../vidjil -w 60 -r 5 -o out2 -u -U -v -G ../../germline/IGH ../../data/Stanford_S22.fasta ; tail out2/Stanford_S22.segmented.vdj.fa ; grep UNSEG out2/Stanford_S22.unsegmented.vdj.fa
 # Testing uncommon and debug options 
 
 $ verbose (-v)

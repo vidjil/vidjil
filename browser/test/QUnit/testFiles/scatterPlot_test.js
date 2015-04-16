@@ -1,6 +1,4 @@
 
-var console = new Com(console)
-
 test("scatterplot : grid", function() {
     var m = new Model(m);
     m.parseJsonData(json_data,100)
