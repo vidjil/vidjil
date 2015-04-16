@@ -158,7 +158,7 @@ Window prediction
                 (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)
   -m <int>      minimal admissible delta between last V and first J k-mer (default: -10) (default with -D: 0)
   -M <int>      maximal admissible delta between last V and first J k-mer (default: 20) (default with -D: 80)
-  -w <int>      w-mer size used for the length of the extracted window (default: 40)(default with -D: 60)
+  -w <int>      w-mer size used for the length of the extracted window (default: 50)
   -e <float>    maximal e-value for determining if a segmentation can be trusted (default: 'all', no limit)
 #+END_EXAMPLE
 
@@ -166,18 +166,19 @@ The =-s=, =-k=, =-m= and =-M= options are the options of the seed-based heuristi
 explanation can be found in the paper. These options are for advanced usage, the defaults values should work.
 
 The =-w= option fixes the size of the "window" that is the main
-identifier to gather clones. The defaults values (40 for VJ, 60 for
-VDJ recombinations) were selected to ensure a high-quality clone gathering. The
+identifier to gather clones. The default value (=-w 50=) was selected
+to ensure a high-quality clone gathering. The
 high-throughput heuristic predicts the center of the "window" that may
 be shifted by a few bases from the actual "center" of the CDR3 (for TRG,
 less than 15 bases compared to the IMGT/V-QUEST or IgBlast prediction
 in >99% of cases). The extracted window should be large enough to
 fully contain the CDR3 as well as some part of the end of the V and
-the start of the J to uniquely identify a clone.
+the start of the J, or at least some specific N region, to uniquely identify a clone.
 
-Setting =-w= to 30 for VJ and 50 for VDJ recombinations may "segment" (analyze) a
-few more reads, but may in some rare cases falsely cluster reads from
-different clones.  Setting =-w= to lower values is not recommended.
+Setting =-w= to lower values may "segment" (analyze) a few more reads, depending
+on the read length of your data, but may in some rare cases falsely cluster reads from
+different clones. The =-w 40= option is usually safe, and =-w 30= can also be tested.
+Setting =-w= to lower values is not recommended.
 
 The =-e= option sets the maximal e-value accepted for segmenting a sequence.
 It is an upper bound on the number of exepcted windows found by chance by the seed-based heuristic.
