@@ -14,11 +14,14 @@ def info():
 
     if 'next' in request.vars:
         try:
-            new_id = request.vars["id"]
-            new_id = str(int(new_id)+int(request.vars["next"]))
-            while db.patient[new_id] is None and int(new_id) > 0:
-                new_id = str(int(new_id)+int(request.vars["next"]))
-            request.vars["id"] = new_id
+            current_id = request.vars["id"]
+            go_next = int(request.vars['next'])
+            if go_next > 0:
+                res = db(db.patient.id > current_id).select(db.patient.id, orderby=db.patient.id, limitby=(0,1))
+            else:
+                res = db(db.patient.id < current_id).select(db.patient.id, orderby=~db.patient.id, limitby=(0,1))
+            if (len(res) > 0):
+                request.vars["id"] = str(res[0].id)
         except:
             pass
 
