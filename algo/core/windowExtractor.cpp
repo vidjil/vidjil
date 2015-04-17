@@ -152,7 +152,12 @@ void WindowExtractor::out_stats(ostream &out)
 {
   for (int i=0; i<STATS_SIZE; i++)
     {
-      if (i == TOTAL_SEG_AND_WINDOW)
+      // stats[NOT_PROCESSED] should equal to 0
+      if (i == NOT_PROCESSED && (!stats[i].nb))
+        continue;
+
+      // Pretty-print
+      if (i == UNSEG_TOO_SHORT)
 	out << endl;
       out << stats[i] << endl ;
     }
