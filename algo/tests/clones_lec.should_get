@@ -4,7 +4,7 @@ $ Extract 50bp windows (TRG)
 1:found . 50-windows
 
 $ Find the good number of windows
-1: found 2 .* in 4 segments .* inside 7 sequences
+1: found 2 .* in 4 reads .* 7 reads
 
 $ Find the good statistics on TRG
 1: TRG .* -> .* 7 .* 84.0 .* 2 .* 2.0

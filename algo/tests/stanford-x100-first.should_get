@@ -1,4 +1,4 @@
 !LAUNCH: ../../vidjil -x 100 -G ../../germline/IGH ../../data/Stanford_S22.fasta
 
 $ Analyze the good number of sequences in Stanford S22 
-1: found 98 ..-windows in 99 segments .99.. inside 100 sequences
+1: found 98 ..-windows in 99 reads .99. of 100 reads

@@ -8,4 +8,4 @@ $ Find the good number of segmented sequences (including "too short sequences")
 1: junction detected in 13148 reads .100%.
 
 $ Find the good number of windows of size 100 in Stanford S22
-1: found 9800 100-windows in 10931 segments
+1: found 9800 100-windows in 10931 reads
