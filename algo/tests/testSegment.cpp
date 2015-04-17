@@ -121,9 +121,9 @@ void testSegmentationCause() {
       TAP_TEST(ks.getLeft() == 17, TEST_KMER_LEFT, "left = " << ks.getLeft());
       TAP_TEST(ks.getRight() == 18, TEST_KMER_RIGHT, "right = " << ks.getRight());
 
-      ks.setSegmentationStatus(DONT_KNOW);
+      ks.setSegmentationStatus(NOT_PROCESSED);
       TAP_TEST(! ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, "");
-      TAP_TEST(ks.getSegmentationStatus() == DONT_KNOW, TEST_SET_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.getSegmentationStatus() == NOT_PROCESSED, TEST_SET_SEGMENTATION_CAUSE, "");
       ks.setSegmentationStatus(UNSEG_NOISY);
       TAP_TEST(! ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, "");
       TAP_TEST(ks.getSegmentationStatus() == UNSEG_NOISY, TEST_SET_SEGMENTATION_CAUSE, "");
@@ -240,7 +240,7 @@ void testExtractor() {
   TAP_TEST(we.getNbSegmented(UNSEG_TOO_FEW_J) == 2, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(UNSEG_BAD_DELTA_MIN) == 0, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(UNSEG_BAD_DELTA_MAX) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
-  TAP_TEST(we.getNbSegmented(TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW) == 2, TEST_EXTRACTOR_NB_SEGMENTED, "");
+  TAP_TEST(we.getNbSegmented(UNSEG_TOO_SHORT_FOR_WINDOW) == 2, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(TOTAL_SEG_AND_WINDOW) == 3, TEST_EXTRACTOR_NB_SEGMENTED, "");
 
   TAP_TEST(we.getAverageSegmentationLength(SEG_PLUS) == 41.25, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(SEG_PLUS));
@@ -251,7 +251,7 @@ void testExtractor() {
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_FEW_V) == 51, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_FEW_J) == 55, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_BAD_DELTA_MAX) == 66, TEST_EXTRACTOR_AVG_LENGTH, "");
-  TAP_TEST(we.getAverageSegmentationLength(TOTAL_SEG_BUT_TOO_SHORT_FOR_THE_WINDOW) == 28.5, TEST_EXTRACTOR_AVG_LENGTH, "");
+  TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW) == 28.5, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST(we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW) == 48, TEST_EXTRACTOR_AVG_LENGTH, "");
 
   TAP_TEST(out_seg.tellp() > 0, TEST_EXTRACTOR_OUT_SEG, "");
