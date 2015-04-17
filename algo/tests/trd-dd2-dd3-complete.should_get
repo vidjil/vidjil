@@ -1,7 +1,7 @@
 !LAUNCH: ../../vidjil -A -g ../../germline ../../data/trd-dd2-dd3.fa
 
 $ Segment only 2 reads, because there is no -i
-1:segmented 2 reads .40..
+1:junction detected in 2 reads .40..
 
 $ TRDV3*01-TRDD3*01 reported as "UNSEG too few J"
 1:UNSEG too few J  .*-> .*  1  .*  63

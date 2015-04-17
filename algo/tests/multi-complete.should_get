@@ -1,7 +1,7 @@
 !LAUNCH: ../../vidjil -g ../../germline ../../data/multi-complete.fa
 
 $ Segment all the seven reads
-1:segmented 7 reads
+1:junction detected in 7 reads
 
 $ Segment one read on TRA
 1:TRA .* -> .* 1 
