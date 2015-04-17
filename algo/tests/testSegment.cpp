@@ -228,10 +228,11 @@ void testExtractor() {
   we.setUnsegmentedOutput(&out_unseg);
 
   WindowsStorage *ws = we.extract(&data, multi, 30, labels);
+  // we.out_stats(cout);
 
   TAP_TEST(we.getNbReads() == 13, TEST_EXTRACTOR_NB_READS, "");
 
-  TAP_TEST(we.getNbSegmented(SEG_PLUS) == 4, TEST_EXTRACTOR_NB_SEGMENTED, "segPlus: " << we.getNbSegmented(SEG_PLUS));
+  TAP_TEST(we.getNbSegmented(SEG_PLUS) == 2, TEST_EXTRACTOR_NB_SEGMENTED, "segPlus: " << we.getNbSegmented(SEG_PLUS));
   TAP_TEST(we.getNbSegmented(SEG_MINUS) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(UNSEG_TOO_SHORT) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(UNSEG_STRAND_NOT_CONSISTENT) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
@@ -243,7 +244,7 @@ void testExtractor() {
   TAP_TEST(we.getNbSegmented(UNSEG_TOO_SHORT_FOR_WINDOW) == 2, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(TOTAL_SEG_AND_WINDOW) == 3, TEST_EXTRACTOR_NB_SEGMENTED, "");
 
-  TAP_TEST(we.getAverageSegmentationLength(SEG_PLUS) == 41.25, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(SEG_PLUS));
+  TAP_TEST(we.getAverageSegmentationLength(SEG_PLUS) == 54, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(SEG_PLUS));
   TAP_TEST(we.getAverageSegmentationLength(SEG_MINUS) == 36, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_SHORT) == 4, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_STRAND_NOT_CONSISTENT) == 36, TEST_EXTRACTOR_AVG_LENGTH, "");

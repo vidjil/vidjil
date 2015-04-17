@@ -7,8 +7,8 @@ $ Find the good number of windows
 1: found 2 .* in 4 reads .* 7 reads
 
 $ Find the good statistics on TRG
-1: TRG .* -> .* 7 .* 84.0 .* 2 .* 2.0
+1: TRG .* -> .* 4 .* 117.0 .* 2 .* 2.0
 
 $ Find the good length statistics
-1: SEG_+.* 78.5
-1: SEG_-.* 91.3
+3: SEG.* 117.0
+1: UNSEG too short w.* 40.0
