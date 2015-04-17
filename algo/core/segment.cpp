@@ -202,7 +202,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, int multiplier)
   segmented_germline = germline ;
   reversed = false;
   Dend=0;
-  because = 0 ; // Cause of unsegmentation
+  because = NOT_PROCESSED ; // Cause of unsegmentation
   score = 0 ;
   evalue = NO_LIMIT_VALUE;
   evalue_left = NO_LIMIT_VALUE;
@@ -303,7 +303,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, int multiplier)
 	}
     } 
 
-  if (!because)
+  if (because == NOT_PROCESSED)
     {
       // Yes, it is segmented
       segmented = true;
@@ -605,7 +605,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
 {
   segmented = false;
   dSegmented = false;
-  because = 0 ;
+  because = NOT_PROCESSED ;
   segmented_germline = germline ;
   info_extra = "" ;
   label = seq.label ;
@@ -696,7 +696,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
     
   if (!segmented)
     {
-      because = DONT_KNOW;
+      because = NOT_PROCESSED;
       info = " @" + string_of_int (Vend + FIRST_POS) + "  @" + string_of_int(Jstart + FIRST_POS) ;
       
       if (Jstart - Vend < germline->delta_min)
