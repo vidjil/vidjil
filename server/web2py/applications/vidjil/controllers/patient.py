@@ -142,7 +142,7 @@ def custom():
             )
 
     query = db(q).select(
-                db.patient.id, db.patient.info, db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
+                db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name, db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
                 db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
                 db.sequence_file.patient_id, db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
                 db.sequence_file.size_file,
@@ -158,7 +158,9 @@ def custom():
         row.checked = False
         if (str(row.results_file.id) in request.vars["custom_list"]) :
             row.checked = True
-        row.string = (vidjil_utils.anon(row.sequence_file.patient_id, auth.user_id) + row.sequence_file.filename +
+
+        row.names = vidjil_utils.anon_names(row.patient.id, row.patient.first_name, row.patient.last_name)
+        row.string = (row.names + row.sequence_file.filename +
                       str(row.sequence_file.sampling_date) + str(row.sequence_file.pcr) + str(row.config.name) + str(row.results_file.run_date)).lower()
     query = query.find(lambda row : ( vidjil_utils.filter(row.string,request.vars["filter"]) or row.checked) )
     
