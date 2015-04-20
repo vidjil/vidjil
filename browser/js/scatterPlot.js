@@ -1703,6 +1703,8 @@ ScatterPlot.prototype = {
         leg.exit()
             .remove();
         leg.on("click", function(d){
+            if (!d3.event.ctrlKey) 
+                self.m.unselectAll()
             var listToSelect = [];
             var halfRangeColumn = 0.5;
             if (self.axisX.labels.length>1)
@@ -1807,6 +1809,8 @@ ScatterPlot.prototype = {
         leg.exit()
             .remove();
         leg.on("click", function(d){
+            if (!d3.event.ctrlKey) 
+                self.m.unselectAll()
             var listToSelect = [];
             var halfRangeLine = 0.5;
             if (self.axisY.labels.length>1)
