@@ -311,7 +311,6 @@ def index():
         
     keys = result.keys() 
     
-    (auth.can_modify_patient(row['id']) )
     query = db(
         (db.auth_permission.name == "admin") & 
         (db.auth_permission.table_name == "patient") &
