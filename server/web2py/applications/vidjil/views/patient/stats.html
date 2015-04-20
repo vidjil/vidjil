@@ -19,7 +19,7 @@
 
 
         <div class="db_block_right">
-        {{if auth.has_permission("run", "results_file") :}}
+        {{if auth.can_process_file() :}}
             config
             <span>
                 <select id="choose_config" name="config" onchange="db.call('patient/stats', {'config_id' : this.value,

@@ -27,7 +27,7 @@ query = db(
             <input type="checkbox" name="sequence_file" onclick="db.user_rights(this.checked, this.name, 'upload', {{=id}});" {{if auth.has_permission('upload', 'sequence_file', 0, id) :}}{{="checked"}}{{pass}}>
             
             run vidjil
-            <input type="checkbox" name="results_file" onclick="db.user_rights(this.checked, this.name, 'run', {{=id}});" {{if auth.has_permission('run', 'results_file', 0, id) :}}{{="checked"}}{{pass}}>
+            <input type="checkbox" name="results_file" onclick="db.user_rights(this.checked, this.name, 'run', {{=id}});" {{if auth.can_process_file(id) :}}{{="checked"}}{{pass}}>
             
             </br>
             <!--create config <input type="checkbox" name="config" onclick="db.test(this.checked, this.name, {{request.vars["id"]}});"></br>-->

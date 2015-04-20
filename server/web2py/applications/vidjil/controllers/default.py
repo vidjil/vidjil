@@ -122,7 +122,7 @@ def run_request():
         id_config = None
     else:
         id_config = request.vars["config_id"]
-    if not auth.has_permission("run", "results_file") and not auth.has_membership("admin") :
+    if not auth.can_process_file():
         error += "permission needed"
 
     id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
