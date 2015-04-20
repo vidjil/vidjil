@@ -13,7 +13,7 @@ def index():
         row.created = db( db.patient.creator == row.id ).count()
         
         row.access = ''
-        if auth.has_permission('create', 'patient', 0, row.id): row.access += 'c'
+        if auth.can_create_patient(user=row.id): row.access += 'c'
         if auth.can_upload_file(user=row.id): row.access += 'u'
         if auth.can_process_file(user=row.id): row.access += 'r'
 

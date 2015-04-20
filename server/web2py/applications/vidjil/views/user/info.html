@@ -21,7 +21,7 @@ query = db(
     <div class="db_block">
         <div class="db_block_left">
             create patient 
-            <input type="checkbox" name="patient" onclick="db.user_rights(this.checked, this.name, 'create', {{=id}});" {{if auth.has_permission('create', 'patient', 0, id) :}}{{="checked"}}{{pass}}>
+            <input type="checkbox" name="patient" onclick="db.user_rights(this.checked, this.name, 'create', {{=id}});" {{if auth.can_create_patient(id) :}}{{="checked"}}{{pass}}>
             
             upload sequence
             <input type="checkbox" name="sequence_file" onclick="db.user_rights(this.checked, this.name, 'upload', {{=id}});" {{if auth.can_upload_file(user=id) :}}{{="checked"}}{{pass}}>

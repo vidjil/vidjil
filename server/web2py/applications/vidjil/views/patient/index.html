@@ -64,7 +64,7 @@
 </div>
 
 
-{{if auth.has_permission("create", "patient") :}}
+{{if auth.can_create_patient():}}
 <span class="button2" onclick="db.call('patient/add')"> + new patient </span>
 <span class="button2" onclick="db.call('patient/custom', {'filter': '{{=request.vars['filter']}}' })"> compare samples/patients </span>
 {{else:}}

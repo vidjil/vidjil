@@ -417,7 +417,7 @@ def index():
 
 ## return form to create new patient
 def add(): 
-    if (auth.has_permission('create', 'patient') ):
+    if (auth.can_create_patient()):
         return dict(message=T('add patient'))
     else :
         res = {"message": ACCESS_DENIED}
@@ -431,7 +431,7 @@ def add():
 ## redirect to patient list if success
 ## return a flash error message if fail
 def add_form(): 
-    if (auth.has_permission('create', 'patient') ):
+    if (auth.can_create_patient()):
         
         error = ""
         if request.vars["first_name"] == "" :
