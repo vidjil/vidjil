@@ -151,7 +151,7 @@ def permission():
     
 #TODO refactor with patient/change_permission
 def change_permission():
-    if (auth.has_permission('admin', 'config', request.vars["config_id"]) ):
+    if (auth.can_modify_config(request.vars["config_id"]) ):
         error = ""
         if request.vars["group_id"] == "" :
             error += "missing group_id, "
