@@ -18,7 +18,7 @@ def index():
 
     return dict(message=T('Configs'),
                query=query,
-               isAdmin = auth.has_membership("admin"))
+               isAdmin = auth.is_admin())
 
 
 def add(): 

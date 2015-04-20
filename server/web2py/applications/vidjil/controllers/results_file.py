@@ -10,7 +10,7 @@ if request.env.http_origin:
 
 ## return admin_panel
 def index():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
 
         query = db(
             (db.results_file.sequence_file_id==db.sequence_file.id)
@@ -57,7 +57,7 @@ def index():
                     reverse=reverse)
 
 def run_all():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         query = db(
                 (db.results_file_file.sequence_file_id==db.sequence_file.id)
                 & (db.results_file.config_id==db.config.id)

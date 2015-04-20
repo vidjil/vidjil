@@ -107,7 +107,7 @@ def anon_names(patient_id, first_name, last_name, can_view=None):
         name = ln[:3]
 
     # Admins also see the patient id
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         name += ' (%s)' % patient_id
 
     return name

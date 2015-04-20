@@ -278,7 +278,7 @@ def index():
         
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
-    isAdmin = auth.has_membership("admin")
+    isAdmin = auth.is_admin()
     
     ##retrieve patient list 
     query = db(

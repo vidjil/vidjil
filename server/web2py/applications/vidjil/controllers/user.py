@@ -39,7 +39,7 @@ def info():
     return dict(message=T('user info'))
 
 def rights():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         id = request.vars["id"]
         group_id = auth.user_group(id)
         msg = ""

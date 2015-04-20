@@ -14,7 +14,7 @@ if request.env.http_origin:
 
 ## return admin_panel
 def index():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         p = subprocess.Popen(["uptime"], stdout=subprocess.PIPE)
         uptime, err = p.communicate()
         
@@ -50,7 +50,7 @@ def monitor():
     
     
 def showlog():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         
         
         lines = []
@@ -115,7 +115,7 @@ def showlog():
 
 ## to use after change in the upload folder
 def repair_missing_files():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         
         flist = ""
         for row in db(db.sequence_file.id>0 and db.sequence_file.data_file != None).select() : 
@@ -134,7 +134,7 @@ def repair_missing_files():
 
     
 def make_backup():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         
         db.export_to_csv_file(open(defs.DB_BACKUP_FILE, 'wb'))
                 
@@ -144,7 +144,7 @@ def make_backup():
     
     
 def repair():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         
         flist = "fix creator "
         for row in db(db.patient.creator == None).select() : 
