@@ -1706,10 +1706,9 @@ ScatterPlot.prototype = {
             var listToSelect = [];
             var halfRangeColumn = 0.5;
             if (self.axisX.labels.length>1)
-                halfRangeColumn = (self.axisX.labels[1].pos - self.axisX.labels[0].pos)/2;
+                halfRangeColumn = Math.abs((self.axisX.labels[1].pos - self.axisX.labels[0].pos)/2);
             for (n in self.nodes){
                 if (Math.abs(self.axisX.pos(n) - d.pos) < halfRangeColumn)
-                //if (self.axisX.pos(n) == d.pos){
                     listToSelect.push(n);
                 }
                 self.m.multiSelect(listToSelect);
@@ -1811,7 +1810,8 @@ ScatterPlot.prototype = {
             var listToSelect = [];
             var halfRangeLine = 0.5;
             if (self.axisY.labels.length>1)
-                halfRangeLine = (self.axisY.labels[1].pos - self.axisY.labels[0].pos)/2;
+                halfRangeLine = Math.abs((self.axisY.labels[0].pos - self.axisY.labels[1].pos)/2);
+                
             for (n in self.nodes){
                 if (Math.abs(self.axisY.pos(n) - d.pos) < halfRangeLine)
                     listToSelect.push(n);
