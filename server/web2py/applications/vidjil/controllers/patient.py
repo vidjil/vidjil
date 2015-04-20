@@ -95,7 +95,7 @@ def info():
 
     
     log.debug('patient (%s)' % request.vars["id"])
-    if (auth.has_permission('read', 'patient', request.vars["id"]) ):
+    if (auth.can_view_patient(request.vars["id"]) ):
         return dict(query=query,
                     patient=patient,
                     birth=vidjil_utils.anon_birth(request.vars["id"], auth.user.id),

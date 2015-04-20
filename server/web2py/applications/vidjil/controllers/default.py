@@ -168,8 +168,7 @@ def get_data():
         error += "id patient file needed, "
     if not "config" in request.vars:
         error += "id config needed, "
-    if not auth.has_permission('admin', 'patient', request.vars["patient"]) and \
-    not auth.has_permission('read', 'patient', request.vars["patient"]):
+    if not auth.can_view_patient(request.vars["patient"]):
         error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
 
     query = db( ( db.fused_file.patient_id == request.vars["patient"] )
@@ -247,8 +246,7 @@ def get_custom_data():
         for id in request.vars["custom"] :
             sequence_file_id = db.results_file[id].sequence_file_id
             patient_id =db.sequence_file[sequence_file_id].patient_id
-            if not auth.has_permission('admin', 'patient', patient_id) and \
-                not auth.has_permission('read', 'patient', patient_id):
+            if not auth.can_view_patient(patient_id):
                 error += "you do not have permission to consult this patient ("+str(patient_id)+")"
             
     if error == "" :
@@ -291,8 +289,7 @@ def get_analysis():
         error += "id patient file needed, "
     if not "config" in request.vars:
         error += "id config needed, "
-    if not auth.has_permission('admin', 'patient', request.vars["patient"]) and \
-    not auth.has_permission('read', 'patient', request.vars["patient"]):
+    if not auth.can_view_patient(request.vars["patient"]):
         error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
 
     ## empty analysis file
