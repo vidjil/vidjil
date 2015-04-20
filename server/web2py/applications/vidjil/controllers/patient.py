@@ -290,16 +290,12 @@ def index():
     result = {}
     
     for i, row in enumerate(query) :
-        try:
-            ln = unicode(row.last_name, 'utf-8')
-        except UnicodeDecodeError:
-            ln = row.last_name
         result[row.id] = {
             "id" :int(row.id),
             "last_name" : row.last_name,
             "first_name" : row.first_name,
             "has_permission" : False,
-            "name" : ln[:3],
+            "anon_allowed": False,
             "birth" : row.birth,
             "info" : row.info,
             "creator" : row.creator,
@@ -370,19 +366,18 @@ def index():
     for i, row in enumerate(query4) :
         if row.patient.id in keys :
             result[row.patient.id]['group_list'].append(row.auth_group.role.replace('user_','u'))
-            
+
     query5 = db(
-        (db.auth_permission.name == "anon") & 
+        (db.auth_permission.name == "anon") &
         (db.auth_permission.table_name == "patient") &
         (db.patient.id == db.auth_permission.record_id ) &
         (auth.user_group() == db.auth_permission.group_id )
     ).select(
-        db.patient.id, db.patient.last_name, db.patient.first_name
+        db.patient.id
     )
     for i, row in enumerate(query5) :
         if row.id in keys :
-            result[row.id]['name'] = row.last_name + " " + row.first_name
-
+            result[row.id]['anon_allowed'] = True
         
     for key, row in result.iteritems():
         row['most_used_conf'] = max(set(row['conf_id_list']), key=row['conf_id_list'].count)

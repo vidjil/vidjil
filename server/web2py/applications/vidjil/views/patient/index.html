@@ -41,8 +41,7 @@
        {{for row in query :}}
            <tr class="pointer" onclick="db.call('patient/info', {'id' :'{{=row['id']}}' , 'config_id' : {{=row['most_used_conf']}} } )" >
                 <td>
-		     {{ if isAdmin: }} ({{=row['id']}}) {{ pass }}
-                     {{=vidjil_utils.anon_names(row['id'], row['first_name'], row['last_name'])}}
+                     {{=vidjil_utils.anon_names(row['id'], row['first_name'], row['last_name'], row['anon_allowed'])}}
                 </td>
                 <td> {{=row['birth'] }} </td>
                 <td> {{=row['info'] }} </td>
