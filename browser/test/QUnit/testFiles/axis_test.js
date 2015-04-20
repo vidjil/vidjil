@@ -14,19 +14,22 @@ test("Axis : ", function() {
     
     deepEqual(axis.labels,  [], "default axis");
     
-    
-    
     //abundance
-    axis.useSize()
+    axis.custom(function(cloneID){return m.clone(cloneID).getSizeZero()}, 
+                function(){return m.min_size},
+                1,
+                true,
+                true
+    )
     deepEqual(axis.labels,  [
-            {"geneColor": undefined,"pos": 0,"text": "100%", "type": "line"},
+            {"geneColor": undefined,"pos": 1,"text": "100%", "type": "line"},
             {"geneColor": undefined,"pos": 0.5,"text": "10%", "type": "line"},
-            {"geneColor": undefined,"pos": 1,"text": "1%", "type": "line"}
+            {"geneColor": undefined,"pos": 0,"text": "1%", "type": "line"}
         ], "check size labels");
     
-    equal(axis.pos(0).toPrecision(3), 0.651, "clone 0 (5%) position -> 0.651")
+    equal(axis.pos(0).toPrecision(3), 0.349, "clone 0 (5%) position -> 0.651")
     equal(axis.pos(1).toPrecision(3), 0.500, "clone 1 (10%) position -> 0.5")
-    equal(axis.pos(2).toPrecision(3), 0.452, "clone 2 (12.5%) position -> 0.452")
+    equal(axis.pos(2).toPrecision(3), 0.548, "clone 2 (12.5%) position -> 0.452")
     
     axis.m.changeGermline("TRG")
     //germline V
