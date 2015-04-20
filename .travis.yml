@@ -17,19 +17,19 @@ script:
   - g++ --version
   ###
   - echo '"Build..."' && echo -en 'travis_fold:start:script.build\\r'
-  - make COVERAGE=1
+  - make COVERAGE=1 CXXFLAGS='-std=c++11'
   - echo -en 'travis_fold:end:script.build\\r'
   ###
   - echo '"Tests, Algo (unit)..."'  && echo -en 'travis_fold:start:script.test-algo-unit\\r'
-  - make COVERAGE=1 unit
+  - make COVERAGE=1 CXXFLAGS='-std=c++11' unit
   - echo -en 'travis_fold:end:script.test-algo-unit\\r'
   ###
   - echo '"Tests, Algo (functional, .should_get)..."'  && echo -en 'travis_fold:start:script.test-algo-functional\\r'
-  - make COVERAGE=1 should
+  - make COVERAGE=1 CXXFLAGS='-std=c++11' should
   - echo -en 'travis_fold:end:script.test-algo-functional\\r'
   ###
   - echo '"Tests, Algo (functional, .should-vdj.fa)..."'  && echo -en 'travis_fold:start:script.test-algo-functional-vdj\\r'
-  - make COVERAGE=1 shouldvdj
+  - make COVERAGE=1 CXXFLAGS='-std=c++11' shouldvdj
   - echo -en 'travis_fold:end:script.test-algo-functional-vdj\\r'
   ###
   - echo '"Tests, Tools..."'  && echo -en 'travis_fold:start:script.test-tools\\r'
