@@ -258,7 +258,7 @@ ScatterPlot.prototype = {
         this.grpLinks = this.plot_container.append('svg:g')
             .attr('class', 'grpLinks');
 
-        //Initialisation des nodes
+        //Initialisation of nodes
         this.nodes = d3.range(this.m.clones.length)
             .map(Object);
         for (var i = 0; i < this.m.clones.length; i++) {
@@ -1702,7 +1702,18 @@ ScatterPlot.prototype = {
             .append("text");
         leg.exit()
             .remove();
-        leg
+        leg.on("click", function(d){
+            var listToSelect = [];
+            var halfRangeColumn = 0.5;
+            if (self.axisX.labels.length>1)
+                halfRangeColumn = Math.abs((self.axisX.labels[1].pos - self.axisX.labels[0].pos)/2);
+            for (n in self.nodes){
+                if (Math.abs(self.axisX.pos(n) - d.pos) < halfRangeColumn)
+                    listToSelect.push(n);
+                }
+                self.m.multiSelect(listToSelect);
+            delete listToSelect; 
+           })
             .attr("x", function(d) {
                 return self.gridSizeW * d.pos + self.marge_left;
             })
@@ -1795,7 +1806,20 @@ ScatterPlot.prototype = {
             .append("text");
         leg.exit()
             .remove();
-        leg
+        leg.on("click", function(d){
+            var listToSelect = [];
+            var halfRangeLine = 0.5;
+            if (self.axisY.labels.length>1)
+                halfRangeLine = Math.abs((self.axisY.labels[0].pos - self.axisY.labels[1].pos)/2);
+                
+            for (n in self.nodes){
+                if (Math.abs(self.axisY.pos(n) - d.pos) < halfRangeLine)
+                    listToSelect.push(n);
+                }
+            self.m.multiSelect(listToSelect);
+            delete listToSelect; 
+           })
+
             .attr("x", function(d) {
                 if (d.type == "subline") return self.sub_text_position_y;
                 else return self.text_position_y;
