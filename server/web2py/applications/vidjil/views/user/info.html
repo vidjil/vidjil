@@ -48,7 +48,7 @@ query = db(
                     {{if row.auth_group.role[:5] != "user_" :}}
                          <tr>
                             <td>{{=row.auth_group.role}}</td>
-                            <td>{{if auth.has_permission('admin', 'auth_group', row.auth_group.id, request.vars["id"]) :}}
+                            <td>{{if auth.can_modify_group(row.auth_group.id, request.vars["id"]) :}}
                                 admin
                                 {{else:}}
                                 member
