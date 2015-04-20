@@ -6,15 +6,16 @@
 
 {{
 data_count = 0 
+patient_name = vidjil_utils.anon_ids(request.vars["id"])
 query = db( (db.sequence_file.patient_id==request.vars["id"])).select() 
 for row in query :}}
     {{data_count += db(db.results_file.sequence_file_id == row.id).count()}}
 {{pass}}
 <div>
-    <h3>{{=message}}: {{=vidjil_utils.anon(request.vars["id"], auth.user.id)}}
+    <h3>{{=message}}: {{=patient_name}}
     </h3>
     
-    Are you sure you want to delete the patient {{=vidjil_utils.anon(request.vars["id"], auth.user.id)}} ?</br>
+    Are you sure you want to delete the patient {{=patient_name}} ?</br>
     This will delete {{=db(db.sequence_file.patient_id==request.vars["id"]).count()}} sequence file(s) and {{=data_count}} result files.</br>
     This action cannot be undone.
 

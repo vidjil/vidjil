@@ -42,7 +42,7 @@
            <tr class="pointer" onclick="db.call('patient/info', {'id' :'{{=row['id']}}' , 'config_id' : {{=row['most_used_conf']}} } )" >
                 <td>
 		     {{ if isAdmin: }} ({{=row['id']}}) {{ pass }}
-                     {{=row['name']}}
+                     {{=vidjil_utils.anon_names(row['id'], row['first_name'], row['last_name'])}}
                 </td>
                 <td> {{=row['birth'] }} </td>
                 <td> {{=row['info'] }} </td>

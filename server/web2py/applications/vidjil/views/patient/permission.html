@@ -2,7 +2,7 @@
 {{import vidjil_utils}}
 
 <h3>
-    Access to patient {{=vidjil_utils.anon(request.vars["id"], auth.user.id)}}
+    Access to patient {{=vidjil_utils.anon_ids(request.vars["id"])}}
 </h3>
 
 <div id="db_table_container">

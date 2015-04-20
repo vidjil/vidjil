@@ -72,7 +72,7 @@
 
                  <tr>
                    <!--      <td> <input type="checkbox" name="custom_result[]" value="{{=row.results_file.id}}" {{if row.checked :}} checked {{pass}}> </td> -->
-                    <td> {{=vidjil_utils.anon(row.sequence_file.patient_id, auth.user_id)}}</td>
+                    <td> {{=vidjil_utils.anon_names(row.sequence_file.patient_id, row.patient.first_name, row.patient.last_name)}}</td>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}  {{pass}} id="sequence_file_{{=row.sequence_file.id}}">
                          {{=row.sequence_file.filename}}
                     </td>

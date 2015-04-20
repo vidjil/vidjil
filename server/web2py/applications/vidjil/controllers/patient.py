@@ -29,7 +29,7 @@ def info():
 
     if request.vars["config_id"] and request.vars["config_id"] != "-1" :
         config_id = long(request.vars["config_id"])
-        patient_name = vidjil_utils.anon(patient.id, auth.user_id)
+        patient_name = vidjil_utils.anon_names(patient.id, patient.first_name, patient.last_name)
         config_name = db.config[request.vars["config_id"]].name
 
         fused = db(

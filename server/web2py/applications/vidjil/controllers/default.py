@@ -188,7 +188,7 @@ def get_data():
         data = gluon.contrib.simplejson.loads(f.read())
         f.close()
         
-        patient_name = vidjil_utils.anon(request.vars["patient"], auth.user_id)
+        patient_name = vidjil_utils.anon_ids(request.vars["patient"])
         config_name = db.config[request.vars["config"]].name
         command = db.config[request.vars["config"]].command
         
@@ -265,7 +265,7 @@ def get_custom_data():
             sequence_file_id = db.results_file[id].sequence_file_id
             patient_id = db.sequence_file[sequence_file_id].patient_id
             config_id = db.results_file[id].config_id
-            patient_name = vidjil_utils.anon(patient_id, auth.user_id)
+            patient_name = vidjil_utils.anon_ids(patient_id)
             filename = db.sequence_file[sequence_file_id].filename
             data["samples"]["original_names"].append(patient_name + "_" + filename)
             data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
