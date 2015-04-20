@@ -127,7 +127,7 @@ def run_request():
 
     id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
 
-    if not auth.has_permission('admin', 'patient', id_patient) :
+    if not auth.can_modify_patient(id_patient) :
         error += "you do not have permission to launch process for this patient ("+str(id_patient)+"), "
 
     if id_config:
@@ -351,7 +351,7 @@ def save_analysis():
         error += "id patient file needed, "
     if not "config" in request.vars:
         error += "id config needed, "
-    if not auth.has_permission('admin', 'patient', request.vars['patient']) :
+    if not auth.can_modify_patient(request.vars['patient']) :
         error += "you do not have permission to save changes on this patient"
 
     if error == "" :

@@ -82,7 +82,7 @@
 		    <td> {{=row.sequence_file.provider}} {{if row.sequence_file.provider:}}{{=row.sequence_file.provider.last_name}}{{pass}}</td>
 		    {{pass}}
 
-                    {{if (auth.has_permission('admin', 'patient', request.vars["id"]) ):}}
+                    {{if (auth.can_modify_patient(request.vars["id"]) ):}}
                         <td class="pointer" onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
                         <td class="pointer" onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
                         <td> <a {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}
@@ -122,7 +122,7 @@
 <div class="db_block">
 
     <div class="db_block_left">
-        {{if auth.has_permission('admin', 'patient', request.vars["id"]):}}
+        {{if auth.can_modify_patient(request.vars["id"]):}}
         <span class="button2" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> + add file </span>
 
         {{if not auth.can_process_file() :}}

@@ -311,7 +311,7 @@ def index():
         
     keys = result.keys() 
     
-    (auth.has_permission('admin', 'patient', row['id']) )
+    (auth.can_modify_patient(row['id']) )
     query = db(
         (db.auth_permission.name == "admin") & 
         (db.auth_permission.table_name == "patient") &
@@ -483,7 +483,7 @@ def add_form():
 
 ## return edit form 
 def edit(): 
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.can_modify_patient(request.vars["id"]) ):
         return dict(message=T('edit patient'))
     else :
         res = {"message": ACCESS_DENIED}
@@ -497,7 +497,7 @@ def edit():
 ## redirect to patient list if success
 ## return a flash error message if fail
 def edit_form(): 
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.can_modify_patient(request.vars["id"]) ):
         error = ""
         if request.vars["first_name"] == "" :
             error += "first name needed, "
@@ -539,7 +539,7 @@ def download():
 
 #
 def confirm():
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.can_modify_patient(request.vars["id"]) ):
         log.debug('request patient deletion')
         return dict(message=T('confirm patient deletion'))
     else :
@@ -550,7 +550,7 @@ def confirm():
 
 #
 def delete():
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.can_modify_patient(request.vars["id"]) ):
         import shutil, os.path
         #delete data file 
         query = db( (db.sequence_file.patient_id==request.vars["id"])).select() 
@@ -576,7 +576,7 @@ def delete():
     
 #
 def permission(): 
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.can_modify_patient(request.vars["id"]) ):
         
         query = db( db.auth_group.role != 'admin' ).select()
         
@@ -619,7 +619,7 @@ def permission():
 
 #
 def change_permission():
-    if (auth.has_permission('admin', 'patient', request.vars["patient_id"]) ):
+    if (auth.can_modify_patient(request.vars["patient_id"]) ):
         error = ""
         if request.vars["group_id"] == "" :
             error += "missing group_id, "

@@ -107,7 +107,7 @@ def delete():
 
 
 def permission(): 
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.can_modify_patient(request.vars["id"]) ):
         
         query = db( (db.auth_group.role != 'admin') ).select()
         
