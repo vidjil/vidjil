@@ -42,8 +42,11 @@ def logger():
         lvl = logging.INFO
     log.log(lvl, res)
 
-def init_db():
-    if db(db.auth_user.id > 0).count() == 0:
+def init_db(force=False):
+    if (db(db.auth_user.id > 0).count() == 0) or (force) : 
+        for table in db :
+            table.truncate()
+        
         id_first_user=""
 
         ## création du premier user
@@ -167,7 +170,7 @@ def get_data():
         error += "id config needed, "
     if not auth.has_permission('admin', 'patient', request.vars["patient"]) and \
     not auth.has_permission('read', 'patient', request.vars["patient"]):
-        error += "you do not have permission to consult this patient ("+request.vars["patient"]+")"
+        error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
 
     query = db( ( db.fused_file.patient_id == request.vars["patient"] )
                & ( db.fused_file.config_id == request.vars["config"] )

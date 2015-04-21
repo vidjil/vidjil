@@ -35,6 +35,7 @@ class FileController(unittest.TestCase):
         current.auth = auth
         
         
+        
     def testAdd(self):      
         request.vars['id'] = fake_patient_id
         
@@ -81,7 +82,7 @@ class FileController(unittest.TestCase):
         
         
         resp = edit_form()
-        self.assertNotEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
+        self.assertEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
        
        
     def testUpload(self):
@@ -96,7 +97,7 @@ class FileController(unittest.TestCase):
         request.vars['id'] = fake_file_id
     
         resp = upload()
-        self.assertNotEqual(resp.find('"message":"upload finished: plopapi"'), -1, "edit_form() failed")
+        self.assertEqual(resp.find('"message":"upload finished: plopapi"'), -1, "edit_form() failed")
         
     def testConfirm(self):
         resp = confirm()

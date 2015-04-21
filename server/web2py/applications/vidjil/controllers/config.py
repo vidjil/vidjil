@@ -5,6 +5,9 @@ if request.env.http_origin:
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
 
+    
+ACCESS_DENIED = "access denied"
+
 def index():
     if not auth.user : 
         res = {"redirect" : "default/user/login"}

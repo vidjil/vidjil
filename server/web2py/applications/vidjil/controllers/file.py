@@ -77,7 +77,7 @@ def add_form():
 
 
 def edit(): 
-    if auth.has_permission('admin', 'patient', request.vars['patient_id']):
+    if auth.has_permission('admin', 'patient', request.vars['patient_id']) or auth.has_membership("admin"):
         return dict(message=T('edit file'))
     #elif not auth.has_permission('upload', 'sequence_file', request.vars['id'], auth.user_id):
     #    res = {"success" : "false", "message" : "you don't have right to upload files"}

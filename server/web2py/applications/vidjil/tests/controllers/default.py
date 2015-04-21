@@ -68,6 +68,7 @@ class DefaultController(unittest.TestCase):
         request.vars['custom'] = [str(fake_result_id), str(fake_result_id)]
         
         resp = get_custom_data()
+        print resp
         self.assertNotEqual(resp.find('"segmented":[742377,742377]'), -1, "get_custom_data doesn't return a valid json")
         
         
