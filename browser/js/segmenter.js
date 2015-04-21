@@ -34,8 +34,14 @@
 
 CGI_ADDRESS = ""
 
-/* segment constructor
- *
+/** segment 
+ * Segment is a view object to see the sequences of the selected clones in the model <br>
+ * some function are provided to allow alignement / highlight / imgt request / ...
+ * @constructor
+ * @param {string} id - dom id of the html div who will contain the segmenter
+ * @param {Model} model
+ * @augments View
+ * @this View
  * */
 function Segment(id, model) {
     
@@ -71,13 +77,17 @@ function Segment(id, model) {
 
 Segment.prototype = {
 
-    /* 
-     *
+    /**
+     * init the view before use
      * */
     init: function () {
         this.build()
     },
 
+    /**
+     * build needed html elements (button / highlight menu)
+     * 
+     * */
     build: function () {
         var self = this
 
@@ -305,13 +315,9 @@ Segment.prototype = {
             });
     },
 
-    /*
-     *
-     * */
-    resize: function () {},
-
-    /*
-     *
+    /**
+     * update(size/style/position) a list of selected clones <br>
+     * @param {integer[]} list - array of clone index
      * */
     updateElem: function (list) {
         
@@ -338,6 +344,10 @@ Segment.prototype = {
         }    
     },
 
+    /**
+     * update(style only) a list of selected clones
+     * @param {integer[]} list - array of clone index
+     * */
     updateElemStyle: function (list) {
         
         for (var i = 0; i < list.length; i++) {
@@ -361,8 +371,9 @@ Segment.prototype = {
        
     },
     
-    /* Fonction permettant de recharger le bouton 'align' 
-    */
+    /**
+     * enable/disable align button if their is currently enough sequences selected
+     * */
     updateAlignmentButton: function() {
         var self = this;
         var align = document.getElementById("align");
@@ -380,9 +391,10 @@ Segment.prototype = {
     },
 
 
-    /* genere le code HTML des infos d'un clone
-     * @div_elem : element HTML a remplir
-     * @cloneID : identifiant du clone a décrire
+    /**
+     * complete a div with a clone information/sequence
+     * @param {dom} div_elem - the dom element to complete
+     * @param {intger} cloneID - clone index 
      * */
     div_elem: function (div_elem, cloneID) {
         var self = this;
@@ -433,6 +445,11 @@ Segment.prototype = {
         div_elem.appendChild(seq_size);
     },
 
+    /**
+     * add a clone in the segmenter<br>
+     * build a div with clone information and sequence
+     * @param {intger} cloneID - clone index 
+     * */
     addToSegmenter: function (cloneID) {
         var self = this;
 
@@ -470,6 +487,11 @@ Segment.prototype = {
     },
 
 
+    /**
+     * build a request with currently selected clones to send to IMGT or igblast <br>
+     * (see crossDomain.js)
+     * @param {string} address - 'IMGT' or 'igBlast'
+     * */
     sendTo: function (address) {
 
         var list = this.m.getSelected()
@@ -494,7 +516,10 @@ Segment.prototype = {
         if (address == 'igBlast') igBlastPost(request, system);
 
     },
-
+    
+    /**
+     * move the horizontal slider to focus the most interesting parts of the sequences 
+     * */
     show: function () {
         var li = document.getElementById("listSeq")
             .getElementsByTagName("li");
@@ -508,6 +533,9 @@ Segment.prototype = {
         }
     },
 
+    /**
+     * enable/disable alignment
+     * */
     toggleAlign: function () {
         if (this.aligned)
             this.resetAlign() ;
@@ -515,6 +543,9 @@ Segment.prototype = {
             this.align() ;
     },
 
+    /**
+     * align currently selected clone's sequences using a server side cgi script
+     * */
     align: function () {
         var self = this
         var list = this.m.getSelected()
@@ -551,23 +582,10 @@ Segment.prototype = {
         })
     },
 
-    clipBoard: function () {
-
-        var div = document.getElementById('clipBoard');
-        div.innerHTML = "";
-        div.appendChild(document.createTextNode(""));
-
-        /*
-        if (document.createRange && window.getSelection) {
-            var range = document.createRange();
-            range.selectNode(div);
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(range);
-        } 
-        */
-
-    },
-
+    /**
+     * transform currently selected sequences in fasta format
+     * @return {string} fasta 
+     * */
     toFasta: function () {
         var selected = this.m.getSelected();
         var result = "";
@@ -579,6 +597,9 @@ Segment.prototype = {
         return result
     },
 
+    /**
+     * remove alignement
+     * */
     resetAlign: function() {
         var selected = this.m.getSelected();
 
@@ -590,6 +611,11 @@ Segment.prototype = {
         }
     },
     
+    
+    /**
+     * callback function for align()
+     * @param {file} file - align file done by the cgi script
+     * */
     displayAjaxResult: function(file) {
 
         var json = JSON.parse(file)
@@ -609,6 +635,10 @@ Segment.prototype = {
         }
 
     },
+    
+    /**
+     * build and display statistics about selected clones
+     * */
     updateStats: function (){
         var list = this.m.getSelected()
         var sumPercentage = 0;
@@ -639,6 +669,10 @@ Segment.prototype = {
         $(".stats_content").text(t)
     },
 
+    /**
+     * find and return the list of clone fields who contain potential information who can be highlighted on sequences
+     * @return {string[]} - field list
+     * */
     findPotentialField : function () {
         // Guess fields for the highlight menu
         result = [""];
@@ -671,6 +705,11 @@ Segment.prototype = {
         return result;
     },
     
+    /**
+     * determine if a string is a DNA sequence or not
+     * @param {string}
+     * @return {bool}
+     * */
     isDNA : function (string) {
         if (string == null) {
             return false;
@@ -684,6 +723,11 @@ Segment.prototype = {
         }
     },
     
+    /**
+     * check if the object can be used to find a position on a sequence
+     * @param {object}
+     * @return {bool}
+     * */
     isPos : function (obj) {
         if (obj == null) {
             return false;
@@ -693,7 +737,12 @@ Segment.prototype = {
             return false;
         }
     },
-    
+
+    /**
+     * determine if a string is an amino acid sequence or not
+     * @param {string}
+     * @return {bool}
+     * */
     isAA : function (string) {
         if (string == null) {
             return false;
@@ -719,7 +768,12 @@ Segment.prototype = $.extend(Object.create(View.prototype), Segment.prototype);
 
 
 
-
+/**
+ * Sequence object contain a dna sequence and various functions to manipulate them
+ * @param {integer} id - clone index
+ * @param {Model} model 
+ * @constructor
+ * */
 function Sequence(id, model) {
     this.id = id; //clone ID
     this.m = model; //Model utilisé
@@ -730,7 +784,11 @@ function Sequence(id, model) {
 
 Sequence.prototype = {
 
-    //load sequence from model or use given argument
+    /**
+     * load the clone sequence <br>
+     * retrieve the one in the model or use the one given in parameter <br>
+     * @param {string} str
+     * */
     load: function (str) {
         if (typeof str !== 'undefined') this.use_marge = false
         str = typeof str !== 'undefined' ? str : this.m.clone(this.id).sequence;
@@ -747,7 +805,9 @@ Sequence.prototype = {
         return this;
     },
 
-    //store position of each nucleotide
+    /**
+     * save the position of each nucleotide in an array <br>
+     * */
     computePos: function () {
         this.pos = [];
         var j = 0
@@ -759,7 +819,10 @@ Sequence.prototype = {
         this.pos.push(this.seq.length)
         return this;
     },
-    
+
+    /**
+     * use the cdr3 (if available) to compute the amino acid sequence <br>
+     * */
     computeAAseq : function () {
         var start = -1;
         var stop = -1;
@@ -805,17 +868,24 @@ Sequence.prototype = {
         }
     },
 
-    //compare sequence with another string and surround change
+    /**
+     * compare sequence with another string and surround change
+     * @param {char} self
+     * @param {char} other
+     * @return {string}  
+     * */
     spanify_mutation: function (self, other) {
         if (segment.aligned && self != other) {
             return "<span class='substitution' other='" + other + '-' + segment.first_clone + "'>" + self + "</span>"
-        }
-	else {
+        }else {
             return self
-	}
+        }
     },
 
-    //return sequence completed with html tag
+    /**
+     * return sequence completed with html tag <br>
+     * @return {string}
+     * */
     toString: function () {
         var clone = this.m.clone(this.id)
         var result = ""
@@ -907,6 +977,13 @@ Sequence.prototype = {
         return marge + result
     },
     
+    
+    /**
+     * build a highlight descriptor (start/stop/color/...)
+     * @param {string} field - clone field name who contain the information to highlight
+     * @param {string} color
+     * @return {object}
+     * */
     get_positionned_highlight : function (field, color) {
         var clone = this.m.clone(this.id);
         var h = {'start' : -1, 'stop' : -1, 'seq': '', 'color' : color};
@@ -963,6 +1040,8 @@ Sequence.prototype = {
         return h
     }
 }
+
+
 
 tableAA = {
  'TTT' : 'F',

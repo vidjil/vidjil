@@ -71,4 +71,12 @@ View.prototype = {
     updateElemStyle : function () {
         
     },
+    
+    /**
+     * resize view to match his div size
+     * @abstract
+     * */
+    resize : function () {
+        
+    },
 }
