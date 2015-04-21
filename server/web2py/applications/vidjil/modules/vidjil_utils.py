@@ -185,9 +185,18 @@ def extract_fields_from_json(json_fields, pos_in_list, filename):
 
 ####
 
+SOURCES = "https://github.com/vidjil/vidjil/blob/master/server/web2py/applications/vidjil/%s#L%s"
+SOURCES_DIR_DEFAULT = 'controllers/'
+SOURCES_DIR = {
+    'task.py': 'models/',
+    'db.py': 'models/',
+}
+
+
 log_patient = re.compile('\((\d+)\)')
 log_config = re.compile(' c(\d+)')
 log_task = re.compile('\[(\d+)\]')
+log_py = re.compile('(.*[.]py):(\d+)')
 
 def log_links(s):
     '''Add HTML links to a log string
@@ -213,6 +222,14 @@ def log_links(s):
     m_task = log_task.search(s)
     task = int(m_task.group(1)) if m_task else None
 
+    m_py = log_py.search(s)
+    if m_py:
+        source = m_py.group(1)
+        if source in SOURCES_DIR:
+            source = SOURCES_DIR[source] + source
+        else:
+            source = SOURCES_DIR_DEFAULT + source
+
     ### Rules
 
     url = ''  # href link
@@ -236,6 +253,10 @@ def log_links(s):
         (start, end) = m_task.span()
         start += 1
         end -= 1
+
+    if m_py:
+        (start, end) = m_py.span(2)
+        url = SOURCES % (source, m_py.group(2))
 
     ### Build final string
 
