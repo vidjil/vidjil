@@ -83,7 +83,7 @@ def showlog():
                     line["date"] = tmp[1]
                     line["date2"] = tmp[2].split(',')[0]
                     line["type"] = tmp[3]
-                    line["file"] = tmp[5]
+                    line["file"] = vidjil_utils.log_links(tmp[5])
 
                     if tmp[6] != "Creating":
                         if len(tmp) < 9:
