@@ -1380,7 +1380,6 @@ ScatterPlot.prototype = {
                     listToSelect.push(n);
                 }
                 self.m.multiSelect(listToSelect);
-            delete listToSelect; 
            })
             .attr("x", function(d) {
                 return self.gridSizeW * d.pos + self.marge_left;
@@ -1485,7 +1484,6 @@ ScatterPlot.prototype = {
                     listToSelect.push(n);
                 }
             self.m.multiSelect(listToSelect);
-            delete listToSelect; 
            })
 
             .attr("x", function(d) {
