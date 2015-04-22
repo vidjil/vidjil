@@ -2,7 +2,6 @@
 
 import unittest
 from gluon.globals import Request, Session, Storage, Response
-from gluon.tools import Auth
 from gluon.contrib.test_helpers import form_postvars
 from gluon import current
 
@@ -25,7 +24,7 @@ class ConfigController(unittest.TestCase):
         global response, session, request, auth
         session = Session()
         request = Request({})
-        auth = Auth(globals(), db)
+        auth = VidjilAuth(globals(), db)
         auth.login_bare("test@vidjil.org", "1234")
         
         auth.add_permission(group_id, 'admin', db.patient, 0)
