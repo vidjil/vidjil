@@ -1,8 +1,8 @@
 from gluon.tools import Auth
 
 class VidjilAuth(Auth):
-    admin = False
-    groups = []
+    admin = None
+    groups = None
     permissions = {}
 
     def __init__(self, environment=None, db=None):
@@ -52,6 +52,9 @@ class VidjilAuth(Auth):
         '''Tells if the user is an admin.  If the user is None, the current
         user is taken into account'''
 
+        if self.admin == None:
+            self.preload()
+
         if user == None:
             return self.admin
         return self.has_membership(user_id = user, role = 'admin')
@@ -61,6 +64,8 @@ class VidjilAuth(Auth):
         '''
         Tells if the current user is in the group
         '''
+        if self.groups == None:
+            self.preload()
         return group in self.groups
 
     def can_create_patient(self, user = None):
