@@ -1476,19 +1476,21 @@ ScatterPlot.prototype = {
         leg.exit()
             .remove();
         leg.on("click", function(d){
-            if (!d3.event.ctrlKey) 
-                self.m.unselectAll()
-            var listToSelect = [];
-            var halfRangeLine = 0.5;
-            if (self.axisY.labels.length>1)
-                halfRangeLine = Math.abs((self.axisY.labels[0].pos - self.axisY.labels[1].pos)/2);
+            if (self.mode !="bar"){
+                if (!d3.event.ctrlKey) 
+                    self.m.unselectAll()
+                var listToSelect = [];
+                var halfRangeLine = 0.5;
+                if (self.axisY.labels.length>1)
+                    halfRangeLine = Math.abs((self.axisY.labels[0].pos - self.axisY.labels[1].pos)/2);
                 
-            for (n in self.nodes){
-                if (Math.abs(self.axisY.pos(n) - d.pos) < halfRangeLine)
-                    listToSelect.push(n);
+                for (n in self.nodes){
+                    if (Math.abs(self.axisY.pos(n) - d.pos) < halfRangeLine)
+                        listToSelect.push(n);
+                    }
+                self.m.multiSelect(listToSelect);
                 }
-            self.m.multiSelect(listToSelect);
-           })
+            })
 
             .attr("x", function(d) {
                 if (d.type == "subline") return self.sub_text_position_y;
