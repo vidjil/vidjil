@@ -370,7 +370,9 @@ def index():
         (db.auth_permission.name == "anon") & 
         (db.auth_permission.table_name == "patient") &
         (db.patient.id == db.auth_permission.record_id ) &
-        (auth.user_group() == db.auth_permission.group_id )
+        (db.auth_group.id == db.auth_permission.group_id ) &
+        (db.auth_membership.user_id == auth.user_id) &
+        (db.auth_membership.group_id == db.auth_group.id)
     ).select(
         db.patient.id, db.patient.last_name, db.patient.first_name
     )
