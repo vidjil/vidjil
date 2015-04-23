@@ -30,7 +30,7 @@ query = db(
                      <tr>
                         <td> {{=row.auth_user.first_name + " " + row.auth_user.last_name}}</td>
                         <td> {{=row.auth_user.email}} </td>
-                        <td> {{if auth.has_permission('admin', 'auth_group', request.vars["id"], row.auth_user.id):}}
+                        <td> {{if auth.can_modify_group(request.vars["id"], row.auth_user.id):}}
                          admin
                          {{pass}}</td>
                         <td onclick="db.call('group/kick', {'user_id' :'{{=row.auth_user.id}}', 'group_id' : '{{=request.vars["id"]}}'} )" > X </td>
@@ -41,7 +41,7 @@ query = db(
         <table class="db_table" id="db_fixed_header"></table>
     </div>
 
-    {{if auth.has_permission("admin", "auth_group", request.vars["id"], auth.user.id) :}}
+    {{if auth.can_modify_group(request.vars["id"]) :}}
 
         <div>
             invite

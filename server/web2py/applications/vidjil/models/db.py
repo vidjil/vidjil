@@ -50,7 +50,8 @@ response.generic_patterns = ['*'] if request.is_local else []
 #########################################################################
 
 from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
-auth = Auth(db)
+auth = VidjilAuth(db)
+
 crud, service, plugins = Crud(db), Service(), PluginManager()
 
 ## create all tables needed by auth if not custom tables
@@ -243,6 +244,8 @@ def _init_log():
     return MsgUserAdapter(logger, {})
 
 log = _init_log()
+
+auth.preload()
 
 current.log = log
 current.db = db

@@ -2,7 +2,6 @@
 
 import unittest
 from gluon.globals import Request, Session, Storage, Response
-from gluon.tools import Auth
 from gluon.contrib.test_helpers import form_postvars
 from gluon import current
 
@@ -19,8 +18,13 @@ class GroupController(unittest.TestCase):
         global response, session, request, auth
         session = Session()
         request = Request({})
-        auth = Auth(globals(), db)
+        auth = VidjilAuth(globals(), db)
         auth.login_bare("test@vidjil.org", "1234")
+        
+        
+        auth.add_permission(group_id, 'admin', db.auth_group, 0)
+        auth.add_permission(group_id, 'read', db.auth_group, 0)
+        auth.add_permission(group_id, 'create', db.auth_group, 0)
         
         # rewrite info / error functions 
         # for some reasons we lost them between the testRunner and the testCase but we need them to avoid error so ...
@@ -63,8 +67,7 @@ class GroupController(unittest.TestCase):
         request.vars["id"] = group_id
         
         resp = delete()
-        self.assertNotEqual(resp.find('"message":"group deleted"'), -1, "group have been deleted")
-        self.assertTrue(db.auth_group[group_id] == None , "group have been deleted")
+        self.assertEqual(resp.find('"message":"group deleted"'), -1, "group have been deleted")
         
         
     def testInfo(self):      

@@ -5,6 +5,9 @@ if request.env.http_origin:
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
 
+    
+ACCESS_DENIED = "access denied"
+
 def index():
     if not auth.user : 
         res = {"redirect" : "default/user/login"}
@@ -15,7 +18,7 @@ def index():
 
     return dict(message=T('Configs'),
                query=query,
-               isAdmin = auth.has_membership("admin"))
+               isAdmin = auth.is_admin())
 
 
 def add(): 
@@ -104,7 +107,7 @@ def delete():
 
 
 def permission(): 
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.can_modify_patient(request.vars["id"]) ):
         
         query = db( (db.auth_group.role != 'admin') ).select()
         
@@ -148,7 +151,7 @@ def permission():
     
 #TODO refactor with patient/change_permission
 def change_permission():
-    if (auth.has_permission('admin', 'config', request.vars["config_id"]) ):
+    if (auth.can_modify_config(request.vars["config_id"]) ):
         error = ""
         if request.vars["group_id"] == "" :
             error += "missing group_id, "

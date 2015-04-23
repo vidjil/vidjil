@@ -22,6 +22,8 @@ test:
 
 test_browser: unit_browser functional_browser
 
+test_server: unit_server
+
 test_tools:
 	make -C tools/tests
 
@@ -83,6 +85,9 @@ functional_browser:
 headless_browser:
 	make -C browser/test headless
 
+unit_server:
+	make -C server/ unit
+
 ### Code coverage
 
 coverage: unit_coverage should_coverage
@@ -127,6 +132,7 @@ cleanall: clean
 	make -C data $^
 	make -C germline $^
 	make -C $(VIDJIL_ALGO_SRC) cleanall
+	make -C server cleanall
 
 .PHONY: all test should clean cleanall distrib data germline unit_coverage should_coverage coverage
 

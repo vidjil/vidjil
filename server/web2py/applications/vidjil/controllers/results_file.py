@@ -10,7 +10,7 @@ if request.env.http_origin:
 
 ## return admin_panel
 def index():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
 
         query = db(
             (db.results_file.sequence_file_id==db.sequence_file.id)
@@ -57,7 +57,7 @@ def index():
                     reverse=reverse)
 
 def run_all():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         query = db(
                 (db.results_file_file.sequence_file_id==db.sequence_file.id)
                 & (db.results_file.config_id==db.config.id)
@@ -74,15 +74,15 @@ def run_all():
 ## display run page result 
 ## need ["results_file_id"]
 def info():
-    if (auth.has_permission('admin', 'patient', db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id ) ):
+    if (auth.can_modify_patient(db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id ) ):
         return dict(message=T('result info'))
     else :
         res = {"message": "acces denied"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 def confirm():
-    if (auth.has_permission('admin', 'patient', db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id )
-        & auth.has_permission("run", "results_file") ) or auth.has_membership("admin"):
+    if (auth.can_modify_patient(db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id )
+        & auth.can_process_file()):
         return dict(message=T('result confirm'))
     else :
         res = {"message": "acces denied"}
@@ -90,8 +90,8 @@ def confirm():
     
 #
 def delete():
-    if (auth.has_permission('admin', 'patient', db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id )
-        & auth.has_permission("run", "results_file") ) or auth.has_membership("admin"):
+    if (auth.can_modify_patient(db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id )
+        & auth.can_process_file()):
         
         config_id = db.results_file[request.vars["results_file_id"]].config_id
         patient_id = db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id

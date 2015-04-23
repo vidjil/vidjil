@@ -42,8 +42,11 @@ def logger():
         lvl = logging.INFO
     log.log(lvl, res)
 
-def init_db():
-    if db(db.auth_user.id > 0).count() == 0:
+def init_db(force=False):
+    if (db(db.auth_user.id > 0).count() == 0) or (force) : 
+        for table in db :
+            table.truncate()
+        
         id_first_user=""
 
         ## création du premier user
@@ -119,16 +122,16 @@ def run_request():
         id_config = None
     else:
         id_config = request.vars["config_id"]
-    if not auth.has_permission("run", "results_file") and not auth.has_membership("admin") :
+    if not auth.can_process_file():
         error += "permission needed"
 
     id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
 
-    if not auth.has_permission('admin', 'patient', id_patient) :
+    if not auth.can_modify_patient(id_patient) :
         error += "you do not have permission to launch process for this patient ("+str(id_patient)+"), "
 
     if id_config:
-      if not auth.has_permission('read', 'config', id_config) :
+      if not auth.can_use_config(id_config) :
         error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
 
     if error == "" :
@@ -165,9 +168,8 @@ def get_data():
         error += "id patient file needed, "
     if not "config" in request.vars:
         error += "id config needed, "
-    if not auth.has_permission('admin', 'patient', request.vars["patient"]) and \
-    not auth.has_permission('read', 'patient', request.vars["patient"]):
-        error += "you do not have permission to consult this patient ("+request.vars["patient"]+")"
+    if not auth.can_view_patient(request.vars["patient"]):
+        error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
 
     query = db( ( db.fused_file.patient_id == request.vars["patient"] )
                & ( db.fused_file.config_id == request.vars["config"] )
@@ -185,7 +187,7 @@ def get_data():
         data = gluon.contrib.simplejson.loads(f.read())
         f.close()
         
-        patient_name = vidjil_utils.anon(request.vars["patient"], auth.user_id)
+        patient_name = vidjil_utils.anon_ids(request.vars["patient"])
         config_name = db.config[request.vars["config"]].name
         command = db.config[request.vars["config"]].command
         
@@ -244,8 +246,7 @@ def get_custom_data():
         for id in request.vars["custom"] :
             sequence_file_id = db.results_file[id].sequence_file_id
             patient_id =db.sequence_file[sequence_file_id].patient_id
-            if not auth.has_permission('admin', 'patient', patient_id) and \
-                not auth.has_permission('read', 'patient', patient_id):
+            if not auth.can_view_patient(patient_id):
                 error += "you do not have permission to consult this patient ("+str(patient_id)+")"
             
     if error == "" :
@@ -262,7 +263,7 @@ def get_custom_data():
             sequence_file_id = db.results_file[id].sequence_file_id
             patient_id = db.sequence_file[sequence_file_id].patient_id
             config_id = db.results_file[id].config_id
-            patient_name = vidjil_utils.anon(patient_id, auth.user_id)
+            patient_name = vidjil_utils.anon_ids(patient_id)
             filename = db.sequence_file[sequence_file_id].filename
             data["samples"]["original_names"].append(patient_name + "_" + filename)
             data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
@@ -288,8 +289,7 @@ def get_analysis():
         error += "id patient file needed, "
     if not "config" in request.vars:
         error += "id config needed, "
-    if not auth.has_permission('admin', 'patient', request.vars["patient"]) and \
-    not auth.has_permission('read', 'patient', request.vars["patient"]):
+    if not auth.can_view_patient(request.vars["patient"]):
         error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
 
     ## empty analysis file
@@ -348,7 +348,7 @@ def save_analysis():
         error += "id patient file needed, "
     if not "config" in request.vars:
         error += "id config needed, "
-    if not auth.has_permission('admin', 'patient', request.vars['patient']) :
+    if not auth.can_modify_patient(request.vars['patient']) :
         error += "you do not have permission to save changes on this patient"
 
     if error == "" :

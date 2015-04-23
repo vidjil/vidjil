@@ -2,7 +2,6 @@
 
 import unittest
 from gluon.globals import Request, Session, Storage, Response
-from gluon.tools import Auth
 from gluon.contrib.test_helpers import form_postvars
 from gluon import current
 
@@ -19,7 +18,7 @@ class PatientController(unittest.TestCase):
         global response, session, request, auth
         session = Session()
         request = Request({})
-        auth = Auth(globals(), db)
+        auth = VidjilAuth(globals(), db)
         auth.login_bare("test@vidjil.org", "1234")
         
         # rewrite info / error functions 
@@ -34,6 +33,10 @@ class PatientController(unittest.TestCase):
         current.db = db
         current.auth = auth
         
+        auth.add_permission(group_id, 'admin', db.patient, 0)
+        auth.add_permission(group_id, 'read', db.patient, 0)
+        auth.add_permission(group_id, 'create', db.patient, 0)
+
         
     def testInfo(self):
         request.vars["id"] = fake_patient_id
@@ -65,6 +68,7 @@ class PatientController(unittest.TestCase):
         request.vars["id_label"] = "bob"
         
         resp = add_form()
+        print db(db.auth_permission.id>0).select()
         self.assertNotEqual(resp.find('patient added'), -1, "add patient failled")
         
         
@@ -84,7 +88,7 @@ class PatientController(unittest.TestCase):
         request.vars["id_label"] = "bab"
         
         resp = edit_form()
-        self.assertNotEqual(resp.find('patient bab bab edited'), -1, "edit patient failled")
+        self.assertNotEqual(resp.find('bab bab (1): patient edited"'), -1, "edit patient failled")
         
         
     def testConfirm(self):

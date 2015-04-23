@@ -10,11 +10,11 @@ if request.env.http_origin:
 
 
 def add(): 
-    if not auth.has_permission('admin', 'patient', request.vars['id'], auth.user_id) and not auth.has_membership("admin"):
+    if not auth.can_modify_patient(request.vars['id'], auth.user_id):
         res = {"success" : "false", "message" : "you need admin permission on this patient to add files"}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-    elif not auth.has_permission('upload', 'sequence_file', request.vars['id'], auth.user_id) and not auth.has_membership("admin"):
+    elif not auth.can_upload_file(request.vars['id']):
         res = {"success" : "false", "message" : "you don't have right to upload files"}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
@@ -77,9 +77,9 @@ def add_form():
 
 
 def edit(): 
-    if auth.has_permission('admin', 'patient', request.vars['patient_id']):
+    if auth.can_modify_patient(request.vars['patient_id']):
         return dict(message=T('edit file'))
-    #elif not auth.has_permission('upload', 'sequence_file', request.vars['id'], auth.user_id):
+    #elif not auth.can_upload_file(request.vars['id']):
     #    res = {"success" : "false", "message" : "you don't have right to upload files"}
     #    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
@@ -153,7 +153,7 @@ def upload():
   
 
 def confirm():
-    if auth.has_permission('admin', 'patient', request.vars['patient_id']) or auth.has_membership("admin"):
+    if auth.can_modify_patient(request.vars['patient_id']):
         return dict(message=T('confirm sequence file deletion'))
     else:
         res = {"success" : "false", "message" : "you need admin permission to delete this file"}
@@ -166,7 +166,7 @@ def delete():
     
     patient_id = db.sequence_file[request.vars["id"]].patient_id
     
-    if auth.has_permission('admin', 'patient', patient_id):
+    if auth.can_modify_patient(patient_id):
         db(db.sequence_file.id == request.vars["id"]).delete()
         db(db.results_file.sequence_file_id == request.vars["id"]).delete()
 

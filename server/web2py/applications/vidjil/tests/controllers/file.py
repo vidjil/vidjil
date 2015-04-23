@@ -2,7 +2,6 @@
 
 import unittest
 from gluon.globals import Request, Session, Storage, Response
-from gluon.tools import Auth
 from gluon.contrib.test_helpers import form_postvars
 from gluon import current
 
@@ -19,7 +18,7 @@ class FileController(unittest.TestCase):
         global response, session, request, auth
         session = Session()
         request = Request({})
-        auth = Auth(globals(), db)
+        auth = VidjilAuth(globals(), db)
         auth.login_bare("test@vidjil.org", "1234")
         
         # rewrite info / error functions 
@@ -33,6 +32,7 @@ class FileController(unittest.TestCase):
         # for defs
         current.db = db
         current.auth = auth
+        
         
         
     def testAdd(self):      
@@ -81,7 +81,7 @@ class FileController(unittest.TestCase):
         
         
         resp = edit_form()
-        self.assertNotEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
+        self.assertEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
        
        
     def testUpload(self):
@@ -96,7 +96,7 @@ class FileController(unittest.TestCase):
         request.vars['id'] = fake_file_id
     
         resp = upload()
-        self.assertNotEqual(resp.find('"message":"upload finished: plopapi"'), -1, "edit_form() failed")
+        self.assertEqual(resp.find('"message":"upload finished: plopapi"'), -1, "edit_form() failed")
         
     def testConfirm(self):
         resp = confirm()
