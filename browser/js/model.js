@@ -55,7 +55,6 @@ function Model() {
     window.onresize = function () { self.resize(); };
     
     this.start()
-    
 }
 
 
