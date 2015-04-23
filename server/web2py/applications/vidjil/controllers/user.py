@@ -13,9 +13,9 @@ def index():
         row.created = db( db.patient.creator == row.id ).count()
         
         row.access = ''
-        if auth.has_permission('create', 'patient', 0, row.id): row.access += 'c'
-        if auth.has_permission('upload', 'sequence_file', 0, row.id): row.access += 'u'
-        if auth.has_permission('run', 'results_file', 0, row.id): row.access += 'r'
+        if auth.can_create_patient(user=row.id): row.access += 'c'
+        if auth.can_upload_file(user=row.id): row.access += 'u'
+        if auth.can_process_file(user=row.id): row.access += 'r'
 
         q = [g.group_id for g in db(db.auth_membership.user_id==row.id).select()]
         q.sort()
@@ -39,7 +39,7 @@ def info():
     return dict(message=T('user info'))
 
 def rights():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         id = request.vars["id"]
         group_id = auth.user_group(id)
         msg = ""

@@ -14,11 +14,14 @@ def info():
 
     if 'next' in request.vars:
         try:
-            new_id = request.vars["id"]
-            new_id = str(int(new_id)+int(request.vars["next"]))
-            while db.patient[new_id] is None and int(new_id) > 0:
-                new_id = str(int(new_id)+int(request.vars["next"]))
-            request.vars["id"] = new_id
+            current_id = request.vars["id"]
+            go_next = int(request.vars['next'])
+            if go_next > 0:
+                res = db(db.patient.id > current_id).select(db.patient.id, orderby=db.patient.id, limitby=(0,1))
+            else:
+                res = db(db.patient.id < current_id).select(db.patient.id, orderby=~db.patient.id, limitby=(0,1))
+            if (len(res) > 0):
+                request.vars["id"] = str(res[0].id)
         except:
             pass
 
@@ -26,7 +29,7 @@ def info():
 
     if request.vars["config_id"] and request.vars["config_id"] != "-1" :
         config_id = long(request.vars["config_id"])
-        patient_name = vidjil_utils.anon(patient.id, auth.user_id)
+        patient_name = vidjil_utils.anon_names(patient.id, patient.first_name, patient.last_name)
         config_name = db.config[request.vars["config_id"]].name
 
         fused = db(
@@ -92,7 +95,7 @@ def info():
 
     
     log.debug('patient (%s)' % request.vars["id"])
-    if (auth.has_permission('read', 'patient', request.vars["id"]) ):
+    if (auth.can_view_patient(request.vars["id"]) ):
         return dict(query=query,
                     patient=patient,
                     birth=vidjil_utils.anon_birth(request.vars["id"], auth.user.id),
@@ -139,7 +142,7 @@ def custom():
             )
 
     query = db(q).select(
-                db.patient.id, db.patient.info, db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
+                db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name, db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
                 db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
                 db.sequence_file.patient_id, db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
                 db.sequence_file.size_file,
@@ -155,7 +158,9 @@ def custom():
         row.checked = False
         if (str(row.results_file.id) in request.vars["custom_list"]) :
             row.checked = True
-        row.string = (vidjil_utils.anon(row.sequence_file.patient_id, auth.user_id) + row.sequence_file.filename +
+
+        row.names = vidjil_utils.anon_names(row.patient.id, row.patient.first_name, row.patient.last_name)
+        row.string = (row.names + row.sequence_file.filename +
                       str(row.sequence_file.sampling_date) + str(row.sequence_file.pcr) + str(row.config.name) + str(row.results_file.run_date)).lower()
     query = query.find(lambda row : ( vidjil_utils.filter(row.string,request.vars["filter"]) or row.checked) )
     
@@ -273,7 +278,7 @@ def index():
         
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
-    isAdmin = auth.has_membership("admin")
+    isAdmin = auth.is_admin()
     
     ##retrieve patient list 
     query = db(
@@ -285,16 +290,12 @@ def index():
     result = {}
     
     for i, row in enumerate(query) :
-        try:
-            ln = unicode(row.last_name, 'utf-8')
-        except UnicodeDecodeError:
-            ln = row.last_name
         result[row.id] = {
             "id" :int(row.id),
             "last_name" : row.last_name,
             "first_name" : row.first_name,
             "has_permission" : False,
-            "name" : ln[:3],
+            "anon_allowed": False,
             "birth" : row.birth,
             "info" : row.info,
             "creator" : row.creator,
@@ -310,7 +311,6 @@ def index():
         
     keys = result.keys() 
     
-    (auth.has_permission('admin', 'patient', row['id']) )
     query = db(
         (db.auth_permission.name == "admin") & 
         (db.auth_permission.table_name == "patient") &
@@ -365,21 +365,20 @@ def index():
     for i, row in enumerate(query4) :
         if row.patient.id in keys :
             result[row.patient.id]['group_list'].append(row.auth_group.role.replace('user_','u'))
-            
+
     query5 = db(
-        (db.auth_permission.name == "anon") & 
+        (db.auth_permission.name == "anon") &
         (db.auth_permission.table_name == "patient") &
         (db.patient.id == db.auth_permission.record_id ) &
         (db.auth_group.id == db.auth_permission.group_id ) &
         (db.auth_membership.user_id == auth.user_id) &
         (db.auth_membership.group_id == db.auth_group.id)
     ).select(
-        db.patient.id, db.patient.last_name, db.patient.first_name
+        db.patient.id
     )
     for i, row in enumerate(query5) :
         if row.id in keys :
-            result[row.id]['name'] = row.last_name + " " + row.first_name
-
+            result[row.id]['anon_allowed'] = True
         
     for key, row in result.iteritems():
         row['most_used_conf'] = max(set(row['conf_id_list']), key=row['conf_id_list'].count)
@@ -419,7 +418,7 @@ def index():
 
 ## return form to create new patient
 def add(): 
-    if (auth.has_permission('create', 'patient') ):
+    if (auth.can_create_patient()):
         return dict(message=T('add patient'))
     else :
         res = {"message": ACCESS_DENIED}
@@ -433,7 +432,7 @@ def add():
 ## redirect to patient list if success
 ## return a flash error message if fail
 def add_form(): 
-    if (auth.has_permission('create', 'patient') ):
+    if (auth.can_create_patient()):
         
         error = ""
         if request.vars["first_name"] == "" :
@@ -485,7 +484,7 @@ def add_form():
 
 ## return edit form 
 def edit(): 
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.can_modify_patient(request.vars["id"]) ):
         return dict(message=T('edit patient'))
     else :
         res = {"message": ACCESS_DENIED}
@@ -499,7 +498,7 @@ def edit():
 ## redirect to patient list if success
 ## return a flash error message if fail
 def edit_form(): 
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.can_modify_patient(request.vars["id"]) ):
         error = ""
         if request.vars["first_name"] == "" :
             error += "first name needed, "
@@ -541,7 +540,7 @@ def download():
 
 #
 def confirm():
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.can_modify_patient(request.vars["id"]) ):
         log.debug('request patient deletion')
         return dict(message=T('confirm patient deletion'))
     else :
@@ -552,7 +551,7 @@ def confirm():
 
 #
 def delete():
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.can_modify_patient(request.vars["id"]) ):
         import shutil, os.path
         #delete data file 
         query = db( (db.sequence_file.patient_id==request.vars["id"])).select() 
@@ -578,7 +577,7 @@ def delete():
     
 #
 def permission(): 
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.can_modify_patient(request.vars["id"]) ):
         
         query = db( db.auth_group.role != 'admin' ).select()
         
@@ -621,7 +620,7 @@ def permission():
 
 #
 def change_permission():
-    if (auth.has_permission('admin', 'patient', request.vars["patient_id"]) ):
+    if (auth.can_modify_patient(request.vars["patient_id"]) ):
         error = ""
         if request.vars["group_id"] == "" :
             error += "missing group_id, "

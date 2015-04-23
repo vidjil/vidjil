@@ -78,15 +78,26 @@ def anon_birth(patient_id, user_id):
     else:
         return age
 
-def anon(patient_id, user_id):
+def anon_ids(patient_id):
     '''Anonymize patient name. Only the 'anon' access see the full patient name.'''
     db = current.db
     auth=current.auth
     
     last_name = db.patient[patient_id].last_name
     first_name = db.patient[patient_id].first_name
-    
-    if auth.has_permission("anon", "patient", patient_id, user_id):
+
+    return anon_names(patient_id, first_name, last_name)
+
+def anon_names(patient_id, first_name, last_name, can_view=None):
+    '''
+    Anonymize the given names of the patient whose ID is patient_id.
+    This function performs at most one db call (to know if we can see
+    the patient's personal informations). None is performed if can_view
+    is provided (to tell if one can view the patient's personal informations)
+    '''
+    auth=current.auth
+
+    if can_view or (can_view == None and auth.can_view_patient_info(patient_id)):
         name = last_name + " " + first_name
     else:
         try:
@@ -96,7 +107,7 @@ def anon(patient_id, user_id):
         name = ln[:3]
 
     # Admins also see the patient id
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         name += ' (%s)' % patient_id
 
     return name

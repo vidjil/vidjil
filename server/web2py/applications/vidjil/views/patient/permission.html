@@ -2,7 +2,7 @@
 {{import vidjil_utils}}
 
 <h3>
-    Access to patient {{=vidjil_utils.anon(request.vars["id"], auth.user.id)}}
+    Access to patient {{=vidjil_utils.anon_ids(request.vars["id"])}}
 </h3>
 
 <div id="db_table_container">
@@ -16,7 +16,7 @@
                 <td class="column1"> private info</td>
             </tr>
         </thead>
-        {{admin = auth.has_permission("admin", "patient", request.vars["id"], auth.user.id)}}
+        {{admin = auth.can_modify_patient(request.vars["id"])}}
         {{ for row in query :}}
             <tr>
                 <td> {{=row.id}} </td><td> {{=row.owner}} </td>
@@ -51,6 +51,6 @@
     <table class="db_table" id="db_fixed_header"></table>    
 </div>
 
-{{if not auth.has_permission("admin", "patient", request.vars["id"], auth.user.id) :}}
+{{if not auth.can_modify_patient(request.vars["id"]) :}}
     <div>you need admin access on this patient if you want to change permission </div>
 {{pass}}
