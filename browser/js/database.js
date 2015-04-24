@@ -922,9 +922,9 @@ function suggest_box(id, list) {
     suggest_arrow.className = "suggest_arrow"
     suggest_arrow.title = "show all suggestions"
     suggest_arrow.onclick = function(){
+        input_box.focus()
         suggest_list.style.display = "block"
         suggest_list.innerHTML=""
-        input_box.focus()
         for (var i=0; i<list.length; i++){
             var suggestion = document.createElement("div")
             suggestion.className = "suggestion"
@@ -968,6 +968,9 @@ function suggest_box(id, list) {
     
     //masque la liste
     input_box.onblur = function(){
-        setTimeout(function(){suggest_list.style.display = "none"}, 200)
+        setTimeout(function(){
+            if (input_box !== document.activeElement)
+                suggest_list.style.display = "none"
+        }, 200)
     };
 }

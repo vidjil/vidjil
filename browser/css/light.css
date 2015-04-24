@@ -1431,7 +1431,8 @@ select > option:hover {
   border-color: #cccccc;
   max-height: 100px;
   display: none;
-  width: 250px;
+  width: 300px;
+  overflow-y: scroll;
 }
 .suggest_arrow {
   position: absolute;
