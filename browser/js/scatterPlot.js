@@ -1391,14 +1391,17 @@ ScatterPlot.prototype = {
         leg.exit()
             .remove();
         leg.on("click", function(d){
+            if (!d3.event.ctrlKey) 
+                self.m.unselectAll()
             var listToSelect = [];
             var halfRangeColumn = 0.5;
             if (self.axisX.labels.length>1)
                 halfRangeColumn = Math.abs((self.axisX.labels[1].pos - self.axisX.labels[0].pos)/2);
-            for (n in self.nodes){
-                if (Math.abs(self.axisX.pos(n) - d.pos) < halfRangeColumn)
-                    listToSelect.push(n);
-                }
+            for (n=0; n<self.nodes.length; n++){
+                if (self.m.clones[n].germline == (self.m.germlineV.system))
+                    if (Math.abs(self.axisX.pos(self.nodes[n]) - d.pos) < halfRangeColumn)
+                        listToSelect.push(self.nodes[n]);
+            }
                 self.m.multiSelect(listToSelect);
            })
             .attr("x", function(d) {
@@ -1494,17 +1497,21 @@ ScatterPlot.prototype = {
         leg.exit()
             .remove();
         leg.on("click", function(d){
-            var listToSelect = [];
-            var halfRangeLine = 0.5;
-            if (self.axisY.labels.length>1)
-                halfRangeLine = Math.abs((self.axisY.labels[0].pos - self.axisY.labels[1].pos)/2);
-                
-            for (n in self.nodes){
-                if (Math.abs(self.axisY.pos(n) - d.pos) < halfRangeLine)
-                    listToSelect.push(n);
+            if (self.mode !="bar"){
+                if (!d3.event.ctrlKey) 
+                    self.m.unselectAll()
+                var listToSelect = [];
+                var halfRangeLine = 0.5;
+                if (self.axisY.labels.length>1)
+                    halfRangeLine = Math.abs((self.axisY.labels[0].pos - self.axisY.labels[1].pos)/2);
+                for (n=0; n<self.nodes.length; n++){
+                    if (self.m.clones[n].germline == (self.m.germlineV.system))
+                        if (Math.abs(self.axisY.pos(n) - d.pos) < halfRangeLine)
+                            listToSelect.push(n);
+                        }
+                self.m.multiSelect(listToSelect);
                 }
-            self.m.multiSelect(listToSelect);
-           })
+            })
 
             .attr("x", function(d) {
                 if (d.type == "subline") return self.sub_text_position_y;
@@ -1676,7 +1683,8 @@ ScatterPlot.prototype = {
     },
 
     /**
-     * check and put the correct currently selected axis for axisX/Y menu <br>
+     * check and put the correct currently 
+      axis for axisX/Y menu <br>
      * */
     updateMenu: function() {
         var select_x = 0;
