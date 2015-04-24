@@ -36,11 +36,11 @@ def add_form():
     import shutil, os.path, datetime
     error = ""
     
-    if request.vars['sampling_date'] != None :
+    if request.vars['sampling_date'] != '' :
         try:
             datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
         except ValueError:
-            error += "date missing or wrong format, "
+            error += "date (wrong format), "
     if request.vars['filename'] == None :
         error += " missing filename"
             
@@ -98,6 +98,11 @@ def edit_form():
         error += "missing id"
     if request.vars['filename'] == None :
         error += " missing filename"
+    if request.vars['sampling_date'] != '' :
+        try:
+            datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
+        except ValueError:
+            error += "date (wrong format), "
             
     if error=="" :
         mes = "file " + str(request.vars['id']) + " : "

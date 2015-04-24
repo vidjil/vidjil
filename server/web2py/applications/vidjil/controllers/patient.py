@@ -439,10 +439,11 @@ def add_form():
             error += "first name needed, "
         if request.vars["last_name"] == "" :
             error += "last name needed, "
-        try:
-            datetime.datetime.strptime(""+request.vars['birth'], '%Y-%m-%d')
-        except ValueError:
-            error += "date missing or wrong format"
+        if request.vars["birth"] != "" :
+            try:
+                datetime.datetime.strptime(""+request.vars['birth'], '%Y-%m-%d')
+            except ValueError:
+                error += "date (wrong format)"
 
         if error=="" :
             id = db.patient.insert(first_name=request.vars["first_name"],
@@ -504,10 +505,11 @@ def edit_form():
             error += "first name needed, "
         if request.vars["last_name"] == "" :
             error += "last name needed, "
-        try:
-            datetime.datetime.strptime(""+request.vars['birth'], '%Y-%m-%d')
-        except ValueError:
-            error += "date missing or wrong format"
+        if request.vars["birth"] != "" :
+            try:
+                datetime.datetime.strptime(""+request.vars['birth'], '%Y-%m-%d')
+            except ValueError:
+                error += "date (wrong format)"
         if request.vars["id"] == "" :
             error += "patient id needed, "
 
