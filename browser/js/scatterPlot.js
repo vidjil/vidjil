@@ -1641,8 +1641,8 @@ ScatterPlot.prototype = {
             this.update();
         }
 
-        if (typeof m.graph != "undefined") {
-            m.graph.setOtherVisibility(this.splitX == "otherSize" || this.splitY == "otherSize")
+        if (typeof this.m.graph != "undefined") {
+            this.m.graph.setOtherVisibility(this.splitX == "otherSize" || this.splitY == "otherSize")
         }
 
     },
