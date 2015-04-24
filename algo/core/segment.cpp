@@ -400,16 +400,20 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
   // E-value threshold
   if (threshold_nb_expected > NO_LIMIT_VALUE)
     if (the_kseg->isSegmented()) {
-        if (the_kseg->evalue > threshold_nb_expected
-            && the_kseg->evalue_left <= threshold_nb_expected
-            && the_kseg->evalue_right <= threshold_nb_expected) {
+        if (the_kseg->evalue > threshold_nb_expected) {
+
+          // Detail the unsegmentation cause
+          if (the_kseg->evalue_left > threshold_nb_expected
+            && the_kseg->evalue_right > threshold_nb_expected) {
           the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_ZERO);
         } else if (the_kseg->evalue_left > threshold_nb_expected) {
           the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_V);
         } else if (the_kseg->evalue_right > threshold_nb_expected) {
           the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_J);
-        }
+        } else // left and right are <= threshold, but their sum is > threshold
+          the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_ZERO);
       }
+    }
 }
 
 KmerMultiSegmenter::~KmerMultiSegmenter() {
