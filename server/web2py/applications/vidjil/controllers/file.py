@@ -167,10 +167,14 @@ def delete():
     import shutil, os.path
     
     patient_id = db.sequence_file[request.vars["id"]].patient_id
-    
+    delete_results = ('delete_results' in request.vars and request.vars['delete_results'] == 'True')
+
     if auth.can_modify_patient(patient_id):
-        db(db.sequence_file.id == request.vars["id"]).delete()
-        db(db.results_file.sequence_file_id == request.vars["id"]).delete()
+        if not(delete_results):
+            delete_sequence_file(request.vars['id'])
+        else:
+            db(db.sequence_file.id == request.vars["id"]).delete()
+            db(db.results_file.sequence_file_id == request.vars["id"]).delete()
 
         res = {"redirect": "patient/info",
                "args" : { "id" : patient_id},
