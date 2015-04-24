@@ -57,7 +57,6 @@ const char* const segmented_mesg[] = { "?",
 
 class Segmenter {
 protected:
-  string label;
   string sequence;
   int Vend, Jstart;
   int Dstart, Dend;
@@ -71,6 +70,7 @@ protected:
 
  public:
   Germline *segmented_germline;
+  string label;
   string code;
   string code_short;
   string code_light;

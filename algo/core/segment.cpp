@@ -149,9 +149,8 @@ bool Segmenter::finishSegmentationD()
 
 string Segmenter::getInfoLine() const
 {
-  string s = ">" ;
+  string s = "" ;
 
-  s += label + " " ;
   s += (segmented ? "" : "! ") + info ;
   s += " " + info_extra ;
   s += " " + segmented_germline->code ;
@@ -170,6 +169,7 @@ string Segmenter::getInfoLine() const
 
 ostream &operator<<(ostream &out, const Segmenter &s)
 {
+  out << ">" << s.label << " " ;
   out << s.getInfoLine() << endl;
 
   if (s.segmented)
@@ -349,16 +349,17 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
       if (out_unsegmented)
         {
           // Debug, display k-mer affectation and segmentation result for this germline
-          *out_unsegmented << "#"
-                           << left << setw(4) << kseg->segmented_germline->code << " "
-                           << left << setw(20) << segmented_mesg[kseg->getSegmentationStatus()] << " ";
-
-          *out_unsegmented << right << setw(3) << kseg->score << " ";
+          *out_unsegmented << "# "
+                           << right << setw(3) << kseg->score << " "
+                           << left << setw(30)
+                           << kseg->getInfoLine()
+                           << endl ;
           
-          if (kseg->getSegmentationStatus() != UNSEG_TOO_SHORT) 
-            *out_unsegmented << kseg->getKmerAffectAnalyser()->toString();
-
-          *out_unsegmented << endl ;
+          if (kseg->getSegmentationStatus() != UNSEG_TOO_SHORT)
+            {
+              *out_unsegmented << kseg->getKmerAffectAnalyser()->toString();
+              *out_unsegmented << endl ;
+            }
         }
 
       // Always remember the first kseg

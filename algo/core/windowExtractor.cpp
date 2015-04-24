@@ -83,7 +83,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
 
     // Last line of detailed affects output
     if (out_affects) {
-      *out_affects << "#" << seg->getInfoLine() << endl;
+      *out_affects << "#>" << seg->label << " " <<  seg->getInfoLine() << endl << endl;
     }
 
     // Progress bar
