@@ -47,19 +47,22 @@ import traceback
 import shutil
 from copy import copy
 
-
+execfile("applications/vidjil/controllers/default.py", globals())
 
 
 # create a test database by copying the original db
+test_db = DAL('sqlite://testing1234.sqlite')
 
-test_db = DAL('sqlite://testing124.sqlite')
+# build default database if doesn't exist
+init_db()
+
 for tablename in db.tables:  # Copy tables!
     table_copy = [copy(f) for f in db[tablename]]
     test_db.define_table(tablename, *table_copy)
 
 db = test_db
 
-execfile("applications/vidjil/controllers/default.py", globals())
+
 init_db(True)
 
 # use a fake user

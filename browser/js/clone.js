@@ -363,15 +363,7 @@ Clone.prototype = {
             if ("GgCc".indexOf(this.sequence[i]) > -1)
                 gc++ }
 
-        this.GCContent = 100 * gc / this.sequence.length
-    },
-
-    getGCContent : function () {
-        if (typeof (this.GCContent) != 'undefined'){
-            return this.GCContent
-        }else{
-            return 0;
-        }
+        this.GCContent = gc / this.sequence.length
     },
 
     getSequenceLength : function () {

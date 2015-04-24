@@ -127,15 +127,15 @@ function ScatterPlot(id, model) {
     // Plot axis
     this.available_axis = {
         "sequenceLength" : { "fct" : function(cloneID) {return self.m.clone(cloneID).getSequenceLength()} },
-        "GCContent" : { "fct" : function(cloneID) {return self.m.clone(cloneID).getGCContent()} },
+        "GCContent" : { "fct" : "GCContent", "output" : "percent" },
         "n" : { "fct" : function(cloneID) {return self.m.clone(cloneID).getNlength()} },
         "lengthCDR3" : { "fct" : function(cloneID) {return self.m.clone(cloneID).seg["cdr3"].length} },
         "Size" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSizeZero()}, 
                     "min" : function(){return self.m.min_size},
-                    "max" : 1, "percent" : true, "log" :true  },
+                    "max" : 1, "output" : "percent", "log" :true  },
         "otherSize" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSizeZero(m.tOther)}, 
                         "min" : function(){return self.m.min_size}, 
-                        "max" : 1, "percent" : true, "log" :true  }
+                        "max" : 1, "output" : "percent", "log" :true  }
     }
     
     // Plot Presets
@@ -303,7 +303,7 @@ ScatterPlot.prototype = {
         this.initMotor();
         this.force
             .nodes(this.nodes) //Nodes array initialisation
-            .on("tick", this.tick.bind(this)); // on -> Listen updates compared to modified positions
+            .on("tick", function(){self.tick()}); // on -> Listen updates compared to modified positions
 
         //Création d'un element SVG pour chaque nodes (this.node.[...])
         this.node = this.plot_container.selectAll("circle")
@@ -585,7 +585,7 @@ ScatterPlot.prototype = {
         }
         
         //sort each bar (axisY)
-        this.sortBarTab(function(a){return self.m.clone(a).getGene("3")});
+        
         switch (this.splitY) {
             case "allele_v" :
                 this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getGene("5")});
@@ -600,13 +600,17 @@ ScatterPlot.prototype = {
                 this.sortBarTab(function(cloneID){return self.m.clone(cloneID).getGene("3",false)});
                 break;
             default :
-                if (typeof this.available_axis[this.splitY])
+                if (typeof this.available_axis[this.splitY]){
                     this.sortBarTab(this.available_axis[this.splitY].fct);
+                }else{
+                    this.sortBarTab(function(a){return self.m.clone(a).getGene("3")});
+                }
             break;
         }
         
         //compute position for each clones
         this.computeBarTab();
+        
     },
     
     /**
@@ -618,7 +622,14 @@ ScatterPlot.prototype = {
      * */
     makeBarTab: function (fct, values) {
         var min, max;
-        this.barTab = [];
+        this.barTab = {};
+        
+        if (typeof fct == "string"){
+            var tmp = fct 
+            fct = function(id){ 
+                return self.m.clone(id).get(tmp)
+            }
+        }
         
         if (typeof values == "undefined"){
             for (var i in this.m.clones) {
@@ -657,7 +668,6 @@ ScatterPlot.prototype = {
                 }
             }
         }
-        
         return this;
     },
     
@@ -666,16 +676,25 @@ ScatterPlot.prototype = {
      * param {function} fct - distribution function
      * */
     sortBarTab: function (fct) {
+        console.log('sort')
+        console.log(fct)
+        if (typeof fct == "string"){
+            var tmp = fct 
+            fct = function(id){ 
+                return self.m.clone(id).get(tmp)
+            }
+        }
         
         for (var i in this.barTab) {
             this.barTab[i].sort(function (a,b) {
                 var va;
                 try{
-                    var v = fct(a);
-                }catch(e){}
+                    var va = fct(a);
+                }catch(e){
+                }
                 var vb;
                 try{
-                    var v = fct(b);
+                    var vb = fct(b);
                 }catch(e){}
                 
                 if (typeof va == "undefined") return (typeof vb == "undefined")  ? 0 :  -1;
@@ -730,6 +749,7 @@ ScatterPlot.prototype = {
         
         k=1 ;
         for (var i in this.barTab) {
+
             var y_pos = 0
             var x_pos = this.axisX.posBarLabel(k, tab_length)
             
@@ -1628,8 +1648,8 @@ ScatterPlot.prototype = {
             this.update();
         }
 
-        if (typeof m.graph != "undefined") {
-            m.graph.setOtherVisibility(this.splitX == "otherSize" || this.splitY == "otherSize")
+        if (typeof this.m.graph != "undefined") {
+            this.m.graph.setOtherVisibility(this.splitX == "otherSize" || this.splitY == "otherSize")
         }
 
     },
@@ -1656,7 +1676,7 @@ ScatterPlot.prototype = {
             default :
                 if (typeof this.available_axis[splitMethod]){
                     var a = this.available_axis[splitMethod];
-                    axis.custom(a.fct, a.min, a.max, a.percent, a.log)
+                    axis.custom(a.fct, a.min, a.max, a.output, a.log)
                 }
             break;
         }

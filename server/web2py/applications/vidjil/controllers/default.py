@@ -43,7 +43,7 @@ def logger():
     log.log(lvl, res)
 
 def init_db(force=False):
-    if (db(db.auth_user.id > 0).count() == 0) or (force) : 
+    if (force) or (db(db.auth_user.id > 0).count() == 0) : 
         for table in db :
             table.truncate()
         

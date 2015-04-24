@@ -1,6 +1,8 @@
 # coding: utf8
 import gluon.contrib.simplejson, datetime
 import vidjil_utils
+import time
+
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -116,6 +118,8 @@ def info():
 
 
 def custom():
+    start = time.time()
+
     if request.vars["config_id"] and request.vars["config_id"] != "-1" :
         config_id = long(request.vars["config_id"])
         config_name = db.config[request.vars["config_id"]].name
@@ -167,8 +171,7 @@ def custom():
     if config :
         query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.vars["custom_list"])) )
     
-    res = {"message": "custom list (%s)" % config_name}
-    log.debug(res)
+    log.debug("patient/custom (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
 
     return dict(query=query,
                 config_id=config_id,
@@ -178,7 +181,6 @@ def custom():
 STATS_READLINES = 1000 # approx. size in which the stats are searched
 
 def stats():
-    import time
     start = time.time()
 
     d = custom()
@@ -268,8 +270,6 @@ def stats():
 
 ## return patient list
 def index():
-    import time
-    
     start = time.time()
     if not auth.user : 
         res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
@@ -370,7 +370,9 @@ def index():
         (db.auth_permission.name == "anon") &
         (db.auth_permission.table_name == "patient") &
         (db.patient.id == db.auth_permission.record_id ) &
-        (auth.user_group() == db.auth_permission.group_id )
+        (db.auth_group.id == db.auth_permission.group_id ) &
+        (db.auth_membership.user_id == auth.user_id) &
+        (db.auth_membership.group_id == db.auth_group.id)
     ).select(
         db.patient.id
     )
@@ -437,10 +439,11 @@ def add_form():
             error += "first name needed, "
         if request.vars["last_name"] == "" :
             error += "last name needed, "
-        try:
-            datetime.datetime.strptime(""+request.vars['birth'], '%Y-%m-%d')
-        except ValueError:
-            error += "date missing or wrong format"
+        if request.vars["birth"] != "" :
+            try:
+                datetime.datetime.strptime(""+request.vars['birth'], '%Y-%m-%d')
+            except ValueError:
+                error += "date (wrong format)"
 
         if error=="" :
             id = db.patient.insert(first_name=request.vars["first_name"],
@@ -502,10 +505,11 @@ def edit_form():
             error += "first name needed, "
         if request.vars["last_name"] == "" :
             error += "last name needed, "
-        try:
-            datetime.datetime.strptime(""+request.vars['birth'], '%Y-%m-%d')
-        except ValueError:
-            error += "date missing or wrong format"
+        if request.vars["birth"] != "" :
+            try:
+                datetime.datetime.strptime(""+request.vars['birth'], '%Y-%m-%d')
+            except ValueError:
+                error += "date (wrong format)"
         if request.vars["id"] == "" :
             error += "patient id needed, "
 

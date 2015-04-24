@@ -7,7 +7,7 @@ requirejs.config({
 });
 
 require(['../conf'], function () {}, function(err) {});
-
+require(["../view"], function () {}, function(err) {});
 require(["jquery",
         "d3.v3",
         "jquery.form",
@@ -20,7 +20,6 @@ require(["jquery",
         "underscore",
         "rgbcolor",
         "file",
-        "../view",
         "../compare", 
         "../menu", 
         "../dbscan", 

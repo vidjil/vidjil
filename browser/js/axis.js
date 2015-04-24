@@ -143,65 +143,99 @@ Axis.prototype = {
      * @param {boolean} percent - display label as percent ( value 1 => 100%)
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * */
-    custom: function(fct, default_min, default_max, percent, use_log){
-        percent = typeof percent !== 'undefined' ? percent : false;
-        use_log= typeof percent !== 'undefined' ? use_log : false;
+    custom: function(fct, default_min, default_max, output, use_log){
+        output = typeof output !== 'undefined' ? output : 'float';
+        use_log = typeof use_log !== 'undefined' ? use_log : false;
         var self = this;
-        this.fct = fct;
         
-        var min = default_min;
-        var max = default_max;
-        if (typeof min === 'function') min = min();
-        if (typeof min === 'function') max = max();
-            
-        for (var i in this.m.clones){
-            var tmp;
-            try{
-                tmp = fct(i);
-            }catch(e){}
-            
-            if ( typeof tmp != "undefined"){
-                if ( tmp > max || typeof max == "undefined") max = tmp;
-                if ( tmp < min || typeof min == "undefined") min = tmp;
+        this.fct = fct;
+        if (typeof fct == "string"){
+            this.fct = function(id){ 
+                return self.m.clone(id).get(fct)
             }
         }
         
-        if (typeof min == "undefined"){ 
-            min = 0;
-            max = 1;
-        }
+        if ( output != "string" ){
+            var min = default_min;
+            var max = default_max;
+            if (typeof min === 'function') min = min();
+            if (typeof min === 'function') max = max();
         
-        var range = [0,1]
-        if (self.reverse) range = [1,0]
-        if (use_log){
-            this.sizeScale = d3.scale.log()
-            .domain([min, max])
-            .range(range);
-        }else{
-            this.sizeScale = d3.scale.linear()
+            for (var i in this.m.clones){
+                var tmp;
+                try{
+                    tmp = this.fct(i);
+                }catch(e){}
+                
+                if ( typeof tmp != "undefined"){
+                    if ( tmp > max || typeof max == "undefined") max = tmp;
+                    if ( tmp < min || typeof min == "undefined") min = tmp;
+                }
+            }
+            
+            if (typeof min == "undefined"){ 
+                min = 0;
+                max = 1;
+            }
+            
+            var range = [0,1]
+            if (self.reverse) range = [1,0]
+            if (use_log){
+                this.sizeScale = d3.scale.log()
                 .domain([min, max])
                 .range(range);
-        }
-            
-        this.min = min;
-        this.max = max;
-        
-        this.pos = function(cloneID) {
-            var value, pos;
-            try{
-                value = self.fct(cloneID);
-            }catch(e){}
-            
-            if (typeof value != "undefined"){
-                pos = self.sizeScale(value);
             }else{
-                pos = self.sizeScale(self.min);
+                this.sizeScale = d3.scale.linear()
+                    .domain([min, max])
+                    .range(range);
+            }
+                
+            this.min = min;
+            this.max = max;
+            
+            this.pos = function(cloneID) {
+                var value, pos;
+                try{
+                    value = self.fct(cloneID);
+                }catch(e){}
+                
+                if (typeof value != "undefined"){
+                    pos = self.sizeScale(value);
+                }else{
+                    pos = self.sizeScale(self.min);
+                }
+                
+                return pos;
+            }
+        }else{
+            this.values = {};
+            for (var i in this.m.clones){
+                try{
+                    var tmp = this.fct(i);
+                    console.log(tmp)
+                    if (typeof tmp != 'undefined') this.values[tmp] = 0;
+                }catch(e){}
             }
             
-            return pos;
+            var key = Object.keys(this.values)
+            var step = 1/(key.length+1);
+            pos = step/2;
+            for (var i in key){
+                this.values[key[i]] = pos;
+                pos += step;
+            }
+            
+            this.values["?"] = pos;
+            
+            this.pos = function(cloneID) {
+                result = this.values[this.fct(cloneID)]
+                
+                if (typeof result == 'undefined') return "?"
+                return result
+            }
         }
         
-        this.computeCustomLabels(min, max, percent, use_log)
+        this.computeCustomLabels(min, max, output, use_log)
     },
     
     /**
@@ -212,32 +246,39 @@ Axis.prototype = {
      * @param {boolean} percent - display label as percent ( value 1 => 100%)
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * */
-    computeCustomLabels: function(min, max, percent, use_log){
+    computeCustomLabels: function(min, max, output, use_log){
         this.labels = [];
         
-        if (use_log){
-            var h=1
-            for (var i = 0; i < 10; i++) {
-                var pos = this.sizeScale(h); // pos is possibly already reversed
-                var text = this.m.formatSize(h, false)
-                if (pos >= 0 && pos <= 1)
-                this.labels.push(this.label("line", pos, text));
-                h = h / 10;
+        if (output == "string"){
+            var key = Object.keys(this.values)
+            for (var i in key){
+                this.labels.push(this.label("line", this.values[key[i]], key[i]));
             }
         }else{
-            var h = (max-min)/5
-            var delta = (max-min)
-            for (var i = 0; i <= 5; i++) {
-                pos = (h*i)*(1/delta);
-                
-                var text = Math.round(min+(h*i))
-                if (percent){
-                    text = ((min+(h*i))*100).toFixed(1) + "%"
+            if (use_log){
+                var h=1
+                for (var i = 0; i < 10; i++) {
+                    var pos = this.sizeScale(h); // pos is possibly already reversed
+                    var text = this.m.formatSize(h, false)
+                    if (pos >= 0 && pos <= 1)
+                    this.labels.push(this.label("line", pos, text));
+                    h = h / 10;
                 }
-                
-                if (this.reverse) pos = 1 - pos; 
-                
-                this.labels.push(this.label("line", pos, text));
+            }else{
+                var h = (max-min)/5
+                var delta = (max-min)
+                for (var i = 0; i <= 5; i++) {
+                    pos = (h*i)*(1/delta);
+                    
+                    var text = Math.round(min+(h*i))
+                    if (output=="percent"){
+                        text = ((min+(h*i))*100).toFixed(1) + "%"
+                    }
+                    
+                    if (this.reverse) pos = 1 - pos; 
+                    
+                    this.labels.push(this.label("line", pos, text));
+                }
             }
         }
     },
