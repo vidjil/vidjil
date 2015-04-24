@@ -233,6 +233,8 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
     }
   }
 
+  score = nb_strand[0] + nb_strand[1] ; // Used only for non-segmented germlines
+
   KmerAffect before, after;
 
   if (!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12))
@@ -258,7 +260,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
         because = UNSEG_TOO_FEW_ZERO ;
 
       // The pseudo-germline should never take precedence over the regular germlines
-      score = 1 ;
+      evalue = 1.0 ;
     }
 
   else
@@ -329,7 +331,8 @@ KmerSegmenter::~KmerSegmenter() {
 KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented,
                                        double threshold, int nb_reads_for_evalue)
 {
-  int best_score_seg = 0 ; // Best score, segmented sequences
+  bool found_seg = false ; // Found a segmentation
+  double best_evalue_seg = NO_LIMIT_VALUE ; // Best evalue, segmented sequences
   int best_score_unseg = 0 ; // Best score, unsegmented sequences
   the_kseg = NULL;
   multi_germline = multigermline;
@@ -370,10 +373,12 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
         {
           // Yes, it is segmented
           // Should we keep the kseg ?
-          if (kseg->score > best_score_seg)
+          if (!found_seg || (kseg->evalue < best_evalue_seg))
             {
               keep_seg = true;
-              best_score_seg = kseg->score ;
+              best_evalue_seg = kseg->evalue ;
+
+              found_seg = true;
             }
         }
       else
@@ -383,7 +388,7 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
             if (kseg->score > best_score_unseg)
             {              
               best_score_unseg = kseg->score ;
-              if (!best_score_seg)
+              if (!found_seg)
                 keep_seg = true;
             }
         }
@@ -456,8 +461,6 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
           Jstart = tmp;
         }
       }
-  
-    score = max.nb_before_left + max.nb_before_right + max.nb_after_left + max.nb_after_right;  
 }
 
 KmerAffectAnalyser *KmerSegmenter::getKmerAffectAnalyser() const {
