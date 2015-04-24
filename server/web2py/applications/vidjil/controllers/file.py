@@ -3,6 +3,7 @@ import gluon.contrib.simplejson
 import defs
 import vidjil_utils
 import os
+import controller_utils
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
@@ -11,13 +12,9 @@ if request.env.http_origin:
 
 def add(): 
     if not auth.can_modify_patient(request.vars['id'], auth.user_id):
-        res = {"success" : "false", "message" : "you need admin permission on this patient to add files"}
-        log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return error_message("you need admin permission on this patient to add files")
     elif not auth.can_upload_file(request.vars['id']):
-        res = {"success" : "false", "message" : "you don't have right to upload files"}
-        log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return error_message("you don't have right to upload files")
     else:
         query = db((db.sequence_file.patient_id==request.vars['id'])).select()
         if len(query) != 0 :
@@ -48,9 +45,7 @@ def add_form():
         query = db((db.sequence_file.patient_id==request.vars['patient_id'])).select()
         for row in query :
             if row.filename == request.vars['filename'] :
-                res = {"message": "this sequence file already exists for this patient"}
-                log.error(res)
-                return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+                return error_message("this sequence file already exists for this patient")
             
         id = db.sequence_file.insert(sampling_date=request.vars['sampling_date'],
                             info=request.vars['file_info'],
@@ -71,9 +66,7 @@ def add_form():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
         
     else :
-        res = {"success" : "false", "message" : error}
-        log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return error_message(error)
 
 
 def edit(): 
@@ -83,9 +76,7 @@ def edit():
     #    res = {"success" : "false", "message" : "you don't have right to upload files"}
     #    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
-        res = {"success" : "false", "message" : "you need admin permission to edit files"}
-        log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return error_message("you need admin permission to edit files")
         
 
 
@@ -161,10 +152,7 @@ def confirm():
     if auth.can_modify_patient(request.vars['patient_id']):
         return dict(message=T('confirm sequence file deletion'))
     else:
-        res = {"success" : "false", "message" : "you need admin permission to delete this file"}
-        log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-        
+        return error_message("you need admin permission to delete this file")
 
 def delete():
     import shutil, os.path
@@ -181,10 +169,7 @@ def delete():
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
-        res = {"success" : "false", "message" : "you need admin permission to delete this file"}
-        log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-    
+        return error_message("you need admin permission to delete this file")
 
 def sequencer_list():
     sequencer_list = []
