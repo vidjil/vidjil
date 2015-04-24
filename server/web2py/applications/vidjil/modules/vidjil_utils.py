@@ -2,6 +2,7 @@ import math
 import re
 import defs
 import json
+import datetime
 from gluon import current
 from datetime import date
 
@@ -50,7 +51,10 @@ def format_size(n, unit='B'):
 
 def age_years_months(birth, months_below_year=4):
     '''Get the age in years, and possibly months.'''
-
+    
+    if not isinstance(birth, datetime.date) :
+        return '-/-'
+    
     today = date.today()
     years = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
     age = '%dy' % years
