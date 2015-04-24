@@ -149,8 +149,17 @@ def upload():
   
 
 def confirm():
+    delete_only_sequence = ('delete_only_sequence' in request.vars and request.vars['delete_only_sequence'] == 'True')
+    delete_results = ('delete_results' in request.vars and request.vars['delete_results'] == 'True')
+    sequence_file = db.sequence_file[request.vars['id']]
+    if sequence_file == None:
+        return controller_utils.error_message("The requested file doesn't exist")
+    if sequence_file.data_file == None:
+        delete_results = True
     if auth.can_modify_patient(request.vars['patient_id']):
-        return dict(message=T('confirm sequence file deletion'))
+        return dict(message=T('choose what you would like to delete'),
+                    delete_only_sequence = delete_only_sequence,
+                    delete_results = delete_results)
     else:
         return error_message("you need admin permission to delete this file")
 
