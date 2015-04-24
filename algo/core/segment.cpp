@@ -79,10 +79,6 @@ bool Segmenter::isDSegmented() const {
   return dSegmented;
 }
 
-bool KmerSegmenter::isDetected() const {
-  return detected;
-}
-
 // Chevauchement
 
 string Segmenter::removeChevauchement()
@@ -197,7 +193,6 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
   sequence = seq.sequence ;
   info = "" ;
   info_extra = "seed";
-  detected = false ;
   segmented = false;
   segmented_germline = germline ;
   reversed = false;
@@ -255,9 +250,6 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
 
       strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
       computeSegmentation(strand, max12.first, max12.second, threshold, multiplier);
-
-      if (!detected)
-        because = UNSEG_TOO_FEW_ZERO ;
 
       // The pseudo-germline should never take precedence over the regular germlines
       evalue = 1.0 ;
@@ -439,7 +431,7 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   //
 
       // We labeled it detected if there were both enough affect_5 and enough affect_3
-      detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
+      bool detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
         && (max.nb_after_left + max.nb_after_right >= DETECT_THRESHOLD);
       
       if (! max.max_found) {
