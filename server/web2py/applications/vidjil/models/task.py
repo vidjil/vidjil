@@ -83,7 +83,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
 
     ## config de vidjil
     vidjil_cmd = db.config[id_config].command
-    vidjil_cmd = vidjil_cmd.replace( 'germline/' ,germline_folder)
+    vidjil_cmd = vidjil_cmd.replace( ' germline' ,germline_folder)
     
     os.makedirs(out_folder)
     out_log = out_folder+'/'+output_filename+'.vidjil.log'
