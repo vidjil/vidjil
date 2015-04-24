@@ -185,7 +185,7 @@ class KmerSegmenter : public Segmenter
    * @param seq: An object read from a FASTA/FASTQ file
    * @param germline: the germline
    */
-  KmerSegmenter(Sequence seq, Germline *germline, int multiplier=1);
+  KmerSegmenter(Sequence seq, Germline *germline, double threshold = THRESHOLD_NB_EXPECTED, int multiplier=1);
 
   KmerSegmenter(const KmerSegmenter &seg);
 
@@ -199,7 +199,7 @@ class KmerSegmenter : public Segmenter
   void toJsonList(JsonList *seg);
 
  private:
-  void computeSegmentation(int strand, KmerAffect left, KmerAffect right, int multiplier);
+  void computeSegmentation(int strand, KmerAffect left, KmerAffect right, double threshold, int multiplier);
 };
 
 

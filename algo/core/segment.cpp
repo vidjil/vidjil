@@ -191,7 +191,7 @@ ostream &operator<<(ostream &out, const Segmenter &s)
 
 KmerSegmenter::KmerSegmenter() { kaa = 0 ; }
 
-KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, int multiplier)
+KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold, int multiplier)
 {
   label = seq.label ;
   sequence = seq.sequence ;
@@ -252,7 +252,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, int multiplier)
         }
 
       strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
-      computeSegmentation(strand, max12.first, max12.second, multiplier);
+      computeSegmentation(strand, max12.first, max12.second, threshold, multiplier);
 
       if (!detected)
         because = UNSEG_TOO_FEW_ZERO ;
@@ -283,7 +283,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, int multiplier)
     return ;
   }
 
-  computeSegmentation(strand, before, after, multiplier);
+  computeSegmentation(strand, before, after, threshold, multiplier);
 
     } // endif Pseudo-germline
 
@@ -343,7 +343,7 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
     {
       Germline *germline = *it ;
 
-      KmerSegmenter *kseg = new KmerSegmenter(seq, germline, multiplier);
+      KmerSegmenter *kseg = new KmerSegmenter(seq, germline, threshold, multiplier);
       bool keep_seg = false;
 
       if (out_unsegmented)
@@ -396,24 +396,6 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
         delete kseg;
       }
     } // end for (Germlines)
-
-  // E-value threshold
-  if (threshold_nb_expected > NO_LIMIT_VALUE)
-    if (the_kseg->isSegmented()) {
-        if (the_kseg->evalue > threshold_nb_expected) {
-
-          // Detail the unsegmentation cause
-          if (the_kseg->evalue_left > threshold_nb_expected
-            && the_kseg->evalue_right > threshold_nb_expected) {
-          the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_ZERO);
-        } else if (the_kseg->evalue_left > threshold_nb_expected) {
-          the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_V);
-        } else if (the_kseg->evalue_right > threshold_nb_expected) {
-          the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_J);
-        } else // left and right are <= threshold, but their sum is > threshold
-          the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_ZERO);
-      }
-    }
 }
 
 KmerMultiSegmenter::~KmerMultiSegmenter() {
@@ -421,7 +403,7 @@ KmerMultiSegmenter::~KmerMultiSegmenter() {
     delete the_kseg;
 }
 
-void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffect after, int multiplier) {
+void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffect after, double threshold, int multiplier) {
   // Try to segment, computing 'Vend' and 'Jstart'
   // If not segmented, put the cause of unsegmentation in 'because'
 
@@ -432,6 +414,24 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   evalue_left = pvalues.first * multiplier ;
   evalue_right = pvalues.second * multiplier ;
   evalue = evalue_left + evalue_right ;
+
+  // E-value threshold
+  if (threshold > NO_LIMIT_VALUE && evalue > threshold) {
+
+    // Detail the unsegmentation cause
+    if (evalue_left > threshold && evalue_right > threshold)
+      because = UNSEG_TOO_FEW_ZERO ;
+    else if (evalue_left > threshold)
+      because = UNSEG_TOO_FEW_V ;
+    else if (evalue_right > threshold)
+      because = UNSEG_TOO_FEW_J ;
+    else // left and right are <= threshold, but their sum is > threshold
+      because = UNSEG_TOO_FEW_ZERO ;
+
+    return ;
+  }
+
+  //
 
       // We labeled it detected if there were both enough affect_5 and enough affect_3
       detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
