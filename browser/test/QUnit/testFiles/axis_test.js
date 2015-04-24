@@ -74,10 +74,27 @@ test("Axis : ", function() {
     
     //Nlength
     axis.custom(function(cloneID) {
-                var value = m.clone(cloneID)
-                    .getNlength()
-                if (typeof value != "undefined" && value != 0) return value;
-                return undefined;
-            })
+                m.clone(cloneID).getNlength()
+                return m.clone(cloneID).getNlength();
+            },
+            0,25)
+    
+    equal(axis.pos(0).toPrecision(3), 0.00, "custom  : clone 0 (nlength = 0) position -> 0.00")
+    equal(axis.pos(1).toPrecision(3), 0.360, "custom  : clone 1 (nlength = 9) position -> 0.360")
 
+    
+    //gc
+    axis.custom('GCContent', 0, 1, 'percent')
+    
+    equal(axis.pos(0).toPrecision(3), 0.0476, "custom (percent) : clone 0 (gc = 1/21) position -> 0.0476")
+    equal(axis.pos(1).toPrecision(3), 0.944, "custom (percent) : clone 1 (gc = 17/18) position -> 0.944")
+    deepEqual(axis.labels[0].text,  "0.0%", "custom (percent) : check label 0.0%")
+    
+    //gc + log
+    axis.custom('GCContent', 0.001, 1, 'percent', true)
+    
+    equal(axis.pos(0).toPrecision(3), 0.559, "custom (percent+log) : clone 0 (gc = 1/21) position -> 0.559")
+    equal(axis.pos(1).toPrecision(3), 0.992, "custom (percent+log) : clone 1 (gc = 17/18) position -> 0.992")
+    deepEqual(axis.labels[0].text,  "100%", "custom (percent+log) : check label 100%")
+    deepEqual(axis.labels[1].text,  "10%", "custom (percent+log) : check label 10%")
 });

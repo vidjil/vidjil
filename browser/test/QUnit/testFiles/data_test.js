@@ -36,7 +36,7 @@ json_data = {
   },
   "clones": [
     { 
-        "sequence" : "aaaaaaaaaaaaaaaaaaaaa",
+        "sequence" : "aaaaaaaaaaaaaaaaaaaag",
         "name" : "test1",
         "id" : "id1",
         "reads" : [10,10,15,15] ,
@@ -50,7 +50,7 @@ json_data = {
         }
     },
     { 
-        "sequence" : "bbbbbbbbbbbbbbb",
+        "sequence" : "ccccccccccccccccca",
         "name" : "test2",
         "id" : "id2",
         "reads" : [20,20,10,10] ,
