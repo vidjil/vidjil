@@ -195,6 +195,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
   info_extra = "seed";
   segmented = false;
   segmented_germline = germline ;
+  system = germline->code; // useful ?
   reversed = false;
   Dend=0;
   because = NOT_PROCESSED ; // Cause of unsegmentation
@@ -249,7 +250,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
         }
 
       strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
-      computeSegmentation(strand, max12.first, max12.second, threshold, multiplier);
+      computeSegmentation(strand, max12.first, max12.second, germline->delta_min, germline->delta_max, threshold, multiplier);
 
       // The pseudo-germline should never take precedence over the regular germlines
       evalue = 1.0 ;
@@ -277,41 +278,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
     return ;
   }
 
-  computeSegmentation(strand, before, after, threshold, multiplier);
+  computeSegmentation(strand, before, after, germline->delta_min, germline->delta_max, threshold, multiplier);
 
     } // endif Pseudo-germline
-
-
-  if (! because)
-    {
-      // Now we check the delta between Vend and right
-   
-      if (Jstart - Vend < germline->delta_min)
-	{
-	  because = UNSEG_BAD_DELTA_MIN ;
-	}
-
-      if (Jstart - Vend > germline->delta_max)
-	{
-	  because = UNSEG_BAD_DELTA_MAX ;
-	}
-    } 
-
-  if (because == NOT_PROCESSED)
-    {
-      // Yes, it is segmented
-      segmented = true;
-      reversed = (strand == -1); 
-      because = reversed ? SEG_MINUS : SEG_PLUS ;
-
-      info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS)  ;
-      // removeChevauchement is called once info was already computed: it is only to output info_extra
-      info_extra += removeChevauchement();
-      finishSegmentation();
-      system = germline->code;
-      return ;
-    } 
-
  
 }
 
@@ -400,7 +369,9 @@ KmerMultiSegmenter::~KmerMultiSegmenter() {
     delete the_kseg;
 }
 
-void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffect after, double threshold, int multiplier) {
+void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffect after,
+                                        int delta_min, int delta_max,
+                                        double threshold, int multiplier) {
   // Try to segment, computing 'Vend' and 'Jstart'
   // If not segmented, put the cause of unsegmentation in 'because'
 
@@ -444,15 +415,49 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
 	  because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_J ;
 	} else 
           because = UNSEG_AMBIGUOUS; 
-      } else {
-        Vend = max.first_pos_max;
-        Jstart = max.last_pos_max + 1;
-        if (strand == -1) {
-          int tmp = sequence.size() - Vend - 1;
-          Vend = sequence.size() - Jstart - 1;
-          Jstart = tmp;
-        }
+
+        return ;
       }
+
+   // There was a good segmentation point
+
+   Vend = max.first_pos_max;
+   Jstart = max.last_pos_max + 1;
+   if (strand == -1) {
+     int tmp = sequence.size() - Vend - 1;
+     Vend = sequence.size() - Jstart - 1;
+     Jstart = tmp;
+   }
+
+
+  // Now we check the delta between Vend and right
+
+  if (Jstart - Vend < delta_min)
+    {
+      because = UNSEG_BAD_DELTA_MIN ;
+      return ;
+    }
+
+  if (Jstart - Vend > delta_max)
+    {
+      because = UNSEG_BAD_DELTA_MAX ;
+      return ;
+    }
+
+  assert(because == NOT_PROCESSED);
+
+  // Yes, it is segmented
+  segmented = true;
+  reversed = (strand == -1);
+  because = reversed ? SEG_MINUS : SEG_PLUS ;
+
+  info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS)  ;
+
+  // removeChevauchement is called once info was already computed: it is only to output info_extra
+  info_extra += removeChevauchement();
+  finishSegmentation();
+
+  return ;
 }
 
 KmerAffectAnalyser *KmerSegmenter::getKmerAffectAnalyser() const {

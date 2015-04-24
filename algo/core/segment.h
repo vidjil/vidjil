@@ -195,7 +195,9 @@ class KmerSegmenter : public Segmenter
   void toJsonList(JsonList *seg);
 
  private:
-  void computeSegmentation(int strand, KmerAffect left, KmerAffect right, double threshold, int multiplier);
+  void computeSegmentation(int strand, KmerAffect left, KmerAffect right,
+                           int delta_min, int delta_max,
+                           double threshold, int multiplier);
 };
 
 
