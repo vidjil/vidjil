@@ -7,7 +7,7 @@ test("scatterplot : grid", function() {
     m.initClones()
 
     var sp = new ScatterPlot("visu",m);
-    sp.init()
+    sp.init();
     
     equal(sp.returnActiveclones(), 3, "returnActiveClones -> 3");
     

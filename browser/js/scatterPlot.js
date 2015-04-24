@@ -303,7 +303,7 @@ ScatterPlot.prototype = {
         this.initMotor();
         this.force
             .nodes(this.nodes) //Nodes array initialisation
-            .on("tick", this.tick.bind(this)); // on -> Listen updates compared to modified positions
+            .on("tick", function(){self.tick()}); // on -> Listen updates compared to modified positions
 
         //Création d'un element SVG pour chaque nodes (this.node.[...])
         this.node = this.plot_container.selectAll("circle")
