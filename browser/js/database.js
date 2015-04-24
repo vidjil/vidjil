@@ -119,6 +119,8 @@ Database.prototype = {
                 } else {
                     self.check_cert()
                 }
+
+		self.warn("callUrl: " + status + " - " + url.replace(self.db_address, '') + "?" + this.argsToStr(args))
             }
             
         });
@@ -355,12 +357,14 @@ Database.prototype = {
     request: function (controller_name, args, quiet) {
         var self = this;
 
+	var url = controller_name + "?" + this.argsToStr(args);
+
         //envoye de la requete ajax
         $.ajax({
             type: "POST",
             timeout: DB_TIMEOUT_CALL,
             crossDomain: true,
-            url: self.db_address + controller_name + "?" + this.argsToStr(args),
+            url: self.db_address + url,
             xhrFields: {withCredentials: true},
             success: function (result) {
                 if (typeof quiet == 'undefined')
@@ -373,6 +377,11 @@ Database.prototype = {
                 } else {
                     self.call("patient/index")
                 }
+
+                if (typeof quiet == 'undefined') {
+		    // This triggers another request() call, but this time with quiet=true
+		    self.warn("request: " + status + " - " + url)
+		}
             }
         });
     },
@@ -676,6 +685,8 @@ Database.prototype = {
     },
 
 
+    // Log functions, to server
+    // 'quiet' is set to true to avoid infinite loops with timeouts
     log : function (lvl, msg) { this.request('default/logger', {'lvl': lvl, 'msg': msg}, true) },
     debug:    function(msg) { this.log(10, msg) },
     info:     function(msg) { this.log(20, msg) },
