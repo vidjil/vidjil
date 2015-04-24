@@ -151,7 +151,6 @@ def run_request():
 # need patient, config
 # need patient admin or read permission
 def get_data():
-    import time
     from subprocess import Popen, PIPE, STDOUT
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,

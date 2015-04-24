@@ -7,7 +7,7 @@ import re
 TASK_TIMEOUT = 60 * 60
 
 def schedule_run(id_sequence, id_config):
-    import time, datetime, sys, os.path
+    import time, datetime, os.path
     from subprocess import Popen, PIPE, STDOUT, os
 
     id_patient = db.sequence_file[id_sequence].patient_id
@@ -63,7 +63,7 @@ def schedule_run(id_sequence, id_config):
 
 
 def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_after=False):
-    import time, datetime, sys, os.path
+    import time, datetime, os.path
     from subprocess import Popen, PIPE, STDOUT, os
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences

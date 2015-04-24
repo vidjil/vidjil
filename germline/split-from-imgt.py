@@ -7,7 +7,6 @@ import os
 import urllib
 from collections import defaultdict
 import re
-import urllib
 
 IMGT_LICENSE = '''
    # To use the IMGT germline databases (IMGT/GENE-DB), you have to agree to IMGT license: 

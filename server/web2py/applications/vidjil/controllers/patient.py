@@ -562,7 +562,7 @@ def confirm():
 #
 def delete():
     if (auth.can_modify_patient(request.vars["id"]) ):
-        import shutil, os.path
+        import os.path
         #delete data file 
         query = db( (db.sequence_file.patient_id==request.vars["id"])).select() 
         for row in query :

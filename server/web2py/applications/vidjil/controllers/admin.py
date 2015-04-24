@@ -2,7 +2,6 @@
 import gluon.contrib.simplejson, re
 import os.path, subprocess
 import vidjil_utils
-from collections import defaultdict
 
 MAX_LOG_LINES = 500
 
