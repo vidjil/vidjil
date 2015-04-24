@@ -427,6 +427,7 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   pair <double, double> pvalues = kaa->getLeftRightProbabilityAtLeastOrAbove();
   evalue_left = pvalues.first * multiplier ;
   evalue_right = pvalues.second * multiplier ;
+  evalue = evalue_left + evalue_right ;
 
       // We labeled it detected if there were both enough affect_5 and enough affect_3
       detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
