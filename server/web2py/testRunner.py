@@ -184,7 +184,7 @@ def custom_execfile(test_file):
         sys.path.append(os.path.split(test_file)[0]) # to support imports form current folder in the testfiles
         g=copy(globals())
         execfile(test_file, g) 
-    except (WindowsError,ValueError,SystemExit):
+    except (OSError,ValueError,SystemExit):
         pass # we know about the rotating logger error...
              # and SystemExit is not useful to detect
     except:
