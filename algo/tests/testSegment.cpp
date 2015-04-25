@@ -114,87 +114,87 @@ void testSegmentationCause() {
     
     if (data.read(i).label == "seq-seg+") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "seq is " << data.label(i));
-      TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       TAP_TEST(ks.getJunction(30) == "GCCACCTGGGACAGGGAATTATTATAAGAA"
                || ks.getJunction(30) == "TGCCACCTGGGACAGGGAATTATTATAAGA", 
-               TEST_KMER_JUNCTION, "");
+               TEST_KMER_JUNCTION, ks.getInfoLineWithAffects());
       TAP_TEST(ks.getLeft() == 17, TEST_KMER_LEFT, "left = " << ks.getLeft());
       TAP_TEST(ks.getRight() == 18, TEST_KMER_RIGHT, "right = " << ks.getRight());
 
       ks.setSegmentationStatus(NOT_PROCESSED);
-      TAP_TEST(! ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, "");
-      TAP_TEST(ks.getSegmentationStatus() == NOT_PROCESSED, TEST_SET_SEGMENTATION_CAUSE, "");
+      TAP_TEST(! ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == NOT_PROCESSED, TEST_SET_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       ks.setSegmentationStatus(UNSEG_NOISY);
-      TAP_TEST(! ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, "");
-      TAP_TEST(ks.getSegmentationStatus() == UNSEG_NOISY, TEST_SET_SEGMENTATION_CAUSE, "");
+      TAP_TEST(! ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_NOISY, TEST_SET_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       ks.setSegmentationStatus(SEG_PLUS);
-      TAP_TEST(ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, "");
-      TAP_TEST(ks.getSegmentationStatus(), TEST_SET_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus(), TEST_SET_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-seg-") {
-      TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
-      TAP_TEST(ks.getSegmentationStatus() == SEG_MINUS, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == SEG_MINUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       TAP_TEST(ks.getJunction(30) == "GCCACCTGGGACAGGGAATTATTATAAGAA"
                || ks.getJunction(30) == "TGCCACCTGGGACAGGGAATTATTATAAGA", 
-               TEST_KMER_JUNCTION, "");
+               TEST_KMER_JUNCTION, ks.getInfoLineWithAffects());
       TAP_TEST(ks.getLeft() == 17, TEST_KMER_LEFT, "left = " << ks.getLeft());
       TAP_TEST(ks.getRight() == 18, TEST_KMER_RIGHT, "right = " << ks.getRight());
       nb_checked++;
     } else if (data.read(i).label == "seq-short") {
-      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
-      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_SHORT, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_SHORT, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-strand") {
-      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
-      TAP_TEST(ks.getSegmentationStatus() == UNSEG_STRAND_NOT_CONSISTENT, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_STRAND_NOT_CONSISTENT, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-zero") {
-      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
-      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_ZERO, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_ZERO, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-fewV") {
-      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
-      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_V, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_V, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-fewJ") {
-      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "fewJ: " << ks.getKmerAffectAnalyser()->toString());
-      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_J, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "fewJ: " << ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_J, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-fewV2") {
-      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
-      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_V, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_V, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-fewJ2") {
-      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "fewJ: " << ks.getKmerAffectAnalyser()->toString());
-      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_J, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "fewJ: " << ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_J, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-delta-min-old") {
       // This test was a test for delta_min but with the CountKmerAffectAnalyser
       // the read is segmented, now. So we keep it, but change the test
-      TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "delta-min: " << ks.getKmerAffectAnalyser()->toString());
-      TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "delta-min: " << ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       TAP_TEST(ks.getJunction(30) == "GCCACCTGGGACAGGGAATTATTATAAGAA"
                || ks.getJunction(30) == "TGCCACCTGGGACAGGGAATTATTATAAGA", 
                TEST_KMER_JUNCTION, "junction: " << ks.getJunction(30));
       nb_checked++;
     } else if (data.read(i).label == "seq-delta-min") {
-      TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "delta-min: " << ks.getKmerAffectAnalyser()->toString());
-      TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "delta-min: " << ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       TAP_TEST(ks.getJunction(21) == "GGCAGTTGGAACAACACTTGT",
                TEST_KMER_JUNCTION, "window: " << ks.getJunction(21));
-      TAP_TEST(ks.getLeft() == 9, TEST_KMER_LEFT, "left = " << ks.getLeft() << ", aa = " << ks.getKmerAffectAnalyser()->toString());
-      TAP_TEST(ks.getRight() == 19, TEST_KMER_RIGHT, "right = " << ks.getRight());
+      TAP_TEST(ks.getLeft() == 9, TEST_KMER_LEFT, "left = " << ks.getLeft() << ", " << ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getRight() == 19, TEST_KMER_RIGHT, "right = " << ks.getRight() << ", " << ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-delta-max") {
-      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
-      TAP_TEST(ks.getSegmentationStatus() == UNSEG_BAD_DELTA_MAX, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_BAD_DELTA_MAX, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-seg-no-window") {
-      TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "");
-      TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, "");
+      TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       TAP_TEST(ks.getLeft() == 11, TEST_KMER_LEFT, "left = " << ks.getLeft());
       TAP_TEST(ks.getRight() == 12, TEST_KMER_RIGHT, "right = " << ks.getRight());
-      TAP_TEST(ks.getJunction(30) == "", TEST_KMER_JUNCTION, "");
+      TAP_TEST(ks.getJunction(30) == "", TEST_KMER_JUNCTION, ks.getInfoLineWithAffects());
       TAP_TEST(ks.getJunction(20) == "CTGGGACAGGGAATTATTAT"
                || ks.getJunction(20) == "CCTGGGACAGGGAATTATTA", TEST_KMER_JUNCTION,"window: " << ks.getJunction(20));
       nb_checked++;
