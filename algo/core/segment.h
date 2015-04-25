@@ -192,6 +192,7 @@ class KmerSegmenter : public Segmenter
    */
   KmerAffectAnalyser *getKmerAffectAnalyser() const;
 
+  string getInfoLineWithAffects() const;
   void toJsonList(JsonList *seg);
 
  private:
