@@ -313,9 +313,9 @@ void testProbability() {
 }
 
 void testSegment() {
-  testFineSegment();
   testSegmentOverlap();
   testSegmentationCause();
   testExtractor();
   testProbability();
+  testFineSegment();
 }
