@@ -54,7 +54,7 @@ void testRandom() {
   string sequence = "AA";
 
   for (int i = 0; i < 10; i++) {
-    seqs.push_back(create_sequence("seq"+id, "seq"+id, sequence, ""));
+    seqs.push_back(create_sequence("seq" + string_of_int(id), "seq" + string_of_int(id), sequence, ""));
     sequence += "A";
     id++;
   }

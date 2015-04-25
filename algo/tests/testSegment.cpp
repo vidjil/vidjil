@@ -288,8 +288,8 @@ void testProbability() {
                 "CTTG", "CTTT"};
   Fasta V, J;
   for (int i = 0; i < 64; i++) {
-    Sequence v = {"V_"+(i+33), "V"+(i+33), v_seq[i], "", NULL};
-    Sequence j = {"J_"+(i+33), "J"+(i+33), j_seq[i], "", NULL};
+    Sequence v = {"V_" + string_of_int(i+33), "V" + string_of_int(i+33), v_seq[i], "", NULL};
+    Sequence j = {"J_" + string_of_int(i+33), "J" + string_of_int(i+33), j_seq[i], "", NULL};
     V.add(v);
     J.add(j);
   }
