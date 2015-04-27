@@ -518,6 +518,16 @@ Clone.prototype = {
         html += "<tr><td> sequence name </td><td colspan='" + time_length + "'>" + this.getSequenceName() + "</td></tr>"
         html += "<tr><td> code </td><td colspan='" + time_length + "'>" + this.getCode() + "</td></tr>"
         html += "<tr><td> length </td><td colspan='" + time_length + "'>" + this.getSequenceLength() + "</td></tr>"
+
+        //coverage info
+        if (typeof this.coverage != 'undefined') {
+            html += "<tr><td> average coverage </td><td colspan='" + time_length + "'><span "
+            if (this.coverage < this.COVERAGE_WARN)
+                html += "class='warning'"
+            html += ">" + this.coverage.toFixed(3) + "</span></td>"
+        }
+
+        // abundance info
         html += "<tr><td> size (n-reads (total reads) )</td>"
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + this.get('reads',this.m.samples.order[i]) + 
