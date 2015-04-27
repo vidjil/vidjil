@@ -211,7 +211,11 @@ class MsgUserAdapter(logging.LoggerAdapter):
             for ip_prefix in ips:
                 if ip.startswith(ip_prefix):
                     ip = "%s/%s" % (ip, ips[ip_prefix])
-        new_msg =  '%30s %12s %s' % (ip, ('<%s>' % auth.user.first_name.replace(' ','-') if auth.user else ''), msg)
+
+        usern = auth.user.first_name.replace(' ','-') if auth.user else ''
+        if auth.is_impersonating():
+            usern = 'team!' + usern
+        new_msg =  '%30s %12s %s' % (ip, ('<%s>' % usern), msg)
         return new_msg, kwargs
     
     def admin(self, msg):
