@@ -3,17 +3,30 @@ DB_TIMEOUT_CALL = 5000                // Regular call
 DB_TIMEOUT_GET_DATA = 15000           // Get patient/sample .data
 DB_TIMEOUT_GET_CUSTOM_DATA = 1200000  // Launch custum fused sample .data
 
+
+/**
+ * 
+ * @class Database
+ * @constructor 
+ * @param {Model} model
+ * @param {string} address
+ * */
 function Database(model, address) {
     var self = this;
     
+    //check if a default address is available in config.js
     if (typeof config != 'undefined' && config.use_database != undefined && config.use_database) {
         if (config.db_address) { DB_ADDRESS = config.db_address}
+        
+        //if adress is set to default => use the same location as the browser
         if (config.db_address == "default") DB_ADDRESS = "https://"+window.location.hostname+"/vidjil/"
     }
+    
+    //use address given in parameter
     if (typeof address != "undefined"){ DB_ADDRESS = address }
     
+    
     if (DB_ADDRESS != ""){
-        console.log("plapipo"+DB_ADDRESS)
         var fileref=document.createElement('script')
         fileref.setAttribute("type","text/javascript")
         fileref.setAttribute("src", DB_ADDRESS + "static/js/checkSSL.js")
@@ -51,6 +64,9 @@ function return_URL_CGI() {
 
 Database.prototype = {
     
+    /**
+     * build the window used to display server database page 
+     * */
     build: function () {
         var self = this;
         
@@ -72,13 +88,25 @@ Database.prototype = {
         document.body.appendChild(this.div);
     },
     
-    /*appel une page générée a partir des données du serveur
-     *page : nom de la page coté serveur
-     *args : parametres format json ( { "name_arg1" : "arg1", ... } )
+    /**
+     * check ssl certificate validity  
+     * */
+    check_cert: function () {
+        if (typeof sslCertTrusted == 'undefined' || !sslCertTrusted){
+            var msg = " Welcome to Vidjil! </br>"
+                    + "Your browser currently does not recognize our SSL certificate. </br>"
+                    + "To use the sample database, you need to accept this certificate and/or tag this website as a trusted one. </br>"
+                    + "<a href='"+DB_ADDRESS+"'>Follow this link<a/>"
+            console.log({"type": "popup", "msg": msg})
+        }
+    },
+    
+    /** 
+     * call a server page
+     * @param {string} page - name of the server page to call
+     * @param {object} args - parameters ({ "name_arg1" : "arg1", ... })
      * */
     call: function (page, args) {
-        
-
         try {
             var event = window.event || arguments.callee.caller.arguments[0] 
             event.stopPropagation();
@@ -99,6 +127,11 @@ Database.prototype = {
         this.callUrl(url, args)
     },
     
+    /** 
+     * display a given url inside the window
+     * @param {string} url - name of the server page to call
+     * @param {object} args - parameters ({ "name_arg1" : "arg1", ... })
+     * */
     callUrl : function (url, args){
         var self=this;
         
@@ -126,16 +159,13 @@ Database.prototype = {
         });
     },
     
-    check_cert: function () {
-        if (typeof sslCertTrusted == 'undefined' || !sslCertTrusted){
-            var msg = " Welcome to Vidjil! </br>"
-                    + "Your browser currently does not recognize our SSL certificate. </br>"
-                    + "To use the sample database, you need to accept this certificate and/or tag this website as a trusted one. </br>"
-                    + "<a href='"+DB_ADDRESS+"'>Follow this link<a/>"
-            console.log({"type": "popup", "msg": msg})
-        }
-    },
-    
+    /**
+     * callback function for callURL() <br>
+     * parse the result and depending on the case display the result as an html page or a flash message or ...
+     * @param {string} result - can be html or json string
+     * @param {string} url - the url who has returned this result
+     * @param {object} args - parameters used with the url
+     * */
     display_result: function (result, url, args) {
         //rétablissement de l'adresse pour les futures requetes
         result = result.replace("DB_ADDRESS/", this.db_address);
@@ -144,7 +174,7 @@ Database.prototype = {
         try {
             var res = jQuery.parseJSON(result);
         }
-        catch(err)
+        catch(err)//it's not a json so we just display the result as an html page
         {
             //affichage résultat
             this.display(result)
@@ -162,7 +192,7 @@ Database.prototype = {
             return 0 ;
         }
         
-        //hack redirection
+        //the json result contain a hack redirection
         if (res.redirect){
             if (res.redirect == "back"){
                 this.back()
@@ -173,7 +203,7 @@ Database.prototype = {
             }
         }
         
-        //data file
+        //the json result look like a .vidjil file so we load it
         if (res.reads){
             m.parseJsonData(result, 100)
             m.loadGermline();
@@ -185,23 +215,24 @@ Database.prototype = {
             return;
         }
         
-        //analysis file
+        //the json result look like a .analysis file so we load it
         if (typeof res.clones != "undefined" && typeof res.reads == "undefined" ){
             m.parseJsonAnalysis(result)
             m.initClones()
         }
 
-        // server message
+        //the json result contain a flash message
         if (res.message) console.log({"type": "flash",
                                       "msg": "database : " + res.message,
                                       "priority": res.success == "false" ? 2 : 1}) // res.success can be 'undefined'
         return res
 
+        
         if (this.url.length == 1) $("#db_back").addClass("inactive");
     },
     
-    /* associe a un <form> un handler custom
-     * /!\ les <form> ne sont pas présent au chargement de l'interface, ils apparaissent aprés des call ajax
+    /** 
+     * link html forms to their coresponding ajax handler 
      * */
     init_ajaxform: function () {
         var self = this
@@ -330,7 +361,9 @@ Database.prototype = {
         
     },
     
-    /*reload the current db page*/
+    /**
+     * reload the current db page
+     * */
     reload: function(){
         if (this.url.length==0){
             this.call('patient/index')
@@ -340,6 +373,9 @@ Database.prototype = {
         }
     },
     
+    /**
+     * return to the previous loaded page
+     * */
     back: function(){
         if (this.url.length > 1){
             this.url.pop()
@@ -350,7 +386,8 @@ Database.prototype = {
     },
     
     
-    /* appel une fonction du serveur
+    /**
+     * appel une fonction du serveur
      * idem que call() mais la réponse n'est pas une page html a afficher
      * mais simplement une confirmation que la requete a été entendu
      */
