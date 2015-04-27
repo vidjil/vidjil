@@ -89,6 +89,7 @@ def init_db(force=False):
         auth.add_permission(id_admin_group, 'create', db.patient, 0)
         auth.add_permission(id_admin_group, 'create', db.auth_group, 0)
         auth.add_permission(id_admin_group, 'create', db.config, 0)
+        auth.add_permission(id_admin_group, 'impersonate', db.auth_user, 0)
 
 def init_from_csv():
     if db(db.auth_user.id > 0).count() == 0:
@@ -462,6 +463,26 @@ def user():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
     return dict(form=auth())
+
+def impersonate() :
+    if auth.is_impersonating() :
+        stop_impersonate()
+    if request.vars["id"] != 0 :
+        auth.impersonate(request.vars["id"]) 
+    res = {"redirect": "reload"}
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def stop_impersonate() :
+    import time
+    if auth.is_impersonating() :
+        auth.impersonate(0) 
+        # force clean login (default impersonate don't restore everything :/ )
+        auth.login_user(db.auth_user(auth.user.id))
+
+    res = {"redirect" : URL('patient', 'index', scheme=True, host=True)}
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+
 
 ## TODO make custom download for .data et .analysis
 @cache.action()
