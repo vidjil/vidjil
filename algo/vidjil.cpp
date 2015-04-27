@@ -184,6 +184,7 @@ void usage(char *progname, bool advanced)
 
        << "Window annotations" << endl
        << "  -l <file>     labels for some windows -- these windows will be kept even if -r/-% thresholds are not reached" << endl
+       << "  -F            filter -- keep only the labeled windows" << endl
        << endl ;
 
   cerr << "Limits to report a clone (or a window)" << endl
@@ -345,7 +346,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHaiI12g:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3E:")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHaiI12g:G:V:D:J:k:r:vw:e:C:f:l:Fc:m:M:N:s:b:Sn:o:L%:y:z:uUK3E:")) != EOF)
 
     switch (c)
       {
@@ -522,6 +523,10 @@ int main (int argc, char **argv)
       case 'l':
 	windows_labels_file = optarg; 
 	break;
+
+      case 'F':
+        only_labeled_windows = true;
+        break;
 
       // Clustering
 
@@ -1022,8 +1027,17 @@ int main (int argc, char **argv)
     //$$ min_reads_clone (ou label)
 
     int min_reads_clone_ratio = (int) (ratio_reads_clone * nb_segmented / 100.0);
-    cout << "Considering only labeled windows and windows with >= " << min_reads_clone << " reads"
-	 << " and with a ratio >= " << ratio_reads_clone << " (" << min_reads_clone_ratio << ")" << endl ;
+    cout << "Considering ";
+
+    if (only_labeled_windows)
+      cout << "only labeled windows" ;
+
+    if (!only_labeled_windows)
+      cout << "labeled windows"
+           << " and windows with >= " << min_reads_clone << " reads"
+           << " and with a ratio >= " << ratio_reads_clone << " (" << min_reads_clone_ratio << ")" ;
+
+    cout << endl ;
 
     int min_reads_clone_final = max(min_reads_clone, min_reads_clone_ratio);
 
