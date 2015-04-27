@@ -467,13 +467,16 @@ def impersonate() :
     if auth.is_impersonating() :
         stop_impersonate()
     if request.vars["id"] != 0 :
+        log.debug({"success" : "true", "message" : "impersonate >> %s" % request.vars["id"]})
         auth.impersonate(request.vars["id"]) 
+        log.debug({"success" : "true", "message" : "impersonated"})
     res = {"redirect": "reload"}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def stop_impersonate() :
     import time
     if auth.is_impersonating() :
+        log.debug({"success" : "true", "message" : "impersonate << stop"})
         auth.impersonate(0) 
         # force clean login (default impersonate don't restore everything :/ )
         auth.login_user(db.auth_user(auth.user.id))
