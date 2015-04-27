@@ -448,15 +448,20 @@ List.prototype = {
         }
         span_size.style.color = this.m.clone(cloneID).getColor();
         span_size.appendChild(document.createTextNode(this.m.clone(cloneID).getStrSize()));
-
+        
         
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
         span_info.onclick = function () {
             self.displayInfoBox(cloneID);
         }
-        span_info.appendChild(document.createTextNode("I"));
 
+        if (this.m.clone(cloneID).coverage < this.m.clone(cloneID).COVERAGE_WARN) {
+            span_info.className += " warning" ;
+            span_info.appendChild(document.createTextNode("!"));
+        } else {
+            span_info.appendChild(document.createTextNode("i"));
+        }
         
         var span_cluster = document.createElement('span')
         span_cluster.className = "clusterBox";

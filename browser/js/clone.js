@@ -56,7 +56,8 @@ function Clone(data, model, index) {
 
 
 Clone.prototype = {
-    
+
+    COVERAGE_WARN: 0.5,
     
     /** 
      * return clone's most important name <br>
