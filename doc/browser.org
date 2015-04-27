@@ -302,11 +302,16 @@ There can be several causes leading to bad ratios:
    between .85 and 1 is quite frequent. On the contrary, if it is .5 it means that the consensus sequence
   length is half shorter than the median read length in the clone.
 
-  There is a bad clone coverage ($<.5$) when reads do share the same window
+  There is a bad clone coverage (< 0.5) when reads do share the same window
   (it is how Vidjil defines a clone) and when they have frequent discrepancies
   outside of the window. Such cases have been observed with chimeric reads
   which share the same V(D)J recombinations in their first half and have
   totally different and unknown sequences in their second half.
+
+  In the browser, the clones with a low clone coverage (< 0.5) are displayed in
+  the list with an orange I on the right. You can also visualize the clones
+  according to their clone coverage by selecting for example “clone
+  coverage/GC content” in the preset menu of the “plot” box.
 * Keyboard shortcuts
 
 ** Browser 
