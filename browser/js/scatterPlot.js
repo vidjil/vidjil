@@ -120,6 +120,7 @@ function ScatterPlot(id, model) {
         ["otherSize", "size (other point)"],
         ["sequenceLength", "clone length"],
         ["GCContent", "GC content"],
+        ["coverage", "clone coverage"],
         ["n", "N length"],
         ["lengthCDR3", "CDR3 length"]
     ];
@@ -130,6 +131,8 @@ function ScatterPlot(id, model) {
         "GCContent" : { "fct" : "GCContent", "output" : "percent" },
         "n" : { "fct" : function(cloneID) {return self.m.clone(cloneID).getNlength()} },
         "lengthCDR3" : { "fct" : function(cloneID) {return self.m.clone(cloneID).seg["cdr3"].length} },
+        "coverage": { "fct" : function(cloneID){return self.m.clone(cloneID).coverage},
+                      "min" : 0, "max" : 1, "output" : "float-2", "log": false },
         "Size" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSizeZero()}, 
                     "min" : function(){return self.m.min_size},
                     "max" : 1, "output" : "percent", "log" :true  },
@@ -144,6 +147,7 @@ function ScatterPlot(id, model) {
         "V/J (alleles)" : { "mode": "plot", "x" : "allele_v", "y": "allele_j"},
         "V/N length" : { "mode": "plot", "x" : "gene_v", "y": "n"},
         "clone length / GC content " : { "mode": "plot", "x": "sequenceLength", "y" : "GCContent"},
+        "clone coverage / GC content " : { "mode": "plot", "x": "coverage", "y" : "GCContent"},
         // "V/abundance" : { "mode": "plot", "x" : "gene_v", "y": "Size"},
         "V distribution" :            { "mode": "bar", "x" : "gene_v",         "y": "gene_j"},
         "Clone length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "gene_v"},

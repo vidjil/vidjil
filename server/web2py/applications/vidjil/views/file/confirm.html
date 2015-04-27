@@ -6,12 +6,38 @@
 <div>
     <h3>{{=message}}</h3>
     
-    Are you sure you want to delete this sequence file?</br>
-    This will also delete {{=db(db.results_file.sequence_file_id==request.vars["id"]).count()}} related result files.</br>
-    This action cannot be undone.
+    {{count_results = db(db.results_file.sequence_file_id==request.vars["id"]).count()}}
 
+    Are you sure you want to delete this sequence file?</br>
+
+    {{if not delete_results and not delete_only_sequence:}}
+      You have the choice:
+    <dl>
+      <dt>delete sequence alone</dt>
+      <dd>
+	You will remove the file containing all the DNA sequences.
+	This will save disk space but you will still have access to your results.
+      </dd>
+      <dt>delete sequence and results</dt>
+      <dd>
+	You will remove everything related with this sequence file: the sequence file itself as well as the {{=count_results}} files that have been generated.
+      </dd>
+    </dl>
+    {{else:}}
+      {{if delete_results:}}
+      You are about to delete the sequence file and {{=count_results}} result files.
+      {{else:}}
+      You are about to delete the sequence file alone.
+      {{pass}}
+      <p>This action cannot be undone.</p>
+    {{pass}}
     <div class="center"> 
-        <button onclick="db.call('file/delete', {'id' :'{{=request.vars["id"]}}'} )">delete</button>
+      {{if delete_results or delete_only_sequence:}}
+        <button onclick="db.call('file/delete', {'id' :'{{=request.vars["id"]}}', 'patient_id' :'{{=request.vars["patient_id"]}}', 'delete_results': '{{=delete_results}}'} )">delete</button>
+      {{else:}}
+	<button onclick="db.call('file/confirm', {'id': '{{=request.vars["id"]}}', 'patient_id' :'{{=request.vars["patient_id"]}}', 'delete_results': 'False', 'delete_only_sequence': 'True'})">delete sequence alone</button>
+	<button onclick="db.call('file/confirm', {'id': '{{=request.vars["id"]}}', 'patient_id' :'{{=request.vars["patient_id"]}}', 'delete_results': 'True', 'delete_only_sequence': 'False'})">delete sequence and results</button>
+      {{pass}}
         <button onclick="db.call('patient/info', {'id' :'{{=db.sequence_file[request.vars["id"]].patient_id}}'} )">cancel</button>
     </div>
 </div>

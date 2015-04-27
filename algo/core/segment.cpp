@@ -79,10 +79,6 @@ bool Segmenter::isDSegmented() const {
   return dSegmented;
 }
 
-bool KmerSegmenter::isDetected() const {
-  return detected;
-}
-
 // Chevauchement
 
 string Segmenter::removeChevauchement()
@@ -149,9 +145,8 @@ bool Segmenter::finishSegmentationD()
 
 string Segmenter::getInfoLine() const
 {
-  string s = ">" ;
+  string s = "" ;
 
-  s += label + " " ;
   s += (segmented ? "" : "! ") + info ;
   s += " " + info_extra ;
   s += " " + segmented_germline->code ;
@@ -168,8 +163,25 @@ string Segmenter::getInfoLine() const
   return s ;
 }
 
+string KmerSegmenter::getInfoLineWithAffects() const
+{
+   stringstream ss;
+
+   ss << "# "
+      << right << setw(3) << score << " "
+      << left << setw(30)
+      << getInfoLine() ;
+
+   if (getSegmentationStatus() != UNSEG_TOO_SHORT)
+     ss << getKmerAffectAnalyser()->toString();
+
+   return ss.str();
+}
+
+
 ostream &operator<<(ostream &out, const Segmenter &s)
 {
+  out << ">" << s.label << " " ;
   out << s.getInfoLine() << endl;
 
   if (s.segmented)
@@ -191,15 +203,15 @@ ostream &operator<<(ostream &out, const Segmenter &s)
 
 KmerSegmenter::KmerSegmenter() { kaa = 0 ; }
 
-KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, int multiplier)
+KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold, int multiplier)
 {
   label = seq.label ;
   sequence = seq.sequence ;
   info = "" ;
   info_extra = "seed";
-  detected = false ;
   segmented = false;
   segmented_germline = germline ;
+  system = germline->code; // useful ?
   reversed = false;
   Dend=0;
   because = NOT_PROCESSED ; // Cause of unsegmentation
@@ -233,6 +245,8 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, int multiplier)
     }
   }
 
+  score = nb_strand[0] + nb_strand[1] ; // Used only for non-segmented germlines
+
   KmerAffect before, after;
 
   if (!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12))
@@ -252,13 +266,10 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, int multiplier)
         }
 
       strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
-      computeSegmentation(strand, max12.first, max12.second, multiplier);
-
-      if (!detected)
-        because = UNSEG_TOO_FEW_ZERO ;
+      computeSegmentation(strand, max12.first, max12.second, germline->delta_min, germline->delta_max, threshold, multiplier);
 
       // The pseudo-germline should never take precedence over the regular germlines
-      score = 1 ;
+      evalue = 1.0 ;
     }
 
   else
@@ -283,41 +294,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, int multiplier)
     return ;
   }
 
-  computeSegmentation(strand, before, after, multiplier);
+  computeSegmentation(strand, before, after, germline->delta_min, germline->delta_max, threshold, multiplier);
 
     } // endif Pseudo-germline
-
-
-  if (! because)
-    {
-      // Now we check the delta between Vend and right
-   
-      if (Jstart - Vend < germline->delta_min)
-	{
-	  because = UNSEG_BAD_DELTA_MIN ;
-	}
-
-      if (Jstart - Vend > germline->delta_max)
-	{
-	  because = UNSEG_BAD_DELTA_MAX ;
-	}
-    } 
-
-  if (because == NOT_PROCESSED)
-    {
-      // Yes, it is segmented
-      segmented = true;
-      reversed = (strand == -1); 
-      because = reversed ? SEG_MINUS : SEG_PLUS ;
-
-      info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS)  ;
-      // removeChevauchement is called once info was already computed: it is only to output info_extra
-      info_extra += removeChevauchement();
-      finishSegmentation();
-      system = germline->code;
-      return ;
-    } 
-
  
 }
 
@@ -329,7 +308,8 @@ KmerSegmenter::~KmerSegmenter() {
 KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented,
                                        double threshold, int nb_reads_for_evalue)
 {
-  int best_score_seg = 0 ; // Best score, segmented sequences
+  bool found_seg = false ; // Found a segmentation
+  double best_evalue_seg = NO_LIMIT_VALUE ; // Best evalue, segmented sequences
   int best_score_unseg = 0 ; // Best score, unsegmented sequences
   the_kseg = NULL;
   multi_germline = multigermline;
@@ -343,22 +323,13 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
     {
       Germline *germline = *it ;
 
-      KmerSegmenter *kseg = new KmerSegmenter(seq, germline, multiplier);
+      KmerSegmenter *kseg = new KmerSegmenter(seq, germline, threshold, multiplier);
       bool keep_seg = false;
 
       if (out_unsegmented)
         {
           // Debug, display k-mer affectation and segmentation result for this germline
-          *out_unsegmented << "#"
-                           << left << setw(4) << kseg->segmented_germline->code << " "
-                           << left << setw(20) << segmented_mesg[kseg->getSegmentationStatus()] << " ";
-
-          *out_unsegmented << right << setw(3) << kseg->score << " ";
-          
-          if (kseg->getSegmentationStatus() != UNSEG_TOO_SHORT) 
-            *out_unsegmented << kseg->getKmerAffectAnalyser()->toString();
-
-          *out_unsegmented << endl ;
+          *out_unsegmented << kseg->getInfoLineWithAffects() << endl ;
         }
 
       // Always remember the first kseg
@@ -369,10 +340,12 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
         {
           // Yes, it is segmented
           // Should we keep the kseg ?
-          if (kseg->score > best_score_seg)
+          if (!found_seg || (kseg->evalue < best_evalue_seg))
             {
               keep_seg = true;
-              best_score_seg = kseg->score ;
+              best_evalue_seg = kseg->evalue ;
+
+              found_seg = true;
             }
         }
       else
@@ -382,7 +355,7 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
             if (kseg->score > best_score_unseg)
             {              
               best_score_unseg = kseg->score ;
-              if (!best_score_seg)
+              if (!found_seg)
                 keep_seg = true;
             }
         }
@@ -395,20 +368,6 @@ KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermlin
         delete kseg;
       }
     } // end for (Germlines)
-
-  // E-value threshold
-  if (threshold_nb_expected > NO_LIMIT_VALUE)
-    if (the_kseg->isSegmented()) {
-        if (the_kseg->evalue > threshold_nb_expected
-            && the_kseg->evalue_left <= threshold_nb_expected
-            && the_kseg->evalue_right <= threshold_nb_expected) {
-          the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_ZERO);
-        } else if (the_kseg->evalue_left > threshold_nb_expected) {
-          the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_V);
-        } else if (the_kseg->evalue_right > threshold_nb_expected) {
-          the_kseg->setSegmentationStatus(UNSEG_TOO_FEW_J);
-        }
-      }
 }
 
 KmerMultiSegmenter::~KmerMultiSegmenter() {
@@ -416,7 +375,9 @@ KmerMultiSegmenter::~KmerMultiSegmenter() {
     delete the_kseg;
 }
 
-void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffect after, int multiplier) {
+void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffect after,
+                                        int delta_min, int delta_max,
+                                        double threshold, int multiplier) {
   // Try to segment, computing 'Vend' and 'Jstart'
   // If not segmented, put the cause of unsegmentation in 'because'
 
@@ -426,9 +387,28 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   pair <double, double> pvalues = kaa->getLeftRightProbabilityAtLeastOrAbove();
   evalue_left = pvalues.first * multiplier ;
   evalue_right = pvalues.second * multiplier ;
+  evalue = evalue_left + evalue_right ;
+
+  // E-value threshold
+  if (threshold > NO_LIMIT_VALUE && evalue > threshold) {
+
+    // Detail the unsegmentation cause
+    if (evalue_left > threshold && evalue_right > threshold)
+      because = UNSEG_TOO_FEW_ZERO ;
+    else if (evalue_left > threshold)
+      because = UNSEG_TOO_FEW_V ;
+    else if (evalue_right > threshold)
+      because = UNSEG_TOO_FEW_J ;
+    else // left and right are <= threshold, but their sum is > threshold
+      because = UNSEG_TOO_FEW_ZERO ;
+
+    return ;
+  }
+
+  //
 
       // We labeled it detected if there were both enough affect_5 and enough affect_3
-      detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
+      bool detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
         && (max.nb_after_left + max.nb_after_right >= DETECT_THRESHOLD);
       
       if (! max.max_found) {
@@ -441,17 +421,49 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
 	  because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_J ;
 	} else 
           because = UNSEG_AMBIGUOUS; 
-      } else {
-        Vend = max.first_pos_max;
-        Jstart = max.last_pos_max + 1;
-        if (strand == -1) {
-          int tmp = sequence.size() - Vend - 1;
-          Vend = sequence.size() - Jstart - 1;
-          Jstart = tmp;
-        }
+
+        return ;
       }
-  
-    score = max.nb_before_left + max.nb_before_right + max.nb_after_left + max.nb_after_right;  
+
+   // There was a good segmentation point
+
+   Vend = max.first_pos_max;
+   Jstart = max.last_pos_max + 1;
+   if (strand == -1) {
+     int tmp = sequence.size() - Vend - 1;
+     Vend = sequence.size() - Jstart - 1;
+     Jstart = tmp;
+   }
+
+
+  // Now we check the delta between Vend and right
+
+  if (Jstart - Vend < delta_min)
+    {
+      because = UNSEG_BAD_DELTA_MIN ;
+      return ;
+    }
+
+  if (Jstart - Vend > delta_max)
+    {
+      because = UNSEG_BAD_DELTA_MAX ;
+      return ;
+    }
+
+  assert(because == NOT_PROCESSED);
+
+  // Yes, it is segmented
+  segmented = true;
+  reversed = (strand == -1);
+  because = reversed ? SEG_MINUS : SEG_PLUS ;
+
+  info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS)  ;
+
+  // removeChevauchement is called once info was already computed: it is only to output info_extra
+  info_extra += removeChevauchement();
+  finishSegmentation();
+
+  return ;
 }
 
 KmerAffectAnalyser *KmerSegmenter::getKmerAffectAnalyser() const {

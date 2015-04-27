@@ -10,10 +10,13 @@ if request.env.http_origin:
 
 ACCESS_DENIED = "access denied"
 
-## return patient file list
-##
-def info():
 
+##
+##
+def next_patient():
+    '''
+    Process request, possibly changing request.vars['id'] depending on request.vars['next']
+    '''
     if 'next' in request.vars:
         try:
             current_id = request.vars["id"]
@@ -27,6 +30,11 @@ def info():
         except:
             pass
 
+## return patient file list
+##
+def info():
+
+    next_patient()
     patient = db.patient[request.vars["id"]]
 
     if request.vars["config_id"] and request.vars["config_id"] != "-1" :
@@ -554,7 +562,7 @@ def confirm():
 #
 def delete():
     if (auth.can_modify_patient(request.vars["id"]) ):
-        import shutil, os.path
+        import os.path
         #delete data file 
         query = db( (db.sequence_file.patient_id==request.vars["id"])).select() 
         for row in query :

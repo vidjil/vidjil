@@ -172,8 +172,8 @@ class OtherWindows:
     
     """Aggregate counts of windows that are discarded (due to too small 'top') for each point into several 'others-' windows."""
 
-    def __init__(self, length, ranges = [1000, 100, 10, 1]):
-        self.ranges = ranges
+    def __init__(self, length, ranges = None):
+        self.ranges = ranges if ranges is not None else [1000, 100, 10, 1]
         self.length = length
         self.sizes = {}
 

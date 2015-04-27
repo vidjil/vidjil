@@ -4,6 +4,9 @@
 
 import sys
 import os
+import urllib
+from collections import defaultdict
+import re
 
 IMGT_LICENSE = '''
    # To use the IMGT germline databases (IMGT/GENE-DB), you have to agree to IMGT license: 
@@ -16,6 +19,7 @@ IMGT_LICENSE = '''
 
 print (IMGT_LICENSE)
 
+NCBI_API = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&rettype=fasta&retmode=text'+'&id=%s&from=%s&to=%s'
 
 # Parse lines in IMGT/GENE-DB such as:
 # >M12949|TRGV1*01|Homo sapiens|ORF|...
@@ -37,6 +41,56 @@ def check_directory_exists(path):
     if not(os.path.isdir(path)):
         os.mkdir(path)
 
+def gene_matches(string, list_regex):
+    '''
+    >>> gene_matches('>M994641|IGHD1-18*01|Toto', ['TRGV', 'IGHD'])
+    True
+    >>> gene_matches('>M994641|IGHD1-18*01|Toto', ['TRGV', 'TRGD'])
+    False
+    >>> gene_matches('>M994641|IGHJ4*01|Toto', ['[A-Z]{3}J'])
+    True
+    >>> gene_matches('>M22153|TRDD2*01|Homo sapiens|F|', ['TRDD2'])
+    True
+    '''
+    for regex in list_regex:
+        if re.search(regex, string) <> None:
+            return True
+    return False
+
+def get_gene_coord(imgt_line):
+    '''
+    >>> line = '>X15272|TRGV4*01|Homo sapiens|F|V-REGION|406..705|300 nt|1| | | | |300+0=300| |rev-compl|'
+    >>> get_gene_coord(line) == {'X15272': {'from': 406, 'to': 705, 'imgt_name': 'TRGV4*01'}}
+    True
+    '''
+    elements = imgt_line.split('|')
+    assert len(elements) >= 6
+    start, end = elements[5].split('..')
+    return {elements[0][1:]: {'from': int(start),
+                              'to': int(end),
+                              'imgt_name': elements[1]}}
+
+def get_gene_sequence(gene, other_gene_name, start, end):
+    '''
+    Return the gene sequences between positions start and end (included).
+    '''
+    fasta_string = urllib.urlopen(NCBI_API % (gene, start, end)).read()
+    return re.sub('(>g.\|)', r'\1'+other_gene_name+'|', fasta_string)
+
+def retrieve_genes(filename, genes, additional_length):
+    file = verbose_open_w(filename)
+    for gene in genes:
+        start = genes[gene]['from']
+        end = genes[gene]['to']
+        if additional_length > 0:
+            end += additional_length
+        elif additional_length < 0:
+            start = max(1, start + additional_length)
+        file.write(get_gene_sequence(gene, genes[gene]['imgt_name'], start, end))
+
+
+LENGTH_UPSTREAM=40
+LENGTH_DOWNSTREAM=40
 # Create isolated files for some sequences
 SPECIAL_SEQUENCES = [
 ]
@@ -44,12 +98,18 @@ SPECIAL_SEQUENCES = [
 # Split sequences in several files
 SPLIT_SEQUENCES = {'/DV': ['TRAV', 'TRDV']}
 
+DOWNSTREAM_REGIONS=['[A-Z]{3}J', 'TRDD3']
+UPSTREAM_REGIONS=['IGHD', 'TRDD2']
+
 SPECIES = {
     "Homo sapiens": './', 
     "Mus musculus": 'mus-musculus/',
     "Rattus norvegicus": 'rattus-norvegicus/',
     "Rattus norvegicus_BN/SsNHsdMCW": 'rattus-norvegicus/',
 }
+
+downstream_data = defaultdict(dict)
+upstream_data = defaultdict(dict)
 
 for l in sys.stdin:
 
@@ -68,6 +128,11 @@ for l in sys.stdin:
             check_directory_exists(path)
 
             if system.startswith('IG') or system.startswith('TR'):
+
+                if gene_matches(l, DOWNSTREAM_REGIONS):
+                    downstream_data[path+'/'+system].update(get_gene_coord(l))
+                if gene_matches(l, UPSTREAM_REGIONS):
+                    upstream_data[path+'/'+system].update(get_gene_coord(l))
 
                 systems = get_split_files(seq, SPLIT_SEQUENCES)
                 if systems:
@@ -89,3 +154,7 @@ for l in sys.stdin:
     if current_special:
             current_special.write(l)
 
+for system in upstream_data:
+    retrieve_genes(system+"_upstream.fa", upstream_data[system], -LENGTH_UPSTREAM)
+for system in downstream_data:
+    retrieve_genes(system+"_downstream.fa", downstream_data[system], LENGTH_DOWNSTREAM)

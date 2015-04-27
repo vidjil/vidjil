@@ -13,7 +13,7 @@ def ordered(d, key=None):
 def concatenate_with_padding(d, 
                              d1, d1_size, 
                              d2, d2_size,
-                             ignore_keys=[]):
+                             ignore_keys=None):
     '''Concatenate two dictionaries d1 and d2 into d
     The dictionaries d1 and d2 store several values that are lists with d1_size and d2_size elements,
     and the resulting dictionary will store values that are lists with size d1_size + d2_size elements.
@@ -34,7 +34,10 @@ def concatenate_with_padding(d,
 
     t1=[]
     t2=[]
-        
+
+    if ignore_keys == None:
+        ignore_keys = []
+
     for i in range(d1_size):
         t1.append(0)
         

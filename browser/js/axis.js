@@ -274,6 +274,9 @@ Axis.prototype = {
                     if (output=="percent"){
                         text = ((min+(h*i))*100).toFixed(1) + "%"
                     }
+                    if (output=="float-2"){
+                        text = (min+(h*i)).toFixed(2)
+                    }
                     
                     if (this.reverse) pos = 1 - pos; 
                     

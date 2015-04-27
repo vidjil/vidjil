@@ -51,11 +51,13 @@ function Clone(data, model, index) {
     this.m.clones[index]=this
     this.tag = this.getTag();
     this.computeGCContent()
+    this.computeCoverage()
 }
 
 
 Clone.prototype = {
-    
+
+    COVERAGE_WARN: 0.5,
     
     /** 
      * return clone's most important name <br>
@@ -352,6 +354,28 @@ Clone.prototype = {
         return s
     },
 
+    /*
+     * Compute coverage as the average value of non-zero coverages
+     */
+
+    computeCoverage: function () {
+        if (typeof (this._coverage) == 'undefined') {
+            this.coverage = undefined
+            return
+        }
+
+        var sum = 0.0
+        var nb = 0
+
+        for (var i=0; i<this._coverage.length; i++) {
+            if (this._coverage[i] > 0) {
+                sum += parseFloat(this._coverage[i])
+                nb += 1
+            }
+        }
+        this.coverage = sum/nb
+    },
+
     computeGCContent: function () {
         if (typeof (this.sequence) == 'undefined') {
             this.GCContent = '?'
@@ -494,6 +518,16 @@ Clone.prototype = {
         html += "<tr><td> sequence name </td><td colspan='" + time_length + "'>" + this.getSequenceName() + "</td></tr>"
         html += "<tr><td> code </td><td colspan='" + time_length + "'>" + this.getCode() + "</td></tr>"
         html += "<tr><td> length </td><td colspan='" + time_length + "'>" + this.getSequenceLength() + "</td></tr>"
+
+        //coverage info
+        if (typeof this.coverage != 'undefined') {
+            html += "<tr><td> average coverage </td><td colspan='" + time_length + "'><span "
+            if (this.coverage < this.COVERAGE_WARN)
+                html += "class='warning'"
+            html += ">" + this.coverage.toFixed(3) + "</span></td>"
+        }
+
+        // abundance info
         html += "<tr><td> size (n-reads (total reads) )</td>"
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + this.get('reads',this.m.samples.order[i]) + 
