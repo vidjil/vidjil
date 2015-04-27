@@ -154,7 +154,7 @@ def confirm():
     delete_results = ('delete_results' in request.vars and request.vars['delete_results'] == 'True')
     sequence_file = db.sequence_file[request.vars['id']]
     if sequence_file == None:
-        return controller_utils.error_message("The requested file doesn't exist")
+        return error_message("The requested file doesn't exist")
     if sequence_file.data_file == None:
         delete_results = True
     if auth.can_modify_patient(request.vars['patient_id']):
