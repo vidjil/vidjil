@@ -331,6 +331,7 @@ int main (int argc, char **argv)
 
   string forced_edges = "" ;
 
+  map <string, string> windows_labels ;
   string windows_labels_file = "" ;
   bool only_labeled_windows = false ;
 
@@ -673,7 +674,7 @@ int main (int argc, char **argv)
   out_dir += "/" ;
 
   /// Load labels ;
-  map <string, string> windows_labels = load_map(windows_labels_file);
+  load_into_map(windows_labels, windows_labels_file);
 
   switch(command) {
   case CMD_WINDOWS: cout << "Extracting windows" << endl; 
