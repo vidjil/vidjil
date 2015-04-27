@@ -9,7 +9,7 @@ WindowExtractor::WindowExtractor(): out_segmented(NULL), out_unsegmented(NULL), 
                                     
 WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *multigermline,
 					 size_t w,
-                                         map<string, string> &windows_labels,
+                                         map<string, string> &windows_labels, bool only_labeled_windows,
                                          int stop_after, int only_nth_read, bool keep_unsegmented_as_clone,
                                          double nb_expected, int nb_reads_for_evalue) {
   init_stats();
@@ -57,6 +57,10 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
     stats[seg->getSegmentationStatus()].insert(read_length);
 
     if (seg->isSegmented()) {
+
+      // Filter
+      if (!only_labeled_windows || (windows_labels.find(junc) != windows_labels.end()))
+
       // Store the window
       windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline);
 

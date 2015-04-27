@@ -331,6 +331,7 @@ int main (int argc, char **argv)
   string forced_edges = "" ;
 
   string windows_labels_file = "" ;
+  bool only_labeled_windows = false ;
 
   char c ;
 
@@ -954,7 +955,9 @@ int main (int argc, char **argv)
       we.setAffectsOutput(out_affects);
     }
 
-    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels, max_reads_processed, only_nth_read, keep_unsegmented_as_clone,
+    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w,
+                                                windows_labels, only_labeled_windows,
+                                                max_reads_processed, only_nth_read, keep_unsegmented_as_clone,
                                                 expected_value, nb_reads_for_evalue);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();

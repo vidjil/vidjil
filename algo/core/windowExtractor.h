@@ -39,6 +39,7 @@ class WindowExtractor {
    * @param multigermline: the multigermline
    * @param w: length of the window
    * @param windows_labels: Windows that must be kept and registered as such.
+   * @param only_labeled_windows: remember only windows from windows_labels
    * @param nb_expected: maximal e-value of the segmentation
    * @param nb_reads_for_evalue: number of reads, used for e-value computation. Can be approximate or faked.
    * @return a pointer to a WindowsStorage that will contain all the windows.
@@ -48,7 +49,7 @@ class WindowExtractor {
    */
   WindowsStorage *extract(OnlineFasta *reads, MultiGermline *multigermline,
                           size_t w,
-                          map<string, string> &windows_labels,
+                          map<string, string> &windows_labels, bool only_labeled_windows=false,
                           int stop_after=-1, int only_nth_reads=1, bool keep_unsegmented_as_clone=false,
                           double nb_expected = THRESHOLD_NB_EXPECTED, int nb_reads_for_evalue = 1);
 
