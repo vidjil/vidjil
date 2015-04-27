@@ -51,6 +51,7 @@ function Clone(data, model, index) {
     this.m.clones[index]=this
     this.tag = this.getTag();
     this.computeGCContent()
+    this.computeCoverage()
 }
 
 
@@ -350,6 +351,28 @@ Clone.prototype = {
         }
         s += this.sequence.substring(this.seg['3start'] - 1)
         return s
+    },
+
+    /*
+     * Compute coverage as the average value of non-zero coverages
+     */
+
+    computeCoverage: function () {
+        if (typeof (this._coverage) == 'undefined') {
+            this.coverage = undefined
+            return
+        }
+
+        var sum = 0.0
+        var nb = 0
+
+        for (var i=0; i<this._coverage.length; i++) {
+            if (this._coverage[i] > 0) {
+                sum += parseFloat(this._coverage[i])
+                nb += 1
+            }
+        }
+        this.coverage = sum/nb
     },
 
     computeGCContent: function () {
