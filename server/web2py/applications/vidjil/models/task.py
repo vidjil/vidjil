@@ -347,10 +347,10 @@ def custom_fuse(file_list):
     try:
         f = open(fuse_filepath, 'rb')
         data = gluon.contrib.simplejson.loads(f.read())
-    except IOError:
+    except IOError, e:
         res = {"message": "'custom fuse' -> IOError"}
         log.error(res)
-        raise IOError
+        raise e
 
     clean_cmd = "rm -rf " + out_folder 
     p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
