@@ -3,6 +3,7 @@ import os
 import sys
 import defs
 import re
+import os.path
 
 TASK_TIMEOUT = 60 * 60
 
@@ -321,7 +322,7 @@ def custom_fuse(file_list):
     if defs.PORT_FUSE_SERVER is None:
         raise IOError('This server cannot fuse custom data')
     random_id = random.randint(99999999,99999999999)
-    out_folder = defs.DIR_OUT_VIDJIL_ID % random_id
+    out_folder = os.path.abspath(defs.DIR_OUT_VIDJIL_ID % random_id)
     output_filename = defs.BASENAME_OUT_VIDJIL_ID % random_id
     
     cmd = "rm -rf "+out_folder 
@@ -337,7 +338,7 @@ def custom_fuse(file_list):
     files = ""
     for id in file_list :
         if db.results_file[id].data_file is not None :
-            files += defs.DIR_RESULTS + db.results_file[id].data_file + " "
+            files += os.path.abspath(defs.DIR_RESULTS + db.results_file[id].data_file) + " "
     
     cmd = "python "+ os.path.abspath(defs.DIR_FUSE) +"/fuse.py -o "+output_file+" -t 100 "+files
     proc_srvr = xmlrpclib.ServerProxy("http://localhost:%d" % defs.PORT_FUSE_SERVER)
