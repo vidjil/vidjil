@@ -44,7 +44,7 @@ class AdminController(unittest.TestCase):
         
         
     def testLog(self):
-        request.vars.file = '../log/nginx/access.log'
+        request.vars.file = 'vidjil.log'
         resp = showlog()
         self.assertTrue(resp.has_key('lines'), "log() has returned an incomplete response")
         
