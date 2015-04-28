@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import unittest
+import gluon.contrib.simplejson
 from gluon.globals import Request, Session, Storage, Response
 from gluon.contrib.test_helpers import form_postvars
 from gluon import current
@@ -66,9 +67,12 @@ class DefaultController(unittest.TestCase):
     def testCustomData(self):
         request.vars['custom'] = [str(fake_result_id), str(fake_result_id)]
         
-        resp = get_custom_data()
+        resp = gluon.contrib.simplejson.loads(get_custom_data())
         print resp
-        self.assertNotEqual(resp.find('"segmented":[742377,742377]'), -1, "get_custom_data doesn't return a valid json")
+        if resp.has_key('success') and resp['success'] == 'false':
+           self.assertTrue(defs.PORT_FUSE_SERVER is None, 'get_custom_data returns error without fuse server')
+        else:
+            self.assertNotEqual(resp.find('"segmented":[742377,742377]'), -1, "get_custom_data doesn't return a valid json")
         
         
     def testGetAnalysis(self):
