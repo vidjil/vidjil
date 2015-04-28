@@ -18,7 +18,7 @@ unit: clean_unit_tests
 	cd web2py; python web2py.py -S vidjil -M -R testRunner.py
 
 standalone_install: install_unit_tests
-	mkdir -p web2py/applications/vidjil/databases upload result
+	mkdir -p web2py/applications/vidjil/databases web2py/upload web2py/result
 	sed -i 's@/var/vidjil@logs@' web2py/applications/vidjil/modules/defs.py
 	sed -i '/mysql/d; /^DIR_/s/\/mnt\///; s/PORT_FUSE_SERVER = .*/PORT_FUSE_SERVER = None/'  web2py/applications/vidjil/modules/defs.py
 
