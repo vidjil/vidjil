@@ -317,7 +317,9 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
 def custom_fuse(file_list):
     import time, datetime, sys, os.path, random, xmlrpclib
     from subprocess import Popen, PIPE, STDOUT, os
-    
+
+    if defs.PORT_FUSE_SERVER is None:
+        raise IOError('This server cannot fuse custom data')
     random_id = random.randint(99999999,99999999999)
     out_folder = defs.DIR_OUT_VIDJIL_ID % random_id
     output_filename = defs.BASENAME_OUT_VIDJIL_ID % random_id

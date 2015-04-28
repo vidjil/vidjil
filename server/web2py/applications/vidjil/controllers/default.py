@@ -12,6 +12,7 @@
 import defs
 import vidjil_utils
 import logging
+from controller_utils import error_message
 
 import gluon.contrib.simplejson, time, datetime
 if request.env.http_origin:
@@ -250,7 +251,10 @@ def get_custom_data():
                 error += "you do not have permission to consult this patient ("+str(patient_id)+")"
             
     if error == "" :
-        data = custom_fuse(request.vars["custom"])
+        try:
+            data = custom_fuse(request.vars["custom"])
+        except IOError, error:
+            return error_message(str(error))
         
         data["dataFileName"] = "Compare patients"
         data["info"] = "Compare patients"
