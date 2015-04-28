@@ -22,6 +22,11 @@ standalone_install: install_unit_tests
 	sed -i 's@/var/vidjil@logs@' web2py/applications/vidjil/modules/defs.py
 	sed -i '/mysql/d; /^DIR_/s/\/mnt\///; s/PORT_FUSE_SERVER = .*/PORT_FUSE_SERVER = None/'  web2py/applications/vidjil/modules/defs.py
 
+launch_fuse_server:
+	python fuse_server.py &
+kill_fuse_server:
+	pkill -f fuse_server.py
+
 clean_unit_tests:
 	rm -f web2py/test-reports/*.xml
 
