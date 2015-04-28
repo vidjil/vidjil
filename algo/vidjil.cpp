@@ -182,8 +182,9 @@ void usage(char *progname, bool advanced)
        << "  -e <float>    maximal e-value for determining if a segmentation can be trusted (default: " << THRESHOLD_NB_EXPECTED << ")" << endl
        << endl
 
-       << "Window annotations" << endl
-       << "  -l <file>     labels for some windows -- these windows will be kept even if -r/-% thresholds are not reached" << endl
+       << "Labeled windows (these windows will be kept even if -r/-% thresholds are not reached)" << endl
+       << "  -W <window>   label the given window" << endl
+       << "  -l <file>     label a set of windows given in <file>" << endl
        << "  -F            filter -- keep only the labeled windows" << endl
        << endl ;
 
@@ -347,7 +348,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHaiI12g:G:V:D:J:k:r:vw:e:C:f:l:Fc:m:M:N:s:b:Sn:o:L%:y:z:uUK3E:")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHaiI12g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:M:N:s:b:Sn:o:L%:y:z:uUK3E:")) != EOF)
 
     switch (c)
       {
@@ -519,6 +520,12 @@ int main (int argc, char **argv)
 
       case 'x':
         max_reads_processed = atoi_NO_LIMIT(optarg);
+        break;
+
+      // Labels
+
+      case 'W':
+        windows_labels[string(optarg)] = '-W';
         break;
 
       case 'l':
