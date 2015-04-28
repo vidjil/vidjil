@@ -240,12 +240,14 @@ The =-A= option disables all these thresholds. This option should be
 used only for test and debug purposes, on very small datasets, and
 produce large file and takes huge computation times.
 
-** Force to follow some sequences
 
-Vidjil allows to specify a list of windows that must be followed
+** Labeled windows
+
+Vidjil allows to indicate that specific windows that must be followed
 (even if those windows are 'rare', below the =-r/-%= thresholds).
-The parameter =-l= is made for providing such a list in a file giving
-one window by line like in the following example:
+
+Such windows can be provided either with =-W <window>=, or with =-l <file>=.
+The file given by =-l= should have one window by line, as in the following example:
 
 #+BEGIN_EXAMPLE
 TGTGCGAGAGATGGACGGGATACGTAAAACGACATATGGTTCGGGGTTTGGTGCTTTTGA my-clone-1
@@ -257,6 +259,10 @@ The first column of the file is the window to be followed
 while the remaining columns consist of the window's label.
 In Vidjil output, the labels are output alongside their windows.
 
+With the =-F= option, /only/ the labeld windows are kept. This allows
+to quickly filter a set of reads, looking for a known window,
+with the =-FaW <window>= options:
+All the reads with this windows will be extracted to =out/seq/clone.fa-1=.
 
 ** Further clustering (experimental)
 
