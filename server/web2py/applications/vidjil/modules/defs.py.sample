@@ -36,7 +36,7 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 ### Directory for program used in task.py
 ### relative path start from server/web2py
 DIR_VIDJIL = '../../'
-DIR_FUSE = '../'
+DIR_FUSE = '../../tools'
 
 ### Port on which to run the fuse server
 ### Used in models/task.py and in /server/fuse_server.py
