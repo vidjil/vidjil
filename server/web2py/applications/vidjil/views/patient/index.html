@@ -43,7 +43,7 @@
                 <td>
                      {{=vidjil_utils.anon_names(row['id'], row['first_name'], row['last_name'], row['anon_allowed'])}}
                 </td>
-                <td> {{=row['birth'] }} </td>
+                <td> {{ if row['birth'] is not None: }} {{=row['birth'] }} {{ pass }} </td>
                 <td> {{=row['info'] }} </td>
                 <td> {{=row['confs']}}</td>
 {{if isAdmin:}} <td> {{=row['groups']}}</td>{{pass}}

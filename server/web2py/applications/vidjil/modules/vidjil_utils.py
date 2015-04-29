@@ -75,6 +75,10 @@ def anon_birth(patient_id, user_id):
     auth=current.auth
 
     birth = db.patient[patient_id].birth
+
+    if birth is None:
+        return ""
+
     age = age_years_months(birth)
 
     if auth.has_permission("anon", "patient", patient_id, user_id):
