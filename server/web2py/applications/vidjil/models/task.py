@@ -1,12 +1,13 @@
 # coding: utf8
 import os
-import sys
 import defs
 import re
 import os.path
 import time
 import sys
 import datetime
+import random
+import xmlrpclib
 
 TASK_TIMEOUT = 60 * 60
 
@@ -315,6 +316,7 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
     return "SUCCESS"
 
 def custom_fuse(file_list):
+    from subprocess import Popen, PIPE, STDOUT, os
 
     if defs.PORT_FUSE_SERVER is None:
         raise IOError('This server cannot fuse custom data')
