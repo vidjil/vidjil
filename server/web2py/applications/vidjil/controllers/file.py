@@ -3,6 +3,8 @@ import gluon.contrib.simplejson
 import defs
 import vidjil_utils
 import os
+import os.path
+import datetime
 from controller_utils import error_message
 
 if request.env.http_origin:
@@ -31,7 +33,6 @@ def add():
 
 #TODO check data
 def add_form(): 
-    import shutil, os.path, datetime
     error = ""
     
     if request.vars['sampling_date'] != '' :
@@ -83,7 +84,6 @@ def edit():
 
 #TODO check data
 def edit_form(): 
-    import shutil, os.path, datetime
     error = ""
     
     if request.vars['id'] == None :
@@ -174,7 +174,6 @@ def delete_sequence_file(seq_id):
         return error_message('you need admin permission to delete this file')
 
 def delete():
-    import shutil, os.path
     
     patient_id = db.sequence_file[request.vars["id"]].patient_id
     delete_results = ('delete_results' in request.vars and request.vars['delete_results'] == 'True')

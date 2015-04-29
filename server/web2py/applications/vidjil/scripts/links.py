@@ -1,6 +1,5 @@
 
 import defs
-import datetime
 
 patient_id = 10
 

@@ -4,11 +4,13 @@ import sys
 import defs
 import re
 import os.path
+import time
+import sys
+import datetime
 
 TASK_TIMEOUT = 60 * 60
 
 def schedule_run(id_sequence, id_config):
-    import time, datetime, os.path
     from subprocess import Popen, PIPE, STDOUT, os
 
     id_patient = db.sequence_file[id_sequence].patient_id
@@ -64,7 +66,6 @@ def schedule_run(id_sequence, id_config):
 
 
 def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_after=False):
-    import time, datetime, os.path
     from subprocess import Popen, PIPE, STDOUT, os
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
@@ -176,7 +177,6 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
 
 
 def run_copy(id_file, id_config, id_data, id_fuse, clean_before=False, clean_after=False):
-    import time, datetime, sys, os.path
     from subprocess import Popen, PIPE, STDOUT, os
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
@@ -238,7 +238,6 @@ def run_copy(id_file, id_config, id_data, id_fuse, clean_before=False, clean_aft
 
 
 def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_after=False):
-    import time, datetime, sys, os.path
     from subprocess import Popen, PIPE, STDOUT, os
     
     out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
@@ -316,8 +315,6 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
     return "SUCCESS"
 
 def custom_fuse(file_list):
-    import time, datetime, sys, os.path, random, xmlrpclib
-    from subprocess import Popen, PIPE, STDOUT, os
 
     if defs.PORT_FUSE_SERVER is None:
         raise IOError('This server cannot fuse custom data')

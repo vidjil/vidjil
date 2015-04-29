@@ -4,9 +4,9 @@ from subprocess import *
 import sys
 sys.path.insert(0, './web2py/applications/vidjil/modules')
 import defs
+import os.path
 
 def fuse(cmd, output_dir, filename):
-    import time, datetime, os.path
     from subprocess import Popen, PIPE, STDOUT, os
 
     fuse_log_file = open(output_dir+'/'+filename+'.fuse.log', 'w')

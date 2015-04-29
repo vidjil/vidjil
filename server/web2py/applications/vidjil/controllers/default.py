@@ -232,8 +232,6 @@ def get_data():
     
 #########################################################################
 def get_custom_data():
-    import time
-    import vidjil_utils
     from subprocess import Popen, PIPE, STDOUT
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True)} #TODO _next
@@ -478,7 +476,6 @@ def impersonate() :
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def stop_impersonate() :
-    import time
     if auth.is_impersonating() :
         log.debug({"success" : "true", "message" : "impersonate << stop"})
         auth.impersonate(0) 

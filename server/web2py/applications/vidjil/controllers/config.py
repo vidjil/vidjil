@@ -59,8 +59,6 @@ def edit():
 
 
 def edit_form(): 
-    import shutil, os.path
-    
     error =""
 
     required_fields = ['id', 'config_name', 'config_command', 'config_fuse_command', 'config_program']
@@ -92,8 +90,6 @@ def confirm():
     return dict(message=T('confirm config deletion'))
 
 def delete():
-    import shutil, os.path
-    
     #delete results_file using this config
     db(db.results_file.config_id==request.vars["id"]).delete()
     

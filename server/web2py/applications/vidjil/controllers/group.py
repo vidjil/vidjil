@@ -18,7 +18,6 @@ def add():
 ## redirect to group list if success
 ## return a flash error message if error
 def add_form(): 
-    import gluon.contrib.simplejson, datetime
     error = ""
 
     if request.vars["group_name"] == "" :
