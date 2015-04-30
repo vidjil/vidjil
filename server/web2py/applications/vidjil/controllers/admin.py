@@ -132,10 +132,13 @@ def repair_missing_files():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     
+def backup_database(stream):
+    db.export_to_csv_file(stream)
+
 def make_backup():
     if auth.is_admin():
         
-        db.export_to_csv_file(open(defs.DB_BACKUP_FILE, 'wb'))
+        backup_database(open(defs.DB_BACKUP_FILE, 'wb'))
                 
         res = {"success" : "true", "message" : "DB backup -> %s" % defs.DB_BACKUP_FILE}
         log.admin(res)
