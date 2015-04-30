@@ -20,13 +20,18 @@ if [ $# -ge 1 ]; then
     DIR="$1/"
 fi
 
-now=$(date +"%Y-%m-%d_%H:%M:%S") 
+now=$(date +"%Y-%m-%d_%H:%M:%S")
+vidjil_path=web2py/applications/vidjil
+db_backup_file=/tmp/db-backup-$now.csv
+
+python web2py/web2py.py -S vidjil -M -R "applications/vidjil/scripts/backup-db.py" -A "$db_backup_file"
+
 if [ $COMPLETE -eq 1 ]; then
         filename="${DIR}backup_"$now
-        zip -r $filename web2py/applications/vidjil/databases/  /mnt/result/results/  /mnt/upload/uploads/
+        zip -r $filename web2py/applications/vidjil/databases/  /mnt/result/results/  /mnt/upload/uploads/ $db_backup_file
 else
         filename="${DIR}backup_essentials_"$now
-        zip -r $filename web2py/applications/vidjil/databases/  /mnt/result/results/
+        zip -r $filename web2py/applications/vidjil/databases/  /mnt/result/results/ $db_backup_file
 fi
-
+rm -f "$db_backup_file"
 echo $filename
