@@ -98,7 +98,7 @@ def init_from_csv():
         log.info(res)
 
         try:
-            db.import_from_csv_file(open(defs.DB_BACKUP_FILE, 'rb'), null='')
+            db.import_from_csv_file(open(defs.DB_BACKUP_FILE, 'rb'))
             # db.scheduler_task.truncate()
             # db.scheduler_run.truncate()
         except Exception as e:
