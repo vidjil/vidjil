@@ -61,6 +61,7 @@ for tablename in db.tables:  # Copy tables!
     test_db.define_table(tablename, *table_copy)
 
 db = test_db
+auth.db = test_db
 
 
 init_db(True)
