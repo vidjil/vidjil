@@ -9,8 +9,6 @@ import datetime
 import random
 import xmlrpclib
 
-TASK_TIMEOUT = 60 * 60
-
 def schedule_run(id_sequence, id_config):
     from subprocess import Popen, PIPE, STDOUT, os
 
@@ -54,7 +52,7 @@ def schedule_run(id_sequence, id_config):
     program = db.config[id_config].program
     ##add task to scheduler
     task = scheduler.queue_task(program, [id_sequence, id_config, data_id, fuse_id]
-                                , repeats = 1, timeout = TASK_TIMEOUT)
+                                , repeats = 1, timeout = defs.TASK_TIMEOUT)
     db.results_file[data_id] = dict(scheduler_task_id = task.id)
 
     filename= db.sequence_file[id_sequence].filename

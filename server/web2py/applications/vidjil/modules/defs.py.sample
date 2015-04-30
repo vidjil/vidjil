@@ -47,5 +47,9 @@ DIR_LOG = '/var/vidjil/'
 LOG_INFO = DIR_LOG + 'vidjil.log'
 LOG_DEBUG = DIR_LOG + 'vidjil-debug.log'
 
+### Timeouts
+# Delay in seconds before a task is considered in timeout
+TASK_TIMEOUT = 2 * 60 * 60
+
 ### Reverse IP file
 REVERSE_IP = '/home/vidjil/ips.txt'
