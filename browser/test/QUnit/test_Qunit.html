@@ -5,6 +5,11 @@
     <title>QUnit - The Vidjil Project</title>
 
     <link rel="stylesheet" href="../../css/qunit-1.15.0.css">
+    <style>
+        .flash_container, .log_container, .popup_container, .data-container{
+            display:none !important;
+        }
+    </style>
 
     <script type="text/javascript" src='../../js/lib/d3.v3.js'></script>
     <script type="text/javascript" src="../../js/lib/jquery-2.1.1.min.js"></script>
@@ -20,28 +25,28 @@
     <script type="text/javascript" src='../../js/lib/file.js'></script>
     <script type="text/javascript" src='../../js/lib/jquery.zclip.js'></script>
 
-    <script type="text/javascript" src='../../js/view.js'></script>
+    <script type="text/javascript" src='../../js/view.js' data-cover></script>
     <script type="text/javascript" src='../../js/compare.js' data-cover></script>
-    <script type="text/javascript" src='../../js/menu.js'></script>
-    <script type="text/javascript" src='../../js/dbscan.js'></script>
-    <script type="text/javascript" src='../../js/germline.js'></script>
-    <script type="text/javascript" src='../../../germline/germlines.data'></script>
-    <script type="text/javascript" src='../../js/germline_builder.js'></script>
-    <script type="text/javascript" src='../../js/segmenter.js'></script>
+    <script type="text/javascript" src='../../js/menu.js' data-cover></script>
+    <script type="text/javascript" src='../../js/dbscan.js' data-cover></script>
+    <script type="text/javascript" src='../../js/germline.js' ></script>
+    <script type="text/javascript" src='../../../germline/germlines.data' ></script>
+    <script type="text/javascript" src='../../js/germline_builder.js' data-cover></script>
+    <script type="text/javascript" src='../../js/segmenter.js' data-cover></script>
     <script type="text/javascript" src='../../js/model_loader.js' data-cover></script>
     <script type="text/javascript" src='../../js/model.js' data-cover></script>
     <script type="text/javascript" src='../../js/clone.js' data-cover></script>
-    <script type="text/javascript" src='../../js/list.js'></script>
+    <script type="text/javascript" src='../../js/list.js' data-cover></script>
     <script type="text/javascript" src="../../js/axis.js" data-cover> </script>
     <script type="text/javascript" src="../../js/graph.js" data-cover> </script>
     <script type="text/javascript" src="../../js/scatterPlot.js" data-cover> </script>
-    <script type="text/javascript" src='../../js/builder.js'></script>
-    <script type="text/javascript" src='../../js/com.js'></script>
-    <script type="text/javascript" src='../../js/vidjil-style.js'></script>
-    <script type="text/javascript" src='../../js/crossDomain.js'></script>
+    <script type="text/javascript" src='../../js/builder.js' data-cover></script>
+    <script type="text/javascript" src='../../js/com.js' data-cover></script>
+    <script type="text/javascript" src='../../js/vidjil-style.js' data-cover></script>
+    <script type="text/javascript" src='../../js/crossDomain.js' data-cover></script>
     <script type="text/javascript" src='../../js/pdf.js'></script>
-    <script type="text/javascript" src='../../js/database.js'></script>
-    <script type="text/javascript" src='../../js/stats.js'></script>
+    <script type="text/javascript" src='../../js/database.js' data-cover></script>
+    <script type="text/javascript" src='../../js/stats.js' data-cover></script>
 
     <script type="text/javascript" src="./testFiles/data_test.js"></script>
 </head>
@@ -82,5 +87,6 @@
     <script src="./testFiles/scatterPlot_test.js"></script>
     <script src="./testFiles/axis_test.js"></script>
     <script src="./testFiles/graph_test.js"></script>
+    <script src="./testFiles/com_test.js"></script>
 </body>
 </html>

@@ -28,7 +28,9 @@ json_data = {
       "  ==> segmented 407095 reads (56.5%)\n  ==> found 35801 40-windows in 396776 segments (55.1%) inside 720531 sequences\n ", 
       "  ==> segmented 419506 reads (46.2%)\n  ==> found 19567 40-windows in 400435 segments (44.1%) inside 908909 sequences\n ", 
       "  ==> segmented 448435 reads (48.2%)\n  ==> found 43444 40-windows in 418595 segments (45%) inside 929901 sequences\n " 
-    ]
+    ],
+    "producer": ["ha","hi","ho","hu"],
+    "run_timestamp": ["2015-10-20 13:59:02", "2015-10-25 14:00:32", "2015-11-20 14:03:13", "2015-12-20 14:04:48"]
   }, 
   "data": {
     "dataTest1" : [45,60,52,60],

@@ -48,6 +48,7 @@ function Model() {
         this[f] = Model_loader.prototype[f]
     }
     
+    this.reset();
     this.view = [];
     this.checkBrowser();
     this.germlineList = new GermlineList()
@@ -211,6 +212,7 @@ Model.prototype = {
         for (var i = 0; i < this.clones.length; i++) {
             var clone = this.clone(i)
             clone.colorN = colorGenerator((((clone.getNlength() / n_max) - 1) * (-250)));
+            clone.tag = this.default_tag;
         }
         
         this.applyAnalysis(this.analysis);
@@ -323,7 +325,7 @@ Model.prototype = {
             if (new_cluster.length != 0){
                 var l = new_cluster[0]
                 for (var j=0; j<new_cluster.length;j++){
-                    if (m.clone(new_cluster[j]).top < m.clone(l).top) l = new_cluster[j]
+                    if (this.clone(new_cluster[j]).top < this.clone(l).top) l = new_cluster[j]
                 }
                 this.clusters[l] = new_cluster;
             }
@@ -342,19 +344,6 @@ Model.prototype = {
             }
         }
         return -1
-    },
-
-    /** 
-     * erase all changes made by user or from the .analysis file
-     * */
-    resetAnalysis: function () {
-        console.log("resetAnalysis()");
-        this.analysis = {
-            clones: [],
-            cluster: [],
-            date: []
-        };
-        this.initClones();
     },
 
     /**
@@ -384,6 +373,7 @@ Model.prototype = {
      * @return {string} timestamp - sample date
      * */
     getSampleTime: function(time) {
+        var time = typeof time !== 'undefined' ? time : this.t
         var value = "–"
         if (typeof this.samples.timestamp != 'undefined'){
             if (typeof this.samples.timestamp[time] != 'undefined'){
@@ -398,9 +388,10 @@ Model.prototype = {
      * @return {string} soft - name of the software used 
      * */
     getSoftVersionTime: function(time) { 
+        var time = typeof time !== 'undefined' ? time : this.t
         var soft_version = "–"
-        if (typeof m.samples.producer != 'undefined')
-            soft_version = m.samples.producer[time]
+        if (typeof this.samples.producer != 'undefined')
+            soft_version = this.samples.producer[time]
         return soft_version;
     },
 
@@ -409,9 +400,10 @@ Model.prototype = {
      * @return {string} command - sample command
      * */
     getCommandTime: function(time) {
+        var time = typeof time !== 'undefined' ? time : this.t
         var command = "–"
-        if (typeof m.samples.commandline != 'undefined')
-            command = m.samples.commandline[time]
+        if (typeof this.samples.commandline != 'undefined')
+            command = this.samples.commandline[time]
         return command;
     },
     
@@ -420,9 +412,10 @@ Model.prototype = {
      * @return {string} command - sample command
      * */
     getTimestampTime: function(time) {
+        var time = typeof time !== 'undefined' ? time : this.t
         var timestamp = "–"
-        if (typeof m.samples.run_timestamp != 'undefined')
-            timestamp = m.samples.run_timestamp[time]
+        if (typeof this.samples.run_timestamp != 'undefined')
+            timestamp = this.samples.run_timestamp[time]
         return timestamp
     },
 
@@ -586,7 +579,7 @@ Model.prototype = {
      * clones sizes can change depending the parameters so it's neccesary to recompute normalization from time to time
      * */
     update_normalization: function () {
-        if (this.normalization.B != 0 && this.normalization.type=="clone") {
+        if ((this.normalization.B != 0 && this.normalization.type=="clone" )) {
             this.compute_normalization( this.normalization.id, this.normalization.B);
         }
     },

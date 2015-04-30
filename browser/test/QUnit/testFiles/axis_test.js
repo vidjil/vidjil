@@ -74,7 +74,6 @@ test("Axis : ", function() {
     
     //Nlength
     axis.custom(function(cloneID) {
-                m.clone(cloneID).getNlength()
                 return m.clone(cloneID).getNlength();
             },
             0,25)
@@ -97,4 +96,10 @@ test("Axis : ", function() {
     equal(axis.pos(1).toPrecision(3), 0.992, "custom (percent+log) : clone 1 (gc = 17/18) position -> 0.992")
     deepEqual(axis.labels[0].text,  "100%", "custom (percent+log) : check label 100%")
     deepEqual(axis.labels[1].text,  "10%", "custom (percent+log) : check label 10%")
+    
+    //output string
+    axis.custom(function(cloneID) {
+                return m.clone(cloneID).getName();
+            }, undefined, undefined, 'string')
+    equal(axis.pos(0).toPrecision(3), 0.100, "custom (name : clone 0 ")
 });
