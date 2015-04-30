@@ -228,21 +228,25 @@ def _init_log():
     """
 
     import logging
+    import sys
+
+    def create_handler(filename, level):
+        try:
+            handler = logging.FileHandler(filename)
+        except:
+            handler = logging.StreamHandler(sys.stderr)
+        else:
+            handler.setLevel(level)
+            handler.setFormatter(formatter)
+        return handler
 
     logger = logging.getLogger('vidjil') # (request.application)
     if not logger.handlers:
         logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s')
 
-        handler = logging.FileHandler(defs.LOG_DEBUG)
-        handler.setLevel(logging.DEBUG)
-        handler.setFormatter(formatter)
-        logger.addHandler(handler) 
-
-        handler = logging.FileHandler(defs.LOG_INFO)
-        handler.setLevel(logging.INFO)
-        handler.setFormatter(formatter)
-        logger.addHandler(handler) 
+        logger.addHandler(create_handler(defs.LOG_DEBUG, logging.DEBUG))
+        logger.addHandler(create_handler(defs.LOG_INFO, logging.INFO))
 
         logger.debug("Creating logger")
     return MsgUserAdapter(logger, {})
