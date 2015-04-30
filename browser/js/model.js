@@ -1259,6 +1259,10 @@ Model.prototype = {
         delta_min = 9999
         delta_max = 0
 
+        for (var i = 0; i < this.samples.order.length; i++)
+	    if (this.samples.timestamp[i] == 'None')
+		return { 'min': -1, 'max': -1 }
+
         try
         {
             previous_t = this.samples.timestamp[0]
