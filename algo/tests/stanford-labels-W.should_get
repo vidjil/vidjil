@@ -4,6 +4,6 @@ $ Keep the good number of windows, including one window labeled by -W
 1: keep 3 windows
 
 $ The third clone has only one windows and the good label
-1: clone-003.*0001-.* W
+1: clone-003.*0001-.* -W
 
 

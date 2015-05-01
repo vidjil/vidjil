@@ -525,7 +525,7 @@ int main (int argc, char **argv)
       // Labels
 
       case 'W':
-        windows_labels[string(optarg)] = '-W';
+        windows_labels[string(optarg)] = string("-W");
         break;
 
       case 'l':
