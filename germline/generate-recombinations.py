@@ -51,7 +51,7 @@ def select_genes_randomly(rep5, rep3, at_most):
 
 def write_seq_to_file(seq, code, file):
     seq.header = seq.header.replace(' ', '_')+"__"+code
-    file.write(str(seq2))
+    file.write(str(seq))
 
 def generate_to_file_rec(rep5, rep4, rep3, code, f, recomb_function):
     if rep4 == []:
