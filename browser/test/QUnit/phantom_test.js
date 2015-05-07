@@ -4,8 +4,9 @@ var page = require('webpage').create();
 page.onConsoleMessage = function(msg) { console.log(msg); };
 
 var curdir = phantom.args[0] || fs.workingDirectory;
+// curdir = "http://localhost/browser/test/QUnit"
 
-page.open("http://localhost/browser/test/QUnit/test_Qunit.html", function() {
+page.open(curdir+"/test_Qunit.html", function() {
     setTimeout(function(){
         
         var tap = page.evaluate(function() {
