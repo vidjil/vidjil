@@ -71,7 +71,9 @@ class Browser < MiniTest::Test
 
     end
     
-    $b.div(:id => 'demo_file_menu').click 
+    # check the 'import data' menu element, and click on it
+    $b.div(:id => 'demo_file_menu').click
+    assert ($b.div(:id => 'demo_file_menu').a(:id => 'import_data_anchor')), "'import data' not present"
     $b.div(:id => 'demo_file_menu').a(:id => 'import_data_anchor').click
     
     # select data file
