@@ -4,7 +4,9 @@ import glob
 from collections import defaultdict
 
 
-def sort_except_fixed_order(l, fixed_order=[]):
+def sort_except_fixed_order(l, fixed_order=None):
+    if fixed_order is None:
+        fixed_order = []
     ll = filter(lambda x: x not in fixed_order, l)
     return fixed_order + sorted(ll)
         
