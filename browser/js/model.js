@@ -1260,7 +1260,7 @@ Model.prototype = {
         delta_max = 0
 
         for (var i = 0; i < this.samples.order.length; i++)
-	    if (this.samples.timestamp[i] == 'None')
+	    if ((typeof this.samples.timestamp == 'undefined') || (this.samples.timestamp[i] == 'None'))
 		return { 'min': -1, 'max': -1 }
 
         try
