@@ -142,7 +142,8 @@ RELEASE_SOURCE = $(wildcard $(VIDJIL_ALGO_SRC)/*.cpp) $(wildcard $(VIDJIL_ALGO_S
 RELEASE_MAKE = ./Makefile  $(VIDJIL_ALGO_SRC)/Makefile  $(VIDJIL_ALGO_SRC)/core/Makefile $(VIDJIL_ALGO_SRC)/tests/Makefile $(VIDJIL_ALGO_SRC)/lib/Makefile germline/Makefile data/Makefile tools/tests/Makefile doc/Makefile
 RELEASE_TESTS =  doc/format-analysis.org data/get-sequences $(wildcard data/*.vidjil) $(wildcard data/*.analysis) $(wildcard data/*.fa) $(wildcard data/*.fq)  $(VIDJIL_ALGO_SRC)/tests/should-vdj-to-tap.py $(wildcard $(VIDJIL_ALGO_SRC)/tests/should-vdj-tests/*.should-vdj.fa)  $(VIDJIL_ALGO_SRC)/tests/should-to-tap.sh $(wildcard $(VIDJIL_ALGO_SRC)/tests/*.should_get) $(wildcard $(VIDJIL_ALGO_SRC)/tests/bugs/*.fa)  $(wildcard $(VIDJIL_ALGO_SRC)/tests/bugs/*.should_get) $(VIDJIL_ALGO_SRC)/tests/format-json.sh $(wildcard doc/analysis-example*.vidjil) $(wildcard tools/tests/*.should_get) tools/tests/should-to-tap.sh tools/diff_json.sh
 RELEASE_GERMLINES = germline/germline_id germline/get-saved-germline germline/get-germline germline/split-from-imgt.py
-RELEASE_FILES = $(RELEASE_SOURCE) $(RELEASE_TESTS) $(RELEASE_MAKE) $(RELEASE_GERMLINES) doc/CHANGELOG doc/algo.org doc/LICENSE data/segmentation.fasta $(wildcard data/*.fa.gz) $(wildcard data/*.label)
+RELEASE_HELP = doc/algo.org doc/locus.org  doc/CHANGELOG  doc/LICENSE
+RELEASE_FILES = $(RELEASE_SOURCE) $(RELEASE_TESTS) $(RELEASE_MAKE) $(RELEASE_GERMLINES) $(RELEASE_HELP) data/segmentation.fasta $(wildcard data/*.fa.gz) $(wildcard data/*.label)
 RELEASE_ARCHIVE = vidjil-$(RELEASE_TAG).tgz
 
 CURRENT_DIR = vidjil
