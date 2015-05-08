@@ -165,7 +165,15 @@ Window prediction
 #+END_EXAMPLE
 
 The =-s=, =-k=, =-m= and =-M= options are the options of the seed-based heuristic. A detailed
-explanation can be found in the paper. These options are for advanced usage, the defaults values should work.
+explanation can be found in the paper. /These options are for advanced usage, the defaults values should work./
+The =-s= or =-k= option selects the seed used for the k-mer V/J affectation.
+The =-m= / =-M= options control the minimum and maximum difference of positions between the last
+conserved k-mer of V and the first conserved k-mer of J. As they may be some sequencing errors or mutations
+compared to the germline genes, this is not the size of the junction (even without inserted nucleotides
+in the N region, this difference of position can equal to 20 or 30, or even more, if there are some
+errors or mutations at the end of V and and at the beginning of J). Note that is even possible to set =-m -10=
+(meaning that V and J could overlap 10 bp). This is the default for TRG recombinations.
+
 
 The =-w= option fixes the size of the "window" that is the main
 identifier to gather clones. The default value (=-w 50=) was selected
