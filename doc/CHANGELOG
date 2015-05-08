@@ -1,7 +1,7 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
-2015-05-XX  The Vidjil Team
+2015-05-08  The Vidjil Team
         * New default e-value threshold (-e 1.0), improving the segmentation heuristic
         * New default for window length (-w 50), even with -D or with -g, streamlining the window handling
         * Better multi-germline analysis (-g), selecting the best locus on the e-value (core/segment.cpp)
