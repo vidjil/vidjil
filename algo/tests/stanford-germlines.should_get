@@ -1,17 +1,17 @@
-!LAUNCH: (cd ../.. ; $LAUNCHER ./vidjil -c germlines -s '######-######' data/Stanford_S22.fasta)
+!LAUNCH: (cd ../.. ; $LAUNCHER ./vidjil -c germlines -t 100 -s '######-######' data/Stanford_S22.fasta)
 
 $ number of reads and kmers
 1:13153 reads, 3020179 kmers
 
 $ k-mers, IGHV
-1:13148 .* 1832527 .*IGHV
+1:13115 .* 1223118 .*IGHV
 
 $ k-mers, IGHJ
-1:5 .* 407486 .*IGHJ
+1:38 .* 435867 .*IGHJ
 
 $ k-mers, ambiguous
-1:98857   .*\\?
+1:47370   .*\\?
 
 $ k-mers, unknown
-1:618273 .*_
+1:1251710 .*_
 
