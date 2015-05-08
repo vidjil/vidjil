@@ -169,17 +169,25 @@ explanation can be found in the paper. These options are for advanced usage, the
 
 The =-w= option fixes the size of the "window" that is the main
 identifier to gather clones. The default value (=-w 50=) was selected
-to ensure a high-quality clone gathering. The
-high-throughput heuristic predicts the center of the "window" that may
+to ensure a high-quality clone gathering: reads are clustered when
+they /exactly/ share, at the nucleotide level, a 50 bp-window centered
+on the CDR3. No sequencing errors are corrected inside this window.
+The center of the "window", predicted by the high-throughput heuristic, may
 be shifted by a few bases from the actual "center" of the CDR3 (for TRG,
 less than 15 bases compared to the IMGT/V-QUEST or IgBlast prediction
 in >99% of cases). The extracted window should be large enough to
 fully contain the CDR3 as well as some part of the end of the V and
 the start of the J, or at least some specific N region, to uniquely identify a clone.
 
-Setting =-w= to lower values may "segment" (analyze) a few more reads, depending
-on the read length of your data, but may in some rare cases falsely cluster reads from
-different clones. The =-w 40= option is usually safe, and =-w 30= can also be tested.
+Setting =-w= to higher values (such as =-w 60= or =-w 100=) makes the clone gathering
+even more conservative, enabling to split clones with low specificity (such as IGH with very
+large D, short or no N regions and almost no somatic hypermutations). However, such settings
+may "segment" (analyze) less reads, depending on the read length of your data, and may also
+return more clones, as any sequencing error in the window is not corrected.
+
+Setting =-w= to lower values than 50 may "segment" (analyze) a few more reads, depending
+on the read length of your data, but may in some cases falsely cluster reads from
+different clones. The =-w 40= option is usually safe for VJ recombinations, and =-w 30= can also be tested.
 Setting =-w= to lower values is not recommended.
 
 The =-e= option sets the maximal e-value accepted for segmenting a sequence.
