@@ -129,6 +129,11 @@ def run_request():
 
     id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
 
+    if "grep_reads" in request.vars:
+        grep_reads = request.vars["grep_reads"]
+    else:
+        grep_reads = None
+
     if not auth.can_modify_patient(id_patient) :
         error += "you do not have permission to launch process for this patient ("+str(id_patient)+"), "
 
@@ -137,7 +142,7 @@ def run_request():
         error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
 
     if error == "" :
-        res = schedule_run(request.vars["sequence_file_id"], request.vars["config_id"])
+        res = schedule_run(request.vars["sequence_file_id"], id_config, grep_reads)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
