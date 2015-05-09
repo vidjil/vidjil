@@ -22,9 +22,9 @@ def next_patient():
             current_id = request.vars["id"]
             go_next = int(request.vars['next'])
             if go_next > 0:
-                res = db(db.patient.id > current_id).select(db.patient.id, orderby=db.patient.id, limitby=(0,1))
+                res = db((db.patient.id > current_id) & (auth.accessible_query('read', db.patient))).select(db.patient.id, orderby=db.patient.id, limitby=(0,1))
             else:
-                res = db(db.patient.id < current_id).select(db.patient.id, orderby=~db.patient.id, limitby=(0,1))
+                res = db((db.patient.id < current_id) & (auth.accessible_query('read', db.patient))).select(db.patient.id, orderby=~db.patient.id, limitby=(0,1))
             if (len(res) > 0):
                 request.vars["id"] = str(res[0].id)
         except:

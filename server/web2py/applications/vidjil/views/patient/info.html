@@ -5,10 +5,10 @@
 
 <div>
 
-{{if auth.is_admin():}}
+
   <span class="button" onclick="db.call('patient/info', {'next': '1', 'id' :'{{=request.vars['id']}}', 'config_id' : '{{=request.vars['config_id']}}'})">prev</span>
   <span class="button" onclick="db.call('patient/info', {'next': '-1', 'id' :'{{=request.vars['id']}}', 'config_id' : '{{=request.vars['config_id']}}'})">next</span>
-{{ pass }}
+
 
 
     <h3>{{=vidjil_utils.anon_names(request.vars['id'], patient.first_name, patient.last_name)}}</h3>
