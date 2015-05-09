@@ -57,6 +57,7 @@
                 <td class="column2">last processing</td>
                 <td class="column_100">status</td>
                 <td class="column5"></td>
+                <td class="column5"></td>
                 <td class="column4"></td>
 
             </tr>
@@ -84,9 +85,9 @@
 
                     {{if (auth.can_modify_patient(request.vars["id"]) ):}}
                         <td class="pointer" onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
-                        <td class="pointer" onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
                         <td> <a {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}
                                 {{else:}} href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" {{pass}}  >dl</a></td>
+                        <td class="pointer" onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
                     {{else:}}<td></td><td></td><td></td>{{pass}}
 
 
@@ -98,9 +99,15 @@
                    {{else:}}<td></td>{{pass}}
                    {{if row.results_file.id:}}
                      <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=status}} </td>
+                     <td>
+                        {{if row.results_file.data_file:}}
+                            <a href={{=URL('default', 'download', scheme='https', args=row.results_file.data_file, vars=dict(filename='result-%s-%s.txt' % (request.vars['id'], row.results_file.id)))}}
+                               type="application/octet-stream">dl</a>
+                        {{pass}}
+                     </td>
                      <td class="pointer" onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}'})" > X </td>
                    {{else:}}
-                     <td></td><td></td>
+                     <td></td><td></td><td></td>
                    {{pass}}
                    <td>
                    {{if row.sequence_file.data_file != None and ( row.results_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED") ):}}
