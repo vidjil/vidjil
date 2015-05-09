@@ -504,6 +504,7 @@ Clone.prototype = {
             for (var i = 0; i < time_length; i++) {
                 html += "<td>"
                 html += this.getReads(this.m.samples.order[i]) + "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")"
+                if ($('#debug_menu').is(':visible')) {
                 html += "<br/>"
                 call_reads = "db.call('default/run_request', { "
                 call_reads += "'sequence_file_id': '" + this.m.samples.db_key[this.m.samples.order[i]] + "', "
@@ -511,6 +512,7 @@ Clone.prototype = {
                 call_reads += "'grep_reads' : '" + this.id + "' })"
                 console.log(call_reads)
                 html += "<span class='button' onclick=\"" + call_reads + "\"> get reads </span>"
+                }
                 html += "</td>"
             }
             html += "</tr><tr><td> clone size (%)</td>"
