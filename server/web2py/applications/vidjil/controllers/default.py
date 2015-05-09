@@ -204,10 +204,12 @@ def get_data():
         
         data["samples"]["info"] = []
         data["samples"]["timestamp"] = []
+        data["samples"]["db_key"] = []
         for i in range(len(data["samples"]["original_names"])) :
             data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
             data["samples"]["info"].append('')
             data["samples"]["timestamp"].append('')
+            data["samples"]["db_key"].append('')
 
         ## récupération des infos stockées sur la base de données
         query = db( ( db.patient.id == db.sequence_file.patient_id )
@@ -225,6 +227,7 @@ def get_data():
                     data["samples"]["timestamp"][i] = str(row.sequence_file.sampling_date)
                     data["samples"]["info"][i] = row.sequence_file.info
                     data["samples"]["commandline"][i] = command
+                    data["samples"]["db_key"][i] = row.sequence_file.id
                 
         log.debug("get_data (%s) c%s -> %s" % (request.vars["patient"], request.vars["config"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
