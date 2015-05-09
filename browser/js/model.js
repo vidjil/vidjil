@@ -1642,7 +1642,7 @@ Model.prototype = {
     systemBox: function (system){
         
         var span = document.createElement('span')
-        span.className = "systemBox";
+        span.className = "systemBoxMenu";
         if ((typeof system != 'undefined')){
             span.appendChild(document.createTextNode(this.germlineList.getShortcut(system)));
             if (this.system_selected.indexOf(system) != -1) 

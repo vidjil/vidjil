@@ -485,7 +485,9 @@ List.prototype = {
         div_elem.appendChild(span_cluster);
         if (this.m.system=="multi") {
             var system = this.m.clone(cloneID).get('germline')
-            div_elem.appendChild(this.m.systemBox(system));
+            var span_systemBox = this.m.systemBox(system);
+            span_systemBox.className = "systemBox";
+            div_elem.appendChild(span_systemBox);
         }
         div_elem.appendChild(span_name);
         div_elem.appendChild(span_info);
