@@ -26,7 +26,7 @@ def assert_scheduler_task_does_not_exist(args):
     return None
 
 
-def schedule_run(id_sequence, id_config):
+def schedule_run(id_sequence, id_config, grep_reads=None):
     from subprocess import Popen, PIPE, STDOUT, os
 
     id_patient = db.sequence_file[id_sequence].patient_id
@@ -41,18 +41,22 @@ def schedule_run(id_sequence, id_config):
                                      run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                      config_id = id_config )
         
-    ## check fused_file
-    row2 = db( ( db.fused_file.config_id == id_config ) & 
-              ( db.fused_file.patient_id == id_patient )  
-            ).select()
+    if grep_reads:
+        args = [id_sequence, id_config, data_id, None, grep_reads]
+    else:
+        ## check fused_file
+        row2 = db( ( db.fused_file.config_id == id_config ) &
+                   ( db.fused_file.patient_id == id_patient )
+               ).select()
 
-    if len(row2) > 0 : ## update
-        fuse_id = row2[0].id
-    else:             ## create
-        fuse_id = db.fused_file.insert(patient_id = id_patient,
-                                        config_id = id_config)
+        if len(row2) > 0 : ## update
+            fuse_id = row2[0].id
+        else:             ## create
+            fuse_id = db.fused_file.insert(patient_id = id_patient,
+                                           config_id = id_config)
 
-    args = [id_sequence, id_config, data_id, fuse_id, None]
+        args = [id_sequence, id_config, data_id, fuse_id, None]
+
     err = assert_scheduler_task_does_not_exist(str(args))
     if err:
         log.error(err)
@@ -67,13 +71,14 @@ def schedule_run(id_sequence, id_config):
     filename= db.sequence_file[id_sequence].filename
 
     res = {"redirect": "reload",
-           "message": "[%s] (%s) c%s: process requested - %s" % (data_id, id_patient, id_config, filename)}
+           "message": "[%s] (%s) c%s: process requested - %s %s" % (data_id, id_patient, id_config, grep_reads, filename)}
 
     log.info(res)
     return res
 
 
-def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_after=False):
+def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
+               clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
@@ -94,6 +99,10 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
     ## config de vidjil
     vidjil_cmd = db.config[id_config].command
     vidjil_cmd = vidjil_cmd.replace( ' germline' ,germline_folder)
+
+    if grep_reads:
+        # TODO: security, assert grep_reads XXXX
+        vidjil_cmd += ' -FaW "%s" ' % grep_reads
     
     os.makedirs(out_folder)
     out_log = out_folder+'/'+output_filename+'.vidjil.log'
@@ -178,7 +187,9 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, clean_before=False, clean_a
     res = {"message": "[%s] c%s: Vidjil finished - %s - %s" % (id_data, id_config, info, out_folder)}
     log.info(res)
 
-    run_fuse(id_file, id_config, id_data, id_fuse, clean_before = False)
+
+    if not grep_reads:
+        run_fuse(id_file, id_config, id_data, id_fuse, clean_before = False)
 
     return "SUCCESS"
 
