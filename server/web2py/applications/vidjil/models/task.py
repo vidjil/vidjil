@@ -9,6 +9,23 @@ import datetime
 import random
 import xmlrpclib
 
+
+def assert_scheduler_task_does_not_exist(args):
+    ##check scheduled run
+    row = db( ( db.scheduler_task.args == args)
+         & ( db.scheduler_task.status != "FAILED"  )
+         & ( db.scheduler_task.status != "EXPIRED"  )
+         & ( db.scheduler_task.status != "TIMEOUT"  )
+         & ( db.scheduler_task.status != "COMPLETED"  )
+         ).select()
+
+    if len(row) > 0 :
+        res = {"message": "task already registered"}
+        return res
+
+    return None
+
+
 def schedule_run(id_sequence, id_config):
     from subprocess import Popen, PIPE, STDOUT, os
 
@@ -34,25 +51,17 @@ def schedule_run(id_sequence, id_config):
     else:             ## create
         fuse_id = db.fused_file.insert(patient_id = id_patient,
                                         config_id = id_config)
-        
-    ##check scheduled run
-    row3 = db( ( db.scheduler_task.args == '["' + str(id_sequence) + '", "' + str(id_config) + '", ' + str(data_id) + ', ' + str(fuse_id) + ']' ) 
-         & ( db.scheduler_task.status != "FAILED"  )
-         & ( db.scheduler_task.status != "EXPIRED"  )
-         & ( db.scheduler_task.status != "TIMEOUT"  )
-         & ( db.scheduler_task.status != "COMPLETED"  )
-         ).select()
 
-    if len(row3) > 0 :
-        res = {"message": "run already registered"}
-        log.error(res)
-        return res
-
+    args = [id_sequence, id_config, data_id, fuse_id, None]
+    err = assert_scheduler_task_does_not_exist(str(args))
+    if err:
+        log.error(err)
+        return err
 
     program = db.config[id_config].program
     ##add task to scheduler
-    task = scheduler.queue_task(program, [id_sequence, id_config, data_id, fuse_id]
-                                , repeats = 1, timeout = defs.TASK_TIMEOUT)
+    task = scheduler.queue_task(program, args,
+                                repeats = 1, timeout = defs.TASK_TIMEOUT)
     db.results_file[data_id] = dict(scheduler_task_id = task.id)
 
     filename= db.sequence_file[id_sequence].filename
