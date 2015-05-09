@@ -126,13 +126,19 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
     sys.stdout.flush()
     db.commit()
 
-    ## récupération du fichier data.json généré
-    results_filepath = os.path.abspath(out_folder+'/'+output_filename+".vidjil")
+    ## Get result file
+    if grep_reads:
+        out_results = out_folder + '/seq/clone.fa-1'
+    else:
+        out_results = out_folder + '/' + output_filename + '.vidjil'
+
+    print "===>", out_results
+    results_filepath = os.path.abspath(out_results)
 
     try:
         stream = open(results_filepath, 'rb')
     except IOError:
-        print "!!! Vidjil failed, no .vidjil file"
+        print "!!! Vidjil failed, no result file"
         res = {"message": "[%s] c%s: Vidjil FAILED - %s" % (id_data, id_config, out_folder)}
         log.error(res)
         raise IOError
