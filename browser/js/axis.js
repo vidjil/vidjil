@@ -155,7 +155,7 @@ Axis.prototype = {
             }
         }
         
-        if ( output != "string" ){
+        if ( (output != "string") && (output != "string-sorted")){
             var min = default_min;
             var max = default_max;
             if (typeof min === 'function') min = min();
@@ -218,6 +218,11 @@ Axis.prototype = {
             }
             
             var key = Object.keys(this.values)
+
+            if (output == "string-sorted") {
+                key.sort()
+            }
+
             var step = 1/(key.length+1);
             pos = step/2;
             for (var i in key){
@@ -249,7 +254,7 @@ Axis.prototype = {
     computeCustomLabels: function(min, max, output, use_log){
         this.labels = [];
         
-        if (output == "string"){
+        if ((output == "string") || (output == "string-sorted")) {
             var key = Object.keys(this.values)
             for (var i in key){
                 this.labels.push(this.label("line", this.values[key[i]], key[i]));
