@@ -446,11 +446,14 @@ ScatterPlot.prototype = {
         element.setAttribute('value', "custom");
         element.appendChild(document.createTextNode("–"));
         this.select_preset.appendChild(element);
+
+        var p = 0
         for (var i in this.preset) {
             var element = document.createElement("option");
             element.setAttribute('value', i);
-            element.appendChild(document.createTextNode(i));
+            element.appendChild(document.createTextNode('[' + p + '] ' + i));
             this.select_preset.appendChild(element);
+	    p += 1;
         }
         
         div_x.appendChild(document.createTextNode("x "));
