@@ -502,7 +502,16 @@ Clone.prototype = {
             html += "<tr><td> clone name </td><td colspan='" + time_length + "'>" + this.getName() + "</td></tr>"
             html += "<tr><td> clone size (n-reads (total reads) )</td>"
             for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.getReads(this.m.samples.order[i]) + "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")</td>"
+                html += "<td>"
+                html += this.getReads(this.m.samples.order[i]) + "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")"
+                html += "<br/>"
+                call_reads = "db.call('default/run_request', { "
+                call_reads += "'sequence_file_id': '" + this.m.samples.db_key[this.m.samples.order[i]] + "', "
+                call_reads += "'config_id' : '" + this.m.db_key.config + "', "
+                call_reads += "'grep_reads' : '" + this.id + "' })"
+                console.log(call_reads)
+                html += "<span class='button' onclick=\"" + call_reads + "\"> get reads </span>"
+                html += "</td>"
             }
             html += "</tr><tr><td> clone size (%)</td>"
             for (var i = 0; i < time_length; i++) {
