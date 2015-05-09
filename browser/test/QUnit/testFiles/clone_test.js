@@ -30,7 +30,21 @@
         "top" : 3,
         "germline" : "TRG",
     }
-    
+
+
+function includes(result, pattern, message) {
+    // Checks that the result includes the pattern
+    // TODO: see and use qunit-regexp !
+    var res = result.indexOf(pattern) > -1
+
+    if (res) {
+        ok(res, message)
+    }
+    else { // Only for easy debug
+        equal(result, "{includes} " + pattern, message)
+    }
+}
+
 test("clone : name", function() {
     
     var m = new Model();
@@ -64,9 +78,23 @@ test("clone : name", function() {
     equal(c1.get('reads'), 10, "clone c1 reads : 10");
     equal(c1.getSequenceSize(), "0.05", "clone c1 size : 0.05");
     console.log(m.samples.order)
-    equal(c1.getHtmlInfo(), "<h2>Cluster info : hello</h2><div id='info_window'><table><tr><th></th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr><tr><td class='header' colspan='5'> clone </td></tr><tr><td> clone name </td><td colspan='4'>hello</td></tr><tr><td> clone size (n-reads (total reads) )</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td> clone size (%)</td><td>10.000 % </td><td>20.000 % </td><td>15.000 % </td><td>30.000 % </td><tr><td class='header' colspan='5'> representative sequence</td></tr><tr><td> sequence name </td><td colspan='4'>hello</td></tr><tr><td> code </td><td colspan='4'>hello</td></tr><tr><td> length </td><td colspan='4'>19</td></tr><tr><td> size (n-reads (total reads) )</td><td>10  (200)</td><td>10  (100)</td><td>15  (200)</td><td>15  (100)</td></tr><tr><td> size (%)</td><td>5.000 % </td><td>10.000 % </td><td>7.500 % </td><td>15.000 % </td></tr><tr><td class='header' colspan='5'> segmentation</td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr><tr><td> 5 </td><td colspan='4'>undefined V</td></tr><tr><td> 4 </td><td colspan='4'>IGHD2*03</td></tr><tr><td> 3 </td><td colspan='4'>IGHV4*01</td></tr><tr><td class='header' colspan='5'> &nbsp; </td></tr></table></div>",
-    "getHtmlInfo"); 
+
+    html = c1.getHtmlInfo()
+    includes(html, "<h2>Cluster info : hello</h2><div id='info_window'><table><tr><th></th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
+             "getHtmlInfo: cluster info");
+
+    includes(html, "<tr><td class='header' colspan='5'> clone </td></tr><tr><td> clone name </td><td colspan='4'>hello</td></tr><tr><td> clone size (n-reads (total reads) )</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td> clone size (%)</td><td>10.000 % </td><td>20.000 % </td><td>15.000 % </td><td>30.000 % </td>",
+             "getHtmlInfo: clone information");
     
+    includes(html, "<tr><td class='header' colspan='5'> representative sequence</td></tr><tr><td> sequence name </td><td colspan='4'>hello</td></tr><tr><td> code </td><td colspan='4'>hello</td></tr><tr><td> length </td><td colspan='4'>19</td></tr><tr><td> size (n-reads (total reads) )</td><td>10  (200)</td><td>10  (100)</td><td>15  (200)</td><td>15  (100)</td></tr><tr><td> size (%)</td><td>5.000 % </td><td>10.000 % </td><td>7.500 % </td><td>15.000 % </td></tr>",
+             "getHtmlInfo: representative sequence information");
+
+    includes(html, "<tr><td class='header' colspan='5'> segmentation</td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", "getHtmlInfo: segmentation information");
+
+    // <tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG</td></tr> // not tested (order of title/class)
+
+    includes(html, "<tr><td> V gene (or 5') </td><td colspan='4'>undefined V</td></tr><tr><td> (D gene) </td><td colspan='4'>IGHD2*03</td></tr><tr><td> J gene (or 3') </td><td colspan='4'>IGHV4*01</td></tr>",
+             "getHtmlInfo: segmentation information (VDJ)");
 
 });
 
