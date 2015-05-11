@@ -70,6 +70,7 @@ KmerRepresentativeComputer WindowsStorage::getRepresentativeComputer(junction wi
   repComp.setMinCover(min_cover);
   repComp.setPercentCoverage(percent_cover);
   repComp.setRequiredSequence(window);
+  repComp.setCoverageReferenceLength(stats_by_window[window].getAverage());
   repComp.compute();
 
   // We should always have a representative, because
