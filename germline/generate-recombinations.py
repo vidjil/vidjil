@@ -66,7 +66,7 @@ def write_seq_to_file(seq, code, file):
     seq.header = seq.header.replace(' ', '_')+"__"+code
     file.write(str(seq))
 
-def generate_to_file_rec(rep5, rep4, rep3, code, f, recomb_function):
+def generate_to_file_rec(rep5, rep4, rep3, code, output, recomb_function):
     if rep4 == []:
         recomb1_left = rep5
     else:
@@ -74,20 +74,19 @@ def generate_to_file_rec(rep5, rep4, rep3, code, f, recomb_function):
     recomb1_right = rep3
 
     nb = 0
-    with open(f, 'w') as ff:
-        for seq5, seq3 in select_genes(recomb1_left, recomb1_right):
-            seq = recomb_function(seq5, seq3)
-            if rep4 != []:
-                nb += generate_to_file_rec(rep5, [], [seq], code, f, recomb_function)
-            else:
-                seq.header = seq.header.replace(' ', '_')+"__"+code
-                ff.write(str(seq))
-                nb += 1
+    for seq5, seq3 in select_genes(recomb1_left, recomb1_right):
+        seq = recomb_function(seq5, seq3)
+        if rep4 != []:
+            nb += generate_to_file_rec(rep5, [], [seq], code, output, recomb_function)
+        else:
+            seq.header = seq.header.replace(' ', '_')+"__"+code
+            output.write(str(seq))
+            nb += 1
     return nb
 
 def generate_to_file(rep5, rep4, rep3, code, f, recomb_function):
     print("  ==>", f)
-    print("  ==> %d recombinations" % generate_to_file_rec(rep5, rep4, rep3, code, f, recomb_function))
+    print("  ==> %d recombinations" % generate_to_file_rec(rep5, rep4, rep3, code, open(f, 'w'), recomb_function))
 
 
 
