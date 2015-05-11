@@ -2,10 +2,11 @@
 !LOG: stanford-w100.log
 
 $ Find the good number of "too short sequences" for windows of size 100
-1: UNSEG too short w ->     2221
+1: UNSEG too short w ->      588
 
 $ Find the good number of segmented sequences (including "too short sequences")
-1: junction detected in 13148 reads .100%.
+1: junction detected in 13145 reads .99.9%.
 
 $ Find the good number of windows of size 100 in Stanford S22
-1: found 9796 100-windows in 10927 reads
+1: found 11320 100-windows in 12557 reads
+
