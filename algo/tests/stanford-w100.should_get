@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -s '#####-#####' -w 100 -G ../../germline/IGH ../../data/Stanford_S22.fasta
+!LAUNCH: ../../vidjil -y 0 -s '#####-#####' -w 100 -G ../../germline/IGH ../../data/Stanford_S22.fasta
 !LOG: stanford-w100.log
 
 $ Find the good number of "too short sequences" for windows of size 100

@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -k 14 -G ../../germline/IGH ../../data/Stanford_S22.fasta
+!LAUNCH: ../../vidjil -y 0 -k 14 -G ../../germline/IGH ../../data/Stanford_S22.fasta
 !LOG: stanford-k14.log
 
 $ Find the good number of windows in Stanford S22 (contiguous seed 14)
