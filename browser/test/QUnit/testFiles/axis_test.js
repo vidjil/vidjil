@@ -62,13 +62,13 @@ test("Axis : ", function() {
     axis.useGermline(axis.m.germlineJ, "J", true)
     deepEqual(axis.labels,  [
             {"geneColor": "rgb(36,183,171)","pos": 0.25,"text": "TRGJ2","type": "line"},
-            {"geneColor": "rgb(183,110,36)","pos": 0.125,"text": "*03","type": "subline"},
-            {"geneColor": "rgb(36,183,171)","pos": 0.375,"text": "*04","type": "subline"},
+            {"geneColor": "rgb(183,110,36)","pos": 0.125,"text": "*02","type": "subline"},
+            {"geneColor": "rgb(36,183,171)","pos": 0.375,"text": "*03","type": "subline"},
             {"geneColor": "","pos": 0.75,"text": "?","type": "line"}
         ], "check germline J allele labels");
     
-    equal(axis.pos(0).toPrecision(3), 0.125, "clone 0 (j2*03) position -> 0.125")
-    equal(axis.pos(1).toPrecision(3), 0.375, "clone 1 (j2*04) position -> 0.375")
+    equal(axis.pos(0).toPrecision(3), 0.375, "clone 0 (j2*03) position -> 0.375")
+    equal(axis.pos(1).toPrecision(3), 0.125, "clone 1 (j2*04) position -> 0.125")
     
     
     

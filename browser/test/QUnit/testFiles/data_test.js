@@ -60,7 +60,7 @@ json_data = {
         "germline" : "TRG",
         "seg" : {
             "5" : "TRGV5*01",
-            "3" : "TRGJ2*04",
+            "3" : "TRGJ2*02",
             "3start" : 15,
             "5end" : 5
         }
@@ -69,7 +69,7 @@ json_data = {
         "sequence" : "cccccccccccccccccccc",
         "name" : "test3",
         "id" : "id3",
-        "reads" : [25,25,50,50] ,
+        "reads" : [25,25,50,5] ,
         "top" : 3,
         "germline" : "IGH",
         "seg" : {
