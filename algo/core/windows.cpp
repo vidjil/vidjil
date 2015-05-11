@@ -25,7 +25,7 @@ string WindowsStorage::getLabel(junction window) {
 
 float WindowsStorage::getAverageLength(junction window) {
   assert(hasWindow(window));
-  return stats_by_window[window].getAverage();
+  return seqs_by_window[window].getAverageScore();
 }
 
 Germline *WindowsStorage::getGermline(junction window) {
@@ -148,7 +148,6 @@ void WindowsStorage::add(junction window, Sequence sequence, int status, Germlin
 
   seqs_by_window[window].add(sequence);
   status_by_window[window][status]++;
-  stats_by_window[window].insert(sequence.sequence.length());
 
   germline_by_window[window] = germline;
 }

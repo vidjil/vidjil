@@ -33,7 +33,6 @@ typedef string junction ;
 class WindowsStorage {
  private:
   map<junction, BinReadStorage > seqs_by_window;
-  map<junction, Stats > stats_by_window;
   map<junction, vector<int> > status_by_window;
   map<junction, Germline* > germline_by_window;
   map<string, string> windows_labels;
