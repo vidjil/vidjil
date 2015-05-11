@@ -106,11 +106,6 @@ class WindowsStorage {
                            size_t nb_buckets=HISTOGRAM_SIZE_AUDITIONED);
 
 
-  /*
-   * Fill the stats_clone member of the different Germlines
-   */
-  void fillStatsClones();
-
   /**
    * @return true iff a limit has been set for the maximal number of reads per
    * window

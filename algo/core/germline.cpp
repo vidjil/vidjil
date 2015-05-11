@@ -21,9 +21,6 @@ void Germline::init(string _code, char _shortcut,
      
   delta_min = _delta_min ;
   delta_max = _delta_max ;
-
-  stats_reads.setLabel(code);
-  stats_clones.setLabel("");
 }
 
 

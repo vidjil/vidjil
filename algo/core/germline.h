@@ -80,9 +80,6 @@ class Germline {
 
   int delta_min;
   int delta_max;
-
-  Stats stats_reads;
-  Stats stats_clones;
 };
 
 

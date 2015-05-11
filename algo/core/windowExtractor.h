@@ -9,6 +9,10 @@
 #include "kmerstore.h"
 #include "kmeraffect.h"
 #include "windows.h"
+#include "read_storage.h"
+
+#define NB_BINS_CLONES 10
+#define MAX_VALUE_BINS_CLONES 1000
 
 using namespace std;
 
@@ -19,7 +23,8 @@ using namespace std;
 class WindowExtractor {
  private:
   size_t nb_reads;
-  map<string, size_t> nb_reads_germline;
+  map<string, BinReadStorage> stats_reads;
+  map<string, BinReadStorage> stats_clones;
 
   ostream *out_segmented;
   ostream *out_unsegmented;
@@ -122,6 +127,11 @@ class WindowExtractor {
    * Initialize the statistics (put 0 everywhere).
    */
   void init_stats();
+
+  /*
+   * Fill the stats_clone member of the different Germlines
+   */
+  void fillStatsClones(WindowsStorage *storage);
 };
 
 #endif
