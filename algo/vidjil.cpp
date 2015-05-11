@@ -270,8 +270,24 @@ int main (int argc, char **argv)
        << "# No lymphocyte was harmed in the making of this software," << endl
        << "# however this software is for research use only and comes with no warranty." << endl
        << endl
-       << "# Please cite http://biomedcentral.com/1471-2164/15/409 if you use Vidjil." 
+       << "# Please cite http://biomedcentral.com/1471-2164/15/409 if you use Vidjil." << endl
        << endl ;
+
+  //////////////////////////////////
+  // Display version information or git log
+
+  string soft_version = "vidjil ";
+#ifdef RELEASE_TAG
+  cout << "# version: vidjil " << RELEASE_TAG << endl ;
+  soft_version.append(RELEASE_TAG);
+#else
+  cout << "# development version" << endl ;
+#ifdef GIT_VERSION
+  cout << "# git: " << GIT_VERSION << endl ;
+  soft_version.append("dev ");
+  soft_version.append(GIT_VERSION);
+#endif
+#endif
 
   //$$ options: defaults
 
@@ -721,22 +737,6 @@ int main (int argc, char **argv)
 
   cout << "# " << time_buffer << endl ;
 
-
-  //////////////////////////////////
-  // Display version information or git log
-
-  string soft_version = "vidjil ";
-#ifdef RELEASE_TAG
-  cout << "# version: vidjil " << RELEASE_TAG << endl ;
-  soft_version.append(RELEASE_TAG);
-#else
-  cout << "# development version" << endl ;
-#ifdef GIT_VERSION
-  cout << "# git: " << GIT_VERSION << endl ;
-  soft_version.append("dev ");
-  soft_version.append(GIT_VERSION);
-#endif
-#endif
 
   //////////////////////////////////
   // Warning for non-optimal use
