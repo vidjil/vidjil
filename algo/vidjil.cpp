@@ -951,7 +951,7 @@ int main (int argc, char **argv)
     ofstream *out_unsegmented = NULL;
     ofstream *out_affects = NULL;
  
-    WindowExtractor we;
+    WindowExtractor we(multigermline);
     if (! output_sequences_by_cluster)
       we.setMaximalNbReadsPerWindow(max_auditionned);
  
@@ -976,7 +976,7 @@ int main (int argc, char **argv)
       we.setAffectsOutput(out_affects);
     }
 
-    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w,
+    WindowsStorage *windowsStorage = we.extract(reads, w,
                                                 windows_labels, only_labeled_windows,
                                                 max_reads_processed, only_nth_read, keep_unsegmented_as_clone,
                                                 expected_value, nb_reads_for_evalue);

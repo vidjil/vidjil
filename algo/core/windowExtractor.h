@@ -27,16 +27,17 @@ class WindowExtractor {
 
   Stats stats[STATS_SIZE];
   size_t max_reads_per_window;
+
+  MultiGermline *multigermline;
  public:
 
-  WindowExtractor();
+  WindowExtractor(MultiGermline *multigermline);
 
   /**
    * Extract windows from the collection of input reads.
    * If (un)segmented sequences must be output, the functions 
    * set(Un)SegmentedOutput() must be called before.
    * @param reads: the collection of input reads
-   * @param multigermline: the multigermline
    * @param w: length of the window
    * @param windows_labels: Windows that must be kept and registered as such.
    * @param only_labeled_windows: remember only windows from windows_labels
@@ -47,7 +48,7 @@ class WindowExtractor {
    * @post Statistics on segmentation will be provided through the getSegmentationStats() methods
    *       and getAverageSegmentationLength().
    */
-  WindowsStorage *extract(OnlineFasta *reads, MultiGermline *multigermline,
+  WindowsStorage *extract(OnlineFasta *reads,
                           size_t w,
                           map<string, string> &windows_labels, bool only_labeled_windows=false,
                           int stop_after=-1, int only_nth_reads=1, bool keep_unsegmented_as_clone=false,

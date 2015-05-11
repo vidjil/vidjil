@@ -5,9 +5,10 @@
 #define PROGRESS_POINT 25000
 #define PROGRESS_LINE 40
 
-WindowExtractor::WindowExtractor(): out_segmented(NULL), out_unsegmented(NULL), out_affects(NULL), max_reads_per_window(~0){}
+WindowExtractor::WindowExtractor(MultiGermline *multigermline): out_segmented(NULL), out_unsegmented(NULL), out_affects(NULL), max_reads_per_window(~0), multigermline(multigermline){
+}
                                     
-WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *multigermline,
+WindowsStorage *WindowExtractor::extract(OnlineFasta *reads,
 					 size_t w,
                                          map<string, string> &windows_labels, bool only_labeled_windows,
                                          int stop_after, int only_nth_read, bool keep_unsegmented_as_clone,

@@ -220,14 +220,14 @@ void testExtractor() {
   multi = new MultiGermline();
   multi->insert(germline);
 
-  WindowExtractor we;
+  WindowExtractor we(multi);
   map<string, string> labels;
   ofstream out_seg("segmented.log");
   ofstream out_unseg("unsegmented.log");
   we.setSegmentedOutput(&out_seg);
   we.setUnsegmentedOutput(&out_unseg);
 
-  WindowsStorage *ws = we.extract(&data, multi, 30, labels);
+  WindowsStorage *ws = we.extract(&data, 30, labels);
   // we.out_stats(cout);
 
   TAP_TEST(we.getNbReads() == 13, TEST_EXTRACTOR_NB_READS, "");
