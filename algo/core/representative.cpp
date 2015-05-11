@@ -9,7 +9,8 @@ using namespace std;
 
 RepresentativeComputer::RepresentativeComputer(list<Sequence> &r)
   :sequences(r),is_computed(false),representative(),min_cover(1),
-   percent_cover(0.5),revcomp(true),required(""),coverage(0.0),coverage_info("") {
+   percent_cover(0.5),revcomp(true),required(""),coverage_reference_length(0),
+   coverage(0.0),coverage_info("") {
 }
 
 Sequence RepresentativeComputer::getRepresentative() const{
@@ -75,6 +76,7 @@ KmerRepresentativeComputer::KmerRepresentativeComputer(list<Sequence> &r,
   :RepresentativeComputer(r),seed(seed),stability_limit(DEFAULT_STABILITY_LIMIT){}
   
 void KmerRepresentativeComputer::compute() {
+  assert(coverage_reference_length > 0);
   is_computed = false;
 
   // First create an index on the set of reads
