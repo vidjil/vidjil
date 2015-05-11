@@ -65,7 +65,7 @@ class BinReadStorage: public VirtualReadStorage {
   size_t nb_inserted;
   size_t nb_stored;
   size_t smallest_bin_not_empty;
-
+  string label;
 public:
   BinReadStorage();
   
@@ -156,7 +156,16 @@ public:
    */
   size_t getNbScores(size_t bin=~0) const;
 
+  bool hasLabel() const;
+
+  string getLabel() const;
+
   list<Sequence> getReads() const;
+
+  /**
+   * Set the label of the statistics
+   */
+  void setLabel(string &label);
 
  private:
   /**
