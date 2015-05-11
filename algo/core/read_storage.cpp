@@ -1,4 +1,5 @@
 #include "read_storage.h"
+#include "tools.h"
 
 size_t VirtualReadStorage::getMaxNbReadsStored() const{
   return maxNbStored;
@@ -149,6 +150,10 @@ bool BinReadStorage::hasLabel() const {
 
 void BinReadStorage::setLabel(string &label) {
   this->label = label;
+}
+
+void BinReadStorage::out_average_scores(ostream &out) {
+  output_label_average(out, getLabel(), getNbScores(), getAverageScore());
 }
 
 size_t BinReadStorage::scoreToBin(float score) {

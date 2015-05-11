@@ -3,6 +3,7 @@
 
 #include "read_score.h"
 #include <list>
+#include <iostream>
 using namespace std;
 
 /**
@@ -167,6 +168,8 @@ public:
    */
   void setLabel(string &label);
 
+  void out_average_scores(ostream &out);
+
  private:
   /**
    * @return the bin a sequence of the given score must lie.
@@ -181,4 +184,5 @@ public:
 
   friend void testBinReadStorage();
 };
+
 #endif
