@@ -1235,6 +1235,7 @@ int main (int argc, char **argv)
 
 	  if ((max_clones >= 0) && (num_clone >= max_clones + 1))
 	    {
+	      cout << representative << endl ;
 	      out_clones << representative << endl ;
 	      continue;
 	    }
