@@ -31,6 +31,11 @@ def recombine_VJ_with_removes(seq5, remove5, Nlength, remove3, seq3):
 
     return recombine_VJ(seq5, remove5, random_sequence(available, Nlength), remove3, seq3)
 
+def get_gene_name(allele):
+    '''
+    From fasta sequence to Ig/TR gene name
+    '''
+    return allele.name[:allele.name.find('*')]
 
 def select_genes(rep5, rep3, at_most=0):
     if at_most > 0 and len(rep5) * len(rep3) > at_most:
@@ -38,9 +43,17 @@ def select_genes(rep5, rep3, at_most=0):
     return select_all_genes(rep5, rep3)
 
 def select_all_genes(rep5, rep3):
+    genes5 = {}
+    genes3 = {}
     for seq5 in rep5:
-        for seq3 in rep3:
-            yield (seq5, seq3)
+        gene_name_5 = get_gene_name(seq5)
+        if not gene_name_5 in genes5:
+            genes5[gene_name_5] = True
+            for seq3 in rep3:
+                gene_name_3 = get_gene_name(seq3)
+                if not gene_name_5+gene_name_3 in genes3:
+                    genes3[gene_name_5+gene_name_3] = True
+                    yield (seq5, seq3)
 
 def select_genes_randomly(rep5, rep3, at_most):
     nb = 0
