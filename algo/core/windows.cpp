@@ -142,6 +142,7 @@ void WindowsStorage::add(junction window, Sequence sequence, int status, Germlin
 
   seqs_by_window[window].add(sequence);
   status_by_window[window][status]++;
+  stats_by_window[window].insert(sequence.sequence.length());
 
   germline_by_window[window] = germline;
 }
