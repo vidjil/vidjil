@@ -172,6 +172,12 @@ void WindowExtractor::init_stats() {
 
 void WindowExtractor::out_stats(ostream &out)
 {
+  out_stats_germlines(out);
+  out << endl;
+  out_stats_segmentation(out);
+}
+
+void WindowExtractor::out_stats_segmentation(ostream &out) {
   for (int i=0; i<STATS_SIZE; i++)
     {
       // stats[NOT_PROCESSED] should equal to 0
@@ -183,4 +189,18 @@ void WindowExtractor::out_stats(ostream &out)
 	out << endl;
       out << stats[i] << endl ;
     }
+}
+
+void WindowExtractor::out_stats_germlines(ostream &out) {
+  out << "                          " ;
+  out << "reads av. len     clones av. rds" ;
+  out << endl ;
+
+  for (map<string,BinReadStorage>::iterator it = stats_reads.begin(); it != stats_reads.end(); ++it)
+    {
+      stats_reads[it->first].out_average_scores(out);
+      stats_clones[it->first].out_average_scores(out);
+      out << endl ;
+    }
+
 }

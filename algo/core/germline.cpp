@@ -236,21 +236,6 @@ void MultiGermline::build_with_one_index(string seed, bool set_index)
   insert_in_one_index(index, set_index);
 }
 
-void MultiGermline::out_stats(ostream &out)
-{
-  out << "                          " ;
-  out << "reads av. len     clones av. rds" ;
-  out << endl ;
-
-  for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
-    {
-      Germline *germline = *it ;
-      out << germline->stats_reads ;
-      out << germline->stats_clones ;
-      out << endl ;
-    }
-}
-
 /* Mark k-mers common to several germlines as ambiguous */
 void MultiGermline::mark_cross_germlines_as_ambiguous()
 {

@@ -117,11 +117,21 @@ class WindowExtractor {
   void setAffectsOutput(ostream *out);
 
   /**
-   * Output the segmentation stats
+   * Output the segmentation and germlines stats
    * @param out: The output stream
    */
   void out_stats(ostream &out);
 
+  /**
+   * Output segmentation stats
+   */
+  void out_stats_segmentation(ostream &out);
+
+  /**
+   * Output germlines statistics (read lengths per germline,
+   * and number of reads per clones).
+   */
+  void out_stats_germlines(ostream &out);
  private:
   /**
    * Initialize the statistics (put 0 everywhere).

@@ -1011,11 +1011,6 @@ int main (int argc, char **argv)
         stream_segmentation_info << "  ! Please check the unsegmentation causes below and refer to the documentation." << endl ;
       }
 
-    cout << "Build clone stats" << endl;
-    windowsStorage->fillStatsClones();
-    
-    multigermline->out_stats(stream_segmentation_info);
-    stream_segmentation_info << endl;
     we.out_stats(stream_segmentation_info);
     
     cout << stream_segmentation_info.str();
