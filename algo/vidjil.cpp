@@ -116,7 +116,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define DEFAULT_CLUSTER_COST  Cluster
 #define DEFAULT_SEGMENT_COST   VDJ
 
-#define DEFAULT_TRIM 0
+#define DEFAULT_TRIM 100
 
 // error
 #define ERROR_STRING "[error] "
