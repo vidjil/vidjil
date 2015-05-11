@@ -517,10 +517,10 @@ List.prototype = {
         var clusterSize = this.m.clone(cloneID).getSize()
         var clusterReads = this.m.clone(cloneID).getReads()
 
-        for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
+        for (var i = 0; i < self.m.clusters[cloneID].length; i++) {
             (function (i) {
-                var id = this.m.clusters[cloneID][i]
-                var color = this.m.clone(id).getColor();
+                var id = self.m.clusters[cloneID][i]
+                var color = self.m.clone(id).getColor();
                 var div_clone = document.createElement('div');
                 div_clone.id = "_" + id;
                 div_clone.id2 = id;
@@ -536,8 +536,8 @@ List.prototype = {
                 span_name.onclick = function (e) {
                     self.clickList(e, id);
                 }
-                span_name.appendChild(document.createTextNode(this.m.clone(id).getCode()));
-                span_name.title = this.m.clone(id).getCode();
+                span_name.appendChild(document.createTextNode(self.m.clone(id).getCode()));
+                span_name.title = self.m.clone(id).getCode();
 
                 var span_info = document.createElement('span')
                 span_info.className = "infoBox";
@@ -560,7 +560,7 @@ List.prototype = {
                 
                 var r = 100
                 if (clusterSize != 0) {
-                    span_stat.appendChild(document.createTextNode( (this.m.clone(id).get('reads', this.m.t)*100/clusterReads).toFixed(1) + "%"));
+                    span_stat.appendChild(document.createTextNode( (self.m.clone(id).get('reads', self.m.t)*100/clusterReads).toFixed(1) + "%"));
                 } else {
                     span_stat.appendChild(document.createTextNode("0%"))
                 }
@@ -608,7 +608,7 @@ List.prototype = {
                 .click();
         }
         $(input).focusout(function() {
-            setTimeout(function(){m.update()},500)
+            setTimeout(function(){self.m.update()},500)
         })
         divParent.appendChild(input);
         divParent.onclick = "";
@@ -990,7 +990,7 @@ List.prototype = {
         
         if (cloneID[0] == "s") cloneID = cloneID.substr(3);
         $(this.tagSelector).show("fast");
-        this.tagSelectorInfo.innerHTML = "tag for "+m.clone(cloneID).getName()+"("+cloneID+")"; 
+        this.tagSelectorInfo.innerHTML = "tag for "+this.m.clone(cloneID).getName()+"("+cloneID+")"; 
     },
     
     
