@@ -29,11 +29,20 @@ test("scatterplot : grid", function() {
     
     
     sp.changeSplitMethod("gene_v", "gene_v", "bar");
-    sp.update()
+    
     equal(document.getElementById("bar1").className.baseVal, "", "check splitMethod V/V /plot : check if bar are displayed")
     
     $(document.getElementsByClassName("sp_legend")[0]).d3Click() //click label ighv4
     deepEqual(m.getSelected(), [2], "check click label");
     
     
+    sp.changeSplitMethod("n", "Size", "bar");
+    sp.update()
+    
+    equal(sp.nodes[1].bar_h , 0.4444444444444445 ,"bar position : Ok")
+    equal(sp.nodes[1].bar_w , 0.08 ,"bar position : Ok")
+    equal(sp.nodes[1].bar_x , 0.25 ,"bar position : Ok")
+    equal(sp.nodes[1].bar_y , 0.4444444444444445 ,"bar position : Ok")
+    
 });
+
