@@ -15,10 +15,13 @@ BinReadStorage::BinReadStorage()
   :nb_bins(0), bins(NULL), score_bins(NULL), nb_scores(NULL), total_nb_scores(0), max_score(0),
    nb_inserted(0), nb_stored(0), smallest_bin_not_empty(~0) {}
 
-void BinReadStorage::init(size_t nb_bins, size_t max_score, const VirtualReadScore *vrs) {
+void BinReadStorage::init(size_t nb_bins, size_t max_score, const VirtualReadScore *vrs, bool no_list) {
   this->nb_bins = nb_bins;
   this->max_score = max_score;
-  bins = new list<Sequence>[nb_bins+1];
+  if (no_list)
+    bins = NULL;
+  else
+    bins = new list<Sequence>[nb_bins+1];
 
   score_bins = new double[nb_bins+1];
   nb_scores = new size_t[nb_bins+1];

@@ -75,8 +75,11 @@ public:
    * to be max_score. If higher score are met, they are put in the nb_bins+1 bin.
    * The class doesn't destruct the VirtualReadScore. It is the responsability of the caller.
    * @pre all scores must be >= 0
+   * @param no_list: don't create a list (useful for storing only stats,
+   *                 false by default: lists are created). If the option is set to true, the
+   *                 function add() must not be called but only the addScore().
    */
-  void init(size_t nb_bins, size_t max_score, const VirtualReadScore *vrs);
+  void init(size_t nb_bins, size_t max_score, const VirtualReadScore *vrs, bool no_list = false);
 
   ~BinReadStorage();
   
