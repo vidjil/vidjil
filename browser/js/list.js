@@ -583,9 +583,7 @@ List.prototype = {
     editName: function (cloneID, elem) {
         var self = this;
         if (document.getElementById("new_name")) {
-            this.updateElem([document.getElementById("new_name")
-                .parentNode.parentNode.parentNode.id
-            ]);
+            this.update();
         }
         var divParent = elem;
         divParent.innerHTML = "";
@@ -947,27 +945,22 @@ List.prototype = {
         var span1 = document.createElement('span');
         span1.appendChild(document.createTextNode("normalize to: "))
 
+        
+        this.norm_input = document.createElement('input');
+        this.norm_input.type = "number";
+        this.norm_input.step = "0.0001"
+        
         var span2 = document.createElement('span');
-        var input = document.createElement('input');
-        input.type = "number";
-        input.step = "0.0001"
-        input.id = "normalized_size";
-        input.onkeydown = function () {
-            if (event.keyCode == 13) document.getElementById('normalized_size_button')
-                .click();
-        }
+        span2.appendChild(this.norm_input)
         
-        span2.appendChild(input)
-        
-        var span3 = document.createElement('button');
-        span3.appendChild(document.createTextNode("ok"))
-        span3.id = "normalized_size_button";
-        span3.onclick = function () {
+        this.norm_button = document.createElement('button');
+        this.norm_button.appendChild(document.createTextNode("ok"))
+        this.norm_button.onclick = function () {
             var cloneID = self.cloneID;
-            var size = parseFloat(document.getElementById('normalized_size').value);
+            var size = parseFloat(self.norm_input.value);
             
             if (size>0 && size<1){
-                document.getElementById('normalized_size').value = ""
+                self.norm_input.value = ""
                 self.m.clone(cloneID).expected=size;
                 self.m.compute_normalization(cloneID, size)
                 self.m.update()
@@ -976,11 +969,14 @@ List.prototype = {
                 console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
             }
         }
+        this.norm_input.onkeydown = function () {
+            if (event.keyCode == 13) self.norm_button.click();
+        }
         
         var div = document.createElement('div');
         div.appendChild(span1)
         div.appendChild(span2)
-        div.appendChild(span3)
+        div.appendChild(this.norm_button)
         
         var li = document.createElement('li');
         li.appendChild(div)
