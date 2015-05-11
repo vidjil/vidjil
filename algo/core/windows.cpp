@@ -15,6 +15,14 @@ list<pair <junction, size_t> > &WindowsStorage::getSortedList() {
   return sort_all_windows;
 }
 
+map<junction, BinReadStorage>::iterator WindowsStorage::begin() {
+  return seqs_by_window.begin();
+}
+
+map<junction, BinReadStorage>::iterator WindowsStorage::end() {
+  return seqs_by_window.end();
+}
+
 string WindowsStorage::getLabel(junction window) {
   
   if (windows_labels.find(window) == windows_labels.end())

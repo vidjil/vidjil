@@ -57,6 +57,9 @@ class WindowsStorage {
    *         or NULL if the window doesn't exist.
    */
   Germline *getGermline(junction window);
+
+  map<junction, BinReadStorage>::iterator begin();
+  map<junction, BinReadStorage>::iterator end();
   
   JsonList statusToJson(junction window);
 
