@@ -1270,6 +1270,11 @@ int main (int argc, char **argv)
         json_coverage.add(repComp.getCoverage());
         json_clone.add("_coverage", json_coverage);
 
+        JsonArray json_avg_length;
+        float average_read_length = windowsStorage->getAverageLength(it->first);
+        json_avg_length.add(average_read_length);
+        json_clone.add("_average_read_length", json_avg_length);
+
         JsonArray json_coverage_info;
         json_coverage_info.add(repComp.getCoverageInfo());
         json_clone.add("_coverage_info", json_coverage_info);

@@ -23,6 +23,11 @@ string WindowsStorage::getLabel(junction window) {
   return windows_labels[window];   
 }
 
+float WindowsStorage::getAverageLength(junction window) {
+  assert(hasWindow(window));
+  return stats_by_window[window].getAverage();
+}
+
 Germline *WindowsStorage::getGermline(junction window) {
   map<junction, Germline *>::iterator result = germline_by_window.find(window);
   if (result == germline_by_window.end())
@@ -70,7 +75,7 @@ KmerRepresentativeComputer WindowsStorage::getRepresentativeComputer(junction wi
   repComp.setMinCover(min_cover);
   repComp.setPercentCoverage(percent_cover);
   repComp.setRequiredSequence(window);
-  repComp.setCoverageReferenceLength(stats_by_window[window].getAverage());
+  repComp.setCoverageReferenceLength(getAverageLength(window));
   repComp.compute();
 
   // We should always have a representative, because

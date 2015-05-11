@@ -62,6 +62,11 @@ class WindowsStorage {
   JsonList statusToJson(junction window);
 
   /**
+   * @return the average read length of the reads segmented with the given window
+   */
+  float getAverageLength(junction window);
+
+  /**
    * @return the maximal number of reads that can be stored for a window.
    */
   size_t getMaximalNbReadsPerWindow();
