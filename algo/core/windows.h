@@ -21,6 +21,7 @@
 #include "read_storage.h"
 #include "read_score.h"
 #include "representative.h"
+#include "stats.h"
 
 #define NB_BINS 15
 #define MAX_VALUE_BINS 500
@@ -32,6 +33,7 @@ typedef string junction ;
 class WindowsStorage {
  private:
   map<junction, BinReadStorage > seqs_by_window;
+  map<junction, Stats > stats_by_window;
   map<junction, vector<int> > status_by_window;
   map<junction, Germline* > germline_by_window;
   map<string, string> windows_labels;

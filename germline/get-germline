@@ -3,7 +3,7 @@
 cd $(dirname $0)
 wget -O - http://www.imgt.org/download/GENE-DB/IMGTGENEDB-ReferenceSequences.fasta-nt-WithoutGaps-F+ORF+inframeP | python split-from-imgt.py 
 
-wget -O - IMGT_RELEASE http://www.imgt.org/download/GENE-DB/RELEASE
+wget -O IMGT_RELEASE http://www.imgt.org/download/GENE-DB/RELEASE
 
 wget -N http://rbx.vidjil.org/browser/germline/IGK-INTRON.fa
 wget -N http://rbx.vidjil.org/browser/germline/IGK-KDE.fa

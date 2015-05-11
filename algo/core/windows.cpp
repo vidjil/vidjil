@@ -70,6 +70,7 @@ KmerRepresentativeComputer WindowsStorage::getRepresentativeComputer(junction wi
   repComp.setMinCover(min_cover);
   repComp.setPercentCoverage(percent_cover);
   repComp.setRequiredSequence(window);
+  repComp.setCoverageReferenceLength(stats_by_window[window].getAverage());
   repComp.compute();
 
   // We should always have a representative, because
@@ -142,6 +143,7 @@ void WindowsStorage::add(junction window, Sequence sequence, int status, Germlin
 
   seqs_by_window[window].add(sequence);
   status_by_window[window][status]++;
+  stats_by_window[window].insert(sequence.sequence.length());
 
   germline_by_window[window] = germline;
 }

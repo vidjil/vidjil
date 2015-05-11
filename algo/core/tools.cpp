@@ -1,4 +1,6 @@
 #include <algorithm>
+#include <iostream>
+#include <iomanip>
 #include "tools.h"
 
 string seed_contiguous(int k)
@@ -51,6 +53,13 @@ string string_of_int(int number)
 {
    stringstream ss;
    ss << number ;
+   return ss.str();
+}
+
+string fixed_string_of_float(float number, int precision)
+{
+   stringstream ss;
+   ss << fixed << setprecision(precision) << number ;
    return ss.str();
 }
 
