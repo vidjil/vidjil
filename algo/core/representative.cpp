@@ -104,7 +104,7 @@ void KmerRepresentativeComputer::compute() {
     Sequence sequence = rc.getithBest(seq);
 
     if (sequence.sequence.size() <= length_longest_run) {
-      continue;
+      break;
     }
     size_t pos_required = sequence.sequence.find(required);
     if (pos_required == string::npos && revcomp)
