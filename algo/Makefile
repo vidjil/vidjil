@@ -28,8 +28,11 @@ EXEC=vidjil
 MAINCORE=$(wildcard *.cpp)
 LIBCORE=core/vidjil.a lib/lib.a
 
-BINDIR=..
-CGIDIR=../browser/cgi
+BINDIR=../
+CGIDIR=../browser/cgi/
+
+VIDJIL=$(BINDIR)$(EXEC)
+ALIGN_CGI=$(CGIDIR)align.cgi
 
 CREATE_VERSION_GIT_H := $(shell test -x ./create-git-version-h.sh && ./create-git-version-h.sh)
 
@@ -66,10 +69,10 @@ cleanspaced:
 
 ###
 
-align.cgi: cgi/align.o
+$(ALIGN_CGI): cgi/align.o $(LIBCORE)
 	mkdir -p $(CGIDIR)
 	make -C core OPTIM="$(OPTIM)"
-	$(CC) -o $(CGIDIR)/align.cgi cgi/align.o $(LIBCORE) $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 ###
 
 all: $(EXEC)
@@ -78,10 +81,10 @@ debug:
 	make clean
 	make DEBUG="-ggdb"
 
-$(EXEC): %: %.o 
+$(VIDJIL): $(BINDIR)%: %.o $(LIBCORE)
 	make -C core OPTIM="$(OPTIM)"
 	make -C lib OPTIM="$(OPTIM)"
-	$(CC) -o $(BINDIR)/$@ $^ $(LIBCORE) $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
 clean:
 	make -C core $@
