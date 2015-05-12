@@ -38,7 +38,7 @@ CREATE_VERSION_GIT_H := $(shell test -x ./create-git-version-h.sh && ./create-gi
 
 .PHONY: all core lib clean forcedep
 
-v: vidjil align.cgi
+all: $(VIDJIL) $(ALIGN_CGI)
 
 ###
 
@@ -74,8 +74,6 @@ $(ALIGN_CGI): cgi/align.o $(LIBCORE)
 	make -C core OPTIM="$(OPTIM)"
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 ###
-
-all: $(EXEC)
 
 debug:
 	make clean
