@@ -84,6 +84,16 @@ $(VIDJIL): $(BINDIR)%: %.o $(LIBCORE)
 	make -C lib OPTIM="$(OPTIM)"
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
+###
+# Subdirectories
+###
+
+core/%:
+	make -C core $(notdir $@)
+
+lib/%:
+	make -C lib $(notdir $@)
+
 clean:
 	make -C core $@
 	make -C lib $@
