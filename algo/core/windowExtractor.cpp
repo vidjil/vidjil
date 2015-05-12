@@ -193,13 +193,13 @@ void WindowExtractor::out_stats_segmentation(ostream &out) {
 
 void WindowExtractor::out_stats_germlines(ostream &out) {
   out << "                          " ;
-  out << "reads av. len     clones av. rds" ;
+  out << "reads av. len     clones clo/rds" ;
   out << endl ;
 
   for (map<string,BinReadStorage>::iterator it = stats_reads.begin(); it != stats_reads.end(); ++it)
     {
       stats_reads[it->first].out_average_scores(out);
-      stats_clones[it->first].out_average_scores(out);
+      stats_clones[it->first].out_average_scores(out, true);
       out << endl ;
     }
 
