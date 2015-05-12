@@ -32,6 +32,7 @@ def compress_all_sequences():
                 new_filename = seq.filename+".gz"
                 new_data_filename = get_new_uploaded_filename(data_file, new_filename)
                 os.rename(data_file+".gz", new_data_filename)
+                log.debug('Compressed '+new_data_filename)
                 db.sequence_file[seq.id] = dict(filename = new_filename,\
                                                 data_file = os.path.basename(new_data_filename),\
                                                 size_file = os.path.getsize(new_data_filename))
