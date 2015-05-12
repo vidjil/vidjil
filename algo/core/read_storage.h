@@ -132,6 +132,13 @@ public:
   double getAverageScore(size_t bin=~0);
 
   /**
+   * @return the inverted average score stored in the corresponding bin. If no
+   * parameter is provided or if the parameter is outside the range [0,
+   * getNbBins()] then the average over all the score is returned.
+   */
+  double getInvertedAverageScore(size_t bin=~0);
+
+  /**
    * @return the sum of all the scores stored in the bin corresponding to the score
    * obtained for the provided sequence.
    */
@@ -168,7 +175,7 @@ public:
    */
   void setLabel(string &label);
 
-  void out_average_scores(ostream &out);
+  void out_average_scores(ostream &out, bool inversed=false);
 
  private:
   /**

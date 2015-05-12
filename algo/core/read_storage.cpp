@@ -98,6 +98,9 @@ double BinReadStorage::getAverageScoreByScore(float score) {
 double BinReadStorage::getAverageScore(size_t bin) {
   return getScore(bin) / getNbScores(bin);
 }
+double BinReadStorage::getInvertedAverageScore(size_t bin) {
+  return getNbScores(bin) / getScore(bin);
+}
 
 double BinReadStorage::getScoreBySeq(Sequence &s) {
   return getScoreByScore(scorer->getScore(s.sequence));
@@ -152,8 +155,8 @@ void BinReadStorage::setLabel(string &label) {
   this->label = label;
 }
 
-void BinReadStorage::out_average_scores(ostream &out) {
-  output_label_average(out, getLabel(), getNbScores(), getAverageScore());
+void BinReadStorage::out_average_scores(ostream &out, bool inversed) {
+  output_label_average(out, getLabel(), getNbScores(), inversed ? getInvertedAverageScore() : getAverageScore(), inversed ? 3 : 1);
 }
 
 size_t BinReadStorage::scoreToBin(float score) {
