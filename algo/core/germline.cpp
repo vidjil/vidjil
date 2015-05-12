@@ -198,6 +198,7 @@ void MultiGermline::build_incomplete_set(string path, int max_indexing)
   // Should parse 'data/germlines.data'
   // VdJa
   add_germline(new Germline("VdJa", 'a', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRAJ.fa", -10, 80, max_indexing), SEED_S13);
+  add_germline(new Germline("VdJa", 'a', path + "/TRDD_upstream.fa", "", path + "/TRAJ.fa", -10, 80, max_indexing), SEED_S13);
 
   // DD2-DD3
   add_germline(new Germline("TRD+", 'd', path + "/TRDD2-01.fa",   "", path + "/TRDJ.fa",     -10, 60, max_indexing), SEED_9);
