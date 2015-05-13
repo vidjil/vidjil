@@ -66,6 +66,8 @@ def get_gene_coord(imgt_line):
     '''
     elements = imgt_line.split('|')
     assert len(elements) >= 6
+    if elements[5].find('..') == -1:
+        return None, None
     start, end = elements[5].split('..')
     return elements[0][1:], {'from': int(start),
                              'to': int(end),
@@ -82,7 +84,8 @@ def store_data_if_updownstream(fasta_header, path, data, genes):
     gene = gene_matches(fasta_header, genes)
     if gene:
         gene_name, gene_coord = get_gene_coord(fasta_header)
-        data[path+'/'+gene][gene_name].append(gene_coord)
+        if gene_name:
+            data[path+'/'+gene][gene_name].append(gene_coord)
     
 def retrieve_genes(filename, genes, additional_length):
     file = verbose_open_w(filename)
