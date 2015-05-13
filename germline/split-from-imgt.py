@@ -78,16 +78,23 @@ def get_gene_sequence(gene, other_gene_name, start, end):
     fasta_string = urllib.urlopen(NCBI_API % (gene, start, end)).read()
     return re.sub('(>g.\|)', r'\1'+other_gene_name+'|', fasta_string)
 
+def store_data_if_updownstream(fasta_header, path, data, genes):
+    gene = gene_matches(fasta_header, genes)
+    if gene:
+        gene_name, gene_coord = get_gene_coord(fasta_header)
+        data[path+'/'+gene][gene_name].append(gene_coord)
+    
 def retrieve_genes(filename, genes, additional_length):
     file = verbose_open_w(filename)
     for gene in genes:
-        start = genes[gene]['from']
-        end = genes[gene]['to']
-        if additional_length > 0:
-            end += additional_length
-        elif additional_length < 0:
-            start = max(1, start + additional_length)
-        file.write(get_gene_sequence(gene, genes[gene]['imgt_name'], start, end))
+        for coord in genes[gene]:
+            start = coord['from']
+            end = coord['to']
+            if additional_length > 0:
+                end += additional_length
+            elif additional_length < 0:
+                start = max(1, start + additional_length)
+            file.write(get_gene_sequence(gene, coord['imgt_name'], start, end))
 
 
 LENGTH_UPSTREAM=40
@@ -109,8 +116,8 @@ SPECIES = {
     "Rattus norvegicus_BN/SsNHsdMCW": 'rattus-norvegicus/',
 }
 
-downstream_data = defaultdict(dict)
-upstream_data = defaultdict(dict)
+downstream_data = defaultdict(lambda: defaultdict(list))
+upstream_data = defaultdict(lambda: defaultdict(list))
 
 for l in sys.stdin:
 
@@ -130,10 +137,8 @@ for l in sys.stdin:
 
             if system.startswith('IG') or system.startswith('TR'):
 
-                if gene_matches(l, DOWNSTREAM_REGIONS):
-                    downstream_data[path+'/'+system].update(get_gene_coord(l))
-                if gene_matches(l, UPSTREAM_REGIONS):
-                    upstream_data[path+'/'+system].update(get_gene_coord(l))
+                store_data_if_updownstream(l, path, downstream_data, DOWNSTREAM_REGIONS)
+                store_data_if_updownstream(l, path, upstream_data, UPSTREAM_REGIONS)
 
                 systems = get_split_files(seq, SPLIT_SEQUENCES)
                 if systems:
