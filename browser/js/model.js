@@ -72,6 +72,24 @@ Model.prototype = {
         
         this.waiting_screen.appendChild(this.waiting_msg);
         document.body.appendChild(this.waiting_screen);
+        
+               
+        //build infoBox
+        
+        this.infoBox = document.createElement("div");
+        this.infoBox.className = "info-container";
+        
+        var closeinfoBox = document.createElement("span");
+        closeinfoBox.className = "closeButton" ;
+        closeinfoBox.appendChild(document.createTextNode("X"));
+        closeinfoBox.onclick = function() {self.closeInfoBox()};
+        this.infoBox.appendChild(closeinfoBox);
+        
+        var div_info = document.createElement("div");
+        div_info.className = "info-msg";
+        this.infoBox.appendChild(div_info);
+        
+        document.body.appendChild(this.infoBox);
     },
     
     /**
@@ -88,6 +106,7 @@ Model.prototype = {
         this.clones = [];
         this.data = {};
         this.data_info = {};
+        this.clone_info = -1;
         
         this.t = 0;          // Selected time/sample
         this.tOther = 0;  // Other (previously) selected time/sample
@@ -1489,6 +1508,33 @@ Model.prototype = {
     },
     
     
+    /**
+     * compute and display clone information in a window
+     * @param {integer} cloneID - clone index
+     * */
+    displayInfoBox: function(cloneID) {
+        $(".list").find(".infoBox").removeClass("infoBox-open")
+        
+        if (this.clone_info == cloneID) {
+            this.closeInfoBox();
+            return;
+        }
+        
+        this.clone_info = cloneID;
+        this.infoBox.style.display = "block";
+        this.infoBox.lastElementChild.innerHTML = self.m.clone(cloneID).getHtmlInfo();
+        $("#"+cloneID).find(".infoBox").addClass("infoBox-open")
+    },
+
+    /**
+     * close clone information box
+     * */
+    closeInfoBox: function() {
+        $(".list").find(".infoBox").removeClass("infoBox-open")
+        this.clone_info = -1;
+        this.infoBox.style.display = "none";
+        this.infoBox.lastElementChild.innerHTML = "";
+    },
     
     /**
      * change the strategy for normalization
