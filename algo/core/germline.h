@@ -10,6 +10,7 @@
 #include "tools.h"
 
 #define PSEUDO_GERMLINE_MAX12 "xxx"
+#define PSEUDO_GERMLINE_MAX12_EVALUE_PENALTY 1000
 
 using namespace std;
 

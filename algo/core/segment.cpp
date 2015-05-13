@@ -268,8 +268,8 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
       strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
       computeSegmentation(strand, max12.first, max12.second, germline->delta_min, germline->delta_max, threshold, multiplier);
 
-      // The pseudo-germline should never take precedence over the regular germlines
-      evalue = 1.0 ;
+      // The pseudo-germline should never take precedence over regular germlines of similar e-value
+      evalue *= PSEUDO_GERMLINE_MAX12_EVALUE_PENALTY ;
     }
 
   else
