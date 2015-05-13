@@ -44,19 +44,20 @@ def check_directory_exists(path):
 def gene_matches(string, list_regex):
     '''
     >>> gene_matches('>M994641|IGHD1-18*01|Toto', ['TRGV', 'IGHD'])
-    'IGHD'
+    ['IGHD']
     >>> gene_matches('>M994641|IGHD1-18*01|Toto', ['TRGV', 'TRGD'])
-    None
+    []
     >>> gene_matches('>M994641|IGHJ4*01|Toto', ['[A-Z]{3}J'])
-    'IGHJ'
-    >>> gene_matches('>M22153|TRDD2*01|Homo sapiens|F|', ['TRDD2'])
-    'TRDD2'
+    ['IGHJ']
+    >>> gene_matches('>M22153|TRDD2*01|Homo sapiens|F|', ['TRDD', 'IGH', 'TRDD2'])
+    ['TRDD', 'TRDD2']
     '''
+    results = []
     for regex in list_regex:
         match = re.search(regex, string)
         if match <> None:
-            return match.group(0)
-    return None
+            results.append(match.group(0))
+    return results
 
 def get_gene_coord(imgt_line):
     '''
@@ -81,8 +82,7 @@ def get_gene_sequence(gene, other_gene_name, start, end):
     return re.sub('(>g.\|)', r'\1'+other_gene_name+'|', fasta_string)
 
 def store_data_if_updownstream(fasta_header, path, data, genes):
-    gene = gene_matches(fasta_header, genes)
-    if gene:
+    for gene in gene_matches(fasta_header, genes):
         gene_name, gene_coord = get_gene_coord(fasta_header)
         if gene_name:
             data[path+'/'+gene][gene_name].append(gene_coord)
