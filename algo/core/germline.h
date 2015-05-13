@@ -80,9 +80,6 @@ class Germline {
 
   int delta_min;
   int delta_max;
-
-  Stats stats_reads;
-  Stats stats_clones;
 };
 
 
@@ -113,8 +110,6 @@ class MultiGermline {
   void build_with_one_index(string seed, bool set_index);
 
   void mark_cross_germlines_as_ambiguous();
-  
-  void out_stats(ostream &out);
 };
 
 ostream &operator<<(ostream &out, const MultiGermline &multigermline);

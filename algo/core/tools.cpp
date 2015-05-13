@@ -256,3 +256,18 @@ double nChoosek(unsigned n, unsigned k)
     }
     return nChoosek_stored[n][k];
 }
+
+void output_label_average(ostream &out, string label, long long int nb, double average, int precision)
+ {
+  out << "  ";
+
+  if (label.size())
+    out << left << setw(18) << label << "->" ;
+
+  out << right << setw(9) << nb ;
+  out << "   " << setw(5) ;
+  if (nb)
+    out << fixed << setprecision(precision) << average ;
+  else
+    out << "-" ;
+}

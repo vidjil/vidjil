@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -G ../../germline/IGH -r 5 -l ../../data/Stanford_S22.label ../../data/Stanford_S22.fasta
+!LAUNCH: ../../vidjil -z 0 -G ../../germline/IGH -r 5 -l ../../data/Stanford_S22.label ../../data/Stanford_S22.fasta
 
 $ Some clone has only one read, bypassing the -r 5 option, and the good label
 1: clone-00..*0001-.* my-clone

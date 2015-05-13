@@ -5,9 +5,17 @@
 #define PROGRESS_POINT 25000
 #define PROGRESS_LINE 40
 
-WindowExtractor::WindowExtractor(): out_segmented(NULL), out_unsegmented(NULL), out_affects(NULL), max_reads_per_window(~0){}
+WindowExtractor::WindowExtractor(MultiGermline *multigermline): out_segmented(NULL), out_unsegmented(NULL), out_affects(NULL), max_reads_per_window(~0), multigermline(multigermline){
+    for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
+    {
+      Germline *germline = *it ;
+      stats_reads[germline->code].init(NB_BINS, MAX_VALUE_BINS, NULL, true);
+      stats_reads[germline->code].setLabel(germline->code);
+      stats_clones[germline->code].init(NB_BINS_CLONES, MAX_VALUE_BINS_CLONES, NULL, true);
+    }
+}
                                     
-WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *multigermline,
+WindowsStorage *WindowExtractor::extract(OnlineFasta *reads,
 					 size_t w,
                                          map<string, string> &windows_labels, bool only_labeled_windows,
                                          int stop_after, int only_nth_read, bool keep_unsegmented_as_clone,
@@ -16,11 +24,6 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
 
   WindowsStorage *windowsStorage = new WindowsStorage(windows_labels);
   windowsStorage->setMaximalNbReadsPerWindow(max_reads_per_window);
-  for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
-    {
-      Germline *germline = *it ;
-      nb_reads_germline[germline->code] = 0;
-    }
 
   int nb_reads_all = 0;
   unsigned long long int bp_total = 0;
@@ -65,9 +68,8 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
       windowsStorage->add(junc, reads->getSequence(), seg->getSegmentationStatus(), seg->segmented_germline);
 
       // Update stats
-      seg->segmented_germline->stats_reads.insert(read_length);
       stats[TOTAL_SEG_AND_WINDOW].insert(read_length) ;
-      nb_reads_germline[seg->system]++;
+      stats_reads[seg->system].addScore(read_length);
 
       if (out_segmented) {
         *out_segmented << *seg ; // KmerSegmenter output (V/N/J)
@@ -106,6 +108,8 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads, MultiGermline *mult
 
   cout << endl ;
 
+  fillStatsClones(windowsStorage);
+
   return windowsStorage;
 }
 
@@ -126,7 +130,7 @@ size_t WindowExtractor::getNbSegmented(SEGMENTED seg) {
 }
 
 size_t WindowExtractor::getNbReadsGermline(string germline) {
-  return nb_reads_germline[germline];
+  return stats_reads[germline].getNbScores();
 }
 
 void WindowExtractor::setMaximalNbReadsPerWindow(size_t max_reads) {
@@ -145,6 +149,20 @@ void WindowExtractor::setAffectsOutput(ostream *out) {
   out_affects = out;
 }
 
+void WindowExtractor::fillStatsClones(WindowsStorage *storage)
+{
+  for (map <junction, BinReadStorage >::iterator it = storage->begin();
+       it != storage->end();
+       it++)
+    {
+      junction junc = it->first;
+      int nb_reads = it->second.getNbInserted();
+      Germline *germline = storage->getGermline(junc);
+
+      stats_clones[germline->code].addScore(nb_reads);
+    }
+}
+
 void WindowExtractor::init_stats() {
   for (int i = 0; i < STATS_SIZE; i++) {
     stats[i].label = segmented_mesg[i];
@@ -154,6 +172,12 @@ void WindowExtractor::init_stats() {
 
 void WindowExtractor::out_stats(ostream &out)
 {
+  out_stats_germlines(out);
+  out << endl;
+  out_stats_segmentation(out);
+}
+
+void WindowExtractor::out_stats_segmentation(ostream &out) {
   for (int i=0; i<STATS_SIZE; i++)
     {
       // stats[NOT_PROCESSED] should equal to 0
@@ -165,4 +189,18 @@ void WindowExtractor::out_stats(ostream &out)
 	out << endl;
       out << stats[i] << endl ;
     }
+}
+
+void WindowExtractor::out_stats_germlines(ostream &out) {
+  out << "                          " ;
+  out << "reads av. len     clones clo/rds" ;
+  out << endl ;
+
+  for (map<string,BinReadStorage>::iterator it = stats_reads.begin(); it != stats_reads.end(); ++it)
+    {
+      stats_reads[it->first].out_average_scores(out);
+      stats_clones[it->first].out_average_scores(out, true);
+      out << endl ;
+    }
+
 }

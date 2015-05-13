@@ -6,6 +6,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <cassert>
 #include "fasta.h"
@@ -164,6 +165,13 @@ const Sequence NULL_SEQUENCE = create_sequence("", "", "NULL", "");
 
 bool operator==(const Sequence &s1, const Sequence &s2);
 bool operator!=(const Sequence &s1, const Sequence &s2);
+
+
+/***
+ Outputs
+ ***/
+
+void output_label_average(ostream &out, string label, long long int nb, double average, int precision=1);
 
 //////////////////////////////////////////////////
 // Template code

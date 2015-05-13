@@ -116,7 +116,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define DEFAULT_CLUSTER_COST  Cluster
 #define DEFAULT_SEGMENT_COST   VDJ
 
-#define DEFAULT_TRIM 0
+#define DEFAULT_TRIM 100
 
 // error
 #define ERROR_STRING "[error] "
@@ -270,8 +270,24 @@ int main (int argc, char **argv)
        << "# No lymphocyte was harmed in the making of this software," << endl
        << "# however this software is for research use only and comes with no warranty." << endl
        << endl
-       << "# Please cite http://biomedcentral.com/1471-2164/15/409 if you use Vidjil." 
+       << "# Please cite http://biomedcentral.com/1471-2164/15/409 if you use Vidjil." << endl
        << endl ;
+
+  //////////////////////////////////
+  // Display version information or git log
+
+  string soft_version = "vidjil ";
+#ifdef RELEASE_TAG
+  cout << "# version: vidjil " << RELEASE_TAG << endl ;
+  soft_version.append(RELEASE_TAG);
+#else
+  cout << "# development version" << endl ;
+#ifdef GIT_VERSION
+  cout << "# git: " << GIT_VERSION << endl ;
+  soft_version.append("dev ");
+  soft_version.append(GIT_VERSION);
+#endif
+#endif
 
   //$$ options: defaults
 
@@ -723,22 +739,6 @@ int main (int argc, char **argv)
 
 
   //////////////////////////////////
-  // Display version information or git log
-
-  string soft_version = "vidjil ";
-#ifdef RELEASE_TAG
-  cout << "# version: vidjil " << RELEASE_TAG << endl ;
-  soft_version.append(RELEASE_TAG);
-#else
-  cout << "# development version" << endl ;
-#ifdef GIT_VERSION
-  cout << "# git: " << GIT_VERSION << endl ;
-  soft_version.append("dev ");
-  soft_version.append(GIT_VERSION);
-#endif
-#endif
-
-  //////////////////////////////////
   // Warning for non-optimal use
 
   if (max_clones == -1 || max_clones > WARN_MAX_CLONES)
@@ -951,7 +951,7 @@ int main (int argc, char **argv)
     ofstream *out_unsegmented = NULL;
     ofstream *out_affects = NULL;
  
-    WindowExtractor we;
+    WindowExtractor we(multigermline);
     if (! output_sequences_by_cluster)
       we.setMaximalNbReadsPerWindow(max_auditionned);
  
@@ -976,7 +976,7 @@ int main (int argc, char **argv)
       we.setAffectsOutput(out_affects);
     }
 
-    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w,
+    WindowsStorage *windowsStorage = we.extract(reads, w,
                                                 windows_labels, only_labeled_windows,
                                                 max_reads_processed, only_nth_read, keep_unsegmented_as_clone,
                                                 expected_value, nb_reads_for_evalue);
@@ -1011,11 +1011,6 @@ int main (int argc, char **argv)
         stream_segmentation_info << "  ! Please check the unsegmentation causes below and refer to the documentation." << endl ;
       }
 
-    cout << "Build clone stats" << endl;
-    windowsStorage->fillStatsClones();
-    
-    multigermline->out_stats(stream_segmentation_info);
-    stream_segmentation_info << endl;
     we.out_stats(stream_segmentation_info);
     
     cout << stream_segmentation_info.str();
@@ -1240,6 +1235,7 @@ int main (int argc, char **argv)
 
 	  if ((max_clones >= 0) && (num_clone >= max_clones + 1))
 	    {
+	      cout << representative << endl ;
 	      out_clones << representative << endl ;
 	      continue;
 	    }
@@ -1269,6 +1265,11 @@ int main (int argc, char **argv)
         JsonArray json_coverage;
         json_coverage.add(repComp.getCoverage());
         json_clone.add("_coverage", json_coverage);
+
+        JsonArray json_avg_length;
+        float average_read_length = windowsStorage->getAverageLength(it->first);
+        json_avg_length.add(average_read_length);
+        json_clone.add("_average_read_length", json_avg_length);
 
         JsonArray json_coverage_info;
         json_coverage_info.add(repComp.getCoverageInfo());

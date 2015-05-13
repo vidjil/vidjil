@@ -33,7 +33,6 @@ typedef string junction ;
 class WindowsStorage {
  private:
   map<junction, BinReadStorage > seqs_by_window;
-  map<junction, Stats > stats_by_window;
   map<junction, vector<int> > status_by_window;
   map<junction, Germline* > germline_by_window;
   map<string, string> windows_labels;
@@ -58,8 +57,16 @@ class WindowsStorage {
    *         or NULL if the window doesn't exist.
    */
   Germline *getGermline(junction window);
+
+  map<junction, BinReadStorage>::iterator begin();
+  map<junction, BinReadStorage>::iterator end();
   
   JsonList statusToJson(junction window);
+
+  /**
+   * @return the average read length of the reads segmented with the given window
+   */
+  float getAverageLength(junction window);
 
   /**
    * @return the maximal number of reads that can be stored for a window.
@@ -101,11 +108,6 @@ class WindowsStorage {
   list<Sequence> getSample(junction window, size_t nb_sampled, 
                            size_t nb_buckets=HISTOGRAM_SIZE_AUDITIONED);
 
-
-  /*
-   * Fill the stats_clone member of the different Germlines
-   */
-  void fillStatsClones();
 
   /**
    * @return true iff a limit has been set for the maximal number of reads per

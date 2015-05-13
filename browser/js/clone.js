@@ -52,13 +52,25 @@ function Clone(data, model, index) {
     this.tag = this.getTag();
     this.computeGCContent()
     this.computeCoverage()
+    this.computeEValue()
 }
 
 
 Clone.prototype = {
 
     COVERAGE_WARN: 0.5,
+    EVALUE_WARN: 0.001,
     
+    isWarned: function () {
+    /**
+     * @return {bool} a warning is set on this clone
+     */
+        if (this.m.coverage < this.COVERAGE_WARN) return true;
+        if (typeof(this.eValue) != undefined && this.eValue > this.EVALUE_WARN) return true;
+        return false;
+    },
+
+
     /** 
      * return clone's most important name <br>
      * cluster name > custom_name > segmentation name > window
@@ -300,9 +312,14 @@ Clone.prototype = {
 
     }, //end getSize
 
+    computeEValue: function () {
+        var e = this.getGene('_evalue');
+        if (typeof(e) != 'undefined')
+            this.eValue = parseFloat(e)
+        else
+            this.eValue = undefined
+    },
 
-    
-    
     getGene: function (type, withAllele) {
         withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
         if (typeof (this.seg) != 'undefined' && typeof (this.seg[type]) != 'undefined') {
@@ -320,6 +337,7 @@ Clone.prototype = {
             case "3" :
                 return "undefined J";
         }
+        return undefined;
     },
     
     getNlength: function () {
@@ -536,6 +554,14 @@ Clone.prototype = {
             if (this.coverage < this.COVERAGE_WARN)
                 html += "class='warning'"
             html += ">" + this.coverage.toFixed(3) + "</span></td>"
+        }
+
+        // e-value
+        if (typeof this.eValue != 'undefined') {
+            html += "<tr><td> e-value </td><td colspan='" + time_length + "'><span "
+            if (this.eValue > this.EVALUE_WARN)
+                html += "class='warning'"
+            html += ">" + this.eValue + "</span></td>"
         }
 
         // abundance info

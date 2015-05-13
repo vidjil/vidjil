@@ -105,7 +105,11 @@
                                type="application/octet-stream">dl</a>
                         {{pass}}
                      </td>
+                    {{if (auth.can_modify_patient(request.vars["id"]) and auth.can_process_file()):}}
                      <td class="pointer" onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}'})" > X </td>
+                    {{else:}}
+                     <td></td>
+                    {{pass}}
                    {{else:}}
                      <td></td><td></td><td></td>
                    {{pass}}
@@ -144,7 +148,7 @@
 <div class="db_block">
 
     <div class="db_block_left">
-        {{if auth.can_modify_patient(request.vars["id"]):}}
+        {{if auth.can_upload_file(request.vars["id"]): }}
         <span class="button2" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> + add file </span>
 
         {{if not auth.can_process_file() :}}

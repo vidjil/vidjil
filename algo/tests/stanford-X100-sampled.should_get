@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -X 100 -G ../../germline/IGH ../../data/Stanford_S22.fasta
+!LAUNCH: ../../vidjil -y 0 -X 100 -G ../../germline/IGH ../../data/Stanford_S22.fasta
 
 $ Skip the good number of reads
 1:Processing every 131th read

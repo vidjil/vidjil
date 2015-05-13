@@ -12,7 +12,7 @@ class Stats {
  public:
   string label;
   int nb;
-  int data;
+  long long int data;
 
  public:
   Stats();

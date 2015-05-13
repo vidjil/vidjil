@@ -161,7 +161,7 @@ Window prediction
   -M <int>      maximal admissible delta between last V and first J k-mer (default: 20) (default with -D: 80)
   -w <int>      w-mer size used for the length of the extracted window (default: 50)
   -e <float>    maximal e-value for determining if a segmentation can be trusted (default: 'all', no limit)
-  -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: 0) (0: no trim)
+  -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: 100) (0: no trim)
 #+END_EXAMPLE
 
 The =-s=, =-k=, =-m= and =-M= options are the options of the seed-based heuristic. A detailed
@@ -209,8 +209,7 @@ The threshold can be disabled with =-e all=.
 The =-t= option sets the maximal number of nucleotides that will be indexed in
 V genes (the 3' end) or in J genes (the 5' end). This reduces the load of the
 indexes, giving more precise window estimation and e-value computation.
-This option is currently not set, it will be set by default in a next release.
-Using =-t 100= is generally safe.
+The default is =-t 100=.
 
 ** Threshold on clone output
 

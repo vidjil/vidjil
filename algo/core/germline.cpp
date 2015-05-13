@@ -21,9 +21,6 @@ void Germline::init(string _code, char _shortcut,
      
   delta_min = _delta_min ;
   delta_max = _delta_max ;
-
-  stats_reads.setLabel(code);
-  stats_clones.setLabel("");
 }
 
 
@@ -201,6 +198,7 @@ void MultiGermline::build_incomplete_set(string path, int max_indexing)
   // Should parse 'data/germlines.data'
   // VdJa
   add_germline(new Germline("VdJa", 'a', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRAJ.fa", -10, 80, max_indexing), SEED_S13);
+  add_germline(new Germline("VdJa", 'a', path + "/TRDD_upstream.fa", "", path + "/TRAJ.fa", -10, 80, max_indexing), SEED_S13);
 
   // DD2-DD3
   add_germline(new Germline("TRD+", 'd', path + "/TRDD2-01.fa",   "", path + "/TRDJ.fa",     -10, 60, max_indexing), SEED_9);
@@ -208,7 +206,7 @@ void MultiGermline::build_incomplete_set(string path, int max_indexing)
   add_germline(new Germline("TRD+", 'd', path + "/TRDD2-01.fa",   "", path + "/TRDD3-01.fa", -10, 50, max_indexing), SEED_9);
 
   // DH-JH
-  add_germline(new Germline("IGH+", 'h', path + "/IGHD.fa",       "", path + "/IGHJ.fa",     -10, 20, max_indexing), SEED_S12);
+  add_germline(new Germline("IGH+", 'h', path + "/IGHD_upstream.fa",       "", path + "/IGHJ.fa",     -10, 20, max_indexing), SEED_S12);
 
   // IGK: KDE, INTRON
   add_germline(new Germline("IGK+", 'k', path + "/IGK-INTRON.fa", "", path + "/IGK-KDE.fa",  -10, 80, max_indexing), SEED_S10);
@@ -237,21 +235,6 @@ void MultiGermline::build_with_one_index(string seed, bool set_index)
   bool rc = true ;
   index = KmerStoreFactory::createIndex<KmerAffect>(seed, rc);
   insert_in_one_index(index, set_index);
-}
-
-void MultiGermline::out_stats(ostream &out)
-{
-  out << "                          " ;
-  out << "reads av. len     clones av. rds" ;
-  out << endl ;
-
-  for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
-    {
-      Germline *germline = *it ;
-      out << germline->stats_reads ;
-      out << germline->stats_clones ;
-      out << endl ;
-    }
 }
 
 /* Mark k-mers common to several germlines as ambiguous */

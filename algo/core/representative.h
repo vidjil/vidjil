@@ -115,6 +115,9 @@ public:
   void setStabilityLimit(int limit);
 
   // Actions
+  /**
+   * @pre setCoverageReferenceLength() must have been called previously
+   */
   void compute();
 
 };
