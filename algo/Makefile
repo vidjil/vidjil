@@ -88,10 +88,10 @@ $(VIDJIL): $(BINDIR)%: %.o $(LIBCORE)
 # Subdirectories
 ###
 
-core/%:
+core/%.a: FORCE
 	make -C core $(notdir $@)
 
-lib/%:
+lib/%.a: FORCE
 	make -C lib $(notdir $@)
 
 clean:
@@ -113,6 +113,8 @@ forcedep:
 	g++ $(CXXFLAGS) -M $(MAINCORE) > dep.mk
 	make -C core forcedep
 	make -C lib forcedep
+
+FORCE:
 
 DEP=$(wildcard dep.mk)
 
