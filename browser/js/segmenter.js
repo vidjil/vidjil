@@ -83,7 +83,7 @@ Segment.prototype = {
     init: function () {
         this.build()
     },
-
+    
     /**
      * build needed html elements (button / highlight menu)
      * 
@@ -401,6 +401,9 @@ Segment.prototype = {
 
         div_elem.innerHTML = '';
         div_elem.className = "seq-fixed";
+        if (this.m.focus == cloneID) {
+            $(div_elem).addClass("list_focus");
+        } 
 
         var seq_name = document.createElement('span');
         seq_name.className = "nameBox";
@@ -421,7 +424,7 @@ Segment.prototype = {
         var svg_star = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
         svg_star.setAttribute('class', 'starBox');
         svg_star.onclick = function () {
-            changeTag(cloneID);
+            self.m.openTagSelector(cloneID);
         }
 
         var path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
@@ -440,7 +443,16 @@ Segment.prototype = {
         seq_size.style.color = this.m.clone(cloneID).color;
         seq_size.appendChild(document.createTextNode(this.m.clone(cloneID).getStrSize()));
 
+        var span_info = document.createElement('span')
+        span_info.className = "infoBox";
+        if (cloneID == this.m.clone_info) span_info.className = "infoBox infoBox-open";
+        span_info.onclick = function () {
+            self.m.displayInfoBox(cloneID);
+        }
+        span_info.appendChild(document.createTextNode("i"));
+        
         div_elem.appendChild(seq_name);
+        div_elem.appendChild(span_info);
         div_elem.appendChild(svg_star);
         div_elem.appendChild(seq_size);
     },

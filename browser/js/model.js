@@ -64,6 +64,8 @@ Model.prototype = {
      * Build html elements used by model
      * */
     build: function () {
+        var self =this;
+        
         this.waiting_screen = document.createElement("div");
         this.waiting_screen.className = "waiting_screen";
         
@@ -73,7 +75,7 @@ Model.prototype = {
         this.waiting_screen.appendChild(this.waiting_msg);
         document.body.appendChild(this.waiting_screen);
         
-               
+                
         //build infoBox
         
         this.infoBox = document.createElement("div");
@@ -90,6 +92,24 @@ Model.prototype = {
         this.infoBox.appendChild(div_info);
         
         document.body.appendChild(this.infoBox);
+        
+        //build tagSelector
+        this.tagSelector = document.createElement("div");
+        this.tagSelector.className = "tagSelector";
+        
+        var closeTag = document.createElement("span");
+        closeTag.className = "closeButton" ;
+        closeTag.appendChild(document.createTextNode("X"));
+        closeTag.onclick = function() {$(this).parent().hide('fast')};
+        this.tagSelector.appendChild(closeTag);
+        
+        this.tagSelectorInfo = document.createElement("div")
+        this.tagSelector.appendChild(this.tagSelectorInfo);
+        
+        this.tagSelectorList = document.createElement("ul")
+        this.tagSelector.appendChild(this.tagSelectorList);
+        
+        document.body.appendChild(this.tagSelector);
     },
     
     /**
@@ -1524,6 +1544,7 @@ Model.prototype = {
         this.infoBox.style.display = "block";
         this.infoBox.lastElementChild.innerHTML = self.m.clone(cloneID).getHtmlInfo();
         $("#"+cloneID).find(".infoBox").addClass("infoBox-open")
+        $("#f"+cloneID).find(".infoBox").addClass("infoBox-open")
     },
 
     /**
@@ -1531,9 +1552,97 @@ Model.prototype = {
      * */
     closeInfoBox: function() {
         $(".list").find(".infoBox").removeClass("infoBox-open")
+        $(".listSeq").find(".infoBox").removeClass("infoBox-open")
         this.clone_info = -1;
         this.infoBox.style.display = "none";
         this.infoBox.lastElementChild.innerHTML = "";
+    },
+
+ 
+    /**
+     * open/build the tag/normalize menu for a clone
+     * @param {integer} cloneID - clone index
+     * */
+    openTagSelector: function (cloneID) {
+        var self = this;
+        cloneID = typeof cloneID !== 'undefined' ? cloneID : this.cloneID;
+        this.tagSelectorList.innerHTML = "";
+        this.cloneID=cloneID
+        
+        for (var i = 0; i < this.tag.length; i++) {
+            (function (i) {
+                var span1 = document.createElement('span');
+                span1.className = "tagColorBox tagColor" + i
+                span1.onclick = function () {
+                    self.clone(cloneID).changeTag(i)
+                    $(self.tagSelector).hide('fast')
+                }
+                
+                var span2 = document.createElement('span');
+                span2.className = "tagName" + i + " tn"
+                span2.appendChild(document.createTextNode(self.tag[i].name))
+                span2.onclick = function () {
+                    self.clone(cloneID).changeTag(i)
+                    $(self.tagSelector).hide('fast')
+                }
+
+                var div = document.createElement('div');
+                div.className = "tagElem"
+                div.appendChild(span1)
+                div.appendChild(span2)
+
+                var li = document.createElement('li');
+                li.appendChild(div)
+
+                self.tagSelectorList.appendChild(li);
+            })(i)
+        }
+        
+        var span1 = document.createElement('span');
+        span1.appendChild(document.createTextNode("normalize to: "))
+
+        
+        this.norm_input = document.createElement('input');
+        this.norm_input.type = "number";
+        this.norm_input.step = "0.0001"
+        
+        var span2 = document.createElement('span');
+        span2.appendChild(this.norm_input)
+        
+        this.norm_button = document.createElement('button');
+        this.norm_button.appendChild(document.createTextNode("ok"))
+        this.norm_button.onclick = function () {
+            var cloneID = self.cloneID;
+            var size = parseFloat(self.norm_input.value);
+            
+            if (size>0 && size<1){
+                self.norm_input.value = ""
+                self.m.clone(cloneID).expected=size;
+                self.m.compute_normalization(cloneID, size)
+                self.m.update()
+                $(self.tagSelector).hide('fast')
+            }else{
+                console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
+            }
+        }
+        this.norm_input.onkeydown = function () {
+            if (event.keyCode == 13) self.norm_button.click();
+        }
+        
+        var div = document.createElement('div');
+        div.appendChild(span1)
+        div.appendChild(span2)
+        div.appendChild(this.norm_button)
+        
+        var li = document.createElement('li');
+        li.appendChild(div)
+
+        this.tagSelectorList.appendChild(li);
+        
+        
+        if (cloneID[0] == "s") cloneID = cloneID.substr(3);
+        $(this.tagSelector).show("fast");
+        this.tagSelectorInfo.innerHTML = "tag for "+this.m.clone(cloneID).getName()+"("+cloneID+")"; 
     },
     
     /**
