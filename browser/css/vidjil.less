@@ -608,7 +608,7 @@ line {
   float:left;
   user-select :none;
   margin-right: 5px;
-  margin-left: 15px;
+  margin-left: 5px;
 }
 
 
@@ -633,18 +633,18 @@ line {
   border-color : @select;
 }
 .list_focus{
-    background : @border;
+    background : @border !important;
 }
 
 .sequence-line { 
-  white-space: nowrap;
+    white-space: nowrap;
 }
-
-.sequence-line:hover{
+.sequence-line:hover { 
     font-weight: bold;
 }
 
 .seq-fixed {
+  font-weight: bold;
   position: relative;
   display: inline-block;
   width: (@width_left_container - @width_scrollbar);
@@ -895,9 +895,9 @@ span .substitution{
   max-width: -moz-calc(~"100%" - @width_left_container + 60px);
   max-width: -webkit-calc(~"100%" - @width_left_container + 60px);
   max-width: calc(~"100%" - @width_left_container + 60px);
-  height: -moz-calc(~"100%" - 200px);
-  height: -webkit-calc(~"100%" - 200px);
-  height: calc(~"100%" - 200px);
+  height: -moz-calc(~"100%" - 215px);
+  height: -webkit-calc(~"100%" - 215px);
+  height: calc(~"100%" - 215px);
 }
 
 .data-msg, .info-msg{

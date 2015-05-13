@@ -491,7 +491,7 @@ line {
   float: left;
   user-select: none;
   margin-right: 5px;
-  margin-left: 15px;
+  margin-left: 5px;
 }
 #new_name {
   font-family: monospace;
@@ -511,7 +511,7 @@ line {
   border-color: #002b36;
 }
 .list_focus {
-  background: #cccccc;
+  background: #cccccc !important;
 }
 .sequence-line {
   white-space: nowrap;
@@ -520,6 +520,7 @@ line {
   font-weight: bold;
 }
 .seq-fixed {
+  font-weight: bold;
   position: relative;
   display: inline-block;
   width: 445px;
@@ -747,9 +748,9 @@ span .substitution {
   max-width: -moz-calc(100% - 535px);
   max-width: -webkit-calc(100% - 535px);
   max-width: calc(100% - 535px);
-  height: -moz-calc(100% - 200px);
-  height: -webkit-calc(100% - 200px);
-  height: calc(100% - 200px);
+  height: -moz-calc(100% - 215px);
+  height: -webkit-calc(100% - 215px);
+  height: calc(100% - 215px);
 }
 .data-msg,
 .info-msg {
