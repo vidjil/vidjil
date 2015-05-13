@@ -61,15 +61,15 @@ def gene_matches(string, list_regex):
 def get_gene_coord(imgt_line):
     '''
     >>> line = '>X15272|TRGV4*01|Homo sapiens|F|V-REGION|406..705|300 nt|1| | | | |300+0=300| |rev-compl|'
-    >>> get_gene_coord(line) == {'X15272': {'from': 406, 'to': 705, 'imgt_name': 'TRGV4*01'}}
+    >>> get_gene_coord(line) == 'X15272', {'from': 406, 'to': 705, 'imgt_name': 'TRGV4*01'}
     True
     '''
     elements = imgt_line.split('|')
     assert len(elements) >= 6
     start, end = elements[5].split('..')
-    return {elements[0][1:]: {'from': int(start),
-                              'to': int(end),
-                              'imgt_name': elements[1]}}
+    return elements[0][1:], {'from': int(start),
+                             'to': int(end),
+                             'imgt_name': elements[1]}
 
 def get_gene_sequence(gene, other_gene_name, start, end):
     '''
