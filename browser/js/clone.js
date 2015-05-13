@@ -61,6 +61,16 @@ Clone.prototype = {
     COVERAGE_WARN: 0.5,
     EVALUE_WARN: 0.001,
     
+    isWarned: function () {
+    /**
+     * @return {bool} a warning is set on this clone
+     */
+        if (this.m.coverage < this.COVERAGE_WARN) return true;
+        if (this.eValue != "undefined" && this.eValue > this.EVALUE_WARN) return true;
+        return false;
+    },
+
+
     /** 
      * return clone's most important name <br>
      * cluster name > custom_name > segmentation name > window

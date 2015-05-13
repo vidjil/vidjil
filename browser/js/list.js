@@ -456,7 +456,7 @@ List.prototype = {
             self.displayInfoBox(cloneID);
         }
 
-        if (this.m.clone(cloneID).coverage < this.m.clone(cloneID).COVERAGE_WARN) {
+        if (this.m.clone(cloneID).isWarned()) {
             span_info.className += " warning" ;
             span_info.appendChild(document.createTextNode("!"));
         } else {
