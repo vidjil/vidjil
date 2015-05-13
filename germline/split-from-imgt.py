@@ -44,18 +44,19 @@ def check_directory_exists(path):
 def gene_matches(string, list_regex):
     '''
     >>> gene_matches('>M994641|IGHD1-18*01|Toto', ['TRGV', 'IGHD'])
-    True
+    'IGHD'
     >>> gene_matches('>M994641|IGHD1-18*01|Toto', ['TRGV', 'TRGD'])
-    False
+    None
     >>> gene_matches('>M994641|IGHJ4*01|Toto', ['[A-Z]{3}J'])
-    True
+    'IGHJ'
     >>> gene_matches('>M22153|TRDD2*01|Homo sapiens|F|', ['TRDD2'])
-    True
+    'TRDD2'
     '''
     for regex in list_regex:
-        if re.search(regex, string) <> None:
-            return True
-    return False
+        match = re.search(regex, string)
+        if match <> None:
+            return match.group(0)
+    return None
 
 def get_gene_coord(imgt_line):
     '''
