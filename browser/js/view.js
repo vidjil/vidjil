@@ -39,10 +39,8 @@ View.prototype = {
     /**
      * init the view before use
      * @abstract
-     * @return {object] this
      * */
     init : function () {
-        return this
     },
     
     /**
