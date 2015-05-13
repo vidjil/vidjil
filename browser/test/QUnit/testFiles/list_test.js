@@ -163,7 +163,7 @@ test("List : tag/norm", function() {
     var clone_list = document.getElementById('list').lastChild.childNodes
     
     ok(true,"ok")
-    $(clone_list[3]).find($(".starBox"))[0].click()
+    $(clone_list[3]).find($(".starBox")).click()
 
     equal(m.clone(1).getSize(), 0.1, "size before norm : Ok")
     equal(m.clone(2).getSize(), 0.125, "size before norm : Ok")
