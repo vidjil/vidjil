@@ -194,8 +194,11 @@ def stats():
     d = custom()
 
     stats_regex = [
-        # found 771265 40-windows in 2620561 segments (85.4%) inside 3068713 sequences
+        # found 771265 40-windows in 2620561 segments (85.4%) inside 3068713 sequences # before 1f501e13 (-> 2015.05)
         'in (?P<seg>\d+) segments \((?P<seg_ratio>.*?)\) inside (?P<reads>\d+) sequences',
+
+        # found 10750 50-windows in 13139 reads (99.9% of 13153 reads)
+        'windows in (?P<seg>\d+) reads \((?P<seg_ratio>.*?) of (?P<reads>\d+) reads\)',
 
         # locus
         'log.* TRG.*?->\s*?(?P<TRG_reads>\d+)\s+(?P<TRG_av_len>[0-9.]+)\s+(?P<TRG_clones>\d+)\s+(?P<TRG_av_reads>[0-9.]+)\s*.n',
