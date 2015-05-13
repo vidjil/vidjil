@@ -196,9 +196,9 @@ void MultiGermline::build_default_set(string path, int max_indexing)
 void MultiGermline::build_incomplete_set(string path, int max_indexing)
 {
   // Should parse 'data/germlines.data'
-  // VdJa
-  add_germline(new Germline("VdJa", 'a', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRAJ.fa", -10, 80, max_indexing), SEED_S13);
-  add_germline(new Germline("VdJa", 'a', path + "/TRDD_upstream.fa", "", path + "/TRAJ.fa", -10, 80, max_indexing), SEED_S13);
+  // TRA+D
+  add_germline(new Germline("TRA+D", 'a', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRAJ.fa", -10, 80, max_indexing), SEED_S13);
+  add_germline(new Germline("TRA+D", 'a', path + "/TRDD_upstream.fa", "", path + "/TRAJ.fa", -10, 80, max_indexing), SEED_S13);
 
   // DD-JD + DD2-DD3
   add_germline(new Germline("TRD+", 'd', path + "/TRDD_upstream.fa",   "", path + "/TRDJ.fa",     -10, 60, max_indexing), SEED_9);
@@ -240,7 +240,7 @@ void MultiGermline::build_with_one_index(string seed, bool set_index)
 /* Mark k-mers common to several germlines as ambiguous */
 void MultiGermline::mark_cross_germlines_as_ambiguous()
 {
-  string VdJa = "VdJa";
+  string VdJa = "TRA+D";
   
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
     {
