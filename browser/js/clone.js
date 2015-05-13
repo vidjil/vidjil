@@ -66,7 +66,7 @@ Clone.prototype = {
      * @return {bool} a warning is set on this clone
      */
         if (this.m.coverage < this.COVERAGE_WARN) return true;
-        if (this.eValue != "undefined" && this.eValue > this.EVALUE_WARN) return true;
+        if (typeof(this.eValue) != undefined && this.eValue > this.EVALUE_WARN) return true;
         return false;
     },
 
@@ -313,7 +313,11 @@ Clone.prototype = {
     }, //end getSize
 
     computeEValue: function () {
-        this.eValue = parseFloat(this.getGene('_evalue'));
+        var e = this.getGene('_evalue');
+        if (typeof(e) != 'undefined')
+            this.eValue = parseFloat(e)
+        else
+            this.eValue = undefined
     },
 
     getGene: function (type, withAllele) {
@@ -333,7 +337,7 @@ Clone.prototype = {
             case "3" :
                 return "undefined J";
         }
-        return "undefined";
+        return undefined;
     },
     
     getNlength: function () {
