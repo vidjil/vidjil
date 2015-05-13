@@ -780,7 +780,7 @@ ScatterPlot.prototype = {
             }
             k++;
         }
-        this.axisY.computeCustomLabels(0, bar_max, true, false);
+        this.axisY.computeCustomLabels(0, bar_max, "percent", false);
         this.axisX.computeCustomBarLabels(this.barTab)
         this.initGrid();
         this.drawBarTab(500);
