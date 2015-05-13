@@ -38,7 +38,7 @@ json_data = {
   },
   "clones": [
     { 
-        "sequence" : "aaaaaaaaaaaaaaaaaaaag",
+        "sequence" : "aaaaaaaaaaaaaaaaaaaAG",
         "name" : "test1",
         "id" : "id1",
         "reads" : [10,10,15,15] ,
@@ -48,7 +48,8 @@ json_data = {
             "5" : "TRGV4*01",
             "3" : "TRGJ2*03",
             "3start" : 6,
-            "5end" : 5
+            "5end" : 5,
+            "cdr3" : "AG"
         }
     },
     { 
@@ -62,7 +63,8 @@ json_data = {
             "5" : "TRGV5*01",
             "3" : "TRGJ2*02",
             "3start" : 15,
-            "5end" : 5
+            "5end" : 5,
+            "fr1" : {"start" :2, "stop":5}
         }
     },
     { 
