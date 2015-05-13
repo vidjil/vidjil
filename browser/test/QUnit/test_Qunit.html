@@ -9,6 +9,9 @@
         .flash_container, .log_container, .popup_container, .data-container, .info-container, .dataMenu, .tagSelector{
             display:none !important;
         }
+        .list_focus{
+            background : rgb(204, 204, 204);
+        }
     </style>
 
     <script type="text/javascript" src='../../js/lib/d3.v3.js'></script>
@@ -55,6 +58,7 @@
     <div style="opacity:0% !important; position:absolute; z-index:-5">
         <div id="data-container" ></div>
         <div id="visu" style="width:800px; height:500px;"></div>
+        <div id="segment" style="width:800px; height:500px;"></div>
         <div id="info-row" style="width:800px; height:500px;"><div id="info"> </div></div>
         <div id="list-row" style="width:800px; height:500px;"><div id="list"> </div></div>
         <div id="data-row" style="width:800px; height:500px;"><div id="data"> </div></div>
@@ -93,5 +97,6 @@
     <script src="./testFiles/graph_test.js"></script>
     <script src="./testFiles/com_test.js"></script>
     <script src="./testFiles/list_test.js"></script>
+    <script src="./testFiles/segmenter_test.js"></script>
 </body>
 </html>
