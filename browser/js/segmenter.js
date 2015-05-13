@@ -329,7 +329,7 @@ Segment.prototype = {
                     this.div_elem(spanF, id);
                     
                     var spanM = document.getElementById("m" + id);
-                    spanM.innerHTML = this.sequence[id].toString()
+                    spanM.innerHTML = this.sequence[id].toString(this)
                 } else {
                     this.addToSegmenter(id);
                     this.show();
@@ -490,7 +490,7 @@ Segment.prototype = {
         var spanM = document.createElement('span');
         spanM.id = "m" + cloneID;
         spanM.className = "seq-mobil";
-        spanM.innerHTML = this.sequence[cloneID].load().toString()
+        spanM.innerHTML = this.sequence[cloneID].load().toString(this)
 
         li.appendChild(spanF);
         li.appendChild(spanM);
@@ -619,7 +619,7 @@ Segment.prototype = {
 
         for (var i = 0; i < selected.length; i++) {
             var spanM = document.getElementById("m" + selected[i])
-            spanM.innerHTML =  this.sequence[selected[i]].load().toString()
+            spanM.innerHTML =  this.sequence[selected[i]].load().toString(this)
         }
     },
     
@@ -643,7 +643,7 @@ Segment.prototype = {
             // global container
             var spanM = document.getElementById("m" + this.memTab[i]);
             var seq = this.sequence[this.memTab[i]]
-            spanM.innerHTML = seq.toString()
+            spanM.innerHTML = seq.toString(this)
         }
 
     },
@@ -659,7 +659,7 @@ Segment.prototype = {
             
         //verifier que les points sélectionnés sont dans une germline courante
         for (var i = 0; i < list.length ; i++){   
-            if (m.clones[list[i]].isActive()) {
+            if (this.m.clones[list[i]].isActive()) {
                 length += 1;
                 sumPercentage += this.m.clone(list[i]).getSize();
                 sumReads+= this.m.clone(list[i]).getReads(); 
@@ -670,7 +670,7 @@ Segment.prototype = {
         if (sumReads > 0) {
             t += length + " clone" + (length>1 ? "s" : "") + ", "
             t += this.m.toStringThousands(sumReads) + " read" + (sumReads>1 ? "s" : "") + ", "
-            t += sumPercentage = m.formatSize(sumPercentage, true);
+            t += sumPercentage = this.m.formatSize(sumPercentage, true);
             t += " "
             $(".focus_selected").css("display", "")
         }
@@ -691,7 +691,7 @@ Segment.prototype = {
         
         // What looks likes DNA everywhere
         for (var i in this.m) {
-            if (this.isDNA(this.m[i]) ||this.isDNA(m[i]) ){
+            if (this.isDNA(this.m[i])){
                 if (result.indexOf(i) == -1) result.push(i);
             }
         }
@@ -898,7 +898,7 @@ Sequence.prototype = {
      * return sequence completed with html tag <br>
      * @return {string}
      * */
-    toString: function () {
+    toString: function (segment) {
         var clone = this.m.clone(this.id)
         var result = ""
         
