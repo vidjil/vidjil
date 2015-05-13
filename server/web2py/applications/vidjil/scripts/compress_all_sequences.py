@@ -38,6 +38,7 @@ def compress_all_sequences():
                                                 data_file = os.path.basename(new_data_filename),\
                                                 size_file = os.path.getsize(new_data_filename))
                 compressed.append({'data_file': new_data_filename, 'original': new_filename, 'id': seq.id})
+                db.commit()
     return compressed
 
 
