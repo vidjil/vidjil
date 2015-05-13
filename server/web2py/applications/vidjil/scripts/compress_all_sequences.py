@@ -4,7 +4,8 @@ import os.path
 import base64
 
 def can_be_compressed(original_filename, server_filename):
-    return server_filename[-3:].lower() <> ".gz"\
+    server_ext = os.path.splitext(server_filename)[1][1:].lower()
+    return server_ext in ['fasta', 'fastq', 'fa', 'fq']\
         and original_filename is not None\
         and original_filename[-3:].lower() <> ".gz"\
         and os.path.exists(server_filename)\
