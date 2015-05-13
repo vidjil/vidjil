@@ -168,8 +168,8 @@ test("List : tag/norm", function() {
     equal(m.clone(1).getSize(), 0.1, "size before norm : Ok")
     equal(m.clone(2).getSize(), 0.125, "size before norm : Ok")
     
-    list.norm_input.value = 0.25;
-    list.norm_button.click();
+    m.norm_input.value = 0.25;
+    m.norm_button.click();
     
     equal(m.clone(1).getSize(), 0.5, "size after norm : Ok")
     equal(m.clone(2).getSize(), 0.625, "size after norm : Ok")

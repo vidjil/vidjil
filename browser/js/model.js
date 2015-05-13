@@ -1617,9 +1617,9 @@ Model.prototype = {
             
             if (size>0 && size<1){
                 self.norm_input.value = ""
-                self.m.clone(cloneID).expected=size;
-                self.m.compute_normalization(cloneID, size)
-                self.m.update()
+                self.clone(cloneID).expected=size;
+                self.compute_normalization(cloneID, size)
+                self.update()
                 $(self.tagSelector).hide('fast')
             }else{
                 console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
@@ -1642,7 +1642,7 @@ Model.prototype = {
         
         if (cloneID[0] == "s") cloneID = cloneID.substr(3);
         $(this.tagSelector).show("fast");
-        this.tagSelectorInfo.innerHTML = "tag for "+this.m.clone(cloneID).getName()+"("+cloneID+")"; 
+        this.tagSelectorInfo.innerHTML = "tag for "+this.clone(cloneID).getName()+"("+cloneID+")"; 
     },
     
     /**
