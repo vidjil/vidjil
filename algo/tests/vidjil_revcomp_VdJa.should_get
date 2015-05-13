@@ -6,8 +6,8 @@ $ Just one window found
 $ Just one clone found
 1:==> 1 clones
 
-$ Two reads segmented in VdJa
-1:VdJa -> 2
+$ Two reads segmented on TRA+D
+1:TRA.D -> 2
 
 $ segmentation for the main clone
 1:TRDV1.01 5//3 TRDD2.01 1//7 TRAJ29
