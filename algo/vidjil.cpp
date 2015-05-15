@@ -1278,7 +1278,7 @@ int main (int argc, char **argv)
         // From FineSegmenter
         json_clone.add("sequence", seg.getSequence().sequence);
         
-        if (seg.isSegmented())
+        if (seg.code_short.length())
           json_clone.add("name", seg.code_short);
 
         seg.toJsonList(&json_seg);

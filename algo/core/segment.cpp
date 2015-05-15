@@ -619,6 +619,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
   because = NOT_PROCESSED ;
   segmented_germline = germline ;
   info_extra = "" ;
+  code_short = "" ;
   label = seq.label ;
   sequence = seq.sequence ;
   Dend=0;
@@ -631,7 +632,19 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
   CDR3end = -1;
   
   if (!germline->rep_5.size() || !germline->rep_3.size())
-    return ;
+    {
+      // We check whether this sequence is segmented with MAX12 (with default e-value parameters)
+      KmerSegmenter *kseg = new KmerSegmenter(seq, germline, THRESHOLD_NB_EXPECTED, 1);
+      if (kseg->isSegmented() && (!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12)))
+        {
+          code_short = "Unexpected ";
+          code_short += kseg->before.toStringSigns() + germline->index->getLabel(kseg->before);
+          code_short += "/";
+          code_short += kseg->before.toStringSigns() + germline->index->getLabel(kseg->after);
+          info_extra += " " + kseg->before.toString() + "/" + kseg->after.toString() + " (" + code_short + ")";
+        }
+      return ;
+    }
 
   // TODO: factoriser tout cela, peut-etre en lancant deux segmenteurs, un +, un -, puis un qui chapote
   
