@@ -201,7 +201,7 @@ void MultiGermline::build_incomplete_set(string path, int max_indexing)
   add_germline(new Germline("TRA+D", 'a', path + "/TRDD_upstream.fa", "", path + "/TRAJ.fa", -10, 80, max_indexing), SEED_S13);
 
   // DD-JD + DD2-DD3
-  add_germline(new Germline("TRD+", 'd', path + "/TRDD_upstream.fa",   "", path + "/TRDJ.fa",     -10, 60, max_indexing), SEED_9);
+  add_germline(new Germline("TRD+", 'd', path + "/TRDD2_upstream.fa",   "", path + "/TRDJ.fa",     -10, 60, max_indexing), SEED_9);
   add_germline(new Germline("TRD+", 'd', path + "/TRDV.fa",       "", path + "/TRDD3_downstream.fa", -10, 50, max_indexing), SEED_9);
   add_germline(new Germline("TRD+", 'd', path + "/TRDD2_upstream.fa",   "", path + "/TRDD3_downstream.fa", -10, 50, max_indexing), SEED_9);
 
