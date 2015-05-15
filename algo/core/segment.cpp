@@ -247,8 +247,6 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
 
   score = nb_strand[0] + nb_strand[1] ; // Used only for non-segmented germlines
 
-  KmerAffect before, after;
-
   if (!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12))
     { // Pseudo-germline, max12
 
@@ -259,6 +257,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
       CountKmerAffectAnalyser ckaa(*(germline->index), sequence);
       pair <KmerAffect, KmerAffect> max12 = ckaa.sortLeftRight(ckaa.max12(forbidden));
 
+      before = max12.first ;
+      after = max12.second ;
+
       if (max12.first.isUnknown() || max12.second.isUnknown())
         {
           because = UNSEG_TOO_FEW_ZERO ;
@@ -266,10 +267,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
         }
 
       strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
-      computeSegmentation(strand, max12.first, max12.second, germline->delta_min, germline->delta_max, threshold, multiplier);
 
       // The pseudo-germline should never take precedence over regular germlines of similar e-value
-      evalue *= PSEUDO_GERMLINE_MAX12_EVALUE_PENALTY ;
+      multiplier *= PSEUDO_GERMLINE_MAX12_EVALUE_PENALTY ;
     }
 
   else
@@ -294,10 +294,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
     return ;
   }
 
-  computeSegmentation(strand, before, after, germline->delta_min, germline->delta_max, threshold, multiplier);
-
     } // endif Pseudo-germline
  
+  computeSegmentation(strand, before, after, germline->delta_min, germline->delta_max, threshold, multiplier);
 }
 
 KmerSegmenter::~KmerSegmenter() {

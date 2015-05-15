@@ -174,6 +174,7 @@ class KmerSegmenter : public Segmenter
   int score;
   int pvalue_left;
   int pvalue_right;
+  KmerAffect before, after;
 
   KmerSegmenter();
   /**
