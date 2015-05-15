@@ -1,0 +1,13 @@
+# Fake chimera sequences, (somewhat unprobable) V-J recombinations
+
+>TRBV1*01--TRGJ1*01
+cagcaagaagactcagctgcgtatctctgcaccagcagccaaga
+gaattattataagaaactctttggcagtggaacaacactggttgtcacag
+
+>TRDV1*01--IGHJ1*01
+ttacagctagaagattcagcaaagtacttttgtgctcttggggaact
+gctgaatacttccagcactggggccagggcaccctggtcaccgtctcctcag
+
+>IGKV1-12*01--IGKJ1*01
+gaagattttgcaacttactattgtcaacaggctaacagtttccctcc
+ttatgtcttcggaactgggaccaaggtcaccgtcctag
