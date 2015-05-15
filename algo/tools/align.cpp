@@ -76,8 +76,6 @@ int main(int argc, char* argv[])
 		<< "	-c	cost 		( VDJ par defaut)" << endl
 		<< "		1	DNA" << endl
 		<< "		2	VDJ" << endl
-		<< "		3	Identity" << endl
-		<< "		4	IdentityToto" << endl
 		<< "		5	IdentityDirty" << endl
 		<< "		6	Hamming" << endl
 		<< "		7	Levenshtein" << endl
@@ -113,8 +111,6 @@ int main(int argc, char* argv[])
 	cost=atoi(argv[i+1]);
 	if ( cost == 1) dpCost = DNA;
 	if ( cost == 2) dpCost = VDJ;
-	if ( cost == 3) dpCost = Identity;
-	if ( cost == 4) dpCost = IdentityToto;
 	if ( cost == 5) dpCost = IdentityDirty;
 	if ( cost == 6) dpCost = Hamming;
 	if ( cost == 7) dpCost = Levenshtein;
