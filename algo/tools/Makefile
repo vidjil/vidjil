@@ -12,7 +12,7 @@ all: $(EXEC)
 
 $(EXEC): %: %.o 
 	make -C .. OPTIM="$(OPTIM)"
-	$(CC) -I .. -o $@ $^ $(LIBCORE)
+	$(CC) -I .. -o $@ $^ $(LIBCORE) $(LDLIBS)
 
 clean:
 	rm -f $(EXEC)
