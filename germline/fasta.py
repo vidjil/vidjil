@@ -32,6 +32,9 @@ def parse(fasta, endline=''):
 
         if not l:
             continue
+
+        if l[0] == '#':
+            continue
     
         if l[0] == '>':
             if header or sequence:
