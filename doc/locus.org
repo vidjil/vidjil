@@ -15,7 +15,7 @@ selecting the best locus for each read.
 |                      | *TRA* | Va-Ja                   |        |                                   |
 |                      | *TRB* | Vb-(Db)-Jb              |        |                                   |
 |                      | *TRD* | Vd-(Dd)-Jd              | *TRD+* | Vd-Dd3, Dd2-Jd, Dd2-Dd3           |
-|                      |       |                         | *VdJa* | Vd-(Dd)-Ja                        |
+|                      |       |                         | *TRA+D*| Vd-(Dd)-Ja, Dd-Ja                 |
 |                      | *TRG* | Vg-Jg                   |        |                                   |
 |----------------------+-------+-------------------------+--------+-----------------------------------|
 |                      | *IGH* | Vh-(Dh)-Jh              | *IGH+* | Dh-Jh                             |
