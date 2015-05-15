@@ -22,6 +22,10 @@ install_web2py_standalone: install_web2py
 	sed -i 's@/var/vidjil@logs@' web2py/applications/vidjil/modules/defs.py
 	sed -i '/mysql/d; /^DIR_/s/\/mnt\///;'  web2py/applications/vidjil/modules/defs.py
 
+launch_web2py_localhost:
+	python web2py/web2py.py -a 'password' -i 127.0.0.1 -p 8000   
+
+
 launch_fuse_server:
 	python fuse_server.py &
 kill_fuse_server:
