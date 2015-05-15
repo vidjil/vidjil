@@ -74,8 +74,8 @@ germline_data = {
         "color" : "#d5a920",
         "description": "Human T-cell receptor, delta locus (14q11.2), incomplete Dd2-Dd3 rearrangements",
         "follows": "TRD",
-        "5": ["TRDV.fa", "TRDD2-01.fa"],
-        "3": ["TRDJ.fa", "TRDD3-01.fa"]
+        "5": ["TRDV.fa", "TRDD2_upstream.fa"],
+        "3": ["TRDJ.fa", "TRDD3_downstream.fa"]
     },
 
     "IGH": {
