@@ -13,6 +13,9 @@ endif
 all:
 	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)
 
+static:
+	make all LDFLAGS="-static -static-libstdc++"
+
 test:
 	make COVERAGE="$(COVERAGE)" unit
 	make functional
