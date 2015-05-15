@@ -50,19 +50,8 @@ germline_data = {
         "shortcut": "a",
         "color" : "#46abf2",
         "description": "Human T-cell receptor, alpha/delta locus (14q11.2)",
-        "5": ["TRDV.fa"],
+        "5": ["TRDV.fa", "TRDD.fa"],
         "4": ["TRDD.fa"],
-        "3": ["TRAJ.fa"],
-        "parameters": {
-            "seed": "13s"
-        }
-    },
-
-    "TRA+D": {
-        "shortcut": "a",
-        "color" : "#46abf2",
-        "description": "Human T-cell receptor, alpha/delta locus (14q11.2)",
-        "5": ["TRDD.fa"],
         "3": ["TRAJ.fa"],
         "parameters": {
             "seed": "13s"
