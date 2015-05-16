@@ -18,7 +18,7 @@
                 {{if auth.is_impersonating() :}}                     
                     impersonate
                     <span>
-                        <select id="choose_user" name="user" onchange="db.call('default/impersonate', {'id' : this.value})">
+                        <select id="choose_user" name="user" onchange="db.call('default/impersonate', {'id' : this.value, 'next': '{{=request.url}}'})">
                             <option value="0" selected> --- </option>
                             {{for row in db(db.auth_user.id >1).select() :}}
                                 <option value="{{=row.id }}" {{if row.id==auth.user_id:}}selected {{pass}}>
@@ -33,7 +33,7 @@
                    {{if not auth.is_impersonating() :}} 
                     impersonate
                     <span>
-                        <select id="choose_user" name="user" onchange="db.call('default/impersonate', {'id' : this.value})">
+                        <select id="choose_user" name="user" onchange="db.call('default/impersonate', {'id' : this.value, 'next': '{{=request.url}}'});">
                             <option value="0" selected> --- </option>
                             {{for row in db(db.auth_user.id >1).select() :}} 
                                 <option value="{{=row.id }}">{{=row.id}} &ndash; {{=row.first_name}} {{=row.last_name}}</option> {{pass}}

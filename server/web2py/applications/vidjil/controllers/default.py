@@ -484,7 +484,10 @@ def impersonate() :
         log.debug({"success" : "true", "message" : "impersonate >> %s" % request.vars["id"]})
         auth.impersonate(request.vars["id"]) 
         log.debug({"success" : "true", "message" : "impersonated"})
-    res = {"redirect": "reload"}
+    if not 'admin' in request.vars['next']:
+        res = {"redirect": "reload"}
+    else:
+        res = {"redirect" : URL('patient', 'index', scheme=True, host=True)}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def stop_impersonate() :
@@ -494,7 +497,7 @@ def stop_impersonate() :
         # force clean login (default impersonate don't restore everything :/ )
         auth.login_user(db.auth_user(auth.user.id))
 
-    res = {"redirect" : URL('patient', 'index', scheme=True, host=True)}
+    res = {"redirect" : "reload"}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
