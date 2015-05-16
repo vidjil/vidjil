@@ -30,7 +30,11 @@ def index():
 def help():
     return dict(message=T('help i\'m lost'))
 
-
+#########################################################################
+## default home page
+def home():
+    res = {"redirect" : URL('admin' if auth.is_admin() else 'patient', 'index', scheme=True, host=True)}
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def logger():
     '''Log to the server'''
@@ -442,7 +446,7 @@ def user():
 
     #redirect already logged user 
     if auth.user and request.args[0] == 'login' :
-        res = {"redirect" : URL('patient', 'index', scheme=True, host=True)}
+        res = {"redirect" : URL('default', 'home', scheme=True, host=True)}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
     #only authentified admin user can access register view
