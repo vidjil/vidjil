@@ -94,7 +94,7 @@ Model_loader.prototype = {
                 
         else if (typeof config != 'undefined' && config.use_database){
             //wait 1sec to check ssl
-            setTimeout(function () { db.call("patient/index.html")}, 1000);
+            setTimeout(function () { db.call("default/home.html")}, 1000);
         }else{
             console.log({"type":"popup", "default":"welcome" })
         }

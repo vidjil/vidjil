@@ -282,7 +282,7 @@ Database.prototype = {
                         console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                     } else {
                         var nexts = $('#login_form').attr('action').split("&")
-                        var next = "patient/index"
+                        var next = "default/home"
                         if ($('#login_form').attr('action').indexOf('register') != -1)
                             next = "user/info"
                         var args = {}
@@ -366,7 +366,7 @@ Database.prototype = {
      * */
     reload: function(){
         if (this.url.length==0){
-            this.call('patient/index')
+            this.call('default/home')
         }else{
             url = this.url[this.url.length-1]
             this.callUrl(url)
@@ -412,7 +412,7 @@ Database.prototype = {
                 if (status === "timeout") {
                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
                 } else {
-                    self.call("patient/index")
+                    self.call("default/home")
                 }
 
                 if (typeof quiet == 'undefined') {
