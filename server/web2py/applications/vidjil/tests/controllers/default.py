@@ -64,6 +64,22 @@ class DefaultController(unittest.TestCase):
         self.assertNotEqual(resp.find('(config_test_popipo)'), -1, "get_data doesn't return a valid json")
         
         
+    def testCustomDataNoFile(self):
+        resp = gluon.contrib.simplejson.loads(get_custom_data())
+        print resp['message']
+        self.assertTrue(resp.has_key('success'))
+        self.assertEqual(resp['success'], 'false')
+        self.assertNotEqual(resp['message'].find('get_custom_data'), -1)
+        self.assertNotEqual(resp['message'].find('no file selected'), -1)
+
+    def testCustomDataOneFile(self):
+        request.vars['custom'] = str(fake_result_id)
+        resp = gluon.contrib.simplejson.loads(get_custom_data())
+        self.assertTrue(resp.has_key('success'))
+        self.assertEqual(resp['success'], 'false')
+        self.assertNotEqual(resp['message'].find('get_custom_data'), -1)
+        self.assertNotEqual(resp['message'].find('select several files'), -1)
+
     def testCustomData(self):
         request.vars['custom'] = [str(fake_result_id), str(fake_result_id)]
         
