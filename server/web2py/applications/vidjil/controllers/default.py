@@ -254,11 +254,15 @@ def get_custom_data():
     if not "custom" in request.vars :
         error += "no file selected, "
     else:
-        for id in request.vars["custom"] :
-            sequence_file_id = db.results_file[id].sequence_file_id
-            patient_id =db.sequence_file[sequence_file_id].patient_id
-            if not auth.can_view_patient(patient_id):
-                error += "you do not have permission to consult this patient ("+str(patient_id)+")"
+        if type(request.vars['custom']) is not list or len(request.vars['custom']) < 2:
+            error += "you must select several files."
+        else:
+            for id in request.vars["custom"] :
+                log.debug("id = '%s'" % str(id))
+                sequence_file_id = db.results_file[id].sequence_file_id
+                patient_id =db.sequence_file[sequence_file_id].patient_id
+                if not auth.can_view_patient(patient_id):
+                    error += "you do not have permission to consult this patient ("+str(patient_id)+")"
             
     if error == "" :
         try:
