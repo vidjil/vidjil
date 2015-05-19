@@ -394,9 +394,9 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
     // Detail the unsegmentation cause
     if (evalue_left >= threshold && evalue_right >= threshold)
       because = UNSEG_TOO_FEW_ZERO ;
-    else if (evalue_left >= threshold)
+    else if ((strand == 1 ? evalue_left : evalue_right) >= threshold)
       because = UNSEG_TOO_FEW_V ;
-    else if (evalue_right >= threshold)
+    else if ((strand == 1 ? evalue_right : evalue_left) >= threshold)
       because = UNSEG_TOO_FEW_J ;
     else // left and right are <= threshold, but their sum is > threshold
       because = UNSEG_TOO_FEW_ZERO ;
