@@ -506,9 +506,9 @@ List.prototype = {
                 var span_info = document.createElement('span')
                 span_info.className = "infoBox";
                 span_info.onclick = function () {
-                    self.m.displayInfoBox(self.m.clone(this.parentNode.id2).getHtmlInfo());
+                    self.m.displayInfoBox(id);
                 }
-                span_info.appendChild(document.createTextNode("I"));
+                span_info.appendChild(document.createTextNode("i"));
 
                 var img = document.createElement('img');
                 img.onclick = function () {
