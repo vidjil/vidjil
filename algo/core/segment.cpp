@@ -127,7 +127,7 @@ bool Segmenter::finishSegmentationD()
 
   seg_V = seq.substr(0, Vend+1) ; // From pos. 0 to Vend
   seg_J = seq.substr(Jstart) ;
-  
+  seg_N = seq.substr(Vend+1, Jstart-Vend-1) ;  // Twice computed for FineSegmenter, but only once in KmerSegmenter !
   seg_D  = seq.substr(Dstart, Dend-Dstart+1) ; // From Dstart to Dend
   
   info = "VDJ \t0 " + string_of_int(Vend) +
