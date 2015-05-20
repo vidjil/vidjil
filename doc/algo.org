@@ -288,16 +288,19 @@ All the reads with this windows will be extracted to =out/seq/clone.fa-1=.
 
 ** Further clustering (experimental)
 
-These options have no consequences on the =.vdj.fa= file, but adds
-additional information in the =.vidjil= file to be visualized in the
-browser.
+The following options are experimental and have no consequences on the =.vdj.fa= file,
+nor on the standard output. They instead add a =clusters= sections in the =.vidjil= file
+that will be visualized in the browser.
 
-Setting the =-n= option triggers an additional automatic
-clustering using DBSCAN algorithm (Ester and al., 1996). 
+The =-n= option triggers an automatic clustering using DBSCAN algorithm (Ester and al., 1996).
+Using =-n 5= usually cluster reads within a distance of 1 mismatch (default score
+being +1 for a match and -4 for a mismatch). However, more distant reads can also
+be clustered when there are more than 10 reads within the distance threshold.
+This behaviour can be controlled with the =-N= option.
 
 The =-E= option allows to specify a file for manually clustering two windows
 considered as similar. Such a file may be automatically produced by vidjil
-(out/edges), depending on the option provided. Only the two first columns 
+(=out/edges=), depending on the option provided. Only the two first columns
 (separed by one space) are important to vidjil, they only consist of the 
 two windows that must be clustered.
 
@@ -354,6 +357,8 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 ./vidjil -c clones -G germline/IGH -r 1 -n 5 ./data/clones_simul.fa
    # Window extraction + clone gathering,
    # with automatic clustering, distance five (-n 5)
+   # The result of the automatic clustering is in the .vidjil file
+   # and can been seen/edited in the browser.
 #+END_SRC
 
 #+BEGIN_SRC sh
