@@ -110,38 +110,65 @@ function ScatterPlot(id, model) {
     //mouse coordinates
     this.coordinates = [0, 0];
 
-    //Menu without graph distrib'
-    this.menu = [
-        ["gene_v", "gene V"],
-        ["gene_j", "gene J"],
-        ["allele_v", "allele V"],
-        ["allele_j", "allele J"],
-        ["locus", "locus"],
-        ["Size", "size"],
-        ["otherSize", "size (other point)"],
-        ["sequenceLength", "clone length"],
-        ["GCContent", "GC content"],
-        ["coverage", "clone coverage"],
-        ["n", "N length"],
-        ["lengthCDR3", "CDR3 length"]
-    ];
-    
     // Plot axis
     this.available_axis = {
-        "sequenceLength" : { "fct" : function(cloneID) {return self.m.clone(cloneID).getSequenceLength()} },
-        "GCContent" : { "fct" : "GCContent", "output" : "percent" },
-        "n" : { "fct" : function(cloneID) {return self.m.clone(cloneID).getNlength()} },
-        "lengthCDR3" : { "fct" : function(cloneID) {return self.m.clone(cloneID).seg["cdr3"].length} },
-        "coverage": { "fct" : function(cloneID){return self.m.clone(cloneID).coverage},
-                      "min" : 0, "max" : 1, "output" : "float-2", "log": false },
-        "locus" : {  "fct" : function(cloneID){return self.m.clone(cloneID).germline},
-                     "output": "string-sorted" },
-        "Size" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSizeZero()}, 
-                    "min" : function(){return self.m.min_size},
-                    "max" : 1, "output" : "percent", "log" :true  },
-        "otherSize" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSizeZero(m.tOther)}, 
-                        "min" : function(){return self.m.min_size}, 
-                        "max" : 1, "output" : "percent", "log" :true  }
+        "gene_v": { 
+            label:"gene V" 
+        },
+        "gene_j": { 
+            label:"gene J" 
+        },
+        "allele_v": { 
+            label:"allele V" 
+        },
+        "allele_j": { 
+            label:"allele J" 
+        },
+        "sequenceLength" : { 
+            label: "clone length",
+            fct: function(cloneID) {return self.m.clone(cloneID).getSequenceLength()}
+        },
+        "GCContent" : { 
+            label: "GC content",
+            fct: "GCContent", 
+            output: "percent"
+        },
+        "n": {
+            label: "N length",
+            fct: function(cloneID) {return self.m.clone(cloneID).getNlength()} 
+        },
+        "lengthCDR3": {
+            label: "CDR3 length",
+            fct: function(cloneID) {return self.m.clone(cloneID).seg["cdr3"].length}
+        },
+        "coverage": { 
+            label: "clone coverage",
+            fct: function(cloneID){return self.m.clone(cloneID).coverage},
+            min: 0,
+            max: 1, 
+            output: "float-2", 
+            log: false 
+        },
+        "locus" : { 
+            label: "locus",
+            fct: function(cloneID){return self.m.clone(cloneID).germline},
+            output: "string-sorted"
+        },
+        "Size" : { 
+            label: "size",
+            fct : function(cloneID){return self.m.clone(cloneID).getSizeZero()}, 
+            min : function(){return self.m.min_size},
+            max : 1, 
+            output : "percent", 
+            log : true  
+        },
+        "otherSize" : { 
+            label: "size (other point)",
+            fct : function(cloneID){return self.m.clone(cloneID).getSizeZero(m.tOther)}, 
+            min : function(){return self.m.min_size}, 
+            max : 1, 
+            output : "percent", 
+            log : true  }
     }
     
     // Plot Presets
@@ -422,10 +449,10 @@ ScatterPlot.prototype = {
         }
         
         //Ajout de chaque méthode de répartition dans les menus pour l'axe des X/Y
-        for (var i = 0; i < this.menu.length; i++) {
+        for (var key in this.available_axis) {
             var element = document.createElement("option");
-            element.setAttribute('value', this.menu[i][0]);
-            var text = document.createTextNode(this.menu[i][1]);
+            element.setAttribute('value', key);
+            var text = document.createTextNode(this.available_axis[key].label);
             element.appendChild(text);
 
             var element2 = element.cloneNode(true);
@@ -1700,9 +1727,11 @@ ScatterPlot.prototype = {
     updateMenu: function() {
         var select_x = 0;
         var select_y = 0
-        for (var i = 0; i < this.menu.length; i++) {
-            if (this.menu[i][0] == this.splitX) select_x = i
-            if (this.menu[i][0] == this.splitY) select_y = i
+        var i=0;
+        for (var key in this.available_axis) {
+            if (key == this.splitX) select_x = i
+            if (key == this.splitY) select_y = i
+            i++;
         }
         this.select_x.selectedIndex = select_x
         this.select_y.selectedIndex = select_y
