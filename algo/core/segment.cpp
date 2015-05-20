@@ -270,9 +270,6 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
       // Anyway, it allows to gather such reads and their reverse complement into a unique window...
       // ... except when the read is quite different outside the window
       strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
-
-      // The pseudo-germline should never take precedence over regular germlines of similar e-value
-      multiplier *= PSEUDO_GERMLINE_MAX12_EVALUE_PENALTY ;
     }
 
   else
