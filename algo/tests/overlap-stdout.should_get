@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -c segment -G ../../germline/IGH -A ../../data/overlap-d-j.fa | tail -4 | tr '\\\\n' '!' | sed 's/!//g' | wc
+!LAUNCH: ../../vidjil -c segment -G ../../germline/IGH -A ../../data/overlap-d-j.fa | tail -4 | tr -d '\\\\n' | wc -c
 
 $ Exported sequence has all the bases
 1:116
