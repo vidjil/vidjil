@@ -47,9 +47,9 @@ function ScatterPlot(id, model) {
     this.gridSizeH = 1; //grid height
 
     //Margins left/right ( fixed value )
-    this.marge_left = 100;
+    this.marge_left = 120;
     this.marge_right = 10;
-    this.marge_top = 60;
+    this.marge_top = 75;
     this.marge_bot = 25;
 
     this.max_precision = 9; //Precision max (default: 9)
@@ -96,13 +96,13 @@ function ScatterPlot(id, model) {
 
     //axis X text position
     this.rotation_x = 0;
-    this.text_position_x = 15;
-    this.sub_text_position_x = 30;
+    this.text_position_x = 30;
+    this.sub_text_position_x = 45;
 
     //axis Y text position
     this.rotation_y = 0;
-    this.text_position_y = 40;
-    this.sub_text_position_y = 80;
+    this.text_position_y = 60;
+    this.sub_text_position_y = 100;
 
     //Clone selected
     this.cloneSelected = -1;
@@ -265,20 +265,25 @@ ScatterPlot.prototype = {
             self.updateSelector()
         })
 
-        //Sélection du contenu de l'axe des X -> Ajout d'un attribut valant un id
+        //add a container for x axis in the scatterplot svg
         this.axis_x_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", this.id + "_axis_x_container")
 
-        //Sélection du contenu de l'axe des X -> Ajout d'un attribut valant un id
+        //add a container for y axis in the scatterplot svg
         this.axis_y_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", this.id + "_axis_y_container")
 
-        //Sélection du contenu des points -> Ajout d'un attribut valant un id
+        //add a container for plots/bar in the scatterplot svg
         this.plot_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", this.id + "_plot_container")
+            
+        //add a container for axis label in the scatterplot svg
+        this.axis_container = d3.select("#" + this.id + "_svg")
+            .append("svg:g")
+            .attr("id", this.id + "_axis_container")
 
 
         $("#" + this.id + "_plot_container")
@@ -1388,6 +1393,8 @@ ScatterPlot.prototype = {
 
         var self = this;
 
+        this.label_update();
+        
         //detect label size
         var label_width = 0;
         var line = 0
@@ -1411,14 +1418,14 @@ ScatterPlot.prototype = {
         var className = "sp_legend"
         if (space < 1.1) {
             this.rotation_x = 320;
-            this.text_position_x = 45;
-            this.sub_text_position_x = 65;
+            this.text_position_x = 60;
+            this.sub_text_position_x = 80;
             className = "sp_rotated_legend";
         } else {
             this.rotation_x = 0;
             className = "sp_legend";
-            this.text_position_x = 15;
-            this.sub_text_position_x = 30;
+            this.text_position_x = 30;
+            this.sub_text_position_x = 45;
         }
 
         //LEGENDE
@@ -1527,6 +1534,8 @@ ScatterPlot.prototype = {
 
         self = this;
 
+        this.label_update();
+        
         //LEGENDE
         leg = this.axis_y_container.selectAll("text")
             .data(data);
@@ -1609,6 +1618,28 @@ ScatterPlot.prototype = {
                 return null;
             });
 
+    },
+    
+    label_update : function () {
+        
+        var data = [
+            {x:(this.gridSizeW/2)+this.marge_left, y:12, text:this.available_axis[this.splitX].label, rotation:0 },
+            {y:(this.gridSizeH/2)+this.marge_top,  x:12, text:this.available_axis[this.splitY].label, rotation:270}
+        ]
+        
+        leg = this.axis_container.selectAll("text")
+            .data(data);
+        leg.enter()
+            .append("text");
+        leg.exit()
+            .remove()
+        leg.attr("x", function(d) {return d.x})
+            .attr("y", function(d) {return d.y})
+            .text(function(d) {return d.text})
+            .attr("class", "sp_legend2")
+            .attr("transform", function(d) {
+                if (d.rotate != 0) return "rotate(" + d.rotation + " " + d.x + " " + d.y + ")"
+            })
     },
 
     /**

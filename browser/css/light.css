@@ -297,6 +297,12 @@ line {
   text-anchor: middle;
   dominant-baseline: middle;
 }
+.sp_legend2 {
+  fill: #657b83;
+  opacity: 0.4;
+  text-anchor: middle;
+  dominant-baseline: middle;
+}
 .sp_system {
   position: absolute;
   top: -0.5em;
