@@ -640,7 +640,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
           code_short = "Unexpected ";
           code_short += kseg->before.toStringSigns() + germline->index->getLabel(kseg->before);
           code_short += "/";
-          code_short += kseg->before.toStringSigns() + germline->index->getLabel(kseg->after);
+          code_short += kseg->after.toStringSigns() + germline->index->getLabel(kseg->after);
           info_extra += " " + kseg->before.toString() + "/" + kseg->after.toString() + " (" + code_short + ")";
         }
       return ;
