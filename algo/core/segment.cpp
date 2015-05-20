@@ -640,11 +640,17 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
       KmerSegmenter *kseg = new KmerSegmenter(seq, germline, THRESHOLD_NB_EXPECTED, 1);
       if (kseg->isSegmented() && (!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12)))
         {
+          reversed = kseg->isReverse();
+
+          KmerAffect left = reversed ? KmerAffect(kseg->after, true) : kseg->before ;
+          KmerAffect right = reversed ? KmerAffect(kseg->before, true) : kseg->after ;
+
           code_short = "Unexpected ";
-          code_short += kseg->before.toStringSigns() + germline->index->getLabel(kseg->before);
+
+          code_short += left.toStringSigns() + germline->index->getLabel(left);
           code_short += "/";
-          code_short += kseg->after.toStringSigns() + germline->index->getLabel(kseg->after);
-          info_extra += " " + kseg->before.toString() + "/" + kseg->after.toString() + " (" + code_short + ")";
+          code_short += right.toStringSigns() + germline->index->getLabel(right);
+          info_extra += " " + left.toString() + "/" + right.toString() + " (" + code_short + ")";
         }
       return ;
     }
