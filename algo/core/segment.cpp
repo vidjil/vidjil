@@ -192,7 +192,7 @@ ostream &operator<<(ostream &out, const Segmenter &s)
     }
   else
     {
-      out << s.sequence << endl ;
+      out << s.getSequence().sequence << endl ;
     }
 
   return out ;
