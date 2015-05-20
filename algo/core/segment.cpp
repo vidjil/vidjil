@@ -266,6 +266,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
           return ;
         }
 
+      // This strand computation is only a heuristic, especially for chimera +/- reads
+      // Anyway, it allows to gather such reads and their reverse complement into a unique window...
+      // ... except when the read is quite different outside the window
       strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
 
       // The pseudo-germline should never take precedence over regular germlines of similar e-value
