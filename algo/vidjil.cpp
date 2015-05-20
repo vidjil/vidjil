@@ -910,6 +910,9 @@ int main (int argc, char **argv)
 
       for (list< pair <KmerAffect, string> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
 	{
+          if (it->first.getStrand() == -1)
+            continue ;
+
 	  char key = affect_char(it->first.affect) ;
 	  
 	  cout << setw(12) << stats_max[key] << " " ;

@@ -213,6 +213,10 @@ void IKmerStore<T>::insert(Fasta& input,
   }
 
   labels.push_back(make_pair(T(label, 1), label)) ;
+
+  if (revcomp_indexed  && ! T::hasRevcompSymetry()) {
+    labels.push_back(make_pair(T(label, -1), label)) ;
+  }
 }
 
 template<class T> 
