@@ -14,6 +14,9 @@ SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
 VALGRIND=valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file="$$(mktemp "$(REPORTS_PATH)/valgrind.xml.XXXXXX")"
 
+DATE=$(shell date +%Y-%m-%d:%H:%M:%S)
+SNAPSHOT=snapshot-log-$(DATE)
+
 .PHONY: all force clean forcedep
 
 test: all
@@ -25,6 +28,11 @@ test: all
 
 all: core $(EXEC)
 	@echo "All tests compiled."
+
+snapshot:
+	grep . *.log should-vdj-tests/*.log > $(SNAPSHOT)
+	touch snapshot-last ; mv snapshot-last snapshot-prev
+	ln -s $(SNAPSHOT) snapshot-last
 
 should: vidjil $(SHOULD_LOG)
 
