@@ -1,3 +1,4 @@
+!REQUIRES: python ../../tools/check_python_version.py
 !LAUNCH: ../../vidjil -z 0 -w 60 -G ../../germline/IGH ../../data/Stanford_S22.fasta ; python ../../tools/fuse.py out/Stanford_S22.vidjil out/Stanford_S22.vidjil -o out/fused.data ; cat out/fused.data | python ../../tools/format_json.py -1
 
 $ Points list
