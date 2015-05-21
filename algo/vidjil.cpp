@@ -102,10 +102,8 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define DEFAULT_SEED   ""
 
 #define DEFAULT_DELTA_MIN  -10
-#define DEFAULT_DELTA_MAX   20
 
 #define DEFAULT_DELTA_MIN_D  0
-#define DEFAULT_DELTA_MAX_D  80
 
 #define DEFAULT_MAX_AUDITIONED 2000
 #define DEFAULT_RATIO_REPRESENTATIVE 0.5
@@ -179,7 +177,6 @@ void usage(char *progname, bool advanced)
        << "                (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)" << endl
 #endif
        << "  -m <int>      minimal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MIN << ") (default with -D: " << DEFAULT_DELTA_MIN_D << ")" << endl
-       << "  -M <int>      maximal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MAX << ") (default with -D: " << DEFAULT_DELTA_MAX_D << ")" << endl
        << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ")" << endl
        << "  -e <float>    maximal e-value for determining if a segmentation can be trusted (default: " << THRESHOLD_NB_EXPECTED << ")" << endl
        << "  -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: " << DEFAULT_TRIM << ") (0: no trim)" << endl
@@ -334,7 +331,6 @@ int main (int argc, char **argv)
 
   // Admissible delta between left and right segmentation points
   int delta_min = DEFAULT_DELTA_MIN ; // Kmer+Fine
-  int delta_max = DEFAULT_DELTA_MAX ; // Fine
   int trim_sequences = DEFAULT_TRIM;
 
   bool output_sequences_by_cluster = false;
@@ -368,7 +364,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHaiI12g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:M:N:s:b:Sn:o:L%:y:z:uUK3E:t:")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHaiI12g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3E:t:")) != EOF)
 
     switch (c)
       {
@@ -404,7 +400,6 @@ int main (int argc, char **argv)
       case 'D':
 	f_reps_D.push_back(optarg);
 	delta_min = DEFAULT_DELTA_MIN_D ;
-	delta_max = DEFAULT_DELTA_MAX_D ;
 	break;
         
       case 'J':
@@ -445,7 +440,6 @@ int main (int argc, char **argv)
             {
               f_reps_D.push_back(putative_f_rep_D.c_str()) ;
               delta_min = DEFAULT_DELTA_MIN_D ;
-              delta_max = DEFAULT_DELTA_MAX_D ;
             }
         }
 	f_reps_J.push_back((germline_system + "J.fa").c_str()) ;
@@ -477,10 +471,6 @@ int main (int argc, char **argv)
 
       case 'm':
 	delta_min = atoi(optarg);
-        break;
-
-      case 'M':
-	delta_max = atoi(optarg);
         break;
 
       case '!':
@@ -788,7 +778,7 @@ int main (int argc, char **argv)
 	  Germline *germline;
 	  germline = new Germline(germline_system, 'X',
                                   f_reps_V, f_reps_D, f_reps_J, 
-                                  delta_min, delta_max, trim_sequences);
+                                  delta_min, trim_sequences);
 
           germline->new_index(seed);
 
@@ -807,7 +797,7 @@ int main (int argc, char **argv)
           multigermline->build_with_one_index(seed, false);
         }
 
-        Germline *pseudo = new Germline(PSEUDO_GERMLINE_MAX12, 'x', -10, 80, trim_sequences);
+        Germline *pseudo = new Germline(PSEUDO_GERMLINE_MAX12, 'x', -10, trim_sequences);
         pseudo->index = multigermline->index ;
         multigermline->germlines.push_back(pseudo);
     }

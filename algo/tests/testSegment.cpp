@@ -20,7 +20,7 @@ void testFineSegment()
   Fasta data("../../data/Stanford_S22.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline("IGH", 'G', seqV, seqD, seqJ, 0, 50);
+  germline = new Germline("IGH", 'G', seqV, seqD, seqJ, 0);
   germline->new_index("####");
 
   Sequence seq = data.read(2);
@@ -71,11 +71,11 @@ void testSegmentOverlap()
   Fasta data("../../data/bug-segment-overlap.fa", 1, " ");
   
   Germline *germline1 ;
-  germline1 = new Germline("TRG", 'G', seqV, seqV, seqJ, -50, 50);
+  germline1 = new Germline("TRG", 'G', seqV, seqV, seqJ, -50);
   germline1->new_index("##########");
 
   Germline *germline2 ;
-  germline2 = new Germline("TRG2", 'G', seqV, seqV, seqJ, -50, 50);
+  germline2 = new Germline("TRG2", 'G', seqV, seqV, seqJ, -50);
   germline2->new_index("##########");
 
   for (int i = 0; i < data.size(); i++) {
@@ -104,7 +104,7 @@ void testSegmentationCause() {
   Fasta data("../../data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, seqV, seqJ, 0, 10);
+  germline = new Germline("TRG", 'G', seqV, seqV, seqJ, 0);
   germline->new_index("##########");
 
   int nb_checked = 0;
@@ -218,7 +218,7 @@ void testExtractor() {
   OnlineFasta data("../../data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, seqV, seqJ, 0, 10, 0);
+  germline = new Germline("TRG", 'G', seqV, seqV, seqJ, 0, 0);
   germline->new_index("##########");
 
   MultiGermline *multi ;
@@ -298,7 +298,7 @@ void testProbability() {
     V.add(v);
     J.add(j);
   }
-  Germline germline("Test", 'T', V, Fasta(), J, 0, 30);
+  Germline germline("Test", 'T', V, Fasta(), J, 0);
   germline.new_index("####");
 
 
