@@ -709,8 +709,9 @@ List.prototype = {
             var c = this.m.clone(i) 
             if (c.getName().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
             if (c.getSequence().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
+            if (c.getRevCompSequence().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
             if (c.getSequenceName().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
-        }
+		}
         this.m.update()
     },
     

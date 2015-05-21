@@ -22,6 +22,8 @@ test:
 	make test_tools
 	@echo
 	@echo "*** All tests passed. Congratulations !"
+	@echo
+	make -C algo/tests snapshot
 
 test_browser: unit_browser functional_browser
 

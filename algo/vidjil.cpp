@@ -910,6 +910,9 @@ int main (int argc, char **argv)
 
       for (list< pair <KmerAffect, string> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
 	{
+          if (it->first.getStrand() == -1)
+            continue ;
+
 	  char key = affect_char(it->first.affect) ;
 	  
 	  cout << setw(12) << stats_max[key] << " " ;
@@ -932,6 +935,8 @@ int main (int argc, char **argv)
   //           CLONE ANALYSIS           //
   ////////////////////////////////////////
   if (command == CMD_CLONES || command == CMD_WINDOWS) {
+
+    string f_json = out_dir + f_basename + JSON_SUFFIX ;
 
     //////////////////////////////////
     //$$ Kmer Segmentation
@@ -1094,7 +1099,7 @@ int main (int argc, char **argv)
 	clones_windows  = comp.cluster(forced_edges, w, cout, epsilon, minPts) ;
 	comp.stat_cluster(clones_windows, cout );
 	comp.del();
-	cout << "  ==> " << clones_windows.size() << " clusters" << endl ;
+	cout << "  ==> " << clones_windows.size() << " clusters (" << f_json << ")" << endl ;
       } 
     else
       { 
@@ -1378,7 +1383,6 @@ int main (int argc, char **argv)
     } // end if (command == CMD_CLONES) 
 
     //$$ .json output: json_data_segment
-    string f_json = out_dir + f_basename + JSON_SUFFIX ;
     cout << "  ==> " << f_json << "\t(data file for the browser)" << endl ;
     ofstream out_json(f_json.c_str()) ;
     

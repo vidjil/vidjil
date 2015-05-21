@@ -356,6 +356,19 @@ Clone.prototype = {
         }
     },
 
+	getRevCompSequence : function () {
+        if (typeof (this.sequence) != 'undefined' && this.sequence != 0){
+            var dict_comp  = {"A":"T","T":"A","C":"G","G":"C"}
+			var revcompSeq = ""
+			for (var i = this.sequence.length; i >= 0; i--) {
+				revcompSeq += dict_comp[this.sequence[i]]
+			}
+			return revcompSeq
+        }else{
+            return "0";
+        }
+    },
+    
     getPrintableSegSequence: function () {
         if (typeof this.seg == 'undefined' || typeof this.seg['5end'] == 'undefined' || typeof this.seg['3start'] == 'undefined') {
             return this.getSequence()

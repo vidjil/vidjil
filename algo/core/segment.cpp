@@ -127,7 +127,7 @@ bool Segmenter::finishSegmentationD()
 
   seg_V = seq.substr(0, Vend+1) ; // From pos. 0 to Vend
   seg_J = seq.substr(Jstart) ;
-  
+  seg_N = seq.substr(Vend+1, Jstart-Vend-1) ;  // Twice computed for FineSegmenter, but only once in KmerSegmenter !
   seg_D  = seq.substr(Dstart, Dend-Dstart+1) ; // From Dstart to Dend
   
   info = "VDJ \t0 " + string_of_int(Vend) +
@@ -192,7 +192,7 @@ ostream &operator<<(ostream &out, const Segmenter &s)
     }
   else
     {
-      out << s.sequence << endl ;
+      out << s.getSequence().sequence << endl ;
     }
 
   return out ;
@@ -266,10 +266,10 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
           return ;
         }
 
+      // This strand computation is only a heuristic, especially for chimera +/- reads
+      // Anyway, it allows to gather such reads and their reverse complement into a unique window...
+      // ... except when the read is quite different outside the window
       strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
-
-      // The pseudo-germline should never take precedence over regular germlines of similar e-value
-      multiplier *= PSEUDO_GERMLINE_MAX12_EVALUE_PENALTY ;
     }
 
   else
@@ -394,9 +394,9 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
     // Detail the unsegmentation cause
     if (evalue_left >= threshold && evalue_right >= threshold)
       because = UNSEG_TOO_FEW_ZERO ;
-    else if (evalue_left >= threshold)
+    else if ((strand == 1 ? evalue_left : evalue_right) >= threshold)
       because = UNSEG_TOO_FEW_V ;
-    else if (evalue_right >= threshold)
+    else if ((strand == 1 ? evalue_right : evalue_left) >= threshold)
       because = UNSEG_TOO_FEW_J ;
     else // left and right are <= threshold, but their sum is > threshold
       because = UNSEG_TOO_FEW_ZERO ;
@@ -637,11 +637,17 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
       KmerSegmenter *kseg = new KmerSegmenter(seq, germline, THRESHOLD_NB_EXPECTED, 1);
       if (kseg->isSegmented() && (!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12)))
         {
+          reversed = kseg->isReverse();
+
+          KmerAffect left = reversed ? KmerAffect(kseg->after, true) : kseg->before ;
+          KmerAffect right = reversed ? KmerAffect(kseg->before, true) : kseg->after ;
+
           code_short = "Unexpected ";
-          code_short += kseg->before.toStringSigns() + germline->index->getLabel(kseg->before);
+
+          code_short += left.toStringSigns() + germline->index->getLabel(left);
           code_short += "/";
-          code_short += kseg->before.toStringSigns() + germline->index->getLabel(kseg->after);
-          info_extra += " " + kseg->before.toString() + "/" + kseg->after.toString() + " (" + code_short + ")";
+          code_short += right.toStringSigns() + germline->index->getLabel(right);
+          info_extra += " " + left.toString() + "/" + right.toString() + " (" + code_short + ")";
         }
       return ;
     }
