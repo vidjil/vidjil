@@ -1,0 +1,14 @@
+!LAUNCH: ../../vidjil -i -g ../../germline/ -r 1 -c clones ../../data/revcomp-VdJa.fa
+
+$ Just one window found
+1:==> found 1 ..-windows
+
+$ Just one clone found
+1:==> 1 clones
+
+$ Two reads segmented on TRA+D
+1:TRA.D -> 2
+
+$ segmentation for the main clone
+1:TRDV1.01 5//3 TRDD2.01 1//7 TRAJ29
+

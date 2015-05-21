@@ -12,6 +12,7 @@
 import defs
 import vidjil_utils
 import logging
+from controller_utils import error_message
 
 import gluon.contrib.simplejson, time, datetime
 if request.env.http_origin:
@@ -29,7 +30,11 @@ def index():
 def help():
     return dict(message=T('help i\'m lost'))
 
-
+#########################################################################
+## default home page
+def home():
+    res = {"redirect" : URL('admin' if auth.is_admin() else 'patient', 'index', scheme=True, host=True)}
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 def logger():
     '''Log to the server'''
@@ -42,8 +47,11 @@ def logger():
         lvl = logging.INFO
     log.log(lvl, res)
 
-def init_db():
-    if db(db.auth_user.id > 0).count() == 0:
+def init_db(force=False):
+    if (force) or (db(db.auth_user.id > 0).count() == 0) : 
+        for table in db :
+            table.truncate()
+        
         id_first_user=""
 
         ## création du premier user
@@ -86,6 +94,7 @@ def init_db():
         auth.add_permission(id_admin_group, 'create', db.patient, 0)
         auth.add_permission(id_admin_group, 'create', db.auth_group, 0)
         auth.add_permission(id_admin_group, 'create', db.config, 0)
+        auth.add_permission(id_admin_group, 'impersonate', db.auth_user, 0)
 
 def init_from_csv():
     if db(db.auth_user.id > 0).count() == 0:
@@ -93,7 +102,7 @@ def init_from_csv():
         log.info(res)
 
         try:
-            db.import_from_csv_file(open(defs.DB_BACKUP_FILE, 'rb'), null='')
+            db.import_from_csv_file(open(defs.DB_BACKUP_FILE, 'rb'))
             # db.scheduler_task.truncate()
             # db.scheduler_run.truncate()
         except Exception as e:
@@ -119,20 +128,25 @@ def run_request():
         id_config = None
     else:
         id_config = request.vars["config_id"]
-    if not auth.has_permission("run", "results_file") and not auth.has_membership("admin") :
+    if not auth.can_process_file():
         error += "permission needed"
 
     id_patient = db.sequence_file[request.vars["sequence_file_id"]].patient_id
 
-    if not auth.has_permission('admin', 'patient', id_patient) :
+    if "grep_reads" in request.vars:
+        grep_reads = request.vars["grep_reads"]
+    else:
+        grep_reads = None
+
+    if not auth.can_modify_patient(id_patient) :
         error += "you do not have permission to launch process for this patient ("+str(id_patient)+"), "
 
     if id_config:
-      if not auth.has_permission('read', 'config', id_config) :
+      if not auth.can_use_config(id_config) :
         error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
 
     if error == "" :
-        res = schedule_run(request.vars["sequence_file_id"], request.vars["config_id"])
+        res = schedule_run(request.vars["sequence_file_id"], id_config, grep_reads)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
@@ -148,7 +162,6 @@ def run_request():
 # need patient, config
 # need patient admin or read permission
 def get_data():
-    import time
     from subprocess import Popen, PIPE, STDOUT
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
@@ -165,9 +178,8 @@ def get_data():
         error += "id patient file needed, "
     if not "config" in request.vars:
         error += "id config needed, "
-    if not auth.has_permission('admin', 'patient', request.vars["patient"]) and \
-    not auth.has_permission('read', 'patient', request.vars["patient"]):
-        error += "you do not have permission to consult this patient ("+request.vars["patient"]+")"
+    if not auth.can_view_patient(request.vars["patient"]):
+        error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
 
     query = db( ( db.fused_file.patient_id == request.vars["patient"] )
                & ( db.fused_file.config_id == request.vars["config"] )
@@ -185,7 +197,7 @@ def get_data():
         data = gluon.contrib.simplejson.loads(f.read())
         f.close()
         
-        patient_name = vidjil_utils.anon(request.vars["patient"], auth.user_id)
+        patient_name = vidjil_utils.anon_ids(request.vars["patient"])
         config_name = db.config[request.vars["config"]].name
         command = db.config[request.vars["config"]].command
         
@@ -196,10 +208,12 @@ def get_data():
         
         data["samples"]["info"] = []
         data["samples"]["timestamp"] = []
+        data["samples"]["db_key"] = []
         for i in range(len(data["samples"]["original_names"])) :
             data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
             data["samples"]["info"].append('')
             data["samples"]["timestamp"].append('')
+            data["samples"]["db_key"].append('')
 
         ## récupération des infos stockées sur la base de données
         query = db( ( db.patient.id == db.sequence_file.patient_id )
@@ -217,6 +231,7 @@ def get_data():
                     data["samples"]["timestamp"][i] = str(row.sequence_file.sampling_date)
                     data["samples"]["info"][i] = row.sequence_file.info
                     data["samples"]["commandline"][i] = command
+                    data["samples"]["db_key"][i] = row.sequence_file.id
                 
         log.debug("get_data (%s) c%s -> %s" % (request.vars["patient"], request.vars["config"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
@@ -229,8 +244,6 @@ def get_data():
     
 #########################################################################
 def get_custom_data():
-    import time
-    import vidjil_utils
     from subprocess import Popen, PIPE, STDOUT
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True)} #TODO _next
@@ -241,15 +254,21 @@ def get_custom_data():
     if not "custom" in request.vars :
         error += "no file selected, "
     else:
-        for id in request.vars["custom"] :
-            sequence_file_id = db.results_file[id].sequence_file_id
-            patient_id =db.sequence_file[sequence_file_id].patient_id
-            if not auth.has_permission('admin', 'patient', patient_id) and \
-                not auth.has_permission('read', 'patient', patient_id):
-                error += "you do not have permission to consult this patient ("+str(patient_id)+")"
+        if type(request.vars['custom']) is not list or len(request.vars['custom']) < 2:
+            error += "you must select several files."
+        else:
+            for id in request.vars["custom"] :
+                log.debug("id = '%s'" % str(id))
+                sequence_file_id = db.results_file[id].sequence_file_id
+                patient_id =db.sequence_file[sequence_file_id].patient_id
+                if not auth.can_view_patient(patient_id):
+                    error += "you do not have permission to consult this patient ("+str(patient_id)+")"
             
     if error == "" :
-        data = custom_fuse(request.vars["custom"])
+        try:
+            data = custom_fuse(request.vars["custom"])
+        except IOError, error:
+            return error_message(str(error))
         
         data["dataFileName"] = "Compare patients"
         data["info"] = "Compare patients"
@@ -262,7 +281,7 @@ def get_custom_data():
             sequence_file_id = db.results_file[id].sequence_file_id
             patient_id = db.sequence_file[sequence_file_id].patient_id
             config_id = db.results_file[id].config_id
-            patient_name = vidjil_utils.anon(patient_id, auth.user_id)
+            patient_name = vidjil_utils.anon_ids(patient_id)
             filename = db.sequence_file[sequence_file_id].filename
             data["samples"]["original_names"].append(patient_name + "_" + filename)
             data["samples"]["timestamp"].append(str(db.sequence_file[sequence_file_id].sampling_date))
@@ -288,8 +307,7 @@ def get_analysis():
         error += "id patient file needed, "
     if not "config" in request.vars:
         error += "id config needed, "
-    if not auth.has_permission('admin', 'patient', request.vars["patient"]) and \
-    not auth.has_permission('read', 'patient', request.vars["patient"]):
+    if not auth.can_view_patient(request.vars["patient"]):
         error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
 
     ## empty analysis file
@@ -348,7 +366,7 @@ def save_analysis():
         error += "id patient file needed, "
     if not "config" in request.vars:
         error += "id config needed, "
-    if not auth.has_permission('admin', 'patient', request.vars['patient']) :
+    if not auth.can_modify_patient(request.vars['patient']) :
         error += "you do not have permission to save changes on this patient"
 
     if error == "" :
@@ -432,7 +450,7 @@ def user():
 
     #redirect already logged user 
     if auth.user and request.args[0] == 'login' :
-        res = {"redirect" : URL('patient', 'index', scheme=True, host=True)}
+        res = {"redirect" : URL('default', 'home', scheme=True, host=True)}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
     #only authentified admin user can access register view
@@ -462,6 +480,31 @@ def user():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
     return dict(form=auth())
+
+def impersonate() :
+    if auth.is_impersonating() :
+        stop_impersonate()
+    if request.vars["id"] != 0 :
+        log.debug({"success" : "true", "message" : "impersonate >> %s" % request.vars["id"]})
+        auth.impersonate(request.vars["id"]) 
+        log.debug({"success" : "true", "message" : "impersonated"})
+    if not 'admin' in request.vars['next']:
+        res = {"redirect": "reload"}
+    else:
+        res = {"redirect" : URL('patient', 'index', scheme=True, host=True)}
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def stop_impersonate() :
+    if auth.is_impersonating() :
+        log.debug({"success" : "true", "message" : "impersonate << stop"})
+        auth.impersonate(0) 
+        # force clean login (default impersonate don't restore everything :/ )
+        auth.login_user(db.auth_user(auth.user.id))
+
+    res = {"redirect" : "reload"}
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+
 
 ## TODO make custom download for .data et .analysis
 @cache.action()

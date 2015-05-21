@@ -46,11 +46,11 @@ germline_data = {
         }
     },
 
-    "VdJa": {
+    "TRA+D": {
         "shortcut": "a",
         "color" : "#46abf2",
-        "description": "Human T-cell receptor, incomplete Vd-Ja rearrangements",
-        "5": ["TRDV.fa"],
+        "description": "Human T-cell receptor, alpha/delta locus (14q11.2)",
+        "5": ["TRDV.fa", "TRDD.fa"],
         "4": ["TRDD.fa"],
         "3": ["TRAJ.fa"],
         "parameters": {
@@ -63,8 +63,8 @@ germline_data = {
         "color" : "#d5a920",
         "description": "Human T-cell receptor, delta locus (14q11.2), incomplete Dd2-Dd3 rearrangements",
         "follows": "TRD",
-        "5": ["TRDV.fa", "TRDD2-01.fa"],
-        "3": ["TRDJ.fa", "TRDD3-01.fa"]
+        "5": ["TRDV.fa", "TRDD2_upstream.fa"],
+        "3": ["TRDJ.fa", "TRDD3_downstream.fa"]
     },
 
     "IGH": {

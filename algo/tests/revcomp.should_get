@@ -1,10 +1,10 @@
-!LAUNCH: $LAUNCHER ../../vidjil -k 9 -G ../../germline/IGH  -K -c clones ../../data/revcomp.fa ; grep '#IGH' out/revcomp.affects | sed 's/[^X]//g'  | awk '{ print length }'
+!LAUNCH: $LAUNCHER ../../vidjil -k 9 -G ../../germline/IGH  -K -c clones ../../data/revcomp.fa ; grep 'X.X.X' out/revcomp.affects | sed 's/[^X]//g'  | sort -u
 
 $ Segments both reads, normal and reverse
 1:junction detected in 2 reads
 
 $ Same number of 'V' affectations in both reads
-2:143
+1: XXX
 
 $ Only one window
 1:==> found 1 ..-window

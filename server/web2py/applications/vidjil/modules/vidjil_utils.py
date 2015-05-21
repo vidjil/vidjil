@@ -2,6 +2,7 @@ import math
 import re
 import defs
 import json
+import datetime
 from gluon import current
 from datetime import date
 
@@ -50,7 +51,10 @@ def format_size(n, unit='B'):
 
 def age_years_months(birth, months_below_year=4):
     '''Get the age in years, and possibly months.'''
-
+    
+    if not isinstance(birth, datetime.date) :
+        return '-/-'
+    
     today = date.today()
     years = today.year - birth.year - ((today.month, today.day) < (birth.month, birth.day))
     age = '%dy' % years
@@ -71,6 +75,10 @@ def anon_birth(patient_id, user_id):
     auth=current.auth
 
     birth = db.patient[patient_id].birth
+
+    if birth is None:
+        return ""
+
     age = age_years_months(birth)
 
     if auth.has_permission("anon", "patient", patient_id, user_id):
@@ -78,15 +86,26 @@ def anon_birth(patient_id, user_id):
     else:
         return age
 
-def anon(patient_id, user_id):
+def anon_ids(patient_id):
     '''Anonymize patient name. Only the 'anon' access see the full patient name.'''
     db = current.db
     auth=current.auth
     
     last_name = db.patient[patient_id].last_name
     first_name = db.patient[patient_id].first_name
-    
-    if auth.has_permission("anon", "patient", patient_id, user_id):
+
+    return anon_names(patient_id, first_name, last_name)
+
+def anon_names(patient_id, first_name, last_name, can_view=None):
+    '''
+    Anonymize the given names of the patient whose ID is patient_id.
+    This function performs at most one db call (to know if we can see
+    the patient's personal informations). None is performed if can_view
+    is provided (to tell if one can view the patient's personal informations)
+    '''
+    auth=current.auth
+
+    if can_view or (can_view == None and auth.can_view_patient_info(patient_id)):
         name = last_name + " " + first_name
     else:
         try:
@@ -96,7 +115,7 @@ def anon(patient_id, user_id):
         name = ln[:3]
 
     # Admins also see the patient id
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         name += ' (%s)' % patient_id
 
     return name
@@ -185,9 +204,18 @@ def extract_fields_from_json(json_fields, pos_in_list, filename):
 
 ####
 
+SOURCES = "https://github.com/vidjil/vidjil/blob/master/server/web2py/applications/vidjil/%s#L%s"
+SOURCES_DIR_DEFAULT = 'controllers/'
+SOURCES_DIR = {
+    'task.py': 'models/',
+    'db.py': 'models/',
+}
+
+
 log_patient = re.compile('\((\d+)\)')
 log_config = re.compile(' c(\d+)')
 log_task = re.compile('\[(\d+)\]')
+log_py = re.compile('(.*[.]py):(\d+)')
 
 def log_links(s):
     '''Add HTML links to a log string
@@ -213,6 +241,14 @@ def log_links(s):
     m_task = log_task.search(s)
     task = int(m_task.group(1)) if m_task else None
 
+    m_py = log_py.search(s)
+    if m_py:
+        source = m_py.group(1)
+        if source in SOURCES_DIR:
+            source = SOURCES_DIR[source] + source
+        else:
+            source = SOURCES_DIR_DEFAULT + source
+
     ### Rules
 
     url = ''  # href link
@@ -236,6 +272,10 @@ def log_links(s):
         (start, end) = m_task.span()
         start += 1
         end -= 1
+
+    if m_py:
+        (start, end) = m_py.span(2)
+        url = SOURCES % (source, m_py.group(2))
 
     ### Build final string
 

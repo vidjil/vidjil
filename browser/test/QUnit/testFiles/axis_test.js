@@ -62,22 +62,44 @@ test("Axis : ", function() {
     axis.useGermline(axis.m.germlineJ, "J", true)
     deepEqual(axis.labels,  [
             {"geneColor": "rgb(36,183,171)","pos": 0.25,"text": "TRGJ2","type": "line"},
-            {"geneColor": "rgb(183,110,36)","pos": 0.125,"text": "*03","type": "subline"},
-            {"geneColor": "rgb(36,183,171)","pos": 0.375,"text": "*04","type": "subline"},
+            {"geneColor": "rgb(183,110,36)","pos": 0.125,"text": "*02","type": "subline"},
+            {"geneColor": "rgb(36,183,171)","pos": 0.375,"text": "*03","type": "subline"},
             {"geneColor": "","pos": 0.75,"text": "?","type": "line"}
         ], "check germline J allele labels");
     
-    equal(axis.pos(0).toPrecision(3), 0.125, "clone 0 (j2*03) position -> 0.125")
-    equal(axis.pos(1).toPrecision(3), 0.375, "clone 1 (j2*04) position -> 0.375")
+    equal(axis.pos(0).toPrecision(3), 0.375, "clone 0 (j2*03) position -> 0.375")
+    equal(axis.pos(1).toPrecision(3), 0.125, "clone 1 (j2*04) position -> 0.125")
     
     
     
     //Nlength
     axis.custom(function(cloneID) {
-                var value = m.clone(cloneID)
-                    .getNlength()
-                if (typeof value != "undefined" && value != 0) return value;
-                return undefined;
-            })
+                return m.clone(cloneID).getNlength();
+            },
+            0,25)
+    
+    equal(axis.pos(0).toPrecision(3), 0.00, "custom  : clone 0 (nlength = 0) position -> 0.00")
+    equal(axis.pos(1).toPrecision(3), 0.360, "custom  : clone 1 (nlength = 9) position -> 0.360")
 
+    
+    //gc
+    axis.custom('GCContent', 0, 1, 'percent')
+    
+    equal(axis.pos(0).toPrecision(3), 0.0476, "custom (percent) : clone 0 (gc = 1/21) position -> 0.0476")
+    equal(axis.pos(1).toPrecision(3), 0.944, "custom (percent) : clone 1 (gc = 17/18) position -> 0.944")
+    deepEqual(axis.labels[0].text,  "0.0%", "custom (percent) : check label 0.0%")
+    
+    //gc + log
+    axis.custom('GCContent', 0.001, 1, 'percent', true)
+    
+    equal(axis.pos(0).toPrecision(3), 0.559, "custom (percent+log) : clone 0 (gc = 1/21) position -> 0.559")
+    equal(axis.pos(1).toPrecision(3), 0.992, "custom (percent+log) : clone 1 (gc = 17/18) position -> 0.992")
+    deepEqual(axis.labels[0].text,  "100%", "custom (percent+log) : check label 100%")
+    deepEqual(axis.labels[1].text,  "10%", "custom (percent+log) : check label 10%")
+    
+    //output string
+    axis.custom(function(cloneID) {
+                return m.clone(cloneID).getName();
+            }, undefined, undefined, 'string')
+    equal(axis.pos(0).toPrecision(3), 0.100, "custom (name : clone 0 ")
 });

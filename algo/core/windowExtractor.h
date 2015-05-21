@@ -9,6 +9,10 @@
 #include "kmerstore.h"
 #include "kmeraffect.h"
 #include "windows.h"
+#include "read_storage.h"
+
+#define NB_BINS_CLONES 10
+#define MAX_VALUE_BINS_CLONES 1000
 
 using namespace std;
 
@@ -19,7 +23,8 @@ using namespace std;
 class WindowExtractor {
  private:
   size_t nb_reads;
-  map<string, size_t> nb_reads_germline;
+  map<string, BinReadStorage> stats_reads;
+  map<string, BinReadStorage> stats_clones;
 
   ostream *out_segmented;
   ostream *out_unsegmented;
@@ -27,18 +32,20 @@ class WindowExtractor {
 
   Stats stats[STATS_SIZE];
   size_t max_reads_per_window;
+
+  MultiGermline *multigermline;
  public:
 
-  WindowExtractor();
+  WindowExtractor(MultiGermline *multigermline);
 
   /**
    * Extract windows from the collection of input reads.
    * If (un)segmented sequences must be output, the functions 
    * set(Un)SegmentedOutput() must be called before.
    * @param reads: the collection of input reads
-   * @param multigermline: the multigermline
    * @param w: length of the window
    * @param windows_labels: Windows that must be kept and registered as such.
+   * @param only_labeled_windows: remember only windows from windows_labels
    * @param nb_expected: maximal e-value of the segmentation
    * @param nb_reads_for_evalue: number of reads, used for e-value computation. Can be approximate or faked.
    * @return a pointer to a WindowsStorage that will contain all the windows.
@@ -46,9 +53,9 @@ class WindowExtractor {
    * @post Statistics on segmentation will be provided through the getSegmentationStats() methods
    *       and getAverageSegmentationLength().
    */
-  WindowsStorage *extract(OnlineFasta *reads, MultiGermline *multigermline,
+  WindowsStorage *extract(OnlineFasta *reads,
                           size_t w,
-                          map<string, string> &windows_labels,
+                          map<string, string> &windows_labels, bool only_labeled_windows=false,
                           int stop_after=-1, int only_nth_reads=1, bool keep_unsegmented_as_clone=false,
                           double nb_expected = THRESHOLD_NB_EXPECTED, int nb_reads_for_evalue = 1);
 
@@ -110,16 +117,31 @@ class WindowExtractor {
   void setAffectsOutput(ostream *out);
 
   /**
-   * Output the segmentation stats
+   * Output the segmentation and germlines stats
    * @param out: The output stream
    */
   void out_stats(ostream &out);
 
+  /**
+   * Output segmentation stats
+   */
+  void out_stats_segmentation(ostream &out);
+
+  /**
+   * Output germlines statistics (read lengths per germline,
+   * and number of reads per clones).
+   */
+  void out_stats_germlines(ostream &out);
  private:
   /**
    * Initialize the statistics (put 0 everywhere).
    */
   void init_stats();
+
+  /*
+   * Fill the stats_clone member of the different Germlines
+   */
+  void fillStatsClones(WindowsStorage *storage);
 };
 
 #endif

@@ -22,6 +22,7 @@ protected:
   float percent_cover;
   bool revcomp;
   string required;
+  float coverage_reference_length;
   float coverage;
   string coverage_info;
 public:
@@ -83,6 +84,11 @@ public:
    * Setting the sequence is not required and it can be empty.
    */
   void setRequiredSequence(string sequence);
+
+  /**
+   * @param coverage_reference_length: reference length used to compute the coverage
+   */
+  void setCoverageReferenceLength(float coverage_reference_length);
 };
 
 /**
@@ -109,6 +115,9 @@ public:
   void setStabilityLimit(int limit);
 
   // Actions
+  /**
+   * @pre setCoverageReferenceLength() must have been called previously
+   */
   void compute();
 
 };

@@ -13,19 +13,25 @@
                 widows: 2;
             }
 
-            @page :first {          /* first page */
-                margin-top: 2cm    
-            }
-
             .container { page-break-inside : avoid }
             .clone { page-break-inside : avoid }
             table { page-break-inside : avoid }
 
-            html, body {
-                width: 210mm;
-                height: 297mm;        
+            html {
+                background-color: #4F4F4F;
             }
-
+            html, body {
+                margin: auto;
+            }
+            .page {
+                width: 210mm;
+                padding: 20mm;
+                margin: 10mm auto;
+                border: 1px #D3D3D3 solid;
+                border-radius: 5px;
+                background: white;
+                box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+            }
             @media print {
                 body {
                     -webkit-print-color-adjust: exact;
@@ -37,6 +43,16 @@
                 footer.print {
                     position: fixed;
                     bottom: 277mm;
+                }
+                .page {
+                    margin: 0;
+                    border: initial;
+                    border-radius: initial;
+                    width: initial;
+                    min-height: initial;
+                    box-shadow: initial;
+                    background: initial;
+                    page-break-after: always;
                 }
             }
 
@@ -104,6 +120,7 @@
             .info-table {
                 width: 380px;
                 font-size: 100%;
+                word-break: break-all;
             }
             .flex{
                 width: 100%;
@@ -161,7 +178,7 @@
             }
             .label{
                 opacity:0.8;
-                max-width: 100px;
+                width: 100px;
                 padding-right:10px;
                 vertical-align: baseline;
             }
@@ -255,6 +272,17 @@
                 opacity: 0.8;
                 stroke: #222;
             }
+            .graph_line, .graph_select, .graph_focus{
+                stroke-width: 2.5px;
+                cursor: pointer;
+                stroke: #657b83;
+            }
+            .graph_data {
+                fill: none;
+                stroke-width: 8px;
+                opacity: 0.3;
+                cursor: pointer;
+            }
         </style>
 
         <!-- scatterplot style-->
@@ -297,18 +325,16 @@
         </style>
     </head>
     
-    <body>
+    <body class="page">
 
 <!-- bug with webkit
         <header class="print"> vidjil header : hello !! </header>
         <footer class="print"> vidjil footer : copyright blabla / rbx.vidjil.org/browser | 2015 voodooj company </footer>
 -->
-
         <div id="header">
             <div id="header-logo"><div id="logo">Vidjil <span class="logo">(beta)</span></div></div>
             <div id="header-title">Report template</div>
         </div>
-
     </body>
 
 </html>

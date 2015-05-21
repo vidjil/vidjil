@@ -1,7 +1,7 @@
-!LAUNCH: ../../vidjil -V ../../germline/IGHV.fa -D ../../germline/IGHD.fa -J ../../germline/IGHJ.fa -s \\\\#\\\\#\\\\#\\\\#\\\\#\\\\#-\\\\#\\\\#\\\\#\\\\#\\\\#\\\\# ../../data/Stanford_S22.fasta
+!LAUNCH: ../../vidjil -z 0 -V ../../germline/IGHV.fa -D ../../germline/IGHD.fa -J ../../germline/IGHJ.fa -s \\\\#\\\\#\\\\#\\\\#\\\\#\\\\#-\\\\#\\\\#\\\\#\\\\#\\\\#\\\\# ../../data/Stanford_S22.fasta
 
 $ Parses IGHV.fa germline
-1: 100439 bp in 344 sequences
+1: 101627 bp in 348 sequences
 
 $ Parses IGHD.fa germline
 1: 1070 bp in  44 sequences
@@ -10,11 +10,19 @@ $ Parses germline/IGHJ.fa
 1: 701 bp in  13 sequences
 
 $ Find the good index load
-1:custom .*  0.158. s13 k12
+1:custom .*  0.050. s13 k12
 
 $ Find approximately the good number of sequences for e-value computation
 1: approx. 131.. sequences
 
 $ Find the good number of windows in Stanford S22
-1: found 10732 50-windows in 13138 reads
+1: found 10750 50-windows in 13139 reads
 
+$ First clone -- find the good number of reads
+2:clone-001--.*--0000008
+
+$ First clone -- find the good representative
+1:clone-001--.*--lcl.FLN1FA001CPAUQ.1.-.105,232.-.2
+
+$ First clone -- find the good coverage
+1:clone-001--.* 128 bp .55. of 232.0 bp.

@@ -24,7 +24,8 @@
 
 /** View constructor <br>
  * super-class for all view <br>
- * contains all functions required by the model to interact with a view.
+ * contains all functions required by the model to interact with a view. <br>
+ * the model don't need anything else to handle a view.
  * @class View
  * @constructor 
  * */
@@ -38,14 +39,13 @@ View.prototype = {
     /**
      * init the view before use
      * @abstract
-     * @return {object] this
      * */
     init : function () {
-        return this
     },
     
     /**
-     * update all elements
+     * update all elements, perform a complete rebuild of the view <br>
+     * by default doing a updateElem() on each clone must do the job
      * @abstract
      * */
     update: function () {
@@ -55,7 +55,8 @@ View.prototype = {
     },
     
     /**
-     * update(size/style/position) a list of selected clones
+     * update(size/style/position) a list of selected clones <br>
+     * a slight function for operation who impact only a bunch of clones (merge/split/...)
      * @abstract
      * @param {integer[]} list - array of clone index
      * */
@@ -64,11 +65,21 @@ View.prototype = {
     },
     
     /**
-     * update(style only) a list of selected clones
+     * update(style only) a list of selected clones <br>
+     * a slight function for operation who impact only styles of clones (select/focus)
      * @abstract
      * @param {integer[]} list - array of clone index
      * */
     updateElemStyle : function () {
+        
+    },
+    
+    /**
+     * resize view to match his div size <br>
+     * each view must be able to match the size of it's div
+     * @abstract
+     * */
+    resize : function () {
         
     },
 }

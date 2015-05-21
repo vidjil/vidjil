@@ -10,6 +10,7 @@ void testRepresentative() {
   krc.setRevcomp(false);
   krc.setMinCover(1);
   krc.setPercentCoverage(0.5);
+  krc.setCoverageReferenceLength(50);
 
   krc.compute();
   Sequence representative = krc.getRepresentative();
@@ -55,6 +56,7 @@ void testRevcompRepresentative() {
 
   KmerRepresentativeComputer krc(reads, "##############");
   krc.setOptions(false, 3, 0.5);
+  krc.setCoverageReferenceLength(50);
   krc.compute();
   Sequence representative = krc.getRepresentative();
 
@@ -65,6 +67,7 @@ void testRevcompRepresentative() {
 
   KmerRepresentativeComputer krc2(reads, "##############");
   krc2.setOptions(false, 3, 0.5);
+  krc2.setCoverageReferenceLength(50);
   krc2.compute();
   Sequence representative2 = krc2.getRepresentative();
 

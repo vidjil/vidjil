@@ -43,7 +43,11 @@ def format_rank_nb_reads(rank, list_nb_reads, list_total_nb_reads):
     return s
 
 
-def common_two_clones(self, other, seg=[1000000]):
+def common_two_clones(self, other, seg=None):
+
+    if seg is None:
+        seg = [1000000]
+    
     if not other or not self:
         return
     

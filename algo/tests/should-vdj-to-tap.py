@@ -15,18 +15,25 @@ The 'should_pattern' is then checked against the 'result' part, and a .tap file 
 '''
 
 import sys
+
+PY_REQUIRED = (2, 7)
+if sys.version_info < PY_REQUIRED:
+    print("This script requires Python >= %d.%d." % (PY_REQUIRED))
+    sys.exit(1)
+
 from subprocess import Popen, PIPE, STDOUT
 
 import os
 import argparse
 
-VIDJIL_FINE = '{directory}/vidjil -e 1e-6 -c segment -i -g {directory}/germline %s > %s'
-VIDJIL_KMER = '{directory}/vidjil -e 1e-6 -b out -c windows -uU -i -g {directory}/germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa > %s'
+VIDJIL_FINE = '{directory}/vidjil -c segment -i -g {directory}/germline %s > %s'
+VIDJIL_KMER = '{directory}/vidjil -b out -c windows -uU -2 -i -g {directory}/germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa > %s'
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('--program', '-p', default=VIDJIL_FINE, help='program to launch on each file (%(default)s)')
 parser.add_argument('-q', dest='program', action='store_const', const=VIDJIL_KMER, help='shortcut for -p (VIDJIL_KMER), to be used with -2')
 parser.add_argument('--after-two', '-2', action='store_true', help='compare only the right part of the pattern after two underscores (locus code)')
+parser.add_argument('--revcomp', '-r', action='store_true', help='duplicate the tests on reverse-complemented files')
 parser.add_argument('--directory', '-d', default='../..', help='base directory where Vidjil is. This value is used by the default -p and -q values (%(default)s)')
 parser.add_argument('file', nargs='+', help='''.should-vdj.fa files''')
 
@@ -129,6 +136,11 @@ if __name__ == '__main__':
 
     for f_should in args.file:
         should_to_tap_one_file(f_should)
+
+        if args.revcomp:
+            f_should_rc = f_should + '.rc'
+            os.system('python ../../germline/revcomp-fasta.py < %s > %s' % (f_should, f_should_rc))
+            should_to_tap_one_file(f_should_rc)
         print
 
     if global_failed:

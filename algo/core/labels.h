@@ -1,4 +1,4 @@
-using namespace std;
+
 #include <map>
 #include <string>
 #include <fstream>
@@ -6,5 +6,5 @@ using namespace std;
 #include <list>
 #include "fasta.h"
 
-map <string, string> load_map(string map_file);
+void load_into_map(map <string, string> &the_map, string map_file);
 

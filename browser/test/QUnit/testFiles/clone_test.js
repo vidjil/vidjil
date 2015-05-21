@@ -1,6 +1,6 @@
 
     var json_clone1 = {
-        "sequence" : "abcdefghijklmnopqrstuvwxyz",
+        "sequence" : "aaaaaaaaaattttttttt",
         "name" : "hello",
         "id" : "id1",
         "reads" : [10,10,15,15] ,
@@ -30,7 +30,21 @@
         "top" : 3,
         "germline" : "TRG",
     }
-    
+
+
+function includes(result, pattern, message) {
+    // Checks that the result includes the pattern
+    // TODO: see and use qunit-regexp !
+    var res = result.indexOf(pattern) > -1
+
+    if (res) {
+        ok(res, message)
+    }
+    else { // Only for easy debug
+        equal(result, "{includes} " + pattern, message)
+    }
+}
+
 test("clone : name", function() {
     
     var m = new Model();
@@ -50,6 +64,7 @@ test("clone : name", function() {
     equal(c3.getCode(), "id3", "get code clone3 : id3");
     
     c3.changeName("plop")
+    equal(c3.getName(), "plop", "changename clone3 : plop");
     equal(c3.getSequenceName(), "plop", "changename clone3 : plop");
     
     m.select(0)
@@ -63,9 +78,23 @@ test("clone : name", function() {
     equal(c1.get('reads'), 10, "clone c1 reads : 10");
     equal(c1.getSequenceSize(), "0.05", "clone c1 size : 0.05");
     console.log(m.samples.order)
-    equal(c1.getHtmlInfo(), "<h2>Cluster info : hello</h2><div id='info_window'><table><tr><th></th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr><tr><td class='header' colspan='5'> clone </td></tr><tr><td> clone name </td><td colspan='4'>hello</td></tr><tr><td> clone size (n-reads (total reads) )</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td> clone size (%)</td><td>10.000 % </td><td>20.000 % </td><td>15.000 % </td><td>30.000 % </td><tr><td class='header' colspan='5'> representative sequence</td></tr><tr><td> sequence name </td><td colspan='4'>hello</td></tr><tr><td> code </td><td colspan='4'>hello</td></tr><tr><td> length </td><td colspan='4'>26</td></tr><tr><td> size (n-reads (total reads) )</td><td>10  (200)</td><td>10  (100)</td><td>15  (200)</td><td>15  (100)</td></tr><tr><td> size (%)</td><td>5.000 % </td><td>10.000 % </td><td>7.500 % </td><td>15.000 % </td></tr><tr><td class='header' colspan='5'> segmentation</td></tr><tr><td> sequence </td><td colspan='4'>abcdefghijklmnopqrstuvwxyz</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr><tr><td> 5 </td><td colspan='4'>undefined V</td></tr><tr><td> 4 </td><td colspan='4'>IGHD2*03</td></tr><tr><td> 3 </td><td colspan='4'>IGHV4*01</td></tr><tr><td class='header' colspan='5'> &nbsp; </td></tr></table></div>",          
-              "getHtmlInfo"); 
+
+    html = c1.getHtmlInfo()
+    includes(html, "<h2>Cluster info : hello</h2><div id='info_window'><table><tr><th></th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
+             "getHtmlInfo: cluster info");
+
+    includes(html, "<tr><td class='header' colspan='5'> clone </td></tr><tr><td> clone name </td><td colspan='4'>hello</td></tr><tr><td> clone size (n-reads (total reads) )</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td> clone size (%)</td><td>10.000 % </td><td>20.000 % </td><td>15.000 % </td><td>30.000 % </td>",
+             "getHtmlInfo: clone information");
     
+    includes(html, "<tr><td class='header' colspan='5'> representative sequence</td></tr><tr><td> sequence name </td><td colspan='4'>hello</td></tr><tr><td> code </td><td colspan='4'>hello</td></tr><tr><td> length </td><td colspan='4'>19</td></tr><tr><td> size (n-reads (total reads) )</td><td>10  (200)</td><td>10  (100)</td><td>15  (200)</td><td>15  (100)</td></tr><tr><td> size (%)</td><td>5.000 % </td><td>10.000 % </td><td>7.500 % </td><td>15.000 % </td></tr>",
+             "getHtmlInfo: representative sequence information");
+
+    includes(html, "<tr><td class='header' colspan='5'> segmentation</td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", "getHtmlInfo: segmentation information");
+
+    // <tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG</td></tr> // not tested (order of title/class)
+
+    includes(html, "<tr><td> V gene (or 5') </td><td colspan='4'>undefined V</td></tr><tr><td> (D gene) </td><td colspan='4'>IGHD2*03</td></tr><tr><td> J gene (or 3') </td><td colspan='4'>IGHV4*01</td></tr>",
+             "getHtmlInfo: segmentation information (VDJ)");
 
 });
 
@@ -78,6 +107,8 @@ test("clone : size", function() {
     var c3 = new Clone(json_clone3, m, 2)
     m.initClones()
 
+    equal(c1.getSystemSize(), "0.1", "clone c1 system size : 0.1");
+    equal(c1.getStrSystemSize(), "10.000%", "clone c1 system size : 10%");
     m.select(0)
     m.select(1)
     m.merge()
@@ -89,6 +120,7 @@ test("clone : size", function() {
     equal(c1.get('reads'), 10, "clone c1 reads : 10");
     equal(c1.getSequenceSize(), "0.05", "clone c1 size : 0.05");
     
+    
 });
 
 test("clone : system", function() {
@@ -97,6 +129,7 @@ test("clone : system", function() {
     m.parseJsonData(json_data)
     var c1 = new Clone(json_clone1, m, 0)
     m.initClones()
+
 
     equal(c1.get('germline'), "TRG", "getSystem() >> clone system : TRG");
     equal(c1.getGene('5'), "undefined V", "getV() >> V : undefined");
@@ -129,5 +162,19 @@ test("clone : tag / color", function() {
     m.changeColorMethod("abundance")
     c1.updateColor()
     equal(c1.getColor(), "rgb(183,36,36)", "getColor() >> abundance color : ");
+    
+});
+
+test("clone : export", function() {
+    
+    var m = new Model();
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0)
+    m.initClones()
+
+    equal(c1.getPrintableSegSequence(), "aaaaa\naaaaatttt\nttttt", "getPrintableSegSequence() : Ok");
+    console.log(c1.getFasta())
+    equal(c1.getFasta(), ">hello    200 reads (100.00%)\naaaaa\naaaaatttt\nttttt\n", "getFasta() : Ok");
+
     
 });

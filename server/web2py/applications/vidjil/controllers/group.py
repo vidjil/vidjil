@@ -18,7 +18,6 @@ def add():
 ## redirect to group list if success
 ## return a flash error message if error
 def add_form(): 
-    import gluon.contrib.simplejson, datetime
     error = ""
 
     if request.vars["group_name"] == "" :
@@ -107,7 +106,7 @@ def change_permission():
 ## need ["group_id", "user_id"]
 def invite():
     #check admin 
-    if auth.has_permission('admin', 'auth_group', request.vars["group_id"], auth.user.id):
+    if auth.can_modify_group(request.vars["group_id"]):
         auth.add_membership(request.vars["group_id"], request.vars["user_id"])
         res = {"redirect" : "group/info" ,
                "args" : { "id" : request.vars["group_id"]},
@@ -126,7 +125,7 @@ def invite():
 ## need ["group_id", "user_id"]
 def kick():
     #check admin 
-    if auth.has_permission('admin', 'auth_group', request.vars["group_id"], auth.user.id):
+    if auth.can_modify_group(request.vars["group_id"]):
         auth.del_membership(request.vars["group_id"], request.vars["user_id"])
         res = {"redirect" : "group/info" ,
                "args" : { "id" : request.vars["group_id"]},

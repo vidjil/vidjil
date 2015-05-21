@@ -169,24 +169,41 @@ Window prediction
   -M <int>      maximal admissible delta between last V and first J k-mer (default: 20) (default with -D: 80)
   -w <int>      w-mer size used for the length of the extracted window (default: 50)
   -e <float>    maximal e-value for determining if a segmentation can be trusted (default: 'all', no limit)
+  -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: 100) (0: no trim)
 #+END_EXAMPLE
 
 The =-s=, =-k=, =-m= and =-M= options are the options of the seed-based heuristic. A detailed
-explanation can be found in the paper. These options are for advanced usage, the defaults values should work.
+explanation can be found in the paper. /These options are for advanced usage, the defaults values should work./
+The =-s= or =-k= option selects the seed used for the k-mer V/J affectation.
+The =-m= / =-M= options control the minimum and maximum difference of positions between the last
+conserved k-mer of V and the first conserved k-mer of J. As they may be some sequencing errors or mutations
+compared to the germline genes, this is not the size of the junction (even without inserted nucleotides
+in the N region, this difference of position can equal to 20 or 30, or even more, if there are some
+errors or mutations at the end of V and and at the beginning of J). Note that is even possible to set =-m -10=
+(meaning that V and J could overlap 10 bp). This is the default for TRG recombinations.
+
 
 The =-w= option fixes the size of the "window" that is the main
 identifier to gather clones. The default value (=-w 50=) was selected
-to ensure a high-quality clone gathering. The
-high-throughput heuristic predicts the center of the "window" that may
+to ensure a high-quality clone gathering: reads are clustered when
+they /exactly/ share, at the nucleotide level, a 50 bp-window centered
+on the CDR3. No sequencing errors are corrected inside this window.
+The center of the "window", predicted by the high-throughput heuristic, may
 be shifted by a few bases from the actual "center" of the CDR3 (for TRG,
 less than 15 bases compared to the IMGT/V-QUEST or IgBlast prediction
 in >99% of cases). The extracted window should be large enough to
 fully contain the CDR3 as well as some part of the end of the V and
 the start of the J, or at least some specific N region, to uniquely identify a clone.
 
-Setting =-w= to lower values may "segment" (analyze) a few more reads, depending
-on the read length of your data, but may in some rare cases falsely cluster reads from
-different clones. The =-w 40= option is usually safe, and =-w 30= can also be tested.
+Setting =-w= to higher values (such as =-w 60= or =-w 100=) makes the clone gathering
+even more conservative, enabling to split clones with low specificity (such as IGH with very
+large D, short or no N regions and almost no somatic hypermutations). However, such settings
+may "segment" (analyze) less reads, depending on the read length of your data, and may also
+return more clones, as any sequencing error in the window is not corrected.
+
+Setting =-w= to lower values than 50 may "segment" (analyze) a few more reads, depending
+on the read length of your data, but may in some cases falsely cluster reads from
+different clones. The =-w 40= option is usually safe for VJ recombinations, and =-w 30= can also be tested.
 Setting =-w= to lower values is not recommended.
 
 The =-e= option sets the maximal e-value accepted for segmenting a sequence.
@@ -196,6 +213,11 @@ input sequence and the number of locus searched for.
 The default value is 1.0, but values such as 1000, 1e-3 or even less can be used
 to have a more or less permissive segmentation.
 The threshold can be disabled with =-e all=.
+
+The =-t= option sets the maximal number of nucleotides that will be indexed in
+V genes (the 3' end) or in J genes (the 5' end). This reduces the load of the
+indexes, giving more precise window estimation and e-value computation.
+The default is =-t 100=.
 
 ** Threshold on clone output
 
@@ -248,12 +270,14 @@ The =-A= option disables all these thresholds. This option should be
 used only for test and debug purposes, on very small datasets, and
 produce large file and takes huge computation times.
 
-** Force to follow some sequences
 
-Vidjil allows to specify a list of windows that must be followed
+** Labeled windows
+
+Vidjil allows to indicate that specific windows that must be followed
 (even if those windows are 'rare', below the =-r/-%= thresholds).
-The parameter =-l= is made for providing such a list in a file giving
-one window by line like in the following example:
+
+Such windows can be provided either with =-W <window>=, or with =-l <file>=.
+The file given by =-l= should have one window by line, as in the following example:
 
 #+BEGIN_EXAMPLE
 TGTGCGAGAGATGGACGGGATACGTAAAACGACATATGGTTCGGGGTTTGGTGCTTTTGA my-clone-1
@@ -265,19 +289,26 @@ The first column of the file is the window to be followed
 while the remaining columns consist of the window's label.
 In Vidjil output, the labels are output alongside their windows.
 
+With the =-F= option, /only/ the labeld windows are kept. This allows
+to quickly filter a set of reads, looking for a known window,
+with the =-FaW <window>= options:
+All the reads with this windows will be extracted to =out/seq/clone.fa-1=.
 
 ** Further clustering (experimental)
 
-These options have no consequences on the =.vdj.fa= file, but adds
-additional information in the =.vidjil= file to be visualized in the
-browser.
+The following options are experimental and have no consequences on the =.vdj.fa= file,
+nor on the standard output. They instead add a =clusters= sections in the =.vidjil= file
+that will be visualized in the browser.
 
-Setting the =-n= option triggers an additional automatic
-clustering using DBSCAN algorithm (Ester and al., 1996). 
+The =-n= option triggers an automatic clustering using DBSCAN algorithm (Ester and al., 1996).
+Using =-n 5= usually cluster reads within a distance of 1 mismatch (default score
+being +1 for a match and -4 for a mismatch). However, more distant reads can also
+be clustered when there are more than 10 reads within the distance threshold.
+This behaviour can be controlled with the =-N= option.
 
 The =-E= option allows to specify a file for manually clustering two windows
 considered as similar. Such a file may be automatically produced by vidjil
-(out/edges), depending on the option provided. Only the two first columns 
+(=out/edges=), depending on the option provided. Only the two first columns
 (separed by one space) are important to vidjil, they only consist of the 
 two windows that must be clustered.
 
@@ -334,6 +365,8 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
 ./vidjil -c clones -G germline/IGH -r 1 -n 5 ./data/clones_simul.fa
    # Window extraction + clone gathering,
    # with automatic clustering, distance five (-n 5)
+   # The result of the automatic clustering is in the .vidjil file
+   # and can been seen/edited in the browser.
 #+END_SRC
 
 #+BEGIN_SRC sh

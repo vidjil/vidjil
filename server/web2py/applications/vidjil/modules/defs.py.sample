@@ -36,7 +36,7 @@ BASENAME_OUT_VIDJIL_ID = '%06d'
 ### Directory for program used in task.py
 ### relative path start from server/web2py
 DIR_VIDJIL = '../../'
-DIR_FUSE = '../'
+DIR_FUSE = '../../tools'
 
 ### Port on which to run the fuse server
 ### Used in models/task.py and in /server/fuse_server.py
@@ -46,6 +46,10 @@ PORT_FUSE_SERVER = 12789
 DIR_LOG = '/var/vidjil/'
 LOG_INFO = DIR_LOG + 'vidjil.log'
 LOG_DEBUG = DIR_LOG + 'vidjil-debug.log'
+
+### Timeouts
+# Delay in seconds before a task is considered in timeout
+TASK_TIMEOUT = 2 * 60 * 60
 
 ### Reverse IP file
 REVERSE_IP = '/home/vidjil/ips.txt'

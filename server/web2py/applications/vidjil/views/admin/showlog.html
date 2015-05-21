@@ -43,7 +43,7 @@
             <td> {{=line["date2"]}} </td>
             <td> {{=line["user"]}} </td>
             <td> {{=line["type"]}} </td>
-            <td> {{=line["file"]}} </td>
+            <td> {{=XML(line["file"])}} </td>
            {{ pass }}
             <td> {{=XML(line["mes"])}} </td>
         </tr>

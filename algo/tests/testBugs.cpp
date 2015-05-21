@@ -9,8 +9,6 @@ using namespace std;
 
 void testSegmentationBug1(int delta_min, int delta_max) {
   string buggy_sequences = "bugs/kmersegment.fa";
-  int k = 14;
-  bool rc = true;
   Fasta seqV("../../germline/TRGV.fa");
   Fasta seqJ("../../germline/TRGJ.fa");
 

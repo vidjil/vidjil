@@ -26,9 +26,16 @@
 #  along with "Vidjil". If not, see <http://www.gnu.org/licenses/>
 
 from __future__ import print_function
+
+import sys
+
+PY_REQUIRED = (2, 7)
+if sys.version_info < PY_REQUIRED:
+    print("This script requires Python >= %d.%d." % (PY_REQUIRED))
+    sys.exit(1)
+
 import json
 import argparse
-import sys
 import time
 import copy
 import os.path
@@ -172,8 +179,8 @@ class OtherWindows:
     
     """Aggregate counts of windows that are discarded (due to too small 'top') for each point into several 'others-' windows."""
 
-    def __init__(self, length, ranges = [1000, 100, 10, 1]):
-        self.ranges = ranges
+    def __init__(self, length, ranges = None):
+        self.ranges = ranges if ranges is not None else [1000, 100, 10, 1]
         self.length = length
         self.sizes = {}
 

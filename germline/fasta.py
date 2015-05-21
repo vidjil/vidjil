@@ -1,6 +1,26 @@
 
 
 
+COMPLEMENT_NUCLEOTIDE = {
+    'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C',
+    'Y': 'R', 'R': 'Y', # pyrimidine (CT) / purine (AG)
+    'W': 'S', 'S': 'W', # weak (AT) / strong (GC)
+    'K': 'M', 'M': 'K', #  keto (TG) / amino (AC)
+    'B': 'V', 'V': 'B', 'D': 'H', 'H': 'D',
+    'N': 'N'
+}
+
+def revcomp(seq):
+    '''Returns the reverse complement of a sequence
+
+    >>> revcomp('ACGNTT')
+    'AANCGT'
+    '''
+    rc = ''
+    for nucl in seq[::-1]:
+        rc += COMPLEMENT_NUCLEOTIDE[nucl.upper()]
+    return rc
+
 def parse(fasta, endline=''):
     '''Iterates over sequences in a fasta files, yielding (header, sequence) pairs'''
 
@@ -11,6 +31,9 @@ def parse(fasta, endline=''):
         l = l.strip()
 
         if not l:
+            continue
+
+        if l[0] == '#':
             continue
     
         if l[0] == '>':
@@ -41,6 +64,9 @@ class Fasta():
     def __init__(self, header, sequence):
         self.header = header
         self.seq = sequence
+
+    def revcomp(self):
+        self.seq = revcomp(self.seq)
 
     @property
     def name(self):

@@ -21,7 +21,7 @@
 
 
         <div class="db_block_right">
-        {{if auth.has_permission("run", "results_file") :}}
+        {{if auth.can_process_file() :}}
             config
             <span>
                 <select id="choose_config" name="config" onchange="db.call('patient/custom', {'config_id' : this.value, 
@@ -64,7 +64,7 @@
 
                  <tr>
                     <td> <input type="checkbox" name="custom_result[]" value="{{=row.results_file.id}}" {{if row.checked :}} checked {{pass}}> </td>
-                    <td> {{=vidjil_utils.anon(row.sequence_file.patient_id, auth.user_id)}}</td>
+                    <td> {{=row.names}} </td>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}  {{pass}} id="sequence_file_{{=row.sequence_file.id}}">
                          {{=row.sequence_file.filename}}
                     </td>

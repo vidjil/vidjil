@@ -47,24 +47,31 @@ import traceback
 import shutil
 from copy import copy
 
-
+execfile("applications/vidjil/controllers/default.py", globals())
 
 
 # create a test database by copying the original db
-shutil.copy2('applications/vidjil/databases/storage.sqlite', 'applications/vidjil/databases/testing.sqlite')
-test_db = DAL('sqlite://testing.sqlite')
+test_db = DAL('sqlite://testing1234.sqlite')
+
+# build default database if doesn't exist
+init_db()
+
 for tablename in db.tables:  # Copy tables!
     table_copy = [copy(f) for f in db[tablename]]
     test_db.define_table(tablename, *table_copy)
 
 db = test_db
+auth.db = test_db
+
+
+init_db(True)
 
 # use a fake user
 user_id = db.auth_user.insert(
     first_name='Testers',
     last_name='Inc',
     email='test@vidjil.org',
-    password= db.auth_user.password.validate('1234')[0],
+    password= db.auth_user.password.validate('1234')[0]
 )
 unique_group = db.auth_group.insert(role="user_"+str(user_id), description=" ")
 db.auth_membership.insert(user_id=user_id, group_id=unique_group)
@@ -73,6 +80,7 @@ db.auth_membership.insert(user_id=user_id, group_id=unique_group)
 group_id = 1 #admin group
 db.auth_membership.insert(user_id=user_id, group_id=group_id)
 
+
 # add fake config
 fake_config_id = db.config.insert(name="config_test_popipo",
                                     info="popapipapo",
@@ -80,6 +88,18 @@ fake_config_id = db.config.insert(name="config_test_popipo",
                                     fuse_command="-plop",
                                     program="plop.cpp"
                                     )
+                                    
+db.auth_permission.insert(group_id = group_id,
+                        name = "admin",
+                        table_name = "config",
+                        record_id = fake_config_id
+                        )
+db.auth_permission.insert(group_id = group_id,
+                        name = "read",
+                        table_name = "config",
+                        record_id = fake_config_id
+                        )
+                                
 # add fake patient
 fake_patient_id = db.patient.insert(first_name="plop",
                                    last_name="plop",
@@ -87,6 +107,12 @@ fake_patient_id = db.patient.insert(first_name="plop",
                                    info="plop",
                                    id_label="plop",
                                    creator=user_id)
+                                   
+db.auth_permission.insert(group_id = group_id,
+                        name = "admin",
+                        table_name = "patient",
+                        record_id = fake_patient_id
+                        )
 
 # and a fake file for this patient
 fake_file_id = db.sequence_file.insert(sampling_date="1903-02-02",
@@ -159,7 +185,7 @@ def custom_execfile(test_file):
         sys.path.append(os.path.split(test_file)[0]) # to support imports form current folder in the testfiles
         g=copy(globals())
         execfile(test_file, g) 
-    except (WindowsError,ValueError,SystemExit):
+    except (OSError,ValueError,SystemExit):
         pass # we know about the rotating logger error...
              # and SystemExit is not useful to detect
     except:

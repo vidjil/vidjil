@@ -5,17 +5,20 @@ if request.env.http_origin:
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
 
+    
+ACCESS_DENIED = "access denied"
+
 def index():
     if not auth.user : 
         res = {"redirect" : "default/user/login"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 
-    query = db((auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) ).select() 
+    query = db((auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) ).select(orderby=~db.config.name)
 
     return dict(message=T('Configs'),
                query=query,
-               isAdmin = auth.has_membership("admin"))
+               isAdmin = auth.is_admin())
 
 
 def add(): 
@@ -56,8 +59,6 @@ def edit():
 
 
 def edit_form(): 
-    import shutil, os.path
-    
     error =""
 
     required_fields = ['id', 'config_name', 'config_command', 'config_fuse_command', 'config_program']
@@ -89,8 +90,6 @@ def confirm():
     return dict(message=T('confirm config deletion'))
 
 def delete():
-    import shutil, os.path
-    
     #delete results_file using this config
     db(db.results_file.config_id==request.vars["id"]).delete()
     
@@ -104,7 +103,7 @@ def delete():
 
 
 def permission(): 
-    if (auth.has_permission('admin', 'patient', request.vars["id"]) ):
+    if (auth.can_modify_patient(request.vars["id"]) ):
         
         query = db( (db.auth_group.role != 'admin') ).select()
         
@@ -148,7 +147,7 @@ def permission():
     
 #TODO refactor with patient/change_permission
 def change_permission():
-    if (auth.has_permission('admin', 'config', request.vars["config_id"]) ):
+    if (auth.can_modify_config(request.vars["config_id"]) ):
         error = ""
         if request.vars["group_id"] == "" :
             error += "missing group_id, "

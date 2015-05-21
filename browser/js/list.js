@@ -51,7 +51,6 @@ function List(id_list, id_data, model) {
     this.id_data = id_data;
     this.index = []
     this.index_data = {};
-    this.clone_info = -1;
 
     this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
     this.build();
@@ -72,23 +71,6 @@ List.prototype = {
      * */
     build: function () {
         var self =this;
-        
-        //build tagSelector
-        this.tagSelector = document.createElement("div");
-        this.tagSelector.className = "tagSelector";
-        
-        var closeTag = document.createElement("span");
-        closeTag.className = "closeButton" ;
-        closeTag.appendChild(document.createTextNode("X"));
-        closeTag.onclick = function() {$(this).parent().hide('fast')};
-        this.tagSelector.appendChild(closeTag);
-        
-        this.tagSelectorInfo = document.createElement("div")
-        this.tagSelector.appendChild(this.tagSelectorInfo);
-        
-        this.tagSelectorList = document.createElement("ul")
-        this.tagSelector.appendChild(this.tagSelectorList);
-        
         
         //build dataMenu
         this.dataMenu = document.createElement("div");
@@ -127,26 +109,8 @@ List.prototype = {
             self.m.update()
             $(self.dataMenu).hide('fast')
         }
-        
-        //build infoBox
-        
-        this.infoBox = document.createElement("div");
-        this.infoBox.className = "info-container";
-        
-        var closeinfoBox = document.createElement("span");
-        closeinfoBox.className = "closeButton" ;
-        closeinfoBox.appendChild(document.createTextNode("X"));
-        closeinfoBox.onclick = function() {self.closeInfoBox()};
-        this.infoBox.appendChild(closeinfoBox);
-        
-        var div_info = document.createElement("div");
-        div_info.className = "info-msg";
-        this.infoBox.appendChild(div_info);
-        
-        //add to body
-        document.body.appendChild(this.tagSelector);
+ 
         document.body.appendChild(this.dataMenu);
-        document.body.appendChild(this.infoBox);
         
     },
     
@@ -430,7 +394,7 @@ List.prototype = {
         var span_star = document.createElement('div');
         span_star.className = "starBox";
         span_star.onclick = function () {
-            self.openTagSelector(cloneID);
+            self.m.openTagSelector(cloneID);
         }
         var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
         var path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
@@ -448,15 +412,20 @@ List.prototype = {
         }
         span_size.style.color = this.m.clone(cloneID).getColor();
         span_size.appendChild(document.createTextNode(this.m.clone(cloneID).getStrSize()));
-
+        
         
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
         span_info.onclick = function () {
-            self.displayInfoBox(cloneID);
+            self.m.displayInfoBox(cloneID);
         }
-        span_info.appendChild(document.createTextNode("I"));
 
+        if (this.m.clone(cloneID).isWarned()) {
+            span_info.className += " warning" ;
+            span_info.appendChild(document.createTextNode("!"));
+        } else {
+            span_info.appendChild(document.createTextNode("i"));
+        }
         
         var span_cluster = document.createElement('span')
         span_cluster.className = "clusterBox";
@@ -480,7 +449,9 @@ List.prototype = {
         div_elem.appendChild(span_cluster);
         if (this.m.system=="multi") {
             var system = this.m.clone(cloneID).get('germline')
-            div_elem.appendChild(this.m.systemBox(system));
+            var span_systemBox = this.m.systemBox(system);
+            span_systemBox.className = "systemBox";
+            div_elem.appendChild(span_systemBox);
         }
         div_elem.appendChild(span_name);
         div_elem.appendChild(span_info);
@@ -510,10 +481,10 @@ List.prototype = {
         var clusterSize = this.m.clone(cloneID).getSize()
         var clusterReads = this.m.clone(cloneID).getReads()
 
-        for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
+        for (var i = 0; i < self.m.clusters[cloneID].length; i++) {
             (function (i) {
-                var id = this.m.clusters[cloneID][i]
-                var color = this.m.clone(id).getColor();
+                var id = self.m.clusters[cloneID][i]
+                var color = self.m.clone(id).getColor();
                 var div_clone = document.createElement('div');
                 div_clone.id = "_" + id;
                 div_clone.id2 = id;
@@ -529,13 +500,13 @@ List.prototype = {
                 span_name.onclick = function (e) {
                     self.clickList(e, id);
                 }
-                span_name.appendChild(document.createTextNode(this.m.clone(id).getCode()));
-                span_name.title = this.m.clone(id).getCode();
+                span_name.appendChild(document.createTextNode(self.m.clone(id).getCode()));
+                span_name.title = self.m.clone(id).getCode();
 
                 var span_info = document.createElement('span')
                 span_info.className = "infoBox";
                 span_info.onclick = function () {
-                    self.displayInfoBox(self.m.clone(this.parentNode.id2).getHtmlInfo());
+                    self.m.displayInfoBox(self.m.clone(this.parentNode.id2).getHtmlInfo());
                 }
                 span_info.appendChild(document.createTextNode("I"));
 
@@ -553,7 +524,7 @@ List.prototype = {
                 
                 var r = 100
                 if (clusterSize != 0) {
-                    span_stat.appendChild(document.createTextNode( (this.m.clone(id).get('reads', this.m.t)*100/clusterReads).toFixed(1) + "%"));
+                    span_stat.appendChild(document.createTextNode( (self.m.clone(id).get('reads', self.m.t)*100/clusterReads).toFixed(1) + "%"));
                 } else {
                     span_stat.appendChild(document.createTextNode("0%"))
                 }
@@ -576,9 +547,7 @@ List.prototype = {
     editName: function (cloneID, elem) {
         var self = this;
         if (document.getElementById("new_name")) {
-            this.updateElem([document.getElementById("new_name")
-                .parentNode.parentNode.parentNode.id
-            ]);
+            this.update();
         }
         var divParent = elem;
         divParent.innerHTML = "";
@@ -597,11 +566,11 @@ List.prototype = {
             e = e || window.event;
             var key = e.keyCode
             if (key == 0) key = e.which 
-            if (key == 13) document.getElementById('btnSave')
+            if (key == 13) $('#btnSave')
                 .click();
         }
         $(input).focusout(function() {
-            setTimeout(function(){m.update()},500)
+            setTimeout(function(){self.m.update()},500)
         })
         divParent.appendChild(input);
         divParent.onclick = "";
@@ -738,8 +707,9 @@ List.prototype = {
             var c = this.m.clone(i) 
             if (c.getName().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
             if (c.getSequence().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
+            if (c.getRevCompSequence().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
             if (c.getSequenceName().toUpperCase().indexOf(str.toUpperCase())!=-1 ) c.isFiltered = false
-        }
+		}
         this.m.update()
     },
     
@@ -898,127 +868,13 @@ List.prototype = {
         this.m.select(cloneID)
     },
     
-    /**
-     * open/build the tag/normalize menu for a clone
-     * @param {integer} cloneID - clone index
-     * */
-    openTagSelector: function (cloneID) {
-        var self = this;
-        cloneID = typeof cloneID !== 'undefined' ? cloneID : this.cloneID;
-        this.tagSelectorList.innerHTML = "";
-        this.cloneID=cloneID
-        
-        for (var i = 0; i < this.m.tag.length; i++) {
-            (function (i) {
-                var span1 = document.createElement('span');
-                span1.className = "tagColorBox tagColor" + i
-                span1.onclick = function () {
-                    self.m.clone(cloneID).changeTag(i)
-                    $(self.tagSelector).hide('fast')
-                }
-                
-                var span2 = document.createElement('span');
-                span2.className = "tagName" + i + " tn"
-                span2.appendChild(document.createTextNode(self.m.tag[i].name))
-                span2.onclick = function () {
-                    self.m.clone(cloneID).changeTag(i)
-                    $(self.tagSelector).hide('fast')
-                }
-
-                var div = document.createElement('div');
-                div.className = "tagElem"
-                div.appendChild(span1)
-                div.appendChild(span2)
-
-                var li = document.createElement('li');
-                li.appendChild(div)
-
-                self.tagSelectorList.appendChild(li);
-            })(i)
-        }
-        
-        var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode("normalize to: "))
-
-        var span2 = document.createElement('span');
-        var input = document.createElement('input');
-        input.type = "number";
-        input.step = "0.0001"
-        input.id = "normalized_size";
-        input.onkeydown = function () {
-            if (event.keyCode == 13) document.getElementById('normalized_size_button')
-                .click();
-        }
-        
-        span2.appendChild(input)
-        
-        var span3 = document.createElement('button');
-        span3.appendChild(document.createTextNode("ok"))
-        span3.id = "normalized_size_button";
-        span3.onclick = function () {
-            var cloneID = self.cloneID;
-            var size = parseFloat(document.getElementById('normalized_size').value);
-            
-            if (size>0 && size<1){
-                document.getElementById('normalized_size').value = ""
-                self.m.clone(cloneID).expected=size;
-                self.m.compute_normalization(cloneID, size)
-                self.m.update()
-                $(self.tagSelector).hide('fast')
-            }else{
-                console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
-            }
-        }
-        
-        var div = document.createElement('div');
-        div.appendChild(span1)
-        div.appendChild(span2)
-        div.appendChild(span3)
-        
-        var li = document.createElement('li');
-        li.appendChild(div)
-
-        this.tagSelectorList.appendChild(li);
-        
-        
-        if (cloneID[0] == "s") cloneID = cloneID.substr(3);
-        $(this.tagSelector).show("fast");
-        this.tagSelectorInfo.innerHTML = "tag for "+m.clone(cloneID).getName()+"("+cloneID+")"; 
-    },
-    
     
     openDataMenu : function (data) {
         $(this.dataMenu).show("fast");
         this.dataMenuInfo.innerHTML = data;
     },
     
-    /**
-     * compute and display clone information in a window
-     * @param {integer} cloneID - clone index
-     * */
-    displayInfoBox: function(cloneID) {
-        $(this.index[this.clone_info]).find(".infoBox").removeClass("infoBox-open")
-        
-        if (this.clone_info == cloneID) {
-            this.closeInfoBox();
-            return;
-        }
-        
-        this.clone_info = cloneID;
-        this.infoBox.style.display = "block";
-        this.infoBox.lastElementChild.innerHTML = self.m.clone(cloneID).getHtmlInfo();
-        $(this.index[cloneID]).find(".infoBox").addClass("infoBox-open")
-    },
 
-    /**
-     * close clone information box
-     * */
-    closeInfoBox: function() {
-        $(this.index[this.clone_info]).find(".infoBox").removeClass("infoBox-open")
-        this.clone_info = -1;
-        this.infoBox.style.display = "none";
-        this.infoBox.lastElementChild.innerHTML = "";
-    }
 
 } //fin prototype
 List.prototype = $.extend(Object.create(View.prototype), List.prototype);

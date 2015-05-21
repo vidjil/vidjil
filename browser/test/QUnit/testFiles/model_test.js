@@ -4,14 +4,51 @@ test("model : load", function() {
     var m = new Model();
     m.parseJsonData(json_data)
     
-    equal(m.samples.number, 4, "timepoint : number==4");
-    equal(m.samples.number, m.samples.original_names.length, "timepoint : check if array have the expected length");
+    equal(m.samples.number, 4, "parse_json > timepoint : number==4");
+    equal(m.samples.number, m.samples.original_names.length, "parse_json > timepoint : check if array have the expected length");
+
+    return
+    
+    // TODO: not working with phantomjs without localhost server
+    curdir = "http://localhost/browser/test/QUnit"
+
+    stop()
+    m.loadDataUrl(curdir + "/testFiles/test.vidjil")
+    setTimeout( function() {
+        start()
+        equal(m.samples.number, 3, "loadDataUrl from " + curdir + " > timepoint : number==3")
+    }, 100)
+    
+    
+    
+    stop()
+    m.loadAnalysisUrl(curdir + "/testFiles/test.analysis")
+    setTimeout( function() {
+        start()
+        equal(m.clone(0).tag, 0, "loadAnalysisUrl() : OK")
+        equal(m.getPrintableAnalysisName() , "test", "getPrintableAnalysisName : Ok")
+        deepEqual(jQuery.parseJSON(m.strAnalysis()).producer, "browser" , "strAnalysis() : OK")
+        m.resetAnalysis();
+        equal(m.clone(0).tag, 8, "resetAnalysis() : OK")
+    }, 100)
+    
 });
 
 test("model : time control", function() {
     var m = new Model();
     m.parseJsonData(json_data)
     
+    equal(m.getSampleTime(), "2014-10-20 13:59:02", "getSampleTime : Ok")
+    equal(m.getSampleTime(2), "2014-11-20 14:03:13", "getSampleTime : Ok")
+    
+    equal(m.getSoftVersionTime(), "ha", "getSoftVersionTime : Ok")
+    equal(m.getSoftVersionTime(2), "ho", "getSoftVersionTime : Ok")
+    
+    equal(m.getCommandTime(), "./vidjil -c clones -g germline/ -r 1 -o ./out0 -z 200 -n 5 Diag.fa ", "getCommandTime : Ok")
+    equal(m.getCommandTime(2), "./vidjil -c clones -g germline/ -r 1 -o ./out2 -z 200 -n 5 Fu-2.fa ", "getCommandTime : Ok")
+
+    equal(m.getTimestampTime(), "2015-10-20 13:59:02", "getTimestampTime : Ok")
+    equal(m.getTimestampTime(2), "2015-11-20 14:03:13", "getTimestampTime : Ok")
     
     equal(m.t, 0, "default timepoint = 0");                     // [0,1,2,3] => 0
     deepEqual(m.samples.order, [0,1,2,3], "default order = [0,1,2,3]")
@@ -59,6 +96,8 @@ test("model : select/focus", function() {
     m.multiSelect([0,2,3])
     deepEqual(m.getSelected(), [0,2,3], "multi-select");
     m.unselectAll()
+    equal(m.findWindow("aaaaaaaaaaaid1aaaaaaa"), 0, "findWindow : Ok")
+    equal(m.findWindow("aaaaaaaaaaaplopaaaaaaa"), -1, "findWindow : Ok")
     
     m.focusIn(0)
 });
@@ -96,6 +135,12 @@ test("model : cluster", function() {
     
     m.resetClusters()
     deepEqual(m.clusters, [[0],[1],[2],[3]], "resetClusters");
+    
+    var m = new Model();
+    m.parseJsonData(json_data,100)
+    m.loadCluster([["id1", "id2"]])
+    deepEqual(m.clusters[0], [0,1], "loadCluster() : Ok");
+    
 });
 
 test("model: system selection", function() {

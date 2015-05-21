@@ -11,10 +11,10 @@
 {{else:}}
     
     
-    
-{{form['_id'] ="login_form"}}
-    
-{{=form}}
+{{if 'form' in locals():}}
+    {{form['_id'] ="login_form"}}
+    {{=form}}
+{{pass}}
     
 {{if request.args(0)=='login':}}
     

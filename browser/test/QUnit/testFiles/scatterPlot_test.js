@@ -1,4 +1,5 @@
 
+
 test("scatterplot : grid", function() {
     var m = new Model(m);
     m.parseJsonData(json_data,100)
@@ -6,7 +7,8 @@ test("scatterplot : grid", function() {
     m.initClones()
 
     var sp = new ScatterPlot("visu",m);
-
+    sp.init();
+    
     equal(sp.returnActiveclones(), 3, "returnActiveClones -> 3");
     
     sp.buildSystemGrid()
@@ -17,6 +19,30 @@ test("scatterplot : grid", function() {
                                     {"enabled": true,"text": "IGH","x": 0.80,"y": 0.75}]}, 
             "buildSystemGrid()");
     
-    //deepEqual(sp.nodes[0], "","") 
-              
+    equal(sp.nodes.length, 4 , "check nodes");
+    
+    sp.changeSplitMethod("gene_v", "gene_v", "plot");
+    sp.update()
+    equal(sp.axisX.pos(1), sp.axisY.pos(1), "check splitMethod V/V /plot : xpos = ypos");
+    equal(sp.axisX.pos(1), sp.axisY.pos(1), "check splitMethod V/V /plot : xpos = ypos");
+    equal(document.getElementById("circle1").className.baseVal, "circle", "check splitMethod V/V /plot : check if plot are displayed")
+    
+    
+    sp.changeSplitMethod("gene_v", "gene_v", "bar");
+    
+    equal(document.getElementById("bar1").className.baseVal, "", "check splitMethod V/V /plot : check if bar are displayed")
+    
+    $(document.getElementsByClassName("sp_legend")[0]).d3Click() //click label ighv4
+    deepEqual(m.getSelected(), [2], "check click label");
+    
+    
+    sp.changeSplitMethod("n", "Size", "bar");
+    sp.update()
+    
+    equal(sp.nodes[1].bar_h , 0.4444444444444445 ,"bar position : Ok")
+    equal(sp.nodes[1].bar_w , 0.08 ,"bar position : Ok")
+    equal(sp.nodes[1].bar_x , 0.25 ,"bar position : Ok")
+    equal(sp.nodes[1].bar_y , 0.4444444444444445 ,"bar position : Ok")
+    
 });
+

@@ -2,7 +2,6 @@
 
 import unittest
 from gluon.globals import Request, Session, Storage, Response
-from gluon.tools import Auth
 from gluon.contrib.test_helpers import form_postvars
 from gluon import current
 
@@ -19,7 +18,7 @@ class FileController(unittest.TestCase):
         global response, session, request, auth
         session = Session()
         request = Request({})
-        auth = Auth(globals(), db)
+        auth = VidjilAuth(globals(), db)
         auth.login_bare("test@vidjil.org", "1234")
         
         # rewrite info / error functions 
@@ -33,6 +32,7 @@ class FileController(unittest.TestCase):
         # for defs
         current.db = db
         current.auth = auth
+        
         
         
     def testAdd(self):      
@@ -81,7 +81,7 @@ class FileController(unittest.TestCase):
         
         
         resp = edit_form()
-        self.assertNotEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
+        self.assertEqual(resp.find('"message":"plopapi: metadata saved"'), -1, "edit_form() failed")
        
        
     def testUpload(self):
@@ -96,11 +96,26 @@ class FileController(unittest.TestCase):
         request.vars['id'] = fake_file_id
     
         resp = upload()
-        self.assertNotEqual(resp.find('"message":"upload finished: plopapi"'), -1, "edit_form() failed")
+        self.assertEqual(resp.find('"message":"upload finished: plopapi"'), -1, "edit_form() failed")
         
-    def testConfirm(self):
+    def testConfirmFail(self):
         resp = confirm()
-        self.assertTrue(resp.has_key('message'), "confirm() has returned an incomplete response")
+        self.assertTrue(resp.find('requested file doesn\'t exist') > -1, "confirm() should fail because file is not in DB")
+
+    def testConfirmSuccess(self):
+        test_file_id = db.sequence_file.insert(sampling_date="1903-02-02",
+                                    info="plop",
+                                    pcr="plop",
+                                    sequencer="plop",
+                                    producer="plop",
+                                    patient_id=fake_patient_id,
+                                    filename="babibou",
+                                    provider=user_id,
+                                    data_file =  db.sequence_file.data_file.store(open("../../doc/analysis-example.vidjil", 'rb'), "babibou"))
+        request.vars['id'] = test_file_id
+
+        resp = confirm()
+        self.assertTrue(resp.has_key('message'), "confirm() fails to confirm deletion of a file")
     
     
     def testDelete(self):
@@ -111,16 +126,27 @@ class FileController(unittest.TestCase):
                                     producer="plop",
                                     patient_id=fake_patient_id,
                                     filename="babibou",
-                                    provider=user_id)
+                                    provider=user_id,
+                                    data_file =  open("../../doc/analysis-example.vidjil", 'rb'))
+
+        result_id = db.results_file.insert(sequence_file_id = test_file_id,
+                                           config_id = fake_config_id,
+                                           run_date = '2015-04-23 00:00:00')
         
         self.assertTrue(db.sequence_file[test_file_id].filename == "babibou" , "file have been added")
         
         request.vars['id'] = test_file_id
         
         resp = delete()
-        self.assertTrue(db.sequence_file[test_file_id] == None , "file have been deleted")
+        self.assertTrue(db.sequence_file[test_file_id].data_file == None , "file only should have been deleted")
+        self.assertTrue(db.results_file[result_id] <> None, "result file should not have been deleted")
         
-        
+
+        request.vars['delete_results'] = 'True'
+        resp = delete()
+        self.assertTrue(db.sequence_file[test_file_id] == None, "sequence entry in DB should have been deleted")
+        self.assertTrue(db.results_file[result_id] == None, "result file should have been deleted")
+
     def testSequencerList(self):
         
         resp = sequencer_list()

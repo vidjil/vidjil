@@ -15,12 +15,25 @@ list<pair <junction, size_t> > &WindowsStorage::getSortedList() {
   return sort_all_windows;
 }
 
+map<junction, BinReadStorage>::iterator WindowsStorage::begin() {
+  return seqs_by_window.begin();
+}
+
+map<junction, BinReadStorage>::iterator WindowsStorage::end() {
+  return seqs_by_window.end();
+}
+
 string WindowsStorage::getLabel(junction window) {
   
   if (windows_labels.find(window) == windows_labels.end())
     return "" ;
   
   return windows_labels[window];   
+}
+
+float WindowsStorage::getAverageLength(junction window) {
+  assert(hasWindow(window));
+  return seqs_by_window[window].getAverageScore();
 }
 
 Germline *WindowsStorage::getGermline(junction window) {
@@ -70,6 +83,7 @@ KmerRepresentativeComputer WindowsStorage::getRepresentativeComputer(junction wi
   repComp.setMinCover(min_cover);
   repComp.setPercentCoverage(percent_cover);
   repComp.setRequiredSequence(window);
+  repComp.setCoverageReferenceLength(getAverageLength(window));
   repComp.compute();
 
   // We should always have a representative, because
@@ -144,20 +158,6 @@ void WindowsStorage::add(junction window, Sequence sequence, int status, Germlin
   status_by_window[window][status]++;
 
   germline_by_window[window] = germline;
-}
-
-void WindowsStorage::fillStatsClones()
-{
-  for (map <junction, BinReadStorage >::iterator it = seqs_by_window.begin();
-       it != seqs_by_window.end();
-       it++)
-    {
-      junction junc = it->first;
-      int nb_reads = it->second.getNbInserted();
-      Germline *germline = germline_by_window[junc];
-
-      germline->stats_clones.insert(nb_reads);
-    }
 }
 
 pair <int, size_t> WindowsStorage::keepInterestingWindows(size_t min_reads_window) {

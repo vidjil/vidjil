@@ -56,23 +56,27 @@ public:
    * @param label: label that must be associated to the given files
    * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
-  void insert(Fasta& input, const string& label="");
+  void insert(Fasta& input, const string& label="", int keep_only = 0);
 
   /**
    * @param input: A list of FASTA files
    * @param label: label that must be associated to the given files
    * @post All the sequences in the FASTA files have been indexed, and the label is stored in the list of labels
    */
-  void insert(list<Fasta>& input, const string& label="");
+  void insert(list<Fasta>& input, const string& label="", int keep_only = 0);
   
   /**
    * @param input: A sequence to be cut in k-mers
    * @param label: label that must be associated to the given files
+   * @param keep_only: if > 0 will keep at most the last keep_only nucleotides
+   *                   of the sequence. if < 0 will keep at most the first
+   *                   keep_only nucleotides of the sequence. if == 0,
+   *                   will keep all the sequence.
    * @post All the k-mers in the sequence have been indexed.
    */
   void insert(const seqtype &sequence,
               const string &label,
-              bool ignore_extended_nucleotides=true);
+              bool ignore_extended_nucleotides=true, int keep_only = 0);
 
   /**
    * @param word: a k-mer
@@ -104,6 +108,12 @@ public:
    * @return the seed used
    */
   string getSeed() const;
+
+  /**
+   * @param kmer: a kmer
+   * @return one label associated with the kmer
+   */
+  string getLabel(T kmer) const;
 
   /**
    * @param seq: a sequence
@@ -187,28 +197,43 @@ IKmerStore<T>::~IKmerStore(){}
 
 template<class T> 
 void IKmerStore<T>::insert(list<Fasta>& input,
-                           const string &label){
+                           const string &label,
+                           int keep_only){
   for(list<Fasta>::iterator it = input.begin() ; it != input.end() ; it++){
-    insert(*it, label);
+    insert(*it, label, keep_only);
   }
 }
 
 template<class T> 
 void IKmerStore<T>::insert(Fasta& input,
-                           const string &label){
+                           const string &label,
+                           int keep_only){
   for (int r = 0; r < input.size(); r++) {
-    insert(input.sequence(r), label);
+    insert(input.sequence(r), label, true, keep_only);
   }
 
   labels.push_back(make_pair(T(label, 1), label)) ;
+
+  if (revcomp_indexed  && ! T::hasRevcompSymetry()) {
+    labels.push_back(make_pair(T(label, -1), label)) ;
+  }
 }
 
 template<class T> 
 void IKmerStore<T>::insert(const seqtype &sequence,
                            const string &label,
-                           bool ignore_extended_nucleotides){
-  for(size_t i = 0 ; i + s < sequence.length() + 1 ; i++) {
-    seqtype kmer = spaced(sequence.substr(i, s), seed);
+                           bool ignore_extended_nucleotides,
+                           int keep_only){
+  size_t start_indexing = 0;
+  size_t end_indexing = sequence.length();
+  if (keep_only > 0 && sequence.length() > (size_t)keep_only) {
+    start_indexing = sequence.length() - keep_only;
+  } else if (keep_only < 0 && sequence.length() > (size_t) -keep_only) {
+    end_indexing = -keep_only;
+  }
+  for(size_t i = start_indexing ; i + s < end_indexing + 1 ; i++) {
+    seqtype substr = sequence.substr(i, s);
+    seqtype kmer = spaced(substr, seed);
 
     if (ignore_extended_nucleotides && has_extended_nucleotides(kmer))
       continue;
@@ -227,7 +252,7 @@ void IKmerStore<T>::insert(const seqtype &sequence,
     }
     this_kmer += T(label, strand);
     if (revcomp_indexed && ! T::hasRevcompSymetry()) {
-      seqtype rc_kmer = revcomp(kmer);
+      seqtype rc_kmer = spaced(revcomp(substr), seed);
       T &this_rc_kmer = this->get(rc_kmer);
       if (this_rc_kmer.isNull())
         nb_kmers_inserted++;
@@ -278,6 +303,13 @@ string IKmerStore<T>::getSeed() const {
   return seed;
 }
 
+template<class T>
+string IKmerStore<T>::getLabel(T kmer) const {
+  for (typename list< pair<T, string> >::const_iterator it = labels.begin(); it != labels.end(); ++it)
+    if (it->first == kmer)
+      return it->second ;
+  return "" ;
+}
 
 // .getResults()
 template<class T>

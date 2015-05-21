@@ -21,6 +21,7 @@
 #include "read_storage.h"
 #include "read_score.h"
 #include "representative.h"
+#include "stats.h"
 
 #define NB_BINS 15
 #define MAX_VALUE_BINS 500
@@ -56,8 +57,16 @@ class WindowsStorage {
    *         or NULL if the window doesn't exist.
    */
   Germline *getGermline(junction window);
+
+  map<junction, BinReadStorage>::iterator begin();
+  map<junction, BinReadStorage>::iterator end();
   
   JsonList statusToJson(junction window);
+
+  /**
+   * @return the average read length of the reads segmented with the given window
+   */
+  float getAverageLength(junction window);
 
   /**
    * @return the maximal number of reads that can be stored for a window.
@@ -99,11 +108,6 @@ class WindowsStorage {
   list<Sequence> getSample(junction window, size_t nb_sampled, 
                            size_t nb_buckets=HISTOGRAM_SIZE_AUDITIONED);
 
-
-  /*
-   * Fill the stats_clone member of the different Germlines
-   */
-  void fillStatsClones();
 
   /**
    * @return true iff a limit has been set for the maximal number of reads per

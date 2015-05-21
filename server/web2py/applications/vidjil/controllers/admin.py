@@ -2,7 +2,6 @@
 import gluon.contrib.simplejson, re
 import os.path, subprocess
 import vidjil_utils
-from collections import defaultdict
 
 MAX_LOG_LINES = 500
 
@@ -14,7 +13,7 @@ if request.env.http_origin:
 
 ## return admin_panel
 def index():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         p = subprocess.Popen(["uptime"], stdout=subprocess.PIPE)
         uptime, err = p.communicate()
         
@@ -50,7 +49,7 @@ def monitor():
     
     
 def showlog():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         
         
         lines = []
@@ -83,7 +82,7 @@ def showlog():
                     line["date"] = tmp[1]
                     line["date2"] = tmp[2].split(',')[0]
                     line["type"] = tmp[3]
-                    line["file"] = tmp[5]
+                    line["file"] = vidjil_utils.log_links(tmp[5])
 
                     if tmp[6] != "Creating":
                         if len(tmp) < 9:
@@ -115,7 +114,7 @@ def showlog():
 
 ## to use after change in the upload folder
 def repair_missing_files():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         
         flist = ""
         for row in db(db.sequence_file.id>0 and db.sequence_file.data_file != None).select() : 
@@ -133,10 +132,13 @@ def repair_missing_files():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     
+def backup_database(stream):
+    db.export_to_csv_file(stream)
+
 def make_backup():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         
-        db.export_to_csv_file(open(defs.DB_BACKUP_FILE, 'wb'))
+        backup_database(open(defs.DB_BACKUP_FILE, 'wb'))
                 
         res = {"success" : "true", "message" : "DB backup -> %s" % defs.DB_BACKUP_FILE}
         log.admin(res)
@@ -144,7 +146,7 @@ def make_backup():
     
     
 def repair():
-    if auth.has_membership("admin"):
+    if auth.is_admin():
         
         flist = "fix creator "
         for row in db(db.patient.creator == None).select() : 

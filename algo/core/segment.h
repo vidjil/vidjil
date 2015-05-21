@@ -21,10 +21,8 @@
                                    segment to a given strand */
 
 #define DETECT_THRESHOLD 5      /* If the number of both V and J affectations
-                                   is above this threshold, then the sequence
-                                   will be labeled as 'detected', and, if it
-                                   not segmented, the remaining germlines will
-                                   not be tested */
+                                   is above this threshold, then the sequence,
+                                   if it not segmented, will be marked as AMBIGUOUS */
 
 #define JSON_REMEMBER_BEST  4   /* The number of V/D/J predictions to keep  */
 
@@ -57,7 +55,6 @@ const char* const segmented_mesg[] = { "?",
 
 class Segmenter {
 protected:
-  string label;
   string sequence;
   int Vend, Jstart;
   int Dstart, Dend;
@@ -71,6 +68,7 @@ protected:
 
  public:
   Germline *segmented_germline;
+  string label;
   string code;
   string code_short;
   string code_light;
@@ -168,16 +166,15 @@ ostream &operator<<(ostream &out, const Segmenter &s);
 class KmerSegmenter : public Segmenter
 {
  private:
-  int detected;
   KmerAffectAnalyser *kaa;
  protected:
   string affects;
 
  public:
-  bool isDetected() const;
   int score;
   int pvalue_left;
   int pvalue_right;
+  KmerAffect before, after;
 
   KmerSegmenter();
   /**
@@ -185,7 +182,7 @@ class KmerSegmenter : public Segmenter
    * @param seq: An object read from a FASTA/FASTQ file
    * @param germline: the germline
    */
-  KmerSegmenter(Sequence seq, Germline *germline, int multiplier=1);
+  KmerSegmenter(Sequence seq, Germline *germline, double threshold = THRESHOLD_NB_EXPECTED, int multiplier=1);
 
   KmerSegmenter(const KmerSegmenter &seg);
 
@@ -196,10 +193,13 @@ class KmerSegmenter : public Segmenter
    */
   KmerAffectAnalyser *getKmerAffectAnalyser() const;
 
+  string getInfoLineWithAffects() const;
   void toJsonList(JsonList *seg);
 
  private:
-  void computeSegmentation(int strand, KmerAffect left, KmerAffect right, int multiplier);
+  void computeSegmentation(int strand, KmerAffect left, KmerAffect right,
+                           int delta_min, int delta_max,
+                           double threshold, int multiplier);
 };
 
 

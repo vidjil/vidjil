@@ -142,6 +142,9 @@ enum {
   TEST_BRS_GET_NB_STORED,
   TEST_BRS_ADD,
   TEST_BRS_GET_READS,
+  TEST_BRS_GET_SCORE,
+  TEST_BRS_GET_AVG_SCORE,
+  TEST_BRS_GET_NB_SCORES,
 
   /* Bugs */
   TEST_BUG_SEGMENTATION,
@@ -279,6 +282,9 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_BRS_GET_NB_STORED, "Test the getNbStored() method in ReadStorage");
   RECORD_TAP_TEST(TEST_BRS_ADD, "Test the add() method in ReadStorage");
   RECORD_TAP_TEST(TEST_BRS_GET_READS, "Test the getReads() method in ReadStorage");
+  RECORD_TAP_TEST(TEST_BRS_GET_SCORE, "Test BinReadStorage::getScore()");
+  RECORD_TAP_TEST(TEST_BRS_GET_AVG_SCORE, "Test BinReadStorage::getAverageScore()");
+  RECORD_TAP_TEST(TEST_BRS_GET_NB_SCORES, "Test BinReadStorage::getNbScores()");
 
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE, "Test KmerRepresentativeComputer computations");
   RECORD_TAP_TEST(TEST_KMER_REPRESENTATIVE_REQUIRED_SEQ, "Test KmerRepresentativeComputer computations with a required sequence");

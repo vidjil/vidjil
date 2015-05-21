@@ -585,7 +585,6 @@ Builder.prototype = {
                 }
             
             var span_system = this.m.systemBox(key)
-            span_system.className = "systemBoxMenu";
                 
             var span = document.createElement('span');
             span.className = "systemBoxNameMenu";

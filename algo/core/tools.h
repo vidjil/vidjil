@@ -6,6 +6,7 @@
 
 #include <sstream>
 #include <iostream>
+#include <iomanip>
 #include <string>
 #include <cassert>
 #include "fasta.h"
@@ -72,6 +73,7 @@ bool pair_occurrence_sort(pair<T, int> a, pair<T, int> b);
 
 
 string string_of_int(int number);
+string fixed_string_of_float(float number, int precision);
 string scientific_string_of_double(double number);
 
 /**
@@ -163,6 +165,13 @@ const Sequence NULL_SEQUENCE = create_sequence("", "", "NULL", "");
 
 bool operator==(const Sequence &s1, const Sequence &s2);
 bool operator!=(const Sequence &s1, const Sequence &s2);
+
+
+/***
+ Outputs
+ ***/
+
+void output_label_average(ostream &out, string label, long long int nb, double average, int precision=1);
 
 //////////////////////////////////////////////////
 // Template code

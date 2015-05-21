@@ -15,7 +15,7 @@
                 <td class="column1"> admin</td>
             </tr>
         </thead>
-        {{admin = auth.has_permission("admin", "config", request.vars["id"], auth.user.id)}}
+        {{admin = auth.can_modify_config(request.vars["id"])}}
         {{ for row in query :}}
             <tr>
                 <td> {{=row.owner}} </td>
@@ -43,6 +43,6 @@
     <table class="db_table" id="db_fixed_header"></table>    
 </div>
 
-{{if not auth.has_permission("admin", "config", request.vars["id"], auth.user.id) :}}
+{{if not auth.can_modify_config(request.vars["id"]) :}}
     <div>you need admin access on this patient if you want to change permission </div>
 {{pass}}

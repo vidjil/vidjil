@@ -116,6 +116,8 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define DEFAULT_CLUSTER_COST  Cluster
 #define DEFAULT_SEGMENT_COST   VDJ
 
+#define DEFAULT_TRIM 100
+
 // error
 #define ERROR_STRING "[error] "
 
@@ -180,10 +182,13 @@ void usage(char *progname, bool advanced)
        << "  -M <int>      maximal admissible delta between last V and first J k-mer (default: " << DEFAULT_DELTA_MAX << ") (default with -D: " << DEFAULT_DELTA_MAX_D << ")" << endl
        << "  -w <int>      w-mer size used for the length of the extracted window (default: " << DEFAULT_W << ")" << endl
        << "  -e <float>    maximal e-value for determining if a segmentation can be trusted (default: " << THRESHOLD_NB_EXPECTED << ")" << endl
+       << "  -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: " << DEFAULT_TRIM << ") (0: no trim)" << endl
        << endl
 
-       << "Window annotations" << endl
-       << "  -l <file>     labels for some windows -- these windows will be kept even if -r/-% thresholds are not reached" << endl
+       << "Labeled windows (these windows will be kept even if -r/-% thresholds are not reached)" << endl
+       << "  -W <window>   label the given window" << endl
+       << "  -l <file>     label a set of windows given in <file>" << endl
+       << "  -F            filter -- keep only the labeled windows" << endl
        << endl ;
 
   cerr << "Limits to report a clone (or a window)" << endl
@@ -265,8 +270,24 @@ int main (int argc, char **argv)
        << "# No lymphocyte was harmed in the making of this software," << endl
        << "# however this software is for research use only and comes with no warranty." << endl
        << endl
-       << "# Please cite http://biomedcentral.com/1471-2164/15/409 if you use Vidjil." 
+       << "# Please cite http://biomedcentral.com/1471-2164/15/409 if you use Vidjil." << endl
        << endl ;
+
+  //////////////////////////////////
+  // Display version information or git log
+
+  string soft_version = "vidjil ";
+#ifdef RELEASE_TAG
+  cout << "# version: vidjil " << RELEASE_TAG << endl ;
+  soft_version.append(RELEASE_TAG);
+#else
+  cout << "# development version" << endl ;
+#ifdef GIT_VERSION
+  cout << "# git: " << GIT_VERSION << endl ;
+  soft_version.append("dev ");
+  soft_version.append(GIT_VERSION);
+#endif
+#endif
 
   //$$ options: defaults
 
@@ -314,6 +335,7 @@ int main (int argc, char **argv)
   // Admissible delta between left and right segmentation points
   int delta_min = DEFAULT_DELTA_MIN ; // Kmer+Fine
   int delta_max = DEFAULT_DELTA_MAX ; // Fine
+  int trim_sequences = DEFAULT_TRIM;
 
   bool output_sequences_by_cluster = false;
   bool output_segmented = false;
@@ -330,7 +352,9 @@ int main (int argc, char **argv)
 
   string forced_edges = "" ;
 
+  map <string, string> windows_labels ;
   string windows_labels_file = "" ;
+  bool only_labeled_windows = false ;
 
   char c ;
 
@@ -344,7 +368,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHaiI12g:G:V:D:J:k:r:vw:e:C:f:l:c:m:M:N:s:b:Sn:o:L%:y:z:uUK3E:")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHaiI12g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:M:N:s:b:Sn:o:L%:y:z:uUK3E:t:")) != EOF)
 
     switch (c)
       {
@@ -481,6 +505,10 @@ int main (int argc, char **argv)
 	output_sequences_by_cluster = true;
 	break;
 
+      case 't':
+        trim_sequences = atoi(optarg);
+        break;
+
       case 'v':
 	verbose += 1 ;
 	break;
@@ -518,9 +546,19 @@ int main (int argc, char **argv)
         max_reads_processed = atoi_NO_LIMIT(optarg);
         break;
 
+      // Labels
+
+      case 'W':
+        windows_labels[string(optarg)] = string("-W");
+        break;
+
       case 'l':
 	windows_labels_file = optarg; 
 	break;
+
+      case 'F':
+        only_labeled_windows = true;
+        break;
 
       // Clustering
 
@@ -667,7 +705,7 @@ int main (int argc, char **argv)
   out_dir += "/" ;
 
   /// Load labels ;
-  map <string, string> windows_labels = load_map(windows_labels_file);
+  load_into_map(windows_labels, windows_labels_file);
 
   switch(command) {
   case CMD_WINDOWS: cout << "Extracting windows" << endl; 
@@ -699,22 +737,6 @@ int main (int argc, char **argv)
 
   cout << "# " << time_buffer << endl ;
 
-
-  //////////////////////////////////
-  // Display version information or git log
-
-  string soft_version = "vidjil ";
-#ifdef RELEASE_TAG
-  cout << "# version: vidjil " << RELEASE_TAG << endl ;
-  soft_version.append(RELEASE_TAG);
-#else
-  cout << "# development version" << endl ;
-#ifdef GIT_VERSION
-  cout << "# git: " << GIT_VERSION << endl ;
-  soft_version.append("dev ");
-  soft_version.append(GIT_VERSION);
-#endif
-#endif
 
   //////////////////////////////////
   // Warning for non-optimal use
@@ -758,7 +780,7 @@ int main (int argc, char **argv)
     
       if (multi_germline)
 	{
-	  multigermline->build_default_set(multi_germline_file);
+	  multigermline->build_default_set(multi_germline_file, trim_sequences);
 	}
       else
 	{
@@ -766,7 +788,7 @@ int main (int argc, char **argv)
 	  Germline *germline;
 	  germline = new Germline(germline_system, 'X',
                                   f_reps_V, f_reps_D, f_reps_J, 
-                                  delta_min, delta_max);
+                                  delta_min, delta_max, trim_sequences);
 
           germline->new_index(seed);
 
@@ -785,7 +807,7 @@ int main (int argc, char **argv)
           multigermline->build_with_one_index(seed, false);
         }
 
-        Germline *pseudo = new Germline(PSEUDO_GERMLINE_MAX12, 'x', -10, 80);
+        Germline *pseudo = new Germline(PSEUDO_GERMLINE_MAX12, 'x', -10, 80, trim_sequences);
         pseudo->index = multigermline->index ;
         multigermline->germlines.push_back(pseudo);
     }
@@ -793,7 +815,7 @@ int main (int argc, char **argv)
       // Should come after the initialization of regular (and possibly pseudo) germlines
     if (multi_germline_incomplete) {
       multigermline->one_index_per_germline = true; // Starting from now, creates new indexes
-      multigermline->build_incomplete_set(multi_germline_file);
+      multigermline->build_incomplete_set(multi_germline_file, trim_sequences);
     }
 
     if (multi_germline_mark)
@@ -888,6 +910,9 @@ int main (int argc, char **argv)
 
       for (list< pair <KmerAffect, string> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
 	{
+          if (it->first.getStrand() == -1)
+            continue ;
+
 	  char key = affect_char(it->first.affect) ;
 	  
 	  cout << setw(12) << stats_max[key] << " " ;
@@ -911,6 +936,8 @@ int main (int argc, char **argv)
   ////////////////////////////////////////
   if (command == CMD_CLONES || command == CMD_WINDOWS) {
 
+    string f_json = out_dir + f_basename + JSON_SUFFIX ;
+
     //////////////////////////////////
     //$$ Kmer Segmentation
 
@@ -929,7 +956,7 @@ int main (int argc, char **argv)
     ofstream *out_unsegmented = NULL;
     ofstream *out_affects = NULL;
  
-    WindowExtractor we;
+    WindowExtractor we(multigermline);
     if (! output_sequences_by_cluster)
       we.setMaximalNbReadsPerWindow(max_auditionned);
  
@@ -954,7 +981,9 @@ int main (int argc, char **argv)
       we.setAffectsOutput(out_affects);
     }
 
-    WindowsStorage *windowsStorage = we.extract(reads, multigermline, w, windows_labels, max_reads_processed, only_nth_read, keep_unsegmented_as_clone,
+    WindowsStorage *windowsStorage = we.extract(reads, w,
+                                                windows_labels, only_labeled_windows,
+                                                max_reads_processed, only_nth_read, keep_unsegmented_as_clone,
                                                 expected_value, nb_reads_for_evalue);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();
@@ -987,11 +1016,6 @@ int main (int argc, char **argv)
         stream_segmentation_info << "  ! Please check the unsegmentation causes below and refer to the documentation." << endl ;
       }
 
-    cout << "Build clone stats" << endl;
-    windowsStorage->fillStatsClones();
-    
-    multigermline->out_stats(stream_segmentation_info);
-    stream_segmentation_info << endl;
     we.out_stats(stream_segmentation_info);
     
     cout << stream_segmentation_info.str();
@@ -1019,8 +1043,17 @@ int main (int argc, char **argv)
     //$$ min_reads_clone (ou label)
 
     int min_reads_clone_ratio = (int) (ratio_reads_clone * nb_segmented / 100.0);
-    cout << "Considering only labeled windows and windows with >= " << min_reads_clone << " reads"
-	 << " and with a ratio >= " << ratio_reads_clone << " (" << min_reads_clone_ratio << ")" << endl ;
+    cout << "Considering ";
+
+    if (only_labeled_windows)
+      cout << "only labeled windows" ;
+
+    if (!only_labeled_windows)
+      cout << "labeled windows"
+           << " and windows with >= " << min_reads_clone << " reads"
+           << " and with a ratio >= " << ratio_reads_clone << " (" << min_reads_clone_ratio << ")" ;
+
+    cout << endl ;
 
     int min_reads_clone_final = max(min_reads_clone, min_reads_clone_ratio);
 
@@ -1066,7 +1099,7 @@ int main (int argc, char **argv)
 	clones_windows  = comp.cluster(forced_edges, w, cout, epsilon, minPts) ;
 	comp.stat_cluster(clones_windows, cout );
 	comp.del();
-	cout << "  ==> " << clones_windows.size() << " clusters" << endl ;
+	cout << "  ==> " << clones_windows.size() << " clusters (" << f_json << ")" << endl ;
       } 
     else
       { 
@@ -1207,6 +1240,7 @@ int main (int argc, char **argv)
 
 	  if ((max_clones >= 0) && (num_clone >= max_clones + 1))
 	    {
+	      cout << representative << endl ;
 	      out_clones << representative << endl ;
 	      continue;
 	    }
@@ -1237,6 +1271,11 @@ int main (int argc, char **argv)
         json_coverage.add(repComp.getCoverage());
         json_clone.add("_coverage", json_coverage);
 
+        JsonArray json_avg_length;
+        float average_read_length = windowsStorage->getAverageLength(it->first);
+        json_avg_length.add(average_read_length);
+        json_clone.add("_average_read_length", json_avg_length);
+
         JsonArray json_coverage_info;
         json_coverage_info.add(repComp.getCoverageInfo());
         json_clone.add("_coverage_info", json_coverage_info);
@@ -1244,7 +1283,7 @@ int main (int argc, char **argv)
         // From FineSegmenter
         json_clone.add("sequence", seg.getSequence().sequence);
         
-        if (seg.isSegmented())
+        if (seg.code_short.length())
           json_clone.add("name", seg.code_short);
 
         seg.toJsonList(&json_seg);
@@ -1344,7 +1383,6 @@ int main (int argc, char **argv)
     } // end if (command == CMD_CLONES) 
 
     //$$ .json output: json_data_segment
-    string f_json = out_dir + f_basename + JSON_SUFFIX ;
     cout << "  ==> " << f_json << "\t(data file for the browser)" << endl ;
     ofstream out_json(f_json.c_str()) ;
     

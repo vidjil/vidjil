@@ -1,0 +1,8 @@
+
+
+# 'Undefined name' for web2py globals 'db', 'auth', 'request'
+
+pyflakes:
+  disable:
+    - F821
+

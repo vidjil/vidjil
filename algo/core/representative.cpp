@@ -9,7 +9,8 @@ using namespace std;
 
 RepresentativeComputer::RepresentativeComputer(list<Sequence> &r)
   :sequences(r),is_computed(false),representative(),min_cover(1),
-   percent_cover(0.5),revcomp(true),required(""),coverage(0.0),coverage_info("") {
+   percent_cover(0.5),revcomp(true),required(""),coverage_reference_length(0),
+   coverage(0.0),coverage_info("") {
 }
 
 Sequence RepresentativeComputer::getRepresentative() const{
@@ -50,6 +51,10 @@ void RepresentativeComputer::setRequiredSequence(string sequence) {
   required = sequence;
 }
 
+void RepresentativeComputer::setCoverageReferenceLength(float coverage_reference_length) {
+  this->coverage_reference_length = coverage_reference_length;
+}
+
 string KmerRepresentativeComputer::getSeed() const{
   return seed;
 }
@@ -71,6 +76,7 @@ KmerRepresentativeComputer::KmerRepresentativeComputer(list<Sequence> &r,
   :RepresentativeComputer(r),seed(seed),stability_limit(DEFAULT_STABILITY_LIMIT){}
   
 void KmerRepresentativeComputer::compute() {
+  assert(coverage_reference_length > 0);
   is_computed = false;
 
   // First create an index on the set of reads
@@ -94,15 +100,11 @@ void KmerRepresentativeComputer::compute() {
   Sequence sequence_longest_run;
   size_t k = getSeed().length();
 
-  Stats stats_length;
-  
   for (size_t seq = 1; seq <= sequences.size() && seq <= seq_index_longest_run + stability_limit ; seq++) {
     Sequence sequence = rc.getithBest(seq);
 
-    stats_length.insert(sequence.sequence.size());
-
     if (sequence.sequence.size() <= length_longest_run) {
-      continue;
+      break;
     }
     size_t pos_required = sequence.sequence.find(required);
     if (pos_required == string::npos && revcomp)
@@ -159,11 +161,10 @@ void KmerRepresentativeComputer::compute() {
 
     representative.quality = "";
 
-    int length = stats_length.getAverage();
-    coverage = (float) length_longest_run / length;
+    coverage = (float) length_longest_run / coverage_reference_length;
 
     coverage_info  = string_of_int(length_longest_run) + " bp"
-      + " (" + string_of_int(100 * coverage) + "% of " + string_of_int(length) + " bp)";
+      + " (" + string_of_int(100 * coverage) + "% of " + fixed_string_of_float(coverage_reference_length, 1) + " bp)";
 
     representative.label += " - " + coverage_info ;
   }

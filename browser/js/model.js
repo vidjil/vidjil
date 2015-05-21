@@ -48,6 +48,7 @@ function Model() {
         this[f] = Model_loader.prototype[f]
     }
     
+    this.reset();
     this.view = [];
     this.checkBrowser();
     this.germlineList = new GermlineList()
@@ -55,7 +56,6 @@ function Model() {
     window.onresize = function () { self.resize(); };
     
     this.start()
-    
 }
 
 
@@ -64,6 +64,8 @@ Model.prototype = {
      * Build html elements used by model
      * */
     build: function () {
+        var self =this;
+        
         this.waiting_screen = document.createElement("div");
         this.waiting_screen.className = "waiting_screen";
         
@@ -72,6 +74,42 @@ Model.prototype = {
         
         this.waiting_screen.appendChild(this.waiting_msg);
         document.body.appendChild(this.waiting_screen);
+        
+                
+        //build infoBox
+        
+        this.infoBox = document.createElement("div");
+        this.infoBox.className = "info-container";
+        
+        var closeinfoBox = document.createElement("span");
+        closeinfoBox.className = "closeButton" ;
+        closeinfoBox.appendChild(document.createTextNode("X"));
+        closeinfoBox.onclick = function() {self.closeInfoBox()};
+        this.infoBox.appendChild(closeinfoBox);
+        
+        var div_info = document.createElement("div");
+        div_info.className = "info-msg";
+        this.infoBox.appendChild(div_info);
+        
+        document.body.appendChild(this.infoBox);
+        
+        //build tagSelector
+        this.tagSelector = document.createElement("div");
+        this.tagSelector.className = "tagSelector";
+        
+        var closeTag = document.createElement("span");
+        closeTag.className = "closeButton" ;
+        closeTag.appendChild(document.createTextNode("X"));
+        closeTag.onclick = function() {$(this).parent().hide('fast')};
+        this.tagSelector.appendChild(closeTag);
+        
+        this.tagSelectorInfo = document.createElement("div")
+        this.tagSelector.appendChild(this.tagSelectorInfo);
+        
+        this.tagSelectorList = document.createElement("ul")
+        this.tagSelector.appendChild(this.tagSelectorList);
+        
+        document.body.appendChild(this.tagSelector);
     },
     
     /**
@@ -88,6 +126,7 @@ Model.prototype = {
         this.clones = [];
         this.data = {};
         this.data_info = {};
+        this.clone_info = -1;
         
         this.t = 0;          // Selected time/sample
         this.tOther = 0;  // Other (previously) selected time/sample
@@ -212,6 +251,7 @@ Model.prototype = {
         for (var i = 0; i < this.clones.length; i++) {
             var clone = this.clone(i)
             clone.colorN = colorGenerator((((clone.getNlength() / n_max) - 1) * (-250)));
+            clone.tag = this.default_tag;
         }
         
         this.applyAnalysis(this.analysis);
@@ -324,7 +364,7 @@ Model.prototype = {
             if (new_cluster.length != 0){
                 var l = new_cluster[0]
                 for (var j=0; j<new_cluster.length;j++){
-                    if (m.clone(new_cluster[j]).top < m.clone(l).top) l = new_cluster[j]
+                    if (this.clone(new_cluster[j]).top < this.clone(l).top) l = new_cluster[j]
                 }
                 this.clusters[l] = new_cluster;
             }
@@ -343,19 +383,6 @@ Model.prototype = {
             }
         }
         return -1
-    },
-
-    /** 
-     * erase all changes made by user or from the .analysis file
-     * */
-    resetAnalysis: function () {
-        console.log("resetAnalysis()");
-        this.analysis = {
-            clones: [],
-            cluster: [],
-            date: []
-        };
-        this.initClones();
     },
 
     /**
@@ -385,6 +412,7 @@ Model.prototype = {
      * @return {string} timestamp - sample date
      * */
     getSampleTime: function(time) {
+        var time = typeof time !== 'undefined' ? time : this.t
         var value = "–"
         if (typeof this.samples.timestamp != 'undefined'){
             if (typeof this.samples.timestamp[time] != 'undefined'){
@@ -399,9 +427,10 @@ Model.prototype = {
      * @return {string} soft - name of the software used 
      * */
     getSoftVersionTime: function(time) { 
+        var time = typeof time !== 'undefined' ? time : this.t
         var soft_version = "–"
-        if (typeof m.samples.producer != 'undefined')
-            soft_version = m.samples.producer[time]
+        if (typeof this.samples.producer != 'undefined')
+            soft_version = this.samples.producer[time]
         return soft_version;
     },
 
@@ -410,9 +439,10 @@ Model.prototype = {
      * @return {string} command - sample command
      * */
     getCommandTime: function(time) {
+        var time = typeof time !== 'undefined' ? time : this.t
         var command = "–"
-        if (typeof m.samples.commandline != 'undefined')
-            command = m.samples.commandline[time]
+        if (typeof this.samples.commandline != 'undefined')
+            command = this.samples.commandline[time]
         return command;
     },
     
@@ -421,9 +451,10 @@ Model.prototype = {
      * @return {string} command - sample command
      * */
     getTimestampTime: function(time) {
+        var time = typeof time !== 'undefined' ? time : this.t
         var timestamp = "–"
-        if (typeof m.samples.run_timestamp != 'undefined')
-            timestamp = m.samples.run_timestamp[time]
+        if (typeof this.samples.run_timestamp != 'undefined')
+            timestamp = this.samples.run_timestamp[time]
         return timestamp
     },
 
@@ -587,7 +618,7 @@ Model.prototype = {
      * clones sizes can change depending the parameters so it's neccesary to recompute normalization from time to time
      * */
     update_normalization: function () {
-        if (this.normalization.B != 0 && this.normalization.type=="clone") {
+        if ((this.normalization.B != 0 && this.normalization.type=="clone" )) {
             this.compute_normalization( this.normalization.id, this.normalization.B);
         }
     },
@@ -1267,6 +1298,10 @@ Model.prototype = {
         delta_min = 9999
         delta_max = 0
 
+        for (var i = 0; i < this.samples.order.length; i++)
+	    if ((typeof this.samples.timestamp == 'undefined') || (this.samples.timestamp[i] == 'None'))
+		return { 'min': -1, 'max': -1 }
+
         try
         {
             previous_t = this.samples.timestamp[0]
@@ -1493,6 +1528,122 @@ Model.prototype = {
     },
     
     
+    /**
+     * compute and display clone information in a window
+     * @param {integer} cloneID - clone index
+     * */
+    displayInfoBox: function(cloneID) {
+        $(".list").find(".infoBox").removeClass("infoBox-open")
+        
+        if (this.clone_info == cloneID) {
+            this.closeInfoBox();
+            return;
+        }
+        
+        this.clone_info = cloneID;
+        this.infoBox.style.display = "block";
+        this.infoBox.lastElementChild.innerHTML = self.m.clone(cloneID).getHtmlInfo();
+        $("#"+cloneID).find(".infoBox").addClass("infoBox-open")
+        $("#f"+cloneID).find(".infoBox").addClass("infoBox-open")
+    },
+
+    /**
+     * close clone information box
+     * */
+    closeInfoBox: function() {
+        $(".list").find(".infoBox").removeClass("infoBox-open")
+        $(".listSeq").find(".infoBox").removeClass("infoBox-open")
+        this.clone_info = -1;
+        this.infoBox.style.display = "none";
+        this.infoBox.lastElementChild.innerHTML = "";
+    },
+
+ 
+    /**
+     * open/build the tag/normalize menu for a clone
+     * @param {integer} cloneID - clone index
+     * */
+    openTagSelector: function (cloneID) {
+        var self = this;
+        cloneID = typeof cloneID !== 'undefined' ? cloneID : this.cloneID;
+        this.tagSelectorList.innerHTML = "";
+        this.cloneID=cloneID
+        
+        for (var i = 0; i < this.tag.length; i++) {
+            (function (i) {
+                var span1 = document.createElement('span');
+                span1.className = "tagColorBox tagColor" + i
+                span1.onclick = function () {
+                    self.clone(cloneID).changeTag(i)
+                    $(self.tagSelector).hide('fast')
+                }
+                
+                var span2 = document.createElement('span');
+                span2.className = "tagName" + i + " tn"
+                span2.appendChild(document.createTextNode(self.tag[i].name))
+                span2.onclick = function () {
+                    self.clone(cloneID).changeTag(i)
+                    $(self.tagSelector).hide('fast')
+                }
+
+                var div = document.createElement('div');
+                div.className = "tagElem"
+                div.appendChild(span1)
+                div.appendChild(span2)
+
+                var li = document.createElement('li');
+                li.appendChild(div)
+
+                self.tagSelectorList.appendChild(li);
+            })(i)
+        }
+        
+        var span1 = document.createElement('span');
+        span1.appendChild(document.createTextNode("normalize to: "))
+
+        
+        this.norm_input = document.createElement('input');
+        this.norm_input.type = "number";
+        this.norm_input.step = "0.0001"
+        
+        var span2 = document.createElement('span');
+        span2.appendChild(this.norm_input)
+        
+        this.norm_button = document.createElement('button');
+        this.norm_button.appendChild(document.createTextNode("ok"))
+        this.norm_button.onclick = function () {
+            var cloneID = self.cloneID;
+            var size = parseFloat(self.norm_input.value);
+            
+            if (size>0 && size<1){
+                self.norm_input.value = ""
+                self.clone(cloneID).expected=size;
+                self.compute_normalization(cloneID, size)
+                self.update()
+                $(self.tagSelector).hide('fast')
+            }else{
+                console.log({"type": "popup", "msg": "expected input between 0.0001 and 1"});
+            }
+        }
+        this.norm_input.onkeydown = function () {
+            if (event.keyCode == 13) self.norm_button.click();
+        }
+        
+        var div = document.createElement('div');
+        div.appendChild(span1)
+        div.appendChild(span2)
+        div.appendChild(this.norm_button)
+        
+        var li = document.createElement('li');
+        li.appendChild(div)
+
+        this.tagSelectorList.appendChild(li);
+        
+        
+        if (cloneID[0] == "s") cloneID = cloneID.substr(3);
+        $(this.tagSelector).show("fast");
+        this.tagSelectorInfo.innerHTML = "tag for "+this.clone(cloneID).getName()+"("+cloneID+")"; 
+    },
     
     /**
      * change the strategy for normalization
@@ -1646,7 +1797,7 @@ Model.prototype = {
     systemBox: function (system){
         
         var span = document.createElement('span')
-        span.className = "systemBox";
+        span.className = "systemBoxMenu";
         if ((typeof system != 'undefined')){
             span.appendChild(document.createTextNode(this.germlineList.getShortcut(system)));
             if (this.system_selected.indexOf(system) != -1) 

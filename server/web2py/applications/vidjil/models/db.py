@@ -50,7 +50,8 @@ response.generic_patterns = ['*'] if request.is_local else []
 #########################################################################
 
 from gluon.tools import Auth, Crud, Service, PluginManager, prettydate
-auth = Auth(db)
+auth = VidjilAuth(db)
+
 crud, service, plugins = Crud(db), Service(), PluginManager()
 
 ## create all tables needed by auth if not custom tables
@@ -210,7 +211,11 @@ class MsgUserAdapter(logging.LoggerAdapter):
             for ip_prefix in ips:
                 if ip.startswith(ip_prefix):
                     ip = "%s/%s" % (ip, ips[ip_prefix])
-        new_msg =  '%30s %12s %s' % (ip, ('<%s>' % auth.user.first_name.replace(' ','-') if auth.user else ''), msg)
+
+        usern = auth.user.first_name.replace(' ','-') if auth.user else ''
+        if auth.is_impersonating():
+            usern = 'team!' + usern
+        new_msg =  '%30s %12s %s' % (ip, ('<%s>' % usern), msg)
         return new_msg, kwargs
     
     def admin(self, msg):
@@ -223,26 +228,32 @@ def _init_log():
     """
 
     import logging
+    import sys
+
+    def create_handler(filename, level):
+        try:
+            handler = logging.FileHandler(filename)
+        except:
+            handler = logging.StreamHandler(sys.stderr)
+        else:
+            handler.setLevel(level)
+            handler.setFormatter(formatter)
+        return handler
 
     logger = logging.getLogger('vidjil') # (request.application)
     if not logger.handlers:
         logger.setLevel(logging.DEBUG)
         formatter = logging.Formatter('[%(process)d] %(asctime)s %(levelname)8s - %(filename)s:%(lineno)d\t%(message)s')
 
-        handler = logging.FileHandler(defs.LOG_DEBUG)
-        handler.setLevel(logging.DEBUG)
-        handler.setFormatter(formatter)
-        logger.addHandler(handler) 
-
-        handler = logging.FileHandler(defs.LOG_INFO)
-        handler.setLevel(logging.INFO)
-        handler.setFormatter(formatter)
-        logger.addHandler(handler) 
+        logger.addHandler(create_handler(defs.LOG_DEBUG, logging.DEBUG))
+        logger.addHandler(create_handler(defs.LOG_INFO, logging.INFO))
 
         logger.debug("Creating logger")
     return MsgUserAdapter(logger, {})
 
 log = _init_log()
+
+auth.preload()
 
 current.log = log
 current.db = db

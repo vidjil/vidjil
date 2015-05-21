@@ -41,10 +41,9 @@
        {{for row in query :}}
            <tr class="pointer" onclick="db.call('patient/info', {'id' :'{{=row['id']}}' , 'config_id' : {{=row['most_used_conf']}} } )" >
                 <td>
-		     {{ if isAdmin: }} ({{=row['id']}}) {{ pass }}
-                     {{=row['name']}}
+                     {{=vidjil_utils.anon_names(row['id'], row['first_name'], row['last_name'], row['anon_allowed'])}}
                 </td>
-                <td> {{=row['birth'] }} </td>
+                <td> {{ if row['birth'] is not None: }} {{=row['birth'] }} {{ pass }} </td>
                 <td> {{=row['info'] }} </td>
                 <td> {{=row['confs']}}</td>
 {{if isAdmin:}} <td> {{=row['groups']}}</td>{{pass}}
@@ -65,7 +64,7 @@
 </div>
 
 
-{{if auth.has_permission("create", "patient") :}}
+{{if auth.can_create_patient():}}
 <span class="button2" onclick="db.call('patient/add')"> + new patient </span>
 <span class="button2" onclick="db.call('patient/custom', {'filter': '{{=request.vars['filter']}}' })"> compare samples/patients </span>
 {{else:}}

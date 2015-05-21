@@ -71,7 +71,9 @@ class Browser < MiniTest::Test
 
     end
     
-    $b.div(:id => 'demo_file_menu').click 
+    # check the 'import data' menu element, and click on it
+    $b.div(:id => 'demo_file_menu').click
+    assert ($b.div(:id => 'demo_file_menu').a(:id => 'import_data_anchor')), "'import data' not present"
     $b.div(:id => 'demo_file_menu').a(:id => 'import_data_anchor').click
     
     # select data file
@@ -242,9 +244,9 @@ class Browser < MiniTest::Test
     $b.clone_in_scatterplot('25').wait_until_present
     $b.clone_in_scatterplot('25').click
 
-    assert ($b.preset_selector.selected? "V/J (genes)"), ">> preset selector badly set"
+    assert ($b.preset_selector.selected? "[0] V/J (genes)"), ">> preset selector badly set"
     $b.send_keys :numpad2
-    assert ($b.preset_selector.selected? "V/N length"), ">> preset selector not properly changed"
+    assert ($b.preset_selector.selected? "[2] V/N length"), ">> preset selector not properly changed"
   end
 
   def test_10_imgt

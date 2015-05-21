@@ -2,7 +2,6 @@
 
 import unittest
 from gluon.globals import Request, Session, Storage, Response
-from gluon.tools import Auth
 from gluon.contrib.test_helpers import form_postvars
 from gluon import current
 
@@ -22,7 +21,7 @@ class AdminController(unittest.TestCase):
         global response, session, request, auth
         session = Session()
         request = Request([])
-        auth = Auth(globals(), db)
+        auth = VidjilAuth(globals(), db)
         auth.login_bare("test@vidjil.org", "1234")
         
         # rewrite info / error functions 
@@ -45,8 +44,8 @@ class AdminController(unittest.TestCase):
         
         
     def testLog(self):
-        request.vars.file = '../log/nginx/access.log'
-        resp = log()
+        request.vars.file = 'vidjil.log'
+        resp = showlog()
         self.assertTrue(resp.has_key('lines'), "log() has returned an incomplete response")
         
         

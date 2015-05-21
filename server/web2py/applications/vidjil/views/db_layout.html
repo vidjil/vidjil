@@ -2,7 +2,7 @@
     
     <div id="db_menu">
         <a class="button" onclick="db.call('patient/index');">patients</a>
-        {{if auth.has_membership("admin"):}}
+        {{if auth.is_admin():}}
         - - -
         <a class="button" onclick="db.call('config/index');">configs</a>
         <a class="button" onclick="db.call('group/index');">groups</a>
@@ -14,8 +14,43 @@
     
     <div id="db_auth">
             {{if auth.user:}}
-	    {{=auth.user.first_name}} {{=auth.user.last_name}}
-            <a class="button" onclick="db.request('default/user/logout');">(logout)</a>
+        
+                {{if auth.is_impersonating() :}}                     
+                    impersonate
+                    <span>
+                        <select id="choose_user" name="user" onchange="db.call('default/impersonate', {'id' : this.value, 'next': '{{=request.url}}'})">
+                            <option value="0" selected> --- </option>
+                            {{for row in db(db.auth_user.id >1).select() :}}
+                                <option value="{{=row.id }}" {{if row.id==auth.user_id:}}selected {{pass}}>
+                                    {{=row.id}} &ndash; {{=row.first_name}} {{=row.last_name}}
+                                </option> {{pass}}
+                        </select>
+                    </span>{{pass}}
+        
+        
+        
+                {{if auth.is_admin():}}
+                   {{if not auth.is_impersonating() :}} 
+                    impersonate
+                    <span>
+                        <select id="choose_user" name="user" onchange="db.call('default/impersonate', {'id' : this.value, 'next': '{{=request.url}}'});">
+                            <option value="0" selected> --- </option>
+                            {{for row in db(db.auth_user.id >1).select() :}} 
+                                <option value="{{=row.id }}">{{=row.id}} &ndash; {{=row.first_name}} {{=row.last_name}}</option> {{pass}}
+                        </select>
+                    </span>
+                   {{pass}}
+                {{pass}}
+                
+        
+                {{if not auth.is_impersonating() :}}                     
+                    {{=auth.user.first_name}} {{=auth.user.last_name}}
+                {{pass}}
+        
+        
+        
+        
+                <a class="button" onclick="db.request('default/user/logout');">(logout)</a>
             {{pass}}
     </div>
     

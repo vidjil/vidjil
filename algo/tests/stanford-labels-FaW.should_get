@@ -1,0 +1,10 @@
+!LAUNCH: ../../vidjil -t 0 -G ../../germline/IGH -FaW GAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACT ../../data/Stanford_S22.fasta ; cat out/seq/clone.fa-1
+
+$ Keep only one windows, the one given by -W, with only 5 reads (it is actually the second clone in Stanford_S22.fasta)
+1: keep 1 windows in 5 reads
+
+$ Tbere are the three IGHV/D/J genes in out/seq/clone.fa-1
+3:>IGH
+
+$ There are 5 reads in out/seq/clone.fa-1
+5:>lcl

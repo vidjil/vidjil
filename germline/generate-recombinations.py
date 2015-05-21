@@ -31,6 +31,11 @@ def recombine_VJ_with_removes(seq5, remove5, Nlength, remove3, seq3):
 
     return recombine_VJ(seq5, remove5, random_sequence(available, Nlength), remove3, seq3)
 
+def get_gene_name(allele):
+    '''
+    From fasta sequence to Ig/TR gene name
+    '''
+    return allele.name[:allele.name.find('*')]
 
 def select_genes(rep5, rep3, at_most=0):
     if at_most > 0 and len(rep5) * len(rep3) > at_most:
@@ -38,9 +43,17 @@ def select_genes(rep5, rep3, at_most=0):
     return select_all_genes(rep5, rep3)
 
 def select_all_genes(rep5, rep3):
+    genes5 = {}
+    genes3 = {}
     for seq5 in rep5:
-        for seq3 in rep3:
-            yield (seq5, seq3)
+        gene_name_5 = get_gene_name(seq5)
+        if not gene_name_5 in genes5:
+            genes5[gene_name_5] = True
+            for seq3 in rep3:
+                gene_name_3 = get_gene_name(seq3)
+                if not gene_name_5+gene_name_3 in genes3:
+                    genes3[gene_name_5+gene_name_3] = True
+                    yield (seq5, seq3)
 
 def select_genes_randomly(rep5, rep3, at_most):
     nb = 0
@@ -51,9 +64,9 @@ def select_genes_randomly(rep5, rep3, at_most):
 
 def write_seq_to_file(seq, code, file):
     seq.header = seq.header.replace(' ', '_')+"__"+code
-    file.write(str(seq2))
+    file.write(str(seq))
 
-def generate_to_file_rec(rep5, rep4, rep3, code, f, recomb_function):
+def generate_to_file_rec(rep5, rep4, rep3, code, output, recomb_function):
     if rep4 == []:
         recomb1_left = rep5
     else:
@@ -61,20 +74,19 @@ def generate_to_file_rec(rep5, rep4, rep3, code, f, recomb_function):
     recomb1_right = rep3
 
     nb = 0
-    with open(f, 'w') as ff:
-        for seq5, seq3 in select_genes(recomb1_left, recomb1_right):
-            seq = recomb_function(seq5, seq3)
-            if rep4 != []:
-                nb += generate_to_file_rec(rep5, [], [seq], code, f, recomb_function)
-            else:
-                seq.header = seq.header.replace(' ', '_')+"__"+code
-                ff.write(str(seq))
-                nb += 1
+    for seq5, seq3 in select_genes(recomb1_left, recomb1_right):
+        seq = recomb_function(seq5, seq3)
+        if rep4 != []:
+            nb += generate_to_file_rec(rep5, [], [seq], code, output, recomb_function)
+        else:
+            seq.header = seq.header.replace(' ', '_')+"__"+code
+            output.write(str(seq))
+            nb += 1
     return nb
 
 def generate_to_file(rep5, rep4, rep3, code, f, recomb_function):
     print("  ==>", f)
-    print("  ==> %d recombinations" % generate_to_file_rec(rep5, rep4, rep3, code, f, recomb_function))
+    print("  ==> %d recombinations" % generate_to_file_rec(rep5, rep4, rep3, code, open(f, 'w'), recomb_function))
 
 
 

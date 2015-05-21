@@ -98,7 +98,6 @@ int main(int argc, const char** argv)
   
   Fasta fasta1(file1, 1, " ");
   Fasta fasta2(file2, 1, " ");
-
   
   // Sequences
   int i = atoi(args["-i"].asString().c_str());

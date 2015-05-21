@@ -220,7 +220,7 @@ analyzed reads, including the hidden clones.
 
 
 * What is the sequence displayed for each clone ?
-
+<<representative>>
 The sequences displayed for each clone are not individual reads.  
 The clones may gather thousands of reads, and all these reads can have
 some differences. Depending on the sequencing technology, the reads
@@ -292,7 +292,26 @@ There can be several causes leading to bad ratios:
      spot on the graph any large change in concentration.
 
 
+** Clone coverage
+   The clone coverage is computed over the consensus sequence which is
+   displayed for each clone (see [[representative][What is the sequence displayed for each clone?]]). 
+   Its length should be representative of the read lengths among that clone. A
+   clone can be constituted of thousands of reads of various lengths. We
+   expect the consensus sequence to be close to the median read length of the
+   clone. The clone coverage is such a measure: having a clone coverage
+   between .85 and 1 is quite frequent. On the contrary, if it is .5 it means that the consensus sequence
+  length is half shorter than the median read length in the clone.
 
+  There is a bad clone coverage (< 0.5) when reads do share the same window
+  (it is how Vidjil defines a clone) and when they have frequent discrepancies
+  outside of the window. Such cases have been observed with chimeric reads
+  which share the same V(D)J recombinations in their first half and have
+  totally different and unknown sequences in their second half.
+
+  In the browser, the clones with a low clone coverage (< 0.5) are displayed in
+  the list with an orange I on the right. You can also visualize the clones
+  according to their clone coverage by selecting for example “clone
+  coverage/GC content” in the preset menu of the “plot” box.
 * Keyboard shortcuts
 
 ** Browser 

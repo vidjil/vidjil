@@ -3,7 +3,17 @@
 <head>
     <meta charset="utf-8">
     <title>QUnit - The Vidjil Project</title>
+
     <link rel="stylesheet" href="../../css/qunit-1.15.0.css">
+    <style>
+        .flash_container, .log_container, .popup_container, .data-container, .info-container, .dataMenu, .tagSelector{
+            display:none !important;
+        }
+        .list_focus{
+            background : rgb(204, 204, 204);
+        }
+    </style>
+
     <script type="text/javascript" src='../../js/lib/d3.v3.js'></script>
     <script type="text/javascript" src="../../js/lib/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="../../js/lib/jquery.form.js"></script>
@@ -18,49 +28,66 @@
     <script type="text/javascript" src='../../js/lib/file.js'></script>
     <script type="text/javascript" src='../../js/lib/jquery.zclip.js'></script>
 
-    <script type="text/javascript" src='../../js/view.js'></script>
-    <script type="text/javascript" src='../../js/compare.js'></script>
-    <script type="text/javascript" src='../../js/menu.js'></script>
-    <script type="text/javascript" src='../../js/dbscan.js'></script>
-    <script type="text/javascript" src='../../js/germline.js'></script>
-    <script type="text/javascript" src='../../../germline/germlines.data'></script>
-    <script type="text/javascript" src='../../js/germline_builder.js'></script>
-    <script type="text/javascript" src='../../js/segmenter.js'></script>
-    <script type="text/javascript" src='../../js/model_loader.js'></script>
-    <script type="text/javascript" src='../../js/model.js'></script>
-    <script type="text/javascript" src='../../js/clone.js'></script>
-    <script type="text/javascript" src='../../js/list.js'></script>
-    <script type="text/javascript" src="../../js/axis.js"> </script>
-    <script type="text/javascript" src="../../js/graph.js"> </script>
-    <script type="text/javascript" src="../../js/scatterPlot.js"> </script>
-    <script type="text/javascript" src='../../js/builder.js'></script>
-    <script type="text/javascript" src='../../js/com.js'></script>
-    <script type="text/javascript" src='../../js/vidjil-style.js'></script>
-    <script type="text/javascript" src='../../js/crossDomain.js'></script>
+    <script type="text/javascript" src='../../js/view.js' data-cover></script>
+    <script type="text/javascript" src='../../js/compare.js' data-cover></script>
+    <script type="text/javascript" src='../../js/menu.js' data-cover></script>
+    <script type="text/javascript" src='../../js/dbscan.js' data-cover></script>
+    <script type="text/javascript" src='../../js/germline.js' ></script>
+    <script type="text/javascript" src='../../../germline/germlines.data' ></script>
+    <script type="text/javascript" src='../../js/germline_builder.js' data-cover></script>
+    <script type="text/javascript" src='../../js/segmenter.js' data-cover></script>
+    <script type="text/javascript" src='../../js/model_loader.js' data-cover></script>
+    <script type="text/javascript" src='../../js/model.js' data-cover></script>
+    <script type="text/javascript" src='../../js/clone.js' data-cover></script>
+    <script type="text/javascript" src='../../js/list.js' data-cover></script>
+    <script type="text/javascript" src="../../js/axis.js" data-cover> </script>
+    <script type="text/javascript" src="../../js/graph.js" data-cover> </script>
+    <script type="text/javascript" src="../../js/scatterPlot.js" data-cover> </script>
+    <script type="text/javascript" src='../../js/builder.js' data-cover></script>
+    <script type="text/javascript" src='../../js/com.js' data-cover></script>
+    <script type="text/javascript" src='../../js/vidjil-style.js' data-cover></script>
+    <script type="text/javascript" src='../../js/crossDomain.js' data-cover></script>
     <script type="text/javascript" src='../../js/pdf.js'></script>
-    <script type="text/javascript" src='../../js/database.js'></script>
-    <script type="text/javascript" src='../../js/stats.js'></script>
+    <script type="text/javascript" src='../../js/database.js' data-cover></script>
+    <script type="text/javascript" src='../../js/stats.js' data-cover></script>
 
     <script type="text/javascript" src="./testFiles/data_test.js"></script>
 </head>
 <body>
 
-    <div style="opacity:0%; position:absolute; z-index:-5">
+    <div style="opacity:0% !important; position:absolute; z-index:-5">
         <div id="data-container" ></div>
         <div id="visu" style="width:800px; height:500px;"></div>
+        <div id="segment" style="width:800px; height:500px;"></div>
+        <div id="info-row" style="width:800px; height:500px;"><div id="info"> </div></div>
+        <div id="list-row" style="width:800px; height:500px;"><div id="list"> </div></div>
+        <div id="data-row" style="width:800px; height:500px;"><div id="data"> </div></div>
+        <div id="test_div"></div>
     </div>
 
     <div id="qunit"></div>
     <div id="qunit-fixture"></div>
     <script src="../../js/lib/qunit-1.14.0.js"></script>
     <script type="text/javascript" src="../../js/lib/qunit-tap.js"></script>
+    <script src="../../js/lib/blanket.min.js"></script>
     <script>
+
+
     var tap_output;
     qunitTap(QUnit, function() { 
             if (typeof arguments != "undefined"){
                 tap_output+=arguments[0]+"\n" 
             }
         });
+
+    jQuery.fn.d3Click = function () {
+        this.each(function (i, e) {
+            var evt = document.createEvent("MouseEvents");
+            evt.initMouseEvent("click", true, true, window, 0, 0, 0, 0, 0, false, false, false, false, 0, null);
+            e.dispatchEvent(evt);
+        });
+    };
+
     </script>
     <script src="./testFiles/dbscan_test.js"></script>
     <script src="./testFiles/model_test.js"></script>
@@ -68,5 +95,8 @@
     <script src="./testFiles/scatterPlot_test.js"></script>
     <script src="./testFiles/axis_test.js"></script>
     <script src="./testFiles/graph_test.js"></script>
+    <script src="./testFiles/com_test.js"></script>
+    <script src="./testFiles/list_test.js"></script>
+    <script src="./testFiles/segmenter_test.js"></script>
 </body>
 </html>

@@ -94,7 +94,7 @@ Model_loader.prototype = {
                 
         else if (typeof config != 'undefined' && config.use_database){
             //wait 1sec to check ssl
-            setTimeout(function () { db.call("patient/index.html")}, 1000);
+            setTimeout(function () { db.call("default/home.html")}, 1000);
         }else{
             console.log({"type":"popup", "default":"welcome" })
         }
@@ -185,19 +185,19 @@ Model_loader.prototype = {
         var url_split = url.split('/')
         
         $.ajax({
-            type: "POST",
+            type: "GET",
             timeout: 5000,
             crossDomain: true,
             url: url,
             success: function (result) {
                 self.parseJsonData(result, 100)
-                self.loadGermline();
-                self.initClones()
+                    .loadGermline()
+                    .initClones();
                 self.dataFileName = url_split[url_split.length-1]
                 callback()
             },                
             error: function (request, status, error) {
-                console.log({"type": "flash", "msg": "error : can't reach " + url + "file", "priority": 2 });
+                console.log({"type": "flash", "msg": "error : can't reach " + url + " file", "priority": 2 });
             }
         });
 
@@ -216,7 +216,7 @@ Model_loader.prototype = {
         var url_split = url2.split('/')
         
         $.ajax({
-            type: "POST",
+            type: "GET",
             timeout: 5000,
             crossDomain: true,
             url: url2,
@@ -451,6 +451,21 @@ Model_loader.prototype = {
         saveAs(textFileAsBlob, filename + ".analysis");
         self.m.analysisHasChanged = false
     }, //end saveAnalysis
+
+    
+    /** 
+     * erase all changes made by user or from the .analysis file
+     * */
+    resetAnalysis: function () {
+        console.log("resetAnalysis()");
+        this.analysis = {
+            clones: [],
+            cluster: [],
+            date: []
+        };
+        this.initClones();
+    },
+    
     
     /**
      * create a json string with analysis currently applied 

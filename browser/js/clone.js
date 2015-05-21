@@ -51,12 +51,26 @@ function Clone(data, model, index) {
     this.m.clones[index]=this
     this.tag = this.getTag();
     this.computeGCContent()
+    this.computeCoverage()
+    this.computeEValue()
 }
 
 
 Clone.prototype = {
+
+    COVERAGE_WARN: 0.5,
+    EVALUE_WARN: 0.001,
     
-    
+    isWarned: function () {
+    /**
+     * @return {bool} a warning is set on this clone
+     */
+        if (this.m.coverage < this.COVERAGE_WARN) return true;
+        if (typeof(this.eValue) != undefined && this.eValue > this.EVALUE_WARN) return true;
+        return false;
+    },
+
+
     /** 
      * return clone's most important name <br>
      * cluster name > custom_name > segmentation name > window
@@ -298,9 +312,14 @@ Clone.prototype = {
 
     }, //end getSize
 
+    computeEValue: function () {
+        var e = this.getGene('_evalue');
+        if (typeof(e) != 'undefined')
+            this.eValue = parseFloat(e)
+        else
+            this.eValue = undefined
+    },
 
-    
-    
     getGene: function (type, withAllele) {
         withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
         if (typeof (this.seg) != 'undefined' && typeof (this.seg[type]) != 'undefined') {
@@ -318,6 +337,7 @@ Clone.prototype = {
             case "3" :
                 return "undefined J";
         }
+        return undefined;
     },
     
     getNlength: function () {
@@ -336,6 +356,19 @@ Clone.prototype = {
         }
     },
 
+	getRevCompSequence : function () {
+        if (typeof (this.sequence) != 'undefined' && this.sequence != 0){
+            var dict_comp  = {"A":"T","T":"A","C":"G","G":"C"}
+			var revcompSeq = ""
+			for (var i = this.sequence.length; i >= 0; i--) {
+				revcompSeq += dict_comp[this.sequence[i]]
+			}
+			return revcompSeq
+        }else{
+            return "0";
+        }
+    },
+    
     getPrintableSegSequence: function () {
         if (typeof this.seg == 'undefined' || typeof this.seg['5end'] == 'undefined' || typeof this.seg['3start'] == 'undefined') {
             return this.getSequence()
@@ -352,6 +385,28 @@ Clone.prototype = {
         return s
     },
 
+    /*
+     * Compute coverage as the average value of non-zero coverages
+     */
+
+    computeCoverage: function () {
+        if (typeof (this._coverage) == 'undefined') {
+            this.coverage = undefined
+            return
+        }
+
+        var sum = 0.0
+        var nb = 0
+
+        for (var i=0; i<this._coverage.length; i++) {
+            if (this._coverage[i] > 0) {
+                sum += parseFloat(this._coverage[i])
+                nb += 1
+            }
+        }
+        this.coverage = sum/nb
+    },
+
     computeGCContent: function () {
         if (typeof (this.sequence) == 'undefined') {
             this.GCContent = '?'
@@ -363,15 +418,7 @@ Clone.prototype = {
             if ("GgCc".indexOf(this.sequence[i]) > -1)
                 gc++ }
 
-        this.GCContent = 100 * gc / this.sequence.length
-    },
-
-    getGCContent : function () {
-        if (typeof (this.GCContent) != 'undefined'){
-            return this.GCContent
-        }else{
-            return 0;
-        }
+        this.GCContent = gc / this.sequence.length
     },
 
     getSequenceLength : function () {
@@ -486,7 +533,18 @@ Clone.prototype = {
             html += "<tr><td> clone name </td><td colspan='" + time_length + "'>" + this.getName() + "</td></tr>"
             html += "<tr><td> clone size (n-reads (total reads) )</td>"
             for (var i = 0; i < time_length; i++) {
-            html += "<td>" + this.getReads(this.m.samples.order[i]) + "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")</td>"
+                html += "<td>"
+                html += this.getReads(this.m.samples.order[i]) + "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")"
+                if ($('#debug_menu').is(':visible')) {
+                html += "<br/>"
+                call_reads = "db.call('default/run_request', { "
+                call_reads += "'sequence_file_id': '" + this.m.samples.db_key[this.m.samples.order[i]] + "', "
+                call_reads += "'config_id' : '" + this.m.db_key.config + "', "
+                call_reads += "'grep_reads' : '" + this.id + "' })"
+                console.log(call_reads)
+                html += "<span class='button' onclick=\"" + call_reads + "\"> get reads </span>"
+                }
+                html += "</td>"
             }
             html += "</tr><tr><td> clone size (%)</td>"
             for (var i = 0; i < time_length; i++) {
@@ -502,6 +560,24 @@ Clone.prototype = {
         html += "<tr><td> sequence name </td><td colspan='" + time_length + "'>" + this.getSequenceName() + "</td></tr>"
         html += "<tr><td> code </td><td colspan='" + time_length + "'>" + this.getCode() + "</td></tr>"
         html += "<tr><td> length </td><td colspan='" + time_length + "'>" + this.getSequenceLength() + "</td></tr>"
+
+        //coverage info
+        if (typeof this.coverage != 'undefined') {
+            html += "<tr><td> average coverage </td><td colspan='" + time_length + "'><span "
+            if (this.coverage < this.COVERAGE_WARN)
+                html += "class='warning'"
+            html += ">" + this.coverage.toFixed(3) + "</span></td>"
+        }
+
+        // e-value
+        if (typeof this.eValue != 'undefined') {
+            html += "<tr><td> e-value </td><td colspan='" + time_length + "'><span "
+            if (this.eValue > this.EVALUE_WARN)
+                html += "class='warning'"
+            html += ">" + this.eValue + "</span></td>"
+        }
+
+        // abundance info
         html += "<tr><td> size (n-reads (total reads) )</td>"
         for (var i = 0; i < time_length; i++) {
             html += "<td>" + this.get('reads',this.m.samples.order[i]) + 
@@ -537,9 +613,10 @@ Clone.prototype = {
         
         html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.sequence + "</td></tr>"
         html += "<tr><td> id </td><td colspan='" + time_length + "'>" + this.id + "</td></tr>"
-        html += "<tr><td> 5 </td><td colspan='" + time_length + "'>" + this.getGene("5") + "</td></tr>"
-        html += "<tr><td> 4 </td><td colspan='" + time_length + "'>" + this.getGene("4") + "</td></tr>"
-        html += "<tr><td> 3 </td><td colspan='" + time_length + "'>" + this.getGene("3") + "</td></tr>"
+        html += "<tr><td> locus </td><td colspan='" + time_length + "'>" + this.m.systemBox(this.germline).outerHTML + this.germline + "</td></tr>"
+        html += "<tr><td> V gene (or 5') </td><td colspan='" + time_length + "'>" + this.getGene("5") + "</td></tr>"
+        html += "<tr><td> (D gene) </td><td colspan='" + time_length + "'>" + this.getGene("4") + "</td></tr>"
+        html += "<tr><td> J gene (or 3') </td><td colspan='" + time_length + "'>" + this.getGene("3") + "</td></tr>"
         
         
         //other info (clntab)

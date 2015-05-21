@@ -5,13 +5,12 @@
 #include "tools.h"
 
 
-map <string, string> load_map(string map_file)
+void load_into_map(map <string, string> &the_map, string map_file)
 {
   // Loads a simple file with key, values into a map
-  map <string, string> the_map ;
   
   if (!map_file.size())
-    return the_map ;
+    return ;
 
   cout << "  <== " << map_file ;
 
@@ -20,7 +19,6 @@ map <string, string> load_map(string map_file)
   if (!f.is_open())
     {
       cout << "  [failed] " << endl ;
-      return the_map ;
     }
 
   int nb_keys = 0 ;
@@ -42,8 +40,6 @@ map <string, string> load_map(string map_file)
     }
 
   cout << ": " << nb_keys << " elements" << endl ;
-
-  return the_map ;
 }
 
 

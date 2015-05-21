@@ -1,4 +1,5 @@
 #include "stats.h"
+#include "tools.h"
 
 Stats::Stats()
 {
@@ -24,17 +25,6 @@ float Stats::getAverage()
 
 ostream &operator<<(ostream &out, Stats &stats)
 {
-  out << "  ";
-  
-  if (stats.label.size())
-    out << left << setw(18) << stats.label << "->" ;
-
-  out << right << setw(9) << stats.nb ;
-  out << "   " << setw(5) ;
-  if (stats.nb)
-    out << fixed << setprecision(1) << stats.getAverage() ;
-  else
-    out << "-" ;
-  
+  output_label_average(out, stats.label, stats.nb, stats.getAverage());
   return out;
 }

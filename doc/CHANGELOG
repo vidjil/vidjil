@@ -1,6 +1,18 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
+2015-05-08  The Vidjil Team
+        * New default e-value threshold (-e 1.0), improving the segmentation heuristic
+        * New default for window length (-w 50), even with -D or with -g, streamlining the window handling
+        * Better multi-germline analysis (-g), selecting the best locus on the e-value (core/segment.cpp)
+        * New experimental trim option (-t), considering only the relevant ends of the germline genes (core/kmerstore.h)
+        * Streamlined unsegmentation causes, including 'too short for w(indow)'
+        * Updated main and debug ouptut
+        * Updated help (algo.org, and new locus.org)
+        * New option to keep only reads with labeled windows (-F), new combo (-FaW) to filter reads by window
+        * Bugs closed (non symmetrical seeds and revcomp)
+        * New and updated unit and functional tests
+
 2015-04-09  The Vidjil Team
         * New experimental e-value threshold (-e) (core/segment.cpp)
         * New experimental unexpected recombination analysis (-2) (core/segment.cpp)
