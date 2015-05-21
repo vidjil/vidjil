@@ -15,7 +15,6 @@
 #include <utility>
 #include <string>
 #include "fasta.h"
-#include "json.h"
 #include "segment.h"
 #include "germline.h"
 #include "read_storage.h"
@@ -211,8 +210,6 @@ class WindowsStorage {
    * Print the windows from the most abundant to the least abundant
    */ 
   ostream &printSortedWindows(ostream &os);
-
-  JsonArray sortedWindowsToJsonArray(map<junction, JsonList> json_data_segment);
   
   json sortedWindowsToJson(map<junction, json> json_data_segment);
 

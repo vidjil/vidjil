@@ -10,7 +10,6 @@
 #include "kmerstore.h"
 #include "kmeraffect.h"
 #include "affectanalyser.h"
-#include "json.h"
 #include "../lib/json.hpp"
 
 #define EXTEND_D_ZONE 5
@@ -196,7 +195,6 @@ class KmerSegmenter : public Segmenter
   KmerAffectAnalyser *getKmerAffectAnalyser() const;
 
   string getInfoLineWithAffects() const;
-  void toJsonList(JsonList *seg);
   json toJson();
 
  private:
@@ -247,7 +245,6 @@ class FineSegmenter : public Segmenter
   void FineSegmentD(Germline *germline);
   void findCDR3();
 
-  void toJsonList(JsonList *seg);
   json toJson();
   
 };
