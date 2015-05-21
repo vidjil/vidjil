@@ -22,11 +22,13 @@
 #include "read_score.h"
 #include "representative.h"
 #include "stats.h"
+#include "../lib/json.hpp"
 
 #define NB_BINS 15
 #define MAX_VALUE_BINS 500
 
 using namespace std;
+using json = nlohmann::json;
 
 typedef string junction ;
 
@@ -61,7 +63,7 @@ class WindowsStorage {
   map<junction, BinReadStorage>::iterator begin();
   map<junction, BinReadStorage>::iterator end();
   
-  JsonList statusToJson(junction window);
+  json statusToJson(junction window);
 
   /**
    * @return the average read length of the reads segmented with the given window
@@ -211,6 +213,8 @@ class WindowsStorage {
   ostream &printSortedWindows(ostream &os);
 
   JsonArray sortedWindowsToJsonArray(map<junction, JsonList> json_data_segment);
+  
+  json sortedWindowsToJson(map<junction, json> json_data_segment);
 
   /**
    * Display a window with its in size in a somewhat FASTA format
