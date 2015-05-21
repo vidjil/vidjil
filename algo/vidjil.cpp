@@ -1022,7 +1022,7 @@ int main (int argc, char **argv)
     we.out_stats(stream_segmentation_info);
     
     cout << stream_segmentation_info.str();
-      map <junction, JsonList> json_data_segment ;
+      map <junction, json> json_data_segment ;
     
 
 	//////////////////////////////////
@@ -1264,45 +1264,32 @@ int main (int argc, char **argv)
 	cout << seg << endl ;
 	out_clone << seg << endl ;
 	out_clones << seg << endl ;
-
-
-        // Prepare .json data segment
-        JsonList json_clone;
-        JsonList json_seg;
-
-        JsonArray json_coverage;
-        json_coverage.add(repComp.getCoverage());
-        json_clone.add("_coverage", json_coverage);
-
-        JsonArray json_avg_length;
-        float average_read_length = windowsStorage->getAverageLength(it->first);
-        json_avg_length.add(average_read_length);
-        json_clone.add("_average_read_length", json_avg_length);
-
-        JsonArray json_coverage_info;
-        json_coverage_info.add(repComp.getCoverageInfo());
-        json_clone.add("_coverage_info", json_coverage_info);
-
-        // From FineSegmenter
-        json_clone.add("sequence", seg.getSequence().sequence);
-        
-        if (seg.code_short.length())
-          json_clone.add("name", seg.code_short);
-
-        seg.toJsonList(&json_seg);
-
+    
         // Re-launch also a KmerMultiSegmenter, for control purposes (affectations, evalue)
         KmerMultiSegmenter kmseg(seg.getSequence(), multigermline, 0, expected_value, nb_reads_for_evalue);
         KmerSegmenter *kseg = kmseg.the_kseg ;
-        kseg->toJsonList(&json_seg);
         if (verbose)
           cout << "KmerSegmenter: " << kseg->getInfoLine() << endl;
 
-        // Save .json data segment
-        json_clone.add("seg", json_seg);
+        
+        json json_clone;
+        json_clone["_coverage"] = { repComp.getCoverage() };
+        json_clone["_average_read_length"] = { windowsStorage->getAverageLength(it->first) };
+        json_clone["_coverage_info"] = {repComp.getCoverageInfo()};
+        
+        // From FineSegmenter
+        json_clone["sequence"] = seg.getSequence().sequence;
+        json_clone["name"] = seg.code_short;
+        json_clone["seg"] = seg.toJson();
+
+        //From KmerMultiSegmenter
+        json json_kseg = kseg->toJson();
+        for (json::iterator it = json_kseg.begin(); it != json_kseg.end(); ++it) {
+            json_clone["seg"][it.key()] = it.value();
+        }
+        
         json_data_segment[it->first] = json_clone;
-
-
+        
         if (seg.isSegmented())
 	  {
 	      // Check for identical code, outputs to out_edge
@@ -1389,119 +1376,43 @@ int main (int argc, char **argv)
     cout << "  ==> " << f_json << "\t(data file for the browser)" << endl ;
     ofstream out_json(f_json.c_str()) ;
     
-    JsonList *json_out;
-    json_out=new JsonList();
-
-    // Version/timestamp/git info
-
     ostringstream stream_cmdline;
     for (int i=0; i < argc; i++) stream_cmdline << argv[i] << " ";
     
-    JsonArray json_nb_reads;
-    json_nb_reads.add(nb_total_reads);
+    
+    //json custom germline
+    json json_germlines;
+    json_germlines = {
+        {"custom", {
+            {"shortcut", "X"},
+            {"3", json::array()},
+            {"4", json::array()},
+            {"5", json::array()}
+        }}
+    };
 
-    JsonArray json_nb_segmented;
-    json_nb_segmented.add(nb_segmented);
-    
-    JsonArray json_original_names;
-    json_original_names.add(f_reads);
-    
-    JsonArray json_timestamp;
-    json_timestamp.add(time_buffer);
-    
-    JsonArray json_soft;
-    json_soft.add(soft_version);
-    
-    JsonArray json_log;
-    json_log.add(stream_segmentation_info.str());
-    
-    JsonArray json_cmdline;
-    json_cmdline.add(stream_cmdline.str());// TODO: escape "s in argv
-
-    JsonArray jsonSortedWindows = windowsStorage->sortedWindowsToJsonArray(json_data_segment);
-    
-    //samples field
-    JsonList *json_samples;
-    json_samples=new JsonList();
-    json_samples->add("number", 1);
-    json_samples->add("original_names", json_original_names);
-    json_samples->add("run_timestamp", json_timestamp);
-    json_samples->add("producer", json_soft);
-    json_samples->add("log", json_log);
-    json_samples->add("commandline", json_cmdline);
-    
-    //reads field
-    JsonList *json_reads;
-    json_reads=new JsonList();
-    json_reads->add("total", json_nb_reads);
-    json_reads->add("segmented", json_nb_segmented); 
-    JsonList *json_reads_germlineList;
-    json_reads_germlineList = new JsonList();
-    
-    //germlines field
-    JsonList *json_germlines;
-    json_germlines=new JsonList();
-    JsonList *json_custom_germline;
-    json_custom_germline = new JsonList();
-    
-    json_custom_germline->add("shortcut", "X");
-    JsonArray json_3;
-    JsonArray json_4;
-    JsonArray json_5;
     for (list<string>::iterator it = f_reps_V.begin(); it != f_reps_V.end(); it++){
-        json_3.add(*it);
+        json_germlines["custom"]["3"].push_back(*it);
     }
     for (list<string>::iterator it = f_reps_D.begin(); it != f_reps_D.end(); it++){
-        json_4.add(*it);
+        json_germlines["custom"]["4"].push_back(*it);
     }
     for (list<string>::iterator it = f_reps_J.begin(); it != f_reps_J.end(); it++){
-        json_5.add(*it);
+        json_germlines["custom"]["5"].push_back(*it);
     }
-    json_custom_germline->add("3", json_3);
-    json_custom_germline->add("4", json_4);
-    json_custom_germline->add("5", json_5);
-    json_germlines->add("custom", *json_custom_germline);
-    
-    if (multi_germline)
-      {
-        for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
-          {
-            Germline *germline = *it ;
-            JsonArray json_reads_germline;
-            json_reads_germline.add(we.getNbReadsGermline(germline->code));
-            json_reads_germlineList->add(germline->code, json_reads_germline);
-          }
-      }
-    else
-      {
-        json_reads_germlineList->add(germline_system, json_nb_segmented);
-      }
-    json_reads->add("germline", *json_reads_germlineList); 
-    
-    json_out->add("vidjil_json_version", VIDJIL_JSON_VERSION);
-    json_out->add("samples", *json_samples);
-    json_out->add("reads", *json_reads);
-    json_out->add("clones", jsonSortedWindows);
-    json_out->add("germlines", *json_germlines);
     
     
-    if (epsilon || forced_edges.size()){
-      JsonArray json_clusters = comp.toJson(clones_windows);
-      json_out->add("clusters", json_clusters );
-    }
-
+    
+    //if (epsilon || forced_edges.size()){
+    //  JsonArray json_clusters = comp.toJson(clones_windows);
+    //  json_out->add("clusters", json_clusters );
+    //}
+    
     //Added edges in the json output file
     //json->add("links", jsonLevenshtein);
     //out_json << json->toString();
-    
-    delete json_out;
-    delete json_samples;
-    delete json_reads;
-    delete json_reads_germlineList;
-    delete json_germlines;
-    delete json_custom_germline;
 
-    //json jsonSortedWindows = windowsStorage->sortedWindowsToJson(json_data_segment);
+    json jsonSortedWindows = windowsStorage->sortedWindowsToJson(json_data_segment);
     
     json reads_germline;
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
@@ -1524,8 +1435,8 @@ int main (int argc, char **argv)
             {"segmented", {nb_segmented}},
             {"germline", reads_germline}
         }},
-        //{"clones", jsonSortedWindows},
-        {"germlines", {}}
+        {"clones", jsonSortedWindows},
+        {"germlines", json_germlines}
     };
     
     
