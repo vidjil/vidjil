@@ -50,7 +50,7 @@ germline_data = {
         "shortcut": "a",
         "color" : "#46abf2",
         "description": "Human T-cell receptor, alpha/delta locus (14q11.2)",
-        "5": ["TRDV.fa", "TRDD.fa"],
+        "5": ["TRDV.fa", "TRDD_upstream.fa"],
         "4": ["TRDD.fa"],
         "3": ["TRAJ.fa"],
         "parameters": {
@@ -83,7 +83,7 @@ germline_data = {
         "color" : "#8c91e4",
         "description": "Human immunoglobulin, heavy locus (14q32.33), incomplete DH-JH rearrangements",
         "follows": "IGH",
-        "5": ["IGHD.fa"],
+        "5": ["IGHD_upstream.fa"],
         "3": ["IGHJ.fa"]
     },
 
