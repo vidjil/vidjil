@@ -1002,8 +1002,35 @@ void FineSegmenter::toJsonList(JsonList *seg){
     json_cdr->add("stop", CDR3end);
     seg->add("cdr3", *json_cdr);
       }
-
   }
+}
+
+json FineSegmenter::toJson(){
+  json seg;
+    
+  if (isSegmented()) {
+    seg["5"] = segmented_germline->rep_5.label(best_V);
+    seg["5start"] = 0;
+    seg["5end"] = Vend;
+    
+    if (score_D.size()>0){
+      seg["4"] = segmented_germline->rep_4.label(best_D);
+      seg["4start"] = Dstart;
+      seg["4end"] = Dend;
+    }
+    
+    seg["3"] = segmented_germline->rep_3.label(best_J);
+    seg["3start"] = Jstart;
+
+    if (CDR3start >= 0) {
+        seg["cdr3"] = {
+            {"start", CDR3start},
+            {"stop", CDR3end}
+        };
+    }
+  }
+  
+  return seg;
 }
 
 void KmerSegmenter::toJsonList(JsonList *seg)
@@ -1034,6 +1061,31 @@ void KmerSegmenter::toJsonList(JsonList *seg)
 
     delete json_affectValues;
     delete json_affectSigns;
+}
+
+json KmerSegmenter::toJson() {
+    json seg;
+    int sequenceSize = sequence.size();
+
+    if (evalue > NO_LIMIT_VALUE)
+        seg["_evalue"] = scientific_string_of_double(evalue);
+    if (evalue_left > NO_LIMIT_VALUE)
+      seg["_evalue_left"] = scientific_string_of_double(evalue_left);
+    if (evalue_right > NO_LIMIT_VALUE)
+      seg["_evalue_right"] = scientific_string_of_double(evalue_right);
+
+    seg["affectValues"] = {
+        {"start", 0},
+        {"stop", sequenceSize},
+        {"seq", getKmerAffectAnalyser()->toStringValues()}
+    };
+    
+    seg["affectSigns"] = {
+        {"start", 0},
+        {"stop", sequenceSize},
+        {"seq", getKmerAffectAnalyser()->toStringSigns()}
+    };
+    return seg;
 }
 
 
