@@ -52,6 +52,8 @@
 #include "core/list_utils.h"
 #include "core/windowExtractor.h"
 
+#include "lib/json.hpp"
+
 #include "vidjil.h"
 
 // RELEASE_TAG may be defined in the "release.h" file.
@@ -131,6 +133,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 
 using namespace std ;
+using json = nlohmann::json;
 
 //$$ options: usage
 
@@ -1386,8 +1389,8 @@ int main (int argc, char **argv)
     cout << "  ==> " << f_json << "\t(data file for the browser)" << endl ;
     ofstream out_json(f_json.c_str()) ;
     
-    JsonList *json;
-    json=new JsonList();
+    JsonList *json_out;
+    json_out=new JsonList();
 
     // Version/timestamp/git info
 
@@ -1475,29 +1478,61 @@ int main (int argc, char **argv)
       }
     json_reads->add("germline", *json_reads_germlineList); 
     
-    json->add("vidjil_json_version", VIDJIL_JSON_VERSION);
-    json->add("samples", *json_samples);
-    json->add("reads", *json_reads);
-    json->add("clones", jsonSortedWindows);
-    json->add("germlines", *json_germlines);
+    json_out->add("vidjil_json_version", VIDJIL_JSON_VERSION);
+    json_out->add("samples", *json_samples);
+    json_out->add("reads", *json_reads);
+    json_out->add("clones", jsonSortedWindows);
+    json_out->add("germlines", *json_germlines);
     
     
     if (epsilon || forced_edges.size()){
       JsonArray json_clusters = comp.toJson(clones_windows);
-      json->add("clusters", json_clusters );
+      json_out->add("clusters", json_clusters );
     }
 
     //Added edges in the json output file
     //json->add("links", jsonLevenshtein);
-    out_json << json->toString();
+    //out_json << json->toString();
     
-    delete json;
+    delete json_out;
     delete json_samples;
     delete json_reads;
     delete json_reads_germlineList;
     delete json_germlines;
     delete json_custom_germline;
 
+    //json jsonSortedWindows = windowsStorage->sortedWindowsToJson(json_data_segment);
+    
+    json reads_germline;
+    for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
+        Germline *germline = *it ;
+        reads_germline[germline->code] = we.getNbReadsGermline(germline->code);
+    }
+    
+    json j = {
+        {"vidjil_json_version", VIDJIL_JSON_VERSION},
+        {"samples", {
+            {"number", 1},
+            {"original_names", {f_reads}},
+            {"run_timestamp", {time_buffer}},
+            {"producer", {soft_version}},
+            {"log", {stream_segmentation_info.str()}},
+            {"commandline", {stream_cmdline.str()}}
+        }},
+        {"reads", {
+            {"total", {nb_total_reads}},
+            {"segmented", {nb_segmented}},
+            {"germline", reads_germline}
+        }},
+        //{"clones", jsonSortedWindows},
+        {"germlines", {}}
+    };
+    
+    
+    //Added edges in the json output file
+    //json->add("links", jsonLevenshtein);
+    //out_json << json->toString();
+    out_json << j.dump(2);
     delete multigermline ;
     delete windowsStorage;
 
