@@ -289,8 +289,11 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
     after = KmerAffect(germline->affect_3, 1);    
   } else {
     // Ambiguous information: we have positive and negative strands
-    // and there is not enough difference to put them aparat.
-    because = UNSEG_STRAND_NOT_CONSISTENT ;
+    // and there is not enough difference to put them apart.
+    if (nb_strand[0] + nb_strand[1] >= DETECT_THRESHOLD_STRAND)
+      because = UNSEG_STRAND_NOT_CONSISTENT ;
+    else
+      because = UNSEG_TOO_FEW_ZERO ;
     return ;
   }
 
