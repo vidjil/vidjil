@@ -105,7 +105,7 @@ clustering.
 #+BEGIN_EXAMPLE
 Germline databases (one -V/(-D)/-J, or -G, or -g option must be given for all commands except -c germlines)
   -V <file>     V germline multi-fasta file
-  -D <file>     D germline multi-fasta file (and resets -m, -M and -w options), will segment into V(D)J components
+  -D <file>     D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components
   -J <file>     J germline multi-fasta file
   -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)
   -g <path>     multiple germlines (in the path <path>, takes TRA, TRB, TRG, TRD, IGH, IGK and IGL and sets window prediction parameters)
@@ -130,23 +130,14 @@ Window prediction
                 (default: #####-#####, ######-######, #######-#######, depends on germline)
   -k <int>      k-mer size used for the V/J affectation (default: 10, 12, 13, depends on germline)
                 (using -k option is equivalent to set with -s a contiguous seed with only '#' characters)
-  -m <int>      minimal admissible delta between last V and first J k-mer (default: -10) (default with -D: 0)
-  -M <int>      maximal admissible delta between last V and first J k-mer (default: 20) (default with -D: 80)
   -w <int>      w-mer size used for the length of the extracted window (default: 50)
   -e <float>    maximal e-value for determining if a segmentation can be trusted (default: 'all', no limit)
   -t <int>      trim V and J genes (resp. 5' and 3' regions) to keep at most <int> nt (default: 100) (0: no trim)
 #+END_EXAMPLE
 
-The =-s=, =-k=, =-m= and =-M= options are the options of the seed-based heuristic. A detailed
+The =-s=, =-k= are the options of the seed-based heuristic. A detailed
 explanation can be found in the paper. /These options are for advanced usage, the defaults values should work./
 The =-s= or =-k= option selects the seed used for the k-mer V/J affectation.
-The =-m= / =-M= options control the minimum and maximum difference of positions between the last
-conserved k-mer of V and the first conserved k-mer of J. As they may be some sequencing errors or mutations
-compared to the germline genes, this is not the size of the junction (even without inserted nucleotides
-in the N region, this difference of position can equal to 20 or 30, or even more, if there are some
-errors or mutations at the end of V and and at the beginning of J). Note that is even possible to set =-m -10=
-(meaning that V and J could overlap 10 bp). This is the default for TRG recombinations.
-
 
 The =-w= option fixes the size of the "window" that is the main
 identifier to gather clones. The default value (=-w 50=) was selected
@@ -258,6 +249,11 @@ With the =-F= option, /only/ the labeld windows are kept. This allows
 to quickly filter a set of reads, looking for a known window,
 with the =-FaW <window>= options:
 All the reads with this windows will be extracted to =out/seq/clone.fa-1=.
+
+** VDJ assignation options
+   The =-m= option controls the minimum difference of positions between the end
+   of the V and the start of the J. Note that it is even possible to set =-m -10=
+   (meaning that V and J could overlap 10 bp). This is the default for TRG recombinations.
 
 ** Further clustering (experimental)
 
