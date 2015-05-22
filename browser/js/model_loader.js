@@ -125,7 +125,8 @@ Model_loader.prototype = {
         oFReader.onload = function (oFREvent) {
             self.parseJsonData(oFREvent.target.result, limit)
                 .loadGermline()
-                .loadAnalysis(analysis);
+                .loadAnalysis(analysis)
+                .update_selected_system()
             self.dataFileName = document.getElementById(id)
                 .files[0].name;
             self.initClones()
@@ -192,7 +193,8 @@ Model_loader.prototype = {
             success: function (result) {
                 self.parseJsonData(result, 100)
                     .loadGermline()
-                    .initClones();
+                    .initClones()
+                self.update_selected_system()
                 self.dataFileName = url_split[url_split.length-1]
                 callback()
             },                

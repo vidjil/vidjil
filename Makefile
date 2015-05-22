@@ -19,13 +19,19 @@ static:
 test:
 	make COVERAGE="$(COVERAGE)" unit
 	make functional
-	make test_tools
+	make test_tools_if_python
 	@echo
 	@echo "*** All tests passed. Congratulations !"
+	@echo
+	-(make -C algo/tests snapshot)
 
 test_browser: unit_browser functional_browser
 
 test_server: unit_server
+
+test_tools_if_python:
+	-(python tools/check_python_version.py && make test_tools)
+	@(python tools/check_python_version.py || echo "!!! Bad python version, we skip tools tests...")
 
 test_tools:
 	make -C tools/tests
@@ -47,9 +53,7 @@ should: all
 
 shouldvdj: all
 	@echo
-	@echo "*** Launching .should-vdj-fa tests..."
-	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests shouldvdj
-	@echo "*** All .should-vdj.fa tests passed"
+	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests shouldvdj_if_python
 
 shouldvdj_generate:
 	@echo

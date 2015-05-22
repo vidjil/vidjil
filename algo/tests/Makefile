@@ -14,6 +14,9 @@ SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
 VALGRIND=valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file="$$(mktemp "$(REPORTS_PATH)/valgrind.xml.XXXXXX")"
 
+DATE=$(shell date +%Y-%m-%d:%H:%M:%S)
+SNAPSHOT=snapshot-log-$(DATE)
+
 .PHONY: all force clean forcedep
 
 test: all
@@ -26,11 +29,22 @@ test: all
 all: core $(EXEC)
 	@echo "All tests compiled."
 
+snapshot:
+	grep . *.log should-vdj-tests/*.log > $(SNAPSHOT)
+	touch snapshot-last ; mv snapshot-last snapshot-prev
+	ln -s $(SNAPSHOT) snapshot-last
+
 should: vidjil $(SHOULD_LOG)
 
+shouldvdj_if_python:
+	-(python ../../tools/check_python_version.py && make shouldvdj)
+	@(python ../../tools/check_python_version.py || echo "!!! Bad python version, we skip .should-vdj.fa tests...")
+
 shouldvdj: vidjil
+	@echo "*** Launching .should-vdj-fa tests..."
 	python should-vdj-to-tap.py -2q -r $(SHOULD_VDJ) $(SHOULD_LOCUS)
 	python should-vdj-to-tap.py $(SHOULD_VDJ)
+	@echo "*** All .should-vdj.fa tests passed"
 
 %.tap: %.should_get force
 	./should-to-tap.sh $<

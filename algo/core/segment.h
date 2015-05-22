@@ -16,9 +16,13 @@
 
 #define MIN_D_LENGTH 5          /* If a D-REGION is smaller than this threshold, it is not output */
 
-#define RATIO_STRAND 5          /* The ratio between the affectations in one
+#define RATIO_STRAND 2          /* The ratio between the affectations in one
                                    strand and the other, to safely attribute a
                                    segment to a given strand */
+
+#define DETECT_THRESHOLD_STRAND 5   /* If the number of total affectations
+                                       is above this threshold, then a sequence with no clearly attributed
+                                       stranf will be marked as STRAND_NOT_CONSISTEN */
 
 #define DETECT_THRESHOLD 5      /* If the number of both V and J affectations
                                    is above this threshold, then the sequence,
