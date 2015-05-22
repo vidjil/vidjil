@@ -1401,13 +1401,6 @@ int main (int argc, char **argv)
         json_germlines["custom"]["5"].push_back(*it);
     }
     
-    
-    
-    //if (epsilon || forced_edges.size()){
-    //  JsonArray json_clusters = comp.toJson(clones_windows);
-    //  json_out->add("clusters", json_clusters );
-    //}
-    
     //Added edges in the json output file
     //json->add("links", jsonLevenshtein);
     //out_json << json->toString();
@@ -1438,6 +1431,10 @@ int main (int argc, char **argv)
         {"clones", jsonSortedWindows},
         {"germlines", json_germlines}
     };
+    
+    if (epsilon || forced_edges.size()){
+        j["clusters"] = comp.toJson(clones_windows);
+    }
     
     
     //Added edges in the json output file
