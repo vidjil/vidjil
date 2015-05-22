@@ -19,7 +19,7 @@ static:
 test:
 	make COVERAGE="$(COVERAGE)" unit
 	make functional
-	make test_tools
+	make test_tools_if_python
 	@echo
 	@echo "*** All tests passed. Congratulations !"
 	@echo
@@ -28,6 +28,10 @@ test:
 test_browser: unit_browser functional_browser
 
 test_server: unit_server
+
+test_tools_if_python:
+	-(python tools/check_python_version.py && make test_tools)
+	@(python tools/check_python_version.py || echo "!!! Bad python version, we skip tools tests...")
 
 test_tools:
 	make -C tools/tests
