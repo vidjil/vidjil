@@ -6,8 +6,10 @@
 #include <iostream>
 #include <iomanip>
 #include "json.h"
+#include "../lib/json.hpp"
 
 using namespace std;
+using json = nlohmann::json;
 
 #define LIMIT_DISPLAY 15
 
@@ -120,6 +122,6 @@ class JsonOutputWindowsMatrix: public OutputSimilarityMatrix {
 ostream &operator<<(ostream &out, const RawOutputSimilarityMatrix &matrix);
 ostream &operator<<(ostream &out, const HTMLOutputSimilarityMatrix &matrix);
 JsonArray &operator<<(JsonArray &out, const JsonOutputSimilarityMatrix &matrix);
-JsonArray &operator<<(JsonArray &out, const JsonOutputWindowsMatrix &matrix);
+json &operator<<(json &out, const JsonOutputWindowsMatrix &matrix);
 
 #endif

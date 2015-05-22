@@ -365,8 +365,8 @@ int main (int argc, char **argv)
 
   double expected_value = THRESHOLD_NB_EXPECTED;
 
-  //JsonArray which contains the Levenshtein distances
-  JsonArray jsonLevenshtein;
+  //json which contains the Levenshtein distances
+  json jsonLevenshtein;
 
   //$$ options: getopt
 
@@ -1359,13 +1359,13 @@ int main (int argc, char **argv)
     SimilarityMatrix matrix = compare_all(first_representatives,
                                           representatives_labels);
     cout << RawOutputSimilarityMatrix(matrix, 90);
-    /*
-        //Compute all the edges
-        cout << "Compute distances" << endl ;
-        SimilarityMatrix matrixLevenshtein = compare_windows(*windowsStorage, Levenshtein, max_clones);
-        //Added distances matrix in the JsonTab
-        jsonLevenshtein << JsonOutputWindowsMatrix(matrixLevenshtein);
-    */
+    
+    //Compute all the edges
+    cout << "Compute distances" << endl ;
+    SimilarityMatrix matrixLevenshtein = compare_windows(*windowsStorage, Levenshtein, max_clones);
+    //Added distances matrix in the JsonTab
+    jsonLevenshtein << JsonOutputWindowsMatrix(matrixLevenshtein);
+    
      // delete scorer;
 
     } // endif (clones_windows.size() > 0)
@@ -1436,10 +1436,9 @@ int main (int argc, char **argv)
         j["clusters"] = comp.toJson(clones_windows);
     }
     
-    
     //Added edges in the json output file
-    //json->add("links", jsonLevenshtein);
-    //out_json << json->toString();
+    j["links"] = jsonLevenshtein;
+    
     out_json << j.dump(2);
     delete multigermline ;
     delete windowsStorage;
