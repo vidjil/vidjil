@@ -36,9 +36,15 @@ snapshot:
 
 should: vidjil $(SHOULD_LOG)
 
+shouldvdj_if_python:
+	-(python ../../tools/check_python_version.py && make shouldvdj)
+	@(python ../../tools/check_python_version.py || echo "!!! Bad python version, we skip .should-vdj.fa tests...")
+
 shouldvdj: vidjil
+	@echo "*** Launching .should-vdj-fa tests..."
 	python should-vdj-to-tap.py -2q -r $(SHOULD_VDJ) $(SHOULD_LOCUS)
 	python should-vdj-to-tap.py $(SHOULD_VDJ)
+	@echo "*** All .should-vdj.fa tests passed"
 
 %.tap: %.should_get force
 	./should-to-tap.sh $<

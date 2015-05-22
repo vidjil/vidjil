@@ -49,9 +49,7 @@ should: all
 
 shouldvdj: all
 	@echo
-	@echo "*** Launching .should-vdj-fa tests..."
-	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests shouldvdj
-	@echo "*** All .should-vdj.fa tests passed"
+	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests shouldvdj_if_python
 
 shouldvdj_generate:
 	@echo
