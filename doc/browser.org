@@ -246,7 +246,7 @@ A first control is to check the number of “segmented reads” in the info pane
 For each point, this shows the number of reads where Vidjil found a CDR3.
      
 Ratios above 90% usually mean very good results. Smaller ratios, especially under 60%, often mean that something went wrong.
-The “info“ button further detail the causes of non-segmentation (UNSEG).
+The “info“ button further detail the causes of non-segmentation (=UNSEG=, see detail on [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]]).
 There can be several causes leading to bad ratios: 
 
 *** Analysis or biological causes
