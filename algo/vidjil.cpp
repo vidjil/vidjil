@@ -1410,7 +1410,7 @@ int main (int argc, char **argv)
     json reads_germline;
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it){
         Germline *germline = *it ;
-        reads_germline[germline->code] = we.getNbReadsGermline(germline->code);
+        reads_germline[germline->code] = {we.getNbReadsGermline(germline->code)};
     }
     
     json j = {
