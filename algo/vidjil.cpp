@@ -1437,7 +1437,7 @@ int main (int argc, char **argv)
     }
     
     //Added edges in the json output file
-    j["links"] = jsonLevenshtein;
+    j["similarity"] = jsonLevenshtein;
     
     out_json << j.dump(2);
     delete multigermline ;
