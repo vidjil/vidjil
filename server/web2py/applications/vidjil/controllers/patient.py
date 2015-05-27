@@ -222,8 +222,10 @@ def stats():
     }
 
     keys_patient = [ 'info' ]
+    keys_file = [ 'sampling_date', 'size_file' ]
 
     keys = []
+    keys += keys_file
     keys += keys_patient
 
     regex = []
@@ -254,7 +256,10 @@ def stats():
                 row[key] = row_fused[key]
                 found[key] = True
             elif key in keys_patient:
-                row[key] = row.patient.info # todo, should not be hardcoded
+                row[key] = row.patient[key]
+                found[key] = True
+            elif key in keys_file:
+                row[key] = row.sequence_file[key]
                 found[key] = True
             else:
                 row[key] = ''
