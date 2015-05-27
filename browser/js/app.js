@@ -41,7 +41,8 @@ require(["jquery",
         "../database",
         "../stats",
         "../shortcut",
-        "../export"
+        "../export",
+        "../similarity"
         ], function(){
             if (typeof main == "undefined"){
                 require(["../main"]);

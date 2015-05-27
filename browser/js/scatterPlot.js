@@ -168,11 +168,25 @@ function ScatterPlot(id, model) {
             min : function(){return self.m.min_size}, 
             max : 1, 
             output : "percent", 
-            log : true  }
+            log : true  
+        },
+        "pcaX": { 
+            label: "clone coverage",
+            fct: function(cloneID){return self.m.clone(cloneID).pca[0]},
+            output: "float-2", 
+            log: false 
+        },
+        "pcaY": { 
+            label: "clone coverage",
+            fct: function(cloneID){return self.m.clone(cloneID).pca[1]},
+            output: "float-2", 
+            log: false 
+        }
     }
     
     // Plot Presets
     this.preset = { 
+        "graph" : { "mode": "plot", "x" : "pcaX", "y": "pcaY"},
         "V/J (genes)" : { "mode": "plot", "x" : "gene_v", "y": "gene_j"},
         "V/J (alleles)" : { "mode": "plot", "x" : "allele_v", "y": "allele_j"},
         "V/N length" : { "mode": "plot", "x" : "gene_v", "y": "n"},
@@ -184,6 +198,7 @@ function ScatterPlot(id, model) {
         "Clone length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "gene_v"},
         "N length distribution" :     { "mode": "bar", "x" : "n",              "y": "gene_v"},
         "compare two samples" : { "mode": "plot", "x" : "Size", "y": "otherSize"}
+        
     };
     this.default_preset = 1
 
