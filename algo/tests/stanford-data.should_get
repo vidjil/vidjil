@@ -1,3 +1,4 @@
+!REQUIRES: python ../../tools/check_python_version.py
 !LAUNCH: ../../vidjil -z 0 -G ../../germline/IGH -w 60 -r 5 -b data  ../../data/Stanford_S22.fasta ; cat out/data.vidjil | python ../../tools/format_json.py -1
 
 $ Number of reads

@@ -47,9 +47,9 @@ function ScatterPlot(id, model) {
     this.gridSizeH = 1; //grid height
 
     //Margins left/right ( fixed value )
-    this.marge_left = 100;
+    this.marge_left = 120;
     this.marge_right = 10;
-    this.marge_top = 60;
+    this.marge_top = 75;
     this.marge_bot = 25;
 
     this.max_precision = 9; //Precision max (default: 9)
@@ -96,13 +96,13 @@ function ScatterPlot(id, model) {
 
     //axis X text position
     this.rotation_x = 0;
-    this.text_position_x = 15;
-    this.sub_text_position_x = 30;
+    this.text_position_x = 30;
+    this.sub_text_position_x = 45;
 
     //axis Y text position
     this.rotation_y = 0;
-    this.text_position_y = 40;
-    this.sub_text_position_y = 80;
+    this.text_position_y = 60;
+    this.sub_text_position_y = 100;
 
     //Clone selected
     this.cloneSelected = -1;
@@ -110,38 +110,65 @@ function ScatterPlot(id, model) {
     //mouse coordinates
     this.coordinates = [0, 0];
 
-    //Menu without graph distrib'
-    this.menu = [
-        ["gene_v", "gene V"],
-        ["gene_j", "gene J"],
-        ["allele_v", "allele V"],
-        ["allele_j", "allele J"],
-        ["locus", "locus"],
-        ["Size", "size"],
-        ["otherSize", "size (other point)"],
-        ["sequenceLength", "clone length"],
-        ["GCContent", "GC content"],
-        ["coverage", "clone coverage"],
-        ["n", "N length"],
-        ["lengthCDR3", "CDR3 length"]
-    ];
-    
     // Plot axis
     this.available_axis = {
-        "sequenceLength" : { "fct" : function(cloneID) {return self.m.clone(cloneID).getSequenceLength()} },
-        "GCContent" : { "fct" : "GCContent", "output" : "percent" },
-        "n" : { "fct" : function(cloneID) {return self.m.clone(cloneID).getNlength()} },
-        "lengthCDR3" : { "fct" : function(cloneID) {return self.m.clone(cloneID).seg["cdr3"].length} },
-        "coverage": { "fct" : function(cloneID){return self.m.clone(cloneID).coverage},
-                      "min" : 0, "max" : 1, "output" : "float-2", "log": false },
-        "locus" : {  "fct" : function(cloneID){return self.m.clone(cloneID).germline},
-                     "output": "string-sorted" },
-        "Size" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSizeZero()}, 
-                    "min" : function(){return self.m.min_size},
-                    "max" : 1, "output" : "percent", "log" :true  },
-        "otherSize" : { "fct" : function(cloneID){return self.m.clone(cloneID).getSizeZero(m.tOther)}, 
-                        "min" : function(){return self.m.min_size}, 
-                        "max" : 1, "output" : "percent", "log" :true  }
+        "gene_v": { 
+            label:"gene V" 
+        },
+        "gene_j": { 
+            label:"gene J" 
+        },
+        "allele_v": { 
+            label:"allele V" 
+        },
+        "allele_j": { 
+            label:"allele J" 
+        },
+        "sequenceLength" : { 
+            label: "clone length",
+            fct: function(cloneID) {return self.m.clone(cloneID).getSequenceLength()}
+        },
+        "GCContent" : { 
+            label: "GC content",
+            fct: "GCContent", 
+            output: "percent"
+        },
+        "n": {
+            label: "N length",
+            fct: function(cloneID) {return self.m.clone(cloneID).getNlength()} 
+        },
+        "lengthCDR3": {
+            label: "CDR3 length",
+            fct: function(cloneID) {return self.m.clone(cloneID).seg["cdr3"].length}
+        },
+        "coverage": { 
+            label: "clone coverage",
+            fct: function(cloneID){return self.m.clone(cloneID).coverage},
+            min: 0,
+            max: 1, 
+            output: "float-2", 
+            log: false 
+        },
+        "locus" : { 
+            label: "locus",
+            fct: function(cloneID){return self.m.clone(cloneID).germline},
+            output: "string-sorted"
+        },
+        "Size" : { 
+            label: "size",
+            fct : function(cloneID){return self.m.clone(cloneID).getSizeZero()}, 
+            min : function(){return self.m.min_size},
+            max : 1, 
+            output : "percent", 
+            log : true  
+        },
+        "otherSize" : { 
+            label: "size (other point)",
+            fct : function(cloneID){return self.m.clone(cloneID).getSizeZero(m.tOther)}, 
+            min : function(){return self.m.min_size}, 
+            max : 1, 
+            output : "percent", 
+            log : true  }
     }
     
     // Plot Presets
@@ -238,20 +265,25 @@ ScatterPlot.prototype = {
             self.updateSelector()
         })
 
-        //Sélection du contenu de l'axe des X -> Ajout d'un attribut valant un id
+        //add a container for x axis in the scatterplot svg
         this.axis_x_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", this.id + "_axis_x_container")
 
-        //Sélection du contenu de l'axe des X -> Ajout d'un attribut valant un id
+        //add a container for y axis in the scatterplot svg
         this.axis_y_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", this.id + "_axis_y_container")
 
-        //Sélection du contenu des points -> Ajout d'un attribut valant un id
+        //add a container for plots/bar in the scatterplot svg
         this.plot_container = d3.select("#" + this.id + "_svg")
             .append("svg:g")
             .attr("id", this.id + "_plot_container")
+            
+        //add a container for axis label in the scatterplot svg
+        this.axis_container = d3.select("#" + this.id + "_svg")
+            .append("svg:g")
+            .attr("id", this.id + "_axis_container")
 
 
         $("#" + this.id + "_plot_container")
@@ -422,10 +454,10 @@ ScatterPlot.prototype = {
         }
         
         //Ajout de chaque méthode de répartition dans les menus pour l'axe des X/Y
-        for (var i = 0; i < this.menu.length; i++) {
+        for (var key in this.available_axis) {
             var element = document.createElement("option");
-            element.setAttribute('value', this.menu[i][0]);
-            var text = document.createTextNode(this.menu[i][1]);
+            element.setAttribute('value', key);
+            var text = document.createTextNode(this.available_axis[key].label);
             element.appendChild(text);
 
             var element2 = element.cloneNode(true);
@@ -1361,6 +1393,8 @@ ScatterPlot.prototype = {
 
         var self = this;
 
+        this.label_update();
+        
         //detect label size
         var label_width = 0;
         var line = 0
@@ -1384,14 +1418,14 @@ ScatterPlot.prototype = {
         var className = "sp_legend"
         if (space < 1.1) {
             this.rotation_x = 320;
-            this.text_position_x = 45;
-            this.sub_text_position_x = 65;
+            this.text_position_x = 60;
+            this.sub_text_position_x = 80;
             className = "sp_rotated_legend";
         } else {
             this.rotation_x = 0;
             className = "sp_legend";
-            this.text_position_x = 15;
-            this.sub_text_position_x = 30;
+            this.text_position_x = 30;
+            this.sub_text_position_x = 45;
         }
 
         //LEGENDE
@@ -1500,6 +1534,8 @@ ScatterPlot.prototype = {
 
         self = this;
 
+        this.label_update();
+        
         //LEGENDE
         leg = this.axis_y_container.selectAll("text")
             .data(data);
@@ -1582,6 +1618,28 @@ ScatterPlot.prototype = {
                 return null;
             });
 
+    },
+    
+    label_update : function () {
+        
+        var data = [
+            {x:(this.gridSizeW/2)+this.marge_left, y:12, text:this.available_axis[this.splitX].label, rotation:0 },
+            {y:(this.gridSizeH/2)+this.marge_top,  x:12, text:this.available_axis[this.splitY].label, rotation:270}
+        ]
+        
+        leg = this.axis_container.selectAll("text")
+            .data(data);
+        leg.enter()
+            .append("text");
+        leg.exit()
+            .remove()
+        leg.attr("x", function(d) {return d.x})
+            .attr("y", function(d) {return d.y})
+            .text(function(d) {return d.text})
+            .attr("class", "sp_legend2")
+            .attr("transform", function(d) {
+                if (d.rotate != 0) return "rotate(" + d.rotation + " " + d.x + " " + d.y + ")"
+            })
     },
 
     /**
@@ -1700,9 +1758,11 @@ ScatterPlot.prototype = {
     updateMenu: function() {
         var select_x = 0;
         var select_y = 0
-        for (var i = 0; i < this.menu.length; i++) {
-            if (this.menu[i][0] == this.splitX) select_x = i
-            if (this.menu[i][0] == this.splitY) select_y = i
+        var i=0;
+        for (var key in this.available_axis) {
+            if (key == this.splitX) select_x = i
+            if (key == this.splitY) select_y = i
+            i++;
         }
         this.select_x.selectedIndex = select_x
         this.select_y.selectedIndex = select_y

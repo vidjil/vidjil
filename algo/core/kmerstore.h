@@ -44,6 +44,7 @@ protected:
   int s; // span of the seed (s >= k)
   string seed ;
   size_t nb_kmers_inserted;
+  int max_size_indexing;
 
 public:
 
@@ -88,6 +89,12 @@ public:
    * @return the percentage of kmers that are set in the index
    */
   float getIndexLoad() const;
+
+  /**
+   * @return the given integer (size of a read),
+   *         but limit this size to max_size_indexing if it was defined
+   */
+  int atMostMaxSizeIndexing(int n) const;
 
   /**
    * @return probability that the number of kmers is 'at_least' or more in a sequence of length 'length'
@@ -231,6 +238,12 @@ void IKmerStore<T>::insert(const seqtype &sequence,
   } else if (keep_only < 0 && sequence.length() > (size_t) -keep_only) {
     end_indexing = -keep_only;
   }
+
+  size_t size_indexing = end_indexing - start_indexing;
+  if (size_indexing > max_size_indexing) {
+    max_size_indexing = size_indexing;
+  }
+
   for(size_t i = start_indexing ; i + s < end_indexing + 1 ; i++) {
     seqtype substr = sequence.substr(i, s);
     seqtype kmer = spaced(substr, seed);
@@ -266,6 +279,13 @@ float IKmerStore<T>::getIndexLoad() const {
   return nb_kmers_inserted*1. / (1 << (2 * k));
 }
 
+template<class T>
+int IKmerStore<T>::atMostMaxSizeIndexing(int n) const {
+  if (!max_size_indexing || n < max_size_indexing)
+    return n ;
+
+  return max_size_indexing ;
+}
 
 template<class T>
 double IKmerStore<T>::getProbabilityAtLeastOrAbove(int at_least, int length) const {
@@ -398,6 +418,7 @@ MapKmerStore<T>::MapKmerStore(int k, bool revcomp){
 template <class T>
 void MapKmerStore<T>::init() {
   this->nb_kmers_inserted = 0;
+  this->max_size_indexing = 0;
 }
 
 template <class T> 
@@ -440,6 +461,7 @@ ArrayKmerStore<T>::ArrayKmerStore(string seed, bool revcomp){
 template <class T>
 void ArrayKmerStore<T>::init() {
   this->nb_kmers_inserted = 0;
+  this->max_size_indexing = 0;
   if ((size_t)(this->k << 1) >= sizeof(int) * 8)
     throw std::bad_alloc();
   store = new T[(unsigned int)1 << (this->k << 1)];

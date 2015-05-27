@@ -16,9 +16,13 @@
 
 #define MIN_D_LENGTH 5          /* If a D-REGION is smaller than this threshold, it is not output */
 
-#define RATIO_STRAND 5          /* The ratio between the affectations in one
+#define RATIO_STRAND 2          /* The ratio between the affectations in one
                                    strand and the other, to safely attribute a
                                    segment to a given strand */
+
+#define DETECT_THRESHOLD_STRAND 5   /* If the number of total affectations
+                                       is above this threshold, then a sequence with no clearly attributed
+                                       stranf will be marked as STRAND_NOT_CONSISTEN */
 
 #define DETECT_THRESHOLD 5      /* If the number of both V and J affectations
                                    is above this threshold, then the sequence,
@@ -40,7 +44,7 @@ enum SEGMENTED { NOT_PROCESSED,
                  SEG_PLUS, SEG_MINUS,
                  UNSEG_TOO_SHORT, UNSEG_STRAND_NOT_CONSISTENT,
 		 UNSEG_TOO_FEW_ZERO,  UNSEG_TOO_FEW_V, UNSEG_TOO_FEW_J, 
-		 UNSEG_BAD_DELTA_MIN, UNSEG_BAD_DELTA_MAX, UNSEG_AMBIGUOUS, UNSEG_NOISY,
+		 UNSEG_BAD_DELTA_MIN, UNSEG_BAD_DELTA_MAX, UNSEG_AMBIGUOUS,
 		 UNSEG_TOO_SHORT_FOR_WINDOW,
 
 		 STATS_SIZE } ;
@@ -50,7 +54,6 @@ const char* const segmented_mesg[] = { "?",
                                        "UNSEG too short", "UNSEG strand",
 				       "UNSEG too few (0)", "UNSEG too few V", "UNSEG too few J",
 				       "UNSEG < delta_min", "UNSEG > delta_max", "UNSEG ambiguous",
-                                       "UNSEG noisy",
                                        "UNSEG too short w",
                                       } ;
 
