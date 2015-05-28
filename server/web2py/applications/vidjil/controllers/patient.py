@@ -200,10 +200,6 @@ def stats():
         # found 10750 50-windows in 13139 reads (99.9% of 13153 reads)
         'windows in (?P<seg>\d+) reads \((?P<seg_ratio>.*?) of (?P<reads>\d+) reads\)',
 
-        # locus
-        'log.* TRG.*?->\s*?(?P<TRG_reads>\d+)\s+(?P<TRG_av_len>[0-9.]+)\s+(?P<TRG_clones>\d+)\s+(?P<TRG_av_reads>[0-9.]+)\s*.n',
-        'log.* IGH.*?->\s*?(?P<IGH_reads>\d+)\s+(?P<IGH_av_len>[0-9.]+)\s+(?P<IGH_clones>\d+)\s+(?P<IGH_av_reads>[0-9.]+)\s*.n',
-
         # segmentation causes
         'log.* SEG_[+].*?-> (?P<SEG_plus>.*?).n',
         'log.* SEG_[-].*?-> (?P<SEG_minus>.*?).n',
@@ -212,6 +208,13 @@ def stats():
         '"name".*"(?P<main_clone>.*)"',
         '"reads" :  [[] (?P<main_clone_reads>\d+) ',
     ]
+
+    # stats by locus
+    for locus in defs.LOCUS:
+        locus_regex = locus.replace('+', '[+]')
+        locus_group = locus.replace('+', 'p')
+        stats_regex += [ 'log.* %(locus)s.*?->\s*?(?P<%(locus_g)s_reads>\d+)\s+(?P<%(locus_g)s_av_len>[0-9.]+)\s+(?P<%(locus_g)s_clones>\d+)\s+(?P<%(locus_g)s_av_reads>[0-9.]+)\s*.n'
+                         % { 'locus': locus_regex, 'locus_g': locus_group } ]
 
     json_paths = {'reads distribution [>= 10%]': 'reads/distribution/0.1',
                   'reads distribution [>= 1% < 10%]': 'reads/distribution/0.01',

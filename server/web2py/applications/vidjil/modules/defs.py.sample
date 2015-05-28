@@ -53,3 +53,7 @@ TASK_TIMEOUT = 2 * 60 * 60
 
 ### Reverse IP file
 REVERSE_IP = '/home/vidjil/ips.txt'
+
+### Locus (should be parsed from germlines.data)
+LOCUS = ['TRA', 'TRA+D', 'TRB', 'TRG', 'TRD', 'TRD+',
+         'IGH', 'IGH+', 'IGK', 'IGK+', 'IGL']
