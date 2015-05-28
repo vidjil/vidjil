@@ -33,12 +33,13 @@ CGIDIR=../browser/cgi/
 
 VIDJIL=$(BINDIR)$(EXEC)
 ALIGN_CGI=$(CGIDIR)align.cgi
+SIMILARITY_CGI=$(CGIDIR)similarity.cgi
 
 CREATE_VERSION_GIT_H := $(shell test -x ./create-git-version-h.sh && ./create-git-version-h.sh)
 
 .PHONY: all core lib clean forcedep
 
-all: $(VIDJIL) $(ALIGN_CGI)
+all: $(VIDJIL) $(ALIGN_CGI) $(SIMILARITY_CGI)
 
 ###
 
@@ -71,6 +72,10 @@ cleanspaced:
 
 $(ALIGN_CGI): cgi/align.o $(LIBCORE)
 	mkdir -p $(CGIDIR)
+	make -C core OPTIM="$(OPTIM)"
+	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
+
+$(SIMILARITY_CGI): cgi/similarity.o $(LIBCORE)
 	make -C core OPTIM="$(OPTIM)"
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 ###
