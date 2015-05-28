@@ -5,6 +5,34 @@ function Matrix (model) {
 
 Matrix.prototype = {
     
+    get_similarity: function () {
+        var self = this
+        var request = "";
+
+        for (var i = 0; i < this.m.clones.length-1; i++) {
+            request += ">" + i + "\n" + this.m.clone(i).id + "\n";
+        }
+
+        $.ajax({
+            type: "POST",
+            data: request,
+            url: segment.cgi_address + "similarity.cgi",
+            beforeSend: function () {
+                self.m.wait();
+            },
+            complete: function () {
+                self.m.resume();
+            },
+            success: function (result) {
+                console.log(result)
+                self.matrix = JSON.parse(result)
+            },
+            error: function () {
+                console.log({"type": "flash", "msg": "cgi error : impossible to connect", "priority": 2});
+            }
+        })
+    },
+    
     /**
      * multiply 2 matrix
      * @param {number[][]} matrix1 
@@ -190,11 +218,11 @@ Matrix.prototype = {
         var tsne = new tsnejs.tSNE(opt); 
 
         var dists = []
-        for (var i in m.similarity.matrix[0]) dists[i] = []
+        for (var i in this.matrix[0]) dists[i] = []
             
-        for (var i in m.similarity.matrix) {
-            for (var j in m.similarity.matrix) {
-                dists[i][j]= Math.pow(m.similarity.matrix[i][j],pow)
+        for (var i in this.matrix) {
+            for (var j in this.matrix) {
+                dists[i][j]= Math.pow( (100-this.matrix[i][j]) ,pow)
             }
         }
             
