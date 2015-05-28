@@ -44,10 +44,10 @@ Vidjil has been successfully tested on the following platforms :
  - CentOS 6.3 i386
  - Debian Squeeze 
  - Fedora 17
- - FreeBSD 9.1 amd64
+ - FreeBSD 9.2 amd64
  - NetBSD 6.0.1 amd64
- - Ubuntu 12.04 amd64
- - Ubuntu 12.04 i386
+ - Ubuntu 12.04 LTS amd64
+ - Ubuntu 14.04 LTS amd64
 
 Vidjil is developed with continuous integration using systematic unit and functional testing.
 The development team internally uses [[https://jenkins-ci.org/][Jenkins]] for that.
@@ -55,11 +55,46 @@ Moreover, the results of some of these tests can be publicly checked on [[https:
 
 ** Requirements
   
-  To install and use Vidjil on a computer, make sure:
+To install and use Vidjil, make sure:
   - to be on a POSIX system ;
-  - to have a C++11 compiler ;
+  - to have a C++11 compiler (as =g++= 4.8 or above or =clang= 3.3 or above)
   - to have the =zlib= installed (=zlib1g-dev= package under Debian/Ubuntu,
     =zlib-devel= package under Fedora/CentOS).
+
+
+*** CentOS 6
+
+g++-4.8 is included in the devtools 2.0.
+
+#+BEGIN_SRC sh
+sudo wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo
+sudo yum install devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++
+scl enable devtoolset-2 bash # Open a shell running devtools
+#+END_SRC sh
+
+*** FreeBSD 9.2
+
+g++-4.8 is included in FreeBSD 9.2.
+
+*** Ubuntu 14.04 LTS
+
+#+BEGIN_SRC sh
+sudo apt-get install g++-4.8
+#+END_SRC sh
+
+*** Ubuntu 12.04 LTS
+
+g++-4.8 is included in the devtools 2.0.
+
+#+BEGIN_SRC sh
+sudo apt-get install python-software-properties
+sudo add-apt-repository ppa:ubuntu-toolchain-r/test
+sudo apt-get update
+sudo apt-get install g++-4.8
+#+END_SRC sh
+
+
+
 
 ** Installation
 
@@ -84,13 +119,12 @@ make test                # run self-tests
 ./vidjil -h              # display help/usage
 #+END_SRC
 
-** C++11 Compilation
+If your build system does not use C++11 by default, you should replace the =make= commands by:
 
-If your build system does not use C++11 by default, you should try:
-
-make CXXFLAGS='-std=gnu++0x'                         ### gcc-4.6 (as in Ubuntu 12.04 LTS)
-make CXXFLAGS='-std=c++11'                           ### gcc-4.8 (as in Ubuntu 14.04 LTS)
+#+BEGIN_SRC sh
+make CXXFLAGS='-std=c++11'                           ### gcc-4.8
 make CXXFLAGS='-std=c++11' LDFLAGS='-stdlib=libc++'  ### OS X Mavericks
+#+END_SRC
 
 
 * Input and parameters
