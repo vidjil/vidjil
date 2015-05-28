@@ -10,7 +10,7 @@ $ Parses germline/IGHJ.fa
 1: 701 bp in  13 sequences
 
 $ Find the good index load
-1:custom .*  0.050. s13 k12
+1:custom .*  0.055. s13 k12
 
 $ Find approximately the good number of sequences for e-value computation
 1: approx. 131.. sequences
