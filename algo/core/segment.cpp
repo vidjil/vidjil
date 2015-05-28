@@ -391,7 +391,9 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
     bool detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
       && (max.nb_after_left + max.nb_after_right >= DETECT_THRESHOLD);
 
-    if ((strand == 1 && max.nb_before_left == 0) || (strand == -1 && max.nb_after_right == 0))
+    if (max.nb_before_left + max.nb_before_right + max.nb_after_left + max.nb_after_right == 0)
+      because = UNSEG_TOO_FEW_ZERO ;
+    else if ((strand == 1 && max.nb_before_left == 0) || (strand == -1 && max.nb_after_right == 0))
       because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_V ;
     else if ((strand == 1 && max.nb_after_right == 0)|| (strand == -1 && max.nb_before_left == 0))
       because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_J ;
