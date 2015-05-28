@@ -121,7 +121,7 @@ class JsonOutputWindowsMatrix: public OutputSimilarityMatrix {
 
 ostream &operator<<(ostream &out, const RawOutputSimilarityMatrix &matrix);
 ostream &operator<<(ostream &out, const HTMLOutputSimilarityMatrix &matrix);
-JsonArray &operator<<(JsonArray &out, const JsonOutputSimilarityMatrix &matrix);
+json &operator<<(json &out, const JsonOutputSimilarityMatrix &matrix);
 json &operator<<(json &out, const JsonOutputWindowsMatrix &matrix);
 
 #endif

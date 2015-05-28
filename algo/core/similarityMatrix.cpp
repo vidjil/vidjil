@@ -165,20 +165,16 @@ ostream &operator<<(ostream &out, const RawOutputSimilarityMatrix &outputMatrix)
 
 /*Export a similarity matrix, for the edit distance distribution & DBSCAN algorithm
 */
-JsonArray &operator<<(JsonArray &out, const JsonOutputSimilarityMatrix &outputMatrix) {
+json &operator<<(json &out, const JsonOutputSimilarityMatrix &outputMatrix) {
 
     SimilarityMatrix &matrix = outputMatrix.matrix;
+    
+    out = json::array();
+    
     for (int i = 0; i < matrix.size(); i++) {
+        out[i] = json::array();
         for (int j = 0; j < matrix.size(); j++) {
-            if (i < j) {
-                //Creation of an edges objects array, which contains a source objet, a target object, and the length of the distance between them
-                JsonList lineEdge;
-                lineEdge.add("source", i);
-                lineEdge.add("target", j);
-                //100 - similarity -> distance
-                lineEdge.add("len", (100 - matrix(i,j)));
-                out.add(lineEdge);
-            }
+            out[i][j] = fabs(matrix(i,j));
         }
     }
     return out;
@@ -190,16 +186,12 @@ json &operator<<(json &out, const JsonOutputWindowsMatrix &outputMatrix) {
 
     SimilarityMatrix &matrix = outputMatrix.matrix;
     
-    out = {
-        {"index", json::object()},  //index clone id > matrix row/column
-        {"matrix", json::array()}   //2 dimensional array
-    };
+    out = json::array();
     
     for (int i = 0; i < matrix.size(); i++) {
-        //out["index"][] =
-        out["matrix"][i] = json::array();
+        out[i] = json::array();
         for (int j = 0; j < matrix.size(); j++) {
-            out["matrix"][i][j] = fabs(matrix(i,j));
+            out[i][j] = fabs(matrix(i,j));
         }
     }
     return out;
