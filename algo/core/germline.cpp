@@ -16,7 +16,7 @@ void Germline::init(string _code, char _shortcut,
   affect_3 = "J" ;
 
   affect_5 = string(1, toupper(shortcut)) + "-" + code + "V";
-  affect_4 = ""; // string(1, 14 + shortcut) + "-" + code + "D";
+  affect_4 = string(1, 14 + shortcut) + "-" + code + "D";
   affect_3 = string(1, tolower(shortcut)) + "-" + code + "J";
      
   delta_min = _delta_min ;
@@ -103,11 +103,9 @@ void Germline::set_index(IKmerStore<KmerAffect> *_index)
 void Germline::update_index(IKmerStore<KmerAffect> *_index)
 {
   if (!_index) _index = index ;
+
   _index->insert(rep_5, affect_5, max_indexing);
-
-  if (affect_4.size())
-    _index->insert(rep_4, affect_4);
-
+  _index->insert(rep_4, affect_4);
   _index->insert(rep_3, affect_3, -max_indexing);
 }
 
