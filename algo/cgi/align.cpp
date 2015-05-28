@@ -6,35 +6,36 @@
 #include "../core/dynprog.h"
 #include "../core/fasta.h"
 #include "../core/lazy_msa.h"
-#include "../core/json.h"
+#include "../lib/json.hpp"
 
-using namespace std;
+using namespace std ;
+using json = nlohmann::json;
 
-bool check_cgi_parameters(JsonList &result) {
+bool check_cgi_parameters(json &result) {
   char * requestMethod = getenv("REQUEST_METHOD");
   if(!requestMethod) {
-    result.add("Error", "requestMethod");
+    result["Error"] = "requestMethod";
     return false;
   } else if(strcmp(requestMethod, "POST") != 0) {
-    result.add("Error", "requestMethod =/= post");
+    result["Error"] = "requestMethod =/= post";
     return false;
   }
   char * contentType = getenv("CONTENT_TYPE");
   if(!contentType) {
-    result.add("Error", "content_type");
+    result["Error"] = "content_type";
     return false;
   }
-  result.add("requestMethod",requestMethod);
-  result.add("contentType", contentType);
+  result["requestMethod"] = requestMethod;
+  result["contentType"] = contentType;
   return true;
 }
 
-bool create_fasta_file(JsonList &result, int fd) {
+bool create_fasta_file(json &result, int fd) {
   char temp[1024];
   FILE *f;
   f = fdopen(fd,"w");
   if(f == NULL){
-    result.add("Error", "opening tempfile");
+    result["Error"] = "opening tempfile";
     return false;
   }else{
     while(cin) {
@@ -54,7 +55,7 @@ int main(int argc, char* argv[])
   const char* fdata;
   //  ostringstream ost; 
   char filename[] = "/tmp/VidjilAlignXXXXXX";
-  JsonList result;
+  json result;
   bool error = false;
 
   bool cgi_mode;
@@ -67,7 +68,7 @@ int main(int argc, char* argv[])
       if (! error) {
         int fd = mkstemp(filename);
         if (fd == -1) {
-          result.add("Error", "Temporary file");
+          result["Error"] = "Temporary file";
           error = true;
         } else {
           error = ! create_fasta_file(result, fd);
@@ -101,16 +102,16 @@ int main(int argc, char* argv[])
 
       if (cgi_mode) {
         if (! error) {
-          JsonArray alignment;
+          json alignment;
       
           for (int i=0; i<lm.sizeUsed+2; i++){
-            alignment.add(align_str[i]);
+            alignment.push_back(align_str[i]);
           }
-          result.add("seq", alignment);
+          result["seq"] = alignment;
         }
 
         remove(filename);
-        cout << result.toString();
+        cout << result.dump(2);
       }else{
         int length=60;
         int n=align_str[0].size();
