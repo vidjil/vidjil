@@ -20,7 +20,7 @@ void testFineSegment()
   Fasta data("../../data/Stanford_S22.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline("IGH", 'G', seqV, seqD, seqJ, 0, 50);
+  germline = new Germline("IGH", 'G', seqV, seqD, seqJ, 0);
   germline->new_index("####");
 
   Sequence seq = data.read(2);
@@ -71,11 +71,11 @@ void testSegmentOverlap()
   Fasta data("../../data/bug-segment-overlap.fa", 1, " ");
   
   Germline *germline1 ;
-  germline1 = new Germline("TRG", 'G', seqV, seqV, seqJ, -50, 50);
+  germline1 = new Germline("TRG", 'G', seqV, Fasta(), seqJ, -50);
   germline1->new_index("##########");
 
   Germline *germline2 ;
-  germline2 = new Germline("TRG2", 'G', seqV, seqV, seqJ, -50, 50);
+  germline2 = new Germline("TRG2", 'G', seqV, Fasta(), seqJ, -50);
   germline2->new_index("##########");
 
   for (int i = 0; i < data.size(); i++) {
@@ -104,7 +104,7 @@ void testSegmentationCause() {
   Fasta data("../../data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, seqV, seqJ, 0, 10);
+  germline = new Germline("TRG", 'G', seqV, Fasta(), seqJ, 0);
   germline->new_index("##########");
 
   int nb_checked = 0;
@@ -124,9 +124,6 @@ void testSegmentationCause() {
       ks.setSegmentationStatus(NOT_PROCESSED);
       TAP_TEST(! ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       TAP_TEST(ks.getSegmentationStatus() == NOT_PROCESSED, TEST_SET_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
-      ks.setSegmentationStatus(UNSEG_NOISY);
-      TAP_TEST(! ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
-      TAP_TEST(ks.getSegmentationStatus() == UNSEG_NOISY, TEST_SET_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       ks.setSegmentationStatus(SEG_PLUS);
       TAP_TEST(ks.isSegmented(), TEST_SET_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       TAP_TEST(ks.getSegmentationStatus(), TEST_SET_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
@@ -193,10 +190,6 @@ void testSegmentationCause() {
       TAP_TEST(ks.getLeft() == 9, TEST_KMER_LEFT, "left = " << ks.getLeft() << ", " << ks.getInfoLineWithAffects());
       TAP_TEST(ks.getRight() == 19, TEST_KMER_RIGHT, "right = " << ks.getRight() << ", " << ks.getInfoLineWithAffects());
       nb_checked++;
-    } else if (data.read(i).label == "seq-delta-max") {
-      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, ks.getInfoLineWithAffects());
-      TAP_TEST(ks.getSegmentationStatus() == UNSEG_BAD_DELTA_MAX, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
-      nb_checked++;
     } else if (data.read(i).label == "seq-seg-no-window") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, ks.getInfoLineWithAffects());
       TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
@@ -209,7 +202,7 @@ void testSegmentationCause() {
     }
   }
   
-  TAP_TEST(nb_checked == 15, TEST_KMER_DATA, "");
+  TAP_TEST(nb_checked == 14, TEST_KMER_DATA, "");
 
   delete germline;
 }
@@ -221,7 +214,7 @@ void testExtractor() {
   OnlineFasta data("../../data/segmentation.fasta", 1, " ");
 
   Germline *germline ;
-  germline = new Germline("TRG", 'G', seqV, seqV, seqJ, 0, 10, 0);
+  germline = new Germline("TRG", 'G', seqV, Fasta(), seqJ, 0, 0);
   germline->new_index("##########");
 
   MultiGermline *multi ;
@@ -238,7 +231,7 @@ void testExtractor() {
   WindowsStorage *ws = we.extract(&data, 30, labels);
   // we.out_stats(cout);
 
-  TAP_TEST(we.getNbReads() == 15, TEST_EXTRACTOR_NB_READS, "");
+  TAP_TEST(we.getNbReads() == 14, TEST_EXTRACTOR_NB_READS, "");
 
   TAP_TEST(we.getNbSegmented(SEG_PLUS) == 2, TEST_EXTRACTOR_NB_SEGMENTED, "segPlus: " << we.getNbSegmented(SEG_PLUS));
   TAP_TEST(we.getNbSegmented(SEG_MINUS) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
@@ -248,7 +241,6 @@ void testExtractor() {
   TAP_TEST(we.getNbSegmented(UNSEG_TOO_FEW_V) == 3, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(UNSEG_TOO_FEW_J) == 3, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(UNSEG_BAD_DELTA_MIN) == 0, TEST_EXTRACTOR_NB_SEGMENTED, "");
-  TAP_TEST(we.getNbSegmented(UNSEG_BAD_DELTA_MAX) == 1, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(UNSEG_TOO_SHORT_FOR_WINDOW) == 2, TEST_EXTRACTOR_NB_SEGMENTED, "");
   TAP_TEST(we.getNbSegmented(TOTAL_SEG_AND_WINDOW) == 3, TEST_EXTRACTOR_NB_SEGMENTED, "");
 
@@ -259,7 +251,6 @@ void testExtractor() {
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_FEW_ZERO) == 36, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_FEW_V) == 46, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_TOO_FEW_V));
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_FEW_J) == 48, TEST_EXTRACTOR_AVG_LENGTH, "average: " << we.getAverageSegmentationLength(UNSEG_TOO_FEW_J));
-  TAP_TEST(we.getAverageSegmentationLength(UNSEG_BAD_DELTA_MAX) == 66, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST(we.getAverageSegmentationLength(UNSEG_TOO_SHORT_FOR_WINDOW) == 28.5, TEST_EXTRACTOR_AVG_LENGTH, "");
   TAP_TEST(we.getAverageSegmentationLength(TOTAL_SEG_AND_WINDOW) == 48, TEST_EXTRACTOR_AVG_LENGTH, "");
 
@@ -301,7 +292,7 @@ void testProbability() {
     V.add(v);
     J.add(j);
   }
-  Germline germline("Test", 'T', V, Fasta(), J, 0, 30);
+  Germline germline("Test", 'T', V, Fasta(), J, 0);
   germline.new_index("####");
 
 

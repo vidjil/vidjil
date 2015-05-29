@@ -192,7 +192,7 @@ while read line; do
                         error=1
 			echo >&2; echo >&2; echo $SEPARATOR_LINE >&2
 			echo "$file failed:" >&2
-			echo $line >&2
+			echo "$line" >&2
 			echo $SEPARATOR_LINE >&2
 			cat $FILE_TO_GREP >&2
 			echo $SEPARATOR_LINE >&2; echo >&2; echo >&2

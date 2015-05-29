@@ -194,6 +194,7 @@ distrib:
 	cd release/$(DIST_DIR) && make germline
 	cd release/$(DIST_DIR) && make data
 	cd release/$(DIST_DIR) && make test
+	cd release/$(DIST_DIR) && make clean && make static && mv vidjil vidjil-$(RELEASE_TAG)_`uname -m`
 
 
 release_browser:

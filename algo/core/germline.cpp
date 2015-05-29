@@ -3,7 +3,7 @@
 #include <ctype.h>
 
 void Germline::init(string _code, char _shortcut,
-                    int _delta_min, int _delta_max,
+                    int _delta_min,
                     int max_indexing)
 {
   code = _code ;
@@ -16,28 +16,27 @@ void Germline::init(string _code, char _shortcut,
   affect_3 = "J" ;
 
   affect_5 = string(1, toupper(shortcut)) + "-" + code + "V";
-  affect_4 = ""; // string(1, 14 + shortcut) + "-" + code + "D";
+  affect_4 = string(1, 14 + shortcut) + "-" + code + "D";
   affect_3 = string(1, tolower(shortcut)) + "-" + code + "J";
      
   delta_min = _delta_min ;
-  delta_max = _delta_max ;
 }
 
 
 Germline::Germline(string _code, char _shortcut,
-		   int _delta_min, int _delta_max,
+		   int _delta_min,
                     int max_indexing)
 {
-  init(_code, _shortcut, _delta_min, _delta_max, max_indexing);
+  init(_code, _shortcut, _delta_min, max_indexing);
 }
 
 
 Germline::Germline(string _code, char _shortcut,
 		   string f_rep_5, string f_rep_4, string f_rep_3,
-		   int _delta_min, int _delta_max,
+		   int _delta_min,
                     int max_indexing)
 {
-  init(_code, _shortcut, _delta_min, _delta_max, max_indexing);
+  init(_code, _shortcut, _delta_min, max_indexing);
 
   f_reps_5.push_back(f_rep_5);
   f_reps_4.push_back(f_rep_4);
@@ -51,10 +50,10 @@ Germline::Germline(string _code, char _shortcut,
 
 Germline::Germline(string _code, char _shortcut,
 		   list <string> _f_reps_5, list <string> _f_reps_4, list <string> _f_reps_3,
-		   int _delta_min, int _delta_max,
+		   int _delta_min,
                     int max_indexing)
 {
-  init(_code, _shortcut, _delta_min, _delta_max, max_indexing);
+  init(_code, _shortcut, _delta_min, max_indexing);
 
   f_reps_5 = _f_reps_5 ;
   f_reps_4 = _f_reps_4 ;
@@ -77,10 +76,10 @@ Germline::Germline(string _code, char _shortcut,
 
 Germline::Germline(string _code, char _shortcut, 
            Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
-		   int _delta_min, int _delta_max,
+		   int _delta_min,
                     int max_indexing)
 {
-  init(_code, _shortcut, _delta_min, _delta_max, max_indexing);
+  init(_code, _shortcut, _delta_min, max_indexing);
 
   rep_5 = _rep_5 ;
   rep_4 = _rep_4 ;
@@ -104,11 +103,9 @@ void Germline::set_index(IKmerStore<KmerAffect> *_index)
 void Germline::update_index(IKmerStore<KmerAffect> *_index)
 {
   if (!_index) _index = index ;
+
   _index->insert(rep_5, affect_5, max_indexing);
-
-  if (affect_4.size())
-    _index->insert(rep_4, affect_4);
-
+  _index->insert(rep_4, affect_4);
   _index->insert(rep_3, affect_3, -max_indexing);
 }
 
@@ -133,7 +130,7 @@ Germline::~Germline()
 ostream &operator<<(ostream &out, const Germline &germline)
 {
   out << setw(4) << left << germline.code << right << " '" << germline.shortcut << "' "
-      << setw(3) << germline.delta_min << "/" << setw(3) << germline.delta_max
+      << setw(3) << germline.delta_min
       << " " << germline.index ;
 
   if (germline.index) {
@@ -183,34 +180,34 @@ void MultiGermline::add_germline(Germline *germline, string seed)
 void MultiGermline::build_default_set(string path, int max_indexing)
 {
   // Should parse 'data/germlines.data'
-  add_germline(new Germline("TRA", 'A', path + "/TRAV.fa", "",                path + "/TRAJ.fa", -10, 20, max_indexing), SEED_S13);
-  add_germline(new Germline("TRB", 'B', path + "/TRBV.fa", path + "/TRBD.fa", path + "/TRBJ.fa",   0, 80, max_indexing), SEED_S12);
-  add_germline(new Germline("TRG", 'G', path + "/TRGV.fa", "",                path + "/TRGJ.fa", -10, 30, max_indexing), SEED_S10);
-  add_germline(new Germline("TRD", 'D', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRDJ.fa",   0, 80, max_indexing), SEED_S10);
+  add_germline(new Germline("TRA", 'A', path + "/TRAV.fa", "",                path + "/TRAJ.fa", -10, max_indexing), SEED_S13);
+  add_germline(new Germline("TRB", 'B', path + "/TRBV.fa", path + "/TRBD.fa", path + "/TRBJ.fa",   0, max_indexing), SEED_S12);
+  add_germline(new Germline("TRG", 'G', path + "/TRGV.fa", "",                path + "/TRGJ.fa", -10, max_indexing), SEED_S10);
+  add_germline(new Germline("TRD", 'D', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRDJ.fa",   0, max_indexing), SEED_S10);
 
-  add_germline(new Germline("IGH", 'H', path + "/IGHV.fa", path + "/IGHD.fa", path + "/IGHJ.fa",   0, 80, max_indexing), SEED_S12);
-  add_germline(new Germline("IGK", 'K', path + "/IGKV.fa", "",                path + "/IGKJ.fa", -10, 20, max_indexing), SEED_S10);
-  add_germline(new Germline("IGL", 'L', path + "/IGLV.fa", "",                path + "/IGLJ.fa", -10, 20, max_indexing), SEED_S10);
+  add_germline(new Germline("IGH", 'H', path + "/IGHV.fa", path + "/IGHD.fa", path + "/IGHJ.fa",   0, max_indexing), SEED_S12);
+  add_germline(new Germline("IGK", 'K', path + "/IGKV.fa", "",                path + "/IGKJ.fa", -10, max_indexing), SEED_S10);
+  add_germline(new Germline("IGL", 'L', path + "/IGLV.fa", "",                path + "/IGLJ.fa", -10, max_indexing), SEED_S10);
 }
 
 void MultiGermline::build_incomplete_set(string path, int max_indexing)
 {
   // Should parse 'data/germlines.data'
   // TRA+D
-  add_germline(new Germline("TRA+D", 'a', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRAJ.fa", -10, 80, max_indexing), SEED_S13);
-  add_germline(new Germline("TRA+D", 'a', path + "/TRDD_upstream.fa", "", path + "/TRAJ.fa", -10, 80, max_indexing), SEED_S13);
+  add_germline(new Germline("TRA+D", 'a', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRAJ.fa", -10, max_indexing), SEED_S13);
+  add_germline(new Germline("TRA+D", 'a', path + "/TRDD_upstream.fa", "", path + "/TRAJ.fa", -10, max_indexing), SEED_S13);
 
   // DD-JD + DD2-DD3
-  add_germline(new Germline("TRD+", 'd', path + "/TRDD2_upstream.fa",   "", path + "/TRDJ.fa",     -10, 60, max_indexing), SEED_9);
-  add_germline(new Germline("TRD+", 'd', path + "/TRDV.fa",       "", path + "/TRDD3_downstream.fa", -10, 50, max_indexing), SEED_9);
-  add_germline(new Germline("TRD+", 'd', path + "/TRDD2_upstream.fa",   "", path + "/TRDD3_downstream.fa", -10, 50, max_indexing), SEED_9);
+  add_germline(new Germline("TRD+", 'd', path + "/TRDD2_upstream.fa",   "", path + "/TRDJ.fa",     -10, max_indexing), SEED_9);
+  add_germline(new Germline("TRD+", 'd', path + "/TRDV.fa",       "", path + "/TRDD3_downstream.fa", -10, max_indexing), SEED_9);
+  add_germline(new Germline("TRD+", 'd', path + "/TRDD2_upstream.fa",   "", path + "/TRDD3_downstream.fa", -10, max_indexing), SEED_9);
 
   // DH-JH
-  add_germline(new Germline("IGH+", 'h', path + "/IGHD_upstream.fa",       "", path + "/IGHJ.fa",     -10, 20, max_indexing), SEED_S12);
+  add_germline(new Germline("IGH+", 'h', path + "/IGHD_upstream.fa",       "", path + "/IGHJ.fa",     -10, max_indexing), SEED_S12);
 
   // IGK: KDE, INTRON
-  add_germline(new Germline("IGK+", 'k', path + "/IGK-INTRON.fa", "", path + "/IGK-KDE.fa",  -10, 80, max_indexing), SEED_S10);
-  add_germline(new Germline("IGK+", 'k', path + "/IGKV.fa",       "", path + "/IGK-KDE.fa",  -10, 80, max_indexing), SEED_S10);
+  add_germline(new Germline("IGK+", 'k', path + "/IGK-INTRON.fa", "", path + "/IGK-KDE.fa",  -10, max_indexing), SEED_S10);
+  add_germline(new Germline("IGK+", 'k', path + "/IGKV.fa",       "", path + "/IGK-KDE.fa",  -10, max_indexing), SEED_S10);
 }
 
 /* if 'one_index_per_germline' was not set, this should be called once all germlines have been loaded */

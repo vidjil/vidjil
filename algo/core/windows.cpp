@@ -78,13 +78,13 @@ KmerRepresentativeComputer WindowsStorage::getRepresentativeComputer(junction wi
     = getSample(window,nb_sampled, nb_buckets);
   KmerRepresentativeComputer repComp(auditioned_sequences, seed);
   repComp.setRevcomp(true);
-  repComp.setMinCover(min_cover);
+  repComp.setMinCover((windows_labels.find(window) == windows_labels.end()) ? min_cover : 1);
   repComp.setPercentCoverage(percent_cover);
   repComp.setRequiredSequence(window);
   repComp.setCoverageReferenceLength(getAverageLength(window));
   repComp.compute();
 
-  // We should always have a representative, because
+  // We should always have a representative, because either the junction is labelled (thus setMinCover(1)), or:
   // - there is at least min('min_reads_clone', 'max_auditioned') sequences in auditioned_sequences
   // - and 'min_cover' = min('min_reads_clone', 'max_auditioned')
   // - and these sequence are at least as long as the seed

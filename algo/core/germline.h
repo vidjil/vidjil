@@ -18,7 +18,7 @@ class Germline {
   int max_indexing;
 
   void init(string _code, char _shortcut,
-            int _delta_min, int _delta_max,
+            int _delta_min,
             int max_indexing);
 
  public:
@@ -26,29 +26,26 @@ class Germline {
    * @param delta_min: the minimal distance between the right bound and the left bound
    *        so that the segmentation is accepted
    *        (left bound: end of V, right bound : start of J)
-   * @param delta_min: the maximal distance between the right bound and the left bound
-   *        so that the segmentation is accepted
-   *        (left bound: end of V, right bound : start of J)
    * @param max_indexing: maximal length of the sequence to be indexed (0: all)
    */
 
   Germline(string _code, char _shortcut,
            list <string> f_rep_5, list <string> f_rep_4, list <string> f_rep_3,
-           int _delta_min, int _delta_max,
+           int _delta_min,
             int max_indexing=0);
 
   Germline(string _code, char _shortcut, 
   	   string f_rep_5, string f_rep_4, string f_rep_3,
-	   int _delta_min, int _delta_max,
+	   int _delta_min,
             int max_indexing=0);
 
   Germline(string _code, char _shortcut, 
       Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
-	   int _delta_min, int _delta_max,
+	   int _delta_min,
             int max_indexing=0);
 
   Germline(string _code, char _shortcut,
-	   int _delta_min, int _delta_max,
+	   int _delta_min,
             int max_indexing=0);
 
   ~Germline();
@@ -79,7 +76,6 @@ class Germline {
   IKmerStore<KmerAffect> *index;
 
   int delta_min;
-  int delta_max;
 };
 
 

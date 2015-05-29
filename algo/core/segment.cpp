@@ -299,7 +299,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
 
     } // endif Pseudo-germline
  
-  computeSegmentation(strand, before, after, germline->delta_min, germline->delta_max, threshold, multiplier);
+  computeSegmentation(strand, before, after, threshold, multiplier);
 }
 
 KmerSegmenter::~KmerSegmenter() {
@@ -378,7 +378,6 @@ KmerMultiSegmenter::~KmerMultiSegmenter() {
 }
 
 void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffect after,
-                                        int delta_min, int delta_max,
                                         double threshold, int multiplier) {
   // Try to segment, computing 'Vend' and 'Jstart'
   // If not segmented, put the cause of unsegmentation in 'because'
@@ -392,7 +391,9 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
     bool detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
       && (max.nb_after_left + max.nb_after_right >= DETECT_THRESHOLD);
 
-    if ((strand == 1 && max.nb_before_left == 0) || (strand == -1 && max.nb_after_right == 0))
+    if (max.nb_before_left + max.nb_before_right + max.nb_after_left + max.nb_after_right == 0)
+      because = UNSEG_TOO_FEW_ZERO ;
+    else if ((strand == 1 && max.nb_before_left == 0) || (strand == -1 && max.nb_after_right == 0))
       because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_V ;
     else if ((strand == 1 && max.nb_after_right == 0)|| (strand == -1 && max.nb_before_left == 0))
       because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_J ;
@@ -433,21 +434,6 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
      Vend = sequence.size() - Jstart - 1;
      Jstart = tmp;
    }
-
-
-  // Now we check the delta between Vend and right
-
-  if (Jstart - Vend < delta_min)
-    {
-      because = UNSEG_BAD_DELTA_MIN ;
-      return ;
-    }
-
-  if (Jstart - Vend > delta_max)
-    {
-      because = UNSEG_BAD_DELTA_MAX ;
-      return ;
-    }
 
   assert(because == NOT_PROCESSED);
 
@@ -722,7 +708,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
     }
 
   segmented = (Vend != (int) string::npos) && (Jstart != (int) string::npos) && 
-    (Jstart - Vend >= germline->delta_min) && (Jstart - Vend <= germline->delta_max);
+    (Jstart - Vend >= germline->delta_min);
     
   if (!segmented)
     {
@@ -734,11 +720,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
           because = UNSEG_BAD_DELTA_MIN  ;
         }
 
-      if (Jstart - Vend > germline->delta_max)
-        {
-          because = UNSEG_BAD_DELTA_MAX  ;
-        }
-        
       if (Vend == (int) string::npos) 
         {
           because = UNSEG_TOO_FEW_V ;

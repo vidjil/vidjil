@@ -24,7 +24,5 @@ tgcaaaatctaattaaaaatgattctgggttctattactgtgccacctgggacaggAAAAAAAAAAAAAAAAAA
 tgtgccacctgggacaggGAATTATTATAAGAAACTtgtgccacctgggacaggGAATTATTATAAGAAACT
 >seq-delta-min
 cttgggcagttggaacaacACTTGTTGTCACAG
->seq-delta-max
-tgtgccacctgggacaggAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAGAATTATTATAAGAAACT
 >seq-seg-no-window
 acctgggacaggGAATTATTATAA

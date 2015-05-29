@@ -5,7 +5,7 @@ $ Number of reads
 e1:"total": [13153]
 
 $ Number of segmented reads
-e1:"segmented": [13139]
+e1:"segmented": [13153]
 
 $ Most abundant window
 1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC".*"reads": \\[8\\]

@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -z 0 -w 60 -r 5 -o out2 -u -U -v -G ../../germline/IGH ../../data/Stanford_S22.fasta ; tail out2/Stanford_S22.segmented.vdj.fa ; grep UNSEG out2/Stanford_S22.unsegmented.vdj.fa
+!LAUNCH: ../../vidjil -k 16 -z 0 -w 60 -r 5 -o out2 -u -U -v -G ../../germline/IGH ../../data/Stanford_S22.fasta ; tail out2/Stanford_S22.segmented.vdj.fa ; grep UNSEG out2/Stanford_S22.unsegmented.vdj.fa
 # Testing uncommon and debug options 
 
 $ verbose (-v)
@@ -8,5 +8,5 @@ $ segmented.fa (-U)
 1:>lcl.FLN1FA001BCDD7.1. .* seed IGH SEG
 
 $ unsegmented.fa (-u)
-1:>lcl.FLN1FA002PX5D6.1. .* UNSEG
+3:>lcl.FLN1FA00.* UNSEG
 

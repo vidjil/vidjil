@@ -1,15 +1,15 @@
-!LAUNCH: ../../vidjil -k 14 -w 50 -c clones -G ../../germline/IGH -y 3 -z 1 -r 1 -n 5 ../../data/clones_simul.fa
+!LAUNCH: ../../vidjil -k 14 -w 50 -c clones -G ../../germline/IGH -y 3 -z 0 -r 1 -n 5 ../../data/clones_simul.fa ; cat out/clones_simul.vidjil
 
 $ Window extractions
-1:found 25 50-windows in 66 reads
+2:found 25 50-windows in 66 reads
 
 $ Some clustering
 1:==> 2 clusters
 
-$ Clone 1 output
-f1:Clone #001 .* 36 reads
+$ Clones #01 and #02 are clustered (not together): their windows appear two times in .vidjil ('id' and 'clusters')
+2:"CTGTGCGAGAGTGGGCAGCAGCTGGTCTGATGCTTTTGATTATCTGGGGC"
+2:"GCGAGAGCGATCCCCCGGTATTACTATGATACTAGTGGCCCAAACGACTA"
 
-$ Clone 2 output
-f1:Clone #002 .* 23 reads
-
+$ Clones #03 is not clustered: its windows appear only once .vidjil ('id')
+1:"TGTGAGAGAGCGATCCCCCGGTATTACTAGGATACTAGTGGCCCAAACGA"
 
