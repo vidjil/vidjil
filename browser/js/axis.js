@@ -159,15 +159,17 @@ Axis.prototype = {
             var min = default_min;
             var max = default_max;
             if (typeof min === 'function') min = min();
-            if (typeof min === 'function') max = max();
+            if (typeof max === 'function') max = max();
         
             for (var i in this.m.clones){
                 var tmp;
                 try{
                     tmp = this.fct(i);
-                }catch(e){}
+                }catch(e){
+                    tmp = undefined;
+                }
                 
-                if ( typeof tmp != "undefined"){
+                if ( typeof tmp != "undefined" && !isNaN(tmp)){
                     if ( tmp > max || typeof max == "undefined") max = tmp;
                     if ( tmp < min || typeof min == "undefined") min = tmp;
                 }
