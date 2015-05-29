@@ -170,23 +170,60 @@ function ScatterPlot(id, model) {
             output : "percent", 
             log : true  
         },
-        "pcaX": { 
-            label: "clone coverage",
-            fct: function(cloneID){return self.m.clone(cloneID).pca[0]},
+        "tsneX": { 
+            label: "",
+            fct: function(cloneID){return self.m.clone(cloneID).tsne[0]},
             output: "float-2", 
-            log: false 
+            log: false,
+            min: 0,
+            max: 1, 
+            hide : true 
         },
-        "pcaY": { 
-            label: "clone coverage",
-            fct: function(cloneID){return self.m.clone(cloneID).pca[1]},
+        "tsneY": { 
+            label: "",
+            fct: function(cloneID){return self.m.clone(cloneID).tsne[1]},
             output: "float-2", 
-            log: false 
+            log: false,
+            min: 0,
+            max: 1, 
+            hide : true 
+        },
+        "tsneX_system": { 
+            label: "",
+            fct: function(cloneID){
+                var r = self.gridSizeH/self.gridSizeW;
+                var k=1;
+                var yMax =matrix.system[self.m.clone(cloneID).get("germline")].yMax
+                if (yMax > r) k = r/yMax
+                return k*self.m.clone(cloneID).tsne_system[0]
+            },
+            output: "float-2", 
+            log: false,
+            min: 0,
+            max: 1, 
+            hide : true 
+        },
+        "tsneY_system": { 
+            label: "",
+            fct: function(cloneID){
+                var r = self.gridSizeH/self.gridSizeW;
+                var k=1;
+                var yMax =matrix.system[self.m.clone(cloneID).get("germline")].yMax
+                if (yMax > r) k = r/yMax
+                return k*self.m.clone(cloneID).tsne_system[1]
+            },
+            output: "float-2", 
+            log: false,
+            min: 0,
+            max: function(){return self.gridSizeH/self.gridSizeW}, 
+            hide : true 
         }
     }
     
     // Plot Presets
     this.preset = { 
-        "graph" : { "mode": "plot", "x" : "pcaX", "y": "pcaY"},
+        "graph" : { "mode": "plot", "x" : "tsneX", "y": "tsneY"},
+        "graph_by_system" : { "mode": "plot", "x" : "tsneX_system", "y": "tsneY_system"},
         "V/J (genes)" : { "mode": "plot", "x" : "gene_v", "y": "gene_j"},
         "V/J (alleles)" : { "mode": "plot", "x" : "allele_v", "y": "allele_j"},
         "V/N length" : { "mode": "plot", "x" : "gene_v", "y": "n"},
@@ -1032,7 +1069,7 @@ ScatterPlot.prototype = {
         //On prend la hauteur de la div
         this.resizeH = div_height - this.marge_top - this.marge_bot;
 
-        if (this.splitX == "allele_v" || this.splitX == "gene_v" || this.splitX == "allele_j" || this.splitX == "gene_j" ||
+        if (this.splitX == "allele_v" || this.splitX == "gene_v" || this.splitX == "allele_j" || this.splitX == "gene_j" || this.splitX == "tsneX_system" ||
             (this.mode == "plot" & (this.splitY == "allele_v" || this.splitY == "gene_v" || this.splitY == "allele_j" || this.splitY == "gene_j"))) {
             this.use_system_grid = true;
             this.buildSystemGrid()
