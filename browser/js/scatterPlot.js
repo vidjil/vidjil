@@ -283,6 +283,7 @@ ScatterPlot.prototype = {
 
         this.select_preset.selectedIndex = this.default_preset
         this.changePreset();
+        this.tsne_ready=false;
 
         this.resize();
     },
@@ -1759,6 +1760,7 @@ ScatterPlot.prototype = {
      * @param {string} mode 
      * */
     changeSplitMethod: function(splitX, splitY, mode) {
+        var self = this;
         
         if (mode == "bar" && mode != this.mode) {
             this.endPlot();
@@ -1769,7 +1771,7 @@ ScatterPlot.prototype = {
         if (mode != "bar" && this.mode == "bar") {
             endbar = true;
         }
-
+        
         this.splitX = splitX;
         this.splitY = splitY;
         this.mode = mode;
@@ -1792,6 +1794,14 @@ ScatterPlot.prototype = {
             this.m.graph.setOtherVisibility(this.splitX == "otherSize" || this.splitY == "otherSize")
         }
 
+        if (splitX == "tsneX" || splitX == "tsneX_system"){
+            if (!this.tsne_ready){
+                console.log("plop")
+                this.tsne_ready=true;
+                this.m.similarity_builder.init(function(){self.changeSplitMethod(splitX, splitY, mode)});
+                return 0;
+            }
+        }
     },
 
     /**
