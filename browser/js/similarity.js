@@ -1,6 +1,7 @@
 
 function Matrix (model) {
     this.m = model;
+    this.system = {}
 }
 
 Matrix.prototype = {
@@ -15,6 +16,7 @@ Matrix.prototype = {
 
         $.ajax({
             type: "POST",
+            timeout: 120000,
             data: request,
             url: segment.cgi_address + "similarity.cgi",
             beforeSend: function () {
@@ -33,184 +35,8 @@ Matrix.prototype = {
         })
     },
     
-    /**
-     * multiply 2 matrix
-     * @param {number[][]} matrix1 
-     * @param {number[][]} matrix2
-     * @return {number[][]}
-     * */
-    multiply : function (matrix1, matrix2){
-        var result=[]
-        for (var x in matrix1){
-            result[x]=[]
-            for (var y in matrix2[0]){
-                var sum = 0;
-                
-                for (var i in matrix1[x]){
-                    for (var j in matrix2){
-                        sum += (matrix1[x][i] * matrix2[j][y])
-                    }
-                }
-                result[x][y]=sum;
-            }
-        }
-        return result
-    },
     
-    /**
-     * compute the mean of each matrix row
-     * @param {number[][]} matrix
-     * @return {number[]} 
-     * */
-    mean_vector : function(matrix) {
-        var mean = []
-        for (var i in matrix) { 
-            var sum = 0;
-            for (var j in m.similarity.matrix[i]) sum += m.similarity.matrix[i][j]
-            mean[i] = sum/m.similarity.matrix[i].length;
-        }
-        return mean;
-    },
-    
-    /**
-     * translate matrix position to be centered on origin
-     * @param {number[][]} matrix
-     * @return {number[][]}
-     * */
-    center : function(matrix) {
-        var mean = this.mean_vector(matrix);
-        
-        var deltaMatrix = [];
-        for (var i in matrix) { 
-            deltaMatrix[i] = []
-            for (var j in matrix[i]) deltaMatrix[i][j] =  matrix[i][j] - mean[j]
-        }
-        return deltaMatrix
-    },
-    
-    /**
-     * build the transposed matrix
-     * @param {number[][]} matrix
-     * @return {number[][]}
-     * */
-    transpose : function(matrix) {
-        var matrixT = []
-        
-        for (var i in matrix[0]) { 
-            matrixT[i] = []
-            for (var j in matrix) matrixT[i][j]=0;
-        }
-        
-        for (var i in matrix) { 
-            for (var j in matrix[0]) matrixT[i][j] = matrix[j][i]
-        }
-        
-        return matrixT
-    },
-    
-    
-    /**
-     * build covariance matrix
-     * @param {number[][]} matrix
-     * @return {number[][]}
-     * */
-    covariance : function (matrix) {
-        var deltaMatrix = this.center(matrix);
-        var deltaMatrixT =this.transpose(deltaMatrix);
-        
-        return this.multiply(deltaMatrix, deltaMatrixT)
-    },
-    
-    /**
-     * 
-     * */
-    diag : function (matrix){
-        for (var i in matrix) { 
-            for (var j in matrix[i]) if (i != j)  matrixT[i][j]=0;
-        }
-    },
-    
-    /**
-     * perform principal component analysis
-     * @param {number[][]} matrix
-     * @return {number[][]}
-     * */
-    pca : function (matrix) {
-        var startTime = new Date().getTime();
-        var elapsedTime = 0;
-
-        var cov = this.covariance(matrix)
-        
-        elapsedTime = new Date().getTime() - startTime;
-        console.log("cov(): " + elapsedTime + "ms");
-        
-        var eigen = numeric.eig(cov)
-        
-        elapsedTime = new Date().getTime() - startTime;
-        console.log("eig(): " + elapsedTime + "ms");
-        
-        //reduce to 2 dimension
-        var dim2 = []
-        for (var i in matrix){
-            dim2[i] = [];
-            dim2[i][0] = eigen.E.x[0][i]
-            dim2[i][1] = eigen.E.x[1][i]
-        }
-        
-        var result = this.multiply(matrix, dim2)
-        
-        for (var i in result){
-            m.clone(i).pca = result[i]
-        }
-        
-        return result;
-    },
-    
-    pca2 : function (matrix) {
-        var transpose = numeric.transpose(matrix)
-        var s = numeric.div(this.multiply(transpose, matrix), matrix.length);
-        var eigen = numeric.svd(s);
-        
-        //reduce to 2 dimension
-        var dim2 = []
-        for (var i in matrix){
-            dim2[i] = [];
-            dim2[i][0] = eigen.U[i][0]
-            dim2[i][1] = eigen.U[i][1]
-        }
-        
-        var result = this.multiply(matrix, dim2)
-        
-        for (var i in result){
-            m.clone(i).pca = result[i]
-        }
-        
-        return result;
-    },
-    
-    pca3: function (X,npc){
-        var USV = numeric.svd(X);
-        var U = USV.U;
-        var V = USV.V;
-        
-        var S = []
-        for (var i in USV.S){
-            S[i] = [];
-            for (var j in USV.S) S[i][j]=0
-        }
-        
-        for (var i in USV.S) S[i][i]=USV.S[i]
-            
-        var pcUdS = this.multiply(U,S);
-        
-        for (var i in result){
-            m.clone(i).pca = pcUdS[i]
-        }
-        
-        return pcUdS;
-    },
-    
-    tsne: function(e,p,pow) {
+    compute_tsne: function(e,p,po) {
         var opt = {
             epsilon: e,
             perplexity: p
