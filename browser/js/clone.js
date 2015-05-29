@@ -541,6 +541,7 @@ Clone.prototype = {
         };
         m.analysisHasChanged = true;
         this.manuallyChanged = true;
+        m.update()
     },
     createSegmentList: function (segment, locus) {
         var segments = {"Vsegment": ["5", "V"], "Dsegment": ["4", "D"], "Jsegment": ["3", "J"]}
@@ -574,6 +575,7 @@ Clone.prototype = {
         this.seg["_evalue_right"] = 0
         m.analysisHasChanged = true;
         this.manuallyChanged = true;
+        m.update();
     }, 
     getHTMLModifState: function () {
         var content = ""
