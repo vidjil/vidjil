@@ -172,7 +172,13 @@ function ScatterPlot(id, model) {
         },
         "tsneX": { 
             label: "",
-            fct: function(cloneID){return self.m.clone(cloneID).tsne[0]},
+            fct: function(cloneID){
+                var r = self.gridSizeH/self.gridSizeW;
+                var k=1;
+                var yMax = self.m.similarity_builder.yMax
+                if (yMax > r) k = r/yMax
+                return k*self.m.clone(cloneID).tsne[0]
+            },
             output: "float-2", 
             log: false,
             min: 0,
@@ -181,11 +187,17 @@ function ScatterPlot(id, model) {
         },
         "tsneY": { 
             label: "",
-            fct: function(cloneID){return self.m.clone(cloneID).tsne[1]},
+            fct: function(cloneID){
+                var r = self.gridSizeH/self.gridSizeW;
+                var k=1;
+                var yMax = self.m.similarity_builder.yMax
+                if (yMax > r) k = r/yMax
+                return k*self.m.clone(cloneID).tsne[1]
+            },
             output: "float-2", 
             log: false,
             min: 0,
-            max: 1, 
+            max: function(){return self.gridSizeH/self.gridSizeW},
             hide : true 
         },
         "tsneX_system": { 
@@ -193,7 +205,7 @@ function ScatterPlot(id, model) {
             fct: function(cloneID){
                 var r = self.gridSizeH/self.gridSizeW;
                 var k=1;
-                var yMax =matrix.system[self.m.clone(cloneID).get("germline")].yMax
+                var yMax = self.m.similarity_builder.system_yMax[self.m.clone(cloneID).get("germline")]
                 if (yMax > r) k = r/yMax
                 return k*self.m.clone(cloneID).tsne_system[0]
             },
@@ -208,7 +220,7 @@ function ScatterPlot(id, model) {
             fct: function(cloneID){
                 var r = self.gridSizeH/self.gridSizeW;
                 var k=1;
-                var yMax =matrix.system[self.m.clone(cloneID).get("germline")].yMax
+                var yMax = self.m.similarity_builder.system_yMax[self.m.clone(cloneID).get("germline")]
                 if (yMax > r) k = r/yMax
                 return k*self.m.clone(cloneID).tsne_system[1]
             },
