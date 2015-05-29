@@ -215,17 +215,17 @@ function ScatterPlot(id, model) {
             output: "float-2", 
             log: false,
             min: 0,
-            max: function(){return self.gridSizeH/self.gridSizeW}, 
+            max: function(){return self.gridSizeH/self.gridSizeW},
             hide : true 
         }
     }
     
     // Plot Presets
     this.preset = { 
-        "graph" : { "mode": "plot", "x" : "tsneX", "y": "tsneY"},
-        "graph_by_system" : { "mode": "plot", "x" : "tsneX_system", "y": "tsneY_system"},
         "V/J (genes)" : { "mode": "plot", "x" : "gene_v", "y": "gene_j"},
         "V/J (alleles)" : { "mode": "plot", "x" : "allele_v", "y": "allele_j"},
+        "graph" : { "mode": "plot", "x" : "tsneX", "y": "tsneY"},
+        "graph_by_system" : { "mode": "plot", "x" : "tsneX_system", "y": "tsneY_system"},
         "V/N length" : { "mode": "plot", "x" : "gene_v", "y": "n"},
         "clone length / locus" : { "mode": "plot", "x": "sequenceLength", "y" : "locus"},
         "clone length / GC content " : { "mode": "plot", "x": "sequenceLength", "y" : "GCContent"},
@@ -507,15 +507,17 @@ ScatterPlot.prototype = {
         
         //Ajout de chaque méthode de répartition dans les menus pour l'axe des X/Y
         for (var key in this.available_axis) {
-            var element = document.createElement("option");
-            element.setAttribute('value', key);
-            var text = document.createTextNode(this.available_axis[key].label);
-            element.appendChild(text);
+            if (typeof this.available_axis[key].hide == "undefined" || !this.available_axis[key].hide){
+                var element = document.createElement("option");
+                element.setAttribute('value', key);
+                var text = document.createTextNode(this.available_axis[key].label);
+                element.appendChild(text);
 
-            var element2 = element.cloneNode(true);
+                var element2 = element.cloneNode(true);
 
-            this.select_x.appendChild(element);
-            this.select_y.appendChild(element2);
+                this.select_x.appendChild(element);
+                this.select_y.appendChild(element2);
+            }
         }
 
         this.select_preset = document.createElement('select');
