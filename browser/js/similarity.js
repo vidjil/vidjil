@@ -48,7 +48,7 @@ Matrix.prototype = {
             
         for (var i in this.matrix) {
             for (var j in this.matrix) {
-                dists[i][j]= Math.pow( (100-this.matrix[i][j]) ,pow)
+                dists[i][j]= Math.pow( (100-this.matrix[i][j]) ,po)
             }
         }
             
@@ -61,46 +61,93 @@ Matrix.prototype = {
         var result = tsne.getSolution(); 
         
         for (var i in result){
-            m.clone(i).pca = result[i]
+            m.clone(i).tsne = result[i]
         }
         
         return dists
     },
     
-    /**
-     * 
-     * */
-    mds : function (matrix) {
-        var startTime = new Date().getTime();
-        var elapsedTime = 0;
+    compute_locus_tsne: function(e,p,po) {
         
-        var pca = this.pca(matrix)
-        
-        elapsedTime = new Date().getTime() - startTime;
-        console.log("pca(): " + elapsedTime + "ms");
-        
-        var minX=0;
-        var maxX=0;
-        var minY=0;
-        var maxY=0;
-        
-        for (var i in pca) {
-            if (pca[i][0] > maxX) maxX = pca[i][0]
-            if (pca[i][0] < minX) minX = pca[i][0]
-            if (pca[i][1] > maxY) maxY = pca[i][1]
-            if (pca[i][1] < minY) minY = pca[i][1]
+        for (var l in this.m.system_available){
+            var locus = this.m.system_available[l]
+            var opt = {
+                epsilon: e,
+                perplexity: p
+            }; 
+            var tsne = new tsnejs.tSNE(opt); 
+
+            var list = []
+            for (var i=0; i<this.m.clones.length; i++) if (this.m.clone(i).get("germline") == locus) list.push(i)
+            
+            var dists = []
+            for (var i in list) dists[i] = []
+                
+            for (var i in list) {
+                for (var j in list) {
+                    dists[i][j]= Math.pow( (100-this.matrix[list[i]][list[j]]) ,po)
+                }
+            }
+                
+            tsne.initDataRaw(dists);
+
+            for(var k = 0; k < 2000; k++) {
+                tsne.step(); 
+            }
+
+            var result = tsne.getSolution(); 
+            
+            //compute min/max range
+            var xMax=0;
+            var xMin=0;
+            var yMax=0;
+            var yMin=0;
+            
+            for (var i in result){
+                if (result[i][0] > xMax) xMax=result[i][0];
+                if (result[i][0] < xMin) xMin=result[i][0];
+                if (result[i][1] > yMax) yMax=result[i][1];
+                if (result[i][1] < yMin) yMin=result[i][1];
+            }
+            
+            var deltaX = xMax-xMin;
+            var deltaY = yMax-yMin;
+            
+            //replace origin on 0/0
+            for (var i in result){
+                result[i][0] = result[i][0] - xMin;
+                result[i][1] = result[i][1] - yMin;
+            }
+            
+            //rotate result 
+            if (deltaY > deltaX) {
+                for (var i in result){
+                    var tmp = result[i][0];
+                    result[i][0] = result[i][1];
+                    result[i][1] = tmp;
+                }
+                var tmp = deltaX;
+                deltaX = deltaY;
+                deltaY = tmp;
+            }
+            
+            //rescale
+            for (var i in result){
+                result[i][0] = result[i][0]/deltaX
+                result[i][1] = result[i][1]/deltaX
+            }
+            
+            this.system[locus]={}
+            this.system[locus].yMax = deltaY/deltaX;
+            
+            for (var i in result){
+                m.clone(list[i]).tsne_system = result[i]
+            }
+            
         }
         
-        var deltaX = maxX-minX;
-        var deltaY = maxY-minY;
-        
-        for (var i in pca) {
-            pca[i][0] = (pca[i][0]-minX)/deltaX
-            pca[i][1] = (pca[i][1]-minY)/deltaY
-        }
-        
-        return pca
     }
+
 }
 
 
