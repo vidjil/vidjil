@@ -547,6 +547,7 @@ Clone.prototype = {
 			myDiv.innerHTML = content;
 		};
 		m.analysisHasChanged = true;
+                m.update()
 	},
 	createSegmentList: function (segment, locus) {
 		var segments = {"Vsegment": ["5", "V"], "Dsegment": ["4", "D"], "Jsegment": ["3", "J"]}
@@ -589,6 +590,7 @@ Clone.prototype = {
 		this.seg["_evalue_left"]  = 0 //form["Vsegment"].value
 		this.seg["_evalue_right"] = 0 //form["Vsegment"].value
 		m.analysisHasChanged = true;
+                m.update()
 	}, 
 	
     
