@@ -1053,6 +1053,10 @@ ScatterPlot.prototype = {
             .updateClones()
             .updateMenu()
             .initGrid();
+        
+        if (this.splitX == "tsneX_system" || this.splitX == "tsneX"){
+            this.changeSplitMethod(this.splitX, this.splitY, this.mode)
+        }
     },
     
     /**
@@ -1270,9 +1274,9 @@ ScatterPlot.prototype = {
         var elapsedTime = 0;
 
         this.compute_size()
+            .initGrid()
             .updateClones()
-            .updateMenu()
-            .initGrid();
+            .updateMenu();
 
         //Donne des informations quant au temps de MàJ des données
         elapsedTime = new Date()
@@ -1757,6 +1761,7 @@ ScatterPlot.prototype = {
         this.splitX = splitX;
         this.splitY = splitY;
         this.mode = mode;
+        this.compute_size();
 
         this.updateAxis(this.axisX, this.splitX);
         this.updateAxis(this.axisY, this.splitY);
