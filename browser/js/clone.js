@@ -33,6 +33,8 @@ function Clone(data, model, index) {
     this.index = index
     this.split = false
     this.seg = {};
+    this.manuallyChanged = false
+    this.shoxLists       = false
     var key = Object.keys(data)
     
     for (var i=0; i<key.length; i++ ){
@@ -356,14 +358,21 @@ Clone.prototype = {
         }
     },
 
-	getRevCompSequence : function () {
+    getRevCompSequence : function () {
         if (typeof (this.sequence) != 'undefined' && this.sequence != 0){
-            var dict_comp  = {"A":"T","T":"A","C":"G","G":"C"}
-			var revcompSeq = ""
-			for (var i = this.sequence.length; i >= 0; i--) {
-				revcompSeq += dict_comp[this.sequence[i]]
-			}
-			return revcompSeq
+            var dict_comp  = {
+          'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C',
+          'Y': 'R', 'R': 'Y', // pyrimidine (CT) / purine (AG)
+          'W': 'S', 'S': 'W', // weak (AT) / strong (GC)
+          'K': 'M', 'M': 'K', // keto (TG) / amino (AC)
+          'B': 'V', 'V': 'B', 'D': 'H', 'H': 'D',
+          'N': 'N'
+          }
+            var revcompSeq = ""
+            for (var i = this.sequence.length -1 ; i > 0; i--) {
+                revcompSeq += dict_comp[this.sequence[i]]
+            }
+            return revcompSeq
         }else{
             return "0";
         }
@@ -504,6 +513,105 @@ Clone.prototype = {
         }
     },
     
+    createLocusList: function () {
+        var list_germline = ["TRA", "TRB", "TRG", "TRD", "IGH", "IGK", "IGL", "VdJa", "TRD+", "IGH+", "IGK+", "undefined"];
+        // TODO ask for text
+        var content = "manual chgmt: <form name='germ'><select NAME='LocusForm' id='germSelector', onChange='m.clones["+ this.index +"].changeLocus(this.form.LocusForm.value);'>";
+        content += "<option value="+ this.germline + ">" + this.germline + "</option>";
+        
+        for (var i in germline_data) {
+            if (i.indexOf("_") ==-1 ){
+                content += "<option value=" + i +">" + i + "</option>";
+            }
+        }
+        content += "</select></form>";
+        return content;
+    },
+    changeLocus: function(formValue) {
+        // TODO add chgmt of germline in data analysis
+        // TODO change the germlines stats 
+        // TODO passer directement la valeur du form, et pas le form
+       this.germline = formValue;
+        var segments  = ["Vsegment", "Dsegment", "Jsegment"];
+        
+        for (var i = 0; i < segments.length; i++) {
+            var myDiv = document.getElementById('list'+segments[i]);
+            var content = this.createSegmentList(segments[i], formValue);
+            myDiv.innerHTML = content;
+        };
+        m.analysisHasChanged = true;
+        this.manuallyChanged = true;
+    },
+    createSegmentList: function (segment, locus) {
+        var segments = {"Vsegment": ["5", "V"], "Dsegment": ["4", "D"], "Jsegment": ["3", "J"]}
+        var nLocus = locus + segments[segment][1]
+        var content = "<form name="+ segment  +"><select NAME="+segment+" onChange='m.clones["+ this.index +"].changeSegment(this.form." + segment + ".value, " + segments[segment][0] + ");'>";
+        // TODO create changeSegment function
+        content += "<option value="+ this.getGene(segments[segment][0]) + ">" + this.getGene(segments[segment][0]) + "</option>";        
+
+        if( typeof(locus) == 'undefined' ){
+            nLocus = this.germline + segments[segment][1]
+        };
+        for (var i in germline) {
+            if (i.indexOf(nLocus) !=-1 ){
+                for (seg in germline[i]) {
+                    content += "<option value=" + seg +">" + seg + "</option>";
+                };
+            };
+        };
+        content += "</select></form>";
+        return content;
+    },
+    changeSegment: function (formValue, segment) {
+        // TODO add chgmt of germline in data analysis
+        this.seg[segment]         = formValue
+        this.seg[segment+"start"] = 0
+        this.seg[segment+"end"]   = 0            
+
+        // TODO : insert real value for stats (start, end, evalue, ...)
+        this.seg["_evalue"]       = 0
+        this.seg["_evalue_left"]  = 0
+        this.seg["_evalue_right"] = 0
+        m.analysisHasChanged = true;
+        this.manuallyChanged = true;
+    }, 
+    getHTMLModifState: function () {
+        var content = ""
+        if (this.manuallyChanged == true) {
+            // TODO find a better icon
+            content += " <img src='images/icon_fav_on.png' alt='This clone has been manually changed'>"
+            
+        };
+        return content;
+    },
+    // fix florian
+    showModificationLists: function() {
+        var listDiv = ["listLocus", "listVsegment", "listDsegment", "listJsegment"]
+        if (this.showList == true) {
+            for (elt in listDiv) {
+                $(listDiv[elt]).hide("fast");
+            };
+            this.showList = true
+        } else if (this.showList == false ) {
+            for (elt in listDiv) {
+                $(listDiv[elt]).show("fast");
+            };
+            this.showList=false
+        };
+                  
+    },
+    toggle: function() {
+        // TODO use jquery
+        var listDiv = ["listLocus", "listVsegment", "listDsegment", "listJsegment"]
+        for (elt in listDiv) {
+            node = document.getElementById(listDiv[elt]);
+            if (node.style.display == "none") {
+                node.style.display = "inline";
+            } else {
+                node.style.display = "none";
+            };
+        };
+    },
     
     /* return info about a sequence/clone in html 
      *
@@ -593,7 +701,11 @@ Clone.prototype = {
 
         
         //segmentation info
-        html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation</td></tr>"
+        html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation "
+        // TODO add button to hide/display lists
+        html += " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>manual edit</button> ";
+        html += this.getHTMLModifState()
+        html += "</td></tr>"
         
         if (typeof this.stats != 'undefined'){
             var total_stat = [];
@@ -613,10 +725,10 @@ Clone.prototype = {
         
         html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.sequence + "</td></tr>"
         html += "<tr><td> id </td><td colspan='" + time_length + "'>" + this.id + "</td></tr>"
-        html += "<tr><td> locus </td><td colspan='" + time_length + "'>" + this.m.systemBox(this.germline).outerHTML + this.germline + "</td></tr>"
-        html += "<tr><td> V gene (or 5') </td><td colspan='" + time_length + "'>" + this.getGene("5") + "</td></tr>"
-        html += "<tr><td> (D gene) </td><td colspan='" + time_length + "'>" + this.getGene("4") + "</td></tr>"
-        html += "<tr><td> J gene (or 3') </td><td colspan='" + time_length + "'>" + this.getGene("3") + "</td></tr>"
+        html += "<tr><td> locus </td><td colspan='" + time_length + "'>" + this.m.systemBox(this.germline).outerHTML + this.germline + "<div id='listLocus' style='display: none'>" + this.createLocusList() +"</div></td></tr>"
+        html += "<tr><td> V gene (or 5') </td><td colspan='" + time_length + "'>" + this.getGene("5") + "<div id='listVsegment' style='display: none'>" + this.createSegmentList("Vsegment") + "</div></td></tr>"
+        html += "<tr><td> (D gene) </td><td colspan='" + time_length + "'>" + this.getGene("4") + "<div id='listDsegment' style='display: none'>" + this.createSegmentList("Dsegment") + "</div></td></tr>"
+        html += "<tr><td> J gene (or 3') </td><td colspan='" + time_length + "'>" + this.getGene("3") + "<div id='listJsegment' style='display: none'>" + this.createSegmentList("Jsegment") + "</div></td></tr>"
         
         
         //other info (clntab)
