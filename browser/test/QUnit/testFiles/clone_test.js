@@ -89,13 +89,19 @@ test("clone : name", function() {
     includes(html, "<tr><td class='header' colspan='5'> representative sequence</td></tr><tr><td> sequence name </td><td colspan='4'>hello</td></tr><tr><td> code </td><td colspan='4'>hello</td></tr><tr><td> length </td><td colspan='4'>19</td></tr><tr><td> size (n-reads (total reads) )</td><td>10  (200)</td><td>10  (100)</td><td>15  (200)</td><td>15  (100)</td></tr><tr><td> size (%)</td><td>5.000 % </td><td>10.000 % </td><td>7.500 % </td><td>15.000 % </td></tr>",
              "getHtmlInfo: representative sequence information");
 
-    includes(html, "<tr><td class='header' colspan='5'> segmentation</td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", "getHtmlInfo: segmentation information");
-
+    includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' onclick='m.clones[0].toggle()'>manual edit</button> </td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", "getHtmlInfo: segmentation information + modification button");
+    // Test icon 
+    c1.manuallyChanged = true;
+    html = c1.getHtmlInfo()
+    includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' onclick='m.clones[0].toggle()'>manual edit</button>  <img src='images/icon_fav_on.png' alt='This clone has been manually changed'></td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", "getHtmlInfo: segmentation information + modification button + icon");
+    
     // <tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG</td></tr> // not tested (order of title/class)
-
-    includes(html, "<tr><td> V gene (or 5') </td><td colspan='4'>undefined V</td></tr><tr><td> (D gene) </td><td colspan='4'>IGHD2*03</td></tr><tr><td> J gene (or 3') </td><td colspan='4'>IGHV4*01</td></tr>",
-             "getHtmlInfo: segmentation information (VDJ)");
-
+    
+    // TODO : Corrections after germline.js correction
+    includes(html, "<tr><td> V gene (or 5') </td><td colspan='4'>undefined V<div id='listVsegment' style='display: none'><form name=Vsegment><select NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'><option value=undefined V>undefined V</option><option value=TRGJP2*01>TRGJP2*01</option><option value=TRGV1*01>TRGV1*01</option><option value=TRGV10*01>TRGV10*01</option><option value=TRGV10*02>TRGV10*02</option><option value=TRGV11*01>TRGV11*01</option><option value=TRGV11*02>TRGV11*02</option><option value=TRGV2*01>TRGV2*01</option><option value=TRGV2*02>TRGV2*02</option><option value=TRGV3*01>TRGV3*01</option><option value=TRGV3*02>TRGV3*02</option><option value=TRGV4*01>TRGV4*01</option><option value=TRGV4*02>TRGV4*02</option><option value=TRGV5*01>TRGV5*01</option><option value=TRGV5P*01>TRGV5P*01</option><option value=TRGV5P*02>TRGV5P*02</option><option value=TRGV8*01>TRGV8*01</option><option value=TRGV9*01>TRGV9*01</option><option value=TRGV9*02>TRGV9*02</option><option value=TRGVA*01>TRGVA*01</option></select></form></div></td></tr>", "getHtmlInfo: segmentation information (V gene)");
+    includes(html, "<tr><td> (D gene) </td><td colspan='4'>IGHD2*03<div id='listDsegment' style='display: none'><form name=Dsegment><select NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'><option value=IGHD2*03>IGHD2*03</option></select></form></div></td></tr>", "getHtmlInfo: segmentation information (D gene)");
+    includes(html, "<tr><td> J gene (or 3') </td><td colspan='4'>IGHV4*01<div id='listJsegment' style='display: none'><form name=Jsegment><select NAME=Jsegment onChange='m.clones[0].changeSegment(this.form.Jsegment.value, 3);'><option value=IGHV4*01>IGHV4*01</option><option value=TRDV3*02>TRDV3*02</option><option value=TRGJ1*01>TRGJ1*01</option><option value=TRGJ1*02>TRGJ1*02</option><option value=TRGJ2*01>TRGJ2*01</option><option value=TRGJP*01>TRGJP*01</option><option value=TRGJP1*01>TRGJP1*01</option><option value=TRGJP2*01>TRGJP2*01</option><option value=TRDJ4*01>TRDJ4*01</option><option value=TRGJ1*01>TRGJ1*01</option><option value=TRGJ1*02>TRGJ1*02</option><option value=TRGJ2*01>TRGJ2*01</option><option value=TRGJP*01>TRGJP*01</option><option value=TRGJP1*01>TRGJP1*01</option><option value=TRGJP2*01>TRGJP2*01</option></select></form></div></td></tr>", "getHtmlInfo: segmentation information (J gene)");
+    
 });
 
 test("clone : size", function() {
