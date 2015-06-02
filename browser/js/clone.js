@@ -513,6 +513,10 @@ Clone.prototype = {
         }
     },
     
+    /**
+     * Create a list of possibles locus to manually assign to a clone
+     * @return {string} content - an HTML  code of form
+     */    
     createLocusList: function () {
         var list_germline = ["TRA", "TRB", "TRG", "TRD", "IGH", "IGK", "IGL", "VdJa", "TRD+", "IGH+", "IGK+", "undefined"];
         // TODO ask for text
@@ -527,6 +531,12 @@ Clone.prototype = {
         content += "</select></form>";
         return content;
     },
+    
+    /**
+     * Apply a locus changment made by user to a clone
+     * Change *Changed params to true and update the view with new param 
+     * @param {string} formValue - the value of selection made by user
+     */
     changeLocus: function(formValue) {
         // TODO add chgmt of germline in data analysis
         // TODO change the germlines stats 
@@ -543,6 +553,13 @@ Clone.prototype = {
         this.manuallyChanged = true;
         m.update()
     },
+    
+    /**
+     * Create a list of possibles segments to manually assign to a clone
+     * @return {string} content - an HTML  code of form
+     * @param {string} locus - the locus of the clone
+     * @param {string} segment - the segment concerned( "Vsegment", "Dsegment" or "Jsegment")
+     */
     createSegmentList: function (segment, locus) {
         var segments = {"Vsegment": ["5", "V"], "Dsegment": ["4", "D"], "Jsegment": ["3", "J"]}
         var nLocus = locus + segments[segment][1]
@@ -563,6 +580,13 @@ Clone.prototype = {
         content += "</select></form>";
         return content;
     },
+    
+    /**
+     * Apply a segment changment made by user to a clone
+     * Change *Changed params to true and update the view with new param 
+     * @param {string} formValue - the value of selection made by user
+     * @param {string} segment - the segment who will be change( "5", "4" or "3")
+     */
     changeSegment: function (formValue, segment) {
         // TODO add chgmt of germline in data analysis
         this.seg[segment]         = formValue
@@ -576,7 +600,11 @@ Clone.prototype = {
         m.analysisHasChanged = true;
         this.manuallyChanged = true;
         m.update();
-    }, 
+    },
+    
+    /**
+     * Use the manuallyChanged value to insert an icon in the html information
+     */
     getHTMLModifState: function () {
         var content = ""
         if (this.manuallyChanged == true) {
@@ -586,22 +614,9 @@ Clone.prototype = {
         };
         return content;
     },
-    // fix florian
-    showModificationLists: function() {
-        var listDiv = ["listLocus", "listVsegment", "listDsegment", "listJsegment"]
-        if (this.showList == true) {
-            for (elt in listDiv) {
-                $(listDiv[elt]).hide("fast");
-            };
-            this.showList = true
-        } else if (this.showList == false ) {
-            for (elt in listDiv) {
-                $(listDiv[elt]).show("fast");
-            };
-            this.showList=false
-        };
-                  
-    },
+    /**
+     * Use to switch the display value of manual changment lists between "none" or "inline"
+     */
     toggle: function() {
         // TODO use jquery
         var listDiv = ["listLocus", "listVsegment", "listDsegment", "listJsegment"]
@@ -704,9 +719,8 @@ Clone.prototype = {
         
         //segmentation info
         html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation "
-        // TODO add button to hide/display lists
-        html += " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>manual edit</button> ";
-        html += this.getHTMLModifState()
+        html += " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>manual edit</button> "; //Use to hide/display lists
+        html += this.getHTMLModifState() // icon if manual changement 
         html += "</td></tr>"
         
         if (typeof this.stats != 'undefined'){
@@ -727,7 +741,7 @@ Clone.prototype = {
         
         html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.sequence + "</td></tr>"
         html += "<tr><td> id </td><td colspan='" + time_length + "'>" + this.id + "</td></tr>"
-        html += "<tr><td> locus </td><td colspan='" + time_length + "'>" + this.m.systemBox(this.germline).outerHTML + this.germline + "<div id='listLocus' style='display: none'>" + this.createLocusList() +"</div></td></tr>"
+        html += "<tr><td> locus </td><td colspan='" + time_length + "'>" + this.m.systemBox(this.germline).outerHTML + this.germline + "<div id='listLocus' style='display: none'>" + this.createLocusList() + "</div></td></tr>"
         html += "<tr><td> V gene (or 5') </td><td colspan='" + time_length + "'>" + this.getGene("5") + "<div id='listVsegment' style='display: none'>" + this.createSegmentList("Vsegment") + "</div></td></tr>"
         html += "<tr><td> (D gene) </td><td colspan='" + time_length + "'>" + this.getGene("4") + "<div id='listDsegment' style='display: none'>" + this.createSegmentList("Dsegment") + "</div></td></tr>"
         html += "<tr><td> J gene (or 3') </td><td colspan='" + time_length + "'>" + this.getGene("3") + "<div id='listJsegment' style='display: none'>" + this.createSegmentList("Jsegment") + "</div></td></tr>"
