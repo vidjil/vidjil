@@ -80,7 +80,7 @@ test("List : filter", function() {
     
     var clone_list = document.getElementById('list').lastChild.childNodes
     m.updateElemStyle([0,1,2,3]);
-    
+
     stop()
     list.filter("test2");
     setTimeout( function() {
@@ -91,8 +91,7 @@ test("List : filter", function() {
         stop()
     }, 100)
     
-    
-    setTimeout( function() {
+   setTimeout( function() {
         start()
         ok( $(clone_list[3]).is(':visible'), "test2 is filtered : Ok");
         ok( !$(clone_list[2]).is(':visible'), "test1 is not filtered : Ok");
@@ -109,7 +108,10 @@ test("List : filter", function() {
     
 });
 
-test("List : filter", function() {
+
+
+
+test("List : filter revcomp", function() {
     
     var m = new Model();
     m.parseJsonData(json_data,100)
@@ -118,38 +120,51 @@ test("List : filter", function() {
     
     var list = new List("list","data",m);
     list.init();
-    
+ 
     var clone_list = document.getElementById('list').lastChild.childNodes
     m.updateElemStyle([0,1,2,3]);
     
+    // fix florian
     stop()
-    list.filter("test2");
+    list.filter("test1"); 
     setTimeout( function() {
         start()
-        ok( !$(clone_list[3]).is(':visible'), "test2 is not filtered : Ok");
-        ok( $(clone_list[2]).is(':visible'), "test1 is filtered : Ok");
-        list.filter("test1");
+        ok(  $(clone_list[3]).is(':visible'), "test1 is visible : Ok");
+        ok( !$(clone_list[2]).is(':visible'), "test2 is not visible : Ok");
+        ok( !$(clone_list[1]).is(':visible'), "test3 is not visible : Ok");
+        list.filter("test2");
         stop()
     }, 100)
-    
-    
     setTimeout( function() {
         start()
-        ok( $(clone_list[3]).is(':visible'), "test2 is filtered : Ok");
-        ok( !$(clone_list[2]).is(':visible'), "test1 is not filtered : Ok");
-        list.reset_filter(false);
-        m.update();
+        ok( !$(clone_list[3]).is(':visible'), "test1 is not visible : Ok");
+        ok(  $(clone_list[2]).is(':visible'), "test2 is visible : Ok"); //test 1 c1
+        ok( !$(clone_list[1]).is(':visible'), "test3 is not visible : Ok");
+        list.filter("TTTT");
         stop()
     }, 200)
-
     setTimeout( function() {
         start()
-        ok($(clone_list[3]).is(':visible'), "resetFilter : Ok");
-        ok($(clone_list[2]).is(':visible'), "resetFilter : Ok");
+        ok(  $(clone_list[3]).is(':visible'), "test1 is visible : Ok");
+        ok( !$(clone_list[2]).is(':visible'), "test2 is not visible : Ok");
+        ok( !$(clone_list[1]).is(':visible'), "test3 is not visible : Ok");
+        list.reset_filter(false);
+        stop()
     }, 300)
+    setTimeout( function() {
+        start()
+        ok( $(clone_list[3]).is(':visible'), "test1 is visible : Ok");
+        //ok( !$(clone_list[3]).is(':visible'), "test1 is not visible : Ok");
+        ok( $(clone_list[2]).is(':visible'), "test2 is visible : Ok"); //test 1 c1
+        //ok( !$(clone_list[2]).is(':visible'), "test2 is not visible : Ok");
+        ok( $(clone_list[1]).is(':visible'), "test3 is visible : Ok");
+        //ok( !$(clone_list[1]).is(':visible'), "test3 is not visible : Ok");
+        list.reset_filter(false);
+        //stop()
+    }, 400)
     
-});
 
+});
 
 test("List : tag/norm", function() {
     var m = new Model();
