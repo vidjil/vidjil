@@ -618,15 +618,9 @@ Clone.prototype = {
      * Use to switch the display value of manual changment lists between "none" or "inline"
      */
     toggle: function() {
-        // TODO use jquery
-        var listDiv = ["listLocus", "listVsegment", "listDsegment", "listJsegment"]
+        var listDiv = ["#listLocus", "#listVsegment", "#listDsegment", "#listJsegment"]
         for (elt in listDiv) {
-            node = document.getElementById(listDiv[elt]);
-            if (node.style.display == "none") {
-                node.style.display = "inline";
-            } else {
-                node.style.display = "none";
-            };
+            $( listDiv[elt] ).toggle();
         };
     },
     
