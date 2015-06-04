@@ -8,5 +8,5 @@ $ segmented.fa (-U)
 1:>lcl.FLN1FA001BCDD7.1. .* seed IGH SEG
 
 $ unsegmented.fa (-u)
-3:>lcl.FLN1FA00.* UNSEG
+4:>lcl.FLN1FA00.* UNSEG
 
