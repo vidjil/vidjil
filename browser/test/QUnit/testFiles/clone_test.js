@@ -99,20 +99,42 @@ test("clone : name", function() {
     
     // <tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG</td></tr> // not tested (order of title/class)
     
-    // TODO : Forms corrections after germline.js correction
-    includes(html, "<tr><td> V gene (or 5') </td><td colspan='4'>undefined V<div id='listVsegment' style='display: none'>", 
+    // locus/genes tests
+    includes(html, "<tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG<div id='listLocus' style='display: none'>",
+        "getHtmlInfo: segmentation information (Locus)");
+    includes(html, "<tr><td> V gene (or 5') </td><td colspan='4'>undefined V<div id='listVsegment' style='display: none'>",
         "getHtmlInfo: segmentation information (V gene)");
-    includes(html, "<form name=Vsegment><select NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'><option value=undefined V>undefined V</option><option value=TRGJP2*01>TRGJP2*01</option><option value=TRGV1*01>TRGV1*01</option><option value=TRGV10*01>TRGV10*01</option><option value=TRGV10*02>TRGV10*02</option><option value=TRGV11*01>TRGV11*01</option><option value=TRGV11*02>TRGV11*02</option><option value=TRGV2*01>TRGV2*01</option><option value=TRGV2*02>TRGV2*02</option><option value=TRGV3*01>TRGV3*01</option><option value=TRGV3*02>TRGV3*02</option><option value=TRGV4*01>TRGV4*01</option><option value=TRGV4*02>TRGV4*02</option><option value=TRGV5*01>TRGV5*01</option><option value=TRGV5P*01>TRGV5P*01</option><option value=TRGV5P*02>TRGV5P*02</option><option value=TRGV8*01>TRGV8*01</option><option value=TRGV9*01>TRGV9*01</option><option value=TRGV9*02>TRGV9*02</option><option value=TRGVA*01>TRGVA*01</option></select></form></div></td></tr>",
-        "getHtmlInfo: segmentation information (V gene form)");
     includes(html, "<tr><td> (D gene) </td><td colspan='4'>IGHD2*03<div id='listDsegment' style='display: none'>",
         "getHtmlInfo: segmentation information (D gene)");
-    includes(html, "<form name=Dsegment><select NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'><option value=IGHD2*03>IGHD2*03</option></select></form></div></td></tr>", 
-        "getHtmlInfo: segmentation information (D gene form)");
-    includes(html, "<tr><td> J gene (or 3') </td><td colspan='4'>IGHV4*01<div id='listJsegment' style='display: none'>", 
+    includes(html, "<tr><td> J gene (or 3') </td><td colspan='4'>IGHV4*01<div id='listJsegment' style='display: none'>",
         "getHtmlInfo: segmentation information (J gene)");
-    includes(html, "<form name=Jsegment><select NAME=Jsegment onChange='m.clones[0].changeSegment(this.form.Jsegment.value, 3);'><option value=IGHV4*01>IGHV4*01</option><option value=TRDV3*02>TRDV3*02</option><option value=TRGJ1*01>TRGJ1*01</option><option value=TRGJ1*02>TRGJ1*02</option><option value=TRGJ2*01>TRGJ2*01</option><option value=TRGJP*01>TRGJP*01</option><option value=TRGJP1*01>TRGJP1*01</option><option value=TRGJP2*01>TRGJP2*01</option><option value=TRDJ4*01>TRDJ4*01</option><option value=TRGJ1*01>TRGJ1*01</option><option value=TRGJ1*02>TRGJ1*02</option><option value=TRGJ2*01>TRGJ2*01</option><option value=TRGJP*01>TRGJP*01</option><option value=TRGJP1*01>TRGJP1*01</option><option value=TRGJP2*01>TRGJP2*01</option></select></form></div></td></tr>",
-        "getHtmlInfo: segmentation information (J gene form)");
-    
+
+    // forms tests
+    // TODO : Forms corrections after germline.js correction
+    includes(html, "<form name='germ'><select NAME='LocusForm' id='germSelector', onChange='m.clones[0].changeLocus(this.form.LocusForm.value);'><option value=TRG>TRG</option><option value=TRA>TRA</option>",
+        "getHtmlInfo: Locus form");
+    includes(html, "<form name=Vsegment><select NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'><option value=undefined V>undefined V</option><option value=TRGJP2*01>TRGJP2*01</option>",
+        "getHtmlInfo: V gene form");
+    includes(html, "<form name=Dsegment><select NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'><option value=IGHD2*03>IGHD2*03</option></select></form></div></td></tr>",
+        "getHtmlInfo: D gene form");
+    includes(html, "<form name=Jsegment><select NAME=Jsegment onChange='m.clones[0].changeSegment(this.form.Jsegment.value, 3);'><option value=IGHV4*01>IGHV4*01</option><option value=TRDV3*02>TRDV3*02</option>",
+        "getHtmlInfo: J gene form");
+
+    // Test after germline manual changement
+    c1.germline="newLocus"; c1.seg["5"]= "segment5_V"; c1.seg["4"]= "segment4_D"; c1.seg["3"]= "segment3_J";
+    html = c1.getHtmlInfo()
+    includes(html, "<form name='germ'><select NAME='LocusForm' id='germSelector', onChange='m.clones[0].changeLocus(this.form.LocusForm.value);'><option value=newLocus>newLocus</option><option value=TRA>TRA</option>",
+        "getHtmlInfo: Locus after manual changement");
+    includes(html, "<form name=Vsegment><select NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'><option value=segment5_V>segment5_V</option>",
+        "getHtmlInfo: V gene after manual changement");
+    includes(html, "<form name=Dsegment><select NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'><option value=segment4_D>segment4_D</option>",
+        "getHtmlInfo: D gene after manual changement");
+    includes(html, "<form name=Jsegment><select NAME=Jsegment onChange='m.clones[0].changeSegment(this.form.Jsegment.value, 3);'><option value=segment3_J>segment3_J</option>",
+        "getHtmlInfo: J gene after manual changement");
+
+    c1.seg["5"]= "undefined V"; c1.seg["4"]= "IGHD2*03"; c1.seg["3"]= "IGHV4*01";
+    html = c1.getHtmlInfo()
+
 });
 
 test("clone : size", function() {
