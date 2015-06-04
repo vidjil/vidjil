@@ -1,0 +1,7 @@
+!LAUNCH: ../../../vidjil -KA -k 16 -z 0 -G ../../../germline/IGH bug20150604.fa
+
+$ Bug on some architectures, not segmented
+1: junction detected in 1 reads
+
+
+
