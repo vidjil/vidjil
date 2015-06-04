@@ -518,9 +518,7 @@ Clone.prototype = {
      * @return {string} content - an HTML  code of form
      */    
     createLocusList: function () {
-        var list_germline = ["TRA", "TRB", "TRG", "TRD", "IGH", "IGK", "IGL", "VdJa", "TRD+", "IGH+", "IGK+", "undefined"];
-        // TODO ask for text
-        var content = "manual chgmt: <form name='germ'><select NAME='LocusForm' id='germSelector', onChange='m.clones["+ this.index +"].changeLocus(this.form.LocusForm.value);'>";
+        var content = "<form name='germ'><select NAME='LocusForm' id='germSelector', onChange='m.clones["+ this.index +"].changeLocus(this.form.LocusForm.value);'>";
         content += "<option value="+ this.germline + ">" + this.germline + "</option>";
         
         for (var i in germline_data) {
@@ -538,9 +536,7 @@ Clone.prototype = {
      * @param {string} formValue - the value of selection made by user
      */
     changeLocus: function(formValue) {
-        // TODO add chgmt of germline in data analysis
-        // TODO change the germlines stats 
-        // TODO passer directement la valeur du form, et pas le form
+       // TODO change the germlines stats 
        this.germline = formValue;
         var segments  = ["Vsegment", "Dsegment", "Jsegment"];
         
@@ -564,7 +560,6 @@ Clone.prototype = {
         var segments = {"Vsegment": ["5", "V"], "Dsegment": ["4", "D"], "Jsegment": ["3", "J"]}
         var nLocus = locus + segments[segment][1]
         var content = "<form name="+ segment  +"><select NAME="+segment+" onChange='m.clones["+ this.index +"].changeSegment(this.form." + segment + ".value, " + segments[segment][0] + ");'>";
-        // TODO create changeSegment function
         content += "<option value="+ this.getGene(segments[segment][0]) + ">" + this.getGene(segments[segment][0]) + "</option>";        
 
         if( typeof(locus) == 'undefined' ){
@@ -737,7 +732,7 @@ Clone.prototype = {
         html += "<tr><td> id </td><td colspan='" + time_length + "'>" + this.id + "</td></tr>"
         html += "<tr><td> locus </td><td colspan='" + time_length + "'>" + this.m.systemBox(this.germline).outerHTML + this.germline + "<div id='listLocus' style='display: none'>" + this.createLocusList() + "</div></td></tr>"
         html += "<tr><td> V gene (or 5') </td><td colspan='" + time_length + "'>" + this.getGene("5") + "<div id='listVsegment' style='display: none'>" + this.createSegmentList("Vsegment") + "</div></td></tr>"
-        html += "<tr><td> (D gene) </td><td colspan='" + time_length + "'>" + this.getGene("4") + "<div id='listDsegment' style='display: none'>" + this.createSegmentList("Dsegment") + "</div></td></tr>"
+        html += "<tr><td> (D gene) </td><td colspan='" + time_length + "'>" + this.getGene("4") +       "<div id='listDsegment' style='display: none'>" + this.createSegmentList("Dsegment") + "</div></td></tr>"
         html += "<tr><td> J gene (or 3') </td><td colspan='" + time_length + "'>" + this.getGene("3") + "<div id='listJsegment' style='display: none'>" + this.createSegmentList("Jsegment") + "</div></td></tr>"
         
         
