@@ -89,47 +89,47 @@ test("clone : name", function() {
     includes(html, "<tr><td class='header' colspan='5'> representative sequence</td></tr><tr><td> sequence name </td><td colspan='4'>hello</td></tr><tr><td> code </td><td colspan='4'>hello</td></tr><tr><td> length </td><td colspan='4'>19</td></tr><tr><td> size (n-reads (total reads) )</td><td>10  (200)</td><td>10  (100)</td><td>15  (200)</td><td>15  (100)</td></tr><tr><td> size (%)</td><td>5.000 % </td><td>10.000 % </td><td>7.500 % </td><td>15.000 % </td></tr>",
              "getHtmlInfo: representative sequence information");
 
-    includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' onclick='m.clones[0].toggle()'>manual edit</button> </td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", 
+    includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' class='devel-mode' onclick='m.clones[0].toggle()'>edit</button> </td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", 
         "getHtmlInfo: segmentation information + modification button");
     // Test icon 
     c1.manuallyChanged = true;
     html = c1.getHtmlInfo()
-    includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' onclick='m.clones[0].toggle()'>manual edit</button>  <img src='images/icon_fav_on.png' alt='This clone has been manually changed'></td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", 
+    includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' class='devel-mode' onclick='m.clones[0].toggle()'>edit</button>  <img src='images/icon_fav_on.png' alt='This clone has been manually changed'></td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", 
         "getHtmlInfo: segmentation information + modification button + manuallyChanged icon");
     
     // <tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG</td></tr> // not tested (order of title/class)
     
     // locus/genes tests
-    includes(html, "<tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG<div id='listLocus' style='display: none'>",
+    includes(html, "<tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG<div class='div-menu-selector' id='listLocus' style='display: none'>",
         "getHtmlInfo: segmentation information (Locus)");
-    includes(html, "<tr><td> V gene (or 5') </td><td colspan='4'>undefined V<div id='listVsegment' style='display: none'>",
+    includes(html, "<tr><td> V gene (or 5') </td><td colspan='4'>undefined V<div class='div-menu-selector' id='listVsegment' style='display: none'>",
         "getHtmlInfo: segmentation information (V gene)");
-    includes(html, "<tr><td> (D gene) </td><td colspan='4'>IGHD2*03<div id='listDsegment' style='display: none'>",
+    includes(html, "<tr><td> (D gene) </td><td colspan='4'>IGHD2*03<div class='div-menu-selector' id='listDsegment' style='display: none'>",
         "getHtmlInfo: segmentation information (D gene)");
-    includes(html, "<tr><td> J gene (or 3') </td><td colspan='4'>IGHV4*01<div id='listJsegment' style='display: none'>",
+    includes(html, "<tr><td> J gene (or 3') </td><td colspan='4'>IGHV4*01<div class='div-menu-selector' id='listJsegment' style='display: none'>",
         "getHtmlInfo: segmentation information (J gene)");
 
     // forms tests
     // TODO : Forms corrections after germline.js correction
-    includes(html, "<form name='germ'><select NAME='LocusForm' id='germSelector', onChange='m.clones[0].changeLocus(this.form.LocusForm.value);'><option value=TRG>TRG</option><option value=TRA>TRA</option>",
+    includes(html, "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones[0].changeLocus(this.form.LocusForm.value);'><option value=TRG>TRG</option><option value=TRA>TRA</option>",
         "getHtmlInfo: Locus form");
-    includes(html, "<form name=Vsegment><select NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'><option value=undefined V>undefined V</option><option value=TRGJP2*01>TRGJP2*01</option>",
+    includes(html, "<form name=Vsegment><select class='menu-selector' NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'><option value=undefined V>undefined V</option><option value=TRGJP2*01>TRGJP2*01</option>",
         "getHtmlInfo: V gene form");
-    includes(html, "<form name=Dsegment><select NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'><option value=IGHD2*03>IGHD2*03</option></select></form></div></td></tr>",
+    includes(html, "<form name=Dsegment><select class='menu-selector' NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'><option value=IGHD2*03>IGHD2*03</option></select></form></div></td></tr>",
         "getHtmlInfo: D gene form");
-    includes(html, "<form name=Jsegment><select NAME=Jsegment onChange='m.clones[0].changeSegment(this.form.Jsegment.value, 3);'><option value=IGHV4*01>IGHV4*01</option><option value=TRDV3*02>TRDV3*02</option>",
+    includes(html, "<form name=Jsegment><select class='menu-selector' NAME=Jsegment onChange='m.clones[0].changeSegment(this.form.Jsegment.value, 3);'><option value=IGHV4*01>IGHV4*01</option><option value=TRDV3*02>TRDV3*02</option>",
         "getHtmlInfo: J gene form");
 
     // Test after germline manual changement
     c1.germline="newLocus"; c1.seg["5"]= "segment5_V"; c1.seg["4"]= "segment4_D"; c1.seg["3"]= "segment3_J";
     html = c1.getHtmlInfo()
-    includes(html, "<form name='germ'><select NAME='LocusForm' id='germSelector', onChange='m.clones[0].changeLocus(this.form.LocusForm.value);'><option value=newLocus>newLocus</option><option value=TRA>TRA</option>",
+    includes(html, "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones[0].changeLocus(this.form.LocusForm.value);'><option value=newLocus>newLocus</option><option value=TRA>TRA</option>",
         "getHtmlInfo: Locus after manual changement");
-    includes(html, "<form name=Vsegment><select NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'><option value=segment5_V>segment5_V</option>",
+    includes(html, "<form name=Vsegment><select class='menu-selector' NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'><option value=segment5_V>segment5_V</option>",
         "getHtmlInfo: V gene after manual changement");
-    includes(html, "<form name=Dsegment><select NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'><option value=segment4_D>segment4_D</option>",
+    includes(html, "<form name=Dsegment><select class='menu-selector' NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'><option value=segment4_D>segment4_D</option>",
         "getHtmlInfo: D gene after manual changement");
-    includes(html, "<form name=Jsegment><select NAME=Jsegment onChange='m.clones[0].changeSegment(this.form.Jsegment.value, 3);'><option value=segment3_J>segment3_J</option>",
+    includes(html, "<form name=Jsegment><select class='menu-selector' NAME=Jsegment onChange='m.clones[0].changeSegment(this.form.Jsegment.value, 3);'><option value=segment3_J>segment3_J</option>",
         "getHtmlInfo: J gene after manual changement");
 
     c1.seg["5"]= "undefined V"; c1.seg["4"]= "IGHD2*03"; c1.seg["3"]= "IGHV4*01";

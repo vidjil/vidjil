@@ -518,7 +518,7 @@ Clone.prototype = {
      * @return {string} content - an HTML  code of form
      */    
     createLocusList: function () {
-        var content = "<form name='germ'><select NAME='LocusForm' id='germSelector', onChange='m.clones["+ this.index +"].changeLocus(this.form.LocusForm.value);'>";
+        var content = "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones["+ this.index +"].changeLocus(this.form.LocusForm.value);'>";
         content += "<option value="+ this.germline + ">" + this.germline + "</option>";
         
         for (var i in germline_data) {
@@ -559,7 +559,7 @@ Clone.prototype = {
     createSegmentList: function (segment, locus) {
         var segments = {"Vsegment": ["5", "V"], "Dsegment": ["4", "D"], "Jsegment": ["3", "J"]}
         var nLocus = locus + segments[segment][1]
-        var content = "<form name="+ segment  +"><select NAME="+segment+" onChange='m.clones["+ this.index +"].changeSegment(this.form." + segment + ".value, " + segments[segment][0] + ");'>";
+        var content = "<form name="+ segment  +"><select class='menu-selector' NAME="+segment+" onChange='m.clones["+ this.index +"].changeSegment(this.form." + segment + ".value, " + segments[segment][0] + ");'>";
         content += "<option value="+ this.getGene(segments[segment][0]) + ">" + this.getGene(segments[segment][0]) + "</option>";        
 
         if( typeof(locus) == 'undefined' ){
@@ -708,7 +708,7 @@ Clone.prototype = {
         
         //segmentation info
         html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation "
-        html += " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>manual edit</button> "; //Use to hide/display lists
+        html += " <button type='button' class='devel-mode' onclick='m.clones["+ this.index +"].toggle()'>edit</button> "; //Use to hide/display lists
         html += this.getHTMLModifState() // icon if manual changement 
         html += "</td></tr>"
         
@@ -730,10 +730,10 @@ Clone.prototype = {
         
         html += "<tr><td> sequence </td><td colspan='" + time_length + "'>" + this.sequence + "</td></tr>"
         html += "<tr><td> id </td><td colspan='" + time_length + "'>" + this.id + "</td></tr>"
-        html += "<tr><td> locus </td><td colspan='" + time_length + "'>" + this.m.systemBox(this.germline).outerHTML + this.germline + "<div id='listLocus' style='display: none'>" + this.createLocusList() + "</div></td></tr>"
-        html += "<tr><td> V gene (or 5') </td><td colspan='" + time_length + "'>" + this.getGene("5") + "<div id='listVsegment' style='display: none'>" + this.createSegmentList("Vsegment") + "</div></td></tr>"
-        html += "<tr><td> (D gene) </td><td colspan='" + time_length + "'>" + this.getGene("4") +       "<div id='listDsegment' style='display: none'>" + this.createSegmentList("Dsegment") + "</div></td></tr>"
-        html += "<tr><td> J gene (or 3') </td><td colspan='" + time_length + "'>" + this.getGene("3") + "<div id='listJsegment' style='display: none'>" + this.createSegmentList("Jsegment") + "</div></td></tr>"
+        html += "<tr><td> locus </td><td colspan='" + time_length + "'>" + this.m.systemBox(this.germline).outerHTML + this.germline + "<div class='div-menu-selector' id='listLocus' style='display: none'>" + this.createLocusList() + "</div></td></tr>"
+        html += "<tr><td> V gene (or 5') </td><td colspan='" + time_length + "'>" + this.getGene("5") + "<div class='div-menu-selector' id='listVsegment' style='display: none'>" + this.createSegmentList("Vsegment") + "</div></td></tr>"
+        html += "<tr><td> (D gene) </td><td colspan='" + time_length + "'>" + this.getGene("4") +       "<div class='div-menu-selector' id='listDsegment' style='display: none'>" + this.createSegmentList("Dsegment") + "</div></td></tr>"
+        html += "<tr><td> J gene (or 3') </td><td colspan='" + time_length + "'>" + this.getGene("3") + "<div class='div-menu-selector' id='listJsegment' style='display: none'>" + this.createSegmentList("Jsegment") + "</div></td></tr>"
         
         
         //other info (clntab)
