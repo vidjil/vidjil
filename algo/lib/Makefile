@@ -1,6 +1,6 @@
 CC=g++
 OPTIM=-O2
-override CXXFLAGS += -W -Wall -std=gnu++11 $(OPTIM)
+override CXXFLAGS += -W -Wall -std=c++11 $(OPTIM)
 SRCCORE=$(wildcard *.cpp)
 OBJCORE=$(SRCCORE:.cpp=.o)
 LIBCORE=lib.a
