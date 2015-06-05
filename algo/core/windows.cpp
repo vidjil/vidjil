@@ -1,12 +1,10 @@
 #include <iostream>
 #include <string>
 #include "tools.h"
-#include "json.h"
 #include "windows.h"
 #include "representative.h"
 #include "sequenceSampler.h"
 #include "segment.h"
-#include "json.h"
 
 WindowsStorage::WindowsStorage(map<string, string> &labels)
   :windows_labels(labels),max_reads_per_window(~0),nb_bins(NB_BINS),max_value_bins(MAX_VALUE_BINS) {}
@@ -47,14 +45,14 @@ size_t WindowsStorage::getMaximalNbReadsPerWindow() {
   return max_reads_per_window;
 }
 
-JsonList WindowsStorage::statusToJson(junction window) {
-    JsonList result;
+json WindowsStorage::statusToJson(junction window) {
+    json result;
     
     for (unsigned int i=0; i<status_by_window[window].size(); i++){
         if (status_by_window[window][i] !=0){
             ostringstream oss; 
             oss << i;
-            result.add(oss.str(), status_by_window[window][i]);
+            result[oss.str()] = status_by_window[window][i];
         }
     }
     
@@ -217,33 +215,30 @@ ostream &WindowsStorage::printSortedWindows(ostream &os) {
   return os;
 }
 
-JsonArray WindowsStorage::sortedWindowsToJsonArray(map <junction, JsonList> json_data_segment) {
-  JsonArray windowsArray;
+json WindowsStorage::sortedWindowsToJson(map <junction, json> json_data_segment) {
+  json windowsArray;
   int top = 1;
     
-  for (list<pair <junction, size_t> >::const_iterator it = sort_all_windows.begin();
+  for (list<pair <junction, size_t> >::const_iterator it = sort_all_windows.begin(); 
        it != sort_all_windows.end(); ++it) 
     {
-	   
-      JsonList windowsList;
-      JsonArray json_reads;
-      JsonArray json_seg;
-      json_reads.add(it->second);
+       
+      json windowsList;
 
-	  if (json_data_segment.find(it->first) != json_data_segment.end()){
-          windowsList.concat(json_data_segment[it->first]);
+      if (json_data_segment.find(it->first) != json_data_segment.end()){
+          windowsList = json_data_segment[it->first];
       }else{
-          windowsList.add("sequence", 0); //TODO need to compute representative sequence for this case
+          windowsList["sequence"] = 0; //TODO need to compute representative sequence for this case
       }
-      windowsList.add("id", it->first);
-      windowsList.add("reads", json_reads);
-      windowsList.add("top", top++);
-      //windowsList.add("id", this->getId(it->first));
-      JsonList seg_stat = this->statusToJson(it->first);
-      json_seg.add(seg_stat);
-      windowsList.add("germline", germline_by_window[it->first]->code);
-      windowsList.add("seg_stat", json_seg);
-      windowsArray.add(windowsList);
+      
+      json reads = {it->second};
+      windowsList["id"] = it->first;
+      windowsList["reads"] = reads;
+      windowsList["top"] = top++;
+      windowsList["germline"] = germline_by_window[it->first]->code;
+      windowsList["seg_stat"] = this->statusToJson(it->first);
+      
+      windowsArray.push_back(windowsList);
     }
 
   return windowsArray;

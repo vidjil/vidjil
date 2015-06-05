@@ -397,9 +397,9 @@ void comp_matrix::stat_cluster( list<list<junction> > cluster, ostream &out )
   
 }
 
-JsonArray comp_matrix::toJson(list<list<junction> > clusterList)
+json comp_matrix::toJson(list<list<junction> > clusterList)
 {
-    JsonArray result;
+    json result;
     
     for (list <list <string> >::iterator it = clusterList.begin();
     it != clusterList.end(); ++it )
@@ -407,13 +407,13 @@ JsonArray comp_matrix::toJson(list<list<junction> > clusterList)
       list<string> li=*it;
       
       if (li.size() > 1 ){ 
-        JsonArray cluster;
+        json cluster;
         for (list<string>::iterator it2 = li.begin();
         it2 != li.end(); ++it2 )
         {
-            cluster.add(*it2);
+            cluster.push_back(*it2);
         }
-        result.add(cluster);
+        result.push_back(cluster);
       }
     }
     

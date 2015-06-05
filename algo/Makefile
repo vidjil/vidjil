@@ -1,6 +1,6 @@
 CC=g++
 OPTIM=-O2 -DNDEBUG  $(COVERAGE) $(DEBUG)
-override CXXFLAGS += -W -Wall $(OPTIM)
+override CXXFLAGS += -W -Wall -std=gnu++11 $(OPTIM)
 
 ## inspired from http://stackoverflow.com/questions/399850/best-compiler-warning-level-for-c-c-compilers/401276
 PARANOID= -Wall -Weffc++ -pedantic  \

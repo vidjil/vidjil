@@ -3,25 +3,33 @@ compiler: gcc
 
 before_install:
   - sudo pip install cpp-coveralls
+  # g++-4.8
+  - sudo add-apt-repository -y ppa:ubuntu-toolchain-r/test
+  - sudo apt-get update -qq
+
+install:
+  - sudo apt-get install -qq gcc-4.8 g++-4.8
+  - sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 90
 
 before_script: make data ; make germline
 
 script:
+  - g++ --version
   ###
   - echo '"Build..."' && echo -en 'travis_fold:start:script.build\\r'
-  - make COVERAGE=1
+  - make COVERAGE=1 CXXFLAGS='-std=c++11'
   - echo -en 'travis_fold:end:script.build\\r'
   ###
   - echo '"Tests, Algo (unit)..."'  && echo -en 'travis_fold:start:script.test-algo-unit\\r'
-  - make COVERAGE=1 unit
+  - make COVERAGE=1 CXXFLAGS='-std=c++11' unit
   - echo -en 'travis_fold:end:script.test-algo-unit\\r'
   ###
   - echo '"Tests, Algo (functional, .should_get)..."'  && echo -en 'travis_fold:start:script.test-algo-functional\\r'
-  - make COVERAGE=1 should
+  - make COVERAGE=1 CXXFLAGS='-std=c++11' should
   - echo -en 'travis_fold:end:script.test-algo-functional\\r'
   ###
   - echo '"Tests, Algo (functional, .should-vdj.fa)..."'  && echo -en 'travis_fold:start:script.test-algo-functional-vdj\\r'
-  - make COVERAGE=1 shouldvdj
+  - make COVERAGE=1 CXXFLAGS='-std=c++11' shouldvdj
   - echo -en 'travis_fold:end:script.test-algo-functional-vdj\\r'
   ###
   - echo '"Tests, Tools..."'  && echo -en 'travis_fold:start:script.test-tools\\r'
