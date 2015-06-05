@@ -11,7 +11,7 @@ LIBCORE=../core/vidjil.a ../lib/lib.a
 all: $(EXEC)
 
 $(EXEC): %: %.o 
-	make -C .. OPTIM="$(OPTIM)"
+	$(MAKE) -C .. OPTIM="$(OPTIM)"
 	$(CC) -I .. -o $@ $^ $(LIBCORE) $(LDLIBS)
 
 clean:

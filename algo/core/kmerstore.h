@@ -276,7 +276,7 @@ void IKmerStore<T>::insert(const seqtype &sequence,
 
 template<class T>
 float IKmerStore<T>::getIndexLoad() const {
-  return nb_kmers_inserted*1. / (1 << (2 * k));
+  return nb_kmers_inserted / pow(4.0, k);
 }
 
 template<class T>

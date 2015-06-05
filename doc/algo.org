@@ -49,8 +49,9 @@ Vidjil has been successfully tested on the following platforms :
  - Ubuntu 12.04 amd64
  - Ubuntu 12.04 i386
 
-Vidjil is developed with continuous integration using systematic unit and functional testing
-The results of these automated tests can be checked on [[https://travis-ci.org/vidjil/vidjil][travis-ci.org]].
+Vidjil is developed with continuous integration using systematic unit and functional testing.
+The development team internally uses [[https://jenkins-ci.org/][Jenkins]] for that.
+Moreover, the results of some of these tests can be publicly checked on [[https://travis-ci.org/vidjil/vidjil][travis-ci.org]].
 
 ** Requirements
   
