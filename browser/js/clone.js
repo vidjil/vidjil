@@ -518,7 +518,7 @@ Clone.prototype = {
      * @return {string} content - an HTML  code of form
      */    
     createLocusList: function () {
-        var content = "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones["+ this.index +"].changeLocus(this.form.LocusForm.value);'>";
+        var content = "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones["+ this.index +"].changeLocus(this.form.LocusForm.value);'  style='width: 80px' >";
         content += "<option value="+ this.germline + ">" + this.germline + "</option>";
         
         for (var i in germline_data) {
@@ -559,7 +559,7 @@ Clone.prototype = {
     createSegmentList: function (segment, locus) {
         var segments = {"Vsegment": ["5", "V"], "Dsegment": ["4", "D"], "Jsegment": ["3", "J"]}
         var nLocus = locus + segments[segment][1]
-        var content = "<form name="+ segment  +"><select class='menu-selector' NAME="+segment+" onChange='m.clones["+ this.index +"].changeSegment(this.form." + segment + ".value, " + segments[segment][0] + ");'>";
+        var content = "<form name="+ segment  +"><select class='menu-selector' NAME="+segment+" onChange='m.clones["+ this.index +"].changeSegment(this.form." + segment + ".value, " + segments[segment][0] + ");'  style='width: 100px' >";
         content += "<option value="+ this.getGene(segments[segment][0]) + ">" + this.getGene(segments[segment][0]) + "</option>";        
 
         if( typeof(locus) == 'undefined' ){
