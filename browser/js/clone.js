@@ -708,7 +708,7 @@ Clone.prototype = {
         
         //segmentation info
         html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> segmentation "
-        html += " <button type='button' onclick='m.clones["+ this.index +"].toggle()'>manual edit</button> "; //Use to hide/display lists
+        html += " <button type='button' class='devel-mode' onclick='m.clones["+ this.index +"].toggle()'>edit</button> "; //Use to hide/display lists
         html += this.getHTMLModifState() // icon if manual changement 
         html += "</td></tr>"
         

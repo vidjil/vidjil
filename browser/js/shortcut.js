@@ -96,8 +96,10 @@ Shortcut.prototype = {
                             var d_m = $("#debug_menu")
                             if (d_m.css("display") == "none"){
                                 $("#debug_menu").css("display", "");
+                                $(".devel-mode").show();
                             }else{
                                 $("#debug_menu").css("display", "none");
+                                $(".devel-mode").hide();
                             }
                         }
                         break;

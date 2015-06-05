@@ -37,7 +37,7 @@ snapshot:
 should: vidjil $(SHOULD_LOG)
 
 shouldvdj_if_python:
-	-(python ../../tools/check_python_version.py && make shouldvdj)
+	-(python ../../tools/check_python_version.py && $(MAKE) shouldvdj)
 	@(python ../../tools/check_python_version.py || echo "!!! Bad python version, we skip .should-vdj.fa tests...")
 
 shouldvdj: vidjil
@@ -50,11 +50,11 @@ shouldvdj: vidjil
 	./should-to-tap.sh $<
 
 valgrind_should:
-	make -C $(REPORTS_PATH) clean_valgrind
-	LAUNCHER="$(VALGRIND)" make should
+	$(MAKE) -C $(REPORTS_PATH) clean_valgrind
+	LAUNCHER="$(VALGRIND)" $(MAKE) should
 
 valgrind_%:
-	LAUNCHER="$(VALGRIND)" make $(patsubst valgrind_%,%,$@)
+	LAUNCHER="$(VALGRIND)" $(MAKE) $(patsubst valgrind_%,%,$@)
 
 valgrind_tests: vidjil tests
 	$(VALGRIND) ./tests
@@ -66,11 +66,11 @@ $(EXEC): % : %.o $(LIB)
 ../core.a: core
 
 vidjil:
-	make -C ../ clean
-	make -C ../ OPTIM="$(OPTIM)"
+	$(MAKE) -C ../ clean
+	$(MAKE) -C ../ OPTIM="$(OPTIM)"
 
 core:
-	make -C ../core
+	$(MAKE) -C ../core
 
 %.o: %.cpp $(OTHER_SRC)
 	$(CC) -o $@ $(INCLUDE) -c $< $(CXXFLAGS)
