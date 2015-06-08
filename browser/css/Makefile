@@ -11,5 +11,5 @@ light.css: light.less vidjil.less
 
 
 no:
-	make LESSC="./node lessc"
+	$(MAKE) LESSC="./node lessc"
 

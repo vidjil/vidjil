@@ -13,7 +13,7 @@ go: align
 all: $(EXEC)
 
 $(EXEC): %: %.o 
-	make -C .. OPTIM="$(OPTIM)"
+	$(MAKE) -C .. OPTIM="$(OPTIM)"
 	$(CC) -I .. -o $@ $^ $(LIBCORE) $(LDLIBS)
 
 clean:

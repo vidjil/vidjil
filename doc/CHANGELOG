@@ -1,18 +1,19 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
-2015-06-XX  The Vidjil Team
+2015-06-05  The Vidjil Team
         * New default trim option (-t 100), considering only the relevant ends of the germline genes
         * Better segmentation heuristic when there are few k-mers (core/segment.cpp)
         * Better TRA/TRD locus analysis (-i), including both Vd-(Dd)-Ja and Dd-Ja recombinations (core/germline.cpp)
         * Better incomplete TRD and Dh/Jh analysis (-i), including up/downstream region of D genes (core/germline.cpp)
         * Better computation of the reference length for the coverage information, considering all reads of each clone
         * Better unexpected recombination analysis (-2), with information on the locus used (core/segment.cpp)
-        * Streamlined again unsegmentation causes (core/segment.cpp)
+        * Streamlined again unsegmentation causes and removed delta_{min,max} for the heuristic (core/segment.cpp)
         * Refactored stats computation (core/read_storage.cpp)
         * Updated build process
-        * Updated help (unsegmentation causes, clustering options)
-        * Bugs closed (segmentation with k-mers on the negative strand, clone output on stdout)
+          The next release will require a C++11 compiler. Static binaries will also be distributed.
+        * Updated help (unsegmentation causes, clustering options, -m option)
+        * Bugs closed (segmentation with k-mers on the negative strand, e-value computation, clone output on stdout)
         * New and updated unit and functional tests, and faster functional tests
 
 2015-05-08  The Vidjil Team

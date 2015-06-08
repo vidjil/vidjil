@@ -157,21 +157,28 @@ If you have an admin access, you can grant access to other users ('p').
 
 Clicking on a patient give acccess the "samples" page. Each sample is
 a =.fasta=, =.fastq=, =.gz= or =.clntab= file that will be processed by one or several
-pipelines.
+pipelines with one or several /configurations/ that set software options.
+The base configurations are « TRG », « IGH », « multi » (=-g germline=) and « multi+inc » (=-g germline -i=).
+See also https://github.com/vidjil/vidjil/blob/master/doc/locus.org.
+
 You can see which samples have been processed with the selected
-config, and download the sequence files if they are available ("dl").
+config, and access to the results (=See results=, bottom right).
+The first click on this button can take a few seconds.
 
-Depending on your granted accesses, you can 
-add a new sample to the list ("add file"), 
-schedule a processing for a sequence file (select a config and "run"),
-or delete a sample ("X").
+Depending on your granted access, you can add a new sample to the list (=add file=),
+download sequence files when they are available (=dl=) or delete sequence files (=X=).
+Note that sequence file may be deleted (in particular to save server disk space) while still keeping the results.
 
+*** Processing samples
+
+Depending on your granted accesses, you can schedule a processing for a sequence file (select a config and =run=).
 The processing can take a few seconds to a few hours, depending on the
-software lauched, its options and the size of the sample.
-Once the processing is finished, click on the button "see result" and
-the browser will load the data of the processed files. The first click
-on this button can take a few seconds.
+software lauched, the options set in the config, the size of the sample and the server load.
 
+The « reload » button (bottom left) updates the status of the task, that should do =QUEUED= → =ASSIGNED= → =RUNNING= → =COMPLETED=.
+It is possible to launch several process at the same time (some will wait in the =QUEUED= / =ASSIGNED= states), and also to launch process while you
+are uploading data. Finally, you can safely close the window with the patient database (and even the browser) when some process are queued/launched.
+The only thing you should not do is to close completely the browser while sequences are uploading.
 
 
 * Can I see all the clones ?

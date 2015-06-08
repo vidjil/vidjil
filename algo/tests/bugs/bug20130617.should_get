@@ -1,4 +1,4 @@
-!LAUNCH: ../../../vidjil -c clones -G ../../../germline/TRG -r 1 -R 1 bug20130617.fa
+!LAUNCH: ../../../vidjil -c clones -G ../../../germline/TRG -r 1 bug20130617.fa
 
 
 $ Bug with J deletion being 122

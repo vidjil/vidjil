@@ -8,7 +8,7 @@ germline:
 
 get-all-data:
 	sh get-germline
-	make ../browser/js/germline.js
+	$(MAKE) ../browser/js/germline.js
 
 clean:
 	rm -f $(DATA)

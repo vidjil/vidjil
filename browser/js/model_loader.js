@@ -494,7 +494,8 @@ Model_loader.prototype = {
             //tag, custom name, expected_value
             if ((typeof clone.tag != "undefined" && clone.tag != 8) || 
                 typeof clone.c_name != "undefined" ||
-                typeof clone.expected != "undefined") {
+                typeof clone.expected != "undefined" || 
+                ( typeof clone.manuallyChanged != "undefined"  && clone.manuallyChanged == true)) {
 
                 var elem = {};
                 elem.id = clone.id;
@@ -506,10 +507,27 @@ Model_loader.prototype = {
                     elem.name = clone.c_name;
                 if (typeof clone.expected != "undefined")
                     elem.expected = clone.expected;
-
+                if (typeof clone.manuallyChanged != "undefined"  && clone.manuallyChanged == true){
+                    // to test : 
+                    // m.clones[4].manuallyChanged = true; m.clones[4].id = "troll_4"; m.clones[4].seg["5"] = "segmentTroll4"; m.clones[0].manuallyChanged = true; m.clones[0].id = "troll_0"; m.clones[0].seg["5"] = "segmentTroll0"
+                    elem.manuallyChanged = true
+                    elem.germline = clone.germline;
+                    elem.eValue = clone.eValue;
+                    
+                    elem.seg = {}
+                    //for (i in ["5", "4", "3"] ) { //var i = 3; i > 5; i++) {
+                    for (var j = 5; j >= 3; j--) {
+                        if (typeof(clone.seg[j]) != 'undefined') {
+                            elem.seg[j]         = clone.seg[j];};
+                        if (typeof(clone.seg[j+"start"]) != 'undefined') {
+                            elem.seg[j+"start"] = clone.seg[j+"start"];};
+                        if (typeof(clone.seg[j+"end"]) != 'undefined') {
+                            elem.seg[j+"end"]   = clone.seg[j+"end"];};
+                    };
+                };
+                 
                 analysisData.clones.push(elem);
             }
-
             //clones / cluster
             if (this.clusters[i].length > 1) {
                 var elem = [];
