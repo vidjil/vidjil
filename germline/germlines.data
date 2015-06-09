@@ -1,4 +1,4 @@
-germline_data = {
+{
     
     "TRA": {
         "shortcut": "A",
@@ -79,7 +79,10 @@ germline_data = {
         }, {
             "5": ["TRDD2_upstream.fa"],
             "3": ["TRDJ.fa", "TRDD3_downstream.fa"]
-        } ]
+        } ],
+        "parameters": {
+            "seed": "9s"
+        }
     },
 
     "IGH": {
@@ -104,6 +107,8 @@ germline_data = {
             "5": ["IGHD_upstream.fa"],
             "3": ["IGHJ.fa"]
         } ],
+        "parameters": {
+            "seed": "12s"
         }
     },
 
@@ -116,7 +121,7 @@ germline_data = {
             "3": ["IGKJ.fa"]
         } ],
         "parameters": {
-            "seed": "11s"
+            "seed": "10s"
         }
     },
     "IGK+": {
@@ -128,6 +133,9 @@ germline_data = {
             "5": ["IGKV.fa", "IGK-INTRON.fa"],
             "3": ["IGK-KDE.fa"]
         } ],
+        "parameters": {
+            "seed": "10s"
+        }
     },
 
     "IGL": {
@@ -139,7 +147,7 @@ germline_data = {
             "3": ["IGLJ.fa"]
         } ],
         "parameters": {
-            "seed": "11s"
+            "seed": "10s"
         }
     }
 
