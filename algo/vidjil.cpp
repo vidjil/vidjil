@@ -773,7 +773,8 @@ int main (int argc, char **argv)
     
       if (multi_germline)
 	{
-	  multigermline->build_default_set(multi_germline_file, trim_sequences);
+	  multigermline->build_default_set(multi_germline_file, trim_sequences);      
+      //multigermline->build(multi_germline_file, trim_sequences);
 	}
       else
 	{

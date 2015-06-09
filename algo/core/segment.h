@@ -2,6 +2,7 @@
 #define SEGMENT_H
 
 #include <string>
+#include <fstream>
 #include <iostream>
 #include "fasta.h"
 #include "dynprog.h"

@@ -8,10 +8,12 @@
 #include "kmerstore.h"
 #include "stats.h"
 #include "tools.h"
+#include "../lib/json.hpp"
 
 #define PSEUDO_GERMLINE_MAX12 "xxx"
 
 using namespace std;
+using json = nlohmann::json;
 
 class Germline {
  private:
@@ -47,6 +49,8 @@ class Germline {
   Germline(string _code, char _shortcut,
 	   int _delta_min,
             int max_indexing=0);
+  
+  Germline(string _code, char shortcut, string path, json json_recom, int max_indexing=0);
 
   ~Germline();
 
@@ -99,6 +103,7 @@ class MultiGermline {
   void add_germline(Germline *germline, string seed);
   void build_default_set(string path, int max_indexing);
   void build_incomplete_set(string path, int max_indexing);
+  void build(string path, int max_indexing);
 
   // Creates and update an unique index for all the germlines
   // If 'set_index' is set, set this index as the index for all germlines
