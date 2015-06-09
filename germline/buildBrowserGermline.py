@@ -52,7 +52,6 @@ for i in range(1, len(sys.argv)-2) :
 
 if output_name != "":
     with open(output_name, "w") as file :
-        file.write("germline = ")
         json.dump(table, file, indent=2, sort_keys=True)
         
         data = open(data_file, "r")
