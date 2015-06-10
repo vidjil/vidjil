@@ -86,6 +86,11 @@ class Germline {
 ostream &operator<<(ostream &out, const Germline &germline);
 
 
+
+enum GERMLINES_FILTER { GERMLINES_ALL,
+                        GERMLINES_REGULAR,
+                        GERMLINES_INCOMPLETE } ;
+
 class MultiGermline {
  private:
 
@@ -103,7 +108,7 @@ class MultiGermline {
   void add_germline(Germline *germline, string seed);
   void build_default_set(string path, int max_indexing);
   void build_incomplete_set(string path, int max_indexing);
-  void build(string path, int max_indexing);
+  void build_from_json(string path, string json_filename, int filter, int max_indexing);
 
   // Creates and update an unique index for all the germlines
   // If 'set_index' is set, set this index as the index for all germlines

@@ -774,7 +774,7 @@ int main (int argc, char **argv)
       if (multi_germline)
 	{
 	  multigermline->build_default_set(multi_germline_file, trim_sequences);      
-      //multigermline->build(multi_germline_file, trim_sequences);
+      //multigermline->build_from_json(multi_germline_file, "germlines.data", GERMLINES_REGULAR, trim_sequences);
 	}
       else
 	{
@@ -810,6 +810,7 @@ int main (int argc, char **argv)
     if (multi_germline_incomplete) {
       multigermline->one_index_per_germline = true; // Starting from now, creates new indexes
       multigermline->build_incomplete_set(multi_germline_file, trim_sequences);
+      //multigermline->build_from_json(multi_germline_file, "germlines.data", GERMLINES_INCOMPLETE, trim_sequences);
     }
 
     if (multi_germline_mark)

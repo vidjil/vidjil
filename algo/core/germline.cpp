@@ -221,10 +221,10 @@ void MultiGermline::add_germline(Germline *germline, string seed)
   germlines.push_back(germline);
 }
 
-void MultiGermline::build(string path, int max_indexing)
+void MultiGermline::build_from_json(string path, string json_filename, int filter, int max_indexing)
 {
   //parse germlines.data
-  ifstream germline_data(path + "/germlines.data");
+  ifstream germline_data(path + "/" + json_filename);
   string content( (std::istreambuf_iterator<char>(germline_data) ),
                   (std::istreambuf_iterator<char>()    ) );
 
@@ -237,7 +237,20 @@ void MultiGermline::build(string path, int max_indexing)
     char shortcut = it.value()["shortcut"].dump()[1];
     string code = it.key();
     string seed = it.value()["parameters"]["seed"];
-    
+
+    switch (filter) {
+    case GERMLINES_REGULAR:
+      if (code.find("+") != string::npos) continue ;
+      break ;
+
+    case GERMLINES_INCOMPLETE:
+      if (code.find("+") == string::npos) continue ;
+      break ;
+
+    default:
+      break ;
+    }
+
     map<string, string> seedMap;
     seedMap["13s"] = SEED_S13;
     seedMap["12s"] = SEED_S12;
@@ -246,7 +259,7 @@ void MultiGermline::build(string path, int max_indexing)
     
     //for each set of recombination 3/4/5
     for (json::iterator it2 = recom.begin(); it2 != recom.end(); ++it2) {
-      add_germline(new Germline(code, shortcut, path, *it2 , max_indexing), seedMap[seed]);
+      add_germline(new Germline(code, shortcut, path + "/", *it2 , max_indexing), seedMap[seed]);
     }
   }
   
