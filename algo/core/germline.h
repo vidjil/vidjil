@@ -106,8 +106,6 @@ class MultiGermline {
 
   void insert(Germline *germline);
   void add_germline(Germline *germline, string seed);
-  void build_default_set(string path, int max_indexing);
-  void build_incomplete_set(string path, int max_indexing);
   void build_from_json(string path, string json_filename, int filter, int max_indexing);
 
   // Creates and update an unique index for all the germlines

@@ -265,38 +265,6 @@ void MultiGermline::build_from_json(string path, string json_filename, int filte
   
 }
 
-void MultiGermline::build_default_set(string path, int max_indexing)
-{
-  // Should parse 'data/germlines.data'
-  add_germline(new Germline("TRA", 'A', path + "/TRAV.fa", "",                path + "/TRAJ.fa", -10, max_indexing), SEED_S13);
-  add_germline(new Germline("TRB", 'B', path + "/TRBV.fa", path + "/TRBD.fa", path + "/TRBJ.fa",   0, max_indexing), SEED_S12);
-  add_germline(new Germline("TRG", 'G', path + "/TRGV.fa", "",                path + "/TRGJ.fa", -10, max_indexing), SEED_S10);
-  add_germline(new Germline("TRD", 'D', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRDJ.fa",   0, max_indexing), SEED_S10);
-
-  add_germline(new Germline("IGH", 'H', path + "/IGHV.fa", path + "/IGHD.fa", path + "/IGHJ.fa",   0, max_indexing), SEED_S12);
-  add_germline(new Germline("IGK", 'K', path + "/IGKV.fa", "",                path + "/IGKJ.fa", -10, max_indexing), SEED_S10);
-  add_germline(new Germline("IGL", 'L', path + "/IGLV.fa", "",                path + "/IGLJ.fa", -10, max_indexing), SEED_S10);
-}
-
-void MultiGermline::build_incomplete_set(string path, int max_indexing)
-{
-  // Should parse 'data/germlines.data'
-  // TRA+D
-  add_germline(new Germline("TRA+D", 'a', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRAJ.fa", -10, max_indexing), SEED_S13);
-  add_germline(new Germline("TRA+D", 'a', path + "/TRDD_upstream.fa", "", path + "/TRAJ.fa", -10, max_indexing), SEED_S13);
-
-  // DD-JD + DD2-DD3
-  add_germline(new Germline("TRD+", 'd', path + "/TRDD2_upstream.fa",   "", path + "/TRDJ.fa",     -10, max_indexing), SEED_9);
-  add_germline(new Germline("TRD+", 'd', path + "/TRDV.fa",       "", path + "/TRDD3_downstream.fa", -10, max_indexing), SEED_9);
-  add_germline(new Germline("TRD+", 'd', path + "/TRDD2_upstream.fa",   "", path + "/TRDD3_downstream.fa", -10, max_indexing), SEED_9);
-
-  // DH-JH
-  add_germline(new Germline("IGH+", 'h', path + "/IGHD_upstream.fa",       "", path + "/IGHJ.fa",     -10, max_indexing), SEED_S12);
-
-  // IGK: KDE, INTRON
-  add_germline(new Germline("IGK+", 'k', path + "/IGK-INTRON.fa", "", path + "/IGK-KDE.fa",  -10, max_indexing), SEED_S10);
-  add_germline(new Germline("IGK+", 'k', path + "/IGKV.fa",       "", path + "/IGK-KDE.fa",  -10, max_indexing), SEED_S10);
-}
 
 /* if 'one_index_per_germline' was not set, this should be called once all germlines have been loaded */
 void MultiGermline::insert_in_one_index(IKmerStore<KmerAffect> *_index, bool set_index)
