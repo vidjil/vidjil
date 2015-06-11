@@ -247,24 +247,47 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
 
   score = nb_strand[0] + nb_strand[1] ; // Used only for non-segmented germlines
 
-  if (!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12))
-    { // Pseudo-germline, max12
+  if ((!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12)
+       || (!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX1U))))
+    { // Pseudo-germline, MAX12 and MAX1U
+      pair <KmerAffect, KmerAffect> max12 ;
+      CountKmerAffectAnalyser ckaa(*(germline->index), sequence);
+
 
       set<KmerAffect> forbidden;
       forbidden.insert(KmerAffect::getAmbiguous());
       forbidden.insert(KmerAffect::getUnknown());
 
-      CountKmerAffectAnalyser ckaa(*(germline->index), sequence);
-      pair <KmerAffect, KmerAffect> max12 = ckaa.sortLeftRight(ckaa.max12(forbidden));
-
-      before = max12.first ;
-      after = max12.second ;
-
-      if (max12.first.isUnknown() || max12.second.isUnknown())
+      if (!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12))
+        // MAX12: two maximum k-mers (no unknown)
         {
-          because = UNSEG_TOO_FEW_ZERO ;
-          return ;
+          max12 = ckaa.max12(forbidden);
+
+          if (max12.first.isUnknown() || max12.second.isUnknown())
+            {
+              because = UNSEG_TOO_FEW_ZERO ;
+              return ;
+            }
         }
+
+      else
+        // MAX1U: the maximum k-mers (no unknown) + unknown
+        {
+          CountKmerAffectAnalyser ckaa(*(germline->index), sequence);
+          KmerAffect max = ckaa.max(forbidden);
+
+          if (max.isUnknown())
+            {
+              because = UNSEG_TOO_FEW_ZERO ;
+              return ;
+            }
+          max12 = make_pair(max, KmerAffect::getUnknown());
+        }
+
+      pair <KmerAffect, KmerAffect> before_after =  ckaa.sortLeftRight(max12);
+
+      before = before_after.first ;
+      after = before_after.second ;
 
       // This strand computation is only a heuristic, especially for chimera +/- reads
       // Anyway, it allows to gather such reads and their reverse complement into a unique window...

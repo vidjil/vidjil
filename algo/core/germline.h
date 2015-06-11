@@ -11,6 +11,7 @@
 #include "../lib/json.hpp"
 
 #define PSEUDO_GERMLINE_MAX12 "xxx"
+#define PSEUDO_GERMLINE_MAX1U "yyy"
 
 using namespace std;
 using json = nlohmann::json;
