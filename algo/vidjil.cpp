@@ -346,7 +346,8 @@ int main (int argc, char **argv)
   bool multi_germline_incomplete = false;
   bool multi_germline_mark = false;
   bool multi_germline_one_index_per_germline = true;
-  bool multi_germline_unexpected_recombinations = false;
+  bool multi_germline_unexpected_recombinations_12 = false;
+  bool multi_germline_unexpected_recombinations_1U = false;
   string multi_germline_file = DEFAULT_MULTIGERMLINE;
 
   string forced_edges = "" ;
@@ -367,7 +368,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHaiI12g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3E:t:")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHaiI124g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3E:t:")) != EOF)
 
     switch (c)
       {
@@ -429,7 +430,11 @@ int main (int argc, char **argv)
         break;
 
       case '2':
-        multi_germline_unexpected_recombinations = true ;
+        multi_germline_unexpected_recombinations_12 = true ;
+        break;
+
+      case '4':
+        multi_germline_unexpected_recombinations_1U = true ;
         break;
 
       case 'G':
@@ -795,14 +800,23 @@ int main (int argc, char **argv)
       multigermline->build_with_one_index(seed, true);
     }
 
-      if (multi_germline_unexpected_recombinations) {
+      if (multi_germline_unexpected_recombinations_12 || multi_germline_unexpected_recombinations_1U) {
         if (!multigermline->index) {
           multigermline->build_with_one_index(seed, false);
         }
+      }
 
+      if (multi_germline_unexpected_recombinations_12) {
         Germline *pseudo = new Germline(PSEUDO_GERMLINE_MAX12, 'x', -10, trim_sequences);
         pseudo->index = multigermline->index ;
         multigermline->germlines.push_back(pseudo);
+      }
+
+      if (multi_germline_unexpected_recombinations_1U) {
+        Germline *pseudo_u = new Germline(PSEUDO_GERMLINE_MAX1U, 'y', -10, trim_sequences);
+        // TODO: there should be more up/downstream regions for the 'yyy' germline. And/or smaller seeds ?
+        pseudo_u->index = multigermline->index ;
+        multigermline->germlines.push_back(pseudo_u);
     }
 
       // Should come after the initialization of regular (and possibly pseudo) germlines
