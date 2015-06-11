@@ -333,7 +333,7 @@ string IKmerStore<T>::getLabel(T kmer) const {
   for (typename list< pair<T, string> >::const_iterator it = labels.begin(); it != labels.end(); ++it)
     if (it->first == kmer)
       return it->second ;
-  return "" ;
+  return "?" ;
 }
 
 // .getResults()

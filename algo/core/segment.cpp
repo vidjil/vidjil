@@ -642,9 +642,10 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
   
   if (!germline->rep_5.size() || !germline->rep_3.size())
     {
-      // We check whether this sequence is segmented with MAX12 (with default e-value parameters)
+      // We check whether this sequence is segmented with MAX12 or MAX1U (with default e-value parameters)
       KmerSegmenter *kseg = new KmerSegmenter(seq, germline, THRESHOLD_NB_EXPECTED, 1);
-      if (kseg->isSegmented() && (!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12)))
+      if (kseg->isSegmented() && ((!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12))
+                                  || !strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX1U)))
         {
           reversed = kseg->isReverse();
 
