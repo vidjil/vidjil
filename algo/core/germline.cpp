@@ -173,7 +173,7 @@ Germline::~Germline()
 
 ostream &operator<<(ostream &out, const Germline &germline)
 {
-  out << setw(4) << left << germline.code << right << " '" << germline.shortcut << "' "
+  out << setw(5) << left << germline.code << right << " '" << germline.shortcut << "' "
       << setw(3) << germline.delta_min
       << " ";
 
