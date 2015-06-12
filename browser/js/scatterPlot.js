@@ -1162,8 +1162,13 @@ ScatterPlot.prototype = {
             //deplace le node vers son objectif
         this.active_node.each(this.move());
         //résolution des collisions
+        this.r_max = 0;
+        for (var i = 0; i < this.nodes.length; i++) {
+            if (this.nodes[i].r2 > this.r_max) this.r_max = this.nodes[i].r2;
+        }
+        
         var quad = d3.geom.quadtree(this.nodes)
-
+        
         for (var i = 0; i < this.nodes.length; i++) {
             if (this.nodes[i].r1 > 0.1) {
                 quad.visit(this.collide(this.nodes[i]));
@@ -1253,28 +1258,33 @@ ScatterPlot.prototype = {
      * @param {node} node - d3js node for a clone
      * */
     collide: function(node) {
-        var r = node.r2 + 30,
+        
+        var r = node.r2 + this.r_max + 2,
             nx1 = node.x - r,
             nx2 = node.x + r,
             ny1 = node.y - r,
             ny2 = node.y + r;
+            
         return function(quad, x1, y1, x2, y2) {
-            if (quad.point && (quad.point !== node) && quad.point.r1 != 0) {
-                var x = node.x - quad.point.x,
-                    y = node.y - quad.point.y,
-                    l = Math.sqrt(x * x + y * y),
-                    r = node.r2 + quad.point.r2 + 2;
-                if (l < r) {
-                    var c1 = node.s
-                    var c2 = quad.point.s
-                    var w = (c2 / (c1 + c2))
-                    l = (l - r) / l * w;
-                    node.x -= x *= l;
-                    node.y -= y *= l;
+            var node2 = quad.point
+            
+            if (node2 && (node2 !== node) && node2.r1 != 0) {
+                var delta_x = node.x - node2.x,
+                    delta_y = node.y - node2.y,
+                    delta = Math.sqrt( (delta_x * delta_x) + (delta_y * delta_y) ),
+                    r_sum = node.r2 + node2.r2 + 2;
+                if (delta < r_sum) {
+                    var s1 = node.s
+                    var s2 = node2.s
+                    var w = (s2 / (s1 + s2))
+                    var l = (delta - r_sum) / delta * w;
+                    node.x -= delta_x *= l;
+                    node.y -= delta_y *= l;
                 }
             }
             return x1 > nx2 || x2 < nx1 || y1 > ny2 || y2 < ny1;
         };
+        
     },
 
     /**

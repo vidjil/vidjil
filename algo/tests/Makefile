@@ -33,6 +33,7 @@ snapshot:
 	grep . *.log should-vdj-tests/*.log > $(SNAPSHOT)
 	touch snapshot-last ; mv snapshot-last snapshot-prev
 	ln -s $(SNAPSHOT) snapshot-last
+	-(diff snapshot-prev snapshot-last | diffstat -cC)
 
 should: vidjil $(SHOULD_LOG)
 

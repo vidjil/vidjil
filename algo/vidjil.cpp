@@ -773,7 +773,7 @@ int main (int argc, char **argv)
     
       if (multi_germline)
 	{
-	  multigermline->build_default_set(multi_germline_file, trim_sequences);
+          multigermline->build_from_json(multi_germline_file, "germlines.data", GERMLINES_REGULAR, trim_sequences);
 	}
       else
 	{
@@ -808,7 +808,7 @@ int main (int argc, char **argv)
       // Should come after the initialization of regular (and possibly pseudo) germlines
     if (multi_germline_incomplete) {
       multigermline->one_index_per_germline = true; // Starting from now, creates new indexes
-      multigermline->build_incomplete_set(multi_germline_file, trim_sequences);
+      multigermline->build_from_json(multi_germline_file, "germlines.data", GERMLINES_INCOMPLETE, trim_sequences);
     }
 
     if (multi_germline_mark)
@@ -1349,12 +1349,14 @@ int main (int argc, char **argv)
     SimilarityMatrix matrix = compare_all(first_representatives,
                                           representatives_labels);
     cout << RawOutputSimilarityMatrix(matrix, 90);
-    
+
+    if (max_clones > 0) {
     //Compute all the edges
     cout << "Compute distances" << endl ;
     SimilarityMatrix matrixLevenshtein = compare_windows(*windowsStorage, Levenshtein, max_clones);
     //Added distances matrix in the JsonTab
     jsonLevenshtein << JsonOutputWindowsMatrix(matrixLevenshtein);
+    }
     
      // delete scorer;
 

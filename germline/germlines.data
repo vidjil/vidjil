@@ -1,4 +1,4 @@
-germline_data = {
+{
     
     "TRA": {
         "shortcut": "A",
@@ -59,8 +59,11 @@ germline_data = {
         "color" : "#46abf2",
         "description": "Human T-cell receptor, alpha/delta locus (14q11.2)",
         "recombinations": [ {
-            "5": ["TRDV.fa", "TRDD_upstream.fa"],
+            "5": ["TRDV.fa"],
             "4": ["TRDD.fa"],
+            "3": ["TRAJ.fa"]
+        }, {
+            "5": ["TRDD_upstream.fa"],
             "3": ["TRAJ.fa"]
         } ],
         "parameters": {
@@ -74,12 +77,18 @@ germline_data = {
         "description": "Human T-cell receptor, delta locus (14q11.2), incomplete Dd2-Dd3 rearrangements",
         "follows": "TRD",
         "recombinations": [ {
-            "5": ["TRDD2_upstream.fa"],
-            "3": ["TRDJ.fa", "TRDD3_downstream.fa"]
+            "5": ["TRDV.fa"],
+            "3": ["TRDD3_downstream.fa"]
         }, {
             "5": ["TRDD2_upstream.fa"],
-            "3": ["TRDJ.fa", "TRDD3_downstream.fa"]
-        } ]
+            "3": ["TRDJ.fa"]
+        }, {
+            "5": ["TRDD2_upstream.fa"],
+            "3": ["TRDD3_downstream.fa"]
+        } ],
+        "parameters": {
+            "seed": "9s"
+        }
     },
 
     "IGH": {
@@ -104,6 +113,8 @@ germline_data = {
             "5": ["IGHD_upstream.fa"],
             "3": ["IGHJ.fa"]
         } ],
+        "parameters": {
+            "seed": "12s"
         }
     },
 
@@ -116,7 +127,7 @@ germline_data = {
             "3": ["IGKJ.fa"]
         } ],
         "parameters": {
-            "seed": "11s"
+            "seed": "10s"
         }
     },
     "IGK+": {
@@ -128,6 +139,9 @@ germline_data = {
             "5": ["IGKV.fa", "IGK-INTRON.fa"],
             "3": ["IGK-KDE.fa"]
         } ],
+        "parameters": {
+            "seed": "10s"
+        }
     },
 
     "IGL": {
@@ -139,7 +153,7 @@ germline_data = {
             "3": ["IGLJ.fa"]
         } ],
         "parameters": {
-            "seed": "11s"
+            "seed": "10s"
         }
     }
 
