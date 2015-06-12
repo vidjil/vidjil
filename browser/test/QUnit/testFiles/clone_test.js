@@ -15,7 +15,7 @@
     }
     
     var json_clone2 = {
-        "sequence" : "aaaaaaaaaaaaaaaaaaaaa",
+        "sequence" : "AACGTACCAGG",
         "id" : "id2",
         "reads" : [10,10,15,15] ,
         "top" : 2,
@@ -23,7 +23,7 @@
     }
     
     var json_clone3 = {
-        "sequence" : "aaaaaaaaaaaaaaaaaaaaa",
+        "sequence" : "aacgtaccagg",
         "c_name" : "custom name",
         "id" : "id3",
         "reads" : [10,10,15,15] ,
@@ -135,6 +135,23 @@ test("clone : name", function() {
     c1.seg["5"]= "undefined V"; c1.seg["4"]= "IGHD2*03"; c1.seg["3"]= "IGHV4*01";
     html = c1.getHtmlInfo()
 });
+
+test("clone : getSequence/RevComp", function() {
+
+    var m = new Model();
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0)
+    var c2 = new Clone(json_clone2, m, 1)
+    var c3 = new Clone(json_clone3, m, 2)
+    m.initClones()
+
+    //fix test sequence et revcomp
+    equal(c2.getSequence(), "AACGTACCAGG", "C2 getSequence()");
+    equal(c2.getRevCompSequence(), "CCTGGTACGTT", "C2 getRevCompSequence()");
+    equal(c3.getSequence(), "AACGTACCAGG", "C3 (min case) getSequence()");
+    equal(c3.getRevCompSequence(), "CCTGGTACGTT", "C3 (min case) getRevCompSequence()");
+});
+
 
 test("clone : size", function() {
     
