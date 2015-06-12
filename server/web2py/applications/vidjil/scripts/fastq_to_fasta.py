@@ -8,7 +8,8 @@ def fastq_to_fasta(files, simulate = False):
     for file in files:
         seq = db(db.sequence_file.data_file == file).select().first()
         print (seq)
-        if seq is not None and seq.filename is not None and seq.filename[-len(EXPECTED_EXT):] == EXPECTED_EXT:
+        if seq is not None and seq.filename is not None\
+           and seq.filename[-len(EXPECTED_EXT):] == EXPECTED_EXT and os.path.isfile(defs.DIR_SEQUENCES+seq.data_file):
             new_filename = seq.filename[:-len(EXPECTED_EXT)] + ".fasta.gz"
             log.debug("fastq.gz > fasta.gz: Transform %s in %s" % (seq.filename, new_filename))
 
