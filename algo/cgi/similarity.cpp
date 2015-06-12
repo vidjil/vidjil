@@ -61,9 +61,12 @@ int main(int argc, char* argv[])
   bool error = false;
 
   bool cgi_mode;
-  
+  bool output_json = false;
+    
+  //CGI
     if (argc <= 1){
       cgi_mode=true;
+      output_json=true;
       cout <<"Content-type: text/html"<<endl<<endl;
 
       error = ! check_cgi_parameters(result);
@@ -77,15 +80,37 @@ int main(int argc, char* argv[])
           fdata = filename;
         }
       }
+      
+    //command
     }else{
       cgi_mode=false;
-      fdata = argv[1];
+      
+      //help !
+      if (strcmp(argv[1], "-h")==0){
+          
+        cout << "usage: similarity [-h] [-j] file\n\n";
+        cout << "file : fasta file\n";
+        cout << "-h : help\n";
+        cout << "-j : json output\n";
+        return 0;
+      }
+      
+      if (argc >= 3){
+        if (strcmp(argv[1], "-j")==0) {
+          output_json = true;
+        }
+        fdata = argv[2];
+      }else{
+        fdata = argv[1];
+      }
     }
+    
+    
     
     if (!cgi_mode) cout <<endl;
 
     if (! error) {
-      Fasta fa(fdata, 1, " ", !cgi_mode);
+      Fasta fa(fdata, 1, " ", !output_json);
     
       list<Sequence> reads;
       reads = fa.getAll();
@@ -97,10 +122,10 @@ int main(int argc, char* argv[])
       
       SimilarityMatrix matrix = compare_all(reads, labels);
 
-      if (cgi_mode) {
+      if (output_json) {
           json j;
           j << JsonOutputSimilarityMatrix(matrix);
-          cout << j.dump(2);
+          cout << j.dump();
       }else{
         cout << RawOutputSimilarityMatrix(matrix, 90);
       }
