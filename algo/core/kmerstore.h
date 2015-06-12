@@ -52,6 +52,7 @@ public:
 
   static int last_id;
   int id; // id of this index
+  int refs; // number of germlines using this index
 
   list< pair <T, string> > labels;
 

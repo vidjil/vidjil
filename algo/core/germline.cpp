@@ -134,6 +134,7 @@ void Germline::new_index(string seed)
 {
   bool rc = true ;
   index = KmerStoreFactory::createIndex<KmerAffect>(seed, rc);
+  index->refs = 1;
 
   update_index();
 }
@@ -141,6 +142,7 @@ void Germline::new_index(string seed)
 void Germline::set_index(IKmerStore<KmerAffect> *_index)
 {
   index = _index;
+  index->refs++ ;
 }
 
 
@@ -168,7 +170,10 @@ void Germline::mark_as_ambiguous(Germline *other)
 Germline::~Germline()
 {
   if (index)
-    delete index;
+    {
+      if (--(index->refs) == 0)
+        delete index;
+    }
 }
 
 ostream &operator<<(ostream &out, const Germline &germline)
@@ -195,18 +200,9 @@ MultiGermline::MultiGermline(bool _one_index_per_germline)
 }
 
 MultiGermline::~MultiGermline() {
-  bool first = true ;
-
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
     {
-      if (!one_index_per_germline && !first)
-        {
-          // The index was already deleted in the first germline
-          (*it) -> index = 0 ;
-        }
       delete *it ;
-
-      first = false ;
     }
 }
 
