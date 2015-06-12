@@ -23,7 +23,6 @@
 
 #include "compare-all.h"
 #include "tools.h"
-#include "json.h"
 
 SimilarityMatrix compare_all(list <Sequence> sequences,
                              list <string> sequence_names)
@@ -72,6 +71,7 @@ SimilarityMatrix compare_all(list <Sequence> sequences,
 	  float identity = identity_percent(score);
 
           matrix.setScore(num, num_num, identity);
+          matrix.setScore(num_num, num, identity);
 	  
         }
     
@@ -130,6 +130,7 @@ SimilarityMatrix compare_windows(WindowsStorage &windowsStorage, const Cost theC
 
                 //Put the score at position1 / position2 of the array
                 matrix.setScore(positionIt1, positionIt2, score);
+                matrix.setScore(positionIt2, positionIt1, score);
 
                 }
 

@@ -186,20 +186,20 @@ JsonArray &operator<<(JsonArray &out, const JsonOutputSimilarityMatrix &outputMa
 
 /* Export Levenshtein distances matrix, for the edit distance distribution & DBSCAN algorithm
 */
-JsonArray &operator<<(JsonArray &out, const JsonOutputWindowsMatrix &outputMatrix) {
+json &operator<<(json &out, const JsonOutputWindowsMatrix &outputMatrix) {
 
     SimilarityMatrix &matrix = outputMatrix.matrix;
+    
+    out = {
+        {"index", json::object()},  //index clone id > matrix row/column
+        {"matrix", json::array()}   //2 dimensional array
+    };
+    
     for (int i = 0; i < matrix.size(); i++) {
+        //out["index"][] =
+        out["matrix"][i] = json::array();
         for (int j = 0; j < matrix.size(); j++) {
-            if (i < j) {
-                //Creation of an edges objects array, which contains a source objet, a target object, and the length of the distance between them
-                JsonList lineEdge;
-                lineEdge.add("source", i);
-                lineEdge.add("target", j);
-                //absolute value of the score -> distance
-                lineEdge.add("len", fabs(matrix(i,j)));
-                out.add(lineEdge);
-            }
+            out["matrix"][i][j] = fabs(matrix(i,j));
         }
     }
     return out;

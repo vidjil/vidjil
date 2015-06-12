@@ -1,5 +1,6 @@
 
 #include "germline.h"
+#include <fstream>
 #include <ctype.h>
 
 void Germline::init(string _code, char _shortcut,
@@ -86,6 +87,49 @@ Germline::Germline(string _code, char _shortcut,
   rep_3 = _rep_3 ;
 }
 
+Germline::Germline(string code, char shortcut, string path, json json_recom, int max_indexing)
+{
+    
+  int delta_min = 0;
+  
+  if (json_recom.find("4") != json_recom.end()) {
+      delta_min = -10;
+  }
+  
+  init(code, shortcut, delta_min, max_indexing);
+  
+  rep_5 = Fasta(2, "|") ;
+  rep_4 = Fasta(2, "|") ;
+  rep_3 = Fasta(2, "|") ;
+
+  for (json::iterator it = json_recom["5"].begin();
+       it != json_recom["5"].end(); ++it) 
+  {
+    string filename = *it;
+    f_reps_5.push_back(path + filename);
+    rep_5.add(path + filename);
+  }
+  
+  if (json_recom.find("4") != json_recom.end()) {
+    for (json::iterator it = json_recom["4"].begin();
+        it != json_recom["4"].end(); ++it) 
+    {
+        string filename = *it;
+        f_reps_4.push_back(path + filename);
+        rep_4.add(path + filename);
+    }
+  }
+  
+  for (json::iterator it = json_recom["3"].begin();
+       it != json_recom["3"].end(); ++it) 
+  {
+    string filename = *it;
+    f_reps_3.push_back(path + filename);
+    rep_3.add(path + filename);
+  }
+  
+}
+
 void Germline::new_index(string seed)
 {
   bool rc = true ;
@@ -129,11 +173,12 @@ Germline::~Germline()
 
 ostream &operator<<(ostream &out, const Germline &germline)
 {
-  out << setw(4) << left << germline.code << right << " '" << germline.shortcut << "' "
+  out << setw(5) << left << germline.code << right << " '" << germline.shortcut << "' "
       << setw(3) << germline.delta_min
-      << " " << germline.index ;
+      << " ";
 
   if (germline.index) {
+    out << " 0x" << hex << setw(2) << setfill('0') << germline.index->id << dec << setfill(' ') << " " ;
     out << fixed << setprecision(3) << setw(8) << 100 * germline.index->getIndexLoad() << "%";
     out << " s" << germline.index->getS() << " k" << germline.index->getK() << " " << germline.index->getSeed() ; // TODO: there should be a << for index
   }
@@ -177,38 +222,50 @@ void MultiGermline::add_germline(Germline *germline, string seed)
   germlines.push_back(germline);
 }
 
-void MultiGermline::build_default_set(string path, int max_indexing)
+void MultiGermline::build_from_json(string path, string json_filename, int filter, int max_indexing)
 {
-  // Should parse 'data/germlines.data'
-  add_germline(new Germline("TRA", 'A', path + "/TRAV.fa", "",                path + "/TRAJ.fa", -10, max_indexing), SEED_S13);
-  add_germline(new Germline("TRB", 'B', path + "/TRBV.fa", path + "/TRBD.fa", path + "/TRBJ.fa",   0, max_indexing), SEED_S12);
-  add_germline(new Germline("TRG", 'G', path + "/TRGV.fa", "",                path + "/TRGJ.fa", -10, max_indexing), SEED_S10);
-  add_germline(new Germline("TRD", 'D', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRDJ.fa",   0, max_indexing), SEED_S10);
+  //parse germlines.data
+  ifstream germline_data(path + "/" + json_filename);
+  string content( (std::istreambuf_iterator<char>(germline_data) ),
+                  (std::istreambuf_iterator<char>()    ) );
 
-  add_germline(new Germline("IGH", 'H', path + "/IGHV.fa", path + "/IGHD.fa", path + "/IGHJ.fa",   0, max_indexing), SEED_S12);
-  add_germline(new Germline("IGK", 'K', path + "/IGKV.fa", "",                path + "/IGKJ.fa", -10, max_indexing), SEED_S10);
-  add_germline(new Germline("IGL", 'L', path + "/IGLV.fa", "",                path + "/IGLJ.fa", -10, max_indexing), SEED_S10);
+  json j = json::parse(content);
+  
+  //for each germline
+  for (json::iterator it = j.begin(); it != j.end(); ++it) {
+      
+    json recom = it.value()["recombinations"];
+    char shortcut = it.value()["shortcut"].dump()[1];
+    string code = it.key();
+    string seed = it.value()["parameters"]["seed"];
+
+    switch (filter) {
+    case GERMLINES_REGULAR:
+      if (code.find("+") != string::npos) continue ;
+      break ;
+
+    case GERMLINES_INCOMPLETE:
+      if (code.find("+") == string::npos) continue ;
+      break ;
+
+    default:
+      break ;
+    }
+
+    map<string, string> seedMap;
+    seedMap["13s"] = SEED_S13;
+    seedMap["12s"] = SEED_S12;
+    seedMap["10s"] = SEED_S10;
+    seedMap["9s"] = SEED_9;
+    
+    //for each set of recombination 3/4/5
+    for (json::iterator it2 = recom.begin(); it2 != recom.end(); ++it2) {
+      add_germline(new Germline(code, shortcut, path + "/", *it2 , max_indexing), seedMap[seed]);
+    }
+  }
+  
 }
 
-void MultiGermline::build_incomplete_set(string path, int max_indexing)
-{
-  // Should parse 'data/germlines.data'
-  // TRA+D
-  add_germline(new Germline("TRA+D", 'a', path + "/TRDV.fa", path + "/TRDD.fa", path + "/TRAJ.fa", -10, max_indexing), SEED_S13);
-  add_germline(new Germline("TRA+D", 'a', path + "/TRDD_upstream.fa", "", path + "/TRAJ.fa", -10, max_indexing), SEED_S13);
-
-  // DD-JD + DD2-DD3
-  add_germline(new Germline("TRD+", 'd', path + "/TRDD2_upstream.fa",   "", path + "/TRDJ.fa",     -10, max_indexing), SEED_9);
-  add_germline(new Germline("TRD+", 'd', path + "/TRDV.fa",       "", path + "/TRDD3_downstream.fa", -10, max_indexing), SEED_9);
-  add_germline(new Germline("TRD+", 'd', path + "/TRDD2_upstream.fa",   "", path + "/TRDD3_downstream.fa", -10, max_indexing), SEED_9);
-
-  // DH-JH
-  add_germline(new Germline("IGH+", 'h', path + "/IGHD_upstream.fa",       "", path + "/IGHJ.fa",     -10, max_indexing), SEED_S12);
-
-  // IGK: KDE, INTRON
-  add_germline(new Germline("IGK+", 'k', path + "/IGK-INTRON.fa", "", path + "/IGK-KDE.fa",  -10, max_indexing), SEED_S10);
-  add_germline(new Germline("IGK+", 'k', path + "/IGKV.fa",       "", path + "/IGK-KDE.fa",  -10, max_indexing), SEED_S10);
-}
 
 /* if 'one_index_per_germline' was not set, this should be called once all germlines have been loaded */
 void MultiGermline::insert_in_one_index(IKmerStore<KmerAffect> *_index, bool set_index)

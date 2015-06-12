@@ -2,6 +2,7 @@
 #define SEGMENT_H
 
 #include <string>
+#include <fstream>
 #include <iostream>
 #include "fasta.h"
 #include "dynprog.h"
@@ -10,7 +11,7 @@
 #include "kmerstore.h"
 #include "kmeraffect.h"
 #include "affectanalyser.h"
-#include "json.h"
+#include "../lib/json.hpp"
 
 #define EXTEND_D_ZONE 5
 
@@ -37,6 +38,7 @@
 
 
 using namespace std;
+using json = nlohmann::json;
 
 enum SEGMENTED { NOT_PROCESSED,
 		 TOTAL_SEG_AND_WINDOW,
@@ -197,7 +199,7 @@ class KmerSegmenter : public Segmenter
   KmerAffectAnalyser *getKmerAffectAnalyser() const;
 
   string getInfoLineWithAffects() const;
-  void toJsonList(JsonList *seg);
+  json toJson();
 
  private:
   void computeSegmentation(int strand, KmerAffect left, KmerAffect right,
@@ -246,7 +248,7 @@ class FineSegmenter : public Segmenter
   void FineSegmentD(Germline *germline);
   void findCDR3();
 
-  void toJsonList(JsonList *seg);
+  json toJson();
   
 };
 

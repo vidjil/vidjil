@@ -50,6 +50,9 @@ public:
 
   virtual ~IKmerStore();
 
+  static int last_id;
+  int id; // id of this index
+
   list< pair <T, string> > labels;
 
   /**
@@ -145,6 +148,7 @@ public:
   virtual T& operator[](seqtype& word) = 0;
 };
 
+template<class T> int IKmerStore<T>::last_id = 0;
 
 template <class T> 
 class MapKmerStore : public IKmerStore<T>
@@ -276,7 +280,7 @@ void IKmerStore<T>::insert(const seqtype &sequence,
 
 template<class T>
 float IKmerStore<T>::getIndexLoad() const {
-  return nb_kmers_inserted*1. / (1 << (2 * k));
+  return nb_kmers_inserted / pow(4.0, k);
 }
 
 template<class T>
@@ -525,6 +529,9 @@ IKmerStore<T> *KmerStoreFactory::createIndex(string seed, bool revcomp) {
     cout << "  (using a MapKmer to fit into memory)" << endl;
     index = new MapKmerStore<T>(seed, revcomp);
   }
+
+  index->id = ++IKmerStore<T>::last_id;
+
   return index;
 }
 

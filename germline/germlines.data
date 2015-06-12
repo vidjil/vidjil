@@ -1,11 +1,13 @@
-germline_data = {
+{
     
     "TRA": {
         "shortcut": "A",
         "color" : "#268bd2",
         "description": "Human T-cell receptor, alpha locus (14q11.2)",
-        "5": ["TRAV.fa"],
-        "3": ["TRAJ.fa"],
+        "recombinations": [ {
+            "5": ["TRAV.fa"],
+            "3": ["TRAJ.fa"]
+        } ],
         "parameters": {
             "seed": "13s"
         }
@@ -15,9 +17,11 @@ germline_data = {
         "shortcut": "B",
         "color" : "#cb4b16",
         "description": "Human T-cell receptor, beta locus (7q34)",
-        "5": ["TRBV.fa"],
-        "4": ["TRBD.fa"],
-        "3": ["TRBJ.fa"],
+        "recombinations": [ {
+            "5": ["TRBV.fa"],
+            "4": ["TRBD.fa"],
+            "3": ["TRBJ.fa"]
+        } ],
         "parameters": {
             "seed": "12s"
         }
@@ -27,8 +31,10 @@ germline_data = {
         "shortcut": "G",
         "color" : "#dc322f",
         "description": "Human T-cell receptor, gamma locus (7p14)",
-        "5": ["TRGV.fa"],
-        "3": ["TRGJ.fa"],
+        "recombinations": [ {
+            "5": ["TRGV.fa"],
+            "3": ["TRGJ.fa"]
+        } ],
         "parameters": {
             "seed": "10s"
         }
@@ -38,9 +44,11 @@ germline_data = {
         "shortcut": "D",
         "color" : "#b58900",
         "description": "Human T-cell receptor, delta locus (14q11.2)",
-        "5": ["TRDV.fa"],
-        "4": ["TRDD.fa"],
-        "3": ["TRDJ.fa"],
+        "recombinations": [ {
+            "5": ["TRDV.fa"],
+            "4": ["TRDD.fa"],
+            "3": ["TRDJ.fa"]
+        } ],
         "parameters": {
             "seed": "10s"
         }
@@ -50,9 +58,14 @@ germline_data = {
         "shortcut": "a",
         "color" : "#46abf2",
         "description": "Human T-cell receptor, alpha/delta locus (14q11.2)",
-        "5": ["TRDV.fa", "TRDD_upstream.fa"],
-        "4": ["TRDD.fa"],
-        "3": ["TRAJ.fa"],
+        "recombinations": [ {
+            "5": ["TRDV.fa"],
+            "4": ["TRDD.fa"],
+            "3": ["TRAJ.fa"]
+        }, {
+            "5": ["TRDD_upstream.fa"],
+            "3": ["TRAJ.fa"]
+        } ],
         "parameters": {
             "seed": "13s"
         }
@@ -63,17 +76,30 @@ germline_data = {
         "color" : "#d5a920",
         "description": "Human T-cell receptor, delta locus (14q11.2), incomplete Dd2-Dd3 rearrangements",
         "follows": "TRD",
-        "5": ["TRDV.fa", "TRDD2_upstream.fa"],
-        "3": ["TRDJ.fa", "TRDD3_downstream.fa"]
+        "recombinations": [ {
+            "5": ["TRDV.fa"],
+            "3": ["TRDD3_downstream.fa"]
+        }, {
+            "5": ["TRDD2_upstream.fa"],
+            "3": ["TRDJ.fa"]
+        }, {
+            "5": ["TRDD2_upstream.fa"],
+            "3": ["TRDD3_downstream.fa"]
+        } ],
+        "parameters": {
+            "seed": "9s"
+        }
     },
 
     "IGH": {
         "shortcut": "H",
         "color" : "#6c71c4",
         "description": "Human immunoglobulin, heavy locus (14q32.33)",
-        "5": ["IGHV.fa"],
-        "4": ["IGHD.fa"],
-        "3": ["IGHJ.fa"],
+        "recombinations": [ {
+            "5": ["IGHV.fa"],
+            "4": ["IGHD.fa"],
+            "3": ["IGHJ.fa"]
+        } ],
         "parameters": {
             "seed": "12s"
         }
@@ -83,18 +109,25 @@ germline_data = {
         "color" : "#8c91e4",
         "description": "Human immunoglobulin, heavy locus (14q32.33), incomplete DH-JH rearrangements",
         "follows": "IGH",
-        "5": ["IGHD_upstream.fa"],
-        "3": ["IGHJ.fa"]
+        "recombinations": [ {
+            "5": ["IGHD_upstream.fa"],
+            "3": ["IGHJ.fa"]
+        } ],
+        "parameters": {
+            "seed": "12s"
+        }
     },
 
     "IGK": {
         "shortcut": "K",
         "color" : "#2aa198",
         "description": "Human immunoglobulin, kappa locus (2p11.2)",
-        "5": ["IGKV.fa"],
-        "3": ["IGKJ.fa"],
+        "recombinations": [ {
+            "5": ["IGKV.fa"],
+            "3": ["IGKJ.fa"]
+        } ],
         "parameters": {
-            "seed": "11s"
+            "seed": "10s"
         }
     },
     "IGK+": {
@@ -102,18 +135,25 @@ germline_data = {
         "color" : "#4ac1a8",
         "description": "Human immunoglobulin, kappa locus (2p11.2), Vk-KDE and Intron-KDE rearrangements",
         "follows": "IGK",
-        "5": ["IGKV.fa", "IGK-INTRON.fa"],
-        "3": ["IGK-KDE.fa"]
+        "recombinations": [ {
+            "5": ["IGKV.fa", "IGK-INTRON.fa"],
+            "3": ["IGK-KDE.fa"]
+        } ],
+        "parameters": {
+            "seed": "10s"
+        }
     },
 
     "IGL": {
         "shortcut": "L",
         "color" : "#d33682",
         "description": "Human immunoglobulin, lambda locus (22q11.2)",
-        "5": ["IGLV.fa"],
-        "3": ["IGLJ.fa"],
+        "recombinations": [ {
+            "5": ["IGLV.fa"],
+            "3": ["IGLJ.fa"]
+        } ],
         "parameters": {
-            "seed": "11s"
+            "seed": "10s"
         }
     }
 

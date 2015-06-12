@@ -1,6 +1,6 @@
 CC=g++
 OPTIM=-O2 -DNDEBUG  $(COVERAGE) $(DEBUG)
-override CXXFLAGS += -W -Wall $(OPTIM)
+override CXXFLAGS += -W -Wall -std=c++11 $(OPTIM)
 
 ## inspired from http://stackoverflow.com/questions/399850/best-compiler-warning-level-for-c-c-compilers/401276
 PARANOID= -Wall -Weffc++ -pedantic  \
@@ -43,15 +43,15 @@ all: $(VIDJIL) $(ALIGN_CGI)
 ###
 
 paranoid: clean
-	make vidjil OPTIM="$(PARANOID)"
+	$(MAKE) vidjil OPTIM="$(PARANOID)"
 
 ###
 
 kmers: cleankmers
-	make CONFIG="-DDEBUG_KMERS"
+	$(MAKE) CONFIG="-DDEBUG_KMERS"
 
 nokmers: cleankmers
-	make
+	$(MAKE)
 
 cleankmers:
 	rm -f vidjil.o core/windowExtractor.o core/segment.o
@@ -59,10 +59,10 @@ cleankmers:
 ###
 
 spaced: cleanspaced
-	make
+	$(MAKE)
 
 nospaced: cleanspaced
-	make CONFIG="-DNO_SPACED_SEEDS"
+	$(MAKE) CONFIG="-DNO_SPACED_SEEDS"
 
 cleanspaced:
 	rm -f vidjil.o core/tools.o
@@ -71,17 +71,17 @@ cleanspaced:
 
 $(ALIGN_CGI): cgi/align.o $(LIBCORE)
 	mkdir -p $(CGIDIR)
-	make -C core OPTIM="$(OPTIM)"
+	$(MAKE) -C core OPTIM="$(OPTIM)"
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 ###
 
 debug:
-	make clean
-	make DEBUG="-ggdb"
+	$(MAKE) clean
+	$(MAKE) DEBUG="-ggdb"
 
 $(VIDJIL): $(BINDIR)%: %.o $(LIBCORE)
-	make -C core OPTIM="$(OPTIM)"
-	make -C lib OPTIM="$(OPTIM)"
+	$(MAKE) -C core OPTIM="$(OPTIM)"
+	$(MAKE) -C lib OPTIM="$(OPTIM)"
 	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
 ###
@@ -89,30 +89,30 @@ $(VIDJIL): $(BINDIR)%: %.o $(LIBCORE)
 ###
 
 core/%.a: FORCE
-	make -C core $(notdir $@)
+	$(MAKE) -C core $(notdir $@)
 
 lib/%.a: FORCE
-	make -C lib $(notdir $@)
+	$(MAKE) -C lib $(notdir $@)
 
 clean:
-	make -C core $@
-	make -C lib $@
+	$(MAKE) -C core $@
+	$(MAKE) -C lib $@
 	rm -f *.o cgi/*.o
 	cd $(BINDIR) ; rm -f $(EXEC)
-	make -C tests $@
+	$(MAKE) -C tests $@
 
 cleancoverage: clean
 	rm -f *.gcda *.gcno *.gcov
-	make -C core cleancoverage
-	make -C lib cleancoverage
+	$(MAKE) -C core cleancoverage
+	$(MAKE) -C lib cleancoverage
 
 cleanall: cleancoverage
-	make -C tests cleanall
+	$(MAKE) -C tests cleanall
 
 forcedep:
 	g++ $(CXXFLAGS) -M $(MAINCORE) > dep.mk
-	make -C core forcedep
-	make -C lib forcedep
+	$(MAKE) -C core forcedep
+	$(MAKE) -C lib forcedep
 
 FORCE:
 

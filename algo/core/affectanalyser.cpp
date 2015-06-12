@@ -158,8 +158,9 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
   }
 
   left_evalue = kms.getProbabilityAtLeastOrAbove(results.nb_before_left,
-                                                 results.first_pos_max + kms.getS());
-  right_evalue = kms.getProbabilityAtLeastOrAbove(results.nb_after_right, seq.size() - results.last_pos_max);
+                                                 1 + results.first_pos_max);
+  right_evalue = kms.getProbabilityAtLeastOrAbove(results.nb_after_right,
+                                                  seq.size() - 1 - results.last_pos_max);
 
   /* Main test: 
      1) do we have enough affectations in good positions ('before' at the left and 'after' at the right) ?

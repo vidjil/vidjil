@@ -11,49 +11,49 @@ else
 endif
 
 all:
-	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)
+	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)
 
 static:
-	make all LDFLAGS="-static -static-libstdc++"
+	$(MAKE) all LDFLAGS="-static -static-libstdc++"
 
 test:
-	make COVERAGE="$(COVERAGE)" unit
-	make functional
-	make test_tools_if_python
+	$(MAKE) COVERAGE="$(COVERAGE)" unit
+	$(MAKE) functional
+	$(MAKE) test_tools_if_python
 	@echo
 	@echo "*** All tests passed. Congratulations !"
 	@echo
-	-(make -C algo/tests snapshot)
+	-($(MAKE) -C algo/tests snapshot)
 
 test_browser: unit_browser functional_browser
 
 test_server: unit_server
 
 test_tools_if_python:
-	-(python tools/check_python_version.py && make test_tools)
+	-(python tools/check_python_version.py && $(MAKE) test_tools)
 	@(python tools/check_python_version.py || echo "!!! Bad python version, we skip tools tests...")
 
 test_tools:
-	make -C tools/tests
+	$(MAKE) -C tools/tests
 
 unit: all
 	@echo "*** Launching unit tests..."
-	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests
+	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests
 	@echo "*** All unit tests passed"
 
 functional: all
-	make should
-	make shouldvdj
+	$(MAKE) should
+	$(MAKE) shouldvdj
 
 should: all
 	@echo
 	@echo "*** Launching .should_get tests..."
-	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests should
+	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests should
 	@echo "*** All .should_get tests passed"
 
 shouldvdj: all
 	@echo
-	make COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests shouldvdj_if_python
+	$(MAKE) COVERAGE="$(COVERAGE_OPTION)" -C $(VIDJIL_ALGO_SRC)/tests shouldvdj_if_python
 
 shouldvdj_generate:
 	@echo
@@ -78,31 +78,31 @@ shouldvdj_generated_fine: all shouldvdj_generate
 	python algo/tests/tap-stats.py data/gen/5-*.1.tap
 
 valgrind_unit:
-	make -C algo/tests valgrind_tests
+	$(MAKE) -C algo/tests valgrind_tests
 
 valgrind_should:
-	make -C algo/tests valgrind_should
+	$(MAKE) -C algo/tests valgrind_should
 
 unit_browser:
-	make -C browser/test unit
+	$(MAKE) -C browser/test unit
 
 functional_browser:
-	make -C browser/test functional
+	$(MAKE) -C browser/test functional
 
 headless_browser:
-	make -C browser/test headless
+	$(MAKE) -C browser/test headless
 
 unit_server:
-	make -C server/ unit
+	$(MAKE) -C server/ unit
 
 ### Code coverage
 
 coverage: unit_coverage should_coverage
 
 unit_coverage: clean
-	make COVERAGE=1 unit
+	$(MAKE) COVERAGE=1 unit
 should_coverage: clean
-	make COVERAGE=1 functional
+	$(MAKE) COVERAGE=1 functional
 
 ### Reports with gcovr
 
@@ -130,16 +130,16 @@ cppcheck:
 ###
 
 data germline: %:
-	make -C $@
+	$(MAKE) -C $@
 
 clean:
-	make -C $(VIDJIL_ALGO_SRC) clean
+	$(MAKE) -C $(VIDJIL_ALGO_SRC) clean
 
 cleanall: clean
-	make -C data $^
-	make -C germline $^
-	make -C $(VIDJIL_ALGO_SRC) cleanall
-	make -C server cleanall
+	$(MAKE) -C data $^
+	$(MAKE) -C germline $^
+	$(MAKE) -C $(VIDJIL_ALGO_SRC) cleanall
+	$(MAKE) -C server cleanall
 
 .PHONY: all test should clean cleanall distrib data germline unit_coverage should_coverage coverage
 
@@ -164,7 +164,7 @@ DIST_BROWSER_DIR=vidjil-browser-$(RELEASE_TAG)
 TEST_FILES_BROWSER= Makefile $(VIDJIL_BROWSER_SRC)/test/Makefile $(wildcard $(VIDJIL_BROWSER_SRC)/test/*.rb) $(wildcard $(VIDJIL_BROWSER_SRC)/test/QUnit/*)  $(wildcard $(VIDJIL_BROWSER_SRC)/test/QUnit/testFiles/*.js)
 RELEASE_FILES_BROWSER=$(TEST_FILES_BROWSER) $(wildcard $(VIDJIL_BROWSER_SRC)/*.html) $(wildcard $(VIDJIL_BROWSER_SRC)/js/*.js) $(wildcard $(VIDJIL_BROWSER_SRC)/js/lib/*.js) $(wildcard $(VIDJIL_BROWSER_SRC)/css/*.css) 
 
-# make distrib RELEASE_TAG=2013.04alpha
+# $(MAKE) distrib RELEASE_TAG=2013.04alpha
 distrib:	
 	$(info ==== Release $(RELEASE_TAG) ====)
 
@@ -190,11 +190,11 @@ distrib:
 
 	# Check archive
 	cd release && tar xvfz $(RELEASE_ARCHIVE)
-	cd release/$(DIST_DIR) && make
-	cd release/$(DIST_DIR) && make germline
-	cd release/$(DIST_DIR) && make data
-	cd release/$(DIST_DIR) && make test
-	cd release/$(DIST_DIR) && make clean && make static && mv vidjil vidjil-$(RELEASE_TAG)_`uname -m`
+	cd release/$(DIST_DIR) && $(MAKE)
+	cd release/$(DIST_DIR) && $(MAKE) germline
+	cd release/$(DIST_DIR) && $(MAKE) data
+	cd release/$(DIST_DIR) && $(MAKE) test
+	cd release/$(DIST_DIR) && $(MAKE) clean && $(MAKE) static && mv vidjil vidjil-$(RELEASE_TAG)_`uname -m`
 
 
 release_browser:
@@ -222,7 +222,7 @@ release_browser:
 
 	# Check archive
 	cd release && tar xvfz $(RELEASE_BROWSER_ARCHIVE)
-	cd release/$(DIST_BROWSER_DIR) && make unit_browser
+	cd release/$(DIST_BROWSER_DIR) && $(MAKE) unit_browser
 
 
 
