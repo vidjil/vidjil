@@ -111,30 +111,29 @@ test("clone : name", function() {
 
     // forms tests
     // TODO : Forms corrections after germline.js correction
-    includes(html, "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones[0].changeLocus(this.form.LocusForm.value);'><option value=TRG>TRG</option><option value=TRA>TRA</option>",
+    includes(html, "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones[0].changeLocus(this.form.LocusForm.value);'  style='width: 80px' ><option value=TRG>TRG</option><option value=TRA>TRA</option>",
         "getHtmlInfo: Locus form");
-    includes(html, "<form name=Vsegment><select class='menu-selector' NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'><option value=undefined V>undefined V</option><option value=TRGJP2*01>TRGJP2*01</option>",
+    includes(html, "<form name=Vsegment><select class='menu-selector' NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'  style='width: 100px' ><option value=undefined V>undefined V</option><option value=TRGJP2*01>TRGJP2*01</option>",
         "getHtmlInfo: V gene form");
-    includes(html, "<form name=Dsegment><select class='menu-selector' NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'><option value=IGHD2*03>IGHD2*03</option></select></form></div></td></tr>",
+    includes(html, "<form name=Dsegment><select class='menu-selector' NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'  style='width: 100px' ><option value=IGHD2*03>IGHD2*03</option></select></form></div></td></tr>",
         "getHtmlInfo: D gene form");
-    includes(html, "<form name=Jsegment><select class='menu-selector' NAME=Jsegment onChange='m.clones[0].changeSegment(this.form.Jsegment.value, 3);'><option value=IGHV4*01>IGHV4*01</option><option value=TRDV3*02>TRDV3*02</option>",
+    includes(html, "<form name=Jsegment><select class='menu-selector' NAME=Jsegment onChange='m.clones[0].changeSegment(this.form.Jsegment.value, 3);'  style='width: 100px' ><option value=IGHV4*01>IGHV4*01</option><option value=TRDV3*02>TRDV3*02</option>",
         "getHtmlInfo: J gene form");
 
     // Test after germline manual changement
     c1.germline="newLocus"; c1.seg["5"]= "segment5_V"; c1.seg["4"]= "segment4_D"; c1.seg["3"]= "segment3_J";
     html = c1.getHtmlInfo()
-    includes(html, "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones[0].changeLocus(this.form.LocusForm.value);'><option value=newLocus>newLocus</option><option value=TRA>TRA</option>",
+    includes(html, "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones[0].changeLocus(this.form.LocusForm.value);'  style='width: 80px' ><option value=newLocus>newLocus</option><option value=TRA>TRA</option>",
         "getHtmlInfo: Locus after manual changement");
-    includes(html, "<form name=Vsegment><select class='menu-selector' NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'><option value=segment5_V>segment5_V</option>",
+    includes(html, "<form name=Vsegment><select class='menu-selector' NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'  style='width: 100px' ><option value=segment5_V>segment5_V</option>",
         "getHtmlInfo: V gene after manual changement");
-    includes(html, "<form name=Dsegment><select class='menu-selector' NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'><option value=segment4_D>segment4_D</option>",
+    includes(html, "<form name=Dsegment><select class='menu-selector' NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'  style='width: 100px' ><option value=segment4_D>segment4_D</option>",
         "getHtmlInfo: D gene after manual changement");
-    includes(html, "<form name=Jsegment><select class='menu-selector' NAME=Jsegment onChange='m.clones[0].changeSegment(this.form.Jsegment.value, 3);'><option value=segment3_J>segment3_J</option>",
+    includes(html, "<form name=Jsegment><select class='menu-selector' NAME=Jsegment onChange='m.clones[0].changeSegment(this.form.Jsegment.value, 3);'  style='width: 100px' ><option value=segment3_J>segment3_J</option>",
         "getHtmlInfo: J gene after manual changement");
 
     c1.seg["5"]= "undefined V"; c1.seg["4"]= "IGHD2*03"; c1.seg["3"]= "IGHV4*01";
     html = c1.getHtmlInfo()
-
 });
 
 test("clone : size", function() {
