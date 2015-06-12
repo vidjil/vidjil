@@ -100,8 +100,6 @@ test("clone : name", function() {
     // <tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG</td></tr> // not tested (order of title/class)
     
     // locus/genes tests
-    includes(html, "<tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG<div id='listLocus' style='display: none'>",
-        "getHtmlInfo: segmentation information (Locus)");
     includes(html, "<tr><td> V gene (or 5') </td><td colspan='4'>undefined V<div id='listVsegment' style='display: none'>",
         "getHtmlInfo: segmentation information (V gene)");
     includes(html, "<tr><td> (D gene) </td><td colspan='4'>IGHD2*03<div id='listDsegment' style='display: none'>",
