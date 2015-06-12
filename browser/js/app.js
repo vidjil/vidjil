@@ -39,7 +39,6 @@ require(["jquery",
         "../crossDomain",
         "../pdf",
         "../database",
-        "../stats",
         "../shortcut",
         "../export",
         "../similarity"
