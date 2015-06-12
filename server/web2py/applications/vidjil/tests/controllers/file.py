@@ -33,8 +33,18 @@ class FileController(unittest.TestCase):
         current.db = db
         current.auth = auth
         
-        
-        
+
+    def createDumbSequenceFile(self):
+        return db.sequence_file.insert(sampling_date="1903-02-02",
+                                       info="plop",
+                                       pcr="plop",
+                                       sequencer="plop",
+                                       producer="plop",
+                                       patient_id=fake_patient_id,
+                                       filename="babibou",
+                                       provider=user_id,
+                                       data_file =  db.sequence_file.data_file.store(open("../../doc/analysis-example.vidjil", 'rb'), "babibou"))
+
     def testAdd(self):      
         request.vars['id'] = fake_patient_id
         
@@ -103,15 +113,7 @@ class FileController(unittest.TestCase):
         self.assertTrue(resp.find('requested file doesn\'t exist') > -1, "confirm() should fail because file is not in DB")
 
     def testConfirmSuccess(self):
-        test_file_id = db.sequence_file.insert(sampling_date="1903-02-02",
-                                    info="plop",
-                                    pcr="plop",
-                                    sequencer="plop",
-                                    producer="plop",
-                                    patient_id=fake_patient_id,
-                                    filename="babibou",
-                                    provider=user_id,
-                                    data_file =  db.sequence_file.data_file.store(open("../../doc/analysis-example.vidjil", 'rb'), "babibou"))
+        test_file_id = self.createDumbSequenceFile()
         request.vars['id'] = test_file_id
 
         resp = confirm()
@@ -119,15 +121,7 @@ class FileController(unittest.TestCase):
     
     
     def testDelete(self):
-        test_file_id = db.sequence_file.insert(sampling_date="1903-02-02",
-                                    info="plop",
-                                    pcr="plop",
-                                    sequencer="plop",
-                                    producer="plop",
-                                    patient_id=fake_patient_id,
-                                    filename="babibou",
-                                    provider=user_id,
-                                    data_file =  open("../../doc/analysis-example.vidjil", 'rb'))
+        test_file_id = self.createDumbSequenceFile()
 
         result_id = db.results_file.insert(sequence_file_id = test_file_id,
                                            config_id = fake_config_id,
