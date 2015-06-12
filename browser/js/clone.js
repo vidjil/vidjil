@@ -352,7 +352,7 @@ Clone.prototype = {
     
     getSequence : function () {
         if (typeof (this.sequence) != 'undefined' && this.sequence != 0){
-            return this.sequence
+            return this.sequence.toUpperCase()
         }else{
             return "0";
         }
@@ -369,8 +369,8 @@ Clone.prototype = {
           'N': 'N'
           }
             var revcompSeq = ""
-            for (var i = this.sequence.length -1 ; i > 0; i--) {
-                revcompSeq += dict_comp[this.sequence[i]]
+            for (var i = this.sequence.length -1 ; i > -1; i--) { // test -1
+                revcompSeq += dict_comp[this.sequence[i].toUpperCase()]
             }
             return revcompSeq
         }else{
