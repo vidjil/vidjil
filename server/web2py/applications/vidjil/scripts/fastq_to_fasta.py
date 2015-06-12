@@ -3,10 +3,6 @@ import defs
 import os
 import sys
 
-execfile("applications/vidjil/scripts/compress_all_sequences.py", globals())
-
-# import applications.vidjil.scripts.compress_all_sequences
-
 def fastq_to_fasta(files, simulate = False):
     EXPECTED_EXT = ".fastq.gz"
     for file in files:
@@ -23,7 +19,7 @@ def fastq_to_fasta(files, simulate = False):
                 print (cmd)
             else:
                 os.system(cmd)
-                update_sequence_file(seq.id, new_filename, new_data_filename)
+                update_name_of_sequence_file(seq.id, new_filename, new_data_filename)
 #                os.unlink(defs.DIR_SEQUENCES+seq.data_file)
         else:
             if seq is not None:
