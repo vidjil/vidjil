@@ -157,9 +157,11 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
       results.nb_before_right++;
   }
 
-  left_evalue = kms.getProbabilityAtLeastOrAbove(results.nb_before_left,
+  left_evalue = kms.getProbabilityAtLeastOrAbove(before,
+                                                 results.nb_before_left,
                                                  1 + results.first_pos_max);
-  right_evalue = kms.getProbabilityAtLeastOrAbove(results.nb_after_right,
+  right_evalue = kms.getProbabilityAtLeastOrAbove(after,
+                                                  results.nb_after_right,
                                                   seq.size() - 1 - results.last_pos_max);
 
   /* Main test: 
@@ -179,8 +181,8 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
 }
 
 
-double KmerAffectAnalyser::getProbabilityAtLeastOrAbove(int at_least) const {
-  return kms.getProbabilityAtLeastOrAbove(at_least, seq.size());
+double KmerAffectAnalyser::getProbabilityAtLeastOrAbove(const KmerAffect &kmer, int at_least) const {
+  return kms.getProbabilityAtLeastOrAbove(kmer, at_least, seq.size());
 }
 
 pair <double, double> KmerAffectAnalyser::getLeftRightProbabilityAtLeastOrAbove() const {
