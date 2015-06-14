@@ -297,18 +297,22 @@ void testProbability() {
 
 
   TAP_TEST(germline.index->getIndexLoad() == .75, TEST_GET_INDEX_LOAD, "");
-
+  TAP_TEST(germline.index->getIndexLoad(AFFECT_NOT_UNKNOWN) == .75, TEST_GET_INDEX_LOAD, ".getIndexLoad with AFFECT_NOT_UNKNOWN");
+  TAP_TEST(germline.index->getIndexLoad(AFFECT_UNKNOWN) == .25, TEST_GET_INDEX_LOAD, ".getIndexLoad with AFFECT_UNKNOWN");
 
   Sequence seq = {"to_segment", "to_segment", "TATCG", "", NULL};
   KmerSegmenter kseg(seq, &germline);
 
   KmerAffectAnalyser *kaa = kseg.getKmerAffectAnalyser();
 
-  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(3) == 0, TEST_PROBABILITY_SEGMENTATION, "");
-  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(2) == .75 * .75, TEST_PROBABILITY_SEGMENTATION, "");
-  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(1) == .75 * 2 * .25 + kaa->getProbabilityAtLeastOrAbove(2),
-            TEST_PROBABILITY_SEGMENTATION, "");
-  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(0) == 1, TEST_PROBABILITY_SEGMENTATION, "");
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 3) == 0, TEST_PROBABILITY_SEGMENTATION, "");
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 2) == .75 * .75, TEST_PROBABILITY_SEGMENTATION, "");
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 1) == .75 * 2 * .25 + kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 2), TEST_PROBABILITY_SEGMENTATION, "");
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(AFFECT_NOT_UNKNOWN, 0) == 1, TEST_PROBABILITY_SEGMENTATION, "");
+
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(AFFECT_UNKNOWN, 3) == 0, TEST_PROBABILITY_SEGMENTATION, ".getProbabilityAtLeastOrAbove() with AFFECT_UNKOWN");
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(AFFECT_UNKNOWN, 2) == .25 * .25, TEST_PROBABILITY_SEGMENTATION, ".getProbabilityAtLeastOrAbove() with AFFECT_UNKOWN");
+  TAP_TEST(kaa->getProbabilityAtLeastOrAbove(AFFECT_UNKNOWN, 0) == 1, TEST_PROBABILITY_SEGMENTATION, ".getProbabilityAtLeastOrAbove() with AFFECT_UNKOWN");
 }
 
 void testSegment() {
