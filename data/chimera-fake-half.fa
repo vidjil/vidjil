@@ -1,0 +1,29 @@
+# Fake chimera sequences
+# one half is first 60 bp of some V genes
+# the other half is a 40 bp di-mer sequence
+
+>TRAV1-1*01--cgcg
+ggacaaagccttgagcagccctctgaagtgacagctgtggaaggagccattgtccagata
+cgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcg
+
+>TRGV1*01--cgcg
+tcttccaacttggaagggagaacgaagtcagtcaccaggctgactgggtcatctgctgaa
+cgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcg
+
+>IGHV1-18*01--cgcg
+caggttcagctggtgcagtctggagctgaggtgaagaagcctggggcctcagtgaaggtc
+cgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcgcg
+
+
+>atat--TRBV1*01
+atatatatatatatatatatatatatatatatatatatat
+gatactggaattacccagacaccaaaatacctggtcacagcaatggggagtaaaaggaca
+
+>atat--TRDV1*01
+atatatatatatatatatatatatatatatatatatatat
+gcccagaaggttactcaagcccagtcatcagtatccatgccagtgaggaaagcagtcacc
+
+>atat--IGKV1-12*01
+atatatatatatatatatatatatatatatatatatatat
+gacatccagatgacccagtctccatcttccgtgtctgcatctgtaggagacagagtcacc
+
