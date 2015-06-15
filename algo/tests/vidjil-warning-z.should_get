@@ -1,5 +1,5 @@
 !NO_LAUNCHER:
-!LAUNCH: ../../vidjil -z 200 -g ../../germline
+!LAUNCH: ../../vidjil -z 200 -G ../../germline/IGH ../../data/trd-dd2-dd3.fa
 
 $ Warning, -z
 1:WARNING
