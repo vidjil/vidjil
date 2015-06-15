@@ -70,6 +70,7 @@ cd "$DIR"
 OUTPUT_DIR=.
 TAP_FILE=${BASE%.*}.tap
 LOG_FILE=${BASE%.*}.log
+EXIT_CODE=
 OUTPUT_FILE=
 FILE_TO_GREP=
 NO_LAUNCHER=
@@ -83,6 +84,7 @@ TMP_TAP_FILE=$(mktemp tap.XXXX)
 nb_tests=0
 # Count number of tests to be performed
 nb_tests=`grep -Ec '^[^$#!]' $BASE`
+nb_tests=$((nb_tests+1))
 
 echo "1.."$nb_tests
 test_nb=1
@@ -135,9 +137,11 @@ while read line; do
                     echo "Launching '$cmd'" >&2
                     if [ -z "$OUTPUT_FILE" ]; then
                         eval $cmd > $LOG_FILE
+                        EXIT_CODE=$?
                         FILE_TO_GREP=$LOG_FILE
                     else
                         eval $cmd > /dev/null
+                        EXIT_CODE=$?
                         FILE_TO_GREP=$OUTPUT_FILE
                     fi
                     launched=1
@@ -211,7 +215,23 @@ while read line; do
         fi
     fi
     line_nb=$((line_nb+1))
+
 done < $BASE
+
+# Check exit code
+if [ $EXIT_CODE -eq 0 ]; then
+    echo "ok $test_nb -  Exit code 0"
+else
+    echo "not ok $test_nb -  Exit code $EXIT_CODE"
+    error=1
+
+    echo >&2; echo >&2; echo $SEPARATOR_LINE >&2
+    echo "error: exit code $EXIT_CODE" >&2
+    echo $SEPARATOR_LINE >&2
+    cat $FILE_TO_GREP >&2
+    echo $SEPARATOR_LINE >&2;  echo >&2; echo >&2
+fi
+
 } > $TMP_TAP_FILE
 
 mv $TMP_TAP_FILE $TAP_FILE
