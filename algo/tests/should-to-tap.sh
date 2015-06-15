@@ -29,12 +29,18 @@ option after the option !OUTPUT_DIR:
 By default spaces can be replaced by any whitespaces. You can override this by
 specifying !IGNORE_WHITESPACES: 0
 
+* Exit code
+  The exit code of the launched command line is also checked. By default, an
+  exit code of 0 is expected. The .should_get file can specify an option
+  !EXIT_CODE: indacting another expected value.
+
 * Requirements
   Sometimes, to launch a test some requirements must be met. If the requirements
   are not met we may want to skip the test. To do so, specify in the file
   an option !REQUIRES: which will be followed by a command that is supposed
   to exit with the error code 0. If the error code is different from 0 all the
   tests in the file will be skipped.
+
 * Environment
 ** Debug
    If the environment variable DEBUG is defined, then some debug information 
