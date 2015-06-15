@@ -154,16 +154,24 @@ bool operator>=(const KmerAffect &a1, const KmerAffect &a2);
 bool operator!=(const KmerAffect &a1, const KmerAffect &a2);
 ostream &operator<<(ostream &os, const KmerAffect &kmer);
 
-
+#define AFFECT_NOT_UNKNOWN_SYMBOL "*"
 #define AFFECT_AMBIGUOUS_SYMBOL "?"
 #define AFFECT_UNKNOWN_SYMBOL "_"
 #define AFFECT_AMBIGUOUS_CHAR (AFFECT_AMBIGUOUS_SYMBOL[0])
 #define AFFECT_UNKNOWN_CHAR (AFFECT_UNKNOWN_SYMBOL[0])
 
+
+/**
+ * Constant defining any not-unknown affectation
+ * Could be used by .getIndexLoad(), but now any non-AFFECT_UNKNOWN kmer will work.
+ */
+const KmerAffect AFFECT_NOT_UNKNOWN = KmerAffect(AFFECT_NOT_UNKNOWN_SYMBOL, 0);
+
 /**
  * Constant defining the unknown affectation (not known yet)
  */
 const KmerAffect AFFECT_UNKNOWN = KmerAffect(AFFECT_UNKNOWN_SYMBOL, 0); 
+
 /**
  * Constant defining the ambiguous affectation (many possibilities)
  */

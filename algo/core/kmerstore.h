@@ -92,6 +92,7 @@ public:
   /**
    * @return the percentage of kmers that are set in the index
    */
+  float getIndexLoad(T kmer) const;
   float getIndexLoad() const;
 
   /**
@@ -103,7 +104,7 @@ public:
   /**
    * @return probability that the number of kmers is 'at_least' or more in a sequence of length 'length'
    */
-  double getProbabilityAtLeastOrAbove(int at_least, int length) const;
+  double getProbabilityAtLeastOrAbove(T kmer, int at_least, int length) const;
 
   /**
    * @return the value of k
@@ -280,6 +281,10 @@ void IKmerStore<T>::insert(const seqtype &sequence,
 }
 
 template<class T>
+float IKmerStore<T>::getIndexLoad(const T kmer) const {
+  return kmer.isUnknown() ? 1 - getIndexLoad() : getIndexLoad();
+}
+template<class T>
 float IKmerStore<T>::getIndexLoad() const {
   return nb_kmers_inserted / pow(4.0, k);
 }
@@ -293,11 +298,11 @@ int IKmerStore<T>::atMostMaxSizeIndexing(int n) const {
 }
 
 template<class T>
-double IKmerStore<T>::getProbabilityAtLeastOrAbove(int at_least, int length) const {
+double IKmerStore<T>::getProbabilityAtLeastOrAbove(const T kmer, int at_least, int length) const {
 
   // n: number of kmers in the sequence
   int n = length - getS() + 1;
-  float index_load = getIndexLoad() ;
+  float index_load = getIndexLoad(kmer) ;
 
   double proba = 0;
   double probability_having_system = pow(index_load, at_least);
@@ -333,7 +338,7 @@ string IKmerStore<T>::getLabel(T kmer) const {
   for (typename list< pair<T, string> >::const_iterator it = labels.begin(); it != labels.end(); ++it)
     if (it->first == kmer)
       return it->second ;
-  return "" ;
+  return "?" ;
 }
 
 // .getResults()
