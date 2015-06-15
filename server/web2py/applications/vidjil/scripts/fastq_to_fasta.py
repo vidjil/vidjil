@@ -21,7 +21,7 @@ def fastq_to_fasta(files, simulate = False):
             else:
                 os.system(cmd)
                 update_name_of_sequence_file(seq.id, new_filename, new_data_filename)
-#                os.unlink(defs.DIR_SEQUENCES+seq.data_file)
+                db.commit()
         else:
             if seq is not None:
                 log.debug('fastq.gz > fasta.gz: Ignoring %s' % seq.data_file)
