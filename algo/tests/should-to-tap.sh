@@ -70,6 +70,7 @@ cd "$DIR"
 OUTPUT_DIR=.
 TAP_FILE=${BASE%.*}.tap
 LOG_FILE=${BASE%.*}.log
+EXPECTED_EXIT_CODE=0
 EXIT_CODE=
 OUTPUT_FILE=
 FILE_TO_GREP=
@@ -101,6 +102,8 @@ while read line; do
             type=${line%%:*}
             if [ "$type" == "LAUNCH" ]; then
                 eval cmd=\"${line#*:}\"
+            elif [ "$type" == "EXIT_CODE" ]; then
+                EXPECTED_EXIT_CODE=${line#*:}
             elif [ "$type" == "LOG" ]; then
                 eval LOG_FILE=\"${line#*:}\"
             elif [ "$type" == "OUTPUT_FILE" ]; then
@@ -219,14 +222,14 @@ while read line; do
 done < $BASE
 
 # Check exit code
-if [ $EXIT_CODE -eq 0 ]; then
-    echo "ok $test_nb -  Exit code 0"
+if [ $EXIT_CODE -eq $EXPECTED_EXIT_CODE ]; then
+    echo "ok $test_nb -  Exit code $EXIT_CODE"
 else
     echo "not ok $test_nb -  Exit code $EXIT_CODE"
     error=1
 
     echo >&2; echo >&2; echo $SEPARATOR_LINE >&2
-    echo "error: exit code $EXIT_CODE" >&2
+    echo "error: exit code $EXIT_CODE (expected $EXPECTED_EXIT_CODE)" >&2
     echo $SEPARATOR_LINE >&2
     cat $FILE_TO_GREP >&2
     echo $SEPARATOR_LINE >&2;  echo >&2; echo >&2
