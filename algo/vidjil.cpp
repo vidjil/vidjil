@@ -1259,7 +1259,7 @@ int main (int argc, char **argv)
 	  // FineSegmenter
 	  FineSegmenter seg(representative, segmented_germline, segment_cost);
 	
-          if (segmented_germline->rep_4.size())
+          if (segmented_germline->seg_method == SEG_METHOD_543)
 	  seg.FineSegmentD(segmented_germline);
 
           if (detect_CDR3)
@@ -1321,7 +1321,8 @@ int main (int argc, char **argv)
 
 	      // Output best V, (D) and J germlines to CLONE_FILENAME-*
 	      out_clone << segmented_germline->rep_5.read(seg.best_V) ;
-	      if (segmented_germline->rep_4.size()) out_clone << segmented_germline->rep_4.read(seg.best_D) ;
+	      if (segmented_germline->seg_method == SEG_METHOD_543)
+                out_clone << segmented_germline->rep_4.read(seg.best_D) ;
 	      out_clone << segmented_germline->rep_3.read(seg.best_J) ;
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
@@ -1477,7 +1478,7 @@ int main (int argc, char **argv)
 
             if (s.isSegmented()) 
               {
-                if (germline->rep_4.size())
+                if (germline->seg_method == SEG_METHOD_543)
                   s.FineSegmentD(germline);
 
                 if (detect_CDR3)

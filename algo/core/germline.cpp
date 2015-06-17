@@ -7,7 +7,7 @@ void Germline::init(string _code, char _shortcut,
                     int _delta_min,
                     int max_indexing)
 {
-  seg_method = SEG_METHOD_REGULAR ;
+  seg_method = SEG_METHOD_53 ;
   code = _code ;
   shortcut = _shortcut ;
   index = 0 ;
@@ -47,6 +47,9 @@ Germline::Germline(string _code, char _shortcut,
   rep_5 = Fasta(f_rep_5, 2, "|");
   rep_4 = Fasta(f_rep_4, 2, "|");
   rep_3 = Fasta(f_rep_3, 2, "|");
+
+  if (rep_4.size())
+    seg_method = SEG_METHOD_543 ;
 }
 
 
@@ -73,6 +76,9 @@ Germline::Germline(string _code, char _shortcut,
 
   for (list<string>::const_iterator it = f_reps_3.begin(); it != f_reps_3.end(); ++it)
     rep_3.add(*it);
+
+  if (rep_4.size())
+    seg_method = SEG_METHOD_543 ;
 }
 
 
@@ -86,6 +92,9 @@ Germline::Germline(string _code, char _shortcut,
   rep_5 = _rep_5 ;
   rep_4 = _rep_4 ;
   rep_3 = _rep_3 ;
+
+  if (rep_4.size())
+    seg_method = SEG_METHOD_543 ;
 }
 
 Germline::Germline(string code, char shortcut, string path, json json_recom, int max_indexing)
@@ -128,7 +137,9 @@ Germline::Germline(string code, char shortcut, string path, json json_recom, int
     f_reps_3.push_back(path + filename);
     rep_3.add(path + filename);
   }
-  
+
+  if (rep_4.size())
+    seg_method = SEG_METHOD_543 ;
 }
 
 void Germline::new_index(string seed)
