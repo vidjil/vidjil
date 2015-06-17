@@ -247,8 +247,8 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
 
   score = nb_strand[0] + nb_strand[1] ; // Used only for non-segmented germlines
 
-  if ((!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12)
-       || (!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX1U))))
+  if ((germline->seg_method == SEG_METHOD_MAX12)
+      || (germline->seg_method == SEG_METHOD_MAX1U))
     { // Pseudo-germline, MAX12 and MAX1U
       pair <KmerAffect, KmerAffect> max12 ;
       CountKmerAffectAnalyser ckaa(*(germline->index), sequence);
@@ -258,7 +258,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
       forbidden.insert(KmerAffect::getAmbiguous());
       forbidden.insert(KmerAffect::getUnknown());
 
-      if (!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12))
+      if (germline->seg_method == SEG_METHOD_MAX12)
         // MAX12: two maximum k-mers (no unknown)
         {
           max12 = ckaa.max12(forbidden);
@@ -644,8 +644,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
     {
       // We check whether this sequence is segmented with MAX12 or MAX1U (with default e-value parameters)
       KmerSegmenter *kseg = new KmerSegmenter(seq, germline, THRESHOLD_NB_EXPECTED, 1);
-      if (kseg->isSegmented() && ((!strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX12))
-                                  || !strcmp(germline->code.c_str(), PSEUDO_GERMLINE_MAX1U)))
+      if (kseg->isSegmented() && ((germline->seg_method == SEG_METHOD_MAX12)
+                                  || (germline->seg_method == SEG_METHOD_MAX1U)))
         {
           reversed = kseg->isReverse();
 
