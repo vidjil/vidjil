@@ -7,6 +7,7 @@ void Germline::init(string _code, char _shortcut,
                     int _delta_min,
                     int max_indexing)
 {
+  seg_method = SEG_METHOD_REGULAR ;
   code = _code ;
   shortcut = _shortcut ;
   index = 0 ;

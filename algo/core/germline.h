@@ -10,8 +10,11 @@
 #include "tools.h"
 #include "../lib/json.hpp"
 
-#define PSEUDO_GERMLINE_MAX12 "xxx"
-#define PSEUDO_GERMLINE_MAX1U "yyy"
+enum SEGMENTATION_METHODS {
+  SEG_METHOD_REGULAR,
+  SEG_METHOD_MAX12,
+  SEG_METHOD_MAX1U
+} ;
 
 using namespace std;
 using json = nlohmann::json;
@@ -55,6 +58,7 @@ class Germline {
 
   ~Germline();
 
+  int seg_method ;
   string code ;
   char   shortcut ;
 
