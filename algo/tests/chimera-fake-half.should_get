@@ -2,7 +2,7 @@
 # TODO: a more precise modeling should give a e-value computation that could make this work even with -e 1
 
 $ The KmerSegmenter segments the six chimera reads on PSEUDO_MAX1U germline (-4)
-1:yyy .* -> .* 6
+1:xxx .* -> .* 6
 
 $ The FineSegmenter gives the locus information (-4)
 1:Unexpected .A-TRAV/.\?
