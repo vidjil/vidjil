@@ -125,14 +125,16 @@ def anon_names(patient_id, first_name, last_name, can_view=None):
 # return true if the string respect the filter list 
 def filter(str, filter_str):
     filter_list = filter_str.split(" ")
-    
+    str = map(lambda s: s.lower(), str)
+
     for f in filter_list :
         if len(f) > 0 and f[0] == "-" :
-            if f[1:].lower() in str.lower():
-                return False
-        else :
-            if f.lower() not in str.lower():
-                return False
+            pattern = f[1:]
+        else:
+            pattern = f
+        result = filter(lambda item: pattern.lower() in item, str)
+        if len(result) == 0:
+            return False
     return True
 
 

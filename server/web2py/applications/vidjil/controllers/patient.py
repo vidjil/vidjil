@@ -172,8 +172,7 @@ def custom():
             row.checked = True
 
         row.names = vidjil_utils.anon_names(row.patient.id, row.patient.first_name, row.patient.last_name)
-        row.string = (row.names + row.sequence_file.filename +
-                      str(row.sequence_file.sampling_date) + str(row.sequence_file.pcr) + str(row.config.name) + str(row.results_file.run_date) + str(row.patient.info)).lower()
+        row.string = [row.names, row.sequence_file.filename, str(row.sequence_file.sampling_date), str(row.sequence_file.pcr), str(row.config.name), str(row.results_file.run_date), row.patient.info]
     query = query.find(lambda row : ( vidjil_utils.filter(row.string,request.vars["filter"]) or row.checked) )
     
     if config :
@@ -426,7 +425,7 @@ def index():
         request.vars["filter"] = ""
 
     for row in result :
-        row['string'] = (row['last_name']+row['first_name']+row['confs']+row['groups']+str(row['birth'])).lower()+str(row['info'])
+        row['string'] = [row['last_name'], row['first_name'], row['confs'], row['groups'], str(row['birth']), str(row['info'])]
     result = filter(lambda row : vidjil_utils.filter(row['string'],request.vars["filter"]), result )
     log.debug("patient list (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
     return dict(query = result,

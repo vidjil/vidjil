@@ -50,7 +50,7 @@ def index():
             request.vars["filter"] = ""
 
         for row in query :
-            row.string = (row.sequence_file.filename+row.config.name+row.patient.last_name+row.patient.first_name+row.sequence_file.producer+str(row.results_file.run_date)+row.status ).lower()
+            row.string = [row.sequence_file.filename, row.config.name, row.patient.last_name, row.patient.first_name, row.sequence_file.producer, str(row.results_file.run_date), row.status]
         query = query.find(lambda row : vidjil_utils.filter(row.string,request.vars["filter"]) )
         
         return dict(query = query,
