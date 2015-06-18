@@ -11,29 +11,6 @@ def can_be_compressed(original_filename, server_filename):
         and os.path.exists(server_filename)\
         and not os.path.islink(server_filename)
 
-def get_new_uploaded_filename(data_file, new_filename):
-    '''
-    Rename the name given to a file uploaded by the user
-    data_file: full path to the file stored by web2py on disk
-    (new_filename is the real filename, not the one use by web2py to store files.)
-    '''
-    ext_pos = data_file.rfind('.')
-    name_pos = data_file.rfind('.', 0, ext_pos)
-    new_filename_ext = os.path.splitext(new_filename)[1]
-    new_data_file_name = data_file[:name_pos+1] + base64.b16encode(new_filename).lower() + new_filename_ext
-    return new_data_file_name
-
-def update_sequence_file(id, filename, new_data_filename):
-    '''
-    Update a sequence_file table.
-    filename: new (readable) filename
-    new_data_filename: new data_file full path to the file
-
-    The size is updated
-    '''
-    db.sequence_file[id] = dict(filename = filename,\
-                                data_file = os.path.basename(new_data_filename),\
-                                size_file = os.path.getsize(new_data_filename))
 
 def compress_all_sequences():
     sequences = db(db.sequence_file).select()
@@ -47,7 +24,7 @@ def compress_all_sequences():
                 new_data_filename = get_new_uploaded_filename(data_file, new_filename)
                 os.rename(data_file+".gz", new_data_filename)
                 log.debug('Compressed '+new_data_filename)
-                update_sequence_file(seq.id, new_filename, new_data_filename)
+                update_name_of_sequence_file(seq.id, new_filename, new_data_filename)
                 compressed.append({'data_file': new_data_filename, 'original': new_filename, 'id': seq.id})
                 db.commit()
     return compressed

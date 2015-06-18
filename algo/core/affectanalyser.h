@@ -177,7 +177,7 @@ class KmerAffectAnalyser: public AffectAnalyser {
   /**
    * @return probability that the number of kmers is 'at_least' or more
    */
-  double getProbabilityAtLeastOrAbove(int at_least) const;
+  double getProbabilityAtLeastOrAbove(const KmerAffect &kmer, int at_least) const;
 
   /**
    * @return probabilities that the number of left/right kmers is 'at_least' or more

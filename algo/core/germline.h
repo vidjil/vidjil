@@ -10,7 +10,12 @@
 #include "tools.h"
 #include "../lib/json.hpp"
 
-#define PSEUDO_GERMLINE_MAX12 "xxx"
+enum SEGMENTATION_METHODS {
+  SEG_METHOD_53,      // Regular or incomplete germlines, 5'-3'
+  SEG_METHOD_543,     // Regular or incomplete germlines, 5'-3', with an additional middle gene (such a D gene)
+  SEG_METHOD_MAX12,   // Pseudo-germline, most two frequent kmer affectations  (-2)
+  SEG_METHOD_MAX1U    // Pseudo-germline, most frequent kmer affection and unknwon affectation (-4)
+} ;
 
 using namespace std;
 using json = nlohmann::json;
@@ -54,6 +59,7 @@ class Germline {
 
   ~Germline();
 
+  int seg_method ;
   string code ;
   char   shortcut ;
 

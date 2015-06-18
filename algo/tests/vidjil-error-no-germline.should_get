@@ -1,4 +1,5 @@
 !LAUNCH: ../../vidjil 2>&1
+!EXIT_CODE: 1
 
 $ Error, no germlines
 1:error.* one germline must be given
