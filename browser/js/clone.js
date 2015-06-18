@@ -536,20 +536,121 @@ Clone.prototype = {
      * @param {string} formValue - the value of selection made by user
      */
     changeLocus: function(formValue) {
-       // TODO change the germlines stats 
-       this.germline = formValue;
-        var segments  = ["Vsegment", "Dsegment", "Jsegment"];
+        if (typeof this.germline == 'undefined') {
+            this.germline = "custom";
+        }
+        var oldGermline = this.germline;
+        var newGermline = formValue;
+        console.log("Changement of locus : "+oldGermline +" to "+ newGermline)
+        this.germline = newGermline;
         
+        // change reads segmented/germline values in model
+        try {
+            for (var i =0; i< m.reads.segmented.length; i++) {
+                if(oldGermline != "custom") {this.m.reads.germline[oldGermline][i] -= this.reads[i]};
+                if(newGermline != "custom") {this.m.reads.germline[newGermline][i] += this.reads[i]};
+                if (newGermline == "custom" && newGermline != oldGermline) {
+                    m.reads.segmented_all[i] -= this.reads[i]
+                } else if (oldGermline == "custom" && newGermline != "custom"){
+                    m.reads.segmented_all[i] += this.reads[i]
+                }
+            }
+        }
+        catch (e) {
+            console.log("Erreur : impossible d'acceder a 'm.reads.segmented'"); 
+        }
+        try { builder.build_info_container() } catch (e) { console.log("Erreur : impossible to build info_container'"); 
+        } 
+        
+        // change reads segmented/germline values in info panel
+        for (var timestamp = 0; timestamp < m.reads.segmented.length; timestamp++) {
+            var str_info = m.samples.log[timestamp].split("\n");
+            // Correction relative position by position of TRA (first locus)
+            var posTRA = 0;
+            for (var i =0; i< str_info.length-1; i++) { if (str_info[i].split(" ")[2] == "TRA") { posTRA = i; } };
+            dicoPosGermline = {
+                "TRA": posTRA+0, "TRB": posTRA+1 , "TRG": posTRA+2 , "TRD": posTRA+3 , "IGH": posTRA+4 , "IGK": posTRA+5 , "IGL": posTRA+6, "VdJa": posTRA+7, "TRD+": posTRA+8 , "TRD+": posTRA+9, "TRD+": posTRA+10, "IGH+": posTRA+11, "IGK+": posTRA+12, "IGK+": posTRA+13,
+                "?": posTRA+15, "custom": posTRA+15, "SegWithWindow": posTRA+26, "SegWithoutWindow" : posTRA+27
+            };
+            var newSamplesLog   = "  ";
+            posOldGermline      = dicoPosGermline[oldGermline];
+            posNewGermline      = dicoPosGermline[newGermline];
+            posSegmentedInfos   = dicoPosGermline["SegWithWindow"]; // Add info to dico
+            posUnsegmentedInfos = dicoPosGermline["SegWithoutWindow"]; // idem
+            // Use to repeat n times a character
+            String.prototype.repeat = function( num ) {
+                return new Array( num + 1 ).join( this );
+            };
+            /*
+             * Split line to get info, change them, and return a new line with updated info
+             */
+            function lineUpdater(line, nbReads, bool) { // bool indique si add or substract
+                var lineContent = $.grep(line.split(" "),function(n){ return(n); });
+                if (bool == false){
+                    var reads    = +lineContent[2] - +nbReads;
+                    var clones   = +lineContent[4] -1;
+                } else {
+                    var reads    = +lineContent[2] + +nbReads;
+                    var clones   = +lineContent[4] +1;
+                }
+                var locus    = lineContent[0];
+                var arrow    = lineContent[1];
+                var avLength = lineContent[3]; // TODO comment la calculer
+                if (reads > 0 ){
+                    var avReads = (reads/clones).toFixed(2);
+                } else {
+                    var avReads = "-";
+                }
+                dicoSpace = {"locus":[locus,2,20], "arrow":[arrow,21,23], "reads":[reads,24,33], "avLength":[avLength,33,41], "clones":[clones,41,52], "avReads":[avReads,52,59]};
+                if (oldGermline == "custom" || newGermline == "custom") {
+                    delete dicoSpace["clones"];
+                    delete dicoSpace["avReads"];
+                    }
+                var newLine = "  ";
+
+                for (tuple in dicoSpace) {
+                    var toAdd = dicoSpace[tuple][2] - dicoSpace[tuple][1] - String(dicoSpace[tuple][0]).length;
+                    if (tuple != "locus") { newLine += " ".repeat(toAdd) + dicoSpace[tuple][0]; }
+                    else                  { newLine += dicoSpace[tuple][0] + " ".repeat(toAdd); }; // Locus is on the left side
+                }
+                return newLine;
+            }
+            for (var i =0; i< str_info.length-1; i++) {
+                if (i == posOldGermline) {
+                    str_info[i] = lineUpdater(str_info[i], this.reads[timestamp], false);
+                }
+                if (i == posNewGermline) {
+                    str_info[i] = lineUpdater(str_info[i], this.reads[timestamp], true);
+                }
+                // TODO change the line if necessary at the end
+                /*if (i == posSegmentedInfos) {
+                    if (newGerline == "custom" || oldGermline == "custom") {
+                    // segmented line with/without windows
+                    }*/
+                newSamplesLog += str_info[i]+"\n";
+                }
+            m.samples.log[timestamp] = newSamplesLog.slice( 1 ).slice( 1 ); // slice use to fix bug two first space in double (4x)
+            }
+
+        var segments  = ["Vsegment", "Dsegment", "Jsegment"];
+
         for (var i = 0; i < segments.length; i++) {
-            var myDiv = document.getElementById('list'+segments[i]);
-            var content = this.createSegmentList(segments[i], formValue);
-            myDiv.innerHTML = content;
+            if (document.getElementById('list'+segments[i])) {
+                var myDiv = document.getElementById('list'+segments[i]);
+                var content = this.createSegmentList(segments[i], formValue);
+                myDiv.innerHTML = content;
+            }
         };
         m.analysisHasChanged = true;
         this.manuallyChanged = true;
-        m.update()
+        // if newGerline wasn't in system_available
+        if (jQuery.inArray( newGermline, m.system_available ) == -1) {
+            m.system_available.push(newGermline);
+        }
+        m.toggle_all_systems(true);
+        m.update();
     },
-    
+
     /**
      * Create a list of possibles segments to manually assign to a clone
      * @return {string} content - an HTML  code of form
@@ -557,13 +658,13 @@ Clone.prototype = {
      * @param {string} segment - the segment concerned( "Vsegment", "Dsegment" or "Jsegment")
      */
     createSegmentList: function (segment, locus) {
-        var segments = {"Vsegment": ["5", "V"], "Dsegment": ["4", "D"], "Jsegment": ["3", "J"]}
-        var nLocus = locus + segments[segment][1]
+        var segments = {"Vsegment": ["5", "V"], "Dsegment": ["4", "D"], "Jsegment": ["3", "J"]};
+        var nLocus = locus + segments[segment][1];
         var content = "<form name="+ segment  +"><select class='menu-selector' NAME="+segment+" onChange='m.clones["+ this.index +"].changeSegment(this.form." + segment + ".value, " + segments[segment][0] + ");'  style='width: 100px' >";
         content += "<option value="+ this.getGene(segments[segment][0]) + ">" + this.getGene(segments[segment][0]) + "</option>";        
 
         if( typeof(locus) == 'undefined' ){
-            nLocus = this.germline + segments[segment][1]
+            nLocus = this.germline + segments[segment][1];
         };
         for (var i in germline) {
             if (i.indexOf(nLocus) !=-1 ){
@@ -811,7 +912,7 @@ Clone.prototype = {
         }
     }
     
-}
+};
 
 
 
