@@ -140,22 +140,38 @@ Segment.prototype = {
 
         //toIgBlast button
         span = document.createElement('span');
-        span.id = "toIgBlast"
-        span.className = "button"
+        span.id = "toIgBlast";
+        span.className = "button";
         span.onclick = function () {
             self.sendTo('igBlast')
-        }
+        };
         span.appendChild(document.createTextNode("❯ to IgBlast"));
-        div_menu.appendChild(span)
+        div_menu.appendChild(span);
+        
+        //toBlast button
+        span = document.createElement('span');
+        span.id = "toBlast";
+        span.className = "button";
+        span.onclick = function () {
+            // TODO query depend of seq in segmenter
+            // look at 'http://www.ncbi.nlm.nih.gov/staff/tao/URLAPI/new/node107.html' for more informations
+            for (clone in m.getSelected()) {
+                    var url = "http://www.ncbi.nlm.nih.gov/blast/Blast.cgi?CMD=Put&QUERY="+m.clones[clone].getSequence()+"&PROGRAM=blastn&FILTER=L&DATABASE=nr&ALIGNMENTS=100&DESCRIPTIONS=100";
+                    var win = window.open(url, '_blank');
+            }
+            if (m.getSelected().length ==0) { console.log("list of selected clone is empty"); };
+        };
+        span.appendChild(document.createTextNode("❯ to Blast"));
+        div_menu.appendChild(span);
 
         //toClipBoard button
         span = document.createElement('span');
-        span.id = "toClipBoard"
-        span.className = "button"
+        span.id = "toClipBoard";
+        span.className = "button";
         span.appendChild(document.createTextNode("❯ to clipBoard"));
         // div_menu.appendChild(span)
 
-        div.appendChild(div_menu)
+        div.appendChild(div_menu);
         
         
         
@@ -591,7 +607,7 @@ Segment.prototype = {
             error: function () {
                 console.log({"type": "flash", "msg": "cgi error : impossible to connect", "priority": 2});
             }
-        })
+        });
     },
 
     /**
@@ -768,7 +784,7 @@ Segment.prototype = {
         }
     },
 
-} //fin prototype Segment
+}; //fin prototype Segment
 Segment.prototype = $.extend(Object.create(View.prototype), Segment.prototype);
 
 
@@ -1051,7 +1067,7 @@ Sequence.prototype = {
 
         return h
     }
-}
+};
 
 
 
@@ -1120,4 +1136,4 @@ tableAA = {
  'GGC' : 'G',
  'GGA' : 'G',
  'GGG' : 'G'
-}
+};
