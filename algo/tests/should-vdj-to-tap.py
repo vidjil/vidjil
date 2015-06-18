@@ -26,7 +26,7 @@ from subprocess import Popen, PIPE, STDOUT
 import os
 import argparse
 
-VIDJIL_FINE = '{directory}/vidjil -c segment -i -g {directory}/germline %s > %s'
+VIDJIL_FINE = '{directory}/vidjil -X 50 -c segment -i -g {directory}/germline %s > %s'
 VIDJIL_KMER = '{directory}/vidjil -b out -c windows -uU -2 -i -g {directory}/germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa > %s'
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
