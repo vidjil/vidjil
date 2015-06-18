@@ -65,7 +65,7 @@ def showlog():
         for row in reversed(file.readlines()) :
             parsed = False
 
-            if not vidjil_utils.filter(row, request.vars["filter"]) :
+            if not vidjil_utils.advanced_filter([row], request.vars["filter"]) :
                 continue
 
             if log_format: # == 'vidjil'

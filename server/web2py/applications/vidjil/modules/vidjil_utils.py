@@ -123,7 +123,7 @@ def anon_names(patient_id, first_name, last_name, can_view=None):
 
 # take a string to check and a filter_str (list of word to find (or not)) 
 # return true if the string respect the filter list 
-def filter(str, filter_str):
+def advanced_filter(str, filter_str):
     filter_list = filter_str.split(" ")
     str = map(lambda s: s.lower(), str)
 
