@@ -557,80 +557,10 @@ Clone.prototype = {
             }
         }
         catch (e) {
-            console.log("Erreur : impossible d'acceder a 'm.reads.segmented'"); 
+            console.log("Erreur : unable to get 'm.reads.segmented'"); 
         }
-        try { builder.build_info_container() } catch (e) { console.log("Erreur : impossible to build info_container'"); 
+        try { builder.build_info_container() } catch (e) { console.log("Erreur : unable to build info_container'"); 
         } 
-        
-        // change reads segmented/germline values in info panel
-        for (var timestamp = 0; timestamp < m.reads.segmented.length; timestamp++) {
-            var str_info = m.samples.log[timestamp].split("\n");
-            // Correction relative position by position of TRA (first locus)
-            var posTRA = 0;
-            for (var i =0; i< str_info.length-1; i++) { if (str_info[i].split(" ")[2] == "TRA") { posTRA = i; } };
-            dicoPosGermline = {
-                "TRA": posTRA+0, "TRB": posTRA+1 , "TRG": posTRA+2 , "TRD": posTRA+3 , "IGH": posTRA+4 , "IGK": posTRA+5 , "IGL": posTRA+6, "VdJa": posTRA+7, "TRD+": posTRA+8 , "TRD+": posTRA+9, "TRD+": posTRA+10, "IGH+": posTRA+11, "IGK+": posTRA+12, "IGK+": posTRA+13,
-                "?": posTRA+15, "custom": posTRA+15, "SegWithWindow": posTRA+26, "SegWithoutWindow" : posTRA+27
-            };
-            var newSamplesLog   = "  ";
-            posOldGermline      = dicoPosGermline[oldGermline];
-            posNewGermline      = dicoPosGermline[newGermline];
-            posSegmentedInfos   = dicoPosGermline["SegWithWindow"]; // Add info to dico
-            posUnsegmentedInfos = dicoPosGermline["SegWithoutWindow"]; // idem
-            // Use to repeat n times a character
-            String.prototype.repeat = function( num ) {
-                return new Array( num + 1 ).join( this );
-            };
-            /*
-             * Split line to get info, change them, and return a new line with updated info
-             */
-            function lineUpdater(line, nbReads, bool) { // bool indique si add or substract
-                var lineContent = $.grep(line.split(" "),function(n){ return(n); });
-                if (bool == false){
-                    var reads    = +lineContent[2] - +nbReads;
-                    var clones   = +lineContent[4] -1;
-                } else {
-                    var reads    = +lineContent[2] + +nbReads;
-                    var clones   = +lineContent[4] +1;
-                }
-                var locus    = lineContent[0];
-                var arrow    = lineContent[1];
-                var avLength = lineContent[3]; // TODO comment la calculer
-                if (reads > 0 ){
-                    var avReads = (reads/clones).toFixed(2);
-                } else {
-                    var avReads = "-";
-                }
-                dicoSpace = {"locus":[locus,2,20], "arrow":[arrow,21,23], "reads":[reads,24,33], "avLength":[avLength,33,41], "clones":[clones,41,52], "avReads":[avReads,52,59]};
-                if (oldGermline == "custom" || newGermline == "custom") {
-                    delete dicoSpace["clones"];
-                    delete dicoSpace["avReads"];
-                    }
-                var newLine = "  ";
-
-                for (tuple in dicoSpace) {
-                    var toAdd = dicoSpace[tuple][2] - dicoSpace[tuple][1] - String(dicoSpace[tuple][0]).length;
-                    if (tuple != "locus") { newLine += " ".repeat(toAdd) + dicoSpace[tuple][0]; }
-                    else                  { newLine += dicoSpace[tuple][0] + " ".repeat(toAdd); }; // Locus is on the left side
-                }
-                return newLine;
-            }
-            for (var i =0; i< str_info.length-1; i++) {
-                if (i == posOldGermline) {
-                    str_info[i] = lineUpdater(str_info[i], this.reads[timestamp], false);
-                }
-                if (i == posNewGermline) {
-                    str_info[i] = lineUpdater(str_info[i], this.reads[timestamp], true);
-                }
-                // TODO change the line if necessary at the end
-                /*if (i == posSegmentedInfos) {
-                    if (newGerline == "custom" || oldGermline == "custom") {
-                    // segmented line with/without windows
-                    }*/
-                newSamplesLog += str_info[i]+"\n";
-                }
-            m.samples.log[timestamp] = newSamplesLog.slice( 1 ).slice( 1 ); // slice use to fix bug two first space in double (4x)
-            }
 
         var segments  = ["Vsegment", "Dsegment", "Jsegment"];
 

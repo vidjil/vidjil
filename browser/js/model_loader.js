@@ -409,9 +409,6 @@ Model_loader.prototype = {
                     var pos = s.original_names.indexOf(this.samples.original_names[i])
                     if (pos == -1) this.samples.order.push(i)
                 }
-                // update new log if variant locus
-                m.samples.log = this.analysis.samples.log;
-
             }
             
             //tags
