@@ -409,6 +409,8 @@ Model_loader.prototype = {
                     var pos = s.original_names.indexOf(this.samples.original_names[i])
                     if (pos == -1) this.samples.order.push(i)
                 }
+                // update new log if variant locus
+                m.samples.log = this.analysis.samples.log;
 
             }
             
@@ -420,7 +422,7 @@ Model_loader.prototype = {
                 for (var i=0; i<keys.length; i++){
                     this.tag[parseInt(keys[i])].name = s.names[keys[i]]
                 }
-                
+               
                 for (var i=0; i<s.hide.length; i++){
                     this.tag[s.hide[i]].display = false;
                 }
@@ -446,8 +448,15 @@ Model_loader.prototype = {
                             m.clones[n].seg = clone.seg;
                         }
                     }
+                    // load germline in system_available
+                    if (jQuery.inArray( clone.germline, m.system_available ) == -1) {
+                        m.system_available.push(clone.germline);
+                    }
                 }
             }
+            m.toggle_all_systems(true);
+            m.update();
+            
         }else{
             console.log({"type": "flash", "msg": "invalid version for this .analysis file" , "priority": 1});
         }
@@ -509,9 +518,9 @@ Model_loader.prototype = {
 
             //tag, custom name, expected_value
             if ((typeof clone.tag != "undefined" && clone.tag != 8) || 
-                typeof clone.c_name != "undefined" ||
-                typeof clone.expected != "undefined" || 
-                ( typeof clone.manuallyChanged != "undefined"  && clone.manuallyChanged == true)) {
+                 typeof clone.c_name != "undefined" ||
+                 typeof clone.expected != "undefined" || 
+                (typeof clone.manuallyChanged != "undefined"  && clone.manuallyChanged == true)) {
 
                 var elem = {};
                 elem.id = clone.id;
