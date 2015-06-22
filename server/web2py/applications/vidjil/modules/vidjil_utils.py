@@ -167,13 +167,21 @@ def extract_value_from_json_path(json_path, json):
 
     Takes a path (for instance field1/field2/field3) and returns
     the value at that path.
+    The path also support indexed opeations (such as field1/field2[3]/field4)
 
     If the value doesn't exist None will be returned.
     '''
     elem = json
     try:
         for x in json_path.strip("/").split("/"):
-            elem = elem.get(x)
+            list_pos = re.search(r'[[]\d+[]]', x)
+            if list_pos is not None:
+                list_pos = list_pos.span()
+                index = int(x[list_pos[0]+1:list_pos[1]-1])
+                x = x[:list_pos[0]]
+                elem = elem.get(x)[index]
+            else:
+                elem = elem.get(x)
     except:
         pass
 
@@ -186,7 +194,8 @@ def extract_fields_from_json(json_fields, pos_in_list, filename):
     where the values are the values from the JSON filename.
 
     If the value retrieved from a JSON is an array, we will
-    get only the item at position <pos_in_list>
+    get only the item at position <pos_in_list> (if None, will
+    get all of them)
     '''
     try:
         json_dict = json.loads(open(filename).read())
@@ -197,7 +206,8 @@ def extract_fields_from_json(json_fields, pos_in_list, filename):
     for field in json_fields:
         value = extract_value_from_json_path(json_fields[field], json_dict)
         if value is not None:
-            if  not isinstance(value, basestring) and len(value) > pos_in_list:
+            if  not isinstance(value, basestring) and pos_in_list is not None\
+                and len(value) > pos_in_list:
                 matched_keys[field] = value[pos_in_list]
             else:
                 matched_keys[field] = value
@@ -211,6 +221,8 @@ SOURCES_DIR_DEFAULT = 'controllers/'
 SOURCES_DIR = {
     'task.py': 'models/',
     'db.py': 'models/',
+    'sequence_file.py': 'models/',
+    'vidjil_utils.py': 'modules/',
 }
 
 

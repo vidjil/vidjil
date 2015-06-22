@@ -50,9 +50,11 @@ class DefaultController(unittest.TestCase):
         #this will test only the scheduller not the worker
         request.vars['config_id'] = fake_config_id
         request.vars['sequence_file_id'] = fake_file_id
+        patient = db((db.sequence_file.id == fake_file_id) & (db.sequence_file.patient_id == db.patient.id)).select(db.patient.ALL).first()
         
         resp = run_request()
         self.assertNotEqual(resp.find('process requested'), -1, "run_request doesn't return a valid message")
+        self.assertEqual(db((db.fused_file.config_id == fake_config_id) & (db.fused_file.patient_id == patient.id)).count(), 1)
         
         
     def testGetData(self):
