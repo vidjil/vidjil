@@ -148,6 +148,16 @@ Segment.prototype = {
         span.appendChild(document.createTextNode("❯ to IgBlast"));
         div_menu.appendChild(span)
 
+        //toBlast button
+        span = document.createElement('span');
+        span.id = "toBlast";
+        span.className = "button";
+        span.onclick = function () {
+            self.sendTo('blast')
+        };
+        span.appendChild(document.createTextNode("❯ to Blast"));
+        div_menu.appendChild(span);
+        
         //toClipBoard button
         span = document.createElement('span');
         span.id = "toClipBoard"
@@ -502,7 +512,7 @@ Segment.prototype = {
     /**
      * build a request with currently selected clones to send to IMGT or igblast <br>
      * (see crossDomain.js)
-     * @param {string} address - 'IMGT' or 'igBlast'
+     * @param {string} address - 'IMGT', 'igBlast' or 'Blast'
      * */
     sendTo: function (address) {
 
@@ -526,6 +536,7 @@ Segment.prototype = {
         }
         if (address == 'IMGT') imgtPost(request, system);
         if (address == 'igBlast') igBlastPost(request, system);
+        if (address == 'blast') blastPost(request, system);
 
     },
     
