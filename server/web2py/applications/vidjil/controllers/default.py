@@ -298,15 +298,13 @@ def get_custom_data():
     
 #########################################################################
 ## return .analysis file
-# need patient_id, config_id
+# need patient_id
 # need patient admin or read permission
 def get_analysis():
     error = ""
 
     if not "patient" in request.vars :
         error += "id patient file needed, "
-    if not "config" in request.vars:
-        error += "id config needed, "
     if not auth.can_view_patient(request.vars["patient"]):
         error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
 
@@ -329,11 +327,10 @@ def get_analysis():
     if error == "" :
 
         ## récupération des infos se trouvant dans le fichier .analysis
-        analysis_query = db(  (db.analysis_file.patient_id == request.vars["patient"])
-                   & (db.analysis_file.config_id == request.vars["config"] )  )
+        analysis_query = db(db.analysis_file.patient_id == request.vars["patient"]).select(orderby=~db.analysis_file.analyze_date)
 
-        if not analysis_query.isempty() :
-            row = analysis_query.select().first()
+        if len(analysis_query) > 0 :
+            row = analysis_query.first()
             f = open(defs.DIR_RESULTS+'/'+row.analysis_file, "r")
             analysis = gluon.contrib.simplejson.loads(f.read())
             f.close()
@@ -357,42 +354,28 @@ def get_analysis():
 
 #########################################################################
 ## upload .analysis file and store it on the database
-# need patient_id, config_id, fileToUpload
+# need patient_id, fileToUpload
 # need patient admin permission
 def save_analysis():
     error = ""
 
     if not "patient" in request.vars :
         error += "id patient file needed, "
-    if not "config" in request.vars:
-        error += "id config needed, "
     if not auth.can_modify_patient(request.vars['patient']) :
         error += "you do not have permission to save changes on this patient"
 
     if error == "" :
-        analysis_query = db(  (db.analysis_file.patient_id == request.vars['patient'])
-                            & (db.analysis_file.config_id == request.vars['config'] )  )
-
         f = request.vars['fileToUpload']
-
         ts = time.time()
-        if not analysis_query.isempty() :
-            analysis_id = analysis_query.select().first().id
-            db.analysis_file[analysis_id] = dict(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
-                                                 analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-                                                 )
-        else:
-
-            analysis_id = db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
-                                                  config_id = request.vars['config'],
-                                                  patient_id = request.vars['patient'],
-                                                  analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
-                                                  )
+        analysis_id = db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
+                                              patient_id = request.vars['patient'],
+                                              analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
+                                              )
 
         patient_name = db.patient[request.vars['patient']].first_name + " " + db.patient[request.vars['patient']].last_name
 
         res = {"success" : "true",
-               "message" : "%s (%s) c%s: analysis saved" % (patient_name, request.vars['patient'], request.vars['config'])}
+               "message" : "%s (%s): analysis saved" % (patient_name, request.vars['patient'])}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
