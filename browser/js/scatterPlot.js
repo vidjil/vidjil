@@ -1709,8 +1709,8 @@ ScatterPlot.prototype = {
                 halfRangeColumn = (self.axisX.labels[1].pos - self.axisX.labels[0].pos)/2;
             for (n in self.nodes){
                 if (Math.abs(self.axisX.pos(n) - d.pos) < halfRangeColumn)
-                //if (self.axisX.pos(n) == d.pos){
-                    listToSelect.push(n);
+                    if (self.nodes[n].r1>0)
+                                listToSelect.push(n);
                 }
                 self.m.multiSelect(listToSelect);
             delete listToSelect; 
@@ -1814,7 +1814,8 @@ ScatterPlot.prototype = {
                 halfRangeLine = (self.axisY.labels[1].pos - self.axisY.labels[0].pos)/2;
             for (n in self.nodes){
                 if (Math.abs(self.axisY.pos(n) - d.pos) < halfRangeLine)
-                    listToSelect.push(n);
+                    if (self.nodes[n].r1>0)
+                        listToSelect.push(n);
                 }
             self.m.multiSelect(listToSelect);
             delete listToSelect; 
