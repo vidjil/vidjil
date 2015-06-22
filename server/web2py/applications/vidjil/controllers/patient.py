@@ -203,10 +203,6 @@ def stats():
         # segmentation causes
         'log.* SEG_[+].*?-> (?P<SEG_plus>.*?).n',
         'log.* SEG_[-].*?-> (?P<SEG_minus>.*?).n',
-
-        # main clone
-        '"name".*"(?P<main_clone>.*)"',
-        '"reads" :  [[] (?P<main_clone_reads>\d+) ',
     ]
 
     # stats by locus
@@ -216,12 +212,19 @@ def stats():
         stats_regex += [ 'log.* %(locus)s.*?->\s*?(?P<%(locus_g)s_reads>\d+)\s+(?P<%(locus_g)s_av_len>[0-9.]+)\s+(?P<%(locus_g)s_clones>\d+)\s+(?P<%(locus_g)s_av_reads>[0-9.]+)\s*.n'
                          % { 'locus': locus_regex, 'locus_g': locus_group } ]
 
-    json_paths = {'reads distribution [>= 10%]': 'reads/distribution/0.1',
+    json_paths = {
+        'result_file': {
+            'main_clone': '/clones[0]/name',
+            'main_clone_reads': '/clones[0]/reads[0]'
+        },
+        'fused_file': {
+                  'reads distribution [>= 10%]': 'reads/distribution/0.1',
                   'reads distribution [>= 1% < 10%]': 'reads/distribution/0.01',
                   'reads distribution [>= .01% < 1%]': 'reads/distribution/0.001',
                   'reads distribution [>= .001% < .01%]': 'reads/distribution/0.0001',
                   'reads distribution [>= .0001% < .001%]': 'reads/distribution/0.00001',
-                  'producer': 'samples/producer',
+                  'producer': 'samples/producer'
+        }
     }
 
     keys_patient = [ 'info' ]
@@ -237,18 +240,19 @@ def stats():
         regex += [r]
         keys += r.groupindex.keys()
 
-    keys += sorted(json_paths.keys())
+    keys += sorted(json_paths['result_file'].keys() + json_paths['fused_file'].keys())
     found = {}
 
     for row in d['query']:
         results_f = row.results_file.data_file
         row_result = vidjil_utils.search_first_regex_in_file(regex, defs.DIR_RESULTS + results_f, STATS_READLINES)
+        row_result_json = vidjil_utils.extract_fields_from_json(json_paths['result_file'], None, defs.DIR_RESULTS + results_f)
 
         fused_file = db((db.fused_file.patient_id == row.sequence_file.patient_id) & (db.fused_file.config_id == row.results_file.config_id)).select(orderby = ~db.fused_file.id, limitby=(0,1))
         if len(fused_file) > 0 and fused_file[0].sequence_file_list is not None:
             sequence_file_list = fused_file[0].sequence_file_list.split('_')
             pos_in_list = sequence_file_list.index(str(row.sequence_file.id))
-            row_fused = vidjil_utils.extract_fields_from_json(json_paths, pos_in_list, defs.DIR_RESULTS + fused_file[0].fused_file)
+            row_fused = vidjil_utils.extract_fields_from_json(json_paths['fused_file'], pos_in_list, defs.DIR_RESULTS + fused_file[0].fused_file)
         else:
             row_fused = {}
         for key in keys:
