@@ -48,18 +48,17 @@ def info():
         )
 
         analysis = db(
-            (db.analysis_file.patient_id == patient)
-            & (db.analysis_file.config_id == config_id)
-        )
+            db.analysis_file.patient_id == patient
+        ).select(orderby=~db.analysis_file.analyze_date)
         
         
         config = True
         fused_count = fused.count()
         fused_file = fused.select()
         fused_filename = patient_name +"_"+ config_name + ".data"
-        analysis_count = analysis.count()
-        analysis_file = analysis.select()
-        analysis_filename = patient_name +"_"+ config_name + ".analysis"
+        analysis_count = len(analysis)
+        analysis_file = analysis
+        analysis_filename = patient_name+".analysis"
         
     else:
         config_id = -1
