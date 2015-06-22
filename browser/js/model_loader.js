@@ -483,8 +483,8 @@ Model_loader.prototype = {
             timestamp : timestamp,
             vidjil_json_version : VIDJIL_JSON_VERSION,
             samples : this.samples,
-            clones : [],
-            clusters : [],
+            clones : this.analysis_clones,
+            clusters : this.analysis_clusters,
             tags : {}
         }
 
