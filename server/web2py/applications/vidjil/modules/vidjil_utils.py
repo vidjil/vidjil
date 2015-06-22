@@ -221,6 +221,8 @@ SOURCES_DIR_DEFAULT = 'controllers/'
 SOURCES_DIR = {
     'task.py': 'models/',
     'db.py': 'models/',
+    'sequence_file.py': 'models/',
+    'vidjil_utils.py': 'modules/',
 }
 
 
