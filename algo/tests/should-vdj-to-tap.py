@@ -59,7 +59,11 @@ def fasta_id_lines_from_program(f_should):
     program = args.program.replace('{directory}',args.directory)
     cmd = program % (f_should, f_log)
     print cmd
-    os.system(cmd)
+
+    exit_code = os.system(cmd)
+    if exit_code:
+        print "Error. The program halted with exit code %s." % exit_code
+        sys.exit(3)
 
     for l in open(f_log):
         if not l:

@@ -29,12 +29,18 @@ option after the option !OUTPUT_DIR:
 By default spaces can be replaced by any whitespaces. You can override this by
 specifying !IGNORE_WHITESPACES: 0
 
+* Exit code
+  The exit code of the launched command line is also checked. By default, an
+  exit code of 0 is expected. The .should_get file can specify an option
+  !EXIT_CODE: indacting another expected value.
+
 * Requirements
   Sometimes, to launch a test some requirements must be met. If the requirements
   are not met we may want to skip the test. To do so, specify in the file
   an option !REQUIRES: which will be followed by a command that is supposed
   to exit with the error code 0. If the error code is different from 0 all the
   tests in the file will be skipped.
+
 * Environment
 ** Debug
    If the environment variable DEBUG is defined, then some debug information 
@@ -70,6 +76,8 @@ cd "$DIR"
 OUTPUT_DIR=.
 TAP_FILE=${BASE%.*}.tap
 LOG_FILE=${BASE%.*}.log
+EXPECTED_EXIT_CODE=0
+EXIT_CODE=
 OUTPUT_FILE=
 FILE_TO_GREP=
 NO_LAUNCHER=
@@ -83,6 +91,7 @@ TMP_TAP_FILE=$(mktemp tap.XXXX)
 nb_tests=0
 # Count number of tests to be performed
 nb_tests=`grep -Ec '^[^$#!]' $BASE`
+nb_tests=$((nb_tests+1))
 
 echo "1.."$nb_tests
 test_nb=1
@@ -99,6 +108,8 @@ while read line; do
             type=${line%%:*}
             if [ "$type" == "LAUNCH" ]; then
                 eval cmd=\"${line#*:}\"
+            elif [ "$type" == "EXIT_CODE" ]; then
+                EXPECTED_EXIT_CODE=${line#*:}
             elif [ "$type" == "LOG" ]; then
                 eval LOG_FILE=\"${line#*:}\"
             elif [ "$type" == "OUTPUT_FILE" ]; then
@@ -135,9 +146,11 @@ while read line; do
                     echo "Launching '$cmd'" >&2
                     if [ -z "$OUTPUT_FILE" ]; then
                         eval $cmd > $LOG_FILE
+                        EXIT_CODE=$?
                         FILE_TO_GREP=$LOG_FILE
                     else
                         eval $cmd > /dev/null
+                        EXIT_CODE=$?
                         FILE_TO_GREP=$OUTPUT_FILE
                     fi
                     launched=1
@@ -211,7 +224,23 @@ while read line; do
         fi
     fi
     line_nb=$((line_nb+1))
+
 done < $BASE
+
+# Check exit code
+if [ $EXIT_CODE -eq $EXPECTED_EXIT_CODE ]; then
+    echo "ok $test_nb -  Exit code $EXIT_CODE"
+else
+    echo "not ok $test_nb -  Exit code $EXIT_CODE"
+    error=1
+
+    echo >&2; echo >&2; echo $SEPARATOR_LINE >&2
+    echo "error: exit code $EXIT_CODE (expected $EXPECTED_EXIT_CODE)" >&2
+    echo $SEPARATOR_LINE >&2
+    cat $FILE_TO_GREP >&2
+    echo $SEPARATOR_LINE >&2;  echo >&2; echo >&2
+fi
+
 } > $TMP_TAP_FILE
 
 mv $TMP_TAP_FILE $TAP_FILE

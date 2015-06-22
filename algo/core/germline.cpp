@@ -7,6 +7,7 @@ void Germline::init(string _code, char _shortcut,
                     int _delta_min,
                     int max_indexing)
 {
+  seg_method = SEG_METHOD_53 ;
   code = _code ;
   shortcut = _shortcut ;
   index = 0 ;
@@ -46,6 +47,9 @@ Germline::Germline(string _code, char _shortcut,
   rep_5 = Fasta(f_rep_5, 2, "|");
   rep_4 = Fasta(f_rep_4, 2, "|");
   rep_3 = Fasta(f_rep_3, 2, "|");
+
+  if (rep_4.size())
+    seg_method = SEG_METHOD_543 ;
 }
 
 
@@ -72,6 +76,9 @@ Germline::Germline(string _code, char _shortcut,
 
   for (list<string>::const_iterator it = f_reps_3.begin(); it != f_reps_3.end(); ++it)
     rep_3.add(*it);
+
+  if (rep_4.size())
+    seg_method = SEG_METHOD_543 ;
 }
 
 
@@ -85,15 +92,18 @@ Germline::Germline(string _code, char _shortcut,
   rep_5 = _rep_5 ;
   rep_4 = _rep_4 ;
   rep_3 = _rep_3 ;
+
+  if (rep_4.size())
+    seg_method = SEG_METHOD_543 ;
 }
 
 Germline::Germline(string code, char shortcut, string path, json json_recom, int max_indexing)
 {
     
-  int delta_min = 0;
+  int delta_min = -10;
   
   if (json_recom.find("4") != json_recom.end()) {
-      delta_min = -10;
+      delta_min = 0;
   }
   
   init(code, shortcut, delta_min, max_indexing);
@@ -127,13 +137,16 @@ Germline::Germline(string code, char shortcut, string path, json json_recom, int
     f_reps_3.push_back(path + filename);
     rep_3.add(path + filename);
   }
-  
+
+  if (rep_4.size())
+    seg_method = SEG_METHOD_543 ;
 }
 
 void Germline::new_index(string seed)
 {
   bool rc = true ;
   index = KmerStoreFactory::createIndex<KmerAffect>(seed, rc);
+  index->refs = 1;
 
   update_index();
 }
@@ -141,6 +154,7 @@ void Germline::new_index(string seed)
 void Germline::set_index(IKmerStore<KmerAffect> *_index)
 {
   index = _index;
+  index->refs++ ;
 }
 
 
@@ -168,7 +182,10 @@ void Germline::mark_as_ambiguous(Germline *other)
 Germline::~Germline()
 {
   if (index)
-    delete index;
+    {
+      if (--(index->refs) == 0)
+        delete index;
+    }
 }
 
 ostream &operator<<(ostream &out, const Germline &germline)
@@ -195,18 +212,9 @@ MultiGermline::MultiGermline(bool _one_index_per_germline)
 }
 
 MultiGermline::~MultiGermline() {
-  bool first = true ;
-
   for (list<Germline*>::const_iterator it = germlines.begin(); it != germlines.end(); ++it)
     {
-      if (!one_index_per_germline && !first)
-        {
-          // The index was already deleted in the first germline
-          (*it) -> index = 0 ;
-        }
       delete *it ;
-
-      first = false ;
     }
 }
 

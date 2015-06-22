@@ -33,13 +33,15 @@ snapshot:
 	grep . *.log should-vdj-tests/*.log > $(SNAPSHOT)
 	touch snapshot-last ; mv snapshot-last snapshot-prev
 	ln -s $(SNAPSHOT) snapshot-last
-	-(diff snapshot-prev snapshot-last | diffstat -cC)
+	diff -I "20..-..-.." snapshot-prev snapshot-last | diffstat -cC
 
 should: vidjil $(SHOULD_LOG)
 
 shouldvdj_if_python:
-	-(python ../../tools/check_python_version.py && $(MAKE) shouldvdj)
-	@(python ../../tools/check_python_version.py || echo "!!! Bad python version, we skip .should-vdj.fa tests...")
+	if python ../../tools/check_python_version.py ; \
+	then $(MAKE) shouldvdj ; \
+	else echo "!!! Bad python version, we skip .should-vdj.fa tests..." ; \
+	fi
 
 shouldvdj: vidjil
 	@echo "*** Launching .should-vdj-fa tests..."

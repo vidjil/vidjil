@@ -121,18 +121,20 @@ def anon_names(patient_id, first_name, last_name, can_view=None):
     return name
 
 
-# take a string to check and a filter_str (list of word to find (or not)) 
+# take a list of strings to check and a filter_str (list of word to find (or not)) 
 # return true if the string respect the filter list 
-def filter(str, filter_str):
+def advanced_filter(list_searched, filter_str):
     filter_list = filter_str.split(" ")
-    
+    list_searched = map(lambda s: s.lower(), list_searched)
+
     for f in filter_list :
         if len(f) > 0 and f[0] == "-" :
-            if f[1:].lower() in str.lower():
-                return False
-        else :
-            if f.lower() not in str.lower():
-                return False
+            pattern = f[1:]
+        else:
+            pattern = f
+        result = filter(lambda item: pattern.lower() in item, list_searched)
+        if len(result) == 0:
+            return False
     return True
 
 

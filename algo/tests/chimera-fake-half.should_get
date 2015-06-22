@@ -1,0 +1,13 @@
+!LAUNCH: ../../vidjil -e 10 -A -t 0 -g ../../germline -4 -i ../../data/chimera-fake-half.fa
+# TODO: a more precise modeling should give a e-value computation that could make this work even with -e 1
+
+$ The KmerSegmenter segments the six chimera reads on PSEUDO_MAX1U germline (-4)
+1:xxx .* -> .* 6
+
+$ The FineSegmenter gives the locus information (-4)
+1:Unexpected .A-TRAV/.\?
+1:Unexpected .G-TRGV/.\?
+1:Unexpected .H-IGHV/.\?
+1:Unexpected .\?/.B-TRBV
+1:Unexpected .\?/.D-TRDV
+1:Unexpected .\?/.K-IGKV

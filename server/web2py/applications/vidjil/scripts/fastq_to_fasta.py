@@ -3,16 +3,13 @@ import defs
 import os
 import sys
 
-execfile("applications/vidjil/scripts/compress_all_sequences.py", globals())
-
-# import applications.vidjil.scripts.compress_all_sequences
-
 def fastq_to_fasta(files, simulate = False):
     EXPECTED_EXT = ".fastq.gz"
     for file in files:
         seq = db(db.sequence_file.data_file == file).select().first()
         print (seq)
-        if seq is not None and seq.filename is not None and seq.filename[-len(EXPECTED_EXT):] == EXPECTED_EXT:
+        if seq is not None and seq.filename is not None\
+           and seq.filename[-len(EXPECTED_EXT):] == EXPECTED_EXT and os.path.isfile(defs.DIR_SEQUENCES+seq.data_file):
             new_filename = seq.filename[:-len(EXPECTED_EXT)] + ".fasta.gz"
             log.debug("fastq.gz > fasta.gz: Transform %s in %s" % (seq.filename, new_filename))
 
@@ -23,8 +20,8 @@ def fastq_to_fasta(files, simulate = False):
                 print (cmd)
             else:
                 os.system(cmd)
-                update_sequence_file(seq.id, new_filename, new_data_filename)
-#                os.unlink(defs.DIR_SEQUENCES+seq.data_file)
+                update_name_of_sequence_file(seq.id, new_filename, new_data_filename)
+                db.commit()
         else:
             if seq is not None:
                 log.debug('fastq.gz > fasta.gz: Ignoring %s' % seq.data_file)
