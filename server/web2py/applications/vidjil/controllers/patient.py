@@ -255,21 +255,21 @@ def stats():
             row_fused = vidjil_utils.extract_fields_from_json(json_paths['fused_file'], pos_in_list, defs.DIR_RESULTS + fused_file[0].fused_file)
         else:
             row_fused = {}
+        results_list = [row_result, row_result_json, row_fused]
         for key in keys:
-            if key in row_result:
-                row[key] = row_result[key]
-                found[key] = True
-            elif key in row_fused:
-                row[key] = row_fused[key]
-                found[key] = True
-            elif key in keys_patient:
-                row[key] = row.patient[key]
-                found[key] = True
-            elif key in keys_file:
-                row[key] = row.sequence_file[key]
-                found[key] = True
-            else:
-                row[key] = ''
+            for map_result in results_list:
+                if key in map_result:
+                    row[key] = map_result[key]
+                    found[key] = True
+            if key not in found:
+                if key in keys_patient:
+                    row[key] = row.patient[key]
+                    found[key] = True
+                elif key in keys_file:
+                    row[key] = row.sequence_file[key]
+                    found[key] = True
+                else:
+                    row[key] = ''
 
     # Re-process some data
     keys += ['IGH_av_clones']
