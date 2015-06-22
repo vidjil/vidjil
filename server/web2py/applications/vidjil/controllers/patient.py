@@ -245,9 +245,9 @@ def stats():
         row_result = vidjil_utils.search_first_regex_in_file(regex, defs.DIR_RESULTS + results_f, STATS_READLINES)
 
         fused_file = db((db.fused_file.patient_id == row.sequence_file.patient_id) & (db.fused_file.config_id == row.results_file.config_id)).select(orderby = ~db.fused_file.id, limitby=(0,1))
-        if len(fused_file) > 0:
-            index_of_id = fused_file[0].sequence_file_list.find('%d_' % row.sequence_file.id)
-            pos_in_list = fused_file[0].sequence_file_list.count('_', 0, index_of_id)
+        if len(fused_file) > 0 and fused_file[0].sequence_file_list is not None:
+            sequence_file_list = fused_file[0].sequence_file_list.split('_')
+            pos_in_list = sequence_file_list.index(str(row.sequence_file.id))
             row_fused = vidjil_utils.extract_fields_from_json(json_paths, pos_in_list, defs.DIR_RESULTS + fused_file[0].fused_file)
         else:
             row_fused = {}
