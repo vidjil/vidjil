@@ -167,13 +167,21 @@ def extract_value_from_json_path(json_path, json):
 
     Takes a path (for instance field1/field2/field3) and returns
     the value at that path.
+    The path also support indexed opeations (such as field1/field2[3]/field4)
 
     If the value doesn't exist None will be returned.
     '''
     elem = json
     try:
         for x in json_path.strip("/").split("/"):
-            elem = elem.get(x)
+            list_pos = re.search(r'[[]\d+[]]', x)
+            if list_pos is not None:
+                list_pos = list_pos.span()
+                index = int(x[list_pos[0]+1:list_pos[1]-1])
+                x = x[:list_pos[0]]
+                elem = elem.get(x)[index]
+            else:
+                elem = elem.get(x)
     except:
         pass
 
