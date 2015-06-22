@@ -194,7 +194,8 @@ def extract_fields_from_json(json_fields, pos_in_list, filename):
     where the values are the values from the JSON filename.
 
     If the value retrieved from a JSON is an array, we will
-    get only the item at position <pos_in_list>
+    get only the item at position <pos_in_list> (if None, will
+    get all of them)
     '''
     try:
         json_dict = json.loads(open(filename).read())
@@ -205,7 +206,8 @@ def extract_fields_from_json(json_fields, pos_in_list, filename):
     for field in json_fields:
         value = extract_value_from_json_path(json_fields[field], json_dict)
         if value is not None:
-            if  not isinstance(value, basestring) and len(value) > pos_in_list:
+            if  not isinstance(value, basestring) and pos_in_list is not None\
+                and len(value) > pos_in_list:
                 matched_keys[field] = value[pos_in_list]
             else:
                 matched_keys[field] = value
