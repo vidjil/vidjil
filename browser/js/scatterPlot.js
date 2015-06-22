@@ -1455,7 +1455,8 @@ ScatterPlot.prototype = {
             for (n=0; n<self.nodes.length; n++){
                 if (self.m.clones[n].germline == (self.m.germlineV.system))
                     if (Math.abs(self.axisX.pos(self.nodes[n]) - d.pos) < halfRangeColumn)
-                        listToSelect.push(self.nodes[n]);
+                        if (self.nodes[n].r1>0)
+                            listToSelect.push(self.nodes[n]);
             }
                 self.m.multiSelect(listToSelect);
            })
@@ -1564,7 +1565,8 @@ ScatterPlot.prototype = {
                 for (n=0; n<self.nodes.length; n++){
                     if (self.m.clones[n].germline == (self.m.germlineV.system))
                         if (Math.abs(self.axisY.pos(n) - d.pos) < halfRangeLine)
-                            listToSelect.push(n);
+                            if (self.nodes[n].r1>0)
+                                listToSelect.push(n);
                         }
                 self.m.multiSelect(listToSelect);
                 }
