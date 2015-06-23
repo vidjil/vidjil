@@ -69,9 +69,11 @@ g++-4.8 is included in the devtools 2.0.
 
 #+BEGIN_SRC sh
 sudo wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo
-sudo yum install devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++
-scl enable devtoolset-2 bash # Open a shell running devtools
-#+END_SRC sh
+sudo yum install devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++ devtoolset-2-valgrind
+
+# scl enable devtoolset-2 bash     # either open a shell running devtools
+source /opt/rh/devtoolset-2/enable # ... or source devtools in the same shell
+#+END_SRC
 
 *** FreeBSD 9.2
 
