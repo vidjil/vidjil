@@ -107,7 +107,7 @@ apt-get install g++-4.8 valgrind
 
 #+BEGIN_SRC sh
 sudo apt-get install g++-4.8
-#+END_SRC sh
+#+END_SRC
 
 *** Ubuntu 12.04 LTS
 
@@ -118,7 +118,7 @@ sudo apt-get install python-software-properties
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test
 sudo apt-get update
 sudo apt-get install g++-4.8
-#+END_SRC sh
+#+END_SRC
 
 
 
