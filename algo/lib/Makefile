@@ -19,11 +19,11 @@ cleancoverage:
 	rm -f *.gcda *.gcno *.gcov
 
 forcedep:
-	g++ $(CXXFLAGS) -M $(SRCCORE) > dep.mk
+	$(CXX) $(CXXFLAGS) -M $(SRCCORE) > dep.mk
 
 DEP=$(wildcard dep.mk)
 
 ifeq (${DEP},)
-$(shell	g++ -M $(SRCCORE) > dep.mk)
+$(shell $(CXX) -M $(SRCCORE) > dep.mk)
 endif
 include dep.mk
