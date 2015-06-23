@@ -89,14 +89,14 @@ cleantests:
 cleanall: clean cleancoverage cleantests
 
 forcedep:
-	$(CXX) $(INCLUDE) -M $(SRC) > dep.mk
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -M $(SRC) > dep.mk
 
 force:
 
 DEP=$(wildcard dep.mk)
 
 ifeq (${DEP},)
-$(shell	$(CXX) $(INCLUDE) -M $(SRC) > dep.mk)
+$(shell	$(CXX) $(CXXFLAGS) $(INCLUDE) -M $(SRC) > dep.mk)
 endif
 include dep.mk
 

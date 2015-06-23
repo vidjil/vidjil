@@ -119,7 +119,7 @@ FORCE:
 DEP=$(wildcard dep.mk)
 
 ifeq (${DEP},)
-$(shell	$(CXX) -M $(MAINCORE) > dep.mk)
+$(shell	$(CXX) $(CXXFLAGS) -M $(MAINCORE) > dep.mk)
 endif
 include dep.mk
 

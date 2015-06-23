@@ -24,6 +24,6 @@ forcedep:
 DEP=$(wildcard dep.mk)
 
 ifeq (${DEP},)
-$(shell	$(CXX) -M $(SRCCORE) > dep.mk)
+$(shell	$(CXX) $(CXXFLAGS) -M $(SRCCORE) > dep.mk)
 endif
 include dep.mk
