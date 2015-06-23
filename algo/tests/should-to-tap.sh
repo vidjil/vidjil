@@ -231,7 +231,7 @@ done < $BASE
 if [ $EXIT_CODE -eq $EXPECTED_EXIT_CODE ]; then
     echo "ok $test_nb -  Exit code $EXIT_CODE"
 else
-    echo "not ok $test_nb -  Exit code $EXIT_CODE"
+    echo -n "not ok $test_nb "
 
     if ! eval $REQUIRE > /dev/null 2> /dev/null; then
         echo -n "# SKIP "
@@ -246,6 +246,7 @@ else
     echo $SEPARATOR_LINE >&2;  echo >&2; echo >&2
 
     fi
+    echo "-  Exit code $EXIT_CODE"
 fi
 
 } > $TMP_TAP_FILE
