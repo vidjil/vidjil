@@ -1,4 +1,4 @@
-CC=g++
+CXX?=g++
 OPTIM=-O2 
 override CXXFLAGS += -W -Wall -std=c++11 $(OPTIM)
 SRCCORE=$(wildcard *.cpp)

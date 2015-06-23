@@ -1,4 +1,4 @@
-CC=g++
+CXX=g++
 INCLUDE=-I ..
 OPTIM=-g -O0 $(COVERAGE)
 override CXXFLAGS += -W -Wall $(OPTIM)
