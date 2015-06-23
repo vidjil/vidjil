@@ -232,6 +232,11 @@ if [ $EXIT_CODE -eq $EXPECTED_EXIT_CODE ]; then
     echo "ok $test_nb -  Exit code $EXIT_CODE"
 else
     echo "not ok $test_nb -  Exit code $EXIT_CODE"
+
+    if ! eval $REQUIRE > /dev/null 2> /dev/null; then
+        echo -n "# SKIP "
+    else
+
     error=1
 
     echo >&2; echo >&2; echo $SEPARATOR_LINE >&2
@@ -239,6 +244,8 @@ else
     echo $SEPARATOR_LINE >&2
     cat $FILE_TO_GREP >&2
     echo $SEPARATOR_LINE >&2;  echo >&2; echo >&2
+
+    fi
 fi
 
 } > $TMP_TAP_FILE
