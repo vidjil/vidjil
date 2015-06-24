@@ -409,7 +409,6 @@ Model_loader.prototype = {
                     var pos = s.original_names.indexOf(this.samples.original_names[i])
                     if (pos == -1) this.samples.order.push(i)
                 }
-
             }
             
             //tags
@@ -420,7 +419,7 @@ Model_loader.prototype = {
                 for (var i=0; i<keys.length; i++){
                     this.tag[parseInt(keys[i])].name = s.names[keys[i]]
                 }
-                
+               
                 for (var i=0; i<s.hide.length; i++){
                     this.tag[s.hide[i]].display = false;
                 }
@@ -432,6 +431,29 @@ Model_loader.prototype = {
             }
             this.initClones();
             this.initData();
+            
+            //clones
+            if (this.analysis.clones) {
+                var clones = this.analysis.clones
+                for (var i = 0; i < clones.length; i++){
+                    var clone = clones[i]
+                    for (var n=0; n < m.clones.length; n++){
+                        if (clone.id == m.clones[n].id){
+                            m.clones[n].manuallyChanged = true;
+                            m.clones[n].germline = clone.germline;
+                            m.clones[n].eValue   = clone.eValue;
+                            m.clones[n].seg = clone.seg;
+                        }
+                    }
+                    // load germline in system_available
+                    if (jQuery.inArray( clone.germline, m.system_available ) == -1) {
+                        m.system_available.push(clone.germline);
+                    }
+                }
+            }
+            m.toggle_all_systems(true);
+            m.update();
+            
         }else{
             console.log({"type": "flash", "msg": "invalid version for this .analysis file" , "priority": 1});
         }
@@ -493,9 +515,9 @@ Model_loader.prototype = {
 
             //tag, custom name, expected_value
             if ((typeof clone.tag != "undefined" && clone.tag != 8) || 
-                typeof clone.c_name != "undefined" ||
-                typeof clone.expected != "undefined" || 
-                ( typeof clone.manuallyChanged != "undefined"  && clone.manuallyChanged == true)) {
+                 typeof clone.c_name != "undefined" ||
+                 typeof clone.expected != "undefined" || 
+                (typeof clone.manuallyChanged != "undefined"  && clone.manuallyChanged == true)) {
 
                 var elem = {};
                 elem.id = clone.id;
@@ -508,22 +530,10 @@ Model_loader.prototype = {
                 if (typeof clone.expected != "undefined")
                     elem.expected = clone.expected;
                 if (typeof clone.manuallyChanged != "undefined"  && clone.manuallyChanged == true){
-                    // to test : 
-                    // m.clones[4].manuallyChanged = true; m.clones[4].id = "troll_4"; m.clones[4].seg["5"] = "segmentTroll4"; m.clones[0].manuallyChanged = true; m.clones[0].id = "troll_0"; m.clones[0].seg["5"] = "segmentTroll0"
                     elem.manuallyChanged = true
                     elem.germline = clone.germline;
-                    elem.eValue = clone.eValue;
-                    
-                    elem.seg = {}
-                    //for (i in ["5", "4", "3"] ) { //var i = 3; i > 5; i++) {
-                    for (var j = 5; j >= 3; j--) {
-                        if (typeof(clone.seg[j]) != 'undefined') {
-                            elem.seg[j]         = clone.seg[j];};
-                        if (typeof(clone.seg[j+"start"]) != 'undefined') {
-                            elem.seg[j+"start"] = clone.seg[j+"start"];};
-                        if (typeof(clone.seg[j+"end"]) != 'undefined') {
-                            elem.seg[j+"end"]   = clone.seg[j+"end"];};
-                    };
+                    elem.eValue   = clone.eValue;
+                    elem.seg      = clone.seg
                 };
                  
                 analysisData.clones.push(elem);
