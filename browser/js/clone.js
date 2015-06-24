@@ -543,24 +543,22 @@ Clone.prototype = {
         var newGermline = formValue;
         console.log("Changement of locus : "+oldGermline +" to "+ newGermline)
         this.germline = newGermline;
-        
+
         // change reads segmented/germline values in model
         try {
-            for (var i =0; i< m.reads.segmented.length; i++) {
+            for (var i =0; i< this.m.reads.segmented.length; i++) {
                 if(oldGermline != "custom") {this.m.reads.germline[oldGermline][i] -= this.reads[i]};
                 if(newGermline != "custom") {this.m.reads.germline[newGermline][i] += this.reads[i]};
                 if (newGermline == "custom" && newGermline != oldGermline) {
-                    m.reads.segmented_all[i] -= this.reads[i]
+                    this.m.reads.segmented_all[i] -= this.reads[i]
                 } else if (oldGermline == "custom" && newGermline != "custom"){
-                    m.reads.segmented_all[i] += this.reads[i]
+                    this.m.reads.segmented_all[i] += this.reads[i]
                 }
             }
         }
         catch (e) {
-            console.log("Erreur : unable to get 'm.reads.segmented'"); 
+            console.log("Erreur : unable to get 'this.m.reads.segmented'"); 
         }
-        try { builder.build_info_container() } catch (e) { console.log("Erreur : unable to build info_container'"); 
-        } 
 
         var segments  = ["Vsegment", "Dsegment", "Jsegment"];
 
@@ -571,14 +569,14 @@ Clone.prototype = {
                 myDiv.innerHTML = content;
             }
         };
-        m.analysisHasChanged = true;
+        this.m.analysisHasChanged = true;
         this.manuallyChanged = true;
         // if newGerline wasn't in system_available
-        if (jQuery.inArray( newGermline, m.system_available ) == -1) {
-            m.system_available.push(newGermline);
+        if (jQuery.inArray( newGermline, this.m.system_available ) == -1) {
+            this.m.system_available.push(newGermline);
         }
-        m.toggle_all_systems(true);
-        m.update();
+        this.m.toggle_all_systems(true);
+        this.m.update();
     },
 
     /**
@@ -623,9 +621,9 @@ Clone.prototype = {
         this.seg["_evalue"]       = 0
         this.seg["_evalue_left"]  = 0
         this.seg["_evalue_right"] = 0
-        m.analysisHasChanged = true;
+        this.m.analysisHasChanged = true;
         this.manuallyChanged = true;
-        m.update();
+        this.m.update();
     },
     
     /**
