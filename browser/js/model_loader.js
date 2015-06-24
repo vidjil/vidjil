@@ -434,15 +434,28 @@ Model_loader.prototype = {
             
             //clones
             if (this.analysis.clones) {
-                var clones = this.analysis.clones
+                var clones = this.analysis.clones;
                 for (var i = 0; i < clones.length; i++){
-                    var clone = clones[i]
+                    var clone = clones[i];
                     for (var n=0; n < m.clones.length; n++){
                         if (clone.id == m.clones[n].id){
                             m.clones[n].manuallyChanged = true;
+                            // Apply m.reads.germline changment 
+                            for (var time =0; time< m.reads.segmented.length; time ++) {
+                                var oldGermline = m.clones[n].germline;
+                                var newGermline = clone.germline; 
+                                if(oldGermline != "custom") {m.reads.germline[oldGermline][time] -= m.clones[n].reads[time];};
+                                if(newGermline != "custom") {m.reads.germline[newGermline][time] += m.clones[n].reads[time];};
+                                if (newGermline == "custom" && newGermline != oldGermline) {
+                                    m.reads.segmented_all[time] -= m.clones[n].reads[time];
+                                } else if (oldGermline == "custom" && newGermline != "custom"){
+                                    m.reads.segmented_all[time] += m.clones[n].reads[time];
+                                }
+                            }
                             m.clones[n].germline = clone.germline;
                             m.clones[n].eValue   = clone.eValue;
                             m.clones[n].seg = clone.seg;
+                            
                         }
                     }
                     // load germline in system_available
