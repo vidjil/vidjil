@@ -1,0 +1,7 @@
+!LAUNCH: ../../vidjil -e 10 -A -i -g ../../germline ../../data/trb-bd2-bj2-3.fa
+
+$ Segment all 5 reads, thanks to -i
+1:junction detected in 1 reads .100..
+
+
+
