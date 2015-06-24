@@ -17,13 +17,15 @@ void testFineSegment()
   Fasta seqD("../../germline/IGHD.fa", 2);
   Fasta seqJ("../../germline/IGHJ.fa", 2);
   
-  Fasta data("../../data/Stanford_S22.fasta", 1, " ");
+  OnlineFasta data("../../data/Stanford_S22.fasta", 1, " ");
+  data.next();
+  data.next();
 
   Germline *germline ;
   germline = new Germline("IGH", 'G', seqV, seqD, seqJ, 0);
   germline->new_index("####");
 
-  Sequence seq = data.read(2);
+  Sequence seq = data.getSequence();
       
   //segmentation VJ
   FineSegmenter s(seq, germline, VDJ);
