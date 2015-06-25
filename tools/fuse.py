@@ -35,6 +35,7 @@ import time
 import copy
 import os.path
 import datetime
+import subprocess
 from operator import itemgetter
 from utils import *
 
@@ -720,6 +721,15 @@ def main():
     print("\t", jlist_fused) 
     print()
 
+    #compute similarity matrix
+    fasta = ""
+    for i in range(len(jlist_fused.d["clones"])) :
+        fasta += ">>" + str(i) + "\n"
+        fasta += jlist_fused.d["clones"][i].d["id"] + "\n"
+    fasta_file = open("tmp", 'w')
+    fasta_file.write(fasta)
+    jlist_fused.d["similarity"] = json.loads(subprocess.check_output(["../algo/tools/similarity", "-j", "tmp"]))
+    
     print("### Save merged file")
     jlist_fused.save_json(args.output)
 

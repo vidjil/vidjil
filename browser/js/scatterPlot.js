@@ -58,7 +58,6 @@ function ScatterPlot(id, model) {
        BEG --
     */
     this.mouseZoom = 1; //Zoom (scroll wheel)
-    this.reinit = false; //Boolean used to know the physics engine state (reinit/init)
     this['continue'] = false; //Boolean used for the nodes movements
     this.allEdges = new Array(); //Initial edges array
     this.edgeSaved = new Array(); //Edges array saved for the Edit Distance visualization
@@ -67,7 +66,6 @@ function ScatterPlot(id, model) {
     this.active_move = false; //Boolean given to the nodes movements
     this.reloadCharge = true; //Boolean allowing to reload the physic engine charge (reject)
     this.canSavePositions = true; //Boolean which allows to save initial positions of nodes
-    this.initialPositions = []; //Initial positions of all nodes - usefull when calling reinit_motor()
     //Object which allows to save new position, and move all nodes according to the object's parameters
     this.positionToMove = {
         originx: 0,
@@ -168,13 +166,80 @@ function ScatterPlot(id, model) {
             min : function(){return self.m.min_size}, 
             max : 1, 
             output : "percent", 
-            log : true  }
+            log : true  
+        },
+        "tsneX": { 
+            label: "distance (X)",
+            fct: function(cloneID){
+                var r = self.gridSizeH/self.gridSizeW;
+                var k=1;
+                var yMax = self.m.similarity_builder.yMax
+                if (yMax > r) k = r/yMax
+                return k*self.m.clone(cloneID).tsne[0] + (1-k)/2
+            },
+            output: "float-2", 
+            log: false,
+            min: 0,
+            max: 1, 
+            hide : true,
+            display_label : false
+        },
+        "tsneY": { 
+            label: "distance (Y)",
+            fct: function(cloneID){
+                var r = self.gridSizeH/self.gridSizeW;
+                var k=1;
+                var yMax = self.m.similarity_builder.yMax
+                if (yMax > r) k = r/yMax
+                return k*self.m.clone(cloneID).tsne[1]
+            },
+            output: "float-2", 
+            log: false,
+            min: 0,
+            max: function(){return self.gridSizeH/self.gridSizeW},
+            hide : true,
+            display_label : false
+        },
+        "tsneX_system": { 
+            label: "distance (X), by locus",
+            fct: function(cloneID){
+                var r = self.gridSizeH/self.gridSizeW;
+                var k=1;
+                var yMax = self.m.similarity_builder.system_yMax[self.m.clone(cloneID).get("germline")]
+                if (yMax > r) k = r/yMax
+                return k*self.m.clone(cloneID).tsne_system[0] + (1-k)/2
+            },
+            output: "float-2", 
+            log: false,
+            min: 0,
+            max: 1, 
+            hide : true,
+            display_label : false
+        },
+        "tsneY_system": { 
+            label: "distance (Y), by locus",
+            fct: function(cloneID){
+                var r = self.gridSizeH/self.gridSizeW;
+                var k=1;
+                var yMax = self.m.similarity_builder.system_yMax[self.m.clone(cloneID).get("germline")]
+                if (yMax > r) k = r/yMax
+                return k*self.m.clone(cloneID).tsne_system[1]
+            },
+            output: "float-2", 
+            log: false,
+            min: 0,
+            max: function(){return self.gridSizeH/self.gridSizeW},
+            hide : true,
+            display_label : false
+        }
     }
     
     // Plot Presets
     this.preset = { 
         "V/J (genes)" : { "mode": "plot", "x" : "gene_v", "y": "gene_j"},
         "V/J (alleles)" : { "mode": "plot", "x" : "allele_v", "y": "allele_j"},
+        // "graph" : { "mode": "plot", "x" : "tsneX", "y": "tsneY"},
+        // "graph_by_system" : { "mode": "plot", "x" : "tsneX_system", "y": "tsneY_system"},
         "V/N length" : { "mode": "plot", "x" : "gene_v", "y": "n"},
         "clone length / locus" : { "mode": "plot", "x": "sequenceLength", "y" : "locus"},
         "clone length / GC content " : { "mode": "plot", "x": "sequenceLength", "y" : "GCContent"},
@@ -184,6 +249,7 @@ function ScatterPlot(id, model) {
         "Clone length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "gene_v"},
         "N length distribution" :     { "mode": "bar", "x" : "n",              "y": "gene_v"},
         "compare two samples" : { "mode": "plot", "x" : "Size", "y": "otherSize"}
+        
     };
     this.default_preset = 1
 
@@ -219,6 +285,7 @@ ScatterPlot.prototype = {
 
         this.select_preset.selectedIndex = this.default_preset
         this.changePreset();
+        this.tsne_ready=false;
 
         this.resize();
     },
@@ -325,19 +392,6 @@ ScatterPlot.prototype = {
             this.nodes[i].old_y = [0, 0, 0, 0, 0]
         };
 
-        //Initialisation of tmp array which contains all the edges
-        this.allEdges = this.m.links;
-        //Initialisation of array which contains all the usefull edges for the Edit Distane visualization
-        this.edge = this.keepUsefullEdgesForEditDistanceGraph(this.allEdges);
-
-        /*
-        //DBSCAN algorithm loading
-        this.m.loadDBSCAN(this);
-        //DBSCAN sliders values loading
-        this.m.changeSliderValue(true, "DBSCANNbrSlider", "Nbr ", this.m.nbr);
-        this.m.changeSliderValue(true, "DBSCANEpsSlider", "Eps ", this.m.eps);
-        */
-
         //Initialisation of the D3JS physic engine
         this.force = d3.layout.force();
         this.initMotor();
@@ -409,10 +463,6 @@ ScatterPlot.prototype = {
             .charge(0) //Default value: -1
             .friction(0.75) //Velocity
             .size([1, 1]);
-        //Previous graph destruction
-        this.unsetGraphLinks();
-        //Free nodes
-        this.fixedAllClones(false);
     },
 
     /**
@@ -455,15 +505,17 @@ ScatterPlot.prototype = {
         
         //Ajout de chaque méthode de répartition dans les menus pour l'axe des X/Y
         for (var key in this.available_axis) {
-            var element = document.createElement("option");
-            element.setAttribute('value', key);
-            var text = document.createTextNode(this.available_axis[key].label);
-            element.appendChild(text);
+            if (typeof this.available_axis[key].hide == "undefined" || !this.available_axis[key].hide){
+                var element = document.createElement("option");
+                element.setAttribute('value', key);
+                var text = document.createTextNode(this.available_axis[key].label);
+                element.appendChild(text);
 
-            var element2 = element.cloneNode(true);
+                var element2 = element.cloneNode(true);
 
-            this.select_x.appendChild(element);
-            this.select_y.appendChild(element2);
+                this.select_x.appendChild(element);
+                this.select_y.appendChild(element2);
+            }
         }
 
         this.select_preset = document.createElement('select');
@@ -999,6 +1051,10 @@ ScatterPlot.prototype = {
             .updateClones()
             .updateMenu()
             .initGrid();
+        
+        if (this.splitX == "tsneX_system" || this.splitX == "tsneX"){
+            this.changeSplitMethod(this.splitX, this.splitY, this.mode)
+        }
     },
     
     /**
@@ -1017,7 +1073,7 @@ ScatterPlot.prototype = {
         //On prend la hauteur de la div
         this.resizeH = div_height - this.marge_top - this.marge_bot;
 
-        if (this.splitX == "allele_v" || this.splitX == "gene_v" || this.splitX == "allele_j" || this.splitX == "gene_j" ||
+        if (this.splitX == "allele_v" || this.splitX == "gene_v" || this.splitX == "allele_j" || this.splitX == "gene_j" || this.splitX == "tsneX_system" ||
             (this.mode == "plot" & (this.splitY == "allele_v" || this.splitY == "gene_v" || this.splitY == "allele_j" || this.splitY == "gene_j"))) {
             this.use_system_grid = true;
             this.buildSystemGrid()
@@ -1226,9 +1282,9 @@ ScatterPlot.prototype = {
         var elapsedTime = 0;
 
         this.compute_size()
+            .initGrid()
             .updateClones()
-            .updateMenu()
-            .initGrid();
+            .updateMenu();
 
         //Donne des informations quant au temps de MàJ des données
         elapsedTime = new Date()
@@ -1240,7 +1296,7 @@ ScatterPlot.prototype = {
      * update all clones (color / position / axis)
      * */
     updateClones: function() {
-        if (this.mode == "bar" && !this.reinit) {
+        if (this.mode == "bar") {
             this.computeBarTab();
         }
         
@@ -1344,36 +1400,27 @@ ScatterPlot.prototype = {
                         .getColor());
                 })
         }
-        //Activation des liens "utiles" pour le graphe
-        if (this.reinit) this.activeLine();
     },
 
     /**
      * set default axisX/Y
      * */
     initGrid: function() {
-
         self = this;
 
-        //Réinitialisation de la grille si les légendes sont placées sur "graph", mais que la répartition par distance d'édition est désactivée
-        if ((self.splitX == "graph" || self.splitY == "graph" || self.splitX == "dbscan" ||  self.splitY == "dbscan") && self.reinit == false) {
-            this.splitX = "gene_v";
-            this.splitY = "gene_j";
-        }
-
-        if (!self.reinit) this.axis_x_update(this.axisX.labels);
-        if (!self.reinit) this.axis_y_update(this.axisY.labels);
-        if (!self.reinit) this.system_label_update(this.systemGrid.label);
+        this.axis_x_update(this.axisX.labels);
+        this.axis_y_update(this.axisY.labels);
+        this.system_label_update(this.systemGrid.label);
 
         return this;
     },
 
+     
     /**
      * retrieve and apply selected splitMethod in the axisX menu selector
      * */
     changeXaxis: function() {
         var elem = this.select_x;
-        if (this.checkGraphMethod(elem.value)) return;
         this.changeSplitMethod(elem.value, this.splitY, this.mode);
         this.select_preset.selectedIndex = 0
     },
@@ -1383,7 +1430,6 @@ ScatterPlot.prototype = {
      * */
     changeYaxis: function() {
         var elem = this.select_y;
-        if (this.checkGraphMethod(elem.value)) return;
         this.changeSplitMethod(this.splitX, elem.value, this.mode);
         this.select_preset.selectedIndex = 0
     },
@@ -1713,6 +1759,7 @@ ScatterPlot.prototype = {
      * @param {string} mode 
      * */
     changeSplitMethod: function(splitX, splitY, mode) {
+        var self = this;
         
         if (mode == "bar" && mode != this.mode) {
             this.endPlot();
@@ -1723,10 +1770,11 @@ ScatterPlot.prototype = {
         if (mode != "bar" && this.mode == "bar") {
             endbar = true;
         }
-
+        
         this.splitX = splitX;
         this.splitY = splitY;
         this.mode = mode;
+        this.compute_size();
 
         this.updateAxis(this.axisX, this.splitX);
         this.updateAxis(this.axisY, this.splitY);
@@ -1745,6 +1793,14 @@ ScatterPlot.prototype = {
             this.m.graph.setOtherVisibility(this.splitX == "otherSize" || this.splitY == "otherSize")
         }
 
+        if (splitX == "tsneX" || splitX == "tsneX_system"){
+            if (!this.tsne_ready){
+                console.log("plop")
+                this.tsne_ready=true;
+                this.m.similarity_builder.init(function(){self.changeSplitMethod(splitX, splitY, mode)});
+                return 0;
+            }
+        }
     },
 
     /**
@@ -1769,7 +1825,7 @@ ScatterPlot.prototype = {
             default :
                 if (typeof this.available_axis[splitMethod]){
                     var a = this.available_axis[splitMethod];
-                    axis.custom(a.fct, a.min, a.max, a.output, a.log)
+                    axis.custom(a.fct, a.min, a.max, a.output, a.log, a.display_label)
                 }
             break;
         }
@@ -2006,453 +2062,6 @@ ScatterPlot.prototype = {
         }
     },
     
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    /*********************************************
-     * DBSCAN
-     * *******************************************/
-    
-    
-    
-    
-    
-    /* Function which permits to modify the D3JS physic engine, compared to the graph distribution
-     * */
-    graphMotor: function() {
-        var self = this;
-        this.force
-            //Added greater 'alpha' to obtains a larger nodes animation
-            .alpha(100)
-            //Gravity only for Edit Distance - no gravity to DBSCAN for fixed nodes in the SVG frame (without charge between nodes)
-            .gravity(function(d) {
-                if (self.dbscanActive) return 0;
-                else return -0.001
-            })
-            //Added edges array (different according to the graphe visualization)
-            .links(self.edge)
-            /*
-            LinkDistance:
-                -Edit Distance = Distance power 1.3, with zoom and coeff parameters
-                -DBSCAN = 2 choices:
-                                    -> CORE node = default length (see DBSCANLength) and zoom + coeff parameters
-                                    -> NEAR node = attribution  of a superior length
-            */
-            .linkDistance(function(d) {
-                if (self.dbscanActive && (self.m.clone(d.source)
-                        .tagCluster == "CORE" || self.m.clone(d.target)
-                        .tagCluster == "CORE"))
-                    return (self.DBSCANLength * self.mouseZoom * (self.resizeCoef / ((20 * self.resizeCoef) / 100)));
-                else {
-                    //Added length between nodes to let the CORE node at the middle of the cluster
-                    if (self.dbscanActive) return (8 * self.mouseZoom * (self.resizeCoef / ((20 * self.resizeCoef) / 100)));
-                }
-                if (!self.dbscanActive) return (Math.pow(d.len, 1.4) * self.mouseZoom * (self.resizeCoef / ((20 * self.resizeCoef) / 100)));
-            })
-            .charge(function(d) {
-                if (self.reloadCharge) {
-                    return -1;
-                }
-            }) //Allows to act to the DBSCAN visualization -> clusters with length not equals to 1 are rejected -> independant clusters = independant graphs 
-            .linkStrength(1) //Added strong strength
-            .size([self.resizeW - 50, self.resizeH - 50]);
-        this.setGraphLinks(); //Edges initialization in the graph
-    },
-
-    /* Function which allows to initialize the edges creation, for the D3JS engine
-     * */
-    setGraphLinks: function() {
-        var self = this;
-        //Add links selected, added data
-        var allLinks = this.grpLinks
-            .selectAll("line")
-            //Attributing to each 'line' object a data contains in the edges array, give with the engine initialization
-            .data(self.edge);
-        //Added real edges (see setEdgeContainer developer documentation)
-        this.setEdgeContainer(allLinks);
-    },
-
-    /*  Function which allow to initialize/re-initialize the edges array of the graph, and unset lines
-     * */
-    unsetGraphLinks: function() {
-        this.force.links([]); //The engine not contains links
-        this.grpLinks.selectAll("line")
-            .remove(); //Useless links are delete
-    },
-
-    /* Function which allows to re-initialize the D3JS engine, according to the visualization
-     * -> If visualization 'DBSCAN' -> New configuration fo the physic engine (see 'graphMotor')
-     * -> Else, configuration by default of the engine (see 'init_motor')
-     * */
-    reinit_motor: function() {
-        this.m.resetClusters();
-        if (!this.reinit) {
-            //The configuration of the engine is active
-            this.reinit = true;
-            //All the nodes positions are saved
-            if (this.canSavePositions)
-                this.saveInitialPositions();
-            //Permission to save all positions is now delete - in order to not save initial positions of nodes when switching: DBSCAN -> Edit Distance OR Edit Distance -> DBSCAN
-            this.canSavePositions = false;
-            //Re-init of X/Y axis
-            this.switchInitMenu();
-            /* Relaunch of the physic engine ->
-             * If DBSCAN mode is activated, we compute the DBSCAN object
-             * Else, relaunch of the engine for Edit Distance visualization 
-             */
-            if (this.dbscanActive) {
-                this.activeSliderDistanceMax(false);
-                this.runGraphVisualization("dbscan");
-            } else this.runGraphVisualization("edit_distance");
-            //Charge disabled
-            this.reloadCharge = false;
-            //Activation of the slider to move the distanceMax parameter, IF AND ONLY IF the Edit Distance visualization is activated
-            if (!this.dbscanActive) {
-                this.activeSliderDistanceMax(true);
-            }
-        } else {
-            //Graph mode disabled
-            this.reinit = false;
-            //Reloading of the charge
-            this.reloadCharge = true;
-            //Allow to save all nodes
-            this.canSavePositions = true;
-            //Re-init grid (for 'normal' distribution)
-            this.initGrid();
-            //Re-init of X/Y axis menu (see switchInitMenu doc)
-            this.switchInitMenu();
-            //Motor by default
-            this.initMotor();
-            //Reloading of the initial positions of nodes
-            this.reinitInitialPositions();
-            //Reloading of physic engine
-            this.force.start();
-            //Reloading of graph distribution axis
-            this.m.update();
-            //Edit Distance slider disabled
-            this.activeSliderDistanceMax(false);
-        }
-    },
-
-    /* Function which allows to run a graph visualization
-     * @param viewing: the visualization given
-     */
-    runGraphVisualization: function(viewing) {
-        //All the links are now erased
-        this.unsetGraphLinks();
-        //Compute edges, according to the visualization given
-        switch (viewing) {
-            case "dbscan":
-                this.computeDBSCANEdges();
-                break;
-            case "edit_distance":
-                this.computeEditDistanceEdges();
-                break;
-        }
-        //Re-init the physic engine
-        this.graphMotor();
-        //Added color to edges, according to the visualization given
-        this.addColorEdge();
-        //We allow to separate clusters
-        this.reloadCharge = true;
-        //Reload the physic engine
-        this.force.start();
-        //Charge disabled -> no separation of clusters by charge
-        this.reloadCharge = false;
-    },
-
-    /* Function which allows to create physically edges (see D3JS developer documentation on enter() and remove())
-     * @allEdges: array of all edges
-     */
-    setEdgeContainer: function(allEdges) {
-        //Added SVG 'line' element -> "line_active" 'cause no apparition of links - links will be active when manual selection of one or more clone(s)
-        this.edgeContainer = allEdges.enter()
-            .append("svg:line")
-            .attr("class", "line_inactive")
-            .on("mouseover", function(d) {
-                self.m.focusEdge(d);
-            });
-    },
-
-    /* Function which permits to add a color for each object which is contains in the initial edges array
-     */
-    addColorEdge: function() {
-        //DBSCAN visualization case
-        if (this.dbscanActive) {
-            for (var i = 0; i < this.edge.length; i++) {
-                //Yellow color attributed to edges which have source or target, with tag 'CORE'
-                if (this.m.clone(this.edge[i].source)
-                    .tagCluster == "CORE" || this.m.clone(this.edge[i].target)
-                    .tagCluster == "CORE")
-                    this.edge[i].color = "yellow";
-                else
-                //Red color attributed to edges which have source or target, with tag 'NEAR' (neighbors)
-                if (this.m.clone(this.edge[i].source)
-                    .tagCluster == "NEAR" || this.m.clone(this.edge[i].target)
-                    .tagCluster == "NEAR")
-                    this.edge[i].color = "red";
-            }
-        }
-        //Edit Distance visualization case
-        else {
-            for (var i = 0; i < this.edge.length; i++) {
-                //If the link's length is lower than distanceMax, color the link
-                if (this.edge[i].len <= this.distanceMax)
-                //colorGenerator usage for color red (0) to blue (270), by gap: 270/distanceMax
-                    this.edge[i].color = colorGenerator((270 / this.distanceMax) * this.edge[i].len);
-                //If the link is not interesting, we attribute the white color (usefull for the activeAllLine() function)
-                else this.edge[i].color = "white";
-            }
-        }
-    },
-
-    /* Function which allows to compute usefull edges in dataset, for the DBSCAN graph visualization
-     */
-    computeDBSCANEdges: function() {
-        this.edge = self.keepUsefullEdgesForDBSCANGraph(self.allEdges);
-    },
-
-    /* Function which allows to compute usefull edges in dataset, for the Edit Distance graph visualization
-     */
-    computeEditDistanceEdges: function() {
-        this.edge = self.keepUsefullEdgesForEditDistanceGraph(self.allEdges);
-    },
-
-    /* Function which allows to keep only edges which concerns nodes in specific cluster -> verification done to see if source and target is in the same cluster
-       @param tmp: array of all edges
-     */
-    keepUsefullEdgesForDBSCANGraph: function(tmp) {
-        var returnedTab = [];
-        if (typeof tmp != 'undefined') {
-            for (var i = 0; i < tmp.length; i++) {
-                if (this.m.clone(tmp[i].source)
-                    .cluster == this.m.clone(tmp[i].target)
-                    .cluster) {
-                    returnedTab.push(tmp[i]);
-                }
-            }
-        }
-        return returnedTab;
-    },
-
-    /* Function which allows to keep only edges which length is lower than distanceMax
-       @param tmp: array of all edges
-     */
-    keepUsefullEdgesForEditDistanceGraph: function(tmp) {
-        var returnedTab = [];
-        if (typeof tmp != 'undefined') {
-            //Sorted array, according to growing edges length
-            tmp.sort(function(a, b) {
-                if (a.len < b.len) return -1;
-                if (a.len > b.len) return 1;
-                return 0
-            });
-            for (var i = 0; i < tmp.length; i++) {
-                //Keep only edges lower or equals than distanceMax
-                if (tmp[i].len <= this.distanceMax)
-                    returnedTab.push(tmp[i]);
-                else
-                    break;
-            }
-        }
-        return returnedTab
-    },
-
-    
-    /* Function which allows to update edges of graph
-     * */
-    updateGraph: function() {
-        this.setGraphLinks();
-    },
-    
-    /*Function which allows to switch between initial menu and graph menu*/
-    switchInitMenu: function() {
-        var axis_select_x = document.getElementsByClassName("axis_select_x");
-        var axis_select_y = document.getElementsByClassName("axis_select_y");
-        var graph_selector = document.getElementsByClassName("axis_select_graph");
-        for (var i = 0; i < axis_select_x.length; i++)
-            axis_select_x[i].style.display = this.reinit ? "none" : "block";
-        for (var i = 0; i < axis_select_y.length; i++)
-            axis_select_y[i].style.display = this.reinit ? "none" : "block";
-        for (var i = 0; i < graph_selector.length; i++)
-            graph_selector[i].style.display = this.reinit ? "block" : "none";
-    },
-    
-    /* Function which allows to verify if we can switch to an accessible distribution
-     * @value: dbscan / graph, according to the visualization hope
-     */
-    checkGraphMethod: function(value) {
-        switch (value) {
-            case 'dbscan':
-                this.changeSplitMethod('dbscan', 'dbscan');
-                return true;
-            case 'graph':
-                this.changeSplitMethod('graph', 'graph');
-                return true;
-        }
-        return false;
-    },
-    
-        /* Function which allows to add a stroke attribute to all edges
-     */
-    addColor: function() {
-        this.edgeContainer
-            .style("stroke", function(d) {
-                return d.color;
-            });
-    },
-
-    /*Function which permits to compute and add edges positions, according to source and target nodes
-     */
-    addPosition: function() {
-        var self = this;
-        //self.marge = margin top and left given in the scatterPlot
-        this.edgeContainer
-            //Awarding of the source position
-            .attr("x1", function(d) {
-                return (d.source.px + self.marge_left);
-            })
-            .attr("y1", function(d) {
-                return (d.source.py + self.marge_top);
-            })
-            //Awarding of the target position
-            .attr("x2", function(d) {
-                return (d.target.px + self.marge_left);
-            })
-            .attr("y2", function(d) {
-                return (d.target.py + self.marge_top);
-            });
-    },
-    
-    
-   /**
-     * Function which allows to re-init all points to a (no-)fixed position
-     * @bool: True -> fix / False -> no-fix
-     */
-    fixedAllClones: function(bool) {
-        for (var i = 0; i < this.nodes.length; i++)
-            this.nodes[i].fixed = bool;
-    },
-
-    /* Function which permits to force all no-clustered clones, to return at their initial position
-     */
-    forceNodesToStayInInitialPosition: function() {
-        for (var i = 0; i < this.m.clones.length; i++) {
-            if (this.m.dbscan.clusters[this.m.clone(i)
-                    .cluster].length == 1) {
-                //Calcul du delta
-                var x = this.nodes[i].x;
-                var y = this.nodes[i].y;
-                var deltaX = this.initialPositions[i].initPosX - x;
-                var deltaY = this.initialPositions[i].initPosY - y;
-                this.nodes[i].x += 5 * deltaX / 100;
-                this.nodes[i].y += 5 * deltaY / 100;
-            }
-        }
-    },
-
-    /* Save clones positions in object which contains x/y coordinates (usefull for init_motor -> graphMotor)
-     * Usefull function to force clones to return at their initial position IF the clone is not in a cluster, for the DBSCAN visualization
-     */
-    saveInitialPositions: function() {
-        function newObject(x, y) {
-            this.initPosX = x;
-            this.initPosY = y;
-        };
-        for (var i = 0; i < this.nodes.length; i++) {
-            this.initialPositions.push(new newObject(this.nodes[i].x, this.nodes[i].y));
-        }
-    },
-
-    /* Function which permits to add X/Y margins to the initialPositions array (which contains initial positions of all nodes) - usefull for the selector movements
-     * @marginX: margin left
-     * @marginY: margin top
-     */
-    addNextPositionsToClones: function(marginX, marginY) {
-        for (var i = 0; i < this.nodes.length; i++) {
-            //Added X margin
-            this.initialPositions[i].initPosX += marginX;
-            //Added Y margin
-            this.initialPositions[i].initPosY += marginY;
-        }
-    },
-
-    /* Function which re-init initial positions of all clones
-     */
-    reinitInitialPositions: function() {
-        this.initialPositions = [];
-    },
-
-    /* Function which allow to vary the max distance given between two clones
-     * @distanceMax: the new distanceMax
-     */
-    displayDistanceMax: function(distanceMax) {
-        //Replacement of the distanceMax attribute, if distanceMax parameter is not undefined
-        distanceMax = typeof(distanceMax) != "undefined" ? distanceMax : this.distanceMax;
-        this.distanceMax = distanceMax;
-
-        //Disable and active slider -> display value of the slider
-        this.activeSliderDistanceMax(false);
-        this.activeSliderDistanceMax(true);
-
-        var display_container = document.getElementById('distanceMax_slider');
-        if (display_container != null) {
-            display_container.value = distanceMax;
-        }
-
-        //Compute and display EditDistance visualization
-        this.runGraphVisualization("edit_distance");
-
-        //Update the style of all elements
-        this.updateElemStyle();
-    },
-
-    /* Activation/Disactivation of the distanceMax display slider
-     * @bool: True -> on / False -> off
-     */
-    activeSliderDistanceMax: function(bool) {
-        var slider = document.getElementById("displayMax_slider");
-        this.m.changeSliderEditDistanceValue(bool, this.distanceMax);
-        bool ? slider.style.display = "" : slider.style.display = "none";
-    },
-
-    /* Function which allow to activate the opacity of a specific clone
-     */
-    activeLine: function() {
-        var self = this;
-        var selected = self.m.getSelected()
-        if (selected.length > 0) {
-            this.grpLinks.selectAll("line")
-                .attr("class", function(d) {
-                    if ((selected.indexOf(d.source.id) >= 0 || sselected.indexOf(d.target.id) >= 0) && (self.m.clone(d.source)
-                            .isActive() && self.m.clone(d.target)
-                            .isActive())) return "line_active";
-                    else return "line_inactive"
-                });
-        } else this.activeAllLine(false);
-    },
-
-    /* Function which allows to activate/disactivate all lines which are contains in the scatterPlot
-     * @bool: True -> active all / False -> disactive all
-     */
-    activeAllLine: function(bool) {
-        var self = this;
-        this.grpLinks.selectAll("line")
-            .attr("class", bool ? "line_active" : "line_inactive");
-    }
-
 
 }
 ScatterPlot.prototype = $.extend(Object.create(View.prototype), ScatterPlot.prototype);

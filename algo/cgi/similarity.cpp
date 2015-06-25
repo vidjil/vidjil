@@ -6,6 +6,8 @@
 #include "../core/dynprog.h"
 #include "../core/fasta.h"
 #include "../core/lazy_msa.h"
+#include "../core/similarityMatrix.h"
+#include "../core/compare-all.h"
 #include "../lib/json.hpp"
 
 using namespace std ;
@@ -54,14 +56,17 @@ int main(int argc, char* argv[])
   
   const char* fdata;
   //  ostringstream ost; 
-  char filename[] = "/tmp/VidjilAlignXXXXXX";
+  char filename[] = "/tmp/VidjilSimilarityXXXXXX";
   json result;
   bool error = false;
 
   bool cgi_mode;
-  
+  bool output_json = false;
+    
+  //CGI
     if (argc <= 1){
       cgi_mode=true;
+      output_json=true;
       cout <<"Content-type: text/html"<<endl<<endl;
 
       error = ! check_cgi_parameters(result);
@@ -75,62 +80,56 @@ int main(int argc, char* argv[])
           fdata = filename;
         }
       }
+      
+    //command
     }else{
       cgi_mode=false;
-      fdata = argv[1];
+      
+      //help !
+      if (strcmp(argv[1], "-h")==0){
+          
+        cout << "usage: similarity [-h] [-j] file\n\n";
+        cout << "file : fasta file\n";
+        cout << "-h : help\n";
+        cout << "-j : json output\n";
+        return 0;
+      }
+      
+      if (argc >= 3){
+        if (strcmp(argv[1], "-j")==0) {
+          output_json = true;
+        }
+        fdata = argv[2];
+      }else{
+        fdata = argv[1];
+      }
     }
+    
+    
     
     if (!cgi_mode) cout <<endl;
 
     if (! error) {
-      Fasta fa(fdata, 1, " ", !cgi_mode);
+      Fasta fa(fdata, 1, " ", !output_json);
     
-    
-      string seq0 = fa.sequence(0);
-    
-      LazyMsa lm = LazyMsa(fa.size(), seq0);
-    
-      for (int i=1; i < fa.size(); i++){
-        string seq1 = fa.sequence(i);
-        lm.add(seq1);
-      }
-    
-      string *align_str;
-      align_str =new string[lm.sizeUsed+2];
-      lm.align(align_str);
-    
-
-      if (cgi_mode) {
-        if (! error) {
-          json alignment;
+      list<Sequence> reads;
+      reads = fa.getAll();
       
-          for (int i=0; i<lm.sizeUsed+2; i++){
-            alignment.push_back(align_str[i]);
-          }
-          result["seq"] = alignment;
-        }
+      list<string> labels;
+      for (int i=0; i < reads.size(); i++) {
+        labels.push_back(fa.label(i));
+      }
+      
+      SimilarityMatrix matrix = compare_all(reads, labels);
 
-        remove(filename);
-        cout << result.dump(2);
+      if (output_json) {
+          json j;
+          j << JsonOutputSimilarityMatrix(matrix);
+          cout << j.dump();
       }else{
-        int length=60;
-        int n=align_str[0].size();
-        int j=0;
-      
-        while (n > 0){
-          for (int i=0; i<lm.sizeUsed+2; i++){
-	  
-            cout<<" >  "<<align_str[i].substr(j*length,length)<<"  <  "<<fa.label(i)<<endl;
-          }
-          cout<<endl;
-          n=n-length;
-          j++;
-        }
-      
+        cout << RawOutputSimilarityMatrix(matrix, 90);
       }
+      
     }
       
 }
-
-
-
