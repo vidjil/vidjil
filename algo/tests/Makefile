@@ -1,7 +1,7 @@
-CC=g++
+CXX=g++
 INCLUDE=-I ..
 OPTIM=-g -O0 $(COVERAGE)
-override CXXFLAGS += -W -Wall $(OPTIM)
+override CXXFLAGS += -std=c++11 -W -Wall $(OPTIM)
 LDLIBS=-lz
 SRC= tests.cpp
 EXEC=$(SRC:.cpp=)
@@ -63,7 +63,7 @@ valgrind_tests: vidjil tests
 	$(VALGRIND) ./tests
 
 $(EXEC): % : %.o $(LIB) 
-	$(CC) -o $@ $< $(LIB) $(LDLIBS) $(LDFLAGS) $(CXXFLAGS)
+	$(CXX) -o $@ $< $(LIB) $(LDLIBS) $(LDFLAGS) $(CXXFLAGS)
 
 
 ../core.a: core
@@ -76,7 +76,7 @@ core:
 	$(MAKE) -C ../core
 
 %.o: %.cpp $(OTHER_SRC)
-	$(CC) -o $@ $(INCLUDE) -c $< $(CXXFLAGS)
+	$(CXX) -o $@ $(INCLUDE) -c $< $(CXXFLAGS)
 
 clean:
 	rm -f *.o $(EXEC)
@@ -89,14 +89,14 @@ cleantests:
 cleanall: clean cleancoverage cleantests
 
 forcedep:
-	g++ $(INCLUDE) -M $(SRC) > dep.mk
+	$(CXX) $(CXXFLAGS) $(INCLUDE) -M $(SRC) > dep.mk
 
 force:
 
 DEP=$(wildcard dep.mk)
 
 ifeq (${DEP},)
-$(shell	g++ $(INCLUDE) -M $(SRC) > dep.mk)
+$(shell	$(CXX) $(CXXFLAGS) $(INCLUDE) -M $(SRC) > dep.mk)
 endif
 include dep.mk
 

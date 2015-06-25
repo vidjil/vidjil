@@ -42,7 +42,8 @@ Vidjil is open-source, released under GNU GPLv3 license.
 Vidjil has been successfully tested on the following platforms :
  - CentOS 6.3 amd64
  - CentOS 6.3 i386
- - Debian Squeeze 
+ - Debian Squeeze 6.0
+ - Debian Wheezy 7.0 amd64
  - Fedora 17
  - FreeBSD 9.2 amd64
  - NetBSD 6.0.1 amd64
@@ -68,19 +69,45 @@ g++-4.8 is included in the devtools 2.0.
 
 #+BEGIN_SRC sh
 sudo wget http://people.centos.org/tru/devtools-2/devtools-2.repo -O /etc/yum.repos.d/devtools-2.repo
-sudo yum install devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++
-scl enable devtoolset-2 bash # Open a shell running devtools
-#+END_SRC sh
+sudo yum install devtoolset-2-gcc devtoolset-2-binutils devtoolset-2-gcc-c++ devtoolset-2-valgrind
+
+# scl enable devtoolset-2 bash     # either open a shell running devtools
+source /opt/rh/devtoolset-2/enable # ... or source devtools in the same shell
+#+END_SRC
 
 *** FreeBSD 9.2
 
 g++-4.8 is included in FreeBSD 9.2.
 
+
+*** Debian Wheezy 7.0
+
+g++-4.8 should be pinned from testing.
+Put in =/etc/apt/preferences= the following lines:
+
+#+BEGIN_SRC sh
+Package: *
+Pin: release n=wheezy
+Pin-Priority: 900
+
+Package: g++-4.8, gcc-4.8, valgrind*
+Pin: release n=jessie
+Pin-Priority: 950
+#+END_SRC
+
+Then g++ 4.8 can be installed.
+
+#+BEGIN_SRC sh
+apt-get update
+apt-get install g++-4.8 valgrind
+#+END_SRC
+
+
 *** Ubuntu 14.04 LTS
 
 #+BEGIN_SRC sh
 sudo apt-get install g++-4.8
-#+END_SRC sh
+#+END_SRC
 
 *** Ubuntu 12.04 LTS
 
@@ -91,7 +118,7 @@ sudo apt-get install python-software-properties
 sudo add-apt-repository ppa:ubuntu-toolchain-r/test
 sudo apt-get update
 sudo apt-get install g++-4.8
-#+END_SRC sh
+#+END_SRC
 
 
 
