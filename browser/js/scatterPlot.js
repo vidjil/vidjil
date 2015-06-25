@@ -58,7 +58,6 @@ function ScatterPlot(id, model) {
        BEG --
     */
     this.mouseZoom = 1; //Zoom (scroll wheel)
-    this.reinit = false; //Boolean used to know the physics engine state (reinit/init)
     this['continue'] = false; //Boolean used for the nodes movements
     this.allEdges = new Array(); //Initial edges array
     this.edgeSaved = new Array(); //Edges array saved for the Edit Distance visualization
@@ -1293,7 +1292,7 @@ ScatterPlot.prototype = {
      * update all clones (color / position / axis)
      * */
     updateClones: function() {
-        if (this.mode == "bar" && !this.reinit) {
+        if (this.mode == "bar") {
             this.computeBarTab();
         }
         
@@ -1397,36 +1396,27 @@ ScatterPlot.prototype = {
                         .getColor());
                 })
         }
-        //Activation des liens "utiles" pour le graphe
-        if (this.reinit) this.activeLine();
     },
 
     /**
      * set default axisX/Y
      * */
     initGrid: function() {
-
         self = this;
 
-        //Réinitialisation de la grille si les légendes sont placées sur "graph", mais que la répartition par distance d'édition est désactivée
-        if ((self.splitX == "graph" || self.splitY == "graph" || self.splitX == "dbscan" ||  self.splitY == "dbscan") && self.reinit == false) {
-            this.splitX = "gene_v";
-            this.splitY = "gene_j";
-        }
-
-        if (!self.reinit) this.axis_x_update(this.axisX.labels);
-        if (!self.reinit) this.axis_y_update(this.axisY.labels);
-        if (!self.reinit) this.system_label_update(this.systemGrid.label);
+        this.axis_x_update(this.axisX.labels);
+        this.axis_y_update(this.axisY.labels);
+        this.system_label_update(this.systemGrid.label);
 
         return this;
     },
 
+     
     /**
      * retrieve and apply selected splitMethod in the axisX menu selector
      * */
     changeXaxis: function() {
         var elem = this.select_x;
-        if (this.checkGraphMethod(elem.value)) return;
         this.changeSplitMethod(elem.value, this.splitY, this.mode);
         this.select_preset.selectedIndex = 0
     },
@@ -1436,7 +1426,6 @@ ScatterPlot.prototype = {
      * */
     changeYaxis: function() {
         var elem = this.select_y;
-        if (this.checkGraphMethod(elem.value)) return;
         this.changeSplitMethod(this.splitX, elem.value, this.mode);
         this.select_preset.selectedIndex = 0
     },
