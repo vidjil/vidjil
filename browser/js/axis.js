@@ -143,9 +143,10 @@ Axis.prototype = {
      * @param {boolean} percent - display label as percent ( value 1 => 100%)
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * */
-    custom: function(fct, default_min, default_max, output, use_log){
+    custom: function(fct, default_min, default_max, output, use_log, display_label){
         output = typeof output !== 'undefined' ? output : 'float';
         use_log = typeof use_log !== 'undefined' ? use_log : false;
+        display_label = typeof display_label !== 'undefined' ? display_label : true;
         var self = this;
         
         this.fct = fct;
@@ -242,7 +243,7 @@ Axis.prototype = {
             }
         }
         
-        this.computeCustomLabels(min, max, output, use_log)
+        this.computeCustomLabels(min, max, output, use_log, display_label)
     },
     
     /**
@@ -253,13 +254,15 @@ Axis.prototype = {
      * @param {boolean} percent - display label as percent ( value 1 => 100%)
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
      * */
-    computeCustomLabels: function(min, max, output, use_log){
+    computeCustomLabels: function(min, max, output, use_log, display_label){
         this.labels = [];
         
         if ((output == "string") || (output == "string-sorted")) {
             var key = Object.keys(this.values)
             for (var i in key){
-                this.labels.push(this.label("line", this.values[key[i]], key[i]));
+                var text = key[i];
+                if (!display_label) text = "";
+                this.labels.push(this.label("line", this.values[key[i]], text));
             }
         }else{
             if (use_log){
@@ -268,6 +271,7 @@ Axis.prototype = {
                     var pos = this.sizeScale(h); // pos is possibly already reversed
                     var text = this.m.formatSize(h, false)
                     if (pos >= 0 && pos <= 1)
+                    if (!display_label) text = "";
                     this.labels.push(this.label("line", pos, text));
                     h = h / 10;
                 }
@@ -286,7 +290,7 @@ Axis.prototype = {
                     }
                     
                     if (this.reverse) pos = 1 - pos; 
-                    
+                    if (!display_label) text = "";
                     this.labels.push(this.label("line", pos, text));
                 }
             }
