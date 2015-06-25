@@ -42,6 +42,8 @@ from utils import *
 VIDJIL_JSON_VERSION = "2014.10"
 FUSE_VERSION = "vidjil fuse"
 
+TOOL_SIMILARITY = "../algo/tools/similarity"
+
 GERMLINES_ORDER = ['TRA', 'TRB', 'TRG', 'TRD', 'DD', 'IGH', 'DHJH', 'IJK', 'IJL'] 
 
 ####
@@ -728,8 +730,11 @@ def main():
         fasta += jlist_fused.d["clones"][i].d["id"] + "\n"
     fasta_file = open("tmp", 'w')
     fasta_file.write(fasta)
-    jlist_fused.d["similarity"] = json.loads(subprocess.check_output(["../algo/tools/similarity", "-j", "tmp"]))
-    
+    try:
+        out = subprocess.check_output([TOOL_SIMILARITY, "-j", "tmp"])
+        jlist_fused.d["similarity"] = json.loads(out)
+    except OSError:
+        print("! failed: %s" % TOOL_SIMILARITY)
     print("### Save merged file")
     jlist_fused.save_json(args.output)
 
