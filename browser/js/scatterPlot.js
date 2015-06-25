@@ -181,7 +181,8 @@ function ScatterPlot(id, model) {
             log: false,
             min: 0,
             max: 1, 
-            hide : true 
+            hide : true,
+            display_label : false
         },
         "tsneY": { 
             label: "",
@@ -196,7 +197,8 @@ function ScatterPlot(id, model) {
             log: false,
             min: 0,
             max: function(){return self.gridSizeH/self.gridSizeW},
-            hide : true 
+            hide : true,
+            display_label : false
         },
         "tsneX_system": { 
             label: "",
@@ -211,7 +213,8 @@ function ScatterPlot(id, model) {
             log: false,
             min: 0,
             max: 1, 
-            hide : true 
+            hide : true,
+            display_label : false
         },
         "tsneY_system": { 
             label: "",
@@ -226,7 +229,8 @@ function ScatterPlot(id, model) {
             log: false,
             min: 0,
             max: function(){return self.gridSizeH/self.gridSizeW},
-            hide : true 
+            hide : true,
+            display_label : false
         }
     }
     
@@ -1807,7 +1811,7 @@ ScatterPlot.prototype = {
             default :
                 if (typeof this.available_axis[splitMethod]){
                     var a = this.available_axis[splitMethod];
-                    axis.custom(a.fct, a.min, a.max, a.output, a.log)
+                    axis.custom(a.fct, a.min, a.max, a.output, a.log, a.display_label)
                 }
             break;
         }
