@@ -84,13 +84,17 @@ Similarity.prototype = {
         }
 
         var result = tsne.getSolution(); 
+        result = this.rescale(result);
         var yMax = 0;
+        var xMax = 0;
         
         for (var i in result){
             if (result[i][1] > yMax) yMax = result[i][1];
+            if (result[i][0] > xMax) xMax = result[i][0];
             m.clone(i).tsne = result[i]
         }
         this.yMax = yMax;
+        this.xMax = xMax;
         
         return this;
     },

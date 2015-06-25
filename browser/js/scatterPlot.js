@@ -175,7 +175,7 @@ function ScatterPlot(id, model) {
                 var k=1;
                 var yMax = self.m.similarity_builder.yMax
                 if (yMax > r) k = r/yMax
-                return k*self.m.clone(cloneID).tsne[0]
+                return k*self.m.clone(cloneID).tsne[0] + (1-k)/2
             },
             output: "float-2", 
             log: false,
@@ -207,7 +207,7 @@ function ScatterPlot(id, model) {
                 var k=1;
                 var yMax = self.m.similarity_builder.system_yMax[self.m.clone(cloneID).get("germline")]
                 if (yMax > r) k = r/yMax
-                return k*self.m.clone(cloneID).tsne_system[0]
+                return k*self.m.clone(cloneID).tsne_system[0] + (1-k)/2
             },
             output: "float-2", 
             log: false,
