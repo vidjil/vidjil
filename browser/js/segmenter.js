@@ -140,22 +140,36 @@ Segment.prototype = {
 
         //toIgBlast button
         span = document.createElement('span');
-        span.id = "toIgBlast"
-        span.className = "button"
+        span.id = "toIgBlast";
+        span.className = "button";
         span.onclick = function () {
             self.sendTo('igBlast')
-        }
+        };
         span.appendChild(document.createTextNode("❯ to IgBlast"));
-        div_menu.appendChild(span)
+        div_menu.appendChild(span);
 
+        //toBlast button
+        span = document.createElement('span');
+        span.id = "toBlast";
+        span.className = "button";
+        span.onclick = function () {
+            if (m.getSelected().length > 30) {
+                console.log({"type": "flash", "msg": "A maximum of 30 clones are allowed by Blast" , "priority": 1});
+            } else {
+            self.sendTo('blast');
+            }
+        };
+        span.appendChild(document.createTextNode("❯ to Blast"));
+        div_menu.appendChild(span);
+        
         //toClipBoard button
         span = document.createElement('span');
-        span.id = "toClipBoard"
-        span.className = "button"
+        span.id = "toClipBoard";
+        span.className = "button";
         span.appendChild(document.createTextNode("❯ to clipBoard"));
         // div_menu.appendChild(span)
 
-        div.appendChild(div_menu)
+        div.appendChild(div_menu);
         
         
         
@@ -502,7 +516,7 @@ Segment.prototype = {
     /**
      * build a request with currently selected clones to send to IMGT or igblast <br>
      * (see crossDomain.js)
-     * @param {string} address - 'IMGT' or 'igBlast'
+     * @param {string} address - 'IMGT', 'igBlast' or 'Blast'
      * */
     sendTo: function (address) {
 
@@ -526,6 +540,7 @@ Segment.prototype = {
         }
         if (address == 'IMGT') imgtPost(request, system);
         if (address == 'igBlast') igBlastPost(request, system);
+        if (address == 'blast') blastPost(request, system);
 
     },
     
@@ -591,7 +606,7 @@ Segment.prototype = {
             error: function () {
                 console.log({"type": "flash", "msg": "cgi error : impossible to connect", "priority": 2});
             }
-        })
+        });
     },
 
     /**
@@ -768,7 +783,7 @@ Segment.prototype = {
         }
     },
 
-} //fin prototype Segment
+}; //fin prototype Segment
 Segment.prototype = $.extend(Object.create(View.prototype), Segment.prototype);
 
 
@@ -1051,7 +1066,7 @@ Sequence.prototype = {
 
         return h
     }
-}
+};
 
 
 
@@ -1120,4 +1135,4 @@ tableAA = {
  'GGC' : 'G',
  'GGA' : 'G',
  'GGG' : 'G'
-}
+};

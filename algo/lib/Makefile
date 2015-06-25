@@ -1,4 +1,4 @@
-CC=g++
+CXX?=g++
 OPTIM=-O2
 override CXXFLAGS += -W -Wall -std=c++11 $(OPTIM)
 SRCCORE=$(wildcard *.cpp)
@@ -19,11 +19,11 @@ cleancoverage:
 	rm -f *.gcda *.gcno *.gcov
 
 forcedep:
-	g++ $(CXXFLAGS) -M $(SRCCORE) > dep.mk
+	$(CXX) $(CXXFLAGS) -M $(SRCCORE) > dep.mk
 
 DEP=$(wildcard dep.mk)
 
 ifeq (${DEP},)
-$(shell	g++ -M $(SRCCORE) > dep.mk)
+$(shell $(CXX) $(CXXFLAGS) -M $(SRCCORE) > dep.mk)
 endif
 include dep.mk

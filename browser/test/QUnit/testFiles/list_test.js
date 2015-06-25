@@ -68,7 +68,7 @@ test("List : sort", function() {
     
 });
 
-test("List : filter", function() {
+test("List : filters", function() {
     
     var m = new Model();
     m.parseJsonData(json_data,100)
@@ -77,92 +77,47 @@ test("List : filter", function() {
     
     var list = new List("list","data",m);
     list.init();
-    
+
     var clone_list = document.getElementById('list').lastChild.childNodes
     m.updateElemStyle([0,1,2,3]);
-
+    
     stop()
-    list.filter("test2");
+    list.filter("test1");
     setTimeout( function() {
         start()
-        ok( !$(clone_list[3]).is(':visible'), "test2 is not filtered : Ok");
-        ok( $(clone_list[2]).is(':visible'), "test1 is filtered : Ok");
-        list.filter("test1");
+        ok(  $(clone_list[3]).is(':visible'), "filter id ('test1') : test1 is visible : Ok");
+        ok( !$(clone_list[2]).is(':visible'), "filter id ('test1') : test2 is not visible : Ok");
+        list.filter("aAaaaAAA");
         stop()
     }, 100)
-    
-   setTimeout( function() {
+    setTimeout( function() {
         start()
-        ok( $(clone_list[3]).is(':visible'), "test2 is filtered : Ok");
-        ok( !$(clone_list[2]).is(':visible'), "test1 is not filtered : Ok");
+        ok(  $(clone_list[3]).is(':visible'), "filter seq ('aAaaaAAA') : test1 is  visible : Ok");
+        ok( !$(clone_list[2]).is(':visible'), "filter seq ('aAaaaAAA') : test2 is not visible : Ok");
+        list.filter("TGGGGGGg");
+        stop()
+    }, 200)  
+    setTimeout( function() {
+        start()
+        ok( !$(clone_list[3]).is(':visible'), "filter revComp ('TGGGGGGg') : test1 is not visible : Ok");
+        ok(  $(clone_list[2]).is(':visible'), "filter revComp ('TGGGGGGg') : test2 is visible : Ok");
+        list.filter("CCCCa");
+        stop()
+    }, 300)  
+    setTimeout( function() {
+        start()
+        ok( !$(clone_list[3]).is(':visible'), "filter seq ('CCCCa') : test1 is not visible : Ok");
+        ok(  $(clone_list[2]).is(':visible'), "filter seq ('CCCCa') : test2 is visible : Ok");
         list.reset_filter(false);
         m.update();
         stop()
-    }, 200)
-
-    setTimeout( function() {
-        start()
-        ok($(clone_list[3]).is(':visible'), "resetFilter : Ok");
-        ok($(clone_list[2]).is(':visible'), "resetFilter : Ok");
-    }, 300)
-    
-});
-
-
-
-
-test("List : filter revcomp", function() {
-    
-    var m = new Model();
-    m.parseJsonData(json_data,100)
-    m.loadGermline()
-    m.initClones()
-    
-    var list = new List("list","data",m);
-    list.init();
- 
-    var clone_list = document.getElementById('list').lastChild.childNodes
-    m.updateElemStyle([0,1,2,3]);
-    
-    // fix florian
-    stop()
-    list.filter("test1"); 
-    setTimeout( function() {
-        start()
-        ok(  $(clone_list[3]).is(':visible'), "test1 is visible : Ok");
-        ok( !$(clone_list[2]).is(':visible'), "test2 is not visible : Ok");
-        ok( !$(clone_list[1]).is(':visible'), "test3 is not visible : Ok");
-        list.filter("test2");
-        stop()
-    }, 100)
-    setTimeout( function() {
-        start()
-        ok( !$(clone_list[3]).is(':visible'), "test1 is not visible : Ok");
-        ok(  $(clone_list[2]).is(':visible'), "test2 is visible : Ok"); //test 1 c1
-        ok( !$(clone_list[1]).is(':visible'), "test3 is not visible : Ok");
-        list.filter("TTTT");
-        stop()
-    }, 200)
-    setTimeout( function() {
-        start()
-        ok(  $(clone_list[3]).is(':visible'), "test1 is visible : Ok");
-        ok( !$(clone_list[2]).is(':visible'), "test2 is not visible : Ok");
-        ok( !$(clone_list[1]).is(':visible'), "test3 is not visible : Ok");
-        list.reset_filter(false);
-        stop()
-    }, 300)
-    setTimeout( function() {
-        start()
-        ok( $(clone_list[3]).is(':visible'), "test1 is visible : Ok");
-        //ok( !$(clone_list[3]).is(':visible'), "test1 is not visible : Ok");
-        ok( $(clone_list[2]).is(':visible'), "test2 is visible : Ok"); //test 1 c1
-        //ok( !$(clone_list[2]).is(':visible'), "test2 is not visible : Ok");
-        ok( $(clone_list[1]).is(':visible'), "test3 is visible : Ok");
-        //ok( !$(clone_list[1]).is(':visible'), "test3 is not visible : Ok");
-        list.reset_filter(false);
-        //stop()
     }, 400)
-    
+    setTimeout( function() {
+        start()
+        ok( $(clone_list[3]).is(':visible'), "reset_filter : test1 is visible : Ok");
+        ok( $(clone_list[2]).is(':visible'), "reset_filter : test2 is visible : Ok");
+        //stop()
+    }, 500)
 
 });
 

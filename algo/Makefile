@@ -1,4 +1,4 @@
-CC=g++
+CXX?=g++
 OPTIM=-O2 -DNDEBUG  $(COVERAGE) $(DEBUG)
 override CXXFLAGS += -W -Wall -std=c++11 $(OPTIM)
 
@@ -75,15 +75,16 @@ cleanspaced:
 $(ALIGN_CGI): cgi/align.o $(LIBCORE)
 	mkdir -p $(CGIDIR)
 	$(MAKE) -C core OPTIM="$(OPTIM)"
-	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
 $(SIMILARITY_CGI): cgi/similarity.o $(LIBCORE)
 	make -C core OPTIM="$(OPTIM)"
-	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
 $(SIMILARITY_TOOL): cgi/similarity.o $(LIBCORE)
 	make -C core OPTIM="$(OPTIM)"
-	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
+
 ###
 
 debug:
@@ -93,7 +94,7 @@ debug:
 $(VIDJIL): $(BINDIR)%: %.o $(LIBCORE)
 	$(MAKE) -C core OPTIM="$(OPTIM)"
 	$(MAKE) -C lib OPTIM="$(OPTIM)"
-	$(CC) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
 ###
 # Subdirectories
@@ -121,7 +122,7 @@ cleanall: cleancoverage
 	$(MAKE) -C tests cleanall
 
 forcedep:
-	g++ $(CXXFLAGS) -M $(MAINCORE) > dep.mk
+	$(CXX) $(CXXFLAGS) -M $(MAINCORE) > dep.mk
 	$(MAKE) -C core forcedep
 	$(MAKE) -C lib forcedep
 
@@ -130,7 +131,7 @@ FORCE:
 DEP=$(wildcard dep.mk)
 
 ifeq (${DEP},)
-$(shell	g++ -M $(MAINCORE) > dep.mk)
+$(shell	$(CXX) $(CXXFLAGS) -M $(MAINCORE) > dep.mk)
 endif
 include dep.mk
 

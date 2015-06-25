@@ -143,3 +143,46 @@ function igBlastPost(data, system) {
     form.submit();
 
 }
+
+
+//parametre blast par defaut
+var blastInput = {};
+blastInput["query_sequence"]          = "";
+blastInput["query_type"]              = "dna";
+blastInput["filterable-dropdown-tag"] = "Human (Homo sapiens)";
+blastInput["db_type"]                 = "dna";
+blastInput["source_dna"]              = "LATESTGP";
+blastInput["search_type"]             = "NCBIBLAST_BLASTN";
+blastInput["config_set_NCBIBLAST_BLASTN"]       = "normal";
+blastInput["description"]                       = "";
+blastInput["NCBIBLAST_BLASTN__max_target_seqs"] = "100";
+blastInput["NCBIBLAST_BLASTN__culling_limit"]   = "5";
+blastInput["NCBIBLAST_BLASTN__evalue"]          = "10";
+blastInput["NCBIBLAST_BLASTN__word_size"]       = "11";
+blastInput["NCBIBLAST_BLASTN__score"]           = "1_3";
+blastInput["NCBIBLAST_BLASTN__gap_dna"]         = "5n2";
+blastInput["NCBIBLAST_BLASTN__ungapped"]        = 0;
+blastInput["NCBIBLAST_BLASTN__dust"]            = 1;
+blastInput["NCBIBLAST_BLASTN__repeat_mask"]     = 1;
+
+function blastPost(data, system) {
+
+    blastInput["query_sequence"] = data;
+
+    var form = document.getElementById("form");
+    form.innerHTML = "";
+    form.target = "_blank";
+    form.action = "http://www.ensembl.org/Multi/Tools/Blast?db=core";
+    form.method = "POST";
+
+    for (var k in blastInput) {
+        var input = document.createElement("input");
+        input.type = "hidden";
+        input.name = k;
+        input.value = blastInput[k];
+        form.appendChild(input);
+    }
+
+    form.submit();
+
+}
