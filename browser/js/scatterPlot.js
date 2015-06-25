@@ -169,7 +169,7 @@ function ScatterPlot(id, model) {
             log : true  
         },
         "tsneX": { 
-            label: "",
+            label: "distance (X)",
             fct: function(cloneID){
                 var r = self.gridSizeH/self.gridSizeW;
                 var k=1;
@@ -185,7 +185,7 @@ function ScatterPlot(id, model) {
             display_label : false
         },
         "tsneY": { 
-            label: "",
+            label: "distance (Y)",
             fct: function(cloneID){
                 var r = self.gridSizeH/self.gridSizeW;
                 var k=1;
@@ -201,7 +201,7 @@ function ScatterPlot(id, model) {
             display_label : false
         },
         "tsneX_system": { 
-            label: "",
+            label: "distance (X), by locus",
             fct: function(cloneID){
                 var r = self.gridSizeH/self.gridSizeW;
                 var k=1;
@@ -217,7 +217,7 @@ function ScatterPlot(id, model) {
             display_label : false
         },
         "tsneY_system": { 
-            label: "",
+            label: "distance (Y), by locus",
             fct: function(cloneID){
                 var r = self.gridSizeH/self.gridSizeW;
                 var k=1;
