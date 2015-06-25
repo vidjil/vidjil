@@ -817,7 +817,7 @@ ScatterPlot.prototype = {
             var tmp = 0;
             for (var j in this.barTab[i]) {
                 var cloneID = this.barTab[i][j]
-                if ( this.m.clone(cloneID).id != "other") tmp += this.m.clone(cloneID).getSize();
+                if (!this.m.clone(cloneID).isVirtual()) tmp += this.m.clone(cloneID).getSize();
             }
             if (tmp > bar_max) bar_max = tmp;
         }
@@ -851,7 +851,7 @@ ScatterPlot.prototype = {
             for (var j in this.barTab[i]){
                 var cloneID = this.barTab[i][j]
                 height = 0;
-                if ( this.m.clone(cloneID).id != "other" & this.m.clone(cloneID).isActive() ) {
+                if ( (!this.m.clone(cloneID).isVirtual()) & this.m.clone(cloneID).isActive() ) {
                     height = this.m.clone(cloneID).getSize()/bar_max;
                 }
                 y_pos += height;

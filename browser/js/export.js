@@ -207,8 +207,8 @@ Report.prototype = {
             }
             polyline.setAttribute("stroke", color);
             
-            //remove "other" and disabled clones
-            if (i != norm && (this.m.clone(i).id == "other" || !this.m.clone(i).isActive())) {
+            //remove virtual and disabled clones
+            if (i != norm && (this.m.clone(i).isVirtual() || !this.m.clone(i).isActive())) {
                 polyline.parentNode.removeChild(polyline);
             }
         }
@@ -285,8 +285,8 @@ Report.prototype = {
             var color = this.m.tag[this.m.clone(i).getTag()].color
             circle.setAttribute("stroke", color);
             
-            //remove "other" and disabled clones
-            if (this.m.clone(i).germline != system || this.m.clone(i).id == "other" || !this.m.clone(i).isActive()) {
+            //remove virtual and disabled clones
+            if (this.m.clone(i).germline != system || this.m.clone(i).isVirtual() || !this.m.clone(i).isActive()) {
                 circle.parentNode.removeChild(circle);
             }
         }

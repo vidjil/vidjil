@@ -200,7 +200,7 @@ PDF.prototype = {
                 polyline.setAttribute("stroke", color);
             }
 
-            if (m.clone(i).id == "other" || !m.clone(i).isActive()) {
+            if (m.clone(i).isVirtual() || !m.clone(i).isActive()) {
                 polyline.parentNode.removeChild(polyline);
             }
         }

@@ -1760,9 +1760,9 @@ Model.prototype = {
         for (var i=0; i<this.samples.order.length; i++) csv += ",ratios_"+i
         csv += "\n"
         
-        //only non-empty active clones and "other"
+        //only non-empty active clones and virtual clones
         for (var i=0; i<this.clusters.length; i++){
-            if ( (this.clusters[i].length != 0 && this.clone(i).isActive()) || this.clone(i).getName()=="other" ){
+            if ( (this.clusters[i].length != 0 && this.clone(i).isActive()) || this.clone(i).isVirtual() ){
                 csv += this.clone(i).toCSV()
                 csv += "\n"
             }

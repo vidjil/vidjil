@@ -822,6 +822,10 @@ Clone.prototype = {
     isActive: function () {
         return this.active
     },
+
+    isVirtual: function () {
+        return this.id == "other"
+    },
     
     isFocus: function () {
         return this.index == this.m.focus
