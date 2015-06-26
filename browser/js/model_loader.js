@@ -280,14 +280,15 @@ Model_loader.prototype = {
             }
         }
         
-        // add fake clone 
+        // add a virtual clone
+
         var other = {
             "sequence": 0,
             "id": "other",
             "top": 0,
             "reads": []
         }
-        var clone = new Clone(other, self, index)
+        var clone = new Clone(other, self, index, true)
         
         //init clusters
         this.loadCluster(this.data_clusters)

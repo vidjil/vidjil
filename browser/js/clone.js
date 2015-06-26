@@ -28,12 +28,13 @@
  * @param {Model} model
  * @param {integer} index - clone index, it's just the clone position in the model's clone array
  * */
-function Clone(data, model, index) {
+function Clone(data, model, index, virtual) {
     this.m = model
     this.index = index
     this.split = false
     this.seg = {};
     this.segEdited = false
+    this.virtual = typeof virtual !== 'undefined' ? virtual : false
     var key = Object.keys(data)
     
     for (var i=0; i<key.length; i++ ){
@@ -797,7 +798,7 @@ Clone.prototype = {
     },
     
     enable: function (top) {
-        if (this.top <= top && this.m.tag[this.getTag()].display && this.id != "other") {
+        if (this.top <= top && this.m.tag[this.getTag()].display && !this.isVirtual()) {
             this.active = true;
         }
     },
@@ -823,7 +824,7 @@ Clone.prototype = {
     },
 
     isVirtual: function () {
-        return this.id == "other"
+        return this.virtual
     },
     
     isFocus: function () {
