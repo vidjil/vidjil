@@ -77,9 +77,9 @@ test("clone : name", function() {
     
     equal(c1.get('reads'), 10, "clone c1 reads : 10");
     equal(c1.getSequenceSize(), "0.05", "clone c1 size : 0.05");
-    console.log(m.samples.order)
+    console.log(m.samples.order);
 
-    html = c1.getHtmlInfo()
+    html = m.clones[0].getHtmlInfo();
     includes(html, "<h2>Cluster info : hello</h2><div id='info_window'><table><tr><th></th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
              "getHtmlInfo: cluster info");
 
@@ -92,14 +92,14 @@ test("clone : name", function() {
     includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' class='devel-mode' onclick='m.clones[0].toggle()'>edit</button> </td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", 
         "getHtmlInfo: segmentation information + modification button");
     // Test icon 
-    c1.manuallyChanged = true;
-    html = c1.getHtmlInfo()
+    m.clones[0].manuallyChanged = true;
+    html = m.clones[0].getHtmlInfo();
     includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' class='devel-mode' onclick='m.clones[0].toggle()'>edit</button>  <img src='images/icon_fav_on.png' alt='This clone has been manually changed'></td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", 
         "getHtmlInfo: segmentation information + modification button + manuallyChanged icon");
     
     // <tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG</td></tr> // not tested (order of title/class)
     
-    // locus/genes tests
+    // locus/genes content tests
     includes(html, "<tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG<div class='div-menu-selector' id='listLocus' style='display: none'>",
         "getHtmlInfo: segmentation information (Locus)");
     includes(html, "<tr><td> V gene (or 5') </td><td colspan='4'>undefined V<div class='div-menu-selector' id='listVsegment' style='display: none'>",
@@ -110,30 +110,28 @@ test("clone : name", function() {
         "getHtmlInfo: segmentation information (J gene)");
 
     // forms tests
-    // TODO : Forms corrections after germline.js correction
-    includes(html, "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones[0].changeLocus(this.form.LocusForm.value);'  style='width: 80px' ><option value=TRG>TRG</option><option value=TRA>TRA</option>",
+    includes(html, 
+        "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones[0].changeLocus(this.form.LocusForm.value);'  style='width: 80px' >",
         "getHtmlInfo: Locus form");
-    includes(html, "<form name=Vsegment><select class='menu-selector' NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'  style='width: 100px' ><option value=undefined V>undefined V</option><option value=TRGJP2*01>TRGJP2*01</option>",
+    includes(html, 
+        "<form name=Vsegment><select class='menu-selector' NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'  style='width: 100px' >",
         "getHtmlInfo: V gene form");
-    includes(html, "<form name=Dsegment><select class='menu-selector' NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'  style='width: 100px' ><option value=IGHD2*03>IGHD2*03</option></select></form></div></td></tr>",
-        "getHtmlInfo: D gene form");
-    includes(html, "<form name=Jsegment><select class='menu-selector' NAME=Jsegment onChange='m.clones[0].changeSegment(this.form.Jsegment.value, 3);'  style='width: 100px' ><option value=IGHV4*01>IGHV4*01</option><option value=TRDV3*02>TRDV3*02</option>",
-        "getHtmlInfo: J gene form");
 
-    // Test after germline manual changement
-    c1.germline="newLocus"; c1.seg["5"]= "segment5_V"; c1.seg["4"]= "segment4_D"; c1.seg["3"]= "segment3_J";
-    html = c1.getHtmlInfo()
-    includes(html, "<form name='germ'><select class='menu-selector' NAME='LocusForm' id='germSelector', onChange='m.clones[0].changeLocus(this.form.LocusForm.value);'  style='width: 80px' ><option value=newLocus>newLocus</option><option value=TRA>TRA</option>",
-        "getHtmlInfo: Locus after manual changement");
-    includes(html, "<form name=Vsegment><select class='menu-selector' NAME=Vsegment onChange='m.clones[0].changeSegment(this.form.Vsegment.value, 5);'  style='width: 100px' ><option value=segment5_V>segment5_V</option>",
-        "getHtmlInfo: V gene after manual changement");
-    includes(html, "<form name=Dsegment><select class='menu-selector' NAME=Dsegment onChange='m.clones[0].changeSegment(this.form.Dsegment.value, 4);'  style='width: 100px' ><option value=segment4_D>segment4_D</option>",
-        "getHtmlInfo: D gene after manual changement");
-    includes(html, "<form name=Jsegment><select class='menu-selector' NAME=Jsegment onChange='m.clones[0].changeSegment(this.form.Jsegment.value, 3);'  style='width: 100px' ><option value=segment3_J>segment3_J</option>",
-        "getHtmlInfo: J gene after manual changement");
+    // first options tests
+    includes(html, "<option value=TRG>TRG</option><option value=TRA>TRA</option>","getHtmlInfo: first options in select Locus");
+    includes(html, "<option value=undefined V>undefined V</option><option value=TRGJP2*01>TRGJP2*01</option>",  "getHtmlInfo:  first options in select Vgene");
+       
+    // Test after germline/segment manual changement
+    m.clones[0].changeLocus("IGH"); 
+    m.clones[0].changeSegment("testV5", "5");
+    html = m.clones[0].getHtmlInfo();
+    includes(html, 
+        "<option value=IGH>IGH</option><option value=TRA>TRA</option>",
+        "getHtmlInfo:  first options in select locus (after changment)"); // after germline changment
+    includes(html, 
+        "<tr><td> V gene (or 5') </td><td colspan='4'>testV5<div class='div-menu-selector' id='listVsegment' style='display: none'>",
+        "getHtmlInfo: segmentation information (V gene) after changment");
 
-    c1.seg["5"]= "undefined V"; c1.seg["4"]= "IGHD2*03"; c1.seg["3"]= "IGHV4*01";
-    html = c1.getHtmlInfo()
 });
 
 test("clone : getSequence/RevComp", function() {
