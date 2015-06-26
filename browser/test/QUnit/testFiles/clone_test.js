@@ -231,3 +231,32 @@ test("clone : export", function() {
 
     
 });
+
+
+test("clone : changeLocus/Segment", function() {
+    
+    var m = new Model();
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0)
+    var c2 = new Clone(json_clone2, m, 1)
+    var c3 = new Clone(json_clone3, m, 2)
+    m.initClones()
+
+    // Test after germline manual changement
+    m.clones[0].reads = [25,25,25,25]; 
+    console.log(m.reads.germline.IGH);
+    
+    equal(m.reads.germline.IGH.toString(), "100,50,100,50", "m.reads.IGH adaptation (init state)");
+    m.clones[0].changeLocus("IGH"); 
+    //console.log(m.reads.germline.TRG);
+    
+    equal(m.reads.germline.IGH.toString(), "125,75,125,75", "m.reads.IGH adaptation (TRG -> IGH)");
+    equal(m.reads.germline.TRG.toString(), "75,25,75,25",   "m.reads.TRG adaptation (TRG -> IGH)");
+    
+    m.clones[0].changeLocus("IGH"); 
+    equal(m.reads.germline.IGH.toString(), "125,75,125,75", "m.reads.IGH adaptation (IGH -> IGH)");
+    m.clones[0].changeLocus("TRG"); 
+    equal(m.reads.germline.IGH.toString(), "100,50,100,50", "m.reads.IGH adaptation (IGH -> TRG)");
+    // TODO tests : reads, system_available, 
+    
+});
