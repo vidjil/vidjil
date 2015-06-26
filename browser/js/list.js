@@ -603,7 +603,7 @@ List.prototype = {
 
             var div = this.index[list[i]];
 
-            if ((this.m.clone(list[i]).isActive() && this.m.clusters[list[i]].length != 0) || this.m.clone(list[i]).id == "other") {
+            if ((this.m.clone(list[i]).isActive() && this.m.clusters[list[i]].length != 0) || this.m.clone(list[i]).isVirtual()) {
 
                 div.innerHTML = '';
                 div.className = "list";
