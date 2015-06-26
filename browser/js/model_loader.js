@@ -439,7 +439,7 @@ Model_loader.prototype = {
                     var clone = clones[i];
                     for (var n=0; n < m.clones.length; n++){
                         if (clone.id == m.clones[n].id){
-                            m.clones[n].manuallyChanged = true;
+                            m.clones[n].segEdited = true; /// DUBIOUS
                             // Apply m.reads.germline changment 
                             for (var time =0; time< m.reads.segmented.length; time ++) {
                                 var oldGermline = m.clones[n].germline;
@@ -530,7 +530,7 @@ Model_loader.prototype = {
             if ((typeof clone.tag != "undefined" && clone.tag != 8) || 
                  typeof clone.c_name != "undefined" ||
                  typeof clone.expected != "undefined" || 
-                (typeof clone.manuallyChanged != "undefined"  && clone.manuallyChanged == true)) {
+                (typeof clone.segEdited != "undefined"  && clone.segEdited)) {
 
                 var elem = {};
                 elem.id = clone.id;
@@ -542,8 +542,8 @@ Model_loader.prototype = {
                     elem.name = clone.c_name;
                 if (typeof clone.expected != "undefined")
                     elem.expected = clone.expected;
-                if (typeof clone.manuallyChanged != "undefined"  && clone.manuallyChanged == true){
-                    elem.manuallyChanged = true
+                if (typeof clone.segEdited != "undefined" && clone.segEdited){
+                    elem.segEdited = true
                     elem.germline = clone.germline;
                     elem.eValue   = clone.eValue;
                     elem.seg      = clone.seg
