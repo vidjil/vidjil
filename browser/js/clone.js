@@ -798,8 +798,14 @@ Clone.prototype = {
     },
     
     enable: function (top) {
-        if (this.top <= top && this.m.tag[this.getTag()].display && !this.isVirtual()) {
+        if (this.top > top || this.isVirtual())
+            return ;
+
+        if (this.m.tag[this.getTag()].display) {
             this.active = true;
+        }
+        else {
+            this.m.someClonesFiltered = true
         }
     },
     
