@@ -30,15 +30,18 @@ LIBCORE=core/vidjil.a lib/lib.a
 
 BINDIR=../
 CGIDIR=../browser/cgi/
+TOOLDIR=tools/
 
 VIDJIL=$(BINDIR)$(EXEC)
 ALIGN_CGI=$(CGIDIR)align.cgi
+SIMILARITY_CGI=$(CGIDIR)similarity.cgi
+SIMILARITY_TOOL=$(TOOLDIR)similarity
 
 CREATE_VERSION_GIT_H := $(shell test -x ./create-git-version-h.sh && ./create-git-version-h.sh)
 
 .PHONY: all core lib clean forcedep
 
-all: $(VIDJIL) $(ALIGN_CGI)
+all: $(VIDJIL) $(ALIGN_CGI) $(SIMILARITY_CGI) $(SIMILARITY_TOOL)
 
 ###
 
@@ -73,6 +76,15 @@ $(ALIGN_CGI): cgi/align.o $(LIBCORE)
 	mkdir -p $(CGIDIR)
 	$(MAKE) -C core OPTIM="$(OPTIM)"
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
+
+$(SIMILARITY_CGI): cgi/similarity.o $(LIBCORE)
+	make -C core OPTIM="$(OPTIM)"
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
+
+$(SIMILARITY_TOOL): cgi/similarity.o $(LIBCORE)
+	make -C core OPTIM="$(OPTIM)"
+	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
+
 ###
 
 debug:

@@ -28,13 +28,13 @@
  * @param {Model} model
  * @param {integer} index - clone index, it's just the clone position in the model's clone array
  * */
-function Clone(data, model, index) {
+function Clone(data, model, index, virtual) {
     this.m = model
     this.index = index
     this.split = false
     this.seg = {};
-    this.manuallyChanged = false
-    this.shoxLists       = false
+    this.segEdited = false
+    this.virtual = typeof virtual !== 'undefined' ? virtual : false
     var key = Object.keys(data)
     
     for (var i=0; i<key.length; i++ ){
@@ -570,7 +570,8 @@ Clone.prototype = {
             }
         };
         this.m.analysisHasChanged = true;
-        this.manuallyChanged = true;
+        this.segEdited = true;
+
         // if newGerline wasn't in system_available
         if (jQuery.inArray( newGermline, this.m.system_available ) == -1) {
             this.m.system_available.push(newGermline);
@@ -622,18 +623,19 @@ Clone.prototype = {
         this.seg["_evalue_left"]  = 0
         this.seg["_evalue_right"] = 0
         this.m.analysisHasChanged = true;
-        this.manuallyChanged = true;
+        this.segEdited = true;
         this.m.update();
+
     },
     
     /**
-     * Use the manuallyChanged value to insert an icon in the html information
+     * Use the .segEdited value to insert an icon in the html information
      */
     getHTMLModifState: function () {
         var content = ""
-        if (this.manuallyChanged == true) {
+        if (this.segEdited) {
             // TODO find a better icon
-            content += " <img src='images/icon_fav_on.png' alt='This clone has been manually changed'>"
+            content += " <img src='images/icon_fav_on.png' alt='This clone has been edited by a user'>"
             
         };
         return content;
@@ -796,8 +798,14 @@ Clone.prototype = {
     },
     
     enable: function (top) {
-        if (this.top <= top && this.m.tag[this.getTag()].display && this.id != "other") {
+        if (this.top > top || this.isVirtual())
+            return ;
+
+        if (this.m.tag[this.getTag()].display) {
             this.active = true;
+        }
+        else {
+            this.m.someClonesFiltered = true
         }
     },
     
@@ -819,6 +827,10 @@ Clone.prototype = {
     
     isActive: function () {
         return this.active
+    },
+
+    isVirtual: function () {
+        return this.virtual
     },
     
     isFocus: function () {

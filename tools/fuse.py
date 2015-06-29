@@ -35,11 +35,14 @@ import time
 import copy
 import os.path
 import datetime
+import subprocess
 from operator import itemgetter
 from utils import *
 
 VIDJIL_JSON_VERSION = "2014.10"
 FUSE_VERSION = "vidjil fuse"
+
+TOOL_SIMILARITY = "../algo/tools/similarity"
 
 GERMLINES_ORDER = ['TRA', 'TRB', 'TRG', 'TRD', 'DD', 'IGH', 'DHJH', 'IJK', 'IJL'] 
 
@@ -720,6 +723,18 @@ def main():
     print("\t", jlist_fused) 
     print()
 
+    #compute similarity matrix
+    fasta = ""
+    for i in range(len(jlist_fused.d["clones"])) :
+        fasta += ">>" + str(i) + "\n"
+        fasta += jlist_fused.d["clones"][i].d["id"] + "\n"
+    fasta_file = open("tmp", 'w')
+    fasta_file.write(fasta)
+    try:
+        out = subprocess.check_output([TOOL_SIMILARITY, "-j", "tmp"])
+        jlist_fused.d["similarity"] = json.loads(out)
+    except OSError:
+        print("! failed: %s" % TOOL_SIMILARITY)
     print("### Save merged file")
     jlist_fused.save_json(args.output)
 

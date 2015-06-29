@@ -127,6 +127,7 @@ Model.prototype = {
         this.data = {};
         this.data_info = {};
         this.clone_info = -1;
+        this.someClonesFiltered = false;
         
         this.t = 0;          // Selected time/sample
         this.tOther = 0;  // Other (previously) selected time/sample
@@ -826,6 +827,9 @@ Model.prototype = {
      * update clones colors
      * */
     updateModel: function () {
+
+        this.someClonesFiltered = false
+
         for (var i = 0; i < this.clusters.length; i++) {
             // compute only non empty clones
             if (this.clusters[i].length != 0) {
@@ -849,6 +853,7 @@ Model.prototype = {
             for (var i = 0; i < this.clones.length; i++) {
                 if (this.system_selected.indexOf(this.clone(i).get('germline')) == -1) {
                     this.clones[i].disable()
+                    this.someClonesFiltered = true
                 }
             }
         }
@@ -857,6 +862,7 @@ Model.prototype = {
         for (var i = 0; i < this.clones.length; i++) {
             if (this.clone(i).isFiltered) {
                 this.clone(i).disable();
+                this.someClonesFiltered = true
             }
         }
         
@@ -1012,8 +1018,11 @@ Model.prototype = {
             }
         }
 
-        this.clone(this.clones.length - 1).reads = other;
-
+        var c = this.clone(this.clones.length - 1)
+        c.reads = other;
+        c.name = "smaller clones"
+        if (this.someClonesFiltered)
+            c.name += " + filtered clones";
     },
     
     /**
@@ -1760,9 +1769,9 @@ Model.prototype = {
         for (var i=0; i<this.samples.order.length; i++) csv += ",ratios_"+i
         csv += "\n"
         
-        //only non-empty active clones and "other"
+        //only non-empty active clones and virtual clones
         for (var i=0; i<this.clusters.length; i++){
-            if ( (this.clusters[i].length != 0 && this.clone(i).isActive()) || this.clone(i).getName()=="other" ){
+            if ( (this.clusters[i].length != 0 && this.clone(i).isActive()) || this.clone(i).isVirtual() ){
                 csv += this.clone(i).toCSV()
                 csv += "\n"
             }

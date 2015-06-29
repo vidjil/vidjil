@@ -20,6 +20,7 @@ require(["jquery",
         "underscore",
         "rgbcolor",
         "file",
+        "tsne",
         "../compare", 
         "../menu", 
         "../dbscan", 
@@ -39,9 +40,9 @@ require(["jquery",
         "../crossDomain",
         "../pdf",
         "../database",
-        "../stats",
         "../shortcut",
-        "../export"
+        "../export",
+        "../similarity"
         ], function(){
             if (typeof main == "undefined"){
                 require(["../main"]);

@@ -60,6 +60,11 @@ var segment = new Segment("bot-container", m);   // Segmenter
 var builder = new Builder(m);
 
 
+/* Similarity
+ * retrieve and compute everything related to the similarity matrix
+ */
+var sim = new Similarity(m);
+
 /* [outdated] PDF
  * This is an outdated module, replaced by report. It will be removed in a future release
  */
