@@ -161,6 +161,71 @@ def search_first_regex_in_file(regex, filename, max_nb_line=None):
 
 #### Utilities on JSON
 
+def cleanup_json_sample(json_string):
+    '''
+    Takes a JSON sample and close the ) ] " ' so that
+    the string can be parsed by a JSON parser.
+    >>> cleanup_json_sample('"toto": [ [ 1 ], "t')
+    '"toto": [ [ 1 ], "t"]'
+    >>> cleanup_json_sample('"toto": [ [ 1 ], ')
+    '"toto": [ [ 1 ]]'
+    >>> cleanup_json_sample('{"germlines": {"custom": {"3": [')
+    '{"germlines": {"custom": {"3": []}}}'
+    >>> cleanup_json_sample('{"germlines": {"custom": {"3":')
+    '{"germlines": {"custom": {}}}'
+    >>> cleanup_json_sample('{"germlines": {"custom": {"3')
+    '{"germlines": {"custom": {}}}'
+    >>> cleanup_json_sample('{"germlines": {"custom": {"3": [2], "2')
+    '{"germlines": {"custom": {"3": [2]}}}'
+    >>> cleanup_json_sample('{"germlines": {"custom": {"3": [2], "2": "truc"')
+    '{"germlines": {"custom": {"3": [2], "2": "truc"}}}'
+
+    '''
+    start_delimiters = ['{', '[', '"', "'"]
+    end_delimiters = ['}', ']', '"', "'"]
+
+    delimiter_stack = []
+    pos_isolated_comma = None
+
+    for i, char in enumerate(json_string):
+        if char in start_delimiters or char in end_delimiters:
+            try:
+                corresponding_delimiter = start_delimiters[end_delimiters.index(char)]
+            except ValueError:
+                corresponding_delimiter = None
+            if len(delimiter_stack) == 0 or delimiter_stack[-1][0] <> corresponding_delimiter:
+                delimiter_stack.append(char)
+            else:
+                delimiter_stack.pop()
+            pos_isolated_comma = None
+        elif char == ',':
+            pos_isolated_comma = i
+
+    if pos_isolated_comma <> None:
+        json_string = json_string[:pos_isolated_comma]
+    json_string = json_string.strip()
+
+    delimiter_stack.reverse()
+    end_delimiter_stack = map(lambda c: end_delimiters[start_delimiters.index(c)], delimiter_stack)
+
+    if (len(end_delimiter_stack) > 0 and end_delimiter_stack[0] == '}')\
+       or (len(end_delimiter_stack) > 1 and end_delimiter_stack[0] in ['"', "'"] and end_delimiter_stack[1] == '}'):
+        # We didn't close a dict. Are we in the middle of a property (eg. "toto": )
+        last_colon = json_string.rfind(':')
+        last_bracket = json_string.rfind('{')
+        last_comma = json_string.rfind(',')-1
+        property_start = max(last_comma, last_bracket)
+        if last_colon == len(json_string)-1\
+           or property_start > last_colon:
+            json_string = json_string[:property_start+1]
+            if len(end_delimiter_stack) > 1 and end_delimiter_stack[0] <> '}':
+                end_delimiter_stack.pop(0)
+
+
+    return json_string + ''.join(end_delimiter_stack)
+
+
+
 def extract_value_from_json_path(json_path, json):
     '''
     Highly inspired from http://stackoverflow.com/a/7320664/1192742
