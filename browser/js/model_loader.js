@@ -438,10 +438,10 @@ Model_loader.prototype = {
                 var clones = this.analysis.clones;
                 for (var i = 0; i < clones.length; i++){
                     var clone = clones[i];
-                    if (clone.segEdited == true) {
+                    if (clone.segEdited) {
                     for (var n=0; n < m.clones.length; n++){
                         if (clone.id == m.clones[n].id){
-                            m.clones[n].segEdited = true; /// DUBIOUS
+                            m.clones[n].segEdited = true;
                             // Apply m.reads.germline changment 
                             for (var time =0; time< m.reads.segmented.length; time ++) {
                                 var oldGermline = m.clones[n].germline;
