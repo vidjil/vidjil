@@ -103,7 +103,7 @@ class OnlineFasta {
   OnlineFasta(int extract_field=0, string extract_separator="|");
 
   /**
-   * Open the file and read the first sequence.
+   * Open the file. No sequence is read at first.
    * @post getSequence() does not return the first sequence yet. 
    *       next() must be called first.
    * @throws invalid_argument if file cannot be opened or is not
