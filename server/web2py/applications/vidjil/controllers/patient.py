@@ -241,9 +241,9 @@ def stats():
         keys += r.groupindex.keys()
 
     keys += sorted(json_paths['result_file'].keys() + json_paths['fused_file'].keys())
-    found = {}
 
     for row in d['query']:
+        found = {}
         results_f = row.results_file.data_file
         row_result = vidjil_utils.search_first_regex_in_file(regex, defs.DIR_RESULTS + results_f, STATS_READLINES)
         try:
