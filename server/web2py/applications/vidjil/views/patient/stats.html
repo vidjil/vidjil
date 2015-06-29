@@ -73,7 +73,11 @@
                     </td>
 
                    {{ for key in stats: }}
-                   <td>{{ =row[key] }}</td>
+                   <td>
+		     {{ if key in row: }}
+		     {{ =row[key] }}
+		     {{ pass }}
+		   </td>
                    {{ pass }}
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} >
                         {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
