@@ -186,6 +186,7 @@ def custom():
     
 
 STATS_READLINES = 1000 # approx. size in which the stats are searched
+STATS_MAXBYTES = 500000 # approx. size in which the stats are searched
 
 def stats():
     start = time.time()
@@ -246,7 +247,7 @@ def stats():
         results_f = row.results_file.data_file
         row_result = vidjil_utils.search_first_regex_in_file(regex, defs.DIR_RESULTS + results_f, STATS_READLINES)
         try:
-            row_result_json = vidjil_utils.extract_fields_from_json(json_paths['result_file'], None, defs.DIR_RESULTS + results_f)
+            row_result_json = vidjil_utils.extract_fields_from_json(json_paths['result_file'], None, defs.DIR_RESULTS + results_f, STATS_MAXBYTES)
         except:
             row_result_json = []
 
@@ -255,7 +256,7 @@ def stats():
             sequence_file_list = fused_file[0].sequence_file_list.split('_')
             try:
                 pos_in_list = sequence_file_list.index(str(row.sequence_file.id))
-                row_fused = vidjil_utils.extract_fields_from_json(json_paths['fused_file'], pos_in_list, defs.DIR_RESULTS + fused_file[0].fused_file)
+                row_fused = vidjil_utils.extract_fields_from_json(json_paths['fused_file'], pos_in_list, defs.DIR_RESULTS + fused_file[0].fused_file, STATS_MAXBYTES)
             except ValueError:
                 row_fused = []
         else:
