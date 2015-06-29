@@ -29,7 +29,7 @@
     "TRB+": {
         "shortcut": "b",
         "color" : "#8c91e4",
-        "description": "Human T-cell receptor, beta locus (7q34), incomplete DH-JH rearrangements",
+        "description": "Human T-cell receptor, beta locus (7q34), incomplete DB-JB rearrangements",
         "follows": "TRB",
         "recombinations": [ {
             "5": ["TRBD_upstream.fa"],
