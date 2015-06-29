@@ -29,6 +29,12 @@
         "reads" : [10,10,15,15] ,
         "top" : 3,
         "germline" : "TRG",
+        "seg" : {
+            "3" : "IGHV4*01",
+            "4" : "IGHD2*03",
+            "3start" : 15,
+            "5end" : 5
+        }
     }
 
 
@@ -180,18 +186,18 @@ test("clone : system", function() {
     
     var m = new Model();
     m.parseJsonData(json_data)
-    var c1 = new Clone(json_clone1, m, 0)
+    var c3 = new Clone(json_clone3, m, 0)
     m.initClones()
 
 
-    equal(c1.get('germline'), "TRG", "getSystem() >> clone system : TRG");
-    equal(c1.getGene('5'), "undefined V", "getV() >> V : undefined");
-    equal(c1.getGene('4'), "IGHD2*03", "getD()  >> D (+allele): IGHD2*03");
-    equal(c1.getGene('3'), "IGHV4*01", "getJ() >> J (+alelele): IGHV4*01");
-    equal(c1.getGene('4', false), "IGHD2", "getD() >> D : IGHD2");
-    equal(c1.getGene('3', false), "IGHV4", "getJ() >>J : IGHV4");
-    equal(c1.getGene("4"), "IGHD2*03", "getGene() >> D (+allele): IGHD2*03");
-    equal(c1.getNlength(), 9, "getNlength() >> 9");
+    equal(c3.get('germline'), "TRG", "getSystem() >> clone system : TRG");
+    equal(c3.getGene('5'), "undefined V", "getV() >> V : undefined");
+    equal(c3.getGene('4'), "IGHD2*03", "getD()  >> D (+allele): IGHD2*03");
+    equal(c3.getGene('3'), "IGHV4*01", "getJ() >> J (+alelele): IGHV4*01");
+    equal(c3.getGene('4', false), "IGHD2", "getD() >> D : IGHD2");
+    equal(c3.getGene('3', false), "IGHV4", "getJ() >>J : IGHV4");
+    equal(c3.getGene("4"), "IGHD2*03", "getGene() >> D (+allele): IGHD2*03");
+    equal(c3.getNlength(), 9, "getNlength() >> 9");
     
 });
 
