@@ -252,7 +252,7 @@ def extract_value_from_json_path(json_path, json):
 
     return elem
 
-def extract_fields_from_json(json_fields, pos_in_list, filename):
+def extract_fields_from_json(json_fields, pos_in_list, filename, max_bytes = None):
     '''
     Takes a map of JSON fields (the key is a common name
     and the value is a path) and return a similar map
@@ -263,10 +263,14 @@ def extract_fields_from_json(json_fields, pos_in_list, filename):
     get all of them)
     '''
     try:
-        json_dict = json.loads(open(filename).read())
+        if max_bytes is None:
+            json_dict = json.loads(cleanup_json_sample(open(filename).read()))
+        else:
+            json_dict = json.loads(cleanup_json_sample(open(filename).read(max_bytes)))
     except IOError:
         json_dict = {}
-
+    except ValueError as e:
+        current.log.debug(str(e))
     matched_keys = {}
     for field in json_fields:
         value = extract_value_from_json_path(json_fields[field], json_dict)
