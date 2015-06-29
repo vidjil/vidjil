@@ -245,13 +245,19 @@ def stats():
     for row in d['query']:
         results_f = row.results_file.data_file
         row_result = vidjil_utils.search_first_regex_in_file(regex, defs.DIR_RESULTS + results_f, STATS_READLINES)
-        row_result_json = vidjil_utils.extract_fields_from_json(json_paths['result_file'], None, defs.DIR_RESULTS + results_f)
+        try:
+            row_result_json = vidjil_utils.extract_fields_from_json(json_paths['result_file'], None, defs.DIR_RESULTS + results_f)
+        except:
+            row_result_json = []
 
         fused_file = db((db.fused_file.patient_id == row.sequence_file.patient_id) & (db.fused_file.config_id == row.results_file.config_id)).select(orderby = ~db.fused_file.id, limitby=(0,1))
         if len(fused_file) > 0 and fused_file[0].sequence_file_list is not None:
             sequence_file_list = fused_file[0].sequence_file_list.split('_')
-            pos_in_list = sequence_file_list.index(str(row.sequence_file.id))
-            row_fused = vidjil_utils.extract_fields_from_json(json_paths['fused_file'], pos_in_list, defs.DIR_RESULTS + fused_file[0].fused_file)
+            try:
+                pos_in_list = sequence_file_list.index(str(row.sequence_file.id))
+                row_fused = vidjil_utils.extract_fields_from_json(json_paths['fused_file'], pos_in_list, defs.DIR_RESULTS + fused_file[0].fused_file)
+            except ValueError:
+                row_fused = []
         else:
             row_fused = {}
         results_list = [row_result, row_result_json, row_fused]
