@@ -53,11 +53,6 @@
                 {{ pass }}
                 <!-- ----- -->
 
-          <!--
-                <td class="column2"> sampling date </td>
-                <td> info </td>
-                <td> pcr </td>
-            -->
                 <td class="column1"> size </td>
 
 		<td class="column_200"> config </td>
@@ -80,11 +75,6 @@
                    {{ for key in stats: }}
                    <td>{{ =row[key] }}</td>
                    {{ pass }}
-              <!--
-                    <td> {{=row.sequence_file.sampling_date}} </td>
-                    <td> {{=row.sequence_file.info}} </td>
-                    <td> {{=row.sequence_file.pcr}} </td>
-              -->
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} >
                         {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
 		    <td> {{=row.config.name}}
