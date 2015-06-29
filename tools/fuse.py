@@ -36,6 +36,7 @@ import copy
 import os.path
 import datetime
 import subprocess
+import tempfile
 from operator import itemgetter
 from utils import *
 
@@ -728,15 +729,16 @@ def main():
     for i in range(len(jlist_fused.d["clones"])) :
         fasta += ">>" + str(i) + "\n"
         fasta += jlist_fused.d["clones"][i].d["id"] + "\n"
-    fasta_file = open("tmp", 'w')
+    fasta_file = tempfile.NamedTemporaryFile()
     fasta_file.write(fasta)
     try:
-        out = subprocess.check_output([TOOL_SIMILARITY, "-j", "tmp"])
+        out = subprocess.check_output([TOOL_SIMILARITY, "-j", fasta_file.name])
         jlist_fused.d["similarity"] = json.loads(out)
     except OSError:
         print("! failed: %s" % TOOL_SIMILARITY)
     print("### Save merged file")
     jlist_fused.save_json(args.output)
+    unlink(fasta_file.name)
 
     
     
