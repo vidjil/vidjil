@@ -1,0 +1,7 @@
+!LAUNCH: ../../../vidjil -c clones -r 1 -G ../../../germline/IGH bug20150629.fa >/dev/null && python ../../../tools/format_json.py out/bug20150629.vidjil| grep '\\"name\\"'
+
+$ The sequence is not segmented
+0:IGHV
+
+$ The sequence should have a name
+0:"\\s*"
