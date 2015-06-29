@@ -438,6 +438,7 @@ Model_loader.prototype = {
                 var clones = this.analysis.clones;
                 for (var i = 0; i < clones.length; i++){
                     var clone = clones[i];
+                    if (clone.segEdited == true) {
                     for (var n=0; n < m.clones.length; n++){
                         if (clone.id == m.clones[n].id){
                             m.clones[n].segEdited = true; /// DUBIOUS
@@ -463,6 +464,7 @@ Model_loader.prototype = {
                     if (jQuery.inArray( clone.germline, m.system_available ) == -1) {
                         m.system_available.push(clone.germline);
                     }
+                }
                 }
             }
             m.toggle_all_systems(true);
