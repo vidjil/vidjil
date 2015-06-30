@@ -994,7 +994,7 @@ Model.prototype = {
      * added)
      * */
     countRealClones: function() {
-        return this.clones.length - 1
+        return this.clones.length - this.system_available.length;
     },
 
     /**
