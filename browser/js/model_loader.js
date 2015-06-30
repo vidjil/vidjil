@@ -280,16 +280,6 @@ Model_loader.prototype = {
             }
         }
         
-        // add a virtual clone
-
-        var other = {
-            "sequence": 0,
-            "id": "other",
-            "top": 0,
-            "reads": []
-        }
-        var clone = new Clone(other, self, index, true)
-        
         //init clusters
         this.loadCluster(this.data_clusters)
         
@@ -352,7 +342,20 @@ Model_loader.prototype = {
         } else {
             self.system = germline_list[0];
         }
-        
+
+        // add virtuals clones (ex-others)
+        for (var i = 0; i < this.system_available.length; i++) {
+            var other = {
+                "sequence": 0,
+                "id": "other"+this.system_available[i],
+                "top": 0,
+                "reads": [],
+                "germline" : this.system_available[i],
+            };
+            var clone = new Clone(other, self, index, true);
+            index++ ;
+        }
+
         return this
 
     }
@@ -579,4 +582,4 @@ Model_loader.prototype = {
     },
 
 
-}
+};
