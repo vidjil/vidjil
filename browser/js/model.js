@@ -1001,28 +1001,38 @@ Model.prototype = {
      * sum all the unsegmented/undisplayed clones reads and put them in the 'other' clone
      * */
     computeOtherSize: function () {
-        var other = [];
+        var newOthers = {};
 
-        for (var j = 0; j < this.samples.number; j++) {
-            other[j] = this.reads.segmented[j]
+        // Creation of newOthers dict by germlines & timestamp
+        for (elt in this.system_available){
+            var locus = this.system_available[elt];
+            newOthers[locus] = [];
+            for (var sample = 0; sample < this.samples.number; sample++) {
+                newOthers[locus][sample] = this.reads.germline[locus][sample];
+                }
         }
 
-        for (var i = 0; i < this.clones.length - 1; i++) {
-            for (var j = 0; j < this.samples.number; j++) {
-                if (this.clone(i).isActive()) {
-                    for (var k = 0; k < this.clusters[i].length; k++) {
-                        if (this.clusters[i][k] != this.clones.length - 1)
-                            other[j] -= this.clone(this.clusters[i][k]).get('reads', j);
+        // compute size for each germlines of newOthers
+        lenSA = this.system_available.length;
+        for (var pos = 0; pos < this.clones.length - lenSA; pos++) {
+            for (var sample = 0; sample < this.samples.number ; sample++) {
+                if (this.clone(pos).isActive()) {
+                    for (var k = 0; k < this.clusters[pos].length; k++) {
+                        if (this.clusters[pos][k] != this.clones.length - 1)
+                            newOthers[this.clone(pos).germline][sample] -= this.clone(this.clusters[pos][k]).get('reads', sample);
                     }
                 }
             }
         }
 
-        var c = this.clone(this.clones.length - 1)
-        c.reads = other;
-        c.name = "smaller clones"
-        if (this.someClonesFiltered)
-            c.name += " + filtered clones";
+        // values assignation of other
+        for (var pos = this.clones.length -lenSA; pos < this.clones.length ; pos++) { 
+            var c = this.clone(pos);
+            c.reads = newOthers[c.germline];
+            c.name = c.germline + " smaller clones";
+            if (this.someClonesFiltered)
+                c.name += " + filtered clones";
+        }
     },
     
     /**
@@ -2091,7 +2101,7 @@ Model.prototype = {
         return this.getName(edge.source)+" -- "+this.getName(edge.target)+" == "+edge.len;
     },
 
-} //end prototype Model
+}; //end prototype Model
 
 
 
