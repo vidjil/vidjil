@@ -67,7 +67,7 @@ test("clone : name", function() {
     equal(c2.getCode(), "id2", "get code clone2 : id2");
     
     equal(c3.getSequenceName(), "custom name", "get name clone3 : custom name");
-    equal(c3.getCode(), "smaller clones + filtered clones", "get code clone3 : id3");
+    equal(c3.getCode(), "id3", "get code clone3 : id3");
     
     c3.changeName("plop")
     equal(c3.getName(), "plop", "changename clone3 : plop");
@@ -236,9 +236,7 @@ test("clone : export", function() {
 
     equal(c3.getPrintableSegSequence(), "aaaaa\naaaaatttt\nttttt", "getPrintableSegSequence() : Ok");
     console.log(c3.getFasta())
-    equal(c3.getFasta(), ">smaller clones + filtered clones    200 reads (100.00%)\naaaaa\naaaaatttt\nttttt\n", "getFasta() : Ok");
-    // TODO see why this name "smaller clones"; equal(c3.getFasta(), ">hello    200 reads (100.00%)\naaaaa\naaaaatttt\nttttt\n", "getFasta() : Ok");
-
+    equal(c3.getFasta(), ">id3    10 reads (5.000%)\naaaaa\naaaaatttt\nttttt\n", "getFasta() : Ok");
     
 });
 
