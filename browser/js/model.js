@@ -741,7 +741,12 @@ Model.prototype = {
     select: function (cloneID) {
         console.log("select() (clone " + cloneID + ")");
 
-        if (cloneID == (this.clones.length - 1)) return 0
+        // others shouldn't be selectable
+        var posOthers = {}; 
+        for (var i = this.clones.length - this.system_available.length; i <= this.clones.length - 1; i++) {
+            posOthers[i]='';
+            }
+        if (cloneID in posOthers) {return 0;};
 
         if (this.clone(cloneID).isSelected()) {
             this.clone(cloneID).select = false;
@@ -1129,7 +1134,7 @@ Model.prototype = {
         }
         
         var tmp = {}
-        for (var i = 0; i < this.clones.length - 1; i++) {
+        for (var i = 0; i < this.clones.length - this.system_available.length; i++) {
 
             //detect key value
             var key = "undefined"
