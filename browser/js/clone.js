@@ -67,7 +67,7 @@ Clone.prototype = {
     /**
      * @return {bool} a warning is set on this clone
      */
-        if (this.m.coverage < this.COVERAGE_WARN) return true;
+        if (this.coverage < this.COVERAGE_WARN) return true;
         if (typeof(this.eValue) != undefined && this.eValue > this.EVALUE_WARN) return true;
         return false;
     },
