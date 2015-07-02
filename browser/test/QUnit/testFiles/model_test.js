@@ -134,7 +134,7 @@ test("model : cluster", function() {
     deepEqual(m.clusters[0], [0,2], "restore previous clusters (made by user with merge whithout using clusterby function)");
     
     m.resetClusters()
-    deepEqual(m.clusters, [[0],[1],[2],[3]], "resetClusters");
+    deepEqual(m.clusters, [[0],[1],[2],[3],[4]], "resetClusters");
     
     var m = new Model();
     m.parseJsonData(json_data,100)
