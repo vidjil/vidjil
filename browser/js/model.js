@@ -1023,8 +1023,9 @@ Model.prototype = {
             for (var sample = 0; sample < this.samples.number ; sample++) {
                 if (this.clone(pos).isActive()) {
                     for (var k = 0; k < this.clusters[pos].length; k++) {
-                        if (this.clusters[pos][k] != this.clones.length - 1)
-                            newOthers[this.clone(pos).germline][sample] -= this.clone(this.clusters[pos][k]).get('reads', sample);
+                        if (this.clusters[pos][k] != this.clones.length - lenSA) {
+                            newOthers[this.clone(pos).germline][sample] -= this.clone(this.clusters[pos][k]).get('reads', sample);}
+                        else { break; }
                     }
                 }
             }
