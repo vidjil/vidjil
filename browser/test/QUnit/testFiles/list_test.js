@@ -11,7 +11,7 @@ test("List : edit", function() {
     list.init();
     
     var clone_list = document.getElementById('list').lastChild
-    equal(clone_list.childNodes.length, 4, "clone list length = 4 ('other' + 3 clones) : Ok")
+    equal(clone_list.childNodes.length, 5, "clone list length = 5 -> 3 clones+ 2 others (TRG & IGH) : Ok")
 
 
     list.editName(1, list.index[1])
