@@ -109,7 +109,7 @@ Clone.prototype = {
      * @return {string} segmentation name
      * */
     getCode: function () {
-        if (typeof (this.sequence) != 'undefined' && typeof (this.name) != 'undefined') {
+        if (typeof (this.sequence) != 'undefined' && typeof (this.name) != 'undefined' && this.name != "") {
             if (this.length > 100 && typeof (this.shortName) != 'undefined') {
                 return this.shortName;
             } else {
