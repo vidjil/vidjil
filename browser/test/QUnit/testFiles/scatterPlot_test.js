@@ -19,7 +19,7 @@ test("scatterplot : grid", function() {
                                     {"enabled": true,"text": "IGH","x": 0.80,"y": 0.75}]}, 
             "buildSystemGrid()");
     
-    equal(sp.nodes.length, 4 , "check nodes");
+    equal(sp.nodes.length, 5 , "check nodes");
     
     sp.changeSplitMethod("gene_v", "gene_v", "plot");
     sp.update()
