@@ -25,6 +25,7 @@
     var json_clone3 = {
         "sequence" : "aaaaaaaaaattttttttt",
         "c_name" : "custom name",
+        "name": "",
         "id" : "id3",
         "reads" : [10,10,15,15] ,
         "top" : 3,
