@@ -418,6 +418,8 @@ List.prototype = {
         
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
+
+        if (!this.m.clone(cloneID).isVirtual()) {
         span_info.onclick = function () {
             self.m.displayInfoBox(cloneID);
         }
@@ -427,6 +429,7 @@ List.prototype = {
             span_info.appendChild(document.createTextNode("!"));
         } else {
             span_info.appendChild(document.createTextNode("i"));
+        }
         }
         
         var span_cluster = document.createElement('span')
