@@ -121,14 +121,17 @@ def edit_form():
 
 def upload(): 
     session.forget(response)
+    mes = ""
     error = ""
+
     if request.vars['id'] == None :
         error += "missing id"
-    
-    if error=="" :
+    elif db.sequence_file[request.vars["id"]] is None:
+        error += "no sequence file with this id"
 
+    if not error:
         patient_id = db.sequence_file[request.vars["id"]].patient_id            
-        mes = "file %s (%s): " % (request.vars['id'], patient_id)
+        mes += "file %s (%s): " % (request.vars['id'], patient_id)
         res = {"message": mes + "processing uploaded file",
                "redirect": "patient/info",
                "args" : {"id" : request.vars['id']}
@@ -139,14 +142,26 @@ def upload():
             db.sequence_file[request.vars["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
             mes += "upload finished"
         
-        seq_file = defs.DIR_SEQUENCES+db.sequence_file[request.vars["id"]].data_file
+        data_file = db.sequence_file[request.vars["id"]].data_file
+
+        if data_file is None:
+            error += "no data file"
+
+    if not error:
+        seq_file = defs.DIR_SEQUENCES + data_file
+
+        # Compute and store file size
         size = os.path.getsize(seq_file)
         mes += ' (%s)' % vidjil_utils.format_size(size)
         db.sequence_file[request.vars["id"]] = dict(size_file = size)
-        
-        res = {"message": mes}
+
+    # Log and exit
+    res = {"message": mes + error}
+    if error:
+        log.error(res)
+    else:
         log.info(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
   
 
 def confirm():
