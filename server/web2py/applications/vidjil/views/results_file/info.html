@@ -31,6 +31,7 @@ run = db(db.scheduler_run.task_id == results_file.scheduler_task_id).select().fi
 
 </div>
 
+{{if run:}}
 <div id="db_table_container">
    <table>
        <tr>
@@ -57,7 +58,7 @@ run = db(db.scheduler_run.task_id == results_file.scheduler_task_id).select().fi
        </textarea></td></tr>
     </table>
 </div>
-
+{{pass}}
 
 <div class="db_block">
     <div class="db_block_left">
