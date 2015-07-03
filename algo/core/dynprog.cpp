@@ -102,7 +102,7 @@ int Cost::homo2(char xa, char xb, char y)
 double Cost::toPValue(int score)
 {
   // TODO: compute an actual p-value
-  return (score <= 0) ? BAD_EVALUE : 1 / (double) score ;
+  return (score <= MIN_MATCHES * match) ? BAD_EVALUE : 1 / (double) score ;
 }
 
 

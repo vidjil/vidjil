@@ -16,6 +16,7 @@
 #define EXTEND_D_ZONE 5
 
 #define MIN_D_LENGTH 5          /* If a D-REGION is smaller than this threshold, it is not output */
+#define MIN_MATCHES 10          /* If a V/J-REGION does not give an alignment score with at least this number of matches, the FineSegmenter does not segment the sequence */
 
 #define RATIO_STRAND 2          /* The ratio between the affectations in one
                                    strand and the other, to safely attribute a
