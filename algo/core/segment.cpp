@@ -79,6 +79,25 @@ bool Segmenter::isDSegmented() const {
   return dSegmented;
 }
 
+
+// E-values
+
+void Segmenter::checkLeftRightEvaluesThreshold(double threshold, int strand)
+{
+  if (threshold == NO_LIMIT_VALUE)
+    return ;
+
+  if (evalue_left >= threshold && evalue_right >= threshold)
+    because = UNSEG_TOO_FEW_ZERO ;
+  else if ((strand == 1 ? evalue_left : evalue_right) >= threshold)
+    because = UNSEG_TOO_FEW_V ;
+  else if ((strand == 1 ? evalue_right : evalue_left) >= threshold)
+    because = UNSEG_TOO_FEW_J ;
+  else if (evalue >= threshold) // left and right are <= threshold, but their sum is > threshold
+    because = UNSEG_TOO_FEW_ZERO ;
+}
+
+
 // Chevauchement
 
 string Segmenter::removeChevauchement()
@@ -427,26 +446,16 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   }
 
 
+  // E-values
   pair <double, double> pvalues = kaa->getLeftRightProbabilityAtLeastOrAbove();
   evalue_left = pvalues.first * multiplier ;
   evalue_right = pvalues.second * multiplier ;
   evalue = evalue_left + evalue_right ;
 
-  // E-value threshold
-  if (threshold > NO_LIMIT_VALUE && evalue >= threshold) {
+  checkLeftRightEvaluesThreshold(threshold, strand);
 
-    // Detail the unsegmentation cause
-    if (evalue_left >= threshold && evalue_right >= threshold)
-      because = UNSEG_TOO_FEW_ZERO ;
-    else if ((strand == 1 ? evalue_left : evalue_right) >= threshold)
-      because = UNSEG_TOO_FEW_V ;
-    else if ((strand == 1 ? evalue_right : evalue_left) >= threshold)
-      because = UNSEG_TOO_FEW_J ;
-    else // left and right are <= threshold, but their sum is > threshold
-      because = UNSEG_TOO_FEW_ZERO ;
-
+  if (because != NOT_PROCESSED)
     return ;
-  }
 
    // There was a good segmentation point
 
@@ -457,8 +466,6 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
      Vend = sequence.size() - Jstart - 1;
      Jstart = tmp;
    }
-
-  assert(because == NOT_PROCESSED);
 
   // Yes, it is segmented
   segmented = true;

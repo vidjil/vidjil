@@ -67,6 +67,12 @@ protected:
   bool reversed, segmented, dSegmented;
   int because;
 
+  /**
+   * Compares evalue_left, evalue_right and evalue against the provided threshold
+   * @post some evalue is above the threshold ==> because is set to UNSEG_TOO_FEW_ZERO, UNSEG_TOO_FEW_V or UNSEG_TOO_FEW_J
+   */
+  void checkLeftRightEvaluesThreshold(double threshold, int strand);
+
   string removeChevauchement();
   bool finishSegmentation();
   bool finishSegmentationD();
