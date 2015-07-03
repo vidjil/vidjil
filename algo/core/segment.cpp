@@ -731,33 +731,33 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
       score_J=score_minus_J;
     }
 
-  segmented = (Vend != (int) string::npos) && (Jstart != (int) string::npos) && 
-    (Jstart - Vend >= germline->delta_min);
-    
-  if (!segmented)
-    {
-      because = NOT_PROCESSED;
-      info = " @" + string_of_int (Vend + FIRST_POS) + "  @" + string_of_int(Jstart + FIRST_POS) ;
-      
-      if (Jstart - Vend < germline->delta_min)
-        {
-          because = UNSEG_BAD_DELTA_MIN  ;
-        }
 
-      if (Vend == (int) string::npos) 
-        {
-          because = UNSEG_TOO_FEW_V ;
-        }
+  /* Unsegmentation causes */
+  if (Jstart - Vend < germline->delta_min)
+    {
+      because = UNSEG_BAD_DELTA_MIN  ;
+    }
+
+  if (Vend == (int) string::npos)
+    {
+      because = UNSEG_TOO_FEW_V ;
+    }
       
-      if (Jstart == (int) string::npos)
-        {
-          because = UNSEG_TOO_FEW_J ;
-        }
-      
+  if (Jstart == (int) string::npos)
+    {
+      because = UNSEG_TOO_FEW_J ;
+    }
+
+  if (because != NOT_PROCESSED)
+    {
+      segmented = false;
+      info = " @" + string_of_int (Vend + FIRST_POS) + "  @" + string_of_int(Jstart + FIRST_POS) ;
       return ;
     }
-    
-    because = reversed ? SEG_MINUS : SEG_PLUS ;
+
+  /* The sequence is segmented */
+  segmented = true ;
+  because = reversed ? SEG_MINUS : SEG_PLUS ;
     
     //overlap VJ
     if(Jstart-Vend <=0){
