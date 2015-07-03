@@ -46,6 +46,11 @@ class Cost
   int substitution(char a, char b);
   int homo2(char xa, char xb, char y);
 
+  /**
+   * @return p-value of having a random alignment of the given score
+   */
+  double toPValue(int score);
+
   int open_insertion;
   int open_deletion;
   int extend_insertion;
