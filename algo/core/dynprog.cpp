@@ -23,6 +23,7 @@
 
 #include "dynprog.h"
 #include "tools.h"
+#include "segment.h"
 #include <cassert>
 #include <list>
 #include <cstdlib>
@@ -96,6 +97,12 @@ int Cost::substitution(char a, char b)
 int Cost::homo2(char xa, char xb, char y)
 {
   return ((xa == xb) && (xb == y)) ? homopolymer : MINUS_INF ;
+}
+
+double Cost::toPValue(int score)
+{
+  // TODO: compute an actual p-value
+  return (score <= MIN_MATCHES * match) ? BAD_EVALUE : 1 / (double) score ;
 }
 
 

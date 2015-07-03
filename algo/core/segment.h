@@ -16,6 +16,7 @@
 #define EXTEND_D_ZONE 5
 
 #define MIN_D_LENGTH 5          /* If a D-REGION is smaller than this threshold, it is not output */
+#define MIN_MATCHES 10          /* If a V/J-REGION does not give an alignment score with at least this number of matches, the FineSegmenter does not segment the sequence */
 
 #define RATIO_STRAND 2          /* The ratio between the affectations in one
                                    strand and the other, to safely attribute a
@@ -32,6 +33,7 @@
 #define JSON_REMEMBER_BEST  4   /* The number of V/D/J predictions to keep  */
 
 #define NO_LIMIT_VALUE  -1
+#define BAD_EVALUE  1e10
 
 #define THRESHOLD_NB_EXPECTED 1.0 /* Threshold of the accepted expected value for number of found k-mers */
 
@@ -66,6 +68,12 @@ protected:
   int CDR3start, CDR3end;
   bool reversed, segmented, dSegmented;
   int because;
+
+  /**
+   * Compares evalue_left, evalue_right and evalue against the provided threshold
+   * @post some evalue is above the threshold ==> because is set to UNSEG_TOO_FEW_ZERO, UNSEG_TOO_FEW_V or UNSEG_TOO_FEW_J
+   */
+  void checkLeftRightEvaluesThreshold(double threshold, int strand);
 
   string removeChevauchement();
   bool finishSegmentation();
@@ -239,7 +247,8 @@ class FineSegmenter : public Segmenter
    * @param seq: An object read from a FASTA/FASTQ file
    * @param germline: germline used
    */
-  FineSegmenter(Sequence seq, Germline *germline, Cost segment_cost);
+   FineSegmenter(Sequence seq, Germline *germline, Cost segment_cost,
+                 double threshold = THRESHOLD_NB_EXPECTED, int multiplier=1);
   
   /**
   * extend segmentation from VJ to VDJ

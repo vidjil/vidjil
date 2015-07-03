@@ -79,6 +79,25 @@ bool Segmenter::isDSegmented() const {
   return dSegmented;
 }
 
+
+// E-values
+
+void Segmenter::checkLeftRightEvaluesThreshold(double threshold, int strand)
+{
+  if (threshold == NO_LIMIT_VALUE)
+    return ;
+
+  if (evalue_left >= threshold && evalue_right >= threshold)
+    because = UNSEG_TOO_FEW_ZERO ;
+  else if ((strand == 1 ? evalue_left : evalue_right) >= threshold)
+    because = UNSEG_TOO_FEW_V ;
+  else if ((strand == 1 ? evalue_right : evalue_left) >= threshold)
+    because = UNSEG_TOO_FEW_J ;
+  else if (evalue >= threshold) // left and right are <= threshold, but their sum is > threshold
+    because = UNSEG_TOO_FEW_ZERO ;
+}
+
+
 // Chevauchement
 
 string Segmenter::removeChevauchement()
@@ -427,26 +446,16 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   }
 
 
+  // E-values
   pair <double, double> pvalues = kaa->getLeftRightProbabilityAtLeastOrAbove();
   evalue_left = pvalues.first * multiplier ;
   evalue_right = pvalues.second * multiplier ;
   evalue = evalue_left + evalue_right ;
 
-  // E-value threshold
-  if (threshold > NO_LIMIT_VALUE && evalue >= threshold) {
+  checkLeftRightEvaluesThreshold(threshold, strand);
 
-    // Detail the unsegmentation cause
-    if (evalue_left >= threshold && evalue_right >= threshold)
-      because = UNSEG_TOO_FEW_ZERO ;
-    else if ((strand == 1 ? evalue_left : evalue_right) >= threshold)
-      because = UNSEG_TOO_FEW_V ;
-    else if ((strand == 1 ? evalue_right : evalue_left) >= threshold)
-      because = UNSEG_TOO_FEW_J ;
-    else // left and right are <= threshold, but their sum is > threshold
-      because = UNSEG_TOO_FEW_ZERO ;
-
+  if (because != NOT_PROCESSED)
     return ;
-  }
 
    // There was a good segmentation point
 
@@ -457,8 +466,6 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
      Vend = sequence.size() - Jstart - 1;
      Jstart = tmp;
    }
-
-  assert(because == NOT_PROCESSED);
 
   // Yes, it is segmented
   segmented = true;
@@ -621,7 +628,7 @@ string format_del(int deletions)
   return deletions ? *"(" + string_of_int(deletions) + " del)" : "" ;
 }
 
-FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
+FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  double threshold, int multiplier)
 {
   segmented = false;
   dSegmented = false;
@@ -731,33 +738,39 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
       score_J=score_minus_J;
     }
 
-  segmented = (Vend != (int) string::npos) && (Jstart != (int) string::npos) && 
-    (Jstart - Vend >= germline->delta_min);
-    
-  if (!segmented)
-    {
-      because = NOT_PROCESSED;
-      info = " @" + string_of_int (Vend + FIRST_POS) + "  @" + string_of_int(Jstart + FIRST_POS) ;
-      
-      if (Jstart - Vend < germline->delta_min)
-        {
-          because = UNSEG_BAD_DELTA_MIN  ;
-        }
+  /* E-values */
+  evalue_left = multiplier * segment_cost.toPValue(score_V[0].first);
+  evalue_right = multiplier * segment_cost.toPValue(score_J[0].first);
+  evalue = evalue_left + evalue_right ;
 
-      if (Vend == (int) string::npos) 
-        {
-          because = UNSEG_TOO_FEW_V ;
-        }
+  /* Unsegmentation causes */
+  if (Jstart - Vend < germline->delta_min)
+    {
+      because = UNSEG_BAD_DELTA_MIN  ;
+    }
+
+  if (Vend == (int) string::npos)
+    {
+      evalue_left = BAD_EVALUE ;
+    }
       
-      if (Jstart == (int) string::npos)
-        {
-          because = UNSEG_TOO_FEW_J ;
-        }
-      
+  if (Jstart == (int) string::npos)
+    {
+      evalue_right = BAD_EVALUE ;
+    }
+
+  checkLeftRightEvaluesThreshold(threshold, reversed ? -1 : 1);
+
+  if (because != NOT_PROCESSED)
+    {
+      segmented = false;
+      info = " @" + string_of_int (Vend + FIRST_POS) + "  @" + string_of_int(Jstart + FIRST_POS) ;
       return ;
     }
-    
-    because = reversed ? SEG_MINUS : SEG_PLUS ;
+
+  /* The sequence is segmented */
+  segmented = true ;
+  because = reversed ? SEG_MINUS : SEG_PLUS ;
     
     //overlap VJ
     if(Jstart-Vend <=0){

@@ -1474,7 +1474,7 @@ int main (int argc, char **argv)
         KmerSegmenter *seg = kmseg.the_kseg ;
         Germline *germline = seg->segmented_germline ;
         
-            FineSegmenter s(seq, germline, segment_cost);
+        FineSegmenter s(seq, germline, segment_cost, expected_value, nb_reads_for_evalue);
 
             if (s.isSegmented()) 
               {
