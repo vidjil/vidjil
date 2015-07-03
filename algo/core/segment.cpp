@@ -628,7 +628,7 @@ string format_del(int deletions)
   return deletions ? *"(" + string_of_int(deletions) + " del)" : "" ;
 }
 
-FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
+FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  double threshold, int multiplier)
 {
   segmented = false;
   dSegmented = false;
@@ -739,7 +739,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
     }
 
   /* E-values */
-  int multiplier = 1 ;
   evalue_left = multiplier * segment_cost.toPValue(score_V[0].first);
   evalue_right = multiplier * segment_cost.toPValue(score_J[0].first);
   evalue = evalue_left + evalue_right ;
@@ -760,7 +759,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
       evalue_right = BAD_EVALUE ;
     }
 
-  double threshold = THRESHOLD_NB_EXPECTED ;
   checkLeftRightEvaluesThreshold(threshold, reversed ? -1 : 1);
 
   if (because != NOT_PROCESSED)

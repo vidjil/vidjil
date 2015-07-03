@@ -246,7 +246,8 @@ class FineSegmenter : public Segmenter
    * @param seq: An object read from a FASTA/FASTQ file
    * @param germline: germline used
    */
-  FineSegmenter(Sequence seq, Germline *germline, Cost segment_cost);
+   FineSegmenter(Sequence seq, Germline *germline, Cost segment_cost,
+                 double threshold = THRESHOLD_NB_EXPECTED, int multiplier=1);
   
   /**
   * extend segmentation from VJ to VDJ
