@@ -1,7 +1,7 @@
 !LAUNCH: ../../vidjil -r 1 -k 4 -w 20 -c clones -V ../../data/toy_V.fa -J ../../data/toy_J.fa ../../data/no_representative.fa 
 
 $ Short reads properly segmented
-1:SEG_+.* 4 
+1:SEG_+.* -> .* 4
 
 $ Window found
 1:^CACCCCCCCCCTTTTTTTCT$

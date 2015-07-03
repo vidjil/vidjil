@@ -1,4 +1,4 @@
-!LAUNCH: $LAUNCHER ../../vidjil -z 1 -k 9 -G ../../germline/IGH -% 0.001 -r 2 -x 1000 -y 1 -c clones ../../data/Stanford_S22.fasta | sed 's/--IGH--.*VDJ\\(.*\\).$/\\1/' > vidjil_s22.log && $LAUNCHER ../../vidjil -z 1 -k 9 -G ../../germline/IGH -% 0.001 -r 2 -x 1000 -y 1 -c clones ../../data/Stanford_S22.rc.fasta | sed 's/--IGH--.*VDJ\\(.*\\).$/\\1/' > vidjil_s22_rc.log && diff vidjil_s22.log vidjil_s22_rc.log
+!LAUNCH: $LAUNCHER ../../vidjil -z 1 -k 9 -G ../../germline/IGH -% 0.001 -r 2 -x 1000 -y 1 -c clones ../../data/Stanford_S22.fasta | sed 's/--IGH--.*VDJ\\(.*\\).$/\\1/' | sed 's/IGH SEG_./IGH SEG_X/' > vidjil_s22.log && $LAUNCHER ../../vidjil -z 1 -k 9 -G ../../germline/IGH -% 0.001 -r 2 -x 1000 -y 1 -c clones ../../data/Stanford_S22.rc.fasta | sed 's/--IGH--.*VDJ\\(.*\\).$/\\1/' |  sed 's/IGH SEG_./IGH SEG_X/' > vidjil_s22_rc.log && diff vidjil_s22.log vidjil_s22_rc.log
 !EXIT_CODE: 1
 
 $ Same number segmented
