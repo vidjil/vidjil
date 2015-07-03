@@ -738,6 +738,11 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
       score_J=score_minus_J;
     }
 
+  /* E-values */
+  int multiplier = 1 ;
+  evalue_left = multiplier * segment_cost.toPValue(score_V[0].first);
+  evalue_right = multiplier * segment_cost.toPValue(score_J[0].first);
+  evalue = evalue_left + evalue_right ;
 
   /* Unsegmentation causes */
   if (Jstart - Vend < germline->delta_min)
@@ -747,13 +752,16 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c)
 
   if (Vend == (int) string::npos)
     {
-      because = UNSEG_TOO_FEW_V ;
+      evalue_left = BAD_EVALUE ;
     }
       
   if (Jstart == (int) string::npos)
     {
-      because = UNSEG_TOO_FEW_J ;
+      evalue_right = BAD_EVALUE ;
     }
+
+  double threshold = THRESHOLD_NB_EXPECTED ;
+  checkLeftRightEvaluesThreshold(threshold, reversed ? -1 : 1);
 
   if (because != NOT_PROCESSED)
     {

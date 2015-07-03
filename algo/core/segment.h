@@ -32,6 +32,7 @@
 #define JSON_REMEMBER_BEST  4   /* The number of V/D/J predictions to keep  */
 
 #define NO_LIMIT_VALUE  -1
+#define BAD_EVALUE  1e10
 
 #define THRESHOLD_NB_EXPECTED 1.0 /* Threshold of the accepted expected value for number of found k-mers */
 
