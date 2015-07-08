@@ -279,10 +279,11 @@ def extract_fields_from_json(json_fields, pos_in_list, filename, max_bytes = Non
     '''
     try:
         if max_bytes is None:
-            json_dict = json.loads(cleanup_json_sample(open(filename).read()))
+            json_dict = json.loads(open(filename).read())
         else:
             json_dict = json.loads(cleanup_json_sample(open(filename).read(max_bytes)))
     except IOError:
+        current.log.debug('JSON loading failed')
         json_dict = {}
     except ValueError as e:
         current.log.debug(str(e))
