@@ -1,6 +1,7 @@
 #!/usr/bin/python
 
 import unittest
+import tempfile
 import gluon.contrib.simplejson
 from gluon.globals import Request, Session, Storage, Response
 from gluon.contrib.test_helpers import form_postvars
@@ -105,11 +106,12 @@ class DefaultController(unittest.TestCase):
             pass
         
         plop = emptyClass()
-        setattr(plop, 'file',  open("../../doc/analysis-example.vidjil", 'rb'))
+        analysis = tempfile.NamedTemporaryFile()
+        analysis.write('{"toto": 1, "bla": [], "clones": {"id": "AATA", "tag": 0}}')
+        setattr(plop, 'file',  open(analysis.name, 'rb'))
         setattr(plop, 'filename', 'plopapou')
         
         request.vars['fileToUpload'] = plop
-        request.vars['config'] = fake_config_id
         request.vars['patient'] = fake_patient_id
         
         resp = save_analysis()
