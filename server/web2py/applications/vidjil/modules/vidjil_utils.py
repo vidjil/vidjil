@@ -138,6 +138,21 @@ def advanced_filter(list_searched, filter_str):
     return True
 
 
+def put_properties_in_dict(src_dict, dest_dict, properties):
+    '''
+    Put the values of src_dict in dest_dict.
+    Only keys that are keys in properties are copied to dest_dict.
+    The key in dest_dict is determined by properties[key]
+
+    >>> put_properties_in_dict({'toto': [1, 2], 'tutu': 'A'}, {'toto': 3, 'machin': 2}, {'toto': 'toto', 'titi': 'titi', 'tutu': 'truc'}) == {'toto': [1, 2], 'truc': 'A', 'machin': 2}
+    True
+    '''
+    for key in properties.iterkeys():
+        if key in src_dict:
+            dest_dict[properties[key]] = src_dict[key]
+    return dest_dict
+
+
 #### Utilities on regex
 def search_first_regex_in_file(regex, filename, max_nb_line=None):
     try:
