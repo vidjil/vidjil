@@ -35,7 +35,12 @@ class DefaultController(unittest.TestCase):
         # for defs
         current.db = db
         current.auth = auth
-        
+
+    def _get_fake_analysis_file(self):
+        file = tempfile.TemporaryFile()
+        file.write('{"toto": 1, "bla": [], "clones": {"id": "AATA", "tag": 0}}')
+        file.seek(0)
+        return file
         
     def testIndex(self):      
         resp = index()
@@ -92,14 +97,6 @@ class DefaultController(unittest.TestCase):
            self.assertTrue(defs.PORT_FUSE_SERVER is None, 'get_custom_data returns error without fuse server')
         else:
             self.assertEqual(resp['reads']['segmented'][0], resp['reads']['segmented'][1], "get_custom_data doesn't return a valid json")
-        
-        
-    def testGetAnalysis(self):
-        request.vars['config'] = fake_config_id
-        request.vars['patient'] = fake_patient_id
-        
-        resp = get_analysis()
-        self.assertNotEqual(resp.find('"info_patient":"plop"'), -1, "get_analysis doesn't return a valid json")
 
     def testSaveAnalysis(self):
         class emptyClass( object ):
@@ -115,5 +112,13 @@ class DefaultController(unittest.TestCase):
         request.vars['patient'] = fake_patient_id
         
         resp = save_analysis()
-        self.assertNotEqual(resp.find('analysis saved","success":"true"'), -1, "save_analysis failed")
-        
+
+        resp = get_analysis_from_patient(fake_patient_id)
+        self.assertEqual(len(resp), 1, "should have one analysis for that patient %d"%len(resp))
+        self.assertEqual(resp[0].patient_id, fake_patient_id, "get_analysis doesn't have the correct patient")
+
+    def testGetCleanAnalysis(self):
+        analysis = get_clean_analysis(self._get_fake_analysis_file())
+        self.assertEqual(analysis['clones']['id'], 'AATA', 'Bad clone id')
+        self.assertEqual(analysis['tags'], {}, 'Bad tags entry in analysis')
+        self.assertEqual(analysis['vidjil_json_version'], '2014.09', 'Bad vidjil_json_version string')

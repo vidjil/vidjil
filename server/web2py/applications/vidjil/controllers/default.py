@@ -308,42 +308,15 @@ def get_analysis():
     if not auth.can_view_patient(request.vars["patient"]):
         error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
 
-    ## empty analysis file
-    res = {"samples": {"number": 0,
-                      "original_names": [],
-                      "order": [],
-                      "info_sequence_file" : []
-                       },
-           "custom": [],
-           "clusters": [],
-           "clones" : [],
-           "tags": {},
-           "vidjil_json_version" : "2014.09"
-           }
-
     if "custom" in request.vars :
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        return gluon.contrib.simplejson.dumps(get_default_analysis(), separators=(',',':'))
     
     if error == "" :
-
+        
         ## récupération des infos se trouvant dans le fichier .analysis
-        analysis_query = db(db.analysis_file.patient_id == request.vars["patient"]).select(orderby=~db.analysis_file.analyze_date)
-
-        if len(analysis_query) > 0 :
-            row = analysis_query.first()
-            f = open(defs.DIR_RESULTS+'/'+row.analysis_file, "r")
-            analysis = gluon.contrib.simplejson.loads(f.read())
-            f.close()
-            if 'cluster' in analysis:
-                res["clusters"] = analysis["cluster"]
-            if 'clusters' in analysis :
-                res["clusters"] = analysis["clusters"]
-            res["clones"] = analysis["clones"]
-            res["tags"] = analysis["tags"]
-            res["samples"]= analysis["samples"]
-
-        res["info_patient"] = db.patient[request.vars["patient"]].info
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+        analysis_data = get_analysis_data(request.vars['patient'])
+        analysis_data["info_patient"] = db.patient[request.vars["patient"]].info
+        return gluon.contrib.simplejson.dumps(analysis_data, separators=(',',':'))
 
     else :
         res = {"success" : "false",
