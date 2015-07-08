@@ -34,6 +34,7 @@ import argparse
 import time
 import copy
 import os.path
+import os
 import datetime
 import subprocess
 import tempfile
@@ -738,7 +739,7 @@ def main():
         print("! failed: %s" % TOOL_SIMILARITY)
     print("### Save merged file")
     jlist_fused.save_json(args.output)
-    unlink(fasta_file.name)
+    os.unlink(fasta_file.name)
 
     
     
