@@ -512,7 +512,7 @@ Model.prototype = {
      * */
     toggle_all_systems: function(is_on) {
         if (is_on) {
-            this.system_selected = this.system_available
+            this.system_selected = this.system_available.slice()
         } else {
             this.system_selected = []
         }
