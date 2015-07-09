@@ -606,8 +606,8 @@ List.prototype = {
 
             var div = this.index[list[i]];
 
-            if ((this.m.clone(list[i]).isActive() && this.m.clusters[list[i]].length != 0) || (this.m.clone(list[i]).isVirtual() && this.m.clone(list[i]).reads[self.m.t] != 0)) {
-
+            if ((this.m.clone(list[i]).isActive() && this.m.clusters[list[i]].length != 0)
+                || (this.m.clone(list[i]).isVirtual() && this.m.system_selected.indexOf(this.m.clone(list[i]).germline) != -1)) {
 
                 div.innerHTML = '';
                 div.className = "list";
