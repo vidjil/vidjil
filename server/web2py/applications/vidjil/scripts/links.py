@@ -4,21 +4,26 @@ import vidjil_utils
 import argparse
 
 
-parser = argparse.ArgumentParser()
+parser = argparse.ArgumentParser(description='Link sequences and/or results file from the DB.',
+                                 epilog='At least -s or -r should be used')
+parser.add_argument('--sequences', '-s',  action='store_true', help='link sequence files')
+parser.add_argument('--results', '-r',  action='store_true', help='link results files')
+parser.add_argument('--diag', '-d',  action='store_true', help='link only diagnosis results (first sample per patient)')
 parser.add_argument('--filter', '-f', type=str, default='', help='filter on info (%(default)s)')
 args = parser.parse_args()
 
 our_id = 0
 
-print "### Sequences"
 
-for res in db(db.patient.id == db.sequence_file.patient_id).select():
+if args.sequences:
+  print "### Sequences"
+
+  for res in db(db.patient.id == db.sequence_file.patient_id).select():
     our_id += 1
     print "ln -s %s/%-20s %5s.fa" % (defs.DIR_SEQUENCES, res.sequence_file.data_file, our_id),
     print "\t", "# seq-%04d" % res.sequence_file.id, "%-20s" % res.sequence_file.filename,
     print "\t", "# pat-%04d (%s %s)" % (res.patient.id, res.patient.first_name, res.patient.last_name)
 
-print "### Results"
 
 
 def last_result_by_file():
@@ -58,9 +63,17 @@ def last_result_by_first_point_by_patient():
 
 
 
+if args.diag:
+    print "### Results (first sample per patient)"
+    gen_results = last_result_by_first_point_by_patient
+elif args.results:
+    print "### Results"
+    gen_results = last_result_by_file
+else:
+    gen_results = None
 
-# for (res, seq) in last_result_by_file():
-for (res, seq) in last_result_by_first_point_by_patient():
+if gen_results:
+  for (res, seq) in gen_results():
     our_id = "pat-%04d--%s--sched-%04d--seq-%04d--%s" % (res.patient.id, res.patient.last_name[:3],
                                                          res.results_file.scheduler_task_id,
                                                          seq.id, seq.sampling_date)
