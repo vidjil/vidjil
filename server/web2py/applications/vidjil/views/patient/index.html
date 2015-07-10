@@ -63,6 +63,8 @@
     <table class="db_table" id="db_fixed_header"></table>
 </div>
 
+<div class="db_block">
+    <div class="db_block_left">
 
 {{if auth.can_create_patient():}}
 <span class="button2" onclick="db.call('patient/add')"> + new patient </span>
@@ -70,3 +72,9 @@
 {{else:}}
 <!-- <span class="button2 inactive" onclick="db.call('patient/add')" title="you don't have permission to create new patient"> add patient </span> -->
 {{pass}}
+
+  </div>
+  <div class="db_block_right">
+  {{ =len(query) }} patients
+  </div>
+</div>
