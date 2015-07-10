@@ -5,6 +5,7 @@ from __future__ import print_function
 import fuse
 import sys
 import argparse
+import re
 
 parser = argparse.ArgumentParser(description = 'Output a LaTeX table for clones in .vidjil files')
 parser.add_argument('--min-ratio', '-r', type=float, default=.01, help='minimal reads ratio of the clone (%(default).3f)')
@@ -14,7 +15,8 @@ parser.add_argument('--verbose', '-v', action='store_true', help='verbose output
 parser.add_argument('file', nargs='+', help='''.vidjil files''')
 
 
-
+# data.vidjil/pat-0119--PAR--sched-0900...
+regex_filename = re.compile('.*pat-(.*)--sched')
 
 def main():
 
@@ -25,7 +27,11 @@ def main():
     for i in args.file:
         data = fuse.ListWindows()
         data.load(i, False, verbose = args.verbose)
-        print('%%  ', i)
+
+        m = regex_filename.match(i)
+        i_short = m.group(1) if m else i
+
+        print('%s %% %s' % (i_short, i))
         print('%%  ', data.d["reads"])
         segmented_reads = data.d['reads'].d['segmented'][0]
 
