@@ -43,6 +43,8 @@ def main():
                 out += [(-reads, w.latex(base=segmented_reads))]
         for bla, ltx in sorted(out[:args.top]):
             print(ltx)
+        if not out:
+            print(r'\\')
 
         print(r'  \hline')
 
