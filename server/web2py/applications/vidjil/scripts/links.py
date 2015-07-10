@@ -79,9 +79,10 @@ else:
 
 if gen_results:
   for (res, seq) in gen_results():
-    our_id = "pat-%04d--%s--sched-%04d--seq-%04d--%s" % (res.patient.id, res.patient.last_name[:3],
+    our_id = "pat-%04d--%3s--sched-%04d--seq-%04d--%s" % (res.patient.id, res.patient.last_name[:3],
                                                          res.results_file.scheduler_task_id,
                                                          seq.id, seq.sampling_date)
+    our_id = our_id.replace(' ', '-')
 
     print "ln -s %s/%-20s %5s.vidjil" % (defs.DIR_RESULTS, res.results_file.data_file, our_id),
     print "\t", "# seq-%04d" % seq.id, "%-20s" % seq.filename, "%-10s" % seq.sampling_date,
