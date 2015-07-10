@@ -9,7 +9,7 @@ parser = argparse.ArgumentParser(description='Link sequences and/or results file
 parser.add_argument('--sequences', '-s',  action='store_true', help='link sequence files')
 parser.add_argument('--results', '-r',  action='store_true', help='link results files')
 parser.add_argument('--diag', '-d',  action='store_true', help='link only diagnosis results (first sample per patient)')
-parser.add_argument('--filter', '-f', type=str, default='', help='filter on info (%(default)s), only for -s or -d')
+parser.add_argument('--filter', '-f', type=str, default='', help='filter on patient name or info (%(default)s), only for -s or -d')
 args = parser.parse_args()
 
 our_id = 0
@@ -21,7 +21,7 @@ if args.sequences:
   for res in db(db.patient.id == db.sequence_file.patient_id).select():
 
     if args.filter:
-      if not vidjil_utils.advanced_filter([res.patient.info], args.filter):
+      if not vidjil_utils.advanced_filter([res.patient.first_name,res.patient.last_name,res.patient.info], args.filter):
         continue
 
     our_id += 1
@@ -56,7 +56,7 @@ def last_result_by_first_point_by_patient():
                                                                                       orderby=db.patient.id|db.sequence_file.sampling_date|~db.results_file.run_date):
 
         if args.filter:
-            if not vidjil_utils.advanced_filter([res.patient.info], args.filter):
+            if not vidjil_utils.advanced_filter([res.patient.first_name,res.patient.last_name,res.patient.info], args.filter):
                 continue
 
         # Remeber only the first element
