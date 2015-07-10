@@ -1,8 +1,12 @@
 
 import defs
+import vidjil_utils
+import argparse
 
-patient_id = 10
 
+parser = argparse.ArgumentParser()
+parser.add_argument('--filter', '-f', type=str, default='', help='filter on info (%(default)s)')
+args = parser.parse_args()
 
 our_id = 0
 
@@ -41,6 +45,10 @@ def last_result_by_first_point_by_patient():
                   & (db.results_file.sequence_file_id == db.sequence_file.id)).select(#groupby=db.patient.id,
                                                                                       orderby=db.patient.id|db.sequence_file.sampling_date|~db.results_file.run_date):
 
+        if args.filter:
+            if not vidjil_utils.advanced_filter([res.patient.info], args.filter):
+                continue
+
         # Remeber only the first element
         if not str(res.patient.id) in res_by_pat:
             res_by_pat[str(res.patient.id)] = (res, res.sequence_file)
@@ -59,7 +67,7 @@ for (res, seq) in last_result_by_first_point_by_patient():
 
     print "ln -s %s/%-20s %5s.vidjil" % (defs.DIR_RESULTS, res.results_file.data_file, our_id),
     print "\t", "# seq-%04d" % seq.id, "%-20s" % seq.filename, "%-10s" % seq.sampling_date,
-    print "\t", "# pat-%04d (%s %s)" % (res.patient.id, res.patient.first_name, res.patient.last_name)
+    print "\t", "# pat-%04d (%s %s) - %s" % (res.patient.id, res.patient.first_name, res.patient.last_name, res.patient.info.replace('\n', ' '))
 
 
 log.debug("=== links.py completed ===")
