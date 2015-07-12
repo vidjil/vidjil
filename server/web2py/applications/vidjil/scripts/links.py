@@ -4,16 +4,22 @@ import vidjil_utils
 import argparse
 
 
-parser = argparse.ArgumentParser(description='Link sequences and/or results file from the DB.',
+parser = argparse.ArgumentParser(description='Output shell commands to link sequences and/or results file from the DB to human-readable names',
                                  epilog='At least -s or -r should be used')
 parser.add_argument('--sequences', '-s',  action='store_true', help='link sequence files')
 parser.add_argument('--results', '-r',  action='store_true', help='link results files')
 parser.add_argument('--diag', '-d',  action='store_true', help='link only diagnosis results (first sample per patient)')
 parser.add_argument('--filter', '-f', type=str, default='', help='filter on patient name or info (%(default)s), only for -s or -d')
+parser.add_argument('--raw', '-w',  action='store_true', help='do not link, only display the list of raw files')
 args = parser.parse_args()
 
 our_id = 0
 
+def link(from_name, to_name, comments, link):
+    if link:
+        print "ln -s %s %s \t# %s" % (from_name, to_name, comments)
+    else:
+        print from_name
 
 if args.sequences:
   print "### Sequences"
@@ -25,11 +31,12 @@ if args.sequences:
         continue
 
     our_id += 1
-    print "ln -s %s/%-20s %5s.fa" % (defs.DIR_SEQUENCES, res.sequence_file.data_file, our_id),
-    print "\t", "# seq-%04d" % res.sequence_file.id, "%-20s" % res.sequence_file.filename,
-    print "\t", "# pat-%04d (%s %s)" % (res.patient.id, res.patient.first_name, res.patient.last_name)
 
-
+    link("%s/%-20s" % (defs.DIR_SEQUENCES, res.sequence_file.data_file),
+         "%5s.fa" % our_id,
+         "seq-%04d %-20s" % (res.sequence_file.id, res.sequence_file.filename)
+         + "\t# pat-%04d (%s %s)" % (res.patient.id, res.patient.first_name, res.patient.last_name),
+         not args.raw)
 
 def last_result_by_file():
   for seq in db(db.sequence_file).select():
@@ -84,9 +91,11 @@ if gen_results:
                                                          seq.id, seq.sampling_date)
     our_id = our_id.replace(' ', '-')
 
-    print "ln -s %s/%-20s %5s.vidjil" % (defs.DIR_RESULTS, res.results_file.data_file, our_id),
-    print "\t", "# seq-%04d" % seq.id, "%-20s" % seq.filename, "%-10s" % seq.sampling_date,
-    print "\t", "# pat-%04d (%s %s) - %s" % (res.patient.id, res.patient.first_name, res.patient.last_name, res.patient.info.replace('\n', ' '))
+    link("%s/%-20s" % (defs.DIR_RESULTS, res.results_file.data_file),
+         "%5s.vidjil" % our_id,
+         "seq-%04d %-20s %-10s" % (seq.id, seq.filename, seq.sampling_date)
+         + "\t# pat-%04d (%s %s) - %s" % (res.patient.id, res.patient.first_name, res.patient.last_name, res.patient.info.replace('\n', ' ')),
+         not args.raw)
 
 
 log.debug("=== links.py completed ===")
