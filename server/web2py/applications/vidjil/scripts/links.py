@@ -9,6 +9,7 @@ parser = argparse.ArgumentParser(description='Output shell commands to link sequ
 parser.add_argument('--sequences', '-s',  action='store_true', help='link sequence files')
 parser.add_argument('--results', '-r',  action='store_true', help='link results files')
 parser.add_argument('--diag', '-d',  action='store_true', help='link only diagnosis results (first sample per patient)')
+parser.add_argument('--analysis', '-a',  action='store_true', help='link analysis files (last file per patient)')
 parser.add_argument('--filter', '-f', type=str, default='', help='filter on patient name or info (%(default)s), only for -s or -d')
 parser.add_argument('--raw', '-w',  action='store_true', help='do not link, only display the list of raw files')
 args = parser.parse_args()
@@ -99,6 +100,33 @@ if gen_results:
          "seq-%04d %-20s %-10s" % (seq.id, seq.filename, seq.sampling_date)
          + "\t# %s" % patient_string(res.patient),
          not args.raw)
+
+
+
+if args.analysis:
+    print "### Analysis"
+
+    last_id = None
+
+    for res in db(db.patient.id == db.analysis_file.patient_id).select(orderby=db.patient.id|~db.analysis_file.analyze_date):
+
+        # Only last saved analysis:
+        if res.patient.id == last_id:
+            continue
+        last_id = res.patient.id
+
+        if args.filter:
+            if not vidjil_utils.advanced_filter([res.patient.first_name,res.patient.last_name,res.patient.info], args.filter):
+                continue
+
+        our_id = "pat-%04d--%3s" % (res.patient.id, res.patient.last_name[:3])
+        our_id = our_id.replace(' ', '-')
+
+        link("%s/%-20s" % (defs.DIR_RESULTS, res.analysis_file.analysis_file),
+             "%s.analysis" % our_id,
+             "%s" % res.analysis_file.analyze_date
+             + "\t# %s" % patient_string(res.patient),
+             not args.raw)
 
 
 log.debug("=== links.py completed ===")
