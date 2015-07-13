@@ -15,6 +15,9 @@ args = parser.parse_args()
 
 our_id = 0
 
+def patient_string(row):
+    return "pat-%04d (%s %s) - %s" % (row.id, row.first_name, row.last_name, row.info.replace('\n', ' '))
+
 def link(from_name, to_name, comments, link):
     if link:
         print "ln -s %s %s \t# %s" % (from_name, to_name, comments)
@@ -35,7 +38,7 @@ if args.sequences:
     link("%s/%-20s" % (defs.DIR_SEQUENCES, res.sequence_file.data_file),
          "%5s.fa" % our_id,
          "seq-%04d %-20s" % (res.sequence_file.id, res.sequence_file.filename)
-         + "\t# pat-%04d (%s %s)" % (res.patient.id, res.patient.first_name, res.patient.last_name),
+         + "\t# %s" % patient_string(res.patient),
          not args.raw)
 
 def last_result_by_file():
@@ -94,7 +97,7 @@ if gen_results:
     link("%s/%-20s" % (defs.DIR_RESULTS, res.results_file.data_file),
          "%5s.vidjil" % our_id,
          "seq-%04d %-20s %-10s" % (seq.id, seq.filename, seq.sampling_date)
-         + "\t# pat-%04d (%s %s) - %s" % (res.patient.id, res.patient.first_name, res.patient.last_name, res.patient.info.replace('\n', ' ')),
+         + "\t# %s" % patient_string(res.patient),
          not args.raw)
 
 
