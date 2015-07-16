@@ -230,6 +230,20 @@ class TestMultilocus < BrowserTest
       assert ($b.clone_info('25')[:name].style('color') ==  'rgba(220, 50, 47, 1)' ) , ">> fail tag : clone color hasn't changed"
     end
   end
+
+  def test_13_export_fasta
+    $b.clone_in_scatterplot('77').click
+    $b.clone_in_scatterplot('25').click(:control)
+    $b.clone_in_scatterplot('88').click(:control)
+
+    $b.menu_item_export_fasta.click
+    assert ( $b.window(:title => "").exists? ) , ">> fail opening fasta export "
+    $b.window(:title => "").use do
+      assert ($b.text.include? ">TRBV29*01 -1/0/-0 TRBD1*01 -2/0/-5 TRBJ2-5*01"), "header name"
+      assert ($b.text.include? "YYGGGYYACGYAYAGCGGYGYTTYYCCTYTYTGYTYTGCYAAAYAACYYYYTGTGYCTYTGTGCYGYGTTYCCCGGYYYAAACYCYCYYCCTYG\nGCYAGGYCYGG"), "sequence"
+    end
+  end
+
   
 
   def TODO_test_14_edit_tag
