@@ -178,6 +178,16 @@ string extract_from_label(string str, int field, string separator)
   return str.substr(found1+1, found2-found1-1);
 }
 
+
+string extract_dirname(string path) {
+  size_t pos_lastdir = path.find_last_of('/');
+  if (pos_lastdir != std::string::npos) {
+    path = path.substr(0, pos_lastdir);
+  }
+
+  return path;
+}
+
 string extract_basename(string path, bool remove_ext) {
   size_t pos_lastdir = path.find_last_of('/');
   if (pos_lastdir != std::string::npos) {
