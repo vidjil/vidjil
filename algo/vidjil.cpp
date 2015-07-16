@@ -157,8 +157,10 @@ void usage(char *progname, bool advanced)
        << "  -D <file>     D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
        << "  -G <prefix>   prefix for V (D) and J repertoires (shortcut for -V <prefix>V.fa -D <prefix>D.fa -J <prefix>J.fa) (basename gives germline code)" << endl
-       << "  -g <path>     multiple germlines (in the path <path>, takes TRA, TRB, TRG, TRD, IGH, IGK and IGL and sets window prediction parameters)" << endl
-       << "  -i            multiple germlines, also incomplete rearrangements (must be used with -g)" << endl
+       << "  -g <path>     multiple locus/germlines. In the path <path>, takes 'germlines.data' to select locus and parameters" << endl
+       << "                Selecting '-g germline' processes TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations" << endl
+       << "                A different 'germlines.data' file can also be provided with -g <file>" << endl
+       << "  -i            multiple locus/germlines, also incomplete/unusual rearrangements (must be used with -g)" << endl
        << endl ;
 
   if (advanced)
