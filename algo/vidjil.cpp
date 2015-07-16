@@ -68,7 +68,8 @@
 
 //$$ #define (mainly default options)
 
-#define DEFAULT_MULTIGERMLINE "germline"
+#define DEFAULT_MULTI_GERMLINE_PATH "germline/"
+#define DEFAULT_MULTI_GERMLINE_FILE "germlines.data"
 
 #define DEFAULT_READS  "./data/Stanford_S22.fasta"
 #define DEFAULT_MIN_READS_CLONE 5
@@ -349,7 +350,9 @@ int main (int argc, char **argv)
   bool multi_germline_one_index_per_germline = true;
   bool multi_germline_unexpected_recombinations_12 = false;
   bool multi_germline_unexpected_recombinations_1U = false;
-  string multi_germline_file = DEFAULT_MULTIGERMLINE;
+
+  string multi_germline_path = DEFAULT_MULTI_GERMLINE_PATH;
+  string multi_germline_file = DEFAULT_MULTI_GERMLINE_FILE;
 
   string forced_edges = "" ;
 
@@ -415,6 +418,29 @@ int main (int argc, char **argv)
       case 'g':
 	multi_germline = true;
 	multi_germline_file = string(optarg);
+        {
+          string arg = string(optarg);
+          struct stat buffer;
+          if (stat(arg.c_str(), &buffer) == 0)
+            {
+              if( buffer.st_mode & S_IFDIR )
+                {
+                  // argument is a directory
+                  multi_germline_path = arg ;
+                  multi_germline_file = DEFAULT_MULTI_GERMLINE_FILE ;
+                }
+              else
+                {
+                  multi_germline_path = extract_dirname(arg);
+                  multi_germline_file = extract_basename(arg, false);
+                }
+            }
+          else
+             {
+               cerr << ERROR_STRING << "A path or a file must be given with -g" << endl ;
+               exit(1);
+             }
+        }
 	germline_system = "multi" ;
 	break;
 
@@ -779,7 +805,7 @@ int main (int argc, char **argv)
     
       if (multi_germline)
 	{
-          multigermline->build_from_json(multi_germline_file, "germlines.data", GERMLINES_REGULAR, trim_sequences);
+          multigermline->build_from_json(multi_germline_path, multi_germline_file, GERMLINES_REGULAR, trim_sequences);
 	}
       else
 	{
@@ -825,7 +851,7 @@ int main (int argc, char **argv)
       // Should come after the initialization of regular (and possibly pseudo) germlines
     if (multi_germline_incomplete) {
       multigermline->one_index_per_germline = true; // Starting from now, creates new indexes
-      multigermline->build_from_json(multi_germline_file, "germlines.data", GERMLINES_INCOMPLETE, trim_sequences);
+      multigermline->build_from_json(multi_germline_path, multi_germline_file, GERMLINES_INCOMPLETE, trim_sequences);
     }
 
     if (multi_germline_mark)
