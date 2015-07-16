@@ -1,0 +1,29 @@
+{
+    "Y-Vb/Jg": {
+        "shortcut": "y",
+        "description": "Fake chimera locus",
+        "recombinations": [ {
+            "5": ["../germline/TRBV.fa"],
+            "3": ["../germline/TRGJ.fa"]
+        } ],
+        "parameters": {
+            "seed": "13s"
+        }
+    },
+
+    "Z-Vd/Jh-or-Vk/Jl": {
+        "shortcut": "z",
+        "description": "Fake chimera locus, with two different recombinations",
+        "recombinations": [ {
+            "5": ["../germline/TRDV.fa"],
+            "3": ["../germline/IGHJ.fa"]
+        },
+        {
+            "5": ["../germline/IGKV.fa"],
+            "3": ["../germline/IGLJ.fa"]
+        } ],
+        "parameters": {
+            "seed": "12s"
+        }
+    }
+ }
