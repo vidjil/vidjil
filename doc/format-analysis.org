@@ -117,7 +117,7 @@ This file reflects what an user could have done with the browser (or with some o
 She has manually set sample names (=names=), tagged (=tag=, =tags=) and clustered (=clusters=) 
 some clones, and added external data (=data=).
 
-#+BEGIN_SRC js :tangle analysis-example1.analysis
+#+BEGIN_SRC js :tangle analysis-example2.analysis
     {
         "producer": "user Bob, via browser",
         "timestamp": "2014-10-01 12:00:11",
@@ -134,7 +134,7 @@ some clones, and added external data (=data=).
             {
                 "id": "clone-845",
                 "name": "Main LAL clone",
-                "tag": "0",
+                "tag": "0"
             },
             {
                 "id": "spikeE",
