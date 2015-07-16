@@ -13,7 +13,7 @@ test("Segmenter : ", function() {
     m.select(0)
     var div0 = document.getElementById("f0");
     notEqual(div0.innerHTML.indexOf("test1"), -1, "select : Ok")
-    
+
     m.select(1)
     var div1 = document.getElementById("f1");
     notEqual(div1.innerHTML.indexOf("test2"), -1, "select : Ok")
@@ -30,6 +30,7 @@ test("Segmenter : ", function() {
     //
     deepEqual(segment.findPotentialField(), ["","m","cdr3","fr1"], "potentialField : Ok")
     
+
     m.select(0)
     deepEqual(segment.toFasta(), "> test1 // 5.000%\naaaaaaaaaaaaaaaaaaaAG\n","toFasta :Ok")
     
@@ -41,5 +42,9 @@ test("Segmenter : ", function() {
     m.focusOut()
     m.updateElem([0])
     notEqual($("#f0").css("background-color"), "rgb(204, 204, 204)", "focusOut : Ok")
+    
+    //stats
+    //m.select(0);
+    equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 10 reads, 5.000% ", "stats : Ok")  
     
 });
