@@ -146,8 +146,8 @@ test("List : tag/norm", function() {
     m.norm_input.value = 0.25;
     m.norm_button.click();
     
-    equal(m.clone(1).getSize(), 0.5, "size after norm : Ok")
-    equal(m.clone(2).getSize(), 0.625, "size after norm : Ok")
+    equal(m.clone(1).getSize(), 0.25, "size after norm : Ok")
+    equal(m.clone(2).getSize(), 0.3125, "size after norm : Ok")
 });
 
 
