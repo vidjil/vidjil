@@ -56,9 +56,32 @@ class VidjilBrowser < Watir::Browser
     return element(extra.merge(:id => 'seq'+id))
   end
 
+  # Change the coloration
+  def color_by(dimension)
+    menu_color.select_list.select dimension
+  end
+
+  # Return the div of the graph component
+  def graph(extra = {})
+    return element(extra.merge(:class => 'graph', :id => 'visu2'))
+  end
+
+  def info_segmented
+    return element(:id => 'info_segmented').span(:index => 1)
+  end
+
+  def info_selected_locus
+    return element(:id => 'info_selected_locus').span(:index => 1)
+  end
+
   # Return the div containing the information (status bar)
   def infoline
     return div(:id => 'bot-container').div(:class => 'focus')
+  end
+
+  # Return the span of the locus
+  def locus_topleft(locus)
+       return span(:class => 'systemBoxNameMenu', :class => locus)
   end
 
   def menu_patient
@@ -88,7 +111,13 @@ class VidjilBrowser < Watir::Browser
   def menu_settings
     return div(:id => 'settings_menu')
   end
-  
+
+  def menu_item_export_fasta
+    menu = menu_import_export
+    menu.click
+    return menu.a(:id => 'export_fasta')
+  end
+
   # Return the element corresponding to the x axis of the scatterplot
   def scatterplot_x
     return scatterplot('x')
