@@ -93,20 +93,20 @@
             <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');">import/export
                 <div id="demoSelector" class="selector"><div>
                     <div class="menu_box">
-                        <a id="import_data_anchor" class="buttonSelector" onclick="javascript:loadData()">import data (.vidjil)</a>
-                        <a id="import_data_analysis" class="buttonSelector" onclick="javascript:loadAnalysis()">import analysis</a>
+                        <a id="import_data_anchor" id="import_data" class="buttonSelector" onclick="javascript:loadData()">import data (.vidjil)</a>
+                        <a id="import_data_analysis" id="import_analysis" class="buttonSelector" onclick="javascript:loadAnalysis()">import analysis</a>
                     </div>
                     <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
                     <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
                     <div class="menu_box">
-                      <a class="buttonSelector" onclick="javascript:report.reportHTMLdiag()">export report (sample)</a>
-                      <a class="buttonSelector" onclick="javascript:report.reportHTML()">export report (monitor)</a>
+                      <a class="buttonSelector" id="export_sample_report" onclick="javascript:report.reportHTMLdiag()">export report (sample)</a>
+                      <a class="buttonSelector" id="export_monitor_report" onclick="javascript:report.reportHTML()">export report (monitor)</a>
                     </div>
                     <div class="menu_box">
-                        <a class="buttonSelector" onclick="javascript:m.saveAnalysis()">export analysis</a>
-                        <a class="buttonSelector" onclick="javascript:pdf.makeGraph()">export pdf (graph)</a>
-                        <a class="buttonSelector" onclick="javascript:m.exportCSV()">export csv (visible clones)</a>
-                        <a class="buttonSelector" onclick="javascript:m.exportFasta()">export fasta(selected clones)</a>
+                        <a class="buttonSelector" id="export_analysis" onclick="javascript:m.saveAnalysis()">export analysis</a>
+                        <a class="buttonSelector" id="export_pdf" onclick="javascript:pdf.makeGraph()">export pdf (graph)</a>
+                        <a class="buttonSelector" id="export_csv" onclick="javascript:m.exportCSV()">export csv (visible clones)</a>
+                        <a class="buttonSelector" id="export_fasta" onclick="javascript:m.exportFasta()">export fasta(selected clones)</a>
                     </div>
                 </div></div>
             </div>
