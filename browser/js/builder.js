@@ -537,7 +537,7 @@ Builder.prototype = {
                 else if (percent < 50)  { warning = "warning" ;  }
             }
 
-            var div_segmented = this.build_info_line("info_segmented", "selected locus", val, warning)
+            var div_segmented = this.build_info_line("info_selected_locus", "selected locus", val, warning)
             parent.appendChild(div_segmented)
         }
   
