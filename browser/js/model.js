@@ -124,7 +124,7 @@ Model.prototype = {
         
         this.clusters = [];
         this.clones = [];
-        this.data = {};
+        this.data = {}; // external data
         this.data_info = {};
         this.clone_info = -1;
         this.someClonesFiltered = false;
