@@ -1,0 +1,5 @@
+rm -f test/*.xml
+for file in test_*rb; do
+    ruby $file;
+    mv test/reports/*.xml test/
+done
