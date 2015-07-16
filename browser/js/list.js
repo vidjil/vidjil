@@ -88,7 +88,7 @@ List.prototype = {
         var div_normalize = document.createElement("div");
         div_normalize.appendChild(document.createElement("span").appendChild(document.createTextNode("normalize to: ")));
         this.data_norm_input = document.createElement("input");
-        this.data_norm_input.id = "normalized_size";
+        this.data_norm_input.id = "normalized_data_size";
         this.data_norm_input.step = '0.0001';
         this.data_norm_input.type = 'number';
         div_normalize.appendChild(document.createElement("span").appendChild(this.data_norm_input));

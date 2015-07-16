@@ -1648,6 +1648,7 @@ Model.prototype = {
 
         
         this.norm_input = document.createElement('input');
+        this.norm_input.id = "normalized_size";
         this.norm_input.type = "number";
         this.norm_input.step = "0.0001"
         
