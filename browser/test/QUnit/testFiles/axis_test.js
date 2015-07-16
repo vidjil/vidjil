@@ -101,5 +101,5 @@ test("Axis : ", function() {
     axis.custom(function(cloneID) {
                 return m.clone(cloneID).getName();
             }, undefined, undefined, 'string')
-    equal(axis.pos(0).toPrecision(3), 0.100, "custom (name : clone 0 ")
+    equal(axis.pos(0).toPrecision(3), 0.0833, "custom (name : clone 0 ")
 });
