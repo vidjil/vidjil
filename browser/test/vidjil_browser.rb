@@ -39,16 +39,19 @@ class VidjilBrowser < Watir::Browser
 
 
   # Return the clone on the scatterplot
+  # Beware the id must be a string
   def clone_in_scatterplot(id, extra={})
     return element(extra.merge(:id => "circle"+id))
   end
 
   # Return the clone in the graph
+  # Beware the id must be a string
   def clone_in_graph(id, extra={})
     return element(extra.merge(:id => "polyline"+id))
   end
 
   # Return the item of clone id in segmenter (may not exist…)
+  # Beware the id must be a string
   def clone_in_segmenter(id, extra={})
     return element(extra.merge(:id => 'seq'+id))
   end
