@@ -224,7 +224,7 @@ test("clone : tag / color", function() {
     
     m.changeColorMethod("abundance")
     c1.updateColor()
-    equal(c1.getColor(), "rgb(183,36,36)", "getColor() >> abundance color : ");
+    equal(c1.getColor(), "rgb(36,183,88)", "getColor() >> abundance color : ");
     
 });
 
