@@ -123,7 +123,7 @@ function ScatterPlot(id, model) {
             label:"allele J" 
         },
         "sequenceLength" : { 
-            label: "clone length",
+            label: "clone consensus length",
             fct: function(cloneID) {return self.m.clone(cloneID).getSequenceLength()}
         },
         "GCContent" : { 
@@ -140,7 +140,7 @@ function ScatterPlot(id, model) {
             fct: function(cloneID) {return self.m.clone(cloneID).seg["cdr3"].length}
         },
         "coverage": { 
-            label: "clone coverage",
+            label: "clone consensus coverage",
             fct: function(cloneID){return self.m.clone(cloneID).coverage},
             min: 0,
             max: 1, 
@@ -241,12 +241,12 @@ function ScatterPlot(id, model) {
         // "graph" : { "mode": "plot", "x" : "tsneX", "y": "tsneY"},
         // "graph_by_system" : { "mode": "plot", "x" : "tsneX_system", "y": "tsneY_system"},
         "V/N length" : { "mode": "plot", "x" : "gene_v", "y": "n"},
-        "clone length / locus" : { "mode": "plot", "x": "sequenceLength", "y" : "locus"},
-        "clone length / GC content " : { "mode": "plot", "x": "sequenceLength", "y" : "GCContent"},
-        "clone coverage / GC content " : { "mode": "plot", "x": "coverage", "y" : "GCContent"},
+        "clone consensus length / locus" : { "mode": "plot", "x": "sequenceLength", "y" : "locus"},
+        "clone consensus length / GC content " : { "mode": "plot", "x": "sequenceLength", "y" : "GCContent"},
+        "clone consensus coverage / GC content " : { "mode": "plot", "x": "coverage", "y" : "GCContent"},
         // "V/abundance" : { "mode": "plot", "x" : "gene_v", "y": "Size"},
         "V distribution" :            { "mode": "bar", "x" : "gene_v",         "y": "gene_j"},
-        "Clone length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "gene_v"},
+        "clone consensus length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "gene_v"},
         "N length distribution" :     { "mode": "bar", "x" : "n",              "y": "gene_v"},
         "compare two samples" : { "mode": "plot", "x" : "Size", "y": "otherSize"}
         
