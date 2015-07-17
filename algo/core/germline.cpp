@@ -197,7 +197,7 @@ ostream &operator<<(ostream &out, const Germline &germline)
   if (germline.index) {
     out << " 0x" << hex << setw(2) << setfill('0') << germline.index->id << dec << setfill(' ') << " " ;
     out << fixed << setprecision(3) << setw(8) << 100 * germline.index->getIndexLoad() << "%";
-    out << " s" << germline.index->getS() << " k" << germline.index->getK() << " " << germline.index->getSeed() ; // TODO: there should be a << for index
+    out << " l" << germline.index->getS() << " k" << germline.index->getK() << " " << germline.index->getSeed() ; // TODO: there should be a << for index
   }
 
   out << endl;
