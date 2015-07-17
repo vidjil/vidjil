@@ -80,14 +80,14 @@ source /opt/rh/devtoolset-2/enable # ... or source devtools in the same shell
 g++-4.8 is included in FreeBSD 9.2.
 
 
-*** Debian Wheezy 7.0
+*** Debian Squeeze 6.0 / Wheezy 7.0
 
 g++-4.8 should be pinned from testing.
 Put in =/etc/apt/preferences= the following lines:
 
 #+BEGIN_SRC sh
 Package: *
-Pin: release n=wheezy
+Pin: release n=wheezy # (or squeeze)
 Pin-Priority: 900
 
 Package: g++-4.8, gcc-4.8, valgrind*
