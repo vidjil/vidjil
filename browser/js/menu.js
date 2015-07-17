@@ -37,7 +37,7 @@ function initMenu () {
             
             //detect if files are available
             $.ajax({
-                type: "POST",
+                type: "GET",
                 timeout: 5000,
                 crossDomain: true,
                 url: config.file_menu.path + config.file_menu.file[0],
