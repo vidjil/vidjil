@@ -7,7 +7,7 @@ The Vidjil browser is able to display multi-locus data, as long as this informat
 is provided in the =.vidjil= file computed by the analysis program.
 The Vidjil algorithm currently analyzes the following locus,
 selecting the best locus for each read.
-
+The configuration of analyzed locus is done in the =germline/germlines.data= file.
 
 |----------------------+-------+-------------------------+--------+-----------------------------------|
 |                      |       | complete recombinations |        | incomplete/special recombinations |
@@ -33,10 +33,6 @@ are long enough (especially the J region).
 The detection of incomplete/special recombinaisons is more challenging and may fail in some cases.
 In particular, as D genes may be very short, detecting TRD+ (Dd2/Dd3) and IGH+ (Dh-Jh) recombinations
 require to have reads with fairly conserved D genes.
-
-/Development note./
-The algorithm parameters are hard-coded for each locus, it is defined in the =algo/core/germline.cpp= files.
-In a future release, the mechanism will be more flexible and will parse the =germline/germlines.data= file.
 
 
 
