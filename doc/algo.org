@@ -99,7 +99,7 @@ Then g++ 4.8 can be installed.
 
 #+BEGIN_SRC sh
 apt-get update
-apt-get install g++-4.8 valgrind
+apt-get install -t jessie g++-4.8 valgrind
 #+END_SRC
 
 
