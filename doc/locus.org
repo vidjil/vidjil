@@ -32,7 +32,7 @@ are long enough (especially the J region).
 
 The detection of incomplete/special recombinaisons is more challenging and may fail in some cases.
 In particular, as D genes may be very short, detecting TRD+ (Dd2/Dd3) and IGH+ (Dh-Jh) recombinations
-require to have reads with fairly conserved D genes.
+require to have reads with fairly conserved D genes or up/downstream regions.
 
 
 
