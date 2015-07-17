@@ -2,10 +2,10 @@
 # Testing a custom (fake) germlines.data
 
 $ Loads from 'chimera-fake-VJ-germlines.data' a custom germline
-1: Y-.* s14 k13
+1: Y-.* l14 k13
 
 $ Loads from 'chimera-fake-VJ-germlines.data' a custom germline with two possibilities of recombinations
-2: Z-.* s13 k12
+2: Z-.* l13 k12
 
 $ The KmerSegmenter segments the three chimera reads
 1:Y-.* -> .* 1
