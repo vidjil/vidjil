@@ -163,6 +163,14 @@ void testFastaAddThrows() {
   }
   TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
 
+  caught = false;
+  try {
+    Fasta fa1("../../data/malformed7.fq");
+  } catch(invalid_argument e) {
+    TAP_TEST(string(e.what()).find("Unexpected EOF") == 0, TEST_FASTA_INVALID_FILE, "");
+    caught = true;
+  }
+  TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
 }
 
 void testSequenceOutputOperator() {

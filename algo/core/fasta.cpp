@@ -171,8 +171,10 @@ void OnlineFasta::next() {
   current.label.erase();
   current.sequence.erase();
   current.quality.erase();
-  if (current.seq)
+  if (current.seq) {
     delete [] current.seq;
+    current.seq = NULL;
+  }
 
   if  (hasNext()) {
     switch(line[0]) {
