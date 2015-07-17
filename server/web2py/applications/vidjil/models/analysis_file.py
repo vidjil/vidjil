@@ -1,11 +1,17 @@
 import defs
 import vidjil_utils
 
-def get_analysis_from_patient(patient_id):
+def get_analysis_from_patient(patient_id, *fields, **kwargs):
     '''
-    Returns the data from the DB corresponding to the analysis of this patient
+    Returns the data from the DB corresponding to the analysis of this patient.
+
+    fields: (optional) arguments given to the select (what fields must be 
+            retrieved, by default: all)
+    kwargs: parameterize the select (with orderby, groupby, etc.) in the fashion of web2py
     '''
-    return db(db.analysis_file.patient_id == patient_id).select(orderby=~db.analysis_file.analyze_date)
+    if 'orderby' not in kwargs:
+        kwargs['orderby'] = ~db.analysis_file.analyze_date
+    return db(db.analysis_file.patient_id == patient_id).select(*fields, **kwargs)
     
 def get_analysis_data(patient_id):
     '''
