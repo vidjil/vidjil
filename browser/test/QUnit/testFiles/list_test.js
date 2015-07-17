@@ -68,7 +68,8 @@ test("List : sort", function() {
     notEqual(clone_list[4].innerHTML.indexOf("TRG smaller"), -1, "sortByJ: Ok");
 
     list.sortListByTop();
-    notEqual(clone_list[0].innerHTML.indexOf("IGH smaller"), -1, "sortByTop: Ok");
+    notEqual(clone_list[0].innerHTML.indexOf("smaller"), -1, "sortByTop: Ok"); // TRG or IGH
+    notEqual(clone_list[1].innerHTML.indexOf("smaller"), -1, "sortByTop: Ok"); // TRG or IGH
     notEqual(clone_list[2].innerHTML.indexOf("test1"),       -1, "sortByTop: Ok");
     notEqual(clone_list[3].innerHTML.indexOf("test2"),       -1, "sortByTop: Ok");
     notEqual(clone_list[4].innerHTML.indexOf("test3"),       -1, "sortByTop: Ok");
