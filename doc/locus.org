@@ -1,5 +1,5 @@
 #+TITLE: Vidjil -- Analyzed locus
-#+AUTHOR: The Vidjil team (Mathieu, Mikaël, Marc and Tatiana)
+#+AUTHOR: The Vidjil team (Florian, Mathieu, Mikaël, Marc and Tatiana)
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
 #+OPTIONS: toc:nil
 
@@ -13,7 +13,7 @@ The configuration of analyzed locus is done in the =germline/germlines.data= fil
 |                      |       | complete recombinations |        | incomplete/special recombinations |
 |----------------------+-------+-------------------------+--------+-----------------------------------|
 |                      | *TRA* | Va-Ja                   |        |                                   |
-|                      | *TRB* | Vb-(Db)-Jb              |        |                                   |
+|                      | *TRB* | Vb-(Db)-Jb              | *TRB+* | Db-Jb                             |
 |                      | *TRD* | Vd-(Dd)-Jd              | *TRD+* | Vd-Dd3, Dd2-Jd, Dd2-Dd3           |
 |                      |       |                         | *TRA+D*| Vd-(Dd)-Ja, Dd-Ja                 |
 |                      | *TRG* | Vg-Jg                   |        |                                   |
