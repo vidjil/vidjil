@@ -1804,7 +1804,10 @@ ScatterPlot.prototype = {
             this.update();
         }
 
+        oldOtherVisibility = this.otherVisibility
         this.otherVisibility = this.splitX == "otherSize" || this.splitY == "otherSize"
+        if (this.otherVisibility != oldOtherVisibility)
+            this.updateClones()
 
         if (typeof this.m.graph != "undefined") {
             this.m.graph.setOtherVisibility(this.otherVisibility)
