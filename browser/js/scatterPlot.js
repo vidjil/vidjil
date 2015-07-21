@@ -102,6 +102,9 @@ function ScatterPlot(id, model) {
     this.text_position_y = 60;
     this.sub_text_position_y = 100;
 
+    // is 'otherSize' selected ?
+    this.otherVisibility = false
+
     //Clone selected
     this.cloneSelected = -1;
 
@@ -1789,8 +1792,10 @@ ScatterPlot.prototype = {
             this.update();
         }
 
+        this.otherVisibility = this.splitX == "otherSize" || this.splitY == "otherSize"
+
         if (typeof this.m.graph != "undefined") {
-            this.m.graph.setOtherVisibility(this.splitX == "otherSize" || this.splitY == "otherSize")
+            this.m.graph.setOtherVisibility(this.otherVisibility)
         }
 
         if (splitX == "tsneX" || splitX == "tsneX_system"){
