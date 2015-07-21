@@ -1,13 +1,14 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
-2015-07-XX  The Vidjil Team
+2015-07-21  The Vidjil Team
         * New flexible parameterization of analyzed recombinations through a json file (germline/germlines.data)
         * New experimental unexpected recombination analysis (-4 -e 10) (core/segment.cpp)
         * New threshold for FineSegmenter VJ assignation, with at least 10 matches (core/germline.cpp)
         * Streamlined handling of segmentation methods (core/germline.h, core/segment.cpp)
         * Updated distance matrix computation between all clones (core/similarityMatrix.cpp)
         * New nlohmann json libray to parse and write json files (lib/json.h)
+        * Updated build process, now requiring a C++11 compiler
         * New draft developer documentation (doc/dev.org), updated help and user documentation
         * New and updated unit and functional tests, bugs closed in shouldvdj tests
 
