@@ -1339,6 +1339,12 @@ ScatterPlot.prototype = {
                     var seqID = this.m.clusters[cloneID][i]
                     var size = this.m.clone(seqID)
                         .getSequenceSize();
+
+                    if (this.otherVisibility) {
+                        var otherSize = this.m.clone(seqID).getSequenceSize(this.m.tOther)
+                        if (otherSize > size) size = otherSize
+                    }
+
                     this.nodes[seqID].s = size
                         //Math.pow(x,y) -> x**y
                     if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
@@ -1354,6 +1360,12 @@ ScatterPlot.prototype = {
                     .getSize2();
                 if (this.m.clusters[cloneID].length == 0) size = this.m.clone(cloneID)
                     .getSequenceSize();
+
+                if (this.otherVisibility) {
+                    var otherSize = this.m.clone(seqID).getSequenceSize(this.m.tOther)
+                    if (otherSize > size) size = otherSize
+                }
+
                 this.nodes[cloneID].s = size
                 if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
                 this.nodes[cloneID].r1 = size
