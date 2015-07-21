@@ -843,7 +843,7 @@ int main (int argc, char **argv)
       }
 
       if (multi_germline_unexpected_recombinations_1U) {
-        Germline *pseudo_u = new Germline("xxx", 'y', -10, trim_sequences);
+        Germline *pseudo_u = new Germline("xxx", 'x', -10, trim_sequences);
         pseudo_u->seg_method = SEG_METHOD_MAX1U ;
         // TODO: there should be more up/downstream regions for the 'yyy' germline. And/or smaller seeds ?
         pseudo_u->index = multigermline->index ;
