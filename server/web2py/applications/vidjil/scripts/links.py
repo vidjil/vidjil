@@ -17,7 +17,7 @@ args = parser.parse_args()
 our_id = 0
 
 def patient_string(row):
-    return "pat-%04d (%s %s) - %s" % (row.id, row.first_name, row.last_name, row.info.replace('\n', ' '))
+    return "u%s pat-%04d (%s %s) - %s" % (row.creator, row.id, row.first_name, row.last_name, row.info.replace('\n', ' '))
 
 def link(from_name, to_name, comments, link):
     if link:
