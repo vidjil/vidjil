@@ -40,8 +40,8 @@ import subprocess
 import tempfile
 from operator import itemgetter
 from utils import *
+from defs import *
 
-VIDJIL_JSON_VERSION = "2014.10"
 FUSE_VERSION = "vidjil fuse"
 
 TOOL_SIMILARITY = "../algo/tools/similarity"
@@ -213,7 +213,7 @@ class OtherWindows:
             print('  --[others]-->', w)
             yield w
         
-class ListWindows:
+class ListWindows(VidjilJson):
     '''storage class for sequences informations 
     
     >>> lw1.info()
@@ -278,13 +278,6 @@ class ListWindows:
         print(self)
         for clone in self:
             print(clone)
-
-    ### check vidjil_json_version
-    def check_version(self, filepath):
-        if "vidjil_json_version" in self.d:
-            if self.d["vidjil_json_version"] <= VIDJIL_JSON_VERSION:
-                return
-        raise IOError ("File '%s' is too old -- please regenerate it with a newer version of Vidjil" % filepath)
         
     ### compute statistics about clones
     def build_stat(self):
