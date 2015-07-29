@@ -1831,7 +1831,7 @@ Model.prototype = {
             for (var i=0; i<list.length; i++){
                 var geneV = this.clone(list[i]).getGene(5)                
                 var geneD = this.clone(list[i]).getGene(4)
-                var geneJ = this.clone(list[i]).getGene(3) // y a-t-il une raison de tester qu'ils ne soient pas "undefined" ?
+                var geneJ = this.clone(list[i]).getGene(3) 
                 
                 if (listGene.indexOf(geneV) == -1)     
                     listGene.push(geneV)
@@ -1841,11 +1841,17 @@ Model.prototype = {
                     listGene.push(geneJ)
                 
             }
+
             for (var i=0; i<listGene.length; i++){
-                fasta += ">" + listGene[i] + '\n';
-                //fasta += //sequence
+                console.log(listGene[i])
             }
-  
+
+            for (var i=0; i<listGene.length; i++){
+                germName = listGene[i].slice(0, 4)
+                console.log(germName)
+                fasta += ">" + listGene[i] + '\n';
+                fasta +=  germline[germName][listGene[i]].toUpperCase() + '\n'//sequence
+            }
 
             //fasta += segmented_germline->rep_5.read(seg.best_V);
             /*segmented_germline = windowsStorage->getGermline(it->first)
