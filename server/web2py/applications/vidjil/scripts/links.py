@@ -12,6 +12,7 @@ parser.add_argument('--sequences', '-s',  action='store_true', help='link sequen
 parser.add_argument('--results', '-r',  action='store_true', help='link results files')
 parser.add_argument('--diag', '-d',  action='store_true', help='link only diagnosis results (first sample per patient)')
 parser.add_argument('--analysis', '-a',  action='store_true', help='link analysis files (last file per patient)')
+parser.add_argument('--original', '-o', action='store_true', help='for -s, use original filenames')
 parser.add_argument('--filter', '-f', type=str, default='', help='filter on patient name or info (%(default)s), only for -s or -d')
 parser.add_argument('--creator', '-c', type=int, default=0, help='filter on patient creator id, only for -s or -d')
 parser.add_argument('--raw', '-w',  action='store_true', help='do not link, only display the list of raw files')
@@ -41,10 +42,15 @@ if args.sequences:
         if res.patient.creator != args.creator:
             continue
 
-    our_id += 1
+
+    if args.original:
+       f = res.sequence_file.filename
+    else:
+       our_id += 1
+       f = "%5s.fa" % our_id
 
     link("%s/%-20s" % (defs.DIR_SEQUENCES, res.sequence_file.data_file),
-         "%5s.fa" % our_id,
+         f,
          "seq-%04d %-20s" % (res.sequence_file.id, res.sequence_file.filename)
          + "\t# %s" % patient_string(res.patient),
          not args.raw)
