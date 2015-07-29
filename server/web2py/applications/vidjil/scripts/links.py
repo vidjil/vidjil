@@ -1,3 +1,5 @@
+import sys
+print "#", ' '.join(sys.argv)
 
 import defs
 import vidjil_utils
