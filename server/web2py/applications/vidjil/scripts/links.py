@@ -11,6 +11,7 @@ parser.add_argument('--results', '-r',  action='store_true', help='link results 
 parser.add_argument('--diag', '-d',  action='store_true', help='link only diagnosis results (first sample per patient)')
 parser.add_argument('--analysis', '-a',  action='store_true', help='link analysis files (last file per patient)')
 parser.add_argument('--filter', '-f', type=str, default='', help='filter on patient name or info (%(default)s), only for -s or -d')
+parser.add_argument('--creator', '-c', type=int, default=0, help='filter on patient creator id, only for -s or -d')
 parser.add_argument('--raw', '-w',  action='store_true', help='do not link, only display the list of raw files')
 args = parser.parse_args()
 
@@ -33,6 +34,10 @@ if args.sequences:
     if args.filter:
       if not vidjil_utils.advanced_filter([res.patient.first_name,res.patient.last_name,res.patient.info], args.filter):
         continue
+
+    if args.creator:
+        if res.patient.creator != args.creator:
+            continue
 
     our_id += 1
 
@@ -68,6 +73,10 @@ def last_result_by_first_point_by_patient():
 
         if args.filter:
             if not vidjil_utils.advanced_filter([res.patient.first_name,res.patient.last_name,res.patient.info], args.filter):
+                continue
+
+        if args.creator:
+            if res.patient.creator != args.creator:
                 continue
 
         # Remeber only the first element
