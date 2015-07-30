@@ -115,11 +115,12 @@ class Window:
         
         return obj
         
-    def latex(self, point=0, base=10000):
+    def latex(self, point=0, base=10000, tag=''):
         reads = self.d["reads"][point]
         ratio = float(reads)/base
-        return r"   &   & %7d & %5.2f\%% & %-50s \\ %% %s" % (reads, ratio * 100,
-                                                           self.d["name"] if 'name' in self.d else self.d["id"], self.d["id"])
+        return r"   &   & %7d & %5.2f\%% & %-50s \\ %% %4s %s" % (reads, ratio * 100,
+                                                                  self.d["name"] if 'name' in self.d else self.d["id"],
+                                                                  tag, self.d["id"])
 
     ### print essential info about Window
     def __str__(self):
