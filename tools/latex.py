@@ -3,6 +3,7 @@
 
 from __future__ import print_function
 import fuse
+import analysis
 import sys
 import argparse
 import re
@@ -11,6 +12,7 @@ parser = argparse.ArgumentParser(description = 'Output a LaTeX table for clones 
 parser.add_argument('--min-ratio', '-r', type=float, default=.01, help='minimal reads ratio of the clone (%(default).3f)')
 parser.add_argument('--min', '-m', type=int, default=1, help='minimal number of reads in the clone (%(default)d)')
 parser.add_argument('--top', '-t', type=int, default=5, help='maximal number of clones to displlay (%(default)d)')
+parser.add_argument('--analysis', '-a', action='store_true', help='filter clones tagged in the relevant .analysis file (experimental, hardcoded)')
 parser.add_argument('--verbose', '-v', action='store_true', help='verbose output')
 parser.add_argument('file', nargs='+', help='''.vidjil files''')
 
@@ -31,12 +33,27 @@ def main():
         m = regex_filename.match(i)
         i_short = m.group(1) if m else i
 
+        if args.analysis:
+            # TODO: hardcoded for output of links.py
+            # should be more flexible
+            ii = 'data.vidjil/' + 'pat-' + i_short +'.analysis'
+            data_analysis = analysis.Analysis()
+            data_analysis.load(ii)
+        else:
+            data_analysis = None
+
         print('%s %% %s' % (i_short, i))
         print('%%  ', data.d["reads"])
         segmented_reads = data.d['reads'].d['segmented'][0]
 
         out = []
         for w in data:
+            if data_analysis:
+                tag = data_analysis.tag_of_clone(w)
+                if not tag:
+                    continue
+            else:
+                tag = ''
             reads = w.d['reads'][0]
             ratio = float(reads)/segmented_reads
             if reads >= args.min and ratio >= args.min_ratio:
