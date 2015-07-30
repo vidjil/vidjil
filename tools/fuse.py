@@ -115,10 +115,11 @@ class Window:
         
         return obj
         
-    def latex(self, point=0, base=10000, tag=''):
+    def latex(self, point=0, base_germline=10000, base=10000, tag=''):
         reads = self.d["reads"][point]
+        ratio_germline = float(reads)/base_germline
         ratio = float(reads)/base
-        return r"   &   & %7d & %5.2f\%% & %-50s \\ %% %4s %s" % (reads, ratio * 100,
+        return r"   &   & %7d & %5.2f\%% & of %-4s & %5.2f\%% & %-50s \\ %% %4s %s" % (reads, ratio_germline * 100, self.d['germline'], ratio * 100,
                                                                   self.d["name"] if 'name' in self.d else self.d["id"],
                                                                   tag, self.d["id"])
 

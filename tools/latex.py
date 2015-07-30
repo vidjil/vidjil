@@ -65,7 +65,8 @@ def main():
             if reads >= args.min and ratio >= args.min_ratio:
                 out += [(-reads, w, tag)]
         for bla, w, tag in sorted(out[:args.top]):
-            print(w.latex(base=segmented_reads, tag=tag))
+            segmented_reads_germline = data.d['reads'].d['germline'][w.d['germline']][0]
+            print(w.latex(base_germline=segmented_reads_germline, base=segmented_reads, tag=tag))
         if not out:
             print(r'\\')
 
