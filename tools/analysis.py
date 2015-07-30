@@ -22,3 +22,17 @@ class Analysis(VidjilJson):
         for clone in self.d['clones']:
             self.clones[clone['id']] = clone
 
+    def info_of_clone(self, w):
+        if w.d['id'] in self.clones:
+            return self.clones[w.d['id']]
+        return None
+
+    def tag_of_clone(self, w):
+        i = self.info_of_clone(w)
+        if i:
+            try:
+                return i['tag']
+            except:
+                return None
+        return None
+
