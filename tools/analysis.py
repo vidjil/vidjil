@@ -22,6 +22,12 @@ class Analysis(VidjilJson):
         for clone in self.d['clones']:
             self.clones[clone['id']] = clone
 
+    def missing_clones(self, lw):
+        '''Return a set of the clones described in this .analysis but not present into the .vidjil'''
+        my_clones = set(self.clones.keys())
+        lw_clones = set([c.d['id'] for c in lw])
+        return my_clones.difference(lw_clones)
+
     def info_of_clone(self, w):
         if w.d['id'] in self.clones:
             return self.clones[w.d['id']]

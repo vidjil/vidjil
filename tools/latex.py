@@ -63,6 +63,10 @@ def main():
         if not out:
             print(r'\\')
 
+        if data_analysis:
+            for c in data_analysis.missing_clones(data):
+                print('%% !! %s' % c)
+
         print(r'  \hline')
 
 if  __name__ =='__main__':
