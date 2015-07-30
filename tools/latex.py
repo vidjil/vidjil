@@ -39,6 +39,12 @@ def main():
             ii = 'data.vidjil/' + 'pat-' + i_short +'.analysis'
             data_analysis = analysis.Analysis()
             data_analysis.load(ii)
+
+            if str(data_analysis.d['samples']['run_timestamp']) == str(data.d['samples'].d['run_timestamp']):
+                print("%% timestamps: OK")
+            else:
+                print("%% timestamps: XXX", i, data.d['samples'].d['run_timestamp'], "instead of", data_analysis.d['samples']['run_timestamp'])
+
         else:
             data_analysis = None
 
