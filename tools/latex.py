@@ -11,7 +11,7 @@ import re
 parser = argparse.ArgumentParser(description = 'Output a LaTeX table for clones in .vidjil files')
 parser.add_argument('--min-ratio', '-r', type=float, default=.01, help='minimal reads ratio of the clone (%(default).3f)')
 parser.add_argument('--min', '-m', type=int, default=1, help='minimal number of reads in the clone (%(default)d)')
-parser.add_argument('--top', '-t', type=int, default=5, help='maximal number of clones to displlay (%(default)d)')
+parser.add_argument('--top', '-t', type=int, default=5, help='maximal number of clones to display (%(default)d)')
 parser.add_argument('--analysis', '-a', action='store_true', help='filter clones tagged in the relevant .analysis file (experimental, hardcoded)')
 parser.add_argument('--verbose', '-v', action='store_true', help='verbose output')
 parser.add_argument('file', nargs='+', help='''.vidjil files''')
