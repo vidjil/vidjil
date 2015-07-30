@@ -40,9 +40,9 @@ def main():
             reads = w.d['reads'][0]
             ratio = float(reads)/segmented_reads
             if reads >= args.min and ratio >= args.min_ratio:
-                out += [(-reads, w.latex(base=segmented_reads))]
-        for bla, ltx in sorted(out[:args.top]):
-            print(ltx)
+                out += [(-reads, w)]
+        for bla, w in sorted(out[:args.top]):
+            print(w.latex(base=segmented_reads))
         if not out:
             print(r'\\')
 
