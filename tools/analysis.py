@@ -5,6 +5,8 @@ import json
 from utils import *
 from defs import *
 
+from collections import defaultdict
+
 class Analysis(VidjilJson):
 
 
@@ -20,8 +22,14 @@ class Analysis(VidjilJson):
             self.d = tmp
             self.check_version(file_path)
 
+        self.id_lengths = defaultdict(int)
         for clone in self.d['clones']:
             self.clones[clone['id']] = clone
+            self.id_lengths[len(clone['id'])] += 1
+
+
+        print "%% run_t ->", self.d['samples']['producer'], self.d['samples']['run_timestamp'], self.d['samples']['commandline']
+        print "%% lengths ->", self.id_lengths
 
     def missing_clones(self, lw):
         '''Return a set of the clones described in this .analysis but not present into the .vidjil'''

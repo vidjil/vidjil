@@ -41,6 +41,7 @@ import tempfile
 from operator import itemgetter
 from utils import *
 from defs import *
+from collections import defaultdict
 
 FUSE_VERSION = "vidjil fuse"
 
@@ -115,6 +116,9 @@ class Window:
         
         return obj
         
+    def get_nb_reads(self, id, point=0):
+        return self[id]["reads"][point]
+
     def latex(self, point=0, base_germline=10000, base=10000, tag=''):
         reads = self.d["reads"][point]
         ratio_germline = float(reads)/base_germline
@@ -343,6 +347,17 @@ class ListWindows(VidjilJson):
         
         time = os.path.getmtime(file_path)
         self.d["samples"].d["timestamp"] = [datetime.datetime.fromtimestamp(time).strftime("%Y-%m-%d %H:%M:%S")]
+
+        self.id_lengths = defaultdict(int)
+
+        print("%%")
+        for clone in self:
+            self.id_lengths[len(clone.d['id'])] += 1
+        print ("%% lengths .vidjil -> ", self.id_lengths)
+        try:
+            print("%% run_v ->", self.d["samples"].d["producer"], self.d["samples"].d["run_timestamp"])
+        except KeyError:
+            pass
 
     def getTop(self, top):
         result = []
