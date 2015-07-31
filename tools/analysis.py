@@ -8,7 +8,8 @@ from defs import *
 class Analysis(VidjilJson):
 
 
-    def __init__(self):
+    def __init__(self, data=None):
+        self.data = data
         self.clones = {}
 
 
@@ -27,6 +28,21 @@ class Analysis(VidjilJson):
         my_clones = set(self.clones.keys())
         lw_clones = set([c.d['id'] for c in lw])
         return my_clones.difference(lw_clones)
+
+
+    def cluster_stats(self, point=0):
+        for cluster in self.d['clusters']:
+            sizes = []
+            for c in cluster:
+                try:
+                    s = self.data[c].d["reads"][point]
+                    sizes += [s]
+                except AttributeError:
+                    print "!! missing from cluster", c
+
+            if sizes:
+                print "%% cluster: max is %.3f of the sum, len %d" % (float(max(sizes)) / float(sum(sizes)), len(sizes))
+
 
     def info_of_clone(self, w):
         if w.d['id'] in self.clones:

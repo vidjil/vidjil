@@ -37,14 +37,14 @@ def main():
             # TODO: hardcoded for output of links.py
             # should be more flexible
             ii = 'data.vidjil/' + 'pat-' + i_short +'.analysis'
-            data_analysis = analysis.Analysis()
+            data_analysis = analysis.Analysis(data)
             data_analysis.load(ii)
+            data_analysis.cluster_stats()
 
             if str(data_analysis.d['samples']['run_timestamp']) == str(data.d['samples'].d['run_timestamp']):
                 print("%% timestamps: OK")
             else:
                 print("%% timestamps: XXX", i, data.d['samples'].d['run_timestamp'], "instead of", data_analysis.d['samples']['run_timestamp'])
-
         else:
             data_analysis = None
 
