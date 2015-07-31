@@ -12,7 +12,9 @@ parser = argparse.ArgumentParser(description = 'Output a LaTeX table for clones 
 parser.add_argument('--min-ratio', '-r', type=float, default=.01, help='minimal reads ratio of the clone (%(default).3f)')
 parser.add_argument('--min', '-m', type=int, default=1, help='minimal number of reads in the clone (%(default)d)')
 parser.add_argument('--top', '-t', type=int, default=5, help='maximal number of clones to display (%(default)d)')
+parser.add_argument('--sample', '-s', type=int, default=0, help='sample number (%(default)d)')
 parser.add_argument('--analysis', '-a', action='store_true', help='filter clones tagged in the relevant .analysis file (experimental, hardcoded)')
+
 parser.add_argument('--verbose', '-v', action='store_true', help='verbose output')
 parser.add_argument('file', nargs='+', help='''.vidjil files''')
 
@@ -29,6 +31,11 @@ def main():
     for i in args.file:
         data = fuse.ListWindows()
         data.load(i, False, verbose = args.verbose)
+
+        if data.d['samples'].d['number'] < args.sample + 1:
+            print("! no sample %d in %s'" % (args.sample, i))
+            continue
+        sample = args.sample
 
         m = regex_filename.match(i)
         i_short = m.group(1) if m else i
@@ -50,7 +57,7 @@ def main():
 
         print('%s %% %s' % (i_short, i))
         print('%%  ', data.d["reads"])
-        segmented_reads = data.d['reads'].d['segmented'][0]
+        segmented_reads = data.d['reads'].d['segmented'][sample]
 
         out = []
         for w in data:
@@ -60,12 +67,12 @@ def main():
                     continue
             else:
                 tag = ''
-            reads = w.d['reads'][0]
+            reads = w.d['reads'][sample]
             ratio = float(reads)/segmented_reads
             if reads >= args.min and ratio >= args.min_ratio:
                 out += [(-reads, w, tag)]
         for bla, w, tag in sorted(out[:args.top]):
-            segmented_reads_germline = data.d['reads'].d['germline'][w.d['germline']][0]
+            segmented_reads_germline = data.d['reads'].d['germline'][w.d['germline']][sample]
             print(w.latex(base_germline=segmented_reads_germline, base=segmented_reads, tag=tag))
         if not out:
             print(r'\\')
