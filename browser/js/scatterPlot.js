@@ -41,6 +41,7 @@ function ScatterPlot(id, model) {
 
     //size ( computed value -> resize() function)
     this.resizeCoef = 1; //Multiplifying factor, application to nodes radius
+    this.resizeMinSize = 0.001; // Any clone with a non-null size is displayed as clones of this size
     this.resizeW = 1; //scatterplot width
     this.resizeH = 1; //scatterplot height
     this.gridSizeW = 1; //grid width
@@ -1326,6 +1327,17 @@ ScatterPlot.prototype = {
     },
 
     /** 
+     * return the actual radius of the clone
+     * @param {float} size - clone ratio size, between 0.0 and 1.0
+     * */
+    radiusClone: function(size) {
+        if (size == 0)
+            return 0 ;
+        //Math.pow(x,y) -> x**y
+        return this.resizeCoef * Math.pow((size + this.resizeMinSize), (1 / 3)) / 25
+    },
+
+    /**
      * update color/style/position of a single clone
      * @param {integer} cloneID - clone index 
      * */
@@ -1346,9 +1358,7 @@ ScatterPlot.prototype = {
                     }
 
                     this.nodes[seqID].s = size
-                        //Math.pow(x,y) -> x**y
-                    if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
-                    this.nodes[seqID].r1 = size
+                    this.nodes[seqID].r1 = this.radiusClone(size)
                 }
             } else {
                 for (var i = 0; i < this.m.clusters[cloneID].length; i++) {
@@ -1367,8 +1377,7 @@ ScatterPlot.prototype = {
                 }
 
                 this.nodes[cloneID].s = size
-                if (size != 0) size = this.resizeCoef * Math.pow((size + 0.001), (1 / 3)) / 25
-                this.nodes[cloneID].r1 = size
+                this.nodes[cloneID].r1 = this.radiusClone(size)
             }
 
         } else {
