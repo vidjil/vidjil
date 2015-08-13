@@ -1833,31 +1833,21 @@ Model.prototype = {
                 var geneD = this.clone(list[i]).getGene(4)
                 var geneJ = this.clone(list[i]).getGene(3) 
                 
-                if (listGene.indexOf(geneV) == -1)     
+                if ((geneV != undefined) && listGene.indexOf(geneV) == -1)     
                     listGene.push(geneV)
                 if ((geneD != undefined) && listGene.indexOf(geneD) == -1)     
                     listGene.push(geneD)
-                if (listGene.indexOf(geneJ) == -1)     
-                    listGene.push(geneJ)
-                
-            }
-
-            for (var i=0; i<listGene.length; i++){
-                console.log(listGene[i])
+                if ((geneJ != undefined) && listGene.indexOf(geneJ) == -1)     
+                    listGene.push(geneJ)     
             }
 
             for (var i=0; i<listGene.length; i++){
                 germName = listGene[i].slice(0, 4)
-                console.log(germName)
                 fasta += ">" + listGene[i] + '\n';
-                fasta +=  germline[germName][listGene[i]].toUpperCase() + '\n'//sequence
+                fasta += germline[germName][listGene[i]].toUpperCase() + '\n'
+                
             }
 
-            //fasta += segmented_germline->rep_5.read(seg.best_V);
-            /*segmented_germline = windowsStorage->getGermline(it->first)
-            *
-            *
-            */
             var result = $('<div/>', {
                 html: fasta
             }).appendTo(w.document.body);
