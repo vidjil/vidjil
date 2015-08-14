@@ -250,7 +250,7 @@ function ScatterPlot(id, model) {
         "clone consensus coverage / GC content " : { "mode": "plot", "x": "coverage", "y" : "GCContent"},
         // "V/abundance" : { "mode": "plot", "x" : "gene_v", "y": "Size"},
         "V distribution" :            { "mode": "bar", "x" : "gene_v",         "y": "gene_j"},
-        "clone consensus length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "gene_v"},
+        "clone consensus length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "Size"},
         "N length distribution" :     { "mode": "bar", "x" : "n",              "y": "gene_v"},
         "compare two samples" : { "mode": "plot", "x" : "Size", "y": "otherSize"}
         
@@ -750,7 +750,7 @@ ScatterPlot.prototype = {
                 this.barTab[values[i]]=[];
             }
         }
-        
+
         this.barTab["?"]=[];
         
         for (var i in this.m.clones) {
@@ -868,7 +868,7 @@ ScatterPlot.prototype = {
             }
             k++;
         }
-        this.axisY.computeCustomLabels(0, bar_max, "percent", false);
+        this.axisY.computeCustomLabels(0, bar_max, "percent", false, true);
         this.axisX.computeCustomBarLabels(this.barTab)
         this.initGrid();
         this.drawBarTab(500);
