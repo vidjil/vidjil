@@ -234,6 +234,10 @@ Model.prototype = {
     initClones: function () {
         console.log("initClones()");
 
+        // time_type to name_short if there is many samples
+        if (this.samples.order.length > 6)
+            this.changeTimeFormat("short_name")
+
         // time_type to delta_date if we have enough different dates
         deltas = this.dateDiffMinMax()
         if (deltas.max > 1)
