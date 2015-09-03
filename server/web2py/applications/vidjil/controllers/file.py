@@ -189,7 +189,8 @@ def delete_sequence_file(seq_id):
     sequence = db.sequence_file[seq_id]
     seq_filename = sequence.data_file
     if auth.can_modify_patient(sequence.patient_id):
-        log.debug('Deleting '+defs.DIR_SEQUENCES+seq_filename+' with ID'+str(seq_id))
+        if seq_filename is not None:
+            log.debug('Deleting '+defs.DIR_SEQUENCES+seq_filename+' with ID'+str(seq_id))
         db.sequence_file[seq_id] = dict(data_file = None)
     else:
         return error_message('you need admin permission to delete this file')
