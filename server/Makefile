@@ -20,6 +20,7 @@ unit: clean_unit_tests
 install_web2py_standalone: install_web2py
 	mkdir -p web2py/applications/vidjil/databases web2py/upload web2py/result
 	sed -i 's@/var/vidjil@logs@' web2py/applications/vidjil/modules/defs.py
+	sed -i 's@12789@None@' web2py/applications/vidjil/modules/defs.py
 	sed -i '/mysql/d; /^DIR_/s/\/mnt\///;'  web2py/applications/vidjil/modules/defs.py
 
 launch_web2py_localhost:
