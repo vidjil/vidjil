@@ -325,7 +325,8 @@ All the reads with this windows will be extracted to =out/seq/clone.fa-1=.
 ** VDJ assignation options
    The =-m= option controls the minimum difference of positions between the end
    of the V and the start of the J. Note that it is even possible to set =-m -10=
-   (meaning that V and J could overlap 10 bp). This is the default for TRG recombinations.
+   (meaning that V and J could overlap 10 bp). This is the default for VJ recombinations
+   (except when using a =germlines.data= file).
 
 ** Further clustering (experimental)
 
