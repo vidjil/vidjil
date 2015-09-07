@@ -165,6 +165,12 @@ def upload():
   
 
 def confirm():
+    '''
+    Request parameters:
+    \param delete_results: (optional) boolean
+    \param id: sequence file ID
+    \param patient_id: patient id
+    '''
     delete_only_sequence = ('delete_only_sequence' in request.vars and request.vars['delete_only_sequence'] == 'True')
     delete_results = ('delete_results' in request.vars and request.vars['delete_results'] == 'True')
     sequence_file = db.sequence_file[request.vars['id']]
@@ -183,14 +189,20 @@ def delete_sequence_file(seq_id):
     sequence = db.sequence_file[seq_id]
     seq_filename = sequence.data_file
     if auth.can_modify_patient(sequence.patient_id):
-        log.debug('Deleting '+defs.DIR_SEQUENCES+seq_filename+' with ID'+str(seq_id))
+        if seq_filename is not None:
+            log.debug('Deleting '+defs.DIR_SEQUENCES+seq_filename+' with ID'+str(seq_id))
         db.sequence_file[seq_id] = dict(data_file = None)
     else:
         return error_message('you need admin permission to delete this file')
 
 def delete():
-    
-    patient_id = db.sequence_file[request.vars["id"]].patient_id
+    '''
+    Called (via request) with:
+    \param: id (the sequence ID)
+    \param: patient_id
+    \param: delete_results: (optional) boolean stating if we also want to delete the results.
+    '''
+    patient_id = request.vars["patient_id"]
     delete_results = ('delete_results' in request.vars and request.vars['delete_results'] == 'True')
 
     if auth.can_modify_patient(patient_id):

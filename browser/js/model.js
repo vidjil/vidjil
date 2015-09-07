@@ -234,6 +234,10 @@ Model.prototype = {
     initClones: function () {
         console.log("initClones()");
 
+        // time_type to name_short if there is many samples
+        if (this.samples.order.length > 6)
+            this.changeTimeFormat("short_name")
+
         // time_type to delta_date if we have enough different dates
         deltas = this.dateDiffMinMax()
         if (deltas.max > 1)
@@ -1426,12 +1430,16 @@ Model.prototype = {
 
         switch (format) {
             case "name":
+            case "short_name":
                 if (typeof this.samples.names != 'undefined' && this.samples.names[timeID] != ""){
                     result = this.samples.names[timeID]
                 }else{
                     result = this.samples.original_names[timeID]
                     result = result.split('/')[result.split('/').length-1]
                     result = result.split('.')[0]
+                }
+                if (format == "short_name"){
+                    result = result.substring(0, 8);
                 }
                 break;
 
