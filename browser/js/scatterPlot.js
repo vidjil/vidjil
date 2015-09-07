@@ -249,7 +249,7 @@ function ScatterPlot(id, model) {
         "clone consensus length / GC content " : { "mode": "plot", "x": "sequenceLength", "y" : "GCContent"},
         "clone consensus coverage / GC content " : { "mode": "plot", "x": "coverage", "y" : "GCContent"},
         // "V/abundance" : { "mode": "plot", "x" : "gene_v", "y": "Size"},
-        "V distribution" :            { "mode": "bar", "x" : "gene_v",         "y": "gene_j"},
+        "V distribution" :            { "mode": "bar", "x" : "gene_v",         "y": "Size"},
         "clone consensus length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "Size"},
         "N length distribution" :     { "mode": "bar", "x" : "n",              "y": "gene_v"},
         "compare two samples" : { "mode": "plot", "x" : "Size", "y": "otherSize"}
@@ -744,7 +744,12 @@ ScatterPlot.prototype = {
                     }
                 }
             }
-            for (var i=min; i<=max; i++) this.barTab[i]=[];
+            console.log("min : " + min)
+            console.log("max : " + max)
+            for (var i=min; i<=max; i++){ 
+                this.barTab[i]=[];
+                console.log("val : " + this.barTab[i])
+            }
         }else{
             for (var i in values) {
                 this.barTab[values[i]]=[];
@@ -762,6 +767,7 @@ ScatterPlot.prototype = {
                 }catch(e){}
                 if (typeof v == "undefined" || typeof this.barTab[v] == "undefined" ) {
                     this.barTab["?"].push(i);
+                    console.log("barTab : " + typeof this.barTab[v])
                 }else{
                     this.barTab[v].push(i);
                 }
