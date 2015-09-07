@@ -1837,10 +1837,10 @@ Model.prototype = {
 
             var listGene = []
             for (var i=0; i<list.length; i++){
-                var geneV = this.clone(list[i]).getGene(5)                
+                var geneV = this.clone(list[i]).getGene(5)     
                 var geneD = this.clone(list[i]).getGene(4)
                 var geneJ = this.clone(list[i]).getGene(3) 
-                
+
                 if ((geneV != undefined) && listGene.indexOf(geneV) == -1)     
                     listGene.push(geneV)
                 if ((geneD != undefined) && listGene.indexOf(geneD) == -1)     
@@ -1850,11 +1850,19 @@ Model.prototype = {
             }
 
             for (var i=0; i<listGene.length; i++){
-                germName = listGene[i].slice(0, 4)
+                if (listGene[i].charAt(0) == 'K'){
+                    germName = "IGK-KDE"
+                }
+                else{
+                    if (listGene[i].charAt(1) == 'n') 
+                        germName = "IGK-INTRON" 
+                    else
+                        germName = listGene[i].slice(0, 4);                              
+                }
+                
                 fasta += ">" + listGene[i] + '\n';
                 fasta += germline[germName][listGene[i]].toUpperCase() + '\n'
-                
-            }
+        }
 
             var result = $('<div/>', {
                 html: fasta
