@@ -273,7 +273,7 @@ There can be several causes leading to bad ratios:
 
 *** PCR or sequencing causes
 
-   - the read length is too short, the reads do not span the junction zone (UNSEG too few V/J).
+   - the read length is too short, the reads do not span the junction zone (UNSEG too few V/J or UNSEG only V/J).
       (Vidjil detects a “window” including the CDR3. By default this window is 40–60bp long, so the read needs be that long centered on the junction).
 
    - In particular, for paired-end sequencing, one of the ends can lead to reads not fully containing the CDR3 region
