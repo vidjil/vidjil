@@ -702,7 +702,7 @@ Clone.prototype = {
             }
             html += "</tr><tr><td> clone size (%)</td>"
             for (var i = 0; i < time_length; i++) {
-            html += "<td>" + (this.getSize(this.m.samples.order[i]) * 100).toFixed(3) + " % </td>"
+                html += "<td>" + this.getStrSize(this.m.samples.order[i]) + " </td>"
             }
             html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> representative sequence</td></tr>"
         }else{
