@@ -226,7 +226,8 @@ Clone.prototype = {
     getStrSystemSize: function (time) {
         time = this.m.getTime(time)
         var size = this.getSystemSize(time);
-        return this.m.formatSize(size, true)
+        var sizeQ = this.m.getSizeThresholdQ(time);
+        return this.m.formatSize(size, true, sizeQ)
     },
 
 
@@ -244,14 +245,18 @@ Clone.prototype = {
     getStrSystemGroupSize: function (time) {
         time = this.m.getTime(time)
         var size = this.getSystemGroupSize(time)
-        return this.m.formatSize(size, true)
+        var sizeQ = this.m.getSizeThresholdQ(time);
+        return this.m.formatSize(size, true, sizeQ)
     },
 
     /* return a printable size such as either '26.32%' or '26.32% (33.66% of IGH)' (when there are several systems) */
     getPrintableSize: function (time) {
 
-        var size = this.getReads(time)
-        s = this.m.toStringThousands(size) + ' read' + (size > 1 ? 's' : '') + ' '
+        var reads = this.getReads(time)
+        s = this.m.toStringThousands(reads) + ' read' + (reads > 1 ? 's' : '') + ' '
+
+        if (reads < this.m.NB_READS_THRESHOLD_QUANTIFIABLE)
+            return s
 
         s += '('
         s += this.getStrSize(time)
