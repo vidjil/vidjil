@@ -869,7 +869,7 @@ span.logo {
   width: -webkit-calc(100% - 1075px);
   width: calc(100% - 1075px);
   overflow: hidden;
-  height: 1em;
+  height: 1.1em;
 }
 .stats {
   position: relative;
