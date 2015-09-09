@@ -192,8 +192,9 @@ Clone.prototype = {
      * @return {string} size
      * */
     getStrSize: function (time) {
-        var size = this.getSize(this.m.getTime(time));
-        return this.m.formatSize(size, true)
+        var size = this.getSize(time);
+        var sizeQ = this.m.getSizeThresholdQ(time);
+        return this.m.formatSize(size, true, sizeQ)
     },
     
     /**

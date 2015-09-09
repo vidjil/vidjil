@@ -1523,15 +1523,44 @@ Model.prototype = {
 
     },
 
+
+    NB_READS_THRESHOLD_QUANTIFIABLE: 5,
+
+    /**
+     * Size threshold to compute percentages.
+     * Under this threshold, the clone is 'positive, but not quantifiable'
+     * inspired from clone:getSize()
+     * @param {integer} time - tracking point (default value : current tracking point)
+     * @return {float} size
+     * */
+    getSizeThresholdQ: function (time) {
+        time = this.getTime(time);
+
+        if (this.reads.segmented[time] == 0 ) return 0;
+        var result = this.NB_READS_THRESHOLD_QUANTIFIABLE / this.reads.segmented[time];
+
+        if (this.norm) result = this.normalize(result, time);
+
+        return result;
+    },
+
     /**
      * format size with the default format in use (model.notation_type) 
      * @param {float} size 
      * @param {bool} fixed - use a fixed size 
+     * @param {float} sizeQ - under this size, this is not quantifiable
      * */
-    formatSize: function (size, fixed) {
+    formatSize: function (size, fixed, sizeQ) {
         var result = "-"
 
         if (size == 0) return result
+
+        if (typeof sizeQ !== 'undefined') {
+            if (size < sizeQ) {
+                return "+"
+                // return "< " + this.formatSize(sizeQ, true)
+            }
+        }
 
         switch (this.notation_type) {
         case "percent":
