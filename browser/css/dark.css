@@ -1548,3 +1548,7 @@ table.log textarea {
 .inactiveTag {
   background-image: linear-gradient(45deg, transparent -25%, #000000 100%, #000000 100%, transparent 0%);
 }
+
+#listLocus, #listVsegment, #listDsegment, #listJsegment {
+  display: none;
+}
