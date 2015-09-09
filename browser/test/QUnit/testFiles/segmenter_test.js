@@ -52,4 +52,9 @@ test("Segmenter : ", function() {
 
     m.multiSelect([0,1])
     equal(document.getElementsByClassName("stats_content")[0].innerHTML, "2 clones, 30 reads, 15.00% ", "stats (several clones) : Ok")
+
+    m.unselectAll()
+    m.select(2)
+    m.changeTime(3)
+    equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 3 reads  ", "stats (1 clone with few reads) : Ok")
 });

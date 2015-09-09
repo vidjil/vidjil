@@ -71,7 +71,7 @@ json_data = {
         "sequence" : "cccccccccccccccccccc",
         "name" : "test3",
         "id" : "id3",
-        "reads" : [25,25,50,5] ,
+        "reads" : [25,25,50,3],
         "top" : 3,
         "germline" : "IGH",
         "seg" : {
