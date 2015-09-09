@@ -865,9 +865,9 @@ span.logo {
   position: relative;
   text-align: center;
   float: left;
-  width: -moz-calc(100% - 975px);
-  width: -webkit-calc(100% - 975px);
-  width: calc(100% - 975px);
+  width: -moz-calc(100% - 1075px);
+  width: -webkit-calc(100% - 1075px);
+  width: calc(100% - 1075px);
   overflow: hidden;
   height: 1em;
 }
@@ -875,7 +875,7 @@ span.logo {
   position: relative;
   text-align: right;
   float: right;
-  width: 247px;
+  width: 347px;
   padding-right: 3px;
 }
 .segmenter {
