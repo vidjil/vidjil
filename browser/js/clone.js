@@ -279,10 +279,13 @@ Clone.prototype = {
 
         return fasta
     },
-    
-    /* 
-     *
+
+    /**
+     * compute the clone size (**only the main sequence, without merging**) at a given time
+     * @param {integer} time - tracking point (default value : current tracking point)
+     * @return {float} size
      * */
+
     getSequenceSize: function (time) {
         time = this.m.getTime(time)
         
@@ -297,6 +300,12 @@ Clone.prototype = {
 
     }, //end getSequenceSize
 
+    getStrSequenceSize: function (time) {
+        time = this.m.getTime(time)
+        var size = this.getSequenceSize(time)
+        var sizeQ = this.m.getSizeThresholdQ(time);
+        return this.m.formatSize(size, true, sizeQ)
+    },
 
     /* compute the clone reads number ( sum of all reads of clones clustered )
      * @t : tracking point (default value : current tracking point)
