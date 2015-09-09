@@ -250,7 +250,7 @@ Clone.prototype = {
     getPrintableSize: function (time) {
 
         var size = this.getReads(time)
-        s = size + ' read' + (size > 1 ? 's' : '') + ' '
+        s = this.m.toStringThousands(size) + ' read' + (size > 1 ? 's' : '') + ' '
 
         s += '('
         s += this.getStrSize(time)
