@@ -48,7 +48,7 @@ test("Segmenter : ", function() {
     equal(document.getElementsByClassName("stats_content")[0].innerHTML, "", "stats (empty) : Ok")
 
     m.select(0)
-    equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 10 reads (5.000%, 10.000% of TRG) ", "stats (1 clone) : Ok")
+    equal(document.getElementsByClassName("stats_content")[0].innerHTML, "1 clone, 10 reads (5.000%, 10.00% of TRG) ", "stats (1 clone) : Ok")
 
     m.multiSelect([0,1])
     equal(document.getElementsByClassName("stats_content")[0].innerHTML, "2 clones, 30 reads, 15.00% ", "stats (several clones) : Ok")

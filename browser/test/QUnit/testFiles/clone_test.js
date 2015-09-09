@@ -80,7 +80,7 @@ test("clone : name", function() {
     
     equal(c1.getReads(), 20, "cluster c1+c2 reads : 20");
     equal(c1.getSize(), 0.10, "cluster c1+c2 size : 0.10");
-    equal(c1.getStrSize(), "10.000%", "cluster c1+c2 size (%) : 10%");
+    equal(c1.getStrSize(), "10.00%", "cluster c1+c2 size (%) : 10%");
     
     equal(c1.get('reads'), 10, "clone c1 reads : 10");
     equal(c1.getSequenceSize(), "0.05", "clone c1 size : 0.05");
@@ -171,14 +171,14 @@ test("clone : size", function() {
     m.initClones()
 
     equal(c1.getSystemSize(), "0.1", "clone c1 system size : 0.1");
-    equal(c1.getStrSystemSize(), "10.000%", "clone c1 system size : 10%");
+    equal(c1.getStrSystemSize(), "10.00%", "clone c1 system size : 10%");
     m.select(0)
     m.select(1)
     m.merge()
     
     equal(c1.getReads(), 20, "cluster c1+c2 reads : 20");
     equal(c1.getSize(), 0.10, "cluster c1+c2 size : 0.10");
-    equal(c1.getStrSize(), "10.000%", "cluster c1+c2 size (%) : 10%");
+    equal(c1.getStrSize(), "10.00%", "cluster c1+c2 size (%) : 10%");
     
     equal(c1.get('reads'), 10, "clone c1 reads : 10");
     equal(c1.getSequenceSize(), "0.05", "clone c1 size : 0.05");
