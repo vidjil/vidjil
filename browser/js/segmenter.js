@@ -671,10 +671,12 @@ Segment.prototype = {
         var sumPercentage = 0;
         var sumReads = 0;
         var length = 0;
+        var lastActiveClone = 0;
             
         //verifier que les points sélectionnés sont dans une germline courante
-        for (var i = 0; i < list.length ; i++){   
+        for (var i = 0; i < list.length ; i++){
             if (this.m.clones[list[i]].isActive()) {
+                lastActiveClone = this.m.clones[list[i]]
                 length += 1;
                 sumPercentage += this.m.clone(list[i]).getSize();
                 sumReads+= this.m.clone(list[i]).getReads(); 
@@ -684,8 +686,13 @@ Segment.prototype = {
         var t = ""
         if (sumReads > 0) {
             t += length + " clone" + (length>1 ? "s" : "") + ", "
-            t += this.m.toStringThousands(sumReads) + " read" + (sumReads>1 ? "s" : "") + ", "
-            t += sumPercentage = this.m.formatSize(sumPercentage, true);
+
+            if (length == 1)
+                t += lastActiveClone.getPrintableSize()
+            else {
+                t += this.m.toStringThousands(sumReads) + " read" + (sumReads>1 ? "s" : "") + ", "
+                t += this.m.formatSize(sumPercentage, true);
+            }
             t += " "
             $(".focus_selected").css("display", "")
         }
