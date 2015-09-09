@@ -1539,7 +1539,7 @@ Model.prototype = {
                 if (size < 0.0001) {
                     result = (100 * size)
                         .toFixed(4) + "%";
-                } else if (size > 0.1) {
+                } else if (size >= 0.1) {
                     result = (100 * size)
                         .toFixed(2) + "%";
                 } else {
