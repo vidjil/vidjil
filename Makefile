@@ -30,8 +30,7 @@ test_browser: unit_browser functional_browser
 test_server: unit_server
 
 test_tools_if_python:
-	-(python tools/check_python_version.py && $(MAKE) test_tools)
-	@(python tools/check_python_version.py || echo "!!! Bad python version, we skip tools tests...")
+	@((python tools/check_python_version.py && $(MAKE) test_tools) || (python tools/check_python_version.py || echo "!!! Bad python version, we skip tools tests..."))
 
 test_tools:
 	$(MAKE) -C tools/tests
