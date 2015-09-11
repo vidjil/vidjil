@@ -1,6 +1,5 @@
 # ./vidjil -g /Users/magiraud/vidjil/germline -A algo/tests/bugs/bug20150909.fa 
-# The sequences are segmented, but not fine-segmented (UNSEG < delta_min)
-
+# The sequences are segmented, but the fine-segmentation details need to be checked
 
 >TRGV9*01_6/C/29_TRGJ1*02__TRG
 GACATAGCTACCTACTACTGTGCCTTGTGG

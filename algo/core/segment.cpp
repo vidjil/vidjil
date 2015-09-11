@@ -744,11 +744,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   evalue = evalue_left + evalue_right ;
 
   /* Unsegmentation causes */
-  if (Jstart - Vend < germline->delta_min)
-    {
-      because = UNSEG_BAD_DELTA_MIN  ;
-    }
-
   if (Vend == (int) string::npos)
     {
       evalue_left = BAD_EVALUE ;
