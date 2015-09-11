@@ -22,6 +22,7 @@ if sys.version_info < PY_REQUIRED:
     sys.exit(1)
 
 from subprocess import Popen, PIPE, STDOUT
+from collections import defaultdict
 
 import os
 import argparse
@@ -51,6 +52,8 @@ if args.after_two:
 
 
 global_failed = False
+global_stats = defaultdict(int)
+global_stats_failed = defaultdict(int)
 
 def fasta_id_lines_from_program(f_should):
     f_log = f_should + PROG_TAG + LOG_SUFFIX
@@ -88,12 +91,19 @@ def id_line_to_tap(l, tap_id):
     # We could have something that allows some regexp (still allowing * and + without escaping)
     should_pattern = should.replace('_', ' ')
 
+    if '  ' in should_pattern:
+        locus = should_pattern.split('  ')[1]
+    else:
+        locus = None
+
     if args.after_two:
         # Testing only the locus code
-        if '  ' in should_pattern:
-            should_pattern = should_pattern.split('  ')[1]
+        if locus:
+            should_pattern = locus
         else:
             return '# %d - not tested (no locus)' % tap_id
+
+    globals()['global_stats'][locus] += 1
 
     tap = ''
     should_not_found = (not should_pattern in result) \
@@ -101,6 +111,7 @@ def id_line_to_tap(l, tap_id):
 
     if should_not_found:
         globals()['global_failed'] = True
+        globals()['global_stats_failed'][locus] += 1
         tap += 'not '
 
     tap += 'ok %d - %s' % (tap_id, should_pattern)
@@ -146,6 +157,13 @@ if __name__ == '__main__':
             os.system('python ../../germline/revcomp-fasta.py < %s > %s' % (f_should, f_should_rc))
             should_to_tap_one_file(f_should_rc)
         print
+
+    print "=== Summary, should-vdj tests ==="
+    print "            tested     failed"
+    for locus in sorted(global_stats):
+        print "    %-5s     %4d       %4d" % (locus, global_stats[locus], global_stats_failed[locus])
+    print "    =====     %4d       %4d" % (sum(global_stats.values()), sum(global_stats_failed.values()))
+    print
 
     if global_failed:
         sys.exit(1)
