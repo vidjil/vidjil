@@ -60,6 +60,24 @@ const char* const segmented_mesg[] = { "?",
                                        "UNSEG too short w",
                                       } ;
 
+
+
+
+ /**
+  * Find the best split point when there may be a overlap between a left and a right region
+  * @param overlap: the length of the overlap
+  * @param seq_left, seq_right: the two sequences that overlap
+  * @param ref_left, ref_right: the two reference sequences
+  * @param segment_cost: dp cost
+
+  * @post  trim_left (at the end of seq_left) and trim_right (at the beginning of seq_right)
+  *        are the best number of nucleotides to trim in order to remove the overlap
+  */
+
+void best_overlap_split(int overlap, string seq_left, string seq_right,
+                        string ref_left, string ref_right,
+                        int *trim_left, int *trim_right, Cost segment_cost);
+
 class Segmenter {
 protected:
   string sequence;

@@ -496,13 +496,17 @@ void Segmenter::setSegmentationStatus(int status) {
 
 // FineSegmenter
 
-void best_align(int overlap, string seq_left, string seq_right,
-		string ref_left ,string ref_right, int *b_r, int *b_l, Cost segment_cost)
+
+void best_overlap_split(int overlap, string seq_left, string seq_right,
+                        string ref_left, string ref_right,
+                        int *trim_left, int *trim_right, Cost segment_cost)
 {
       int score_r[overlap+1];
       int score_l[overlap+1];
       
       //LEFT
+
+      // reverse left sequence
       ref_left=string(ref_left.rbegin(), ref_left.rend());
       seq_left=string(seq_left.rbegin(), seq_left.rend()); 
       
@@ -531,6 +535,8 @@ void best_align(int overlap, string seq_left, string seq_right,
       int best_r=0;
       int best_l=0;
 
+      // Find (i, j), with i+j >= overlap,
+      // maximizing score_l[j] + score_r[i] (and minimizing i+j in case of equality)
       for (int i=0; i<=overlap; i++){
 	for (int j=overlap-i; j<=overlap; j++){
 	  if ( ((score_r[i]+score_l[j]) == score) && (i+j < best_r+best_l )){
@@ -545,8 +551,8 @@ void best_align(int overlap, string seq_left, string seq_right,
 	  }
 	}
       }
-      *b_r=best_r;
-      *b_l=best_l;
+      *trim_left = best_l;
+      *trim_right = best_r;
 }
 
 bool comp_pair (pair<int,int> i,pair<int,int> j)
@@ -775,8 +781,9 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
       string seq_left = sequence.substr(0, Vend+1);
       string seq_right = sequence.substr(Jstart);
 
-      best_align(overlap, seq_left, seq_right, 
-		 germline->rep_5.sequence(best_V), germline->rep_3.sequence(best_J), &b_r,&b_l, segment_cost);
+      best_overlap_split(overlap, seq_left, seq_right,
+                         germline->rep_5.sequence(best_V), germline->rep_3.sequence(best_J),
+                         &b_l, &b_r, segment_cost);
       // Trim V
       Vend -= b_l;
       del_V += b_l;
@@ -867,8 +874,9 @@ void FineSegmenter::FineSegmentD(Germline *germline){
       string seq_left = seq.substr(0, Vend+1);
       string seq_right = seq.substr(Dstart, Dend-Dstart+1);
 
-      best_align(overlap, seq_left, seq_right, 
-		 germline->rep_5.sequence(best_V), germline->rep_4.sequence(best_D), &b_r,&b_l, segment_cost);
+      best_overlap_split(overlap, seq_left, seq_right,
+                         germline->rep_5.sequence(best_V), germline->rep_4.sequence(best_D),
+                         &b_l, &b_r, segment_cost);
 
       // Trim V
       Vend -= b_l;
@@ -886,8 +894,9 @@ void FineSegmenter::FineSegmentD(Germline *germline){
       string seq_right = seq.substr(Dstart, Dend-Dstart+1);
       string seq_left = seq.substr(Jstart, seq.length()-Jstart);
 
-      best_align(overlap, seq_left, seq_right, 
-		 germline->rep_4.sequence(best_D), germline->rep_3.sequence(best_J), &b_r,&b_l, segment_cost);
+      best_overlap_split(overlap, seq_left, seq_right,
+                         germline->rep_4.sequence(best_D), germline->rep_3.sequence(best_J),
+                         &b_l, &b_r, segment_cost);
 
       // Trim D
       Dend -= b_l;
