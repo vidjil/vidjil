@@ -510,27 +510,22 @@ void best_overlap_split(int overlap, string seq_left, string seq_right,
       ref_left=string(ref_left.rbegin(), ref_left.rend());
       seq_left=string(seq_left.rbegin(), seq_left.rend()); 
       
-      DynProg dp1 = DynProg(seq_left, ref_left,
+      DynProg dp_l = DynProg(seq_left, ref_left,
 			   DynProg::Local, segment_cost);
-      score_l[0] = dp1.compute();
-      dp1.backtrack();
+      score_l[0] = dp_l.compute();
+      dp_l.backtrack();
       
       //RIGHT
-      DynProg dp = DynProg(seq_right, ref_right,
+      DynProg dp_r = DynProg(seq_right, ref_right,
 			   DynProg::Local, segment_cost);
-      score_r[0] = dp.compute();
-      dp.backtrack();    
+      score_r[0] = dp_r.compute();
+      dp_r.backtrack();
       
       for(int i=1; i<=overlap; i++){
-	if(dp.best_i-i >0)
-	score_r[i] = dp.B[dp.best_i-i][dp.best_j].score;
-	else
-	score_r[i] =0;
-	if(dp1.best_i-i >0)
-	score_l[i] = dp1.B[dp1.best_i-i][dp1.best_j].score;	
-	else
-	score_l[i] =0;
+          score_l[i] = dp_l.best_i - i > 0 ? dp_l.B[dp_l.best_i - i][dp_l.best_j].score : 0 ;
+          score_r[i] = dp_r.best_i - i > 0 ? dp_r.B[dp_r.best_i - i][dp_r.best_j].score : 0 ;
       }
+
       int score=-1000000;
       int best_r=0;
       int best_l=0;
@@ -539,15 +534,12 @@ void best_overlap_split(int overlap, string seq_left, string seq_right,
       // maximizing score_l[j] + score_r[i] (and minimizing i+j in case of equality)
       for (int i=0; i<=overlap; i++){
 	for (int j=overlap-i; j<=overlap; j++){
-	  if ( ((score_r[i]+score_l[j]) == score) && (i+j < best_r+best_l )){
-	    best_r=i;
+          int score_ij = score_l[j] + score_r[i];
+
+	  if ((score_ij > score ) || ((score_ij == score) && (i+j < best_r + best_l))) {
+            best_r=i;
 	    best_l=j;
-	    score=(score_r[i]+score_l[j]) ;
-	  }
-	  if ( (score_r[i]+score_l[j]) > score){
-	    best_r=i;
-	    best_l=j;
-	    score=(score_r[i]+score_l[j]) ;
+	    score = score_ij;
 	  }
 	}
       }
