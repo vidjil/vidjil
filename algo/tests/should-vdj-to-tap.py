@@ -210,7 +210,7 @@ if __name__ == '__main__':
             should_to_tap_one_file(f_should_rc)
         print
 
-    print "=== Summary, should-vdj tests ==="
+    print "=== Summary, should-vdj tests ===" + (' (only locus)' if args.after_two else '')
     print "            tested     failed"
     for locus in sorted(global_stats):
         print "    %-5s     %4d       %4d" % (locus, global_stats[locus], global_stats_failed[locus])
