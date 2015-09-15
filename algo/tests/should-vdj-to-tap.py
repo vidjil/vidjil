@@ -15,6 +15,7 @@ The 'should_pattern' is then checked against the 'result' part, and a .tap file 
 '''
 
 import sys
+import re
 
 PY_REQUIRED = (2, 7)
 if sys.version_info < PY_REQUIRED:
@@ -74,6 +75,53 @@ def fasta_id_lines_from_program(f_should):
         if l[0] == '>':
             yield l
 
+def should_pattern_to_regex(p):
+    '''
+    Converts patterns such as the following ones into a Python regex.
+
+    TRBV6-1 7/0/12 TRBD2 1/8/2 TRBJ2-7
+    TRDV2*02 14/TCCCGGCCT/0 TRDD3*01_3/CCACGGC/4_TRAJ29*01
+    TRDD2 18//4 TRAJ29 TRA+D # comments comments ...
+    TRGV11 2/5/0 TRGJ1
+    '''
+
+    r = []
+
+    for term in p.split():
+
+        # Comment, stop parsing here
+        if term.startswith('#'):
+            continue
+
+        # deletion/insertion/deletion
+        # Note that '/' may be also in gene name, such as in IGKV1/OR-3*01
+        if term.count('/') == 2:
+            trim_left, n_region, trim_right = term.split('/')
+            try:
+                n_insert = int(n_region)
+                n_region = '[ACGT]{%d}' % n_insert
+            except ValueError: # already /ACGTG/
+                pass
+
+            r += ['/'.join((trim_left, n_region, trim_right))]
+            continue
+
+        # Gene name, possibly without allele information
+        if not '*' in term:
+            # Some 'genes', such as KDE, do not have allele information
+            term += '([*]\d*)?'
+        else:
+            term = term.replace('*', '[*]')
+
+        r += [term]
+
+    regex_pattern = ' '.join(r)
+    regex = re.compile(regex_pattern)
+
+    # print '==', p, '->', regex_pattern
+    return regex
+
+
 def id_line_to_tap(l, tap_id):
     '''
     Parses lines such as:
@@ -88,35 +136,39 @@ def id_line_to_tap(l, tap_id):
     should = l[1:pos]
     result = l[pos+1:] + ' '
 
-    # We could have something that allows some regexp (still allowing * and + without escaping)
     should_pattern = should.replace('_', ' ')
 
     if '  ' in should_pattern:
         locus = should_pattern.split('  ')[1]
+        should_pattern = should_pattern.split('  ')[0]
     else:
         locus = None
 
     if args.after_two:
         # Testing only the locus code
-        if locus:
-            should_pattern = locus
-        else:
+        if not locus:
             return '# %d - not tested (no locus)' % tap_id
+
+        found = (locus in result) and not ('%s UNSEG' % locus in result)
+
+    else:
+        # Testing the should pattern
+        should_regex = should_pattern_to_regex(should_pattern)
+        match = should_regex.search(result)
+        found = (match is not None)
 
     globals()['global_stats'][locus] += 1
 
     tap = ''
-    should_not_found = (not should_pattern in result) \
-                       or (should_pattern + ' UNSEG' in result)
 
-    if should_not_found:
+    if not found:
         globals()['global_failed'] = True
         globals()['global_stats_failed'][locus] += 1
         tap += 'not '
 
     tap += 'ok %d - %s' % (tap_id, should_pattern)
 
-    if should_not_found:
+    if not found:
         tap += ' - found instead ' + result
 
     return tap
