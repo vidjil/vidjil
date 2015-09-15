@@ -1,0 +1,12 @@
+!LAUNCH: ../../vidjil -A -G ../../germline/TRB ../../data/trb-only-VJ.fa ; cat out/trb-only-VJ.vidjil
+
+$ Segments the read on TRB (the information is given twice, stdout + .vidjil)
+2: TRB .* -> .* 1
+
+$ The FineSegmenter outputs a segmentation without any D
+1: clone-001--TRB--.*--TRBV7-2--TRBJ2-3
+
+$ There is a segmentation in the .vidjil, but without any D
+1: "3": "TRBJ2-3
+0: "4": "TRBD
+1: "5": "TRBV7-2
