@@ -999,7 +999,7 @@ json FineSegmenter::toJson(){
     seg["5start"] = 0;
     seg["5end"] = Vend;
     
-    if (score_D.size()>0){
+    if (isDSegmented()) {
       seg["4"] = segmented_germline->rep_4.label(best_D);
       seg["4start"] = Dstart;
       seg["4end"] = Dend;
