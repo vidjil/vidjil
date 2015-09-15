@@ -11,6 +11,29 @@
 
 using namespace std;
 
+
+
+void testDynprog()
+{
+  // aaaaaaaTaa
+  //      cGcccccccc
+
+  string refA = "AAAAAAAAAA";
+  string refC = "CCCCCCCCCC";
+
+  // here seqA and seqC do not actullay overlap, but the goal is to find the good split point
+  string seqA = "AAAAAAATAA";
+  string seqC = "CGCCCCCCCC";
+
+  int trimA, trimC ;
+
+  best_overlap_split(5, seqA, seqC, refA, refC, &trimA, &trimC, VDJ);
+
+  cout << trimA << " / " << trimC << endl ;
+  TAP_TEST(trimA == 3, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides");
+  TAP_TEST(trimC == 2, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides");
+}
+
 void testFineSegment()
 {
   Fasta seqV("../../germline/IGHV.fa", 2);
@@ -322,5 +345,6 @@ void testSegment() {
   testSegmentationCause();
   testExtractor();
   testProbability();
+  testDynprog();
   testFineSegment();
 }
