@@ -26,12 +26,17 @@ void testDynprog()
   string seqC = "CGCCCCCCCC";
 
   int trimA, trimC ;
+  int posA = 100;
+  int posC = 200;
 
-  best_overlap_split(5, seqA, seqC, refA, refC, &trimA, &trimC, VDJ);
+  best_overlap_split(5, seqA, seqC, refA, refC, &posA, &posC, &trimA, &trimC, VDJ);
 
   cout << trimA << " / " << trimC << endl ;
   TAP_TEST(trimA == 3, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides");
   TAP_TEST(trimC == 2, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides");
+
+  TAP_TEST(posA ==  97, TEST_FINE_SEGMENT_OVERLAP, "end position of left region");
+  TAP_TEST(posC == 202,  TEST_FINE_SEGMENT_OVERLAP, "start position of right region");
 }
 
 void testFineSegment()
