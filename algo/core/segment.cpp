@@ -505,17 +505,17 @@ void best_overlap_split(int overlap, string seq_left, string seq_right,
       int score_l[overlap+1];
       
       //LEFT
-
-      // reverse left sequence
-      ref_left=string(ref_left.rbegin(), ref_left.rend());
-      seq_left=string(seq_left.rbegin(), seq_left.rend()); 
-      
       DynProg dp_l = DynProg(seq_left, ref_left,
 			   DynProg::Local, segment_cost);
       score_l[0] = dp_l.compute();
       dp_l.backtrack();
       
       //RIGHT
+      // reverse right sequence
+      ref_right=string(ref_right.rbegin(), ref_right.rend());
+      seq_right=string(seq_right.rbegin(), seq_right.rend());
+
+
       DynProg dp_r = DynProg(seq_right, ref_right,
 			   DynProg::Local, segment_cost);
       score_r[0] = dp_r.compute();
