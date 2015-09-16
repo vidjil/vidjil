@@ -68,15 +68,18 @@ const char* const segmented_mesg[] = { "?",
   * @param overlap: the length of the overlap
   * @param seq_left, seq_right: the two sequences that overlap
   * @param ref_left, ref_right: the two reference sequences
+  * @param pos_seq_left, pos_seq_right: the initial end/start position of two overlaping sequences
   * @param segment_cost: dp cost
-
-  * @post  trim_left (at the end of seq_left) and trim_right (at the beginning of seq_right)
-  *        are the best number of nucleotides to trim in order to remove the overlap
+  *
+  * @post  trim_ref_left (at the end of ref_left) and trim_ref_right (at the beginning of ref_right)
+  *        are set to the best number of nucleotides to trim in order to remove the overlap
+  *        pos_seq_left and pos_seq_right are shifted by the good number of nucleotides (relatively to seq_{left,right})
   */
 
 void best_overlap_split(int overlap, string seq_left, string seq_right,
                         string ref_left, string ref_right,
-                        int *trim_left, int *trim_right, Cost segment_cost);
+                        int *pos_seq_left, int *pos_seq_right,
+                        int *trim_ref_left, int *trim_ref_right, Cost segment_cost);
 
 class Segmenter {
 protected:

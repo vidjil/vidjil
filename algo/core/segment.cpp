@@ -499,7 +499,8 @@ void Segmenter::setSegmentationStatus(int status) {
 
 void best_overlap_split(int overlap, string seq_left, string seq_right,
                         string ref_left, string ref_right,
-                        int *trim_left, int *trim_right, Cost segment_cost)
+                        int *pos_seq_left, int *pos_seq_right,
+                        int *trim_ref_left, int *trim_ref_right, Cost segment_cost)
 {
       int score_r[overlap+1];
       int score_l[overlap+1];
@@ -508,7 +509,7 @@ void best_overlap_split(int overlap, string seq_left, string seq_right,
       DynProg dp_l = DynProg(seq_left, ref_left,
 			   DynProg::Local, segment_cost);
       score_l[0] = dp_l.compute();
-      dp_l.backtrack();
+
       
       //RIGHT
       // reverse right sequence
@@ -519,32 +520,54 @@ void best_overlap_split(int overlap, string seq_left, string seq_right,
       DynProg dp_r = DynProg(seq_right, ref_right,
 			   DynProg::Local, segment_cost);
       score_r[0] = dp_r.compute();
-      dp_r.backtrack();
-      
-      for(int i=1; i<=overlap; i++){
-          score_l[i] = dp_l.best_i - i > 0 ? dp_l.B[dp_l.best_i - i][dp_l.best_j].score : 0 ;
-          score_r[i] = dp_r.best_i - i > 0 ? dp_r.B[dp_r.best_i - i][dp_r.best_j].score : 0 ;
+
+
+
+      int trim_l[overlap+1];
+      int trim_r[overlap+1];
+
+      for(int i=0; i<=overlap; i++) {
+        score_l[i] = i < seq_left.size()  ? dp_l.best_score_on_i(seq_left.size()  - i, trim_l + i) : MINUS_INF ;
+        score_r[i] = i < seq_right.size() ? dp_r.best_score_on_i(seq_right.size() - i, trim_r + i) : MINUS_INF ;
       }
 
-      int score=-1000000;
-      int best_r=0;
-      int best_l=0;
+
+// #define DEBUG_OVERLAP
+#ifdef DEBUG_OVERLAP
+      cout << dp_l ;
+      cout << dp_r ;
+
+      for(int i=0; i<=overlap; i++)
+        cout << i << "  left: " << score_l[i] << "/" << trim_l[i] << "     right: " << score_r[i] << "/" << trim_r[i] << endl;
+#endif
+
+      int score = MINUS_INF;
+      int best_i = 0 ;
+      int best_j = 0 ;
+
 
       // Find (i, j), with i+j >= overlap,
-      // maximizing score_l[j] + score_r[i] (and minimizing i+j in case of equality)
+      // maximizing score_l[j] + score_r[i]
       for (int i=0; i<=overlap; i++){
 	for (int j=overlap-i; j<=overlap; j++){
-          int score_ij = score_l[j] + score_r[i];
+          int score_ij = score_l[i] + score_r[j];
 
-	  if ((score_ij > score ) || ((score_ij == score) && (i+j < best_r + best_l))) {
-            best_r=i;
-	    best_l=j;
+	  if (score_ij > score) {
+            best_i = i ;
+            best_j = j ;
+            *trim_ref_left  = ref_left.size() - trim_l[i];
+	    *trim_ref_right = ref_right.size() - trim_r[j];
 	    score = score_ij;
 	  }
 	}
       }
-      *trim_left = best_l;
-      *trim_right = best_r;
+
+      *pos_seq_left -= best_i ;
+      *pos_seq_right += best_j ;
+
+#ifdef DEBUG_OVERLAP
+      cout << "best_overlap_split: " << score << "   left: " << *trim_ref_left << " @" << *pos_seq_right << "    right:" << *trim_ref_right << " @" << *pos_seq_right << endl;
+#endif
 }
 
 bool comp_pair (pair<int,int> i,pair<int,int> j)
@@ -775,14 +798,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
       best_overlap_split(overlap, seq_left, seq_right,
                          germline->rep_5.sequence(best_V), germline->rep_3.sequence(best_J),
-                         &b_l, &b_r, segment_cost);
-      // Trim V
-      Vend -= b_l;
-      del_V += b_l;
+                         &Vend, &Jstart, &del_V, &del_J, segment_cost);
 
-      // Trim J
-      Jstart += b_r;
-      del_J += b_r;
       if (Jstart>=(int) sequence.length())
 	  Jstart=sequence.length()-1;
     }
@@ -861,43 +878,28 @@ void FineSegmenter::FineSegmentD(Germline *germline){
     
     //overlap VD
     if(Dstart-Vend <=0){
-      int b_r, b_l;
       int overlap=Vend-Dstart+1;
       string seq_left = seq.substr(0, Vend+1);
       string seq_right = seq.substr(Dstart, Dend-Dstart+1);
 
       best_overlap_split(overlap, seq_left, seq_right,
                          germline->rep_5.sequence(best_V), germline->rep_4.sequence(best_D),
-                         &b_l, &b_r, segment_cost);
-
-      // Trim V
-      Vend -= b_l;
-      del_V += b_l;
-
-      // Trim D
-      Dstart += b_r;
+                         &Vend, &Dstart, &del_V, &del_D_left, segment_cost);
     }
+
     seg_N1 = seq.substr(Vend+1, Dstart-Vend-1) ; // From Vend+1 to Dstart-1
     
     //overlap DJ
     if(Jstart-Dend <=0){
-      int b_r, b_l;
       int overlap=Dend-Jstart+1;
       string seq_right = seq.substr(Dstart, Dend-Dstart+1);
       string seq_left = seq.substr(Jstart, seq.length()-Jstart);
 
       best_overlap_split(overlap, seq_left, seq_right,
                          germline->rep_4.sequence(best_D), germline->rep_3.sequence(best_J),
-                         &b_l, &b_r, segment_cost);
-
-      // Trim D
-      Dend -= b_l;
-
-      // Trim J
-      Jstart += b_r;
-      del_J += b_r;
-
+                         &Dend, &Jstart, &del_D_right, &del_J, segment_cost);
     }
+
     seg_N2 = seq.substr(Dend+1, Jstart-Dend-1) ; // From Dend+1 to right-1
     code = germline->rep_5.label(best_V) +
     " "+ string_of_int(del_V) + 
