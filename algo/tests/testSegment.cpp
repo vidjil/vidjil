@@ -31,7 +31,6 @@ void testDynprog()
 
   best_overlap_split(5, seqA, seqC, refA, refC, &posA, &posC, &trimA, &trimC, VDJ);
 
-  cout << trimA << " / " << trimC << endl ;
   TAP_TEST(trimA == 3, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides");
   TAP_TEST(trimC == 2, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides");
 
