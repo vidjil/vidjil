@@ -126,6 +126,8 @@ class DynProg
 
   string SemiGlobal_extract_best();
 
+  int best_score_on_i(int i, int *best_j);
+
   friend ostream& operator<<(ostream& out, const DynProg& dp);
   
   operation **B;  // Score and backtrack matrix

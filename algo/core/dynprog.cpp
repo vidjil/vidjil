@@ -358,6 +358,19 @@ int DynProg::compute()
   return best_score ;
 }
 
+int DynProg::best_score_on_i(int i, int *best_j)
+{
+  int best_score = MINUS_INF ;
+
+  for (int j=0; j<=n; j++)
+    if (B[i][j].score > best_score) {
+      *best_j = j ;
+      best_score = B[i][j].score;
+    }
+
+  return best_score ;
+}
+
 void DynProg::backtrack()
 {
   // Tables for displaying the alignment
