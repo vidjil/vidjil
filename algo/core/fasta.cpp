@@ -89,6 +89,8 @@ void Fasta::add(Sequence seq) {
 }
 
 int Fasta::size() const{ return (int)reads.size(); }
+int Fasta::totalSize() const { return total_size ; }
+
 list<Sequence> Fasta::getAll() const {
   list<Sequence> reads;
 

@@ -53,6 +53,8 @@ public:
               bool verbose=true);
 	
 	int size() const;
+        int totalSize() const;
+
         /**
          * Get all the sequences from the FASTA file
          * @return a list of sequences in the same order as in the input file
