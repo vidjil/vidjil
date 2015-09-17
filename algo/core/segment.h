@@ -15,8 +15,6 @@
 
 #define EXTEND_D_ZONE 5
 
-#define MIN_D_LENGTH 5          /* If a D-REGION is smaller than this threshold, it is not output */
-
 #define RATIO_STRAND 2          /* The ratio between the affectations in one
                                    strand and the other, to safely attribute a
                                    segment to a given strand */
@@ -35,6 +33,7 @@
 #define BAD_EVALUE  1e10
 
 #define THRESHOLD_NB_EXPECTED 1.0 /* Threshold of the accepted expected value for number of found k-mers */
+#define THRESHOLD_NB_EXPECTED_D  .05 /* e-value threshold, D-REGION */
 
 
 
@@ -274,7 +273,8 @@ class FineSegmenter : public Segmenter
   * extend segmentation from VJ to VDJ
   * @param germline: germline used
   */
-  void FineSegmentD(Germline *germline);
+  void FineSegmentD(Germline *germline,
+                    double threshold = THRESHOLD_NB_EXPECTED_D, int multiplier=1);
   void findCDR3();
 
   json toJson();

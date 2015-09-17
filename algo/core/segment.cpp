@@ -833,7 +833,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 }
 
 
-void FineSegmenter::FineSegmentD(Germline *germline){
+void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, int multiplier){
   
   if (segmented){
     
@@ -865,13 +865,12 @@ void FineSegmenter::FineSegmentD(Germline *germline){
 	
     string seq = getSequence().sequence;
 
+    float evalue_D = multiplier * (r-l) * germline->rep_4.totalSize() * segment_cost.toPValue(score_D[0].first);
 
-    // recompute remaining length for D
-    length = germline->rep_4.sequence(best_D).length() - del_D_right - del_D_left;
 
-    if (length < MIN_D_LENGTH)
+
+    if (evalue_D > evalue_threshold)
       return ;
-
 
     dSegmented=true;
     
