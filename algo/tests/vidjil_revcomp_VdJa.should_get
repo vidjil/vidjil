@@ -9,6 +9,5 @@ $ Just one clone found
 $ Two reads segmented on TRA+D
 1:TRA.D -> 2
 
-$ segmentation for the main clone
-1:TRDV1.01 5//3 TRDD2.01 1//7 TRAJ29
-
+$ One clone for the two reads, Vd1/Ja29
+1:clone-001--TRA[+]D--.*002-.* TRDV1[*]01 .* TRAJ29[*]01
