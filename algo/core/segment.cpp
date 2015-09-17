@@ -760,8 +760,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
     }
 
   /* E-values */
-  evalue_left = multiplier * segment_cost.toPValue(score_V[0].first);
-  evalue_right = multiplier * segment_cost.toPValue(score_J[0].first);
+  evalue_left  = multiplier * seq.sequence.size() * germline->rep_5.totalSize() * segment_cost.toPValue(score_V[0].first);
+  evalue_right = multiplier * seq.sequence.size() * germline->rep_3.totalSize() * segment_cost.toPValue(score_J[0].first);
   evalue = evalue_left + evalue_right ;
 
   /* Unsegmentation causes */
