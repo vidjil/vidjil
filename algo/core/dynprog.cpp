@@ -28,6 +28,7 @@
 #include <list>
 #include <cstdlib>
 #include <string>
+#include <cmath>
 
 #define SUBST '|'
 #define MISMATCH '.'
@@ -54,6 +55,8 @@ Cost::Cost(int match, int mismatch, int indel, int del_end, int homopolymer)
   this -> open_insertion = this -> open_deletion = MINUS_INF ;
   this -> extend_insertion = this -> extend_deletion = MINUS_INF ;
   this -> affine_gap = false ;
+
+  estimate_K_lambda();
 }
 
 Cost::Cost(int match, int mismatch, int open_gap, int extend_gap, int del_end, int homopolymer)
@@ -68,6 +71,15 @@ Cost::Cost(int match, int mismatch, int open_gap, int extend_gap, int del_end, i
   this -> open_insertion = this -> open_deletion = open_gap ;
   this -> extend_insertion = this -> extend_deletion = extend_gap ;
   this -> affine_gap = true ;
+
+  estimate_K_lambda();
+}
+
+void Cost::estimate_K_lambda()
+{
+  // Rough estimate of K and lambda parameters
+  lambda = log(4) / match ;
+  K = 0.05 ;
 }
 
 
@@ -81,7 +93,9 @@ ostream& operator<<(ostream& out, const Cost& cost)
       << "/" << cost.open_deletion << cost.extend_deletion
       << ", " << cost.deletion_end
       << ", " << cost.homopolymer
-      << ")" ;
+      << ") "
+      << cost.K << "/" << cost.lambda ;
+
   return out;
 }
 
@@ -99,10 +113,9 @@ int Cost::homo2(char xa, char xb, char y)
   return ((xa == xb) && (xb == y)) ? homopolymer : MINUS_INF ;
 }
 
-double Cost::toPValue(int score)
+double Cost::toPValue(const int score)
 {
-  // TODO: compute an actual p-value
-  return (score <= MIN_MATCHES * match) ? BAD_EVALUE : 1 / (double) score ;
+  return K * exp(-lambda * score);
 }
 
 

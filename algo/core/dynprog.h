@@ -49,7 +49,7 @@ class Cost
   /**
    * @return p-value of having a random alignment of the given score
    */
-  double toPValue(int score);
+  double toPValue(const int score);
 
   int open_insertion;
   int open_deletion;
@@ -57,6 +57,10 @@ class Cost
   int extend_deletion;
 
   bool affine_gap;
+
+  void estimate_K_lambda();
+  float K;
+  float lambda;
 };
 
 
