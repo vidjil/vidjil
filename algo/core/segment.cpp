@@ -790,7 +790,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
     
     //overlap VJ
     if(Jstart-Vend <=0){
-      int b_r, b_l;
       int overlap=Vend-Jstart+1;
       
       string seq_left = sequence.substr(0, Vend+1);
