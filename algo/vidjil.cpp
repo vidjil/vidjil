@@ -71,6 +71,7 @@
 #define DEFAULT_MULTI_GERMLINE_PATH "germline/"
 #define DEFAULT_MULTI_GERMLINE_FILE "germlines.data"
 
+#define DEFAULT_READ_HEADER_SEPARATOR " "
 #define DEFAULT_READS  "./data/Stanford_S22.fasta"
 #define DEFAULT_MIN_READS_CLONE 5
 #define DEFAULT_MAX_REPRESENTATIVES 100
@@ -150,9 +151,14 @@ void usage(char *progname, bool advanced)
        << "  \t\t" << COMMAND_WINDOWS   << "  \t locus detection, window extraction" << endl
        << "  \t\t" << COMMAND_SEGMENT   << "  \t detailed V(D)J segmentation (not recommended)" << endl
        << "  \t\t" << COMMAND_GERMLINES << "  \t statistics on k-mers in different germlines" << endl
-       << endl       
+       << endl ;
 
-       << "Germline databases (one -V/(-D)/-J, or -G, or -g option must be given for all commands except -c " << COMMAND_GERMLINES << ")" << endl
+  if (advanced)
+  cerr << "Input" << endl
+       << "  -# <string>   separator for headers in the reads file (default: '" << DEFAULT_READ_HEADER_SEPARATOR << "')" << endl
+       << endl ;
+
+  cerr << "Germline databases (one -V/(-D)/-J, or -G, or -g option must be given for all commands except -c " << COMMAND_GERMLINES << ")" << endl
        << "  -V <file>     V germline multi-fasta file" << endl
        << "  -D <file>     D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
@@ -301,6 +307,7 @@ int main (int argc, char **argv)
   list <string> f_reps_D ;
   list <string> f_reps_J ;
 
+  string read_header_separator = DEFAULT_READ_HEADER_SEPARATOR ;
   string f_reads = DEFAULT_READS ;
   string seed = DEFAULT_SEED ;
   string f_basename = "";
@@ -374,7 +381,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHaiI124g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3E:t:")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHaiI124g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:")) != EOF)
 
     switch (c)
       {
@@ -399,6 +406,10 @@ int main (int argc, char **argv)
         }
         break;
 
+      // Input
+      case '#':
+        read_header_separator = string(optarg);
+        break;
 
       // Germline
 
@@ -873,7 +884,7 @@ int main (int argc, char **argv)
   OnlineFasta *reads;
 
   try {
-    reads = new OnlineFasta(f_reads, 1, " ");
+    reads = new OnlineFasta(f_reads, 1, read_header_separator);
   } catch (const invalid_argument e) {
     cerr << ERROR_STRING << "Vidjil cannot open reads file " << f_reads << ": " << e.what() << endl;
     exit(1);
