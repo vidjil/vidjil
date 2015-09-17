@@ -1,7 +1,8 @@
-!LAUNCH: ../../vidjil -e 10 -A -i -g ../../germline ../../data/trd-dd2-dd3.fa
+!LAUNCH: ../../vidjil -w 10 -e 10 -A -i -g ../../germline ../../data/trd-dd2-dd3.fa
 
 $ Segment all 5 reads, thanks to -i
 1:junction detected in 5 reads .100..
 
-
+$ 3 reads are segmented on TRD+ (with -w 10, otherwise the reads are too short)
+1: TRD[+] .*->.* 3
 
