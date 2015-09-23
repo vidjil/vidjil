@@ -39,15 +39,18 @@ should: vidjil $(SHOULD_LOG)
 
 shouldvdj_if_python:
 	if python ../../tools/check_python_version.py ; \
-	then $(MAKE) shouldvdj ; \
+	then $(MAKE) shouldlocus_and_vdj ; \
 	else echo "!!! Bad python version, we skip .should-vdj.fa tests..." ; \
 	fi
 
-shouldvdj: vidjil
+shouldlocus_and_vdj: vidjil
 	@echo "*** Launching .should-vdj-fa tests..."
 	python should-vdj-to-tap.py -2q -r $(SHOULD_VDJ) $(SHOULD_LOCUS)
-	python should-vdj-to-tap.py $(SHOULD_VDJ)
+	$(MAKE) shouldvdj
 	@echo "*** All .should-vdj.fa tests passed"
+
+shouldvdj:
+	python should-vdj-to-tap.py $(SHOULD_VDJ)
 
 %.tap: %.should_get force
 	./should-to-tap.sh $<
