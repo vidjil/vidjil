@@ -28,8 +28,8 @@ from collections import defaultdict
 import os
 import argparse
 
-VIDJIL_FINE = '{directory}/vidjil -X 50 -# "#" -c segment -i -g {directory}/germline %s > %s'
-VIDJIL_KMER = '{directory}/vidjil -b out -c windows -uU -2 -i -g {directory}/germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa > %s'
+VIDJIL_FINE = '{directory}/vidjil -X 50 -# "#" -c segment -i -g {directory}/germline %s >> %s'
+VIDJIL_KMER = '{directory}/vidjil -b out -c windows -uU -2 -i -g {directory}/germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa >> %s'
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
 parser.add_argument('--program', '-p', default=VIDJIL_FINE, help='program to launch on each file (%(default)s)')
@@ -63,7 +63,9 @@ def fasta_id_lines_from_program(f_should):
 
     program = args.program.replace('{directory}',args.directory)
     cmd = program % (f_should, f_log)
-    print cmd
+
+    with open(f_log, 'w') as f:
+        f.write('# %s\n\n' % cmd)
 
     exit_code = os.system(cmd)
     if exit_code:
