@@ -55,6 +55,7 @@ if args.after_two:
 global_failed = False
 global_stats = defaultdict(int)
 global_stats_failed = defaultdict(int)
+global_stats_todo = defaultdict(int)
 
 def fasta_id_lines_from_program(f_should):
     f_log = f_should + PROG_TAG + LOG_SUFFIX
@@ -132,8 +133,8 @@ def id_line_to_tap(l, tap_id):
     '''
 
     l = l.strip()
-    pos = l.find(' ')
-    should = l[1:pos]
+    pos = l.find('\t')
+    should = l[1:pos].replace(' + VJ','').replace(' + VDJ','').replace(' - VJ','').replace(' - VDJ','')
     result = l[pos+1:] + ' '
 
     should_pattern = should.replace('_', ' ')
@@ -162,8 +163,12 @@ def id_line_to_tap(l, tap_id):
     tap = ''
 
     if not found:
-        globals()['global_failed'] = True
         globals()['global_stats_failed'][locus] += 1
+        if 'TODO' in should:
+            globals()['global_stats_todo'][locus] += 1
+        else:
+            globals()['global_failed'] = True
+
         tap += 'not '
 
     tap += 'ok %d - %s' % (tap_id, should_pattern)
@@ -171,6 +176,9 @@ def id_line_to_tap(l, tap_id):
     if not found:
         tap += ' - found instead ' + result
 
+    if 'TODO' in should:
+        tap += '# TODO'
+        
     return tap
 
 
@@ -211,10 +219,12 @@ if __name__ == '__main__':
         print
 
     print "=== Summary, should-vdj tests ===" + (' (only locus)' if args.after_two else '')
-    print "            tested     failed"
+    print "            tested     passed     failed (todo)"
     for locus in sorted(global_stats):
-        print "    %-5s     %4d       %4d" % (locus, global_stats[locus], global_stats_failed[locus])
-    print "    =====     %4d       %4d" % (sum(global_stats.values()), sum(global_stats_failed.values()))
+        print "    %-5s     %4d       %4d       %4d   %4s" % (locus, global_stats[locus], global_stats[locus] - global_stats_failed[locus], global_stats_failed[locus],
+                                                              ("(%d)" % global_stats_todo[locus] if global_stats_todo[locus] else ''))
+    print "    =====     %4d       %4d       %4d   %4s" % (sum(global_stats.values()), sum(global_stats.values()) - sum(global_stats_failed.values()), sum(global_stats_failed.values()),
+                                                           "(%d)" % sum(global_stats_todo.values()))
     print
 
     if global_failed:
