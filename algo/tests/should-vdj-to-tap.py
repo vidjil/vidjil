@@ -173,14 +173,16 @@ def id_line_to_tap(l, tap_id):
 
         tap += 'not '
 
-    tap += 'ok %d - %s' % (tap_id, should_pattern)
+    tap += 'ok %d ' % tap_id
+
+    if 'TODO' in should:
+        tap += '# TODO '
+
+    tap += '- ' + should_pattern
 
     if not found:
         tap += ' - found instead ' + result
 
-    if 'TODO' in should:
-        tap += '# TODO'
-        
     return tap
 
 
