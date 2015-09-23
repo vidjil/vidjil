@@ -140,7 +140,7 @@ def id_line_to_tap(l, tap_id):
     should_pattern = should.replace('_', ' ')
 
     if '  ' in should_pattern:
-        locus = should_pattern.split('  ')[1]
+        locus = should_pattern.split('  ')[1].strip().split(' ')[0]
         should_pattern = should_pattern.split('  ')[0]
     else:
         locus = None
