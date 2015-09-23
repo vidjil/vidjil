@@ -125,6 +125,8 @@ def should_pattern_to_regex(p):
     return regex
 
 
+r_locus = re.compile('\[\S+\]')
+
 def id_line_to_tap(l, tap_id):
     '''
     Parses lines such as:
@@ -140,8 +142,13 @@ def id_line_to_tap(l, tap_id):
     result = l[pos+1:] + ' '
 
     should_pattern = should.replace('_', ' ')
+    m_locus = r_locus.search(should_pattern)
 
-    if '  ' in should_pattern:
+    if m_locus:
+        locus = m_locus.group(0)
+        should_pattern = should_pattern.replace(locus, '')
+        locus = locus.replace('[','').replace(']','')
+    elif '  ' in should_pattern: # deprecated 'two spaces', will be removed
         locus = should_pattern.split('  ')[1].strip().split(' ')[0]
         should_pattern = should_pattern.split('  ')[0]
     else:
