@@ -58,7 +58,7 @@ shouldvdj_generate:
 	@echo
 	rm -rf data/gen
 	mkdir -p data/gen
-	cd germline ; python generate-recombinations.py
+	cd germline ; python generate-recombinations.py --random-deletions 8,4:3,1:5,3 --random-insertions 5,4 -e .01
 
 shouldvdj_generated_kmer: all shouldvdj_generate
 	@echo
