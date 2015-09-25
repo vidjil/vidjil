@@ -2,6 +2,7 @@
 #include <core/fasta.h>
 #include "tests.h"
 #include <stdexcept>
+#include <vector>
 
 void testOnlineFasta1() {
   OnlineFasta fa("../../data/test1.fa");
@@ -342,6 +343,35 @@ void testExtractBasename() {
            TEST_EXTRACT_BASENAME, extract_basename("/", true));
 }
 
+void testGenerateAllSeeds() {
+  std::vector<string> solution1 = {"ATAAT"};
+
+  TAP_TEST(generate_all_seeds(solution1[0], "#####") == solution1,
+           TEST_GENERATE_ALL_SEEDS, "");
+
+
+  std::vector<string> solution2 = {"ATAAT", "ATCAT", "ATGAT", "ATTAT"};
+  std::vector<string> try2 = generate_all_seeds("ATAAT", "##-##");
+
+  TAP_TEST(try2 == solution2,
+           TEST_GENERATE_ALL_SEEDS, "");
+
+  std::vector<string> solution3 = {"ATAAT", "ATCAT", "ATGAT", "ATTAT",
+                                   "ATACT", "ATCCT", "ATGCT", "ATTCT",
+                                   "ATAGT", "ATCGT", "ATGGT", "ATTGT",
+                                   "ATATT", "ATCTT", "ATGTT", "ATTTT"};
+  TAP_TEST(generate_all_seeds("ATAAT", "##--#") == solution3,
+           TEST_GENERATE_ALL_SEEDS, "");
+
+
+  std::vector<string> solution4 = {"AA", "CA", "GA", "TA",
+                                   "AC", "CC", "GC", "TC",
+                                   "AG", "CG", "GG", "TG",
+                                   "AT", "CT", "GT", "TT"};
+  TAP_TEST(generate_all_seeds("AA", "--") == solution4,
+           TEST_GENERATE_ALL_SEEDS, "");
+}
+
 void testNChooseK() {
   TAP_TEST(nChoosek(1, 10) == 0, TEST_N_CHOOSE_K, "");
   TAP_TEST(nChoosek(1, 1) == 1, TEST_N_CHOOSE_K, "");
@@ -462,5 +492,6 @@ void testTools() {
   testExtendedNucleotides();
   testExtractBasename();
   testNChooseK();
+  testGenerateAllSeeds();
   testTrimSequence();
 }

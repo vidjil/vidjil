@@ -24,6 +24,7 @@
 #include <iomanip>
 #include <string>
 #include <cassert>
+#include <vector>
 #include "fasta.h"
 using namespace std;
 
@@ -158,6 +159,12 @@ string extract_dirname(string path);
  * @return Extract basename of a file and extracts extension (by default)
  */
 string extract_basename(string path, bool remove_ext = true);
+
+/**
+ * Generate all the possible (nucleotide) strings from the (spaced) seed
+ * provided in parameter.
+ */
+vector<string> generate_all_seeds(const string &str, const string &seed);
 
 /**
  * remove_trailing_whitespaces removes the whitespaces (ie. ' ', '\t', '\r')

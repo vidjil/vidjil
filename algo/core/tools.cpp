@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <iostream>
 #include <iomanip>
+#include <algorithm>
 #include "tools.h"
 
 string seed_contiguous(int k)
@@ -221,6 +222,29 @@ string extract_basename(string path, bool remove_ext) {
   }
 
   return path;
+}
+
+vector<string> generate_all_seeds(const string &str, const string &seed) {
+  assert(str.length() == seed.length());
+  static const string nucleotides = "ACGT";
+  static const size_t nb_nucleotides = nucleotides.length();
+  size_t nb_spaces = count(seed.begin(), seed.end(), '-');
+  vector<string> sequences(1 << (nb_spaces * 2));
+  if (nb_spaces == 0)
+    sequences[0] = str;
+  else {
+    size_t first_pos = seed.find_first_of('-');
+    string start_str = str.substr(0,first_pos);
+    vector<string> end_sequences = generate_all_seeds(str.substr(first_pos+1), seed.substr(first_pos+1));
+    size_t j = 0;
+    for (string &end_str: end_sequences) {
+      for (size_t i = 0; i < nb_nucleotides; i++) {
+        sequences[j++] = start_str + nucleotides[i] + end_str;
+      }
+    }
+  }
+
+  return sequences;
 }
 
 int remove_trailing_whitespaces(string &str) {
