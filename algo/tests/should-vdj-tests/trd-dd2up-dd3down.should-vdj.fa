@@ -1,16 +1,16 @@
 
->TRDD2*01_0//0_TRDJ1*01  TRD+
+>TRDD2*01 0//0 TRDJ1*01  [TRD+]
 TATACTGATGTGTTTCATTGTG
 ccttcctac
 acaccgataaactcatctttggaaaaggaacccgtgtgactgtggaaccaa
 
->TRDD2*01_0//0_TRDD3*01  TRD+
+>TRDD2*01 0//0 TRDD3*01  [TRD+]
 TATACTGATGTGTTTCATTGTG
 ccttcctac
 actgggggatacg
 CACAGTGCTACAAAACCTACAGAGACCTGTAC
 
->TRDV3*01_0//0_TRDD3*01  TRD+
+>TRDV3*01 0//0 TRDD3*01  [TRD+]
 atctctccagtaaggactgaagacagtgccacttactactgtgcctttag
 actgggggatacg
 CACAGTGCTACAAAACCTACAGAGACCTGTAC
