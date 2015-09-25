@@ -60,7 +60,7 @@ shouldvdj_generate:
 	mkdir -p data/gen
 	cd germline ; python generate-recombinations.py --random-deletions 8,4:3,1:5,3 --random-insertions 5,4 -e .01
 
-shouldvdj_generated_kmer: all shouldvdj_generate
+shouldvdj_generated_kmer: all
 	@echo
 	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors) -- Kmer"
 	-cd data/gen ; python ../../algo/tests/should-vdj-to-tap.py -2q *.should-vdj.fa
@@ -68,7 +68,7 @@ shouldvdj_generated_kmer: all shouldvdj_generate
 	python algo/tests/tap-stats.py data/gen/0-*.2.tap
 	python algo/tests/tap-stats.py data/gen/5-*.2.tap
 
-shouldvdj_generated_fine: all shouldvdj_generate
+shouldvdj_generated_fine: all
 	@echo
 	@echo "*** Launching generated .should-vdj-fa tests (and accepts errors) -- Fine"
 	-cd data/gen ; python ../../algo/tests/should-vdj-to-tap.py *.should-vdj.fa
