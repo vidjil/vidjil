@@ -999,15 +999,25 @@ json FineSegmenter::toJson(){
     seg["5"] = segmented_germline->rep_5.label(best_V);
     seg["5start"] = 0;
     seg["5end"] = Vend;
+    seg["5del"] = del_V;
     
     if (isDSegmented()) {
       seg["4"] = segmented_germline->rep_4.label(best_D);
       seg["4start"] = Dstart;
       seg["4end"] = Dend;
+      seg["4delLeft"] = del_D_left;
+      seg["4delRight"] = del_D_right;
+
+      seg["N1"] = seg_N1.size();
+      seg["N2"] = seg_N2.size();
+    }
+    else {
+      seg["N"] = seg_N.size();
     }
     
     seg["3"] = segmented_germline->rep_3.label(best_J);
     seg["3start"] = Jstart;
+    seg["3del"] = del_J;
 
     if (CDR3start >= 0) {
         seg["cdr3"] = {
