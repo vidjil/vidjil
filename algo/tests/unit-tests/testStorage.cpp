@@ -1,18 +1,21 @@
 #include <core/fasta.h>
 #include <core/kmerstore.h>
+#include <core/automaton.hpp>
 #include "tests.h"
 
 template<template<class> class Index>
-void testInsertOneSeq() {
-  Index<Kmer> index(4, true);
+void testInsertOneSeq(bool revcomp) {
+  Index<Kmer> index(4, revcomp);
 
   string seq = "ACAA";
   string label = "s";
 
   index.insert(seq, label);
+  index.finish_building();
 
   string other1 = "TTGT", other2 = "AACA", other3 = "AAAA",
     other4 = "CAAA";
+
   TAP_TEST(index.get(seq).count == 1, TEST_KMERSTORE_INSERT_ONE_SEQ, "");
   TAP_TEST(index.get(other1).count == 0, TEST_KMERSTORE_INSERT_ONE_SEQ, "");
   TAP_TEST(index.get(other2).count == 0, TEST_KMERSTORE_INSERT_ONE_SEQ, "");
@@ -100,13 +103,17 @@ void testKmerStoreSeed() {
 }
 
 void testStorage() {
-  testInsertOneSeq<ArrayKmerStore>();
-  testInsertOneSeq<MapKmerStore>();
+  testInsertOneSeq<ArrayKmerStore>(true);
+  testInsertOneSeq<MapKmerStore>(true);
+  testInsertOneSeq<PointerACAutomaton>(false);
+
   testKmerStoreWithKmerSimple<ArrayKmerStore>(5, false, TEST_ARRAY_KMERSTORE);
   testKmerStoreWithKmerSimple<ArrayKmerStore>(5, true, TEST_ARRAY_KMERSTORE_RC);
 
   testKmerStoreWithKmerSimple<MapKmerStore>(5, false, TEST_MAP_KMERSTORE);
   testKmerStoreWithKmerSimple<MapKmerStore>(5, true, TEST_MAP_KMERSTORE_RC);
+
+  testKmerStoreWithKmerSimple<PointerACAutomaton>(5, false, TEST_AHO_KMERSTORE);
 
   testKmerStoreWithKmer<ArrayKmerStore>(10, TEST_ARRAY_KMERSTORE_RC);
   testKmerStoreWithKmer<MapKmerStore>(14, TEST_MAP_KMERSTORE_RC);

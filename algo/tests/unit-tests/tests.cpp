@@ -14,6 +14,7 @@
 #include "testSampler.cpp"
 #include "testWindowsStorage.cpp"
 #include "testReadStorage.cpp"
+#include "testAutomaton.cpp"
 
 int main(void) {
   TAP_START(NB_TESTS);
@@ -33,6 +34,7 @@ int main(void) {
   testRevcompRepresentative();
   testWindowStorage();
   testReadStorage();
+  testAutomaton();
 
   TAP_END_TEST_EXIT
 }

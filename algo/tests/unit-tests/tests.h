@@ -37,11 +37,18 @@ enum {
   TEST_MAP_KMERSTORE,
   TEST_ARRAY_KMERSTORE_RC,
   TEST_MAP_KMERSTORE_RC,
+  TEST_AHO_KMERSTORE,
   TEST_KMERSTORE_GET_K,
   TEST_KMERSTORE_GET_S,
   TEST_KMERSTORE_GET_SEED,
   TEST_KMERSTORE_INSERT_ONE_SEQ,
   TEST_GET_INDEX_LOAD,
+
+  /* Aho Corasick tests */
+  TEST_AC_TRANSITIONS,
+  TEST_AC_GET,
+  TEST_AC_FINAL,
+  TEST_AC_GET_RESULTS,
 
   /* KmerAffect */
   TEST_AFFECT_STRAND,
@@ -198,10 +205,16 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_MAP_KMERSTORE, "Testing MapKmerStore");
   RECORD_TAP_TEST(TEST_ARRAY_KMERSTORE_RC, "Testing ArrayKmerStore with revcomp");
   RECORD_TAP_TEST(TEST_MAP_KMERSTORE_RC, "Testing MapKmerStore with revcomp");
+  RECORD_TAP_TEST(TEST_AHO_KMERSTORE, "Testing basic PointerACAutomaton");
   RECORD_TAP_TEST(TEST_KMERSTORE_GET_K, "Testing getK() in KmerStore");
   RECORD_TAP_TEST(TEST_KMERSTORE_GET_S, "Testing getK() in KmerStore");
   RECORD_TAP_TEST(TEST_KMERSTORE_GET_SEED, "Testing getK() in KmerStore");
   RECORD_TAP_TEST(TEST_GET_INDEX_LOAD, "Testing getIndexLoad() in KmerStore");
+
+  RECORD_TAP_TEST(TEST_AC_TRANSITIONS, "Testing that transitions are correct in Aho-Corasick");
+  RECORD_TAP_TEST(TEST_AC_GET, "Testing that retrieving information from Aho-Corasick is ok");
+  RECORD_TAP_TEST(TEST_AC_FINAL, "Testing that final states are positioned correctly");
+  RECORD_TAP_TEST(TEST_AC_GET_RESULTS, "Testing getResults with Aho-Corasick");
 
   RECORD_TAP_TEST(TEST_AFFECT_STRAND, "affect_strand()");
   RECORD_TAP_TEST(TEST_AFFECT_CHAR, "affect_char()");
@@ -326,6 +339,7 @@ inline Index *createIndex(int k, bool revcomp) {
   Index *index = new Index(k, revcomp);
   for (int i=0; i < nb_seq; i++)
     index->insert(seq[2*i], seq[2*i+1]);
+  index->finish_building();
   return index;
 }
 
