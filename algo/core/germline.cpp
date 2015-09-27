@@ -4,7 +4,7 @@
 #include <ctype.h>
 
 void Germline::init(string _code, char _shortcut,
-                    int _delta_min,
+                    int _delta_min, string seed,
                     int max_indexing)
 {
   seg_method = SEG_METHOD_53 ;
@@ -12,6 +12,7 @@ void Germline::init(string _code, char _shortcut,
   shortcut = _shortcut ;
   index = 0 ;
   this->max_indexing = max_indexing;
+  this->seed = seed;
 
   affect_5 = "V" ;
   affect_4 = "" ;
@@ -26,19 +27,19 @@ void Germline::init(string _code, char _shortcut,
 
 
 Germline::Germline(string _code, char _shortcut,
-		   int _delta_min,
+		   int _delta_min, string seed,
                     int max_indexing)
 {
-  init(_code, _shortcut, _delta_min, max_indexing);
+  init(_code, _shortcut, _delta_min, seed, max_indexing);
 }
 
 
 Germline::Germline(string _code, char _shortcut,
 		   string f_rep_5, string f_rep_4, string f_rep_3,
-		   int _delta_min,
+		   int _delta_min, string seed,
                     int max_indexing)
 {
-  init(_code, _shortcut, _delta_min, max_indexing);
+  init(_code, _shortcut, _delta_min, seed, max_indexing);
 
   f_reps_5.push_back(f_rep_5);
   f_reps_4.push_back(f_rep_4);
@@ -56,10 +57,10 @@ Germline::Germline(string _code, char _shortcut,
 
 Germline::Germline(string _code, char _shortcut,
 		   list <string> _f_reps_5, list <string> _f_reps_4, list <string> _f_reps_3,
-		   int _delta_min,
+		   int _delta_min, string seed,
                     int max_indexing)
 {
-  init(_code, _shortcut, _delta_min, max_indexing);
+  init(_code, _shortcut, _delta_min, seed, max_indexing);
 
   f_reps_5 = _f_reps_5 ;
   f_reps_4 = _f_reps_4 ;
@@ -87,10 +88,10 @@ Germline::Germline(string _code, char _shortcut,
 
 Germline::Germline(string _code, char _shortcut, 
            Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
-		   int _delta_min,
+		   int _delta_min, string seed,
                     int max_indexing)
 {
-  init(_code, _shortcut, _delta_min, max_indexing);
+  init(_code, _shortcut, _delta_min, seed, max_indexing);
 
   rep_5 = _rep_5 ;
   rep_4 = _rep_4 ;
@@ -100,7 +101,8 @@ Germline::Germline(string _code, char _shortcut,
     seg_method = SEG_METHOD_543 ;
 }
 
-Germline::Germline(string code, char shortcut, string path, json json_recom, int max_indexing)
+Germline::Germline(string code, char shortcut, string path, json json_recom,
+                   string seed, int max_indexing)
 {
     
   int delta_min = -10;
@@ -109,7 +111,7 @@ Germline::Germline(string code, char shortcut, string path, json json_recom, int
       delta_min = 0;
   }
   
-  init(code, shortcut, delta_min, max_indexing);
+  init(code, shortcut, delta_min, seed, max_indexing);
 
   bool regular = (code.find("+") == string::npos);
   
@@ -147,8 +149,10 @@ Germline::Germline(string code, char shortcut, string path, json json_recom, int
     seg_method = SEG_METHOD_543 ;
 }
 
-void Germline::new_index(string seed)
+void Germline::new_index()
 {
+  assert(! seed.empty());
+
   bool rc = true ;
   index = KmerStoreFactory::createIndex<KmerAffect>(seed, rc);
   index->refs = 1;
@@ -167,19 +171,19 @@ void Germline::update_index(IKmerStore<KmerAffect> *_index)
 {
   if (!_index) _index = index ;
 
-  _index->insert(rep_5, affect_5, max_indexing);
-  _index->insert(rep_4, affect_4);
-  _index->insert(rep_3, affect_3, -max_indexing);
+  _index->insert(rep_5, affect_5, max_indexing, seed);
+  _index->insert(rep_4, affect_4, 0, seed);
+  _index->insert(rep_3, affect_3, -max_indexing, seed);
 }
 
 void Germline::mark_as_ambiguous(Germline *other)
 {
-  index->insert(other->rep_5, AFFECT_AMBIGUOUS_SYMBOL, max_indexing);
+  index->insert(other->rep_5, AFFECT_AMBIGUOUS_SYMBOL, max_indexing, seed);
 
   if (other->affect_4.size())
-    index->insert(other->rep_4, AFFECT_AMBIGUOUS_SYMBOL);
+    index->insert(other->rep_4, AFFECT_AMBIGUOUS_SYMBOL, 0, seed);
 
-  index->insert(other->rep_3, AFFECT_AMBIGUOUS_SYMBOL, -max_indexing);
+  index->insert(other->rep_3, AFFECT_AMBIGUOUS_SYMBOL, -max_indexing, seed);
 }
 
 
@@ -233,10 +237,10 @@ void MultiGermline::insert(Germline *germline)
   germlines.push_back(germline);
 }
 
-void MultiGermline::add_germline(Germline *germline, string seed)
+void MultiGermline::add_germline(Germline *germline)
 {
   if (one_index_per_germline)
-    germline->new_index(seed);
+    germline->new_index();
   germlines.push_back(germline);
 }
 
@@ -278,7 +282,8 @@ void MultiGermline::build_from_json(string path, string json_filename, int filte
     
     //for each set of recombination 3/4/5
     for (json::iterator it2 = recom.begin(); it2 != recom.end(); ++it2) {
-      add_germline(new Germline(code, shortcut, path + "/", *it2 , max_indexing), seedMap[seed]);
+      add_germline(new Germline(code, shortcut, path + "/", *it2 , seedMap[seed],
+                                max_indexing));
     }
   }
   

@@ -13,8 +13,8 @@ void testSegmentationBug1(int delta_min, int delta_max) {
   Fasta seqJ("../../germline/TRGJ.fa");
 
   Germline *germline ;
-  germline = new Germline("custom", 'x', seqV, seqV, seqJ, delta_min, delta_max);
-  germline->new_index("##############");
+  germline = new Germline("custom", 'x', seqV, seqV, seqJ, delta_min, "##############");
+  germline->new_index();
   
   OnlineFasta input(buggy_sequences);
 

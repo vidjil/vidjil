@@ -31,7 +31,7 @@ class Germline {
   int max_indexing;
 
   void init(string _code, char _shortcut,
-            int _delta_min,
+            int _delta_min, string seed,
             int max_indexing);
 
  public:
@@ -44,24 +44,25 @@ class Germline {
 
   Germline(string _code, char _shortcut,
            list <string> f_rep_5, list <string> f_rep_4, list <string> f_rep_3,
-           int _delta_min,
+           int _delta_min, string seed="",
             int max_indexing=0);
 
   Germline(string _code, char _shortcut, 
   	   string f_rep_5, string f_rep_4, string f_rep_3,
-	   int _delta_min,
+	   int _delta_min, string seed="",
             int max_indexing=0);
 
   Germline(string _code, char _shortcut, 
       Fasta _rep_5, Fasta _rep_4, Fasta _rep_3,
-	   int _delta_min,
+	   int _delta_min, string seed="",
             int max_indexing=0);
 
   Germline(string _code, char _shortcut,
-	   int _delta_min,
+	   int _delta_min, string seed="",
             int max_indexing=0);
   
-  Germline(string _code, char shortcut, string path, json json_recom, int max_indexing=0);
+  Germline(string _code, char shortcut, string path, json json_recom,
+           string seed="", int max_indexing=0);
 
   ~Germline();
 
@@ -69,7 +70,12 @@ class Germline {
   string code ;
   char   shortcut ;
 
-  void new_index(string seed);
+  /**
+   * The string used for indexing the germline.
+   */
+  string seed;
+
+  void new_index();
   void set_index(IKmerStore<KmerAffect> *index);
 
   void update_index(IKmerStore<KmerAffect> *_index = NULL);
@@ -126,7 +132,7 @@ class MultiGermline {
   ~MultiGermline();
 
   void insert(Germline *germline);
-  void add_germline(Germline *germline, string seed);
+  void add_germline(Germline *germline);
   void build_from_json(string path, string json_filename, int filter, int max_indexing);
 
   // Creates and update an unique index for all the germlines
