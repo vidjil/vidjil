@@ -24,6 +24,11 @@ public:
   Kmer(const string &label, int strand=1);
 
   Kmer &operator+=(const Kmer &);
+
+  /**
+   * When indexing revcomp, should the value be the same or not?
+   * In other words, does the information stored by the class is strand-dependent?
+   */
   static bool hasRevcompSymetry();
 
   /**
