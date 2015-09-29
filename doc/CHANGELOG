@@ -1,6 +1,13 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
+2015-10-XX  The Vidjil Team
+	* Better FineSegmenter V(D)J assignation, especially when V and J are close (core/segment.cpp)
+	* Renamed 'UNSEG too few J/V' to 'UNSEG only V/J' to better reflect the actual detection of one part
+	* Refactored test mechanism for V(D)J assignation, allowing flexible patterns (tests/should-vdj-tests)
+	* New tests on sequences with manually curated V(D)J assignations (tests/should-vdj-tests)
+	* Bugs closed (no more spurious D in some VJ recombinations, corrected number of deletions around D regions)
+
 2015-07-21  The Vidjil Team
         * New flexible parameterization of analyzed recombinations through a json file (germline/germlines.data)
         * New experimental unexpected recombination analysis (-4 -e 10) (core/segment.cpp)
