@@ -82,10 +82,17 @@ public:
    * @param seed: the seed to use for indexing. By default it will be the seed of the index
    * @post All the k-mers in the sequence have been indexed.
    */
-  void insert(const seqtype &sequence,
-              const string &label,
-              bool ignore_extended_nucleotides=true, int keep_only = 0,
-              string seed="");
+  virtual void insert(const seqtype &sequence,
+                      const string &label,
+                      bool ignore_extended_nucleotides=true, int keep_only = 0,
+                      string seed="");
+
+  /**
+   * Perform extra steps to finish the building of the index. After using
+   * that function, we are not supposed to insert any other sequence.
+   * No query function should be called before calling that function.
+   */
+  void finish_building();
 
   /**
    * @param word: a k-mer

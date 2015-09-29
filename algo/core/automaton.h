@@ -103,6 +103,8 @@ private:
   void free_automaton(pointer_state<Info> *, set<void *> &);
   void init(string seed, bool revcomp);
 public:
+  using IKmerStore<Info>::insert;
+
   /**
    * @param revcomp: should the revcomp of the sequences also be indexed
    *
