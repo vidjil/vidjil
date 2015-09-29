@@ -64,6 +64,10 @@ public:
    */
   virtual void *next(void *state, char c) = 0;
 
+  /**
+   * @inherited from IKmerStore
+   */
+  size_t smallestAnalysableLength() const;
 
 };
 

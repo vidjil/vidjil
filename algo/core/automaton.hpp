@@ -30,6 +30,10 @@ void *AbstractACAutomaton<Info>::goto_state(const string &seq, void *starting_st
   return current_state;
 }
 
+template<class Info>
+size_t AbstractACAutomaton<Info>::smallestAnalysableLength() const {
+  return 1;
+}
 ///////////////////////
 
 template <class Info>
