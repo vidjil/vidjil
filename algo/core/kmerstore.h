@@ -292,6 +292,9 @@ void IKmerStore<T>::insert(const seqtype &sequence,
 }
 
 template<class T>
+void IKmerStore<T>::finish_building() {}
+
+template<class T>
 float IKmerStore<T>::getIndexLoad(const T kmer) const {
   return kmer.isUnknown() ? 1 - getIndexLoad() : getIndexLoad();
 }

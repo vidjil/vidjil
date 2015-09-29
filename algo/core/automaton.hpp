@@ -6,6 +6,11 @@
 //////////////////// IMPLEMENTATIONS ////////////////////
 
 template <class Info>
+void AbstractACAutomaton<Info>::finish_building() {
+  build_failure_functions();
+}
+
+template <class Info>
 bool AbstractACAutomaton<Info>::isInitialState(void *state) {
   return state == initialState;
 }

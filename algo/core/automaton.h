@@ -29,6 +29,11 @@ public:
   virtual void build_failure_functions() = 0;
 
   /**
+   * @inherited from IKMerStore
+   */
+  void finish_building();
+
+  /**
    * @return the information stored for this state
    */
   virtual list<Info> &getInfo(void *state) = 0;
