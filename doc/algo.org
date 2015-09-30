@@ -44,9 +44,6 @@ Vidjil has been successfully tested on the following platforms :
  - CentOS 6.3 i386
  - Debian Squeeze 6.0
  - Debian Wheezy 7.0 amd64
- - Fedora 17
- - FreeBSD 9.2 amd64
- - NetBSD 6.0.1 amd64
  - Ubuntu 12.04 LTS amd64
  - Ubuntu 14.04 LTS amd64
 
