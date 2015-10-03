@@ -149,7 +149,7 @@ void usage(char *progname, bool advanced)
        << "  -c <command>"
        << "\t"     << COMMAND_CLONES    << "  \t locus detection, window extraction, clone gathering (default command, most efficient, all outputs)" << endl
        << "  \t\t" << COMMAND_WINDOWS   << "  \t locus detection, window extraction" << endl
-       << "  \t\t" << COMMAND_SEGMENT   << "  \t detailed V(D)J segmentation (not recommended)" << endl
+       << "  \t\t" << COMMAND_SEGMENT   << "  \t detailed V(D)J designation (not recommended)" << endl
        << "  \t\t" << COMMAND_GERMLINES << "  \t statistics on k-mers in different germlines" << endl
        << endl ;
 
@@ -207,7 +207,7 @@ void usage(char *progname, bool advanced)
 
        << "Limits to further analyze some clones" << endl
        << "  -y <nb>       maximal number of clones computed with a representative ('" << NO_LIMIT << "': no limit) (default: " << DEFAULT_MAX_REPRESENTATIVES << ")" << endl
-       << "  -z <nb>       maximal number of clones to be segmented ('" << NO_LIMIT << "': no limit, do not use) (default: " << DEFAULT_MAX_CLONES << ")" << endl
+       << "  -z <nb>       maximal number of clones to be analyzed with a full V(D)J designation ('" << NO_LIMIT << "': no limit, do not use) (default: " << DEFAULT_MAX_CLONES << ")" << endl
        << "  -A            reports and segments all clones (-r 0 -% 0 -y " << NO_LIMIT << " -z " << NO_LIMIT << "), to be used only on very small datasets (for example -AX 20)" << endl
        << "  -x <nb>       maximal number of reads to process ('" << NO_LIMIT << "': no limit, default), only first reads" << endl
        << "  -X <nb>       maximal number of reads to process ('" << NO_LIMIT << "': no limit, default), sampled reads" << endl
@@ -795,8 +795,7 @@ int main (int argc, char **argv)
     {
       cout << "* Vidjil purpose is to extract very quickly windows overlapping the CDR3" << endl
 	   << "* and to gather reads into clones (-c clones), and not to provide an accurate V(D)J segmentation." << endl
-	   << "* The following segmentations are slow to compute and are provided only for convenience." << endl
-	   << "* They should be checked with other softwares such as IgBlast, iHHMune-align or IMGT/V-QUEST." << endl 
+	   << "* The full V(D)J designations are slow to compute and are provided only for convenience." << endl
 	   << "* More information is provided in the 'doc/algo.org' file." << endl 
 	   << endl ;
     }

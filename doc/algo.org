@@ -255,7 +255,7 @@ Limits to report a clone (or a window)
 
 Limits to further analyze some clones
   -y <nb>       maximal number of clones computed with a representative ('all': no limit) (default: 100)
-  -z <nb>       maximal number of clones to be segmented ('all': no limit, do not use) (default: 20)
+  -z <nb>       maximal number of clones to be analyzed with a full V(D)J designation ('all': no limit, do not use) (default: 20)
   -A            reports and segments all clones (-r 1 -% 0 -y all -z all), to be used only on very small datasets
 #+END_EXAMPLE
 
@@ -357,7 +357,7 @@ The main output of Vidjil (with the default =-c clones= command) are two followi
  - The =.vidjil= file is /the file for the Vidjil browser/.
    The file is in a =.json= format (detailed in [[file:format-analysis.org][format-analysis.org]])
    describing the windows and their count, the representatives (=-y=),
-   the detailed segmentation (=-z=, see warning below), and possibly
+   the detailed V(D)J designation (=-z=, see warning below), and possibly
    the results of the further clustering.
 
    The browser takes this =.vidjil= file (possibly merged with
@@ -370,7 +370,7 @@ The main output of Vidjil (with the default =-c clones= command) are two followi
    The sequences are at least the windows (and their count in the headers) or
    the representatives (=-y=) when they have been computed.
    The headers include the count of each window, and further includes the
-   detailed segmentation (=-z=, see warning below), given in a '.vdj' format, see below.
+   detailed V(D)J designation (=-z=, see warning below), given in a '.vdj' format, see below.
    The further clustering is not output in this file.
 
    The =.vdj.fa= output enables to use Vidjil as a /filtering tool/,
@@ -432,8 +432,8 @@ in the following situations:
 - in a first pass, when requested with =-U= option, in a =.segmented.vdj.fa= file.
 
       The goal of this ultra-fast segmentation, based on a seed
-      heuristics, is only to locate the w-window overlapping the
-      CDR3. This should not be taken as a real V(D)J segmentation, as
+      heuristics, is only to identify the locus and to locate the w-window overlapping the
+      CDR3. This should not be taken as a real V(D)J designation, as
       the center of the window may be shifted up to 15 bases from the
       actual center.
 
@@ -441,13 +441,15 @@ in the following situations:
         - at the end of the clones detection (default command =-c clones=)
         - or directly when explicitly requiring segmentation (=-c segment=)
 
-      This segmentation obtained by full comparison (dynamic
-      programming) with all germline sequences. Such segmentation are
-      not at the core of the Vidjil clone gathering method (which
-      relies only on the 'window', see above). They are slow to compute
-      and are provided only for convenience.
-      They should be checked with other softwares such
-      as IgBlast, iHHMune-align or IMGT/V-QUEST.
+      These V(D)J designations are obtained by full comparison (dynamic programming)
+      with all germline sequences.
+
+      Note that these designations are relatively slow to compute. However, they
+      are not at the core of the Vidjil clone gathering method (which
+      relies only on the 'window', see above).
+      To check the quality of these designations, the automated test suite include
+      sequences with manually curated V(D)J designations (see [[http://git.vidjil.org/blob/master/doc/should-vdj.org][should-vdj.org]]).
+
 
 Segmentations of V(D)J recombinations are displayed using a dedicated
 .vdj format. This format is compatible with FASTA format. A line starting
