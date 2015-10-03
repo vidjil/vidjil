@@ -537,6 +537,8 @@ void best_overlap_split(int overlap, string seq_left, string seq_right,
       cout << dp_l ;
       cout << dp_r ;
 
+      cout << "seq:" << seq_left << "\t\t" << seq_right << endl;
+      cout << "ref:" << ref_left << "\t\t" << ref_right << endl;
       for(int i=0; i<=overlap; i++)
         cout << i << "  left: " << score_l[i] << "/" << trim_l[i] << "     right: " << score_r[i] << "/" << trim_r[i] << endl;
 #endif
@@ -566,7 +568,10 @@ void best_overlap_split(int overlap, string seq_left, string seq_right,
       *pos_seq_right += best_j ;
 
 #ifdef DEBUG_OVERLAP
-      cout << "best_overlap_split: " << score << "   left: " << *trim_ref_left << " @" << *pos_seq_right << "    right:" << *trim_ref_right << " @" << *pos_seq_right << endl;
+      cout << "overlap: " << overlap << ", " << "best_overlap_split: " << score
+           << "    left: " << best_i << "-" << *trim_ref_left << " @" << *pos_seq_right
+           << "    right:" << best_j << "-" << *trim_ref_right << " @" << *pos_seq_right
+           << endl;
 #endif
 }
 
