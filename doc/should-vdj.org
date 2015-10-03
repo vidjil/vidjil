@@ -111,7 +111,13 @@ A future format will allow to specify these alternatives.
 It is advised now to leave a comment in plain English:
 
 #+BEGIN_EXAMPLE
-# or TRGJ1*01
+# The D/J junction can be seen as 2//7, 3//6, or 4//5
+>IGHV3-48*01 0/AA/6 IGHD5-12*01 3//6 IGHJ4*02  [IGH]
+ATGAACAGCCTGAGAGCCGAGGACACGGCTGTGTATTACTGTGCGAGAGAAAATAGTG
+GCTACGATTTGACTAC
+TGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGTT
+
+# TRGJ1*01 or TRGJ1*02
 >TRGV5*01 TRGJ1*02   [TRG]
 ...
 #+END_EXAMPLE
