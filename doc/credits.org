@@ -1,0 +1,45 @@
+
+Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes,
+developed by the Bonsai bioinformatics lab, at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille.
+
+Contact: Mathieu Giraud and Mikaël Salson <contact@vidjil.org>
+
+* Vidjil core development
+ - Mathieu Giraud, 2011-2015
+ - Mikaël Salson, 2011-2015
+ - Marc Duez, 2012-2015
+ - Tatiana Rocher, 2014-2015
+ - Florian Thonier, 2015
+
+* Other contributors
+ - David Chatel, 2011-2012
+ - Antonin Carette, 2014
+
+* .should-vdj.fa tests with curated V(D)J designations
+ - Yann Ferret (CHRU Lille), 2014-2015
+ - Florian Thonier (Inserm, Paris Necker), 2015
+
+* Acknowledgements
+
+We thank all users, collaborators and colleagues who provided feedback on Vidjil and proposed new ideas.
+
+Vidjil is developed in collaboration or in connection with the following groups:
+ - department of Hematology of CHRU Lille
+ - Functional and Structural Genomic Platform (U. Lille 2, IFR-114, IRCL)
+ - Institut Necker Enfants Malades, Paris
+ - EuroClonality-NGS working group
+
+* Funding
+
+The development of Vidjil is funded by:
+ - Région Nord-Pas-de-Calais, 2012-2017
+ - Université Lille 1, 2014-2017
+ - SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), 2014-2016
+ - Inria Lille, 2015-2017
+
+* Reference
+
+Mathieu Giraud, Mikaël Salson, et al.,
+"Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing",
+BMC Genomics 2014, 15:409
+http://dx.doi.org/10.1186/1471-2164-15-409
