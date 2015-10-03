@@ -895,8 +895,8 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
     //overlap DJ
     if(Jstart-Dend <=0){
       int overlap=Dend-Jstart+1;
-      string seq_right = seq.substr(Dstart, Dend-Dstart+1);
-      string seq_left = seq.substr(Jstart, seq.length()-Jstart);
+      string seq_left = seq.substr(Dstart, Dend-Dstart+1);
+      string seq_right = seq.substr(Jstart, seq.length()-Jstart);
 
       best_overlap_split(overlap, seq_left, seq_right,
                          germline->rep_4.sequence(best_D), germline->rep_3.sequence(best_J),
