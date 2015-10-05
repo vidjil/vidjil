@@ -1,3 +1,4 @@
+#+TITLE: Vidjil credits
 
 Vidjil is an open-source platform for the analysis of high-throughput sequencing data from lymphocytes,
 developed by the Bonsai bioinformatics lab, at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille.
@@ -21,7 +22,7 @@ Contact: Mathieu Giraud and Mikaël Salson <contact@vidjil.org>
 
 * Acknowledgements
 
-We thank all users, collaborators and colleagues who provided feedback on Vidjil and proposed new ideas.
+We thank all our users, collaborators and colleagues who provided feedback on Vidjil and proposed new ideas.
 
 Vidjil is developed in collaboration or in connection with the following groups:
  - department of Hematology of CHRU Lille
