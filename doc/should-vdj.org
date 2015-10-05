@@ -125,7 +125,7 @@ TGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGTT
 
 * Running the tests
 
-Vidjil can be tested on =.should-vdj= tests can be launched within the =algo/tests= directory:
+Vidjil can be tested on =.should-vdj:= tests can be launched within the =algo/tests= directory:
   - =python should-vdj-to-tap.py= runs one or several tests, given as parameters on the command line,
   - =make shouldvdj= runs all =.should-vdj.fa= tests,
   - =make shouldvdj_and_locus= further runs tests on the locus.
