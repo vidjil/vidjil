@@ -138,7 +138,7 @@ make germline
    # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
 
 make                     # compile Vijil
-make test                # run self-tests
+make test                # (optional) run self-tests (can take 5 to 60 minutes)
 
 ./vidjil -h              # display help/usage
 #+END_SRC
