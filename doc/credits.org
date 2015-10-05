@@ -23,6 +23,17 @@ Contact: Mathieu Giraud and Mikaël Salson <contact@vidjil.org>
 * Acknowledgements
 
 We thank all our users, collaborators and colleagues who provided feedback on Vidjil and proposed new ideas.
+Our special thanks go to:
+- Marine Armand
+- Jack Bartram
+- Aurélie Caillault
+- Yann Ferret
+- Alice Fievet
+- Martin Figeac
+- Nathalie Grardel
+- Michaela Kotrová
+- Claude Preudhomme
+- Shéhérazade Sebda
 
 Vidjil is developed in collaboration or in connection with the following groups:
  - department of Hematology of CHRU Lille
