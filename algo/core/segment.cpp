@@ -856,10 +856,12 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
 
     int r = Jstart + EXTEND_D_ZONE;
 
-    if (r > (int)getSequence().sequence.length()) 
-      r = getSequence().sequence.length();
+    string seq = getSequence().sequence; // segmented sequence, possibly rev-comped
+
+    if (r > (int) seq.length())
+      r = seq.length();
       
-    string str = getSequence().sequence.substr(l, r-l);
+    string str = seq.substr(l, r-l);
 
     // Align
     end = align_against_collection(str, germline->rep_4, false, true, &tag_D, &del_D_right, &del_D_left, &begin,
@@ -870,8 +872,6 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
     Dstart = l + begin;
     Dend = l + end;
 	
-    string seq = getSequence().sequence;
-
     float evalue_D = multiplier * (r-l) * germline->rep_4.totalSize() * segment_cost.toPValue(score_D[0].first);
 
 
