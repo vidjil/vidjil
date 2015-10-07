@@ -1,8 +1,12 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
+2015-10-08  The Vidjil Team
+	* Bug closed (V(D)J assignation when V/D/J segments are close on the negative strand) (core/segment.cpp)
+
 2015-10-05  The Vidjil Team
 	* Better FineSegmenter V(D)J assignation, especially when V/D/J segments are close (core/segment.cpp)
+	* Better e-value computation for FineSegmenter V(D)J assignation (core/segment.cpp)
 	* Renamed 'UNSEG too few J/V' to 'UNSEG only V/J' to better reflect the actual detection of one part
 	* Refactored tests for V(D)J assignation, allowing flexible patterns, new documentation (doc/should-vdj.org)
 	* New tests on sequences with manually curated V(D)J assignations (tests/should-vdj-tests)
