@@ -46,11 +46,14 @@ shouldvdj_if_python:
 shouldlocus_and_vdj: vidjil
 	@echo "*** Launching .should-vdj-fa tests..."
 	python should-vdj-to-tap.py -2q -r $(SHOULD_VDJ) $(SHOULD_LOCUS)
-	$(MAKE) shouldvdj
+	$(MAKE) shouldvdj_with_rc
 	@echo "*** All .should-vdj.fa tests passed"
 
 shouldvdj:
 	python should-vdj-to-tap.py $(SHOULD_VDJ)
+
+shouldvdj_with_rc:
+	python should-vdj-to-tap.py -r $(SHOULD_VDJ)
 
 %.tap: %.should_get force
 	./should-to-tap.sh $<
