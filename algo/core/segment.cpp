@@ -792,13 +792,15 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   /* The sequence is segmented */
   segmented = true ;
   because = reversed ? SEG_MINUS : SEG_PLUS ;
-    
+
+  string sequence_or_rc = getSequence().sequence; // segmented sequence, possibly rev-comped
+
     //overlap VJ
     if(Jstart-Vend <=0){
       int overlap=Vend-Jstart+1;
-      
-      string seq_left = sequence.substr(0, Vend+1);
-      string seq_right = sequence.substr(Jstart);
+
+      string seq_left = sequence_or_rc.substr(0, Vend+1);
+      string seq_right = sequence_or_rc.substr(Jstart);
 
       best_overlap_split(overlap, seq_left, seq_right,
                          germline->rep_5.sequence(best_V), germline->rep_3.sequence(best_J),
@@ -811,7 +813,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
     // string chevauchement = removeChevauchement();
 
     /// used only below, then recomputed in finishSegmentation() ;
-    seg_N = revcomp(sequence, reversed).substr(Vend+1, Jstart-Vend-1); 
+    seg_N = sequence_or_rc.substr(Vend+1, Jstart-Vend-1);
 
   code = germline->rep_5.label(best_V) +
     " "+ string_of_int(del_V) + 
