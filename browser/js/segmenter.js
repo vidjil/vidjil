@@ -148,6 +148,16 @@ Segment.prototype = {
         span.appendChild(document.createTextNode("❯ to IgBlast"));
         div_menu.appendChild(span);
 
+        //toARResT button
+        span = document.createElement('span');
+        span.id = "toARResT";
+        span.className = "button devel-mode";
+        span.onclick = function () {
+            self.sendTo('ARResT')
+        };
+        span.appendChild(document.createTextNode("❯ to ARResT/CJ"));
+        div_menu.appendChild(span);
+
         //toBlast button
         span = document.createElement('span');
         span.id = "toBlast";
@@ -516,7 +526,7 @@ Segment.prototype = {
     /**
      * build a request with currently selected clones to send to IMGT or igblast <br>
      * (see crossDomain.js)
-     * @param {string} address - 'IMGT', 'igBlast' or 'Blast'
+     * @param {string} address - 'IMGT', 'ARResT', 'igBlast' or 'Blast'
      * */
     sendTo: function (address) {
 
@@ -539,6 +549,7 @@ Segment.prototype = {
             }
         }
         if (address == 'IMGT') imgtPost(request, system);
+        if (address == 'ARResT') arrestPost(request, system);
         if (address == 'igBlast') igBlastPost(request, system);
         if (address == 'blast') blastPost(request, system);
 

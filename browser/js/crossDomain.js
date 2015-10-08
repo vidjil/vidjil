@@ -145,6 +145,37 @@ function igBlastPost(data, system) {
 }
 
 
+// ARReST / CompileJunction
+
+var arrestInput = {};
+arrestInput["fname"] = "exported_func" ;
+arrestInput["pjxrand"] = ".0033328778554" ;
+arrestInput["elite"] = "" ;
+
+function arrestPost(data, system) {
+
+    arrestInput["args"] = data;
+
+    var form = document.getElementById("form");
+    form.innerHTML = "";
+    form.target = "_blank";
+    form.action = "http://tools.bat.infspire.org/cgi-bin/arrest/compile.junctions.online.pl";
+    form.method = "POST";
+
+    for (var k in arrestInput) {
+        var input = document.createElement("input");
+        input.type = "hidden";
+        input.name = k;
+        input.value = arrestInput[k];
+        form.appendChild(input);
+    }
+
+    form.submit();
+
+}
+
+
+
 //parametre blast par defaut
 var blastInput = {};
 blastInput["query_sequence"]          = "";
