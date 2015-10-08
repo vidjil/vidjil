@@ -121,55 +121,33 @@ Builder.prototype = {
         
         normalize_list.appendChild(div)
         
-        for (var i=0; i<self.m.clones.length; i++){
-            if (typeof self.m.clone(i).expected != "undefined"){
-                
-                var input = document.createElement("input")
-                input.value=i;
-                input.type = "radio"
-                input.name = "normalize_list"
-                if (self.m.normalization.id==i) input.checked=true;
-                
-                var text = document.createTextNode(self.m.clone(i).getName() + " → " +self.m.clone(i).expected)
-                
-                var div = document.createElement("div")
-                div.onclick = function () {
-                    self.m.compute_normalization(this.firstChild.value) 
-                    this.firstChild.checked=true
-                    self.m.update()
-                }
-                div.className="buttonSelector"
-                div.appendChild(input)
-                div.appendChild(text)
-                
-                normalize_list.appendChild(div)
+        // Regroup Clones and Data into a single array with only critical data
+        var divElements = [];
+        for (var i = 0; i < self.m.clones.length; ++i) {
+            if (typeof self.m.clone(i).expected != "undefined") {
+                divElements.push({
+                    id: i
+                    name: self.m.clone(i).getName(),
+                    expected: self.m.clone(i).expected
+                });
             }
         }
         
-        for (var key in self.m.data){
-            if (typeof self.m.data[key].expected != "undefined"){
-                
-                var input = document.createElement("input")
-                input.value=key;
-                input.type = "radio"
-                input.name = "normalize_list"
-                if (self.m.normalization.id==key) input.checked=true;
-                
-                var text = document.createTextNode(key + " → " +self.m.data[key].expected)
-                
-                var div = document.createElement("div")
-                div.onclick = function () {
-                    self.m.compute_data_normalization(this.firstChild.value) 
-                    this.firstChild.checked=true
-                    self.m.update()
-                }
-                div.className="buttonSelector"
-                div.appendChild(input)
-                div.appendChild(text)
-                
-                normalize_list.appendChild(div)
+        for (var key in self.m.data) {
+            if (typeof self.m.data[key].expected != "undefined") {
+                divElements.push({
+                    id: key,
+                    name: self.m.data[key],
+                    expected: self.m.data[key].expected
+                });
             }
         }
+
+        // Create clickable div for each Clone and Data Entry
+        for (int i = 0; i < divElements.length; ++i) {
+            var div = setupNormalizeDiv(divElements[i], "buttonSelector");
+            normalize_list.appendChild(div);
+        } 
         
     },
 
@@ -714,5 +692,33 @@ Builder.prototype = {
         this.m.update();
     },
 
+    // Build an html input tag
+    setupInput: function(name, type, value, id=None) {
+        var input = document.createElement("input");
+        if(id != None) input.id = id;
+        input.name = name;
+        input.type = type;
+        input.value = value;
+        return input;
+    },
+
+    // Build a clickable div element that triggers model update
+    setupNormalizeDiv: function(elem, className) {
+        var div = document.createElement("div");
+        var input = setupInput("normalize_list", "radio", elem.id);
+        if (self.m.normalization.id == elem.id) input.checked = true;
+        var text = document.createTextNode(elem.name + " → " + elem.expected);
+
+        div.onclick = function () {
+            self.m.compute_data_normalization(this.firstChild.value);
+            this.firstChild.checked = true;
+            self.m.update();
+        }
+
+        div.className = className;
+        div.appendChild(inputNode);
+        div.appendChild(textNode);
+        return div;
+    },
 
 }
