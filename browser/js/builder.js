@@ -410,66 +410,81 @@ Builder.prototype = {
         var div_point = this.build_info_line("info_point", "sample",  this.m.getStrTime(this.m.t, "name") )
 
         if (this.m.samples.order.length > 1){
-            var nextTime = document.createElement('span')
-            nextTime.appendChild(document.createTextNode(">"));
-            nextTime.className = "next_button button_right"
-            nextTime.onclick = function () {
-                self.m.nextTime();
-            }
+            var nextTime = self.createClickableElem('span',
+                [document.createTextNode(">")],
+                "",
+                "next_button button_right",
+                function () {
+                    self.m.nextTime();
+                }
+            );
             div_point.appendChild(nextTime)    
             
             if (self.m.isPlaying){
-                var stop = document.createElement('span')
-                stop.appendChild(document.createTextNode("stop"));
-                stop.className = "stop_button button_right"
-                stop.onclick = function () {
-                    self.m.stop();
-                }
+                var stop = self.createClickableElem('span',
+                    [document.createTextNode("stop")],
+                    "",
+                    "stop_button button_right",
+                    function () {
+                        self.m.stop();
+                    }
+                );
+                
                 div_point.appendChild(stop)
-            }else{
-                var play = document.createElement('span')
-                play.appendChild(document.createTextNode("play"));
-                play.className = "play_button button_right"
-                play.onclick = function () {
-                    self.m.play(self.m.t);
-                }
+            } else {
+                var play = self.createClickableElem('span',
+                    [document.createTextNode("play")],
+                    "",
+                    "play_button button_right",
+                    function () {
+                        self.m.play(self.m.t);
+                    }
+                );
                 div_point.appendChild(play)
             }
             
-            var previousTime = document.createElement('span')
-            previousTime.appendChild(document.createTextNode("<"));
-            previousTime.className = "previous_button button_right"
-            previousTime.onclick = function () {
-                self.m.previousTime();
-            }
-            div_point.appendChild(previousTime)        
+            var previousTime = self.createClickableElem('span',
+                [document.createTextNode("<")],
+                "",
+                "previous_button button_right",
+                function () {
+                    self.m.previousTime();
+                }
+            );
+            div_point.appendChild(previousTime)
         }
         
-        var editTimeName = document.createElement('span')
-        editTimeName.appendChild(document.createTextNode("edit"));
-        editTimeName.className = "button_right"
-        editTimeName.onclick = function () {
-            self.edit(this, "names");
-        }
+        var editTimeName = self.createClickableElem('span',
+            [document.createTextNode("edit")],
+            "",
+            "button_right",
+            function () {
+                self.edit(this, "names");
+            }
+        );
         div_point.appendChild(editTimeName)
         
-        var infoTime = document.createElement('span')
-        infoTime.appendChild(document.createTextNode("Info"));
-        infoTime.className = "button_right"
-        infoTime.onclick = function () {
-            console.log({"type": "big-popup", "msg": self.m.getPointHtmlInfo(self.m.t)});
-        }
+        var infoTime = self.createClickableElem('span',
+            [document.createTextNode("Info")],
+            "",
+            "button_right",
+            function () {
+                console.log({"type": "big-popup", "msg": self.m.getPointHtmlInfo(self.m.t)});
+            }
+        );
         div_point.appendChild(infoTime)
         
         parent.appendChild(div_point)
         
         var div_date = this.build_info_line("info_date", "date", this.m.getStrTime(this.m.t, "sampling_date") )
-        var span = document.createElement('span')
-        span.appendChild(document.createTextNode("edit"));
-        span.className = "button_right"
-        span.onclick = function () {
-            self.edit(this, "timestamp");
-        }
+        var span = self.createClickableElem('span',
+            [document.createTextNode("edit")],
+            "",
+            "button_right",
+            function () {
+                self.edit(this, "timestamp");
+            }
+        );
         // div_date.appendChild(span)
         parent.appendChild(div_date)
 
@@ -714,6 +729,22 @@ Builder.prototype = {
         div.appendChild(inputNode);
         div.appendChild(textNode);
         return div;
+    },
+
+    createClickableElem: function(type, children, id, className, onclick) {
+        var element = document.createElement(type);
+
+        for (var i = 0; i < children.length; ++i)
+            element.appendChild(children[i]);
+        if (id != "" && typeof id != "undefined") element.id = id;
+        if(className != "" && typeof className != "undefined") element.className = className;
+
+        if (typeof onclick === "function")
+            element.onclick = onclick;
+        else if (typeof onclick != "undefined")
+            console.log("Error: invalid parameter " + onclick + " is not a function");
+
+        return element;
     },
 
 }
