@@ -52,6 +52,19 @@
 
 
 ** Browser
+*** Unit
+    The unit tests in the browser are managed by QUnit and launched using
+    [[http://phantomjs.org/][phantomjs]]. The tests are organised in the directory
+    [[../browser/test/QUnit/testFiles][browser/test/QUnit/testFiles]]. The file [[../browser/test/QUnit/testFiles/data_test.js][data_test.js]] contains a toy
+    dataset that is used in the tests.
+
+    Unit tests can be launched using a real browser (instead of phantomjs). It
+    suffices to open the file [[../browser/test/QUnit/test_Qunit.html][test_Qunit.html]]. In this HTML webpage it is
+    possible to see the coverage. It is important that all possible functions
+    are covered by unit tests. Having the coverage displayed under Firefox
+    needs to display the webpage using a web server for security
+    reasons. Under Chromium/Chrome this should work fine by just opening the
+    webpage.
 *** Functional
     All the browser functional testing is done in the directory
     =browser/tests=.
