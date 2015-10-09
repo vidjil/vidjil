@@ -546,7 +546,7 @@ Builder.prototype = {
 
             keys += 1 ;
 
-            var checkbox = setupInput("checkbox_system_" + key, "", "checkbox", "");
+            var checkbox = this.setupInput("checkbox_system_" + key, "", "checkbox", "");
             checkbox.className = "hiddenCheckBox"
             checkbox.appendChild(document.createTextNode(key))
             if (this.m.system_selected.indexOf(key) != -1)
