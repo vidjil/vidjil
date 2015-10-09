@@ -171,20 +171,17 @@ Builder.prototype = {
         var divParent = elem.parentNode;
         divParent.innerHTML = "";
 
-        var input = document.createElement('input');
-        input.type = "text";
-        input.id = "new_tag_name";
-        input.value = this.m.tag[tagID].name;
+        var input = this.setupInput("new_tag_name", "", "text", this.m.tag[tagID].name);
         input.style.width = "100px";
         input.style.border = "0px";
         input.style.margin = "0px";
         input.onkeydown = function (e) {
             e = e || window.event;
-            var key = e.keyCode
-            if (key == 0) key = e.which 
+            var key = e.keyCode;
+            if (key == 0) key = e.which ;
             if (key == 13) document.getElementById('btnSaveTag')
                 .click();
-        }
+        };
         divParent.appendChild(input);
         divParent.onclick = "";
 
@@ -193,13 +190,13 @@ Builder.prototype = {
         a.appendChild(document.createTextNode("save"));
         a.id = "btnSaveTag";
         a.onclick = function (event) {
-            event.stopPropagation()
-            event.preventDefault()
+            event.stopPropagation();
+            event.preventDefault();
             var newTagName = document.getElementById("new_tag_name")
                 .value;
-            self.m.tag[tagID].name = newTagName
-            self.m.analysisHasChanged = true
-        }
+            self.m.tag[tagID].name = newTagName;
+            self.m.analysisHasChanged = true;
+        };
         divParent.appendChild(a);
         $('#new_tag_name')
             .select();
@@ -212,10 +209,7 @@ Builder.prototype = {
         var divParent = elem.parentNode;
         divParent.innerHTML = "";
 
-        var input = document.createElement('input');
-        input.type = "text";
-        input.id = "edit_value";
-        input.value = self.m.samples[data][self.m.t];
+        var input = this.setupInput("edit_value", "", "text", self.m.samples[data][self.m.t]);
         input.style.width = "200px";
         input.style.border = "0px";
         input.style.margin = "0px";
@@ -540,11 +534,11 @@ Builder.prototype = {
         
         var keys = 0 ;
 
-	var key_list = this.m.system_available;
-	key_list.sort();
+    	var key_list = this.m.system_available;
+    	key_list.sort();
 
         for (var k in key_list) {
-	    key = key_list[k];
+    	    key = key_list[k];
 
             if ((key == "TRA" || key == "IGH") && keys > 0) {
                 span2.appendChild(document.createElement("br"));
@@ -552,23 +546,22 @@ Builder.prototype = {
 
             keys += 1 ;
 
-            var checkbox=document.createElement("input");
-                checkbox.type="checkbox";
-                checkbox.id = "checkbox_system_"+key
-                checkbox.className = "hiddenCheckBox"
-                checkbox.appendChild(document.createTextNode(key))
-                if (this.m.system_selected.indexOf(key) != -1)
-                    checkbox.checked=true
-                checkbox.onchange = function () {
-                    m.toggle_system(this.id.replace("checkbox_system_",""))
-                }
+            var checkbox = setupInput("checkbox_system_" + key, "", "checkbox", "");
+            checkbox.className = "hiddenCheckBox"
+            checkbox.appendChild(document.createTextNode(key))
+            if (this.m.system_selected.indexOf(key) != -1)
+                checkbox.checked=true
+
+            checkbox.onchange = function () {
+                m.toggle_system(this.id.replace("checkbox_system_",""))
+            }
             
             var span_system = this.m.systemBox(key)
                 
             var span = document.createElement('span');
             span.className = "systemBoxNameMenu "+key;
             if (this.m.system_selected.indexOf(key) == -1)
-            span.className = "systemBoxNameMenu inactive "+key;
+                span.className = "systemBoxNameMenu inactive " + key;
             span.appendChild(span_system)
             span.appendChild(checkbox)
             span.appendChild(document.createTextNode(key))
@@ -694,14 +687,12 @@ Builder.prototype = {
     },
 
     // Build an html input tag
-    setupInput: function(name, type, value, id) {
+    setupInput: function(id, name, type, value) {
         var input = document.createElement("input");
-        if(id != "") {
-            input.id = id;
-        }
-        input.name = name;
+        if(id != "") input.id = id;
+        if(name != "") input.name = name;
+        if(value != "") input.value = value;
         input.type = type;
-        input.value = value;
         return input;
     },
 
@@ -709,7 +700,7 @@ Builder.prototype = {
     setupNormalizeDiv: function(elem, className) {
         var self = this;
         var div = document.createElement("div");
-        var inputNode = this.setupInput("normalize_list", "radio", elem.id, "");
+        var inputNode = this.setupInput("", "normalize_list", "radio", elem.id);
         if (this.m.normalization.id == elem.id) input.checked = true;
         var textNode = document.createTextNode(elem.name + " → " + elem.expected);
 
