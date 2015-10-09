@@ -25,6 +25,32 @@
    6. The representative can then be segmented to determine what V, D and J
       genes are at play. This is done by the FineSegmenter (=core/segment.h=).
 * Tests
+** Algorithm
+*** Unit
+    Unit tests are managed using an internal lightweight poorly-designed
+    library that outputs a TAP file. They are organised in the directory
+    [[../algo/tests][algo/tests]].
+
+    All the tests are defined in the [[../algo/tests/tests.cpp][tests.cpp]] file. But, for the sake of
+    clarity, this file includes other =cpp= files that incorporates all the
+    tests. A call to =make= compiles and launched the =tests.cpp= file, which
+    outputs a TAP file (in case of total success) and creates a =tests.cpp.tap=
+    file (in every case).
+**** Tap test library
+     The library is defined in the [[../algo/tests/testing.h][testing.h]] file.
+
+     Tests must be declared in the [[../algo/tests/tests.h][tests.h]] file:
+     1. Define a new macro (in the enum) corresponding to the test name
+     2. In =declare_tests()= use =RECORD_TAP_TEST= to associate the macro with a
+        description (that will be displayed in the TAP output file).
+
+     Then testing can be done using the =TAP_TEST= macro. The macro takes three
+     arguments. The first one is a boolean that is supposed to be true, the
+     second is the test name (using the macro defined in =tests.h=) and the
+     third one (which can be an empty string) is something which is displayed
+     when the test fails.
+
+
 ** Browser
 *** Functional
     All the browser functional testing is done in the directory
