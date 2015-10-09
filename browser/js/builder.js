@@ -19,8 +19,8 @@ Builder.prototype = {
 
         d3.select("#visu-separator")
             .on("mousedown", function () {
-                self.dragSeparator()
-            })
+                self.dragSeparator();
+            });
         d3.select("#visu-container")
             .on("mouseup", function () {
                 self.dropSeparator()
@@ -99,34 +99,34 @@ Builder.prototype = {
     
     build_settings: function () {
         var self = this;
-        var normalize_list = document.getElementById("normalize_list")
-        normalize_list.innerHTML=""
+        var normalize_list = document.getElementById("normalize_list");
+        normalize_list.innerHTML="";
         
-        var input = document.createElement("input")
-        input.type = "radio"
+        var input = document.createElement("input");
+        input.type = "radio";
         input.value= -1;
-        input.name = "normalize_list"
-        input.id = "reset_norm"
+        input.name = "normalize_list";
+        input.id = "reset_norm";
         input.checked=true;
         
-        var div = document.createElement("div")
+        var div = document.createElement("div");
         div.onclick = function () {
-            self.m.compute_normalization(-1) 
-            this.firstChild.checked=true
-            self.m.update()
-        }
-        div.className="buttonSelector"
-        div.appendChild(input)
-        div.appendChild(document.createTextNode("none"))
+            self.m.compute_normalization(-1) ;
+            this.firstChild.checked=true;
+            self.m.update();
+        };
+        div.className="buttonSelector";
+        div.appendChild(input);
+        div.appendChild(document.createTextNode("none"));
         
-        normalize_list.appendChild(div)
+        normalize_list.appendChild(div);
         
         // Regroup Clones and Data into a single array with only critical data
         var divElements = [];
         for (var i = 0; i < self.m.clones.length; ++i) {
             if (typeof self.m.clone(i).expected != "undefined") {
                 divElements.push({
-                    id: i
+                    id: i,
                     name: self.m.clone(i).getName(),
                     expected: self.m.clone(i).expected
                 });
@@ -144,10 +144,11 @@ Builder.prototype = {
         }
 
         // Create clickable div for each Clone and Data Entry
-        for (int i = 0; i < divElements.length; ++i) {
-            var div = setupNormalizeDiv(divElements[i], "buttonSelector");
-            normalize_list.appendChild(div);
-        } 
+        for (var j = 0; j < divElements.length; ++j) {
+            var elem = self.setupNormalizeDiv(divElements[i], "buttonSelector");
+            console.log(elem);
+            normalize_list.appendChild(elem);
+        }
         
     },
 
@@ -693,9 +694,11 @@ Builder.prototype = {
     },
 
     // Build an html input tag
-    setupInput: function(name, type, value, id=None) {
+    setupInput: function(name, type, value, id) {
         var input = document.createElement("input");
-        if(id != None) input.id = id;
+        if(id != "") {
+            input.id = id;
+        }
         input.name = name;
         input.type = type;
         input.value = value;
@@ -704,10 +707,11 @@ Builder.prototype = {
 
     // Build a clickable div element that triggers model update
     setupNormalizeDiv: function(elem, className) {
+        var self = this;
         var div = document.createElement("div");
-        var input = setupInput("normalize_list", "radio", elem.id);
-        if (self.m.normalization.id == elem.id) input.checked = true;
-        var text = document.createTextNode(elem.name + " → " + elem.expected);
+        var inputNode = this.setupInput("normalize_list", "radio", elem.id, "");
+        if (this.m.normalization.id == elem.id) input.checked = true;
+        var textNode = document.createTextNode(elem.name + " → " + elem.expected);
 
         div.onclick = function () {
             self.m.compute_data_normalization(this.firstChild.value);
