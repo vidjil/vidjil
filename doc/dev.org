@@ -24,6 +24,20 @@
       stored for a given window.
    6. The representative can then be segmented to determine what V, D and J
       genes are at play. This is done by the FineSegmenter (=core/segment.h=).
+
+* Browser
+
+** Installation
+
+Opening the =browser/index.html= file is enough to get a functionning browser,
+able to open =.vidjil= files with the =import/export= menu.
+
+(XXX TODO: explain germlines XXX)
+
+To work with actual data, the easiest way is to copy =js/conf.js.sample= to =js/conf.js=.
+This will unlock the =patients= menu and allow your local browser
+to access the public server at http://rbx.vidjil.org/.
+
 * Tests
 ** Algorithm
 *** Unit
