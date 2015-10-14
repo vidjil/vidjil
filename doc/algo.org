@@ -44,6 +44,7 @@ Vidjil has been successfully tested on the following platforms :
  - CentOS 6.3 i386
  - Debian Squeeze 6.0
  - Debian Wheezy 7.0 amd64
+ - FreeBSD 9.2
  - Ubuntu 12.04 LTS amd64
  - Ubuntu 14.04 LTS amd64
 
@@ -76,7 +77,19 @@ source /opt/rh/devtoolset-2/enable # ... or source devtools in the same shell
 
 g++-4.8 is included in FreeBSD 9.2.
 
+You may also need to install the =gzstream= library with:
+#+BEGIN_SRC sh
+pkg install gzstream
+#+END_SRC
 
+Also Vidjil uses GNU make which requires =gmake= under FreeBSD.
+At the time of redacting the documentation, =g++= requires extra options to
+ensure flawless compilation and execution of Vidjil:
+#+BEGIN_SRC 
+make MAKE=gmake CXXFLAGS="-D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"
+#+END_SRC
+The =gcc49= at the end of the command line is to be replaced by the =gcc= version
+used. 
 *** Debian Squeeze 6.0 / Wheezy 7.0
 
 g++-4.8 should be pinned from testing.
