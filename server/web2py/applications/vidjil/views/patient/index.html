@@ -47,7 +47,11 @@
                 </td>
                 <td> {{ if row['birth'] is not None: }} {{=row['birth'] }} {{ pass }} </td>
                 <td> {{=row['info'] }} </td>
-                <td> {{=row['confs']}}</td>
+                <td>
+                  {{for conf in row['conf_list'] :}}
+                    <a href="index.html?patient={{=row['id']}}&config={{=conf['id']}}">{{=conf['name']}}</a>
+                  {{pass}}
+                </td>
 {{if isAdmin:}} <td> {{=row['groups']}}</td>{{pass}}
 {{if isAdmin:}} <td> {{=row['creator']}}</td>{{pass}}
                 <td> {{=row['file_count']}} ({{=vidjil_utils.format_size(row['size'])}}) </td>

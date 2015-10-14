@@ -380,7 +380,8 @@ def index():
     )
     for i, row in enumerate(query3) :
         if row.patient.id in keys :
-            result[row.patient.id]['conf_list'].append(row.config.name)
+            result[row.patient.id]['conf_list'].append({'id': row.config.id, 'name': row.config.name})
+            #result[row.patient.id]['conf_list'].append(row.config.name)
             result[row.patient.id]['conf_id_list'].append(row.config.id)
     
     query4 = db(
@@ -411,7 +412,7 @@ def index():
         
     for key, row in result.iteritems():
         row['most_used_conf'] = max(set(row['conf_id_list']), key=row['conf_id_list'].count)
-        row['confs'] = ", ".join(list(set(row['conf_list']))) 
+        #row['confs'] = ", ".join(list(set(row['conf_list']))) 
         row['groups'] = ", ".join(filter(lambda g: g != 'admin', set(row['group_list'])))
         
     result = result.values()
