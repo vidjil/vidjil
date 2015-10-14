@@ -79,12 +79,12 @@ $(ALIGN_CGI): cgi/align.o $(LIBCORE)
 
 $(SIMILARITY_CGI): cgi/similarity.o $(LIBCORE)
 	mkdir -p $(CGIDIR)
-	make -C core OPTIM="$(OPTIM)"
+	$(MAKE) -C core OPTIM="$(OPTIM)"
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
 $(SIMILARITY_TOOL): cgi/similarity.o $(LIBCORE)
 	mkdir -p $(TOOLDIR)
-	make -C core OPTIM="$(OPTIM)"
+	$(MAKE) -C core OPTIM="$(OPTIM)"
 	$(CXX) -o $@ $^ $(LDFLAGS) $(LDLIBS) $(CXXFLAGS)
 
 ###
