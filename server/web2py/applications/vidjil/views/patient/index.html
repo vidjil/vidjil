@@ -49,7 +49,15 @@
                 <td> {{=row['info'] }} </td>
                 <td>
                   {{for conf in row['conf_list'] :}}
-                    <a href="index.html?patient={{=row['id']}}&config={{=conf['id']}}">{{=conf['name']}}</a>
+                    {{filename = vidjil_utils.anon_ids(row['id']) + " (" + conf['name'] + ")"}}
+                    {{if conf['fused_file'] is not None :}}
+                      <a href="index.html?patient={{=row['id']}}&config={{=conf['id']}}" type="text/html"
+                            onclick="event.preventDefault()
+                                     event.stopPropagation()
+                                     if( event.which == 2 ) { window.open(this.href) }
+                                     else { db.load_data( { 'patient' : '{{=row['id']}}' , 'config' : {{=conf['id']}} }, '{{=filename}}' ) }" >
+                    {{pass}}
+                        {{=conf['name']}} </a>
                   {{pass}}
                 </td>
 {{if isAdmin:}} <td> {{=row['groups']}}</td>{{pass}}

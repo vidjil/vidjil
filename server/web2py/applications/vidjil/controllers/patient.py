@@ -374,13 +374,14 @@ def index():
     
     query3 = db(
         (db.patient.id == db.fused_file.patient_id) &
-        (db.fused_file.config_id == db.config.id)
+        (db.fused_file.config_id == db.config.id) &
+        (auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) )
     ).select(
-        db.patient.id, db.config.name, db.config.id
+        db.patient.id, db.config.name, db.config.id, db.fused_file.fused_file
     )
     for i, row in enumerate(query3) :
         if row.patient.id in keys :
-            result[row.patient.id]['conf_list'].append({'id': row.config.id, 'name': row.config.name})
+            result[row.patient.id]['conf_list'].append({'id': row.config.id, 'name': row.config.name, 'fused_file': row.fused_file.fused_file})
             #result[row.patient.id]['conf_list'].append(row.config.name)
             result[row.patient.id]['conf_id_list'].append(row.config.id)
     
