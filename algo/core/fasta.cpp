@@ -107,14 +107,19 @@ const string& Fasta::sequence(int index) const{ return reads[index].sequence; }
 
 // OnlineFasta
 
-OnlineFasta::OnlineFasta(int extract_field, string extract_separator):
-  input(NULL), extract_field(extract_field), extract_separator(extract_separator){}
+OnlineFasta::OnlineFasta(int extract_field, string extract_separator,
+                         int nb_sequences_max, int only_nth_sequence):
+  input(NULL),
+  extract_field(extract_field), extract_separator(extract_separator),
+  nb_sequences_max(nb_sequences_max), only_nth_sequence(only_nth_sequence){}
 
 OnlineFasta::OnlineFasta(const string &input, 
-                         int extract_field, string extract_separator)
+                         int extract_field, string extract_separator,
+                         int nb_sequences_max, int only_nth_sequence)
   :input(new igzstream(input.c_str())),
   extract_field(extract_field), 
-  extract_separator(extract_separator)
+   extract_separator(extract_separator),
+   nb_sequences_max(nb_sequences_max), only_nth_sequence(only_nth_sequence)
 {
   if (this->input->fail()) {
     delete this->input;
@@ -127,9 +132,11 @@ OnlineFasta::OnlineFasta(const string &input,
 }
 
 OnlineFasta::OnlineFasta(istream &input, 
-                         int extract_field, string extract_separator)
+                         int extract_field, string extract_separator,
+                         int nb_sequences_max, int only_nth_sequence)
   :input(&input), extract_field(extract_field),
-  extract_separator(extract_separator)
+   extract_separator(extract_separator),
+   nb_sequences_max(nb_sequences_max), only_nth_sequence(only_nth_sequence)
 {
   input_allocated = false;
   init();

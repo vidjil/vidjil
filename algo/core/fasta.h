@@ -97,12 +97,16 @@ class OnlineFasta {
   size_t line_nb;
   unsigned long long char_nb;
 
+  int nb_sequences_max;
+  int only_nth_sequence;
+
  public:
 
   /**
    * Default constructor
    */
-  OnlineFasta(int extract_field=0, string extract_separator="|");
+  OnlineFasta(int extract_field=0, string extract_separator="|",
+              int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
 
   /**
    * Open the file. No sequence is read at first.
@@ -112,10 +116,12 @@ class OnlineFasta {
    *         well-formed
    */
   OnlineFasta(const string &input, 
-              int extract_field=0, string extract_separator="|");
+              int extract_field=0, string extract_separator="|",
+              int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
 
   OnlineFasta(istream &input, 
-              int extract_field=0, string extract_separator="|");
+              int extract_field=0, string extract_separator="|",
+              int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
 
   ~OnlineFasta();
 
