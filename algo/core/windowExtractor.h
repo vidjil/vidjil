@@ -56,7 +56,7 @@ class WindowExtractor {
   WindowsStorage *extract(OnlineFasta *reads,
                           size_t w,
                           map<string, string> &windows_labels, bool only_labeled_windows=false,
-                          int stop_after=-1, int only_nth_reads=1, bool keep_unsegmented_as_clone=false,
+                          bool keep_unsegmented_as_clone=false,
                           double nb_expected = THRESHOLD_NB_EXPECTED, int nb_reads_for_evalue = 1);
 
   /**
