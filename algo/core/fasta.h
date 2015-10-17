@@ -97,6 +97,7 @@ class OnlineFasta {
   size_t line_nb;
   unsigned long long char_nb;
 
+  int nb_sequences_returned;
   int nb_sequences_max;
   int only_nth_sequence;
 

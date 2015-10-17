@@ -150,6 +150,7 @@ OnlineFasta::~OnlineFasta() {
 }
 
 void OnlineFasta::init() {
+  nb_sequences_returned = 0;
   char_nb = 0;
   line_nb = 0;
   line = getInterestingLine();
@@ -169,7 +170,8 @@ Sequence OnlineFasta::getSequence() {
 }
 
 bool OnlineFasta::hasNext() {
-  return (! input->eof()) || line.length() > 0;
+  return ((!input->eof()) || line.length() > 0)
+    && ((nb_sequences_max == NO_LIMIT_VALUE) || (nb_sequences_returned < nb_sequences_max));
 }
 
 void OnlineFasta::next() {
@@ -194,6 +196,7 @@ void OnlineFasta::next() {
     }
     
     // Identifier line
+    nb_sequences_returned++;
     current.label_full = line.substr(1);
     current.label = extract_from_label(current.label_full, extract_field, extract_separator);
 
