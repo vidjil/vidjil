@@ -97,6 +97,7 @@ class OnlineFasta {
   size_t line_nb;
   unsigned long long char_nb;
 
+  int nb_sequences_parsed;
   int nb_sequences_returned;
   int nb_sequences_max;
   int only_nth_sequence;
@@ -160,6 +161,11 @@ class OnlineFasta {
    * Initialisation of the object
    */
   void init();
+
+  /**
+   * Skip to the next sequence that is a multiple of 'only_nth_sequence'
+   */
+  void skipToNthSequence();
 
   /**
    * Reads line in the input stream until we have a line with at least one

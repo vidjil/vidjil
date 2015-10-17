@@ -150,6 +150,7 @@ OnlineFasta::~OnlineFasta() {
 }
 
 void OnlineFasta::init() {
+  nb_sequences_parsed = 0;
   nb_sequences_returned = 0;
   char_nb = 0;
   line_nb = 0;
@@ -174,6 +175,20 @@ bool OnlineFasta::hasNext() {
     && ((nb_sequences_max == NO_LIMIT_VALUE) || (nb_sequences_returned < nb_sequences_max));
 }
 
+void OnlineFasta::skipToNthSequence() {
+  // Possibly skip some reads, when only_nth_sequence > 1
+  while (hasNext())
+    if (nb_sequences_parsed % only_nth_sequence)
+      {
+        nb_sequences_returned--;
+        next();
+        continue ;
+      }
+    else
+      return  ;
+}
+
+
 void OnlineFasta::next() {
   fasta_state state = FASTX_UNINIT;
 
@@ -196,6 +211,7 @@ void OnlineFasta::next() {
     }
     
     // Identifier line
+    nb_sequences_parsed++;
     nb_sequences_returned++;
     current.label_full = line.substr(1);
     current.label = extract_from_label(current.label_full, extract_field, extract_separator);
@@ -247,6 +263,8 @@ void OnlineFasta::next() {
 
   } else
     unexpectedEOF();
+
+  skipToNthSequence();
 }
 
 string OnlineFasta::getInterestingLine(int state) {
