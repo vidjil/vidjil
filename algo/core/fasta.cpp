@@ -170,14 +170,19 @@ Sequence OnlineFasta::getSequence() {
   return current;
 }
 
+
+bool OnlineFasta::hasNextData() {
+  return ((!input->eof()) || line.length() > 0);
+}
+
 bool OnlineFasta::hasNext() {
-  return ((!input->eof()) || line.length() > 0)
+  return hasNextData()
     && ((nb_sequences_max == NO_LIMIT_VALUE) || (nb_sequences_returned < nb_sequences_max));
 }
 
 void OnlineFasta::skipToNthSequence() {
   // Possibly skip some reads, when only_nth_sequence > 1
-  while (hasNext())
+  while (hasNextData())
     if (nb_sequences_parsed % only_nth_sequence)
       {
         nb_sequences_returned--;
@@ -202,7 +207,7 @@ void OnlineFasta::next() {
     current.seq = NULL;
   }
 
-  if  (hasNext()) {
+  if  (hasNextData()) {
     switch(line[0]) {
     case '>': state=FASTX_FASTA; break;
     case '@': state=FASTX_FASTQ_ID; break;
@@ -217,10 +222,10 @@ void OnlineFasta::next() {
     current.label = extract_from_label(current.label_full, extract_field, extract_separator);
 
     line = getInterestingLine();
-    while (hasNext() && ((state != FASTX_FASTA || line[0] != '>')
+    while (hasNextData() && ((state != FASTX_FASTA || line[0] != '>')
                          && (state != FASTX_FASTQ_QUAL || line[0] != '@'))) {
 
-      if (hasNext()) {
+      if (hasNextData()) {
         switch(state) {
         case FASTX_FASTA: case FASTX_FASTQ_ID:
           // Sequence
@@ -269,7 +274,7 @@ void OnlineFasta::next() {
 
 string OnlineFasta::getInterestingLine(int state) {
   string line;
-  while (line.length() == 0 && hasNext() && getline(*input, line)) {
+  while (line.length() == 0 && hasNextData() && getline(*input, line)) {
     line_nb++;
     char_nb += line.length() + 1;
     remove_trailing_whitespaces(line);

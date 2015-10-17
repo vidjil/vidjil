@@ -146,6 +146,11 @@ class OnlineFasta {
   /**
    * @return true iff we did not reach yet the end of the file.
    */
+  bool hasNextData();
+
+  /**
+   * @return true iff we did not reach yet both the end of the file and the maximal number of returned sequences
+   */
   bool hasNext();
 
   /**
