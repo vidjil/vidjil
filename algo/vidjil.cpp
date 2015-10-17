@@ -888,7 +888,11 @@ int main (int argc, char **argv)
           only_nth_read = 1 ;
 
         max_reads_processed = max_reads_processed_sample ;
-        cout << "Processing every " << only_nth_read << "th read" << endl ;
+
+        if (only_nth_read > 1)
+          cout << "Processing every " << only_nth_read
+               << (only_nth_read == 2 ? "nd" : (only_nth_read == 3 ? "rd" : "th"))
+               << " read" << endl ;
       }
 
   OnlineFasta *reads;
