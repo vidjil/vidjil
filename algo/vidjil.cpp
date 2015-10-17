@@ -884,6 +884,9 @@ int main (int argc, char **argv)
     if (max_reads_processed_sample != NO_LIMIT_VALUE)
       {
         only_nth_read = nb_sequences_in_fasta(f_reads) / max_reads_processed_sample;
+        if (only_nth_read == 0)
+          only_nth_read = 1 ;
+
         max_reads_processed = max_reads_processed_sample ;
         cout << "Processing every " << only_nth_read << "th read" << endl ;
       }
