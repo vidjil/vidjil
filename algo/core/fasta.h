@@ -97,12 +97,18 @@ class OnlineFasta {
   size_t line_nb;
   unsigned long long char_nb;
 
+  int nb_sequences_parsed;
+  int nb_sequences_returned;
+  int nb_sequences_max;
+  int only_nth_sequence;
+
  public:
 
   /**
    * Default constructor
    */
-  OnlineFasta(int extract_field=0, string extract_separator="|");
+  OnlineFasta(int extract_field=0, string extract_separator="|",
+              int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
 
   /**
    * Open the file. No sequence is read at first.
@@ -112,10 +118,12 @@ class OnlineFasta {
    *         well-formed
    */
   OnlineFasta(const string &input, 
-              int extract_field=0, string extract_separator="|");
+              int extract_field=0, string extract_separator="|",
+              int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
 
   OnlineFasta(istream &input, 
-              int extract_field=0, string extract_separator="|");
+              int extract_field=0, string extract_separator="|",
+              int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
 
   ~OnlineFasta();
 
@@ -138,6 +146,11 @@ class OnlineFasta {
   /**
    * @return true iff we did not reach yet the end of the file.
    */
+  bool hasNextData();
+
+  /**
+   * @return true iff we did not reach yet both the end of the file and the maximal number of returned sequences
+   */
   bool hasNext();
 
   /**
@@ -153,6 +166,11 @@ class OnlineFasta {
    * Initialisation of the object
    */
   void init();
+
+  /**
+   * Skip to the next sequence that is a multiple of 'only_nth_sequence'
+   */
+  void skipToNthSequence();
 
   /**
    * Reads line in the input stream until we have a line with at least one

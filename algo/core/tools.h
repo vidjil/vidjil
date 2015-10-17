@@ -1,6 +1,10 @@
 #ifndef TOOLS_H
 #define TOOLS_H
 
+
+#define NO_LIMIT_VALUE  -1  // Value for 'all' on command-line options
+
+
 #define MAX_SEED_SIZE  50 // Spaced seed buffer
 #define FIRST_POS  0      // Numbering of the base pairs
 

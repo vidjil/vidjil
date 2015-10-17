@@ -337,8 +337,8 @@ int main (int argc, char **argv)
   float ratio_reads_clone = DEFAULT_RATIO_READS_CLONE;
   // int average_deletion = 4;     // Average number of deletion in V or J
 
-  int max_reads_processed = -1;
-  int max_reads_processed_sample = -1;
+  int max_reads_processed = NO_LIMIT_VALUE;
+  int max_reads_processed_sample = NO_LIMIT_VALUE;
 
   float ratio_representative = DEFAULT_RATIO_REPRESENTATIVE;
   unsigned int max_auditionned = DEFAULT_MAX_AUDITIONED;
@@ -879,11 +879,19 @@ int main (int argc, char **argv)
     
   //////////////////////////////////
   //$$ Read sequence files
- 
+
+    int only_nth_read = 1 ;
+    if (max_reads_processed_sample != NO_LIMIT_VALUE)
+      {
+        only_nth_read = nb_sequences_in_fasta(f_reads) / max_reads_processed_sample;
+        max_reads_processed = max_reads_processed_sample ;
+        cout << "Processing every " << only_nth_read << "th read" << endl ;
+      }
+
   OnlineFasta *reads;
 
   try {
-    reads = new OnlineFasta(f_reads, 1, read_header_separator);
+    reads = new OnlineFasta(f_reads, 1, read_header_separator, max_reads_processed, only_nth_read);
   } catch (const invalid_argument e) {
     cerr << ERROR_STRING << "Vidjil cannot open reads file " << f_reads << ": " << e.what() << endl;
     exit(1);
@@ -989,14 +997,6 @@ int main (int argc, char **argv)
     //////////////////////////////////
     //$$ Kmer Segmentation
 
-    int only_nth_read = 1 ;
-    if (max_reads_processed_sample > 0)
-      {
-        only_nth_read = nb_sequences_in_fasta(f_reads) / max_reads_processed_sample;
-        max_reads_processed = max_reads_processed_sample ;
-        cout << "Processing every " << only_nth_read << "th read" << endl ;
-      }
-
     cout << endl;
     cout << "Loop through reads, looking for windows" << endl ;
 
@@ -1031,7 +1031,7 @@ int main (int argc, char **argv)
 
     WindowsStorage *windowsStorage = we.extract(reads, w,
                                                 windows_labels, only_labeled_windows,
-                                                max_reads_processed, only_nth_read, keep_unsegmented_as_clone,
+                                                keep_unsegmented_as_clone,
                                                 expected_value, nb_reads_for_evalue);
     windowsStorage->setIdToAll();
     size_t nb_total_reads = we.getNbReads();

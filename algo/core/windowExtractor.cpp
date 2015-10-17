@@ -18,23 +18,17 @@ WindowExtractor::WindowExtractor(MultiGermline *multigermline): out_segmented(NU
 WindowsStorage *WindowExtractor::extract(OnlineFasta *reads,
 					 size_t w,
                                          map<string, string> &windows_labels, bool only_labeled_windows,
-                                         int stop_after, int only_nth_read, bool keep_unsegmented_as_clone,
+                                         bool keep_unsegmented_as_clone,
                                          double nb_expected, int nb_reads_for_evalue) {
   init_stats();
 
   WindowsStorage *windowsStorage = new WindowsStorage(windows_labels);
   windowsStorage->setMaximalNbReadsPerWindow(max_reads_per_window);
 
-  int nb_reads_all = 0;
   unsigned long long int bp_total = 0;
 
-  while (reads->hasNext() && (int) nb_reads != stop_after) {
+  while (reads->hasNext()) {
     reads->next();
-    nb_reads_all++;
-
-    if (nb_reads_all % only_nth_read)
-      continue ;
-
     nb_reads++;
 
     if (out_affects) {
