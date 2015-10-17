@@ -26,6 +26,26 @@ void testOnlineFasta1() {
   TAP_TEST(nb_seq == 5, TEST_O_FASTA_HAS_NEXT, "");
 }
 
+void testOnlineFastaMaxNth() {
+  OnlineFasta fa("../../data/test1.fa", 0, "|", 2, 2);
+
+  // First sequence is 'seq2', because only_nth_sequence = 2
+  TAP_TEST(fa.hasNext(), TEST_O_FASTA_HAS_NEXT, "");
+  fa.next();
+  Sequence s2 = fa.getSequence();
+  TAP_TEST(s2.label == "seq2", TEST_O_FASTA_GET_SEQUENCE, "Expected seq2, found " + s2.label);
+
+  // Second sequence is 'seq4', because only_nth_sequence = 2
+  TAP_TEST(fa.hasNext(), TEST_O_FASTA_HAS_NEXT, "");
+  fa.next();
+  Sequence s4 = fa.getSequence();
+  TAP_TEST(s4.label == "seq4", TEST_O_FASTA_GET_SEQUENCE, "Expected seq4, found " + s4.label);
+
+  // No more sequences, because nb_sequences_max = 2
+  TAP_TEST(!fa.hasNext(), TEST_O_FASTA_HAS_NEXT, "Expected (pseudo) end of file");
+}
+
+
 
 void testFastaNbSequences() {
   TAP_TEST(nb_sequences_in_fasta("../../germline/IGHV.fa") == 348, TEST_FASTA_NB_SEQUENCES, "ccc");
@@ -304,6 +324,7 @@ void testNChooseK() {
 
 void testTools() {
   testOnlineFasta1();
+  testOnlineFastaMaxNth();
   testFastaNbSequences();
   testFasta1();
   testFastaAdd();
