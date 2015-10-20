@@ -62,6 +62,8 @@ def list():
         (db.sequence_file.id==request.vars['sequence_file_id'])
         & (db.sequence_file.patient_id==db.patient.id)
         & (db.results_file.config_id==db.config.id)
+        & (db.results_file.sequence_file_id==db.sequence_file.id)
+        & (db.config.id==request.vars['config_id'])
     ).select(
         orderby = ~db.results_file.run_date
     )
