@@ -106,7 +106,7 @@
                                type="application/octet-stream">dl</a>
                         {{pass}}
                      </td>
-                     <td class="button" onclick="db.call('results_file/list', {'sequence_file_id': '{{=row.sequence_file.id}}'})">h</td>
+                     <td class="button" onclick="db.call('results_file/list', {'sequence_file_id': '{{=row.sequence_file.id}}', 'config_id': '{{=config_id}}' })">h</td>
                     {{if (auth.can_modify_patient(request.vars["id"]) and auth.can_process_file()):}}
                      <td class="pointer" onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}'})" > X </td>
                     {{else:}}
