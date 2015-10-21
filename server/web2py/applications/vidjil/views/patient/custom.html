@@ -5,7 +5,11 @@
 
 <div>
 
-    <h3>Compare samples from different patients</h3>
+	{{ if request.vars['patient_id']: }}
+		<h3>Compare samples</h3>	
+	{{ else: }}
+    	<h3>Compare samples from different patients</h3>
+    {{pass}}
 
     <p>Select up to 10 samples to be compared.</p>
 

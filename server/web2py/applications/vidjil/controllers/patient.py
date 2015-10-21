@@ -144,7 +144,24 @@ def custom():
         request.vars["custom_list"] = [request.vars["custom_list"]]
         
 
-    q = ((auth.accessible_query('read', db.patient)) 
+    if request.vars["patient_id"]:
+        q = ((auth.accessible_query('read', db.patient)) 
+                & (auth.accessible_query('read', db.config)) 
+                & (db.patient.id==request.vars["patient_id"])
+                & (db.sequence_file.patient_id==db.patient.id)
+                & (db.results_file.sequence_file_id==db.sequence_file.id)
+                & (db.results_file.data_file != '')
+                & (db.config.id==db.results_file.config_id)
+            )
+        query = db(q).select(
+                db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name, db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
+                db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
+                db.sequence_file.patient_id, db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
+                db.sequence_file.size_file,
+                orderby = ~db.sequence_file.patient_id|db.sequence_file.id|db.results_file.run_date
+            )
+    else:
+        q = ((auth.accessible_query('read', db.patient)) 
                 & (auth.accessible_query('read', db.config)) 
                 & (db.sequence_file.patient_id==db.patient.id)
                 & (db.results_file.sequence_file_id==db.sequence_file.id)
@@ -152,7 +169,7 @@ def custom():
                 & (db.config.id==db.results_file.config_id)
             )
 
-    query = db(q).select(
+        query = db(q).select(
                 db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name, db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
                 db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
                 db.sequence_file.patient_id, db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
