@@ -140,11 +140,6 @@ sudo apt-get install g++-4.8
 ** Installation
 
 #+BEGIN_SRC sh
-make data
-   # get some IGH rearrangements from a single individual, as described in:
-   # Boyd, S. D., and al. Individual variation in the germline Ig gene
-   # repertoire inferred from variable region gene rearrangements. J
-   # Immunol, 184(12), 6986–92.
 
 make germline
    # get IMGT germline databases (IMGT/GENE-DB) -- you have to agree to IMGT license: 
@@ -162,8 +157,6 @@ make                     # build Vijil from the sources (see the requirements, a
 wget http://bioinfo.lifl.fr/vidjil/vidjil-2015.10.2_x86_64 -O vidjil
                          # download a static binary (built for x86_64 architectures)
 
-make test                # (optional) run self-tests (can take 5 to 60 minutes)
-
 ./vidjil -h              # display help/usage
 #+END_SRC
 
@@ -172,6 +165,20 @@ If your build system does not use C++11 by default, you should replace the =make
 #+BEGIN_SRC sh
 make CXXFLAGS='-std=c++11'                           ### gcc-4.8
 make CXXFLAGS='-std=c++11' LDFLAGS='-stdlib=libc++'  ### OS X Mavericks
+#+END_SRC
+
+** Self-tests (optional)
+
+You can run the tests with the following commands:
+
+#+BEGIN_SRC sh
+make data
+   # get IGH rearrangements from a single individual, as described in:
+   # Boyd, S. D., and al. Individual variation in the germline Ig gene
+   # repertoire inferred from variable region gene rearrangements. J
+   # Immunol, 184(12), 6986–92.
+
+make test                # ( run self-tests (can take 5 to 60 minutes)
 #+END_SRC
 
 
