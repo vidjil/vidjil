@@ -28,8 +28,21 @@ def index():
         for row2 in query_size:
             row.files += 1
             row.size += row2.size_file
+
+    ##sort query
+    reverse = False
+    if request.vars["reverse"] == "true" :
+        reverse = True
+    if request.vars["sort"] == "files" :
+        query = sorted(query, key = lambda row : row.files, reverse=reverse)
+    elif request.vars["sort"] == "patients" :
+        query = sorted(query, key = lambda row : row.created, reverse=reverse)
+    else:
+        query = sorted(query, key = lambda row : row.id, reverse=False)
+
             
-    return dict(query=query)
+    return dict(query=query,
+    			reverse=reverse)
 
 ## return user information
 ## need ["id"]
