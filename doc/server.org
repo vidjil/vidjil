@@ -155,11 +155,13 @@ These installation instruction are for Ubuntu server 14.04
 
 	And create some symlinks to avoid splitting our app:
 
-		ln -s /home/www-data/vidjil/server/browser /var/www/browser
-		ln -s /home/www-data/vidjil/server/browser/cgi/align.cgi /usr/lib/cgi-bin
+		ln -s /home/www-data/vidjil/browser /var/www/browser
+		ln -s /home/www-data/vidjil/browser/cgi/align.cgi /usr/lib/cgi-bin
+		ln -s /home/www-data/vidjil/germline /var/www/germline
+		ln -s /home/www-data/vidjil/data /var/www/data
 
 	Now we need to configure the database connection parameters:
-		- create a file called conf.js in /home/www-data/vidjil/browser.js containing:
+		- create a file called conf.js in /home/www-data/vidjil/browser/js containing:
 			var config = {
 			    /*cgi*/
 			    \"cgi_address\" : \"default\",
@@ -176,10 +178,13 @@ These installation instruction are for Ubuntu server 14.04
 			to vidjil/server/web2py/applications/vidjil/modules/defs.py
 		  and change the value of DB_ADDRESS to reference your database.
 
-	//TODO detail user creation
+	You can now access your app.
+	All that is left to do is click on the init database link above the login page.
+	This creates a default admin user: plop@plop.com and password: 1234 (make sure to
+	remove this user in your production environment) and creates the configurations you can have
+	for files and results.
 
-	You can now access your app
-
+	
 * Testing the server
   If you develop on the server, or just want to check if everything is ok, you
   should launch the server tests.
