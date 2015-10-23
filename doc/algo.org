@@ -53,9 +53,12 @@ Vidjil is developed with continuous integration using systematic unit and functi
 The development team internally uses [[https://jenkins-ci.org/][Jenkins]] for that.
 Moreover, the results of some of these tests can be publicly checked on [[https://travis-ci.org/vidjil/vidjil][travis-ci.org]].
 
-** Requirements
-  
-To install and use Vidjil, make sure:
+** Build requirements (optional)
+
+This paragraph details the requirements to build Vidjil from source.
+You can also download a static binary (see next paragraph, 'Installation').
+
+To compile Vidjil, make sure:
   - to be on a POSIX system ;
   - to have a C++11 compiler (as =g++= 4.8 or above or =clang= 3.3 or above)
   - to have the =zlib= installed (=zlib1g-dev= package under Debian/Ubuntu,
@@ -151,7 +154,14 @@ make germline
    # Lefranc, M.-P., IMGT®, the international ImMunoGeneTics database,
    # Nucl. Acids Res., 29, 207-209 (2001). PMID: 11125093
 
-make                     # compile Vijil
+
+# either
+make                     # build Vijil from the sources (see the requirements, above)
+
+# or
+wget http://bioinfo.lifl.fr/vidjil/vidjil-2015.10.2_x86_64 -O vidjil
+                         # download a static binary (built for x86_64 architectures)
+
 make test                # (optional) run self-tests (can take 5 to 60 minutes)
 
 ./vidjil -h              # display help/usage
