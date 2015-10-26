@@ -34,7 +34,7 @@ def index():
     if request.vars["reverse"] == "true" :
         reverse = True
     if request.vars["sort"] == "files" :
-        query = sorted(query, key = lambda row : row.files, reverse=reverse)
+        query = sorted(query, key = lambda row : row.size, reverse=reverse)
     elif request.vars["sort"] == "patients" :
         query = sorted(query, key = lambda row : row.created, reverse=reverse)
     else:
