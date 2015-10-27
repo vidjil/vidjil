@@ -55,10 +55,10 @@
                       {{ configs.append(str(A(conf['name'], _href="index.html?patient=" + str(row['id']) + "&config=" + str(conf['id']), _type="text/html",
                             _onclick="event.preventDefault();event.stopPropagation();if( event.which == 2 ) { window.open(this.href); } else { db.load_data( { 'patient' : '" + str(row['id']) + "' , 'config' : " + str(conf['id']) + " }, '" + filename + "' ); }"))) }}
                     {{else:}}
-                      {{ configs.append(config['name']) }}
+                      {{ configs.append(conf['name']) }}
                     {{pass}}
-                    {{= XML(", ".join(configs)) }}
                   {{pass}}
+                  {{= XML(", ".join(configs)) }}
                 </td>
 {{if isAdmin:}} <td> {{=row['groups']}}</td>{{pass}}
 {{if isAdmin:}} <td> {{=row['creator']}}</td>{{pass}}
