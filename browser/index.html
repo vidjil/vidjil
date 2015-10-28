@@ -214,6 +214,7 @@
                 </div></div>
             </div>
 
+
             <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none"> development              
                 <div id="adminSelector" class="selector"><div>
                     <input type="checkbox" onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display fps</input></br>
@@ -221,6 +222,8 @@
                     <div class="buttonSelector" onclick="m.changeTimeFormat('delta_date_no_zero', true)"><input type="radio" name="time" value="delta_date_no_zero">day after first sample (no zero)</input></div>
                 </div></div>
             </div>
+            
+            <div id="header_messages" class="message_container"></div>
 
             <div id="logo" style="float: right;" onclick="console.log({'type': 'popup', 'default':'welcome'})">Vidjil <span class='logo'>(beta)</span></div>
 
@@ -284,5 +287,3 @@
     </body> 
 
 </html>
-
-  

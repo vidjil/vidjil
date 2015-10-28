@@ -1,4 +1,4 @@
-{{extend 'db_layout.html'}}
+	{{extend 'db_layout.html'}}
 
 <h2>{{=T( request.args(0).replace('_',' ').capitalize() )}}</h2>
 
@@ -35,7 +35,8 @@ demo login: <i>demo@vidjil.org</i>
   You can <a href="mailto:contact@vidjil.org?Subject=%5BVidjil%5D%20Account%20on%20rbx.vidjil.org&Body=%0ADear%20Vidjil%20Team%2C%0A%0AI%20would%20like%20to%20have%20an%20account%20on%20the%20Vidjil%20server.%0A%0A">request an account</a> on this server to test your data. 
 </p>
 
-
+<div id="login_messages" class="message_container"></div>
+<br/>
 <hr />
 
 <h3>About</h3>
