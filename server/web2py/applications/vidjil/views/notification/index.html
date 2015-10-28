@@ -1,0 +1,39 @@
+{{extend 'db_layout.html'}}
+
+<h3>{{=message}}</h3>
+
+<div id="db_table_container">
+    <table class="db_table" id="table">
+
+
+        <thead>
+            <tr>
+                <td class="column_100"> Creator </td>
+            	<td class="column_100"> Type </td>
+                <td class="column_100"> Priority </td>
+                <td class="column_100"> Message </td>
+                <td class="column_100"> Expiration Date </td>                
+                
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+                <td class="column5"> </td>
+            </tr>
+        </thead>
+        <tbody>
+        	{{for row in query:}}
+        		<tr>
+        			<td>{{=row.creator}}</td>
+        			<td>{{=row.message_type}}</td>
+        			<td>{{=row.priority}}</td>
+        			<td>{{=row.message_content}}</td>
+        			<td>{{=row.expiration}}</td>
+        			<td onclick="db.call('notification/edit', {'id' : '{{=row.id}}'})">e</td>
+        			<td onclick="db.call('notification/delete', {'id' : '{{=row.id}}'})">X</td>
+        		</tr>
+        	{{pass}}
+        </tbody>
+    </table>
+    <table class="db_table" id="db_fixed_header"></table>
+</div>
+
+<span class="button2" onclick="db.call('notification/add')"> + new notification </span>
