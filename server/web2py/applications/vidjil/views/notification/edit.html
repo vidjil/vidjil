@@ -35,6 +35,11 @@ info = db.notification[request.vars["id"]]
                 <td></td>
             </tr>
             <tr>
+                <td><label for="notification_title" id="notification_title__label">title: </label></td>
+                <td><input class="string" id="notification_title" name="title" type="text" value="{{=info.title}}" /><span>*</span></td>
+                <td></td>
+            </tr>
+            <tr>
                 <td><label for="notification_message_content" id="notification_message_content__label">message: </label></td>
                 <td><textarea class="string" id="notification_message_content" name="message_content" type="text">{{=info.message_content}}</textarea><span>*</span></td>
                 <td></td>

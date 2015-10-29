@@ -11,6 +11,7 @@
                 <td class="column_100"> Creator </td>
             	<td class="column_100"> Type </td>
                 <td class="column_100"> Priority </td>
+                <td class="column_100"> Title </td>
                 <td class="column_100"> Message </td>
                 <td class="column_100"> Expiration Date </td>                
                 
@@ -22,13 +23,14 @@
         <tbody>
         	{{for row in query:}}
         		<tr>
-        			<td>{{=row.creator}}</td>
-        			<td>{{=row.message_type}}</td>
-        			<td>{{=row.priority}}</td>
-        			<td>{{=row.message_content}}</td>
-        			<td>{{=row.expiration}}</td>
-        			<td onclick="db.call('notification/edit', {'id' : '{{=row.id}}'})">e</td>
-        			<td onclick="db.call('notification/delete', {'id' : '{{=row.id}}'})">X</td>
+        			<td class="pointer" onclick="db.call('notification/info', {'id' : '{{=row.id}}'})">{{=row.creator}}</td>
+        			<td class="pointer" onclick="db.call('notification/info', {'id' : '{{=row.id}}'})">{{=row.message_type}}</td>
+        			<td class="pointer" onclick="db.call('notification/info', {'id' : '{{=row.id}}'})">{{=row.priority}}</td>
+        			<td class="pointer" onclick="db.call('notification/info', {'id' : '{{=row.id}}'})">{{=row.title}}</td>
+        			<td class="pointer" onclick="db.call('notification/info', {'id' : '{{=row.id}}'})">{{=row.message_content}}</td>
+        			<td class="pointer" onclick="db.call('notification/info', {'id' : '{{=row.id}}'})">{{=row.expiration}}</td>
+        			<td class="pointer" onclick="db.call('notification/edit', {'id' : '{{=row.id}}'})">e</td>
+        			<td class="pointer" onclick="db.call('notification/delete', {'id' : '{{=row.id}}'})">X</td>
         		</tr>
         	{{pass}}
         </tbody>
