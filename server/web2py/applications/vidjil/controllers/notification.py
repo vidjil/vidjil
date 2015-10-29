@@ -145,5 +145,5 @@ def get_active_notifications():
         query = db(
             (db.notification.expiration >= today) | (db.notification.expiration == None)
         ).select()
-
+    #TODO sanitize this response
     return query.json()
