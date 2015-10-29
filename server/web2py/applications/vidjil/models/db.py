@@ -175,6 +175,14 @@ db.define_table('analysis_file',
                       uploadfolder=defs.DIR_RESULTS,
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
+db.define_table('notification',
+				Field('creator', 'integer'),
+				Field('title', 'string'),
+				Field('message_content', 'text'),
+				Field('message_type', 'string'),
+				Field('priority', 'string'),
+				Field('expiration', 'datetime'))
+
 
 ## after defining tables, uncomment below to enable auditing
 auth.enable_record_versioning(db)

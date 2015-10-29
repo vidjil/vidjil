@@ -1549,6 +1549,44 @@ table.log textarea {
   background-image: linear-gradient(45deg, transparent -25%, #ffffff 100%, #ffffff 100%, transparent 0%);
 }
 
+.message_container {
+    float: left;
+    display: none;
+}
+
+.urgent_message {
+	background-color: #D4A190;
+}
+
+.info_message {
+	background-color: #A1D490;
+}
+
+.notification {
+	margin: 5px;
+	padding: 3px;
+	display: inline-flex;
+    -webkit-border-radius: 2px;
+	-moz-border-radius: 2px;
+	border-radius: 2px;
+}
+
+#login_messages .notification {
+	display: block;
+}
+
+#login_messages .notification pre {
+	padding: 3px;
+	margin: 0px;
+	display: block;
+	width: auto;
+}
+
+#login_messages.message_container {
+	width: 100%;
+}
+
+
 #listLocus, #listVsegment, #listDsegment, #listJsegment {
   display: none;
 }

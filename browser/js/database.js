@@ -2,6 +2,7 @@ DB_ADDRESS = ""
 DB_TIMEOUT_CALL = 5000                // Regular call
 DB_TIMEOUT_GET_DATA = 15000           // Get patient/sample .data
 DB_TIMEOUT_GET_CUSTOM_DATA = 1200000  // Launch custum fused sample .data
+NOTIFICATION_PERIOD = 30000			  // Time interval to check for notifications periodically
 
 
 /**
@@ -189,6 +190,9 @@ Database.prototype = {
             //
             this.fixed_header()
             
+            // New page displayed, attempt to display header and login notifications
+            this.loadNotifications();
+
             return 0 ;
         }
         
@@ -601,6 +605,85 @@ Database.prototype = {
             console.log({"type": "flash", "msg": "server : save analysis error : this file is nor from the database" , "priority": 2});
         }
     },
+
+    // periodically query the server for notifications
+    // And loads them into elements with id 'header_messages' and 'login_messages'
+	// TODO : Tidy up
+    loadNotifications: function() {
+    	var self = this;
+		if (DB_ADDRESS != "") {
+			$.ajax({
+		        type: "GET",
+		        crossDomain: true,
+		        url: DB_ADDRESS + 'notification/get_active_notifications',
+		        contentType: 'text/plain',
+		        timeout: DB_TIMEOUT_CALL,
+		        success: function (result) {
+		        	var messages;
+		        	try {
+		        		messages = JSON.parse(result);
+		        		var header_messages = [];
+		        		var login_messages = [];
+		        		for (var i = 0; i < messages.length; ++i) {
+		        			if (messages[i]['message_type'] == 'header') {
+		        				header_messages.push(messages[i]);
+		        			} else if (messages[i]['message_type'] == 'login') {
+		        				login_messages.push(messages[i]);
+		        			}
+		        		}
+		        		
+		        		//TODO see if we can remove this hard coupling to classes
+		        		var hm = $('#header_messages');
+			        	self.integrateMessages(hm, header_messages);
+
+			        	var lm = $('#login_messages');
+			        	self.integrateMessages(lm, login_messages);
+			        
+		        	} catch (err) {
+		        		console.log("ERROR: " + err);
+		        	}
+		            
+		        }, 
+		        error: function (request, status, error) {
+		            if (status === "timeout") {
+		                console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+		            } else {
+		                console.log("unable to get notifications");
+		                console.log(DB_ADDRESS + url + ": " + error);
+		            }
+		        }
+		    });
+		} else {
+			console.log("Database has not been initialised");
+		}
+	},
+
+	// takes a jQuery elem
+	integrateMessages: function(elem, messages, classNames) {
+		var message, preformat;
+		// empty container because prototype is destined to be called periodically
+		elem.empty();
+
+		//set default classes if they are undefined
+		classNames = classNames === undefined ? {'urgent': 'urgent_message', 'info': 'info_message'} : classNames;
+
+		if (messages.length > 0) {
+			for (var i=0; i < messages.length; ++i) {
+				message = document.createElement('div');
+				message.className = classNames[messages[i]['priority']] + " notification";
+				$(message).attr('onclick', "db.call('notification/info', {'id': '" + messages[i]['id'] + "'})");
+				$(message).append(
+					// message is sanitized by the server so we unescape the string to include links and formatting
+					document.createTextNode(unescape(messages[i]['title']))
+				);
+				elem.append(message);
+			}
+			elem.fadeIn();
+    	} else {
+    		// No messages to display so hide message container
+    		elem.fadeOut();
+    	}
+	},
     
     //affiche la fenetre de dialogue avec le serveur et affiche ses réponses
     display: function (msg) {
