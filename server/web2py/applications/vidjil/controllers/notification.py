@@ -20,6 +20,11 @@ def index():
     return dict(message="Notifications",
         query=query)
 
+def info():
+
+	query = db.notification[request.vars['id']]
+
+	return dict(query=query)
 
 # serve for to add a notification
 def add():
@@ -38,6 +43,8 @@ def add_form():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     error = ""
+    if request.vars['title'] =="":
+        error += "title needed, "
     if request.vars["message_content"] == "" :
         error += "message content needed, "
     if request.vars["message_type"] == "" :
@@ -51,7 +58,8 @@ def add_form():
             error += "date (wrong format)"
 
     if error=="" :
-        id = db.notification.insert(message_content=request.vars["message_content"],
+        id = db.notification.insert(title=request.vars["title"],
+        						message_content=request.vars["message_content"],
                                message_type=request.vars["message_type"],
                                priority=request.vars["priority"],
                                expiration=request.vars["expiration"],
@@ -100,7 +108,8 @@ def edit_form():
             error += "date (wrong format)"
 
     if error=="" :
-        db.notification[request.vars['id']] = dict(message_content=request.vars["message_content"],
+        db.notification[request.vars['id']] = dict(title=request.vars["title"],
+        						message_content=request.vars["message_content"],
                                message_type=request.vars["message_type"],
                                priority=request.vars["priority"],
                                expiration=request.vars["expiration"])
