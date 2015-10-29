@@ -59,7 +59,7 @@ def add_form():
 
     if error=="" :
         id = db.notification.insert(title=request.vars["title"],
-        						message_content=request.vars["message_content"],
+        						message_content=xmlescape(request.vars["message_content"]),
                                message_type=request.vars["message_type"],
                                priority=request.vars["priority"],
                                expiration=request.vars["expiration"],
@@ -109,7 +109,7 @@ def edit_form():
 
     if error=="" :
         db.notification[request.vars['id']] = dict(title=request.vars["title"],
-        						message_content=request.vars["message_content"],
+        						message_content=xmlescape(request.vars["message_content"]),
                                message_type=request.vars["message_type"],
                                priority=request.vars["priority"],
                                expiration=request.vars["expiration"])
@@ -155,4 +155,4 @@ def get_active_notifications():
             (db.notification.expiration >= today) | (db.notification.expiration == None)
         ).select()
     #TODO sanitize this response
-    return query.json()
+    return query.as_json()
