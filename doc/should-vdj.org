@@ -25,6 +25,9 @@ Users and developers are strongly encouraged to send us (=contact@vidjil.org=)
 their manually curated sequences, ideally in the format described below, or by
 directly proposing pull requests on GitHub with new tests in the [[https://github.com/vidjil/vidjil/tree/master/algo/tests/should-vdj-tests][=algo/tests/should-vdj=]] directory.
 We can also help to encode sequences in this format.
+The current tests were contributed by:
+ - Yann Ferret (CHRU Lille), 2014-2015
+ - Florian Thonier (Inserm, Paris Necker), 2015
 
 * A =.should-vdj.fa= file
 
