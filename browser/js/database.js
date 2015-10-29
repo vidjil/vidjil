@@ -2,7 +2,7 @@ DB_ADDRESS = ""
 DB_TIMEOUT_CALL = 5000                // Regular call
 DB_TIMEOUT_GET_DATA = 15000           // Get patient/sample .data
 DB_TIMEOUT_GET_CUSTOM_DATA = 1200000  // Launch custum fused sample .data
-NOTIFICATION_PERIOD = 5000			  // Time interval to check for notifications periodically
+NOTIFICATION_PERIOD = 30000			  // Time interval to check for notifications periodically
 
 
 /**
@@ -190,6 +190,9 @@ Database.prototype = {
             //
             this.fixed_header()
             
+            // New page displayed, attempt to display header and login notifications
+            this.loadNotifications();
+
             return 0 ;
         }
         
@@ -602,6 +605,90 @@ Database.prototype = {
             console.log({"type": "flash", "msg": "server : save analysis error : this file is nor from the database" , "priority": 2});
         }
     },
+
+    // periodically query the server for notifications
+    // And loads them into elements with id 'header_messages' and 'login_messages'
+	// TODO : Tidy up
+    loadNotifications: function() {
+    	var self = this;
+		if (DB_ADDRESS != "") {
+			$.ajax({
+		        type: "GET",
+		        crossDomain: true,
+		        url: DB_ADDRESS + 'notification/get_active_notifications',
+		        contentType: 'text/plain',
+		        timeout: DB_TIMEOUT_CALL,
+		        success: function (result) {
+		        	var messages;
+		        	try {
+		        		messages = JSON.parse(result);
+		        		var header_messages = [];
+		        		var login_messages = [];
+		        		for (var i = 0; i < messages.length; ++i) {
+		        			if (messages[i]['message_type'] == 'header') {
+		        				header_messages.push(messages[i]);
+		        			} else if (messages[i]['message_type'] == 'login') {
+		        				login_messages.push(messages[i]);
+		        			}
+		        		}
+		        		
+		        		//TODO see if we can remove this hard coupling to classes
+		        		var hm = $('#header_messages');
+		        		console.log("hm: " + hm);
+			        	self.integrateMessages(hm, header_messages);
+
+			        	var lm = $('#login_messages');
+			        	console.log("lm:" + lm);
+			        	self.integrateMessages(lm, login_messages);
+			        
+		        	} catch (err) {
+		        		console.log("ERROR: " + err);
+		        	}
+		            
+		        }, 
+		        error: function (request, status, error) {
+		            if (status === "timeout") {
+		                console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+		            } else {
+		                console.log("unable to get notifications");
+		                console.log(DB_ADDRESS + url + ": " + error);
+		            }
+		        }
+		    });
+		} else {
+			console.log("Database has not been initialised");
+		}
+	},
+
+	// takes a jQuery elem
+	integrateMessages: function(elem, messages, classNames) {
+		var message, preformat;
+		// empty container because prototype is destined to be called periodically
+		elem.empty();
+
+		//set default classes if they are undefined
+		classNames = classNames === undefined ? {'urgent': 'urgent_message', 'info': 'info_message'} : classNames;
+
+		if (messages.length > 0) {
+			for (var i=0; i < messages.length; ++i) {
+				message = document.createElement('div');
+				message.className = classNames[messages[i]['priority']] + " notification";
+				// force browser to preserve text formatting
+				//preformat = document.createElement('pre');
+				//$(message).append(preformat);
+				$(message).append(
+					// message is sanitized by the server so we unescape the string to include links and formatting
+					document.createTextNode(unescape(messages[i]['message_content']))
+				);
+				elem.append(message);
+			}
+			console.log('fadeIn');
+			elem.fadeIn();
+    	} else {
+    		// No messages to display so hide message container
+    		elem.fadeOut();
+    	}
+	},
     
     //affiche la fenetre de dialogue avec le serveur et affiche ses réponses
     display: function (msg) {
@@ -1011,82 +1098,4 @@ function suggest_box(id, list) {
                 suggest_list.style.display = "none"
         }, 200)
     };
-}
-
-// periodically query the server for notifications
-// TODO : Tidy up
-(function worker(address, url, period, undefined) {
-	if (address !== undefined && address != "") {
-		$.ajax({
-	        type: "GET",
-	        crossDomain: true,
-	        url: DB_ADDRESS + url,
-	        contentType: 'text/plain',
-	        timeout: DB_TIMEOUT_CALL,
-	        success: function (result) {
-	        	var messages;
-	        	try {
-	        		messages = JSON.parse(result);
-	        		var header_messages = [];
-	        		var login_messages = [];
-	        		for (var i = 0; i < messages.length; ++i) {
-	        			console.log(messages[i]['message_type']);
-	        			if (messages[i]['message_type'] == 'header') {
-	        				header_messages.push(messages[i]);
-	        			} else if (messages[i]['message_type'] == 'login') {
-	        				login_messages.push(messages[i]);
-	        			}
-	        		}
-	        		// clear out the element and load new messaged
-	        		var hm = $('#header_messages');
-		        	hm.empty();
-	        		if (header_messages.length > 0) {
-		        		integrateMessages(hm, header_messages);
-		        		hm.fadeIn();
-		        	} else {
-		        		hm.fadeOut();
-		        	}
-
-		        	var lm = $('#login_messages');
-		        	lm.empty();
-	        		if (login_messages.length > 0) {
-		        		integrateMessages(lm, login_messages);
-		        		lm.fadeIn();
-		        	} else {
-		        		lm.fadeOut();
-		        	}
-	        	} catch (err) {
-	        		console.log("ERROR: " + err);
-	        	}
-	            
-	        }, 
-	        error: function (request, status, error) {
-	            if (status === "timeout") {
-	                console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
-	            } else {
-	                console.log("unable to get notifications");
-	                console.log(address + url + ": " + error);
-	            }
-	        }
-	    });
-	} else {
-		console.log("DB_ADDRESS : " + DB_ADDRESS);
-	}
-	setTimeout(worker, period, DB_ADDRESS, url, period);
-})(DB_ADDRESS, 'notification/get_active_notifications', NOTIFICATION_PERIOD);
-
-
-function integrateMessages(elem, messages, classNames) {
-	var message;
-
-	classNames = classNames === undefined ? {'urgent': 'urgent_message', 'info': 'info_message'} : classNames;
-
-	for (var i=0; i < messages.length; ++i) {
-		message = document.createElement('span');
-		message.className = classNames[messages[i]['priority']] + " notification";
-		$(message).append(
-			document.createTextNode(messages[i]['message_content'])
-		);
-		elem.append(message);
-	}
 }

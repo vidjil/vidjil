@@ -92,3 +92,8 @@ var shortcut = new Shortcut()
 
 //TODO 
 initMenu();
+
+(function worker(){
+	db.loadNotifications();
+	setTimeout(worker, 30000);
+})();
