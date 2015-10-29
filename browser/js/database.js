@@ -671,12 +671,10 @@ Database.prototype = {
 			for (var i=0; i < messages.length; ++i) {
 				message = document.createElement('div');
 				message.className = classNames[messages[i]['priority']] + " notification";
-				// force browser to preserve text formatting
-				//preformat = document.createElement('pre');
-				//$(message).append(preformat);
+				$(message).attr('onclick', "db.call('notification/info', {'id': '" + messages[i]['id'] + "'})");
 				$(message).append(
 					// message is sanitized by the server so we unescape the string to include links and formatting
-					document.createTextNode(unescape(messages[i]['message_content']))
+					document.createTextNode(unescape(messages[i]['title']))
 				);
 				elem.append(message);
 			}
