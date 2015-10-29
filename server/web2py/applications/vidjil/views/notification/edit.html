@@ -4,6 +4,8 @@
 info = db.notification[request.vars["id"]]
 }}
 
+<h3>{{=message}}</h3>
+
 <form id="data_form" action="DB_ADDRESS/notification/edit_form" enctype="multipart/form-data" method="post">
 	<input type="HIDDEN" id="notification_id" name="id" value="{{=request.vars["id"]}}"> 
     <table>
