@@ -25,7 +25,7 @@ info = db.notification[request.vars["id"]]
             </tr>
             <tr>
                 <td><label for="notification_expiration" id="notification_expiration__label">expiration date: </label></td>
-                <td><input class="date" id="notification_expiration" name="expiration" type="text" value="{{=info.expiration.date()}}"><span>(format: yyyy-mm-dd)</span></td>
+                <td><input class="date" id="notification_expiration" name="expiration" type="text" value="{{=info.expiration.date() if info.expiration is not None else ''}}"><span>(format: yyyy-mm-dd)</span></td>
                 <td></td>
             </tr>
             <tr>
