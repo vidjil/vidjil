@@ -12,12 +12,26 @@ info = db.notification[request.vars["id"]]
         <tbody>
             <tr>
                 <td ><label for="notification_message_type" id="notification_message_type__label">type: </label></td>
-                <td ><input class="string" id="notification_message_type" name="message_type" type="text" value="{{=info.message_type}}"><span>*</span></td>
+                <td >
+	                {{=SELECT(
+	                	OPTION('Login page', _value='login'),
+	                	OPTION('Header', _value='header'),
+	                	value=info.message_type,
+	                	_name="message_type"
+	                )}}
+	                <span>*</span></td>
                 <td ></td>
             </tr>
             <tr>
                 <td><label for="notification_priority" id="notification_priority__label">priority: </label></td>
-                <td><input class="string" id="notification_priority" name="priority" type="text" value="{{=info.priority}}"><span>*</span></td>
+                <td>
+	                {{=SELECT(
+	                	OPTION('Information', _value='info'),
+	                	OPTION('Urgent', _value='urgent'),
+	                	value=info.priority,
+	                	_name="priority"
+	                )}}
+	                <span>*</span></td>
                 <td></td>
             </tr>
             <tr>
