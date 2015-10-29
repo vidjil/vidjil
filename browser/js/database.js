@@ -634,11 +634,9 @@ Database.prototype = {
 		        		
 		        		//TODO see if we can remove this hard coupling to classes
 		        		var hm = $('#header_messages');
-		        		console.log("hm: " + hm);
 			        	self.integrateMessages(hm, header_messages);
 
 			        	var lm = $('#login_messages');
-			        	console.log("lm:" + lm);
 			        	self.integrateMessages(lm, login_messages);
 			        
 		        	} catch (err) {
@@ -682,7 +680,6 @@ Database.prototype = {
 				);
 				elem.append(message);
 			}
-			console.log('fadeIn');
 			elem.fadeIn();
     	} else {
     		// No messages to display so hide message container
