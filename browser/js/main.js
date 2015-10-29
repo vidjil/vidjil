@@ -95,5 +95,5 @@ initMenu();
 
 (function worker(){
 	db.loadNotifications();
-	setTimeout(worker, 30000);
+	setTimeout(worker, 300000);
 })();
