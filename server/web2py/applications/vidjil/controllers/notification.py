@@ -59,7 +59,7 @@ def add_form():
 
     if error=="" :
         id = db.notification.insert(title=request.vars["title"],
-        						message_content=xmlescape(request.vars["message_content"]),
+        						message_content=XML(request.vars["message_content"], sanitize=True).xml(),
                                message_type=request.vars["message_type"],
                                priority=request.vars["priority"],
                                expiration=request.vars["expiration"],
@@ -109,7 +109,7 @@ def edit_form():
 
     if error=="" :
         db.notification[request.vars['id']] = dict(title=request.vars["title"],
-        						message_content=xmlescape(request.vars["message_content"]),
+        						message_content=XML(request.vars["message_content"], sanitize=True).xml(),
                                message_type=request.vars["message_type"],
                                priority=request.vars["priority"],
                                expiration=request.vars["expiration"])
