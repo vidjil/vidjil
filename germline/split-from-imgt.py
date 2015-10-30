@@ -108,9 +108,17 @@ LENGTH_DOWNSTREAM=40
 SPECIAL_SEQUENCES = [
 ]
 
-FEATURES = [
-    "V-REGION", "D-REGION", "J-REGION",
+FEATURES_VDJ = [ "V-REGION", "D-REGION", "J-REGION" ]
+FEATURES_CLASSES = [
+    "CH1", "CH2", "CH3", "CH3-CHS", "CH4-CHS",
+    "H", "H-CH2", "H1", "H2", "H3", "H4",
+    "M", "M1", "M2",
 ]
+FEATURES = FEATURES_VDJ + FEATURES_CLASSES
+
+# Heavy-chain human IGH exons, ordered
+CLASSES = [ "IGHM", "IGHD", "IGHG3", "IGHG1", "IGHA1", "IGHG2", "IGHG4", "IGHE", "IGHA2",
+            "IGHGP" ]
 
 # Split sequences in several files
 SPLIT_SEQUENCES = {'/DV': ['TRAV', 'TRDV']}
@@ -140,7 +148,14 @@ for l in sys.stdin:
         if species in SPECIES and feature in FEATURES:
             seq = l.split('|')[1]
             path = SPECIES[species]
-            system = seq[:4]
+
+            if feature in FEATURES_VDJ:
+                system = seq[:4]
+            else:
+                system = seq[:seq.find("*")]
+                if not system in CLASSES:
+                    print "! Unknown class: ", system
+
             keys = [path + system]
 
             check_directory_exists(path)
