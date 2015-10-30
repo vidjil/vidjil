@@ -155,6 +155,7 @@ for l in sys.stdin:
                 system = seq[:seq.find("*")]
                 if not system in CLASSES:
                     print "! Unknown class: ", system
+                system = system.replace("IGH", "IGHC=")
 
             keys = [path + system]
 
