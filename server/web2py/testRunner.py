@@ -137,6 +137,14 @@ fake_fused_id = db.fused_file.insert(patient_id = fake_patient_id,
                                     fuse_date = "2014-09-19 00:00:00",
                                     fused_file = db.fused_file.fused_file.store(stream, "plop.data")
                                     )
+
+fake_notification_id = db.notification.insert(title='test',
+                                            message_content='test',
+                                            message_type='login',
+                                            priority='header',
+                                            expiration='1990-01-01',
+                                            creator=user_id
+                                            )
 db.commit()
 
 
