@@ -108,6 +108,10 @@ LENGTH_DOWNSTREAM=40
 SPECIAL_SEQUENCES = [
 ]
 
+FEATURES = [
+    "V-REGION", "D-REGION", "J-REGION",
+]
+
 # Split sequences in several files
 SPLIT_SEQUENCES = {'/DV': ['TRAV', 'TRDV']}
 
@@ -131,8 +135,9 @@ for l in sys.stdin:
         current_special = None
 
         species = l.split('|')[2].strip()
+        feature = l.split('|')[4].strip()
 
-        if species in SPECIES and ("V-REGION" in l or "D-REGION" in l or "J-REGION" in l):
+        if species in SPECIES and feature in FEATURES:
             seq = l.split('|')[1]
             path = SPECIES[species]
             system = seq[:4]
