@@ -181,7 +181,7 @@ db.define_table('notification',
 				Field('message_content', 'text'),
 				Field('message_type', 'string'),
 				Field('priority', 'string'),
-				Field('expiration', 'datetime'))
+				Field('expiration', 'date'))
 
 
 ## after defining tables, uncomment below to enable auditing
