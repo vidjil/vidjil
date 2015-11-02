@@ -3,6 +3,7 @@
 import unittest
 import tempfile
 import gluon.contrib.simplejson
+from datetime import date
 from gluon.globals import Request, Session, Storage, Response
 from gluon.contrib.test_helpers import form_postvars
 from gluon import current
@@ -65,13 +66,15 @@ class NotificationController(unittest.TestCase):
         res = edit()
         assertTrue(res.hasKey('message'), "edit returned an incomplete response")
 
-    def testEditForm(self):
+    def test1EditForm(self):
+        date = date.today()
+        today.replace(year = today.year+1)
         request.vars['id'] = fake_notification_id
         request.vars['title'] = "test title"
         request.vars['message_content'] = "test content"
         request.vars['message_type'] = "type"
         request.vars['priority'] = "header"
-        request.vars['expiration'] = "2015-10-30"
+        request.vars['expiration'] = date.__str__()
 
         res = edit_form()
         note = db.notification[fake_notification_id]
@@ -83,9 +86,10 @@ class NotificationController(unittest.TestCase):
         notification_id = db(db.notification.title=="test title").select()[0].id
         
         res = delete()
-        self.assertTrue
+        self.assertTrue(res.hasKey('message'), "edit returned an incomplete response")
         
 
     def test2GetActiveNotifications(self):
-        #TODO
-        assertTrue(true, "False")
+        #TODO Improve this test
+        res = get_active_notifications()
+        assertTrue(res != "", "get active notifications returned no response")
