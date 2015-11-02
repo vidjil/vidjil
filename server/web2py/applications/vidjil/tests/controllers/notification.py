@@ -92,4 +92,4 @@ class NotificationController(unittest.TestCase):
     def test2GetActiveNotifications(self):
         #TODO Improve this test
         res = get_active_notifications()
-        assertTrue(res != "", "get active notifications returned no response")
+        assertTrue(res != "[]", "get active notifications returned no notifications")
