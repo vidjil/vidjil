@@ -1519,7 +1519,7 @@ table.log textarea {
   flex-grow: 1;
 }
 .tagColor0 {
-  background: #dc322f;
+  background: #DC322F;
 }
 .tagColor1 {
   background: #cb4b16;
@@ -1548,45 +1548,44 @@ table.log textarea {
 .inactiveTag {
   background-image: linear-gradient(45deg, transparent -25%, #ffffff 100%, #ffffff 100%, transparent 0%);
 }
-
 .message_container {
-    float: left;
-    display: none;
+  float: left;
+  display: none;
 }
-
 .urgent_message {
-	background-color: #D4A190;
+  background-color: #D4A190;
 }
-
 .info_message {
-	background-color: #A1D490;
+  background-color: #A1D490;
 }
-
 .notification {
-	margin: 5px;
-	padding: 3px;
-	display: inline-flex;
-    -webkit-border-radius: 2px;
-	-moz-border-radius: 2px;
-	border-radius: 2px;
+  margin: 5px;
+  padding: 3px;
+  display: inline-flex;
+  -webkit-border-radius: 2px;
+  -moz-border-radius: 2px;
+  border-radius: 2px;
 }
-
+.notification:hover {
+  border: 1px solid #002b36;
+  color: #002b36;
+  margin: 4px;
+}
 #login_messages .notification {
-	display: block;
+  display: block;
 }
-
 #login_messages .notification pre {
-	padding: 3px;
-	margin: 0px;
-	display: block;
-	width: auto;
+  padding: 3px;
+  margin: 0px;
+  display: block;
+  width: auto;
 }
-
 #login_messages.message_container {
-	width: 100%;
+  width: 100%;
 }
-
-
-#listLocus, #listVsegment, #listDsegment, #listJsegment {
+#listLocus,
+#listVsegment,
+#listDsegment,
+#listJsegment {
   display: none;
 }
