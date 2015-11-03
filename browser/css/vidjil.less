@@ -1755,8 +1755,12 @@ flex-grow : 1;
 }
 
 .message_container {
-    float: left;
     display: none;
+}
+
+.message_container.header {
+    overflow: hidden;
+    text-align: center;
 }
 
 .urgent_message {
@@ -1770,7 +1774,7 @@ flex-grow : 1;
 .notification {
 	margin: 5px;
 	padding: 3px;
-	display: inline-flex;
+	display: inline-block;
     -webkit-border-radius: 2px;
 	-moz-border-radius: 2px;
 	border-radius: 2px;
