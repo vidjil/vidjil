@@ -1557,22 +1557,19 @@ table.log textarea {
 }
 .urgent_message {
   background-color: #D4A190;
+  margin: 5px;
 }
 .info_message {
-  background-color: #A1D490;
+  border: 1px solid #cccccc;
+  margin: 4px;
 }
 .notification {
-  margin: 5px;
   padding: 3px;
   display: inline-block;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
-}
-.notification:hover {
-  border: 1px solid #002b36;
-  color: #002b36;
-  margin: 4px;
+  cursor: pointer;
 }
 #login_messages .notification {
   display: block;

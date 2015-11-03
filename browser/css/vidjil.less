@@ -1765,25 +1765,21 @@ flex-grow : 1;
 
 .urgent_message {
 	background-color: @urgent_message;
+	margin: 5px;
 }
 
 .info_message {
-	background-color: @info_message;
+	border: 1px solid @border;
+	margin: 4px;
 }
 
 .notification {
-	margin: 5px;
 	padding: 3px;
 	display: inline-block;
     -webkit-border-radius: 2px;
 	-moz-border-radius: 2px;
 	border-radius: 2px;
-}
-
-.notification:hover {
-	border: 1px solid @select;
-	color: @select;
-	margin: 4px;
+	cursor: pointer;
 }
 
 #login_messages .notification {
