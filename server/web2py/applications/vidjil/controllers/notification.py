@@ -98,7 +98,6 @@ def edit():
 
 # process submitted edit form
 def edit_form():
-    #TODO delete parameters associated (would enable reusing messages)
     if (not auth.is_admin()):
         res = {"message": ACCESS_DENIED}
         log.error(res)
@@ -123,6 +122,9 @@ def edit_form():
                                message_type=request.vars["message_type"],
                                priority=request.vars["priority"],
                                expiration=request.vars["expiration"])
+
+        db((db.user_preference.val==request.vars['id'])
+            &(db.user_preference.preference=='mail')).delete()
 
         res = {"redirect": "notification/index",
                "args" : { "id" : request.vars['id'] },
