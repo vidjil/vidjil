@@ -616,7 +616,7 @@ Database.prototype = {
 		        type: "GET",
 		        crossDomain: true,
 		        url: DB_ADDRESS + 'notification/get_active_notifications',
-		        contentType: 'text/plain',
+                        xhrFields: {withCredentials: true},
 		        timeout: DB_TIMEOUT_CALL,
 		        success: function (result) {
 		        	var messages;
