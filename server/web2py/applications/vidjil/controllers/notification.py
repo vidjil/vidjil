@@ -146,6 +146,9 @@ def delete():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     db(db.notification.id==request.vars['id']).delete()
+    # Cascade the notification deletion onto associated preferences
+    db((db.user_preference.val==request.vars['id'])
+        &(db.user_preference.preference=='mail')).delete()
     res = {"redirect": "notification/index",
                "success": "true",
                "message": "notification " + request.vars['id'] + " deleted"}
