@@ -23,6 +23,15 @@ def index():
 def info():
 
 	query = db.notification[request.vars['id']]
+        if auth.user:
+            rows = db((db.user_preference.user_id==auth.user.id)
+                &(db.user_preference.preference=='mail')
+                &(db.user_preference.val==request.vars['id'])).select()
+            if len(rows) == 0:
+                db.user_preference.insert(
+                    user_id=auth.user.id,
+                    preference='mail',
+                    val=request.vars['id'])
 
 	return dict(query=query)
 
@@ -89,6 +98,7 @@ def edit():
 
 # process submitted edit form
 def edit_form():
+    #TODO delete parameters associated (would enable reusing messages)
     if (not auth.is_admin()):
         res = {"message": ACCESS_DENIED}
         log.error(res)
@@ -143,16 +153,30 @@ def delete():
 # 
 def get_active_notifications():
     today = date.today()
+    
+    log.error('auth: ' + str(auth))
 
+    user_id = auth.user.id if auth.user else None    
     if (request.vars['type'] is not None):
         query = db(
         ((db.notification.expiration >= today)
             | (db.notification.expiration == None))
             & (db.notification.message_type == request.vars['type'])
-        ).select()
+        ).select(
+            db.notification.ALL, db.user_preference.val,
+            left=db.user_preference.on(
+                (db.user_preference.val==db.notification.id)
+                &(db.user_preference.user_id==user_id)))
     else :
         query = db(
             (db.notification.expiration >= today) | (db.notification.expiration == None)
-        ).select()
+        ).select(
+            db.notification.ALL, db.user_preference.val,
+            left=db.user_preference.on(
+                (db.user_preference.val==db.notification.id)
+                &(db.user_preference.user_id==user_id)))
+
+        query = query.find(lambda row: row.user_preference.val is None)
+
     #TODO sanitize this response
     return query.as_json()
