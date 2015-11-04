@@ -616,7 +616,7 @@ Database.prototype = {
 		        type: "GET",
 		        crossDomain: true,
 		        url: DB_ADDRESS + 'notification/get_active_notifications',
-		        contentType: 'text/plain',
+                        xhrFields: {withCredentials: true},
 		        timeout: DB_TIMEOUT_CALL,
 		        success: function (result) {
 		        	var messages;
@@ -625,9 +625,9 @@ Database.prototype = {
 		        		var header_messages = [];
 		        		var login_messages = [];
 		        		for (var i = 0; i < messages.length; ++i) {
-		        			if (messages[i]['message_type'] == 'header') {
+		        			if (messages[i]['notification']['message_type'] == 'header') {
 		        				header_messages.push(messages[i]);
-		        			} else if (messages[i]['message_type'] == 'login') {
+		        			} else if (messages[i]['notification']['message_type'] == 'login') {
 		        				login_messages.push(messages[i]);
 		        			}
 		        		}
@@ -670,11 +670,11 @@ Database.prototype = {
 		if (messages.length > 0) {
 			for (var i=0; i < messages.length; ++i) {
 				message = document.createElement('div');
-				message.className = classNames[messages[i]['priority']] + " notification";
-				$(message).attr('onclick', "db.call('notification/info', {'id': '" + messages[i]['id'] + "'})");
+				message.className = classNames[messages[i]['notification']['priority']] + " notification";
+				$(message).attr('onclick', "db.call('notification/info', {'id': '" + messages[i]['notification']['id'] + "'})");
 				$(message).append(
 					// message is sanitized by the server so we unescape the string to include links and formatting
-					document.createTextNode(unescape(messages[i]['title']))
+					document.createTextNode(unescape(messages[i]['notification']['title']))
 				);
 				elem.append(message);
 			}

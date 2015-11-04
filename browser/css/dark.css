@@ -1549,27 +1549,27 @@ table.log textarea {
   background-image: linear-gradient(45deg, transparent -25%, #000000 100%, #000000 100%, transparent 0%);
 }
 .message_container {
-  float: left;
   display: none;
+}
+.message_container.header {
+  overflow: hidden;
+  text-align: center;
 }
 .urgent_message {
   background-color: #652D1A;
+  margin: 5px;
 }
 .info_message {
-  background-color: #1F5A0B;
+  border: 1px solid #333333;
+  margin: 4px;
 }
 .notification {
-  margin: 5px;
   padding: 3px;
-  display: inline-flex;
+  display: inline-block;
   -webkit-border-radius: 2px;
   -moz-border-radius: 2px;
   border-radius: 2px;
-}
-.notification:hover {
-  border: 1px solid #fdf6e3;
-  color: #fdf6e3;
-  margin: 4px;
+  cursor: pointer;
 }
 #login_messages .notification {
   display: block;

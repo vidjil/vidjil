@@ -183,6 +183,11 @@ db.define_table('notification',
 				Field('priority', 'string'),
 				Field('expiration', 'date'))
 
+db.define_table('user_preference',
+		Field('user_id', 'reference auth_user'),
+		Field('preference', 'string'),
+		Field('val', 'string'))
+
 
 ## after defining tables, uncomment below to enable auditing
 auth.enable_record_versioning(db)
