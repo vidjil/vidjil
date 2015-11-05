@@ -22,18 +22,18 @@ def index():
 
 def info():
 
-	query = db.notification[request.vars['id']]
-        if auth.user:
-            rows = db((db.user_preference.user_id==auth.user.id)
-                &(db.user_preference.preference=='mail')
-                &(db.user_preference.val==request.vars['id'])).select()
-            if len(rows) == 0:
-                db.user_preference.insert(
-                    user_id=auth.user.id,
-                    preference='mail',
-                    val=request.vars['id'])
+    query = db.notification[request.vars['id']]
+    if auth.user:
+        rows = db((db.user_preference.user_id==auth.user.id)
+            &(db.user_preference.preference=='mail')
+            &(db.user_preference.val==request.vars['id'])).select()
+        if len(rows) == 0:
+            db.user_preference.insert(
+                user_id=auth.user.id,
+                preference='mail',
+                val=request.vars['id'])
 
-	return dict(query=query)
+    return dict(query=query)
 
 # serve for to add a notification
 def add():
@@ -68,11 +68,11 @@ def add_form():
 
     if error=="" :
         id = db.notification.insert(title=request.vars["title"],
-        						message_content=XML(request.vars["message_content"], sanitize=True).xml(),
-                               message_type=request.vars["message_type"],
-                               priority=request.vars["priority"],
-                               expiration=request.vars["expiration"],
-                               creator=auth.user_id)
+                            message_content=XML(request.vars["message_content"], sanitize=True).xml(),
+                            message_type=request.vars["message_type"],
+                            priority=request.vars["priority"],
+                            expiration=request.vars["expiration"],
+                            creator=auth.user_id)
 
         res = {"redirect": "notification/index",
                "args" : { "id" : id },
@@ -118,10 +118,10 @@ def edit_form():
 
     if error=="" :
         db.notification[request.vars['id']] = dict(title=request.vars["title"],
-        						message_content=XML(request.vars["message_content"], sanitize=True).xml(),
-                               message_type=request.vars["message_type"],
-                               priority=request.vars["priority"],
-                               expiration=request.vars["expiration"])
+                            message_content=XML(request.vars["message_content"], sanitize=True).xml(),
+                            message_type=request.vars["message_type"],
+                            priority=request.vars["priority"],
+                            expiration=request.vars["expiration"])
 
         db((db.user_preference.val==request.vars['id'])
             &(db.user_preference.preference=='mail')).delete()
