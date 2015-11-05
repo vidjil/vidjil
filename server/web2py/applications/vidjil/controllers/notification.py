@@ -162,8 +162,6 @@ def delete():
 def get_active_notifications():
     today = date.today()
     
-    log.error('auth: ' + str(auth))
-
     user_id = auth.user.id if auth.user else None    
     if (request.vars['type'] is not None):
         query = db(
