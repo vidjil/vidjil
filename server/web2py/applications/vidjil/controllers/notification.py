@@ -181,24 +181,13 @@ def get_active_notifications():
     cached = cache.ram(key, lambda: None, time_expire=None)
     if not cached:
         # No cache found: query database
-        if (request.vars['type'] is not None):
-            query = db(
-            ((db.notification.expiration >= today)
-                | (db.notification.expiration == None))
-                & (db.notification.message_type == request.vars['type'])
-            ).select(
-                db.notification.ALL, db.user_preference.val,
-                left=db.user_preference.on(
-                    (db.user_preference.val==db.notification.id)
-                    &(db.user_preference.user_id==user_id)))
-        else :
-            query = db(
-                (db.notification.expiration >= today) | (db.notification.expiration == None)
-            ).select(
-                db.notification.ALL, db.user_preference.val,
-                left=db.user_preference.on(
-                    (db.user_preference.val==db.notification.id)
-                    &(db.user_preference.user_id==user_id)))
+        query = db(
+            (db.notification.expiration >= today) | (db.notification.expiration == None)
+        ).select(
+            db.notification.ALL, db.user_preference.val,
+            left=db.user_preference.on(
+                (db.user_preference.val==db.notification.id)
+                &(db.user_preference.user_id==user_id)))
 
         query = query.find(lambda row: row.user_preference.val is None)
         cached = cache.ram(key, lambda: query, time_expire=CACHE_EXPIRY)
