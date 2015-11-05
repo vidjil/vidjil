@@ -8,6 +8,8 @@ if request.env.http_origin:
 
     
 ACCESS_DENIED = "access denied"
+NOTIFICATION_CACHE_PREFIX = 'notification_'
+CACHE_EXPIRY = 3600
 
 def index():
     if not auth.is_admin() :
@@ -21,7 +23,7 @@ def index():
         query=query)
 
 def info():
-
+    user_id = auth.user.id if auth.user else None    
     query = db.notification[request.vars['id']]
     if auth.user:
         rows = db((db.user_preference.user_id==auth.user.id)
@@ -33,8 +35,10 @@ def info():
                 preference='mail',
                 val=request.vars['id'])
 
-    notifications = db(db.notification).select(orderby=~db.notification.id)
+            # Clear cache of this user
+            cache.ram.clear(regex=NOTIFICATION_CACHE_PREFIX + str(user_id))
 
+    notifications = db(db.notification).select(orderby=~db.notification.id)
     return dict(query=query,
                 notifications=notifications)
 
@@ -81,6 +85,8 @@ def add_form():
                "args" : { "id" : id },
                "message": "notification added"}
         log.info(res)
+        # Clear cache of all notifications
+        cache.ram.clear(regex=NOTIFICATION_CACHE_PREFIX + '*')
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
@@ -133,6 +139,8 @@ def edit_form():
                "args" : { "id" : request.vars['id'] },
                "message": "notification updated"}
         log.info(res)
+        # Clear cache of all notifications
+        cache.ram.clear(regex=NOTIFICATION_CACHE_PREFIX + '*')
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
@@ -156,37 +164,47 @@ def delete():
                "success": "true",
                "message": "notification " + request.vars['id'] + " deleted"}
     log.info(res)
+    # Clear cache of all notifications
+    cache.ram.clear(regex=NOTIFICATION_CACHE_PREFIX + '*')
     return gluon.contrib.simplejson.dumps(res, separators=(',',':')) 
 
-# 
+#
 def get_active_notifications():
     today = date.today()
-    #TODO globalise these values ?
-    cache_time = 3600
-    cache_type = cache.ram
     user_id = auth.user.id if auth.user else None    
-    if (request.vars['type'] is not None):
-        query = db(
-        ((db.notification.expiration >= today)
-            | (db.notification.expiration == None))
-            & (db.notification.message_type == request.vars['type'])
-        ).select(
-            db.notification.ALL, db.user_preference.val,
-            left=db.user_preference.on(
-                (db.user_preference.val==db.notification.id)
-                &(db.user_preference.user_id==user_id)),
-            cache=(cache_type, cache_time))
-    else :
-        query = db(
-            (db.notification.expiration >= today) | (db.notification.expiration == None)
-        ).select(
-            db.notification.ALL, db.user_preference.val,
-            left=db.user_preference.on(
-                (db.user_preference.val==db.notification.id)
-                &(db.user_preference.user_id==user_id)),
-            cache=(cache_type, cache_time))
+    if user_id:
+        key = NOTIFICATION_CACHE_PREFIX + str(user_id)
+    else:
+        key = NOTIFICATION_CACHE_PREFIX
+
+    # Try try to overwrite current cache with None.
+    # If it works the cache has expired or this is the first call
+    cached = cache.ram(key, lambda: None, time_expire=CACHE_EXPIRY)
+    if not cached:
+        # No cache found: query database
+        if (request.vars['type'] is not None):
+            query = db(
+            ((db.notification.expiration >= today)
+                | (db.notification.expiration == None))
+                & (db.notification.message_type == request.vars['type'])
+            ).select(
+                db.notification.ALL, db.user_preference.val,
+                left=db.user_preference.on(
+                    (db.user_preference.val==db.notification.id)
+                    &(db.user_preference.user_id==user_id)))
+        else :
+            query = db(
+                (db.notification.expiration >= today) | (db.notification.expiration == None)
+            ).select(
+                db.notification.ALL, db.user_preference.val,
+                left=db.user_preference.on(
+                    (db.user_preference.val==db.notification.id)
+                    &(db.user_preference.user_id==user_id)))
 
         query = query.find(lambda row: row.user_preference.val is None)
+        cache.ram.clear(key)
+        cached = cache.ram(key, lambda: query, time_expire=CACHE_EXPIRY)
 
     #TODO sanitize this response
-    return query.as_json()
+    return cached.as_json()
+
