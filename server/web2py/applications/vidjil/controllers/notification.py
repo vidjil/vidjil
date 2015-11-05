@@ -33,7 +33,10 @@ def info():
                 preference='mail',
                 val=request.vars['id'])
 
-    return dict(query=query)
+    notifications = db(db.notification).select(orderby=~db.notification.id)
+
+    return dict(query=query,
+                notifications=notifications)
 
 # serve for to add a notification
 def add():
