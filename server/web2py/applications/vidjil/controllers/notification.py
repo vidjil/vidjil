@@ -177,9 +177,8 @@ def get_active_notifications():
     else:
         key = NOTIFICATION_CACHE_PREFIX
 
-    # Try try to overwrite current cache with None.
-    # If it works the cache has expired or this is the first call
-    cached = cache.ram(key, lambda: None, time_expire=CACHE_EXPIRY)
+    # Force retrieval of the cache even if no value is set 
+    cached = cache.ram(key, lambda: None, time_expire=None)
     if not cached:
         # No cache found: query database
         if (request.vars['type'] is not None):
@@ -202,7 +201,6 @@ def get_active_notifications():
                     &(db.user_preference.user_id==user_id)))
 
         query = query.find(lambda row: row.user_preference.val is None)
-        cache.ram.clear(key)
         cached = cache.ram(key, lambda: query, time_expire=CACHE_EXPIRY)
 
     #TODO sanitize this response
