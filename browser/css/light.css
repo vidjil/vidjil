@@ -1556,8 +1556,9 @@ table.log textarea {
   text-align: center;
 }
 .urgent_message {
-  background-color: #D4A190;
-  margin: 5px;
+  border: 2px solid #cccccc;
+  margin: 3px;
+  font-weight: bold;
 }
 .info_message {
   border: 1px solid #cccccc;
