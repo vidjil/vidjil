@@ -161,7 +161,9 @@ def delete():
 # 
 def get_active_notifications():
     today = date.today()
-    
+    #TODO globalise these values ?
+    cache_time = 3600
+    cache_type = cache.ram
     user_id = auth.user.id if auth.user else None    
     if (request.vars['type'] is not None):
         query = db(
@@ -172,7 +174,8 @@ def get_active_notifications():
             db.notification.ALL, db.user_preference.val,
             left=db.user_preference.on(
                 (db.user_preference.val==db.notification.id)
-                &(db.user_preference.user_id==user_id)))
+                &(db.user_preference.user_id==user_id)),
+            cache=(cache_type, cache_time))
     else :
         query = db(
             (db.notification.expiration >= today) | (db.notification.expiration == None)
@@ -180,7 +183,8 @@ def get_active_notifications():
             db.notification.ALL, db.user_preference.val,
             left=db.user_preference.on(
                 (db.user_preference.val==db.notification.id)
-                &(db.user_preference.user_id==user_id)))
+                &(db.user_preference.user_id==user_id)),
+            cache=(cache_type, cache_time))
 
         query = query.find(lambda row: row.user_preference.val is None)
 
