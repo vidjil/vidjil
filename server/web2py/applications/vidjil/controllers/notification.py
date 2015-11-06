@@ -190,7 +190,7 @@ def get_active_notifications():
                 &(db.user_preference.user_id==user_id)))
 
         query = query.find(lambda row: row.user_preference.val is None)
-        cached = cache.ram(key, lambda: query, time_expire=CACHE_EXPIRY)
+        cached = cache.ram(key, lambda: query, time_expire=0)
 
     #TODO sanitize this response
     return cached.as_json()
