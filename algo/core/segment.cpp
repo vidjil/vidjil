@@ -580,6 +580,23 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
   return ( i.first > j.first);
 }
 
+
+/**
+ * Align a read against a collection of sequences, maximizing the alignment 'score'
+ * @param read:         the read
+ * @param rep:          a collection of reference sequences
+ * @param reverse_both: if true, reverse both the read and the reference sequences (J segment)
+ * @param local:        if true, Local alignment (D segment), otherwise LocalEndWithSomeDeletions (V and J segments)
+ * @param segment_cost: the cost used by the dynamic programing
+ * @return score:       the maximized score, together with the following values:
+ * @return tag:           - the name of the sequence
+ * @return del:           - the number of deletions at the end of the reference sequence (or at the start if 'reverse_both')
+ * @return del2:          - the number of deletions at the start of the reference sequence (used with 'local')
+ * @return begin:         - the start position of the aligned segment in the read
+ * @return length:        - the length of the alignmed segment in the read
+ * @return best_best_i: ?
+ */
+
 int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool local, int *tag, 
 			     int *del, int *del2, int *begin, int *length, vector<pair<int, int> > *score
 			    , Cost segment_cost)
