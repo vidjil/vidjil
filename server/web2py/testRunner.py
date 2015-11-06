@@ -151,10 +151,6 @@ fake_mail_preference_id = db.user_preference.insert(user_id =user_id,
                                                     val=fake_notification_id
                                                     )
 
-fake_mail_preference_id2 = db.user_preference.insert(user_id =18,
-                                                    preference='mail',
-                                                    val=fake_notification_id
-                                                    )
 db.commit()
 
 
