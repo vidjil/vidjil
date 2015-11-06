@@ -586,7 +586,7 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
  * @param read:         the read
  * @param rep:          a collection of reference sequences
  * @param reverse_both: if true, reverse both the read and the reference sequences (J segment)
- * @param local:        if true, Local alignment (D segment), otherwise LocalEndWithSomeDeletions (V and J segments)
+ * @param local:        if true, Local alignment (D segment), otherwise LocalEndWithSomeDeletions and onlyBottomTriangle (V and J segments)
  * @param segment_cost: the cost used by the dynamic programing
  * @return score:       the maximized score, together with the following values:
  * @return tag:           - the name of the sequence
@@ -620,7 +620,9 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool l
 			   dpMode, // DynProg::SemiGlobalTrans, 
 			   segment_cost, // DNA
 			   reverse_both, reverse_both);
-      int score = dp.compute();
+
+      bool onlyBottomTriangle = !local ;
+      int score = dp.compute(onlyBottomTriangle, BOTTOM_TRIANGLE_SHIFT);
       
       if (local==true){ 
 	dp.backtrack();

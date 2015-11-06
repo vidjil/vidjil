@@ -34,6 +34,10 @@
 #define THRESHOLD_NB_EXPECTED 1.0 /* Threshold of the accepted expected value for number of found k-mers */
 #define THRESHOLD_NB_EXPECTED_D  .05 /* e-value threshold, D-REGION */
 
+#define BOTTOM_TRIANGLE_SHIFT  20   /* Should equal to (max allowed 'k-band') + (max allowed number of V/J deletions) - (min size to recognize facing J/V)
+                                       As we need ~10 bp to recognize the facing V/J, this value should be large enough to handle V/J deletions until ~30 bp,
+                                       (and even larger V/J deletions if there is a large facing J or V in the read). */
+
 
 
 using namespace std;
