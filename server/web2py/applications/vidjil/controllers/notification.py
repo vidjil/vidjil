@@ -9,7 +9,6 @@ if request.env.http_origin:
     
 ACCESS_DENIED = "access denied"
 NOTIFICATION_CACHE_PREFIX = 'notification_'
-CACHE_EXPIRY = 3600
 
 def index():
     if not auth.is_admin() :
