@@ -11,6 +11,8 @@
                     <td class="column_200"> @</td>
                     <td class="column_50">access</td>
                     <td class="column_100">groups</td>
+                    <td class="column_200" onclick="db.call('user/index', {'sort' : 'login'
+                    {{if not reverse and request.vars["sort"]=="login" :}} , 'reverse' : true {{pass}} })">last login</td>
                     <td class="column_50" onclick="db.call('user/index', {'sort' :'patients'
                   {{if not reverse and request.vars["sort"]=="patients" :}} , 'reverse' : true {{pass}} })">patients created </td>
                     <td class="column_100" onclick="db.call('user/index', {'sort' :'files'
@@ -25,6 +27,7 @@
                     <td> {{=row.email}}  </td>
                     <td> {{=row.access}}  </td>
                     <td> {{=row.groups}}  </td>
+                    <td> {{=row.last_login}} </td>
                     <td> {{=row.created}}  </td>
                     <td> {{=row.files}} ({{=vidjil_utils.format_size(row.size)}}) </td>
                 </tr>

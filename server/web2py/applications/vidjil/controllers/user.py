@@ -29,6 +29,13 @@ def index():
             row.files += 1
             row.size += row2.size_file
 
+        last_logins = db((db.auth_event.user_id==row.id)
+                        &(db.auth_event.description=='User ' + str(row.id) + ' Logged-in')
+                        &(db.auth_event.origin=='auth')).select(db.auth_event.time_stamp,
+                                                                orderby=~db.auth_event.time_stamp)
+        
+        row.last_login = last_logins[0].time_stamp if len(last_logins) > 0 else None
+
     ##sort query
     reverse = False
     if request.vars["reverse"] == "true" :
@@ -37,6 +44,8 @@ def index():
         query = sorted(query, key = lambda row : row.size, reverse=reverse)
     elif request.vars["sort"] == "patients" :
         query = sorted(query, key = lambda row : row.created, reverse=reverse)
+    elif request.vars["sort"] == "login" :
+        query = sorted(query, key = lambda row : row.last_login, reverse=reverse)
     else:
         query = sorted(query, key = lambda row : row.id, reverse=False)
 
