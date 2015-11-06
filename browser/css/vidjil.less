@@ -1764,8 +1764,9 @@ flex-grow : 1;
 }
 
 .urgent_message {
-	background-color: @urgent_message;
-	margin: 5px;
+	border: 2px solid @border;
+	margin: 3px;
+	font-weight: bold;
 }
 
 .info_message {
@@ -1799,4 +1800,14 @@ flex-grow : 1;
 
 #listLocus, #listVsegment, #listDsegment, #listJsegment {
   display: none;
+}
+
+.db_block.info_block {
+	height: 50%;
+	overflow-y: scroll;
+	overflow-x: hidden;
+}
+
+#db_table_container.info_table {
+	height: 50%
 }

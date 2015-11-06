@@ -8,6 +8,7 @@ if request.env.http_origin:
 
     
 ACCESS_DENIED = "access denied"
+NOTIFICATION_CACHE_PREFIX = 'notification_'
 
 def index():
     if not auth.is_admin() :
@@ -21,19 +22,24 @@ def index():
         query=query)
 
 def info():
+    user_id = auth.user.id if auth.user else None    
+    query = db.notification[request.vars['id']]
+    if auth.user:
+        rows = db((db.user_preference.user_id==auth.user.id)
+            &(db.user_preference.preference=='mail')
+            &(db.user_preference.val==request.vars['id'])).select()
+        if len(rows) == 0:
+            db.user_preference.insert(
+                user_id=auth.user.id,
+                preference='mail',
+                val=request.vars['id'])
 
-	query = db.notification[request.vars['id']]
-        if auth.user:
-            rows = db((db.user_preference.user_id==auth.user.id)
-                &(db.user_preference.preference=='mail')
-                &(db.user_preference.val==request.vars['id'])).select()
-            if len(rows) == 0:
-                db.user_preference.insert(
-                    user_id=auth.user.id,
-                    preference='mail',
-                    val=request.vars['id'])
+            # Clear cache of this user
+            cache.ram.clear(regex=NOTIFICATION_CACHE_PREFIX + str(user_id))
 
-	return dict(query=query)
+    notifications = db(db.notification).select(orderby=~db.notification.id)
+    return dict(query=query,
+                notifications=notifications)
 
 # serve for to add a notification
 def add():
@@ -68,16 +74,18 @@ def add_form():
 
     if error=="" :
         id = db.notification.insert(title=request.vars["title"],
-        						message_content=XML(request.vars["message_content"], sanitize=True).xml(),
-                               message_type=request.vars["message_type"],
-                               priority=request.vars["priority"],
-                               expiration=request.vars["expiration"],
-                               creator=auth.user_id)
+                            message_content=XML(request.vars["message_content"], sanitize=True).xml(),
+                            message_type=request.vars["message_type"],
+                            priority=request.vars["priority"],
+                            expiration=request.vars["expiration"],
+                            creator=auth.user_id)
 
         res = {"redirect": "notification/index",
                "args" : { "id" : id },
                "message": "notification added"}
         log.info(res)
+        # Clear cache of all notifications
+        cache.ram.clear(regex=NOTIFICATION_CACHE_PREFIX + '*')
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
@@ -98,7 +106,6 @@ def edit():
 
 # process submitted edit form
 def edit_form():
-    #TODO delete parameters associated (would enable reusing messages)
     if (not auth.is_admin()):
         res = {"message": ACCESS_DENIED}
         log.error(res)
@@ -119,15 +126,20 @@ def edit_form():
 
     if error=="" :
         db.notification[request.vars['id']] = dict(title=request.vars["title"],
-        						message_content=XML(request.vars["message_content"], sanitize=True).xml(),
-                               message_type=request.vars["message_type"],
-                               priority=request.vars["priority"],
-                               expiration=request.vars["expiration"])
+                            message_content=XML(request.vars["message_content"], sanitize=True).xml(),
+                            message_type=request.vars["message_type"],
+                            priority=request.vars["priority"],
+                            expiration=request.vars["expiration"])
+
+        db((db.user_preference.val==request.vars['id'])
+            &(db.user_preference.preference=='mail')).delete()
 
         res = {"redirect": "notification/index",
                "args" : { "id" : request.vars['id'] },
                "message": "notification updated"}
         log.info(res)
+        # Clear cache of all notifications
+        cache.ram.clear(regex=NOTIFICATION_CACHE_PREFIX + '*')
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
@@ -144,30 +156,30 @@ def delete():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     db(db.notification.id==request.vars['id']).delete()
+    # Cascade the notification deletion onto associated preferences
+    db((db.user_preference.val==request.vars['id'])
+        &(db.user_preference.preference=='mail')).delete()
     res = {"redirect": "notification/index",
                "success": "true",
                "message": "notification " + request.vars['id'] + " deleted"}
     log.info(res)
+    # Clear cache of all notifications
+    cache.ram.clear(regex=NOTIFICATION_CACHE_PREFIX + '*')
     return gluon.contrib.simplejson.dumps(res, separators=(',',':')) 
 
-# 
+#
 def get_active_notifications():
     today = date.today()
-    
-    log.error('auth: ' + str(auth))
-
     user_id = auth.user.id if auth.user else None    
-    if (request.vars['type'] is not None):
-        query = db(
-        ((db.notification.expiration >= today)
-            | (db.notification.expiration == None))
-            & (db.notification.message_type == request.vars['type'])
-        ).select(
-            db.notification.ALL, db.user_preference.val,
-            left=db.user_preference.on(
-                (db.user_preference.val==db.notification.id)
-                &(db.user_preference.user_id==user_id)))
-    else :
+    if user_id:
+        key = NOTIFICATION_CACHE_PREFIX + str(user_id)
+    else:
+        key = NOTIFICATION_CACHE_PREFIX
+
+    # Force retrieval of the cache even if no value is set 
+    cached = cache.ram(key, lambda: None, time_expire=None)
+    if not cached:
+        # No cache found: query database
         query = db(
             (db.notification.expiration >= today) | (db.notification.expiration == None)
         ).select(
@@ -177,6 +189,8 @@ def get_active_notifications():
                 &(db.user_preference.user_id==user_id)))
 
         query = query.find(lambda row: row.user_preference.val is None)
+        cached = cache.ram(key, lambda: query, time_expire=0)
 
     #TODO sanitize this response
-    return query.as_json()
+    return cached.as_json()
+

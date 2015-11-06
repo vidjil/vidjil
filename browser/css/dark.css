@@ -1556,8 +1556,9 @@ table.log textarea {
   text-align: center;
 }
 .urgent_message {
-  background-color: #652D1A;
-  margin: 5px;
+  border: 2px solid #333333;
+  margin: 3px;
+  font-weight: bold;
 }
 .info_message {
   border: 1px solid #333333;
@@ -1588,4 +1589,12 @@ table.log textarea {
 #listDsegment,
 #listJsegment {
   display: none;
+}
+.db_block.info_block {
+  height: 50%;
+  overflow-y: scroll;
+  overflow-x: hidden;
+}
+#db_table_container.info_table {
+  height: 50%;
 }

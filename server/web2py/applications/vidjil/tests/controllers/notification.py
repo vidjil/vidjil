@@ -76,9 +76,12 @@ class NotificationController(unittest.TestCase):
         request.vars['expiration'] = str(curdate)
         res = edit_form()
         note = db.notification[fake_notification_id]
+        preferences = db((db.user_preference.preference=='mail')
+                        &(db.user_preference.val==fake_notification_id)).select()
         self.assertNotEquals(res.find('notification updated'), -1, "edit_form returned an incomplete response")
         self.assertTrue(note.title == "test title", "edit_form was unable to update the title")
         self.assertTrue(note.message_content == "test content", "edit_form was unable to update the message content")
+        self.assertEqual(len(preferences), 0, "edit_form was unable to clear the associated preferences")
 
     def test4Delete(self):
         notification_id = db(db.notification.title=="test title").select()[0].id
