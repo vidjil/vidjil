@@ -223,7 +223,7 @@ inline void try_operation(operation &best, int type, int i, int j, int score)
     }
 }
 
-int DynProg::compute()
+int DynProg::compute(bool onlyBottomTriangle, int onlyBottomTriangleShift)
 {
   best_score = MINUS_INF ;
   best_i = 0 ;
@@ -235,6 +235,19 @@ int DynProg::compute()
     for (int j=1; j<=n; j++)
     {
       best.score = MINUS_INF ;
+
+      // If onlyBottomTriangle, stops when we are not in the bottom triangle
+      if (onlyBottomTriangle && ((n-j) >= (m-i) + onlyBottomTriangleShift))
+        {
+          best.type = 'k';
+          B[i][j] = best;
+          if (cost.affine_gap)
+            {
+              Bins[i][j] = best;
+              Bdel[i][j] = best;
+            }
+          continue ;
+        }
 
       // The edit operations, with their backtracking information and their score
 

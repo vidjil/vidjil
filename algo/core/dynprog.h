@@ -124,7 +124,21 @@ class DynProg
   DynProg(const string &x, const string &y, DynProgMode mode, const Cost &c, const bool reverse_x=false, const bool reverse_y=false);
   ~DynProg();
   void init();
-  int compute();
+
+
+  /*
+   * Launch the DP matrix computation
+   *
+   * @param onlyBottomTriangle:      limits the DP matrix computation to its bottom 'half'
+   *                                 (the reference point being the 'last' point (m,n))
+   *                                 (if the matrix is not square, this 'half' will be larger or smaller than 50%)
+   *
+   * @param onlyBottomTriangleShift: shifts the border between the top 'half' and the bottom 'half' of the DP matrix
+   *                                 (when this value is positive, slighty more than 'half' of the matrix will be computed)
+   */
+
+  int compute(bool onlyBottomTriangle = false, int onlyBottomTriangleShift = 0);
+
   void backtrack();
   void SemiGlobal_hits_threshold(vector<int> &hits, int threshold, int shift_pos, int verbose);
 
