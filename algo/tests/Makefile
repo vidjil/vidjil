@@ -55,6 +55,10 @@ shouldvdj:
 shouldvdj_with_rc:
 	python should-vdj-to-tap.py -r $(SHOULD_VDJ)
 
+shouldvdj_with_rc_merged:
+	cat $(SHOULD_VDJ) > should-vdj-tests/should-vdj.merged.fa
+	python should-vdj-to-tap.py -r should-vdj-tests/should-vdj.merged.fa
+
 %.tap: %.should_get force
 	./should-to-tap.sh $<
 
