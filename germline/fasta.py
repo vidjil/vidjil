@@ -1,5 +1,5 @@
 
-
+import sys
 
 COMPLEMENT_NUCLEOTIDE = {
     'A': 'T', 'T': 'A', 'C': 'G', 'G': 'C',
@@ -18,7 +18,11 @@ def revcomp(seq):
     '''
     rc = ''
     for nucl in seq[::-1]:
-        rc += COMPLEMENT_NUCLEOTIDE[nucl.upper()]
+        try:
+            rc += COMPLEMENT_NUCLEOTIDE[nucl.upper()]
+        except:
+            sys.stderr.write("! Unknown nucleotide : '%s' " % nucl + seq)
+            rc += 'N'
     return rc
 
 def parse(fasta, endline=''):
