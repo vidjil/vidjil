@@ -1594,18 +1594,18 @@ text.alert { fill: red; }
 
 .flash_1, .log_1 {
     font-weight: bold;
-    background-color: #DFF0D8;
+    background-color: @message_green1;
 }
 
 .flash_2, .log_2 {
     font-weight: bold;
-    background-color: #F2DEAE;
+    background-color: @message_green2;
 }
 
 .flash_3, .log_3 {
     font-weight: bold;
     border-color: darkred;
-    background-color: #F2DEDE;
+    background-color: @message_red;
 }
 
 select>option:hover {
@@ -1764,14 +1764,16 @@ flex-grow : 1;
 }
 
 .urgent_message {
-	border: 2px solid @border;
+	border: 2px solid @message_border_red;
 	margin: 3px;
 	font-weight: bold;
+        background-color: @message_red;
 }
 
 .info_message {
 	border: 1px solid @border;
 	margin: 4px;
+        background-color: @message_green1;
 }
 
 .notification {

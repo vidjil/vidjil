@@ -10,6 +10,7 @@ if request.env.http_origin:
 ACCESS_DENIED = "access denied"
 NOTIFICATION_CACHE_PREFIX = 'notification_'
 
+# Deprecated
 def index():
     if not auth.is_admin() :
         res = {"message": ACCESS_DENIED}
@@ -23,7 +24,10 @@ def index():
 
 def info():
     user_id = auth.user.id if auth.user else None    
-    query = db.notification[request.vars['id']]
+
+    query = None
+    if request.vars['id']:
+        query = db.notification[request.vars['id']]
     if auth.user:
         rows = db((db.user_preference.user_id==auth.user.id)
             &(db.user_preference.preference=='mail')
@@ -38,7 +42,11 @@ def info():
             cache.ram.clear(regex=NOTIFICATION_CACHE_PREFIX + str(user_id))
 
     notifications = db(db.notification).select(orderby=~db.notification.id)
-    return dict(query=query,
+    if not auth.is_admin():
+         notifications = notifications.find(lambda row: row.expiration >= date.today())
+         
+    return dict(message="Notifications",
+                query=query,
                 notifications=notifications)
 
 # serve for to add a notification
@@ -66,7 +74,9 @@ def add_form():
         error += "type needed, "
     if request.vars["priority"] == "" :
         error += "priority needed, "
-    if request.vars["expiration"] != "" :
+    if request.vars["expiration"] == "" :
+        erro += "expiration date required"
+    else:
         try:
             datetime.datetime.strptime(""+request.vars['expiration'], '%Y-%m-%d')
         except ValueError:
@@ -118,7 +128,9 @@ def edit_form():
         error += "type needed, "
     if request.vars["priority"] == "" :
         error += "priority needed, "
-    if request.vars["expiration"] != "" :
+    if request.vars["expiration"] == "" :
+        error += "expiration date required"
+    else:
         try:
             datetime.datetime.strptime(""+request.vars['expiration'], '%Y-%m-%d')
         except ValueError:

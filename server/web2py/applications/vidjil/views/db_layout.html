@@ -2,13 +2,13 @@
     
     <div id="db_menu">
         <a class="button" onclick="db.call('patient/index');">patients</a>
+        <a class="button" onclick="db.call('notification/info');">notifications</a>
         {{if auth.is_admin():}}
         - - -
         <a class="button" onclick="db.call('config/index');">configs</a>
         <a class="button" onclick="db.call('group/index');">groups</a>
         <a class="button" onclick="db.call('user/index');">users</a>
         <a class="button" onclick="db.call('admin/index');">admin</a>
-        <a class="button" onclick="db.call('notification/index');">notifications</a>
         - - -
         {{pass}}
     </div>
