@@ -1556,13 +1556,15 @@ table.log textarea {
   text-align: center;
 }
 .urgent_message {
-  border: 2px solid #333333;
+  border: 2px solid darkred;
   margin: 3px;
   font-weight: bold;
+  background-color: #F2DEDE;
 }
 .info_message {
   border: 1px solid #333333;
   margin: 4px;
+  background-color: #DFF0D8;
 }
 .notification {
   padding: 3px;
