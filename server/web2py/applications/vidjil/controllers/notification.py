@@ -66,7 +66,9 @@ def add_form():
         error += "type needed, "
     if request.vars["priority"] == "" :
         error += "priority needed, "
-    if request.vars["expiration"] != "" :
+    if request.vars["expiration"] == "" :
+        erro += "expiration date required"
+    else:
         try:
             datetime.datetime.strptime(""+request.vars['expiration'], '%Y-%m-%d')
         except ValueError:
@@ -118,7 +120,9 @@ def edit_form():
         error += "type needed, "
     if request.vars["priority"] == "" :
         error += "priority needed, "
-    if request.vars["expiration"] != "" :
+    if request.vars["expiration"] == "" :
+        error += "expiration date required"
+    else:
         try:
             datetime.datetime.strptime(""+request.vars['expiration'], '%Y-%m-%d')
         except ValueError:
