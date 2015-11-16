@@ -13,7 +13,9 @@ def index():
 def imgt():
     if request.env.request_method == "POST":
         payload = dict(request.post_vars)
-        del payload['Session']
+        
+        if 'Session' in payload.keys():
+            del payload['Session']
         response = requests.post("http://www.imgt.org/IMGT_vquest/vquest", data=payload)
         if response.status_code == requests.codes.ok:
             return response
