@@ -96,6 +96,12 @@ Otherwise, such =.vidjil= files can be obtained:
 
 - Clones can be searched (“search” box) by either their name, their custom name, 
   or their DNA sequence.
+- The concentration of some clones may not be displayed. Instead you can have
+  either a =+= symbol or a =-= symbol. In the former case that means the clone has
+  been detected (positive) but in few reads (typically less than five). In the
+  latter case it means that the clone has not been detected (negative) in the
+  sample but has been detected in another time point that is not currently
+  displayed.
 
 ** The time graph
 
