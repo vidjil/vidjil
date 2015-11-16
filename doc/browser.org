@@ -212,14 +212,14 @@ never in the "top 100", as for example:
 in the =.analysis= file, it will always be shown even if it does not
 meet the "top" filter.
 
-** The "other" clone
+** The "smaller clones"
 
-This virtual clone in the clone list groups all clones that are hidden
+There is a virtual clone per locus in the clone list which groups all clones that are hidden
 (because of the "top" or because of hiding some tags). The sum of
-ratios in the list of clones is always 100%: thus the "other" clone
+ratios in the list of clones is always 100%: thus the "smaller clones"
 changes when one use the "filter" menu.
 
-Note that the ratios include the "other" clone: if a clone principal
+Note that the ratios include the "smaller clones": if a clone
 is reported to have 10.54%, this 10.54% ratio relates to the number of
 analyzed reads, including the hidden clones.
 
@@ -236,7 +236,7 @@ especially in the case of overlapping paired-end sequencing. There can be also
 some sequencing errors.
 The =.vidjil= file has to give one consensus sequence per clone, and
 Rep-Seq algorithms have to deal with great care to these difference in
-order to not gather reads from different clones.
+order not to gather reads from different clones.
 
 For the Vidjil algorithm, it is required that the window centered on
 the CDR3 is /exactly/ shared by all the reads. The other positions in
