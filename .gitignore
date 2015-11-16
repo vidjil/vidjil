@@ -1,4 +1,8 @@
 germline/????.fa
+germline/????_downstream.fa
+germline/????_upstream.fa
+germline/mus-musculus/
+germline/rattus-norvegicus
 data/Stanford_S22.fasta
 data/Stanford_S22.rc.fasta
 *.data
