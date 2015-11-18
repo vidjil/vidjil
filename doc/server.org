@@ -194,3 +194,14 @@ These installation instruction are for Ubuntu server 14.04
   background and can be killed with =make kill_fuse_server=).
 
   Then you can launch the tests with =make unit=.
+
+
+* Troubleshootings
+** Workers seem to be stuck
+   For some reasons, that are not clear yet, it may happen that workers are not
+   assigned any additional jobs even if they don't have any ongoin jobs.
+
+   In such a (rare) case, it may be useful to restart web2py schedulers
+   #+BEGIN_SRC sh
+   initctl restart web2py-scheduler
+   #+END_SRC
