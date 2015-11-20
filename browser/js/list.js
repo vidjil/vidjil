@@ -719,6 +719,26 @@ List.prototype = {
         this.m.update()
     },
     
+
+//filter with d error
+/*filter: function(str){
+   this.reset_filter(true)
+        for (var i=0; i<this.m.clones.length; i++){
+            var c = this.m.clone(i) 
+            if (distanceLevenshtein(c.getName().toUpperCase(), str.toUpperCase()) <= d) 
+                c.isFiltered = false
+            if (distanceLevenshtein(c.getSequence().toUpperCase(), str.toUpperCase() <= d) 
+                c.isFiltered = false
+            if (distanceLevenshtein(c.getRevCompSequence().toUpperCase(), str.toUpperCase()) <= d ) 
+                c.isFiltered = false
+            if (distanceLevenshtein(c.getSequenceName().toUpperCase(), str.toUpperCase()) <= d ) 
+                c.isFiltered = false
+        }
+        this.m.update()
+    },
+
+*/
+
     /**
      * filter, keep only currently selected clones <br> 
      * */
@@ -884,6 +904,8 @@ List.prototype = {
 
 } //fin prototype
 List.prototype = $.extend(Object.create(View.prototype), List.prototype);
+
+
 
 
 
