@@ -1,5 +1,7 @@
 # coding: utf8
 from datetime import date
+from datetime import datetime
+
 import gluon.contrib.simplejson
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -10,19 +12,7 @@ if request.env.http_origin:
 ACCESS_DENIED = "access denied"
 NOTIFICATION_CACHE_PREFIX = 'notification_'
 
-# Deprecated
 def index():
-    if not auth.is_admin() :
-        res = {"message": ACCESS_DENIED}
-        log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))    
-
-    query = db(db.notification).select(orderby=~db.notification.id)
-
-    return dict(message="Notifications",
-        query=query)
-
-def info():
     user_id = auth.user.id if auth.user else None    
 
     query = None
@@ -78,7 +68,7 @@ def add_form():
         erro += "expiration date required"
     else:
         try:
-            datetime.datetime.strptime(""+request.vars['expiration'], '%Y-%m-%d')
+            datetime.strptime(""+request.vars['expiration'], '%Y-%m-%d')
         except ValueError:
             error += "date (wrong format)"
 
@@ -88,7 +78,8 @@ def add_form():
                             message_type=request.vars["message_type"],
                             priority=request.vars["priority"],
                             expiration=request.vars["expiration"],
-                            creator=auth.user_id)
+                            creator=auth.user_id,
+                            creation_datetime=datetime.now())
 
         res = {"redirect": "notification/index",
                "args" : { "id" : id },
@@ -132,7 +123,7 @@ def edit_form():
         error += "expiration date required"
     else:
         try:
-            datetime.datetime.strptime(""+request.vars['expiration'], '%Y-%m-%d')
+            datetime.strptime(""+request.vars['expiration'], '%Y-%m-%d')
         except ValueError:
             error += "date (wrong format)"
 
