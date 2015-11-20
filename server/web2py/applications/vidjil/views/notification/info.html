@@ -19,7 +19,8 @@
                 <td class="column_100"> Priority </td>
                 <td class="column_100"> Title </td>
                 <td class="column_100"> Message </td>
-                <td class="column_100"> Expiration Date </td>                
+                <td class="column_100"> Expiration Date </td>
+                <td class="column_100"> Creation Date </td>
             {{if auth.is_admin():}} 
                 <td class="column5"> </td>
                 <td class="column5"> </td>
@@ -47,6 +48,9 @@
                 </td>
                 <td class="pointer" onclick="db.call('notification/info', {'id' : '{{=row.id}}'})">
                     {{=row.expiration}}
+                </td>
+                <td class="pointer" onclick="db.call('notification/info', {'id' : '{{=row.id}}'})">
+                    {{=row.creation_datetime}}
                 </td>
             {{if auth.is_admin():}}
                 <td class="pointer" onclick="db.call('notification/edit', {'id' : '{{=row.id}}'})">

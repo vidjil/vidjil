@@ -181,7 +181,8 @@ db.define_table('notification',
 				Field('message_content', 'text'),
 				Field('message_type', 'string'),
 				Field('priority', 'string'),
-				Field('expiration', 'date'))
+				Field('expiration', 'date'),
+                                Field('creation_datetime', 'datetime'))
 
 db.define_table('user_preference',
 		Field('user_id', 'reference auth_user'),

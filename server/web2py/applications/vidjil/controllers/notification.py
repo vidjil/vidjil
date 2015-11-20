@@ -1,5 +1,7 @@
 # coding: utf8
 from datetime import date
+from datetime import datetime
+
 import gluon.contrib.simplejson
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
@@ -88,7 +90,8 @@ def add_form():
                             message_type=request.vars["message_type"],
                             priority=request.vars["priority"],
                             expiration=request.vars["expiration"],
-                            creator=auth.user_id)
+                            creator=auth.user_id,
+                            creation_datetime=datetime.now())
 
         res = {"redirect": "notification/index",
                "args" : { "id" : id },
