@@ -12,19 +12,7 @@ if request.env.http_origin:
 ACCESS_DENIED = "access denied"
 NOTIFICATION_CACHE_PREFIX = 'notification_'
 
-# Deprecated
 def index():
-    if not auth.is_admin() :
-        res = {"message": ACCESS_DENIED}
-        log.error(res)
-        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))    
-
-    query = db(db.notification).select(orderby=~db.notification.id)
-
-    return dict(message="Notifications",
-        query=query)
-
-def info():
     user_id = auth.user.id if auth.user else None    
 
     query = None
