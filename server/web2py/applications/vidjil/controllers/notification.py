@@ -80,7 +80,7 @@ def add_form():
         erro += "expiration date required"
     else:
         try:
-            datetime.datetime.strptime(""+request.vars['expiration'], '%Y-%m-%d')
+            datetime.strptime(""+request.vars['expiration'], '%Y-%m-%d')
         except ValueError:
             error += "date (wrong format)"
 
@@ -135,7 +135,7 @@ def edit_form():
         error += "expiration date required"
     else:
         try:
-            datetime.datetime.strptime(""+request.vars['expiration'], '%Y-%m-%d')
+            datetime.strptime(""+request.vars['expiration'], '%Y-%m-%d')
         except ValueError:
             error += "date (wrong format)"
 
