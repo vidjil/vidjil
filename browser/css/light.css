@@ -732,14 +732,15 @@ span .substitution {
   left: -webkit-calc(50% - 250px);
   left: calc(50% - 250px);
 }
-.popup_container a {
-  text-decoration: none;
-  font-weight: bold;
+/* Main style for <a>
+   Used in particular in .popup_container, on login screen, in news, in links to results (for patient list and patient info)  */
+a {
   color: #657b83;
 }
-.popup_container a:hover {
+a:hover {
   color: #002b36;
 }
+/* ----------------- */
 .data-container,
 .info-container {
   z-index: 3;
