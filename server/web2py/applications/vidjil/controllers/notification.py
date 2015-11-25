@@ -65,7 +65,7 @@ def add_form():
     if request.vars["priority"] == "" :
         error += "priority needed, "
     if request.vars["expiration"] == "" :
-        erro += "expiration date required"
+        error += "expiration date required"
     else:
         try:
             datetime.strptime(""+request.vars['expiration'], '%Y-%m-%d')
