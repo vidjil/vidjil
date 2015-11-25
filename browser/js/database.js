@@ -684,7 +684,7 @@ Database.prototype = {
 
 				$(message).append(
 					// message is sanitized by the server so we unescape the string to include links and formatting
-					document.createTextNode(display_title)
+					document.createTextNode(unescape(display_title))
 				);
 				elem.append(message);
 			}
