@@ -429,6 +429,7 @@ Database.prototype = {
 
     /*récupére et initialise le browser avec un fichier .data
      * args => format json ( parametre attendu  > patient_id, config_id)
+     * filename => patient name used in the patient menu for the previous visited patients
      */
     load_data: function (args, filename) {
         var self = this;
