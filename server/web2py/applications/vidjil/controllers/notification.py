@@ -35,7 +35,7 @@ def index():
     if not auth.is_admin():
          notifications = notifications.find(lambda row: row.expiration >= date.today())
          
-    return dict(message="Notifications",
+    return dict(message="News",
                 query=query,
                 notifications=notifications)
 

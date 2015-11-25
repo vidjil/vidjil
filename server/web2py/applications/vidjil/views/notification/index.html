@@ -7,6 +7,9 @@
     <div class="db_block info_block">
         {{=XML(markdown(query.message_content))}}
     </div>
+
+
+    <h3>Older news</h3>
 {{pass}}
 
 <div id="db_table_container" {{if query is not None:}}class="info_table"{{pass}}>
@@ -69,5 +72,5 @@
 </div>
 
 {{if auth.is_admin():}}
-    <span class="button2" onclick="db.call('notification/add')"> + new notification </span>
+    <span class="button2" onclick="db.call('notification/add')"> + add news </span>
 {{pass}}
