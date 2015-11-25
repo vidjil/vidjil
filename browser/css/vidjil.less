@@ -879,15 +879,18 @@ span .substitution{
   left: calc(~"50% - 250px");
 }
 
-.popup_container a {
-  text-decoration: none;
-  font-weight: bold;
-  color: @default ;
+
+/* Main style for <a>
+   Used in particular in .popup_container, on login screen, in news, in links to results (for patient list and patient info)  */
+
+a {
+  color: @default;
 }
 
-.popup_container a:hover{
-  color : @select;
+a:hover {
+  color: @select;
 }
+/* ----------------- */
 
 .data-container, .info-container{
   z-index:3;

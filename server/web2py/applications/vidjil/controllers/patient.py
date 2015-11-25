@@ -511,6 +511,12 @@ def add_form():
                    "args" : { "id" : id },
                    "message": patient_name + ": patient added"}
             log.info(res)
+
+            if (id % 100) == 0:
+                mail.send(to=defs.ADMIN_EMAILS,
+                subject="[Vidjil] %d" % id,
+                message="The %dth patient has just been created." % id)
+
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
         else :

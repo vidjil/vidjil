@@ -429,6 +429,7 @@ Database.prototype = {
 
     /*récupére et initialise le browser avec un fichier .data
      * args => format json ( parametre attendu  > patient_id, config_id)
+     * filename => patient name used in the patient menu for the previous visited patients
      */
     load_data: function (args, filename) {
         var self = this;
@@ -671,7 +672,7 @@ Database.prototype = {
 			for (var i=0; i < messages.length; ++i) {
 				message = document.createElement('div');
 				message.className = classNames[messages[i]['notification']['priority']] + " notification";
-				$(message).attr('onclick', "db.call('notification/info', {'id': '" + messages[i]['notification']['id'] + "'})");
+				$(message).attr('onclick', "db.call('notification/index', {'id': '" + messages[i]['notification']['id'] + "'})");
 				$(message).append(
 					// message is sanitized by the server so we unescape the string to include links and formatting
 					document.createTextNode(unescape(messages[i]['notification']['title']))

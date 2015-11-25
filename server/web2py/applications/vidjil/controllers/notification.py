@@ -35,7 +35,7 @@ def index():
     if not auth.is_admin():
          notifications = notifications.find(lambda row: row.expiration >= date.today())
          
-    return dict(message="Notifications",
+    return dict(message="News",
                 query=query,
                 notifications=notifications)
 
@@ -65,7 +65,7 @@ def add_form():
     if request.vars["priority"] == "" :
         error += "priority needed, "
     if request.vars["expiration"] == "" :
-        erro += "expiration date required"
+        error += "expiration date required"
     else:
         try:
             datetime.strptime(""+request.vars['expiration'], '%Y-%m-%d')

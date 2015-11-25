@@ -7,6 +7,9 @@
     <div class="db_block info_block">
         {{=XML(markdown(query.message_content))}}
     </div>
+
+
+    <h3>Older news</h3>
 {{pass}}
 
 <div id="db_table_container" {{if query is not None:}}class="info_table"{{pass}}>
@@ -15,12 +18,12 @@
         <thead>
             <tr>
                 <td class="column_100"> Title </td>
-                <td class="column_100"> Message </td>
-                <td class="column_100"> Creation Date </td>
+                <td class="column_200"> Message </td>
+                <td class="column_100"> Date </td>
             {{if auth.is_admin():}} 
-                <td class="column_100"> Creator </td>
-                <td class="column_100"> Type </td>
-                <td class="column_100"> Priority </td>
+                <td class="column_50"> Creator </td>
+                <td class="column_50"> Type </td>
+                <td class="column_50"> Priority </td>
                 <td class="column_100"> Expiration Date </td>
                 <td class="column5"> </td>
                 <td class="column5"> </td>
@@ -69,5 +72,5 @@
 </div>
 
 {{if auth.is_admin():}}
-    <span class="button2" onclick="db.call('notification/add')"> + new notification </span>
+    <span class="button2" onclick="db.call('notification/add')"> + add news </span>
 {{pass}}
