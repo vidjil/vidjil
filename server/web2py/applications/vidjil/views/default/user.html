@@ -21,11 +21,13 @@
     {{if not 'register' in auth.settings.actions_disabled:}}
         {{#<button class="btn" onclick="db.call('default/user/register')">Register</button>}}
     {{pass}}
-    
+
+<!--    
     {{if not 'request_reset_password' in auth.settings.actions_disabled:}}
         <button class="btn" onclick="db.call('default/user/request_reset_password')">Lost Password</button>
     {{pass}}
- 
+ -->
+
 <p>
 demo login: <i>demo@vidjil.org</i>
 <br />password: <i>demo</i>
