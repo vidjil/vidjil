@@ -670,12 +670,21 @@ Database.prototype = {
 
 		if (messages.length > 0) {
 			for (var i=0; i < messages.length; ++i) {
+
+                                display_title = ""
+                                if (messages[i]['notification']['message_type'] == 'login')
+                                {
+                                    display_title += messages[i]['notification']['creation_datetime'].split(' ')[0] + ' : '
+                                }
+                                display_title += messages[i]['notification']['title']
+
 				message = document.createElement('div');
 				message.className = classNames[messages[i]['notification']['priority']] + " notification";
 				$(message).attr('onclick', "db.call('notification/index', {'id': '" + messages[i]['notification']['id'] + "'})");
+
 				$(message).append(
 					// message is sanitized by the server so we unescape the string to include links and formatting
-					document.createTextNode(unescape(messages[i]['notification']['title']))
+					document.createTextNode(unescape(display_title))
 				);
 				elem.append(message);
 			}
