@@ -183,18 +183,12 @@ Clone.prototype = {
 
         return result
     },
-    
-    
+
     /**
-     * return the size ratio with a fixed number of character
-     * use notation defined in model
-     * @param {integer} time - tracking point (default value : current tracking point)
-     * @return {string} size
-     * */
-    getStrSize: function (time) {
-        var size = this.getSize(time);
-        var sizeQ = this.m.getSizeThresholdQ(time);
-        return this.m.formatSize(size, true, sizeQ)
+     * @return {string} the global size ratio of the clone at the given time
+     */
+    getStrSize: function(time) {
+        return this.m.getStrAnySize(time, this.getSize(time));
     },
     
     /**
@@ -223,12 +217,6 @@ Clone.prototype = {
      * @param {integer} time - tracking point (default value : current tracking point)
      * @return {string} size
      * */
-    getStrSystemSize: function (time) {
-        time = this.m.getTime(time)
-        var size = this.getSystemSize(time);
-        var sizeQ = this.m.getSizeThresholdQ(time);
-        return this.m.formatSize(size, true, sizeQ)
-    },
 
 
     /**
@@ -241,13 +229,6 @@ Clone.prototype = {
         if (this.norm) result = this.normalize(result, time)
         return result
 
-    },
-
-    getStrSystemGroupSize: function (time) {
-        time = this.m.getTime(time)
-        var size = this.getSystemGroupSize(time)
-        var sizeQ = this.m.getSizeThresholdQ(time);
-        return this.m.formatSize(size, true, sizeQ)
     },
 
     /* return a printable size such as either '26.32%' or '26.32% (33.66% of IGH)' (when there are several systems) */

@@ -1544,6 +1544,18 @@ Model.prototype = {
         return result;
     },
 
+
+    /**
+     * return the size ratio with a fixed number of character
+     * @param {integer} time - tracking point (default value : current tracking point)
+     * @param {integer} size - the ratio to be formatted
+     * @return {string} size
+     * */
+    getStrAnySize: function (time, size) {
+        var sizeQ = this.getSizeThresholdQ(time);
+        return this.formatSize(size, true, sizeQ)
+    },
+
     /**
      * format size with the default format in use (model.notation_type) 
      * @param {float} size 
