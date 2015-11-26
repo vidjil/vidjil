@@ -698,12 +698,13 @@ Segment.prototype = {
         if (sumReads > 0) {
             t += length + " clone" + (length>1 ? "s" : "") + ", "
 
+            t += this.m.toStringThousands(sumReads) + " read" + (sumReads>1 ? "s" : "")
+
+            percentageStr = this.m.getStrAnySize(this.m.t, sumPercentage)
+            if (percentageStr != "+")
+                t += " (" + percentageStr + ")"
             if (length == 1)
-                t += lastActiveClone.getPrintableSize()
-            else {
-                t += this.m.toStringThousands(sumReads) + " read" + (sumReads>1 ? "s" : "") + ", "
-                t += this.m.formatSize(sumPercentage, true);
-            }
+                extra_info_system = lastActiveClone.getStrAllSystemSize(this.m.t, true)
             t += " "
             $(".focus_selected").css("display", "")
         }
@@ -712,6 +713,18 @@ Segment.prototype = {
         }
             
         $(".stats_content").text(t)
+        if (length == 1) {
+            s = ''
+            if (extra_info_system.systemGroup != undefined) {
+                s = extra_info_system.systemGroup
+                if (extra_info_system.system != undefined)
+                    s += ', '
+            }
+            if (extra_info_system.system != undefined) {
+                s += extra_info_system.system
+            }
+            $(".stats_content").prop('title', s)
+        }
     },
 
     /**
