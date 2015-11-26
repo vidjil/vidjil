@@ -277,20 +277,21 @@ Clone.prototype = {
         if (reads < this.m.NB_READS_THRESHOLD_QUANTIFIABLE)
             return s
 
+        sizes = this.getStrAllSystemSize(time, true)
+
         s += '('
-        s += this.getStrSize(time)
+        s += sizes.global
 
         if (this.m.system_available.length>1) {
-
-            systemGroup = this.m.systemGroup(this.germline)
-            if (systemGroup.indexOf('/') > -1) // if the system group has more than one germline
+            if (sizes.systemGroup != undefined) // if the system group has more than one germline
             {
                 s += ', '
-                s += this.getStrSystemGroupSize(time) + ' of ' + systemGroup
+                s += sizes.systemGroup
             }
-
-            s += ', '
-            s += this.getStrSystemSize(time) + ' of ' + this.germline
+            if (sizes.system != undefined) {
+                s += ', '
+                s += sizes.system
+            }
         }
 
         s += ')'
