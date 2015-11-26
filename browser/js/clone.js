@@ -212,12 +212,49 @@ Clone.prototype = {
     },
 
     /**
-     * return the clone's system size with a fixed number of character
+     * Return the size ratios of the current clone at a given time.
+     * Return the size globally, for the clone's system and for the clone's
+     * system group.
+     */
+    getAllSystemSize: function(time) {
+        return {global: this.getSize(time),
+                system: this.getSystemSize(time),
+                systemGroup: this.getSystemGroupSize(time)};
+    },
+
+    /**
+     * return the clone's ratio sizes with a fixed number of character
      * use notation defined in model
      * @param {integer} time - tracking point (default value : current tracking point)
-     * @return {string} size
+     * @param {boolean} extra_info - true iff we add information in the system strings
+     * to the system they refer to.
+     * @return {object} with three fields: global, system and systemGroup whose
+     * values are sizes as formatted strings.
+     * For systemGroup the value may be undefined if there is no system group.
      * */
+    getStrAllSystemSize: function (time, extra_info) {
+        extra_info = extra_info || false
 
+        sizes = this.getAllSystemSize(time)
+
+        if (sizes.systemGroup == 0
+            || this.m.systemGroup(this.germline) == this.germline)
+            systemGroupStr = undefined
+        else
+            systemGroupStr = this.m.getStrAnySize(time, sizes.systemGroup)
+            + (extra_info ? ' of ' + this.m.systemGroup(this.germline) : '')
+
+        systemStr = this.m.getStrAnySize(time, sizes.system)
+        if (systemStr != "+")
+            systemStr = this.m.getStrAnySize(time, sizes.system)
+            + (extra_info ? ' of ' + this.germline : '')
+        else
+            systemStr = undefined
+
+        return {global: this.m.getStrAnySize(time, sizes.global),
+                system: systemStr,
+                systemGroup: systemGroupStr}
+    },
 
     /**
        Ratio relative to the system group (if it exists) */
