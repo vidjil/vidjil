@@ -139,7 +139,7 @@ Clone.prototype = {
 
 
     /**
-     * compute the clone size ( sum of all clones clustered ) at a given time
+     * compute the clone size ( ratio of all clones clustered ) at a given time
      * @param {integer} time - tracking point (default value : current tracking point)
      * @return {float} size
      * */
@@ -155,7 +155,7 @@ Clone.prototype = {
     }, //end getSize
     
     /**
-     * compute the clone size (sum of all clones clustered) at a given time <br>
+     * compute the clone size (ratio of all clones clustered) at a given time <br>
      * return 'undefined' in case of empty clone <br>
      * @param {integer} time - tracking point (default value : current tracking point)
      * @return {float} size
@@ -186,7 +186,7 @@ Clone.prototype = {
     
     
     /**
-     * return the clone size with a fixed number of character
+     * return the size ratio with a fixed number of character
      * use notation defined in model
      * @param {integer} time - tracking point (default value : current tracking point)
      * @return {string} size
@@ -198,7 +198,7 @@ Clone.prototype = {
     },
     
     /**
-     * return the clone's system size
+     * return the clone's system size ratio
      * use notation defined in model
      * @param {integer} time - tracking point (default value : current tracking point)
      * @return {float} size
@@ -231,7 +231,8 @@ Clone.prototype = {
     },
 
 
-    /* Ratio relative to the system group */
+    /**
+       Ratio relative to the system group (if it exists) */
     getSystemGroupSize: function (time) {
         var group_reads = this.m.systemGroupSize(this.germline, this.m.getTime(time))
 
