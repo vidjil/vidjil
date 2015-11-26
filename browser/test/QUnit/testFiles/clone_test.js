@@ -171,7 +171,10 @@ test("clone : size", function() {
     m.initClones()
 
     equal(c1.getSystemSize(), "0.1", "clone c1 system size : 0.1");
-    equal(c1.getStrSystemSize(), "10.00%", "clone c1 system size : 10%");
+    sizes = c1.getStrAllSystemSize(m.t, true);
+    equal(m.getStrAnySize(0, c1.getSystemSize()), "10.00%", "clone c1 system size : 10%");
+    equal(sizes.system, "10.00% of TRG", "clone c1 system size: 10%")
+    equal(sizes.systemGroup, undefined, "clone c1 system group size: undefined")
     m.select(0)
     m.select(1)
     m.merge()
