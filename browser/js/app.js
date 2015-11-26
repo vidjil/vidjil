@@ -6,22 +6,30 @@ requirejs.config({
     }
 });
 
-require(['../conf'], function () {}, function(err) {});
-require(["../view"], function () {}, function(err) {});
+// Load required libraries first
 require(["jquery",
-        "d3.v3",
-        "jquery.form",
-        "StackBlur",
-        "jspdf",
-        "jspdf.plugin.addimage",
-        "jspdf.plugin.svgToPdf",
-        "jspdf.plugin.split_text_to_size",
-        "jspdf.plugin.standard_fonts_metrics",
-        "underscore",
-        "rgbcolor",
-        "file",
-        "tsne",
-        "../compare", 
+         "d3.v3",
+         "jquery.form",
+         "StackBlur",
+         "jspdf",
+         "jspdf.plugin.addimage",
+         "jspdf.plugin.svgToPdf",
+         "jspdf.plugin.split_text_to_size",
+         "jspdf.plugin.standard_fonts_metrics",
+         "underscore",
+         "rgbcolor",
+         "file",
+         "tsne"],
+        function () {}, function(err) {});
+
+// Then config file (needed by Vidjil)
+require(['../conf'], function () {}, function(err) {});
+
+// Then load views (otherwise that could generate some errors if
+// some files are loaded before the views)
+require(["../view"], function () {}, function(err) {});
+
+require(["../compare",
         "../menu", 
         "../dbscan", 
         "../germline", 
