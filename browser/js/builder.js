@@ -85,11 +85,11 @@ Builder.prototype = {
             .style.height = spSize + "%"
         document.getElementById("visu2")
             .style.height = graphSize + "%"
+        this.m.resize();
     },
 
     dropSeparator: function () {
         if (this.drag_separator) {
-            this.m.resize();
             this.drag_separator = false;
 
             var sel = window.getSelection();
