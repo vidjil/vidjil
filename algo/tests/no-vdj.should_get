@@ -1,0 +1,11 @@
+!LAUNCH: ../../vidjil -g ../../germline ../../data/no-vdj.fa 
+
+$ No sequence is segmented
+1: junction detected in 0 reads
+
+$ The proper unsegmentation cause is given
+1: UNSEG only V      -> .* 0
+1: UNSEG only J      -> .* 0
+1: UNSEG too few V/J -> .* 3
+
+
