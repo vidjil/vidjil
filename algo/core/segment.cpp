@@ -430,17 +430,17 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
   // We did not find a good segmentation point
   if (!max.max_found) {
     // We labeled it detected if there were both enough affect_5 and enough affect_3
-    bool detected = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD)
-      && (max.nb_after_left + max.nb_after_right >= DETECT_THRESHOLD);
+    bool detected_before = (max.nb_before_left + max.nb_before_right >= DETECT_THRESHOLD);
+    bool detected_after = (max.nb_after_left + max.nb_after_right >= DETECT_THRESHOLD);
 
-    if (max.nb_before_left + max.nb_before_right + max.nb_after_left + max.nb_after_right == 0)
-      because = UNSEG_TOO_FEW_ZERO ;
-    else if ((strand == 1 && max.nb_before_left == 0) || (strand == -1 && max.nb_after_right == 0))
-      because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_V ;
-    else if ((strand == 1 && max.nb_after_right == 0)|| (strand == -1 && max.nb_before_left == 0))
-      because = detected ? UNSEG_AMBIGUOUS : UNSEG_TOO_FEW_J ;
+    if (detected_before && detected_after)
+      because = UNSEG_AMBIGUOUS ;
+    else if ((strand == 1 && detected_before) || (strand == -1 && detected_after))
+      because = UNSEG_TOO_FEW_J ;
+    else if ((strand == 1 && detected_after) || (strand == -1 && detected_before))
+      because = UNSEG_TOO_FEW_V ;
     else
-      because = UNSEG_AMBIGUOUS;
+      because = UNSEG_TOO_FEW_ZERO ;
 
     return ;
   }
