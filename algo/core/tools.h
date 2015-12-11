@@ -2,6 +2,11 @@
 #define TOOLS_H
 
 
+// error
+#define ERROR_STRING "[error] "
+#define WARNING_STRING "[warning] "
+
+
 #define NO_LIMIT_VALUE  -1  // Value for 'all' on command-line options
 
 

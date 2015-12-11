@@ -28,7 +28,17 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads,
   unsigned long long int bp_total = 0;
 
   while (reads->hasNext()) {
-    reads->next();
+
+    try {
+      reads->next();
+    }
+    catch (const invalid_argument e) {
+      cout << endl;
+      cerr << WARNING_STRING << "Error in getting a new read: " << e.what() << endl;
+      cerr << WARNING_STRING << "Vidjil stops the analysis here, after " << nb_reads << " reads." << endl;
+      break ;
+    }
+
     nb_reads++;
 
     if (out_affects) {

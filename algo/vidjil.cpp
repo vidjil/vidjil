@@ -120,9 +120,6 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 
 #define DEFAULT_TRIM 100
 
-// error
-#define ERROR_STRING "[error] "
-
 // warn
 #define WARN_MAX_CLONES 100
 #define WARN_PERCENT_SEGMENTED 40
