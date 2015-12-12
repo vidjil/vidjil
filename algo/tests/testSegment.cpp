@@ -202,14 +202,9 @@ void testSegmentationCause() {
       TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "fewJ2: " << ks.getInfoLineWithAffects());
       TAP_TEST(ks.getSegmentationStatus() == UNSEG_TOO_FEW_J, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
-    } else if (data.read(i).label == "seq-delta-min-old") {
-      // This test was a test for delta_min but with the CountKmerAffectAnalyser
-      // the read is segmented, now. So we keep it, but change the test
-      TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "delta-min: " << ks.getInfoLineWithAffects());
-      TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
-      TAP_TEST(ks.getJunction(30) == "GCCACCTGGGACAGGGAATTATTATAAGAA"
-               || ks.getJunction(30) == "TGCCACCTGGGACAGGGAATTATTATAAGA", 
-               TEST_KMER_JUNCTION, "junction: " << ks.getJunction(30));
+    } else if (data.read(i).label == "seq-ambiguous-VJVJ") {
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "ambiguous-VJVJ: " << ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_AMBIGUOUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-delta-min") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "delta-min: " << ks.getInfoLineWithAffects());

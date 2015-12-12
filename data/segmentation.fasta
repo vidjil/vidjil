@@ -20,7 +20,8 @@ tgtgccacctgggacaggAAAAAAAAAAAAAAAAA
 TTTTTTTTTTTTTTTTTcctgtcccaggtggcaca
 >seq-fewJ2
 tgcaaaatctaattaaaaatgattctgggttctattactgtgccacctgggacaggAAAAAAAAAAAAAAAAAA
->seq-delta-min-old
+
+>seq-ambiguous-VJVJ
 tgtgccacctgggacaggGAATTATTATAAGAAACTtgtgccacctgggacaggGAATTATTATAAGAAACT
 >seq-delta-min
 cttgggcagttggaacaacACTTGTTGTCACAG
