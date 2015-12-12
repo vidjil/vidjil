@@ -8,6 +8,8 @@
 #include <vector>
 #include <cassert>
 #include <map>
+#include <iostream>
+#include <iomanip>
 
 // Define two constant affectations: ambiguous and unknown.
 

@@ -15,7 +15,7 @@ bool operator==(const affect_infos &ai1, const affect_infos &ai2) {
 ostream &operator<<(ostream &out, const affect_infos &a)
 {
   out << "$ " ;
-  out << "found " << a.max_found << ", " ;
+  out << "found " << (a.max_found ? "y" : "n") << ", " ;
   out << "value " << a.max_value<< ", " ;
   out << "pos " << a.first_pos_max << "-" << a.last_pos_max << ", " ;
   out << "before " << a.nb_before_left << "/" << a.nb_before_right << ", " ;
@@ -151,6 +151,14 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
       results.nb_after_right = 0;
       results.nb_before_right = 0;
     }
+
+#ifdef DEBUG_GET_MAXIMUM
+    cout << setw(3) << i
+         << "  " << affectations[i - span + maxOverlap] << ((affectations[i - span + maxOverlap] == before)?"!":" ")
+         << "  " << affectations[i] << ((affectations[i] == after)?"!":" ")
+         << " =" << setw(3) << currentValue
+         << "  " << results ;
+#endif
   }
   for (int i = length - span + maxOverlap; i < length && i >= 0; i++) {
     if (affectations[i] == before)
@@ -175,8 +183,12 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
       && currentValue < results.max_value
       && results.max_value > 0) {
     results.max_found = true;
-    return results;
   }
+
+#ifdef DEBUG_GET_MAXIMUM
+  cout << results ;
+#endif
+
   return results;
 }
 
