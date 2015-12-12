@@ -5,7 +5,8 @@
 #define PROGRESS_POINT 25000
 #define PROGRESS_LINE 40
 
-WindowExtractor::WindowExtractor(MultiGermline *multigermline): out_segmented(NULL), out_unsegmented(NULL), out_affects(NULL), max_reads_per_window(~0), multigermline(multigermline){
+WindowExtractor::WindowExtractor(MultiGermline *multigermline): out_segmented(NULL), out_unsegmented(NULL), out_unsegmented_detail(NULL), out_affects(NULL),
+                                                                max_reads_per_window(~0), multigermline(multigermline){
     for (list<Germline*>::const_iterator it = multigermline->germlines.begin(); it != multigermline->germlines.end(); ++it)
     {
       Germline *germline = *it ;
@@ -89,6 +90,9 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads,
       if (out_unsegmented) {
         *out_unsegmented << *seg ;
       }
+      if (out_unsegmented_detail) {
+        *out_unsegmented_detail[seg->getSegmentationStatus()] << *seg ;
+      }
     }
 
     // Last line of detailed affects output
@@ -147,6 +151,10 @@ void WindowExtractor::setSegmentedOutput(ostream *out) {
 
 void WindowExtractor::setUnsegmentedOutput(ostream *out) {
   out_unsegmented = out;
+}
+
+void WindowExtractor::setUnsegmentedDetailOutput(ofstream **outs) {
+  out_unsegmented_detail = outs;
 }
 
 void WindowExtractor::setAffectsOutput(ostream *out) {

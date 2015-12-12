@@ -94,6 +94,7 @@ enum { CMD_WINDOWS, CMD_CLONES, CMD_SEGMENT, CMD_GERMLINES } ;
 #define WINDOWS_FILENAME ".windows.fa"
 #define SEGMENTED_FILENAME ".segmented.vdj.fa"
 #define UNSEGMENTED_FILENAME ".unsegmented.vdj.fa"
+#define UNSEGMENTED_DETAIL_FILENAME ".fa"
 #define AFFECTS_FILENAME ".affects"
 #define EDGES_FILENAME ".edges"
 #define COMP_FILENAME "comp.vidjil"
@@ -229,6 +230,7 @@ void usage(char *progname, bool advanced)
   cerr << "Detailed output per read (not recommended, large files)" << endl
        << "  -U            output segmented reads (in " << SEGMENTED_FILENAME << " file)" << endl
        << "  -u            output unsegmented reads (in " << UNSEGMENTED_FILENAME << " file)" << endl
+       << "  -uu           output unsegmented reads, gathered by unsegmentation cause (in *" << UNSEGMENTED_DETAIL_FILENAME << " files)" << endl
        << "  -K            output detailed k-mer affectation on all reads (in " << AFFECTS_FILENAME << " file) (use only for debug, for example -KX 100)" << endl
        << endl
  
@@ -347,6 +349,7 @@ int main (int argc, char **argv)
   bool output_sequences_by_cluster = false;
   bool output_segmented = false;
   bool output_unsegmented = false;
+  bool output_unsegmented_detail = false;
   bool output_affects = false;
   bool keep_unsegmented_as_clone = false;
 
@@ -631,6 +634,7 @@ int main (int argc, char **argv)
         break;
 
       case 'u':
+        output_unsegmented_detail = output_unsegmented; // -uu
         output_unsegmented = true;
         break;
       case 'U':
@@ -1006,6 +1010,7 @@ int main (int argc, char **argv)
 
     ofstream *out_segmented = NULL;
     ofstream *out_unsegmented = NULL;
+    ofstream *out_unsegmented_detail[STATS_SIZE];
     ofstream *out_affects = NULL;
  
     WindowExtractor we(multigermline);
@@ -1025,6 +1030,25 @@ int main (int argc, char **argv)
       out_unsegmented = new ofstream(f_unsegmented.c_str());
       we.setUnsegmentedOutput(out_unsegmented);
     }
+
+    if (output_unsegmented_detail) {
+      for (int i=0; i<STATS_SIZE; i++)
+        {
+          // Sanitize segmented_mesg[i]
+          string s = segmented_mesg[i] ;
+          replace(s.begin(), s.end(), '?', '_');
+          replace(s.begin(), s.end(), ' ', '_');
+          replace(s.begin(), s.end(), '/', '_');
+          replace(s.begin(), s.end(), '<', '_');
+
+          string f_unsegmented_detail = out_dir + f_basename + "." + s + UNSEGMENTED_DETAIL_FILENAME ;
+          cout << "  ==> " << f_unsegmented_detail << endl ;
+          out_unsegmented_detail[i] = new ofstream(f_unsegmented_detail.c_str());
+        }
+
+      we.setUnsegmentedDetailOutput(out_unsegmented_detail);
+    }
+
 
     if (output_affects) {
       string f_affects = out_dir + f_basename + AFFECTS_FILENAME ;
