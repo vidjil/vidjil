@@ -207,12 +207,11 @@ void testSegmentationCause() {
       TAP_TEST(ks.getSegmentationStatus() == UNSEG_AMBIGUOUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-delta-min") {
-      TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "delta-min: " << ks.getInfoLineWithAffects());
-      TAP_TEST(ks.getSegmentationStatus() == SEG_PLUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
-      TAP_TEST(ks.getJunction(21) == "GGCAGTTGGAACAACACTTGT",
-               TEST_KMER_JUNCTION, "window: " << ks.getJunction(21));
-      TAP_TEST(ks.getLeft() == 9, TEST_KMER_LEFT, "left = " << ks.getLeft() << ", " << ks.getInfoLineWithAffects());
-      TAP_TEST(ks.getRight() == 19, TEST_KMER_RIGHT, "right = " << ks.getRight() << ", " << ks.getInfoLineWithAffects());
+      // This test was a test for delta_min but the read is now reported as ambiguous,
+      // as they are, at the left of the segmentation point, not twice more "V" k-mers than "J" k-mers.
+      // We keep the test, but change it.
+      TAP_TEST(! ks.isSegmented(), TEST_KMER_IS_SEGMENTED, "delta-min: " << ks.getInfoLineWithAffects());
+      TAP_TEST(ks.getSegmentationStatus() == UNSEG_AMBIGUOUS, TEST_KMER_SEGMENTATION_CAUSE, ks.getInfoLineWithAffects());
       nb_checked++;
     } else if (data.read(i).label == "seq-seg-no-window") {
       TAP_TEST(ks.isSegmented(), TEST_KMER_IS_SEGMENTED, ks.getInfoLineWithAffects());
