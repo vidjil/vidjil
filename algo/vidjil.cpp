@@ -1032,7 +1032,7 @@ int main (int argc, char **argv)
     }
 
     if (output_unsegmented_detail) {
-      for (int i=0; i<STATS_SIZE; i++)
+      for (int i=STATS_FIRST_UNSEG; i<STATS_SIZE; i++)
         {
           // Sanitize segmented_mesg[i]
           string s = segmented_mesg[i] ;

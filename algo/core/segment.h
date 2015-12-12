@@ -54,6 +54,9 @@ enum SEGMENTED { NOT_PROCESSED,
 		 UNSEG_TOO_SHORT_FOR_WINDOW,
 
 		 STATS_SIZE } ;
+
+#define STATS_FIRST_UNSEG UNSEG_TOO_SHORT
+
 const char* const segmented_mesg[] = { "?",
                                        "SEG",
                                        "SEG_+", "SEG_-",

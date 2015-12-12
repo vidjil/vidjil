@@ -90,7 +90,7 @@ WindowsStorage *WindowExtractor::extract(OnlineFasta *reads,
       if (out_unsegmented) {
         *out_unsegmented << *seg ;
       }
-      if (out_unsegmented_detail) {
+      if (out_unsegmented_detail && (seg->getSegmentationStatus() >= STATS_FIRST_UNSEG)) {
         *out_unsegmented_detail[seg->getSegmentationStatus()] << *seg ;
       }
     }
