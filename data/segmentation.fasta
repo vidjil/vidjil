@@ -23,7 +23,12 @@ tgcaaaatctaattaaaaatgattctgggttctattactgtgccacctgggacaggAAAAAAAAAAAAAAAAAA
 
 >seq-ambiguous-VJVJ
 tgtgccacctgggacaggGAATTATTATAAGAAACTtgtgccacctgggacaggGAATTATTATAAGAAACT
+
 >seq-delta-min
+#vvvvvvvvvvvvvvvvvv               # TRGV11*01 (start)
+#         jjjjjjjjjjjjjjjjjjjjjjj # TRGJ1*02
+#VVVVVVVVVJJJJJJJJJJJJJJ          # contiguous 10-mer
 cttgggcagttggaacaacACTTGTTGTCACAG
+
 >seq-seg-no-window
 acctgggacaggGAATTATTATAA
