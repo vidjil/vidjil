@@ -163,10 +163,12 @@ class KmerAffectAnalyser: public AffectAnalyser {
    *         maximise the number of affectations before, minus the number of
    *         affectations after the returned positions.
    *
-   *         The maximum reached must be above max(0, total number of
-   *         <before>) and such that the number of <before> after the
-   *         rightmost max position is <ratioMin> times less than the number
-   *         of <after> after that position. If no so much maximum is found,
+   *         The maximum reached must be above max(0, total number of <before>)
+   *         and such that the numbers of <before>/<after> in "good" positions
+   *         (at the left of the leftmost max position for <before>,
+   *         and at the right of the rightmost max position for <after>)
+   *         are at least <ratioMin> times than the numbers of <before>/<after>
+   *         in "bad" positions. If no so much maximum is found,
    *         the boolean <max_found> is set to false in the structure.
    *
    * @complexity time: linear in count(), space: constant

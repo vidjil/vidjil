@@ -178,7 +178,10 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
      2) there should be at least one 'before' and one 'after' (? CHECK ?)
   */
 
-  if (results.nb_after_right >= results.nb_before_right*ratioMin
+  if ((results.nb_after_right >= results.nb_before_right*ratioMin)
+      && (results.nb_after_right >= results.nb_after_left*ratioMin)
+      && (results.nb_before_left >= results.nb_after_left*ratioMin)
+      && (results.nb_before_left >= results.nb_before_right*ratioMin)
       && (results.nb_after_right > 0 || results.nb_before_right == 0)
       && currentValue < results.max_value
       && results.max_value > 0) {
