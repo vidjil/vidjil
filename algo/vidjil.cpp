@@ -1525,6 +1525,11 @@ int main (int argc, char **argv)
     if (output_unsegmented)
       delete out_unsegmented;
 
+    if (output_unsegmented_detail)
+      for (int i=0; i<STATS_SIZE; i++)
+        delete out_unsegmented_detail[i];
+
+
   } else if (command == CMD_SEGMENT) {
     //$$ CMD_SEGMENT
     ////////////////////////////////////////
