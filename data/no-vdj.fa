@@ -1,10 +1,40 @@
+# Testing unsegmentation classification
+
 # Sequences outside any V(D)J locus
 
->nothing-1
+>too_few_vj-1
 CTAGGCATGGCTCCTCTCCACAGGAAAACTCCACTCCAGTGCTCAGCTTGCACCCTGGCACAGGCCAGCAGTTGCTGGAAGTCAGACACCTGAGAAGAAC
 
->nothing-2
+>too_few_vj-2
 GCCTCAGGCCAGCCTTCCGCTCCTTGAAGCTGGTCTCCGCACAGTGCTGGTTCCGTCACCCCCACCCAGGGAAGCAGGTCTGAGCAGCTTGTCCTGGCTG
 
->nothing-3
+>too_few_vj-3
 CACAGCTAGAGATCCTTTATTAAAAGCACACTGTTGGTTTCTGCTCAGTTCTTTATTGATTGGTGTGCCGTTTTCTCTGGAAGCCTCTTAAGAACACAGT
+
+
+# Fake sequences
+
+>too_short
+acgt
+
+>strand IGKV1-12*01(revcomp)--IGKJ1*01
+ggagggaaactgttagcctgttgacaatagtaagttgc
+gtggacgttcggccaagggaccaaggtggaaatcaaac
+
+>only_V TRDV1*01--nothing
+ttacagctagaagattcagcaaagtacttttgtgctcttggggaact
+CTAGGCATGGCTCCTCTCCACAGGAAAACTCCACCTAGGCATGGCTC
+
+>only_J nothing--TRGJ1*01
+CTAGGCATGGCTCCTCTCCACAGGAAAACTCCACCTAGGCATGGCTC
+gaattattataagaaactctttggcagtggaacaacactggttgtcacag
+
+>ambiguous TRGV1*01 TRGJ1*01 TRGV1*01 TRGJ1*01
+ggaatcactccaggaaagtatgacactggaagcacaaggagcaattggaatttgaga
+gaattattataagaaactctttggc
+ctgcaaaatctaattaaaaatgattctgggttctattactgtgccacctgggacagg
+agtggaacaacactggttgtcacag
+
+>too_short_w TRGV1*01 TRGJ1*01
+actgtgccacctgggacagg
+gaattattataagaaactct
