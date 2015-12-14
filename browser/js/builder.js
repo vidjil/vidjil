@@ -488,9 +488,9 @@ Builder.prototype = {
         parent.appendChild(sample_div)
 
         // Total
-        parent.appendChild(div_total)
 
         var div_total = this.build_named_info_line("info_total", "total", this.m.toStringThousands(this.m.reads.total[this.m.t]) + " reads")
+        parent.appendChild(div_total)
 
         // Segmented reads
         var val = "no reads segmented" ;
