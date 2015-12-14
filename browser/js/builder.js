@@ -403,7 +403,8 @@ Builder.prototype = {
         }
         
         //point info
-        var div_point = this.build_info_line("info_point", "sample",  this.m.getStrTime(this.m.t, "name") )
+        var sample_div = document.createElement("div")
+        sample_div.className = "sample_details"
 
         if (this.m.samples.order.length > 1){
             var nextTime = self.createClickableElem('span',
@@ -414,7 +415,7 @@ Builder.prototype = {
                     self.m.nextTime();
                 }
             );
-            div_point.appendChild(nextTime)    
+            sample_div.appendChild(nextTime)    
             
             if (self.m.isPlaying){
                 var stop = self.createClickableElem('span',
@@ -426,7 +427,7 @@ Builder.prototype = {
                     }
                 );
                 
-                div_point.appendChild(stop)
+                sample_div.appendChild(stop)
             } else {
                 var play = self.createClickableElem('span',
                     [document.createTextNode("play")],
@@ -436,7 +437,7 @@ Builder.prototype = {
                         self.m.play(self.m.t);
                     }
                 );
-                div_point.appendChild(play)
+                sample_div.appendChild(play)
             }
             
             var previousTime = self.createClickableElem('span',
@@ -447,7 +448,7 @@ Builder.prototype = {
                     self.m.previousTime();
                 }
             );
-            div_point.appendChild(previousTime)
+            sample_div.appendChild(previousTime)
         }
         
         var editTimeName = self.createClickableElem('span',
