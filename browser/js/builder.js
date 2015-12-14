@@ -490,9 +490,8 @@ Builder.prototype = {
 
         var reads_div = document.createElement("div")
         reads_div.className = "reads_details"
-
-        var reads_title = document.createElement("span")
-        reads_title.className = "info_row"
+        var reads_title = document.createElement("div")
+        reads_title.className = "info_line centered"
         reads_title.appendChild(document.createTextNode("reads"))
 
         reads_div.appendChild(reads_title)
