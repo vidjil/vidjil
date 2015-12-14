@@ -487,10 +487,18 @@ Builder.prototype = {
 
         parent.appendChild(sample_div)
 
-        // Total
+        var reads_div = document.createElement("div")
+        reads_div.className = "reads_details"
 
+        var reads_title = document.createElement("span")
+        reads_title.className = "info_row"
+        reads_title.appendChild(document.createTextNode("reads"))
+
+        reads_div.appendChild(reads_title)
+
+        // Total
         var div_total = this.build_named_info_line("info_total", "total", this.m.toStringThousands(this.m.reads.total[this.m.t]) + " reads")
-        parent.appendChild(div_total)
+        reads_div.appendChild(div_total)
 
         // Segmented reads
         var val = "no reads segmented" ;
@@ -506,7 +514,7 @@ Builder.prototype = {
         }
 
         var div_segmented = this.build_named_info_line("info_segmented", "locus", val, warning)
-        parent.appendChild(div_segmented)
+        reads_div.appendChild(div_segmented)
 
 
         // Segmented reads, on the selected system(s)
@@ -524,9 +532,14 @@ Builder.prototype = {
             }
 
             var div_segmented = this.build_named_info_line("info_selected_locus", "selected", val, warning)
-            parent.appendChild(div_segmented)
+            reads_div.appendChild(div_segmented)
         }
-  
+        
+        parent.appendChild(reads_div)
+        
+        var clear_div = document.createElement("div")
+        clear_div.className = "clear"
+        parent.appendChild(clear_div)
 
         var div_color = this.build_info_color()
         parent.appendChild(div_color) 
