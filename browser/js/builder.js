@@ -405,6 +405,29 @@ Builder.prototype = {
         //point info
         var sample_div = document.createElement("div")
         sample_div.className = "sample_details"
+        
+        var editTimeName = self.createClickableElem('span',
+            [document.createTextNode("edit")],
+            "",
+            "button_right",
+            function () {
+                self.edit(this, "names");
+            }
+        );
+        sample_div.appendChild(editTimeName)
+        
+        var infoTime = self.createClickableElem('span',
+            [document.createTextNode("Info")],
+            "",
+            "button_right",
+            function () {
+                console.log({"type": "big-popup", "msg": self.m.getPointHtmlInfo(self.m.t)});
+            }
+        );
+        sample_div.appendChild(infoTime)
+
+        var div_point = this.build_info_line("info_point",  this.m.getStrTime(this.m.t, "name") )
+        sample_div.appendChild(div_point)
 
         if (this.m.samples.order.length > 1){
             var nextTime = self.createClickableElem('span',
@@ -450,29 +473,7 @@ Builder.prototype = {
             );
             sample_div.appendChild(previousTime)
         }
-        
-        var editTimeName = self.createClickableElem('span',
-            [document.createTextNode("edit")],
-            "",
-            "button_right",
-            function () {
-                self.edit(this, "names");
-            }
-        );
-        div_point.appendChild(editTimeName)
-        
-        var infoTime = self.createClickableElem('span',
-            [document.createTextNode("Info")],
-            "",
-            "button_right",
-            function () {
-                console.log({"type": "big-popup", "msg": self.m.getPointHtmlInfo(self.m.t)});
-            }
-        );
-        div_point.appendChild(infoTime)
-        
-        parent.appendChild(div_point)
-        
+
         var div_date = this.build_info_line("info_date", this.m.getStrTime(this.m.t, "sampling_date") )
         var span = self.createClickableElem('span',
             [document.createTextNode("edit")],
