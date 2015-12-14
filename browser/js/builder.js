@@ -597,27 +597,37 @@ Builder.prototype = {
         return div
     },
     
-    build_info_line: function (id, name, value, className) {
-        var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode(name));
-        span1.className = "info_row"
-        var span2 = document.createElement('span');
+    build_info_line: function (id, value, className) {
+        var span = document.createElement('span');
 	if (!(typeof(className) === "undefined"))
 	    {
 		if (className)
 		{
-		    span2.className = className ;
+		    span.className = className ;
 		}
 	    }
-        span2.appendChild(document.createTextNode(value));
+        span.appendChild(document.createTextNode(value));
 
         var div = document.createElement('div');
         div.id = id
         div.className = "info_line"
-        div.appendChild(span1)
-        div.appendChild(span2)
+        div.appendChild(span)
 
         return div
+    },
+
+    build_named_info_line: function (id, name, value, className) {
+        var div = this.build_info_line(id, value, className);
+        var inner_span = div.firstChild;
+        div.innerHTML = null;
+
+        var info_row = document.createElement("span");
+        info_row.className = "info_row";
+        info_row.appendChild(document.createTextNode(name));
+
+        div.appendChild(info_row);
+        div.appendChild(inner_span);
+        return div;
     },
 
     build_info_color: function () {
