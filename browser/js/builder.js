@@ -483,8 +483,9 @@ Builder.prototype = {
             }
         );
         // div_date.appendChild(span)
-        parent.appendChild(div_date)
+        sample_div.appendChild(div_date)
 
+        parent.appendChild(sample_div)
 
         // Total
         var div_total = this.build_info_line("info_total", "total", this.m.toStringThousands(this.m.reads.total[this.m.t]) + " reads")
@@ -504,7 +505,7 @@ Builder.prototype = {
 	else if (percent < 50)  { val += " – Few reads segmented" ;  warning = "warning" ;  }
         }
 
-        var div_segmented = this.build_info_line("info_segmented", "segmented", val, warning)
+        var div_segmented = this.build_named_info_line("info_segmented", "locus", val, warning)
         parent.appendChild(div_segmented)
 
 
