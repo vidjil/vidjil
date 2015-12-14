@@ -1611,3 +1611,6 @@ table.log textarea {
 .clear {
   clear: both;
 }
+.centered {
+  text-align: center;
+}
