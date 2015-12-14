@@ -389,13 +389,6 @@ Builder.prototype = {
         var parent = document.getElementById("info")
         parent.innerHTML = "";
 
-        //file name
-        var div_data_file = document.createElement('div');
-        div_data_file.id = "info_data_file"
-        div_data_file.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
-        document.title = this.m.getPrintableAnalysisName()
-        parent.appendChild(div_data_file)
-
         //global info
         var div_analysis_file = this.build_info_line("info_analysis_file", "analysis", this.m.analysisFileName)
         parent.appendChild(div_analysis_file)
