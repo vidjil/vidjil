@@ -34,6 +34,7 @@ Builder.prototype = {
                 self.toggle_left_container()
             });
 
+        this.build_top_container()
         this.build_info_container()
         this.build_clusterSelector()
         this.initTag();
@@ -44,6 +45,7 @@ Builder.prototype = {
 
     update: function () {
 
+        this.build_top_container()
         this.build_info_container()
         this.updateTagBox();
     },
@@ -234,6 +236,7 @@ Builder.prototype = {
         a.id = "btnSave";
         a.onclick = function () {
             self.m.samples[data][self.m.t] = document.getElementById("edit_value").value
+            self.build_top_container()
             self.build_info_container()
             self.m.update()
             self.m.analysisHasChanged = true
@@ -534,6 +537,16 @@ Builder.prototype = {
         parent.appendChild(div_color) 
 
         this.initTag();
+    },
+
+    build_top_container: function () {
+        var parent = document.getElementById("top_filename");
+        parent.innerHTML = "";
+        var div_data_file = document.createElement('div');
+        //div_data_file.id = "info_data_file"
+        div_data_file.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
+        document.title = this.m.getPrintableAnalysisName()
+        parent.appendChild(div_data_file)
     },
 
     build_multi_system: function () {
