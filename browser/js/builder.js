@@ -497,7 +497,7 @@ Builder.prototype = {
         reads_div.appendChild(reads_title)
 
         // Total
-        var div_total = this.build_named_info_line("info_total", "total", this.m.toStringThousands(this.m.reads.total[this.m.t]) + " reads")
+        var div_total = this.build_named_info_line("info_total", "total", this.m.toStringThousands(this.m.reads.total[this.m.t]))
         reads_div.appendChild(div_total)
 
         // Segmented reads
@@ -506,7 +506,7 @@ Builder.prototype = {
         if (this.m.reads.segmented_all[this.m.t] > 0)
         {
         var percent = (this.m.reads.segmented_all[this.m.t] / this.m.reads.total[this.m.t]) * 100
-        val = this.m.toStringThousands(this.m.reads.segmented_all[this.m.t]) + " reads" + " (" + percent.toFixed(2) + "%)"
+        val = this.m.toStringThousands(this.m.reads.segmented_all[this.m.t]) + " (" + percent.toFixed(2) + "%)"
 
 	var warning = false ;
 	if (percent < 10)  { val += " – Very few reads segmented" ;  warning = "alert" ;  }
@@ -524,7 +524,7 @@ Builder.prototype = {
             if (this.m.reads.segmented[this.m.t] > 0)
             {
                 var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100
-                val = this.m.toStringThousands(this.m.reads.segmented[this.m.t]) + " reads" + " (" + percent.toFixed(2) + "%)"
+                val = this.m.toStringThousands(this.m.reads.segmented[this.m.t]) + " (" + percent.toFixed(2) + "%)"
 
                 var warning = false ;
                 if (percent < 10)  { warning = "alert" ;  }
