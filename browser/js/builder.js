@@ -390,15 +390,15 @@ Builder.prototype = {
         parent.innerHTML = "";
 
         //global info
-        var div_analysis_file = this.build_info_line("info_analysis_file", "analysis", this.m.analysisFileName)
-        parent.appendChild(div_analysis_file)
+        /*var div_analysis_file = this.build_info_line("info_analysis_file", this.m.analysisFileName)
+        parent.appendChild(div_analysis_file)*/
         
         //system
         if (this.m.system =="multi"){
             var div_multi_system = this.build_multi_system()
             parent.appendChild(div_multi_system)
         }else{
-            var div_system = this.build_info_line("info_system", "locus", this.m.system)
+            var div_system = this.build_info_line("info_system", this.m.system)
             parent.appendChild(div_system)
         }
         
@@ -472,7 +472,7 @@ Builder.prototype = {
         
         parent.appendChild(div_point)
         
-        var div_date = this.build_info_line("info_date", "date", this.m.getStrTime(this.m.t, "sampling_date") )
+        var div_date = this.build_info_line("info_date", this.m.getStrTime(this.m.t, "sampling_date") )
         var span = self.createClickableElem('span',
             [document.createTextNode("edit")],
             "",
@@ -521,7 +521,7 @@ Builder.prototype = {
                 else if (percent < 50)  { warning = "warning" ;  }
             }
 
-            var div_segmented = this.build_info_line("info_selected_locus", "selected locus", val, warning)
+            var div_segmented = this.build_named_info_line("info_selected_locus", "selected", val, warning)
             parent.appendChild(div_segmented)
         }
   
