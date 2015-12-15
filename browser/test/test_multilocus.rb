@@ -16,12 +16,12 @@ class TestMultilocus < BrowserTest
   end
   
   def test_00_info_segmentation
-    assert ($b.div(:id => 'info_segmented').text.include?  '742 377 reads (94.35%)'), ' Incorrect number of segmented reads'
+    assert ($b.div(:id => 'info_segmented').text.include?  '742 377 (94.35%)'), ' Incorrect number of segmented reads'
   end
 
 
   def test_00_info_reads
-    assert ($b.div(:id => 'info_total').text.include? '786 861 reads'), 'Incorrect number of reads'
+    assert ($b.div(:id => 'info_total').text.include? '786 861'), 'Incorrect number of reads'
   end
 
   def test_00_default_point_name
