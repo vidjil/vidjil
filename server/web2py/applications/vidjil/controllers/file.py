@@ -57,6 +57,11 @@ def add_form():
                             patient_id=request.vars['patient_id'],
                             filename=request.vars['filename'],
                             provider=auth.user_id)
+        
+        id_sample_set = db.sample_set.insert(sample_type="sequence_file")
+        
+        id_sample_set_membership = db.sample_set_membership.insert(sample_set_id=id_sample_set,
+                                                                  sequence_file_id=id)
     
         res = {"file_id" : id,
                "message": "file %s (%s): upload started: %s" % (id, request.vars['patient_id'], request.vars['filename']),
