@@ -96,13 +96,20 @@ use_janrain(auth, filename='private/janrain.key')
 ## >>> for row in rows: print row.id, row.myfield
 #########################################################################
 
+
+
+db.define_table('sample_set',
+               Field('sample_type', 'string'))
+
+
 db.define_table('patient',
                 Field('first_name','string'),
                 Field('last_name','string'),
                 Field('birth','date'),
                 Field('info','text'),
                 Field('id_label','string'),
-                Field('creator','reference auth_user'))
+                Field('creator','reference auth_user'),
+                Field('sample_set_id','reference sample_set'))
 
 '''
 db.patient.first_name.requires = IS_NOT_EMPTY( error_message='input needed' )
@@ -110,8 +117,6 @@ db.patient.last_name.requires = IS_NOT_EMPTY( error_message='input needed' )
 db.patient.birth.requires = IS_DATE(format=T('%Y-%m-%d'),
                    error_message='must be YYYY-MM-DD!')
 '''
-
-
 
 db.define_table('sequence_file',
                 Field('patient_id', 'reference patient'),
@@ -130,14 +135,6 @@ db.define_table('sequence_file',
 
 
 
-db.define_table('standard_file',
-                Field('name', 'string'),
-                Field('info','text'),
-                Field('data_file', 'upload',
-                      uploadfolder=defs.DIR_SEQUENCES,
-                      autodelete=AUTODELETE, length=LENGTH_UPLOAD))
-
-
 
 db.define_table('config',
                 Field('name', 'string'),
@@ -150,15 +147,18 @@ db.define_table('config',
 db.define_table('results_file',
                 Field('sequence_file_id', 'reference sequence_file'),
                 Field('config_id', 'reference config'),
+                Field('sample_set_id', 'reference sample_set'),
                 Field('run_date','datetime'),
                 Field('scheduler_task_id', 'integer'),
                 Field('data_file', 'upload', 
                       uploadfolder=defs.DIR_RESULTS,
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
+
 db.define_table('fused_file',
                 Field('patient_id', 'reference patient'),
                 Field('config_id', 'reference config'),
+                Field('sample_set_id', 'reference sample_set'),
                 Field('fuse_date','datetime', default="1970-01-01 00:00:00"),
                 Field('status', 'string'),
                 Field('sequence_file_list', 'string'),
@@ -188,6 +188,13 @@ db.define_table('user_preference',
 		Field('user_id', 'reference auth_user'),
 		Field('preference', 'string'),
 		Field('val', 'string'))
+
+
+db.define_table('sample_set_membership',
+               Field('sample_set_id','reference sample_set'),
+               Field('sequence_file_id', 'reference sequence_file'))
+
+
 
 
 ## after defining tables, uncomment below to enable auditing
