@@ -919,9 +919,9 @@ Sequence.prototype = {
                 if(code.length == 2) pos = i;
                 i++;
             }
-            
+
             if (code.length == 3){
-                this.seqAA[pos] = tableAA[code];
+                this.seqAA[pos] = tableAAdefault[code];
             }
         }
     },
@@ -1165,5 +1165,26 @@ tableAA = {
  'GGT' : 'G',
  'GGC' : 'G',
  'GGA' : 'G',
- 'GGG' : 'G'
+ 'GGG' : 'G',
+ // If 'N' in sequence, but with no effect
+ 'CTN' : 'L',
+ 'TCN' : 'S',
+ 'GGN' : 'G',
+ 'GCN' : 'A',
+ 'GTN' : 'V',
+ 'ACN' : 'T',
+ 'CCN' : 'P'
 };
+
+// Return a default value '?' if key are not in AA table
+function defaultDict(map, defaultValue) {
+    return function(key) {
+        if (key in map)
+            return map[key];
+        if (typeof defaultValue == "function")
+            return defaultValue(key);
+        return defaultValue;
+    };
+}
+
+tableAAdefault = defaultDict(tableAA, '?');
