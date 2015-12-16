@@ -340,8 +340,12 @@ def save_analysis():
     if error == "" :
         f = request.vars['fileToUpload']
         ts = time.time()
+        
+        sample_set_id = db.patient[request.vars['patient']].sample_set_id
+        
         analysis_id = db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
                                               patient_id = request.vars['patient'],
+                                              sample_set_id = sample_set_id,
                                               analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                                               )
 
