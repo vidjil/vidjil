@@ -36,6 +36,7 @@ def info():
 
     next_patient()
     patient = db.patient[request.vars["id"]]
+    sample_set_id = patient.sample_set_id
 
     if request.vars["config_id"] and request.vars["config_id"] != "-1" and request.vars["config_id"] != "None":
         config_id = long(request.vars["config_id"])
@@ -48,7 +49,7 @@ def info():
         )
 
         analysis = db(
-            db.analysis_file.patient_id == patient
+            db.analysis_file.sample_set_id == sample_set_id
         ).select(orderby=~db.analysis_file.analyze_date)
         
         
