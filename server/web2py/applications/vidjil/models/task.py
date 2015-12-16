@@ -26,10 +26,10 @@ def assert_scheduler_task_does_not_exist(args):
     return None
 
 
-def schedule_run(id_sequence, id_config, grep_reads=None):
+def schedule_run(id_sequence, id_patient, id_config, grep_reads=None):
     from subprocess import Popen, PIPE, STDOUT, os
 
-    id_patient = db.sequence_file[id_sequence].patient_id
+    id_sample_set = db.patient[id_patient].sample_set_id
         
     #check results_file
     row = db( ( db.results_file.config_id == id_config ) & 
@@ -46,13 +46,13 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     else:
         ## check fused_file
         row2 = db( ( db.fused_file.config_id == id_config ) &
-                   ( db.fused_file.patient_id == id_patient )
+                   ( db.fused_file.sample_set_id == id_sample_set )
                ).select()
 
         if len(row2) > 0 : ## update
             fuse_id = row2[0].id
         else:             ## create
-            fuse_id = db.fused_file.insert(patient_id = id_patient,
+            fuse_id = db.fused_file.insert(sample_set_id = id_sample_set,
                                            config_id = id_config)
 
         args = [id_sequence, id_config, data_id, fuse_id, None]
