@@ -66,12 +66,14 @@ auth.db = test_db
 
 init_db(True)
 
+fake_sample_set_id = db.sample_set.insert(sample_type = 'patient')
+
 # use a fake user
 user_id = db.auth_user.insert(
     first_name='Testers',
     last_name='Inc',
     email='test@vidjil.org',
-    password= db.auth_user.password.validate('1234')[0]
+    password= db.auth_user.password.validate('1234')[0],
 )
 unique_group = db.auth_group.insert(role="user_"+str(user_id), description=" ")
 db.auth_membership.insert(user_id=user_id, group_id=unique_group)
@@ -106,7 +108,8 @@ fake_patient_id = db.patient.insert(first_name="plop",
                                    birth="1902-02-02",
                                    info="plop",
                                    id_label="plop",
-                                   creator=user_id)
+                                   creator=user_id,
+				   sample_set_id=fake_sample_set_id)
                                    
 db.auth_permission.insert(group_id = group_id,
                         name = "admin",
@@ -120,9 +123,12 @@ fake_file_id = db.sequence_file.insert(sampling_date="1903-02-02",
                                     pcr="plop",
                                     sequencer="plop",
                                     producer="plop",
-                                    patient_id=fake_patient_id,
                                     filename="plop",
                                     provider=user_id)
+
+fake_sample_set_membership = db.sample_set_membership.insert(sample_set_id = fake_sample_set_id,
+				    sequence_file_id = fake_file_id
+)
 
 # and a fake result for this file
 stream = open("../../doc/analysis-example.vidjil", 'rb')
