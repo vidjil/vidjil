@@ -489,8 +489,11 @@ def add_form():
                 error += "date (wrong format)"
 
         if error=="" :
+            id_sample_set = db.sample_set.insert(sample_type="patient")
+            
             id = db.patient.insert(first_name=request.vars["first_name"],
                                    last_name=request.vars["last_name"],
+                                   sample_set_id=id_sample_set,
                                    birth=request.vars["birth"],
                                    info=request.vars["info"],
                                    id_label=request.vars["id_label"],
@@ -608,11 +611,16 @@ def delete():
         for row in query :
             db(db.results_file.sequence_file_id == row.id).delete()
 
+        sample_set_id = db.patient[request.vars["id"]].sample_set_id
+        
         #delete sequence file
         db(db.sequence_file.patient_id == request.vars["id"]).delete()
 
         #delete patient
         db(db.patient.id == request.vars["id"]).delete()
+        
+        #delete patient sample_set
+        db(db.sample_set.id == sample_set_id).delete()
 
         res = {"redirect": "patient/index",
                "success": "true",
