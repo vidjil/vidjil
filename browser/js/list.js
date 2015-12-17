@@ -58,8 +58,8 @@ function List(id_list, id_data, model) {
     this.sort_option = {
         "-" : function () {},
         "size" : function(){self.sortListBySize()},
-        "V" : function(){self.sortListByV()},
-        "J" : function(){self.sortListByJ()}
+        "V/5'" : function(){self.sortListByV()},
+        "J/3'" : function(){self.sortListByJ()}
     }
 }
 
