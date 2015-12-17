@@ -99,7 +99,7 @@ use_janrain(auth, filename='private/janrain.key')
 
 
 db.define_table('sample_set',
-               Field('sample_type', 'string'))
+               Field('sample_type', 'string', ondelete='SET NULL'))
 
 
 db.define_table('patient',
@@ -109,7 +109,7 @@ db.define_table('patient',
                 Field('info','text'),
                 Field('id_label','string'),
                 Field('creator','reference auth_user'),
-                Field('sample_set_id','reference sample_set'))
+                Field('sample_set_id','reference sample_set', ondelete='SET NULL'))
 
 '''
 db.patient.first_name.requires = IS_NOT_EMPTY( error_message='input needed' )
@@ -147,7 +147,6 @@ db.define_table('config',
 db.define_table('results_file',
                 Field('sequence_file_id', 'reference sequence_file'),
                 Field('config_id', 'reference config'),
-                Field('sample_set_id', 'reference sample_set'),
                 Field('run_date','datetime'),
                 Field('scheduler_task_id', 'integer'),
                 Field('data_file', 'upload', 
@@ -158,7 +157,7 @@ db.define_table('results_file',
 db.define_table('fused_file',
                 Field('patient_id', 'reference patient'),
                 Field('config_id', 'reference config'),
-                Field('sample_set_id', 'reference sample_set'),
+                Field('sample_set_id', 'reference sample_set', ondelete='SET NULL'),
                 Field('fuse_date','datetime', default="1970-01-01 00:00:00"),
                 Field('status', 'string'),
                 Field('sequence_file_list', 'string'),
@@ -169,7 +168,7 @@ db.define_table('fused_file',
 db.define_table('analysis_file',
                 Field('patient_id', 'reference patient'),
                 Field('config_id', 'reference config'),
-                Field('sample_set_id', 'reference sample_set'),
+                Field('sample_set_id', 'reference sample_set', ondelete='SET NULL'),
                 Field('analyze_date','datetime'),
                 Field('status', 'string'),
                 Field('analysis_file', 'upload', 
@@ -192,8 +191,8 @@ db.define_table('user_preference',
 
 
 db.define_table('sample_set_membership',
-               Field('sample_set_id','reference sample_set'),
-               Field('sequence_file_id', 'reference sequence_file'))
+               Field('sample_set_id','reference sample_set', ondelete='SET NULL'),
+               Field('sequence_file_id', 'reference sequence_file', ondelete='SET NULL'))
 
 
 
