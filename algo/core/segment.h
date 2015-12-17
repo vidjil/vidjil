@@ -61,7 +61,7 @@ const char* const segmented_mesg[] = { "?",
                                        "SEG",
                                        "SEG_+", "SEG_-",
                                        "UNSEG too short", "UNSEG strand",
-				       "UNSEG too few V/J", "UNSEG only V", "UNSEG only J",
+				       "UNSEG too few V/J", "UNSEG only V/5'", "UNSEG only J/3'",
 				       "UNSEG < delta_min", "UNSEG ambiguous",
                                        "UNSEG too short w",
                                       } ;

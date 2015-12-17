@@ -1040,6 +1040,7 @@ int main (int argc, char **argv)
           replace(s.begin(), s.end(), ' ', '_');
           replace(s.begin(), s.end(), '/', '_');
           replace(s.begin(), s.end(), '<', '_');
+          replace(s.begin(), s.end(), '\'', '_');
 
           string f_unsegmented_detail = out_dir + f_basename + "." + s + UNSEGMENTED_DETAIL_FILENAME ;
           cout << "  ==> " << f_unsegmented_detail << endl ;
