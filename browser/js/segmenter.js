@@ -921,7 +921,7 @@ Sequence.prototype = {
             }
 
             if (code.length == 3){
-                this.seqAA[pos] = tableAAdefault[code];
+                this.seqAA[pos] = tableAAdefault(code);
             }
         }
     },
