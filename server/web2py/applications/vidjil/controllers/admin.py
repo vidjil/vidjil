@@ -143,6 +143,11 @@ def make_backup():
         res = {"success" : "true", "message" : "DB backup -> %s" % defs.DB_BACKUP_FILE}
         log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    
+    
+def load_backup():
+    if auth.is_admin():
+        db.import_from_csv_file(defs.DB_BACKUP_FILE,'rb')
 
 ## delete all sample_set
 ## create a new sample_set for every patient/ every sequence_file
