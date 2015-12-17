@@ -430,9 +430,9 @@ The following unsegmentation causes are reported:
 |---------------------+---------------------------------------------------------------------------------------------------------------------|
 | =UNSEG too few V/J= | No information has been found on the read: There are not enough similarities neither with a V gene or a J gene.     |
 |---------------------+---------------------------------------------------------------------------------------------------------------------|
-| =UNSEG only V=      | Relevant similarities have been found with some V, but not enough with any J.                                       |
+| =UNSEG only V/5=    | Relevant similarities have been found with some V, but not enough with any J.                                       |
 |---------------------+---------------------------------------------------------------------------------------------------------------------|
-| =UNSEG only J=      | Relevant similarities have been found with some J, but not enough with any V.                                       |
+| =UNSEG only J/3=    | Relevant similarities have been found with some J, but not enough with any V.                                       |
 |---------------------+---------------------------------------------------------------------------------------------------------------------|
 | =UNSEG ambiguous=   | Vidjil finds some V and J similarities mixed together which makes the situation ambiguous and hardly solvable.      |
 |---------------------+---------------------------------------------------------------------------------------------------------------------|
@@ -446,7 +446,7 @@ Some datasets may give reads with many low =UNSEG too few= reads:
  -  =UNSEG too few V/J= usually happens when reads share almost nothing with the V(D)J region.
     This is expected when the PCR or capture-based approach included other regions, such as in whole RNA-seq.
 
- - =UNSEG only V= and =UNSEG only J= happens when reads do not span enough the junction zone.
+ - =UNSEG only V/5= and =UNSEG only J/3= happen when reads do not span enough the junction zone.
     Vidjil detects a “window” including the CDR3. By default this window is 50bp long,
     so the read needs be that long centered on the junction.
 
