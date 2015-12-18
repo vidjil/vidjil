@@ -5,9 +5,10 @@ $ The KmerSegmenter segments the six chimera reads on PSEUDO_MAX1U germline (-4)
 1:xxx .* -> .* 6
 
 $ The FineSegmenter gives the locus information (-4)
-1:Unexpected .A-TRAV/.\?
-1:Unexpected .G-TRGV/.\?
-1:Unexpected .H-IGHV/.\?
-1:Unexpected .\?/.B-TRBV
-1:Unexpected .\?/.D-TRDV
-1:Unexpected .\?/.K-IGKV
+1:Unexpected .*TRAV.*/.\?
+1:Unexpected .*TRGV.*/.\?
+1:Unexpected .*IGHV.*/.\?
+1:Unexpected .\?/.*TRBV
+1:Unexpected .\?/.*TRDV
+1:Unexpected .\?/.*IGKV
+
