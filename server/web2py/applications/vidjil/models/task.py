@@ -275,7 +275,7 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
         os.makedirs(out_folder)    
     
     row = db(db.sequence_file.id==id_file).select()
-    id_patient = row[0].patient_id
+    sample_set_id = row[0].sample_set_id
     
     fuse_log_file = open(out_folder+'/'+output_filename+'.fuse.log', 'w')
     
@@ -283,9 +283,9 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
     output_file = out_folder+'/'+output_filename+'.fused'
     files = ""
     sequence_file_list = ""
-    query2 = db( ( db.patient.id == db.sequence_file.patient_id )
-                   & ( db.results_file.sequence_file_id == db.sequence_file.id )
-                   & ( db.patient.id == id_patient )
+    query2 = db( ( db.results_file.sequence_file_id == db.sequence_file.id )
+                   & ( db.sample_set_membership.sequence_file_id == db.sequence_file_id)
+                   & ( db.sample_set_membership.sample_set_id == sample_set_id)
                    & ( db.results_file.config_id == id_config )
                    ).select( orderby=db.sequence_file.id|~db.results_file.run_date) 
     query = []
