@@ -183,7 +183,7 @@ def get_data():
 
     query = db( ( db.fused_file.patient_id == request.vars["patient"] )
                & ( db.fused_file.config_id == request.vars["config"] )
-               ).select()
+               ).select(db.fused_file.ALL)
     for row in query :
         fused_file = defs.DIR_RESULTS+'/'+row.fused_file
         sequence_file_list = row.sequence_file_list
