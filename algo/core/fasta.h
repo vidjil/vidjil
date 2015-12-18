@@ -51,7 +51,10 @@ public:
 	Fasta(const string &input, 
 	      int extract_field=0, string extract_separator="|",
               bool verbose=true);
-	
+
+        Fasta(bool virtualfasta, const string name); // virtualfasta unused
+
+        string name;
 	int size() const;
         int totalSize() const;
 
@@ -189,6 +192,9 @@ class OnlineFasta {
 istream& operator>>(istream& in, Fasta& fasta);
 ostream& operator<<(ostream& out, Fasta& fasta);
 ostream &operator<<(ostream &out, const Sequence &seq);
+
+const Fasta FASTA_UNKNOWN = Fasta(true, "_");
+const Fasta FASTA_AMBIGUOUS = Fasta(true, "?");
 
 /**
  * Count the number of sequences in a Fasta file

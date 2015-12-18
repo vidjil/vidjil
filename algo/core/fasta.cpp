@@ -44,6 +44,13 @@ void Fasta::init(int extract_field, string extract_separator)
   this -> extract_field = extract_field ;
   this -> extract_separator = extract_separator ; 
   total_size = 0;
+  name = "";
+}
+
+Fasta::Fasta(bool virtualfasta, string name)
+{
+  init(0, "");
+  this -> name = name;
 }
 
 Fasta::Fasta(int extract_field, string extract_separator)
@@ -76,6 +83,8 @@ void Fasta::add(const string &filename, bool verbose) {
     {
       throw invalid_argument(" !! Error in opening file: "+ filename);
     }
+
+  name += filename + " ";
 
   if (verbose)
   cout << " <== " << filename ;
