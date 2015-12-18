@@ -178,6 +178,11 @@ void Germline::mark_as_ambiguous(Germline *other)
 }
 
 
+void Germline::override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right)
+{
+  rep_5 = index->getLabel(left);
+  rep_3 = index->getLabel(right);
+}
 
 Germline::~Germline()
 {
