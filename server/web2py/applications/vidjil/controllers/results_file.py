@@ -14,7 +14,8 @@ def index():
 
         query = db(
             (db.results_file.sequence_file_id==db.sequence_file.id)
-            & (db.sequence_file.patient_id==db.patient.id)
+            & (db.sequence_file.id==db.sample_set_membership.sequence_file_id)
+            & (db.sample_set_membership.sample_set_id==db.patient.sample_set_id)
             & (db.results_file.config_id==db.config.id)
         ).select(
             orderby = ~db.results_file.run_date
@@ -74,14 +75,24 @@ def run_all():
 ## display run page result 
 ## need ["results_file_id"]
 def info():
-    if (auth.can_modify_patient(db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id ) ):
+    patient_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
+                    &(db.results_file.id == request.vars["results_file_id"])
+                    &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                    &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
+                ).select(db.patient.id).first().id
+    if (auth.can_modify_patient(patient_id)):
         return dict(message=T('result info'))
     else :
         res = {"message": "acces denied"}
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
 def confirm():
-    if (auth.can_modify_patient(db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id )
+    patient_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
+                    &(db.results_file.id == request.vars["results_file_id"])
+                    &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                    &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
+                ).select(db.patient.id).first().id
+    if (auth.can_modify_patient(patient_id)
         & auth.can_process_file()):
         return dict(message=T('result confirm'))
     else :
@@ -90,24 +101,37 @@ def confirm():
     
 #
 def delete():
-    if (auth.can_modify_patient(db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id )
+    sample_set_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
+                    &(db.results_file.id == request.vars["results_file_id"])
+                    &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                    ).select(db.sample_set_membership.sample_set_id).first().sample_set_id
+    patient_id = db(db.patient.sample_set_id == db.sample_set_membership.sample_set_id).select(db.patient.id).first().id
+
+    if (auth.can_modify_patient(patient_id)
         & auth.can_process_file()):
         
         config_id = db.results_file[request.vars["results_file_id"]].config_id
-        patient_id = db.sequence_file[db.results_file[request.vars["results_file_id"]].sequence_file_id].patient_id
+
+        # TODO is this necessary ?
+        patient_id = db((db.sequence_file.id == db.results_file.sequence_file_id)
+                    &(db.results_file.id == request.vars["results_file_id"])
+                    &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                    &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
+                ).select(db.patient.id).first().id
         
         #delete results_file
         db(db.results_file.id == request.vars["results_file_id"]).delete()
         
         #delete fused_file 
-        count = db((db.patient.id == patient_id) & 
-                   (db.sequence_file.patient_id == db.patient.id) &
+        count = db((db.patient.id == patient_id) &
+                   (db.patient.sample_set_id == db.sample_set_membership.sample_set_id) &
+                   (db.sequence_file.id == db.sample_set_membership.sequence_file_id) &
                    (db.sequence_file.id == db.results_file.sequence_file_id) &
                    (db.results_file.config_id == config_id)
                    ).count()
         
         if count == 0 :
-            db((db.fused_file.patient_id == patient_id ) &
+            db((db.fused_file.sample_set_id == sample_set_id) &
                (db.fused_file.config_id == config_id)
                ).delete()
         

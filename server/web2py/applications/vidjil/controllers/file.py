@@ -19,7 +19,12 @@ def add():
     elif not auth.can_upload_file(request.vars['id']):
         return error_message("you don't have right to upload files")
     else:
-        query = db((db.sequence_file.patient_id==request.vars['id'])).select()
+        query = db((db.patient.id == request.vars['id'])
+                &(db.sample_set.id == db.patient.sample_set_id)
+                &(db.sample_set.sample_type == 'patient')
+                &(db.sample_set_membership.sample_set_id == db.sample_set.id)
+                &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            ).select(db.sequence_file.ALL)
         if len(query) != 0 :
             pcr = query[0].pcr
             sequencer = query[0].sequencer
@@ -44,7 +49,12 @@ def add_form():
         error += " missing filename"
             
     if error=="" :
-        query = db((db.sequence_file.patient_id==request.vars['patient_id'])).select()
+        query = db((db.patient.id == request.vars['patient_id'])
+                &(db.sample_set.id == db.patient.sample_set_id)
+                &(db.sample_set.sample_type == 'patient')
+                &(db.sample_set_membership.sample_set_id == db.sample_set.id)
+                &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            ).select(db.sequence_file.ALL)
         for row in query :
             if row.filename == request.vars['filename'] :
                 return error_message("this sequence file already exists for this patient")
@@ -115,7 +125,12 @@ def edit_form():
                                                         filename=filename,
                                                         provider=auth.user_id)
             
-        patient_id = db.sequence_file[request.vars["id"]].patient_id
+        patient_id = db((db.sequence_file.id == request.vars["id"])
+                        &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                        &(db.sample_set.id == db.sample_set_membership.sample_set_id)
+                        &(db.sample_set.sample_type == 'patient')
+                        &(db.patient.sample_set_id == db.sample_set.id)
+                        ).select(db.patient.id).first().id
         
         res = {"file_id" : request.vars['id'],
                "redirect": "patient/info",
@@ -135,7 +150,12 @@ def upload():
         error += "no sequence file with this id"
 
     if not error:
-        patient_id = db.sequence_file[request.vars["id"]].patient_id            
+        patient_id = db((db.sequence_file.id == request.vars["id"])
+                        &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                        &(db.sample_set.id == db.sample_set_membership.sample_set_id)
+                        &(db.sample_set.sample_type == 'patient')
+                        &(db.patient.sample_set_id == db.sample_set.id)
+                        ).select(db.patient.id).first()
         mes += "file %s (%s): " % (request.vars['id'], patient_id)
         res = {"message": mes + "processing uploaded file",
                "redirect": "patient/info",

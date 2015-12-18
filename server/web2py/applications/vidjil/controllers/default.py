@@ -181,7 +181,8 @@ def get_data():
     if not auth.can_view_patient(request.vars["patient"]):
         error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
 
-    query = db( ( db.fused_file.patient_id == request.vars["patient"] )
+    query = db( ( db.fused_file.sample_set_id == db.patient.sample_set_id)
+               & ( db.patient.id == request.vars["patient"] )
                & ( db.fused_file.config_id == request.vars["config"] )
                ).select(db.fused_file.ALL)
     for row in query :
@@ -216,7 +217,8 @@ def get_data():
             data["samples"]["db_key"].append('')
 
         ## récupération des infos stockées sur la base de données
-        query = db( ( db.patient.id == db.sequence_file.patient_id )
+        query = db( ( db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
+                   & ( db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                    & ( db.results_file.sequence_file_id == db.sequence_file.id )
                    & ( db.patient.id == request.vars["patient"] )
                    & ( db.results_file.config_id == request.vars["config"]  )
@@ -260,7 +262,9 @@ def get_custom_data():
             for id in request.vars["custom"] :
                 log.debug("id = '%s'" % str(id))
                 sequence_file_id = db.results_file[id].sequence_file_id
-                patient_id =db.sequence_file[sequence_file_id].patient_id
+                patient_id = db((db.sample_set_membership.sequence_file_id == sequence_file_id)
+                            & (db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
+                ).select(db.patient.id).first()
                 if not auth.can_view_patient(patient_id):
                     error += "you do not have permission to consult this patient ("+str(patient_id)+")"
             
@@ -279,7 +283,13 @@ def get_custom_data():
         
         for id in request.vars["custom"] :
             sequence_file_id = db.results_file[id].sequence_file_id
-            patient_id = db.sequence_file[sequence_file_id].patient_id
+            patient_id = db((db.sequence_file.id == sequence_file_id)
+                            & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                            & (db.sample_set.id == db.sample_set_membership.sample_set_id)
+                            & (db.sample_set.sample_type == 'patient')
+                            & (db.patient.sample_set_id == db.sample_set.id)
+                            ).select(db.patient.id).first()
+
             config_id = db.results_file[id].config_id
             patient_name = vidjil_utils.anon_ids(patient_id)
             filename = db.sequence_file[sequence_file_id].filename
