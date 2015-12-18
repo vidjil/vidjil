@@ -139,8 +139,10 @@ def run_request():
     else:
         grep_reads = None
 
+    #TODO change this to sample_set
+    id_patient = request.vars["patient_id"]
     if not auth.can_modify_patient(id_patient) :
-        error += "you do not have permission to launch process for this patient ("+str(id_patient)+"), "
+        error += "you do not have permission to launch process for this sample_set ("+str(id_patient)+"), "
 
     if id_config:
       if not auth.can_use_config(id_config) :
