@@ -917,10 +917,10 @@ int main (int argc, char **argv)
       IKmerStore<KmerAffect> *index = multigermline->index ;
 
       // Initialize statistics, with two additional categories
-      index->labels.push_back(make_pair(KmerAffect::getAmbiguous(), AFFECT_AMBIGUOUS_SYMBOL));
-      index->labels.push_back(make_pair(KmerAffect::getUnknown(), AFFECT_UNKNOWN_SYMBOL));
+      index->labels.push_back(make_pair(KmerAffect::getAmbiguous(), FASTA_AMBIGUOUS));
+      index->labels.push_back(make_pair(KmerAffect::getUnknown(), FASTA_UNKNOWN));
       
-      for (list< pair <KmerAffect, string> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
+      for (list< pair <KmerAffect, Fasta> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
 	{
 	  char key = affect_char(it->first.affect) ;
 	  stats_kmer[key] = 0 ;
@@ -972,7 +972,7 @@ int main (int argc, char **argv)
 	   << endl ;
       cout << "\t" << " max" << "\t\t" << "        kmers" << "\n" ;
 
-      for (list< pair <KmerAffect, string> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
+      for (list< pair <KmerAffect, Fasta> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
 	{
           if (it->first.getStrand() == -1)
             continue ;
@@ -987,7 +987,7 @@ int main (int argc, char **argv)
 	  cout << setw(12) << stats_kmer[key] << " " ;
 	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[key] / total_length * 100 << "%" ;
 
-	  cout << "     " << key << " " << it->second << endl ;
+	  cout << "     " << key << " " << it->second.name << endl ;
 	}
       
       delete index;

@@ -706,9 +706,9 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
           code_short = "Unexpected ";
 
-          code_short += left.toStringSigns() + germline->index->getLabel(left);
+          code_short += left.toStringSigns() + germline->index->getLabel(left).name;
           code_short += "/";
-          code_short += right.toStringSigns() + germline->index->getLabel(right);
+          code_short += right.toStringSigns() + germline->index->getLabel(right).name;
           info_extra += " " + left.toString() + "/" + right.toString() + " (" + code_short + ")";
         }
       return ;

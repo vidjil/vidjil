@@ -54,7 +54,7 @@ public:
   int id; // id of this index
   int refs; // number of germlines using this index
 
-  list< pair <T, string> > labels;
+  list< pair <T, Fasta> > labels;
 
   /**
    * @param input: A single FASTA file
@@ -125,7 +125,7 @@ public:
    * @param kmer: a kmer
    * @return one label associated with the kmer
    */
-  string getLabel(T kmer) const;
+  Fasta getLabel(T kmer) const;
 
   /**
    * @param seq: a sequence
@@ -225,10 +225,10 @@ void IKmerStore<T>::insert(Fasta& input,
     insert(input.sequence(r), label, true, keep_only);
   }
 
-  labels.push_back(make_pair(T(label, 1), label)) ;
+  labels.push_back(make_pair(T(label, 1), input)) ;
 
   if (revcomp_indexed  && ! T::hasRevcompSymetry()) {
-    labels.push_back(make_pair(T(label, -1), label)) ;
+    labels.push_back(make_pair(T(label, -1), input)) ;
   }
 }
 
@@ -334,11 +334,11 @@ string IKmerStore<T>::getSeed() const {
 }
 
 template<class T>
-string IKmerStore<T>::getLabel(T kmer) const {
-  for (typename list< pair<T, string> >::const_iterator it = labels.begin(); it != labels.end(); ++it)
+Fasta IKmerStore<T>::getLabel(T kmer) const {
+  for (typename list< pair<T, Fasta> >::const_iterator it = labels.begin(); it != labels.end(); ++it)
     if (it->first == kmer)
       return it->second ;
-  return "?" ;
+  return FASTA_AMBIGUOUS ;
 }
 
 // .getResults()
