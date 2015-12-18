@@ -213,7 +213,10 @@ def confirm():
 def delete_sequence_file(seq_id):
     sequence = db.sequence_file[seq_id]
     seq_filename = sequence.data_file
-    if auth.can_modify_patient(sequence.patient_id):
+    patient_id = db((db.sample_set_membership.sequence_file_id == seq_id)
+                    &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
+                    ).select(db.patient.id).first().id
+    if auth.can_modify_patient(patient_id):
         if seq_filename is not None:
             log.debug('Deleting '+defs.DIR_SEQUENCES+seq_filename+' with ID'+str(seq_id))
         db.sequence_file[seq_id] = dict(data_file = None)
