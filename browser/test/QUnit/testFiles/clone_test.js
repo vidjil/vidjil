@@ -13,10 +13,13 @@
             "5end" : 5
         }
     }
-    
+
+    var some_name = "IGHV3-23*01 6//4 IGHD1-1*01 5/CCCACGTGGGGG/4 IGHJ5*02"
+
     var json_clone2 = {
         "sequence" : "AACGTACCAGG",
         "id" : "id2",
+        "name" : some_name,
         "reads" : [10,10,15,15] ,
         "top" : 2,
         "germline" : "TRG",
@@ -63,9 +66,11 @@ test("clone : name, informations, getHtmlInfo", function() {
     
     equal(c1.getSequenceName(), "hello", "get name clone1 : hello");
     equal(c1.getCode(), "hello", "get code clone1 : hello");
-    
-    equal(c2.getSequenceName(), "id2", "get name clone2 : id2");
-    equal(c2.getCode(), "id2", "get code clone2 : id2");
+
+    equal(c2.getSequenceName(), some_name, "clone2, .getSequenceName()");
+    equal(c2.getCode(), some_name, "clone2, .getCode()");
+    equal(c2.getName(), some_name, "clone2, .getName()");
+    equal(c2.getShortName(), "IGHV3-23 6//4 D1-1 5/12/4 J5", "clone2, .getShortName()");
     
     equal(c3.getSequenceName(), "custom name", "get name clone3 : custom name");
     equal(c3.getCode(), "id3", "get code clone3 : id3");
