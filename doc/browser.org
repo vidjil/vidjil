@@ -38,7 +38,7 @@ Otherwise, such =.vidjil= files can be obtained:
    =.fasta=, =.fastq= or =.gz= files, see [[http://git.vidjil.org/blob/master/doc/algo.org][algo.org]]).
    To gather several =.vidjil= files, you have to use the [[http://git.vidjil.org/blob/master/tools/fuse.py][fuse.py]] script
  - or by any other V(D)J analysis pipelines able to output files
-   respecting the =.vidjil= [[format-analysis.org][file format]] (contact us if you are interested)
+   respecting the =.vidjil= [[./format-analysis.org][file format]] (contact us if you are interested)
 
 
 
