@@ -757,6 +757,7 @@ Clone.prototype = {
         if (isCluster) {
             html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> clone </td></tr>"
             html += "<tr><td> clone name </td><td colspan='" + time_length + "'>" + this.getName() + "</td></tr>"
+            html += "<tr><td> clone short name </td><td colspan='" + time_length + "'>" + this.getShortName() + "</td></tr>"
             html += "<tr><td> clone size (n-reads (total reads) )</td>"
             for (var i = 0; i < time_length; i++) {
                 html += "<td>"
