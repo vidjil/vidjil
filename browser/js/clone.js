@@ -79,16 +79,29 @@ Clone.prototype = {
      * */
 
     REGEX_N: /^(\d*)\/([ACGT]*)\/(\d*)$/,                                        // 6/ACCAT/
+    REGEX_GENE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-*]*)$/,                       // IGHV3-11*03
 
     getShortName: function () {
 
         name_items = this.getName().split(' ')
         short_name_items = []
 
+        last_locus = ''
+
         for (var i = 0; i < name_items.length; i++) {
 
             s = name_items[i]
             console.log('>' + s);
+
+            // Shorten IGHV3-11*03 ... IGHD6-13*01 ... IGHJ4*02 into IGHV3-11*03 ... D6-13*01 ... J4*02
+            z = s.match(this.REGEX_GENE);
+            if (z)
+            {
+                locus = (z[1] == last_locus) ? '' : z[1]
+                short_name_items.push(locus + z[2])
+                last_locus = z[1]
+                continue
+            }
 
             // Shorten 6/ACCAT/ into 6/5/0
             z = s.match(this.REGEX_N);
