@@ -441,7 +441,7 @@ Segment.prototype = {
             self.m.clone(cloneID).unselect();
             self.aligned = false;
         }
-        seq_name.appendChild(document.createTextNode(this.m.clone(cloneID).getName()));
+        seq_name.appendChild(document.createTextNode(this.m.clone(cloneID).getShortName()));
         seq_name.title = this.m.clone(cloneID).getName();
         seq_name.style.color = this.m.clone(cloneID).color;
 

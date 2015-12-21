@@ -388,7 +388,7 @@ List.prototype = {
         span_name.onclick = function (e) {
             self.clickList(e, cloneID);
         }
-        span_name.appendChild(document.createTextNode(this.m.clone(cloneID).getName()));
+        span_name.appendChild(document.createTextNode(this.m.clone(cloneID).getShortName()));
         span_name.title = this.m.clone(cloneID).getName();
         span_name.style.color = this.m.clone(cloneID).getColor();
 
