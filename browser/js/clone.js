@@ -57,6 +57,7 @@ function Clone(data, model, index, virtual) {
     this.computeEValue()
 }
 
+function nullIfZero(x) { return x == 0 ? '' : x }
 
 Clone.prototype = {
 
@@ -93,7 +94,7 @@ Clone.prototype = {
             z = s.match(this.REGEX_N);
             if (z)
             {
-                short_name_items.push(z[1] + '/' + z[2].length + '/' + z[3])
+                short_name_items.push(z[1] + '/' + nullIfZero(z[2].length) + '/' + z[3])
                 continue
             }
 
