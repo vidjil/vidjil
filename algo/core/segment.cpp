@@ -845,10 +845,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
     "/" + string_of_int(del_J) +
     " " + germline->rep_3.label(best_J); 
 
-  code_light = germline->rep_5.label(best_V) +
-    "/ " + germline->rep_3.label(best_J); 
-
- 
   info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS) ;
   finishSegmentation();
 }
@@ -931,10 +927,6 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
     "/" + seg_N2 +
     "/" + string_of_int(del_J) +
     " " + germline->rep_3.label(best_J); 
-    
-    code_light = germline->rep_5.label(best_V) +
-    "/ " + germline->rep_4.label(best_D) +
-    "/ " + germline->rep_3.label(best_J); 
     
     finishSegmentationD();
   }
