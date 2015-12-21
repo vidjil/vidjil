@@ -110,7 +110,6 @@ protected:
   Germline *segmented_germline;
   string label;
   string code;
-  string code_short;
   string code_light;
   string info;        // .vdj.fa header, fixed fields
   string info_extra;  // .vdj.fa header, other information, at the end of the header

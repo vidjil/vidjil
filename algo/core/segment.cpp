@@ -680,7 +680,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   because = NOT_PROCESSED ;
   segmented_germline = germline ;
   info_extra = "" ;
-  code_short = "" ;
   label = seq.label ;
   sequence = seq.sequence ;
   Dend=0;
@@ -703,12 +702,12 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
           KmerAffect left = reversed ? KmerAffect(kseg->after, true) : kseg->before ;
           KmerAffect right = reversed ? KmerAffect(kseg->before, true) : kseg->after ;
 
-          code_short = "Unexpected ";
+          code = "Unexpected ";
 
-          code_short += left.toStringSigns() + germline->index->getLabel(left).name;
-          code_short += "/";
-          code_short += right.toStringSigns() + germline->index->getLabel(right).name;
-          info_extra += " " + left.toString() + "/" + right.toString() + " (" + code_short + ")";
+          code += left.toStringSigns() + germline->index->getLabel(left).name;
+          code += "/";
+          code += right.toStringSigns() + germline->index->getLabel(right).name;
+          info_extra += " " + left.toString() + "/" + right.toString() + " (" + code + ")";
 
           if (germline->seg_method == SEG_METHOD_MAX1U)
             return ;
@@ -846,15 +845,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
     "/" + string_of_int(del_J) +
     " " + germline->rep_3.label(best_J); 
 
-    stringstream code_s;
-   code_s<< germline->rep_5.label(best_V) <<
-    " -" << string_of_int(del_V) << "/" 
-    << seg_N.size()
-    // chevauchement +
-    << "/-" << string_of_int(del_J)
-    <<" " << germline->rep_3.label(best_J);
-    code_short=code_s.str();
-    
   code_light = germline->rep_5.label(best_V) +
     "/ " + germline->rep_3.label(best_J); 
 
@@ -941,21 +931,6 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
     "/" + seg_N2 +
     "/" + string_of_int(del_J) +
     " " + germline->rep_3.label(best_J); 
-
-    stringstream code_s;
-    code_s << germline->rep_5.label(best_V) 
-    << " -" << string_of_int(del_V) << "/" 
-    << seg_N1.size()
-    
-    << "/-" << string_of_int(del_D_left) 
-    << " " << germline->rep_4.label(best_D) 
-    << " -" << string_of_int(del_D_right) << "/"
-    
-    << seg_N2.size()
-    << "/-" << string_of_int(del_J) 
-    << " " << germline->rep_3.label(best_J);
-    code_short=code_s.str();
-    
     
     code_light = germline->rep_5.label(best_V) +
     "/ " + germline->rep_4.label(best_D) +

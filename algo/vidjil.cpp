@@ -1353,7 +1353,7 @@ int main (int argc, char **argv)
         
         // From FineSegmenter
         json_clone["sequence"] = seg.getSequence().sequence;
-        json_clone["name"] = seg.code_short;
+        json_clone["name"] = seg.code;
         json_clone["seg"] = seg.toJson();
 
         //From KmerMultiSegmenter
