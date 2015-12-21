@@ -89,7 +89,7 @@ pkg install gzstream
 Also Vidjil uses GNU make which requires =gmake= under FreeBSD.
 At the time of redacting the documentation, =g++= requires extra options to
 ensure flawless compilation and execution of Vidjil:
-#+BEGIN_SRC 
+#+BEGIN_SRC sh
 make MAKE=gmake CXXFLAGS="-D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"
 #+END_SRC
 The =gcc49= at the end of the command line is to be replaced by the =gcc= version
