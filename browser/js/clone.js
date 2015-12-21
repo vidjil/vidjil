@@ -72,6 +72,36 @@ Clone.prototype = {
         return false;
     },
 
+    /**
+     * return clone's most important name, shortened
+     * @return {string} name
+     * */
+
+    REGEX_N: /^(\d*)\/([ACGT]*)\/(\d*)$/,                                        // 6/ACCAT/
+
+    getShortName: function () {
+
+        name_items = this.getName().split(' ')
+        short_name_items = []
+
+        for (var i = 0; i < name_items.length; i++) {
+
+            s = name_items[i]
+            console.log('>' + s);
+
+            // Shorten 6/ACCAT/ into 6/5/0
+            z = s.match(this.REGEX_N);
+            if (z)
+            {
+                short_name_items.push(z[1] + '/' + z[2].length + '/' + z[3])
+                continue
+            }
+
+            short_name_items.push(s)
+        }
+
+        return short_name_items.join(' ')
+    },
 
     /** 
      * return clone's most important name <br>
