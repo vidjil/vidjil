@@ -1204,8 +1204,10 @@ int main (int argc, char **argv)
     //////////////////////////////////
     //$$ Output clones
 
-    if (max_clones > 0)
-      cout << "Detailed analysis of at most " << max_clones<< " clones" ;
+    if (max_clones == 0)
+      cout << "No detailed clone analysis" ;
+    else if (max_clones > 0)
+      cout << "Detailed analysis of at most " << max_clones<< " clone" << (max_clones > 1 ? "s" : "") ;
     else
       cout << "Detailed analysis of all clones" ;
     cout << endl ;
@@ -1450,7 +1452,8 @@ int main (int argc, char **argv)
     } // end if (command == CMD_CLONES) 
 
     //$$ .json output: json_data_segment
-    cout << "  ==> " << f_json << "\t(data file for the browser)" << endl ;
+    cout << endl ;
+    cout << "  ==> " << f_json << "\t(data file for the web application)" << endl ;
     ofstream out_json(f_json.c_str()) ;
     
     ostringstream stream_cmdline;
