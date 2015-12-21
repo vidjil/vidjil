@@ -80,6 +80,7 @@ Clone.prototype = {
 
     REGEX_N: /^(\d*)\/([ACGT]*)\/(\d*)$/,                                        // 6/ACCAT/
     REGEX_GENE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-*]*)$/,                       // IGHV3-11*03
+    REGEX_GENE_IGNORE_ALLELE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-]*)[\w-*]*$/,   // IGHV3-11*03  (ignore *03)
 
     getShortName: function () {
 
@@ -94,7 +95,8 @@ Clone.prototype = {
             console.log('>' + s);
 
             // Shorten IGHV3-11*03 ... IGHD6-13*01 ... IGHJ4*02 into IGHV3-11*03 ... D6-13*01 ... J4*02
-            z = s.match(this.REGEX_GENE);
+            // z = s.match(this.REGEX_GENE);
+            z = s.match(this.REGEX_GENE_IGNORE_ALLELE);
             if (z)
             {
                 locus = (z[1] == last_locus) ? '' : z[1]
