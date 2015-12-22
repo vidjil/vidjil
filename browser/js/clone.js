@@ -79,6 +79,7 @@ Clone.prototype = {
      * */
 
     REGEX_N: /^(-?\d*)\/([ACGT]*)\/(-?\d*)$/,                                    // 6/ACCAT/
+    REGEX_N_SIZE: /^(-?\d*)\/(\d*)\/(-?\d*)$/,                                   // 6/5/
     REGEX_GENE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-*]*)$/,                       // IGHV3-11*03
     REGEX_GENE_IGNORE_ALLELE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-]*)[\w-*]*$/,   // IGHV3-11*03  (ignore *03)
 
@@ -110,6 +111,14 @@ Clone.prototype = {
             if (z)
             {
                 short_name_items.push(Math.abs(z[1]) + '/' + nullIfZero(z[2].length) + '/' + Math.abs(z[3]))
+                continue
+            }
+
+            // Shorten -6/0/ into 6//0
+            z = s.match(this.REGEX_N_SIZE);
+            if (z)
+            {
+                short_name_items.push(Math.abs(z[1]) + '/' + nullIfZero(z[2]) + '/' + Math.abs(z[3]))
                 continue
             }
 
