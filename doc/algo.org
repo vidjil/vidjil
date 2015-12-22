@@ -454,6 +454,20 @@ Some datasets may give reads with many low =UNSEG too few= reads:
 See [[http://git.vidjil.org/blob/master/doc/browser.org][browser.org]] for information on the biological or sequencing causes that can lead to few segmented reads.
 
 
+** Filtering reads
+
+It is possible to extract all segmented or unsegmented reads, possibly to give them to  other software.
+Runing Vidjil with =-U= gives a file =out/basename.unsegmented.vdj.fa=, with all segmented reads.
+On datasets generated with rather specific V(D)J primers, this is generally not recommended, as it may generate a large file.
+However, the =-U= option is very useful for whole RNA-Seq or capture datasets that contain few reads with V(D)J recombinations.
+
+Similarly, two options are available to get the unsegmented reads:
+   - =-u= gives a file =out/basename.segmented.vdj.fa=, with unsegmented reads.
+   - =-uu= gives a set of files =out/basename.UNSEG_*=, with unsegmented reads gathered by unsegmentation cause
+
+Again, as these options may generate large files, they are generally not recommended.
+However, they are very useful in some situations, especially to understand why some dataset gives poor segmentation result.
+For example =-uu -X 1000= splits the unsegemented reads from the 1000 first reads.
 
 
 ** Segmentation and .vdj format
