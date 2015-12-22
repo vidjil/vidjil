@@ -411,8 +411,24 @@ The main output of Vidjil (with the default =-c clones= command) are two followi
 
 
 By default, the two output files are named =out/basename.vidjil= in =out/basename.vdj.fa=, where:
- - =out= is the directory where all the outputs are stored, including auxiliary output files (can be changed with the =-o= option)
+ - =out= is the directory where all the outputs are stored (can be changed with the =-o= option).
  - =basename= is the basename of the input =.fasta/.fastq= file (can be overriden with the =-b= option)
+
+** Auxiliary output files
+
+The auxiliary files include =out/basename.windows.fa= (list of windows, with number of occurrences, as below)
+and =out/seq/clone.fa-*= (detailed analysis by clone).
+
+#+BEGIN_EXAMPLE
+>8--window--1
+ATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGG
+>5--window--2
+ATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGAC
+(...)
+#+END_EXAMPLE
+
+Windows of size 50 (modifiable by =-w=) have been extracted.
+The first window has 8 occurrences, the second window has 5 occurrences.
 
 
 ** Unsegmentation causes
