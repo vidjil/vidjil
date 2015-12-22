@@ -32,8 +32,6 @@ def index():
             cache.ram.clear(regex=NOTIFICATION_CACHE_PREFIX + str(user_id))
 
     notifications = db(db.notification).select(orderby=~db.notification.id)
-    if not auth.is_admin():
-         notifications = notifications.find(lambda row: row.expiration >= date.today())
          
     return dict(message="News",
                 query=query,
