@@ -227,7 +227,7 @@ void usage(char *progname, bool advanced)
        << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
        << endl ;
 
-  cerr << "Detailed output per read (generally not recommended, large files, but may be used for filtering)" << endl
+  cerr << "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)" << endl
        << "  -U            output segmented reads (in " << SEGMENTED_FILENAME << " file)" << endl
        << "  -u            output unsegmented reads (in " << UNSEGMENTED_FILENAME << " file)" << endl
        << "  -uu           output unsegmented reads, gathered by unsegmentation cause (in *" << UNSEGMENTED_DETAIL_FILENAME << " files)" << endl
