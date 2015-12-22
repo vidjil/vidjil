@@ -553,45 +553,39 @@ applicable being removed:
 All the following examples are on a IGH VDJ recombinations : they thus
 require either the =-G germline/IGH= option, or the multi-germline =-g germline= option.
 
+** Basic usage: PCR-based datasets, with primers in the V(D)J regions (such as BIOMED-2 primers)
+
 #+BEGIN_SRC sh
 ./vidjil -G germline/IGH data/Stanford_S22.fasta
-   # Detects windows overlapping IGH CDR3s and gather the reads into clones
-   # Summary of clones is available both in out/Stanford_S22.vdj.fa
-   # and in out/Stanford_S22.vidjil.
+   # Gather the reads into clones, based on windows overlapping IGH CDR3s.
+   # Summary of clones is available both on stdout, in out/Stanford_S22.vdj.fa and in out/Stanford_S22.vidjil.
 #+END_SRC
-
-#+BEGIN_EXAMPLE
->8--window--1
-CACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCCA
->5--window--2
-CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
-(...)
-#+END_EXAMPLE
-
-   Windows of size 60 (modifiable by =-w=) have been extracted.
-   The first window has 8 occurrences, the second window has 5 occurrences.
-
 
 #+BEGIN_SRC sh
 ./vidjil -g germline -i data/reads.fasta
-   # Detects for each read the best locus
-   # Detects windows overlapping CDR3s and gather the reads into clones
+   # Detects for each read the best locus, including an analysis of incomplete/unusual recombinations
+   # Gather the reads into clones, again based on windows overlapping the detected CDR3s.
+   # Summary of clones is available both on stdout, in out/reads.vdj.fa and in out/reads.vidjil.
 #+END_SRC
 
 
+** Basic usage: Whole RNA-Seq or capture datasets
+
+#+BEGIN_SRC sh
+./vidjil -g germline -i -U data/reads.fasta
+   # Detects for each read the best locus, including an analysis of incomplete/unusual recombinations
+   # Gather the reads into clones, again based on windows overlapping the detected CDR3s.
+   # Summary of clones is available both on stdout, in out/reads.vdj.fa and in out/reads.vidjil.
+   # The out/reads.segmented.vdj.fa include all reads where a V(D)J recombination was found
+#+END_SRC
+
+
+** Advanced usage
+
 #+BEGIN_SRC sh
 ./vidjil -c clones -G germline/IGH -r 1 ./data/clones_simul.fa
-   # Extracts the windows (-r 1, with at least 1 read each),
+   # Extracts the windows with at least 1 read each (-r 1, the default being -r 5)
    # then gather them into clones
-   # A more natural option could be -r 5.
-   # For debug purpose, if one wants all the clones, use the option -A.
-   # Results are both
-   #  - on the standard output
-   #  - in out/clones_simul.vdj.fa (fasta file to be processed by other tools)
-   #  - in out/clones_simul.vidjil (for the browser)
-   # Additional files are in out/clones_simul.windows.fa and out/seq/clone.fa-*
-   # If one adds the '-U' option, an additonal out/clones_simul.segmented.vdj.fa file is produced,
-   # listing segmented reads using the .vdj format (see below)
 #+END_SRC
 
 #+BEGIN_SRC sh
@@ -599,13 +593,13 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
    # Window extraction + clone gathering,
    # with automatic clustering, distance five (-n 5)
    # The result of the automatic clustering is in the .vidjil file
-   # and can been seen/edited in the browser.
+   # and can been seen/edited in the web application.
 #+END_SRC
 
 #+BEGIN_SRC sh
 ./vidjil -c segment -G germline/IGH data/segment_S22.fa
-   # Segment the reads onto VDJ germline
-   # (this is slow and should only be used for testing)
+   # Detailed V(D)J designation on all reads
+   # (this is slow and should only be used for testing, or on a small file)
 #+END_SRC
 
 #+BEGIN_SRC sh
