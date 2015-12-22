@@ -18,6 +18,9 @@ def index():
     query = None
     if request.vars['id']:
         query = db.notification[request.vars['id']]
+        log.debug('read notification %s' % request.vars["id"])
+    else:
+        log.debug('notification list')
     if auth.user:
         rows = db((db.user_preference.user_id==auth.user.id)
             &(db.user_preference.preference=='mail')
