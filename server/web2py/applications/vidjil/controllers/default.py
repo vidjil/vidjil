@@ -290,7 +290,7 @@ def get_custom_data():
                             & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                             & (db.sample_set.id == db.sample_set_membership.sample_set_id)
                             & (db.patient.sample_set_id == db.sample_set.id)
-                            ).select(db.patient.id).first()
+                            ).select(db.patient.id).first().id
 
             config_id = db.results_file[id].config_id
             patient_name = vidjil_utils.anon_ids(patient_id)
