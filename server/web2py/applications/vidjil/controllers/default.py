@@ -289,7 +289,6 @@ def get_custom_data():
             patient_id = db((db.sequence_file.id == sequence_file_id)
                             & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                             & (db.sample_set.id == db.sample_set_membership.sample_set_id)
-                            & (db.sample_set.sample_type == 'patient')
                             & (db.patient.sample_set_id == db.sample_set.id)
                             ).select(db.patient.id).first()
 
