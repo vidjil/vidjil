@@ -83,7 +83,7 @@ Report.prototype = {
         while (tag < 8 && list.length < 5) {
             for (var i = 0; i < this.m.clones.length; i++) {
                 var clone_tag = this.m.clone(i).getTag()
-                if (clone_tag == tag && this.m.clone(i).isActive) list.push(i)
+                if (clone_tag == tag && this.m.clone(i).isActive && !this.m.clone(i).virtual) list.push(i)
             }
             tag++
         }
@@ -97,7 +97,7 @@ Report.prototype = {
                     var clone = -1
                     for (var j=0; j<this.m.clones.length; j++) {
                         if (list.indexOf(j)==-1 && this.m.clone(j).germline==system && 
-                            (clone==-1 || this.m.clone(j).top < this.m.clone(clone).top ) ) clone=j
+                            (clone==-1 || this.m.clone(j).top < this.m.clone(clone).top ) && !this.m.clone(j).virtual) clone=j
                     }
                     if (clone!=-1) list.push(clone)
                 }
