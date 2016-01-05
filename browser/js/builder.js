@@ -429,16 +429,19 @@ Builder.prototype = {
         var div_point = this.build_info_line("info_point",  this.m.getStrTime(this.m.t, "name") )
         sample_div.appendChild(div_point)
 
+        var div_date = this.build_info_line("info_date", this.m.getStrTime(this.m.t, "sampling_date") )
+        div_date.className += " centered"
+
         if (this.m.samples.order.length > 1){
             var nextTime = self.createClickableElem('span',
                 [document.createTextNode(">")],
                 "",
-                "next_button button_right",
+                "next_button button",
                 function () {
                     self.m.nextTime();
                 }
             );
-            sample_div.appendChild(nextTime)    
+            div_date.appendChild(nextTime)    
             
             if (self.m.isPlaying){
                 var stop = self.createClickableElem('span',
@@ -471,10 +474,9 @@ Builder.prototype = {
                     self.m.previousTime();
                 }
             );
-            sample_div.appendChild(previousTime)
+            div_date.insertBefore(previousTime, div_date.childNodes[0]);
         }
 
-        var div_date = this.build_info_line("info_date", this.m.getStrTime(this.m.t, "sampling_date") )
         var span = self.createClickableElem('span',
             [document.createTextNode("edit")],
             "",
