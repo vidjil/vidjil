@@ -427,6 +427,7 @@ Builder.prototype = {
         sample_div.appendChild(infoTime)
 
         var div_point = this.build_info_line("info_point",  this.m.getStrTime(this.m.t, "name") )
+        div_point.className += " centered"
         sample_div.appendChild(div_point)
 
         var div_date = this.build_info_line("info_date", this.m.getStrTime(this.m.t, "sampling_date") )
@@ -469,7 +470,7 @@ Builder.prototype = {
             var previousTime = self.createClickableElem('span',
                 [document.createTextNode("<")],
                 "",
-                "previous_button button_right",
+                "previous_button button",
                 function () {
                     self.m.previousTime();
                 }
