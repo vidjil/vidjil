@@ -483,6 +483,14 @@ Model.prototype = {
         return timestamp
     },
 
+    getInfoTime: function(time) {
+        var time = typeof time !== 'undefined' ? time : this.t
+        var info = "-"
+        if (typeof this.samples.info != 'undefined')
+            info = this.samples.info[time]
+        return info
+    },
+
     /**
      * return the soft version used to produce all samples results <br>
      * return "multiple" if different soft have been used for different samples
