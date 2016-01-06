@@ -38,7 +38,7 @@
                     {{=row.title}}
                 </td>
                 <td class="pointer" onclick="db.call('notification/index', {'id' : '{{=row.id}}'})">
-                    {{=row.message_content}}
+                    {{=XML(row.message_content)}}
                 </td>
                 <td class="pointer" onclick="db.call('notification/index', {'id' : '{{=row.id}}'})">
                     {{=row.creation_datetime}}
