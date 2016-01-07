@@ -667,10 +667,9 @@ Builder.prototype = {
         var self = this
 
         var div = document.createElement('div');
-        div.className = "info_color"
+        div.className = "info_color centered"
 
         var span0 = document.createElement('span');
-        span0.className="info_row"
         var span1 = document.createElement('span');
         var span2 = document.createElement('span');
         var span3 = document.createElement('span');
