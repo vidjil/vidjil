@@ -138,7 +138,7 @@ fake_result_id = db.results_file.insert(sequence_file_id = fake_file_id,
                                     data_file = db.results_file.data_file.store(stream, "plop.data")
                                     )
 stream.seek(0)
-fake_fused_id = db.fused_file.insert(patient_id = fake_patient_id,
+fake_fused_id = db.fused_file.insert(sample_set_id = fake_sample_set_id,
                                     config_id = fake_config_id,
                                     fuse_date = "2014-09-19 00:00:00",
                                     fused_file = db.fused_file.fused_file.store(stream, "plop.data")

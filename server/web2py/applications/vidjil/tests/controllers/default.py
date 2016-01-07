@@ -58,13 +58,13 @@ class DefaultController(unittest.TestCase):
         request.vars['sequence_file_id'] = fake_file_id
         patient = db((db.sequence_file.id == fake_file_id)
 		& (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-		& (db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
+                & (db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
 	).select(db.patient.ALL).first()
 	request.vars['patient_id'] = patient.id
 
         resp = run_request()
         self.assertNotEqual(resp.find('process requested'), -1, "run_request doesn't return a valid message")
-        self.assertEqual(db((db.fused_file.config_id == fake_config_id) & (db.fused_file.patient_id == patient.id)).count(), 1)
+        self.assertEqual(db((db.fused_file.config_id == fake_config_id) & (db.fused_file.sample_set_id == patient.sample_set_id)).count(), 1)
         
         
     def testGetData(self):
@@ -72,7 +72,7 @@ class DefaultController(unittest.TestCase):
         request.vars['patient'] = fake_patient_id
         
         resp = get_data()
-        self.assertNotEqual(resp.find('segmented":[742377]'), -1, "get_data doesn't return a valid json")
+        self.assertNotEqual(resp.find('segmented":[742377]'), -1, "get_data doesn't return a valid json " + resp)
         self.assertNotEqual(resp.find('(config_test_popipo)'), -1, "get_data doesn't return a valid json")
         
         
@@ -119,7 +119,7 @@ class DefaultController(unittest.TestCase):
 
         resp = get_analysis_from_patient(fake_patient_id)
         self.assertEqual(len(resp), 1, "should have one analysis for that patient %d"%len(resp))
-        self.assertEqual(resp[0].patient_id, fake_patient_id, "get_analysis doesn't have the correct patient")
+        self.assertEqual(resp[0].sample_set_id, fake_sample_set_id, "get_analysis doesn't have the correct sample_set")
 
     def testGetCleanAnalysis(self):
         analysis = get_clean_analysis(self._get_fake_analysis_file())
