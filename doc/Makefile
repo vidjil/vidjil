@@ -1,3 +1,7 @@
+ORG_FILES=$(wildcard *.org)
+
+html: $(ORG_FILES)
+	make $(subst .org,.html, $^)
 
 %.html: %.org
 # Requires emacs with org-mode

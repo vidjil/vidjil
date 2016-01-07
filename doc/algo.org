@@ -1,5 +1,5 @@
 #+TITLE: Vidjil Algorithm -- Command-line Manual
-#+AUTHOR: The Vidjil team (Mathieu, Mikaël and Marc)
+#+AUTHOR: The Vidjil team (Mathieu, Mikaël, Marc, Tatiana and Rayan)
 #+HTML_HEAD: <link rel="stylesheet" type="text/css" href="../css/org-mode.css" />
 
 # This manual can be browsed online:
@@ -16,7 +16,7 @@ diversity. They are also useful markers of pathologies, and in
 leukemia, are used to quantify the minimal residual disease during
 patient follow-up.
 
-Vidjil processes high-throughput sequencing data to extract V(D)J
+The Vidjil algorithm processes high-throughput sequencing data to extract V(D)J
 junctions and gather them into clones. Vidjil starts 
 from a set of reads and detects "windows" overlapping the actual CDR3.
 This is based on an fast and reliable seed-based heuristic and allows
@@ -26,7 +26,7 @@ germline sequences. At the end, only the representative sequences
 of each clone have to be analyzed. Vidjil can also cluster similar
 clones, or leave this to the user after a manual review in the browser.
 
-The method is described in the following paper:
+The method is described in the following reference:
 
 Mathieu Giraud, Mikaël Salson, et al.,
 "Fast multiclonal clusterization of V(D)J recombinations from high-throughput sequencing",
@@ -39,7 +39,7 @@ Vidjil is open-source, released under GNU GPLv3 license.
 
 ** Supported platforms
 
-Vidjil has been successfully tested on the following platforms :
+The Vidjil algorithm has been successfully tested on the following platforms :
  - CentOS 6.3 amd64
  - CentOS 6.3 i386
  - Debian Squeeze 6.0
@@ -89,7 +89,7 @@ pkg install gzstream
 Also Vidjil uses GNU make which requires =gmake= under FreeBSD.
 At the time of redacting the documentation, =g++= requires extra options to
 ensure flawless compilation and execution of Vidjil:
-#+BEGIN_SRC 
+#+BEGIN_SRC sh
 make MAKE=gmake CXXFLAGS="-D_GLIBCXX_USE_C99 -Wl,-rpath=/usr/local/lib/gcc49"
 #+END_SRC
 The =gcc49= at the end of the command line is to be replaced by the =gcc= version
@@ -154,7 +154,7 @@ make germline
 make                     # build Vijil from the sources (see the requirements, above)
 
 # or
-wget http://bioinfo.lifl.fr/vidjil/vidjil-2015.10.2_x86_64 -O vidjil
+wget http://bioinfo.lifl.fr/vidjil/vidjil-2015.12_x86_64 -O vidjil
                          # download a static binary (built for x86_64 architectures)
 
 ./vidjil -h              # display help/usage
@@ -178,7 +178,7 @@ make data
    # repertoire inferred from variable region gene rearrangements. J
    # Immunol, 184(12), 6986–92.
 
-make test                # ( run self-tests (can take 5 to 60 minutes)
+make test                # run self-tests (can take 5 to 60 minutes)
 #+END_SRC
 
 
@@ -216,10 +216,11 @@ Germline databases (one -V/(-D)/-J, or -G, or -g option must be given for all co
  - The =-V/(-D)/-J= options enable to select individual V, (D) and J repertoires (fasta files).
    This allows in particular to select incomplete rearrangement using custom V or J repertoires with added sequences.
  - The =-g germline/= option launches the analysis on the seven germlines, selecting the best locus for each read.
-   Using =-g germline/ -i= stests also some incomplete and unusual recombinations.
+   Using =-g germline/ -i= stests also some incomplete and unusual recombinations (locus with a =+= in their name)
    See [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for information on the analyzable locus.
-   Analyzed locus and parameters are configured through the =germline/germlines.data= file.
-   Other configurations files can be selected, for example with =-g germline/custom-germlines.data -i=.
+ - Analyzed locus and parameters are configured through the =germline/germlines.data= file.
+   To select a custom set of TR or Ig locus, you may copy =germline/germlines.data= into a new file,
+   as for example =germline/custom-germlines.data=, and run Vidjil with =-g germline/custom-germlines.data -i=.
 
 ** Main algorithm parameters
 
@@ -236,7 +237,8 @@ Window prediction
 #+END_EXAMPLE
 
 The =-s=, =-k= are the options of the seed-based heuristic. A detailed
-explanation can be found in the paper. /These options are for advanced usage, the defaults values should work./
+explanation can be found in (Giraud, Salson and al., 2014).
+/These options are for advanced usage, the defaults values should work./
 The =-s= or =-k= option selects the seed used for the k-mer V/J affectation.
 
 The =-w= option fixes the size of the "window" that is the main
@@ -259,7 +261,8 @@ return more clones, as any sequencing error in the window is not corrected.
 
 Setting =-w= to lower values than 50 may "segment" (analyze) a few more reads, depending
 on the read length of your data, but may in some cases falsely cluster reads from
-different clones. The =-w 40= option is usually safe for VJ recombinations, and =-w 30= can also be tested.
+different clones.
+For VJ recombinations, the =-w 40= option is usually safe, and =-w 30= can also be tested.
 Setting =-w= to lower values is not recommended.
 
 The =-e= option sets the maximal e-value accepted for segmenting a sequence.
@@ -275,7 +278,7 @@ V genes (the 3' end) or in J genes (the 5' end). This reduces the load of the
 indexes, giving more precise window estimation and e-value computation.
 The default is =-t 100=.
 
-** Threshold on clone output
+** Thresholds on clone output
 
 The following options control how many clones are output and analyzed.
 
@@ -304,13 +307,13 @@ representatives (see below), but you can safely put =-y all= if you want
 to compute all representative sequences.
 
 The =-z= option limits the number of clones that are fully analyzed,
-/with their V(D)J segmentation/, in particular to enable the browser
+/with their V(D)J segmentation/, in particular to enable the web application
 to display the clones on the grid (otherwise they are displayed on the
 '?/?' axis). It should be smaller than =-y=.
 If you want to analyze more clones, you should use =-z 50= or
 =-z 100=.  It is not recommended to use larger values: outputting more
-than 100 clones is often not useful since they can't be visualized easily
-in the browser, and takes large computation time (full dynamic programming, 
+than 100 clones is often not useful since they can not be visualized easily
+in the web application, and takes large computation time (full dynamic programming,
 see below).
 
 Note that even if a clone is not in the top 20 (or 50, or 100) but
@@ -318,7 +321,7 @@ still passes the =-r=, =-%= options, it is still reported in both the =.vidjil=
 and =.vdj.fa= files. If the clone is at some MRD point in the top 20 (or 50, or 100),
 it will be fully analyzed/segmented by this other point (and then
 collected by the =fuse.py= script, using representatives computed at this
-other point, and then, on the browser, correctly displayed on the grid). 
+other point, and then, on the web application, correctly displayed on the grid).
 *Thus is advised to leave the default* =-y 100 -z 20= *options 
 for the majority of uses.*
 
@@ -336,8 +339,8 @@ Such windows can be provided either with =-W <window>=, or with =-l <file>=.
 The file given by =-l= should have one window by line, as in the following example:
 
 #+BEGIN_EXAMPLE
-TGTGCGAGAGATGGACGGGATACGTAAAACGACATATGGTTCGGGGTTTGGTGCTTTTGA my-clone-1
-TGTGCGAGAGATGGACGGAATACGTTAAACGACATATGGTTCGGGGTATGGTGCTTTTGA my-clone-2 foo
+GAGAGATGGACGGGATACGTAAAACGACATATGGTTCGGGGTTTGGTGCT my-clone-1
+GAGAGATGGACGGAATACGTTAAACGACATATGGTTCGGGGTATGGTGCT my-clone-2 foo
 #+END_EXAMPLE
 
 Windows and labels must be separed by one space.
@@ -360,7 +363,7 @@ All the reads with this windows will be extracted to =out/seq/clone.fa-1=.
 
 The following options are experimental and have no consequences on the =.vdj.fa= file,
 nor on the standard output. They instead add a =clusters= sections in the =.vidjil= file
-that will be visualized in the browser.
+that will be visualized in the web application.
 
 The =-n= option triggers an automatic clustering using DBSCAN algorithm (Ester and al., 1996).
 Using =-n 5= usually cluster reads within a distance of 1 mismatch (default score
@@ -376,26 +379,23 @@ two windows that must be clustered.
 
 
 
-
-
-
 * Output
 
-** Output files
+** Main output files
 
 The main output of Vidjil (with the default =-c clones= command) are two following files:
 
- - The =.vidjil= file is /the file for the Vidjil browser/.
+ - The =.vidjil= file is /the file for the Vidjil web application/.
    The file is in a =.json= format (detailed in [[file:format-analysis.org][format-analysis.org]])
    describing the windows and their count, the representatives (=-y=),
    the detailed V(D)J designation (=-z=, see warning below), and possibly
    the results of the further clustering.
 
-   The browser takes this =.vidjil= file (possibly merged with
+   The web application takes this =.vidjil= file (possibly merged with
    =fuse.py=) for the /visualization and analysis/ of clones and their
    tracking along different samples (for example time points in a MRD
    setup or in a immunological study).
-   Please see [[file:browser.org][browser]].org for more information on the browser.
+   Please see [[file:browser.org][browser]].org for more information on the web application.
 
  - The =.vdj.fa= file is /a FASTA file for further processing by other bioinformatics tools/.
    The sequences are at least the windows (and their count in the headers) or
@@ -411,15 +411,32 @@ The main output of Vidjil (with the default =-c clones= command) are two followi
 
 
 By default, the two output files are named =out/basename.vidjil= in =out/basename.vdj.fa=, where:
- - =out= is the directory where all the outputs are stored, including auxiliary output files (can be changed with the =-o= option)
+ - =out= is the directory where all the outputs are stored (can be changed with the =-o= option).
  - =basename= is the basename of the input =.fasta/.fastq= file (can be overriden with the =-b= option)
+
+** Auxiliary output files
+
+The auxiliary files include =out/basename.windows.fa= (list of windows, with number of occurrences, as below)
+and =out/seq/clone.fa-*= (detailed analysis by clone).
+
+#+BEGIN_EXAMPLE
+>8--window--1
+ATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGG
+>5--window--2
+ATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGAC
+(...)
+#+END_EXAMPLE
+
+Windows of size 50 (modifiable by =-w=) have been extracted.
+The first window has 8 occurrences, the second window has 5 occurrences.
 
 
 ** Unsegmentation causes
 
 Vidjil output details statistics on the reads that are not segmented (not analyzed).
 Basically, *an unsegmented read is a read where Vidjil cannot identify a window at the junction of V and J genes*.
-To properly analyze a read, Vijdil needs that the sequence spans enough V region and J region.
+To properly analyze a read, Vijdil needs that the sequence spans enough V region and J region
+(or, more generally, 5' region and 3' regions when looking for incomplete or unusual recombinations).
 The following unsegmentation causes are reported:
 
 |                     |                                                                                                                     |
@@ -430,9 +447,9 @@ The following unsegmentation causes are reported:
 |---------------------+---------------------------------------------------------------------------------------------------------------------|
 | =UNSEG too few V/J= | No information has been found on the read: There are not enough similarities neither with a V gene or a J gene.     |
 |---------------------+---------------------------------------------------------------------------------------------------------------------|
-| =UNSEG only V=      | Relevant similarities have been found with some V, but not enough with any J.                                       |
+| =UNSEG only V/5=    | Relevant similarities have been found with some V, but not enough with any J.                                       |
 |---------------------+---------------------------------------------------------------------------------------------------------------------|
-| =UNSEG only J=      | Relevant similarities have been found with some J, but not enough with any V.                                       |
+| =UNSEG only J/3=    | Relevant similarities have been found with some J, but not enough with any V.                                       |
 |---------------------+---------------------------------------------------------------------------------------------------------------------|
 | =UNSEG ambiguous=   | Vidjil finds some V and J similarities mixed together which makes the situation ambiguous and hardly solvable.      |
 |---------------------+---------------------------------------------------------------------------------------------------------------------|
@@ -446,13 +463,27 @@ Some datasets may give reads with many low =UNSEG too few= reads:
  -  =UNSEG too few V/J= usually happens when reads share almost nothing with the V(D)J region.
     This is expected when the PCR or capture-based approach included other regions, such as in whole RNA-seq.
 
- - =UNSEG only V= and =UNSEG only J= happens when reads do not span enough the junction zone.
+ - =UNSEG only V/5= and =UNSEG only J/3= happen when reads do not span enough the junction zone.
     Vidjil detects a “window” including the CDR3. By default this window is 50bp long,
     so the read needs be that long centered on the junction.
 
 See [[http://git.vidjil.org/blob/master/doc/browser.org][browser.org]] for information on the biological or sequencing causes that can lead to few segmented reads.
 
 
+** Filtering reads
+
+It is possible to extract all segmented or unsegmented reads, possibly to give them to  other software.
+Runing Vidjil with =-U= gives a file =out/basename.unsegmented.vdj.fa=, with all segmented reads.
+On datasets generated with rather specific V(D)J primers, this is generally not recommended, as it may generate a large file.
+However, the =-U= option is very useful for whole RNA-Seq or capture datasets that contain few reads with V(D)J recombinations.
+
+Similarly, two options are available to get the unsegmented reads:
+   - =-u= gives a file =out/basename.segmented.vdj.fa=, with unsegmented reads.
+   - =-uu= gives a set of files =out/basename.UNSEG_*=, with unsegmented reads gathered by unsegmentation cause
+
+Again, as these options may generate large files, they are generally not recommended.
+However, they are very useful in some situations, especially to understand why some dataset gives poor segmentation result.
+For example =-uu -X 1000= splits the unsegemented reads from the 1000 first reads.
 
 
 ** Segmentation and .vdj format
@@ -469,7 +500,8 @@ in the following situations:
       actual center.
 
 - in a second pass, on the standard output and in both =.vidjil= and =.vdj.fa= files
-        - at the end of the clones detection (default command =-c clones=)
+        - at the end of the clones detection (default command =-c clones=,
+          on a number of clones limited by the =-z= option)
         - or directly when explicitly requiring segmentation (=-c segment=)
 
       These V(D)J designations are obtained by full comparison (dynamic programming)
@@ -483,7 +515,7 @@ in the following situations:
 
 
 Segmentations of V(D)J recombinations are displayed using a dedicated
-.vdj format. This format is compatible with FASTA format. A line starting
+=.vdj= format. This format is compatible with FASTA format. A line starting
 with a > is of the following form:
 
 #+BEGIN_EXAMPLE
@@ -537,45 +569,39 @@ applicable being removed:
 All the following examples are on a IGH VDJ recombinations : they thus
 require either the =-G germline/IGH= option, or the multi-germline =-g germline= option.
 
+** Basic usage: PCR-based datasets, with primers in the V(D)J regions (such as BIOMED-2 primers)
+
 #+BEGIN_SRC sh
 ./vidjil -G germline/IGH data/Stanford_S22.fasta
-   # Detects windows overlapping IGH CDR3s and gather the reads into clones
-   # Summary of clones is available both in out/Stanford_S22.vdj.fa
-   # and in out/Stanford_S22.vidjil.
+   # Gather the reads into clones, based on windows overlapping IGH CDR3s.
+   # Summary of clones is available both on stdout, in out/Stanford_S22.vdj.fa and in out/Stanford_S22.vidjil.
 #+END_SRC
-
-#+BEGIN_EXAMPLE
->8--window--1
-CACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCCA
->5--window--2
-CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
-(...)
-#+END_EXAMPLE
-
-   Windows of size 60 (modifiable by =-w=) have been extracted.
-   The first window has 8 occurrences, the second window has 5 occurrences.
-
 
 #+BEGIN_SRC sh
 ./vidjil -g germline -i data/reads.fasta
-   # Detects for each read the best locus
-   # Detects windows overlapping CDR3s and gather the reads into clones
+   # Detects for each read the best locus, including an analysis of incomplete/unusual recombinations
+   # Gather the reads into clones, again based on windows overlapping the detected CDR3s.
+   # Summary of clones is available both on stdout, in out/reads.vdj.fa and in out/reads.vidjil.
 #+END_SRC
 
 
+** Basic usage: Whole RNA-Seq or capture datasets
+
+#+BEGIN_SRC sh
+./vidjil -g germline -i -U data/reads.fasta
+   # Detects for each read the best locus, including an analysis of incomplete/unusual recombinations
+   # Gather the reads into clones, again based on windows overlapping the detected CDR3s.
+   # Summary of clones is available both on stdout, in out/reads.vdj.fa and in out/reads.vidjil.
+   # The out/reads.segmented.vdj.fa include all reads where a V(D)J recombination was found
+#+END_SRC
+
+
+** Advanced usage
+
 #+BEGIN_SRC sh
 ./vidjil -c clones -G germline/IGH -r 1 ./data/clones_simul.fa
-   # Extracts the windows (-r 1, with at least 1 read each),
+   # Extracts the windows with at least 1 read each (-r 1, the default being -r 5)
    # then gather them into clones
-   # A more natural option could be -r 5.
-   # For debug purpose, if one wants all the clones, use the option -A.
-   # Results are both
-   #  - on the standard output
-   #  - in out/clones_simul.vdj.fa (fasta file to be processed by other tools)
-   #  - in out/clones_simul.vidjil (for the browser)
-   # Additional files are in out/clones_simul.windows.fa and out/seq/clone.fa-*
-   # If one adds the '-U' option, an additonal out/clones_simul.segmented.vdj.fa file is produced,
-   # listing segmented reads using the .vdj format (see below)
 #+END_SRC
 
 #+BEGIN_SRC sh
@@ -583,13 +609,13 @@ CTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGACGTCTG
    # Window extraction + clone gathering,
    # with automatic clustering, distance five (-n 5)
    # The result of the automatic clustering is in the .vidjil file
-   # and can been seen/edited in the browser.
+   # and can been seen/edited in the web application.
 #+END_SRC
 
 #+BEGIN_SRC sh
 ./vidjil -c segment -G germline/IGH data/segment_S22.fa
-   # Segment the reads onto VDJ germline
-   # (this is slow and should only be used for testing)
+   # Detailed V(D)J designation on all reads
+   # (this is slow and should only be used for testing, or on a small file)
 #+END_SRC
 
 #+BEGIN_SRC sh

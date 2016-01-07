@@ -58,8 +58,8 @@ function List(id_list, id_data, model) {
     this.sort_option = {
         "-" : function () {},
         "size" : function(){self.sortListBySize()},
-        "V" : function(){self.sortListByV()},
-        "J" : function(){self.sortListByJ()}
+        "V/5'" : function(){self.sortListByV()},
+        "J/3'" : function(){self.sortListByJ()}
     }
 }
 
@@ -388,7 +388,7 @@ List.prototype = {
         span_name.onclick = function (e) {
             self.clickList(e, cloneID);
         }
-        span_name.appendChild(document.createTextNode(this.m.clone(cloneID).getName()));
+        span_name.appendChild(document.createTextNode(this.m.clone(cloneID).getShortName()));
         span_name.title = this.m.clone(cloneID).getName();
         span_name.style.color = this.m.clone(cloneID).getColor();
 

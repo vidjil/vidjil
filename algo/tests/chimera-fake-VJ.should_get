@@ -3,7 +3,7 @@
 $ The KmerSegmenter segments the three chimera reads on PSEUDO_MAX12 germline (-2)
 1:xxx .* -> .* 3
 
-$ The FineSegmenter gives the locus information (-2)
-1:Unexpected .K-IGKV/.l-IGLJ
-1:Unexpected .B-TRBV/.g-TRGJ
-1:Unexpected .D-TRDV/.h-IGHJ
+$ The FineSegmenter correclty segments the three sequences (-2)
+1:IGKV1-12.01 0//0 IGLJ1.01
+1:TRBV1.01 0//0 TRGJ1.01
+1:TRDV1.01 0//0 IGHJ1.01

@@ -70,7 +70,8 @@ class TestMultilocus < BrowserTest
 
   def test_03_rename_clone_by_clicking
     clone_name = $b.clone_info('25')[:name]
-    assert (clone_name.text == 'TRBV29*01 -1/0/-0 TRBD1*01 -2/0/-5 TRBJ2-5*01'), " >> clone name is not corect"
+    assert (clone_name.title == 'TRBV29*01 -1/0/-0 TRBD1*01 -2/0/-5 TRBJ2-5*01'), " >> clone name is not correct : " + clone_name.title
+    assert (clone_name.text == 'TRBV29 1//0 D1 2//5 J2-5'), " >> clone short name is not correct : " + clone_name.text
     clone_name.double_click
 
     $b.clone_name_editor.set 'renamed_click'
@@ -123,7 +124,7 @@ class TestMultilocus < BrowserTest
 
   def check_when_list_or_scatterplot_clicked
     clone_name = $b.clone_info('25')[:name]
-    assert ( $b.infoline.text == clone_name.text), ">> Clone name is not correct in focus div"
+    assert ( $b.infoline.text == clone_name.title), ">> Clone name is not correct in focus div"
     assert ( $b.clone_in_list('25').class_name.include? "list_select" ), ">> Incorrect class name, clone is not selected"
     assert ( $b.clone_in_scatterplot('25', :class => "circle_select").exists?)
     assert ( $b.clone_in_graph('25', :class=> "graph_select").exists?)

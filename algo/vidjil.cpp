@@ -227,7 +227,7 @@ void usage(char *progname, bool advanced)
        << "  -C <string>   use custom Cost for automatic clustering : format \"match, subst, indels, homo, del_end\" (default "<<Cluster<<" )"<< endl
        << endl ;
 
-  cerr << "Detailed output per read (generally not recommended, large files, but may be used for filtering)" << endl
+  cerr << "Detailed output per read (generally not recommended, large files, but may be used for filtering, as in -uu -X 1000)" << endl
        << "  -U            output segmented reads (in " << SEGMENTED_FILENAME << " file)" << endl
        << "  -u            output unsegmented reads (in " << UNSEGMENTED_FILENAME << " file)" << endl
        << "  -uu           output unsegmented reads, gathered by unsegmentation cause (in *" << UNSEGMENTED_DETAIL_FILENAME << " files)" << endl
@@ -917,10 +917,10 @@ int main (int argc, char **argv)
       IKmerStore<KmerAffect> *index = multigermline->index ;
 
       // Initialize statistics, with two additional categories
-      index->labels.push_back(make_pair(KmerAffect::getAmbiguous(), AFFECT_AMBIGUOUS_SYMBOL));
-      index->labels.push_back(make_pair(KmerAffect::getUnknown(), AFFECT_UNKNOWN_SYMBOL));
+      index->labels.push_back(make_pair(KmerAffect::getAmbiguous(), FASTA_AMBIGUOUS));
+      index->labels.push_back(make_pair(KmerAffect::getUnknown(), FASTA_UNKNOWN));
       
-      for (list< pair <KmerAffect, string> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
+      for (list< pair <KmerAffect, Fasta> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
 	{
 	  char key = affect_char(it->first.affect) ;
 	  stats_kmer[key] = 0 ;
@@ -972,7 +972,7 @@ int main (int argc, char **argv)
 	   << endl ;
       cout << "\t" << " max" << "\t\t" << "        kmers" << "\n" ;
 
-      for (list< pair <KmerAffect, string> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
+      for (list< pair <KmerAffect, Fasta> >::const_iterator it = index->labels.begin(); it != index->labels.end(); ++it)
 	{
           if (it->first.getStrand() == -1)
             continue ;
@@ -987,7 +987,7 @@ int main (int argc, char **argv)
 	  cout << setw(12) << stats_kmer[key] << " " ;
 	  cout << setw(6) << fixed << setprecision(2) <<  (float) stats_kmer[key] / total_length * 100 << "%" ;
 
-	  cout << "     " << key << " " << it->second << endl ;
+	  cout << "     " << key << " " << it->second.name << endl ;
 	}
       
       delete index;
@@ -1040,6 +1040,7 @@ int main (int argc, char **argv)
           replace(s.begin(), s.end(), ' ', '_');
           replace(s.begin(), s.end(), '/', '_');
           replace(s.begin(), s.end(), '<', '_');
+          replace(s.begin(), s.end(), '\'', '_');
 
           string f_unsegmented_detail = out_dir + f_basename + "." + s + UNSEGMENTED_DETAIL_FILENAME ;
           cout << "  ==> " << f_unsegmented_detail << endl ;
@@ -1203,8 +1204,10 @@ int main (int argc, char **argv)
     //////////////////////////////////
     //$$ Output clones
 
-    if (max_clones > 0)
-      cout << "Detailed analysis of at most " << max_clones<< " clones" ;
+    if (max_clones == 0)
+      cout << "No detailed clone analysis" ;
+    else if (max_clones > 0)
+      cout << "Detailed analysis of at most " << max_clones<< " clone" << (max_clones > 1 ? "s" : "") ;
     else
       cout << "Detailed analysis of all clones" ;
     cout << endl ;
@@ -1352,7 +1355,7 @@ int main (int argc, char **argv)
         
         // From FineSegmenter
         json_clone["sequence"] = seg.getSequence().sequence;
-        json_clone["name"] = seg.code_short;
+        json_clone["name"] = seg.code;
         json_clone["seg"] = seg.toJson();
 
         //From KmerMultiSegmenter
@@ -1449,7 +1452,8 @@ int main (int argc, char **argv)
     } // end if (command == CMD_CLONES) 
 
     //$$ .json output: json_data_segment
-    cout << "  ==> " << f_json << "\t(data file for the browser)" << endl ;
+    cout << endl ;
+    cout << "  ==> " << f_json << "\t(data file for the web application)" << endl ;
     ofstream out_json(f_json.c_str()) ;
     
     ostringstream stream_cmdline;

@@ -13,10 +13,13 @@
             "5end" : 5
         }
     }
-    
+
+    var some_name = "IGHV3-23*01 6//4 IGHD1-1*01 5/CCCACGTGGGGG/4 IGHJ5*02"
+
     var json_clone2 = {
         "sequence" : "AACGTACCAGG",
         "id" : "id2",
+        "name" : some_name,
         "reads" : [10,10,15,15] ,
         "top" : 2,
         "germline" : "TRG",
@@ -52,7 +55,7 @@ function includes(result, pattern, message) {
     }
 }
 
-test("clone : name", function() {
+test("clone : name, informations, getHtmlInfo", function() {
     
     var m = new Model();
     m.parseJsonData(json_data)
@@ -63,9 +66,11 @@ test("clone : name", function() {
     
     equal(c1.getSequenceName(), "hello", "get name clone1 : hello");
     equal(c1.getCode(), "hello", "get code clone1 : hello");
-    
-    equal(c2.getSequenceName(), "id2", "get name clone2 : id2");
-    equal(c2.getCode(), "id2", "get code clone2 : id2");
+
+    equal(c2.getSequenceName(), some_name, "clone2, .getSequenceName()");
+    equal(c2.getCode(), some_name, "clone2, .getCode()");
+    equal(c2.getName(), some_name, "clone2, .getName()");
+    equal(c2.getShortName(), "IGHV3-23 6//4 D1-1 5/12/4 J5", "clone2, .getShortName()");
     
     equal(c3.getSequenceName(), "custom name", "get name clone3 : custom name");
     equal(c3.getCode(), "id3", "get code clone3 : id3");
@@ -90,7 +95,10 @@ test("clone : name", function() {
     includes(html, "<h2>Cluster info : hello</h2><div id='info_window'><table><tr><th></th><td>Diag</td><td>Fu-1</td><td>Fu-2</td><td>Fu-3</td></tr>",
              "getHtmlInfo: cluster info");
 
-    includes(html, "<tr><td class='header' colspan='5'> clone </td></tr><tr><td> clone name </td><td colspan='4'>hello</td></tr><tr><td> clone size (n-reads (total reads) )</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td> clone size (%)</td><td>10.00%</td><td>20.00%</td><td>15.00%</td><td>30.00%</td>",
+    includes(html, "<tr><td> clone name </td><td colspan='4'>hello</td></tr><tr><td> clone short name </td><td colspan='4'>hello</td></tr>",
+             "getHtmlInfo: clone names")
+
+    includes(html, "<tr><td> clone size (n-reads (total reads) )</td><td>20  (200)</td><td>20  (100)</td><td>30  (200)</td><td>30  (100)</td></tr><tr><td> clone size (%)</td><td>10.00%</td><td>20.00%</td><td>15.00%</td><td>30.00%</td>",
              "getHtmlInfo: clone information");
     
     includes(html, "<tr><td class='header' colspan='5'> representative sequence</td></tr><tr><td> sequence name </td><td colspan='4'>hello</td></tr><tr><td> code </td><td colspan='4'>hello</td></tr><tr><td> length </td><td colspan='4'>19</td></tr><tr><td> size (n-reads (total reads) )</td><td>10  (200)</td><td>10  (100)</td><td>15  (200)</td><td>15  (100)</td></tr><tr><td> size (%)</td><td>5.000%</td><td>10.00%</td><td>7.500%</td><td>15.00%</td></tr>",

@@ -115,16 +115,16 @@ function ScatterPlot(id, model) {
     // Plot axis
     this.available_axis = {
         "gene_v": { 
-            label:"gene V" 
+            label:"V/5' gene"
         },
         "gene_j": { 
-            label:"gene J" 
+            label:"J/3' gene"
         },
         "allele_v": { 
-            label:"allele V" 
+            label:"V allele"
         },
         "allele_j": { 
-            label:"allele J" 
+            label:"J allele"
         },
         "sequenceLength" : { 
             label: "clone consensus length",

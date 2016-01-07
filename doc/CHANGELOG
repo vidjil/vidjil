@@ -1,6 +1,18 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
+2015-12-22  The Vidjil Team
+	* Better KmerSegmenter, rejecting reads with large alterning V/J zones (core/segment.cpp)
+	* Better unsegmentation causes, 'UNSEG only V/J' needs significant V/J fragments (core/segment.cpp)
+	* Renamed unsegmentation messages to "only V/5'" and "only J/3'" to avoid confusion (core/segment.h)
+	* Faster FineSegmenter (~35%), computing roughly half of the dynamic programming matrix (core/segment.cpp)
+	* More flexible handling of badly formatted .fastq files (core/fasta.cpp)
+	* New filtering/debug option (-uu), sort unsegmented reads (core/windowExtractor.cpp)
+	* Streamlined json output, removing short codes (vidjil.cpp, core/segment.cpp)
+	* Updated and refactored help (doc/algo.org)
+	* Updated unit and functional tests
+	* Bugs closed (build process, -X with large numbers, -x/-X combined with -c segment, stdout messages)
+
 2015-10-08  The Vidjil Team
 	* Bug closed (V(D)J assignation when V/D/J segments are close on the negative strand) (core/segment.cpp)
 

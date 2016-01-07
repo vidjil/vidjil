@@ -70,6 +70,15 @@ class Germline {
 
   void mark_as_ambiguous(Germline *other);
     
+  /*
+   * This function sets the rep5/3 according to two KmerAffects.
+   * Quite useful for some pseudo-germlines.
+   * This should not be used for regular germlines that have and use some rep5/3.
+   * @param left, right: two KmerAffects
+   * @post  set rep_5 and rep_3 stored in the labels of the index
+   */
+  void override_rep5_rep3_from_labels(KmerAffect left, KmerAffect right);
+
   list <string> f_reps_5 ;
   list <string> f_reps_4 ;
   list <string> f_reps_3 ;

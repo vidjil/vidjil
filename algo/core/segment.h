@@ -61,7 +61,7 @@ const char* const segmented_mesg[] = { "?",
                                        "SEG",
                                        "SEG_+", "SEG_-",
                                        "UNSEG too short", "UNSEG strand",
-				       "UNSEG too few V/J", "UNSEG only V", "UNSEG only J",
+				       "UNSEG too few V/J", "UNSEG only V/5'", "UNSEG only J/3'",
 				       "UNSEG < delta_min", "UNSEG ambiguous",
                                        "UNSEG too short w",
                                       } ;
@@ -110,8 +110,6 @@ protected:
   Germline *segmented_germline;
   string label;
   string code;
-  string code_short;
-  string code_light;
   string info;        // .vdj.fa header, fixed fields
   string info_extra;  // .vdj.fa header, other information, at the end of the header
   int best_V, best_J ;

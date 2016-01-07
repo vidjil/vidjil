@@ -680,7 +680,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   because = NOT_PROCESSED ;
   segmented_germline = germline ;
   info_extra = "" ;
-  code_short = "" ;
   label = seq.label ;
   sequence = seq.sequence ;
   Dend=0;
@@ -691,27 +690,32 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
   CDR3start = -1;
   CDR3end = -1;
-  
-  if (!germline->rep_5.size() || !germline->rep_3.size())
+
+  if ((germline->seg_method == SEG_METHOD_MAX12) || (germline->seg_method == SEG_METHOD_MAX1U))
     {
       // We check whether this sequence is segmented with MAX12 or MAX1U (with default e-value parameters)
       KmerSegmenter *kseg = new KmerSegmenter(seq, germline, THRESHOLD_NB_EXPECTED, 1);
-      if (kseg->isSegmented() && ((germline->seg_method == SEG_METHOD_MAX12)
-                                  || (germline->seg_method == SEG_METHOD_MAX1U)))
+      if (kseg->isSegmented())
         {
           reversed = kseg->isReverse();
 
           KmerAffect left = reversed ? KmerAffect(kseg->after, true) : kseg->before ;
           KmerAffect right = reversed ? KmerAffect(kseg->before, true) : kseg->after ;
 
-          code_short = "Unexpected ";
+          code = "Unexpected ";
 
-          code_short += left.toStringSigns() + germline->index->getLabel(left);
-          code_short += "/";
-          code_short += right.toStringSigns() + germline->index->getLabel(right);
-          info_extra += " " + left.toString() + "/" + right.toString() + " (" + code_short + ")";
+          code += left.toStringSigns() + germline->index->getLabel(left).name;
+          code += "/";
+          code += right.toStringSigns() + germline->index->getLabel(right).name;
+          info_extra += " " + left.toString() + "/" + right.toString() + " (" + code + ")";
+
+          if (germline->seg_method == SEG_METHOD_MAX1U)
+            return ;
+
+          germline->override_rep5_rep3_from_labels(left, right);
         }
-      return ;
+      else
+        return ;
     }
 
   // TODO: factoriser tout cela, peut-etre en lancant deux segmenteurs, un +, un -, puis un qui chapote
@@ -841,19 +845,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
     "/" + string_of_int(del_J) +
     " " + germline->rep_3.label(best_J); 
 
-    stringstream code_s;
-   code_s<< germline->rep_5.label(best_V) <<
-    " -" << string_of_int(del_V) << "/" 
-    << seg_N.size()
-    // chevauchement +
-    << "/-" << string_of_int(del_J)
-    <<" " << germline->rep_3.label(best_J);
-    code_short=code_s.str();
-    
-  code_light = germline->rep_5.label(best_V) +
-    "/ " + germline->rep_3.label(best_J); 
-
- 
   info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS) ;
   finishSegmentation();
 }
@@ -936,25 +927,6 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
     "/" + seg_N2 +
     "/" + string_of_int(del_J) +
     " " + germline->rep_3.label(best_J); 
-
-    stringstream code_s;
-    code_s << germline->rep_5.label(best_V) 
-    << " -" << string_of_int(del_V) << "/" 
-    << seg_N1.size()
-    
-    << "/-" << string_of_int(del_D_left) 
-    << " " << germline->rep_4.label(best_D) 
-    << " -" << string_of_int(del_D_right) << "/"
-    
-    << seg_N2.size()
-    << "/-" << string_of_int(del_J) 
-    << " " << germline->rep_3.label(best_J);
-    code_short=code_s.str();
-    
-    
-    code_light = germline->rep_5.label(best_V) +
-    "/ " + germline->rep_4.label(best_D) +
-    "/ " + germline->rep_3.label(best_J); 
     
     finishSegmentationD();
   }

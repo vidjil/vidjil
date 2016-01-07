@@ -57,6 +57,7 @@ function Clone(data, model, index, virtual) {
     this.computeEValue()
 }
 
+function nullIfZero(x) { return x == 0 ? '' : x }
 
 Clone.prototype = {
 
@@ -72,6 +73,60 @@ Clone.prototype = {
         return false;
     },
 
+    /**
+     * return clone's most important name, shortened
+     * @return {string} name
+     * */
+
+    REGEX_N: /^(-?\d*)\/([ACGT]*)\/(-?\d*)$/,                                    // 6/ACCAT/
+    REGEX_N_SIZE: /^(-?\d*)\/(\d*)\/(-?\d*)$/,                                   // 6/5/
+    REGEX_GENE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-*]*)$/,                       // IGHV3-11*03
+    REGEX_GENE_IGNORE_ALLELE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-]*)[\w-*]*$/,   // IGHV3-11*03  (ignore *03)
+
+    getShortName: function () {
+
+        name_items = this.getName().split(' ')
+        short_name_items = []
+
+        last_locus = ''
+
+        for (var i = 0; i < name_items.length; i++) {
+
+            s = name_items[i]
+            console.log('>' + s);
+
+            // Shorten IGHV3-11*03 ... IGHD6-13*01 ... IGHJ4*02 into IGHV3-11*03 ... D6-13*01 ... J4*02
+            // z = s.match(this.REGEX_GENE);
+            z = s.match(this.REGEX_GENE_IGNORE_ALLELE);
+            if (z)
+            {
+                locus = (z[1] == last_locus) ? '' : z[1]
+                short_name_items.push(locus + z[2])
+                last_locus = z[1]
+                continue
+            }
+
+            // Shorten -6/ACCAT/ into 6/5/0
+            z = s.match(this.REGEX_N);
+            if (z)
+            {
+                short_name_items.push(Math.abs(z[1]) + '/' + nullIfZero(z[2].length) + '/' + Math.abs(z[3]))
+                continue
+            }
+
+            // Shorten -6/0/ into 6//0
+            z = s.match(this.REGEX_N_SIZE);
+            if (z)
+            {
+                short_name_items.push(Math.abs(z[1]) + '/' + nullIfZero(z[2]) + '/' + Math.abs(z[3]))
+                continue
+            }
+
+            short_name_items.push(s)
+        }
+
+        return short_name_items.join(' ')
+    },
 
     /** 
      * return clone's most important name <br>
@@ -711,6 +766,7 @@ Clone.prototype = {
         if (isCluster) {
             html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> clone </td></tr>"
             html += "<tr><td> clone name </td><td colspan='" + time_length + "'>" + this.getName() + "</td></tr>"
+            html += "<tr><td> clone short name </td><td colspan='" + time_length + "'>" + this.getShortName() + "</td></tr>"
             html += "<tr><td> clone size (n-reads (total reads) )</td>"
             for (var i = 0; i < time_length; i++) {
                 html += "<td>"

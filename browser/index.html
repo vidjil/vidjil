@@ -115,8 +115,9 @@
                 <div id="clusterSelector" class="selector"><div>
                     <a class="buttonSelector" onclick="m.restoreClusters();">clones merged by user</a>
                     <a class="buttonSelector" onclick="m.resetClusters();">reset all user clones</a>
-                    <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(5)});">cluster by V </a>
-                    <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(3)});">cluster by J </a>
+                    <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(5)});">cluster by V/5' </a>
+                    <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(3)});">cluster by J/3' </a>
+                    <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).germline});">cluster by locus </a>
 
                     <div id="clusterby_button"> </div>
                 </div></div>
@@ -125,8 +126,8 @@
             <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color by
                 <div class="div-menu-selector"><select class="menu-selector" onchange="m.changeColorMethod(this.value)">
                     <option value="Tag">tag</option>
-                    <option value="V">V</option>
-                    <option value="J">J</option>
+                    <option value="V">V/5'</option>
+                    <option value="J">J/3'</option>
                     <option value="N">N</option>
                     <option value="system" id="color_system_button">locus/germline</option>
                     <option value="abundance">abundance</option>

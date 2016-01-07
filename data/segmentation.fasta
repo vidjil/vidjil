@@ -30,5 +30,11 @@ tgtgccacctgggacaggGAATTATTATAAGAAACTtgtgccacctgggacaggGAATTATTATAAGAAACT
 #VVVVVVVVVJJJJJJJJJJJJJJ          # contiguous 10-mer
 cttgggcagttggaacaacACTTGTTGTCACAG
 
+>seq-delta-min-padded
+# seq-delta-min padded with some V and some J
+tcttccaacttggaagggagaacgaagtcagtcaccaggctgactgggtcatctgctgaa
+cttgggcagttggaacaacACTTGTTGTCACAG
+gaattattataagaaactctttggcagtggaacaacactggttgtcac
+
 >seq-seg-no-window
 acctgggacaggGAATTATTATAA

@@ -1900,10 +1900,11 @@ Model.prototype = {
                     else
                         germName = listGene[i].slice(0, 4);                              
                 }
-                
-                fasta += ">" + listGene[i] + '\n';
-                fasta += germline[germName][listGene[i]].toUpperCase() + '\n'
-        }
+                if (typeof germline[germName][listGene[i]] != 'undefined') {
+                    fasta += ">" + listGene[i] + '\n';
+                    fasta += germline[germName][listGene[i]].toUpperCase() + '\n'
+                }
+            }
 
             var result = $('<div/>', {
                 html: fasta
