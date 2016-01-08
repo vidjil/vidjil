@@ -1,8 +1,9 @@
-function Builder(model) {
+function Builder(model, database) {
     if (typeof model != "undefined"){
         this.m = model; //Model utilisé
         this.m.view.push(this); //synchronisation au Model
     }
+    this.db = database;
     this.colorMethod = "";
     this.width_left_container = $("#left-container")
         .css("width")
@@ -554,6 +555,16 @@ Builder.prototype = {
         text_area.disabled = true
         text_area.innerHTML = this.m.getInfoTime(this.m.t)
         div_sequence_info.appendChild(text_area)
+
+        var save_info = document.createElement("span")
+        save_info.onclick = function() {
+            self.db.save_sample_info(self.m.t, "foobar");
+        }
+        save_info.innerHTML = "save"
+        save_info.className = "save_info button_right"
+        div_sequence_info.appendChild(save_info)
+     
+        parent.appendChild(div_sequence_info)
 
         this.initTag();
     },
