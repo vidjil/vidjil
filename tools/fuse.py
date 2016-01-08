@@ -330,6 +330,9 @@ class ListWindows(VidjilJson):
         with open(file_path, "r") as file:
                 tmp = json.load(file, object_hook=self.toPython)     
                 self.d=tmp.d
+                # Be robust against 'null' values for clones
+                if not self.d["clones"]:
+                    self.d["clones"] = []
                 self.check_version(file_path)
         
         if 'distribution' not in self.d['reads'].d:
