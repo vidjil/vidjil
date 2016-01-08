@@ -232,6 +232,7 @@ def get_data():
             for i in range(len(data["samples"]["original_names"])) :
                 data_file = data["samples"]["original_names"][i]
                 if row.sequence_file.data_file == data_file :
+                    data["samples"]["ids"][i] = row.sequence_file.id
                     data["samples"]["original_names"][i] = filename
                     data["samples"]["timestamp"][i] = str(row.sequence_file.sampling_date)
                     data["samples"]["info"][i] = row.sequence_file.info
