@@ -277,3 +277,22 @@ def producer_list():
             
     res = {"producer": producer_list}
     return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+def save_info():
+    sequence_file_id = request.vars["id"]
+    row = db.sequence_file[sequence_file_id]
+    if row is not None:
+        if auth.can_modify_patient(row.patient_id):
+            row = dict(info = request.vars["info"])
+
+            res = {"success": True,
+                   "message": "The changes have been saved"}
+        else:
+            res = {"success": False,
+                   "message": "You do not have permission to do that"}
+    else:
+        res = {"success": False,
+               "message": "An error occured"}
+    return gluon.contrib.simplejson.dumps(res, separators=(',', ':'))
+
+
