@@ -547,14 +547,13 @@ Builder.prototype = {
         var div_color = this.build_info_color()
         parent.appendChild(div_color) 
 
-        var div_info = document.createElement("div")
-        div_info.className = "centered"
+        var div_sequence_info = document.createElement("div")
+        div_sequence_info.className = "info_sequence"
         var text_area = document.createElement("textarea")
         text_area.className = "info_text"
         text_area.disabled = true
         text_area.innerHTML = this.m.getInfoTime(this.m.t)
-        div_info.appendChild(text_area)
-        parent.appendChild(div_info)
+        div_sequence_info.appendChild(text_area)
 
         this.initTag();
     },
