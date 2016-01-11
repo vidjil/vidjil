@@ -20,7 +20,7 @@ def print_fuse_from_sequence_filename(substring):
                 result_filenames.append(results[0].data_file)
                 sequence_filenames.append(db.sequence_file[seq_id].filename)
             results = ' '.join([defs.DIR_RESULTS+'{0}'.format(f) for f in result_filenames])
-            patient_id = str(db.sequence_file[id.id].patient_id)
+            patient_id = str(db((db.sequence_file.id == id.id) & (db.sample_set_membership.sequence_file_id == db.sequence_file.id) & (db.patient.sample_set_id == db.sample_set_membership.sample_set_id)).select(db.patient.id).first().id)
             comments = ' '.join(sequence_filenames)+' (patientID: ' + patient_id +')'\
                        +' http://rbx.vidjil.org/browser/?patient=%s&config=%s' % (patient_id, fused.config_id)
             print ("python %s/fuse.py -o %s/%s -t 100 %s # %s" % (os.path.abspath(defs.DIR_FUSE),\

@@ -145,6 +145,36 @@ def make_backup():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
     
+def load_backup():
+    if auth.is_admin():
+        db.import_from_csv_file(defs.DB_BACKUP_FILE,'rb')
+
+## delete all sample_set
+## create a new sample_set for every patient/ every sequence_file
+## add sequence_file from a patient to the patient sample set
+def sample_set_fixer():
+    if auth.is_admin():
+        
+        db(db.sample_set.id>0).update(sample_type="old")
+        db(db.sample_set_membership.id>0).delete()
+        
+        for row in db(db.sequence_file.id>0).select() :
+            sample_set_id = db.sample_set.insert(sample_type="sequence_file")
+
+            db.sample_set_membership.insert(sample_set_id=sample_set_id,
+                                           sequence_file_id=row.id)
+        
+        for row in db(db.patient.id>0).select() :
+            sample_set_id = db.sample_set.insert(sample_type="patient")
+            db.patient[row.id] = dict(sample_set_id=sample_set_id)
+            
+            for row2 in db(db.sequence_file.patient_id==row.id).select() :
+                db.sample_set_membership.insert(sample_set_id=sample_set_id,
+                                               sequence_file_id=row2.id)
+                
+        db(db.sample_set.sample_type=="old").delete()
+                
+    
 def repair():
     if auth.is_admin():
         
@@ -167,7 +197,8 @@ def repair():
             db.sequence_file[row.id] = dict(provider = auth.user_id)
       
         flist += "fix sequence_file patient "
-        db(db.sequence_file.patient_id == None).delete();
+        db((db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+           & (db.sample_set_membership.sample_set_id == None)).delete();
         
         flist += "fix results_file "
         db(db.results_file.sequence_file_id == None).delete()

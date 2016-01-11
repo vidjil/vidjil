@@ -36,6 +36,7 @@ def info():
 
     next_patient()
     patient = db.patient[request.vars["id"]]
+    sample_set_id = patient.sample_set_id
 
     if request.vars["config_id"] and request.vars["config_id"] != "-1" and request.vars["config_id"] != "None":
         config_id = long(request.vars["config_id"])
@@ -43,12 +44,13 @@ def info():
         config_name = db.config[request.vars["config_id"]].name
 
         fused = db(
-            (db.fused_file.patient_id == patient)
+            (db.patient.id == patient)
+            & (db.patient.sample_set_id == db.fused_file.sample_set_id)
             & (db.fused_file.config_id == config_id)
         )
 
         analysis = db(
-            db.analysis_file.patient_id == patient
+            db.analysis_file.sample_set_id == sample_set_id
         ).select(orderby=~db.analysis_file.analyze_date)
         
         
@@ -74,7 +76,8 @@ def info():
 	query =[]
 	
         query2 = db(
-                (db.sequence_file.patient_id==db.patient.id)
+                (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+                & (db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
                 & (db.patient.id==request.vars["id"])
             ).select(
                 left=db.results_file.on(
@@ -92,7 +95,8 @@ def info():
     else:
 
         query = db(
-                (db.sequence_file.patient_id==db.patient.id)
+                (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+                & (db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
                 & (db.patient.id==request.vars["id"])
             ).select(
                 left=db.results_file.on(
@@ -148,7 +152,9 @@ def custom():
         q = ((auth.accessible_query('read', db.patient)) 
                 & (auth.accessible_query('read', db.config)) 
                 & (db.patient.id==request.vars["patient_id"])
-                & (db.sequence_file.patient_id==db.patient.id)
+                & (db.sample_set.id == db.patient.sample_set_id)
+                & (db.sample_set_membership.sample_set_id == db.sample_set.id)
+                & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                 & (db.results_file.sequence_file_id==db.sequence_file.id)
                 & (db.results_file.data_file != '')
                 & (db.config.id==db.results_file.config_id)
@@ -157,7 +163,9 @@ def custom():
     else:
         q = ((auth.accessible_query('read', db.patient)) 
                 & (auth.accessible_query('read', db.config)) 
-                & (db.sequence_file.patient_id==db.patient.id)
+                & (db.sample_set.id == db.patient.sample_set_id)
+                & (db.sample_set_membership.sample_set_id == db.sample_set.id)
+                & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                 & (db.results_file.sequence_file_id==db.sequence_file.id)
                 & (db.results_file.data_file != '')
                 & (db.config.id==db.results_file.config_id)
@@ -167,9 +175,9 @@ def custom():
     query = db(q).select(
                 db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name, db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
                 db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
-                db.sequence_file.patient_id, db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
+                db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
                 db.sequence_file.size_file,
-                orderby = ~db.sequence_file.patient_id|db.sequence_file.id|db.results_file.run_date,
+                orderby = ~db.patient.id|db.sequence_file.id|db.results_file.run_date,
                 groupby = myGroupBy
             )
 
@@ -263,7 +271,7 @@ def stats():
         except:
             row_result_json = []
 
-        fused_file = db((db.fused_file.patient_id == row.sequence_file.patient_id) & (db.fused_file.config_id == row.results_file.config_id)).select(orderby = ~db.fused_file.id, limitby=(0,1))
+        fused_file = db((db.fused_file.sample_set_id == row.sample_set.id) & (db.fused_file.config_id == row.results_file.config_id)).select(orderby = ~db.fused_file.id, limitby=(0,1))
         if len(fused_file) > 0 and fused_file[0].sequence_file_list is not None:
             sequence_file_list = fused_file[0].sequence_file_list.split('_')
             try:
@@ -375,7 +383,9 @@ def index():
             result[row.patient.id]['creator'] = row.auth_user.last_name
        
     query2 = db(
-        db.patient.id == db.sequence_file.patient_id
+        (db.patient.sample_set_id == db.sample_set.id)
+        &(db.sample_set_membership.sample_set_id == db.sample_set.id)
+        &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
     ).select(
         db.patient.id, db.sequence_file.size_file
     )
@@ -385,7 +395,7 @@ def index():
             result[row.patient.id]['size'] += row.sequence_file.size_file
     
     query3 = db(
-        (db.patient.id == db.fused_file.patient_id) &
+        (db.patient.sample_set_id == db.fused_file.sample_set_id) &
         (db.fused_file.config_id == db.config.id) &
         (auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) )
     ).select(
@@ -489,8 +499,11 @@ def add_form():
                 error += "date (wrong format)"
 
         if error=="" :
+            id_sample_set = db.sample_set.insert(sample_type="patient")
+            
             id = db.patient.insert(first_name=request.vars["first_name"],
                                    last_name=request.vars["last_name"],
+                                   sample_set_id=id_sample_set,
                                    birth=request.vars["birth"],
                                    info=request.vars["info"],
                                    id_label=request.vars["id_label"],
@@ -603,16 +616,27 @@ def confirm():
 #
 def delete():
     if (auth.can_modify_patient(request.vars["id"]) ):
+        sample_set_id = db.patient[request.vars["id"]].sample_set_id
+
         #delete data file 
-        query = db( (db.sequence_file.patient_id==request.vars["id"])).select() 
+        query = db( (db.sample_set_membership.sample_set_id == sample_set_id)
+                    & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+                ).select(db.sequence_file.id) 
         for row in query :
             db(db.results_file.sequence_file_id == row.id).delete()
-
+        
         #delete sequence file
-        db(db.sequence_file.patient_id == request.vars["id"]).delete()
+        query = db((db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            & (db.sample_set_membership.sample_set_id == sample_set_id)
+            ).select(db.sequence_file.id)
+        for row in query :
+            db(db.sequence_file.id == row.id).delete()
 
         #delete patient
         db(db.patient.id == request.vars["id"]).delete()
+        
+        #delete patient sample_set
+        db(db.sample_set.id == sample_set_id).delete()
 
         res = {"redirect": "patient/index",
                "success": "true",

@@ -18,7 +18,7 @@ print
 
 yesterday = datetime.datetime.now() - datetime.timedelta(hours=LAST_HOURS)
 
-RUN_CONFIG_SEQ_PATIENT = (db.results_file.sequence_file_id == db.sequence_file.id) & (db.patient.id == db.sequence_file.patient_id) & (db.config.id == db.results_file.config_id) & (db.scheduler_task.id == db.results_file.scheduler_task_id)
+RUN_CONFIG_SEQ_PATIENT = (db.results_file.sequence_file_id == db.sequence_file.id) & (db.sample_set_membership.sequence_file_id == db.sequence_file.id) & (db.sample_set_memebership.sample_set_id == db.patient.sample_set_id) & (db.config.id == db.results_file.config_id) & (db.scheduler_task.id == db.results_file.scheduler_task_id)
 
 print 
 print "=== Recent not completed tasks, last %d hours" % LAST_HOURS
@@ -31,7 +31,7 @@ for res in db((db.scheduler_task.last_run_time >= yesterday) & (db.scheduler_tas
 print
 print "=== Recent analysis saved, last %d hours" % LAST_HOURS
 
-for res in db((db.analysis_file.analyze_date >= yesterday) & (db.patient.id == db.analysis_file.patient_id)).select():
+for res in db((db.analysis_file.analyze_date >= yesterday) & (db.patient.sample_set_id == db.analysis_file.sample_set_id)).select():
     print "   ", res.analysis_file.analyze_date,
     print "\t", "pat-%04d (%s)" % (res.patient.id, res.patient.last_name[:3]),
     print "\t", ellipsis(res.analysis_file.analysis_file, 50)

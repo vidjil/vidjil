@@ -11,7 +11,9 @@ def get_analysis_from_patient(patient_id, *fields, **kwargs):
     '''
     if 'orderby' not in kwargs:
         kwargs['orderby'] = ~db.analysis_file.analyze_date
-    return db(db.analysis_file.patient_id == patient_id).select(*fields, **kwargs)
+        
+    sample_set_id = db.patient[patient_id].sample_set_id
+    return db(db.analysis_file.sample_set_id == sample_set_id).select(*fields, **kwargs)
     
 def get_analysis_data(patient_id):
     '''
@@ -67,4 +69,3 @@ def get_default_analysis():
            "tags": {},
            "vidjil_json_version" : "2014.09"
            }
-

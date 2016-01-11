@@ -32,7 +32,7 @@ def link(from_name, to_name, comments, link):
 if args.sequences:
   print "### Sequences"
 
-  for res in db(db.patient.id == db.sequence_file.patient_id).select():
+  for res in db(db.patient.sample_set_id == db.sample_set_membership.sample_set_id) & (db.sample_set_membership.sequence_file_id == db.sequence_file.id).select():
 
     if args.filter:
       if not vidjil_utils.advanced_filter([res.patient.first_name,res.patient.last_name,res.patient.info], args.filter):
@@ -60,7 +60,7 @@ def last_result_by_file():
     print "===", "seq-%d" % seq.id, "\t", seq.sampling_date, "\t", seq.filename, seq.data_file
     res_with_file = []
 
-    for res in db((db.results_file.sequence_file_id == seq.id) & (db.patient.id == seq.patient_id)).select(orderby=db.results_file.run_date):
+    for res in db((db.results_file.sequence_file_id == seq.id)).select(orderby=db.results_file.run_date):
        print "   ", "sched-%d" % res.results_file.scheduler_task_id, "\t", res.results_file.run_date, "\t", res.results_file.data_file
        if res.results_file.data_file:
               res_with_file += [res]
@@ -75,7 +75,7 @@ def last_result_by_file():
 def last_result_by_first_point_by_patient():
     res_by_pat = {}
 
-    for res in db((db.patient.id == db.sequence_file.patient_id)
+    for res in db((db.patient.sample_set_id == db.sample_set_membership.sample_set_id) & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                   & (db.results_file.sequence_file_id == db.sequence_file.id)).select(#groupby=db.patient.id,
                                                                                       orderby=db.patient.id|db.sequence_file.sampling_date|~db.results_file.run_date):
 
@@ -125,7 +125,7 @@ if args.analysis:
 
     last_id = None
 
-    for res in db(db.patient.id == db.analysis_file.patient_id).select(orderby=db.patient.id|~db.analysis_file.analyze_date):
+    for res in db(db.patient.sample_set_id == db.analysis_file.sample_set_id).select(orderby=db.patient.id|~db.analysis_file.analyze_date):
 
         # Only last saved analysis:
         if res.patient.id == last_id:

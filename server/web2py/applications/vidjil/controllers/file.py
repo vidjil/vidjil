@@ -19,7 +19,10 @@ def add():
     elif not auth.can_upload_file(request.vars['id']):
         return error_message("you don't have right to upload files")
     else:
-        query = db((db.sequence_file.patient_id==request.vars['id'])).select()
+        query = db((db.patient.id == request.vars['id'])
+                &(db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
+                &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            ).select(db.sequence_file.ALL)
         if len(query) != 0 :
             pcr = query[0].pcr
             sequencer = query[0].sequencer
@@ -44,7 +47,10 @@ def add_form():
         error += " missing filename"
             
     if error=="" :
-        query = db((db.sequence_file.patient_id==request.vars['patient_id'])).select()
+        query = db((db.patient.id == request.vars['patient_id'])
+                &(db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
+                &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            ).select(db.sequence_file.ALL)
         for row in query :
             if row.filename == request.vars['filename'] :
                 return error_message("this sequence file already exists for this patient")
@@ -57,6 +63,13 @@ def add_form():
                             patient_id=request.vars['patient_id'],
                             filename=request.vars['filename'],
                             provider=auth.user_id)
+        
+        id_sample_set = db.sample_set.insert(sample_type="sequence_file")
+        
+        id_sample_set_membership = db.sample_set_membership.insert(sample_set_id=id_sample_set,
+                                                                  sequence_file_id=id)
+        id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=db.patient[request.vars['patient_id']].sample_set_id,
+                                                                  sequence_file_id=id)
     
         res = {"file_id" : id,
                "message": "file %s (%s): upload started: %s" % (id, request.vars['patient_id'], request.vars['filename']),
@@ -110,7 +123,10 @@ def edit_form():
                                                         filename=filename,
                                                         provider=auth.user_id)
             
-        patient_id = db.sequence_file[request.vars["id"]].patient_id
+        patient_id = db((db.sequence_file.id == request.vars["id"])
+                        &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                        &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
+                        ).select(db.patient.id).first().id
         
         res = {"file_id" : request.vars['id'],
                "redirect": "patient/info",
@@ -130,7 +146,10 @@ def upload():
         error += "no sequence file with this id"
 
     if not error:
-        patient_id = db.sequence_file[request.vars["id"]].patient_id            
+        patient_id = db((db.sequence_file.id == request.vars["id"])
+                        &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                        &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
+                        ).select(db.patient.id).first()
         mes += "file %s (%s): " % (request.vars['id'], patient_id)
         res = {"message": mes + "processing uploaded file",
                "redirect": "patient/info",
@@ -188,7 +207,10 @@ def confirm():
 def delete_sequence_file(seq_id):
     sequence = db.sequence_file[seq_id]
     seq_filename = sequence.data_file
-    if auth.can_modify_patient(sequence.patient_id):
+    patient_id = db((db.sample_set_membership.sequence_file_id == seq_id)
+                    &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
+                    ).select(db.patient.id).first().id
+    if auth.can_modify_patient(patient_id):
         if seq_filename is not None:
             log.debug('Deleting '+defs.DIR_SEQUENCES+seq_filename+' with ID'+str(seq_id))
         db.sequence_file[seq_id] = dict(data_file = None)

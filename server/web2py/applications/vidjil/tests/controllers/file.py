@@ -128,6 +128,7 @@ class FileController(unittest.TestCase):
                                            config_id = fake_config_id,
                                            run_date = '2015-04-23 00:00:00')
         
+        db.sample_set_membership.insert(sample_set_id = fake_sample_set_id, sequence_file_id = test_file_id)
         self.assertTrue(db.sequence_file[test_file_id].filename == "babibou" , "file have been added")
         
         request.vars['id'] = test_file_id

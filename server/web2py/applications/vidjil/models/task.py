@@ -26,11 +26,9 @@ def assert_scheduler_task_does_not_exist(args):
     return None
 
 
-def schedule_run(id_sequence, id_config, grep_reads=None):
+def schedule_run(id_sequence, id_sample_set, id_config, grep_reads=None):
     from subprocess import Popen, PIPE, STDOUT, os
 
-    id_patient = db.sequence_file[id_sequence].patient_id
-        
     #check results_file
     row = db( ( db.results_file.config_id == id_config ) & 
              ( db.results_file.sequence_file_id == id_sequence )  
@@ -46,13 +44,13 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     else:
         ## check fused_file
         row2 = db( ( db.fused_file.config_id == id_config ) &
-                   ( db.fused_file.patient_id == id_patient )
+                   ( db.fused_file.sample_set_id == id_sample_set )
                ).select()
 
         if len(row2) > 0 : ## update
             fuse_id = row2[0].id
         else:             ## create
-            fuse_id = db.fused_file.insert(patient_id = id_patient,
+            fuse_id = db.fused_file.insert(sample_set_id = id_sample_set,
                                            config_id = id_config)
 
         args = [id_sequence, id_config, data_id, fuse_id, None]
@@ -71,7 +69,7 @@ def schedule_run(id_sequence, id_config, grep_reads=None):
     filename= db.sequence_file[id_sequence].filename
 
     res = {"redirect": "reload",
-           "message": "[%s] (%s) c%s: process requested - %s %s" % (data_id, id_patient, id_config, grep_reads, filename)}
+           "message": "[%s] (%s) c%s: process requested - %s %s" % (data_id, id_sample_set, id_config, grep_reads, filename)}
 
     log.info(res)
     return res
@@ -275,7 +273,7 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
         os.makedirs(out_folder)    
     
     row = db(db.sequence_file.id==id_file).select()
-    id_patient = row[0].patient_id
+    sample_set_id = row[0].sample_set_id
     
     fuse_log_file = open(out_folder+'/'+output_filename+'.fuse.log', 'w')
     
@@ -283,9 +281,9 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
     output_file = out_folder+'/'+output_filename+'.fused'
     files = ""
     sequence_file_list = ""
-    query2 = db( ( db.patient.id == db.sequence_file.patient_id )
-                   & ( db.results_file.sequence_file_id == db.sequence_file.id )
-                   & ( db.patient.id == id_patient )
+    query2 = db( ( db.results_file.sequence_file_id == db.sequence_file.id )
+                   & ( db.sample_set_membership.sequence_file_id == db.sequence_file_id)
+                   & ( db.sample_set_membership.sample_set_id == sample_set_id)
                    & ( db.results_file.config_id == id_config )
                    ).select( orderby=db.sequence_file.id|~db.results_file.run_date) 
     query = []
