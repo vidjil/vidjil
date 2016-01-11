@@ -4,7 +4,7 @@ import defs
 from gluon import current
 
 # AUTODELETE should be set to False before any maintenance operation on the DB
-AUTODELETE = True
+AUTODELETE = False
 
 # Length of the upload field
 LENGTH_UPLOAD = 400

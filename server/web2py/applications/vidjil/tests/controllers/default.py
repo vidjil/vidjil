@@ -58,9 +58,7 @@ class DefaultController(unittest.TestCase):
         request.vars['sequence_file_id'] = fake_file_id
         patient = db((db.sequence_file.id == fake_file_id)
 		& (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-		& (db.patient.sample_set_id == db.sample_set.id)
-                & (db.sample_set.sample_type == 'patient')
-                & (db.sample_set.id == db.sample_set_membership.sample_set_id)
+                & (db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
 	).select(db.patient.ALL).first()
 	request.vars['patient_id'] = patient.id
 

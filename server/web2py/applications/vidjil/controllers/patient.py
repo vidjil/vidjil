@@ -77,9 +77,7 @@ def info():
 	
         query2 = db(
                 (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-                & (db.sample_set_membership.sample_set_id == db.sample_set.id)
-                & (db.sample_set.sample_type == 'patient')
-                & (db.sample_set.id == db.patient.sample_set_id)
+                & (db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
                 & (db.patient.id==request.vars["id"])
             ).select(
                 left=db.results_file.on(
@@ -98,9 +96,7 @@ def info():
 
         query = db(
                 (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-                & (db.sample_set_membership.sample_set_id == db.sample_set.id)
-                & (db.sample_set.sample_type == 'patient')
-                & (db.sample_set.id == db.patient.sample_set_id)
+                & (db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
                 & (db.patient.id==request.vars["id"])
             ).select(
                 left=db.results_file.on(

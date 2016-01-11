@@ -57,15 +57,16 @@ def index():
         return dict(query = query,
                     reverse=reverse)
 
-def run_all():
+def run_all_patients():
     if auth.is_admin():
         query = db(
-                (db.results_file_file.sequence_file_id==db.sequence_file.id)
-                & (db.results_file.config_id==db.config.id)
-            ).select()
+                (db.sample_set.sample_type == 'patient')
+                & (db.sample_set_membership.sample_set_id == db.sample_set.id)
+                & (db.sample_set_membership.sequence_file_id == db.results_file.sequence_file_id)
+                ).select(db.sample_set.id, db.results_file.sequence_file_id, db.results_file.id)
 
         for row in query:
-            schedule_run(row.sequence_file.id, row.config.id)
+            schedule_run(row.results_file.sequence_file_id, row.sample_set.id, row.results_file.config_id)
 
         res = {"success" : "true",
                "message" : "rerun all"}

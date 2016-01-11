@@ -26,11 +26,9 @@ def assert_scheduler_task_does_not_exist(args):
     return None
 
 
-def schedule_run(id_sequence, id_patient, id_config, grep_reads=None):
+def schedule_run(id_sequence, id_sample_set, id_config, grep_reads=None):
     from subprocess import Popen, PIPE, STDOUT, os
 
-    id_sample_set = db.patient[id_patient].sample_set_id
-        
     #check results_file
     row = db( ( db.results_file.config_id == id_config ) & 
              ( db.results_file.sequence_file_id == id_sequence )  
@@ -71,7 +69,7 @@ def schedule_run(id_sequence, id_patient, id_config, grep_reads=None):
     filename= db.sequence_file[id_sequence].filename
 
     res = {"redirect": "reload",
-           "message": "[%s] (%s) c%s: process requested - %s %s" % (data_id, id_patient, id_config, grep_reads, filename)}
+           "message": "[%s] (%s) c%s: process requested - %s %s" % (data_id, id_sample_set, id_config, grep_reads, filename)}
 
     log.info(res)
     return res

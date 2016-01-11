@@ -131,22 +131,25 @@ def run_request():
     if not auth.can_process_file():
         error += "permission needed"
 
-    id_patient = request.vars["patient_id"]
+    # TODO pass sample_set_id directly
+    id_sample_set = db.patient[request.vars["patient_id"]].sample_set_id
 
     if "grep_reads" in request.vars:
         grep_reads = request.vars["grep_reads"]
     else:
         grep_reads = None
 
+    #TODO change this to sample_set
+    id_patient = request.vars["patient_id"]
     if not auth.can_modify_patient(id_patient) :
-        error += "you do not have permission to launch process for this patient ("+str(id_patient)+"), "
+        error += "you do not have permission to launch process for this sample_set ("+str(id_patient)+"), "
 
     if id_config:
       if not auth.can_use_config(id_config) :
         error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
 
     if error == "" :
-        res = schedule_run(request.vars["sequence_file_id"], id_patient, id_config, grep_reads)
+        res = schedule_run(request.vars["sequence_file_id"], id_sample_set, id_config, grep_reads)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     else :
@@ -286,9 +289,8 @@ def get_custom_data():
             patient_id = db((db.sequence_file.id == sequence_file_id)
                             & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                             & (db.sample_set.id == db.sample_set_membership.sample_set_id)
-                            & (db.sample_set.sample_type == 'patient')
                             & (db.patient.sample_set_id == db.sample_set.id)
-                            ).select(db.patient.id).first()
+                            ).select(db.patient.id).first().id
 
             config_id = db.results_file[id].config_id
             patient_name = vidjil_utils.anon_ids(patient_id)
