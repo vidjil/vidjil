@@ -193,10 +193,12 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
 
 
     if not grep_reads:
-        run_fuse(id_file, id_config, id_data, id_fuse, clean_before = False)
+        for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
+	    sample_set_id = row.sample_set_id
+	    print row.sample_set_id
+            run_fuse(id_file, id_config, id_data, id_fuse, sample_set_id, clean_before = False)
 
     return "SUCCESS"
-
 
 
 def run_copy(id_file, id_config, id_data, id_fuse, clean_before=False, clean_after=False):
@@ -254,13 +256,17 @@ def run_copy(id_file, id_config, id_data, id_fuse, clean_before=False, clean_aft
     res = {"message": "[%s] c%s: 'copy' finished - %s" % (id_data, id_config, filename)}
     log.info(res)
 
-    run_fuse(id_file, id_config, id_data, id_fuse, clean_before = False)
+    for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
+        sample_set_id = row.sample_set_id
+        print row.sample_set_id
+        run_fuse(id_file, id_config, id_data, id_fuse, sample_set_id, clean_before = False)
+
 
     return "SUCCESS"
 
 
 
-def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_after=False):
+def run_fuse(id_file, id_config, id_data, id_fuse, sample_set_id, clean_before=True, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
     
     out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
@@ -272,8 +278,6 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
         p.wait()
         os.makedirs(out_folder)    
     
-    row = db(db.sequence_file.id==id_file).select()
-    sample_set_id = row[0].sample_set_id
     
     fuse_log_file = open(out_folder+'/'+output_filename+'.fuse.log', 'w')
     
@@ -282,7 +286,7 @@ def run_fuse(id_file, id_config, id_data, id_fuse, clean_before=True, clean_afte
     files = ""
     sequence_file_list = ""
     query2 = db( ( db.results_file.sequence_file_id == db.sequence_file.id )
-                   & ( db.sample_set_membership.sequence_file_id == db.sequence_file_id)
+                   & ( db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                    & ( db.sample_set_membership.sample_set_id == sample_set_id)
                    & ( db.results_file.config_id == id_config )
                    ).select( orderby=db.sequence_file.id|~db.results_file.run_date) 
