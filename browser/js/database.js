@@ -823,7 +823,7 @@ Database.prototype = {
 
         var database_id = self.m.samples["ids"][sample_id];
 
-        self.request('file/save_info', {id: database_id, value: info});
+        this.request('file/save_info', {id: database_id, info: info});
     },
 
 
