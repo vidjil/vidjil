@@ -44,8 +44,7 @@ def info():
         config_name = db.config[request.vars["config_id"]].name
 
         fused = db(
-            (db.patient.id == patient)
-            & (db.patient.sample_set_id == db.fused_file.sample_set_id)
+            (db.fused_file.sample_set_id == sample_set_id)
             & (db.fused_file.config_id == config_id)
         )
 
