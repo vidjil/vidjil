@@ -552,7 +552,7 @@ Builder.prototype = {
         div_sequence_info.className = "info_sequence"
         var text_area = document.createElement("textarea")
         text_area.className = "info_text"
-        text_area.disabled = true
+        // text_area.disabled = true
         text_area.innerHTML = this.m.getInfoTime(this.m.t)
         div_sequence_info.appendChild(text_area)
 
