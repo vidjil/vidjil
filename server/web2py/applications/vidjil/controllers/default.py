@@ -213,11 +213,13 @@ def get_data():
         data["samples"]["info"] = []
         data["samples"]["timestamp"] = []
         data["samples"]["db_key"] = []
+        data["samples"]["ids"] = []
         for i in range(len(data["samples"]["original_names"])) :
             data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
             data["samples"]["info"].append('')
             data["samples"]["timestamp"].append('')
             data["samples"]["db_key"].append('')
+            data["samples"]["ids"].append('')
 
         ## récupération des infos stockées sur la base de données
         query = db( ( db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
