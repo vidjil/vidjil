@@ -558,7 +558,7 @@ Builder.prototype = {
 
         var save_info = document.createElement("span")
         save_info.onclick = function() {
-            self.db.save_sample_info(self.m.t, "foobar");
+            self.db.save_sample_info(self.m.t, $('.info_text').val());
         }
         save_info.innerHTML = "save"
         save_info.className = "save_info button_right"
