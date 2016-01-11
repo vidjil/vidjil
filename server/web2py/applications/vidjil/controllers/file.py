@@ -283,7 +283,7 @@ def save_info():
     row = db.sequence_file[sequence_file_id]
     if row is not None:
         if auth.can_modify_patient(row.patient_id):
-            row = dict(info = request.vars["info"])
+            db.sequence_file[sequence_file_id] = dict(info = request.vars["info"])
 
             res = {"success": True,
                    "message": "The changes have been saved"}
