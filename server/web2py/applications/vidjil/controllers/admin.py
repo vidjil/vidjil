@@ -152,6 +152,7 @@ def load_backup():
 ## delete all sample_set
 ## create a new sample_set for every patient/ every sequence_file
 ## add sequence_file from a patient to the patient sample set
+## Add sample_set_id to fused_file and analysis_file entries
 def sample_set_fixer():
     if auth.is_admin():
         
@@ -171,6 +172,9 @@ def sample_set_fixer():
             for row2 in db(db.sequence_file.patient_id==row.id).select() :
                 db.sample_set_membership.insert(sample_set_id=sample_set_id,
                                                sequence_file_id=row2.id)
+
+            db(db.fused_file.patient_id==row.id).update(sample_set_id=sample_set_id)
+            db(db.analysis_file.patient_id==row.id).update(sample_set_id=sample_set_id)
                 
         db(db.sample_set.sample_type=="old").delete()
                 
