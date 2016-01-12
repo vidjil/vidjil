@@ -548,20 +548,10 @@ Builder.prototype = {
         var div_color = this.build_info_color()
         parent.appendChild(div_color) 
 
-        var div_sequence_info = document.createElement("div")
-        div_sequence_info.className = "info_sequence"
-        var text_area = document.createElement("textarea")
-        text_area.className = "info_text"
-        // text_area.disabled = true
-        text_area.innerHTML = this.m.getInfoTime(this.m.t)
-        div_sequence_info.appendChild(text_area)
-
-        var save_info = document.createElement("span")
-        save_info.onclick = function() {
+        var div_sequence_info = this.create_info_container('span', 'textarea', 'sequence_info', 'info_text');
+        var save_info = this.create_save_button("save_info button_right", function() {
             self.db.save_sample_info(self.m.t, $('.info_text').val());
-        }
-        save_info.innerHTML = "save"
-        save_info.className = "save_info button_right"
+        });
         div_sequence_info.appendChild(save_info)
      
         parent.appendChild(div_sequence_info)
@@ -577,6 +567,30 @@ Builder.prototype = {
         div_data_file.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
         document.title = this.m.getPrintableAnalysisName()
         parent.appendChild(div_data_file)
+    },
+
+    create_info_container: function (container_type, text_container_type, externalClass, innerClass) {
+        var container = document.createElement(container_type);
+        container.className = externalClass;
+        var text_container = document.createElement(text_container_type);
+        text_container.className = innerClass;
+        // text_container.disabled = true
+        // TODO extract / parameterise
+        text_container.innerHTML = this.m.getInfoTime(this.m.t);
+        container.appendChild(text_container);
+
+        return container;
+    },
+
+    create_save_button: function (className, callback) {
+        if(typeof className == 'undefined')
+            className = "save_button";
+        var button = document.createElement("span");
+        button.onclick = callback;
+        button.innerHTML = "save";
+        button.className = className;
+
+        return button;
     },
 
     build_multi_system: function () {
