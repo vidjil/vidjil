@@ -567,6 +567,9 @@ Builder.prototype = {
         div_data_file.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
         document.title = this.m.getPrintableAnalysisName()
         parent.appendChild(div_data_file)
+
+        var div_patient_info = this.create_info_container('div', 'input', 'patient_info', 'patient_info_text');
+        parent.appendChild(div_patient_info)
     },
 
     create_info_container: function (container_type, text_container_type, externalClass, innerClass) {
