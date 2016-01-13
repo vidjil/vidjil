@@ -1149,20 +1149,20 @@ ScatterPlot.prototype = {
             return d.r2 > 0.1;
         });
 
+        //deplace le node vers son objectif
+        this.node.each(this.move());
         //mise a jour des rayons( maj progressive )
         this.node.each(this.updateRadius());
 
-        this.active_node.each(this.debugNaN())
-            //deplace le node vers son objectif
-        this.active_node.each(this.move());
+        this.node.each(this.debugNaN())
         //résolution des collisions
         this.r_max = 0;
         for (var i = 0; i < this.nodes.length; i++) {
             if (this.nodes[i].r2 > this.r_max) this.r_max = this.nodes[i].r2;
         }
-        
+
         var quad = d3.geom.quadtree(this.nodes)
-        
+
         for (var i = 0; i < this.nodes.length; i++) {
             if (this.nodes[i].r1 > 0.1) {
                 quad.visit(this.collide(this.nodes[i]));
@@ -1202,6 +1202,13 @@ ScatterPlot.prototype = {
     move: function() {
         self = this;
         return function(d) {
+            if (d.r2<0.4){ //teleport a nodes directly at his expected position
+                d.old_x=[d.x2,d.x2,d.x2,d.x2,d.x2];
+                d.x=d.x2+Math.random(); //add a small random to avoid multiple nodes to teleport at the exact same position
+                d.old_y=[d.y2,d.y2,d.y2,d.y2,d.y2];
+                d.y=d.y2+Math.random();
+                return
+            }
             d.old_x.push(d.x);
             d.old_x.shift();
             if (d.x != d.x2) {
