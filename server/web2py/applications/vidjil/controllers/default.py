@@ -205,6 +205,7 @@ def get_data():
         config_name = db.config[request.vars["config"]].name
         command = db.config[request.vars["config"]].command
         
+        data["patient_id"] = request.vars["patient"]
         data["patient_name"] = patient_name
         data["config_name"] = config_name
         data["dataFileName"] = patient_name + " (" + config_name + ")"

@@ -826,6 +826,14 @@ Database.prototype = {
         this.request('file/save_info', {id: database_id, info: info});
     },
 
+    save_patient_info: function (patient_id, info) {
+        self.m.info = info;
+
+        var database_id = self.m.patient_id;
+
+        this.request('patient/save_info', {id: database_id, info: info});
+    },
+
 
     // Log functions, to server
     // 'quiet' is set to true to avoid infinite loops with timeouts

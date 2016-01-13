@@ -566,6 +566,7 @@ Builder.prototype = {
 
     build_top_container: function () {
         var parent = document.getElementById("top_filename");
+        var self = this;
         parent.innerHTML = "";
         var div_data_file = document.createElement('div');
         //div_data_file.id = "info_data_file"
@@ -574,6 +575,10 @@ Builder.prototype = {
         parent.appendChild(div_data_file)
 
         var div_patient_info = this.create_info_container(this.m.info, 'div', 'input', 'patient_info', 'patient_info_text');
+        var save_patient_info = this.create_save_button('save_info button', function(){
+            self.db.save_patient_info(self.m.patient, $('.patient_info_text').val());
+        });
+        div_patient_info.appendChild(save_patient_info);
         parent.appendChild(div_patient_info)
     },
 
