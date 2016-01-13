@@ -548,7 +548,12 @@ Builder.prototype = {
         var div_color = this.build_info_color()
         parent.appendChild(div_color) 
 
-        var div_sequence_info = this.create_info_container('span', 'textarea', 'sequence_info', 'info_text');
+        var div_sequence_info = this.create_info_container(
+                this.m.getInfoTime(this.m.t),
+                'span',
+                'textarea',
+                'sequence_info',
+                'info_text');
         var save_info = this.create_save_button("save_info button_right", function() {
             self.db.save_sample_info(self.m.t, $('.info_text').val());
         });
@@ -568,18 +573,22 @@ Builder.prototype = {
         document.title = this.m.getPrintableAnalysisName()
         parent.appendChild(div_data_file)
 
-        var div_patient_info = this.create_info_container('div', 'input', 'patient_info', 'patient_info_text');
+        var div_patient_info = this.create_info_container(this.m.info, 'div', 'input', 'patient_info', 'patient_info_text');
         parent.appendChild(div_patient_info)
     },
 
-    create_info_container: function (container_type, text_container_type, externalClass, innerClass) {
+    create_info_container: function (info, container_type, text_container_type, externalClass, innerClass) {
         var container = document.createElement(container_type);
         container.className = externalClass;
         var text_container = document.createElement(text_container_type);
         text_container.className = innerClass;
         // text_container.disabled = true
-        // TODO extract / parameterise
-        text_container.innerHTML = this.m.getInfoTime(this.m.t);
+
+        if (text_container instanceof HTMLInputElement) {
+            text_container.value = info;
+        } else {
+            text_container.innerHTML = info; 
+        }
         container.appendChild(text_container);
 
         return container;
