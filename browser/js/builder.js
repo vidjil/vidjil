@@ -565,15 +565,14 @@ Builder.prototype = {
     },
 
     build_top_container: function () {
-        var parent = document.getElementById("top_filename");
         var self = this;
+        var parent = document.getElementById("top_info");
         parent.innerHTML = "";
         var div_data_file = document.createElement('div');
         //div_data_file.id = "info_data_file"
         div_data_file.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
         document.title = this.m.getPrintableAnalysisName()
         parent.appendChild(div_data_file)
-
         var div_patient_info = this.create_info_container(this.m.info, 'div', 'input', 'patient_info', 'patient_info_text');
         var save_patient_info = this.create_save_button('save_info button', function(){
             self.db.save_patient_info(self.m.patient, $('.patient_info_text').val());
