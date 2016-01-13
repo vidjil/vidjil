@@ -1787,26 +1787,38 @@ ScatterPlot.prototype = {
         }
     },
 
-    /** 
+    /**
      * compute both axis with a new splitmethod (list of splitmethod in this.available_axis) <br>
      * and a mode ( 'bar' or 'scatterplot' )
      * @param {string} splitX - splitMethod
      * @param {string} splitY - splitMethod
-     * @param {string} mode 
+     * @param {string} mode
      * */
     changeSplitMethod: function(splitX, splitY, mode) {
         var self = this;
-        
+
         if (mode == "bar" && mode != this.mode) {
             this.endPlot();
             this.initBar();
         }
-        
+
         var endbar = false;
         if (mode != "bar" && this.mode == "bar") {
             endbar = true;
         }
-        
+
+        if (splitX == "tsneX" || splitX == "tsneX_system"){
+            this.margin = this.graph_margin;
+            if (!this.tsne_ready){
+                console.log("plop")
+                this.tsne_ready=true;
+                this.m.similarity_builder.init(function(){self.changeSplitMethod(splitX, splitY, mode)});
+                return 0;
+            }
+        }else{
+            this.margin = this.default_margin;
+        }
+
         this.splitX = splitX;
         this.splitY = splitY;
         this.mode = mode;
@@ -1834,14 +1846,6 @@ ScatterPlot.prototype = {
             this.m.graph.setOtherVisibility(this.otherVisibility)
         }
 
-        if (splitX == "tsneX" || splitX == "tsneX_system"){
-            if (!this.tsne_ready){
-                console.log("plop")
-                this.tsne_ready=true;
-                this.m.similarity_builder.init(function(){self.changeSplitMethod(splitX, splitY, mode)});
-                return 0;
-            }
-        }
     },
 
     /**
