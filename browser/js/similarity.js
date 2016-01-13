@@ -2,19 +2,19 @@
 function Similarity (model) {
     //default var for tsne
     this.e = 10;
-    this.p = 3;
-    this.po = 1;
+    this.p = 5;
+    this.po = 0.6;
 
     this.m = model;
     this.m.similarity_builder = this;
     this.callback=function(){};
-    
+
     this.yMax = 0;
     this.system_yMax = {}
 }
 
 Similarity.prototype = {
-    
+
     init : function(callback) {
         this.callback=callback;
         if (typeof this.m.similarity != "undefined"){
@@ -24,16 +24,16 @@ Similarity.prototype = {
         }else{
             this.get_similarity()
         }
-        
-        
+
+
     },
-    
+
     get_similarity: function () {
         var self = this
         var request = "";
 
-        for (var i = 0; i < this.m.clones.length-1; i++) {
-            request += ">" + i + "\n" + this.m.clone(i).id + "\n";
+        for (var i = 0; i < this.m.clones.length; i++) {
+            if (m.clone(i).sequence!=0) request += ">" + i + "\n" + this.m.clone(i).id + "\n";
         }
 
         $.ajax({
@@ -48,7 +48,6 @@ Similarity.prototype = {
                 self.m.resume();
             },
             success: function (result) {
-                console.log(result)
                 self.m.similarity = JSON.parse(result)
                 self.compute_tsne(self.e,self.p,self.po)
                 .compute_system_tsne(self.e,self.p,self.po)
@@ -59,35 +58,33 @@ Similarity.prototype = {
             }
         })
     },
-    
-    
+
+
     compute_tsne: function(e,p,po) {
         var opt = {
             epsilon: e,
             perplexity: p
-        }; 
-        var tsne = new tsnejs.tSNE(opt); 
+        };
+        this.tsne = new tsnejs.tSNE(opt);
 
-        var dists = []
-        for (var i in this.m.similarity[0]) dists[i] = []
-            
-        for (var i in this.m.similarity) {
-            for (var j in this.m.similarity) {
-                dists[i][j]= Math.pow( (100-this.m.similarity[i][j]) ,po)
+        this.dists = []
+        for (var i=0; i<this.m.similarity.length; i++) {
+            this.dists[i] = []
+            for (var j=0; j<this.m.similarity.length; j++) {
+                this.dists[i][j]= Math.pow( (100-this.m.similarity[i][j]) ,po)
             }
         }
-            
-        tsne.initDataDist(dists);
+        this.tsne.initDataDist(this.dists);
 
-        for(var k = 0; k < 2000; k++) {
-            tsne.step(); 
-        }
+        for(var k = 0; k < 500; k++) this.tsne.step();
+        console.log(this.tsne.step());
 
-        var result = tsne.getSolution(); 
+        var result = this.tsne.getSolution();
+        console.log(result[5][4])
         result = this.rescale(result);
         var yMax = 0;
         var xMax = 0;
-        
+
         for (var i in result){
             if (result[i][1] > yMax) yMax = result[i][1];
             if (result[i][0] > xMax) xMax = result[i][0];
@@ -135,61 +132,57 @@ Similarity.prototype = {
             deltaX = deltaY;
             deltaY = tmp;
         }
-        
+
         //rescale
         for (var i in result){
             result[i][0] = result[i][0]/deltaX
             result[i][1] = result[i][1]/deltaX
         }
-        
+
         return result;
     },
-    
+
     compute_system_tsne: function(e,p,po) {
-        
+
         for (var l in this.m.system_available){
             var locus = this.m.system_available[l]
             var opt = {
                 epsilon: e,
                 perplexity: p
-            }; 
-            var tsne = new tsnejs.tSNE(opt); 
+            };
+            var tsne = new tsnejs.tSNE(opt);
 
             var list = []
-            for (var i=0; i<this.m.clones.length; i++) if (this.m.clone(i).get("germline") == locus) list.push(i)
-            
+            for (var i=0; i<this.m.similarity.length; i++) if (this.m.clone(i).get("germline") == locus) list.push(i)
+
             var dists = []
             for (var i in list) dists[i] = []
-                
+
             for (var i in list) {
                 for (var j in list) {
                     dists[i][j]= Math.pow( (100-this.m.similarity[list[i]][list[j]]) ,po)
                 }
             }
-                
+
             tsne.initDataRaw(dists);
 
-            for(var k = 0; k < 2000; k++) {
-                tsne.step(); 
+            for(var k = 0; k < 500; k++) {
+                tsne.step();
             }
 
-            var result = tsne.getSolution(); 
-            
+            var result = tsne.getSolution();
+
             result = this.rescale(result);
             var yMax = 0;
-            
+
             for (var i in result){
                 if (result[i][1] > yMax) yMax = result[i][1];
                 m.clone(list[i]).tsne_system = result[i];
             }
-            
+
             this.system_yMax[locus] = yMax;
         }
         return this;
     }
 
 }
-
-
-
-

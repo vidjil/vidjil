@@ -236,13 +236,13 @@ function ScatterPlot(id, model) {
             display_label : false
         }
     }
-    
+
     // Plot Presets
-    this.preset = { 
+    this.preset = {
         "V/J (genes)" : { "mode": "plot", "x" : "gene_v", "y": "gene_j"},
         "V/J (alleles)" : { "mode": "plot", "x" : "allele_v", "y": "allele_j"},
-        // "graph" : { "mode": "plot", "x" : "tsneX", "y": "tsneY"},
-        // "graph_by_system" : { "mode": "plot", "x" : "tsneX_system", "y": "tsneY_system"},
+        "graph" : { "mode": "plot", "x" : "tsneX", "y": "tsneY"},
+        "graph_by_system" : { "mode": "plot", "x" : "tsneX_system", "y": "tsneY_system"},
         "V/N length" : { "mode": "plot", "x" : "gene_v", "y": "n"},
         "clone consensus length / locus" : { "mode": "plot", "x": "sequenceLength", "y" : "locus"},
         "clone consensus length / GC content " : { "mode": "plot", "x": "sequenceLength", "y" : "GCContent"},
