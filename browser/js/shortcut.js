@@ -108,9 +108,11 @@ Shortcut.prototype = {
                         if(e.shiftKey || e.metakey) db.reload()
                         break;
                     default:
-                        if ((key >= 96) && (key <= 105)) { // Numeric keypad, 0-9
+                        if ( ((key >= 96) && (key <= 105)) || ((key >= 48) && (key <= 57)) ) { // Numeric keypad, 0-9
                             var select_preset = document.getElementsByClassName("axis_select_preset_select")[0]
-                            select_preset.selectedIndex = key - 95
+                            var shift = 95;
+                            if (key<58) shift = 47
+                            select_preset.selectedIndex = key - shift;
                             try {
                                 sp.changePreset(select_preset)
                             }
