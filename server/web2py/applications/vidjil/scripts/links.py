@@ -10,6 +10,8 @@ parser = argparse.ArgumentParser(description='Output shell commands to link sequ
                                  epilog='At least -s or -r should be used')
 parser.add_argument('--sequences', '-s',  action='store_true', help='link sequence files')
 parser.add_argument('--results', '-r',  action='store_true', help='link results files')
+parser.add_argument('--fused', '-u', action='store_true', help='link fused files')
+parser.add_argument('--config', '-g', type=int, help='ID of config to take into account with --fuse')
 parser.add_argument('--diag', '-d',  action='store_true', help='link only diagnosis results (first sample per patient)')
 parser.add_argument('--analysis', '-a',  action='store_true', help='link analysis files (last file per patient)')
 parser.add_argument('--original', '-o', action='store_true', help='for -s, use original filenames')
@@ -99,7 +101,26 @@ def last_result_by_first_point_by_patient():
     for pat in res_by_pat:
         yield res_by_pat[pat]
 
+def last_fused_by_patient():
+    fused_by_patient = {}
 
+    for res in db((db.patient.id == db.fused_file.patient_id)).select(orderby=db.patient.id|~db.fused_file.fuse_date):
+        if args.config:
+            if args.config != res.fused_file.config_id:
+                continue
+
+        if args.filter:
+            if not vidjil_utils.advanced_filter([res.patient.first_name,res.patient.last_name,res.patient.info], args.filter):
+                continue
+
+        if args.creator:
+            if res.patient.creator != args.creator:
+                continue
+
+        # Remeber only the first element
+        if not str(res.patient.id) in fused_by_patient:
+            fused_by_patient[str(res.patient.id)] = True
+            yield (res, res.fused_file)
 
 if args.diag:
     print "### Results (first sample per patient)"
@@ -123,7 +144,20 @@ if gen_results:
          + "\t# %s" % patient_string(res.patient),
          not args.raw)
 
+if args.fused:
+    print "### Fused"
 
+    for (res, fused) in last_fused_by_patient():
+        our_id = "pat-%04d--%3s--seqs-%s--fused-%04d--%s--conf%03d" % (res.patient.id, res.patient.last_name[:3],
+                                                              fused.sequence_file_list,
+                                                                       fused.id, fused.fuse_date, fused.config_id)
+        our_id = our_id.replace(' ', '-')
+
+        link("%s/%-20s" % (defs.DIR_RESULTS, fused.fused_file),
+             "%5s.vidjil" % our_id,
+             "fused-%04d %-20s %-10s" % (fused.id, fused.fused_file, fused.fuse_date)
+             + "\t# %s" % patient_string(res.patient),
+        not args.raw)
 
 if args.analysis:
     print "### Analysis"
