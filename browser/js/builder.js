@@ -212,18 +212,18 @@ Builder.prototype = {
         var divParent = elem.parentNode;
         divParent.innerHTML = "";
 
-        var input = this.create_edit_input();
+        var id = "edit_value";
+        var input = this.create_edit_input(id, self.m.getStrTime(self.m.t, data));
         divParent.appendChild(input);
         divParent.onclick = "";
 
-        var a = create_save_button();
+        var a = this.create_save_button(id, data);
         divParent.appendChild(a);
-        $('#edit_value')
-            .select();
+        $(input).select();
     },
 
-    create_edit_input: function () {
-        var input = this.setupInput("edit_value", "", "text", self.m.getStrTime(self.m.t, data));
+    create_edit_input: function (id, value) {
+        var input = this.setupInput(id, "", "text", value);
         input.style.width = "200px";
         input.style.border = "0px";
         input.style.margin = "0px";
@@ -242,13 +242,14 @@ Builder.prototype = {
         return input;
     },
 
-    create_save_button: function () {
+    create_save_button: function (target_id, data) {
+        var self = this;
         var a = document.createElement('a');
         a.className = "button";
         a.appendChild(document.createTextNode("save"));
         a.id = "btnSave";
         a.onclick = function () {
-            self.m.samples[data][self.m.t] = document.getElementById("edit_value").value
+            self.m.samples[data][self.m.t] = document.getElementById(target_id).value
             self.build_top_container()
             self.build_info_container()
             self.m.update()

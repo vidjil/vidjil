@@ -1445,6 +1445,8 @@ Model.prototype = {
 
         switch (format) {
             case "name":
+            case "names":
+                //TODO resolve thid hack
             case "short_name":
                 if (typeof this.samples.names != 'undefined' && this.samples.names[timeID] != ""){
                     result = this.samples.names[timeID]
@@ -1483,6 +1485,12 @@ Model.prototype = {
                         }
                     }
                 }
+                break;
+            default:
+                if (typeof this.samples[format] != 'undefined') {
+                    result = this.samples[format][timeID];
+                }
+                break;
         }
         return result
     },
