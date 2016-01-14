@@ -62,6 +62,11 @@ def last_result_by_file():
 
     for res in db((db.results_file.sequence_file_id == seq.id)).select(orderby=db.results_file.run_date):
        print "   ", "sched-%d" % res.results_file.scheduler_task_id, "\t", res.results_file.run_date, "\t", res.results_file.data_file
+
+       if args.filter:
+           if not vidjil_utils.advanced_filter([res.patient.first_name,res.patient.last_name,res.patient.info], args.filter):
+               continue
+
        if res.results_file.data_file:
               res_with_file += [res]
 
