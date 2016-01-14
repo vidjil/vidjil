@@ -565,11 +565,6 @@ Builder.prototype = {
                 'textarea',
                 'sequence_info',
                 'info_text');
-        var save_info = this.create_save_button("save_info button_right", function() {
-            self.db.save_sample_info(self.m.t, $('.info_text').val());
-        });
-        div_sequence_info.appendChild(save_info)
-     
         parent.appendChild(div_sequence_info)
 
         this.initTag();
@@ -585,10 +580,6 @@ Builder.prototype = {
         document.title = this.m.getPrintableAnalysisName()
         parent.appendChild(div_data_file)
         var div_patient_info = this.create_info_container(this.m.info, 'div', 'input', 'patient_info', 'patient_info_text');
-        var save_patient_info = this.create_save_button('save_info button', function(){
-            self.db.save_patient_info(self.m.patient, $('.patient_info_text').val());
-        });
-        div_patient_info.appendChild(save_patient_info);
         parent.appendChild(div_patient_info)
     },
 
@@ -609,15 +600,7 @@ Builder.prototype = {
         return container;
     },
 
-    create_save_button: function (className, callback) {
-        if(typeof className == 'undefined')
-            className = "save_button";
-        var button = document.createElement("span");
-        button.onclick = callback;
-        button.innerHTML = "save";
-        button.className = className;
 
-        return button;
     },
 
     build_multi_system: function () {
