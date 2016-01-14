@@ -418,16 +418,6 @@ Builder.prototype = {
         var sample_div = document.createElement("div")
         sample_div.className = "sample_details"
         
-        var editTimeName = self.createClickableElem('span',
-            [document.createTextNode("edit")],
-            "",
-            "button_right",
-            function () {
-                self.edit(this, "names");
-            }
-        );
-        sample_div.appendChild(editTimeName)
-        
         var infoTime = self.createClickableElem('span',
             [document.createTextNode("Info")],
             "",
@@ -440,6 +430,11 @@ Builder.prototype = {
 
         var div_point = this.build_info_line("info_point",  this.m.getStrTime(this.m.t, "name") )
         div_point.className += " centered"
+
+        $(div_point).on("dblclick", function() {
+            self.edit(this, "names");
+        });
+
         sample_div.appendChild(div_point)
 
         var div_date = this.build_info_line("info_date", this.m.getStrTime(this.m.t, "sampling_date") )
