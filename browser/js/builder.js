@@ -212,7 +212,18 @@ Builder.prototype = {
         var divParent = elem.parentNode;
         divParent.innerHTML = "";
 
-        var input = this.setupInput("edit_value", "", "text", self.m.samples[data][self.m.t]);
+        var input = this.create_edit_input();
+        divParent.appendChild(input);
+        divParent.onclick = "";
+
+        var a = create_save_button();
+        divParent.appendChild(a);
+        $('#edit_value')
+            .select();
+    },
+
+    create_edit_input: function () {
+        var input = this.setupInput("edit_value", "", "text", self.m.getStrTime(self.m.t, data));
         input.style.width = "200px";
         input.style.border = "0px";
         input.style.margin = "0px";
@@ -228,9 +239,10 @@ Builder.prototype = {
                 m.update()
             }, 500);
         })
-        divParent.appendChild(input);
-        divParent.onclick = "";
+        return input;
+    },
 
+    create_save_button: function () {
         var a = document.createElement('a');
         a.className = "button";
         a.appendChild(document.createTextNode("save"));
@@ -242,9 +254,7 @@ Builder.prototype = {
             self.m.update()
             self.m.analysisHasChanged = true
         }
-        divParent.appendChild(a);
-        $('#edit_value')
-            .select();
+        return a;
     },
 
     /*complete displaySelector menu with correct info about current tagname / top
