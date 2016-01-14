@@ -556,8 +556,6 @@ Builder.prototype = {
 
         var div_sequence_info = this.create_info_container(
                 this.m.getInfoTime(this.m.t),
-                'span',
-                'textarea',
                 'sequence_info',
                 'info_text');
         parent.appendChild(div_sequence_info)
@@ -574,28 +572,28 @@ Builder.prototype = {
         div_data_file.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
         document.title = this.m.getPrintableAnalysisName()
         parent.appendChild(div_data_file)
-        var div_patient_info = this.create_info_container(this.m.info, 'div', 'input', 'patient_info', 'patient_info_text');
+        var div_patient_info = this.create_info_container(
+                this.m.info,
+                'patient_info',
+                'patient_info_text');
         parent.appendChild(div_patient_info)
     },
 
-    create_info_container: function (info, container_type, text_container_type, externalClass, innerClass) {
-        var container = document.createElement(container_type);
-        container.className = externalClass;
-        var text_container = document.createElement(text_container_type);
-        text_container.className = innerClass;
-        // text_container.disabled = true
+    create_info_container: function (info, className, id) {
+        var self = this;
+        var container = document.createElement('div');
+        container.className = className;
 
-        if (text_container instanceof HTMLInputElement) {
-            text_container.value = info;
-        } else {
-            text_container.innerHTML = info; 
-        }
-        container.appendChild(text_container);
+        text_span = document.createElement('span');
+        text_span.id = id;
+        text_span.innerHTML = info.replace(/\n/g, '<br />');
+
+        $(text_span).on("dblclick", function() {
+            self.edit(this, "info");
+        });
+        container.appendChild(text_span);
 
         return container;
-    },
-
-
     },
 
     build_multi_system: function () {
