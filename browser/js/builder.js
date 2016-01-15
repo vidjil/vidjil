@@ -216,7 +216,7 @@ Builder.prototype = {
             self.post_save(self, data);
         }
 
-        this.setup_generic_edit(id, elem, data, save_callback)
+        this.build_generic_edit(id, elem, data, save_callback)
     },
 
     edit_sample: function(elem, data) {
@@ -229,7 +229,7 @@ Builder.prototype = {
             self.post_save(self, data)
         }
 
-        this.setup_generic_edit(id, elem, data, save_callback);
+        this.build_sample_edit(id, elem, data, save_callback);
     },
 
     edit_patient: function(elem, data) {
@@ -242,10 +242,10 @@ Builder.prototype = {
             self.post_save(self, data)
         }
 
-        this.setup_patient_edit(id, elem, data, save_callback);
+        this.build_patient_edit(id, elem, data, save_callback);
     },
 
-    setup_edit: function (input, id, elem, data, save_callback) {
+    build_edit: function (input, id, elem, data, save_callback) {
         var divParent = elem.parentNode;
         divParent.innerHTML = "";
 
@@ -257,14 +257,14 @@ Builder.prototype = {
         $(input).select();
     },
 
-    setup_patient_edit: function (id, elem, data, save_callback) {
+    build_patient_edit: function (id, elem, data, save_callback) {
         var input = this.create_edit_input(id, this.m.info);
-        this.setup_edit(input, id, elem, data, save_callback);
+        this.build_edit(input, id, elem, data, save_callback);
     },
 
-    setup_generic_edit: function(id, elem, data, save_callback) {
+    build_generic_edit: function(id, elem, data, save_callback) {
         var input = this.create_edit_input(id, this.m.getStrTime(this.m.t, data));
-        this.setup_edit(input, id, elem, data, save_callback);
+        this.build_edit(input, id, elem, data, save_callback);
     },
 
     create_edit_input: function (id, value) {
