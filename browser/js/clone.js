@@ -93,7 +93,6 @@ Clone.prototype = {
         for (var i = 0; i < name_items.length; i++) {
 
             s = name_items[i]
-            console.log('>' + s);
 
             // Shorten IGHV3-11*03 ... IGHD6-13*01 ... IGHJ4*02 into IGHV3-11*03 ... D6-13*01 ... J4*02
             // z = s.match(this.REGEX_GENE);
