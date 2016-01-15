@@ -309,7 +309,7 @@ to compute all representative sequences.
 The =-z= option limits the number of clones that are fully analyzed,
 /with their V(D)J segmentation/, in particular to enable the web application
 to display the clones on the grid (otherwise they are displayed on the
-'?/?' axis). It should be smaller than =-y=.
+'?/?' axis).
 If you want to analyze more clones, you should use =-z 50= or
 =-z 100=.  It is not recommended to use larger values: outputting more
 than 100 clones is often not useful since they can not be visualized easily

@@ -567,6 +567,8 @@ int main (int argc, char **argv)
 
       case 'z':
 	max_clones = atoi_NO_LIMIT(optarg);
+        if (max_representatives < max_clones)
+          max_representatives = max_clones ;
         break;
 
       case 'A': // --all
