@@ -209,17 +209,31 @@ Builder.prototype = {
      * */
     edit: function (elem, data) {
         var self = this;
+        var id = "edit_value";
+        var save_callback = function() {
+            var value = document.getElementById(id).value;
+            self.m.samples[data][self.m.t] = value
+            self.post_save(self, data);
+        }
+
+        this.setup_generic_edit(id, elem, data, save_callback)
+    },
+
+    setup_edit: function (input, id, elem, data, save_callback) {
         var divParent = elem.parentNode;
         divParent.innerHTML = "";
 
-        var id = "edit_value";
-        var input = this.create_edit_input(id, self.m.getStrTime(self.m.t, data));
         divParent.appendChild(input);
         divParent.onclick = "";
 
-        var a = this.create_save_button(id, data);
+        var a = this.create_save_button(id, data, save_callback);
         divParent.appendChild(a);
         $(input).select();
+    },
+
+    setup_generic_edit: function(id, elem, data, save_callback) {
+        var input = this.create_edit_input(id, this.m.getStrTime(this.m.t, data));
+        this.setup_edit(input, id, elem, data, save_callback);
     },
 
     create_edit_input: function (id, value) {
