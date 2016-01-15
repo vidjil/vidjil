@@ -256,20 +256,20 @@ Builder.prototype = {
         return input;
     },
 
-    create_save_button: function (target_id, data) {
-        var self = this;
+    create_save_button: function (target_id, data, save_callback) {
         var a = document.createElement('a');
         a.className = "button";
         a.appendChild(document.createTextNode("save"));
         a.id = "btnSave";
-        a.onclick = function () {
-            self.m.samples[data][self.m.t] = document.getElementById(target_id).value
-            self.build_top_container()
-            self.build_info_container()
-            self.m.update()
-            self.m.analysisHasChanged = true
-        }
+        a.onclick = save_callback;
         return a;
+    },
+
+    post_save: function(self, data) {
+        self.build_top_container()
+        self.build_info_container()
+        self.m.update()
+        self.m.analysisHasChanged = true
     },
 
     /*complete displaySelector menu with correct info about current tagname / top
