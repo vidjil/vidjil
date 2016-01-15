@@ -12,3 +12,9 @@ $ Most abundant window
 
 $ Segmentation
 1:"name": "IGHV3-23.05 6/ACCCGGGAGGAACAATAT/9 IGHD6-13.01 0//5 IGHJ4.02"
+
+$ Second sequence has a DNA sequence provided
+1:"id": "CTGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTA".*"sequence": "[ACGT]+",
+
+$ Second sequence also has evalues
+1:"id": "CTGTGCGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTA".*"_evalue": "[0-9\.e-]+"
