@@ -1315,12 +1315,29 @@ int main (int argc, char **argv)
 	  representative.label = clone_id + "--" + representative.label;
 
 	  
-	  //$$ If max_clones is reached, we stop here but still outputs the representative
+        // Re-launch also a KmerMultiSegmenter, for control purposes (affectations, evalue)
+        KmerMultiSegmenter kmseg(representative, multigermline, 0, expected_value, nb_reads_for_evalue);
+        KmerSegmenter *kseg = kmseg.the_kseg ;
+        if (verbose)
+          cout << "KmerSegmenter: " << kseg->getInfoLine() << endl;
+
+        
+        json json_clone;
+        json_clone["sequence"] = representative.sequence;
+        json_clone["_coverage"] = { repComp.getCoverage() };
+        json_clone["_average_read_length"] = { windowsStorage->getAverageLength(it->first) };
+        json_clone["_coverage_info"] = {repComp.getCoverageInfo()};
+        //From KmerMultiSegmenter
+        json_clone["seg"] = kseg->toJson();
+        
+
+          //$$ If max_clones is reached, we stop here but still outputs the representative
 
 	  if ((max_clones >= 0) && (num_clone >= max_clones + 1))
 	    {
 	      cout << representative << endl ;
 	      out_clones << representative << endl ;
+              json_data_segment[it->first] = json_clone;
 	      continue;
 	    }
 
@@ -1341,29 +1358,14 @@ int main (int argc, char **argv)
 	out_clone << seg << endl ;
 	out_clones << seg << endl ;
     
-        // Re-launch also a KmerMultiSegmenter, for control purposes (affectations, evalue)
-        KmerMultiSegmenter kmseg(seg.getSequence(), multigermline, 0, expected_value, nb_reads_for_evalue);
-        KmerSegmenter *kseg = kmseg.the_kseg ;
-        if (verbose)
-          cout << "KmerSegmenter: " << kseg->getInfoLine() << endl;
-
-        
-        json json_clone;
-        json_clone["_coverage"] = { repComp.getCoverage() };
-        json_clone["_average_read_length"] = { windowsStorage->getAverageLength(it->first) };
-        json_clone["_coverage_info"] = {repComp.getCoverageInfo()};
         
         // From FineSegmenter
-        json_clone["sequence"] = seg.getSequence().sequence;
         json_clone["name"] = seg.code;
-        json_clone["seg"] = seg.toJson();
-
-        //From KmerMultiSegmenter
-        json json_kseg = kseg->toJson();
-        for (json::iterator it = json_kseg.begin(); it != json_kseg.end(); ++it) {
+        json json_fseg = seg.toJson();
+        for (json::iterator it = json_fseg.begin(); it != json_fseg.end(); ++it) {
             json_clone["seg"][it.key()] = it.value();
         }
-        
+
         json_data_segment[it->first] = json_clone;
         
         if (seg.isSegmented())
