@@ -262,6 +262,15 @@ Builder.prototype = {
         this.build_edit(input, id, elem, data, save_callback);
     },
 
+    build_sample_edit: function (id, elem, data, save_callback) {
+        var input = document.createElement('textarea');
+        input.id = id;
+        input.innerHTML = this.m.getStrTime(this.m.t, data);
+        this.setup_edit_input(input);
+
+        this.build_edit(input, id, elem, data, save_callback);
+    },
+
     build_generic_edit: function(id, elem, data, save_callback) {
         var input = this.create_edit_input(id, this.m.getStrTime(this.m.t, data));
         this.build_edit(input, id, elem, data, save_callback);
@@ -269,9 +278,14 @@ Builder.prototype = {
 
     create_edit_input: function (id, value) {
         var input = this.setupInput(id, "", "text", value);
+        this.setup_edit_input(input);
         input.style.width = "200px";
         input.style.border = "0px";
         input.style.margin = "0px";
+        return input;
+    },
+
+    setup_edit_input: function (input) {
         input.onkeydown = function (e) {
             e = e || window.event;
             var key = e.keyCode
@@ -284,7 +298,6 @@ Builder.prototype = {
                 m.update()
             }, 500);
         })
-        return input;
     },
 
     create_save_button: function (target_id, data, save_callback) {
