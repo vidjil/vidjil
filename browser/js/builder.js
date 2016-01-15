@@ -624,6 +624,7 @@ Builder.prototype = {
         parent.appendChild(div_patient_info)
     },
 
+    // TODO ambiguous with build_info_container => find another name ?
     create_info_container: function (info, className, id) {
         var container = document.createElement('div');
         container.className = className;
