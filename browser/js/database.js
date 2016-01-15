@@ -829,7 +829,7 @@ Database.prototype = {
     save_patient_info: function (patient_id, info) {
         self.m.info = info;
 
-        var database_id = self.m.patient_id;
+        var database_id = patient_id;
 
         this.request('patient/save_info', {id: database_id, info: info});
     },
