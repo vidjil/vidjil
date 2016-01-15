@@ -281,7 +281,7 @@ Builder.prototype = {
         this.setup_edit_input(input);
         input.style.width = "200px";
         input.style.border = "0px";
-        input.style.margin = "0px";
+        //input.style.margin = "0px";
         return input;
     },
 
