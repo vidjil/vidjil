@@ -1331,25 +1331,25 @@ int main (int argc, char **argv)
         json_clone["seg"] = kseg->toJson();
         
 
-          //$$ If max_clones is reached, we stop here but still outputs the representative
+        //$$ If max_clones is reached, we stop here but still outputs the representative
 
-	  if ((max_clones >= 0) && (num_clone >= max_clones + 1))
-	    {
-	      cout << representative << endl ;
-	      out_clones << representative << endl ;
-              json_data_segment[it->first] = json_clone;
-	      continue;
-	    }
+        if ((max_clones >= 0) && (num_clone >= max_clones + 1))
+          {
+            cout << representative << endl ;
+            out_clones << representative << endl ;
+            json_data_segment[it->first] = json_clone;
+            continue;
+          }
 
 
-	  // FineSegmenter
-	  FineSegmenter seg(representative, segmented_germline, segment_cost);
+        // FineSegmenter
+        FineSegmenter seg(representative, segmented_germline, segment_cost);
 	
-          if (segmented_germline->seg_method == SEG_METHOD_543)
+        if (segmented_germline->seg_method == SEG_METHOD_543)
 	  seg.FineSegmentD(segmented_germline);
 
-          if (detect_CDR3)
-            seg.findCDR3();
+        if (detect_CDR3)
+          seg.findCDR3();
 
           
 	// Output representative, possibly segmented... 
@@ -1363,7 +1363,7 @@ int main (int argc, char **argv)
         json_clone["name"] = seg.code;
         json json_fseg = seg.toJson();
         for (json::iterator it = json_fseg.begin(); it != json_fseg.end(); ++it) {
-            json_clone["seg"][it.key()] = it.value();
+          json_clone["seg"][it.key()] = it.value();
         }
 
         json_data_segment[it->first] = json_clone;
