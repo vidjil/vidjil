@@ -219,6 +219,32 @@ Builder.prototype = {
         this.setup_generic_edit(id, elem, data, save_callback)
     },
 
+    edit_sample: function(elem, data) {
+        var self = this;
+        var id = "edit_value";
+        var save_callback = function() {
+            var value = document.getElementById(id).value;
+            self.db.save_sample_info(self.m.t, value);
+            self.m.samples[data][self.m.t] = value
+            self.post_save(self, data)
+        }
+
+        this.setup_generic_edit(id, elem, data, save_callback);
+    },
+
+    edit_patient: function(elem, data) {
+        var self = this;
+        var id = "edit_value";
+        var save_callback = function() {
+            var value = document.getElementById(id).value;
+            self.db.save_patient_info(self.m.patient_id, value);
+            self.m.patient_id = value
+            self.post_save(self, data)
+        }
+
+        this.setup_patient_edit(id, elem, data, save_callback);
+    },
+
     setup_edit: function (input, id, elem, data, save_callback) {
         var divParent = elem.parentNode;
         divParent.innerHTML = "";
@@ -229,6 +255,11 @@ Builder.prototype = {
         var a = this.create_save_button(id, data, save_callback);
         divParent.appendChild(a);
         $(input).select();
+    },
+
+    setup_patient_edit: function (id, elem, data, save_callback) {
+        var input = this.create_edit_input(id, this.m.info);
+        this.setup_edit(input, id, elem, data, save_callback);
     },
 
     setup_generic_edit: function(id, elem, data, save_callback) {
@@ -568,7 +599,7 @@ Builder.prototype = {
         var div_color = this.build_info_color()
         parent.appendChild(div_color) 
 
-        var div_sequence_info = this.create_info_container(
+        var div_sequence_info = this.create_sample_info_container(
                 this.m.getInfoTime(this.m.t),
                 'sequence_info',
                 'info_text');
@@ -586,7 +617,7 @@ Builder.prototype = {
         div_data_file.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
         document.title = this.m.getPrintableAnalysisName()
         parent.appendChild(div_data_file)
-        var div_patient_info = this.create_info_container(
+        var div_patient_info = this.create_patient_info_container(
                 this.m.info,
                 'patient_info',
                 'patient_info_text');
@@ -594,7 +625,6 @@ Builder.prototype = {
     },
 
     create_info_container: function (info, className, id) {
-        var self = this;
         var container = document.createElement('div');
         container.className = className;
 
@@ -602,10 +632,29 @@ Builder.prototype = {
         text_span.id = id;
         text_span.innerHTML = info.replace(/\n/g, '<br />');
 
-        $(text_span).on("dblclick", function() {
-            self.edit(this, "info");
-        });
         container.appendChild(text_span);
+
+        return container;
+    },
+
+    create_sample_info_container: function (info, className, id) {
+        var self = this;
+        var container = this.create_info_container(info, className, id);
+
+        $(container).children(":first").on("dblclick", function() {
+            self.edit_sample(this, "info");
+        });
+
+        return container;
+    },
+
+    create_patient_info_container: function (info, className, id) {
+        var self = this;
+        var container = this.create_info_container(info, className, id);
+
+        $(container).children(":first").on("dblclick", function() {
+            self.edit_patient(this, "info");
+        });
 
         return container;
     },
