@@ -18,7 +18,7 @@ print
 
 yesterday = datetime.datetime.now() - datetime.timedelta(hours=LAST_HOURS)
 
-RUN_CONFIG_SEQ_PATIENT = (db.results_file.sequence_file_id == db.sequence_file.id) & (db.sample_set_membership.sequence_file_id == db.sequence_file.id) & (db.sample_set_memebership.sample_set_id == db.patient.sample_set_id) & (db.config.id == db.results_file.config_id) & (db.scheduler_task.id == db.results_file.scheduler_task_id)
+RUN_CONFIG_SEQ_PATIENT = (db.results_file.sequence_file_id == db.sequence_file.id) & (db.sample_set_membership.sequence_file_id == db.sequence_file.id) & (db.sample_set_membership.sample_set_id == db.patient.sample_set_id) & (db.config.id == db.results_file.config_id) & (db.scheduler_task.id == db.results_file.scheduler_task_id)
 
 print 
 print "=== Recent not completed tasks, last %d hours" % LAST_HOURS
