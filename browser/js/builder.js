@@ -238,7 +238,7 @@ Builder.prototype = {
         var save_callback = function() {
             var value = document.getElementById(id).value;
             self.db.save_patient_info(self.m.patient_id, value);
-            self.m.patient_id = value
+            self.m.info = value
             self.post_save(self, data)
         }
 
