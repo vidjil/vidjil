@@ -216,33 +216,14 @@ Builder.prototype = {
             self.post_save(self, data);
         }
 
-        this.build_generic_edit(id, elem, data, save_callback)
+        this.build_input_edit(id, elem, data, save_callback)
     },
 
-    edit_sample: function(elem, data) {
+    edit_textarea: function(elem, data, callback) {
         var self = this;
         var id = "edit_value";
-        var save_callback = function() {
-            var value = document.getElementById(id).value;
-            self.db.save_sample_info(self.m.t, value);
-            self.m.samples[data][self.m.t] = value
-            self.post_save(self, data)
-        }
-
-        this.build_sample_edit(id, elem, data, save_callback);
-    },
-
-    edit_patient: function(elem, data) {
-        var self = this;
-        var id = "edit_value";
-        var save_callback = function() {
-            var value = document.getElementById(id).value;
-            self.db.save_patient_info(self.m.patient_id, value);
-            self.m.info = value
-            self.post_save(self, data)
-        }
-
-        this.build_patient_edit(id, elem, data, save_callback);
+        var value = this.m.getStrTime(this.m.t, data);
+        this.build_textarea_edit(id, elem, value, callback);
     },
 
     build_edit: function (input, id, elem, data, save_callback) {
@@ -257,21 +238,16 @@ Builder.prototype = {
         $(input).select();
     },
 
-    build_patient_edit: function (id, elem, data, save_callback) {
-        var input = this.create_edit_input(id, this.m.info);
-        this.build_edit(input, id, elem, data, save_callback);
-    },
-
-    build_sample_edit: function (id, elem, data, save_callback) {
+    build_textarea_edit: function (id, elem, value, data, save_callback) {
         var input = document.createElement('textarea');
         input.id = id;
-        input.innerHTML = this.m.getStrTime(this.m.t, data);
+        input.innerHTML = value; 
         this.setup_edit_input(input);
 
         this.build_edit(input, id, elem, data, save_callback);
     },
 
-    build_generic_edit: function(id, elem, data, save_callback) {
+    build_input_edit: function(id, elem, data, save_callback) {
         var input = this.create_edit_input(id, this.m.getStrTime(this.m.t, data));
         this.build_edit(input, id, elem, data, save_callback);
     },
@@ -612,10 +588,15 @@ Builder.prototype = {
         var div_color = this.build_info_color()
         parent.appendChild(div_color) 
 
-        var div_sequence_info = this.create_sample_info_container(
+        var div_sequence_info = this.create_info_container(
                 this.m.getInfoTime(this.m.t),
                 'sequence_info',
-                'info_text');
+                'info_text',
+                function() {
+                    var value = document.getElementById(id).value;
+                    self.m.samples[data][self.m.t] = value
+                    self.post_save(self, data)
+                });
         parent.appendChild(div_sequence_info)
 
         this.initTag();
@@ -630,15 +611,21 @@ Builder.prototype = {
         div_data_file.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
         document.title = this.m.getPrintableAnalysisName()
         parent.appendChild(div_data_file)
-        var div_patient_info = this.create_patient_info_container(
+        var div_patient_info = this.create_info_container(
                 this.m.info,
                 'patient_info',
-                'patient_info_text');
+                'patient_info_text',
+                function() {
+                    var value = document.getElementById(id).value;
+                    self.m.info = value
+                    self.post_save(self, data)
+                });
         parent.appendChild(div_patient_info)
     },
 
     // TODO ambiguous with build_info_container => find another name ?
-    create_info_container: function (info, className, id) {
+    create_info_container: function (info, className, id, callback) {
+        var self = this;
         var container = document.createElement('div');
         container.className = className;
 
@@ -648,26 +635,8 @@ Builder.prototype = {
 
         container.appendChild(text_span);
 
-        return container;
-    },
-
-    create_sample_info_container: function (info, className, id) {
-        var self = this;
-        var container = this.create_info_container(info, className, id);
-
         $(container).children(":first").on("dblclick", function() {
-            self.edit_sample(this, "info");
-        });
-
-        return container;
-    },
-
-    create_patient_info_container: function (info, className, id) {
-        var self = this;
-        var container = this.create_info_container(info, className, id);
-
-        $(container).children(":first").on("dblclick", function() {
-            self.edit_patient(this, "info");
+            self.edit_textarea(this, "info", callback);
         });
 
         return container;
