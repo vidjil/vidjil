@@ -258,7 +258,7 @@ Builder.prototype = {
         this.setup_edit_input(input);
         input.style.width = "200px";
         input.style.border = "0px";
-        //input.style.margin = "0px";
+        input.style.margin = "0px";
         return input;
     },
 
@@ -547,11 +547,11 @@ Builder.prototype = {
 
         var reads_div = document.createElement("div")
         reads_div.className = "reads_details"
-        var reads_title = document.createElement("div")
+        /*var reads_title = document.createElement("div")
         reads_title.className = "info_line centered"
         reads_title.appendChild(document.createTextNode("reads"))
 
-        reads_div.appendChild(reads_title)
+        reads_div.appendChild(reads_title)*/
 
         // Total
         var div_total = this.build_named_info_line("info_total", "total", this.m.toStringThousands(this.m.reads.total[this.m.t]))
@@ -746,7 +746,7 @@ Builder.prototype = {
         var self = this
 
         var div = document.createElement('div');
-        div.className = "info_color centered"
+        div.className = "info_color centered vertical_space"
 
         var span0 = document.createElement('span');
         var span1 = document.createElement('span');
