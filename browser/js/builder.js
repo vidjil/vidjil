@@ -234,8 +234,7 @@ Builder.prototype = {
         divParent.appendChild(input);
         divParent.onclick = "";
 
-        var a = this.create_save_button(id, callback);
-        divParent.appendChild(a);
+        $(input).on('save', callback);
         $(input).select();
     },
 
@@ -267,8 +266,8 @@ Builder.prototype = {
             e = e || window.event;
             var key = e.keyCode
             if (key == 0) key = e.which 
-            if (key == 13) document.getElementById('btnSave')
-                .click();
+            if (key == 13) $(input).trigger("save");
+            else if (key == 27) m.update()
         }
         $(input).focusout(function() {
             setTimeout(function(){
@@ -276,16 +275,7 @@ Builder.prototype = {
             }, 500);
         })
     },
-
-    create_save_button: function (target_id, callback) {
-        var a = document.createElement('a');
-        a.className = "button";
-        a.appendChild(document.createTextNode("save"));
-        a.id = "btnSave";
-        a.onclick = callback;
-        return a;
-    },
-
+    
     post_save: function(self) {
         self.build_top_container()
         self.build_info_container()
