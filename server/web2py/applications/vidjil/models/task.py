@@ -302,8 +302,8 @@ def run_fuse(id_file, id_config, id_data, id_fuse, sample_set_id, clean_before=T
             files += defs.DIR_RESULTS + row.results_file.data_file + " "
             sequence_file_list += str(row.results_file.sequence_file_id) + "_"
             
-    
-    cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+output_file+" -t 100 "+files
+    fuse_cmd = db.config[id_config].fuse_command
+    cmd = "python "+defs.DIR_FUSE+"/fuse.py -o "+ output_file + " " + fuse_cmd + " " + files
 
 
     print "=== fuse.py ==="

@@ -12,6 +12,7 @@
                 <td class="column2"> name </td>
                 <td class="column1"> program </td>
                 <td> command </td>
+                <td class="column_100"> fuse </td>
                 <td> info </td>
 
                 <td class="column5"> </td>
@@ -27,6 +28,7 @@
                 <td> {{=row.name }} </td>
                 <td> {{=row.program }} </td>
                 <td> {{=row.command }} </td>
+                <td> {{=row.fuse_command }} </td>
                 <td> {{=row.info }} </td>
 
 {{if isAdmin:}} <td onclick="db.call('config/permission', {'id' :'{{=row.id}}'} )" > p </td> {{else:}} <td></td> {{pass}}
