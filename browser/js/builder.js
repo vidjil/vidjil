@@ -210,46 +210,47 @@ Builder.prototype = {
     edit: function (elem, data) {
         var self = this;
         var id = "edit_value";
+        var init_value = self.m.getStrTime(self.m.t, data);
         var save_callback = function() {
             var value = document.getElementById(id).value;
             self.m.samples[data][self.m.t] = value
-            self.post_save(self, data);
+            self.post_save(self);
         }
 
-        this.build_input_edit(id, elem, data, save_callback)
+        this.build_input_edit(id, elem, init_value, save_callback)
     },
 
-    edit_textarea: function(elem, data, callback) {
+    edit_textarea: function(elem, value, callback) {
         var self = this;
         var id = "edit_value";
-        var value = this.m.getStrTime(this.m.t, data);
         this.build_textarea_edit(id, elem, value, callback);
     },
 
-    build_edit: function (input, id, elem, data, save_callback) {
+    //TODO rename
+    build_edit: function (input, id, elem, callback) {
         var divParent = elem.parentNode;
         divParent.innerHTML = "";
 
         divParent.appendChild(input);
         divParent.onclick = "";
 
-        var a = this.create_save_button(id, data, save_callback);
+        var a = this.create_save_button(id, callback);
         divParent.appendChild(a);
         $(input).select();
     },
 
-    build_textarea_edit: function (id, elem, value, data, save_callback) {
+    build_textarea_edit: function (id, elem, value, callback) {
         var input = document.createElement('textarea');
         input.id = id;
         input.innerHTML = value; 
         this.setup_edit_input(input);
 
-        this.build_edit(input, id, elem, data, save_callback);
+        this.build_edit(input, id, elem, callback);
     },
 
-    build_input_edit: function(id, elem, data, save_callback) {
-        var input = this.create_edit_input(id, this.m.getStrTime(this.m.t, data));
-        this.build_edit(input, id, elem, data, save_callback);
+    build_input_edit: function(id, elem, value, callback) {
+        var input = this.create_edit_input(id, value);
+        this.build_edit(input, id, elem, callback);
     },
 
     create_edit_input: function (id, value) {
@@ -276,16 +277,16 @@ Builder.prototype = {
         })
     },
 
-    create_save_button: function (target_id, data, save_callback) {
+    create_save_button: function (target_id, callback) {
         var a = document.createElement('a');
         a.className = "button";
         a.appendChild(document.createTextNode("save"));
         a.id = "btnSave";
-        a.onclick = save_callback;
+        a.onclick = callback;
         return a;
     },
 
-    post_save: function(self, data) {
+    post_save: function(self) {
         self.build_top_container()
         self.build_info_container()
         self.m.update()
@@ -435,6 +436,18 @@ Builder.prototype = {
         var parent = document.getElementById("info")
         parent.innerHTML = "";
 
+        var div_patient_info = this.create_info_container(
+                this.m.info,
+                'patient_info',
+                'patient_info_text',
+                function() {
+                    //TODO id needs to be passed as param
+                    var value = document.getElementById('edit_value').value;
+                    self.m.info = value
+                    self.post_save(self)
+                });
+        parent.appendChild(div_patient_info)
+        
         //global info
         /*var div_analysis_file = this.build_info_line("info_analysis_file", this.m.analysisFileName)
         parent.appendChild(div_analysis_file)*/
@@ -593,9 +606,10 @@ Builder.prototype = {
                 'sequence_info',
                 'info_text',
                 function() {
-                    var value = document.getElementById(id).value;
-                    self.m.samples[data][self.m.t] = value
-                    self.post_save(self, data)
+                    //TODO id needs to be passed as param
+                    var value = document.getElementById('edit_value').value;
+                    self.m.samples['info'][self.m.t] = value
+                    self.post_save(self)
                 });
         parent.appendChild(div_sequence_info)
 
@@ -611,16 +625,6 @@ Builder.prototype = {
         div_data_file.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
         document.title = this.m.getPrintableAnalysisName()
         parent.appendChild(div_data_file)
-        var div_patient_info = this.create_info_container(
-                this.m.info,
-                'patient_info',
-                'patient_info_text',
-                function() {
-                    var value = document.getElementById(id).value;
-                    self.m.info = value
-                    self.post_save(self, data)
-                });
-        parent.appendChild(div_patient_info)
     },
 
     // TODO ambiguous with build_info_container => find another name ?
@@ -631,12 +635,14 @@ Builder.prototype = {
 
         text_span = document.createElement('span');
         text_span.id = id;
+        text_span.className = 'info_container';
         text_span.innerHTML = info.replace(/\n/g, '<br />');
 
         container.appendChild(text_span);
 
         $(container).children(":first").on("dblclick", function() {
-            self.edit_textarea(this, "info", callback);
+            //var value = self.m.getStrTime(self.m.t, 'info');
+            self.edit_textarea(this, info, callback);
         });
 
         return container;
