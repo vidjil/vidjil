@@ -355,6 +355,9 @@ Model_loader.prototype = {
             var clone = new Clone(other, self, index, true);
             index++ ;
         }
+        
+        //remove incomplete similarity matrix (TODO: fix fuse.py)
+        this.similarity = undefined;
 
         return this
 
