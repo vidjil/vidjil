@@ -1,0 +1,4 @@
+!LAUNCH: ../../../vidjil -s '#####-#####' -c clones -r 1 -G ../../../germline/IGH -t 0 -e 1 bug20160121.fa
+
+$ Sequences should not be segmented since they only contain J.
+1:UNSEG only J/3' -> 2
