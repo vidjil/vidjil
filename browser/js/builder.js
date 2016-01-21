@@ -425,8 +425,9 @@ Builder.prototype = {
         var parent = document.getElementById("info")
         parent.innerHTML = "";
 
+        var patient_info = typeof this.m.info != 'undefined' ? this.m.info : "";
         var div_patient_info = this.create_info_container(
-                this.m.info,
+                patient_info,
                 'patient_info',
                 'patient_info_text',
                 function() {
@@ -597,6 +598,8 @@ Builder.prototype = {
                 function() {
                     //TODO id needs to be passed as param
                     var value = document.getElementById('edit_value').value;
+                    if (typeof self.m.samples['info'] == 'undefined')
+                        self.m.samples['info'] = new Array(self.m.samples.names.length, "");
                     self.m.samples['info'][self.m.t] = value
                     self.post_save(self)
                 });
