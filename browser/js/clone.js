@@ -223,6 +223,18 @@ Clone.prototype = {
     }, 
     
     /**
+     * return the biggest size a clone can reach in the current samples
+     * */
+    getMaxSize: function () {
+        var max=0;
+        for (var i in this.m.samples.order){
+            var tmp=this.getSize(this.m.samples.order[i]);
+            if (tmp>max) max=tmp;
+        }
+        return max;
+    },
+    
+    /**
      * special getSize for scatterplot (ignore constant normalization)<br>
      * @param {integer} time - tracking point (default value : current tracking point)
      * @return {float} size
