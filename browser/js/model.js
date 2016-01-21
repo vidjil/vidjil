@@ -1109,9 +1109,9 @@ Model.prototype = {
     /**
      * merge all clones currently in the selection into one cluster
      * */
-    merge: function () {
+    merge: function (list) {
+        if (list==undefined) list = this.getSelected()
         var new_cluster = [];
-        var list = this.getSelected()
         var leader;
         var top = 200;
         console.log("merge clones " + list)
