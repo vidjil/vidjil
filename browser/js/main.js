@@ -81,7 +81,7 @@ var db = new Database(m);
  * The builder completes some informations in the menu and provide some tools
  * TODO replace with a menu and info view
  */
-var builder = new Builder(m, db);
+var builder = new Builder(m);
 
 
 /* [WIP] Shortcut (optional)
