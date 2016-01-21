@@ -2,8 +2,8 @@
 function Similarity (model) {
     //default var for tsne
     this.e = 10;
-    this.p = 5;
-    this.po = 0.6;
+    this.p = 80;
+    this.po = 1.5;
 
     this.m = model;
     this.m.similarity_builder = this;
@@ -76,7 +76,7 @@ Similarity.prototype = {
         }
         this.tsne.initDataDist(this.dists);
 
-        for(var k = 0; k < 500; k++) this.tsne.step();
+        for(var k = 0; k < 1000; k++) this.tsne.step();
         console.log(this.tsne.step());
 
         var result = this.tsne.getSolution();
@@ -183,6 +183,85 @@ Similarity.prototype = {
             this.system_yMax[locus] = yMax;
         }
         return this;
+    }, 
+    
+    
+    DBscan: function (eps, min) {
+        var cluster_list = [];
+        var cluster=[];
+        
+        //init flag (keep track of visited/clustered clones)
+        var visit_flag = []
+        var cluster_flag = []
+        
+        for (var i in this.similarity){
+            visit[i]=false;
+            cluster[i]=false;
+        } 
+        
+        for (var i in this.m.similarity) {
+            //search for an unvisited node
+            if (!visit_flag[i]){
+                visit_flag[i]=true;
+                
+                //compute neighborhood of the unvisited node
+                var tmp = this.compute_neighborhood(i, eps);
+                var neighborhood = tmp[0];
+                var neighborhood_size = tmp[1];
+                
+                //start expand a cluster around the unvisited node if the local density is enough
+                if (neighborhood_size > min) {
+                    var cluster = [] //new cluster
+                    
+                    var l = neighborhood.length;
+                    for (var j=0; j<l; j++){
+                        if (!visit_flag[neighborhood[j]]){
+                            visit_flag[neighborhood[j]]=true;
+                            
+                            var tmp2 = this.compute_neighborhood(neighborhood[j], eps);
+                            var neighborhood2 = tmp2[0];
+                            var neighborhood_size2 = tmp2[1];
+                                
+                            //add to the cluster the neighborhood of every valid neighbor 
+                            if (neighborhood_size2 > min){
+                                for (var k in neighborhood2){
+                                    if (neighborhood.indexOf(neighborhood2[k]) == -1){
+                                        neighborhood.push(neighborhood2[k]);
+                                        l++;
+                                    }
+                                }
+                            }
+                            
+                        }
+                    }
+                    //add all the neighborhood to the cluster
+                    if (!cluster_flag[neighborhood[j]]){
+                        cluster_flag[neighborhood[j]]=true;
+                        cluster.push(neighborhood[j]);
+                    }
+                    
+                    //add only clusters with more than one clone
+                    if (cluster.length >1) cluster_list.push(cluster);
+                }
+            }     
+        }
+        for (var c in cluster_list) this.m.merge(cluster_list[c]);
+        return cluster_list;
+    },
+    
+    
+    compute_neighborhood: function (id, eps) {
+        var neighborhood=[];
+        var neighborhood_size=0;
+        for (var j in this.m.similarity){
+            if (this.m.similarity[id][j] > eps) {
+                neighborhood.push(j); 
+                neighborhood_size += this.m.clone(j).getMaxSize()
+            }
+        } 
+        return [neighborhood, neighborhood_size];
     }
+
+    
 
 }
