@@ -1616,12 +1616,19 @@ table.log textarea {
 }
 .info_container {
   display: block;
-  height: auto;
   padding: 5px;
   border: 1px solid;
-  margin-bottom: 5px;
   overflow-wrap: break-word;
+  overflow-y: hidden;
   max-width: 457px;
+  min-height: 17px;
+  height: 17px;
+}
+.info_container:hover {
+  height: auto;
+}
+.patient_info_text {
+  margin-bottom: 5px;
 }
 textarea#edit_value {
   -webkit-box-sizing: border-box;
