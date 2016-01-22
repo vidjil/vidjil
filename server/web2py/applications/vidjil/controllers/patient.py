@@ -730,20 +730,3 @@ def change_permission():
         res = {"message": ACCESS_DENIED}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
-def save_info():
-    patient_id = request.vars["id"]
-    row = db.patient[patient_id]
-    if row is not None:
-        if auth.can_modify_patient(patient_id):
-            db.patient[patient_id] = dict(info = request.vars["info"])
-
-            res = {"success": True,
-                   "message": "The changes have been saved"}
-        else:
-            res = {"success": False,
-                   "message": "You do not have permission to do that"}
-    else:
-        res = {"success": False,
-               "message": "An error occured"}
-    return gluon.contrib.simplejson.dumps(res, separators=(',', ':'))

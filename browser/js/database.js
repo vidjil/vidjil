@@ -821,23 +821,6 @@ Database.prototype = {
         return args
     },
 
-    save_sample_info: function (sample_id, info) {
-        self.m.samples["info"][sample_id] = info;
-
-        var database_id = self.m.samples["ids"][sample_id];
-
-        this.request('file/save_info', {id: database_id, info: info});
-    },
-
-    save_patient_info: function (patient_id, info) {
-        self.m.info = info;
-
-        var database_id = patient_id;
-
-        this.request('patient/save_info', {id: database_id, info: info});
-    },
-
-
     // Log functions, to server
     // 'quiet' is set to true to avoid infinite loops with timeouts
     log : function (lvl, msg) { this.request('default/logger', {'lvl': lvl, 'msg': msg}, true) },
