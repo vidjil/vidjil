@@ -265,12 +265,13 @@ Builder.prototype = {
             e = e || window.event;
             var key = e.keyCode
             if (key == 0) key = e.which 
-            if (key == 13) $(input).trigger("save");
+    //        if (key == 13) $(input).trigger("save");
             else if (key == 27) m.update()
         }
         $(input).focusout(function() {
             setTimeout(function(){
-                m.update()
+                $(input).trigger("save");
+      //          m.update()
             }, 500);
         })
     },
