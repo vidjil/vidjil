@@ -365,6 +365,15 @@ def save_analysis():
                                               analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                                               )
 
+        db(db.patient.id == request.vars['patient']).update(info = request.vars['patient_info']);
+
+        ids = request.vars['samples_id'].split(',')
+        infos = request.vars['samples_info'].split(',')
+
+        # TODO find way to remove loop ?
+        for i in range(0, len(ids)):
+            db(db.sequence_file.id == int(ids[i])).update(info = infos[i])
+
         patient_name = db.patient[request.vars['patient']].first_name + " " + db.patient[request.vars['patient']].last_name
 
         res = {"success" : "true",

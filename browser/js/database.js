@@ -580,6 +580,9 @@ Database.prototype = {
             });
             var fd = new FormData();
             fd.append("fileToUpload", blob);
+            fd.append("patient_info", self.m.info);
+            fd.append("samples_info", self.m.samples.info);
+            fd.append("samples_id", self.m.samples.ids);
             
             $.ajax({
                 type: "POST",

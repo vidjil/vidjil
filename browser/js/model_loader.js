@@ -505,6 +505,7 @@ Model_loader.prototype = {
         
         var analysisData = {
             producer : "browser",
+            info : this.info,
             timestamp : timestamp,
             vidjil_json_version : VIDJIL_JSON_VERSION,
             samples : this.samples,
