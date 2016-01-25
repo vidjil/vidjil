@@ -21,9 +21,7 @@ Similarity.prototype = {
     init : function(callback) {
         this.callback=callback;
         if (typeof this.m.similarity != "undefined"){
-            this.compute_tsne(self.e,self.p,self.po)
-            .compute_system_tsne(self.e,self.p,self.po)
-            .callback();
+            this.callback();
         }else{
             this.get_similarity()
         }
