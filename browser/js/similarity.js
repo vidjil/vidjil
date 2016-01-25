@@ -15,6 +15,9 @@ function Similarity (model) {
 
 Similarity.prototype = {
 
+    /* compute tsne/system_tsne using similarity matrix
+     * retrieve similarity matrix from server if neccesary 
+     * */
     init : function(callback) {
         this.callback=callback;
         if (typeof this.m.similarity != "undefined"){
@@ -27,7 +30,10 @@ Similarity.prototype = {
 
 
     },
-
+    
+    /* request a similarity to the cgi server
+     * pre-compute tsne/system_tsne on success
+     * */
     get_similarity: function () {
         var self = this
         var request = "";
@@ -59,7 +65,9 @@ Similarity.prototype = {
         })
     },
 
-
+    /* compute tsne using the similarity matrix (default parameters are defined in the similarity Object)
+     * tsne computes a 2D coordinate for each clones and tries to conserve the relative distance between each clones.
+     * */
     compute_tsne: function(e,p,po) {
         var opt = {
             epsilon: e,
@@ -96,6 +104,9 @@ Similarity.prototype = {
         return this;
     },
     
+    /* translate and rescale an array of coordinates to be between 0/0 and 1/1
+     *
+     * */ 
     rescale: function(tab){
         var result = tab;
         
@@ -142,6 +153,9 @@ Similarity.prototype = {
         return result;
     },
 
+    /* same as compute_tsne() but treats each systems independently
+     *
+     * */
     compute_system_tsne: function(e,p,po) {
 
         for (var l in this.m.system_available){
@@ -185,7 +199,9 @@ Similarity.prototype = {
         return this;
     }, 
     
-    
+    /* 
+     * return a list of clusters found with the DBscan algorithm
+     * */
     DBscan: function (eps, min) {
         var cluster_list = [];
         var cluster=[];
@@ -249,7 +265,9 @@ Similarity.prototype = {
         return cluster_list;
     },
     
-    
+    /* find the eps-neighborhood of a given clone
+     * return a list of neighbor and the density of this neighborhood 
+     * */
     compute_neighborhood: function (id, eps) {
         var neighborhood=[];
         var neighborhood_size=0;
