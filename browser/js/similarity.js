@@ -201,16 +201,23 @@ Similarity.prototype = {
      * return a list of clusters found with the DBscan algorithm
      * */
     DBscan: function (eps, min) {
+        var self = this;
+        this.callback = function(){self.DBscan(eps,min)};
+        if (typeof this.m.similarity == "undefined"){
+            this.get_similarity();
+            return;
+        }
+        
+        this.m.resetClusters();
         var cluster_list = [];
-        var cluster=[];
         
         //init flag (keep track of visited/clustered clones)
         var visit_flag = []
         var cluster_flag = []
         
-        for (var i in this.similarity){
-            visit[i]=false;
-            cluster[i]=false;
+        for (var i in this.m.similarity){
+            visit_flag[i]=false;
+            cluster_flag[i]=false;
         } 
         
         for (var i in this.m.similarity) {
@@ -247,11 +254,11 @@ Similarity.prototype = {
                             }
                             
                         }
-                    }
-                    //add all the neighborhood to the cluster
-                    if (!cluster_flag[neighborhood[j]]){
-                        cluster_flag[neighborhood[j]]=true;
-                        cluster.push(neighborhood[j]);
+                        //add all the neighborhood to the cluster
+                        if (!cluster_flag[neighborhood[j]]){
+                            cluster_flag[neighborhood[j]]=true;
+                            cluster.push(neighborhood[j]);
+                        }
                     }
                     
                     //add only clusters with more than one clone
