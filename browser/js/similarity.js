@@ -283,8 +283,79 @@ Similarity.prototype = {
             }
         } 
         return [neighborhood, neighborhood_size];
+    },
+
+
+    /* return all clones who don't have any bigger neighbors
+     * and clones too big to be considered as just noise of the previous ones
+     * eps : neighborhood distance
+     * limit : relative size needed for a clone to not be considered as noise
+     * */
+    find_real_clones : function (eps, limit) {
+        var clone_list = [];
+        
+        for (var i in this.m.similarity) {
+            var flag = true;
+            var size = this.m.clone(i).getMaxSize();
+            var n = [];
+            
+            for (var j in this.m.similarity){
+                var neighbor_size = this.m.clone(j).getMaxSize();
+                if (this.m.similarity[i][j] > eps) {
+                    if (neighbor_size>(size*limit) ) n.push(j);
+                    if (neighbor_size>size) flag = false;
+                }
+            } 
+            
+            if (flag){
+                clone_list.push(i);
+                for (var j in n) if (clone_list.indexOf(n[j])==-1) clone_list.push(n[j]);
+            } 
+        }
+        
+        return clone_list;
+    },
+
+    /* 
+     * 
+     * */
+    cluster_me : function (eps, limit) {
+        var self = this;
+        this.callback = function(){self.cluster_me(eps,limit)};
+        if (typeof this.m.similarity == "undefined"){
+            this.get_similarity();
+            return;
+        }
+        
+        this.m.resetClusters();
+        var c = this.find_real_clones(eps, limit);
+        
+        var cluster_list = [];
+        var cluster_flag = []
+        for (var i in this.m.similarity) cluster_flag[i] = false; 
+        
+        for (var i in c) {
+            var cluster = [c[i]];
+            
+            for (var j in this.m.similarity){
+                if (this.m.similarity[c[i]][j] > eps && c.indexOf(j)==-1 && !cluster_flag[j]) {
+                    cluster_flag[j] = true;
+                    cluster.push(j);
+                }
+            } 
+            
+            if (cluster.length>1) cluster_list.push(cluster); 
+        }
+        
+        for (var c in cluster_list) this.m.merge(cluster_list[c]);
+        return cluster_list;
     }
 
-    
+
 
 }
+
+
+
+
+
