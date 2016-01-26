@@ -172,17 +172,14 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
                                                   results.nb_after_right,
                                                   seq.size() - 1 - results.first_pos_max);
 
-  /* Main test: 
-     1) do we have enough affectations in good positions ('before' at the left and 'after' at the right) ?
-     We tolerate some of them in bad positions, but there must be 'ratioMin' more in good positions
-     2) there should be at least one 'before' and one 'after' (? CHECK ?)
-  */
+  /* Do we have enough affectations in good positions ('before' at the left and 'after' at the right) ?
+     We tolerate some of them in bad positions, but there must be more than 'ratioMin' more in good positions.
+     As the comparison is strict, passing this test implies that there is at least one 'before' kmer at the left
+     and one 'after' kmer at the right.
+   */
 
-  if ((results.nb_after_right >= results.nb_after_left*ratioMin)
-      && (results.nb_before_left >= results.nb_before_right*ratioMin)
-      && (results.nb_after_right > 0 || results.nb_before_right == 0)
-      && currentValue < results.max_value
-      && results.max_value > 0) {
+  if ((results.nb_after_right > results.nb_after_left*ratioMin)
+      && (results.nb_before_left > results.nb_before_right*ratioMin)) {
     results.max_found = true;
   }
 
