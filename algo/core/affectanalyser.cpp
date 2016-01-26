@@ -109,7 +109,7 @@ affect_infos KmerAffectAnalyser::getMaximum(const KmerAffect &before,
   affect_infos results;
   results.max_found = false;
   results.max_value = 0;
-  results.first_pos_max = results.last_pos_max = -1;
+  results.first_pos_max = results.last_pos_max = 0;
   results.nb_before_left = results.nb_before_right = results.nb_after_right = results.nb_after_left = 0;
   currentValue = 0;
 
