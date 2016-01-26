@@ -211,7 +211,7 @@ void testGetMaximum() {
            "(" << results.first_pos_max
            << ", " << results.last_pos_max << ")");
 
-  results = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 1., 0);
+  results = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 0.9, 0);
   TAP_TEST(results.max_found , 
            TEST_AA_GET_MAXIMUM_MAX_FOUND, "(" << results.first_pos_max
            << ", " << results.last_pos_max << ")");
@@ -221,7 +221,7 @@ void testGetMaximum() {
   TAP_TEST(results.max_value == 2, TEST_AA_GET_MAXIMUM_VALUE,
            "max = " << results.max_value);
 
-  results = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 1., k);
+  results = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 0.9, k);
   TAP_TEST(results.max_found, 
            TEST_AA_GET_MAXIMUM_MAX_FOUND, "(" << results.first_pos_max
            << ", " << results.last_pos_max << ")");
@@ -230,7 +230,7 @@ void testGetMaximum() {
            << ", " << results.last_pos_max << ")");
   TAP_TEST(results.max_value == 2, TEST_AA_GET_MAXIMUM_VALUE, "");
 
-  affect_infos results2 = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 1., k+5);
+  affect_infos results2 = kaa.getMaximum(AFFECT_J_BWD, AFFECT_V_BWD, 0.9, k+5);
   TAP_TEST(results == results2, TEST_AA_GET_MAXIMUM_VALUE, "");
 
   KmerAffect a2[] = {AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, AFFECT_V, 
