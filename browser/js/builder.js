@@ -618,6 +618,9 @@ Builder.prototype = {
         var div_data_file = document.createElement('div');
         //div_data_file.id = "info_data_file"
         div_data_file.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
+	div_data_file.onclick = function() {
+	    db.call('patient/info', {'id' : m.patient_id});
+	}
         document.title = this.m.getPrintableAnalysisName()
         parent.appendChild(div_data_file)
     },
