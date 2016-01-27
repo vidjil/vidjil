@@ -643,7 +643,7 @@ Builder.prototype = {
 
     build_multi_system: function () {
         var div = document.createElement('div');
-        div.className = "info_line";
+        div.className = "info_line locus_line";
         
         var span1 = document.createElement('span');
         span1.appendChild(document.createTextNode("locus"));
