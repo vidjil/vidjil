@@ -1644,6 +1644,7 @@ textarea#edit_value {
   box-sizing: border-box;
   width: 100%;
   min-height: 45px;
+  margin-bottom: -32px;
 }
 #top_info {
   display: inline-flex;
