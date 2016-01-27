@@ -1626,14 +1626,14 @@ table.log textarea {
   position: fixed;
   width: 100%;
   background-color: #ffffff;
-  -webkit-transition: max-height 0.8s;
-  -moz-transition: max-height 0.8s;
-  transition: max-height 0.8s;
-  z-index: 0;
+  -webkit-transition: max-height 0.8s ease-out;
+  -moz-transition: max-height 0.8s ease-out;
+  transition: max-height 0.8s ease-out;
+  z-index: 1;
 }
 .info_container:hover {
   max-height: 400px;
-  z-index: 1;
+  z-index: 2;
 }
 .patient_info_text {
   margin-bottom: 5px;
