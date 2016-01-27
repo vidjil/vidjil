@@ -466,8 +466,10 @@ Builder.prototype = {
         );
         sample_div.appendChild(infoTime)
 
-        var div_point = this.build_info_line("info_point",  this.m.getStrTime(this.m.t, "name") )
+	var point_value = this.m.getStrTime(this.m.t, "name")
+        var div_point = this.build_info_line("info_point",   point_value)
         div_point.className += " centered"
+        div_point.title = point_value
 
         $(div_point).on("dblclick", function() {
             self.edit(this, "names");
