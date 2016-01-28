@@ -182,6 +182,13 @@ class WindowsStorage {
    */
   string getLabel(junction window);
 
+
+  /**
+   * @pre should be called before keepInterestingWindows()
+   * Compute, display, and return some diversity measures
+   */
+  json computeDiversity(int nb_segmented);
+
   /**
    * @pre sort() must have been called.
    * @param top: Only the germlines of the top most abundant windows will

@@ -215,6 +215,40 @@ ostream &WindowsStorage::printSortedWindows(ostream &os) {
   return os;
 }
 
+
+
+json WindowsStorage::computeDiversity(int nb_segmented) {
+
+  double index_H_entropy = 0.0 ;
+  double index_1_minus_Ds_diversity = 0.0 ;
+
+  for (auto it = seqs_by_window.begin(); it != seqs_by_window.end(); ++it) {
+    size_t clone_nb_reads = it->second.getNbInserted();
+
+    float ratio = (float) clone_nb_reads / nb_segmented ;
+    index_H_entropy -= ratio * log(ratio) ;
+
+    index_1_minus_Ds_diversity += (float) (clone_nb_reads * (clone_nb_reads - 1)) / (nb_segmented * (nb_segmented - 1)) ;
+  }
+
+  float index_E_equitability  = index_H_entropy / log(nb_segmented) ;
+  float index_Ds_diversity = 1 - index_1_minus_Ds_diversity ;
+
+  cout << "Diversity measures" << endl
+       << "  H = " << index_H_entropy << endl        // Shannon's diversity
+       << "  E = " << index_E_equitability  << endl  // Shannon's equitability
+       << " Ds = " << index_Ds_diversity << endl     // Simpson's diversity
+       << endl;
+
+  json jsonDiversity;
+  jsonDiversity["index_H_entropy"] = index_H_entropy ;
+  jsonDiversity["index_E_equitability"] = index_E_equitability ;
+  jsonDiversity["index_Ds_diversity"] = index_Ds_diversity ;
+
+  return jsonDiversity;
+}
+
+
 json WindowsStorage::sortedWindowsToJson(map <junction, json> json_data_segment) {
   json windowsArray;
   int top = 1;
