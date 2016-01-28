@@ -24,4 +24,8 @@ $ Segment one read on IGK
 $ Segment one read on IGL
 1:IGL .* -> .* 1 
 
+$ Compute the diversity. All windows have only one read, full diversity.
+7: 1   1.000
+1:  E = 1.000
+1: Ds = 1.000
 
