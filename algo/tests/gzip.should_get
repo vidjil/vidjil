@@ -4,5 +4,5 @@
 $ Identical output
 1:Diff: 0
 
-$ Testing out-fa-gz has approximately 80 lines
-1: [78]. out-fa-gz
+$ Testing out-fa-gz has approximately 90 lines
+1: [89]. out-fa-gz
