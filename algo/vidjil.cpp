@@ -1112,11 +1112,14 @@ int main (int argc, char **argv)
 	//////////////////////////////////
 
 	string f_all_windows = out_dir + f_basename + WINDOWS_FILENAME;
-	cout << "  ==> " << f_all_windows << endl ;
+	cout << "  ==> " << f_all_windows << endl << endl ;
 
 	ofstream out_all_windows(f_all_windows.c_str());
         windowsStorage->printSortedWindows(out_all_windows);
 
+
+    //$$ compute, display and store diversity measures
+    json jsonDiversity = windowsStorage->computeDiversity(nb_segmented);
 
     //////////////////////////////////
     //$$ min_reads_clone (ou label)
@@ -1523,6 +1526,10 @@ int main (int argc, char **argv)
     //Added edges in the json output file
     j["similarity"] = jsonLevenshtein;
     
+    // Diversity measures
+    j["diversity"] = jsonDiversity;
+
+
     out_json << j.dump(2);
     delete multigermline ;
     delete windowsStorage;
