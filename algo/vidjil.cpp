@@ -1158,6 +1158,7 @@ int main (int argc, char **argv)
     list <list <junction> > clones_windows;
     comp_matrix comp=comp_matrix(sort_clones);
       
+    //$$ Further analyze some clones (-z)
     if (command == CMD_CLONES) {
 
     if (epsilon || forced_edges.size())
@@ -1529,6 +1530,8 @@ int main (int argc, char **argv)
     // Diversity measures
     j["diversity"] = jsonDiversity;
 
+
+    //$$ Output json, clean
 
     out_json << j.dump(2);
     delete multigermline ;
