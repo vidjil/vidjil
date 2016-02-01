@@ -13,29 +13,32 @@ using namespace std;
 
 
 
-void testDynprog()
+void testOverlap()
 {
   // aaaaaaaTaa
   //      cGcccccccc
 
   string refA = "AAAAAAAAAA";
-  string refC = "CCCCCCCCCC";
+  string refC = "TCCCCCCCCC";
 
-  // here seqA and seqC do not actullay overlap, but the goal is to find the good split point
-  string seqA = "AAAAAAATAA";
-  string seqC = "CGCCCCCCCC";
+  // here refA and refC do not actullay overlap, but the goal is to find the good split point
+  string seq = "AAAAAAACCACCCCCC";
+  // positions -->    6..9
 
   int trimA, trimC ;
-  int posA = 100;
-  int posC = 200;
 
-  best_overlap_split(5, seqA, seqC, refA, refC, &posA, &posC, &trimA, &trimC, VDJ);
+  int posA = 9;
+  int posC = 6;  // this value is not really meaningful here, but allows anyway to test the function
 
-  TAP_TEST(trimA == 3, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides");
-  TAP_TEST(trimC == 2, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides");
+  check_and_resolve_overlap(seq, 0, seq.length(),
+                     refA, refC,
+                     &posA, &posC, &trimA, &trimC, VDJ);
 
-  TAP_TEST(posA ==  97, TEST_FINE_SEGMENT_OVERLAP, "end position of left region");
-  TAP_TEST(posC == 202,  TEST_FINE_SEGMENT_OVERLAP, "start position of right region");
+  TAP_TEST(trimA == 3, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides : " << trimA);
+  TAP_TEST(trimC == 1, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides : " << trimC);
+
+  TAP_TEST(posA == 6, TEST_FINE_SEGMENT_OVERLAP, "end position of left region : " << posA);
+  TAP_TEST(posC == 7,  TEST_FINE_SEGMENT_OVERLAP, "start position of right region : " << posC);
 }
 
 void testFineSegment()
@@ -353,6 +356,6 @@ void testSegment() {
   testSegmentationCause();
   testExtractor();
   testProbability();
-  testDynprog();
+  testOverlap();
   testFineSegment();
 }
