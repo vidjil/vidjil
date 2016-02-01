@@ -50,7 +50,7 @@ void testFineSegment()
 
   Germline *germline ;
   germline = new Germline("IGH", 'G', seqV, seqD, seqJ, 0);
-  germline->new_index("####");
+  germline->new_index("########");
 
   Sequence seq = data.getSequence();
       
