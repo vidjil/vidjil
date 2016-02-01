@@ -586,6 +586,7 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
  * Align a read against a collection of sequences, maximizing the alignment 'score'
  * @param read:         the read
  * @param rep:          a collection of reference sequences
+ * @param reverse_ref:  if true, reverse the reference sequences (VkVk)
  * @param reverse_both: if true, reverse both the read and the reference sequences (J segment)
  * @param local:        if true, Local alignment (D segment), otherwise LocalEndWithSomeDeletions and onlyBottomTriangle (V and J segments)
  * @param segment_cost: the cost used by the dynamic programing
@@ -598,7 +599,7 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
  * @return best_best_i: ?
  */
 
-int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool local, int *tag, 
+int align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool reverse_both, bool local, int *tag,
 			     int *del, int *del2, int *begin, int *length, vector<pair<int, int> > *score
 			    , Cost segment_cost)
 {
@@ -614,10 +615,13 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool l
 
   DynProg::DynProgMode dpMode = DynProg::LocalEndWithSomeDeletions;
   if (local==true) dpMode = DynProg::Local;
+
+  // With reverse_ref, the read is reversed to prevent calling revcomp on each reference sequence
+  string sequence_or_rc = revcomp(read, reverse_ref);
   
   for (int r = 0 ; r < rep.size() ; r++)
     {
-      DynProg dp = DynProg(read, rep.sequence(r),
+      DynProg dp = DynProg(sequence_or_rc, rep.sequence(r),
 			   dpMode, // DynProg::SemiGlobalTrans, 
 			   segment_cost, // DNA
 			   reverse_both, reverse_both);
@@ -665,6 +669,10 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_both, bool l
   cout << "del/del2/begin:" << (*del) << "/" << (*del2) << "/" << (*begin) << endl;
   cout << endl;
 #endif
+
+  if (reverse_ref)
+    // Why -1 here and +1 in dynprog.cpp /// best_i = m - best_i + 1 ;
+    best_best_i = read.length() - best_best_i - 1 ;
   
   return best_best_i ;
 }
@@ -692,6 +700,9 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   CDR3start = -1;
   CDR3end = -1;
 
+  bool reverse_V = false ;
+  bool reverse_J = false ;
+
   if ((germline->seg_method == SEG_METHOD_MAX12) || (germline->seg_method == SEG_METHOD_MAX1U))
     {
       // We check whether this sequence is segmented with MAX12 or MAX1U (with default e-value parameters)
@@ -702,6 +713,9 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
           KmerAffect left = reversed ? KmerAffect(kseg->after, true) : kseg->before ;
           KmerAffect right = reversed ? KmerAffect(kseg->before, true) : kseg->after ;
+
+          reverse_V = (left.getStrand() == -1);
+          reverse_J = (right.getStrand() == -1);
 
           code = "Unexpected ";
 
@@ -735,10 +749,13 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   int del2=0;
   int beg=0;
   
-  Vend = align_against_collection(sequence_or_rc, germline->rep_5, false, false, &best_V, &del_V, &del2, &beg,
+  Vend = align_against_collection(sequence_or_rc, germline->rep_5, reverse_V, reverse_V, false,
+                                  &best_V, &del_V, &del2, &beg,
 					   &plus_length, &score_V
 					   , segment_cost);
-  Jstart = align_against_collection(sequence_or_rc, germline->rep_3, true, false, &best_J, &del_J, &del2, &beg,
+
+  Jstart = align_against_collection(sequence_or_rc, germline->rep_3, reverse_J, !reverse_J, false,
+                                    &best_J, &del_J, &del2, &beg,
 					    &plus_length, &score_J
 					    , segment_cost);
   plus_length += Jstart - Vend ;
@@ -828,7 +845,8 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
     string str = seq.substr(l, r-l);
 
     // Align
-    end = align_against_collection(str, germline->rep_4, false, true, &tag_D, &del_D_right, &del_D_left, &begin,
+    end = align_against_collection(str, germline->rep_4, false, false, true,
+                                   &tag_D, &del_D_right, &del_D_left, &begin,
 				&length, &score_D, segment_cost);
     
     best_D = tag_D;
