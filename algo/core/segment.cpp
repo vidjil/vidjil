@@ -714,6 +714,8 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
           KmerAffect left = reversed ? KmerAffect(kseg->after, true) : kseg->before ;
           KmerAffect right = reversed ? KmerAffect(kseg->before, true) : kseg->after ;
 
+          delete kseg ;
+
           reverse_V = (left.getStrand() == -1);
           reverse_J = (right.getStrand() == -1);
 
@@ -730,7 +732,10 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
           germline->override_rep5_rep3_from_labels(left, right);
         }
       else
-        return ;
+        {
+          delete kseg ;
+          return ;
+        }
     }
 
   // Strand determination, with KmerSegmenter (with default e-value parameters)
@@ -740,6 +745,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
   KmerSegmenter *kseg = new KmerSegmenter(seq, germline, THRESHOLD_NB_EXPECTED, 1);
   reversed = kseg->isReverse();
+  delete kseg ;
   
   string sequence_or_rc = revcomp(sequence, reversed); // sequence, possibly reversed
 
