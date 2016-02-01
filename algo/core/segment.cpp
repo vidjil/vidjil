@@ -266,6 +266,8 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
 
   score = nb_strand[0] + nb_strand[1] ; // Used only for non-segmented germlines
 
+  reversed = (nb_strand[0] > nb_strand[1]) ;
+
   if ((germline->seg_method == SEG_METHOD_MAX12)
       || (germline->seg_method == SEG_METHOD_MAX1U))
     { // Pseudo-germline, MAX12 and MAX1U
@@ -311,7 +313,7 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
       // This strand computation is only a heuristic, especially for chimera +/- reads
       // Anyway, it allows to gather such reads and their reverse complement into a unique window...
       // ... except when the read is quite different outside the window
-      strand = nb_strand[0] > nb_strand[1] ? -1 : 1 ;
+      strand = reversed ? -1 : 1 ;
     }
 
   else
@@ -469,7 +471,6 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
 
   // Yes, it is segmented
   segmented = true;
-  reversed = (strand == -1);
   because = reversed ? SEG_MINUS : SEG_PLUS ;
 
   info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS)  ;
