@@ -284,6 +284,13 @@ class FineSegmenter : public Segmenter
   */
   void FineSegmentD(Germline *germline,
                     double threshold = THRESHOLD_NB_EXPECTED_D, int multiplier=1);
+
+  bool FineSegmentD(Germline *germline,
+                    string seq_Y, int *Yend, int *del_Y,
+                    int *del_DD_left, int *DD_start, int *best_DD, int *DD_end, int *del_DD_right,
+                    int *del_Z, int *Zstart, string seq_Z,
+                    double threshold = THRESHOLD_NB_EXPECTED_D, int multiplier=1);
+
   void findCDR3();
 
   json toJson();

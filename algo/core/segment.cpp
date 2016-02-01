@@ -829,22 +829,21 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   finishSegmentation();
 }
 
-
-void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, int multiplier){
-  
-  if (segmented){
-    
+bool FineSegmenter::FineSegmentD(Germline *germline,
+                                 string seq_Y, int *Yend, int *del_Y,
+                                 int *del_DD_left, int *DD_start, int *best_DD, int *DD_end, int *del_DD_right,
+                                 int *del_Z, int *Zstart, string seq_Z,
+                                 double evalue_threshold, int multiplier){
     int end = (int) string::npos ;
-    int tag_D;
     int length = 0 ;
     int begin = 0;
     
     // Create a zone where to look for D, adding at most EXTEND_D_ZONE nucleotides at each side
-    int l = Vend - EXTEND_D_ZONE;
+    int l = *Yend - EXTEND_D_ZONE;
     if (l<0) 
       l=0 ;
 
-    int r = Jstart + EXTEND_D_ZONE;
+    int r = *Zstart + EXTEND_D_ZONE;
 
     string seq = getSequence().sequence; // segmented sequence, possibly rev-comped
 
@@ -855,33 +854,42 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
 
     // Align
     end = align_against_collection(str, germline->rep_4, false, false, true,
-                                   &tag_D, &del_D_right, &del_D_left, &begin,
+                                   best_DD, del_DD_right, del_DD_left, &begin,
 				&length, &score_D, segment_cost);
-    
-    best_D = tag_D;
-    
-    Dstart = l + begin;
-    Dend = l + end;
+
+    *DD_start = l + begin;
+    *DD_end = l + end;
 	
     float evalue_D = multiplier * (r-l) * germline->rep_4.totalSize() * segment_cost.toPValue(score_D[0].first);
 
-
-
     if (evalue_D > evalue_threshold)
-      return ;
-
-    dSegmented=true;
+      return false;
     
     //overlap VD
-
-    seg_N1 = check_and_resolve_overlap(seq, 0, Dend,
-                         germline->rep_5.sequence(best_V), germline->rep_4.sequence(best_D),
-                         &Vend, &Dstart, &del_V, &del_D_left, segment_cost);
+    seg_N1 = check_and_resolve_overlap(seq, 0, *DD_end,
+                         seq_Y, germline->rep_4.sequence(*best_DD),
+                         Yend, DD_start, del_Y, del_DD_left, segment_cost);
     
     //overlap DJ
-    seg_N2 = check_and_resolve_overlap(seq, Dstart, seq.length(),
-                         germline->rep_4.sequence(best_D), germline->rep_3.sequence(best_J),
-                         &Dend, &Jstart, &del_D_right, &del_J, segment_cost);
+    seg_N2 = check_and_resolve_overlap(seq, *DD_start, seq.length(),
+                         germline->rep_4.sequence(*best_DD), seq_Z,
+                         DD_end, Zstart, del_DD_right, del_Z, segment_cost);
+
+    return true;
+}
+
+void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, int multiplier){
+
+  if (segmented){
+
+    dSegmented = FineSegmentD(germline,
+                              germline->rep_5.sequence(best_V), &Vend, &del_V,
+                              &del_D_left, &Dstart, &best_D, &Dend, &del_D_right,
+                              &del_J, &Jstart, germline->rep_3.sequence(best_J),
+                              evalue_threshold, multiplier);
+
+    if (!dSegmented)
+      return ;
 
     code = germline->rep_5.label(best_V) +
     " "+ string_of_int(del_V) + 
