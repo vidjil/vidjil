@@ -122,7 +122,8 @@ $(EXEC): % : %.o $(LIB)
 	$(CXX) -o $@ $< $(LIB) $(LDLIBS) $(LDFLAGS) $(CXXFLAGS)
 
 
-../core.a: core
+../%.a:
+	$(MAKE) -C $(dir $@) $(notdir $@)
 
 vidjil:
 	$(MAKE) -C ../ clean
