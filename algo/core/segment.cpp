@@ -729,38 +729,19 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   
   string sequence_or_rc = revcomp(sequence, reversed); // sequence, possibly reversed
 
-  // Strand +
-  
-  int plus_score = 0 ;
-  int tag_plus_V, tag_plus_J;
+
+  /* Segmentation */
   int plus_length = 0 ;
-  int del_plus_V, del_plus_J ;
   int del2=0;
   int beg=0;
   
-  vector<pair<int, int> > score_plus_V;
-  vector<pair<int, int> > score_plus_J;
-  
-  int plus_left = align_against_collection(sequence_or_rc, germline->rep_5, false, false, &tag_plus_V, &del_plus_V, &del2, &beg,
-					   &plus_length, &score_plus_V
+  Vend = align_against_collection(sequence_or_rc, germline->rep_5, false, false, &best_V, &del_V, &del2, &beg,
+					   &plus_length, &score_V
 					   , segment_cost);
-  int plus_right = align_against_collection(sequence_or_rc, germline->rep_3, true, false, &tag_plus_J, &del_plus_J, &del2, &beg,
-					    &plus_length, &score_plus_J
+  Jstart = align_against_collection(sequence_or_rc, germline->rep_3, true, false, &best_J, &del_J, &del2, &beg,
+					    &plus_length, &score_J
 					    , segment_cost);
-  plus_length += plus_right - plus_left ;
-
-  plus_score=score_plus_V[0].first + score_plus_J[0].first ;
-
-    {
-      Vend = plus_left ;
-      Jstart = plus_right ;
-      best_V = tag_plus_V ;
-      best_J = tag_plus_J ;
-      del_V = del_plus_V ;
-      del_J = del_plus_J ;
-      score_V=score_plus_V;
-      score_J=score_plus_J;
-    }
+  plus_length += Jstart - Vend ;
 
   /* E-values */
   evalue_left  = multiplier * sequence.size() * germline->rep_5.totalSize() * segment_cost.toPValue(score_V[0].first);
