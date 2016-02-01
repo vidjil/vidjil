@@ -1,6 +1,6 @@
 /*
   This file is part of Vidjil <http://www.vidjil.org>
-  Copyright (C) 2011, 2012, 2013, 2014, 2015 by Bonsai bioinformatics 
+  Copyright (C) 2011, 2012, 2013, 2014, 2015, 2016 by Bonsai bioinformatics
   at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
   Contributors: 
       Mathieu Giraud <mathieu.giraud@vidjil.org>
@@ -719,8 +719,16 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
         return ;
     }
 
-  // TODO: factoriser tout cela, peut-etre en lancant deux segmenteurs, un +, un -, puis un qui chapote
+  // Strand determination, with KmerSegmenter (with default e-value parameters)
+  // Note that we use only the 'strand' component
+  // When the KmerSegmenter fails, continue with positive strand
+  // TODO: flag to force a strand / to test both strands ?
+
+  KmerSegmenter *kseg = new KmerSegmenter(seq, germline, THRESHOLD_NB_EXPECTED, 1);
+  reversed = kseg->isReverse();
   
+  string sequence_or_rc = revcomp(sequence, reversed); // sequence, possibly reversed
+
   // Strand +
   
   int plus_score = 0 ;
@@ -733,39 +741,16 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   vector<pair<int, int> > score_plus_V;
   vector<pair<int, int> > score_plus_J;
   
-  int plus_left = align_against_collection(sequence, germline->rep_5, false, false, &tag_plus_V, &del_plus_V, &del2, &beg, 
+  int plus_left = align_against_collection(sequence_or_rc, germline->rep_5, false, false, &tag_plus_V, &del_plus_V, &del2, &beg,
 					   &plus_length, &score_plus_V
 					   , segment_cost);
-  int plus_right = align_against_collection(sequence, germline->rep_3, true, false, &tag_plus_J, &del_plus_J, &del2, &beg,
+  int plus_right = align_against_collection(sequence_or_rc, germline->rep_3, true, false, &tag_plus_J, &del_plus_J, &del2, &beg,
 					    &plus_length, &score_plus_J
 					    , segment_cost);
   plus_length += plus_right - plus_left ;
 
   plus_score=score_plus_V[0].first + score_plus_J[0].first ;
-  
-  // Strand -
-  string rc = revcomp(sequence) ;
-  int minus_score = 0 ;
-  int tag_minus_V, tag_minus_J;
-  int minus_length = 0 ;
-  int del_minus_V, del_minus_J ;
-  
-  vector<pair<int, int> > score_minus_V;
-  vector<pair<int, int> > score_minus_J;
-  
-  int minus_left = align_against_collection(rc, germline->rep_5, false, false, &tag_minus_V, &del_minus_V, &del2, &beg,
-					    &minus_length, &score_minus_V
-					    ,  segment_cost);
-  int minus_right = align_against_collection(rc, germline->rep_3, true, false, &tag_minus_J, &del_minus_J, &del2, &beg,
-					     &minus_length, &score_minus_J
-					     , segment_cost);
-  minus_length += minus_right - minus_left ;
 
-  minus_score=score_minus_V[0].first + score_minus_J[0].first ;
-  
-  reversed = (minus_score > plus_score) ;
-
-  if (!reversed)
     {
       Vend = plus_left ;
       Jstart = plus_right ;
@@ -775,17 +760,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
       del_J = del_plus_J ;
       score_V=score_plus_V;
       score_J=score_plus_J;
-    }
-  else
-    {
-      Vend = minus_left ;
-      Jstart = minus_right ;
-      best_V = tag_minus_V ;
-      best_J = tag_minus_J ;
-      del_V = del_minus_V ;
-      del_J = del_minus_J ;
-      score_V=score_minus_V;
-      score_J=score_minus_J;
     }
 
   /* E-values */
@@ -816,8 +790,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   /* The sequence is segmented */
   segmented = true ;
   because = reversed ? SEG_MINUS : SEG_PLUS ;
-
-  string sequence_or_rc = getSequence().sequence; // segmented sequence, possibly rev-comped
 
     //overlap VJ
     if(Jstart-Vend <=0){
