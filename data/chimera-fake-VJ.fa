@@ -8,6 +8,14 @@ gaattattataagaaactctttggcagtggaacaacactggttgtcacag
 ttacagctagaagattcagcaaagtacttttgtgctcttggggaact
 gctgaatacttccagcactggggccagggcaccctggtcaccgtctcctcag
 
->IGKV1-12*01--IGLJ1*01 (revcomp)
+>TRDV1*01--IGKV1-12*01 (J is a revcomp'd V)
+ttacagctagaagattcagcaaagtacttttgtgctcttggggaact
+ggagggaaactgttagcctgttgacaatagtaa
+
+>IGLJ1*01--TRGJ1*01 (V is a revcomp'd J)
+tgaccttggtcccagttccgaagacataa
+gaattattataagaaactctttggcagtggaacaacactggttgtcacag
+
+>IGKV1-12*01--IGLJ1*01 (both revcomp)
 ctaggacggtgaccttggtcccagttccgaagacataa
 ggagggaaactgttagcctgttgacaatagtaagttgcaaaatcttc
