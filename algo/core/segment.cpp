@@ -498,11 +498,19 @@ void Segmenter::setSegmentationStatus(int status) {
 // FineSegmenter
 
 
-void best_overlap_split(int overlap, string seq_left, string seq_right,
+string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
                         string ref_left, string ref_right,
                         int *pos_seq_left, int *pos_seq_right,
                         int *trim_ref_left, int *trim_ref_right, Cost segment_cost)
 {
+  // Overlap size
+  int overlap = *pos_seq_left - *pos_seq_right + 1;
+
+  if (overlap > 0)
+    {
+      string seq_left = seq.substr(seq_begin, *pos_seq_left - seq_begin + 1);
+      string seq_right = seq.substr(*pos_seq_right, seq_end - *pos_seq_right + 1);
+
       int score_r[overlap+1];
       int score_l[overlap+1];
       
@@ -574,6 +582,10 @@ void best_overlap_split(int overlap, string seq_left, string seq_right,
            << "    right:" << best_j << "-" << *trim_ref_right << " @" << *pos_seq_right
            << endl;
 #endif
+    } // end if (overlap > 0)
+
+  // From *pos_seq_left + 1 to *pos_seq_right - 1
+  return seq.substr(*pos_seq_left + 1, *pos_seq_right - *pos_seq_left - 1);
 }
 
 bool comp_pair (pair<int,int> i,pair<int,int> j)
@@ -796,24 +808,15 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   because = reversed ? SEG_MINUS : SEG_PLUS ;
 
     //overlap VJ
-    if(Jstart-Vend <=0){
-      int overlap=Vend-Jstart+1;
-
-      string seq_left = sequence_or_rc.substr(0, Vend+1);
-      string seq_right = sequence_or_rc.substr(Jstart);
-
-      best_overlap_split(overlap, seq_left, seq_right,
+  seg_N = check_and_resolve_overlap(sequence_or_rc, 0, sequence_or_rc.length(),
                          germline->rep_5.sequence(best_V), germline->rep_3.sequence(best_J),
                          &Vend, &Jstart, &del_V, &del_J, segment_cost);
 
+  // Why could this happen ?
       if (Jstart>=(int) sequence.length())
 	  Jstart=sequence.length()-1;
-    }
 
-    // string chevauchement = removeChevauchement();
-
-    /// used only below, then recomputed in finishSegmentation() ;
-    seg_N = sequence_or_rc.substr(Vend+1, Jstart-Vend-1);
+  // seg_N will be recomputed in finishSegmentation()
 
   code = germline->rep_5.label(best_V) +
     " "+ string_of_int(del_V) + 
@@ -870,30 +873,16 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
     dSegmented=true;
     
     //overlap VD
-    if(Dstart-Vend <=0){
-      int overlap=Vend-Dstart+1;
-      string seq_left = seq.substr(0, Vend+1);
-      string seq_right = seq.substr(Dstart, Dend-Dstart+1);
 
-      best_overlap_split(overlap, seq_left, seq_right,
+    seg_N1 = check_and_resolve_overlap(seq, 0, Dend,
                          germline->rep_5.sequence(best_V), germline->rep_4.sequence(best_D),
                          &Vend, &Dstart, &del_V, &del_D_left, segment_cost);
-    }
-
-    seg_N1 = seq.substr(Vend+1, Dstart-Vend-1) ; // From Vend+1 to Dstart-1
     
     //overlap DJ
-    if(Jstart-Dend <=0){
-      int overlap=Dend-Jstart+1;
-      string seq_left = seq.substr(Dstart, Dend-Dstart+1);
-      string seq_right = seq.substr(Jstart, seq.length()-Jstart);
-
-      best_overlap_split(overlap, seq_left, seq_right,
+    seg_N2 = check_and_resolve_overlap(seq, Dstart, seq.length(),
                          germline->rep_4.sequence(best_D), germline->rep_3.sequence(best_J),
                          &Dend, &Jstart, &del_D_right, &del_J, segment_cost);
-    }
 
-    seg_N2 = seq.substr(Dend+1, Jstart-Dend-1) ; // From Dend+1 to right-1
     code = germline->rep_5.label(best_V) +
     " "+ string_of_int(del_V) + 
     "/" + seg_N1 + 

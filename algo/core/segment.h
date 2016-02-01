@@ -68,21 +68,24 @@ const char* const segmented_mesg[] = { "?",
 
 
 
+/**
+ * Check whether there is an overlap between a Vend (*pos_seq_left) and a Jstart (*pos_seq_right),
+ * If this is the case, fix this overlap (finding the best split point), and update segmentation accordingly
+ * @param seq:                             the read
+ * @param seq_begin, seq_end:              the positions to consider on 'seq' for the two sequences that may overlap
+ * @param ref_left, ref_right:             the two reference sequences
+ * @param *pos_seq_left, *pos_seq_right:   the initial end/start positions of the possibly overlapping sequences (Vend and Jstart)
+ * @param *trim_ref_left, *trim_ref_right: reference to deletions
+ * @param segment_cost:                    the cost used by the dynamic programing
+ *
+ * @post  trim_ref_left (at the end of ref_left) and trim_ref_right (at the beginning of ref_right)
+ *        are set to the best number of nucleotides to trim in order to remove the overlap
+ *        pos_seq_left and pos_seq_right are shifted by the good number of nucleotides
+ *
+ * @return                                 the N segment
+ */
 
- /**
-  * Find the best split point when there may be a overlap between a left and a right region
-  * @param overlap: the length of the overlap
-  * @param seq_left, seq_right: the two sequences that overlap
-  * @param ref_left, ref_right: the two reference sequences
-  * @param pos_seq_left, pos_seq_right: the initial end/start position of two overlaping sequences
-  * @param segment_cost: dp cost
-  *
-  * @post  trim_ref_left (at the end of ref_left) and trim_ref_right (at the beginning of ref_right)
-  *        are set to the best number of nucleotides to trim in order to remove the overlap
-  *        pos_seq_left and pos_seq_right are shifted by the good number of nucleotides (relatively to seq_{left,right})
-  */
-
-void best_overlap_split(int overlap, string seq_left, string seq_right,
+string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
                         string ref_left, string ref_right,
                         int *pos_seq_left, int *pos_seq_right,
                         int *trim_ref_left, int *trim_ref_right, Cost segment_cost);
