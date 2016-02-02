@@ -214,7 +214,9 @@ template <class Info>
 void *PointerACAutomaton<Info>::next(void *state, char c) {
   void *next_state = state;
   c = toupper(c);
-  return ((pointer_state<Info> *)next_state)->transition(c);
+  void *accessed_state = ((pointer_state<Info> *)next_state)->transition(c);
+  assert(accessed_state != NULL);        // Did you call finish_building()?
+  return accessed_state;
 }
 
 
