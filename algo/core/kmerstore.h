@@ -178,6 +178,7 @@ public:
 template<class T>
 IKmerStore<T>::IKmerStore() {
   id = ++last_id;
+  refs = 0;
 }
 
 template<class T> int IKmerStore<T>::last_id = 0;
