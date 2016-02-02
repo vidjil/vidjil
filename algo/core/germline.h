@@ -75,6 +75,11 @@ class Germline {
    */
   string seed;
 
+  /**
+   * Finishes the construction of the germline so that it can be used
+   */
+  void finish();
+
   void new_index();
   void set_index(IKmerStore<KmerAffect> *index);
 
@@ -135,6 +140,10 @@ class MultiGermline {
   void add_germline(Germline *germline);
   void build_from_json(string path, string json_filename, int filter, int max_indexing);
 
+  /**
+   * Finishes the construction of the multi germline so that it can be used
+   */
+  void finish();
   // Creates and update an unique index for all the germlines
   // If 'set_index' is set, set this index as the index for all germlines
   void insert_in_one_index(IKmerStore<KmerAffect> *_index, bool set_index);

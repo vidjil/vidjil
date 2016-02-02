@@ -150,6 +150,11 @@ Germline::Germline(string code, char shortcut, string path, json json_recom,
     seg_method = SEG_METHOD_543 ;
 }
 
+void Germline::finish() {
+  if (index)
+    index->finish_building();
+}
+
 void Germline::new_index()
 {
   assert(! seed.empty());
@@ -313,6 +318,16 @@ void MultiGermline::build_with_one_index(string seed, bool set_index)
   bool rc = true ;
   index = new PointerACAutomaton<KmerAffect>(seed, rc);
   insert_in_one_index(index, set_index);
+}
+
+void MultiGermline::finish() {
+  if (index) {
+    index->finish_building();
+  } else {
+    for (auto germline: germlines) {
+      germline->finish();
+    }
+  }
 }
 
 /* Mark k-mers common to several germlines as ambiguous */

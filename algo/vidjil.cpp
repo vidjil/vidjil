@@ -921,7 +921,8 @@ int main (int argc, char **argv)
 
     if (multi_germline_mark)
       multigermline->mark_cross_germlines_as_ambiguous();
-    
+
+    multigermline->finish();
     cout << "Germlines loaded" << endl ;
     cout << *multigermline ;
     cout << endl ;

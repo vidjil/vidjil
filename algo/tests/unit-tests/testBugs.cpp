@@ -15,6 +15,7 @@ void testSegmentationBug1(int delta_min, int delta_max) {
   Germline *germline ;
   germline = new Germline("custom", 'x', seqV, seqV, seqJ, delta_min, "##############");
   germline->new_index();
+  germline->finish();
   
   OnlineFasta input(buggy_sequences);
 

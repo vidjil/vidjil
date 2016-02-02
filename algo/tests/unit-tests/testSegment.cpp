@@ -54,6 +54,7 @@ void testFineSegment()
   Germline *germline ;
   germline = new Germline("IGH", 'G', seqV, seqD, seqJ, 0, "########");
   germline->new_index();
+  germline->finish();
 
   Sequence seq = data.getSequence();
       
@@ -110,6 +111,9 @@ void testSegmentOverlap()
   germline2 = new Germline("TRG2", 'G', seqV, Fasta(), seqJ, -50, "##########");
   germline2->new_index();
 
+  germline1->finish();
+  germline2->finish();
+
   for (int i = 0; i < data.size(); i++) {
     KmerSegmenter ks(data.read(i), germline1);
 
@@ -138,6 +142,7 @@ void testSegmentationCause() {
   Germline *germline ;
   germline = new Germline("TRG", 'G', seqV, Fasta(), seqJ, 0, "##########");
   germline->new_index();
+  germline->finish();
 
   int nb_checked = 0;
 
@@ -254,6 +259,7 @@ void testExtractor() {
   MultiGermline *multi ;
   multi = new MultiGermline();
   multi->insert(germline);
+  multi->finish();
 
   WindowExtractor we(multi);
   map<string, string> labels;
@@ -330,6 +336,7 @@ void testProbability() {
   }
   Germline germline("Test", 'T', V, Fasta(), J, 0, "####");
   germline.new_index();
+  germline.finish();
 
 
   TAP_TEST(germline.index->getIndexLoad() == .75, TEST_GET_INDEX_LOAD, "");

@@ -99,7 +99,7 @@ public:
    * that function, we are not supposed to insert any other sequence.
    * No query function should be called before calling that function.
    */
-  void finish_building();
+  virtual void finish_building();
 
   /**
    * @param word: a k-mer
