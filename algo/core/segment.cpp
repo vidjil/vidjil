@@ -402,6 +402,10 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
 KmerSegmenter::~KmerSegmenter() {
   if (kaa)
     delete kaa;
+
+  delete box_V;
+  delete box_D;
+  delete box_J;
 }
 
 KmerMultiSegmenter::KmerMultiSegmenter(Sequence seq, MultiGermline *multigermline, ostream *out_unsegmented,
@@ -1053,3 +1057,8 @@ json KmerSegmenter::toJson() {
 }
 
 
+FineSegmenter::~FineSegmenter() {
+  delete box_V;
+  delete box_D;
+  delete box_J;
+}

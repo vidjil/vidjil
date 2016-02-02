@@ -299,7 +299,9 @@ class FineSegmenter : public Segmenter
    */
    FineSegmenter(Sequence seq, Germline *germline, Cost segment_cost,
                  double threshold = THRESHOLD_NB_EXPECTED, int multiplier=1);
-  
+
+   ~FineSegmenter();
+
   /**
   * extend segmentation from VJ to VDJ
   * @param germline: germline used
