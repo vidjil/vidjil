@@ -725,7 +725,7 @@ void align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool r
   box->score = score_r;
 
 #ifdef DEBUG_SEGMENT	
-  cout << "best: " << best_labels << " " << best_score ;
+  cout << "best: " << box->ref_label << " " << best_score ;
   cout << "del/del2/begin:" << (box->del_right) << "/" << (box->del_left) << "/" << (box->start) << endl;
   cout << endl;
 #endif
