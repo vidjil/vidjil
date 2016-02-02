@@ -639,7 +639,7 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
  */
 
 int align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool reverse_both, bool local,
-                             AlignBox *box, int *length, Cost segment_cost)
+                             AlignBox *box, Cost segment_cost)
 {
   
   int best_score = MINUS_INF ;
@@ -697,8 +697,6 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool re
   box->del_right = reverse_both ? best_best_j : box->ref.size() - best_best_j - 1;
   box->del_left = best_first_j;
   box->start = best_first_i;
-
-  *length -= box->del_right ;
   
   box->score = score_r;
 
@@ -792,15 +790,12 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
 
   /* Segmentation */
-  int plus_length = 0 ;
   box_V->end = align_against_collection(sequence_or_rc, germline->rep_5, reverse_V, reverse_V, false,
-                                        box_V, &plus_length, segment_cost);
+                                        box_V, segment_cost);
 
   box_J->start = align_against_collection(sequence_or_rc, germline->rep_3, reverse_J, !reverse_J, false,
-                                          box_J, &plus_length, segment_cost);
+                                          box_J, segment_cost);
   box_J->del_left = box_J->del_right; // should be directly in align_against_collection() ?
-
-  plus_length += box_J->start - box_V->end ;
 
   /* E-values */
   evalue_left  = multiplier * sequence.size() * germline->rep_5.totalSize() * segment_cost.toPValue(box_V->score[0].first);
@@ -855,8 +850,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 bool FineSegmenter::FineSegmentD(Germline *germline,
                                  AlignBox *box_Y, AlignBox *box_DD, AlignBox *box_Z,
                                  double evalue_threshold, int multiplier){
-    int length = 0 ;
-    
+
     // Create a zone where to look for D, adding at most EXTEND_D_ZONE nucleotides at each side
     int l = box_Y->end - EXTEND_D_ZONE;
     if (l<0) 
@@ -873,7 +867,7 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
 
     // Align
     box_DD->end = align_against_collection(str, germline->rep_4, false, false, true,
-                                           box_DD, &length, segment_cost);
+                                           box_DD, segment_cost);
 
     box_DD->start += l ;
     box_DD->end += l ;
