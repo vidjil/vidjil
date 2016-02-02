@@ -15,30 +15,27 @@ using namespace std;
 
 void testOverlap()
 {
-  // aaaaaaaTaa
-  //      cGcccccccc
+  AlignBox *box_A = new AlignBox() ;
+  AlignBox *box_C = new AlignBox() ;
 
-  string refA = "AAAAAAAAAA";
-  string refC = "TCCCCCCCCC";
+  box_A->ref = "AAAAAAAAAA";
+  box_C->ref = "TCCCCCCCCC";
 
-  // here refA and refC do not actullay overlap, but the goal is to find the good split point
+  // here box_A.ref and box_C.ref do not actullay overlap, but the goal is to find the good split point
   string seq = "AAAAAAACCACCCCCC";
   // positions -->    6..9
 
-  int trimA, trimC ;
-
-  int posA = 9;
-  int posC = 6;  // this value is not really meaningful here, but allows anyway to test the function
+  box_A->end = 9;
+  box_C->ref = 6;  // this value is not really meaningful here, but allows anyway to test the function
 
   check_and_resolve_overlap(seq, 0, seq.length(),
-                     refA, refC,
-                     &posA, &posC, &trimA, &trimC, VDJ);
+                            box_A, box_C, VDJ);
 
-  TAP_TEST(trimA == 3, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides : " << trimA);
-  TAP_TEST(trimC == 1, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides : " << trimC);
+  TAP_TEST(box_A->del_right == 3, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides : " << box_A);
+  TAP_TEST(box_C->del_left == 1, TEST_FINE_SEGMENT_OVERLAP, "number of trim nucleotides : " << box_C);
 
-  TAP_TEST(posA == 6, TEST_FINE_SEGMENT_OVERLAP, "end position of left region : " << posA);
-  TAP_TEST(posC == 7,  TEST_FINE_SEGMENT_OVERLAP, "start position of right region : " << posC);
+  TAP_TEST(box_A->end == 6, TEST_FINE_SEGMENT_OVERLAP, "end position of left region : " << box_A);
+  TAP_TEST(box_C->start == 7,  TEST_FINE_SEGMENT_OVERLAP, "start position of right region : " << box_C);
 }
 
 void testFineSegment()
