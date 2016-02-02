@@ -68,6 +68,10 @@ const char* const segmented_mesg[] = { "?",
 
 
 
+/**
+ * An alignment box (AlignBox) gather all parameters for a recombined gene segment (V, D, J, other D...)
+ **/
+
 class AlignBox
 {
  public:
@@ -76,16 +80,19 @@ class AlignBox
   int end;
   int del_right;
 
+  AlignBox();
+  string getSequence(string sequence);
+
+  /* Identifier, label and sequence of the reference sequence (the best one) */
   int ref_nb;
   string ref_label;
   string ref;
+
+  /* Identifiers and scores of other possible reference sequence */
   vector<pair<int, int> > score;
-
-  string getSequence(string sequence);
-
-  AlignBox();
 };
 
+ostream &operator<<(ostream &out, const AlignBox &box);
 
 /**
  * Check whether there is an overlap between two boxes,
