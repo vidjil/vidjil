@@ -102,7 +102,7 @@ public:
 template <class Info>
 class PointerACAutomaton: public AbstractACAutomaton<Info> {
 private:
-  void free_automaton(pointer_state<Info> *, set<void *> &);
+  void free_automaton(pointer_state<Info> *);
   void init(string seed, bool revcomp);
 public:
   using IKmerStore<Info>::insert;

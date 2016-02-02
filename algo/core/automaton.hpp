@@ -2,6 +2,7 @@
 #define AUTOMATON_HPP
 
 #include "automaton.h"
+#include <stack>
 
 //////////////////// IMPLEMENTATIONS ////////////////////
 
@@ -72,21 +73,29 @@ void PointerACAutomaton<Info>::init(string seed, bool revcomp) {
 
 template <class Info>
 PointerACAutomaton<Info>::~PointerACAutomaton() {
-  set<void *>deleted_states;
-  free_automaton(this->getInitialState(), deleted_states);
+  free_automaton(this->getInitialState());
 }
 
 template <class Info>
-void PointerACAutomaton<Info>::free_automaton(pointer_state<Info> *state,
-                                              set<void *> &deleted_states) {
+void PointerACAutomaton<Info>::free_automaton(pointer_state<Info> *state) {
+  set<void *> deleted_states;
+  stack<pointer_state<Info> *> states_stacked;
   deleted_states.insert(state);
-  for (size_t i = 0; i < NB_TRANSITIONS; i++) {
-    if (state->transitions[i] != NULL
-        && deleted_states.count(state->transitions[i]) == 0
-        && state->transitions[i] != state)
-      free_automaton(state->transitions[i], deleted_states);
+  states_stacked.push(state);
+
+  while (! states_stacked.empty()) {
+    pointer_state<Info> *current_state = states_stacked.top();
+    states_stacked.pop();
+    for (size_t i = 0; i < NB_TRANSITIONS; i++) {
+      if (current_state->transitions[i] != NULL
+          && deleted_states.count(current_state->transitions[i]) == 0
+          && current_state->transitions[i] != current_state) {
+        deleted_states.insert(current_state->transitions[i]);
+        states_stacked.push(current_state->transitions[i]);
+      }
+    }
+    delete current_state;
   }
-  delete state;
 }
 
 template <class Info>
