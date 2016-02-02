@@ -638,7 +638,7 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
  * @post  box is filled
  */
 
-int align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool reverse_both, bool local,
+void align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool reverse_both, bool local,
                              AlignBox *box, Cost segment_cost)
 {
   
@@ -709,8 +709,8 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool re
   if (reverse_ref)
     // Why -1 here and +1 in dynprog.cpp /// best_i = m - best_i + 1 ;
     best_best_i = read.length() - best_best_i - 1 ;
-  
-  return best_best_i ;
+
+  box->end = best_best_i ;
 }
 
 string format_del(int deletions)
@@ -790,12 +790,16 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
 
   /* Segmentation */
-  box_V->end = align_against_collection(sequence_or_rc, germline->rep_5, reverse_V, reverse_V, false,
+  align_against_collection(sequence_or_rc, germline->rep_5, reverse_V, reverse_V, false,
                                         box_V, segment_cost);
 
-  box_J->start = align_against_collection(sequence_or_rc, germline->rep_3, reverse_J, !reverse_J, false,
+  align_against_collection(sequence_or_rc, germline->rep_3, reverse_J, !reverse_J, false,
                                           box_J, segment_cost);
-  box_J->del_left = box_J->del_right; // should be directly in align_against_collection() ?
+
+  // J was run with '!reverseJ', we copy the box informations from right to left
+  // Should this directly be handled in align_against_collection() ?
+  box_J->start = box_J->end ;
+  box_J->del_left = box_J->del_right;
 
   /* E-values */
   evalue_left  = multiplier * sequence.size() * germline->rep_5.totalSize() * segment_cost.toPValue(box_V->score[0].first);
@@ -866,7 +870,7 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
     string str = seq.substr(l, r-l);
 
     // Align
-    box_DD->end = align_against_collection(str, germline->rep_4, false, false, true,
+    align_against_collection(str, germline->rep_4, false, false, true,
                                            box_DD, segment_cost);
 
     box_DD->start += l ;
