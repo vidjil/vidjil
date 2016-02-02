@@ -214,10 +214,14 @@ ostream &operator<<(ostream &out, const Germline &germline)
       << setw(3) << germline.delta_min
       << " ";
 
+  size_t seed_w = seed_weight(germline.seed);
+
   if (germline.index) {
     out << " 0x" << hex << setw(2) << setfill('0') << germline.index->id << dec << setfill(' ') << " " ;
-    out << fixed << setprecision(3) << setw(8) << 100 * germline.index->getIndexLoad() << "%";
-    out << " l" << germline.index->getS() << " k" << germline.index->getK() << " " << germline.index->getSeed() ; // TODO: there should be a << for index
+    out << fixed << setprecision(3) << setw(8)
+        << 100 * germline.index->getIndexLoad(KmerAffect(germline.affect_5, 1, seed_w)) << "%" << " "
+        << 100 * germline.index->getIndexLoad(KmerAffect(germline.affect_3, 1, seed_w)) << "%";
+    out << " l" << germline.seed.length() << " k" << seed_w << " " << germline.seed ;
   }
 
   out << endl;
