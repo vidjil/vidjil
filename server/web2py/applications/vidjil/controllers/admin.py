@@ -215,3 +215,45 @@ def repair():
         res = {"success" : "true", "message" : "DB repaired: " + flist}
         log.admin(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+
+def get_files():
+    import tarfile
+    if auth.is_admin():        
+        user_id = request.vars['id']
+        base_query = ((db.auth_user.id == user_id)
+            &(db.auth_membership.user_id == db.auth_user.id)
+            &(db.auth_group.id == db.auth_membership.group_id)
+            &(db.auth_permission.group_id == db.auth_group.id)
+            &(db.auth_permission.table_name == "patient")
+            &(db.patient.id == db.auth_permission.record_id))
+ 
+        query = db( base_query &(db.fused_file.sample_set_id == db.patient.sample_set_id))
+        
+        log.info(query._select(db.fused_file.fused_file))
+        fused_files = query.select(db.fused_file.fused_file.with_alias('filename'))
+        log.info(fused_files)
+
+        query = db(base_query & (db.analysis_file.sample_set_id == db.patient.sample_set_id))
+        log.info(query._select(db.analysis_file.analysis_file))
+        analysis_files = query.select(db.analysis_file.analysis_file.with_alias('filename'))
+
+        sequence_base_query = (base_query
+                            & (db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
+                            & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
+                            )
+
+        log.info(db(sequence_base_query)._select(db.sequence_file.data_file))
+        sequence_files = db(sequence_base_query).select(db.sequence_file.data_file.with_alias('filename'))
+        log.info(sequence_files)
+
+        query = db(sequence_base_query & (db.results_file.sequence_file_id == db.sequence_file.id))
+        log.info(query._select(db.results_file.data_file))
+        results_files = query.select(db.results_file.data_file.with_alias('filename'))
+        log.info(results_files)
+
+        with tarfile.open("/mnt/result/user_files.tar.gz", "w:gz") as tar:
+            for file_list in [(fused_files, defs.DIR_RESULTS),  (analysis_files, defs.DIR_RESULTS), (sequence_files, defs.DIR_SEQUENCES), (results_files, defs.DIR_RESULTS)]:
+                for my_file in file_list[0]:
+                    tar.add(file_list[1] + my_file.filename)
+
