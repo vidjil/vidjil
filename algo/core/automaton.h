@@ -22,6 +22,8 @@ class AbstractACAutomaton: public IKmerStore<Info> {
 protected:
   void *initialState;
 public:
+  AbstractACAutomaton();
+
   /**
    * Builds the failure functions. This function must be called before any
    * query is made.

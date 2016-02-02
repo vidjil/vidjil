@@ -6,6 +6,9 @@
 //////////////////// IMPLEMENTATIONS ////////////////////
 
 template <class Info>
+AbstractACAutomaton<Info>::AbstractACAutomaton():IKmerStore<Info>() {}
+
+template <class Info>
 void AbstractACAutomaton<Info>::finish_building() {
   build_failure_functions();
 }
@@ -37,17 +40,17 @@ size_t AbstractACAutomaton<Info>::smallestAnalysableLength() const {
 ///////////////////////
 
 template <class Info>
-PointerACAutomaton<Info>::PointerACAutomaton(bool revcomp){
+PointerACAutomaton<Info>::PointerACAutomaton(bool revcomp):AbstractACAutomaton<Info>(){
   init("##########",revcomp);
 }
 
 template <class Info>
-PointerACAutomaton<Info>::PointerACAutomaton(string seed, bool revcomp) {
+PointerACAutomaton<Info>::PointerACAutomaton(string seed, bool revcomp):AbstractACAutomaton<Info>() {
   init(seed, revcomp);
 }
 
 template <class Info>
-PointerACAutomaton<Info>::PointerACAutomaton(int k, bool revcomp) {
+PointerACAutomaton<Info>::PointerACAutomaton(int k, bool revcomp):AbstractACAutomaton<Info>() {
   init(seed_contiguous(k), revcomp);
 }
 

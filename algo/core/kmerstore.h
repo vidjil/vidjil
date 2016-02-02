@@ -61,6 +61,8 @@ public:
 
   list< pair <T, Fasta> > labels;
 
+  IKmerStore();
+
   /**
    * @param input: A single FASTA file
    * @param label: label that must be associated to the given files
@@ -172,6 +174,11 @@ public:
    */
   virtual T& operator[](seqtype& word) = 0;
 };
+
+template<class T>
+IKmerStore<T>::IKmerStore() {
+  id = ++last_id;
+}
 
 template<class T> int IKmerStore<T>::last_id = 0;
 
@@ -451,7 +458,7 @@ size_t IKmerStore<T>::smallestAnalysableLength() const {
 // MapKmerStore
 
 template <class T>
-MapKmerStore<T>::MapKmerStore(string seed, bool revcomp){
+MapKmerStore<T>::MapKmerStore(string seed, bool revcomp):IKmerStore<T>(){
   this->seed = seed;   
   int k = seed_weight(seed);
   this->k = k;
@@ -461,7 +468,7 @@ MapKmerStore<T>::MapKmerStore(string seed, bool revcomp){
 }
 
 template <class T>
-MapKmerStore<T>::MapKmerStore(int k, bool revcomp){
+MapKmerStore<T>::MapKmerStore(int k, bool revcomp):IKmerStore<T>(){
   this->seed = seed_contiguous(k);
   this->k = k;
   this->s = k;
@@ -493,7 +500,7 @@ T& MapKmerStore<T>::operator[](seqtype& word){
 // ArrayKmerStore
 
 template <class T> 
-ArrayKmerStore<T>::ArrayKmerStore(int k, bool revcomp) {
+ArrayKmerStore<T>::ArrayKmerStore(int k, bool revcomp):IKmerStore<T>() {
   this->seed = seed_contiguous(k);
   this->k = k;
   this->s = k;
@@ -503,7 +510,7 @@ ArrayKmerStore<T>::ArrayKmerStore(int k, bool revcomp) {
 
 
 template <class T> 
-ArrayKmerStore<T>::ArrayKmerStore(string seed, bool revcomp){
+ArrayKmerStore<T>::ArrayKmerStore(string seed, bool revcomp):IKmerStore<T>(){
   this->seed = seed; 
   int k = seed_weight(seed);
   this->k = k;
@@ -579,8 +586,6 @@ IKmerStore<T> *KmerStoreFactory::createIndex(string seed, bool revcomp) {
     cout << "  (using a MapKmer to fit into memory)" << endl;
     index = new MapKmerStore<T>(seed, revcomp);
   }
-
-  index->id = ++IKmerStore<T>::last_id;
 
   return index;
 }
