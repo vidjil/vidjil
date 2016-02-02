@@ -7,7 +7,10 @@
 //////////////////// IMPLEMENTATIONS ////////////////////
 
 template <class Info>
-AbstractACAutomaton<Info>::AbstractACAutomaton():IKmerStore<Info>() {}
+AbstractACAutomaton<Info>::AbstractACAutomaton():IKmerStore<Info>() {
+  for (size_t i = 0; i < MAX_KMER_SIZE; i++)
+    kmers_inserted_by_length[i] = 0;
+}
 
 template <class Info>
 void AbstractACAutomaton<Info>::finish_building() {
@@ -160,12 +163,14 @@ void PointerACAutomaton<Info>::insert(const seqtype &seq, Info info) {
     // Need to create more states
     for (; i < seq_length; i++) {
       pointer_state<Info> *new_state = new pointer_state<Info>();
-      this->nb_kmers_inserted++;
       state->transitions[nuc_to_int(seq[i])] = new_state;
       state = new_state;
     }
   }
   state->is_final = true;
+  this->nb_kmers_inserted++;
+  assert(info.getLength() <= MAX_KMER_SIZE);
+  this->kmers_inserted_by_length[info.getLength()]++;
   state->informations.front() += info;
 }
 

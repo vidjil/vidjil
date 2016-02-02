@@ -12,6 +12,9 @@
 
 using namespace std;
 
+/* Max value for k (for storing the number of kmers of that size) */
+#define MAX_KMER_SIZE 20
+
 /**
  * This abstract class represents an Aho-Corasick automaton.
  * Each final state can store some information.
@@ -21,6 +24,7 @@ class AbstractACAutomaton: public IKmerStore<Info> {
 
 protected:
   void *initialState;
+  size_t kmers_inserted_by_length[MAX_KMER_SIZE];
 public:
   AbstractACAutomaton();
 
