@@ -1,5 +1,6 @@
 
 #include "germline.h"
+#include "automaton.hpp"
 #include <fstream>
 #include <ctype.h>
 
@@ -154,7 +155,7 @@ void Germline::new_index()
   assert(! seed.empty());
 
   bool rc = true ;
-  index = KmerStoreFactory::createIndex<KmerAffect>(seed, rc);
+  index = new PointerACAutomaton<KmerAffect>(seed, rc);
   index->refs = 1;
 
   update_index();
@@ -310,7 +311,7 @@ void MultiGermline::insert_in_one_index(IKmerStore<KmerAffect> *_index, bool set
 void MultiGermline::build_with_one_index(string seed, bool set_index)
 {
   bool rc = true ;
-  index = KmerStoreFactory::createIndex<KmerAffect>(seed, rc);
+  index = new PointerACAutomaton<KmerAffect>(seed, rc);
   insert_in_one_index(index, set_index);
 }
 
