@@ -1397,10 +1397,10 @@ int main (int argc, char **argv)
                 }
 
 	      // Output best V, (D) and J germlines to CLONE_FILENAME-*
-	      out_clone << segmented_germline->rep_5.read(seg.best_V) ;
+	      out_clone << segmented_germline->rep_5.read(seg.box_V->ref_nb) ;
 	      if (segmented_germline->seg_method == SEG_METHOD_543)
-                out_clone << segmented_germline->rep_4.read(seg.best_D) ;
-	      out_clone << segmented_germline->rep_3.read(seg.best_J) ;
+                out_clone << segmented_germline->rep_4.read(seg.box_D->ref_nb) ;
+	      out_clone << segmented_germline->rep_3.read(seg.box_J->ref_nb) ;
 	      out_clone << endl;
 	   } // end if (seg.isSegmented())
 

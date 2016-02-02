@@ -29,6 +29,24 @@
 #include <cstring>
 #include <string>
 
+
+AlignBox::AlignBox() {
+  del_left = 0 ;
+  start = 0 ;
+  end = 0 ;
+  del_right = 0 ;
+
+  ref_nb = 0 ;
+  ref = "";
+  ref_label = "";
+}
+
+string AlignBox::getSequence(string sequence) {
+  return sequence.substr(start, end-start+1);
+}
+
+
+
 Segmenter::~Segmenter() {}
 
 Sequence Segmenter::getSequence() const {
@@ -52,19 +70,19 @@ string Segmenter::getJunction(int l) const {
 }
 
 int Segmenter::getLeft() const {
-  return Vend;
+  return box_V->end;
 }
   
 int Segmenter::getRight() const {
-  return Jstart;
+  return box_J->start;
 }
 
 int Segmenter::getLeftD() const {
-  return Dstart;
+  return box_D->start;
 }
   
 int Segmenter::getRightD() const {
-  return Dend;
+  return box_D->end;
 }
 
 bool Segmenter::isReverse() const {
@@ -106,12 +124,12 @@ string Segmenter::removeChevauchement()
   
   string chevauchement = "" ;
 
-  if (Vend >= Jstart)
+  if (box_V->end >= box_J->start)
     {
-      int middle = (Vend + Jstart) / 2 ;
-      chevauchement = " !ov " + string_of_int (Vend - Jstart + 1);
-      Vend = middle ;
-      Jstart = middle+1 ;
+      int middle = (box_V->end + box_J->start) / 2 ;
+      chevauchement = " !ov " + string_of_int (box_V->end - box_J->start + 1);
+      box_V->end = middle ;
+      box_J->start = middle+1 ;
     }
 
   return chevauchement ;
@@ -126,11 +144,11 @@ bool Segmenter::finishSegmentation()
   
   string seq = getSequence().sequence;
     
-  seg_V = seq.substr(0, Vend+1) ;
-  seg_N = seq.substr(Vend+1, Jstart-Vend-1) ;  // Twice computed for FineSegmenter, but only once in KmerSegmenter !
-  seg_J = seq.substr(Jstart) ;
-  Dstart=0;
-  Dend=0;
+  seg_V = seq.substr(0, box_V->end+1) ;
+  seg_N = seq.substr(box_V->end+1, box_J->start-box_V->end-1) ;  // Twice computed for FineSegmenter, but only once in KmerSegmenter !
+  seg_J = seq.substr(box_J->start) ;
+  box_D->start=0;
+  box_D->end=0;
 
   info = "VJ \t" + string_of_int(FIRST_POS) + " " + info + " " + string_of_int(seq.size() - 1 + FIRST_POS) ;
   info += "\t" + code ;
@@ -144,15 +162,15 @@ bool Segmenter::finishSegmentationD()
 {
   string seq = getSequence().sequence;
 
-  seg_V = seq.substr(0, Vend+1) ; // From pos. 0 to Vend
-  seg_J = seq.substr(Jstart) ;
-  seg_N = seq.substr(Vend+1, Jstart-Vend-1) ;  // Twice computed for FineSegmenter, but only once in KmerSegmenter !
-  seg_D  = seq.substr(Dstart, Dend-Dstart+1) ; // From Dstart to Dend
+  seg_V = seq.substr(0, box_V->end+1) ; // From pos. 0 to box_V->end
+  seg_J = seq.substr(box_J->start) ;
+  seg_N = seq.substr(box_V->end+1, box_J->start-box_V->end-1) ;  // Twice computed for FineSegmenter, but only once in KmerSegmenter !
+  seg_D  = seq.substr(box_D->start, box_D->end-box_D->start+1) ; // From Dstart to Dend
   
-  info = "VDJ \t0 " + string_of_int(Vend) +
-		" " + string_of_int(Dstart) + 
-		" " + string_of_int(Dend) +
-		" " + string_of_int(Jstart) +
+  info = "VDJ \t0 " + string_of_int(box_V->end) +
+                " " + string_of_int(box_D->start) +
+		" " + string_of_int(box_D->end) +
+		" " + string_of_int(box_J->start) +
 		" " + string_of_int(seq.size()-1+FIRST_POS) ;
 		
   info += "\t" + code ;
@@ -224,6 +242,10 @@ KmerSegmenter::KmerSegmenter() { kaa = 0 ; }
 
 KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold, int multiplier)
 {
+  box_V = new AlignBox();
+  box_D = new AlignBox();
+  box_J = new AlignBox();
+
   label = seq.label ;
   sequence = seq.sequence ;
   info = "" ;
@@ -232,7 +254,6 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
   segmented_germline = germline ;
   system = germline->code; // useful ?
   reversed = false;
-  Dend=0;
   because = NOT_PROCESSED ; // Cause of unsegmentation
   score = 0 ;
   evalue = NO_LIMIT_VALUE;
@@ -423,7 +444,7 @@ KmerMultiSegmenter::~KmerMultiSegmenter() {
 
 void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffect after,
                                         double threshold, int multiplier) {
-  // Try to segment, computing 'Vend' and 'Jstart'
+  // Try to segment, computing 'box_V->end' and 'box_J->start'
   // If not segmented, put the cause of unsegmentation in 'because'
 
   affect_infos max;
@@ -461,19 +482,19 @@ void KmerSegmenter::computeSegmentation(int strand, KmerAffect before, KmerAffec
 
    // There was a good segmentation point
 
-   Vend = max.first_pos_max;
-   Jstart = max.last_pos_max + 1;
+   box_V->end = max.first_pos_max;
+   box_J->start = max.last_pos_max + 1;
    if (strand == -1) {
-     int tmp = sequence.size() - Vend - 1;
-     Vend = sequence.size() - Jstart - 1;
-     Jstart = tmp;
+     int tmp = sequence.size() - box_V->end - 1;
+     box_V->end = sequence.size() - box_J->start - 1;
+     box_J->start = tmp;
    }
 
   // Yes, it is segmented
   segmented = true;
   because = reversed ? SEG_MINUS : SEG_PLUS ;
 
-  info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS)  ;
+  info = string_of_int(box_V->end + FIRST_POS) + " " + string_of_int(box_J->start + FIRST_POS)  ;
 
   // removeChevauchement is called once info was already computed: it is only to output info_extra
   info_extra += removeChevauchement();
@@ -499,30 +520,29 @@ void Segmenter::setSegmentationStatus(int status) {
 
 
 string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
-                        string ref_left, string ref_right,
-                        int *pos_seq_left, int *pos_seq_right,
-                        int *trim_ref_left, int *trim_ref_right, Cost segment_cost)
+                                 AlignBox *box_left, AlignBox *box_right,
+                                 Cost segment_cost)
 {
   // Overlap size
-  int overlap = *pos_seq_left - *pos_seq_right + 1;
+  int overlap = box_left->end - box_right->start + 1;
 
   if (overlap > 0)
     {
-      string seq_left = seq.substr(seq_begin, *pos_seq_left - seq_begin + 1);
-      string seq_right = seq.substr(*pos_seq_right, seq_end - *pos_seq_right + 1);
+      string seq_left = seq.substr(seq_begin, box_left->end - seq_begin + 1);
+      string seq_right = seq.substr(box_right->start, seq_end - box_right->start + 1);
 
       int score_r[overlap+1];
       int score_l[overlap+1];
       
       //LEFT
-      DynProg dp_l = DynProg(seq_left, ref_left,
+      DynProg dp_l = DynProg(seq_left, box_left->ref,
 			   DynProg::Local, segment_cost);
       score_l[0] = dp_l.compute();
 
       
       //RIGHT
       // reverse right sequence
-      ref_right=string(ref_right.rbegin(), ref_right.rend());
+      string ref_right=string(box_right->ref.rbegin(), box_right->ref.rend());
       seq_right=string(seq_right.rbegin(), seq_right.rend());
 
 
@@ -566,26 +586,26 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
 	  if (score_ij > score) {
             best_i = i ;
             best_j = j ;
-            *trim_ref_left  = ref_left.size() - trim_l[i];
-	    *trim_ref_right = ref_right.size() - trim_r[j];
+            box_left->del_right = box_left->ref.size() - trim_l[i];
+	    box_right->del_left = box_right->ref.size() - trim_r[j];
 	    score = score_ij;
 	  }
 	}
       }
 
-      *pos_seq_left -= best_i ;
-      *pos_seq_right += best_j ;
+      box_left->end -= best_i ;
+      box_right->start += best_j ;
 
 #ifdef DEBUG_OVERLAP
       cout << "overlap: " << overlap << ", " << "best_overlap_split: " << score
-           << "    left: " << best_i << "-" << *trim_ref_left << " @" << *pos_seq_right
-           << "    right:" << best_j << "-" << *trim_ref_right << " @" << *pos_seq_right
+           << "    left: " << best_i << "-" << box_left->del_right << " @" << box_left->end
+           << "    right:" << best_j << "-" << box_right->del_left << " @" << box_right->start
            << endl;
 #endif
     } // end if (overlap > 0)
 
-  // From *pos_seq_left + 1 to *pos_seq_right - 1
-  return seq.substr(*pos_seq_left + 1, *pos_seq_right - *pos_seq_left - 1);
+  // From box_left->end + 1 to box_right->start - 1
+  return seq.substr(box_left->end + 1, box_right->start - box_left->end - 1);
 }
 
 bool comp_pair (pair<int,int> i,pair<int,int> j)
@@ -611,18 +631,17 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
  * @return best_best_i: ?
  */
 
-int align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool reverse_both, bool local, int *tag,
-			     int *del, int *del2, int *begin, int *length, vector<pair<int, int> > *score
-			    , Cost segment_cost)
+int align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool reverse_both, bool local,
+                             AlignBox *box, int *length, Cost segment_cost)
 {
   
   int best_score = MINUS_INF ;
-  int best_r = MINUS_INF ;
+  box->ref_nb = MINUS_INF ;
   int best_best_i = (int) string::npos ;
   int best_best_j = (int) string::npos ;
   int best_first_i = (int) string::npos ;
   int best_first_j = (int) string::npos ;
-  string best_label = "" ;
+
   vector<pair<int, int> > score_r;
 
   DynProg::DynProgMode dpMode = DynProg::LocalEndWithSomeDeletions;
@@ -652,8 +671,8 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool re
 	  best_best_j = dp.best_j ;
 	  best_first_i = dp.first_i ;
 	  best_first_j = dp.first_j ;
-	  best_r = r ;
-	  best_label = rep.label(r) ;
+	  box->ref_nb = r ;
+	  box->ref_label = rep.label(r) ;
 	}
 	
 	score_r.push_back(make_pair(score, r));
@@ -667,18 +686,18 @@ int align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool re
     }
     sort(score_r.begin(),score_r.end(),comp_pair);
 
-  *del = reverse_both ? best_best_j : rep.sequence(best_r).size() - best_best_j - 1;
-  *del2 = best_first_j;
-  *begin = best_first_i;
-  *tag = best_r ; 
+  box->ref = rep.sequence(box->ref_nb);
+  box->del_right = reverse_both ? best_best_j : box->ref.size() - best_best_j - 1;
+  box->del_left = best_first_j;
+  box->start = best_first_i;
+
+  *length -= box->del_right ;
   
-  *length -= *del ;
-  
-  *score=score_r;
+  box->score = score_r;
 
 #ifdef DEBUG_SEGMENT	
   cout << "best: " << best_labels << " " << best_score ;
-  cout << "del/del2/begin:" << (*del) << "/" << (*del2) << "/" << (*begin) << endl;
+  cout << "del/del2/begin:" << (box->del_right) << "/" << (box->del_left) << "/" << (box->start) << endl;
   cout << endl;
 #endif
 
@@ -696,6 +715,10 @@ string format_del(int deletions)
 
 FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  double threshold, int multiplier)
 {
+  box_V = new AlignBox();
+  box_D = new AlignBox();
+  box_J = new AlignBox();
+
   segmented = false;
   dSegmented = false;
   because = NOT_PROCESSED ;
@@ -703,7 +726,6 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   info_extra = "" ;
   label = seq.label ;
   sequence = seq.sequence ;
-  Dend=0;
   segment_cost=segment_c;
   evalue = NO_LIMIT_VALUE;
   evalue_left = NO_LIMIT_VALUE;
@@ -764,32 +786,27 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
   /* Segmentation */
   int plus_length = 0 ;
-  int del2=0;
-  int beg=0;
-  
-  Vend = align_against_collection(sequence_or_rc, germline->rep_5, reverse_V, reverse_V, false,
-                                  &best_V, &del_V, &del2, &beg,
-					   &plus_length, &score_V
-					   , segment_cost);
+  box_V->end = align_against_collection(sequence_or_rc, germline->rep_5, reverse_V, reverse_V, false,
+                                        box_V, &plus_length, segment_cost);
 
-  Jstart = align_against_collection(sequence_or_rc, germline->rep_3, reverse_J, !reverse_J, false,
-                                    &best_J, &del_J, &del2, &beg,
-					    &plus_length, &score_J
-					    , segment_cost);
-  plus_length += Jstart - Vend ;
+  box_J->start = align_against_collection(sequence_or_rc, germline->rep_3, reverse_J, !reverse_J, false,
+                                          box_J, &plus_length, segment_cost);
+  box_J->del_left = box_J->del_right; // should be directly in align_against_collection() ?
+
+  plus_length += box_J->start - box_V->end ;
 
   /* E-values */
-  evalue_left  = multiplier * sequence.size() * germline->rep_5.totalSize() * segment_cost.toPValue(score_V[0].first);
-  evalue_right = multiplier * sequence.size() * germline->rep_3.totalSize() * segment_cost.toPValue(score_J[0].first);
+  evalue_left  = multiplier * sequence.size() * germline->rep_5.totalSize() * segment_cost.toPValue(box_V->score[0].first);
+  evalue_right = multiplier * sequence.size() * germline->rep_3.totalSize() * segment_cost.toPValue(box_J->score[0].first);
   evalue = evalue_left + evalue_right ;
 
   /* Unsegmentation causes */
-  if (Vend == (int) string::npos)
+  if (box_V->end == (int) string::npos)
     {
       evalue_left = BAD_EVALUE ;
     }
       
-  if (Jstart == (int) string::npos)
+  if (box_J->start == (int) string::npos)
     {
       evalue_right = BAD_EVALUE ;
     }
@@ -799,7 +816,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   if (because != NOT_PROCESSED)
     {
       segmented = false;
-      info = " @" + string_of_int (Vend + FIRST_POS) + "  @" + string_of_int(Jstart + FIRST_POS) ;
+      info = " @" + string_of_int (box_V->end + FIRST_POS) + "  @" + string_of_int(box_J->start + FIRST_POS) ;
       return ;
     }
 
@@ -809,41 +826,36 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
     //overlap VJ
   seg_N = check_and_resolve_overlap(sequence_or_rc, 0, sequence_or_rc.length(),
-                         germline->rep_5.sequence(best_V), germline->rep_3.sequence(best_J),
-                         &Vend, &Jstart, &del_V, &del_J, segment_cost);
+                                    box_V, box_J, segment_cost);
 
   // Why could this happen ?
-      if (Jstart>=(int) sequence.length())
-	  Jstart=sequence.length()-1;
+      if (box_J->start>=(int) sequence.length())
+	  box_J->start=sequence.length()-1;
 
   // seg_N will be recomputed in finishSegmentation()
 
-  code = germline->rep_5.label(best_V) +
-    " "+ string_of_int(del_V) + 
+  code = box_V->ref_label +
+    " "+ string_of_int(box_V->del_right) +
     "/" + seg_N + 
     // chevauchement +
-    "/" + string_of_int(del_J) +
-    " " + germline->rep_3.label(best_J); 
+    "/" + string_of_int(box_J->del_left) +
+    " " + box_J->ref_label;
 
-  info = string_of_int(Vend + FIRST_POS) + " " + string_of_int(Jstart + FIRST_POS) ;
+  info = string_of_int(box_V->end + FIRST_POS) + " " + string_of_int(box_J->start + FIRST_POS) ;
   finishSegmentation();
 }
 
 bool FineSegmenter::FineSegmentD(Germline *germline,
-                                 string seq_Y, int *Yend, int *del_Y,
-                                 int *del_DD_left, int *DD_start, int *best_DD, int *DD_end, int *del_DD_right,
-                                 int *del_Z, int *Zstart, string seq_Z,
+                                 AlignBox *box_Y, AlignBox *box_DD, AlignBox *box_Z,
                                  double evalue_threshold, int multiplier){
-    int end = (int) string::npos ;
     int length = 0 ;
-    int begin = 0;
     
     // Create a zone where to look for D, adding at most EXTEND_D_ZONE nucleotides at each side
-    int l = *Yend - EXTEND_D_ZONE;
+    int l = box_Y->end - EXTEND_D_ZONE;
     if (l<0) 
       l=0 ;
 
-    int r = *Zstart + EXTEND_D_ZONE;
+    int r = box_Z->start + EXTEND_D_ZONE;
 
     string seq = getSequence().sequence; // segmented sequence, possibly rev-comped
 
@@ -853,27 +865,24 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
     string str = seq.substr(l, r-l);
 
     // Align
-    end = align_against_collection(str, germline->rep_4, false, false, true,
-                                   best_DD, del_DD_right, del_DD_left, &begin,
-				&length, &score_D, segment_cost);
+    box_DD->end = align_against_collection(str, germline->rep_4, false, false, true,
+                                           box_DD, &length, segment_cost);
 
-    *DD_start = l + begin;
-    *DD_end = l + end;
-	
-    float evalue_D = multiplier * (r-l) * germline->rep_4.totalSize() * segment_cost.toPValue(score_D[0].first);
+    box_DD->start += l ;
+    box_DD->end += l ;
+
+    float evalue_D = multiplier * (r-l) * germline->rep_4.totalSize() * segment_cost.toPValue(box_DD->score[0].first);
 
     if (evalue_D > evalue_threshold)
       return false;
     
     //overlap VD
-    seg_N1 = check_and_resolve_overlap(seq, 0, *DD_end,
-                         seq_Y, germline->rep_4.sequence(*best_DD),
-                         Yend, DD_start, del_Y, del_DD_left, segment_cost);
+    seg_N1 = check_and_resolve_overlap(seq, 0, box_DD->end,
+                                       box_Y, box_DD, segment_cost);
     
     //overlap DJ
-    seg_N2 = check_and_resolve_overlap(seq, *DD_start, seq.length(),
-                         germline->rep_4.sequence(*best_DD), seq_Z,
-                         DD_end, Zstart, del_DD_right, del_Z, segment_cost);
+    seg_N2 = check_and_resolve_overlap(seq, box_DD->start, seq.length(),
+                                       box_DD, box_Z, segment_cost);
 
     return true;
 }
@@ -883,25 +892,23 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
   if (segmented){
 
     dSegmented = FineSegmentD(germline,
-                              germline->rep_5.sequence(best_V), &Vend, &del_V,
-                              &del_D_left, &Dstart, &best_D, &Dend, &del_D_right,
-                              &del_J, &Jstart, germline->rep_3.sequence(best_J),
+                              box_V, box_D, box_J,
                               evalue_threshold, multiplier);
 
     if (!dSegmented)
       return ;
 
-    code = germline->rep_5.label(best_V) +
-    " "+ string_of_int(del_V) + 
+    code = box_V->ref_label +
+    " "+ string_of_int(box_V->del_right) +
     "/" + seg_N1 + 
     
-    "/" + string_of_int(del_D_left) +
-    " " + germline->rep_4.label(best_D) +
-    " " + string_of_int(del_D_right) +
+    "/" + string_of_int(box_D->del_left) +
+    " " + box_D->ref_label +
+    " " + string_of_int(box_D->del_right) +
     
     "/" + seg_N2 +
-    "/" + string_of_int(del_J) +
-    " " + germline->rep_3.label(best_J); 
+    "/" + string_of_int(box_J->del_left) +
+    " " + box_J->ref_label;
     
     finishSegmentationD();
   }
@@ -926,16 +933,16 @@ void FineSegmenter::findCDR3(){
     std::list<string>::const_iterator it;
     for (it = codon_start.begin(); it != codon_start.end(); ++it) {//filter 1 : start codon must be in V
         loc = 0;
-        while ( loc != string::npos && loc < (size_t)Vend){
+        while ( loc != string::npos && loc < (size_t)box_V->end){
             loc = str.find(*it, loc+3);
-            if (loc != string::npos && loc < (size_t)Vend) {
+            if (loc != string::npos && loc < (size_t)box_V->end) {
                 p_start.push_front(loc);
             }
         }
     }
 
     for (it = codon_end.begin(); it != codon_end.end(); ++it) {//filter 2 : end codon must be in J
-        loc = Jstart;
+        loc = box_J->start;
         while ( loc != string::npos){
             loc = str.find(*it, loc+3);
             if (loc != string::npos) {
@@ -969,17 +976,17 @@ json FineSegmenter::toJson(){
   json seg;
     
   if (isSegmented()) {
-    seg["5"] = segmented_germline->rep_5.label(best_V);
+    seg["5"] = box_V->ref_label;
     seg["5start"] = 0;
-    seg["5end"] = Vend;
-    seg["5del"] = del_V;
+    seg["5end"] = box_V->end;
+    seg["5del"] = box_V->del_right;
     
     if (isDSegmented()) {
-      seg["4"] = segmented_germline->rep_4.label(best_D);
+      seg["4"] = box_D->ref_label;
       seg["4start"] = Dstart;
       seg["4end"] = Dend;
-      seg["4delLeft"] = del_D_left;
-      seg["4delRight"] = del_D_right;
+      seg["4delLeft"] = box_D->del_left;
+      seg["4delRight"] = box_D->del_right;
 
       seg["N1"] = seg_N1.size();
       seg["N2"] = seg_N2.size();
@@ -988,9 +995,9 @@ json FineSegmenter::toJson(){
       seg["N"] = seg_N.size();
     }
     
-    seg["3"] = segmented_germline->rep_3.label(best_J);
-    seg["3start"] = Jstart;
-    seg["3del"] = del_J;
+    seg["3"] = box_J->ref_label;
+    seg["3start"] = box_J->start;
+    seg["3del"] = box_J->del_left;
 
     if (CDR3start >= 0) {
         seg["cdr3"] = {

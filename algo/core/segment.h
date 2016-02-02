@@ -68,27 +68,42 @@ const char* const segmented_mesg[] = { "?",
 
 
 
+class AlignBox
+{
+ public:
+  int del_left;
+  int start;
+  int end;
+  int del_right;
+
+  int ref_nb;
+  string ref_label;
+  string ref;
+  vector<pair<int, int> > score;
+
+  string getSequence(string sequence);
+
+  AlignBox();
+};
+
+
 /**
- * Check whether there is an overlap between a Vend (*pos_seq_left) and a Jstart (*pos_seq_right),
+ * Check whether there is an overlap between two boxes,
  * If this is the case, fix this overlap (finding the best split point), and update segmentation accordingly
  * @param seq:                             the read
  * @param seq_begin, seq_end:              the positions to consider on 'seq' for the two sequences that may overlap
- * @param ref_left, ref_right:             the two reference sequences
- * @param *pos_seq_left, *pos_seq_right:   the initial end/start positions of the possibly overlapping sequences (Vend and Jstart)
- * @param *trim_ref_left, *trim_ref_right: reference to deletions
+ * @param *box_left, *box_right            the two boxes
  * @param segment_cost:                    the cost used by the dynamic programing
  *
- * @post  trim_ref_left (at the end of ref_left) and trim_ref_right (at the beginning of ref_right)
- *        are set to the best number of nucleotides to trim in order to remove the overlap
- *        pos_seq_left and pos_seq_right are shifted by the good number of nucleotides
+ * @post  box_left->del_left and box_right->del_right are set to the best number of nucleotides to trim in order to remove the overlap.
+ *        box_left->end and box_right->start are shifted by the good number of nucleotides
  *
  * @return                                 the N segment
  */
 
 string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
-                        string ref_left, string ref_right,
-                        int *pos_seq_left, int *pos_seq_right,
-                        int *trim_ref_left, int *trim_ref_right, Cost segment_cost);
+                                 AlignBox *box_left, AlignBox *box_right,
+                                 Cost segment_cost);
 
 class Segmenter {
 protected:
@@ -115,11 +130,10 @@ protected:
   string code;
   string info;        // .vdj.fa header, fixed fields
   string info_extra;  // .vdj.fa header, other information, at the end of the header
-  int best_V, best_J ;
-  int del_V, del_D_left, del_D_right, del_J ;
   string seg_V, seg_N, seg_J, system;
 
-  int best_D;
+  AlignBox *box_V, *box_D, *box_J;
+
   double evalue;
   double evalue_left;
   double evalue_right;
@@ -286,9 +300,7 @@ class FineSegmenter : public Segmenter
                     double threshold = THRESHOLD_NB_EXPECTED_D, int multiplier=1);
 
   bool FineSegmentD(Germline *germline,
-                    string seq_Y, int *Yend, int *del_Y,
-                    int *del_DD_left, int *DD_start, int *best_DD, int *DD_end, int *del_DD_right,
-                    int *del_Z, int *Zstart, string seq_Z,
+                    AlignBox *box_Y, AlignBox *box_DD, AlignBox *box_Z,
                     double threshold = THRESHOLD_NB_EXPECTED_D, int multiplier=1);
 
   void findCDR3();
