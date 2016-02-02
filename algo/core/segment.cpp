@@ -57,6 +57,26 @@ ostream &operator<<(ostream &out, const AlignBox &box)
   return out ;
 }
 
+string codeFromBoxes(vector <AlignBox*> boxes, string sequence)
+{
+  string code = "";
+
+  int n = boxes.size();
+
+  for (int i=0; i<n; i++) {
+
+    if (i>0) {
+      code += " " + string_of_int(boxes[i-1]->del_right) + "/"
+        // From box_left->end + 1 to box_right->start - 1
+        + sequence.substr(boxes[i-1]->end + 1, boxes[i]->start - boxes[i-1]->end - 1)
+        + "/" + string_of_int(boxes[i]->del_left) + " " ;
+    }
+
+    code += boxes[i]->ref_label ;
+  }
+
+  return code;
+}
 
 
 Segmenter::~Segmenter() {}
@@ -840,12 +860,10 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
   // seg_N will be recomputed in finishSegmentation()
 
-  code = box_V->ref_label +
-    " "+ string_of_int(box_V->del_right) +
-    "/" + seg_N + 
-    // chevauchement +
-    "/" + string_of_int(box_J->del_left) +
-    " " + box_J->ref_label;
+  vector <AlignBox*> boxes ;
+  boxes.push_back(box_V);
+  boxes.push_back(box_J);
+  code = codeFromBoxes(boxes, sequence);
 
   info = string_of_int(box_V->end + FIRST_POS) + " " + string_of_int(box_J->start + FIRST_POS) ;
   finishSegmentation();
@@ -903,18 +921,12 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
     if (!dSegmented)
       return ;
 
-    code = box_V->ref_label +
-    " "+ string_of_int(box_V->del_right) +
-    "/" + seg_N1 + 
-    
-    "/" + string_of_int(box_D->del_left) +
-    " " + box_D->ref_label +
-    " " + string_of_int(box_D->del_right) +
-    
-    "/" + seg_N2 +
-    "/" + string_of_int(box_J->del_left) +
-    " " + box_J->ref_label;
-    
+    vector <AlignBox*> boxes ;
+    boxes.push_back(box_V);
+    boxes.push_back(box_D);
+    boxes.push_back(box_J);
+    code = codeFromBoxes(boxes, sequence);
+
     finishSegmentationD();
   }
 }
