@@ -110,8 +110,7 @@ public:
   /**
    * @return the percentage of kmers that are set in the index
    */
-  float getIndexLoad(T kmer) const;
-  float getIndexLoad() const;
+  virtual float getIndexLoad(T kmer) const;
 
   /**
    * @return the given integer (size of a read),
@@ -324,11 +323,8 @@ void IKmerStore<T>::finish_building() {}
 
 template<class T>
 float IKmerStore<T>::getIndexLoad(const T kmer) const {
-  return kmer.isUnknown() ? 1 - getIndexLoad() : getIndexLoad();
-}
-template<class T>
-float IKmerStore<T>::getIndexLoad() const {
-  return nb_kmers_inserted / pow(4.0, k);
+  float index_load = nb_kmers_inserted / pow(4.0, kmer.getLength());
+  return (kmer.isUnknown()) ? 1 - index_load : index_load;
 }
 
 template<class T>

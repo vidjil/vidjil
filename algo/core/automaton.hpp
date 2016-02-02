@@ -7,14 +7,17 @@
 //////////////////// IMPLEMENTATIONS ////////////////////
 
 template <class Info>
-AbstractACAutomaton<Info>::AbstractACAutomaton():IKmerStore<Info>() {
-  for (size_t i = 0; i < MAX_KMER_SIZE; i++)
-    kmers_inserted_by_length[i] = 0;
-}
+AbstractACAutomaton<Info>::AbstractACAutomaton():IKmerStore<Info>() {}
 
 template <class Info>
 void AbstractACAutomaton<Info>::finish_building() {
   build_failure_functions();
+}
+
+template<class Info>
+float AbstractACAutomaton<Info>::getIndexLoad(Info kmer) const {
+  float load = kmers_inserted.at(kmer) / pow(4.0, kmer.getLength());
+  return (kmer.isUnknown()) ? 1 - load : load;
 }
 
 template <class Info>
@@ -168,9 +171,11 @@ void PointerACAutomaton<Info>::insert(const seqtype &seq, Info info) {
     }
   }
   state->is_final = true;
-  this->nb_kmers_inserted++;
   assert(info.getLength() <= MAX_KMER_SIZE);
-  this->kmers_inserted_by_length[info.getLength()]++;
+  if (state->informations.front().isNull()) {
+    this->nb_kmers_inserted++;
+    this->kmers_inserted[info]++;
+  }
   state->informations.front() += info;
 }
 

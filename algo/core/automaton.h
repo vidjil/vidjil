@@ -24,7 +24,7 @@ class AbstractACAutomaton: public IKmerStore<Info> {
 
 protected:
   void *initialState;
-  size_t kmers_inserted_by_length[MAX_KMER_SIZE];
+  map<Info, size_t> kmers_inserted;
 public:
   AbstractACAutomaton();
 
@@ -38,6 +38,11 @@ public:
    * @inherited from IKMerStore
    */
   void finish_building();
+
+  /**
+   * @inherited from IKMerStore
+   */
+  float getIndexLoad(Info kmer) const;
 
   /**
    * @return the information stored for this state
