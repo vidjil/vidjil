@@ -806,7 +806,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   reversed = kseg->isReverse();
   delete kseg ;
   
-  string sequence_or_rc = revcomp(sequence, reversed); // sequence, possibly reversed
+  sequence_or_rc = revcomp(sequence, reversed); // sequence, possibly reversed
 
 
   /* Segmentation */
@@ -863,7 +863,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   vector <AlignBox*> boxes ;
   boxes.push_back(box_V);
   boxes.push_back(box_J);
-  code = codeFromBoxes(boxes, sequence);
+  code = codeFromBoxes(boxes, sequence_or_rc);
 
   info = string_of_int(box_V->end + FIRST_POS) + " " + string_of_int(box_J->start + FIRST_POS) ;
   finishSegmentation();
@@ -925,7 +925,7 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
     boxes.push_back(box_V);
     boxes.push_back(box_D);
     boxes.push_back(box_J);
-    code = codeFromBoxes(boxes, sequence);
+    code = codeFromBoxes(boxes, sequence_or_rc);
 
     finishSegmentationD();
   }

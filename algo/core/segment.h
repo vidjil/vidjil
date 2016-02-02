@@ -115,6 +115,7 @@ string check_and_resolve_overlap(string seq, int seq_begin, int seq_end,
 class Segmenter {
 protected:
   string sequence;
+  string sequence_or_rc;
   int Vend, Jstart;
   int Dstart, Dend;
   int CDR3start, CDR3end;
