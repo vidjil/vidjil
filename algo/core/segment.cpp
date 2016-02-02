@@ -925,9 +925,36 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
     if (!dSegmented)
       return ;
 
+    AlignBox *box_D1 = new AlignBox();
+    AlignBox *box_D2 = new AlignBox();
+
+#define DD_MIN_SEARCH 5
+
     vector <AlignBox*> boxes ;
     boxes.push_back(box_V);
+
+    if (box_D->start - box_V->end >= DD_MIN_SEARCH)
+      {
+        bool d1 = FineSegmentD(germline,
+                               box_V, box_D1, box_D,
+                               evalue_threshold, multiplier);
+
+        if (d1)
+          boxes.push_back(box_D1);
+      }
+
     boxes.push_back(box_D);
+
+    if (box_J->start - box_D->end >= DD_MIN_SEARCH)
+      {
+        bool d2 = FineSegmentD(germline,
+                               box_D, box_D2, box_J,
+                               evalue_threshold, multiplier);
+
+        if (d2)
+          boxes.push_back(box_D2);
+      }
+
     boxes.push_back(box_J);
     code = codeFromBoxes(boxes, sequence_or_rc);
 
