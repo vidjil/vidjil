@@ -490,12 +490,12 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
     return ;
   } else if (nb_strand[0] > RATIO_STRAND * nb_strand[1]) {
     strand = -1;
-    before = KmerAffect(germline->affect_3, -1); 
-    after = KmerAffect(germline->affect_5, -1);
+    before = KmerAffect(germline->affect_3, -1, seed_weight(germline->seed));
+    after = KmerAffect(germline->affect_5, -1, seed_weight(germline->seed));
   } else if (nb_strand[1] > RATIO_STRAND * nb_strand[0]) {
     strand = 1;
-    before = KmerAffect(germline->affect_5, 1); 
-    after = KmerAffect(germline->affect_3, 1);    
+    before = KmerAffect(germline->affect_5, 1, seed_weight(germline->seed));
+    after = KmerAffect(germline->affect_3, 1, seed_weight(germline->seed));
   } else {
     // Ambiguous information: we have positive and negative strands
     // and there is not enough difference to put them apart.

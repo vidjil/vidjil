@@ -338,8 +338,7 @@ void testProbability() {
   germline.new_index();
   germline.finish();
 
-
-  TAP_TEST(germline.index->getIndexLoad() == .75, TEST_GET_INDEX_LOAD, "");
+  TAP_TEST(germline.index->getIndexLoad(KmerAffect(germline.affect_5, 1, 4)) == .5, TEST_GET_INDEX_LOAD, "");
   TAP_TEST(germline.index->getIndexLoad(AFFECT_NOT_UNKNOWN) == .75, TEST_GET_INDEX_LOAD, ".getIndexLoad with AFFECT_NOT_UNKNOWN");
   TAP_TEST(germline.index->getIndexLoad(AFFECT_UNKNOWN) == .25, TEST_GET_INDEX_LOAD, ".getIndexLoad with AFFECT_UNKNOWN");
 

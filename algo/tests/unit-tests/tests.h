@@ -53,6 +53,7 @@ enum {
   /* KmerAffect */
   TEST_AFFECT_STRAND,
   TEST_AFFECT_CHAR,
+  TEST_AFFECT_LENGTH,
   TEST_AFFECT_COMPARISON,
   TEST_AFFECT_TO_STRING,
   TEST_AFFECT_OUT,
@@ -217,6 +218,7 @@ inline void declare_tests() {
   RECORD_TAP_TEST(TEST_AC_GET_RESULTS, "Testing getResults with Aho-Corasick");
 
   RECORD_TAP_TEST(TEST_AFFECT_STRAND, "affect_strand()");
+  RECORD_TAP_TEST(TEST_AFFECT_LENGTH, "affect_length()");
   RECORD_TAP_TEST(TEST_AFFECT_CHAR, "affect_char()");
   RECORD_TAP_TEST(TEST_AFFECT_COMPARISON, "Comparison operators for affect_t");
   RECORD_TAP_TEST(TEST_AFFECT_TO_STRING, "toString() for affect_t");

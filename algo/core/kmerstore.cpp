@@ -32,7 +32,7 @@ Kmer::Kmer():count(0) {}
 
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-parameter"
-Kmer::Kmer(const string &label, int strand) {
+Kmer::Kmer(const string &label, int strand, size_t length) {
   count = 1;
 }
 #pragma GCC diagnostic pop

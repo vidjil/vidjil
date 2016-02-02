@@ -21,7 +21,7 @@ public:
   /**
    * This constructor is used via a IKmerStore<Kmer> index (hence the argument list)       
    */
-  Kmer(const string &label, int strand=1);
+  Kmer(const string &label, int strand=1, size_t length=0);
 
   Kmer &operator+=(const Kmer &);
 
@@ -258,10 +258,10 @@ void IKmerStore<T>::insert(Fasta& input,
     insert(input.sequence(r), label, true, keep_only, seed);
   }
 
-  labels.push_back(make_pair(T(label, 1), input)) ;
+  labels.push_back(make_pair(T(label, 1, seed_weight(seed)), input)) ;
 
   if (revcomp_indexed  && ! T::hasRevcompSymetry()) {
-    labels.push_back(make_pair(T(label, -1), input)) ;
+    labels.push_back(make_pair(T(label, -1, seed_weight(seed)), input)) ;
   }
 }
 
@@ -283,6 +283,7 @@ void IKmerStore<T>::insert(const seqtype &sequence,
     seed = this->seed;
 
   size_t seed_span = seed.length();
+  size_t seed_w = seed_weight(seed);
   size_t size_indexing = end_indexing - start_indexing;
   if (size_indexing > max_size_indexing) {
     max_size_indexing = size_indexing;
@@ -307,13 +308,13 @@ void IKmerStore<T>::insert(const seqtype &sequence,
     if (this_kmer.isNull()) {
       nb_kmers_inserted++;
     }
-    this_kmer += T(label, strand);
+    this_kmer += T(label, strand, seed_w);
     if (revcomp_indexed && ! T::hasRevcompSymetry()) {
       seqtype rc_kmer = spaced(revcomp(substr), seed);
       T &this_rc_kmer = this->get(rc_kmer);
       if (this_rc_kmer.isNull())
         nb_kmers_inserted++;
-      this_rc_kmer += T(label, -1);
+      this_rc_kmer += T(label, -1, seed_w);
     }
   }
 }

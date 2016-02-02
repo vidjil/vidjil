@@ -23,6 +23,7 @@ typedef struct affect_s affect_t;
 struct affect_s {
   // 7 lsb are the label, the msb is the strand (0 -> -, 1 -> +)
   char c;
+  unsigned char length;
 };
 
 /**
@@ -34,6 +35,11 @@ int affect_strand(const affect_t &affect);
  * @return the character associated to the affect_t
  */
 char affect_char(const affect_t &affect);
+
+/**
+ * @return the length of the kmer associated with the affectation
+ */
+size_t affect_length(const affect_t &affect);
 
 bool operator==(const affect_t &a1, const affect_t &a2);
 bool operator<(const affect_t &a1, const affect_t &a2);
@@ -75,9 +81,11 @@ public:
      
   /**
    * Construct an affectation as stated by the parameters
-   * @post affect_strand(affect) == strand AND affect_char(affect) == kmer[0]
+   * @post affect_strand(affect) == strand AND affect_char(affect) == kmer[0] AND
+   *       affect_length(affect) == length
    */
-  KmerAffect(const string &label, int strand=1);
+  KmerAffect(const string &label, int strand, size_t length);
+
   /**
    * Add another affectation to the current one.
    * @post The current affectation is not modified if the parameter is the same
@@ -115,6 +123,11 @@ public:
   string getLabel() const;
 
   /**
+   * @return the length of such an affectation
+   */
+  unsigned char getLength() const;
+
+  /**
    * @return the unknown affectation
    */
   static KmerAffect getUnknown();
@@ -143,6 +156,8 @@ public:
   string toString() const;
 string toStringValues()const;
 string toStringSigns() const;
+
+ void setLength(unsigned char length);
 };
 
 
@@ -165,23 +180,23 @@ ostream &operator<<(ostream &os, const KmerAffect &kmer);
  * Constant defining any not-unknown affectation
  * Could be used by .getIndexLoad(), but now any non-AFFECT_UNKNOWN kmer will work.
  */
-const KmerAffect AFFECT_NOT_UNKNOWN = KmerAffect(AFFECT_NOT_UNKNOWN_SYMBOL, 0);
+const KmerAffect AFFECT_NOT_UNKNOWN = KmerAffect(AFFECT_NOT_UNKNOWN_SYMBOL, 0, 1);
 
 /**
  * Constant defining the unknown affectation (not known yet)
  */
-const KmerAffect AFFECT_UNKNOWN = KmerAffect(AFFECT_UNKNOWN_SYMBOL, 0); 
+const KmerAffect AFFECT_UNKNOWN = KmerAffect(AFFECT_UNKNOWN_SYMBOL, 0, 1);
 
 /**
  * Constant defining the ambiguous affectation (many possibilities)
  */
-const KmerAffect AFFECT_AMBIGUOUS = KmerAffect(AFFECT_AMBIGUOUS_SYMBOL, 1); 
+const KmerAffect AFFECT_AMBIGUOUS = KmerAffect(AFFECT_AMBIGUOUS_SYMBOL, 1, 1);
 
-const KmerAffect AFFECT_V = KmerAffect("V", 1); 
-const KmerAffect AFFECT_J = KmerAffect("J", 1); 
+const KmerAffect AFFECT_V = KmerAffect("V", 1, 1);
+const KmerAffect AFFECT_J = KmerAffect("J", 1, 1);
 
-const KmerAffect AFFECT_V_BWD = KmerAffect("V", -1); 
-const KmerAffect AFFECT_J_BWD = KmerAffect("J", -1); 
+const KmerAffect AFFECT_V_BWD = KmerAffect("V", -1, 1);
+const KmerAffect AFFECT_J_BWD = KmerAffect("J", -1, 1);
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
 

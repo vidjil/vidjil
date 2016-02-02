@@ -31,6 +31,10 @@ char affect_char(const affect_t &affect) {
   return (affect.c & ((1 << 7)-1));
 }
 
+size_t affect_length(const affect_t &affect) {
+  return affect.length;
+}
+
 // KmerAffect class
 
 bool operator==(const affect_t &a1, const affect_t &a2) {
@@ -98,8 +102,9 @@ KmerAffect::KmerAffect(const KmerAffect &ka, bool reverse) {
 }
 
 KmerAffect::KmerAffect(const string &label,
-                       int strand) {
+                       int strand, size_t length) {
   affect.c = label[0];
+  affect.length = length;
   if (strand == 1)
      affect.c |= (1 << 7);
 }
@@ -144,6 +149,10 @@ string KmerAffect::getLabel() const {
   return string(1, affect_char(affect));
 }
 
+unsigned char KmerAffect::getLength() const {
+  return affect_length(affect);
+}
+
 KmerAffect KmerAffect::getUnknown() {
   return AFFECT_UNKNOWN;
 }
@@ -172,6 +181,9 @@ string KmerAffect::toStringSigns() const {
   return ::toStringSigns(affect);
 }
 
+void KmerAffect::setLength(unsigned char length) {
+  affect.length = length;
+}
 
 bool operator==(const KmerAffect &a1, const KmerAffect &a2) {
   return a1.affect == a2.affect;

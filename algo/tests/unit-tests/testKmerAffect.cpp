@@ -2,14 +2,18 @@
 #include <core/kmeraffect.h>
 
 void testAffect() {
-  affect_t Vminus = {'V'}, Vplus = {'V'};
+  affect_t Vminus = {'V', 1}, Vplus = {'V', 2};
   Vplus.c |= 1 << 7;
-  affect_t Jplus = {'J'};
+  affect_t Jplus = {'J', 3};
   Jplus.c |= 1 << 7;
 
 
   TAP_TEST(affect_strand(Vminus) == -1, TEST_AFFECT_STRAND, "");
   TAP_TEST(affect_strand(Vplus) == 1, TEST_AFFECT_STRAND, "");
+
+  TAP_TEST(affect_length(Vminus) == 1, TEST_AFFECT_LENGTH, "");
+  TAP_TEST(affect_length(Vplus) == 2, TEST_AFFECT_LENGTH, "");
+  TAP_TEST(affect_length(Jplus) == 3, TEST_AFFECT_LENGTH, "");
 
   TAP_TEST(affect_char(Vminus) == 'V', TEST_AFFECT_CHAR, "");
   TAP_TEST(affect_char(Vplus) == 'V', TEST_AFFECT_CHAR, "");
@@ -54,13 +58,13 @@ void testAffect() {
 }
 
 void testKmerAffectClass() {
-  affect_t Vminus = {'V'}, Vplus = {'V'};
+  affect_t Vminus = {'V', 4}, Vplus = {'V', 4};
   Vplus.c |= 1 << 7;
-  affect_t Jplus = {'J'};
+  affect_t Jplus = {'J', 4};
   Jplus.c |= 1 << 7;
-  KmerAffect KAVp("V", 1);
-  KmerAffect KAVm("V", -1);
-  KmerAffect KAJp("J", 1);
+  KmerAffect KAVp("V", 1, 4);
+  KmerAffect KAVm("V", -1, 4);
+  KmerAffect KAJp("J", 1, 4);
 
   TAP_TEST(KAVp.affect == Vplus, TEST_KMERAFFECT_CONSTRUCTOR, "");
   TAP_TEST(KAVm.affect == Vminus, TEST_KMERAFFECT_CONSTRUCTOR, "");
@@ -72,6 +76,8 @@ void testKmerAffectClass() {
   TAP_TEST(copy2.getLabel() == KAVp.getLabel(), TEST_KMERAFFECT_CONSTRUCTOR_COPY_REVERSE, "");
   TAP_TEST(copy1.getStrand() == KAVp.getStrand(), TEST_KMERAFFECT_CONSTRUCTOR_COPY_REVERSE, "");
   TAP_TEST(copy2.getStrand() == -KAVp.getStrand(), TEST_KMERAFFECT_CONSTRUCTOR_COPY_REVERSE, "");
+  TAP_TEST(copy1.getLength() == KAVp.getLength(), TEST_KMERAFFECT_CONSTRUCTOR_COPY_REVERSE, "");
+  TAP_TEST(copy2.getLength() == KAVp.getLength(), TEST_KMERAFFECT_CONSTRUCTOR_COPY_REVERSE, "");
     
   KmerAffect test = KAVp;
   TAP_TEST(test.affect == KAVp.affect, TEST_KMERAFFECT_AFFECTATION, "");
@@ -117,9 +123,9 @@ void testKmerAffectClass() {
 
 
 void testKmerAffectComparison() {
-  KmerAffect Vminus("V", -1);
-  KmerAffect Vplus("V", 1);
-  KmerAffect Jplus("J", 1);
+  KmerAffect Vminus("V", -1, 4);
+  KmerAffect Vplus("V", 1, 4);
+  KmerAffect Jplus("J", 1, 4);
 
   TAP_TEST(! (Vminus == Vplus), TEST_KMERAFFECT_COMPARISON, "");
   TAP_TEST(Vminus != Vplus, TEST_KMERAFFECT_COMPARISON, "");
