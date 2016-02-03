@@ -48,7 +48,7 @@ void testOnlineFastaMaxNth() {
 
 
 void testFastaNbSequences() {
-  TAP_TEST(nb_sequences_in_fasta("../../germline/IGHV.fa") == 348, TEST_FASTA_NB_SEQUENCES, "ccc");
+  TAP_TEST(nb_sequences_in_fasta("../../germline/IGHV.fa") == 350, TEST_FASTA_NB_SEQUENCES, "ccc");
 
   int a1 = approx_nb_sequences_in_fasta("../../germline/IGHV.fa");
   TAP_TEST(a1 >= 340 && a1 <= 348, TEST_FASTA_NB_SEQUENCES, "");
