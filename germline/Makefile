@@ -6,7 +6,9 @@ germline:
 ../browser/js/germline.js: $(DATA) germlines.data
 	python buildBrowserGermline.py $^ $@
 
-get-all-data:
+get-all-data: $(DATA)
+
+$(DATA):
 	sh get-germline
 	$(MAKE) ../browser/js/germline.js
 
