@@ -875,14 +875,15 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
 bool FineSegmenter::FineSegmentD(Germline *germline,
                                  AlignBox *box_Y, AlignBox *box_DD, AlignBox *box_Z,
+                                 int extend_DD_on_Y, int extend_DD_on_Z,
                                  double evalue_threshold, int multiplier){
 
-    // Create a zone where to look for D, adding at most EXTEND_D_ZONE nucleotides at each side
-    int l = box_Y->end - EXTEND_D_ZONE;
+    // Create a zone where to look for D, adding some nucleotides on both sides
+    int l = box_Y->end - extend_DD_on_Y;
     if (l<0) 
       l=0 ;
 
-    int r = box_Z->start + EXTEND_D_ZONE;
+    int r = box_Z->start + extend_DD_on_Z;
 
     string seq = getSequence().sequence; // segmented sequence, possibly rev-comped
 
@@ -920,6 +921,7 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
 
     dSegmented = FineSegmentD(germline,
                               box_V, box_D, box_J,
+                              EXTEND_D_ZONE, EXTEND_D_ZONE,
                               evalue_threshold, multiplier);
 
     if (!dSegmented)
@@ -937,6 +939,7 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
       {
         bool d1 = FineSegmentD(germline,
                                box_V, box_D1, box_D,
+                               EXTEND_D_ZONE, 0,
                                evalue_threshold, multiplier);
 
         if (d1)
@@ -949,6 +952,7 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
       {
         bool d2 = FineSegmentD(germline,
                                box_D, box_D2, box_J,
+                               0, EXTEND_D_ZONE,
                                evalue_threshold, multiplier);
 
         if (d2)
