@@ -29,6 +29,7 @@
 #include <cstring>
 #include <string>
 
+#define NO_FORBIDDEN_ID (-1)
 
 AlignBox::AlignBox() {
   del_left = 0 ;
@@ -662,7 +663,8 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
  * @post  box is filled
  */
 
-void align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool reverse_both, bool local,
+void align_against_collection(string &read, Fasta &rep, int forbidden_rep_id,
+                              bool reverse_ref, bool reverse_both, bool local,
                              AlignBox *box, Cost segment_cost)
 {
   
@@ -683,6 +685,9 @@ void align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool r
   
   for (int r = 0 ; r < rep.size() ; r++)
     {
+      if (r == forbidden_rep_id)
+        continue;
+
       DynProg dp = DynProg(sequence_or_rc, rep.sequence(r),
 			   dpMode, // DynProg::SemiGlobalTrans, 
 			   segment_cost, // DNA
@@ -814,10 +819,10 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
 
   /* Segmentation */
-  align_against_collection(sequence_or_rc, germline->rep_5, reverse_V, reverse_V, false,
+  align_against_collection(sequence_or_rc, germline->rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
                                         box_V, segment_cost);
 
-  align_against_collection(sequence_or_rc, germline->rep_3, reverse_J, !reverse_J, false,
+  align_against_collection(sequence_or_rc, germline->rep_3, NO_FORBIDDEN_ID, reverse_J, !reverse_J, false,
                                           box_J, segment_cost);
 
   // J was run with '!reverseJ', we copy the box informations from right to left
@@ -875,6 +880,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
 bool FineSegmenter::FineSegmentD(Germline *germline,
                                  AlignBox *box_Y, AlignBox *box_DD, AlignBox *box_Z,
+                                 int forbidden_id,
                                  int extend_DD_on_Y, int extend_DD_on_Z,
                                  double evalue_threshold, int multiplier){
 
@@ -893,7 +899,7 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
     string str = seq.substr(l, r-l);
 
     // Align
-    align_against_collection(str, germline->rep_4, false, false, true,
+    align_against_collection(str, germline->rep_4, forbidden_id, false, false, true,
                                            box_DD, segment_cost);
 
     box_DD->start += l ;
@@ -921,6 +927,7 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
 
     dSegmented = FineSegmentD(germline,
                               box_V, box_D, box_J,
+                              NO_FORBIDDEN_ID,
                               EXTEND_D_ZONE, EXTEND_D_ZONE,
                               evalue_threshold, multiplier);
 
@@ -939,6 +946,7 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
       {
         bool d1 = FineSegmentD(germline,
                                box_V, box_D1, box_D,
+                               box_D->ref_nb,
                                EXTEND_D_ZONE, 0,
                                evalue_threshold, multiplier);
 
@@ -952,6 +960,7 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
       {
         bool d2 = FineSegmentD(germline,
                                box_D, box_D2, box_J,
+                               box_D->ref_nb,
                                0, EXTEND_D_ZONE,
                                evalue_threshold, multiplier);
 

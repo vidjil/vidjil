@@ -311,6 +311,7 @@ class FineSegmenter : public Segmenter
 
   bool FineSegmentD(Germline *germline,
                     AlignBox *box_Y, AlignBox *box_DD, AlignBox *box_Z,
+                    int forbidden_id,
                     int extend_DD_on_Y, int extend_DD_on_Z,
                     double threshold = THRESHOLD_NB_EXPECTED_D, int multiplier=1);
 
