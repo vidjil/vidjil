@@ -1,7 +1,7 @@
 !LAUNCH: ../../vidjil -e 10 -z 0 -V ../../germline/IGHV.fa -D ../../germline/IGHD.fa -J ../../germline/IGHJ.fa -s \\\\#\\\\#\\\\#\\\\#\\\\#\\\\#-\\\\#\\\\#\\\\#\\\\#\\\\#\\\\# ../../data/Stanford_S22.fasta
 
 $ Parses IGHV.fa germline
-1: 101627 bp in 348 sequences
+1: 102221 bp in 350 sequences
 
 $ Parses IGHD.fa germline
 1: 1070 bp in  44 sequences

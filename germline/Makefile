@@ -1,4 +1,4 @@
-DATA=???[VDJ].fa IGK-INTRON.fa IGK-KDE.fa TRDD2_upstream.fa TRDD3_downstream.fa ???[VDJ]_upstream.fa ???[VDJ]_downstream.fa
+DATA=???[VDJ].fa IGK-INTRON.fa IGK-KDE.fa TRDD2_upstream.fa TRDD3_downstream.fa ???[VDJ]_upstream.fa ???[VDJ]_downstream.fa {IG,TR}*=*.fa
 
 germline:
 	sh get-saved-germline
