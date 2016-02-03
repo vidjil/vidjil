@@ -119,7 +119,7 @@ FEATURES_CLASSES = [
 FEATURES = FEATURES_VDJ + FEATURES_CLASSES
 
 # Heavy-chain human IGH exons, ordered
-CLASSES = [ "IGHM", "IGHD", "IGHG3", "IGHG1", "IGHA1", "IGHG2", "IGHG4", "IGHE", "IGHA2",
+CLASSES = [ "IGHA", "IGHM", "IGHD", "IGH2B", "IGHG3", "IGHG1", "IGHA1", "IGHG2", "IGHG4", "IGHE", "IGHA2",
             "IGHGP" ]
 
 # Split sequences in several files
