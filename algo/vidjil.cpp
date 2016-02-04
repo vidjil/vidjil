@@ -164,14 +164,17 @@ void usage(char *progname, bool advanced)
        << "  -g <path>     multiple locus/germlines. In the path <path>, takes 'germlines.data' to select locus and parameters" << endl
        << "                Selecting '-g germline' processes TRA, TRB, TRG, TRD, IGH, IGK and IGL locus, possibly with some incomplete/unusal recombinations" << endl
        << "                A different 'germlines.data' file can also be provided with -g <file>" << endl
-       << "  -i            multiple locus/germlines, also incomplete/unusual rearrangements (must be used with -g)" << endl
+       << endl
+
+       << "Locus/recombinations" << endl
+       << "  -i            try to detect incomplete/unusual recombinations (locus with '+', must be used with -g)" << endl
+       << "  -2            try to detect unexpected recombinations (must be used with -g)" << endl
        << endl ;
 
   if (advanced)
   cerr << "Experimental options (do not use)" << endl
        << "  -I            ignore k-mers common to different germline systems (experimental, must be used with -g, do not use)" << endl
        << "  -1            use a unique index for all germline systems (experimental, must be used with -g, do not use)" << endl
-       << "  -2            try to detect unexpected recombinations (experimental, must be used with -g, do not use)" << endl
        << "  -4            try to detect unexpected recombinations with translocations (experimental, must be used with -g, do not use)" << endl
        << "  -!            keep unsegmented reads as clones, taking for junction the complete sequence, to be used on very small datasets (for example -!AX 20)" << endl
        << endl
