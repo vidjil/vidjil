@@ -173,7 +173,7 @@ You can run the tests with the following commands:
 
 #+BEGIN_SRC sh
 make data
-   # get IGH rearrangements from a single individual, as described in:
+   # get IGH recombinations from a single individual, as described in:
    # Boyd, S. D., and al. Individual variation in the germline Ig gene
    # repertoire inferred from variable region gene rearrangements. J
    # Immunol, 184(12), 6986–92.

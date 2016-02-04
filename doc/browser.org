@@ -26,7 +26,7 @@ The Vidjil browser runs in any modern browser. It has been successfully tested o
 ** The .vidjil files
 
 The vidjil browser displays =.vidjil= files that summarize the V(D)J
-rearrangements and the sequences found in a run. 
+recombinations and the sequences found in a run. 
 
 The easiest way to get these files is to [[http://rbx.vidjil.org/browser][request an account]] on the Vidjil server.
 You will then be able to upload,
@@ -129,7 +129,7 @@ The time graph is hidden with there is only one timepoint.
   
 To further analyze a set of clones sharing a same V and J, it is often useful
 to focus on the clones, then to display them ones according to either their “clone length”
-or their “N length” (that is N1-D-N2 in the case of VDJ rearrangements)
+or their “N length” (that is N1-D-N2 in the case of VDJ recombinations)
 
 ** The aligner (bottom panel)
 
