@@ -547,9 +547,9 @@ Builder.prototype = {
         reads_div.appendChild(reads_title)*/
 
         // Total
-        var div_total = this.build_named_info_line("info_total", "total", this.m.toStringThousands(this.m.reads.total[this.m.t]))
+        /*var div_total = this.build_named_info_line("info_total", "total", this.m.toStringThousands(this.m.reads.total[this.m.t]))
         reads_div.appendChild(div_total)
-
+*/
         // Segmented reads
         var val = "no reads segmented" ;
 
@@ -563,7 +563,7 @@ Builder.prototype = {
 	else if (percent < 50)  { val += " – Few reads segmented" ;  warning = "warning" ;  }
         }
 
-        var div_segmented = this.build_named_info_line("info_segmented", "locus", val, warning)
+        var div_segmented = this.build_named_info_line("info_segmented", "reads", val, warning)
         reads_div.appendChild(div_segmented)
 
 
@@ -581,7 +581,7 @@ Builder.prototype = {
                 else if (percent < 50)  { warning = "warning" ;  }
             }
 
-            var div_segmented = this.build_named_info_line("info_selected_locus", "selected", val, warning)
+            var div_segmented = this.build_named_info_line("info_selected_locus", "locus", val, warning)
             reads_div.appendChild(div_segmented)
         }
         
