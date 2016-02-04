@@ -1,10 +1,25 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
+2016-02-xx  The Vidjil Team
+	* New default threshold (-z 100), fully analyzing more clones
+	* New computation of diversity indices (Shannon, Simpson) (core/windows.cpp)
+	* Streamlined KmerSegmenter test (core/affectanalyser.cpp)
+	* Safer p-value estimation in KmerSegmenter, taking into account the central region (core/affectanalyser.cpp)
+	* New experimental VDDJ detection analysis (-d) (core/segment.cpp)
+	* Better FineSegmenter V(D)J designation for inverted genes in unexpected recombination analysis (core/segment.cpp)
+	  The unexpected recombination analysis (-2) can now safely be used.
+	* Streamlined FineSegmenter handling of V, D and J segments (core/segment.cpp)
+	* Faster FineSegmenter (~30%), relying on the KmerSegmenter to select to correct strand (core/segment.cpp)
+	* Updated germline genes from IMGT/GENE-DB
+	* Bugs closed (.vidjil output for sequences beyond the -z threshold)
+	* New and updated unit and functional tests
+
 2015-12-22  The Vidjil Team
 	* Better KmerSegmenter, rejecting reads with large alterning V/J zones (core/segment.cpp)
 	* Better unsegmentation causes, 'UNSEG only V/J' needs significant V/J fragments (core/segment.cpp)
 	* Renamed unsegmentation messages to "only V/5'" and "only J/3'" to avoid confusion (core/segment.h)
+	* Better unexpected recombination analysis (-2), with a FineSegmenter V(D)J assignation (core/segment.cpp)
 	* Faster FineSegmenter (~35%), computing roughly half of the dynamic programming matrix (core/segment.cpp)
 	* More flexible handling of badly formatted .fastq files (core/fasta.cpp)
 	* New filtering/debug option (-uu), sort unsegmented reads (core/windowExtractor.cpp)
