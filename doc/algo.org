@@ -289,7 +289,7 @@ Limits to report a clone (or a window)
 
 Limits to further analyze some clones
   -y <nb>       maximal number of clones computed with a representative ('all': no limit) (default: 100)
-  -z <nb>       maximal number of clones to be analyzed with a full V(D)J designation ('all': no limit, do not use) (default: 20)
+  -z <nb>       maximal number of clones to be analyzed with a full V(D)J designation ('all': no limit, do not use) (default: 100)
   -A            reports and segments all clones (-r 1 -% 0 -y all -z all), to be used only on very small datasets
 #+END_EXAMPLE
 
@@ -310,19 +310,19 @@ The =-z= option limits the number of clones that are fully analyzed,
 /with their V(D)J segmentation/, in particular to enable the web application
 to display the clones on the grid (otherwise they are displayed on the
 '?/?' axis).
-If you want to analyze more clones, you should use =-z 50= or
-=-z 100=.  It is not recommended to use larger values: outputting more
-than 100 clones is often not useful since they can not be visualized easily
+If you want to analyze more clones, you should use =-z 200= or
+=-z 500=.  It is not recommended to use larger values: outputting more
+than 500 clones is often not useful since they can not be visualized easily
 in the web application, and takes large computation time (full dynamic programming,
 see below).
 
-Note that even if a clone is not in the top 20 (or 50, or 100) but
+Note that even if a clone is not in the top 100 (or 200, or 500) but
 still passes the =-r=, =-%= options, it is still reported in both the =.vidjil=
-and =.vdj.fa= files. If the clone is at some MRD point in the top 20 (or 50, or 100),
+and =.vdj.fa= files. If the clone is at some MRD point in the top 100 (or 200, or 500),
 it will be fully analyzed/segmented by this other point (and then
 collected by the =fuse.py= script, using representatives computed at this
 other point, and then, on the web application, correctly displayed on the grid).
-*Thus is advised to leave the default* =-y 100 -z 20= *options 
+*Thus is advised to leave the default* =-z 100= *option
 for the majority of uses.*
 
 The =-A= option disables all these thresholds. This option should be
