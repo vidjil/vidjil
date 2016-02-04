@@ -35,6 +35,7 @@ results_files = query.select(db.results_file.data_file.with_alias('filename'), d
 with tarfile.open("/mnt/result/user_files.tar.gz", "w:gz") as tar:
     for file_list in [(fused_files, defs.DIR_RESULTS),  (analysis_files, defs.DIR_RESULTS), (sequence_files, defs.DIR_SEQUENCES), (results_files, defs.DIR_RESULTS)]:
         for my_file in file_list[0]:
+            log.info("loading: " + file_list[1] + my_file.filename)
             if my_file.filename is not None:
                 tar.add(file_list[1] + my_file.filename)
 
