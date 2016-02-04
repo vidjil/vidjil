@@ -33,6 +33,15 @@ sequence_files = db(sequence_base_query & (db.results_file.data_file != "")).sel
 query = db(sequence_base_query & (db.results_file.sequence_file_id == db.sequence_file.id) & (db.results_file.data_file != ""))
 results_files = query.select(db.results_file.data_file.with_alias('filename'), distinct=True)
 
+log.info("Fused files: ")
+log.info(fused_files)
+log.info("Analysis files: ")
+log.info(analysis_files)
+log.info("Sequence_files: ")
+log.info(sequence_files)
+log.info("Result files: ")
+log.info(results_files)
+
 with tarfile.open("/mnt/result/user_files_" + user_id + "_" + str(datetime.now()) + ".tar.gz", "w:gz") as tar:
     for file_list in [(fused_files, defs.DIR_RESULTS),  (analysis_files, defs.DIR_RESULTS), (sequence_files, defs.DIR_SEQUENCES), (results_files, defs.DIR_RESULTS)]:
         for my_file in file_list[0]:
