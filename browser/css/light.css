@@ -811,6 +811,7 @@ a:hover {
 }
 .button_left {
   float: left;
+  margin-right: -27px;
 }
 .button2 {
   border: solid;
