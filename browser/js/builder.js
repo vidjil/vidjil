@@ -650,10 +650,6 @@ Builder.prototype = {
         var div = document.createElement('div');
         div.className = "info_line locus_line";
         
-        var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode("locus"));
-        span1.className = "info_row"
-        
         var span2 = document.createElement('span');
         span2.className = "info_row_content"
         
@@ -701,7 +697,6 @@ Builder.prototype = {
             span2.appendChild(span)
         }
         
-        div.appendChild(span1)
         div.appendChild(span2)
         
         return div
