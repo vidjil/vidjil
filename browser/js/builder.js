@@ -457,7 +457,7 @@ Builder.prototype = {
         sample_div.className = "sample_details"
         
         var infoTime = self.createClickableElem('span',
-            [document.createTextNode("Info")],
+            [document.createTextNode("\u24D8")],
             "",
             "button_left",
             function () {
@@ -493,7 +493,7 @@ Builder.prototype = {
             
             if (self.m.isPlaying){
                 var stop = self.createClickableElem('span',
-                    [document.createTextNode("stop")],
+                    [document.createTextNode("\u25A0")],
                     "",
                     "stop_button button_left",
                     function () {
@@ -504,7 +504,7 @@ Builder.prototype = {
                 sample_div.appendChild(stop)
             } else {
                 var play = self.createClickableElem('span',
-                    [document.createTextNode("play")],
+                    [document.createTextNode("\u25B6")],
                     "",
                     "play_button button_left",
                     function () {
