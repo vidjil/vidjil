@@ -29,7 +29,7 @@
     "TRB+": {
         "shortcut": "b",
         "color" : "#8c91e4",
-        "description": "Human T-cell receptor, beta locus (7q34), incomplete DB-JB rearrangements",
+        "description": "Human T-cell receptor, beta locus (7q34), incomplete Db-Jb recombinations",
         "follows": "TRB",
         "recombinations": [ {
             "5": ["TRBD_upstream.fa"],
@@ -87,7 +87,7 @@
     "TRD+": {
         "shortcut": "d",
         "color" : "#d5a920",
-        "description": "Human T-cell receptor, delta locus (14q11.2), incomplete Dd2-Dd3 rearrangements",
+        "description": "Human T-cell receptor, delta locus (14q11.2), incomplete Dd2-Dd3 recombinations",
         "follows": "TRD",
         "recombinations": [ {
             "5": ["TRDV.fa"],
@@ -120,7 +120,7 @@
     "IGH+": {
         "shortcut": "h",
         "color" : "#8c91e4",
-        "description": "Human immunoglobulin, heavy locus (14q32.33), incomplete DH-JH rearrangements",
+        "description": "Human immunoglobulin, heavy locus (14q32.33), incomplete Dh-Jh recombinations",
         "follows": "IGH",
         "recombinations": [ {
             "5": ["IGHD_upstream.fa"],
@@ -146,7 +146,7 @@
     "IGK+": {
         "shortcut": "k",
         "color" : "#4ac1a8",
-        "description": "Human immunoglobulin, kappa locus (2p11.2), Vk-KDE and Intron-KDE rearrangements",
+        "description": "Human immunoglobulin, kappa locus (2p11.2), Vk-KDE and Intron-KDE recombinations",
         "follows": "IGK",
         "recombinations": [ {
             "5": ["IGKV.fa", "IGK-INTRON.fa"],
