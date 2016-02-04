@@ -284,7 +284,7 @@ The following options control how many clones are output and analyzed.
 
 #+BEGIN_EXAMPLE
 Limits to report a clone (or a window)
-  -r <nb>       minimal number of reads supporting a clone (default: 10)
+  -r <nb>       minimal number of reads supporting a clone (default: 5)
   -% <ratio>    minimal percentage of reads supporting a clone (default: 0)
 
 Limits to further analyze some clones
@@ -296,7 +296,7 @@ Limits to further analyze some clones
 The =-r/-%= options are strong thresholds: if a clone does not have
 the requested number of reads, the clone is discarded (except when
 using =-l=, see below).
-The default =-r 10= option is meant to only output clones that
+The default =-r 5= option is meant to only output clones that
 have a significant read support. *You should use* =-r 1= *if you
 want to detect all clones starting from the first read* (especially for
 MRD detection).
