@@ -459,7 +459,7 @@ Builder.prototype = {
         var infoTime = self.createClickableElem('span',
             [document.createTextNode("Info")],
             "",
-            "button_right",
+            "button_left",
             function () {
                 console.log({"type": "big-popup", "msg": self.m.getPointHtmlInfo(self.m.t)});
             }
@@ -495,7 +495,7 @@ Builder.prototype = {
                 var stop = self.createClickableElem('span',
                     [document.createTextNode("stop")],
                     "",
-                    "stop_button button_right",
+                    "stop_button button_left",
                     function () {
                         self.m.stop();
                     }
@@ -506,7 +506,7 @@ Builder.prototype = {
                 var play = self.createClickableElem('span',
                     [document.createTextNode("play")],
                     "",
-                    "play_button button_right",
+                    "play_button button_left",
                     function () {
                         self.m.play(self.m.t);
                     }
