@@ -1,11 +1,15 @@
 
 
 ### Copied from data/segment_simul.fa and algo/tests/segment_simul.should_get
+# See algo/tests/segment_simul.should_get for a detailed description
+# With only one D, this is:
+# IGHV5-10-1*01 2/CTTC/3 IGHD1-14*01 1/GTTA/5 IGHJ5*01  [IGH]
 
->IGHV5-10-1*01 2/CTTC/3 IGHD1-14*01 1/GTTA/5 IGHJ5*01  [IGH]
+>IGHV5-10-1*01 2/CTTC/3 IGHD1-14*01 1//23 IGHD3-16*01 8//7 IGHJ5*01  [IGH]
 aagtccatcagcactgcctacctgcagtggagcagcctgaaggcctcggacaccgccatgtattactgtgcga
 CTTC
 ataaccggaacca
 GTTA
-tggttcgactcctggggccaaggaaccctggtcaccgtctcctcag
+TG
+gttcgactcctggggccaaggaaccctggtcaccgtctcctcag
 
