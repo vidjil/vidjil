@@ -16,11 +16,11 @@ base_query = ((db.auth_user.id == user_id)
     &(db.auth_permission.table_name == "patient")
     &(db.patient.id == db.auth_permission.record_id))
 
-query = db( base_query &(db.fused_file.sample_set_id == db.patient.sample_set_id))
+query = db( base_query &(db.fused_file.sample_set_id == db.patient.sample_set_id) & (db.fused_file.fused_file != ""))
 
 fused_files = query.select(db.fused_file.fused_file.with_alias('filename'), distinct=True)
 
-query = db(base_query & (db.analysis_file.sample_set_id == db.patient.sample_set_id))
+query = db(base_query & (db.analysis_file.sample_set_id == db.patient.sample_set_id) & (db.analysis_file.analysis_file != ""))
 analysis_files = query.select(db.analysis_file.analysis_file.with_alias('filename'), distinct=True)
 
 sequence_base_query = (base_query
@@ -28,15 +28,14 @@ sequence_base_query = (base_query
                     & (db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                     )
 
-sequence_files = db(sequence_base_query).select(db.sequence_file.data_file.with_alias('filename'), distinct=True)
+sequence_files = db(sequence_base_query & (db.results_file.data_file != "")).select(db.sequence_file.data_file.with_alias('filename'), distinct=True)
 
-query = db(sequence_base_query & (db.results_file.sequence_file_id == db.sequence_file.id))
+query = db(sequence_base_query & (db.results_file.sequence_file_id == db.sequence_file.id) & (db.results_file.data_file != ""))
 results_files = query.select(db.results_file.data_file.with_alias('filename'), distinct=True)
 
 with tarfile.open("/mnt/result/user_files_" + user_id + "_" + str(datetime.now()) + ".tar.gz", "w:gz") as tar:
     for file_list in [(fused_files, defs.DIR_RESULTS),  (analysis_files, defs.DIR_RESULTS), (sequence_files, defs.DIR_SEQUENCES), (results_files, defs.DIR_RESULTS)]:
         for my_file in file_list[0]:
             log.info("loading: " + file_list[1] + my_file.filename)
-            if my_file.filename is not None:
-                tar.add(file_list[1] + my_file.filename)
+            tar.add(file_list[1] + my_file.filename)
 
