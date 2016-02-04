@@ -507,7 +507,8 @@ in the following situations:
       These V(D)J designations are obtained by full comparison (dynamic programming)
       with all germline sequences.
 
-      Note that these designations are relatively slow to compute. However, they
+      Note that these designations are relatively slow to compute, especially
+      for the IGH locus. However, they
       are not at the core of the Vidjil clone gathering method (which
       relies only on the 'window', see above).
       To check the quality of these designations, the automated test suite include
