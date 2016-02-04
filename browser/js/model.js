@@ -1461,7 +1461,7 @@ Model.prototype = {
                 break;
 
             case "sampling_date":
-                if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID])
+                if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID] && this.samples.timestamp[timeID != "None"])
                     result = this.samples.timestamp[timeID].split(" ")[0]
                 break;
 
