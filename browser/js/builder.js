@@ -555,6 +555,7 @@ Builder.prototype = {
         }
 
         var div_segmented = this.build_named_info_line("info_segmented", "reads", val, warning)
+        div_segmented.title = "total: " + this.m.toStringThousands(this.m.reads.total[this.m.t])
         reads_div.appendChild(div_segmented)
 
 
