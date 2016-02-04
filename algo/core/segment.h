@@ -306,7 +306,7 @@ class FineSegmenter : public Segmenter
   * extend segmentation from VJ to VDJ
   * @param germline: germline used
   */
-  void FineSegmentD(Germline *germline,
+  void FineSegmentD(Germline *germline, bool several_D,
                     double threshold = THRESHOLD_NB_EXPECTED_D, int multiplier=1);
 
   bool FineSegmentD(Germline *germline,

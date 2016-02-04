@@ -921,7 +921,8 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
     return true;
 }
 
-void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, int multiplier){
+void FineSegmenter::FineSegmentD(Germline *germline, bool several_D,
+                                 double evalue_threshold, int multiplier){
 
   if (segmented){
 
@@ -942,7 +943,7 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
     vector <AlignBox*> boxes ;
     boxes.push_back(box_V);
 
-    if (box_D->start - box_V->end >= DD_MIN_SEARCH)
+    if (several_D && (box_D->start - box_V->end >= DD_MIN_SEARCH))
       {
         bool d1 = FineSegmentD(germline,
                                box_V, box_D1, box_D,
@@ -956,7 +957,7 @@ void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, in
 
     boxes.push_back(box_D);
 
-    if (box_J->start - box_D->end >= DD_MIN_SEARCH)
+    if (several_D && (box_J->start - box_D->end >= DD_MIN_SEARCH))
       {
         bool d2 = FineSegmentD(germline,
                                box_D, box_D2, box_J,
