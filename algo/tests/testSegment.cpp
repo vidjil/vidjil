@@ -60,7 +60,7 @@ void testFineSegment()
   TAP_TEST(s.isSegmented(), TEST_SEGMENT_POSITION, "is segmented (VJ)") ;
   
   //segmentation D
-  s.FineSegmentD(germline);
+  s.FineSegmentD(germline, false);
   
   TAP_TEST(s.isSegmented(), TEST_SEGMENT_POSITION, "is segmented (VDJ)") ;
 
@@ -70,7 +70,7 @@ void testFineSegment()
 
   TAP_TEST(s2.isSegmented(), TEST_SEGMENT_POSITION, "is segmented (VJ)") ;
   //segmentation D
-  s2.FineSegmentD(germline);
+  s2.FineSegmentD(germline, false);
   TAP_TEST(s2.isSegmented(), TEST_SEGMENT_POSITION, "is segmented (VDJ)") ;
   
   TAP_TEST(s.getLeft() == s2.getLeft(), TEST_SEGMENT_REVCOMP, " left segmentation position");
