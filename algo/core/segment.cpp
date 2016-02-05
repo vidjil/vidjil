@@ -918,6 +918,18 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
     seg_N2 = check_and_resolve_overlap(seq, box_DD->start, seq.length(),
                                        box_DD, box_Z, segment_cost);
 
+    // Realign D to see whether the score is enough
+    DynProg dp = DynProg(box_DD->getSequence(seq), box_DD->ref,
+                         DynProg::SemiGlobal, segment_cost, false, false);
+    int score_new = dp.compute();
+
+    float evalue_DD_new = multiplier * (box_DD->end - box_DD->start + 1) * box_DD->ref.size() * segment_cost.toPValue(score_new);
+
+    if (evalue_DD_new > evalue_threshold)
+      {
+        return false ;
+      }
+
     return true;
 }
 
