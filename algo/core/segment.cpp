@@ -909,6 +909,11 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
 
     if (evalue_D > evalue_threshold)
       return false;
+
+    int save_box_Y_end = box_Y->end ;
+    int save_box_Y_del_right = box_Y->del_right ;
+    int save_box_Z_del_left = box_Z->del_left;
+    int save_box_Z_start = box_Z->start ;
     
     //overlap VD
     seg_N1 = check_and_resolve_overlap(seq, 0, box_DD->end,
@@ -927,6 +932,12 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
 
     if (evalue_DD_new > evalue_threshold)
       {
+        // Restore box_Y and box_Z
+        box_Y->end =  save_box_Y_end;
+        box_Y->del_right = save_box_Y_del_right;
+        box_Z->del_left = save_box_Z_del_left;
+        box_Z->start = save_box_Z_start;
+
         return false ;
       }
 
