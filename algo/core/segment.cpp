@@ -29,6 +29,7 @@
 #include <cstring>
 #include <string>
 
+#define NO_FORBIDDEN_ID (-1)
 
 AlignBox::AlignBox() {
   del_left = 0 ;
@@ -662,7 +663,8 @@ bool comp_pair (pair<int,int> i,pair<int,int> j)
  * @post  box is filled
  */
 
-void align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool reverse_both, bool local,
+void align_against_collection(string &read, Fasta &rep, int forbidden_rep_id,
+                              bool reverse_ref, bool reverse_both, bool local,
                              AlignBox *box, Cost segment_cost)
 {
   
@@ -683,6 +685,9 @@ void align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool r
   
   for (int r = 0 ; r < rep.size() ; r++)
     {
+      if (r == forbidden_rep_id)
+        continue;
+
       DynProg dp = DynProg(sequence_or_rc, rep.sequence(r),
 			   dpMode, // DynProg::SemiGlobalTrans, 
 			   segment_cost, // DNA
@@ -725,7 +730,7 @@ void align_against_collection(string &read, Fasta &rep, bool reverse_ref, bool r
   box->score = score_r;
 
 #ifdef DEBUG_SEGMENT	
-  cout << "best: " << best_labels << " " << best_score ;
+  cout << "best: " << box->ref_label << " " << best_score ;
   cout << "del/del2/begin:" << (box->del_right) << "/" << (box->del_left) << "/" << (box->start) << endl;
   cout << endl;
 #endif
@@ -814,10 +819,10 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
 
   /* Segmentation */
-  align_against_collection(sequence_or_rc, germline->rep_5, reverse_V, reverse_V, false,
+  align_against_collection(sequence_or_rc, germline->rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
                                         box_V, segment_cost);
 
-  align_against_collection(sequence_or_rc, germline->rep_3, reverse_J, !reverse_J, false,
+  align_against_collection(sequence_or_rc, germline->rep_3, NO_FORBIDDEN_ID, reverse_J, !reverse_J, false,
                                           box_J, segment_cost);
 
   // J was run with '!reverseJ', we copy the box informations from right to left
@@ -875,14 +880,16 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
 bool FineSegmenter::FineSegmentD(Germline *germline,
                                  AlignBox *box_Y, AlignBox *box_DD, AlignBox *box_Z,
+                                 int forbidden_id,
+                                 int extend_DD_on_Y, int extend_DD_on_Z,
                                  double evalue_threshold, int multiplier){
 
-    // Create a zone where to look for D, adding at most EXTEND_D_ZONE nucleotides at each side
-    int l = box_Y->end - EXTEND_D_ZONE;
+    // Create a zone where to look for D, adding some nucleotides on both sides
+    int l = box_Y->end - extend_DD_on_Y;
     if (l<0) 
       l=0 ;
 
-    int r = box_Z->start + EXTEND_D_ZONE;
+    int r = box_Z->start + extend_DD_on_Z;
 
     string seq = getSequence().sequence; // segmented sequence, possibly rev-comped
 
@@ -892,7 +899,7 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
     string str = seq.substr(l, r-l);
 
     // Align
-    align_against_collection(str, germline->rep_4, false, false, true,
+    align_against_collection(str, germline->rep_4, forbidden_id, false, false, true,
                                            box_DD, segment_cost);
 
     box_DD->start += l ;
@@ -914,20 +921,54 @@ bool FineSegmenter::FineSegmentD(Germline *germline,
     return true;
 }
 
-void FineSegmenter::FineSegmentD(Germline *germline, double evalue_threshold, int multiplier){
+void FineSegmenter::FineSegmentD(Germline *germline, bool several_D,
+                                 double evalue_threshold, int multiplier){
 
   if (segmented){
 
     dSegmented = FineSegmentD(germline,
                               box_V, box_D, box_J,
+                              NO_FORBIDDEN_ID,
+                              EXTEND_D_ZONE, EXTEND_D_ZONE,
                               evalue_threshold, multiplier);
 
     if (!dSegmented)
       return ;
 
+    AlignBox *box_D1 = new AlignBox();
+    AlignBox *box_D2 = new AlignBox();
+
+#define DD_MIN_SEARCH 5
+
     vector <AlignBox*> boxes ;
     boxes.push_back(box_V);
+
+    if (several_D && (box_D->start - box_V->end >= DD_MIN_SEARCH))
+      {
+        bool d1 = FineSegmentD(germline,
+                               box_V, box_D1, box_D,
+                               box_D->ref_nb,
+                               EXTEND_D_ZONE, 0,
+                               evalue_threshold, multiplier);
+
+        if (d1)
+          boxes.push_back(box_D1);
+      }
+
     boxes.push_back(box_D);
+
+    if (several_D && (box_J->start - box_D->end >= DD_MIN_SEARCH))
+      {
+        bool d2 = FineSegmentD(germline,
+                               box_D, box_D2, box_J,
+                               box_D->ref_nb,
+                               0, EXTEND_D_ZONE,
+                               evalue_threshold, multiplier);
+
+        if (d2)
+          boxes.push_back(box_D2);
+      }
+
     boxes.push_back(box_J);
     code = codeFromBoxes(boxes, sequence_or_rc);
 

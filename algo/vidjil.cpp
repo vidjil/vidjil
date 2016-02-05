@@ -167,6 +167,7 @@ void usage(char *progname, bool advanced)
        << endl
 
        << "Locus/recombinations" << endl
+       << "  -d            try to detect several D (experimental)" << endl
        << "  -i            try to detect incomplete/unusual recombinations (locus with '+', must be used with -g)" << endl
        << "  -2            try to detect unexpected recombinations (must be used with -g)" << endl
        << endl ;
@@ -356,6 +357,8 @@ int main (int argc, char **argv)
   bool output_affects = false;
   bool keep_unsegmented_as_clone = false;
 
+  bool several_D = false;
+
   bool multi_germline = false;
   bool multi_germline_incomplete = false;
   bool multi_germline_mark = false;
@@ -384,7 +387,7 @@ int main (int argc, char **argv)
   //$$ options: getopt
 
 
-  while ((c = getopt(argc, argv, "A!x:X:hHaiI124g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:")) != EOF)
+  while ((c = getopt(argc, argv, "A!x:X:hHadiI124g:G:V:D:J:k:r:vw:e:C:f:W:l:Fc:m:N:s:b:Sn:o:L%:y:z:uUK3E:t:#:")) != EOF)
 
     switch (c)
       {
@@ -459,6 +462,10 @@ int main (int argc, char **argv)
         }
 	germline_system = "multi" ;
 	break;
+
+      case 'd':
+        several_D = true;
+        break;
 
       case 'i':
 	multi_germline_incomplete = true;
@@ -1355,7 +1362,7 @@ int main (int argc, char **argv)
         FineSegmenter seg(representative, segmented_germline, segment_cost);
 	
         if (segmented_germline->seg_method == SEG_METHOD_543)
-	  seg.FineSegmentD(segmented_germline);
+	  seg.FineSegmentD(segmented_germline, several_D);
 
         if (detect_CDR3)
           seg.findCDR3();
@@ -1571,7 +1578,7 @@ int main (int argc, char **argv)
             if (s.isSegmented()) 
               {
                 if (germline->seg_method == SEG_METHOD_543)
-                  s.FineSegmentD(germline);
+                  s.FineSegmentD(germline, several_D);
 
                 if (detect_CDR3)
                   s.findCDR3();

@@ -1,9 +1,11 @@
 ######################################
 # VDDJ non detecte
 
+# /9 TRDD3 1/ -> 13-9-1 = 3nt, too short
 >TRDV2 7/2/4 TRDD2 0/0/9 TRDD3 1/1/31 TRAJ29 [TRD] TODO
 AcgagaaaaggacatctatgGCCCTGGTTTCAAagacAATTTCCAAGGTGACATTGATATTGCAAAGAACCTGGCTGTACTTAAGATACTTGCACCATCAGAGAGAGATGAAGGGTCTTACTACTGTGCCTGGGCCTACTACCaaagggcacaagactttctgtgattgcaagtaagtgtttctagccatccttgattttgatcagcaatggcttcttcccttgaattatttttcagtgtacctagaatgccttttgcccccaagaaaggtttggaaggagctgggtcattagcattgcgcaggaaattacaggttattctgttataattcgaagccactggacagtcatgatgcacacagatctggcctgcattgcacctggctagtgctcagtgtgtagctatctgagctctgatgtaagt
 
+# /3 TRDD2 3/ -> 9-3-3 = 3nt, too short
 >TRDV2 3/0/3 TRDD2 3/2/0 TRDD3 1/2/3 TRAJ29 [TRD] TODO
 TGGTTTNAAgacaaTTTCcaAGGTGACATTGATATTGCAAAGAACCTGGCTGTACTtaAgATACTTGCaCCATCAgAgAGAGATgAaGGGTCTtACtaCTGTGCCTGTGACtCCCCACtGGGGGATACCTATTCAGGAAACACACCTcTTGTcTTTGGAAaGGGCACAAgAcTTTCTGTGATTGCAAGTAAgTGTTTCTAgCcaTCCTTGATTTTGATcagCAatGGCTTCTTCCCTTGAATTATTTTTCaGTGTACCTAgaATGCtTTTgCCA
 
