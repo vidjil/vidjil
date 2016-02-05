@@ -995,6 +995,9 @@ void FineSegmenter::FineSegmentD(Germline *germline, bool several_D,
     boxes.push_back(box_J);
     code = codeFromBoxes(boxes, sequence_or_rc);
 
+    delete box_D1;
+    delete box_D2;
+
     finishSegmentationD();
   }
 }

@@ -36,6 +36,9 @@ void testOverlap()
 
   TAP_TEST(box_A->end == 6, TEST_FINE_SEGMENT_OVERLAP, "end position of left region : " << box_A);
   TAP_TEST(box_C->start == 7,  TEST_FINE_SEGMENT_OVERLAP, "start position of right region : " << box_C);
+
+  delete box_A;
+  delete box_C;
 }
 
 void testFineSegment()
