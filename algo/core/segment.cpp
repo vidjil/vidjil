@@ -1071,8 +1071,8 @@ json FineSegmenter::toJson(){
     
     if (isDSegmented()) {
       seg["4"] = box_D->ref_label;
-      seg["4start"] = Dstart;
-      seg["4end"] = Dend;
+      seg["4start"] = box_D->start;
+      seg["4end"] = box_D->end;
       seg["4delLeft"] = box_D->del_left;
       seg["4delRight"] = box_D->del_right;
 
