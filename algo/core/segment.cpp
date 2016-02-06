@@ -893,7 +893,7 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
   // seg_N will be recomputed in finishSegmentation()
 
-  vector <AlignBox*> boxes ;
+  boxes.clear();
   boxes.push_back(box_V);
   boxes.push_back(box_J);
   code = codeFromBoxes(boxes, sequence_or_rc);
@@ -982,16 +982,15 @@ void FineSegmenter::FineSegmentD(Germline *germline, bool several_D,
     if (!dSegmented)
       return ;
 
-    AlignBox *box_D1 = new AlignBox();
-    AlignBox *box_D2 = new AlignBox();
-
 #define DD_MIN_SEARCH 5
 
-    vector <AlignBox*> boxes ;
+    boxes.clear();
     boxes.push_back(box_V);
 
     if (several_D && (box_D->start - box_V->end >= DD_MIN_SEARCH))
       {
+        AlignBox *box_D1 = new AlignBox("4a");
+
         bool d1 = FineSegmentD(germline,
                                box_V, box_D1, box_D,
                                box_D->ref_nb,
@@ -1000,12 +999,16 @@ void FineSegmenter::FineSegmentD(Germline *germline, bool several_D,
 
         if (d1)
           boxes.push_back(box_D1);
+        else
+          delete box_D1;
       }
 
     boxes.push_back(box_D);
 
     if (several_D && (box_J->start - box_D->end >= DD_MIN_SEARCH))
       {
+        AlignBox *box_D2 = new AlignBox("4b");
+
         bool d2 = FineSegmentD(germline,
                                box_D, box_D2, box_J,
                                box_D->ref_nb,
@@ -1014,13 +1017,12 @@ void FineSegmenter::FineSegmentD(Germline *germline, bool several_D,
 
         if (d2)
           boxes.push_back(box_D2);
+        else
+          delete box_D2;
       }
 
     boxes.push_back(box_J);
     code = codeFromBoxes(boxes, sequence_or_rc);
-
-    delete box_D1;
-    delete box_D2;
 
     finishSegmentationD();
   }
@@ -1086,22 +1088,21 @@ void FineSegmenter::findCDR3(){
 
 json FineSegmenter::toJson(){
   json seg;
-    
+
+  for (AlignBox *box: boxes)
+    {
+      box->addToJson(seg);
+    }
+
   if (isSegmented()) {
 
-    box_V->addToJson(seg);
-
     if (isDSegmented()) {
-      box_D->addToJson(seg);
-
       seg["N1"] = seg_N1.size();
       seg["N2"] = seg_N2.size();
     }
     else {
       seg["N"] = seg_N.size();
     }
-
-    box_J->addToJson(seg);
 
     if (CDR3start >= 0) {
         seg["cdr3"] = {

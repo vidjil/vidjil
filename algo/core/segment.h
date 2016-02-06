@@ -292,6 +292,8 @@ class FineSegmenter : public Segmenter
    vector<pair<int, int> > score_V;
    vector<pair<int, int> > score_D;
    vector<pair<int, int> > score_J;
+
+   vector <AlignBox*> boxes ;
    
    /**
    * Build a fineSegmenter based on KmerSegmentation
