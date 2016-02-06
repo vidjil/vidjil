@@ -1142,7 +1142,13 @@ json KmerSegmenter::toJson() {
 
 
 FineSegmenter::~FineSegmenter() {
-  delete box_V;
-  delete box_D;
-  delete box_J;
+
+  // Push box_V, box_D, box_J in boxes if they are not already there
+  for (AlignBox* box: {box_V, box_D, box_J})
+    if (std::find(boxes.begin(), boxes.end(), box) == boxes.end())
+      boxes.push_back(box);
+
+  // Delete all boxes
+  for (AlignBox* box: boxes)
+    delete box;
 }
