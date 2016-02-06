@@ -1065,7 +1065,6 @@ json FineSegmenter::toJson(){
     
   if (isSegmented()) {
     seg["5"] = box_V->ref_label;
-    seg["5start"] = 0;
     seg["5end"] = box_V->end;
     seg["5del"] = box_V->del_right;
     
