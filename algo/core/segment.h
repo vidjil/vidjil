@@ -75,13 +75,16 @@ const char* const segmented_mesg[] = { "?",
 class AlignBox
 {
  public:
+  string key;
+
   int del_left;
   int start;
   int end;
   int del_right;
 
-  AlignBox();
+  AlignBox(string key = "");
   string getSequence(string sequence);
+  void addToJson(json &seg);
 
   /* Identifier, label and sequence of the reference sequence (the best one) */
   int ref_nb;

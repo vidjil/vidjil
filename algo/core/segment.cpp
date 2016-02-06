@@ -31,7 +31,9 @@
 
 #define NO_FORBIDDEN_ID (-1)
 
-AlignBox::AlignBox() {
+AlignBox::AlignBox(string _key) {
+  key = _key;
+
   del_left = 0 ;
   start = 0 ;
   end = 0 ;
@@ -46,6 +48,28 @@ string AlignBox::getSequence(string sequence) {
   return sequence.substr(start, end-start+1);
 }
 
+void AlignBox::addToJson(json &seg) {
+
+  seg[key] = ref_label;
+
+  if (key == "5")
+    {
+      seg[key+"end"] = end;
+      seg[key+"del"] = del_right;
+    }
+  else if (key == "3")
+    {
+      seg[key+"del"] = del_left;
+      seg[key+"start"] = start;
+    }
+  else
+    {
+      seg[key+"delLeft"] = del_left;
+      seg[key+"start"] = start;
+      seg[key+"end"] = end;
+      seg[key+"delRight"] = del_right;
+    }
+}
 
 ostream &operator<<(ostream &out, const AlignBox &box)
 {
@@ -749,9 +773,9 @@ string format_del(int deletions)
 
 FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  double threshold, int multiplier)
 {
-  box_V = new AlignBox();
-  box_D = new AlignBox();
-  box_J = new AlignBox();
+  box_V = new AlignBox("5");
+  box_D = new AlignBox("4");
+  box_J = new AlignBox("3");
 
   segmented = false;
   dSegmented = false;
@@ -1064,16 +1088,11 @@ json FineSegmenter::toJson(){
   json seg;
     
   if (isSegmented()) {
-    seg["5"] = box_V->ref_label;
-    seg["5end"] = box_V->end;
-    seg["5del"] = box_V->del_right;
-    
+
+    box_V->addToJson(seg);
+
     if (isDSegmented()) {
-      seg["4"] = box_D->ref_label;
-      seg["4start"] = box_D->start;
-      seg["4end"] = box_D->end;
-      seg["4delLeft"] = box_D->del_left;
-      seg["4delRight"] = box_D->del_right;
+      box_D->addToJson(seg);
 
       seg["N1"] = seg_N1.size();
       seg["N2"] = seg_N2.size();
@@ -1081,10 +1100,8 @@ json FineSegmenter::toJson(){
     else {
       seg["N"] = seg_N.size();
     }
-    
-    seg["3"] = box_J->ref_label;
-    seg["3start"] = box_J->start;
-    seg["3del"] = box_J->del_left;
+
+    box_J->addToJson(seg);
 
     if (CDR3start >= 0) {
         seg["cdr3"] = {
