@@ -632,6 +632,11 @@ require either the =-G germline/IGH= option, or the multi-germline =-g germline=
    # The out/reads.segmented.vdj.fa include all reads where a V(D)J recombination was found
 #+END_SRC
 
+Typical whole RNA-Seq or capture datasets may be huge (several GB) but with only a (very) small portion of CDR3s.
+Using Vidjil with =-U= will create a =out/reads.segmented.vdj.fa= file
+that includes all reads where a V(D)J recombination (or an unexpected recombination, with =-2=) was found.
+This file will be relatively small (a few kB or MB) and can be taken again as an input for Vidjil or for other programs.
+
 
 ** Advanced usage
 
