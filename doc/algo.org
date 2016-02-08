@@ -224,7 +224,7 @@ Locus/recombinations
    See [[http://git.vidjil.org/blob/master/doc/locus.org][locus.org]] for information on the analyzable locus.
  - Analyzed locus and parameters are configured through the =germline/germlines.data= file.
    To select a custom set of TR or Ig locus, you may copy =germline/germlines.data= into a new file,
-   as for example =germline/custom-germlines.data=, and run Vidjil with =-g germline/custom-germlines.data -i=.
+   as for example =germline/custom-germlines.data=, and run Vidjil with =-g germline/custom-germlines.data -i -2=.
 
 ** Main algorithm parameters
 
