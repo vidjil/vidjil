@@ -1,7 +1,7 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
-2016-02-xx  The Vidjil Team
+2016-02-08  The Vidjil Team
 	* New default threshold (-z 100), fully analyzing more clones
 	* New computation of diversity indices (Shannon, Simpson) (core/windows.cpp)
 	* Streamlined KmerSegmenter test (core/affectanalyser.cpp)
