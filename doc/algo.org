@@ -436,12 +436,14 @@ The first window has 8 occurrences, the second window has 5 occurrences.
 
 ** Diversity measures
 
-Several [[https://en.wikipedia.org/wiki/Diversity_index][diversity indices]] indices are reported, both on the standard output and in the =.vidjil= file:
+Several [[https://en.wikipedia.org/wiki/Diversity_index][diversity indices]] are reported, both on the standard output and in the =.vidjil= file:
 
 - H  (=index_H_entropy=): Shannon's diversity
 - E  (=index_E_equitability=): Shannon's equitability
 - Ds (=index_Ds_diversity=): Simpson's diversity
 
+E ans Ds values are between 0 (no diversity, one clone gathers all analyzed reads)
+and 1 (full diversity, each analyzed read belongs to a different clone).
 
 ** Unsegmentation causes
 
