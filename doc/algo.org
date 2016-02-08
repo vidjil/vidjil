@@ -615,8 +615,8 @@ require either the =-G germline/IGH= option, or the multi-germline =-g germline=
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -g germline -i data/reads.fasta
-   # Detects for each read the best locus, including an analysis of incomplete/unusual recombinations
+./vidjil -g germline -i -2 data/reads.fasta
+   # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Gather the reads into clones, again based on windows overlapping the detected CDR3s.
    # Summary of clones is available both on stdout, in out/reads.vdj.fa and in out/reads.vidjil.
 #+END_SRC
@@ -625,8 +625,8 @@ require either the =-G germline/IGH= option, or the multi-germline =-g germline=
 ** Basic usage: Whole RNA-Seq or capture datasets
 
 #+BEGIN_SRC sh
-./vidjil -g germline -i -U data/reads.fasta
-   # Detects for each read the best locus, including an analysis of incomplete/unusual recombinations
+./vidjil -g germline -i -2 -U data/reads.fasta
+   # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Gather the reads into clones, again based on windows overlapping the detected CDR3s.
    # Summary of clones is available both on stdout, in out/reads.vdj.fa and in out/reads.vidjil.
    # The out/reads.segmented.vdj.fa include all reads where a V(D)J recombination was found
