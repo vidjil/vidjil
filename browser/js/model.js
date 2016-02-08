@@ -1063,7 +1063,14 @@ Model.prototype = {
         html += "<tr><td> parameters </td><td>" + this.getCommandTime(timeID) + "</td></tr>"
         html += "<tr><td> timestamp </td><td>" + this.getTimestampTime(timeID) + "</td></tr>"
         html += "<tr><td> segmentation </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
-            
+
+        if ( typeof this.diversity != 'undefined') {
+            html += "<tr><td class='header' colspan='2'> diversity </td></tr>"
+            for (var key in this.diversity) {
+                html += "<tr><td> " + key.replace('index_', '') + "</td><td>" + this.diversity[key].toFixed(3) + '</td></tr>'
+            }
+        }
+
         html += "</table></div>"
         return html
     },
