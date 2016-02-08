@@ -420,19 +420,41 @@ By default, the two output files are named =out/basename.vidjil= in =out/basenam
 
 ** Auxiliary output files
 
-The auxiliary files include =out/basename.windows.fa= (list of windows, with number of occurrences, as below)
-and =out/seq/clone.fa-*= (detailed analysis by clone).
+The =out/basename.windows.fa= file contains the list of windows, with number of occurrences:
 
 #+BEGIN_EXAMPLE
 >8--window--1
-ATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGG
+TATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTG
 >5--window--2
+CGAGAGGTTACTATGATAGTAGTGGTTATTACGGGGTAGGGCAGTACTAC
 ATAGTAGTGGTTATTACGGGGTAGGGCAGTACTACTACTACTACATGGAC
 (...)
 #+END_EXAMPLE
 
 Windows of size 50 (modifiable by =-w=) have been extracted.
 The first window has 8 occurrences, the second window has 5 occurrences.
+
+The =out/seq/clone.fa-*= contains the detailed analysis by clone, with
+the window, the representative sequence, as well as with the most similar V, (D) and J germline genes:
+
+#+BEGIN_EXAMPLE
+>clone-001--IGH--0000008--0.0608%--window
+TATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTG
+>clone-001--IGH--0000008--0.0608%--lcl|FLN1FA001CPAUQ.1|-[105,232]-#2 - 128 bp (55% of 232.0 bp) + VDJ 	0 54 73 84 85 127	IGHV3-23*05 6/ACCCGGGAGGAACAATAT/9 IGHD6-13*01 0//5 IGHJ4*02  IGH SEG_+ 1.946653e-19 1.352882e-19/5.937712e-20
+GCTGTACCTGCAAATGAACAGCCTGCGAGCCGAGGACACGGCCACCTATTACTGT
+ACCCGGGAGGAACAATATAGCAGCTGGTAC
+TTTGACTTCTGGGGCCAGGGGATCCTGGTCACCGTCTCCTCAG
+
+>IGHV3-23*05
+GAGGTGCAGCTGTTGGAGTCTGGGGGAGGCTTGGTACAGCCTGGGGGGTCCCTGAGACTCTCCTGTGCAGCCTCTGGATTCACCTTTAGCAGCTATGCCATGAGCTGGGTCCGCCAGGCTCCAGGGAAGGGGCTGGAGTGGGTCTCAGCTATTTATAGCAGTGGTAGTAGCACATACTATGCAGACTCCGTGAAGGGCCGGTTCACCATCTCCAGAGACAATTCCAAGAACACGCTGTATCTGCAAATGAACAGCCTGAGAGCCGAGGACACGGCCGTATATTACTGTGCGAAA
+>IGHD6-13*01
+GGGTATAGCAGCAGCTGGTAC
+>IGHJ4*02
+ACTACTTTGACTACTGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAG
+#+END_EXAMPLE
+
+The =-a= debug option further output in each =out/seq/clone.fa-*= files the full list of reads belonging to this clone.
+The =-a= option produces large files, and is not recommanded in general cases.
 
 ** Diversity measures
 
