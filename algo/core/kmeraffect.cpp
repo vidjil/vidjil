@@ -22,6 +22,7 @@
 */
 
 #include "kmeraffect.h"
+#include <cassert>
 
 int affect_strand(const affect_t &affect) {
   return (affect.c & (1 << 7)) ? 1 : -1;
@@ -120,8 +121,10 @@ KmerAffect &KmerAffect::operator+=(const KmerAffect &kmer) {
       // strand is ambiguous but not the label, but we don't have enough space
       // in 1 byte…
       *this = AFFECT_AMBIGUOUS;
-    else 
+    else {
+      assert(affect.c != kmer.affect.c || getLength() == kmer.getLength());
       *this = AFFECT_AMBIGUOUS;
+    }
   }
   return *this;
 }
