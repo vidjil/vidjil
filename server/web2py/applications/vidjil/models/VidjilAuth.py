@@ -86,6 +86,34 @@ class VidjilAuth(Auth):
         '''
         return self.get_permission('admin', 'patient', patient_id, user)\
             or self.is_admin(user)
+        
+    def can_modify_run(self, run_id, user = None):
+        '''
+        Returns True if the current user can administrate
+        the run whose ID is run_id
+
+        If the user is None, the current user is taken into account
+        '''
+        return self.get_permission('admin', 'run', run_id, user)\
+            or self.is_admin(user)
+        
+    def can_modify_sample_set(self, sample_set_id, user = None) :
+        sample_set = db.sample_set[sample_set_id]
+        
+        perm = self.get_permission('admin', 'sample_set', sample_set_id, user)\
+            or self.is_admin(user)
+
+        if (sample_set.sample_type == "patient") :
+            for row in db( db.patient.sample_set_id == sample_set_id ).select() :
+                if self.can_modify_patient(row.id, user):
+                    perm = True;
+
+        if (sample_set.sample_type == "run") :
+            for row in db( db.run.sample_set_id == sample_set_id ).select() :
+                if self.can_modify_run(row.id, user):
+                    perm = True;
+
+        return perm
 
     def can_modify_config(self, config_id, user = None):
         '''
