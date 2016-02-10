@@ -37,7 +37,29 @@ able to open =.vidjil= files with the =import/export= menu.
 To work with actual data, the easiest way is to copy =js/conf.js.sample= to =js/conf.js=.
 This will unlock the =patients= menu and allow your local browser
 to access the public server at http://rbx.vidjil.org/.
+** Notifications
+*** Priority
+#<<browser:priority>>
+    The priority determines how the notification are shown and what action the
+    used should do. The priorities can be between 0 and 3.
+    - 0 :: The notification is not shown
+    - 1 :: The notification is shown (usually on green background) and
+         automatically disappears
+    - 2 :: The notification is shown (usually on yellow background) and
+         automatically disappears
+    - 3 :: The notification is shown (usually on red background) and doesn't
+         disappear until the user clicks on it.
 
+    In the =console.log=, the field =priority= takes one of those priorities.
+* Server
+** Notifications
+*** Priority
+    The priority determines how the notification is shown (see [[browser:priority][here for more
+    details]]). From the server we have two ways of modifiying the priority.
+    Either by defining the =success= field to ='true'= or to ='false'=, either
+    by explicitly specifying the priority in the field =priority=.
+
+    For more details see 35054e4
 * Tests
 ** Algorithm
 *** Unit
