@@ -13,68 +13,113 @@ if request.env.http_origin:
     response.headers['Access-Control-Max-Age'] = 86400
 
 
+    
+    
 def add(): 
-    if not auth.can_modify_patient(request.vars['id'], auth.user_id):
-        return error_message("you need admin permission on this patient to add files")
-    elif not auth.can_upload_file(request.vars['id']):
+    if not auth.can_upload_file():
         return error_message("you don't have right to upload files")
     else:
-        query = db((db.patient.id == request.vars['id'])
-                &(db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
-                &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-            ).select(db.sequence_file.ALL)
-        if len(query) != 0 :
-            pcr = query[0].pcr
-            sequencer = query[0].sequencer
-            producer = query[0].producer
-        else:
-            pcr = sequencer = producer = ""
-        return dict(message=T('add file'),
-                    pcr=pcr,
-                    sequencer=sequencer,
-                    producer=producer)
+        
+        query_patient = db(
+            auth.accessible_query('admin', db.patient)
+        ).select(
+            db.patient.ALL,
+            orderby = ~db.patient.id
+        )
+        patient_list = []
 
-#TODO check data
+        for row in query_patient :
+            name = row.first_name + " " + row.last_name
+            birth = "[" + str(row.birth) + "]   "
+            id = "   ("+str(row.id)+")"
+            patient_list.append(birth+name+id)
+            
+        query_run = db(
+            auth.accessible_query('admin', db.run)
+        ).select(
+            db.run.ALL,
+            orderby = ~db.run.id
+        )
+        run_list = []
+
+        for row in query_run :
+            name = row.name
+            run_date = "[" + str(row.run_date) + "]   "
+            id = "   ("+str(row.id)+")"
+            run_list.append(run_date+name+id)
+        
+        return dict(message = T('add file'),
+                   patient_list = patient_list,
+                   run_list = run_list)
+
+
 def add_form(): 
     error = ""
+    patient_id = None
+    run_id = None
     
     if request.vars['sampling_date'] != '' :
         try:
             datetime.datetime.strptime(""+request.vars['sampling_date'], '%Y-%m-%d')
         except ValueError:
             error += "date (wrong format), "
-    if request.vars['filename'] == None :
-        error += " missing filename"
             
-    if error=="" :
-        query = db((db.patient.id == request.vars['patient_id'])
+    if request.vars['filename'] == None :
+        error += " missing file"
+    if request.vars['patient_id'] == '' and request.vars['run_id'] == "" :
+        error += " missing patient or run"
+        
+    if request.vars['patient_id'] != '' :
+        patient_id = int(request.vars['patient_id'].split('(')[-1][:-1])
+        if not auth.can_modify_patient(patient_id) :
+            error += " missing permission for patient "+str(patient_id)
+            
+        query = db((db.patient.id == patient_id)
                 &(db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
                 &(db.sequence_file.id == db.sample_set_membership.sequence_file_id)
             ).select(db.sequence_file.ALL)
         for row in query :
             if row.filename == request.vars['filename'] :
-                return error_message("this sequence file already exists for this patient")
+                error += " this sequence file already exists for this patient"
             
+    if request.vars['run_id'] != '' :
+        run_id = int(request.vars['run_id'].split('(')[-1][:-1])
+        if not auth.can_modify_run(run_id) :
+            error += " missing permission for run "+str(run_id)
+
+
+    if error=="" :
+            
+        #add sequence_file to the db
         id = db.sequence_file.insert(sampling_date=request.vars['sampling_date'],
                             info=request.vars['file_info'],
-                            pcr=request.vars['pcr'],
-                            sequencer=request.vars['sequencer'],
-                            producer=request.vars['producer'],
-                            patient_id=request.vars['patient_id'],
                             filename=request.vars['filename'],
                             provider=auth.user_id)
         
+        #add a default sample_set for this sequence file
         id_sample_set = db.sample_set.insert(sample_type="sequence_file")
         
         id_sample_set_membership = db.sample_set_membership.insert(sample_set_id=id_sample_set,
                                                                   sequence_file_id=id)
-        id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=db.patient[request.vars['patient_id']].sample_set_id,
+        #add sequence_file to a run sample_set
+        if run_id is not None :
+            run_sample_set_id = db.run[run_id].sample_set_id
+            id_sample_set_membership_run = db.sample_set_membership.insert(sample_set_id=run_sample_set_id,
                                                                   sequence_file_id=id)
-    
+            redirect_args = {"id" : run_sample_set_id}
+            
+        #add sequence_file to a patient sample_set
+        if patient_id is not None :
+            patient_sample_set_id = db.patient[patient_id].sample_set_id
+            id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=patient_sample_set_id,
+                                                                  sequence_file_id=id)
+            redirect_args = {"id" : patient_sample_set_id}
+        
+        
         res = {"file_id" : id,
-               "message": "file %s (%s): upload started: %s" % (id, request.vars['patient_id'], request.vars['filename']),
-               "redirect": "patient/info",
-               "args" : {"id" : request.vars['patient_id']}
+               "message": "file %s : upload started: %s" % (id, request.vars['filename']),
+               "redirect": "sample_set/index",
+               "args" : redirect_args
                }
         log.info(res)
 
@@ -87,7 +132,7 @@ def add_form():
 def edit(): 
     if auth.can_modify_patient(request.vars['patient_id']):
         return dict(message=T('edit file'))
-    #elif not auth.can_upload_file(request.vars['id']):
+    #elif not auth.can_upload_file():
     #    res = {"success" : "false", "message" : "you don't have right to upload files"}
     #    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:

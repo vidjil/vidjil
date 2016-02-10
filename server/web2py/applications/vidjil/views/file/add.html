@@ -1,53 +1,46 @@
 {{extend 'db_layout.html'}}
 
-{{patient = db.patient[request.vars["id"]]}}
-<h3>{{=patient.last_name + " " + patient.first_name }} ({{=patient.birth}}) -- add file</h3>
+<h3>New sequence file</h3>
 
-<div>
-    <table>
-        <tr>
-            <td >
-                <label for="file" id="file__label"> file </label>
-            </td>
-            <td >
-                <input id="upload_file" type="file" name="file" >
-            </td>
-            <td >
-	      (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
-        </tr>
-    </table>
-</div>
 
 <form id="upload_form" action="DB_ADDRESS/file/add_form" enctype="multipart/form-data" method="post">
-    <input type="hidden" name="patient_id" value="{{=request.vars["id"]}}" >
     <input type="hidden" id="filename" name="filename" type="text" value="">
     
     <table>
         <tbody>
             <tr>
-                <td><label for="sampling_date" id="sampling_date__label">sampling date: </label></td>
-                <td><input class="date" id="sampling_date" name="sampling_date" type="text" value="">
-                    <span>(format: yyyy-mm-dd)</span></td>
+                <td ><label for="file" id="file__label"> file </label></td>
+                <td ><input id="upload_file" type="file" name="file" ></td>
+                <td >* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
+            </tr>
+            <tr>
+                <td><label for="patient_id" id="patient_id__label">patient: </label></td>
+                <td><input list="patients" id="patient_id" name="patient_id" type="text" size="80"></td>
+                  <datalist id="patients">
+                  {{for row in patient_list :}}
+                      <option value="{{=row}}">
+                  {{pass}}
+                  </datalist>
+                <td rowspan="2">* you must associate a sequence file with at least one patient or run</td>
+            </tr>
+            <tr>
+                <td><label for="run_id" id="run_id__label">run: </label></td>
+                <td><input list="runs" id="run_id" name="run_id" type="text" size="80"></td>
+                  <datalist id="runs">
+                  {{for row in run_list :}}
+                      <option value="{{=row}}">
+                  {{pass}}
+                  </datalist>
                 <td></td>
+            </tr>
+            <tr>
+                <td><label for="sampling_date" id="sampling_date__label">sampling date: </label></td>
+                <td><input class="date" id="sampling_date" name="sampling_date" type="text" size="20" value=""></td>
+                <td>(format: yyyy-mm-dd)</td>
             </tr>
             <tr>
                 <td><label for="file_info" id="file_info__label">info: </label></td>
-                <td><textarea class="text" id="file_info" name="file_info" cols="40" rows="10"></textarea></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><label for="pcr" id="pcr__label">pcr: </label></td>
-                <td><input class="text" id="pcr" name="pcr" type="text" size="40" value="{{=pcr}}"></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><label for="sequencer" id="sequencer__label">sequencer: </label></td>
-                <td><input class="text" id="sequencer" name="sequencer" type="text" size="40" value="{{=sequencer}}"></td>
-                <td></td>
-            </tr>
-            <tr>
-                <td><label for="producer" id="producer__label">producer: </label></td>
-                <td><input class="text" id="producer" name="producer" type="text" size="40" value="{{=producer}}"></td>
+                <td><textarea class="text" id="file_info" name="file_info" cols="60" rows="12"></textarea></td>
                 <td></td>
             </tr>
             <tr>
