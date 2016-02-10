@@ -85,7 +85,7 @@ ostream &operator<<(ostream &os, const affect_t &a) {
 
 
 KmerAffect::KmerAffect() {
-  affect.c = AFFECT_UNKNOWN_CHAR;
+  *this = AFFECT_UNKNOWN;
 }
 
 KmerAffect::KmerAffect(const affect_t &a) {
