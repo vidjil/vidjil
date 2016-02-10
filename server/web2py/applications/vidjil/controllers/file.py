@@ -185,6 +185,7 @@ def upload():
     res = {"message": error + mes}
     if error:
         res['success'] = 'false'
+        res['priority'] = 3
         log.error(res)
     else:
         log.info(res)

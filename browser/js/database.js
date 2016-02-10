@@ -226,9 +226,13 @@ Database.prototype = {
         }
 
         //the json result contain a flash message
-        if (res.message) console.log({"type": "flash",
-                                      "msg": "database : " + res.message,
-                                      "priority": res.success == "false" ? 2 : 1}) // res.success can be 'undefined'
+        if (res.message) {
+	    priority = res.success == 'false' ? 2 : 1
+	    priority = res.priority == 'undefined' ? priority : res.priority
+	    console.log({"type": "flash",
+                         "msg": "database : " + res.message,
+                         "priority": res.priority}) // res.success can be 'undefined'
+	}
         return res
 
         
