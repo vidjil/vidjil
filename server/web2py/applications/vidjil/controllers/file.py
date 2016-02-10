@@ -158,8 +158,15 @@ def upload():
         log.debug(res)
         if request.vars.file != None :
             f = request.vars.file
-            db.sequence_file[request.vars["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
-            mes += "upload finished"
+            try:
+                db.sequence_file[request.vars["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
+                mes += "upload finished"
+            except IOError as e:
+                if str(e).find("File name too long") > -1:
+                    error += 'Your filename is too long, please shorten it'
+                else:
+                    error += "System error during processing of uploaded file"
+                    log.error(str(e))
         
         data_file = db.sequence_file[request.vars["id"]].data_file
 
