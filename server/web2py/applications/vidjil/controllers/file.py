@@ -184,6 +184,7 @@ def upload():
     # Log and exit
     res = {"message": error + mes}
     if error:
+        res['success'] = 'false'
         log.error(res)
     else:
         log.info(res)
