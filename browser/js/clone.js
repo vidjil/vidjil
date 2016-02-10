@@ -322,11 +322,19 @@ Clone.prototype = {
 
     },
 
-    /* return a printable size such as either '26.32%' or '26.32% (33.66% of IGH)' (when there are several systems) */
+    /* return a printable information: length, number of reads, and ratios
+       The ratios may be '26.32%', or, when there are several (pseudo-)locus,
+       '26.32%, 33.66% of IGH' or even '0.273%, 4.043% of IGK+/IGK, 4.060% of IGK+'
+
+       --> "286 nt, 1418 reads (0.273%, 4.043% of IGK+/IGK, 4.060% of IGK+)"
+    */
+
     getPrintableSize: function (time) {
 
         var reads = this.getReads(time)
-        s = this.m.toStringThousands(reads) + ' read' + (reads > 1 ? 's' : '') + ' '
+        s = this.getSequenceLength() + ' nt, '
+
+        s += this.m.toStringThousands(reads) + ' read' + (reads > 1 ? 's' : '') + ' '
 
         if (reads < this.m.NB_READS_THRESHOLD_QUANTIFIABLE)
             return s
