@@ -150,7 +150,7 @@ def upload():
                         &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                         &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
                         ).select(db.patient.id).first()
-        mes += "file %s (%s): " % (request.vars['id'], patient_id)
+        mes += " file %s (patient %s) " % (db.sequence_file[request.vars['id']].filename, patient_id['id'])
         res = {"message": mes + "processing uploaded file",
                "redirect": "patient/info",
                "args" : {"id" : request.vars['id']}
@@ -163,9 +163,9 @@ def upload():
                 mes += "upload finished"
             except IOError as e:
                 if str(e).find("File name too long") > -1:
-                    error += 'Your filename is too long, please shorten it'
+                    error += 'Your filename is too long, please shorten it.'
                 else:
-                    error += "System error during processing of uploaded file"
+                    error += "System error during processing of uploaded file."
                     log.error(str(e))
         
         data_file = db.sequence_file[request.vars["id"]].data_file
@@ -182,7 +182,7 @@ def upload():
         db.sequence_file[request.vars["id"]] = dict(size_file = size)
 
     # Log and exit
-    res = {"message": mes + error}
+    res = {"message": error + mes}
     if error:
         log.error(res)
     else:
