@@ -248,7 +248,7 @@ test("clone : export", function() {
 
     equal(c3.getPrintableSegSequence(), "aaaaa\naaaaatttt\nttttt", "getPrintableSegSequence() : Ok");
     console.log(c3.getFasta())
-    equal(c3.getFasta(), ">id3    10 reads (5.000%)\naaaaa\naaaaatttt\nttttt\n", "getFasta() : Ok");
+    equal(c3.getFasta(), ">id3    19 nt, 10 reads (5.000%)\naaaaa\naaaaatttt\nttttt\n", "getFasta() : Ok");
     
 });
 
