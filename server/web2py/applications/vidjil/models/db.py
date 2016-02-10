@@ -118,6 +118,14 @@ db.patient.birth.requires = IS_DATE(format=T('%Y-%m-%d'),
                    error_message='must be YYYY-MM-DD!')
 '''
 
+db.define_table('run',
+                Field('name','string'),
+                Field('run_date','date'),
+                Field('info','text'),
+                Field('id_label','string'),
+                Field('creator','reference auth_user'),
+                Field('sample_set_id','reference sample_set', ondelete='SET NULL'))
+
 db.define_table('sequence_file',
                 Field('patient_id', 'reference patient'),
                 Field('sampling_date','date'),
