@@ -39,7 +39,7 @@ size_t affect_length(const affect_t &affect) {
 // KmerAffect class
 
 bool operator==(const affect_t &a1, const affect_t &a2) {
-  return a1.c == a2.c;
+  return a1.c == a2.c && a1.length == a2.length;
 }
 bool operator<(const affect_t &a1, const affect_t &a2) {
   return a1.c < a2.c;
@@ -54,7 +54,7 @@ bool operator>=(const affect_t &a1, const affect_t &a2) {
   return ! (a1 < a2);
 }
 bool operator!=(const affect_t &a1, const affect_t &a2) {
-  return a1.c != a2.c;
+  return ! (a1 == a2);
 }
 string toString(const affect_t &a) {
   string result;
@@ -204,7 +204,7 @@ bool operator>=(const KmerAffect &a1, const KmerAffect &a2) {
   return a1.affect >= a2.affect;
 }
 bool operator!=(const KmerAffect &a1, const KmerAffect &a2) {
-  return a1.affect != a2.affect;
+  return ! (a1 == a2);
 }
 
 ostream &operator<<(ostream &os, const KmerAffect &kmer) {
