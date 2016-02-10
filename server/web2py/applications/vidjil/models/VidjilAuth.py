@@ -143,14 +143,13 @@ class VidjilAuth(Auth):
         return self.get_permission('run', 'results_file', user=user)\
             or self.is_admin(user)
 
-    def can_upload_file(self, patient_id = 0, user = None):
+    def can_upload_file(self, user = None):
         '''
-        Returns True iff the current user can upload a sequence file to
-        the patient whose ID is given in parameter.
+        Returns True iff the current user can upload a sequence file
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('upload', 'sequence_file', patient_id, user)\
+        return self.get_permission('upload', 'sequence_file', user=user)\
             or self.is_admin(user)
 
     def can_use_config(self, config_id, user = None):
