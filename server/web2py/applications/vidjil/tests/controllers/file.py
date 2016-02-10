@@ -107,7 +107,7 @@ class FileController(unittest.TestCase):
         request.vars['id'] = fake_file_id
     
         resp = upload()
-        self.assertEqual(resp.find('"message":"upload finished: plopapi"'), -1, "edit_form() failed")
+        self.assertNotEqual(resp.find('upload finished'), -1, "testUpload() failed")
         
     def testConfirmFail(self):
         resp = confirm()
