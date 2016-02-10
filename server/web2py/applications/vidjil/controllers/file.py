@@ -170,7 +170,7 @@ def upload():
         
         data_file = db.sequence_file[request.vars["id"]].data_file
 
-        if data_file is None:
+        if len(error) == 0 and data_file is None:
             error += "no data file"
 
     if not error:
