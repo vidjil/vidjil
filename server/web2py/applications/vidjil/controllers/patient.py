@@ -340,6 +340,7 @@ def index():
     for i, row in enumerate(query) :
         result[row.id] = {
             "id" :int(row.id),
+            "sample_set_id" : int(row.sample_set_id),
             "last_name" : row.last_name,
             "first_name" : row.first_name,
             "has_permission" : False,
