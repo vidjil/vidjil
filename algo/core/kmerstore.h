@@ -26,6 +26,11 @@ public:
   Kmer &operator+=(const Kmer &);
 
   /**
+   * @return the length of the kmer (only there for compatibility with KmerAffect)
+   */
+  size_t getLength() const;
+
+  /**
    * When indexing revcomp, should the value be the same or not?
    * In other words, does the information stored by the class is strand-dependent?
    */
@@ -34,7 +39,13 @@ public:
   /**
    * @return true if the element is the same as when initialised with default constructor.
    */
-  bool isNull();
+  bool isNull() const;
+
+  /**
+   * @return true iff the kmer is unknown (which doesn't make sense here but
+   * it only there for a reason of compatibility with KmerAffect)
+   */
+  bool isUnknown() const;
 } ;
 ostream &operator<<(ostream &os, const Kmer &kmer);
 

@@ -42,12 +42,20 @@ Kmer &Kmer::operator+=(const Kmer &kmer) {
   return *this;
 }
 
+size_t Kmer::getLength() const{
+  return 10;
+}
+
 bool Kmer::hasRevcompSymetry() {
   return true;
 }
 
-bool Kmer::isNull() {
+bool Kmer::isNull() const{
   return count == 0;
+}
+
+bool Kmer::isUnknown() const{
+  return false;
 }
 
 ostream &operator<<(ostream &os, const Kmer &kmer) {
