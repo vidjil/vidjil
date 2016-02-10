@@ -112,7 +112,7 @@ KmerAffect::KmerAffect(const string &label,
 KmerAffect &KmerAffect::operator+=(const KmerAffect &kmer) {
   if (kmer.affect != affect) {
     if (isUnknown())
-      affect = kmer.affect;
+      *this = kmer;
     else if (affect_char(affect) == affect_char(kmer.affect)
              && (affect_strand(affect) != affect_strand(kmer.affect)))
       // Same label but different strand

@@ -15,9 +15,9 @@ float KmerAffectReadScore::getScore(const Sequence &sequence) const {
   vector<KmerAffect> answers = index.getResults(sequence.sequence);
   float score = 0;
   for (size_t i = 0; i < answers.size(); i++) {
-    if (answers[i].affect == AFFECT_AMBIGUOUS)
+    if (answers[i] == AFFECT_AMBIGUOUS)
       score += ambiguous_score;
-    else if (answers[i].affect == AFFECT_UNKNOWN) 
+    else if (answers[i] == AFFECT_UNKNOWN)
       score += unknown_score;
     else 
       score += unambiguous_score;
