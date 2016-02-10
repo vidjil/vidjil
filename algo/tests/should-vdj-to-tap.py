@@ -36,6 +36,7 @@ parser.add_argument('--program', '-p', default=VIDJIL_FINE, help='program to lau
 parser.add_argument('-q', dest='program', action='store_const', const=VIDJIL_KMER, help='shortcut for -p (VIDJIL_KMER), to be used with -2')
 parser.add_argument('--ignore_N', '-N', action='store_true', help='ignore N patterns, checking only gene and allele names')
 parser.add_argument('--ignore_allele', '-A', action='store_true', help='ignore allele, checking only gene names')
+parser.add_argument('--ignore_D', '-D', action='store_true', help='ignore D gene names and alleles')
 parser.add_argument('--after-two', '-2', action='store_true', help='compare only the right part of the pattern after two underscores (locus code)')
 parser.add_argument('--revcomp', '-r', action='store_true', help='duplicate the tests on reverse-complemented files')
 parser.add_argument('--directory', '-d', default='../..', help='base directory where Vidjil is. This value is used by the default -p and -q values (%(default)s)')
@@ -122,6 +123,10 @@ def should_pattern_to_regex(p):
             term += '([*]\d*)?'
         else:
             gene, allele = term.split('*')
+
+            if args.ignore_D and ('IGHD' in gene or 'TRBD' in gene or 'TRDD' in gene):
+                gene = '\S*'
+                allele = '\d*'
 
             if args.ignore_allele:
                 allele = '\d*'
