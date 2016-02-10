@@ -119,7 +119,12 @@ def should_pattern_to_regex(p):
         r += [term]
 
     regex_pattern = ' '.join(r)
-    regex = re.compile(regex_pattern)
+
+    try:
+        regex = re.compile(regex_pattern)
+    except:
+        sys.stderr.write("Error. Invalid regex_pattern: " + regex)
+        sys.exit(4)
 
     # print '==', p, '->', regex_pattern
     return regex
