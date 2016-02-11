@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <cstdlib>
+#include <unistd.h>
 #include "../core/dynprog.h"
 #include "../core/fasta.h"
 #include "../core/lazy_msa.h"
@@ -126,6 +127,8 @@ int main(int argc, char* argv[])
           json j;
           j << JsonOutputSimilarityMatrix(matrix);
           cout << j.dump();
+          if (cgi_mode)
+            unlink(fdata);
       }else{
         cout << RawOutputSimilarityMatrix(matrix, 90);
       }
