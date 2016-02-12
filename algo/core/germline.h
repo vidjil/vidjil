@@ -20,7 +20,8 @@ enum SEGMENTATION_METHODS {
   SEG_METHOD_53,      // Regular or incomplete germlines, 5'-3'
   SEG_METHOD_543,     // Regular or incomplete germlines, 5'-3', with an additional middle gene (such a D gene)
   SEG_METHOD_MAX12,   // Pseudo-germline, most two frequent kmer affectations  (-2)
-  SEG_METHOD_MAX1U    // Pseudo-germline, most frequent kmer affection and unknwon affectation (-4)
+  SEG_METHOD_MAX1U,   // Pseudo-germline, most frequent kmer affection and unknwon affectation (-4)
+  SEG_METHOD_ONE      // Map a read onto a genomic region, without recombination. Evil.
 } ;
 
 

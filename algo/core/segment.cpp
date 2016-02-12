@@ -444,6 +444,41 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
 
   reversed = (nb_strand[0] > nb_strand[1]) ;
 
+
+
+  if (germline->seg_method == SEG_METHOD_ONE) {
+
+    KmerAffectAnalyser kaa(*(germline->index), sequence);
+
+    KmerAffect kmer = KmerAffect(germline->affect_4, 1, germline->seed.size());
+    int c = kaa.count(kmer);
+
+    // E-value
+    double pvalue = kaa.getProbabilityAtLeastOrAbove(kmer, c);
+    evalue = pvalue * multiplier ;
+
+    if (evalue >= threshold)
+      {
+        because = UNSEG_TOO_FEW_ZERO ;
+        return ;
+      }
+
+    segmented = true ;
+    because = reversed ? SEG_MINUS : SEG_PLUS ;
+
+    int pos = sequence.size() / 2 ;
+
+    info = "=" + string_of_int(c) + " @" + string_of_int(pos) ;
+
+    // getJunction() will be centered on pos
+    box_V->end = pos;
+    box_J->start = pos;
+    finishSegmentation();
+
+    return ;
+  }
+  
+  
   if ((germline->seg_method == SEG_METHOD_MAX12)
       || (germline->seg_method == SEG_METHOD_MAX1U))
     { // Pseudo-germline, MAX12 and MAX1U
