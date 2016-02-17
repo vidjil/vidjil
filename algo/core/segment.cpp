@@ -813,9 +813,9 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
 
           code = "Unexpected ";
 
-          code += left.toStringSigns() + germline->index->getLabel(left).name;
+          code += left.toStringSigns() + germline->index->getLabel(left).basename;
           code += "/";
-          code += right.toStringSigns() + germline->index->getLabel(right).name;
+          code += right.toStringSigns() + germline->index->getLabel(right).basename;
           info_extra += " " + left.toString() + "/" + right.toString() + " (" + code + ")";
 
           if (germline->seg_method == SEG_METHOD_MAX1U)
