@@ -429,11 +429,12 @@ line {
 
 @top_container_height : 32px;
 @width_left_container : 475px;
-@width_highlight : 250px;
+@width_highlight : 300px;
 @width_stats: 350px;
 @width_scrollbar : 30px;
 @width_clusterBox :16px;
 @width_starBox : 16px;
+@width_thumbBox : 16px;
 @width_sizeBox : 60px;
 @width_infoBox : 20px;
 @width_systemBox : 13px;
@@ -538,6 +539,16 @@ line {
 
 .starBox{
   width: @width_starBox;
+  float: right;
+  height: 16px;
+  display: inline-block;
+  user-select :none;
+  overflow: hidden;
+}
+
+
+.thumbBox{
+  width: @width_thumbBox;
   float: right;
   height: 16px;
   display: inline-block;
@@ -1010,13 +1021,13 @@ span.logo
 .menu-segmenter {
     position: relative;
     float: left;
-    width: @width_left_container;
+    width: @width_left_container +200;
 }
 
 .menu-highlight {
     position: relative;
     float: left;
-    width: @width_highlight;
+    width: eval(@width_highlight);
 }
 
 .devel-mode {
@@ -1027,9 +1038,9 @@ span.logo
     position: relative;
     text-align: center;
     float: left;
-    width: -moz-calc(~"100%" - (@width_left_container + @width_stats + @width_highlight));
-    width: -webkit-calc(~"100%" - (@width_left_container + @width_stats + @width_highlight));
-    width: calc(~"100%" - (@width_left_container + @width_stats + @width_highlight));
+    width: -moz-calc(~"100%" - (@width_left_container + @width_stats + @width_highlight + 50));
+    width: -webkit-calc(~"100%" - (@width_left_container + @width_stats + @width_highlight + 50));
+    width: calc(~"100%" - (@width_left_container +  @width_stats + @width_highlight + 50));
     overflow: hidden;
     height: 1.1em;
 }
