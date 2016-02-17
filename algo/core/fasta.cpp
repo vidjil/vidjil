@@ -45,12 +45,14 @@ void Fasta::init(int extract_field, string extract_separator)
   this -> extract_separator = extract_separator ; 
   total_size = 0;
   name = "";
+  basename = "";
 }
 
 Fasta::Fasta(bool virtualfasta, string name)
 {
   init(0, "");
   this -> name = name;
+  basename = extract_basename(name);
 }
 
 Fasta::Fasta(int extract_field, string extract_separator)
@@ -85,6 +87,7 @@ void Fasta::add(const string &filename, bool verbose) {
     }
 
   name += filename + " ";
+  basename += extract_basename(filename) += " ";
 
   if (verbose)
   cout << " <== " << filename ;

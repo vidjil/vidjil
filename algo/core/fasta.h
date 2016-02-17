@@ -55,6 +55,7 @@ public:
         Fasta(bool virtualfasta, const string name); // virtualfasta unused
 
         string name;
+        string basename;
 	int size() const;
         int totalSize() const;
 
