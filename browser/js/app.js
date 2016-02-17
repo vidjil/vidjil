@@ -54,7 +54,8 @@ function loadAfterConf() {
                  "../database",
                  "../shortcut",
                  "../export",
-                 "../similarity"
+                 "../similarity",
+                 "../tools"
                 ], function(){
                     if (typeof main == "undefined"){
                         require(["../main"]);
