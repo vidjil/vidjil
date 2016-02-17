@@ -86,8 +86,14 @@ void Fasta::add(const string &filename, bool verbose) {
       throw invalid_argument(" !! Error in opening file: "+ filename);
     }
 
-  name += filename + " ";
-  basename += extract_basename(filename) += " ";
+  if (name.size())
+    name += " ";
+
+  if (basename.size())
+    basename += " ";
+
+  name += filename;
+  basename += extract_basename(filename);
 
   if (verbose)
   cout << " <== " << filename ;
