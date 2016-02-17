@@ -538,6 +538,9 @@ Model_loader.prototype = {
                     elem.germline = clone.germline;
                     elem.eValue   = clone.eValue;
                     elem.seg      = clone.seg
+                    //remove unneeded elements sometimes left after IMGT interrogation
+                    if (clone.seg.imgt["Sequence number"]!==null){
+                        delete clone.seg.imgt["Sequence number"];} //m.clones[i].seg.imgt["Sequence number"]
                 };
                  
                 analysisData.clones.push(elem);
