@@ -8,7 +8,7 @@ Views
     r2d3 		: fallback d3 pour internet-explorer IE8- (a tester)	
     * @version	 	v0.1.0
     * @author 		Michael Hemesath
-    * @link 		github.com/mhemesath/r2d3/
+    * @link 		github.com/mhemesath/r2d3/ (dead project)
     * @license 		MIT Licensed
 
 Tools
@@ -29,7 +29,13 @@ Tools
     * @author 		Alexis Sellier 
     * @link 		<self@cloudhead.net> / http://lesscss.org/
     * @license 		apache v2 
-    
+
+  require.js  		: JavaScript file and module loader
+    * @version	 	RequireJS 2.1.16
+    * @author 		The Dojo Foundation All Rights Reserved. 
+    * @link 		http://jrburke.com / http://requirejs.org/
+    * @license 		MIT or new BSD license 
+
 PDF 
 
     jspdf		: API pdf 
