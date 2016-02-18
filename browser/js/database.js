@@ -739,46 +739,70 @@ Database.prototype = {
         this.call('user/rights', arg)
     },
     
+    
+    updateList: function(that) {
+        var lastValue = that.lastValue,
+            value = that.value,
+            array = [],
+            pos = value.indexOf('|'),
+            start = that.selectionStart,
+            end = that.selectionEnd,
+            options;
+
+        if (that.options) {
+            options = that.options;
+        } else {
+            options = Object.keys(that.list.options).map(function (option) {
+                return that.list.options[option].value;
+            });
+            that.options = options;
+        }
+
+        if (lastValue !== value && value.length>1) {
+            that.list.innerHTML = options.filter(function (a) {
+                return ~a.toLowerCase().indexOf(value.toLowerCase());
+            }).slice(0,10).map(function (a) {
+                return '<option value="' + value + '|' + a + '">' + a + '</option>';
+            }).join();
+            this.updateInput(that);
+            that.lastValue = value;
+        }
+    },
+
+    updateInput: function(that) {
+        var value = that.value,
+            pos = value.indexOf('|'),
+            start = that.selectionStart,
+            end = that.selectionEnd;
+
+        if (~pos) {
+            value = value.slice(pos + 1);
+        }
+        that.value = value;
+        if (that.lastValue !== value){
+            that.options.indexOf(value)!= -1 ? that.style.color = "green" : that.style.color = "red";
+        }
+        //that.setSelectionRange(start, end);
+    },
+    
     build_suggest_box: function() {
         var self = this
         
-        if (document.getElementById("pcr")){
-            var url = self.db_address+"file/pcr_list"
-            $.ajax({
-                type: "POST",
-                crossDomain: true,
-                url: url,
-                success: function (result) {
-                    var res = jQuery.parseJSON(result);
-                    suggest_box("pcr", res.pcr)
-                }
+        if (document.getElementById("patient_list")){
+            
+            document.getElementById('patient_list').addEventListener('keyup', function (e) {
+                self.updateList(this);
             });
-        }
-        
-        if (document.getElementById("sequencer")){
-            var url = self.db_address+"file/sequencer_list"
-            $.ajax({
-                type: "POST",
-                crossDomain: true,
-                url: url,
-                success: function (result) {
-                    var res = jQuery.parseJSON(result);
-                    suggest_box("sequencer", res.sequencer)
-                }
+            document.getElementById('patient_list').addEventListener('input', function (e) {
+                self.updateInput(this);
             });
-        }
-        
-        if (document.getElementById("producer")){
-            var url = self.db_address+"file/producer_list"
-            $.ajax({
-                type: "POST",
-                crossDomain: true,
-                url: url,
-                success: function (result) {
-                    var res = jQuery.parseJSON(result);
-                    suggest_box("producer", res.producer)
-                }
+            document.getElementById('run_list').addEventListener('keyup', function (e) {
+                self.updateList(this);
             });
+            document.getElementById('run_list').addEventListener('input', function (e) {
+                self.updateInput(this);
+            });
+            
         }
     },
     
