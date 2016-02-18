@@ -19,7 +19,7 @@
         <div class="db_block_right"> {{if auth.can_process_file() :}}
             config
             <span>
-                <select id="choose_config" name="config" onchange="db.call('sample_set/info', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
+                <select id="choose_config" name="config" onchange="db.call('sample_set/index', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
                     <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
                     {{for row in db((auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) ).select(orderby=~db.config.name) :}}
                         <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} title="{{=row.info}}" >
@@ -47,7 +47,6 @@
             <tr><td class="column_200"> file name </td>
                 <td class="column_100"> sampling date </td>
                 <td> info </td>
-                <td> pcr </td>
                 <td> size </td>
 		{{if auth.is_admin():}} <td> uploader </td> {{pass}}
                 <td class="column5"> </td>
@@ -80,7 +79,6 @@
                     </td>
                     <td> {{if row.sequence_file.sampling_date <> None:}} {{=row.sequence_file.sampling_date}} {{pass}}</td>
                     <td> {{=row.sequence_file.info}} </td>
-                    <td> {{=row.sequence_file.pcr}} </td>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} >
                         {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
 		    {{if auth.is_admin():}}
@@ -88,10 +86,10 @@
 		    {{pass}}
 
                     {{if can_modify:}}
-                        <td class="pointer" onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
+                        <td class="pointer" onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}'} )" > e </td>
                         <td> <a {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}
                                 {{else:}} href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" {{pass}}  >dl</a></td>
-                        <td class="pointer" onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
+                        <td class="pointer" onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id }}', 'redirect_sample_set_id' : '{{=request.vars["id"]}}'} )" > X </td>
                     {{else:}}<td></td><td></td><td></td>{{pass}}
 
 

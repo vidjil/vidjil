@@ -33,12 +33,14 @@
     {{pass}}
     <div class="center"> 
       {{if delete_results or delete_only_sequence:}}
-        <button onclick="db.call('file/delete', {'id' :'{{=request.vars["id"]}}', 'patient_id' :'{{=request.vars["patient_id"]}}', 'delete_results': '{{=delete_results}}'} )">delete</button>
+        <button onclick="db.call('file/delete', {'id' :'{{=request.vars["id"]}}', 'redirect_sample_set_id' :'{{=request.vars["redirect_sample_set_id"]}}', 'delete_results': '{{=delete_results}}'} )">delete</button>
       {{else:}}
-	<button onclick="db.call('file/confirm', {'id': '{{=request.vars["id"]}}', 'patient_id' :'{{=request.vars["patient_id"]}}', 'delete_results': 'False', 'delete_only_sequence': 'True'})">delete sequence alone</button>
-	<button onclick="db.call('file/confirm', {'id': '{{=request.vars["id"]}}', 'patient_id' :'{{=request.vars["patient_id"]}}', 'delete_results': 'True', 'delete_only_sequence': 'False'})">delete sequence and results</button>
+	<button onclick="db.call('file/confirm', {'id': '{{=request.vars["id"]}}', 'redirect_sample_set_id' :'{{=request.vars["redirect_sample_set_id"]}}',
+'delete_results': 'False', 'delete_only_sequence': 'True'})">delete sequence alone</button>
+	<button onclick="db.call('file/confirm', {'id': '{{=request.vars["id"]}}', 'redirect_sample_set_id' :'{{=request.vars["redirect_sample_set_id"]}}',
+'delete_results': 'True', 'delete_only_sequence': 'False'})">delete sequence and results</button>
       {{pass}}
-        <button onclick="db.call('patient/info', {'id' :'{{=db.sequence_file[request.vars["id"]].patient_id}}'} )">cancel</button>
+        <button onclick="db.call('sample_set/index', {'id' :'{{=request.vars["redirect_sample_set_id"]}}'} )">cancel</button>
     </div>
 </div>
     

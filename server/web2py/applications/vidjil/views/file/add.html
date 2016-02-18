@@ -15,7 +15,7 @@
             </tr>
             <tr>
                 <td><label for="patient_id" id="patient_id__label">patient: </label></td>
-                <td><input list="patients" id="patient_id" name="patient_id" type="text" size="80"></td>
+                <td><input list="patients" id="patient_id" name="patient_id" type="text" size="80" value="{{=patient}}"></td>
                   <datalist id="patients">
                   {{for row in patient_list :}}
                       <option value="{{=row}}">
@@ -25,7 +25,7 @@
             </tr>
             <tr>
                 <td><label for="run_id" id="run_id__label">run: </label></td>
-                <td><input list="runs" id="run_id" name="run_id" type="text" size="80"></td>
+                <td><input list="runs" id="run_id" name="run_id" type="text" size="80" value="{{=run}}"></td>
                   <datalist id="runs">
                   {{for row in run_list :}}
                       <option value="{{=row}}">
