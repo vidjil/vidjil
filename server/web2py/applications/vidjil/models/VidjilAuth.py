@@ -114,6 +114,19 @@ class VidjilAuth(Auth):
                     perm = True;
 
         return perm
+    
+    def can_modify_file(self, file_id, user = None) :
+        
+        if self.is_admin(user) :
+            return True
+        
+        sample_set_list = db(db.sample_set_membership.sequence_file_id == file_id).select(db.sample_set_membership.sample_set_id)
+        
+        for row in sample_set_list : 
+            if self.can_modify_sample_set(row.sample_set_id) :
+                return True
+            
+        return False
 
     def can_modify_config(self, config_id, user = None):
         '''
