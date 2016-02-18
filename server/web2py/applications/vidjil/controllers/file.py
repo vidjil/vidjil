@@ -7,18 +7,24 @@ import os.path
 import datetime
 from controller_utils import error_message
 
+
 if request.env.http_origin:
     response.headers['Access-Control-Allow-Origin'] = request.env.http_origin  
     response.headers['Access-Control-Allow-Credentials'] = 'true'
     response.headers['Access-Control-Max-Age'] = 86400
 
-
-    
     
 def add(): 
     if not auth.can_upload_file():
         return error_message("you don't have right to upload files")
     else:
+        
+        patient_id = None
+        run_id = None
+        if db.sample_set[request.vars["id"]].sample_type == "patient" :
+            patient_id = db( db.patient.sample_set_id == request.vars["id"]).select()[0].id
+        if db.sample_set[request.vars["id"]].sample_type == "run" :
+            run_id = db( db.run.sample_set_id == request.vars["id"]).select()[0].id
         
         query_patient = db(
             auth.accessible_query('admin', db.patient)
@@ -27,12 +33,15 @@ def add():
             orderby = ~db.patient.id
         )
         patient_list = []
+        patient = ""
 
         for row in query_patient :
             name = row.first_name + " " + row.last_name
             birth = "[" + str(row.birth) + "]   "
             id = "   ("+str(row.id)+")"
             patient_list.append(birth+name+id)
+            if patient_id == row.id :
+                patient = birth+name+id
             
         query_run = db(
             auth.accessible_query('admin', db.run)
@@ -41,16 +50,21 @@ def add():
             orderby = ~db.run.id
         )
         run_list = []
+        run = ""
 
         for row in query_run :
             name = row.name
             run_date = "[" + str(row.run_date) + "]   "
             id = "   ("+str(row.id)+")"
             run_list.append(run_date+name+id)
+            if run_id == row.id :
+                run = run_date+name+id
         
         return dict(message = T('add file'),
                    patient_list = patient_list,
-                   run_list = run_list)
+                   run_list = run_list,
+                   patient = patient,
+                   run = run)
 
 
 def add_form(): 
@@ -129,12 +143,60 @@ def add_form():
         return error_message(error)
 
 
+    
 def edit(): 
-    if auth.can_modify_patient(request.vars['patient_id']):
-        return dict(message=T('edit file'))
-    #elif not auth.can_upload_file():
-    #    res = {"success" : "false", "message" : "you don't have right to upload files"}
-    #    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+    if auth.can_modify_file(request.vars['id']):
+        patient_id = None
+        run_id = None
+        
+        sample_set_list = db(db.sample_set_membership.sequence_file_id == request.vars['id']).select(db.sample_set_membership.sample_set_id)
+        
+        for row in sample_set_list :
+            if db.sample_set[row.sample_set_id].sample_type == "patient" :
+                patient_id = db( db.patient.sample_set_id == row.sample_set_id).select()[0].id
+            if db.sample_set[row.sample_set_id].sample_type == "run" :
+                run_id = db( db.run.sample_set_id == row.sample_set_id).select()[0].id
+        
+        query_patient = db(
+            auth.accessible_query('admin', db.patient)
+        ).select(
+            db.patient.ALL,
+            orderby = ~db.patient.id
+        )
+        patient_list = []
+        patient = ""
+
+        for row in query_patient :
+            name = row.first_name + " " + row.last_name
+            birth = "[" + str(row.birth) + "]   "
+            id = "   ("+str(row.id)+")"
+            patient_list.append(birth+name+id)
+            if patient_id == row.id :
+                patient = birth+name+id
+            
+        query_run = db(
+            auth.accessible_query('admin', db.run)
+        ).select(
+            db.run.ALL,
+            orderby = ~db.run.id
+        )
+        run_list = []
+        run = ""
+
+        for row in query_run :
+            name = row.name
+            run_date = "[" + str(row.run_date) + "]   "
+            id = "   ("+str(row.id)+")"
+            run_list.append(run_date+name+id)
+            if run_id == row.id :
+                run = run_date+name+id
+        
+        return dict(message = T('edit file'),
+                   patient_list = patient_list,
+                   run_list = run_list,
+                   patient = patient,
+                   run = run,
+                   file = db.sequence_file[request.vars["id"]])
     else:
         return error_message("you need admin permission to edit files")
         
@@ -143,7 +205,13 @@ def edit():
 #TODO check data
 def edit_form(): 
     error = ""
-    
+    patient_id = None
+    run_id = None
+  
+    if request.vars['patient_id'] != '' :
+        patient_id = int(request.vars['patient_id'].split('(')[-1][:-1])
+    if request.vars['run_id'] != '' :
+        run_id = int(request.vars['run_id'].split('(')[-1][:-1])
     if request.vars['id'] == None :
         error += "missing id"
     if request.vars['filename'] == None :
@@ -168,18 +236,40 @@ def edit_form():
                                                         filename=filename,
                                                         provider=auth.user_id)
             
+        #remove previous membership
+        for row in db( db.sample_set_membership.sequence_file_id == request.vars["id"]).select() :
+            if db.sample_set[row.sample_set_id].sample_type != "sequence_file" :
+                db(db.sample_set_membership.id == row.id).delete()
+        
+        #add sequence_file to a run sample_set
+        if run_id is not None :
+            run_sample_set_id = db.run[run_id].sample_set_id
+            id_sample_set_membership_run = db.sample_set_membership.insert(sample_set_id=run_sample_set_id,
+                                                                  sequence_file_id=request.vars["id"])
+            redirect_args = {"id" : run_sample_set_id}
+            
+        #add sequence_file to a patient sample_set
+        if patient_id is not None :
+            patient_sample_set_id = db.patient[patient_id].sample_set_id
+            id_sample_set_membership_patient = db.sample_set_membership.insert(sample_set_id=patient_sample_set_id,
+                                                                  sequence_file_id=request.vars["id"])
+            redirect_args = {"id" : patient_sample_set_id}
+        
+            
         patient_id = db((db.sequence_file.id == request.vars["id"])
                         &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
                         &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
                         ).select(db.patient.id).first().id
         
-        res = {"file_id" : request.vars['id'],
-               "redirect": "patient/info",
-               "args" : { "id" : patient_id},
-               "message": "file %s: metadata saved" % request.vars["id"]}
+        res = {"file_id" : request.vars["id"],
+               "message": "file %s: metadata saved" % request.vars["id"],
+               "redirect": "sample_set/index",
+               "args" : redirect_args
+               }
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+    
 def upload(): 
     session.forget(response)
     mes = ""
@@ -242,7 +332,6 @@ def confirm():
     Request parameters:
     \param delete_results: (optional) boolean
     \param id: sequence file ID
-    \param patient_id: patient id
     '''
     delete_only_sequence = ('delete_only_sequence' in request.vars and request.vars['delete_only_sequence'] == 'True')
     delete_results = ('delete_results' in request.vars and request.vars['delete_results'] == 'True')
@@ -261,10 +350,8 @@ def confirm():
 def delete_sequence_file(seq_id):
     sequence = db.sequence_file[seq_id]
     seq_filename = sequence.data_file
-    patient_id = db((db.sample_set_membership.sequence_file_id == seq_id)
-                    &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
-                    ).select(db.patient.id).first().id
-    if auth.can_modify_patient(patient_id):
+
+    if auth.can_modify_file(seq_id):
         if seq_filename is not None:
             log.debug('Deleting '+defs.DIR_SEQUENCES+seq_filename+' with ID'+str(seq_id))
         db.sequence_file[seq_id] = dict(data_file = None)
@@ -275,22 +362,23 @@ def delete():
     '''
     Called (via request) with:
     \param: id (the sequence ID)
-    \param: patient_id
     \param: delete_results: (optional) boolean stating if we also want to delete the results.
     '''
-    patient_id = request.vars["patient_id"]
     delete_results = ('delete_results' in request.vars and request.vars['delete_results'] == 'True')
 
-    if auth.can_modify_patient(patient_id):
+    if auth.can_modify_file(request.vars["id"]):
         if not(delete_results):
             delete_sequence_file(request.vars['id'])
         else:
             db(db.sequence_file.id == request.vars["id"]).delete()
             db(db.results_file.sequence_file_id == request.vars["id"]).delete()
+            
+            for row in db( db.sample_set_membership.sequence_file_id == request.vars["id"]).select() :
+                db(db.sample_set_membership.id == row.id).delete()
 
-        res = {"redirect": "patient/info",
-               "args" : { "id" : patient_id},
-               "message": "file %s (%s): sequence file deleted" % (request.vars["id"], patient_id)}
+        res = {"redirect": "sample_set/index",
+               "args" : { "id" : request.vars["redirect_sample_set_id"]},
+               "message": "sequence file deleted"}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else:
