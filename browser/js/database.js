@@ -782,7 +782,7 @@ Database.prototype = {
         if (that.lastValue !== value){
             that.options.indexOf(value)!= -1 ? that.style.color = "green" : that.style.color = "red";
         }
-        //that.setSelectionRange(start, end);
+        that.setSelectionRange(start, end);
     },
     
     build_suggest_box: function() {
@@ -1061,76 +1061,3 @@ Uploader.prototype = {
     }
 }
 
-
-
-/*crée une liste de suggestion dynamique autour d'un input text*/
-function suggest_box(id, list) {
-
-    list = list.sort()
-    var input_box = document.getElementById(id)
-    
-    //positionnement d'une boite vide pour contenir les suggestions
-    var suggest_box = document.createElement('div')
-    suggest_box.className = "suggest_box"
-    suggest_box.style.width = getComputedStyle(input_box,null).width
-    
-    var suggest_list = document.createElement('div')
-    suggest_list.className = "suggest_list"
-    suggest_box.appendChild(suggest_list)
-    
-    var suggest_arrow = document.createElement('div')
-    suggest_arrow.className = "suggest_arrow"
-    suggest_arrow.title = "show all suggestions"
-    suggest_arrow.onclick = function(){
-        input_box.focus()
-        suggest_list.style.display = "block"
-        suggest_list.innerHTML=""
-        for (var i=0; i<list.length; i++){
-            var suggestion = document.createElement("div")
-            suggestion.className = "suggestion"
-            suggestion.appendChild(document.createTextNode(list[i]))
-            suggestion.onclick = function(){
-                input_box.value = this.innerHTML
-                setTimeout(function(){suggest_list.style.display = "none"}, 200)
-            }
-            suggest_list.appendChild(suggestion)
-        }
-    }
-    suggest_box.appendChild(suggest_arrow)
-    
-    //ajout de la suggest_box apres l'input correspondant
-    if (input_box.nextSibling) {
-        input_box.parentNode.insertBefore(suggest_box, input_box.nextSibling);
-    }else{
-        input_box.parentNode.appendChild(suggest_box)
-    }
-    
-    //réactualise la liste a chaque changement d'input
-    input_box.onkeyup = function(){
-        suggest_list.style.display = "block"
-        suggest_list.innerHTML=""
-        var value = this.value.toUpperCase();
-        var count = 0
-        for (var i=0; i<list.length; i++){
-            if (list[i].toUpperCase().indexOf(value) != -1){
-                var suggestion = document.createElement("div")
-                suggestion.className = "suggestion"
-                suggestion.appendChild(document.createTextNode(list[i]))
-                suggestion.onclick = function(){
-                    input_box.value = this.innerHTML
-                    setTimeout(function(){suggest_list.style.display = "none"}, 200)
-                }
-                suggest_list.appendChild(suggestion)
-                count++
-            }
-        }
-    };
-    
-    //masque la liste
-    input_box.onblur = function(){
-        setTimeout(function(){
-            if (input_box !== document.activeElement)
-                suggest_list.style.display = "none"
-        }, 200)
-    };
-}
