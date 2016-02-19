@@ -28,8 +28,6 @@ for i in range(1, len(sys.argv)-2) :
     
         if len(ligne) != 0 :
             if ligne[0]=='>' :
-                if len(sequence)!=0 :
-                    table[system][identifiant]=sequence
                 identifiant=ligne[1:]
             
                 if identifiant.count('|') != 0 :
