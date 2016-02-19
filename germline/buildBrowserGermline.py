@@ -26,29 +26,29 @@ for i in range(1, len(sys.argv)-2) :
     for ligne in fasta :
         ligne = ligne.rstrip('\n\r')
     
-        if len(ligne) != 0 :
+        if ligne:
             if ligne[0]=='>' :
                 identifiant=ligne[1:]
             
-                if identifiant.count('|') != 0 :
-                    tmp=identifiant.split('|')
-                    identifiant=tmp[1]
+                if '|' in identifiant:
+                    identifiant = identifiant.split('|')[1]
                 
-                if identifiant.count('_') != 0 :
-                    tmp2=identifiant.split('_')
-                    identifiant=tmp2[0]
+                if '_' in identifiant:
+                    identifiant = identifiant.split('_')[0]
                     
-                sequence="";
+                sequence = ""
             else :
                 sequence+=ligne
         
-        if len(sequence)!=0 :
+        if sequence:
+            # If there is still some sequence left, this value will be overwritten in the next pass
             table[system][identifiant]=sequence
-    
-    
+
     fasta.close()
 
-if output_name != "":
+
+
+if output_name:
     with open(output_name, "w") as file :
         file.write("germline = ")
         json.dump(table, file, indent=2, sort_keys=True)
