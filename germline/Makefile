@@ -8,11 +8,10 @@ js: ../browser/js/germline.js
 ../browser/js/germline.js: $(DATA) germlines.data
 	python buildBrowserGermline.py $^ $@
 
-get-all-data: $(DATA)
+get-all-data: js
 
 $(DATA):
 	sh get-germline
-	$(MAKE) ../browser/js/germline.js
 
 clean:
 	rm -f $(DATA)
