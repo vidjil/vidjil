@@ -129,6 +129,7 @@ SPLIT_SEQUENCES = {'/DV': ['TRAV', 'TRDV']}
 
 DOWNSTREAM_REGIONS=['[A-Z]{3}J', 'TRDD3']
 UPSTREAM_REGIONS=['IGHD', 'TRDD', 'TRBD', 'TRDD2']
+# Be careful, 'IGHD' regex for UPSTREAM_REGIONS also matches IGHD*0? constant regions.
 
 SPECIES = {
     "Homo sapiens": './', 
@@ -167,8 +168,9 @@ for l in sys.stdin:
 
             if system.startswith('IG') or system.startswith('TR'):
 
-                store_data_if_updownstream(l, path, downstream_data, DOWNSTREAM_REGIONS)
-                store_data_if_updownstream(l, path, upstream_data, UPSTREAM_REGIONS)
+                if feature in FEATURES_VDJ:
+                    store_data_if_updownstream(l, path, downstream_data, DOWNSTREAM_REGIONS)
+                    store_data_if_updownstream(l, path, upstream_data, UPSTREAM_REGIONS)
 
                 systems = get_split_files(seq, SPLIT_SEQUENCES)
                 if systems:
