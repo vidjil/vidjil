@@ -3,7 +3,7 @@ import sys
 
     
 if len(sys.argv) < 3:
-    print("Usage: %s <FASTA input file> [JSON/DATA germline file] [JSON output file]" % sys.argv[0])
+    print("Usage: %s <FASTA input files> [JSON/DATA germline file] [JSON output file]" % sys.argv[0])
     sys.exit()
 input_name = sys.argv[1]
 output_name = ""
@@ -52,8 +52,10 @@ for i in range(1, len(sys.argv)-2) :
 
 if output_name != "":
     with open(output_name, "w") as file :
+        file.write("germline = ")
         json.dump(table, file, indent=2, sort_keys=True)
         
         data = open(data_file, "r")
         file.write( "\n\n" )
+        file.write("germline_data = ")
         file.write( data.read() )
