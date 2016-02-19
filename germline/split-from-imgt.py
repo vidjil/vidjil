@@ -74,6 +74,8 @@ def get_gene_coord(imgt_line):
     start, end = elements[5].split('..')
     if start.find(',') > -1:
         start = start[2:]
+    if end.find(',') > -1:
+        end = end.split(',')[0]
     return elements[0][1:], {'from': int(start),
                              'to': int(end),
                              'imgt_name': elements[1]}
