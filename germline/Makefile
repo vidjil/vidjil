@@ -3,6 +3,8 @@ DATA=???[VDJ].fa IGK-INTRON.fa IGK-KDE.fa TRDD2_upstream.fa TRDD3_downstream.fa 
 germline:
 	sh get-saved-germline
 
+js: ../browser/js/germline.js
+
 ../browser/js/germline.js: $(DATA) germlines.data
 	python buildBrowserGermline.py $^ $@
 
