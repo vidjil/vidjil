@@ -8,13 +8,14 @@ js: ../browser/js/germline.js
 ../browser/js/germline.js: $(DATA) germlines.data
 	python buildBrowserGermline.py $^ $@
 
-get-all-data: js
+get-all-data: clean $(DATA)
 
 $(DATA):
 	sh get-germline
+	$(MAKE) js
 
 clean:
-	rm -f $(DATA)
+	rm -f $(DATA) ../browser/js/germline.js
 
 diff-from-saved:
 	rm -rf saved-germline
