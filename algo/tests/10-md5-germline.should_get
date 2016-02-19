@@ -5,11 +5,11 @@ $ Check md5 in germline/, sequences split from IMGT
 1:3a655c9d99ca04907a120f1b69febf2e IGHD.fa
 1:0d87f672c582e7e15cdcaa0fb5e08f6f IGHJ.fa
 1:b59eb57893dbab69d98eb712722bf603 IGHV.fa
-1:6a696e7cc21b8ffb7e3adbcf37167711 IGKJ.fa
+1:c574f5bcc98c99d6462365eb2a9aecc6 IGKJ.fa
 1:2746f12c8af2a9b42b166ef468dd08d9 IGKV.fa
 1:a6bdc2aa82d151e30d10d302559355b6 IGLJ.fa
 1:3184a810b22ff5557e99f99906c92fef IGLV.fa
-1:17513843a8d4d2025c38afa13249e2e1 TRAJ.fa
+1:5ee643edc326f1e46b0b5914a0b6d3d4 TRAJ.fa
 1:a7eedfb8feda1107884ad9a363c90831 TRAV.fa
 1:f66c70cda5b369aecd34ab1cd11e7415 TRBD.fa
 1:cc20222cdb7a381ff5a34030bee91e08 TRBJ.fa
@@ -21,7 +21,7 @@ $ Check md5 in germline/, sequences split from IMGT
 1:64e5f218e9de3443f04c4f4e81468f0d TRGV.fa
 
 $ Check md5 in germline/, other sequences
-1:e47e9881c18535d719d1858e3781815d IGHD_upstream.fa
+f1:e47e9881c18535d719d1858e3781815d IGHD_upstream.fa
 1:301b1035a82526a882192690d8f58edc TRBD_upstream.fa
 1:1b05fb4a7aae78a5d0ce057329916393 TRDD_upstream.fa
 1:08041ed38ba7f82db4a9be4ffc9be0b2 IGHJ_downstream.fa
