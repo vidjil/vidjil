@@ -28,7 +28,7 @@
     },
     "TRB+": {
         "shortcut": "b",
-        "color" : "#8c91e4",
+        "color" : "#eb6b36",
         "description": "Human T-cell receptor, beta locus (7q34), incomplete Db-Jb recombinations",
         "follows": "TRB",
         "recombinations": [ {
