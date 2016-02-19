@@ -15,3 +15,10 @@ $(DATA):
 
 clean:
 	rm -f $(DATA)
+
+diff-from-saved:
+	rm -rf saved-germline
+	mkdir saved-germline
+	cd saved-germline ; sh ../get-saved-germline
+	echo
+	diff -r -u -x "*[.][^f][^a]" -x "germline*" -x "get*" -x "Makefile" -x "saved-*" saved-germline/ .
