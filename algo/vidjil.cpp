@@ -1339,7 +1339,7 @@ int main (int argc, char **argv)
 
         
         json json_clone;
-        json_clone["sequence"] = representative.sequence;
+        json_clone["sequence"] = kseg->getSequence().sequence;
         json_clone["_coverage"] = { repComp.getCoverage() };
         json_clone["_average_read_length"] = { windowsStorage->getAverageLength(it->first) };
         json_clone["_coverage_info"] = {repComp.getCoverageInfo()};
