@@ -137,7 +137,7 @@ test("clone : name, informations, getHtmlInfo", function() {
 
     // first options tests
     includes(html, "<option value=TRG>TRG</option><option value=TRA>TRA</option>","getHtmlInfo: first options in select Locus");
-    includes(html, "<option value=undefined V>undefined V</option><option value=TRGJP2*01>TRGJP2*01</option>",  "getHtmlInfo:  first options in select Vgene");
+    includes(html, "<option value=undefined V>undefined V</option><option value=TRGV1*01>TRGV1*01</option>",  "getHtmlInfo:  first options in select Vgene");
        
     // Test after germline/segment manual changement
     m.clones[0].changeLocus("IGH"); 
