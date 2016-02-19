@@ -21,7 +21,7 @@ $ Check md5 in germline/, sequences split from IMGT
 1:64e5f218e9de3443f04c4f4e81468f0d TRGV.fa
 
 $ Check md5 in germline/, other sequences
-f1:e47e9881c18535d719d1858e3781815d IGHD_upstream.fa
+1:e47e9881c18535d719d1858e3781815d IGHD_upstream.fa
 1:301b1035a82526a882192690d8f58edc TRBD_upstream.fa
 1:1b05fb4a7aae78a5d0ce057329916393 TRDD_upstream.fa
 1:08041ed38ba7f82db4a9be4ffc9be0b2 IGHJ_downstream.fa
