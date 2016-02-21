@@ -984,7 +984,29 @@ FineSegmenter::FineSegmenter(Sequence seq, Germline *germline, Cost segment_c,  
   sequence_or_rc = revcomp(sequence, reversed); // sequence, possibly reversed
 
 
-  /* Segmentation */
+  /* Read mapping */
+  if (germline->seg_method == SEG_METHOD_ONE)
+    {
+      align_against_collection(sequence_or_rc, germline->rep_4, NO_FORBIDDEN_ID, false, false,
+                               true, // local
+                               box_D, segment_cost);
+
+      segmented = true ;
+      because = reversed ? SEG_MINUS : SEG_PLUS ;
+
+      boxes.clear();
+      boxes.push_back(box_D);
+      code = codeFromBoxes(boxes, sequence_or_rc);
+
+      box_V->end = box_D->start;
+      box_J->start = box_D->end;
+      finishSegmentation();
+
+      return;
+    }
+
+
+  /* Regular 53 Segmentation */
   align_against_collection(sequence_or_rc, germline->rep_5, NO_FORBIDDEN_ID, reverse_V, reverse_V, false,
                                         box_V, segment_cost);
 
