@@ -15,11 +15,18 @@ HUGO_URL = HUGO_REQUEST + HUGO_COLS + HUGO_QUERY
 
 NCBI_API = 'http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nuccore&rettype=fasta&retmode=text'+'&id=%s'
 
+# Common CD used to sort cells, see https://en.wikipedia.org/wiki/Cluster_of_differentiation
+SORTING_CD = [ 'CD3g', 'CD3d', 'CD3e', 'CD4', 'CD8a', 'CD8b', 'CD11a', 'CD11b', 'CD14', 'CD15', 'CD16a', 'CD16b', 'CD19', 'CD20', 'CD22', 'CD24', 'CD25', 'CD30', 'CD31', 'CD34', 'CD38', 'CD45', 'CD56', 'CD61', 'CD91', 'CD114', 'CD117', 'CD182' ]
 
 OUT = 'CD.fa'
 
+SORTING_OUT = 'CD-sorting.fa'
+
 print "==>", OUT
 out = open(OUT, 'w')
+
+print "==>", SORTING_OUT
+sorting_out = open(SORTING_OUT, 'w')
 
 for l in urllib.urlopen(HUGO_URL).readlines():
     ll = l.split('\t')
@@ -38,5 +45,7 @@ for l in urllib.urlopen(HUGO_URL).readlines():
 
     out.write(fasta_with_id)
 
+    if cd_id in SORTING_CD:
+        sorting_out.write(fasta_with_id)
     
 
