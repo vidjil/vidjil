@@ -137,6 +137,9 @@ Germline::Germline(string code, char shortcut, string path, json json_recom,
 
   if (rep_4.size())
     seg_method = SEG_METHOD_543 ;
+
+  if (!rep_5.size() && !rep_3.size())
+    seg_method = SEG_METHOD_ONE ;
 }
 
 void Germline::finish() {
