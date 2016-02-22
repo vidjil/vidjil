@@ -119,6 +119,7 @@ function imgtPost(data, system) {
  */
 function imgtPostForSegmenter(data, system) {
 
+    var imgt4segButton= document.getElementById("toIMGTSeg");
     //limit #request to #
     var pos, nb = 1;
     pos = 0;
@@ -126,18 +127,19 @@ function imgtPostForSegmenter(data, system) {
         nb++;
     }
 
-    //process to first 10 sequences then send another process to handle to remaining part
+    //update imgt button according to request processing
+    if (typeof imgt4segButton != "undefined"){
+        imgt4segButton.setAttribute("style","color:green");
+        if (!imgt4segButton.textContent.contains("loading")  ){imgt4segButton.textContent+=" (loading)";}
+    }
+
+    //process to first 10 sequences then alert user about the remaining part
     if (nb > 10) {
         pos = nth_ocurrence(data, '>', 11);
         var newdata = data.substr(pos);
         data = data.substr(0, pos - 1);
         var msg = "Analysis has been cut off after the 10th sequence due to IMGT limits. Please change your selection to update the other clones, after this processing. ";
 
-        /* Need to think about how to link a sequence list to a cloneID when more than 10.
-        if (pos >= 0) {
-            msg += " Please note that another set is to be sent for analysis to IMGT. this may take some time !";
-            imgtPostForSegmenter(newdata, system);
-        }*/
         console.log({
             "type": "flash",
             "msg": msg ,
@@ -178,7 +180,7 @@ function imgtPostForSegmenter(data, system) {
     httpRequest.onreadystatechange = function () {
         if (httpRequest.readyState == 4 && httpRequest.status == 200) {
             console.log({
-                "type": "flash",
+                "type": "log",
                 "msg": "imgtPostForSegmenter: Loading results from Imgt Form ",
                 "priority": 1
             });
@@ -196,25 +198,32 @@ function imgtPostForSegmenter(data, system) {
                 m.clones[cloneIdx].seg.imgt2display = computeStartStop(imgtArray[i],m.clones[cloneIdx].getSequence());
                 //toggle save in analysis file
                 m.clones[cloneIdx].segEdited = true;
-
             }
-            logmsg=logmsg.substr(logmsg.length-1)==","?logmsg.substr(0,logmsg.length-1):logmsg;
             m.updateElemStyle(m.getSelected());
 
+            var imgt4segButton= document.getElementById("toIMGTSeg");
+            if (typeof imgt4segButton != "undefined"){
+                imgt4segButton.removeAttribute("style");
+                imgt4segButton.textContent=imgt4segButton.textContent.replace(" (loading)","");
+            }
             console.log({
-                "type": "flash",
-                "msg": logmsg + ")" + httpRequest.statusText,
-                "priority": 1
+                "type": "log",
+                "msg": logmsg+ ")" + httpRequest.statusText
             });
         }
-    }
+    };
     httpRequest.onerror = function () {
         console.log({
             "type": "flash",
             "msg": "imgtPostForSegmenter: error while requesting IMGT website: " + httpRequest.statusText,
             "priority": 2
         });
-    }
+        var imgt4segButton= document.getElementById("toIMGTSeg");
+        if (typeof imgt4segButton != "undefined"){
+            imgt4segButton.removeAttribute("style");
+            imgt4segButton.textContent=imgt4segButton.textContent.replace(" (loading)","");
+        }
+    };
 
     //test with a local file
     //httpRequest.open('GET', '/vidjil/data/vquest.data');
