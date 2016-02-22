@@ -1,9 +1,10 @@
 var fs = require('fs');
+var system = require('system');
 
 var page = require('webpage').create();
 page.onConsoleMessage = function(msg) { console.log(msg); };
 
-var curdir = phantom.args[0] || fs.workingDirectory;
+var curdir = system.args[1] || fs.workingDirectory;
 // curdir = "http://localhost/browser/test/QUnit"
 
 page.open(curdir+"/test_Qunit.html", function() {
