@@ -615,7 +615,13 @@ def confirm():
 #
 def delete():
     if (auth.can_modify_patient(request.vars["id"]) ):
-        sample_set_id = db.patient[request.vars["id"]].sample_set_id
+        patient = db.patient[request.vars["id"]]
+        if patient is None:
+            res = {"message": 'An error occured. This patient may have already been deleted'}
+            log.error(res)
+            return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+        sample_set_id =.patient.sample_set_id
 
         #delete data file 
         query = db( (db.sample_set_membership.sample_set_id == sample_set_id)
