@@ -222,13 +222,15 @@ json WindowsStorage::computeDiversity(int nb_segmented) {
   double index_H_entropy = 0.0 ;
   double index_1_minus_Ds_diversity = 0.0 ;
 
+  double nb_seg_nb_seg_m1 = (double) nb_segmented * ((double) nb_segmented - 1);
+
   for (auto it = seqs_by_window.begin(); it != seqs_by_window.end(); ++it) {
     size_t clone_nb_reads = it->second.getNbInserted();
 
     float ratio = (float) clone_nb_reads / nb_segmented ;
     index_H_entropy -= ratio * log(ratio) ;
 
-    index_1_minus_Ds_diversity += (float) (clone_nb_reads * (clone_nb_reads - 1)) / (nb_segmented * (nb_segmented - 1)) ;
+    index_1_minus_Ds_diversity += ((double) clone_nb_reads * ((double) clone_nb_reads - 1)) / nb_seg_nb_seg_m1 ;
   }
 
   float index_E_equitability  = index_H_entropy / log(nb_segmented) ;
