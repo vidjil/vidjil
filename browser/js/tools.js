@@ -51,8 +51,16 @@ function tsvToArray(allText) {
 function processImgtContents(IMGTresponse,tag) {
 
     var impl = document.implementation;
-    var htmlDoc = (new DOMParser).parseFromString(IMGTresponse, "text/html");
-    var allpretext = htmlDoc.getElementsByTagName(tag)[0].innerHTML;
+    //var htmlDoc = (new DOMParser).parseFromString(IMGTresponse, "text/html");
+    var htmlDoc = document.implementation.createHTMLDocument("example");
+    htmlDoc.documentElement.innerHTML= IMGTresponse;
+
+    if (htmlDoc.length<10){
+        console.log({
+            "type": "log",
+            "msg": "Error, Javascript engine does not supprt the parseFromString method..."});
+    }
+    var allpretext = ((htmlDoc.getElementsByTagName(tag))[0]).innerHTML;
     var idxFirst = allpretext.indexOf('Sequence number');
     var textlikecsv = allpretext.substr(idxFirst);
     var imgArray = tsvToArray(textlikecsv);

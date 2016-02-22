@@ -21,11 +21,11 @@ test("test tsvToArray", function () {
         var aTest = tsvToArray(tabstring);
         ok(aTest[0].head3 === "Line 1 data3", "Array[0].head3 =='Line 1 data3'");
         ok(aTest[1].head2 === "Line 2 data2", "Array[1].head2=='Line 2 head2'");
-        ok(typeof(aTest[5]) === 'undefined', "Tis is only a 2 lines array, no line #5");
+        ok(aTest[5] == null, "This is only a 2 lines array, no line #5");
     }
 );
 
-asyncTest("processImgtContents(IMGTresponse,tag)", function () {
+asyncTest("processImgtContents", function () {
         expect(5);
 
         var xhr = $.ajax({
@@ -72,7 +72,7 @@ test("computeStartStop(arrayToProcess,sequence)", function () {
 
 
         var imgt2display = computeStartStop(json_data.clones[3].seg.imgt, json_data.clones[3].sequence);
-        ok(typeof imgt2display != 'undefined', "function returned a not null array");
+        ok( null != imgt2display, "function returned a not null array");
         deepEqual(imgt2display, imgt2displayCheck, "Processed array is similar to expected array");
 
     }
