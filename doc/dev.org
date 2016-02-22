@@ -90,7 +90,8 @@ to access the public server at http://rbx.vidjil.org/.
 ** Browser
 *** Unit
     The unit tests in the browser are managed by QUnit and launched using
-    [[http://phantomjs.org/][phantomjs]]. The tests are organised in the directory
+    [[http://phantomjs.org/][phantomjs]], by launching =make unit= from the =browser/test= directory.
+    The tests are organised in the directory
     [[../browser/test/QUnit/testFiles][browser/test/QUnit/testFiles]]. The file [[../browser/test/QUnit/testFiles/data_test.js][data_test.js]] contains a toy
     dataset that is used in the tests.
 
