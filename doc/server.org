@@ -197,6 +197,7 @@ These installation instruction are for Ubuntu server 14.04
 
 
 * Troubleshootings
+
 ** Workers seem to be stuck
    For some reasons, that are not clear yet, it may happen that workers are not
    assigned any additional jobs even if they don't have any ongoin jobs.
@@ -205,3 +206,38 @@ These installation instruction are for Ubuntu server 14.04
    #+BEGIN_SRC sh
    initctl restart web2py-scheduler
    #+END_SRC
+
+* Hardware
+** Minimal
+   The minimal requirement for running Vidjil is quite low. For a single run,
+   a single core processor with 2GB of RAM will suffice (Vidjil Typically uses
+   approx. 1.2GB of RAM to run on a 1GB fastq and will take approx. 5 minutes+).
+   Therefore in order to maintain a stable service of the server with a single
+   worker for running Vidjil, any standard multi-core processor will do.
+
+** Recommended
+   When choosing hardware for your server it is important to know the scale
+   of usage you require.
+   If you have many users that use the app on a daily basis, you will need to
+   have multiple cores to ensure the worker queues don't build up.
+   One worker will occupy one core completely when running Vidjil (Vidjil is
+   currently single-threaded).
+
+   For reference, here is the current Vidjil setup we use on our public
+   testing server:
+      - Processor: Quad core Intel 2.4MHz
+      - RAM: 16GB
+
+   This configuration currently serves 15 regular users (~40 total).
+   Given that the CPU is quad-core, we have 3 workers for executing Vidjil.
+   This way the webserver can always have a dedicated cpu core and
+   running the workers at full capacity has no adverse effects on the
+   web server's response times.
+
+* Storage
+  The main limitation of Vidjil is the amount of data involved. Files can
+  sometimes weigh several GB, so a full installation's total storage should
+  be be serveral hundred GB, or even several TB.
+
+  We recommend a RAID setup of at least 2x2TB to allow for user files and at
+  least one backup.
