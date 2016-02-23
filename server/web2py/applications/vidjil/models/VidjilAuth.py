@@ -186,6 +186,24 @@ class VidjilAuth(Auth):
         return self.get_permission('read', 'patient', patient_id ,user)\
             or self.can_modify_patient(patient_id, user)\
             or self.is_admin(user)
+            
+    def can_view_sample_set(self, sample_set_id, user = None) :
+        sample_set = db.sample_set[sample_set_id]
+        
+        perm = self.get_permission('admin', 'sample_set', sample_set_id, user)\
+            or self.is_admin(user)
+
+        if (sample_set.sample_type == "patient") :
+            for row in db( db.patient.sample_set_id == sample_set_id ).select() :
+                if self.can_view_patient(row.id, user):
+                    perm = True;
+
+        if (sample_set.sample_type == "run") :
+            for row in db( db.run.sample_set_id == sample_set_id ).select() :
+                if self.can_view_run(row.id, user):
+                    perm = True;
+
+        return perm
         
     def can_view_patient_info(self, patient_id, user = None):
         '''
