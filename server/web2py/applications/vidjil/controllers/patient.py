@@ -9,87 +9,8 @@ if request.env.http_origin:
     response.headers['Access-Control-Max-Age'] = 86400
 
 ACCESS_DENIED = "access denied"
-
-def custom():
-    start = time.time()
-
-    if request.vars["config_id"] and request.vars["config_id"] != "-1" :
-        config_id = long(request.vars["config_id"])
-        config_name = db.config[request.vars["config_id"]].name
-        config = True
-        
-    else:
-        request.vars["config_id"] = -1
-        config_id = -1
-        config_name = None
-        config = False
-        
-    if "custom_list" not in request.vars :
-        request.vars["custom_list"] = []
-    if type(request.vars["custom_list"]) is str :
-        request.vars["custom_list"] = [request.vars["custom_list"]]
-        
-    myGroupBy = None
-    if request.vars["patient_id"]:
-        q = ((auth.accessible_query('read', db.patient)) 
-                & (auth.accessible_query('read', db.config)) 
-                & (db.patient.id==request.vars["patient_id"])
-                & (db.sample_set.id == db.patient.sample_set_id)
-                & (db.sample_set_membership.sample_set_id == db.sample_set.id)
-                & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-                & (db.results_file.sequence_file_id==db.sequence_file.id)
-                & (db.results_file.data_file != '')
-                & (db.config.id==db.results_file.config_id)
-            )
-        
-    else:
-        q = ((auth.accessible_query('read', db.patient)) 
-                & (auth.accessible_query('read', db.config)) 
-                & (db.sample_set.id == db.patient.sample_set_id)
-                & (db.sample_set_membership.sample_set_id == db.sample_set.id)
-                & (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
-                & (db.results_file.sequence_file_id==db.sequence_file.id)
-                & (db.results_file.data_file != '')
-                & (db.config.id==db.results_file.config_id)
-            )
-        myGroupBy = db.sequence_file.id|db.results_file.config_id
-
-    query = db(q).select(
-                db.patient.id, db.patient.info, db.patient.first_name, db.patient.last_name, db.results_file.id, db.results_file.config_id, db.sequence_file.sampling_date,
-                db.sequence_file.pcr, db.config.name, db.results_file.run_date, db.results_file.data_file, db.sequence_file.filename,
-                db.sequence_file.data_file, db.sequence_file.id, db.sequence_file.info,
-                db.sequence_file.size_file,
-                orderby = ~db.patient.id|db.sequence_file.id|db.results_file.run_date,
-                groupby = myGroupBy
-            )
-
-    ##filter
-    if "filter" not in request.vars :
-        request.vars["filter"] = ""
-        
-    for row in query :
-        row.checked = False
-        if (str(row.results_file.id) in request.vars["custom_list"]) :
-            row.checked = True
-
-        row.names = vidjil_utils.anon_names(row.patient.id, row.patient.first_name, row.patient.last_name)
-        row.string = [row.names, row.sequence_file.filename, str(row.sequence_file.sampling_date), str(row.sequence_file.pcr), str(row.config.name), str(row.results_file.run_date), row.patient.info]
-    query = query.find(lambda row : ( vidjil_utils.advanced_filter(row.string,request.vars["filter"]) or row.checked) )
-
-    
-    if config :
-        query = query.find(lambda row : ( row.results_file.config_id==config_id or (str(row.results_file.id) in request.vars["custom_list"])) )
-    
-    log.debug("patient/custom (%.3fs) %s" % (time.time()-start, request.vars["filter"]))
-
-    return dict(query=query,
-                config_id=config_id,
-                config=config)
-    
-
 STATS_READLINES = 1000 # approx. size in which the stats are searched
 STATS_MAXBYTES = 500000 # approx. size in which the stats are searched
-
 def stats():
     start = time.time()
 
