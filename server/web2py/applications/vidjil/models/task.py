@@ -271,9 +271,6 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     db.commit()
 
     config_name = db.config[id_config].name
-    print (id_data)
-    print (id_config)
-    print (out_folder)
     res = {"message": "[%s] c%s: MiXCR finished - %s" % (id_data, id_config, out_folder)}
     log.info(res)
 
