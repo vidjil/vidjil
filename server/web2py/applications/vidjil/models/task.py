@@ -200,7 +200,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
 
     return "SUCCESS"
 
-def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False):
+def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
     import time
 
@@ -265,6 +265,12 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     config_name = db.config[id_config].name
     res = {"message": "[%s] c%s: MiXCR finished - %s" % (id_data, id_config, out_folder)}
     log.info(res)
+
+    for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
+        sample_set_id = row.sample_set_id
+        print row.sample_set_id
+        run_fuse(id_file, id_config, id_data, id_fuse, sample_set_id, clean_before = False)
+
 
     return "SUCCESS"
 
