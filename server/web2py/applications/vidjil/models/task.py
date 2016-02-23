@@ -243,6 +243,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     sys.stdout.flush()
 
     p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=STDOUT, close_fds=True)
+    p.wait()
 
     print "Output log in " + out_log
     sys.stdout.flush()
@@ -252,14 +253,6 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     alignments_filepath = os.path.abspath(out_alignments)
     results_filepath = ""
 
-    try:
-        stream = open(alignments_filepath, 'rb')
-        print alignments_filepath
-    except IOError:
-        print "!!! MiXCR failed to start"
-        res = {"message": "[%s] c%s: MiXCR FAILED - %s" % (id_data, id_config, out_folder)}
-        log.error(res)
-        raise IOError
 
 
     ## insertion dans la base de donnée
