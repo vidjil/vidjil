@@ -251,7 +251,6 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     ## Get result file
     print "===>", out_results
     alignments_filepath = os.path.abspath(out_alignments)
-    results_filepath = ""
 
 
 
@@ -259,7 +258,7 @@ def run_mixcr(id_file, id_config, id_data, clean_before=False, clean_after=False
     ts = time.time()
     db.results_file[id_data] = dict(status = "ready",
                                  run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
-                                 data_file = results_filepath
+                                 data_file = out_results
                                 )
     db.commit()
 
