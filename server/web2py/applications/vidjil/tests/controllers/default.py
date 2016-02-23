@@ -60,7 +60,7 @@ class DefaultController(unittest.TestCase):
 		& (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                 & (db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
 	).select(db.patient.ALL).first()
-	request.vars['patient_id'] = patient.id
+	request.vars['sample_set_id'] = patient.sample_set_id
 
         resp = run_request()
         self.assertNotEqual(resp.find('process requested'), -1, "run_request doesn't return a valid message")
@@ -69,7 +69,7 @@ class DefaultController(unittest.TestCase):
         
     def testGetData(self):
         request.vars['config'] = fake_config_id
-        request.vars['patient'] = fake_patient_id
+        request.vars['sample_set_id'] = fake_sample_set_id
         
         resp = get_data()
         self.assertNotEqual(resp.find('segmented":[742377]'), -1, "get_data doesn't return a valid json " + resp)
@@ -117,7 +117,7 @@ class DefaultController(unittest.TestCase):
         
         resp = save_analysis()
 
-        resp = get_analysis_from_patient(fake_patient_id)
+        resp = get_analysis_from_sample_set(fake_sample_set_id)
         self.assertEqual(len(resp), 1, "should have one analysis for that patient %d"%len(resp))
         self.assertEqual(resp[0].sample_set_id, fake_sample_set_id, "get_analysis doesn't have the correct sample_set")
 

@@ -159,8 +159,8 @@ def run_request():
 
 #########################################################################
 ## return .data file
-# need patient, config
-# need patient admin or read permission
+# need sample_set, config
+# need sample_set admin or read permission
 def get_data():
     from subprocess import Popen, PIPE, STDOUT
     if not auth.user :
@@ -343,7 +343,7 @@ def get_analysis():
     if error == "" :
         
         ## récupération des infos se trouvant dans le fichier .analysis
-        analysis_data = get_analysis_data(request.vars['patient'])
+        analysis_data = get_analysis_data(request.vars['sample_set_id'])
         #analysis_data["info_patient"] = db.patient[request.vars["patient"]].info
         return gluon.contrib.simplejson.dumps(analysis_data, separators=(',',':'))
 

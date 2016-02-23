@@ -36,19 +36,7 @@ class PatientController(unittest.TestCase):
         auth.add_permission(group_id, 'admin', db.patient, 0)
         auth.add_permission(group_id, 'read', db.patient, 0)
         auth.add_permission(group_id, 'create', db.patient, 0)
-
-        
-    def testInfo(self):
-        request.vars["id"] = fake_patient_id
-        
-        resp = info()
-        self.assertTrue(resp.has_key('query'), "info() has returned an incomplete response")
-        
-        
-    def testCustom(self):
-        resp = custom()
-        self.assertTrue(resp.has_key('query'), "custom() has returned an incomplete response")
-        
+    
         
     def testIndex(self):
         resp = index()
