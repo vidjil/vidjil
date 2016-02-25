@@ -232,12 +232,11 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
 
     ## commande complete
     mixcr = defs.DIR_MIXCR + 'mixcr'
-    cmd = mixcr + ' align --save-reads -t 3 -r ' + report + '.aln'
+    cmd = mixcr + ' align --save-reads -t 1 -r ' + report + '.aln'
     #+ output_filename
-    # TODO reduce threads
     cmd += ' ' + seq_file  + ' ' + out_alignments
-    cmd += ' && ' + mixcr + ' assemble -t 3 -r ' + report + '.asmbl ' + out_alignments + ' ' + out_clones
-    cmd += ' && ' + mixcr + ' exportClones -t 3 --format vidjil -germline -id -name -reads -sequence -top -seg -s ' + out_clones + ' ' + out_results
+    cmd += ' && ' + mixcr + ' assemble -t 1 -r ' + report + '.asmbl ' + out_alignments + ' ' + out_clones
+    cmd += ' && ' + mixcr + ' exportClones -t 1 --format vidjil -germline -id -name -reads -sequence -top -seg -s ' + out_clones + ' ' + out_results
 
     ## execute la commande MiXCR
     print "=== Launching MiXCR ==="
