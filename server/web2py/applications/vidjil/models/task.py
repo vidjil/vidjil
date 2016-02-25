@@ -253,13 +253,23 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
     alignments_filepath = os.path.abspath(out_alignments)
 
 
+    results_filepath = os.path.abspath(out_results)
+    try:
+        stream = open(results_filepath, 'rb')
+    except IOError:
+        print "!!! MiXCR failed, no result file"
+        res = {"message": "[%s] c%s: MiXCR FAILED - %s" % (id_data, id_config, out_folder)}
+        log.error(res)
+        raise IOError
 
     ## insertion dans la base de donnée
     ts = time.time()
+    
     db.results_file[id_data] = dict(status = "ready",
                                  run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
-                                 data_file = out_results
+                                 data_file = stream
                                 )
+    
     db.commit()
 
     config_name = db.config[id_config].name
