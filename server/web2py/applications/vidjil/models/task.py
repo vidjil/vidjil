@@ -200,6 +200,88 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
 
     return "SUCCESS"
 
+def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_after=False):
+    from subprocess import Popen, PIPE, STDOUT, os
+    import time
+
+    upload_folder = defs.DIR_SEQUENCES
+    out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
+
+    cmd = "rm -rf "+out_folder
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+    p.wait()
+
+    ## filepath du fichier de séquence
+    row = db(db.sequence_file.id==id_file).select()
+    filename = row[0].data_file
+    output_filename = defs.BASENAME_OUT_VIDJIL_ID % id_data
+    seq_file = upload_folder+filename
+
+    ## config de vidjil
+    arg_cmd = db.config[id_config].command
+
+    os.makedirs(out_folder)
+    out_log = out_folder + output_filename+'.mixcr.log'
+    report = out_folder + output_filename + '.mixcr.report'
+    log_file = open(out_log, 'w')
+
+    out_alignments = out_folder + output_filename + '.align.vdjca'
+    out_clones =  out_folder + output_filename + '.clones.clns'
+    out_results_file = output_filename + '.mixcr'
+    out_results = out_folder + out_results_file
+
+    ## commande complete
+    mixcr = defs.DIR_MIXCR + 'mixcr'
+    cmd = mixcr + ' align --save-reads -t 1 -r ' + report + '.aln'
+    #+ output_filename
+    cmd += ' ' + seq_file  + ' ' + out_alignments
+    cmd += ' && ' + mixcr + ' assemble -t 1 -r ' + report + '.asmbl ' + out_alignments + ' ' + out_clones
+    cmd += ' && ' + mixcr + ' exportClones -t 1 --format vidjil -germline -id -name -reads -sequence -top -seg -s ' + out_clones + ' ' + out_results
+
+    ## execute la commande MiXCR
+    print "=== Launching MiXCR ==="
+    print cmd
+    print "========================"
+    sys.stdout.flush()
+
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=STDOUT, close_fds=True)
+    p.wait()
+
+    print "Output log in " + out_log
+    sys.stdout.flush()
+
+    ## Get result file
+    print "===>", out_results
+    results_filepath = os.path.abspath(out_results)
+    try:
+        stream = open(results_filepath, 'rb')
+    except IOError:
+        print "!!! MiXCR failed, no result file"
+        res = {"message": "[%s] c%s: MiXCR FAILED - %s" % (id_data, id_config, out_folder)}
+        log.error(res)
+        raise IOError
+
+    ## insertion dans la base de donnée
+    ts = time.time()
+    
+    db.results_file[id_data] = dict(status = "ready",
+                                 run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
+                                 data_file = stream
+                                )
+    
+    db.commit()
+
+    config_name = db.config[id_config].name
+    res = {"message": "[%s] c%s: MiXCR finished - %s" % (id_data, id_config, out_folder)}
+    log.info(res)
+
+    for row in db(db.sample_set_membership.sequence_file_id==id_file).select() :
+        sample_set_id = row.sample_set_id
+        print row.sample_set_id
+        run_fuse(id_file, id_config, id_data, id_fuse, sample_set_id, clean_before = False)
+
+
+    return "SUCCESS"
 
 def run_copy(id_file, id_config, id_data, id_fuse, clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
@@ -388,4 +470,5 @@ def custom_fuse(file_list):
 
 from gluon.scheduler import Scheduler
 scheduler = Scheduler(db, dict(vidjil=run_vidjil,
+                               mixcr=run_mixcr,
                                none=run_copy))
