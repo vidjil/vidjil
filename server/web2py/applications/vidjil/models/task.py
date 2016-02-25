@@ -222,19 +222,22 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
 
     os.makedirs(out_folder)
     out_log = out_folder + output_filename+'.mixcr.log'
+    report = out_folder + output_filename + '.mixcr.report'
     log_file = open(out_log, 'w')
 
     out_alignments = out_folder + output_filename + '.align.vdjca'
     out_clones =  out_folder + output_filename + '.clones.clns'
-    out_results = out_folder + output_filename + '.mixcr'
+    out_results_file = output_filename + '.mixcr'
+    out_results = out_folder + out_results_file
 
     ## commande complete
     mixcr = defs.DIR_MIXCR + 'mixcr'
-    cmd = mixcr + ' align --save-reads -t 1'
+    cmd = mixcr + ' align --save-reads -t 3 -r ' + report + '.aln'
     #+ output_filename
+    # TODO reduce threads
     cmd += ' ' + seq_file  + ' ' + out_alignments
-    cmd += ' && ' + mixcr + ' assemble -t 1 ' + out_alignments + ' ' + out_clones
-    cmd += ' && ' + mixcr + ' exportClones -t 1 ' + arg_cmd + ' ' + out_clones + ' ' + out_results
+    cmd += ' && ' + mixcr + ' assemble -t 3 -r ' + report + '.asmbl ' + out_alignments + ' ' + out_clones
+    cmd += ' && ' + mixcr + ' exportClones -t 3 --format vidjil -germline -id -name -reads -sequence -top -seg -s ' + out_clones + ' ' + out_results
 
     ## execute la commande MiXCR
     print "=== Launching MiXCR ==="
