@@ -252,9 +252,6 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
 
     ## Get result file
     print "===>", out_results
-    alignments_filepath = os.path.abspath(out_alignments)
-
-
     results_filepath = os.path.abspath(out_results)
     try:
         stream = open(results_filepath, 'rb')
