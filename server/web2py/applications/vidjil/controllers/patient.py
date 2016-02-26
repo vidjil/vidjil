@@ -621,7 +621,7 @@ def delete():
             log.error(res)
             return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
-        sample_set_id =.patient.sample_set_id
+        sample_set_id = patient.sample_set_id
 
         #delete data file 
         query = db( (db.sample_set_membership.sample_set_id == sample_set_id)
