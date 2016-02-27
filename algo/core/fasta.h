@@ -93,6 +93,8 @@ public:
 class OnlineFasta {
  private:
   Sequence current;
+  int current_gaps;
+
   istream *input;
   int extract_field;
   string extract_separator;

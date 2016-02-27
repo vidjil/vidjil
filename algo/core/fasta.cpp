@@ -174,6 +174,7 @@ void OnlineFasta::init() {
   line_nb = 0;
   line = getInterestingLine();
   current.seq = NULL;
+  current_gaps = 0;
 }
 
 unsigned long long OnlineFasta::getPos() {
@@ -213,7 +214,18 @@ void OnlineFasta::skipToNthSequence() {
 
 void OnlineFasta::addLineToCurrentSequence(string line)
 {
-  current.sequence += line;
+  for (char& c : line)
+    {
+      if (c == ' ')
+        continue ;
+
+      if (c == '.') {
+        current_gaps++;
+        continue ;
+      }
+
+      current.sequence += c;
+    }
 }
 
 void OnlineFasta::next() {
@@ -227,6 +239,7 @@ void OnlineFasta::next() {
   if (current.seq) {
     delete [] current.seq;
     current.seq = NULL;
+    current_gaps = 0;
   }
 
   if  (hasNextData()) {
