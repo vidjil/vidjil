@@ -119,7 +119,10 @@ class Segmenter {
 protected:
   string sequence;
   string sequence_or_rc;
+
+  int JUNCTIONstart, JUNCTIONend;
   int CDR3start, CDR3end;
+
   bool reversed, segmented, dSegmented;
   int because;
 

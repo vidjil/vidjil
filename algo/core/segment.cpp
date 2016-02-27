@@ -303,6 +303,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
   box_D = new AlignBox();
   box_J = new AlignBox();
 
+  CDR3start = -1;
+  CDR3end = -1;
+
   label = seq.label ;
   sequence = seq.sequence ;
   info = "" ;
@@ -1029,61 +1032,31 @@ void FineSegmenter::FineSegmentD(Germline *germline, bool several_D,
 }
 
 void FineSegmenter::findCDR3(){
-    string str = getSequence().sequence;
-    
-    list<string> codon_start;
-    codon_start.push_back("TGT");
-    codon_start.push_back("TGC");
-    
-    list<string> codon_end;
-    codon_end.push_back("TTT");
-    codon_end.push_back("TTC");
-    codon_end.push_back("TGG");
-    
-    list<int> p_start;
-    list<int> p_end;
 
-    size_t loc;
-    std::list<string>::const_iterator it;
-    for (it = codon_start.begin(); it != codon_start.end(); ++it) {//filter 1 : start codon must be in V
-        loc = 0;
-        while ( loc != string::npos && loc < (size_t)box_V->end){
-            loc = str.find(*it, loc+3);
-            if (loc != string::npos && loc < (size_t)box_V->end) {
-                p_start.push_front(loc);
-            }
-        }
-    }
+  Sequence V = segmented_germline->rep_5.read(box_V->ref_nb);
+  Sequence J = segmented_germline->rep_3.read(box_J->ref_nb);
 
-    for (it = codon_end.begin(); it != codon_end.end(); ++it) {//filter 2 : end codon must be in J
-        loc = box_J->start;
-        while ( loc != string::npos){
-            loc = str.find(*it, loc+3);
-            if (loc != string::npos) {
-                p_end.push_back(loc);
-            }
-        }
-    }
+  int V_104 = V.marked_pos;
+  int J_118 = J.marked_pos;
 
-    CDR3start = -1;
-    CDR3end = -1;
-    
-    std::list<int>::const_iterator it1;
-    for (it1 = p_start.begin(); it1 != p_start.end(); ++it1) {
-        
-        std::list<int>::const_iterator it2;
-        for (it2 = p_end.begin(); it2 != p_end.end(); ++it2) {
-            
-            if ( (*it2-*it1)%3 == 0){       //filter 3 : start/stop codon must be seprated by a multiple of 3
-                
-                if ( fabs((*it2-*it1)-36 ) < fabs((CDR3end-CDR3start)-36) ){ //filter 4 : cdr3 length must be close to 12 AA
-                    CDR3start = *it1;
-                    CDR3end = *it2;
-                }
-            }
-        }
-    }
-    
+  if (!V_104 || !J_118)
+    return ;
+
+  // The following offsets are the number of nucleotides contained in the identified V-REGION / J-REGION until positions 104 and 118, included.
+  // TODO: These computations could be improved by backtracking in the DP matrix.
+  int V_104_offset = V.sequence.length() - V_104 + 1 - box_V->del_right ;
+  int J_118_offset = J_118 - box_J->del_left ;
+
+  // We require the full V_104 and J_118 codons
+  if (V_104_offset < 3 || J_118_offset < 3)
+    return ;
+
+  JUNCTIONstart = (box_V->end + 1 + 1) - V_104_offset;
+  JUNCTIONend = (box_J->start + 1 - 1) + J_118_offset;
+
+  // IMGT-CDR3 is, on each side, 3 nucleotides shorter than IMGT-JUNCTION
+  CDR3start = JUNCTIONstart + 3;
+  CDR3end = JUNCTIONend - 3;
 }
 
 json FineSegmenter::toJson(){
