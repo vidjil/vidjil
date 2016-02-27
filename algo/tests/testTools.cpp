@@ -193,6 +193,24 @@ void testFastaAddThrows() {
   TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
 }
 
+void testFastaLabelAndMark() {
+
+  Fasta fa(1, "=", 9);
+
+  istringstream seq1(">tic=tac=toe\nACGTACGTACGT\n");
+  seq1 >> fa ;
+  TAP_TEST(fa.read(0).label == "tic", TEST_FASTA_LABEL, "");
+  TAP_TEST(fa.read(0).marked_pos == 9, TEST_FASTA_MARK, "");
+
+  istringstream seq2(">seq2\nA.G.ACGTACGT\n");
+  seq2 >> fa ;
+  TAP_TEST(fa.read(1).marked_pos == 7, TEST_FASTA_MARK, "");
+
+  istringstream seq3(">seq2\n..........GT\n");
+  seq3 >> fa ;
+  TAP_TEST(fa.read(2).marked_pos == 0, TEST_FASTA_MARK, "");
+}
+
 void testSequenceOutputOperator() {
   ostringstream oss;
   Sequence seq = {"a b c", "a", "GATTACA", "AIIIIIH", NULL, 0};
@@ -329,6 +347,7 @@ void testTools() {
   testFasta1();
   testFastaAdd();
   testFastaAddThrows();
+  testFastaLabelAndMark();
   testSequenceOutputOperator();
   testFastaOutputOperator();
   testRevcomp();
