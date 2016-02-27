@@ -323,8 +323,8 @@ void testProbability() {
                 "CTTG", "CTTT"};
   Fasta V, J;
   for (int i = 0; i < 64; i++) {
-    Sequence v = {"V_" + string_of_int(i+33), "V" + string_of_int(i+33), v_seq[i], "", NULL};
-    Sequence j = {"J_" + string_of_int(i+33), "J" + string_of_int(i+33), j_seq[i], "", NULL};
+    Sequence v = {"V_" + string_of_int(i+33), "V" + string_of_int(i+33), v_seq[i], "", NULL, 0};
+    Sequence j = {"J_" + string_of_int(i+33), "J" + string_of_int(i+33), j_seq[i], "", NULL, 0};
     V.add(v);
     J.add(j);
   }
@@ -336,7 +336,7 @@ void testProbability() {
   TAP_TEST(germline.index->getIndexLoad(AFFECT_NOT_UNKNOWN) == .75, TEST_GET_INDEX_LOAD, ".getIndexLoad with AFFECT_NOT_UNKNOWN");
   TAP_TEST(germline.index->getIndexLoad(AFFECT_UNKNOWN) == .25, TEST_GET_INDEX_LOAD, ".getIndexLoad with AFFECT_UNKNOWN");
 
-  Sequence seq = {"to_segment", "to_segment", "TATCG", "", NULL};
+  Sequence seq = {"to_segment", "to_segment", "TATCG", "", NULL, 0};
   KmerSegmenter kseg(seq, &germline);
 
   KmerAffectAnalyser *kaa = kseg.getKmerAffectAnalyser();

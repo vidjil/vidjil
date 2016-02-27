@@ -195,7 +195,7 @@ void testFastaAddThrows() {
 
 void testSequenceOutputOperator() {
   ostringstream oss;
-  Sequence seq = {"a b c", "a", "GATTACA", "AIIIIIH", NULL};
+  Sequence seq = {"a b c", "a", "GATTACA", "AIIIIIH", NULL, 0};
   oss << seq;
 
   TAP_TEST(oss.str() == "@a\nGATTACA\n+\nAIIIIIH\n", TEST_SEQUENCE_OUT, oss.str());
