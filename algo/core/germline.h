@@ -17,6 +17,12 @@ enum SEGMENTATION_METHODS {
   SEG_METHOD_MAX1U    // Pseudo-germline, most frequent kmer affection and unknwon affectation (-4)
 } ;
 
+
+// JUNCTION/CDR3 extraction from gapped V/J sequences
+#define        CYS104_IN_GAPPED_V  310   // First nucleotide of Cys104
+#define PHE118_TRP118_IN_GAPPED_J   38   // Last nucleotide of Phe118/Trp118
+
+
 using namespace std;
 using json = nlohmann::json;
 
