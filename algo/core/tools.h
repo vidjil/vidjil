@@ -147,6 +147,11 @@ string extract_basename(string path, bool remove_ext = true);
 int remove_trailing_whitespaces(string &str);
 
 /**
+ * @return subsequence delimited by biological positions (starting from 1), including both positions
+ */
+string subsequence(const string &text, int start, int end);
+
+/**
  * @return reverse(complement(dna)) if do_revcomp, otherwise dna
  */
 string revcomp(const string &dna, bool do_revcomp = true);
