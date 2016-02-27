@@ -1,23 +1,23 @@
 !NO_LAUNCHER:
 !LAUNCH: (cd ../../germline ; md5sum *.fa || md5 -r *.fa)
 
-$ Check md5 in germline/, sequences split from IMGT
+$ Check md5 in germline/, sequences split and processed from IMGT
 1:3a655c9d99ca04907a120f1b69febf2e IGHD.fa
-1:0d87f672c582e7e15cdcaa0fb5e08f6f IGHJ.fa
+1:99648acbcf17a675fa7e48ae8c8836d2 IGHJ.fa
 1:92aef873dde83c68070843a57904b15b IGHV.fa
-1:c574f5bcc98c99d6462365eb2a9aecc6 IGKJ.fa
+1:15a49bc8fc8dcb78153b3e6c3df9f5e4 IGKJ.fa
 1:a27659426126c5ab779a00bc9643d73e IGKV.fa
-1:a6bdc2aa82d151e30d10d302559355b6 IGLJ.fa
+1:0adbe435909c871a11b6555de52e3479 IGLJ.fa
 1:5f2039964e6623a5d88eb9b33be07a1a IGLV.fa
-1:5ee643edc326f1e46b0b5914a0b6d3d4 TRAJ.fa
+1:04dc5d173e42e145766da31e54b93af6 TRAJ.fa
 1:d249b9fe019f945d0643dd8d0e978f49 TRAV.fa
 1:f66c70cda5b369aecd34ab1cd11e7415 TRBD.fa
-1:cc20222cdb7a381ff5a34030bee91e08 TRBJ.fa
+1:7eaa560f388d7bbf596e6577812a3c2c TRBJ.fa
 1:2ba9bfe18bd6540f07009489d4881159 TRBV.fa
 1:97e784cdfd5994c10ebbbedfcf332ef6 TRDD.fa
-1:cfb6f64b2b6d9d8aa7a827ad6937fc82 TRDJ.fa
+1:014c76bb3c4d051f4174aaf768573789 TRDJ.fa
 1:74b37f99e9a63b861c03d1a55b4ee58a TRDV.fa
-1:0fb74249e406e3689ffad1b5633bbc3f TRGJ.fa
+1:3414424de4b8a7da9e1e47539a13daab TRGJ.fa
 1:40e7f196afc226db253d6ff5169f99bd TRGV.fa
 
 $ Check md5 in germline/, other sequences
