@@ -39,10 +39,11 @@ unsigned long long filesize(const char* filename)
     return in.tellg();
 }
 
-void Fasta::init(int extract_field, string extract_separator)
+void Fasta::init(int extract_field, string extract_separator, int mark_pos)
 {
   this -> extract_field = extract_field ;
   this -> extract_separator = extract_separator ; 
+  this -> mark_pos = mark_pos;
   total_size = 0;
   name = "";
   basename = "";
@@ -55,9 +56,9 @@ Fasta::Fasta(bool virtualfasta, string name)
   basename = extract_basename(name);
 }
 
-Fasta::Fasta(int extract_field, string extract_separator)
+Fasta::Fasta(int extract_field, string extract_separator, int mark_pos)
 {
-  init(extract_field, extract_separator);
+  init(extract_field, extract_separator, mark_pos);
 }
 
 Fasta::Fasta(const string &input, 
@@ -343,6 +344,7 @@ istream& operator>>(istream& in, Fasta& fasta){
 	string line;
 	Sequence read;
         OnlineFasta of(in, fasta.extract_field, fasta.extract_separator);
+        of.setMarkPos(fasta.mark_pos);
 
         while (of.hasNext()) {
           of.next();
