@@ -168,17 +168,24 @@ OnlineFasta::~OnlineFasta() {
 }
 
 void OnlineFasta::init() {
+  mark_pos = 0;
   nb_sequences_parsed = 0;
   nb_sequences_returned = 0;
   char_nb = 0;
   line_nb = 0;
-  line = getInterestingLine();
   current.seq = NULL;
+  current.marked_pos = 0;
   current_gaps = 0;
+
+  line = getInterestingLine();
 }
 
 unsigned long long OnlineFasta::getPos() {
   return char_nb;
+}
+
+void OnlineFasta::setMarkPos(int mark_pos) {
+  this -> mark_pos = mark_pos;
 }
 
 size_t OnlineFasta::getLineNb() {
@@ -225,6 +232,11 @@ void OnlineFasta::addLineToCurrentSequence(string line)
       }
 
       current.sequence += c;
+
+      if (mark_pos) {
+        if (current.sequence.length() + current_gaps == mark_pos)
+          current.marked_pos = current.sequence.length();
+      }
     }
 }
 
@@ -239,6 +251,7 @@ void OnlineFasta::next() {
   if (current.seq) {
     delete [] current.seq;
     current.seq = NULL;
+    current.marked_pos = 0;
     current_gaps = 0;
   }
 
