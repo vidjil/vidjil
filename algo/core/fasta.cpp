@@ -211,6 +211,10 @@ void OnlineFasta::skipToNthSequence() {
       return  ;
 }
 
+void OnlineFasta::addLineToCurrentSequence(string line)
+{
+  current.sequence += line;
+}
 
 void OnlineFasta::next() {
   fasta_state state = FASTX_UNINIT;
@@ -247,7 +251,7 @@ void OnlineFasta::next() {
         switch(state) {
         case FASTX_FASTA: case FASTX_FASTQ_ID:
           // Sequence
-          current.sequence += line;
+          addLineToCurrentSequence(line);
           break;
         case FASTX_FASTQ_SEQ:
           // FASTQ separator between sequence and quality

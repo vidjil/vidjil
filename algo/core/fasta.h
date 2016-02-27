@@ -101,6 +101,8 @@ class OnlineFasta {
   size_t line_nb;
   unsigned long long char_nb;
 
+  void addLineToCurrentSequence(string line);
+
   int nb_sequences_parsed;
   int nb_sequences_returned;
   int nb_sequences_max;
