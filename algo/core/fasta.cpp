@@ -367,7 +367,14 @@ ostream &operator<<(ostream &out, const Sequence &seq) {
     out << "@";
   } else
     out << ">";
-  out << seq.label << endl;
+  out << seq.label;
+
+  if (seq.marked_pos) {
+    out << " !@" << seq.marked_pos ;
+  }
+
+  out << endl;
+
   out << seq.sequence << endl;
   if (is_fastq) {
     out << "+" << endl << seq.quality << endl;
