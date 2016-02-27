@@ -51,7 +51,7 @@ void testFastaNbSequences() {
   TAP_TEST(nb_sequences_in_fasta("../../germline/IGHV.fa") == 350, TEST_FASTA_NB_SEQUENCES, "ccc");
 
   int a1 = approx_nb_sequences_in_fasta("../../germline/IGHV.fa");
-  TAP_TEST(a1 >= 340 && a1 <= 348, TEST_FASTA_NB_SEQUENCES, "");
+  TAP_TEST(a1 >= 345 && a1 <= 355, TEST_FASTA_NB_SEQUENCES, "");
 
   int a2 = nb_sequences_in_fasta("../../data/Stanford_S22.fasta", true);
   TAP_TEST(a2 >= 13100 && a2 <= 13200, TEST_FASTA_NB_SEQUENCES, "");
