@@ -1105,7 +1105,9 @@ json FineSegmenter::toJson(){
     if (CDR3start >= 0) {
         seg["cdr3"] = {
             {"start", CDR3start},
-            {"stop", CDR3end}
+            {"stop", CDR3end},
+            {"aa", CDR3aa},
+            {"productive", CDR3productive}
         };
     }
   }
