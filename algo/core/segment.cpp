@@ -1076,6 +1076,8 @@ void FineSegmenter::findCDR3(){
 
   JUNCTIONaa = nuc_to_aa(subsequence(getSequence().sequence, JUNCTIONstart, CDR3start-1))
     + CDR3aa + nuc_to_aa(subsequence(getSequence().sequence, CDR3end+1, JUNCTIONend));
+
+  CDR3productive = (CDR3nuc.length() % 3 == 0) && (CDR3aa.find('*') == string::npos);
 }
 
 json FineSegmenter::toJson(){
