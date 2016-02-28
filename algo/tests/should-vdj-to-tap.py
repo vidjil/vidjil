@@ -99,6 +99,13 @@ def should_pattern_to_regex(p):
         if term.startswith('#'):
             continue
 
+        # (such as CDR3 / junction)
+        if term.startswith('{'):
+            term = term.replace('*','[*]').replace('!','#')
+            term = term.replace('{', '.*[{].*').replace('}', '.*[}]')
+            r += [term]
+            continue
+
         # deletion/insertion/deletion
         # Note that '/' may be also in gene name, such as in IGKV1/OR-3*01
         if term.count('/') == 2:
