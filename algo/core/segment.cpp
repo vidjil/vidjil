@@ -1057,6 +1057,12 @@ void FineSegmenter::findCDR3(){
   // IMGT-CDR3 is, on each side, 3 nucleotides shorter than IMGT-JUNCTION
   CDR3start = JUNCTIONstart + 3;
   CDR3end = JUNCTIONend - 3;
+
+  CDR3nuc = subsequence(getSequence().sequence, CDR3start, CDR3end);
+  CDR3aa = nuc_to_aa(CDR3nuc);
+
+  JUNCTIONaa = nuc_to_aa(subsequence(getSequence().sequence, JUNCTIONstart, CDR3start-1))
+    + CDR3aa + nuc_to_aa(subsequence(getSequence().sequence, CDR3end+1, JUNCTIONend));
 }
 
 json FineSegmenter::toJson(){

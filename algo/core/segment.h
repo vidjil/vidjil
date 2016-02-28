@@ -121,7 +121,11 @@ protected:
   string sequence_or_rc;
 
   int JUNCTIONstart, JUNCTIONend;
+  string JUNCTIONaa;
+
   int CDR3start, CDR3end;
+  string CDR3nuc;
+  string CDR3aa;
 
   bool reversed, segmented, dSegmented;
   int because;
