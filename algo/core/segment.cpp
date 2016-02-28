@@ -254,6 +254,10 @@ string Segmenter::getInfoLine() const
   if (evalue_right > NO_LIMIT_VALUE)
     s += "/" + scientific_string_of_double(evalue_right);
 
+  if (CDR3start > 0)
+    s += " {CDR3: " + string_of_int(CDR3start) + "(" + string_of_int(CDR3end-CDR3start+1) + ")" + string_of_int(CDR3end) + " "
+      + "up"[CDR3productive] + " " + JUNCTIONaa + " " + CDR3nuc + "}";
+
   return s ;
 }
 
