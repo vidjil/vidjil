@@ -1059,7 +1059,20 @@ void FineSegmenter::findCDR3(){
   CDR3end = JUNCTIONend - 3;
 
   CDR3nuc = subsequence(getSequence().sequence, CDR3start, CDR3end);
-  CDR3aa = nuc_to_aa(CDR3nuc);
+
+  if (CDR3nuc.length() % 3 == 0)
+    {
+      CDR3aa = nuc_to_aa(CDR3nuc);
+    }
+  else
+    {
+      // start of codon fully included in the germline J
+      int CDR3startJfull = (CDR3end + 3) - ((J_118_offset / 3) * 3) + 1;
+
+      CDR3aa =
+        nuc_to_aa(subsequence(getSequence().sequence, CDR3start, CDR3startJfull-1)) +
+        nuc_to_aa(subsequence(getSequence().sequence, CDR3startJfull, CDR3end));
+    }
 
   JUNCTIONaa = nuc_to_aa(subsequence(getSequence().sequence, JUNCTIONstart, CDR3start-1))
     + CDR3aa + nuc_to_aa(subsequence(getSequence().sequence, CDR3end+1, JUNCTIONend));
