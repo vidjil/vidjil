@@ -270,6 +270,15 @@ void testDNAToInt() {
   TAP_TEST(dna_to_int("TTTT", 4) == 255, TEST_DNA_TO_INT, "");
 }
 
+
+void testNucToAA() {
+  cout << GENETIC_CODE << endl;
+  TAP_TEST (nuc_to_aa("acaaggagcaattggaatttgagactgcaaaatctaattaaaaatgattctgggttctattactgtgccacctgggacagg") == "TRSNWNLRLQNLIKNDSGFYYCATWDR", TEST_NUC_TO_AA, "");
+  TAP_TEST (nuc_to_aa("ACGTacgtACGTacgt") == "TYVRT#", TEST_NUC_TO_AA, "");
+  TAP_TEST (nuc_to_aa("atgTAAtagTGA") == "M***", TEST_NUC_TO_AA, "");
+  TAP_TEST (nuc_to_aa("cccCATgaaTT") == "PHE#", TEST_NUC_TO_AA, "");
+}
+
 void testRevcompInt() {
   TAP_TEST(revcomp_int(dna_to_int("AA", 2), 2) == dna_to_int("TT", 2),
            TEST_REVCOMP_INT, "");
@@ -354,6 +363,7 @@ void testTools() {
   testCreateSequence();
   testNucToInt();
   testDNAToInt();
+  testNucToAA();
   testRevcompInt();
   testExtendedNucleotides();
   testExtractBasename();
