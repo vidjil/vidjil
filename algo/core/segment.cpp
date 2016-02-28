@@ -92,7 +92,7 @@ string codeFromBoxes(vector <AlignBox*> boxes, string sequence)
 
     if (i>0) {
       code += " " + string_of_int(boxes[i-1]->del_right) + "/"
-        // From box_left->end + 1 to box_right->start - 1
+        // From box_left->end + 1 to box_right->start - 1, both positions included
         + sequence.substr(boxes[i-1]->end + 1, boxes[i]->start - boxes[i-1]->end - 1)
         + "/" + string_of_int(boxes[i]->del_left) + " " ;
     }
