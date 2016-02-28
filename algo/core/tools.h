@@ -126,6 +126,19 @@ inline int nuc_to_int(char nuc) {
  */
 int dna_to_int(const string &, int size);
 
+#define GENETIC_CODE \
+  "KNKN" "TTTT" "RSRS" "IIMI" \
+  "QHQH" "PPPP" "RRRR" "LLLL" \
+  "EDED" "AAAA" "GGGG" "VVVV" \
+  "*Y*Y" "SSSS" "*CWC" "LFLF"
+
+#define GENETIC_CODE_OUT_OF_FRAME '#'
+
+/**
+ * Convert nucleotides to amino acids
+ */
+string nuc_to_aa(const string &nuc);
+
 string extract_from_label(string str, int field, string separator);
 
 /**

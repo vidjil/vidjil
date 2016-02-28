@@ -136,6 +136,26 @@ int dna_to_int(const string &word, int size) {
   return index_word;
 }
 
+string nuc_to_aa(const string &word) {
+  string aa;
+  int index_word = 0;
+  int i = 0;
+
+  for (; i < word.length() ; i++) {
+    index_word = (index_word << 2) | nuc_to_int(word[i]);
+
+    if (i % 3 == 2) {
+      aa += GENETIC_CODE[index_word];
+      index_word = 0 ;
+    }
+  }
+
+  if (i % 3)
+    aa += GENETIC_CODE_OUT_OF_FRAME ;
+
+  return aa;
+}
+
 Sequence create_sequence(string label_full, string label, string sequence, string quality) {
   Sequence seq;
   seq.label_full = label_full;
