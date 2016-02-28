@@ -1058,6 +1058,10 @@ void FineSegmenter::findCDR3(){
   JUNCTIONstart = (box_V->end + 1 + 1) - V_104_offset;
   JUNCTIONend = (box_J->start + 1 - 1) + J_118_offset;
 
+  // Sequence may be too short
+  if (JUNCTIONstart < 1 || JUNCTIONend > getSequence().sequence.length())
+    return ;
+
   // IMGT-CDR3 is, on each side, 3 nucleotides shorter than IMGT-JUNCTION
   CDR3start = JUNCTIONstart + 3;
   CDR3end = JUNCTIONend - 3;
