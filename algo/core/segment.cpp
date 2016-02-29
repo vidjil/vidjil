@@ -1067,6 +1067,15 @@ void FineSegmenter::findCDR3(){
   if (JUNCTIONstart < 1 || JUNCTIONend > getSequence().sequence.length())
     return ;
 
+  JUNCTIONstart = box_V->marked_pos;
+  JUNCTIONend = box_J->marked_pos;
+
+  // There are two cases when we can not detect a JUNCTION/CDR3:
+  // - Germline V or J gene has no 'marked_pos'
+  // - Sequence may be too short on either side, and thus the backtrack did not find a suitable 'marked_pos'
+  if (JUNCTIONstart == 0 || JUNCTIONend == 0)
+    return;
+  
   // IMGT-CDR3 is, on each side, 3 nucleotides shorter than IMGT-JUNCTION
   CDR3start = JUNCTIONstart + 3;
   CDR3end = JUNCTIONend - 3;
