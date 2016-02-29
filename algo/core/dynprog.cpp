@@ -424,6 +424,13 @@ void DynProg::backtrack()
   int i=best_i+1;
   int j=best_j+1;
 
+  // Retake good i/j when there were reversed strings
+  if (reverse_x)
+    i = m - i + 1 ;
+
+  if (reverse_y)
+    j = n - j + 1;
+
   // Compute backtrack strings
   
   ostringstream back_x;
@@ -432,9 +439,11 @@ void DynProg::backtrack()
   
   while (1) {
 
-    if (j == marked_pos_j)
+
+    if ((!reverse_y && (j == marked_pos_j))
+        || (reverse_y && (n-j+1 == marked_pos_j)))
       {
-        marked_pos_i = i ;
+        marked_pos_i = reverse_x ? m-i+1 : i ;
       }
 
     if ((i<0) || (j<0))
