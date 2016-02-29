@@ -1649,6 +1649,7 @@ textarea#edit_value {
 }
 #top_info {
   display: inline-flex;
+  font-weight: bold;
 }
 .save_info.button {
   vertical-align: top;
