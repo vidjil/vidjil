@@ -124,18 +124,12 @@ line {
   border-color: #cccccc;
 }
 .info_row {
-  padding-left: 20px;
   min-width: 100px;
   display: inline-block;
 }
 .info_row_content {
   display: inline-block;
   width: 345px;
-}
-#info_point {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 #info_data_file {
   font-size: 200%;
@@ -1667,4 +1661,19 @@ textarea#edit_value {
 }
 .locus_line {
   margin-top: 44px;
+}
+.inline-block_10 {
+  display: inline-block;
+  width: 10%;
+  vertical-align: top;
+}
+.inline-block_90 {
+  display: inline-block;
+  width: 90%;
+  vertical-align: top;
+}
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

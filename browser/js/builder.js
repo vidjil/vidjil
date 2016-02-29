@@ -456,20 +456,25 @@ Builder.prototype = {
         var sample_div = document.createElement("div")
         sample_div.className = "sample_details"
         
+	var point_value = this.m.getStrTime(this.m.t, "name")
+        point_value = point_value != "" ? point_value : "-/-"
+        var point_name_container = document.createElement("div")
+        point_name_container.className += "inline-block_90 centered ellipsis"
+        point_name_container.title = point_value
+        point_name_container.appendChild(document.createTextNode(point_value))
+
+        var infoTime_container = document.createElement("div")
+        infoTime_container.className = "inline-block_10"
         var infoTime = self.createClickableElem('span',
-            [document.createTextNode("\u24D8")],
+            [document.createTextNode("i")],
             "",
-            "button_left",
+            "button",
             function () {
                 console.log({"type": "big-popup", "msg": self.m.getPointHtmlInfo(self.m.t)});
             }
         );
-        sample_div.appendChild(infoTime)
-
-	var point_value = this.m.getStrTime(this.m.t, "name")
-        var div_point = this.build_info_line("info_point",   point_value)
-        div_point.className += " centered"
-        div_point.title = point_value
+        infoTime_container.appendChild(infoTime)
+        var div_point = this.build_composite_info_line("info_point", [infoTime_container, point_name_container])
 
         $(div_point).on("dblclick", function() {
             self.edit(this, "names");
@@ -477,8 +482,11 @@ Builder.prototype = {
 
         sample_div.appendChild(div_point)
 
-        var div_date = this.build_info_line("info_date", this.m.getStrTime(this.m.t, "sampling_date") )
-        div_date.className += " centered"
+        var span_date = document.createElement("span")
+        span_date.appendChild(document.createTextNode(this.m.getStrTime(this.m.t, "sampling_date")))
+        var nav_container = document.createElement("div")
+        nav_container.className += " centered inline-block_90"
+        nav_container.appendChild(span_date)
 
         if (this.m.samples.order.length > 1){
             var nextTime = self.createClickableElem('span',
@@ -489,29 +497,32 @@ Builder.prototype = {
                     self.m.nextTime();
                 }
             );
-            div_date.appendChild(nextTime)    
-            
+            nav_container.appendChild(nextTime)    
+           
+            var play_stop_container_div = document.createElement("div")
+            play_stop_container_div.className = "inline-block_10"
+            sample_div.appendChild(play_stop_container_div)
             if (self.m.isPlaying){
-                var stop = self.createClickableElem('span',
-                    [document.createTextNode("\u25A0")],
+                var stop = self.createClickableElem('div',
+                    [document.createTextNode("s")],
                     "",
-                    "stop_button button_left",
+                    "stop_button button",
                     function () {
                         self.m.stop();
                     }
                 );
                 
-                sample_div.appendChild(stop)
+                play_stop_container_div.appendChild(stop)
             } else {
-                var play = self.createClickableElem('span',
-                    [document.createTextNode("\u25B6")],
+                var play = self.createClickableElem('div',
+                    [document.createTextNode("p")],
                     "",
-                    "play_button button_left",
+                    "play_button button",
                     function () {
                         self.m.play(self.m.t);
                     }
                 );
-                sample_div.appendChild(play)
+                play_stop_container_div.appendChild(play)
             }
             
             var previousTime = self.createClickableElem('span',
@@ -522,7 +533,7 @@ Builder.prototype = {
                     self.m.previousTime();
                 }
             );
-            div_date.insertBefore(previousTime, div_date.childNodes[0]);
+            nav_container.insertBefore(previousTime, nav_container.childNodes[0]);
         }
 
         var span = self.createClickableElem('span',
@@ -533,6 +544,8 @@ Builder.prototype = {
                 self.edit(this, "timestamp");
             }
         );
+        var div_date = this.build_composite_info_line("info_date", [play_stop_container_div, nav_container])
+
         // div_date.appendChild(span)
         sample_div.appendChild(div_date)
 
@@ -695,6 +708,7 @@ Builder.prototype = {
     },
     
     build_info_line: function (id, value, className) {
+        var val = value != ""? value : "-/-"
         var span = document.createElement('span');
 	if (!(typeof(className) === "undefined"))
 	    {
@@ -703,7 +717,7 @@ Builder.prototype = {
 		    span.className = className ;
 		}
 	    }
-        span.appendChild(document.createTextNode(value));
+        span.appendChild(document.createTextNode(val));
 
         var div = document.createElement('div');
         div.id = id
@@ -711,6 +725,17 @@ Builder.prototype = {
         div.appendChild(span)
 
         return div
+    },
+
+    build_composite_info_line: function(id, children) {
+        var div = document.createElement('div')
+        div.id = id
+        div.className = "info_line"
+
+        for(var i = 0; i < children.length; i++) {
+            div.appendChild(children[i])
+        }
+        return div;
     },
 
     build_named_info_line: function (id, name, value, className) {
