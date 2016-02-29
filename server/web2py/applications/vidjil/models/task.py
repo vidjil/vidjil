@@ -230,12 +230,15 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
     out_results_file = output_filename + '.mixcr'
     out_results = out_folder + out_results_file
 
+    align_report = report + '.aln'
+    assembly_report = report + 'asmbl'
+
     ## commande complete
     mixcr = defs.DIR_MIXCR + 'mixcr'
-    cmd = mixcr + ' align --save-reads -t 1 -r ' + report + '.aln'
+    cmd = mixcr + ' align --save-reads -t 1 -r ' + align_report
     #+ output_filename
     cmd += ' ' + arg_cmd + ' ' + seq_file  + ' ' + out_alignments
-    cmd += ' && ' + mixcr + ' assemble -t 1 -r ' + report + '.asmbl ' + out_alignments + ' ' + out_clones
+    cmd += ' && ' + mixcr + ' assemble -t 1 -r ' + assembly_report + ' ' + out_alignments + ' ' + out_clones
     cmd += ' && ' + mixcr + ' exportClones -t 1 --format vidjil -germline -id -name -reads -sequence -top -seg -s ' + out_clones + ' ' + out_results
 
     ## execute la commande MiXCR
@@ -255,15 +258,21 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
     results_filepath = os.path.abspath(out_results)
     try:
         stream = open(results_filepath, 'rb')
+        stream.close()
     except IOError:
         print "!!! MiXCR failed, no result file"
         res = {"message": "[%s] c%s: MiXCR FAILED - %s" % (id_data, id_config, out_folder)}
         log.error(res)
         raise IOError
 
+    reports = get_file_content(align_report)
+    reports += get_file_content(assembly_report)
+    add_string_to_field(reports, "log", results_filepath)
+
     ## insertion dans la base de donnée
     ts = time.time()
     
+    stream = open(results_filepath, 'rb')
     db.results_file[id_data] = dict(status = "ready",
                                  run_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S'),
                                  data_file = stream
@@ -467,6 +476,25 @@ def custom_fuse(file_list):
     log.info(res)
 
     return data
+
+def get_file_content(filename):
+    content = ""
+    with open(filename, 'rb') as my_file:
+        content = my_file.read()
+    return content
+
+def add_string_to_field(string, field, filename):
+    import json
+    with open(filename, 'r') as json_file:
+        my_json = json.load(json_file)
+        if field in my_json:
+            my_json[field][0] +=string
+        else:
+            my_json[field] = []
+            my_json[field].append(string)
+    # TODO fix this dirty hack to get around bad file descriptor error
+    new_file = open(filename, 'w')
+    json.dump(my_json, new_file)
 
 from gluon.scheduler import Scheduler
 scheduler = Scheduler(db, dict(vidjil=run_vidjil,
