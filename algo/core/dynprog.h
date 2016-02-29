@@ -119,9 +119,14 @@ class DynProg
   int best_j ;                  /* Start at 1 */
   int first_i ;                 /* Start at 1 */
   int first_j ;                 /* Start at 1 */
-  string str_back ;
 
-  DynProg(const string &x, const string &y, DynProgMode mode, const Cost &c, const bool reverse_x=false, const bool reverse_y=false);
+  string str_back ;
+  int marked_pos_i ; // To be computed (in x)
+  int marked_pos_j ; // Given (in y)
+
+  DynProg(const string &x, const string &y, DynProgMode mode, const Cost &c,
+          const bool reverse_x=false, const bool reverse_y=false,
+          const int marked_pos_j=0);
   ~DynProg();
   void init();
 

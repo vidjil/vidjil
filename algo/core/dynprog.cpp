@@ -119,13 +119,18 @@ double Cost::toPValue(const int score)
 }
 
 
-DynProg::DynProg(const string &x, const string &y, DynProgMode mode, const Cost& cost, const bool reverse_x, const bool reverse_y)
+DynProg::DynProg(const string &x, const string &y, DynProgMode mode, const Cost& cost,
+                 const bool reverse_x, const bool reverse_y,
+                 const int marked_pos_j)
 {
   this -> x = reverse_x ? reverse(x) : x ;
   this -> y = reverse_y ? reverse(y) : y ;
 
   this -> reverse_x = reverse_x ;
   this -> reverse_y = reverse_y ;
+
+  this -> marked_pos_j = marked_pos_j;
+  this -> marked_pos_i = 0;
 
   m = x.size();
   n = y.size();
@@ -426,6 +431,11 @@ void DynProg::backtrack()
   ostringstream back_tr;
   
   while (1) {
+
+    if (j == marked_pos_j)
+      {
+        marked_pos_i = i ;
+      }
 
     if ((i<0) || (j<0))
       { 
