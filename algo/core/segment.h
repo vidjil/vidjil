@@ -91,6 +91,9 @@ class AlignBox
   string ref_label;
   string ref;
 
+  /* Marked position, for Cys104 and Phe118/Trp118 */
+  int marked_pos;
+
   /* Identifiers and scores of other possible reference sequence */
   vector<pair<int, int> > score;
 };

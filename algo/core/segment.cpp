@@ -722,7 +722,8 @@ void align_against_collection(string &read, Fasta &rep, int forbidden_rep_id,
       DynProg dp = DynProg(sequence_or_rc, rep.sequence(r),
 			   dpMode, // DynProg::SemiGlobalTrans, 
 			   segment_cost, // DNA
-			   reverse_both, reverse_both);
+			   reverse_both, reverse_both,
+                          rep.read(r).marked_pos);
 
       bool onlyBottomTriangle = !local ;
       int score = dp.compute(onlyBottomTriangle, BOTTOM_TRIANGLE_SHIFT);
@@ -740,6 +741,10 @@ void align_against_collection(string &read, Fasta &rep, int forbidden_rep_id,
 	  best_first_j = dp.first_j ;
 	  box->ref_nb = r ;
 	  box->ref_label = rep.label(r) ;
+
+          if (!local)
+            dp.backtrack();
+          box->marked_pos = dp.marked_pos_i ;
 	}
 	
 	score_r.push_back(make_pair(score, r));
