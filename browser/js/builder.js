@@ -433,8 +433,7 @@ Builder.prototype = {
                 'patient_info_text',
                 function() {
                     //TODO id needs to be passed as param
-                    var value = document.getElementById('edit_value').value;
-                    self.m.info = value
+                    self.m.info = this.value
                     self.post_save(self)
                 });
         parent.appendChild(div_patient_info)
@@ -606,7 +605,7 @@ Builder.prototype = {
                 'info_text',
                 function() {
                     //TODO id needs to be passed as param
-                    var value = document.getElementById('edit_value').value;
+                    var value = this.value;
                     if (typeof self.m.samples['info'] == 'undefined')
                         self.m.samples['info'] = new Array(self.m.samples.names.length, "");
                     self.m.samples['info'][self.m.t] = value
