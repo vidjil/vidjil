@@ -567,7 +567,7 @@ Builder.prototype = {
 	else if (percent < 50)  { val += " – Few reads segmented" ;  warning = "warning" ;  }
         }
 
-        var div_segmented = this.build_named_info_line("info_segmented", "reads", val, warning)
+        var div_segmented = this.build_named_info_line("info_segmented", "analyzed reads", val, warning)
         div_segmented.title = "total: " + this.m.toStringThousands(this.m.reads.total[this.m.t])
         reads_div.appendChild(div_segmented)
 
@@ -586,7 +586,7 @@ Builder.prototype = {
                 else if (percent < 50)  { warning = "warning" ;  }
             }
 
-            var div_segmented = this.build_named_info_line("info_selected_locus", "locus", val, warning)
+            var div_segmented = this.build_named_info_line("info_selected_locus", "selected locus", val, warning)
             reads_div.appendChild(div_segmented)
         }
         
