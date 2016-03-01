@@ -101,7 +101,94 @@ Database.prototype = {
             console.log({"type": "popup", "msg": msg})
         }
     },
+
+    get_contamination : function() {
+        var self=this;
+        
+        self.callProcess('default/run_contamination', 
+                        {"sequence_file_id":self.m.samples.sequence_file_id,
+                         "config_id":self.m.samples.config_id,
+                         "results_file_id":self.m.samples.results_file_id,
+                     }, function(a){console.log(a)})
+    },
     
+     /**
+      * request a side process to the server
+      * check if the process is done at regular interval and trigger callback
+      * */
+     callProcess : function (page, args, callback){
+         var self=this;
+         
+         var arg = "";
+         if (typeof args != "undefined" && Object.keys(args).length) 
+             var arg = this.argsToStr(args)
+         
+         var url = self.db_address + page + "?" + arg
+         if (page.substr(0,4).toLowerCase() == "http") {
+             url = page + arg
+         }
+         
+         $.ajax({
+             type: "POST",
+             crossDomain: true,
+             context: self,
+             url: url,
+             contentType: 'text/plain',
+             timeout: DB_TIMEOUT_CALL,
+             xhrFields: {withCredentials: true},
+             success: function (result) {
+                 result = jQuery.parseJSON(result)
+                 setTimeout(function(){ self.waitProcess(result.processId, 5000, callback)}, 5000);
+             }, 
+             error: function (request, status, error) {
+                 if (status === "timeout") {
+                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                 } else {
+                     self.check_cert()
+                 }
+                 self.warn("callProcess: " + status + " - " + url.replace(self.db_address, '') + "?" + this.argsToStr(args))
+             }
+         });
+     },
+     
+     /**
+     * check if a server process is done(recursive)
+     * */
+     waitProcess: function (processId, interval, callback){
+         console.log("... " +processId)
+         var self=this;
+         var url = self.db_address + "default/checkProcess?processId="+processId;
+         
+         $.ajax({
+             type: "POST",
+             crossDomain: true,
+             context: self,
+             url: url,
+             contentType: 'text/plain',
+             timeout: DB_TIMEOUT_CALL,
+             xhrFields: {withCredentials: true},
+             success: function (result) {
+                 result = jQuery.parseJSON(result)
+                 if (result.status == "COMPLETED"){
+                     callback(result.data);
+                 }else if(result.status == "FAILED"){
+                     console.log({"type": "flash", "msg": "process failed", "priority": 1});
+                 }else{
+                     setTimeout(function(){ self.waitProcess(processId, interval, callback); }, interval); 
+                 }
+                 
+             }, 
+             error: function (request, status, error) {
+                 if (status === "timeout") {
+                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                 } else {
+                     self.check_cert()
+                 }
+                 self.warn("waitProcess: " + status )
+             }
+         });
+     },
+
     /** 
      * call a server page
      * @param {string} page - name of the server page to call
