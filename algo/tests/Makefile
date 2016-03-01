@@ -3,7 +3,7 @@ INCLUDE=-I ..
 OPTIM=-g -O0 $(COVERAGE)
 override CXXFLAGS += -std=c++11 -W -Wall $(OPTIM)
 LDLIBS=-lz
-SRC= tests.cpp
+SRC= unit-tests/tests.cpp
 EXEC=$(SRC:.cpp=)
 OTHER_SRC=$(wildcard *.cpp)
 LIB=../core/vidjil.a ../lib/lib.a
@@ -23,8 +23,8 @@ SNAPSHOT=$(SNAPSHOTS_DIR)/snapshot-log--$(DATE)
 test: all
 	@echo
 	@echo "*** Launching unit tests..."
-	./tests
-	cat tests.cpp.tap
+	./unit-tests/tests
+	cat ./unit-tests/tests.cpp.tap
 	@echo "*** All unit tests passed"
 
 all: core $(EXEC)
