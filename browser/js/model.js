@@ -486,7 +486,7 @@ Model.prototype = {
     getInfoTime: function(time) {
         var time = typeof time !== 'undefined' ? time : this.t
         var info = "-"
-        if (typeof this.samples.info != 'undefined')
+        if (typeof this.samples.info != 'undefined' && this.samples.info != null && this.samples.info != "")
             info = this.samples.info[time]
         return info
     },
