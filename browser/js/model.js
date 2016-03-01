@@ -1705,8 +1705,7 @@ Model.prototype = {
         
         this.norm_input = document.createElement('input');
         this.norm_input.id = "normalized_size";
-        this.norm_input.type = "number";
-        this.norm_input.step = "0.0001"
+        this.norm_input.type = "text";
         
         var span2 = document.createElement('span');
         span2.appendChild(this.norm_input)
