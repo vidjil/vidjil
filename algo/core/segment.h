@@ -329,6 +329,10 @@ class FineSegmenter : public Segmenter
                     int extend_DD_on_Y, int extend_DD_on_Z,
                     double threshold = THRESHOLD_NB_EXPECTED_D, int multiplier=1);
 
+  /**
+   * find JUNCTION/CDR3, by using marked Cys104 and Phe118/Trp118 positions
+   * in the germline V and J genes and the backtrack of the DP matrix
+   */
   void findCDR3();
 
   json toJson();
