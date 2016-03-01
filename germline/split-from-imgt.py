@@ -130,15 +130,25 @@ CUSTOM_118 = { '': 0    # custom position of 118 in sequences without the Trp-Gl
 
 def gap_j(seq):
     '''Gap J sequences in order to align the Phe118/Trp118 codon'''
-    m = j118.search(seq)
 
-    if not m:
-        if len(seq) > PHE_TRP_WARN_SIZE:
-            print "# %s in %s" % (PHE_TRP_WARN_MSG, seq)
-            seq = "# %s\n%s" % (PHE_TRP_WARN_MSG, seq)
-        return seq
+    seqs = seq.strip()
 
-    pos = m.start() + 1 # positions start at 1
+    if seqs in CUSTOM_118:
+        print "# Custom 118 position in %s" % seq
+        pos = CUSTOM_118[seqs]
+        seq =  seq.replace('\n', " # Custom\n")
+
+    else:
+        m = j118.search(seq)
+
+        if not m:
+            if len(seq) > PHE_TRP_WARN_SIZE:
+                print "# %s in %s" % (PHE_TRP_WARN_MSG, seq)
+                seq = "# %s\n%s" % (PHE_TRP_WARN_MSG, seq)
+            return seq
+
+        pos = m.start() + 1 # positions start at 1
+
     return (MAX_GAP_J - pos) * '.' + seq
 
 
