@@ -555,7 +555,7 @@ Builder.prototype = {
         reads_div.className = "reads_details"
         
         // Segmented reads
-        var val = "no reads segmented" ;
+        var val = "no read segmented" ;
 
         if (this.m.reads.segmented_all[this.m.t] > 0)
         {
