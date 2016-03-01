@@ -390,7 +390,6 @@ Model_loader.prototype = {
         if (typeof self.analysis.vidjil_json_version != 'undefined' && self.analysis.vidjil_json_version >= "2014.09"){
 
             //samples
-            var match = 0;
             if (this.analysis.samples) {
                 var s = this.analysis.samples
                 
@@ -399,7 +398,6 @@ Model_loader.prototype = {
                     var pos = this.samples.original_names.indexOf(s.original_names[i])
                     if (pos != -1){
                         if (s.names[i] != "") this.samples.names[pos] = s.names[i]
-                        match++
                     }
                 }
                 
