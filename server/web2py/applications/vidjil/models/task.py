@@ -231,7 +231,7 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
     out_results = out_folder + out_results_file
 
     align_report = report + '.aln'
-    assembly_report = report + 'asmbl'
+    assembly_report = report + '.asmbl'
 
     ## commande complete
     mixcr = defs.DIR_MIXCR + 'mixcr'
