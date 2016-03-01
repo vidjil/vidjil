@@ -1102,6 +1102,11 @@ json FineSegmenter::toJson(){
             {"aa", CDR3aa},
             {"productive", CDR3productive}
         };
+        seg["junction"] = {
+            {"start", JUNCTIONstart},
+            {"stop", JUNCTIONend},
+            {"aa", JUNCTIONaa}
+        };
     }
   }
   
