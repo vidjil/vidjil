@@ -7,8 +7,8 @@ SRC= tests.cpp
 EXEC=$(SRC:.cpp=)
 OTHER_SRC=$(wildcard *.cpp)
 LIB=../core/vidjil.a ../lib/lib.a
-SHOULD=$(wildcard *.should_get)
-SHOULD_LOG=$(SHOULD:.should_get=.tap)
+SHOULD=$(wildcard should-get-tests/*.should-get)
+SHOULD_LOG=$(SHOULD:.should-get=.tap)
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
 SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
@@ -32,7 +32,7 @@ all: core $(EXEC)
 
 snapshot:
 	mkdir -p $(SNAPSHOTS_DIR)
-	grep . *.log should-vdj-tests/*.log > $(SNAPSHOT)
+	grep . should-get-tests/*.log should-vdj-tests/*.log > $(SNAPSHOT)
 	touch snapshot-last ; mv snapshot-last snapshot-prev
 	ln -s $(SNAPSHOT) snapshot-last
 	diff -I "20..-..-.." snapshot-prev snapshot-last | diffstat -cC
@@ -61,7 +61,7 @@ shouldvdj_with_rc_merged:
 	cat $(SHOULD_VDJ) > should-vdj-tests/should-vdj.merged.fa
 	python should-vdj-to-tap.py -r should-vdj-tests/should-vdj.merged.fa
 
-%.tap: %.should_get force
+%.tap: %.should-get force
 	./should-to-tap.sh $<
 
 valgrind_should:
