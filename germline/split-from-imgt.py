@@ -115,6 +115,17 @@ MAX_GAP_J = 36          # maximal position of Phe/Trp (36 for TRAJ52*01)
 PHE_TRP_WARN_SIZE = 15  # small sequences are on a second line
 PHE_TRP_WARN_MSG = 'No Phe/Trp-Gly-X-Gly pattern'
 
+CUSTOM_118 = { '': 0    # custom position of 118 in sequences without the Trp-Gly-X-Gly pattern
+    #                               118
+    #                               |..
+    ,                       'gcacatgtttggcagcaagacccagcccactgtctta':         8 # IGLJ-C/OR18*01
+    ,    'ggttttcagatggccagaagctgctctttgcaaggggaaccatgttaaaggtggatctta':    27 # TRAJ16*01
+    , 'agatgcgtgacagctatgagaagctgatatttggaaaggagacatgactaactgtgaagc':       30 # TRAJ51*01
+    ,    'ggtaccgggttaataggaaactgacatttggagccaacactagaggaatcatgaaactca':    27 # TRAJ61*01
+    ,       'ataccactggttggttcaagatatttgctgaagggactaagctcatagtaacttcacctg': 24 # TRGJP1*01
+    ,       'atagtagtgattggatcaagacgtttgcaaaagggactaggctcatagtaacttcgcctg': 24 # TRGJP2*01
+}
+
 def gap_j(seq):
     '''Gap J sequences in order to align the Phe118/Trp118 codon'''
     m = j118.search(seq)
