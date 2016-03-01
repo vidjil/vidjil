@@ -156,6 +156,24 @@ def run_request():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
+def checkProcess():
+    task = db.scheduler_task[request.vars["processId"]]
+    
+    if task.status == "COMPLETED" :
+        run = db( db.scheduler_run.task_id == task.id ).select()[0]
+    
+        res = {"success" : "true",
+               "status" : task.status,
+               "data" : run.run_result,
+               "processId" : task.id}
+    else :
+        res = {"success" : "true",
+               "status" : task.status,
+               "processId" : task.id}
+        
+    log.error(res)
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
 
 #########################################################################
 ## return .data file
