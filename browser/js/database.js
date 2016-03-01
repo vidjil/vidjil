@@ -554,7 +554,7 @@ Database.prototype = {
         }
         
         var url = document.documentURI.split('?')[0]
-        var new_location = url+"?patient="+args.patient+"&config="+args.config
+        var new_location = url+"?sample_set_id="+args.sample_set_id+"&config="+args.config
         window.history.pushState('plop', 'plop', new_location);
         
         $.ajax({

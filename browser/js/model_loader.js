@@ -59,7 +59,7 @@ Model_loader.prototype = {
                 
                 if (tmp2[0] == 'data') dataURL = tmp2[1]
                 if (tmp2[0] == 'analysis') analysisURL = tmp2[1]
-                if (tmp2[0] == 'patient') patient = tmp2[1]
+                if (tmp2[0] == 'sample_set_id') sample_set_id = tmp2[1]
                 if (tmp2[0] == 'config') dbconfig = tmp2[1]
                 if (tmp2[0] == 'custom') {
                     custom_split = tmp2[1].split(',')
@@ -82,9 +82,9 @@ Model_loader.prototype = {
             }
         }
             
-        else if (patient != "-1" && dbconfig != "-1"){
+        else if (sample_set_id != "-1" && dbconfig != "-1"){
             //wait 1sec to check ssl
-            setTimeout(function () { db.load_data( {"patient" : patient , "config" : dbconfig } , "")  }, 1000);
+            setTimeout(function () { db.load_data( {"sample_set_id" : sample_set_id , "config" : dbconfig } , "")  }, 1000);
         }
             
         else if (custom_list.length>0){
