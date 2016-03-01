@@ -309,6 +309,7 @@ int main (int argc, char **argv)
   list <string> f_reps_V ;
   list <string> f_reps_D ;
   list <string> f_reps_J ;
+  list <pair <string, string>> multi_germline_paths_and_files ;
 
   string read_header_separator = DEFAULT_READ_HEADER_SEPARATOR ;
   string f_reads = DEFAULT_READS ;
@@ -365,9 +366,6 @@ int main (int argc, char **argv)
   bool multi_germline_one_index_per_germline = true;
   bool multi_germline_unexpected_recombinations_12 = false;
   bool multi_germline_unexpected_recombinations_1U = false;
-
-  string multi_germline_path = DEFAULT_MULTI_GERMLINE_PATH;
-  string multi_germline_file = DEFAULT_MULTI_GERMLINE_FILE;
 
   string forced_edges = "" ;
 
@@ -436,7 +434,6 @@ int main (int argc, char **argv)
 
       case 'g':
 	multi_germline = true;
-	multi_germline_file = string(optarg);
         {
           string arg = string(optarg);
           struct stat buffer;
@@ -445,13 +442,11 @@ int main (int argc, char **argv)
               if( buffer.st_mode & S_IFDIR )
                 {
                   // argument is a directory
-                  multi_germline_path = arg ;
-                  multi_germline_file = DEFAULT_MULTI_GERMLINE_FILE ;
+                  multi_germline_paths_and_files.push_back(make_pair(arg, DEFAULT_MULTI_GERMLINE_FILE)) ;
                 }
               else
                 {
-                  multi_germline_path = extract_dirname(arg);
-                  multi_germline_file = extract_basename(arg, false);
+                  multi_germline_paths_and_files.push_back(make_pair(extract_dirname(arg), extract_basename(arg, false)));
                 }
             }
           else
@@ -821,6 +816,9 @@ int main (int argc, char **argv)
     {
       multi_germline = true ;
       multi_germline_one_index_per_germline = false ;
+
+      if (multi_germline_paths_and_files.size() == 0)
+        multi_germline_paths_and_files.push_back(make_pair(DEFAULT_MULTI_GERMLINE_PATH, DEFAULT_MULTI_GERMLINE_FILE));
     }
 
   MultiGermline *multigermline = new MultiGermline(multi_germline_one_index_per_germline);
@@ -830,7 +828,8 @@ int main (int argc, char **argv)
     
       if (multi_germline)
 	{
-          multigermline->build_from_json(multi_germline_path, multi_germline_file, GERMLINES_REGULAR, trim_sequences);
+          for (pair <string, string> path_file: multi_germline_paths_and_files)
+            multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_REGULAR, trim_sequences);
 	}
       else
 	{
@@ -876,7 +875,9 @@ int main (int argc, char **argv)
       // Should come after the initialization of regular (and possibly pseudo) germlines
     if (multi_germline_incomplete) {
       multigermline->one_index_per_germline = true; // Starting from now, creates new indexes
-      multigermline->build_from_json(multi_germline_path, multi_germline_file, GERMLINES_INCOMPLETE, trim_sequences);
+
+      for (pair <string, string> path_file: multi_germline_paths_and_files)
+        multigermline->build_from_json(path_file.first, path_file.second, GERMLINES_INCOMPLETE, trim_sequences);
     }
 
     if (multi_germline_mark)
