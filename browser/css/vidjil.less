@@ -1864,14 +1864,19 @@ flex-grow : 1;
     margin-bottom: 5px;
 }
 
+.patient_info {
+    margin-bottom: 45px;
+       margin-bottom: 45px;
+}
+
 textarea#edit_value {
     -webkit-box-sizing: border-box;
     -moz-box-sizing: border-box;
     box-sizing: border-box;
     //display:block;
-    width: 100%;
+    position: fixed;
+    width: @width_left_container - 5px;
     min-height: 45px;
-    margin-bottom: -@infoContainerHeight;
 }
 
 #top_info {
@@ -1888,10 +1893,6 @@ textarea#edit_value {
 .vertical_space {
     margin-top: 5px;
     margin-bottom: 5px;
-}
-
-.locus_line {
-    margin-top: @infoContainerHeight + @locusSpacingMargin;
 }
 
 .inline-block_10 {

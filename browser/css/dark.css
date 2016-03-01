@@ -1639,13 +1639,16 @@ table.log textarea {
 .patient_info_text {
   margin-bottom: 5px;
 }
+.patient_info {
+  margin-bottom: 45px;
+}
 textarea#edit_value {
   -webkit-box-sizing: border-box;
   -moz-box-sizing: border-box;
   box-sizing: border-box;
-  width: 100%;
+  position: fixed;
+  width: 470px;
   min-height: 45px;
-  margin-bottom: -32px;
 }
 #top_info {
   display: inline-flex;
@@ -1659,9 +1662,6 @@ textarea#edit_value {
 .vertical_space {
   margin-top: 5px;
   margin-bottom: 5px;
-}
-.locus_line {
-  margin-top: 44px;
 }
 .inline-block_10 {
   display: inline-block;
