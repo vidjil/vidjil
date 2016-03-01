@@ -187,6 +187,17 @@ class VidjilAuth(Auth):
             or self.can_modify_patient(patient_id, user)\
             or self.is_admin(user)
             
+    def can_view_run(self, run_id, user = None):
+        '''
+        Returns True iff the current user can view
+        the patient whose ID is patient_id
+
+        If the user is None, the current user is taken into account
+        '''
+        return self.get_permission('read', 'run', run_id ,user)\
+            or self.can_modify_run(run_id, user)\
+            or self.is_admin(user)
+            
     def can_view_sample_set(self, sample_set_id, user = None) :
         sample_set = db.sample_set[sample_set_id]
         
