@@ -488,6 +488,10 @@ Builder.prototype = {
         nav_container.className += " centered inline-block_90"
         nav_container.appendChild(span_date)
 
+        var play_stop_container_div = document.createElement("div")
+        play_stop_container_div.className = "inline-block_10"
+        sample_div.appendChild(play_stop_container_div)
+
         if (this.m.samples.order.length > 1){
             var nextTime = self.createClickableElem('span',
                 [document.createTextNode(">")],
@@ -499,9 +503,6 @@ Builder.prototype = {
             );
             nav_container.appendChild(nextTime)    
            
-            var play_stop_container_div = document.createElement("div")
-            play_stop_container_div.className = "inline-block_10"
-            sample_div.appendChild(play_stop_container_div)
             if (self.m.isPlaying){
                 var stop = self.createClickableElem('div',
                     [document.createTextNode("s")],
