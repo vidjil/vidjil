@@ -72,7 +72,7 @@ valgrind_%:
 	LAUNCHER="$(VALGRIND)" $(MAKE) $(patsubst valgrind_%,%,$@)
 
 valgrind_tests: vidjil tests
-	$(VALGRIND) ./tests
+	$(VALGRIND) ./unit-tests/tests
 
 $(EXEC): % : %.o $(LIB) 
 	$(CXX) -o $@ $< $(LIB) $(LDLIBS) $(LDFLAGS) $(CXXFLAGS)
