@@ -555,38 +555,14 @@ Builder.prototype = {
         reads_div.className = "reads_details"
         
         // Segmented reads
-        var val = "no read segmented" ;
-
-        if (this.m.reads.segmented_all[this.m.t] > 0)
-        {
-        var percent = (this.m.reads.segmented_all[this.m.t] / this.m.reads.total[this.m.t]) * 100
-        val = this.m.toStringThousands(this.m.reads.segmented_all[this.m.t]) + " (" + percent.toFixed(2) + "%)"
-
-	var warning = false ;
-	if (percent < 10)  { val += " – Very few reads segmented" ;  warning = "alert" ;  }
-	else if (percent < 50)  { val += " – Few reads segmented" ;  warning = "warning" ;  }
-        }
-
-        var div_segmented = this.build_named_info_line("info_segmented", "analyzed reads", val, warning)
+        var div_segmented = this.build_line_read_number("info_segmented", "analyzed reads", "analyzed", this.m.reads.segmented_all)
         div_segmented.title = "total: " + this.m.toStringThousands(this.m.reads.total[this.m.t])
         reads_div.appendChild(div_segmented)
 
 
         // Segmented reads, on the selected system(s)
         if (this.m.system == "multi") {
-            var val = "no reads on selected locus" ;
-
-            if (this.m.reads.segmented[this.m.t] > 0)
-            {
-                var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100
-                val = this.m.toStringThousands(this.m.reads.segmented[this.m.t]) + " (" + percent.toFixed(2) + "%)"
-
-                var warning = false ;
-                if (percent < 10)  { warning = "alert" ;  }
-                else if (percent < 50)  { warning = "warning" ;  }
-            }
-
-            var div_segmented = this.build_named_info_line("info_selected_locus", "selected locus", val, warning)
+            var div_segmented = this.build_line_read_number("info_selected_locus", "selected locus", "on selected locus", this.m.reads.segmented)
             reads_div.appendChild(div_segmented)
         }
         
@@ -614,6 +590,34 @@ Builder.prototype = {
         parent.appendChild(div_sequence_info)
 
         this.initTag();
+    },
+
+    build_line_read_number: function (id, label, qualifier, read_number) {
+        var val = "no read " + qualifier ;
+	var warning = false ;
+
+        if (read_number[this.m.t] > 0)
+        {
+            var percent = (read_number[this.m.t] / this.m.reads.total[this.m.t]) * 100
+            val = this.m.toStringThousands(read_number[this.m.t]) + " (" + percent.toFixed(2) + "%)"
+
+            var warning_span = document.createElement('span');
+            warning_span.innerHTML = " ! ";
+            warning_span.className = "warningReads";
+	    if (percent < 10)  {
+                warning_span.title = "Very few reads " + qualifier ;
+                warning_span.className += ' '+(warning = "alert") ;
+            }
+	    else if (percent < 50)  {
+                warning_span.title = "Few reads " + qualifier ;
+                warning_span.className = ' '+(warning = "warning") ;
+            }
+        }
+        div = this.build_named_info_line(id, label, val, false);
+        if (warning != false) {
+            div.appendChild(warning_span);
+        }
+        return div;
     },
 
     build_top_container: function () {
