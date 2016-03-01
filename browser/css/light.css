@@ -1034,6 +1034,13 @@ span.alert {
 text.alert {
   fill: red;
 }
+span.warningReads {
+  margin-left: .5em;
+  display: inline-block;
+  width: 1em;
+  text-align: center;
+  cursor: help;
+}
 .sp_menu_anchor {
   position: relative;
   top: 0px;
