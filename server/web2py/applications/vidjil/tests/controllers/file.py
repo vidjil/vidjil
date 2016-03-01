@@ -66,11 +66,12 @@ class FileController(unittest.TestCase):
         request.vars['pcr'] = "plop"
         request.vars['sequencer'] = "plop"
         request.vars['producer'] = "plop"
-        request.vars['patient_id'] = fake_patient_id
+        request.vars['patient_id'] = "plapipou("+str(fake_patient_id)+")"
+        request.vars['run_id'] = ""
         request.vars['filename'] = "plopapi"
         
         resp = add_form()
-        self.assertNotEqual(resp.find('"redirect":"patient/info","message"'), -1, "add_form() failed")
+        self.assertNotEqual(resp.find('"redirect":"sample_set/index"'), -1, "add_form() failed")
     
     
     def testEdit(self):
@@ -89,6 +90,8 @@ class FileController(unittest.TestCase):
         request.vars['pcr'] = "plop"
         request.vars['sequencer'] = "plop"
         request.vars['producer']="plop"
+        request.vars['patient_id']="plapipou("+str(fake_patient_id)+")"
+        request.vars['run_id']=""
         
         
         resp = edit_form()
