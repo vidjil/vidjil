@@ -1,4 +1,4 @@
-!LAUNCH: $LAUNCHER ../../vidjil -k 9 -G ../../germline/IGH  -K -c clones ../../data/revcomp.fa ; grep 'X.X.X' out/revcomp.affects | sed 's/[^X]//g'  | sort -u ; grep '#>'  out/revcomp.affects | sed 's/.*SEG.../e-value:/' | cut -f 1 -d' '
+!LAUNCH: $LAUNCHER $VIDJIL_DIR/vidjil -k 9 -G $VIDJIL_DIR/germline/IGH  -K -c clones $VIDJIL_DIR/data/revcomp.fa ; grep 'X.X.X' out/revcomp.affects | sed 's/[^X]//g'  | sort -u ; grep '#>'  out/revcomp.affects | sed 's/.*SEG.../e-value:/' | cut -f 1 -d' '
 
 $ Segments both reads, normal and reverse
 1:junction detected in 2 reads

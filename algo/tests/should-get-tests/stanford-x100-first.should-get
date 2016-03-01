@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -y 0 -x 100 -G ../../germline/IGH ../../data/Stanford_S22.fasta
+!LAUNCH: $VIDJIL_DIR/vidjil -y 0 -x 100 -G $VIDJIL_DIR/germline/IGH $VIDJIL_DIR/data/Stanford_S22.fasta
 
 $ Analyze the good number of sequences in Stanford S22 
 1: found 99 ..-windows in 100 reads .100. of 100 reads

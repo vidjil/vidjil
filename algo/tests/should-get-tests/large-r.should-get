@@ -1,4 +1,4 @@
-!LAUNCH: (for i in {1..100000}; do echo '>read' ; echo ccgtgtattactgtgcgagagagctgaatacttccagcactg ; done ;) > same-igh-100k.fa ; $LAUNCHER ../../vidjil -G ../../germline/IGH -r 5000  -w 15  same-igh-100k.fa; rm -f same-igh-100k.fa
+!LAUNCH: (for i in {1..100000}; do echo '>read' ; echo ccgtgtattactgtgcgagagagctgaatacttccagcactg ; done ;) > same-igh-100k.fa ; $LAUNCHER $VIDJIL_DIR/vidjil -G $VIDJIL_DIR/germline/IGH -r 5000  -w 15  same-igh-100k.fa; rm -f same-igh-100k.fa
 
 $ Find a unique clone with all reads
 1:>clone-001--IGH--0100000--100.--window

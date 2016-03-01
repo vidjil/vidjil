@@ -1,5 +1,5 @@
-!REQUIRES: python ../../tools/check_python_version.py
-!LAUNCH: ../../vidjil -z 1 -G ../../germline/IGH -w 60 -r 5 -e 10 -b data  ../../data/Stanford_S22.fasta > /dev/null ; cat out/data.vidjil | python ../../tools/format_json.py -1
+!REQUIRES: python $VIDJIL_DIR/tools/check_python_version.py
+!LAUNCH: $VIDJIL_DIR/vidjil -z 1 -G $VIDJIL_DIR/germline/IGH -w 60 -r 5 -e 10 -b data  $VIDJIL_DIR/data/Stanford_S22.fasta > /dev/null ; cat out/data.vidjil | python $VIDJIL_DIR/tools/format_json.py -1
 
 $ Number of reads
 e1:"total": [13153]

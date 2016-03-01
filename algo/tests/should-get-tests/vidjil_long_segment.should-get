@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -G ../../germline/IGH ../../data/long-segmentation.fa
+!LAUNCH: $VIDJIL_DIR/vidjil -G $VIDJIL_DIR/germline/IGH $VIDJIL_DIR/data/long-segmentation.fa
 
 $ Sequence should be segmented by k-mer segmenter
 e1:SEG_+ -> 1 

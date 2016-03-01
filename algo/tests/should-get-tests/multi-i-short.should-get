@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -g ../../germline -i ../../data/multi-short.fa
+!LAUNCH: $VIDJIL_DIR/vidjil -g $VIDJIL_DIR/germline -i $VIDJIL_DIR/data/multi-short.fa
 
 $ Segment all the seven reads
 1:junction detected in 7 reads

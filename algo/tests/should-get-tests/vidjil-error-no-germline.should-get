@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil 2>&1
+!LAUNCH: $VIDJIL_DIR/vidjil 2>&1
 !EXIT_CODE: 1
 
 $ Error, no germlines

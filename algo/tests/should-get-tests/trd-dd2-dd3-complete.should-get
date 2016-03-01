@@ -1,4 +1,4 @@
-!LAUNCH: ../../vidjil -A -g ../../germline ../../data/trd-dd2-dd3.fa
+!LAUNCH: $VIDJIL_DIR/vidjil -A -g $VIDJIL_DIR/germline $VIDJIL_DIR/data/trd-dd2-dd3.fa
 
 $ Segment only 2 reads, because there is no -i
 1:junction detected in 2 reads .40..
