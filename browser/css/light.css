@@ -470,7 +470,7 @@ line {
 }
 .systemBoxNameMenu {
   display: inline-block;
-  min-width: 70px;
+  min-width: 67px;
   height: 20px;
   cursor: pointer;
 }
