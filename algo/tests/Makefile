@@ -14,9 +14,9 @@ SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
 VALGRIND=valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file="$$(mktemp "$(REPORTS_PATH)/valgrind.xml.XXXXXX")"
 
-DATE=$(shell date +%Y-%m-%d:%H:%M:%S)
+DATE=$(shell date +%Y-%m-%d--%H:%M:%S)
 SNAPSHOTS_DIR=./snapshots
-SNAPSHOT=$(SNAPSHOTS_DIR)/snapshot-log-$(DATE)
+SNAPSHOT=$(SNAPSHOTS_DIR)/snapshot-log--$(DATE)
 
 .PHONY: all force clean forcedep
 
