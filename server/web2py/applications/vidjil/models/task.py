@@ -203,6 +203,7 @@ def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
 def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
     import time
+    import json
 
     upload_folder = defs.DIR_SEQUENCES
     out_folder = defs.DIR_OUT_VIDJIL_ID % id_data
@@ -267,7 +268,17 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
 
     reports = get_file_content(align_report)
     reports += get_file_content(assembly_report)
-    add_string_to_field(reports, "log", results_filepath)
+    with open(results_filepath, 'r') as json_file:
+        my_json = json.load(json_file)
+        if "log" in my_json["samples"]:
+            my_json["samples"]["log"][0] += reports
+        else:
+            my_json["samples"]["log"] = []
+            my_json["samples"]["log"].append(reports)
+        # TODO fix this dirty hack to get around bad file descriptor error
+    new_file = open(results_filepath, 'w')
+    json.dump(my_json, new_file)
+    new_file.close()
 
     ## insertion dans la base de donnée
     ts = time.time()
@@ -482,19 +493,6 @@ def get_file_content(filename):
     with open(filename, 'rb') as my_file:
         content = my_file.read()
     return content
-
-def add_string_to_field(string, field, filename):
-    import json
-    with open(filename, 'r') as json_file:
-        my_json = json.load(json_file)
-        if field in my_json:
-            my_json[field][0] +=string
-        else:
-            my_json[field] = []
-            my_json[field].append(string)
-    # TODO fix this dirty hack to get around bad file descriptor error
-    new_file = open(filename, 'w')
-    json.dump(my_json, new_file)
 
 from gluon.scheduler import Scheduler
 scheduler = Scheduler(db, dict(vidjil=run_vidjil,
