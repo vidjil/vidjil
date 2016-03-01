@@ -51,7 +51,7 @@ void testFastaNbSequences() {
   TAP_TEST(nb_sequences_in_fasta("../../germline/IGHV.fa") == 350, TEST_FASTA_NB_SEQUENCES, "ccc");
 
   int a1 = approx_nb_sequences_in_fasta("../../germline/IGHV.fa");
-  TAP_TEST(a1 >= 340 && a1 <= 348, TEST_FASTA_NB_SEQUENCES, "");
+  TAP_TEST(a1 >= 345 && a1 <= 355, TEST_FASTA_NB_SEQUENCES, "");
 
   int a2 = nb_sequences_in_fasta("../../data/Stanford_S22.fasta", true);
   TAP_TEST(a2 >= 13100 && a2 <= 13200, TEST_FASTA_NB_SEQUENCES, "");
@@ -193,9 +193,27 @@ void testFastaAddThrows() {
   TAP_TEST(caught == true, TEST_FASTA_INVALID_FILE, "");
 }
 
+void testFastaLabelAndMark() {
+
+  Fasta fa(1, "=", 9);
+
+  istringstream seq1(">tic=tac=toe\nACGTACGTACGT\n");
+  seq1 >> fa ;
+  TAP_TEST(fa.read(0).label == "tic", TEST_FASTA_LABEL, "");
+  TAP_TEST(fa.read(0).marked_pos == 9, TEST_FASTA_MARK, "");
+
+  istringstream seq2(">seq2\nA.G.ACGTACGT\n");
+  seq2 >> fa ;
+  TAP_TEST(fa.read(1).marked_pos == 7, TEST_FASTA_MARK, "");
+
+  istringstream seq3(">seq2\n..........GT\n");
+  seq3 >> fa ;
+  TAP_TEST(fa.read(2).marked_pos == 0, TEST_FASTA_MARK, "");
+}
+
 void testSequenceOutputOperator() {
   ostringstream oss;
-  Sequence seq = {"a b c", "a", "GATTACA", "AIIIIIH", NULL};
+  Sequence seq = {"a b c", "a", "GATTACA", "AIIIIIH", NULL, 0};
   oss << seq;
 
   TAP_TEST(oss.str() == "@a\nGATTACA\n+\nAIIIIIH\n", TEST_SEQUENCE_OUT, oss.str());
@@ -250,6 +268,15 @@ void testDNAToInt() {
   TAP_TEST(dna_to_int("AAAAAAA", 7) == 0, TEST_DNA_TO_INT, "");
   TAP_TEST(dna_to_int("ATTAGGA", 7) == 3880, TEST_DNA_TO_INT, "");
   TAP_TEST(dna_to_int("TTTT", 4) == 255, TEST_DNA_TO_INT, "");
+}
+
+
+void testNucToAA() {
+  cout << GENETIC_CODE << endl;
+  TAP_TEST (nuc_to_aa("acaaggagcaattggaatttgagactgcaaaatctaattaaaaatgattctgggttctattactgtgccacctgggacagg") == "TRSNWNLRLQNLIKNDSGFYYCATWDR", TEST_NUC_TO_AA, "");
+  TAP_TEST (nuc_to_aa("ACGTacgtACGTacgt") == "TYVRT#", TEST_NUC_TO_AA, "");
+  TAP_TEST (nuc_to_aa("atgTAAtagTGA") == "M***", TEST_NUC_TO_AA, "");
+  TAP_TEST (nuc_to_aa("cccCATgaaTT") == "PHE#", TEST_NUC_TO_AA, "");
 }
 
 void testRevcompInt() {
@@ -329,12 +356,14 @@ void testTools() {
   testFasta1();
   testFastaAdd();
   testFastaAddThrows();
+  testFastaLabelAndMark();
   testSequenceOutputOperator();
   testFastaOutputOperator();
   testRevcomp();
   testCreateSequence();
   testNucToInt();
   testDNAToInt();
+  testNucToAA();
   testRevcompInt();
   testExtendedNucleotides();
   testExtractBasename();

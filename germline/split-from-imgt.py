@@ -106,6 +106,52 @@ def retrieve_genes(filename, genes, additional_length):
             file.write(get_gene_sequence(gene, coord['imgt_name'], start, end))
 
 
+#                  Phe
+#                  TrpGly   Gly
+j118 = re.compile('t..gg....gg.')
+
+
+MAX_GAP_J = 36          # maximal position of Phe/Trp (36 for TRAJ52*01)
+PHE_TRP_WARN_SIZE = 15  # small sequences are on a second line
+PHE_TRP_WARN_MSG = 'No Phe/Trp-Gly-X-Gly pattern'
+
+CUSTOM_118 = { '': 0    # custom position of 118 in sequences without the Trp-Gly-X-Gly pattern
+    #                               118
+    #                               |..
+    ,                       'gcacatgtttggcagcaagacccagcccactgtctta':         8 # IGLJ-C/OR18*01
+    ,    'ggttttcagatggccagaagctgctctttgcaaggggaaccatgttaaaggtggatctta':    27 # TRAJ16*01
+    , 'agatgcgtgacagctatgagaagctgatatttggaaaggagacatgactaactgtgaagc':       30 # TRAJ51*01
+    ,    'ggtaccgggttaataggaaactgacatttggagccaacactagaggaatcatgaaactca':    27 # TRAJ61*01
+    ,       'ataccactggttggttcaagatatttgctgaagggactaagctcatagtaacttcacctg': 24 # TRGJP1*01
+    ,       'atagtagtgattggatcaagacgtttgcaaaagggactaggctcatagtaacttcgcctg': 24 # TRGJP2*01
+  #  ,         'ctgagaggcgctgctgggcgtctgggcggaggactcctggttctgg':               # TRBJ2-2P*01 ?
+  #  ,        'ctcctacgagcagtacgtcgggccgggcaccaggctcacggtcacag':               # TRBJ2-7*02 ?
+}
+
+def gap_j(seq):
+    '''Gap J sequences in order to align the Phe118/Trp118 codon'''
+
+    seqs = seq.strip()
+
+    if seqs in CUSTOM_118:
+        print "# Custom 118 position in %s" % seq
+        pos = CUSTOM_118[seqs]
+        seq =  seq.replace('\n', " # Custom\n")
+
+    else:
+        m = j118.search(seq)
+
+        if not m:
+            if len(seq) > PHE_TRP_WARN_SIZE:
+                print "# %s in %s" % (PHE_TRP_WARN_MSG, seq)
+                seq = "# %s\n%s" % (PHE_TRP_WARN_MSG, seq)
+            return seq
+
+        pos = m.start() + 1 # positions start at 1
+
+    return (MAX_GAP_J - pos) * '.' + seq
+
+
 LENGTH_UPSTREAM=40
 LENGTH_DOWNSTREAM=40
 # Create isolated files for some sequences
@@ -185,6 +231,9 @@ for l in sys.stdin:
                 name = '%s.fa' % seq.replace('*', '-')
                 current_special = verbose_open_w(name)
 
+
+    if '>' not in l and current_files and feature == 'J-REGION':
+        l = gap_j(l)
 
     for current_file in current_files:
             current_file.write(l)

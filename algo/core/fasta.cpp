@@ -39,10 +39,11 @@ unsigned long long filesize(const char* filename)
     return in.tellg();
 }
 
-void Fasta::init(int extract_field, string extract_separator)
+void Fasta::init(int extract_field, string extract_separator, int mark_pos)
 {
   this -> extract_field = extract_field ;
   this -> extract_separator = extract_separator ; 
+  this -> mark_pos = mark_pos;
   total_size = 0;
   name = "";
   basename = "";
@@ -55,9 +56,9 @@ Fasta::Fasta(bool virtualfasta, string name)
   basename = extract_basename(name);
 }
 
-Fasta::Fasta(int extract_field, string extract_separator)
+Fasta::Fasta(int extract_field, string extract_separator, int mark_pos)
 {
-  init(extract_field, extract_separator);
+  init(extract_field, extract_separator, mark_pos);
 }
 
 Fasta::Fasta(const string &input, 
@@ -168,16 +169,24 @@ OnlineFasta::~OnlineFasta() {
 }
 
 void OnlineFasta::init() {
+  mark_pos = 0;
   nb_sequences_parsed = 0;
   nb_sequences_returned = 0;
   char_nb = 0;
   line_nb = 0;
-  line = getInterestingLine();
   current.seq = NULL;
+  current.marked_pos = 0;
+  current_gaps = 0;
+
+  line = getInterestingLine();
 }
 
 unsigned long long OnlineFasta::getPos() {
   return char_nb;
+}
+
+void OnlineFasta::setMarkPos(int mark_pos) {
+  this -> mark_pos = mark_pos;
 }
 
 size_t OnlineFasta::getLineNb() {
@@ -211,6 +220,26 @@ void OnlineFasta::skipToNthSequence() {
       return  ;
 }
 
+void OnlineFasta::addLineToCurrentSequence(string line)
+{
+  for (char& c : line)
+    {
+      if (c == ' ')
+        continue ;
+
+      if (c == '.') {
+        current_gaps++;
+        continue ;
+      }
+
+      current.sequence += c;
+
+      if (mark_pos) {
+        if (current.sequence.length() + current_gaps == mark_pos)
+          current.marked_pos = current.sequence.length();
+      }
+    }
+}
 
 void OnlineFasta::next() {
   fasta_state state = FASTX_UNINIT;
@@ -223,6 +252,8 @@ void OnlineFasta::next() {
   if (current.seq) {
     delete [] current.seq;
     current.seq = NULL;
+    current.marked_pos = 0;
+    current_gaps = 0;
   }
 
   if  (hasNextData()) {
@@ -247,7 +278,7 @@ void OnlineFasta::next() {
         switch(state) {
         case FASTX_FASTA: case FASTX_FASTQ_ID:
           // Sequence
-          current.sequence += line;
+          addLineToCurrentSequence(line);
           break;
         case FASTX_FASTQ_SEQ:
           // FASTQ separator between sequence and quality
@@ -313,6 +344,7 @@ istream& operator>>(istream& in, Fasta& fasta){
 	string line;
 	Sequence read;
         OnlineFasta of(in, fasta.extract_field, fasta.extract_separator);
+        of.setMarkPos(fasta.mark_pos);
 
         while (of.hasNext()) {
           of.next();
@@ -335,7 +367,14 @@ ostream &operator<<(ostream &out, const Sequence &seq) {
     out << "@";
   } else
     out << ">";
-  out << seq.label << endl;
+  out << seq.label;
+
+  if (seq.marked_pos) {
+    out << " !@" << seq.marked_pos ;
+  }
+
+  out << endl;
+
   out << seq.sequence << endl;
   if (is_fastq) {
     out << "+" << endl << seq.quality << endl;

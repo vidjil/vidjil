@@ -5,7 +5,8 @@
 # With only one D, this is:
 # IGHV5-10-1*01 2/CTTC/3 IGHD1-14*01 1/GTTA/5 IGHJ5*01  [IGH]
 
->IGHV5-10-1*01 2/CTTC/3 IGHD1-14*01 1//23 IGHD3-16*01 8//7 IGHJ5*01  [IGH]
+>IGHV5-10-1*01 2/CTTC/3 IGHD1-14*01 1//23 IGHD3-16*01 8//7 IGHJ5*01  [IGH]  {CATS*PEPVM!FDSW}
+# IMGT/JunctionAnalysis: {CATS*PEPV!WFDSW}
 aagtccatcagcactgcctacctgcagtggagcagcctgaaggcctcggacaccgccatgtattactgtgcga
 CTTC
 ataaccggaacca

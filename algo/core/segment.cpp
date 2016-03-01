@@ -92,7 +92,7 @@ string codeFromBoxes(vector <AlignBox*> boxes, string sequence)
 
     if (i>0) {
       code += " " + string_of_int(boxes[i-1]->del_right) + "/"
-        // From box_left->end + 1 to box_right->start - 1
+        // From box_left->end + 1 to box_right->start - 1, both positions included
         + sequence.substr(boxes[i-1]->end + 1, boxes[i]->start - boxes[i-1]->end - 1)
         + "/" + string_of_int(boxes[i]->del_left) + " " ;
     }
@@ -254,6 +254,10 @@ string Segmenter::getInfoLine() const
   if (evalue_right > NO_LIMIT_VALUE)
     s += "/" + scientific_string_of_double(evalue_right);
 
+  if (CDR3start > 0)
+    s += " {" + string_of_int(JUNCTIONstart) + "(" + string_of_int(JUNCTIONend-JUNCTIONstart+1) + ")" + string_of_int(JUNCTIONend) + " "
+      + "up"[JUNCTIONproductive] + " " + JUNCTIONaa + "}";
+
   return s ;
 }
 
@@ -302,6 +306,9 @@ KmerSegmenter::KmerSegmenter(Sequence seq, Germline *germline, double threshold,
   box_V = new AlignBox();
   box_D = new AlignBox();
   box_J = new AlignBox();
+
+  CDR3start = -1;
+  CDR3end = -1;
 
   label = seq.label ;
   sequence = seq.sequence ;
@@ -715,7 +722,8 @@ void align_against_collection(string &read, Fasta &rep, int forbidden_rep_id,
       DynProg dp = DynProg(sequence_or_rc, rep.sequence(r),
 			   dpMode, // DynProg::SemiGlobalTrans, 
 			   segment_cost, // DNA
-			   reverse_both, reverse_both);
+			   reverse_both, reverse_both,
+                          rep.read(r).marked_pos);
 
       bool onlyBottomTriangle = !local ;
       int score = dp.compute(onlyBottomTriangle, BOTTOM_TRIANGLE_SHIFT);
@@ -733,6 +741,10 @@ void align_against_collection(string &read, Fasta &rep, int forbidden_rep_id,
 	  best_first_j = dp.first_j ;
 	  box->ref_nb = r ;
 	  box->ref_label = rep.label(r) ;
+
+          if (!local)
+            dp.backtrack();
+          box->marked_pos = dp.marked_pos_i ;
 	}
 	
 	score_r.push_back(make_pair(score, r));
@@ -1029,61 +1041,40 @@ void FineSegmenter::FineSegmentD(Germline *germline, bool several_D,
 }
 
 void FineSegmenter::findCDR3(){
-    string str = getSequence().sequence;
-    
-    list<string> codon_start;
-    codon_start.push_back("TGT");
-    codon_start.push_back("TGC");
-    
-    list<string> codon_end;
-    codon_end.push_back("TTT");
-    codon_end.push_back("TTC");
-    codon_end.push_back("TGG");
-    
-    list<int> p_start;
-    list<int> p_end;
 
-    size_t loc;
-    std::list<string>::const_iterator it;
-    for (it = codon_start.begin(); it != codon_start.end(); ++it) {//filter 1 : start codon must be in V
-        loc = 0;
-        while ( loc != string::npos && loc < (size_t)box_V->end){
-            loc = str.find(*it, loc+3);
-            if (loc != string::npos && loc < (size_t)box_V->end) {
-                p_start.push_front(loc);
-            }
-        }
+  JUNCTIONstart = box_V->marked_pos;
+  JUNCTIONend = box_J->marked_pos;
+
+  // There are two cases when we can not detect a JUNCTION/CDR3:
+  // - Germline V or J gene has no 'marked_pos'
+  // - Sequence may be too short on either side, and thus the backtrack did not find a suitable 'marked_pos'
+  if (JUNCTIONstart == 0 || JUNCTIONend == 0)
+    return;
+  
+  // IMGT-CDR3 is, on each side, 3 nucleotides shorter than IMGT-JUNCTION
+  CDR3start = JUNCTIONstart + 3;
+  CDR3end = JUNCTIONend - 3;
+
+  CDR3nuc = subsequence(getSequence().sequence, CDR3start, CDR3end);
+
+  if (CDR3nuc.length() % 3 == 0)
+    {
+      CDR3aa = nuc_to_aa(CDR3nuc);
+    }
+  else
+    {
+      // start of codon fully included in the germline J
+      int CDR3startJfull = JUNCTIONend - ((JUNCTIONend - box_J->start) / 3) * 3 + 1 ;
+
+      CDR3aa =
+        nuc_to_aa(subsequence(getSequence().sequence, CDR3start, CDR3startJfull-1)) +
+        nuc_to_aa(subsequence(getSequence().sequence, CDR3startJfull, CDR3end));
     }
 
-    for (it = codon_end.begin(); it != codon_end.end(); ++it) {//filter 2 : end codon must be in J
-        loc = box_J->start;
-        while ( loc != string::npos){
-            loc = str.find(*it, loc+3);
-            if (loc != string::npos) {
-                p_end.push_back(loc);
-            }
-        }
-    }
+  JUNCTIONaa = nuc_to_aa(subsequence(getSequence().sequence, JUNCTIONstart, CDR3start-1))
+    + CDR3aa + nuc_to_aa(subsequence(getSequence().sequence, CDR3end+1, JUNCTIONend));
 
-    CDR3start = -1;
-    CDR3end = -1;
-    
-    std::list<int>::const_iterator it1;
-    for (it1 = p_start.begin(); it1 != p_start.end(); ++it1) {
-        
-        std::list<int>::const_iterator it2;
-        for (it2 = p_end.begin(); it2 != p_end.end(); ++it2) {
-            
-            if ( (*it2-*it1)%3 == 0){       //filter 3 : start/stop codon must be seprated by a multiple of 3
-                
-                if ( fabs((*it2-*it1)-36 ) < fabs((CDR3end-CDR3start)-36) ){ //filter 4 : cdr3 length must be close to 12 AA
-                    CDR3start = *it1;
-                    CDR3end = *it2;
-                }
-            }
-        }
-    }
-    
+  JUNCTIONproductive = (CDR3nuc.length() % 3 == 0) && (JUNCTIONaa.find('*') == string::npos);
 }
 
 json FineSegmenter::toJson(){
@@ -1107,7 +1098,14 @@ json FineSegmenter::toJson(){
     if (CDR3start >= 0) {
         seg["cdr3"] = {
             {"start", CDR3start},
-            {"stop", CDR3end}
+            {"stop", CDR3end},
+            {"aa", CDR3aa}
+        };
+        seg["junction"] = {
+            {"start", JUNCTIONstart},
+            {"stop", JUNCTIONend},
+            {"aa", JUNCTIONaa},
+            {"productive", JUNCTIONproductive}
         };
     }
   }

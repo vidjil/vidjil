@@ -126,6 +126,19 @@ inline int nuc_to_int(char nuc) {
  */
 int dna_to_int(const string &, int size);
 
+#define GENETIC_CODE \
+  "KNKN" "TTTT" "RSRS" "IIMI" \
+  "QHQH" "PPPP" "RRRR" "LLLL" \
+  "EDED" "AAAA" "GGGG" "VVVV" \
+  "*Y*Y" "SSSS" "*CWC" "LFLF"
+
+#define GENETIC_CODE_OUT_OF_FRAME '#'
+
+/**
+ * Convert nucleotides to amino acids
+ */
+string nuc_to_aa(const string &nuc);
+
 string extract_from_label(string str, int field, string separator);
 
 /**
@@ -145,6 +158,11 @@ string extract_basename(string path, bool remove_ext = true);
  * @return the number of whitespaces removed
  */
 int remove_trailing_whitespaces(string &str);
+
+/**
+ * @return subsequence delimited by biological positions (starting from 1), including both positions
+ */
+string subsequence(const string &text, int start, int end);
 
 /**
  * @return reverse(complement(dna)) if do_revcomp, otherwise dna

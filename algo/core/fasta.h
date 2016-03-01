@@ -17,6 +17,7 @@ typedef struct read_t
   string sequence; // Sequence: original string representation
   string quality;
   int*   seq;      // Sequence: seq representation
+  int    marked_pos; // Some marked position in the sequence
 } Sequence;
 
 typedef enum {
@@ -31,17 +32,18 @@ unsigned long long filesize(const char* filename);
 
 class Fasta
 {
-        void init(int extract_field, string extract_separator);
+        void init(int extract_field, string extract_separator, int mark_pos=0);
 
         int total_size;
         int extract_field;
+        int mark_pos;
 	string extract_separator;
 	
 	vector<Sequence> reads;
 	// ostream *oout ;
 
 public:
-        Fasta(int extract_field=0, string extract_separator="|");
+        Fasta(int extract_field=0, string extract_separator="|", int mark_pos=0);
         /**
          * Read all the sequences in the input filename and record them in the object.
          *
@@ -93,6 +95,8 @@ public:
 class OnlineFasta {
  private:
   Sequence current;
+  int current_gaps;
+
   istream *input;
   int extract_field;
   string extract_separator;
@@ -100,6 +104,9 @@ class OnlineFasta {
   bool input_allocated;
   size_t line_nb;
   unsigned long long char_nb;
+
+  int mark_pos;
+  void addLineToCurrentSequence(string line);
 
   int nb_sequences_parsed;
   int nb_sequences_returned;
@@ -130,6 +137,11 @@ class OnlineFasta {
               int nb_sequences_max=NO_LIMIT_VALUE, int only_nth_sequence=1);
 
   ~OnlineFasta();
+
+  /**
+   * sets a position to be followed in gapped sequences
+   */
+  void setMarkPos(int mark_pos);
 
   /**
    * @return the position in the file

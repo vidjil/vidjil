@@ -1,0 +1,33 @@
+
+# Test borderline cases for CDR3/JUNCTION with indels close to positions 104/118.
+
+>TRGV1*01 0/AA/0 TRGJ1*01  [TRG]  {CATWDRKNYYKKLF}
+ctgcaaaatctaattaaaaatgattctgggttctattactgtgccacctgggacaggAA
+gaattattataagaaactctttggcagtggaacaacactggttgtcacag
+
+
+# One A inserted after the end of Cys104 -> other frame for V
+>TRGV1*01 0/A/0 TRGJ1*01  [TRG]  {CSHLGQENYYKKLF}
+ctgcaaaatctaattaaaaatgattctgggttctattactgtAgccacctgggacaggA
+gaattattataagaaactctttggcagtggaacaacactggttgtcacag
+
+# One G deleted after the end of Cys104 -> other frame for V
+>TRGV1*01 0/AAA/0 TRGJ1*01  [TRG]  {CPPGTGKNYYKKLF}
+ctgcaaaatctaattaaaaatgattctgggttctattactgtccacctgggacaggAAA
+gaattattataagaaactctttggcagtggaacaacactggttgtcacag
+
+
+# One A inserted before the start of Phe118 -> other frame for J
+>TRGV1*01 0/A/0 TRGJ1*01  [TRG]  {CATWDRRIIIRNSF}
+ctgcaaaatctaattaaaaatgattctgggttctattactgtgccacctgggacaggA
+gaattattataagaaactcAtttggcagtggaacaacactggttgtcacag
+
+# One T deleted before the start of Phe118 -> other frame for J
+>TRGV1*01 0/AAA/0 TRGJ1*01  [TRG]  {ATWDRKELL*ETF}
+ctgcaaaatctaattaaaaatgattctgggttctattactgtgccacctgggacaggAAA
+gaattattataagaaacttttggcagtggaacaacactggttgtcacag
+
+
+# There could also be tests with an indel inside Cys104 or Phe118,
+# but it would be difficult to assert what should be the right answer
+# in these cases.

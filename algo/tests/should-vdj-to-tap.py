@@ -28,7 +28,7 @@ from collections import defaultdict
 import os
 import argparse
 
-VIDJIL_FINE = '{directory}/vidjil -X 100 -# "#" -c segment -i -d -g {directory}/germline %s >> %s'
+VIDJIL_FINE = '{directory}/vidjil -X 100 -# "#" -c segment -i -3 -d -g {directory}/germline %s >> %s'
 VIDJIL_KMER = '{directory}/vidjil -# "#" -b out -c windows -uU -2 -i -g {directory}/germline %s > /dev/null ; cat out/out.segmented.vdj.fa out/out.unsegmented.vdj.fa >> %s'
 
 parser = argparse.ArgumentParser(formatter_class=argparse.RawTextHelpFormatter)
@@ -40,6 +40,8 @@ parser.add_argument('--ignore_D', '-D', action='store_true', help='ignore D gene
 parser.add_argument('--after-two', '-2', action='store_true', help='compare only the right part of the pattern after two underscores (locus code)')
 parser.add_argument('--revcomp', '-r', action='store_true', help='duplicate the tests on reverse-complemented files')
 parser.add_argument('--directory', '-d', default='../..', help='base directory where Vidjil is. This value is used by the default -p and -q values (%(default)s)')
+parser.add_argument('--verbose', '-v', action='store_true')
+
 parser.add_argument('file', nargs='+', help='''.should-vdj.fa files''')
 
 args = parser.parse_args()
@@ -99,6 +101,13 @@ def should_pattern_to_regex(p):
         if term.startswith('#'):
             continue
 
+        # (such as CDR3 / junction)
+        if term.startswith('{'):
+            term = term.replace('*','[*]').replace('!','#')
+            term = term.replace('{', '.*[{].*').replace('}', '.*[}]')
+            r += [term]
+            continue
+
         # deletion/insertion/deletion
         # Note that '/' may be also in gene name, such as in IGKV1/OR-3*01
         if term.count('/') == 2:
@@ -143,7 +152,10 @@ def should_pattern_to_regex(p):
         sys.stderr.write("Error. Invalid regex_pattern: " + regex)
         sys.exit(4)
 
-    # print '==', p, '->', regex_pattern
+    if args.verbose:
+        print
+        print '      ', p, '->', regex_pattern
+
     return regex
 
 
@@ -234,7 +246,7 @@ def should_to_tap_one_file(f_should):
 
         for tap_id, l in enumerate(id_lines):
             tap_line = id_line_to_tap(l, tap_id+1)
-            if 'not ok' in tap_line:
+            if args.verbose or 'not ok' in tap_line:
                 print tap_line
             ff.write(tap_line + '\n')
 

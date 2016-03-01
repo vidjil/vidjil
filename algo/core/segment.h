@@ -91,6 +91,9 @@ class AlignBox
   string ref_label;
   string ref;
 
+  /* Marked position, for Cys104 and Phe118/Trp118 */
+  int marked_pos;
+
   /* Identifiers and scores of other possible reference sequence */
   vector<pair<int, int> > score;
 };
@@ -119,7 +122,15 @@ class Segmenter {
 protected:
   string sequence;
   string sequence_or_rc;
+
+  int JUNCTIONstart, JUNCTIONend;
+  string JUNCTIONaa;
+  bool JUNCTIONproductive;
+
   int CDR3start, CDR3end;
+  string CDR3nuc;
+  string CDR3aa;
+
   bool reversed, segmented, dSegmented;
   int because;
 
@@ -318,6 +329,10 @@ class FineSegmenter : public Segmenter
                     int extend_DD_on_Y, int extend_DD_on_Z,
                     double threshold = THRESHOLD_NB_EXPECTED_D, int multiplier=1);
 
+  /**
+   * find JUNCTION/CDR3, by using marked Cys104 and Phe118/Trp118 positions
+   * in the germline V and J genes and the backtrack of the DP matrix
+   */
   void findCDR3();
 
   json toJson();
