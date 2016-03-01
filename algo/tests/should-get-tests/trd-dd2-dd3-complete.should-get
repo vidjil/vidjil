@@ -1,0 +1,13 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -A -g $VIDJIL_DIR/germline $VIDJIL_DIR/data/trd-dd2-dd3.fa
+
+$ Segment only 2 reads, because there is no -i
+1:junction detected in 2 reads .40..
+
+$ TRDV3*01-TRDD3*01 reported as "UNSEG only V/5'"
+1:UNSEG only V/5' .*-> .*  1  .*  63
+
+$ TRDD2*01-TRDJ1*01 reported as "UNSEG only J/3'"
+1:UNSEG only J/3' .*-> .*  1  .*  60
+
+$ TRDD2*01-TRDD3*01 reported as "UNSEG too few V/J"
+1:UNSEG too few V/J.*-> .*  1  .*  22

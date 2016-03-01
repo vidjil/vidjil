@@ -1,0 +1,8 @@
+!NO_LAUNCHER:
+!LAUNCH: $VIDJIL_DIR/vidjil -z 200 -G $VIDJIL_DIR/germline/IGH $VIDJIL_DIR/data/trd-dd2-dd3.fa
+
+$ Warning, -z
+1:WARNING
+
+$ Link to documentation
+1:algo.org

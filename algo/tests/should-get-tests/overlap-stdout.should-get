@@ -1,0 +1,7 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -c segment -G $VIDJIL_DIR/germline/IGH -A $VIDJIL_DIR/data/overlap-d-j.fa | tail -4 | tr -d '\\\\n' | wc -c
+
+$ Exported sequence has all the bases
+1:116
+
+
+

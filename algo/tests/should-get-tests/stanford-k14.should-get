@@ -1,0 +1,6 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -y 0 -k 14 -G $VIDJIL_DIR/germline/IGH $VIDJIL_DIR/data/Stanford_S22.fasta
+!LOG: stanford-k14.log
+
+$ Find the good number of windows in Stanford S22 (contiguous seed 14)
+1: found 10790 50-windows in 13152 reads
+

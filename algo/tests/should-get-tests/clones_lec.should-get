@@ -1,0 +1,18 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -G $VIDJIL_DIR/germline/TRG -c clones -A -3 $VIDJIL_DIR/data/segment_lec.fa
+
+$ Extract 50bp windows (TRG)
+1:found . 50-windows
+
+$ Find the good number of windows
+1: found 2 .* in 4 reads .* 7 reads
+
+$ Find the good statistics on TRG
+1: TRG .* -> .* 4 .* 117.0 .* 2 .* 0.500
+
+$ Find the good length statistics
+3: SEG.* 117.0
+1: UNSEG too short w.* 40.0
+
+$ Find the good CDR3
+1: CATWA#YYKKLF
+1: CAAWRPTGWFKIF

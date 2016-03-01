@@ -1,0 +1,12 @@
+!REQUIRES: python $VIDJIL_DIR/tools/check_python_version.py
+!LAUNCH: $VIDJIL_DIR/vidjil -z 0 -w 60 -G $VIDJIL_DIR/germline/IGH $VIDJIL_DIR/data/Stanford_S22.fasta ; python $VIDJIL_DIR/tools/fuse.py out/Stanford_S22.vidjil out/Stanford_S22.vidjil -o out/fused.data ; cat out/fused.data | python $VIDJIL_DIR/tools/format_json.py -1
+
+$ Points list
+e1:"original_names": ["../../..//data/Stanford_S22.fasta", "../../..//data/Stanford_S22.fasta"]
+
+$ Most abundant window, twice, fused 
+1:"id": "CCACCTATTACTGTACCCGGGAGGAACAATATAGCAGCTGGTACTTTGACTTCTGGGGCC".*"reads": \\[8, 8\\].*"top": 2
+
+# Fails since 49046ca6b97, no more 'others'
+$ Windows that are not in the top 50
+f1:"window": "others-1", .* "size": [ 12962, 12962 ]

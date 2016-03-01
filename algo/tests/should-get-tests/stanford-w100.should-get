@@ -1,0 +1,12 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -e 10 -y 0 -s '#####-#####' -w 100 -G $VIDJIL_DIR/germline/IGH $VIDJIL_DIR/data/Stanford_S22.fasta
+!LOG: stanford-w100.log
+
+$ Find the good number of "too short sequences" for windows of size 100
+1: UNSEG too short w ->      484
+
+$ Find the good number of segmented sequences (including "too short sequences")
+1: junction detected in 13153 reads .100%.
+
+$ Find the good number of windows of size 100 in Stanford S22
+1: found 11437 100-windows in 12669 reads
+

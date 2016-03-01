@@ -1,0 +1,16 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -k 14 -w 50 -c clones -G $VIDJIL_DIR/germline/IGH -y 3 -z 1 -r 1 $VIDJIL_DIR/data/clones_simul.fa
+
+$ Junction extractions
+1:found 25 50-windows in 66 reads
+
+$ No clustering
+1:==> 25 clones
+
+$ Clone 1 output
+1:Clone #001 .* 29 reads
+
+$ Clone 2 output
+1:Clone #002 .* 14 reads
+
+$ Clone 3 output (sequencing error)
+1:Clone #003 .* 1 reads

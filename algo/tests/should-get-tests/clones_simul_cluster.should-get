@@ -1,0 +1,19 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -k 14 -w 50 -c clones -G $VIDJIL_DIR/germline/IGH -y 3 -z 0 -r 1 -n 5 $VIDJIL_DIR/data/clones_simul.fa ; cat out/clones_simul.vidjil
+
+$ Window extractions
+2:found 25 50-windows in 66 reads
+
+$ Some clustering
+1:==> 2 clusters
+
+$ Clones #01 and #02 are clustered (not together): their windows appear two times in .vidjil ('id' and 'clusters')
+2:"CTGTGCGAGAGTGGGCAGCAGCTGGTCTGATGCTTTTGATTATCTGGGGC"
+2:"GCGAGAGCGATCCCCCGGTATTACTATGATACTAGTGGCCCAAACGACTA"
+
+$ Clones #03 is not clustered: its windows appear only once .vidjil ('id')
+1:"TGTGAGAGAGCGATCCCCCGGTATTACTAGGATACTAGTGGCCCAAACGA"
+
+$ Clones #01, #02 and #03 have the start of their sequence in .vidjil, on the good strand
+1: "sequence": "ACGCTGGCAATGGTAACACAAAATATTCACAGAAG
+1: "sequence": "TAGTGGTGCCATATACTACGCAGACTCTGTGAAGG
+1: "sequence": "CATTAGTAGTAATAGTGGTGCCATATACTACGCAG

@@ -1,0 +1,5 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -c segment -g $VIDJIL_DIR/germline $VIDJIL_DIR/data/multi-tiny.fa
+
+$ Do not segment any of the seven reads
+7:UNSEG
+

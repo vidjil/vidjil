@@ -1,0 +1,10 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -KA -z 0 -s \\\\#\\\\#\\\\#\\\\#\\\\#-\\\\#\\\\#\\\\#\\\\#\\\\# -G $VIDJIL_DIR/germline/IGH  $VIDJIL_DIR/data/common-V-D.fa  ; cat out/common-V-D.affects
+
+$ Segments the sequence
+1: SEG  .* -> .* 1 
+
+$ Find the good affects for the D segment, including a AMBIGUOUS k-mer, common with V
+1:_ _ _ \\?.f.f.f.f.f.f _ _ _ _
+
+$ The windows found by the KmerSegmenter has a fairly good position
+2: 0 162 179 219

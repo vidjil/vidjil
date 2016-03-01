@@ -1,0 +1,9 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -w 10 -G $VIDJIL_DIR/germline/IGH $VIDJIL_DIR/data/Stanford-S22.fa 2>&1
+!EXIT_CODE: 1
+
+$ Error, too small -w
+1:error.* Too small -w
+
+
+
+

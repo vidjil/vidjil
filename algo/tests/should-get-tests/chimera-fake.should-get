@@ -1,0 +1,6 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -g $VIDJIL_DIR/germline -i $VIDJIL_DIR/data/chimera-fake.fa
+
+$ Do not segment on any germline, even incomplete
+1:junction detected in 0 reads
+
+

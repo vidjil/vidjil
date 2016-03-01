@@ -1,9 +1,0 @@
-!LAUNCH: ../../vidjil -A -t 0 -g ../../germline -2 -i ../../data/chimera-fake.fa
-
-$ The KmerSegmenter segments the three chimera reads on PSEUDO_MAX12 germline (-2)
-1:xxx .* -> .* 3
-
-$ The FineSegmenter gives the locus information (-2)
-1:Unexpected .*TRAV.*/.*TRBV
-1:Unexpected .*TRGV.*/.*TRDV
-1:Unexpected .*IGHV.*/.*IGKV

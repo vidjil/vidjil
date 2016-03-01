@@ -1,4 +1,0 @@
-!LAUNCH: ../../vidjil -G ../../germline/IGH -r 1 ../../data/large_N.fa
-
-$ Find a huge insertion in the segmentation
-1:>clone-001.*/[ACGT]{100}

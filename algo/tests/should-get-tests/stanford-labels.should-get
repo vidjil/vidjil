@@ -1,0 +1,6 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -z 0 -G $VIDJIL_DIR/germline/IGH -r 5 -l $VIDJIL_DIR/data/Stanford_S22.label $VIDJIL_DIR/data/Stanford_S22.fasta
+
+$ Some clone has only one read, bypassing the -r 5 option, and the good label
+1: clone-00..*0001-.* my-clone
+
+

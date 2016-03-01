@@ -1,0 +1,14 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -\# FA -k 16 -z 0 -w 60 -r 5 -o out2 -u -U -v -G $VIDJIL_DIR/germline/IGH $VIDJIL_DIR/data/Stanford_S22.fasta ; tail out2/Stanford_S22.segmented.vdj.fa ; grep UNSEG out2/Stanford_S22.unsegmented.vdj.fa
+# Testing uncommon and debug options 
+
+$ verbose (-v)
+2:auditioned sequences
+
+$ segmented.fa (-U)
+2:>lcl.FLN1.* VJ .* seed IGH SEG_[+]
+
+$ unsegmented.fa (-u)
+5:>lcl.FLN1.* UNSEG
+
+$ fasta header stops before FA
+2:clone-.*-lcl.FLN1-

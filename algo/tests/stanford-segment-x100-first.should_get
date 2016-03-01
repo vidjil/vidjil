@@ -1,5 +1,0 @@
-!LAUNCH: ../../vidjil -c segment -x 2 -G ../../germline/IGH ../../data/Stanford_S22.fasta
-
-$ Segments the good number of sequences in Stanford S22 
-2: >lcl
-

@@ -3,34 +3,36 @@ INCLUDE=-I ..
 OPTIM=-g -O0 $(COVERAGE)
 override CXXFLAGS += -std=c++11 -W -Wall $(OPTIM)
 LDLIBS=-lz
-SRC= tests.cpp
+SRC= unit-tests/tests.cpp
 EXEC=$(SRC:.cpp=)
 OTHER_SRC=$(wildcard *.cpp)
 LIB=../core/vidjil.a ../lib/lib.a
-SHOULD=$(wildcard *.should_get)
-SHOULD_LOG=$(SHOULD:.should_get=.tap)
+SHOULD=$(wildcard should-get-tests/*.should-get)
+SHOULD_LOG=$(SHOULD:.should-get=.tap)
 SHOULD_VDJ=$(wildcard should-vdj-tests/*.should-vdj.fa)
 SHOULD_LOCUS=$(wildcard should-vdj-tests/*.should-locus.fa)
 REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))/../../reports
 VALGRIND=valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file="$$(mktemp "$(REPORTS_PATH)/valgrind.xml.XXXXXX")"
 
-DATE=$(shell date +%Y-%m-%d:%H:%M:%S)
-SNAPSHOT=snapshot-log-$(DATE)
+DATE=$(shell date +%Y-%m-%d--%H:%M:%S)
+SNAPSHOTS_DIR=./snapshots
+SNAPSHOT=$(SNAPSHOTS_DIR)/snapshot-log--$(DATE)
 
 .PHONY: all force clean forcedep
 
 test: all
 	@echo
 	@echo "*** Launching unit tests..."
-	./tests
-	cat tests.cpp.tap
+	./unit-tests/tests
+	cat ./unit-tests/tests.cpp.tap
 	@echo "*** All unit tests passed"
 
 all: core $(EXEC)
 	@echo "All tests compiled."
 
 snapshot:
-	grep . *.log should-vdj-tests/*.log > $(SNAPSHOT)
+	mkdir -p $(SNAPSHOTS_DIR)
+	grep . should-get-tests/*.log should-vdj-tests/*.log > $(SNAPSHOT)
 	touch snapshot-last ; mv snapshot-last snapshot-prev
 	ln -s $(SNAPSHOT) snapshot-last
 	diff -I "20..-..-.." snapshot-prev snapshot-last | diffstat -cC
@@ -59,7 +61,7 @@ shouldvdj_with_rc_merged:
 	cat $(SHOULD_VDJ) > should-vdj-tests/should-vdj.merged.fa
 	python should-vdj-to-tap.py -r should-vdj-tests/should-vdj.merged.fa
 
-%.tap: %.should_get force
+%.tap: %.should-get force
 	./should-to-tap.sh $<
 
 valgrind_should:
