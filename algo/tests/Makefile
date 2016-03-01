@@ -15,7 +15,8 @@ REPORTS_PATH := $(patsubst %/Makefile,%,$(abspath $(lastword $(MAKEFILE_LIST))))
 VALGRIND=valgrind -v --tool=memcheck --leak-check=full --show-reachable=yes --undef-value-errors=yes --track-origins=yes --xml=yes --xml-file="$$(mktemp "$(REPORTS_PATH)/valgrind.xml.XXXXXX")"
 
 DATE=$(shell date +%Y-%m-%d:%H:%M:%S)
-SNAPSHOT=snapshot-log-$(DATE)
+SNAPSHOTS_DIR=./snapshots
+SNAPSHOT=$(SNAPSHOTS_DIR)/snapshot-log-$(DATE)
 
 .PHONY: all force clean forcedep
 
@@ -30,6 +31,7 @@ all: core $(EXEC)
 	@echo "All tests compiled."
 
 snapshot:
+	mkdir -p $(SNAPSHOTS_DIR)
 	grep . *.log should-vdj-tests/*.log > $(SNAPSHOT)
 	touch snapshot-last ; mv snapshot-last snapshot-prev
 	ln -s $(SNAPSHOT) snapshot-last
