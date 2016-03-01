@@ -1,6 +1,12 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
+2016-03-XX  The Vidjil Team
+	* Better JUNCTION/CDR3 detection (-3), based on positions of Cys104 and Phe118/Trp118 (core/segment.cpp)
+	* Bugs closed (.vidjil output of revcomp'd sequences, computation of Simpson index Ds)
+	* Streamlined structure of tests directory
+	* New and updated unit and functional tests
+
 2016-02-08  The Vidjil Team
 	* New default threshold (-z 100), fully analyzing more clones
 	* New computation of diversity indices (Shannon, Simpson) (core/windows.cpp)
