@@ -1,0 +1,12 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -g $VIDJIL_DIR/germline -g $VIDJIL_DIR/germline/isotypes.data -i $VIDJIL_DIR/data/isotypes.fa
+
+$ Segment the three reads
+1: junction detected in 3 reads
+
+$ Segment one read on IGH (first -g option)
+1: IGH .* -> .* 1 
+
+$ Segment two reads on IgVC/IgJC (second -g option)
+1: IgVC .* -> .* 1
+1: IgJC .* -> .* 1 
+
