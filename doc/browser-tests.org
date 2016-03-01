@@ -41,7 +41,7 @@ gem install test-unit
 * Launch browser tests
 
 #+BEGIN_SRC sh
-ruby test_browser.rb
+make functional
 #+END_SRC
 
 ** Headless mode
@@ -65,5 +65,5 @@ ruby test_browser.rb
 
    Then the browser tests can be launched in headless mode with:
    #+BEGIN_SRC sh
-   HEADLESS=1 ruby test_browser.rb
+   make headless
    #+END_SRC
