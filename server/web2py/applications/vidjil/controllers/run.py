@@ -222,9 +222,9 @@ def add_form():
             auth.add_permission(user_group, 'read', db.run, id)
             auth.add_permission(user_group, 'anon', db.run, id)
 
-            res = {"redirect": "run/info",
+            res = {"redirect": "run/index",
                    "args" : { "id" : id },
-                   "message": request.vars["name"] + ": patient added"}
+                   "message": request.vars["name"] + ": run added"}
             log.info(res)
 
             if (id % 100) == 0:

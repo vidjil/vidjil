@@ -324,8 +324,8 @@ def add_form():
             
             patient_name = request.vars["first_name"] + ' ' + request.vars["last_name"]
 
-            res = {"redirect": "patient/info",
-                   "args" : { "id" : id },
+            res = {"redirect": "sample_set/index",
+                   "args" : { "id" : id_sample_set },
                    "message": patient_name + ": patient added"}
             log.info(res)
 

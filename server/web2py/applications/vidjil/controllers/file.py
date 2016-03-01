@@ -230,9 +230,6 @@ def edit_form():
         if request.vars['sampling_date'] != None and request.vars['file_info'] != None :
             db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'],
                                                         info=request.vars['file_info'],
-                                                        pcr=request.vars['pcr'],
-                                                        sequencer=request.vars['sequencer'],
-                                                        producer=request.vars['producer'],
                                                         filename=filename,
                                                         provider=auth.user_id)
             
@@ -255,11 +252,6 @@ def edit_form():
                                                                   sequence_file_id=request.vars["id"])
             redirect_args = {"id" : patient_sample_set_id}
         
-            
-        patient_id = db((db.sequence_file.id == request.vars["id"])
-                        &(db.sample_set_membership.sequence_file_id == db.sequence_file.id)
-                        &(db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
-                        ).select(db.patient.id).first().id
         
         res = {"file_id" : request.vars["id"],
                "message": "file %s: metadata saved" % request.vars["id"],
@@ -268,7 +260,8 @@ def edit_form():
                }
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
-
+    else :
+        return error_message(error)
     
 def upload(): 
     session.forget(response)
