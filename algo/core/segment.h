@@ -125,11 +125,11 @@ protected:
 
   int JUNCTIONstart, JUNCTIONend;
   string JUNCTIONaa;
+  bool JUNCTIONproductive;
 
   int CDR3start, CDR3end;
   string CDR3nuc;
   string CDR3aa;
-  bool CDR3productive;
 
   bool reversed, segmented, dSegmented;
   int because;

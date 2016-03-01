@@ -255,8 +255,8 @@ string Segmenter::getInfoLine() const
     s += "/" + scientific_string_of_double(evalue_right);
 
   if (CDR3start > 0)
-    s += " {CDR3: " + string_of_int(CDR3start) + "(" + string_of_int(CDR3end-CDR3start+1) + ")" + string_of_int(CDR3end) + " "
-      + "up"[CDR3productive] + " " + JUNCTIONaa + " " + CDR3nuc + "}";
+    s += " {" + string_of_int(JUNCTIONstart) + "(" + string_of_int(JUNCTIONend-JUNCTIONstart+1) + ")" + string_of_int(JUNCTIONend) + " "
+      + "up"[JUNCTIONproductive] + " " + JUNCTIONaa + "}";
 
   return s ;
 }
@@ -1074,7 +1074,7 @@ void FineSegmenter::findCDR3(){
   JUNCTIONaa = nuc_to_aa(subsequence(getSequence().sequence, JUNCTIONstart, CDR3start-1))
     + CDR3aa + nuc_to_aa(subsequence(getSequence().sequence, CDR3end+1, JUNCTIONend));
 
-  CDR3productive = (CDR3nuc.length() % 3 == 0) && (CDR3aa.find('*') == string::npos);
+  JUNCTIONproductive = (CDR3nuc.length() % 3 == 0) && (JUNCTIONaa.find('*') == string::npos);
 }
 
 json FineSegmenter::toJson(){
@@ -1099,13 +1099,13 @@ json FineSegmenter::toJson(){
         seg["cdr3"] = {
             {"start", CDR3start},
             {"stop", CDR3end},
-            {"aa", CDR3aa},
-            {"productive", CDR3productive}
+            {"aa", CDR3aa}
         };
         seg["junction"] = {
             {"start", JUNCTIONstart},
             {"stop", JUNCTIONend},
-            {"aa", JUNCTIONaa}
+            {"aa", JUNCTIONaa},
+            {"productive", JUNCTIONproductive}
         };
     }
   }
