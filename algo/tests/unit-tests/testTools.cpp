@@ -115,7 +115,7 @@ void testFastaAddThrows() {
 
   caught = false;
   try {
-    fa1.add("testTools.cpp");
+    fa1.add("Makefile");
   } catch (invalid_argument e) {
     TAP_TEST(string(e.what()).find("The file seems to be malformed") != string::npos, TEST_FASTA_INVALID_FILE, "");
     caught = true;
