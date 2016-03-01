@@ -1042,31 +1042,6 @@ void FineSegmenter::FineSegmentD(Germline *germline, bool several_D,
 
 void FineSegmenter::findCDR3(){
 
-  Sequence V = segmented_germline->rep_5.read(box_V->ref_nb);
-  Sequence J = segmented_germline->rep_3.read(box_J->ref_nb);
-
-  int V_104 = V.marked_pos;
-  int J_118 = J.marked_pos;
-
-  if (!V_104 || !J_118)
-    return ;
-
-  // The following offsets are the number of nucleotides contained in the identified V-REGION / J-REGION until positions 104 and 118, included.
-  // TODO: These computations could be improved by backtracking in the DP matrix.
-  int V_104_offset = V.sequence.length() - V_104 + 1 - box_V->del_right ;
-  int J_118_offset = J_118 - box_J->del_left ;
-
-  // We require the full V_104 and J_118 codons
-  if (V_104_offset < 3 || J_118_offset < 3)
-    return ;
-
-  JUNCTIONstart = (box_V->end + 1 + 1) - V_104_offset;
-  JUNCTIONend = (box_J->start + 1 - 1) + J_118_offset;
-
-  // Sequence may be too short
-  if (JUNCTIONstart < 1 || JUNCTIONend > getSequence().sequence.length())
-    return ;
-
   JUNCTIONstart = box_V->marked_pos;
   JUNCTIONend = box_J->marked_pos;
 
@@ -1089,7 +1064,7 @@ void FineSegmenter::findCDR3(){
   else
     {
       // start of codon fully included in the germline J
-      int CDR3startJfull = (CDR3end + 3) - ((J_118_offset / 3) * 3) + 1;
+      int CDR3startJfull = JUNCTIONend - ((JUNCTIONend - box_J->start) / 3) * 3 + 1 ;
 
       CDR3aa =
         nuc_to_aa(subsequence(getSequence().sequence, CDR3start, CDR3startJfull-1)) +
