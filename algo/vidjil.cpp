@@ -156,7 +156,7 @@ void usage(char *progname, bool advanced)
        << "  -# <string>   separator for headers in the reads file (default: '" << DEFAULT_READ_HEADER_SEPARATOR << "')" << endl
        << endl ;
 
-  cerr << "Germline databases (one -V/(-D)/-J, or -G, or -g option must be given for all commands except -c " << COMMAND_GERMLINES << ")" << endl
+  cerr << "Germline databases (at least one -V/(-D)/-J, or -G, or -g option must be given for all commands except -c " << COMMAND_GERMLINES << ")" << endl
        << "  -V <file>     V germline multi-fasta file" << endl
        << "  -D <file>     D germline multi-fasta file (and resets -m and -w options), will segment into V(D)J components" << endl
        << "  -J <file>     J germline multi-fasta file" << endl
