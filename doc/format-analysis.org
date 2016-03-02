@@ -105,6 +105,20 @@ and 'IMGT clonotype (AA) or (nt)' could also be used by some programs).
 		    "5": "TRGV5*01",  "5start": 0,   "5end": 86,
 		    "3": "TRGJ1*02",  "3start": 89,  "3end": 118
 		}
+            },
+            {
+                "id": "clone2",
+                "sequence": "GATACA",
+                "reads": [ 153, 10221 ],
+                "germline": "TRG",
+                "top": 2
+            },
+            {
+                "id": "clone3",
+                "sequence": "ATACAGA",
+                "reads": [ 521, 42 ],
+                "germline": "TRG",
+                "top": 3
             }
         ]
     }
@@ -147,7 +161,7 @@ some clones, and added external data (=data=).
         ],
 
         "clusters": [
-            [ "clone-845", "clone-821", "clone-147" ],
+            [ "clone2", "clone3"],
             [ "clone-5", "clone-10", "clone-179" ]
         ],
 
@@ -171,6 +185,12 @@ The =order= field defines the order in which order the points should be
 considered. In that case we should first consider the second point (whose =name=
 is /fu1)/ and the point to be considered in second should be the first one in
 the file (whose =name= is /diag/).
+
+As exemplified in the =clusters= field, this proceeds to the clustering of
+clones defined in the =.vidjil= file (here /clone2/ and /clone3/ are defined in the
+vidjil file in previous section). If clones do not exist, the clusters are
+just ignored. The first item of the cluster is considered as the
+representative clone of the cluster.
 
 * The different elements
 						     
