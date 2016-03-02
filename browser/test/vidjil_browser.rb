@@ -73,6 +73,11 @@ class VidjilBrowser < Watir::Browser
     return element(extra.merge(:class => 'graph', :id => 'visu2'))
   end
 
+  # Return the x legend of the graph (id is a string from 0 to the number of samples - 1)
+  def graph_x_legend(id, extra = {})
+    return graph.element(extra.merge(:id => 'time'+id))
+  end
+
   def info_segmented
     return element(:id => 'info_segmented').span(:index => 1)
   end
