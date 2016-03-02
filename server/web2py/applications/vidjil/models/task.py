@@ -280,17 +280,8 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
                     & (db.sequence_file.id == db.results_file.sequence_file_id)).select(db.sequence_file.filename)[0].filename
     with open(results_filepath, 'r') as json_file:
         my_json = json.load(json_file)
-        if "log" in my_json["samples"]:
-            my_json["samples"]["log"][0] += reports
-        else:
-            my_json["samples"]["log"] = []
-            my_json["samples"]["log"].append(reports)
-
-        if "original_names" in my_json["samples"]:
-            my_json["samples"]["original_names"][0] = original_name
-        else:
-            my_json["samples"]["original_names"] = []
-            my_json["samples"]["log"].append(original_name)
+        fill_field(my_json, reports, "log", "samples", True)
+        fill_field(my_json, original_name, "original_names", "samples")
 
         # TODO fix this dirty hack to get around bad file descriptor error
     new_file = open(results_filepath, 'w')
@@ -505,11 +496,25 @@ def custom_fuse(file_list):
 
     return data
 
+#TODO move this ?
 def get_file_content(filename):
     content = ""
     with open(filename, 'rb') as my_file:
         content = my_file.read()
     return content
+
+def fill_field(dest, value, field, parent="", append=False):
+    if parent is not None and parent != "":
+        dest = dest[parent]
+
+    if field in dest:
+        if append:
+            dest[field][0] += value
+        else:
+            dest[field][0] = value
+    else:
+        dest[field] = []
+        dest[field].append(value)
 
 from gluon.scheduler import Scheduler
 scheduler = Scheduler(db, dict(vidjil=run_vidjil,
