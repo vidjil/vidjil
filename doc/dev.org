@@ -60,6 +60,17 @@ to access the public server at http://rbx.vidjil.org/.
     by explicitly specifying the priority in the field =priority=.
 
     For more details see 35054e4
+** Getting data and analysis
+   How the data files (.vidjil) and analysis files are retrieved from the server?
+*** Retrieving the data file
+    This is done in the =default.py= controller under the =get_data= function.
+    However the .vidjil file is not provided as its exact copy on the
+    server. Several informations coming from the DB are fed to the file
+    (original filename, time stamps, information on each point, …)
+*** Retrieving the analysis file
+    This is done in the =default.py= controller under the =get_analysis= function.
+    Actually the real work is done in the =analysis_file.py= model, in the
+    =get_analysis_data= function.
 * Tests
 ** Algorithm
 *** Unit
