@@ -435,7 +435,8 @@ Builder.prototype = {
                     //TODO id needs to be passed as param
                     self.m.info = this.value
                     self.post_save(self)
-                });
+                },
+                'patient information');
         parent.appendChild(div_patient_info)
         
         //global info
@@ -586,7 +587,8 @@ Builder.prototype = {
                         self.m.samples['info'] = new Array(self.m.samples.names.length, "");
                     self.m.samples['info'][self.m.t] = value
                     self.post_save(self)
-                });
+                },
+                'sample information');
         parent.appendChild(div_sequence_info)
 
         this.initTag();
@@ -635,15 +637,16 @@ Builder.prototype = {
     },
 
     // TODO ambiguous with build_info_container => find another name ?
-    create_info_container: function (info, className, id, callback) {
+    create_info_container: function (info, className, id, callback, placeholder) {
         var self = this;
         var container = document.createElement('div');
         container.className = className;
 
-        text_span = document.createElement('span');
+        text_span = document.createElement('textarea');
         text_span.id = id;
         text_span.className = 'info_container';
         text_span.innerHTML = info.replace(/\n/g, '<br />');
+        text_span.setAttribute('placeholder', placeholder);
 
         container.appendChild(text_span);
 
