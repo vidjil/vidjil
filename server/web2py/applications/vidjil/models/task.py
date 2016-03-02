@@ -276,6 +276,8 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
 
     reports = get_file_content(align_report)
     reports += get_file_content(assembly_report)
+    original_name = db((db.results_file.id == id_data)
+                    & (db.sequence_file.id == db.results_file.sequence_file_id)).select(db.sequence_file.filename)[0].filename
     with open(results_filepath, 'r') as json_file:
         my_json = json.load(json_file)
         if "log" in my_json["samples"]:
@@ -283,6 +285,13 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
         else:
             my_json["samples"]["log"] = []
             my_json["samples"]["log"].append(reports)
+
+        if "original_names" in my_json["samples"]:
+            my_json["samples"]["original_names"][0] = original_name
+        else:
+            my_json["samples"]["original_names"] = []
+            my_json["samples"]["log"].append(original_name)
+
         # TODO fix this dirty hack to get around bad file descriptor error
     new_file = open(results_filepath, 'w')
     json.dump(my_json, new_file)
