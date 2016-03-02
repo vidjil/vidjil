@@ -276,8 +276,7 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
 
     reports = get_file_content(align_report)
     reports += get_file_content(assembly_report)
-    original_name = db((db.results_file.id == id_data)
-                    & (db.sequence_file.id == db.results_file.sequence_file_id)).select(db.sequence_file.filename)[0].filename
+    original_name = row[0].filename
     with open(results_filepath, 'r') as json_file:
         my_json = json.load(json_file)
         fill_field(my_json, reports, "log", "samples", True)
