@@ -367,6 +367,9 @@ The =-3= option launches a CDR3/JUNCTION detection based on the position
 of Cys104 and Phe118/Trp118 amino acids. This detection relies on alignment
 with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences.
 
+The advanced =-f= option sets the parameters used in the comparisons between
+the clone sequence and the V(D)J germline genes. The default values should work.
+
    The advanced =-m= option controls the minimum difference of positions between the end
    of the V and the start of the J. Note that it is even possible to set =-m -10=
    (meaning that V and J could overlap 10 bp). This is the default for VJ recombinations
