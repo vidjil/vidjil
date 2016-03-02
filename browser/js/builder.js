@@ -645,7 +645,7 @@ Builder.prototype = {
         text_span = document.createElement('textarea');
         text_span.id = id;
         text_span.className = 'info_container';
-        text_span.innerHTML = info.replace(/\n/g, '<br />');
+        text_span.innerHTML = info ;
         text_span.setAttribute('placeholder', placeholder);
 
         container.appendChild(text_span);
