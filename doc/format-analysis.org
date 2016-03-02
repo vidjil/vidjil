@@ -146,8 +146,8 @@ some clones, and added external data (=data=).
 
         "clones": [
             {
-                "id": "clone-845",
                 "name": "Main LAL clone",
+                "id": "clone-001",
                 "tag": "0"
             },
             {

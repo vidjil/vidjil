@@ -24,6 +24,18 @@ class TestSimple < BrowserTest
     assert ($b.graph_x_legend('0').attribute_value('x') > $b.graph_x_legend('1').attribute_value('x'))
   end
 
+  def test_00_custom_clone
+    assert ($b.clone_info('0')[:name].text == 'Main ALL clone')
+
+    $b.select_tag('0').click
+
+    assert (not $b.clone_in_list('0').visible?)
+    assert (not $b.clone_in_scatterplot('0').visible?)
+    assert (not $b.clone_in_graph('0').visible?)
+
+    $b.select_tag('0').click
+  end
+
   def test_01_data_loaded
     qpcr = $b.external_data('qPCR')
     assert (qpcr[:name] == 'qPCR' and qpcr[:value] == 0.83), "qPCR external data not as expected"
