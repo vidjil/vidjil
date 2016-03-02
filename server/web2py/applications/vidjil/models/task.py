@@ -282,6 +282,7 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
         my_json = json.load(json_file)
         fill_field(my_json, reports, "log", "samples", True)
         fill_field(my_json, original_name, "original_names", "samples")
+        fill_field(my_json, cmd, "command_line", "samples")
 
         # TODO fix this dirty hack to get around bad file descriptor error
     new_file = open(results_filepath, 'w')
