@@ -393,24 +393,10 @@ Model_loader.prototype = {
             if (this.analysis.samples) {
                 var s = this.analysis.samples
                 
-                //replace names
-                for (var i=0; i<s.number; i++){
-                    var pos = this.samples.original_names.indexOf(s.original_names[i])
-                    if (pos != -1){
-                        if (s.names[i] != "") this.samples.names[pos] = s.names[i]
-                    }
-                }
-                
-                this.samples.order = []
-                for (var i=0; i<s.order.length; i++){
-                    var pos = this.samples.original_names.indexOf(s.original_names[s.order[i]])
-                    if ( pos != -1) this.samples.order.push(pos)
-                }
-                
-                for (var i=0; i<this.samples.number; i++){
-                    var pos = s.original_names.indexOf(this.samples.original_names[i])
-                    if (pos == -1) this.samples.order.push(i)
-                }
+                //replace names, timestamps, order...
+                for (var key in s)
+                    if (s[key].length == this.samples.number)
+                        this.samples[key] = s[key]
             }
             
             //tags
