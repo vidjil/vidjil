@@ -9,7 +9,7 @@ your own analysis pipeline.
 The =.vidjil= file represents the actual data on clones (and that can
 reach megabytes). It should be automatically produced.
 
-The =.analysis= file describe customizations done by the user
+The =.analysis= file describes customizations done by the user
 (or by some automatic pre-processing) on the Vidjil browser. The browser
 can load or save such files (and possibly from/to the patient database).
 It is intended to be very small (a few kilobytes).
@@ -146,8 +146,8 @@ some clones, and added external data (=data=).
 
         "clones": [
             {
-                "name": "Main LAL clone",
                 "id": "clone-001",
+                "name": "Main ALL clone",
                 "tag": "0"
             },
             {
