@@ -216,13 +216,17 @@ void usage(char *progname, bool advanced)
        << endl ;
 
   if (advanced)
-  cerr << "Fine segmentation options (second pass, see warning in doc/algo.org)" << endl
+  cerr << "Fine segmentation options (second pass)" << endl
        << "  -f <string>   use custom Cost for fine segmenter : format \"match, subst, indels, homo, del_end\" (default "<<VDJ<<" )"<< endl
        << "  -m <int>      minimal admissible delta between the end of the V and the start of the J (default: " << DEFAULT_DELTA_MIN << ") (default with -D: " << DEFAULT_DELTA_MIN_D << ")" << endl
-       << "  -3            CDR3 detection (experimental)" << endl
-       << endl
+       << endl ;
 
-       << "Additional clustering (experimental)" << endl
+  cerr << "Clone analysis (second pass)" << endl
+       << "  -3            CDR3/JUNCTION detection (requires gapped V/J germlines)" << endl
+       << endl ;
+
+  if (advanced)
+  cerr << "Additional clustering (experimental)" << endl
        << "  -E <file>     manual clustering -- a file used to force some specific edges" << endl
        << "  -n <int>      maximum distance between neighbors for automatic clustering (default " << DEFAULT_EPSILON << "). No automatic clusterisation if =0." << endl
        << "  -N <int>      minimum required neighbors for automatic clustering (default " << DEFAULT_MINPTS << ")" << endl
@@ -253,10 +257,10 @@ void usage(char *progname, bool advanced)
 
        << endl 
        << "Examples (see doc/algo.org)" << endl
-       << "  " << progname << " -c clones   -G germline/IGH          data/Stanford_S22.fasta" << endl
-       << "  " << progname << " -c clones   -g germline -i -2        data/Stanford_S22.fasta   # (detect the locus for each read, including unusual/unexpected recombinations)" << endl
+       << "  " << progname << " -c clones   -G germline/IGH -3       data/Stanford_S22.fasta" << endl
+       << "  " << progname << " -c clones   -g germline -i -2 -3     data/Stanford_S22.fasta   # (detect the locus for each read, including unusual/unexpected recombinations)" << endl
        << "  " << progname << " -c windows  -g germline -i -2 -u -U  data/Stanford_S22.fasta   # (detect the locus, splits the reads into two (large) files)" << endl
-       << "  " << progname << " -c segment  -G germline/IGH          data/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing)" << endl
+       << "  " << progname << " -c segment  -G germline/IGH -3       data/Stanford_S22.fasta   # (full analysis of each read, only for debug/testing)" << endl
        << "  " << progname << " -c germlines                         data/Stanford_S22.fasta   # (statistics on the k-mers)" << endl
     ;
   exit(1);

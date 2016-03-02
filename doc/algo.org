@@ -314,7 +314,8 @@ representatives (see below), but you can safely put =-y all= if you want
 to compute all representative sequences.
 
 The =-z= option limits the number of clones that are fully analyzed,
-/with their V(D)J segmentation/, in particular to enable the web application
+/with their V(D)J designation and possibly a CDR3 detection/,
+in particular to enable the web application
 to display the clones on the grid (otherwise they are displayed on the
 '?/?' axis).
 If you want to analyze more clones, you should use =-z 200= or
@@ -360,8 +361,13 @@ to quickly filter a set of reads, looking for a known window,
 with the =-FaW <window>= options:
 All the reads with this windows will be extracted to =out/seq/clone.fa-1=.
 
-** VDJ assignation options
-   The =-m= option controls the minimum difference of positions between the end
+** Clone analysis: VDJ assignation and CDR3 detection
+
+The =-3= option launches a CDR3/JUNCTION detection based on the position
+of Cys104 and Phe118/Trp118 amino acids. This detection relies on alignment
+with gapped V and J sequences, as for instance, for V genes, IMGT/GENE-DB sequences.
+
+   The advanced =-m= option controls the minimum difference of positions between the end
    of the V and the start of the J. Note that it is even possible to set =-m -10=
    (meaning that V and J could overlap 10 bp). This is the default for VJ recombinations
    (except when using a =germlines.data= file).
@@ -395,7 +401,7 @@ The main output of Vidjil (with the default =-c clones= command) are two followi
  - The =.vidjil= file is /the file for the Vidjil web application/.
    The file is in a =.json= format (detailed in [[file:format-analysis.org][format-analysis.org]])
    describing the windows and their count, the representatives (=-y=),
-   the detailed V(D)J designation (=-z=, see warning below), and possibly
+   the detailed V(D)J and CDR3 designation (=-z=, see warning below), and possibly
    the results of the further clustering.
 
    The web application takes this =.vidjil= file (possibly merged with
@@ -408,7 +414,7 @@ The main output of Vidjil (with the default =-c clones= command) are two followi
    The sequences are at least the windows (and their count in the headers) or
    the representatives (=-y=) when they have been computed.
    The headers include the count of each window, and further includes the
-   detailed V(D)J designation (=-z=, see warning below), given in a '.vdj' format, see below.
+   detailed V(D)J and CDR3 designation (=-z=, see warning below), given in a '.vdj' format, see below.
    The further clustering is not output in this file.
 
    The =.vdj.fa= output enables to use Vidjil as a /filtering tool/,
@@ -614,15 +620,17 @@ require either the =-G germline/IGH= option, or the multi-germline =-g germline=
 ** Basic usage: PCR-based datasets, with primers in the V(D)J regions (such as BIOMED-2 primers)
 
 #+BEGIN_SRC sh
-./vidjil -G germline/IGH data/Stanford_S22.fasta
+./vidjil -G germline/IGH -3 data/Stanford_S22.fasta
    # Gather the reads into clones, based on windows overlapping IGH CDR3s.
+   # Assign the VDJ genes and try to detect the CDR3 of each clone.
    # Summary of clones is available both on stdout, in out/Stanford_S22.vdj.fa and in out/Stanford_S22.vidjil.
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -g germline -i -2 data/reads.fasta
+./vidjil -g germline -i -2 -3 data/reads.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Gather the reads into clones, again based on windows overlapping the detected CDR3s.
+   # Assign the VDJ genes and try to detect the CDR3 of each clone.
    # Summary of clones is available both on stdout, in out/reads.vdj.fa and in out/reads.vidjil.
 #+END_SRC
 
@@ -633,7 +641,7 @@ require either the =-G germline/IGH= option, or the multi-germline =-g germline=
 ./vidjil -g germline -i -2 -U data/reads.fasta
    # Detects for each read the best locus, including an analysis of incomplete/unusual and unexpected recombinations
    # Gather the reads into clones, again based on windows overlapping the detected CDR3s.
-   # Summary of clones is available both on stdout, in out/reads.vdj.fa and in out/reads.vidjil.
+   # Assign the VDJ genes and try to detect the CDR3 of each clone.
    # The out/reads.segmented.vdj.fa include all reads where a V(D)J recombination was found
 #+END_SRC
 
@@ -660,8 +668,8 @@ This file will be relatively small (a few kB or MB) and can be taken again as an
 #+END_SRC
 
 #+BEGIN_SRC sh
-./vidjil -c segment -G germline/IGH data/segment_S22.fa
-   # Detailed V(D)J designation on all reads
+./vidjil -c segment -G germline/IGH -3 data/segment_S22.fa
+   # Detailed V(D)J designation and CDR3 detection on all reads, without clone gathering
    # (this is slow and should only be used for testing, or on a small file)
 #+END_SRC
 
