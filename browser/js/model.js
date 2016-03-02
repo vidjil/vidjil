@@ -289,7 +289,7 @@ Model.prototype = {
         
         this.analysis_clones = []   // will store unused clones analysis
         
-        if (this.analysis.vidjil_json_version != 'undefined' && this.analysis.vidjil_json_version == VIDJIL_JSON_VERSION){
+        if (this.analysis.vidjil_json_version != 'undefined' && this.analysis.vidjil_json_version >= VIDJIL_JSON_VERSION){
             var c = analysis.clones
             
             //      CUSTOM TAG / NAME
