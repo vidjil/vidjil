@@ -23,7 +23,7 @@ class VidjilBrowser < Watir::Browser
   # the corresponding elements in the list.
   def clone_info(id, extra={})
     clone = clone_in_list(id, extra)
-    return {cluster: clone.element(:class => 'clusterBox'), system: clone.element(:class => "nameBox"),
+    return {cluster: clone.element(:class => 'clusterBox'), system: clone.element(:class => "systemBox"),
             name: clone.element(:class => 'nameBox'), info: clone.element(:class => 'infoBox'),
             star: clone.element(:class => 'starBox'), size: clone.element(:class => 'sizeBox')}
   end
