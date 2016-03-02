@@ -61,6 +61,13 @@ class VidjilBrowser < Watir::Browser
     menu_color.select_list.select dimension
   end
 
+  # Return an associative array (keys name, and value) for the following external data
+  def external_data(id)
+    item = element(:id => 'data_'+id)
+    return {name: item.element(:class => 'data_name').text,
+            value: item.element(:class => 'data_value').text.to_f}
+  end
+
   # Return the div of the graph component
   def graph(extra = {})
     return element(extra.merge(:class => 'graph', :id => 'visu2'))
