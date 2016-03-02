@@ -68,8 +68,56 @@ class TestSimple < BrowserTest
     assert ($b.clone_in_graph('0').visible?)
   end
 
+  def test_05_check_cluster
+    clustered = $b.clone_info('1')
+    assert (clustered[:name].text == 'clone2'), "First clone of cluster should be clone2"
+    assert ($b.clone_in_scatterplot('1').visible?)
+    assert (not $b.clone_in_scatterplot('2').visible?)
 
-  def test_98_select_other
+    clustered[:cluster].click
+
+    assert ($b.clone_in_scatterplot('1').visible?)
+    assert ($b.clone_in_scatterplot('2').visible?)
+
+    first_in_cluster = $b.clone_in_cluster('1', '1')
+    second_in_cluster = $b.clone_in_cluster('1', '2')
+
+    assert (first_in_cluster[:name].text == 'clone2')
+    assert (second_in_cluster[:name].text == 'clone3')
+
+    # Close the cluster
+    clustered[:cluster].click
+end
+
+  def test_06_remove_cluster
+    clustered = $b.clone_info('1')
+    clustered[:cluster].click
+    $b.clone_in_cluster('1', '2')[:delete].click
+
+    assert (not $b.clone_cluster('1').visible?)
+    
+    assert ($b.clone_in_scatterplot('1').visible?)
+    assert ($b.clone_in_scatterplot('2').visible?)
+
+    clone3 = $b.clone_info('2')
+    assert (clone3[:name].text == "clone3")
+    assert (clone3[:system].text == "G")
+  end
+
+  def test_07_create_cluster
+    $b.clone_in_scatterplot('1').click
+    $b.clone_in_scatterplot('2').click(:control)
+
+    $b.merge.click
+
+    clustered = $b.clone_info('1')
+    assert (clustered[:name].text == 'clone2')
+    clustered[:cluster].click # Close the cluster
+    assert ($b.clone_in_scatterplot('1').visible?)
+    assert (not $b.clone_in_scatterplot('2').visible?)
+  end
+
+  def test_90_select_other
     # Click on first point
     $b.graph_x_legend('1').click
     assert ($b.graph_x_legend('1', :class => 'graph_time2').exists?)

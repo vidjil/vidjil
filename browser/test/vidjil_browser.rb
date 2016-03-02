@@ -27,7 +27,21 @@ class VidjilBrowser < Watir::Browser
             name: clone.element(:class => 'nameBox'), info: clone.element(:class => 'infoBox'),
             star: clone.element(:class => 'starBox'), size: clone.element(:class => 'sizeBox')}
   end
-  
+
+  # Return the clone cluster for clone ID
+  def clone_cluster(id, extra = {})
+    return clone_in_list(id, extra).element(:id => 'cluster'+id)
+  end
+
+  # Return the n-th clone in a cluster for clone ID
+  # n: a str (starting at 1)
+  def clone_in_cluster(id, n, extra = {})
+    cluster = clone_cluster(id, extra).element(:id => '_'+n)
+    return {object: cluster,
+            name: cluster.element(:class => 'nameBox'), size: cluster.element(:class => 'sizeBox'),
+            info: cluster.element(:class => 'infoBox'), delete: cluster.element(:class => 'delBox')}
+  end
+
   # Return a hash with information on the sequence in the segmenter
   # A hash with keys name, star and size defined with
   # the corresponding elements in the segmenter.
