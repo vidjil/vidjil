@@ -139,8 +139,8 @@ some clones, and added external data (=data=).
 
         "samples": {
              "number": 2, 
-             "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"],
              "names": ["diag", "fu1"],
+             "original_names": ["file1.fastq", "file2.fastq"],
              "order": [1, 0]
         },
 
@@ -226,7 +226,6 @@ representative clone of the cluster.
     "number": 2,      // number of samples [required]
 
     "original_names": [],  // original sample names (with samples.number elements) [required]
-                      // the names in the .vidjil file and in .analysis files must match
 
     "names": [],      // custom sample names (with samples.number elements) [optional]
                       // These names are editable and will be used on the graphs
