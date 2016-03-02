@@ -130,6 +130,14 @@ class VidjilBrowser < Watir::Browser
     return menu.a(:id => 'export_fasta')
   end
 
+  def merge
+    return element(:id => 'merge')
+  end
+
+  def select_tag(id, extra={})
+    return element(extra.merge(:id => 'fastTag'+id))
+  end
+
   # Return the element corresponding to the x axis of the scatterplot
   def scatterplot_x
     return scatterplot('x')
