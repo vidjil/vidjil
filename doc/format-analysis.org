@@ -127,7 +127,7 @@ some clones, and added external data (=data=).
              "number": 2, 
              "original_names": ["T8045-BC081-Diag.fastq", "T8045-BC082-fu1.fastq"],
              "names": ["diag", "fu1"],
-             "order": [0, 1]
+             "order": [1, 0]
         },
 
         "clones": [
@@ -167,6 +167,10 @@ some clones, and added external data (=data=).
     }
 #+END_SRC
 
+The =order= field defines the order in which order the points should be
+considered. In that case we should first consider the second point (whose =name=
+is /fu1)/ and the point to be considered in second should be the first one in
+the file (whose =name= is /diag/).
 
 * The different elements
 						     
