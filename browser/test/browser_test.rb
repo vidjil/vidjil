@@ -31,6 +31,7 @@ class BrowserTest < MiniTest::Test
     folder_path.sub! '/browser/test', ''
     index_path = 'file://' + folder_path + '/browser/index.html'
     data_path = folder_path + vidjil_file
+    analysis_path = nil
     if analysis_file != nil
       analysis_path = folder_path + analysis_file
     end
@@ -74,7 +75,14 @@ class BrowserTest < MiniTest::Test
     
     # select data file
     $b.div(:id => 'file_menu').file_field(:name,"json").set(data_path)
-    $b.div(:id => 'file_menu').button(:text => 'start').click 
+
+    # select analysis file
+    if analysis_path != nil
+      $b.div(:id => 'file_menu').file_field(:name, "pref").set(analysis_path)
+    end
+
+    $b.div(:id => 'file_menu').button(:text => 'start').click
+
   end
 
   def close_everything
