@@ -65,9 +65,11 @@ Germline::Germline(string _code, char _shortcut,
   f_reps_4 = _f_reps_4 ;
   f_reps_3 = _f_reps_3 ;
 
-  rep_5 = Fasta(2, "|", CYS104_IN_GAPPED_V);
+  bool regular = (code.find("+") == string::npos);
+
+  rep_5 = Fasta(2, "|", regular ? CYS104_IN_GAPPED_V : 0);
   rep_4 = Fasta(2, "|") ;
-  rep_3 = Fasta(2, "|", PHE118_TRP118_IN_GAPPED_J);
+  rep_3 = Fasta(2, "|", regular ? PHE118_TRP118_IN_GAPPED_J : 0);
 
   for (list<string>::const_iterator it = f_reps_5.begin(); it != f_reps_5.end(); ++it)
     rep_5.add(*it);
@@ -108,10 +110,12 @@ Germline::Germline(string code, char shortcut, string path, json json_recom, int
   }
   
   init(code, shortcut, delta_min, max_indexing);
+
+  bool regular = (code.find("+") == string::npos);
   
-  rep_5 = Fasta(2, "|", CYS104_IN_GAPPED_V) ;
+  rep_5 = Fasta(2, "|", regular ? CYS104_IN_GAPPED_V : 0) ;
   rep_4 = Fasta(2, "|") ;
-  rep_3 = Fasta(2, "|", PHE118_TRP118_IN_GAPPED_J) ;
+  rep_3 = Fasta(2, "|", regular ? PHE118_TRP118_IN_GAPPED_J : 0) ;
 
   for (json::iterator it = json_recom["5"].begin();
        it != json_recom["5"].end(); ++it) 
