@@ -475,20 +475,19 @@ Segment.prototype = {
         seq_name.title = this.m.clone(cloneID).getName();
         seq_name.style.color = this.m.clone(cloneID).color;
 
-        var svg_star = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+        // Tag
+        var svg_star = document.createElement('span')
         svg_star.setAttribute('class', 'starBox');
         svg_star.onclick = function () {
             self.m.openTagSelector(cloneID);
         }
+        svg_star.appendChild(icon('icon-star-2', 'clone tag'))
+        svg_star.setAttribute('id', 'color' + cloneID);
+        if (typeof this.m.clone(cloneID).tag != 'undefined')
+            svg_star.style.color = this.m.tag[this.m.clone(cloneID).getTag()].color
 
-        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-        path.setAttribute('d', this.starPath);
-        path.setAttribute('id', 'color' + cloneID);
-        if (typeof this.m.clone(cloneID).tag != 'undefined') path.setAttribute("fill", this.m.tag[this.m.clone(cloneID).tag].color);
-        else path.setAttribute("fill", "");
 
-        svg_star.appendChild(path);
-
+        // Size
         var seq_size = document.createElement('span')
         seq_size.className = "sizeBox";
         seq_size.onclick = function () {
