@@ -1,6 +1,6 @@
 CC=g++
 OPTIM=-O2
-override CXXFLAGS += -W -Wall -I.. -I../lib/ $(OPTIM)
+override CXXFLAGS += -std=c++11 -W -Wall -I.. -I../lib/ $(OPTIM)
 LDLIBS=-lm -lz
 SRC=$(wildcard *.cpp)
 EXEC=$(SRC:.cpp=)
