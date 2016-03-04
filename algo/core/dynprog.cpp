@@ -566,9 +566,16 @@ ostream& operator<<(ostream& out, const DynProg& dp)
       for (int j=0; j<=dp.n; j++)
         {
           if (dp.B[i][j].score)
-            out << setw(4) << dp.B[i][j].score << dp.B[i][j].type ;
+            {
+              if (dp.B[i][j].score <= MINUS_INF)
+                out << "-INF" ;
+              else
+                out << setw(4) << dp.B[i][j].score ;
+            }
           else
-            out << "    " << dp.B[i][j].type ;
+            out << "    ";
+
+          out << dp.B[i][j].type ;
         }
       out << endl ;      
     }
