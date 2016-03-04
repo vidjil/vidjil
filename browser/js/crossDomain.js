@@ -138,7 +138,7 @@ function imgtPostForSegmenter(data, system) {
         pos = nth_ocurrence(data, '>', 11);
         var newdata = data.substr(pos);
         data = data.substr(0, pos - 1);
-        var msg = "Analysis has been cut off after the 10th sequence due to IMGT limits. Please change your selection to update the other clones, after this processing. ";
+        var msg = "The first 10 sequences were sent to IMGT/V-QUEST."
 
         console.log({
             "type": "flash",
