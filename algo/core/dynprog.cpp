@@ -180,12 +180,13 @@ DynProg::~DynProg() {
 
 void DynProg::init()
 {
+  // Initialize backtrack labels (B[0][0] labels are never used)
+
   for (int i=1; i<=m; i++)
     {
       B[i][0].type = INSER ;
       B[i][0].i = i-1 ;
       B[i][0].j = 0 ;
-      Bdel[i][0].score = Bins[i][0].score = MINUS_INF ;
     }
 
   for (int j=1; j<=n; j++)
@@ -193,29 +194,52 @@ void DynProg::init()
       B[0][j].type = DELET ;    
       B[0][j].i = 0 ;
       B[0][j].j = j-1 ;
-      Bdel[0][j].score = Bins[0][j].score = MINUS_INF ;
     }
+
+  // Initialize scores
 
   if (mode == Local || mode == LocalEndWithSomeDeletions)
     for (int i=0; i<=m; i++)
-      B[i][0].score = 0 ;
-  else if (mode == GlobalButMostlyLocal)
-    for (int i=0; i<=m; i++)
-      B[i][0].score = i * cost.insertion / 2 ;
+      {
+        B[i][0].score = 0 ;
+        if (cost.affine_gap) {
+          Bins[i][0].score = 0;
+          Bdel[i][0].score = 0;
+        }
+      }
   else // Global, SemiGlobal
-    for (int i=0; i<=m; i++)
+    for (int i=0; i<=m; i++) {
       B[i][0].score = i * cost.insertion ;
-   
+      if (cost.affine_gap) {
+        Bins[i][0].score = cost.open_insertion + cost.extend_insertion * i;
+        Bdel[i][0].score = MINUS_INF;
+      }
+
+      if (mode == GlobalButMostlyLocal)
+        B[i][0].score /= 2;
+    }
+
   if (mode == SemiGlobal || mode == SemiGlobalTrans || mode == Local || mode == LocalEndWithSomeDeletions)
-    for (int j=0; j<=n; j++)
+    for (int j=0; j<=n; j++) {
       B[0][j].score = 0 ;
-  else if (mode == GlobalButMostlyLocal)
-    for (int j=0; j<=n; j++)
-      B[0][j].score = j * cost.deletion / 2 ;
+       if (cost.affine_gap) {
+          Bins[0][j].score = 0;
+          Bdel[0][j].score = 0;
+       }
+    }
   else // Global
-    for (int j=0; j<=n; j++)
+    for (int j=0; j<=n; j++) {
       B[0][j].score = j * cost.deletion ;
+       if (cost.affine_gap) {
+         Bins[0][j].score = MINUS_INF;
+         Bdel[0][j].score = cost.open_deletion + cost.extend_deletion * j;
+       }
+
+       if (mode == GlobalButMostlyLocal)
+         B[0][j].score /= 2;
+    }
 }
+
 
 inline void try_operation(operation &best, int type, int i, int j, int score)
 {
