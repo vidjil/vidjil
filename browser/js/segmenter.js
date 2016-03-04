@@ -1134,7 +1134,7 @@ Sequence.prototype = {
             }
             marge += "</span>"
         }
-        return marge;
+        return marge + result;
     },
 
     /**
