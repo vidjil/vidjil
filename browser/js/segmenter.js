@@ -110,6 +110,7 @@ Segment.prototype = {
         //merge button
         var span = document.createElement('span');
         span.id = "merge"
+        span.setAttribute('title', 'Merge the clones into a unique clone')
         span.className = "button"
         span.onclick = function () {
             self.m.merge()
@@ -121,6 +122,7 @@ Segment.prototype = {
         if (this.cgi_address) {
         span = document.createElement('span');
         span.id = "align"
+        span.setAttribute('title', 'Align the sequences')
         this.updateAlignmentButton();
         span.className = "button"
         span.onclick = function () {
@@ -133,6 +135,7 @@ Segment.prototype = {
         //toIMGT button
         span = document.createElement('span');
         span.id = "toIMGT"
+        span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and see the results in a new tab')
         span.className = "button"
         span.onclick = function () {
             self.sendTo('IMGT')
@@ -143,6 +146,7 @@ Segment.prototype = {
         //toIMGTSeg button
         span = document.createElement('span');
         span.id = "toIMGTSeg";
+        span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and loads the results in the sequence panel')
         span.className = "button button_next";
         span.onclick = function () {
             self.sendTo('IMGTSeg')
@@ -153,6 +157,7 @@ Segment.prototype = {
         //toIgBlast button
         span = document.createElement('span');
         span.id = "toIgBlast";
+        span.setAttribute('title', 'Send sequences to NCBI IgBlast and see the results in a new tab')
         span.className = "button";
         span.onclick = function () {
             self.sendTo('igBlast')
@@ -163,6 +168,7 @@ Segment.prototype = {
         //toARResT button
         span = document.createElement('span');
         span.id = "toARResT";
+        span.setAttribute('title', 'Send sequences to ARResT/CompileJunctions and see the results in a new tab')
         span.className = "button devel-mode";
         span.onclick = function () {
             self.sendTo('ARResT')
@@ -173,6 +179,7 @@ Segment.prototype = {
         //toBlast button
         span = document.createElement('span');
         span.id = "toBlast";
+        span.setAttribute('title', 'Send sequences to Ensembl Blast and see the results in a new tab')
         span.className = "button";
         span.onclick = function () {
             if (m.getSelected().length > 30) {
