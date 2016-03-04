@@ -1,7 +1,7 @@
 
 This changelog concerns the algorithmic part (C++) of Vidjil.
 
-2016-03-XX  The Vidjil Team
+2016-03-04  The Vidjil Team
 	* Better JUNCTION/CDR3 detection (-3), based on positions of Cys104 and Phe118/Trp118 (core/segment.cpp)
 	* Bugs closed (.vidjil output of revcomp'd sequences, computation of Simpson index Ds)
 	* Streamlined structure of tests directory
