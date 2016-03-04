@@ -547,9 +547,9 @@ float identity_percent(int score)
 }
 
 
-ostream& to_ostream(ostream& out, operation** B, const string x, const string y, int m, int n)
+ostream& to_ostream(ostream& out, string label, operation** B, const string x, const string y, int m, int n)
 {
-  out << "       " ;
+  out << label << "  " ;
 
   for (int j=0; j<n; j++)
     out << setw(4) << y[j] << " ";
@@ -579,13 +579,20 @@ ostream& to_ostream(ostream& out, operation** B, const string x, const string y,
         }
       out << endl ;      
     }
+
+  out << endl;
   
   return out ;
 }
 
 ostream& operator<<(ostream& out, const DynProg& dp)
 {
-  to_ostream(out, dp.B, dp.x, dp.y, dp.m, dp.n);
+  if (dp.cost.affine_gap)
+    {
+      to_ostream(out, "[Bins]", dp.Bins, dp.x, dp.y, dp.m, dp.n);
+      to_ostream(out, "[Bdel]", dp.Bdel, dp.x, dp.y, dp.m, dp.n);
+    }
+  to_ostream(out, "[B]   ",dp.B, dp.x, dp.y, dp.m, dp.n);
   out << "best: " << dp.best_i << "," << dp.best_j << endl;
 
   return out;
