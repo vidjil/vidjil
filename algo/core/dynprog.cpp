@@ -547,44 +547,49 @@ float identity_percent(int score)
 }
 
 
-ostream& operator<<(ostream& out, const DynProg& dp)
+ostream& to_ostream(ostream& out, operation** B, const string x, const string y, int m, int n)
 {
   out << "       " ;
 
-  for (int j=0; j<dp.n; j++)
-    out << setw(4) << dp.y[j] << " ";
+  for (int j=0; j<n; j++)
+    out << setw(4) << y[j] << " ";
 
   out << endl ;
 
-  for (int i=0; i<=dp.m; i++)
+  for (int i=0; i<=m; i++)
     {
       if (i)
-	out << dp.x[i-1] << " " ;
+	out << x[i-1] << " " ;
       else
 	out << "  " ;
 
-      for (int j=0; j<=dp.n; j++)
+      for (int j=0; j<=n; j++)
         {
-          if (dp.B[i][j].score)
+          if (B[i][j].score)
             {
-              if (dp.B[i][j].score <= MINUS_INF)
+              if (B[i][j].score <= MINUS_INF)
                 out << "-INF" ;
               else
-                out << setw(4) << dp.B[i][j].score ;
+                out << setw(4) << B[i][j].score ;
             }
           else
             out << "    ";
 
-          out << dp.B[i][j].type ;
+          out << B[i][j].type ;
         }
       out << endl ;      
     }
   
-  out << "best: " << dp.best_i << "," << dp.best_j << endl;
-
   return out ;
 }
 
+ostream& operator<<(ostream& out, const DynProg& dp)
+{
+  to_ostream(out, dp.B, dp.x, dp.y, dp.m, dp.n);
+  out << "best: " << dp.best_i << "," << dp.best_j << endl;
+
+  return out;
+}
 
 Cost strToCost(string str, Cost default_cost){
 
