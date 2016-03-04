@@ -198,16 +198,17 @@ void DynProg::init()
 
   // Initialize scores
 
-  if (mode == Local || mode == LocalEndWithSomeDeletions)
-    for (int i=0; i<=m; i++)
+  for (int i=0; i<=m; i++)
+    for (int j=0; j<=n; j++)
       {
-        B[i][0].score = 0 ;
+        B[i][j].score = 0 ;
         if (cost.affine_gap) {
-          Bins[i][0].score = 0;
-          Bdel[i][0].score = 0;
+          Bins[i][j].score = 0;
+          Bdel[i][j].score = 0;
         }
       }
-  else // Global, SemiGlobal
+
+  if (!(mode == Local || mode == LocalEndWithSomeDeletions)) // Global, SemiGlobal
     for (int i=0; i<=m; i++) {
       B[i][0].score = i * cost.insertion ;
       if (cost.affine_gap) {
@@ -219,15 +220,7 @@ void DynProg::init()
         B[i][0].score /= 2;
     }
 
-  if (mode == SemiGlobal || mode == SemiGlobalTrans || mode == Local || mode == LocalEndWithSomeDeletions)
-    for (int j=0; j<=n; j++) {
-      B[0][j].score = 0 ;
-       if (cost.affine_gap) {
-          Bins[0][j].score = 0;
-          Bdel[0][j].score = 0;
-       }
-    }
-  else // Global
+  if (!(mode == SemiGlobal || mode == SemiGlobalTrans || mode == Local || mode == LocalEndWithSomeDeletions)) // Global
     for (int j=0; j<=n; j++) {
       B[0][j].score = j * cost.deletion ;
        if (cost.affine_gap) {
