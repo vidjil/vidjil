@@ -5,6 +5,28 @@ function Report(model) {
 
 Report.prototype = {
     
+    reportcontamination : function() {
+        this.m.wait("generating report : this operation can take a few seconds")
+        
+        var self = this
+        this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
+    
+        var text = "contamination report: "
+        if (typeof this.m.patient_name != 'undefined')
+            text += this.m.patient_name
+            
+        this.w.onload = function(){
+            self.w.document.title = text
+            self.w.document.getElementById("header-title").innerHTML = text
+            
+            self.info()
+                .contamination()
+                
+            self.m.resize()
+            self.m.resume()
+        }
+    },
+    
     reportHTML : function() {
         this.m.wait("generating report : this operation can take a few seconds")
         
@@ -117,6 +139,39 @@ Report.prototype = {
         }).appendTo(container);
         
         return container
+    },
+
+    contamination : function(){
+        var self = this;
+        
+        var contamination = this.container("Report run contamination")
+        var left = $('<div/>', {'class': 'flex'}).appendTo(contamination);
+        
+        var content = [
+            {'label': "sample name" , 'value' : self.m.samples.names}
+        ]
+        
+        var table = $('<table/>', {'class': 'info-table2 float-left'}).appendTo(left);
+        for ( var key in content ){
+            var v = content[key]
+            var row = $('<tr/>').appendTo(table);
+            $('<td/>', {'class': 'label', 'text': v.label}).appendTo(row);
+            for (var i in v.value) $('<td/>', {'text': v.value[i].replace("_L001__001", "")}).appendTo(row);
+        }
+        var row0 = $('<tr/>').appendTo(table);
+        $('<td/>', {'class': 'label', 'text': " "}).appendTo(row0);
+        var row1 = $('<tr/>').appendTo(table);
+        $('<td/>', {'class': 'label', 'text': "reads "}).appendTo(row1);
+        for (var i in self.m.contamination) $('<td/>', {
+            'text': self.m.contamination[i].total_reads }).appendTo(row1);
+        
+        var row2 = $('<tr/>').appendTo(table);
+        $('<td/>', {'class': 'label', 'text': "(%) "}).appendTo(row2);
+        for (var i in self.m.contamination) $('<td/>', {
+            'text': " (" +(self.m.contamination[i].total_reads/self.m.reads.segmented[i]*100).toFixed(3)+"%)"}).appendTo(row2);
+        
+
+        return this
     },
     
     info : function() {

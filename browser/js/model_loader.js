@@ -39,7 +39,7 @@ Model_loader.prototype = {
         var self = this;
         var dataURL = ""
         var analysisURL = ""
-        var patient = -1
+        var sample_set_id = -1
         var dbconfig = -1
         var custom_list = []
         

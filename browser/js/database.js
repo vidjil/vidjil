@@ -109,7 +109,10 @@ Database.prototype = {
                         {"sequence_file_id":self.m.samples.sequence_file_id,
                          "config_id":self.m.samples.config_id,
                          "results_file_id":self.m.samples.results_file_id,
-                     }, function(a){console.log(a)})
+                     }, function(a){
+                         self.m.contamination=jQuery.parseJSON(a);
+                         report.reportcontamination()
+                     })
     },
     
      /**
