@@ -143,11 +143,11 @@ Segment.prototype = {
         //toIMGTSeg button
         span = document.createElement('span');
         span.id = "toIMGTSeg";
-        span.className = "button";
+        span.className = "button button_next";
         span.onclick = function () {
             self.sendTo('IMGTSeg')
         };
-        span.appendChild(document.createTextNode("❯ IMGT/V-QUEST4Seg"));
+        span.appendChild(document.createTextNode("▼"));
         div_menu.appendChild(span);
 
         //toIgBlast button

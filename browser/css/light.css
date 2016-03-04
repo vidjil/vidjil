@@ -810,6 +810,9 @@ a:hover {
   min-width: 16px;
   color: #657b83;
 }
+.button_next {
+    margin-left: -8px ;
+}
 .button_right {
   float: right;
 }
