@@ -77,7 +77,7 @@ List.prototype = {
         
         var closedataMenu = document.createElement("span");
         closedataMenu.className = "closeButton" ;
-        closedataMenu.appendChild(document.createTextNode("X"));
+        closedataMenu.appendChild(icon('icon-cancel', ''));
         closedataMenu.onclick = function() {$(this).parent().hide('fast')};
         this.dataMenu.appendChild(closedataMenu);
         
@@ -505,7 +505,7 @@ List.prototype = {
                 span_info.onclick = function () {
                     self.m.displayInfoBox(id);
                 }
-                span_info.appendChild(document.createTextNode("i"));
+                span_info.appendChild(icon('icon-info', 'clone information'));
 
                 var img = document.createElement('img');
                 img.onclick = function () {

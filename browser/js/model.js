@@ -83,7 +83,7 @@ Model.prototype = {
         
         var closeinfoBox = document.createElement("span");
         closeinfoBox.className = "closeButton" ;
-        closeinfoBox.appendChild(document.createTextNode("X"));
+        closeinfoBox.appendChild(icon('icon-cancel', ''));
         closeinfoBox.onclick = function() {self.closeInfoBox()};
         this.infoBox.appendChild(closeinfoBox);
         
@@ -99,7 +99,7 @@ Model.prototype = {
         
         var closeTag = document.createElement("span");
         closeTag.className = "closeButton" ;
-        closeTag.appendChild(document.createTextNode("X"));
+        closeTag.appendChild(icon('icon-cancel', ''));
         closeTag.onclick = function() {$(this).parent().hide('fast')};
         this.tagSelector.appendChild(closeTag);
         
