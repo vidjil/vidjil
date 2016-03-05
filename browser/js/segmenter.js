@@ -462,9 +462,9 @@ Segment.prototype = {
         var seq_name = document.createElement('span');
         seq_name.className = "nameBox";
 
-        var del = document.createElement('img')
+        var del = document.createElement('span')
         del.className = "delBox"
-        del.src = "images/delete-gray.png"
+        del.appendChild(icon('icon-cancel', 'Unselect this clone'));
         seq_name.appendChild(del);
 
         del.onclick = function () {

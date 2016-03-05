@@ -507,12 +507,12 @@ List.prototype = {
                 }
                 span_info.appendChild(icon('icon-info', 'clone information'));
 
-                var img = document.createElement('img');
+                var img = document.createElement('span');
                 img.onclick = function () {
                     self.m.split(cloneID, this.parentNode.id2);
                 }
                 if (id != parseInt(cloneID)) {
-                    img.src = "images/delete.png";
+                    img.appendChild(icon('icon-cancel', 'Remove this subclone from the clone'));
                 }
                 img.className = "delBox";
 
