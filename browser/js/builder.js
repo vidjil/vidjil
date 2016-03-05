@@ -491,7 +491,7 @@ Builder.prototype = {
 
         if (this.m.samples.order.length > 1){
             var nextTime = self.createClickableElem('span',
-                [document.createTextNode(">")],
+                [icon('icon-right-open-1', 'next sample')],
                 "",
                 "next_button button",
                 function () {
@@ -502,7 +502,7 @@ Builder.prototype = {
            
             if (self.m.isPlaying){
                 var stop = self.createClickableElem('div',
-                    [document.createTextNode("s")],
+                    [icon('icon-pause', 'pauses cycling')],
                     "",
                     "stop_button button",
                     function () {
@@ -513,7 +513,7 @@ Builder.prototype = {
                 play_stop_container_div.appendChild(stop)
             } else {
                 var play = self.createClickableElem('div',
-                    [document.createTextNode("p")],
+                    [icon('icon-play', 'cycle through samples')],
                     "",
                     "play_button button",
                     function () {
@@ -524,7 +524,7 @@ Builder.prototype = {
             }
             
             var previousTime = self.createClickableElem('span',
-                [document.createTextNode("<")],
+                [icon('icon-left-open-1', 'previous sample') ],
                 "",
                 "previous_button button",
                 function () {
