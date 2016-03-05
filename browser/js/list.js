@@ -246,6 +246,7 @@ List.prototype = {
         var filter_input = document.createElement('input')
         filter_input.id = 'filter_input'
         filter_input.type = 'text'
+        filter_input.setAttribute('placeholder', 'search');
         filter_input.onchange = function () {
             self.filter(this.value)
         }
@@ -292,7 +293,7 @@ List.prototype = {
         div_list_menu.appendChild(a_split)
         div_list_menu.appendChild(a_unsplit)
 
-        div_list_menu.appendChild(filter_label)
+        // div_list_menu.appendChild(filter_label)
         div_list_menu.appendChild(filter_input)
         div_list_menu.appendChild(filter_reset)
         div_list_menu.appendChild(sort_span)
