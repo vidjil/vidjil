@@ -205,7 +205,7 @@ Graph.prototype = {
         var div = document.createElement('div')
         div.id = "" + this.id + "_menu"
         div.className = "graph_menu"
-        div.appendChild(document.createTextNode("+"))
+        div.appendChild(icon('icon-pin', 'Drag here samples to hide them'))
         
         var list = document.createElement('div')
         list.id = "" + this.id + "_list"
