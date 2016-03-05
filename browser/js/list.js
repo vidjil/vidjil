@@ -241,7 +241,7 @@ List.prototype = {
         }
 
         var filter_label = document.createElement('span')
-        filter_label.appendChild(document.createTextNode("search"))
+        filter_label.appendChild(icon('icon-search-1', 'Search a clone by name, sequence, or V/D/J gene'))
         
         var filter_input = document.createElement('input')
         filter_input.id = 'filter_input'
@@ -251,7 +251,7 @@ List.prototype = {
         }
         
         var filter_reset = document.createElement('span')
-        filter_reset.appendChild(document.createTextNode("X"))
+        filter_reset.appendChild(icon('icon-cancel', 'Clear the search'))
         filter_reset.className = "button"
         filter_reset.onclick = function () {
             document.getElementById('filter_input').value = ''
