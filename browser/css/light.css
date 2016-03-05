@@ -462,16 +462,18 @@ line {
 .systemBox,
 .systemBoxMenu {
   display: inline-block;
-  width: 13px;
-  height: 13px;
+  width: 12px;
+  height: 12px;
+  line-height: 12px;
+  vertical-align: middle;
   text-align: center;
   border-radius: 3px;
   border-width: 1px;
   margin: 4px;
   margin-top: 2px;
-  color: #002b36;
-  font-family: monospace;
-  font-size: 80%;
+  color: #fff;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 70%;
   background: #cccccc;
 }
 .systemBox {

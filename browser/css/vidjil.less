@@ -437,7 +437,7 @@ line {
 @width_thumbBox : 16px;
 @width_sizeBox : 60px;
 @width_infoBox : 20px;
-@width_systemBox : 13px;
+@width_systemBox : 12px;
 @width_listElem : (@width_left_container - @width_scrollbar);
 @margin : 6px;
 @margin_nameBox : 10px;
@@ -579,15 +579,17 @@ line {
 .systemBox, .systemBoxMenu {
     display: inline-block;
     width: @width_systemBox;
-    height: 13px;
+    height: @width_systemBox;
+    line-height: @width_systemBox;
+    vertical-align: middle;
     text-align: center;
     border-radius: 3px;
     border-width: 1px;
     margin: 4px;
     margin-top: 2px;
-    color: @select;
-    font-family: monospace;
-    font-size: 80%;
+    color: #fff;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 70%;
     background: @border;
 }
 
