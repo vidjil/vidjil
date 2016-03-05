@@ -509,17 +509,17 @@ Segment.prototype = {
         // Productive/unproductive
         var productive_info = document.createElement('span');
         productive_info.className = "infoBox";
-        var info = ' '
+
+        var info = '' ;
 
         if (this.m.clone(cloneID).seg.imgt!=null){
-            info = (this.m.clone(cloneID).seg.imgt["Functionality"].toLowerCase().indexOf("unproductive") > -1) ? 'p' : 'u' ;
+            info = (this.m.clone(cloneID).seg.imgt["Functionality"].toLowerCase().indexOf("unproductive") > -1)
+                ? icon('icon-plus-squared', 'productive')
+                : icon('icon-minus-squared', 'unproductive') ;
         }
 
-        productive_info.appendChild(document.createTextNode(info));
-
-        // Tag
-        if (typeof this.m.clone(cloneID).tag != 'undefined') path.setAttribute("fill", this.m.tag[this.m.clone(cloneID).tag].color);
-        else path.setAttribute("fill", "");
+        if (info)
+            productive_info.appendChild(info);
 
         // Gather all elements
 
