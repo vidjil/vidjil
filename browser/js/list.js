@@ -228,14 +228,14 @@ List.prototype = {
 
         var a_split = document.createElement('a')
         a_split.className = "button"
-        a_split.appendChild(document.createTextNode("+"))
+        a_split.appendChild(icon('icon-plus', 'Show all subclones'))
         a_split.onclick = function () {
             self.m.split_all(true)
         }
         
         var a_unsplit = document.createElement('a')
         a_unsplit.className = "button"
-        a_unsplit.appendChild(document.createTextNode("-"))
+        a_unsplit.appendChild(icon('icon-minus', 'Hide all subclones'))
         a_unsplit.onclick = function () {
             self.m.split_all(false)
         }
@@ -430,12 +430,12 @@ List.prototype = {
                 span_cluster.onclick = function () {
                     self.hideCluster(cloneID)
                 }
-                span_cluster.appendChild(document.createTextNode("-"));
+                span_cluster.appendChild(icon('icon-minus', 'Hide the subclones'));
             } else {
                 span_cluster.onclick = function () {
                     self.showCluster(cloneID)
                 }
-                span_cluster.appendChild(document.createTextNode("+"));
+                span_cluster.appendChild(icon('icon-plus', 'Show the subclones'));
             }
         } else {
             span_cluster.appendChild(document.createTextNode(' '));
