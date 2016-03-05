@@ -497,13 +497,14 @@ Segment.prototype = {
         seq_size.style.color = this.m.clone(cloneID).color;
         seq_size.appendChild(document.createTextNode(this.m.clone(cloneID).getStrSize()));
 
+        // Info
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
         if (cloneID == this.m.clone_info) span_info.className = "infoBox infoBox-open";
         span_info.onclick = function () {
             self.m.displayInfoBox(cloneID);
         }
-        span_info.appendChild(document.createTextNode("i"));
+        span_info.appendChild(icon('icon-info', 'clone information'))
 
         // Productive/unproductive
         var productive_info = document.createElement('span');

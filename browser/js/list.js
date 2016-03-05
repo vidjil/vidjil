@@ -429,9 +429,9 @@ List.prototype = {
 
         if (this.m.clone(cloneID).isWarned()) {
             span_info.className += " warning" ;
-            span_info.appendChild(document.createTextNode("!"));
+            span_info.appendChild(icon('icon-warning-1', 'clone information'));
         } else {
-            span_info.appendChild(document.createTextNode("i"));
+            span_info.appendChild(icon('icon-info', 'clone information'));
         }
         }
         

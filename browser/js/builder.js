@@ -463,7 +463,7 @@ Builder.prototype = {
         var infoTime_container = document.createElement("div")
         infoTime_container.className = "inline-block_10"
         var infoTime = self.createClickableElem('span',
-            [document.createTextNode("i")],
+            [icon('icon-info', 'sample information')],
             "",
             "button",
             function () {
