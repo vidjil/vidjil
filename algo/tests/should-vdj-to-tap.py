@@ -93,20 +93,18 @@ def should_pattern_to_regex(p):
     TRGV11 2/5/0 TRGJ1
     '''
 
-    r = []
 
-    for term in p.split():
+    def process_term(term):
 
         # Comment, stop parsing here
         if term.startswith('#'):
-            continue
+            return []
 
         # (such as CDR3 / junction)
         if term.startswith('{'):
             term = term.replace('*','[*]').replace('!','#')
             term = term.replace('{', '.*[{].*').replace('}', '.*[}]')
-            r += [term]
-            continue
+            return [term]
 
         # deletion/insertion/deletion
         # Note that '/' may be also in gene name, such as in IGKV1/OR-3*01
@@ -123,8 +121,7 @@ def should_pattern_to_regex(p):
                 n_region = '[ACGT]*'
                 trim_right = '\d+'
 
-            r += ['/'.join((trim_left, n_region, trim_right))]
-            continue
+            return ['/'.join((trim_left, n_region, trim_right))]
 
         # Gene name, possibly without allele information
         if not '*' in term:
@@ -142,8 +139,14 @@ def should_pattern_to_regex(p):
 
             term = gene + '[*]' + allele
 
-        r += [term]
+        return [term]
 
+
+    r = []
+
+    for term in p.split():
+        r += process_term(term)
+        
     regex_pattern = ' '.join(r)
 
     try:
