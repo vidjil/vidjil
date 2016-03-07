@@ -1697,5 +1697,11 @@ textarea#edit_value {
   text-overflow: ellipsis;
 }
 #highlightCheckboxes {
+  height: 100%;
   float: left;
+}
+label.highlight_label {
+  display: inline-block;
+  height: 100%;
+  vertical-align: bottom;
 }
