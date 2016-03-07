@@ -163,7 +163,7 @@ def should_pattern_to_regex(p):
     try:
         regex = re.compile(regex_pattern)
     except:
-        sys.stderr.write("Error. Invalid regex_pattern: " + regex)
+        sys.stderr.write("Error. Invalid regex_pattern: " + regex_pattern)
         sys.exit(4)
 
     if args.verbose:
