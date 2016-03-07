@@ -107,21 +107,21 @@ Mixed TRA/TRD recombinations can be encoded with =[TRA+D]=.
 Other special cases, such as translocations involving BCL1 or BCL2, should be written now as comments after a =#= character.
 
 
-* Ambiguous designations
+* Ambiguous or alternate designations
 
 On some sequences, several V(D)J designations may be equally acceptable.
-A future format will allow to specify these alternatives.
-It is advised now to leave a comment in plain English:
+These alternate choices can be encoded as =(choice1, choice2)=.
+For difficult cases, is advised to further leave a comment in plain English:
 
 #+BEGIN_EXAMPLE
 # The D/J junction can be seen as 2//7, 3//6, or 4//5
->IGHV3-48*01 0/AA/6 IGHD5-12*01 3//6 IGHJ4*02  [IGH]
+>IGHV3-48*01 0/AA/6 IGHD5-12*01 (2//7, 3//6, 4//5) IGHJ4*02  [IGH]
 ATGAACAGCCTGAGAGCCGAGGACACGGCTGTGTATTACTGTGCGAGAGAAAATAGTG
 GCTACGATTTGACTAC
 TGGGGCCAGGGAACCCTGGTCACCGTCTCCTCAGTT
 
 # TRGJ1*01 or TRGJ1*02
->TRGV5*01 TRGJ1*02   [TRG]
+>TRGV5*01 (TRGJ1*01, TRGJ1*02)  [TRG]
 ...
 #+END_EXAMPLE
 
