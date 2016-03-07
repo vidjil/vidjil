@@ -91,6 +91,7 @@ def should_pattern_to_regex(p):
     TRDV2*02 14/TCCCGGCCT/0 TRDD3*01_3/CCACGGC/4_TRAJ29*01
     TRDD2 18//4 TRAJ29 TRA+D # comments comments ...
     TRGV11 2/5/0 TRGJ1
+    IGHV3-48 0/AA/6 IGHD5-12 (2//7, 3//6, 4//5) IGHJ4*02
     '''
 
 
@@ -99,6 +100,14 @@ def should_pattern_to_regex(p):
         # Comment, stop parsing here
         if term.startswith('#'):
             return []
+
+        # Ambiguous/alternate pattern
+        if term.startswith('('):
+            choices = []
+            term_without_par = term[1:-1]
+            for t in term_without_par.split(','):
+                choices += process_term(t)
+            return ['(%s)' % '|'.join(choices)]
 
         # (such as CDR3 / junction)
         if term.startswith('{'):
@@ -143,6 +152,7 @@ def should_pattern_to_regex(p):
 
 
     r = []
+    p = p.replace(', ', ',')
 
     for term in p.split():
         r += process_term(term)
