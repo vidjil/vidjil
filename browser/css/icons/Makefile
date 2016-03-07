@@ -2,6 +2,11 @@
 
 FONT_DIR      ?= ./fontello/
 
+retrieve:
+	rm -rf ${FONT_DIR}
+	cp config.json ${FONT_DIR}
+	make fontopen
+	make fontsave
 
 ### Don't edit below ###
 
@@ -15,7 +20,7 @@ fontopen:
 	curl --silent --show-error --fail --output .fontello \
 		--form "config=@${FONT_DIR}/config.json" \
 		${FONTELLO_HOST}
-	x-www-browser ${FONTELLO_HOST}/`cat .fontello`
+	# x-www-browser ${FONTELLO_HOST}/`cat .fontello`
 
 
 fontsave:
