@@ -1220,11 +1220,10 @@ text.alert {
   display: inline-block;
 }
 .db_footer {
-  width: 100%;
   display: inline-block;
   position: absolute;
   bottom: 5px;
-  right: 0px;
+  left: 0px;
 }
 .db_block_left {
   float: left;
