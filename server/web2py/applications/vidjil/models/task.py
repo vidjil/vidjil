@@ -250,10 +250,6 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
     cmd += ' && '
     cmd += mixcr + ' exportClones --format vidjil -germline -id -name -reads -sequence -top -seg -s ' + args_3 + ' ' + out_clones + ' ' + out_results
 
-    ## get mixcr version
-    p = Popen(mixcr + ' -v', shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
-    (stdoutdata, stderrdata) = p.communicate()
-
     ## execute la commande MiXCR
     print "=== Launching MiXCR ==="
     print cmd
@@ -286,7 +282,6 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
         fill_field(my_json, reports, "log", "samples", True)
         fill_field(my_json, original_name, "original_names", "samples")
         fill_field(my_json, cmd, "commandline", "samples")
-        fill_field(my_json, stdoutdata, "producer", "samples")
 
         # TODO fix this dirty hack to get around bad file descriptor error
     new_file = open(results_filepath, 'w')
