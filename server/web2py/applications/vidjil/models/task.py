@@ -234,13 +234,21 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
     align_report = report + '.aln'
     assembly_report = report + '.asmbl'
 
+    arg_cmds = arg_cmd.split('|')
+    args_1, args_2, args_3 = '', '', ''
+    try:
+        args_1, args_2, args_3 = arg_cmds
+    except:
+        print arg_cmd
+        print "! Bad arguments, we expect args_align | args_assemble | args_exportClones"
+
     ## commande complete
     mixcr = defs.DIR_MIXCR + 'mixcr'
-    cmd = mixcr + ' align --save-reads -t 1 -r ' + align_report
-    #+ output_filename
-    cmd += ' ' + arg_cmd + ' ' + seq_file  + ' ' + out_alignments
-    cmd += ' && ' + mixcr + ' assemble -t 1 -r ' + assembly_report + ' ' + out_alignments + ' ' + out_clones
-    cmd += ' && ' + mixcr + ' exportClones --format vidjil -germline -id -name -reads -sequence -top -seg -s ' + out_clones + ' ' + out_results
+    cmd = mixcr + ' align --save-reads -t 1 -r ' + align_report + ' ' + args_1 + ' ' + seq_file  + ' ' + out_alignments
+    cmd += ' && '
+    cmd += mixcr + ' assemble -t 1 -r ' + assembly_report + ' ' + args_2 + ' ' + out_alignments + ' ' + out_clones
+    cmd += ' && '
+    cmd += mixcr + ' exportClones --format vidjil -germline -id -name -reads -sequence -top -seg -s ' + args_3 + ' ' + out_clones + ' ' + out_results
 
     ## execute la commande MiXCR
     print "=== Launching MiXCR ==="
