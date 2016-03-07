@@ -210,6 +210,57 @@ function imgtPostForSegmenter(data, system) {
                 "type": "log",
                 "msg": logmsg+ ")" + httpRequest.statusText
             });
+
+            var span = document.getElementById('highlightCheckboxes');
+            var input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = 'imgt_input_check';
+            $(input).on("click", function() {
+                if(this.checked) {
+                    segment.highlight[0].field = "CDR3-IMGT";
+                    segment.highlight[0].color = "red";
+
+                } else {
+                    segment.highlight[0].field = "";
+                }
+                    segment.update();
+
+            });
+            input.click();
+            var label = document.createElement('label');
+            label.setAttribute("for", 'imgt_input_check');
+            label.innerHTML = 'CDR3-IMGT';
+
+            span.appendChild(input);
+            span.appendChild(label);
+
+            input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = 'imgt_vdj_input_check';
+            $(input).on("click", function() {
+                if(this.checked) {
+                    segment.highlight[1].field = "3'V-REGION";
+                    segment.highlight[1].color = "blue";
+                    segment.highlight[2].field = "D-REGION";
+                    segment.highlight[2].color = "green";
+                    segment.highlight[3].field = "5'J-REGION";
+                    segment.highlight[3].color = "gray";
+                } else {
+                    segment.highlight[1].field = "";
+                    segment.highlight[2].field = "";
+                    segment.highlight[3].field = "";
+
+                }
+                    segment.update();
+
+            });
+            input.click();
+            var label = document.createElement('label');
+            label.setAttribute("for", 'imgt_vdj_input_check');
+            label.innerHTML = 'VDJ-IMGT';
+
+            span.appendChild(input);
+            span.appendChild(label);
         }
     };
     httpRequest.onerror = function () {

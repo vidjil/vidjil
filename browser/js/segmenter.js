@@ -70,7 +70,8 @@ function Segment(id, model) {
     this.highlight = [
         {'field' : "", 'color': "red"},
         {'field' : "", 'color': "blue"},
-        //{'field' : "", 'color': "green"}
+        {'field' : "", 'color': "green"},
+        {'field' : "", 'color': "yellow"}
     ];
 }
 
@@ -202,6 +203,10 @@ Segment.prototype = {
         //menu-highlight
         var div_menu_highlight = this.updateHighLightMenu();
         div.appendChild(div_menu_highlight);
+
+        span = document.createElement("span");
+        span.id = 'highlightCheckboxes';
+        div.appendChild(span);
 
         // Checkbox for id
         /*
