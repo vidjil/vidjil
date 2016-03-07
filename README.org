@@ -6,7 +6,7 @@
 [[https://coveralls.io/r/vidjil/vidjil][http://img.shields.io/coveralls/vidjil/vidjil.svg]]
 
 # Vidjil -- V(D)J recombinations analysis -- [[http://www.vidjil.org]]
-# Copyright (C) 2011, 2012, 2013, 2014, 2015 by Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
+# Copyright (C) 2011-2016 by Bonsai bioinformatics at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
 # [[contact@vidjil.org]]
 
 V(D)J recombinations in lymphocytes are essential for immunological
@@ -64,15 +64,18 @@ Bug reports, issues and patches are welcome.
 
 * The Vidjil team
 
-Vidjil is developed by Marc Duez, [[http://cristal.univ-lille.fr/~giraud][Mathieu Giraud]] and [[http://cristal.univ-lille.fr/~salson][Mikaël Salson]]
+Vidjil is developed by [[http://cristal.univ-lille.fr/~giraud][Mathieu Giraud]], Ryan Herbert, Tatiana Rocher and  [[http://cristal.univ-lille.fr/~salson][Mikaël Salson]]
 from the [[http://cristal.univ-lille.fr/bonsai][Bonsai bioinformatics team]] (CRIStAL, CNRS, U. Lille, Inria Lille).
+Vidjil is also developed by external colleagues:
+Marc Duez located in Bristol (School of Social and Community Medicine, University of Bristol)
+and Florian Thonier located in Paris (department of hematology, Necker hospital)
 Vidjil is developed in collaboration with 
 the [[http://biologiepathologie.chru-lille.fr/organisation-fbp/91210.html][department of Hematology]] of CHRU Lille, 
 the [[http://www.ircl.org/plate-forme-genomique.html][Functional and Structural Genomic Platform]] (U. Lille 2, IFR-114, IRCL), 
 and the [[http://www.euroclonality.org/][EuroClonality-NGS]] working group.
-The research is supported by SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041) and by Région Nord-Pas-de-Calais (ABILES). 
+The research is supported by SIRIC ONCOLille (Grant INCa-DGOS-Inserm 6041), by Région Nord-Pas-de-Calais (ABILES) and by Inria.
 
-* Reference
+* References
 
 If you use Vidjil for your research, please cite the following reference:
 
@@ -81,3 +84,10 @@ Mathieu Giraud, Mikaël Salson, et al.,
 BMC Genomics 2014, 15:409 
 [[http://dx.doi.org/10.1186/1471-2164-15-409]]
 
+You may also be interested in the following publication for the diagnosis of
+acute lymphoblastic leukemia with high-throughput sequencing:
+
+Yann Ferret, Aurélie Caillault, et al., “Multi-loci diagnosis of acute
+lymphoblastic leukaemia with high-throughput sequencing and bioinformatics
+analysis”, British Journal of Haematology 2016
+http://dx.doi.org/10.1111/bjh.13981
