@@ -230,6 +230,9 @@ def id_line_to_tap(l, tap_id):
 
     tap += 'ok %d ' % tap_id
 
+    if 'BUG' in should:
+        tap += '# BUG '
+
     if 'TODO' in should:
         tap += '# TODO '
     else:
