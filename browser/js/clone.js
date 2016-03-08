@@ -778,7 +778,7 @@ Clone.prototype = {
             for (var i = 0; i < time_length; i++) {
                 html += "<td>"
                 html += this.getReads(this.m.samples.order[i]) + "  (" + this.m.reads.segmented[this.m.samples.order[i]] + ")"
-                if ($('#debug_menu').is(':visible')) {
+                if ($('#debug_menu').is(':visible') && (typeof this.m.db_key.config != 'undefined' )) {
                 html += "<br/>"
                 call_reads = "db.call('default/run_request', { "
                 call_reads += "'sequence_file_id': '" + this.m.samples.db_key[this.m.samples.order[i]] + "', "
