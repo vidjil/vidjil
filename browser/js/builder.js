@@ -670,12 +670,15 @@ Builder.prototype = {
     	var key_list = this.m.system_available;
     	key_list.sort();
 
+        var last_key = "";
+
         for (var k in key_list) {
     	    key = key_list[k];
 
-            if ((key == "TRA" || key == "IGH") && keys > 0) {
+            if (key.substring(0,2) == "TR" && last_key.substring(0,2) == "IG" && keys > 0) {
                 span2.appendChild(document.createElement("br"));
             }
+            last_key = key ;
 
             keys += 1 ;
 
