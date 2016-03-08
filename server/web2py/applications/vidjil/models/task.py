@@ -274,14 +274,17 @@ def run_mixcr(id_file, id_config, id_data, id_fuse, clean_before=False, clean_af
         log.error(res)
         raise IOError
 
-    reports = get_file_content(align_report)
-    reports += get_file_content(assembly_report)
+    align_report = get_file_content(align_report)
+    assembly_report = get_file_content(assembly_report)
+    reports = align_report + assembly_report
     original_name = row[0].filename
+    totalReads = extract_total_reads(assembly_report)
     with open(results_filepath, 'r') as json_file:
         my_json = json.load(json_file)
         fill_field(my_json, reports, "log", "samples", True)
         fill_field(my_json, original_name, "original_names", "samples")
         fill_field(my_json, cmd, "commandline", "samples")
+        fill_field(my_json, totalReads, "total", "reads")
 
         # TODO fix this dirty hack to get around bad file descriptor error
     new_file = open(results_filepath, 'w')
@@ -516,6 +519,11 @@ def fill_field(dest, value, field, parent="", append=False):
         dest[field] = []
         dest[field].append(value)
 
+def extract_total_reads(report):
+    reads_matcher = re.compile("Total Reads analysed: [0-9]+")
+    reads_line = reads_matcher.search(report).group()
+    return reads_line.split(' ')[-1]
+    
 from gluon.scheduler import Scheduler
 scheduler = Scheduler(db, dict(vidjil=run_vidjil,
                                mixcr=run_mixcr,
