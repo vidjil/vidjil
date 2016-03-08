@@ -34,6 +34,7 @@ Builder.prototype = {
                 self.toggle_left_container()
             });
 
+        this.build_top_container()
         this.build_info_container()
         this.build_clusterSelector()
         this.initTag();
@@ -44,6 +45,7 @@ Builder.prototype = {
 
     update: function () {
 
+        this.build_top_container()
         this.build_info_container()
         this.updateTagBox();
     },
@@ -206,41 +208,79 @@ Builder.prototype = {
      * */
     edit: function (elem, data) {
         var self = this;
+        var id = "edit_value";
+        var init_value = self.m.getStrTime(self.m.t, data);
+        var save_callback = function() {
+            var value = document.getElementById(id).value;
+            self.m.samples[data][self.m.t] = value
+            self.post_save(self);
+        }
+
+        this.build_input_edit(id, elem, init_value, save_callback)
+    },
+
+    edit_textarea: function(elem, value, callback) {
+        var self = this;
+        var id = "edit_value";
+        this.build_textarea_edit(id, elem, value, callback);
+    },
+
+    //TODO rename
+    build_edit: function (input, id, elem, callback) {
         var divParent = elem.parentNode;
         divParent.innerHTML = "";
 
-        var input = this.setupInput("edit_value", "", "text", self.m.samples[data][self.m.t]);
+        divParent.appendChild(input);
+        divParent.onclick = "";
+
+        $(input).on('save', callback);
+        $(input).select();
+    },
+
+    build_textarea_edit: function (id, elem, value, callback) {
+        var input = document.createElement('textarea');
+        input.id = id;
+        input.innerHTML = value; 
+        this.setup_edit_input(input);
+
+        this.build_edit(input, id, elem, callback);
+    },
+
+    build_input_edit: function(id, elem, value, callback) {
+        var input = this.create_edit_input(id, value);
+        this.build_edit(input, id, elem, callback);
+    },
+
+    create_edit_input: function (id, value) {
+        var input = this.setupInput(id, "", "text", value);
+        this.setup_edit_input(input);
         input.style.width = "200px";
         input.style.border = "0px";
         input.style.margin = "0px";
+        return input;
+    },
+
+    setup_edit_input: function (input) {
         input.onkeydown = function (e) {
             e = e || window.event;
             var key = e.keyCode
             if (key == 0) key = e.which 
-            if (key == 13) document.getElementById('btnSave')
-                .click();
+    //        if (key == 13) $(input).trigger("save");
+            else if (key == 27) m.update()
         }
         $(input).focusout(function() {
             setTimeout(function(){
-                m.update()
+                $(input).trigger("save");
+      //          m.update()
             }, 500);
         })
-        divParent.appendChild(input);
-        divParent.onclick = "";
-
-        var a = document.createElement('a');
-        a.className = "button";
-        a.appendChild(document.createTextNode("save"));
-        a.id = "btnSave";
-        a.onclick = function () {
-            self.m.samples[data][self.m.t] = document.getElementById("edit_value").value
-            self.build_info_container()
-            self.m.update()
-            self.m.analysisHasChanged = true
-        }
-        divParent.appendChild(a);
-        $('#edit_value')
-            .select();
+    },
+    
+    post_save: function(self) {
+        self.build_top_container()
+        self.build_info_container()
+        self.m.update()
+        self.m.analysisHasChanged = true
     },
 
     /*complete displaySelector menu with correct info about current tagname / top
@@ -386,97 +426,117 @@ Builder.prototype = {
         var parent = document.getElementById("info")
         parent.innerHTML = "";
 
-        //file name
-        var div_data_file = document.createElement('div');
-        div_data_file.id = "info_data_file"
-        div_data_file.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
-        document.title = this.m.getPrintableAnalysisName()
-        parent.appendChild(div_data_file)
-
+        var patient_info = typeof this.m.info != 'undefined' ? this.m.info : "";
+        var div_patient_info = this.create_info_container(
+                patient_info,
+                'patient_info',
+                'patient_info_text',
+                function() {
+                    //TODO id needs to be passed as param
+                    self.m.info = this.value
+                    self.post_save(self)
+                },
+                'patient information');
+        parent.appendChild(div_patient_info)
+        
         //global info
-        var div_analysis_file = this.build_info_line("info_analysis_file", "analysis", this.m.analysisFileName)
-        parent.appendChild(div_analysis_file)
+        /*var div_analysis_file = this.build_info_line("info_analysis_file", this.m.analysisFileName)
+        parent.appendChild(div_analysis_file)*/
         
         //system
         if (this.m.system =="multi"){
             var div_multi_system = this.build_multi_system()
             parent.appendChild(div_multi_system)
         }else{
-            var div_system = this.build_info_line("info_system", "locus", this.m.system)
+            var div_system = this.build_info_line("info_system", this.m.system)
             parent.appendChild(div_system)
         }
         
         //point info
-        var div_point = this.build_info_line("info_point", "sample",  this.m.getStrTime(this.m.t, "name") )
+        var sample_div = document.createElement("div")
+        sample_div.className = "sample_details"
+        
+	var point_value = this.m.getStrTime(this.m.t, "name")
+        point_value = point_value != "" ? point_value : "-/-"
+        var point_name_container = document.createElement("div")
+        point_name_container.className += "inline-block_90 centered ellipsis"
+        point_name_container.title = point_value
+        point_name_container.appendChild(document.createTextNode(point_value))
+
+        var infoTime_container = document.createElement("div")
+        infoTime_container.className = "inline-block_10"
+        var infoTime = self.createClickableElem('span',
+            [document.createTextNode("i")],
+            "",
+            "button",
+            function () {
+                console.log({"type": "big-popup", "msg": self.m.getPointHtmlInfo(self.m.t)});
+            }
+        );
+        infoTime_container.appendChild(infoTime)
+        var div_point = this.build_composite_info_line("info_point", [infoTime_container, point_name_container])
+
+        $(div_point).on("dblclick", function() {
+            self.edit(this, "names");
+        });
+
+        sample_div.appendChild(div_point)
+
+        var span_date = document.createElement("span")
+        span_date.appendChild(document.createTextNode(this.m.getStrTime(this.m.t, "sampling_date")))
+        var nav_container = document.createElement("div")
+        nav_container.className += " centered inline-block_90"
+        nav_container.appendChild(span_date)
+
+        var play_stop_container_div = document.createElement("div")
+        play_stop_container_div.className = "inline-block_10"
+        sample_div.appendChild(play_stop_container_div)
 
         if (this.m.samples.order.length > 1){
             var nextTime = self.createClickableElem('span',
                 [document.createTextNode(">")],
                 "",
-                "next_button button_right",
+                "next_button button",
                 function () {
                     self.m.nextTime();
                 }
             );
-            div_point.appendChild(nextTime)    
-            
+            nav_container.appendChild(nextTime)    
+           
             if (self.m.isPlaying){
-                var stop = self.createClickableElem('span',
-                    [document.createTextNode("stop")],
+                var stop = self.createClickableElem('div',
+                    [document.createTextNode("s")],
                     "",
-                    "stop_button button_right",
+                    "stop_button button",
                     function () {
                         self.m.stop();
                     }
                 );
                 
-                div_point.appendChild(stop)
+                play_stop_container_div.appendChild(stop)
             } else {
-                var play = self.createClickableElem('span',
-                    [document.createTextNode("play")],
+                var play = self.createClickableElem('div',
+                    [document.createTextNode("p")],
                     "",
-                    "play_button button_right",
+                    "play_button button",
                     function () {
                         self.m.play(self.m.t);
                     }
                 );
-                div_point.appendChild(play)
+                play_stop_container_div.appendChild(play)
             }
             
             var previousTime = self.createClickableElem('span',
                 [document.createTextNode("<")],
                 "",
-                "previous_button button_right",
+                "previous_button button",
                 function () {
                     self.m.previousTime();
                 }
             );
-            div_point.appendChild(previousTime)
+            nav_container.insertBefore(previousTime, nav_container.childNodes[0]);
         }
-        
-        var editTimeName = self.createClickableElem('span',
-            [document.createTextNode("edit")],
-            "",
-            "button_right",
-            function () {
-                self.edit(this, "names");
-            }
-        );
-        div_point.appendChild(editTimeName)
-        
-        var infoTime = self.createClickableElem('span',
-            [document.createTextNode("Info")],
-            "",
-            "button_right",
-            function () {
-                console.log({"type": "big-popup", "msg": self.m.getPointHtmlInfo(self.m.t)});
-            }
-        );
-        div_point.appendChild(infoTime)
-        
-        parent.appendChild(div_point)
-        
-        var div_date = this.build_info_line("info_date", "date", this.m.getStrTime(this.m.t, "sampling_date") )
+
         var span = self.createClickableElem('span',
             [document.createTextNode("edit")],
             "",
@@ -485,64 +545,122 @@ Builder.prototype = {
                 self.edit(this, "timestamp");
             }
         );
+        var div_date = this.build_composite_info_line("info_date", [play_stop_container_div, nav_container])
+
         // div_date.appendChild(span)
-        parent.appendChild(div_date)
+        sample_div.appendChild(div_date)
 
+        parent.appendChild(sample_div)
 
-        // Total
-        var div_total = this.build_info_line("info_total", "total", this.m.toStringThousands(this.m.reads.total[this.m.t]) + " reads")
-        parent.appendChild(div_total)
-
-
+        var reads_div = document.createElement("div")
+        reads_div.className = "reads_details"
+        
         // Segmented reads
-        var val = "no reads segmented" ;
-
-        if (this.m.reads.segmented_all[this.m.t] > 0)
-        {
-        var percent = (this.m.reads.segmented_all[this.m.t] / this.m.reads.total[this.m.t]) * 100
-        val = this.m.toStringThousands(this.m.reads.segmented_all[this.m.t]) + " reads" + " (" + percent.toFixed(2) + "%)"
-
-	var warning = false ;
-	if (percent < 10)  { val += " – Very few reads segmented" ;  warning = "alert" ;  }
-	else if (percent < 50)  { val += " – Few reads segmented" ;  warning = "warning" ;  }
-        }
-
-        var div_segmented = this.build_info_line("info_segmented", "segmented", val, warning)
-        parent.appendChild(div_segmented)
+        var div_segmented = this.build_line_read_number("info_segmented", "analyzed reads", "analyzed", this.m.reads.segmented_all)
+        div_segmented.title = "total: " + this.m.toStringThousands(this.m.reads.total[this.m.t])
+        reads_div.appendChild(div_segmented)
 
 
         // Segmented reads, on the selected system(s)
         if (this.m.system == "multi") {
-            var val = "no reads on selected locus" ;
-
-            if (this.m.reads.segmented[this.m.t] > 0)
-            {
-                var percent = (this.m.reads.segmented[this.m.t] / this.m.reads.total[this.m.t]) * 100
-                val = this.m.toStringThousands(this.m.reads.segmented[this.m.t]) + " reads" + " (" + percent.toFixed(2) + "%)"
-
-                var warning = false ;
-                if (percent < 10)  { warning = "alert" ;  }
-                else if (percent < 50)  { warning = "warning" ;  }
-            }
-
-            var div_segmented = this.build_info_line("info_selected_locus", "selected locus", val, warning)
-            parent.appendChild(div_segmented)
+            var div_segmented = this.build_line_read_number("info_selected_locus", "selected locus", "on selected locus", this.m.reads.segmented)
+            reads_div.appendChild(div_segmented)
         }
-  
+        
+        parent.appendChild(reads_div)
+        
+        var clear_div = document.createElement("div")
+        clear_div.className = "clear"
+        parent.appendChild(clear_div)
 
         var div_color = this.build_info_color()
         parent.appendChild(div_color) 
 
+        var div_sequence_info = this.create_info_container(
+                this.m.getInfoTime(this.m.t),
+                'sequence_info',
+                'info_text',
+                function() {
+                    //TODO id needs to be passed as param
+                    var value = this.value;
+                    if (typeof self.m.samples['info'] == 'undefined')
+                        self.m.samples['info'] = new Array(self.m.samples.names.length, "");
+                    self.m.samples['info'][self.m.t] = value
+                    self.post_save(self)
+                },
+                'sample information');
+        parent.appendChild(div_sequence_info)
+
         this.initTag();
+    },
+
+    build_line_read_number: function (id, label, qualifier, read_number) {
+        var val = "no read " + qualifier ;
+	var warning = false ;
+
+        if (read_number[this.m.t] > 0)
+        {
+            var percent = (read_number[this.m.t] / this.m.reads.total[this.m.t]) * 100
+            val = this.m.toStringThousands(read_number[this.m.t]) + " (" + percent.toFixed(2) + "%)"
+
+            var warning_span = document.createElement('span');
+            warning_span.innerHTML = " ! ";
+            warning_span.className = "warningReads";
+	    if (percent < 10)  {
+                warning_span.title = "Very few reads " + qualifier ;
+                warning_span.className += ' '+(warning = "alert") ;
+            }
+	    else if (percent < 50)  {
+                warning_span.title = "Few reads " + qualifier ;
+                warning_span.className = ' '+(warning = "warning") ;
+            }
+        }
+        div = this.build_named_info_line(id, label, val, false);
+        if (warning != false) {
+            div.appendChild(warning_span);
+        }
+        return div;
+    },
+
+    build_top_container: function () {
+        var self = this;
+        var parent = document.getElementById("top_info");
+        parent.innerHTML = "";
+        var div_data_file = document.createElement('div');
+        //div_data_file.id = "info_data_file"
+        div_data_file.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
+	div_data_file.onclick = function() {
+	    db.call('patient/info', {'id' : m.patient_id});
+	}
+        document.title = this.m.getPrintableAnalysisName()
+        parent.appendChild(div_data_file)
+    },
+
+    // TODO ambiguous with build_info_container => find another name ?
+    create_info_container: function (info, className, id, callback, placeholder) {
+        var self = this;
+        var container = document.createElement('div');
+        container.className = className;
+
+        text_span = document.createElement('textarea');
+        text_span.id = id;
+        text_span.className = 'info_container';
+        text_span.innerHTML = info ;
+        text_span.setAttribute('placeholder', placeholder);
+
+        container.appendChild(text_span);
+
+        $(container).children(":first").on("dblclick", function() {
+            //var value = self.m.getStrTime(self.m.t, 'info');
+            self.edit_textarea(this, info, callback);
+        });
+
+        return container;
     },
 
     build_multi_system: function () {
         var div = document.createElement('div');
-        div.className = "info_line";
-        
-        var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode("locus"));
-        span1.className = "info_row"
+        div.className = "info_line locus_line";
         
         var span2 = document.createElement('span');
         span2.className = "info_row_content"
@@ -591,43 +709,63 @@ Builder.prototype = {
             span2.appendChild(span)
         }
         
-        div.appendChild(span1)
         div.appendChild(span2)
         
         return div
     },
     
-    build_info_line: function (id, name, value, className) {
-        var span1 = document.createElement('span');
-        span1.appendChild(document.createTextNode(name));
-        span1.className = "info_row"
-        var span2 = document.createElement('span');
+    build_info_line: function (id, value, className) {
+        var val = value != ""? value : "-/-"
+        var span = document.createElement('span');
 	if (!(typeof(className) === "undefined"))
 	    {
 		if (className)
 		{
-		    span2.className = className ;
+		    span.className = className ;
 		}
 	    }
-        span2.appendChild(document.createTextNode(value));
+        span.appendChild(document.createTextNode(val));
 
         var div = document.createElement('div');
         div.id = id
         div.className = "info_line"
-        div.appendChild(span1)
-        div.appendChild(span2)
+        div.appendChild(span)
 
         return div
+    },
+
+    build_composite_info_line: function(id, children) {
+        var div = document.createElement('div')
+        div.id = id
+        div.className = "info_line"
+
+        for(var i = 0; i < children.length; i++) {
+            div.appendChild(children[i])
+        }
+        return div;
+    },
+
+    build_named_info_line: function (id, name, value, className) {
+        var div = this.build_info_line(id, value, className);
+        var inner_span = div.firstChild;
+        div.innerHTML = null;
+
+        var info_row = document.createElement("span");
+        info_row.className = "info_row";
+        info_row.appendChild(document.createTextNode(name));
+
+        div.appendChild(info_row);
+        div.appendChild(inner_span);
+        return div;
     },
 
     build_info_color: function () {
         var self = this
 
         var div = document.createElement('div');
-        div.className = "info_color"
+        div.className = "info_color centered vertical_space"
 
         var span0 = document.createElement('span');
-        span0.className="info_row"
         var span1 = document.createElement('span');
         var span2 = document.createElement('span');
         var span3 = document.createElement('span');

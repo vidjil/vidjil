@@ -53,13 +53,6 @@ var sp = new ScatterPlot("visu", m);             // Scatterplot (both grid and b
 var segment = new Segment("bot-container", m);   // Segmenter
 
 
-/* [WIP] Builder
- * The builder completes some informations in the menu and provide some tools
- * TODO replace with a menu and info view
- */
-var builder = new Builder(m);
-
-
 /* Similarity
  * retrieve and compute everything related to the similarity matrix
  */
@@ -82,6 +75,13 @@ var report = new Report(m)
  * This links the model to a patient database (possibly the one defined in config.js)
  */
 var db = new Database(m);
+
+
+/* [WIP] Builder
+ * The builder completes some informations in the menu and provide some tools
+ * TODO replace with a menu and info view
+ */
+var builder = new Builder(m);
 
 
 /* [WIP] Shortcut (optional)

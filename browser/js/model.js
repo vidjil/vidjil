@@ -483,6 +483,14 @@ Model.prototype = {
         return timestamp
     },
 
+    getInfoTime: function(time) {
+        var time = typeof time !== 'undefined' ? time : this.t
+        var info = "-"
+        if (typeof this.samples.info != 'undefined' && this.samples.info != null)
+            info = this.samples.info[time]
+        return info
+    },
+
     /**
      * return the soft version used to produce all samples results <br>
      * return "multiple" if different soft have been used for different samples
@@ -1437,6 +1445,8 @@ Model.prototype = {
 
         switch (format) {
             case "name":
+            case "names":
+                //TODO resolve thid hack
             case "short_name":
                 if (typeof this.samples.names != 'undefined' && this.samples.names[timeID] != ""){
                     result = this.samples.names[timeID]
@@ -1451,7 +1461,7 @@ Model.prototype = {
                 break;
 
             case "sampling_date":
-                if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID])
+                if ((typeof this.samples.timestamp != 'undefined') && this.samples.timestamp[timeID] && this.samples.timestamp[timeID] != "None")
                     result = this.samples.timestamp[timeID].split(" ")[0]
                 break;
 
@@ -1475,6 +1485,12 @@ Model.prototype = {
                         }
                     }
                 }
+                break;
+            default:
+                if (typeof this.samples[format] != 'undefined') {
+                    result = this.samples[format][timeID];
+                }
+                break;
         }
         return result
     },

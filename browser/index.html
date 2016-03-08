@@ -68,10 +68,13 @@
         <!-- TOP-CONTAINER -->
         <div id="top-container">
 
+            <div class="menu" id="top_info">
+                <!--Div is filled programmatically -->
+            </div>
             <div class="menu" id="db_menu" onmouseover="showSelector('dbSelector');" style="display : none">patients
                 <div id="dbSelector" class="selector"><div>
                     <div class="menu_box">
-                        <a class="buttonSelector" onclick="javascript:db.reload()">open patient</a>
+                        <a class="buttonSelector" onclick="javascript:db.call('patient/index')">open patient</a>
                         <a class="buttonSelector" onclick="javascript:db.save_analysis()">save analysis</a>
                     </div>
                     <div class="menu_box">

@@ -124,16 +124,12 @@ line {
   border-color: #333333;
 }
 .info_row {
-  padding-left: 20px;
   min-width: 100px;
   display: inline-block;
 }
 .info_row_content {
+  width: 100%;
   display: inline-block;
-  width: 345px;
-}
-#info_point {
-  margin-top: 15px;
 }
 #info_data_file {
   font-size: 200%;
@@ -474,7 +470,7 @@ line {
 }
 .systemBoxNameMenu {
   display: inline-block;
-  min-width: 70px;
+  min-width: 67px;
   height: 20px;
   cursor: pointer;
 }
@@ -794,7 +790,8 @@ a:hover {
   color: #fdf6e3;
 }
 .button,
-.button_right {
+.button_right,
+.button_left {
   cursor: pointer;
   font-size: 13px;
   padding: 0px 3px;
@@ -805,6 +802,10 @@ a:hover {
 }
 .button_right {
   float: right;
+}
+.button_left {
+  float: left;
+  margin-right: -27px;
 }
 .button2 {
   border: solid;
@@ -1032,6 +1033,13 @@ span.alert {
 }
 text.alert {
   fill: red;
+}
+span.warningReads {
+  margin-left: .5em;
+  display: inline-block;
+  width: 1em;
+  text-align: center;
+  cursor: help;
 }
 .sp_menu_anchor {
   position: relative;
@@ -1599,4 +1607,81 @@ table.log textarea {
 }
 #db_table_container.info_table {
   height: 50%;
+}
+.sample_details {
+  float: left;
+  width: 50%;
+}
+.reads_details {
+  float: right;
+  width: 50%;
+}
+.clear {
+  clear: both;
+}
+.centered {
+  text-align: center;
+}
+.info_container {
+  display: block;
+  padding: 5px;
+  border: 1px solid;
+  overflow-wrap: break-word;
+  overflow-y: hidden;
+  max-width: 457px;
+  min-height: 32px;
+  max-height: 32px;
+  position: fixed;
+  width: 100%;
+  background-color: #000000;
+  -webkit-transition: max-height 0.8s ease-out;
+  -moz-transition: max-height 0.8s ease-out;
+  transition: max-height 0.8s ease-out;
+  z-index: 1;
+}
+.info_container:hover {
+  max-height: 400px;
+  z-index: 2;
+}
+.patient_info_text {
+  margin-bottom: 5px;
+}
+.patient_info {
+  margin-bottom: 45px;
+}
+textarea#edit_value {
+  -webkit-box-sizing: border-box;
+  -moz-box-sizing: border-box;
+  box-sizing: border-box;
+  position: fixed;
+  width: 470px;
+  min-height: 45px;
+}
+#top_info {
+  display: inline-flex;
+  font-weight: bold;
+}
+.save_info.button {
+  vertical-align: top;
+  padding-right: 0px;
+  margin-right: 0px;
+}
+.vertical_space {
+  margin-top: 5px;
+  margin-bottom: 5px;
+}
+.inline-block_10 {
+  display: inline-block;
+  width: 10%;
+  vertical-align: top;
+}
+.inline-block_90 {
+  display: inline-block;
+  width: 90%;
+  vertical-align: top;
+}
+.ellipsis {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }

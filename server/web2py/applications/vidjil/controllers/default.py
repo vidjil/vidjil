@@ -205,6 +205,7 @@ def get_data():
         config_name = db.config[request.vars["config"]].name
         command = db.config[request.vars["config"]].command
         
+        data["patient_id"] = request.vars["patient"]
         data["patient_name"] = patient_name
         data["config_name"] = config_name
         data["dataFileName"] = patient_name + " (" + config_name + ")"
@@ -213,11 +214,13 @@ def get_data():
         data["samples"]["info"] = []
         data["samples"]["timestamp"] = []
         data["samples"]["db_key"] = []
+        data["samples"]["ids"] = []
         for i in range(len(data["samples"]["original_names"])) :
             data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
             data["samples"]["info"].append('')
             data["samples"]["timestamp"].append('')
             data["samples"]["db_key"].append('')
+            data["samples"]["ids"].append('')
 
         ## récupération des infos stockées sur la base de données
         query = db( ( db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
@@ -232,6 +235,7 @@ def get_data():
             for i in range(len(data["samples"]["original_names"])) :
                 data_file = data["samples"]["original_names"][i]
                 if row.sequence_file.data_file == data_file :
+                    data["samples"]["ids"][i] = row.sequence_file.id
                     data["samples"]["original_names"][i] = filename
                     data["samples"]["timestamp"][i] = str(row.sequence_file.sampling_date)
                     data["samples"]["info"][i] = row.sequence_file.info
@@ -360,6 +364,15 @@ def save_analysis():
                                               sample_set_id = sample_set_id,
                                               analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                                               )
+
+        db(db.patient.id == request.vars['patient']).update(info = request.vars['patient_info']);
+
+        ids = request.vars['samples_id'].split(',')
+        infos = request.vars['samples_info'].split(',')
+
+        # TODO find way to remove loop ?
+        for i in range(0, len(ids)):
+            db(db.sequence_file.id == int(ids[i])).update(info = infos[i])
 
         patient_name = db.patient[request.vars['patient']].first_name + " " + db.patient[request.vars['patient']].last_name
 
