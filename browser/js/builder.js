@@ -586,27 +586,29 @@ Builder.prototype = {
 
     build_line_read_number: function (id, label, qualifier, read_number) {
         var val = "no read " + qualifier ;
-	var warning = false ;
+        var warning_title = false ;
+        var warning_class = '' ;
 
         if (read_number[this.m.t] > 0)
         {
             var percent = (read_number[this.m.t] / this.m.reads.total[this.m.t]) * 100
             val = this.m.toStringThousands(read_number[this.m.t]) + " (" + percent.toFixed(2) + "%)"
 
-            var warning_span = document.createElement('span');
-            warning_span.innerHTML = " ! ";
-            warning_span.className = "warningReads";
 	    if (percent < 10)  {
-                warning_span.title = "Very few reads " + qualifier ;
-                warning_span.className += ' '+(warning = "alert") ;
+                warning_title = "Very few reads " + qualifier ;
+                warning_class = "alert" ;
             }
 	    else if (percent < 50)  {
-                warning_span.title = "Few reads " + qualifier ;
-                warning_span.className = ' '+(warning = "warning") ;
+                warning_title = "Few reads " + qualifier ;
+                warning_class = "warning" ;
             }
         }
         div = this.build_named_info_line(id, label, val, false);
-        if (warning != false) {
+
+        if (warning_class != "") {
+            var warning_span = document.createElement('span')
+            warning_span.className = "warningReads " + warning_class;
+            warning_span.appendChild(icon('icon-warning-1', warning_title));
             div.appendChild(warning_span);
         }
         return div;
