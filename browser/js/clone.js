@@ -879,21 +879,30 @@ Clone.prototype = {
                 html += "</tr>"
             }
         }
+        
+        //IMGT info
+        if (this.seg.imgt != null) {
+            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> IMGT information " + "</td></tr>";
+            for (var item in this.seg.imgt) {
+                    html += "<tr><td> " + item + "</td><td> " + this.seg.imgt[item] + "</td></tr>";
+            }
+        }
+
         html += "</table></div>"
         return html
     },
-    
+
     toCSV: function () {
-        var csv = this.getName() + "," + this.id + "," + this.get('germline') + "," + this.getTagName() + "," 
+        var csv = this.getName() + "," + this.id + "," + this.get('germline') + "," + this.getTagName() + ","
                 + this.getGene("5") + "," + this.getGene("4") + "," + this.getGene("3") + "," + this.getSequence()
-        
+
         for (var i=0; i<this.m.samples.order.length; i++) csv += "," + this.getReads(this.m.samples.order[i])
         for (var i=0; i<this.m.samples.order.length; i++) csv += "," + this.getSize(this.m.samples.order[i])
         for (var i=0; i<this.m.samples.order.length; i++) csv += "," + this.getPrintableSize(this.m.samples.order[i]).replace(/,/g, ';')
-        
+
         return csv
     },
-    
+
     enable: function (top) {
         if (this.top > top || this.isVirtual())
             return ;
@@ -905,23 +914,24 @@ Clone.prototype = {
             this.m.someClonesFiltered = true
         }
     },
-    
+
     disable: function () {
         this.active = false;
     },
-    
+
     unselect: function () {
         console.log("unselect() (clone " + this.index + ")")
         if (this.select) {
             this.select = false;
+            this.m.removeFromOrderedSelectedClones(this.index);
         }
         this.m.updateElemStyle([this.index]);
     },
-    
+
     isSelected: function () {
         return this.select
     },
-    
+
     isActive: function () {
         return this.active
     },

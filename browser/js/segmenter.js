@@ -24,7 +24,7 @@
  *
  * segmenter.js
  *
- * segmenter tools
+ * segmenter
  *
  * content:
  *
@@ -55,7 +55,7 @@ function Segment(id, model) {
     }
     
     this.id = id; //ID de la div contenant le segmenteur
-    this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z"
+    this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z";
     this.cgi_address = CGI_ADDRESS
 
     this.first_clone = 0 ; // id of sequence at the top of the segmenter
@@ -108,6 +108,7 @@ Segment.prototype = {
         //merge button
         var span = document.createElement('span');
         span.id = "merge"
+        span.setAttribute('title', 'Merge the clones into a unique clone')
         span.className = "button"
         span.onclick = function () {
             self.m.merge()
@@ -119,6 +120,7 @@ Segment.prototype = {
         if (this.cgi_address) {
         span = document.createElement('span');
         span.id = "align"
+        span.setAttribute('title', 'Align the sequences')
         this.updateAlignmentButton();
         span.className = "button"
         span.onclick = function () {
@@ -131,6 +133,7 @@ Segment.prototype = {
         //toIMGT button
         span = document.createElement('span');
         span.id = "toIMGT"
+        span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and see the results in a new tab')
         span.className = "button"
         span.onclick = function () {
             self.sendTo('IMGT')
@@ -138,9 +141,21 @@ Segment.prototype = {
         span.appendChild(document.createTextNode("❯ to IMGT/V-QUEST"));
         div_menu.appendChild(span)
 
+        //toIMGTSeg button
+        span = document.createElement('span');
+        span.id = "toIMGTSeg";
+        span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and loads the results in the sequence panel')
+        span.className = "button button_next devel-mode";
+        span.onclick = function () {
+            self.sendTo('IMGTSeg')
+        };
+        span.appendChild(document.createTextNode("▼"));
+        div_menu.appendChild(span);
+
         //toIgBlast button
         span = document.createElement('span');
         span.id = "toIgBlast";
+        span.setAttribute('title', 'Send sequences to NCBI IgBlast and see the results in a new tab')
         span.className = "button";
         span.onclick = function () {
             self.sendTo('igBlast')
@@ -151,6 +166,7 @@ Segment.prototype = {
         //toARResT button
         span = document.createElement('span');
         span.id = "toARResT";
+        span.setAttribute('title', 'Send sequences to ARResT/CompileJunctions and see the results in a new tab')
         span.className = "button devel-mode";
         span.onclick = function () {
             self.sendTo('ARResT')
@@ -161,6 +177,7 @@ Segment.prototype = {
         //toBlast button
         span = document.createElement('span');
         span.id = "toBlast";
+        span.setAttribute('title', 'Send sequences to Ensembl Blast and see the results in a new tab')
         span.className = "button";
         span.onclick = function () {
             if (m.getSelected().length > 30) {
@@ -180,95 +197,30 @@ Segment.prototype = {
         // div_menu.appendChild(span)
 
         div.appendChild(div_menu);
-        
-        
-        
+
+
         //menu-highlight
-        var div_highlight = document.createElement('div');
-        div_highlight.className = "menu-highlight devel-mode"
-        div_highlight.onmouseover = function () {
-            self.m.focusOut()
-        };
-        
-        // Guessing fields, populating dropdown lists
-        var fields = this.findPotentialField();
-        var filter = ["sequence", "_sequence.trimmed nt seq"]; // Fields that are ignored
-
-        for (var i in this.highlight) {
-            var input = document.createElement('select');
-            input.style.borderColor = this.highlight[i].color;
-            input.style.width = "60px";
-            input.id = "highlight_"+i
-            
-            for (var i in fields){
-                if (filter.indexOf(fields[i]) == -1) {
-                    var option = document.createElement('option');
-                    option.appendChild(document.createTextNode(fields[i]));
-                    input.appendChild(option);
-                }
-            }
-            
-            input.onchange = function () {
-                var id = this.id.replace("highlight_","")
-                segment.highlight[id].field = this.options[this.selectedIndex].text;
-                segment.update();
-            }
-            
-            div_highlight.appendChild(input)
-        }
-
-        // Checkbox for cdr3
-        if (fields.indexOf("cdr3") != -1) {
-            
-            var aaCheckbox = document.createElement('input');
-            aaCheckbox.type = "checkbox";
-            aaCheckbox.onclick = function () {
-                segment.amino = this.checked;
-                segment.update();
-            }
-            div_highlight.appendChild(aaCheckbox)
-            div_highlight.appendChild(document.createTextNode("AA"));
-                
-                
-            var cdr3Checkbox = document.createElement('input');
-            cdr3Checkbox.type = "checkbox";
-            cdr3Checkbox.onclick = function () {
-                var id = 0;
-                if (this.checked){
-                    segment.highlight[id].field = "cdr3";
-                }else{
-                    segment.highlight[id].field = "";
-                }
-                segment.update();
-            }
-            div_highlight.appendChild(cdr3Checkbox)
-            div_highlight.appendChild(document.createTextNode("CDR3"));
-        
-        }
+        var div_menu_highlight = this.updateHighLightMenu();
+        div.appendChild(div_menu_highlight);
 
         // Checkbox for id
         /*
-        var windowCheckbox = document.createElement('input');
-        windowCheckbox.type = "checkbox";
-        windowCheckbox.onclick = function () {
-            var id = 1;
-            if (this.checked){
-                segment.highlight[id].field = "id";
-            }else{
-                segment.highlight[id].field = "";
-            }
-            segment.update();
-        }
-        div_highlight.appendChild(windowCheckbox)
-        div_highlight.appendChild(document.createTextNode("id"));
-        */
-        div.appendChild(div_highlight)
+         var windowCheckbox = document.createElement('input');
+         windowCheckbox.type = "checkbox";
+         windowCheckbox.onclick = function () {
+         var id = 1;
+         if (this.checked){
+         segment.highlight[id].field = "id";
+         }else{
+         segment.highlight[id].field = "";
+         }
+         segment.update();
+         }
+         div_highlight.appendChild(windowCheckbox)
+         div_highlight.appendChild(document.createTextNode("id"));
+         */
+        //div.appendChild(div_highlight)
 
-        
-        
-        
-        
-        
 
         var div_focus = document.createElement('div');
         div_focus.className = "focus"
@@ -279,7 +231,7 @@ Segment.prototype = {
 
         var stats_content = document.createElement('span');
         stats_content.className = "stats_content"
-        div_stats.appendChild(stats_content)        
+        div_stats.appendChild(stats_content)
 
         var focus_selected = document.createElement('a');
         focus_selected.appendChild(document.createTextNode("(focus)"))
@@ -339,19 +291,91 @@ Segment.prototype = {
             });
     },
 
+
+    /**
+     * get the highlight select box according to existing values in model.
+     * Mainly ADN recognized sequence and field with start/stop values.
+     *
+     */
+    updateHighLightMenu: function () {
+
+        var div_highlight = document.createElement('div');
+        div_highlight.className = "menu-highlight devel-mode";
+        div_highlight.onmouseover = function () {
+            self.m.focusOut()
+        };
+
+        // Guessing fields, populating dropdown lists
+        var fields = this.findPotentialField();
+        var filter = ["sequence", "_sequence.trimmed nt seq"]; // Fields that are ignored
+
+        for (var i in this.highlight) {
+            var input = document.createElement('select');
+            input.style.borderColor = this.highlight[i].color;
+            input.style.width = "60px";
+            input.id = "highlight_" + i;
+
+            for (var i in fields) {
+                if (filter.indexOf(fields[i]) == -1) {
+                    var option = document.createElement('option');
+                    option.appendChild(document.createTextNode(fields[i]));
+                    input.appendChild(option);
+                }
+            }
+
+            input.onchange = function () {
+                var id = this.id.replace("highlight_", "");
+                segment.highlight[id].field = this.options[this.selectedIndex].text;
+                segment.update();
+            };
+
+            div_highlight.appendChild(input);
+        }
+
+        // Checkbox for cdr3
+        if (fields.indexOf("cdr3") != -1) {
+
+            var aaCheckbox = document.createElement('input');
+            aaCheckbox.type = "checkbox";
+            aaCheckbox.onclick = function () {
+                segment.amino = this.checked;
+                segment.update();
+            }
+            div_highlight.appendChild(aaCheckbox);
+            div_highlight.appendChild(document.createTextNode("AA"));
+
+
+            var cdr3Checkbox = document.createElement('input');
+            cdr3Checkbox.type = "checkbox";
+            cdr3Checkbox.onclick = function () {
+                var id = 0;
+                if (this.checked) {
+                    segment.highlight[id].field = "cdr3";
+                } else {
+                    segment.highlight[id].field = "";
+                }
+                segment.update();
+            }
+            div_highlight.appendChild(cdr3Checkbox);
+            div_highlight.appendChild(document.createTextNode("CDR3"));
+
+        }
+        return div_highlight;
+    },
+
     /**
      * update(size/style/position) a list of selected clones <br>
      * @param {integer[]} list - array of clone index
      * */
     updateElem: function (list) {
-        
+
         for (var i = 0; i < list.length; i++) {
             var id = list[i]
             if (this.m.clone(id).isSelected()) {
                 if (document.getElementById("seq" + id)) {
                     var spanF = document.getElementById("f" + id);
                     this.div_elem(spanF, id);
-                    
+
                     var spanM = document.getElementById("m" + id);
                     spanM.innerHTML = this.sequence[id].toString(this)
                 } else {
@@ -392,9 +416,10 @@ Segment.prototype = {
         }
         this.updateAlignmentButton()
         this.updateStats();
-       
+        this.updateSegmenterWithHighLighSelection();
+
     },
-    
+
     /**
      * enable/disable align button if their is currently enough sequences selected
      * */
@@ -474,9 +499,28 @@ Segment.prototype = {
             self.m.displayInfoBox(cloneID);
         }
         span_info.appendChild(document.createTextNode("i"));
-        
+
+        // Productive/unproductive
+        var productive_info = document.createElement('span');
+        productive_info.className = "infoBox";
+        var info = ' '
+
+        if (this.m.clone(cloneID).seg.imgt!=null){
+            info = (this.m.clone(cloneID).seg.imgt["Functionality"].toLowerCase().indexOf("unproductive") > -1) ? 'p' : 'u' ;
+        }
+
+        productive_info.appendChild(document.createTextNode(info));
+
+        // Tag
+        if (typeof this.m.clone(cloneID).tag != 'undefined') path.setAttribute("fill", this.m.tag[this.m.clone(cloneID).tag].color);
+        else path.setAttribute("fill", "");
+
+        // Gather all elements
+
         div_elem.appendChild(seq_name);
+        //div_elem.appendChild(span_funct);
         div_elem.appendChild(span_info);
+        div_elem.appendChild(productive_info);
         div_elem.appendChild(svg_star);
         div_elem.appendChild(seq_size);
     },
@@ -549,14 +593,17 @@ Segment.prototype = {
             }
         }
         if (address == 'IMGT') imgtPost(request, system);
+        if (address == 'IMGTSeg') imgtPostForSegmenter(request, system);
         if (address == 'ARResT') arrestPost(request, system);
         if (address == 'igBlast') igBlastPost(request, system);
         if (address == 'blast') blastPost(request, system);
 
+        this.update();
+
     },
-    
+
     /**
-     * move the horizontal slider to focus the most interesting parts of the sequences 
+     * move the horizontal slider to focus the most interesting parts of the sequences
      * */
     show: function () {
         var li = document.getElementById("listSeq")
@@ -728,20 +775,24 @@ Segment.prototype = {
     },
 
     /**
-     * find and return the list of clone fields who contain potential information who can be highlighted on sequences
+     * find and return the list of clone fields who contain potential information that can be highlighted on sequences
      * @return {string[]} - field list
+     *
+     * Please note that these pushed values will have to be present in the model ( and properly set with start, stop, seq)
+     * to be processed and displayed in the segmenter. ( )
+     *
      * */
     findPotentialField : function () {
         // Guess fields for the highlight menu
         result = [""];
-        
+
         // What looks likes DNA everywhere
         for (var i in this.m) {
             if (this.isDNA(this.m[i])){
                 if (result.indexOf(i) == -1) result.push(i);
             }
         }
-        
+
         for (var j=0; (j<10 & j<this.m.clones.length) ; j++){
             var clone = this.m.clone(j);
 
@@ -760,9 +811,45 @@ Segment.prototype = {
                 }
             }
         }
+
+        //Add external infos like IMGT's ... to selectbox values in a static way
+        // as imgt info might not have been requested at the moment of menu buidling.
+        result.push("3'V-REGION");
+        result.push("5'J-REGION");
+        result.push("D Region");
+        result.push("CDR3-IMGT");
+
+
         return result;
     },
-    
+
+    /**
+     * update segmenter with dev menu info if displayed upon update after select or info imported into model
+     *
+     */
+    updateSegmenterWithHighLighSelection: function () {
+
+        var iterator = document.evaluate(".//div[@class='menu-highlight devel-mode']/select", document, null, XPathResult.UNORDERED_NODE_ITERATOR_TYPE, null);
+
+        if (typeof iterator != 'undefined') {
+            try {
+                var thisNode = iterator.iterateNext();
+
+                while (thisNode) {
+                    var id = thisNode.id.replace("highlight_", "");
+                    if (typeof thisNode.id != 'undefined' && typeof thisNode.selectedIndex != 'undefined' && typeof thisNode.selectedIndex !='undefined') {
+                        segment.highlight[id].field = thisNode.options[thisNode.selectedIndex].text;
+                        segment.update();
+                    }
+                    thisNode = iterator.iterateNext();
+                }
+            }
+            catch (e) {
+                //if no proper node then nothing to do
+            }
+        }
+    },
+
     /**
      * determine if a string is a DNA sequence or not
      * @param {string}
@@ -946,18 +1033,22 @@ Sequence.prototype = {
      * */
     toString: function (segment) {
         var clone = this.m.clone(this.id)
-        var result = ""
-        
+        var result = "";
+
         if (typeof clone.sequence != 'undefined' && clone.sequence != 0) {
+
             //find V, D, J position
             if (typeof clone.seg != 'undefined'){
-                var startV = 0
-                var endV = this.pos[clone.seg["5end"]]
-                var startJ = this.pos[clone.seg["3start"]]
-                var endJ = this.seq.length
-                if (typeof clone.seg["4start"] != 'undefined' && typeof clone.seg["4end"] != 'undefined') {
-                    var startD = this.pos[clone.seg["4start"]]
-                    var endD = this.pos[clone.seg["4end"]]
+
+                var vdjArray = this.getVdjStartEnd(clone);
+
+                var startV =  vdjArray["5start"];
+                var endV = vdjArray["5end"];
+                var startJ = vdjArray["3start"];
+                var endJ = vdjArray["3end"];
+                if (typeof vdjArray["4start"]!= 'undefined' && typeof clone.seg["4end"] != 'undefined'){
+                    var startD = vdjArray["4start"];
+                    var endD = vdjArray["4end"];
                 }
             }
 
@@ -992,16 +1083,26 @@ Sequence.prototype = {
                     var h = highlights[j];
 
                     if (i == h.start){
-                        result += "<span class='highlight'><span class='" + h.css + "' style='color:" + h.color + "'>"
+                        result += "<span class='highlight'><span class='" + h.css + "' style='color:" + h.color + "'" ;
+                        result += typeof h.tooltip !='undefined'? " data-tooltip='"+ h.tooltip + "' data-tooltip-position='right'":""; // style='margin-top: 0px;'"
+                        result +=    ">";
                         result += h.seq
                         result += "</span></span>"
                     }
                 }
-                
+
+
                 // VDJ spans - begin
-                if (i == startV) result += "</span><span class='V' "+ vColor + " >"
-                if (i == startD) result += "</span><span class='D'>"
-                if (i == startJ) result += "</span><span class='J' " + jColor + " >"
+                if (i == startV){
+                    result += "</span><span class='V' "+ vColor + ">";
+                }
+
+                if (i == startD){
+                    result += "</span><span class='D'>";
+                }
+                if (i == startJ) {
+                    result += "</span><span class='J' " + jColor+ ">"}
+
 
                 // one character
                 if (segment.amino) {
@@ -1031,11 +1132,29 @@ Sequence.prototype = {
             }
             marge += "</span>"
         }
-        
-        return marge + result
+        return marge + result;
     },
-    
-    
+
+    /**
+     * get V D J start end position in a reusable way...
+     *
+     * @param cloneinfo
+     * @return {object}
+     */
+    getVdjStartEnd: function (clone) {
+
+        var vdjArray ={} ;
+        vdjArray["5start"] = 0;
+        vdjArray["5end"] = this.pos[clone.seg["5end"]];
+        vdjArray["3start"] = this.pos[clone.seg["3start"]];
+        vdjArray["3end"] = this.seq.length;
+        if (typeof clone.seg["4start"] != 'undefined' && typeof clone.seg["4end"] != 'undefined') {
+            vdjArray["4start"] = this.pos[clone.seg["4start"]];
+            vdjArray["4end"] = this.pos[clone.seg["4end"]]
+        }
+        return vdjArray;
+    },
+
     /**
      * build a highlight descriptor (start/stop/color/...)
      * @param {string} field - clone field name who contain the information to highlight
@@ -1050,11 +1169,14 @@ Sequence.prototype = {
         // Find the good object p
         if (typeof clone[field] != 'undefined'){
             p = clone[field];                   //check clone meta-data
-        }else if (typeof clone.seg != 'undefined' &&typeof clone.seg[field] != 'undefined'){
+        }else if (typeof clone.seg != 'undefined' && typeof clone.seg[field] != 'undefined'){
             p = clone.seg[field];               //check clone seg data
         }else if (typeof this.m[field] != 'undefined'){
             p = this.m[field];               //check model
-        }else{
+        }else if (typeof clone.seg.imgt2display != 'undefined' && typeof clone.seg.imgt2display[field] != 'undefined' )
+        {
+            p = clone.seg.imgt2display[field];
+        } else {
             return h
         }
         
@@ -1069,12 +1191,13 @@ Sequence.prototype = {
             h.start = this.pos[clone.sequence.indexOf(p)]
             h.stop = this.pos[clone.sequence.indexOf(p)+p.length]
         }else if (p.constructor === Object & typeof p.start != 'undefined'){
-            h.start = this.pos[p.start]
-            h.stop = this.pos[p.stop]
+            h.start = this.pos[p.start];
+            h.stop = this.pos[p.stop];
 
             if (typeof p.seq != 'undefined') {
                 raw_seq = p.seq
             }
+            h.tooltip = typeof p.tooltip != 'undefined'? p.tooltip:"";
         }
 
         // Build the (possibly invisible) sequence

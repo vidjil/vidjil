@@ -121,26 +121,27 @@ Model.prototype = {
             clusters: [],
             date: []
         };
-        
+
+        this.orderedSelectedClones=[];
         this.clusters = [];
         this.clones = [];
         this.data = {}; // external data
         this.data_info = {};
         this.clone_info = -1;
         this.someClonesFiltered = false;
-        
+
         this.t = 0;          // Selected time/sample
         this.tOther = 0;  // Other (previously) selected time/sample
         this.focus = -1;
         this.system_selected = []
-        
+
         this.colorMethod = "Tag";
         this.changeNotation("percent", false)
         this.changeTimeFormat("name", false)
-                
+
         this.display_window = false
         this.isPlaying = false;
-        
+
         this.mapID = {};
         this.top = 50;
         this.precision = 1;
@@ -762,8 +763,10 @@ Model.prototype = {
 
         if (this.clone(cloneID).isSelected()) {
             this.clone(cloneID).select = false;
+            this.removeFromOrderedSelectedClones(cloneID);
         } else {
             this.clone(cloneID).select = true;
+            this.orderedSelectedClones.push(cloneID);
         }
         
         this.updateElemStyle([cloneID]);
@@ -794,19 +797,20 @@ Model.prototype = {
         console.log("select() (clone " + list + ")");
 
         var tmp = []
-        for (var i=0; i<list.length; i++){
+        for (var i = 0; i < list.length; i++) {
             tmp[i] = {'id': list[i], 'size': this.clone(list[i]).getSize()}
         }
-        
-        list=[]
+
+        list = []
         tmp = tmp.sort(function (a, b) {
             if (a.size < b.size) return 1;
             return -1;
         })
-        
-        for (var i=0; i<tmp.length; i++){
+
+        for (var i = 0; i < tmp.length; i++) {
             this.clone(tmp[i].id).select = true;
-            list[i]=tmp[i].id
+            this.orderedSelectedClones.push(tmp[i].id);
+            list[i] = tmp[i].id
         }
 
         this.updateElemStyle(list);
@@ -816,12 +820,26 @@ Model.prototype = {
      * kick all clones out of the selection
      * */
     unselectAll: function () {
-        console.log("unselectAll()")
+        console.log("unselectAll()");
+        this.orderedSelectedClones = [];
         var list = this.getSelected();
         for (var i = 0; i < list.length; i++) {
             this.clone(list[i]).select = false;
         }
         this.updateElemStyle(list);
+    },
+
+    /**
+     * Remove an item from the selected Clones list
+     */
+    removeFromOrderedSelectedClones: function (cloneID){
+
+        if (this.orderedSelectedClones!==null){
+            var pos=this.orderedSelectedClones.indexOf(cloneID);
+            if (pos>-1){
+                this.orderedSelectedClones.splice(pos,1);
+            }
+        }
     },
 
 

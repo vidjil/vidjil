@@ -1,7 +1,6 @@
-
 //parametre IMGT par defaut
 var imgtInput = {};
-imgtInput["callback"] = "jQuery17106713638880755752_1378825832820"
+imgtInput["callback"] = "jQuery17106713638880755752_1378825832820";
 imgtInput["livret"] = "1";
 imgtInput["Session"] = "&lt;session code=Â¤0Â¤ appliName=Â¤IMGTvquestÂ¤ time=Â¤3625396897Â¤/&gt;";
 imgtInput["l01p01c02"] = "Homo sapiens";
@@ -34,15 +33,15 @@ imgtInput["l01p01c31"] = "Y";
 imgtInput["l01p01c32"] = "Y";
 imgtInput["l01p01c33"] = "Y";
 imgtInput["l01p01c34"] = "Y";
-imgtInput["l01p01c46"] = "Y";
-imgtInput["l01p01c47"] = "Y";
-imgtInput["l01p01c48"] = "Y";
-imgtInput["l01p01c49"] = "Y";
+imgtInput["l01p01c46"] = "N";
+imgtInput["l01p01c47"] = "N";
+imgtInput["l01p01c48"] = "N";
+imgtInput["l01p01c49"] = "N";
 imgtInput["l01p01c50"] = "Y";
-imgtInput["l01p01c51"] = "Y";
-imgtInput["l01p01c52"] = "Y";
-imgtInput["l01p01c53"] = "Y";
-imgtInput["l01p01c54"] = "Y";
+imgtInput["l01p01c51"] = "N";
+imgtInput["l01p01c52"] = "N";
+imgtInput["l01p01c53"] = "N";
+imgtInput["l01p01c54"] = "N";
 imgtInput["l01p01c55"] = "NO";
 imgtInput["l01p01c35"] = "F+ORF+ in-frame P";
 imgtInput["l01p01c36"] = "0";
@@ -83,7 +82,6 @@ igBlastInput["CMD"] = "request";
 igBlastInput["seqtype"] = "TCR";
 
 
-
 function imgtPost(data, system) {
 
     imgtInput["l01p01c10"] = data;
@@ -110,6 +108,129 @@ function imgtPost(data, system) {
     form.submit();
 
 }
+/**
+ * Send of form to imgt to get valuable information from genes like
+ * operativeness, CDR3 sequence ....
+ * Process the information received
+ * display it in the segmenter div of the browser.
+ *
+ * @param data
+ * @param system
+ */
+function imgtPostForSegmenter(data, system) {
+
+    var imgt4segButton= document.getElementById("toIMGTSeg");
+    //limit #request to #
+    var pos, nb = 1;
+    pos = 0;
+    while ((pos = data.indexOf(">", pos + 1)) > 0) {
+        nb++;
+    }
+
+    //update imgt button according to request processing
+    if (typeof imgt4segButton != "undefined"){
+        imgt4segButton.setAttribute("style","color:green");
+        if (!imgt4segButton.textContent.contains("loading")  ){imgt4segButton.textContent+=" (loading)";}
+    }
+
+    //process to first 10 sequences then alert user about the remaining part
+    if (nb > 10) {
+        pos = nth_ocurrence(data, '>', 11);
+        var newdata = data.substr(pos);
+        data = data.substr(0, pos - 1);
+        var msg = "The first 10 sequences were sent to IMGT/V-QUEST."
+
+        console.log({
+            "type": "flash",
+            "msg": msg ,
+            "priority": 1
+        });
+    }
+
+    imgtInput["l01p01c07"] = "3. Excel";
+    imgtInput["l01p01c10"] = data;
+    imgtInput["l01p01c62"] = 2;
+
+    if (system[0] == "I") {
+        imgtInput["l01p01c04"] = "IG";
+    }
+    if (system[0] == "T") {
+        imgtInput["l01p01c04"] = "TR";
+    }
+    var form = document.getElementById("form");
+    form.innerHTML = "";
+    form.target = "";
+    //disabled due to security concerns
+    //form.action = "http://www.imgt.org/IMGT_vquest/vquest";
+    //using proxy on server to allow requests on other site than vidjil one's in JS.
+    form.action = "https://test.vidjil.org/vidjil/proxy/imgt";
+    form.method = "POST";
+
+    for (var k in imgtInput) {
+        var input = document.createElement("input");
+        input.type = "hidden";
+        input.name = k;
+        input.value = imgtInput[k];
+        form.appendChild(input);
+    }
+
+    /*due to browser's security limitations, a proxy had to be settled. */
+    var httpRequest = new XMLHttpRequest();
+    var imgtArray;
+    httpRequest.onreadystatechange = function () {
+        if (httpRequest.readyState == 4 && httpRequest.status == 200) {
+            console.log({
+                "type": "log",
+                "msg": "imgtPostForSegmenter: Loading results from Imgt Form ",
+                "priority": 1
+            });
+            imgtArray = processImgtContents(httpRequest.responseText, "pre");
+            var logmsg = "IMGT: processing clone idx(";
+            var cloneIdx;
+            for (var i = 0; i < imgtArray.length; i++) {
+                //merge clone from segmenter and imgtinfo
+                //loop through the model maintained selection list
+                cloneIdx= m.orderedSelectedClones[i];
+                logmsg += cloneIdx + ",";
+                //remove unneeded info coz relative to # of selected items
+                delete  imgtArray[i]["Sequence number"];
+                m.clones[cloneIdx].seg.imgt = imgtArray[i];
+                m.clones[cloneIdx].seg.imgt2display = computeStartStop(imgtArray[i],m.clones[cloneIdx].getSequence());
+                //toggle save in analysis file
+                m.clones[cloneIdx].segEdited = true;
+            }
+            m.updateElemStyle(m.getSelected());
+
+            var imgt4segButton= document.getElementById("toIMGTSeg");
+            if (typeof imgt4segButton != "undefined"){
+                imgt4segButton.removeAttribute("style");
+                imgt4segButton.textContent=imgt4segButton.textContent.replace(" (loading)","");
+            }
+            console.log({
+                "type": "log",
+                "msg": logmsg+ ")" + httpRequest.statusText
+            });
+        }
+    };
+    httpRequest.onerror = function () {
+        console.log({
+            "type": "flash",
+            "msg": "imgtPostForSegmenter: error while requesting IMGT website: " + httpRequest.statusText,
+            "priority": 2
+        });
+        var imgt4segButton= document.getElementById("toIMGTSeg");
+        if (typeof imgt4segButton != "undefined"){
+            imgt4segButton.removeAttribute("style");
+            imgt4segButton.textContent=imgt4segButton.textContent.replace(" (loading)","");
+        }
+    };
+
+    //test with a local file
+    //httpRequest.open('GET', '/vidjil/data/vquest.data');
+    httpRequest.open(form.method, form.action, true);
+    httpRequest.send(new FormData(form));
+}
+
 
 function igBlastPost(data, system) {
 
@@ -173,7 +294,6 @@ function arrestPost(data, system) {
     form.submit();
 
 }
-
 
 
 //parametre blast par defaut

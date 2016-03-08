@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <title>QUnit - The Vidjil Project</title>
 
-    <link rel="stylesheet" href="../../css/qunit-1.15.0.css">
+    <link rel="stylesheet" href="../../css/qunit-1.21.0.css">
     <style>
         .flash_container, .log_container, .popup_container, .data-container, .info-container, .dataMenu, .tagSelector{
             display:none !important;
@@ -49,8 +49,11 @@
     <script type="text/javascript" src='../../js/crossDomain.js' data-cover></script>
     <script type="text/javascript" src='../../js/pdf.js'></script>
     <script type="text/javascript" src='../../js/database.js' data-cover></script>
+    <script type="text/javascript" src='../../js/tools.js' data-cover></script>
 
     <script type="text/javascript" src="./testFiles/data_test.js"></script>
+    <!-- needed to load form with jQuery -->
+    <script>QUnit.config.autostart=false;</script>
 </head>
 <body>
 
@@ -66,9 +69,9 @@
 
     <div id="qunit"></div>
     <div id="qunit-fixture"></div>
-    <script src="../../js/lib/qunit-1.14.0.js"></script>
-    <script type="text/javascript" src="../../js/lib/qunit-tap.js"></script>
-    <script src="../../js/lib/blanket.min.js"></script>
+    <script src="../../js/lib/qunit-1.21.0.js"></script>
+    <script type="text/javascript" src="../../js/lib/qunit-tap.1.5.0.js"></script>
+    <script src="../../js/lib/blanket.1.1.9.js"></script>
     <script>
 
 
@@ -97,5 +100,6 @@
     <script src="./testFiles/com_test.js"></script>
     <script src="./testFiles/list_test.js"></script>
     <script src="./testFiles/segmenter_test.js"></script>
+    <script src="./testFiles/tools_test.js"></script>
 </body>
 </html>
