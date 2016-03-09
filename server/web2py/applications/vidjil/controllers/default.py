@@ -231,7 +231,7 @@ def get_data():
                 data["info"] = db.patient[row.id].info
 
         if (sample_set.sample_type == "run") :
-            for row in db( db.run.sample_set_id == sample_set_id ).select() :
+            for row in db( db.run.sample_set_id == request.vars["sample_set_id"] ).select() :
                 run_name = db.run[row.id].name
                 data["dataFileName"] = run_name + " (" + config_name + ")"
                 data["info"] = db.patient[row.id].info
@@ -239,46 +239,53 @@ def get_data():
         data["patient_name"] = patient_name
         data["config_name"] = config_name
         
-        
-        
-        
         data["samples"]["info"] = []
         data["samples"]["timestamp"] = []
-        data["samples"]["db_key"] = []
-        data["samples"]["ids"] = []
+        data["samples"]["sequence_file_id"] = []
+        data["samples"]["results_file_id"] = []
+        data["samples"]["config_id"] = []
+        data["samples"]["names"] = []
         for i in range(len(data["samples"]["original_names"])) :
             data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
             data["samples"]["info"].append('')
             data["samples"]["timestamp"].append('')
-            data["samples"]["db_key"].append('')
-            data["samples"]["ids"].append('')
+            data["samples"]["sequence_file_id"].append('')
+            data["samples"]["results_file_id"].append('')
+            data["samples"]["config_id"].append('')
+            data["samples"]["names"].append('')
 
         ## récupération des infos stockées sur la base de données
-        query = db( ( db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
+        query = db(  ( db.sample_set.id == request.vars["sample_set_id"] )
+                   & ( db.sample_set.id == db.sample_set_membership.sample_set_id )
                    & ( db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                    & ( db.results_file.sequence_file_id == db.sequence_file.id )
-                   & ( db.patient.id == request.vars["patient"] )
                    & ( db.results_file.config_id == request.vars["config"]  )
-                   ).select( orderby=db.sequence_file.id|db.results_file.run_date, groupby=db.sequence_file.id )
+                   ).select(db.sequence_file.ALL,db.results_file.ALL, db.sample_set.id, orderby=db.sequence_file.id|~db.results_file.run_date)
 
-        for row in query :
-            filename = row.sequence_file.filename
-            for i in range(len(data["samples"]["original_names"])) :
-                data_file = data["samples"]["original_names"][i]
-                if row.sequence_file.data_file == data_file :
-                    data["samples"]["ids"][i] = row.sequence_file.id
-                    data["samples"]["original_names"][i] = filename
-                    data["samples"]["timestamp"][i] = str(row.sequence_file.sampling_date)
-                    data["samples"]["info"][i] = row.sequence_file.info
-                    data["samples"]["commandline"][i] = command
-                    data["samples"]["db_key"][i] = row.sequence_file.id
+        query2 = []
+        sequence_file_id = 0
+        for row in query : 
+            if row.sequence_file.id != sequence_file_id :
+                query2.append(row)
+                sequence_file_id = row.sequence_file.id
+        
+        i=0
+        for row in query2 :
+            data["samples"]["timestamp"][i] = str(row.sequence_file.sampling_date)
+            data["samples"]["info"][i] = row.sequence_file.info
+            data["samples"]["commandline"][i] = command
+            data["samples"]["sequence_file_id"][i] = row.sequence_file.id
+            data["samples"]["results_file_id"][i] = row.results_file.id
+            data["samples"]["config_id"][i] = request.vars["config"]
+            data["samples"]["names"][i] = row.sequence_file.filename.split('.')[0]
+            i+=1
                 
-        log.debug("get_data (%s) c%s -> %s" % (request.vars["patient"], request.vars["config"], fused_file))
+        log.debug("get_data (%s) c%s -> %s" % (request.vars["sample_set_id"], request.vars["config"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
     else :
         res = {"success" : "false",
-               "message" : "get_data (%s) c%s : %s " % (request.vars["patient"], request.vars["config"], error)}
+               "message" : "get_data (%s) c%s : %s " % (request.vars["sample_set_id"], request.vars["config"], error)}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
