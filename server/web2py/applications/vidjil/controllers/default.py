@@ -155,6 +155,18 @@ def run_request():
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+def run_contamination():
+    task = scheduler.queue_task('compute_contamination', pvars=dict(sequence_file_id=request.vars["sequence_file_id"],
+                                                                    results_file_id=request.vars["results_file_id"],
+                                                                    config_id=request.vars["config_id"]),
+             repeats = 1, timeout = defs.TASK_TIMEOUT,immediate=True)
+    
+    res = {"success" : "true",
+           "processId" : task.id}
+    log.error(res)
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+
 
 def checkProcess():
     task = db.scheduler_task[request.vars["processId"]]
