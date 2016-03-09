@@ -21,7 +21,7 @@ class TestMultilocus < BrowserTest
 
 
   def test_00_info_reads
-    assert ($b.div(:id => 'info_total').text.include? '786 861'), 'Incorrect number of reads'
+    assert ($b.div(:id => 'info_segmented').title.include? '786 861'), 'Incorrect number of reads'
   end
 
   def test_00_default_point_name
@@ -41,7 +41,7 @@ class TestMultilocus < BrowserTest
 
   def test_00_info_point
     assert (not $b.div(:id => 'info_timepoint').present?), "Info timepoint should not be present"
-    $b.div(:id => 'info_point').span(:text => 'Info').click
+    $b.div(:id => 'info').div(:class => 'sample_details').span(:text => 'i').click
     assert ($b.div(:id => 'info_timepoint').visible?), "After clicking info timepoint should be visible"
 
     table = $b.div(:id => 'info_timepoint').table
