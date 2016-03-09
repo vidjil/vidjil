@@ -86,6 +86,47 @@ class VidjilAuth(Auth):
         '''
         return self.get_permission('admin', 'patient', patient_id, user)\
             or self.is_admin(user)
+        
+    def can_modify_run(self, run_id, user = None):
+        '''
+        Returns True if the current user can administrate
+        the run whose ID is run_id
+
+        If the user is None, the current user is taken into account
+        '''
+        return self.get_permission('admin', 'run', run_id, user)\
+            or self.is_admin(user)
+        
+    def can_modify_sample_set(self, sample_set_id, user = None) :
+        sample_set = db.sample_set[sample_set_id]
+        
+        perm = self.get_permission('admin', 'sample_set', sample_set_id, user)\
+            or self.is_admin(user)
+
+        if (sample_set.sample_type == "patient") :
+            for row in db( db.patient.sample_set_id == sample_set_id ).select() :
+                if self.can_modify_patient(row.id, user):
+                    perm = True;
+
+        if (sample_set.sample_type == "run") :
+            for row in db( db.run.sample_set_id == sample_set_id ).select() :
+                if self.can_modify_run(row.id, user):
+                    perm = True;
+
+        return perm
+    
+    def can_modify_file(self, file_id, user = None) :
+        
+        if self.is_admin(user) :
+            return True
+        
+        sample_set_list = db(db.sample_set_membership.sequence_file_id == file_id).select(db.sample_set_membership.sample_set_id)
+        
+        for row in sample_set_list : 
+            if self.can_modify_sample_set(row.sample_set_id) :
+                return True
+            
+        return False
 
     def can_modify_config(self, config_id, user = None):
         '''
@@ -115,14 +156,13 @@ class VidjilAuth(Auth):
         return self.get_permission('run', 'results_file', user=user)\
             or self.is_admin(user)
 
-    def can_upload_file(self, patient_id = 0, user = None):
+    def can_upload_file(self, user = None):
         '''
-        Returns True iff the current user can upload a sequence file to
-        the patient whose ID is given in parameter.
+        Returns True iff the current user can upload a sequence file
 
         If the user is None, the current user is taken into account
         '''
-        return self.get_permission('upload', 'sequence_file', patient_id, user)\
+        return self.get_permission('upload', 'sequence_file', user=user)\
             or self.is_admin(user)
 
     def can_use_config(self, config_id, user = None):
@@ -146,6 +186,35 @@ class VidjilAuth(Auth):
         return self.get_permission('read', 'patient', patient_id ,user)\
             or self.can_modify_patient(patient_id, user)\
             or self.is_admin(user)
+            
+    def can_view_run(self, run_id, user = None):
+        '''
+        Returns True iff the current user can view
+        the patient whose ID is patient_id
+
+        If the user is None, the current user is taken into account
+        '''
+        return self.get_permission('read', 'run', run_id ,user)\
+            or self.can_modify_run(run_id, user)\
+            or self.is_admin(user)
+            
+    def can_view_sample_set(self, sample_set_id, user = None) :
+        sample_set = db.sample_set[sample_set_id]
+        
+        perm = self.get_permission('admin', 'sample_set', sample_set_id, user)\
+            or self.is_admin(user)
+
+        if (sample_set.sample_type == "patient") :
+            for row in db( db.patient.sample_set_id == sample_set_id ).select() :
+                if self.can_view_patient(row.id, user):
+                    perm = True;
+
+        if (sample_set.sample_type == "run") :
+            for row in db( db.run.sample_set_id == sample_set_id ).select() :
+                if self.can_view_run(row.id, user):
+                    perm = True;
+
+        return perm
         
     def can_view_patient_info(self, patient_id, user = None):
         '''

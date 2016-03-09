@@ -1,4 +1,5 @@
 # coding: utf8
+import json
 import os
 import defs
 import re
@@ -25,6 +26,69 @@ def assert_scheduler_task_does_not_exist(args):
 
     return None
 
+def compute_contamination(sequence_file_id, results_file_id, config_id):
+    result = []
+    for i in range(0, len(sequence_file_id)) :
+        result.append({})
+        result[i]["total_clones"]=0
+        result[i]["total_reads"]=0
+        result[i]["sample"]={}
+        
+        #open sample
+        with open(defs.DIR_RESULTS+db.results_file[results_file_id[i]].data_file, "r") as json_data:
+            d = json.load(json_data)
+            list1 = {}
+            total_reads1=d["reads"]["segmented"][0]
+            for clone in d["clones"]:
+                list1[clone["id"]] = clone["reads"][0]
+            json_data.close()
+        
+        #iterate trough others run's samples
+        sample_set_run = db( (db.sample_set_membership.sequence_file_id == sequence_file_id[i])
+                           & (db.sample_set_membership.sample_set_id == db.sample_set.id)
+                           & (db.sample_set.sample_type == "run") ).select().first()
+        
+        if sample_set_run != None :
+            sample_set_id = sample_set_run.sample_set.id
+            query = db(  ( db.sample_set.id == sample_set_id )
+                       & ( db.sample_set.id == db.sample_set_membership.sample_set_id )
+                       & ( db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+                       & ( db.sequence_file.id != sequence_file_id[i])
+                       & ( db.results_file.sequence_file_id == db.sequence_file.id )
+                       & ( db.results_file.config_id == config_id[i]  )
+                       ).select(db.sequence_file.ALL,db.results_file.ALL, db.sample_set.id, orderby=db.sequence_file.id|~db.results_file.run_date)
+
+            query2 = []
+            sfi = 0
+            for row in query : 
+                if row.sequence_file.id != sfi :
+                    query2.append(row)
+                    sfi = row.sequence_file.id
+            
+            for row in query2 :
+                print defs.DIR_RESULTS+row.results_file.data_file
+                result[i]["sample"][row.results_file.id] = {}
+                result[i]["sample"][row.results_file.id]["clones"] = 0
+                result[i]["sample"][row.results_file.id]["reads"] = 0
+                with open(defs.DIR_RESULTS+row.results_file.data_file, "r") as json_data2:
+                    try:
+                        d = json.load(json_data2)
+                        total_reads2=d["reads"]["segmented"][0]
+                        for clone in d["clones"]:
+                            if clone["id"] in list1 :
+                                if clone["reads"][0] > 10*list1[clone["id"]] :
+                                    result[i]["total_clones"] += 1
+                                    result[i]["total_reads"] += list1[clone["id"]]
+                                    result[i]["sample"][row.results_file.id]["clones"] += 1
+                                    result[i]["sample"][row.results_file.id]["reads"] += list1[clone["id"]]
+                            
+                    except ValueError, e:
+                        print 'invalid_json'
+                    json_data2.close()
+
+
+    return result
+    
 
 def schedule_run(id_sequence, id_sample_set, id_config, grep_reads=None):
     from subprocess import Popen, PIPE, STDOUT, os
@@ -526,5 +590,6 @@ def extract_total_reads(report):
     
 from gluon.scheduler import Scheduler
 scheduler = Scheduler(db, dict(vidjil=run_vidjil,
+                               compute_contamination=compute_contamination,
                                mixcr=run_mixcr,
                                none=run_copy))

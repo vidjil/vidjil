@@ -2,29 +2,24 @@
 {{import vidjil_utils}}
 
 
-
 <div>
 
+    <h3>
+    <span class="button" onclick="db.call('sample_set/index', {'next': '1', 'id' :'{{=request.vars['id']}}', 'config_id' : '{{=request.vars['config_id']}}'})">< </span>
+        {{=info["name"]}}
+    <span class="button" onclick="db.call('sample_set/index', {'next': '-1', 'id' :'{{=request.vars['id']}}', 'config_id' : '{{=request.vars['config_id']}}'})"> ></span>
+    </h3>
 
-  <span class="button" onclick="db.call('patient/info', {'next': '1', 'id' :'{{=request.vars['id']}}', 'config_id' : '{{=request.vars['config_id']}}'})">prev</span>
-  <span class="button" onclick="db.call('patient/info', {'next': '-1', 'id' :'{{=request.vars['id']}}', 'config_id' : '{{=request.vars['config_id']}}'})">next</span>
-
-
-
-    <h3>{{=vidjil_utils.anon_names(request.vars['id'], patient.first_name, patient.last_name)}}</h3>
-
+        
+        
     <div class="db_block">
 
-        <div class="db_block_left">
-	  {{=patient.id_label}} &nbsp; {{=birth}}
-        </div>
-
-
-        <div class="db_block_right">
-        {{if auth.can_process_file() :}}
+        <div class="db_block_left"> {{=info["label"]}} </div>
+        
+        <div class="db_block_right"> {{if auth.can_process_file() :}}
             config
             <span>
-                <select id="choose_config" name="config" onchange="db.call('patient/info', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
+                <select id="choose_config" name="config" onchange="db.call('sample_set/index', {'id' :'{{=request.vars['id']}}', 'config_id' : this.value})">
                     <option value="-1" {{if not config :}}selected{{pass}}> --- </option>
                     {{for row in db((auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) ).select(orderby=~db.config.name) :}}
                         <option value="{{=row.id }}" {{if row.id==config_id:}}selected{{pass}} title="{{=row.info}}" >
@@ -33,19 +28,25 @@
                     {{pass}}
                 </select>
             </span>
-        {{pass}}
-        </div>
+        {{pass}}</div>
+        
     </div>
 
 </div>
 
+    
+    
+    
+    
+    
+    
+    
 <div id="db_table_container">
     <table class="db_table" id="table">
         <thead>
             <tr><td class="column_200"> file name </td>
                 <td class="column_100"> sampling date </td>
                 <td> info </td>
-                <td> pcr </td>
                 <td> size </td>
 		{{if auth.is_admin():}} <td> uploader </td> {{pass}}
                 <td class="column5"> </td>
@@ -62,6 +63,8 @@
 
             </tr>
         </thead>
+        
+        
         <tbody>
             {{for row in query :}}
                 {{if row.results_file.scheduler_task_id is None or db.scheduler_task[row.results_file.scheduler_task_id ] is None:}}
@@ -76,18 +79,17 @@
                     </td>
                     <td> {{if row.sequence_file.sampling_date <> None:}} {{=row.sequence_file.sampling_date}} {{pass}}</td>
                     <td> {{=row.sequence_file.info}} </td>
-                    <td> {{=row.sequence_file.pcr}} </td>
                     <td {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}} {{pass}} >
                         {{=vidjil_utils.format_size(row.sequence_file.size_file)}} </td>
 		    {{if auth.is_admin():}}
 		    <td> {{=row.sequence_file.provider}} {{if row.sequence_file.provider:}}{{=row.sequence_file.provider.last_name}}{{pass}}</td>
 		    {{pass}}
 
-                    {{if (auth.can_modify_patient(request.vars["id"]) ):}}
-                        <td class="pointer" onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > e </td>
+                    {{if can_modify:}}
+                        <td class="pointer" onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}'} )" > e </td>
                         <td> <a {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}
                                 {{else:}} href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" {{pass}}  >dl</a></td>
-                        <td class="pointer" onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id}}', 'patient_id' :'{{=request.vars['id']}}'} )" > X </td>
+                        <td class="pointer" onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id }}', 'redirect_sample_set_id' : '{{=request.vars["id"]}}'} )" > X </td>
                     {{else:}}<td></td><td></td><td></td>{{pass}}
 
 
@@ -105,7 +107,7 @@
                                type="application/octet-stream">dl</a>
                         {{pass}}
                      </td>
-                    {{if (auth.can_modify_patient(request.vars["id"]) and auth.can_process_file()):}}
+                    {{if can_modify and auth.can_process_file():}}
                      <td class="pointer" onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}'})" > X </td>
                     {{else:}}
                      <td></td>
@@ -116,7 +118,7 @@
                    <td>
                    {{if row.sequence_file.data_file != None and ( row.results_file.id == None or ( status != "RUNNING" and status != "QUEUED" and status != "ASSIGNED") ):}}
                        {{if auth.can_process_file() and auth.can_use_config(config_id) :}}
-                           <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'patient_id' : {{=patient.id}}, 'config_id' : {{=config_id}} } )"> run >> </span>
+                           <span class="button" onclick="db.call('default/run_request', { 'sequence_file_id' : '{{=row.sequence_file.id}}', 'sample_set_id' : {{=request.vars["id"]}}, 'config_id' : {{=config_id}} } )"> run >> </span>
     sample_set_id = fake_sample_set_id
                        {{pass}}
                    {{pass}}
@@ -128,11 +130,16 @@
     </table>
     <table class="db_table" id="db_fixed_header"></table>
 
+    
+    
+    
+    
+    
    <br /><br />
-   {{=patient.info}}
-   <span class="button" onclick="db.call('patient/edit', { 'id' : '{{=request.vars["id"]}}' } )" > (edit patient data) </span>
+   {{=info["info"]}}
+   <span class="button" onclick="db.call('sample_set/edit', { 'id' : '{{=request.vars["id"]}}' } )" > (edit) </span>
 
-        {{if auth.can_upload_file(request.vars["id"]): }}
+        {{if can_upload: }}
         {{if not auth.can_process_file() :}}
   <br /> Once your data are uploaded, please
   <a href="mailto:contact@vidjil.org?Subject=%5Bvidjil%5D%20New%20sequences&Body=%0AHi%2C%0A%0AI%20uploaded%20some%20sequences%20on%20the%20rbx.vidjil.org%20server.%0ACould%20you%20run%20Vidjil%20on%20these%20data%20%3F%0A%0A">request an analysis</a>.
@@ -158,26 +165,26 @@
 <div class="db_block">
 
     <div class="db_block_left">
-        {{if auth.can_upload_file(request.vars["id"]): }}
+        {{if can_upload: }}
         <span class="button2" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> + add file </span>
 
         {{pass}}
-        <span class="button2" onclick="db.call('patient/custom', {'patient_id': '{{=request.vars["id"]}}', 'filter': ''} )">compare samples for this patient</span>
+        <span class="button2" onclick="db.call('sample_set/custom', {'id': '{{=request.vars['id']}}', 'filter': ''} )">compare samples for this patient</span>
     </div>
 
 
     <div class="db_block_right">
         see the result:
-        {{for row in db( (db.fused_file.sample_set_id == db.patient[request.vars["id"]].sample_set_id ) & 
+        {{for row in db( (db.fused_file.sample_set_id == request.vars["id"]) & 
                          (auth.accessible_query('read', db.config) | auth.accessible_query('admin', db.config) ) &
                          (db.config.id ==db.fused_file.config_id)
                        ).select() :}}
-            {{filename = vidjil_utils.anon_ids(request.vars["id"]) + " (" + row.config.name + ")"}}
+        
             {{if row.fused_file.fused_file is not None :}}
-                <a class="button2" href="index.html?patient={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
+                <a class="button2" href="index.html?sample_set_id={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
                       onclick="event.preventDefault()
                                if( event.which == 2 ) { window.open(this.href) }
-                               else { db.load_data( { 'patient' : '{{=request.vars["id"]}}' , 'config' : {{=row.config.id}} }, '{{=filename}}' ) }" >
+                               else { db.load_data( { 'sample_set_id' : '{{=request.vars["id"]}}' , 'config' : {{=row.config.id}} }, '{{=info["filename"]}}' ) }" >
             {{pass}}
                 {{=row.config.name}} </a>
         {{pass}}

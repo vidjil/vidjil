@@ -131,22 +131,19 @@ def run_request():
     if not auth.can_process_file():
         error += "permission needed"
 
-    # TODO pass sample_set_id directly
-    id_sample_set = db.patient[request.vars["patient_id"]].sample_set_id
+    id_sample_set = request.vars["sample_set_id"]
 
     if "grep_reads" in request.vars:
         grep_reads = request.vars["grep_reads"]
     else:
         grep_reads = None
 
-    #TODO change this to sample_set
-    id_patient = request.vars["patient_id"]
-    if not auth.can_modify_patient(id_patient) :
-        error += "you do not have permission to launch process for this sample_set ("+str(id_patient)+"), "
+    if not auth.can_modify_sample_set(id_sample_set) :
+        error += "you do not have permission to launch process for this sample_set ("+str(id_sample_set)+"), "
 
     if id_config:
-      if not auth.can_use_config(id_config) :
-        error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
+        if not auth.can_use_config(id_config) :
+            error += "you do not have permission to launch process for this config ("+str(id_config)+"), "
 
     if error == "" :
         res = schedule_run(request.vars["sequence_file_id"], id_sample_set, id_config, grep_reads)
@@ -158,18 +155,48 @@ def run_request():
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
+def run_contamination():
+    task = scheduler.queue_task('compute_contamination', pvars=dict(sequence_file_id=request.vars["sequence_file_id"],
+                                                                    results_file_id=request.vars["results_file_id"],
+                                                                    config_id=request.vars["config_id"]),
+             repeats = 1, timeout = defs.TASK_TIMEOUT,immediate=True)
+    
+    res = {"success" : "true",
+           "processId" : task.id}
+    log.error(res)
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
+
+
+def checkProcess():
+    task = db.scheduler_task[request.vars["processId"]]
+    
+    if task.status == "COMPLETED" :
+        run = db( db.scheduler_run.task_id == task.id ).select()[0]
+    
+        res = {"success" : "true",
+               "status" : task.status,
+               "data" : run.run_result,
+               "processId" : task.id}
+    else :
+        res = {"success" : "true",
+               "status" : task.status,
+               "processId" : task.id}
+        
+    log.error(res)
+    return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
 
 #########################################################################
 ## return .data file
-# need patient, config
-# need patient admin or read permission
+# need sample_set, config
+# need sample_set admin or read permission
 def get_data():
     from subprocess import Popen, PIPE, STDOUT
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
                             vars=dict(_next=URL('default', 'get_data', scheme=True, host=True,
-                                                vars=dict(patient = request.vars["patient"],
+                                                vars=dict(sample_set_id = request.vars["sample_set_id"],
                                                           config =request.vars["config"]))
                                       )
                             )}
@@ -177,15 +204,18 @@ def get_data():
 
     error = ""
 
-    if not "patient" in request.vars :
-        error += "id patient file needed, "
+    if not "sample_set_id" in request.vars :
+        error += "id sampleset file needed, "
+    else : 
+        if not auth.can_view_sample_set(request.vars["sample_set_id"]):
+            error += "you do not have permission to consult this sample_set ("+str(request.vars["sample_set_id"])+")"
     if not "config" in request.vars:
         error += "id config needed, "
-    if not auth.can_view_patient(request.vars["patient"]):
-        error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
 
-    query = db( ( db.fused_file.sample_set_id == db.patient.sample_set_id)
-               & ( db.patient.id == request.vars["patient"] )
+
+    sample_set = db.sample_set[request.vars["sample_set_id"]]
+    
+    query = db( ( db.fused_file.sample_set_id == request.vars["sample_set_id"])
                & ( db.fused_file.config_id == request.vars["config"] )
                ).select(db.fused_file.ALL)
     for row in query :
@@ -201,53 +231,80 @@ def get_data():
         data = gluon.contrib.simplejson.loads(f.read())
         f.close()
         
-        patient_name = vidjil_utils.anon_ids(request.vars["patient"])
+        patient_name = ""
+        run_name = ""
         config_name = db.config[request.vars["config"]].name
         command = db.config[request.vars["config"]].command
         
-        data["patient_id"] = request.vars["patient"]
-        data["patient_name"] = patient_name
-        data["config_name"] = config_name
-        data["dataFileName"] = patient_name + " (" + config_name + ")"
-        data["info"] = db.patient(request.vars["patient"]).info
+        if (sample_set.sample_type == "patient") :
+            for row in db( db.patient.sample_set_id == request.vars["sample_set_id"] ).select() :
+                patient_name = vidjil_utils.anon_ids(row.id)
+                data["dataFileName"] = patient_name + " (" + config_name + ")"
+                data["info"] = db.patient[row.id].info
+                data["patient_id"] = row.id
+                data["patient_name"] = patient_name
+
+        if (sample_set.sample_type == "run") :
+            for row in db( db.run.sample_set_id == request.vars["sample_set_id"] ).select() :
+                run_name = db.run[row.id].name
+                data["dataFileName"] = run_name + " (" + config_name + ")"
+                data["info"] = db.run[row.id].info
+                data["run_id"] = row.id
+                data["run_name"] = run_name
         
+        data["config_name"] = config_name
         data["samples"]["info"] = []
         data["samples"]["timestamp"] = []
+        data["samples"]["sequence_file_id"] = []
+        data["samples"]["results_file_id"] = []
+        data["samples"]["config_id"] = []
+        data["samples"]["names"] = []
         data["samples"]["db_key"] = []
         data["samples"]["ids"] = []
         for i in range(len(data["samples"]["original_names"])) :
             data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
             data["samples"]["info"].append('')
             data["samples"]["timestamp"].append('')
+            data["samples"]["sequence_file_id"].append('')
+            data["samples"]["results_file_id"].append('')
+            data["samples"]["config_id"].append('')
+            data["samples"]["names"].append('')
             data["samples"]["db_key"].append('')
             data["samples"]["ids"].append('')
 
         ## récupération des infos stockées sur la base de données
-        query = db( ( db.patient.sample_set_id == db.sample_set_membership.sample_set_id)
+        query = db(  ( db.sample_set.id == request.vars["sample_set_id"] )
+                   & ( db.sample_set.id == db.sample_set_membership.sample_set_id )
                    & ( db.sequence_file.id == db.sample_set_membership.sequence_file_id)
                    & ( db.results_file.sequence_file_id == db.sequence_file.id )
-                   & ( db.patient.id == request.vars["patient"] )
                    & ( db.results_file.config_id == request.vars["config"]  )
-                   ).select( orderby=db.sequence_file.id|db.results_file.run_date, groupby=db.sequence_file.id )
+                   ).select(db.sequence_file.ALL,db.results_file.ALL, db.sample_set.id, orderby=db.sequence_file.id|~db.results_file.run_date)
 
-        for row in query :
-            filename = row.sequence_file.filename
-            for i in range(len(data["samples"]["original_names"])) :
-                data_file = data["samples"]["original_names"][i]
-                if row.sequence_file.data_file == data_file :
-                    data["samples"]["ids"][i] = row.sequence_file.id
-                    data["samples"]["original_names"][i] = filename
-                    data["samples"]["timestamp"][i] = str(row.sequence_file.sampling_date)
-                    data["samples"]["info"][i] = row.sequence_file.info
-                    data["samples"]["commandline"][i] = command
-                    data["samples"]["db_key"][i] = row.sequence_file.id
+        query2 = []
+        sequence_file_id = 0
+        for row in query : 
+            if row.sequence_file.id != sequence_file_id :
+                query2.append(row)
+                sequence_file_id = row.sequence_file.id
+        
+        i=0
+        for row in query2 :
+            data["samples"]["timestamp"][i] = str(row.sequence_file.sampling_date)
+            data["samples"]["info"][i] = row.sequence_file.info
+            data["samples"]["commandline"][i] = command
+            data["samples"]["sequence_file_id"][i] = row.sequence_file.id
+            data["samples"]["results_file_id"][i] = row.results_file.id
+            data["samples"]["config_id"][i] = request.vars["config"]
+            data["samples"]["names"][i] = row.sequence_file.filename.split('.')[0]
+            data["samples"]["ids"][i] = row.sequence_file.id
+            i+=1
                 
-        log.debug("get_data (%s) c%s -> %s" % (request.vars["patient"], request.vars["config"], fused_file))
+        log.debug("get_data (%s) c%s -> %s" % (request.vars["sample_set_id"], request.vars["config"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
     else :
         res = {"success" : "false",
-               "message" : "get_data (%s) c%s : %s " % (request.vars["patient"], request.vars["config"], error)}
+               "message" : "get_data (%s) c%s : %s " % (request.vars["sample_set_id"], request.vars["config"], error)}
         log.error(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     
@@ -319,10 +376,10 @@ def get_custom_data():
 def get_analysis():
     error = ""
 
-    if not "patient" in request.vars :
-        error += "id patient file needed, "
-    if not auth.can_view_patient(request.vars["patient"]):
-        error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
+    if not "sample_set_id" in request.vars :
+        error += "id sample_set file needed, "
+    if not auth.can_view_sample_set(request.vars["sample_set_id"]):
+        error += "you do not have permission to consult this sample_set ("+str(request.vars["sample_set_id"])+")"
 
     if "custom" in request.vars :
         return gluon.contrib.simplejson.dumps(get_default_analysis(), separators=(',',':'))
@@ -330,8 +387,8 @@ def get_analysis():
     if error == "" :
         
         ## récupération des infos se trouvant dans le fichier .analysis
-        analysis_data = get_analysis_data(request.vars['patient'])
-        analysis_data["info_patient"] = db.patient[request.vars["patient"]].info
+        analysis_data = get_analysis_data(request.vars['sample_set_id'])
+        #analysis_data["info_patient"] = db.patient[request.vars["patient"]].info
         return gluon.contrib.simplejson.dumps(analysis_data, separators=(',',':'))
 
     else :
@@ -348,25 +405,29 @@ def get_analysis():
 def save_analysis():
     error = ""
 
-    if not "patient" in request.vars :
-        error += "id patient file needed, "
-    if not auth.can_modify_patient(request.vars['patient']) :
-        error += "you do not have permission to save changes on this patient"
+    if not "sample_set_id" in request.vars :
+        error += "sample set id needed, "
+    if not auth.can_modify_sample_set(request.vars['sample_set_id']) :
+        error += "you do not have permission to save changes on this sample set"
 
     if error == "" :
         f = request.vars['fileToUpload']
         ts = time.time()
         
-        sample_set_id = db.patient[request.vars['patient']].sample_set_id
+        sample_set_id = request.vars['sample_set_id']
         
         analysis_id = db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
-                                              patient_id = request.vars['patient'],
                                               sample_set_id = sample_set_id,
                                               analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                                               )
-
-        db(db.patient.id == request.vars['patient']).update(info = request.vars['patient_info']);
-
+        sample_type = db.sample_set[sample_set_id].sample_type
+        if (sample_type == "patient") :
+            db(db.patient.sample_set_id == sample_set_id).update(info = request.vars['info']);
+        
+        if (sample_type == "run") :
+            db(db.run.sample_set_id == sample_set_id).update(info = request.vars['info']);
+        
+        
         ids = request.vars['samples_id'].split(',')
         infos = request.vars['samples_info'].split(',')
 
@@ -374,10 +435,10 @@ def save_analysis():
         for i in range(0, len(ids)):
             db(db.sequence_file.id == int(ids[i])).update(info = infos[i])
 
-        patient_name = db.patient[request.vars['patient']].first_name + " " + db.patient[request.vars['patient']].last_name
+        #patient_name = db.patient[request.vars['patient']].first_name + " " + db.patient[request.vars['patient']].last_name
 
         res = {"success" : "true",
-               "message" : "%s (%s): analysis saved" % (patient_name, request.vars['patient'])}
+               "message" : "(%s): analysis saved" % (sample_set_id)}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :

@@ -101,7 +101,97 @@ Database.prototype = {
             console.log({"type": "popup", "msg": msg})
         }
     },
+
+    get_contamination : function() {
+        var self=this;
+        
+        self.callProcess('default/run_contamination', 
+                        {"sequence_file_id":self.m.samples.sequence_file_id,
+                         "config_id":self.m.samples.config_id,
+                         "results_file_id":self.m.samples.results_file_id,
+                     }, function(a){
+                         self.m.contamination=jQuery.parseJSON(a);
+                         report.reportcontamination()
+                     })
+    },
     
+     /**
+      * request a side process to the server
+      * check if the process is done at regular interval and trigger callback
+      * */
+     callProcess : function (page, args, callback){
+         var self=this;
+         
+         var arg = "";
+         if (typeof args != "undefined" && Object.keys(args).length) 
+             var arg = this.argsToStr(args)
+         
+         var url = self.db_address + page + "?" + arg
+         if (page.substr(0,4).toLowerCase() == "http") {
+             url = page + arg
+         }
+         
+         $.ajax({
+             type: "POST",
+             crossDomain: true,
+             context: self,
+             url: url,
+             contentType: 'text/plain',
+             timeout: DB_TIMEOUT_CALL,
+             xhrFields: {withCredentials: true},
+             success: function (result) {
+                 result = jQuery.parseJSON(result)
+                 setTimeout(function(){ self.waitProcess(result.processId, 5000, callback)}, 5000);
+             }, 
+             error: function (request, status, error) {
+                 if (status === "timeout") {
+                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                 } else {
+                     self.check_cert()
+                 }
+                 self.warn("callProcess: " + status + " - " + url.replace(self.db_address, '') + "?" + this.argsToStr(args))
+             }
+         });
+     },
+     
+     /**
+     * check if a server process is done(recursive)
+     * */
+     waitProcess: function (processId, interval, callback){
+         console.log("... " +processId)
+         var self=this;
+         var url = self.db_address + "default/checkProcess?processId="+processId;
+         
+         $.ajax({
+             type: "POST",
+             crossDomain: true,
+             context: self,
+             url: url,
+             contentType: 'text/plain',
+             timeout: DB_TIMEOUT_CALL,
+             xhrFields: {withCredentials: true},
+             success: function (result) {
+                 result = jQuery.parseJSON(result)
+                 if (result.status == "COMPLETED"){
+                     callback(result.data);
+                 }else if(result.status == "FAILED"){
+                     console.log({"type": "flash", "msg": "process failed", "priority": 1});
+                 }else{
+                     setTimeout(function(){ self.waitProcess(processId, interval, callback); }, interval); 
+                 }
+                 
+             }, 
+             error: function (request, status, error) {
+                 if (status === "timeout") {
+                     console.log({"type": "flash", "default" : "database_timeout", "priority": 2});
+                 } else {
+                     self.check_cert()
+                 }
+                 self.warn("waitProcess: " + status )
+             }
+         });
+     },
+
     /** 
      * call a server page
      * @param {string} page - name of the server page to call
@@ -467,7 +557,7 @@ Database.prototype = {
         }
         
         var url = document.documentURI.split('?')[0]
-        var new_location = url+"?patient="+args.patient+"&config="+args.config
+        var new_location = url+"?sample_set_id="+args.sample_set_id+"&config="+args.config
         window.history.pushState('plop', 'plop', new_location);
         
         $.ajax({
@@ -580,7 +670,7 @@ Database.prototype = {
             });
             var fd = new FormData();
             fd.append("fileToUpload", blob);
-            fd.append("patient_info", self.m.info);
+            fd.append("info", self.m.info);
             fd.append("samples_info", self.m.samples.info);
             fd.append("samples_id", self.m.samples.ids);
             
@@ -739,46 +829,70 @@ Database.prototype = {
         this.call('user/rights', arg)
     },
     
+    
+    updateList: function(that) {
+        var lastValue = that.lastValue,
+            value = that.value,
+            array = [],
+            pos = value.indexOf('|'),
+            start = that.selectionStart,
+            end = that.selectionEnd,
+            options;
+
+        if (that.options) {
+            options = that.options;
+        } else {
+            options = Object.keys(that.list.options).map(function (option) {
+                return that.list.options[option].value;
+            });
+            that.options = options;
+        }
+
+        if (lastValue !== value && value.length>1) {
+            that.list.innerHTML = options.filter(function (a) {
+                return ~a.toLowerCase().indexOf(value.toLowerCase());
+            }).slice(0,10).map(function (a) {
+                return '<option value="' + value + '|' + a + '">' + a + '</option>';
+            }).join();
+            this.updateInput(that);
+            that.lastValue = value;
+        }
+    },
+
+    updateInput: function(that) {
+        var value = that.value,
+            pos = value.indexOf('|'),
+            start = that.selectionStart,
+            end = that.selectionEnd;
+
+        if (~pos) {
+            value = value.slice(pos + 1);
+        }
+        that.value = value;
+        if (that.lastValue !== value){
+            that.options.indexOf(value)!= -1 ? that.style.color = "green" : that.style.color = "red";
+        }
+        that.setSelectionRange(start, end);
+    },
+    
     build_suggest_box: function() {
         var self = this
         
-        if (document.getElementById("pcr")){
-            var url = self.db_address+"file/pcr_list"
-            $.ajax({
-                type: "POST",
-                crossDomain: true,
-                url: url,
-                success: function (result) {
-                    var res = jQuery.parseJSON(result);
-                    suggest_box("pcr", res.pcr)
-                }
+        if (document.getElementById("patient_list")){
+            
+            document.getElementById('patient_list').addEventListener('keyup', function (e) {
+                self.updateList(this);
             });
-        }
-        
-        if (document.getElementById("sequencer")){
-            var url = self.db_address+"file/sequencer_list"
-            $.ajax({
-                type: "POST",
-                crossDomain: true,
-                url: url,
-                success: function (result) {
-                    var res = jQuery.parseJSON(result);
-                    suggest_box("sequencer", res.sequencer)
-                }
+            document.getElementById('patient_list').addEventListener('input', function (e) {
+                self.updateInput(this);
             });
-        }
-        
-        if (document.getElementById("producer")){
-            var url = self.db_address+"file/producer_list"
-            $.ajax({
-                type: "POST",
-                crossDomain: true,
-                url: url,
-                success: function (result) {
-                    var res = jQuery.parseJSON(result);
-                    suggest_box("producer", res.producer)
-                }
+            document.getElementById('run_list').addEventListener('keyup', function (e) {
+                self.updateList(this);
             });
+            document.getElementById('run_list').addEventListener('input', function (e) {
+                self.updateInput(this);
+            });
+            
         }
     },
     
@@ -1037,76 +1151,3 @@ Uploader.prototype = {
     }
 }
 
-
-
-/*crée une liste de suggestion dynamique autour d'un input text*/
-function suggest_box(id, list) {
-
-    list = list.sort()
-    var input_box = document.getElementById(id)
-    
-    //positionnement d'une boite vide pour contenir les suggestions
-    var suggest_box = document.createElement('div')
-    suggest_box.className = "suggest_box"
-    suggest_box.style.width = getComputedStyle(input_box,null).width
-    
-    var suggest_list = document.createElement('div')
-    suggest_list.className = "suggest_list"
-    suggest_box.appendChild(suggest_list)
-    
-    var suggest_arrow = document.createElement('div')
-    suggest_arrow.className = "suggest_arrow"
-    suggest_arrow.title = "show all suggestions"
-    suggest_arrow.onclick = function(){
-        input_box.focus()
-        suggest_list.style.display = "block"
-        suggest_list.innerHTML=""
-        for (var i=0; i<list.length; i++){
-            var suggestion = document.createElement("div")
-            suggestion.className = "suggestion"
-            suggestion.appendChild(document.createTextNode(list[i]))
-            suggestion.onclick = function(){
-                input_box.value = this.innerHTML
-                setTimeout(function(){suggest_list.style.display = "none"}, 200)
-            }
-            suggest_list.appendChild(suggestion)
-        }
-    }
-    suggest_box.appendChild(suggest_arrow)
-    
-    //ajout de la suggest_box apres l'input correspondant
-    if (input_box.nextSibling) {
-        input_box.parentNode.insertBefore(suggest_box, input_box.nextSibling);
-    }else{
-        input_box.parentNode.appendChild(suggest_box)
-    }
-    
-    //réactualise la liste a chaque changement d'input
-    input_box.onkeyup = function(){
-        suggest_list.style.display = "block"
-        suggest_list.innerHTML=""
-        var value = this.value.toUpperCase();
-        var count = 0
-        for (var i=0; i<list.length; i++){
-            if (list[i].toUpperCase().indexOf(value) != -1){
-                var suggestion = document.createElement("div")
-                suggestion.className = "suggestion"
-                suggestion.appendChild(document.createTextNode(list[i]))
-                suggestion.onclick = function(){
-                    input_box.value = this.innerHTML
-                    setTimeout(function(){suggest_list.style.display = "none"}, 200)
-                }
-                suggest_list.appendChild(suggestion)
-                count++
-            }
-        }
-    };
-    
-    //masque la liste
-    input_box.onblur = function(){
-        setTimeout(function(){
-            if (input_box !== document.activeElement)
-                suggest_list.style.display = "none"
-        }, 200)
-    };
-}
