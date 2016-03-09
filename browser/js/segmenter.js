@@ -1026,9 +1026,13 @@ Sequence.prototype = {
      * */
     spanify_mutation: function (self, other) {
         if (segment.aligned && self != other) {
+            var span = document.createElement('span');
+            span.className = 'substitution';
+            span.addAttibute('other', other + '-' + segment.first_clone);
+            span.appendChild(document.createTextNode(self));
             return "<span class='substitution' other='" + other + '-' + segment.first_clone + "'>" + self + "</span>"
         }else {
-            return self
+            return document.createTextNode(self);
         }
     },
 
@@ -1038,7 +1042,6 @@ Sequence.prototype = {
      * */
     toString: function (segment) {
         var clone = this.m.clone(this.id)
-        var result = "";
 
         if (typeof clone.sequence != 'undefined' && clone.sequence != 0) {
 
@@ -1046,25 +1049,18 @@ Sequence.prototype = {
             if (typeof clone.seg != 'undefined'){
 
                 var vdjArray = this.getVdjStartEnd(clone);
+                var vdjArrayRev = {};
 
-                var startV =  vdjArray["5start"];
-                var endV = vdjArray["5end"];
-                var startJ = vdjArray["3start"];
-                var endJ = vdjArray["3end"];
+                vdjArrayRev[vdjArray["5start"]] = {'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : ""};
+                vdjArrayRev[vdjArray["3start"]] = {'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : ""};
+                vdjArrayRev[vdjArray["5end"]] = {'type':'N', 'color': ""};
+                vdjArrayRev[vdjArray["3end"]] = {'type':'N', 'color': ""};
                 if (typeof vdjArray["4start"]!= 'undefined' && typeof clone.seg["4end"] != 'undefined'){
-                    var startD = vdjArray["4start"];
-                    var endD = vdjArray["4end"];
+                    vdjArrayRev[vdjArray["4start"]] = {'type':'D', 'color': ""};
+                    vdjArrayRev[vdjArray["4end"]] = {'type':'N', 'color': ""};
                 }
             }
 
-            //V color
-            var vColor = "";
-            if (this.m.colorMethod == "V") vColor = "style='color : " + clone.colorV + "'";
-
-            //J color
-            var jColor = "";
-            if (this.m.colorMethod == "J") jColor = "style='color : " + clone.colorJ + "'";
-            
             var window_start = this.pos[clone.sequence.indexOf(clone.id)];
             if (typeof clone.seg != "undefined" && typeof clone.seg["cdr3"] != "undefined"){
                 if (clone.seg["cdr3"].start != "undefined"){
@@ -1080,7 +1076,7 @@ Sequence.prototype = {
             }
             
             // Build the sequence, adding VDJ and highlight spans
-            result += "<span>"
+            var result = document.createElement('span');
             for (var i = 0; i < this.seq.length; i++) {
 
                 // Highlight spans
@@ -1088,56 +1084,62 @@ Sequence.prototype = {
                     var h = highlights[j];
 
                     if (i == h.start){
-                        result += "<span class='highlight'><span class='" + h.css + "' style='color:" + h.color + "'" ;
-                        result += typeof h.tooltip !='undefined'? " data-tooltip='"+ h.tooltip + "' data-tooltip-position='right'":""; // style='margin-top: 0px;'"
-                        result +=    ">";
-                        result += h.seq
-                        result += "</span></span>"
+                        var highlightSpan = document.createElement('span');
+                        highlightSpan.style = "color: " + h.color;
+                        highlightSpan.className = h.css;
+                        if(typeof h.tooltipe != 'undefined') {
+                            highlightSpan.dataset.tooltip = h.tooltip;
+                            highlightSpan.dataset.tooltip_position = "right";
+                        }
+                        highlightSpan.appendChild(document.createTextNode(h.seq));
+
+                        var highlightWrapper = document.createElement("span");
+                        highlightWrapper.appendChild(highlightSpan);
+                        highlightWrapper.className = "highlight";
+                        result.appendChild(highlightWrapper);
+
+                        // split the current span to fit the highlight span            
+                        var oldCurSpan = currentSpan;
+                        currentSpan = document.createElement('span');
+                        currentSpan.className = oldCurSpan.className;
+                        result.appendChild(currentSpan);
                     }
                 }
 
 
                 // VDJ spans - begin
-                if (i == startV){
-                    result += "</span><span class='V' "+ vColor + ">";
-                }
+                if (typeof vdjArrayRev[i] != 'undefined') {
+                    currentSpan = document.createElement('span');
+                    currentSpan.className = vdjArrayRev[i]['type'];
+                    currentSpan.style = "color: " + vdjArrayRev[i]['color'];
+                    result.appendChild(currentSpan);
 
-                if (i == startD){
-                    result += "</span><span class='D'>";
                 }
-                if (i == startJ) {
-                    result += "</span><span class='J' " + jColor+ ">"}
-
 
                 // one character
                 if (segment.amino) {
-                    result += this.spanify_mutation(this.seqAA[i], segment.sequence[segment.first_clone].seqAA[i])
+                    currentSpan.appendChild(this.spanify_mutation(this.seqAA[i], segment.sequence[segment.first_clone].seqAA[i]));
                 }else{
-                    result += this.spanify_mutation(this.seq[i], segment.sequence[segment.first_clone].seq[i])
+                    currentSpan.appendChild(this.spanify_mutation(this.seq[i], segment.sequence[segment.first_clone].seq[i]));
                 }
-
-                // VDJ spans - end
-                if (i == endV) result += "</span><span class ='N'>"
-                if (i == endD) result += "</span><span class ='N'>"
-                if (i == endJ) result += "</span><span>"
+                    
             }
-            result += "</span>"
         }else{
             var window_start = 0
-            result += clone.id
+            result.appendChild(document.createTextNode(clone.id));
         }
-        
+
         //marge
         var marge = ""
         if (this.use_marge){
             marge += "<span class='seq-marge'>";
             var size_marge = 300 - window_start;
             if (size_marge > 0) {
-                for (var i = 0; i < size_marge; i++) marge += "&nbsp";
+                for (var i = 0; i < size_marge; i++) marge += "\u00A0";
             }
             marge += "</span>"
         }
-        return marge + result;
+        return marge + result.innerHTML;
     },
 
     /**
@@ -1208,12 +1210,12 @@ Sequence.prototype = {
         // Build the (possibly invisible) sequence
         if (raw_seq == "") {
             h.css = "highlight_border"
-            for (var k=0; k<(h.stop - h.start); k++) h.seq += "&nbsp;"
+            for (var k=0; k<(h.stop - h.start); k++) h.seq += "\u00A0"
         } else {
             h.css = "highlight_seq"
             var j = 0
             for (var k=h.start; j<raw_seq.length; k++) { // End condition on j, not on k
-                var c = "&nbsp";
+                var c = "\u00A0";
                 if (this.seq[k] != '-') {
                     var cc = raw_seq[j++]
                     if ((cc != '_') && (cc != ' ')) c = cc ;
