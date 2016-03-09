@@ -69,7 +69,7 @@
 {{if isAdmin:}} <td onclick="db.call('patient/permission', {'id' :'{{=row['id']}}'} )" > <i class="icon-key" title="set permissions"></i> </td> {{else:}} <td></td> {{pass}}
                 {{if row['has_permission']:}}
                 <td onclick="db.call('patient/edit', {'id' :'{{=row['id']}}'} )" > <i class="icon-pencil-2" title="edit patient information"></i> </td>
-                <td onclick="db.call('patient/confirm', {'id' :'{{=row['id']}}'} )" > <i class="icon-cancel" title="delete patient"></i> </td>
+                <td onclick="db.call('patient/confirm', {'id' :'{{=row['id']}}'} )" > <i class="icon-erase" title="delete patient"></i> </td>
                 {{else:}}  <td></td><td></td>{{pass}}
             </tr>
         {{pass}}

@@ -46,7 +46,7 @@
                    <td class="button" onclick="db.call('results_file/info', { 'results_file_id' : '{{=row.results_file.id}}' } )"> {{=row.results_file.run_date }}</td>
                {{else:}}<td></td>{{pass}} 
                <td> {{=row.status}} </td>
-               <td onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}'})" > <i class="icon-cancel" title="delete process"></i> </td>
+               <td onclick="db.call('results_file/confirm', {'results_file_id' :'{{=row.results_file.id}}'})" > <i class="icon-erase" title="delete process"></i> </td>
                <td>
                {{if row.results_file.id == None or ( row.status != "RUNNING" and row.status != "QUEUED" and row.status != "ASSIGNED"):}}
                    {{if auth.can_process_file() :}}
