@@ -463,7 +463,7 @@ Builder.prototype = {
         var infoTime_container = document.createElement("div")
         infoTime_container.className = "inline-block_10"
         var infoTime = self.createClickableElem('span',
-            [document.createTextNode("i")],
+            [icon('icon-info', 'sample information')],
             "",
             "button",
             function () {
@@ -491,7 +491,7 @@ Builder.prototype = {
 
         if (this.m.samples.order.length > 1){
             var nextTime = self.createClickableElem('span',
-                [document.createTextNode(">")],
+                [icon('icon-right-open-1', 'next sample')],
                 "",
                 "next_button button",
                 function () {
@@ -502,7 +502,7 @@ Builder.prototype = {
            
             if (self.m.isPlaying){
                 var stop = self.createClickableElem('div',
-                    [document.createTextNode("s")],
+                    [icon('icon-pause', 'pauses cycling')],
                     "",
                     "stop_button button",
                     function () {
@@ -513,7 +513,7 @@ Builder.prototype = {
                 play_stop_container_div.appendChild(stop)
             } else {
                 var play = self.createClickableElem('div',
-                    [document.createTextNode("p")],
+                    [icon('icon-play', 'cycle through samples')],
                     "",
                     "play_button button",
                     function () {
@@ -524,7 +524,7 @@ Builder.prototype = {
             }
             
             var previousTime = self.createClickableElem('span',
-                [document.createTextNode("<")],
+                [icon('icon-left-open-1', 'previous sample') ],
                 "",
                 "previous_button button",
                 function () {
@@ -586,27 +586,29 @@ Builder.prototype = {
 
     build_line_read_number: function (id, label, qualifier, read_number) {
         var val = "no read " + qualifier ;
-	var warning = false ;
+        var warning_title = false ;
+        var warning_class = '' ;
 
         if (read_number[this.m.t] > 0)
         {
             var percent = (read_number[this.m.t] / this.m.reads.total[this.m.t]) * 100
             val = this.m.toStringThousands(read_number[this.m.t]) + " (" + percent.toFixed(2) + "%)"
 
-            var warning_span = document.createElement('span');
-            warning_span.innerHTML = " ! ";
-            warning_span.className = "warningReads";
 	    if (percent < 10)  {
-                warning_span.title = "Very few reads " + qualifier ;
-                warning_span.className += ' '+(warning = "alert") ;
+                warning_title = "Very few reads " + qualifier ;
+                warning_class = "alert" ;
             }
 	    else if (percent < 50)  {
-                warning_span.title = "Few reads " + qualifier ;
-                warning_span.className = ' '+(warning = "warning") ;
+                warning_title = "Few reads " + qualifier ;
+                warning_class = "warning" ;
             }
         }
         div = this.build_named_info_line(id, label, val, false);
-        if (warning != false) {
+
+        if (warning_class != "") {
+            var warning_span = document.createElement('span')
+            warning_span.className = "warningReads " + warning_class;
+            warning_span.appendChild(icon('icon-warning-1', warning_title));
             div.appendChild(warning_span);
         }
         return div;

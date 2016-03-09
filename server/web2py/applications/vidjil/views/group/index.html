@@ -29,8 +29,8 @@ query = db(
                         <td> {{=row.auth_group.role}} </td>
                         <td> {{=row[count]}}  </td>
                         <td> {{=row.auth_group.description }} </td>
-                        <td onclick="db.call('group/permission', {'id' :'{{=row.auth_group.id}}'} )" > p </td>
-                        <td onclick="db.call('group/confirm', {'id' :'{{=row.auth_group.id}}'} )" > X </td>  
+                        <td onclick="db.call('group/permission', {'id' :'{{=row.auth_group.id}}'} )" > <i class="icon-key" title="set permissions"></i> </td>
+                        <td onclick="db.call('group/confirm', {'id' :'{{=row.auth_group.id}}'} )" > <i class="icon-erase" title="delete group"></i> </td>  
                     </tr>
                 {{pass}}
            {{pass}}

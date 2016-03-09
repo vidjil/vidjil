@@ -78,8 +78,8 @@ Database.prototype = {
         close_popup.onclick = function(){
             self.close();
         }
-        close_popup.className = "closeButton";
-        close_popup.appendChild(document.createTextNode("X"));
+        close_popup.className = "closeButton"
+        close_popup.appendChild(icon('icon-cancel', ''));
         this.msg = document.createElement("div")
         this.msg.className = "db_msg";
         

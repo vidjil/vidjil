@@ -462,9 +462,9 @@ Segment.prototype = {
         var seq_name = document.createElement('span');
         seq_name.className = "nameBox";
 
-        var del = document.createElement('img')
+        var del = document.createElement('span')
         del.className = "delBox"
-        del.src = "images/delete-gray.png"
+        del.appendChild(icon('icon-cancel', 'Unselect this clone'));
         seq_name.appendChild(del);
 
         del.onclick = function () {
@@ -475,20 +475,19 @@ Segment.prototype = {
         seq_name.title = this.m.clone(cloneID).getName();
         seq_name.style.color = this.m.clone(cloneID).color;
 
-        var svg_star = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
+        // Tag
+        var svg_star = document.createElement('span')
         svg_star.setAttribute('class', 'starBox');
         svg_star.onclick = function () {
             self.m.openTagSelector(cloneID);
         }
+        svg_star.appendChild(icon('icon-star-2', 'clone tag'))
+        svg_star.setAttribute('id', 'color' + cloneID);
+        if (typeof this.m.clone(cloneID).tag != 'undefined')
+            svg_star.style.color = this.m.tag[this.m.clone(cloneID).getTag()].color
 
-        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-        path.setAttribute('d', this.starPath);
-        path.setAttribute('id', 'color' + cloneID);
-        if (typeof this.m.clone(cloneID).tag != 'undefined') path.setAttribute("fill", this.m.tag[this.m.clone(cloneID).tag].color);
-        else path.setAttribute("fill", "");
 
-        svg_star.appendChild(path);
-
+        // Size
         var seq_size = document.createElement('span')
         seq_size.className = "sizeBox";
         seq_size.onclick = function () {
@@ -497,28 +496,29 @@ Segment.prototype = {
         seq_size.style.color = this.m.clone(cloneID).color;
         seq_size.appendChild(document.createTextNode(this.m.clone(cloneID).getStrSize()));
 
+        // Info
         var span_info = document.createElement('span')
         span_info.className = "infoBox";
         if (cloneID == this.m.clone_info) span_info.className = "infoBox infoBox-open";
         span_info.onclick = function () {
             self.m.displayInfoBox(cloneID);
         }
-        span_info.appendChild(document.createTextNode("i"));
+        span_info.appendChild(icon('icon-info', 'clone information'))
 
         // Productive/unproductive
         var productive_info = document.createElement('span');
         productive_info.className = "infoBox";
-        var info = ' '
+
+        var info = '' ;
 
         if (this.m.clone(cloneID).seg.imgt!=null){
-            info = (this.m.clone(cloneID).seg.imgt["Functionality"].toLowerCase().indexOf("unproductive") > -1) ? 'p' : 'u' ;
+            info = (this.m.clone(cloneID).seg.imgt["Functionality"].toLowerCase().indexOf("unproductive") > -1)
+                ? icon('icon-plus-squared', 'productive')
+                : icon('icon-minus-squared', 'unproductive') ;
         }
 
-        productive_info.appendChild(document.createTextNode(info));
-
-        // Tag
-        if (typeof this.m.clone(cloneID).tag != 'undefined') path.setAttribute("fill", this.m.tag[this.m.clone(cloneID).tag].color);
-        else path.setAttribute("fill", "");
+        if (info)
+            productive_info.appendChild(info);
 
         // Gather all elements
 

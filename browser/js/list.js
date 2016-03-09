@@ -52,10 +52,6 @@ function List(id_list, id_data, model) {
     this.index = []
     this.index_data = {};
 
-    this.starPath = "M 0,6.1176482 5.5244193, 5.5368104 8.0000008,0 10.172535,5.5368104 16,6.1176482 11.406183,9.9581144 12.947371,16 8.0000008,12.689863 3.0526285,16 4.4675491,10.033876 z";
-    this.thumbsUp = "M 0 906.256l0 -499.968q0 -39.06 27.342 -66.402t66.402 -27.342l93.744 0q32.074 0 60.543 23.436 11.718 -5.859 33.201 -15.624 123.039 -64.449 124.992 -226.548 0 -39.06 27.342 -66.402t66.402 -27.342q56.637 0 105.462 64.449t48.825 146.475q0 66.402 -7.812 103.509 236.313 5.859 265.608 13.671 42.966 11.718 65.425 42.966t22.46 62.496l0 23.436q-1.953 39.06 -27.342 68.355 17.577 33.201 11.718 74.214 -7.812 54.684 -41.013 85.932 15.624 37.107 0 83.979 -17.577 58.59 -52.731 82.026 7.812 27.342 0 54.684 -5.859 17.577 -13.671 33.201 -33.201 60.543 -111.321 60.543l-171.864 0q-91.791 0 -185.535 -21.483 -91.791 -21.483 -126.945 -29.295l-1.953 0q0 -1.953 -2.929 -1.953l-4.883 0l0 -1.953q-27.342 54.684 -83.979 54.684l-93.744 0q-39.06 0 -66.402 -27.342t-27.342 -66.402zm62.496 0q0 13.671 8.789 22.46t22.46 8.789l93.744 0q13.671 0 22.46 -8.789t8.789 -22.46l0 -499.968q0 -13.671 -8.789 -22.46t-22.46 -8.789l-93.744 0q-13.671 0 -22.46 8.789t-8.789 22.46l0 499.968zm31.248 -46.872q0 -19.53 13.671 -33.201t33.201 -13.671 33.201 13.671 13.671 33.201 -13.671 33.201 -33.201 13.671 -33.201 -13.671 -13.671 -33.201zm31.248 0q0 15.624 15.624 15.624t15.624 -15.624 -15.624 -15.624 -15.624 15.624zm124.992 -3.906q0 23.436 27.342 27.342 21.483 5.859 144.522 35.154 87.885 19.53 171.864 19.53l171.864 0q41.013 0 56.637 -27.342 5.859 -15.624 7.812 -23.436 5.859 -11.718 -1.953 -27.342t-29.295 -15.624l-48.825 0q-15.624 0 -15.624 -15.624t15.624 -15.624l50.778 0q31.248 0 48.825 -10.742t22.46 -19.53 10.742 -30.271q21.483 -64.449 -39.06 -64.449l-62.496 0q-15.624 0 -15.624 -15.624t15.624 -15.624l74.214 0q56.637 0 68.355 -66.402 1.953 -21.483 -8.789 -40.037t-41.989 -18.553l-60.543 0q-15.624 0 -15.624 -15.624t15.624 -15.624l62.496 0q60.543 0 62.496 -44.919l0 -21.483q0 -37.107 -37.107 -46.872 -44.919 -11.718 -337.869 -11.718 19.53 -58.59 24.413 -83.979t4.883 -80.073q0 -56.637 -32.224 -102.532t-59.567 -45.895q-31.248 0 -31.248 31.248 -1.953 91.791 -45.895 172.841t-141.593 122.063q-1.953 0 -3.906 .977l-1.953 .977q-25.389 7.812 -25.389 33.201l0 431.613z";
-    this.thumbsDown="M 142.848 250.048q0 -14.508 -10.602 -25.11t-25.11 -10.602 -25.11 10.602 -10.602 25.11 10.602 25.11 25.11 10.602 25.11 -10.602 10.602 -25.11zm642.816 321.408q0 -19.53 -11.997 -45.198t-29.853 -26.226q8.37 -9.486 13.95 -26.505t5.58 -30.969q0 -38.502 -29.574 -66.402 10.044 -17.856 10.044 -38.502t-9.765 -41.013 -26.505 -29.295q2.79 -16.74 2.79 -31.248 0 -47.43 -27.342 -70.308t-75.888 -22.878h-71.424q-73.098 0 -190.836 40.734 -2.79 1.116 -16.182 5.859t-19.809 6.975 -19.53 6.417 -21.204 6.138 -18.414 3.627 -17.577 1.674h-17.856v357.12h17.856q8.928 0 19.809 5.022t22.32 15.066 21.483 19.809 22.32 24.552 19.251 23.715 17.577 22.878 12.834 16.74q30.69 37.944 42.966 50.778 22.878 23.994 33.201 61.101t17.019 70.029 21.204 47.43q53.568 0 71.424 -26.226t17.856 -80.91q0 -32.922 -26.784 -89.559t-26.784 -89.001h196.416q27.9 0 49.662 -21.483t21.762 -49.941zm71.424 .558q0 57.474 -42.408 99.882t-100.44 42.408h-98.208q26.784 55.242 26.784 107.136 0 65.844 -19.53 103.788 -19.53 38.502 -56.916 56.637t-84.258 18.135q-28.458 0 -50.22 -20.646 -18.972 -18.414 -30.132 -45.756t-14.229 -50.499 -9.765 -47.151 -17.298 -35.712q-26.784 -27.9 -59.706 -70.866 -56.358 -73.098 -76.446 -86.49h-152.892q-29.574 0 -50.499 -20.925t-20.925 -50.499v-357.12q0 -29.574 20.925 -50.499t50.499 -20.925h160.704q12.276 0 77.004 -22.32 71.424 -24.552 124.434 -36.828t111.6 -12.276h62.496q78.12 0 126.387 44.082t47.709 120.528v2.79q33.48 42.966 33.48 99.324 0 12.276 -1.674 23.994 21.204 37.386 21.204 80.352 0 20.088 -5.022 38.502 27.342 41.292 27.342 90.954z";
-
     this.build();
     
     this.sort_option = {
@@ -81,7 +77,7 @@ List.prototype = {
         
         var closedataMenu = document.createElement("span");
         closedataMenu.className = "closeButton" ;
-        closedataMenu.appendChild(document.createTextNode("X"));
+        closedataMenu.appendChild(icon('icon-cancel', ''));
         closedataMenu.onclick = function() {$(this).parent().hide('fast')};
         this.dataMenu.appendChild(closedataMenu);
         
@@ -201,19 +197,15 @@ List.prototype = {
             value.className = "data_value";
             div.appendChild(value)
             
-            var star = document.createElement('div');
+            var star = document.createElement('span');
             star.className = "starBox";
             (function (key) {
                 star.onclick = function () {
                     self.openDataMenu(key);
                 }
             })(key);
-            
-            var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-            var path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-            path.setAttribute('d', this.starPath);
-            svg.appendChild(path);
-            star.appendChild(svg)
+
+            star.appendChild(icon('icon-star-2', 'clone tag'))
             div.appendChild(star)
             
             this.index_data[key] = value;
@@ -236,30 +228,31 @@ List.prototype = {
 
         var a_split = document.createElement('a')
         a_split.className = "button"
-        a_split.appendChild(document.createTextNode("+"))
+        a_split.appendChild(icon('icon-plus', 'Show all subclones'))
         a_split.onclick = function () {
             self.m.split_all(true)
         }
         
         var a_unsplit = document.createElement('a')
         a_unsplit.className = "button"
-        a_unsplit.appendChild(document.createTextNode("-"))
+        a_unsplit.appendChild(icon('icon-minus', 'Hide all subclones'))
         a_unsplit.onclick = function () {
             self.m.split_all(false)
         }
 
         var filter_label = document.createElement('span')
-        filter_label.appendChild(document.createTextNode("search"))
+        filter_label.appendChild(icon('icon-search-1', 'Search a clone by name, sequence, or V/D/J gene'))
         
         var filter_input = document.createElement('input')
         filter_input.id = 'filter_input'
         filter_input.type = 'text'
+        filter_input.setAttribute('placeholder', 'search');
         filter_input.onchange = function () {
             self.filter(this.value)
         }
         
         var filter_reset = document.createElement('span')
-        filter_reset.appendChild(document.createTextNode("X"))
+        filter_reset.appendChild(icon('icon-cancel', 'Clear the search'))
         filter_reset.className = "button"
         filter_reset.onclick = function () {
             document.getElementById('filter_input').value = ''
@@ -300,7 +293,7 @@ List.prototype = {
         div_list_menu.appendChild(a_split)
         div_list_menu.appendChild(a_unsplit)
 
-        div_list_menu.appendChild(filter_label)
+        // div_list_menu.appendChild(filter_label)
         div_list_menu.appendChild(filter_input)
         div_list_menu.appendChild(filter_reset)
         div_list_menu.appendChild(sort_span)
@@ -401,13 +394,9 @@ List.prototype = {
         span_star.onclick = function () {
             self.m.openTagSelector(cloneID);
         }
-        var svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg')
-        var path = document.createElementNS('http://www.w3.org/2000/svg', 'path')
-        path.setAttribute('d', this.starPath);
-        path.setAttribute('id', 'color' + cloneID);
-        path.setAttribute("fill", this.m.tag[this.m.clone(cloneID).getTag()].color);
-        svg.appendChild(path);
-        span_star.appendChild(svg)
+        span_star.appendChild(icon('icon-star-2', 'clone tag'))
+        span_star.setAttribute('id', 'color' + cloneID);
+        span_star.style.color = this.m.tag[this.m.clone(cloneID).getTag()].color
 
         
         var span_size = document.createElement('span')
@@ -429,9 +418,9 @@ List.prototype = {
 
         if (this.m.clone(cloneID).isWarned()) {
             span_info.className += " warning" ;
-            span_info.appendChild(document.createTextNode("!"));
+            span_info.appendChild(icon('icon-warning-1', 'clone information'));
         } else {
-            span_info.appendChild(document.createTextNode("i"));
+            span_info.appendChild(icon('icon-info', 'clone information'));
         }
         }
         
@@ -442,12 +431,12 @@ List.prototype = {
                 span_cluster.onclick = function () {
                     self.hideCluster(cloneID)
                 }
-                span_cluster.appendChild(document.createTextNode("-"));
+                span_cluster.appendChild(icon('icon-minus', 'Hide the subclones'));
             } else {
                 span_cluster.onclick = function () {
                     self.showCluster(cloneID)
                 }
-                span_cluster.appendChild(document.createTextNode("+"));
+                span_cluster.appendChild(icon('icon-plus', 'Show the subclones'));
             }
         } else {
             span_cluster.appendChild(document.createTextNode(' '));
@@ -516,14 +505,14 @@ List.prototype = {
                 span_info.onclick = function () {
                     self.m.displayInfoBox(id);
                 }
-                span_info.appendChild(document.createTextNode("i"));
+                span_info.appendChild(icon('icon-info', 'clone information'));
 
-                var img = document.createElement('img');
+                var img = document.createElement('span');
                 img.onclick = function () {
                     self.m.split(cloneID, this.parentNode.id2);
                 }
                 if (id != parseInt(cloneID)) {
-                    img.src = "images/delete.png";
+                    img.appendChild(icon('icon-cancel', 'Remove this subclone from the clone'));
                 }
                 img.className = "delBox";
 

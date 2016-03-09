@@ -178,7 +178,7 @@ Com.prototype = {
             self.closePopupMsg();
         }
         close_popup.className = "closeButton";
-        close_popup.appendChild(document.createTextNode("X"));
+        close_popup.appendChild(icon('icon-cancel', ''));
         this.popup_msg = document.createElement("div")
         this.popup_msg.className = "popup_msg";
         
@@ -196,7 +196,7 @@ Com.prototype = {
         
         var closedataBox = document.createElement("span");
         closedataBox.className = "closeButton" ;
-        closedataBox.appendChild(document.createTextNode("X"));
+        closedataBox.appendChild(icon('icon-cancel', ''));
         closedataBox.onclick = function() {self.closeDataBox()};
         this.div_dataBox.appendChild(closedataBox);
         

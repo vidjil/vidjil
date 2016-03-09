@@ -56,3 +56,11 @@
 
   
 
+/* Get an icon */
+
+function icon(name, title) {
+    i = document.createElement('i')
+    i.className = name
+    i.setAttribute('title', title)
+    return i
+}
