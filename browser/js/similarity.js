@@ -46,7 +46,7 @@ Similarity.prototype = {
             data: request,
             url: segment.cgi_address + "similarity.cgi",
             beforeSend: function () {
-                self.m.wait("compute similarity matrix");
+                self.m.wait("Computing similarities between clones...");
             },
             complete: function () {
                 self.m.resume();

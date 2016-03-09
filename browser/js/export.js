@@ -6,7 +6,7 @@ function Report(model) {
 Report.prototype = {
     
     reportcontamination : function() {
-        this.m.wait("generating report : this operation can take a few seconds")
+        this.m.wait("Generating report...")
         
         var self = this
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
@@ -28,7 +28,7 @@ Report.prototype = {
     },
     
     reportHTML : function() {
-        this.m.wait("generating report : this operation can take a few seconds")
+        this.m.wait("Generating report...")
         
         var self = this
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");
@@ -63,7 +63,7 @@ Report.prototype = {
     },
     
     reportHTMLdiag : function() {
-        this.m.wait("generating report : this operation can take a few seconds")
+        this.m.wait("Generating report...")
         
         var self = this
         this.w = window.open("report.html", "_blank", "selected=0, toolbar=yes, scrollbars=yes, resizable=yes");

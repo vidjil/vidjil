@@ -614,7 +614,7 @@ Database.prototype = {
         var new_location = url+arg
         window.history.pushState('plop', 'plop', new_location);
         
-        this.m.wait("please wait : this operation can take a few minutes")
+        this.m.wait("Comparing samples...")
         $.ajax({
             type: "POST",
             timeout: DB_TIMEOUT_GET_CUSTOM_DATA,
