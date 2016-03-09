@@ -86,10 +86,10 @@
 		    {{pass}}
 
                     {{if can_modify:}}
-                        <td class="pointer" onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}'} )" > e </td>
+                        <td class="pointer" onclick="db.call('file/edit', {'id' :'{{=row.sequence_file.id}}'} )" >  <i class="icon-pencil-2" title="edit sample information"></i> </td>
                         <td> <a {{if row.sequence_file.data_file == None :}} {{=XML("class='inactive' title='file is missing' ")}}
                                 {{else:}} href="{{=URL('patient','download', scheme='https', args=row.sequence_file.data_file)}}" {{pass}}  >dl</a></td>
-                        <td class="pointer" onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id }}', 'redirect_sample_set_id' : '{{=request.vars["id"]}}'} )" > X </td>
+                        <td class="pointer" onclick="db.call('file/confirm', {'id' :'{{=row.sequence_file.id }}', 'redirect_sample_set_id' : '{{=request.vars["id"]}}'} )" >  <i class="icon-cancel" title="delete sample"></i> </td>
                     {{else:}}<td></td><td></td><td></td>{{pass}}
 
 
