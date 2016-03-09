@@ -241,22 +241,26 @@ def get_data():
                 patient_name = vidjil_utils.anon_ids(row.id)
                 data["dataFileName"] = patient_name + " (" + config_name + ")"
                 data["info"] = db.patient[row.id].info
+                data["patient_id"] = row.id
+                data["patient_name"] = patient_name
 
         if (sample_set.sample_type == "run") :
             for row in db( db.run.sample_set_id == request.vars["sample_set_id"] ).select() :
                 run_name = db.run[row.id].name
                 data["dataFileName"] = run_name + " (" + config_name + ")"
-                data["info"] = db.patient[row.id].info
+                data["info"] = db.run[row.id].info
+                data["run_id"] = row.id
+                data["run_name"] = run_name
         
-        data["patient_name"] = patient_name
         data["config_name"] = config_name
-        
         data["samples"]["info"] = []
         data["samples"]["timestamp"] = []
         data["samples"]["sequence_file_id"] = []
         data["samples"]["results_file_id"] = []
         data["samples"]["config_id"] = []
         data["samples"]["names"] = []
+        data["samples"]["db_key"] = []
+        data["samples"]["ids"] = []
         for i in range(len(data["samples"]["original_names"])) :
             data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
             data["samples"]["info"].append('')
@@ -265,6 +269,8 @@ def get_data():
             data["samples"]["results_file_id"].append('')
             data["samples"]["config_id"].append('')
             data["samples"]["names"].append('')
+            data["samples"]["db_key"].append('')
+            data["samples"]["ids"].append('')
 
         ## récupération des infos stockées sur la base de données
         query = db(  ( db.sample_set.id == request.vars["sample_set_id"] )
@@ -290,6 +296,7 @@ def get_data():
             data["samples"]["results_file_id"][i] = row.results_file.id
             data["samples"]["config_id"][i] = request.vars["config"]
             data["samples"]["names"][i] = row.sequence_file.filename.split('.')[0]
+            data["samples"]["ids"][i] = row.sequence_file.id
             i+=1
                 
         log.debug("get_data (%s) c%s -> %s" % (request.vars["sample_set_id"], request.vars["config"], fused_file))
@@ -398,25 +405,29 @@ def get_analysis():
 def save_analysis():
     error = ""
 
-    if not "patient" in request.vars :
-        error += "id patient file needed, "
-    if not auth.can_modify_patient(request.vars['patient']) :
-        error += "you do not have permission to save changes on this patient"
+    if not "sample_set_id" in request.vars :
+        error += "sample set id needed, "
+    if not auth.can_modify_sample_set(request.vars['sample_set_id']) :
+        error += "you do not have permission to save changes on this sample set"
 
     if error == "" :
         f = request.vars['fileToUpload']
         ts = time.time()
         
-        sample_set_id = db.patient[request.vars['patient']].sample_set_id
+        sample_set_id = request.vars['sample_set_id']
         
         analysis_id = db.analysis_file.insert(analysis_file = db.analysis_file.analysis_file.store(f.file, f.filename),
-                                              patient_id = request.vars['patient'],
                                               sample_set_id = sample_set_id,
                                               analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                                               )
-
-        db(db.patient.id == request.vars['patient']).update(info = request.vars['patient_info']);
-
+        sample_type = db.sample_set[sample_set_id].sample_type
+        if (sample_type == "patient") :
+            db(db.patient.sample_set_id == sample_set_id).update(info = request.vars['info']);
+        
+        if (sample_type == "run") :
+            db(db.run.sample_set_id == sample_set_id).update(info = request.vars['info']);
+        
+        
         ids = request.vars['samples_id'].split(',')
         infos = request.vars['samples_info'].split(',')
 
@@ -424,10 +435,10 @@ def save_analysis():
         for i in range(0, len(ids)):
             db(db.sequence_file.id == int(ids[i])).update(info = infos[i])
 
-        patient_name = db.patient[request.vars['patient']].first_name + " " + db.patient[request.vars['patient']].last_name
+        #patient_name = db.patient[request.vars['patient']].first_name + " " + db.patient[request.vars['patient']].last_name
 
         res = {"success" : "true",
-               "message" : "%s (%s): analysis saved" % (patient_name, request.vars['patient'])}
+               "message" : "(%s): analysis saved" % (sample_set_id)}
         log.info(res)
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
     else :
