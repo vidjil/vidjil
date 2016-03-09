@@ -3,9 +3,9 @@
 FONT_DIR      ?= ./fontello/
 
 retrieve:
-	rm -rf ${FONT_DIR}
-	mkdir -p ${FONT_DIR}
-	cp config.json ${FONT_DIR}
+	rm -rf "${FONT_DIR}"
+	mkdir -p "${FONT_DIR}"
+	cp config.json "${FONT_DIR}"
 	make fontopen
 	make fontsave
 
@@ -37,7 +37,7 @@ fontsave:
 	curl --silent --show-error --fail --output .fontello.zip \
 		${FONTELLO_HOST}/`cat .fontello`/get
 	unzip .fontello.zip -d .fontello.src
-	rm -rf ${FONT_DIR}
-	mkdir -p ${FONT_DIR}
-	mv `find ./.fontello.src -maxdepth 1 -name 'fontello-*'` ${FONT_DIR}
+	rm -rf "${FONT_DIR}"
+	mkdir -p "${FONT_DIR}"
+	mv `find ./.fontello.src -maxdepth 1 -name 'fontello-*'` "${FONT_DIR}"
 	rm -rf .fontello.src .fontello.zip
