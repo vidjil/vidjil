@@ -441,7 +441,8 @@ line {
   overflow: hidden;
 }
 .infoBox {
-  width: 15px;
+  font-size: 90%;
+  width: 16px;
   float: right;
   height: 15px;
   display: inline-block;
