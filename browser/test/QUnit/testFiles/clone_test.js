@@ -102,14 +102,14 @@ test("clone : name, informations, getHtmlInfo", function() {
              "getHtmlInfo: clone information");
     
     includes(html, "<tr><td class='header' colspan='5'> representative sequence</td></tr><tr><td> sequence name </td><td colspan='4'>hello</td></tr><tr><td> code </td><td colspan='4'>hello</td></tr><tr><td> length </td><td colspan='4'>19</td></tr><tr><td> size (n-reads (total reads) )</td><td>10  (200)</td><td>10  (100)</td><td>15  (200)</td><td>15  (100)</td></tr><tr><td> size (%)</td><td>5.000%</td><td>10.00%</td><td>7.500%</td><td>15.00%</td></tr>",
-             "getHtmlInfo: representative sequence information");
+        "getHtmlInfo: representative sequence information");
 
-    includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' class='devel-mode' onclick='m.clones[0].toggle()'>edit</button> </td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", 
+    includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' onclick='m.clones[0].toggle()'>edit</button> </td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", 
         "getHtmlInfo: segmentation information + modification button");
     // Test icon 
     m.clones[0].segEdited = true;
     html = m.clones[0].getHtmlInfo();
-    includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' class='devel-mode' onclick='m.clones[0].toggle()'>edit</button>  <img src='images/icon_fav_on.png' alt='This clone has been edited by a user'></td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>", 
+    includes(html, "<tr><td class='header' colspan='5'> segmentation  <button type='button' onclick='m.clones[0].toggle()'>edit</button>  <img src='images/icon_fav_on.png' alt='This clone has been edited by a user'></td></tr><tr><td> sequence </td><td colspan='4'>aaaaaaaaaattttttttt</td></tr><tr><td> id </td><td colspan='4'>id1</td></tr>",
         "getHtmlInfo: segmentation information + modification button + manuallyChanged icon");
     
     // <tr><td> locus </td><td colspan='4'><span title=\"TRG\" class=\"systemBoxMenu\">G</span>TRG</td></tr> // not tested (order of title/class)
