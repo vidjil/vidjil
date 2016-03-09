@@ -169,7 +169,7 @@
         <span class="button2" onclick="db.call('file/add', { 'id' : '{{=request.vars["id"]}}' } )"> + add file </span>
 
         {{pass}}
-        <span class="button2" onclick="db.call('patient/custom', {'patient_id': '{{=request.vars["id"]}}', 'filter': ''} )">compare samples for this patient</span>
+        <span class="button2" onclick="db.call('sample_set/custom', {'id': '{{=request.vars['id']}}', 'filter': ''} )">compare samples for this patient</span>
     </div>
 
 
@@ -181,10 +181,10 @@
                        ).select() :}}
         
             {{if row.fused_file.fused_file is not None :}}
-                <a class="button2" href="index.html?patient={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
+                <a class="button2" href="index.html?sample_set_id={{=request.vars["id"]}}&config={{=row.config.id}}" type="text/html"
                       onclick="event.preventDefault()
                                if( event.which == 2 ) { window.open(this.href) }
-                               else { db.load_data( { 'patient' : '{{=request.vars["id"]}}' , 'config' : {{=row.config.id}} }, '{{=info["filename"]}}' ) }" >
+                               else { db.load_data( { 'sample_set_id' : '{{=request.vars["id"]}}' , 'config' : {{=row.config.id}} }, '{{=info["filename"]}}' ) }" >
             {{pass}}
                 {{=row.config.name}} </a>
         {{pass}}

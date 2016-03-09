@@ -166,7 +166,7 @@ def get_data():
     if not auth.user :
         res = {"redirect" : URL('default', 'user', args='login', scheme=True, host=True,
                             vars=dict(_next=URL('default', 'get_data', scheme=True, host=True,
-                                                vars=dict(patient = request.vars["patient"],
+                                                vars=dict(sample_set_id = request.vars["sample_set_id"],
                                                           config =request.vars["config"]))
                                       )
                             )}
@@ -174,15 +174,18 @@ def get_data():
 
     error = ""
 
-    if not "patient" in request.vars :
-        error += "id patient file needed, "
+    if not "sample_set_id" in request.vars :
+        error += "id sampleset file needed, "
+    else : 
+        if not auth.can_view_sample_set(request.vars["sample_set_id"]):
+            error += "you do not have permission to consult this sample_set ("+str(request.vars["sample_set_id"])+")"
     if not "config" in request.vars:
         error += "id config needed, "
-    if not auth.can_view_patient(request.vars["patient"]):
-        error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
 
-    query = db( ( db.fused_file.sample_set_id == db.patient.sample_set_id)
-               & ( db.patient.id == request.vars["patient"] )
+
+    sample_set = db.sample_set[request.vars["sample_set_id"]]
+    
+    query = db( ( db.fused_file.sample_set_id == request.vars["sample_set_id"])
                & ( db.fused_file.config_id == request.vars["config"] )
                ).select(db.fused_file.ALL)
     for row in query :
@@ -198,15 +201,28 @@ def get_data():
         data = gluon.contrib.simplejson.loads(f.read())
         f.close()
         
-        patient_name = vidjil_utils.anon_ids(request.vars["patient"])
+        patient_name = ""
+        run_name = ""
         config_name = db.config[request.vars["config"]].name
         command = db.config[request.vars["config"]].command
         
-        data["patient_id"] = request.vars["patient"]
+        if (sample_set.sample_type == "patient") :
+            for row in db( db.patient.sample_set_id == request.vars["sample_set_id"] ).select() :
+                patient_name = vidjil_utils.anon_ids(row.id)
+                data["dataFileName"] = patient_name + " (" + config_name + ")"
+                data["info"] = db.patient[row.id].info
+
+        if (sample_set.sample_type == "run") :
+            for row in db( db.run.sample_set_id == sample_set_id ).select() :
+                run_name = db.run[row.id].name
+                data["dataFileName"] = run_name + " (" + config_name + ")"
+                data["info"] = db.patient[row.id].info
+        
         data["patient_name"] = patient_name
         data["config_name"] = config_name
-        data["dataFileName"] = patient_name + " (" + config_name + ")"
-        data["info"] = db.patient(request.vars["patient"]).info
+        
+        
+        
         
         data["samples"]["info"] = []
         data["samples"]["timestamp"] = []
@@ -316,10 +332,10 @@ def get_custom_data():
 def get_analysis():
     error = ""
 
-    if not "patient" in request.vars :
-        error += "id patient file needed, "
-    if not auth.can_view_patient(request.vars["patient"]):
-        error += "you do not have permission to consult this patient ("+str(request.vars["patient"])+")"
+    if not "sample_set_id" in request.vars :
+        error += "id sample_set file needed, "
+    if not auth.can_view_sample_set(request.vars["sample_set_id"]):
+        error += "you do not have permission to consult this sample_set ("+str(request.vars["sample_set_id"])+")"
 
     if "custom" in request.vars :
         return gluon.contrib.simplejson.dumps(get_default_analysis(), separators=(',',':'))
@@ -328,7 +344,7 @@ def get_analysis():
         
         ## récupération des infos se trouvant dans le fichier .analysis
         analysis_data = get_analysis_data(request.vars['patient'])
-        analysis_data["info_patient"] = db.patient[request.vars["patient"]].info
+        #analysis_data["info_patient"] = db.patient[request.vars["patient"]].info
         return gluon.contrib.simplejson.dumps(analysis_data, separators=(',',':'))
 
     else :
