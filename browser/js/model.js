@@ -1109,11 +1109,17 @@ Model.prototype = {
     /**
      * merge all clones currently in the selection into one cluster
      * */
-    merge: function () {
+    merge: function (list) {
+        var select_lead = false;
+        if (list==undefined){
+            list = this.getSelected();
+            select_lead = true;
+        } 
+        
         var new_cluster = [];
-        var list = this.getSelected()
         var leader;
         var top = 200;
+        
         console.log("merge clones " + list)
 
         for (var i = 0; i < list.length; i++) {
@@ -1128,7 +1134,7 @@ Model.prototype = {
         this.clusters[leader] = new_cluster;
         this.unselectAll()
         this.updateElem(list)
-        this.select(leader)
+        if (select_lead) this.select(leader)
         
         this.analysisHasChanged = true
     },
