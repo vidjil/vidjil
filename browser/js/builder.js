@@ -219,12 +219,6 @@ Builder.prototype = {
         this.build_input_edit(id, elem, init_value, save_callback)
     },
 
-    edit_textarea: function(elem, value, callback) {
-        var self = this;
-        var id = "edit_value";
-        this.build_textarea_edit(id, elem, value, callback);
-    },
-
     //TODO rename
     build_edit: function (input, id, elem, callback) {
         var divParent = elem.parentNode;
@@ -235,15 +229,6 @@ Builder.prototype = {
 
         $(input).on('save', callback);
         $(input).select();
-    },
-
-    build_textarea_edit: function (id, elem, value, callback) {
-        var input = document.createElement('textarea');
-        input.id = id;
-        input.innerHTML = value; 
-        this.setup_edit_input(input);
-
-        this.build_edit(input, id, elem, callback);
     },
 
     build_input_edit: function(id, elem, value, callback) {
@@ -281,6 +266,22 @@ Builder.prototype = {
         self.build_info_container()
         self.m.update()
         self.m.analysisHasChanged = true
+    },
+
+    update_model_data(fieldName, value, parent) {
+        if(typeof parent != 'undefined')
+            this.m[parent][fieldName]= value;
+        else
+            this.m[fieldName] = value;
+        this.post_save(this);
+    },
+
+    update_model_sample_data(fieldName, value, parent) {
+        if(typeof parent != 'undefined')
+            this.m[parent][fieldName][this.m.t]= value;
+        else
+            this.m[fieldName][this.m.t] = value;
+        this.post_save(this);
     },
 
     /*complete displaySelector menu with correct info about current tagname / top
@@ -427,16 +428,12 @@ Builder.prototype = {
         parent.innerHTML = "";
 
         var patient_info = typeof this.m.info != 'undefined' ? this.m.info : "";
-        var div_patient_info = this.create_info_container(
+        var div_patient_info = this.create_generic_info_container(
                 patient_info,
                 'patient_info',
                 'patient_info_text',
-                function() {
-                    //TODO id needs to be passed as param
-                    self.m.info = this.value
-                    self.post_save(self)
-                },
-                'patient information');
+                'patient information',
+                'info');
         parent.appendChild(div_patient_info)
         
         //global info
@@ -576,19 +573,12 @@ Builder.prototype = {
         var div_color = this.build_info_color()
         parent.appendChild(div_color) 
 
-        var div_sequence_info = this.create_info_container(
+        var div_sequence_info = this.create_sample_info_container(
                 this.m.getInfoTime(this.m.t),
                 'sequence_info',
                 'info_text',
-                function() {
-                    //TODO id needs to be passed as param
-                    var value = this.value;
-                    if (typeof self.m.samples['info'] == 'undefined')
-                        self.m.samples['info'] = new Array(self.m.samples.names.length, "");
-                    self.m.samples['info'][self.m.t] = value
-                    self.post_save(self)
-                },
-                'sample information');
+                'sample information',
+                'info');
         parent.appendChild(div_sequence_info)
 
         this.initTag();
@@ -636,8 +626,26 @@ Builder.prototype = {
         parent.appendChild(div_data_file)
     },
 
+    create_sample_info_container: function(info, className, id, placeholder, target) {
+        var self = this;
+        var container = this.create_info_container(info, className, id, placeholder);
+        $(textarea).on("change", function() {
+            self.update_model_sample_data(target, this.value, "samples");
+        });
+        return container;
+    },
+
+    create_generic_info_container: function(info, className, id, placeholder, target) {
+        var self = this;
+        var container = this.create_info_container(info, className, id, placeholder);
+        $(textarea).on("change", function() {
+            self.update_model_data(target, this.value);
+        });
+        return container;
+    },
+
     // TODO ambiguous with build_info_container => find another name ?
-    create_info_container: function (info, className, id, callback, placeholder) {
+    create_info_container: function (info, className, id, placeholder, target) {
         var self = this;
         var container = document.createElement('div');
         container.className = className;
@@ -649,13 +657,6 @@ Builder.prototype = {
         textarea.setAttribute('placeholder', placeholder);
 
         container.appendChild(textarea);
-
-
-
-        $(container).children(":first").on("dblclick", function() {
-            //var value = self.m.getStrTime(self.m.t, 'info');
-            self.edit_textarea(this, info, callback);
-        });
 
         return container;
     },
