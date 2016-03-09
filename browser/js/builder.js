@@ -642,13 +642,15 @@ Builder.prototype = {
         var container = document.createElement('div');
         container.className = className;
 
-        text_span = document.createElement('textarea');
-        text_span.id = id;
-        text_span.className = 'info_container';
-        text_span.innerHTML = info ;
-        text_span.setAttribute('placeholder', placeholder);
+        textarea = document.createElement('textarea');
+        textarea.id = id;
+        textarea.className = 'info_container';
+        textarea.innerHTML = info ;
+        textarea.setAttribute('placeholder', placeholder);
 
-        container.appendChild(text_span);
+        container.appendChild(textarea);
+
+
 
         $(container).children(":first").on("dblclick", function() {
             //var value = self.m.getStrTime(self.m.t, 'info');
