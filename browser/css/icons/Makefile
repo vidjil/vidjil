@@ -4,6 +4,7 @@ FONT_DIR      ?= ./fontello/
 
 retrieve:
 	rm -rf ${FONT_DIR}
+	mkdir -p ${FONT_DIR}
 	cp config.json ${FONT_DIR}
 	make fontopen
 	make fontsave
