@@ -241,8 +241,6 @@ function ScatterPlot(id, model) {
     this.preset = {
         "V/J (genes)" : { "mode": "plot", "x" : "gene_v", "y": "gene_j"},
         "V/J (alleles)" : { "mode": "plot", "x" : "allele_v", "y": "allele_j"},
-        "graph" : { "mode": "plot", "x" : "tsneX", "y": "tsneY"},
-        "graph_by_system" : { "mode": "plot", "x" : "tsneX_system", "y": "tsneY_system"},
         "V/N length" : { "mode": "plot", "x" : "gene_v", "y": "n"},
         "clone consensus length / locus" : { "mode": "plot", "x": "sequenceLength", "y" : "locus"},
         "clone consensus length / GC content " : { "mode": "plot", "x": "sequenceLength", "y" : "GCContent"},
@@ -251,7 +249,9 @@ function ScatterPlot(id, model) {
         "V distribution" :            { "mode": "bar", "x" : "gene_v",         "y": "Size"},
         "clone consensus length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "Size"},
         "N length distribution" :     { "mode": "bar", "x" : "n",              "y": "gene_v"},
-        "compare two samples" : { "mode": "plot", "x" : "Size", "y": "otherSize"}
+        "compare two samples" : { "mode": "plot", "x" : "Size", "y": "otherSize"},
+        "plot by similarity" : { "mode": "plot", "x" : "tsneX", "y": "tsneY"},
+        "plot by similarity and by locus" : { "mode": "plot", "x" : "tsneX_system", "y": "tsneY_system"},
         
     };
     this.default_preset = 1
