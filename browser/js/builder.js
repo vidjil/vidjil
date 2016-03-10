@@ -585,7 +585,7 @@ Builder.prototype = {
     },
 
     build_line_read_number: function (id, label, qualifier, read_number) {
-        var val = "no read " + qualifier ;
+        var val = "no read";
         var warning_title = false ;
         var warning_class = '' ;
 
