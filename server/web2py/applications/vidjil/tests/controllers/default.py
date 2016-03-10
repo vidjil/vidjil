@@ -114,6 +114,10 @@ class DefaultController(unittest.TestCase):
         
         request.vars['fileToUpload'] = plop
         request.vars['patient'] = fake_patient_id
+        request.vars['info'] = "fake info"
+        request.vars['samples_id'] = str(fake_file_id)
+        request.vars['samples_info'] = "fake sample info"
+        request.vars['sample_set_id'] = fake_sample_set_id
         
         resp = save_analysis()
 
