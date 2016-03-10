@@ -1079,16 +1079,16 @@ Model.prototype = {
     getPointHtmlInfo: function (timeID) {
         var html = ""
 
-        html = "<h2>Point " + this.getStrTime(timeID, "name") + " ("+m.getSampleTime(timeID)+")</h2>"
+        html = "<h2>Sample " + this.getStrTime(timeID, "name") + " ("+m.getSampleTime(timeID)+")</h2>"
         html += "<div id='info_timepoint'><table><tr><th></th>"
         html += "<tr><td> reads </td><td>" + this.reads.total[timeID] + "</td></tr>"
-        html += "<tr><td> reads segmented </td><td>" + this.reads.segmented_all[timeID] +
+        html += "<tr><td> analyzed reads </td><td>" + this.reads.segmented_all[timeID] +
             " ("+ (this.reads.segmented_all[timeID]*100/this.reads.total[timeID]).toFixed(3) + " % )</td></tr>"
 
-        html += "<tr><td> software used </td><td>" + this.getSoftVersionTime(timeID) + "</td></tr>"
+        html += "<tr><td> analysis software </td><td>" + this.getSoftVersionTime(timeID) + "</td></tr>"
         html += "<tr><td> parameters </td><td>" + this.getCommandTime(timeID) + "</td></tr>"
         html += "<tr><td> timestamp </td><td>" + this.getTimestampTime(timeID) + "</td></tr>"
-        html += "<tr><td> segmentation </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
+        html += "<tr><td> analysis log </td><td><pre>" + this.getSegmentationInfo(timeID) + "</pre></td></tr>"
 
         if ( typeof this.diversity != 'undefined') {
             html += "<tr><td class='header' colspan='2'> diversity </td></tr>"
