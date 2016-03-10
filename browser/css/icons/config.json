@@ -1233,6 +1233,12 @@
       "code": 59959,
       "uid": "471497b78b90ca63aa21b13bf4c46cf4",
       "css": "female"
+    },
+    {
+      "uid": "9bd60140934a1eb9236fd7a8ab1ff6ba",
+      "css": "spin4",
+      "code": 59597,
+      "src": "fontelico"
     }
   ],
   "ascent": 850,
