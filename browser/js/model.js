@@ -827,6 +827,9 @@ Model.prototype = {
             this.clone(list[i]).select = false;
         }
         this.updateElemStyle(list);
+        var span = document.getElementById('highlightCheckboxes');
+        span.innerHTML = "";
+
     },
 
     /**
