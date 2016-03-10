@@ -51,6 +51,13 @@ to access the public server at http://rbx.vidjil.org/.
          disappear until the user clicks on it.
 
     In the =console.log=, the field =priority= takes one of those priorities.
+** Classes
+*** Clone
+**** Info box
+     In the info box all the fields starting with a _ are put. Also all the
+     fields under the =seg= field are displayed as soon as they have a =start= and
+     =stop=. Some of them can be explicitly not displayed by filling the
+     =exclude_seg_info= array in =getHtmlInfo=.
 * Server
 ** Notifications
 *** Priority

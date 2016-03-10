@@ -931,7 +931,22 @@ Clone.prototype = {
         html += "<tr><td> V gene (or 5') </td><td colspan='" + time_length + "'>" + this.getGene("5") + "<div class='div-menu-selector' id='listVsegment' style='display: none'>" + this.createSegmentList("Vsegment") + "</div></td></tr>"
         html += "<tr><td> (D gene) </td><td colspan='" + time_length + "'>" + this.getGene("4") +       "<div class='div-menu-selector' id='listDsegment' style='display: none'>" + this.createSegmentList("Dsegment") + "</div></td></tr>"
         html += "<tr><td> J gene (or 3') </td><td colspan='" + time_length + "'>" + this.getGene("3") + "<div class='div-menu-selector' id='listJsegment' style='display: none'>" + this.createSegmentList("Jsegment") + "</div></td></tr>"
-        
+
+        // Other seg info
+        var exclude_seg_info = ['affectSigns', 'affectValues']
+        for (var key in this.seg) {
+            if (exclude_seg_info.indexOf(key) == -1 && this.seg[key] instanceof Object) {
+                var nt_seq = this.getSegNtSequence(key);
+                if (nt_seq != '') {
+                    html += "<tr><td> "+key+" </td><td colspan='" + time_length + "'>" + this.getSegNtSequence(key) + "</td></tr>"
+                }
+            }
+        }
+        if (typeof this.seg['junction'] != 'undefined'
+           && this.seg.junction.productive == true) {
+            html += "<tr><td> Junction (AA seq) </td><td colspan='" + time_length + "'>" + this.getSegAASequence('junction') + "</td></tr>"
+        }
+
         
         //other info (clntab)
         html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> &nbsp; </td></tr>"
