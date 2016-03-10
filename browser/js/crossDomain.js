@@ -211,6 +211,7 @@ function imgtPostForSegmenter(data, system) {
             });
 
             var span = document.getElementById('highlightCheckboxes');
+            span.innerHTML = "";
             var input = document.createElement('input');
             input.type = 'checkbox';
             input.id = 'imgt_input_check';
