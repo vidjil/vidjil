@@ -51,6 +51,31 @@ to access the public server at http://rbx.vidjil.org/.
          disappear until the user clicks on it.
 
     In the =console.log=, the field =priority= takes one of those priorities.
+** Plots
+*** How to add something to be plotted
+    You want to add a dimension in the scatterplot or as a color? Read the
+    following.
+**** Scatterplot
+     In [[file:../browser/js/scatterPlot.js][scatterPlot.js]], the =available_axis= object defines the dimensions that
+     can be displayed. It suffices to add an entry so that it will be proposed
+     in the X and Y axis. This kind of way of doing should be generalized to
+     the other components.
+
+     The presets are defined in the =preset= object.
+**** Color
+     Adding a color needs slightly more work than adding a dimension in the
+     scatterplot.
+
+     The function =updateColor= in file [[file:../browser/js/clone.js][clone.js]] must be modified to add our color method.
+     The variable =this.color= must contain a color (either in HTML or RGB, or…).
+
+     Then a legend must be displayed to understand what the color represents.
+     For this sake, modify the =build_info_color= method in [[file:../browser/js/builder.js][builder.js]] file. By
+     default four spans are defined (that can be used) to display the legend:
+     =span0=, ..., =span3=.
+
+     Finally modify the [[file:../browser/index.html][index.html]] file to add the new color method in the
+     select box (which is under the =color_menu= ID).
 ** Classes
 *** Clone
 **** Info box
