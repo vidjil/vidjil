@@ -1,5 +1,5 @@
 DB_ADDRESS = ""
-DB_TIMEOUT_CALL = 5000                // Regular call
+DB_TIMEOUT_CALL = 10000               // Regular call
 DB_TIMEOUT_GET_DATA = 15000           // Get patient/sample .data
 DB_TIMEOUT_GET_CUSTOM_DATA = 1200000  // Launch custum fused sample .data
 NOTIFICATION_PERIOD = 30000			  // Time interval to check for notifications periodically
