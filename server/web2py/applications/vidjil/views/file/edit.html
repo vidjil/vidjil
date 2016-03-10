@@ -29,7 +29,7 @@ info = db.sequence_file[request.vars["id"]]
                 <td ><input id="upload_file" type="file" name="file" ></td>
                 <td >* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
             </tr>
-            <tr>
+            <tr class='devel-mode'>
                 <td><label for="patient_list" id="patient_id__label">patient: </label></td>
                 <td><input list="patients" id="patient_list" name="patient_id" type="text" size="80" value="{{=patient}}"></td>
                   <datalist id="patients">
@@ -39,7 +39,7 @@ info = db.sequence_file[request.vars["id"]]
                   </datalist>
                 <td rowspan="2">* you must associate a sequence file with at least one patient or run</td>
             </tr>
-            <tr>
+            <tr class='devel-mode'>
                 <td><label for="run_list" id="run_id__label">run: </label></td>
                 <td><input list="runs" id="run_list" name="run_id" type="text" size="80" value="{{=run}}"></td>
                   <datalist id="runs">

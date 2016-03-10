@@ -2,7 +2,7 @@
     
     <div id="db_menu">
         <a class="button" onclick="db.call('patient/index');">patients</a>
-        <a class="button" onclick="db.call('run/index');">runs</a>
+        <a class="button devel-mode" onclick="db.call('run/index');">runs</a>
         <a class="button" onclick="db.call('notification/index');">news</a>
         {{if auth.is_admin():}}
         - - -
