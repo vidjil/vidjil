@@ -243,16 +243,17 @@ function ScatterPlot(id, model) {
         "V/J (alleles)" : { "mode": "plot", "x" : "allele_v", "y": "allele_j"},
         "V/N length" : { "mode": "plot", "x" : "gene_v", "y": "n"},
         "clone consensus length / locus" : { "mode": "plot", "x": "sequenceLength", "y" : "locus"},
-        "clone consensus length / GC content " : { "mode": "plot", "x": "sequenceLength", "y" : "GCContent"},
-        "clone consensus coverage / GC content " : { "mode": "plot", "x": "coverage", "y" : "GCContent"},
         // "V/abundance" : { "mode": "plot", "x" : "gene_v", "y": "Size"},
-        "V distribution" :            { "mode": "bar", "x" : "gene_v",         "y": "Size"},
         "clone consensus length distribution" : { "mode": "bar", "x" : "sequenceLength", "y": "Size"},
+        "V distribution" :            { "mode": "bar", "x" : "gene_v",         "y": "Size"},
         "N length distribution" :     { "mode": "bar", "x" : "n",              "y": "gene_v"},
+        "CDR3 length distribution" : { "mode": "bar", "x": "lengthCDR3", "y" : "Size"},
+        "J distribution" :            { "mode": "bar", "x" : "gene_j",         "y": "Size"},
         "compare two samples" : { "mode": "plot", "x" : "Size", "y": "otherSize"},
         "plot by similarity" : { "mode": "plot", "x" : "tsneX", "y": "tsneY"},
         "plot by similarity and by locus" : { "mode": "plot", "x" : "tsneX_system", "y": "tsneY_system"},
-        
+        "clone consensus length / GC content " : { "mode": "plot", "x": "sequenceLength", "y" : "GCContent"},
+        "clone consensus coverage / GC content " : { "mode": "plot", "x": "coverage", "y" : "GCContent"},
     };
     this.default_preset = 1
 
