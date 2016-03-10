@@ -146,7 +146,7 @@ Segment.prototype = {
         span = document.createElement('span');
         span.id = "toIMGTSeg";
         span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and loads the results in the sequence panel')
-        span.className = "button button_next devel-mode";
+        span.className = "button button_next";
         span.onclick = function () {
             self.sendTo('IMGTSeg')
         };
