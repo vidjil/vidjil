@@ -243,11 +243,11 @@ function imgtPostForSegmenter(data, system) {
             $(input).on("click", function() {
                 if(this.checked) {
                     segment.highlight[1].field = "3'V-REGION";
-                    segment.highlight[1].color = "blue";
+                    segment.highlight[1].color = "#4b4";
                     segment.highlight[2].field = "D-REGION";
-                    segment.highlight[2].color = "green";
+                    segment.highlight[2].color = "#b44";
                     segment.highlight[3].field = "5'J-REGION";
-                    segment.highlight[3].color = "gray";
+                    segment.highlight[3].color = "#aa2";
                 } else {
                     segment.highlight[1].field = "";
                     segment.highlight[2].field = "";

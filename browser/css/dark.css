@@ -555,13 +555,19 @@ line {
   word-spacing: normal;
 }
 .V {
-  color: #ffb300;
+  text-transform: lowercase;
+  color: #000;
+  background-color: #efe;
 }
 .D {
-  color: #c7007d;
+  text-transform: lowercase;
+  color: #000;
+  background-color: #fee;
 }
 .J {
-  color: #009b95;
+  text-transform: lowercase;
+  color: #000;
+  background-color: #ffffe2;
 }
 .highlight_border,
 .highlight_seq {
