@@ -604,7 +604,8 @@ line {
   word-spacing: normal;
 }
 span .substitution {
-  background-color: #333333;
+  font-weight: bold;
+  color: #800;
 }
 /*tag*/
 .tagSelector {
