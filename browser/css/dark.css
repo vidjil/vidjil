@@ -1649,7 +1649,7 @@ table.log textarea {
 .info_container {
   display: block;
   padding: 5px;
-  border: 1px solid;
+  border: 1px solid #333333;
   overflow-wrap: break-word;
   overflow-y: hidden;
   max-width: 457px;
