@@ -174,6 +174,17 @@ Clone.prototype = {
         }
     }, //end getCode
     
+
+    getCDR3length: function() {
+        if (typeof(this.seg) != 'undefined'
+            && typeof (this.seg['cdr3']) != 'undefined'
+            && typeof (this.seg['cdr3'].start) != 'undefined'
+            && typeof (this.seg['cdr3'].stop) != 'undefined') {
+            return this.seg["cdr3"].stop - this.seg["cdr3"].start + 1
+        } else {
+            return 0;
+        }
+    },
     
     /**
      * change/add custom name
