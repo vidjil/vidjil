@@ -48,7 +48,7 @@ def info(sample_set_id):
     if sample_type == "patient" : 
         patient = db((db.patient.sample_set_id == request.vars["id"])).select()[0]
         name = vidjil_utils.anon_names(patient.id, patient.first_name, patient.last_name)
-        return dict(name = "patient : " + name,
+        return dict(name = name,
                     filename = name,
                     label = patient.id_label + " (" + str(patient.birth) + ")",
                     info = patient.info
