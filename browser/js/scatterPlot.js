@@ -732,7 +732,8 @@ ScatterPlot.prototype = {
         if (typeof values == "undefined"){
             for (var i in this.m.clones) {
                 var clone = this.m.clone(i)
-                if (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.get('germline') ) ){
+                if ((!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.get('germline') ))
+                    && clone.isActive()){
                     var v;
                     try{
                         var v = fct(i);
@@ -759,7 +760,8 @@ ScatterPlot.prototype = {
         
         for (var i in this.m.clones) {
             var clone = this.m.clone(i)
-            if (!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.get('germline') ) ){
+            if ((!this.use_system_grid || (this.use_system_grid && this.m.germlineV.system == clone.get('germline') ))
+               && clone.isActive()){
                 var v;
                 try{
                     var v = fct(i);
