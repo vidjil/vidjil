@@ -231,6 +231,9 @@ function imgtPostForSegmenter(data, system) {
             label.setAttribute("for", 'imgt_input_check');
             label.innerHTML = 'CDR3-IMGT';
 
+            input.setAttribute("title", 'Display CDR3 computed by IMGT/V-QUEST');
+            label.setAttribute("title", 'Display CDR3 computed by IMGT/V-QUEST');
+
             span.appendChild(input);
             span.appendChild(label);
 
@@ -258,6 +261,9 @@ function imgtPostForSegmenter(data, system) {
             var label = document.createElement('label');
             label.setAttribute("for", 'imgt_vdj_input_check');
             label.innerHTML = 'VDJ-IMGT';
+
+            input.setAttribute("title", 'Display V, D and J segments computed by IMGT/V-QUEST');
+            label.setAttribute("title", 'Display V, D and J segments computed by IMGT/V-QUEST');
 
             span.appendChild(input);
             span.appendChild(label);
