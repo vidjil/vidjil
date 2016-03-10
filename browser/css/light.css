@@ -869,6 +869,11 @@ span.logo {
   float: left;
   width: 475px 200;
 }
+#toIMGTSeg {
+  width: 12px;
+  display: inline-block;
+  text-align: center;
+}
 .menu-highlight {
   position: relative;
   float: left;
