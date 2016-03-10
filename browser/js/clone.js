@@ -961,6 +961,9 @@ Clone.prototype = {
         return this.select
     },
 
+    /**
+     * @return true iff the clone is not filtered
+     */
     isActive: function () {
         return this.active
     },
