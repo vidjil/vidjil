@@ -10,7 +10,17 @@
             "3" : "IGHV4*01",
             "4" : "IGHD2*03",
             "3start" : 15,
-            "5end" : 5
+            "5end" : 5,
+            "cdr3": {
+                "start": 10,
+                "stop": 15,
+                "aa": "ABCDE"
+            },
+            "junction": {
+                "start": 9,
+                "stop": 11,
+                "productive": true
+            }
         }
     }
 
@@ -37,7 +47,12 @@
             "3" : "IGHV4*01",
             "4" : "IGHD2*03",
             "3start" : 15,
-            "5end" : 5
+            "5end" : 5,
+            "junction": {
+                "start": 2,
+                "stop": 13,
+                "productive": false
+            }
         }
     }
 
@@ -150,6 +165,33 @@ test("clone : name, informations, getHtmlInfo", function() {
         "<tr><td> V gene (or 5') </td><td colspan='4'>testV5<div class='div-menu-selector' id='listVsegment' style='display: none'>",
         "getHtmlInfo: segmentation information (V gene) after changment");
 
+});
+
+test('clone: get info from seg', function() {
+    var m = new Model();
+    m.parseJsonData(json_data)
+    var c1 = new Clone(json_clone1, m, 0)
+    var c2 = new Clone(json_clone2, m, 1)
+    var c3 = new Clone(json_clone3, m, 2)
+    m.initClones()
+
+    equal(c1.getSegLength('cdr3'), 6, "CDR3 length");
+    equal(c2.getSegLength('cdr3'), 0, "no cdr3 in c2");
+    var pos_cdr3 = c1.getSegStartStop('cdr3')
+    equal(pos_cdr3['start'], 10, "CDR3 length")
+    equal(pos_cdr3['stop'], 15, "CDR3 length")
+    equal(c1.getSegStartStop('toto'), null, "no toto record")
+    var pos_junction = c3.getSegStartStop('junction')
+    equal(pos_junction['start'], 2, "junction of c3")
+    equal(pos_junction['stop'], 13, "junction of c3")
+
+    pos_junction = c1.getSegStartStop('junction')
+    equal(pos_junction['start'], 9, "start junction of c1")
+    equal(pos_junction['stop'], 11, "stop junction of c1")
+
+    equal(c1.getSegNtSequence('junction'), 'aat', 'junction c1')
+    equal(c1.getSegAASequence('junction'), '', 'no AA junction for c1')
+    equal(c1.getSegAASequence('cdr3'), 'ABCDE', 'AA CDR3 for c1')
 });
 
 test("clone : getSequence/RevComp", function() {

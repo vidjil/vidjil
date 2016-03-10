@@ -140,7 +140,7 @@ function ScatterPlot(id, model) {
         },
         "lengthCDR3": {
             label: "CDR3 length",
-            fct: function(cloneID) {return self.m.clone(cloneID).getCDR3length()}
+            fct: function(cloneID) {return self.m.clone(cloneID).getSegLength('cdr3')}
         },
         "coverage": { 
             label: "clone consensus coverage",

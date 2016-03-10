@@ -127,6 +127,58 @@ Clone.prototype = {
         return short_name_items.join(' ')
     },
 
+    /**
+     * Get the amino-acid sequence of the provided field (in the seg part)
+     */
+    getSegAASequence: function(field_name) {
+        if (typeof this.seg != 'undefined'
+            && typeof this.seg[field_name] != 'undefined'
+            && typeof this.seg[field_name].aa != 'undefined') {
+            return this.seg[field_name].aa;
+        }
+        return '';
+    },
+
+    /**
+     * Get the nucleotide sequence  (extracted from the start and stop fields)
+     */
+    getSegNtSequence: function(field_name) {
+        positions = this.getSegStartStop(field_name)
+        if (positions != null) {
+            return this.sequence.substr(positions['start'], positions['stop'] - positions['start']+1)
+        }
+        return '';
+    },
+
+    /**
+     * Return the length of the given field_name in seg
+     * (difference between the stop and the start).
+     * If no start and stop are given, return 0
+     */
+    getSegLength: function(field_name) {
+        positions = this.getSegStartStop(field_name)
+        if (positions != null) {
+            return positions['stop'] - positions['start'] + 1
+        } else {
+            return 0;
+        }
+    },
+
+    /**
+     * Get the start and stop position of a given field (e.g. cdr3)
+     * If it does not exist return null
+     */
+    getSegStartStop: function(field_name) {
+        if (typeof this.seg != 'undefined'
+            && typeof this.seg[field_name] != 'undefined'
+            && typeof this.seg[field_name].start != 'undefined'
+            && typeof this.seg[field_name].stop != 'undefined') {
+            return {'start': this.seg[field_name].start,
+                    'stop': this.seg[field_name].stop}
+        }
+        return null;
+    },
+
     /** 
      * return clone's most important name <br>
      * cluster name > custom_name > segmentation name > window
@@ -173,19 +225,7 @@ Clone.prototype = {
             return this.id;
         }
     }, //end getCode
-    
 
-    getCDR3length: function() {
-        if (typeof(this.seg) != 'undefined'
-            && typeof (this.seg['cdr3']) != 'undefined'
-            && typeof (this.seg['cdr3'].start) != 'undefined'
-            && typeof (this.seg['cdr3'].stop) != 'undefined') {
-            return this.seg["cdr3"].stop - this.seg["cdr3"].start + 1
-        } else {
-            return 0;
-        }
-    },
-    
     /**
      * change/add custom name
      * @param {string} name
