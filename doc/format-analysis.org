@@ -292,7 +292,7 @@ In the .analysis file, this section is intended to describe some specific clones
          "3start": 0, 
          "3end": 0,
 
-                     // any feature to be highligthen in the sequenc
+                     // any feature to be highligthed in the sequenc
                      // the optional "seq" element gives a sequence that corresponds to this feature
                      // CDR3 should be stored that way (in a field called "cdr3"), this is similar
                      // for the other region of interest.
