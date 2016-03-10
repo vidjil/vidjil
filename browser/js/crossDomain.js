@@ -129,8 +129,8 @@ function imgtPostForSegmenter(data, system) {
 
     //update imgt button according to request processing
     if (typeof imgt4segButton != "undefined"){
-        imgt4segButton.setAttribute("style","color:green");
-        if (!imgt4segButton.textContent.contains("loading")  ){imgt4segButton.textContent+=" (loading)";}
+        imgt4segButton.innerHTML = '';
+        imgt4segButton.appendChild(icon('icon-spin4 animate-spin', 'Sequences sent to IMGT/V-QUEST'));
     }
 
     //process to first 10 sequences then alert user about the remaining part
@@ -203,8 +203,7 @@ function imgtPostForSegmenter(data, system) {
 
             var imgt4segButton= document.getElementById("toIMGTSeg");
             if (typeof imgt4segButton != "undefined"){
-                imgt4segButton.removeAttribute("style");
-                imgt4segButton.textContent=imgt4segButton.textContent.replace(" (loading)","");
+                imgt4segButton.innerHTML = '▼';
             }
             console.log({
                 "type": "log",
