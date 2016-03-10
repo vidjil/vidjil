@@ -421,7 +421,7 @@ Segment.prototype = {
         }
         this.updateAlignmentButton()
         this.updateStats();
-        this.updateSegmenterWithHighLighSelection();
+        //this.updateSegmenterWithHighLighSelection();
 
     },
 
