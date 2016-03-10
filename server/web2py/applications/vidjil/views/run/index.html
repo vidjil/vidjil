@@ -69,10 +69,10 @@
                 <td> {{=row['file_count']}} ({{=vidjil_utils.format_size(row['size'])}}) </td>
             {{ total_file_count += row['file_count'] ; total_size += row['size'] }}
                
-{{if isAdmin:}} <td onclick="db.call('run/permission', {'id' :'{{=row['id']}}'} )" > p </td> {{else:}} <td></td> {{pass}}
+{{if isAdmin:}} <td onclick="db.call('run/permission', {'id' :'{{=row['id']}}'} )" > <i class="icon-key" title="set permissions"></i>  </td> {{else:}} <td></td> {{pass}}
                 {{if row['has_admin_permission']:}}
-                <td onclick="db.call('run/edit', {'id' :'{{=row['id']}}'} )" > e </td>
-                <td onclick="db.call('run/confirm', {'id' :'{{=row['id']}}'} )" > X </td>  
+                <td onclick="db.call('run/edit', {'id' :'{{=row['id']}}'} )" >  <i class="icon-pencil-2" title="edit run information"></i> </td>
+                <td onclick="db.call('run/confirm', {'id' :'{{=row['id']}}'} )" >  <i class="icon-erase" title="delete run"></i> </td>
                 {{else:}}  <td></td><td></td>{{pass}}
             </tr>
         {{pass}}

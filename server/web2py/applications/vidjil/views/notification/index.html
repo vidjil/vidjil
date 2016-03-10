@@ -58,10 +58,10 @@
                     {{=row.expiration}}
                 </td>
                 <td class="pointer" onclick="db.call('notification/edit', {'id' : '{{=row.id}}'})">
-                    e
+                    <i class="icon-pencil-2" title="edit notification"></i>
                 </td>
                 <td class="pointer" onclick="db.call('notification/delete', {'id' : '{{=row.id}}'})">
-                    X
+                    <i class="icon-erase" title="delete notification"></i>
                 </td>
             {{pass}}
             </tr>
