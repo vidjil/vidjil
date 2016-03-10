@@ -808,6 +808,19 @@ Builder.prototype = {
                 span2.appendChild(spantag);
             }
             break;
+        case 'productive':
+            span0.appendChild(document.createTextNode('not productive '));
+            var spanNotProductive = document.createElement('span')
+            spanNotProductive.style.backgroundColor = colorProductivity('false')
+            spanNotProductive.className = 'tagColorBox'
+            var spanProductive = document.createElement('span')
+            spanProductive.style.backgroundColor = colorProductivity('true')
+            spanProductive.className = 'tagColorBox'
+            span2.appendChild(spanNotProductive)
+            span2.appendChild(spanProductive)
+            span3.appendChild(document.createTextNode('productive'));
+
+            break;
         case "abundance":
             span0.appendChild(document.createTextNode("abundance"));
 

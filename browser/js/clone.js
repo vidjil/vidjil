@@ -628,6 +628,12 @@ Clone.prototype = {
             this.color =  this.colorN;
         }else if (this.m.colorMethod == "system") {
             this.color = this.m.germlineList.getColor(this.germline)
+        } else if (this.m.colorMethod == 'productive') {
+            if (typeof this.seg != 'undefined'
+                && typeof this.seg.junction != 'undefined'
+                && typeof this.seg.junction.productive != 'undefined') {
+                this.color = colorProductivity(this.seg.junction.productive)
+            }
         }else{
             this.color = "";
         }

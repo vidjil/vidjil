@@ -295,7 +295,9 @@ In the .analysis file, this section is intended to describe some specific clones
                      // any feature to be highligthen in the sequenc
                      // the optional "seq" element gives a sequence that corresponds to this feature
                      // CDR3 should be stored that way (in a field called "cdr3"), this is similar
-                     // for the other regions of interest.
+                     // for the other region of interest.
+                     // The junction is also stored in that way (in a "junction" field),
+                     // its productivity must be stored in a boolean field called "productive"
          "somefeature": { "start": 0, "stop": 0, "seq": "" }
       }
 
