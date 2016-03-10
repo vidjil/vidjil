@@ -1654,6 +1654,7 @@ table.log textarea {
   text-align: center;
 }
 .info_container {
+  color: #657b83;
   display: block;
   padding: 5px;
   border: 1px solid #cccccc;
@@ -1691,6 +1692,7 @@ textarea#edit_value {
 #top_info {
   display: inline-flex;
   font-weight: bold;
+  color: black;
 }
 .save_info.button {
   vertical-align: top;
