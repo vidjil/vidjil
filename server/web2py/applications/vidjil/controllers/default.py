@@ -189,7 +189,7 @@ def checkProcess():
 
 #########################################################################
 ## return .data file
-# need sample_set, config
+# need sample_set/patient, config
 # need sample_set admin or read permission
 def get_data():
     from subprocess import Popen, PIPE, STDOUT
@@ -203,7 +203,13 @@ def get_data():
         return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
 
     error = ""
+    
+    if "patient" in request.vars :
+        request.vars["sample_set_id"] = db.patient[request.vars["patient"]].sample_set_id
 
+    if "run" in request.vars :
+        request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
+    
     if not "sample_set_id" in request.vars :
         error += "id sampleset file needed, "
     else : 
@@ -376,6 +382,12 @@ def get_custom_data():
 def get_analysis():
     error = ""
 
+    if "patient" in request.vars :
+        request.vars["sample_set_id"] = db.patient[request.vars["patient"]].sample_set_id
+
+    if "run" in request.vars :
+        request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
+    
     if not "sample_set_id" in request.vars :
         error += "id sample_set file needed, "
     if not auth.can_view_sample_set(request.vars["sample_set_id"]):

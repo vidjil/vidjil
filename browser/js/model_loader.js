@@ -37,11 +37,13 @@ Model_loader.prototype = {
      * */
     start: function() {
         var self = this;
-        var dataURL = ""
-        var analysisURL = ""
-        var sample_set_id = -1
-        var dbconfig = -1
-        var custom_list = []
+        var dataURL = "";
+        var analysisURL = "";
+        var sample_set_id = -1;
+        var patient = -1;
+        var run = -1;
+        var dbconfig = -1;
+        var custom_list = [];
         
         /** Process arguments in conf.js */
         if (typeof config != 'undefined' && typeof config.autoload != 'undefined')
@@ -60,6 +62,8 @@ Model_loader.prototype = {
                 if (tmp2[0] == 'data') dataURL = tmp2[1]
                 if (tmp2[0] == 'analysis') analysisURL = tmp2[1]
                 if (tmp2[0] == 'sample_set_id') sample_set_id = tmp2[1]
+                if (tmp2[0] == 'patient') patient = tmp2[1]
+                if (tmp2[0] == 'run') run = tmp2[1]
                 if (tmp2[0] == 'config') dbconfig = tmp2[1]
                 if (tmp2[0] == 'custom') {
                     custom_split = tmp2[1].split(',')
@@ -85,6 +89,16 @@ Model_loader.prototype = {
         else if (sample_set_id != "-1" && dbconfig != "-1"){
             //wait 1sec to check ssl
             setTimeout(function () { db.load_data( {"sample_set_id" : sample_set_id , "config" : dbconfig } , "")  }, 1000);
+        }
+        
+        else if (patient != "-1" && dbconfig != "-1"){
+            //wait 1sec to check ssl
+            setTimeout(function () { db.load_data( {"patient" : patient , "config" : dbconfig } , "")  }, 1000);
+        }
+        
+        else if (run != "-1" && dbconfig != "-1"){
+            //wait 1sec to check ssl
+            setTimeout(function () { db.load_data( {"run" : run , "config" : dbconfig } , "")  }, 1000);
         }
             
         else if (custom_list.length>0){
