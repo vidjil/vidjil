@@ -894,7 +894,7 @@ Clone.prototype = {
         
         //IMGT info
         if (this.seg.imgt != null) {
-            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> IMGT information " + "</td></tr>";
+            html += "<tr><td class='header' colspan='" + (time_length + 1) + "'> Results of <a href='http://www.imgt.org/IMGT_vquest/share/textes/'>IMGT/V-QUEST</a> " + "</td></tr>";
             for (var item in this.seg.imgt) {
                     html += "<tr><td> " + item + "</td><td> " + this.seg.imgt[item] + "</td></tr>";
             }
