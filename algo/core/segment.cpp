@@ -1125,13 +1125,13 @@ json KmerSegmenter::toJson() {
       seg["_evalue_right"] = scientific_string_of_double(evalue_right);
 
     seg["affectValues"] = {
-        {"start", 0},
+        {"start", 1},
         {"stop", sequenceSize},
         {"seq", getKmerAffectAnalyser()->toStringValues()}
     };
     
     seg["affectSigns"] = {
-        {"start", 0},
+        {"start", 1},
         {"stop", sequenceSize},
         {"seq", getKmerAffectAnalyser()->toStringSigns()}
     };
