@@ -1028,7 +1028,7 @@ Sequence.prototype = {
         if (segment.aligned && self != other) {
             var span = document.createElement('span');
             span.className = 'substitution';
-            span.addAttibute('other', other + '-' + segment.first_clone);
+            span.addAttribute('other', other + '-' + segment.first_clone);
             span.appendChild(document.createTextNode(self));
             return "<span class='substitution' other='" + other + '-' + segment.first_clone + "'>" + self + "</span>"
         }else {
