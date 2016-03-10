@@ -189,7 +189,7 @@ test('clone: get info from seg', function() {
     equal(pos_junction['start'], 9, "start junction of c1")
     equal(pos_junction['stop'], 11, "stop junction of c1")
 
-    equal(c1.getSegNtSequence('junction'), 'att', 'junction c1')
+    equal(c1.getSegNtSequence('junction'), 'aat', 'junction c1')
     equal(c1.getSegAASequence('junction'), '', 'no AA junction for c1')
     equal(c1.getSegAASequence('cdr3'), 'ABCDE', 'AA CDR3 for c1')
 });

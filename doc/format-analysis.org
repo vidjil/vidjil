@@ -279,6 +279,7 @@ In the .analysis file, this section is intended to describe some specific clones
                      // in the browser clones, that are not segmented will be shown on the grid with '?/?'
                      // positions are related to the 'sequence'
                      // names of V/D/J genes should match the ones in files referenced in germline/germline.data
+                     // Positions must start at 1.
       {
          "5": "IGHV5*01",
          "5start": 0, 
@@ -297,8 +298,9 @@ In the .analysis file, this section is intended to describe some specific clones
                      // CDR3 should be stored that way (in a field called "cdr3"), this is similar
                      // for the other region of interest.
                      // The junction is also stored in that way (in a "junction" field),
-                     // its productivity must be stored in a boolean field called "productive"
-         "somefeature": { "start": 0, "stop": 0, "seq": "" }
+                     // its productivity must be stored in a boolean field called "productive".
+                     // Positions must also start at 1.
+         "somefeature": { "start": 1, "stop": 100, "seq": "" }
       }
 
 
