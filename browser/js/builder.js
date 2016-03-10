@@ -681,7 +681,13 @@ Builder.prototype = {
     	    key = key_list[k];
 
             if (key.substring(0,2) == "TR" && last_key.substring(0,2) == "IG" && keys > 0) {
-                span2.appendChild(document.createElement("br"));
+                if (key_list.length > 7)
+                    span2.appendChild(document.createElement("br"));
+                if (key_list.length < 7) {
+                    var spacer = document.createElement("span")
+                    spacer.className = "systemBoxNameMenu"
+                    span2.appendChild(spacer);
+                }
             }
             last_key = key ;
 
