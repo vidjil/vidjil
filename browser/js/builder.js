@@ -640,7 +640,7 @@ Builder.prototype = {
 
         var save_analysis = document.createElement("a");
         save_analysis.className = "buttonSelector"
-        save_analysis.appendChild(document.createTextNode("save this patient's analysis"));
+        save_analysis.appendChild(document.createTextNode("save patient"));
         save_analysis.onclick = function() {
             db.save_analysis();
         }
