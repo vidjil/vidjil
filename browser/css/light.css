@@ -1701,6 +1701,10 @@ textarea#edit_value {
   font-weight: bold;
   color: black;
 }
+#top_info div {
+  font-weight: normal;
+  color: #657b83;
+}
 .save_info.button {
   vertical-align: top;
   padding-right: 0px;

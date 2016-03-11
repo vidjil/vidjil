@@ -618,14 +618,38 @@ Builder.prototype = {
         var self = this;
         var parent = document.getElementById("top_info");
         parent.innerHTML = "";
-        var div_data_file = document.createElement('div');
-        //div_data_file.id = "info_data_file"
-        div_data_file.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
-	div_data_file.onclick = function() {
+        parent.appendChild(document.createTextNode(this.m.getPrintableAnalysisName()));
+
+        var selector = document.createElement('div');
+        selector.className = 'selector';
+        selector.id = 'patientSelector';
+        parent.appendChild(selector);
+        var interm = document.createElement('div');
+        selector.appendChild(interm);
+        var menu_box = document.createElement('div');
+        menu_box.className = "menu_box";
+        interm.appendChild(menu_box);
+
+        var open_patient = document.createElement('a');
+        open_patient.className = "buttonSelector";
+        open_patient.appendChild(document.createTextNode("open patient"));
+	open_patient.onclick = function() {
 	    db.call('patient/info', {'id' : m.patient_id});
 	}
+        menu_box.appendChild(open_patient);
+
+        var save_analysis = document.createElement("a");
+        save_analysis.className = "buttonSelector"
+        save_analysis.appendChild(document.createTextNode("save this patient's analysis"));
+        save_analysis.onclick = function() {
+            db.save_analysis();
+        }
+        menu_box.appendChild(save_analysis);
+
+        $(parent).on('mouseover', function() {
+            showSelector('patientSelector');
+        })
         document.title = this.m.getPrintableAnalysisName()
-        parent.appendChild(div_data_file)
     },
 
     create_sample_info_container: function(info, className, id, placeholder, target) {
