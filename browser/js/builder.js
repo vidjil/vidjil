@@ -667,9 +667,7 @@ Builder.prototype = {
         var div = document.createElement('div');
         div.className = "info_line locus_line";
         
-        var span2 = document.createElement('span');
-        span2.className = "info_row_content"
-        
+        var span2 ;
         var keys = 0 ;
 
     	var key_list = this.m.system_available;
@@ -680,14 +678,15 @@ Builder.prototype = {
         for (var k in key_list) {
     	    key = key_list[k];
 
-            if (key.substring(0,2) == "TR" && last_key.substring(0,2) == "IG" && keys > 0) {
-                if (key_list.length > 7)
-                    span2.appendChild(document.createElement("br"));
-                if (key_list.length < 7) {
-                    var spacer = document.createElement("span")
-                    spacer.className = "systemBoxNameMenu"
-                    span2.appendChild(spacer);
-                }
+            // Are we at the start of a new group of locus ?
+            if (key.substring(0,2) != last_key.substring(0,2) || keys == 0) {
+
+                if (keys > 0)
+                    // Flush existing span2
+                    div.appendChild(span2)
+
+                span2 = document.createElement('span')
+                span2.className = "locus_row"
             }
             last_key = key ;
 
