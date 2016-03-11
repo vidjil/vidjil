@@ -34,6 +34,8 @@
 #define MISMATCH '.'
 #define INSER 'i'
 #define DELET 'd'
+#define INSER_AFFINE 'I'
+#define DELET_AFFINE 'D'
 #define INIT '_'
 #define HOMO2X 'h'
 #define HOMO2Y 'h'
@@ -224,6 +226,7 @@ void DynProg::init()
         Bins[i][0].score = cost.open_insertion + cost.extend_insertion * i;
         Bdel[i][0].score = MINUS_INF;
         B[i][0].score = Bins[i][0].score ;
+        B[i][0].type = INSER_AFFINE;
       }
 
       if (mode == GlobalButMostlyLocal) {
@@ -242,6 +245,7 @@ void DynProg::init()
          if (j) Bins[0][j].score = MINUS_INF;
          Bdel[0][j].score = cost.open_deletion + cost.extend_deletion * j;
          B[0][j].score = Bdel[0][j].score;
+         B[0][j].type = DELET_AFFINE;
        }
 
        if (mode == GlobalButMostlyLocal) {
@@ -309,13 +313,13 @@ int DynProg::compute(bool onlyBottomTriangle, int onlyBottomTriangleShift)
           Bins[i][j].score = MINUS_INF ;
           try_operation(Bins[i][j], 'o', i-1, j, B[i-1][j].score + cost.open_insertion);
           try_operation(Bins[i][j], 'x', Bins[i-1][j].i, j, Bins[i-1][j].score + cost.extend_insertion);
-          try_operation(best, INSER, Bins[i][j].i, j ,Bins[i][j].score);
+          try_operation(best, INSER_AFFINE, Bins[i][j].i, j ,Bins[i][j].score);
 
           // Gotoh affine gaps - deletions
           Bdel[i][j].score = MINUS_INF ;
           try_operation(Bdel[i][j], 'o', i, j-1, B[i][j-1].score + cost.open_deletion);
           try_operation(Bdel[i][j], 'x', i, Bdel[i][j-1].j, Bdel[i][j-1].score + cost.extend_deletion);
-          try_operation(best, DELET, i, Bdel[i][j].j,  Bdel[i][j].score);
+          try_operation(best, DELET_AFFINE, i, Bdel[i][j].j,  Bdel[i][j].score);
         }
 
       // Homopolymers
