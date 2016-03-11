@@ -485,7 +485,8 @@ List.prototype = {
         for (var i = 0; i < self.m.clusters[cloneID].length; i++) {
             (function (i) {
                 var id = self.m.clusters[cloneID][i]
-                var color = self.m.clone(id).getColor();
+                var clone = self.m.clone(id)
+                var color = clone.getColor();
                 var div_clone = document.createElement('div');
                 div_clone.id = "_" + id;
                 div_clone.id2 = id;
@@ -494,7 +495,7 @@ List.prototype = {
                 div_clone.onmouseover = function () {
                     self.m.focusIn(id);
                 }
-                if (self.m.clone(id).isSelected) div_clone.className = "listElem selected";
+                if (clone.isSelected) div_clone.className = "listElem selected";
 
                 var span_name = document.createElement('span');
                 span_name.className = "nameBox";
@@ -505,8 +506,8 @@ List.prototype = {
                 span_name.onclick = function (e) {
                     self.clickList(e, id);
                 }
-                span_name.appendChild(document.createTextNode(self.m.clone(id).getCode()));
-                span_name.title = self.m.clone(id).getCode();
+                span_name.appendChild(document.createTextNode(clone.getCode()));
+                span_name.title = clone.getCode();
 
                 var span_info = document.createElement('span')
                 span_info.className = "infoBox";
@@ -529,7 +530,7 @@ List.prototype = {
                 
                 var r = 100
                 if (clusterSize != 0) {
-                    span_stat.appendChild(document.createTextNode( (self.m.clone(id).get('reads', self.m.t)*100/clusterReads).toFixed(1) + "%"));
+                    span_stat.appendChild(document.createTextNode( (clone.get('reads', self.m.t)*100/clusterReads).toFixed(1) + "%"));
                 } else {
                     span_stat.appendChild(document.createTextNode("0%"))
                 }

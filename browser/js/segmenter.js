@@ -484,9 +484,12 @@ Segment.prototype = {
             self.m.clone(cloneID).unselect();
             self.aligned = false;
         }
-        seq_name.appendChild(document.createTextNode(this.m.clone(cloneID).getShortName()));
-        seq_name.title = this.m.clone(cloneID).getName();
-        seq_name.style.color = this.m.clone(cloneID).color;
+
+        var clone = this.m.clone(cloneID)
+
+        seq_name.appendChild(document.createTextNode(clone.getShortName()));
+        seq_name.title = clone.getName();
+        seq_name.style.color = clone.color;
 
         // Tag
         var svg_star = document.createElement('span')
@@ -496,8 +499,8 @@ Segment.prototype = {
         }
         svg_star.appendChild(icon('icon-star-2', 'clone tag'))
         svg_star.setAttribute('id', 'color' + cloneID);
-        if (typeof this.m.clone(cloneID).tag != 'undefined')
-            svg_star.style.color = this.m.tag[this.m.clone(cloneID).getTag()].color
+        if (typeof clone.tag != 'undefined')
+            svg_star.style.color = this.m.tag[clone.getTag()].color
 
 
         // Size
@@ -506,8 +509,8 @@ Segment.prototype = {
         seq_size.onclick = function () {
             self.m.clone(cloneID).unselect();
         }
-        seq_size.style.color = this.m.clone(cloneID).color;
-        seq_size.appendChild(document.createTextNode(this.m.clone(cloneID).getStrSize()));
+        seq_size.style.color = clone.color;
+        seq_size.appendChild(document.createTextNode(clone.getStrSize()));
 
         // Info
         var span_info = document.createElement('span')
@@ -524,8 +527,8 @@ Segment.prototype = {
 
         var info = '' ;
 
-        if (this.m.clone(cloneID).seg.imgt!=null){
-            info = (this.m.clone(cloneID).seg.imgt["Functionality"].toLowerCase().indexOf("unproductive") > -1)
+        if (clone.seg.imgt!=null){
+            info = (clone.seg.imgt["Functionality"].toLowerCase().indexOf("unproductive") > -1)
                 ? icon('icon-plus-squared', 'productive')
                 : icon('icon-minus-squared', 'unproductive') ;
         }
