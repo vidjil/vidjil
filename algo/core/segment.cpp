@@ -1050,6 +1050,19 @@ void FineSegmenter::findCDR3(){
   // - Sequence may be too short on either side, and thus the backtrack did not find a suitable 'marked_pos'
   if (JUNCTIONstart == 0 || JUNCTIONend == 0)
     return;
+
+  // We require at least two codons
+  if (JUNCTIONend - JUNCTIONstart + 1 < 6) {
+    JUNCTIONstart = -1 ;
+    JUNCTIONend = -1 ;
+    return ;
+  }
+
+  // We require at least one more nucleotide to export a CDR3
+  if (JUNCTIONend - JUNCTIONstart + 1 < 7) {
+    JUNCTIONproductive = false ;
+    return ;
+  }
   
   // IMGT-CDR3 is, on each side, 3 nucleotides shorter than IMGT-JUNCTION
   CDR3start = JUNCTIONstart + 3;
@@ -1101,6 +1114,9 @@ json FineSegmenter::toJson(){
             {"stop", CDR3end},
             {"aa", CDR3aa}
         };
+    }
+
+    if (JUNCTIONstart >= 0) {
         seg["junction"] = {
             {"start", JUNCTIONstart},
             {"stop", JUNCTIONend},
