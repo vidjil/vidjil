@@ -34,6 +34,7 @@
 #define MISMATCH '.'
 #define INSER 'i'
 #define DELET 'd'
+#define INIT '_'
 #define HOMO2X 'h'
 #define HOMO2Y 'h'
 #define FIN ' '
@@ -196,6 +197,8 @@ void DynProg::init()
           Bdel[i][j].i = BAD_BACKTRACK;
           Bins[i][j].j = BAD_BACKTRACK;
           Bdel[i][j].j = BAD_BACKTRACK;
+          Bins[i][j].type = INIT;
+          Bdel[i][j].type = INIT;
         }
       }
 
