@@ -268,17 +268,17 @@ Builder.prototype = {
         self.m.analysisHasChanged = true
     },
 
-    update_model_data(fieldName, value, parent) {
-        if(typeof parent != 'undefined')
-            this.m[parent][fieldName]= value;
+    update_model_data(fieldName, value, field_parent) {
+        if(typeof field_parent != 'undefined')
+            this.m[field_parent][fieldName]= value;
         else
             this.m[fieldName] = value;
         this.post_save(this);
     },
 
-    update_model_sample_data(fieldName, value, parent) {
-        if(typeof parent != 'undefined')
-            this.m[parent][fieldName][this.m.t]= value;
+    update_model_sample_data(fieldName, value, field_parent) {
+        if(typeof field_parent != 'undefined')
+            this.m[field_parent][fieldName][this.m.t]= value;
         else
             this.m[fieldName][this.m.t] = value;
         this.post_save(this);
