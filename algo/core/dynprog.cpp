@@ -34,11 +34,16 @@
 #define MISMATCH '.'
 #define INSER 'i'
 #define DELET 'd'
+#define INSER_AFFINE 'I'
+#define DELET_AFFINE 'D'
+#define INIT '_'
 #define HOMO2X 'h'
 #define HOMO2Y 'h'
 #define FIN ' '
 #define BEGIN 'B'
 #define BACKSIZE 120
+
+#define BAD_BACKTRACK -1
 
 using namespace std;
 
@@ -180,12 +185,31 @@ DynProg::~DynProg() {
 
 void DynProg::init()
 {
+  // Initialize scores
+  for (int i=0; i<=m; i++)
+    for (int j=0; j<=n; j++)
+      {
+        B[i][j].score = 0 ;
+        B[i][j].i = BAD_BACKTRACK ;
+        B[i][j].j = BAD_BACKTRACK ;
+        if (cost.affine_gap) {
+          Bins[i][j].score = 0;
+          Bdel[i][j].score = 0;
+          Bins[i][j].i = BAD_BACKTRACK;
+          Bdel[i][j].i = BAD_BACKTRACK;
+          Bins[i][j].j = BAD_BACKTRACK;
+          Bdel[i][j].j = BAD_BACKTRACK;
+          Bins[i][j].type = INIT;
+          Bdel[i][j].type = INIT;
+        }
+      }
+
+  // Initialize backtrack labels (B[0][0] labels are never used)
   for (int i=1; i<=m; i++)
     {
       B[i][0].type = INSER ;
       B[i][0].i = i-1 ;
       B[i][0].j = 0 ;
-      Bdel[i][0].score = Bins[i][0].score = MINUS_INF ;
     }
 
   for (int j=1; j<=n; j++)
@@ -193,29 +217,47 @@ void DynProg::init()
       B[0][j].type = DELET ;    
       B[0][j].i = 0 ;
       B[0][j].j = j-1 ;
-      Bdel[0][j].score = Bins[0][j].score = MINUS_INF ;
     }
 
-  if (mode == Local || mode == LocalEndWithSomeDeletions)
-    for (int i=0; i<=m; i++)
-      B[i][0].score = 0 ;
-  else if (mode == GlobalButMostlyLocal)
-    for (int i=0; i<=m; i++)
-      B[i][0].score = i * cost.insertion / 2 ;
-  else // Global, SemiGlobal
-    for (int i=0; i<=m; i++)
+  if (!(mode == Local || mode == LocalEndWithSomeDeletions)) // Global, SemiGlobal
+    for (int i=0; i<=m; i++) {
       B[i][0].score = i * cost.insertion ;
-   
-  if (mode == SemiGlobal || mode == SemiGlobalTrans || mode == Local || mode == LocalEndWithSomeDeletions)
-    for (int j=0; j<=n; j++)
-      B[0][j].score = 0 ;
-  else if (mode == GlobalButMostlyLocal)
-    for (int j=0; j<=n; j++)
-      B[0][j].score = j * cost.deletion / 2 ;
-  else // Global
-    for (int j=0; j<=n; j++)
+      if (cost.affine_gap) {
+        Bins[i][0].score = cost.open_insertion + cost.extend_insertion * i;
+        Bdel[i][0].score = MINUS_INF;
+        B[i][0].score = Bins[i][0].score ;
+        B[i][0].type = INSER_AFFINE;
+      }
+
+      if (mode == GlobalButMostlyLocal) {
+        B[i][0].score /= 2;
+        if (cost.affine_gap) {
+          Bins[i][0].score -= cost.open_insertion / 2 ;
+          B[i][0].score = Bins[i][0].score ;
+        }
+      }
+    }
+
+  if (!(mode == SemiGlobal || mode == SemiGlobalTrans || mode == Local || mode == LocalEndWithSomeDeletions)) // Global
+    for (int j=0; j<=n; j++) {
       B[0][j].score = j * cost.deletion ;
+       if (cost.affine_gap) {
+         if (j) Bins[0][j].score = MINUS_INF;
+         Bdel[0][j].score = cost.open_deletion + cost.extend_deletion * j;
+         B[0][j].score = Bdel[0][j].score;
+         B[0][j].type = DELET_AFFINE;
+       }
+
+       if (mode == GlobalButMostlyLocal) {
+         B[0][j].score /= 2;
+         if (cost.affine_gap) {
+           Bdel[0][j].score -= cost.open_deletion / 2 ;
+           B[0][j].score = Bdel[0][j].score;
+         }
+       }
+    }
 }
+
 
 inline void try_operation(operation &best, int type, int i, int j, int score)
 {
@@ -271,13 +313,13 @@ int DynProg::compute(bool onlyBottomTriangle, int onlyBottomTriangleShift)
           Bins[i][j].score = MINUS_INF ;
           try_operation(Bins[i][j], 'o', i-1, j, B[i-1][j].score + cost.open_insertion);
           try_operation(Bins[i][j], 'x', Bins[i-1][j].i, j, Bins[i-1][j].score + cost.extend_insertion);
-          try_operation(best, INSER, Bins[i][j].i, j ,Bins[i][j].score);
+          try_operation(best, INSER_AFFINE, Bins[i][j].i, j ,Bins[i][j].score);
 
           // Gotoh affine gaps - deletions
           Bdel[i][j].score = MINUS_INF ;
           try_operation(Bdel[i][j], 'o', i, j-1, B[i][j-1].score + cost.open_deletion);
-          try_operation(Bdel[i][j], 'x', i, Bdel[i][j-1].j, Bdel[i-1][j].score + cost.extend_deletion);
-          try_operation(best, DELET, i, Bdel[i][j].j,  Bdel[i][j].score);
+          try_operation(Bdel[i][j], 'x', i, Bdel[i][j-1].j, Bdel[i][j-1].score + cost.extend_deletion);
+          try_operation(best, DELET_AFFINE, i, Bdel[i][j].j,  Bdel[i][j].score);
         }
 
       // Homopolymers
@@ -431,8 +473,13 @@ void DynProg::backtrack()
   if (reverse_y)
     j = n - j + 1;
 
-  // Compute backtrack strings
+  if ((i<0) || (i>m) || (j<0) || (j>n))
+    {
+      cout << "Invalid backtrack starting point: " << i << "," << j << endl ;
+      exit(1);
+    }
   
+  // Compute backtrack strings
   ostringstream back_x;
   ostringstream back_y;
   ostringstream back_tr;
@@ -446,12 +493,6 @@ void DynProg::backtrack()
         marked_pos_i = reverse_x ? m-i+1 : i ;
       }
 
-    if ((i<0) || (j<0))
-      { 
-        cout << "Invalid backtrack: " << i << "," << j << endl ;
-        exit(1);
-      }
-
     if  (B[i][j].type == FIN)
       break ;
       
@@ -459,6 +500,15 @@ void DynProg::backtrack()
     
     int next_i = B[i][j].i;
     int next_j = B[i][j].j;
+
+    if ((next_i<0) || (next_i>m) || (next_j<0) || (next_j>n))
+      {
+        cout << "Invalid backtrack: " << i << "," << j << " -> " << next_i << "," << next_j << endl ;
+        cout << back_x.str() << endl ;
+        cout << back_tr.str() << endl ;
+        cout << back_y.str() << endl ;
+        exit(1);
+      }
 
     // The maximum number of characters implied by this operation
     int max_k = max(i - next_i, j - next_j);
@@ -547,37 +597,56 @@ float identity_percent(int score)
 }
 
 
-ostream& operator<<(ostream& out, const DynProg& dp)
+ostream& to_ostream(ostream& out, string label, operation** B, const string x, const string y, int m, int n)
 {
-  out << "       " ;
+  out << label << "  " ;
 
-  for (int j=0; j<dp.n; j++)
-    out << setw(4) << dp.y[j] << " ";
+  for (int j=0; j<n; j++)
+    out << setw(4) << y[j] << " ";
 
   out << endl ;
 
-  for (int i=0; i<=dp.m; i++)
+  for (int i=0; i<=m; i++)
     {
       if (i)
-	out << dp.x[i-1] << " " ;
+	out << x[i-1] << " " ;
       else
 	out << "  " ;
 
-      for (int j=0; j<=dp.n; j++)
+      for (int j=0; j<=n; j++)
         {
-          if (dp.B[i][j].score)
-            out << setw(4) << dp.B[i][j].score << dp.B[i][j].type ;
+          if (B[i][j].score)
+            {
+              if (B[i][j].score <= MINUS_INF)
+                out << "-INF" ;
+              else
+                out << setw(4) << B[i][j].score ;
+            }
           else
-            out << "    " << dp.B[i][j].type ;
+            out << "    ";
+
+          out << B[i][j].type ;
         }
       out << endl ;      
     }
-  
-  out << "best: " << dp.best_i << "," << dp.best_j << endl;
 
+  out << endl;
+  
   return out ;
 }
 
+ostream& operator<<(ostream& out, const DynProg& dp)
+{
+  if (dp.cost.affine_gap)
+    {
+      to_ostream(out, "[Bins]", dp.Bins, dp.x, dp.y, dp.m, dp.n);
+      to_ostream(out, "[Bdel]", dp.Bdel, dp.x, dp.y, dp.m, dp.n);
+    }
+  to_ostream(out, "[B]   ",dp.B, dp.x, dp.y, dp.m, dp.n);
+  out << "best: " << dp.best_i << "," << dp.best_j << endl;
+
+  return out;
+}
 
 Cost strToCost(string str, Cost default_cost){
 

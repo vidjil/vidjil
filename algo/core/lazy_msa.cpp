@@ -28,7 +28,7 @@ void LazyMsa::add(string sequence){
   sequences[sizeUsed]=sequence;
   
   DynProg::DynProgMode dpMode = DynProg::GlobalButMostlyLocal ;
-  Cost dpCost = VDJ;
+  Cost dpCost = VDJaffine;
   
   DynProg dp = DynProg(ref, sequence, dpMode, dpCost);
   dp.compute();

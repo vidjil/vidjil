@@ -1,0 +1,14 @@
+!LAUNCH: export REQUEST_METHOD=POST ; export CONTENT_TYPE=test ; $LAUNCHER $VIDJIL_DIR/browser/cgi/align.cgi < $VIDJIL_DIR/data/msa2.fa
+
+$ no spurious info
+0: .* bp in .* sequences
+
+$ response header
+1:Content-type: text/html
+
+$ seq1 (reference sequence for lazy msa)
+1:---TAGAT
+
+$ seq2
+1:GGATAGA-
+
