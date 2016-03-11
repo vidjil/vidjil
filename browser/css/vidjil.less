@@ -25,7 +25,7 @@ html{
 }
 
 body {
-  font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
+  font-family: ubuntulight, Arial, Helvetica, Sans-serif;
   font-size: 13px;
   height : 100%;
   margin:0px;
@@ -33,19 +33,16 @@ body {
   background : @border;
 }
 
+.cloneName {
+  font-family: ubuntumedium, Arial Bold, Helvetica, Sans-serif;
+  bottom: 1px;
+}
 
 /* texts that are not sequences nor identifiers */
 
 #info, .popup_msg, .menu, .menu a
 {
-  font-family: ubuntulight, Arial, Helvetica, Sans-serif;
 }
-
-a 
-{
-  font-family: ubuntumedium,  Arial, Helvetica, Sans-serif;
-}
-
 
 
 h2
@@ -145,7 +142,6 @@ line {
 }
 
 #info{
-  font-family: ubuntumedium, Arial, Helvetica, Sans-serif;
   font-size: 13px;
   padding:3px;
   background : @background;
@@ -391,7 +387,6 @@ line {
 
 .sp_system_label{
   color : @default ;
-  font-weight : bold;
   height:0px;
   position:relative;
   -webkit-transition: left 0.5s;
@@ -518,7 +513,6 @@ line {
   -o-transition: color  0.2s;
   -ms-transition: color 0.2s;
   transition: color 0.2s;
-  font-weight : bold;
   padding: 1px 4px 4px 1px;
   height :14px;
 }
@@ -669,7 +663,6 @@ line {
 }
 
 .seq-fixed {
-  font-weight: bold;
   position: relative;
   display: inline-block;
   width: (@width_left_container - @width_scrollbar);
