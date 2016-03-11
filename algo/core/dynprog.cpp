@@ -40,6 +40,8 @@
 #define BEGIN 'B'
 #define BACKSIZE 120
 
+#define BAD_BACKTRACK -1
+
 using namespace std;
 
 
@@ -180,8 +182,24 @@ DynProg::~DynProg() {
 
 void DynProg::init()
 {
-  // Initialize backtrack labels (B[0][0] labels are never used)
+  // Initialize scores
+  for (int i=0; i<=m; i++)
+    for (int j=0; j<=n; j++)
+      {
+        B[i][j].score = 0 ;
+        B[i][j].i = BAD_BACKTRACK ;
+        B[i][j].j = BAD_BACKTRACK ;
+        if (cost.affine_gap) {
+          Bins[i][j].score = 0;
+          Bdel[i][j].score = 0;
+          Bins[i][j].i = BAD_BACKTRACK;
+          Bdel[i][j].i = BAD_BACKTRACK;
+          Bins[i][j].j = BAD_BACKTRACK;
+          Bdel[i][j].j = BAD_BACKTRACK;
+        }
+      }
 
+  // Initialize backtrack labels (B[0][0] labels are never used)
   for (int i=1; i<=m; i++)
     {
       B[i][0].type = INSER ;
@@ -195,18 +213,6 @@ void DynProg::init()
       B[0][j].i = 0 ;
       B[0][j].j = j-1 ;
     }
-
-  // Initialize scores
-
-  for (int i=0; i<=m; i++)
-    for (int j=0; j<=n; j++)
-      {
-        B[i][j].score = 0 ;
-        if (cost.affine_gap) {
-          Bins[i][j].score = 0;
-          Bdel[i][j].score = 0;
-        }
-      }
 
   if (!(mode == Local || mode == LocalEndWithSomeDeletions)) // Global, SemiGlobal
     for (int i=0; i<=m; i++) {
