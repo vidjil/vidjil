@@ -257,7 +257,7 @@ Segment.prototype = {
 
 
         var div_focus = document.createElement('div');
-        div_focus.className = "focus"
+        div_focus.className = "focus cloneName"
         div.appendChild(div_focus)
 
         var div_stats = document.createElement('div');
@@ -467,7 +467,7 @@ Segment.prototype = {
         var self = this;
 
         div_elem.innerHTML = '';
-        div_elem.className = "seq-fixed";
+        div_elem.className = "seq-fixed cloneName";
         if (this.m.focus == cloneID) {
             $(div_elem).addClass("list_focus");
         } 

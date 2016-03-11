@@ -378,6 +378,10 @@ List.prototype = {
         
         var span_name = document.createElement('div');
         span_name.className = "nameBox";
+
+        if (!this.m.clone(cloneID).isVirtual())
+            span_name.className += " cloneName";
+
         span_name.ondblclick = function () {
             self.editName(cloneID, this);
         }
@@ -494,6 +498,10 @@ List.prototype = {
 
                 var span_name = document.createElement('span');
                 span_name.className = "nameBox";
+
+                if (!self.m.clone(cloneID).isVirtual())
+                    span_name.className += " cloneName";
+
                 span_name.onclick = function (e) {
                     self.clickList(e, id);
                 }
