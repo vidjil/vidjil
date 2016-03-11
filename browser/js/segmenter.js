@@ -1171,12 +1171,12 @@ Sequence.prototype = {
 
         var vdjArray ={} ;
         vdjArray["5start"] = 0;
-        vdjArray["5end"] = this.pos[clone.seg["5end"]];
+        vdjArray["5end"] = this.pos[clone.seg["5end"]] + 1;
         vdjArray["3start"] = this.pos[clone.seg["3start"]];
         vdjArray["3end"] = this.seq.length;
         if (typeof clone.seg["4start"] != 'undefined' && typeof clone.seg["4end"] != 'undefined') {
             vdjArray["4start"] = this.pos[clone.seg["4start"]];
-            vdjArray["4end"] = this.pos[clone.seg["4end"]]
+            vdjArray["4end"] = this.pos[clone.seg["4end"]] + 1
         }
         return vdjArray;
     },
