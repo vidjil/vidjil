@@ -448,8 +448,13 @@ void DynProg::backtrack()
   if (reverse_y)
     j = n - j + 1;
 
-  // Compute backtrack strings
+  if ((i<0) || (i>m) || (j<0) || (j>n))
+    {
+      cout << "Invalid backtrack starting point: " << i << "," << j << endl ;
+      exit(1);
+    }
   
+  // Compute backtrack strings
   ostringstream back_x;
   ostringstream back_y;
   ostringstream back_tr;
@@ -463,12 +468,6 @@ void DynProg::backtrack()
         marked_pos_i = reverse_x ? m-i+1 : i ;
       }
 
-    if ((i<0) || (j<0))
-      { 
-        cout << "Invalid backtrack: " << i << "," << j << endl ;
-        exit(1);
-      }
-
     if  (B[i][j].type == FIN)
       break ;
       
@@ -476,6 +475,15 @@ void DynProg::backtrack()
     
     int next_i = B[i][j].i;
     int next_j = B[i][j].j;
+
+    if ((next_i<0) || (next_i>m) || (next_j<0) || (next_j>n))
+      {
+        cout << "Invalid backtrack: " << i << "," << j << " -> " << next_i << "," << next_j << endl ;
+        cout << back_x.str() << endl ;
+        cout << back_tr.str() << endl ;
+        cout << back_y.str() << endl ;
+        exit(1);
+      }
 
     // The maximum number of characters implied by this operation
     int max_k = max(i - next_i, j - next_j);
