@@ -1,0 +1,5 @@
+!LAUNCH: $VIDJIL_DIR/vidjil -c segment -3 -g $VIDJIL_DIR/germline -i $DATA_DIR/no-cdr3.fasta
+
+$ No CDR3 should be found
+0:seq1.* IGH SEG.* [{].*[}]
+

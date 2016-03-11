@@ -74,6 +74,7 @@ BASE=$(basename $file)
 cd "$DIR"
 
 VIDJIL_DIR=../../../
+DATA_DIR=../../../data/
 OUTPUT_DIR=.
 TAP_FILE=${BASE%.*}.tap
 LOG_FILE=${BASE%.*}.log
