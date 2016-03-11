@@ -231,6 +231,9 @@ Segment.prototype = {
             input.setAttribute("title", 'Display CDR3 computed by Vidjil');
             label.setAttribute("title", 'Display CDR3 computed by Vidjil');
 
+            input.className = 'devel-mode';
+            label.className = 'devel-mode';
+
             span.appendChild(input);
             span.appendChild(label);
         }
