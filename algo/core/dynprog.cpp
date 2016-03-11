@@ -226,8 +226,13 @@ void DynProg::init()
         B[i][0].score = Bins[i][0].score ;
       }
 
-      if (mode == GlobalButMostlyLocal)
+      if (mode == GlobalButMostlyLocal) {
         B[i][0].score /= 2;
+        if (cost.affine_gap) {
+          Bins[i][0].score -= cost.open_insertion / 2 ;
+          B[i][0].score = Bins[i][0].score ;
+        }
+      }
     }
 
   if (!(mode == SemiGlobal || mode == SemiGlobalTrans || mode == Local || mode == LocalEndWithSomeDeletions)) // Global
@@ -239,8 +244,13 @@ void DynProg::init()
          B[0][j].score = Bdel[0][j].score;
        }
 
-       if (mode == GlobalButMostlyLocal)
+       if (mode == GlobalButMostlyLocal) {
          B[0][j].score /= 2;
+         if (cost.affine_gap) {
+           Bdel[0][j].score -= cost.open_deletion / 2 ;
+           B[0][j].score = Bdel[0][j].score;
+         }
+       }
     }
 }
 
