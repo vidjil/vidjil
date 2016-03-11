@@ -299,7 +299,7 @@ int DynProg::compute(bool onlyBottomTriangle, int onlyBottomTriangleShift)
           // Gotoh affine gaps - deletions
           Bdel[i][j].score = MINUS_INF ;
           try_operation(Bdel[i][j], 'o', i, j-1, B[i][j-1].score + cost.open_deletion);
-          try_operation(Bdel[i][j], 'x', i, Bdel[i][j-1].j, Bdel[i-1][j].score + cost.extend_deletion);
+          try_operation(Bdel[i][j], 'x', i, Bdel[i][j-1].j, Bdel[i][j-1].score + cost.extend_deletion);
           try_operation(best, DELET, i, Bdel[i][j].j,  Bdel[i][j].score);
         }
 
