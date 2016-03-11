@@ -260,10 +260,9 @@ function imgtPostForSegmenter(data, system) {
             input.click();
             var label = document.createElement('label');
             label.setAttribute("for", 'imgt_vdj_input_check');
-            label.innerHTML = 'VDJ-IMGT';
-
-            input.setAttribute("title", 'Display V, D and J segments computed by IMGT/V-QUEST');
-            label.setAttribute("title", 'Display V, D and J segments computed by IMGT/V-QUEST');
+            label.innerHTML = "5'V/D/3'J-IMGT";
+            input.setAttribute("title", "Display 5'V-REGION, D-REGION and 3'J-REGION computed by IMGT/V-QUEST");
+            label.setAttribute("title", "Display 5'V-REGION, D-REGION and 3'J-REGION computed by IMGT/V-QUEST");
 
             span.appendChild(input);
             span.appendChild(label);

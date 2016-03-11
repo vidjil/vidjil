@@ -529,8 +529,8 @@ Segment.prototype = {
 
         if (clone.seg.imgt!=null){
             info = (clone.seg.imgt["Functionality"].toLowerCase().indexOf("unproductive") > -1)
-                ? icon('icon-plus-squared', 'productive')
-                : icon('icon-minus-squared', 'unproductive') ;
+                ? icon('icon-plus-squared', 'productive, as computed by IMGT/V-QUEST')
+                : icon('icon-minus-squared', 'unproductive, as computed by IMGT/V-QUEST') ;
         }
 
         if (info)
