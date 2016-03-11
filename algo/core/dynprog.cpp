@@ -223,6 +223,7 @@ void DynProg::init()
       if (cost.affine_gap) {
         Bins[i][0].score = cost.open_insertion + cost.extend_insertion * i;
         Bdel[i][0].score = MINUS_INF;
+        B[i][0].score = Bins[i][0].score ;
       }
 
       if (mode == GlobalButMostlyLocal)
@@ -233,8 +234,9 @@ void DynProg::init()
     for (int j=0; j<=n; j++) {
       B[0][j].score = j * cost.deletion ;
        if (cost.affine_gap) {
-         Bins[0][j].score = MINUS_INF;
+         if (j) Bins[0][j].score = MINUS_INF;
          Bdel[0][j].score = cost.open_deletion + cost.extend_deletion * j;
+         B[0][j].score = Bdel[0][j].score;
        }
 
        if (mode == GlobalButMostlyLocal)
