@@ -217,11 +217,11 @@ function imgtPostForSegmenter(data, system) {
             input.id = 'imgt_input_check';
             $(input).on("click", function() {
                 if(this.checked) {
-                    segment.highlight[0].field = "CDR3-IMGT";
-                    segment.highlight[0].color = "red";
+                    segment.highlight[1].field = "CDR3-IMGT";
+                    segment.highlight[1].color = "red";
 
                 } else {
-                    segment.highlight[0].field = "";
+                    segment.highlight[1].field = "";
                 }
                     segment.update();
 
@@ -242,16 +242,16 @@ function imgtPostForSegmenter(data, system) {
             input.id = 'imgt_vdj_input_check';
             $(input).on("click", function() {
                 if(this.checked) {
-                    segment.highlight[1].field = "3'V-REGION";
-                    segment.highlight[1].color = "#4b4";
-                    segment.highlight[2].field = "D-REGION";
-                    segment.highlight[2].color = "#b44";
-                    segment.highlight[3].field = "5'J-REGION";
-                    segment.highlight[3].color = "#aa2";
+                    segment.highlight[2].field = "3'V-REGION";
+                    segment.highlight[2].color = "#4b4";
+                    segment.highlight[3].field = "D-REGION";
+                    segment.highlight[3].color = "#b44";
+                    segment.highlight[4].field = "5'J-REGION";
+                    segment.highlight[4].color = "#aa2";
                 } else {
-                    segment.highlight[1].field = "";
                     segment.highlight[2].field = "";
                     segment.highlight[3].field = "";
+                    segment.highlight[4].field = "";
 
                 }
                     segment.update();

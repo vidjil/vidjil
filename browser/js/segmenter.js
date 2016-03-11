@@ -69,6 +69,7 @@ function Segment(id, model) {
     //elements to be highlited in sequences
     this.highlight = [
         {'field' : "", 'color': "red"},
+        {'field': "", 'color': "orange"},
         {'field' : "", 'color': "blue"},
         {'field' : "", 'color': "green"},
         {'field' : "", 'color': "yellow"}
@@ -206,7 +207,35 @@ Segment.prototype = {
 
         span = document.createElement("span");
         span.id = 'highlightCheckboxes';
+
+        if(this.findPotentialField().indexOf('cdr3') != -1) {
+            var input = document.createElement('input');
+            input.type = 'checkbox';
+            input.id = 'vdj_input_check';
+            $(input).on("click", function() {
+                if(this.checked) {
+                    segment.highlight[0].field = "CDR3";
+                    segment.highlight[0].color = "red";
+
+                } else {
+                    segment.highlight[0].field = "";
+                }
+                    segment.update();
+
+            });
+            input.click();
+            var label = document.createElement('label');
+            label.setAttribute("for", 'vdj_input_check');
+            label.innerHTML = 'CDR3';
+
+            input.setAttribute("title", 'Display CDR3 computed by Vidjil');
+            label.setAttribute("title", 'Display CDR3 computed by Vidjil');
+
+            span.appendChild(input);
+            span.appendChild(label);
+        }
         div.appendChild(span);
+
 
         // Checkbox for id
         /*
@@ -348,22 +377,6 @@ Segment.prototype = {
             }
             div_highlight.appendChild(aaCheckbox);
             div_highlight.appendChild(document.createTextNode("AA"));
-
-
-            var cdr3Checkbox = document.createElement('input');
-            cdr3Checkbox.type = "checkbox";
-            cdr3Checkbox.onclick = function () {
-                var id = 0;
-                if (this.checked) {
-                    segment.highlight[id].field = "cdr3";
-                } else {
-                    segment.highlight[id].field = "";
-                }
-                segment.update();
-            }
-            div_highlight.appendChild(cdr3Checkbox);
-            div_highlight.appendChild(document.createTextNode("CDR3"));
-
         }
         return div_highlight;
     },
