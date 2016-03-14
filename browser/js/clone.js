@@ -160,7 +160,7 @@ Clone.prototype = {
         if (positions != null) {
             return positions['stop'] - positions['start'] + 1
         } else {
-            return 0;
+            return 'undefined';
         }
     },
 
@@ -506,7 +506,7 @@ Clone.prototype = {
         if (typeof this.seg != 'undefined' && typeof this.seg['3start'] != 'undefined'){
             return this.seg['3start']-this.seg['5end']-1
         }else{
-            return 0
+            return 'undefined'
         }
     },
     

@@ -739,7 +739,7 @@ ScatterPlot.prototype = {
                     try{
                         var v = fct(i);
                     }catch(e){}
-                    if (typeof v != "undefined" && v != 0){
+                    if (typeof v != "undefined" && v!= 'undefined'){
                         if (v<min || typeof min == "undefined") min = v;
                         if (v>max || typeof max == "undefined") max = v;
                     }
