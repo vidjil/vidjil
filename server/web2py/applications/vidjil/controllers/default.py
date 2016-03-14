@@ -416,6 +416,11 @@ def get_analysis():
 # need patient admin permission
 def save_analysis():
     error = ""
+    if "patient" in request.vars :
+        request.vars["sample_set_id"] = db.patient[request.vars["patient"]].sample_set_id
+
+    if "run" in request.vars :
+        request.vars["sample_set_id"] = db.run[request.vars["run"]].sample_set_id
 
     if not "sample_set_id" in request.vars :
         error += "It is currently not possible to save an analysis on a comparison of samples, "
