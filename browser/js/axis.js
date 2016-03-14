@@ -297,6 +297,11 @@ Axis.prototype = {
                     min = (min*NB_STEPS_IN_AXIS + max)/(NB_STEPS_IN_AXIS + 1)
                 }
 
+                if (output == 'float' || output == 'undefined') {
+                    if (Math.abs(max - min) < nb_steps) {
+                        nb_steps = Math.abs(max - min)
+                    }
+                }
                 var h = (max-min)/nb_steps
                 // Computed so that pos <= 1 (in the loop below)
                 var delta = (min - max)/((min - undefined_min)/(max-undefined_min) - 1)
