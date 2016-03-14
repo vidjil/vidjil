@@ -286,7 +286,7 @@ Axis.prototype = {
                     var text = this.m.formatSize(h, false)
                     if (!display_label) text = "";
                     if (pos >= 0 && pos <= 1)
-                    this.labels.push(this.label("line", pos, text));
+                        this.labels.push(this.label("line", pos, text));
                     h = h / 10;
                 }
             }else{
