@@ -1070,14 +1070,17 @@ Sequence.prototype = {
                 var vdjArray = this.getVdjStartEnd(clone);
                 var vdjArrayRev = {};
 
-                vdjArrayRev[vdjArray["5start"]] = {'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : ""};
-                vdjArrayRev[vdjArray["3start"]] = {'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : ""};
+                // We first put the end positions
                 vdjArrayRev[vdjArray["5end"]] = {'type':'N', 'color': ""};
                 vdjArrayRev[vdjArray["3end"]] = {'type':'N', 'color': ""};
                 if (typeof vdjArray["4start"]!= 'undefined' && typeof clone.seg["4end"] != 'undefined'){
-                    vdjArrayRev[vdjArray["4start"]] = {'type':'D', 'color': ""};
                     vdjArrayRev[vdjArray["4end"]] = {'type':'N', 'color': ""};
+
+                    // We now put the start positions (that may override previous end positions)
+                    vdjArrayRev[vdjArray["4start"]] = {'type':'D', 'color': ""};
                 }
+                vdjArrayRev[vdjArray["5start"]] = {'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : ""};
+                vdjArrayRev[vdjArray["3start"]] = {'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : ""};
             }
 
             var window_start = this.pos[clone.sequence.indexOf(clone.id)];
