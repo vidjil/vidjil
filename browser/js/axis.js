@@ -188,7 +188,7 @@ Axis.prototype = {
                 max = 1;
             }
 
-            if (has_undefined) {
+            if (has_undefined && ! use_log) {
                 min = min - (max - min)/NB_STEPS_IN_AXIS
             }
             
