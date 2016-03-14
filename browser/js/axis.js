@@ -37,6 +37,7 @@ function Axis (model, reverse) {
 }
 
 const NB_STEPS_IN_AXIS = 10; // Number (max) of labels per numerical axis
+const NB_STEPS_BAR = 30; // Number (max) of labels per numerical axis in histograms
 
 Axis.prototype = {
     
@@ -336,7 +337,7 @@ Axis.prototype = {
         this.labels = [];
         var length = Object.keys(tab).length;
         
-        var step = 1 + Math.floor(length / 30)
+        var step = 1 + Math.floor(length / NB_STEPS_BAR)
         
         var i=1
         for (var e in tab){
