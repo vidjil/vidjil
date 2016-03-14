@@ -55,7 +55,7 @@ Note that other elements could be added by some program (such as =tag= or =clust
                 "top": 1,
                 "seg":
                 {
-		    "5": "TRGV5*01",  "5start": 0,   "5end": 86,
+		    "5": "TRGV5*01",  "5start": 1,   "5end": 86,
 		    "3": "TRGJ1*02",  "3start": 89,  "3end": 118,
                     "cdr3": { "start": 77, "stop": 104, "seq": "gccacctgggccttattataagaaactc" }
 		}
@@ -102,7 +102,7 @@ and 'IMGT clonotype (AA) or (nt)' could also be used by some programs).
                 "top": 1,
                 "seg":
                 {
-		    "5": "TRGV5*01",  "5start": 0,   "5end": 86,
+		    "5": "TRGV5*01",  "5start": 1,   "5end": 86,
 		    "3": "TRGJ1*02",  "3start": 89,  "3end": 118
 		}
             },
@@ -118,7 +118,12 @@ and 'IMGT clonotype (AA) or (nt)' could also be used by some programs).
                 "sequence": "ATACAGA",
                 "reads": [ 521, 42 ],
                 "germline": "TRG",
-                "top": 3
+                "top": 3,
+                "seg":
+                {
+                    "5start": 1, "5end": 100,
+                    "3start": 101, "3end": 200
+                }
             }
         ]
     }
