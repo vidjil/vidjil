@@ -176,7 +176,7 @@ test('clone: get info from seg', function() {
     m.initClones()
 
     equal(c1.getSegLength('cdr3'), 6, "CDR3 length");
-    equal(c2.getSegLength('cdr3'), 0, "no cdr3 in c2");
+    equal(c2.getSegLength('cdr3'), 'undefined', "no cdr3 in c2");
     var pos_cdr3 = c1.getSegStartStop('cdr3')
     equal(pos_cdr3['start'], 10, "CDR3 length")
     equal(pos_cdr3['stop'], 15, "CDR3 length")
