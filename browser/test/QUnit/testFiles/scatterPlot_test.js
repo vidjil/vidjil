@@ -40,8 +40,8 @@ test("scatterplot : grid", function() {
     sp.update()
     
     equal(sp.nodes[1].bar_h , 0.4444444444444445 ,"bar position : Ok")
-    equal(sp.nodes[1].bar_w , 0.08 ,"bar position : Ok")
-    equal(sp.nodes[1].bar_x , 0.25 ,"bar position : Ok")
+    equal(sp.nodes[1].bar_x , sp.axisX.labels[9].pos ,"bar position : Ok")
+    equal(sp.axisX.labels[9].text, "9", "bar position : Ok")
     equal(sp.nodes[1].bar_y , 0.4444444444444445 ,"bar position : Ok")
     
 });
