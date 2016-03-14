@@ -1648,6 +1648,7 @@ ScatterPlot.prototype = {
             .remove();
         leg.on("click", function(d){
             if (self.mode !="bar"){
+                // Multi-selection by clicking on a legend
                 if (!d3.event.ctrlKey) 
                     self.m.unselectAll()
                 var listToSelect = [];
