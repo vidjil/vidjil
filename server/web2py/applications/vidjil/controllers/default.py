@@ -384,6 +384,10 @@ def get_custom_data():
 def get_analysis():
     error = ""
 
+    if "custom" in request.vars :
+        res = {"success" : "true"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
     if "patient" in request.vars :
         request.vars["sample_set_id"] = db.patient[request.vars["patient"]].sample_set_id
 
