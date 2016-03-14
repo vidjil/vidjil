@@ -24,7 +24,7 @@ class TestSimple < BrowserTest
     initial_read_nb = $b.info_selected_locus.text
     $b.locus_topleft('TRG').click
     $b.clone_in_scatterplot('0').wait_while_present
-    assert ($b.info_selected_locus.text == "no reads on selected locus"), "When unselected we have no reads"
+    assert ($b.info_selected_locus.text == "no read"), "When unselected we have no reads"
 
     # Reactivate
     $b.locus_topleft('TRG').click
