@@ -36,6 +36,8 @@ function Axis (model, reverse) {
     this.reverse = reverse;
 }
 
+const NB_STEPS_IN_AXIS = 10; // Number (max) of labels per numerical axis
+
 Axis.prototype = {
     
     /**
@@ -148,6 +150,7 @@ Axis.prototype = {
         use_log = typeof use_log !== 'undefined' ? use_log : false;
         display_label = typeof display_label !== 'undefined' ? display_label : true;
         var self = this;
+        var has_undefined = false
         
         this.fct = fct;
         if (typeof fct == "string"){
@@ -173,12 +176,19 @@ Axis.prototype = {
                 if ( typeof tmp != "undefined" && !isNaN(tmp)){
                     if ( tmp > max || typeof max == "undefined") max = tmp;
                     if ( tmp < min || typeof min == "undefined") min = tmp;
+                    } else {
+                        has_undefined = true
+                    }
                 }
             }
             
             if (typeof min == "undefined"){ 
                 min = 0;
                 max = 1;
+            }
+
+            if (has_undefined) {
+                min = min - (max - min)/NB_STEPS_IN_AXIS
             }
             
             var range = [0,1]
@@ -202,7 +212,7 @@ Axis.prototype = {
                     value = self.fct(cloneID);
                 }catch(e){}
                 
-                if (typeof value != "undefined"){
+                if (typeof value != "undefined" && value != 'undefined'){
                     pos = self.sizeScale(value);
                 }else{
                     pos = self.sizeScale(self.min);
@@ -243,7 +253,7 @@ Axis.prototype = {
             }
         }
         
-        this.computeCustomLabels(min, max, output, use_log, display_label)
+        this.computeCustomLabels(min, max, output, use_log, display_label, has_undefined)
     },
     
     /**
@@ -253,9 +263,12 @@ Axis.prototype = {
      * @param {number} max - maximal label value
      * @param {boolean} percent - display label as percent ( value 1 => 100%)
      * @param {boolean} use_log - use a logarithmic scale instead of a linear
+     * @param {boolean} has_undefined - Should we include an undefined value ?
      * */
-    computeCustomLabels: function(min, max, output, use_log, display_label){
+    computeCustomLabels: function(min, max, output, use_log, display_label, has_undefined){
         this.labels = [];
+        if (typeof has_undefined == 'undefined')
+            has_undefined = false
         
         if ((output == "string") || (output == "string-sorted")) {
             var key = Object.keys(this.values)
@@ -276,10 +289,22 @@ Axis.prototype = {
                     h = h / 10;
                 }
             }else{
-                var h = (max-min)/5
-                var delta = (max-min)
-                for (var i = 0; i <= 5; i++) {
-                    pos = (h*i)*(1/delta);
+                var nb_steps = NB_STEPS_IN_AXIS-1
+                undefined_min = min
+                // Recover the initial min value
+                if (has_undefined) {
+                    min = (min*NB_STEPS_IN_AXIS + max)/(NB_STEPS_IN_AXIS + 1)
+                }
+
+                var h = (max-min)/nb_steps
+                // Computed so that pos <= 1 (in the loop below)
+                var delta = (min - max)/((min - undefined_min)/(max-undefined_min) - 1)
+                if (has_undefined)
+                    this.labels.push(this.label("line", (this.reverse) ? 1 : 0, "?"))
+                // Shift the start when there is an undefined value
+                var start_shift = (min - undefined_min)/(max-undefined_min)
+                for (var i = 0; i <= nb_steps; i++) {
+                    pos = start_shift + (h*i)*(1/delta);
                     
                     var text = Math.round(min+(h*i))
                     if (output=="percent"){
