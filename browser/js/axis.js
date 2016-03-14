@@ -166,16 +166,17 @@ Axis.prototype = {
             if (typeof max === 'function') max = max();
         
             for (var i in this.m.clones){
-                var tmp;
-                try{
-                    tmp = this.fct(i);
-                }catch(e){
-                    tmp = undefined;
-                }
-                
-                if ( typeof tmp != "undefined" && !isNaN(tmp)){
-                    if ( tmp > max || typeof max == "undefined") max = tmp;
-                    if ( tmp < min || typeof min == "undefined") min = tmp;
+                if (! this.m.clones[i].isVirtual()) {
+                    var tmp;
+                    try{
+                        tmp = this.fct(i);
+                    }catch(e){
+                        tmp = undefined;
+                    }
+
+                    if ( typeof tmp != "undefined" && !isNaN(tmp)){
+                        if ( tmp > max || typeof max == "undefined") max = tmp;
+                        if ( tmp < min || typeof min == "undefined") min = tmp;
                     } else {
                         has_undefined = true
                     }
