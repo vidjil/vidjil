@@ -92,6 +92,11 @@ class VidjilBrowser < Watir::Browser
     return graph.element(extra.merge(:id => 'time'+id))
   end
 
+  # Information on the currently displayed point
+  def info_point
+    return element(:id => 'info_point')
+  end
+
   def info_segmented
     return element(:id => 'info_segmented').span(:index => 1)
   end

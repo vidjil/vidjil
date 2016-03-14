@@ -41,7 +41,7 @@ class TestMultilocus < BrowserTest
 
   def test_00_info_point
     assert (not $b.div(:id => 'info_timepoint').present?), "Info timepoint should not be present"
-    $b.div(:id => 'info').div(:class => 'sample_details').span(:text => 'i').click
+    $b.info_point.i.click
     assert ($b.div(:id => 'info_timepoint').visible?), "After clicking info timepoint should be visible"
 
     table = $b.div(:id => 'info_timepoint').table
