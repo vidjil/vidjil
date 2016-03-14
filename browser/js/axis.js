@@ -341,7 +341,7 @@ Axis.prototype = {
         
         var i=1
         for (var e in tab){
-            if (i%step == 0 ){ 
+            if (i%step == 0 || (e == '?' && tab[e].length > 0)){
                 var pos = this.posBarLabel(i, length);
                 if (this.reverse) pos = 1 - pos; 
                 this.labels.push(this.label("line", pos, e));
