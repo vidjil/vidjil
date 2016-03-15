@@ -1,0 +1,38 @@
+{
+
+    "IgVC": {
+        "shortcut": "C",
+        "color" : "#6c71c4",
+        "description": "Mus musculus, heavy locus, with constant heavy chains",
+        "recombinations": [ {
+            "5": ["IGHV.fa"],
+            "4": ["IGHJ.fa"],
+            "3": ["IGHC=A.fa",
+                  "IGHC=G2B.fa",
+                  "IGHC=G3.fa",
+                  "IGHC=M.fa"
+                 ]
+        } ],
+        "parameters": {
+            "seed": "12s"
+        }
+    },
+
+
+    "IgJC": {
+        "shortcut": "c",
+        "color" : "#8c91e4",
+        "description": "Mus musculus, heavy locus, with constant heavy chains",       
+        "recombinations": [ {
+            "5": ["IGHJ.fa"],
+            "3": ["IGHC=A.fa",
+                  "IGHC=G2B.fa",
+                  "IGHC=G3.fa",
+                  "IGHC=M.fa"
+                 ]
+        } ],
+        "parameters": {
+            "seed": "12s"
+        }
+      }
+}
