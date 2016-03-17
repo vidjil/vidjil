@@ -112,6 +112,8 @@ Shortcut.prototype = {
                             var select_preset = document.getElementsByClassName("axis_select_preset_select")[0]
                             var shift = 95;
                             if (key<58) shift = 47
+                            if (e.shiftKey) shift -= 10
+
                             select_preset.selectedIndex = key - shift;
                             try {
                                 sp.changePreset(select_preset)
