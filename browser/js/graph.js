@@ -489,7 +489,7 @@ Graph.prototype = {
      * 
      * */
     clickGraph: function (cloneID){
-        if (!d3.event.ctrlKey) this.m.unselectAll()
+        this.m.unselectAllUnlessKey(d3.event)
         this.m.select(cloneID)
     },
 

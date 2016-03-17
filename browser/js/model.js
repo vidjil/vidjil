@@ -829,6 +829,10 @@ Model.prototype = {
         this.updateElemStyle(list);
     },
 
+    unselectAllUnlessKey: function (e) {
+        if (!(e.ctrlKey || e.altKey || e.metaKey)) this.unselectAll()
+    },
+
     /**
      * Remove an item from the selected Clones list
      */

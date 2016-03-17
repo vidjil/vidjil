@@ -891,7 +891,7 @@ List.prototype = {
      * @param {integer} cloneID - clone index
      * */
     clickList: function (e, cloneID) {
-        if (!(e.ctrlKey || e.metaKey)) this.m.unselectAll()
+        this.m.unselectAllUnlessKey(d3.event)
         this.m.select(cloneID)
     },
     

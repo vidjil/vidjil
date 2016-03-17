@@ -1531,8 +1531,7 @@ ScatterPlot.prototype = {
         leg.exit()
             .remove();
         leg.on("click", function(d){
-            if (!d3.event.ctrlKey) 
-                self.m.unselectAll()
+            this.m.unselectAllUnlessKey(d3.event)
             var listToSelect = [];
             var halfRangeColumn = 0.5;
             if (self.axisX.labels.length>1)
@@ -1649,8 +1648,7 @@ ScatterPlot.prototype = {
         leg.on("click", function(d){
             if (self.mode !="bar"){
                 // Multi-selection by clicking on a legend
-                if (!d3.event.ctrlKey) 
-                    self.m.unselectAll()
+                this.m.unselectAllUnlessKey(d3.event)
                 var listToSelect = [];
                 var halfRangeLine = 0.5;
                 if (self.axisY.labels.length>1)
@@ -2076,7 +2074,7 @@ ScatterPlot.prototype = {
                     .attr("height", 0)
                 this.active_selector = false;
 
-                if (!(d3.event.ctrlKey || d3.event.metakey)) this.m.unselectAll()
+                this.m.unselectAllUnlessKey(d3.event)
                 this.m.multiSelect(nodes_selected)
             }
         }
@@ -2087,7 +2085,7 @@ ScatterPlot.prototype = {
      * @param {integer} cloneID - clone index
      * */
     clickNode: function(cloneID) {
-        if (!d3.event.ctrlKey) this.m.unselectAll()
+        this.m.unselectAllUnlessKey(d3.event)
         this.m.select(cloneID)
     },
 
