@@ -23,6 +23,18 @@ test("test tsvToArray", function () {
         ok(aTest[1].head2 === "Line 2 data2", "Array[1].head2=='Line 2 head2'");
         ok(aTest[5] == null, "This is only a 2 lines array, no line #5");
     }
+    );
+
+test("test rounding functions", function () {
+    equal(nice_ceil(0.072), 0.08, "rounding 0.08");
+    equal(nice_ceil(1.2), 1.5, "rounding 1.2");
+    equal(nice_ceil(18), 20, "rounding 1.2");
+    equal(nice_ceil(100), 100, "rounding 100");
+
+    equal(nice_floor(0.072), 0.07, "rounding 0.072");
+    equal(nice_floor(100), 100, "rounding 100");
+    equal(nice_floor(451), 400, "rounding 451");
+    }
 );
 
 asyncTest("processImgtContents", function () {
