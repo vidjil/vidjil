@@ -119,3 +119,46 @@ function processImgtContents(IMGTresponse,tag) {
     }
     return result;
 }
+
+
+
+/**
+ * Give a nice decimal number above the given number
+ * nice_ceil(0.14) -> 0.2
+ * nice_ceil(23.4) -> 30
+ **/
+
+function nice_ceil(x)
+{
+    if (x <= 0) return x
+
+    try {
+        var floor_power10 = Math.pow(10,Math.floor(Math.log10(x)))
+        return Math.ceil(x / floor_power10) * floor_power10
+    }
+    catch(e) {
+        // Always return something
+        return x;
+    }
+}
+
+
+/**
+ * Give a nice decimal number under the given number
+ * nice_floor(0.14) -> 0.1
+ * nice_floor(23.4) -> 20
+ **/
+
+function nice_floor(x)
+{
+    if (x <= 0) return x
+
+    try {
+        var floor_power10 = Math.pow(10,Math.floor(Math.log10(x)))
+        return Math.floor(x / floor_power10) * floor_power10
+    }
+    catch(e) {
+        // Always return something
+        return x;
+    }
+}
