@@ -79,7 +79,7 @@ test("Axis : ", function() {
             0,25)
     
     equal(axis.pos(0).toPrecision(3), 0.00, "custom  : clone 0 (nlength = 0) position -> 0.00")
-    equal(axis.pos(1).toPrecision(3), 0.360, "custom  : clone 1 (nlength = 9) position -> 0.360")
+    equal(axis.pos(1).toPrecision(3), 0.30, "custom  : clone 1 (nlength = 9) position -> 0.30")
 
     
     //gc
