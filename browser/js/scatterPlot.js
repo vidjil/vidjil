@@ -841,7 +841,7 @@ ScatterPlot.prototype = {
      * compute the position of each rectangles / labels and start the display
      * */
     computeBarTab : function () {
-        var bar_max = this.computeBarMax();
+        var bar_max = nice_ceil(this.computeBarMax());
         var tab_length = Object.keys(this.barTab).length;
         var width = Math.min(0.08, 0.8 / tab_length);
         

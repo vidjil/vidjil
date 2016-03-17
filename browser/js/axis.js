@@ -36,7 +36,7 @@ function Axis (model, reverse) {
     this.reverse = reverse;
 }
 
-const NB_STEPS_IN_AXIS = 10; // Number (max) of labels per numerical axis
+const NB_STEPS_IN_AXIS = 6; // Number (max) of labels per numerical axis
 const NB_STEPS_BAR = 30; // Number (max) of labels per numerical axis in histograms
 
 Axis.prototype = {
@@ -187,6 +187,10 @@ Axis.prototype = {
             if (typeof min == "undefined"){ 
                 min = 0;
                 max = 1;
+            }
+            else {
+                min = nice_floor(min)
+                max = nice_ceil(max)
             }
 
             if (has_undefined && ! use_log) {
