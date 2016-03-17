@@ -539,7 +539,7 @@ ScatterPlot.prototype = {
         for (var i in this.preset) {
             var element = document.createElement("option");
             element.setAttribute('value', i);
-            element.appendChild(document.createTextNode('[' + p + '] ' + i));
+            element.appendChild(document.createTextNode('[' + (p < 10 ? p : '⇧' + (p-10)) + '] ' + i));
             this.select_preset.appendChild(element);
 	    p += 1;
         }
