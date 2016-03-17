@@ -283,6 +283,8 @@ Database.prototype = {
             // New page displayed, attempt to display header and login notifications
             this.loadNotifications();
 
+            $("#top-container").addClass('disabledClass');
+
             return 0 ;
         }
         
@@ -807,6 +809,7 @@ Database.prototype = {
     close: function () {
         this.div.style.display = "none";
         this.msg.innerHTML = "";
+        $('#top-container').removeClass('disabledClass');
     },
     
     fixed_header: function () {
