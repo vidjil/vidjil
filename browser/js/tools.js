@@ -124,7 +124,7 @@ function processImgtContents(IMGTresponse,tag) {
 
 /**
  * Give a nice decimal number above the given number
- * nice_ceil(0.14) -> 0.2
+ * nice_ceil(0.14) -> 0.15
  * nice_ceil(23.4) -> 30
  **/
 
@@ -134,7 +134,9 @@ function nice_ceil(x)
 
     try {
         var floor_power10 = Math.pow(10,Math.floor(Math.log10(x)))
-        return Math.ceil(x / floor_power10) * floor_power10
+
+        var xx = x / floor_power10
+        return (xx == 1 ? 1 : xx <= 1.5 ? 1.5 : Math.ceil(xx)) * floor_power10
     }
     catch(e) {
         // Always return something
