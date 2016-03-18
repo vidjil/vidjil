@@ -56,6 +56,9 @@ ul {
   position: fixed;
   z-index: 1;
 }
+#menu-container {
+  background: inherit;
+}
 .scatterplot,
 .graph {
   -khtml-user-select: none;

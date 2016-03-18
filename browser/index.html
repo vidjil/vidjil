@@ -70,167 +70,167 @@
         
         <!-- TOP-CONTAINER -->
         <div id="top-container">
-
-            <div class="menu" id="top_info">
-                <!--Div is filled programmatically -->
-            </div>
-            <div class="menu" id="db_menu" onmouseover="showSelector('dbSelector');" style="display : none">patients
-                <div id="dbSelector" class="selector"><div>
-                    <div class="menu_box">
-                        <a class="buttonSelector" onclick="javascript:db.call('patient/index')">open patient list</a>
-                    </div>
-                    <div class="menu_box">
-                        <div id="last_loaded_file">
-                        </div>
-                    </div>
-                </div></div>
-            </div>
-
-            <div class="menu" id="static_file_menu" onmouseover="showSelector('fileSelector');" style="display : none">file
-              <div id="fileSelector" class="selector"><div>
-                    <div class="menu_box">
-                        <div id="upload_list">
-                        </div>
-                    </div>
-              </div></div>
-            </div>
-            
-            <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');">import/export
-                <div id="demoSelector" class="selector"><div>
-                    <div class="menu_box">
-                        <a id="import_data_anchor" id="import_data" class="buttonSelector" onclick="javascript:loadData()">import data (.vidjil)</a>
-                        <a id="import_data_analysis" id="import_analysis" class="buttonSelector" onclick="javascript:loadAnalysis()">import analysis</a>
-                    </div>
-                    <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
-                    <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
-                    <div class="menu_box">
-                      <a class="buttonSelector" id="export_sample_report" onclick="javascript:report.reportHTMLdiag()">export report (sample)</a>
-                      <a class="buttonSelector" id="export_monitor_report" onclick="javascript:report.reportHTML()">export report (monitor)</a>
-                    </div>
-                    <div class="menu_box">
-                        <a class="buttonSelector" id="export_analysis" onclick="javascript:m.saveAnalysis()">export analysis</a>
-                        <a class="buttonSelector" id="export_pdf" onclick="javascript:pdf.makeGraph()">export pdf (graph)</a>
-                        <a class="buttonSelector" id="export_csv" onclick="javascript:m.exportCSV()">export csv (visible clones)</a>
-                        <a class="buttonSelector" id="export_fasta" onclick="javascript:m.exportFasta()">export fasta (selected clones)</a>
-                    </div>
-                </div></div>
-            </div>
-
-            <div class="menu" id="cluster_menu" onmouseover="showSelector('clusterSelector');" > cluster
-                <div id="clusterSelector" class="selector"><div>
-                    <a class="buttonSelector" onclick="m.restoreClusters();">clones merged by user</a>
-                    <a class="buttonSelector" onclick="m.resetClusters();">reset all user clones</a>
-                    <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(5)});">cluster by V/5' </a>
-                    <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(3)});">cluster by J/3' </a>
-                    <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).germline});">cluster by locus </a>
-                    <a class="buttonSelector devel-mode" onclick="m.similarity_builder.DBscan(95,0.001);">cluster by DBscan (experimental) </a>
-                    <a class="buttonSelector" onclick="m.similarity_builder.cluster_me(95,0.1);">cluster by similarity </a>
-                    <div id="clusterby_button"> </div>
-                </div></div>
-            </div>
-
-            <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color by
-                <div class="div-menu-selector"><select class="menu-selector" onchange="m.changeColorMethod(this.value)">
-                    <option value="Tag">tag</option>
-                    <option value="V">V/5'</option>
-                    <option value="J">J/3'</option>
-                    <option value="N">N</option>
-                    <option value="system" id="color_system_button">locus/germline</option>
-                    <option value="abundance">abundance</option>
-                    <option value="productive">productivity</option>
-                </select></div>
-            </div>
-
-            <div class="menu" id="filter_menu" onmouseenter="builder.build_displaySelector();" onmouseover="showSelector('filterSelector');" > filter
-                <div id="filterSelector" class="selector"><div>
-                    <div class="menu_box">
-                        <span id="top_label"></span></br>
-                        <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
-                    </div>
-                    <div class="menu_box">
-                        tag visibility</br>
-                        <ul id="tagList">
-                        </ul>
-                    </div>
-                </div></div>
-            </div>
-
-            <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();" onmouseover=" showSelector('settingsSelector');" > settings
-                <div id="settingsSelector" class="selector"><div>
-                    <div class="menu_box">
-                        normalization</br>
-                        <form name="normalize_list" id="normalize_list">
-                        </form>
-                    </div>
-
-                    <div class="menu_box">
-                        normalization method</br>
-                        <div class="buttonSelector" onclick="m.changeNormMethod('constant')" ><input type="radio" name="normalize_method" value="constant" checked >constant</input></div>
-                        <div class="buttonSelector" onclick="m.changeNormMethod('to-100')" ><input type="radio" name="normalize_method" value="to-100">to 100%</input></div>
-
-                    </div>
-
-                    <div class="menu_box">
-                        size display</br>
-                        <div class="buttonSelector" onclick="m.changeNotation('scientific', true)"><input type="radio" name="notation" value="scientific" >scientific notation</input></div>
-                        <div class="buttonSelector" onclick="m.changeNotation('percent', true)"><input type="radio" name="notation" value="percent" checked>percent</input></div>
-                    </div>
-
-                    <div class="menu_box">
-                        point key</br>
-                        <div class="buttonSelector" onclick="m.changeTimeFormat('name', true)"><input type="radio" name="time" value="name" checked>name</input></div>
-                        <div class="buttonSelector" onclick="m.changeTimeFormat('short_name', true)"><input type="radio" name="time" value="short_name" checked>name (short)</input></div>
-                        <div class="buttonSelector" onclick="m.changeTimeFormat('sampling_date', true)"><input type="radio" name="time" value="sampling_date" >sampling date</input></div>
-                        <div class="buttonSelector" onclick="m.changeTimeFormat('delta_date', true)"><input type="radio" name="time" value="delta_date">day after first sample</input></div>
-                    </div>
-
-                    <!--
-                    <div class="submenu" id="system_menu" style="display:none">
+            <div id="menu-container">
+                <div class="menu" id="top_info">
+                    <!--Div is filled programmatically -->
+                </div>
+                <div class="menu" id="db_menu" onmouseover="showSelector('dbSelector');" style="display : none">patients
+                    <div id="dbSelector" class="selector"><div>
                         <div class="menu_box">
-                            selected locus/germline (for the grid)</br>
-                            <ul id="germline_list">
+                            <a class="buttonSelector" onclick="javascript:db.call('patient/index')">open patient list</a>
+                        </div>
+                        <div class="menu_box">
+                            <div id="last_loaded_file">
+                            </div>
+                        </div>
+                    </div></div>
+                </div>
+
+                <div class="menu" id="static_file_menu" onmouseover="showSelector('fileSelector');" style="display : none">file
+                  <div id="fileSelector" class="selector"><div>
+                        <div class="menu_box">
+                            <div id="upload_list">
+                            </div>
+                        </div>
+                  </div></div>
+                </div>
+ 
+                <div class="menu" id="demo_file_menu" onmouseover="showSelector('demoSelector');">import/export
+                    <div id="demoSelector" class="selector"><div>
+                        <div class="menu_box">
+                            <a id="import_data_anchor" id="import_data" class="buttonSelector" onclick="javascript:loadData()">import data (.vidjil)</a>
+                            <a id="import_data_analysis" id="import_analysis" class="buttonSelector" onclick="javascript:loadAnalysis()">import analysis</a>
+                        </div>
+                        <!--<a class="buttonSelector" onclick="javascript:m.resetAnalysis()">reset analysis</a> -->
+                        <!--<a class="buttonSelector" onclick="javascript:reset()">reset all</a> -->
+                        <div class="menu_box">
+                          <a class="buttonSelector" id="export_sample_report" onclick="javascript:report.reportHTMLdiag()">export report (sample)</a>
+                          <a class="buttonSelector" id="export_monitor_report" onclick="javascript:report.reportHTML()">export report (monitor)</a>
+                        </div>
+                        <div class="menu_box">
+                            <a class="buttonSelector" id="export_analysis" onclick="javascript:m.saveAnalysis()">export analysis</a>
+                            <a class="buttonSelector" id="export_pdf" onclick="javascript:pdf.makeGraph()">export pdf (graph)</a>
+                            <a class="buttonSelector" id="export_csv" onclick="javascript:m.exportCSV()">export csv (visible clones)</a>
+                            <a class="buttonSelector" id="export_fasta" onclick="javascript:m.exportFasta()">export fasta (selected clones)</a>
+                        </div>
+                    </div></div>
+                </div>
+
+                <div class="menu" id="cluster_menu" onmouseover="showSelector('clusterSelector');" > cluster
+                    <div id="clusterSelector" class="selector"><div>
+                        <a class="buttonSelector" onclick="m.restoreClusters();">clones merged by user</a>
+                        <a class="buttonSelector" onclick="m.resetClusters();">reset all user clones</a>
+                        <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(5)});">cluster by V/5' </a>
+                        <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).getGene(3)});">cluster by J/3' </a>
+                        <a class="buttonSelector" onclick="m.clusterBy(function(id){return m.clone(id).germline});">cluster by locus </a>
+                        <a class="buttonSelector devel-mode" onclick="m.similarity_builder.DBscan(95,0.001);">cluster by DBscan (experimental) </a>
+                        <a class="buttonSelector" onclick="m.similarity_builder.cluster_me(95,0.1);">cluster by similarity </a>
+                        <div id="clusterby_button"> </div>
+                    </div></div>
+                </div>
+
+                <div class="menu" id="color_menu" onmouseover="showSelector('colorSelector');" > color by
+                    <div class="div-menu-selector"><select class="menu-selector" onchange="m.changeColorMethod(this.value)">
+                        <option value="Tag">tag</option>
+                        <option value="V">V/5'</option>
+                        <option value="J">J/3'</option>
+                        <option value="N">N</option>
+                        <option value="system" id="color_system_button">locus/germline</option>
+                        <option value="abundance">abundance</option>
+                        <option value="productive">productivity</option>
+                    </select></div>
+                </div>
+
+                <div class="menu" id="filter_menu" onmouseenter="builder.build_displaySelector();" onmouseover="showSelector('filterSelector');" > filter
+                    <div id="filterSelector" class="selector"><div>
+                        <div class="menu_box">
+                            <span id="top_label"></span></br>
+                            <input id="top_slider" type="range" min="5" max="100" step="5" value="10" onchange="m.displayTop(this.value)" />
+                        </div>
+                        <div class="menu_box">
+                            tag visibility</br>
+                            <ul id="tagList">
                             </ul>
                         </div>
-                    </div>
-                    -->
+                    </div></div>
+                </div>
 
-                    <!--menu graph/dbscan -->
-                    <div class="submenu" style="display:none">
+                <div class="menu" id="settings_menu" onmouseenter="builder.build_settings();" onmouseover=" showSelector('settingsSelector');" > settings
+                    <div id="settingsSelector" class="selector"><div>
+                        <div class="menu_box">
+                            normalization</br>
+                            <form name="normalize_list" id="normalize_list">
+                            </form>
+                        </div>
 
                         <div class="menu_box">
-                            <div id="DBSCANEpsSlider">
-                            <input id="changeEps" type="range" min="0" max="40" step="1" value="0" onchange="m.changeEps(this.value)" />
+                            normalization method</br>
+                            <div class="buttonSelector" onclick="m.changeNormMethod('constant')" ><input type="radio" name="normalize_method" value="constant" checked >constant</input></div>
+                            <div class="buttonSelector" onclick="m.changeNormMethod('to-100')" ><input type="radio" name="normalize_method" value="to-100">to 100%</input></div>
+
+                        </div>
+
+                        <div class="menu_box">
+                            size display</br>
+                            <div class="buttonSelector" onclick="m.changeNotation('scientific', true)"><input type="radio" name="notation" value="scientific" >scientific notation</input></div>
+                            <div class="buttonSelector" onclick="m.changeNotation('percent', true)"><input type="radio" name="notation" value="percent" checked>percent</input></div>
+                        </div>
+
+                        <div class="menu_box">
+                            point key</br>
+                            <div class="buttonSelector" onclick="m.changeTimeFormat('name', true)"><input type="radio" name="time" value="name" checked>name</input></div>
+                            <div class="buttonSelector" onclick="m.changeTimeFormat('short_name', true)"><input type="radio" name="time" value="short_name" checked>name (short)</input></div>
+                            <div class="buttonSelector" onclick="m.changeTimeFormat('sampling_date', true)"><input type="radio" name="time" value="sampling_date" >sampling date</input></div>
+                            <div class="buttonSelector" onclick="m.changeTimeFormat('delta_date', true)"><input type="radio" name="time" value="delta_date">day after first sample</input></div>
+                        </div>
+
+                        <!--
+                        <div class="submenu" id="system_menu" style="display:none">
+                            <div class="menu_box">
+                                selected locus/germline (for the grid)</br>
+                                <ul id="germline_list">
+                                </ul>
+                            </div>
+                        </div>
+                        -->
+
+                        <!--menu graph/dbscan -->
+                        <div class="submenu" style="display:none">
+
+                            <div class="menu_box">
+                                <div id="DBSCANEpsSlider">
+                                <input id="changeEps" type="range" min="0" max="40" step="1" value="0" onchange="m.changeEps(this.value)" />
+                                </div>
+                            </div>
+
+
+                            <div class="menu_box">
+                                <div id="DBSCANNbrSlider">
+                                <input id="changeNbr" type="range" min="0" max="100" step="1" value="0" onchange="m.changeNbr(this.value)" />
+                                </div>
+                            </div>
+
+
+                            <div class="menu_box">
+                                <div id="EditDistanceSlider">
+                                </br>
+                                <input id="displayMax_slider" type="range" min="1" max="20" step="1" value="10" onchange="sp.displayDistanceMax(this.value)" style="display:none"/>
+                                </div>
                             </div>
                         </div>
 
-                        
-                        <div class="menu_box">
-                            <div id="DBSCANNbrSlider">
-                            <input id="changeNbr" type="range" min="0" max="100" step="1" value="0" onchange="m.changeNbr(this.value)" />
-                            </div>
-                        </div>
+                    </div></div>
+                </div>
 
-                    
-                        <div class="menu_box">
-                            <div id="EditDistanceSlider">
-                            </br>
-                            <input id="displayMax_slider" type="range" min="1" max="20" step="1" value="10" onchange="sp.displayDistanceMax(this.value)" style="display:none"/>
-                            </div>
-                        </div>
-                    </div>
 
-                </div></div>
+                <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none"> development
+                    <div id="adminSelector" class="selector"><div>
+                        <input type="checkbox" onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display fps</input></br>
+                        <input type="checkbox" onclick=" this.checked ? console.openLog() : console.closeLog() ;">log</input>
+                        <div class="buttonSelector" onclick="m.changeTimeFormat('delta_date_no_zero', true)"><input type="radio" name="time" value="delta_date_no_zero">day after first sample (no zero)</input></div>
+                    </div></div>
+                </div>
             </div>
-
-
-            <div id="debug_menu" class="menu" onmouseover="showSelector('adminSelector');" style="display : none"> development              
-                <div id="adminSelector" class="selector"><div>
-                    <input type="checkbox" onclick=" this.checked ? $('#fps').css('display', '') : $('#fps').css('display', 'none');">display fps</input></br>
-                    <input type="checkbox" onclick=" this.checked ? console.openLog() : console.closeLog() ;">log</input>
-                    <div class="buttonSelector" onclick="m.changeTimeFormat('delta_date_no_zero', true)"><input type="radio" name="time" value="delta_date_no_zero">day after first sample (no zero)</input></div>
-                </div></div>
-            </div>
-            
 
             <div id="logo" style="float: right;" onclick="console.log({'type': 'popup', 'default':'welcome'})">Vidjil <span class='logo'>(beta)</span></div>
 
