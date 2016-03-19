@@ -34,6 +34,7 @@ def index():
                         &(db.auth_event.origin=='auth')).select(db.auth_event.time_stamp,
                                                                 orderby=~db.auth_event.time_stamp)
         
+        row.first_login = str(last_logins[-1].time_stamp) if len(last_logins) > 0 else '-'
         row.last_login = str(last_logins[0].time_stamp) if len(last_logins) > 0 else '-'
 
     ##sort query
