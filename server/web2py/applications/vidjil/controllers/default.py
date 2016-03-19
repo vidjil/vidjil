@@ -257,6 +257,8 @@ def get_data():
                 data["info"] = db.run[row.id].info
                 data["run_id"] = row.id
                 data["run_name"] = run_name
+
+        data["sample_set_id"] = sample_set.id
         
         data["config_name"] = config_name
         data["samples"]["info"] = []
