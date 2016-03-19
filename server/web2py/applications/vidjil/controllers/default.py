@@ -257,6 +257,8 @@ def get_data():
                 data["info"] = db.run[row.id].info
                 data["run_id"] = row.id
                 data["run_name"] = run_name
+
+        data["sample_set_id"] = sample_set.id
         
         data["config_name"] = config_name
         data["samples"]["info"] = []
@@ -382,6 +384,10 @@ def get_custom_data():
 def get_analysis():
     error = ""
 
+    if "custom" in request.vars :
+        res = {"success" : "true"}
+        return gluon.contrib.simplejson.dumps(res, separators=(',',':'))
+
     if "patient" in request.vars :
         request.vars["sample_set_id"] = db.patient[request.vars["patient"]].sample_set_id
 
@@ -437,20 +443,24 @@ def save_analysis():
                                               sample_set_id = sample_set_id,
                                               analyze_date = datetime.datetime.fromtimestamp(ts).strftime('%Y-%m-%d %H:%M:%S')
                                               )
-        sample_type = db.sample_set[sample_set_id].sample_type
-        if (sample_type == "patient") :
-            db(db.patient.sample_set_id == sample_set_id).update(info = request.vars['info']);
-        
-        if (sample_type == "run") :
-            db(db.run.sample_set_id == sample_set_id).update(info = request.vars['info']);
-        
-        
-        ids = request.vars['samples_id'].split(',')
-        infos = request.vars['samples_info'].split(',')
 
-        # TODO find way to remove loop ?
-        for i in range(0, len(ids)):
-            db(db.sequence_file.id == int(ids[i])).update(info = infos[i])
+        sample_type = db.sample_set[sample_set_id].sample_type
+        if (request.vars['info'] is not None):
+            if (sample_type == "patient") :
+                db(db.patient.sample_set_id == sample_set_id).update(info = request.vars['info']);
+            
+            if (sample_type == "run") :
+                db(db.run.sample_set_id == sample_set_id).update(info = request.vars['info']);
+
+        if (request.vars['samples_id'] is not None and request.vars['samples_info'] is not None):
+	    ids = request.vars['samples_id'].split(',')
+	    infos = request.vars['samples_info'].split(',')
+        
+        
+            # TODO find way to remove loop ?
+            for i in range(0, len(ids)):
+                if(len(ids[i]) > 0):
+                    db(db.sequence_file.id == int(ids[i])).update(info = infos[i])
 
         #patient_name = db.patient[request.vars['patient']].first_name + " " + db.patient[request.vars['patient']].last_name
 

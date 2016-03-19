@@ -333,7 +333,7 @@ def confirm():
         return error_message("The requested file doesn't exist")
     if sequence_file.data_file == None:
         delete_results = True
-    if auth.can_modify_patient(request.vars['patient_id']):
+    if auth.can_modify_sample_set(request.vars['redirect_sample_set_id']):
         return dict(message=T('choose what you would like to delete'),
                     delete_only_sequence = delete_only_sequence,
                     delete_results = delete_results)

@@ -634,7 +634,7 @@ Builder.prototype = {
         open_patient.className = "buttonSelector";
         open_patient.appendChild(document.createTextNode("open patient"));
 	open_patient.onclick = function() {
-	    db.call('patient/info', {'id' : m.patient_id});
+	    db.call('sample_set/index', {'id' : m.sample_set_id});
 	}
         menu_box.appendChild(open_patient);
 
