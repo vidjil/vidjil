@@ -3,23 +3,22 @@
 <h3>New sequence file</h3>
 <div>
     <table>
-	<tr>
-	    <td >
-		<label for="file" id="file__label"> file </label>
-	    </td>
-	    <td >
-		<input id="upload_file" type="file" name="file" >
-	    </td>
-	    <td >
-	    (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
-	</tr>
-    </table>
-</div>
-
+	<tbody>
+            <tr>
+                <td ><label for="file" id="file__label"> file </label></td>
+                <td ><input id="upload_file" type="file" name="file" ></td>
+                <td >* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
+            </tr>
+            <tr>
+                <td ><label for="file2" id="file2__label"> file2 </label></td>
+                <td ><input id="upload_file2" type="file" name="file2" ></td>
+                <td >* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
+            </tr>
+        </tbody>
+</table>
 
 <form id="upload_form" action="DB_ADDRESS/file/add_form" enctype="multipart/form-data" method="post">
     <input type="hidden" id="filename" name="filename" type="text" value="">
-    
     <table>
         <tbody>
             <tr class='devel-mode'>
@@ -53,10 +52,23 @@
                 <td></td>
             </tr>
             <tr>
+                <td><label for="pre_process" id="pre_process__label">pre-process: </label></td>
+                <td><select id="pre_process" name="pre_process">
+                        <option value="0">none</option>
+                        {{for row in db(db.pre_process.id >0).select() :}}
+                                <option value="{{=row.id }}">
+                                    {{=row.id}} &ndash; {{=row.name}}
+                                </option> {{pass}}
+                    </select>
+                </td>
+                <td></td>
+            </tr>
+            <tr>
                 <td></td>
                 <td><input type="submit" value="Soumettre" class="btn"></td>
                 <td></td>
             </tr>
+
         </tbody>
     </table>
 </form>

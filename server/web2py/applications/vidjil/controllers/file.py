@@ -100,7 +100,9 @@ def add_form():
         run_id = int(request.vars['run_id'].split('(')[-1][:-1])
         if not auth.can_modify_run(run_id) :
             error += " missing permission for run "+str(run_id)
-
+    pre_process = None
+    if request.vars['pre_process'] != "0":
+        pre_process = request.vars['pre_process']
 
     if error=="" :
             
@@ -108,6 +110,7 @@ def add_form():
         id = db.sequence_file.insert(sampling_date=request.vars['sampling_date'],
                             info=request.vars['file_info'],
                             filename=request.vars['filename'],
+                            pre_process_id=pre_process,
                             provider=auth.user_id)
         
         #add a default sample_set for this sequence file
@@ -227,10 +230,14 @@ def edit_form():
         filename = db.sequence_file[request.vars['id']].filename
         if request.vars['filename'] != "":
             filename = request.vars['filename']
+        pre_process = None
+        if request.vars['pre_process'] != "0":
+            pre_process = int(request.vars['pre_process'])
         if request.vars['sampling_date'] != None and request.vars['file_info'] != None :
             db.sequence_file[request.vars["id"]] = dict(sampling_date=request.vars['sampling_date'],
                                                         info=request.vars['file_info'],
                                                         filename=filename,
+                                                        pre_process_id=pre_process,
                                                         provider=auth.user_id)
             
         #remove previous membership
@@ -287,7 +294,10 @@ def upload():
         if request.vars.file != None :
             f = request.vars.file
             try:
-                db.sequence_file[request.vars["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
+                if request.vars["file_number"] == "1" :
+                    db.sequence_file[request.vars["id"]] = dict(data_file = db.sequence_file.data_file.store(f.file, f.filename))
+                else :
+                    db.sequence_file[request.vars["id"]] = dict(data_file2 = db.sequence_file.data_file.store(f.file, f.filename))
                 mes += "upload finished"
             except IOError as e:
                 if str(e).find("File name too long") > -1:
@@ -297,18 +307,28 @@ def upload():
                     log.error(str(e))
         
         data_file = db.sequence_file[request.vars["id"]].data_file
-
-        if len(error) == 0 and data_file is None:
+        data_file2 = db.sequence_file[request.vars["id"]].data_file2
+        
+        if request.vars["file_number"] == "1" and len(error) == 0 and data_file is None:
             error += "no data file"
+        if request.vars["file_number"] == "2" and len(error) == 0 and data_file2 is None:
+            error += "no data file"
+            
+        if data_file is not None and data_file2 is not None and request.vars['pre_process'] != '0':
+            schedule_pre_process(int(request.vars['id']), int(request.vars['pre_process']))
+            mes += "files uploaded, start pre-process !! "+ request.vars['id'] + "-" +request.vars['pre_process']
 
-    if not error:
-        seq_file = defs.DIR_SEQUENCES + data_file
+        if data_file is not None :
+            seq_file = defs.DIR_SEQUENCES + data_file
+            # Compute and store file size
+            size = os.path.getsize(seq_file)
+            mes += ' (%s)' % vidjil_utils.format_size(size)
+            db.sequence_file[request.vars["id"]] = dict(size_file = size)
 
-        # Compute and store file size
-        size = os.path.getsize(seq_file)
-        mes += ' (%s)' % vidjil_utils.format_size(size)
-        db.sequence_file[request.vars["id"]] = dict(size_file = size)
-
+        if data_file2 is not None :
+            seq_file2 = defs.DIR_SEQUENCES + data_file2
+            #TODO
+        
     # Log and exit
     res = {"message": error + mes}
     if error:
