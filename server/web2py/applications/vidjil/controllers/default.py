@@ -88,12 +88,15 @@ def init_db(force=False):
         auth.add_permission(id_admin_group, 'admin', db.patient, 0)
         auth.add_permission(id_admin_group, 'admin', db.auth_group, 0)
         auth.add_permission(id_admin_group, 'admin', db.config, 0)
+        auth.add_permission(id_admin_group, 'admin', db.pre_process, 0)
         auth.add_permission(id_admin_group, 'read', db.patient, 0)
         auth.add_permission(id_admin_group, 'read', db.auth_group, 0)
         auth.add_permission(id_admin_group, 'read', db.config, 0)
+        auth.add_permission(id_admin_group, 'read', db.pre_process, 0)
         auth.add_permission(id_admin_group, 'create', db.patient, 0)
         auth.add_permission(id_admin_group, 'create', db.auth_group, 0)
         auth.add_permission(id_admin_group, 'create', db.config, 0)
+        auth.add_permission(id_admin_group, 'create', db.pre_process, 0)
         auth.add_permission(id_admin_group, 'impersonate', db.auth_user, 0)
 
 def init_from_csv():
