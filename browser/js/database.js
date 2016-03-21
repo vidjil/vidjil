@@ -433,19 +433,38 @@ Database.prototype = {
                 success  : function(result) {
                     var js = self.display_result(result)
                     if (typeof js.file_id != 'undefined'){
-                        $(this).attr("action", "0")
-                        var id = js.file_id
-                        var fileSelect = document.getElementById('upload_file');
-                        var files = fileSelect.files;
-                        var data = new FormData();
-                        
-                        for (var i = 0; i < files.length; i++) {
-                            var file = files[i];
-                            data.append('file', file, file.name);
+                            $(this).attr("action", "0")
+                            var id = js.file_id
+                            if( document.getElementById("upload_file").files.length != 0 ){
+                            var fileSelect = document.getElementById('upload_file');
+                            var files = fileSelect.files;
+                            var data = new FormData();
+                            
+                            for (var i = 0; i < files.length; i++) {
+                                var file = files[i];
+                                data.append('file', file, file.name);
+                            }
+                            data.append('id', id);
+                            data.append('file_number', 1)
+                            data.append('pre_process', document.getElementById('pre_process').value)
+                            var filename = $('#filename').val()
+                            self.uploader.add(id, data, filename, 1)
                         }
-                        data.append('id', id);
-                        var filename = $('#filename').val()
-                        self.uploader.add(id, data, filename)
+                        
+                        if( document.getElementById("upload_file2").files.length != 0 ){
+                            var fileSelect = document.getElementById('upload_file2');
+                            var files = fileSelect.files;
+                            var data2 = new FormData();
+                            
+                            for (var i = 0; i < files.length; i++) {
+                                var file = files[i];
+                                data2.append('file', file, file.name);
+                            }
+                            data2.append('id', id);
+                            data2.append('file_number', 2)
+                            data2.append('pre_process', document.getElementById('pre_process').value)
+                            self.uploader.add(id+"_2", data2, filename, 2)
+                        }
                     }
                 },
                 error: function (request, status, error) {
@@ -968,7 +987,7 @@ function Uploader() {
 Uploader.prototype = {
     
     //add an upload to the queue
-    add : function (id, data, filename) {
+    add : function (id, data, filename, file_number) {
         var div_parent = $("#upload_summary_selector").children()[0]
         var div = $('<div/>').appendTo(div_parent);
         
@@ -976,6 +995,7 @@ Uploader.prototype = {
             "id" : id, 
             "data" : data, 
             "filename" : filename, 
+            "file_number" :file_number,
             "status" : "queued",
             "percent" : 0,
             "div" : div
