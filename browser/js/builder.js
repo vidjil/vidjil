@@ -268,7 +268,7 @@ Builder.prototype = {
         self.m.analysisHasChanged = true
     },
 
-    update_model_data(fieldName, value, field_parent) {
+    update_model_data: function(fieldName, value, field_parent) {
         if(typeof field_parent != 'undefined')
             this.m[field_parent][fieldName]= value;
         else
@@ -276,7 +276,7 @@ Builder.prototype = {
         this.post_save(this);
     },
 
-    update_model_sample_data(fieldName, value, field_parent) {
+    update_model_sample_data: function(fieldName, value, field_parent) {
         if(typeof field_parent != 'undefined')
             this.m[field_parent][fieldName][this.m.t]= value;
         else
