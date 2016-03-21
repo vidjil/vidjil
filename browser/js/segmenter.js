@@ -214,13 +214,13 @@ Segment.prototype = {
             input.id = 'vdj_input_check';
             $(input).on("click", function() {
                 if(this.checked) {
-                    segment.highlight[0].field = "CDR3";
-                    segment.highlight[0].color = "red";
+                    self.highlight[0].field = "CDR3";
+                    self.highlight[0].color = "red";
 
                 } else {
-                    segment.highlight[0].field = "";
+                    self.highlight[0].field = "";
                 }
-                    segment.update();
+                    self.update();
 
             });
             input.click();
