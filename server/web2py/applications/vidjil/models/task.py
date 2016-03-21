@@ -587,9 +587,92 @@ def extract_total_reads(report):
     reads_matcher = re.compile("Total Reads analysed: [0-9]+")
     reads_line = reads_matcher.search(report).group()
     return reads_line.split(' ')[-1]
+
+def schedule_pre_process(sequence_file_id, pre_process_id):
+    from subprocess import Popen, PIPE, STDOUT, os
+
+
+    args = [pre_process_id, sequence_file_id]
+
+    err = assert_scheduler_task_does_not_exist(str(args))
+    if err:
+        log.error(err)
+        return err
+
+    task = scheduler.queue_task("pre_process", args,
+                                repeats = 1, timeout = defs.TASK_TIMEOUT)
+
+    res = {"redirect": "reload",
+           "message": "[%s] (%s): process requested" % (sequence_file_id, pre_process_id)}
+
+    log.info(res)
+    return res
+
+
+def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_after=False):
+    from subprocess import Popen, PIPE, STDOUT, os
+    
+    out_folder = defs.DIR_PRE_VIDJIL_ID % sequence_file_id
+    output_filename = defs.BASENAME_OUT_VIDJIL_ID % sequence_file_id
+    
+    if clean_before:
+        cmd = "rm -rf "+out_folder 
+        p = Popen(cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+        p.wait()
+        os.makedirs(out_folder)    
+
+    output_file = out_folder+'/'+output_filename+'.fastq'
+            
+    print sequence_file_id
+    print pre_process_id
+    sequence_file = db.sequence_file[sequence_file_id]
+    pre_process = db.pre_process[pre_process_id]
+    
+    print sequence_file
+    print pre_process
+    
+    cmd = pre_process.command.replace( "&file1&", defs.DIR_SEQUENCES + sequence_file.data_file)
+    cmd = cmd.replace( "&file2&", defs.DIR_SEQUENCES + sequence_file.data_file2)
+    cmd = cmd.replace( "&result&", output_file)
+
+    print cmd
+    
+    sys.stdout.flush()
+    log_file = open(out_folder+'/'+output_filename+'.pre.log', 'w')
+    
+    
+    p = Popen(cmd, shell=True, stdin=PIPE, stdout=log_file, stderr=log_file, close_fds=True)
+    (stdoutdata, stderrdata) = p.communicate()
+    print "Output log in "+out_folder+'/'+output_filename+'.pre.log'
+
+    filepath = os.path.abspath(output_file)
+
+    try:
+        stream = open(filepath, 'rb')
+    except IOError:
+        print "!!! Pre-process failed, no result file"
+        res = {"message": "[%s] c%s: 'pre-process' FAILED - %s" % (sequence_file_id, pre_process_id, output_file)}
+        log.error(res)
+        raise IOError
+
+    db.sequence_file[sequence_file_id] = dict(data_file = stream,
+                                              data_file2 = None)
+    db.commit()
+
+    if clean_after:
+        clean_cmd = "rm -rf " + out_folder 
+        p = Popen(clean_cmd, shell=True, stdin=PIPE, stdout=PIPE, stderr=STDOUT, close_fds=True)
+        p.wait()
+    
+    res = {"message": "[%s] c%s: 'pre-process' finished - %s" % (sequence_file_id, pre_process_id, output_file)}
+    log.info(res)
+
+    return "SUCCESS"
+    
     
 from gluon.scheduler import Scheduler
 scheduler = Scheduler(db, dict(vidjil=run_vidjil,
                                compute_contamination=compute_contamination,
                                mixcr=run_mixcr,
-                               none=run_copy))
+                               none=run_copy,
+                               pre_process=run_pre_process))
