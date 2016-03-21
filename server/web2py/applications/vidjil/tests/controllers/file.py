@@ -120,6 +120,8 @@ class FileController(unittest.TestCase):
         test_file_id = self.createDumbSequenceFile()
         request.vars['id'] = test_file_id
 
+        request.vars['redirect_sample_set_id'] = fake_sample_set_id
+
         resp = confirm()
         self.assertTrue(resp.has_key('message'), "confirm() fails to confirm deletion of a file")
     
