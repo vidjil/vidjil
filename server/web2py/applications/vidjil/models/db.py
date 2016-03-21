@@ -126,6 +126,13 @@ db.define_table('run',
                 Field('creator','reference auth_user'),
                 Field('sample_set_id','reference sample_set', ondelete='SET NULL'))
 
+
+db.define_table('pre_process',
+                Field('name', 'string'),
+                Field('command', 'string'),
+                Field('info','text'))
+
+
 db.define_table('sequence_file',
                 Field('patient_id', 'reference patient'),
                 Field('sampling_date','date'),
@@ -135,8 +142,14 @@ db.define_table('sequence_file',
                 Field('sequencer','text'),
                 Field('producer','text'),
                 Field('size_file','integer', default=0),
+                Field('size_file2','integer', default=0),
                 Field('provider','reference auth_user'),
+                Field('pre_process_id', 'reference pre_process'),
+                Field('pre_process_result', 'text'),
                 Field('data_file', 'upload', 
+                      uploadfolder=defs.DIR_SEQUENCES,
+                      length=LENGTH_UPLOAD, autodelete=AUTODELETE),
+                Field('data_file2', 'upload', 
                       uploadfolder=defs.DIR_SEQUENCES,
                       length=LENGTH_UPLOAD, autodelete=AUTODELETE))
 
