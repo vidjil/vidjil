@@ -1,5 +1,4 @@
-/*
- * This file is part of Vidjil <http://www.vidjil.org>,
+ /* This file is part of Vidjil <http://www.vidjil.org>,
  * High-throughput Analysis of V(D)J Immune Repertoire.
  * Copyright (C) 2013, 2014, 2015 by Bonsai bioinformatics
  * at CRIStAL (UMR CNRS 9189, Université Lille) and Inria Lille
@@ -81,7 +80,7 @@ var db = new Database(m);
  * The builder completes some informations in the menu and provide some tools
  * TODO replace with a menu and info view
  */
-var builder = new Builder(m);
+var builder = new Builder(m, db);
 
 
 /* [WIP] Shortcut (optional)

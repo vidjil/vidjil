@@ -1,7 +1,11 @@
-function Builder(model) {
+function Builder(model, database) {
     if (typeof model != "undefined"){
         this.m = model; //Model utilisé
         this.m.view.push(this); //synchronisation au Model
+    }
+
+    if(typeof database != 'undefined') {
+        this.db = database;
     }
     this.colorMethod = "";
     this.width_left_container = $("#left-container")
