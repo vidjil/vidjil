@@ -43,9 +43,10 @@ CGI_ADDRESS = ""
  * @augments View
  * @this View
  * */
-function Segment(id, model) {
+function Segment(id, model, database) {
     
     View.call(this, model);
+    this.db = database;
         
     if (typeof config != 'undefined') {
         if (config.cgi_address){
@@ -92,240 +93,243 @@ Segment.prototype = {
      * */
     build: function () {
         var self = this
+        try {
+            var parent = document.getElementById(this.id)
+            parent.innerHTML = "";
 
-        var parent = document.getElementById(this.id)
-        parent.innerHTML = "";
-        
-        //bot-bar
-        var div = document.createElement('div');
-        div.className = "bot-bar"
+            //bot-bar
+            var div = document.createElement('div');
+            div.className = "bot-bar"
 
-        //menu-segmenter
-        var div_menu = document.createElement('div');
-        div_menu.className = "menu-segmenter"
-        div_menu.onmouseover = function () {
-            self.m.focusOut()
-        };
+            //menu-segmenter
+            var div_menu = document.createElement('div');
+            div_menu.className = "menu-segmenter"
+            div_menu.onmouseover = function () {
+                self.m.focusOut()
+            };
 
-        //merge button
-        var span = document.createElement('span');
-        span.id = "merge"
-        span.setAttribute('title', 'Merge the clones into a unique clone')
-        span.className = "button"
-        span.onclick = function () {
-            self.m.merge()
-        }
-        span.appendChild(document.createTextNode("merge"));
-        div_menu.appendChild(span)
-
-        //align button
-        if (this.cgi_address) {
-        span = document.createElement('span');
-        span.id = "align"
-        span.setAttribute('title', 'Align the sequences')
-        this.updateAlignmentButton();
-        span.className = "button"
-        span.onclick = function () {
-            self.toggleAlign()
-        }
-        span.appendChild(document.createTextNode("align"));
-        div_menu.appendChild(span)
-        }
-        
-        //toIMGT button
-        span = document.createElement('span');
-        span.id = "toIMGT"
-        span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and see the results in a new tab')
-        span.className = "button"
-        span.onclick = function () {
-            self.sendTo('IMGT')
-        }
-        span.appendChild(document.createTextNode("❯ to IMGT/V-QUEST"));
-        div_menu.appendChild(span)
-
-        //toIMGTSeg button
-        span = document.createElement('span');
-        span.id = "toIMGTSeg";
-        span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and loads the results in the sequence panel')
-        span.className = "button button_next";
-        span.onclick = function () {
-            self.sendTo('IMGTSeg')
-        };
-        span.appendChild(document.createTextNode("▼"));
-        div_menu.appendChild(span);
-
-        //toIgBlast button
-        span = document.createElement('span');
-        span.id = "toIgBlast";
-        span.setAttribute('title', 'Send sequences to NCBI IgBlast and see the results in a new tab')
-        span.className = "button";
-        span.onclick = function () {
-            self.sendTo('igBlast')
-        };
-        span.appendChild(document.createTextNode("❯ to IgBlast"));
-        div_menu.appendChild(span);
-
-        //toARResT button
-        span = document.createElement('span');
-        span.id = "toARResT";
-        span.setAttribute('title', 'Send sequences to ARResT/CompileJunctions and see the results in a new tab')
-        span.className = "button devel-mode";
-        span.onclick = function () {
-            self.sendTo('ARResT')
-        };
-        span.appendChild(document.createTextNode("❯ to ARResT/CJ"));
-        div_menu.appendChild(span);
-
-        //toBlast button
-        span = document.createElement('span');
-        span.id = "toBlast";
-        span.setAttribute('title', 'Send sequences to Ensembl Blast and see the results in a new tab')
-        span.className = "button";
-        span.onclick = function () {
-            if (m.getSelected().length > 30) {
-                console.log({"type": "flash", "msg": "A maximum of 30 clones are allowed by Blast" , "priority": 1});
-            } else {
-            self.sendTo('blast');
+            //merge button
+            var span = document.createElement('span');
+            span.id = "merge"
+            span.setAttribute('title', 'Merge the clones into a unique clone')
+            span.className = "button"
+            span.onclick = function () {
+                self.m.merge()
             }
-        };
-        span.appendChild(document.createTextNode("❯ to Blast"));
-        div_menu.appendChild(span);
-        
-        //toClipBoard button
-        span = document.createElement('span');
-        span.id = "toClipBoard";
-        span.className = "button";
-        span.appendChild(document.createTextNode("❯ to clipBoard"));
-        // div_menu.appendChild(span)
+            span.appendChild(document.createTextNode("merge"));
+            div_menu.appendChild(span)
 
-        div.appendChild(div_menu);
+            //align button
+            if (this.cgi_address) {
+            span = document.createElement('span');
+            span.id = "align"
+            span.setAttribute('title', 'Align the sequences')
+            this.updateAlignmentButton();
+            span.className = "button"
+            span.onclick = function () {
+                self.toggleAlign()
+            }
+            span.appendChild(document.createTextNode("align"));
+            div_menu.appendChild(span)
+            }
 
+            //toIMGT button
+            span = document.createElement('span');
+            span.id = "toIMGT"
+            span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and see the results in a new tab')
+            span.className = "button"
+            span.onclick = function () {
+                self.sendTo('IMGT')
+            }
+            span.appendChild(document.createTextNode("❯ to IMGT/V-QUEST"));
+            div_menu.appendChild(span)
 
-        //menu-highlight
-        var div_menu_highlight = this.updateHighLightMenu();
-        div.appendChild(div_menu_highlight);
+            //toIMGTSeg button
+            span = document.createElement('span');
+            span.id = "toIMGTSeg";
+            span.setAttribute('title', 'Send sequences to IMGT/V-QUEST and loads the results in the sequence panel')
+            span.className = "button button_next";
+            span.onclick = function () {
+                self.sendTo('IMGTSeg')
+            };
+            span.appendChild(document.createTextNode("▼"));
+            div_menu.appendChild(span);
 
-        span = document.createElement("span");
-        span.id = 'highlightCheckboxes';
+            //toIgBlast button
+            span = document.createElement('span');
+            span.id = "toIgBlast";
+            span.setAttribute('title', 'Send sequences to NCBI IgBlast and see the results in a new tab')
+            span.className = "button";
+            span.onclick = function () {
+                self.sendTo('igBlast')
+            };
+            span.appendChild(document.createTextNode("❯ to IgBlast"));
+            div_menu.appendChild(span);
 
-        if(this.findPotentialField().indexOf('cdr3') != -1) {
-            var input = document.createElement('input');
-            input.type = 'checkbox';
-            input.id = 'vdj_input_check';
-            $(input).on("click", function() {
-                if(this.checked) {
-                    self.highlight[0].field = "CDR3";
-                    self.highlight[0].color = "red";
+            //toARResT button
+            span = document.createElement('span');
+            span.id = "toARResT";
+            span.setAttribute('title', 'Send sequences to ARResT/CompileJunctions and see the results in a new tab')
+            span.className = "button devel-mode";
+            span.onclick = function () {
+                self.sendTo('ARResT')
+            };
+            span.appendChild(document.createTextNode("❯ to ARResT/CJ"));
+            div_menu.appendChild(span);
 
+            //toBlast button
+            span = document.createElement('span');
+            span.id = "toBlast";
+            span.setAttribute('title', 'Send sequences to Ensembl Blast and see the results in a new tab')
+            span.className = "button";
+            span.onclick = function () {
+                if (m.getSelected().length > 30) {
+                    console.log({"type": "flash", "msg": "A maximum of 30 clones are allowed by Blast" , "priority": 1});
                 } else {
-                    self.highlight[0].field = "";
+                self.sendTo('blast');
                 }
-                    self.update();
+            };
+            span.appendChild(document.createTextNode("❯ to Blast"));
+            div_menu.appendChild(span);
 
-            });
-            input.click();
-            var label = document.createElement('label');
-            label.setAttribute("for", 'vdj_input_check');
-            label.innerHTML = 'CDR3';
+            //toClipBoard button
+            span = document.createElement('span');
+            span.id = "toClipBoard";
+            span.className = "button";
+            span.appendChild(document.createTextNode("❯ to clipBoard"));
+            // div_menu.appendChild(span)
 
-            input.setAttribute("title", 'Display CDR3 computed by Vidjil');
-            label.setAttribute("title", 'Display CDR3 computed by Vidjil');
-
-            input.className = 'devel-mode';
-            label.className = 'devel-mode';
-
-            span.appendChild(input);
-            span.appendChild(label);
-        }
-        div.appendChild(span);
+            div.appendChild(div_menu);
 
 
-        // Checkbox for id
-        /*
-         var windowCheckbox = document.createElement('input');
-         windowCheckbox.type = "checkbox";
-         windowCheckbox.onclick = function () {
-         var id = 1;
-         if (this.checked){
-         segment.highlight[id].field = "id";
-         }else{
-         segment.highlight[id].field = "";
-         }
-         segment.update();
-         }
-         div_highlight.appendChild(windowCheckbox)
-         div_highlight.appendChild(document.createTextNode("id"));
-         */
-        //div.appendChild(div_highlight)
+            //menu-highlight
+            var div_menu_highlight = this.updateHighLightMenu();
+            div.appendChild(div_menu_highlight);
 
+            span = document.createElement("span");
+            span.id = 'highlightCheckboxes';
 
-        var div_focus = document.createElement('div');
-        div_focus.className = "focus cloneName"
-        div.appendChild(div_focus)
+            if(this.findPotentialField().indexOf('cdr3') != -1) {
+                var input = document.createElement('input');
+                input.type = 'checkbox';
+                input.id = 'vdj_input_check';
+                $(input).on("click", function() {
+                    if(this.checked) {
+                        self.highlight[0].field = "CDR3";
+                        self.highlight[0].color = "red";
 
-        var div_stats = document.createElement('div');
-        div_stats.className = "stats"
-
-        var stats_content = document.createElement('span');
-        stats_content.className = "stats_content"
-        div_stats.appendChild(stats_content)
-
-        var focus_selected = document.createElement('a');
-        focus_selected.appendChild(document.createTextNode("(focus)"))
-        focus_selected.className = "focus_selected"
-        focus_selected.onclick = function () { list_clones.focus() }
-        div_stats.appendChild(focus_selected)
-
-        div.appendChild(div_stats)
-
-        parent.appendChild(div)
-
-        this.div_segmenter = document.createElement('div');
-        this.div_segmenter.className = "segmenter"
-        //listSeq
-        ul = document.createElement('ul');
-        ul.id = "listSeq"
-        this.div_segmenter.appendChild(ul)
-        
-        parent.appendChild(this.div_segmenter)
-
-       /* $('#toClipBoard')
-            .zclip({
-                path: 'js/lib/ZeroClipboard.swf',
-                copy: function () {
-                    return self.toFasta()
-                }
-            });
-        */
-       
-        $(this.div_segmenter)
-            .scroll(function(){
-                var leftScroll = $(self.div_segmenter).scrollLeft();  
-                $('.seq-fixed').css({'left':+leftScroll});
-            })
-            .mouseenter(function(){
-                if (!self.is_open){
-                    var seg = $(self.div_segmenter),
-                    curH = seg.height(),
-                    autoH = seg.css('height', 'auto').height();
-                    if (autoH > 100){
-                        if (autoH > 500) autoH = 500
-                        seg.stop().height(curH).animate({height: autoH+5}, 250);
-                    }else{
-                        seg.stop().height(curH)
+                    } else {
+                        self.highlight[0].field = "";
                     }
-                    self.is_open = true
-                }
-            });
-            
-        $('#'+this.id)
-            .mouseleave(function(e){
-                if (e.relatedTarget != null && self.is_open){
-                    var seg = $(self.div_segmenter)
-                    seg.stop().animate({height: 100}, 250);
-                    self.is_open = false
-                }
-            });
+                        self.update();
+
+                });
+                input.click();
+                var label = document.createElement('label');
+                label.setAttribute("for", 'vdj_input_check');
+                label.innerHTML = 'CDR3';
+
+                input.setAttribute("title", 'Display CDR3 computed by Vidjil');
+                label.setAttribute("title", 'Display CDR3 computed by Vidjil');
+
+                input.className = 'devel-mode';
+                label.className = 'devel-mode';
+
+                span.appendChild(input);
+                span.appendChild(label);
+            }
+            div.appendChild(span);
+
+
+            // Checkbox for id
+            /*
+             var windowCheckbox = document.createElement('input');
+             windowCheckbox.type = "checkbox";
+             windowCheckbox.onclick = function () {
+             var id = 1;
+             if (this.checked){
+             segment.highlight[id].field = "id";
+             }else{
+             segment.highlight[id].field = "";
+             }
+             segment.update();
+             }
+             div_highlight.appendChild(windowCheckbox)
+             div_highlight.appendChild(document.createTextNode("id"));
+             */
+            //div.appendChild(div_highlight)
+
+
+            var div_focus = document.createElement('div');
+            div_focus.className = "focus cloneName"
+            div.appendChild(div_focus)
+
+            var div_stats = document.createElement('div');
+            div_stats.className = "stats"
+
+            var stats_content = document.createElement('span');
+            stats_content.className = "stats_content"
+            div_stats.appendChild(stats_content)
+
+            var focus_selected = document.createElement('a');
+            focus_selected.appendChild(document.createTextNode("(focus)"))
+            focus_selected.className = "focus_selected"
+            focus_selected.onclick = function () { list_clones.focus() }
+            div_stats.appendChild(focus_selected)
+
+            div.appendChild(div_stats)
+
+            parent.appendChild(div)
+
+            this.div_segmenter = document.createElement('div');
+            this.div_segmenter.className = "segmenter"
+            //listSeq
+            ul = document.createElement('ul');
+            ul.id = "listSeq"
+            this.div_segmenter.appendChild(ul)
+
+            parent.appendChild(this.div_segmenter)
+
+           /* $('#toClipBoard')
+                .zclip({
+                    path: 'js/lib/ZeroClipboard.swf',
+                    copy: function () {
+                        return self.toFasta()
+                    }
+                });
+            */
+
+            $(this.div_segmenter)
+                .scroll(function(){
+                    var leftScroll = $(self.div_segmenter).scrollLeft();
+                    $('.seq-fixed').css({'left':+leftScroll});
+                })
+                .mouseenter(function(){
+                    if (!self.is_open){
+                        var seg = $(self.div_segmenter),
+                        curH = seg.height(),
+                        autoH = seg.css('height', 'auto').height();
+                        if (autoH > 100){
+                            if (autoH > 500) autoH = 500
+                            seg.stop().height(curH).animate({height: autoH+5}, 250);
+                        }else{
+                            seg.stop().height(curH)
+                        }
+                        self.is_open = true
+                    }
+                });
+
+            $('#'+this.id)
+                .mouseleave(function(e){
+                    if (e.relatedTarget != null && self.is_open){
+                        var seg = $(self.div_segmenter)
+                        seg.stop().animate({height: 100}, 250);
+                        self.is_open = false
+                    }
+                });
+        } catch(err) {
+            this.db.error(err.stack);
+        }
     },
 
 

@@ -42,10 +42,11 @@
  * @augments View
  * @this View
  * */
-function List(id_list, id_data, model) {
+function List(id_list, id_data, model, database) {
     var self=this;
     
     View.call(this, model);
+    this.db = database;
     
     this.id = id_list; //ID de la div contenant la liste
     this.id_data = id_data;
@@ -71,48 +72,51 @@ List.prototype = {
     build: function () {
         var self =this;
         
-        //build dataMenu
-        this.dataMenu = document.createElement("div");
-        this.dataMenu.className = "dataMenu";
-        
-        var closedataMenu = document.createElement("span");
-        closedataMenu.className = "closeButton" ;
-        closedataMenu.appendChild(icon('icon-cancel', ''));
-        closedataMenu.onclick = function() {$(this).parent().hide('fast')};
-        this.dataMenu.appendChild(closedataMenu);
-        
-        this.dataMenuInfo = document.createElement("div");
-        this.dataMenu.appendChild(this.dataMenuInfo);
-        
-        var div_normalize = document.createElement("div");
-        div_normalize.appendChild(document.createElement("span").appendChild(document.createTextNode("normalize to: ")));
-        this.data_norm_input = document.createElement("input");
-        this.data_norm_input.id = "normalized_data_size";
-        this.data_norm_input.step = '0.0001';
-        this.data_norm_input.type = 'number';
-        div_normalize.appendChild(document.createElement("span").appendChild(this.data_norm_input));
-        this.data_norm_input_button = document.createElement("BUTTON");
-        this.data_norm_input_button.id = "normalized_size_button";
-        this.data_norm_input_button.appendChild(document.createTextNode("ok"));
-        div_normalize.appendChild(this.data_norm_input_button);
-        this.dataMenu.appendChild(div_normalize);
-        
-        this.data_norm_input.onkeydown = function () {
-            if (event.keyCode == 13) self.data_norm_input_button.click();
+        try {
+            //build dataMenu
+            this.dataMenu = document.createElement("div");
+            this.dataMenu.className = "dataMenu";
+
+            var closedataMenu = document.createElement("span");
+            closedataMenu.className = "closeButton" ;
+            closedataMenu.appendChild(icon('icon-cancel', ''));
+            closedataMenu.onclick = function() {$(this).parent().hide('fast')};
+            this.dataMenu.appendChild(closedataMenu);
+
+            this.dataMenuInfo = document.createElement("div");
+            this.dataMenu.appendChild(this.dataMenuInfo);
+
+            var div_normalize = document.createElement("div");
+            div_normalize.appendChild(document.createElement("span").appendChild(document.createTextNode("normalize to: ")));
+            this.data_norm_input = document.createElement("input");
+            this.data_norm_input.id = "normalized_data_size";
+            this.data_norm_input.step = '0.0001';
+            this.data_norm_input.type = 'number';
+            div_normalize.appendChild(document.createElement("span").appendChild(this.data_norm_input));
+            this.data_norm_input_button = document.createElement("BUTTON");
+            this.data_norm_input_button.id = "normalized_size_button";
+            this.data_norm_input_button.appendChild(document.createTextNode("ok"));
+            div_normalize.appendChild(this.data_norm_input_button);
+            this.dataMenu.appendChild(div_normalize);
+
+            this.data_norm_input.onkeydown = function () {
+                if (event.keyCode == 13) self.data_norm_input_button.click();
+            }
+
+            this.data_norm_input_button.onclick = function () {
+                var data = self.dataMenuInfo.innerHTML
+                var size = parseFloat(self.data_norm_input.value);
+
+                self.data_norm_input.value = ""
+                self.m.compute_data_normalization(data, size)
+                self.m.update()
+                $(self.dataMenu).hide('fast')
+            }
+
+            document.body.appendChild(this.dataMenu);
+        } catch(err) {
+            this.db.error(err.stack);
         }
-        
-        this.data_norm_input_button.onclick = function () {
-            var data = self.dataMenuInfo.innerHTML
-            var size = parseFloat(self.data_norm_input.value);
-            
-            self.data_norm_input.value = ""
-            self.m.compute_data_normalization(data, size)
-            self.m.update()
-            $(self.dataMenu).hide('fast')
-        }
- 
-        document.body.appendChild(this.dataMenu);
-        
     },
     
     /** 
@@ -120,10 +124,14 @@ List.prototype = {
      * need to be done after each .vidjil file change
      * */
     init: function () {
-        this.build_list()
-        this.build_data_list()
-        this.update();
-        this.resize();
+        try {
+            this.build_list()
+            this.build_data_list()
+            this.update();
+            this.resize();
+        } catch(err) {
+            this.db.error(err.stack);
+        }
     },
 
     /** 

@@ -32,10 +32,11 @@
  * @param {string} id - dom id of the html div who will contain the scatterplot
  * @param {Model} model
  * */
-function ScatterPlot(id, model) {
+function ScatterPlot(id, model, database) {
     var self = this;
     
     View.call(this, model);
+    this.db = database;
     
     this.id = id; //ID of the scatterPlot div
 
@@ -278,20 +279,24 @@ ScatterPlot.prototype = {
      * */
     init: function() {
         console.log("ScatterPlot " + this.id + ": init()");
+        try {
 
-        document.getElementById(this.id)
-            .innerHTML = "";
+            document.getElementById(this.id)
+                .innerHTML = "";
 
-        this.initMenu();
-        this.initSVG();
-        this.axisX.useGermline(this.m.germlineV, "V")
-        this.axisY.useGermline(this.m.germlineJ, "J")
+            this.initMenu();
+            this.initSVG();
+            this.axisX.useGermline(this.m.germlineV, "V")
+            this.axisY.useGermline(this.m.germlineJ, "J")
 
-        this.select_preset.selectedIndex = this.default_preset
-        this.changePreset();
-        this.tsne_ready=false;
+            this.select_preset.selectedIndex = this.default_preset
+            this.changePreset();
+            this.tsne_ready=false;
 
-        this.resize();
+            this.resize();
+        } catch(err) {
+            this.db.error(err.stack);
+        }
     },
 
     /**
@@ -1296,19 +1301,23 @@ ScatterPlot.prototype = {
      * */
     update: function() {
         var self = this;
-        var startTime = new Date()
-            .getTime();
-        var elapsedTime = 0;
+        try{
+            var startTime = new Date()
+                .getTime();
+            var elapsedTime = 0;
 
-        this.compute_size()
-            .initGrid()
-            .updateClones()
-            .updateMenu();
+            this.compute_size()
+                .initGrid()
+                .updateClones()
+                .updateMenu();
 
-        //Donne des informations quant au temps de MàJ des données
-        elapsedTime = new Date()
-            .getTime() - startTime;
-        console.log("update sp: " + elapsedTime + "ms");
+            //Donne des informations quant au temps de MàJ des données
+            elapsedTime = new Date()
+                .getTime() - startTime;
+            console.log("update sp: " + elapsedTime + "ms");
+        } catch(err) {
+            this.db.error(err.stack);
+        }
     },
 
     /**

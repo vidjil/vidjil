@@ -40,57 +40,60 @@ console = new Com(console)
 var m = new Model();
 
 
-/* Views
- * Each view is rendered inside a <div> html element (whose id is given as the first paramter),
- * and kept sync with the model given as the other parameter (here 'm').
- * All the views are optional, and several views of the same type can be added.
- */
-
-var graph = new Graph("visu2", m);               // Time graph
-var list_clones = new List("list", "data", m);   // List of clones
-var sp = new ScatterPlot("visu", m);             // Scatterplot (both grid and bar plot view)
-var segment = new Segment("bot-container", m);   // Segmenter
-
-
-/* Similarity
- * retrieve and compute everything related to the similarity matrix
- */
-var sim = new Similarity(m);
-
-/* [outdated] PDF
- * This is an outdated module, replaced by report. It will be removed in a future release
- */
-var pdf = new PDF(m, "visu2_svg")
-
-
-/* [WIP] report module (optional)
- * This module provides html report functions for a given model
- * [WARNING] Views access are currently hard-coded, this will be soon corrected.
- */
-var report = new Report(m)
-
-
 /* Database (optional)
  * This links the model to a patient database (possibly the one defined in config.js)
  */
 var db = new Database(m);
 
+try {
+    /* Views
+     * Each view is rendered inside a <div> html element (whose id is given as the first paramter),
+     * and kept sync with the model given as the other parameter (here 'm').
+     * All the views are optional, and several views of the same type can be added.
+     */
 
-/* [WIP] Builder
- * The builder completes some informations in the menu and provide some tools
- * TODO replace with a menu and info view
- */
-var builder = new Builder(m, db);
+    var graph = new Graph("visu2", m, db);               // Time graph
+    var list_clones = new List("list", "data", m, db);   // List of clones
+    var sp = new ScatterPlot("visu", m, db);             // Scatterplot (both grid and bar plot view)
+    var segment = new Segment("bot-container", m, db);   // Segmenter
 
 
-/* [WIP] Shortcut (optional)
- * This provides keyboard shortcuts to interact with the browser.
- */
-var shortcut = new Shortcut()
+    /* Similarity
+     * retrieve and compute everything related to the similarity matrix
+     */
+    var sim = new Similarity(m);
+
+    /* [outdated] PDF
+     * This is an outdated module, replaced by report. It will be removed in a future release
+     */
+    var pdf = new PDF(m, "visu2_svg")
 
 
-//TODO 
-initMenu();
+    /* [WIP] report module (optional)
+     * This module provides html report functions for a given model
+     * [WARNING] Views access are currently hard-coded, this will be soon corrected.
+     */
+    var report = new Report(m)
+
+
+    /* [WIP] Builder
+     * The builder completes some informations in the menu and provide some tools
+     * TODO replace with a menu and info view
+     */
+    var builder = new Builder(m, db);
+
+
+    /* [WIP] Shortcut (optional)
+     * This provides keyboard shortcuts to interact with the browser.
+     */
+    var shortcut = new Shortcut()
+
+
+    //TODO
+    initMenu();
+} catch(err) {
+    this.db.error(err.stack);
+}
 
 (function worker(){
 	db.loadNotifications();

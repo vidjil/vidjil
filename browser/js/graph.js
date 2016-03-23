@@ -72,7 +72,7 @@
 /** constructor
  *
  * */
-function Graph(id, model) {
+function Graph(id, model, database) {
     //
     View.call(this, model); 
     
@@ -104,6 +104,7 @@ function Graph(id, model) {
     this.text_position_x = 60;
 
     this.m.graph = this // TODO: find a better way to do this
+    this.db = database;
 }
 
 Graph.prototype = {
@@ -116,80 +117,84 @@ Graph.prototype = {
      * 
      * */
     build_graph : function () {
-        document.getElementById(this.id)
-            .innerHTML = "";
-        
-        this.mode = "curve";
+        try {
+            document.getElementById(this.id)
+                .innerHTML = "";
             
-        var self = this;
-        this.vis = d3.select("#" + this.id)
-            .attr("class", "graph")
-            .append("svg:svg")
-            .attr("id", this.id + "_svg")
-            .on("mouseup", function () {
-                self.stopDrag()
-            })
-            .on("mousemove", function () {
-                self.dragTimePoint()
-            })
+            this.mode = "curve";
 
-        d3.select("#" + this.id + "_svg")
-            .append("svg:rect")
-            .attr("id", this.id + "_back")
-            .attr("class", "background_graph")
-            .attr("x", 0)
-            .attr("y", 0)
-            .attr("width", 2500)
-            .attr("height", 2500)
-            .on("click", function () {
-                self.m.unselectAll();
-            })
-            .on("mouseover", function () {
-                self.m.focusOut();
-                $("#" + self.id + "_list")
-                    .stop(true, true)
-                    .hide("fast")
-            })
+            var self = this;
+            this.vis = d3.select("#" + this.id)
+                .attr("class", "graph")
+                .append("svg:svg")
+                .attr("id", this.id + "_svg")
+                .on("mouseup", function () {
+                    self.stopDrag()
+                })
+                .on("mousemove", function () {
+                    self.dragTimePoint()
+                })
 
-        d3.select("#" + this.id + "_svg")
-            .append("svg:rect")
-            .attr("id", this.id + "_back2")
-            .attr("class", "background_graph2")
-            .attr("x", this.marge4)
-            .attr("y", 0)
-            .attr("width", 2500)
-            .attr("height", 2500)
-            .on("click", function () {
-                self.m.unselectAll();
-            })
-            .on("mouseover", function () {
-                self.m.focusOut();
-                $("#" + self.id + "_list")
-                    .stop(true, true)
-                    .hide("fast")
-            })
+            d3.select("#" + this.id + "_svg")
+                .append("svg:rect")
+                .attr("id", this.id + "_back")
+                .attr("class", "background_graph")
+                .attr("x", 0)
+                .attr("y", 0)
+                .attr("width", 2500)
+                .attr("height", 2500)
+                .on("click", function () {
+                    self.m.unselectAll();
+                })
+                .on("mouseover", function () {
+                    self.m.focusOut();
+                    $("#" + self.id + "_list")
+                        .stop(true, true)
+                        .hide("fast")
+                })
 
-        this.axis_container = d3.select("#" + this.id + "_svg")
-            .append("svg:g")
-            .attr("id", "axis_container")
-        this.reso_container = d3.select("#" + this.id + "_svg")
-            .append("svg:g")
-            .attr("id", "reso_container")
-        this.data_container = d3.select("#" + this.id + "_svg")
-            .append("svg:g")
-            .attr("id", "data_container")
-        this.clones_container = d3.select("#" + this.id + "_svg")
-            .append("svg:g")
-            .attr("id", "clones_container")
-        this.date_container = d3.select("#" + this.id + "_svg")
-            .append("svg:g")
-            .attr("id", "date_container")
-        this.text_container = d3.select("#" + this.id + "_svg")
-            .append("svg:g")
-            .attr("id", "text_container")
+            d3.select("#" + this.id + "_svg")
+                .append("svg:rect")
+                .attr("id", this.id + "_back2")
+                .attr("class", "background_graph2")
+                .attr("x", this.marge4)
+                .attr("y", 0)
+                .attr("width", 2500)
+                .attr("height", 2500)
+                .on("click", function () {
+                    self.m.unselectAll();
+                })
+                .on("mouseover", function () {
+                    self.m.focusOut();
+                    $("#" + self.id + "_list")
+                        .stop(true, true)
+                        .hide("fast")
+                })
 
-        this.build_menu()
-            .build_list();
+            this.axis_container = d3.select("#" + this.id + "_svg")
+                .append("svg:g")
+                .attr("id", "axis_container")
+            this.reso_container = d3.select("#" + this.id + "_svg")
+                .append("svg:g")
+                .attr("id", "reso_container")
+            this.data_container = d3.select("#" + this.id + "_svg")
+                .append("svg:g")
+                .attr("id", "data_container")
+            this.clones_container = d3.select("#" + this.id + "_svg")
+                .append("svg:g")
+                .attr("id", "clones_container")
+            this.date_container = d3.select("#" + this.id + "_svg")
+                .append("svg:g")
+                .attr("id", "date_container")
+            this.text_container = d3.select("#" + this.id + "_svg")
+                .append("svg:g")
+                .attr("id", "text_container")
+
+            this.build_menu()
+                .build_list();
+        } catch(err) {
+            this.db.error(err.stack);
+        }
         
         return this
     },
