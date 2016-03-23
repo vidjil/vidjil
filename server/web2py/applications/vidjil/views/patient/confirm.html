@@ -7,16 +7,20 @@
 {{
 data_count = 0 
 patient_name = vidjil_utils.anon_ids(request.vars["id"])
-query = db( (db.sequence_file.patient_id==request.vars["id"])).select() 
-for row in query :}}
-    {{data_count += db(db.results_file.sequence_file_id == row.id).count()}}
-{{pass}}
+sequence_count = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            &(db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
+            &(db.patient.id == request.vars["id"])).count()
+data_count = db( (db.sequence_file.id == db.sample_set_membership.sequence_file_id)
+            &(db.sample_set_membership.sample_set_id == db.patient.sample_set_id)
+            &(db.patient.id == request.vars["id"])
+            &(db.results_file.sequence_file_id == db.sequence_file.id)).count()
+}}
 <div>
     <h3>{{=message}}: {{=patient_name}}
     </h3>
     
     Are you sure you want to delete the patient {{=patient_name}} ?</br>
-    This will delete {{=db(db.sequence_file.patient_id==request.vars["id"]).count()}} sequence file(s) and {{=data_count}} result files.</br>
+    This will delete {{=sequence_count}} sequence file(s) and {{=data_count}} result files.</br>
     This action cannot be undone.
 
     <div class="center"> 
