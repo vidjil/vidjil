@@ -586,5 +586,40 @@ Model_loader.prototype = {
         return JSON.stringify(analysisData, undefined, 2);
     },
 
+    convertSeg: function(seg) {
+        var segMapping = ['5', '4', '3'];
+        var newSeg = {};
+        for (key in seg) {
+            var firstChar = key.substring(0, 1);
+            if ((segMapping.indexOf(firstChar) != -1 && typeof seg[firstChar] != 'object')
+                    || typeof seg[key] != 'object') {
+                if (typeof newSeg[firstChar] == 'undefined') {
+                    newSeg[firstChar] = this.getConvertedSeg(seg, firstChar);
+                }
+            } else {
+                newSeg[key] = seg[key];
+            }
+        }
+        return newSeg;
+    },
+
+    getConvertedSeg: function(seg, key) {
+        var boundaryMapping = {'start': 'start', 'stop': 'end'};
+        var newSeg = {};
+        if (typeof seg[key] != 'undefined') newSeg["name"] = seg[key];
+        for(boundary in boundaryMapping) {
+            var tmp = this.getConvertedBoundary(seg, key, boundaryMapping[boundary]);
+            if (typeof tmp != 'undefined') newSeg[boundary] = tmp;
+        }
+        return newSeg;
+    },
+
+    getConvertedBoundary: function(seg, key, bound) {
+        var newSeg;
+        if (typeof seg[key+bound] != 'undefined') {
+            newSeg = seg[key+bound];
+        }
+        return newSeg;
+    }
 
 };
