@@ -1075,16 +1075,16 @@ Sequence.prototype = {
                 var vdjArrayRev = {};
 
                 // We first put the end positions
-                vdjArrayRev[vdjArray["5end"]] = {'type':'N', 'color': ""};
-                vdjArrayRev[vdjArray["3end"]] = {'type':'N', 'color': ""};
-                if (typeof vdjArray["4start"]!= 'undefined' && typeof clone.seg["4end"] != 'undefined'){
-                    vdjArrayRev[vdjArray["4end"]] = {'type':'N', 'color': ""};
+                vdjArrayRev[vdjArray["5"]['stop']] = {'type':'N', 'color': ""};
+                vdjArrayRev[vdjArray["3"]['start']] = {'type':'N', 'color': ""};
+                if (typeof vdjArray["4"] != 'undefined' && typeof vdjArray["4"]['start']!= 'undefined' && typeof clone.seg["4"]['stop'] != 'undefined'){
+                    vdjArrayRev[vdjArray["4"]['stop']] = {'type':'N', 'color': ""};
 
                     // We now put the start positions (that may override previous end positions)
-                    vdjArrayRev[vdjArray["4start"]] = {'type':'D', 'color': ""};
+                    vdjArrayRev[vdjArray["4"]['start']] = {'type':'D', 'color': ""};
                 }
-                vdjArrayRev[vdjArray["5start"]] = {'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : ""};
-                vdjArrayRev[vdjArray["3start"]] = {'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : ""};
+                vdjArrayRev[vdjArray["5"]['start']] = {'type':'V', 'color': this.m.colorMethod == "V" ? clone.colorV : ""};
+                vdjArrayRev[vdjArray["3"]['start']] = {'type':'J', 'color': this.m.colorMethod == "J" ? clone.colorJ : ""};
             }
 
             var window_start = this.pos[clone.sequence.indexOf(clone.id)];
@@ -1176,14 +1176,15 @@ Sequence.prototype = {
      */
     getVdjStartEnd: function (clone) {
 
-        var vdjArray ={} ;
-        vdjArray["5start"] = 0;
-        vdjArray["5end"] = this.pos[clone.seg["5end"]] + 1;
-        vdjArray["3start"] = this.pos[clone.seg["3start"]];
-        vdjArray["3end"] = this.seq.length;
-        if (typeof clone.seg["4start"] != 'undefined' && typeof clone.seg["4end"] != 'undefined') {
-            vdjArray["4start"] = this.pos[clone.seg["4start"]];
-            vdjArray["4end"] = this.pos[clone.seg["4end"]] + 1
+        var vdjArray ={"5": {}, "3": {}} ;
+        vdjArray["5"]["start"] = 0;
+        vdjArray["5"]["stop"] = this.pos[clone.seg["5"]["stop"]] + 1;
+        vdjArray["3"]["start"] = this.pos[clone.seg["3"]["start"]];
+        vdjArray["3"]["stop"] = this.seq.length;
+        if (typeof clone.seg["4"] != 'undefined' && typeof clone.seg["4"]["start"] != 'undefined' && typeof clone.seg["4"]["stop"] != 'undefined') {
+            vdjArray["4"] = {}
+            vdjArray["4"]["start"] = this.pos[clone.seg["4"]["start"]];
+            vdjArray["4"]["stop"] = this.pos[clone.seg["4"]["stop"]] + 1
         }
         return vdjArray;
     },

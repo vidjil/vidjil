@@ -258,6 +258,7 @@ Model.prototype = {
             var clone = this.clone(i)
             clone.colorN = colorGenerator((((clone.getNlength() / n_max) - 1) * (-250)));
             clone.tag = this.default_tag;
+            clone.seg = this.convertSeg(clone.seg);
         }
         
         this.applyAnalysis(this.analysis);

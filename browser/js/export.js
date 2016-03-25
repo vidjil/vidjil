@@ -541,15 +541,15 @@ Report.prototype = {
         if (typeof this.m.clone(cloneID).seg != 'undefined'){
             var seg = this.m.clone(cloneID).seg
             var seq = this.m.clone(cloneID).getSequence()
-            var seqV = seq.substring(0, seg['5end'] + 1)
-            var seqN = seq.substring(seg['5end'] + 1, seg['3start'])
-            var seqJ = seq.substring(seg['3start'])
+            var seqV = seq.substring(0, seg['5']['stop'] + 1)
+            var seqN = seq.substring(seg['5']['stop'] + 1, seg['3']['start'])
+            var seqJ = seq.substring(seg['3']['start'])
 
             $('<span/>', {'class': 'v_gene', 'text': seqV}).appendTo(sequence);
             if (this.m.clone(cloneID).getGene("4") != "undefined D"){
-                var seqN1 = seq.substring(seg['5end'] + 1, seg['4start'])
-                var seqD = seq.substring(seg['4start'] , seg['4end'] + 1)
-                var seqN2 = seq.substring(seg['4end'] + 1, seg['3start'])
+                var seqN1 = seq.substring(seg['5']['stop'] + 1, seg['4']['start'])
+                var seqD = seq.substring(seg['4']['start'] , seg['4']['stop'] + 1)
+                var seqN2 = seq.substring(seg['4']['stop'] + 1, seg['3'['start']])
                 $('<span/>', {'class': 'n_gene', 'text': seqN1}).appendTo(sequence);
                 $('<span/>', {'class': 'd_gene', 'text': seqD}).appendTo(sequence);
                 $('<span/>', {'class': 'n_gene', 'text': seqN2}).appendTo(sequence);

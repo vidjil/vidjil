@@ -484,11 +484,11 @@ Clone.prototype = {
 
     getGene: function (type, withAllele) {
         withAllele = typeof withAllele !== 'undefined' ? withAllele : true;
-        if (typeof (this.seg) != 'undefined' && typeof (this.seg[type]) != 'undefined') {
+        if (typeof (this.seg) != 'undefined' && typeof (this.seg[type]) != 'undefined' && typeof this.seg[type]["name"] != 'undefined') {
             if (withAllele) {
-                return this.seg[type];
+                return this.seg[type]["name"];
             }else{
-                return this.seg[type].split('*')[0];
+                return this.seg[type]["name"].split('*')[0];
             }
         }
         switch (type) {
@@ -503,8 +503,8 @@ Clone.prototype = {
     },
     
     getNlength: function () {
-        if (typeof this.seg != 'undefined' && typeof this.seg['3start'] != 'undefined'){
-            return this.seg['3start']-this.seg['5end']-1
+        if (typeof this.seg != 'undefined' && typeof this.seg['3'] != 'undefined' && typeof this.seg['5'] != 'undefined'){
+            return this.seg['3']['start']-this.seg['5']['stop']-1
         }else{
             return 'undefined'
         }
@@ -539,18 +539,18 @@ Clone.prototype = {
     },
     
     getPrintableSegSequence: function () {
-        if (typeof this.seg == 'undefined' || typeof this.seg['5end'] == 'undefined' || typeof this.seg['3start'] == 'undefined') {
+        if (typeof this.seg == 'undefined' || typeof this.seg['5'] == 'undefined' || typeof this.seg['3'] == 'undefined') {
             return this.getSequence()
         }
 
         var s = ''
-        s += this.sequence.substring(0,  this.seg['5end'])
+        s += this.sequence.substring(0,  this.seg['5']['stop'])
         s += '\n'
-        if (this.seg['5end'] < this.seg['3start'] - 1) {
-            s += this.sequence.substring(this.seg['5end'], this.seg['3start'] - 1)
+        if (this.seg['5']['stop'] < this.seg['3']['start'] - 1) {
+            s += this.sequence.substring(this.seg['5']['stop'], this.seg['3']['start'] - 1)
             s += '\n'
         }
-        s += this.sequence.substring(this.seg['3start'] - 1)
+        s += this.sequence.substring(this.seg['3']['start'] - 1)
         return s
     },
 
@@ -780,9 +780,15 @@ Clone.prototype = {
      */
     changeSegment: function (formValue, segment) {
         // TODO add chgmt of germline in data analysis
-        this.seg[segment]         = formValue
-        this.seg[segment+"start"] = 0
-        this.seg[segment+"end"]   = 0            
+
+        delete this.seg[segment];
+        delete this.seg[segment+"start"]
+        delete this.seg[segment+"end"]
+
+        this.seg[segment] = {}
+        this.seg[segment]["name"]  = formValue
+        this.seg[segment]["start"] = 0
+        this.seg[segment]["stop"]  = 0
 
         // TODO : insert real value for stats (start, end, evalue, ...)
         this.seg["_evalue"]       = 0
@@ -933,7 +939,7 @@ Clone.prototype = {
         html += "<tr><td> J gene (or 3') </td><td colspan='" + time_length + "'>" + this.getGene("3") + "<div class='div-menu-selector' id='listJsegment' style='display: none'>" + this.createSegmentList("Jsegment") + "</div></td></tr>"
 
         // Other seg info
-        var exclude_seg_info = ['affectSigns', 'affectValues']
+        var exclude_seg_info = ['affectSigns', 'affectValues', '5', '4', '3']
         for (var key in this.seg) {
             if (exclude_seg_info.indexOf(key) == -1 && this.seg[key] instanceof Object) {
                 var nt_seq = this.getSegNtSequence(key);
