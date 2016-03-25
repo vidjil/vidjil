@@ -180,7 +180,7 @@ Germline.prototype = {
         for (var i=0; i<this.m.clones.length; i++){
             if (typeof this.m.clone(i).seg != "undefined" &&
                 typeof this.m.clone(i).seg[type2] != "undefined" &&
-                typeof this.m.clone(i).seg[type2] != "undefined"
+                typeof this.m.clone(i).seg[type2]["name"] != "undefined"
             ){
                 var gene=this.m.clone(i).seg[type2]["name"];
                 if (this.m.system != "multi" || this.m.clone(i).get('germline') == system){
