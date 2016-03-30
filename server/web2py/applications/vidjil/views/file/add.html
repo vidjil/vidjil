@@ -1,6 +1,20 @@
 {{extend 'db_layout.html'}}
 
 <h3>New sequence file</h3>
+<div>
+    <table>
+	<tr>
+	    <td >
+		<label for="file" id="file__label"> file </label>
+	    </td>
+	    <td >
+		<input id="upload_file" type="file" name="file" >
+	    </td>
+	    <td >
+	    (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
+	</tr>
+    </table>
+</div>
 
 
 <form id="upload_form" action="DB_ADDRESS/file/add_form" enctype="multipart/form-data" method="post">
@@ -8,11 +22,6 @@
     
     <table>
         <tbody>
-            <tr>
-                <td ><label for="file" id="file__label"> file </label></td>
-                <td ><input id="upload_file" type="file" name="file" ></td>
-                <td >* (.fa, .fastq, .fa.gz, .fastq.gz, .clntab)   </td>
-            </tr>
             <tr class='devel-mode'>
                 <td><label for="patient_id" id="patient_id__label">patient: </label></td>
                 <td><input list="patients" id="patient_list" name="patient_id" type="text" size="80" value="{{=patient}}"></td>
