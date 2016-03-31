@@ -49,7 +49,7 @@ json_data = {
             "3" : "TRGJ2*03",
             "3start" : 6,
             "5end" : 5,
-            "cdr3" : "AG"
+            "cdr3" : {"start": 5, "stop": 6, aa: "AG"}
         }
     },
     {
