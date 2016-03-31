@@ -137,13 +137,13 @@ Model_loader.prototype = {
             
         oFReader.readAsText(oFile);
         oFReader.onload = function (oFREvent) {
-            self.parseJsonData(oFREvent.target.result, limit)
-                .loadGermline()
+            self.parseJsonData(oFREvent.target.result, limit);
+            self.initClones()
+            self.loadGermline()
                 .loadAnalysis(analysis)
                 .update_selected_system()
             self.dataFileName = document.getElementById(id)
                 .files[0].name;
-            self.initClones()
         }
 
     }, 
