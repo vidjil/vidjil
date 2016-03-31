@@ -1663,12 +1663,8 @@ table.log textarea {
   max-width: 457px;
   min-height: 32px;
   max-height: 32px;
-  position: fixed;
   width: 100%;
   background-color: #000000;
-  -webkit-transition: max-height 0.8s ease-out;
-  -moz-transition: max-height 0.8s ease-out;
-  transition: max-height 0.8s ease-out;
 }
 .info_container:hover {
   max-height: 400px;
@@ -1676,9 +1672,6 @@ table.log textarea {
 }
 .patient_info_text {
   margin-bottom: 5px;
-}
-.patient_info {
-  margin-bottom: 45px;
 }
 textarea#edit_value {
   -webkit-box-sizing: border-box;
