@@ -258,28 +258,6 @@ def get_data():
                 data["run_id"] = row.id
                 data["run_name"] = run_name
 
-        data["sample_set_id"] = sample_set.id
-        
-        data["config_name"] = config_name
-        data["samples"]["info"] = []
-        data["samples"]["timestamp"] = []
-        data["samples"]["sequence_file_id"] = []
-        data["samples"]["results_file_id"] = []
-        data["samples"]["config_id"] = []
-        data["samples"]["names"] = []
-        data["samples"]["db_key"] = []
-        data["samples"]["ids"] = []
-        for i in range(len(data["samples"]["original_names"])) :
-            data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
-            data["samples"]["info"].append('')
-            data["samples"]["timestamp"].append('')
-            data["samples"]["sequence_file_id"].append('')
-            data["samples"]["results_file_id"].append('')
-            data["samples"]["config_id"].append('')
-            data["samples"]["names"].append('')
-            data["samples"]["db_key"].append('')
-            data["samples"]["ids"].append('')
-
         ## récupération des infos stockées sur la base de données
         query = db(  ( db.sample_set.id == request.vars["sample_set_id"] )
                    & ( db.sample_set.id == db.sample_set_membership.sample_set_id )
@@ -295,18 +273,30 @@ def get_data():
                 query2.append(row)
                 sequence_file_id = row.sequence_file.id
         
-        i=0
-        for row in query2 :
-            data["samples"]["timestamp"][i] = str(row.sequence_file.sampling_date)
-            data["samples"]["info"][i] = row.sequence_file.info
-            data["samples"]["commandline"][i] = command
-            data["samples"]["sequence_file_id"][i] = row.sequence_file.id
-            data["samples"]["results_file_id"][i] = row.results_file.id
-            data["samples"]["config_id"][i] = request.vars["config"]
-            data["samples"]["names"][i] = row.sequence_file.filename.split('.')[0]
-            data["samples"]["ids"][i] = row.sequence_file.id
-            i+=1
-                
+        data["sample_set_id"] = sample_set.id
+
+        data["config_name"] = config_name
+        data["samples"]["info"] = []
+        data["samples"]["timestamp"] = []
+        data["samples"]["sequence_file_id"] = []
+        data["samples"]["results_file_id"] = []
+        data["samples"]["config_id"] = []
+        data["samples"]["names"] = []
+        data["samples"]["db_key"] = []
+        data["samples"]["ids"] = []
+        for i in range(len(data["samples"]["original_names"])) :
+            row = query2[i]
+            data["samples"]["original_names"][i] = data["samples"]["original_names"][i].split('/')[-1]
+            data["samples"]["info"].append(row.sequence_file.info)
+            data["samples"]["timestamp"].append(str(row.sequence_file.sampling_date))
+            data["samples"]["sequence_file_id"].append(row.sequence_file.id)
+            data["samples"]["results_file_id"].append(row.results_file.id)
+            data["samples"]["config_id"].append(request.vars['config'])
+            data["samples"]["names"].append(row.sequence_file.filename.split('.')[0])
+            data["samples"]["db_key"].append('')
+            data["samples"]["ids"].append(row.sequence_file.id)
+            data["samples"]["commandline"].append(command)
+
         log.debug("get_data (%s) c%s -> %s" % (request.vars["sample_set_id"], request.vars["config"], fused_file))
         return gluon.contrib.simplejson.dumps(data, separators=(',',':'))
 
