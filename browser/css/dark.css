@@ -1669,7 +1669,6 @@ table.log textarea {
   -webkit-transition: max-height 0.8s ease-out;
   -moz-transition: max-height 0.8s ease-out;
   transition: max-height 0.8s ease-out;
-  z-index: 1;
 }
 .info_container:hover {
   max-height: 400px;
