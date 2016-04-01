@@ -754,6 +754,8 @@ ScatterPlot.prototype = {
                     }
                 }
             }
+            min = Math.floor(min)
+            max = Math.ceil(max)
             console.log("min : " + min)
             console.log("max : " + max)
             for (var i=min; i<=max; i++){ 
@@ -775,6 +777,8 @@ ScatterPlot.prototype = {
                 var v;
                 try{
                     var v = fct(i);
+                    if (typeof v == 'number')
+                        v = Math.round(v)
                 }catch(e){}
                 if (typeof v == "undefined" || typeof this.barTab[v] == "undefined" ) {
                     this.barTab["?"].push(i);
