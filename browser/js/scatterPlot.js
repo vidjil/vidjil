@@ -760,7 +760,6 @@ ScatterPlot.prototype = {
             console.log("max : " + max)
             for (var i=min; i<=max; i++){ 
                 this.barTab[i]=[];
-                console.log("val : " + this.barTab[i])
             }
         }else{
             for (var i in values) {
@@ -782,7 +781,6 @@ ScatterPlot.prototype = {
                 }catch(e){}
                 if (typeof v == "undefined" || typeof this.barTab[v] == "undefined" ) {
                     this.barTab["?"].push(i);
-                    console.log("barTab : " + typeof this.barTab[v])
                 }else{
                     this.barTab[v].push(i);
                 }
