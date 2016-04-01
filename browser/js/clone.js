@@ -83,6 +83,16 @@ Clone.prototype = {
     REGEX_GENE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-*]*)$/,                       // IGHV3-11*03
     REGEX_GENE_IGNORE_ALLELE: /(IGH|IGK|IGL|TRA|TRB|TRG|TRD)([\w-]*)[\w-*]*$/,   // IGHV3-11*03  (ignore *03)
 
+    getAverageReadLength: function(time) {
+        if (this._average_read_length == 'undefined')
+            return 'undefined';
+        time = this.m.getTime(time);
+        var size = this._average_read_length[time];
+        if (size == 0)
+            return 'undefined';
+        return size;
+    },
+
     getShortName: function () {
 
         name_items = this.getName().split(' ')

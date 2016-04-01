@@ -130,6 +130,10 @@ function ScatterPlot(id, model, database) {
             label: "clone consensus length",
             fct: function(cloneID) {return self.m.clone(cloneID).getSequenceLength()}
         },
+        "readLength" : {
+            label: "clone average read length",
+            fct: function(cloneID) {return self.m.clone(cloneID).getAverageReadLength()}
+        },
         "GCContent" : { 
             label: "GC content",
             fct: "GCContent", 
