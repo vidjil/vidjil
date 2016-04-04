@@ -142,11 +142,15 @@ def index():
                 )
             )
 
-
+    query_pre_process = db( db.pre_process.id >0 ).select()
+    pre_process_list = {}
+    for row in query_pre_process:
+        pre_process_list[row.id] = row.name
     
     log.debug('sample_set (%s)' % request.vars["id"])
     #if (auth.can_view_patient(request.vars["id"]) ):
     return dict(query=query,
+                pre_process_list=pre_process_list,
                 config_id=config_id,
                 info=info_file,
                 can_modify=auth.can_modify_sample_set(sample_set_id),

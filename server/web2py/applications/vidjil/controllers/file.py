@@ -101,8 +101,10 @@ def add_form():
         if not auth.can_modify_run(run_id) :
             error += " missing permission for run "+str(run_id)
     pre_process = None
+    pre_process_flag = True
     if request.vars['pre_process'] != "0":
         pre_process = request.vars['pre_process']
+        pre_process_flag = False
 
     if error=="" :
             
@@ -111,6 +113,7 @@ def add_form():
                             info=request.vars['file_info'],
                             filename=request.vars['filename'],
                             pre_process_id=pre_process,
+                            pre_process_flag=pre_process_flag,
                             provider=auth.user_id)
         
         #add a default sample_set for this sequence file

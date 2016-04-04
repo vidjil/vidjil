@@ -142,6 +142,24 @@ def schedule_run(id_sequence, id_sample_set, id_config, grep_reads=None):
 def run_vidjil(id_file, id_config, id_data, id_fuse, grep_reads,
                clean_before=False, clean_after=False):
     from subprocess import Popen, PIPE, STDOUT, os
+    from datetime import timedelta as timed
+    
+    ## re schedule if pre_process is still pending
+    if db.sequence_file[id_file].pre_process_flag != True :
+        
+        print "re-schedule"
+    
+        args = [id_file, id_config, id_data, id_fuse, grep_reads]
+        task = scheduler.queue_task("vidjil", args,
+                        repeats = 1, timeout = defs.TASK_TIMEOUT,
+                               start_time=request.now + timed(seconds=120))
+        db.results_file[id_data] = dict(scheduler_task_id = task.id)
+        db.commit()
+        print task.id
+        sys.stdout.flush()
+        
+        return "SUCCESS"
+    
     
     ## les chemins d'acces a vidjil / aux fichiers de sequences
     germline_folder = defs.DIR_VIDJIL + '/germline/'
@@ -656,7 +674,8 @@ def run_pre_process(pre_process_id, sequence_file_id, clean_before=True, clean_a
         raise IOError
 
     db.sequence_file[sequence_file_id] = dict(data_file = stream,
-                                              data_file2 = None)
+                                              data_file2 = None,
+                                              pre_process_flag = True)
     db.commit()
 
     if clean_after:
