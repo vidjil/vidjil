@@ -357,3 +357,22 @@ The default tag names are defined in [[../browser/js/vidjil-style.js]].
 #+BEGIN_SRC js
     "key" : "value"  // "key" is the tag id from 0 to 7 and "value" is the custom tag name attributed
 #+END_SRC
+
+* Differences between programs
+  Due to specificities between programs, some elements may differ depending
+  on which program has been run.
+
+** MiXCR
+   The output when using MiXCR differs from Vidjil on the id of each clone.
+   Where Vidjil provides the representative sequence of the clone, MiXCR
+   provides the representative sequence in =Amino Acids= followed by the name
+   of the =V gene= and the name of the =J gene=.
+
+
+#+BEGIN_SRC js
+   {
+      "germline": ...
+      "id": CARPRDWNTYYYYGMDVW IGHV3-11*00 IGHJ6*00
+      ...
+   }
+#+END_SRC
