@@ -55,8 +55,8 @@ Note that other elements could be added by some program (such as =tag= or =clust
                 "top": 1,
                 "seg":
                 {
-		    "5": "TRGV5*01",  "5start": 1,   "5end": 86,
-		    "3": "TRGJ1*02",  "3start": 89,  "3end": 118,
+		    "5": {"name": "TRGV5*01",  "start": 1,   "stop": 86},
+		    "3": {"name": "TRGJ1*02",  "start": 89,  "stop": 118},
                     "cdr3": { "start": 77, "stop": 104, "seq": "gccacctgggccttattataagaaactc" }
 		}
 
@@ -102,8 +102,8 @@ and 'IMGT clonotype (AA) or (nt)' could also be used by some programs).
                 "top": 1,
                 "seg":
                 {
-		    "5": "TRGV5*01",  "5start": 1,   "5end": 86,
-		    "3": "TRGJ1*02",  "3start": 89,  "3end": 118
+		    "5": {"name": "TRGV5*01",  "start": 1,   "end": 86},
+		    "3": {"name": "TRGJ1*02",  "start": 89,  "end": 118}
 		}
             },
             {
@@ -121,8 +121,8 @@ and 'IMGT clonotype (AA) or (nt)' could also be used by some programs).
                 "top": 3,
                 "seg":
                 {
-                    "5start": 1, "5end": 100,
-                    "3start": 101, "3end": 200
+                    "5": {"start": 1, "stop": 100},
+                    "3": {"start": 101, "stop": 200}
                 }
             }
         ]
@@ -286,17 +286,17 @@ In the .analysis file, this section is intended to describe some specific clones
                      // names of V/D/J genes should match the ones in files referenced in germline/germline.data
                      // Positions must start at 1.
       {
-         "5": "IGHV5*01",
-         "5start": 0, 
-         "5end": 0,
+         "5": {"name": "IGHV5*01",
+         "start": 0,
+         "stop": 0},
 
-         "4": "IGHD1*01",
-         "4start": 0, 
-         "4end": 0,
+         "4": {"name": "IGHD1*01",
+         "start": 0,
+         "stop": 0},
 
-         "3": "IGHJ3*02",
-         "3start": 0, 
-         "3end": 0,
+         "3": {"name": "IGHJ3*02",
+         "start": 0,
+         "stop": 0},
 
                      // any feature to be highligthed in the sequenc
                      // the optional "seq" element gives a sequence that corresponds to this feature
@@ -356,4 +356,23 @@ The default tag names are defined in [[../browser/js/vidjil-style.js]].
 
 #+BEGIN_SRC js
     "key" : "value"  // "key" is the tag id from 0 to 7 and "value" is the custom tag name attributed
+#+END_SRC
+
+* Differences between programs
+  Due to specificities between programs, some elements may differ depending
+  on which program has been run.
+
+** MiXCR
+   The output when using MiXCR differs from Vidjil on the id of each clone.
+   Where Vidjil provides the representative sequence of the clone, MiXCR
+   provides the representative sequence in =Amino Acids= followed by the name
+   of the =V gene= and the name of the =J gene=.
+
+
+#+BEGIN_SRC js
+   {
+      "germline": ...
+      "id": CARPRDWNTYYYYGMDVW IGHV3-11*00 IGHJ6*00
+      ...
+   }
 #+END_SRC
