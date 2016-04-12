@@ -277,6 +277,8 @@ Graph.prototype = {
         
         this.resizeW = div_width - this.marge4 - this.marge3;
         this.resizeH = div_height - this.marge5;
+        
+        this.maxLabelSize = (this.resizeW-100)/this.m.samples.order.length;
 
         this.vis = d3.select("#" + this.id + "_svg")
             .attr("width", div_width)

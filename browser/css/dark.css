@@ -9,7 +9,8 @@ html {
   min-width: 1160px;
   min-height: 250px;
 }
-body {
+body,
+svg {
   font-family: ubuntulight, Arial, Helvetica, Sans-serif;
   font-size: 13px;
   height: 100%;
@@ -201,7 +202,8 @@ line {
 .axis_v {
   display: none;
 }
-.axis_v_hidden {
+.axis_v_hidden,
+.axis_h_hidden {
   display: none;
 }
 .axis_button,
@@ -380,6 +382,7 @@ line {
   overflow-x: hidden;
   height: calc(100% - 30px);
   /*100% - list_menu height */
+
   padding: 2px;
 }
 #list_data {
@@ -515,7 +518,7 @@ line {
   margin-left: 2px;
 }
 #new_name {
-  font-family: monospace;
+  font-family: monospace, ubuntu_monobold, Courier New, monaco, terminal, courier, system;
   font-weight: bold;
 }
 .list_sort {
@@ -554,7 +557,7 @@ line {
 .seq-mobil {
   margin-left: 475px;
   letter-spacing: 0.12em;
-  font-family: monospace, ubuntu_monobold, Courier New,monaco,terminal,courier,system;
+  font-family: monospace, ubuntu_monobold, Courier New, monaco, terminal, courier, system;
   position: relative;
   bottom: 3px;
   font-size: 1em;
@@ -603,6 +606,7 @@ line {
   font-size: 70%;
   letter-spacing: .428em;
   /* (1-.7) / .7 */
+
   left: .214em;
 }
 .highlight {
@@ -753,8 +757,7 @@ span .substitution {
   left: -webkit-calc(50% - 250px);
   left: calc(50% - 250px);
 }
-/* Main style for <a>
-   Used in particular in .popup_container, on login screen, in news, in links to results (for patient list and patient info)  */
+/* Main style for <a> Used in particular in .popup_container, on login screen, in news, in links to results (for patient list and patient info)  */
 a {
   color: #839496;
 }
@@ -975,18 +978,25 @@ span.logo {
   background: #3d24b6;
   background: -moz-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* FF3.6+ */
+
   background: -webkit-gradient(linear, left top, right top, color-stop(0%, #3d24b6), color-stop(10%, #2448b5), color-stop(20%, #2487b8), color-stop(30%, #24b7ab), color-stop(40%, #24b86e), color-stop(50%, #24b730), color-stop(60%, #55b824), color-stop(70%, #92b724), color-stop(80%, #b89f24), color-stop(90%, #b25f23), color-stop(100%, #b82424));
   /* Chrome,Safari4+ */
+
   background: -webkit-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* Chrome10+,Safari5.1+ */
+
   background: -o-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* Opera 11.10+ */
+
   background: -ms-linear-gradient(left, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* IE10+ */
+
   background: linear-gradient(to right, #3d24b6 0%, #2448b5 10%, #2487b8 20%, #24b7ab 30%, #24b86e 40%, #24b730 50%, #55b824 60%, #92b724 70%, #b89f24 80%, #b25f23 90%, #b82424 100%);
   /* W3C */
+
   filter: "progid:DXImageTransform.Microsoft.gradient( startColorstr='#3d24b6', endColorstr='#b82424',GradientType=1 )";
   /* IE6-9 */
+
   width: 180px;
   height: 8px;
   margin-top: 4px;
@@ -1000,7 +1010,7 @@ span.logo {
   opacity: 0.5;
 }
 #test_result {
-  font-family: Courier New,monaco,terminal,courier,system;
+  font-family: monospace, ubuntu_monobold, Courier New, monaco, terminal, courier, system;
   font-weight: bold;
   position: absolute;
   width: 100%;
@@ -1447,18 +1457,18 @@ span.warningReads {
 .flash_1,
 .log_1 {
   font-weight: bold;
-  background-color: #DFF0D8;
+  background-color: #dff0d8;
 }
 .flash_2,
 .log_2 {
   font-weight: bold;
-  background-color: #F2DEAE;
+  background-color: #f2deae;
 }
 .flash_3,
 .log_3 {
   font-weight: bold;
   border-color: darkred;
-  background-color: #F2DEDE;
+  background-color: #f2dede;
 }
 select > option:hover {
   background-color: #333333;
@@ -1511,7 +1521,7 @@ code,
 kbd,
 samp,
 tt {
-  font-family: monospace,monospace;
+  font-family: monospace, ubuntu_monobold, Courier New, monaco, terminal, courier, system;
   font-size: 1em;
 }
 table.log {
@@ -1549,7 +1559,7 @@ table.log textarea {
   padding: 5px 0px;
   background: grey;
   color: white;
-  font-family: monospace;
+  font-family: monospace, ubuntu_monobold, Courier New, monaco, terminal, courier, system;
   white-space: pre-line;
   overflow: auto;
   max-height: 100%;
@@ -1558,7 +1568,7 @@ table.log textarea {
   flex-grow: 1;
 }
 .tagColor0 {
-  background: #DC322F;
+  background: #dc322f;
 }
 .tagColor1 {
   background: #cb4b16;
@@ -1595,15 +1605,15 @@ table.log textarea {
   text-align: center;
 }
 .urgent_message {
-  border: 2px solid darkred;
+  border: 2px solid #8b0000;
   margin: 3px;
   font-weight: bold;
-  background-color: #F2DEDE;
+  background-color: #f2dede;
 }
 .info_message {
   border: 1px solid #333333;
   margin: 4px;
-  background-color: #DFF0D8;
+  background-color: #dff0d8;
 }
 .notification {
   padding: 3px;

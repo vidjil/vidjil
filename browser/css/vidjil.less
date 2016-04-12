@@ -24,8 +24,8 @@ html{
   min-height: 250px
 }
 
-body {
-  font-family: ubuntulight, Arial, Helvetica, Sans-serif;
+body, svg {
+  font-family: @default-font;
   font-size: 13px;
   height : 100%;
   margin:0px;
@@ -34,7 +34,7 @@ body {
 }
 
 .cloneName {
-  font-family: ubuntumedium, Arial Bold, Helvetica, Sans-serif;
+  font-family: @bold-font;
 }
 
 .seq-fixed .cloneName, .listElem .cloneName {
@@ -43,7 +43,7 @@ body {
 
 /* for FF override */
 textarea {
-  font-family: ubuntulight, Arial, Helvetica, Sans-serif;
+  font-family: @default-font;
   font-size: 100%;
 }
 
@@ -259,7 +259,7 @@ line {
  display: none;
 }
 
-.axis_v_hidden{
+.axis_v_hidden, .axis_h_hidden{
  display: none;
 }
 
@@ -646,7 +646,7 @@ line {
 
 
 #new_name{
-  font-family: monospace;
+  font-family: @monospace-font;
   font-weight:bold;
 }
 
@@ -690,7 +690,7 @@ line {
 .seq-mobil {
   margin-left: @width_left_container;
   letter-spacing: 0.12em;
-  font-family : monospace, ubuntu_monobold, Courier New,monaco,terminal,courier,system; 
+  font-family : @monospace-font; 
   position: relative;
   bottom: 3px;
   font-size:1em;
@@ -910,9 +910,8 @@ span .substitution {
   left: calc(~"50% - 250px");
 }
 
+/* Main style for <a> Used in particular in .popup_container, on login screen, in news, in links to results (for patient list and patient info)  */
 
-/* Main style for <a>
-   Used in particular in .popup_container, on login screen, in news, in links to results (for patient list and patient info)  */
 
 a {
   color: @default;
@@ -1176,7 +1175,7 @@ span.logo
 }
 
 #test_result{
-  font-family : Courier New,monaco,terminal,courier,system; 
+  font-family : @monospace-font;
   font-weight: bold;
   position: absolute;
   width: 100%;
@@ -1719,7 +1718,7 @@ code,
 kbd,
 samp,
 tt{
-  font-family:monospace,monospace;
+  font-family:@monospace-font;
   font-size:1em;
 }
 
@@ -1766,7 +1765,7 @@ display:flex;
 padding:5px 0px;
 background:grey;
 color:white;
-font-family:monospace;
+font-family:@monospace-font;
 white-space: pre-line;
 overflow: auto;
 max-height: 100%;
